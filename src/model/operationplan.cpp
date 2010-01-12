@@ -375,8 +375,7 @@ DECLARE_EXPORT void OperationPlan::addSubOperationPlan(OperationPlan* o)
     firstsubopplan = o;
     lastsubopplan = o;
   }
-  else if (*o < *firstsubopplan 
-    || o->getOperation() == OperationSetup::setupoperation)
+  else if (firstsubopplan->getOperation() != OperationSetup::setupoperation)    
   {
     // New head
     o->nextsubopplan = firstsubopplan;
@@ -385,17 +384,13 @@ DECLARE_EXPORT void OperationPlan::addSubOperationPlan(OperationPlan* o)
   }
   else
   {
-    // Insert in the middle or at the end
-    OperationPlan *x = firstsubopplan;
-    while (x->nextsubopplan && *(x->nextsubopplan) < *o) x = x->nextsubopplan;
-    o->nextsubopplan = x->nextsubopplan;
-    o->prevsubopplan = x;
-    if (x->nextsubopplan)
-      x->nextsubopplan->prevsubopplan = o;
-    else
-      lastsubopplan = o; // New tail
-    x->nextsubopplan = o;
+    // Insert right after the setup operationplan
+    OperationPlan *s = firstsubopplan->nextsubopplan;
+    o->nextsubopplan = s;
+    if (s) s->nextsubopplan = o;
+    else lastsubopplan = o;
   }
+
   o->owner = this;
 
   // Update the date of the top operationplan
@@ -446,50 +441,6 @@ DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
 
   // Sort based on quantity
   return quantity >= a.quantity;
-}
-
-
-DECLARE_EXPORT void OperationPlan::updateSorting()
-{
-  // Get out right away if this operationplan isn't initialized yet
-  if (!(next || prev || oper->last_opplan==this || oper->first_opplan==this))
-    return;
-
-  // Verify that we are smaller than the next operationplan
-  while (next && !(*this < *next))
-  {
-    // Swap places with the next
-    OperationPlan *tmp = next;
-    if (oper->first_opplan == this)
-      // New first operationplan
-      oper->first_opplan = tmp;
-    if (tmp->next) tmp->next->prev = this;
-    if (prev) prev->next = tmp;
-    tmp->prev = prev;
-    next = tmp->next;
-    tmp->next = this;
-    prev = tmp;
-  }
-
-  // Verify that we are bigger than the previous operationplan
-  while (prev && !(*prev < *this))
-  {
-    // Swap places with the previous
-    OperationPlan *tmp = prev;
-    if (oper->last_opplan == this)
-      // New last operationplan
-      oper->last_opplan = tmp;
-    if (tmp->prev) tmp->prev->next = this;
-    if (next) next->prev = tmp;
-    prev = tmp->prev;
-    tmp->prev = this;
-    tmp->next = next;
-    next = tmp;
-  }
-
-  // Update operation if we have become the first or the last operationplan
-  if (!next) oper->last_opplan = this;
-  if (!prev) oper->first_opplan = this;
 }
 
 
@@ -737,12 +688,17 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
   // sense if the operationplan was created to satisfy a demand.
   // It is not valid though when the purpose of the operationplan was to push
   // some material downstream.
+        
+  // Resize children 
+  for (OperationPlan *j = firstsubopplan; j; j = j->nextsubopplan)
+    if (j->getOperation() != OperationSetup::setupoperation)
+    {
+      j->quantity = quantity;
+      j->resizeFlowLoadPlans();
+    }
 
   // Notify the demand of the changed delivery
   if (dmd) dmd->setChanged();
-
-  // Update the sorting of the operationplan in the list
-  updateSorting();
 }
 
 

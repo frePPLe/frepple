@@ -1823,6 +1823,7 @@ class OperationPlan
     friend class Operation;
     friend class OperationAlternate;
     friend class OperationRouting;
+    friend class ProblemPrecedence;
 
   public:
     class FlowPlanIterator;
@@ -2209,13 +2210,6 @@ class OperationPlan
       * Multiple operationplans for the same values of the above keys can exist.
       */
     DECLARE_EXPORT bool operator < (const OperationPlan& a) const;
-
-    /** This method should be called when an operationplan is updated in a way
-      * that can affect it's position in the sorted list: ie changes of the
-      * start date or quantity.<br>
-      * The method will verify the correct sorting an update it if necessary.
-      */
-    DECLARE_EXPORT void updateSorting();
 
   private:
     /** Updates the operationplan based on the latest information of quantity,
@@ -4896,9 +4890,14 @@ class ProblemPrecedence : public Problem
   public:
     string getDescription() const
     {
-      return string("Operation '") + opplan2->getOperation()->getName()
-          + "' starts before Operation '"
-          + opplan1->getOperation()->getName() +"' ends";
+      OperationPlan *o = static_cast<OperationPlan*>(getOwner());
+      if (!o->nextsubopplan)
+        return string("Bogus precendence problem on '")
+          + o->getOperation()->getName() + "'";
+      else
+        return string("Operation '") + o->getOperation()->getName()
+          + "' starts before operation '"
+          + o->nextsubopplan->getOperation()->getName() +"' ends";
     }
     bool isFeasible() const {return false;}
     /** The weight of the problem is equal to the duration in days. */
@@ -4906,18 +4905,15 @@ class ProblemPrecedence : public Problem
     {
       return static_cast<double>(getDateRange().getDuration()) / 86400;
     }
-    explicit ProblemPrecedence
-    (Operation* o, OperationPlan* op1, OperationPlan* op2)
-        : Problem(o), opplan1(op1), opplan2(op2) {addProblem();}
+    explicit ProblemPrecedence(OperationPlan* o) : Problem(o) {addProblem();}
     ~ProblemPrecedence() {removeProblem();}
     string getEntity() const {return "operationplans";}
     const DateRange getDateRange() const
     {
-      return DateRange(opplan2->getDates().getStart(),
-          opplan1->getDates().getEnd());
+      OperationPlan *o = static_cast<OperationPlan*>(getOwner());
+      return DateRange(o->nextsubopplan->getDates().getStart(),
+        o->getDates().getEnd());
     }
-    OperationPlan* getFirstOperationPlan() const {return opplan1;}
-    OperationPlan* getSecondOperationPlan() const {return opplan2;}
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return *metadata;}
@@ -4925,11 +4921,6 @@ class ProblemPrecedence : public Problem
     /** Storing metadata on this class. */
     static DECLARE_EXPORT const MetaClass* metadata;
     size_t getSize() const {return sizeof(ProblemPrecedence);}
-
-  private:
-    /** Pointers to the operationplans which violate the sequence.
-      * opplan1 is expected to finish before opplan2 starts. */
-    OperationPlan *opplan1, *opplan2;
 };
 
 

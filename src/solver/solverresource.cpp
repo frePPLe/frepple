@@ -344,6 +344,11 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
             Date::infinitePast
             );
         HasOverload = true;
+        if (data->state->q_operationplan->getDates().getStart() < newDate)
+          // Moving to the new date turns out to be infeasible! Give it up.
+          // For instance, this can happen when the location calendar doesn't 
+          // have any up-time after the specified date.
+          break;
       }
     }
     while (HasOverload && newDate);

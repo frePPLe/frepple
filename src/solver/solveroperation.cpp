@@ -162,11 +162,14 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
           // Note that the delay variable only reflects the delay due to
           // material constraints. If the operationplan is moved early or late
           // for capacity constraints, this is not included.
-          OperationPlanState at = opplan->getOperation()->setOperationPlanParameters(
-            opplan, 0.01, data.state->a_date, Date::infinitePast, false, false
-            );
-          if (at.end < matnext.getEnd()) matnext = DateRange(at.start, at.end);
-          //xxxif (matnext.getEnd() <= orig_q_date) logger << "STRANGE" << matnext << "  " << orig_q_date << "  " << at.second << "  " << opplan->getQuantity() << endl;
+          if (data.state->a_date < Date::infiniteFuture)
+          {
+            OperationPlanState at = opplan->getOperation()->setOperationPlanParameters(
+              opplan, 0.01, data.state->a_date, Date::infinitePast, false, false
+              );
+            if (at.end < matnext.getEnd()) matnext = DateRange(at.start, at.end);
+            //xxxif (matnext.getEnd() <= orig_q_date) logger << "STRANGE" << matnext << "  " << orig_q_date << "  " << at.second << "  " << opplan->getQuantity() << endl;
+          }
 
           // Jump out of the loop if the answered quantity is 0.
           if (a_qty <= ROUNDING_ERROR)
@@ -533,10 +536,12 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     // Plan the next step
     data->state->q_qty = a_qty;
     data->state->q_date = data->state->curOwnerOpplan->getDates().getStart();
-    (*e)->solve(*this,v);
+    (*e)->solve(*this,v);  // @todo if the step itself has child operations, the curOwnerOpplan field is changed here!!!
     a_qty = data->state->a_qty;
+
     // Update the top operationplan
     data->state->curOwnerOpplan->setQuantity(a_qty,true);
+
     // Maximum for the next date
     if (data->state->a_date != Date::infiniteFuture)
     {

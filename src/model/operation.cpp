@@ -861,8 +861,7 @@ DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, const Attribute
 }
 
 
-DECLARE_EXPORT OperationPlanState
-OperationRouting::setOperationPlanParameters
+DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Invalid call to the function

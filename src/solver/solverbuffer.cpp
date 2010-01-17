@@ -282,7 +282,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferInfinite* b, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(b->getLevel()) << "  Buffer '" << b << "' is asked: "
+    logger << indent(b->getLevel()) << "  Infinite buffer '" << b << "' is asked: "
     << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Call the user exit
@@ -297,7 +297,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferInfinite* b, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(b->getLevel()) << "  Buffer '" << b << "' answers: "
+    logger << indent(b->getLevel()) << "  Infinite buffer '" << b << "' answers: "
     << data->state->a_qty << "  " << data->state->a_date << "  "
     << data->state->a_cost << "  " << data->state->a_penalty << endl;
 }

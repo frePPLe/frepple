@@ -485,7 +485,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
+    logger << indent(oper->getLevel()) << "   Routing operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Call the user exit
@@ -598,7 +598,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
+    logger << indent(oper->getLevel()) << "   Routing operation '" << oper->getName()
       << "' answers: " << data->state->a_qty << "  " << data->state->a_date << "  "
       << data->state->a_cost << "  " << data->state->a_penalty << endl;
 }
@@ -618,7 +618,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
   // Message
   if (loglevel>1)
-    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
+    logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Call the user exit
@@ -769,7 +769,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
       // Message
       if (loglevel && search != PRIORITY)
-        logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
+        logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
           << "' evaluates alternate '" << *altIter << "': quantity " << data->state->a_qty
           << ", cost " << deltaCost << ", penalty " << deltaPenalty << endl;
 
@@ -843,7 +843,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     {
       // Message
       if (loglevel)
-        logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
+        logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
           << "' chooses alternate '" << bestAlternateSelection << "' " << search << endl;
 
       // Create the top operationplan.
@@ -914,7 +914,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
   // Message
   if (loglevel>1)
-    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
+    logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
       << "' answers: " << data->state->a_qty << "  " << data->state->a_date
       << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
 }

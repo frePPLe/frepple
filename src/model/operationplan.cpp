@@ -203,51 +203,15 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
     return false;
   }
 
-  // See if we can consolidate this operationplan with an existing one.
-  // Merging is possible only when all the following conditions are met:
-  //   - id of the new opplan is not set
-  //   - id of the old opplan is set
-  //   - it is a fixedtime operation
-  //   - it doesn't load any resources
-  //   - both operationplans aren't locked
-  //   - both operationplans have no owner
-  //   - start and end date of both operationplans are the same
-  //   - demand of both operationplans are the same
-  //   - maximum operation size is not exceeded
-  //   - @todo need to check that all flowplans are on the same alternate!!!
-  if (!id && getOperation()->getType() == *OperationFixedTime::metadata
-    && !getLocked() && !getOwner() && getOperation()->getLoads().empty())
+  // Call any operation specific initialisation logic
+  if (!oper->extraInstantiate(this))
   {
-    // Loop through candidates
-    OperationPlan *x = oper->last_opplan;
-    OperationPlan *y = NULL;
-    while (x && !(*x < *this))
-    {
-      y = x;
-      x = x->prev;
-    }
-    if (y && y->getDates() == getDates() && !y->getOwner()
-      && y->getDemand() == getDemand() && !y->getLocked() && y->id
-      && y->getQuantity() + getQuantity() < getOperation()->getSizeMaximum())
-    {
-      // Merging with the 'next' operationplan
-      y->setQuantity(y->getQuantity() + getQuantity());
-      delete this;
-      return false;
-    }
-    if (x && x->getDates() == getDates() && !x->getOwner()
-      && x->getDemand() == getDemand() && !x->getLocked() && x->id
-      && x->getQuantity() + getQuantity() < getOperation()->getSizeMaximum())
-    {
-      // Merging with the 'previous' operationplan
-      x->setQuantity(x->getQuantity() + getQuantity());
-      delete this;
-      return false;
-    }
+    delete this;
+    return false;
   }
 
   // Instantiate all suboperationplans as well
-  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+  for (OperationPlan::iterator x(this); x != end(); ++x)
     x->instantiate();
 
   // Create unique identifier

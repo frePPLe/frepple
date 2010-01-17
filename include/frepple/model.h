@@ -1451,14 +1451,21 @@ class Operation : public HasName<Operation>,
     friend class Flow;
     friend class Load;
     friend class OperationPlan;
-    friend class OperationRouting;   // to have access to superoplist
-    friend class OperationAlternate; // to have access to superoplist
+    friend class OperationRouting;   // @todo reduce the number of friends
+    friend class OperationAlternate; 
+    friend class OperationFixedTime; 
 
   protected:
     /** Constructor. Don't use it directly. */
     explicit Operation(const string& str) : HasName<Operation>(str),
       loc(NULL), size_minimum(1.0), size_multiple(0.0), size_maximum(DBL_MAX),
       cost(0.0), hidden(false), first_opplan(NULL), last_opplan(NULL) {}
+
+    /** Extra logic called when instantiating an operationplan.<br>
+      * When the function returns false the creation of the operationplan
+      * is denied and it is deleted.
+      */
+    virtual bool extraInstantiate(OperationPlan* o) {return true;}
 
   public:
     /** Destructor. */
@@ -2398,6 +2405,9 @@ class OperationFixedTime : public Operation
       */
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+  
+  protected:
+    DECLARE_EXPORT virtual bool extraInstantiate(OperationPlan* o);
 
   private:
     /** Stores the lengh of the Operation. */
@@ -2578,6 +2588,10 @@ class OperationRouting : public Operation
         + steps.size() * 2 * sizeof(Operation*);
     }
 
+  protected:
+    /** Extra logic to be used when instantiating an operationplan. */
+    virtual DECLARE_EXPORT bool extraInstantiate(OperationPlan* o);
+
   private:
     /** Stores a double linked list of all step operations. */
     Operationlist steps;
@@ -2707,6 +2721,10 @@ class OperationAlternate : public Operation
       return sizeof(OperationAlternate) + Operation::extrasize()
           + alternates.size() * (5*sizeof(Operation*)+sizeof(alternateProperty));
     }
+
+  protected:
+    /** Extra logic to be used when instantiating an operationplan. */
+    virtual DECLARE_EXPORT bool extraInstantiate(OperationPlan* o);
 
   private:
     typedef list<alternateProperty> alternatePropertyList;

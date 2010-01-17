@@ -104,6 +104,8 @@ Echoing operationplans:
         make item - step 1 10.0 2009-02-22 09:00:00 2009-02-26 09:00:00
         make item - step 2 10.0 2009-02-26 09:00:00 2009-03-01 09:00:00
   Operationplan: make item 9.0 2010-12-25 00:00:00 2011-01-01 00:00:00
+        make item - step 1 9.0 2010-12-25 00:00:00 2010-12-29 00:00:00
+        make item - step 2 9.0 2010-12-29 00:00:00 2011-01-01 00:00:00
   Operationplan: make item - step 1 10.0 2009-02-08 09:00:00 2009-02-12 09:00:00
   Operationplan: make item - step 1 10.0 2009-02-15 09:00:00 2009-02-19 09:00:00
   Operationplan: make item - step 1 10.0 2009-02-22 09:00:00 2009-02-26 09:00:00
@@ -113,8 +115,11 @@ Echoing operationplans:
   Operationplan: make item - step 2 10.0 2009-02-26 09:00:00 2009-03-01 09:00:00
   Operationplan: make item - step 2 9.0 2010-12-29 00:00:00 2011-01-01 00:00:00
   Operationplan: make or buy item 10.0 2009-02-08 09:00:00 2009-02-15 09:00:00
+        make item 10.0 2009-02-08 09:00:00 2009-02-15 09:00:00
   Operationplan: make or buy item 10.0 2009-02-15 09:00:00 2009-02-22 09:00:00
+        make item 10.0 2009-02-15 09:00:00 2009-02-22 09:00:00
   Operationplan: make or buy item 10.0 2009-02-22 09:00:00 2009-03-01 09:00:00
+        make item 10.0 2009-02-22 09:00:00 2009-03-01 09:00:00
 
 Printing problems
   Problem: buffers material excess Buffer 'end item' has material excess of 20 2009-02-15 09:00:00 2009-03-01 20:00:00 20.0

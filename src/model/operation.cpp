@@ -618,6 +618,48 @@ OperationFixedTime::setOperationPlanParameters
 }
 
 
+DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
+{
+  // See if we can consolidate this operationplan with an existing one.
+  // Merging is possible only when all the following conditions are met:
+  //   - id of the new opplan is not set
+  //   - id of the old opplan is set
+  //   - it is a fixedtime operation
+  //   - it doesn't load any resources
+  //   - both operationplans aren't locked
+  //   - both operationplans have no owner
+  //   - start and end date of both operationplans are the same
+  //   - demand of both operationplans are the same
+  //   - maximum operation size is not exceeded
+  //   - @todo need to check that all flowplans are on the same alternate!!!
+  if (!o->getIdentifier() && !o->getLocked() && !o->getOwner() && getLoads().empty())
+  {
+    // Loop through candidates
+    OperationPlan::iterator x(this);
+    OperationPlan *y = NULL;
+    for (; x != OperationPlan::end() && *x < *o; ++x)
+      y = &*x;
+    if (y && y->getDates() == o->getDates() && !y->getOwner()
+      && y->getDemand() == o->getDemand() && !y->getLocked() && y->getIdentifier()
+      && y->getQuantity() + o->getQuantity() < getSizeMaximum())  // @todo ignores multiple qty
+    {
+      // Merging with the 'next' operationplan
+      y->setQuantity(y->getQuantity() + o->getQuantity());
+      return false;
+    }
+    if (x!= OperationPlan::end() && x->getDates() == o->getDates() && !x->getOwner()
+      && x->getDemand() == o->getDemand() && !x->getLocked() && x->getIdentifier()
+      && x->getQuantity() + o->getQuantity() < getSizeMaximum()) // @todo ignores multiple qty
+    {
+      // Merging with the 'previous' operationplan
+      x->setQuantity(x->getQuantity() + o->getQuantity());
+      return false;
+    }
+  }
+  return true;
+}
+
+
 DECLARE_EXPORT void OperationFixedTime::writeElement
 (XMLOutput *o, const Keyword& tag, mode m) const
 {
@@ -944,6 +986,45 @@ DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
 }
 
 
+DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
+{
+  // Create step suboperationplans if they don't exist yet.
+  if (!o->lastsubopplan || o->lastsubopplan->getOperation() == OperationSetup::setupoperation)
+  {
+    logger << "extra" << endl;
+    Date d = o->getDates().getEnd();
+    OperationPlan *p = NULL;
+    // @todo not possible to initialize a routing oplan based on a start date
+    if (d != Date::infiniteFuture)
+    {
+      // Using the end date
+      for (Operation::Operationlist::const_reverse_iterator e =
+            getSubOperations().rbegin(); e != getSubOperations().rend(); ++e)
+      {
+        p = (*e)->createOperationPlan(o->getQuantity(), Date::infinitePast,
+            d, NULL, o, 0, true);
+        d = p->getDates().getStart();
+      }
+    }
+    else
+    {
+      // Using the start date when there is no end date
+      d = o->getDates().getStart();
+      // Using the current date when both the start and end date are missing
+      if (!d) d = Plan::instance().getCurrent();
+      for (Operation::Operationlist::const_iterator e =
+            getSubOperations().begin(); e != getSubOperations().end(); ++e)
+      {
+        p = (*e)->createOperationPlan(o->getQuantity(), d,
+            Date::infinitePast, NULL, o, 0, true);
+        d = p->getDates().getEnd();
+      }
+    }
+  }
+  return true;
+}
+
+
 DECLARE_EXPORT SearchMode decodeSearchMode(const string& c)
 {
   if (c == "PRIORITY") return PRIORITY;
@@ -1148,6 +1229,18 @@ OperationAlternate::setOperationPlanParameters
     // Pass the call to the sub-operation
     return x->getOperation()
       ->setOperationPlanParameters(x,q,s,e,preferEnd, execute);
+}
+
+
+DECLARE_EXPORT bool OperationAlternate::extraInstantiate(OperationPlan* o)
+{
+  // Create a suboperationplan if one doesn't exist yet.
+  // We use the first alternate by default.  // @todo first one may not be effective
+  if (!o->lastsubopplan || o->lastsubopplan->getOperation() == OperationSetup::setupoperation)
+      getSubOperations().front()->createOperationPlan(
+        o->getQuantity(), o->getDates().getStart(),
+        o->getDates().getEnd(), NULL, o, 0, true);
+  return true;
 }
 
 

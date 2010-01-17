@@ -378,6 +378,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
        * setupOpplan->getDates().getDuration() / 3600.0;
       data->state->a_penalty += setupOpplan->getPenalty();
     }
+    // Build-ahead penalty: 1 per day
+    if (currentOpplan.end > data->state->q_operationplan->getDates().getEnd())
+      data->state->a_penalty += 
+        (currentOpplan.end - data->state->q_operationplan->getDates().getEnd()) / 86400.0;
   }
   else if (data->state->q_operationplan->getQuantity() > 0.0)
     data->state->q_operationplan->setQuantity(0.0);
@@ -404,7 +408,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
-    logger << indent(res->getLevel()) << "  Resource '" << res << "' is asked: "
+    logger << indent(res->getLevel()) << "  Infinite resource '" << res << "' is asked: "
     << (-data->state->q_qty) << "  " << data->state->q_operationplan->getDates() << endl;
 
   // Call the user exit
@@ -420,7 +424,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
-    logger << indent(res->getLevel()) << "  Resource '" << res << "' answers: "
+    logger << indent(res->getLevel()) << "  Infinite resource '" << res << "' answers: "
     << (-data->state->a_qty) << "  " << data->state->a_date << endl;
 }
 

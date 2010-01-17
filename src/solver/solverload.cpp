@@ -136,6 +136,22 @@ void SolverMRP::solve(const Load* l, void* v)
         // Other search modes: evaluate all
         double deltaCost = data->state->a_cost - beforeCost;
         double deltaPenalty = data->state->a_penalty - beforePenalty;
+        // Message
+        if (loglevel>1 && search != PRIORITY)
+          logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
+            << l->getOperation()->getName() << "' evaluates alternate '"
+            << curload->getResource() << "': cost " << deltaCost
+            << ", penalty " << deltaPenalty << endl;
+        if (deltaCost < ROUNDING_ERROR && deltaPenalty < ROUNDING_ERROR)
+        {
+          // Zero cost and zero penalty on this alternate. It won't get any better
+          // than this, so we accept this alternate.
+          if (loglevel)
+            logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
+              << l->getOperation()->getName() << "' chooses alternate '"
+              << curload->getResource() << "' " << search << endl;
+          return;
+        }
         data->state->a_cost = beforeCost;
         data->state->a_penalty = beforePenalty;
         double val;
@@ -162,12 +178,6 @@ void SolverMRP::solve(const Load* l, void* v)
           bestAlternateSelection = curload;
           bestAlternateQuantity = lplan->getOperationPlan()->getQuantity();
         }
-        // Message
-        if (loglevel>1 && search != PRIORITY)
-          logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
-            << l->getOperation()->getName() << "' evaluates alternate '"
-            << curload->getResource() << "': cost " << deltaCost
-            << ", penalty " << deltaPenalty << endl;
       }
     }
     else if (loglevel>1 && search != PRIORITY)

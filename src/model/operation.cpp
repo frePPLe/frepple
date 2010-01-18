@@ -722,15 +722,22 @@ OperationTimePer::setOperationPlanParameters
     }
     else
     {
-      // Divide the variable duration by the duration_per time, to compute the
-      // maximum number of pieces that can be produced in the timeframe
-      double max_q = duration_per ?
-        static_cast<double>(actual - duration + 1) / duration_per :
-        q;
-
-      // Set the quantity to either the maximum or the requested quantity,
-      // depending on which one is smaller.
-      q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
+      // Calculate the quantity, respecting minimum, maximum and multiple size.
+      if (duration_per)
+      {
+        if (q * duration_per < static_cast<double>(actual - duration) + 1)
+          // Provided quantity is acceptable.
+          // Note that we allow a margin of 1 second to accept.
+          q = opplan->setQuantity(q, true, false, execute);
+        else
+          // Calculate the maximum operationplan that will fit in the window
+          q = opplan->setQuantity(
+            static_cast<double>(actual - duration) / duration_per, 
+            true, false, execute);
+      }
+      else
+        // No duration_per field given, so any quantity will go
+        q = opplan->setQuantity(q, true, false, execute);
 
       // Updates the dates
       TimePeriod wanted(

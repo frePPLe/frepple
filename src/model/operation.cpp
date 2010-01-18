@@ -725,7 +725,7 @@ OperationTimePer::setOperationPlanParameters
       // Divide the variable duration by the duration_per time, to compute the
       // maximum number of pieces that can be produced in the timeframe
       double max_q = duration_per ?
-        static_cast<double>(actual - duration) / duration_per :
+        static_cast<double>(actual - duration + 1) / duration_per :
         q;
 
       // Set the quantity to either the maximum or the requested quantity,

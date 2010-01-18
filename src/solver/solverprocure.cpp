@@ -85,13 +85,13 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
+  // Call the user exit
+  if (userexit_buffer) userexit_buffer.call(b);
+
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Procurement buffer '" << b->getName()
     << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
-
-  // Call the user exit
-  if (userexit_buffer) userexit_buffer.call(b);
 
   // Standard reply date
   data->state->a_date = Date::infiniteFuture;

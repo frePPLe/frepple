@@ -402,6 +402,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   OperationPlan *z;
 
+  // Call the user exit
+  if (userexit_operation) userexit_operation.call(oper);
+
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
   double flow_qty_per = 1.0;
@@ -421,9 +424,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
-
-  // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper);
 
   // Subtract the post-operation time
   Date prev_q_date_max = data->state->q_date_max;
@@ -483,13 +483,13 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
+  // Call the user exit
+  if (userexit_operation) userexit_operation.call(oper);
+
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Routing operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
-
-  // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper);
 
   // Find the total quantity to flow into the buffer.
   // Multiple suboperations can all produce into the buffer.
@@ -612,17 +612,17 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   double origQqty = data->state->q_qty;
   Buffer *buf = data->state->curBuffer;
   Demand *d = data->state->curDemand;
-  unsigned int loglevel = data->getSolver()->getLogLevel();
 
+  // Call the user exit
+  if (userexit_operation) userexit_operation.call(oper);
+
+  unsigned int loglevel = data->getSolver()->getLogLevel();
   SearchMode search = oper->getSearch();
 
   // Message
   if (loglevel>1)
     logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
-
-  // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper);
 
   // Make sure sub-operationplans know their owner & store the previous value
   OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;
@@ -727,8 +727,14 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Solve constraints on the sub operationplan
       double beforeCost = data->state->a_cost;
       double beforePenalty = data->state->a_penalty;
-      if (search == PRIORITY) 
+      if (search == PRIORITY)
+      {
+        // Message
+        if (loglevel)
+          logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
+            << "' tries alternate '" << *altIter << "' " << endl;
         (*altIter)->solve(*this,v);
+      }
       else
       {
         data->getSolver()->setLogLevel(0);

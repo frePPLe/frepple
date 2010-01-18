@@ -46,13 +46,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   double requested_qty(data->state->q_qty);
   bool tried_requested_date(false);
 
+  // Call the user exit
+  if (userexit_buffer) userexit_buffer.call(b);
+
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
-
-  // Call the user exit
-  if (userexit_buffer) userexit_buffer.call(b);
 
   // Store the last command in the list, in order to undo the following
   // commands if required.
@@ -280,13 +280,13 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferInfinite* b, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
+  // Call the user exit
+  if (userexit_buffer) userexit_buffer.call(b);
+
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Infinite buffer '" << b << "' is asked: "
     << data->state->q_qty << "  " << data->state->q_date << endl;
-
-  // Call the user exit
-  if (userexit_buffer) userexit_buffer.call(b);
 
   // Reply whatever is requested, regardless of date, quantity or supply.
   // The demand is not propagated upstream either.

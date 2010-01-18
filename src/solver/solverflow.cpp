@@ -63,6 +63,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
 
     // 3) Loop through the alternates till we find a non-zero reply
     Date min_next_date(Date::infiniteFuture);
+    double ask_qty;
     FlowPlan *flplan = data->state->q_flowplan;
     for (list<const Flow*>::const_iterator i = thealternates.begin();
       i != thealternates.end();)
@@ -95,13 +96,23 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
       }
 
       // 3c) Ask the buffer
-      data->state->q_qty = - data->state->q_flowplan->getQuantity();
+      data->state->q_qty = ask_qty = - data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
       Command* topcommand = data->getLastCommand();
       curflow->getBuffer()->solve(*this,data);
 
       // 3d) A positive reply: exit the loop
-      if (data->state->a_qty > ROUNDING_ERROR) return;
+      if (data->state->a_qty > ROUNDING_ERROR) 
+      {
+        // Update the opplan, which is required to (1) update the flowplans
+        // and to (2) take care of lot sizing constraints of this operation.
+        if (data->state->a_qty < ask_qty - ROUNDING_ERROR)
+        {
+          flplan->setQuantity(-data->state->a_qty, true);
+          data->state->a_qty = -flplan->getQuantity();
+        }
+        if (data->state->a_qty > ROUNDING_ERROR) return;
+      }
 
       // 3e) Undo the plan on the alternate
       data->undo(topcommand);

@@ -35,6 +35,9 @@ namespace frepple
 
 DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 {
+  // Call the user exit
+  if (userexit_demand) userexit_demand.call(l);
+
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   unsigned int loglevel = data->getSolver()->getLogLevel();
 
@@ -45,9 +48,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   if (data->getSolver()->getLogLevel()>0)
     logger << "Planning demand '" << l->getName() << "' (" << l->getPriority()
     << ", " << l->getDue() << ", " << l->getQuantity() << ")" << endl;
-
-  // Call the user exit
-  if (userexit_demand) userexit_demand.call(l);
 
   // Unattach previous delivery operationplans.
   // Locked operationplans will NOT be deleted, and a part of the demand can

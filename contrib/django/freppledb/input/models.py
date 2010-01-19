@@ -342,6 +342,9 @@ class Operation(AuditModel):
   # Database fields
   name = models.CharField(_('name'), max_length=NAMESIZE, primary_key=True)
   type = models.CharField(_('type'), _('type'), max_length=20, null=True, blank=True, choices=operationtypes)
+  description = models.CharField(_('description'), max_length=DESCRIPTIONSIZE, null=True, blank=True)
+  category = models.CharField(_('category'), max_length=CATEGORYSIZE, null=True, blank=True, db_index=True)
+  subcategory = models.CharField(_('subcategory'), max_length=CATEGORYSIZE, null=True, blank=True, db_index=True)
   location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
     blank=True, db_index=True)
   fence = DurationField(_('release fence'), max_digits=15, decimal_places=4, null=True, blank=True,

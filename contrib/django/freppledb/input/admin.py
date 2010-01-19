@@ -29,6 +29,7 @@ from freppledb.admin import site
 
 class Plan_admin(admin.ModelAdmin):
   model = Plan
+  save_on_top = True
 site.register(Plan,Plan_admin)
 
 
@@ -39,6 +40,7 @@ class Bucket_inline(admin.TabularInline):
 
 class Calendar_admin(admin.ModelAdmin):
   model = Calendar
+  save_on_top = True
   save_as = True
   inlines = [ Bucket_inline, ]
 site.register(Calendar,Calendar_admin)
@@ -47,6 +49,7 @@ site.register(Calendar,Calendar_admin)
 class Location_admin(admin.ModelAdmin):
   model = Location
   raw_id_fields = ('available', 'owner',)
+  save_on_top = True
   save_as = True
 site.register(Location,Location_admin)
 
@@ -54,6 +57,7 @@ site.register(Location,Location_admin)
 class Customer_admin(admin.ModelAdmin):
   model = Customer
   raw_id_fields = ('owner',)
+  save_on_top = True
   save_as = True
 site.register(Customer,Customer_admin)
 
@@ -61,6 +65,7 @@ site.register(Customer,Customer_admin)
 class Item_admin(admin.ModelAdmin):
   model = Item
   save_as = True
+  save_on_top = True
   raw_id_fields = ('operation', 'owner',)
 site.register(Item,Item_admin)
 
@@ -68,17 +73,31 @@ site.register(Item,Item_admin)
 class SubOperation_inline(admin.TabularInline):
   model = SubOperation
   fk_name = 'operation'
-  extra = 3
+  extra = 1
   raw_id_fields = ('suboperation',)
 
+
+class Flow_inline(admin.TabularInline):
+  model = Flow
+  raw_id_fields = ('operation', 'thebuffer',)
+  extra = 1
+
+
+class Load_inline(admin.TabularInline):
+  model = Load
+  raw_id_fields = ('operation', 'resource',)
+  extra = 1
+  
 
 class Operation_admin(admin.ModelAdmin):
   model = Operation
   raw_id_fields = ('location',)
+  save_on_top = True
   save_as = True
   inlines = [ SubOperation_inline, ]
+  # TODO inlines = [ SubOperation_inline, Flow_inline, Load_inline, ]
   fieldsets = (
-          (None, {'fields': ('name', 'type', 'location')}),
+          (None, {'fields': ('name', 'type', 'location', 'description', ('category', 'subcategory'))}),
           (_('Planning parameters'), {
              'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per','search'),
              'classes': ('collapse',)
@@ -90,6 +109,7 @@ site.register(Operation,Operation_admin)
 class SubOperation_admin(admin.ModelAdmin):
   model = SubOperation
   raw_id_fields = ('operation', 'suboperation',)
+  save_on_top = True
 site.register(SubOperation,SubOperation_admin)
 
 
@@ -108,6 +128,8 @@ class Buffer_admin(admin.ModelAdmin):
               'classes': ('collapse',)},),
         )
   save_as = True
+  save_on_top = True
+  #TODO inlines = [ Flow_inline, ]
 site.register(Buffer,Buffer_admin)
 
 
@@ -119,6 +141,7 @@ class SetupRule_inline(admin.TabularInline):
 class SetupMatrix_admin(admin.ModelAdmin):
   model = SetupMatrix
   save_as = True
+  save_on_top = True
   inlines = [ SetupRule_inline, ]
 site.register(SetupMatrix,SetupMatrix_admin)
 
@@ -127,12 +150,15 @@ class Resource_admin(admin.ModelAdmin):
   model = Resource
   raw_id_fields = ('maximum', 'location', 'setupmatrix')
   save_as = True
+  save_on_top = True
+  # TODO inlines = [ Load_inline, ]
 site.register(Resource,Resource_admin)
 
 
 class Flow_admin(admin.ModelAdmin):
   model = Flow
   raw_id_fields = ('operation', 'thebuffer',)
+  save_on_top = True
   save_as = True
 site.register(Flow,Flow_admin)
 
@@ -140,6 +166,7 @@ site.register(Flow,Flow_admin)
 class Load_admin(admin.ModelAdmin):
   model = Load
   raw_id_fields = ('operation', 'resource',)
+  save_on_top = True
   save_as = True
 site.register(Load,Load_admin)
 
@@ -147,6 +174,7 @@ site.register(Load,Load_admin)
 class OperationPlan_admin(admin.ModelAdmin):
   model = OperationPlan
   raw_id_fields = ('operation',)
+  save_on_top = True
   save_as = True
 site.register(OperationPlan,OperationPlan_admin)
 
@@ -159,6 +187,7 @@ class Demand_admin(admin.ModelAdmin):
             (_('Planning parameters'), {'fields': ('operation', 'minshipment', 'maxlateness'), 'classes': ('collapse')}),
         )
   radio_fields = {'priority': admin.HORIZONTAL, }
+  save_on_top = True
   save_as = True
 site.register(Demand,Demand_admin)
 
@@ -177,5 +206,6 @@ class Forecast_admin(admin.ModelAdmin):
         )
   radio_fields = {'priority': admin.HORIZONTAL, }
   inlines = [ ForecastDemand_inline, ]
+  save_on_top = True
   save_as = True
 site.register(Forecast,Forecast_admin)

@@ -15,6 +15,9 @@
 {% block data %}
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
+<td>{{i.description}}</td>
+<td>{{i.category}}</td>
+<td>{{i.subcategory}}</td>
 <td>{{i.type}}</td>
 <td>{% superlink i.location location %}</td>
 <td>{{i.fence|duration}}</td>

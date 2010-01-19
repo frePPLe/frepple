@@ -59,11 +59,11 @@ def loadLocations(cursor):
   print 'Importing locations...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description, owner_id, available_id FROM location")
-  for i,j,k,l in cursor.fetchall():
+  cursor.execute("SELECT name, description, owner_id, available_id, category, subcategory FROM location")
+  for i,j,k,l,m,n in cursor.fetchall():
     cnt += 1
     try:
-      x = frepple.location(name=i, description=j)
+      x = frepple.location(name=i, description=j, category=m, subcategory=n)
       if k: x.owner = frepple.location(name=k)
       if l: x.available = frepple.calendar(name=l)
     except Exception, e: print "Error:", e
@@ -111,11 +111,11 @@ def loadCustomers(cursor):
   print 'Importing customers...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description, owner_id FROM customer")
-  for i, j, k in cursor.fetchall():
+  cursor.execute("SELECT name, description, owner_id, category, subcategory FROM customer")
+  for i, j, k, l, m in cursor.fetchall():
     cnt += 1
     try:
-      x = frepple.customer(name=i, description=j)
+      x = frepple.customer(name=i, description=j, category=l, subcategory=m)
       if k: x.owner = frepple.customer(name=k)
     except Exception, e: print "Error:", e
   print 'Loaded %d customers in %.2f seconds' % (cnt, time() - starttime)
@@ -128,23 +128,24 @@ def loadOperations(cursor):
   cursor.execute('''
     SELECT
       name, fence, pretime, posttime, sizeminimum, sizemultiple, sizemaximum, 
-      type, duration, duration_per, location_id, cost, search
+      type, duration, duration_per, location_id, cost, search, description, 
+      category, subcategory
     FROM operation
     ''')
-  for i, j, k, l, m, n, o, p, q, r, s, t, u in cursor.fetchall():
+  for i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x in cursor.fetchall():
     cnt += 1
     try:
       if not p or p == "operation_fixed_time":
-        x = frepple.operation_fixed_time(name=i)
+        x = frepple.operation_fixed_time(name=i, description=v, category=w, subcategory=x)
         if q: x.duration = q
       elif p == "operation_time_per":
-        x = frepple.operation_time_per(name=i)
+        x = frepple.operation_time_per(name=i, description=v, category=w, subcategory=x)
         if q: x.duration = q
         if r: x.duration_per = r
       elif p == "operation_alternate":
-        x = frepple.operation_alternate(name=i)
+        x = frepple.operation_alternate(name=i, description=v, category=w, subcategory=x)
       elif p == "operation_routing":
-        x = frepple.operation_routing(name=i)
+        x = frepple.operation_routing(name=i, description=v, category=w, subcategory=x)
       else:
         raise ValueError("Operation type '%s' not recognized" % p)
       if j: x.fence = j
@@ -200,11 +201,14 @@ def loadItems(cursor):
   print 'Importing items...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description, operation_id, owner_id, price FROM item")
-  for i, j, k, l, m in cursor.fetchall():
+  cursor.execute('''SELECT 
+      name, description, operation_id, owner_id, 
+      price, category, subcategory 
+      FROM item''')
+  for i,j,k,l,m,n,o in cursor.fetchall():
     cnt += 1
     try:
-      x = frepple.item(name=i, description=j)
+      x = frepple.item(name=i, description=j, category=n, subcategory=o)
       if k: x.operation = frepple.operation(name=k)
       if l: x.owner = frepple.item(name=l)
       if m: x.price = m
@@ -219,12 +223,14 @@ def loadBuffers(cursor):
   cursor.execute('''SELECT name, description, location_id, item_id, onhand,
      minimum_id, producing_id, type, leadtime, min_inventory,
      max_inventory, min_interval, max_interval, size_minimum,
-     size_multiple, size_maximum, fence, carrying_cost FROM buffer''')
-  for i, j, k, l, m, n, o, q, f1, f2, f3, f4, f5, f6, f7, f8, f9, p in cursor.fetchall():
+     size_multiple, size_maximum, fence, carrying_cost, 
+     category, subcategory FROM buffer''')
+  for i,j,k,l,m,n,o,q,f1,f2,f3,f4,f5,f6,f7,f8,f9,p,r,s in cursor.fetchall():
     cnt += 1
     if q == "buffer_procure":
       b = frepple.buffer_procure(
-        name=i, description=j, item=frepple.item(name=l), onhand=m
+        name=i, description=j, item=frepple.item(name=l), onhand=m, 
+        category=r, subcategory=s
         )
       if f1: b.leadtime = f1
       if f2: b.mininventory = f2
@@ -237,11 +243,13 @@ def loadBuffers(cursor):
       if f9: b.fence = f9
     elif q == "buffer_infinite":
       b = frepple.buffer_infinite(
-        name=i, description=j, item=frepple.item(name=l), onhand=m
+        name=i, description=j, item=frepple.item(name=l), onhand=m, 
+        category=r, subcategory=s
         )
     elif not q:
       b = frepple.buffer(
-        name=i, description=j, item=frepple.item(name=l), onhand=m
+        name=i, description=j, item=frepple.item(name=l), onhand=m, 
+        category=r, subcategory=s
         )
     else:
       raise ValueError("Buffer type '%s' not recognized" % q)
@@ -275,14 +283,17 @@ def loadResources(cursor):
   print 'Importing resources...'
   cnt = 0
   starttime = time()
-  cursor.execute('SELECT name, description, maximum_id, location_id, type, cost, maxearly, setup, setupmatrix_id FROM %s' % connection.ops.quote_name('resource'))
-  for i, j, k, l, m, n, o, p, q in cursor.fetchall():
+  cursor.execute('''SELECT 
+    name, description, maximum_id, location_id, type, cost, 
+    maxearly, setup, setupmatrix_id, category, subcategory 
+    FROM %s' % connection.ops.quote_name('resource'))
+  for i,j,k,l,m,n,o,p,q,r,s in cursor.fetchall():
     cnt += 1
     try:
       if m == "resource_infinite":
-        x = frepple.resource_infinite(name=i,description=j)
+        x = frepple.resource_infinite(name=i,description=j,category=r,subcategory=s)
       elif not m:
-        x = frepple.resource(name=i,description=j,maximum=frepple.calendar(name=k))
+        x = frepple.resource(name=i,description=j,maximum=frepple.calendar(name=k),category=r,subcategory=s)
         if o: x.maxearly = o
       else:
         raise ValueError("Resource type '%s' not recognized" % m)
@@ -432,10 +443,13 @@ def loadForecast(cursor):
   print 'Importing forecast...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, customer_id, item_id, priority, operation_id, minshipment, calendar_id, discrete, maxlateness FROM forecast")
-  for i, j, k, l, m, n, o, p, q in cursor.fetchall():
+  cursor.execute('''SELECT name, customer_id, item_id, priority, 
+    operation_id, minshipment, calendar_id, discrete, maxlateness,
+    category,subcategory
+    FROM forecast''')
+  for i,j,k,l,m,n,o,p,q,r,s in cursor.fetchall():
     cnt += 1
-    fcst = frepple.demand_forecast(name=i, priority=l)
+    fcst = frepple.demand_forecast(name=i, priority=l, category=r, subcategory=s)
     if j: fcst.customer = frepple.customer(name=j)
     if k: fcst.item = frepple.item(name=k)
     if m: fcst.operation = frepple.operation(name=m)
@@ -468,11 +482,14 @@ def loadDemand(cursor):
   print 'Importing demands...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, minshipment, maxlateness FROM demand")
-  for i, j, k, l, m, n, o, p, q, r in cursor.fetchall():
+  cursor.execute('''SELECT name, due, quantity, priority, item_id, 
+     operation_id, customer_id, owner_id, minshipment, maxlateness,
+     category, subcategory 
+     FROM demand")
+  for i,j,k,l,m,n,o,p,q,r,s,t in cursor.fetchall():
     cnt += 1
     try:
-      x = frepple.demand( name=i, due=j, quantity=k, priority=l, item=frepple.item(name=m))
+      x = frepple.demand( name=i, due=j, quantity=k, priority=l, item=frepple.item(name=m),category=s,subcategory=t)
       if n: x.operation = frepple.operation(name=n)
       if o: x.customer = frepple.customer(name=o)
       if p: x.owner = frepple.demand(name=p)

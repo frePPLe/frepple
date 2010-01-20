@@ -27,6 +27,8 @@ import django.db.models as models
 from django.db.backends.util import format_number
 from django.forms.widgets import MultiWidget, TextInput, Select
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+
 
 #
 # DURATIONFIELD
@@ -70,8 +72,8 @@ class DurationFormField(fields.MultiValueField):
   widget = DurationWidget
   
   def __init__(self, *args, **kwargs):
-    self.max_digits = kwargs.pop('decimal_places',4)
-    self.decimal_places = kwargs.pop('max_digits',15)
+    self.max_digits = kwargs.pop('decimal_places', settings.DECIMAL_PLACES)
+    self.decimal_places = kwargs.pop('max_digits', settings.MAX_DIGITS)
     kwargs.update({'required':False})
     f = (
         fields.DecimalField(*args, **kwargs),

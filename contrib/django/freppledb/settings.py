@@ -186,6 +186,23 @@ INTERNAL_IPS = ( '127.0.0.1', )
 # output in this encoding.
 DEFAULT_CHARSET = 'utf-8'
 
+
+# The size of the "name" key field of the database models
+NAMESIZE = 60
+
+# The size of the "description" field of the database models
+DESCRIPTIONSIZE = 200
+
+# The size of the "category" and "subcategory" fields of the database models
+CATEGORYSIZE = 20
+
+# The number of digits for a number in the database models
+MAX_DIGITS = 15
+
+# The number of decimal places for a number in the database models
+DECIMAL_PLACES = 4
+
+
 # Allow overriding the settings
 # This is useful for the py2exe distribution: this settings file will be
 # compiled and included in a compressed zip-file, and we need to give users a

@@ -42,10 +42,6 @@ from django.conf import settings
 
 import frepple
 
-# Exported numbers are rounded to this number of decimals after the comma.
-# This number should match the model definitions in models.py
-ROUNDING_DECIMALS = 4
-
 
 def truncate(cursor):
   print "Emptying database plan tables..."
@@ -64,7 +60,6 @@ def truncate(cursor):
 
 
 def exportProblems(cursor):
-  global ROUNDING_DECIMALS
   print "Exporting problems..."
   starttime = time()
   cursor.executemany(
@@ -72,8 +67,8 @@ def exportProblems(cursor):
     (entity,name,description,startdate,enddate,weight) \
     values(%s,%s,%s,%s,%s,%s)",
     [(
-       i.entity, i.name, i.description[0:79], str(i.start), str(i.end),
-       round(i.weight,ROUNDING_DECIMALS)
+       i.entity, i.name, i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
+       round(i.weight,settings.DECIMAL_PLACES)
      ) for i in frepple.problems()
     ])
   transaction.commit()
@@ -82,7 +77,6 @@ def exportProblems(cursor):
 
 
 def exportOperationplans(cursor):
-  global ROUNDING_DECIMALS
   print "Exporting operationplans..."
   starttime = time()
   cnt = 0
@@ -93,7 +87,7 @@ def exportOperationplans(cursor):
        values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
         j.id, i.name.replace("'","''"),
-        round(j.quantity,ROUNDING_DECIMALS), str(j.start), str(j.end),
+        round(j.quantity,settings.DECIMAL_PLACES), str(j.start), str(j.end),
         j.demand and j.demand.name or None, j.locked,
         j.owner and j.owner.id or None
        ) for j in i.operationplans ])
@@ -105,7 +99,6 @@ def exportOperationplans(cursor):
 
 
 def exportFlowplans(cursor):
-  global ROUNDING_DECIMALS
   print "Exporting flowplans..."
   starttime = time()
   cnt = 0
@@ -116,8 +109,8 @@ def exportFlowplans(cursor):
       values (%s,%s,%s,%s,%s)",
       [(
          j.operationplan.id, j.buffer.name, 
-         round(j.quantity,ROUNDING_DECIMALS),
-         str(j.date), round(j.onhand,ROUNDING_DECIMALS)
+         round(j.quantity,settings.DECIMAL_PLACES),
+         str(j.date), round(j.onhand,settings.DECIMAL_PLACES)
        ) for j in i.flowplans
       ])
     cnt += 1
@@ -128,7 +121,6 @@ def exportFlowplans(cursor):
 
 
 def exportLoadplans(cursor):
-  global ROUNDING_DECIMALS
   print "Exporting loadplans..."
   starttime = time()
   cnt = 0
@@ -139,7 +131,7 @@ def exportLoadplans(cursor):
       values (%s,%s,%s,%s,%s,%s)",
       [(
          j.operationplan.id, j.resource.name,
-         round(j.quantity,ROUNDING_DECIMALS),
+         round(j.quantity,settings.DECIMAL_PLACES),
          str(j.startdate), str(j.enddate), j.setup
        ) for j in i.loadplans
       ])
@@ -166,18 +158,17 @@ def exportDemand(cursor):
         if cur < 0: cur = 0
       yield (
         n, d.item.name, d.customer and d.customer.name or None, str(d.due), 
-        round(cur,ROUNDING_DECIMALS), str(i.end),
-        round(i.quantity,ROUNDING_DECIMALS), i.id
+        round(cur,settings.DECIMAL_PLACES), str(i.end),
+        round(i.quantity,settings.DECIMAL_PLACES), i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
         n, d.item.name, d.customer and d.customer.name or None, str(d.due), 
-        round(d.quantity - cumplanned,ROUNDING_DECIMALS), None,
+        round(d.quantity - cumplanned,settings.DECIMAL_PLACES), None,
         None, None
         )
 
-  global ROUNDING_DECIMALS
   print "Exporting demand plans..."
   starttime = time()
   cnt = 0
@@ -196,7 +187,6 @@ def exportDemand(cursor):
 
 
 def exportPegging(cursor):
-  global ROUNDING_DECIMALS
   print "Exporting pegging..."
   starttime = time()
   cnt = 0
@@ -216,8 +206,8 @@ def exportPegging(cursor):
          j.producing and j.producing.id or 0, str(j.producing_date),
          j.buffer and j.buffer.name or '',
          (j.buffer and j.buffer.item and j.buffer.item.name) or '',
-         round(j.quantity_demand,ROUNDING_DECIMALS),
-         round(j.quantity_buffer,ROUNDING_DECIMALS), j.pegged and 1 or 0
+         round(j.quantity_demand,settings.DECIMAL_PLACES),
+         round(j.quantity_buffer,settings.DECIMAL_PLACES), j.pegged and 1 or 0
        ) for j in i.pegging
       ])
     cnt += 1
@@ -232,7 +222,6 @@ def exportForecast(cursor):
   if not 'demand_forecastbucket' in [ a for a, b in inspect.getmembers(frepple) ]:
     return
 
-  global ROUNDING_DECIMALS
   print "Exporting forecast plans..."
   starttime = time()
   cnt = 0
@@ -245,9 +234,9 @@ def exportForecast(cursor):
       values (%s,%s,%s,%s,%s,%s)",
       [(
          i.owner.name, str(i.startdate), str(i.enddate),
-         round(i.total,ROUNDING_DECIMALS),
-         round(i.quantity,ROUNDING_DECIMALS),
-         round(i.consumed,ROUNDING_DECIMALS)
+         round(i.total,settings.DECIMAL_PLACES),
+         round(i.quantity,settings.DECIMAL_PLACES),
+         round(i.consumed,settings.DECIMAL_PLACES)
        )
       ])
     cnt += 1

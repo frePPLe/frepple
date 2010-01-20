@@ -22,15 +22,15 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
+from django.conf import settings
 
-from freppledb.input.models import NAMESIZE
 
 class OperationPlan(models.Model):
   # Database fields
   id = models.IntegerField(_('identifier'), primary_key=True)
-  demand = models.CharField(_('demand'), max_length=NAMESIZE, null=True, db_index=True)
-  operation = models.CharField(_('operation'), max_length=NAMESIZE, db_index=True, null=True)
-  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4, default='1.00')
+  demand = models.CharField(_('demand'), max_length=settings.NAMESIZE, null=True, db_index=True)
+  operation = models.CharField(_('operation'), max_length=settings.NAMESIZE, db_index=True, null=True)
+  quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='1.00')
   startdate = models.DateTimeField(_('startdate'), db_index=True)
   enddate = models.DateTimeField(_('enddate'), db_index=True)
   locked = models.BooleanField(_('locked'), default=True)
@@ -49,10 +49,10 @@ class Problem(models.Model):
   # Database fields
   entity = models.CharField(_('entity'), max_length=15, db_index=True)
   name = models.CharField(_('name'), max_length=20, db_index=True)
-  description = models.CharField(_('description'), max_length=80)
+  description = models.CharField(_('description'), max_length=settings.NAMESIZE+20)
   startdate = models.DateTimeField(_('start date'), db_index=True)
   enddate = models.DateTimeField(_('end date'), db_index=True)
-  weight = models.DecimalField(_('weight'), max_digits=15, decimal_places=4)
+  weight = models.DecimalField(_('weight'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
 
   def __unicode__(self): return str(self.name)
 
@@ -66,12 +66,12 @@ class Problem(models.Model):
 
 class LoadPlan(models.Model):
   # Database fields
-  theresource = models.CharField(_('resource'), max_length=NAMESIZE, db_index=True)
-  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
+  theresource = models.CharField(_('resource'), max_length=settings.NAMESIZE, db_index=True)
+  quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
   startdate = models.DateTimeField(_('startdate'), db_index=True)
   enddate = models.DateTimeField(_('enddate'), db_index=True)
   operationplan = models.IntegerField(_('operationplan'), db_index=True)
-  setup = models.CharField(_('setup'), max_length=NAMESIZE, null=True)
+  setup = models.CharField(_('setup'), max_length=settings.NAMESIZE, null=True)
   
   def __unicode__(self):
       return self.resource.name + ' ' + str(self.startdate) + ' ' + str(self.enddate)
@@ -86,11 +86,11 @@ class LoadPlan(models.Model):
 
 class FlowPlan(models.Model):
   # Database fields
-  thebuffer = models.CharField(_('buffer'), max_length=NAMESIZE, db_index=True)
+  thebuffer = models.CharField(_('buffer'), max_length=settings.NAMESIZE, db_index=True)
   operationplan = models.IntegerField(_('operationplan'), db_index=True)
-  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
+  quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
   flowdate = models.DateTimeField(_('date'), db_index=True)
-  onhand = models.DecimalField(_('onhand'), max_digits=15, decimal_places=4)
+  onhand = models.DecimalField(_('onhand'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
 
   def __unicode__(self):
     return self.thebuffer.name + str(self.flowdate)
@@ -105,12 +105,12 @@ class FlowPlan(models.Model):
 
 class Demand(models.Model):
   # Database fields
-  demand = models.CharField(_('demand'), max_length=NAMESIZE, db_index=True, null=True)
-  item = models.CharField(_('item'), max_length=NAMESIZE, db_index=True, null=True)
-  customer = models.CharField(_('customer'), max_length=NAMESIZE, db_index=True, null=True)
+  demand = models.CharField(_('demand'), max_length=settings.NAMESIZE, db_index=True, null=True)
+  item = models.CharField(_('item'), max_length=settings.NAMESIZE, db_index=True, null=True)
+  customer = models.CharField(_('customer'), max_length=settings.NAMESIZE, db_index=True, null=True)
   due = models.DateTimeField(_('due'), db_index=True)
-  quantity = models.DecimalField(_('demand quantity'), max_digits=15, decimal_places=4, default='0.00')
-  planquantity = models.DecimalField(_('planned quantity'), max_digits=15, decimal_places=4, default='0.00', null=True)
+  quantity = models.DecimalField(_('demand quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
+  planquantity = models.DecimalField(_('planned quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00', null=True)
   plandate = models.DateTimeField(_('planned date'), null=True, db_index=True)
   operationplan = models.IntegerField(_('operationplan'), null=True, db_index=True)
 
@@ -126,16 +126,16 @@ class Demand(models.Model):
 
 class DemandPegging(models.Model):
   # Database fields
-  demand = models.CharField(_('demand'), max_length=NAMESIZE, db_index=True)
+  demand = models.CharField(_('demand'), max_length=settings.NAMESIZE, db_index=True)
   depth = models.IntegerField(_('depth'))
   cons_operationplan = models.IntegerField(_('consuming operationplan'), db_index=True, null=True)
   cons_date = models.DateTimeField(_('consuming date'))
   prod_operationplan = models.IntegerField(_('producing operationplan'), db_index=True, null=True)
   prod_date = models.DateTimeField(_('producing date'))
-  buffer = models.CharField(_('buffer'), max_length=NAMESIZE, db_index=True, null=True)
-  item = models.CharField(_('item'), max_length=NAMESIZE, null=True)
-  quantity_demand = models.DecimalField(_('quantity demand'), max_digits=15, decimal_places=4, default='0.00')
-  quantity_buffer = models.DecimalField(_('quantity buffer'), max_digits=15, decimal_places=4, default='0.00')
+  buffer = models.CharField(_('buffer'), max_length=settings.NAMESIZE, db_index=True, null=True)
+  item = models.CharField(_('item'), max_length=settings.NAMESIZE, null=True)
+  quantity_demand = models.DecimalField(_('quantity demand'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
+  quantity_buffer = models.DecimalField(_('quantity buffer'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
   pegged = models.BooleanField(_('pegged'), default=True)
 
   def __unicode__(self):
@@ -152,12 +152,12 @@ class DemandPegging(models.Model):
 
 class Forecast(models.Model):
   # Database fields
-  forecast = models.CharField(_('forecast'), max_length=NAMESIZE, db_index=True)
+  forecast = models.CharField(_('forecast'), max_length=settings.NAMESIZE, db_index=True)
   startdate = models.DateTimeField(_('start date'), null=False, db_index=True)
   enddate = models.DateTimeField(_('end date'), null=False)
-  total = models.DecimalField(_('total quantity'), max_digits=15, decimal_places=4, default='0.00')
-  net = models.DecimalField(_('net quantity'), max_digits=15, decimal_places=4, default='0.00')
-  consumed = models.DecimalField(_('consumed quantity'), max_digits=15, decimal_places=4, default='0.00')
+  total = models.DecimalField(_('total quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
+  net = models.DecimalField(_('net quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
+  consumed = models.DecimalField(_('consumed quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
 
   def __unicode__(self):
     return self.forecast.name \

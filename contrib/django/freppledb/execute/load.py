@@ -286,7 +286,7 @@ def loadResources(cursor):
   cursor.execute('''SELECT 
     name, description, maximum_id, location_id, type, cost, 
     maxearly, setup, setupmatrix_id, category, subcategory 
-    FROM %s' % connection.ops.quote_name('resource'))
+    FROM %s''' % connection.ops.quote_name('resource'))
   for i,j,k,l,m,n,o,p,q,r,s in cursor.fetchall():
     cnt += 1
     try:
@@ -311,8 +311,7 @@ def loadFlows(cursor):
   starttime = time()
   # Note: The sorting of the flows is not really necessary, but helps to make
   # the planning progress consistent across runs and database engines.
-  cursor.execute('''
-    SELECT 
+  cursor.execute('''SELECT 
       operation_id, thebuffer_id, quantity, type, effective_start, 
       effective_end, name, priority, search
     FROM flow
@@ -485,7 +484,7 @@ def loadDemand(cursor):
   cursor.execute('''SELECT name, due, quantity, priority, item_id, 
      operation_id, customer_id, owner_id, minshipment, maxlateness,
      category, subcategory 
-     FROM demand")
+     FROM demand''')
   for i,j,k,l,m,n,o,p,q,r,s,t in cursor.fetchall():
     cnt += 1
     try:

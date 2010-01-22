@@ -178,7 +178,7 @@ class DatesList(ListReport):
       'filter': FilterDate(),
       }),
     ('quarter_start', {
-      'title': _('month start'),
+      'title': _('quarter start'),
       'filter': FilterDate(),
       }),
     ('year_start', {

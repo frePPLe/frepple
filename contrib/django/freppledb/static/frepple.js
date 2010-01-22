@@ -441,7 +441,10 @@ function bucket_close()
 
 
 var dr,dl,ur,ul,dlt,drt,ult,urt;
-var scrollbarSize = Prototype.Browser.IE ? 11 : 16 ;
+var scrollbarSize = 16;
+if (navigator.userAgent.toUpperCase().indexOf('MSIE 6') != -1 
+  || navigator.userAgent.toUpperCase().indexOf('MSIE 7') != -1)
+  scrollbarSize = 11;
 
 
 /* The scrolling table is built from 4 divs, each with a nested table in it:

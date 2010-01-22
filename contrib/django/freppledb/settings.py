@@ -58,8 +58,8 @@ MANAGERS = ADMINS
 
 # FrePPLe is tested with the following database engines:
 # 'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.
-DATABASE_ENGINE = 'sqlite3'
-DATABASE_NAME = 'frepple'
+DATABASE_ENGINE = 'mysql'
+DATABASE_NAME = 'test2'
 DATABASE_USER = 'frepple'      # Not used with sqlite3.
 DATABASE_PASSWORD = 'frepple'  # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.

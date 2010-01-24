@@ -70,6 +70,9 @@ class OverviewReport(TableReport):
   @staticmethod
   def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
+    baseparams2 = list(baseparams)
+    baseparams2 += list(baseparams)
+    baseparams = tuple(baseparams2)
     # Execute the query
     cursor = connection.cursor()
     query = '''
@@ -112,6 +115,9 @@ class OverviewReport(TableReport):
            bucket.startdate as start2, bucket.enddate as end2,
            out_loadplan.quantity as quantity
          from out_loadplan
+         inner join (%s) res2
+         on out_loadplan.theresource = res2.name
+         and out_loadplan.startdate > '%s' and out_loadplan.enddate < '%s'
          -- Unavailable capacity
          inner join out_operationplan on out_loadplan.operationplan = out_operationplan.id
          inner join operation on out_operationplan.operation = operation.name
@@ -132,7 +138,8 @@ class OverviewReport(TableReport):
          sql_overlap3('bucket.startdate','bucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
          sql_overlap3('bucket.startdate','bucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
          basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
-         connection.ops.quote_name(bucket),bucket,bucket,sortsql)
+         connection.ops.quote_name(bucket),bucket,bucket,basesql,
+         startdate,enddate,sortsql)
     cursor.execute(query, baseparams)
     
     # Build the python result

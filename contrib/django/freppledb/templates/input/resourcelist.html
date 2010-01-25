@@ -4,6 +4,7 @@
 {% include "resourcecontext.html" %}
 {% include "locationcontext.html" %}
 {% include "calendarcontext.html" %}
+{% include "setupmatrixcontext.html" %}
 {% endblock %}
 
 {% block frozendata %}
@@ -24,7 +25,7 @@
 <td>{% superlink i.maximum calendar %}</td>
 <td>{{i.cost}}</td>
 <td>{{i.maxearly}}</td>
-<td>{{i.setupmatrix}}</td>
+<td>{% superlink i.setupmatrix setupmatrix %}</td>
 <td>{{i.setup}}</td>
 <td>{{i.lastmodified}}</td>
 </tr>{% endfor %}

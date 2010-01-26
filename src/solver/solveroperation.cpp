@@ -34,7 +34,14 @@ namespace frepple
 DECLARE_EXPORT void SolverMRP::checkOperationCapacity
   (OperationPlan* opplan, SolverMRP::SolverMRPdata& data)
 {
-  bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
+  unsigned short constrainedLoads = 0;
+  for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
+    h!=opplan->endLoadPlans(); ++h)
+    if (h->getResource()->getType() != *(ResourceInfinite::metadata)
+      && h->isStart())
+    {
+      if (++constrainedLoads > 1) break;
+    }
   DateRange orig;
 
   // Loop through all loadplans, and solve for the resource.
@@ -57,7 +64,7 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
   // need to redo the capacity check for the ones we already checked.
   // Repeat until no load has touched the opplan, or till proven infeasible.
   // No need to reloop if there is only a single load (= 2 loadplans)
-  while (hasMultipleLoads && opplan->getDates()!=orig && (data.state->a_qty!=0.0 || data.state->forceLate));
+  while (constrainedLoads>1 && opplan->getDates()!=orig && (data.state->a_qty!=0.0 || data.state->forceLate));
 }
 
 

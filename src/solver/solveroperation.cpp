@@ -38,7 +38,7 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
   for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
     h!=opplan->endLoadPlans(); ++h)
     if (h->getResource()->getType() != *(ResourceInfinite::metadata)
-      && h->isStart())
+      && h->isStart() && h->getLoad()->getQuantity() != 0.0)
     {
       if (++constrainedLoads > 1) break;
     }
@@ -57,7 +57,8 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
       data.state->q_qty = h->getQuantity();
       data.state->q_date = h->getDate();
       // Call the load solver - which will call the resource solver.
-      h->getLoad()->solve(*this,&data);
+      if (h->getLoad()->getQuantity() != 0.0)
+        h->getLoad()->solve(*this,&data);
     }
   }
   // Imagine there are multiple loads. As soon as one of them is moved, we

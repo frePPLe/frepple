@@ -625,7 +625,7 @@ function syncResize()
     width = dr.scrollWidth + scrollbarSize;
   
   // Calculate height
-  var height = currentResizable.height + totalAvailable.height - totalResizableY;
+  var height = currentResizable.height + totalAvailable.height - totalResizableY + scrollbarSize;
   if (height < 150)
   {
     height = 150;
@@ -633,7 +633,8 @@ function syncResize()
   }
   else
     $(document.documentElement).style.overflowY = 'auto';
-  if (height > dr.scrollHeight) height = dr.scrollHeight;
+  if (height > dr.scrollHeight + scrollbarSize) 
+    height = dr.scrollHeight + scrollbarSize;
   
   // Update the size of the grid
   ur.style.width = dr.style.width = width + "px";

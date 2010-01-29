@@ -92,62 +92,71 @@ a {
 a.buffer {
   margin-right: 17px;
   padding-right: 17px;
-  background: url(/static/context.gif) 100% 100% no-repeat;
+  background: url(/static/context.gif) right center no-repeat;
   white-space: nowrap;
+  display: inline-block; // IE8 is broken and needs this
 }
 a.item {
   margin-right: 17px;
   padding-right: 17px;
-  background: url(/static/context.gif) 100% 100% no-repeat;
+  background: url(/static/context.gif) right center no-repeat;
   white-space: nowrap;
+  display: inline-block; // IE8 is broken and needs this
 }
 a.demand {
   margin-right: 17px;
   padding-right: 17px;
-  background: url(/static/context.gif) 100% 100% no-repeat;
-  white-space: nowrap;
+  background: url(/static/context.gif) right center no-repeat;
+  white-space: nowrap; // IE8 is broken and needs this
 }
 a.resource {
   margin-right: 17px;
   padding-right: 17px;
-  background: url(/static/context.gif) 100% 100% no-repeat;
+  background: url(/static/context.gif) right center no-repeat;
   white-space: nowrap;
+  display: inline-block; // IE8 is broken and needs this
 }
 a.location {
   margin-right: 17px;
   padding-right: 17px;
-  background: url(/static/context.gif) 100% 100% no-repeat;
+  background: url(/static/context.gif) right center no-repeat;
   white-space: nowrap;
+  display: inline-block; // IE8 is broken and needs this
 }
 a.operation {
   margin-right: 17px;
   padding-right: 17px;
-  background: url(/static/context.gif) 100% 100% no-repeat;
+  background: url(/static/context.gif) right center no-repeat;
   white-space: nowrap;
+  display: inline-block; // IE8 is broken and needs this
 }
 a.forecast {
   margin-right: 17px;
   padding-right: 17px;
-  background: url(/static/context.gif) 100% 100% no-repeat;
+  background: url(/static/context.gif) right center no-repeat;
   white-space: nowrap;
+  display: inline-block; // IE8 is broken and needs this
 }
 a.customer {
   margin-right: 17px;
   padding-right: 17px;
-  background: url(/static/context.gif) 100% 100% no-repeat;
+  background: url(/static/context.gif) right center no-repeat;
   white-space: nowrap;
+  display: inline-block; // IE8 is broken and needs this
 }
 a.calendar {
   margin-right: 17px;
   padding-right: 17px;
-  background: url(/static/context.gif) 100% 100% no-repeat;
+  background: url(/static/context.gif) right center no-repeat;
   white-space: nowrap;
+  display: inline-block; // IE8 is broken and needs this
 }
 a.setupmatrix {
   margin-right: 17px;
   padding-right: 17px;
-  background: url(/static/context.gif) 100% 100% no-repeat;
+  background: url(/static/context.gif) right center no-repeat;
   white-space: nowrap;
+  display: inline-block; // IE8 is broken and needs this
 }
 
 

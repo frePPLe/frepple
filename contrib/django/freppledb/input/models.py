@@ -666,7 +666,7 @@ class OperationPlan(AuditModel):
   locked = models.BooleanField(_('locked'),default=True,
     help_text=_('Prevent or allow changes'))
 
-  def __unicode__(self): return str(self.identifier)
+  def __unicode__(self): return str(self.id)
 
   class Meta(AuditModel.Meta):
     db_table = 'operationplan'

@@ -435,6 +435,8 @@ DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::calculateSetup
   }
 
   // No matching rule was found
+  logger << "Warning: Conversion from '" << oldsetup << "' to '" << newsetup 
+    << "' undefined in setup matrix '" << getName() << endl;
   return NULL;
 }
 

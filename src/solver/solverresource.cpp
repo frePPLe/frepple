@@ -81,12 +81,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   // Initialize the default reply
   data->state->a_date = data->state->q_date;
   data->state->a_qty = orig_q_qty;
+  Date prevdate;
 
   // Loop for a valid location by using EARLIER capacity
   if (!data->state->forceLate)
     do
     {
-     // Check the leadtime constraints
+      // Check the leadtime constraints
+      prevdate = data->state->q_operationplan->getDates().getEnd();
       noRestore = data->state->forceLate;
       if (isLeadtimeConstrained() || isFenceConstrained())
         // Note that the check function can update the answered date and quantity
@@ -113,16 +115,15 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         if (cur->getType() == 4)
           curMax = cur->getMax(false);
 
-        /* xxx
         const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
         if (ldplan && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation
-          && ldplan->getOperationPlan()->getDates().getDuration() > 0L)
+          && ldplan->getOperationPlan()->getDates().getDuration() > 0L
+          && ldplan->getOperationPlan() != setupOpplan)
         {
           // Ongoing setup
           HasOverload = true;
           break;
         }
-        */
 
         // Not interested if date doesn't change
         if (cur->getDate() == curdate) continue;
@@ -233,17 +234,28 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           prevMax = curMax;
           if (cur->getType() == 4) curMax = cur->getMax(false);
 
+          // Ongoing setup
+          const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
+          if (ldplan 
+            && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation
+            && ldplan->isStart()
+            && ldplan->getOperationPlan()->getDates().getDuration() > 0L
+            && ldplan->getOperationPlan() != setupOpplan)
+            continue;
+
           // Not interested if date doesn't change
           if (cur->getDate() == curdate) continue;
 
           // We are below the max limit now.
-          if (cur->getOnhand() < prevMax + ROUNDING_ERROR) break;
-          curdate = cur->getDate();
+          if (cur->getOnhand() < prevMax + ROUNDING_ERROR && curdate < prevdate) 
+            break;
+          curdate = cur->getDate();          
         }
+        assert (curdate != prevdate);
 
         // We found a date where the load goes below the maximum
         // At this point:
-        //  - curdate is a latest date where we drop below the maximum
+        //  - curdate is a latest date where we are above the maximum
         //  - cur is the first loadplan where we are below the max
         if (cur != res->getLoadPlans().end() && curdate > currentOpplan.end - res->getMaxEarly())
         {

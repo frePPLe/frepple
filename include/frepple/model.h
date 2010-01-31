@@ -2602,8 +2602,8 @@ inline void OperationPlan::restore(const OperationPlanState& x)
 {
   getOperation()->setOperationPlanParameters(this, x.quantity, x.start, x.end, true);
   assert(quantity == x.quantity);
-  assert(dates.getStart() == x.start && x.start!=x.end);
-  assert(dates.getEnd() == x.end && x.start!=x.end);
+  assert(dates.getStart() == x.start || x.start!=x.end);
+  assert(dates.getEnd() == x.end || x.start!=x.end);
 }
 
 

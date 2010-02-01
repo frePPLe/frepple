@@ -1302,13 +1302,30 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
 
   // Find the setup of the resource at the start of the conversion
   const Load* lastld = NULL;
-  for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin();
-    i != ldplan->getResource()->getLoadPlans().end() && i->getDate() < (s ? s : e); ++i)
-    if (i->getQuantity() != 0.0 
-      && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan
-      && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan->getOwner()
-      && !static_cast<const LoadPlan*>(&*i)->getLoad()->getSetup().empty())
-        lastld = static_cast<const LoadPlan*>(&*i)->getLoad();
+  if (ldplan->getDate() < (s ? s : e))
+  {
+    for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin(ldplan);
+      i != ldplan->getResource()->getLoadPlans().end() && i->getDate() < (s ? s : e); ++i)
+      if (i->getQuantity() != 0.0 
+        && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan
+        && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan->getOwner()
+        && !static_cast<const LoadPlan*>(&*i)->getLoad()->getSetup().empty())
+          lastld = static_cast<const LoadPlan*>(&*i)->getLoad();
+  }
+  else
+  {
+    for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin(ldplan);
+      i != ldplan->getResource()->getLoadPlans().end(); --i)
+      if (i->getQuantity() != 0.0 
+        && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan
+        && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan->getOwner()
+        && !static_cast<const LoadPlan*>(&*i)->getLoad()->getSetup().empty()
+        && i->getDate() < (s ? s : e))
+        {
+          lastld = static_cast<const LoadPlan*>(&*i)->getLoad();
+          break;
+        }
+  }
   string lastsetup = lastld ? lastld->getSetup() : ldplan->getResource()->getSetup();
 
   TimePeriod duration(0L);

@@ -1178,7 +1178,7 @@ class MetaClass : public NonCopyable
   protected:
     /** Default constructor. */
     MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")),
-      category(NULL), factoryMethodDefault(NULL), pythonClass(NULL) {}
+      category(NULL), pythonClass(NULL), factoryMethodDefault(NULL) {}
 
   private:
     /** This is a list of objects that will receive a callback when the call
@@ -2651,9 +2651,9 @@ class PythonObject : public DataElement
     /** Assignment operator. */
     PythonObject& operator = (const PythonObject& o) 
     {
-      if (obj) Py_DECREF(obj);
+      if (obj) {Py_DECREF(obj);}
       obj = o.obj; 
-      if (obj) Py_INCREF(obj);
+      if (obj) {Py_INCREF(obj);}
       return *this;
     }
 
@@ -2872,20 +2872,20 @@ class PythonFunction : public PythonObject
     /** Copy constructor. */
     PythonFunction(const PythonFunction& o) : func(o.func) 
     {
-      if (func) Py_INCREF(func);
+      if (func) {Py_INCREF(func);}
     }
 
     /** Assignment operator. */
     PythonFunction& operator= (const PythonFunction& o) 
     {
-      if (func) Py_DECREF(func);
+      if (func) {Py_DECREF(func);}
       func = o.func;
-      if (func) Py_INCREF(func);
+      if (func) {Py_INCREF(func);}
       return *this;
     }
 
     /** Destructor. */
-    ~PythonFunction() {if (func) Py_DECREF(func);}
+    ~PythonFunction() {if (func) {Py_DECREF(func);}}
 
     /** Conversion operator to a Python pointer. */
     operator const PyObject*() const {return func;}

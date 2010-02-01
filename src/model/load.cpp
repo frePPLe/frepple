@@ -285,6 +285,12 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   if (!getName().empty()) o->writeElement(Tags::tag_name, getName());
   if (getAlternate())
     o->writeElement(Tags::tag_alternate, getAlternate()->getName());
+  if (search != PRIORITY)
+  {
+    ostringstream ch;
+    ch << getSearch();
+    o->writeElement(Tags::tag_search, ch.str());
+  }
 
   // Write the effective daterange
   if (getEffective().getStart() != Date::infinitePast)

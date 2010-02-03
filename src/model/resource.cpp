@@ -259,7 +259,9 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
   // No updating required this resource
   if (!getSetupMatrix() || (ldplan && ldplan->getOperationPlan()->getOperation() != OperationSetup::setupoperation)) 
     return;
-  ldplan = NULL;
+  
+  // Verify assumption of this method
+  assert(!ldplan || !ldplan->isStart());
 
   // Update later setup opplans
   static const Resource* tmp = NULL;  // xxx @todo dirty hack to avoid endless loop!!!
@@ -268,6 +270,7 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
     getLoadPlans().begin(ldplan) :
     getLoadPlans().begin();
   string prevsetup = ldplan ? ldplan->getSetup() : getSetup();
+  Date latestCheckDate = ldplan ? ldplan->getDate() : Date::infiniteFuture;
   for (; i != getLoadPlans().end(); ++i)
   {
     const LoadPlan* l = dynamic_cast<const LoadPlan*>(&*i);
@@ -277,7 +280,8 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
       && !l->isStart())
     {
       // Next conversion operation
-      OperationPlanState x = l->getOperationPlan()->getOperation()->setOperationPlanParameters( l->getOperationPlan(),
+      OperationPlanState x = l->getOperationPlan()->getOperation()->setOperationPlanParameters( 
+        l->getOperationPlan(),
         l->getOperationPlan()->getQuantity(),
         Date::infinitePast,
         l->getOperationPlan()->getDates().getEnd(),
@@ -285,11 +289,15 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
         false);
       if (x.start != l->getOperationPlan()->getDates().getStart() && l->getResource() != tmp)
       {
+        // We need to change a setup plan
         tmp = l->getResource();
         l->getOperationPlan()->restore(x);
-        if (ldplan) return;
         tmp = NULL;
       }
+      else if (ldplan && x.start == l->getOperationPlan()->getDates().getStart()) 
+        // We found a setup plan that doesn't need updating. Later setup plans
+        // won't require updating either
+        return;
     }
   }
 }

@@ -242,6 +242,23 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
     }
   }
 
+  // Find the loadplan before the setup
+  LoadPlan *prevldplan = NULL;
+  if (getOperationPlan()->getOperation() == OperationSetup::setupoperation)
+  {
+    for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
+      i != getResource()->getLoadPlans().end(); --i)
+    {
+      const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
+      if (l && l->getOperationPlan() != getOperationPlan()
+        && l->getOperationPlan() != getOperationPlan()->getOwner())
+      {
+        prevldplan = const_cast<LoadPlan*>(l);
+        break;
+      }
+    }
+  }
+
   // Change this loadplan and its brother
   for (LoadPlan *ldplan = getOtherLoadPlan(); true; )
   {
@@ -249,10 +266,6 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
     if (ldplan->ld)
       ldplan->ld->getResource()->loadplans.erase(ldplan);
     
-    // Update the setups on the old resource
-    if (ldplan == this && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation)
-      ld->getResource()->updateSetups();
-
     // Insert in the new resource
     ldplan->ld = newld;
     newld->getResource()->loadplans.insert(
@@ -263,8 +276,12 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
 
     // Repeat for the brother loadplan or exit
     if (ldplan != this) ldplan = this;
-    else return;
+    else break;
   }
+
+  // Update the setups on the old resource
+  if (prevldplan)
+    prevldplan->ld->getResource()->updateSetups(prevldplan);
 }
 
 

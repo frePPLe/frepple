@@ -442,6 +442,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   firstflowplan = NULL;
   firstloadplan = NULL;
   firstsubopplan = NULL;
+  lastsubopplan = NULL;
 
   // Delete the flowplans and loadplan
   while (e != endFlowPlans()) delete &*(e++);
@@ -681,11 +682,11 @@ DECLARE_EXPORT void OperationPlan::update()
     // If at least 1 sub-operationplan is locked, the parent must be locked
     flags &= ~IS_LOCKED; // Clear is_locked flag
     for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
-        if (i->flags & IS_LOCKED)
-        {
-          flags |= IS_LOCKED;  // Set is_locked flag
-          break;
-        }
+      if (i->flags & IS_LOCKED)
+      {
+        flags |= IS_LOCKED;  // Set is_locked flag
+        break;
+      }
   }
 
   // Update the flow and loadplans

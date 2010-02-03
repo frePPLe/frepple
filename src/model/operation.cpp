@@ -1302,29 +1302,35 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
 
   // Find the setup of the resource at the start of the conversion
   const Load* lastld = NULL;
-  if (ldplan->getDate() < (s ? s : e))
+  if (ldplan->getDate() <= (s ? s : e))
   {
     for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin(ldplan);
       i != ldplan->getResource()->getLoadPlans().end() && i->getDate() < (s ? s : e); ++i)
-      if (i->getQuantity() != 0.0 
-        && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan
-        && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan->getOwner()
-        && !static_cast<const LoadPlan*>(&*i)->getLoad()->getSetup().empty())
-          lastld = static_cast<const LoadPlan*>(&*i)->getLoad();
+    {
+      const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
+      if (l && i->getQuantity() != 0.0 
+        && l->getOperationPlan() != opplan
+        && l->getOperationPlan() != opplan->getOwner()
+        && !l->getLoad()->getSetup().empty())
+          lastld = l->getLoad();
+    }
   }
-  else
+  if (!lastld)
   {
     for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin(ldplan);
       i != ldplan->getResource()->getLoadPlans().end(); --i)
-      if (i->getQuantity() != 0.0 
-        && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan
-        && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan->getOwner()
-        && !static_cast<const LoadPlan*>(&*i)->getLoad()->getSetup().empty()
-        && i->getDate() < (s ? s : e))
+    {
+      const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
+      if (l && i->getQuantity() != 0.0 
+        && l->getOperationPlan() != opplan
+        && l->getOperationPlan() != opplan->getOwner()
+        && !l->getLoad()->getSetup().empty()
+        && l->getDate() < (s ? s : e))
         {
-          lastld = static_cast<const LoadPlan*>(&*i)->getLoad();
+          lastld = l->getLoad();
           break;
         }
+    }
   }
   string lastsetup = lastld ? lastld->getSetup() : ldplan->getResource()->getSetup();
 

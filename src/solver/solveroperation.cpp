@@ -265,7 +265,9 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
 
   if (a_qty <= ROUNDING_ERROR && !data.state->forceLate
       && isPlannedEarly
-      && a_date != Date::infiniteFuture && isCapacityConstrained())
+      && matnext.getStart() != Date::infiniteFuture 
+      && matnext.getStart() != Date::infinitePast
+      && isCapacityConstrained())
     {
       // The operationplan was moved early (because of a resource constraint)
       // and we can't properly trust the reply date in such cases...

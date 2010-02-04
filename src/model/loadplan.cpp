@@ -251,7 +251,8 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
     {
       const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
       if (l && l->getOperationPlan() != getOperationPlan()
-        && l->getOperationPlan() != getOperationPlan()->getOwner())
+        && l->getOperationPlan() != getOperationPlan()->getOwner()
+        && !l->isStart())
       {
         prevldplan = const_cast<LoadPlan*>(l);
         break;

@@ -117,7 +117,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
         const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
         if (ldplan && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation
-          && ldplan->getOperationPlan()->getDates().getDuration() > 0L
+          && ldplan->getOperationPlan()->getDates().getEnd() > data->state->q_operationplan->getDates().getStart()
           && ldplan->getOperationPlan() != setupOpplan)
         {
           // Ongoing setup

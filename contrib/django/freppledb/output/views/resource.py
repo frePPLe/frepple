@@ -70,9 +70,6 @@ class OverviewReport(TableReport):
   @staticmethod
   def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
-    baseparams2 = list(baseparams)
-    baseparams2 += list(baseparams)
-    baseparams = tuple(baseparams2)
     # Execute the query
     cursor = connection.cursor()
     query = '''
@@ -140,7 +137,7 @@ class OverviewReport(TableReport):
          basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
          connection.ops.quote_name(bucket),bucket,bucket,basesql,
          startdate,enddate,sortsql)
-    cursor.execute(query, baseparams)
+    cursor.execute(query, baseparams + baseparams)
     
     # Build the python result
     for row in cursor.fetchall():
@@ -199,7 +196,7 @@ class DetailReport(ListReport):
       'filter': FilterText(),
       }),
     ('operationplan', {
-      'filter': FilterNumber(),
+      'filter': FilterNumber(operator='exact',),
       'title': _('operationplan')
       }),
     )

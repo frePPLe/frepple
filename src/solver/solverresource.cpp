@@ -45,7 +45,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
     logger << indent(res->getLevel()) << "   Resource '" << res->getName()
       << "' is asked: " << (-data->state->q_qty) << "  "
       << data->state->q_operationplan->getDates() << endl;
-  
+
   // Find the setup operationplan
   OperationPlan *setupOpplan = NULL;
   DateRange currentSetupOpplanDates;
@@ -90,6 +90,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       // Check the leadtime constraints
       prevdate = data->state->q_operationplan->getDates().getEnd();
       noRestore = data->state->forceLate;
+
       if (isLeadtimeConstrained() || isFenceConstrained())
         // Note that the check function can update the answered date and quantity
          if (!checkOperationLeadtime(data->state->q_operationplan,*data,false))
@@ -117,11 +118,12 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
         const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
         if (ldplan && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation
-          && ldplan->getOperationPlan()->getDates().getEnd() > data->state->q_operationplan->getDates().getStart()
+          && ldplan->getOperationPlan()->getDates().overlap(data->state->q_operationplan->getDates()) > 0L
           && ldplan->getOperationPlan() != setupOpplan)
         {
           // Ongoing setup
           HasOverload = true;
+          HasSetupOverload = true;
           break;
         }
 
@@ -242,7 +244,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
             && ldplan->getOperationPlan()->getDates().getDuration() > 0L
             && ldplan->getOperationPlan() != setupOpplan)
             continue;
-
+          
           // Not interested if date doesn't change
           if (cur->getDate() == curdate) continue;
 

@@ -138,7 +138,7 @@ class DetailReport(ListReport):
   editable = False
   rows = (
     ('id', {
-      'filter': FilterNumber(),
+      'filter': FilterNumber(operator='exact', ),
       'title': _('operationplan'),
       }),
     ('demand', {
@@ -163,6 +163,10 @@ class DetailReport(ListReport):
     ('locked', {
       'title': _('locked'),
       'filter': FilterBool(),
+      }),
+    ('unavailable', {
+      'title': _('unavailable'),
+      'filter': FilterNumber(),
       }),
     ('owner', {'title': _('owner')}),
     )

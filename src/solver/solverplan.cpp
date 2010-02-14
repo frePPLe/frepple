@@ -199,6 +199,12 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
 
   // Run the planning command threads and wait for them to exit
   threads.execute();
+
+  // Check the resource setups that were broken yyy xxx todo needs to be removed
+  for (Resource::iterator gres = Resource::begin(); gres != Resource::end(); ++gres)
+  {
+    if (gres->getSetupMatrix()) gres->updateSetups();
+  }
 }
 
 
@@ -277,6 +283,8 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
     return getUserExitResource();
   if (attr.isA(Tags::tag_userexit_operation))
     return getUserExitOperation();
+  if (!strcmp(attr.getName(),"unconstrainedSearchAlternates"))
+    return PythonObject(getUnconstrainedSearchAlternates());
   return Solver::getattro(attr);
 }
 
@@ -299,6 +307,8 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
     setUserExitResource(field);
   else if (attr.isA(Tags::tag_userexit_operation))
     setUserExitOperation(field);
+  else if (!strcmp(attr.getName(),"unconstrainedSearchAlternates"))
+    setUnconstrainedSearchAlternates(field.getBool());
   else
     return Solver::setattro(attr, field);
   return 0;

@@ -47,7 +47,7 @@ def exportProblems():
   writer.writerow(('#entity','name','description','start date','end date','weight'))
   for i in frepple.problems():
     writer.writerow(
-      (i.entity, i.name, i.description, i.start, i.end, i.weight)
+      (i.entity, i.name, i.owner, i.description, i.start, i.end, i.weight)
       )
   print 'Exported problems in %.2f seconds' % (time() - starttime)
 
@@ -60,7 +60,8 @@ def exportOperationplans():
   for i in frepple.operationplans():
     writer.writerow(
      ( i.id, i.operation.name, i.quantity, i.start, i.end,
-       i.demand and i.demand.name or '', i.locked)
+       i.demand and i.demand.name or '', i.locked, i.unavailable, 
+       i.owner and i.owner.id or None)
      )
   print 'Exported operationplans in %.2f seconds' % (time() - starttime)
 

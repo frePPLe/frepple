@@ -158,6 +158,7 @@ DECLARE_EXPORT const Keyword Tags::tag_tosetup("tosetup");
 // It must refer to "http://www.w3.org/2001/XMLSchema-instance"
 // This is required to support subclassing in the XML schema.
 DECLARE_EXPORT const Keyword Tags::tag_type("type","xsi");
+DECLARE_EXPORT const Keyword Tags::tag_unavailable("unavailable");
 DECLARE_EXPORT const Keyword Tags::tag_userexit_buffer("userexit_buffer");
 DECLARE_EXPORT const Keyword Tags::tag_userexit_demand("userexit_demand");
 DECLARE_EXPORT const Keyword Tags::tag_userexit_flow("userexit_flow");

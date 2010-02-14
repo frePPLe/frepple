@@ -134,4 +134,3 @@ rm -rf %{buildroot}
 %files doc
 %defattr(-,root,root,-)
 %doc doc/reference doc/*.pdf doc/favicon.ico doc/*.html doc/*.css doc/*.gif doc/*.bmp
-

@@ -544,6 +544,8 @@ PyObject* Problem::getattro(const Attribute& attr)
     return PythonObject(getDateRange().getEnd());
   if (attr.isA(Tags::tag_weight))
     return PythonObject(getWeight());
+  if (attr.isA(Tags::tag_owner))
+    return PythonObject(getOwner());
   return NULL;
 }
 

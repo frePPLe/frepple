@@ -182,7 +182,7 @@ class DetailReport(ListReport):
       'filter': FilterNumber(),
       }),
     ('operationplan', {
-      'filter': FilterNumber(),
+      'filter': FilterNumber(operator='exact', ),
       'title': _('operationplan'),
       }),
     )

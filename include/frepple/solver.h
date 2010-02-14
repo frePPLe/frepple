@@ -196,7 +196,8 @@ class SolverMRP : public Solver
 
     /** Constructor. */
     SolverMRP(const string& n) : Solver(n), constrts(0), maxparallel(0),
-      lazydelay(86400L), autocommit(true) {initType(metadata);}
+      unconstrainedSearchAlternates(true), lazydelay(86400L), autocommit(true)
+      {initType(metadata);}
 
     /** Destructor. */
     virtual ~SolverMRP() {}
@@ -256,15 +257,32 @@ class SolverMRP : public Solver
       */
     bool isFenceConstrained() const {return (constrts & FENCE)>0;}
 
-    /** Returns true if this solver respects the current time of the plan.
+    /** Returns true if the solver respects the current time of the plan.
       * The solver isn't allowed to create any operation plans in the past.
       */
     bool isLeadtimeConstrained() const {return (constrts & LEADTIME)>0;}
+
+    /** Returns true if the solver respects the material procurement 
+      * constraints on procurement buffers.
+      */
     bool isMaterialConstrained() const {return (constrts & MATERIAL)>0;}
+
+    /** Returns true if the solver respects capacity constraints. */
     bool isCapacityConstrained() const {return (constrts & CAPACITY)>0;}
 
     /** Returns true if any constraint is relevant for the solver. */
     bool isConstrained() const {return constrts>0;}
+
+    /** Returns true if the unconstrained plan needs to search alternates.
+      * The demand that is infeasible on any of the alternates is planned
+      * additionally on the primary alternate.<br>
+      * When the flag is set to false, the unconstrained plan only loads
+      * the primary alternate, without evaluating any alternate.
+      */
+    bool getUnconstrainedSearchAlternates() const {return unconstrainedSearchAlternates;}
+
+    void setUnconstrainedSearchAlternates(bool b) 
+      {unconstrainedSearchAlternates = b;}
 
     /** This function defines the order in which the demands are being
       * planned.<br>
@@ -385,6 +403,15 @@ class SolverMRP : public Solver
       *    mangling the debugging output of different threads.
       */
     int maxparallel;
+
+    /** When set to true the unconstrained plan needs to search alternates.
+      * The demand that is infeasible on any of the alternates is planned
+      * additionally on the primary alternate.<br>
+      * When the flag is set to false, the unconstrained plan only loads
+      * the primary alternate, without evaluating any other alternates. This 
+      * may not be the real shortage the user wants to see.
+      */
+    bool unconstrainedSearchAlternates;
 
     /** Time increments for a lazy replan.<br>
       * The solver is expected to return always a next-feasible date when the

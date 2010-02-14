@@ -259,12 +259,8 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
   // No updating required this resource
   if (!getSetupMatrix() || (ldplan && ldplan->getOperationPlan()->getOperation() != OperationSetup::setupoperation)) 
     return;
-  
-  // Verify assumption of this method
-  assert(!ldplan || !ldplan->isStart());
 
   // Update later setup opplans
-  static const Resource* tmp = NULL;  // xxx @todo dirty hack to avoid endless loop!!!
   OperationPlan *opplan = ldplan ? ldplan->getOperationPlan() : NULL;
   loadplanlist::const_iterator i = ldplan ? 
     getLoadPlans().begin(ldplan) :
@@ -287,17 +283,13 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
         l->getOperationPlan()->getDates().getEnd(),
         true,
         false);
-      if (x.start != l->getOperationPlan()->getDates().getStart() && l->getResource() != tmp)
-      {
+      if (x.start != l->getOperationPlan()->getDates().getStart())
         // We need to change a setup plan
-        tmp = l->getResource();
         l->getOperationPlan()->restore(x);
-        tmp = NULL;
-      }
       else if (ldplan && x.start == l->getOperationPlan()->getDates().getStart()) 
         // We found a setup plan that doesn't need updating. Later setup plans
         // won't require updating either
-        return;
+        return;        
     }
   }
 }

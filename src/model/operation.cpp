@@ -631,7 +631,7 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
   //   - start and end date of both operationplans are the same
   //   - demand of both operationplans are the same
   //   - maximum operation size is not exceeded
-  //   - @todo need to check that all flowplans are on the same alternate!!!
+  //   - alternate flowplans need to be on the same alternate
   if (!o->getIdentifier() && !o->getLocked() && !o->getOwner() && getLoads().empty())
   {
     // Loop through candidates
@@ -643,6 +643,17 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       && y->getDemand() == o->getDemand() && !y->getLocked() && y->getIdentifier()
       && y->getQuantity() + o->getQuantity() < getSizeMaximum())  // @todo ignores multiple qty
     {
+      // Check that the flowplans are on identical alternates
+      OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();
+      OperationPlan::FlowPlanIterator fp2 = y->beginFlowPlans();
+      while (fp1 != o->endFlowPlans())
+      {
+        if (fp1->getBuffer() != fp2->getBuffer())
+          // Different alternates - no merge possible
+          return true;
+        ++fp1;
+        ++fp2;
+      }
       // Merging with the 'next' operationplan
       y->setQuantity(y->getQuantity() + o->getQuantity());
       return false;
@@ -651,6 +662,17 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       && x->getDemand() == o->getDemand() && !x->getLocked() && x->getIdentifier()
       && x->getQuantity() + o->getQuantity() < getSizeMaximum()) // @todo ignores multiple qty
     {
+      // Check that the flowplans are on identical alternates
+      OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();
+      OperationPlan::FlowPlanIterator fp2 = x->beginFlowPlans();
+      while (fp1 != o->endFlowPlans())
+      {
+        if (fp1->getBuffer() != fp2->getBuffer())
+          // Different alternates - no merge possible
+          return true;
+        ++fp1;
+        ++fp2;
+      }
       // Merging with the 'previous' operationplan
       x->setQuantity(x->getQuantity() + o->getQuantity());
       return false;
@@ -934,7 +956,6 @@ DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
   // Behavior depends on the dates being passed.
   // Move all sub-operationplans in an orderly fashion, either starting from
   // the specified end date or the specified start date.
-  bool firstOp = true;
   OperationPlanState x;
   Date y;
   bool realfirst = true;
@@ -944,21 +965,13 @@ DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
     for (OperationPlan* i = opplan->lastsubopplan; i; i = i->prevsubopplan)
     {
       if (i->getOperation() == OperationSetup::setupoperation) continue;
-      if (i->getDates().getEnd() > e || firstOp)
+      x = i->getOperation()->setOperationPlanParameters(i,q,Date::infinitePast,e,preferEnd,execute);
+      e = x.start;
+      if (realfirst) 
       {
-        x = i->getOperation()->setOperationPlanParameters(i,q,Date::infinitePast,e,preferEnd,execute);
-        e = x.start;
-        if (firstOp && realfirst) 
-        {
-          y = x.end;
-          //xxx todo firstOp = false;
-          realfirst = false;
-        }
+        y = x.end;
+        realfirst = false;
       }
-      else
-        // There is sufficient slack in the routing, and the start
-        // date doesn't need to be changed
-        return OperationPlanState(opplan->getDates().getStart(), y, x.quantity);
     }
     return OperationPlanState(x.start, y, x.quantity);
   }
@@ -968,21 +981,13 @@ DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
     for (OperationPlan *i = opplan->firstsubopplan; i; i = i->nextsubopplan)
     {
       if (i->getOperation() == OperationSetup::setupoperation) continue;
-      if (i->getDates().getStart() < s || firstOp)
+      x = i->getOperation()->setOperationPlanParameters(i,q,s,Date::infinitePast,preferEnd,execute);
+      s = x.end;
+      if (realfirst)
       {
-        x = i->getOperation()->setOperationPlanParameters(i,q,s,Date::infinitePast,preferEnd,execute);
-        s = x.end;
-        if (firstOp && realfirst)
-        {
-          y = x.start;
-          //xxx todo firstOp = false;
-          realfirst = false;
-        }
+        y = x.start;
+        realfirst = false;
       }
-      else
-        // There is sufficient slack in the routing, and the start
-        // date doesn't need to be changed
-        return OperationPlanState(y, opplan->getDates().getEnd(), x.quantity);
     }
     return OperationPlanState(y, x.end, x.quantity);
   }

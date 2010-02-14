@@ -37,6 +37,7 @@ from datetime import date, datetime
 from email.Utils import formatdate
 from calendar import timegm
 import csv
+import StringIO
 
 from django.conf import settings
 from django.core.paginator import QuerySetPaginator, InvalidPage
@@ -51,12 +52,14 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
+from django.utils.translation import string_concat
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst, get_text_list
 from django.utils.encoding import iri_to_uri, force_unicode
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 
 from input.models import Plan, Buffer
 from common.db import python_date
@@ -267,8 +270,9 @@ def view_report(request, entity=None, **args):
       return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
 
   # Pick up the list of time buckets
+  pref = request.user.get_profile()
   if reportclass.timebuckets:
-    (bucket,start,end,bucketlist) = getBuckets(request)
+    (bucket,start,end,bucketlist) = getBuckets(request, pref)
   else:
     bucket = start = end = bucketlist = None
   type = request.GET.get('reporttype','html')  # HTML or CSV (table or list) output
@@ -376,13 +380,13 @@ def view_report(request, entity=None, **args):
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
     if hasattr(reportclass,'resultlist2'):
       # SQL override provided of type 2
-      response._container = _generate_csv(reportclass, reportclass.resultlist2(counter, bucket, start, end, sortsql=sortsql), type, bucketlist)
+      response._container = _generate_csv(reportclass, reportclass.resultlist2(counter, bucket, start, end, sortsql=sortsql), type, bucketlist, pref)
     elif hasattr(reportclass,'resultlist1'):
       # SQL override provided of type 1
-      response._container = _generate_csv(reportclass, reportclass.resultlist1(counter, bucket, start, end, sortsql=sortsql), type, bucketlist)
+      response._container = _generate_csv(reportclass, reportclass.resultlist1(counter, bucket, start, end, sortsql=sortsql), type, bucketlist, pref)
     else:
       # No SQL override provided
-      response._container = _generate_csv(reportclass, counter, type, bucketlist)
+      response._container = _generate_csv(reportclass, counter, type, bucketlist, pref)
     response._is_string = False
     return response
 
@@ -582,16 +586,19 @@ def _get_javascript_imports(reportclass):
     return reportclass.javascript_imports
 
 
-def _generate_csv(rep, qs, format, bucketlist):
+def _generate_csv(rep, qs, format, bucketlist, pref):
   '''
   This is a generator function that iterates over the report data and
   returns the data row by row in CSV format.
   '''
-  import csv
-  import StringIO
   sf = StringIO.StringIO()
-  writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC)
-
+  if pref.csvdelimiter == 'comma':
+    writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
+  elif pref.csvdelimiter == 'semicolon':
+    writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
+  else:
+    raise Http404('Unknown CSV delimiter')
+     
   # @todo the result should be encoded to an encoding supported by the client. How can we query this from the request header?
   encoding = settings.DEFAULT_CHARSET
 
@@ -680,7 +687,7 @@ def _generate_csv(rep, qs, format, bucketlist):
     raise Http404('Unknown report type')
 
 
-def getBuckets(request, bucket=None, start=None, end=None):
+def getBuckets(request, pref, bucket=None, start=None, end=None):
   '''
   This function gets passed a name of a bucketization.
   It returns a list of buckets.
@@ -688,7 +695,6 @@ def getBuckets(request, bucket=None, start=None, end=None):
   stored in a python variable for performance
   '''
   global datelist
-  pref = request.user.get_profile()
 
   # Select the bucket size (unless it is passed as argument)
   if not bucket:
@@ -838,7 +844,7 @@ def _create_rowheader(req, sortfield, sortdirection, cls, frozen = True):
 
   # Final result
   result.append( u'</form>' )
-  return mark_safe(u'\n'.join(result))
+  return mark_safe(string_concat(*result))
 
 
 class FilterText(object):
@@ -969,16 +975,19 @@ class FilterChoice(object):
   def output(self, row, number, args):
     rowfield = self.field or row[0]
     value = args.get(rowfield, None)
-    result = ['<select name="%s" class="filter" onChange="filterform()"> <option value="">%s</option>' \
-      % (rowfield, _('All')) ]
-    for code, label in self.choices:
-      if code != '':
-        if (code == value):
-          result.append('<option value="%s" selected="yes">%s</option>' % (code, unicode(label)))
-        else:
-          result.append('<option value="%s">%s</option>' % (code, unicode(label)))
-    result.append('</select>')
-    return ' '.join(result)
+    result = [string_concat(u'<select name="', rowfield,
+      u'" class="filter" onChange="filterform()"> <option value="">', _('All'),
+      u'</option>\n')]
+    try:
+      for code, label in callable(self.choices) and self.choices() or self.choices:    
+        if code != '':
+          if (code == value):
+            result.append(string_concat(u'<option value="',code,u'" selected="yes">',unicode(label),u'</option>\n'))
+          else:
+            result.append(string_concat(u'<option value="',code,u'">',unicode(label),u'</option>\n'))
+    except TypeError: pass
+    result.append(u'</select>\n')
+    return string_concat(*result)
 
 
 class FilterBool(FilterChoice):

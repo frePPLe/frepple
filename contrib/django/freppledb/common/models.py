@@ -44,11 +44,17 @@ class Preferences(models.Model):
     ('table',_('Table')),
     ('list',_('List')),
   )
+  csvDelimiter = (
+    ('comma',_('comma ","')),
+    ('semicolon',_('semicolon ";"')),
+  )
   user = models.ForeignKey(User, verbose_name=_('user'), unique=True)
   buckets = models.CharField(_('buckets'), max_length=10, choices=buckettype,
     default='standard')
   startdate = models.DateField(_('startdate'), blank=True, null=True)
   enddate = models.DateField(_('enddate'), blank=True, null=True)
+  csvdelimiter = models.CharField(_('CSV delimiter'), max_length=10, choices=csvDelimiter,
+    default='comma')
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
 

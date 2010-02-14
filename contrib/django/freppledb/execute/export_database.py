@@ -64,10 +64,10 @@ def exportProblems(cursor):
   starttime = time()
   cursor.executemany(
     "insert into out_problem \
-    (entity,name,description,startdate,enddate,weight) \
-    values(%s,%s,%s,%s,%s,%s)",
+    (entity,name,owner,description,startdate,enddate,weight) \
+    values(%s,%s,%s,%s,%s,%s,%s)",
     [(
-       i.entity, i.name, i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
+       i.entity, i.name, str(i.owner), i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
        round(i.weight,settings.DECIMAL_PLACES)
      ) for i in frepple.problems()
     ])
@@ -83,12 +83,12 @@ def exportOperationplans(cursor):
   for i in frepple.operations():
     cursor.executemany(
       "insert into out_operationplan \
-       (id,operation,quantity,startdate,enddate,demand,locked,owner) \
-       values (%s,%s,%s,%s,%s,%s,%s,%s)",
+       (id,operation,quantity,startdate,enddate,demand,locked,unavailable,owner) \
+       values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
         j.id, i.name.replace("'","''"),
         round(j.quantity,settings.DECIMAL_PLACES), str(j.start), str(j.end),
-        j.demand and j.demand.name or None, j.locked,
+        j.demand and j.demand.name or None, j.locked, j.unavailable,
         j.owner and j.owner.id or None
        ) for j in i.operationplans ])
     cnt += 1

@@ -31,12 +31,14 @@ class OperationPlan(models.Model):
   demand = models.CharField(_('demand'), max_length=settings.NAMESIZE, null=True, db_index=True)
   operation = models.CharField(_('operation'), max_length=settings.NAMESIZE, db_index=True, null=True)
   quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='1.00')
+  unavailable = models.DecimalField(_('unavailable'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
   startdate = models.DateTimeField(_('startdate'), db_index=True)
   enddate = models.DateTimeField(_('enddate'), db_index=True)
   locked = models.BooleanField(_('locked'), default=True)
   owner = models.IntegerField(_('owner'), null=True, blank=True, db_index=True)
 
-  def __unicode__(self): return str(self.id)
+  def __unicode__(self): 
+    return "Operationplan %s" % self.id
 
   class Meta:
     db_table = 'out_operationplan'
@@ -48,6 +50,7 @@ class OperationPlan(models.Model):
 class Problem(models.Model):
   # Database fields
   entity = models.CharField(_('entity'), max_length=15, db_index=True)
+  owner = models.CharField(_('owner'), max_length=settings.NAMESIZE, db_index=True)
   name = models.CharField(_('name'), max_length=20, db_index=True)
   description = models.CharField(_('description'), max_length=settings.NAMESIZE+20)
   startdate = models.DateTimeField(_('start date'), db_index=True)

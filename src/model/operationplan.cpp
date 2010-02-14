@@ -49,6 +49,7 @@ int OperationPlan::initialize()
   x.setDoc("frePPLe operationplan");
   x.supportgetattro();
   x.supportsetattro();
+  x.supportstr();
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
@@ -357,13 +358,6 @@ DECLARE_EXPORT void OperationPlan::addSubOperationPlan(OperationPlan* o)
 
   o->owner = this;
 
-  // Update the date of the top operationplan
-  /*XXX
-  setStartAndEnd(
-    firstsubopplan->getDates().getStart(),
-    lastsubopplan->getDates().getEnd()
-  );
-  */
   // Update the flow and loadplans
   update();
 }
@@ -728,6 +722,14 @@ DECLARE_EXPORT double OperationPlan::getPenalty() const
 }
 
 
+DECLARE_EXPORT TimePeriod OperationPlan::getUnavailable() const
+{
+  TimePeriod x;
+  DateRange y = getOperation()->calculateOperationTime(dates.getStart(), dates.getEnd(), &x);
+  return dates.getDuration() - x;
+}
+
+
 DECLARE_EXPORT void OperationPlan::writer(const MetaCategory* c, XMLOutput* o)
 {
   if (!empty())
@@ -853,7 +855,6 @@ DECLARE_EXPORT void OperationPlan::setDemand(Demand* l)
 }
 
 
-
 PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 {
   try
@@ -920,6 +921,8 @@ DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
     return new OperationPlanIterator(this);
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(getHidden());
+  if (attr.isA(Tags::tag_unavailable))
+    return PythonObject(getUnavailable());
   return NULL;
 }
 

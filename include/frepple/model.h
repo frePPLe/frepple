@@ -956,8 +956,8 @@ class Problem : public NonCopyable, public Object
       */
     static DECLARE_EXPORT void clearProblems(HasProblems& p, bool setchanged = true);
 
-    /** Returns a pointer to the plannable object that owns this problem. */
-    HasProblems* getOwner() const {return owner;}
+    /** Returns a pointer to the object that owns this problem. */
+    virtual Object* getOwner() const = 0;
 
     /** Return a reference to the metadata structure. */
     virtual const MetaClass& getType() const {return *metadata;}
@@ -2024,6 +2024,11 @@ class OperationPlan
     /** Calculate the penalty of an operationplan. */
     DECLARE_EXPORT double getPenalty() const;
 
+    /** Calculate the unavailable time during the operationplan. The regular 
+      * duration is extended with this amount.
+      */
+    DECLARE_EXPORT TimePeriod getUnavailable() const;
+
     /** Returns whether the operationplan is locked. A locked operationplan
       * is never changed.
       */
@@ -2131,6 +2136,13 @@ class OperationPlan
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
+
+    PyObject* str() const
+    {          
+      ostringstream ch;
+      ch << id;
+      return PythonObject(ch.str());
+    }
 
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
@@ -4723,12 +4735,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
     bool isStart() const {return start_or_end == START;}
 
     /** Destructor. */
-    virtual ~LoadPlan()
-    {
-      ld->getResource()->setChanged();
-      ld->getResource()->loadplans.erase(this);
-      if (!isStart()) ld->getResource()->updateSetups(); // @TODO Optimize the method to rescan only part of the timeline
-    }
+    DECLARE_EXPORT virtual ~LoadPlan();
 
     /** This function needs to be called whenever the loadplan date or
       * quantity are changed.
@@ -4836,7 +4843,8 @@ class ProblemBeforeCurrent : public Problem
     explicit ProblemBeforeCurrent(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemBeforeCurrent() {removeProblem();}
-    string getEntity() const {return "operationplan";}
+    string getEntity() const {return "operation";}
+    Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
     const DateRange getDateRange() const
     {
       OperationPlan *o = dynamic_cast<OperationPlan*>(getOwner());
@@ -4878,10 +4886,11 @@ class ProblemBeforeFence : public Problem
     explicit ProblemBeforeFence(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemBeforeFence() {removeProblem();}
-    string getEntity() const {return "operationplan";}
+    string getEntity() const {return "operation";}
+    Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
     const DateRange getDateRange() const
     {
-      OperationPlan *o = static_cast<OperationPlan*>(getOwner());
+      OperationPlan *o = dynamic_cast<OperationPlan*>(owner);
       if (o->getDates().getEnd() > Plan::instance().getCurrent()
           + o->getOperation()->getFence())
         return DateRange(o->getDates().getStart(),
@@ -4925,7 +4934,8 @@ class ProblemPrecedence : public Problem
     }
     explicit ProblemPrecedence(OperationPlan* o) : Problem(o) {addProblem();}
     ~ProblemPrecedence() {removeProblem();}
-    string getEntity() const {return "operationplans";}
+    string getEntity() const {return "operation";}
+    Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
     const DateRange getDateRange() const
     {
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
@@ -4957,10 +4967,11 @@ class ProblemDemandNotPlanned : public Problem
     double getWeight() const {return getDemand()->getQuantity();}
     explicit ProblemDemandNotPlanned(Demand* d) : Problem(d) {addProblem();}
     ~ProblemDemandNotPlanned() {removeProblem();}
-    string getEntity() const {return "demands";}
+    string getEntity() const {return "demand";}
     const DateRange getDateRange() const
       {return DateRange(getDemand()->getDue(),getDemand()->getDue());}
-    Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
+    Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
+    Demand* getDemand() const {return dynamic_cast<Demand*>(owner);}
     size_t getSize() const {return sizeof(ProblemDemandNotPlanned);}
 
     /** Return a reference to the metadata structure. */
@@ -5007,6 +5018,7 @@ class ProblemLate : public Problem
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemLate);}
     string getEntity() const {return "demands";}
+    Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return *metadata;}
@@ -5034,7 +5046,8 @@ class ProblemEarly : public Problem
     }
     explicit ProblemEarly(Demand* d) : Problem(d) {addProblem();}
     ~ProblemEarly() {removeProblem();}
-    string getEntity() const {return "demands";}
+    string getEntity() const {return "demand";}
+    Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
     const DateRange getDateRange() const
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());
@@ -5071,10 +5084,11 @@ class ProblemShort : public Problem
       {return getDemand()->getQuantity() - getDemand()->getPlannedQuantity();}
     explicit ProblemShort(Demand* d) : Problem(d) {addProblem();}
     ~ProblemShort() {removeProblem();}
-    string getEntity() const {return "demands";}
+    string getEntity() const {return "demand";}
     const DateRange getDateRange() const
       {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
-    Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
+    Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
+    Demand* getDemand() const {return dynamic_cast<Demand*>(owner);}
     size_t getSize() const {return sizeof(ProblemShort);}
 
     /** Return a reference to the metadata structure. */
@@ -5103,7 +5117,8 @@ class ProblemExcess : public Problem
     double getWeight() const
       {return getDemand()->getPlannedQuantity() - getDemand()->getQuantity();}
     explicit ProblemExcess(Demand* d) : Problem(d) {addProblem();}
-    string getEntity() const {return "demands";}
+    string getEntity() const {return "demand";}
+    Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
     ~ProblemExcess() {removeProblem();}
     const DateRange getDateRange() const
       {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
@@ -5130,7 +5145,8 @@ class ProblemCapacityOverload : public Problem
     ProblemCapacityOverload(Resource* r, DateRange d, double q)
         : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityOverload() {removeProblem();}
-    string getEntity() const {return "resources";}
+    string getEntity() const {return "capacity";}
+    Object* getOwner() const {return dynamic_cast<Resource*>(owner);}
     const DateRange getDateRange() const {return dr;}
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemCapacityOverload);}
@@ -5162,7 +5178,8 @@ class ProblemCapacityUnderload : public Problem
     ProblemCapacityUnderload(Resource* r, DateRange d, double q)
         : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityUnderload() {removeProblem();}
-    string getEntity() const {return "resources";}
+    string getEntity() const {return "capacity";}
+    Object* getOwner() const {return dynamic_cast<Resource*>(owner);}
     const DateRange getDateRange() const {return dr;}
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemCapacityUnderload);}
@@ -5193,7 +5210,8 @@ class ProblemMaterialShortage : public Problem
     double getWeight() const {return qty;}
     ProblemMaterialShortage(Buffer* b, Date st, Date nd, double q)
         : Problem(b), qty(q), dr(st,nd) {addProblem();}
-    string getEntity() const {return "buffers";}
+    string getEntity() const {return "material";}
+    Object* getOwner() const {return dynamic_cast<Buffer*>(owner);}
     ~ProblemMaterialShortage() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
@@ -5225,10 +5243,11 @@ class ProblemMaterialExcess : public Problem
     double getWeight() const {return qty;}
     ProblemMaterialExcess(Buffer* b, Date st, Date nd, double q)
         : Problem(b), qty(q), dr(st,nd) {addProblem();}
-    string getEntity() const {return "buffers";}
+    string getEntity() const {return "material";}
     ~ProblemMaterialExcess() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
-    Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
+    Object* getOwner() const {return dynamic_cast<Buffer*>(owner);}
+    Buffer* getBuffer() const {return dynamic_cast<Buffer*>(owner);}
     size_t getSize() const {return sizeof(ProblemMaterialExcess);}
 
     /** Return a reference to the metadata structure. */

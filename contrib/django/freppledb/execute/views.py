@@ -135,10 +135,19 @@ def runfrepple(request):
   for value in request.POST.getlist('constraint'):
     try: type += int(value)
     except: pass
-
+  searchAlts = True
+  try: searchAlts = request.POST.get('searchAlts')
+  except: pass
+  
   # Run frepple
   try:
-    management.call_command('frepple_run', user=request.user.username, type=type, nonfatal=True)
+    management.call_command(
+      'frepple_run', 
+      user=request.user.username, 
+      type=type, 
+      nonfatal=True, 
+      unconstrainedSearchAlternates=searchAlts
+      )
     request.user.message_set.create(message='Successfully ran frepple')
   except Exception, e:
     request.user.message_set.create(message='Failure when running frePPLe: %s' % e)

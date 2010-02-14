@@ -171,6 +171,45 @@ DECLARE_EXPORT const string& LoadPlan::getSetup(bool current) const
 }
 
 
+DECLARE_EXPORT LoadPlan::~LoadPlan()
+{
+  ld->getResource()->setChanged();
+  LoadPlan *prevldplan = NULL;
+  if (!isStart() && oper->getOperation() == OperationSetup::setupoperation)
+  {
+    for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
+      i != getResource()->getLoadPlans().end(); --i)
+    {
+      const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
+      if (l && l->getOperationPlan() != getOperationPlan()
+        && l->getOperationPlan() != getOperationPlan()->getOwner()
+        && !l->isStart())
+      {
+        prevldplan = const_cast<LoadPlan*>(l);
+        break;
+      }
+    }
+    if (!prevldplan)
+    {
+      for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
+        i != getResource()->getLoadPlans().end(); ++i)
+      {
+        const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
+        if (l && l->getOperationPlan() != getOperationPlan()
+          && l->getOperationPlan() != getOperationPlan()->getOwner()
+          && !l->isStart())
+        {
+          prevldplan = const_cast<LoadPlan*>(l);
+          break;
+        }
+      }
+    }    
+  }
+  ld->getResource()->loadplans.erase(this);
+  if (prevldplan) ld->getResource()->updateSetups(prevldplan); 
+}
+
+
 DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
 {
   // No change
@@ -256,6 +295,21 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
       {
         prevldplan = const_cast<LoadPlan*>(l);
         break;
+      }
+    }
+    if (!prevldplan)
+    {
+      for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
+        i != getResource()->getLoadPlans().end(); ++i)
+      {
+        const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
+        if (l && l->getOperationPlan() != getOperationPlan()
+          && l->getOperationPlan() != getOperationPlan()->getOwner()
+          && !l->isStart())
+        {
+          prevldplan = const_cast<LoadPlan*>(l);
+          break;
+        }
       }
     }
   }

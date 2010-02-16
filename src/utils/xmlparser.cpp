@@ -314,7 +314,7 @@ void XMLInput::endElement(const XMLCh* const uri,
 }
 
 
-void XMLInput::characters(const XMLCh *const c, const unsigned int n)
+void XMLInput::characters(const XMLCh *const c, const XMLSize_t n)
 {
   // No data capture during the ignore state
   if (states.top()==IGNOREINPUT) return;

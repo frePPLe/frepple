@@ -196,7 +196,7 @@ class SolverMRP : public Solver
 
     /** Constructor. */
     SolverMRP(const string& n) : Solver(n), constrts(0), maxparallel(0),
-      unconstrainedSearchAlternates(true), lazydelay(86400L), autocommit(true)
+      plantype(1), lazydelay(86400L), autocommit(true)
       {initType(metadata);}
 
     /** Destructor. */
@@ -273,16 +273,26 @@ class SolverMRP : public Solver
     /** Returns true if any constraint is relevant for the solver. */
     bool isConstrained() const {return constrts>0;}
 
-    /** Returns true if the unconstrained plan needs to search alternates.
-      * The demand that is infeasible on any of the alternates is planned
-      * additionally on the primary alternate.<br>
-      * When the flag is set to false, the unconstrained plan only loads
-      * the primary alternate, without evaluating any alternate.
+    /** Returns the plan type:
+      *  - 1: Constrained plan.<br>
+      *       This plan doesn't not violate any constraints.<br>
+      *       In case of material or capacity shortages the demand is delayed
+      *       or planned short.
+      *  - 2: Unconstrained plan with alternate search.<br>
+      *       This unconstrained plan leaves material, capacity and operation
+      *       problems when shortages are found. Availability is searched across
+      *       alternates and the remaining shortage is shown on the primary 
+      *       alternate.<br>
+      *       The demand is always fully met on time.
+      *  - 3: Unconstrained plan without alternate search.<br>
+      *       This unconstrained plan leaves material, capacity and operation
+      *       problems when shortages are found. It doesn't evaluate availability
+      *       on alternates.<br>
+      *       The demand is always fully met on time.
       */
-    bool getUnconstrainedSearchAlternates() const {return unconstrainedSearchAlternates;}
+    short getPlanType() const {return plantype;}
 
-    void setUnconstrainedSearchAlternates(bool b) 
-      {unconstrainedSearchAlternates = b;}
+    void setPlanType(short b) {plantype = b;}
 
     /** This function defines the order in which the demands are being
       * planned.<br>
@@ -404,14 +414,8 @@ class SolverMRP : public Solver
       */
     int maxparallel;
 
-    /** When set to true the unconstrained plan needs to search alternates.
-      * The demand that is infeasible on any of the alternates is planned
-      * additionally on the primary alternate.<br>
-      * When the flag is set to false, the unconstrained plan only loads
-      * the primary alternate, without evaluating any other alternates. This 
-      * may not be the real shortage the user wants to see.
-      */
-    bool unconstrainedSearchAlternates;
+    /** Type of plan to be created. */
+    short plantype;
 
     /** Time increments for a lazy replan.<br>
       * The solver is expected to return always a next-feasible date when the
@@ -535,7 +539,8 @@ class SolverMRP : public Solver
 
         /** Constructor. */
         SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
-          : sol(s), cluster(c), demands(d),
+          : sol(s), cluster(c), demands(d), 
+          constraints(s ? s->getConstraints() : 0), pass(1), 
           state(statestack), prevstate(statestack-1) {}
 
         /** Verbose mode is inherited from the solver. */
@@ -606,6 +611,19 @@ class SolverMRP : public Solver
 
         /** Stack of solver status information. */
         State statestack[MAXSTATES];
+
+        /** Copy the constraints on the solver.<br>
+          * A local copy is required since we dynamically change it in the 
+          * solver threads.
+          */
+        short constraints;
+        
+        /** Planning phase.<br>
+          * This is used for the unconstrained plan: we first plan in 
+          * constrained mode, and next run a second unconstrained incremental 
+          * plan. 
+          */
+        short pass;
 
       public:
         /** Pointer to the current solver status. */

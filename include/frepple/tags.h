@@ -124,6 +124,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_pegged;
     static DECLARE_EXPORT const Keyword tag_pegging;
     static DECLARE_EXPORT const Keyword tag_plan;
+    static DECLARE_EXPORT const Keyword tag_plantype;
     static DECLARE_EXPORT const Keyword tag_posttime;
     static DECLARE_EXPORT const Keyword tag_pretime;
     static DECLARE_EXPORT const Keyword tag_price;

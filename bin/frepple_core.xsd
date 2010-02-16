@@ -917,6 +917,7 @@
           <xsd:element name="userexit_buffer" type="non-empty-string" />
           <xsd:element name="userexit_resource" type="non-empty-string" />
           <xsd:element name="userexit_operation" type="non-empty-string" />
+          <xsd:element name="plantype" type="xsd:unsignedShort" />
         </xsd:choice>
         <xsd:attribute name="constraints" type="xsd:unsignedShort" />
         <xsd:attribute name="maxparallel" type="xsd:positiveInteger" />
@@ -926,6 +927,7 @@
         <xsd:attribute name="userexit_buffer" type="non-empty-string" />
         <xsd:attribute name="userexit_resource" type="non-empty-string" />
         <xsd:attribute name="userexit_operation" type="non-empty-string" />
+        <xsd:attribute name="plantype" type="xsd:unsignedShort" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

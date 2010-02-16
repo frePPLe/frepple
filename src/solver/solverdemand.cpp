@@ -52,7 +52,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   // Unattach previous delivery operationplans.
   // Locked operationplans will NOT be deleted, and a part of the demand can
   // still remain planned.
-  const_cast<Demand*>(l)->deleteOperationPlans(false, data);
+  if (data->pass == 1)
+    const_cast<Demand*>(l)->deleteOperationPlans(false, data);
 
   // Determine the quantity to be planned and the date for the planning loop
   double plan_qty = l->getQuantity() - l->getPlannedQuantity();
@@ -114,7 +115,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
           && plan_qty - data->state->a_qty > ROUNDING_ERROR))
     {
       if (plan_qty - data->state->a_qty < l->getMinShipment()
-
         && data->state->a_qty + ROUNDING_ERROR >= l->getMinShipment()
         && data->state->a_qty > best_a_qty )
       {
@@ -198,11 +198,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   // Repeat while there is still a quantity left to plan and we aren't
   // exceeding the maximum delivery delay.
   while (plan_qty > ROUNDING_ERROR
-      && plan_date < l->getDue() + l->getMaxLateness());
+    && ((data->getSolver()->getPlanType() == 1 && plan_date < l->getDue() + l->getMaxLateness() 
+        || (data->getSolver()->getPlanType() != 1 && data->pass == 1 && plan_date == l->getDue())
+    )));
 
   // Accept the best possible answer.
   // We may have skipped it in the previous loop, awaiting a still better answer
-  if (best_a_qty > 0.0)
+  if (best_a_qty > 0.0 && data->pass == 1)
   {
     if (loglevel>=2) logger << "Demand '" << l << "' accepts a best answer." << endl;
     data->getSolver()->setLogLevel(0);

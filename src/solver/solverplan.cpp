@@ -88,6 +88,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
     logger << "Start solving cluster " << cluster << " at " << Date::now() << endl;
 
   // Solve the planning problem
+  short oldConstraints = Solver->getConstraints();
   try
   {
     // Sort the demands of this problem.
@@ -95,7 +96,10 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
     // and STL implementations.
     stable_sort(demands->begin(), demands->end(), demand_comparison);
 
+    if (Solver->getPlanType() == 3) Solver->setConstraints(0);
+
     // Loop through the list of all demands in this planning problem
+    pass = 1; // First pass
     for (deque<Demand*>::const_iterator i = demands->begin();
         i != demands->end(); ++i)
     {
@@ -128,7 +132,52 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
       }
     }
 
-    // Clean the list of demands of this problem
+    // Second plan round for the unconstrained plan that searches alternates: 
+    // plan the demand that can't be met on time in an incremental layer.
+    if (Solver->getPlanType() == 2 && Solver->getConstraints())
+    {
+      // Switch off all constraints
+      pass = 2; // Second pass
+      Solver->setConstraints(0);
+
+      // Loop over all demands
+      for (deque<Demand*>::const_iterator i = demands->begin();
+          i != demands->end(); ++i)
+      {
+        // Check whether the demand is already planned in full
+        if ((*i)->getPlannedQuantity() > (*i)->getQuantity() - ROUNDING_ERROR) 
+          continue;
+        Command* topcommand = getLastCommand();
+        // Plan the demand
+        try
+        {
+          State* mystate = state;
+          push();
+          try {(*i)->solve(*Solver,this);}
+          catch (...)
+          {
+            while (state > mystate) pop();
+            throw;
+          }
+          while (state > mystate) pop();
+        }
+        catch (...)
+        {
+          // Error message
+          logger << "Error: Caught an exception while solving demand '"
+            << (*i)->getName() << "':" << endl;
+          try {throw;}
+          catch (bad_exception&) {logger << "  bad exception" << endl;}
+          catch (exception& e) {logger << "  " << e.what() << endl;}
+          catch (...) {logger << "  Unknown type" << endl;}
+
+          // Cleaning up
+          undo(topcommand);
+        }
+      }
+    }
+
+    // Clean the list of demands of this cluster
     demands->clear();
   }
   catch (...)
@@ -150,7 +199,13 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
     for (Operation::iterator f=Operation::begin(); f!=Operation::end(); ++f)
       if (f->getCluster() == cluster)
         f->deleteOperationPlans();
+
+    // Clean the list of demands of this cluster
+    demands->clear();
   }
+      
+  // Restore the old constraints
+  Solver->setConstraints(oldConstraints);
 
   // Message
   if (Solver->getLogLevel()>0)
@@ -224,6 +279,7 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
 
   // Write the fields
   if (constrts) o->writeElement(Tags::tag_constraints, constrts);
+  if (plantype != 1) o->writeElement(Tags::tag_plantype, plantype);
   if (maxparallel) o->writeElement(Tags::tag_maxparallel, maxparallel);
   if (!autocommit) o->writeElement(Tags::tag_autocommit, autocommit);
   if (userexit_flow) 
@@ -260,6 +316,8 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
     setUserExitResource(pElement.getString());
   else if (pAttr.isA(Tags::tag_userexit_operation))
     setUserExitOperation(pElement.getString());
+  else if (pAttr.isA(Tags::tag_plantype))
+    setPlanType(pElement.getInt());
   else
     Solver::endElement(pIn, pAttr, pElement);
 }
@@ -283,8 +341,8 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
     return getUserExitResource();
   if (attr.isA(Tags::tag_userexit_operation))
     return getUserExitOperation();
-  if (!strcmp(attr.getName(),"unconstrainedSearchAlternates"))
-    return PythonObject(getUnconstrainedSearchAlternates());
+  if (attr.isA(Tags::tag_plantype))
+    return PythonObject(getPlanType());
   return Solver::getattro(attr);
 }
 
@@ -307,8 +365,8 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
     setUserExitResource(field);
   else if (attr.isA(Tags::tag_userexit_operation))
     setUserExitOperation(field);
-  else if (!strcmp(attr.getName(),"unconstrainedSearchAlternates"))
-    setUnconstrainedSearchAlternates(field.getBool());
+  else if (attr.isA(Tags::tag_plantype))
+    setPlanType(field.getInt());
   else
     return Solver::setattro(attr, field);
   return 0;

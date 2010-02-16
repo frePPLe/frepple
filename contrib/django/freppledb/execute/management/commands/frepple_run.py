@@ -36,9 +36,11 @@ class Command(BaseCommand):
   option_list = BaseCommand.option_list + (
     make_option('--user', dest='user', type='string',
       help='User running the command'),
-    make_option('--type', dest='type', type='choice',
-      choices=['0','1','2','3','4','5','6','7'], default='7',
-      help='Plan type: 0=unconstrained, 7=fully constrained'),
+    make_option('--constraint', dest='constraint', type='choice',
+      choices=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'], default='15',
+      help='Constraints: 1=lead time, 2=capacity, 4=material, 8=release fence'),
+    make_option('--plantype', dest='plantype', type='choice', choices=['1','2','3'],
+      default='1', help='Plan type: 1=constrained, 2=unconstrained with alternate search, 3=unconstrained without alternate search'),      
     make_option('--nonfatal', action="store_true", dest='nonfatal', 
       default=False, help='Dont abort the execution upon an error'),
   )
@@ -53,19 +55,24 @@ class Command(BaseCommand):
       # Pick up the options
       if 'user' in options: user = options['user'] or ''
       else: user = ''
-      if 'type' in options:
-        type = int(options['type'])
-        if type < 0 or type > 7:
-          raise ValueError("Invalid plan type: %s" % options['type'])
-      else: type = 7
-      if 'nonfatal' in options: nonfatal = options['nonfatal']
-      
+      if 'constraint' in options:
+        constraint = int(options['constraint'])
+        if constraint < 0 or constraint > 15:
+          raise ValueError("Invalid constraint: %s" % options['constraint'])
+      else: constraint = 15
+      if 'plantype' in options: 
+        plantype = int(options['plantype'])
+        if plantype < 1 or plantype > 3:
+          raise ValueError("Invalid plan type: %s" % options['plantype'])
+      else: plantype = 1
+        
       # Log message
       log(category='RUN', theuser=user,
         message=_('Start creating frePPLe plan of type ') + str(type)).save()
 
       # Execute
-      os.environ['PLAN_TYPE'] = str(type)
+      os.environ['PLANTYPE'] = str(plantype)
+      os.environ['CONSTRAINT'] = str(constraint)
       os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
       os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
       os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP

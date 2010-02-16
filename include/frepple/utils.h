@@ -150,8 +150,7 @@ using namespace std;
 
 // Header files for the Xerces-c XML parser.
 #ifndef DOXYGEN
-#define XERCES_NEW_IOSTREAMS
-#define XML_LIBRARY
+#define XERCES_STATIC_LIBRARY
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/Attributes.hpp>
@@ -4080,7 +4079,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     /** Handler called when character data are read in.
       * The data string is add it to the current element data.
       */
-    void characters(const XMLCh *const, const unsigned int);
+    void characters(const XMLCh *const, const XMLSize_t);
 
     /** Handler called by Xerces in fatal error conditions. It throws an
       * exception to abort the parsing procedure. */

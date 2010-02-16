@@ -14,10 +14,13 @@ from django.conf import settings
 frepple.settings.logfile = os.path.join(os.environ['FREPPLE_HOME'],'frepple.log')
 
 # Create a solver where the plan type are defined by an environment variable
-try: plantype = int(os.environ['PLAN_TYPE'])
-except: plantype = 7  # Default is a fully constrained plan
-frepple.solver_mrp(name="MRP", constraints=plantype)
+try: plantype = int(os.environ['PLANTYPE'])
+except: plantype = 1  # Default is a constrained plan
+try: constraint = int(os.environ['CONSTRAINT'])
+except: constraint = 15  # Default is with all constraints enabled
+mrp = frepple.solver_mrp(name="MRP", constraints=constraint, plantype=plantype, loglevel=0)
 print "Plan type: ", plantype
+print "Constraints: ", constraint
 
 # Pick up an override for the database to use
 if 'FREPPLE_DATABASE_NAME' in os.environ:
@@ -37,13 +40,13 @@ print "\nStart loading data from the database at", datetime.now().strftime("%H:%
 frepple.printsize()
 loadfrepple()
 frepple.printsize()
-
+  
 if 'solver_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
   # The forecast module is available
   print "\nStart forecast netting at", datetime.now().strftime("%H:%M:%S")
   frepple.solver_forecast(name="Netting orders from forecast",loglevel=0).solve()
 print "\nStart plan generation at", datetime.now().strftime("%H:%M:%S")
-frepple.solver_mrp(name="MRP",loglevel=0).solve()
+mrp.solve()
 frepple.printsize()
 
 print "\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S")

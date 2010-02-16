@@ -123,6 +123,7 @@ DECLARE_EXPORT const Keyword Tags::tag_parameter("parameter");
 DECLARE_EXPORT const Keyword Tags::tag_pegged("pegged");
 DECLARE_EXPORT const Keyword Tags::tag_pegging("pegging");
 DECLARE_EXPORT const Keyword Tags::tag_plan("plan");
+DECLARE_EXPORT const Keyword Tags::tag_plantype("plantype");
 DECLARE_EXPORT const Keyword Tags::tag_posttime("posttime");
 DECLARE_EXPORT const Keyword Tags::tag_pretime("pretime");
 DECLARE_EXPORT const Keyword Tags::tag_price("price");

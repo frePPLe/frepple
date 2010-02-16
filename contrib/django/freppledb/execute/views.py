@@ -131,12 +131,12 @@ def runfrepple(request):
   FrePPLe execution button.
   '''
   # Decode form input
-  type = 0
+  constraint = 0
   for value in request.POST.getlist('constraint'):
-    try: type += int(value)
+    try: constraint += int(value)
     except: pass
-  searchAlts = True
-  try: searchAlts = request.POST.get('searchAlts')
+  plantype = 1
+  try: plantype = request.POST.get('plantype')
   except: pass
   
   # Run frepple
@@ -144,9 +144,9 @@ def runfrepple(request):
     management.call_command(
       'frepple_run', 
       user=request.user.username, 
-      type=type, 
+      constraint=constraint, 
       nonfatal=True, 
-      unconstrainedSearchAlternates=searchAlts
+      plantype=plantype
       )
     request.user.message_set.create(message='Successfully ran frepple')
   except Exception, e:

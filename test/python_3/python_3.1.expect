@@ -122,4 +122,4 @@ Echoing operationplans:
         make item 10.0 2009-02-22 09:00:00 2009-03-01 09:00:00
 
 Printing problems
-  Problem: buffers material excess Buffer 'end item' has material excess of 20 2009-02-15 09:00:00 2009-03-01 20:00:00 20.0
+  Problem: material material excess Buffer 'end item' has material excess of 20 2009-02-15 09:00:00 2009-03-01 20:00:00 20.0

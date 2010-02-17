@@ -44,22 +44,22 @@ and export results into the database<br/>
 <input type="radio" name="plantype" checked="true" value="1"/><b>Constrained plan</b><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan respects all constraints.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In case of shortages the demand is planned late or short.<br/>
-<input type="radio" name="plantype" value="2"/><b>Unconstrained plan with alternate search</b><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This unconstrained plan leaves material, capacity and operation<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;problems when shortages are found.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Availability is searched across alternates and the shortage is <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shown on the primary alternate.<br/>
+<input type="radio" name="plantype" value="2"/><b>Unconstrained plan over constrained plan</b><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This unconstrained plan first tries to meet the demand on time<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;respecting all constraints. The quantity that can't be met on time<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is planned in unconstrained mode, which shows the material,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;capacity and operation problems.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The demand is always met on time.<br/>
-<input type="radio" name="plantype" value="3"/><b>Unconstrained plan without alternate search</b><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This unconstrained plan leaves material, capacity and operation<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;problems when shortages are found.<br/> 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It doesn't evaluate availability on alternates.<br/>
+<input type="radio" name="plantype" value="3"/><b>Fully unconstrained plan</b><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan is a straightforward unconstrained explosion of<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the demand. No alternate materials or capacity are searched, <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and any shortages are directly shown on the primary alternates.<br/> 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The demand is always fully met on time.<br/>
 <br/>
 <b>Constraints</b>:<br/>
-<input type="checkbox" name="constraint" checked="true" value="1"/>Lead time: do not create plans in the past<br/>
 <input type="checkbox" name="constraint" checked="true" value="4"/>Capacity: respect capacity limits<br/>
 <input type="checkbox" name="constraint" checked="true" value="2"/>Material: respect procurement limits<br/>
+<input type="checkbox" name="constraint" checked="true" value="1"/>Lead time: do not create plans in the past<br/>
 <input type="checkbox" name="constraint" checked="true" value="8"/>Release fence: do not create plans within the release time window<br/>
 <br/>
 <a href="/execute/logfrepple/">View latest log file</a></td>

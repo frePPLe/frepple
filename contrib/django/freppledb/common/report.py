@@ -687,7 +687,7 @@ def _generate_csv(rep, qs, format, bucketlist, pref):
     raise Http404('Unknown report type')
 
 
-def getBuckets(request, pref, bucket=None, start=None, end=None):
+def getBuckets(request, pref=None, bucket=None, start=None, end=None):
   '''
   This function gets passed a name of a bucketization.
   It returns a list of buckets.
@@ -697,6 +697,7 @@ def getBuckets(request, pref, bucket=None, start=None, end=None):
   global datelist
 
   # Select the bucket size (unless it is passed as argument)
+  if pref == None: pref = request.user.get_profile()
   if not bucket:
     bucket = request.GET.get('reportbucket')
     if not bucket:

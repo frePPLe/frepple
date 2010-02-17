@@ -66,7 +66,7 @@ def printmodel():
 
 # Read a file, run the solver and export the results
 frepple.readXMLfile('data.xml')
-frepple.solver_mrp(name="MRP",constraints=7).solve()
+frepple.solver_mrp(name="MRP",constraints=15).solve()
 printmodel()
 frepple.printsize()
 frepple.saveXMLfile('output.2.xml')

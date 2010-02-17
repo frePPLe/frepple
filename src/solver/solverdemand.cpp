@@ -46,8 +46,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>0)
+  {
     logger << "Planning demand '" << l->getName() << "' (" << l->getPriority()
-    << ", " << l->getDue() << ", " << l->getQuantity() << ")" << endl;
+    << ", " << l->getDue() << ", " << l->getQuantity() << ")";
+    if (data->pass == 2 || !data->getSolver()->isConstrained()) 
+      logger << " in unconstrained mode";
+    logger << endl;
+  }
 
   // Unattach previous delivery operationplans.
   // Locked operationplans will NOT be deleted, and a part of the demand can
@@ -198,9 +203,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   // Repeat while there is still a quantity left to plan and we aren't
   // exceeding the maximum delivery delay.
   while (plan_qty > ROUNDING_ERROR
-    && ((data->getSolver()->getPlanType() == 1 && plan_date < l->getDue() + l->getMaxLateness() 
-        || (data->getSolver()->getPlanType() != 1 && data->pass == 1 && plan_date == l->getDue())
-    )));
+    && ((data->getSolver()->getPlanType() != 2 && plan_date < l->getDue() + l->getMaxLateness()) 
+        || (data->getSolver()->getPlanType() == 2 && data->pass == 2 && plan_date < l->getDue() + l->getMaxLateness()) 
+        || (data->getSolver()->getPlanType() == 2 && data->pass == 1 && plan_date == l->getDue())
+    ));
 
   // Accept the best possible answer.
   // We may have skipped it in the previous loop, awaiting a still better answer

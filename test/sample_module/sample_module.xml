@@ -131,7 +131,7 @@ frepple.loadmodule(".libs/mod_sample.so")
   </demands>
   
 <?python
-frepple.solver_mrp(name="MRP", constraints=7, loglevel=0, maxparallel=1).solve()
+frepple.solver_mrp(name="MRP", constraints=15, loglevel=0, maxparallel=1).solve()
 frepple.saveXMLfile("output.1.xml")
 frepple.buffer(name="product in distribution centre", action="R")
 frepple.saveXMLfile("output.2.xml")

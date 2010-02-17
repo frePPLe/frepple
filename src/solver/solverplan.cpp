@@ -96,6 +96,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
     // and STL implementations.
     stable_sort(demands->begin(), demands->end(), demand_comparison);
 
+    // For unconstrained plan without alternate search
     if (Solver->getPlanType() == 3) Solver->setConstraints(0);
 
     // Loop through the list of all demands in this planning problem

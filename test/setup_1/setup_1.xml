@@ -259,7 +259,7 @@ j = None  # Removes the Python reference to the last loadplan
        
 # Create a constrained plan
 print "\n\nCreating constrained plan"
-frepple.solver_mrp(name="MRP constrained", constraints=7, loglevel=2).solve()
+frepple.solver_mrp(name="MRP constrained", constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 
 # Report resource conversions in the constrained plan

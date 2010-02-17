@@ -258,13 +258,17 @@ def checkAlternate(flowplan):
   return False
 
 print "Creating constrained plan"
-sol = frepple.solver_mrp(name="MRP", constraints=7, loglevel=2, userexit_flow=checkAlternate)
+sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2, userexit_flow=checkAlternate)
 sol.solve()
 frepple.saveplan("output.1.xml")
-print "Creating unconstrained plan"
-sol.constraints = 0
+print "Creating unconstrained plan without alterate search"
+sol.plantype = 3
 sol.solve()
 frepple.saveplan("output.2.xml")
+print "Creating unconstrained plan with alternate search"
+sol.plantype = 2
+sol.solve()
+frepple.saveplan("output.3.xml")
 ?>
 
 </plan>

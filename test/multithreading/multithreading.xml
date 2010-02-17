@@ -98,7 +98,7 @@ def funcSolve(id,cnt):
   '''
   A thread command to solve the plan.
   '''
-  frepple.solver_mrp(name="MRP", constraints=7).solve()
+  frepple.solver_mrp(name="MRP", constraints=15).solve()
 
 
 def funcSave(id,cnt):

@@ -386,7 +386,7 @@ def printStatus(d = None):
       print "    %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name)
   print ""
           
-solver = frepple.solver_mrp(name="MRP", constraints=7, loglevel=2, userexit_demand=printStatus)
+solver = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2, userexit_demand=printStatus)
 
 # Create an unconstrained plan
 print "Creating plan 1"

@@ -5017,7 +5017,7 @@ class ProblemLate : public Problem
     }
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemLate);}
-    string getEntity() const {return "demands";}
+    string getEntity() const {return "demand";}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
 
     /** Return a reference to the metadata structure. */

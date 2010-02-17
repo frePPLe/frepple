@@ -42,14 +42,14 @@ problem_definitions = {
 def getEntities():
   return tuple([ 
     (i['entity'], string_concat(_(i['entity']),":",i['id__count'])) 
-    for i in Problem.objects.values('entity').annotate(Count('id')) 
+    for i in Problem.objects.values('entity').annotate(Count('id')).order_by('entity') 
     ])
     
 
 def getNames():
   return tuple([ 
     (i['name'], string_concat(_(i['name']),":",i['id__count']))
-    for i in Problem.objects.values('name').annotate(Count('id')) 
+    for i in Problem.objects.values('name').annotate(Count('id')).order_by('name') 
     ])
   
   

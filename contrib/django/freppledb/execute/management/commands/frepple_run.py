@@ -62,13 +62,13 @@ class Command(BaseCommand):
       else: constraint = 15
       if 'plantype' in options: 
         plantype = int(options['plantype'])
-        if plantype < 1 or plantype > 3:
+        if plantype < 1 or plantype > 2:
           raise ValueError("Invalid plan type: %s" % options['plantype'])
       else: plantype = 1
         
       # Log message
       log(category='RUN', theuser=user,
-        message=_('Start creating frePPLe plan of type ') + str(type)).save()
+        message=_('Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d') % {'plantype': plantype, 'constraint': constraint}).save()
 
       # Execute
       os.environ['PLANTYPE'] = str(plantype)

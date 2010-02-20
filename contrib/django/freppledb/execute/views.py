@@ -41,8 +41,16 @@ def main(request):
   This view implements the overview screen with all execution
   actions.
   '''
+  constraint = int(request.session['constraint'])
   return direct_to_template(request,  template='execute/execute.html',
-        extra_context={'title': _('Execute'), 'reset_crumbs': True} )
+        extra_context={
+          'title': _('Execute'), 
+          'reset_crumbs': True,
+          'capacityconstrained': constraint & 4,
+          'materialconstrained': constraint & 2, 
+          'leadtimeconstrained': constraint & 1, 
+          'fenceconstrained': constraint & 8,
+          } )
 
 
 @staff_member_required
@@ -138,6 +146,10 @@ def runfrepple(request):
   plantype = 1
   try: plantype = request.POST.get('plantype')
   except: pass
+  
+  # Update the session object
+  request.session['plantype'] = plantype
+  request.session['constraint'] = constraint
   
   # Run frepple
   try:

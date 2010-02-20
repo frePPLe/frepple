@@ -41,7 +41,8 @@ def main(request):
   This view implements the overview screen with all execution
   actions.
   '''
-  constraint = int(request.session['constraint'])
+  try: constraint = int(request.session['constraint'])
+  except: constraint = 15
   return direct_to_template(request,  template='execute/execute.html',
         extra_context={
           'title': _('Execute'), 

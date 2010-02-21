@@ -113,7 +113,7 @@ elif settings.DATABASE_ENGINE == 'mysql':
     return '1'
 
   def sql_datediff(d1,d2):
-    return 'timestampdiff(second,%s,%s)/86400' % (d1,d2)
+    return 'timestampdiff(second,%s,%s)/86400' % (d2,d1)
 
   def sql_overlap(s1,e1,s2,e2):
     return 'greatest(0,timestampdiff(second,greatest(%s,%s),least(%s,%s)))/86400' % (s1,s2,e1,e2)

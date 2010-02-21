@@ -228,7 +228,7 @@ allowed = [
 
 # This function is called by the solver to verify whether a certain alternate
 # flow is acceptable or not.
-def checkAlternate(flowplan):
+def checkAlternate(flowplan,mode):
   # The value of global variables is shared across calls to this function.
   global allowed
   # Debugging print statements

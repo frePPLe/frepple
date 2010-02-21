@@ -86,7 +86,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Call the user exit
-  if (userexit_buffer) userexit_buffer.call(b);
+  if (userexit_buffer) userexit_buffer.call(b, PythonObject(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1)

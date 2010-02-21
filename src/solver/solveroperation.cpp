@@ -414,7 +414,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
   OperationPlan *z;
 
   // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper);
+  if (userexit_operation) userexit_operation.call(oper, PythonObject(data->constrainedPlanning));
 
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
@@ -495,7 +495,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper);
+  if (userexit_operation) userexit_operation.call(oper, PythonObject(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -625,7 +625,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   Demand *d = data->state->curDemand;
 
   // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper);
+  if (userexit_operation) userexit_operation.call(oper, PythonObject(data->constrainedPlanning));
 
   unsigned int loglevel = data->getSolver()->getLogLevel();
   SearchMode search = oper->getSearch();

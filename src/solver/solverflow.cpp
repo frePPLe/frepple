@@ -84,7 +84,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
       // 4b) Call the Python user exit if there is one
       if (userexit_flow)
       {
-        PythonObject result = userexit_flow.call(data->state->q_flowplan);
+        PythonObject result = userexit_flow.call(data->state->q_flowplan, PythonObject(data->constrainedPlanning));
         if (!result.getBool())
         {
           // Return value is false, alternate rejected

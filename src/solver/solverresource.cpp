@@ -38,7 +38,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Call the user exit
-  if (userexit_resource) userexit_resource.call(res);
+  if (userexit_resource) userexit_resource.call(res, PythonObject(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -451,7 +451,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Call the user exit
-  if (userexit_resource) userexit_resource.call(res);
+  if (userexit_resource) userexit_resource.call(res, PythonObject(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)

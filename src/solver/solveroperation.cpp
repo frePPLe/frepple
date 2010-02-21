@@ -96,7 +96,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
   }
 
   // Check the leadtime constraints
-  if (!checkOperationLeadtime(opplan,data,true))
+  if (data.constrainedPlanning && !checkOperationLeadtime(opplan,data,true))
     // This operationplan is a wreck. It is impossible to make it meet the
     // leadtime constraints
     return false;
@@ -141,7 +141,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
     matnext.setStart(Date::infinitePast);
     matnext.setEnd(Date::infiniteFuture);
 
-    // Loop through all flowplans
+    // Loop through all flowplans  // xxx @todo need some kind of coordination run here!!! see test alternate_flow_1
     for (OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
         g!=opplan->endFlowPlans(); ++g)
       if (g->getFlow()->isConsumer())
@@ -267,7 +267,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
       && isPlannedEarly
       && matnext.getStart() != Date::infiniteFuture 
       && matnext.getStart() != Date::infinitePast
-      && isCapacityConstrained())
+      && (data.constrainedPlanning && isCapacityConstrained()))
     {
       // The operationplan was moved early (because of a resource constraint)
       // and we can't properly trust the reply date in such cases...
@@ -305,7 +305,8 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
 (OperationPlan* opplan, SolverMRP::SolverMRPdata& data, bool extra)
 {
   // No lead time constraints
-  if (!isFenceConstrained() && !isLeadtimeConstrained()) return true;
+  if (!data.constrainedPlanning || (!isFenceConstrained() && !isLeadtimeConstrained())) 
+    return true;
 
   // Compute offset from the current date: A fence problem uses the release
   // fence window, while a leadtimeconstrained constraint has an offset of 0.
@@ -650,6 +651,10 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     }
   }
 
+  // Control the planning mode
+  bool originalPlanningMode = data->constrainedPlanning;
+  data->constrainedPlanning = true;
+
   // Try all alternates:
   // - First, all alternates that are fully effective in the order of priority.
   // - Next, the alternates beyond their effectivity date.
@@ -659,6 +664,8 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   bool effectiveOnly = true;
   Date a_date = Date::infiniteFuture;
   Date ask_date;
+  Operation *firstAlternate = NULL;
+  double firstFlowPer;
   while (a_qty > 0)
   {
     // Evaluate all alternates
@@ -709,14 +716,25 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         if (f && f->getQuantity() > 0.0)
           sub_flow_qty_per = f->getQuantity();
         else if (!top_flow_exists)
+        {
           // Neither the top nor the sub operation have a flow in the buffer,
           // we're in trouble...
+          // Restore the planning mode
+          data->constrainedPlanning = originalPlanningMode;
           throw DataException("Invalid producing operation '" + oper->getName()
               + "' for buffer '" + buf->getName() + "'");
+        }
       }
       else
         // Default value is 1.0, if no matching flow is required
         sub_flow_qty_per = 1.0;
+
+      // Remember the first alternate
+      if (!firstAlternate)
+      {
+        firstAlternate = *altIter;
+        firstFlowPer = sub_flow_qty_per + top_flow_qty_per;
+      }
 
       // Create the top operationplan.
       // Note that both the top- and the sub-operation can have a flow in the
@@ -752,6 +770,8 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         catch (...)
         {
           data->getSolver()->setLogLevel(loglevel);
+          // Restore the planning mode
+          data->constrainedPlanning = originalPlanningMode;
           throw;
         }
         data->getSolver()->setLogLevel(loglevel);
@@ -914,11 +934,50 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
   } // End while loop until the a_qty > 0
 
+
+  // Unconstrained plan: if nothing was planned, plan unconstrained on the first alternate
+  if (!originalPlanningMode && fabs(origQqty - a_qty) < ROUNDING_ERROR && firstAlternate)
+  {
+    // Switch to unconstrained planning 
+    data->constrainedPlanning = false;
+    // Message
+    if (loglevel)
+      logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
+        << "' plans unconstrained on alternate '" << firstAlternate << "' " << search << endl;
+
+    // Create the top operationplan.
+    // Note that both the top- and the sub-operation can have a flow in the
+    // requested buffer
+    CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
+        oper, a_qty, Date::infinitePast, origQDate,
+        d, prev_owner_opplan, false
+        );
+    if (!prev_owner_opplan) data->add(a);
+
+    // Recreate the ask
+    data->state->q_qty = a_qty / firstFlowPer;
+    data->state->q_date = origQDate;
+    data->state->curDemand = const_cast<Demand*>(d);
+    data->state->curDemand = NULL;
+    data->state->curOwnerOpplan = a->getOperationPlan();
+    data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
+
+    // Create a sub operationplan and solve constraints
+    firstAlternate->solve(*this,v);
+
+    // Fully planned
+    a_qty = 0.0;
+    data->state->a_date = origQDate;
+  }
+
   // Set up the reply
   data->state->a_qty = origQqty - a_qty; // a_qty is the unplanned quantity
   data->state->a_date = a_date;
   assert(data->state->a_qty >= 0);
   assert(data->state->a_date >= data->state->q_date);
+
+  // Restore the planning mode
+  data->constrainedPlanning = originalPlanningMode;
 
   // Increment the cost
   if (data->state->a_qty > 0.0)

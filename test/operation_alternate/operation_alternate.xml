@@ -135,12 +135,15 @@
 	
   <!--
     Case 2: minimum cost choice.
+    TODO
   -->
   <!--
     Case 3: minimum penalty choice.
+    TODO
   -->
   <!--
     Case 4: minimum cost+penalty choice.
+    TODO
   -->
     
 <?python
@@ -149,15 +152,10 @@ sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2)
 sol.solve()
 frepple.saveplan("output.1.xml")
 
-print "CREATING AN UNCONSTRAINED PLAN WITHOUT ALTERNATE SEARCH"
-sol.plantype = 3
-sol.solve()
-frepple.saveplan("output.2.xml")
-
-print "CREATING AN UNCONSTRAINED PLAN WITH ALTERNATE SEARCH"
+print "CREATING AN UNCONSTRAINED PLAN"
 sol.plantype = 2
 sol.solve()
-frepple.saveplan("output.3.xml")
+frepple.saveplan("output.2.xml")
 ?>
 
 </plan>

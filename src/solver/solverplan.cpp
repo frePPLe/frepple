@@ -88,7 +88,6 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
     logger << "Start solving cluster " << cluster << " at " << Date::now() << endl;
 
   // Solve the planning problem
-  short oldConstraints = Solver->getConstraints();
   try
   {
     // Sort the demands of this problem.
@@ -96,11 +95,8 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
     // and STL implementations.
     stable_sort(demands->begin(), demands->end(), demand_comparison);
 
-    // For unconstrained plan without alternate search
-    if (Solver->getPlanType() == 3) Solver->setConstraints(0);
-
     // Loop through the list of all demands in this planning problem
-    pass = 1; // First pass
+    constrainedPlanning = (Solver->getPlanType() == 1);
     for (deque<Demand*>::const_iterator i = demands->begin();
         i != demands->end(); ++i)
     {
@@ -133,51 +129,6 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
       }
     }
 
-    // Second plan round for the unconstrained plan that searches alternates: 
-    // plan the demand that can't be met on time in an incremental layer.
-    if (Solver->getPlanType() == 2 && Solver->getConstraints())
-    {
-      // Switch off all constraints
-      pass = 2; // Second pass
-      Solver->setConstraints(0);
-
-      // Loop over all demands
-      for (deque<Demand*>::const_iterator i = demands->begin();
-          i != demands->end(); ++i)
-      {
-        // Check whether the demand is already planned in full
-        if ((*i)->getPlannedQuantity() > (*i)->getQuantity() - ROUNDING_ERROR) 
-          continue;
-        Command* topcommand = getLastCommand();
-        // Plan the demand
-        try
-        {
-          State* mystate = state;
-          push();
-          try {(*i)->solve(*Solver,this);}
-          catch (...)
-          {
-            while (state > mystate) pop();
-            throw;
-          }
-          while (state > mystate) pop();
-        }
-        catch (...)
-        {
-          // Error message
-          logger << "Error: Caught an exception while solving demand '"
-            << (*i)->getName() << "':" << endl;
-          try {throw;}
-          catch (bad_exception&) {logger << "  bad exception" << endl;}
-          catch (exception& e) {logger << "  " << e.what() << endl;}
-          catch (...) {logger << "  Unknown type" << endl;}
-
-          // Cleaning up
-          undo(topcommand);
-        }
-      }
-    }
-
     // Clean the list of demands of this cluster
     demands->clear();
   }
@@ -204,9 +155,6 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
     // Clean the list of demands of this cluster
     demands->clear();
   }
-      
-  // Restore the old constraints
-  Solver->setConstraints(oldConstraints);
 
   // Message
   if (Solver->getLogLevel()>0)

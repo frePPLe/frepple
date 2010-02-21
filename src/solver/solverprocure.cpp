@@ -117,12 +117,15 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     latest_next = earliest_next + b->getMaximumInterval();
   if (earliest_next && b->getMinimumInterval())
     earliest_next += b->getMinimumInterval();
-  if (data->getSolver()->isLeadtimeConstrained()
-    && earliest_next < Plan::instance().getCurrent() + b->getLeadtime())
-    earliest_next = Plan::instance().getCurrent() + b->getLeadtime();
-  if (data->getSolver()->isFenceConstrained()
-    && earliest_next < Plan::instance().getCurrent() + b->getFence())
-    earliest_next = Plan::instance().getCurrent() + b->getFence();
+  if (data->constrainedPlanning)
+  {
+    if (data->getSolver()->isLeadtimeConstrained()
+      && earliest_next < Plan::instance().getCurrent() + b->getLeadtime())
+      earliest_next = Plan::instance().getCurrent() + b->getLeadtime();
+    if (data->getSolver()->isFenceConstrained()
+      && earliest_next < Plan::instance().getCurrent() + b->getFence())
+      earliest_next = Plan::instance().getCurrent() + b->getFence();
+  }
 
   // Loop through all flowplans
   Date current_date;
@@ -190,7 +193,8 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         && current_date >= data->state->q_date
         && b->getMinimumInterval()
         && data->state->a_date > earliest_next
-        && data->getSolver()->isMaterialConstrained())
+        && data->getSolver()->isMaterialConstrained()
+        && data->constrainedPlanning)
           // The inventory goes negative here and we can't procure more
           // material because of the minimum interval...
           data->state->a_date = earliest_next;
@@ -220,7 +224,8 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       if (current_inventory < -ROUNDING_ERROR
         && data->state->a_date > earliest_next + b->getMinimumInterval()
         && earliest_next + b->getMinimumInterval() > data->state->q_date
-        && data->getSolver()->isMaterialConstrained())
+        && data->getSolver()->isMaterialConstrained()
+        && data->constrainedPlanning)
           // Resizing didn't work, and we still have shortage
           data->state->a_date = earliest_next + b->getMinimumInterval();
     }
@@ -294,9 +299,9 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   }
 
   // Create the answer
-  if (data->getSolver()->isFenceConstrained()
+  if (data->constrainedPlanning && (data->getSolver()->isFenceConstrained()
     || data->getSolver()->isLeadtimeConstrained()
-    || data->getSolver()->isMaterialConstrained())
+    || data->getSolver()->isMaterialConstrained()))
   {
     // Check if the inventory drops below zero somewhere
     double shortage = 0;
@@ -316,14 +321,17 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       // Nothing to promise...
       if (data->state->a_qty < 0) data->state->a_qty = 0;
       // Check the reply date
-      if (data->getSolver()->isFenceConstrained()
-        && data->state->q_date < Plan::instance().getCurrent() + b->getFence()
-        && data->state->a_date > Plan::instance().getCurrent() + b->getFence())
-        data->state->a_date = Plan::instance().getCurrent() + b->getFence();
-      if (data->getSolver()->isLeadtimeConstrained()
-        && data->state->q_date < Plan::instance().getCurrent() + b->getLeadtime()
-        && data->state->a_date > Plan::instance().getCurrent() + b->getLeadtime())
-        data->state->a_date = Plan::instance().getCurrent() + b->getLeadtime();
+      if (data->constrainedPlanning)
+      {
+        if (data->getSolver()->isFenceConstrained()
+          && data->state->q_date < Plan::instance().getCurrent() + b->getFence()
+          && data->state->a_date > Plan::instance().getCurrent() + b->getFence())
+          data->state->a_date = Plan::instance().getCurrent() + b->getFence();
+        if (data->getSolver()->isLeadtimeConstrained()
+          && data->state->q_date < Plan::instance().getCurrent() + b->getLeadtime()
+          && data->state->a_date > Plan::instance().getCurrent() + b->getLeadtime())
+          data->state->a_date = Plan::instance().getCurrent() + b->getLeadtime();
+      }
     }
     else
       // Answer the full quantity

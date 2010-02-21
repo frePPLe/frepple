@@ -539,8 +539,7 @@ class SolverMRP : public Solver
 
         /** Constructor. */
         SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
-          : sol(s), cluster(c), demands(d), 
-          constraints(s ? s->getConstraints() : 0), pass(1), 
+          : sol(s), cluster(c), demands(d), constrainedPlanning(true), 
           state(statestack), prevstate(statestack-1) {}
 
         /** Verbose mode is inherited from the solver. */
@@ -611,19 +610,9 @@ class SolverMRP : public Solver
 
         /** Stack of solver status information. */
         State statestack[MAXSTATES];
-
-        /** Copy the constraints on the solver.<br>
-          * A local copy is required since we dynamically change it in the 
-          * solver threads.
-          */
-        short constraints;
         
-        /** Planning phase.<br>
-          * This is used for the unconstrained plan: we first plan in 
-          * constrained mode, and next run a second unconstrained incremental 
-          * plan. 
-          */
-        short pass;
+        /** True when planning in constrained mode. */
+        bool constrainedPlanning;
 
       public:
         /** Pointer to the current solver status. */

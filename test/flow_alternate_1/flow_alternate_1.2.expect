@@ -1,28 +1,43 @@
 BUFFER	component A	1971-01-01T00:00:00	1	1
-BUFFER	component A	2008-12-24T00:00:00	79	80
-BUFFER	component A	2008-12-24T00:00:00	-10	70
+BUFFER	component A	2008-12-24T00:00:00	70	71
+BUFFER	component A	2008-12-24T00:00:00	-1	70
+BUFFER	component A	2008-12-27T00:00:00	-2	68
+BUFFER	component A	2008-12-29T00:00:00	-5	63
 BUFFER	component B	1971-01-01T00:00:00	4	4
+BUFFER	component B	2008-12-25T00:00:00	-4	0
 BUFFER	component C	1971-01-01T00:00:00	5	5
-BUFFER	component C	2008-12-24T00:00:00	75	80
-BUFFER	component C	2008-12-24T00:00:00	-10	70
+BUFFER	component C	2008-12-24T00:00:00	66	71
+BUFFER	component C	2008-12-24T00:00:00	-1	70
+BUFFER	component C	2008-12-25T00:00:00	-2	68
+BUFFER	component C	2008-12-27T00:00:00	-2	66
+BUFFER	component C	2008-12-29T00:00:00	-5	61
 BUFFER	component F	1971-01-01T00:00:00	5	5
-BUFFER	component F	2008-12-24T00:00:00	75	80
-BUFFER	component F	2008-12-24T00:00:00	-10	70
+BUFFER	component F	2008-12-24T00:00:00	-1	4
+BUFFER	component F	2008-12-25T00:00:00	-2	2
+BUFFER	component F	2008-12-27T00:00:00	-2	0
 BUFFER	component G	1971-01-01T00:00:00	5	5
-BUFFER	product	2009-01-04T00:00:00	10	10
+BUFFER	component G	2008-12-29T00:00:00	-5	0
+BUFFER	product	2009-01-04T00:00:00	5	5
+BUFFER	product	2009-01-04T00:00:00	2	7
+BUFFER	product	2009-01-04T00:00:00	2	9
+BUFFER	product	2009-01-04T00:00:00	1	10
 BUFFER	product	2009-01-04T00:00:00	-10	0
 DEMAND	order 1	2009-01-04T00:00:00	10
-OPERATION	Procure for buffer 'component A'	2008-12-17T00:00:00	2008-12-24T00:00:00	79
-OPERATION	Procure for buffer 'component C'	2008-12-17T00:00:00	2008-12-24T00:00:00	75
-OPERATION	Procure for buffer 'component F'	2008-12-17T00:00:00	2008-12-24T00:00:00	75
-OPERATION	assembly	2008-12-24T00:00:00	2009-01-04T00:00:00	10
+OPERATION	Procure for buffer 'component A'	2008-12-17T00:00:00	2008-12-24T00:00:00	70
+OPERATION	Procure for buffer 'component C'	2008-12-17T00:00:00	2008-12-24T00:00:00	66
+OPERATION	assembly	2008-12-24T00:00:00	2009-01-04T00:00:00	1
+OPERATION	assembly	2008-12-25T00:00:00	2009-01-04T00:00:00	2
+OPERATION	assembly	2008-12-27T00:00:00	2009-01-04T00:00:00	2
+OPERATION	assembly	2008-12-29T00:00:00	2009-01-04T00:00:00	5
 OPERATION	deliver product	2009-01-04T00:00:00	2009-01-04T00:00:00	10
 PROBLEM	material excess	Buffer 'component A' has material excess of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'component B' has material excess of 4	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'component B' has material excess of 4	1971-01-01T00:00:00 / 2008-12-25T00:00:00
 PROBLEM	material excess	Buffer 'component C' has material excess of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'component F' has material excess of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'component G' has material excess of 5	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Job '24' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
-PROBLEM	before current	Job '25' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
+PROBLEM	material excess	Buffer 'component F' has material excess of 5	1971-01-01T00:00:00 / 2008-12-27T00:00:00
+PROBLEM	material excess	Buffer 'component G' has material excess of 5	1971-01-01T00:00:00 / 2008-12-29T00:00:00
 PROBLEM	before current	Job '26' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
+PROBLEM	before current	Job '28' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
 PROBLEM	before current	Job '23' planned in the past	2008-12-24T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Job '24' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Job '25' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Job '27' planned in the past	2008-12-29T00:00:00 / 2009-01-01T00:00:00

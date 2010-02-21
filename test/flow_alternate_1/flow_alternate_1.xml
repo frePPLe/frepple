@@ -94,14 +94,14 @@
           <flow xsi:type="flow_start">
             <buffer name="component D" />
             <quantity>-1</quantity>
-            <!--<effective_end>2009-02-01T00:00:00</effective_end>-->
+            <!-- TODO <effective_end>2009-02-01T00:00:00</effective_end>-->
             <priority>2</priority>
             <alternate>group2</alternate>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="component E" />
             <quantity>-1</quantity>
-            <!--<effective_start>2009-01-10T00:00:00</effective_start>-->
+            <!-- TODO <effective_start>2009-01-10T00:00:00</effective_start>-->
             <priority>3</priority>
             <alternate>group2</alternate>
           </flow>
@@ -109,12 +109,12 @@
             <buffer name="component F" />
             <quantity>-1</quantity>
             <priority>1</priority>
-            <!--<effective_end>2009-02-01T00:00:00</effective_end>-->
+            <!-- TODO <effective_end>2009-02-01T00:00:00</effective_end>-->
             <name>group3</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="component G" />
-            <!--<effective_start>2009-02-01T00:00:00</effective_start>-->
+            <!-- TODO <effective_start>2009-02-01T00:00:00</effective_start>-->
             <quantity>-1</quantity>
             <priority>2</priority>
             <alternate>group3</alternate>
@@ -163,14 +163,10 @@ print "Creating constrained plan"
 sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2)
 sol.solve()
 frepple.saveplan("output.1.xml")
-print "Creating unconstrained plan without alterate search"
-sol.plantype = 3
-sol.solve()
-frepple.saveplan("output.2.xml")
-print "Creating unconstrained plan with alternate search"
+print "Creating unconstrained plan"
 sol.plantype = 2
 sol.solve()
-frepple.saveplan("output.3.xml")
+frepple.saveplan("output.2.xml")
 ?>
 
 </plan>

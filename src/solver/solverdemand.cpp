@@ -36,9 +36,8 @@ namespace frepple
 DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 {
   // Call the user exit
-  if (userexit_demand) userexit_demand.call(l);
-
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  if (userexit_demand) userexit_demand.call(l);
   unsigned int loglevel = data->getSolver()->getLogLevel();
 
   // Note: This solver method does not push/pop states on the stack.
@@ -49,7 +48,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   {
     logger << "Planning demand '" << l->getName() << "' (" << l->getPriority()
     << ", " << l->getDue() << ", " << l->getQuantity() << ")";
-    if (data->pass == 2 || !data->getSolver()->isConstrained()) 
+    if (!data->constrainedPlanning || !data->getSolver()->isConstrained()) 
       logger << " in unconstrained mode";
     logger << endl;
   }
@@ -57,8 +56,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   // Unattach previous delivery operationplans.
   // Locked operationplans will NOT be deleted, and a part of the demand can
   // still remain planned.
-  if (data->pass == 1)
-    const_cast<Demand*>(l)->deleteOperationPlans(false, data);
+  const_cast<Demand*>(l)->deleteOperationPlans(false, data);
 
   // Determine the quantity to be planned and the date for the planning loop
   double plan_qty = l->getQuantity() - l->getPlannedQuantity();
@@ -204,13 +202,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   // exceeding the maximum delivery delay.
   while (plan_qty > ROUNDING_ERROR
     && ((data->getSolver()->getPlanType() != 2 && plan_date < l->getDue() + l->getMaxLateness()) 
-        || (data->getSolver()->getPlanType() == 2 && data->pass == 2 && plan_date < l->getDue() + l->getMaxLateness()) 
-        || (data->getSolver()->getPlanType() == 2 && data->pass == 1 && plan_date == l->getDue())
+        || (data->getSolver()->getPlanType() == 2 && !data->constrainedPlanning && plan_date < l->getDue() + l->getMaxLateness()) 
+        || (data->getSolver()->getPlanType() == 2 && data->constrainedPlanning && plan_date == l->getDue())
     ));
 
   // Accept the best possible answer.
   // We may have skipped it in the previous loop, awaiting a still better answer
-  if (best_a_qty > 0.0 && data->pass == 1)
+  if (best_a_qty > 0.0 && data->constrainedPlanning)
   {
     if (loglevel>=2) logger << "Demand '" << l << "' accepts a best answer." << endl;
     data->getSolver()->setLogLevel(0);

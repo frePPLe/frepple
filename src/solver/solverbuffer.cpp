@@ -227,7 +227,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   }
 
   // Final evaluation of the replenishment
-  if (data->getSolver()->isConstrained())
+  if (data->constrainedPlanning && data->getSolver()->isConstrained())
   {
     // Use the constrained planning result
     data->state->a_qty = requested_qty - shortage;

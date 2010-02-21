@@ -86,7 +86,11 @@ void SolverMRP::solve(const Load* l, void* v)
   // 2) Sort the list
   thealternates.sort(sortLoad);  // @todo cpu-intensive - better is to maintain the list in the correct order
 
-  // 3) Loop through all alternates or till we find a non-zero 
+  // 3) Control the planning mode
+  bool originalPlanningMode = data->constrainedPlanning;
+  data->constrainedPlanning = true;
+
+  // 4) Loop through all alternates or till we find a non-zero 
   // reply (priority search)
   Date min_next_date(Date::infiniteFuture);
   LoadPlan *lplan = data->state->q_loadplan;
@@ -102,13 +106,13 @@ void SolverMRP::solve(const Load* l, void* v)
     const Load *curload = *i;
     data->state->q_loadplan = lplan; // because q_loadplan can change!
 
-    // 3a) Switch to this load
+    // 4a) Switch to this load
     if (lplan->getLoad() != curload) lplan->setLoad(curload);
     lplan->getOperationPlan()->restore(originalOpplan);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
 
-    // 3b) Ask the resource
+    // 4b) Ask the resource
     Command* topcommand = data->getLastCommand();
     if (search == PRIORITY) 
       curload->getResource()->solve(*this,data);
@@ -119,18 +123,24 @@ void SolverMRP::solve(const Load* l, void* v)
       catch (...)
       {
         data->getSolver()->setLogLevel(loglevel);
+        // Restore the planning mode
+        data->constrainedPlanning = originalPlanningMode;
         throw;
       }
       data->getSolver()->setLogLevel(loglevel);
     }
 
-    // 3c) Evaluate the result
+    // 4c) Evaluate the result
     if (data->state->a_qty > ROUNDING_ERROR 
       && lplan->getOperationPlan()->getQuantity() > 0) 
     {
       if (search == PRIORITY)
+      {
         // Priority search: accept any non-zero reply
+        // Restore the planning mode
+        data->constrainedPlanning = originalPlanningMode;
         return;
+      }
       else
       {
         // Other search modes: evaluate all
@@ -150,6 +160,8 @@ void SolverMRP::solve(const Load* l, void* v)
             logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
               << l->getOperation()->getName() << "' chooses alternate '"
               << curload->getResource() << "' " << search << endl;
+          // Restore the planning mode
+          data->constrainedPlanning = originalPlanningMode;
           return;
         }
         data->state->a_cost = beforeCost;
@@ -186,10 +198,10 @@ void SolverMRP::solve(const Load* l, void* v)
         << curload->getResource() << "': not available before " 
         << data->state->a_date << endl;
 
-    // 3d) Undo the plan on the alternate
+    // 4d) Undo the plan on the alternate
     data->undo(topcommand);
 
-    // 3e) Prepare for the next alternate
+    // 4e) Prepare for the next alternate
     if (data->state->a_date < min_next_date)
       min_next_date = data->state->a_date;
     if (++i != thealternates.end() && loglevel>1 && search == PRIORITY)
@@ -198,8 +210,16 @@ void SolverMRP::solve(const Load* l, void* v)
             << (*i)->getResource()->getName() << "'" << endl;
   }
 
-  // 4) Finally replan on the best alternate
-  if (search != PRIORITY && bestAlternateSelection)
+  // 5) Unconstrained plan: plan on the first alternate
+  if (!originalPlanningMode && !(search != PRIORITY && bestAlternateSelection))
+  {
+    // Switch to unconstrained planning 
+    data->constrainedPlanning = false;
+    bestAlternateSelection = *(thealternates.begin());
+  }
+
+  // 6) Finally replan on the best alternate
+  if (!originalPlanningMode || (search != PRIORITY && bestAlternateSelection))
   {
     // Message
     if (loglevel)
@@ -216,13 +236,19 @@ void SolverMRP::solve(const Load* l, void* v)
     lplan->getOperationPlan()->restore(originalOpplan);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
-    bestAlternateSelection->getResource()->solve(*this,data);
+    //xxxif (originalPlanningMode)
+      bestAlternateSelection->getResource()->solve(*this,data);
+
+    // Restore the planning mode
+    data->constrainedPlanning = originalPlanningMode;
     return;
   }
 
-  // 5) No alternate gave a good result
+  // 7) No alternate gave a good result
   data->state->a_date = min_next_date;
   data->state->a_qty = 0;
+  // Restore the planning mode
+  data->constrainedPlanning = originalPlanningMode;
   if (lplan->getOperationPlan()->getQuantity() != 0.0)
     // In case of a zero reply, we resize the operationplan to 0 right away.
     // This is required to make sure that the buffer inventory profile also

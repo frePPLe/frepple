@@ -42,9 +42,31 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(res->getLevel()) << "   Resource '" << res->getName()
-      << "' is asked: " << (-data->state->q_qty) << "  "
-      << data->state->q_operationplan->getDates() << endl;
+  {
+    if (!data->constrainedPlanning || !data->getSolver()->isConstrained()) 
+      logger << indent(res->getLevel()) << "   Resource '" << res->getName()
+        << "' is asked in unconstrained mode: "<< (-data->state->q_qty) << "  "
+        << data->state->q_operationplan->getDates() << endl;
+    else
+      logger << indent(res->getLevel()) << "   Resource '" << res->getName()
+        << "' is asked: "<< (-data->state->q_qty) << "  "
+        << data->state->q_operationplan->getDates() << endl;
+  }
+
+  // Unconstrained plan
+  if (!data->constrainedPlanning)
+  {
+    // Reply whatever is requested, regardless of date and quantity.
+    data->state->a_qty = data->state->q_qty;
+    data->state->a_date = data->state->q_date;
+    data->state->a_cost += data->state->a_qty * res->getCost() // @todo also during unavailable time the cost is incremented
+      * data->state->q_operationplan->getDates().getDuration() / 3600.0;
+
+    // Message
+    if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
+      logger << indent(res->getLevel()) << "  Resource '" << res << "' answers: "
+      << (-data->state->a_qty) << "  " << data->state->a_date << endl;
+  }
 
   // Find the setup operationplan
   OperationPlan *setupOpplan = NULL;
@@ -93,7 +115,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
       if (isLeadtimeConstrained() || isFenceConstrained())
         // Note that the check function can update the answered date and quantity
-         if (!checkOperationLeadtime(data->state->q_operationplan,*data,false))
+         if (data->constrainedPlanning && !checkOperationLeadtime(data->state->q_operationplan,*data,false))
          {
            // Operationplan violates the lead time and/or fence constraint
            noRestore = true;
@@ -265,7 +287,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           data->state->q_operationplan->setEnd(curdate);
 
           // Check the leadtime constraints after the move
-          if (isLeadtimeConstrained() || isFenceConstrained())
+          if (data->constrainedPlanning && (isLeadtimeConstrained() || isFenceConstrained()))
             // Note that the check function can update the answered date
             // and quantity
             checkOperationLeadtime(data->state->q_operationplan,*data,false);
@@ -282,7 +304,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   // past.
   // Or, the solver may be forced to produce a late reply.
   // In these cases we need to search for capacity at later dates.
-  if (data->state->a_qty == 0.0 || data->state->forceLate)
+  if (data->constrainedPlanning && (data->state->a_qty == 0.0 || data->state->forceLate))
   {
     // Put the operationplan back at its original end date
     if (!noRestore)
@@ -377,6 +399,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
     // Create a zero quantity reply
     data->state->a_qty = 0.0;
+  }
+
+  // Force ok in unconstrained plan
+  if (!data->constrainedPlanning && data->state->a_qty == 0.0)
+  {
+    data->state->q_operationplan->restore(currentOpplan);
+    data->state->a_date = data->state->q_date;
+    data->state->a_qty = orig_q_qty;
   }
 
   // Increment the cost  @todo also during unavailable time the cost is incremented

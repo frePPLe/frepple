@@ -37,7 +37,7 @@ bool sortFlow(const Flow* lhs, const Flow* rhs)
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
 {
   // Note: This method is only called for consuming flows and for the leading
   // flow of an alternate group. See SolverMRP::checkOperation
@@ -61,7 +61,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
     // 2) Sort the list
     thealternates.sort(sortFlow);
 
-    // 3) Loop through the alternates till we find a non-zero reply
+    // 3) Control the planning mode
+    bool originalPlanningMode = data->constrainedPlanning;
+    data->constrainedPlanning = true;
+    const Flow *firstAlternate = NULL;
+    double firstQuantity;
+
+    // 4) Loop through the alternates till we find a non-zero reply
     Date min_next_date(Date::infiniteFuture);
     double ask_qty;
     FlowPlan *flplan = data->state->q_flowplan;
@@ -71,11 +77,11 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
       const Flow *curflow = *i;
       data->state->q_flowplan = flplan; // because q_flowplan can change
 
-      // 3a) Switch to this flow
+      // 4a) Switch to this flow
       if (data->state->q_flowplan->getFlow() != curflow)
         data->state->q_flowplan->setFlow(curflow);
 
-      // 3b) Call the Python user exit if there is one
+      // 4b) Call the Python user exit if there is one
       if (userexit_flow)
       {
         PythonObject result = userexit_flow.call(data->state->q_flowplan);
@@ -95,13 +101,20 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
         }
       }
 
-      // 3c) Ask the buffer
+      // Remember the first alternate
+      if (!firstAlternate)
+      {
+        firstAlternate = *i;
+        firstQuantity = data->state->q_flowplan->getQuantity();
+      }
+
+      // 4c) Ask the buffer
       data->state->q_qty = ask_qty = - data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
       Command* topcommand = data->getLastCommand();
       curflow->getBuffer()->solve(*this,data);
 
-      // 3d) A positive reply: exit the loop
+      // 4d) A positive reply: exit the loop
       if (data->state->a_qty > ROUNDING_ERROR) 
       {
         // Update the opplan, which is required to (1) update the flowplans
@@ -111,13 +124,17 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
           flplan->setQuantity(-data->state->a_qty, true);
           data->state->a_qty = -flplan->getQuantity();
         }
-        if (data->state->a_qty > ROUNDING_ERROR) return;
+        if (data->state->a_qty > ROUNDING_ERROR)
+        {
+          data->constrainedPlanning = originalPlanningMode;
+          return;
+        }
       }
 
-      // 3e) Undo the plan on the alternate
+      // 4e) Undo the plan on the alternate
       data->undo(topcommand);
 
-      // 3f) Prepare for the next alternate
+      // 4f) Prepare for the next alternate
       if (data->state->a_date < min_next_date)
         min_next_date = data->state->a_date;
       if (++i != thealternates.end() && data->getSolver()->getLogLevel()>1)
@@ -126,13 +143,41 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
               << (*i)->getBuffer()->getName() << "'" << endl;
     }
 
-    // 4) No alternate gave a good result
-    data->state->a_date = min_next_date;
-    data->state->a_qty = 0;
-    if (data->getSolver()->getLogLevel()>1)
-      logger << indent(fl->getOperation()->getLevel()) <<
-        "   Alternate flow doesn't find supply on any alternate : "
-        << data->state->a_qty << "  " << data->state->a_date << endl;
+    // 5) No reply found, all alternates are infeasible
+    if (!originalPlanningMode)
+    {
+      assert(firstAlternate);
+      // Unconstrained plan: Plan on the primary alternate
+      // Switch to this flow
+      if (flplan->getFlow() != firstAlternate)
+        flplan->setFlow(firstAlternate);
+      // Message
+      if (data->getSolver()->getLogLevel()>1)
+        logger << indent(fl->getOperation()->getLevel()) 
+          << "   Alternate flow plans unconstrained on alternate '"
+          << firstAlternate->getBuffer()->getName() << "'" << endl;
+      // Plan unconstrained
+      data->constrainedPlanning = false;
+      data->state->q_flowplan = flplan; // because q_flowplan can change
+      flplan->setQuantity(firstQuantity, true);
+      data->state->q_qty = ask_qty = - flplan->getQuantity();
+      data->state->q_date = flplan->getDate();
+      Command* topcommand = data->getLastCommand();
+      firstAlternate->getBuffer()->solve(*this,data);
+      data->state->a_qty = -flplan->getQuantity();
+      // Restore original planning mode
+      data->constrainedPlanning = originalPlanningMode;
+    }
+    else
+    {
+      // Constrained plan: Return 0
+      data->state->a_date = min_next_date;
+      data->state->a_qty = 0;
+      if (data->getSolver()->getLogLevel()>1)
+        logger << indent(fl->getOperation()->getLevel()) <<
+          "   Alternate flow doesn't find supply on any alternate : "
+          << data->state->a_qty << "  " << data->state->a_date << endl;
+    }
   }
   else
   {

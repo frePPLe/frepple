@@ -41,7 +41,7 @@ and create a plan in frePPLe...<br/>
 and export results into the database<br/>
 <br/>
 <b>Plan type</b>:<br/>{% endblocktrans %}
-<input type="radio" name="plantype" {% ifequal  request.session.plantype '1' %}checked="true"{% endifequal %} value="1"/>
+<input type="radio" name="plantype" {% ifnotequal request.session.plantype '2' %}checked="true"{% endifnotequal %} value="1"/>
 {% blocktrans %}<b>Constrained plan</b><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan respects the constraints enabled below.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In case of shortages the demand is planned late or short.<br/>{% endblocktrans %}

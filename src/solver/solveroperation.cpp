@@ -894,7 +894,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Recreate the ask
       data->state->q_qty = a_qty / bestFlowPer;
       data->state->q_date = bestQDate;
-      data->state->curDemand = const_cast<Demand*>(d);
       data->state->curDemand = NULL;
       data->state->curOwnerOpplan = a->getOperationPlan();
       data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
@@ -957,13 +956,18 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     // Recreate the ask
     data->state->q_qty = a_qty / firstFlowPer;
     data->state->q_date = origQDate;
-    data->state->curDemand = const_cast<Demand*>(d);
     data->state->curDemand = NULL;
     data->state->curOwnerOpplan = a->getOperationPlan();
     data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
 
     // Create a sub operationplan and solve constraints
     firstAlternate->solve(*this,v);
+
+    // Expand flows of the top operationplan.
+    data->state->q_qty = data->state->a_qty;
+    data->state->q_date = origQDate;
+    data->state->curOwnerOpplan->createFlowLoads();
+    data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
 
     // Fully planned
     a_qty = 0.0;

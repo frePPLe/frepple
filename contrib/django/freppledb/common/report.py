@@ -597,9 +597,7 @@ def _generate_csv(rep, qs, format, bucketlist, pref):
   elif pref.csvdelimiter == 'semicolon':
     writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
   else:
-    raise Http404('Unknown CSV delimiter')
-     
-  # @todo the result should be encoded to an encoding supported by the client. How can we query this from the request header?
+    raise Http404('Unknown CSV delimiter')    
   encoding = settings.DEFAULT_CHARSET
 
   # Write a header row

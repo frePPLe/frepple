@@ -1451,9 +1451,8 @@ class Operation : public HasName<Operation>,
     friend class Flow;
     friend class Load;
     friend class OperationPlan;
-    friend class OperationRouting;   // @todo reduce the number of friends
+    friend class OperationRouting;   
     friend class OperationAlternate; 
-    friend class OperationFixedTime; 
 
   protected:
     /** Constructor. Don't use it directly. */

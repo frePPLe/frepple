@@ -47,7 +47,7 @@ class DataLoadTest(TestCase):
 
   def test_input_calendar(self):
     response = self.client.get('/admin/input/calendar/')
-    self.assertContains(response, '3 calendars')
+    self.assertContains(response, '4 calendars')
 
   def test_input_demand(self):
     response = self.client.get('/admin/input/demand/')
@@ -101,7 +101,7 @@ class DataLoadTest(TestCase):
     finally:
       data.close()
     self.failUnlessEqual(
-      [(i.name, i.category) for i in Location.objects.all()],
+      [(i.name, i.category) for i in Location.objects.order_by('name')],
       [(u'factory 1',u''), (u'factory 2',u''), (u'Test Location 1',u'cat1'), (u'Test Location 2',u'')]
       )
 

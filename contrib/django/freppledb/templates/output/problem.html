@@ -4,6 +4,7 @@
 {% include "buffercontext.html" %}
 {% include "demandcontext.html" %}
 {% include "resourcecontext.html" %}
+{% include "operationcontext.html" %}
 {% endblock %}
 
 {% block data %}
@@ -14,7 +15,7 @@
 <td>{% ifequal i.entity 'material' %}{% superlink i.owner buffer %}{% else %} 
 {% ifequal i.entity 'capacity' %}{% superlink i.owner resource %}{% else %}
 {% ifequal i.entity 'demand' %}{% superlink i.owner demand %}{% else %}
-{{i.owner}} 
+{% superlink i.owner operation %}
 {% endifequal %} {% endifequal %}{% endifequal %}</td>
 <td>{{i.description}}</td>
 <td>{{i.startdate}}</td>

@@ -67,7 +67,9 @@ def exportProblems(cursor):
     (entity,name,owner,description,startdate,enddate,weight) \
     values(%s,%s,%s,%s,%s,%s,%s)",
     [(
-       i.entity, i.name, str(i.owner), i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
+       i.entity, i.name, 
+       isinstance(i.owner,frepple.operationplan) and str(i.owner.operation) or str(i.owner), 
+       i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
        round(i.weight,settings.DECIMAL_PLACES)
      ) for i in frepple.problems()
     ])

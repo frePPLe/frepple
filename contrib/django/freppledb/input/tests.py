@@ -126,52 +126,52 @@ class DataLoadTest(TestCase):
     # Verify original buckets
     self.failUnlessEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2009-01-01 00:00:00', '2009-02-01 00:00:00', 1),
-       ('2009-02-01 00:00:00', '2030-12-31 00:00:00', 0)
+      [('2008-01-01 00:00:00', '2009-02-01 00:00:00', 1),
+       ('2009-02-01 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # Create a new bucket - start date aligned with existing bucket
     calendar.setvalue(datetime(2009,2,1), datetime(2009,3,3), 12)
     self.failUnlessEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2009-01-01 00:00:00', '2009-02-01 00:00:00', 1),
+      [('2008-01-01 00:00:00', '2009-02-01 00:00:00', 1),
        ('2009-02-01 00:00:00', '2009-03-03 00:00:00', 12),
-       ('2009-03-03 00:00:00', '2030-12-31 00:00:00', 0)
+       ('2009-03-03 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # Create a new bucket - end date aligned with existing bucket
     calendar.setvalue(datetime(2009,2,10), datetime(2009,3,3), 100)
     self.failUnlessEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2009-01-01 00:00:00', '2009-02-01 00:00:00', 1),
+      [('2008-01-01 00:00:00', '2009-02-01 00:00:00', 1),
        ('2009-02-01 00:00:00', '2009-02-10 00:00:00', 12),
        ('2009-02-10 00:00:00', '2009-03-03 00:00:00', 100),
-       ('2009-03-03 00:00:00', '2030-12-31 00:00:00', 0)
+       ('2009-03-03 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # 2 buckets partially updates and one deleted
     calendar.setvalue(datetime(2009,1,10), datetime(2009,4,3), 3)
     self.failUnlessEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2009-01-01 00:00:00', '2009-01-10 00:00:00', 1),
+      [('2008-01-01 00:00:00', '2009-01-10 00:00:00', 1),
        ('2009-01-10 00:00:00', '2009-03-03 00:00:00', 3),
        ('2009-03-03 00:00:00', '2009-04-03 00:00:00', 3),
-       ('2009-04-03 00:00:00', '2030-12-31 00:00:00', 0)
+       ('2009-04-03 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # Create a new bucket - end date aligned with existing bucket
     calendar.setvalue(datetime(2009,2,10), datetime(2009,3,3), 4)
     self.failUnlessEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2009-01-01 00:00:00', '2009-01-10 00:00:00', 1),
+      [('2008-01-01 00:00:00', '2009-01-10 00:00:00', 1),
        ('2009-01-10 00:00:00', '2009-02-10 00:00:00', 3),
        ('2009-02-10 00:00:00', '2009-03-03 00:00:00', 4),
        ('2009-03-03 00:00:00', '2009-04-03 00:00:00', 3),
-       ('2009-04-03 00:00:00', '2030-12-31 00:00:00', 0)
+       ('2009-04-03 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # Completely override the value of an existing bucket
     calendar.setvalue(datetime(2009,3,3), datetime(2009,4,3), 5)
     self.failUnlessEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2009-01-01 00:00:00', '2009-01-10 00:00:00', 1),
+      [('2008-01-01 00:00:00', '2009-01-10 00:00:00', 1),
        ('2009-01-10 00:00:00', '2009-02-10 00:00:00', 3),
        ('2009-02-10 00:00:00', '2009-03-03 00:00:00', 4),
        ('2009-03-03 00:00:00', '2009-04-03 00:00:00', 5),
-       ('2009-04-03 00:00:00', '2030-12-31 00:00:00', 0)
+       ('2009-04-03 00:00:00', '2030-12-31 00:00:00', 2)
       ])

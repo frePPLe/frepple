@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-08 09:14+0100\n"
+"POT-Creation-Date: 2010-03-01 20:50+0100\n"
 "PO-Revision-Date: 2009-06-28 12:56+0100\n"
 "Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
@@ -36,42 +36,42 @@ msgstr ""
 "X-Poedit-SearchPath-0: \n"
 
 # Translation included with django
-#: settings.py:80
+#: settings.py:81
 msgid "Dutch"
 msgstr ""
 
 # Translation included with django
-#: settings.py:81
+#: settings.py:82
 msgid "English"
 msgstr ""
 
-#: settings.py:82
+#: settings.py:83
 msgid "Italian"
 msgstr ""
 
 # Translation included with django
-#: settings.py:83
+#: settings.py:84
 msgid "Traditional Chinese"
 msgstr ""
 
-#: common/fields.py:44 common/fields.py:80
+#: common/fields.py:46 common/fields.py:82
 msgid "seconds"
 msgstr ""
 
-#: common/fields.py:45 common/fields.py:81
+#: common/fields.py:47 common/fields.py:83
 #, fuzzy
 msgid "minutes"
 msgstr "項目"
 
-#: common/fields.py:46 common/fields.py:82
+#: common/fields.py:48 common/fields.py:84
 msgid "hours"
 msgstr ""
 
-#: common/fields.py:47 common/fields.py:83 templates/output/resource.xml:2
+#: common/fields.py:49 common/fields.py:85 templates/output/resource.xml:2
 msgid "days"
 msgstr ""
 
-#: common/fields.py:48 common/fields.py:84
+#: common/fields.py:50 common/fields.py:86
 #, fuzzy
 msgid "weeks"
 msgstr "週"
@@ -108,208 +108,220 @@ msgstr "資料表"
 msgid "List"
 msgstr "List"
 
-#: common/models.py:47 execute/models.py:33 execute/views.py:208
+#: common/models.py:48
+msgid "comma \",\""
+msgstr ""
+
+#: common/models.py:49
+msgid "semicolon \";\""
+msgstr ""
+
+#: common/models.py:51 execute/models.py:33 execute/views.py:231
 msgid "user"
 msgstr "使用者"
 
-#: common/models.py:48
+#: common/models.py:52
 msgid "buckets"
 msgstr "buckets"
 
-#: common/models.py:50 output/models.py:33 output/models.py:70
+#: common/models.py:54 output/models.py:35 output/models.py:74
 #: output/views/operation.py:156 output/views/pegging.py:61
-#: output/views/problem.py:54 output/views/resource.py:179
+#: output/views/problem.py:84 output/views/resource.py:183
 msgid "startdate"
 msgstr "開始日期"
 
-#: common/models.py:51 output/models.py:34 output/models.py:71
+#: common/models.py:55 output/models.py:36 output/models.py:75
 #: output/views/operation.py:160 output/views/pegging.py:64
-#: output/views/problem.py:58 output/views/resource.py:183
+#: output/views/problem.py:88 output/views/resource.py:187
 msgid "enddate"
 msgstr "結束日期"
 
-#: common/models.py:52 execute/models.py:30 execute/views.py:199
-#: input/models.py:46 input/views.py:335 input/views.py:361 input/views.py:430
+#: common/models.py:56 common/views.py:51
+msgid "CSV delimiter"
+msgstr ""
+
+#: common/models.py:58 execute/models.py:30 execute/views.py:222
+#: input/models.py:47 input/views.py:335 input/views.py:361 input/views.py:430
 #: input/views.py:479 input/views.py:523 input/views.py:576 input/views.py:645
 #: input/views.py:714 input/views.py:792 input/views.py:866 input/views.py:911
-#: input/views.py:980 input/views.py:1029 input/views.py:1078
+#: input/views.py:992 input/views.py:1041 input/views.py:1090
 msgid "last modified"
 msgstr "上次修改日期"
 
-#: common/models.py:73 common/views.py:145
+#: common/models.py:79 common/views.py:152
 msgid "day"
 msgstr "天"
 
-#: common/models.py:74
+#: common/models.py:80
 msgid "day start"
 msgstr "開始日期"
 
-#: common/models.py:75
+#: common/models.py:81
 msgid "day end"
 msgstr "結束日期"
 
-#: common/models.py:76 common/views.py:149
+#: common/models.py:82 common/views.py:156
 msgid "day of week"
 msgstr "周中的天"
 
-#: common/models.py:76
+#: common/models.py:82
 msgid "0 = sunday, 1 = monday, ..."
 msgstr "0 = 星期天, 1 = 星期一, ..."
 
-#: common/models.py:78 common/views.py:153
+#: common/models.py:84 common/views.py:160
 msgid "week"
 msgstr "週"
 
-#: common/models.py:79 common/views.py:173
+#: common/models.py:85 common/views.py:180
 msgid "week start"
 msgstr "開始週別"
 
-#: common/models.py:80
+#: common/models.py:86
 msgid "week end"
 msgstr "結束週別"
 
-#: common/models.py:82 common/views.py:157
+#: common/models.py:88 common/views.py:164
 msgid "month"
 msgstr "月"
 
-#: common/models.py:83 common/views.py:177 common/views.py:181
+#: common/models.py:89 common/views.py:184
 msgid "month start"
 msgstr "開始月份"
 
-#: common/models.py:84
+#: common/models.py:90
 msgid "month end"
 msgstr "結束月份"
 
-#: common/models.py:86 common/views.py:161
+#: common/models.py:92 common/views.py:168
 msgid "quarter"
 msgstr "季"
 
-#: common/models.py:87
+#: common/models.py:93 common/views.py:188
 msgid "quarter start"
 msgstr "開始季別"
 
-#: common/models.py:88
+#: common/models.py:94
 msgid "quarter end"
 msgstr "結束季別"
 
-#: common/models.py:90 common/views.py:165
+#: common/models.py:96 common/views.py:172
 msgid "year"
 msgstr "年"
 
-#: common/models.py:91 common/views.py:185
+#: common/models.py:97 common/views.py:192
 msgid "year start"
 msgstr "開始年份"
 
-#: common/models.py:92
+#: common/models.py:98
 msgid "year end"
 msgstr "結束年份"
 
-#: common/models.py:94 common/views.py:169
+#: common/models.py:100 common/views.py:176
 msgid "standard"
 msgstr "標準"
 
-#: common/models.py:95 common/views.py:189
+#: common/models.py:101 common/views.py:196
 msgid "standard start"
 msgstr "開始標準"
 
-#: common/models.py:96
+#: common/models.py:102
 msgid "standard end"
 msgstr "結束標準"
 
-#: common/models.py:101 common/models.py:102
+#: common/models.py:107 common/models.py:108
 msgid "dates"
 msgstr "日期"
 
-#: common/report.py:242
+#: common/report.py:245
 msgid "Invalid upload request"
 msgstr "無效的上傳請求"
 
-#: common/report.py:245
+#: common/report.py:248
 msgid "Not authorized"
 msgstr "未授權"
 
-#: common/report.py:250
+#: common/report.py:253
 #, python-format
 msgid ""
 "File upload aborted with errors: changed %(changed)d and added %(added)d "
 "records"
 msgstr ""
 
-#: common/report.py:255
+#: common/report.py:258
 #, fuzzy, python-format
 msgid ""
 "Uploaded file processed with warnings: changed %(changed)d and added %(added)"
 "d records"
 msgstr "上傳檔案有警告訊息"
 
-#: common/report.py:260
+#: common/report.py:263
 #, python-format
 msgid ""
 "Uploaded data successfully: changed %(changed)d and added %(added)d records"
 msgstr ""
 
-#: common/report.py:267
+#: common/report.py:270
 msgid "Permission denied"
 msgstr "權限不足"
 
-#: common/report.py:447
+#: common/report.py:451
 msgid "for"
 msgstr "for"
 
 # Translation included with django
-#: common/report.py:599 common/report.py:602 common/report.py:603
-#: common/report.py:662 common/report.py:674
+#: common/report.py:604 common/report.py:607 common/report.py:608
+#: common/report.py:667 common/report.py:679
 msgid "title"
 msgstr ""
 
-#: common/report.py:605
+#: common/report.py:610
 msgid "data field"
 msgstr "資料欄位"
 
 # Translation included with django
-#: common/report.py:973
+#: common/report.py:978
 msgid "All"
 msgstr ""
 
-#: common/report.py:992
+#: common/report.py:1000
 msgid "False"
 msgstr "偽"
 
-#: common/report.py:992
+#: common/report.py:1000
 msgid "True"
 msgstr "真"
 
-#: common/report.py:1039
+#: common/report.py:1047
 #, python-format
 msgid "Incorrect field %(column)s"
 msgstr "錯誤欄位 %(column)s"
 
-#: common/report.py:1045
+#: common/report.py:1053
 #, python-format
 msgid "Missing primary key field %(key)s"
 msgstr "錯誤的主鍵欄位 %(key)s"
 
-#: common/report.py:1099
+#: common/report.py:1107
 #, python-format
 msgid "Changed %s."
 msgstr ""
 
-#: common/report.py:1099
+#: common/report.py:1107
 #, fuzzy
 msgid "and"
 msgstr "onhand"
 
-#: common/report.py:1109
+#: common/report.py:1117
 #, fuzzy, python-format
 msgid "Row %(rownum)s: %(message)s"
 msgstr "第%(rownum)s列第%(field)s欄：%(data)s：%(message)s"
 
-#: common/report.py:1115
+#: common/report.py:1123
 #, python-format
 msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
 msgstr "第%(rownum)s列第%(field)s欄：%(data)s：%(message)s"
 
-#: common/report.py:1123
+#: common/report.py:1131
 #, python-format
 msgid "Exception during upload: %(message)s"
 msgstr "上傳時發生例外： %(message)s"
@@ -318,7 +330,7 @@ msgstr "上傳時發生例外： %(message)s"
 msgid "Buckets"
 msgstr "Buckets"
 
-#: common/views.py:37 input/models.py:409 input/models.py:522
+#: common/views.py:37 input/models.py:413 input/models.py:526
 msgid "Default"
 msgstr "Default"
 
@@ -342,59 +354,64 @@ msgstr "報告結束日期"
 msgid "End date for filtering report data"
 msgstr "過濾報告資料的結束日期"
 
-#: common/views.py:75
+#: common/views.py:54
+msgid "Delimiter used when exporting CSV files"
+msgstr ""
+
+#: common/views.py:82
 msgid "Edit my preferences"
 msgstr "編輯我的偏好設定"
 
-#: common/views.py:87
+#: common/views.py:94
 msgid "User List"
 msgstr "使用者列表"
 
-#: common/views.py:94
+#: common/views.py:101
 msgid "username"
 msgstr "使用者名稱"
 
 # Translation included with django
-#: common/views.py:98
+#: common/views.py:105
 msgid "E-mail"
 msgstr ""
 
-#: common/views.py:102
+#: common/views.py:109
 msgid "first name"
 msgstr "名字"
 
-#: common/views.py:106
+#: common/views.py:113
 msgid "last name"
 msgstr "姓氏"
 
 # Translation included with django
-#: common/views.py:110
+#: common/views.py:117
 msgid "staff status"
 msgstr ""
 
-#: common/views.py:121
+#: common/views.py:128
 msgid "Group List"
 msgstr "群組列表"
 
-#: common/views.py:128 input/models.py:70 input/models.py:91
-#: input/models.py:200 input/models.py:263 input/models.py:284
-#: input/models.py:302 input/models.py:333 input/models.py:415
-#: input/models.py:480 input/models.py:527 input/models.py:592
-#: input/models.py:625 input/models.py:683 input/models.py:715
+#: common/views.py:135 input/models.py:71 input/models.py:92
+#: input/models.py:201 input/models.py:264 input/models.py:285
+#: input/models.py:303 input/models.py:334 input/models.py:419
+#: input/models.py:484 input/models.py:531 input/models.py:596
+#: input/models.py:629 input/models.py:687 input/models.py:719
 #: input/views.py:291 input/views.py:357 input/views.py:386 input/views.py:455
 #: input/views.py:503 input/views.py:548 input/views.py:625 input/views.py:698
 #: input/views.py:740 input/views.py:818 input/views.py:883 input/views.py:936
-#: output/models.py:50 output/views/kpi.py:40 output/views/problem.py:46
+#: output/models.py:54 output/views/kpi.py:40 output/views/problem.py:51
+#: output/views/problem.py:72
 msgid "name"
 msgstr "名稱"
 
-#: common/views.py:139
+#: common/views.py:146
 msgid "Date List"
 msgstr "Date List"
 
 # Translation included with django
 #: common/templatetags/base_utils.py:131 common/templatetags/base_utils.py:135
-#: common/templatetags/base_utils.py:142 templates/admin/base.html:31
+#: common/templatetags/base_utils.py:142 templates/admin/base.html:32
 #: templates/registration/password_change_done.html:8
 #: templates/registration/password_change_form.html:9
 msgid "Home"
@@ -405,16 +422,17 @@ msgstr ""
 msgid "Site administration"
 msgstr ""
 
-#: execute/models.py:31 execute/views.py:204 input/models.py:98
-#: input/models.py:265 input/models.py:286 input/models.py:304
-#: input/models.py:417 input/models.py:529 input/models.py:685
-#: input/models.py:717 input/views.py:299 input/views.py:394
-#: input/views.py:463 input/views.py:511 input/views.py:556 input/views.py:756
-#: input/views.py:838 input/views.py:895 output/views/kpi.py:39
+#: execute/models.py:31 execute/views.py:227 input/models.py:99
+#: input/models.py:266 input/models.py:287 input/models.py:305
+#: input/models.py:337 input/models.py:421 input/models.py:533
+#: input/models.py:689 input/models.py:721 input/views.py:299
+#: input/views.py:394 input/views.py:463 input/views.py:511 input/views.py:556
+#: input/views.py:756 input/views.py:838 input/views.py:895 input/views.py:944
+#: output/views/kpi.py:39
 msgid "category"
 msgstr "類別"
 
-#: execute/models.py:32 execute/views.py:212
+#: execute/models.py:32 execute/views.py:235
 msgid "message"
 msgstr "訊息"
 
@@ -426,264 +444,270 @@ msgstr "紀錄項目"
 msgid "log entry"
 msgstr "紀錄項目"
 
-#: execute/views.py:45 templates/admin/base_site_nav.html:68
+#: execute/views.py:48 templates/admin/base_site_nav.html:68
 #: templates/admin/index.html:51
 msgid "Execute"
 msgstr "執行"
 
-#: execute/views.py:190
+#: execute/views.py:213
 msgid "Command log"
 msgstr "命令紀錄"
 
-#: execute/management/commands/frepple_createdates.py:84
+#: execute/management/commands/frepple_createdates.py:88
 msgid "Start initializing dates"
 msgstr "啟動初始化日期"
 
-#: execute/management/commands/frepple_createdates.py:122
+#: execute/management/commands/frepple_createdates.py:126
 msgid "Finished initializing dates"
 msgstr "完成初始化日期"
 
-#: execute/management/commands/frepple_createdates.py:127
+#: execute/management/commands/frepple_createdates.py:131
 msgid "Failure initializing dates"
 msgstr "初始化日期失敗"
 
-#: execute/management/commands/frepple_createmodel.py:147
+#: execute/management/commands/frepple_createmodel.py:151
 msgid "Start creating sample model with parameters"
 msgstr "啟動建立帶參數之樣本模式"
 
-#: execute/management/commands/frepple_createmodel.py:365
+#: execute/management/commands/frepple_createmodel.py:369
 msgid "Finished creating sample model"
 msgstr "完成建立樣本模式"
 
-#: execute/management/commands/frepple_createmodel.py:370
+#: execute/management/commands/frepple_createmodel.py:374
 msgid "Failure creating sample model"
 msgstr "建立樣本模式失敗"
 
-#: execute/management/commands/frepple_flush.py:70
+#: execute/management/commands/frepple_flush.py:74
 msgid "Start erasing the database"
 msgstr "開始清除資料庫"
 
-#: execute/management/commands/frepple_flush.py:95
+#: execute/management/commands/frepple_flush.py:99
 msgid "Finished erasing the database"
 msgstr "結束清除資料庫"
 
-#: execute/management/commands/frepple_flush.py:98
+#: execute/management/commands/frepple_flush.py:103
 msgid "Failed erasing the database"
 msgstr "資料庫清除失敗"
 
-#: execute/management/commands/frepple_run.py:61
-msgid "Start creating frePPLe plan of type "
+#: execute/management/commands/frepple_run.py:71
+#, fuzzy, python-format
+msgid ""
+"Start creating frePPLe plan of type %(plantype)d and constraints %"
+"(constraint)d"
 msgstr "啟動建立frePPLe 計畫：型態 "
 
-#: execute/management/commands/frepple_run.py:85
+#: execute/management/commands/frepple_run.py:96
 msgid "Finished creating frePPLe plan"
 msgstr "完成建立frePPLe計畫"
 
-#: execute/management/commands/frepple_run.py:88
+#: execute/management/commands/frepple_run.py:99
 msgid "Failure when creating frePPLe plan"
 msgstr "建立frePPLe計畫失敗"
 
-#: input/admin.py:82 input/admin.py:103 input/admin.py:159 input/admin.py:176
+#: input/admin.py:101 input/admin.py:123 input/admin.py:187 input/admin.py:205
 msgid "Planning parameters"
 msgstr "計畫參數"
 
-#: input/admin.py:101
+#: input/admin.py:121
 msgid "Inventory"
 msgstr "庫存"
 
-#: input/admin.py:106
+#: input/admin.py:126
 msgid "Planning parameters for procurement buffers"
 msgstr "採購暫存計畫參數"
 
-#: input/models.py:60 input/models.py:61 input/models.py:199
-#: input/models.py:388 input/models.py:498 input/models.py:596
-#: input/models.py:631 input/models.py:695 input/models.py:724
+#: input/models.py:61 input/models.py:62 input/models.py:200
+#: input/models.py:392 input/models.py:502 input/models.py:600
+#: input/models.py:635 input/models.py:699 input/models.py:728
 #: input/views.py:633 input/views.py:706 input/views.py:776 input/views.py:850
-#: input/views.py:1017
+#: input/views.py:1029
 msgid "priority"
 msgstr "優先順序"
 
-#: input/models.py:62
+#: input/models.py:63
 #, fuzzy
 msgid "minimum cost"
 msgstr "minimum"
 
-#: input/models.py:63
+#: input/models.py:64
 #, fuzzy
 msgid "minimum penalty"
 msgstr "最小運輸量"
 
-#: input/models.py:64
+#: input/models.py:65
 #, fuzzy
 msgid "minimum cost plus penalty"
 msgstr "最小運輸量"
 
-#: input/models.py:71 input/models.py:96 input/models.py:264
-#: input/models.py:285 input/models.py:303 input/models.py:416
-#: input/models.py:528 input/models.py:684 input/models.py:716
-#: input/views.py:295 input/views.py:390 input/views.py:459 input/views.py:507
-#: input/views.py:552 input/views.py:752 input/views.py:834 input/views.py:891
-#: output/models.py:51 output/views/problem.py:50
+#: input/models.py:72 input/models.py:97 input/models.py:265
+#: input/models.py:286 input/models.py:304 input/models.py:336
+#: input/models.py:420 input/models.py:532 input/models.py:688
+#: input/models.py:720 input/views.py:295 input/views.py:390
+#: input/views.py:459 input/views.py:507 input/views.py:552 input/views.py:752
+#: input/views.py:834 input/views.py:891 input/views.py:940
+#: output/models.py:55 output/views/problem.py:80
 msgid "description"
 msgstr "描述"
 
-#: input/models.py:72
+#: input/models.py:73
 msgid "current date"
 msgstr "目前日期"
 
-#: input/models.py:78 input/models.py:79
+#: input/models.py:79 input/models.py:80
 msgid "plan"
 msgstr "計畫"
 
-#: input/models.py:85 input/models.py:86
+#: input/models.py:86 input/models.py:87
 #, fuzzy
 msgid "double"
 msgstr "due"
 
-#: input/models.py:87
+#: input/models.py:88
 msgid "boolean"
 msgstr ""
 
-#: input/models.py:92 input/models.py:334 input/models.py:419
-#: input/models.py:531 input/models.py:578 input/views.py:319
-#: input/views.py:406 input/views.py:682 input/views.py:887 input/views.py:940
+#: input/models.py:93 input/models.py:335 input/models.py:423
+#: input/models.py:535 input/models.py:582 input/views.py:319
+#: input/views.py:406 input/views.py:682 input/views.py:887 input/views.py:952
 msgid "type"
 msgstr "型態"
 
-#: input/models.py:94
+#: input/models.py:95
 msgid "Type of data values stored in the calendar"
 msgstr ""
 
-#: input/models.py:100 input/models.py:266 input/models.py:287
-#: input/models.py:305 input/models.py:418 input/models.py:530
-#: input/models.py:686 input/models.py:718 input/views.py:303
-#: input/views.py:398 input/views.py:467 input/views.py:515 input/views.py:560
-#: input/views.py:760 input/views.py:842 input/views.py:899
+#: input/models.py:101 input/models.py:267 input/models.py:288
+#: input/models.py:306 input/models.py:338 input/models.py:422
+#: input/models.py:534 input/models.py:690 input/models.py:722
+#: input/views.py:303 input/views.py:398 input/views.py:467 input/views.py:515
+#: input/views.py:560 input/views.py:760 input/views.py:842 input/views.py:899
+#: input/views.py:948
 msgid "subcategory"
 msgstr "子類別"
 
-#: input/models.py:102 input/views.py:903
+#: input/models.py:103 input/views.py:903
 msgid "default value"
 msgstr "預設值"
 
-#: input/models.py:104
+#: input/models.py:105
 msgid "Value to be used when no entry is effective"
 msgstr ""
 
-#: input/models.py:182 input/models.py:195 input/models.py:721
+#: input/models.py:183 input/models.py:196 input/models.py:725
 #: input/views.py:830
 msgid "calendar"
 msgstr "日曆"
 
-#: input/models.py:183
+#: input/models.py:184
 msgid "calendars"
 msgstr "日曆"
 
-#: input/models.py:198 output/views/kpi.py:41
+#: input/models.py:199 output/views/kpi.py:41
 msgid "value"
 msgstr "值"
 
-#: input/models.py:215
+#: input/models.py:216
 msgid "calendar bucket"
 msgstr "日曆清單"
 
-#: input/models.py:216
+#: input/models.py:217
 msgid "calendar buckets"
 msgstr "日曆清單"
 
-#: input/models.py:267 input/views.py:471 output/views/resource.py:54
+#: input/models.py:268 input/views.py:471 output/views/resource.py:54
 msgid "available"
 msgstr "可用"
 
-#: input/models.py:269
+#: input/models.py:270
 msgid "Calendar defining the working hours and holidays of this location"
 msgstr "定義這個位置的工時及假日之日曆"
 
-#: input/models.py:270 input/models.py:288 input/models.py:310
-#: input/models.py:700 input/views.py:475 input/views.py:519
-#: input/views.py:568 input/views.py:780 output/models.py:36
-#: output/views/operation.py:167
+#: input/models.py:271 input/models.py:289 input/models.py:311
+#: input/models.py:704 input/views.py:475 input/views.py:519
+#: input/views.py:568 input/views.py:780 output/models.py:38
+#: output/models.py:53 output/views/operation.py:171
+#: output/views/problem.py:76
 msgid "owner"
 msgstr "擁有者"
 
-#: input/models.py:271 input/models.py:289 input/models.py:311
-#: input/models.py:701
+#: input/models.py:272 input/models.py:290 input/models.py:312
+#: input/models.py:705
 msgid "Hierarchical parent"
 msgstr "Hierarchical parent"
 
-#: input/models.py:277 input/models.py:335 input/models.py:420
-#: input/models.py:534 input/views.py:307 input/views.py:402
-#: input/views.py:944 output/views/buffer.py:55 output/views/operation.py:49
+#: input/models.py:278 input/models.py:339 input/models.py:424
+#: input/models.py:538 input/views.py:307 input/views.py:402
+#: input/views.py:956 output/views/buffer.py:55 output/views/operation.py:49
 #: output/views/resource.py:50
 msgid "location"
 msgstr "位置"
 
-#: input/models.py:278
+#: input/models.py:279
 msgid "locations"
 msgstr "位置"
 
-#: input/models.py:295 input/models.py:687 input/models.py:719
-#: input/views.py:748 input/views.py:826 output/models.py:109
+#: input/models.py:296 input/models.py:691 input/models.py:723
+#: input/views.py:748 input/views.py:826 output/models.py:113
 #: output/views/demand.py:184 output/views/forecast.py:51
 msgid "customer"
 msgstr "客戶"
 
-#: input/models.py:296
+#: input/models.py:297
 msgid "customers"
 msgstr "客戶"
 
-#: input/models.py:306 input/models.py:691 input/models.py:722
+#: input/models.py:307 input/models.py:695 input/models.py:726
 #: input/views.py:772
 msgid "delivery operation"
 msgstr "交貨作業"
 
-#: input/models.py:307
+#: input/models.py:308
 msgid "Default operation used to ship a demand for this item"
 msgstr "預設作業用來裝運這個項目的需求"
 
-#: input/models.py:308 input/views.py:572
+#: input/models.py:309 input/views.py:572
 msgid "price"
 msgstr "價格"
 
-#: input/models.py:309
+#: input/models.py:310
 msgid "Selling price of the item"
 msgstr "該項目的銷售價格"
 
-#: input/models.py:317 input/models.py:422 input/models.py:688
-#: input/models.py:720 input/views.py:311 input/views.py:744
-#: input/views.py:822 output/models.py:108 output/models.py:135
+#: input/models.py:318 input/models.py:426 input/models.py:692
+#: input/models.py:724 input/views.py:311 input/views.py:744
+#: input/views.py:822 output/models.py:112 output/models.py:139
 #: output/views/buffer.py:51 output/views/demand.py:45
 #: output/views/demand.py:180 output/views/forecast.py:47
 #: output/views/pegging.py:55
 msgid "item"
 msgstr "產品"
 
-#: input/models.py:318
+#: input/models.py:319
 msgid "items"
 msgstr "項目"
 
-#: input/models.py:325 input/models.py:326
+#: input/models.py:326 input/models.py:327
 msgid "fixed_time"
 msgstr "fixed_time"
 
-#: input/models.py:327
+#: input/models.py:328
 msgid "time_per"
 msgstr "time_per"
 
-#: input/models.py:328
+#: input/models.py:329
 msgid "routing"
 msgstr "routing"
 
-#: input/models.py:329 input/models.py:594 input/models.py:628
+#: input/models.py:330 input/models.py:598 input/models.py:632
 #: input/views.py:629 input/views.py:702
 msgid "alternate"
 msgstr "alternate"
 
-#: input/models.py:337
+#: input/models.py:341
 msgid "release fence"
 msgstr "release fence"
 
-#: input/models.py:338
+#: input/models.py:342
 msgid ""
 "Operationplans within this time window from the current day are expected to "
 "be released to production ERP"
@@ -691,11 +715,11 @@ msgstr ""
 "Operationplans within this time window from the current day are expected to "
 "be released to production ERP"
 
-#: input/models.py:339 input/views.py:952
+#: input/models.py:343 input/views.py:964
 msgid "pre-op time"
 msgstr "pre-op time"
 
-#: input/models.py:340
+#: input/models.py:344
 msgid ""
 "A delay time to be respected as a soft constraint before starting the "
 "operation"
@@ -703,148 +727,148 @@ msgstr ""
 "A delay time to be respected as a soft constraint before starting the "
 "operation"
 
-#: input/models.py:341 input/views.py:956
+#: input/models.py:345 input/views.py:968
 msgid "post-op time"
 msgstr "post-op time"
 
-#: input/models.py:342
+#: input/models.py:346
 msgid ""
 "A delay time to be respected as a soft constraint after ending the operation"
 msgstr ""
 "A delay time to be respected as a soft constraint after ending the operation"
 
-#: input/models.py:343 input/views.py:960
+#: input/models.py:347 input/views.py:972
 msgid "size minimum"
 msgstr "size minimum"
 
-#: input/models.py:344
+#: input/models.py:348
 #, fuzzy
 msgid "A minimum quantity for operationplans"
 msgstr "A minimum lotsize quantity for operationplans"
 
-#: input/models.py:345 input/views.py:964
+#: input/models.py:349 input/views.py:976
 msgid "size multiple"
 msgstr "size multiple"
 
-#: input/models.py:346
+#: input/models.py:350
 msgid "A multiple quantity for operationplans"
 msgstr "A multiple quantity for operationplans"
 
-#: input/models.py:347 input/views.py:968
+#: input/models.py:351 input/views.py:980
 #, fuzzy
 msgid "size maximum"
 msgstr "size_maximum"
 
-#: input/models.py:348
+#: input/models.py:352
 #, fuzzy
 msgid "A maximum quantity for operationplans"
 msgstr "A minimum lotsize quantity for operationplans"
 
-#: input/models.py:349 input/models.py:505 input/models.py:536
-#: input/views.py:414 input/views.py:972
+#: input/models.py:353 input/models.py:509 input/models.py:540
+#: input/views.py:414 input/views.py:984
 msgid "cost"
 msgstr "費用"
 
-#: input/models.py:350
+#: input/models.py:354
 msgid "Cost per operationplan unit"
 msgstr "Cost per operationplan unit"
 
-#: input/models.py:351 input/models.py:503
+#: input/models.py:355 input/models.py:507
 msgid "duration"
 msgstr "duration"
 
-#: input/models.py:352
+#: input/models.py:356
 msgid "A fixed duration for the operation"
 msgstr "A fixed duration for the operation"
 
-#: input/models.py:353
+#: input/models.py:357
 msgid "duration per unit"
 msgstr "duration per unit"
 
-#: input/models.py:354
+#: input/models.py:358
 msgid "A variable duration for the operation"
 msgstr "A variable duration for the operation"
 
-#: input/models.py:355 input/models.py:598 input/models.py:637
-#: input/views.py:641 input/views.py:710 input/views.py:976
+#: input/models.py:359 input/models.py:602 input/models.py:641
+#: input/views.py:641 input/views.py:710 input/views.py:988
 msgid "search mode"
 msgstr ""
 
-#: input/models.py:357 input/models.py:600 input/models.py:639
+#: input/models.py:361 input/models.py:604 input/models.py:643
 msgid "Method to select prefered alternate"
 msgstr ""
 
-#: input/models.py:379 input/models.py:386 input/models.py:574
-#: input/models.py:616 input/models.py:656 input/views.py:564
+#: input/models.py:383 input/models.py:390 input/models.py:578
+#: input/models.py:620 input/models.py:660 input/views.py:564
 #: input/views.py:605 input/views.py:674 input/views.py:846
-#: input/views.py:1009 input/views.py:1058 output/models.py:31
+#: input/views.py:1021 input/views.py:1070 output/models.py:32
 #: output/views/buffer.py:170 output/views/operation.py:45
 #: output/views/operation.py:150 output/views/pegging.py:49
-#: output/views/resource.py:176 templates/output/pegging.xml:12
-#: templates/output/pegging.xml.py:22
+#: output/views/problem.py:38 output/views/resource.py:180
+#: templates/output/pegging.xml:12 templates/output/pegging.xml.py:22
 msgid "operation"
 msgstr "操作"
 
-#: input/models.py:380
+#: input/models.py:384
 msgid "operations"
 msgstr "操作"
 
-#: input/models.py:389 input/models.py:402 input/views.py:1013
+#: input/models.py:393 input/models.py:406 input/views.py:1025
 msgid "suboperation"
 msgstr "子操作"
 
-#: input/models.py:391 input/models.py:582 input/models.py:619
-#: input/views.py:617 input/views.py:690 input/views.py:1021
+#: input/models.py:395 input/models.py:586 input/models.py:623
+#: input/views.py:617 input/views.py:690 input/views.py:1033
 msgid "effective start"
 msgstr "有效起始"
 
-#: input/models.py:392 input/models.py:585 input/models.py:622
-#: input/views.py:621 input/views.py:694 input/views.py:1025
+#: input/models.py:396 input/models.py:589 input/models.py:626
+#: input/views.py:621 input/views.py:694 input/views.py:1037
 msgid "effective end"
 msgstr "有效結束"
 
-#: input/models.py:403
+#: input/models.py:407
 msgid "suboperations"
 msgstr "子操作"
 
-#: input/models.py:410 input/models.py:523
+#: input/models.py:414 input/models.py:527
 msgid "Infinite"
 msgstr "Infinite"
 
-#: input/models.py:411
+#: input/models.py:415
 msgid "Procure"
 msgstr "Procure"
 
-#: input/models.py:423 input/views.py:315 output/models.py:92
+#: input/models.py:427 input/views.py:315 output/models.py:96
 #: output/views/buffer.py:181
 msgid "onhand"
 msgstr "onhand"
 
-#: input/models.py:423
+#: input/models.py:427
 msgid "current inventory"
 msgstr "目前存貨"
 
-#: input/models.py:424 input/views.py:323
+#: input/models.py:428 input/views.py:323
 msgid "minimum"
 msgstr "minimum"
 
-#: input/models.py:426
+#: input/models.py:430
 msgid "Calendar storing the safety stock profile"
 msgstr "Calendar storing the safety stock profile"
 
-#: input/models.py:427 input/views.py:327
+#: input/models.py:431 input/views.py:327
 msgid "producing"
 msgstr "producing"
 
-#: input/models.py:429
+#: input/models.py:433
 msgid "Operation to replenish the buffer"
 msgstr "Operation to replenish the buffer"
 
-#: input/models.py:430 input/views.py:331
+#: input/models.py:434 input/views.py:331
 msgid "carrying cost"
 msgstr "carrying cost"
 
-#: input/models.py:431
+#: input/models.py:435
 msgid ""
 "Cost of holding inventory in this buffer, expressed as an annual percentage "
 "of the item price."
@@ -852,368 +876,369 @@ msgstr ""
 "Cost of holding inventory in this buffer, expressed as an annual percentage "
 "of the item price."
 
-#: input/models.py:433
+#: input/models.py:437
 msgid "leadtime"
 msgstr "前置時間"
 
-#: input/models.py:434
+#: input/models.py:438
 msgid "Leadtime for supplier of a procure buffer"
 msgstr "Leadtime for supplier of a procure buffer"
 
-#: input/models.py:435 input/views.py:948
+#: input/models.py:439 input/views.py:960
 msgid "fence"
 msgstr "fence"
 
-#: input/models.py:436
+#: input/models.py:440
 msgid "Frozen fence for creating new procurements"
 msgstr "Frozen fence for creating new procurements"
 
-#: input/models.py:437
+#: input/models.py:441
 msgid "min_inventory"
 msgstr "min_inventory"
 
-#: input/models.py:438
+#: input/models.py:442
 msgid "Inventory level that triggers replenishment of a procure buffer"
 msgstr "Inventory level that triggers replenishment of a procure buffer"
 
-#: input/models.py:439
+#: input/models.py:443
 msgid "max_inventory"
 msgstr "max_inventory"
 
-#: input/models.py:440
+#: input/models.py:444
 msgid "Inventory level to which a procure buffer is replenished"
 msgstr "Inventory level to which a procure buffer is replenished"
 
-#: input/models.py:441
+#: input/models.py:445
 msgid "min_interval"
 msgstr "min_interval"
 
-#: input/models.py:442
+#: input/models.py:446
 msgid "Minimum time interval between replenishments of a procure buffer"
 msgstr "Minimum time interval between replenishments of a procure buffer"
 
-#: input/models.py:443
+#: input/models.py:447
 msgid "max_interval"
 msgstr "max_interval"
 
-#: input/models.py:444
+#: input/models.py:448
 msgid "Maximum time interval between replenishments of a procure buffer"
 msgstr "Maximum time interval between replenishments of a procure buffer"
 
-#: input/models.py:445
+#: input/models.py:449
 msgid "size_minimum"
 msgstr "size_minimum"
 
-#: input/models.py:446
+#: input/models.py:450
 msgid "Minimum size of replenishments of a procure buffer"
 msgstr "Minimum size of replenishments of a procure buffer"
 
-#: input/models.py:447
+#: input/models.py:451
 msgid "size_multiple"
 msgstr "size_multiple"
 
-#: input/models.py:448
+#: input/models.py:452
 msgid "Replenishments of a procure buffer are a multiple of this quantity"
 msgstr "Replenishments of a procure buffer are a multiple of this quantity"
 
-#: input/models.py:449
+#: input/models.py:453
 msgid "size_maximum"
 msgstr "size_maximum"
 
-#: input/models.py:450
+#: input/models.py:454
 msgid "Maximum size of replenishments of a procure buffer"
 msgstr "Maximum size of replenishments of a procure buffer"
 
-#: input/models.py:473 input/models.py:576 input/views.py:678
-#: output/models.py:88 output/models.py:134 output/views/buffer.py:47
+#: input/models.py:477 input/models.py:580 input/views.py:678
+#: output/models.py:92 output/models.py:138 output/views/buffer.py:47
 #: output/views/buffer.py:165 output/views/pegging.py:52
 msgid "buffer"
 msgstr "暫存"
 
-#: input/models.py:474
+#: input/models.py:478
 msgid "buffers"
 msgstr "暫存"
 
-#: input/models.py:487 input/models.py:497 input/models.py:540
+#: input/models.py:491 input/models.py:501 input/models.py:544
 #: input/views.py:422 templates/setupmatrixcontext.html:3
 msgid "setup matrix"
 msgstr ""
 
-#: input/models.py:488
+#: input/models.py:492
 msgid "setup matrices"
 msgstr ""
 
-#: input/models.py:499
+#: input/models.py:503
 msgid "from setup"
 msgstr ""
 
-#: input/models.py:500
+#: input/models.py:504
 msgid "Name of the old setup (wildcard characters are supported)"
 msgstr ""
 
-#: input/models.py:501
+#: input/models.py:505
 #, fuzzy
 msgid "to setup"
 msgstr "total supply"
 
-#: input/models.py:502
+#: input/models.py:506
 msgid "Name of the new setup (wildcard characters are supported)"
 msgstr ""
 
-#: input/models.py:504
+#: input/models.py:508
 msgid "Duration of the changeover"
 msgstr ""
 
-#: input/models.py:506
+#: input/models.py:510
 msgid "Cost of the conversion"
 msgstr ""
 
-#: input/models.py:515
+#: input/models.py:519
 msgid "setup matrix rule"
 msgstr ""
 
-#: input/models.py:516
+#: input/models.py:520
 msgid "setup matrix rules"
 msgstr ""
 
-#: input/models.py:532 input/views.py:410
+#: input/models.py:536 input/views.py:410
 msgid "maximum"
 msgstr "maximum"
 
-#: input/models.py:533
+#: input/models.py:537
 msgid "Calendar defining the available capacity"
 msgstr "Calendar defining the available capacity"
 
-#: input/models.py:537
+#: input/models.py:541
 msgid "Cost for using 1 unit of the resource for 1 hour"
 msgstr "Cost for using 1 unit of the resource for 1 hour"
 
-#: input/models.py:538 input/views.py:418
+#: input/models.py:542 input/views.py:418
 msgid "max early"
 msgstr ""
 
-#: input/models.py:539
+#: input/models.py:543
 msgid "Time window before the ask date where we look for available capacity"
 msgstr ""
 
-#: input/models.py:542
+#: input/models.py:546
 msgid "Setup matrix defining the conversion time and cost"
 msgstr ""
 
-#: input/models.py:543 input/models.py:634 input/views.py:426
-#: input/views.py:637 output/models.py:73 output/views/resource.py:191
+#: input/models.py:547 input/models.py:638 input/views.py:426
+#: input/views.py:637 output/models.py:77 output/views/resource.py:195
 msgid "setup"
 msgstr ""
 
-#: input/models.py:544
+#: input/models.py:548
 msgid "Setup of the resource at the start of the plan"
 msgstr ""
 
-#: input/models.py:559 input/models.py:617 input/views.py:609
-#: output/models.py:68 output/views/pegging.py:58 output/views/resource.py:46
-#: output/views/resource.py:172
+#: input/models.py:563 input/models.py:621 input/views.py:609
+#: output/models.py:72 output/views/pegging.py:58 output/views/resource.py:46
+#: output/views/resource.py:176
 msgid "resource"
 msgstr "資源"
 
-#: input/models.py:560
+#: input/models.py:564
 msgid "resources"
 msgstr "資源"
 
-#: input/models.py:567 input/models.py:568
+#: input/models.py:571 input/models.py:572
 msgid "Start"
 msgstr "Start"
 
-#: input/models.py:569
+#: input/models.py:573
 msgid "End"
 msgstr "End"
 
-#: input/models.py:573 input/models.py:615 input/models.py:654
-#: input/views.py:601 input/views.py:670 input/views.py:1005
-#: input/views.py:1054 output/models.py:29
+#: input/models.py:577 input/models.py:619 input/models.py:658
+#: input/views.py:601 input/views.py:670 input/views.py:1017
+#: input/views.py:1066 output/models.py:30
 msgid "identifier"
 msgstr "identifier"
 
-#: input/models.py:580
+#: input/models.py:584
 msgid "Consume/produce material at the start or the end of the operationplan"
 msgstr "Consume/produce material at the start or the end of the operationplan"
 
-#: input/models.py:583 input/models.py:620
+#: input/models.py:587 input/models.py:624
 #, fuzzy
 msgid "Validity start date"
 msgstr "開始日期"
 
-#: input/models.py:586 input/models.py:623
+#: input/models.py:590 input/models.py:627
 #, fuzzy
 msgid "Validity end date"
 msgstr "end date"
 
-#: input/models.py:588 input/models.py:618 input/models.py:658
-#: input/models.py:694 input/models.py:910 input/views.py:613
-#: input/views.py:686 input/views.py:768 input/views.py:1070
-#: output/models.py:32 output/models.py:69 output/models.py:90
+#: input/models.py:592 input/models.py:622 input/models.py:662
+#: input/models.py:698 input/models.py:914 input/views.py:613
+#: input/views.py:686 input/views.py:768 input/views.py:1082
+#: output/models.py:33 output/models.py:73 output/models.py:94
 #: output/views/buffer.py:173 output/views/demand.py:188
 #: output/views/operation.py:152 output/views/pegging.py:67
-#: output/views/resource.py:187
+#: output/views/resource.py:191
 msgid "quantity"
 msgstr "數量"
 
-#: input/models.py:590
+#: input/models.py:594
 #, fuzzy
 msgid "Quantity to consume or produce per operationplan unit"
 msgstr "Cost per operationplan unit"
 
-#: input/models.py:593
+#: input/models.py:597
 msgid "Optional name of this flow"
 msgstr ""
 
-#: input/models.py:595
+#: input/models.py:599
 msgid "Puts the flow in a group of alternate flows"
 msgstr ""
 
-#: input/models.py:597
+#: input/models.py:601
 msgid "Priority of this flow in a group of alternates"
 msgstr ""
 
-#: input/models.py:609
+#: input/models.py:613
 msgid "flow"
 msgstr "流程"
 
-#: input/models.py:610
+#: input/models.py:614
 msgid "flows"
 msgstr "流程"
 
-#: input/models.py:626
+#: input/models.py:630
 #, fuzzy
 msgid "Optional name of this load"
 msgstr "滿足這項需求的作業"
 
-#: input/models.py:629
+#: input/models.py:633
 msgid "Puts the load in a group of alternate loads"
 msgstr ""
 
-#: input/models.py:632
+#: input/models.py:636
 msgid "Priority of this load in a group of alternates"
 msgstr ""
 
-#: input/models.py:635
+#: input/models.py:639
 msgid "Setup required on the resource for this operation"
 msgstr ""
 
-#: input/models.py:648 output/views/resource.py:56
+#: input/models.py:652 output/views/resource.py:56
 #: templates/output/resource.xml:9
 msgid "load"
 msgstr "負荷"
 
-#: input/models.py:649
+#: input/models.py:653
 msgid "loads"
 msgstr "負荷"
 
-#: input/models.py:655
+#: input/models.py:659
 msgid "Unique identifier of an operationplan"
 msgstr "Unique identifier of an operationplan"
 
-#: input/models.py:660 input/models.py:908 input/views.py:1062
-#: output/models.py:52 output/models.py:155
+#: input/models.py:664 input/models.py:912 input/views.py:1074
+#: output/models.py:56 output/models.py:159
 msgid "start date"
 msgstr "開始日期"
 
-#: input/models.py:661 input/models.py:909 input/views.py:1066
-#: output/models.py:53 output/models.py:156
+#: input/models.py:665 input/models.py:913 input/views.py:1078
+#: output/models.py:57 output/models.py:160
 msgid "end date"
 msgstr "end date"
 
-#: input/models.py:662 input/views.py:1074 output/models.py:35
+#: input/models.py:666 input/views.py:1086 output/models.py:37
 #: output/views/operation.py:164
 msgid "locked"
 msgstr "locked"
 
-#: input/models.py:663
+#: input/models.py:667
 msgid "Prevent or allow changes"
 msgstr "Prevent or allow changes"
 
-#: input/models.py:669 output/models.py:43 output/models.py:72
-#: output/models.py:89 output/models.py:114 output/views/buffer.py:186
+#: input/models.py:673 output/models.py:46 output/models.py:76
+#: output/models.py:93 output/models.py:118 output/views/buffer.py:186
 #: output/views/demand.py:203 output/views/operation.py:142
-#: output/views/resource.py:196
+#: output/views/resource.py:200
 msgid "operationplan"
 msgstr "operationplan"
 
-#: input/models.py:670 output/models.py:44
+#: input/models.py:674 output/models.py:47
 msgid "operationplans"
 msgstr "生產計畫"
 
-#: input/models.py:677
+#: input/models.py:681
 msgid "1 - high"
 msgstr "1 - high"
 
-#: input/models.py:678
+#: input/models.py:682
 msgid "2 - normal"
 msgstr "2 - normal"
 
-#: input/models.py:679
+#: input/models.py:683
 msgid "3 - low"
 msgstr "3 - low"
 
-#: input/models.py:689 input/views.py:764 output/models.py:110
+#: input/models.py:693 input/views.py:764 output/models.py:114
 msgid "due"
 msgstr "due"
 
-#: input/models.py:689
+#: input/models.py:693
 msgid "Due date of the demand"
 msgstr ""
 
-#: input/models.py:693 input/models.py:723
+#: input/models.py:697 input/models.py:727
 msgid "Operation used to satisfy this demand"
 msgstr "滿足這項需求的作業"
 
-#: input/models.py:696 input/models.py:725 input/views.py:788
+#: input/models.py:700 input/models.py:729 input/views.py:788
 msgid "minimum shipment"
 msgstr "最小運輸量"
 
-#: input/models.py:697 input/models.py:726
+#: input/models.py:701 input/models.py:730
 msgid "Minimum shipment quantity when planning this demand"
 msgstr "在規劃這一需求時的最小運輸量"
 
-#: input/models.py:698 input/models.py:727 input/views.py:784
+#: input/models.py:702 input/models.py:731 input/views.py:784
 msgid "maximum lateness"
 msgstr "極小化最大延遲時間"
 
-#: input/models.py:699 input/models.py:728
+#: input/models.py:703 input/models.py:732
 msgid "Maximum lateness allowed when planning this demand"
 msgstr "在規劃這項需求時的極小化最大延遲時間"
 
-#: input/models.py:708 output/models.py:30 output/models.py:107
-#: output/models.py:122 output/models.py:128 output/views/demand.py:177
-#: output/views/operation.py:146 templates/output/demand.xml:13
+#: input/models.py:712 output/models.py:31 output/models.py:111
+#: output/models.py:126 output/models.py:132 output/views/demand.py:177
+#: output/views/operation.py:146 output/views/problem.py:35
+#: templates/output/demand.xml:13
 msgid "demand"
 msgstr "需求"
 
-#: input/models.py:709 output/models.py:123
+#: input/models.py:713 output/models.py:127
 msgid "demands"
 msgstr "需求"
 
-#: input/models.py:729 input/views.py:862
+#: input/models.py:733 input/views.py:862
 msgid "discrete"
 msgstr "discrete"
 
-#: input/models.py:729
+#: input/models.py:733
 msgid "Round forecast numbers to integers"
 msgstr "Round forecast numbers to integers"
 
-#: input/models.py:900 input/models.py:907 output/models.py:154
+#: input/models.py:904 input/models.py:911 output/models.py:158
 #: output/views/forecast.py:44
 msgid "forecast"
 msgstr "預測"
 
-#: input/models.py:901
+#: input/models.py:905
 msgid "forecasts"
 msgstr "預測"
 
-#: input/models.py:917
+#: input/models.py:921
 msgid "forecast demand"
 msgstr "預測需求"
 
-#: input/models.py:918
+#: input/models.py:922
 msgid "forecast demands"
 msgstr "預測需求"
 
@@ -1288,119 +1313,124 @@ msgstr "current value"
 msgid "Operation List"
 msgstr "操作列表"
 
-#: input/views.py:991
+#: input/views.py:1003
 msgid "Suboperation List"
 msgstr "Suboperation List"
 
-#: input/views.py:1040
+#: input/views.py:1052
 msgid "Operationplan List"
 msgstr "Operationplan List"
 
-#: output/models.py:49 output/views/problem.py:42
+#: output/models.py:34 output/views/operation.py:168
+#: output/views/resource.py:55 templates/output/resource.xml:13
+msgid "unavailable"
+msgstr ""
+
+#: output/models.py:52 output/views/problem.py:44 output/views/problem.py:68
 msgid "entity"
 msgstr "entity"
 
-#: output/models.py:54 output/views/problem.py:62
+#: output/models.py:58 output/views/problem.py:92
 msgid "weight"
 msgstr "weight"
 
-#: output/models.py:62
+#: output/models.py:66
 msgid "problem"
 msgstr "problem"
 
-#: output/models.py:63
+#: output/models.py:67
 msgid "problems"
 msgstr "problems"
 
-#: output/models.py:82
+#: output/models.py:86
 msgid "loadplan"
 msgstr "loadplan"
 
-#: output/models.py:83
+#: output/models.py:87
 msgid "loadplans"
 msgstr "loadplans"
 
-#: output/models.py:91 output/views/buffer.py:177
+#: output/models.py:95 output/views/buffer.py:177
 msgid "date"
 msgstr "date"
 
-#: output/models.py:101
+#: output/models.py:105
 msgid "flowplan"
 msgstr "flowplan"
 
-#: output/models.py:102
+#: output/models.py:106
 msgid "flowplans"
 msgstr "flowplans"
 
-#: output/models.py:111
+#: output/models.py:115
 msgid "demand quantity"
 msgstr "demand quantity"
 
-#: output/models.py:112 output/views/demand.py:192
+#: output/models.py:116 output/views/demand.py:192
 msgid "planned quantity"
 msgstr "planned quantity"
 
-#: output/models.py:113 output/views/demand.py:200
+#: output/models.py:117 output/views/demand.py:200
 msgid "planned date"
 msgstr "planned date"
 
-#: output/models.py:129 output/views/pegging.py:46
+#: output/models.py:133 output/views/pegging.py:46
 msgid "depth"
 msgstr "depth"
 
-#: output/models.py:130
+#: output/models.py:134
 msgid "consuming operationplan"
 msgstr "consuming operationplan"
 
-#: output/models.py:131
+#: output/models.py:135
 msgid "consuming date"
 msgstr "消費日期"
 
-#: output/models.py:132
+#: output/models.py:136
 msgid "producing operationplan"
 msgstr "producing operationplan"
 
-#: output/models.py:133
+#: output/models.py:137
 msgid "producing date"
 msgstr "生產日期"
 
-#: output/models.py:136
+#: output/models.py:140
 msgid "quantity demand"
 msgstr "quantity demand"
 
-#: output/models.py:137
+#: output/models.py:141
 msgid "quantity buffer"
 msgstr "quantity buffer"
 
-#: output/models.py:138
+#: output/models.py:142
 msgid "pegged"
 msgstr "pegged"
 
-#: output/models.py:148
+#: output/models.py:152
 msgid "demand pegging"
 msgstr "demand pegging"
 
-#: output/models.py:149
+#: output/models.py:153
 msgid "demand peggings"
 msgstr "demand peggings"
 
-#: output/models.py:157
+#: output/models.py:161
 msgid "total quantity"
 msgstr "total quantity"
 
-#: output/models.py:158
+#: output/models.py:162
 msgid "net quantity"
 msgstr "net quantity"
 
-#: output/models.py:159
+#: output/models.py:163
 msgid "consumed quantity"
 msgstr "consumed quantity"
 
-#: output/models.py:168
+#: output/models.py:172
 msgid "forecast plan"
 msgstr "forecast plan"
 
-#: output/models.py:169
+#: output/models.py:173
 msgid "forecast plans"
 msgstr "forecast plans"
 
@@ -1528,7 +1558,70 @@ msgstr "Pegging Report"
 msgid "% used"
 msgstr "使用者"
 
+#: output/views/problem.py:35 templates/output/resource.xml:21
+msgid "overload"
+msgstr ""
+
 #: output/views/problem.py:35
+#, fuzzy
+msgid "underload"
+msgstr "負荷"
+
+#: output/views/problem.py:36
+#, fuzzy
+msgid "material"
+msgstr "max_interval"
+
+#: output/views/problem.py:36
+msgid "material excess"
+msgstr ""
+
+#: output/views/problem.py:36
+msgid "material shortage"
+msgstr ""
+
+#: output/views/problem.py:37
+msgid "capacity"
+msgstr ""
+
+#: output/views/problem.py:37
+msgid "excess"
+msgstr ""
+
+#: output/views/problem.py:37
+msgid "short"
+msgstr ""
+
+#: output/views/problem.py:37
+#, fuzzy
+msgid "early"
+msgstr "max_interval"
+
+#: output/views/problem.py:37
+#, fuzzy
+msgid "late"
+msgstr "date"
+
+#: output/views/problem.py:37
+#, fuzzy
+msgid "unplanned"
+msgstr "planned date"
+
+#: output/views/problem.py:38
+#, fuzzy
+msgid "precedence"
+msgstr "偏好設定"
+
+#: output/views/problem.py:38
+#, fuzzy
+msgid "before fence"
+msgstr "release fence"
+
+#: output/views/problem.py:38
+msgid "before current"
+msgstr ""
+
+#: output/views/problem.py:61
 msgid "Problem Report"
 msgstr "問題報告"
 
@@ -1538,15 +1631,11 @@ msgstr "問題報告"
 msgid "Resource report"
 msgstr "資源報告"
 
-#: output/views/resource.py:55 templates/output/resource.xml:13
-msgid "unavailable"
-msgstr ""
-
 #: output/views/resource.py:57
 msgid "utilization %"
 msgstr "utilization %"
 
-#: output/views/resource.py:160 templates/admin/base_site_nav.html:60
+#: output/views/resource.py:164 templates/admin/base_site_nav.html:60
 #: templates/admin/index.html:93
 #, fuzzy
 msgid "Resource detail report"
@@ -1636,7 +1725,7 @@ msgid "Resource"
 msgstr "資源"
 
 # Translation included with django
-#: templates/admin/base.html:26
+#: templates/admin/base.html:27
 msgid "Welcome,"
 msgstr ""
 
@@ -1781,31 +1870,61 @@ msgid ""
 "<td>Load frePPLe from the database...  <br/>\n"
 "and create a plan in frePPLe...<br/>\n"
 "and export results into the database<br/>\n"
-"Constraints:<input type=\"checkbox\" name=\"constraint\" checked=\"true\" "
-"value=\"1\"/>Leadtime\n"
-"<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"2\"/"
-">Material\n"
-"<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"4\"/"
-">Capacity\n"
+"<br/>\n"
+"<b>Plan type</b>:<br/>"
+msgstr ""
+
+#: templates/execute/execute.html:45
+msgid ""
+"<b>Constrained plan</b><br/>\n"
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan respects the constraints enabled "
+"below.<br/>\n"
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In case of shortages the demand is planned "
+"late or short.<br/>"
+msgstr ""
+
+#: templates/execute/execute.html:49
+msgid ""
+"<b>Unconstrained plan</b><br/>\n"
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan shows material, capacity and "
+"operation problems<br/>\n"
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that prevent the demand from being planned in "
+"time.<br/>\n"
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The demand is always met completely and on "
+"time.<br/>"
+msgstr ""
+
+#: templates/execute/execute.html:54
+msgid "Constraints"
+msgstr ""
+
+#: templates/execute/execute.html:55
+msgid "Capacity: respect capacity limits"
+msgstr ""
+
+#: templates/execute/execute.html:56
+msgid "Material: respect procurement limits"
+msgstr ""
+
+#: templates/execute/execute.html:57
+msgid "Lead time: do not create plans in the past"
+msgstr ""
+
+#: templates/execute/execute.html:58
+msgid "Release fence: do not create plans within the release time window"
+msgstr ""
+
+#: templates/execute/execute.html:60
+msgid ""
 "<a href=\"/execute/logfrepple/\">View latest log file</a></td>\n"
 "<td><input id=\"run\" type=\"submit\" value=\"Run\" /></td>"
 msgstr ""
-"<th scope=\"row\"><a>執行 frePPLe</a></th>\n"
-"<td>從資料庫載入frePPLe...  <br/>\n"
-"然後在frePPLe新增一個計畫...<br/>限制： <input type=\"checkbox\" name="
-"\"constraint\" checked=\"true\" value=\"1\">前置時間</input>\n"
-"<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"2\">原"
-"料</input>\n"
-"<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"4\">產"
-"能</input><br/>\n"
-"<a href=\"/execute/logfrepple/\">查看最新的log檔</a></td>\n"
-"<td><input id=\"run\" type=\"submit\" value=\"執行\" /></td> "
 
-#: templates/execute/execute.html:56
+#: templates/execute/execute.html:71
 msgid "Database"
 msgstr "資料庫"
 
-#: templates/execute/execute.html:59
+#: templates/execute/execute.html:74
 msgid ""
 "<th scope=\"row\"><a>Erase</a></th>\n"
 "<td>Erase all data from the database.</td>\n"
@@ -1815,7 +1934,7 @@ msgstr ""
 "<td>清除資料庫所有資料.</td>\n"
 "<td><input id=\"erase\" type=\"submit\" value=\"清除\" /></td>"
 
-#: templates/execute/execute.html:65
+#: templates/execute/execute.html:80
 msgid ""
 "<th scope=\"row\"><a>Load a dataset</a></th>\n"
 "<td>Load a dataset from a file in the database.<br/>\n"
@@ -1841,11 +1960,11 @@ msgstr ""
 "</td>\n"
 "<td><input id=\"load\" type=\"submit\" value=\"載入\"/></td>"
 
-#: templates/execute/execute.html:85
+#: templates/execute/execute.html:100
 msgid "Model generator"
 msgstr "模式產生器"
 
-#: templates/execute/execute.html:88
+#: templates/execute/execute.html:103
 #, fuzzy
 msgid ""
 "<th scope=\"row\"><a>Create a model</a></th>\n"
@@ -1922,7 +2041,7 @@ msgstr ""
 "</td>\n"
 "<td><input id=\"create\" type=\"submit\" value=\"新增\"/></td> "
 
-#: templates/execute/execute.html:114
+#: templates/execute/execute.html:129
 msgid "Sorry, You don't have any execute permissions..."
 msgstr "對不起，您沒有任何執行權限..."
 
@@ -1953,10 +2072,6 @@ msgstr ""
 
 #: templates/output/resource.xml:17
 msgid "free"
-msgstr ""
-
-#: templates/output/resource.xml:21
-msgid "overload"
 msgstr ""
 
 # Translation included with django
@@ -2005,9 +2120,30 @@ msgstr ""
 msgid "Change my password"
 msgstr ""
 
-#, fuzzy
-#~ msgid "maxearly"
-#~ msgstr "max_interval"
+#~ msgid ""
+#~ "<th scope=\"row\"><a>Run frePPLe</a></th>\n"
+#~ "<td>Load frePPLe from the database...  <br/>\n"
+#~ "and create a plan in frePPLe...<br/>\n"
+#~ "and export results into the database<br/>\n"
+#~ "Constraints:<input type=\"checkbox\" name=\"constraint\" checked=\"true\" "
+#~ "value=\"1\"/>Leadtime\n"
+#~ "<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"2\"/"
+#~ ">Material\n"
+#~ "<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"4\"/"
+#~ ">Capacity\n"
+#~ "<a href=\"/execute/logfrepple/\">View latest log file</a></td>\n"
+#~ "<td><input id=\"run\" type=\"submit\" value=\"Run\" /></td>"
+#~ msgstr ""
+#~ "<th scope=\"row\"><a>執行 frePPLe</a></th>\n"
+#~ "<td>從資料庫載入frePPLe...  <br/>\n"
+#~ "然後在frePPLe新增一個計畫...<br/>限制： <input type=\"checkbox\" name="
+#~ "\"constraint\" checked=\"true\" value=\"1\">前置時間</input>\n"
+#~ "<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"2\">"
+#~ "原料</input>\n"
+#~ "<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"4\">"
+#~ "產能</input><br/>\n"
+#~ "<a href=\"/execute/logfrepple/\">查看最新的log檔</a></td>\n"
+#~ "<td><input id=\"run\" type=\"submit\" value=\"執行\" /></td> "
 
 #~ msgid "Resource Load Detail"
 #~ msgstr "Resource Load Detail"

@@ -4079,7 +4079,11 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     /** Handler called when character data are read in.
       * The data string is add it to the current element data.
       */
+    #if XERCES_VERSION_MAJOR==2
+    void characters(const XMLCh *const, const unsigned int);
+    #else
     void characters(const XMLCh *const, const XMLSize_t);
+    #endif    
 
     /** Handler called by Xerces in fatal error conditions. It throws an
       * exception to abort the parsing procedure. */

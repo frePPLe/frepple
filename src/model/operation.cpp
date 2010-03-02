@@ -1247,11 +1247,24 @@ OperationAlternate::setOperationPlanParameters
 DECLARE_EXPORT bool OperationAlternate::extraInstantiate(OperationPlan* o)
 {
   // Create a suboperationplan if one doesn't exist yet.
-  // We use the first alternate by default.  // @todo first one may not be effective
+  // We use the first effective alternate by default.
   if (!o->lastsubopplan || o->lastsubopplan->getOperation() == OperationSetup::setupoperation)
-      getSubOperations().front()->createOperationPlan(
+  {
+    // Find the right operation
+    Operationlist::const_iterator altIter = getSubOperations().begin();
+    for (; altIter != getSubOperations().end(); )
+    {
+      const OperationAlternate::alternateProperty& props = getProperties(*altIter);
+      // Filter out alternates that are not suitable
+      if (props.first != 0.0 && props.second.within(o->getDates().getEnd()))
+        break;
+    }
+    if (altIter != getSubOperations().end())
+      // Create an operationplan instance
+      (*altIter)->createOperationPlan(
         o->getQuantity(), o->getDates().getStart(),
         o->getDates().getEnd(), NULL, o, 0, true);
+  }
   return true;
 }
 

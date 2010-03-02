@@ -409,17 +409,17 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
     data->state->a_qty = orig_q_qty;
   }
 
-  // Increment the cost  @todo also during unavailable time the cost is incremented
+  // Increment the cost
   if (data->state->a_qty > 0.0)
   {
     // Resource usage
     data->state->a_cost += data->state->a_qty * res->getCost()
-       * data->state->q_operationplan->getDates().getDuration() / 3600.0;
+       * (data->state->q_operationplan->getDates().getDuration() - data->state->q_operationplan->getUnavailable()) / 3600.0;
     // Setup penalty and cost
     if (setupOpplan)
     {
       data->state->a_cost += data->state->a_qty * res->getCost()
-       * setupOpplan->getDates().getDuration() / 3600.0;
+       * (setupOpplan->getDates().getDuration() - setupOpplan->getUnavailable()) / 3600.0;
       data->state->a_penalty += setupOpplan->getPenalty();
     }
     // Build-ahead penalty: 1 per day

@@ -24,8 +24,8 @@ msgstr ""
 "Project-Id-Version: 0.7.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-01 20:50+0100\n"
-"PO-Revision-Date: 2010-03-01 21:46+0100\n"
-"Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
+"PO-Revision-Date: 2010-03-02 18:52+0100\n"
+"Last-Translator: Antonio Mascolo <tonio@purpless.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -114,11 +114,11 @@ msgstr "Lista"
 
 #: common/models.py:48
 msgid "comma \",\""
-msgstr ""
+msgstr "virgola \",\""
 
 #: common/models.py:49
 msgid "semicolon \";\""
-msgstr ""
+msgstr "punto e virgola \";\""
 
 #: common/models.py:51
 #: execute/models.py:33
@@ -153,7 +153,7 @@ msgstr "data di fine"
 #: common/models.py:56
 #: common/views.py:51
 msgid "CSV delimiter"
-msgstr ""
+msgstr "delimitatore CSV"
 
 #: common/models.py:58
 #: execute/models.py:30
@@ -174,7 +174,7 @@ msgstr ""
 #: input/views.py:1041
 #: input/views.py:1090
 msgid "last modified"
-msgstr "modificato da"
+msgstr "modificato in data"
 
 #: common/models.py:79
 #: common/views.py:152
@@ -396,7 +396,7 @@ msgstr "Data di fine per il filtro sui dati contenuti nel rapporto"
 
 #: common/views.py:54
 msgid "Delimiter used when exporting CSV files"
-msgstr ""
+msgstr "Delimitatore utilizzato nell'esportare files CSV"
 
 #: common/views.py:82
 msgid "Edit my preferences"
@@ -571,7 +571,7 @@ msgstr "Errore cancellazione banca dati"
 #: execute/management/commands/frepple_run.py:71
 #, python-format
 msgid "Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d"
-msgstr "Avvio creazione piano frePPLe del tipo %(plantype)d e constraints %(constraint)d"
+msgstr "Avvio creazione piano frePPLe del tipo %(plantype)d e vincoli %(constraint)d"
 
 #: execute/management/commands/frepple_run.py:96
 msgid "Finished creating frePPLe plan"
@@ -623,7 +623,7 @@ msgstr "penalità minima"
 
 #: input/models.py:65
 msgid "minimum cost plus penalty"
-msgstr "costo inimo più la penalità"
+msgstr "costo minimo più la penalità"
 
 #: input/models.py:72
 #: input/models.py:97
@@ -746,7 +746,7 @@ msgstr "disponibile"
 
 #: input/models.py:270
 msgid "Calendar defining the working hours and holidays of this location"
-msgstr "Calendario che definisce le ore di lavoro e le vacanze in questo luogo"
+msgstr "Calendario che definisce le ore di lavoro e le vacanze in questa localizzazione"
 
 #: input/models.py:271
 #: input/models.py:289
@@ -761,7 +761,7 @@ msgstr "Calendario che definisce le ore di lavoro e le vacanze in questo luogo"
 #: output/views/operation.py:171
 #: output/views/problem.py:76
 msgid "owner"
-msgstr "proprietario"
+msgstr "dipendenza"
 
 #: input/models.py:272
 #: input/models.py:290
@@ -781,11 +781,11 @@ msgstr "Genitore gerarchico"
 #: output/views/operation.py:49
 #: output/views/resource.py:50
 msgid "location"
-msgstr "luogo"
+msgstr "localizzazione"
 
 #: input/models.py:279
 msgid "locations"
-msgstr "luoghi"
+msgstr "localizzazioni"
 
 #: input/models.py:296
 #: input/models.py:691
@@ -870,7 +870,7 @@ msgstr "limite di rilascio"
 
 #: input/models.py:342
 msgid "Operationplans within this time window from the current day are expected to be released to production ERP"
-msgstr "Le operazioni all'interno di questa finestra temporale a partire dalla data corrente si prevede saranno rilasciate all'ERP di produzione"
+msgstr "I piani operativi all'interno di questa finestra temporale a partire dalla data corrente si prevede saranno rilasciati all'ERP di produzione"
 
 #: input/models.py:343
 #: input/views.py:964
@@ -897,7 +897,7 @@ msgstr "grandezza minima"
 
 #: input/models.py:348
 msgid "A minimum quantity for operationplans"
-msgstr "Una quantità minima per le operazioni"
+msgstr "Una quantità minima per i piani operativi"
 
 #: input/models.py:349
 #: input/views.py:976
@@ -906,7 +906,7 @@ msgstr "grandezza multipla"
 
 #: input/models.py:350
 msgid "A multiple quantity for operationplans"
-msgstr "Una quantità multipla per le operazioni"
+msgstr "Una quantità multipla per i piani operativi"
 
 #: input/models.py:351
 #: input/views.py:980
@@ -915,7 +915,7 @@ msgstr "massima dimensione"
 
 #: input/models.py:352
 msgid "A maximum quantity for operationplans"
-msgstr "Una quantità minima per le operazioni"
+msgstr "Una quantità minima per i piani operativi"
 
 #: input/models.py:353
 #: input/models.py:509
@@ -927,7 +927,7 @@ msgstr "costo"
 
 #: input/models.py:354
 msgid "Cost per operationplan unit"
-msgstr "Costo per unità operativa"
+msgstr "Costo per unità di piano operativo"
 
 #: input/models.py:355
 #: input/models.py:507
@@ -1030,7 +1030,7 @@ msgstr "Fornisci"
 #: output/models.py:96
 #: output/views/buffer.py:181
 msgid "onhand"
-msgstr "disponibile"
+msgstr "disponibilità in stock"
 
 #: input/models.py:427
 msgid "current inventory"
@@ -1048,7 +1048,7 @@ msgstr "Calendario contenente il profilo delle scorte di sicurezza"
 #: input/models.py:431
 #: input/views.py:327
 msgid "producing"
-msgstr "producendo"
+msgstr "in produzione"
 
 #: input/models.py:433
 msgid "Operation to replenish the buffer"
@@ -1211,7 +1211,7 @@ msgstr "Costo di utilizzo di 1 unità della risorsa per 1 ora"
 #: input/models.py:542
 #: input/views.py:418
 msgid "max early"
-msgstr ""
+msgstr "massimo anticipo"
 
 #: input/models.py:543
 msgid "Time window before the ask date where we look for available capacity"
@@ -1270,7 +1270,7 @@ msgstr "identificativo"
 
 #: input/models.py:584
 msgid "Consume/produce material at the start or the end of the operationplan"
-msgstr "Consuma/produce materiale all'inizio oppure alla fine dell'operazione"
+msgstr "Consuma/produce materiale all'inizio oppure alla fine del piano operativo"
 
 #: input/models.py:587
 #: input/models.py:624
@@ -1304,7 +1304,7 @@ msgstr "quantità"
 
 #: input/models.py:594
 msgid "Quantity to consume or produce per operationplan unit"
-msgstr "Quantità da consuma o produrre per unità operativa"
+msgstr "Quantità da consuma o produrre per unità di piano operativo"
 
 #: input/models.py:597
 msgid "Optional name of this flow"
@@ -1354,7 +1354,7 @@ msgstr "carichi"
 
 #: input/models.py:659
 msgid "Unique identifier of an operationplan"
-msgstr "Identificativo unico dell'operazione"
+msgstr "Identificativo unico del piano operativo"
 
 #: input/models.py:664
 #: input/models.py:912
@@ -1393,12 +1393,12 @@ msgstr "Previeni o permetti le variazioni"
 #: output/views/operation.py:142
 #: output/views/resource.py:200
 msgid "operationplan"
-msgstr "operazione"
+msgstr "piano operativo"
 
 #: input/models.py:674
 #: output/models.py:47
 msgid "operationplans"
-msgstr "operazioni"
+msgstr "piani operativi"
 
 #: input/models.py:681
 msgid "1 - high"
@@ -1420,12 +1420,12 @@ msgstr "scadenza"
 
 #: input/models.py:693
 msgid "Due date of the demand"
-msgstr "Data di scadenza della domanda"
+msgstr "Data di scadenza dell'ordine"
 
 #: input/models.py:697
 #: input/models.py:727
 msgid "Operation used to satisfy this demand"
-msgstr "Operazione utilizzata per soddisfare la domanda"
+msgstr "Operazione utilizzata per soddisfare l'ordine"
 
 #: input/models.py:700
 #: input/models.py:729
@@ -1436,7 +1436,7 @@ msgstr "spedizione minima"
 #: input/models.py:701
 #: input/models.py:730
 msgid "Minimum shipment quantity when planning this demand"
-msgstr "Quantità minima di spedizione nel pianificare la domanda"
+msgstr "Quantità minima di spedizione nel pianificare l'ordine"
 
 #: input/models.py:702
 #: input/models.py:731
@@ -1447,7 +1447,7 @@ msgstr "Ritardo massimo"
 #: input/models.py:703
 #: input/models.py:732
 msgid "Maximum lateness allowed when planning this demand"
-msgstr "Quantità massima di spedizione nel pianificare la domanda"
+msgstr "Quantità massima di spedizione nel pianificare l'ordine"
 
 #: input/models.py:712
 #: output/models.py:31
@@ -1459,12 +1459,12 @@ msgstr "Quantità massima di spedizione nel pianificare la domanda"
 #: output/views/problem.py:35
 #: templates/output/demand.xml:13
 msgid "demand"
-msgstr "domanda"
+msgstr "ordine"
 
 #: input/models.py:713
 #: output/models.py:127
 msgid "demands"
-msgstr "domande"
+msgstr "ordini"
 
 #: input/models.py:733
 #: input/views.py:862
@@ -1518,7 +1518,7 @@ msgstr "Lista delle Risorse"
 
 #: input/views.py:441
 msgid "Location List"
-msgstr "Lista dei luoghi"
+msgstr "Lista delle localizzazioni"
 
 #: input/views.py:490
 msgid "Customer List"
@@ -1538,7 +1538,7 @@ msgstr "Lista dei Flussi"
 
 #: input/views.py:725
 msgid "Demand List"
-msgstr "Lista della Domanda"
+msgstr "Lista degli Ordini"
 
 #: input/views.py:803
 msgid "Forecast List"
@@ -1588,7 +1588,7 @@ msgstr "entità"
 #: output/models.py:58
 #: output/views/problem.py:92
 msgid "weight"
-msgstr "peso"
+msgstr "importanza"
 
 #: output/models.py:66
 msgid "problem"
@@ -1621,7 +1621,7 @@ msgstr "Piani dei Flussi"
 
 #: output/models.py:115
 msgid "demand quantity"
-msgstr "Quantità della Domanda"
+msgstr "Quantità dell'Ordine"
 
 #: output/models.py:116
 #: output/views/demand.py:192
@@ -1648,7 +1648,7 @@ msgstr "data di consumo"
 
 #: output/models.py:136
 msgid "producing operationplan"
-msgstr "sta producendo il piano operativo"
+msgstr "piano operativo in produzione"
 
 #: output/models.py:137
 msgid "producing date"
@@ -1656,7 +1656,7 @@ msgstr "data di produzione"
 
 #: output/models.py:140
 msgid "quantity demand"
-msgstr "quantità della domanda"
+msgstr "quantità dell'ordine"
 
 #: output/models.py:141
 msgid "quantity buffer"
@@ -1668,11 +1668,11 @@ msgstr "pegged"
 
 #: output/models.py:152
 msgid "demand pegging"
-msgstr "pegging della domanda"
+msgstr "pegging dell'ordine"
 
 #: output/models.py:153
 msgid "demand peggings"
-msgstr "peggings delle domande"
+msgstr "peggings degli ordini"
 
 #: output/models.py:161
 msgid "total quantity"
@@ -1738,7 +1738,7 @@ msgstr "Rapporto dettagliato sulle scorte"
 #: templates/admin/base_site_nav.html:56
 #: templates/admin/index.html:78
 msgid "Demand report"
-msgstr "Rapporto sulla domanda"
+msgstr "Rapporto sugli ordini"
 
 #: output/views/demand.py:49
 #: output/views/forecast.py:57
@@ -1838,55 +1838,55 @@ msgstr "sovraccarico"
 
 #: output/views/problem.py:35
 msgid "underload"
-msgstr ""
+msgstr "sotto carico"
 
 #: output/views/problem.py:36
 msgid "material"
-msgstr ""
+msgstr "materiale"
 
 #: output/views/problem.py:36
 msgid "material excess"
-msgstr ""
+msgstr "eccesso di materiale"
 
 #: output/views/problem.py:36
 msgid "material shortage"
-msgstr ""
+msgstr "mancanza di materiale"
 
 #: output/views/problem.py:37
 msgid "capacity"
-msgstr ""
+msgstr "capacità"
 
 #: output/views/problem.py:37
 msgid "excess"
-msgstr ""
+msgstr "eccesso"
 
 #: output/views/problem.py:37
 msgid "short"
-msgstr ""
+msgstr "mancanza"
 
 #: output/views/problem.py:37
 msgid "early"
-msgstr ""
+msgstr "anticipo"
 
 #: output/views/problem.py:37
 msgid "late"
-msgstr ""
+msgstr "ritardo"
 
 #: output/views/problem.py:37
 msgid "unplanned"
-msgstr ""
+msgstr "non pianificato"
 
 #: output/views/problem.py:38
 msgid "precedence"
-msgstr ""
+msgstr "precedenza"
 
 #: output/views/problem.py:38
 msgid "before fence"
-msgstr ""
+msgstr "prima del limite"
 
 #: output/views/problem.py:38
 msgid "before current"
-msgstr ""
+msgstr "prima del corrente"
 
 #: output/views/problem.py:61
 msgid "Problem Report"
@@ -1959,7 +1959,7 @@ msgstr "Dove Utilizzato"
 #: templates/operationcontext.html:6
 #: templates/resourcecontext.html:6
 msgid "Plan"
-msgstr "Piano"
+msgstr "Parametri"
 
 #: templates/calendarcontext.html:3
 msgid "Calendar"
@@ -1971,7 +1971,7 @@ msgstr "Cliente"
 
 #: templates/demandcontext.html:3
 msgid "Demand"
-msgstr "Domanda"
+msgstr "Ordini"
 
 #: templates/forecastcontext.html:3
 msgid "Forecast"
@@ -2172,23 +2172,23 @@ msgstr ""
 
 #: templates/execute/execute.html:54
 msgid "Constraints"
-msgstr ""
+msgstr "Vincoli"
 
 #: templates/execute/execute.html:55
 msgid "Capacity: respect capacity limits"
-msgstr ""
+msgstr "Capacità: rispetto dei limiti di capacità"
 
 #: templates/execute/execute.html:56
 msgid "Material: respect procurement limits"
-msgstr ""
+msgstr "Materiale: rispetto dei limiti di fornitura"
 
 #: templates/execute/execute.html:57
 msgid "Lead time: do not create plans in the past"
-msgstr ""
+msgstr "Lead Time: non si creano piani nel passato"
 
 #: templates/execute/execute.html:58
 msgid "Release fence: do not create plans within the release time window"
-msgstr ""
+msgstr "Limite di rilascio: non si creano piani all'interno della finestra di rilascio"
 
 #: templates/execute/execute.html:60
 msgid ""

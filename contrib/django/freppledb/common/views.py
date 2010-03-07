@@ -24,6 +24,7 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django import forms
+from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
 from common.models import *
@@ -73,9 +74,9 @@ def preferences(request):
         pref.csvdelimiter = newdata['csvdelimiter']
         pref.language = newdata['language']
         pref.save()
-        request.user.message_set.create(message='Successfully updated preferences')
+        request.user.message_set.create(message=force_unicode(_('Successfully updated preferences')))
       except:
-        request.user.message_set.create(message='Failure updating preferences')
+        request.user.message_set.create(message=force_unicode(_('Failure updating preferences')))
   else:
     pref = request.user.get_profile()
     form = PreferencesForm({

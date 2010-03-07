@@ -27,6 +27,7 @@ from django.contrib.auth.models import User
 from django.dispatch import dispatcher
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from input.models import Plan
 
@@ -48,6 +49,7 @@ class Preferences(models.Model):
     ('comma',_('comma ","')),
     ('semicolon',_('semicolon ";"')),
   )
+  languageList = tuple( [ ('auto',_('Detect automatically')), ] + list(settings.LANGUAGES) )
   user = models.ForeignKey(User, verbose_name=_('user'), unique=True)
   buckets = models.CharField(_('buckets'), max_length=10, choices=buckettype,
     default='standard')
@@ -55,6 +57,8 @@ class Preferences(models.Model):
   enddate = models.DateField(_('enddate'), blank=True, null=True)
   csvdelimiter = models.CharField(_('CSV delimiter'), max_length=10, choices=csvDelimiter,
     default='comma')
+  language = models.CharField(_('language'), max_length=10, choices=csvDelimiter,
+    default='auto')
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
 

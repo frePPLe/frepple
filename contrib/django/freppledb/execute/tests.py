@@ -67,10 +67,10 @@ class execute_from_user_interface(TransactionTestCase):
     self.assertRedirects(response, '/execute/execute.html')
 
     # Count the output records
-    self.failUnlessEqual(output.models.Problem.objects.count(),9)
-    self.failUnlessEqual(output.models.FlowPlan.objects.count(),291)
-    self.failUnlessEqual(output.models.LoadPlan.objects.count(),83)
-    self.failUnlessEqual(output.models.OperationPlan.objects.count(),135)
+    self.failUnlessEqual(output.models.Problem.objects.count(),26)
+    self.failUnlessEqual(output.models.FlowPlan.objects.count(),234)
+    self.failUnlessEqual(output.models.LoadPlan.objects.count(),58)
+    self.failUnlessEqual(output.models.OperationPlan.objects.count(),138)
 
 
 class execute_with_commands(TransactionTestCase):
@@ -97,7 +97,7 @@ class execute_with_commands(TransactionTestCase):
     try: os.environ['FREPPLE_DATABASE_USER'] = settings.TEST_DATABASE_USER
     except: pass
     management.call_command('frepple_run', plantype='1', nonfatal=True)
-    self.failIfEqual(output.models.Problem.objects.count(),0)
-    self.failIfEqual(output.models.FlowPlan.objects.count(),0)
-    self.failIfEqual(output.models.LoadPlan.objects.count(),0)
-    self.failIfEqual(output.models.OperationPlan.objects.count(),0)
+    self.failUnlessEqual(output.models.Problem.objects.count(),26)
+    self.failUnlessEqual(output.models.FlowPlan.objects.count(),234)
+    self.failUnlessEqual(output.models.LoadPlan.objects.count(),58)
+    self.failUnlessEqual(output.models.OperationPlan.objects.count(),138)

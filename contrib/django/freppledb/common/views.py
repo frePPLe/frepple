@@ -33,6 +33,16 @@ from django.contrib.auth.models import User, Group
 
 
 class PreferencesForm(forms.Form):
+  language = forms.ChoiceField(label = _("Language"),
+    initial="auto",
+    choices=Preferences.languageList,
+    help_text=_("Language of the user interface"),
+    )
+  csvdelimiter = forms.ChoiceField(label = _("CSV delimiter"),
+    initial="comma",
+    choices=Preferences.csvDelimiter,
+    help_text=_("Delimiter used when exporting CSV files"),
+    )
   buckets = forms.ChoiceField(label = _("Buckets"),
     initial=_('Default'),
     choices=Preferences.buckettype,
@@ -48,11 +58,6 @@ class PreferencesForm(forms.Form):
     help_text=_("End date for filtering report data"),
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
-  csvdelimiter = forms.ChoiceField(label = _("CSV delimiter"),
-    initial="comma",
-    choices=Preferences.csvDelimiter,
-    help_text=_("Delimiter used when exporting CSV files"),
-    )
 
 @login_required
 def preferences(request):
@@ -66,6 +71,7 @@ def preferences(request):
         pref.startdate = newdata['startdate']
         pref.enddate = newdata['enddate']
         pref.csvdelimiter = newdata['csvdelimiter']
+        pref.language = newdata['language']
         pref.save()
         request.user.message_set.create(message='Successfully updated preferences')
       except:
@@ -77,6 +83,7 @@ def preferences(request):
       'startdate': pref.startdate,
       'enddate': pref.enddate,
       'csvdelimiter': pref.csvdelimiter,
+      'language': pref.language,
       })
   return render_to_response('common/preferences.html', {
      'title': _('Edit my preferences'),

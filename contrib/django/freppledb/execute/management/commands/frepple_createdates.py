@@ -97,7 +97,13 @@ class Command(BaseCommand):
         quarter = (month-1) / 3 + 1          # an integer in the range 1 - 4
         year = int(curdate.strftime("%Y"))
         dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
-
+        year_start = date(year,1,1)
+        year_end = date(year+1,1,1)
+        week_start = curdate - timedelta((dayofweek+6)%7)
+        week_end = curdate - timedelta((dayofweek+6)%7-7)
+        if week_start.date() < year_start: week_start = year_start
+        if week_end.date() > year_end: week_end = year_end
+        
         # Main entry
         Dates(
           day = str(curdate.date()),
@@ -105,8 +111,8 @@ class Command(BaseCommand):
           day_end = curdate + timedelta(1),
           dayofweek = dayofweek,
           week = curdate.strftime("%y W%W"),     # Weeks are starting on monday
-          week_start = curdate - timedelta((dayofweek+6)%7),
-          week_end = curdate - timedelta((dayofweek+6)%7-7),
+          week_start = week_start,
+          week_end = week_end,
           month =  curdate.strftime("%b %y"),
           month_start = date(year, month, 1),
           month_end = date(year+month/12, month+1-12*(month/12), 1),
@@ -114,8 +120,8 @@ class Command(BaseCommand):
           quarter_start = date(year, quarter*3-2, 1),
           quarter_end = date(year+quarter/4, quarter*3+1-12*(quarter/4), 1),
           year = curdate.strftime("%Y"),
-          year_start = date(year,1,1),
-          year_end = date(year+1,1,1),
+          year_start = year_start,
+          year_end = year_end,
           ).save()
 
         # Next date

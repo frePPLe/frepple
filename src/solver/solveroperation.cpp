@@ -206,6 +206,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
       // ask date. In this case we will violate the post-operation -soft-
       // constraint.
       data.state->q_date = matnext.getEnd();
+      orig_q_date = data.state->q_date;
       data.state->q_qty = orig_opplan_qty;
       data.state->a_date = Date::infiniteFuture;
       data.state->a_qty = data.state->q_qty;

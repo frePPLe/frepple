@@ -137,18 +137,13 @@ elif settings.DATABASE_ENGINE == 'oracle':
     return '1'
 
   def sql_datediff(d1,d2):
-    # Ridiculously complex code. Bad marks for Oracle!
-    # Straightforward subtraction gives use an "interval" data type, from which it is hard to extract the total time as a number.
-    # We force subtracting 2 dates, which does give the difference in days
-    return "(to_date(to_char(%s,'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') - to_date(to_char(%s,'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') )" % (d1,d2)
+    return "(cast(%s as date) - cast(%s as date))" % (d1,d2)
 
   def sql_overlap(s1,e1,s2,e2):
-    # Ridiculously complex code. Bad marks for Oracle!
-    return "greatest(0,to_date(to_char(least(%s,%s),'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') - to_date(to_char(greatest(%s,%s),'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') )" % (e1,e2,s1,s2)
+    return "greatest(0,cast(least(%s,%s) as date) - cast(greatest(%s,%s) as date))" % (e1,e2,s1,s2)
 
   def sql_overlap3(s1,e1,s2,e2,s3,e3):
-    # Ridiculously complex code. Bad marks for Oracle!
-    return "greatest(0,to_date(to_char(least(%s,%s,%s),'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') - to_date(to_char(greatest(%s,%s,%s),'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') )" % (e1,e2,e3,s1,s2,s3)
+    return "greatest(0,cast(least(%s,%s,%s) as date) - cast(greatest(%s,%s,%s) as date))" % (e1,e2,e3,s1,s2,s3)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)

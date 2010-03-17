@@ -181,7 +181,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
           // Must be same setup
           const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
-          if (ldplan && ldplan->getSetup() != setupLdplan->getSetup())
+          if (ldplan 
+            && ldplan->getOperationPlan()->getDates().overlap(setupOpplan->getDates()) > 0L
+            && ldplan->getSetup() != setupLdplan->getSetup())
           {
             HasOverload = true;
             HasSetupOverload = true;

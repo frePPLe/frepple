@@ -1320,10 +1320,11 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
 
   // Find the setup of the resource at the start of the conversion
   const Load* lastld = NULL;
-  if (ldplan->getDate() <= (s ? s : e))
+  Date boundary = s ? s : e;
+  if (ldplan->getDate() < boundary)
   {
     for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin(ldplan);
-      i != ldplan->getResource()->getLoadPlans().end() && i->getDate() < (s ? s : e); ++i)
+      i != ldplan->getResource()->getLoadPlans().end() && i->getDate() <= boundary; ++i)
     {
       const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
       if (l && i->getQuantity() != 0.0 
@@ -1343,7 +1344,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
         && l->getOperationPlan() != opplan
         && l->getOperationPlan() != opplan->getOwner()
         && !l->getLoad()->getSetup().empty()
-        && l->getDate() < (s ? s : e))
+        && l->getDate() <= boundary)
         {
           lastld = l->getLoad();
           break;

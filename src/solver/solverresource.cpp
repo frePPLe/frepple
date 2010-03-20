@@ -59,8 +59,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
     // Reply whatever is requested, regardless of date and quantity.
     data->state->a_qty = data->state->q_qty;
     data->state->a_date = data->state->q_date;
-    data->state->a_cost += data->state->a_qty * res->getCost() // @todo also during unavailable time the cost is incremented
-      * data->state->q_operationplan->getDates().getDuration() / 3600.0;
+    data->state->a_cost += data->state->a_qty * res->getCost()
+      * (data->state->q_operationplan->getDates().getDuration() - data->state->q_operationplan->getUnavailable()) 
+      / 3600.0;
 
     // Message
     if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
@@ -431,7 +432,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   }
   else if (data->state->q_operationplan->getQuantity() > 0.0)
     data->state->q_operationplan->setQuantity(0.0);
-
+if (userexit_resource) userexit_resource.call(res, PythonObject(data->constrainedPlanning));
   // Message
   if (data->getSolver()->getLogLevel()>1)
   {
@@ -465,8 +466,9 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
   // Reply whatever is requested, regardless of date and quantity.
   data->state->a_qty = data->state->q_qty;
   data->state->a_date = data->state->q_date;
-  data->state->a_cost += data->state->a_qty * res->getCost() // @todo also during unavailable time the cost is incremented
-    * data->state->q_operationplan->getDates().getDuration() / 3600.0;
+  data->state->a_cost += data->state->a_qty * res->getCost()
+    * (data->state->q_operationplan->getDates().getDuration() - data->state->q_operationplan->getUnavailable())
+    / 3600.0;
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)

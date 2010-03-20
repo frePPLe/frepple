@@ -2,7 +2,7 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <description>
     Verifies the resource setup functionality.    
-    This model contains a number of painting lines, which take considerable
+    This model contains a number of painting lines, which take some
     time to change between colors.     
   </description>
   <current>2009-01-01T00:00:00</current>
@@ -346,7 +346,7 @@
 <?python
 from datetime import timedelta
 
-def printStatus(d = None):
+def printStatus(d = None, mode = 1):
   print "\nCurrent status:", d
   for i in frepple.resources():
     print "  Loading of resource '%s' (initial setup %s)" % (i.name, i.setup)

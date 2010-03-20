@@ -21,7 +21,7 @@
  Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="0.8.0.beta">
+  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="0.8.0">
   <!--
     This schema has no target namespace defined. It will adopt the namespace
     of the schema that is using it with an "include" statement.

@@ -9,7 +9,7 @@ bin_PROGRAMS = frepple
 all-local: frepple$(EXEEXT)
 	if test -f .libs/frepple$(EXEEXT); then cp .libs/frepple$(EXEEXT) ../bin; fi
 	if test -f .libs/cygfrepple*.dll; then cp .libs/cygfrepple*.dll ../bin; fi
-	if test -f .libs/libfrepple.so; then cp .libs/libfrepple.so* ../bin; fi
+	if test -f .libs/libfrepple*.so; then cp .libs/libfrepple*.so* ../bin; fi
 
 # Shared library
 lib_LTLIBRARIES = libfrepple.la

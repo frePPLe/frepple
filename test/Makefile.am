@@ -8,8 +8,8 @@ EXTRA_DIST = runtest.py
 
 if LP 
 check:
-	./runtest.py ${TESTARGS}
+	`pwd`/runtest.py ${TESTARGS}
 else
 check:
-	./runtest.py ${TESTARGS} -e lpsolver_1
+	`pwd`/runtest.py ${TESTARGS} -e lpsolver_1
 endif

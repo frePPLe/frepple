@@ -166,7 +166,7 @@ void SolverMRP::solve(const Load* l, void* v)
         }
         data->state->a_cost = beforeCost;
         data->state->a_penalty = beforePenalty;
-        double val;
+        double val = 0.0;
         switch (search)
         {
           case MINCOST:

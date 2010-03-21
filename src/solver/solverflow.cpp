@@ -65,7 +65,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
     bool originalPlanningMode = data->constrainedPlanning;
     data->constrainedPlanning = true;
     const Flow *firstAlternate = NULL;
-    double firstQuantity;
+    double firstQuantity = 0.0;
 
     // 4) Loop through the alternates till we find a non-zero reply
     Date min_next_date(Date::infiniteFuture);

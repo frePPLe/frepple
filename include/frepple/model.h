@@ -876,13 +876,14 @@ class Problem : public NonCopyable, public Object
   public:
     class const_iterator;
     friend class const_iterator;
+    friend class Demand;
 
     /** Constructor.
       * Note that this method can't manipulate the problem container, since
       * the problem objects aren't fully constructed yet.
       * @see addProblem
       */
-    explicit Problem(HasProblems *p) : owner(p)
+    explicit Problem(HasProblems *p) : owner(p), nextProblem(NULL)
     {
       if (!owner) throw LogicException("Invalid problem creation");
       initType(metadata);
@@ -4494,11 +4495,25 @@ class Demand
     /** Constructor. */
     explicit Demand(const string& str) : HasHierarchy<Demand>(str),
       it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0),
-      maxLateness(TimePeriod::MAX), minShipment(0), hidden(false) {}
+      maxLateness(TimePeriod::MAX), minShipment(0), hidden(false),
+      firstConstraint(NULL) {}
 
     /** Destructor. Deleting the demand will also delete all delivery operation
-      * plans */
-    virtual ~Demand() {deleteOperationPlans(true);}
+      * plans (including locked ones). */
+    virtual ~Demand() 
+    {
+      deleteOperationPlans(true);
+      deleteConstraints();
+    }
+
+    /** Empty the list of constraints. */
+    DECLARE_EXPORT void deleteConstraints();
+
+    /** Add a constraints to the list. */
+    DECLARE_EXPORT void addConstraint(Problem *);
+
+    /** Retrieve an iterator for the list of constraints. */
+    DECLARE_EXPORT Problem::const_iterator getConstraints() const; 
 
     /** Returns the quantity of the demand. */
     double getQuantity() const {return qty;}
@@ -4681,6 +4696,10 @@ class Demand
 
     /** A list of operation plans to deliver this demand. */
     OperationPlan_list deli;
+
+    /** A pointer to the first constraint on this demand. Constraints are 
+      * maintained in a single linked list. */
+    Problem* firstConstraint;
 };
 
 
@@ -4839,8 +4858,8 @@ class ProblemBeforeCurrent : public Problem
     bool isFeasible() const {return false;}
     double getWeight() const
     {return dynamic_cast<OperationPlan*>(getOwner())->getQuantity();}
-    explicit ProblemBeforeCurrent(OperationPlan* o) : Problem(o)
-      {addProblem();}
+    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : Problem(o)
+      {if (add) addProblem();}
     ~ProblemBeforeCurrent() {removeProblem();}
     string getEntity() const {return "operation";}
     Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
@@ -4882,8 +4901,8 @@ class ProblemBeforeFence : public Problem
     bool isFeasible() const {return true;}
     double getWeight() const
     {return static_cast<OperationPlan*>(getOwner())->getQuantity();}
-    explicit ProblemBeforeFence(OperationPlan* o) : Problem(o)
-      {addProblem();}
+    explicit ProblemBeforeFence(OperationPlan* o, bool add = true) : Problem(o)
+      {if (add) addProblem();}
     ~ProblemBeforeFence() {removeProblem();}
     string getEntity() const {return "operation";}
     Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
@@ -4931,7 +4950,8 @@ class ProblemPrecedence : public Problem
     {
       return static_cast<double>(getDateRange().getDuration()) / 86400;
     }
-    explicit ProblemPrecedence(OperationPlan* o) : Problem(o) {addProblem();}
+    explicit ProblemPrecedence(OperationPlan* o, bool add = true) : Problem(o) 
+      {if (add) addProblem();}
     ~ProblemPrecedence() {removeProblem();}
     string getEntity() const {return "operation";}
     Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
@@ -4964,7 +4984,8 @@ class ProblemDemandNotPlanned : public Problem
       {return string("Demand '") + getDemand()->getName() + "' is not planned";}
     bool isFeasible() const {return false;}
     double getWeight() const {return getDemand()->getQuantity();}
-    explicit ProblemDemandNotPlanned(Demand* d) : Problem(d) {addProblem();}
+    explicit ProblemDemandNotPlanned(Demand* d, bool add = true) : Problem(d) 
+      {if (add) addProblem();}
     ~ProblemDemandNotPlanned() {removeProblem();}
     string getEntity() const {return "demand";}
     const DateRange getDateRange() const
@@ -5003,7 +5024,8 @@ class ProblemLate : public Problem
     }
 
     /** Constructor. */
-    explicit ProblemLate(Demand* d) : Problem(d) {addProblem();}
+    explicit ProblemLate(Demand* d, bool add = true) : Problem(d) 
+      {if (add) addProblem();}
 
     /** Destructor. */
     ~ProblemLate() {removeProblem();}
@@ -5043,7 +5065,8 @@ class ProblemEarly : public Problem
         getDemand()->getEarliestDelivery()->getDates().getEnd()
         ).getDuration()) / 86400;
     }
-    explicit ProblemEarly(Demand* d) : Problem(d) {addProblem();}
+    explicit ProblemEarly(Demand* d, bool add = true) : Problem(d) 
+      {if (add) addProblem();}
     ~ProblemEarly() {removeProblem();}
     string getEntity() const {return "demand";}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
@@ -5081,7 +5104,8 @@ class ProblemShort : public Problem
     bool isFeasible() const {return true;}
     double getWeight() const
       {return getDemand()->getQuantity() - getDemand()->getPlannedQuantity();}
-    explicit ProblemShort(Demand* d) : Problem(d) {addProblem();}
+    explicit ProblemShort(Demand* d, bool add = true) : Problem(d) 
+      {if (add) addProblem();}
     ~ProblemShort() {removeProblem();}
     string getEntity() const {return "demand";}
     const DateRange getDateRange() const
@@ -5115,7 +5139,8 @@ class ProblemExcess : public Problem
     bool isFeasible() const {return true;}
     double getWeight() const
       {return getDemand()->getPlannedQuantity() - getDemand()->getQuantity();}
-    explicit ProblemExcess(Demand* d) : Problem(d) {addProblem();}
+    explicit ProblemExcess(Demand* d, bool add = true) : Problem(d) 
+      {if (add) addProblem();}
     string getEntity() const {return "demand";}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
     ~ProblemExcess() {removeProblem();}
@@ -5141,8 +5166,8 @@ class ProblemCapacityOverload : public Problem
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return false;}
     double getWeight() const {return qty;}
-    ProblemCapacityOverload(Resource* r, DateRange d, double q)
-        : Problem(r), qty(q), dr(d) {addProblem();}
+    ProblemCapacityOverload(Resource* r, DateRange d, double q, bool add = true)
+        : Problem(r), qty(q), dr(d) {if (add) addProblem();}
     ~ProblemCapacityOverload() {removeProblem();}
     string getEntity() const {return "capacity";}
     Object* getOwner() const {return dynamic_cast<Resource*>(owner);}
@@ -5174,8 +5199,8 @@ class ProblemCapacityUnderload : public Problem
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return true;}
     double getWeight() const {return qty;}
-    ProblemCapacityUnderload(Resource* r, DateRange d, double q)
-        : Problem(r), qty(q), dr(d) {addProblem();}
+    ProblemCapacityUnderload(Resource* r, DateRange d, double q, bool add = true)
+        : Problem(r), qty(q), dr(d) {if (add) addProblem();}
     ~ProblemCapacityUnderload() {removeProblem();}
     string getEntity() const {return "capacity";}
     Object* getOwner() const {return dynamic_cast<Resource*>(owner);}
@@ -5207,8 +5232,8 @@ class ProblemMaterialShortage : public Problem
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return false;}
     double getWeight() const {return qty;}
-    ProblemMaterialShortage(Buffer* b, Date st, Date nd, double q)
-        : Problem(b), qty(q), dr(st,nd) {addProblem();}
+    ProblemMaterialShortage(Buffer* b, Date st, Date nd, double q, bool add = true)
+        : Problem(b), qty(q), dr(st,nd) {if (add) addProblem();}
     string getEntity() const {return "material";}
     Object* getOwner() const {return dynamic_cast<Buffer*>(owner);}
     ~ProblemMaterialShortage() {removeProblem();}
@@ -5240,8 +5265,8 @@ class ProblemMaterialExcess : public Problem
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return true;}
     double getWeight() const {return qty;}
-    ProblemMaterialExcess(Buffer* b, Date st, Date nd, double q)
-        : Problem(b), qty(q), dr(st,nd) {addProblem();}
+    ProblemMaterialExcess(Buffer* b, Date st, Date nd, double q, bool add = true)
+        : Problem(b), qty(q), dr(st,nd) {if (add) addProblem();}
     string getEntity() const {return "material";}
     ~ProblemMaterialExcess() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
@@ -5513,6 +5538,12 @@ class Problem::const_iterator
       */
     explicit const_iterator(HasProblems* o) : iter(o ? o->firstProblem : NULL),
       owner(o), eiter(4) {}
+
+    /** Creates an iterator that will loop through the constraints of
+      * a demand.
+      */
+    explicit const_iterator(Problem* o) : iter(o),
+      owner(NULL), eiter(4) {}
 
     /** Creates an iterator that will loop through the problems of all
       * entities. */
@@ -5881,6 +5912,13 @@ inline int OperationPlan::sizeLoadPlans() const
 class ProblemIterator
   : public FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>
 {
+  public:
+    /** Constructor starting the iteration from a certain problem. */
+    ProblemIterator(Problem *x) : 
+        FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>(x) {}
+    /** Default constructor. */
+    ProblemIterator() : 
+        FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>() {}
 };
 
 

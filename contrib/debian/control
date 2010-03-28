@@ -2,7 +2,7 @@ Source: frepple
 Section: science
 Priority: optional
 Maintainer: Johan De Taeye <jdetaeye@users.sourceforge.net>
-Build-Depends: debhelper (>= 7), cdbs, autotools-dev, doxygen, python-dev (< 3), libxerces-c2-dev
+Build-Depends: debhelper (>= 7), cdbs, autotools-dev, doxygen, python-dev (< 3), libxerces-c2-dev, python-django (>= 1.1) | python-django (< 1.2)
 Build-Conflicts: autoconf2.13, automake1.4
 Standards-Version: 3.8.0
 Homepage: http://www.frepple.com
@@ -11,7 +11,7 @@ Vcs-Svn: https://frepple.svn.sourceforge.net/svnroot/frepple/trunk
 
 Package: frepple
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python (< 3), libxerces-c28
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (< 3), libxerces-c28, python-django (>= 1.1) | python-django (< 1.2)
 Description: Free Production Planning Library
  FrePPLe stands for "Free Production Planning Library". It is a toolkit/
  framework for modeling and solving production planning problems, targeted

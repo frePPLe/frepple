@@ -526,7 +526,7 @@ DECLARE_EXPORT Problem::const_iterator Problem::begin(HasProblems* i, bool refre
 
 DECLARE_EXPORT const Problem::const_iterator Problem::end()
 {
-  return const_iterator(NULL);
+  return const_iterator(static_cast<Problem*>(NULL));
 }
 
 

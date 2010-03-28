@@ -372,3 +372,16 @@ register.tag('iflessthanorequal', iflessthanorequal)
 def ifgreaterthanorequal(parser, token):
     return do_compare(parser, token, False, True)
 register.tag('ifgreaterthanorequal', ifgreaterthanorequal)
+
+
+#
+# Filters to get the verbose name of a model
+# 
+
+def verbose_name(obj):
+	return obj._meta.verbose_name
+register.filter(verbose_name)
+
+def verbose_name_plural(obj):
+	return obj._meta.verbose_name_plural
+register.filter(verbose_name_plural)

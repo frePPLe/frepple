@@ -609,6 +609,7 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="operationplans" type="operationplanlist" />
+      <xsd:element name="constraints" type="problemlist" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="quantity" type="positiveDouble" />

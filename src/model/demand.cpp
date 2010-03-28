@@ -237,6 +237,42 @@ DECLARE_EXPORT double Demand::getPlannedQuantity() const
 }
 
 
+DECLARE_EXPORT void Demand::deleteConstraints() 
+{
+  // Delete each constraint in the list
+  for (Problem *cur = firstConstraint; cur; )
+  {
+    Problem *del = cur;
+    cur = cur->nextProblem;
+    del->owner = NULL;
+    delete del;
+  }
+  // Set the header to NULL
+  firstConstraint = NULL;
+}
+
+
+DECLARE_EXPORT void Demand::addConstraint(Problem *p)
+{
+  if (!firstConstraint)
+    // Insert as the first problem in the list
+    firstConstraint = p;
+  else
+  {
+    // Insert at the end of the list
+    Problem* cur = firstConstraint;
+    while (cur->nextProblem) cur = cur->nextProblem;
+    cur->nextProblem = p;
+  }
+}
+
+
+DECLARE_EXPORT Problem::const_iterator Demand::getConstraints() const 
+{
+  return Problem::const_iterator(firstConstraint);
+}
+
+
 DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
@@ -266,13 +302,23 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
     o->writeElement(Tags::tag_minshipment, getMinShipment());
 
   // Write extra plan information
-  if ((o->getContentType() == XMLOutput::PLAN
-      || o->getContentType() == XMLOutput::PLANDETAIL) && !deli.empty())
+  if (o->getContentType() == XMLOutput::PLAN 
+    || o->getContentType() == XMLOutput::PLANDETAIL)
   {
-    o->BeginObject(Tags::tag_operationplans);
-    for (OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
-      o->writeElement(Tags::tag_operationplan, *i, FULL);
-    o->EndObject(Tags::tag_operationplans);
+    if (!deli.empty())
+    {
+      o->BeginObject(Tags::tag_operationplans);
+      for (OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
+        o->writeElement(Tags::tag_operationplan, *i, FULL);
+      o->EndObject(Tags::tag_operationplans);
+    }
+    if (firstConstraint)
+    {
+      o->BeginObject(Tags::tag_constraints);
+      for (Problem * i = firstConstraint; i; i = i->nextProblem)
+        o->writeElement(Tags::tag_problem, *i, FULL);
+      o->EndObject(Tags::tag_constraints);
+    }
   }
   o->EndObject(tag);
 }
@@ -373,6 +419,8 @@ DECLARE_EXPORT PyObject* Demand::getattro(const Attribute& attr)
     return new DemandPlanIterator(this);
   if (attr.isA(Tags::tag_pegging))
     return new PeggingIterator(this);
+  if (attr.isA(Tags::tag_constraints))
+    return new ProblemIterator(firstConstraint);
   return NULL;
 }
 

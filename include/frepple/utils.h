@@ -5224,6 +5224,8 @@ class FreppleIterator : public PythonExtension<ME>
 
     template <class OTHER> FreppleIterator(const OTHER *o) : i(o) {}
 
+    template <class OTHER> FreppleIterator(const OTHER &o) : i(o) {}
+
     static PyObject* create(PyObject* self, PyObject* args)
      {return new ME();}
 

@@ -8,4 +8,4 @@ callback_SOURCES = main.cpp
 callback_LDADD   = ../../src/libfrepple.la
 EXTRA_DIST = callback.xml callback.expect
 
-CLEANFILES = output.* *.gcda *.gcov *.gcno
+CLEANFILES = test.out *.gcda *.gcov *.gcno

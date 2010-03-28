@@ -9,4 +9,4 @@ name_LDADD   = ../../src/libfrepple.la
 
 EXTRA_DIST = name.expect
 
-CLEANFILES = output.* *.gcda *.gcov *.gcno
+CLEANFILES = test.out *.gcda *.gcov *.gcno

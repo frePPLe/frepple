@@ -247,12 +247,13 @@ DECLARE_EXPORT void Demand::deleteConstraints()
     del->owner = NULL;
     delete del;
   }
+
   // Set the header to NULL
   firstConstraint = NULL;
 }
 
 
-DECLARE_EXPORT void Demand::addConstraint(Problem *p)
+DECLARE_EXPORT void Demand::pushConstraint(Problem *p)
 {
   if (!firstConstraint)
     // Insert as the first problem in the list
@@ -264,6 +265,37 @@ DECLARE_EXPORT void Demand::addConstraint(Problem *p)
     while (cur->nextProblem) cur = cur->nextProblem;
     cur->nextProblem = p;
   }
+}
+
+
+DECLARE_EXPORT void Demand::popConstraint(Problem *p) 
+{
+  if (p) 
+    // Skip the problem that was passed as argument
+    p = p->nextProblem;
+  else
+  {
+    // NULL argument: delete all
+    p = firstConstraint;
+    firstConstraint = NULL;
+  }
+
+  // Delete each constraint after the marked one
+  while (p)
+  {
+    Problem *del = p;
+    p = p->nextProblem;
+    del->owner = NULL;
+    delete del;
+  }
+}
+
+
+DECLARE_EXPORT Problem* Demand::topConstraint() const
+{
+  for (Problem *p = firstConstraint; p; p = p->nextProblem)
+    if (!p->nextProblem) return p;
+  return NULL;
 }
 
 

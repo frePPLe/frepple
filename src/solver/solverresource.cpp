@@ -432,7 +432,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   }
   else if (data->state->q_operationplan->getQuantity() > 0.0)
     data->state->q_operationplan->setQuantity(0.0);
-if (userexit_resource) userexit_resource.call(res, PythonObject(data->constrainedPlanning));
+
+  // Maintain the constraint list
+  if (data->state->a_qty == 0.0 && data->logConstraints)
+    data->planningDemand->pushConstraint(
+      new ProblemCapacityOverload(const_cast<Resource*>(res), DateRange(currentOpplan.start,currentOpplan.end) , orig_q_qty, false)
+      );
+
   // Message
   if (data->getSolver()->getLogLevel()>1)
   {

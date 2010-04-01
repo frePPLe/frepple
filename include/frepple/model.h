@@ -4510,7 +4510,14 @@ class Demand
     DECLARE_EXPORT void deleteConstraints();
 
     /** Add a constraints to the list. */
-    DECLARE_EXPORT void addConstraint(Problem *);
+    DECLARE_EXPORT void pushConstraint(Problem *);
+
+    /** Remove all constraints from the list that appear AFTER the one 
+      * passed as argument. */
+    DECLARE_EXPORT void popConstraint(Problem *);
+
+    /** Get the last constraint on the list. */
+    DECLARE_EXPORT Problem* topConstraint() const;
 
     /** Retrieve an iterator for the list of constraints. */
     DECLARE_EXPORT Problem::const_iterator getConstraints() const; 

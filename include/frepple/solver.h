@@ -463,66 +463,67 @@ class SolverMRP : public Solver
   protected:
     /** @brief This class is used to store the solver status during the
       * ask-reply calls of the solver.
-      *
       */
     struct State
     {
-        /** Points to the demand being planned. */
-        Demand* curDemand;
+      /** Points to the demand being planned.<br>
+        * This field is only non-null when planning the delivery operation. 
+        */
+      Demand* curDemand;
 
-        /** Points to the current owner operationplan. This is used when
-          * operations are nested. */
-        OperationPlan* curOwnerOpplan;
+      /** Points to the current owner operationplan. This is used when
+        * operations are nested. */
+      OperationPlan* curOwnerOpplan;
 
-        /** Points to the current buffer. */
-        Buffer* curBuffer;
+      /** Points to the current buffer. */
+      Buffer* curBuffer;
 
-        /** A flag to force the resource solver to move the operationplan to
-          * a later date where it is feasible.<br>
-          * Admittedly this is an ugly hack...
-          */
-        bool forceLate;
+      /** A flag to force the resource solver to move the operationplan to
+        * a later date where it is feasible.<br>
+        * Admittedly this is an ugly hack...
+        */
+      bool forceLate;
 
-        /** This is the quantity we are asking for. */
-        double q_qty;
+      /** This is the quantity we are asking for. */
+      double q_qty;
 
-        /** This is the date we are asking for. */
-        Date q_date;
+      /** This is the date we are asking for. */
+      Date q_date;
 
-        /** This is the maximum date we are asking for.<br>
-          * In case of a post-operation time there is a difference between
-          * q_date and q_date_max.
-          */
-        Date q_date_max;
+      /** This is the maximum date we are asking for.<br>
+        * In case of a post-operation time there is a difference between
+        * q_date and q_date_max.
+        */
+      Date q_date_max;
 
-        /** This is the quantity we can get by the requested Date. */
-        double a_qty;
+      /** This is the quantity we can get by the requested Date. */
+      double a_qty;
 
-        /** This is the Date when we can get extra availability. */
-        Date a_date;
+      /** This is the Date when we can get extra availability. */
+      Date a_date;
 
-        /** This is a pointer to a LoadPlan. It is used for communication
-          * between the Operation-Solver and the Resource-Solver. */
-        LoadPlan* q_loadplan;
+      /** This is a pointer to a LoadPlan. It is used for communication
+        * between the Operation-Solver and the Resource-Solver. */
+      LoadPlan* q_loadplan;
 
-        /** This is a pointer to a FlowPlan. It is used for communication
-          * between the Operation-Solver and the Buffer-Solver. */
-        FlowPlan* q_flowplan;
+      /** This is a pointer to a FlowPlan. It is used for communication
+        * between the Operation-Solver and the Buffer-Solver. */
+      FlowPlan* q_flowplan;
 
-        /** A pointer to an operationplan currently being solved. */
-        OperationPlan* q_operationplan;
+      /** A pointer to an operationplan currently being solved. */
+      OperationPlan* q_operationplan;
 
-        /** Cost of the reply.<br>
-          * Only the direct cost should be returned in this field.
-          */
-        double a_cost;
+      /** Cost of the reply.<br>
+        * Only the direct cost should be returned in this field.
+        */
+      double a_cost;
 
-        /** Penalty associated with the reply.<br>
-          * This field contains indirect costs and other penalties that are
-          * not strictly related to the request. Examples are setup costs,
-          * inventory carrying costs, ...
-          */
-        double a_penalty;
+      /** Penalty associated with the reply.<br>
+        * This field contains indirect costs and other penalties that are
+        * not strictly related to the request. Examples are setup costs,
+        * inventory carrying costs, ...
+        */
+      double a_penalty;
     };
 
     /** @brief This class is a helper class of the SolverMRP class.
@@ -582,6 +583,7 @@ class SolverMRP : public Solver
           state->q_loadplan = NULL;
           state->q_flowplan = NULL;
           state->q_operationplan = NULL;
+          state->curDemand = NULL;
           state->a_cost = 0.0;
           state->a_penalty = 0.0;
         }
@@ -613,6 +615,12 @@ class SolverMRP : public Solver
         
         /** True when planning in constrained mode. */
         bool constrainedPlanning;
+
+        /** Flags whether or not constraints are being tracked. */
+        bool logConstraints;
+
+        /** Points to the demand being planned. */
+        Demand* planningDemand;
 
       public:
         /** Pointer to the current solver status. */

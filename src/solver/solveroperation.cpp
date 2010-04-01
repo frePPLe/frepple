@@ -46,8 +46,10 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
 
   // Loop through all loadplans, and solve for the resource.
   // This may move an operationplan early or late.
+  Problem* curConstraint = data.planningDemand->topConstraint();
   do
   {
+    data.planningDemand->popConstraint(curConstraint);
     orig = opplan->getDates();
     for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
       h!=opplan->endLoadPlans() && opplan->getDates()==orig; ++h)

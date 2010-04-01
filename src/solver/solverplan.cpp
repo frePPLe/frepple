@@ -101,11 +101,18 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
         i != demands->end(); ++i)
     {
       Command* topcommand = getLastCommand();
-      // Plan the demand
       try
       {
+        // Delete previous constraints
+        (*i)->deleteConstraints();
+
+        // Create a state stack
         State* mystate = state;
         push();
+
+        // Plan the demand
+        planningDemand = *i;
+        logConstraints = (Solver->getPlanType() == 1);
         try {(*i)->solve(*Solver,this);}
         catch (...)
         {

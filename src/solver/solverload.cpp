@@ -89,6 +89,8 @@ void SolverMRP::solve(const Load* l, void* v)
   // 3) Control the planning mode
   bool originalPlanningMode = data->constrainedPlanning;
   data->constrainedPlanning = true;
+  bool originalLogConstraints = data->logConstraints;
+  data->logConstraints = false;
 
   // 4) Loop through all alternates or till we find a non-zero 
   // reply (priority search)
@@ -100,6 +102,7 @@ void SolverMRP::solve(const Load* l, void* v)
   double beforeCost = data->state->a_cost;
   double beforePenalty = data->state->a_penalty;
   OperationPlanState originalOpplan(lplan->getOperationPlan());
+  double originalLoadplanQuantity = data->state->q_loadplan->getQuantity();
   for (list<const Load*>::const_iterator i = thealternates.begin();
     i != thealternates.end();)
   {
@@ -125,6 +128,7 @@ void SolverMRP::solve(const Load* l, void* v)
         data->getSolver()->setLogLevel(loglevel);
         // Restore the planning mode
         data->constrainedPlanning = originalPlanningMode;
+        data->logConstraints = originalLogConstraints;
         throw;
       }
       data->getSolver()->setLogLevel(loglevel);
@@ -139,6 +143,7 @@ void SolverMRP::solve(const Load* l, void* v)
         // Priority search: accept any non-zero reply
         // Restore the planning mode
         data->constrainedPlanning = originalPlanningMode;
+        data->logConstraints = originalLogConstraints;
         return;
       }
       else
@@ -162,6 +167,7 @@ void SolverMRP::solve(const Load* l, void* v)
               << curload->getResource() << "' " << search << endl;
           // Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;
+          data->logConstraints = originalLogConstraints;
           return;
         }
         data->state->a_cost = beforeCost;
@@ -241,14 +247,25 @@ void SolverMRP::solve(const Load* l, void* v)
 
     // Restore the planning mode
     data->constrainedPlanning = originalPlanningMode;
+    data->logConstraints = originalLogConstraints;
     return;
   }
 
   // 7) No alternate gave a good result
   data->state->a_date = min_next_date;
   data->state->a_qty = 0;
+
   // Restore the planning mode
   data->constrainedPlanning = originalPlanningMode;
+
+  // Maintain the constraint list
+  const Load *l = *(thealternates.begin());
+  if (originalLogConstraints)
+    data->planningDemand->pushConstraint(
+      new ProblemCapacityOverload(l->getResource(), DateRange(originalOpplan.start,originalOpplan.end), originalLoadplanQuantity, false)
+      );
+  data->logConstraints = originalLogConstraints;
+
   if (lplan->getOperationPlan()->getQuantity() != 0.0)
     // In case of a zero reply, we resize the operationplan to 0 right away.
     // This is required to make sure that the buffer inventory profile also

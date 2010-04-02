@@ -104,7 +104,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
       try
       {
         // Delete previous constraints
-        (*i)->deleteConstraints();
+        (*i)->getConstraints().clear();
 
         // Create a state stack
         State* mystate = state;

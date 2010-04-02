@@ -89,6 +89,8 @@ void SolverMRP::solve(const Load* l, void* v)
   // 3) Control the planning mode
   bool originalPlanningMode = data->constrainedPlanning;
   data->constrainedPlanning = true;
+
+  // Don't keep track of the constraints right now
   bool originalLogConstraints = data->logConstraints;
   data->logConstraints = false;
 
@@ -261,9 +263,10 @@ void SolverMRP::solve(const Load* l, void* v)
   // Maintain the constraint list
   const Load *l = *(thealternates.begin());
   if (originalLogConstraints)
-    data->planningDemand->pushConstraint(
-      new ProblemCapacityOverload(l->getResource(), DateRange(originalOpplan.start,originalOpplan.end), originalLoadplanQuantity, false)
-      );
+    data->planningDemand->getConstraints().push(
+      new ProblemCapacityOverload(l->getResource(), originalOpplan.start,
+        originalOpplan.end, originalLoadplanQuantity, false)
+    );
   data->logConstraints = originalLogConstraints;
 
   if (lplan->getOperationPlan()->getQuantity() != 0.0)

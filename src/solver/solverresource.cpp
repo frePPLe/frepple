@@ -435,8 +435,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
   // Maintain the constraint list
   if (data->state->a_qty == 0.0 && data->logConstraints)
-    data->planningDemand->pushConstraint(
-      new ProblemCapacityOverload(const_cast<Resource*>(res), DateRange(currentOpplan.start,currentOpplan.end) , orig_q_qty, false)
+    data->planningDemand->getConstraints().push(
+      new ProblemCapacityOverload(const_cast<Resource*>(res), 
+        currentOpplan.start, currentOpplan.end, orig_q_qty, false)
       );
 
   // Message

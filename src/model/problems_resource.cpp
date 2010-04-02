@@ -110,8 +110,8 @@ DECLARE_EXPORT void Resource::updateProblems()
       {
         // New problem now ends
         if (f->getDate() != excessProblemStart)
-          new ProblemCapacityOverload(this, DateRange(excessProblemStart,
-              f->getDate()), excessQty);
+          new ProblemCapacityOverload(this, excessProblemStart,
+              f->getDate(), excessQty);
         excessProblem = false;
       }
     }
@@ -120,8 +120,8 @@ DECLARE_EXPORT void Resource::updateProblems()
 
   // The excess lasts till the end of the horizon...
   if (excessProblem)
-    new ProblemCapacityOverload(this, DateRange(excessProblemStart,
-        Date::infiniteFuture), excessQty);
+    new ProblemCapacityOverload(this, excessProblemStart,
+        Date::infiniteFuture, excessQty);
 
   // The shortage lasts till the end of the horizon...
   if (shortageProblem)

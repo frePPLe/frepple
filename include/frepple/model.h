@@ -876,7 +876,8 @@ class Problem : public NonCopyable, public Object
   public:
     class const_iterator;
     friend class const_iterator;
-    friend class Demand;
+    class List;
+    friend class List;
 
     /** Constructor.
       * Note that this method can't manipulate the problem container, since
@@ -1052,6 +1053,56 @@ class HasProblems
     /** A pointer to the first problem of this object. Problems are maintained
       * in a single linked list. */
     Problem* firstProblem;
+};
+
+
+/** @brief This auxilary class is used to maintain a list of problem models. */
+class Problem::List 
+{
+  public:
+    /** Constructor. */
+    List() : first(NULL) {};
+    
+    /** Destructor. */
+    ~List() {clear();}
+
+    /** Empty the list.<br>
+      * If a problem is passed as argument, that problem and all problems 
+      * following it in the lsit are deleted.<br>
+      * If no argument is passed, the complete list is erased.
+      */
+    DECLARE_EXPORT void clear(Problem * = NULL);
+
+    /** Add a problem to the list. */
+    DECLARE_EXPORT void push(Problem *);
+
+    /** Remove all problems from the list that appear AFTER the one 
+      * passed as argument. */
+    DECLARE_EXPORT void pop(Problem *);
+
+    /** Get the last problem on the list. */
+    DECLARE_EXPORT Problem* top() const;
+
+    /** Cur the list in two parts . */
+    DECLARE_EXPORT Problem* unlink(Problem* p)
+    {
+      Problem *tmp = p->nextProblem;
+      p->nextProblem = NULL;
+      return tmp;
+    }
+
+    /** Returns true if the list is empty. */
+    bool empty() const {return first != NULL;}
+
+    /** Return an iterator to the start of the list. */
+    Problem::const_iterator begin() const;
+
+    /** End iterator. */
+    Problem::const_iterator end() const;
+
+  private:
+    /** Pointer to the head of the list. */
+    Problem* first;
 };
 
 
@@ -4495,32 +4546,14 @@ class Demand
     /** Constructor. */
     explicit Demand(const string& str) : HasHierarchy<Demand>(str),
       it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0),
-      maxLateness(TimePeriod::MAX), minShipment(0), hidden(false),
-      firstConstraint(NULL) {}
+      maxLateness(TimePeriod::MAX), minShipment(0), hidden(false) {}
 
     /** Destructor. Deleting the demand will also delete all delivery operation
       * plans (including locked ones). */
     virtual ~Demand() 
     {
       deleteOperationPlans(true);
-      deleteConstraints();
     }
-
-    /** Empty the list of constraints. */
-    DECLARE_EXPORT void deleteConstraints();
-
-    /** Add a constraints to the list. */
-    DECLARE_EXPORT void pushConstraint(Problem *);
-
-    /** Remove all constraints from the list that appear AFTER the one 
-      * passed as argument. */
-    DECLARE_EXPORT void popConstraint(Problem *);
-
-    /** Get the last constraint on the list. */
-    DECLARE_EXPORT Problem* topConstraint() const;
-
-    /** Retrieve an iterator for the list of constraints. */
-    DECLARE_EXPORT Problem::const_iterator getConstraints() const; 
 
     /** Returns the quantity of the demand. */
     double getQuantity() const {return qty;}
@@ -4605,6 +4638,9 @@ class Demand
 
     /** Updates the customer. */
     virtual void setCustomer(Customer* c) {cust = c; setChanged();}
+
+    /** Return a reference to the constraint list. */
+    Problem::List& getConstraints() {return constraints;}
 
     /** Returns the total amount that has been planned. */
     DECLARE_EXPORT double getPlannedQuantity() const;
@@ -4704,9 +4740,9 @@ class Demand
     /** A list of operation plans to deliver this demand. */
     OperationPlan_list deli;
 
-    /** A pointer to the first constraint on this demand. Constraints are 
-      * maintained in a single linked list. */
-    Problem* firstConstraint;
+    /** A list of constraints preventing this demand from being planned in
+      * full and on time. */
+    Problem::List constraints;
 };
 
 
@@ -5173,8 +5209,8 @@ class ProblemCapacityOverload : public Problem
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return false;}
     double getWeight() const {return qty;}
-    ProblemCapacityOverload(Resource* r, DateRange d, double q, bool add = true)
-        : Problem(r), qty(q), dr(d) {if (add) addProblem();}
+    ProblemCapacityOverload(Resource* r, Date st, Date nd, double q, bool add = true)
+        : Problem(r), qty(q), dr(st,nd) {if (add) addProblem();}
     ~ProblemCapacityOverload() {removeProblem();}
     string getEntity() const {return "capacity";}
     Object* getOwner() const {return dynamic_cast<Resource*>(owner);}
@@ -5577,6 +5613,16 @@ class Problem::const_iterator
 };
 
 
+/** Retrieve an iterator for the list. */
+inline Problem::const_iterator Problem::List::begin() const 
+  {return Problem::const_iterator(first);}
+
+
+/** Stop iterator. */
+inline Problem::const_iterator Problem::List::end() const
+  {return Problem::const_iterator(static_cast<Problem*>(NULL));}
+
+
 /** @brief This class allows upstream and downstream navigation through
   * the plan.
   *
@@ -5902,11 +5948,14 @@ class OperationPlan::LoadPlanIterator
     }
 };
 
+
 inline OperationPlan::LoadPlanIterator OperationPlan::beginLoadPlans() const
   {return OperationPlan::LoadPlanIterator(firstloadplan);}
 
+
 inline OperationPlan::LoadPlanIterator OperationPlan::endLoadPlans() const
   {return OperationPlan::LoadPlanIterator(NULL);}
+
 
 inline int OperationPlan::sizeLoadPlans() const
 {
@@ -5923,6 +5972,11 @@ class ProblemIterator
     /** Constructor starting the iteration from a certain problem. */
     ProblemIterator(Problem *x) : 
         FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>(x) {}
+
+    /** Constructor starting the iteration from a certain problem. */
+    ProblemIterator(Problem &x) : 
+        FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>(&x) {}
+
     /** Default constructor. */
     ProblemIterator() : 
         FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>() {}

@@ -549,4 +549,67 @@ PyObject* Problem::getattro(const Attribute& attr)
   return NULL;
 }
 
+
+DECLARE_EXPORT void Problem::List::clear(Problem *c) 
+{
+  // Delete each constraint in the list
+  for (Problem *cur = c ? c : first; cur; )
+  {
+    Problem *del = cur;
+    cur = cur->nextProblem;
+    del->owner = NULL;
+    delete del;
+  }
+
+  // Set the header to NULL
+  if (!c) first = NULL;
+}
+
+
+DECLARE_EXPORT void Problem::List::push(Problem *p)
+{
+  if (!first)
+    // Insert as the first problem in the list
+    first = p;
+  else
+  {
+    // Insert at the end of the list
+    Problem* cur = first;
+    while (cur->nextProblem) cur = cur->nextProblem;
+    cur->nextProblem = p;
+  }
+}
+
+
+DECLARE_EXPORT void Problem::List::pop(Problem *p) 
+{
+  if (p) 
+    // Skip the problem that was passed as argument
+    p = p->nextProblem;
+  else
+  {
+    // NULL argument: delete all
+    p = first;
+    first = NULL;
+  }
+
+  // Delete each constraint after the marked one
+  while (p)
+  {
+    Problem *del = p;
+    p = p->nextProblem;
+    del->owner = NULL;
+    delete del;
+  }
+}
+
+
+DECLARE_EXPORT Problem* Problem::List::top() const
+{
+  for (Problem *p = first; p; p = p->nextProblem)
+    if (!p->nextProblem) return p;
+  return NULL;
+}
+
+
 } // End namespace

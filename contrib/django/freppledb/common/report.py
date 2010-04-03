@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -41,6 +41,7 @@ import StringIO
 
 from django.conf import settings
 from django.core.paginator import QuerySetPaginator, InvalidPage
+from django.views.decorators.csrf import csrf_protect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import models, transaction, connection
@@ -220,6 +221,7 @@ class TableReport(Report):
 
 
 @staff_member_required
+@csrf_protect
 def view_report(request, entity=None, **args):
   '''
   This is a generic view for two types of reports:

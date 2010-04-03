@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -21,6 +21,7 @@
 # date : $LastChangedDate$
 
 from django.shortcuts import render_to_response
+from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django import forms
@@ -60,7 +61,9 @@ class PreferencesForm(forms.Form):
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
 
+
 @login_required
+@csrf_protect
 def preferences(request):
   if request.method == 'POST':
     form = PreferencesForm(request.POST)

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -24,6 +24,7 @@ import os, os.path
 
 from django.conf import settings
 from django.core import management, serializers
+from django.views.decorators.csrf import csrf_protect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import Http404, HttpResponseRedirect
 from django.views.decorators.cache import never_cache
@@ -36,6 +37,7 @@ from common.report import *
 
 
 @staff_member_required
+@csrf_protect
 def main(request):
   '''
   This view implements the overview screen with all execution
@@ -56,6 +58,7 @@ def main(request):
 
 @staff_member_required
 @never_cache
+@csrf_protect
 def erase(request):
   '''
   Erase the contents of the database.
@@ -78,6 +81,7 @@ def erase(request):
 
 @staff_member_required
 @never_cache
+@csrf_protect
 def create(request):
   '''
   Create a sample model in the database.
@@ -135,10 +139,16 @@ def create(request):
 
 @staff_member_required
 @never_cache
+@csrf_protect
 def runfrepple(request):
   '''
   FrePPLe execution button.
   '''
+  # Allow only post
+  if request.method != 'POST':
+    request.user.message_set.create(message='Only POST method allowed')
+    return HttpResponseRedirect('/execute/execute.html')
+
   # Decode form input
   constraint = 0
   for value in request.POST.getlist('constraint'):
@@ -169,11 +179,12 @@ def runfrepple(request):
 
 
 @staff_member_required
+@never_cache
+@csrf_protect
 def fixture(request):
   """
   Load a dataset stored in a django fixture file.
   """
-
   # Validate the request
   if request.method != 'POST':
     request.user.message_set.create(message='Only POST method allowed')

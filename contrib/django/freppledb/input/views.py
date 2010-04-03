@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -24,6 +24,7 @@ from datetime import date, datetime
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, HttpResponseForbidden, Http404
+from django.views.decorators.csrf import csrf_protect
 from django.core import serializers
 from django.utils.simplejson.decoder import JSONDecoder
 from django.shortcuts import render_to_response
@@ -34,6 +35,8 @@ from input.models import *
 from common.report import *
 
 
+@csrf_protect
+@staff_member_required
 class uploadjson:
   '''
   This class allows us to process json-formatted post requests.

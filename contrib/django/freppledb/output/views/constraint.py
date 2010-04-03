@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -22,45 +22,57 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
-from django.db.models import Count
 
 from input.models import Plan
-from output.models import Problem
+from output.models import Constraint
 from common.report import *
-
-
-def getEntities():
-  return tuple([ 
-    (i['entity'], string_concat(_(i['entity']),":",i['id__count'])) 
-    for i in Problem.objects.values('entity').annotate(Count('id')).order_by('entity') 
-    ])
-    
-
-def getNames():
-  return tuple([ 
-    (i['name'], string_concat(_(i['name']),":",i['id__count']))
-    for i in Problem.objects.values('name').annotate(Count('id')).order_by('name') 
-    ])
   
   
+entities = ( 
+ ('demand',_('demand')),
+ ('material',_('material')),
+ ('capacity',_('capacity')),
+ ('operation',_('operation'))
+ )
+
+names = (
+  ('overload',_('overload')), 
+  ('underload',_('underload')), 
+  ('material excess',_('material excess')), 
+  ('material shortage',_('material shortage')),
+  ('excess',_('excess')), 
+  ('short',_('short')), 
+  ('early',_('early')), 
+  ('late',_('late')), 
+  ('unplanned',_('unplanned')),
+  ('precedence',_('precedence')), 
+  ('before fence',_('before fence')), 
+  ('before current',_('before current'))
+  ) 
+
+
 class Report(ListReport):
   '''
-  A list report to show problems.
+  A list report to show constraints.
   '''
-  template = 'output/problem.html'
-  title = _("Problem Report")
-  basequeryset = Problem.objects.all()
-  model = Problem
+  template = 'output/constraint.html'
+  title = _("Constraint Report")
+  basequeryset = Constraint.objects.all()
+  model = Constraint
   frozenColumns = 0
   editable = False
   rows = (
+    ('demand', {
+      'title': _('demand'),
+      'filter': FilterText(size=30),
+      }),
     ('entity', {
       'title': _('entity'),
-      'filter': FilterChoice(choices=getEntities),
+      'filter': FilterChoice(choices=entities),
       }),
     ('name', {
       'title': _('name'),
-      'filter': FilterChoice(choices=getNames),
+      'filter': FilterChoice(choices=names),
       }),
     ('owner', {
       'title': _('owner'),

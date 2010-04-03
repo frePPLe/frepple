@@ -57,7 +57,7 @@ class Problem(models.Model):
   enddate = models.DateTimeField(_('end date'), db_index=True)
   weight = models.DecimalField(_('weight'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
 
-  def __unicode__(self): return str(self.name)
+  def __unicode__(self): return str(self.description)
 
   class Meta:
     db_table = 'out_problem'
@@ -65,6 +65,27 @@ class Problem(models.Model):
     ordering = ['startdate']
     verbose_name = _('problem')
     verbose_name_plural = _('problems')
+
+
+class Constraint(models.Model):
+  # Database fields
+  demand = models.CharField(_('demand'), max_length=settings.NAMESIZE, db_index=True)
+  entity = models.CharField(_('entity'), max_length=15, db_index=True)
+  owner = models.CharField(_('owner'), max_length=settings.NAMESIZE, db_index=True)
+  name = models.CharField(_('name'), max_length=20, db_index=True)
+  description = models.CharField(_('description'), max_length=settings.NAMESIZE+20)
+  startdate = models.DateTimeField(_('start date'), db_index=True)
+  enddate = models.DateTimeField(_('end date'), db_index=True)
+  weight = models.DecimalField(_('weight'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
+
+  def __unicode__(self): return str(self.demand) + ' ' + str(self.description)
+
+  class Meta:
+    db_table = 'out_constraint'
+    permissions = (("view_constraint", "Can view constraints"),)
+    ordering = ['demand','startdate']
+    verbose_name = _('constraint')
+    verbose_name_plural = _('constraints')
 
 
 class LoadPlan(models.Model):

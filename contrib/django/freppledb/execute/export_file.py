@@ -52,6 +52,19 @@ def exportProblems():
   print 'Exported problems in %.2f seconds' % (time() - starttime)
 
 
+def exportConstraints():
+  print "Exporting constraints..."
+  starttime = time()
+  writer = csv.writer(open("constraints.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer.writerow(('#demand','entity','name','description','start date','end date','weight'))
+  for d in frepple.demands():
+    for i in d.constraints:
+      writer.writerow(
+        (d.name, i.entity, i.name, i.owner, i.description, i.start, i.end, i.weight)
+        )
+  print 'Exported constraints in %.2f seconds' % (time() - starttime)
+
+
 def exportOperationplans():
   print "Exporting operationplans..."
   starttime = time()
@@ -172,6 +185,7 @@ def exportForecast():
 
 def exportfrepple():
   exportProblems()
+  exportConstraints()
   exportOperationplans()
   exportFlowplans()
   exportLoadplans()

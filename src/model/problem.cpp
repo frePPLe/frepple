@@ -552,6 +552,17 @@ PyObject* Problem::getattro(const Attribute& attr)
 
 DECLARE_EXPORT void Problem::List::clear(Problem *c) 
 {
+  // Unchain the predecessor
+  if (c)
+  {
+    for (Problem *x = first; x; x = x->nextProblem)
+      if (x->nextProblem == c)
+      {
+        x->nextProblem = NULL;
+        break;
+      }
+  }
+
   // Delete each constraint in the list
   for (Problem *cur = c ? c : first; cur; )
   {
@@ -583,21 +594,25 @@ DECLARE_EXPORT void Problem::List::push(Problem *p)
 
 DECLARE_EXPORT void Problem::List::pop(Problem *p) 
 {
-  if (p) 
+  Problem *q = NULL; 
+  if (p)
+  {
     // Skip the problem that was passed as argument
-    p = p->nextProblem;
+    q = p->nextProblem;
+    p->nextProblem = NULL;
+  }
   else
   {
     // NULL argument: delete all
-    p = first;
+    q = first;
     first = NULL;
   }
 
   // Delete each constraint after the marked one
-  while (p)
+  while (q)
   {
-    Problem *del = p;
-    p = p->nextProblem;
+    Problem *del = q;
+    q = q->nextProblem;
     del->owner = NULL;
     delete del;
   }

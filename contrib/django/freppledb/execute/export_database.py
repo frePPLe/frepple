@@ -52,7 +52,7 @@ def truncate(cursor):
     delete = "truncate table %s"
   for table in ['out_problem', 'out_demandpegging', 'out_flowplan',
                 'out_loadplan', 'out_demand', 'out_forecast',
-                'out_operationplan',
+                'out_operationplan', 'out_constraint', 
                ]:
     cursor.execute(delete % table)
     transaction.commit()
@@ -76,6 +76,29 @@ def exportProblems(cursor):
   transaction.commit()
   cursor.execute("select count(*) from out_problem")
   print 'Exported %d problems in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+
+
+def exportConstraints(cursor):
+  print "Exporting constraints..."
+  starttime = time()
+  cnt = 0
+  for d in frepple.demands():
+    cursor.executemany(
+      "insert into out_constraint \
+      (demand,entity,name,owner,description,startdate,enddate,weight) \
+      values(%s,%s,%s,%s,%s,%s,%s,%s)",
+      [(
+         d.name,i.entity, i.name, 
+         isinstance(i.owner,frepple.operationplan) and str(i.owner.operation) or str(i.owner), 
+         i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
+         round(i.weight,settings.DECIMAL_PLACES)
+       ) for i in d.constraints
+      ])
+    cnt += 1
+    if cnt % 300 == 0: transaction.commit()
+  transaction.commit()
+  cursor.execute("select count(*) from out_constraint")
+  print 'Exported %d constraints in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
 
 def exportOperationplans(cursor):
@@ -304,6 +327,7 @@ def exportfrepple():
     # For other databases the parallel export normally gives a better
     # performance, but you could still choose a sequential export.
     exportProblems(cursor)
+    exportConstraints(cursor)
     exportOperationplans(cursor)
     exportFlowplans(cursor)
     exportLoadplans(cursor)
@@ -316,7 +340,7 @@ def exportfrepple():
     # The groups are running in seperate threads, and all functions in a group
     # are run in sequence.
     tasks = (
-      DatabaseTask(exportProblems, exportDemand, exportLoadplans),
+      DatabaseTask(exportProblems, exportConstraints, exportDemand, exportLoadplans),
       DatabaseTask(exportOperationplans, exportForecast),
       DatabaseTask(exportFlowplans),
       DatabaseTask(exportPegging),

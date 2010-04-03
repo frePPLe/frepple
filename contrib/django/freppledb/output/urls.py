@@ -25,6 +25,7 @@ from django.conf.urls.defaults import *
 import output.views.buffer
 import output.views.demand
 import output.views.problem
+import output.views.constraint
 import output.views.forecast
 import output.views.resource
 import output.views.operation
@@ -65,6 +66,8 @@ urlpatterns = patterns('',
       {'report': output.views.buffer.DetailReport,}),
     (r'^problem/$', 'common.report.view_report',
       {'report': output.views.problem.Report,}),
+    (r'^constraint/$', 'common.report.view_report',
+      {'report': output.views.constraint.Report,}),
     (r'^operationplan/$', 'common.report.view_report',
       {'report': output.views.operation.DetailReport,}),
     (r'^loadplan/$', 'common.report.view_report',

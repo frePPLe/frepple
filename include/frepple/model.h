@@ -1092,7 +1092,7 @@ class Problem::List
     }
 
     /** Returns true if the list is empty. */
-    bool empty() const {return first != NULL;}
+    bool empty() const {return first == NULL;}
 
     /** Return an iterator to the start of the list. */
     Problem::const_iterator begin() const;

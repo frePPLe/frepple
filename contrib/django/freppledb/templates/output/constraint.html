@@ -1,0 +1,26 @@
+{% extends "admin/base_site_list.html" %}
+
+{% block contextmenus %}
+{% include "buffercontext.html" %}
+{% include "demandcontext.html" %}
+{% include "resourcecontext.html" %}
+{% include "operationcontext.html" %}
+{% endblock %}
+
+{% block data %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
+<td>{{i.demand}}</td>
+<td>{{i.entity}}</td>
+<td>{{i.name}}</td>
+<td>{% ifequal i.entity 'material' %}{% superlink i.owner buffer %}{% else %} 
+{% ifequal i.entity 'capacity' %}{% superlink i.owner resource %}{% else %}
+{% ifequal i.entity 'demand' %}{% superlink i.owner demand %}{% else %}
+{% superlink i.owner operation %}
+{% endifequal %} {% endifequal %}{% endifequal %}</td>
+<td>{{i.description}}</td>
+<td>{{i.startdate}}</td>
+<td>{{i.enddate}}</td>
+<td>{{i.weight}}</td>
+</tr>{% endfor %}
+{% endblock %}

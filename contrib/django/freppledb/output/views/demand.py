@@ -64,7 +64,7 @@ class OverviewReport(TableReport):
 
   @staticmethod
   def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
+    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connection.cursor()
 
     # Execute a query to get the backlog at the start of the horizon

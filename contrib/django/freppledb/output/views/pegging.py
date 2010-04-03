@@ -74,7 +74,7 @@ class Report(ListReport):
   @staticmethod
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
-    basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
+    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connection.cursor()
 
     # query 1: pick up all resources loaded 

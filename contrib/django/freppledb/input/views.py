@@ -108,7 +108,7 @@ class uploadjson:
           # All the rest is garbage
           else:
             msg = "unknown action"
-            raise Exception("Unknown action type '%s'" % entity)
+            raise Exception(_("Unknown action type '%(msg)s'") % {'msg':entity})
 
         except Exception, e:
           messages.add_message(request, messages.ERROR, 'Error processing %s: %s' % (msg,e))

@@ -63,12 +63,11 @@ class OverviewReport(TableReport):
 
   @staticmethod
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
     return basequery.values('name','location')
 
   @staticmethod
   def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
+    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     # Run the query
     cursor = connection.cursor()
     query = '''

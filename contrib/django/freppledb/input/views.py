@@ -35,8 +35,6 @@ from input.models import *
 from common.report import *
 
 
-@csrf_protect
-@staff_member_required
 class uploadjson:
   '''
   This class allows us to process json-formatted post requests.
@@ -45,6 +43,7 @@ class uploadjson:
   becomes available in Django: see http://code.google.com/p/django-rest-interface/
   '''
   @staticmethod
+  @csrf_protect
   @staff_member_required
   def post(request):
     try:

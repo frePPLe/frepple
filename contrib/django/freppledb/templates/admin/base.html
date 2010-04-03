@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=8"/>
 <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/base.css" />
 {% block extrastyle %}{% endblock %}
-<link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{% admin_media_prefix %}css/ie.css{% endblock %}" />
+<!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{% load adminmedia %}{% admin_media_prefix %}css/ie.css{% endblock %}" /><![endif]-->
 {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% admin_media_prefix %}css/rtl.css{% endblock %}" />{% endif %}
 {% block extrahead %}{% endblock %}
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}

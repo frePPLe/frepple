@@ -25,6 +25,7 @@ import os, os.path
 from django.conf import settings
 from django.core import management, serializers
 from django.views.decorators.csrf import csrf_protect
+from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import Http404, HttpResponseRedirect
 from django.views.decorators.cache import never_cache
@@ -65,15 +66,15 @@ def erase(request):
   '''
   # Allow only post
   if request.method != 'POST':
-    request.user.message_set.create(message='Only POST method allowed')
+    messages.add_message(request, messages.ERROR, force_unicode(_('Only POST method allowed')))
     return HttpResponseRedirect('/execute/execute.html')
 
   # Erase the database contents
   try:
     management.call_command('frepple_flush', user=request.user.username, nonfatal=True)
-    request.user.message_set.create(message='Erased the database')
+    messages.add_message(request, messages.INFO, force_unicode(_('Erased the database')))
   except Exception, e:
-    request.user.message_set.create(message='Failure during database erasing:%s' % e)
+    messages.add_message(request, messages.ERROR, force_unicode(_('Failure during database erasing: %(msg)s') % {'msg':e}))
 
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
   return HttpResponseRedirect('/execute/execute.html')
@@ -88,7 +89,8 @@ def create(request):
   '''
   # Allow only post
   if request.method != 'POST':
-    request.user.message_set.create(message='Only POST method allowed')
+    messages.add_message(request, messages.ERROR, 
+      force_unicode(_('Only POST method allowed')))
     return HttpResponseRedirect('/execute/execute.html')
 
   # Validate the input form data
@@ -115,7 +117,8 @@ def create(request):
   except KeyError:
     raise Http404
   except ValueError, e:
-    request.user.message_set.create(message='Invalid input field')
+    messages.add_message(request, messages.ERROR, 
+      force_unicode(_('Invalid input field')))
   else:
     # Execute
     try:
@@ -128,9 +131,11 @@ def create(request):
         procure_lt=procure_lt, user=request.user.username,
         nonfatal=True
         )
-      request.user.message_set.create(message='Created sample model in the database')
+      messages.add_message(request, messages.INFO, 
+        force_unicode(_('Created sample model in the database')))
     except Exception, e:
-      request.user.message_set.create(message='Failure during sample model creation: %s' % e)
+      messages.add_message(request, messages.ERROR, 
+        force_unicode(_('Failure during sample model creation: %(msg)s') % {'msg':e}))
 
   # Show the main screen again
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
@@ -146,7 +151,8 @@ def runfrepple(request):
   '''
   # Allow only post
   if request.method != 'POST':
-    request.user.message_set.create(message='Only POST method allowed')
+    messages.add_message(request, messages.ERROR, 
+      force_unicode(_('Only POST method allowed')))
     return HttpResponseRedirect('/execute/execute.html')
 
   # Decode form input
@@ -171,9 +177,11 @@ def runfrepple(request):
       nonfatal=True, 
       plantype=plantype
       )
-    request.user.message_set.create(message='Successfully ran frepple')
+    messages.add_message(request, messages.INFO, 
+      force_unicode(_('Successfully created a plan')))
   except Exception, e:
-    request.user.message_set.create(message='Failure when running frePPLe: %s' % e)
+    messages.add_message(request, messages.ERROR, 
+      force_unicode(_('Failure creating a plan: %(msg)s') % {'msg':e}))
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
   return HttpResponseRedirect('/execute/execute.html')
 
@@ -187,7 +195,8 @@ def fixture(request):
   """
   # Validate the request
   if request.method != 'POST':
-    request.user.message_set.create(message='Only POST method allowed')
+    messages.add_message(request, messages.ERROR, 
+      force_unicode(_('Only POST method allowed')))
     # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
     return HttpResponseRedirect('/execute/execute.html')
 
@@ -196,7 +205,8 @@ def fixture(request):
     fixture = request.POST['datafile']
     if fixture == '-': raise
   except:
-    request.user.message_set.create(message='Missing dataset name')
+    messages.add_message(request, messages.ERROR, 
+      force_unicode(_('Missing dataset name')))
     return HttpResponseRedirect('/execute/execute.html')
 
   # Load the fixture
@@ -206,11 +216,13 @@ def fixture(request):
     log(category='LOAD', theuser=request.user.username,
       message='Start loading dataset "%s"' % fixture).save()
     management.call_command('loaddata', fixture, verbosity=0)
-    request.user.message_set.create(message='Loaded dataset')
+    messages.add_message(request, messages.INFO, 
+      force_unicode(_('Loaded dataset')))
     log(category='LOAD', theuser=request.user.username,
       message='Finished loading dataset "%s"' % fixture).save()
   except Exception, e:
-    request.user.message_set.create(message='Error while loading dataset: %s' % e)
+    messages.add_message(request, messages.ERROR, 
+      force_unicode(_('Error while loading dataset: %(msg)s') % {'msg':e}))
     log(category='LOAD', theuser=request.user.username,
       message='Failed loading dataset "%s": %s' % (fixture,e)).save()
   return HttpResponseRedirect('/execute/execute.html')

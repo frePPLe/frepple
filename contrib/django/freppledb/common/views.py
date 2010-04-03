@@ -22,6 +22,7 @@
 
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_protect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django import forms
@@ -77,9 +78,9 @@ def preferences(request):
         pref.csvdelimiter = newdata['csvdelimiter']
         pref.language = newdata['language']
         pref.save()
-        request.user.message_set.create(message=force_unicode(_('Successfully updated preferences')))
+        messages.add_message(request, messages.INFO, force_unicode(_('Successfully updated preferences')))
       except:
-        request.user.message_set.create(message=force_unicode(_('Failure updating preferences')))
+        messages.add_message(request, messages.ERROR, force_unicode(_('Failure updating preferences')))
   else:
     pref = request.user.get_profile()
     form = PreferencesForm({

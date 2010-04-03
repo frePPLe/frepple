@@ -307,11 +307,23 @@ function filterform()
 }
 
 
+// Return the value of the csrf-token
+function getToken() 
+{
+  var allcookies = document.cookie.split(';');
+  for ( i = 0; i < allcookies.length; i++ )
+    if (allcookies[i].indexOf("csrftoken=") == 0)
+      return allcookies[i].substr(10);
+  return 'none';
+}
+
+
 function import_show(list_or_table)
 {
   var element = $('popup');
   element.innerHTML = '<h2>' + gettext("Import data") + '</h2><br/>' +
     '<form enctype="multipart/form-data" method="post" action="' + location.href + '"><table><tr>'+
+    '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
     '<td colspan="2">' + gettext('Load data from a CSV-formatted text file in the database.') + '<br/>'+
     gettext('The first row should contain the field names.') + '</td></tr>'+
     '<tr><td>'+gettext('Data file') + ':</td><td><input type="file" id="csv_file" name="csv_file"/></td></tr>'+

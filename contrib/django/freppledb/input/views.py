@@ -22,6 +22,7 @@
 
 from datetime import date, datetime
 
+from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.views.decorators.csrf import csrf_protect
@@ -49,7 +50,7 @@ class uploadjson:
     try:
       # Validate the upload form
       if request.method != 'POST':
-        raise Exception('Only POST method allowed')
+        raise Exception(_('Only POST method allowed'))
 
       # Validate uploaded file is present
       if len(request.FILES)!=1 or 'data' not in request.FILES \
@@ -110,7 +111,7 @@ class uploadjson:
             raise Exception("Unknown action type '%s'" % entity)
 
         except Exception, e:
-          request.user.message_set.create(message='Error processing %s: %s' % (msg,e))
+          messages.add_message(request, messages.ERROR, 'Error processing %s: %s' % (msg,e))
 
       # Processing went fine...
       return HttpResponse("OK")

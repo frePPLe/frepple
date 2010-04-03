@@ -43,6 +43,7 @@ from django.conf import settings
 from django.core.paginator import QuerySetPaginator, InvalidPage
 from django.views.decorators.csrf import csrf_protect
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import models, transaction, connection
 from django.db.models.fields import Field
@@ -244,25 +245,25 @@ def view_report(request, entity=None, **args):
   # Process uploaded data files
   if request.method == 'POST':
     if not reportclass.model or "csv_file" not in request.FILES:
-      request.user.message_set.create(message=_('Invalid upload request'))
+      messages.add_message(request, messages.ERROR, _('Invalid upload request'))
       return HttpResponseRedirect(request.get_full_path())
     if not reportclass.editable or not request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())):
-      request.user.message_set.create(message=_('Not authorized'))
+      messages.add_message(request, messages.ERROR, _('Not authorized'))
       return HttpResponseRedirect(request.get_full_path())
     (warnings,errors,changed,added) = parseUpload(request, reportclass, request.FILES['csv_file'].read())
     if len(errors) > 0:
-      request.user.message_set.create(
-        message=_('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-        )
-      for i in errors: request.user.message_set.create(message=i)
+      messages.add_message(request, messages.INFO,
+       _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+       )
+      for i in errors: messages.add_message(request, messages.INFO, i)
     elif len(warnings) > 0:
-      request.user.message_set.create(
-        message=_('Uploaded file processed with warnings: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+      messages.add_message(request, messages.INFO,
+        _('Uploaded file processed with warnings: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
         )
-      for i in warnings: request.user.message_set.create(message=i)
+      for i in warnings: messages.add_message(request, messages.INFO, i)
     else:
-      request.user.message_set.create(
-        message=_('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+      messages.add_message(request, messages.INFO,
+        _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
         )
     return HttpResponseRedirect(request.get_full_path())
 
@@ -1038,12 +1039,15 @@ def parseUpload(request, reportclass, data):
         for col in row:
           col = col.strip().strip('#').lower()
           if col == "": 
-            headers.append(None)
+            headers.append(False)
             continue
           ok = False
           for i in entityclass._meta.fields:
             if col == i.name.lower() or col == i.verbose_name.lower():
-              headers.append(i)
+              if i.editable == True:
+                headers.append(i)
+              else:
+                headers.append(False)
               ok = True
               break
           if not ok: errors.append(_('Incorrect field %(column)s') % {'column': col})
@@ -1076,7 +1080,7 @@ def parseUpload(request, reportclass, data):
           colnum = 0
           for col in row:
             # More fields in data row than headers. Move on to the next row.
-            if colnum >= len(headers): break
+            if colnum >= len(headers): break      
             if isinstance(headers[colnum],Field): d[headers[colnum].name] = col.strip()
             colnum += 1
 

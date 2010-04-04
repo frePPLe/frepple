@@ -115,7 +115,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
+    'freppledb.common.middleware.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
 )
 

@@ -10,7 +10,7 @@
 {% block data %}
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.demand}}</td>
+<td>{% superlink i.demand demand %}</td>
 <td>{{i.entity}}</td>
 <td>{{i.name}}</td>
 <td>{% ifequal i.entity 'material' %}{% superlink i.owner buffer %}{% else %} 

@@ -248,15 +248,21 @@ DECLARE_EXPORT void CommandSavePlan::execute()
         gdem != Demand::end(); ++gdem)
     {
       if (!gdem->getHidden())
+      {
         for (Demand::OperationPlan_list::const_iterator
-            pp=gdem->getDelivery().begin();
-            pp!=gdem->getDelivery().end();
+            pp = gdem->getDelivery().begin();
+            pp != gdem->getDelivery().end();
             ++pp)
-        {
           textoutput << "DEMAND\t" << (*gdem) << '\t'
-          << (*pp)->getDates().getEnd() << '\t'
-          << (*pp)->getQuantity() << endl;
-        }
+            << (*pp)->getDates().getEnd() << '\t'
+            << (*pp)->getQuantity() << endl;
+        for (Problem::const_iterator i = gdem->getConstraints().begin();
+            i != gdem->getConstraints().end();
+            ++i)
+          textoutput << "DEMAND CONSTRAINT\t" << (*gdem) << '\t'
+            << i->getDescription() << '\t'
+            << i->getDates() << '\t' << endl;
+      }
     }
 
     // Write the resource summary
@@ -294,7 +300,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
     {
       textoutput << "PROBLEM\t" << gprob->getType().type << '\t'
       << gprob->getDescription() << '\t'
-      << gprob->getDateRange() << endl;
+      << gprob->getDates() << endl;
     }
 
     // Close the output file

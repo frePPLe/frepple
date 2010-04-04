@@ -99,7 +99,7 @@ DECLARE_EXPORT bool Problem::operator < (const Problem& a) const
   if (getType() != a.getType()) return getType() < a.getType();
 
   // 3. Sort based on start date
-  return getDateRange().getStart() < a.getDateRange().getStart();
+  return getDates().getStart() < a.getDates().getStart();
 }
 
 
@@ -286,8 +286,8 @@ DECLARE_EXPORT void Problem::writeElement(XMLOutput *o, const Keyword& tag, mode
   o->BeginObject(tag);
   o->writeElement(Tags::tag_name, getType().type);
   o->writeElement(Tags::tag_description, getDescription());
-  o->writeElement(Tags::tag_start, getDateRange().getStart());
-  o->writeElement(Tags::tag_end, getDateRange().getEnd());
+  o->writeElement(Tags::tag_start, getDates().getStart());
+  o->writeElement(Tags::tag_end, getDates().getEnd());
   o->writeElement(Tags::tag_weight, getWeight());
   o->EndObject(tag);
 }
@@ -539,9 +539,9 @@ PyObject* Problem::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_entity))
     return PythonObject(getEntity());
   if (attr.isA(Tags::tag_start))
-    return PythonObject(getDateRange().getStart());
+    return PythonObject(getDates().getStart());
   if (attr.isA(Tags::tag_end))
-    return PythonObject(getDateRange().getEnd());
+    return PythonObject(getDates().getEnd());
   if (attr.isA(Tags::tag_weight))
     return PythonObject(getWeight());
   if (attr.isA(Tags::tag_owner))

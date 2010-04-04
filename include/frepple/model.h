@@ -899,7 +899,7 @@ class Problem : public NonCopyable, public Object
     virtual ~Problem() {}
 
     /** Returns the duration of this problem. */
-    virtual const DateRange getDateRange() const = 0;
+    virtual const DateRange getDates() const = 0;
 
     /** Returns a text description of this problem. */
     virtual string getDescription() const = 0;
@@ -4472,7 +4472,6 @@ class CommandSavePlan : public Command
     /** Python interface to this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
   private:
     string filename;
 };
@@ -4906,7 +4905,7 @@ class ProblemBeforeCurrent : public Problem
     ~ProblemBeforeCurrent() {removeProblem();}
     string getEntity() const {return "operation";}
     Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
-    const DateRange getDateRange() const
+    const DateRange getDates() const
     {
       OperationPlan *o = dynamic_cast<OperationPlan*>(getOwner());
       if (o->getDates().getEnd() > Plan::instance().getCurrent())
@@ -4949,7 +4948,7 @@ class ProblemBeforeFence : public Problem
     ~ProblemBeforeFence() {removeProblem();}
     string getEntity() const {return "operation";}
     Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
-    const DateRange getDateRange() const
+    const DateRange getDates() const
     {
       OperationPlan *o = dynamic_cast<OperationPlan*>(owner);
       if (o->getDates().getEnd() > Plan::instance().getCurrent()
@@ -4991,14 +4990,14 @@ class ProblemPrecedence : public Problem
     /** The weight of the problem is equal to the duration in days. */
     double getWeight() const
     {
-      return static_cast<double>(getDateRange().getDuration()) / 86400;
+      return static_cast<double>(getDates().getDuration()) / 86400;
     }
     explicit ProblemPrecedence(OperationPlan* o, bool add = true) : Problem(o) 
       {if (add) addProblem();}
     ~ProblemPrecedence() {removeProblem();}
     string getEntity() const {return "operation";}
     Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
-    const DateRange getDateRange() const
+    const DateRange getDates() const
     {
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
       return DateRange(o->nextsubopplan->getDates().getStart(),
@@ -5031,7 +5030,7 @@ class ProblemDemandNotPlanned : public Problem
       {if (add) addProblem();}
     ~ProblemDemandNotPlanned() {removeProblem();}
     string getEntity() const {return "demand";}
-    const DateRange getDateRange() const
+    const DateRange getDates() const
       {return DateRange(getDemand()->getDue(),getDemand()->getDue());}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
     Demand* getDemand() const {return dynamic_cast<Demand*>(owner);}
@@ -5073,7 +5072,7 @@ class ProblemLate : public Problem
     /** Destructor. */
     ~ProblemLate() {removeProblem();}
 
-    const DateRange getDateRange() const
+    const DateRange getDates() const
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());
       return DateRange(getDemand()->getDue(),
@@ -5113,7 +5112,7 @@ class ProblemEarly : public Problem
     ~ProblemEarly() {removeProblem();}
     string getEntity() const {return "demand";}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
-    const DateRange getDateRange() const
+    const DateRange getDates() const
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());
       return DateRange(getDemand()->getDue(),
@@ -5151,7 +5150,7 @@ class ProblemShort : public Problem
       {if (add) addProblem();}
     ~ProblemShort() {removeProblem();}
     string getEntity() const {return "demand";}
-    const DateRange getDateRange() const
+    const DateRange getDates() const
       {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
     Demand* getDemand() const {return dynamic_cast<Demand*>(owner);}
@@ -5187,7 +5186,7 @@ class ProblemExcess : public Problem
     string getEntity() const {return "demand";}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
     ~ProblemExcess() {removeProblem();}
-    const DateRange getDateRange() const
+    const DateRange getDates() const
       {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemExcess);}
@@ -5214,7 +5213,7 @@ class ProblemCapacityOverload : public Problem
     ~ProblemCapacityOverload() {removeProblem();}
     string getEntity() const {return "capacity";}
     Object* getOwner() const {return dynamic_cast<Resource*>(owner);}
-    const DateRange getDateRange() const {return dr;}
+    const DateRange getDates() const {return dr;}
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemCapacityOverload);}
 
@@ -5247,7 +5246,7 @@ class ProblemCapacityUnderload : public Problem
     ~ProblemCapacityUnderload() {removeProblem();}
     string getEntity() const {return "capacity";}
     Object* getOwner() const {return dynamic_cast<Resource*>(owner);}
-    const DateRange getDateRange() const {return dr;}
+    const DateRange getDates() const {return dr;}
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemCapacityUnderload);}
 
@@ -5280,7 +5279,7 @@ class ProblemMaterialShortage : public Problem
     string getEntity() const {return "material";}
     Object* getOwner() const {return dynamic_cast<Buffer*>(owner);}
     ~ProblemMaterialShortage() {removeProblem();}
-    const DateRange getDateRange() const {return dr;}
+    const DateRange getDates() const {return dr;}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemMaterialShortage);}
 
@@ -5312,7 +5311,7 @@ class ProblemMaterialExcess : public Problem
         : Problem(b), qty(q), dr(st,nd) {if (add) addProblem();}
     string getEntity() const {return "material";}
     ~ProblemMaterialExcess() {removeProblem();}
-    const DateRange getDateRange() const {return dr;}
+    const DateRange getDates() const {return dr;}
     Object* getOwner() const {return dynamic_cast<Buffer*>(owner);}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(owner);}
     size_t getSize() const {return sizeof(ProblemMaterialExcess);}

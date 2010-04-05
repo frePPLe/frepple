@@ -137,7 +137,7 @@
   </demands>
 
 <?python
-frepple.solver_mrp(name="MRP", constraints=0).solve()
+frepple.solver_mrp(name="MRP", plantype=2).solve()
 frepple.saveXMLfile("output.1.xml")
 frepple.saveplan("output.2.xml")
 ?>

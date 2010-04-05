@@ -8,6 +8,7 @@
 	<current>2009-01-01T00:00:00</current>
 	<solvers>
 		<solver name="MRP" xsi:type="solver_mrp">
+			<plantype>2</plantype>
 		</solver>
 		<solver name="Netting orders from forecast" xsi:type="solver_forecast">
 			<loglevel>2</loglevel>

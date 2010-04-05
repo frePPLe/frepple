@@ -256,12 +256,6 @@ DECLARE_EXPORT void CommandSavePlan::execute()
           textoutput << "DEMAND\t" << (*gdem) << '\t'
             << (*pp)->getDates().getEnd() << '\t'
             << (*pp)->getQuantity() << endl;
-        for (Problem::const_iterator i = gdem->getConstraints().begin();
-            i != gdem->getConstraints().end();
-            ++i)
-          textoutput << "DEMAND CONSTRAINT\t" << (*gdem) << '\t'
-            << i->getDescription() << '\t'
-            << i->getDates() << '\t' << endl;
       }
     }
 
@@ -301,6 +295,21 @@ DECLARE_EXPORT void CommandSavePlan::execute()
       textoutput << "PROBLEM\t" << gprob->getType().type << '\t'
       << gprob->getDescription() << '\t'
       << gprob->getDates() << endl;
+    }
+
+    // Write the constraint summary
+    for (Demand::iterator gdem = Demand::begin();
+        gdem != Demand::end(); ++gdem)
+    {
+      if (!gdem->getHidden())
+      {
+        for (Problem::const_iterator i = gdem->getConstraints().begin();
+            i != gdem->getConstraints().end();
+            ++i)
+          textoutput << "DEMAND CONSTRAINT\t" << (*gdem) << '\t'
+            << i->getDescription() << '\t'
+            << i->getDates() << '\t' << endl;
+      }
     }
 
     // Close the output file

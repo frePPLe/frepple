@@ -305,7 +305,8 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   {
     // Check if the inventory drops below zero somewhere
     double shortage = 0;
-    for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
+    Date startdate;
+    for (Buffer::flowplanlist::const_iterator cur = b->getFlowPlans().begin(); 
       cur != b->getFlowPlans().end(); ++cur)
       if (cur->getDate() >= data->state->q_date
         && cur->getOnhand() < -ROUNDING_ERROR
@@ -313,11 +314,17 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       {
         shortage = cur->getOnhand();
         if (-shortage >= data->state->q_qty) break;
+        if (startdate == Date::infinitePast) startdate = cur->getDate();
       }
     if (shortage < 0)
     {
       // Answer a shorted quantity
       data->state->a_qty = data->state->q_qty + shortage;
+      // Log a constraint
+      if (data->logConstraints)
+        data->planningDemand->getConstraints().push(
+          ProblemMaterialShortage::metadata, b, startdate, Date::infiniteFuture, // @todo calculate a better end date
+          -shortage);
       // Nothing to promise...
       if (data->state->a_qty < 0) data->state->a_qty = 0;
       // Check the reply date

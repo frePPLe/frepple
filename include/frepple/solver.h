@@ -195,7 +195,7 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    SolverMRP(const string& n) : Solver(n), constrts(0), maxparallel(0),
+    SolverMRP(const string& n) : Solver(n), constrts(15), maxparallel(0),
       plantype(1), lazydelay(86400L), autocommit(true)
       {initType(metadata);}
 

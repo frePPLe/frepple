@@ -244,8 +244,7 @@ void SolverMRP::solve(const Load* l, void* v)
     lplan->getOperationPlan()->restore(originalOpplan);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
-    //xxxif (originalPlanningMode)
-      bestAlternateSelection->getResource()->solve(*this,data);
+    bestAlternateSelection->getResource()->solve(*this,data);
 
     // Restore the planning mode
     data->constrainedPlanning = originalPlanningMode;
@@ -264,9 +263,9 @@ void SolverMRP::solve(const Load* l, void* v)
   const Load *l = *(thealternates.begin());
   if (originalLogConstraints)
     data->planningDemand->getConstraints().push(
-      new ProblemCapacityOverload(l->getResource(), originalOpplan.start,
-        originalOpplan.end, originalLoadplanQuantity, false)
-    );
+      ProblemCapacityOverload::metadata,
+      l->getResource(), originalOpplan.start, originalOpplan.end, 
+      originalLoadplanQuantity);
   data->logConstraints = originalLogConstraints;
 
   if (lplan->getOperationPlan()->getQuantity() != 0.0)

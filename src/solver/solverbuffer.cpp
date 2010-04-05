@@ -243,11 +243,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     // Note that if there is a producing operation the constraint is flagged 
     // on the operation instead of on this buffer.
     if (!b->getProducingOperation() && data->logConstraints && shortage > ROUNDING_ERROR)
-      data->planningDemand->getConstraints().push(
-        new ProblemMaterialShortage(
-          const_cast<Buffer*>(b), requested_date, Date::infiniteFuture, 
-          shortage, false)
-      );
+      data->planningDemand->getConstraints().push(ProblemMaterialShortage::metadata,
+          b, requested_date, Date::infiniteFuture, shortage);
   }
   else
   {

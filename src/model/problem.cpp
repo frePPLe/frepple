@@ -577,18 +577,35 @@ DECLARE_EXPORT void Problem::List::clear(Problem *c)
 }
 
 
-DECLARE_EXPORT void Problem::List::push(Problem *p)
+DECLARE_EXPORT void Problem::List::push(const MetaClass* m, 
+  const Object* o, Date st, Date nd, double w)
 {
-  if (!first)
-    // Insert as the first problem in the list
-    first = p;
+  // Find the end of the list
+  Problem* cur = first;
+  while (cur && cur->nextProblem && cur->getOwner() != o)
+    cur = cur->nextProblem;
+  if (cur && cur->getOwner() == o)
+    // Duplicate problem: stop here.
+    return; 
+
+  // Create a new problem
+  Problem *p;
+  if (m == ProblemCapacityOverload::metadata)
+    p = new ProblemCapacityOverload(const_cast<Resource*>(dynamic_cast<const Resource*>(o)), st, nd, w, false);
+  else if (m == ProblemMaterialShortage::metadata)
+    p = new ProblemMaterialShortage(const_cast<Buffer*>(dynamic_cast<const Buffer*>(o)), st, nd, w, false);
+  else if (m == ProblemBeforeCurrent::metadata)
+    p = new ProblemBeforeCurrent(const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd, w);
+  else if (m == ProblemBeforeFence::metadata)
+    p = new ProblemBeforeFence(const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd, w);
   else
-  {
-    // Insert at the end of the list
-    Problem* cur = first;
-    while (cur->nextProblem) cur = cur->nextProblem;
+    throw LogicException("Problem factory can't create this type of problem");
+
+  // Link the problem in the list
+  if (cur)
     cur->nextProblem = p;
-  }
+  else
+    first = p;
 }
 
 

@@ -879,16 +879,13 @@ class Problem : public NonCopyable, public Object
     class List;
     friend class List;
 
-    /** Constructor.
+    /** Constructor.<br>
       * Note that this method can't manipulate the problem container, since
       * the problem objects aren't fully constructed yet.
       * @see addProblem
       */
-    explicit Problem(HasProblems *p) : owner(p), nextProblem(NULL)
-    {
-      if (!owner) throw LogicException("Invalid problem creation");
-      initType(metadata);
-    }
+    explicit Problem(HasProblems *p = NULL) : owner(p), nextProblem(NULL)
+      {initType(metadata);}
 
     /** Initialize the class. */
     static int initialize();
@@ -1074,7 +1071,8 @@ class Problem::List
     DECLARE_EXPORT void clear(Problem * = NULL);
 
     /** Add a problem to the list. */
-    DECLARE_EXPORT void push(Problem *);
+    DECLARE_EXPORT void push
+      (const MetaClass*, const Object*, Date, Date, double);
 
     /** Remove all problems from the list that appear AFTER the one 
       * passed as argument. */
@@ -4893,20 +4891,27 @@ class ProblemBeforeCurrent : public Problem
     string getDescription() const
     {
       ostringstream ch;
-      ch << "Job '" << static_cast<OperationPlan*>(getOwner())->getIdentifier()
-      << "' planned in the past";
+      if (oper)
+        ch << "Job '" << oper << "' planned in the past";
+      else
+        ch << "Job '" << static_cast<OperationPlan*>(getOwner())->getIdentifier()
+        << "' planned in the past";
       return ch.str();
     }
     bool isFeasible() const {return false;}
     double getWeight() const
-    {return dynamic_cast<OperationPlan*>(getOwner())->getQuantity();}
-    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : Problem(o)
+    {return oper ? state.quantity : dynamic_cast<OperationPlan*>(getOwner())->getQuantity();}
+    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : oper(NULL), Problem(o)
       {if (add) addProblem();}
+    explicit ProblemBeforeCurrent(Operation* o, Date st, Date nd, double q) 
+      : oper(o), state(st, nd, q) {}
     ~ProblemBeforeCurrent() {removeProblem();}
     string getEntity() const {return "operation";}
-    Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
+    Object* getOwner() const 
+      {return oper ? static_cast<Object*>(oper) : dynamic_cast<OperationPlan*>(owner);}
     const DateRange getDates() const
     {
+      if (oper) return DateRange(state.start, state.end);
       OperationPlan *o = dynamic_cast<OperationPlan*>(getOwner());
       if (o->getDates().getEnd() > Plan::instance().getCurrent())
         return DateRange(o->getDates().getStart(),
@@ -4922,6 +4927,10 @@ class ProblemBeforeCurrent : public Problem
 
     /** Storing metadata on this class. */
     static DECLARE_EXPORT const MetaClass* metadata;
+
+  private:
+    Operation* oper;   // @todo not clean and consitents to have 'extra' owner here
+    OperationPlanState state;
 };
 
 
@@ -4936,20 +4945,28 @@ class ProblemBeforeFence : public Problem
     string getDescription() const
     {
       ostringstream ch;
-      ch << "Job '" << static_cast<OperationPlan*>(getOwner())->getIdentifier()
-      << "' planned before fence";
+      if (oper)
+        ch << "Job '" << oper << "' planned before fence";
+      else
+        ch << "Job '" << static_cast<OperationPlan*>(getOwner())->getIdentifier()
+        << "' planned before fence";
       return ch.str();
     }
     bool isFeasible() const {return true;}
     double getWeight() const
-    {return static_cast<OperationPlan*>(getOwner())->getQuantity();}
-    explicit ProblemBeforeFence(OperationPlan* o, bool add = true) : Problem(o)
+    {return oper ? state.quantity : static_cast<OperationPlan*>(getOwner())->getQuantity();}
+    explicit ProblemBeforeFence(OperationPlan* o, bool add = true) 
+      : oper(NULL), Problem(o)
       {if (add) addProblem();}
+    explicit ProblemBeforeFence(Operation* o, Date st, Date nd, double q) 
+      : oper(o), state(st, nd, q) {}
     ~ProblemBeforeFence() {removeProblem();}
     string getEntity() const {return "operation";}
-    Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
+    Object* getOwner() const 
+      {return oper ? static_cast<Object*>(oper) : dynamic_cast<OperationPlan*>(owner);}
     const DateRange getDates() const
     {
+      if (oper) return DateRange(state.start, state.end);
       OperationPlan *o = dynamic_cast<OperationPlan*>(owner);
       if (o->getDates().getEnd() > Plan::instance().getCurrent()
           + o->getOperation()->getFence())
@@ -4966,6 +4983,10 @@ class ProblemBeforeFence : public Problem
 
     /** Storing metadata on this class. */
     static DECLARE_EXPORT const MetaClass* metadata;
+
+  private:
+    Operation* oper; // @todo not clean and consitents to have 'extra' owner here
+    OperationPlanState state;
 };
 
 

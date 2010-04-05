@@ -27,11 +27,15 @@ DEMAND	order prio 2 for item 2	2009-01-11T00:00:00	10
 DEMAND	order prio 2 for item 3	2009-01-11T00:00:00	10
 DEMAND	order prio 2 for item 4	2009-01-22T00:00:00	8
 DEMAND	order prio 3 for item 1	2009-01-12T00:00:00	5
+DEMAND CONSTRAINT	order prio 3 for item 1	Buffer 'buffer 1' has material shortage of 5	2009-01-11T00:00:00 / 2030-12-31T00:00:00	
 DEMAND	order prio 3 for item 2	2009-01-05T00:00:00	5
+DEMAND CONSTRAINT	order prio 3 for item 2	Buffer 'buffer 2' has material shortage of 5	2009-01-04T00:00:00 / 2030-12-31T00:00:00	
 DEMAND	order prio 3 for item 3	2009-01-21T00:00:00	2
 DEMAND	order prio 3 for item 3	2009-01-05T00:00:00	5
+DEMAND CONSTRAINT	order prio 3 for item 3	Buffer 'buffer 3' has material shortage of 5	2009-01-04T00:00:00 / 2030-12-31T00:00:00	
 DEMAND	order prio 3 for item 4	2009-01-21T00:00:00	2
 DEMAND	order prio 3 for item 4	2009-01-05T00:00:00	2
+DEMAND CONSTRAINT	order prio 3 for item 4	Buffer 'buffer 4' has material shortage of 8	2009-01-04T00:00:00 / 2030-12-31T00:00:00	
 OPERATION	delivery 1	2009-01-09T00:00:00	2009-01-10T00:00:00	10
 OPERATION	delivery 1	2009-01-10T00:00:00	2009-01-11T00:00:00	10
 OPERATION	delivery 1	2009-01-11T00:00:00	2009-01-12T00:00:00	5

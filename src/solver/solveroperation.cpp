@@ -46,10 +46,10 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
 
   // Loop through all loadplans, and solve for the resource.
   // This may move an operationplan early or late.
-  Problem* curConstraint = data.planningDemand->topConstraint();
+  Problem* curConstraint = data.planningDemand->getConstraints().top();
   do
   {
-    data.planningDemand->popConstraint(curConstraint);
+    data.planningDemand->getConstraints().pop(curConstraint);
     orig = opplan->getDates();
     for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
       h!=opplan->endLoadPlans() && opplan->getDates()==orig; ++h)
@@ -321,9 +321,10 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
     threshold += opplan->getOperation()->getFence();
 
   // Check the setup operationplan
-  Date currentOpplanEnd = opplan->getDates().getEnd();
+  OperationPlanState original(opplan);
   bool ok = true;
   bool checkSetup = true;
+
   // If there are alternate loads we take the best case and assume that
   // at least one of those can give us a zero-time setup.
   // When evaluating the leadtime when solving for capacity we don't use
@@ -366,7 +367,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
     opplan->getOperation()->setOperationPlanParameters(
       opplan, opplan->getQuantity(),
       threshold,
-      currentOpplanEnd + opplan->getOperation()->getPostTime(),
+      original.end + opplan->getOperation()->getPostTime(),
       false
     );
   else
@@ -374,7 +375,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
     opplan->getOperation()->setOperationPlanParameters(
       opplan, opplan->getQuantity(),
       threshold,
-      currentOpplanEnd,
+      original.end,
       true
     );
 
@@ -402,6 +403,17 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
     data.state->a_date = opplan->getDates().getEnd();
     // Set the quantity to 0 (to make sure the buffer doesn't see the supply).
     opplan->setQuantity(0.0);
+
+    // Log the constraint
+    if (data.logConstraints)
+      data.planningDemand->getConstraints().push(
+        (threshold == Plan::instance().getCurrent()) ?
+          ProblemBeforeCurrent::metadata :
+          ProblemBeforeFence::metadata,
+         opplan->getOperation(), original.start, original.end, 
+         original.quantity
+        );
+
     // Deny creation of the operationplan
     return false;
   }
@@ -658,6 +670,10 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   bool originalPlanningMode = data->constrainedPlanning;
   data->constrainedPlanning = true;
 
+  // Remember the top constraint
+  bool originalLogConstraints = data->logConstraints;
+  Problem* topConstraint = data->planningDemand->getConstraints().top();
+
   // Try all alternates:
   // - First, all alternates that are fully effective in the order of priority.
   // - Next, the alternates beyond their effectivity date.
@@ -668,6 +684,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   Date a_date = Date::infiniteFuture;
   Date ask_date;
   Operation *firstAlternate = NULL;
+  Problem* firstAlternateConstraints = NULL;
   double firstFlowPer;
   while (a_qty > 0)
   {
@@ -754,6 +771,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       data->state->curOwnerOpplan = a->getOperationPlan();
       data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
       data->state->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);
+      double ask_quantity = data->state->q_qty;
 
       // Solve constraints on the sub operationplan
       double beforeCost = data->state->a_cost;
@@ -811,6 +829,14 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
           << "' evaluates alternate '" << *altIter << "': quantity " << data->state->a_qty
           << ", cost " << deltaCost << ", penalty " << deltaPenalty << endl;
+
+      // Reply is short, and we 
+      if (data->state->a_qty <= ask_quantity - ROUNDING_ERROR 
+        && *altIter == firstAlternate)
+      {
+
+        data->planningDemand->getConstraints().pop(topConstraint);
+      }
 
       // Process the result
       if (search == PRIORITY)
@@ -937,11 +963,13 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   } // End while loop until the a_qty > 0
 
 
-  // Unconstrained plan: if nothing was planned, plan unconstrained on the first alternate
+  // Unconstrained plan: if not all quantity could be planned, switch to 
+  // unconstrained planning on the first alternate.
   if (!originalPlanningMode && fabs(origQqty - a_qty) < ROUNDING_ERROR && firstAlternate)
   {
     // Switch to unconstrained planning 
     data->constrainedPlanning = false;
+
     // Message
     if (loglevel)
       logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()

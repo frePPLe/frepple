@@ -48,3 +48,9 @@ PROBLEM	late	Demand 'order C' planned P5D after its due date	2009-01-05T00:00:00
 PROBLEM	unplanned	Demand 'order D' is not planned	2009-01-05T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	short	Demand 'order E' planned 10 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	late	Demand 'order F' planned P5D after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+DEMAND CONSTRAINT	order A	Buffer 'buffer A' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order B	Buffer 'buffer B' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order C	Buffer 'buffer C' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order D	Buffer 'buffer D' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order E	Buffer 'buffer E' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order F	Buffer 'buffer F' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00	

@@ -234,7 +234,7 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the fields
-  if (constrts) o->writeElement(Tags::tag_constraints, constrts);
+  if (constrts != 15) o->writeElement(Tags::tag_constraints, constrts);
   if (plantype != 1) o->writeElement(Tags::tag_plantype, plantype);
   if (maxparallel) o->writeElement(Tags::tag_maxparallel, maxparallel);
   if (!autocommit) o->writeElement(Tags::tag_autocommit, autocommit);

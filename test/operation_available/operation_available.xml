@@ -477,7 +477,7 @@
     
 <?python
 print "CREATING A CONSTRAINED PLAN"
-sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2)
+sol = frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2)
 sol.solve()
 frepple.saveplan("output.1.xml")
 

@@ -451,6 +451,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
+  // Find the current list of constraints
+  Problem* topConstraint = data->planningDemand->getConstraints().top();
+  double originalqty = data->state->q_qty;
+
   // Subtract the post-operation time
   Date prev_q_date_max = data->state->q_date_max;
   data->state->q_date_max = data->state->q_date;
@@ -488,6 +492,12 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
 
   // Multiply the operation reqply with the flow quantity to get a final reply
   if (data->state->curBuffer) data->state->a_qty *= flow_qty_per;
+
+  // Ignore any constraints if we get a complete reply.
+  // Sometimes constraints are flagged due to a pre- or post-operation time.
+  // Such constraints ultimately don't result in lateness and can be ignored.
+  if (data->state->a_qty >= originalqty - ROUNDING_ERROR)
+    data->planningDemand->getConstraints().pop(topConstraint);
 
   // Check positive reply quantity
   assert(data->state->a_qty >= 0);

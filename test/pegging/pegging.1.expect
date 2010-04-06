@@ -4,7 +4,6 @@
 	<current>2009-01-01T00:00:00</current>
 	<solvers>
 		<solver name="MRP" xsi:type="solver_mrp">
-			<constraints>15</constraints>
 			<maxparallel>1</maxparallel>
 		</solver>
 	</solvers>
@@ -2255,6 +2254,15 @@
 					</flowplans>
 				</operationplan>
 			</operationplans>
+			<constraints>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;constraint buffer 1&apos; has material shortage of 194</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>194</weight>
+				</problem>
+			</constraints>
 		</demand>
 		<demand name="order for item 2">
 			<quantity>100</quantity>
@@ -2344,6 +2352,15 @@
 					</flowplans>
 				</operationplan>
 			</operationplans>
+			<constraints>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;constraint buffer 2&apos; has material shortage of 194</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>194</weight>
+				</problem>
+			</constraints>
 		</demand>
 		<demand name="order for item 3">
 			<quantity>100</quantity>
@@ -2403,6 +2420,15 @@
 					</flowplans>
 				</operationplan>
 			</operationplans>
+			<constraints>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;constraint buffer 3&apos; has material shortage of 188</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>188</weight>
+				</problem>
+			</constraints>
 		</demand>
 		<demand name="order for item 4">
 			<quantity>100</quantity>
@@ -2462,6 +2488,15 @@
 					</flowplans>
 				</operationplan>
 			</operationplans>
+			<constraints>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;constraint buffer 4&apos; has material shortage of 194</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>194</weight>
+				</problem>
+			</constraints>
 		</demand>
 	</demands>
 	<flows>

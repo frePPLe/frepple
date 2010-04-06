@@ -265,7 +265,7 @@ void SolverMRP::solve(const Load* l, void* v)
     data->planningDemand->getConstraints().push(
       ProblemCapacityOverload::metadata,
       l->getResource(), originalOpplan.start, originalOpplan.end, 
-      originalLoadplanQuantity);
+      -originalLoadplanQuantity);
   data->logConstraints = originalLogConstraints;
 
   if (lplan->getOperationPlan()->getQuantity() != 0.0)

@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-01 20:50+0100\n"
+"POT-Creation-Date: 2010-04-08 21:55+0200\n"
 "PO-Revision-Date: 2009-06-23 22:38+0100\n"
 "Last-Translator: \n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
@@ -31,91 +31,91 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/frepple.js:278
+#: static/frepple.js:287
 msgid "Import data"
 msgstr ""
 
-#: static/frepple.js:280
+#: static/frepple.js:290
 msgid "Load data from a CSV-formatted text file in the database."
 msgstr ""
 
-#: static/frepple.js:281
+#: static/frepple.js:291
 msgid "The first row should contain the field names."
 msgstr ""
 
-#: static/frepple.js:282
+#: static/frepple.js:292
 msgid "Data file"
 msgstr ""
 
-#: static/frepple.js:283
+#: static/frepple.js:293
 msgid "Upload"
 msgstr ""
 
-#: static/frepple.js:284 static/frepple.js.py:308 static/frepple.js.py:356
+#: static/frepple.js:294 static/frepple.js.py:318 static/frepple.js.py:366
 msgid "Cancel"
 msgstr ""
 
-#: static/frepple.js:302
+#: static/frepple.js:312
 msgid "Export data"
 msgstr ""
 
-#: static/frepple.js:304
+#: static/frepple.js:314
 msgid "CSV style"
 msgstr ""
 
-#: static/frepple.js:305
+#: static/frepple.js:315
 msgid "Table"
 msgstr ""
 
-#: static/frepple.js:306
+#: static/frepple.js:316
 msgid "List"
 msgstr ""
 
-#: static/frepple.js:307
+#: static/frepple.js:317
 msgid "Export"
 msgstr ""
 
-#: static/frepple.js:343
+#: static/frepple.js:353
 msgid "Time buckets"
 msgstr ""
 
-#: static/frepple.js:345
+#: static/frepple.js:355
 msgid "Buckets"
 msgstr ""
 
-#: static/frepple.js:346
+#: static/frepple.js:356
 msgid "Standard"
 msgstr ""
 
-#: static/frepple.js:347
+#: static/frepple.js:357
 msgid "Day"
 msgstr ""
 
-#: static/frepple.js:348
+#: static/frepple.js:358
 msgid "Week"
 msgstr ""
 
-#: static/frepple.js:349
+#: static/frepple.js:359
 msgid "Month"
 msgstr ""
 
-#: static/frepple.js:350
+#: static/frepple.js:360
 msgid "Quarter"
 msgstr ""
 
-#: static/frepple.js:351
+#: static/frepple.js:361
 msgid "Year"
 msgstr ""
 
-#: static/frepple.js:353
+#: static/frepple.js:363
 msgid "Start&nbsp;date"
 msgstr ""
 
-#: static/frepple.js:354
+#: static/frepple.js:364
 msgid "End&nbsp;date"
 msgstr ""
 
-#: static/frepple.js:355
+#: static/frepple.js:365
 msgid "OK"
 msgstr ""
 

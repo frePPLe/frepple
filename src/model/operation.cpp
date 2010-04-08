@@ -1003,7 +1003,6 @@ DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
   // Create step suboperationplans if they don't exist yet.
   if (!o->lastsubopplan || o->lastsubopplan->getOperation() == OperationSetup::setupoperation)
   {
-    logger << "extra" << endl;
     Date d = o->getDates().getEnd();
     OperationPlan *p = NULL;
     // @todo not possible to initialize a routing oplan based on a start date

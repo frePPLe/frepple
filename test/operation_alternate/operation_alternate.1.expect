@@ -16,3 +16,4 @@ OPERATION	delivery 1	2009-01-04T00:00:00	2009-01-05T00:00:00	10
 OPERATION	delivery 1	2009-01-10T00:00:00	2009-01-11T00:00:00	20
 OPERATION	make item 1 with routing B	2009-01-01T00:00:00	2009-01-10T00:00:00	4
 PROBLEM	late	Demand 'order prio 2 for item 1' planned P3D after its due date	2009-01-02T00:00:00 / 2009-01-05T00:00:00
+DEMAND CONSTRAINT	order prio 2 for item 1	Job 'make item 1 with routing A step 2' planned in the past	2008-12-17T00:00:00 / 2009-01-01T00:00:00	

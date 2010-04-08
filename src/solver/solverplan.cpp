@@ -211,7 +211,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   // Run the planning command threads and wait for them to exit
   threads.execute();
 
-  // Check the resource setups that were broken yyy xxx todo needs to be removed
+  // @todo Check the resource setups that were broken - needs to be removed
   for (Resource::iterator gres = Resource::begin(); gres != Resource::end(); ++gres)
   {
     if (gres->getSetupMatrix()) gres->updateSetups();

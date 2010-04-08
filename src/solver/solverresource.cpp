@@ -335,7 +335,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         if (cur->getType() == 4)
           curMax = cur->getMax();
 
-        /* xxx
+        /* @todo is this required?
         const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
         if (ldplan && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation
           && ldplan->getOperationPlan()->getDates().getDuration() > 0L)
@@ -467,7 +467,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
     logger << indent(res->getLevel()) << "  Infinite resource '" << res << "' is asked: "
     << (-data->state->q_qty) << "  " << data->state->q_operationplan->getDates() << endl;
 
-  // TODO xxx Need to make the setups feasible - move to earlier dates till max_early fence is reached
+  // @todo Need to make the setups feasible - move to earlier dates till max_early fence is reached
 
   // Reply whatever is requested, regardless of date and quantity.
   data->state->a_qty = data->state->q_qty;

@@ -182,7 +182,7 @@ DECLARE_EXPORT void PeggingIterator::followPegging
     }
 
   // Special case: the operationplan doesn't have flowplans
-  //xxx todo if (noFlowPlans) updateStack(nextlevel, qty, factor, NULL, NULL);
+  // @todo if (noFlowPlans) updateStack(nextlevel, qty, factor, NULL, NULL);
 
   // Recursively call this function for all sub-operationplans.
   for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j)

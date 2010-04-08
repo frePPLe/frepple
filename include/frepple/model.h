@@ -4637,6 +4637,9 @@ class Demand
     virtual void setCustomer(Customer* c) {cust = c; setChanged();}
 
     /** Return a reference to the constraint list. */
+    const Problem::List& getConstraints() const {return constraints;}
+
+    /** Return a reference to the constraint list. */
     Problem::List& getConstraints() {return constraints;}
 
     /** Returns the total amount that has been planned. */

@@ -507,7 +507,9 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
       if (i->getDates().getStart() < d || firstMove)
       {
         i->setStart(d);
-        //xxx todo firstMove = false;
+        // Comment out the next line to leave slack in the routing.
+        // With the line commented out routing slack is cleaned up aggressively.
+        //@todo firstMove = false;  
         d = i->getDates().getEnd();
       }
       else
@@ -539,7 +541,9 @@ void DECLARE_EXPORT OperationPlan::setEnd(Date d)
       if (i->getDates().getEnd() > d || firstMove)
       {
         i->setEnd(d);
-        //xxx todo firstMove = false;
+        // Comment out the next line to leave slack in the routing.
+        // With the line commented out routing slack is cleaned up aggressively.
+        // @todo firstMove = false;
         d = i->getDates().getStart();
       }
       else

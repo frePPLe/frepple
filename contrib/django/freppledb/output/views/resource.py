@@ -53,6 +53,7 @@ class OverviewReport(TableReport):
   crosses = (
     ('available',{'title': _('available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
     ('unavailable',{'title': _('unavailable')}),
+    ('setup',{'title': _('setup')}),
     ('load',{'title': _('load')}),
     ('utilization',{'title': _('utilization %'),}),
     )
@@ -76,7 +77,8 @@ class OverviewReport(TableReport):
              x.bucket as col1, x.startdate as col2, x.enddate as col3,
              min(x.real_available), 
              min(x.total_available) - min(x.real_available) as unavailable,
-             coalesce(sum(loaddata.quantity * %s), 0) as loading
+             coalesce(sum(loaddata.quantity * %s), 0) as loading,
+             0 as setup
        from (
          select res.name as name, res.location_id as location_id,
                d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
@@ -151,6 +153,7 @@ class OverviewReport(TableReport):
         'available': row[5],
         'unavailable': row[6],
         'load': row[7],
+        'setup': row[8],
         'utilization': util,
         }
 
@@ -209,6 +212,7 @@ def GraphData(request, entity):
   free = []
   overload = []
   unavailable = []
+  setup = []
   for x in OverviewReport.resultlist2(basequery, bucket, start, end):
     if x['available'] > x['load']:
       free.append(x['available'] - x['load'])
@@ -219,9 +223,11 @@ def GraphData(request, entity):
       free.append(0)
       overload.append(x['load'] - x['available'])
     unavailable.append(x['unavailable'])
+    setup.append(x['setup'])
   context = { 
     'buckets': bucketlist, 
     'load': load, 
+    'setup': setup, 
     'free': free, 
     'overload': overload, 
     'unavailable': unavailable, 

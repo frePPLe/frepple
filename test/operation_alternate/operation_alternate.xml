@@ -147,12 +147,12 @@
   -->
     
 <?python
-print "CREATING A CONSTRAINED PLAN"
+print "CREATING CONSTRAINED PLAN"
 sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2)
 sol.solve()
 frepple.saveplan("output.1.xml")
 
-print "CREATING AN UNCONSTRAINED PLAN"
+print "CREATING UNCONSTRAINED PLAN"
 sol.plantype = 2
 sol.solve()
 frepple.saveplan("output.2.xml")

@@ -34,7 +34,7 @@ PROBLEM	material excess	Buffer 'end item 1' has material excess of 20	2009-01-01
 PROBLEM	material excess	Buffer 'end item 2' has material excess of 10	2008-12-23T00:00:00 / 2008-12-30T00:00:00
 PROBLEM	material excess	Buffer 'end item 2' has material excess of 10	2009-02-05T00:00:00 / 2009-02-12T00:00:00
 PROBLEM	material excess	Buffer 'end item 2' has material excess of 10	2009-03-05T00:00:00 / 2009-03-12T00:00:00
-PROBLEM	before current	Job '13' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Job '20' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Job '14' planned in the past	2008-12-30T00:00:00 / 2008-12-30T00:00:00
-PROBLEM	before current	Job '21' planned in the past	2008-12-23T00:00:00 / 2008-12-23T00:00:00
+PROBLEM	before current	Operation 'delivery end item 1' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation 'delivery end item 2' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation 'make end item 1' planned in the past	2008-12-30T00:00:00 / 2008-12-30T00:00:00
+PROBLEM	before current	Operation 'make end item 2' planned in the past	2008-12-23T00:00:00 / 2008-12-23T00:00:00

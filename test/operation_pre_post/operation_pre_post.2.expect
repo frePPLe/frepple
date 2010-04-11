@@ -145,18 +145,18 @@ PROBLEM	material excess	Buffer '4. item level 4' has material excess of 6	2008-1
 PROBLEM	material excess	Buffer '4. item level 4' has material excess of 6	2008-12-14T00:00:00 / 2008-12-28T00:00:00
 PROBLEM	material excess	Buffer '4. item level 4' has material excess of 6	2008-12-29T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	material excess	Buffer '4. item level 4' has material excess of 6	2009-01-11T00:00:00 / 2009-01-18T00:00:00
-PROBLEM	before current	Job '1038' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00
-PROBLEM	before current	Job '1040' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Job '1044' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00
-PROBLEM	before current	Job '1046' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Job '1050' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00
-PROBLEM	before current	Job '1052' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Job '1056' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00
-PROBLEM	before current	Job '1057' planned in the past	2008-12-08T00:00:00 / 2008-12-15T00:00:00
-PROBLEM	before current	Job '1058' planned in the past	2008-11-24T00:00:00 / 2008-12-01T00:00:00
-PROBLEM	before current	Job '1063' planned in the past	2008-12-21T00:00:00 / 2008-12-28T00:00:00
-PROBLEM	before current	Job '1068' planned in the past	2008-12-28T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Job '1059' planned in the past	2008-11-10T00:00:00 / 2008-11-17T00:00:00
-PROBLEM	before current	Job '1064' planned in the past	2008-12-07T00:00:00 / 2008-12-14T00:00:00
-PROBLEM	before current	Job '1069' planned in the past	2008-12-14T00:00:00 / 2008-12-21T00:00:00
-PROBLEM	before current	Job '1074' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00
+PROBLEM	before current	Operation '1. make item' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00
+PROBLEM	before current	Operation '1. make item' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation '2. make item' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00
+PROBLEM	before current	Operation '2. make item' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation '3. make item' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00
+PROBLEM	before current	Operation '3. make item' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation '4. make item level 1' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00
+PROBLEM	before current	Operation '4. make item level 2' planned in the past	2008-12-08T00:00:00 / 2008-12-15T00:00:00
+PROBLEM	before current	Operation '4. make item level 3' planned in the past	2008-11-24T00:00:00 / 2008-12-01T00:00:00
+PROBLEM	before current	Operation '4. make item level 3' planned in the past	2008-12-21T00:00:00 / 2008-12-28T00:00:00
+PROBLEM	before current	Operation '4. make item level 3' planned in the past	2008-12-28T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation '4. make item level 4' planned in the past	2008-11-10T00:00:00 / 2008-11-17T00:00:00
+PROBLEM	before current	Operation '4. make item level 4' planned in the past	2008-12-07T00:00:00 / 2008-12-14T00:00:00
+PROBLEM	before current	Operation '4. make item level 4' planned in the past	2008-12-14T00:00:00 / 2008-12-21T00:00:00
+PROBLEM	before current	Operation '4. make item level 4' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00

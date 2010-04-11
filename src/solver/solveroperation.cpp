@@ -641,6 +641,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
 
 
 // No need to take post- and pre-operation times into account
+// @todo This method should only be allowed to create 1 operationplan
 DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 {
   SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
@@ -694,7 +695,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   Date a_date = Date::infiniteFuture;
   Date ask_date;
   Operation *firstAlternate = NULL;
-  Problem* firstAlternateConstraints = NULL;
   double firstFlowPer;
   while (a_qty > 0)
   {
@@ -766,6 +766,19 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         firstFlowPer = sub_flow_qty_per + top_flow_qty_per;
       }
 
+      // Constraint tracking
+      if (*altIter != firstAlternate)
+        // Only enabled on first alternate
+        data->logConstraints = false;
+      else 
+      {
+        // Forget previous constraints if we are replanning the first alternate 
+        // multiple times
+        data->planningDemand->getConstraints().pop(topConstraint);
+        // Potentially keep track of constraints
+        data->logConstraints = originalLogConstraints;
+      }
+
       // Create the top operationplan.
       // Note that both the top- and the sub-operation can have a flow in the
       // requested buffer
@@ -781,7 +794,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       data->state->curOwnerOpplan = a->getOperationPlan();
       data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
       data->state->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);
-      double ask_quantity = data->state->q_qty;
 
       // Solve constraints on the sub operationplan
       double beforeCost = data->state->a_cost;
@@ -803,6 +815,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
           data->getSolver()->setLogLevel(loglevel);
           // Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;
+          data->logConstraints = originalLogConstraints;
           throw;
         }
         data->getSolver()->setLogLevel(loglevel);
@@ -839,14 +852,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
           << "' evaluates alternate '" << *altIter << "': quantity " << data->state->a_qty
           << ", cost " << deltaCost << ", penalty " << deltaPenalty << endl;
-
-      // Reply is short, and we 
-      if (data->state->a_qty <= ask_quantity - ROUNDING_ERROR 
-        && *altIter == firstAlternate)
-      {
-
-        data->planningDemand->getConstraints().pop(topConstraint);
-      }
 
       // Process the result
       if (search == PRIORITY)
@@ -972,13 +977,19 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
   } // End while loop until the a_qty > 0
 
+  // Forget any constraints if we are not short or are planning unconstrained
+  if (a_qty < ROUNDING_ERROR || !originalLogConstraints)
+    data->planningDemand->getConstraints().pop(topConstraint);
 
-  // Unconstrained plan: if not all quantity could be planned, switch to 
+  // Unconstrained plan: If some unplanned quantity remains, switch to 
   // unconstrained planning on the first alternate.
+  // If something could be planned, we expect the caller to re-ask this 
+  // operation.
   if (!originalPlanningMode && fabs(origQqty - a_qty) < ROUNDING_ERROR && firstAlternate)
   {
     // Switch to unconstrained planning 
     data->constrainedPlanning = false;
+    data->logConstraints = false;
 
     // Message
     if (loglevel)
@@ -1023,6 +1034,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
   // Restore the planning mode
   data->constrainedPlanning = originalPlanningMode;
+  data->logConstraints = originalLogConstraints;
 
   // Increment the cost
   if (data->state->a_qty > 0.0)

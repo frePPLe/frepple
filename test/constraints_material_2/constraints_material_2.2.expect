@@ -6,9 +6,12 @@ BUFFER	buffer 3	2009-01-09T00:00:00	200	200
 BUFFER	buffer 3	2009-01-09T00:00:00	-200	0
 BUFFER	buffer 4	2009-01-09T00:00:00	200	200
 BUFFER	buffer 4	2009-01-09T00:00:00	-200	0
-BUFFER	buffer 5	2009-01-09T00:00:00	166.667	166.667
-BUFFER	buffer 5	2009-01-09T00:00:00	33.3333	200
-BUFFER	buffer 5	2009-01-09T00:00:00	-200	2.84217e-014
+BUFFER	buffer 5	2009-01-09T00:00:00	125	125
+BUFFER	buffer 5	2009-01-09T00:00:00	25	150
+BUFFER	buffer 5	2009-01-09T00:00:00	25	175
+BUFFER	buffer 5	2009-01-09T00:00:00	20	195
+BUFFER	buffer 5	2009-01-09T00:00:00	5	200
+BUFFER	buffer 5	2009-01-09T00:00:00	-200	0
 BUFFER	buffer 6	2009-01-07T00:00:00	50	50
 BUFFER	buffer 6	2009-01-08T00:00:00	50	100
 BUFFER	buffer 6	2009-01-09T00:00:00	50	150
@@ -35,8 +38,10 @@ BUFFER	constraint buffer 4c	2009-01-01T00:00:00	12	12
 BUFFER	constraint buffer 4c	2009-01-09T00:00:00	-120	-108
 BUFFER	constraint buffer 4c	2009-01-21T00:00:00	21	-87
 BUFFER	constraint buffer 5a	2009-01-01T00:00:00	10	10
-BUFFER	constraint buffer 5a	2009-01-09T00:00:00	-66.6667	-56.6667
+BUFFER	constraint buffer 5a	2009-01-09T00:00:00	-10	0
+BUFFER	constraint buffer 5a	2009-01-09T00:00:00	-50	-50
 BUFFER	constraint buffer 5b	2009-01-01T00:00:00	20	20
+BUFFER	constraint buffer 5b	2009-01-09T00:00:00	-20	0
 BUFFER	constraint buffer 6	2009-01-01T00:00:00	50	50
 BUFFER	constraint buffer 6	2009-01-06T00:00:00	-100	-50
 DEMAND	order prio 1 for item 1	2009-01-10T00:00:00	100
@@ -55,8 +60,12 @@ OPERATION	make 1	2009-01-09T00:00:00	2009-01-09T00:00:00	40
 OPERATION	make 2	2009-01-09T00:00:00	2009-01-09T00:00:00	40
 OPERATION	make 3	2009-01-09T00:00:00	2009-01-09T00:00:00	40
 OPERATION	make 4	2009-01-09T00:00:00	2009-01-09T00:00:00	40
-OPERATION	make 5	2009-01-09T00:00:00	2009-01-09T00:00:00	33.3333
-OPERATION	make 5 from 5a	2009-01-09T00:00:00	2009-01-09T00:00:00	33.3333
+OPERATION	make 5	2009-01-09T00:00:00	2009-01-09T00:00:00	25
+OPERATION	make 5	2009-01-09T00:00:00	2009-01-09T00:00:00	5
+OPERATION	make 5	2009-01-09T00:00:00	2009-01-09T00:00:00	4
+OPERATION	make 5 from 5a	2009-01-09T00:00:00	2009-01-09T00:00:00	25
+OPERATION	make 5 from 5a	2009-01-09T00:00:00	2009-01-09T00:00:00	5
+OPERATION	make 5 from 5b	2009-01-09T00:00:00	2009-01-09T00:00:00	4
 OPERATION	make 6	2009-01-06T00:00:00	2009-01-09T00:00:00	50
 OPERATION	make 6 step 1	2009-01-06T00:00:00	2009-01-07T00:00:00	50
 OPERATION	make 6 step 2	2009-01-07T00:00:00	2009-01-08T00:00:00	50
@@ -94,7 +103,7 @@ PROBLEM	material shortage	Buffer 'constraint buffer 4b' has material shortage of
 PROBLEM	material excess	Buffer 'constraint buffer 4c' has material excess of 12	2009-01-01T00:00:00 / 2009-01-09T00:00:00
 PROBLEM	material shortage	Buffer 'constraint buffer 4c' has material shortage of 108	2009-01-09T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 5a' has material excess of 10	2009-01-01T00:00:00 / 2009-01-09T00:00:00
-PROBLEM	material shortage	Buffer 'constraint buffer 5a' has material shortage of 56.6667	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 5b' has material excess of 20	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'constraint buffer 5a' has material shortage of 50	2009-01-09T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 5b' has material excess of 20	2009-01-01T00:00:00 / 2009-01-09T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 6' has material excess of 50	2009-01-01T00:00:00 / 2009-01-06T00:00:00
 PROBLEM	material shortage	Buffer 'constraint buffer 6' has material shortage of 50	2009-01-06T00:00:00 / 2030-12-31T00:00:00

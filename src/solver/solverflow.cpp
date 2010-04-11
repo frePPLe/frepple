@@ -67,6 +67,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
     const Flow *firstAlternate = NULL;
     double firstQuantity = 0.0;
 
+    // Remember the top constraint
+    bool originalLogConstraints = data->logConstraints;
+    Problem* topConstraint = data->planningDemand->getConstraints().top();
+
     // 4) Loop through the alternates till we find a non-zero reply
     Date min_next_date(Date::infiniteFuture);
     double ask_qty;
@@ -108,6 +112,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
         firstQuantity = data->state->q_flowplan->getQuantity();
       }
 
+      // Constraint tracking
+      if (*i != firstAlternate)
+        // Only enabled on first alternate
+        data->logConstraints = false;
+      else 
+        // Keep track of constraints, if enabled
+        data->logConstraints = originalLogConstraints;
+
       // 4c) Ask the buffer
       data->state->q_qty = ask_qty = - data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
@@ -127,6 +139,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
         if (data->state->a_qty > ROUNDING_ERROR)
         {
           data->constrainedPlanning = originalPlanningMode;
+          data->logConstraints = originalLogConstraints;
           return;
         }
       }

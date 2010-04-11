@@ -246,7 +246,7 @@ for r in frepple.resources():
 print ""
         
 # Create an unconstrained plan
-print "Creating unconstrained plan"
+print "CREATING UNCONSTRAINED PLAN"
 frepple.solver_mrp(name="MRP unconstrained", constraints=0, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
 
@@ -258,7 +258,7 @@ for i in frepple.resources():
 j = None  # Removes the Python reference to the last loadplan
        
 # Create a constrained plan
-print "\n\nCreating constrained plan"
+print "\n\nCREATING CONSTRAINED PLAN"
 frepple.solver_mrp(name="MRP constrained", constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 

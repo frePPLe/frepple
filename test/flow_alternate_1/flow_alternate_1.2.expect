@@ -35,9 +35,9 @@ PROBLEM	material excess	Buffer 'component B' has material excess of 4	1971-01-01
 PROBLEM	material excess	Buffer 'component C' has material excess of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'component F' has material excess of 5	1971-01-01T00:00:00 / 2008-12-27T00:00:00
 PROBLEM	material excess	Buffer 'component G' has material excess of 5	1971-01-01T00:00:00 / 2008-12-29T00:00:00
-PROBLEM	before current	Job '26' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
-PROBLEM	before current	Job '28' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
-PROBLEM	before current	Job '23' planned in the past	2008-12-24T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Job '24' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Job '25' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Job '27' planned in the past	2008-12-29T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation 'Procure for buffer 'component A'' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
+PROBLEM	before current	Operation 'Procure for buffer 'component C'' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
+PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-24T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-29T00:00:00 / 2009-01-01T00:00:00

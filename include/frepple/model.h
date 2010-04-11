@@ -4894,10 +4894,8 @@ class ProblemBeforeCurrent : public Problem
     string getDescription() const
     {
       ostringstream ch;
-      if (oper)
-        ch << "Job '" << oper << "' planned in the past";
-      else
-        ch << "Job '" << static_cast<OperationPlan*>(getOwner())->getIdentifier()
+      ch << "Operation '" 
+        << (oper ? oper : static_cast<OperationPlan*>(getOwner())->getOperation())
         << "' planned in the past";
       return ch.str();
     }
@@ -4948,10 +4946,8 @@ class ProblemBeforeFence : public Problem
     string getDescription() const
     {
       ostringstream ch;
-      if (oper)
-        ch << "Job '" << oper << "' planned before fence";
-      else
-        ch << "Job '" << static_cast<OperationPlan*>(getOwner())->getIdentifier()
+      ch << "Operation '" 
+        << (oper ? oper : static_cast<OperationPlan*>(getOwner())->getOperation())
         << "' planned before fence";
       return ch.str();
     }

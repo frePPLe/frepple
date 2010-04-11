@@ -159,13 +159,11 @@
   </demands>
 
 <?python
-print "Creating constrained plan"
-sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2)
-sol.solve()
+print "CREATING CONSTRAINED PLAN"
+frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
-print "Creating unconstrained plan"
-sol.plantype = 2
-sol.solve()
+print "CREATING UNCONSTRAINED PLAN"
+frepple.solver_mrp(name="MRP", plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 ?>
 

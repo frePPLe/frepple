@@ -24,4 +24,4 @@ OPERATION	make subassembly	2009-01-01T00:00:00	2009-01-03T00:00:00	2
 PROBLEM	material excess	Buffer 'Raw material' has material excess of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'subassembly' has material excess of 15	1971-01-01T00:00:00 / 2009-01-03T00:00:00
 PROBLEM	late	Demand 'order 1' planned P6D after its due date	2009-01-03T00:00:00 / 2009-01-09T00:00:00
-DEMAND CONSTRAINT	order 1	Job 'make end item' planned in the past	2008-12-26T00:00:00 / 2009-01-02T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'make end item' planned in the past	2008-12-26T00:00:00 / 2009-01-02T00:00:00	

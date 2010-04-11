@@ -69,5 +69,5 @@ OPERATION	make end item	2009-01-18T00:00:00	2009-01-19T00:00:00	1
 PROBLEM	material excess	Buffer 'component' has material excess of 10	1971-01-01T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	material excess	Buffer 'end item' has material excess of 4	2009-01-12T00:00:00 / 2009-01-18T00:00:00
 PROBLEM	late	Demand 'order 4' planned P1D after its due date	2009-01-18T00:00:00 / 2009-01-19T00:00:00
-DEMAND CONSTRAINT	order 4	Job 'buy component' planned in the past	2008-12-31T00:00:00 / 2009-01-10T00:00:00	
+DEMAND CONSTRAINT	order 4	Operation 'buy component' planned in the past	2008-12-31T00:00:00 / 2009-01-10T00:00:00	
 DEMAND CONSTRAINT	order 4	Resource 'Resource' has capacity shortage of 1	2009-01-11T00:00:00 / 2009-01-12T00:00:00	

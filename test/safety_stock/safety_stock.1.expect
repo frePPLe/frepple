@@ -33,5 +33,5 @@ PROBLEM	material excess	Buffer 'end item 2' has material excess of 10	2009-02-05
 PROBLEM	material excess	Buffer 'end item 2' has material excess of 10	2009-03-05T00:00:00 / 2009-03-12T00:00:00
 PROBLEM	late	Demand 'order 1 - item 1' planned P2D after its due date	2009-01-02T00:00:00 / 2009-01-04T00:00:00
 PROBLEM	late	Demand 'order 1 - item 2' planned P2D after its due date	2009-01-02T00:00:00 / 2009-01-04T00:00:00
-DEMAND CONSTRAINT	order 1 - item 1	Job 'delivery end item 1' planned in the past	2008-12-30T00:00:00 / 2009-01-02T00:00:00	
-DEMAND CONSTRAINT	order 1 - item 2	Job 'delivery end item 2' planned in the past	2008-12-30T00:00:00 / 2009-01-02T00:00:00	
+DEMAND CONSTRAINT	order 1 - item 1	Operation 'delivery end item 1' planned in the past	2008-12-30T00:00:00 / 2009-01-02T00:00:00	
+DEMAND CONSTRAINT	order 1 - item 2	Operation 'delivery end item 2' planned in the past	2008-12-30T00:00:00 / 2009-01-02T00:00:00	

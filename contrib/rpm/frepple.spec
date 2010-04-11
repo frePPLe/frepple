@@ -84,7 +84,7 @@ make %{?_smp_mflags} all
 
 %check
 # Run test suite, skipping some long and less interesting tests
-TESTARGS="-e xml_remote -e scalability_1 -e scalability_2 -e scalability_3 -e jobshop"
+TESTARGS="--regression"
 export TESTARGS
 make check
 

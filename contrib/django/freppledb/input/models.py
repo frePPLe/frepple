@@ -920,3 +920,39 @@ class ForecastDemand(AuditModel):
     db_table = 'forecastdemand'
     verbose_name = _('forecast demand')
     verbose_name_plural = _('forecast demands')
+
+
+class Dates(models.Model):
+  # Database fields
+  # Daily buckets
+  day = models.CharField(_('day'),max_length=10, db_index=True)
+  day_start = models.DateTimeField(_('day start'), primary_key=True)
+  day_end = models.DateTimeField(_('day end'),db_index=True)
+  dayofweek = models.SmallIntegerField(_('day of week'), help_text=_('0 = sunday, 1 = monday, ...'))
+  # Weekly buckets
+  week = models.CharField(_('week'),max_length=10, db_index=True)
+  week_start = models.DateTimeField(_('week start'),db_index=True)
+  week_end = models.DateTimeField(_('week end'),db_index=True)
+  # Monthly buckets
+  month = models.CharField(_('month'),max_length=10, db_index=True)
+  month_start = models.DateTimeField(_('month start'),db_index=True)
+  month_end = models.DateTimeField(_('month end'),db_index=True)
+  # Quarterly buckets
+  quarter = models.CharField(_('quarter'),max_length=10, db_index=True)
+  quarter_start = models.DateTimeField(_('quarter start'),db_index=True)
+  quarter_end = models.DateTimeField(_('quarter end'),db_index=True)
+  # Yearly buckets
+  year = models.CharField(_('year'),max_length=10, db_index=True)
+  year_start = models.DateTimeField(_('year start'),db_index=True)
+  year_end = models.DateTimeField(_('year end'),db_index=True)
+  # Default buckets: days + weeks + months
+  standard = models.CharField(_('standard'),max_length=10, db_index=True, null=True)
+  standard_start = models.DateTimeField(_('standard start'),db_index=True, null=True)
+  standard_end = models.DateTimeField(_('standard end'),db_index=True, null=True)
+
+  def __unicode__(self): return str(self.day)
+
+  class Meta:
+    verbose_name = _('dates')  # There will only be multiple dates...
+    verbose_name_plural = _('dates')  # There will only be multiple dates...
+    db_table = 'dates'

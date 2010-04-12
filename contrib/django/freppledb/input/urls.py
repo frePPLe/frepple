@@ -59,6 +59,8 @@ urlpatterns = patterns('',
     {'report': input.views.SubOperationList,}),
   (r'^admin/input/operationplan/$', 'common.report.view_report',
     {'report': input.views.OperationPlanList,}),
+  (r'^admin/input/dates/$', 'common.report.view_report',
+    {'report': input.views.DatesList,}),
 
   # Special reports
   (r'^supplypath/([^/]+)/([^/]+)/$', input.views.pathreport.viewupstream),

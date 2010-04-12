@@ -29,7 +29,7 @@ from django.db import connection, transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from common.models import *
+from input.models import *
 from execute.models import log
 
 

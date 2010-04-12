@@ -140,6 +140,8 @@ class OverviewReport(TableReport):
          startdate,enddate,sortsql)
     cursor.execute(query, baseparams + baseparams)
     
+    print query
+    
     # Build the python result
     for row in cursor.fetchall():
       if row[5] != 0: util = row[7] * 100 / row[5]

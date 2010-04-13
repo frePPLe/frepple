@@ -272,6 +272,40 @@ class pathreport:
        }))
 
 
+class ParameterList(ListReport):
+  '''
+  A list report to show all configurable parameters.
+  '''
+  template = 'input/parameterlist.html'
+  title = _("Parameter List")
+  basequeryset = Parameter.objects.all()
+  model = Parameter
+  frozenColumns = 1
+
+  @staticmethod
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values('name','value','description','lastmodified')
+
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('value', {
+      'title': _('value'),
+      'filter': FilterText(),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(),
+      }),
+    ('lastmodified', {
+      'title': _('last modified'),
+      'filter': FilterDate(),
+      }),
+    )
+    
+
 class BufferList(ListReport):
   '''
   A list report to show buffers.

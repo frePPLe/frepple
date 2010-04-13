@@ -20,17 +20,39 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+from datetime import datetime
+
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from django import forms
+from django.forms.util import ErrorList
 
 from freppledb.input.models import *
 from freppledb.admin import site
 
 
-class Plan_admin(admin.ModelAdmin):
-  model = Plan
+class ParameterForm(forms.ModelForm):
+  class Meta:
+    model = Parameter
+
+  def clean(self):
+    cleaned_data = self.cleaned_data
+    name = cleaned_data.get("name")
+    value = cleaned_data.get("value")
+    # Currentdate parameter must be a date+time value
+    if name == "currentdate":
+      try: d = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+      except: 
+        self._errors["value"] = ErrorList([_("Invalid date: expecting YYYY-MM-DD HH:MM:SS")])
+        del cleaned_data["value"]
+    return cleaned_data
+
+
+class Parameter_admin(admin.ModelAdmin):
+  model = Parameter
   save_on_top = True
-site.register(Plan,Plan_admin)
+  form = ParameterForm
+site.register(Parameter,Parameter_admin)
 
 
 class Bucket_inline(admin.TabularInline):

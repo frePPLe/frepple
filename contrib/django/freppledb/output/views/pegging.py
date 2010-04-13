@@ -25,7 +25,7 @@ from datetime import timedelta, datetime
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Min, Max
 
-from input.models import Plan, Demand
+from input.models import Parameter, Demand
 from output.models import DemandPegging
 from common.report import *
  
@@ -150,7 +150,10 @@ class Report(ListReport):
 @staff_member_required
 def GraphData(request, entity):
   basequery = Demand.objects.filter(name__exact=entity).values('name')
-  current = Plan.objects.get(pk="1").currentdate
+  try:
+    current = datetime.strptime(Parameter.objects.get("currentdate"), "%Y-%m-%d %H:%M:%S")
+  except:
+    current = datetime.now()
   (bucket,start,end,bucketlist) = getBuckets(request)  
   result = [ i for i in Report.resultlist1(basequery,bucket,start,end) ]
   min = None

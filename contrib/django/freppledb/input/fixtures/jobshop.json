@@ -1,5 +1,5 @@
 [
-{"pk": 1, "model": "input.plan", "fields": {"currentdate": "2009-01-01 00:00:00", "name": "frePPLe"}},
+{"pk": "currentdate", "model": "input.parameter", "fields": {"value": "2009-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH-MM-SS"}},
 {"pk": "The job shop", "model": "input.location", "fields": {}},
 {"pk": "My customer", "model": "input.customer", "fields": {}},
 {"pk": "capacity calendar 00", "model": "input.calendar", "fields": {"defaultvalue": "1"}},

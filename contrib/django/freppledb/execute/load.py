@@ -34,6 +34,7 @@ from time import time
 from xml.sax.saxutils import quoteattr
 from threading import Thread
 import inspect
+from datetime import datetime
 
 from django.db import connection
 from django.conf import settings
@@ -43,16 +44,15 @@ import frepple
 header = '<?xml version="1.0" encoding="UTF-8" ?><plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
 
 
-def loadPlan(cursor):
-  # Plan (limited to the first one only)
-  print 'Import plan...'
-  x = [ header ]
-  cursor.execute("SELECT currentdate, name, description FROM plan")
-  d = cursor.fetchone()
-  if not d: raise ValueError('Missing a record in the plan table')
-  frepple.settings.current = d[0]
-  frepple.settings.name = d[1]
-  frepple.settings.description = d[2]
+def loadParameter(cursor):
+  print 'Importing parameters...'
+  try:
+    cursor.execute("SELECT value FROM parameter where name='currentdate'")
+    d = cursor.fetchone()
+    frepple.settings.current = datetime.strptime(d[0], "%Y-%m-%d %H:%M:%S")
+  except:
+    print 'Invalid or missing currentdate parameter: using system clock instead'
+    frepple.settings.current = datetime.now()
 
 
 def loadLocations(cursor):
@@ -532,7 +532,7 @@ def loadfrepple():
 
   if True:
     # Sequential load of all entities
-    loadPlan(cursor)
+    loadParameter(cursor)
     loadCalendars(cursor)
     loadLocations(cursor)
     loadCustomers(cursor)
@@ -560,7 +560,7 @@ def loadfrepple():
     # Unclear what the limiting bottleneck is: python or frepple, definately
     # not the database...
     tasks = (
-      DatabaseTask(loadPlan),
+      DatabaseTask(loadParameter),
       DatabaseTask(loadCalendars, loadLocations),
       DatabaseTask(loadCustomers),
       )

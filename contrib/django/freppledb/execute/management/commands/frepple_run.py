@@ -29,7 +29,6 @@ from django.db import transaction
 from django.conf import settings
 
 from execute.models import log
-from input.models import Plan
 
 
 class Command(BaseCommand):
@@ -86,10 +85,6 @@ class Command(BaseCommand):
         os.environ['PYTHONPATH'] = os.path.normpath(os.path.join(os.environ['FREPPLE_APP'],'..'))
       ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'execute','commands.xml'))
       if ret: raise Exception('Exit code of the batch run is %d' % ret)
-
-      # Mark the last-modified field of the plan. This is used to force
-      # browser clients to refresh any cached reports.
-      Plan.objects.all()[0].save()
 
       # Log message
       log(category='RUN', theuser=user,

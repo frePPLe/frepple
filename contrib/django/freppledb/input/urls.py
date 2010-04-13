@@ -26,10 +26,6 @@ import input.views
 
 urlpatterns = patterns('',
 
-  # Plan report: no list, but redirect to edit page of plan
-  ('^admin/input/plan/$', 'django.views.generic.simple.redirect_to',
-    {'url': '/admin/input/plan/1/'}),
-
   # Model list reports, which override standard admin screens
   (r'^admin/input/buffer/$', 'common.report.view_report',
     {'report': input.views.BufferList,}),
@@ -61,6 +57,8 @@ urlpatterns = patterns('',
     {'report': input.views.OperationPlanList,}),
   (r'^admin/input/dates/$', 'common.report.view_report',
     {'report': input.views.DatesList,}),
+  (r'^admin/input/parameter/$', 'common.report.view_report',
+    {'report': input.views.ParameterList,}),
 
   # Special reports
   (r'^supplypath/([^/]+)/([^/]+)/$', input.views.pathreport.viewupstream),

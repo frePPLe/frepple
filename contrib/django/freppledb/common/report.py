@@ -63,7 +63,7 @@ from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 
-from input.models import Plan, Buffer
+from input.models import Parameter, Buffer
 from common.db import python_date
 
 
@@ -721,11 +721,15 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
       except:
         try: start = pref.startdate
         except: pass
-        if not start: start = Plan.objects.all()[0].currentdate.date()
+        if not start: 
+          try: start = datetime.strptime(Parameter.objects.get("currentdate"), "%Y-%m-%d %H:%M:%S").date()
+          except: start = datetime.now()
     else:
       try: start = pref.startdate
       except: pass
-      if not start: start = Plan.objects.all()[0].currentdate.date()
+      if not start: 
+        try: start = datetime.strptime(Parameter.objects.get("currentdate"), "%Y-%m-%d %H:%M:%S").date()
+        except: start = datetime.now()
 
   # Select the end date (unless it is passed as argument)
   if not end:

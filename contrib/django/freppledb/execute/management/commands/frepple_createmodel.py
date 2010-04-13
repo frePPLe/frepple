@@ -154,15 +154,10 @@ class Command(BaseCommand):
         ).save()
 
       # Plan start date
-      if verbosity>0: print "Updating plan..."
-      try:
-        p = Plan.objects.all()[0]
-        p.currentdate = startdate
-        p.save()
-      except:
-        # No plan exists yet
-        p = Plan(name="frePPLe", currentdate=startdate)
-        p.save()
+      if verbosity>0: print "Updating current date..."
+      param, created = Parameter.objects.get_or_create(name="currentdate")
+      param.value = datetime.strftime(startdate, "%Y-%m-%d %H:%M:%S")
+      param.save()
 
       # Update the user horizon
       try:
@@ -401,7 +396,7 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
   settings.DEBUG = False
 
   first_date = Dates.objects.all()[0].day_start
-  current_date = Plan.objects.all()[0].currentdate
+  current_date = datetime.strptime(Parameter.objects.get("currentdate"), "%Y-%m-%d %H:%M:%S")
   limit = current_date + timedelta(min_day_horizon)
   mode = 'day'
   try:

@@ -20,7 +20,7 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -29,7 +29,7 @@ from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from input.models import Plan
+from input.models import Parameter
 
 
 class Preferences(models.Model):
@@ -67,9 +67,10 @@ def CreatePreferenceModel(instance, **kwargs):
   pref, created = Preferences.objects.get_or_create(user=instance)
   if created:
     try:
-      pref.startdate = Plan.objects.all()[0].currentdate.date()
-      pref.enddate = pref.startdate + timedelta(365)
-    except: pass  # No real problem when this fails
+      pref.startdate = datetime.strptime(Parameter.objects.get("currentdate"), "%Y-%m-%d %H:%M:%S").date()
+    except: 
+      pref.startdate = datetime.now().date()
+    pref.enddate = pref.startdate + timedelta(365)
     pref.save()
 
 # This signal will make sure a preference model is created when a user is added.

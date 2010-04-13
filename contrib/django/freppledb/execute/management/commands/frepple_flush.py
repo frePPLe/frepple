@@ -29,7 +29,6 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from execute.models import log
-from input.models import Plan
 
 
 class Command(BaseCommand):
@@ -89,10 +88,6 @@ class Command(BaseCommand):
       # SQLite specials
       if settings.DATABASE_ENGINE == 'sqlite3':
         cursor.execute('vacuum')   # Shrink the database file
-
-      # Mark the last-modified field of the plan. This is used to force
-      # browser clients to refresh any cached reports.
-      Plan.objects.all()[0].save()
 
       # Logging message
       log(category='ERASE', theuser=user,

@@ -66,18 +66,18 @@ searchmode = (
 )
 
 
-class Plan(AuditModel):
+class Parameter(AuditModel):
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, null=True, blank=True)
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
+  value = models.CharField(_('value'), max_length=settings.NAMESIZE, null=True, blank=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  currentdate = models.DateTimeField(_('current date'))
 
   def __unicode__(self): return self.name
 
   class Meta(AuditModel.Meta):
-    db_table = 'plan'
-    verbose_name = _('plan')
-    verbose_name_plural = _('plan') # There will only be 1 plan...
+    db_table = 'parameter'
+    verbose_name = _('parameter')
+    verbose_name_plural = _('parameters')
 
 
 class Calendar(AuditModel):

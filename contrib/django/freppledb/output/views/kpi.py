@@ -26,7 +26,7 @@ from django.conf import settings
 
 from common.db import sql_datediff
 from common.report import *
-from input.models import Plan
+from input.models import Parameter
 
 
 class Report(ListReport):
@@ -34,7 +34,7 @@ class Report(ListReport):
   title = _("Performance Indicators")
   reset_crumbs = True
   frozenColumns = 0
-  basequeryset = Plan.objects.all()
+  basequeryset = Parameter.objects.all()
   rows = (
     ('category', {'sort': False, 'title': _('category')}),
     ('name', {'sort': False, 'title': _('name')}),

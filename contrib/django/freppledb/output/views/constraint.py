@@ -23,7 +23,6 @@
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-from input.models import Plan
 from output.models import Constraint
 from common.report import *
   

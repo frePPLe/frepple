@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -92,8 +92,8 @@ class Report(ListReport):
       ''' % (
         # Oracle needs conversion from the field out_problem.name
         # (in 'national character set') to the database 'character set'.
-        settings.DATABASE_ENGINE == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
-        settings.DATABASE_ENGINE == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
+        settings.DATABASE_ENGINE == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',   #todo not ready for multidb
+        settings.DATABASE_ENGINE == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',   #todo not ready for multidb
         sql_datediff('plandate','due'),
         sql_datediff('enddate','startdate')
         )

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -25,13 +25,16 @@ from optparse import make_option
 from datetime import timedelta, datetime, date
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db import connection, transaction
+from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 
 from input.models import *
 from execute.models import log
+
+
+database = DEFAULT_DB_ALIAS
 
 
 class Command(BaseCommand):
@@ -82,6 +85,8 @@ class Command(BaseCommand):
         help='Current date of the plan in YYYY-MM-DD format'),
       make_option('--nonfatal', action="store_true", dest='nonfatal', 
         default=False, help='Dont abort the execution upon an error'),
+      make_option('--database', action='store', dest='database',
+        default=DEFAULT_DB_ALIAS, help='Nominates a specific database to populate'),
   )
 
   requires_model_validation = False
@@ -128,6 +133,9 @@ class Command(BaseCommand):
     else: currentdate = '2009-01-01'
     nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
+    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS      
+    if not database in settings.DATABASES.keys():
+      raise CommandError("No database settings known for '%s'" % database )
 
     random.seed(100) # Initialize random seed to get reproducible results
     cnt = 100000     # A counter for operationplan identifiers
@@ -139,7 +147,7 @@ class Command(BaseCommand):
       raise CommandError("current date is not matching format YYYY-MM-DD")
 
     # Check whether the database is empty
-    if Buffer.objects.count()>0 or Item.objects.count()>0:
+    if Buffer.objects.using(database).count()>0 or Item.objects.using(database).count()>0:
       raise CommandError("Database must be empty before creating a model")
 
     try:
@@ -151,20 +159,20 @@ class Command(BaseCommand):
              cluster, demand, forecast_per_item, level, resource,
              resource_size, components, components_per, deliver_lt,
              procure_lt)
-        ).save()
+        ).save(using=database)
 
       # Plan start date
       if verbosity>0: print "Updating current date..."
-      param, created = Parameter.objects.get_or_create(name="currentdate")
+      param, created = Parameter.objects.using(database).get_or_create(name="currentdate")
       param.value = datetime.strftime(startdate, "%Y-%m-%d %H:%M:%S")
-      param.save()
+      param.save(using=database)
 
       # Update the user horizon
       try:
         userprofile = User.objects.get(username=user).get_profile()
         userprofile.startdate = startdate.date()
         userprofile.enddate = (startdate + timedelta(365)).date()
-        userprofile.save()
+        userprofile.save(using=database)
       except:
         pass # It's not important if this fails
 
@@ -175,35 +183,35 @@ class Command(BaseCommand):
 
       # Working days calendar
       if verbosity>0: print "Creating working days..."
-      workingdays = Calendar.objects.create(name="Working Days",type= "calendar_boolean")
-      weeks = Calendar.objects.create(name="Weeks")
+      workingdays = Calendar.objects.using(database).create(name="Working Days",type= "calendar_boolean")
+      weeks = Calendar.objects.using(database).create(name="Weeks")
       cur = None
       cur2 = None
-      for i in Dates.objects.all():
+      for i in Dates.objects.using(database).using(database).all():
         curdate = datetime(i.day_start.year, i.day_start.month, i.day_start.day)
         dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
         if dayofweek == 1:
           # A bucket for the working week: monday through friday
           if cur:
             cur.enddate = curdate
-            cur.save()
+            cur.save(using=database)
           if cur2:
             cur2.enddate = curdate
-            cur2.save()
+            cur2.save(using=database)
           cur = Bucket(startdate=curdate, value=1, calendar=workingdays)
           cur2 = Bucket(startdate=curdate, value=1, calendar=weeks)
         elif dayofweek == 6:
           # A bucket for the weekend
           if cur:
             cur.enddate = curdate
-            cur.save()
+            cur.save(using=database)
           if cur2:
             cur2.enddate = curdate
-            cur2.save()
+            cur2.save(using=database)
           cur = Bucket(startdate=curdate, value=0, calendar=workingdays)
           cur2 = Bucket(startdate=curdate, value=0, calendar=weeks)
-      if cur: cur.save()
-      if cur2: cur2.save()
+      if cur: cur.save(using=database)
+      if cur2: cur2.save(using=database)
       transaction.commit()
 
       # Create a random list of categories to choose from
@@ -213,7 +221,7 @@ class Command(BaseCommand):
       if verbosity>0: print "Creating customers..."
       cust = []
       for i in range(100):
-        c = Customer.objects.create(name = 'Cust %03d' % i)
+        c = Customer.objects.using(database).create(name = 'Cust %03d' % i)
         cust.append(c)
       transaction.commit()
 
@@ -222,12 +230,12 @@ class Command(BaseCommand):
       res = []
       for i in range(resource):
         loc = Location(name='Loc %05d' % int(random.uniform(1,cluster)))
-        loc.save()
+        loc.save(using=database)
         cal = Calendar(name='capacity for res %03d' %i, category='capacity')
         bkt = Bucket(startdate=startdate, value=resource_size, calendar=cal)
-        cal.save()
-        bkt.save()
-        r = Resource.objects.create(name = 'Res %03d' % i, maximum=cal, location=loc)
+        cal.save(using=database)
+        bkt.save(using=database)
+        r = Resource.objects.using(database).create(name = 'Res %03d' % i, maximum=cal, location=loc)
         res.append(r)
       transaction.commit()
       random.shuffle(res)
@@ -235,11 +243,11 @@ class Command(BaseCommand):
       # Create the components
       if verbosity>0: print "Creating raw materials..."
       comps = []
-      comploc = Location.objects.create(name='Procured materials')
+      comploc = Location.objects.using(database).create(name='Procured materials')
       for i in range(components):
-        it = Item.objects.create(name = 'Component %04d' % i, category='Procured')
+        it = Item.objects.using(database).create(name = 'Component %04d' % i, category='Procured')
         ld = abs(round(random.normalvariate(procure_lt,procure_lt/3)))
-        c = Buffer.objects.create(name = 'Component %04d' % i,
+        c = Buffer.objects.using(database).using(database).create(name = 'Component %04d' % i,
              location = comploc,
              category = 'Procured',
              item = it,
@@ -259,16 +267,16 @@ class Command(BaseCommand):
         if verbosity>0: print "Creating supply chain for end item %d..." % i
 
         # location
-        loc, created = Location.objects.get_or_create(name='Loc %05d' % i)
+        loc, created = Location.objects.using(database).get_or_create(name='Loc %05d' % i)
         loc.available = workingdays
-        loc.save()
+        loc.save(using=database)
         
         # Item and delivery operation
-        oper = Operation.objects.create(name='Del %05d' % i, sizemultiple=1, location=loc)
-        it = Item.objects.create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
+        oper = Operation.objects.using(database).create(name='Del %05d' % i, sizemultiple=1, location=loc)
+        it = Item.objects.using(database).create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
 
         # Forecast
-        fcst = Forecast.objects.create( \
+        fcst = Forecast.objects.using(database).create( \
           name='Forecast item %05d' % i,
           calendar=workingdays,
           item=it,
@@ -281,16 +289,16 @@ class Command(BaseCommand):
         fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item * 12)
 
         # Level 0 buffer
-        buf = Buffer.objects.create(name='Buf %05d L00' % i,
+        buf = Buffer.objects.using(database).create(name='Buf %05d L00' % i,
           item=it,
           location=loc,
           category='00'
           )
-        fl = Flow.objects.create(operation=oper, thebuffer=buf, quantity=-1)
+        fl = Flow.objects.using(database).create(operation=oper, thebuffer=buf, quantity=-1)
 
         # Demand
         for j in range(demand):
-          dm = Demand.objects.create(name='Dmd %05d %05d' % (i,j),
+          dm = Demand.objects.using(database).create(name='Dmd %05d %05d' % (i,j),
             item=it,
             quantity=int(random.uniform(1,6)),
             # Exponential distribution of due dates, with an average of deliver_lt days.
@@ -306,7 +314,7 @@ class Command(BaseCommand):
         for k in range(level):
           if k == 1 and res:
             # Create a resource load for operations on level 1
-            oper = Operation.objects.create(name='Oper %05d L%02d' % (i,k),
+            oper = Operation.objects.using(database).create(name='Oper %05d L%02d' % (i,k),
               type='operation_time_per',
               location=loc,
               duration_per=86400,
@@ -315,11 +323,11 @@ class Command(BaseCommand):
             if resource < cluster and i < resource:
               # When there are more cluster than resources, we try to assure
               # that each resource is loaded by at least 1 operation.
-              Load.objects.create(resource=res[i], operation=oper)
+              Load.objects.using(database).create(resource=res[i], operation=oper)
             else:
-              Load.objects.create(resource=random.choice(res), operation=oper)
+              Load.objects.using(database).create(resource=random.choice(res), operation=oper)
           else:
-            oper = Operation.objects.create(
+            oper = Operation.objects.using(database).create(
               name='Oper %05d L%02d' % (i,k),
               duration=random.choice(durations),
               sizemultiple=1,
@@ -329,17 +337,17 @@ class Command(BaseCommand):
           buf.producing = oper
           # Some inventory in random buffers
           if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
-          buf.save()
-          Flow(operation=oper, thebuffer=buf, quantity=1, type="flow_end").save()
+          buf.save(using=database)
+          Flow(operation=oper, thebuffer=buf, quantity=1, type="flow_end").save(using=database)
           if k != level-1:
             # Consume from the next level in the bill of material
-            buf = Buffer.objects.create(
+            buf = Buffer.objects.using(database).create(
               name='Buf %05d L%02d' % (i,k+1),
               item=it,
               location=loc,
               category='%02d' % (k+1)
               )
-            Flow.objects.create(operation=oper, thebuffer=buf, quantity=-1)
+            Flow.objects.using(database).create(operation=oper, thebuffer=buf, quantity=-1)
 
         # Consume raw materials / components
         c = []
@@ -351,7 +359,7 @@ class Command(BaseCommand):
             o = operation = random.choice(ops)
             b = random.choice(comps)
           c.append( (o,b) )
-          fl = Flow.objects.create(
+          fl = Flow.objects.using(database).create(
             operation = o, thebuffer = b,
             quantity = random.choice([-1,-1,-1,-2,-3]))
 
@@ -360,12 +368,12 @@ class Command(BaseCommand):
 
       # Log success
       log(category='CREATE', theuser=user,
-        message=_('Finished creating sample model')).save()
+        message=_('Finished creating sample model')).save(using=database)
 
     except Exception, e:
       # Log failure and rethrow exception
       try: log(category='CREATE', theuser=user,
-        message=u'%s: %s' % (_('Failure creating sample model'),e)).save()
+        message=u'%s: %s' % (_('Failure creating sample model'),e)).save(using=database)
       except: pass
       if nonfatal: raise e
       else: raise CommandError(e)
@@ -395,13 +403,13 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
   tmp_debug = settings.DEBUG
   settings.DEBUG = False
 
-  first_date = Dates.objects.all()[0].day_start
-  current_date = datetime.strptime(Parameter.objects.get("currentdate"), "%Y-%m-%d %H:%M:%S")
+  first_date = Dates.objects.using(database).all()[0].day_start
+  current_date = datetime.strptime(Parameter.objects.using(database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
   limit = current_date + timedelta(min_day_horizon)
   mode = 'day'
   try:
     m = []
-    for i in Dates.objects.all():
+    for i in Dates.objects.using(database).all():
       if i.day_start < current_date:
         # A single bucket for all dates in the past
         i.standard = 'past'
@@ -429,7 +437,7 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
       m.append(i)
     # Needed to create a temporary list of the objects to save, since the
     # database table is locked during the iteration
-    for i in m: i.save()
+    for i in m: i.save(using=database)
     transaction.commit()
   finally:
     transaction.rollback()

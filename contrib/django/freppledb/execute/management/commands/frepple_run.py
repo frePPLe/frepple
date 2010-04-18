@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -25,7 +25,7 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext as _
-from django.db import transaction
+from django.db import transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
 
 from execute.models import log
@@ -42,6 +42,8 @@ class Command(BaseCommand):
       default='1', help='Plan type: 1=constrained, 2=unconstrained'),      
     make_option('--nonfatal', action="store_true", dest='nonfatal', 
       default=False, help='Dont abort the execution upon an error'),
+    make_option('--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to load data from and export results into'),
   )
   help = "Runs frePPLe to generate a plan"
 
@@ -64,16 +66,21 @@ class Command(BaseCommand):
         if plantype < 1 or plantype > 2:
           raise ValueError("Invalid plan type: %s" % options['plantype'])
       else: plantype = 1
+      if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
+      else: database = DEFAULT_DB_ALIAS
+      if not database in settings.DATABASES.keys():
+        raise CommandError("No database settings known for '%s'" % database )
         
       # Log message
       log(category='RUN', theuser=user,
-        message=_('Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d') % {'plantype': plantype, 'constraint': constraint}).save()
+        message=_('Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d') % {'plantype': plantype, 'constraint': constraint}).save(using=database)
 
       # Execute
       os.environ['PLANTYPE'] = str(plantype)
       os.environ['CONSTRAINT'] = str(constraint)
       os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
       os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
+      os.environ['FREPPLE_DATABASE'] = database
       os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
       os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
       os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
@@ -88,10 +95,10 @@ class Command(BaseCommand):
 
       # Log message
       log(category='RUN', theuser=user,
-        message=_('Finished creating frePPLe plan')).save()
+        message=_('Finished creating frePPLe plan')).save(using=database)
     except Exception, e:
       try: log(category='RUN', theuser=user,
-        message=u'%s: %s' % (_('Failure when creating frePPLe plan'),e)).save()
+        message=u'%s: %s' % (_('Failure when creating frePPLe plan'),e)).save(using=database)
       except: pass
       if nonfatal: raise e
       else: raise CommandError(e)

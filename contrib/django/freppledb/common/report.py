@@ -722,13 +722,13 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
         try: start = pref.startdate
         except: pass
         if not start: 
-          try: start = datetime.strptime(Parameter.objects.get("currentdate"), "%Y-%m-%d %H:%M:%S").date()
+          try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S").date()
           except: start = datetime.now()
     else:
       try: start = pref.startdate
       except: pass
       if not start: 
-        try: start = datetime.strptime(Parameter.objects.get("currentdate"), "%Y-%m-%d %H:%M:%S").date()
+        try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S").date()
         except: start = datetime.now()
 
   # Select the end date (unless it is passed as argument)

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -67,7 +67,7 @@ def CreatePreferenceModel(instance, **kwargs):
   pref, created = Preferences.objects.get_or_create(user=instance)
   if created:
     try:
-      pref.startdate = datetime.strptime(Parameter.objects.get("currentdate"), "%Y-%m-%d %H:%M:%S").date()
+      pref.startdate = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S").date()
     except: 
       pref.startdate = datetime.now().date()
     pref.enddate = pref.startdate + timedelta(365)

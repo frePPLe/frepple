@@ -24,24 +24,36 @@ import os
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction, connection
+from django.db import transaction, connections, DEFAULT_DB_ALIAS
 from django.template.loader import render_to_string
-
-from execute.models import log
-from input.models import Operation, Resource, Buffer, Load, Flow
+from django.conf import settings
 
 #TODO handling of suboperations!!!
+
 
 @transaction.commit_manually
 class Command(BaseCommand):
   help = "Generates output in the DOT language to visualize the network"
+
+  option_list = BaseCommand.option_list + (
+      make_option('--database', action='store', dest='database',
+        default=DEFAULT_DB_ALIAS, help='Nominates a specific database to graph'),
+  )
 
   requires_model_validation = False
 
   @transaction.autocommit
   def handle(self, **options):
     try:
-      cursor = connection.cursor()
+
+      # Pick up the options          
+      if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
+      else: database = DEFAULT_DB_ALIAS      
+      if not database in settings.DATABASES.keys():
+        raise CommandError("No database settings known for '%s'" % database )
+
+      # Create a database connection
+      cursor = connections[database].cursor()
       
       # Header
       print 'digraph G {'

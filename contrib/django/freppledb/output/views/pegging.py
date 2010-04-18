@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -151,7 +151,7 @@ class Report(ListReport):
 def GraphData(request, entity):
   basequery = Demand.objects.filter(name__exact=entity).values('name')
   try:
-    current = datetime.strptime(Parameter.objects.get("currentdate"), "%Y-%m-%d %H:%M:%S")
+    current = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
   except:
     current = datetime.now()
   (bucket,start,end,bucketlist) = getBuckets(request)  

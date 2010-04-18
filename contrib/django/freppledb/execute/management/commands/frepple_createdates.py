@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -25,7 +25,7 @@ from optparse import make_option
 from datetime import timedelta, datetime, date
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db import connection, transaction
+from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -48,6 +48,8 @@ class Command(BaseCommand):
           help='User running the command'),
       make_option('--nonfatal', action="store_true", dest='nonfatal', 
         default=False, help='Dont abort the execution upon an error'),
+      make_option('--database', action='store', dest='database',
+        default=DEFAULT_DB_ALIAS, help='Nominates a specific database to populate date information into'),
   )
 
   requires_model_validation = False
@@ -74,6 +76,10 @@ class Command(BaseCommand):
     else: user = ''
     nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
+    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
+    else: database = DEFAULT_DB_ALIAS      
+    if not database in settings.DATABASES.keys():
+      raise CommandError("No database settings known for '%s'" % database )
 
     # Validate the date arguments
     try:
@@ -85,10 +91,10 @@ class Command(BaseCommand):
     try:
       # Logging the action
       log( category='CREATE', theuser=user,
-        message = _('Start initializing dates')).save()
+        message = _('Start initializing dates')).save(using=database)
 
       # Delete the previous set of records
-      connection.cursor().execute('DELETE FROM dates')
+      connections[database].cursor().execute('DELETE FROM dates')
       transaction.commit()
 
       # Loop over all days in the chosen horizon
@@ -122,19 +128,19 @@ class Command(BaseCommand):
           year = curdate.strftime("%Y"),
           year_start = year_start,
           year_end = year_end,
-          ).save()
+          ).save(using=database)
 
         # Next date
         curdate = curdate + timedelta(1)
 
       # Log success
       log(category='CREATE', theuser=user,
-        message=_('Finished initializing dates')).save()
+        message=_('Finished initializing dates')).save(using=database)
 
     except Exception, e:
       # Log failure and rethrow exception
       try: log(category='CREATE', theuser=user,
-        message=u'%s: %s' % (_('Failure initializing dates'),e)).save()
+        message=u'%s: %s' % (_('Failure initializing dates'),e)).save(using=database)
       except: pass
       if nonfatal: raise e
       else: raise CommandError(e)

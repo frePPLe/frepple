@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -24,7 +24,7 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
-from django.db import connection, transaction
+from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -41,11 +41,13 @@ class Command(BaseCommand):
   Another difference is that the initial_data fixture is not loaded.
   '''
   option_list = BaseCommand.option_list + (
-      make_option('--user', dest='user', type='string',
-        help='User running the command'),
-      make_option('--nonfatal', action="store_true", dest='nonfatal', 
-        default=False, help='Dont abort the execution upon an error'),
-      )
+    make_option('--user', dest='user', type='string',
+      help='User running the command'),
+    make_option('--nonfatal', action="store_true", dest='nonfatal', 
+      default=False, help='Dont abort the execution upon an error'),
+    make_option('--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to delete data from'),
+    )
 
   requires_model_validation = False
 
@@ -66,36 +68,42 @@ class Command(BaseCommand):
     else: user = ''
     nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
+    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
+    else: database = DEFAULT_DB_ALIAS      
+    if not database in settings.DATABASES.keys():
+      raise CommandError("No database settings known for '%s'" % database )
 
     try:
       # Logging message
       log(category='ERASE', theuser=user,
-        message=_('Start erasing the database')).save()
-      cursor = connection.cursor()
+        message=_('Start erasing the database')).save(using=database)
+        
+      # Create a database connection
+      cursor = connections[database].cursor()
 
       # Delete all records from the tables
-      sql_list = connection.ops.sql_flush(no_style(), [
+      sql_list = connections[database].ops.sql_flush(no_style(), [
         'out_problem','out_flowplan','out_loadplan','out_demandpegging',
-        'out_operationplan','demand','forecastdemand','forecast','flow',
-        'resourceload','buffer','resource','setuprule','setupmatrix',
-        'operationplan','item','suboperation','operation','location',
-        'bucket','calendar','customer'
+        'out_operationplan','out_constraint','out_demand','out_forecast','demand',
+        'forecastdemand','forecast','flow','resourceload','buffer','resource','setuprule',
+        'setupmatrix','operationplan','item','suboperation','operation',
+        'location','bucket','calendar','customer'
         ], [] )
       for sql in sql_list:
         cursor.execute(sql)
         transaction.commit()
 
       # SQLite specials
-      if settings.DATABASE_ENGINE == 'sqlite3':
+      if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
         cursor.execute('vacuum')   # Shrink the database file
 
       # Logging message
       log(category='ERASE', theuser=user,
-        message=_('Finished erasing the database')).save()
+        message=_('Finished erasing the database')).save(using=database)
         
     except Exception, e:
       try: log(category='RUN', theuser=user,
-        message=u'%s: %s' % (_('Failed erasing the database'),e)).save()
+        message=u'%s: %s' % (_('Failed erasing the database'),e)).save(using=database)
       except: pass
       if nonfatal: raise e
       else: raise CommandError(e)

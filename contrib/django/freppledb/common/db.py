@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -42,13 +42,19 @@ enhance others.
     SQLite returns a string.
     This method does what one might intuitively expect: a python date object
     is always returned.
+
+The code assumes that all database engines are identical in the frePPLe 
+application. 
 '''
 
-from django.conf import settings
 from datetime import date, datetime
 
+from django.conf import settings
+from django.db import DEFAULT_DB_ALIAS
+
+
 # Functions for SQLITE
-if settings.DATABASE_ENGINE == 'sqlite3':
+if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3':
 
   def sql_true():
     return '1'
@@ -78,8 +84,9 @@ if settings.DATABASE_ENGINE == 'sqlite3':
     if isinstance(d,datetime): return d.date()
     return datetime.strptime(d,'%Y-%m-%d %H:%M:%S').date()
 
+
 # Functions for POSTGRESQL
-elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
+elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
 
   def sql_true():
     return 'true'
@@ -106,8 +113,9 @@ elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
   def python_date(d):
     return d.date()
 
+
 # Functions for MYSQL
-elif settings.DATABASE_ENGINE == 'mysql':
+elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.mysql':
 
   def sql_true():
     return '1'
@@ -130,8 +138,9 @@ elif settings.DATABASE_ENGINE == 'mysql':
   def python_date(d):
     return d.date()
 
+
 # Functions for ORACLE
-elif settings.DATABASE_ENGINE == 'oracle':
+elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.oracle':
 
   def sql_true():
     return '1'
@@ -154,5 +163,6 @@ elif settings.DATABASE_ENGINE == 'oracle':
   def python_date(d):
     return d.date()
 
+
 else:
-  raise NameError('The %s database is not support by frePPLe' % settings.DATABASE_ENGINE)
+  raise NameError('The %s database is not support by frePPLe' % settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'])

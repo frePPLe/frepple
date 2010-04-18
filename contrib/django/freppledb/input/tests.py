@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -73,9 +73,9 @@ class DataLoadTest(TestCase):
     response = self.client.get('/admin/input/operationplan/')
     self.assertContains(response, '4 operationplans')
 
-  def test_input_plan(self):
-    response = self.client.get('/admin/input/plan/')
-    self.assertRedirects(response, '/admin/input/plan/1/', status_code=301)
+  def test_input_parameter(self):
+    response = self.client.get('/admin/input/parameter/')
+    self.assertContains(response, '1 parameters')
 
   def test_input_resource(self):
     response = self.client.get('/admin/input/resource/')

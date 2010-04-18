@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -35,18 +35,21 @@ to keep the code portable between different databases.
 from time import time
 from threading import Thread
 import inspect
+import os
 
-from django.db import connection
+from django.db import connections, DEFAULT_DB_ALIAS
 from django.db import transaction
 from django.conf import settings
 
 import frepple
 
+database = DEFAULT_DB_ALIAS
+
 
 def truncate(cursor):
   print "Emptying database plan tables..."
   starttime = time()
-  if settings.DATABASE_ENGINE in ['sqlite3','postgresql_psycopg2']:
+  if settings.DATABASES[database]['ENGINE'] in ['django.db.backends.sqlite3','django.db.backends.postgresql_psycopg2']:
     delete = "delete from %s"
   else:
     delete = "truncate table %s"
@@ -284,17 +287,21 @@ class DatabaseTask(Thread):
   @transaction.commit_manually
   def run(self):
     # Create a database connection
-    cursor = connection.cursor()
-    if settings.DATABASE_ENGINE == 'sqlite3':
+    cursor = connections[database].cursor()
+    if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
       cursor.execute('PRAGMA temp_store = MEMORY;')
       cursor.execute('PRAGMA synchronous = OFF')
       cursor.execute('PRAGMA cache_size = 8000')
-    elif settings.DATABASE_ENGINE == 'oracle':
+    elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.oracle':
       cursor.execute("ALTER SESSION SET COMMIT_WRITE='BATCH,NOWAIT'")
+
     # Run the functions sequentially
     for f in self.functions:
       try: f(cursor)
       except Exception, e: print e
+
+    # Close the connection
+    cursor.close()
 
 
 @transaction.commit_manually
@@ -310,18 +317,20 @@ def exportfrepple():
   settings.DEBUG = False
 
   # Create a database connection
-  cursor = connection.cursor()
-  if settings.DATABASE_ENGINE == 'sqlite3':
+  if 'FREPPLE_DATABASE' in os.environ: 
+    database = os.environ['FREPPLE_DATABASE']
+  cursor = connections[database].cursor()
+  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
     cursor.execute('PRAGMA temp_store = MEMORY;')
     cursor.execute('PRAGMA synchronous = OFF')
     cursor.execute('PRAGMA cache_size = 8000')
-  elif settings.DATABASE_ENGINE == 'oracle':
+  elif settings.DATABASES[database]['ENGINE'] == 'oracle':
     cursor.execute("ALTER SESSION SET COMMIT_WRITE='BATCH,NOWAIT'")
 
   # Erase previous output
   truncate(cursor)
 
-  if settings.DATABASE_ENGINE == 'sqlite3':
+  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
     # OPTION 1: Sequential export of each entity
     # For sqlite this is required since a writer blocks the database file.
     # For other databases the parallel export normally gives a better
@@ -351,6 +360,9 @@ def exportfrepple():
     for i in tasks: i.join()
 
   # Analyze
-  if settings.DATABASE_ENGINE == 'sqlite3':
+  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
     print "Analyzing database tables..."
     cursor.execute("analyze")
+
+  # Close the database connection
+  cursor.close()

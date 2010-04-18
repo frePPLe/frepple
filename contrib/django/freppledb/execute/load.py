@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -34,14 +34,18 @@ from time import time
 from xml.sax.saxutils import quoteattr
 from threading import Thread
 import inspect
+import os
 from datetime import datetime
 
-from django.db import connection
+from django.db import connections, DEFAULT_DB_ALIAS
 from django.conf import settings
 
 import frepple
 
+
 header = '<?xml version="1.0" encoding="UTF-8" ?><plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
+
+database = DEFAULT_DB_ALIAS
 
 
 def loadParameter(cursor):
@@ -286,7 +290,7 @@ def loadResources(cursor):
   cursor.execute('''SELECT 
     name, description, maximum_id, location_id, type, cost, 
     maxearly, setup, setupmatrix_id, category, subcategory 
-    FROM %s''' % connection.ops.quote_name('resource'))
+    FROM %s''' % connections[database].ops.quote_name('resource'))
   for i,j,k,l,m,n,o,p,q,r,s in cursor.fetchall():
     cnt += 1
     try:
@@ -509,11 +513,15 @@ class DatabaseTask(Thread):
 
   def run(self):
     # Create a database connection
-    cursor = connection.cursor()
+    cursor = connections[database].cursor()
+
     # Run the functions sequentially
     for f in self.functions:
       try: f(cursor)
       except Exception, e: print e
+
+    # Close the connection
+    cursor.close()
 
 
 def loadfrepple():
@@ -522,15 +530,19 @@ def loadfrepple():
   frepple application.
   It loads data from the database into the frepple memory.
   '''
-  cursor = connection.cursor()
-
   # Make sure the debug flag is not set!
   # When it is set, the django database wrapper collects a list of all sql
   # statements executed and their timings. This consumes plenty of memory
   # and cpu time.
   settings.DEBUG = False
+  
+  if 'FREPPLE_DATABASE' in os.environ: 
+    database = os.environ['FREPPLE_DATABASE']
 
   if True:
+    # Create a database connection
+    cursor = connections[database].cursor()
+    
     # Sequential load of all entities
     loadParameter(cursor)
     loadCalendars(cursor)
@@ -548,6 +560,9 @@ def loadfrepple():
     loadForecast(cursor)
     loadForecastdemand(cursor)
     loadDemand(cursor)
+    
+    # Close the database connection
+    cursor.close()
   else:
     # Loading of entities in a number of 'groups'.
     # The groups are executed in sequence, while the tasks within a group
@@ -588,4 +603,3 @@ def loadfrepple():
 
   # Finalize
   print 'Done'
-  cursor.close()

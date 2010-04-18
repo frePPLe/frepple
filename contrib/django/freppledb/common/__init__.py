@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -25,13 +25,14 @@ An reusable application that contains common functionality of different
 frePPLe data models.
 
 The common functionality handles:
-  - user preferences: reporting buckets, report start and end dates, report output type
+  - user preferences: reporting buckets, report start and end dates, language, csv delimiter
   - breadcrumbs
   - login using the e-mail address
   - generic report framework
   - database utility functions, mainly to handle SQL dates in a portable way
   - date and time bucket definition
   - extra template tags ifgreaterthan, iflessthan, ifgreaterthanorequal, iflessthanorequal
+  - middelware allowing users to set their preferred language
 '''
 
 from django import template

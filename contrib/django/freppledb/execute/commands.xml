@@ -5,10 +5,12 @@ import os
 import inspect
 from datetime import datetime
 
+from django.db import DEFAULT_DB_ALIAS
+from django.conf import settings
+
 from freppledb.execute.export_database import exportfrepple as export_to_database
 from freppledb.execute.export_file import exportfrepple as export_to_file
 from freppledb.execute.load import loadfrepple
-from django.conf import settings
 
 # Send the output to a logfile
 frepple.settings.logfile = os.path.join(os.environ['FREPPLE_HOME'],'frepple.log')
@@ -22,19 +24,19 @@ mrp = frepple.solver_mrp(name="MRP", constraints=constraint, plantype=plantype, 
 print "Plan type: ", plantype
 print "Constraints: ", constraint
 
-# Pick up an override for the database to use
-if 'FREPPLE_DATABASE_NAME' in os.environ:
-  settings.DATABASE_NAME = os.environ['FREPPLE_DATABASE_NAME']
-if 'FREPPLE_DATABASE_USER' in os.environ:
-  settings.DATABASE_USER = os.environ['FREPPLE_DATABASE_USER']
-
 # Welcome message
-if settings.DATABASE_ENGINE == 'sqlite3':
-  print "Using sqlite3 database '%s'" % settings.DATABASE_NAME
+try: db = os.environ['FREPPLE_DATABASE']
+except: db = DEFAULT_DB_ALIAS
+if settings.DATABASES[db]['ENGINE'] == 'django.db.backends.sqlite3':
+  print "Using sqlite3 database '%s'" % ('NAME' in settings.DATABASES[db] and settings.DATABASES[db]['NAME'] or '')
 else:
-  print "Using %s database '%s' as '%s' on '%s:%s'" % (settings.DATABASE_ENGINE, \
-    settings.DATABASE_NAME, settings.DATABASE_USER, settings.DATABASE_HOST, \
-    settings.DATABASE_PORT)
+  print "Using %s database '%s' as '%s' on '%s:%s'" % (
+    'ENGINE' in settings.DATABASES[db] and settings.DATABASES[db]['ENGINE'] or '', \
+    'NAME' in settings.DATABASES[db] and settings.DATABASES[db]['NAME'] or '', \
+    'USER' in settings.DATABASES[db] and settings.DATABASES[db]['USER'] or '', \
+    'HOST' in settings.DATABASES[db] and settings.DATABASES[db]['HOST'] or '', \
+    'PORT' in settings.DATABASES[db] and settings.DATABASES[db]['PORT'] or ''
+    )
 
 print "\nStart loading data from the database at", datetime.now().strftime("%H:%M:%S")
 frepple.printsize()

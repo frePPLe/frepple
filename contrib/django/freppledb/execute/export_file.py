@@ -145,7 +145,7 @@ def exportPegging():
   writer = csv.writer(open("demand_pegging.csv", "wb"), quoting=csv.QUOTE_ALL)
   writer.writerow(('#demand','level','consuming operationplan id','consuming date',
     'producing operationplan id','producing date','buffer','item','quantity demand',
-    'quantity buffer','pegged'))
+    'quantity buffer'))
   for i in frepple.demands():
     # Find non-hidden demand owner
     n = i
@@ -159,7 +159,7 @@ def exportPegging():
        j.producing and j.producing.id or '', j.producing_date,
        j.buffer and j.buffer.name or '',
        (j.buffer and j.buffer.item and j.buffer.item.name) or '',
-       j.quantity_demand, j.quantity_buffer, j.pegged
+       j.quantity_demand, j.quantity_buffer
        ))
   print 'Exported pegging in %.2f seconds' % (time() - starttime)
 

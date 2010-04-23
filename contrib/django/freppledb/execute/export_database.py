@@ -227,7 +227,7 @@ def exportPegging(cursor):
     cursor.executemany(
       "insert into out_demandpegging \
       (demand,depth,cons_operationplan,cons_date,prod_operationplan,prod_date, \
-       buffer,item,quantity_demand,quantity_buffer,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+       buffer,item,quantity_demand,quantity_buffer) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          n, str(j.level),
          j.consuming and j.consuming.id or 0, str(j.consuming_date),
@@ -235,7 +235,7 @@ def exportPegging(cursor):
          j.buffer and j.buffer.name or '',
          (j.buffer and j.buffer.item and j.buffer.item.name) or '',
          round(j.quantity_demand,settings.DECIMAL_PLACES),
-         round(j.quantity_buffer,settings.DECIMAL_PLACES), j.pegged and 1 or 0
+         round(j.quantity_buffer,settings.DECIMAL_PLACES)
        ) for j in i.pegging
       ])
     cnt += 1

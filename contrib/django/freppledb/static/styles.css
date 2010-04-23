@@ -158,6 +158,13 @@ a.setupmatrix {
   white-space: nowrap;
   display: inline-block; // IE8 is broken and needs this
 }
+a.detail {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) right center no-repeat;
+  white-space: nowrap;
+  display: inline-block; // IE8 is broken and needs this
+}
 
 
 /* Style for main navigation menu */

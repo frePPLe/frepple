@@ -30,7 +30,7 @@ from output.models import LoadPlan
 from common.db import *
 from common.report import *
 
-
+  
 class OverviewReport(TableReport):
   '''
   A report showing the loading of each resource.
@@ -70,6 +70,7 @@ class OverviewReport(TableReport):
   @staticmethod
   def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
+    
     # Execute the query
     cursor = connection.cursor()
     query = '''
@@ -139,8 +140,6 @@ class OverviewReport(TableReport):
          connection.ops.quote_name(bucket),bucket,bucket,basesql,
          startdate,enddate,sortsql)
     cursor.execute(query, baseparams + baseparams)
-    
-    print query
     
     # Build the python result
     for row in cursor.fetchall():

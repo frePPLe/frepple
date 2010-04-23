@@ -160,7 +160,6 @@ class DemandPegging(models.Model):
   item = models.CharField(_('item'), max_length=settings.NAMESIZE, null=True)
   quantity_demand = models.DecimalField(_('quantity demand'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
   quantity_buffer = models.DecimalField(_('quantity buffer'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
-  pegged = models.BooleanField(_('pegged'), default=True)
 
   def __unicode__(self):
     return self.demand \

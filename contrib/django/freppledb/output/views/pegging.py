@@ -24,18 +24,19 @@ from datetime import timedelta, datetime
 
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Min, Max
+from django.db import connections, DEFAULT_DB_ALIAS
 
 from input.models import Parameter, Demand
-from output.models import DemandPegging
+from output.models import DemandPegging, FlowPlan, LoadPlan
 from common.report import *
  
     
-class Report(ListReport):
+class ReportByDemand(ListReport):
   '''
   A list report to show peggings.
   '''
   template = 'output/pegging.html'
-  title = _("Pegging Report")
+  title = _("Demand plan")
   reset_crumbs = False
   basequeryset = Demand.objects.all().values('name')
   frozenColumns = 0
@@ -155,7 +156,7 @@ def GraphData(request, entity):
   except:
     current = datetime.now()
   (bucket,start,end,bucketlist) = getBuckets(request)  
-  result = [ i for i in Report.resultlist1(basequery,bucket,start,end) ]
+  result = [ i for i in ReportByDemand.resultlist1(basequery,bucket,start,end) ]
   min = None
   max = None
 
@@ -215,3 +216,135 @@ def GraphData(request, entity):
   return HttpResponse(
     loader.render_to_string("output/pegging.xml", context, context_instance=RequestContext(request)),
     )
+
+  
+class ReportByBuffer(ListReport):
+  '''
+  A list report to show peggings.
+  '''
+  template = 'output/operationpegging.html'
+  title = _("Pegging report")
+  reset_crumbs = False
+  basequeryset = FlowPlan.objects.all()
+  frozenColumns = 0
+  editable = False
+  timebuckets = False
+  rows = (
+    ('operationplan', {
+      'title': _('operation'),
+      }),
+    ('date', {
+      'title': _('date'),
+      }),
+    ('demand', {
+      'title': _('demand'),
+      }),
+    ('quantity', {
+      'title': _('quantity'),
+      }),
+    )
+
+  @staticmethod
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    # Execute the query
+    cursor = connection.cursor()                           
+    basesql, baseparams = basequery.query.where.as_sql(
+      connections[DEFAULT_DB_ALIAS].ops.quote_name,
+      connections[DEFAULT_DB_ALIAS])                              
+    if not basesql: basesql = '1 = 1'
+    
+    query = '''    
+        select operation, date, demand, quantity                                                        
+        from                                                                                            
+        (                                                                                               
+        select out_demandpegging.demand, prod_date as date, operation, sum(quantity_buffer) as quantity 
+        from out_flowplan                                                                        
+        join out_operationplan                                                                          
+        on out_operationplan.id = out_flowplan.operationplan                                            
+          and %s                                                        
+          and out_flowplan.quantity > 0                                                               
+        join out_demandpegging                                                                                 
+        on out_demandpegging.prod_operationplan = out_flowplan.operationplan                            
+        group by demand, prod_date, operation, out_operationplan.id                                     
+        union                                                                                           
+        select out_demandpegging.demand, cons_date as date, operation, -sum(quantity_buffer) as quantity
+        from out_flowplan                                                                               
+        join out_operationplan                                                                          
+        on out_operationplan.id = out_flowplan.operationplan                                            
+          and %s                                                        
+          and out_flowplan.quantity < 0                                                               
+        join out_demandpegging                                                                          
+        on out_demandpegging.cons_operationplan = out_flowplan.operationplan                            
+        group by demand, cons_date, operation                                                           
+        ) a                                                                                             
+        order by demand, date, operation;                                                               
+      ''' % (basesql, basesql)
+    cursor.execute(query, baseparams + baseparams)
+
+    # Build the python result
+    for row in cursor.fetchall():    
+      yield {
+          'operation': row[0],
+          'date': row[1],
+          'demand': row[2],
+          'quantity': row[3],
+          }
+
+
+class ReportByResource(ListReport):
+  '''
+  A list report to show peggings.
+  '''
+  template = 'output/operationpegging.html'
+  title = _("Pegging report")
+  reset_crumbs = False
+  basequeryset = LoadPlan.objects.all()
+  frozenColumns = 0
+  editable = False
+  timebuckets = False
+  rows = (
+    ('operationplan', {
+      'title': _('operation'),
+      }),
+    ('startdate', {
+      'title': _('date'),
+      }),
+    ('demand', {
+      'title': _('demand'),
+      }),
+    ('quantity', {
+      'title': _('quantity'),
+      }),
+    )
+
+  @staticmethod
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    # Execute the query
+    cursor = connection.cursor()                           
+    basesql, baseparams = basequery.query.where.as_sql(
+      connections[DEFAULT_DB_ALIAS].ops.quote_name,
+      connections[DEFAULT_DB_ALIAS])                              
+    if not basesql: basesql = '1 = 1'
+    
+    query = '''    
+        select operation, out_loadplan.startdate as date, out_demandpegging.demand, sum(quantity_buffer) as quantity
+        from out_loadplan
+        join out_operationplan
+        on out_operationplan.id = out_loadplan.operationplan
+          and %s
+        join out_demandpegging
+        on out_demandpegging.prod_operationplan = out_loadplan.operationplan
+        group by out_demandpegging.demand, out_loadplan.startdate, operation
+        order by out_demandpegging.demand, out_loadplan.startdate, operation
+      ''' % (basesql)
+    cursor.execute(query, baseparams)
+
+    # Build the python result
+    for row in cursor.fetchall():    
+      yield {
+          'operation': row[0],
+          'date': row[1],
+          'demand': row[2],
+          'quantity': row[3],
+          }
+

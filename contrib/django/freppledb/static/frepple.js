@@ -46,6 +46,7 @@ var ContextMenu = {
 
   // A private hash mapping each class to a menu id
   _menus : {
+    'detail': 'detailcontext',
     'buffer': 'buffercontext',
 		'resource': 'resourcecontext',
 		'operation': 'operationcontext',
@@ -130,12 +131,17 @@ var ContextMenu = {
 			ContextMenu._menuElement = $(menuElementId);
       if (ContextMenu._menuElement == null) return false;
 
-      // Get the entity name
-			var item = ContextMenu._attachedElement.innerHTML;
-
-			// Unescape all escaped characters and urlencode the result for usage as a url
-			item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-			  .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
+      // Get the entity name:
+      // If href is equal to '#' we use the inner html of the link.
+      // Otherwise we use the href value.
+			var item = ContextMenu._attachedElement.readAttribute('href');
+			if (item == '#')
+			{
+			  item = ContextMenu._attachedElement.innerHTML;
+			  // Unescape all escaped characters and urlencode the result for usage as a URL
+			  item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+			    .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
+      }
 
 			// Build the urls for the menu
 			var l = ContextMenu._menuElement.getElementsByTagName("a");

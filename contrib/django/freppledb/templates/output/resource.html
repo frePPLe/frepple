@@ -30,6 +30,10 @@
 {% block contextmenus %}
 {% include "resourcecontext.html" %}
 {% include "locationcontext.html" %}
+<div id="detailcontext" class="ContextMenu">
+<a id="/loadplan/%s">{% trans 'Detail' %}</a>
+<a id="/resourcepegging/%s">{% trans 'Pegging' %}</a>
+</div>
 {% endblock %}
 
 {% block before_table %}
@@ -63,7 +67,7 @@
 <td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this)"/><br/>
 {{j.unavailable|floatformat:1}}<br/>
 {{j.setup|floatformat:1}}<br/>
-{% if j.load %}<a href="/loadplan/?theresource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}" tabindex="-1">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
+{% if j.load %}<a href="?theresource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}" tabindex="-1" class="detail">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
 <span {% ifgreaterthan j.utilization 95 %}class="highutil"{% endifgreaterthan %}>{{j.utilization|floatformat:0}}</span></td>
 {% if forloop.last %}</form></tr>{% endif %}{% endfor %}
 {% else %}

@@ -1,8 +1,8 @@
-Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
+Index: contrib/admin/media/js/admin/DateTimeShortcuts.js
 ===================================================================
---- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 11616)
-+++ django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
-@@ -92,7 +92,7 @@
+--- contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 12969)
++++ contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
+@@ -95,7 +95,7 @@
      openClock: function(num) {
          var clock_box = document.getElementById(DateTimeShortcuts.clockDivName+num)
          var clock_link = document.getElementById(DateTimeShortcuts.clockLinkName+num)
@@ -11,7 +11,7 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
          // Recalculate the clockbox position
          // is it left-to-right or right-to-left layout ?
          if (getStyle(document.body,'direction')!='rtl') {
-@@ -106,7 +106,7 @@
+@@ -109,7 +109,7 @@
              clock_box.style.left = findPosX(clock_link) - 110 + 'px';
          }
          clock_box.style.top = findPosY(clock_link) - 30 + 'px';
@@ -20,9 +20,9 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
          // Show the clock box
          clock_box.style.display = 'block';
          addEvent(window.document, 'click', function() { DateTimeShortcuts.dismissClock(num); return true; });
-@@ -128,16 +128,19 @@
-         // Shortcut links (calendar icon and "Today" link)
+@@ -133,16 +133,19 @@
          var shortcuts_span = document.createElement('span');
+         shortcuts_span.className = DateTimeShortcuts.shortCutsClass;
          inp.parentNode.insertBefore(shortcuts_span, inp.nextSibling);
 -        var today_link = document.createElement('a');
 -        today_link.setAttribute('href', 'javascript:DateTimeShortcuts.handleCalendarQuickLink(' + num + ', 0);');
@@ -45,11 +45,9 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
          shortcuts_span.appendChild(cal_link);
  
          // Create calendarbox div.
-@@ -208,21 +211,13 @@
- 	    }
- 	}
+@@ -214,19 +217,12 @@
+         }
  
--    
          // Recalculate the clockbox position
 -        // is it left-to-right or right-to-left layout ?
 -        if (getStyle(document.body,'direction')!='rtl') {
@@ -73,23 +71,37 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
          cal_box.style.display = 'block';
          addEvent(window.document, 'click', function() { DateTimeShortcuts.dismissCalendar(num); return true; });
      },
-Index: django/contrib/admin/sites.py
+Index: contrib/admin/sites.py
 ===================================================================
---- django/contrib/admin/sites.py	(revision 11616)
-+++ django/contrib/admin/sites.py	(working copy)
-@@ -313,7 +313,6 @@
-                     else:
-                         message = _("Usernames cannot contain the '@' character.")
-             return self.display_login_form(request, message)
--
+--- contrib/admin/sites.py	(revision 12969)
++++ contrib/admin/sites.py	(working copy)
+@@ -325,20 +325,7 @@
+         password = request.POST.get('password', None)
+         user = authenticate(username=username, password=password)
+         if user is None:
+-            message = ERROR_MESSAGE
+-            if username is not None and u'@' in username:
+-                # Mistakenly entered e-mail address instead of username? Look it up.
+-                try:
+-                    user = User.objects.get(email=username)
+-                except (User.DoesNotExist, User.MultipleObjectsReturned):
+-                    message = _("Usernames cannot contain the '@' character.")
+-                else:
+-                    if user.check_password(password):
+-                        message = _("Your e-mail address is not your username."
+-                                    " Try '%s' instead.") % user.username
+-                    else:
+-                        message = _("Usernames cannot contain the '@' character.")
+-            return self.display_login_form(request, message)
++            return self.display_login_form(request, ERROR_MESSAGE)
+ 
          # The user data is correct; log in the user in and continue.
          else:
-             if user.is_active and user.is_staff:
-Index: django/contrib/admin/widgets.py
+Index: contrib/admin/widgets.py
 ===================================================================
---- django/contrib/admin/widgets.py	(revision 11616)
-+++ django/contrib/admin/widgets.py	(working copy)
-@@ -123,8 +123,9 @@
+--- contrib/admin/widgets.py	(revision 12969)
++++ contrib/admin/widgets.py	(working copy)
+@@ -127,8 +127,9 @@
          output.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> ' % \
              (related_url, url, name))
          output.append('<img src="%simg/admin/selector-search.gif" width="16" height="16" alt="%s" /></a>' % (settings.ADMIN_MEDIA_PREFIX, _('Lookup')))
@@ -101,10 +113,10 @@ Index: django/contrib/admin/widgets.py
          return mark_safe(u''.join(output))
  
      def base_url_parameters(self):
-Index: django/core/management/__init__.py
+Index: core/management/__init__.py
 ===================================================================
---- django/core/management/__init__.py	(revision 11616)
-+++ django/core/management/__init__.py	(working copy)
+--- core/management/__init__.py	(revision 12969)
++++ core/management/__init__.py	(working copy)
 @@ -14,50 +14,80 @@
  # doesn't have to reload every time it's called.
  _commands = None
@@ -244,13 +256,13 @@ Index: django/core/management/__init__.py
              except ImportError:
                  pass # No management module - ignore this app
  
-Index: django/db/models/sql/query.py
+Index: db/models/sql/compiler.py
 ===================================================================
---- django/db/models/sql/query.py	(revision 11616)
-+++ django/db/models/sql/query.py	(working copy)
-@@ -751,8 +751,11 @@
+--- db/models/sql/compiler.py	(revision 12969)
++++ db/models/sql/compiler.py	(working copy)
+@@ -199,8 +199,11 @@
  
-         for table, col in self.related_select_cols:
+         for table, col in self.query.related_select_cols:
              r = '%s.%s' % (qn(table), qn(col))
 -            if with_aliases and col in col_aliases:
 -                c_alias = 'Col%d' % len(col_aliases)
@@ -262,7 +274,7 @@ Index: django/db/models/sql/query.py
                  result.append('%s AS %s' % (r, c_alias))
                  aliases.add(c_alias)
                  col_aliases.add(c_alias)
-@@ -813,8 +816,11 @@
+@@ -263,8 +266,11 @@
                  result.append((alias, field.column))
                  aliases.add(alias)
                  continue
@@ -276,18 +288,19 @@ Index: django/db/models/sql/query.py
                  result.append('%s.%s AS %s' % (qn(alias),
                      qn2(field.column), c_alias))
                  col_aliases.add(c_alias)
-Index: django/views/i18n.py
+Index: views/i18n.py
 ===================================================================
---- django/views/i18n.py	(revision 11616)
-+++ django/views/i18n.py	(working copy)
-@@ -190,5 +190,8 @@
-     src.extend(csrc)
-     src.append(LibFoot)
-     src.append(InterPolate)
+--- views/i18n.py	(revision 12969)
++++ views/i18n.py	(working copy)
+@@ -257,6 +257,9 @@
+     src.append(LibFormatHead)
+     src.append(get_formats())
+     src.append(LibFormatFoot)
 -    src = ''.join(src)
--    return http.HttpResponse(src, 'text/javascript')
 +
 +    # Create response, and set the HTTP header to allow caching for 1 day by the client browser
 +    response = http.HttpResponse(''.join(src), 'text/javascript')
 +    response['Cache-Control'] = 'max-age=86400'
+     return http.HttpResponse(src, 'text/javascript')
+-
 +    return response

@@ -140,10 +140,6 @@ class DetailReport(ListReport):
       'filter': FilterNumber(operator='exact', ),
       'title': _('operationplan'),
       }),
-    ('demand', {
-      'filter': FilterText(size=15),
-      'title': _('demand'),
-      }),
     ('operation', {
       'filter': FilterText(size=15),
       'title': _('operation')}),

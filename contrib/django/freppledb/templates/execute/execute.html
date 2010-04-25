@@ -54,8 +54,8 @@ and export results into the database<br/>
 <b>{% trans "Constraints" %}</b>:<br/>
 <input type="checkbox" name="constraint" {% if capacityconstrained %}checked="true"{% endif %} value="4"/>{% trans "Capacity: respect capacity limits" %}<br/>
 <input type="checkbox" name="constraint" {% if materialconstrained %}checked="true"{% endif %} value="2"/>{% trans "Material: respect procurement limits" %}<br/>
-<input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked="true"{% endif %} value="1"/>{% trans "Lead time: do not create plans in the past" %}<br/>
-<input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8"/>{% trans "Release fence: do not create plans within the release time window" %}<br/>
+<input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked="true"{% endif %} value="1"/>{% trans "Lead time: do not plan in the past" %}<br/>
+<input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8"/>{% trans "Release fence: do not plan within the release time window" %}<br/>
 <br/>
 {% blocktrans %}<a href="/execute/logfrepple/">View latest log file</a></td>
 <td><input id="run" type="submit" value="Run" /></td>{% endblocktrans %}

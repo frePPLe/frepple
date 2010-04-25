@@ -1,4 +1,7 @@
 
+// Django sets this variable in the admin/base.html template.
+window.__admin_media_prefix__ = "/media/";
+
 // A class to store changes in memory till the save button is hit.
 var upload = {
   _data : [],
@@ -134,7 +137,7 @@ var ContextMenu = {
       // Get the entity name:
       // If href is equal to '#' we use the inner html of the link.
       // Otherwise we use the href value.
-			var item = ContextMenu._attachedElement.readAttribute('href');
+			var item = $(ContextMenu._attachedElement).readAttribute('href');
 			if (item == '#')
 			{
 			  item = ContextMenu._attachedElement.innerHTML;

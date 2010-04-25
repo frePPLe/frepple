@@ -5,7 +5,7 @@
 ;  revision : $LastChangedRevision$  $LastChangedBy$
 ;  date     : $LastChangedDate$
 ;
-; Copyright (C) 2007 by Johan De Taeye
+; Copyright (C) 2007-2010 by Johan De Taeye
 ;
 ; This library is free software; you can redistribute it and/or modify it
 ; under the terms of the GNU Lesser General Public License as published
@@ -213,14 +213,19 @@ Section "Application" SecAppl
   ; Create a settings file for the server
   StrCpy $9 "$INSTDIR\bin\settings.py"
   FileOpen $9 $9 w
-  FileWrite $9 "# Django and frePPLe support the following database engines: $\r$\n"
+  FileWrite $9 "# Django and frePPLe support the following database backends: $\r$\n"
   FileWrite $9 "#  'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.$\r$\n"
-  FileWrite $9 "DATABASE_ENGINE = '$0'$\r$\n"
-  FileWrite $9 "DATABASE_NAME = '$1'  # Database name$\r$\n"
-  FileWrite $9 "DATABASE_USER = '$2'  # Not used with sqlite3.$\r$\n"
-  FileWrite $9 "DATABASE_PASSWORD = '$3' # Not used with sqlite3.$\r$\n"
-  FileWrite $9 "DATABASE_HOST = '$4' # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
-  FileWrite $9 "DATABASE_PORT = '$5' # Set to empty string for default. Not used with sqlite3.$\r$\n"
+  FileWrite $9 "DATABASES = {$\r$\n"
+  FileWrite $9 "  'default': {$\r$\n"
+  FileWrite $9 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
+  FileWrite $9 "    'NAME': '$1',  # Database name $\r$\n"
+  FileWrite $9 "    'USER': '$2',  # Not used with sqlite3.$\r$\n"
+  FileWrite $9 "    'PASSWORD': '$3', # Not used with sqlite3.$\r$\n"
+  FileWrite $9 "    'HOST': '$4',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
+  FileWrite $9 "    'PORT': '$5',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
+  FileWrite $9 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
+  FileWrite $9 "    },$\r$\n"
+  FileWrite $9 "  }$\r$\n$\r$\n"
   FileWrite $9 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
   FileClose $9
 SectionEnd

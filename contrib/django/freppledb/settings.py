@@ -37,8 +37,7 @@ else:
   FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
 FREPPLE_VERSION = '0.8.1.beta'
 
-# Determing whether Django runs as a standalone application or is deployed
-# on a web server
+# Determing whether Django runs as a standalone application or is deployed on a web server
 STANDALONE = False
 try:
   for i in sys.argv:
@@ -56,15 +55,19 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-# FrePPLe is tested with the following database engines:
+# FrePPLe is tested with the following database backends:
 # 'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.
-DATABASE_ENGINE = 'sqlite3'
-DATABASE_NAME = 'frepple'
-DATABASE_USER = 'frepple'      # Not used with sqlite3.
-DATABASE_PASSWORD = 'frepple'  # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-DATABASE_OPTIONS = {}          # Backend specific configuration parameters.
+DATABASES = {
+  'default': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': 'frepple',
+    'USER': 'frepple',
+    'PASSWORD': 'frepple',
+    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
+    'OPTIONS': {},  # Backend specific configuration parameters.
+    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
+    },
+  }
 
 # Local time zone for this installation. All choices can be found here:
 # http://www.postgresql.org/docs/current/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
@@ -219,27 +222,28 @@ if os.path.normcase(os.path.abspath(os.path.dirname(__file__))) != os.path.normc
     print "Error parsing file %s:\n  %s" % (os.path.join(FREPPLE_APP,'settings.py'),e)
 
 # Extra database parameters
-if DATABASE_ENGINE == 'sqlite3':
-  # Path to the sqlite3 test database file
-  TEST_DATABASE_NAME = os.path.join(FREPPLE_HOME,'test_%s.sqlite' % DATABASE_NAME)
-  # Path to sqlite3 database file
-  DATABASE_NAME = os.path.join(FREPPLE_HOME,'%s.sqlite' % DATABASE_NAME)
-  # Extra default settings for SQLITE
-  if len(DATABASE_OPTIONS) == 0:
-    DATABASE_OPTIONS = {"timeout": 10, "check_same_thread": False}
-elif DATABASE_ENGINE == 'mysql':
-  # Extra default settings for MYSQL
-  # InnoDB has the proper support for transactions that is required for
-  # frePPLe in a production environment.
-  if len(DATABASE_OPTIONS) == 0:
-    DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}
-  TEST_DATABASE_NAME = 'test_%s' % DATABASE_NAME
-elif DATABASE_ENGINE == 'oracle':
-  TEST_DATABASE_NAME = DATABASE_NAME
-  TEST_DATABASE_USER = 'test_%s' % DATABASE_USER
-  TEST_DATABASE_PASSWD = DATABASE_PASSWORD
-elif DATABASE_ENGINE == 'postgresql_psycopg2':
-  TEST_DATABASE_NAME = 'test_%s' % DATABASE_NAME
-else:
-  print 'Error: Unsupported database engine %s' % DATABASE_ENGINE
-  sys.exit(1)
+for param in DATABASES.values():
+  if param['ENGINE'] == 'django.db.backends.sqlite3':
+    # Path to the sqlite3 test database file
+    param['TEST_NAME'] = os.path.join(FREPPLE_HOME,'test_%s.sqlite' % param['NAME'])
+    # Path to sqlite3 database file
+    param['NAME'] = os.path.join(FREPPLE_HOME,'%s.sqlite' % param['NAME'])
+    # Extra default settings for SQLITE
+    if len(param['OPTIONS']) == 0:
+      param['OPTIONS'] = {"timeout": 10, "check_same_thread": False}
+  elif param['ENGINE'] == 'django.db.backends.mysql':
+    # Extra default settings for MYSQL
+    # InnoDB has the proper support for transactions that is required for
+    # frePPLe in a production environment.
+    if len(param['OPTIONS']) == 0:
+      param['OPTIONS'] = {"init_command": "SET storage_engine=INNODB"}
+    param['TEST_NAME'] = 'test_%s' % param['NAME']
+  elif param['ENGINE'] == 'django.db.backends.oracle':
+    param['TEST_NAME'] = param['NAME']
+    param['TEST_USER'] = 'test_%s' % param['USER']
+    param['TEST_PASSWD'] = param['PASSWORD']
+  elif param['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+    param['TEST_NAME'] = 'test_%s' % param['NAME']
+  else:
+    print 'Error: Unsupported database engine %s' % param['ENGINE']
+    sys.exit(1)

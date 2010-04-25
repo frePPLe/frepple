@@ -28,7 +28,6 @@ from django.conf import settings
 class OperationPlan(models.Model):
   # Database fields
   id = models.IntegerField(_('identifier'), primary_key=True)
-  demand = models.CharField(_('demand'), max_length=settings.NAMESIZE, null=True, db_index=True)
   operation = models.CharField(_('operation'), max_length=settings.NAMESIZE, db_index=True, null=True)
   quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='1.00')
   unavailable = models.DecimalField(_('unavailable'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')

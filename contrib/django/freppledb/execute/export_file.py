@@ -69,13 +69,12 @@ def exportOperationplans():
   print "Exporting operationplans..."
   starttime = time()
   writer = csv.writer(open("operations.csv", "wb"), quoting=csv.QUOTE_ALL)
-  writer.writerow(('#id','operation','quantity','start date','end date','demand','locked'))
+  writer.writerow(('#id','operation','quantity','start date','end date','locked'))
   for i in frepple.operationplans():
-    writer.writerow(
-     ( i.id, i.operation.name, i.quantity, i.start, i.end,
-       i.demand and i.demand.name or '', i.locked, i.unavailable, 
-       i.owner and i.owner.id or None)
-     )
+    writer.writerow(( 
+       i.id, i.operation.name, i.quantity, i.start, i.end,
+       i.locked, i.unavailable, i.owner and i.owner.id or None
+     ))
   print 'Exported operationplans in %.2f seconds' % (time() - starttime)
 
 

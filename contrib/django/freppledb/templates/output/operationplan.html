@@ -1,8 +1,6 @@
 {% extends "admin/base_site_list.html" %}
 
 {% block contextmenus %}
-{% include "demandcontext.html" %}
-{% include "forecastcontext.html" %}
 {% include "operationcontext.html" %}
 {% endblock %}
 
@@ -10,7 +8,6 @@
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{{i.id}}</td>
-<td>{% if i.fcst_or_actual %}{% superlink i.demand forecast %}{% else %}{% superlink i.demand demand %}{% endif %}</td>
 <td>{% superlink i.operation operation %}</td>
 <td>{{i.quantity}}</td>
 <td>{{i.startdate}}</td>

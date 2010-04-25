@@ -42,6 +42,11 @@ class ReportByDemand(ListReport):
   frozenColumns = 0
   editable = False
   timebuckets = True
+  javascript_imports = [       
+    "/media/js/core.js",
+    "/media/js/calendar.js",
+    "/media/js/admin/DateTimeShortcuts.js",
+    ]
   rows = (
     ('name', {   # XXX TODO
       'title': _('depth'),

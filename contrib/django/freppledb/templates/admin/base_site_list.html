@@ -1,6 +1,6 @@
 {% extends "admin/base_site_nav.html" %}
-{% load i18n admin_list adminmedia %}
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/changelists.css" />{% endblock %}
+{% load i18n admin_list %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="/media/css/changelists.css" />{% endblock %}
 {% block extrahead %}{{ block.super }}
 {% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
 {% endfor %}
@@ -10,7 +10,7 @@
 {% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
-{% if hasaddperm %}<a href="{{ model.admin_url }}add/{% if is_popup %}?_popup=1{% endif %}"><img src="{% admin_media_prefix %}img/admin/icon_addlink.gif"/>{% trans 'Add' %}</a>{% endif %}
+{% if hasaddperm %}<a href="{{ model.admin_url }}add/{% if is_popup %}?_popup=1{% endif %}"><img src="/media/img/admin/icon_addlink.gif"/>{% trans 'Add' %}</a>{% endif %}
 {% if hasaddperm and model %}<a href="javascript:import_show();"><img src="/static/csv.png"/>{% trans 'Import' %}</a>{% endif %}
 <a href="javascript:export_show(true);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a><div id="popup"></div>
 </div>{% endblock %}

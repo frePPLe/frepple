@@ -41,6 +41,7 @@ if len(sys.argv) <= 1:
 
 # Import django settings
 from django.conf import settings
+from django.db import DEFAULT_DB_ALIAS
 
 # Override the debugging settings
 settings.DEBUG = False
@@ -62,11 +63,11 @@ settings.TEMPLATE_DIRS = (
 
 # Create the database if it doesn't exist yet
 noDatabaseSchema = False
-if settings.DATABASE_ENGINE == 'sqlite3':
+if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3':
   # Verify if the sqlite database file exists
   if not os.path.isfile(settings.DATABASE_NAME):
     noDatabaseSchema = True
-elif settings.DATABASE_ENGINE not in ['postgresql_psycopg2', 'mysql', 'oracle']:
+elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] not in ['django.db.backends.postgresql_psycopg2', 'django.db.backends.mysql', 'django.db.backends.oracle']:
     print 'Aborting: Unknown database engine %s' % settings.DATABASE_ENGINE
     raw_input("Hit any key to continue...")
     sys.exit(1)

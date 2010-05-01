@@ -66,8 +66,8 @@
   *         demands.
   *       - moving average, which is applicable when there is little demand
   *         history to rely on.
-  *    The forecast method giving the smallest mean absolute deviation (aka
-  *    "mad"-error) will be automatically picked to produce the forecast.<br>
+  *    The forecast method giving the smallest symmetric mean percentage error (aka
+  *    "smape"-error) will be automatically picked to produce the forecast.<br>
   *    The algorithm will automatically tune the parameters for the
   *    forecasting methods (i.e. alfa for the single exponential smoothing,
   *    or alfa and gamma for the double exponential smoothing) to their
@@ -165,9 +165,9 @@
   *     Set the parameter to 1 to disable the tuning and generate a forecast
   *     based on the user-supplied parameters.
   *
-  *   - Forecast_madAlfa:<br>
-  *     Specifies how the MAD forecast error is weighted for different time
-  *     buckets. The MAD value in the most recent bucket is 1.0, and the
+  *   - Forecast_smapeAlfa:<br>
+  *     Specifies how the sMAPE forecast error is weighted for different time
+  *     buckets. The sMAPE value in the most recent bucket is 1.0, and the
   *     weight decreases exponentially for earlier buckets.<br>
   *     Acceptable values are in the interval 0.5 and 1.0, and the default
   *     is 0.95.
@@ -279,7 +279,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double madWeight[], bool debug);
+          unsigned int count, const double smapeWeight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -332,7 +332,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double madWeight[], bool debug);
+          unsigned int count, const double smapeWeight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -415,6 +415,9 @@ class Forecast : public Demand
           * Used to carry results between the evaluation and applying of the forecast.
           */
         double constant_i;
+        
+        /* Factor used to smoothen the trend in the future buckets. */
+        static double dampenTrend;
 
       public:
         /** Constructor. */
@@ -423,7 +426,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double madWeight[], bool debug);
+          unsigned int count, const double smapeWeight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -480,6 +483,14 @@ class Forecast : public Demand
           if (x<0 || x>1.0) throw DataException(
             "Parameter DoubleExponential.maxGamma must be between 0 and 1");
           max_gamma = x;
+        }
+
+        /** Update the dampening factor for the trend. */
+        static void setDampenTrend(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter DoubleExponential.dampenTrend must be between 0 and 1");
+          dampenTrend = x;
         }
 
         string getName() {return "double exponential";}
@@ -551,7 +562,7 @@ class Forecast : public Demand
 
     /** Generate a forecast value based on historical demand data.<br>
       * This method will call the different forecasting methods and select the
-      * method with the lowest mad-error.<br>
+      * method with the lowest smape-error.<br>
       * It then asks the selected forecast method to generate a value for
       * each of the time buckets passed.
       */
@@ -611,17 +622,17 @@ class Forecast : public Demand
     /** Returns the value of the Net_Late module parameter. */
     static TimePeriod getNetLate() {return Net_Late;}
 
-    /** Updates the value of the Forecast.madAlfa module parameter. */
-    static void setForecastMadAlfa(double t)
+    /** Updates the value of the Forecast.smapeAlfa module parameter. */
+    static void setForecastSmapeAlfa(double t)
     {
       if (t<=0.5 || t>1.0) throw DataException(
-        "Parameter Forecast.madAlfa must be between 0.5 and 1.0"
+        "Parameter Forecast.smapeAlfa must be between 0.5 and 1.0"
         );
-      Forecast_MadAlfa = t;
+      Forecast_SmapeAlfa = t;
     }
 
     /** Returns the value of the Forecast_Iterations module parameter. */
-    static double getForecastMadAlfa() {return Forecast_MadAlfa;}
+    static double getForecastSmapeAlfa() {return Forecast_SmapeAlfa;}
 
     /** Updates the value of the Forecast_Iterations module parameter. */
     static void setForecastIterations(unsigned long t)
@@ -710,13 +721,13 @@ class Forecast : public Demand
       */
     static unsigned long Forecast_Iterations;
 
-    /** Specifies how the MAD forecast error is weighted for different time
-      * buckets. The MAD value in the most recent bucket is 1.0, and the
+    /** Specifies how the sMAPE forecast error is weighted for different time
+      * buckets. The SMAPE value in the most recent bucket is 1.0, and the
       * weight decreases exponentially for earlier buckets.<br>
       * Acceptable values are in the interval 0.5 and 1.0, and the default
       * is 0.95.
       */
-    static double Forecast_MadAlfa;
+    static double Forecast_SmapeAlfa;
 
     /** Number of warmup periods.<br>
       * These periods are used for the initialization of the algorithm

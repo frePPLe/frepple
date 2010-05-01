@@ -36,7 +36,7 @@ bool Forecast::Match_Using_Delivery_Operation = true;
 TimePeriod Forecast::Net_Late(0L);
 TimePeriod Forecast::Net_Early(0L);
 unsigned long Forecast::Forecast_Iterations(15L);
-double Forecast::Forecast_MadAlfa(0.95);
+double Forecast::Forecast_SmapeAlfa(0.95);
 unsigned long Forecast::Forecast_Skip(5);
 
 
@@ -69,8 +69,8 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     // Forecasting
     else if (x->first == "Forecast_Iterations")
       Forecast::setForecastIterations(x->second.getUnsignedLong());
-    else if (x->first == "Forecast_madAlfa")
-      Forecast::setForecastMadAlfa(x->second.getDouble());
+    else if (x->first == "Forecast_SmapeAlfa")
+      Forecast::setForecastSmapeAlfa(x->second.getDouble());
     else if (x->first == "Forecast_Skip")
       Forecast::setForecastSkip(x->second.getUnsignedLong());
     // Moving average forecast method
@@ -96,6 +96,8 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       Forecast::DoubleExponential::setMinGamma(x->second.getDouble());
     else if (x->first == "Forecast_DoubleExponential_maxGamma")
       Forecast::DoubleExponential::setMaxGamma(x->second.getDouble());
+    else if (x->first == "Forecast_DoubleExponential_dampenTrend")
+      Forecast::DoubleExponential::setDampenTrend(x->second.getDouble());
     // Bullshit
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;

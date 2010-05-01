@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?python
+# Forecasting module
+frepple.loadmodule("mod_forecast.so",
+  #Forecast_smapeAlfa=0.95,
+  #Forecast_SingleExponential_minAlfa=0.03,
+  #Forecast_SingleExponential_maxAlfa=1.00,
+  #Forecast_DoubleExponential_minAlfa=0.05,
+  #Forecast_DoubleExponential_maxAlfa=1.00,
+  #Forecast_DoubleExponential_minGamma=0.05,
+  #Forecast_DoubleExponential_maxGamma=1.00,
+  #Forecast_Iterations=15,
+  #Forecast_DoubleExponential_dampenTrend=0.8,
+  #Forecast_Skip=5,
+  )
+?>
+</plan>

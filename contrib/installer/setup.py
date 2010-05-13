@@ -86,7 +86,7 @@ ignores = [# Not using docutils
            'PIL', 'ImageFile',
            # Not needing special datetime handling
            'mx',
-           # Not using yaml serialization      'frepple'
+           # Not using yaml serialization
            'yaml',
            # Not storing templates in python eggs
            'pkg_resources', 'resource',

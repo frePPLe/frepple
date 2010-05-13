@@ -48,43 +48,7 @@ div.OperatorMenu {
   list-style-type: none;
   z-index: 100;
 }
-
-/* Style for links in the context menu. */
-div.OperatorMenu a {
-  display: block;
-  width: 30px;
-  padding: 3px 10px 3px 10px;
-  text-decoration: none;
-  font-family: "MS Sans Serif", Arial, sans-serif;
-  color: black;
-  background: #cccccc;
-}
-
-/* Style when hovering over links in the context menus. */
-div.OperatorMenu a:hover {
-  text-decoration: none;
-  color: white;
-  background: #417690;
-}
-
-/* Note: filter operator styles need fixed width fonts to keep the
-   column width constant for every selected operator. */
-span.numfilteroper {
-  font-family:  Courier New, Courier, monospace;
-  font-size: x-small;
-}
-
-span.datefilteroper {
-  font-family:  Courier New, Courier, monospace;
-  font-size: x-small;
-}
-
-span.textfilteroper {
-  /*text-decoration: underline;*/
-  font-family:  Courier New, Courier, monospace;
-  font-size: x-small;
-}
-
+ 
 a {
   white-space: nowrap;
 }

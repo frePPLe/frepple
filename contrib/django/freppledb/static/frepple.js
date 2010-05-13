@@ -60,9 +60,6 @@ var ContextMenu = {
 		'customer': 'customercontext',
 		'calendar': 'calendarcontext',
 		'setupmatrix': 'setupmatrixcontext',
-		'numfilteroper': 'datefilter',
-    'datefilteroper': 'datefilter',
-    'textfilteroper': 'textfilter'
 	},
 
 	// private method. Get which context menu to show
@@ -98,28 +95,9 @@ var ContextMenu = {
 	_onclick : function (e)
 	{
 
-		// Hide the previous context menu, and update operator
+		// Hide the previous context menu
 		if (ContextMenu._menuElement)
-	  {
-	    // Hide
 			ContextMenu._menuElement.style.display = 'none';
-
-			// If we are closing an operator menu, update the operator
-			if (ContextMenu._menuElement.hasClassName("OperatorMenu") && ContextMenu._attachedElement)
-			{
-			  // Operator selected, or clicked somewhere else?
-			  x = Prototype.Browser.IE ? event.srcElement : e.target;
-        if ($(x).up().hasClassName("OperatorMenu"))
-        {
-			    // Update the span displaying the choosen operator
-			    ContextMenu._attachedElement.innerHTML = x.innerHTML;
-
-			    // Update the name of the filter input field
-			    filterfield = ContextMenu._attachedElement.id.replace("operator","filter");
-          $(filterfield).name = $(filterfield).name.substr(0,$(filterfield).name.lastIndexOf("__")+2) + x.id;
-        }
-		  }
-		}
 
     // No further handling for rightclicks
     if (e!=undefined && !Event.isLeftClick(e)) return true;
@@ -286,36 +264,6 @@ function resetButton(button)
 }
 
 
-function filterform()
-{
-  // The filter header has a lot of fields. To keep the urls clean we use only
-  // the non-empty fields in the form URL.
-  var data = $$('.filter').inject({ }, function(result, element) {
-    key = element.name;
-    value = $(element).getValue();
-    if (value != '' && element.type != 'submit')
-    {
-      if (key in result)
-      {
-        // a key is already present; construct an array of values
-        if (!Object.isArray(result[key])) result[key] = [result[key]];
-        result[key].push(value);
-       }
-       else result[key] = value;
-    }
-    return result;
-    });
-
-  // Examine the current url, and extract optional sort and popup arguments
-  var args = location.href.toQueryParams();
-  if ('o' in args) data['o'] = args['o'];
-  if ('pop' in args) data['pop'] = args['pop'];
-
-  // Go to the new url
-  location.href = "?" + Object.toQueryString(data);
-}
-
-
 // Return the value of the csrf-token
 function getToken() 
 {
@@ -327,9 +275,231 @@ function getToken()
 }
 
 
+function filterform()
+{
+  // Collect all filters.
+  var data = {}
+  document.getElementById('popup').select('span').each(function(element) {
+      if (element.id.indexOf('filter') == 0)
+      {
+        indx = element.id.substring(6);
+        tmp = element.select('[name="filterfield'+indx+'"]')[0];
+        field = tmp.options[tmp.selectedIndex].value;
+        tmp = element.select('[name="filterval'+indx+'"]')[0];
+        if (tmp.type == 'select-one')
+        {
+          value = tmp.options[tmp.selectedIndex].value;
+          data[field] = value;
+        }
+        else
+        {
+          tmp = element.select('[name="filteroper'+indx+'"]')[0];
+          oper = tmp.options[tmp.selectedIndex].value;
+          value = element.select('[name="filterval'+indx+'"]')[0].value;
+          if (value != '') data[field + "__" + oper] = value;
+        }
+      }
+    });
+
+  // Examine the current URL, and extract optional sort and popup arguments
+  var args = location.href.toQueryParams();
+  if ('o' in args) data['o'] = args['o'];
+  if ('pop' in args) data['pop'] = args['pop'];
+
+  // Go to the new URL
+  location.href = "?" + Object.toQueryString(data);
+}
+
+
+function filter_show()
+{  
+  // Constants for the operators
+  var filteroperator = {
+    'icontains': gettext('contains (no case)'), 
+    'contains': gettext('contains'),
+    'istartswith': gettext('starts (no case)'),  
+    'startswith': gettext('starts'),  
+    'iendswith': gettext('ends (no case)'), 
+    'endswith': gettext('ends'),  
+    'iexact': gettext('equals (no case)'), 
+    'exact': gettext('equals'),
+    'isnull': gettext('is null'),
+    '': '=',
+    'lt': '&lt;',
+    'gt': '&gt;',
+    'lte': '&lt;=',
+    'gte': '&gt;=',
+  };
+  var textfilterkeys = [
+    'icontains','contains','istartswith','startswith',
+    'iendswith','endswith','iexact','exact',
+    'isnull','lt','lte','gt','gte'
+  ];
+  var numberfilterkeys = [
+    '','lt','lte','gt','gte','isnull'
+  ];
+
+  // Set form header
+  data = '<h2>' + gettext("Filter data") 
+    + '</h2><br/>\n<form method="get" action="javascript:filterform();">';
+  
+  // Display form fields for existing filters
+  counter = 0;
+  element = $('filters');
+  if (element != null)
+    $('filters').childElements().each(function(element) {
+      // Find value
+      if (element.type == 'text')
+        value = element.value;
+      else if (element.type == 'select-one')
+        value = element.options[element.selectedIndex].value;
+      else
+        // Not an input element
+        return;
+      // Find field and operator name
+      counter++;
+      tmp = element.name.split("__");
+      if (tmp[1] == undefined)
+      {
+        oper = 'exact';
+        field = element.name;
+      }
+      else
+      {
+        field = tmp[0];
+        oper = tmp[1];
+      }
+      // Create the field select list
+      data += '<span id="filter' + counter + '"><select name="filterfield' + counter + '">';
+      $('fields').select('span').each(function(element) {
+        if (element.name == field) 
+        {
+          data += '<option value="' + element.name + '" selected="yes">' + element.innerHTML + '</option>';
+          thefield = element;
+        }
+        else
+          data += '<option value="' + element.name + '">' + element.innerHTML + '</option>';
+      })
+      data += '</select>';
+      // Create the operator select list
+      if (thefield.hasClassName('FilterNumber'))
+      {
+        // Filter for number fields
+        data += '</select>\n<select name="filteroper' + counter + '">';
+        numberfilterkeys.each(function(curoper) {
+          if (oper == curoper)
+             data += '<option value="' + curoper + '" selected="yes">' + filteroperator[curoper] + '</option>';
+          else
+             data += '<option value="' + curoper + '">' + filteroperator[curoper] + '</option>';
+        })
+        data += '</select>';
+        data += '<input type="text" name="filterval' + counter + '" value="' + value + '" size="10"/>\n';
+      } 
+      else if (thefield.hasClassName('FilterDate'))
+      {
+        // Filter for date fields
+        data += '<select name="filteroper' + counter + '">';
+        numberfilterkeys.each(function(curoper) {
+          if (oper == curoper)
+             data += '<option value="' + curoper + '" selected="yes">' + filteroperator[curoper] + '</option>';
+          else
+             data += '<option value="' + curoper + '">' + filteroperator[curoper] + '</option>';
+        })
+        data += '</select>';
+        data += '<input type="text" class="vDateField" name="filterval' + counter + '" value="' + value + '" size="10"/>\n';
+      } 
+      else if (thefield.hasClassName('FilterBool'))
+      {
+        // Filter for choice fields
+        data += 'equals <select name="filterval' + counter + '">';
+        if (value == '0') 
+        {
+          data += '<option value="0" selected="yes">' + gettext('False') + '</option>';
+          data += '<option value="1">' + gettext('True') + '</option>';
+        }
+        else
+        {
+          data += '<option value="0">' + gettext('False') + '</option>';
+          data += '<option value="1" selected="yes">' + gettext('True') + '</option>';
+        }
+        data += '</select>';
+      } 
+      else if (thefield.hasClassName('FilterChoice'))
+      {
+        // Filter for choice fields
+        data += 'equals <select name="filteroper' + counter + '">';
+        numberfilterkeys.each(function(curoper) {
+          if (oper == curoper)
+             data += '<option value="' + curoper + '" selected="yes">' + filteroperator[curoper] + '</option>';
+          else
+             data += '<option value="' + curoper + '">' + filteroperator[curoper] + '</option>';
+        })
+        data += '</select>';
+        data += '<input type="text" class="vDateField" name="filterval' + counter + '" value="' + value + '" size="10"/>\n';
+      } 
+      else 
+      {
+        // Filter for text fields, also used as default
+        data += '<select name="filteroper' + counter + '">';
+        textfilterkeys.each(function(curoper) {
+          if (oper == curoper)
+             data += '<option value="' + curoper + '" selected="yes">' + filteroperator[curoper] + '</option>';
+          else
+             data += '<option value="' + curoper + '">' + filteroperator[curoper] + '</option>';
+        })
+        data += '</select>';
+        data += '<input type="text" name="filterval' + counter + '" value="' + value + '" size="10"/>\n';
+      } 
+      data += '<a href="javascript:filter_delete(' +  counter + ');"><img style="float:right;" src="/media/img/admin/icon_deletelink.gif"/></a><br/></span>';    
+    });
+  
+  // Display form field for adding a new filter
+  data += '<span id="newfilter"><select><option value=""></option>';
+  $('fields').select('span').each(function(element) {
+    data += '<option name="newfilter" value="' + element.name + '">' + element.innerHTML + '</option>';
+  })
+  data += '</select></span>';
+  
+  // Set form footer
+  data += '<a href="javascript:filter_add();"><img style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a><br/>';
+  data += '<input type="submit" value="' + gettext("Filter");
+  data += '" onclick="$(\'popup\').style.display = \'none\';"/>&nbsp;&nbsp;';
+  data += '<input type="button" value="' + gettext("Cancel");
+  data += '" onclick="$(\'popup\').style.display = \'none\';"/></form></div>';
+
+  // Replace the popup content
+  var element = $('popup');
+  element.innerHTML = data;
+  
+  // Position the popup
+  var position = $('csvexport').cumulativeOffset();
+  position[0] -= 302;
+  position[1] += 20;
+  element.style.width = '300px';
+  element.style.left = position[0]+'px';
+  element.style.top  = position[1]+'px';
+  element.style.position = "absolute";
+  element.style.display  = "block";
+}
+
+
+function filter_delete(row)
+{
+  // Remove a filter from the popup window
+  var x = document.getElementById('popup').select('#filter' + row)[0];
+  x.parentNode.removeChild(x);  
+}
+
+
+function filter_add(row)
+{
+}
+
+
 function import_show(list_or_table)
 {
   var element = $('popup');
+  // Replace the content
   element.innerHTML = '<h2>' + gettext("Import data") + '</h2><br/>' +
     '<form enctype="multipart/form-data" method="post" action="' + location.href + '"><table><tr>'+
     '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
@@ -339,8 +509,9 @@ function import_show(list_or_table)
     '<tr><td><input id="upload" type="submit" value="' + gettext('Upload') + '"/></td>'+
     '<td><input type="button" value="' + gettext('Cancel') + '" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
     '</table></form>';
+  // Position the popup
   var position = $('csvexport').cumulativeOffset();
-  position[0] -= 252;
+  position[0] -= 292;
   position[1] += 20;
   element.style.width = '290px';
   element.style.left = position[0]+'px';
@@ -355,6 +526,7 @@ function export_show(list_or_table)
   // The argument is true when we show a "list" report.
   // It is false for "table" reports.
   var element = $('popup');
+  // Replace the content
   element.innerHTML = '<h2>' + gettext("Export data") +'</h2><br/>'+
     '<form method="get" action="javascript:export_close()"><table>'+
     '<tr><th>' + gettext("CSV style") + ':</th><td><select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
@@ -363,6 +535,7 @@ function export_show(list_or_table)
     '<tr><td><input type="submit" value="' + gettext("Export") +'"/></td>'+
     '<td><input type="button" value="' + gettext("Cancel") +'" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
     '</table></form>';
+  // Position the popup
   var position = $('csvexport').cumulativeOffset();
   position[0] -= 202;
   position[1] += 20;
@@ -372,6 +545,7 @@ function export_show(list_or_table)
   element.style.position = "absolute";
   element.style.display  = "block";
 }
+
 
 
 function export_close()

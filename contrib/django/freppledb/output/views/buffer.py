@@ -144,6 +144,7 @@ class OverviewReport(TableReport):
         'endoh': endoh,
         }
 
+
 class DetailReport(ListReport):
   '''
   A list report to show flowplans.

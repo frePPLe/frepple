@@ -74,26 +74,6 @@ ON_ENDS = 2            # Number of pages shown at the start and the end of the p
 # A variable to cache bucket information in memory
 datelist = {}
 
-# Operators used for the date and number filtering in the reports
-IntegerOperator = {
-  'lte': '&lt;=',
-  'gte': '&gt;=',
-  'lt': '&lt;&nbsp;',
-  'gt': '&gt;&nbsp;',
-  'exact': '==',
-  }
-
-# Operators used for the text filtering in the reports
-TextOperator = {
-  'icontains': '&nbsp;&nbsp;i in&nbsp;&nbsp;',
-  'contains': '&nbsp;&nbsp;&nbsp;in&nbsp;&nbsp;&nbsp;',
-  'istartswith': 'i starts',
-  'startswith': '&nbsp;starts&nbsp;',
-  'iendswith': '&nbsp;i ends&nbsp;',
-  'endswith': '&nbsp;&nbsp;ends&nbsp;&nbsp;',
-  'iexact': '&nbsp;&nbsp;i is&nbsp;&nbsp;',
-  'exact': '&nbsp;&nbsp;&nbsp;is&nbsp;&nbsp;&nbsp;',
-  }
 
 # URL parameters that are not query arguments
 reservedParameters = ('o', 'p', 't', 'reporttype', 'pop', 'reportbucket', 'reportstart', 'reportend')
@@ -429,6 +409,8 @@ def view_report(request, entity=None, **args):
     base_request_path = request.path
 
   # Prepare template context
+  head_frozen, head_scroll = _create_rowheader(request, sortfield, sortdirection, reportclass)
+  filterdef, filternew = _create_filter(request, reportclass)
   context = {
        'reportclass': reportclass,
        'model': model,
@@ -452,8 +434,10 @@ def view_report(request, entity=None, **args):
        # Otherwise depend on the value in the report class.
        'reset_crumbs': reportclass.reset_crumbs and entity == None,
        'title': (entity and '%s %s %s' % (unicode(reportclass.title),_('for'),entity)) or reportclass.title,
-       'rowheader': _create_rowheader(request, sortfield, sortdirection, reportclass, False),
-       'rowheaderfrozen': _create_rowheader(request, sortfield, sortdirection, reportclass, True),
+       'rowheader': head_scroll,
+       'rowheaderfrozen': head_frozen,
+       'filterdef': filterdef,
+       'filternew': filternew,
        'crossheader': issubclass(reportclass, TableReport) and _create_crossheader(request, reportclass),
        'columnheader': issubclass(reportclass, TableReport) and _create_columnheader(request, reportclass, bucketlist),
      }
@@ -778,31 +762,25 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
   else:
     res = datelist[bucket]
   return (bucket,start,end,res)
-
-
-def _create_rowheader(req, sortfield, sortdirection, cls, frozen = True):
+  
+  
+def _create_rowheader(req, sortfield, sortdirection, cls):
   '''
   Generate html header row for the columns of a table or list report.
   '''
-  # @todo This filter form is NOT valid HTML code! Forms are not allowed to
-  # be nested in a table.
-  # It somehow works anyway. Only drawback is that the DOM tree in standard
-  # complying browsers (eg firefox and opera) is broken.
-  result = ['<form action="javascript:filterform()">']
   number = 0
   args = req.GET.copy()  # used for the urls used in the sort header
   args2 = req.GET.copy() # used for additional, hidden filter fields
   sortable = False
-
+  result1 = []
+  result2 = []
+  
   # When we update the sorting, we always want to see page 1 again
   if 'p' in args: del args['p']
 
   # A header cell for each row
   for row in cls.rows:
     number = number + 1
-    if issubclass(cls,ListReport):
-      if frozen and number > cls.frozenColumns: break
-      if not frozen and number <= cls.frozenColumns: continue
     title = capfirst(escape((row[1].has_key('title') and row[1]['title']) or row[0]))
     if not row[1].has_key('sort') or row[1]['sort']:
       # Sorting is allowed
@@ -823,15 +801,21 @@ def _create_rowheader(req, sortfield, sortdirection, cls, frozen = True):
       # Which widget to use
       if 'filter' in row[1]:
         # Filtering allowed
-        result.append( u'<th %s><a href="%s?%s">%s</a><br/>%s</th>' \
-          % (y, escape(req.path), escape(args.urlencode()),
-             title, row[1]['filter'].output(row, number, args)
-             ) )
+        if issubclass(cls,ListReport) and number <= cls.frozenColumns:       
+          result1.append( u'<th %s><a href="%s?%s">%s</a></th>' \
+            % (y, escape(req.path), escape(args.urlencode()), title) )
+        else:
+          result2.append( u'<th %s><a href="%s?%s">%s</a></th>' \
+            % (y, escape(req.path), escape(args.urlencode()), title) )
         rowfield = row[1]['filter'].field or row[0]
       else:
         # No filtering allowed
-        result.append( u'<th %s><a href="%s?%s">%s</a></th>' \
-          % (y, escape(req.path), escape(args.urlencode()), title) )
+        if issubclass(cls,ListReport) and number <= cls.frozenColumns:       
+          result1.append( u'<th %s><a href="%s?%s">%s</a></th>' \
+            % (y, escape(req.path), escape(args.urlencode()), title) )
+        else:
+          result2.append( u'<th %s><a href="%s?%s">%s</a></th>' \
+            % (y, escape(req.path), escape(args.urlencode()), title) )
         rowfield = row[0]
       for i in args:
         field, sep, operator = i.rpartition('__')
@@ -839,18 +823,80 @@ def _create_rowheader(req, sortfield, sortdirection, cls, frozen = True):
     else:
       # No sorting is allowed on this field
       # If there is no sorting allowed, then there is also no filtering
-      result.append( u'<th>%s</th>' % title )
+      if issubclass(cls,ListReport) and number <= cls.frozenColumns:       
+        result1.append( u'<th>%s</th>' % title )
+      else:
+        result2.append( u'<th>%s</th>' % title )
 
   if issubclass(cls,TableReport):
-    result.append('<th>&nbsp;</th>')
-
-  # Extra hidden fields for query parameters that aren't rows
-  for key in args2:
-    result.append(u'<input type="hidden" name="%s" value="%s"/>' % (key, args2[key]))
+    result2.append('<th>&nbsp;</th>')
 
   # Final result
-  result.append( u'</form>' )
-  return mark_safe(string_concat(*result))
+  return (mark_safe(string_concat(*result1)), mark_safe(string_concat(*result2)))
+
+  
+filteroperator = {
+  'icontains': _('contains (no case)'), 
+  'contains': _('contains'),
+  'istartswith': _('starts (no case)'),  
+  'startswith': _('starts'),  
+  'iendswith': _('ends (no case)'), 
+  'endswith': _('ends'),  
+  'iexact': _('equals (no case)'), 
+  'exact': _('equals'),
+  'isnull': _('is null'),
+  '': _('='),
+  'lt': u'&lt;',
+  'gt': u'&gt;',
+  'lte': u'&lt;=',
+  'gte': u'&gt;=',
+}
+
+  
+def _create_filter(req, cls):
+  # Initialisation
+  result1 = [u'<form id="filters" action="%s">' % escape(req.path)]
+  result2 = [u'<div id="fields" style="display: none"><form>\n']
+  empty = True
+    
+  # Loop over the row fields - to make sure the filters are shown in the same order
+  filtercounter = 0
+  for row, attribs in cls.rows:
+    try: filtertitle = attribs['title']
+    except: filtertitle = row
+    try: 
+      filter = attribs['filter']
+      filterfield = filter.field or row
+      result2.append(u'<span name="%s" class="%s">%s</span>\n' % (filterfield, filter.__class__.__name__, filtertitle))
+    except: 
+      filter = None
+      filterfield = ''
+      result2.append(u'<span>%s</span>\n' % filtertitle)
+    for i in req.GET:
+      if i in reservedParameters: 
+        if filtercounter > 1: continue
+        result1.append(u'<input type="hidden" name="%s" value="%s"/>' % (i,escape(req.GET[i])))
+      field, sep, operator = i.rpartition('__')
+      if field == '':
+        field = operator
+        operator = 'exact'
+      if filterfield == field:
+        if empty: 
+          result1.append(u'where\n')
+          empty = False
+        else:
+          result1.append(u' and\n')
+        if filter:
+          result1.append(filter.text1(filtertitle, operator, i, escape(req.GET[i]), cls))
+        else:
+          result1.append(u'%s %s <input type="text" class="filter" onChange="filterform()" name="%s" value="%s"/>' % (filtertitle, filteroperator[operator], i, escape(req.GET[i])))
+        filtercounter += 1
+      
+  # Return result
+  result2.append(u'</form></div>')
+  if empty: return (None, mark_safe(string_concat(*result2)))
+  result1.append(u'</form>')
+  return ( mark_safe(string_concat(*result1)), mark_safe(string_concat(*result2)) )
 
 
 class FilterText(object):
@@ -858,37 +904,9 @@ class FilterText(object):
     self.operator = operator
     self.field = field
     self.size = size
-
-  def output(self, row, number, args):
-    global TextOperator
-    rowfield = self.field or row[0]
-    res = []
-    counter = number*10
-    for i in args:
-      try:
-        field, sep, operator = i.rpartition('__')
-        if field == '':
-          field = operator
-          operator = 'exact'
-        if field == rowfield:
-          for value in args.getlist(i):
-            res.append('<span class="textfilteroper" id="operator%d">%s</span><input class="filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-              % (counter, TextOperator[operator], counter, self.size,
-                 escape(value),
-                 rowfield, operator, number+1000,
-                 ))
-      except:
-        # Silently ignore invalid filters
-        pass
-      counter = counter + 1
-    if len(res) > 0:
-      return '<br/>'.join(res)
-    else:
-      return '<span class="textfilteroper" id="operator%d">%s</span><input class="filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (number*10, TextOperator[self.operator], number*10, self.size,
-             escape(args.get("%s__%s" % (rowfield,self.operator),'')),
-             rowfield, self.operator, number+1000,
-             )
+    
+  def text1(self, a,b,c,d,cls):
+    return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', max(len(d),self.size), u'"/>')
 
 
 class FilterNumber(object):
@@ -896,40 +914,9 @@ class FilterNumber(object):
     self.operator = operator
     self.field = field
     self.size = size
-
-  def output(self, row, number, args):
-    global IntegerOperator
-    res = []
-    rowfield = self.field or row[0]
-    counter = number*10
-    for i in args:
-      try:
-        # Skip empty filters
-        if args.get(i) == '': continue
-        # Determine field and operator
-        field, sep, operator = i.rpartition('__')
-        if field == '':
-          field = operator
-          operator = 'exact'
-        if field == rowfield:
-          for value in args.getlist(i):
-            res.append('<span class="numfilteroper" id="operator%d">%s</span><input class="filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-              % (counter, IntegerOperator[operator], counter, self.size,
-                 escape(value),
-                 rowfield, operator, number+1000,
-                 ))
-      except:
-        # Silently ignore invalid filters
-        pass
-      counter = counter + 1
-    if len(res) > 0:
-      return '<br/>'.join(res)
-    else:
-      return '<span class="numfilteroper" id="operator%d">%s</span><input class="filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (number*10, IntegerOperator[self.operator], number*10, self.size,
-             escape(args.get("%s__%s" % (rowfield,self.operator),'')),
-             rowfield, self.operator, number+1000,
-             )
+    
+  def text1(self, a,b,c,d,cls):
+    return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', self.size, u'"/>')
 
 
 class FilterDate(object):
@@ -937,60 +924,24 @@ class FilterDate(object):
     self.operator = operator
     self.field = field
     self.size = size
-
-  def output(self, row, number, args):
-    global IntegerOperator
-    res = []
-    rowfield = self.field or row[0]
-    counter = number*10
-    for i in args:
-      try:
-        # Skip empty filters
-        if args.get(i) == '': continue
-        # Determine field and operator
-        field, sep, operator = i.rpartition('__')
-        if field == '':
-          field = operator
-          operator = 'exact'
-        if field == rowfield:
-          for value in args.getlist(i):
-            res.append('<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-              % (counter, IntegerOperator[operator], counter, self.size,
-                 escape(value),
-                 rowfield, operator, number+1000,
-                 ))
-      except:
-        # Silently ignore invalid filters
-        pass
-      counter = counter + 1
-    if len(res) > 0:
-      return '<br/>'.join(res)
-    else:
-      return '<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (number*10, IntegerOperator[self.operator], number*10, self.size,
-             escape(args.get("%s__%s" % (rowfield,self.operator),'')),
-             rowfield, self.operator, number+1000,
-             )
-
+    
+  def text1(self, a,b,c,d,cls):
+    return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="vDateField filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', self.size, u'"/>')
+    
 
 class FilterChoice(object):
   def __init__(self, field=None, choices=None):
     self.field = field
     self.choices = choices
-
-  def output(self, row, number, args):
-    rowfield = self.field or row[0]
-    value = args.get(rowfield, None)
-    result = [string_concat(u'<select name="', rowfield,
-      u'" class="filter" onChange="filterform()"> <option value="">', _('All'),
-      u'</option>\n')]
+    
+  def text1(self, a,b,c,d,cls):
+    result = [string_concat(a, u' ', filteroperator[b], u'<select class="filter" onChange="javascript:this.form.submit();" name="', c, u'" >')]
     try:
       for code, label in callable(self.choices) and self.choices() or self.choices:    
-        if code != '':
-          if (code == value):
-            result.append(string_concat(u'<option value="',code,u'" selected="yes">',unicode(label),u'</option>\n'))
-          else:
-            result.append(string_concat(u'<option value="',code,u'">',unicode(label),u'</option>\n'))
+        if (code == d):
+          result.append(string_concat(u'<option value="',code,u'" selected="yes">',unicode(label),u'</option>\n'))
+        else:
+          result.append(string_concat(u'<option value="',code,u'">',unicode(label),u'</option>\n'))
     except TypeError: pass
     result.append(u'</select>\n')
     return string_concat(*result)

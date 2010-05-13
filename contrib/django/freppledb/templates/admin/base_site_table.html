@@ -12,29 +12,28 @@
 {% block tools %}<div class="tools">
 <form><input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px;" type="button" id="save" value="{% trans 'Save' %}" onclick="upload.save();"/>
 <input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px; margin-right: 10px; margin-left:10px;" type="button" id="undo" value="{% trans 'Undo' %}" onclick="upload.undo();"/>
+{% if filternew %}<a href="javascript:filter_show();"><img src="/media/img/admin/selector-search.gif"/>{% trans 'Filter' %}</a>{% endif %}
 <a href="javascript:bucket_show();" id="bucketconfig"><img src="/media/img/admin/icon_clock.gif"/>{% trans 'Time' %}</a><span id="timebuckets">{{ reportbucket }},{{ reportstart}},{{ reportend }}</span>
 <a href="javascript:export_show(false);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
 </form><div id="popup"></div></div>{% endblock %}
 {% block content %}
 <div id="content-main">
-
-{% include "textfilter.html" %}
-{% include "datefilter.html" %}
+{% if filternew %}{{ filternew }}{% endif %}
 {% block contextmenus %}{% endblock %}
-
+{% if filterdef %}{{ filterdef }}{% endif %}
 {% block before_table %}{% endblock %}
-<table><tr>{% if rowheaderfrozen %}<td style="padding:0px;"><div id="ul" class="gridupleft"><table id="ult">
+<table><tr><td style="padding:0px;"><div id="ul" class="gridupleft"><table id="ult">
 <thead><tr>{{ rowheader }}</tr></thead>
-</table></div></td>{% endif %}
+</table></div></td>
 
 <td style="padding:0px"><div id="ur" class="gridupright"><table id="urt" style="position: relative;">
 <thead><tr>{{ columnheader }}</tr></thead>
 </table></div></td></tr>
 
-<tr>{% if rowheaderfrozen %}<td style="padding:0px"><div id="dl" class="griddownleft" onscroll="syncScroll(0);">
+<tr><td style="padding:0px"><div id="dl" class="griddownleft" onscroll="syncScroll(0);">
 <table id="dlt" style="float: left; position: relative;"><tbody>
 {% block frozendata %}{% endblock %}
-</tbody></table></div></td>{% endif %}
+</tbody></table></div></td>
 
 <td style="padding:0px"><div id="dr" class="griddownright" onscroll="syncScroll(1);">
 <table id="drt" ><tbody>

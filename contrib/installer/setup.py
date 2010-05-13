@@ -134,6 +134,8 @@ setup(
           "compressed": 1,
           # optimize the bytecode
           "optimize": 2,
+          # bundle python modules in the zip file as well
+          "bundle_files": 2,
           # content of the packaged python
           "packages": packages,
           "excludes": excludes,

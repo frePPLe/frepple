@@ -65,10 +65,10 @@ settings.TEMPLATE_DIRS = (
 noDatabaseSchema = False
 if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3':
   # Verify if the sqlite database file exists
-  if not os.path.isfile(settings.DATABASE_NAME):
+  if not os.path.isfile(settings.DATABASES[DEFAULT_DB_ALIAS]['NAME']):
     noDatabaseSchema = True
 elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] not in ['django.db.backends.postgresql_psycopg2', 'django.db.backends.mysql', 'django.db.backends.oracle']:
-    print 'Aborting: Unknown database engine %s' % settings.DATABASE_ENGINE
+    print 'Aborting: Unknown database engine %s' % settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE']
     raw_input("Hit any key to continue...")
     sys.exit(1)
 else:
@@ -81,7 +81,7 @@ else:
     print "   %s" % e
     raw_input("Hit any key to continue...")
     sys.exit(1)
-  try: cursor.execute("SELECT name FROM plan")
+  try: cursor.execute("SELECT 1 FROM parameter")
   except: noDatabaseSchema = True
   transaction.commit_unless_managed()
 

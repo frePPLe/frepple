@@ -456,13 +456,12 @@ function filter_show()
   // Display form field for adding a new filter
   data += '<span id="newfilter"><select><option value=""></option>';
   $('fields').select('span').each(function(element) {
-    data += '<option name="newfilter" value="' + element.name + '">' + element.innerHTML + '</option>';
+    data += '<option value="' + element.name + '">' + element.innerHTML + '</option>';
   })
-  data += '</select></span>';
+  data += '</select><a href="javascript:filter_add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a><br/></span>';
   
   // Set form footer
-  data += '<a href="javascript:filter_add();"><img style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a><br/>';
-  data += '<input type="submit" value="' + gettext("Filter");
+  data += '<br/><input type="submit" value="' + gettext("Filter");
   data += '" onclick="$(\'popup\').style.display = \'none\';"/>&nbsp;&nbsp;';
   data += '<input type="button" value="' + gettext("Cancel");
   data += '" onclick="$(\'popup\').style.display = \'none\';"/></form></div>';
@@ -491,8 +490,27 @@ function filter_delete(row)
 }
 
 
-function filter_add(row)
+function filter_add()
 {
+  var x = document.getElementById('popup').select('#newfiltericon')[0];
+  tmp = x.up('span').select('select')[0];
+
+  // Exit if no filter information is available
+  if (tmp.selectedIndex == 0) return;
+  field = tmp.options[tmp.selectedIndex].value;
+
+  // Change the "add" icon to a "delete" icon
+  x.id = null;
+  x.src = "/media/img/admin/icon_deletelink.gif";
+  x.up('a').href = 'javascript:filter_delete(' +  0 + ');';
+
+  // Append a new filter
+  data = '<span id="filternew"><select><option value=""></option>';
+  $('fields').select('span').each(function(element) {
+    data += '<option name="newfilter" value="' + element.name + '">' + element.innerHTML + '</option>';
+  });
+  data += '</select><a href="javascript:filter_add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a><br/></span>';
+  x.up('span').insert({after: data});
 }
 
 

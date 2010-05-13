@@ -4,49 +4,28 @@
 {% get_models from auth freppledb.admin.site as modelsAuth %}
 {% get_models from input freppledb.admin.site as modelsIn %}
 <div class="menuBar">
-{% if modelsIn %}
-<a class="menuButton" href="#"
-    onclick="return buttonClick(event,'inputMenu');"
-    onmouseover="buttonMouseover(event,'inputMenu');"
->{% trans 'Input' %}</a>
-{% endif %}
-<a class="menuButton" href="#"
-    onclick="return buttonClick(event,'outputMenu');"
-    onmouseover="buttonMouseover(event,'outputMenu');"
->{% trans 'Reports' %}</a>
-{% if perms.execute %}
-<a class="menuButton" href="#"
-    onclick="return buttonClick(event,'toolsMenu');"
-    onmouseover="buttonMouseover(event,'toolsMenu');"
->{% trans 'Tools' %}</a>
-{% endif %}
-{% if modelsAuth %}
-<a class="menuButton" href="#"
-    onclick="return buttonClick(event,'authMenu');"
-    onmouseover="buttonMouseover(event,'authMenu');"
->{% trans 'Admin' %}</a>
-{% endif %}
-<a class="menuButton" href="#"
-    onclick="return buttonClick(event,'userMenu');"
-    onmouseover="buttonMouseover(event,'userMenu');"
->{% trans 'User' %}</a>
+{% if modelsIn %}<a class="menuButton" href="#" onclick="return buttonClick(event,'inputMenu');"
+  onmouseover="buttonMouseover(event,'inputMenu');">{% trans 'Input' %}</a>{% endif %}
+<a class="menuButton" href="#" onclick="return buttonClick(event,'outputMenu');"
+  onmouseover="buttonMouseover(event,'outputMenu');">{% trans 'Reports' %}</a>
+{% if perms.execute %}<a class="menuButton" href="#" onclick="return buttonClick(event,'toolsMenu');"
+  onmouseover="buttonMouseover(event,'toolsMenu');">{% trans 'Tools' %}</a>{% endif %}
+{% if modelsAuth %}<a class="menuButton" href="#" onclick="return buttonClick(event,'authMenu');"
+  onmouseover="buttonMouseover(event,'authMenu');">{% trans 'Admin' %}</a>{% endif %}
+<a class="menuButton" href="#" onclick="return buttonClick(event,'userMenu');"
+  onmouseover="buttonMouseover(event,'userMenu');">{% trans 'User' %}</a>
 </div>
 
-<!-- input menu -->
-{% if modelsAuth %}
+{% if modelsAuth %}<!-- input menu -->
 <div id="authMenu" class="menu">
 {% for m in modelsAuth %}
 <a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>{% endfor %}
-</div>
-{% endif %}
+</div>{% endif %}
 
-<!-- input menu -->
-{% if modelsIn %}
+{% if modelsIn %}<!-- input menu -->
 <div id="inputMenu" class="menu">
-{% for m in modelsIn %}
-<a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>{% endfor %}
-</div>
-{% endif %}
+{% for m in modelsIn %}<a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>
+{% endfor %}</div>{% endif %}
 
 <!-- output menu -->
 <div id="outputMenu" class="menu">
@@ -63,23 +42,18 @@
 <a class="menuItem" href="/kpi/">{% trans "Performance Indicators" %}</a>
 </div>
 
-<!-- execute menu -->
-{% if perms.execute %}
+{% if perms.execute %}<!-- execute menu -->
 <div id="toolsMenu" class="menu">
 <a class="menuItem" href="/execute/">{% trans 'Execute' %}</a>
 <a class="menuItem" href="/execute/log/">{% trans 'Log' %}</a>
-</div>
-{% endif %}
+</div>{% endif %}
 
 <!-- user menu -->
-<div id="userMenu" class="menu">
-{% if request.user.is_authenticated %}
+<div id="userMenu" class="menu">{% if request.user.is_authenticated %}
 <a class="menuItem" href="/admin/logout/">{% trans 'Log out' %}</a>
 <a class="menuItem" href="/preferences/">{% trans 'Preferences' %}</a>
 <a class="menuItem" href="/admin/password_change/">{% trans 'Change password' %}</a>
-{% else %}
-<a class="menuItem" href="/admin/auth/user/">{% trans 'Log in' %}</a>
-{% endif %}
-</div>
+{% else %}<a class="menuItem" href="/admin/auth/user/">{% trans 'Log in' %}</a>
+{% endif %}</div>
 
 {% endblock %}

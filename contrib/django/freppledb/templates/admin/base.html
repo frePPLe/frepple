@@ -17,37 +17,33 @@
 <!-- Container -->
 <div id="container">
 
-    {% if not is_popup %}
-    <!-- Header -->
-    <div id="header">
-        <div id="branding">
-        {% block branding %}{% endblock %}
-        </div>
-        {% if user.is_authenticated and user.is_staff %}
-        <div id="user-tools"><a href="/admin/logout/">{% trans 'Log out' %}</a> <strong>{% firstof user.first_name user.username %}</strong> {% block userlinks %}{% endblock %}</div>
-        {% endif %}
-        {% block nav-global %}{% endblock %}
-    </div>
-    <!-- END Header -->
-    {% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{ title }}{% endif %}</div>{% endblock %}
-    {% endif %}
+{% if not is_popup %}
+<!-- Header -->
+<div id="header">
+<div id="branding">{% block branding %}{% endblock %}</div>
+{% if user.is_authenticated and user.is_staff %}<div id="user-tools">
+<a href="/admin/logout/">{% trans 'Log out' %}</a> <strong>{% firstof user.first_name user.username %}</strong> 
+{% block userlinks %}{% endblock %}</div>{% endif %}
+{% block nav-global %}{% endblock %}
+</div>
+<!-- END Header -->
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{ title }}{% endif %}</div>{% endblock %}
+{% endif %}
 
-        {% if messages %}
-        <ul class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
-        {% endif %}
+ {% if messages %}<ul class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
 
-    <!-- Content -->
-    <div id="content" class="{% block coltype %}colM{% endblock %}">
-        {% block pretitle %}{% endblock %}
-        {% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1>{{ title|escape }}</h1>{% endif %}</div>{% endblock %}
-        {% block content %}
-        {% block object-tools %}{% endblock %}
-        {{ content }}
-        {% endblock %}
-        {% block sidebar %}{% endblock %}
-        <br class="clear" />
-    </div>
-    <!-- END Content -->
+<!-- Content -->
+<div id="content" class="{% block coltype %}colM{% endblock %}">
+    {% block pretitle %}{% endblock %}
+    {% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1>{{ title|escape }}</h1>{% endif %}</div>{% endblock %}
+    {% block content %}
+    {% block object-tools %}{% endblock %}
+    {{ content }}
+    {% endblock %}
+    {% block sidebar %}{% endblock %}
+    <br class="clear" />
+</div>
+<!-- END Content -->
 
 {% block footer %}<div id="footer"></div>{% endblock %}
 {% comment %}

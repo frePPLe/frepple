@@ -347,7 +347,7 @@ function filter_show()
   counter = 0;
   element = $('filters');
   if (element != null)
-    $('filters').childElements().each(function(element) {
+    element.childElements().each(function(element) {
       // Find value
       if (element.type == 'text')
         value = element.value;
@@ -371,14 +371,14 @@ function filter_show()
       }
       // Create the field select list
       data += '<span id="filter' + counter + '"><select name="filterfield' + counter + '">';
-      $('fields').select('span').each(function(element) {
-        if (element.name == field) 
+      $('fields').select('span').each(function(element) {          
+        if (element.title == field) 
         {
-          data += '<option value="' + element.name + '" selected="yes">' + element.innerHTML + '</option>';
+          data += '<option value="' + element.title + '" selected="yes">' + element.innerHTML + '</option>';
           thefield = element;
         }
         else
-          data += '<option value="' + element.name + '">' + element.innerHTML + '</option>';
+          data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
       })
       data += '</select>';
       // Create the operator select list

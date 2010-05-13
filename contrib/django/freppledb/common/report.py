@@ -856,7 +856,7 @@ filteroperator = {
 def _create_filter(req, cls):
   # Initialisation
   result1 = [u'<form id="filters" action="%s">' % escape(req.path)]
-  result2 = [u'<div id="fields" style="display: none"><form>\n']
+  result2 = [u'<div id="fields" style="display: none"><form action="">\n']
   empty = True
     
   # Loop over the row fields - to make sure the filters are shown in the same order
@@ -867,7 +867,7 @@ def _create_filter(req, cls):
     try: 
       filter = attribs['filter']
       filterfield = filter.field or row
-      result2.append(u'<span name="%s" class="%s">%s</span>\n' % (filterfield, filter.__class__.__name__, filtertitle))
+      result2.append(u'<span title="%s" class="%s">%s</span>\n' % (filterfield, filter.__class__.__name__, filtertitle))
     except: 
       filter = None
       filterfield = ''

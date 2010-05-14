@@ -193,13 +193,13 @@ Section "Application" SecAppl
   StrCmp $0 "SQLite" 0 +3
     StrCpy $0 "sqlite3"
     Goto ok
-  StrCmp $0 "PostgreSQL 8.2" 0 +3
+  StrCmp $0 "PostgreSQL 8" 0 +3
     StrCpy $0 "postgresql_psycopg2"
     Goto ok
   StrCmp $0 "MySQL" 0 +3
     StrCpy $0 "mysql"
     Goto ok
-  StrCmp $0 "Oracle 10g" 0 +3
+  StrCmp $0 "Oracle 11g" 0 +3
     StrCpy $0 "oracle"
     Goto ok
   MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid database type $0!"

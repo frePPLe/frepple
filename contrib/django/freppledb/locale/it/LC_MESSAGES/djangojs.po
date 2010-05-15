@@ -23,99 +23,156 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-08 21:55+0200\n"
-"PO-Revision-Date: 2009-09-04 20:36+0100\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2010-05-15 22:59+0200\n"
+"PO-Revision-Date: 2010-05-15 23:26+0100\n"
+"Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/frepple.js:287
-msgid "Import data"
-msgstr "Import data"
+#: static/frepple.js:247
+msgid "contains (no case)"
+msgstr ""
 
-#: static/frepple.js:290
-msgid "Load data from a CSV-formatted text file in the database."
-msgstr "Load data from a CSV-formatted text file in the database."
+#: static/frepple.js:248
+msgid "contains"
+msgstr ""
 
-#: static/frepple.js:291
-msgid "The first row should contain the field names."
-msgstr "The first row should contain the field names."
+#: static/frepple.js:249
+msgid "starts (no case)"
+msgstr ""
 
-#: static/frepple.js:292
-msgid "Data file"
-msgstr "Data file"
+#: static/frepple.js:250
+msgid "starts"
+msgstr ""
 
-#: static/frepple.js:293
-msgid "Upload"
-msgstr "Upload"
+#: static/frepple.js:251
+msgid "ends (no case)"
+msgstr ""
 
-#: static/frepple.js:294 static/frepple.js.py:318 static/frepple.js.py:366
+#: static/frepple.js:252
+msgid "ends"
+msgstr ""
+
+#: static/frepple.js:253
+msgid "equals (no case)"
+msgstr ""
+
+#: static/frepple.js:254
+msgid "equals"
+msgstr ""
+
+#: static/frepple.js:255
+msgid "is null"
+msgstr ""
+
+#: static/frepple.js:315
+msgid "Filter data"
+msgstr ""
+
+#: static/frepple.js:367
+msgid "Filter"
+msgstr ""
+
+#: static/frepple.js:368
+#: static/frepple.js.py:536
+#: static/frepple.js.py:562
+#: static/frepple.js:612
 msgid "Cancel"
 msgstr "Cancel"
 
-#: static/frepple.js:312
+#: static/frepple.js:483
+#: static/frepple.js.py:488
+msgid "False"
+msgstr ""
+
+#: static/frepple.js:484
+#: static/frepple.js.py:489
+msgid "True"
+msgstr ""
+
+#: static/frepple.js:529
+msgid "Import data"
+msgstr "Import data"
+
+#: static/frepple.js:532
+msgid "Load data from a CSV-formatted text file in the database."
+msgstr "Load data from a CSV-formatted text file in the database."
+
+#: static/frepple.js:533
+msgid "The first row should contain the field names."
+msgstr "The first row should contain the field names."
+
+#: static/frepple.js:534
+msgid "Data file"
+msgstr "Data file"
+
+#: static/frepple.js:535
+msgid "Upload"
+msgstr "Upload"
+
+#: static/frepple.js:556
 msgid "Export data"
 msgstr "Export data"
 
-#: static/frepple.js:314
+#: static/frepple.js:558
 msgid "CSV style"
 msgstr "CSV style"
 
-#: static/frepple.js:315
+#: static/frepple.js:559
 msgid "Table"
 msgstr "Table"
 
-#: static/frepple.js:316
+#: static/frepple.js:560
 msgid "List"
 msgstr "List"
 
-#: static/frepple.js:317
+#: static/frepple.js:561
 msgid "Export"
 msgstr "Export"
 
-#: static/frepple.js:353
+#: static/frepple.js:599
 msgid "Time buckets"
 msgstr "Time buckets"
 
-#: static/frepple.js:355
+#: static/frepple.js:601
 msgid "Buckets"
 msgstr "Buckets"
 
-#: static/frepple.js:356
+#: static/frepple.js:602
 msgid "Standard"
 msgstr "Standard"
 
-#: static/frepple.js:357
+#: static/frepple.js:603
 msgid "Day"
 msgstr "Day"
 
-#: static/frepple.js:358
+#: static/frepple.js:604
 msgid "Week"
 msgstr "Week"
 
-#: static/frepple.js:359
+#: static/frepple.js:605
 msgid "Month"
 msgstr "Month"
 
-#: static/frepple.js:360
+#: static/frepple.js:606
 msgid "Quarter"
 msgstr "Quarter"
 
-#: static/frepple.js:361
+#: static/frepple.js:607
 msgid "Year"
 msgstr "Year"
 
-#: static/frepple.js:363
+#: static/frepple.js:609
 msgid "Start&nbsp;date"
 msgstr "Start&nbsp;date"
 
-#: static/frepple.js:364
+#: static/frepple.js:610
 msgid "End&nbsp;date"
 msgstr "Einddatum"
 
-#: static/frepple.js:365
+#: static/frepple.js:611
 msgid "OK"
 msgstr "OK"
 

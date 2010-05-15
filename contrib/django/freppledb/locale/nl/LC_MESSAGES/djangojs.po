@@ -23,99 +23,156 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-08 21:55+0200\n"
-"PO-Revision-Date: 2009-06-23 22:38+0100\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2010-05-15 22:59+0200\n"
+"PO-Revision-Date: 2010-05-15 23:22+0100\n"
+"Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/frepple.js:287
-msgid "Import data"
-msgstr "Importeer gegevens"
+#: static/frepple.js:247
+msgid "contains (no case)"
+msgstr "bevat (no case)"
 
-#: static/frepple.js:290
-msgid "Load data from a CSV-formatted text file in the database."
-msgstr "Laad een bestand in CSV-formaat in de database."
+#: static/frepple.js:248
+msgid "contains"
+msgstr "bevat"
 
-#: static/frepple.js:291
-msgid "The first row should contain the field names."
-msgstr "De eerste rij moet de veldnamen bevatten."
+#: static/frepple.js:249
+msgid "starts (no case)"
+msgstr "begint (no case)"
 
-#: static/frepple.js:292
-msgid "Data file"
-msgstr "Gegevensbestand"
+#: static/frepple.js:250
+msgid "starts"
+msgstr "start"
 
-#: static/frepple.js:293
-msgid "Upload"
-msgstr "Laad"
+#: static/frepple.js:251
+msgid "ends (no case)"
+msgstr "eindigt (no case)"
 
-#: static/frepple.js:294 static/frepple.js.py:318 static/frepple.js.py:366
+#: static/frepple.js:252
+msgid "ends"
+msgstr "eindigt"
+
+#: static/frepple.js:253
+msgid "equals (no case)"
+msgstr "is (no case)"
+
+#: static/frepple.js:254
+msgid "equals"
+msgstr "is"
+
+#: static/frepple.js:255
+msgid "is null"
+msgstr "is nul"
+
+#: static/frepple.js:315
+msgid "Filter data"
+msgstr "Filter gegevens"
+
+#: static/frepple.js:367
+msgid "Filter"
+msgstr "Filter"
+
+#: static/frepple.js:368
+#: static/frepple.js.py:536
+#: static/frepple.js.py:562
+#: static/frepple.js:612
 msgid "Cancel"
 msgstr "Annuleer"
 
-#: static/frepple.js:312
+#: static/frepple.js:483
+#: static/frepple.js.py:488
+msgid "False"
+msgstr "Onwaar"
+
+#: static/frepple.js:484
+#: static/frepple.js.py:489
+msgid "True"
+msgstr "Waar"
+
+#: static/frepple.js:529
+msgid "Import data"
+msgstr "Importeer gegevens"
+
+#: static/frepple.js:532
+msgid "Load data from a CSV-formatted text file in the database."
+msgstr "Laad een bestand in CSV-formaat in de database."
+
+#: static/frepple.js:533
+msgid "The first row should contain the field names."
+msgstr "De eerste rij moet de veldnamen bevatten."
+
+#: static/frepple.js:534
+msgid "Data file"
+msgstr "Gegevensbestand"
+
+#: static/frepple.js:535
+msgid "Upload"
+msgstr "Laad"
+
+#: static/frepple.js:556
 msgid "Export data"
 msgstr "Exporteer gegevens"
 
-#: static/frepple.js:314
+#: static/frepple.js:558
 msgid "CSV style"
 msgstr "CSV stijl"
 
-#: static/frepple.js:315
+#: static/frepple.js:559
 msgid "Table"
 msgstr "Tabel"
 
-#: static/frepple.js:316
+#: static/frepple.js:560
 msgid "List"
 msgstr "Lijst"
 
-#: static/frepple.js:317
+#: static/frepple.js:561
 msgid "Export"
 msgstr "Exporteer "
 
-#: static/frepple.js:353
+#: static/frepple.js:599
 msgid "Time buckets"
 msgstr "Tijdsindeling"
 
-#: static/frepple.js:355
+#: static/frepple.js:601
 msgid "Buckets"
 msgstr "Tijdsindeling"
 
-#: static/frepple.js:356
+#: static/frepple.js:602
 msgid "Standard"
 msgstr "Standaard"
 
-#: static/frepple.js:357
+#: static/frepple.js:603
 msgid "Day"
 msgstr "Dag"
 
-#: static/frepple.js:358
+#: static/frepple.js:604
 msgid "Week"
 msgstr "Week"
 
-#: static/frepple.js:359
+#: static/frepple.js:605
 msgid "Month"
 msgstr "Maand"
 
-#: static/frepple.js:360
+#: static/frepple.js:606
 msgid "Quarter"
 msgstr "Kwartaal"
 
-#: static/frepple.js:361
+#: static/frepple.js:607
 msgid "Year"
 msgstr "Jaar"
 
-#: static/frepple.js:363
+#: static/frepple.js:609
 msgid "Start&nbsp;date"
 msgstr "Startdatum"
 
-#: static/frepple.js:364
+#: static/frepple.js:610
 msgid "End&nbsp;date"
 msgstr "Einddatum"
 
-#: static/frepple.js:365
+#: static/frepple.js:611
 msgid "OK"
 msgstr "OK"
 

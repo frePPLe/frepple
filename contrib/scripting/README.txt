@@ -1,13 +1,14 @@
 
-THIS CODE IS NOT ACTIVELY BEING DEVELOPED OR EXTENDED ANY MORE. FREPPLE HAS
-CHOSEN PYTHON AS THE PREFERRED SCRIPTING LANGUAGE, AND AN EXTENSIVE AND RICH
-INTERFACE IS AVAILABLE WITH IT.
+DEPRECATION WARNING!!!
+THIS CODE IS LIKELY TO BE REMOVED IN A FUTURE RELEASE.
 
-THIS CODE IS LIKELY TO BE REMOVED FROM THE PACKAGE IN A FUTURE RELEASE.
+THIS CODE IS NOT ACTIVELY BEING DEVELOPED OR EXTENDED ANY MORE. 
+FREPPLE HAS CHOSEN PYTHON AS THE PREFERRED SCRIPTING LANGUAGE, AND AN EXTENSIVE 
+AND RICH API IS AVAILABLE WITH IT.
 
 This is a script for generating access to the frePPLe library from a number of
 scripting languages, such as Perl, Python, Tcl/Tk, Ruby, etc
-You'll the SWIG (Simplified Wrapper Interface Generator) tool for using this.
+You'll need the SWIG (Simplified Wrapper Interface Generator) tool for using this.
 See http://swig.sourceforge.net/ for more information.
 
 Out of the many languages supported by SWIG, I am working with the Perl,

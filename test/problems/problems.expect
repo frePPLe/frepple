@@ -31,7 +31,7 @@ Problems after deleting delivery plan:
 Problems after moving build early:
    2009-01-02T00:00:00 / 2030-12-31T00:00:00 - Buffer 'end item' has material excess of 10
    2009-01-01T00:00:00 / 2009-01-01T00:00:01 - Resource 'Resource' has capacity shortage of 1
-   2009-01-01T00:00:00 / 2009-01-01T00:00:01 - Job '2' planned in the past
+   2009-01-01T00:00:00 / 2009-01-01T00:00:01 - Operation 'make end item' planned in the past
    2009-01-04T09:00:00 / 2009-01-04T09:00:00 - Demand 'order 1' is not planned
 
 Problems after restoring original build plan:

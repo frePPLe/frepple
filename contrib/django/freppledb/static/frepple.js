@@ -59,7 +59,7 @@ var ContextMenu = {
 		'forecast': 'forecastcontext',
 		'customer': 'customercontext',
 		'calendar': 'calendarcontext',
-		'setupmatrix': 'setupmatrixcontext',
+		'setupmatrix': 'setupmatrixcontext'
 	},
 
 	// private method. Get which context menu to show
@@ -293,7 +293,7 @@ var filter = {
     'lt': '&lt;',
     'gt': '&gt;',
     'lte': '&lt;=',
-    'gte': '&gt;=',
+    'gte': '&gt;='
   },
   
   // Operator list for text fields
@@ -316,10 +316,10 @@ var filter = {
     $('popup').select('span').each(function(element) {
         if (element.id.indexOf('filter') == 0)
         {
-          indx = element.id.substring(6);
-          tmp = element.select('[name="filterfield'+indx+'"]')[0];
+          index = element.id.substring(6);
+          tmp = element.select('[name="filterfield' + index + '"]')[0];
           field = tmp.options[tmp.selectedIndex].value;
-          tmp = element.select('[name="filterval'+indx+'"]')[0];
+          tmp = element.select('[name="filterval' + index + '"]')[0];
           if (tmp.type == 'select-one')
           {
             value = tmp.options[tmp.selectedIndex].value;
@@ -327,9 +327,9 @@ var filter = {
           }
           else
           {
-            tmp = element.select('[name="filteroper'+indx+'"]')[0];
+            tmp = element.select('[name="filteroper' + index + '"]')[0];
             oper = tmp.options[tmp.selectedIndex].value;
-            value = element.select('[name="filterval'+indx+'"]')[0].value;
+            value = element.select('[name="filterval' + index + '"]')[0].value;
             if (value.length > 0)
             { 
               if (oper.length > 0)
@@ -391,7 +391,9 @@ var filter = {
         $('fields').select('span').each(function(element) {          
           if (element.title == field) thefield = element;
         })
-        data += '<span id="filter' + counter + '" class="' + thefield.className + '"><select name="filterfield' + counter + '" onchange="filter.change_field(this)">';
+        data += '<span id="filter' + counter + '" class="' + thefield.className + '">';
+        data += '<a href="javascript:filter.remove(' +  counter + ');"><img style="float:right;" src="/media/img/admin/icon_deletelink.gif"/></a>';
+        data += '<select name="filterfield' + counter + '" onchange="filter.change_field(this)">';
         $('fields').select('span').each(function(element) {          
           if (element.title == field) 
             data += '<option value="' + element.title + '" selected="yes">' + element.innerHTML + '</option>';
@@ -404,15 +406,17 @@ var filter = {
         data += filter._build_row(thefield, oper, value, counter);
         
         // Append an icon
-        data += '<a href="javascript:filter.remove(' +  counter + ');"><img style="float:right;" src="/media/img/admin/icon_deletelink.gif"/></a><br/></span>';    
+        data += '<br/></span>';    
       });
     
     // Display form field for adding a new filter
-    data += '<span id="newfilter"><select onchange="filter.change_field(this);"><option value=""></option>';
+    data += '<span id="newfilter">';
+    data += '<a href="javascript:filter.add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a>';
+    data += '<select onchange="filter.change_field(this);"><option value=""></option>';
     $('fields').select('span').each(function(element) {
       data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
     })
-    data += '</select><a href="javascript:filter.add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a><br/></span>';
+    data += '</select><br/></span>';
     
     // Set form footer
     data += '<br/><input type="submit" value="' + gettext("Filter") + '"/>&nbsp;&nbsp;';
@@ -466,12 +470,14 @@ var filter = {
     else
     {
       // Changing the field of an existing filter
-      if (thefield.className == span.className)
-        // Same field type - leave operator and value field unchanged
-        return;
-      alert("NOT IMPLEMENTED YET");
-    //      change operator
-    //      erase
+      // Same field type - leave operator and value field unchanged
+      if (thefield.className == span.className) return;        
+      index = span.id.substring(6);
+      // Delete fields of previous type
+      span.removeChild(span.select('[name="filteroper' + index + '"]')[0]);
+      span.removeChild(span.select('[name="filterval' + index + '"]')[0]);
+      // Inser fields of the new type
+      tmp.insert({after: filter._build_row(thefield, '', '', index)});
     }
   },
   
@@ -500,11 +506,11 @@ var filter = {
     x.up('a').href = 'javascript:filter.remove(' + index + ');';
   
     // Append a new filter
-    data = '<span id="newfilter"><select onchange="filter.change_field(this);"><option value=""></option>';
+    data = '<span id="newfilter"><a href="javascript:filter.add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a><select onchange="filter.change_field(this);"><option value=""></option>';
     $('fields').select('span').each(function(element) {
       data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
     });
-    data += '</select><a href="javascript:filter.add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a><br/></span>';
+    data += '</select><br/></span>';
     x.up('span').insert({after: data});
   },
   
@@ -541,7 +547,7 @@ var filter = {
     else if (thefield.hasClassName('FilterBool'))
     {
       // Filter for choice fields
-      result += 'equals <select name="filterval' + counter + '">';
+      result += '<span name="filteroper' + counter + '">equals </span><select name="filterval' + counter + '">';
       if (value == '0') 
       {
         result += '<option value="0" selected="yes">' + gettext('False') + '</option>';
@@ -557,7 +563,7 @@ var filter = {
     else if (thefield.hasClassName('FilterChoice'))
     {
       // Filter for choice fields
-      result += 'equals <select name="filteroper' + counter + '">';
+      result += '<span name="filteroper' + counter + '">equals </span><select name="filterval' + counter + '">';
       filter.numberoperators.each(function(curoper) {
         if (oper == curoper)
            result += '<option value="' + curoper + '" selected="yes">' + filter.description[curoper] + '</option>';
@@ -581,7 +587,7 @@ var filter = {
       result += '<input type="text" name="filterval' + counter + '" value="' + value + '" size="10"/>\n';
     } 
     return result;
-  },
+  }
 
 }
 

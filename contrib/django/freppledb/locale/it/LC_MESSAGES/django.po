@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: 0.7.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-04-08 21:55+0200\n"
-"PO-Revision-Date: 2010-03-02 18:52+0100\n"
+"PO-Revision-Date: 2010-05-19 14:56+0100\n"
 "Last-Translator: Antonio Mascolo <tonio@purpless.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -123,7 +123,7 @@ msgstr "punto e virgola \";\""
 
 #: common/models.py:52
 msgid "Detect automatically"
-msgstr ""
+msgstr "Individua autoamaticamente"
 
 #: common/models.py:53
 #: execute/models.py:33
@@ -164,7 +164,7 @@ msgstr "delimitatore CSV"
 
 #: common/models.py:60
 msgid "language"
-msgstr ""
+msgstr "lingua"
 
 #: common/models.py:62
 #: execute/models.py:30
@@ -234,43 +234,43 @@ msgstr "campo dati"
 
 #: common/report.py:839
 msgid "contains (no case)"
-msgstr ""
+msgstr "contiene (no case)"
 
 #: common/report.py:840
 msgid "contains"
-msgstr ""
+msgstr "contiene"
 
 #: common/report.py:841
 msgid "starts (no case)"
-msgstr ""
+msgstr "inizia (no case)"
 
 #: common/report.py:842
 msgid "starts"
-msgstr ""
+msgstr "inizia"
 
 #: common/report.py:843
 msgid "ends (no case)"
-msgstr ""
+msgstr "finisce (no case)"
 
 #: common/report.py:844
 msgid "ends"
-msgstr ""
+msgstr "finisce"
 
 #: common/report.py:845
 msgid "equals (no case)"
-msgstr ""
+msgstr "uguale (no case)"
 
 #: common/report.py:846
 msgid "equals"
-msgstr ""
+msgstr "uguale"
 
 #: common/report.py:847
 msgid "is null"
-msgstr ""
+msgstr "e' nullo"
 
 #: common/report.py:848
 msgid "="
-msgstr ""
+msgstr "="
 
 #: common/report.py:958
 msgid "False"
@@ -316,11 +316,11 @@ msgstr "Eccezione durante l'upload: %(message)s"
 
 #: common/views.py:39
 msgid "Language"
-msgstr ""
+msgstr "Lingua"
 
 #: common/views.py:42
 msgid "Language of the user interface"
-msgstr ""
+msgstr "Lingua dell'interfaccia utente"
 
 #: common/views.py:47
 msgid "Delimiter used when exporting CSV files"
@@ -358,11 +358,11 @@ msgstr "Data di fine per il filtro sui dati contenuti nel rapporto"
 
 #: common/views.py:81
 msgid "Successfully updated preferences"
-msgstr ""
+msgstr "Preferenze aggiornate con successo"
 
 #: common/views.py:83
 msgid "Failure updating preferences"
-msgstr ""
+msgstr "Aggiornamento preferenze fallito"
 
 #: common/views.py:94
 msgid "Edit my preferences"
@@ -501,7 +501,7 @@ msgstr "Esegui"
 #: execute/views.py:199
 #: input/views.py:53
 msgid "Only POST method allowed"
-msgstr ""
+msgstr "Solo metodo POST permesso"
 
 #: execute/views.py:75
 msgid "Erased the database"
@@ -510,15 +510,15 @@ msgstr "Avvio cancellazione banca dati"
 #: execute/views.py:77
 #, python-format
 msgid "Failure during database erasing: %(msg)s"
-msgstr ""
+msgstr "Fallimento durante la cancellazione del database: %(msg)s"
 
 #: execute/views.py:121
 msgid "Invalid input field"
-msgstr ""
+msgstr "Campo di input non valido"
 
 #: execute/views.py:135
 msgid "Created sample model in the database"
-msgstr ""
+msgstr "Modello di esempio creato nel databese"
 
 #: execute/views.py:138
 #, python-format
@@ -527,7 +527,7 @@ msgstr "Errore creazione modello di esempio: %(msg)s"
 
 #: execute/views.py:181
 msgid "Successfully created a plan"
-msgstr ""
+msgstr "Piano creato con successo"
 
 #: execute/views.py:184
 #, python-format
@@ -536,16 +536,16 @@ msgstr "Errore creazione modello di esempio: %(msg)s"
 
 #: execute/views.py:209
 msgid "Missing dataset name"
-msgstr ""
+msgstr "Nome del dataset mancante"
 
 #: execute/views.py:220
 msgid "Loaded dataset"
-msgstr ""
+msgstr "Dataset caricato"
 
 #: execute/views.py:225
 #, python-format
 msgid "Error while loading dataset: %(msg)s"
-msgstr ""
+msgstr "Errore nel caricamento del dataset: %(msg)s"
 
 #: execute/views.py:236
 msgid "Command log"
@@ -602,7 +602,7 @@ msgstr "Errore nella creazione del piano frePPLe"
 
 #: input/admin.py:46
 msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-msgstr ""
+msgstr "Data non valida:  si attende YYYY-MM-DD HH:MM:SS"
 
 #: input/admin.py:123
 #: input/admin.py:145
@@ -1633,7 +1633,7 @@ msgstr "date"
 #: input/views.py:111
 #, python-format
 msgid "Unknown action type '%(msg)s'"
-msgstr ""
+msgstr "Tipo di azione sconosciuto '%(msg)s'"
 
 #: input/views.py:255
 #, python-format
@@ -1647,7 +1647,7 @@ msgstr "Rapporto sul flusso di fornitura per %(type)s %(entity)s"
 
 #: input/views.py:280
 msgid "Parameter List"
-msgstr ""
+msgstr "Lista dei Parametri"
 
 #: input/views.py:314
 msgid "Buffer List"
@@ -1753,11 +1753,11 @@ msgstr "problemi"
 
 #: output/models.py:86
 msgid "constraint"
-msgstr ""
+msgstr "vincolo"
 
 #: output/models.py:87
 msgid "constraints"
-msgstr ""
+msgstr "vincoli"
 
 #: output/models.py:106
 msgid "loadplan"
@@ -1952,7 +1952,7 @@ msgstr "prima del corrente"
 
 #: output/views/constraint.py:58
 msgid "Constraint Report"
-msgstr ""
+msgstr "Rapporto sui Vincoli"
 
 #: output/views/demand.py:38
 #: templates/admin/base_site_nav.html:34
@@ -2044,7 +2044,7 @@ msgstr "Rapporto sui dettagli delle operazioni"
 
 #: output/views/pegging.py:39
 msgid "Demand plan"
-msgstr ""
+msgstr "Piano della Domanda"
 
 #: output/views/pegging.py:76
 #, python-format
@@ -2054,7 +2054,7 @@ msgstr "% utilizzato"
 #: output/views/pegging.py:231
 #: output/views/pegging.py:304
 msgid "Pegging report"
-msgstr ""
+msgstr "Rapporto sul Pegging"
 
 #: output/views/problem.py:50
 msgid "Problem Report"
@@ -2133,13 +2133,13 @@ msgstr "Parametri"
 #: templates/operationcontext.html:7
 #: templates/resourcecontext.html:7
 msgid "Plan detail"
-msgstr ""
+msgstr "Dettaglio del piano"
 
 #: templates/buffercontext.html:8
 #: templates/operationcontext.html:8
 #: templates/resourcecontext.html:8
 msgid "Constrained demand"
-msgstr ""
+msgstr "Domanda vincolata"
 
 #: templates/calendarcontext.html:3
 msgid "Calendar"
@@ -2155,7 +2155,7 @@ msgstr "Ordini"
 
 #: templates/demandcontext.html:4
 msgid "Why short or late?"
-msgstr ""
+msgstr "Perche' parziale ed in ritardo?"
 
 #: templates/forecastcontext.html:3
 msgid "Forecast"
@@ -2192,7 +2192,7 @@ msgstr ""
 #: templates/admin/base_site_list.html:13
 #: templates/admin/base_site_table.html:15
 msgid "Filter"
-msgstr ""
+msgstr "Filtro"
 
 # Translation included with django
 #: templates/admin/base_site_list.html:14
@@ -2245,7 +2245,7 @@ msgstr "Rapporto sui problemi"
 
 #: templates/admin/base_site_nav.html:41
 msgid "Constraint report"
-msgstr ""
+msgstr "Rapporto sui vincoli"
 
 #: templates/admin/base_site_nav.html:48
 #: templates/admin/index.html:58
@@ -2466,7 +2466,7 @@ msgstr "Ci scusiamo ma non avete nessun permesso per lanciare ..."
 #: templates/output/buffer.html:9
 #: templates/output/resource.html:34
 msgid "Detail"
-msgstr ""
+msgstr "Dettaglio"
 
 #: templates/output/buffer.html:17
 #: templates/output/demand.html:11

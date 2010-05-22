@@ -31,7 +31,6 @@ The common functionality handles:
   - generic report framework
   - database utility functions, mainly to handle SQL dates in a portable way
   - date and time bucket definition
-  - extra template tags ifgreaterthan, iflessthan, ifgreaterthanorequal, iflessthanorequal
   - middelware allowing users to set their preferred language
 '''
 

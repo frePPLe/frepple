@@ -24,13 +24,14 @@ from datetime import date, datetime
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse, HttpResponseForbidden, Http404
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, Http404
 from django.views.decorators.csrf import csrf_protect
 from django.core import serializers
 from django.utils.simplejson.decoder import JSONDecoder
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import iri_to_uri
 
 from input.models import *
 from common.report import *
@@ -271,6 +272,24 @@ class pathreport:
        'downstream': False,
        }))
 
+
+@staff_member_required
+def location_calendar(request, location):
+  # Check to find a location availability calendar
+  loc = Location.objects.get(pk=location)
+  if loc: 
+    cal = loc.available
+  if cal: 
+    # Go to the calendar
+    return HttpResponseRedirect('/admin/input/calendar/%s/' % iri_to_uri(cal.name) )
+  # Generate a message
+  try: 
+    url = request.META.get('HTTP_REFERER')
+    messages.add_message(request, messages.ERROR, 
+      force_unicode(_('No availability calendar found')))
+    return HttpResponseRedirect(url)
+  except: raise Http404
+    
 
 class ParameterList(ListReport):
   '''

@@ -61,6 +61,7 @@ urlpatterns = patterns('',
     {'report': input.views.ParameterList,}),
 
   # Special reports
+  (r'^admin/input/calendar/location/([^/]+)/$', 'input.views.location_calendar'),
   (r'^supplypath/([^/]+)/([^/]+)/$', input.views.pathreport.viewupstream),
   (r'^whereused/([^/]+)/([^/]+)/$', input.views.pathreport.viewdownstream),
   (r'^edit/$', input.views.uploadjson.post),

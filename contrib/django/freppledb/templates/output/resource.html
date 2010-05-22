@@ -68,7 +68,7 @@
 {{j.unavailable|floatformat:1}}<br/>
 {{j.setup|floatformat:1}}<br/>
 {% if j.load %}<a href="?theresource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}" tabindex="-1" class="detail">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
-<span {% ifgreaterthan j.utilization 95 %}class="highutil"{% endifgreaterthan %}>{{j.utilization|floatformat:0}}</span></td>
+<span {% if j.utilization > 95 %}class="highutil"{% endif %}>{{j.utilization|floatformat:0}}</span></td>
 {% if forloop.last %}</form></tr>{% endif %}{% endfor %}
 {% else %}
 {% for j in objectlist2 %}{% ifchanged j.resource %}{% if not forloop.first %}</tr>{% endif %}<tr class="{% cycle row1,row2 %}">{% endifchanged %}

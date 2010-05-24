@@ -98,6 +98,7 @@ class Command(BaseCommand):
       self.import_products(sock, cursor)
       self.import_locations(sock, cursor)
       self.import_salesorders(sock, cursor)
+      self.import_workcenters(sock, cursor)
             
     except Exception, e:
       raise CommandError(e)    
@@ -114,54 +115,58 @@ class Command(BaseCommand):
   #        - 'OpenERP' -> subcategory
   @transaction.commit_manually
   def import_customers(self, sock, cursor):  
-    starttime = time()
-    cursor.execute("SELECT name FROM customer")
-    frepple_keys = set([ i[0] for i in cursor.fetchall()])
-    ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
-      'res.partner', 'search', 
-      ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
-    fields = ['name', 'active', 'customer', 'ref']
-    if self.verbosity > 0:
-      print "Importing customers..."
-    insert = []
-    update = []
-    delete = []
-    for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'res.partner', 'read', ids, fields):
-      name = u'%d %s' % (i['id'],i['name'])
-      if i['active'] and i['customer']:
-        if name in frepple_keys:
-          update.append(i)
-        else:
-          insert.append(i)
-      elif name in frepple_keys:
-        delete.append( (name,) )
-    cursor.executemany(
-      "insert into customer \
-        (name,description,subcategory,lastmodified) \
-        values (%%s,%%s,'OpenERP','%s')" % self.date,
-      [(
-         u'%d %s' % (i['id'],i['name']),
-         i['ref']
-       ) for i in insert
-      ])
-    cursor.executemany(
-      "update customer \
-        set description=%%s, subcategory='OpenERP',lastmodified='%s' \
-        where name=%%s" % self.date,
-      [(
-         i['ref'],
-         u'%d %s' % (i['id'],i['name'])
-       ) for i in update
-      ])
-    cursor.executemany(
-      "delete from customer where name=%s",
-      delete)
-    transaction.commit()
-    if self.verbosity > 0:
-      print "Inserted %d new customers" % len(insert)
-      print "Updated %d existing customers" % len(update)
-      print "Deleted %d customers" % len(delete)
-      print "Imported customers in %.2f seconds" % (time() - starttime)
+    try:
+      starttime = time()
+      cursor.execute("SELECT name FROM customer")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
+        'res.partner', 'search', 
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
+      fields = ['name', 'active', 'customer', 'ref']
+      if self.verbosity > 0:
+        print "Importing customers..."
+      insert = []
+      update = []
+      delete = []
+      for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'res.partner', 'read', ids, fields):
+        name = u'%d %s' % (i['id'],i['name'])
+        if i['active'] and i['customer']:
+          if name in frepple_keys:
+            update.append(i)
+          else:
+            insert.append(i)
+        elif name in frepple_keys:
+          delete.append( (name,) )
+      cursor.executemany(
+        "insert into customer \
+          (name,description,subcategory,lastmodified) \
+          values (%%s,%%s,'OpenERP','%s')" % self.date,
+        [(
+           u'%d %s' % (i['id'],i['name']),
+           i['ref']
+         ) for i in insert
+        ])
+      cursor.executemany(
+        "update customer \
+          set description=%%s, subcategory='OpenERP',lastmodified='%s' \
+          where name=%%s" % self.date,
+        [(
+           i['ref'],
+           u'%d %s' % (i['id'],i['name'])
+         ) for i in update
+        ])
+      cursor.executemany(
+        "delete from customer where name=%s",
+        delete)
+      transaction.commit()
+      if self.verbosity > 0:
+        print "Inserted %d new customers" % len(insert)
+        print "Updated %d existing customers" % len(update)
+        print "Deleted %d customers" % len(delete)
+        print "Imported customers in %.2f seconds" % (time() - starttime)
+    except Exception, e:
+      transaction.rollback()
+      print "Error importing customers: %s" % e
       
       
   # Importing products
@@ -174,54 +179,58 @@ class Command(BaseCommand):
   #        - 'OpenERP' -> subcategory
   @transaction.commit_manually
   def import_products(self, sock, cursor):  
-    starttime = time()
-    cursor.execute("SELECT name FROM item")
-    frepple_keys = set([ i[0] for i in cursor.fetchall()])
-    ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
-      'product.product', 'search', 
-      ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
-    fields = ['name', 'code', 'active']
-    if self.verbosity > 0:
-      print "Importing products..."
-    insert = []
-    update = []
-    delete = []
-    for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'product.product', 'read', ids, fields):
-      name = i['code'] and u'%d [%s] %s' % (i['id'], i['code'], i['name']) or u'%d %s' % (i['id'], i['name'])
-      if i['active']:
-        if name in frepple_keys:
-          update.append(i)
-        else:
-          insert.append(i)
-      elif name in frepple_keys:
-        delete.append( (name,) )
-    cursor.executemany(
-      "insert into item \
-        (name,description,subcategory,lastmodified) \
-        values (%%s,%%s,'OpenERP','%s')" % self.date,
-      [(
-         i['code'] and u'%d [%s] %s' % (i['id'], i['code'], i['name']) or u'%d %s' % (i['id'], i['name']),
-         i['code'] or None
-       ) for i in insert
-      ])
-    cursor.executemany(
-      "update item \
-        set description=%%s, subcategory='OpenERP', lastmodified='%s' \
-        where name=%%s" % self.date,
-      [(
-         i['code'] or None,
-         i['code'] and u'%d [%s] %s' % (i['id'], i['code'], i['name']) or u'%d %s' % (i['id'], i['name'])
-       ) for i in update
-      ])
-    cursor.executemany(
-      "delete from item where name=%s",
-      delete)
-    transaction.commit()
-    if self.verbosity > 0:
-      print "Inserted %d new products" % len(insert)
-      print "Updated %d existing products" % len(update)
-      print "Deleted %d products" % len(delete)
-      print "Imported products in %.2f seconds" % (time() - starttime)
+    try:
+      starttime = time()
+      cursor.execute("SELECT name FROM item")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
+        'product.product', 'search', 
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
+      fields = ['name', 'code', 'active']
+      if self.verbosity > 0:
+        print "Importing products..."
+      insert = []
+      update = []
+      delete = []
+      for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'product.product', 'read', ids, fields):
+        name = i['code'] and u'%d [%s] %s' % (i['id'], i['code'], i['name']) or u'%d %s' % (i['id'], i['name'])
+        if i['active']:
+          if name in frepple_keys:
+            update.append(i)
+          else:
+            insert.append(i)
+        elif name in frepple_keys:
+          delete.append( (name,) )
+      cursor.executemany(
+        "insert into item \
+          (name,description,subcategory,lastmodified) \
+          values (%%s,%%s,'OpenERP','%s')" % self.date,
+        [(
+           i['code'] and u'%d [%s] %s' % (i['id'], i['code'], i['name']) or u'%d %s' % (i['id'], i['name']),
+           i['code'] or None
+         ) for i in insert
+        ])
+      cursor.executemany(
+        "update item \
+          set description=%%s, subcategory='OpenERP', lastmodified='%s' \
+          where name=%%s" % self.date,
+        [(
+           i['code'] or None,
+           i['code'] and u'%d [%s] %s' % (i['id'], i['code'], i['name']) or u'%d %s' % (i['id'], i['name'])
+         ) for i in update
+        ])
+      cursor.executemany(
+        "delete from item where name=%s",
+        delete)
+      transaction.commit()
+      if self.verbosity > 0:
+        print "Inserted %d new products" % len(insert)
+        print "Updated %d existing products" % len(update)
+        print "Deleted %d products" % len(delete)
+        print "Imported products in %.2f seconds" % (time() - starttime)
+    except Exception, e:
+      transaction.rollback()
+      print "Error importing products: %s" % e
 
     
   # Importing locations
@@ -234,53 +243,57 @@ class Command(BaseCommand):
   #        - 'OpenERP' -> subcategory
   @transaction.commit_manually
   def import_locations(self, sock, cursor):  
-    starttime = time()
-    cursor.execute("SELECT name FROM location")
-    frepple_keys = set([ i[0] for i in cursor.fetchall()])
-    ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
-      'stock.location', 'search', 
-      ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
-    fields = ['name', 'usage', 'active']
-    if self.verbosity > 0:
-      print "Importing locations..."
-    insert = []
-    update = []
-    delete = []
-    for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'stock.location', 'read', ids, fields):
-      name = u'%d %s' % (i['id'],i['name'])
-      if i['active'] and i['usage'] == 'internal':
-        if name in frepple_keys:
-          update.append(i)
-        else:
-          insert.append(i)
-      elif name in frepple_keys:
-        delete.append( (name,) )
-    cursor.executemany(
-      "insert into location \
-        (name,subcategory,lastmodified) \
-        values (%%s,'OpenERP','%s')" % self.date,
-      [(
-         u'%d %s' % (i['id'],i['name']),
-       ) for i in insert
-      ])
-    cursor.executemany(
-      "update location \
-        set subcategory='OpenERP', lastmodified='%s' \
-        where name=%%s" % self.date,
-      [(
-         u'%d %s' % (i['id'],i['name']),
-       ) for i in update
-      ])
-    cursor.executemany(
-      "delete from location where name=%s",
-      delete)
-    transaction.commit()
-    if self.verbosity > 0:
-      print "Inserted %d new locations" % len(insert)
-      print "Updated %d existing locations" % len(update)
-      print "Deleted %d locations" % len(delete)
-      print "Imported locations in %.2f seconds" % (time() - starttime)
-
+    try:
+      starttime = time()
+      cursor.execute("SELECT name FROM location")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
+        'stock.location', 'search', 
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
+      fields = ['name', 'usage', 'active']
+      if self.verbosity > 0:
+        print "Importing locations..."
+      insert = []
+      update = []
+      delete = []
+      for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'stock.location', 'read', ids, fields):
+        name = u'%d %s' % (i['id'],i['name'])
+        if i['active'] and i['usage'] == 'internal':
+          if name in frepple_keys:
+            update.append(i)
+          else:
+            insert.append(i)
+        elif name in frepple_keys:
+          delete.append( (name,) )
+      cursor.executemany(
+        "insert into location \
+          (name,subcategory,lastmodified) \
+          values (%%s,'OpenERP','%s')" % self.date,
+        [(
+           u'%d %s' % (i['id'],i['name']),
+         ) for i in insert
+        ])
+      cursor.executemany(
+        "update location \
+          set subcategory='OpenERP', lastmodified='%s' \
+          where name=%%s" % self.date,
+        [(
+           u'%d %s' % (i['id'],i['name']),
+         ) for i in update
+        ])
+      cursor.executemany(
+        "delete from location where name=%s",
+        delete)
+      transaction.commit()
+      if self.verbosity > 0:
+        print "Inserted %d new locations" % len(insert)
+        print "Updated %d existing locations" % len(update)
+        print "Deleted %d locations" % len(delete)
+        print "Imported locations in %.2f seconds" % (time() - starttime)
+    except Exception, e:
+      transaction.rollback()
+      print "Error importing locations: %s" % e
+    
     
   # Importing sales orders
   #   - extracting recently changed sales.order and sales.order.line objects
@@ -296,62 +309,130 @@ class Command(BaseCommand):
   #        - 1 -> priority
   @transaction.commit_manually
   def import_salesorders(self, sock, cursor):  
-    starttime = time()
-    cursor.execute("SELECT name FROM demand")
-    frepple_keys = set([ i[0] for i in cursor.fetchall()])
-    ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
-      'sale.order.line', 'search', 
-      ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
-    fields = ['sequence', 'state', 'type', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
-    fields2 = ['partner_id', 'date_order', ]
-    if self.verbosity > 0:
-      print "Importing sales orders..."
-    insert = []
-    update = []
-    delete = []
-    for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'sale.order.line', 'read', ids, fields):
-      name = u'%d %s %d' % (i['id'], i['order_id'][1], i['sequence'])
-      if i['state'] == 'confirmed':
-        j = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'sale.order', 'read', [i['order_id'][0],], fields2)[0]
-        if name in frepple_keys:
-          update.append( (
-            u'%s %s' % (i['product_id'][0], i['product_id'][1]),
-            u'%s %s' % (j['partner_id'][0], j['partner_id'][1]),
-            i['product_uom_qty'],
-            j['date_order'],
-            u'%d %s %d' % (i['id'], i['order_id'][1], i['sequence']),
-            ) )
-        else:
-          insert.append( (
-            u'%d %s %d' % (i['id'], i['order_id'][1], i['sequence']),
-            u'%d %s' % (i['product_id'][0], i['product_id'][1]),
-            u'%d %s' % (j['partner_id'][0], j['partner_id'][1]),
-            i['product_uom_qty'],
-            j['date_order'],
-            ) )      
-      elif name in frepple_keys:
-        delete.append( (name,) )
-    cursor.executemany(
-      "insert into demand \
-        (name,item_id,customer_id,quantity,due,priority,subcategory,lastmodified) \
-        values (%%s,%%s,%%s,%%s,%%s,1,'OpenERP','%s')" % self.date,
-      insert)
-    cursor.executemany(
-      "update demand \
-        set item_id=%%s, customer_id=%%s, quantity=%%s, due=%%s, priority=1, subcategory='OpenERP', lastmodified='%s' \
-        where name=%%s" % self.date,
-      update)
-    cursor.executemany(
-      "delete from demand where name=%s",
-      delete)
-    transaction.commit()
-    if self.verbosity > 0:
-      print "Inserted %d new sales orders" % len(insert)
-      print "Updated %d existing sales orders" % len(update)
-      print "Deleted %d sales orders" % len(delete)
-      print "Imported sales orders in %.2f seconds" % (time() - starttime)
+    try:
+      starttime = time()
+      cursor.execute("SELECT name FROM demand")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
+        'sale.order.line', 'search', 
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
+      fields = ['sequence', 'state', 'type', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
+      fields2 = ['partner_id', 'date_order', ]
+      if self.verbosity > 0:
+        print "Importing sales orders..."
+      insert = []
+      update = []
+      delete = []
+      for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'sale.order.line', 'read', ids, fields):
+        name = u'%d %s %d' % (i['id'], i['order_id'][1], i['sequence'])
+        if i['state'] == 'confirmed':
+          j = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'sale.order', 'read', [i['order_id'][0],], fields2)[0]
+          if name in frepple_keys:
+            update.append( (
+              u'%s %s' % (i['product_id'][0], i['product_id'][1]),
+              u'%s %s' % (j['partner_id'][0], j['partner_id'][1]),
+              i['product_uom_qty'],
+              j['date_order'],
+              u'%d %s %d' % (i['id'], i['order_id'][1], i['sequence']),
+              ) )
+          else:
+            insert.append( (
+              u'%d %s %d' % (i['id'], i['order_id'][1], i['sequence']),
+              u'%d %s' % (i['product_id'][0], i['product_id'][1]),
+              u'%d %s' % (j['partner_id'][0], j['partner_id'][1]),
+              i['product_uom_qty'],
+              j['date_order'],
+              ) )      
+        elif name in frepple_keys:
+          delete.append( (name,) )
+      cursor.executemany(
+        "insert into demand \
+          (name,item_id,customer_id,quantity,due,priority,subcategory,lastmodified) \
+          values (%%s,%%s,%%s,%%s,%%s,1,'OpenERP','%s')" % self.date,
+        insert)
+      cursor.executemany(
+        "update demand \
+          set item_id=%%s, customer_id=%%s, quantity=%%s, due=%%s, priority=1, subcategory='OpenERP', lastmodified='%s' \
+          where name=%%s" % self.date,
+        update)
+      cursor.executemany(
+        "delete from demand where name=%s",
+        delete)
+      transaction.commit()
+      if self.verbosity > 0:
+        print "Inserted %d new sales orders" % len(insert)
+        print "Updated %d existing sales orders" % len(update)
+        print "Deleted %d sales orders" % len(delete)
+        print "Imported sales orders in %.2f seconds" % (time() - starttime)
+    except Exception, e:
+      transaction.rollback()
+      print "Error importing sales orders: %s" % e
  
-  # Load workcenters
+ 
+  # Importing import_workcenters
+  #   - extracting recently changed mrp.workcenter objects
+  #   - meeting the criterion: 
+  #        - %active = True
+  #   - mapped fields OpenERP -> frePPLe
+  #        - %id %name -> name
+  #        - %cost_hour -> cost
+  #        - 'OpenERP' -> subcategory
+  @transaction.commit_manually
+  def import_workcenters(self, sock, cursor):  
+    try:
+      starttime = time()
+      cursor.execute("SELECT name FROM resource")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
+        'mrp.workcenter', 'search', 
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
+      fields = ['name', 'active', 'costs_hour',]
+      if self.verbosity > 0:
+        print "Importing workcenters..."
+      insert = []
+      update = []
+      delete = []
+      for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'mrp.workcenter', 'read', ids, fields):
+        name = u'%d %s' % (i['id'],i['name'])
+        if i['active']:
+          if name in frepple_keys:
+            update.append(i)
+          else:
+            insert.append(i)
+        elif name in frepple_keys:
+          delete.append( (name,) )
+      cursor.executemany(
+        "insert into resource \
+          (name,cost,subcategory,lastmodified) \
+          values (%%s,%%s,'OpenERP','%s')" % self.date,
+        [(
+           u'%d %s' % (i['id'],i['name']),
+           i['costs_hour'],
+         ) for i in insert
+        ])
+      cursor.executemany(
+        "update resource \
+          set cost=%%s, subcategory='OpenERP', lastmodified='%s' \
+          where name=%%s" % self.date,
+        [(
+           i['costs_hour'],
+           u'%d %s' % (i['id'],i['name']),
+         ) for i in update
+        ])
+      cursor.executemany(
+        "delete from resource where name=%s",
+        delete)
+      transaction.commit()
+      if self.verbosity > 0:
+        print "Inserted %d new workcenters" % len(insert)
+        print "Updated %d existing workcenters" % len(update)
+        print "Deleted %d workcenters" % len(delete)
+        print "Imported workcenters in %.2f seconds" % (time() - starttime)
+    except Exception, e:
+      transaction.rollback()
+      print "Error importing workcenters: %s" % e
+
+
   # Load onhand
   # Load open purchase orders
   # Load operations / routings    
@@ -360,4 +441,4 @@ class Command(BaseCommand):
   # Load flows       
   # Load loads    
   # Load WIP
-  
+       

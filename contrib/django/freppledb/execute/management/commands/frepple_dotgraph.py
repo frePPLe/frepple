@@ -25,7 +25,6 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, connections, DEFAULT_DB_ALIAS
-from django.template.loader import render_to_string
 from django.conf import settings
 
 #TODO handling of suboperations!!!

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -85,7 +85,7 @@ ignores = [# Not using docutils
            # Not using ImageFields
            'PIL', 'ImageFile',
            # Not needing special datetime handling
-           'mx',
+           'mx', 'mx.TextTools',
            # Not using yaml serialization
            'yaml',
            # Not storing templates in python eggs
@@ -96,7 +96,7 @@ ignores = [# Not using docutils
            'crypt',
            # Not using SSL
            'OpenSSL',
-           # Not needed to include frepple's python interface
+           # Not needed to include frePPLe's own python interface
            'frepple',
            ]
 
@@ -141,6 +141,8 @@ setup(
           "excludes": excludes,
           "includes": includes,
           "ignores": ignores,
+          # ignore this file that is useful only in archaic windows versions
+          "dll_excludes": ['w9xpopen.exe'],
           }},
     data_files = data_files,
     # Attributes
@@ -149,11 +151,17 @@ setup(
     name = "frePPLe",
     author = "www.frepple.com",
     url = "http://www.frepple.com",
-    # Targets to build
-    console = [ {
+    # Target to build a Windows service
+    service = [{
+       "modules":["freppleservice"], 
+       "icon_resources": [(1, "frepple.ico")], 
+       "cmdline_style": 'pywin32',
+       }],
+    # Target to build a console application
+    console = [{
        "script": "manage.py",
-       "icon_resources": [(1, "frepple.ico")]
-       }, ],
+       "icon_resources": [(1, "frepple.ico")],
+       }],
     # Name of the zip file with the bytecode of the Python library.
     # This zip file with the name mentioned below is automatically included
     # in the Python search path (while the default output file "library.zip"

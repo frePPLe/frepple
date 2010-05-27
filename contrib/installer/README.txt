@@ -1,6 +1,6 @@
 
 This is a script for creating a windows installer for frePPLe.
-To run the installer, the following steps are required:
+To create the installer, the following steps are required:
 
 1) Install NSIS v2.41 or higher (Nullsoft Scriptable Install System)
    This is a free package to create installers.
@@ -29,6 +29,7 @@ To run the installer, the following steps are required:
       - cx_oracle
       - MySQLdb
       - psycopg2
+      - pywin32
    The installer uses py2exe to create a directory containing the Python 
    language (with its libaries and extensions) and the frePPLe web user 
    interface.
@@ -38,11 +39,11 @@ To run the installer, the following steps are required:
 
 6) Create sample sqlite database
    The installer will pick up the sqlite database in the file bin\frepple.sqlite.
-   You'll should make sure it is initialized correctly and contains only the
+   You'll should make sure it is initialized correctly and contains the
    sample dataset.
 
 7) Before building the installer script you'll need to update the frepple.nsi
    script to point to the directory where the xerces-c dll is stored.
 
 CONSIDERING ALL THE ABOVE, BUILDING THE INSTALLER ISN'T FOR BEGINNERS. IT
-REQUIRES IN DEPTH UNDERSTANDING OF ALL COMPONENTS AND THEIR USAGE IN FREPPLE...
+REQUIRES PROPER UNDERSTANDING OF ALL COMPONENTS AND THE FREPPLE BUILD PROCESS...

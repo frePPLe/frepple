@@ -192,6 +192,8 @@ MAX_DIGITS = 15
 # The number of decimal places for a number in the database models
 DECIMAL_PLACES = 4
 
+# Port number for the CherryPy web server
+PORT = 8000
 
 # Allow overriding the settings
 # This is useful for the py2exe distribution: this settings file will be

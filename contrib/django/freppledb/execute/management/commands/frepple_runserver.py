@@ -58,8 +58,10 @@ class Command(BaseCommand):
   def handle(self, **options):
 
     # Determine the port number
-    if 'port' in options: port = int(options['port'] or '8000')
-    else: port = 8000
+    if 'port' in options: 
+      port = int(options['port']) or settings.PORT
+    else: 
+      port = settings.PORT
 
     # Determine the IP-address to listen on:
     # - either as command line argument

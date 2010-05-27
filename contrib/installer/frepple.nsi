@@ -68,15 +68,8 @@ CRCCheck on
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 Page custom database database_leave
-  ; Definition of the finish page
-  !define MUI_FINISHPAGE_NOAUTOCLOSE
-  !define MUI_FINISHPAGE_RUN_TEXT "Start the server right now"
-  !define MUI_FINISHPAGE_RUN "$INSTDIR\bin\manage.exe"
-  !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\index.html"
-  !define MUI_FINISHPAGE_SHOWREADME_TEXT "View documentation"
 !insertmacro MUI_PAGE_INSTFILES
-!insertmacro MUI_PAGE_FINISH
+Page custom finish finish_leave
 
 ; Uninstaller pages
 !insertmacro MUI_UNPAGE_WELCOME
@@ -109,15 +102,20 @@ BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
+Var InstalledDocumentation
 
 ReserveFile "parameters.ini"
+ReserveFile "finish.ini"
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
+
 Function .onInit
-  ;Extract InstallOptions INI file
+  ;Extract INI files
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "parameters.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "finish.ini"
   SetShellVarContext all
 FunctionEnd
+
 
 Section -Start
   ; Create the python distribution and django server
@@ -136,6 +134,7 @@ Section -Start
   SetOutPath "$INSTDIR"
   File "COPYING"
   File "README"
+  strcpy $InstalledDocumentation "no"
 SectionEnd
 
 
@@ -193,7 +192,7 @@ Section "Application" SecAppl
   StrCmp $0 "SQLite" 0 +3
     StrCpy $0 "sqlite3"
     Goto ok
-  StrCmp $0 "PostgreSQL 8" 0 +3
+  StrCmp $0 "PostgreSQL 8.2" 0 +3
     StrCpy $0 "postgresql_psycopg2"
     Goto ok
   StrCmp $0 "MySQL" 0 +3
@@ -247,7 +246,7 @@ Function database
   ; Detect Oracle installation
   EnumRegKey $0 HKLM "software\ORACLE" 0
   StrCmp $0 "" +2 0
-  StrCpy $1 "$1|Oracle 10g"
+  StrCpy $1 "$1|Oracle 11g"
 
   ; Update the dropdown with available databases
   WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 9" "ListItems" "$1"
@@ -295,12 +294,42 @@ Function database_leave
 FunctionEnd
 
 
+Function finish
+  ; Display the page
+  !insertmacro MUI_HEADER_TEXT "Completing the installation" "frePPLe has been installed on your computer"
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "finish.ini"
+FunctionEnd
+
+
+Function finish_leave
+  ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 1" "State"
+  IntCmp $0 1 0 +2
+    Exec '"$INSTDIR\bin\manage.exe"'    
+  ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 2" "State"
+  IntCmp $0 1 0 docdone
+    StrCmp $InstalledDocumentation "yes" 0 +3
+      ExecShell open "$INSTDIR\doc\index.html"
+      goto docdone
+      ExecShell open "http://www.frepple.com/pmwiki/pmwiki.php"
+  docdone:
+  ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 3" "State"
+  IntCmp $0 1 0 done
+    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --startup auto install'   
+    sleep 2 
+    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" start'    
+    CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Start service.lnk" "$INSTDIR\bin\freppleservice.exe" "start"
+    CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Stop service.lnk" "$INSTDIR\bin\freppleservice.exe" "stop"
+  done:
+FunctionEnd
+
+
 Section "Documentation" SecDoc
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\doc\index.html"
   File /r "doc"
+  StrCpy $InstalledDocumentation "yes"
 SectionEnd
 
 Section "Examples" SecEx
@@ -387,13 +416,20 @@ FunctionEnd
 
 
 Section Uninstall
+  ; Remove the service
+  nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" stop'
+  sleep 3
+  nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" remove'
+
   ; Remove the entries from the start menu
   SetShellVarContext all
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Uninstall.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Documentation.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\frePPLe web site.lnk"
-
+  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Start service.lnk"
+  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Stop service.lnk"
+  
   ; Remove the folder in start menu
   RMDir "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
 

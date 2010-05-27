@@ -442,3 +442,114 @@ class Command(BaseCommand):
   # Load loads    
   # Load WIP
        
+       
+       
+    
+  # Load open purchase orders
+  # Q: Should purchase orders in state 'draft' be honoured by frePPLe?
+  @transaction.commit_manually
+  def import_purchaseorders(self, sock, cursor):      
+    print "Open purchase orders:"
+    args = [('state', '!=', 'done'),]  
+    ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'purchase.order', 'search', args)
+    fields = ['name', 'location_id', 'partner_id', 'state', 'order_line']
+    fields2 = ['name', 'date_planned', 'product_id', 'product_qty', 'product_uom']
+    for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'purchase.order', 'read', ids, fields):
+      print i
+      for j in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'purchase.order.line', 'read', i['order_line'], fields2):
+        print "    ", j
+        
+
+
+
+
+
+# Bugs:
+#   - Mark a partner inactive. The xml api will still return it as active. Client correctly says inactive.
+
+
+      # Performance test: created 10000 partners in 22m44s, 7.3 per second
+      # Bottleneck is openerp server, not the db at all
+      #cnt = 1
+      #print datetime.now()
+      #while cnt < 10000:
+      #  partner = {
+      #     'name': 'customer %d' % cnt,
+      #     'active': True,
+      #     'customer': True,
+      #  }
+      #  partner_id = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'res.partner', 'create', partner)
+      #  cnt += 1
+      #print datetime.now()
+
+# update mrp_procurement where status is confirmed with the data of the frepple run
+
+
+
+
+#bin\addons\mrp\mrp.py
+#bin\addons\mrp\schedulers.py
+#
+#_procure_confirm:
+#For each mrp.procurement where state = 'confirmed' 
+#and procure_method 'make to order' and date_planned < scheduling window
+#  'check' button
+#        
+#_procure_orderpoint_confirm:
+#  if automatic: self.create_automatic_op(cr, uid, context=context)
+#  for all defined order points
+#    if virtual onhand < minimum at this location
+#              qty = max(op.product_min_qty, op.product_max_qty)-prods
+#              reste = qty % op.qty_multiple
+#              if reste > 0:
+#                  qty += op.qty_multiple - reste
+#              newdate = DateTime.now() + DateTime.RelativeDateTime(
+#                      days=int(op.product_id.seller_delay))
+#              if op.product_id.supply_method == 'buy':
+#                  location_id = op.warehouse_id.lot_input_id
+#              elif op.product_id.supply_method == 'produce':
+#                  location_id = op.warehouse_id.lot_stock_id
+#              else:
+#                  continue
+#              if qty <= 0:
+#                  continue
+#              if op.product_id.type not in ('consu'):
+#                  proc_id = procurement_obj.create(cr, uid, {
+#                      'name': 'OP:' + str(op.id),
+#                      'date_planned': newdate.strftime('%Y-%m-%d'),
+#                      'product_id': op.product_id.id,
+#                      'product_qty': qty,
+#                      'product_uom': op.product_uom.id,
+#                      'location_id': op.warehouse_id.lot_input_id.id,
+#                      'procure_method': 'make_to_order',
+#                      'origin': op.name
+#                  })
+#         wf_service.trg_validate(uid, 'mrp.procurement', proc_id,'button_confirm', cr)    
+#              State changes from 'draft' to 'confirmed'
+#              Confirmed status creates stock moves, and recursively creates extra mrp.procurement records
+#         wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_check', cr)
+#         orderpoint_obj.write(cr, uid, [op.id], {'procurement_id': proc_id})     WHY???? WHER USED???
+#
+#create_automatic_op:
+#For each product & warehouse combination
+#  if virtual inventory < 0
+#    create mrp.procurement with
+#        if product.supply_method == 'buy':
+#            location_id = warehouse.lot_input_id.id
+#        elif product.supply_method == 'produce':
+#            location_id = warehouse.lot_stock_id.id
+#        else:
+#            continue
+#        proc_id = proc_obj.create(cr, uid, {
+#            'name': 'Automatic OP: %s' % product.name,
+#            'origin': 'SCHEDULER',
+#            'date_planned': newdate.strftime('%Y-%m-%d %H:%M:%S'),
+#            'product_id': product.id,
+#            'product_qty': -product.virtual_available,
+#            'product_uom': product.uom_id.id,
+#            'location_id': location_id,
+#            'procure_method': 'make_to_order',
+#            })
+#    wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_confirm', cr)   (State changes from 'draft' to 'confirmed')
+#    wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_check', cr)
+                 

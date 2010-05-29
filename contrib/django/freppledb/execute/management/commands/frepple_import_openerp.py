@@ -77,10 +77,10 @@ class Command(BaseCommand):
     print self.delta
     if 'openerp_url' in options: self.openerp_url = options['openerp_url']
     else: self.openerp_url = 'http://localhost:8069/'
-    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
-    else: database = DEFAULT_DB_ALIAS      
-    if not database in settings.DATABASES.keys():
-      raise CommandError("No database settings known for '%s'" % database )
+    if 'database' in options: self.database = options['database'] or DEFAULT_DB_ALIAS
+    else: self.database = DEFAULT_DB_ALIAS      
+    if not self.database in settings.DATABASES.keys():
+      raise CommandError("No database settings known for '%s'" % self.database )
     
     try:      
       # Log in to the openerp server
@@ -91,7 +91,7 @@ class Command(BaseCommand):
       sock = xmlrpclib.ServerProxy(self.openerp_url + 'xmlrpc/object')
 
       # Create a database connection to the frePPLe database
-      cursor = connections[database].cursor()
+      cursor = connections[self.database].cursor()
       
       # Sequentially load all data
       self.import_customers(sock, cursor)
@@ -99,7 +99,8 @@ class Command(BaseCommand):
       self.import_locations(sock, cursor)
       self.import_salesorders(sock, cursor)
       self.import_workcenters(sock, cursor)
-            
+      self.import_onhand(sock, cursor)
+      
     except Exception, e:
       raise CommandError(e)    
       
@@ -400,14 +401,14 @@ class Command(BaseCommand):
           else:
             insert.append(i)
         elif name in frepple_keys:
-          delete.append( (name,) )
+          delete.append( (name,) )                   
       cursor.executemany(
         "insert into resource \
           (name,cost,subcategory,lastmodified) \
           values (%%s,%%s,'OpenERP','%s')" % self.date,
         [(
            u'%d %s' % (i['id'],i['name']),
-           i['costs_hour'],
+           i['costs_hour'] or 0,
          ) for i in insert
         ])
       cursor.executemany(
@@ -415,7 +416,7 @@ class Command(BaseCommand):
           set cost=%%s, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
         [(
-           i['costs_hour'],
+           i['costs_hour'] or 0,
            u'%d %s' % (i['id'],i['name']),
          ) for i in update
         ])
@@ -433,7 +434,77 @@ class Command(BaseCommand):
       print "Error importing workcenters: %s" % e
 
 
-  # Load onhand
+  # Importing onhand  
+  #   - extracting all stock.report.prodlots objects
+  #   - No filtering for latest changes, ie always complete extract
+  #   - meeting the criterion: 
+  #        - %name > 0
+  #        - Location already mapped in frePPLe
+  #        - Product already mapped in frePPLe
+  #   - mapped fields OpenERP -> frePPLe
+  #        - %product_id %product_name @ %name -> name
+  #        - %product_id %product_name -> item_id
+  #        - %location_id %location_name -> location_id
+  #        - %name -> quantity
+  #        - 'OpenERP' -> subcategory
+  @transaction.commit_manually
+  def import_onhand(self, sock, cursor):  
+    try:
+      starttime = time()
+      cursor.execute("update buffer set onhand = 0 where subcategory = 'OpenERP'")
+      cursor.execute("SELECT name FROM item")
+      frepple_items = set([ i[0] for i in cursor.fetchall()])
+      cursor.execute("SELECT name FROM location")
+      frepple_locations = set([ i[0] for i in cursor.fetchall()])
+      cursor.execute("SELECT name FROM buffer")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
+        'stock.report.prodlots', 'search',  
+        [('name','>', 0),])
+      if self.verbosity > 0:
+        print "Importing onhand..."
+      fields = ['prodlot_id', 'location_id', 'name', 'product_id']
+      insert = []
+      update = []
+      for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'stock.report.prodlots', 'read', ids, fields):
+        name = u'%d %s @ %s' % (i['product_id'][0], i['product_id'][1], i['location_id'][1])
+        item = u'%d %s' % (i['product_id'][0], i['product_id'][1])
+        location = u'%d %s' % (i['location_id'][0], i['location_id'][1])
+        if item in frepple_items and location in frepple_locations:
+          if name in frepple_keys:
+            update.append(i)
+          else:
+            insert.append(i)
+      cursor.executemany(
+        "insert into buffer \
+          (name,item_id,location_id,onhand,subcategory,lastmodified) \
+          values(%%s,%%s,%%s,%%s,'OpenERP','%s')" % self.date,
+        [(
+           u'%d %s @ %s' % (i['product_id'][0], i['product_id'][1], i['location_id'][1]),
+           u'%d %s' % (i['product_id'][0], i['product_id'][1]),
+           u'%d %s' % (i['location_id'][0], i['location_id'][1]),
+           i['name'],
+         ) for i in insert
+        ])
+      cursor.executemany(
+        "update buffer \
+          set onhand=%%s, subcategory='OpenERP', lastmodified='%s' \
+          where name=%%s" % self.date,
+        [(
+           i['name'],
+           u'%d %s @ %s' % (i['product_id'][0], i['product_id'][1], i['location_id'][1]),
+         ) for i in update
+        ])
+      transaction.commit()
+      if self.verbosity > 0:
+        print "Inserted onhand for %d new buffers" % len(insert)
+        print "Updated onhand for %d existing buffers" % len(update)
+        print "Imported onhand in %.2f seconds" % (time() - starttime)
+    except Exception, e:
+      transaction.rollback()
+      print "Error importing onhand: %s" % e
+      
+        
   # Load open purchase orders
   # Load operations / routings    
   # Load buffers
@@ -441,115 +512,5 @@ class Command(BaseCommand):
   # Load flows       
   # Load loads    
   # Load WIP
-       
-       
-       
-    
-  # Load open purchase orders
-  # Q: Should purchase orders in state 'draft' be honoured by frePPLe?
-  @transaction.commit_manually
-  def import_purchaseorders(self, sock, cursor):      
-    print "Open purchase orders:"
-    args = [('state', '!=', 'done'),]  
-    ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'purchase.order', 'search', args)
-    fields = ['name', 'location_id', 'partner_id', 'state', 'order_line']
-    fields2 = ['name', 'date_planned', 'product_id', 'product_qty', 'product_uom']
-    for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'purchase.order', 'read', ids, fields):
-      print i
-      for j in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'purchase.order.line', 'read', i['order_line'], fields2):
-        print "    ", j
-        
 
-
-
-
-
-# Bugs:
-#   - Mark a partner inactive. The xml api will still return it as active. Client correctly says inactive.
-
-
-      # Performance test: created 10000 partners in 22m44s, 7.3 per second
-      # Bottleneck is openerp server, not the db at all
-      #cnt = 1
-      #print datetime.now()
-      #while cnt < 10000:
-      #  partner = {
-      #     'name': 'customer %d' % cnt,
-      #     'active': True,
-      #     'customer': True,
-      #  }
-      #  partner_id = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'res.partner', 'create', partner)
-      #  cnt += 1
-      #print datetime.now()
-
-# update mrp_procurement where status is confirmed with the data of the frepple run
-
-
-
-
-#bin\addons\mrp\mrp.py
-#bin\addons\mrp\schedulers.py
-#
-#_procure_confirm:
-#For each mrp.procurement where state = 'confirmed' 
-#and procure_method 'make to order' and date_planned < scheduling window
-#  'check' button
-#        
-#_procure_orderpoint_confirm:
-#  if automatic: self.create_automatic_op(cr, uid, context=context)
-#  for all defined order points
-#    if virtual onhand < minimum at this location
-#              qty = max(op.product_min_qty, op.product_max_qty)-prods
-#              reste = qty % op.qty_multiple
-#              if reste > 0:
-#                  qty += op.qty_multiple - reste
-#              newdate = DateTime.now() + DateTime.RelativeDateTime(
-#                      days=int(op.product_id.seller_delay))
-#              if op.product_id.supply_method == 'buy':
-#                  location_id = op.warehouse_id.lot_input_id
-#              elif op.product_id.supply_method == 'produce':
-#                  location_id = op.warehouse_id.lot_stock_id
-#              else:
-#                  continue
-#              if qty <= 0:
-#                  continue
-#              if op.product_id.type not in ('consu'):
-#                  proc_id = procurement_obj.create(cr, uid, {
-#                      'name': 'OP:' + str(op.id),
-#                      'date_planned': newdate.strftime('%Y-%m-%d'),
-#                      'product_id': op.product_id.id,
-#                      'product_qty': qty,
-#                      'product_uom': op.product_uom.id,
-#                      'location_id': op.warehouse_id.lot_input_id.id,
-#                      'procure_method': 'make_to_order',
-#                      'origin': op.name
-#                  })
-#         wf_service.trg_validate(uid, 'mrp.procurement', proc_id,'button_confirm', cr)    
-#              State changes from 'draft' to 'confirmed'
-#              Confirmed status creates stock moves, and recursively creates extra mrp.procurement records
-#         wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_check', cr)
-#         orderpoint_obj.write(cr, uid, [op.id], {'procurement_id': proc_id})     WHY???? WHER USED???
-#
-#create_automatic_op:
-#For each product & warehouse combination
-#  if virtual inventory < 0
-#    create mrp.procurement with
-#        if product.supply_method == 'buy':
-#            location_id = warehouse.lot_input_id.id
-#        elif product.supply_method == 'produce':
-#            location_id = warehouse.lot_stock_id.id
-#        else:
-#            continue
-#        proc_id = proc_obj.create(cr, uid, {
-#            'name': 'Automatic OP: %s' % product.name,
-#            'origin': 'SCHEDULER',
-#            'date_planned': newdate.strftime('%Y-%m-%d %H:%M:%S'),
-#            'product_id': product.id,
-#            'product_qty': -product.virtual_available,
-#            'product_uom': product.uom_id.id,
-#            'location_id': location_id,
-#            'procure_method': 'make_to_order',
-#            })
-#    wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_confirm', cr)   (State changes from 'draft' to 'confirmed')
-#    wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_check', cr)
-                 
+              

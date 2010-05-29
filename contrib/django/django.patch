@@ -1,8 +1,8 @@
-Index: contrib/admin/media/js/admin/DateTimeShortcuts.js
+Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 ===================================================================
---- contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 12969)
-+++ contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
-@@ -95,7 +95,7 @@
+--- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 13315)
++++ django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
+@@ -94,7 +94,7 @@
      openClock: function(num) {
          var clock_box = document.getElementById(DateTimeShortcuts.clockDivName+num)
          var clock_link = document.getElementById(DateTimeShortcuts.clockLinkName+num)
@@ -11,7 +11,7 @@ Index: contrib/admin/media/js/admin/DateTimeShortcuts.js
          // Recalculate the clockbox position
          // is it left-to-right or right-to-left layout ?
          if (getStyle(document.body,'direction')!='rtl') {
-@@ -109,7 +109,7 @@
+@@ -108,7 +108,7 @@
              clock_box.style.left = findPosX(clock_link) - 110 + 'px';
          }
          clock_box.style.top = findPosY(clock_link) - 30 + 'px';
@@ -20,7 +20,7 @@ Index: contrib/admin/media/js/admin/DateTimeShortcuts.js
          // Show the clock box
          clock_box.style.display = 'block';
          addEvent(window.document, 'click', function() { DateTimeShortcuts.dismissClock(num); return true; });
-@@ -133,16 +133,19 @@
+@@ -132,16 +132,19 @@
          var shortcuts_span = document.createElement('span');
          shortcuts_span.className = DateTimeShortcuts.shortCutsClass;
          inp.parentNode.insertBefore(shortcuts_span, inp.nextSibling);
@@ -45,7 +45,7 @@ Index: contrib/admin/media/js/admin/DateTimeShortcuts.js
          shortcuts_span.appendChild(cal_link);
  
          // Create calendarbox div.
-@@ -214,19 +217,12 @@
+@@ -213,19 +216,12 @@
          }
  
          // Recalculate the clockbox position
@@ -71,11 +71,11 @@ Index: contrib/admin/media/js/admin/DateTimeShortcuts.js
          cal_box.style.display = 'block';
          addEvent(window.document, 'click', function() { DateTimeShortcuts.dismissCalendar(num); return true; });
      },
-Index: contrib/admin/sites.py
+Index: django/contrib/admin/sites.py
 ===================================================================
---- contrib/admin/sites.py	(revision 12969)
-+++ contrib/admin/sites.py	(working copy)
-@@ -325,20 +325,7 @@
+--- django/contrib/admin/sites.py	(revision 13315)
++++ django/contrib/admin/sites.py	(working copy)
+@@ -321,20 +321,7 @@
          password = request.POST.get('password', None)
          user = authenticate(username=username, password=password)
          if user is None:
@@ -97,11 +97,11 @@ Index: contrib/admin/sites.py
  
          # The user data is correct; log in the user in and continue.
          else:
-Index: contrib/admin/widgets.py
+Index: django/contrib/admin/widgets.py
 ===================================================================
---- contrib/admin/widgets.py	(revision 12969)
-+++ contrib/admin/widgets.py	(working copy)
-@@ -127,8 +127,9 @@
+--- django/contrib/admin/widgets.py	(revision 13315)
++++ django/contrib/admin/widgets.py	(working copy)
+@@ -127,8 +127,11 @@
          output.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> ' % \
              (related_url, url, name))
          output.append('<img src="%simg/admin/selector-search.gif" width="16" height="16" alt="%s" /></a>' % (settings.ADMIN_MEDIA_PREFIX, _('Lookup')))
@@ -110,13 +110,15 @@ Index: contrib/admin/widgets.py
 +        # frePPLe DOES NOT SHOW THE CURRENT VALUE
 +        #if value:
 +        #    output.append(self.label_for_value(value))
++        # frePPLe adds a button to go edit the related object
++        output.append('<a href="%s%s/"><img src="%simg/admin/icon_changelink.gif" width="16" height="16" alt="%s" /></a>' % (related_url, value, settings.ADMIN_MEDIA_PREFIX, _('Edit')))
          return mark_safe(u''.join(output))
  
      def base_url_parameters(self):
-Index: core/management/__init__.py
+Index: django/core/management/__init__.py
 ===================================================================
---- core/management/__init__.py	(revision 12969)
-+++ core/management/__init__.py	(working copy)
+--- django/core/management/__init__.py	(revision 13315)
++++ django/core/management/__init__.py	(working copy)
 @@ -14,50 +14,80 @@
  # doesn't have to reload every time it's called.
  _commands = None
@@ -256,10 +258,10 @@ Index: core/management/__init__.py
              except ImportError:
                  pass # No management module - ignore this app
  
-Index: db/models/sql/compiler.py
+Index: django/db/models/sql/compiler.py
 ===================================================================
---- db/models/sql/compiler.py	(revision 12969)
-+++ db/models/sql/compiler.py	(working copy)
+--- django/db/models/sql/compiler.py	(revision 13315)
++++ django/db/models/sql/compiler.py	(working copy)
 @@ -199,8 +199,11 @@
  
          for table, col in self.query.related_select_cols:
@@ -288,11 +290,11 @@ Index: db/models/sql/compiler.py
                  result.append('%s.%s AS %s' % (qn(alias),
                      qn2(field.column), c_alias))
                  col_aliases.add(c_alias)
-Index: views/i18n.py
+Index: django/views/i18n.py
 ===================================================================
---- views/i18n.py	(revision 12969)
-+++ views/i18n.py	(working copy)
-@@ -257,6 +257,9 @@
+--- django/views/i18n.py	(revision 13315)
++++ django/views/i18n.py	(working copy)
+@@ -260,6 +260,9 @@
      src.append(LibFormatHead)
      src.append(get_formats())
      src.append(LibFormatFoot)

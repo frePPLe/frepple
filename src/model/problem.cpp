@@ -40,6 +40,7 @@ DECLARE_EXPORT const MetaClass* ProblemMaterialExcess::metadata,
   *ProblemShort::metadata,
   *ProblemEarly::metadata,
   *ProblemLate::metadata,
+  *ProblemInvalidData::metadata,
   *ProblemDemandNotPlanned::metadata,
   *ProblemPrecedence::metadata,
   *ProblemBeforeFence::metadata,
@@ -65,6 +66,8 @@ int Problem::initialize()
     ("problem","early");
   ProblemLate::metadata = new MetaClass
     ("problem","late");
+  ProblemInvalidData::metadata = new MetaClass
+    ("problem","invalid data");
   ProblemDemandNotPlanned::metadata = new MetaClass
     ("problem","unplanned");
   ProblemPrecedence::metadata = new MetaClass
@@ -577,7 +580,7 @@ DECLARE_EXPORT void Problem::List::clear(Problem *c)
 }
 
 
-DECLARE_EXPORT void Problem::List::push(const MetaClass* m, 
+DECLARE_EXPORT Problem* Problem::List::push(const MetaClass* m, 
   const Object* o, Date st, Date nd, double w)
 {
   // Find the end of the list
@@ -586,7 +589,7 @@ DECLARE_EXPORT void Problem::List::push(const MetaClass* m,
     cur = cur->nextProblem;
   if (cur && cur->getOwner() == o)
     // Duplicate problem: stop here.
-    return; 
+    return cur; 
 
   // Create a new problem
   Problem *p;
@@ -606,6 +609,7 @@ DECLARE_EXPORT void Problem::List::push(const MetaClass* m,
     cur->nextProblem = p;
   else
     first = p;
+  return p;
 }
 
 

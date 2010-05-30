@@ -1071,7 +1071,7 @@ class Problem::List
     DECLARE_EXPORT void clear(Problem * = NULL);
 
     /** Add a problem to the list. */
-    DECLARE_EXPORT void push
+    DECLARE_EXPORT Problem* push
       (const MetaClass*, const Object*, Date, Date, double);
 
     /** Remove all problems from the list that appear AFTER the one 
@@ -5146,6 +5146,48 @@ class ProblemEarly : public Problem
 
     /** Storing metadata on this class. */
     static DECLARE_EXPORT const MetaClass* metadata;
+};
+
+
+/** @brief A Problem of this class is created in the model when a data exception 
+  * prevents planning of certain objects
+  */
+class ProblemInvalidData : public Problem
+{
+  public:
+    string getDescription() const {return description;}
+    bool isFeasible() const {return false;}
+    double getWeight() const {return qty;}
+    explicit ProblemInvalidData(HasProblems* o, string d, string e, 
+      Date st, Date nd, double q, bool add = true) 
+      : Problem(o), description(d), entity(e), dates(st,nd), qty(q)
+        {if (add) addProblem();}
+    ~ProblemInvalidData() {removeProblem();}
+    string getEntity() const {return entity;}
+    const DateRange getDates() const {return dates;}
+    Object* getOwner() const
+    {
+      if (entity == "demand") return dynamic_cast<Demand*>(owner);
+      if (entity == "buffer") return dynamic_cast<Buffer*>(owner);
+      if (entity == "resource") return dynamic_cast<Resource*>(owner);
+      if (entity == "operation") return dynamic_cast<Operation*>(owner);
+      throw LogicException("Unknown problem entity type");
+    }
+    size_t getSize() const 
+      {return sizeof(ProblemInvalidData) + description.size() + entity.size();}
+
+    /** Return a reference to the metadata structure. */
+    const MetaClass& getType() const {return *metadata;}
+
+    /** Storing metadata on this class. */
+    static DECLARE_EXPORT const MetaClass* metadata;
+
+  private:
+    /** Description of the data issue. */
+    string description;
+    string entity;
+    DateRange dates;
+    double qty;
 };
 
 

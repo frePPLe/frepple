@@ -59,7 +59,7 @@ class Command(BaseCommand):
 
     # Determine the port number
     if 'port' in options: 
-      port = int(options['port']) or settings.PORT
+      port = int(options['port'] or settings.PORT)
     else: 
       port = settings.PORT
 

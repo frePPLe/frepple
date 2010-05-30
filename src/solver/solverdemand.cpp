@@ -87,7 +87,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   else
   {
     // Remove problem that may already exist
-    for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(l), false); j!=Problem::end(); )
+    for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(l), false); 
+      j!=Problem::end(); ++j)
       if (&(j->getType()) == ProblemInvalidData::metadata 
           && j->getDescription() == problemtext)
       {

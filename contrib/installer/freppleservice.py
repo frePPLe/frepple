@@ -51,6 +51,7 @@ class frePPLeService(win32serviceutil.ServiceFramework):
         # to be updated BEFORE importing the settings)
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
         os.environ['FREPPLE_APP'] = os.path.split(sys.path[0])[0]
+        os.environ['FREPPLE_HOME'] = os.path.abspath(os.path.dirname(sys.argv[0]))
         
         # Sys.path contains the zip file with all packages. We need to put the
         # freppledb subdirectory from the zip-file separately on the path because
@@ -122,9 +123,9 @@ class frePPLeService(win32serviceutil.ServiceFramework):
           log = os.path.join(settings.FREPPLE_APP,'server.log')
           sys.stdout = open(log, 'a', 0)
           msg = "frePPLe web server listening on http://%s:%d and logging to %s" % (address, port, log)
-          print settings.DATABASES
           servicemanager.LogInfoMsg(msg)
           print datetime.now().strftime("%Y-%m-%d %H:%M:%S"), msg
+          print os.environ['FREPPLE_APP'], os.environ['FREPPLE_HOME']
         except:
           # Too bad if we can't write log info
           servicemanager.LogInfoMsg("frePPLe web server listening on http://%s:%d without log file" % (address, port))

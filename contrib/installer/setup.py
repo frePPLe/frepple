@@ -47,9 +47,9 @@ packages = [# Required for django standalone deployment
             'cx_Oracle',
             # Required for the python initialization
             'site',
-            # Added to package a more complete python library with frepple
-            'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',
-            'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer',
+            # Added to package a more complete python library with frePPLe
+            'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',  
+            'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer', 
             # Added for unicode and internationalization
             'encodings',
            ]
@@ -134,8 +134,9 @@ setup(
           "compressed": 1,
           # optimize the bytecode
           "optimize": 2,
-          # bundle python modules in the zip file as well
-          "bundle_files": 2,
+          # Next option is commented out: Gives a cleaner install, but doesn't work for sqlite
+          # bundle python modules in the zip file as well.
+          #"bundle_files": 2,
           # content of the packaged python
           "packages": packages,
           "excludes": excludes,

@@ -16,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\module_lp_solver\Debug"
+			OutputDirectory="..\..\bin\"
 			IntermediateDirectory=".\module_lp_solver\Debug"
 			ConfigurationType="2"
 			UseOfMFC="0"
@@ -82,7 +82,6 @@
 				OutputFile="../../bin/mod_lpsolver.so"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../src"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
@@ -120,7 +119,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\module_lp_solver\Release"
+			OutputDirectory="..\..\bin\"
 			IntermediateDirectory=".\module_lp_solver\Release"
 			ConfigurationType="2"
 			UseOfMFC="0"
@@ -193,7 +192,6 @@
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				DelayLoadDLLs=""
 				ProgramDatabaseFile=".\module_lp_solver\Release/module_lp_solver.pdb"

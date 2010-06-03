@@ -16,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\module_forecast\Debug"
+			OutputDirectory="..\..\bin\"
 			IntermediateDirectory=".\module_forecast\Debug"
 			ConfigurationType="2"
 			UseOfMFC="0"
@@ -81,7 +81,6 @@
 				OutputFile="../../bin/mod_forecast.so"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../src"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
@@ -120,7 +119,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\module_forecast\Release"
+			OutputDirectory="..\..\bin\"
 			IntermediateDirectory=".\module_forecast\Release"
 			ConfigurationType="2"
 			UseOfMFC="0"
@@ -192,7 +191,6 @@
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				DelayLoadDLLs=""
 				ProgramDatabaseFile=".\module_forecast\Release\module_forecast.pdb"

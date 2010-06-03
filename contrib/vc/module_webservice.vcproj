@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\module_webservice\Debug"
+			OutputDirectory="..\..\bin\"
 			IntermediateDirectory=".\module_webservice\Debug"
 			ConfigurationType="1"
 			CharacterSet="0"
@@ -94,7 +94,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\module_webservice\$(ConfigurationName)"
+			OutputDirectory="..\..\bin\"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="1"

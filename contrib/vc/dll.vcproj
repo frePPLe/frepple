@@ -16,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\dll\Debug"
+			OutputDirectory="..\..\bin\"
 			IntermediateDirectory=".\dll\Debug"
 			ConfigurationType="2"
 			UseOfMFC="0"
@@ -81,7 +81,6 @@
 				OutputFile="../../bin/frepple_debug.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../src"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
@@ -120,7 +119,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\dll\Release"
+			OutputDirectory="..\..\bin\"
 			IntermediateDirectory=".\dll\Release"
 			ConfigurationType="2"
 			UseOfMFC="0"
@@ -192,7 +191,6 @@
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				ProgramDatabaseFile=".\dll\Release\frepple.pdb"
 				SubSystem="0"

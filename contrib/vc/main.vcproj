@@ -16,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\main\Debug"
+			OutputDirectory="..\..\bin\"
 			IntermediateDirectory=".\main\Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
@@ -112,7 +112,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\main\Debug"
+			OutputDirectory="..\..\bin\"
 			IntermediateDirectory=".\main\Debug"
 			ConfigurationType="1"
 			UseOfMFC="0"

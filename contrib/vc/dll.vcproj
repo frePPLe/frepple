@@ -34,9 +34,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="_DEBUG"
 				MkTypLibCompatible="true"
@@ -60,7 +57,6 @@
 				ProgramDataBaseFileName=".\dll\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 				CompileAs="0"
 			/>
@@ -90,7 +86,6 @@
 				MapFileName=""
 				SubSystem="0"
 				OptimizeReferences="1"
-				OptimizeForWindows98="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				ImportLibrary="../../bin/frepple_debug.lib"
@@ -137,9 +132,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"
 				MkTypLibCompatible="true"
@@ -169,7 +161,6 @@
 				ProgramDataBaseFileName=".\dll\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="false"
 				CompileAs="0"
 			/>
 			<Tool
@@ -195,7 +186,6 @@
 				ProgramDatabaseFile=".\dll\Release\frepple.pdb"
 				SubSystem="0"
 				OptimizeReferences="2"
-				OptimizeForWindows98="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				ImportLibrary="../../bin/frepple.lib"

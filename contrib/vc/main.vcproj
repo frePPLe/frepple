@@ -34,9 +34,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				TypeLibraryName=".\main\Release/main.tlb"
 			/>
@@ -62,7 +59,6 @@
 				ProgramDataBaseFileName=".\main\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="false"
 				CompileAs="0"
 			/>
 			<Tool
@@ -130,9 +126,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				TypeLibraryName=".\main\Debug/main.tlb"
 			/>
@@ -152,7 +145,6 @@
 				ProgramDataBaseFileName=".\main\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 				CompileAs="0"
 			/>

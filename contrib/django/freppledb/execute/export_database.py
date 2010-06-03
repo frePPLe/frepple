@@ -49,7 +49,7 @@ database = DEFAULT_DB_ALIAS
 def truncate(cursor):
   print "Emptying database plan tables..."
   starttime = time()
-  if settings.DATABASES[database]['ENGINE'] in ['django.db.backends.sqlite3','django.db.backends.postgresql_psycopg2']:
+  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3': 
     delete = "delete from %s"
   else:
     delete = "truncate table %s"

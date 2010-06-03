@@ -1177,7 +1177,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribu
 
   // Create a temporary object
   if (!pIn.getUserArea())
-    pIn.setUserArea(new tempData(NULL,alternateProperty(1,DateRange())));
+    pIn.setUserArea(new tempData(static_cast<Operation*>(NULL),alternateProperty(1,DateRange())));
   tempData* tmp = static_cast<tempData*>(pIn.getUserArea());
 
   if (pAttr.isA(Tags::tag_alternate))

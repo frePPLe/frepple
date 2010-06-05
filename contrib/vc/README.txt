@@ -9,9 +9,12 @@ workspaces to build the package. This document contains instructions on how to
 use these workspaces and some notes specific to the use of this compiler.
 
 The project configuration files are generated with version 9 of Visual C++.
-Unfortunately these are not compatible with earlier releases :-(  :-( :-(
+Unfortunately these are not compatible with earlier releases.
 A free version, called "Visual C++ 2008 Express Edition", can be downloaded from
 the Microsoft website.
+The solution file can also be loaded in "Visual C++ 2010 Express Edition", which 
+will upgrade the configuration to the new format. No errors are given during the 
+upgrade and the warnings are innocent.
 
 
 BUILD INSTRUCTIONS

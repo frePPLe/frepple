@@ -44,5 +44,5 @@
 {{paginator_html}}&nbsp;&nbsp;{{hits}} {% if reportclass.model %}{{ reportclass.model|verbose_name_plural }} {% endif %}{% ifnotequal hits fullhits %} (total <a class="showall" href="{{base_request_path}}{% if is_popup %}?pop=1{% endif %}">{{fullhits}}</a>){% endifnotequal %}
 {% endblock %}</p></div>
 {% block after_table %}{% endblock %}
-
+</div>
 {% endblock %}

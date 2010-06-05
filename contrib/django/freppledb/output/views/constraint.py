@@ -22,6 +22,7 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
+from django.db.models import Count
 
 from output.models import Constraint
 from common.report import *
@@ -50,6 +51,20 @@ names = (
   ) 
 
 
+def getEntities():
+  return tuple([ 
+    (i['entity'], string_concat(_(i['entity']),":",i['id__count'])) 
+    for i in Constraint.objects.values('entity').annotate(Count('id')).order_by('entity') 
+    ])
+    
+
+def getNames():
+  return tuple([ 
+    (i['name'], string_concat(_(i['name']),":",i['id__count']))
+    for i in Constraint.objects.values('name').annotate(Count('id')).order_by('name') 
+    ])
+
+
 class Report(ListReport):
   '''
   A list report to show constraints.
@@ -67,11 +82,11 @@ class Report(ListReport):
       }),
     ('entity', {
       'title': _('entity'),
-      'filter': FilterChoice(choices=entities),
+      'filter': FilterChoice(choices=getEntities),
       }),
     ('name', {
       'title': _('name'),
-      'filter': FilterChoice(choices=names),
+      'filter': FilterChoice(choices=getNames),
       }),
     ('owner', {
       'title': _('owner'),

@@ -395,10 +395,15 @@ var filter = {
         data += '<a href="javascript:filter.remove(' +  counter + ');"><img style="float:right;" src="/media/img/admin/icon_deletelink.gif"/></a>';
         data += '<select name="filterfield' + counter + '" onchange="filter.change_field(this)">';
         $('fields').select('span').each(function(element) {          
-          if (element.title == field) 
-            data += '<option value="' + element.title + '" selected="yes">' + element.innerHTML + '</option>';
+          d = element.innerHTML.indexOf('<');
+          if (d > 0)
+            n = element.innerHTML.substring(0,d);
           else
-            data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
+            n = element.innerHTML;
+          if (element.title == field) 
+            data += '<option value="' + element.title + '" selected="yes">' + n + '</option>';
+          else
+            data += '<option value="' + element.title + '">' + n + '</option>';
         })
         data += '</select>';
         
@@ -414,7 +419,11 @@ var filter = {
     data += '<a href="javascript:filter.add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a>';
     data += '<select onchange="filter.change_field(this);"><option value=""></option>';
     $('fields').select('span').each(function(element) {
-      data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
+      d = element.innerHTML.indexOf('<');
+      if (d > 0)
+        data += '<option value="' + element.title + '">' + element.innerHTML.substring(0,d) + '</option>';
+      else
+        data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
     })
     data += '</select><br/></span>';
     
@@ -471,7 +480,8 @@ var filter = {
     {
       // Changing the field of an existing filter
       // Same field type - leave operator and value field unchanged
-      if (thefield.className == span.className) return;        
+      if (thefield.className == span.className && !thefield.hasClassName('FilterChoice')) 
+        return;        
       index = span.id.substring(6);
       // Delete fields of previous type
       span.removeChild(span.select('[name="filteroper' + index + '"]')[0]);
@@ -508,7 +518,11 @@ var filter = {
     // Append a new filter
     data = '<span id="newfilter"><a href="javascript:filter.add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a><select onchange="filter.change_field(this);"><option value=""></option>';
     $('fields').select('span').each(function(element) {
-      data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
+      d = element.innerHTML.indexOf('<');
+      if (d>0)
+        data += '<option value="' + element.title + '">' + element.innerHTML.substring(0,d) + '</option>';
+      else
+        data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
     });
     data += '</select><br/></span>';
     x.up('span').insert({after: data});
@@ -546,7 +560,7 @@ var filter = {
     } 
     else if (thefield.hasClassName('FilterBool'))
     {
-      // Filter for choice fields
+      // Filter for boolean fields
       result += '<span name="filteroper' + counter + '">equals </span><select name="filterval' + counter + '">';
       if (value == '0') 
       {
@@ -564,14 +578,13 @@ var filter = {
     {
       // Filter for choice fields
       result += '<span name="filteroper' + counter + '">equals </span><select name="filterval' + counter + '">';
-      filter.numberoperators.each(function(curoper) {
-        if (oper == curoper)
-           result += '<option value="' + curoper + '" selected="yes">' + filter.description[curoper] + '</option>';
+      thefield.select('option').each(function(element) {
+        if (element.value == value) 
+          result += '<option value="' + element.value + '" selected="yes">' + element.text + '</option>';
         else
-           result += '<option value="' + curoper + '">' + filter.description[curoper] + '</option>';
-      })
-      result += '</select>';
-      result += '<input type="text" class="vDateField" name="filterval' + counter + '" value="' + value + '" size="10"/>\n';
+          result += '<option value="' + element.value + '">' + element.text + '</option>';
+        });
+      result += '</select>';    
     } 
     else 
     {

@@ -65,24 +65,23 @@ prep:
 config:
 	@echo
 	@echo "PHASE: Running configure for optimized build..."
-	./configure --enable-doc --prefix=`pwd`/install-test
-#	  --disable-multithread
+	./configure --enable-doc 
+#--prefix=`pwd`/install-test	
 
 configdebug:
 	@echo
 	@echo "PHASE: Running configure for debug build..."
-	./configure --disable-doc --enable-debug --prefix=`pwd`/install-test
-# --disable-multithread
+	./configure --disable-doc --enable-debug 
 
 configcoverage:
 	@echo
 	@echo "PHASE: Running configure for test coverage build..."
-	./configure --disable-doc --enable-coverage --prefix=`pwd`/install-test
+	./configure --disable-doc --enable-coverage 
 
 configprofile:
 	@echo
 	@echo "PHASE: Running configure for profiling build..."
-	./configure --disable-doc --enable-profile --prefix=`pwd`/install-test
+	./configure --disable-doc --enable-profile 
 
 clean:
 	@echo

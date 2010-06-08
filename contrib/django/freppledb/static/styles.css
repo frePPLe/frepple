@@ -220,10 +220,11 @@ table thead th {
   white-space:nowrap;
   border: 0px;
   vertical-align: top;
+  background: #e0e0e0;
 }
 
 table thead th.sorted {
-  background: #ddd;
+  background: #c0c0c0;
 }
 
 /* @todo remove this hardcoded width */

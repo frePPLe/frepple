@@ -314,7 +314,7 @@ var filter = {
     // Collect the value of all filters.
     var data = {}
     $('popup').select('span').each(function(element) {
-        if (element.id.indexOf('filter') == 0)
+        if (element.id.indexOf('filter') == 0 && !element.hasClassName('datetimeshortcuts'))
         {
           index = element.id.substring(6);
           tmp = element.select('[name="filterfield' + index + '"]')[0];
@@ -436,6 +436,12 @@ var filter = {
     var element = $('popup');
     element.innerHTML = data;
     
+    // Add date picker
+    element.select('input').each(function(element) {
+      if (element.hasClassName('vDateField'))
+       DateTimeShortcuts.addCalendar(element);
+    })
+
     // Position the popup
     var position = $('csvexport').cumulativeOffset();
     position[0] -= 352;
@@ -489,6 +495,12 @@ var filter = {
       // Inser fields of the new type
       tmp.insert({after: filter._build_row(thefield, '', '', index)});
     }
+        
+    // Add date picker
+    span.select('input').each(function(element) {
+      if (element.hasClassName('vDateField'))
+       DateTimeShortcuts.addCalendar(element);
+    });
   },
   
   // Function called when deleting a filter
@@ -535,7 +547,7 @@ var filter = {
     if (thefield.hasClassName('FilterNumber'))
     {
       // Filter for number fields
-      result += '</select>\n<select name="filteroper' + counter + '">';
+      result += '</select>\n<select name="filteroper' + index + '">';
       filter.numberoperators.each(function(curoper) {
         if (oper == curoper)
            result += '<option value="' + curoper + '" selected="yes">' + filter.description[curoper] + '</option>';
@@ -543,12 +555,12 @@ var filter = {
            result += '<option value="' + curoper + '">' + filter.description[curoper] + '</option>';
       })
       result += '</select>';
-      result += '<input type="text" name="filterval' + counter + '" value="' + value + '" size="10"/>\n';
+      result += '<input type="text" name="filterval' + index + '" value="' + value + '" size="10"/>\n';
     } 
     else if (thefield.hasClassName('FilterDate'))
     {
       // Filter for date fields
-      result += '<select name="filteroper' + counter + '">';
+      result += '<select name="filteroper' + index + '">';
       filter.numberoperators.each(function(curoper) {
         if (oper == curoper)
            result += '<option value="' + curoper + '" selected="yes">' + filter.description[curoper] + '</option>';
@@ -556,12 +568,12 @@ var filter = {
            result += '<option value="' + curoper + '">' + filter.description[curoper] + '</option>';
       })
       result += '</select>';
-      result += '<input type="text" class="vDateField" name="filterval' + counter + '" value="' + value + '" size="10"/>\n';
+      result += '<input type="text" class="vDateField" name="filterval' + index + '" value="' + value + '" size="10"/>\n';
     } 
     else if (thefield.hasClassName('FilterBool'))
     {
       // Filter for boolean fields
-      result += '<span name="filteroper' + counter + '">equals </span><select name="filterval' + counter + '">';
+      result += '<span name="filteroper' + index + '">equals </span><select name="filterval' + index + '">';
       if (value == '0') 
       {
         result += '<option value="0" selected="yes">' + gettext('False') + '</option>';
@@ -577,7 +589,7 @@ var filter = {
     else if (thefield.hasClassName('FilterChoice'))
     {
       // Filter for choice fields
-      result += '<span name="filteroper' + counter + '">equals </span><select name="filterval' + counter + '">';
+      result += '<span name="filteroper' + index + '">equals </span><select name="filterval' + index + '">';
       thefield.select('option').each(function(element) {
         if (element.value == value) 
           result += '<option value="' + element.value + '" selected="yes">' + element.text + '</option>';
@@ -589,7 +601,7 @@ var filter = {
     else 
     {
       // Filter for text fields, also used as default
-      result += '<select name="filteroper' + counter + '">';
+      result += '<select name="filteroper' + index + '">';
       filter.textoperators.each(function(curoper) {
         if (oper == curoper)
            result += '<option value="' + curoper + '" selected="yes">' + filter.description[curoper] + '</option>';
@@ -597,7 +609,7 @@ var filter = {
            result += '<option value="' + curoper + '">' + filter.description[curoper] + '</option>';
       })
       result += '</select>';
-      result += '<input type="text" name="filterval' + counter + '" value="' + value + '" size="10"/>\n';
+      result += '<input type="text" name="filterval' + index + '" value="' + value + '" size="10"/>\n';
     } 
     return result;
   }

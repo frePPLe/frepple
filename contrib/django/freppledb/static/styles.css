@@ -178,6 +178,8 @@ a.detail {
   overflow: visible;
   padding-top: 3px;
   padding-bottom: 3px;
+  background-image: url(header.png); 
+  background-repeat: repeat-x;
 }
 
 

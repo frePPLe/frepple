@@ -20,9 +20,14 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+import re 
+
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
 from django.utils import translation
+from django.db import DEFAULT_DB_ALIAS
+from django.http import Http404
+from django.conf import settings
 
 
 class LocaleMiddleware(DjangoLocaleMiddleware):
@@ -39,4 +44,27 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
       language = translation.get_language_from_request(request)
     translation.activate(language)
     request.LANGUAGE_CODE = translation.get_language()
+
+
+for i in settings.DATABASES:
+  settings.DATABASES[i]['regexp'] = re.compile("^/%s/" % i)
+
+class DatabaseSelectionMiddleware(object):
+  """
+  This middleware examines the URL of the incoming request, and determines the 
+  name of database to use.
+  URLs starting with the name of a configured database will be executed on that 
+  database. Extra fields are set on the request to set the selected database.
+  This prefix is then stripped from the path while processing the view.
+  """
+  def process_request(self, request):
+    for i in settings.DATABASES:
+      if settings.DATABASES[i]['regexp'].match(request.path) and i != DEFAULT_DB_ALIAS:
+        request.prefix = '/%s' % i
+        request.path_info = request.path_info[len(request.prefix):]
+        request.path = request.path[len(request.prefix):]
+        request.database = i
+        return
+    request.database = DEFAULT_DB_ALIAS
+    request.prefix = ''
       

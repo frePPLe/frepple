@@ -78,10 +78,10 @@ class ReportByDemand(ListReport):
     )
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
-    cursor = connection.cursor()
+    cursor = connections[request.database].cursor()
 
     # query 1: pick up all resources loaded 
     resource = {}
@@ -161,12 +161,12 @@ def GraphData(request, entity):
   except:
     current = datetime.now()
   (bucket,start,end,bucketlist) = getBuckets(request)  
-  result = [ i for i in ReportByDemand.resultlist1(basequery,bucket,start,end) ]
+  result = [ i for i in ReportByDemand.resultlist1(request,basequery,bucket,start,end) ]
   min = None
   max = None
 
   # extra query: pick up the linked operation plans  
-  cursor = connection.cursor()
+  cursor = connections[request.database].cursor()
   query = '''
     select cons_operationplan, prod_operationplan
     from out_demandpegging
@@ -250,9 +250,9 @@ class ReportByBuffer(ListReport):
     )
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
-    cursor = connection.cursor()                           
+    cursor = connections[request.database].cursor()                           
     basesql, baseparams = basequery.query.where.as_sql(
       connections[DEFAULT_DB_ALIAS].ops.quote_name,
       connections[DEFAULT_DB_ALIAS])                              
@@ -323,9 +323,9 @@ class ReportByResource(ListReport):
     )
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
-    cursor = connection.cursor()                           
+    cursor = connections[request.database].cursor()                           
     basesql, baseparams = basequery.query.where.as_sql(
       connections[DEFAULT_DB_ALIAS].ops.quote_name,
       connections[DEFAULT_DB_ALIAS])                              

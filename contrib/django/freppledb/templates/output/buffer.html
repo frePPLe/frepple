@@ -6,8 +6,8 @@
 {% include "itemcontext.html" %}
 {% include "locationcontext.html" %}
 <div id="detailcontext" class="ContextMenu">
-<a id="/flowplan/%s">{% trans 'Detail' %}</a>
-<a id="/bufferpegging/%s">{% trans 'Pegging' %}</a>
+<a id="{{request.prefix}}/flowplan/%s">{% trans 'Detail' %}</a>
+<a id="{{request.prefix}}/bufferpegging/%s">{% trans 'Pegging' %}</a>
 </div>
 {% endblock %}
 
@@ -23,7 +23,7 @@
 	   var totalAvailable = document.viewport.getDimensions();
 	   var chart1 = new FusionCharts("/static/FCF_MSColumn2DLineDY.swf", "sampleChart", totalAvailable.width-35, 350);
 	   chart1.setTransparent();
-	   chart1.setDataURL(escape("/buffergraph/{{object}}/?reportbucket={{reportbucket}}&reportstart={{reportstart}}&reportend={{reportend}}"));	   	   
+	   chart1.setDataURL(escape("{{request.prefix}}/buffergraph/{{object}}/?reportbucket={{reportbucket}}&reportstart={{reportstart}}&reportend={{reportend}}"));	   	   
 	   chart1.render("chart1div");
 	</script>
 {% endifequal %}{% endblock %}

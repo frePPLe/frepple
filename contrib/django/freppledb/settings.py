@@ -106,6 +106,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'freppledb.common.middleware.LocaleMiddleware',
+    'freppledb.common.middleware.DatabaseSelectionMiddleware',
     'django.middleware.common.CommonMiddleware',
 )
 
@@ -154,9 +155,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user 
 #EMAIL_PORT #required
 #EMAIL_HOST_USER #if required authentication to host
 #EMAIL_HOST_PASSWORD #if required auth.
-
-# Directory from which we allow server include
-ALLOWED_INCLUDE_ROOTS = (FREPPLE_HOME)
 
 # To use a customized authentication backend.
 AUTHENTICATION_BACKENDS = (

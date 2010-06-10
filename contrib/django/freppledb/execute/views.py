@@ -32,6 +32,7 @@ from django.views.decorators.cache import never_cache
 from django.shortcuts import render_to_response, get_object_or_404
 from django.views.generic.simple import direct_to_template
 from django.utils.translation import ugettext_lazy as _
+from django.db import DEFAULT_DB_ALIAS
 
 from execute.models import log
 from common.report import *
@@ -67,17 +68,18 @@ def erase(request):
   # Allow only post
   if request.method != 'POST':
     messages.add_message(request, messages.ERROR, force_unicode(_('Only POST method allowed')))
-    return HttpResponseRedirect('/execute/execute.html')
+    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
   # Erase the database contents
   try:
-    management.call_command('frepple_flush', user=request.user.username, nonfatal=True)
+    management.call_command('frepple_flush', user=request.user.username, 
+      nonfatal=True, database=request.database)
     messages.add_message(request, messages.INFO, force_unicode(_('Erased the database')))
   except Exception, e:
     messages.add_message(request, messages.ERROR, force_unicode(_('Failure during database erasing: %(msg)s') % {'msg':e}))
 
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-  return HttpResponseRedirect('/execute/execute.html')
+  return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
 
 @staff_member_required
@@ -91,7 +93,7 @@ def create(request):
   if request.method != 'POST':
     messages.add_message(request, messages.ERROR, 
       force_unicode(_('Only POST method allowed')))
-    return HttpResponseRedirect('/execute/execute.html')
+    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
   # Validate the input form data
   try:
@@ -122,14 +124,14 @@ def create(request):
   else:
     # Execute
     try:
-      management.call_command('frepple_flush', user=request.user.username, nonfatal=True)
+      management.call_command('frepple_flush', user=request.user.username, nonfatal=True, database=request.database)
       management.call_command('frepple_createmodel',
         verbosity=0, cluster=clusters, demand=demands,
         forecast_per_item=fcstqty, level=levels, resource=resources,
         resource_size=resource_size, components=components,
         components_per=components_per, deliver_lt=deliver_lt,
         procure_lt=procure_lt, user=request.user.username,
-        nonfatal=True
+        nonfatal=True, database=request.database
         )
       messages.add_message(request, messages.INFO, 
         force_unicode(_('Created sample model in the database')))
@@ -139,7 +141,7 @@ def create(request):
 
   # Show the main screen again
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-  return HttpResponseRedirect('/execute/')
+  return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
 
 @staff_member_required
@@ -153,7 +155,7 @@ def runfrepple(request):
   if request.method != 'POST':
     messages.add_message(request, messages.ERROR, 
       force_unicode(_('Only POST method allowed')))
-    return HttpResponseRedirect('/execute/execute.html')
+    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
   # Decode form input
   constraint = 0
@@ -173,9 +175,8 @@ def runfrepple(request):
     management.call_command(
       'frepple_run', 
       user=request.user.username, 
-      constraint=constraint, 
-      nonfatal=True, 
-      plantype=plantype
+      plantype=plantype, constraint=constraint, 
+      nonfatal=True, database=request.database
       )
     messages.add_message(request, messages.INFO, 
       force_unicode(_('Successfully created a plan')))
@@ -183,7 +184,7 @@ def runfrepple(request):
     messages.add_message(request, messages.ERROR, 
       force_unicode(_('Failure creating a plan: %(msg)s') % {'msg':e}))
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-  return HttpResponseRedirect('/execute/execute.html')
+  return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
 
 @staff_member_required
@@ -198,7 +199,7 @@ def fixture(request):
     messages.add_message(request, messages.ERROR, 
       force_unicode(_('Only POST method allowed')))
     # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-    return HttpResponseRedirect('/execute/execute.html')
+    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
   # Decode the input data from the form
   try:
@@ -207,25 +208,59 @@ def fixture(request):
   except:
     messages.add_message(request, messages.ERROR, 
       force_unicode(_('Missing dataset name')))
-    return HttpResponseRedirect('/execute/execute.html')
+    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
   # Load the fixture
   # The fixture loading code is unfornately such that no exceptions are
   # or any error status returned when it fails...
   try:
     log(category='LOAD', theuser=request.user.username,
-      message='Start loading dataset "%s"' % fixture).save()
-    management.call_command('loaddata', fixture, verbosity=0)
+      message='Start loading dataset "%s"' % fixture).save(using=request.database)
+    management.call_command('loaddata', fixture, verbosity=0, database=request.database)
     messages.add_message(request, messages.INFO, 
       force_unicode(_('Loaded dataset')))
     log(category='LOAD', theuser=request.user.username,
-      message='Finished loading dataset "%s"' % fixture).save()
+      message='Finished loading dataset "%s"' % fixture).save(using=request.database)
   except Exception, e:
     messages.add_message(request, messages.ERROR, 
       force_unicode(_('Error while loading dataset: %(msg)s') % {'msg':e}))
     log(category='LOAD', theuser=request.user.username,
-      message='Failed loading dataset "%s": %s' % (fixture,e)).save()
-  return HttpResponseRedirect('/execute/execute.html')
+      message='Failed loading dataset "%s": %s' % (fixture,e)).save(using=request.database)
+  return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+
+
+@staff_member_required
+@never_cache
+def logfile(request):
+  '''
+  This view shows the frepple log file of the last planning run in this database.
+  '''
+  try:
+    if request.database == DEFAULT_DB_ALIAS:
+      f = open(os.path.join(settings.FREPPLE_HOME, 'frepple.log'), 'rb')     
+    else:
+      f = open(os.path.join(settings.FREPPLE_HOME, 'frepple_%s.log' % request.database), 'rb')
+  except:
+    logdata = "File not found"
+  else:
+    try:
+      f.seek(-1, os.SEEK_END)
+      if f.tell() >= 50000:
+        # Too big to display completely
+        f.seek(-50000, os.SEEK_END)
+        logdata = "Displaying only the last 50K from the log file...\n\n..." + f.read(50000)
+      else:
+        # Displayed completely
+        f.seek(0, os.SEEK_SET)
+        logdata = f.read(50000)
+    finally:
+      f.close()
+
+  return direct_to_template(request,  template='execute/logfrepple.html',
+    extra_context={
+      'title': _('Log file'), 
+      'logdata': logdata,
+      } )
 
 
 class LogReport(ListReport):

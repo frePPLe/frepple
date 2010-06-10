@@ -34,7 +34,7 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.contrib.admin import sites
 
-HOMECRUMB = '<a href="/admin/">%s</a>'
+HOMECRUMB = '<a href="%s/admin/">%s</a>'
 
 register = Library()
 variable_title = Variable("title")
@@ -128,11 +128,11 @@ class CrumbsNode(Node):
         except: return ''  # No request found in the context: no crumbs...
         # Pick up the current crumbs from the session cookie
         try: cur = req.session['crumbs']
-        except: cur = [(_('Home'),HOMECRUMB % _('Home'))]
+        except: cur = [(_('Home'),HOMECRUMB % (req.prefix, _('Home')))]
 
         # Check if we need to reset the crumbs
         try:
-          if context['reset_crumbs']: cur = [(_('Home'),HOMECRUMB % _('Home'))]
+          if context['reset_crumbs']: cur = [(_('Home'),HOMECRUMB % (req.prefix, _('Home')))]
         except: pass
 
         # Pop from the stack if the same url is already in the crumbs
@@ -148,8 +148,8 @@ class CrumbsNode(Node):
            cnt += 1
 
         # Push current url on the stack
-        cur.append( (unicode(title),'<a href="%s%s">%s</a>' % (
-          urlquote(req.path),
+        cur.append( (unicode(title),'<a href="%s%s%s">%s</a>' % (
+          req.prefix, urlquote(req.path),
           req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
           unicode(escape(title))
           )))

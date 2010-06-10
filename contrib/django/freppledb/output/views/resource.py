@@ -21,7 +21,7 @@
 # date : $LastChangedDate$
 
 
-from django.db import connection
+from django.db import connections
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
 
@@ -64,15 +64,15 @@ class OverviewReport(TableReport):
   javascript_imports = ['/static/FusionCharts.js',]
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values('name','location')
 
   @staticmethod
-  def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     
     # Execute the query
-    cursor = connection.cursor()
+    cursor = connections[request.database].cursor()
     query = '''
        select x.name as row1, x.location_id as row2,
              x.bucket as col1, x.startdate as col2, x.enddate as col3,

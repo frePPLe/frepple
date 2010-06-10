@@ -29,6 +29,7 @@ from django.forms.util import ErrorList
 
 from freppledb.input.models import *
 from freppledb.admin import site
+from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
 
 
 class ParameterForm(forms.ModelForm):
@@ -48,19 +49,19 @@ class ParameterForm(forms.ModelForm):
     return cleaned_data
 
 
-class Parameter_admin(admin.ModelAdmin):
+class Parameter_admin(MultiDBModelAdmin):
   model = Parameter
   save_on_top = True
   form = ParameterForm
 site.register(Parameter,Parameter_admin)
 
 
-class Bucket_inline(admin.TabularInline):
+class Bucket_inline(MultiDBTabularInline):
   model = Bucket
   extra = 3
 
 
-class Calendar_admin(admin.ModelAdmin):
+class Calendar_admin(MultiDBModelAdmin):
   model = Calendar
   save_on_top = True
   save_as = True
@@ -68,7 +69,7 @@ class Calendar_admin(admin.ModelAdmin):
 site.register(Calendar,Calendar_admin)
 
 
-class Location_admin(admin.ModelAdmin):
+class Location_admin(MultiDBModelAdmin):
   model = Location
   raw_id_fields = ('available', 'owner',)
   save_on_top = True
@@ -76,7 +77,7 @@ class Location_admin(admin.ModelAdmin):
 site.register(Location,Location_admin)
 
 
-class Customer_admin(admin.ModelAdmin):
+class Customer_admin(MultiDBModelAdmin):
   model = Customer
   raw_id_fields = ('owner',)
   save_on_top = True
@@ -84,7 +85,7 @@ class Customer_admin(admin.ModelAdmin):
 site.register(Customer,Customer_admin)
 
 
-class Item_admin(admin.ModelAdmin):
+class Item_admin(MultiDBModelAdmin):
   model = Item
   save_as = True
   save_on_top = True
@@ -92,26 +93,26 @@ class Item_admin(admin.ModelAdmin):
 site.register(Item,Item_admin)
 
 
-class SubOperation_inline(admin.TabularInline):
+class SubOperation_inline(MultiDBTabularInline):
   model = SubOperation
   fk_name = 'operation'
   extra = 1
   raw_id_fields = ('suboperation',)
 
 
-class Flow_inline(admin.TabularInline):
+class Flow_inline(MultiDBTabularInline):
   model = Flow
   raw_id_fields = ('operation', 'thebuffer',)
   extra = 1
 
 
-class Load_inline(admin.TabularInline):
+class Load_inline(MultiDBTabularInline):
   model = Load
   raw_id_fields = ('operation', 'resource',)
   extra = 1
   
 
-class Operation_admin(admin.ModelAdmin):
+class Operation_admin(MultiDBModelAdmin):
   model = Operation
   raw_id_fields = ('location',)
   save_on_top = True
@@ -128,14 +129,14 @@ class Operation_admin(admin.ModelAdmin):
 site.register(Operation,Operation_admin)
 
 
-class SubOperation_admin(admin.ModelAdmin):
+class SubOperation_admin(MultiDBModelAdmin):
   model = SubOperation
   raw_id_fields = ('operation', 'suboperation',)
   save_on_top = True
 site.register(SubOperation,SubOperation_admin)
 
 
-class Buffer_admin(admin.ModelAdmin):
+class Buffer_admin(MultiDBModelAdmin):
   raw_id_fields = ('location', 'item', 'minimum', 'producing', )
   fieldsets = (
             (None,{
@@ -155,12 +156,12 @@ class Buffer_admin(admin.ModelAdmin):
 site.register(Buffer,Buffer_admin)
 
 
-class SetupRule_inline(admin.TabularInline):
+class SetupRule_inline(MultiDBTabularInline):
   model = SetupRule
   extra = 3
 
 
-class SetupMatrix_admin(admin.ModelAdmin):
+class SetupMatrix_admin(MultiDBModelAdmin):
   model = SetupMatrix
   save_as = True
   save_on_top = True
@@ -168,7 +169,7 @@ class SetupMatrix_admin(admin.ModelAdmin):
 site.register(SetupMatrix,SetupMatrix_admin)
 
 
-class Resource_admin(admin.ModelAdmin):
+class Resource_admin(MultiDBModelAdmin):
   model = Resource
   raw_id_fields = ('maximum', 'location', 'setupmatrix')
   save_as = True
@@ -177,7 +178,7 @@ class Resource_admin(admin.ModelAdmin):
 site.register(Resource,Resource_admin)
 
 
-class Flow_admin(admin.ModelAdmin):
+class Flow_admin(MultiDBModelAdmin):
   model = Flow
   raw_id_fields = ('operation', 'thebuffer',)
   save_on_top = True
@@ -185,7 +186,7 @@ class Flow_admin(admin.ModelAdmin):
 site.register(Flow,Flow_admin)
 
 
-class Load_admin(admin.ModelAdmin):
+class Load_admin(MultiDBModelAdmin):
   model = Load
   raw_id_fields = ('operation', 'resource',)
   save_on_top = True
@@ -193,7 +194,7 @@ class Load_admin(admin.ModelAdmin):
 site.register(Load,Load_admin)
 
 
-class OperationPlan_admin(admin.ModelAdmin):
+class OperationPlan_admin(MultiDBModelAdmin):
   model = OperationPlan
   raw_id_fields = ('operation',)
   save_on_top = True
@@ -201,7 +202,7 @@ class OperationPlan_admin(admin.ModelAdmin):
 site.register(OperationPlan,OperationPlan_admin)
 
 
-class Demand_admin(admin.ModelAdmin):
+class Demand_admin(MultiDBModelAdmin):
   model = Demand
   raw_id_fields = ('customer', 'item', 'operation', 'owner',)
   fieldsets = (
@@ -214,12 +215,12 @@ class Demand_admin(admin.ModelAdmin):
 site.register(Demand,Demand_admin)
 
 
-class ForecastDemand_inline(admin.TabularInline):
+class ForecastDemand_inline(MultiDBTabularInline):
   model = ForecastDemand
   extra = 5
 
 
-class Forecast_admin(admin.ModelAdmin):
+class Forecast_admin(MultiDBModelAdmin):
   model = Forecast
   raw_id_fields = ('customer', 'item', 'calendar', 'operation')
   fieldsets = (
@@ -233,7 +234,7 @@ class Forecast_admin(admin.ModelAdmin):
 site.register(Forecast,Forecast_admin)
 
 
-class Dates_admin(admin.ModelAdmin):
+class Dates_admin(MultiDBModelAdmin):
   model = Dates
   fieldsets = (
       (None, {'fields': (('day','day_start','day_end'),

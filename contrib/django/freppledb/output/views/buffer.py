@@ -20,7 +20,7 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from django.db import connection
+from django.db import connections
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
@@ -68,12 +68,12 @@ class OverviewReport(TableReport):
   javascript_imports = ['/static/FusionCharts.js',]
   
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):    
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):    
     return basequery.values('name','item','location')
 
   @staticmethod
-  def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    cursor = connection.cursor()
+  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     
     # Execute a query  to get the onhand value at the start of our horizon
@@ -195,7 +195,7 @@ def GraphData(request, entity):
   consumed = []
   produced = []
   endoh = []
-  for x in OverviewReport.resultlist2(basequery, bucket, start, end):
+  for x in OverviewReport.resultlist2(request, basequery, bucket, start, end):
     consumed.append(x['consumed'])
     produced.append(x['produced'])
     endoh.append(x['endoh'])

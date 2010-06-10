@@ -283,7 +283,7 @@ class DatabaseTask(Thread):
     super(DatabaseTask, self).__init__()
     self.functions = f
 
-  @transaction.commit_manually
+  @transaction.commit_manually(using=database)
   def run(self):
     # Create a database connection
     cursor = connections[database].cursor()
@@ -303,12 +303,12 @@ class DatabaseTask(Thread):
     cursor.close()
 
 
-@transaction.commit_manually
+@transaction.commit_manually(using=database)
 def exportfrepple():
   '''
   This function exports the data from the frepple memory into the database.
   '''
-
+  global database
   # Make sure the debug flag is not set!
   # When it is set, the django database wrapper collects a list of all sql
   # statements executed and their timings. This consumes plenty of memory

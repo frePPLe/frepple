@@ -1,4 +1,4 @@
 {% load i18n %}
 <div id="calendarcontext" class="ContextMenu">
-{% if perms.input.change_calendar %}<a id="/admin/input/calendar/%s/">{% trans 'Calendar' %}</a>{% endif %}
+{% if perms.input.change_calendar %}<a id="{{ request.prefix }}/admin/input/calendar/%s/">{% trans 'Calendar' %}</a>{% endif %}
 </div>

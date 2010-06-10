@@ -264,7 +264,7 @@ def view_report(request, entity=None, **args):
   is_popup = request.GET.has_key('pop')
 
   # Pick up the filter parameters from the url
-  counter = reportclass.basequeryset
+  counter = reportclass.basequeryset.using(request.database)
   fullhits = counter.count()
   if entity:
     # The url path specifies a single entity.
@@ -363,10 +363,10 @@ def view_report(request, entity=None, **args):
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
     if hasattr(reportclass,'resultlist2'):
       # SQL override provided of type 2
-      response._container = _generate_csv(reportclass, reportclass.resultlist2(counter, bucket, start, end, sortsql=sortsql), type, bucketlist, pref)
+      response._container = _generate_csv(reportclass, reportclass.resultlist2(request, counter, bucket, start, end, sortsql=sortsql), type, bucketlist, pref)
     elif hasattr(reportclass,'resultlist1'):
       # SQL override provided of type 1
-      response._container = _generate_csv(reportclass, reportclass.resultlist1(counter, bucket, start, end, sortsql=sortsql), type, bucketlist, pref)
+      response._container = _generate_csv(reportclass, reportclass.resultlist1(request, counter, bucket, start, end, sortsql=sortsql), type, bucketlist, pref)
     else:
       # No SQL override provided
       response._container = _generate_csv(reportclass, counter, type, bucketlist, pref)
@@ -384,7 +384,7 @@ def view_report(request, entity=None, **args):
   if hasattr(reportclass,'resultlist1'):
     # SQL override provided
     try:
-      objectlist1 = reportclass.resultlist1(counter, bucket, start, end, sortsql=sortsql)
+      objectlist1 = reportclass.resultlist1(request, counter, bucket, start, end, sortsql=sortsql)
     except InvalidPage: raise Http404
   else:
     # No SQL override provided
@@ -392,7 +392,7 @@ def view_report(request, entity=None, **args):
   if hasattr(reportclass,'resultlist2'):
     # SQL override provided
     try:
-      objectlist2 = reportclass.resultlist2(counter, bucket, start, end, sortsql=sortsql)
+      objectlist2 = reportclass.resultlist2(request, counter, bucket, start, end, sortsql=sortsql)
     except InvalidPage: raise Http404
   else:
     # No SQL override provided
@@ -404,9 +404,9 @@ def view_report(request, entity=None, **args):
   # Build the path for the complete list.
   # We need to treat URLs for a specific entity a bit differently
   if entity:
-    base_request_path = "%s/" % request.path.rstrip("/").rpartition("/")[0]
+    base_request_path = "%s%s/" % (request.prefix, request.path.rstrip("/").rpartition("/")[0])
   else:
-    base_request_path = request.path
+    base_request_path = "%s%s" %(request.prefix, request.path)
 
   # Prepare template context
   head_frozen, head_scroll = _create_rowheader(request, sortfield, sortdirection, reportclass)
@@ -414,6 +414,7 @@ def view_report(request, entity=None, **args):
   context = {
        'reportclass': reportclass,
        'model': model,
+       'admin_url': model and '%s/%s' % (model._meta.app_label, model.__name__.lower()) or '',
        'hasaddperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())),
        'haschangeperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
        'request': request,
@@ -490,10 +491,10 @@ def _get_paginator_html(request, paginator, page):
       if n == page:
         page_htmls.append('<span class="this-page">%d</span>' % page)
       elif n == 1 and len(parameters) == 0:
-        page_htmls.append('<a href="%s">1</a>' % request.path)
+        page_htmls.append('<a href="%s%s">1</a>' % (request.prefix, request.path))
       else:
         if n>1: parameters.__setitem__('p', n)
-        page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n))
+        page_htmls.append('<a href="%s%s?%s">%s</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
   elif paginator.num_pages > 1:
       # Insert "smart" pagination links, so that there are always ON_ENDS
       # links at either end of the list of pages, and there are always
@@ -504,37 +505,37 @@ def _get_paginator_html(request, paginator, page):
             if n == page:
               page_htmls.append('<span class="this-page">%d</span>' % page)
             elif n == 1 and len(parameters) == 0:
-              page_htmls.append('<a href="%s">1</a>' % request.path)
+              page_htmls.append('<a href="%s%s">1</a>' % (request.prefix,  request.path))
             else:
               if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n))
+              page_htmls.append('<a href="%s%s?%s">%s</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
           page_htmls.append('...')
           for n in range(paginator.num_pages - ON_ENDS, paginator.num_pages + 1):
             parameters.__setitem__('p', n)
-            page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n))
+            page_htmls.append('<a href="%s%s?%s">%s</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
       elif page >= (paginator.num_pages - ON_EACH_SIDE - ON_ENDS):
           # 1 2 ... 95 96 97 *98* 99 100
           for n in range(1, ON_ENDS + 1):
             if n == 1 and len(parameters) == 0:
-              page_htmls.append('<a href="%s">1</a>' % request.path)
+              page_htmls.append('<a href="%s%s">1</a>' % (request.prefix, request.path))
             else:
               if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n))
+              page_htmls.append('<a href="%s%s?%s">%s</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
           page_htmls.append('...')
           for n in range(page - max(ON_EACH_SIDE, ON_ENDS), paginator.num_pages + 1):
             if n == page:
               page_htmls.append('<span class="this-page">%d</span>' % page)
             else:
               if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n))
+              page_htmls.append('<a href="%s%s?%s">%d</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
       else:
           # 1 2 ... 45 46 47 *48* 49 50 51 ... 99 100
           for n in range(1, ON_ENDS + 1):
             if n == 1 and len(parameters) == 0:
-              page_htmls.append('<a href="%s">1</a>' % request.path)
+              page_htmls.append('<a href="%s%s">1</a>' % (request.prefix, request.path))
             else:
               if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n))
+              page_htmls.append('<a href="%s%s?%s">%d</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
           page_htmls.append('...')
           for n in range(page - ON_EACH_SIDE, page + ON_EACH_SIDE + 1):
             if n == page:
@@ -543,11 +544,11 @@ def _get_paginator_html(request, paginator, page):
               page_htmls.append('...')
             else:
               if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n))
+              page_htmls.append('<a href="%s%s?%s">%s</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
           page_htmls.append('...')
           for n in range(paginator.num_pages - ON_ENDS + 1, paginator.num_pages + 1):
               if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n))
+              page_htmls.append('<a href="%s%s?%s">%d</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
   return mark_safe(' '.join(page_htmls))
 
 
@@ -739,6 +740,7 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
     raise Http404, "bucket name %s not valid" % bucket
 
   # Pick up the buckets
+  # Assumption: all database schemas have the same buckets as the default database!
   if not bucket in datelist:
     # Read the buckets from the database if the data isn't available yet
     cursor = connection.cursor()
@@ -802,20 +804,20 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
       if 'filter' in row[1]:
         # Filtering allowed
         if issubclass(cls,ListReport) and number <= cls.frozenColumns:       
-          result1.append( u'<th %s><a href="%s?%s">%s</a></th>' \
-            % (y, escape(req.path), escape(args.urlencode()), title) )
+          result1.append( u'<th %s><a href="%s%s?%s">%s</a></th>' \
+            % (y, req.prefix, escape(req.path), escape(args.urlencode()), title) )
         else:
-          result2.append( u'<th %s><a href="%s?%s">%s</a></th>' \
-            % (y, escape(req.path), escape(args.urlencode()), title) )
+          result2.append( u'<th %s><a href="%s%s?%s">%s</a></th>' \
+            % (y, req.prefix, escape(req.path), escape(args.urlencode()), title) )
         rowfield = row[1]['filter'].field or row[0]
       else:
         # No filtering allowed
         if issubclass(cls,ListReport) and number <= cls.frozenColumns:       
-          result1.append( u'<th %s><a href="%s?%s">%s</a></th>' \
-            % (y, escape(req.path), escape(args.urlencode()), title) )
+          result1.append( u'<th %s><a href="%s%s?%s">%s</a></th>' \
+            % (y, req.prefix, escape(req.path), escape(args.urlencode()), title) )
         else:
-          result2.append( u'<th %s><a href="%s?%s">%s</a></th>' \
-            % (y, escape(req.path), escape(args.urlencode()), title) )
+          result2.append( u'<th %s><a href="%s%s?%s">%s</a></th>' \
+            % (y, req.prefix, escape(req.path), escape(args.urlencode()), title) )
         rowfield = row[0]
       for i in args:
         field, sep, operator = i.rpartition('__')

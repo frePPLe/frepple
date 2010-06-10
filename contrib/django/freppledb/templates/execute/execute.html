@@ -34,7 +34,7 @@
 <table summary="Extra commands.">
 <caption>frePPLe</caption>
 
-<form method="post" action="/execute/runfrepple/">{% csrf_token %}<tr>
+<form method="post" action="{{ request.prefix }}/execute/runfrepple/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Run frePPLe</a></th>
 <td>Load frePPLe from the database...  <br/>
 and create a plan in frePPLe...<br/>
@@ -57,8 +57,8 @@ and export results into the database<br/>
 <input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked="true"{% endif %} value="1"/>{% trans "Lead time: do not plan in the past" %}<br/>
 <input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8"/>{% trans "Release fence: do not plan within the release time window" %}<br/>
 <br/>
-{% blocktrans %}<a href="/execute/logfrepple/">View latest log file</a></td>
-<td><input id="run" type="submit" value="Run" /></td>{% endblocktrans %}
+<a href="{{ request.prefix }}/execute/logfrepple/">{% trans "View latest log file" %}</a></td>
+<td><input id="run" type="submit" value="{% trans "Run" %}" /></td>
 </tr></form>
 
 </table>
@@ -70,13 +70,13 @@ and export results into the database<br/>
 <table summary="Extra commands.">
 <caption>{% trans "Database" %}</caption>
 
-<form method="post" action="/execute/erase/">{% csrf_token %}<tr>
+<form method="post" action="{{ request.prefix }}/execute/erase/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Erase</a></th>
 <td>Erase all data from the database.</td>
 <td><input id="erase" type="submit" value="Erase" /></td>{% endblocktrans %}
 </tr></form>
 
-<form method="post" action="/execute/fixture/">{% csrf_token %}<tr>
+<form method="post" action="{{ request.prefix }}/execute/fixture/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Load a dataset</a></th>
 <td>Load a dataset from a file in the database.<br/>
 Available datasets: <select name="datafile" id="entity">
@@ -99,7 +99,7 @@ Available datasets: <select name="datafile" id="entity">
 <table summary="Extra commands.">
 <caption>{% trans "Model generator" %}</caption>
 
-<form method="post" action="/execute/create/">{% csrf_token %}<tr>
+<form method="post" action="{{ request.prefix }}/execute/create/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Create a model</a></th>
 <td>Create a sample model in the database.<br/>
 The parameters control the size and complexity.<br/>

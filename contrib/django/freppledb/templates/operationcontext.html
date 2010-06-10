@@ -1,9 +1,9 @@
 {% load i18n %}
 <div id="operationcontext" class="ContextMenu">
-{% if perms.input.change_operation %}<a id="/admin/input/operation/%s/">{% trans 'Operation' %}</a>{% endif %}
-<a id="/supplypath/operation/%s/">{% trans 'Supply Path' %}</a>
-<a id="/whereused/operation/%s/">{% trans 'Where Used' %}</a>
-<a id="/operation/%s/">{% trans 'Plan' %}</a>
-<a id="/operationplan?operation__exact=%s">{% trans 'Plan detail' %}</a>
-<a id="/constraint/?entity=operation&owner=%s">{% trans 'Constrained demand' %}</a>
+{% if perms.input.change_operation %}<a id="{{ request.prefix }}/admin/input/operation/%s/">{% trans 'Operation' %}</a>{% endif %}
+<a id="{{ request.prefix }}/supplypath/operation/%s/">{% trans 'Supply Path' %}</a>
+<a id="{{ request.prefix }}/whereused/operation/%s/">{% trans 'Where Used' %}</a>
+<a id="{{ request.prefix }}/operation/%s/">{% trans 'Plan' %}</a>
+<a id="{{ request.prefix }}/operationplan?operation__exact=%s">{% trans 'Plan detail' %}</a>
+<a id="{{ request.prefix }}/constraint/?entity=operation&owner=%s">{% trans 'Constrained demand' %}</a>
 </div>

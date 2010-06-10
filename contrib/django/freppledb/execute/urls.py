@@ -25,10 +25,7 @@ from django.conf.urls.defaults import patterns
 import execute.views
 
 urlpatterns = patterns('',
-    (r'^logfrepple/$', 'django.views.generic.simple.direct_to_template',
-       {'template': 'execute/logfrepple.html',
-        'extra_context': {'title': 'frePPLe log file'},
-       }),
+    (r'^logfrepple/$', 'execute.views.logfile'),
     (r'^log/$', 'common.report.view_report', {'report': execute.views.LogReport,}),
     (r'^runfrepple/$', 'execute.views.runfrepple'),
     (r'^erase/$', 'execute.views.erase'),

@@ -13,7 +13,12 @@ from freppledb.execute.export_file import exportfrepple as export_to_file
 from freppledb.execute.load import loadfrepple
 
 # Send the output to a logfile
-frepple.settings.logfile = os.path.join(os.environ['FREPPLE_HOME'],'frepple.log')
+try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
+except: db = DEFAULT_DB_ALIAS
+if db == DEFAULT_DB_ALIAS:
+  frepple.settings.logfile = os.path.join(os.environ['FREPPLE_HOME'],'frepple.log')
+else:
+  frepple.settings.logfile = os.path.join(os.environ['FREPPLE_HOME'],'frepple_%s.log' % db)
 
 # Create a solver where the plan type are defined by an environment variable
 try: plantype = int(os.environ['PLANTYPE'])
@@ -25,8 +30,6 @@ print "Plan type: ", plantype
 print "Constraints: ", constraint
 
 # Welcome message
-try: db = os.environ['FREPPLE_DATABASE']
-except: db = DEFAULT_DB_ALIAS
 if settings.DATABASES[db]['ENGINE'] == 'django.db.backends.sqlite3':
   print "Using sqlite3 database '%s'" % ('NAME' in settings.DATABASES[db] and settings.DATABASES[db]['NAME'] or '')
 else:

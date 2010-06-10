@@ -76,7 +76,7 @@ class uploadjson:
             if not request.user.has_perm('input.change_resource'):
               raise Exception('No permission to change resources')
             # b) Find the calendar
-            res = Resource.objects.get(name = i['name'])
+            res = Resource.objects.using(request.database).get(name = i['name'])
             if not res.maximum:
               raise Exception('Resource "%s" has no max calendar' % res.name)
             # c) Update the calendar
@@ -102,7 +102,7 @@ class uploadjson:
             # b) Find the forecast
             start = datetime.strptime(i['startdate'],'%Y-%m-%d')
             end = datetime.strptime(i['enddate'],'%Y-%m-%d')
-            fcst = Forecast.objects.get(name = i['name'])
+            fcst = Forecast.objects.using(request.database).get(name = i['name'])
             # c) Update the forecast
             fcst.setTotal(start,end,i['value'])
 
@@ -133,7 +133,7 @@ class pathreport:
   '''
 
   @staticmethod
-  def getPath(type, entity, downstream):
+  def getPath(request, type, entity, downstream):
     '''
     A generator function that recurses upstream or downstream in the supply
     chain.
@@ -144,22 +144,22 @@ class pathreport:
     from django.core.exceptions import ObjectDoesNotExist
     if type == 'buffer':
       # Find the buffer
-      try: root = [ (0, Buffer.objects.get(name=entity), None, None, None, Decimal(1)) ]
+      try: root = [ (0, Buffer.objects.using(request.database).get(name=entity), None, None, None, Decimal(1)) ]
       except ObjectDoesNotExist: raise Http404, "buffer %s doesn't exist" % entity
     elif type == 'item':
       # Find the item
       try:
-        root = [ (0, r, None, None, None, Decimal(1)) for r in Buffer.objects.filter(item=entity) ]
+        root = [ (0, r, None, None, None, Decimal(1)) for r in Buffer.objects.filter(item=entity).using(request.database) ]
       except ObjectDoesNotExist: raise Http404, "item %s doesn't exist" % entity
     elif type == 'operation':
       # Find the operation
-      try: root = [ (0, None, None, Operation.objects.get(name=entity), None, Decimal(1)) ]
+      try: root = [ (0, None, None, Operation.objects.using(request.database).get(name=entity), None, Decimal(1)) ]
       except ObjectDoesNotExist: raise Http404, "operation %s doesn't exist" % entity
     elif type == 'resource':
       # Find the resource
-      try: root = Resource.objects.get(name=entity)
+      try: root = Resource.objects.using(request.database).get(name=entity)
       except ObjectDoesNotExist: raise Http404, "resource %s doesn't exist" % entity
-      root = [ (0, None, None, i.operation, None, Decimal(1)) for i in root.loads.all() ]
+      root = [ (0, None, None, i.operation, None, Decimal(1)) for i in root.loads.using(request.database).all() ]
     else:
       raise Http404, "invalid entity type %s" % type
 
@@ -183,7 +183,7 @@ class pathreport:
       if downstream:
         # Find all operations consuming from this buffer...
         if curbuffer:
-          start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__lt=0).select_related(depth=1) ]
+          start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database) ]
         else:
           start = [ (None, curoperation) ]
         for cons_flow, curoperation in start:
@@ -192,19 +192,19 @@ class pathreport:
           ok = False
 
           # Push the next buffer on the stack, based on current operation
-          for prod_flow in curoperation.flows.filter(quantity__gt=0).select_related(depth=1):
+          for prod_flow in curoperation.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database):
             ok = True
             root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
 
           # Push the next buffer on the stack, based on super-operations
-          for x in curoperation.superoperations.select_related(depth=1):
-            for prod_flow in x.suboperation.flows.filter(quantity__gt=0):
+          for x in curoperation.superoperations.select_related(depth=1).using(request.database):
+            for prod_flow in x.suboperation.flows.filter(quantity__gt=0).using(request.database):
               ok = True
               root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
 
           # Push the next buffer on the stack, based on sub-operations
-          for x in curoperation.suboperations.select_related(depth=1):
-            for prod_flow in x.operation.flows.filter(quantity__gt=0):
+          for x in curoperation.suboperations.select_related(depth=1).using(request.database):
+            for prod_flow in x.operation.flows.filter(quantity__gt=0).using(request.database):
               ok = True
               root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
 
@@ -216,7 +216,7 @@ class pathreport:
         # Find all operations producing into this buffer...
         if curbuffer:
           if curbuffer.producing:
-            start = [ (i, i.operation) for i in curbuffer.producing.flows.filter(quantity__gt=0).select_related(depth=1) ]
+            start = [ (i, i.operation) for i in curbuffer.producing.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database) ]
           else:
             start = []
         else:
@@ -227,19 +227,19 @@ class pathreport:
           ok = False
 
           # Push the next buffer on the stack, based on current operation
-          for cons_flow in curoperation.flows.filter(quantity__lt=0).select_related(depth=1):
+          for cons_flow in curoperation.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database):
             ok = True
             root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
 
           # Push the next buffer on the stack, based on super-operations
-          for x in curoperation.superoperations.select_related(depth=1):
-            for cons_flow in x.suboperation.flows.filter(quantity__lt=0):
+          for x in curoperation.superoperations.select_related(depth=1).using(request.database):
+            for cons_flow in x.suboperation.flows.filter(quantity__lt=0).using(request.database):
               ok = True
               root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
 
           # Push the next buffer on the stack, based on sub-operations
-          for x in curoperation.suboperations.select_related(depth=1):
-            for cons_flow in x.operation.flows.filter(quantity__lt=0):
+          for x in curoperation.suboperations.select_related(depth=1).using(request.database):
+            for cons_flow in x.operation.flows.filter(quantity__lt=0).using(request.database):
               ok = True
               root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
 
@@ -254,7 +254,7 @@ class pathreport:
   def viewdownstream(request, type, entity):
     return render_to_response('input/path.html', RequestContext(request,{
        'title': _('Where-used report for %(type)s %(entity)s') % {'type':_(type), 'entity':entity},
-       'supplypath': pathreport.getPath(type, entity, True),
+       'supplypath': pathreport.getPath(request, type, entity, True),
        'type': type,
        'entity': entity,
        'downstream': True,
@@ -266,7 +266,7 @@ class pathreport:
   def viewupstream(request, type, entity):
     return render_to_response('input/path.html', RequestContext(request,{
        'title': _('Supply path report for %(type)s %(entity)s') % {'type':_(type), 'entity':entity},
-       'supplypath': pathreport.getPath(type, entity, False),
+       'supplypath': pathreport.getPath(request, type, entity, False),
        'type': type,
        'entity': entity,
        'downstream': False,
@@ -276,12 +276,12 @@ class pathreport:
 @staff_member_required
 def location_calendar(request, location):
   # Check to find a location availability calendar
-  loc = Location.objects.get(pk=location)
+  loc = Location.objects.using(request.database).get(pk=location)
   if loc: 
     cal = loc.available
   if cal: 
     # Go to the calendar
-    return HttpResponseRedirect('/admin/input/calendar/%s/' % iri_to_uri(cal.name) )
+    return HttpResponseRedirect('%s/admin/input/calendar/%s/' % (request.prefix, iri_to_uri(cal.name)) )
   # Generate a message
   try: 
     url = request.META.get('HTTP_REFERER')
@@ -302,7 +302,7 @@ class ParameterList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values('name','value','description','lastmodified')
 
   rows = (
@@ -336,7 +336,7 @@ class BufferList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','location','item',
       'onhand','type','minimum','producing','carrying_cost','lastmodified'
@@ -405,7 +405,7 @@ class SetupMatrixList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values('name','lastmodified')
 
   rows = (
@@ -431,7 +431,7 @@ class ResourceList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','location','type',
       'maximum','cost','maxearly','setupmatrix','setup','lastmodified'
@@ -500,7 +500,7 @@ class LocationList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','available','owner',
       'lastmodified'
@@ -549,7 +549,7 @@ class CustomerList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','owner','lastmodified'
       )
@@ -593,7 +593,7 @@ class ItemList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','operation','owner',
       'price','lastmodified'
@@ -646,7 +646,7 @@ class LoadList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','resource','quantity','effective_start','effective_end',
       'name','alternate','priority','setup','search','lastmodified'
@@ -715,7 +715,7 @@ class FlowList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','thebuffer','type','quantity','effective_start',
       'effective_end','name','alternate','priority','search','lastmodified'
@@ -784,7 +784,7 @@ class DemandList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','item','customer','description','category','subcategory',
       'due','quantity','operation','priority','owner','maxlateness',
@@ -862,7 +862,7 @@ class ForecastList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','item','customer','calendar','description','category',
       'subcategory','operation','priority','minshipment','maxlateness',
@@ -981,7 +981,7 @@ class OperationList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','type','location','fence','pretime','posttime','sizeminimum',
       'sizemultiple','sizemaximum','cost','search','lastmodified'
@@ -1062,7 +1062,7 @@ class SubOperationList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','suboperation','priority','effective_start','effective_end',
       'lastmodified'
@@ -1111,7 +1111,7 @@ class OperationPlanList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','startdate','enddate','quantity','locked',
       'lastmodified'

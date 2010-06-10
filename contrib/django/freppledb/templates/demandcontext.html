@@ -1,6 +1,6 @@
 {% load i18n %}
 <div id="demandcontext" class="ContextMenu">
-{% if perms.input.change_demand %}<a id="/admin/input/demand/%s/">{% trans 'Demand' %}</a>{% endif %}
-<a id="/constraint/?demand=%s">{% trans 'Why short or late?' %}</a>
-<a id="/demandpegging/%s/">{% trans 'Plan' %}</a>
+{% if perms.input.change_demand %}<a id="{{ request.prefix }}/admin/input/demand/%s/">{% trans 'Demand' %}</a>{% endif %}
+<a id="{{ request.prefix }}/constraint/?demand=%s">{% trans 'Why short or late?' %}</a>
+<a id="{{ request.prefix }}/demandpegging/%s/">{% trans 'Plan' %}</a>
 </div>

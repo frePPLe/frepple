@@ -31,8 +31,8 @@
 {% include "resourcecontext.html" %}
 {% include "locationcontext.html" %}
 <div id="detailcontext" class="ContextMenu">
-<a id="/loadplan/%s">{% trans 'Detail' %}</a>
-<a id="/resourcepegging/%s">{% trans 'Pegging' %}</a>
+<a id="{{request.prefix}}/loadplan/%s">{% trans 'Detail' %}</a>
+<a id="{{request.prefix}}/resourcepegging/%s">{% trans 'Pegging' %}</a>
 </div>
 {% endblock %}
 
@@ -75,7 +75,7 @@
 <td>{{j.available|floatformat:1}}<br/>
 {{j.unavailable|floatformat:1}}<br/>
 {{j.setup|floatformat:1}}<br/>
-{% if j.load %}<a href="/loadplan/?theresource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
+{% if j.load %}<a href="{{ request.prefix }}/loadplan/?theresource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
 {{j.utilization|floatformat:0}}</td>
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endif %}

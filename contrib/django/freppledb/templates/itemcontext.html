@@ -1,7 +1,7 @@
 {% load i18n %}
 <div id="itemcontext" class="ContextMenu">
-{% if perms.input.change_item %}<a id="/admin/input/item/%s/">{% trans 'Item' %}</a>{% endif %}
-<a id="/supplypath/item/%s/">{% trans 'Supply Path' %}</a>
-<a id="/whereused/item/%s/">{% trans 'Where Used' %}</a>
-<a id="/demand/%s/">{% trans 'Plan' %}</a>
+{% if perms.input.change_item %}<a id="{{ request.prefix }}/admin/input/item/%s/">{% trans 'Item' %}</a>{% endif %}
+<a id="{{ request.prefix }}/supplypath/item/%s/">{% trans 'Supply Path' %}</a>
+<a id="{{ request.prefix }}/whereused/item/%s/">{% trans 'Where Used' %}</a>
+<a id="{{ request.prefix }}/demand/%s/">{% trans 'Plan' %}</a>
 </div>

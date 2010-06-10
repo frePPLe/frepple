@@ -21,7 +21,7 @@
 # date : $LastChangedDate$
 
 from django.utils.translation import ugettext_lazy as _
-from django.db import connection
+from django.db import connections
 from django.conf import settings
 
 from common.db import sql_datediff
@@ -43,9 +43,9 @@ class Report(ListReport):
   default_sort = '2a'
 
   @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
-    cursor = connection.cursor()
+    cursor = connections[request.database].cursor()
     query = '''
       select 101 as id, 'Problem count' as category, %s as name, count(*) as value
       from out_problem

@@ -102,7 +102,7 @@ class Command(BaseCommand):
         message=_('Finished erasing the database')).save(using=database)
         
     except Exception, e:
-      try: log(category='RUN', theuser=user,
+      try: log(category='ERASE', theuser=user,
         message=u'%s: %s' % (_('Failed erasing the database'),e)).save(using=database)
       except: pass
       if nonfatal: raise e

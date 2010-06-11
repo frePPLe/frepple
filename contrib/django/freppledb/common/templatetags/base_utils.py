@@ -33,6 +33,7 @@ from django.utils.encoding import iri_to_uri, force_unicode
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.contrib.admin import sites
+from django.db import DEFAULT_DB_ALIAS
 
 HOMECRUMB = '<a href="%s/admin/">%s</a>'
 
@@ -247,6 +248,35 @@ register.tag('set', set_var)
 
 
 #
+# A tag to return HTML code for a database selector
+#
+
+class SelectDatabaseNode(Node):
+  r'''
+  A tag to return HTML code for a database selector.
+  '''
+  def render(self, context):
+    try: req = context['request']
+    except: return ''  # No request found in the context
+    if len(settings.DATABASES) == 1: return ''
+    s = ['<form><select id="database" name="%s" onchange="selectDatabase()">' % req.database]
+    l = [ i for i in settings.DATABASES ]
+    l.sort()  
+    for i in l:
+      if i == req.database:
+        s.append('<option name="%s" selected="1">%s</option>' % (i,i))
+      else:
+        s.append('<option name="%s">%s</option>' % (i,i))
+    s.append('</select></form>')
+    return ''.join(s)
+  
+def selectDatabase(parser, token):
+    return SelectDatabaseNode()
+
+register.tag('selectDatabase', selectDatabase)
+
+
+#
 # A simple tag returning the frePPLe version
 #
 
@@ -292,3 +322,7 @@ register.filter(verbose_name)
 def verbose_name_plural(obj):
 	return obj._meta.verbose_name_plural
 register.filter(verbose_name_plural)
+
+def app_label(obj):
+	return obj._meta.app_label
+register.filter(app_label)

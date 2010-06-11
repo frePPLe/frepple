@@ -50,10 +50,10 @@
 
 <!-- user menu -->
 <div id="userMenu" class="menu">{% if request.user.is_authenticated %}
-<a class="menuItem" href="/admin/logout/">{% trans 'Log out' %}</a>
-<a class="menuItem" href="/preferences/">{% trans 'Preferences' %}</a>
-<a class="menuItem" href="/admin/password_change/">{% trans 'Change password' %}</a>
-{% else %}<a class="menuItem" href="/admin/auth/user/">{% trans 'Log in' %}</a>
+<a class="menuItem" href="{{request.prefix }}/admin/logout/">{% trans 'Log out' %}</a>
+<a class="menuItem" href="{{request.prefix }}/preferences/">{% trans 'Preferences' %}</a>
+<a class="menuItem" href="{{request.prefix }}/admin/password_change/">{% trans 'Change password' %}</a>
+{% else %}<a class="menuItem" href="{{request.prefix }}/admin/auth/user/">{% trans 'Log in' %}</a>
 {% endif %}</div>
 
 {% endblock %}

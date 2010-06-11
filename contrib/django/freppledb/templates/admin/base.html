@@ -23,7 +23,7 @@
 <div id="branding">{% block branding %}{% endblock %}</div>
 {% if user.is_authenticated and user.is_staff %}<div id="user-tools">
 <a href="/admin/logout/">{% trans 'Log out' %}</a> <strong>{% firstof user.first_name user.username %}</strong> 
-{% block userlinks %}{% endblock %}</div>{% endif %}
+{% block userlinks %}{% endblock %}<br/><br/>{% selectDatabase %}</div>{% endif %}
 {% block nav-global %}{% endblock %}
 </div>
 <!-- END Header -->

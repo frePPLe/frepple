@@ -1012,3 +1012,23 @@ function setUnits(unitselector)
   }
   _currentunits = unitselector.value;
 }
+
+
+function selectDatabase()
+{
+  el = $("database");
+  // Find new database
+  db = el.options[el.selectedIndex].value;
+  // Current database
+  cur = el.name;
+  // Change the location
+  if (cur != db)
+  {
+    if (cur == 'default')
+      window.location.href = window.location.href.replace(window.location.pathname, "/"+db+window.location.pathname);
+    else if (db == 'default')
+      window.location.href = window.location.href.replace("/"+cur+"/", "/");
+    else
+      window.location.href = window.location.href.replace("/"+cur+"/", "/"+db+"/");
+  }
+}

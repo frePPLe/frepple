@@ -414,7 +414,6 @@ def view_report(request, entity=None, **args):
   context = {
        'reportclass': reportclass,
        'model': model,
-       'admin_url': model and '%s/%s' % (model._meta.app_label, model.__name__.lower()) or '',
        'hasaddperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())),
        'haschangeperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
        'request': request,

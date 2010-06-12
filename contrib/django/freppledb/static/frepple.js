@@ -268,9 +268,9 @@ function resetButton(button)
 function getToken() 
 {
   var allcookies = document.cookie.split(';');
-  for ( i = 0; i < allcookies.length; i++ )
-    if (allcookies[i].indexOf("csrftoken=") == 0)
-      return allcookies[i].substr(10);
+  for ( i = 0; i < allcookies.length; i++ ) 
+    if (allcookies[i].strip().indexOf("csrftoken=") == 0)
+      return allcookies[i].strip().substr(10).strip();
   return 'none';
 }
 

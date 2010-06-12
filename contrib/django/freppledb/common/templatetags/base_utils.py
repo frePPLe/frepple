@@ -27,6 +27,7 @@ from django.template import VariableDoesNotExist, TemplateSyntaxError
 from django.template.defaultfilters import stringfilter
 from django.conf import settings
 from django.contrib.admin.views.main import quote
+from django.contrib.admin.models import LogEntry
 from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_unicode
@@ -106,60 +107,63 @@ register.tag('get_models', get_models)
 #
 
 class CrumbsNode(Node):
-    r'''
-    A generic breadcrumbs framework.
+  r'''
+  A generic breadcrumbs framework.
 
-    Usage in your templates:
-    {% crumbs %}
+  Usage in your templates:
+  {% crumbs %}
 
-    The admin app already defines a block for crumbs, so the typical usage of the
-    crumbs tag is as follows:
-    {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
+  The admin app already defines a block for crumbs, so the typical usage of the
+  crumbs tag is as follows:
+  {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
 
-    When the context variable 'reset_crumbs' is defined and set to True, the trail of
-    breadcrumbs is truncated and restarted.
-    The variable can be set either as an extra context variable in the view
-    code, or with the 'set' template tag in the template:
-    {% set reset_crumbs "True" %}
-    '''
-    def render(self, context):
-        global HOMECRUMB
-        global variable_title
-        try: req = context['request']
-        except: return ''  # No request found in the context: no crumbs...
-        # Pick up the current crumbs from the session cookie
-        try: cur = req.session['crumbs']
-        except: cur = [(_('Home'),HOMECRUMB % (req.prefix, _('Home')))]
+  When the context variable 'reset_crumbs' is defined and set to True, the trail of
+  breadcrumbs is truncated and restarted.
+  The variable can be set either as an extra context variable in the view
+  code, or with the 'set' template tag in the template:
+  {% set reset_crumbs "True" %}
+  '''
+  def render(self, context):
+    global HOMECRUMB
+    global variable_title
+    try: req = context['request']
+    except: return ''  # No request found in the context: no crumbs...
+    # Pick up the current crumbs from the session cookie
+    try: cur = req.session['crumbs']
+    except: cur = [(_('Home'),HOMECRUMB % (req.prefix, _('Home')))]
 
-        # Check if we need to reset the crumbs
-        try:
-          if context['reset_crumbs']: cur = [(_('Home'),HOMECRUMB % (req.prefix, _('Home')))]
-        except: pass
+    # Check if we need to reset the crumbs
+    try:
+      if context['reset_crumbs']: cur = [(_('Home'),HOMECRUMB % (req.prefix, _('Home')))]
+    except: pass
 
-        # Pop from the stack if the same url is already in the crumbs
-        try: title = variable_title.resolve(context)
-        except: title = req.get_full_path()
-        # A special case to work around the hardcoded title of the main admin page
-        if title == _('Site administration'): title = _('Home')
-        cnt = 0
-        for i in cur:
-           if i[0] == title:
-             cur = cur[0:cnt]   # Pop all remaining elements from the stack
-             break
-           cnt += 1
+    # Pop from the stack if the same url is already in the crumbs
+    try: title = variable_title.resolve(context)
+    except: title = req.get_full_path()
+    # A special case to work around the hardcoded title of the main admin page
+    if title == _('Site administration'): title = _('Home')
+    cnt = 0
+    for i in cur:
+       if i[0] == title:
+         cur = cur[0:cnt]   # Pop all remaining elements from the stack
+         break
+       cnt += 1
 
-        # Push current url on the stack
-        cur.append( (unicode(title),'<a href="%s%s%s">%s</a>' % (
-          req.prefix, urlquote(req.path),
-          req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
-          unicode(escape(title))
-          )))
+    # Push current url on the stack
+    cur.append( (unicode(title),'<a href="%s%s%s">%s</a>' % (
+      req.prefix, urlquote(req.path),
+      req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
+      unicode(escape(title))
+      )))
 
-        # Update the current session
-        req.session['crumbs'] = cur
+    # Update the current session
+    req.session['crumbs'] = cur
 
-        # Now create HTML code to return
-        return '  >  '.join([i[1] for i in cur])
+    # Now create HTML code to return
+    return '  >  '.join([i[1] for i in cur])
+
+  def __repr__(self):
+    return "<Crumbs Node>"
 
 def do_crumbs(parser, token):
     return CrumbsNode()
@@ -176,6 +180,9 @@ class SuperLink(Node):
     self.var = Variable(varname)
     self.type = type
     self.key = key
+
+  def __repr__(self):
+    return "<SuperLink Node>"
 
   def render(self, context):
     value = self.var.resolve(context)
@@ -230,6 +237,9 @@ class SetVariable(Node):
       context[self.varname] = context[self.value]
     return ''
 
+  def __repr__(self):
+    return "<SetVariable Node>"
+
 
 def set_var(parser, token):
   r'''
@@ -269,6 +279,9 @@ class SelectDatabaseNode(Node):
         s.append('<option name="%s">%s</option>' % (i,i))
     s.append('</select></form>')
     return ''.join(s)
+
+  def __repr__(self):
+    return "<SelectDatabase Node>"
   
 def selectDatabase(parser, token):
     return SelectDatabaseNode()
@@ -276,6 +289,71 @@ def selectDatabase(parser, token):
 register.tag('selectDatabase', selectDatabase)
 
 
+#
+# A tag to return the most recent actions of a user
+#
+# This code is a slightly modified version of a standard Django tag.
+# The only change is to look for the logentry records in the right database.
+# See the file django\contrib\admin\templatetags\log.py
+#
+
+class MultiDBAdminLogNode(Node):
+  def __init__(self, limit, varname, user):
+    self.limit, self.varname, self.user = limit, varname, user
+
+  def render(self, context):
+    try: db = context['request'].database or DEFAULT_DB_ALIAS
+    except: db = DEFAULT_DB_ALIAS
+    if self.user is None:
+      context[self.varname] = LogEntry.objects.using(db).select_related('content_type', 'user')[:self.limit]
+    else:
+      user_id = self.user
+      if not user_id.isdigit():
+          user_id = context[self.user].id
+      context[self.varname] = LogEntry.objects.using(db).filter(user__id__exact=user_id).select_related('content_type', 'user')[:self.limit]
+    return ''
+
+
+class DoGetMultiDBAdminLog:
+  """
+  Populates a template variable with the admin log for the given criteria.
+
+  Usage::
+
+      {% get_admin_log [limit] as [varname] for_user [context_var_containing_user_obj] %}
+
+  Examples::
+
+      {% get_admin_log 10 as admin_log for_user 23 %}
+      {% get_admin_log 10 as admin_log for_user user %}
+      {% get_admin_log 10 as admin_log %}
+
+  Note that ``context_var_containing_user_obj`` can be a hard-coded integer
+  (user ID) or the name of a template context variable containing the user
+  object whose ID you want.
+  """
+  def __init__(self, tag_name):
+    self.tag_name = tag_name
+
+  def __repr__(self):
+    return "<GetMultiDBAdminLog Node>"
+
+  def __call__(self, parser, token):
+    tokens = token.contents.split()
+    if len(tokens) < 4:
+      raise template.TemplateSyntaxError("'%s' statements require two arguments" % self.tag_name)
+    if not tokens[1].isdigit():
+      raise template.TemplateSyntaxError("First argument in '%s' must be an integer" % self.tag_name)
+    if tokens[2] != 'as':
+      raise template.TemplateSyntaxError("Second argument in '%s' must be 'as'" % self.tag_name)
+    if len(tokens) > 4:
+      if tokens[4] != 'for_user':
+        raise template.TemplateSyntaxError("Fourth argument in '%s' must be 'for_user'" % self.tag_name)
+    return MultiDBAdminLogNode(limit=tokens[1], varname=tokens[3], user=(len(tokens) > 5 and tokens[5] or None))
+
+register.tag('get_multidbadmin_log', DoGetMultiDBAdminLog('get_admin_log'))
+        
+        
 #
 # A simple tag returning the frePPLe version
 #

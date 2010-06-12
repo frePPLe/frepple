@@ -117,7 +117,7 @@
         <h2>{% trans 'Recent Actions' %}</h2>
         <h3>{% trans 'My Actions' %}</h3>
             {% load log %}
-            {% get_admin_log 10 as admin_log for_user user %}
+            {% get_multidbadmin_log 10 as admin_log for_user user %}
             {% if not admin_log %}
             <p>{% trans 'None available' %}</p>
             {% else %}
@@ -127,7 +127,7 @@
                 {% if entry.is_deletion %}
                     {{ entry.object_repr }}
                 {% else %}
-                    <a href="{{ request.prefix }}{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                    <a href="{{ request.prefix }}/admin/{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
                 {% endif %}
                 <br/>
                 {% if entry.content_type %}

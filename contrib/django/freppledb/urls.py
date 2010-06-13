@@ -30,11 +30,11 @@ import os.path
 from django.conf.urls.defaults import *
 from django.conf import settings
 
-import common.views
-import output.urls
-import input.urls
-import common.urls
-import admin
+import freppledb.common.views
+import freppledb.output.urls
+import freppledb.input.urls
+import freppledb.common.urls
+import freppledb.admin
 
 urlpatterns = patterns('',
     # frePPLe execution application
@@ -47,16 +47,16 @@ urlpatterns = patterns('',
 # Adding urls for each installed application.
 # Since the URLs don't have a common prefix (maybe they should...) we can't
 # use an "include" in the previous section
-urlpatterns += output.urls.urlpatterns
-urlpatterns += input.urls.urlpatterns
-urlpatterns += common.urls.urlpatterns
+urlpatterns += freppledb.output.urls.urlpatterns
+urlpatterns += freppledb.input.urls.urlpatterns
+urlpatterns += freppledb.common.urls.urlpatterns
 
 # Admin pages, and the Javascript i18n library.
 # It needs to be added as the last item since the applications can
 # hide/override some admin urls.
 urlpatterns += patterns('',
     (r'^admin/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf','freppledb'),}),
-    (r'^admin/', include(admin.site.urls)),
+    (r'^admin/', include(freppledb.admin.site.urls)),
 )
 
 # Allows the standalone development server (and the py2exe executable) to serve

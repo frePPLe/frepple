@@ -22,7 +22,7 @@
 
 from django.test import TestCase
 
-from input.models import *
+from freppledb.input.models import *
 
 class OutputTest(TestCase):
 

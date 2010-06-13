@@ -31,6 +31,7 @@ from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.utils.encoding import force_unicode
 
 from freppledb.common.fields import DurationField
 
@@ -134,15 +135,7 @@ class Calendar(AuditModel):
     user interface only support non-overlapping calendar entries to keep SQL
     statements easy.
     '''
-    # Create a change log entry, if a user is specified
-    if user:
-      global CALENDARID
-      if not CALENDARID:
-        CALENDARID = ContentType.objects.get_for_model(models.get_model('input','calendar')).id
-      LogEntry.objects.log_action(
-        user.id, CALENDARID, self.name, self.name, CHANGE,
-        "Updated value to %s for the daterange %s to %s" % (value, start, end)
-        )
+    db = self._state.db
     for b in self.buckets.filter(enddate__gt=start,startdate__lt=end).order_by('startdate'):
       if b.enddate <= start:
         # Earlier bucket
@@ -153,28 +146,39 @@ class Calendar(AuditModel):
       elif b.startdate == start and b.enddate <= end:
         # Overwrite entire bucket
         b.value = str(value)
-        b.save()
+        b.save(using=db)
       elif b.startdate >= start and b.enddate <= end:
         # Bucket became redundant
-        b.delete()
+        b.delete(using=db)
       elif b.startdate < start and b.enddate > end:
         # New value is completely within this bucket
-        Bucket(calendar=self, startdate=start, value=str(value)).save()
-        Bucket(calendar=self, startdate=end, value=str(b.value)).save()
+        Bucket(calendar=self, startdate=start, value=str(value)).save(using=db)
+        Bucket(calendar=self, startdate=end, value=str(b.value)).save(using=db)
       elif b.startdate < start:
         # An existing bucket is partially before the new daterange
         b.enddate = start
-        b.save()
-        Bucket(calendar=self, startdate=start, enddate=end, value=str(value)).save()
+        b.save(using=db)
+        Bucket(calendar=self, startdate=start, enddate=end, value=str(value)).save(using=db)
       elif b.enddate > end:
         # An existing bucket is partially after the new daterange
-        Bucket(calendar=self, startdate=b.startdate, enddate=end, value=str(value)).save()
+        Bucket(calendar=self, startdate=b.startdate, enddate=end, value=str(value)).save(using=db)
         b.startdate = end
-        b.save()
+        b.save(using=db)
     if self.buckets.count() == 0:
       # There wasn't any bucket yet...
-      Bucket(calendar=self, startdate=start, value=str(value)).save()
-      Bucket(calendar=self, startdate=end, value="0").save()
+      Bucket(calendar=self, startdate=start, value=str(value)).save(using=db)
+      Bucket(calendar=self, startdate=end, value="0").save(using=db)
+    # Create a change log entry, if a user is specified
+    if user:
+      global CALENDARID
+      if not CALENDARID:
+        CALENDARID = ContentType.objects.get_for_model(models.get_model('input','calendar')).id
+      LogEntry(
+        user_id = user.id, content_type_id = CALENDARID, 
+        object_id = self.name, object_repr = force_unicode(self)[:200], 
+        action_flag = CHANGE,
+        change_message = "Updated value to %s for the daterange %s to %s" % (value, start, end)
+        ).save(using=db)
 
   def __unicode__(self): return self.name
 

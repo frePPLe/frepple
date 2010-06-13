@@ -6,12 +6,13 @@
     function onChange(input)
     {
     // Update the utilization percentage immediately
-    var ld = $(input).next().next().next();
+    var ld = $(input).next().next().next().next();
     var u = parseFloat(ld.innerHTML);
-    var utl = u ? ld.next().next() : ld.next();
+    var utl = ld.next('span');
     u /= parseFloat(input.value);
     if (isNaN(u) == true) u = 0.0;
     else u = u * 100;
+      alert(ld.innerHTML);
     utl.innerHTML = u.round();
     if (u < 95)
       utl.removeClassName('highutil');

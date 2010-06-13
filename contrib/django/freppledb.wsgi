@@ -12,7 +12,6 @@
 import os, sys
 
 sys.path.append('/home/frepple/workspace/frepple/contrib/django')
-sys.path.append('/home/frepple/workspace/frepple/contrib/django/freppledb')
 
 os.environ['FREPPLE_HOME'] = '/home/frepple/workspace/frepple/bin'
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'

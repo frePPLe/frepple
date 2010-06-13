@@ -29,7 +29,7 @@ from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from input.models import Parameter
+from freppledb.input.models import Parameter
 
 
 class Preferences(models.Model):

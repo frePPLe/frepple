@@ -25,7 +25,7 @@ import tempfile
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 
-from input.models import *
+from freppledb.input.models import *
 
 class DataLoadTest(TestCase):
 

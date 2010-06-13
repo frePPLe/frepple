@@ -24,7 +24,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib import admin
 
-from common.models import *
+from freppledb.common.models import *
 from freppledb.admin import site
 
 

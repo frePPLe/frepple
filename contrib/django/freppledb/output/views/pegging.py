@@ -26,9 +26,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Min, Max
 from django.db import connections, DEFAULT_DB_ALIAS
 
-from input.models import Parameter, Demand
-from output.models import DemandPegging, FlowPlan, LoadPlan
-from common.report import *
+from freppledb.input.models import Parameter, Demand
+from freppledb.output.models import DemandPegging, FlowPlan, LoadPlan
+from freppledb.common.report import *
  
     
 class ReportByDemand(ListReport):

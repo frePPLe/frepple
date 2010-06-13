@@ -22,62 +22,62 @@
 
 from django.conf.urls.defaults import *
 
-import output.views.buffer
-import output.views.demand
-import output.views.problem
-import output.views.constraint
-import output.views.forecast
-import output.views.resource
-import output.views.operation
-import output.views.pegging
-import output.views.kpi
+import freppledb.output.views.buffer
+import freppledb.output.views.demand
+import freppledb.output.views.problem
+import freppledb.output.views.constraint
+import freppledb.output.views.forecast
+import freppledb.output.views.resource
+import freppledb.output.views.operation
+import freppledb.output.views.pegging
+import freppledb.output.views.kpi
 
 
 urlpatterns = patterns('',
-    (r'^buffer/([^/]+)/$', 'common.report.view_report',
-      {'report': output.views.buffer.OverviewReport,}),
+    (r'^buffer/([^/]+)/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.buffer.OverviewReport,}),
     (r'^buffergraph/([^/]+)/$', 'output.views.buffer.GraphData'),
-    (r'^buffer/$', 'common.report.view_report',
-      {'report': output.views.buffer.OverviewReport,}),
-    (r'^demand/([^/]+)/$', 'common.report.view_report',
-      {'report': output.views.demand.OverviewReport,}),
+    (r'^buffer/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.buffer.OverviewReport,}),
+    (r'^demand/([^/]+)/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.demand.OverviewReport,}),
     (r'^demandgraph/([^/]+)/$', 'output.views.demand.GraphData'),
-    (r'^demand/$', 'common.report.view_report',
-      {'report': output.views.demand.OverviewReport,}),
-    (r'^resource/([^/]+)/$', 'common.report.view_report',
-      {'report': output.views.resource.OverviewReport,}),
+    (r'^demand/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.demand.OverviewReport,}),
+    (r'^resource/([^/]+)/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.resource.OverviewReport,}),
     (r'^resourcegraph/([^/]+)/$', 'output.views.resource.GraphData'),
-    (r'^resource/$', 'common.report.view_report',
-      {'report': output.views.resource.OverviewReport,}),
-    (r'^operation/([^/]+)/$', 'common.report.view_report',
-      {'report': output.views.operation.OverviewReport,}),
+    (r'^resource/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.resource.OverviewReport,}),
+    (r'^operation/([^/]+)/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.operation.OverviewReport,}),
     (r'^operationgraph/([^/]+)/$', 'output.views.operation.GraphData'),
-    (r'^operation/$', 'common.report.view_report',
-      {'report': output.views.operation.OverviewReport,}),
-    (r'^forecast/([^/]+)/$', 'common.report.view_report',
-      {'report': output.views.forecast.OverviewReport,}),
+    (r'^operation/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.operation.OverviewReport,}),
+    (r'^forecast/([^/]+)/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.forecast.OverviewReport,}),
     (r'^forecastgraph/([^/]+)/$', 'output.views.forecast.GraphData'),
-    (r'^forecast/$', 'common.report.view_report',
-      {'report': output.views.forecast.OverviewReport,}),
-    (r'^demandpegging/([^/]+)/$', 'common.report.view_report',
-      {'report': output.views.pegging.ReportByDemand,}),
+    (r'^forecast/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.forecast.OverviewReport,}),
+    (r'^demandpegging/([^/]+)/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.pegging.ReportByDemand,}),
     (r'^pegginggraph/([^/]+)/$', 'output.views.pegging.GraphData'),
-    (r'^bufferpegging/$', 'common.report.view_report',
-      {'report': output.views.pegging.ReportByBuffer,}),
-    (r'^resourcepegging/$', 'common.report.view_report',
-      {'report': output.views.pegging.ReportByResource,}),
-    (r'^flowplan/$', 'common.report.view_report',
-      {'report': output.views.buffer.DetailReport,}),
-    (r'^problem/$', 'common.report.view_report',
-      {'report': output.views.problem.Report,}),
-    (r'^constraint/$', 'common.report.view_report',
-      {'report': output.views.constraint.Report,}),
-    (r'^operationplan/$', 'common.report.view_report',
-      {'report': output.views.operation.DetailReport,}),
-    (r'^loadplan/$', 'common.report.view_report',
-      {'report': output.views.resource.DetailReport,}),
-    (r'^demandplan/$', 'common.report.view_report',
-      {'report': output.views.demand.DetailReport,}),
-    (r'^kpi/$', 'common.report.view_report',
-      {'report': output.views.kpi.Report,}),
+    (r'^bufferpegging/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.pegging.ReportByBuffer,}),
+    (r'^resourcepegging/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.pegging.ReportByResource,}),
+    (r'^flowplan/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.buffer.DetailReport,}),
+    (r'^problem/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.problem.Report,}),
+    (r'^constraint/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.constraint.Report,}),
+    (r'^operationplan/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.operation.DetailReport,}),
+    (r'^loadplan/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.resource.DetailReport,}),
+    (r'^demandplan/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.demand.DetailReport,}),
+    (r'^kpi/$', 'freppledb.common.report.view_report',
+      {'report': freppledb.output.views.kpi.Report,}),
 )

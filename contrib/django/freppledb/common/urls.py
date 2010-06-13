@@ -22,17 +22,17 @@
 
 from django.conf.urls.defaults import *
 
-import common.views
+import freppledb.common.views
 
 urlpatterns = patterns('',
 
   # User preferences
-  (r'^preferences/$', common.views.preferences),
+  (r'^preferences/$', freppledb.common.views.preferences),
 
   # Model list reports, which override standard admin screens
-  (r'^admin/auth/user/$', 'common.report.view_report',
-    {'report': common.views.UserList,}),
-  (r'^admin/auth/group/$', 'common.report.view_report',
-    {'report': common.views.GroupList,}),
+  (r'^admin/auth/user/$', 'freppledb.common.report.view_report',
+    {'report': freppledb.common.views.UserList,}),
+  (r'^admin/auth/group/$', 'freppledb.common.report.view_report',
+    {'report': freppledb.common.views.GroupList,}),
 
 )

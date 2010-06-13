@@ -43,7 +43,10 @@ from django.conf import settings
 
 import frepple
 
-database = DEFAULT_DB_ALIAS
+if 'FREPPLE_DATABASE' in os.environ: 
+  database = os.environ['FREPPLE_DATABASE']
+else:
+  database = DEFAULT_DB_ALIAS
 
 
 def truncate(cursor):
@@ -58,7 +61,7 @@ def truncate(cursor):
                 'out_operationplan', 'out_constraint', 
                ]:
     cursor.execute(delete % table)
-    transaction.commit()
+    transaction.commit(using=database)
   print "Emptied plan tables in %.2f seconds" % (time() - starttime)
 
 
@@ -76,7 +79,7 @@ def exportProblems(cursor):
        round(i.weight,settings.DECIMAL_PLACES)
      ) for i in frepple.problems()
     ])
-  transaction.commit()
+  transaction.commit(using=database)
   cursor.execute("select count(*) from out_problem")
   print 'Exported %d problems in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
@@ -98,8 +101,8 @@ def exportConstraints(cursor):
        ) for i in d.constraints
       ])
     cnt += 1
-    if cnt % 300 == 0: transaction.commit()
-  transaction.commit()
+    if cnt % 300 == 0: transaction.commit(using=database)
+  transaction.commit(using=database)
   cursor.execute("select count(*) from out_constraint")
   print 'Exported %d constraints in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
@@ -119,8 +122,8 @@ def exportOperationplans(cursor):
         j.locked, j.unavailable, j.owner and j.owner.id or None
        ) for j in i.operationplans ])
     cnt += 1
-    if cnt % 300 == 0: transaction.commit()
-  transaction.commit()
+    if cnt % 300 == 0: transaction.commit(using=database)
+  transaction.commit(using=database)
   cursor.execute("select count(*) from out_operationplan")
   print 'Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
@@ -141,8 +144,8 @@ def exportFlowplans(cursor):
        ) for j in i.flowplans
       ])
     cnt += 1
-    if cnt % 300 == 0: transaction.commit()
-  transaction.commit()
+    if cnt % 300 == 0: transaction.commit(using=database)
+  transaction.commit(using=database)
   cursor.execute("select count(*) from out_flowplan")
   print 'Exported %d flowplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
@@ -163,8 +166,8 @@ def exportLoadplans(cursor):
        ) for j in i.loadplans
       ])
     cnt += 1
-    if cnt % 100 == 0: transaction.commit()
-  transaction.commit()
+    if cnt % 100 == 0: transaction.commit(using=database)
+  transaction.commit(using=database)
   cursor.execute("select count(*) from out_loadplan")
   print 'Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
@@ -207,8 +210,8 @@ def exportDemand(cursor):
       values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [ j for j in deliveries(i) ] )
     cnt += 1
-    if cnt % 500 == 0: transaction.commit()
-  transaction.commit()
+    if cnt % 500 == 0: transaction.commit(using=database)
+  transaction.commit(using=database)
   cursor.execute("select count(*) from out_demand")
   print 'Exported %d demand plans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
@@ -238,8 +241,8 @@ def exportPegging(cursor):
        ) for j in i.pegging
       ])
     cnt += 1
-    if cnt % 500 == 0: transaction.commit()
-  transaction.commit()
+    if cnt % 500 == 0: transaction.commit(using=database)
+  transaction.commit(using=database)
   cursor.execute("select count(*) from out_demandpegging")
   print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
@@ -267,9 +270,9 @@ def exportForecast(cursor):
        )
       ])
     cnt += 1
-    if cnt % 1000 == 0: transaction.commit()
+    if cnt % 1000 == 0: transaction.commit(using=database)
 
-  transaction.commit()
+  transaction.commit(using=database)
   cursor.execute("select count(*) from out_forecast")
   print 'Exported %d forecast plans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
@@ -308,7 +311,6 @@ def exportfrepple():
   '''
   This function exports the data from the frepple memory into the database.
   '''
-  global database
   # Make sure the debug flag is not set!
   # When it is set, the django database wrapper collects a list of all sql
   # statements executed and their timings. This consumes plenty of memory
@@ -316,8 +318,6 @@ def exportfrepple():
   settings.DEBUG = False
 
   # Create a database connection
-  if 'FREPPLE_DATABASE' in os.environ: 
-    database = os.environ['FREPPLE_DATABASE']
   cursor = connections[database].cursor()
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
     cursor.execute('PRAGMA temp_store = MEMORY;')

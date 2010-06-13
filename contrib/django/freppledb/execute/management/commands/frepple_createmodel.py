@@ -30,8 +30,8 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 
-from input.models import *
-from execute.models import log
+from freppledb.input.models import *
+from freppledb.execute.models import log
 
 
 database = DEFAULT_DB_ALIAS
@@ -95,7 +95,6 @@ class Command(BaseCommand):
     return settings.FREPPLE_VERSION
 
 
-  @transaction.commit_manually
   def handle(self, **options):
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all sql
@@ -140,17 +139,19 @@ class Command(BaseCommand):
     random.seed(100) # Initialize random seed to get reproducible results
     cnt = 100000     # A counter for operationplan identifiers
 
-    # Pick up the startdate
+    transaction.enter_transaction_management(using=database)
+    transaction.managed(True, using=database)
     try:
-      startdate = datetime.strptime(currentdate,'%Y-%m-%d')
-    except Exception, e:
-      raise CommandError("current date is not matching format YYYY-MM-DD")
+      # Pick up the startdate
+      try:
+        startdate = datetime.strptime(currentdate,'%Y-%m-%d')
+      except Exception, e:
+        raise CommandError("current date is not matching format YYYY-MM-DD")
+  
+      # Check whether the database is empty
+      if Buffer.objects.using(database).count()>0 or Item.objects.using(database).count()>0:
+        raise CommandError("Database must be empty before creating a model")
 
-    # Check whether the database is empty
-    if Buffer.objects.using(database).count()>0 or Item.objects.using(database).count()>0:
-      raise CommandError("Database must be empty before creating a model")
-
-    try:
       # Logging the action
       log(
         category='CREATE', theuser=user,
@@ -212,7 +213,7 @@ class Command(BaseCommand):
           cur2 = Bucket(startdate=curdate, value=0, calendar=weeks)
       if cur: cur.save(using=database)
       if cur2: cur2.save(using=database)
-      transaction.commit()
+      transaction.commit(using=database)
 
       # Create a random list of categories to choose from
       categories = [ 'cat A','cat B','cat C','cat D','cat E','cat F','cat G' ]
@@ -223,7 +224,7 @@ class Command(BaseCommand):
       for i in range(100):
         c = Customer.objects.using(database).create(name = 'Cust %03d' % i)
         cust.append(c)
-      transaction.commit()
+      transaction.commit(using=database)
 
       # Create resources and their calendars
       if verbosity>0: print "Creating resources and calendars..."
@@ -237,7 +238,7 @@ class Command(BaseCommand):
         bkt.save(using=database)
         r = Resource.objects.using(database).create(name = 'Res %03d' % i, maximum=cal, location=loc)
         res.append(r)
-      transaction.commit()
+      transaction.commit(using=database)
       random.shuffle(res)
 
       # Create the components
@@ -259,7 +260,7 @@ class Command(BaseCommand):
              onhand = str(round(forecast_per_item * random.uniform(1,3) * ld / 30)),
              )
         comps.append(c)
-      transaction.commit()
+      transaction.commit(using=database)
 
       # Loop over all clusters
       durations = [ 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
@@ -364,7 +365,7 @@ class Command(BaseCommand):
             quantity = random.choice([-1,-1,-1,-2,-3]))
 
         # Commit the current cluster
-        transaction.commit()
+        transaction.commit(using=database)
 
       # Log success
       log(category='CREATE', theuser=user,
@@ -380,11 +381,11 @@ class Command(BaseCommand):
             
     finally:
       # Commit it all, even in case of exceptions
-      transaction.commit()
+      transaction.commit(using=database)
       settings.DEBUG = tmp_debug
+      transaction.leave_transaction_management(using=database)
 
 
-@transaction.commit_manually
 def updateTelescope(min_day_horizon=10, min_week_horizon=40):
   '''
   Update for the telescopic horizon.
@@ -407,6 +408,8 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
   current_date = datetime.strptime(Parameter.objects.using(database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
   limit = current_date + timedelta(min_day_horizon)
   mode = 'day'
+  transaction.enter_transaction_management(using=database)
+  transaction.managed(True, using=database)
   try:
     m = []
     for i in Dates.objects.using(database).all():
@@ -438,7 +441,8 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
     # Needed to create a temporary list of the objects to save, since the
     # database table is locked during the iteration
     for i in m: i.save(using=database)
-    transaction.commit()
+    transaction.commit(using=database)
   finally:
-    transaction.rollback()
+    transaction.rollback(using=database)
     settings.DEBUG = tmp_debug
+    transaction.leave_transaction_management(using=database)

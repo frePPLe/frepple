@@ -40,6 +40,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 from django.shortcuts import get_object_or_404, render_to_response
 from django.contrib.admin.util import unquote
+from django.utils.translation import ugettext_lazy as _
+from django.utils.text import capfirst, get_text_list
 
 # Make our tags built-in, so we don't have to load them any more in our
 # templates with a 'load' tag.

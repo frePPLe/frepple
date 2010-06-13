@@ -63,8 +63,8 @@ from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 
-from input.models import Parameter, Buffer
-from common.db import python_date
+from freppledb.input.models import Parameter, Buffer
+from freppledb.common.db import python_date
 
 
 # Parameter settings
@@ -226,10 +226,10 @@ def view_report(request, entity=None, **args):
   if request.method == 'POST':
     if not reportclass.model or "csv_file" not in request.FILES:
       messages.add_message(request, messages.ERROR, _('Invalid upload request'))
-      return HttpResponseRedirect(request.get_full_path())
+      return HttpResponseRedirect(request.prefix + request.get_full_path())
     if not reportclass.editable or not request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())):
       messages.add_message(request, messages.ERROR, _('Not authorized'))
-      return HttpResponseRedirect(request.get_full_path())
+      return HttpResponseRedirect(request.prefix + request.get_full_path())
     (warnings,errors,changed,added) = parseUpload(request, reportclass, request.FILES['csv_file'].read())
     if len(errors) > 0:
       messages.add_message(request, messages.INFO,
@@ -245,7 +245,7 @@ def view_report(request, entity=None, **args):
       messages.add_message(request, messages.INFO,
         _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
         )
-    return HttpResponseRedirect(request.get_full_path())
+    return HttpResponseRedirect(request.prefix + request.get_full_path())
 
   # Verify the user is authorirzed to view the report
   for perm in reportclass.permissions:
@@ -870,7 +870,7 @@ def _create_filter(req, cls):
       filterfield = filter.field or row
       result2.append(u'<span title="%s" class="%s">' % (filterfield, filter.__class__.__name__))
       if hasattr(filter, "text2"):
-        result2.append(filter.text2(filtertitle, filterfield, cls))
+        result2.append(filter.text2(filtertitle, filterfield, cls, req))
       else:
         result2.append(filtertitle)      
       result2.append(u'</span>\n')
@@ -893,7 +893,7 @@ def _create_filter(req, cls):
         else:
           result1.append(u' and\n')
         if filter:
-          result1.append(filter.text1(filtertitle, operator, i, escape(req.GET[i]), cls))
+          result1.append(filter.text1(filtertitle, operator, i, escape(req.GET[i]), cls, req))
         else:
           result1.append(u'%s %s <input type="text" class="filter" onChange="filterform()" name="%s" value="%s"/>' % (filtertitle, filteroperator[operator], i, escape(req.GET[i])))
         filtercounter += 1
@@ -911,7 +911,7 @@ class FilterText(object):
     self.field = field
     self.size = size
     
-  def text1(self, a,b,c,d,cls):
+  def text1(self, a,b,c,d,cls, req):
     return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', max(len(d),self.size), u'"/>')
 
 
@@ -921,7 +921,7 @@ class FilterNumber(object):
     self.field = field
     self.size = size
     
-  def text1(self, a,b,c,d,cls):
+  def text1(self, a,b,c,d,cls, req):
     return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', self.size, u'"/>')
 
 
@@ -931,7 +931,7 @@ class FilterDate(object):
     self.field = field
     self.size = size
     
-  def text1(self, a,b,c,d,cls):
+  def text1(self, a,b,c,d,cls, req):
     return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="vDateField filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', self.size, u'"/>')
     
 
@@ -940,10 +940,10 @@ class FilterChoice(object):
     self.field = field
     self.choices = choices
     
-  def text1(self, a,b,c,d,cls):
+  def text1(self, a,b,c,d,cls, req):
     result = [string_concat(a, u' ', filteroperator[b], u'<select class="filter" onChange="javascript:this.form.submit();" name="', c, u'" >')]
     try:
-      for code, label in callable(self.choices) and self.choices() or self.choices:    
+      for code, label in callable(self.choices) and self.choices(req) or self.choices:    
         if (code == d):
           result.append(string_concat(u'<option value="',code,u'" selected="yes">',unicode(label),u'</option>\n'))
         else:
@@ -952,10 +952,10 @@ class FilterChoice(object):
     result.append(u'</select>\n')
     return string_concat(*result)
     
-  def text2(self, a,b,cls):
+  def text2(self, a,b,cls, req):
     result = [string_concat(a, u'<select>')]
     try:
-      for code, label in callable(self.choices) and self.choices() or self.choices:    
+      for code, label in callable(self.choices) and self.choices(req) or self.choices:    
         result.append(string_concat(u'<option value="',code,u'">',unicode(label),u'</option>\n'))
     except TypeError: pass
     result.append(u'</select>\n')
@@ -974,7 +974,6 @@ class FilterBool(FilterChoice):
       )
 
 
-@transaction.commit_manually
 def parseUpload(request, reportclass, data):
     '''
     This method reads CSV data from a string (in memory) and creates or updates
@@ -999,114 +998,118 @@ def parseUpload(request, reportclass, data):
     errors = []
     content_type_id = ContentType.objects.get_for_model(entityclass).pk
     
-    # Loop through the data records
-    has_pk_field = False
-    for row in csv.reader(data.splitlines()):
-      rownumber += 1
-
-      ### Case 1: The first line is read as a header line
-      if rownumber == 1:
-        for col in row:
-          col = col.strip().strip('#').lower()
-          if col == "": 
-            headers.append(False)
-            continue
-          ok = False
-          for i in entityclass._meta.fields:
-            if col == i.name.lower() or col == i.verbose_name.lower():
-              if i.editable == True:
-                headers.append(i)
-              else:
-                headers.append(False)
-              ok = True
-              break
-          if not ok: errors.append(_('Incorrect field %(column)s') % {'column': col})
-          if col == entityclass._meta.pk.name.lower() \
-            or col == entityclass._meta.pk.verbose_name.lower():
-              has_pk_field = True
-        if not has_pk_field and not isinstance(entityclass._meta.pk, AutoField):
-          # The primary key is not an auto-generated id and it is not mapped in the input...
-          errors.append(_('Missing primary key field %(key)s') % {'key': entityclass._meta.pk.name})
-        # Abort when there are errors
-        if len(errors) > 0: return (warnings,errors,0,0)
-        # Create a form class that will be used to validate the data
-        UploadMeta = type("UploadMeta", (), {
-          'model': entityclass,
-          'fields': tuple([i.name for i in headers if isinstance(i,Field)])
-          })
-        UploadForm = type("UploadForm", (ModelForm,), {
-          "Meta": UploadMeta
-          })
-
-      ### Case 2: Skip empty rows and comments rows
-      elif len(row) == 0 or row[0].startswith('#'):
-        continue
-
-      ### Case 3: Process a data row
-      else:
-        try:
-          # Step 1: Build a dictionary with all data fields
-          d = {}
-          colnum = 0
+    transaction.enter_transaction_management(using=request.database)
+    transaction.managed(True, using=database)
+    try:
+      # Loop through the data records
+      has_pk_field = False
+      for row in csv.reader(data.splitlines()):
+        rownumber += 1
+  
+        ### Case 1: The first line is read as a header line
+        if rownumber == 1:
           for col in row:
-            # More fields in data row than headers. Move on to the next row.
-            if colnum >= len(headers): break      
-            if isinstance(headers[colnum],Field): d[headers[colnum].name] = col.strip()
-            colnum += 1
-
-          # Step 2: Fill the form with data, either updating an existing
-          # instance or creating a new one.
-          if has_pk_field:
-            # A primary key is part of the input fields
-            try:
-              # Try to find an existing record with the same primary key
-              it = entityclass.objects.get(pk=d[entityclass._meta.pk.name])
-              form = UploadForm(d,instance=it)
-            except entityclass.DoesNotExist:
+            col = col.strip().strip('#').lower()
+            if col == "": 
+              headers.append(False)
+              continue
+            ok = False
+            for i in entityclass._meta.fields:
+              if col == i.name.lower() or col == i.verbose_name.lower():
+                if i.editable == True:
+                  headers.append(i)
+                else:
+                  headers.append(False)
+                ok = True
+                break
+            if not ok: errors.append(_('Incorrect field %(column)s') % {'column': col})
+            if col == entityclass._meta.pk.name.lower() \
+              or col == entityclass._meta.pk.verbose_name.lower():
+                has_pk_field = True
+          if not has_pk_field and not isinstance(entityclass._meta.pk, AutoField):
+            # The primary key is not an auto-generated id and it is not mapped in the input...
+            errors.append(_('Missing primary key field %(key)s') % {'key': entityclass._meta.pk.name})
+          # Abort when there are errors
+          if len(errors) > 0: return (warnings,errors,0,0)
+          # Create a form class that will be used to validate the data
+          UploadMeta = type("UploadMeta", (), {
+            'model': entityclass,
+            'fields': tuple([i.name for i in headers if isinstance(i,Field)])
+            })
+          UploadForm = type("UploadForm", (ModelForm,), {
+            "Meta": UploadMeta
+            })
+  
+        ### Case 2: Skip empty rows and comments rows
+        elif len(row) == 0 or row[0].startswith('#'):
+          continue
+  
+        ### Case 3: Process a data row
+        else:
+          try:
+            # Step 1: Build a dictionary with all data fields
+            d = {}
+            colnum = 0
+            for col in row:
+              # More fields in data row than headers. Move on to the next row.
+              if colnum >= len(headers): break      
+              if isinstance(headers[colnum],Field): d[headers[colnum].name] = col.strip()
+              colnum += 1
+  
+            # Step 2: Fill the form with data, either updating an existing
+            # instance or creating a new one.
+            if has_pk_field:
+              # A primary key is part of the input fields
+              try:
+                # Try to find an existing record with the same primary key
+                it = entityclass.objects.using(request.database).get(pk=d[entityclass._meta.pk.name])
+                form = UploadForm(d, instance=it)
+              except entityclass.DoesNotExist:
+                form = UploadForm(d)
+                it = None
+            else:
+              # No primary key required for this model
               form = UploadForm(d)
               it = None
-          else:
-            # No primary key required for this model
-            form = UploadForm(d)
-            it = None
-
-          # Step 3: Validate the data and save to the database
-          if form.has_changed():
-            try:
-              obj = form.save()
-              LogEntry(
-                  user_id         = request.user.pk,
-                  content_type_id = content_type_id,
-                  object_id       = obj.pk,
-                  object_repr     = force_unicode(obj),
-                  action_flag     = it and CHANGE or ADDITION,
-                  change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
-              ).save()
-              if it:
-                changed += 1
-              else: 
-                added += 1
-            except Exception, e:
-              # Validation fails
-              for error in form.non_field_errors():
-                warnings.append(
-                  _('Row %(rownum)s: %(message)s') % {
-                    'rownum': rownumber, 'message': error
-                  })
-              for field in form:
-                for error in field.errors:
+  
+            # Step 3: Validate the data and save to the database
+            if form.has_changed():
+              try:
+                obj = form.save(using=request.database)
+                LogEntry(
+                    user_id         = request.user.pk,
+                    content_type_id = content_type_id,
+                    object_id       = obj.pk,
+                    object_repr     = force_unicode(obj),
+                    action_flag     = it and CHANGE or ADDITION,
+                    change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                ).save(using=request.database)
+                if it:
+                  changed += 1
+                else: 
+                  added += 1
+              except Exception, e:
+                # Validation fails
+                for error in form.non_field_errors():
                   warnings.append(
-                    _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
-                      'rownum': rownumber, 'data': d[field.name],
-                      'field': field.name, 'message': error
+                    _('Row %(rownum)s: %(message)s') % {
+                      'rownum': rownumber, 'message': error
                     })
-
-          # Step 4: Commit the database changes from time to time
-          if rownumber % 500 == 0: transaction.commit()
-        except Exception, e:
-          errors.append(_("Exception during upload: %(message)s") % {'message': e,})
-    # Commit final changes
-    transaction.commit()
+                for field in form:
+                  for error in field.errors:
+                    warnings.append(
+                      _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                        'rownum': rownumber, 'data': d[field.name],
+                        'field': field.name, 'message': error
+                      })
+  
+            # Step 4: Commit the database changes from time to time
+            if rownumber % 500 == 0: transaction.commit(using=request.database)
+          except Exception, e:
+            errors.append(_("Exception during upload: %(message)s") % {'message': e,})
+    finally:
+      transaction.commit(using=request.database)
+      transaction.leave_transaction_management(using=database)
 
     # Report all failed records
     return (warnings, errors, changed, added)

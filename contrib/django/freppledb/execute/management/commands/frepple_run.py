@@ -28,7 +28,7 @@ from django.utils.translation import ugettext as _
 from django.db import transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
 
-from execute.models import log
+from freppledb.execute.models import log
 
 
 class Command(BaseCommand):
@@ -49,9 +49,10 @@ class Command(BaseCommand):
 
   requires_model_validation = False
 
-  @transaction.autocommit
   def handle(self, **options):
     nonfatal = False
+    transaction.enter_transaction_management(managed=False, using=db)
+    transaction.managed(False, using=db)
     try:
       # Pick up the options
       if 'user' in options: user = options['user'] or ''
@@ -74,7 +75,8 @@ class Command(BaseCommand):
       # Log message
       log(category='RUN', theuser=user,
         message=_('Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d') % {'plantype': plantype, 'constraint': constraint}).save(using=database)
-
+      transaction.commit(using=database)
+      
       # Execute
       os.environ['PLANTYPE'] = str(plantype)
       os.environ['CONSTRAINT'] = str(constraint)
@@ -102,4 +104,7 @@ class Command(BaseCommand):
       except: pass
       if nonfatal: raise e
       else: raise CommandError(e)
+    finally:
+      transaction.commit(using=database)
+      transaction.leave_transaction_management(using=database)
       

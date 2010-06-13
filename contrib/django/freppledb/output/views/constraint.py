@@ -24,8 +24,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.db.models import Count
 
-from output.models import Constraint
-from common.report import *
+from freppledb.output.models import Constraint
+from freppledb.common.report import ListReport, FilterText, FilterChoice, FilterDate, FilterNumber
   
   
 entities = ( 
@@ -51,17 +51,17 @@ names = (
   ) 
 
 
-def getEntities():
+def getEntities(request):
   return tuple([ 
     (i['entity'], string_concat(_(i['entity']),":",i['id__count'])) 
-    for i in Constraint.objects.values('entity').annotate(Count('id')).order_by('entity') 
+    for i in Constraint.objects.using(request.database).values('entity').annotate(Count('id')).order_by('entity') 
     ])
     
 
-def getNames():
+def getNames(request):
   return tuple([ 
     (i['name'], string_concat(_(i['name']),":",i['id__count']))
-    for i in Constraint.objects.values('name').annotate(Count('id')).order_by('name') 
+    for i in Constraint.objects.using(request.database).values('name').annotate(Count('id')).order_by('name') 
     ])
 
 

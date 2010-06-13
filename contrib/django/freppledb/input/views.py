@@ -33,8 +33,8 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import iri_to_uri
 
-from input.models import *
-from common.report import *
+from freppledb.input.models import *
+from freppledb.common.report import *
 
 
 class uploadjson:

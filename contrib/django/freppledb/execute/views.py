@@ -34,8 +34,8 @@ from django.views.generic.simple import direct_to_template
 from django.utils.translation import ugettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS
 
-from execute.models import log
-from common.report import *
+from freppledb.execute.models import log
+from freppledb.common.report import *
 
 
 @staff_member_required

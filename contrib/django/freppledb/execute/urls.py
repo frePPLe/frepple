@@ -22,14 +22,14 @@
 
 from django.conf.urls.defaults import patterns
 
-import execute.views
+import freppledb.execute.views
 
 urlpatterns = patterns('',
-    (r'^logfrepple/$', 'execute.views.logfile'),
-    (r'^log/$', 'common.report.view_report', {'report': execute.views.LogReport,}),
-    (r'^runfrepple/$', 'execute.views.runfrepple'),
-    (r'^erase/$', 'execute.views.erase'),
-    (r'^create/$', 'execute.views.create'),
-    (r'^fixture/$', 'execute.views.fixture'),
-    (r'^', 'execute.views.main'),
+    (r'^logfrepple/$', 'freppledb.execute.views.logfile'),
+    (r'^log/$', 'freppledb.common.report.view_report', {'report': freppledb.execute.views.LogReport,}),
+    (r'^runfrepple/$', 'freppledb.execute.views.runfrepple'),
+    (r'^erase/$', 'freppledb.execute.views.erase'),
+    (r'^create/$', 'freppledb.execute.views.create'),
+    (r'^fixture/$', 'freppledb.execute.views.fixture'),
+    (r'^', 'freppledb.execute.views.main'),
 )

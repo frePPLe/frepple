@@ -24,10 +24,10 @@ from django.db import connections
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
 
-from input.models import Operation
-from output.models import OperationPlan
-from common.db import *
-from common.report import *
+from freppledb.input.models import Operation
+from freppledb.output.models import OperationPlan
+from freppledb.common.db import *
+from freppledb.common.report import *
 
 
 class OverviewReport(TableReport):

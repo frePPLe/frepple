@@ -26,10 +26,10 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.contrib.admin.views.decorators import staff_member_required
 
-from input.models import Buffer
-from output.models import FlowPlan
-from common.db import *
-from common.report import *
+from freppledb.input.models import Buffer
+from freppledb.output.models import FlowPlan
+from freppledb.common.db import *
+from freppledb.common.report import *
 
 
 class OverviewReport(TableReport):

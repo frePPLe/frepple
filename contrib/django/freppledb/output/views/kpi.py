@@ -24,9 +24,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import connections
 from django.conf import settings
 
-from common.db import sql_datediff
-from common.report import *
-from input.models import Parameter
+from freppledb.common.db import sql_datediff
+from freppledb.common.report import *
+from freppledb.input.models import Parameter
 
 
 class Report(ListReport):

@@ -29,8 +29,8 @@ from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from input.models import *
-from execute.models import log
+from freppledb.input.models import *
+from freppledb.execute.models import log
 
 
 class Command(BaseCommand):
@@ -58,7 +58,6 @@ class Command(BaseCommand):
     return settings.FREPPLE_VERSION
 
 
-  @transaction.commit_manually
   def handle(self, **options):
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all sql
@@ -88,6 +87,8 @@ class Command(BaseCommand):
     except Exception, e:
       raise CommandError("Date is not matching format YYYY-MM-DD")
 
+    transaction.enter_transaction_management(using=database)
+    transaction.managed(True, using=database)
     try:
       # Logging the action
       log( category='CREATE', theuser=user,
@@ -95,7 +96,7 @@ class Command(BaseCommand):
 
       # Delete the previous set of records
       connections[database].cursor().execute('DELETE FROM dates')
-      transaction.commit()
+      transaction.commit(using=database)
 
       # Loop over all days in the chosen horizon
       while curdate < end:
@@ -147,6 +148,7 @@ class Command(BaseCommand):
       
     finally:
       # Commit it all, even in case of exceptions
-      try: transaction.commit()
+      try: transaction.commit(using=database)
       except: pass
       settings.DEBUG = tmp_debug
+      transaction.leave_transaction_management(using=database)

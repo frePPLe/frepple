@@ -30,7 +30,6 @@ from django.conf import settings
 #TODO handling of suboperations!!!
 
 
-@transaction.commit_manually
 class Command(BaseCommand):
   help = "Generates output in the DOT language to visualize the network"
 
@@ -41,7 +40,6 @@ class Command(BaseCommand):
 
   requires_model_validation = False
 
-  @transaction.autocommit
   def handle(self, **options):
     try:
 

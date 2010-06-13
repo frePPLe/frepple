@@ -24,9 +24,9 @@ from django.db import connections
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
 
-from input.models import Forecast
-from common.db import *
-from common.report import *
+from freppledb.input.models import Forecast
+from freppledb.common.db import *
+from freppledb.common.report import *
 
 
 class OverviewReport(TableReport):

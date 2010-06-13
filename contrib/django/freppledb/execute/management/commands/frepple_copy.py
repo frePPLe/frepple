@@ -30,13 +30,35 @@ from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from execute.models import log
+from freppledb.execute.models import log
 
 
 class Command(BaseCommand):
   help = '''
   This command copies the contents of a database into another.
   The original data in the destination database are lost.
+  
+  To use this command the following prerequisites need to be met:
+    * MySQL:
+        - mysqldump and mysql need to be in the path       
+    * PostgreSQL:
+       - pg_dump and psql need to be in the path
+       - The passwords need to be specified upfront in a file ~/.pgpass
+    * SQLite:
+       - none
+    * Oracle:
+       - impdp and expdp need to be in the path
+       - The DBA has to create a server side directory and grant rights to it:
+           CREATE OR REPLACE DIRECTORY dump_dir AS 'c:\temp';
+           GRANT READ, WRITE ON DIRECTORY dump_dir TO usr1;
+           GRANT READ, WRITE ON DIRECTORY dump_dir TO usr2;
+       - If the schemas reside on different servers, the DB will need to
+         create a database link. 
+         If the database are on the same server, you might still use the database
+         link to avoid create a temporary dump file.         
+       - Can't be run multiple copies in parallel!
+       - For oracle, this script probably requires a bit of changing to optimize
+         it for your particular usage. 
   '''
   option_list = BaseCommand.option_list + (
     make_option('--user', dest='user', type='string',
@@ -81,7 +103,7 @@ class Command(BaseCommand):
       raise CommandError("Source and destination databases have a different engine")    
 
     try:
-      # Logging message
+      # Logging message (Always logging in the default database)
       log(category='COPY', theuser=user,
         message=_("Start copying database '%(source)s' to '%(destination)s'" % 
           {'source':source, 'destination':destination} )).save()
@@ -89,10 +111,6 @@ class Command(BaseCommand):
       
       # Copying the data  
       if settings.DATABASES[source]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-        # Prerequisites:
-        # * pg_dump and psql need to be in the path
-        # * The passwords need to be specified upfront in a file ~/.pgpass:
-        #      hostname:port:database:username:password
         ret = os.system("pg_dump -c -U%s -Fp %s%s%s | psql -U%s %s%s%s" % (
           settings.DATABASES[source]['USER'],
           settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',
@@ -108,8 +126,6 @@ class Command(BaseCommand):
         # A plain copy of the database file
         shutil.copy2(settings.DATABASES[source]['NAME'], settings.DATABASES[destination]['NAME'])
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.mysql':
-        # Prerequisites:
-        # * mysqldump and mysql need to be in the path
         ret = os.system("mysqldump %s --password=%s --user=%s %s%s--quick --compress --extended-insert --add-drop-table | mysql %s --password=%s --user=%s %s%s" % (
           settings.DATABASES[source]['NAME'],
           settings.DATABASES[source]['PASSWORD'],
@@ -124,17 +140,6 @@ class Command(BaseCommand):
           ))      
         if ret: raise Exception('Exit code of the database copy command is %d' % ret)
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.oracle':
-        # Prerequisites:
-        # * impdp and expdp need to be in the path
-        # * DBA has to create a server side directory and grant rights to it:
-        #    CREATE OR REPLACE DIRECTORY dump_dir AS 'c:\temp';
-        #    GRANT READ, WRITE ON DIRECTORY dump_dir TO usr1;
-        #    GRANT READ, WRITE ON DIRECTORY dump_dir TO usr2;
-        # * If the schemas reside on different servers, the DB will need to
-        #   create a database link. 
-        #   If the database are on the same server, you might still use the database
-        #   link to avoid create a temporary dump file.
-        # * Can't be run multiple copies in parallel
         try:
           try: os.unlink('c:\\temp\\frepple.dmp')
           except: pass

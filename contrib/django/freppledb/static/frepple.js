@@ -26,8 +26,15 @@ var upload = {
       '--7d79\r\nContent-Disposition: form-data; name="data";'
       + 'filename="data"\r\nContent-Type: application/json\r\n\r\n'
       + Object.toJSON(upload._data)
-      + '\r\n\r\n--7d79--\r\n'
-    new Ajax.Request("/edit/", {
+      + '\r\n\r\n--7d79--\r\n';
+    el = $("database");
+    if (el == undefined)
+      u = "/edit/";
+    else if (el.name == "default")
+      u = "/edit/";
+    else
+      u = "/" + el.name + "/edit/";
+    new Ajax.Request(u, {
         method: 'post',
         asynchronous: false,
         contentType: 'multipart/form-data; boundary=7d79',
@@ -622,7 +629,7 @@ function import_show(list_or_table)
   var element = $('popup');
   // Replace the content
   element.innerHTML = '<h2>' + gettext("Import data") + '</h2><br/>' +
-    '<form enctype="multipart/form-data" method="post" action="' + location.href + '"><table><tr>'+
+    '<form enctype="multipart/form-data" method="post" action=""><table><tr>'+
     '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
     '<td colspan="2">' + gettext('Load data from a CSV-formatted text file in the database.') + '<br/>'+
     gettext('The first row should contain the field names.') + '</td></tr>'+

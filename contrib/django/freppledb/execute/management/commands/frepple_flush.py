@@ -28,7 +28,7 @@ from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from execute.models import log
+from freppledb.execute.models import log
 
 
 class Command(BaseCommand):
@@ -54,7 +54,6 @@ class Command(BaseCommand):
   def get_version(self):
     return settings.FREPPLE_VERSION
 
-  @transaction.commit_manually
   def handle(self, **options):
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all sql
@@ -73,6 +72,8 @@ class Command(BaseCommand):
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )
 
+    transaction.enter_transaction_management(using=database)
+    transaction.managed(True, using=database)
     try:
       # Logging message
       log(category='ERASE', theuser=user,
@@ -91,7 +92,7 @@ class Command(BaseCommand):
         ], [] )
       for sql in sql_list:
         cursor.execute(sql)
-        transaction.commit()
+        transaction.commit(using=database)
 
       # SQLite specials
       if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
@@ -109,5 +110,7 @@ class Command(BaseCommand):
       else: raise CommandError(e)
       
     finally:
-      transaction.commit()
+      transaction.commit(using=database)
       settings.DEBUG = tmp_debug
+      transaction.leave_transaction_management(using=database)
+      

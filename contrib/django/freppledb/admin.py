@@ -26,5 +26,5 @@ from django.contrib import admin
 site = admin.sites.AdminSite()
 
 # Call the admin modules of our applications
-import input.admin
-import common.admin
+import freppledb.input.admin
+import freppledb.common.admin

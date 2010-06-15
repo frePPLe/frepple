@@ -999,7 +999,7 @@ def parseUpload(request, reportclass, data):
     content_type_id = ContentType.objects.get_for_model(entityclass).pk
     
     transaction.enter_transaction_management(using=request.database)
-    transaction.managed(True, using=database)
+    transaction.managed(True, using=request.database)
     try:
       # Loop through the data records
       has_pk_field = False
@@ -1109,7 +1109,7 @@ def parseUpload(request, reportclass, data):
             errors.append(_("Exception during upload: %(message)s") % {'message': e,})
     finally:
       transaction.commit(using=request.database)
-      transaction.leave_transaction_management(using=database)
+      transaction.leave_transaction_management(using=request.database)
 
     # Report all failed records
     return (warnings, errors, changed, added)

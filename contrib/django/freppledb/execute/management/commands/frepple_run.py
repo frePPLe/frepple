@@ -50,28 +50,28 @@ class Command(BaseCommand):
   requires_model_validation = False
 
   def handle(self, **options):
+    # Pick up the options
     nonfatal = False
-    transaction.enter_transaction_management(managed=False, using=db)
-    transaction.managed(False, using=db)
-    try:
-      # Pick up the options
-      if 'user' in options: user = options['user'] or ''
-      else: user = ''
-      if 'constraint' in options:
-        constraint = int(options['constraint'])
-        if constraint < 0 or constraint > 15:
-          raise ValueError("Invalid constraint: %s" % options['constraint'])
-      else: constraint = 15
-      if 'plantype' in options: 
-        plantype = int(options['plantype'])
-        if plantype < 1 or plantype > 2:
-          raise ValueError("Invalid plan type: %s" % options['plantype'])
-      else: plantype = 1
-      if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
-      else: database = DEFAULT_DB_ALIAS
-      if not database in settings.DATABASES.keys():
-        raise CommandError("No database settings known for '%s'" % database )
+    if 'user' in options: user = options['user'] or ''
+    else: user = ''
+    if 'constraint' in options:
+      constraint = int(options['constraint'])
+      if constraint < 0 or constraint > 15:
+        raise ValueError("Invalid constraint: %s" % options['constraint'])
+    else: constraint = 15
+    if 'plantype' in options: 
+      plantype = int(options['plantype'])
+      if plantype < 1 or plantype > 2:
+        raise ValueError("Invalid plan type: %s" % options['plantype'])
+    else: plantype = 1
+    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
+    else: database = DEFAULT_DB_ALIAS
+    if not database in settings.DATABASES.keys():
+      raise CommandError("No database settings known for '%s'" % database )
         
+    transaction.enter_transaction_management(managed=False, using=database)
+    transaction.managed(False, using=database)
+    try:
       # Log message
       log(category='RUN', theuser=user,
         message=_('Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d') % {'plantype': plantype, 'constraint': constraint}).save(using=database)

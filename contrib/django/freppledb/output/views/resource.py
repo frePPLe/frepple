@@ -69,8 +69,8 @@ class OverviewReport(TableReport):
 
   @staticmethod
   def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
-    
+    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)        
+        
     # Execute the query
     cursor = connections[request.database].cursor()
     query = '''
@@ -102,8 +102,8 @@ class OverviewReport(TableReport):
          left join location on res.location_id = location.name
          left join calendar on location.available_id = calendar.name
          left join bucket bucket2 on calendar.name = bucket2.calendar_id
-         and bucket.startdate <= bucket2.enddate
-         and bucket.enddate >= bucket2.startdate
+         and d.startdate <= bucket2.enddate
+         and d.enddate >= bucket2.startdate
          -- Grouping
          group by res.name, res.location_id, d.bucket, d.startdate, d.enddate
        ) x

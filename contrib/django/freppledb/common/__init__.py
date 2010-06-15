@@ -50,7 +50,7 @@ from django.contrib.admin.util import get_deleted_objects
 
 # Make our tags built-in, so we don't have to load them any more in our
 # templates with a 'load' tag.
-template.add_to_builtins('common.templatetags.base_utils')
+template.add_to_builtins('freppledb.common.templatetags.base_utils')
  
 csrf_protect_m = method_decorator(csrf_protect)
 

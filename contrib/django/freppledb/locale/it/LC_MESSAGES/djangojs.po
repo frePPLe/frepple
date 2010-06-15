@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-15 22:59+0200\n"
+"POT-Creation-Date: 2010-06-15 22:52+0200\n"
 "PO-Revision-Date: 2010-05-19 15:29+0100\n"
 "Last-Translator: Antonio Mascolo <tonio@purpless.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
@@ -31,148 +31,144 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/frepple.js:247
+#: static/frepple.js:254
 msgid "contains (no case)"
 msgstr "contiene (no case)"
 
-#: static/frepple.js:248
+#: static/frepple.js:255
 msgid "contains"
 msgstr "contiene"
 
-#: static/frepple.js:249
+#: static/frepple.js:256
 msgid "starts (no case)"
 msgstr "inizia (no case)"
 
-#: static/frepple.js:250
+#: static/frepple.js:257
 msgid "starts"
 msgstr "inizia"
 
-#: static/frepple.js:251
+#: static/frepple.js:258
 msgid "ends (no case)"
 msgstr "finisce (no case)"
 
-#: static/frepple.js:252
+#: static/frepple.js:259
 msgid "ends"
 msgstr "finisce"
 
-#: static/frepple.js:253
+#: static/frepple.js:260
 msgid "equals (no case)"
 msgstr "uguale (no case)"
 
-#: static/frepple.js:254
+#: static/frepple.js:261
 msgid "equals"
 msgstr "uguale"
 
-#: static/frepple.js:255
+#: static/frepple.js:262
 msgid "is null"
 msgstr "e' nullo"
 
-#: static/frepple.js:315
+#: static/frepple.js:322
 msgid "Filter data"
 msgstr "Filtro dati"
 
-#: static/frepple.js:367
+#: static/frepple.js:387
 msgid "Filter"
 msgstr "Filtro"
 
-#: static/frepple.js:368
-#: static/frepple.js.py:536
-#: static/frepple.js.py:562
-#: static/frepple.js:612
+#: static/frepple.js:388 static/frepple.js.py:572 static/frepple.js.py:598
+#: static/frepple.js:648
 msgid "Cancel"
 msgstr "Cancella"
 
-#: static/frepple.js:483
-#: static/frepple.js.py:488
+#: static/frepple.js:520 static/frepple.js.py:525
 msgid "False"
 msgstr "Falso"
 
-#: static/frepple.js:484
-#: static/frepple.js.py:489
+#: static/frepple.js:521 static/frepple.js.py:526
 msgid "True"
 msgstr "Vero"
 
-#: static/frepple.js:529
+#: static/frepple.js:565
 msgid "Import data"
 msgstr "Importa dati"
 
-#: static/frepple.js:532
+#: static/frepple.js:568
 msgid "Load data from a CSV-formatted text file in the database."
 msgstr "Carica dati nel database da un file di testo CSV."
 
-#: static/frepple.js:533
+#: static/frepple.js:569
 msgid "The first row should contain the field names."
 msgstr "La pirma riga dovrebbe contenere i nomi dei campi"
 
-#: static/frepple.js:534
+#: static/frepple.js:570
 msgid "Data file"
 msgstr "file di dati"
 
-#: static/frepple.js:535
+#: static/frepple.js:571
 msgid "Upload"
 msgstr "Caricamento"
 
-#: static/frepple.js:556
+#: static/frepple.js:592
 msgid "Export data"
 msgstr "Esporta i dati"
 
-#: static/frepple.js:558
+#: static/frepple.js:594
 msgid "CSV style"
 msgstr "CSV stile"
 
-#: static/frepple.js:559
+#: static/frepple.js:595
 msgid "Table"
 msgstr "Tabella"
 
-#: static/frepple.js:560
+#: static/frepple.js:596
 msgid "List"
 msgstr "Lista"
 
-#: static/frepple.js:561
+#: static/frepple.js:597
 msgid "Export"
 msgstr "Esporta"
 
-#: static/frepple.js:599
+#: static/frepple.js:635
 msgid "Time buckets"
 msgstr "Intervalli di tempo"
 
-#: static/frepple.js:601
+#: static/frepple.js:637
 msgid "Buckets"
 msgstr "Intervalli"
 
-#: static/frepple.js:602
+#: static/frepple.js:638
 msgid "Standard"
 msgstr "Standard"
 
-#: static/frepple.js:603
+#: static/frepple.js:639
 msgid "Day"
 msgstr "Giorno"
 
-#: static/frepple.js:604
+#: static/frepple.js:640
 msgid "Week"
 msgstr "Settimana"
 
-#: static/frepple.js:605
+#: static/frepple.js:641
 msgid "Month"
 msgstr "Mese"
 
-#: static/frepple.js:606
+#: static/frepple.js:642
 msgid "Quarter"
 msgstr "Trimestre"
 
-#: static/frepple.js:607
+#: static/frepple.js:643
 msgid "Year"
 msgstr "Anno"
 
-#: static/frepple.js:609
+#: static/frepple.js:645
 msgid "Start&nbsp;date"
 msgstr "Inizio&nbsp;data"
 
-#: static/frepple.js:610
+#: static/frepple.js:646
 msgid "End&nbsp;date"
 msgstr "Fine&nbsp;data"
 
-#: static/frepple.js:611
+#: static/frepple.js:647
 msgid "OK"
 msgstr "OK"
 

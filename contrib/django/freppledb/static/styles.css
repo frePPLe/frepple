@@ -230,7 +230,7 @@ table thead th.sorted {
 }
 
 /* @todo remove this hardcoded width */
-.dashboard #content { width: 700px; }
+.dashboard #content { width: 600px; }
 
 tr.level0 {font-weight: bold;}
 td.level0 {padding-left: 0px;}

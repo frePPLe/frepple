@@ -214,7 +214,7 @@ def GraphData(request, entity):
   overload = []
   unavailable = []
   setup = []
-  for x in OverviewReport.resultlist2(basequery, bucket, start, end):
+  for x in OverviewReport.resultlist2(request, basequery, bucket, start, end):
     if x['available'] > x['load']:
       free.append(x['available'] - x['load'])
       overload.append(0)

@@ -130,11 +130,11 @@ class CrumbsNode(Node):
     except: return ''  # No request found in the context: no crumbs...
     # Pick up the current crumbs from the session cookie
     try: cur = req.session['crumbs']
-    except: cur = [(_('Home'),HOMECRUMB % (req.prefix, _('Home')))]
+    except: cur = [(_('Home'), HOMECRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
 
     # Check if we need to reset the crumbs
     try:
-      if context['reset_crumbs']: cur = [(_('Home'),HOMECRUMB % (req.prefix, _('Home')))]
+      if context['reset_crumbs']: cur = [(_('Home'), HOMECRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
     except: pass
 
     # Pop from the stack if the same url is already in the crumbs
@@ -150,11 +150,17 @@ class CrumbsNode(Node):
        cnt += 1
 
     # Push current url on the stack
-    cur.append( (unicode(title),'<a href="%s%s%s">%s</a>' % (
-      req.prefix, urlquote(req.path),
-      req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
-      unicode(escape(title))
-      )))
+    cur.append( (unicode(title),
+      '<a href="%s%s%s">%s</a>' % (
+        req.prefix, urlquote(req.path),
+        req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
+        unicode(escape(title))
+        ),
+      '%s%s%s' % (
+        req.prefix, urlquote(req.path),
+        req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
+        ),
+      ))
 
     # Update the current session
     req.session['crumbs'] = cur

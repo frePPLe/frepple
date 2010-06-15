@@ -211,7 +211,7 @@ def GraphData(request, entity):
   demand = []
   supply = []
   backlog = []
-  for x in OverviewReport.resultlist2(basequery, bucket, start, end):
+  for x in OverviewReport.resultlist2(request, basequery, bucket, start, end):
     demand.append(x['demand'])
     supply.append(x['supply'])
     backlog.append(x['backlog'])

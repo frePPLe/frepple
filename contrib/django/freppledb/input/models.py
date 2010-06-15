@@ -22,8 +22,10 @@
 
 from datetime import datetime, date
 from decimal import Decimal
+import sys
 
 from django.db import models
+from django.db.utils import DEFAULT_DB_ALIAS
 from django.db.models import signals
 from django.http import HttpRequest
 from django.dispatch import dispatcher
@@ -38,6 +40,23 @@ from freppledb.common.fields import DurationField
 
 CALENDARID = None
 
+class AuditManager(models.Manager):
+  def get_query_set(self): 
+    # Loop through all the stack frames until you find the request    
+    f = sys._getframe()
+    while f:
+      if f.f_locals.has_key('request'):  
+        request = f.f_locals['request']  
+        if request and hasattr(request,'database'): 
+          # There is a request object  
+          database = request.database
+          break
+      f = f.f_back
+    if not f: database = DEFAULT_DB_ALIAS
+    
+    # Route to the right database
+    return super(AuditManager, self).get_query_set().using(database)
+   
 
 class AuditModel(models.Model):
   '''
@@ -47,6 +66,8 @@ class AuditModel(models.Model):
   # Database fields
   lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now())
 
+  objects = AuditManager()
+  
   def save(self, *args, **kwargs):
     # Update the field with every change
     self.lastmodified = datetime.now()

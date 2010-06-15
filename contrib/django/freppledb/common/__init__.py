@@ -37,24 +37,36 @@ The common functionality handles:
 from django import template
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
-from django.utils.encoding import force_unicode
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render_to_response
 from django.contrib.admin.util import unquote
+from django.utils.encoding import force_unicode
+from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst, get_text_list
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.admin.util import get_deleted_objects
 
 # Make our tags built-in, so we don't have to load them any more in our
 # templates with a 'load' tag.
 template.add_to_builtins('common.templatetags.base_utils')
  
+csrf_protect_m = method_decorator(csrf_protect)
 
 class MultiDBModelAdmin(admin.ModelAdmin):
   r'''
   This class is an enhanced version of the django regular admin model.
-  See the standard code in the file django\contrib\admin\options.py
   It adds:
      - support for multiple databases
+          - store and load history information in the right database
+          - assure prefix is maintained in the URLs
+          - check for related objects in the right database
      - different logic to determine the next page to display
+
+  See the standard code in the file django\contrib\admin\options.py
+  The level of customization is relatively high, and this code is a bit of a 
+  concern for future upgrades of Django...
   ''' 
   
   def save_model(self, request, obj, form, change):
@@ -123,7 +135,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       content_type__id__exact = ContentType.objects.get_for_model(model).id
     ).select_related().order_by('action_time')
     # If no history was found, see whether this object even exists.
-    obj = get_object_or_404(model, pk=unquote(object_id))
+    obj = get_object_or_404(model.objects.using(request.database), pk=unquote(object_id))
     context = {
       'title': _('Change history: %s') % force_unicode(obj),
       'action_list': action_list,
@@ -140,9 +152,110 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       "admin/object_history.html"
     ], context, context_instance=context_instance)
       
-  # TODO def response_add(self, request, obj, post_url_continue='../%s/'):
-  # TODO def response_change(self, request, obj):
-        
+  def response_add(self, request, obj, post_url_continue='../%s/'):
+    """
+    Determines the HttpResponse for the add_view stage.
+    """
+    opts = obj._meta
+    pk_value = obj._get_pk_val()
+
+    msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj)}
+    # Here, we distinguish between different save types by checking for
+    # the presence of keys in request.POST.
+    if request.POST.has_key("_continue"):
+      self.message_user(request, msg + ' ' + force_unicode(_("You may edit it again below.")))
+      if request.POST.has_key("_popup"):
+        post_url_continue += "?_popup=1"
+      return HttpResponseRedirect(post_url_continue % pk_value)
+
+    if request.POST.has_key("_popup"):
+      return HttpResponse('<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % \
+          # escape() calls force_unicode.
+          (escape(pk_value), escape(obj)))
+    elif request.POST.has_key("_addanother"):
+      self.message_user(request, msg + ' ' + force_unicode(_("You may add another %s below.") % force_unicode(opts.verbose_name)))
+      return HttpResponseRedirect(request.prefix + request.path)
+    else:
+      self.message_user(request, msg)
+
+      # Redirect to previous crumb
+      return HttpResponseRedirect(request.session['crumbs'][-2][2])
+
+
+  def response_change(self, request, obj):
+    """
+    Determines the HttpResponse for the change_view stage.
+    """
+    opts = obj._meta
+    pk_value = obj._get_pk_val()
+
+    msg = _('The %(name)s "%(obj)s" was changed successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj)}
+    if request.POST.has_key("_continue"):
+      self.message_user(request, msg + ' ' + force_unicode(_("You may edit it again below.")))
+      if request.REQUEST.has_key('_popup'):
+          return HttpResponseRedirect(request.prefix + request.path + "?_popup=1")
+      else:
+          return HttpResponseRedirect(request.prefix + request.path)
+    elif request.POST.has_key("_saveasnew"):
+      msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % {'name': force_unicode(opts.verbose_name), 'obj': obj}
+      self.message_user(request, msg)
+      return HttpResponseRedirect("../%s/" % pk_value)
+    elif request.POST.has_key("_addanother"):
+      self.message_user(request, msg + ' ' + force_unicode(_("You may add another %s below.") % force_unicode(opts.verbose_name)))
+      return HttpResponseRedirect("../add/")
+    else:
+      self.message_user(request, msg)
+      # Redirect to previous crumb
+      return HttpResponseRedirect(request.session['crumbs'][-2][2])
+
+  @csrf_protect_m
+  def delete_view(self, request, object_id, extra_context=None):
+    "The 'delete' admin view for this model."
+    opts = self.model._meta
+    app_label = opts.app_label
+
+    obj = self.get_object(request, unquote(object_id))
+
+    if not self.has_delete_permission(request, obj):
+      raise PermissionDenied
+
+    if obj is None:
+      raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': force_unicode(opts.verbose_name), 'key': escape(object_id)})
+
+    # Populate deleted_objects, a data structure of all related objects that
+    # will also be deleted.
+    (deleted_objects, perms_needed) = get_deleted_objects((obj,), opts, request.user, self.admin_site)
+
+    if request.POST: # The user has already confirmed the deletion.
+      if perms_needed:
+        raise PermissionDenied
+      obj_display = force_unicode(obj)
+      self.log_deletion(request, obj, obj_display)
+      obj.delete()
+
+      self.message_user(request, _('The %(name)s "%(obj)s" was deleted successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj_display)})
+
+      # Redirect to previous crumb
+      return HttpResponseRedirect(request.session['crumbs'][-3][2])
+
+    context = {
+        "title": _("Are you sure?"),
+        "object_name": force_unicode(opts.verbose_name),
+        "object": obj,
+        "deleted_objects": deleted_objects,
+        "perms_lacking": perms_needed,
+        "opts": opts,
+        "root_path": self.admin_site.root_path,
+        "app_label": app_label,
+    }
+    context.update(extra_context or {})
+    context_instance = template.RequestContext(request, current_app=self.admin_site.name)
+    return render_to_response(self.delete_confirmation_template or [
+        "admin/%s/%s/delete_confirmation.html" % (app_label, opts.object_name.lower()),
+        "admin/%s/delete_confirmation.html" % app_label,
+        "admin/delete_confirmation.html"
+    ], context, context_instance=context_instance)
+                            
   # TODO: allow permissions per schema
   # def has_add_permission(self, request):
   # def has_change_permission(self, request, obj=None):

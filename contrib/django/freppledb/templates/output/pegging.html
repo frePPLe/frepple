@@ -32,7 +32,7 @@
 	   var totalAvailable = document.viewport.getDimensions();
 	   var chart1 = new FusionCharts("/static/FCF_Gantt.swf", "sampleChart", totalAvailable.width-35, 500);
 	   chart1.setTransparent();
-	   chart1.setDataURL(escape("/pegginggraph/{{ object }}/"));
+	   chart1.setDataURL(escape("{{request.prefix}}/pegginggraph/{{ object }}/"));
 	   chart1.render("chart1div");
 	</script>
 {% endblock %}

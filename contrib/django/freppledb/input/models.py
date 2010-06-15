@@ -583,6 +583,10 @@ class Flow(AuditModel):
     db_index=True, related_name='flows')
   thebuffer = models.ForeignKey(Buffer, verbose_name=_('buffer'),
     db_index=True, related_name='flows')
+  quantity = models.DecimalField(_('quantity'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, 
+    default='1.00',
+    help_text=_('Quantity to consume or produce per operationplan unit')
+    )
   type = models.CharField(_('type'), max_length=20, null=True, blank=True,
     choices=flowtypes,
     help_text=_('Consume/produce material at the start or the end of the operationplan'),
@@ -592,10 +596,6 @@ class Flow(AuditModel):
     )
   effective_end = models.DateTimeField(_('effective end'), null=True, blank=True,
     help_text=_('Validity end date')
-    )
-  quantity = models.DecimalField(_('quantity'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, 
-    default='1.00',
-    help_text=_('Quantity to consume or produce per operationplan unit')
     )
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, null=True, blank=True, 
     help_text=_('Optional name of this flow'))

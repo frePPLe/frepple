@@ -856,7 +856,7 @@ filteroperator = {
   
 def _create_filter(req, cls):
   # Initialisation
-  result1 = [u'<form id="filters" action="%s">' % escape(req.path)]
+  result1 = [u'<form id="filters" action="%s%s">' % (req.prefix,escape(req.path))]
   result2 = [u'<div id="fields" style="display: none"><form action="">\n']
   empty = True
     

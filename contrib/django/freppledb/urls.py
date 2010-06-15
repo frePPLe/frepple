@@ -38,7 +38,7 @@ import freppledb.admin
 
 urlpatterns = patterns('',
     # frePPLe execution application
-    (r'^execute/', include('execute.urls')),
+    (r'^execute/', include('freppledb.execute.urls')),
 
     # Root url redirects to the admin index page
     (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),

@@ -1,6 +1,6 @@
 Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 ===================================================================
---- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 13315)
+--- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 13353)
 +++ django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
 @@ -94,7 +94,7 @@
      openClock: function(num) {
@@ -73,7 +73,7 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
      },
 Index: django/contrib/admin/sites.py
 ===================================================================
---- django/contrib/admin/sites.py	(revision 13315)
+--- django/contrib/admin/sites.py	(revision 13353)
 +++ django/contrib/admin/sites.py	(working copy)
 @@ -321,20 +321,7 @@
          password = request.POST.get('password', None)
@@ -99,7 +99,7 @@ Index: django/contrib/admin/sites.py
          else:
 Index: django/contrib/admin/widgets.py
 ===================================================================
---- django/contrib/admin/widgets.py	(revision 13315)
+--- django/contrib/admin/widgets.py	(revision 13353)
 +++ django/contrib/admin/widgets.py	(working copy)
 @@ -127,8 +127,11 @@
          output.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> ' % \
@@ -117,7 +117,7 @@ Index: django/contrib/admin/widgets.py
      def base_url_parameters(self):
 Index: django/core/management/__init__.py
 ===================================================================
---- django/core/management/__init__.py	(revision 13315)
+--- django/core/management/__init__.py	(revision 13353)
 +++ django/core/management/__init__.py	(working copy)
 @@ -14,50 +14,80 @@
  # doesn't have to reload every time it's called.
@@ -258,9 +258,33 @@ Index: django/core/management/__init__.py
              except ImportError:
                  pass # No management module - ignore this app
  
+Index: django/db/models/fields/related.py
+===================================================================
+--- django/db/models/fields/related.py	(revision 13353)
++++ django/db/models/fields/related.py	(working copy)
+@@ -828,7 +828,10 @@
+         if value is None:
+             return
+ 
+-        qs = self.rel.to._default_manager.filter(**{self.rel.field_name:value})
++        db = model_instance._state.db
++        if db is None:
++            db = router.db_for_write(model_instance.__class__, instance=model_instance)            
++        qs = self.rel.to._default_manager.using(db).filter(**{self.rel.field_name:value})
+         qs = qs.complex_filter(self.rel.limit_choices_to)
+         if not qs.exists():
+             raise exceptions.ValidationError(self.error_messages['invalid'] % {
+@@ -1054,6 +1057,7 @@
+         except ValueError:
+             # the CommaSeparatedIntegerField validator will catch this error
+             return
++        # TODO: this validation is not aware of the database to use in a multi-db configuration
+         objects = mod._default_manager.in_bulk(pks)
+         if len(objects) != len(pks):
+             badkeys = [k for k in pks if k not in objects]
 Index: django/db/models/sql/compiler.py
 ===================================================================
---- django/db/models/sql/compiler.py	(revision 13315)
+--- django/db/models/sql/compiler.py	(revision 13353)
 +++ django/db/models/sql/compiler.py	(working copy)
 @@ -199,8 +199,11 @@
  
@@ -292,7 +316,7 @@ Index: django/db/models/sql/compiler.py
                  col_aliases.add(c_alias)
 Index: django/views/i18n.py
 ===================================================================
---- django/views/i18n.py	(revision 13315)
+--- django/views/i18n.py	(revision 13353)
 +++ django/views/i18n.py	(working copy)
 @@ -260,6 +260,9 @@
      src.append(LibFormatHead)

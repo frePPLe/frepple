@@ -101,17 +101,25 @@ Index: django/contrib/admin/widgets.py
 ===================================================================
 --- django/contrib/admin/widgets.py	(revision 13353)
 +++ django/contrib/admin/widgets.py	(working copy)
-@@ -127,8 +127,11 @@
+@@ -14,6 +14,7 @@
+ from django.utils.encoding import force_unicode
+ from django.conf import settings
+ from django.core.urlresolvers import reverse, NoReverseMatch
++from django.utils.http import urlquote
+ 
+ class FilteredSelectMultiple(forms.SelectMultiple):
+     """
+@@ -127,8 +128,12 @@
          output.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> ' % \
              (related_url, url, name))
          output.append('<img src="%simg/admin/selector-search.gif" width="16" height="16" alt="%s" /></a>' % (settings.ADMIN_MEDIA_PREFIX, _('Lookup')))
--        if value:
--            output.append(self.label_for_value(value))
 +        # frePPLe DOES NOT SHOW THE CURRENT VALUE
 +        #if value:
 +        #    output.append(self.label_for_value(value))
 +        # frePPLe adds a button to go edit the related object
-+        output.append('<a href="%s%s/"><img src="%simg/admin/icon_changelink.gif" width="16" height="16" alt="%s" /></a>' % (related_url, value, settings.ADMIN_MEDIA_PREFIX, _('Edit')))
+         if value:
+-            output.append(self.label_for_value(value))
++          output.append('<a href="%s%s/"> <img src="%simg/admin/icon_changelink.gif" width="16" height="16" alt="%s" /></a>' % (related_url, urlquote(value), settings.ADMIN_MEDIA_PREFIX, _('Edit')))
          return mark_safe(u''.join(output))
  
      def base_url_parameters(self):

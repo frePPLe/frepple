@@ -275,14 +275,14 @@ class SelectDatabaseNode(Node):
     try: req = context['request']
     except: return ''  # No request found in the context
     if len(settings.DATABASES) == 1: return ''
-    s = [u'<form>%s&nbsp;<select id="database" name="%s" onchange="selectDatabase()">' % (force_unicode(_("Model:")), req.database) ]
+    s = [u'<form action="">%s&nbsp;<select id="database" name="%s" onchange="selectDatabase()">' % (force_unicode(_("Model:")), req.database) ]
     l = [ i for i in settings.DATABASES ]
     l.sort()  
     for i in l:
       if i == req.database:
-        s.append(u'<option name="%s" selected="1">%s</option>' % (i,i))
+        s.append(u'<option value="%s" selected="1">%s</option>' % (i,i))
       else:
-        s.append(u'<option name="%s">%s</option>' % (i,i))
+        s.append(u'<option value="%s">%s</option>' % (i,i))
     s.append(u'</select></form>')
     return ''.join(s)
 

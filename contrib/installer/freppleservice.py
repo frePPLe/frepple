@@ -130,6 +130,10 @@ class frePPLeService(win32serviceutil.ServiceFramework):
           # Too bad if we can't write log info
           servicemanager.LogInfoMsg("frePPLe web server listening on http://%s:%d without log file" % (address, port))
 
+        # Log usage
+        from freppledb.execute.management.commands.frepple_runserver import CheckUpdates
+        CheckUpdates().start()
+        
         # Infinite loop serving requests
         try:
           self.server.start()

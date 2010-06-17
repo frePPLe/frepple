@@ -33,8 +33,7 @@ API of frePPLe to bring the data into the frePPLe C++ core engine.
 from time import time
 from xml.sax.saxutils import quoteattr
 from threading import Thread
-import inspect
-import os
+import inspect, os
 from datetime import datetime
 
 from django.db import connections, DEFAULT_DB_ALIAS

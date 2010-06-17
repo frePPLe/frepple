@@ -32,9 +32,8 @@ information to a set of text files.
 
 
 from time import time
-import csv
+import csv, inspect
 from threading import Thread
-import inspect
 
 
 import frepple

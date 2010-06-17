@@ -20,7 +20,6 @@
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
 
-import random
 from optparse import make_option
 from datetime import timedelta, datetime, date
 

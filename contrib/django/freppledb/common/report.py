@@ -36,8 +36,7 @@ It provides the following functionality:
 from datetime import date, datetime
 from email.Utils import formatdate
 from calendar import timegm
-import csv
-import StringIO
+import csv, StringIO
 
 from django.conf import settings
 from django.core.paginator import QuerySetPaginator, InvalidPage
@@ -47,9 +46,9 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import models, transaction, connection
 from django.db.models.fields import Field
-from django.db.models.fields.related import ForeignKey, AutoField
+from django.db.models.fields.related import RelatedField, AutoField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotModified
-from django.forms.models import ModelForm
+from django.forms.models import modelform_factory
 from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.utils.encoding import smart_str
@@ -1032,13 +1031,15 @@ def parseUpload(request, reportclass, data):
           # Abort when there are errors
           if len(errors) > 0: return (warnings,errors,0,0)
           # Create a form class that will be used to validate the data
-          UploadMeta = type("UploadMeta", (), {
-            'model': entityclass,
-            'fields': tuple([i.name for i in headers if isinstance(i,Field)])
-            })
-          UploadForm = type("UploadForm", (ModelForm,), {
-            "Meta": UploadMeta
-            })
+          def createmultidbformfield(f):
+            if isinstance(f, RelatedField):
+              return f.formfield(using=request.database)
+            else:
+              return f.formfield()
+          UploadForm = modelform_factory(entityclass, 
+            fields = tuple([i.name for i in headers if isinstance(i,Field)]),
+            formfield_callback = createmultidbformfield
+            )
   
         ### Case 2: Skip empty rows and comments rows
         elif len(row) == 0 or row[0].startswith('#'):
@@ -1071,11 +1072,11 @@ def parseUpload(request, reportclass, data):
               # No primary key required for this model
               form = UploadForm(d)
               it = None
-  
+            
             # Step 3: Validate the data and save to the database
             if form.has_changed():
               try:
-                obj = form.save(using=request.database)
+                obj = form.save()
                 LogEntry(
                     user_id         = request.user.pk,
                     content_type_id = content_type_id,

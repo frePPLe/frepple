@@ -21,6 +21,7 @@
 # date : $LastChangedDate$
 
 import sys, os, os.path, socket
+from threading import Thread
 from stat import S_ISDIR, ST_MODE
 from optparse import make_option
 from cherrypy.wsgiserver import CherryPyWSGIServer
@@ -56,7 +57,6 @@ class Command(BaseCommand):
     return settings.FREPPLE_VERSION
 
   def handle(self, **options):
-
     # Determine the port number
     if 'port' in options: 
       port = int(options['port'] or settings.PORT)
@@ -95,6 +95,10 @@ class Command(BaseCommand):
       if not os.path.exists(media)or not S_ISDIR(os.stat(media)[ST_MODE]):
         raise Exception("No valid media directory found")
 
+    # Start a seperate thread that will check for updates
+    # We don't wait for it to finish
+    CheckUpdates().start()
+    
     # Run the WSGI server
     server = CherryPyWSGIServer((address, port),
       AdminMediaHandler(WSGIHandler(), media)
@@ -106,3 +110,27 @@ class Command(BaseCommand):
       server.start()
     except KeyboardInterrupt:
       server.stop()
+
+
+class CheckUpdates(Thread):
+  def run(self):
+    if settings.DEBUG == False:
+      try:
+        import urllib 
+        import urllib2 
+        import re 
+        values = {
+          'platform' : sys.platform,
+          'executable' : sys.executable,
+          'version' : settings.FREPPLE_VERSION,
+          }
+        request = urllib2.Request('http://www.frepple.com/usage.php?' + urllib.urlencode(values))
+        response = urllib2.urlopen(request).read()
+        match = re.search("<release>(.*)</release>", response)
+        release = match.group(1)
+        if release > settings.FREPPLE_VERSION:
+          print "A new frePPLe release %s is available. Your current release is %s." % (release, settings.FREPPLE_VERSION)
+      except:
+        # Don't worry if something went wrong. 
+        pass
+      

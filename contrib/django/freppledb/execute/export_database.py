@@ -34,8 +34,7 @@ to keep the code portable between different databases.
 
 from time import time
 from threading import Thread
-import inspect
-import os
+import inspect, os
 
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.db import transaction

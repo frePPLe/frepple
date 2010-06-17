@@ -20,8 +20,7 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-import os
-import shutil
+import os, shutil
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError

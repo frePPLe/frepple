@@ -98,7 +98,32 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       Forecast::DoubleExponential::setMaxGamma(x->second.getDouble());
     else if (x->first == "Forecast_DoubleExponential_dampenTrend")
       Forecast::DoubleExponential::setDampenTrend(x->second.getDouble());
-    // Bullshit
+    // Seasonal forecast method
+    else if (x->first == "Forecast_Seasonal_initialAlfa")
+      Forecast::Seasonal::setInitialAlfa(x->second.getDouble());
+    else if (x->first == "Forecast_Seasonal_minAlfa")
+      Forecast::Seasonal::setMinAlfa(x->second.getDouble());
+    else if (x->first == "Forecast_Seasonal_maxAlfa")
+      Forecast::Seasonal::setMaxAlfa(x->second.getDouble());
+    else if (x->first == "Forecast_Seasonal_initialBeta")
+      Forecast::Seasonal::setInitialGamma(x->second.getDouble());
+    else if (x->first == "Forecast_Seasonal_minBeta")
+      Forecast::Seasonal::setMinBeta(x->second.getDouble());
+    else if (x->first == "Forecast_Seasonal_maxBeta")
+      Forecast::Seasonal::setMaxBeta(x->second.getDouble());    
+    else if (x->first == "Forecast_Seasonal_initialGamma")
+      Forecast::Seasonal::setInitialBeta(x->second.getDouble());
+    else if (x->first == "Forecast_Seasonal_minGamma")
+      Forecast::Seasonal::setMinGamma(x->second.getDouble());
+    else if (x->first == "Forecast_Seasonal_maxGamma")
+      Forecast::Seasonal::setMaxGamma(x->second.getDouble());
+    else if (x->first == "Forecast_Seasonal_dampenTrend")
+      Forecast::Seasonal::setDampenTrend(x->second.getDouble());
+    else if (x->first == "Forecast_Seasonal_minPeriod")
+      Forecast::Seasonal::setMinPeriod(x->second.getInt());
+    else if (x->first == "Forecast_Seasonal_maxPeriod")
+      Forecast::Seasonal::setMaxPeriod(x->second.getInt());
+    // That's bullshit
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
   }

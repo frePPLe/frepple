@@ -48,17 +48,29 @@ void Forecast::generateFutureValues(
   MovingAverage moving_avg;
   SingleExponential single_exp;
   DoubleExponential double_exp;
-  int numberOfMethods = 3;
-  ForecastMethod* methods[3];
+  Seasonal seasonal;
+  int numberOfMethods = 4;
+  ForecastMethod* methods[4];
   methods[0] = &single_exp;
   methods[1] = &double_exp;
-  methods[2] = &moving_avg;
+  methods[2] = &seasonal;
+  methods[3] = &moving_avg;
+
+  // Strip zero demand buckets at the start.  
+  // Eg when demand only starts in the middle of horizon, we only want to 
+  // use the second part of the horizon for forecasting. The zeros before the
+  // demand start would distort the results. 
+  while (historycount >= 1 && *history == 0.0)
+  {
+    ++history;
+    --historycount;
+  }
 
   // Initialize a vector with the smape weights
-  double *smapeWeight = new double[historycount+1];
-  smapeWeight[historycount] = smapeWeight[historycount-1] = 1.0;
-  for (int i=historycount-2; i>=0; --i)
-    smapeWeight[i] = smapeWeight[i+1] * Forecast::getForecastSmapeAlfa();
+  double *weight = new double[historycount+1];
+  weight[historycount] = 1.0;
+  for (int i=historycount-1; i>=0; --i)
+    weight[i] = weight[i+1] * Forecast::getForecastSmapeAlfa();
 
   // Evaluate each forecast method
   double best_error = DBL_MAX;
@@ -68,7 +80,7 @@ void Forecast::generateFutureValues(
   {
     for (int i=0; i<numberOfMethods; ++i)
     {
-      error = methods[i]->generateForecast(this, history, historycount, smapeWeight, debug);
+      error = methods[i]->generateForecast(this, history, historycount, weight, debug);
       if (error<best_error)
       {
         best_error = error;
@@ -78,16 +90,16 @@ void Forecast::generateFutureValues(
   }
   catch (...)
   {
-    delete smapeWeight;
+    delete weight;
     throw;
   }
-  delete smapeWeight;
+  delete weight;
 
   // Apply the most appropriate forecasting method
   if (best_method >= 0)
   {
     if (debug)
-      logger << getName() << ": chosen method : " << methods[best_method]->getName() << endl;
+      logger << getName() << ": chosen method: " << methods[best_method]->getName() << endl;
     methods[best_method]->applyForecast(this, buckets, bucketcount, debug);
   }
 }
@@ -102,7 +114,7 @@ unsigned int Forecast::MovingAverage::defaultbuckets = 5;
 
 
 double Forecast::MovingAverage::generateForecast
-  (Forecast* fcst, const double history[], unsigned int count, const double smapeWeight[], bool debug)
+  (Forecast* fcst, const double history[], unsigned int count, const double weight[], bool debug)
 {
   double error_smape = 0.0;
   double sum = 0.0;
@@ -110,16 +122,22 @@ double Forecast::MovingAverage::generateForecast
   // Calculate the forecast and forecast error.
   for (unsigned int i = 1; i <= count; ++i)
   {
-    sum += history[i-1];
-    if (i>buckets)
+    sum = 0.0;
+    if (i > buckets)
     {
-      sum -= history[i-1-buckets];
+      for (unsigned int j = 0; j < buckets; ++j)
+        sum += history[i-j-1];
       avg = sum / buckets;
     }
     else
+    {
+      // For the first few values
+      for (unsigned int j = 0; j < i; ++j)
+        sum += history[i-j-1];
       avg = sum / i;
-    if (i >= fcst->getForecastSkip())
-      error_smape += fabs(avg - history[i]) / (avg + history[i]) * smapeWeight[i];
+    }
+    if (i >= fcst->getForecastSkip() && i < count)
+      error_smape += fabs(avg - history[i]) / (avg + history[i]) * weight[i];
   }
 
   // Echo the result
@@ -155,7 +173,7 @@ double Forecast::SingleExponential::max_alfa = 1.0;
 
 
 double Forecast::SingleExponential::generateForecast
-  (Forecast* fcst, const double history[], unsigned int count, const double smapeWeight[], bool debug)
+  (Forecast* fcst, const double history[], unsigned int count, const double weight[], bool debug)
 {
   // Verify whether this is a valid forecast method.
   //   - We need at least 5 buckets after the warmup period.
@@ -169,9 +187,12 @@ double Forecast::SingleExponential::generateForecast
   double best_error = DBL_MAX, best_alfa = initial_alfa, best_f_i = 0.0;
   for (; iteration <= Forecast::getForecastIterations(); ++iteration)
   {
-    // Initialize the iteration
-    f_i = history[0];
+    // Initialize variables
     df_dalfa_i = sum_11 = sum_12 = error_smape = 0.0;
+
+    // Initialize the iteration with the average of the first X values.
+    // X is a function of alfa: high alfa -> reactive forecast -> low X
+    f_i = (history[0] + history[1] + history[2]) / 3; 
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
@@ -180,12 +201,12 @@ double Forecast::SingleExponential::generateForecast
       df_dalfa_i = history[i-1] - f_i + (1 - alfa) * df_dalfa_i;
       f_i = history[i-1] * alfa + (1 - alfa) * f_i;
       if (i == count) break;
-      sum_12 += df_dalfa_i * (history[i] - f_i) * smapeWeight[i];
-      sum_11 += df_dalfa_i * df_dalfa_i * smapeWeight[i];
+      sum_12 += df_dalfa_i * (history[i] - f_i) * weight[i];  
+      sum_11 += df_dalfa_i * df_dalfa_i * weight[i];
       if (i >= fcst->getForecastSkip())
       {
-        error += (f_i - history[i]) * (f_i - history[i]) * smapeWeight[i];
-        error_smape += fabs(f_i - history[i]) / (f_i + history[i])* smapeWeight[i];
+        error += (f_i - history[i]) * (f_i - history[i]) * weight[i];
+        error_smape += fabs(f_i - history[i]) / (f_i + history[i])* weight[i];
       }
     }
 
@@ -259,7 +280,6 @@ void Forecast::SingleExponential::applyForecast
 // DOUBLE EXPONENTIAL FORECAST
 //
 
-
 double Forecast::DoubleExponential::initial_alfa = 0.2;
 double Forecast::DoubleExponential::min_alfa = 0.02;
 double Forecast::DoubleExponential::max_alfa = 1.0;
@@ -270,7 +290,7 @@ double Forecast::DoubleExponential::dampenTrend = 0.8;
 
 
 double Forecast::DoubleExponential::generateForecast
-  (Forecast* fcst, const double history[], unsigned int count, const double smapeWeight[], bool debug)
+  (Forecast* fcst, const double history[], unsigned int count, const double weight[], bool debug)
 {
   // Verify whether this is a valid forecast method.
   //   - We need at least 5 buckets after the warmup period.
@@ -290,12 +310,14 @@ double Forecast::DoubleExponential::generateForecast
   unsigned int iteration = 1, boundarytested = 0;
   for (; iteration <= Forecast::getForecastIterations(); ++iteration)
   {
-    // Initialize the iteration
-    constant_i = history[0];
-    trend_i = history[1] - history[0];
+    // Initialize variables
     error = error_smape = sum11 = sum12 = sum22 = sum13 = sum23 = 0.0;
     d_constant_d_alfa =	d_constant_d_gamma = d_trend_d_alfa = d_trend_d_gamma = 0.0;
     d_forecast_d_alfa = d_forecast_d_gamma = 0.0;
+
+    // Initialize the iteration
+    constant_i = (history[0] + history[1] + history[2]) / 3;
+    trend_i = (history[3] - history[0]) / 3;
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
@@ -318,15 +340,15 @@ double Forecast::DoubleExponential::generateForecast
         + (1 - gamma) * d_trend_d_gamma;
       d_forecast_d_alfa = d_constant_d_alfa + d_trend_d_alfa;
       d_forecast_d_gamma = d_constant_d_gamma + d_trend_d_gamma;
-      sum11 += smapeWeight[i] * d_forecast_d_alfa * d_forecast_d_alfa;
-      sum12 += smapeWeight[i] * d_forecast_d_alfa * d_forecast_d_gamma;
-      sum22 += smapeWeight[i] * d_forecast_d_gamma * d_forecast_d_gamma;
-      sum13 += smapeWeight[i] * d_forecast_d_alfa * (history[i] - constant_i - trend_i);
-      sum23 += smapeWeight[i] * d_forecast_d_gamma * (history[i] - constant_i - trend_i);
+      sum11 += weight[i] * d_forecast_d_alfa * d_forecast_d_alfa;
+      sum12 += weight[i] * d_forecast_d_alfa * d_forecast_d_gamma;
+      sum22 += weight[i] * d_forecast_d_gamma * d_forecast_d_gamma;
+      sum13 += weight[i] * d_forecast_d_alfa * (history[i] - constant_i - trend_i);
+      sum23 += weight[i] * d_forecast_d_gamma * (history[i] - constant_i - trend_i);
       if (i >= fcst->getForecastSkip()) // Don't measure during the warmup period
       {
-        error += (constant_i + trend_i - history[i]) * (constant_i + trend_i - history[i]) * smapeWeight[i];
-        error_smape += fabs(constant_i + trend_i - history[i]) / (constant_i + trend_i + history[i]) * smapeWeight[i];
+        error += (constant_i + trend_i - history[i]) * (constant_i + trend_i - history[i]) * weight[i];
+        error_smape += fabs(constant_i + trend_i - history[i]) / (constant_i + trend_i + history[i]) * weight[i];
       }
     }
 
@@ -353,13 +375,15 @@ double Forecast::DoubleExponential::generateForecast
       sum11 -= error / iteration;
       sum22 -= error / iteration;
       determinant = sum11 * sum22 - sum12 * sum12;
-    }
-    if (fabs(determinant) < ROUNDING_ERROR) break; // Still singular
+      if (fabs(determinant) < ROUNDING_ERROR) 
+        // Still singular - stop iterations here
+        break; 
+    }    
     delta_alfa = (sum13 * sum22 - sum23 * sum12) / determinant;
     delta_gamma = (sum23 * sum11 - sum13 * sum12) / determinant;
 
     // Stop when we are close enough and have tried hard enough
-    if (fabs(delta_alfa) + fabs(delta_gamma) < ACCURACY && iteration > 3)
+    if (fabs(delta_alfa) + fabs(delta_gamma) < 2 * ACCURACY && iteration > 3)
       break;
 
     // New values for the next iteration
@@ -408,14 +432,254 @@ void Forecast::DoubleExponential::applyForecast
   // Loop over all buckets and set the forecast to a linearly changing value
   for (unsigned int i = 1; i < bucketcount; ++i)
   {
-    if (constant_i + i * trend_i > 0)
+    constant_i += trend_i;
+    trend_i *= dampenTrend; // Reduce slope in the future
+    if (constant_i > 0)
       forecast->setTotalQuantity(
         DateRange(buckets[i-1], buckets[i]),
-        constant_i + i * trend_i
+        constant_i
         );
-    trend_i *= dampenTrend;
   }
 }
 
+
+//
+// SEASONAL FORECAST
+//
+
+unsigned int Forecast::Seasonal::min_period = 2;
+unsigned int Forecast::Seasonal::max_period = 14;
+double Forecast::Seasonal::dampenTrend = 0.8;
+double Forecast::Seasonal::initial_alfa = 0.2;
+double Forecast::Seasonal::min_alfa = 0.02;
+double Forecast::Seasonal::max_alfa = 1.0;
+double Forecast::Seasonal::initial_beta = 0.2;
+double Forecast::Seasonal::min_beta = 0.2;
+double Forecast::Seasonal::max_beta = 1.0;
+double Forecast::Seasonal::initial_gamma = 0.3;
+double Forecast::Seasonal::min_gamma = 0.05;
+double Forecast::Seasonal::max_gamma = 1.0;
+
+
+void Forecast::Seasonal::detectCycle(const double history[], unsigned int count)
+{
+  // We need at least 2 cycles
+  if (count < min_period*2) return;
+
+  // Compute the average value 
+  double average = 0.0;
+  for (unsigned int i = 0; i < count; ++i)
+    average += history[i];
+  average /= count;
+
+  // Compute variance
+  double variance = 0.0;
+  for (unsigned int i = 0; i < count; ++i)
+    variance += (history[i]-average)*(history[i]-average);
+  variance /= count;
+
+  // Compute autocorrelation for different periods
+  double prev = 10.0;
+  double prevprev = 10.0;
+  for (unsigned short p = min_period; p <= max_period && p < count/2; ++p)
+  {
+    // Compute correlation
+    double correlation = 0.0;
+    for (unsigned int i = p; i < count; ++i)
+      correlation += (history[i]-average)*(history[i-p]-average);
+    correlation /= count - p;
+    correlation /= variance;
+    // Detect cycles if we find a period with a big autocorrelation which
+    // is significantly larger than the adjacent periods.
+    if ((p > min_period + 1 && prev > prevprev*1.1) && prev > correlation*1.1 && prev > 0.3)
+    {
+      period = p - 1;
+      return;
+    }
+    prevprev = prev;
+    prev = correlation;
+  }
+}
+
+
+double Forecast::Seasonal::generateForecast
+  (Forecast* fcst, const double history[], unsigned int count, const double weight[], bool debug)
+{
+  // Check for seasonal cycles
+  detectCycle(history, count);
+
+  // Return if no seasonality is found
+  if (!period) return DBL_MAX;
+
+  // Define variables
+  double error = 0.0, error_smape = 0.0, delta_alfa, delta_beta, delta_gamma;
+  double sum11, sum12, sum13, sum14, sum22, sum23, sum24, sum33, sum34;
+  double best_error = DBL_MAX, best_smape = 0, best_alfa = initial_alfa,
+    best_beta = initial_beta, best_gamma = initial_gamma;
+  S_i = new double[period];
+
+  // Iterations
+  double L_i_prev;
+  unsigned int iteration = 1, boundarytested = 0;
+  for (; iteration <= Forecast::getForecastIterations(); ++iteration)
+  {
+    // Initialize variables
+    error = error_smape = sum11 = sum12 = sum13 = sum14 = 0.0;
+    sum22 = sum23 = sum24 = sum33 = sum34 = 0.0;
+
+    // Initialize the iteration
+    // L_i = average over first cycle
+    // T_i = average delta measured in second cycle 
+    // S_i[index] = actual divided by average in first cycle
+    L_i = 0.0;
+    for (unsigned long i = 0; i < period; ++i)
+      L_i += history[i];
+    L_i /= period;
+    T_i = 0.0;
+    for (unsigned long i = 0; i < period; ++i)
+    {
+      T_i += history[i+period] - history[i];
+      S_i[i] = history[i] / L_i;
+    }
+    T_i /= period * period;
+
+    // Calculate the forecast and forecast error.
+    // We also compute the sums required for the Marquardt optimization.
+    cycleindex = 0;
+    for (unsigned long i = period; i <= count; ++i)
+    {
+      L_i_prev = L_i;
+      L_i = alfa * history[i-1] / S_i[cycleindex] + (1 - alfa) * (L_i + T_i);
+      T_i = beta * (L_i - L_i_prev) + (1 - beta) * T_i;
+      S_i[cycleindex] = gamma * history[i-1] / L_i + (1 - gamma) * S_i[cycleindex];  
+      if (i == count) break;
+      if (i >= fcst->getForecastSkip()) // Don't measure during the warmup period
+      {
+        double fcst = (L_i + T_i) * S_i[cycleindex];
+        error += (fcst - history[i]) * (fcst - history[i]) * weight[i];
+        error_smape += fabs(fcst - history[i]) / (fcst + history[i]) * weight[i];
+      }
+      if (++cycleindex >= period) cycleindex = 0;
+    }
+
+    // Better than earlier iterations?
+    best_smape = error_smape;
+    if (error < best_error)
+    {
+      best_error = error;
+      best_smape = error_smape;
+      best_alfa = alfa;
+      best_beta = beta;
+      best_gamma = gamma;
+    }
+    break; // @todo no iterations yet to tune the seasonal parameters
+
+    // Add Levenberg - Marquardt damping factor
+    sum11 += error / iteration;
+    sum22 += error / iteration;
+    sum33 += error / iteration;
+
+    // Calculate a delta for the alfa, beta and gamma parameters.
+    // We're using Cramer's rule to solve a set of linear equations.
+    double det = determinant(sum11, sum12, sum13,
+      sum12, sum22, sum23,
+      sum13, sum23, sum33);
+    if (fabs(det) < ROUNDING_ERROR)
+    {
+      // Almost singular matrix. Try without the damping factor.
+      sum11 -= error / iteration;
+      sum22 -= error / iteration;
+      sum33 -= error / iteration;
+      det = determinant(sum11, sum12, sum13,
+        sum12, sum22, sum23,
+        sum13, sum23, sum33);
+      if (fabs(det) < ROUNDING_ERROR) 
+        // Still singular - stop iterations here
+        break; 
+    }
+    delta_alfa = determinant(sum14, sum12, sum13,
+      sum24, sum22, sum23,
+      sum34, sum23, sum33) / det;
+    delta_beta = determinant(sum11, sum14, sum13,
+      sum12, sum24, sum23,
+      sum13, sum34, sum33) / det;
+    delta_gamma = determinant(sum11, sum12, sum14,
+      sum12, sum22, sum24,
+      sum13, sum23, sum34) / det;
+
+    // Stop when we are close enough and have tried hard enough
+    if (fabs(delta_alfa) + fabs(delta_beta) + fabs(delta_gamma) < 3 * ACCURACY 
+      && iteration > 3)
+      break;
+
+    // New values for the next iteration
+    alfa += delta_alfa;
+    alfa += delta_beta;
+    gamma += delta_gamma;
+
+    // Limit the parameters in their allowed range.
+    if (alfa > max_alfa)
+      alfa = max_alfa;
+    else if (alfa < min_alfa)
+      alfa = min_alfa;
+    if (beta > max_beta)
+      beta = max_beta;
+    else if (beta < min_beta)
+      beta = min_beta;
+    if (gamma > max_gamma)
+      gamma = max_gamma;
+    else if (gamma < min_gamma)
+      gamma = min_gamma;
+
+    // Verify repeated running with any parameters at the boundary
+    if (gamma == min_gamma || gamma == max_gamma ||
+      beta == min_beta || beta == max_beta ||
+      alfa == min_alfa || alfa == max_alfa)
+    {
+      if (boundarytested++ > 5) break;
+    }
+  }
+
+  if (period > fcst->getForecastSkip())
+    // Correction on the error: we counted less buckets. We now 
+    // proportionally increase the error to account for this and have a
+    // value that can be compared with the other forecast methods.
+    best_smape *= (count - fcst->getForecastSkip()) / (count - period);
+
+  // Keep the best result
+
+  // Echo the result
+  if (debug)
+    logger << (fcst ? fcst->getName() : "") << ": seasonal : "
+      << "alfa " << best_alfa
+      << ", beta " << best_beta
+      << ", gamma " << best_gamma
+      << ", smape " << best_smape
+      << ", " << iteration << " iterations"
+      << ", period " << period
+      << ", constant " << L_i
+      << ", trend " << T_i
+      << ", forecast " << (L_i + T_i) * S_i[count % period]
+      << endl;
+  return best_smape;
+}
+
+
+void Forecast::Seasonal::applyForecast
+  (Forecast* forecast, const Date buckets[], unsigned int bucketcount, bool debug)
+{
+  // Loop over all buckets and set the forecast to a linearly changing value
+  for (unsigned int i = 1; i < bucketcount; ++i)
+  {    
+    L_i += T_i;
+    T_i *= dampenTrend; // Reduce slope in the future
+    if (L_i * S_i[cycleindex] > 0)
+      forecast->setTotalQuantity(
+        DateRange(buckets[i-1], buckets[i]),
+        L_i * S_i[cycleindex]
+        );    
+    if (++cycleindex >= period) cycleindex = 0;
+  }
+}
 
 }       // end namespace

@@ -126,6 +126,7 @@ extern "C" PyObject* Forecast::timeseries(PyObject *self, PyObject *args)
   return Py_BuildValue("");
 }
 
+
 PyObject* ForecastBucket::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_startdate))

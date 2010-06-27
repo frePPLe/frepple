@@ -279,7 +279,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double smapeWeight[], bool debug);
+          unsigned int count, const double weight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -332,7 +332,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double smapeWeight[], bool debug);
+          unsigned int count, const double weight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -426,7 +426,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double smapeWeight[], bool debug);
+          unsigned int count, const double weight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -495,6 +495,230 @@ class Forecast : public Demand
 
         string getName() {return "double exponential";}
     };
+
+    /** @brief A class to perform seasonal forecasting on a time
+      * series.
+      */
+    class Seasonal : public ForecastMethod
+	  {
+      private:
+        /** Smoothing constant. */
+        double alfa;
+
+        /** Trend smoothing constant. */
+        double beta;
+
+        /** Seasonality smoothing constant. */
+        double gamma;
+
+        /** Default initial alfa value.<br>
+          * The default value is 0.2.
+          */
+        static double initial_alfa;
+
+        /** Lower limit on the alfa parameter.<br>
+          * The default value is 0.
+          **/
+        static double min_alfa;
+
+        /** Upper limit on the alfa parameter.<br>
+          * The default value is 1.
+          **/
+        static double max_alfa;
+
+        /** Default initial beta value.<br>
+          * The default value is 0.05.
+          */
+        static double initial_beta;
+
+        /** Lower limit on the beta parameter.<br>
+          * The default value is 0.05.
+          **/
+        static double min_beta;
+
+        /** Upper limit on the beta parameter.<br>
+          * The default value is 1.
+          **/
+        static double max_beta;
+
+        /** Default initial gamma value.<br>
+          * The default value is 0.05.
+          */
+        static double initial_gamma;
+
+        /** Lower limit on the gamma parameter.<br>
+          * The default value is 0.05.
+          **/
+        static double min_gamma;
+
+        /** Upper limit on the gamma parameter.<br>
+          * The default value is 1.
+          **/
+        static double max_gamma;
+
+        /** Used to dampen a trend in the future. */
+        static double dampenTrend;
+
+        /** Minimum cycle to be check for.<br>
+          * The interval of cycles we try to detect should be broad enough.
+          * If eg we normally expect a yearly cycle use a minimum cycle of 10.
+          */
+        static unsigned int min_period;
+
+        /** Maximum cycle to be check for.<br>
+          * The interval of cycles we try to detect should be broad enough.
+          * If eg we normally expect a yearly cycle use a maximum cycle of 14.
+          */
+        static unsigned int max_period; 
+
+        /** Period of the cycle. */
+        unsigned short period;
+
+        /** Smoothed result - constant component.<br>
+          * Used to carry results between the evaluation and applying of the forecast.
+          */
+        double L_i;
+
+        /** Smoothed result - trend component.<br>
+          * Used to carry results between the evaluation and applying of the forecast.
+          */
+        double T_i;
+
+        /** Smoothed result - seasonal component.<br>
+          * Used to carry results between the evaluation and applying of the forecast.
+          */
+        double* S_i;
+
+        /** Remember where in the cycle we are. */
+        unsigned int cycleindex;
+
+        /** A check for seasonality.<br>
+          * The cycle period is returned if seasonality is detected. Zero is 
+          * returned in case no seasonality is present. 
+          */
+        void detectCycle(const double[], unsigned int);
+
+        /** Compute the determinant of a 3x3 matrix. */
+        inline double determinant(const double a, const double b, const double c, 
+          const double d, const double e, const double f, 
+          const double g, const double h, const double i) 
+        { return a * e * i + b * f * g + c * d * h - a * f * h - b * d * i - c * e * g; }
+
+	    public:
+        /** Constructor. */
+        Seasonal(double a = initial_alfa, double b = initial_beta, double g = initial_gamma)
+          : alfa(a), beta(b), gamma(g), period(0), L_i(0), T_i(0), S_i(NULL) {}
+
+        /** Destructor. */
+        ~Seasonal() {if (period) delete S_i;}
+
+        /** Forecast evaluation. */
+        double generateForecast(Forecast* fcst, const double history[],
+          unsigned int count, const double weight[], bool debug);
+
+        /** Forecast value updating. */
+        void applyForecast(Forecast*, const Date[], unsigned int, bool);
+ 
+        /** Update the minimum period that can be detected. */
+        static void setMinPeriod(int x)
+        {
+          if (x <= 1) throw DataException(
+            "Parameter Seasonal.minPeriod must be greater than 1");
+          min_period = x;
+        }
+ 
+        /** Update the maximum period that can be detected. */
+        static void setMaxPeriod(int x)
+        {
+          if (x <= 1) throw DataException(
+            "Parameter Seasonal.maxPeriod must be greater than 1");
+          max_period = x;
+        }
+
+        /** Update the initial value for the alfa parameter. */
+        static void setInitialAlfa(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Seasonal.initialAlfa must be between 0 and 1");
+          initial_alfa = x;
+        }
+
+        /** Update the minimum value for the alfa parameter. */
+        static void setMinAlfa(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Seasonal.minAlfa must be between 0 and 1");
+          min_alfa = x;
+        }
+
+        /** Update the maximum value for the alfa parameter. */
+        static void setMaxAlfa(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Seasonal.maxAlfa must be between 0 and 1");
+          max_alfa = x;
+        }
+
+        /** Update the initial value for the beta parameter. */
+        static void setInitialBeta(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Seasonal.initialBeta must be between 0 and 1");
+          initial_beta = x;
+        }
+
+        /** Update the minimum value for the beta parameter. */
+        static void setMinBeta(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Seasonal.minBeta must be between 0 and 1");
+          min_beta = x;
+        }
+
+        /** Update the maximum value for the beta parameter. */
+        static void setMaxBeta(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Seasonal.maxBeta must be between 0 and 1");
+          max_beta = x;
+        }
+
+        /** Update the initial value for the alfa parameter.<br>
+          * The default value is 0.05. <br>
+          */
+        static void setInitialGamma(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Seasonal.initialGamma must be between 0 and 1");
+          initial_gamma = x;
+        }
+
+        /** Update the minimum value for the alfa parameter. */
+        static void setMinGamma(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Seasonal.minGamma must be between 0 and 1");
+          min_gamma = x;
+        }
+
+        /** Update the maximum value for the alfa parameter. */
+        static void setMaxGamma(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Seasonal.maxGamma must be between 0 and 1");
+          max_gamma = x;
+        }
+
+        /** Update the dampening factor for the trend. */
+        static void setDampenTrend(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Seasonal.dampenTrend must be between 0 and 1");
+          dampenTrend = x;
+        }
+
+        string getName() {return "seasonal";}
+	  };
 
   public:
     /** Constructor. */

@@ -231,8 +231,8 @@ def exportPegging(cursor):
        buffer,item,quantity_demand,quantity_buffer) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          n, str(j.level),
-         j.consuming and j.consuming.id or 0, str(j.consuming_date),
-         j.producing and j.producing.id or 0, str(j.producing_date),
+         j.consuming and j.consuming.id or '0', str(j.consuming_date),
+         j.producing and j.producing.id or '0', str(j.producing_date),
          j.buffer and j.buffer.name or '',
          (j.buffer and j.buffer.item and j.buffer.item.name) or '',
          round(j.quantity_demand,settings.DECIMAL_PLACES),

@@ -157,7 +157,7 @@ class ReportByDemand(ListReport):
 def GraphData(request, entity):
   basequery = Demand.objects.filter(name__exact=entity).values('name')
   try:
-    current = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
+    current = datetime.strptime(Parameter.objects.using(request.database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
   except:
     current = datetime.now()
   (bucket,start,end,bucketlist) = getBuckets(request)  
@@ -174,7 +174,7 @@ def GraphData(request, entity):
     group by cons_operationplan, prod_operationplan
     ''' % entity
   cursor.execute(query)
-  connections = [ {'to':row[1], 'from':row[0]} for row in cursor.fetchall() ]
+  links = [ {'to':row[1], 'from':row[0]} for row in cursor.fetchall() ]
 
   # Rebuild result list
   for i in result:
@@ -215,7 +215,7 @@ def GraphData(request, entity):
     'reportstart': start,
     'reportend': end,
     'objectlist1': result, 
-    'connections': connections,
+    'links': links,
     'todayline': todayline,
     }
   return HttpResponse(
@@ -235,7 +235,7 @@ class ReportByBuffer(ListReport):
   editable = False
   timebuckets = False
   rows = (
-    ('operationplan', {
+    ('operation', {
       'title': _('operation'),
       }),
     ('date', {
@@ -259,10 +259,10 @@ class ReportByBuffer(ListReport):
     if not basesql: basesql = '1 = 1'
     
     query = '''    
-        select operation, date, demand, quantity                                                        
+        select operation, date, demand, quantity, due                                                        
         from                                                                                            
         (                                                                                               
-        select out_demandpegging.demand, prod_date as date, operation, sum(quantity_buffer) as quantity 
+        select out_demandpegging.demand, prod_date as date, operation, sum(quantity_buffer) as quantity, demand.due as due 
         from out_flowplan                                                                        
         join out_operationplan                                                                          
         on out_operationplan.id = out_flowplan.operationplan                                            
@@ -270,9 +270,11 @@ class ReportByBuffer(ListReport):
           and out_flowplan.quantity > 0                                                               
         join out_demandpegging                                                                                 
         on out_demandpegging.prod_operationplan = out_flowplan.operationplan                            
-        group by demand, prod_date, operation, out_operationplan.id                                     
+        left join demand 
+        on demand.name = out_demandpegging.demand
+        group by demand, prod_date, operation, out_operationplan.id, demand.due                                     
         union                                                                                           
-        select out_demandpegging.demand, cons_date as date, operation, -sum(quantity_buffer) as quantity
+        select out_demandpegging.demand, cons_date as date, operation, -sum(quantity_buffer) as quantity, demand.due as due
         from out_flowplan                                                                               
         join out_operationplan                                                                          
         on out_operationplan.id = out_flowplan.operationplan                                            
@@ -280,7 +282,9 @@ class ReportByBuffer(ListReport):
           and out_flowplan.quantity < 0                                                               
         join out_demandpegging                                                                          
         on out_demandpegging.cons_operationplan = out_flowplan.operationplan                            
-        group by demand, cons_date, operation                                                           
+        left join demand 
+        on demand.name = out_demandpegging.demand
+        group by demand, cons_date, operation, demand.due                                                           
         ) a                                                                                             
         order by demand, date, operation;                                                               
       ''' % (basesql, basesql)
@@ -293,6 +297,7 @@ class ReportByBuffer(ListReport):
           'date': row[1],
           'demand': row[2],
           'quantity': row[3],
+          'forecast': not row[4]
           }
 
 
@@ -308,10 +313,10 @@ class ReportByResource(ListReport):
   editable = False
   timebuckets = False
   rows = (
-    ('operationplan', {
+    ('operation', {
       'title': _('operation'),
       }),
-    ('startdate', {
+    ('date', {
       'title': _('date'),
       }),
     ('demand', {
@@ -332,14 +337,16 @@ class ReportByResource(ListReport):
     if not basesql: basesql = '1 = 1'
     
     query = '''    
-        select operation, out_loadplan.startdate as date, out_demandpegging.demand, sum(quantity_buffer) as quantity
+        select operation, out_loadplan.startdate as date, out_demandpegging.demand, sum(quantity_buffer), demand.due
         from out_loadplan
         join out_operationplan
         on out_operationplan.id = out_loadplan.operationplan
           and %s
         join out_demandpegging
         on out_demandpegging.prod_operationplan = out_loadplan.operationplan
-        group by out_demandpegging.demand, out_loadplan.startdate, operation
+        left join demand 
+        on demand.name = out_demandpegging.demand
+        group by out_demandpegging.demand, out_loadplan.startdate, operation, demand.due
         order by out_demandpegging.demand, out_loadplan.startdate, operation
       ''' % (basesql)
     cursor.execute(query, baseparams)
@@ -351,5 +358,6 @@ class ReportByResource(ListReport):
           'date': row[1],
           'demand': row[2],
           'quantity': row[3],
+          'forecast': not row[4]
           }
 

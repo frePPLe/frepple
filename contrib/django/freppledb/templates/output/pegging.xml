@@ -15,7 +15,7 @@
 {% for i in objectlist1 %}<process Name='{{i.operation}}' id='{{ i.id }}' align='left'/>
 {% endfor %}</processes>
 
-<!--
+{% comment %}
 <dataTable fontColor='333333' headerFontColor='000000' headerFontSize='11' >
 <dataColumn headerbgColor='333333' 
   headerAlign='left' headerfontcolor='99cc00' bgColor='99cc00' 
@@ -23,14 +23,14 @@
 {% for i in objectlist1 %}<text label='{{i.operation}}'/>
 {% endfor %}</dataColumn>
 </dataTable>
--->
+{% endcomment %}
     
 <tasks>
 {% for i in objectlist1 %}<task hoverText='{{i.operation}}, {{i.quantity|floatformat:0}}, {{i.percent_used|floatformat:1 }}%' name='{{i.operation}}' processId='{{ i.id }}' start='{{ i.startdate|date:"Y/m/d" }}' end='{{ i.enddate|date:"Y/m/d" }}' id='{{ i.id }}' color='99cc00' alpha='60'  />
 {% endfor %}</tasks>
         
 <connectors>
-{% for i in connections %}<connector fromTaskId='{{ i.from }}' toTaskId='{{ i.to }}' color='99cc00' thickness='1' fromTaskConnectStart='1' toTaskConnectStart='0' />
+{% for i in links %}<connector fromTaskId='{{ i.from }}' toTaskId='{{ i.to }}' color='99cc00' thickness='1' fromTaskConnectStart='1' toTaskConnectStart='0' />
 {% endfor %}
 </connectors>
 

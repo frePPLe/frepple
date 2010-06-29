@@ -188,10 +188,9 @@ double Forecast::SingleExponential::generateForecast
   for (; iteration <= Forecast::getForecastIterations(); ++iteration)
   {
     // Initialize variables
-    df_dalfa_i = sum_11 = sum_12 = error_smape = 0.0;
+    df_dalfa_i = sum_11 = sum_12 = error_smape = error = 0.0;
 
-    // Initialize the iteration with the average of the first X values.
-    // X is a function of alfa: high alfa -> reactive forecast -> low X
+    // Initialize the iteration with the average of the first 3 values.
     f_i = (history[0] + history[1] + history[2]) / 3; 
 
     // Calculate the forecast and forecast error.

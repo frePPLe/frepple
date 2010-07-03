@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2010 by Johan De Taeye                               *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -43,19 +43,6 @@ void Forecast::generateFutureValues(
   if (bucketcount < 2)
     throw DataException("Need at least 2 forecast dates");
 
-  // Create a list of forecasting methods.
-  // We create the forecasting objects in stack memory for best performance.
-  MovingAverage moving_avg;
-  SingleExponential single_exp;
-  DoubleExponential double_exp;
-  Seasonal seasonal;
-  int numberOfMethods = 4;
-  ForecastMethod* methods[4];
-  methods[0] = &single_exp;
-  methods[1] = &double_exp;
-  methods[2] = &seasonal;
-  methods[3] = &moving_avg;
-
   // Strip zero demand buckets at the start.  
   // Eg when demand only starts in the middle of horizon, we only want to 
   // use the second part of the horizon for forecasting. The zeros before the
@@ -64,6 +51,40 @@ void Forecast::generateFutureValues(
   {
     ++history;
     --historycount;
+  }
+
+  // We create the forecasting objects in stack memory for best performance.
+  MovingAverage moving_avg;
+  Croston croston;
+  SingleExponential single_exp;
+  DoubleExponential double_exp;
+  Seasonal seasonal;
+  int numberOfMethods = 4;
+  ForecastMethod* methods[4];
+
+  // Rules to determine which forecast methods can be applied
+  methods[0] = &moving_avg;
+  if (historycount < getForecastSkip() + 5)
+    // Too little history: only use moving average
+    numberOfMethods = 1;
+  else
+  {
+    unsigned int zero = 0;
+    for (unsigned long i = 0; i < historycount; ++i)
+       if (!history[i]) ++zero;
+    if (zero > Croston::getMinIntermittence() * historycount)
+    {
+      // If there are too many zeros: use croston or moving average.
+      numberOfMethods = 2;
+      methods[1] = &croston;
+    }
+    else
+    {
+      // The most common case: enough values and not intermittent
+      methods[1] = &single_exp;
+      methods[2] = &double_exp;
+      methods[3] = &seasonal;
+    }
   }
 
   // Initialize a vector with the smape weights
@@ -117,12 +138,11 @@ double Forecast::MovingAverage::generateForecast
   (Forecast* fcst, const double history[], unsigned int count, const double weight[], bool debug)
 {
   double error_smape = 0.0;
-  double sum = 0.0;
 
   // Calculate the forecast and forecast error.
   for (unsigned int i = 1; i <= count; ++i)
   {
-    sum = 0.0;
+    double sum = 0.0;
     if (i > buckets)
     {
       for (unsigned int j = 0; j < buckets; ++j)
@@ -136,7 +156,7 @@ double Forecast::MovingAverage::generateForecast
         sum += history[i-j-1];
       avg = sum / i;
     }
-    if (i >= fcst->getForecastSkip() && i < count)
+    if (i >= fcst->getForecastSkip() && i < count && avg + history[i] > ROUNDING_ERROR)
       error_smape += fabs(avg - history[i]) / (avg + history[i]) * weight[i];
   }
 
@@ -205,7 +225,8 @@ double Forecast::SingleExponential::generateForecast
       if (i >= fcst->getForecastSkip())
       {
         error += (f_i - history[i]) * (f_i - history[i]) * weight[i];
-        error_smape += fabs(f_i - history[i]) / (f_i + history[i])* weight[i];
+        if (f_i + history[i] > ROUNDING_ERROR)
+          error_smape += fabs(f_i - history[i]) / (f_i + history[i]) * weight[i];
       }
     }
 
@@ -347,7 +368,8 @@ double Forecast::DoubleExponential::generateForecast
       if (i >= fcst->getForecastSkip()) // Don't measure during the warmup period
       {
         error += (constant_i + trend_i - history[i]) * (constant_i + trend_i - history[i]) * weight[i];
-        error_smape += fabs(constant_i + trend_i - history[i]) / (constant_i + trend_i + history[i]) * weight[i];
+        if (constant_i + trend_i + history[i] > ROUNDING_ERROR)
+          error_smape += fabs(constant_i + trend_i - history[i]) / (constant_i + trend_i + history[i]) * weight[i];
       }
     }
 
@@ -548,7 +570,10 @@ double Forecast::Seasonal::generateForecast
     for (unsigned long i = period; i <= count; ++i)
     {
       L_i_prev = L_i;
-      L_i = alfa * history[i-1] / S_i[cycleindex] + (1 - alfa) * (L_i + T_i);
+      if (S_i[cycleindex] > ROUNDING_ERROR)
+        L_i = alfa * history[i-1] / S_i[cycleindex] + (1 - alfa) * (L_i + T_i);
+      else
+        L_i = (1 - alfa) * (L_i + T_i);
       T_i = beta * (L_i - L_i_prev) + (1 - beta) * T_i;
       S_i[cycleindex] = gamma * history[i-1] / L_i + (1 - gamma) * S_i[cycleindex];  
       if (i == count) break;
@@ -556,7 +581,8 @@ double Forecast::Seasonal::generateForecast
       {
         double fcst = (L_i + T_i) * S_i[cycleindex];
         error += (fcst - history[i]) * (fcst - history[i]) * weight[i];
-        error_smape += fabs(fcst - history[i]) / (fcst + history[i]) * weight[i];
+        if (fcst + history[i] > ROUNDING_ERROR)
+          error_smape += fabs(fcst - history[i]) / (fcst + history[i]) * weight[i];
       }
       if (++cycleindex >= period) cycleindex = 0;
     }
@@ -679,6 +705,138 @@ void Forecast::Seasonal::applyForecast
         );    
     if (++cycleindex >= period) cycleindex = 0;
   }
+}
+
+
+//
+// CROSTON'S FORECAST METHOD
+//
+
+
+double Forecast::Croston::initial_alfa = 0.1;
+double Forecast::Croston::min_alfa = 0.03;
+double Forecast::Croston::max_alfa = 1.0;
+double Forecast::Croston::min_intermittence = 0.33;
+
+
+double Forecast::Croston::generateForecast
+  (Forecast* fcst, const double history[], unsigned int count, const double weight[], bool debug)
+{
+  unsigned int iteration = 1;
+  bool upperboundarytested = false;
+  bool lowerboundarytested = false;
+  double error = 0.0, error_smape = 0.0, best_smape = 0.0, delta;
+  double q_i, p_i, d_p_i, d_q_i, d_f_i, sum1, sum2;
+  double best_error = DBL_MAX, best_alfa = initial_alfa, best_f_i = 0.0;
+  unsigned int between_demands = 1;
+  for (; iteration <= Forecast::getForecastIterations(); ++iteration)
+  {
+    // Initialize variables
+    error_smape = error = d_p_i = d_q_i = d_f_i = sum1 = sum2 = 0.0;
+
+    // Initialize the iteration.
+    q_i = history[0];
+    p_i = 0; 
+    f_i = (1 - alfa / 2) * q_i;
+
+    // Calculate the forecast and forecast error.
+    // We also compute the sums required for the Marquardt optimization.
+    for (unsigned long i = 1; i <= count; ++i)
+    {
+      if (history[i-1])
+      {
+        // Non-zero bucket
+        d_p_i = between_demands - p_i + (1 - alfa) * d_p_i;
+        d_q_i = history[i-1] - q_i + (1 - alfa) * d_q_i;
+        q_i = alfa * history[i-1] + (1 - alfa) * q_i; 
+        p_i = alfa * between_demands + (1 - alfa) * q_i; 
+        /*
+        f_i = (1 - alfa / 2) * q_i / p_i;
+        d_f_i = (- q_i / 2 + (1 - alfa/2) * d_q_i - (1 - alfa/2) * d_p_i * q_i / p_i) / p_i;
+        */
+        f_i = q_i / p_i;
+        d_f_i = (d_q_i - d_p_i * q_i / p_i) / p_i;
+        between_demands = 1;
+      }
+      else
+        ++between_demands;
+      if (i == count) break;
+      sum1 += weight[i] * d_f_i * (history[i] - f_i);
+      sum2 += weight[i] * d_f_i * d_f_i;
+      if (i >= fcst->getForecastSkip() && p_i > 0)
+      {
+        error += (f_i - history[i]) * (f_i - history[i]) * weight[i];
+        if (f_i + history[i] > ROUNDING_ERROR)
+          error_smape += fabs(f_i - history[i]) / (f_i + history[i]) * weight[i];
+      }
+    }
+
+    // Better than earlier iterations?
+    if (error < best_error)
+    {
+      best_error = error;
+      best_smape = error_smape;
+      best_alfa = alfa;
+      best_f_i = f_i;
+    }
+
+    // Add Levenberg - Marquardt damping factor
+    if (fabs(sum2 + error / iteration) > ROUNDING_ERROR)
+      sum2 += error / iteration;
+
+    // Calculate a delta for the alfa parameter
+    if (fabs(sum2) < ROUNDING_ERROR) break;
+    delta = sum1 / sum2;
+
+    logger <<  "  " << alfa << "  " << delta << "  " << error << "  " << f_i << endl;
+
+    // Stop when we are close enough and have tried hard enough
+    if (fabs(delta) < ACCURACY && iteration > 3) break;
+
+    // New alfa
+    alfa += delta;
+
+    // Stop when we repeatedly bounce against the limits.
+    // Testing a limits once is allowed.
+    if (alfa > max_alfa)
+    {
+      alfa = max_alfa;
+      if (upperboundarytested) break;
+      upperboundarytested = true;
+    }
+    else if (alfa < min_alfa)
+    {
+      alfa = min_alfa;
+      if (lowerboundarytested) break;
+      lowerboundarytested = true;
+    }
+  }
+
+  // Keep the best result
+  f_i = best_f_i;
+  alfa = best_alfa;
+
+  // Echo the result
+  if (debug)
+    logger << (fcst ? fcst->getName() : "") << ": croston : "
+      << "alfa " << best_alfa
+      << ", smape " << best_smape
+      << ", " << iteration << " iterations"
+      << ", forecast " << f_i << endl;
+  return best_smape;
+}
+
+
+void Forecast::Croston::applyForecast
+  (Forecast* forecast, const Date buckets[], unsigned int bucketcount, bool debug)
+{
+  // Loop over all buckets and set the forecast to a constant value
+  if (f_i < 0) return;
+  for (unsigned int i = 1; i < bucketcount; ++i)
+    forecast->setTotalQuantity(
+      DateRange(buckets[i-1], buckets[i]),
+      f_i
+      );
 }
 
 }       // end namespace

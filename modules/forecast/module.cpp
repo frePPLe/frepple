@@ -123,6 +123,15 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       Forecast::Seasonal::setMinPeriod(x->second.getInt());
     else if (x->first == "Forecast_Seasonal_maxPeriod")
       Forecast::Seasonal::setMaxPeriod(x->second.getInt());
+    // Croston forecast method
+    else if (x->first == "Forecast_Croston_initialAlfa")
+      Forecast::Croston::setInitialAlfa(x->second.getDouble());
+    else if (x->first == "Forecast_Croston_minAlfa")
+      Forecast::Croston::setMinAlfa(x->second.getDouble());
+    else if (x->first == "Forecast_Croston_maxAlfa")
+      Forecast::Croston::setMaxAlfa(x->second.getDouble());
+    else if (x->first == "Forecast_Croston_minIntermittence")
+      Forecast::Croston::setMinIntermittence(x->second.getDouble());
     // That's bullshit
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;

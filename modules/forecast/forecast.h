@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2010 by Johan De Taeye                               *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -719,6 +719,89 @@ class Forecast : public Demand
 
         string getName() {return "seasonal";}
 	  };
+
+    /** @brief A class to calculate a forecast with Croston's method. */
+    class Croston : public ForecastMethod
+    {
+      private:
+        /** Smoothing constant. */
+        double alfa;
+
+        /** Default initial alfa value.<br>
+          * The default value is 0.2.
+          */
+        static double initial_alfa;
+
+        /** Lower limit on the alfa parameter.<br>
+          * The default value is 0.
+          **/
+        static double min_alfa;
+
+        /** Upper limit on the alfa parameter.<br>
+          * The default value is 1.
+          **/
+        static double max_alfa;
+
+        /** Minimum intermittence before this method is applicable. */
+        static double min_intermittence;
+
+        /** Smoothed forecast.<br>
+          * Used to carry results between the evaluation and applying of the forecast.
+          */
+        double f_i;
+
+      public:
+        /** Constructor. */
+        Croston(double a = initial_alfa) : alfa(a), f_i(0)
+        {
+          if (alfa < min_alfa) alfa = min_alfa;
+          if (alfa > max_alfa) alfa = max_alfa;
+        }
+
+        /** Forecast evaluation. */
+        double generateForecast(Forecast* fcst, const double history[],
+          unsigned int count, const double weight[], bool debug);
+
+        /** Forecast value updating. */
+        void applyForecast(Forecast*, const Date[], unsigned int, bool);
+
+        /** Update the initial value for the alfa parameter. */
+        static void setInitialAlfa(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Croston.initialAlfa must be between 0 and 1");
+         initial_alfa = x;
+        }
+
+        /** Update the minimum value for the alfa parameter. */
+        static void setMinAlfa(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Croston.minAlfa must be between 0 and 1");
+          min_alfa = x;
+        }
+
+        /** Update the maximum value for the alfa parameter. */
+        static void setMaxAlfa(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Croston.maxAlfa must be between 0 and 1");
+          max_alfa = x;
+        }
+
+        /** Update the minimum intermittence before applying this method. */
+        static void setMinIntermittence(double x)
+        {
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter Croston.minIntermittence must be between 0 and 1");
+          min_intermittence = x;
+        }
+
+        /** Return the minimum intermittence before applying this method. */
+        static double getMinIntermittence() { return min_intermittence; }
+
+        string getName() {return "croston";}
+    };
 
   public:
     /** Constructor. */

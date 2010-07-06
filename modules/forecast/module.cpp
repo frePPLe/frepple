@@ -57,8 +57,11 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     x != z.end(); ++x)
   try
   {
+    // Forecast buckets
+    if (x->first == "DueAtEndOfBucket")
+      ForecastBucket::setDueAtEndOfBucket(x->second.getBool());
     // Netting
-    if (x->first == "Net_CustomerThenItemHierarchy")
+    else if (x->first == "Net_CustomerThenItemHierarchy")
       Forecast::setCustomerThenItemHierarchy(x->second.getBool());
     else if (x->first == "Net_MatchUsingDeliveryOperation")
       Forecast::setMatchUsingDeliveryOperation(x->second.getBool());

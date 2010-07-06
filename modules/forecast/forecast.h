@@ -60,12 +60,16 @@
   *  - A forecasting algorithm to <b>extrapolate historical demand data to
   *    the future</b>.<br>
   *    The following classical forecasting methods are implemented:
-  *       - single exponential smoothing, which is applicable for
+  *       - <b>Single exponential smoothing</b>, which is applicable for
   *         constant demands .
-  *       - double exponential smoothing, which is applicable for trended
-  *         demands.
-  *       - moving average, which is applicable when there is little demand
-  *         history to rely on.
+  *       - <b>Double exponential smoothing</b>, which is applicable for 
+  *         trended demands.
+  *       - <b>Holt-Winter's exponential smoothing with mutiplicative 
+  *         seasonality</b>, which is applicable for seasonal demands. 
+  *       - <b>Croston's method</b>, which is applicable for intermittent  
+  *         demand (i.e. demand patterns with a lot of zero demand buckets).
+  *       - <b>Moving average</b>, which is applicable when there is little 
+  *         demand history to rely on.
   *    The forecast method giving the smallest symmetric mean percentage error (aka
   *    "smape"-error) will be automatically picked to produce the forecast.<br>
   *    The algorithm will automatically tune the parameters for the
@@ -130,6 +134,13 @@
   * </PRE>
   *
   * The module support the following configuration parameters:
+  *
+  *   - DueAtEndOfBucket:<br>
+  *     By default forecast demand is due at the start of the forecasting 
+  *     bucket. Since the actual customer demand will come in any time in the
+  *     bucket this is a conservative setting.<br>
+  *     By setting this flag to true, the forecast will be due at the end of 
+  *     the forecast bucket. 
   *
   *   - Net_CustomerThenItemHierarchy:<br>
   *     As part of the forecast netting a demand is assiociated with a certain
@@ -202,6 +213,58 @@
   *     Specifies the initial value and the allowed range of the trend
   *     smoothing parameter in the double exponential forecasting method.<br>
   *     The allowed range is between 0 and 1.
+  *
+  *   - Forecast_DoubleExponential_dampenTrend:<br>
+  *     Specifies how the trend is dampened for future buckets.<br>
+  *     The allowed range is between 0 and 1, and the default value is 0.8. 
+  *
+  *   - Forecast_Seasonal_initialAlfa,<br> 
+  *     Forecast_Seasonal_minAlfa,<br> 
+  *     Forecast_Seasonal_maxAlfa:<br>
+  *     Specifies the initial value and the allowed range of the smoothing 
+  *     parameter in the seasonal forecasting method.<br>
+  *     The allowed range is between 0 and 1. Values lower than about 0.05 are
+  *     not advisible.
+  *
+  *   - Forecast_Seasonal_initialBeta,<br> 
+  *     Forecast_Seasonal_minBeta,<br> 
+  *     Forecast_Seasonal_maxBeta:<br>
+  *     Specifies the initial value and the allowed range of the trend 
+  *     smoothing parameter in the seasonal forecasting method.<br>
+  *     The allowed range is between 0 and 1.
+  *
+  *   - Forecast_Seasonal_initialGamma,<br> 
+  *     Forecast_Seasonal_minGamma,<br> 
+  *     Forecast_Seasonal_maxGamma:<br>
+  *     Specifies the initial value and the allowed range of the seasonal 
+  *     smoothing parameter in the seasonal forecasting method.<br>
+  *     The allowed range is between 0 and 1.
+  *
+  *   - Forecast_Seasonal_minPeriod,<br> 
+  *     Forecast_Seasonal_maxPeriod:<br>
+  *     Specifies the periodicity of the seasonal cycles to check for.<br>
+  *     The interval of cycles we try to detect should be broad enough. For 
+  *     instance, if we expect to find a yearly cycle use a minimum period of 
+  *     10 and maximum period of 14. 
+  *
+  *   - Forecast_Seasonal_dampenTrend<br>
+  *     Specifies how the trend is dampened for future buckets.<br>
+  *     The allowed range is between 0 and 1, and the default value is 0.8. 
+  *
+  *   - Forecast_Croston_initialAlfa,<br> 
+  *     Forecast_Croston_minAlfa,<br> 
+  *     Forecast_Croston_maxAlfa:<br>
+  *     Specifies the initial value and the allowed range of the smoothing 
+  *     parameter in the Croston forecasting method.<br>
+  *     The allowed range is between 0 and 1. Values lower than about 0.05 
+  *     are not advisible. 
+  *
+  *   - Forecast_Croston_minIntermittence:<br>
+  *     Minimum intermittence (defined as the percentage of zero demand 
+  *     buckets) before the Croston method is applied. When the intermittence
+  *     exceeds this value, only Croston and moving average are considered 
+  *     suitable forecast methods.<br>
+  *     The default value is 0.33. 
   */
 
 #ifndef FORECAST_H
@@ -1061,7 +1124,7 @@ class ForecastBucket : public Demand
       setOwner(f);
       setHidden(true);  // Avoid the subdemands show up in the output
       setItem(&*(f->getItem()));
-      setDue(d);
+      setDue(DueAtEndOfBucket ? e : d);
       setPriority(f->getPriority());
       setMaxLateness(f->getMaxLateness());
       setMinShipment(f->getMinShipment());
@@ -1142,6 +1205,12 @@ class ForecastBucket : public Demand
     /** Return a pointer to the previous forecast bucket. */
     ForecastBucket* getPreviousBucket() const {return prev;}
 
+    /** A flag to mark whether forecast is due at the start or at the end of a 
+      * bucket.<br>
+      * The default is false, ie due at the start of the bucket.
+      */
+    static void setDueAtEndOfBucket(bool b) {DueAtEndOfBucket = b;}
+
     virtual PyObject* getattro(const Attribute&);
     virtual int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -1153,6 +1222,10 @@ class ForecastBucket : public Demand
     DateRange timebucket;
     ForecastBucket* prev;
     ForecastBucket* next;
+
+    /** A flag to mark whether forecast is due at the start or at the end of a 
+      * bucket. */
+    static bool DueAtEndOfBucket;
 };
 
 

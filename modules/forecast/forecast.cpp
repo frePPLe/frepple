@@ -35,6 +35,7 @@ const Keyword Forecast::tag_net("net");
 const Keyword Forecast::tag_consumed("consumed");
 const MetaClass *Forecast::metadata;
 const MetaClass *ForecastBucket::metadata;
+bool ForecastBucket::DueAtEndOfBucket = false;
 
 
 int Forecast::initialize()

@@ -16,8 +16,7 @@
       var u = parseFloat(a.innerHTML);
     u /= parseFloat(input.value);
     if (isNaN(u) == true) u = 0.0;
-    else u = u * 100;
-      
+    else u = u * 100;      
     el = el.next('span');
     el.innerHTML = u.round();
     if (u < 95)
@@ -25,11 +24,15 @@
     else
       el.addClassName('highutil');
     // Add the change
+    if (old != 0) 
+      u = parseFloat(input.value) * (1 + unavailable / old);
+    else
+      u = parseFloat(input.value); 
     upload.add({entity: 'resource.maximum',
       name: input.form.name,
       startdate: start,
       enddate: end,
-      value: parseFloat(input.value) *(1 + unavailable / old)});
+      value: u});
     }
 </script>
 {% endblock %}

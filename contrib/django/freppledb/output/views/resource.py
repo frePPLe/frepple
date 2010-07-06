@@ -71,15 +71,27 @@ class OverviewReport(TableReport):
   def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)        
         
+    # Get the time units
+    try:
+      units = Parameter.objects.using(request.database).get(name="loading_time_units")
+      if units.value == 'hours':
+        units = 24.0
+      elif units.value == 'weeks':
+        units = 1.0 / 7.0
+      else:
+        units = 1.0
+    except:
+      units = 1.0
+    
     # Execute the query
     cursor = connections[request.database].cursor()
     query = '''
        select x.name as row1, x.location_id as row2,
              x.bucket as col1, x.startdate as col2, x.enddate as col3,
-             min(x.real_available), 
-             min(x.total_available) - min(x.real_available) as unavailable,
-             coalesce(sum(loaddata.quantity * %s), 0) as loading,
-             0 as setup
+             min(x.real_available) * %f, 
+             (min(x.total_available) - min(x.real_available)) * %f as unavailable,
+             coalesce(sum(loaddata.quantity * %f * %s ), 0) as loading,
+             0 * %f as setup
        from (
          select res.name as name, res.location_id as location_id,
                d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
@@ -133,7 +145,9 @@ class OverviewReport(TableReport):
        -- Grouping and ordering
        group by x.name, x.location_id, x.bucket, x.startdate, x.enddate
        order by %s, x.startdate
-       ''' % ( sql_overlap3('loaddata.start1','loaddata.end1','x.startdate','x.enddate','loaddata.start2','loaddata.end2'),
+       ''' % ( units, units, units, 
+         sql_overlap3('loaddata.start1','loaddata.end1','x.startdate','x.enddate','loaddata.start2','loaddata.end2'),
+         units, 
          sql_overlap3('bucket.startdate','bucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
          sql_overlap3('bucket.startdate','bucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
          basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,

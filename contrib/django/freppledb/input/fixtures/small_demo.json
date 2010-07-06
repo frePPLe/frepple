@@ -1,5 +1,6 @@
 [
 {"pk": "currentdate", "model": "input.parameter", "fields": {"value": "2009-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH-MM-SS"}},
+{"pk": "loading_time_units", "model": "input.parameter", "fields": {"value": "days", "description": "Time units to be used for the resource report: hours, days, weeks"}},
 {"pk": "openerp_user", "model": "input.parameter", "fields": {"value": "admin", "description": "OpenERP connector: user for the connection"}},
 {"pk": "openerp_password", "model": "input.parameter", "fields": {"value": "admin", "description": "OpenERP connector: password for the connection"}},
 {"pk": "openerp_db", "model": "input.parameter", "fields": {"value": "openerp", "description": "OpenERP connector: database to connect to"}},

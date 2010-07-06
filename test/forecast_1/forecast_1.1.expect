@@ -366,10 +366,24 @@
 	<problems>
 		<problem>
 			<name>unplanned</name>
+			<description>Demand &apos;A forecast - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>90</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
 			<description>Demand &apos;A order&apos; is not planned</description>
 			<start>2009-01-02T00:00:00</start>
 			<end>2009-01-02T00:00:00</end>
 			<weight>10</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;B forecast - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>80</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
@@ -387,6 +401,20 @@
 		</problem>
 		<problem>
 			<name>unplanned</name>
+			<description>Demand &apos;C forecast - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>90</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;C forecast not selected - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
 			<description>Demand &apos;C order&apos; is not planned</description>
 			<start>2009-01-02T00:00:00</start>
 			<end>2009-01-02T00:00:00</end>
@@ -394,10 +422,24 @@
 		</problem>
 		<problem>
 			<name>unplanned</name>
+			<description>Demand &apos;D forecast - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>90</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
 			<description>Demand &apos;D order&apos; is not planned</description>
 			<start>2009-01-02T00:00:00</start>
 			<end>2009-01-02T00:00:00</end>
 			<weight>10</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;E forecast - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>90</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>

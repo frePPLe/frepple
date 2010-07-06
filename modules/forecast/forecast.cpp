@@ -67,6 +67,10 @@ int ForecastBucket::initialize()
   x.setDoc("frePPLe forecastbucket");
   x.supportgetattro();
   x.supportsetattro();
+  x.supportstr();
+  x.supportcompare();
+  x.setBase(Demand::metadata->pythonClass);
+  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }

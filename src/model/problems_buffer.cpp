@@ -37,8 +37,8 @@ DECLARE_EXPORT void Buffer::updateProblems()
   // Delete existing problems for this buffer
   Problem::clearProblems(*this);
 
-  // Hidden entities don't have problems
-  if (getHidden()) return;
+  // Problem detection disabled on this buffer
+  if (!getDetectProblems()) return;
 
   // Loop through the flowplans
   Date excessProblemStart;

@@ -34,7 +34,8 @@ namespace frepple
 DECLARE_EXPORT void Operation::updateProblems()
 {
   // Find all operationplans, and delegate the problem detection to them
-  for (OperationPlan *o = first_opplan; o; o = o->next) o->updateProblems();
+  if (getDetectProblems())
+    for (OperationPlan *o = first_opplan; o; o = o->next) o->updateProblems();
 }
 
 

@@ -37,8 +37,8 @@ DECLARE_EXPORT void Resource::updateProblems()
   // Delete existing problems for this resource
   Problem::clearProblems(*this);
 
-  // Hidden entities don't have problems
-  if (getHidden()) return;
+  // Problem detection disabled on this resource
+  if (!getDetectProblems()) return;
 
   // Loop through the loadplans
   Date excessProblemStart;

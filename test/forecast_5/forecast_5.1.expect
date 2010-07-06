@@ -59,23 +59,23 @@
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-02-01T00:00:00">
-					<total>70</total>
-					<quantity>70</quantity>
+					<total>68</total>
+					<quantity>68</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-03-01T00:00:00">
+					<total>74</total>
+					<quantity>74</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2009-04-01T00:00:00">
 					<total>80</total>
 					<quantity>80</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2009-04-01T00:00:00">
-					<total>90</total>
-					<quantity>90</quantity>
-					<consumed>0</consumed>
-				</bucket>
 				<bucket start="2009-05-01T00:00:00">
-					<total>100</total>
-					<quantity>100</quantity>
+					<total>84</total>
+					<quantity>84</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-06-01T00:00:00">
@@ -121,33 +121,69 @@
 				</bucket>
 			</buckets>
 		</demand>
+		<demand name="intermittent" xsi:type="demand_forecast">
+			<item name="item"/>
+			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<buckets>
+				<bucket start="2009-01-01T00:00:00">
+					<total>1</total>
+					<quantity>1</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2009-02-01T00:00:00">
+					<total>1</total>
+					<quantity>1</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2009-03-01T00:00:00">
+					<total>1</total>
+					<quantity>1</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2009-04-01T00:00:00">
+					<total>1</total>
+					<quantity>1</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2009-05-01T00:00:00">
+					<total>1</total>
+					<quantity>1</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2009-06-01T00:00:00">
+					<total>0</total>
+					<quantity>0</quantity>
+					<consumed>0</consumed>
+				</bucket>
+			</buckets>
+		</demand>
 		<demand name="irregular demand" xsi:type="demand_forecast">
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
-					<total>47</total>
-					<quantity>47</quantity>
+					<total>66</total>
+					<quantity>66</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-02-01T00:00:00">
-					<total>47</total>
-					<quantity>47</quantity>
+					<total>70</total>
+					<quantity>70</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-03-01T00:00:00">
-					<total>47</total>
-					<quantity>47</quantity>
+					<total>73</total>
+					<quantity>73</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-04-01T00:00:00">
-					<total>47</total>
-					<quantity>47</quantity>
+					<total>76</total>
+					<quantity>76</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-05-01T00:00:00">
-					<total>47</total>
-					<quantity>47</quantity>
+					<total>78</total>
+					<quantity>78</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-06-01T00:00:00">
@@ -198,28 +234,28 @@
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
-					<total>16</total>
-					<quantity>16</quantity>
+					<total>11</total>
+					<quantity>11</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-02-01T00:00:00">
-					<total>16</total>
-					<quantity>16</quantity>
+					<total>11</total>
+					<quantity>11</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-03-01T00:00:00">
-					<total>16</total>
-					<quantity>16</quantity>
+					<total>17</total>
+					<quantity>17</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-04-01T00:00:00">
-					<total>16</total>
-					<quantity>16</quantity>
+					<total>30</total>
+					<quantity>30</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-05-01T00:00:00">
-					<total>17</total>
-					<quantity>17</quantity>
+					<total>29</total>
+					<quantity>29</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-06-01T00:00:00">
@@ -281,23 +317,23 @@
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-02-01T00:00:00">
-					<total>170</total>
-					<quantity>170</quantity>
+					<total>167</total>
+					<quantity>167</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-03-01T00:00:00">
-					<total>179</total>
-					<quantity>179</quantity>
+					<total>173</total>
+					<quantity>173</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-04-01T00:00:00">
-					<total>189</total>
-					<quantity>189</quantity>
+					<total>178</total>
+					<quantity>178</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-05-01T00:00:00">
-					<total>199</total>
-					<quantity>199</quantity>
+					<total>182</total>
+					<quantity>182</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2009-06-01T00:00:00">
@@ -308,4 +344,286 @@
 			</buckets>
 		</demand>
 	</demands>
+	<problems>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;constant plus trend - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>60</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;constant plus trend - 2009-02-01T00:00:00&apos; is not planned</description>
+			<start>2009-02-01T00:00:00</start>
+			<end>2009-02-01T00:00:00</end>
+			<weight>68</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;constant plus trend - 2009-03-01T00:00:00&apos; is not planned</description>
+			<start>2009-03-01T00:00:00</start>
+			<end>2009-03-01T00:00:00</end>
+			<weight>74</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;constant plus trend - 2009-04-01T00:00:00&apos; is not planned</description>
+			<start>2009-04-01T00:00:00</start>
+			<end>2009-04-01T00:00:00</end>
+			<weight>80</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;constant plus trend - 2009-05-01T00:00:00&apos; is not planned</description>
+			<start>2009-05-01T00:00:00</start>
+			<end>2009-05-01T00:00:00</end>
+			<weight>84</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;flat demand - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;flat demand - 2009-02-01T00:00:00&apos; is not planned</description>
+			<start>2009-02-01T00:00:00</start>
+			<end>2009-02-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;flat demand - 2009-03-01T00:00:00&apos; is not planned</description>
+			<start>2009-03-01T00:00:00</start>
+			<end>2009-03-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;flat demand - 2009-04-01T00:00:00&apos; is not planned</description>
+			<start>2009-04-01T00:00:00</start>
+			<end>2009-04-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;flat demand - 2009-05-01T00:00:00&apos; is not planned</description>
+			<start>2009-05-01T00:00:00</start>
+			<end>2009-05-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;intermittent - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>1</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;intermittent - 2009-02-01T00:00:00&apos; is not planned</description>
+			<start>2009-02-01T00:00:00</start>
+			<end>2009-02-01T00:00:00</end>
+			<weight>1</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;intermittent - 2009-03-01T00:00:00&apos; is not planned</description>
+			<start>2009-03-01T00:00:00</start>
+			<end>2009-03-01T00:00:00</end>
+			<weight>1</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;intermittent - 2009-04-01T00:00:00&apos; is not planned</description>
+			<start>2009-04-01T00:00:00</start>
+			<end>2009-04-01T00:00:00</end>
+			<weight>1</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;intermittent - 2009-05-01T00:00:00&apos; is not planned</description>
+			<start>2009-05-01T00:00:00</start>
+			<end>2009-05-01T00:00:00</end>
+			<weight>1</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;irregular demand - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>66</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;irregular demand - 2009-02-01T00:00:00&apos; is not planned</description>
+			<start>2009-02-01T00:00:00</start>
+			<end>2009-02-01T00:00:00</end>
+			<weight>70</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;irregular demand - 2009-03-01T00:00:00&apos; is not planned</description>
+			<start>2009-03-01T00:00:00</start>
+			<end>2009-03-01T00:00:00</end>
+			<weight>73</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;irregular demand - 2009-04-01T00:00:00&apos; is not planned</description>
+			<start>2009-04-01T00:00:00</start>
+			<end>2009-04-01T00:00:00</end>
+			<weight>76</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;irregular demand - 2009-05-01T00:00:00&apos; is not planned</description>
+			<start>2009-05-01T00:00:00</start>
+			<end>2009-05-01T00:00:00</end>
+			<weight>78</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;little history - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>15</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;little history - 2009-02-01T00:00:00&apos; is not planned</description>
+			<start>2009-02-01T00:00:00</start>
+			<end>2009-02-01T00:00:00</end>
+			<weight>15</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;little history - 2009-03-01T00:00:00&apos; is not planned</description>
+			<start>2009-03-01T00:00:00</start>
+			<end>2009-03-01T00:00:00</end>
+			<weight>15</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;little history - 2009-04-01T00:00:00&apos; is not planned</description>
+			<start>2009-04-01T00:00:00</start>
+			<end>2009-04-01T00:00:00</end>
+			<weight>15</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;little history - 2009-05-01T00:00:00&apos; is not planned</description>
+			<start>2009-05-01T00:00:00</start>
+			<end>2009-05-01T00:00:00</end>
+			<weight>15</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;seasonal demand - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>11</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;seasonal demand - 2009-02-01T00:00:00&apos; is not planned</description>
+			<start>2009-02-01T00:00:00</start>
+			<end>2009-02-01T00:00:00</end>
+			<weight>11</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;seasonal demand - 2009-03-01T00:00:00&apos; is not planned</description>
+			<start>2009-03-01T00:00:00</start>
+			<end>2009-03-01T00:00:00</end>
+			<weight>17</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;seasonal demand - 2009-04-01T00:00:00&apos; is not planned</description>
+			<start>2009-04-01T00:00:00</start>
+			<end>2009-04-01T00:00:00</end>
+			<weight>30</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;seasonal demand - 2009-05-01T00:00:00&apos; is not planned</description>
+			<start>2009-05-01T00:00:00</start>
+			<end>2009-05-01T00:00:00</end>
+			<weight>29</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;trend plus constant - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>70</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;trend plus constant - 2009-02-01T00:00:00&apos; is not planned</description>
+			<start>2009-02-01T00:00:00</start>
+			<end>2009-02-01T00:00:00</end>
+			<weight>70</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;trend plus constant - 2009-03-01T00:00:00&apos; is not planned</description>
+			<start>2009-03-01T00:00:00</start>
+			<end>2009-03-01T00:00:00</end>
+			<weight>70</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;trend plus constant - 2009-04-01T00:00:00&apos; is not planned</description>
+			<start>2009-04-01T00:00:00</start>
+			<end>2009-04-01T00:00:00</end>
+			<weight>70</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;trend plus constant - 2009-05-01T00:00:00&apos; is not planned</description>
+			<start>2009-05-01T00:00:00</start>
+			<end>2009-05-01T00:00:00</end>
+			<weight>70</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;trended demand - 2009-01-01T00:00:00&apos; is not planned</description>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<weight>160</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;trended demand - 2009-02-01T00:00:00&apos; is not planned</description>
+			<start>2009-02-01T00:00:00</start>
+			<end>2009-02-01T00:00:00</end>
+			<weight>167</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;trended demand - 2009-03-01T00:00:00&apos; is not planned</description>
+			<start>2009-03-01T00:00:00</start>
+			<end>2009-03-01T00:00:00</end>
+			<weight>173</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;trended demand - 2009-04-01T00:00:00&apos; is not planned</description>
+			<start>2009-04-01T00:00:00</start>
+			<end>2009-04-01T00:00:00</end>
+			<weight>178</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;trended demand - 2009-05-01T00:00:00&apos; is not planned</description>
+			<start>2009-05-01T00:00:00</start>
+			<end>2009-05-01T00:00:00</end>
+			<weight>182</weight>
+		</problem>
+	</problems>
 </plan>

@@ -68,6 +68,9 @@ testcase("seasonal demand", [10,10,20,30,20,10,10,10,10,20,30,20,10,10,10,10,20,
 print "\nCase 7: Very little history"
 testcase("little history", [10,20])
 
+print "\nCase 8: Intermittent demand"
+testcase("intermittent", [7,0,0,5,0,7,0,0,0,0,0,0,5,0,0,0,0,5,0,0,0])
+
 frepple.saveXMLfile("output.1.xml")
 
 ?>

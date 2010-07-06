@@ -45,33 +45,33 @@ DECLARE_EXPORT void Demand::updateProblems()
   bool needsShort(false);
   bool needsExcess(false);
 
+  // Problem detection disabled on this demand
+  if (!getDetectProblems()) return;
+
   // Check which problems need to be created
-  if (!getHidden())
+  if (deli.empty())
   {
-    if (deli.empty())
+    // Check if a new ProblemDemandNotPlanned needs to be created
+    if (getQuantity()>0.0) needsNotPlanned = true;
+  }
+  else
+  {
+    // Loop through the deliveries
+    for (OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); ++i)
     {
-      // Check if a new ProblemDemandNotPlanned needs to be created
-      if (getQuantity()>0.0) needsNotPlanned = true;
+      // Check for ProblemLate problem
+      long d(getDue() - (*i)->getDates().getEnd());
+      if (d < 0L) needsLate = true;
+      // Check for ProblemEarly problem
+      else if (d > 0L) needsEarly = true;
     }
-    else
-    {
-      // Loop through the deliveries
-      for (OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); ++i)
-      {
-        // Check for ProblemLate problem
-        long d(getDue() - (*i)->getDates().getEnd());
-        if (d < 0L) needsLate = true;
-        // Check for ProblemEarly problem
-        else if (d > 0L) needsEarly = true;
-      }
 
-      // Check for ProblemShort problem
-      double plannedqty = getPlannedQuantity();
-      if (plannedqty + ROUNDING_ERROR < qty) needsShort = true;
+    // Check for ProblemShort problem
+    double plannedqty = getPlannedQuantity();
+    if (plannedqty + ROUNDING_ERROR < qty) needsShort = true;
 
-      // Check for ProblemExcess Problem
-      if (plannedqty - ROUNDING_ERROR > qty) needsExcess = true;
-    }
+    // Check for ProblemExcess Problem
+    if (plannedqty - ROUNDING_ERROR > qty) needsExcess = true;
   }
 
   // Loop through the existing problems

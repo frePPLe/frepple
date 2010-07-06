@@ -735,9 +735,8 @@ double Forecast::Croston::generateForecast
     error_smape = error = d_p_i = d_q_i = d_f_i = sum1 = sum2 = 0.0;
 
     // Initialize the iteration.
-    q_i = history[0];
+    q_i = f_i = history[0];
     p_i = 0; 
-    f_i = (1 - alfa / 2) * q_i;
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
@@ -750,10 +749,6 @@ double Forecast::Croston::generateForecast
         d_q_i = history[i-1] - q_i + (1 - alfa) * d_q_i;
         q_i = alfa * history[i-1] + (1 - alfa) * q_i; 
         p_i = alfa * between_demands + (1 - alfa) * q_i; 
-        /*
-        f_i = (1 - alfa / 2) * q_i / p_i;
-        d_f_i = (- q_i / 2 + (1 - alfa/2) * d_q_i - (1 - alfa/2) * d_p_i * q_i / p_i) / p_i;
-        */
         f_i = q_i / p_i;
         d_f_i = (d_q_i - d_p_i * q_i / p_i) / p_i;
         between_demands = 1;
@@ -787,8 +782,6 @@ double Forecast::Croston::generateForecast
     // Calculate a delta for the alfa parameter
     if (fabs(sum2) < ROUNDING_ERROR) break;
     delta = sum1 / sum2;
-
-    logger <<  "  " << alfa << "  " << delta << "  " << error << "  " << f_i << endl;
 
     // Stop when we are close enough and have tried hard enough
     if (fabs(delta) < ACCURACY && iteration > 3) break;

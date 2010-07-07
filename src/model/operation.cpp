@@ -588,8 +588,10 @@ OperationFixedTime::setOperationPlanParameters
   if (opplan->getLocked())
     return OperationPlanState(opplan);
 
-  // All quantities are valid, as long as they are bigger than the minimum size
+  // All quantities are valid, as long as they are above the minimum size and 
+  // below the maximum size
   if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
+  if (q > getSizeMaximum()) q = getSizeMaximum();
   if (fabs(q - opplan->getQuantity()) > ROUNDING_ERROR)
     q = opplan->setQuantity(q, false, false, execute);
 
@@ -723,8 +725,9 @@ OperationTimePer::setOperationPlanParameters
   if (opplan->getLocked())
     return OperationPlanState(opplan);
 
-  // Respect minimum size
+  // Respect minimum and maximum size
   if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
+  if (q > getSizeMaximum()) q = getSizeMaximum();
 
   // The logic depends on which dates are being passed along
   DateRange x;

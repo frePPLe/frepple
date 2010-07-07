@@ -587,7 +587,7 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
     }
     f = getOperation()->getSizeMinimum();
   }
-  if (f!=0.0 && f > getOperation()->getSizeMaximum())
+  if (f != 0.0 && f >= getOperation()->getSizeMaximum())
   {
     roundDown = true; // force rounddown to stay below the limit
     f = getOperation()->getSizeMaximum();

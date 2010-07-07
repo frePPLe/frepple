@@ -2,13 +2,13 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = frepple.sln README.txt model.vcproj utils.vcproj main.vcproj module_forecast.vcproj solver.vcproj dll.vcproj module_lp_solver.vcproj module_webservice.vcproj
+EXTRA_DIST = frepple.sln README.txt model.vcxproj utils.vcxproj main.vcxproj module_forecast.vcxproj solver.vcxproj dll.vcxproj module_lp_solver.vcxproj module_webservice.vcxproj
 
 clean-local:
-	-rm -rf model utils module_forecast main dll solver module_lp_solver module_webservice *.vcproj.* *.vcxproj* *.opt *.ncb *.suo *.log *.sdf ipch
+	-rm -rf model utils module_forecast main dll solver module_lp_solver module_webservice *.vcxproj* *.opt *.ncb *.suo *.log *.sdf ipch
 
 contrib:
 # Call the microsoft development environment from the command line.
 # You'll need to update the path to your studio installation directory.
 # The INCLUDE and LIB environment variables also need to be set okay.
-	'c:\Program Files\Microsoft Visual Studio 9.0\VC\vcpackages\vcbuild.exe' /rebuild  /useenv /showenv frepple.sln "Release|Win32"
+	'C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe' /target:rebuild  /property:useenv=true /property:Configuration=Release /property:Platform=Win32 frepple.sln 

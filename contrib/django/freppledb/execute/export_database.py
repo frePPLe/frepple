@@ -134,7 +134,7 @@ def exportFlowplans(cursor):
   for i in frepple.buffers():
     cursor.executemany(
       "insert into out_flowplan \
-      (operationplan, thebuffer, quantity, flowdate, onhand) \
+      (operationplan_id, thebuffer, quantity, flowdate, onhand) \
       values (%s,%s,%s,%s,%s)",
       [(
          j.operationplan.id, j.buffer.name, 
@@ -156,7 +156,7 @@ def exportLoadplans(cursor):
   for i in frepple.resources():
     cursor.executemany(
       "insert into out_loadplan \
-      (operationplan, theresource, quantity, startdate, enddate, setup) \
+      (operationplan_id, theresource, quantity, startdate, enddate, setup) \
       values (%s,%s,%s,%s,%s,%s)",
       [(
          j.operationplan.id, j.resource.name,
@@ -347,9 +347,9 @@ def exportfrepple():
     # The groups are running in seperate threads, and all functions in a group
     # are run in sequence.
     tasks = (
-      DatabaseTask(exportProblems, exportConstraints, exportDemand, exportLoadplans),
-      DatabaseTask(exportOperationplans, exportForecast),
-      DatabaseTask(exportFlowplans),
+      DatabaseTask(exportProblems, exportConstraints),
+      DatabaseTask(exportOperationplans, exportFlowplans, exportLoadplans),
+      DatabaseTask(exportForecast, exportDemand),
       DatabaseTask(exportPegging),
       )
     # Start all threads

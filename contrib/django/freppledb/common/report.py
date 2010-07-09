@@ -873,7 +873,7 @@ def _create_filter(req, cls):
       else:
         result2.append(filtertitle)      
       result2.append(u'</span>\n')
-    except Exception, e: 
+    except: 
       filter = None
       filterfield = ''
       result2.append(u'<span>%s</span>\n' % filtertitle)

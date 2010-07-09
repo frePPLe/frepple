@@ -93,7 +93,7 @@ class LoadPlan(models.Model):
   quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
   startdate = models.DateTimeField(_('startdate'), db_index=True)
   enddate = models.DateTimeField(_('enddate'), db_index=True)
-  operationplan = models.IntegerField(_('operationplan'), db_index=True)
+  operationplan = models.ForeignKey(OperationPlan, verbose_name=_('operationplan'), db_index=True, related_name='loadplans')
   setup = models.CharField(_('setup'), max_length=settings.NAMESIZE, null=True)
   
   def __unicode__(self):
@@ -110,7 +110,7 @@ class LoadPlan(models.Model):
 class FlowPlan(models.Model):
   # Database fields
   thebuffer = models.CharField(_('buffer'), max_length=settings.NAMESIZE, db_index=True)
-  operationplan = models.IntegerField(_('operationplan'), db_index=True)
+  operationplan = models.ForeignKey(OperationPlan, verbose_name=_('operationplan'), db_index=True, related_name='flowplans')
   quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
   flowdate = models.DateTimeField(_('date'), db_index=True)
   onhand = models.DecimalField(_('onhand'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)

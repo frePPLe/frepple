@@ -152,22 +152,25 @@ class DetailReport(ListReport):
   template = 'output/flowplan.html'
   title = _("Inventory detail report")
   reset_crumbs = False
-  basequeryset = FlowPlan.objects.extra(
-    select={'operation':'out_operationplan.operation'},
-    where=['out_operationplan.id = out_flowplan.operationplan'],
-    tables=['out_operationplan'])
+  basequeryset = FlowPlan.objects.select_related()
   model = FlowPlan
   frozenColumns = 0
   editable = False
+  
+  @staticmethod
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'thebuffer', 'operationplan__operation', 'quantity', 'flowdate', 'onhand', 'operationplan'
+      )
+  
   rows = (
     ('thebuffer', {
       'filter': FilterText(),
       'title': _('buffer')
       }),
-    # @todo filter on the operation field...
-    # ('operation', {'filter': 'operation__icontains', 'title': _('operation')}),
-    ('operation', {
+    ('operationplan__operation', {
       'title': _('operation'),
+      'filter': FilterText(),
       }),
     ('quantity', {
       'title': _('quantity'),

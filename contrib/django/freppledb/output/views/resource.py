@@ -130,7 +130,7 @@ class OverviewReport(TableReport):
          on out_loadplan.theresource = res2.name
          and out_loadplan.startdate > '%s' and out_loadplan.enddate < '%s'
          -- Unavailable capacity
-         inner join out_operationplan on out_loadplan.operationplan = out_operationplan.id
+         inner join out_operationplan on out_loadplan.operationplan_id = out_operationplan.id
          inner join operation on out_operationplan.operation = operation.name
          left join location on operation.location_id = location.name
          left join calendar on location.available_id = calendar.name

@@ -266,6 +266,19 @@ Index: django/core/management/__init__.py
              except ImportError:
                  pass # No management module - ignore this app
  
+Index: django/db/backends/sqlite3/base.py
+===================================================================
+--- django/db/backends/sqlite3/base.py	(revision 13353)
++++ django/db/backends/sqlite3/base.py	(working copy)
+@@ -186,7 +186,7 @@
+         if self.settings_dict['NAME'] != ":memory:":
+             BaseDatabaseWrapper.close(self)
+ 
+-FORMAT_QMARK_REGEX = re.compile(r'(?![^%])%s')
++FORMAT_QMARK_REGEX = re.compile(r'(?<![%])%s')
+ 
+ class SQLiteCursorWrapper(Database.Cursor):
+     """
 Index: django/db/models/fields/related.py
 ===================================================================
 --- django/db/models/fields/related.py	(revision 13353)

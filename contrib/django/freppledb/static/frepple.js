@@ -426,11 +426,15 @@ var filter = {
     data += '<a href="javascript:filter.add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a>';
     data += '<select onchange="filter.change_field(this);"><option value=""></option>';
     $('fields').select('span').each(function(element) {
-      d = element.innerHTML.indexOf('<');
-      if (d > 0)
-        data += '<option value="' + element.title + '">' + element.innerHTML.substring(0,d) + '</option>';
-      else
-        data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
+      if (element.hasClassName('FilterChoice') || element.hasClassName('FilterText') || 
+          element.hasClassName('FilterNumber') || element.hasClassName('FilterDate'))    
+      {
+        d = element.innerHTML.indexOf('<');
+        if (d > 0)
+          data += '<option value="' + element.title + '">' + element.innerHTML.substring(0,d) + '</option>';
+        else
+          data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
+      }
     })
     data += '</select><br/></span>';
     

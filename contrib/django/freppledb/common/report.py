@@ -453,7 +453,7 @@ def _create_columnheader(req, cls, bucketlist):
   Generate html header row for the columns of a table report.
   '''
   # @todo not very clean and consistent with cross and row
-  return mark_safe(' '.join(['<th>%s</th>' % j['name'] for j in bucketlist]))
+  return mark_safe(' '.join(['<th><a title="%s - %s">%s</a></th>' % (j['start'], j['end'], j['name']) for j in bucketlist]))
 
 
 def _create_crossheader(req, cls):

@@ -51,13 +51,15 @@ else:
 def truncate(cursor):
   print "Emptying database plan tables..."
   starttime = time()
-  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3': 
-    delete = "delete from %s"
-  else:
+  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2': 
+    delete = "truncate table %s cascade"
+  elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.mysql':
     delete = "truncate table %s"
-  for table in ['out_problem', 'out_demandpegging', 'out_flowplan',
-                'out_loadplan', 'out_demand', 'out_forecast',
-                'out_operationplan', 'out_constraint', 
+  else:
+    delete = "delete from %s"
+  for table in ['out_problem', 'out_demandpegging', 'out_operationplan', 
+                'out_flowplan', 'out_loadplan', 'out_demand', 'out_forecast',
+                'out_constraint', 
                ]:
     cursor.execute(delete % table)
     transaction.commit(using=database)

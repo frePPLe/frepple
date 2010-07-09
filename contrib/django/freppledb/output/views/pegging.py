@@ -281,7 +281,7 @@ class ReportByBuffer(ListReport):
           and %s                                                        
           and out_flowplan.quantity < 0                                                               
         join out_demandpegging                                                                          
-        on out_demandpegging.cons_operationplan = out_flowplan.operationplan                            
+        on out_demandpegging.cons_operationplan = out_flowplan.operationplan_id                            
         left join demand 
         on demand.name = out_demandpegging.demand
         group by demand, cons_date, operation, demand.due                                                           
@@ -340,10 +340,10 @@ class ReportByResource(ListReport):
         select operation, out_loadplan.startdate as date, out_demandpegging.demand, sum(quantity_buffer), demand.due
         from out_loadplan
         join out_operationplan
-        on out_operationplan.id = out_loadplan.operationplan
+        on out_operationplan.id = out_loadplan.operationplan_id
           and %s
         join out_demandpegging
-        on out_demandpegging.prod_operationplan = out_loadplan.operationplan
+        on out_demandpegging.prod_operationplan = out_loadplan.operationplan_id
         left join demand 
         on demand.name = out_demandpegging.demand
         group by out_demandpegging.demand, out_loadplan.startdate, operation, demand.due

@@ -75,7 +75,7 @@ class DataLoadTest(TestCase):
 
   def test_input_parameter(self):
     response = self.client.get('/admin/input/parameter/')
-    self.assertContains(response, '1 parameters')
+    self.assertContains(response, '6 parameters')
 
   def test_input_resource(self):
     response = self.client.get('/admin/input/resource/')

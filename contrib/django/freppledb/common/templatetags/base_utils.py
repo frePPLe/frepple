@@ -69,9 +69,10 @@ class ModelsNode(Node):
              if m in self.adminsite._registry and user.has_perm("%s.%s" % (self.appname, m._meta.get_change_permission())):
                  model_list.append({
                    'name': capfirst(m._meta.verbose_name_plural),
+                   'verbose_name': capfirst(m._meta.verbose_name),
                    'admin_url': '/admin/%s/%s/' % (self.appname, m.__name__.lower()),
                    })
-          model_list.sort()
+          model_list.sort(key = lambda m : m['verbose_name'])
         context[self.varname] = model_list
         return ''
 
@@ -406,6 +407,10 @@ register.filter(verbose_name)
 def verbose_name_plural(obj):
 	return obj._meta.verbose_name_plural
 register.filter(verbose_name_plural)
+
+def name(obj):
+	return obj.__name__
+register.filter(name)
 
 def app_label(obj):
 	return obj._meta.app_label

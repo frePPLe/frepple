@@ -244,6 +244,17 @@ def GraphData(request, entity):
       overload.append(x['load'] - x['available'])
     unavailable.append(x['unavailable'])
     setup.append(x['setup'])
+  # Get the time units
+  try:
+    units = Parameter.objects.using(request.database).get(name="loading_time_units")
+    if units.value == 'hours':
+      units = _('hours')
+    elif units.value == 'weeks':
+      units = _('weeks')
+    else:
+      units = _('days')
+  except:
+    units = _('days')
   context = { 
     'buckets': bucketlist, 
     'load': load, 
@@ -252,6 +263,7 @@ def GraphData(request, entity):
     'overload': overload, 
     'unavailable': unavailable, 
     'axis_nth': len(bucketlist) / 20 + 1,
+    'units': units,
     }
   return HttpResponse(
     loader.render_to_string("output/resource.xml", context, context_instance=RequestContext(request)),

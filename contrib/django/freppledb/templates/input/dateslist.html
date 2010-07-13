@@ -3,7 +3,7 @@
 {% block frozendata %}
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{ i.day }}</td>
+<td><a href="{{i.day}}/">{{i.day}}</a></td>
 </tr>{% endfor %}
 {% endblock %}
 

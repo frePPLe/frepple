@@ -200,8 +200,8 @@ class Bucket(AuditModel):
   '''
   # Database fields
   calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), related_name='buckets')
-  startdate = models.DateTimeField('start date', null=True, blank=True)
-  enddate = models.DateTimeField('end date', editable=False, null=True, blank=True, default=datetime(2030,12,31))
+  startdate = models.DateTimeField(_('start date'), null=True, blank=True)
+  enddate = models.DateTimeField(_('end date'), editable=False, null=True, blank=True, default=datetime(2030,12,31))
   value = models.DecimalField(_('value'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00', blank=True)
   priority = models.IntegerField(_('priority'), default=0, blank=True)
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, null=True, blank=True)

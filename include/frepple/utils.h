@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2010 by Johan De Taeye                               *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as Objecthed   *
@@ -3634,6 +3634,12 @@ class Command
     /** A second metadata object for registering XML processing instructions. */
     static DECLARE_EXPORT const MetaCategory* metadataInstruction;
 
+    /** Return a pointer to the next command. */
+    Command* getNext() const {return next;}
+
+    /** Return a pointer to the previous command. */
+    Command* getPrev() const {return prev;}    
+
   private:
     /** Specifies whether the execution of the command should remain silent
       * (which is the default), or whether verbose output on the command
@@ -3742,6 +3748,9 @@ class CommandList : public Command
 
     /** Append an additional command to the end of the list. */
     DECLARE_EXPORT void add(Command* c);
+
+    /** Returns the first command that was added to the list. */
+    Command* getFirstCommand() const {return firstCommand;}
 
     /** Returns the last command that was added to the list. */
     Command* getLastCommand() const {return lastCommand;}

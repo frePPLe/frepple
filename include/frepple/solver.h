@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2010 by Johan De Taeye                               *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -184,7 +184,7 @@ class SolverMRP : public Solver
       * @see solve
       */
     DECLARE_EXPORT void solve(const Demand*, void* = NULL);
-
+   
   public:
     /** This is the main solver method that will appropriately call the other
       * solve methods.<br>
@@ -629,7 +629,7 @@ class SolverMRP : public Solver
         /** Pointer to the solver status one level higher on the stack. */
         State* prevstate;
     };
-
+ 
     /** When autocommit is switched off, this command structure will contain
       * all plan changes.
       */
@@ -652,6 +652,11 @@ class SolverMRP : public Solver
       * feasible date.
       */
     DECLARE_EXPORT void checkOperationCapacity(OperationPlan*, SolverMRPdata&);
+
+    /** Scan the operationplans that are about to be committed to verify that
+      * they are not creating any excess. 
+      */
+    DECLARE_EXPORT void scanExcess(Command*);
 };
 
 

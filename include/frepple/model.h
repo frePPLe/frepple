@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2010 by Johan De Taeye                               *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -2150,6 +2150,14 @@ class OperationPlan
 
     /** Returns the start and end date of this operationplan. */
     const DateRange & getDates() const {return dates;}
+
+    /** Return true if the operationplan is redundant, ie all material
+      * it produces is not used at all.<br>
+      * If the optional argument is false (which is the default value), we 
+      * check with the minimum stock level of the buffers. If the argument
+      * is true, we check with 0.
+      */
+    DECLARE_EXPORT bool isExcess(bool = false) const;
 
     /** Returns a unique identifier of the operationplan.<br>
       * The identifier can be specified in the data input (in which case

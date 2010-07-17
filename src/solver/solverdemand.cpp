@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2010 by Johan De Taeye                               *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -209,7 +209,11 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       // Register the new operationplans. We need to make sure that the
       // correct execute method is called!
       if (data->getSolver()->getAutocommit())
+      {
+        data->getSolver()->scanExcess(data->getFirstCommand());
         data->CommandList::execute();
+      }
+
 
       // Update the quantity to plan in the next loop
       plan_qty -= data->state->a_qty;
@@ -248,7 +252,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
         }
       }
       if (data->getSolver()->getAutocommit())
+      {
+        data->getSolver()->scanExcess(data->getFirstCommand());
         data->CommandList::execute();
+      }
     }
     catch (...)
     {
@@ -256,6 +263,29 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       throw;
     }
     data->getSolver()->setLogLevel(loglevel);
+  }
+}
+
+
+DECLARE_EXPORT void SolverMRP::scanExcess(Command* cmd)
+{
+  // Loop over all newly created operationplans found in the command stack
+  for(; cmd; cmd = cmd->getNext())
+  {
+    CommandCreateOperationPlan* createcmd = dynamic_cast<CommandCreateOperationPlan*>(cmd);
+    if (!createcmd)
+    {           
+      // If the command is a list: recursively call this function
+      if (dynamic_cast<CommandList*>(cmd))
+        scanExcess(dynamic_cast<CommandList*>(cmd)->getFirstCommand());
+      //else: Not a command creating an operationplan: move on
+     }
+    else
+    {
+      // Detect excess operationplans and undo them
+      if (createcmd->getOperationPlan() && createcmd->getOperationPlan()->isExcess())
+        createcmd->undo();
+    }
   }
 }
 

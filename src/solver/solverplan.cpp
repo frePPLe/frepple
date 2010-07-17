@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2010 by Johan De Taeye                               *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -371,7 +371,9 @@ DECLARE_EXPORT PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
-    static_cast<SolverMRP*>(self)->commands.CommandList::execute();
+    SolverMRP * me = static_cast<SolverMRP*>(self);
+    me->scanExcess(me->commands.getFirstCommand());    
+    me->commands.CommandList::execute();
   }
   catch(...)
   {

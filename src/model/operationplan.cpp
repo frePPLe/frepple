@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2010 by Johan De Taeye                               *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -726,6 +726,39 @@ DECLARE_EXPORT double OperationPlan::getPenalty() const
 }
 
 
+DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
+{
+  // Recursive call for suboperationplans
+  for (OperationPlan* subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
+    if (!subopplan->isExcess()) return false;
+  
+  // Loop over all producing flowplans 
+  bool hasProducingFlows = false;
+  for (OperationPlan::FlowPlanIterator i = beginFlowPlans();
+        i != endFlowPlans(); ++i)
+  {
+    // Skip consuming flowplans
+    if (i->getQuantity() <= 0) continue;
+    // Loop over all flowplans in the buffer (starting at the end) and verify
+    // that the onhand is bigger than the flowplan quantity
+    hasProducingFlows = true;
+    double current_minimum(0.0);
+    Buffer::flowplanlist::const_iterator j = i->getBuffer()->getFlowPlans().rbegin();
+    if (!strict && j != i->getBuffer()->getFlowPlans().end())
+      current_minimum = j->getMin();
+     for (; j !=  i->getBuffer()->getFlowPlans().end() && &*j != &*i; --j)
+    {
+      if (j->getType() == 3 && !strict) current_minimum = j->getMin(false);
+      if (j->getOnhand() < i->getQuantity() + current_minimum + ROUNDING_ERROR)
+        return false;
+    }
+  }
+  
+  // If we remove this operationplan the onhand in all buffers remains positive.
+  return hasProducingFlows && !getDemand();
+}
+
+  
 DECLARE_EXPORT TimePeriod OperationPlan::getUnavailable() const
 {
   TimePeriod x;

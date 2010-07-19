@@ -728,12 +728,14 @@ DECLARE_EXPORT double OperationPlan::getPenalty() const
 
 DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
 {
+  // Delivery operationplans aren't excess
+  if (getDemand()) return false;
+
   // Recursive call for suboperationplans
   for (OperationPlan* subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
     if (!subopplan->isExcess()) return false;
   
   // Loop over all producing flowplans 
-  bool hasProducingFlows = false;
   for (OperationPlan::FlowPlanIterator i = beginFlowPlans();
         i != endFlowPlans(); ++i)
   {
@@ -741,7 +743,6 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
     if (i->getQuantity() <= 0) continue;
     // Loop over all flowplans in the buffer (starting at the end) and verify
     // that the onhand is bigger than the flowplan quantity
-    hasProducingFlows = true;
     double current_minimum(0.0);
     Buffer::flowplanlist::const_iterator j = i->getBuffer()->getFlowPlans().rbegin();
     if (!strict && j != i->getBuffer()->getFlowPlans().end())
@@ -755,7 +756,7 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
   }
   
   // If we remove this operationplan the onhand in all buffers remains positive.
-  return hasProducingFlows && !getDemand();
+  return true;
 }
 
   

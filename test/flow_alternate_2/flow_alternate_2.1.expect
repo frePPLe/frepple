@@ -12,12 +12,17 @@ BUFFER	product	2009-01-04T00:00:00	-5	0
 DEMAND	order 1	2009-01-04T00:00:00	5
 OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
 OPERATION	deliver product	2009-01-04T00:00:00	2009-01-04T00:00:00	5
-PROBLEM	material excess	Buffer 'A3' has material excess of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'B3' has material excess of 5	1971-01-01T00:00:00 / 2009-01-03T00:00:00
-PROBLEM	material excess	Buffer 'B4' has material excess of 5	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'C2' has material excess of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'C3' has material excess of 5	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'C4' has material excess of 5	1971-01-01T00:00:00 / 2009-01-03T00:00:00
+PROBLEM	material shortage	Buffer 'A1' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'A2' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'A3' has material shortage of 15	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'B1' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'B2' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'B3' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'B4' has material shortage of 15	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'C1' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'C2' has material shortage of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'C3' has material shortage of 15	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'C4' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	short	Demand 'order 1' planned 5 units short	2009-01-04T00:00:00 / 2009-01-04T00:00:00
 DEMAND CONSTRAINT	order 1	Buffer 'A1' has material shortage of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order 1	Buffer 'B3' has material shortage of 5	2009-01-03T00:00:00 / 2030-12-31T00:00:00	

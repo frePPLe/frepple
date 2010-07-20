@@ -43,6 +43,7 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\dll\Release\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">frepple</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">frepple_debug</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <BuildLog>
@@ -98,7 +99,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>../../bin/frepple_debug.lib</ImportLibrary>
+      <ImportLibrary>..\..\bin\frepple_debug.lib</ImportLibrary>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>
@@ -164,7 +165,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>../../bin/frepple.lib</ImportLibrary>
+      <ImportLibrary>frepple.lib</ImportLibrary>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>

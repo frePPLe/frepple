@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2010 by Johan De Taeye                               *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -94,6 +94,7 @@ template <class type> class TimeLine
           * this event. */
         virtual double getMin(bool inclusive = true) const
         {
+          assert(this->getTimeLine());
           EventMinQuantity *m = this->getTimeLine()->lastMin;
           if (inclusive)
             while(m && getDate() < m->getDate()) m = m->prevMin;
@@ -106,6 +107,7 @@ template <class type> class TimeLine
           * this event. */
         virtual double getMax(bool inclusive = true) const
         {
+          assert(this->getTimeLine());
           EventMaxQuantity *m = this->getTimeLine()->lastMax;
           if (inclusive)
             while(m && getDate() < m->getDate()) m = m->prevMax;
@@ -272,6 +274,74 @@ template <class type> class TimeLine
         << "    " << oo->getCumulativeProduced() <<  &*oo << endl;
     }
 
+    /** This functions returns the mimimum valid at a certain date. */
+    virtual double getMin(Date d, bool inclusive = true) const
+    {
+      EventMinQuantity *m = this->lastMin;
+      if (inclusive)
+        while(m && d < m->getDate()) m = m->prevMin;
+      else
+        while(m && d <= m->getDate()) m = m->prevMin;
+      return m ? m->getMin() : 0.0;
+    }
+
+    /** This functions returns the mimimum valid at a certain event. */
+    virtual double getMin(const Event *e, bool inclusive = true) const
+    {
+      if (!e) return 0.0;
+      EventMinQuantity *m = this->lastMin;
+      if (inclusive)
+        while(m && e->getDate() < m->getDate()) m = m->prevMin;
+      else
+        while(m && e->getDate() <= m->getDate()) m = m->prevMin;
+      return m ? m->getMin() : 0.0;
+    }
+
+    /** This functions returns the maximum valid at a certain date. */
+    virtual double getMax(Date d, bool inclusive = true) const
+    {
+      EventMaxQuantity *m = this->lastMax;
+      if (inclusive)
+        while(m && d < m->getDate()) m = m->prevMax;
+      else
+        while(m && d <= m->getDate()) m = m->prevMax;
+      return m ? m->getMax() : 0.0;
+    }
+
+    /** This functions returns the mimimum valid at a certain eveny. */
+    virtual double getMax(const Event *e, bool inclusive = true) const
+    {
+      if (!e) return 0.0;
+      EventMaxQuantity *m = this->lastMax;
+      if (inclusive)
+        while(m && e->getDate() < m->getDate()) m = m->prevMax;
+      else
+        while(m && e->getDate() <= m->getDate()) m = m->prevMax;
+      return m ? m->getMax() : 0.0;
+    }
+
+    /** This functions returns the mimimum event valid at a certain date. */
+    virtual EventMinQuantity* getMinEvent(Date d, bool inclusive = true) const
+    {
+      EventMinQuantity *m = this->lastMin;
+      if (inclusive)
+        while(m && d < m->getDate()) m = m->prevMin;
+      else
+        while(m && d <= m->getDate()) m = m->prevMin;
+      return m ? m : NULL;
+    }
+
+    /** This functions returns the maximum event valid at a certain date. */
+    virtual EventMaxQuantity* getMaxEvent(Date d, bool inclusive = true) const
+    {
+      EventMaxQuantity *m = this->lastMax;
+      if (inclusive)
+        while(m && d < m->getDate()) m = m->prevMax;
+      else
+        while(m && d <= m->getDate()) m = m->prevMax;
+      return m ? m : NULL;
+    }
+
     /** This function is used to trace the consistency of the data structure. */
     bool check() const;
 
@@ -371,7 +441,7 @@ template <class type> void TimeLine<type>::insert (Event* e)
     else
     {
       EventMaxQuantity *o = lastMax;
-      while (o->prevMax && o->getDate() <= o->prevMax->getDate())
+      while (o->prevMax && m->getDate() >= o->prevMax->getDate())
         o = o->prevMax;
       m->prevMax = o->prevMax;
       o->prevMax = m;

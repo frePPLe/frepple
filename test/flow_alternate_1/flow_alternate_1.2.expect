@@ -30,11 +30,13 @@ OPERATION	assembly	2008-12-25T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2008-12-27T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2008-12-29T00:00:00	2009-01-04T00:00:00	5
 OPERATION	deliver product	2009-01-04T00:00:00	2009-01-04T00:00:00	10
-PROBLEM	material excess	Buffer 'component A' has material excess of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'component B' has material excess of 4	1971-01-01T00:00:00 / 2008-12-25T00:00:00
-PROBLEM	material excess	Buffer 'component C' has material excess of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'component F' has material excess of 5	1971-01-01T00:00:00 / 2008-12-27T00:00:00
-PROBLEM	material excess	Buffer 'component G' has material excess of 5	1971-01-01T00:00:00 / 2008-12-29T00:00:00
+PROBLEM	material shortage	Buffer 'component A' has material shortage of 19	1971-01-01T00:00:00 / 2008-12-24T00:00:00
+PROBLEM	material shortage	Buffer 'component B' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'component C' has material shortage of 15	1971-01-01T00:00:00 / 2008-12-24T00:00:00
+PROBLEM	material shortage	Buffer 'component D' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'component E' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'component F' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'component G' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation 'Procure for buffer 'component A'' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
 PROBLEM	before current	Operation 'Procure for buffer 'component C'' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
 PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-24T00:00:00 / 2009-01-01T00:00:00

@@ -3184,8 +3184,8 @@ class BufferProcure : public Buffer
     static int initialize();
 
     /** Constructor. */
-    explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0),
-      max_inventory(0), size_minimum(0), size_maximum(DBL_MAX), size_multiple(0),
+    explicit BufferProcure(const string& c) : Buffer(c), 
+      size_minimum(0), size_maximum(DBL_MAX), size_multiple(0),
       oper(NULL) {initType(metadata);}
     static DECLARE_EXPORT const MetaClass* metadata;
 
@@ -3209,29 +3209,57 @@ class BufferProcure : public Buffer
     /** Return the inventory level that will trigger creation of a
       * purchasing.
       */
-    double getMinimumInventory() const {return min_inventory;}
+    double getMinimumInventory() const 
+      {return getFlowPlans().getMin(Date::infiniteFuture);}
 
-    /** Update the minimum inventory level to trigger replenishments. */
+    /** Update the inventory level that will trigger the creation of a 
+      * replenishment.<br>
+      * Because of the replenishment leadtime, the actual inventory will drop
+      * below this value. It is up to the user to set an appropriate minimum
+      * value.
+      */
     void setMinimumInventory(double f)
     {
       if (f<0)
         throw DataException("Procurement buffer can't have a negative minimum inventory");
-      min_inventory = f;
-      // minimum is increased over the maximum: auto-increase the maximum
-      if (max_inventory < min_inventory) max_inventory = min_inventory;
+      flowplanlist::EventMinQuantity* min = getFlowPlans().getMinEvent(Date::infiniteFuture);
+      if (min)
+        min->setMin(f);
+      else
+      {
+        // Create and insert a new minimum event
+        min = new flowplanlist::EventMinQuantity(Date::infinitePast, f);
+        getFlowPlans().insert(min);
+      }
+      // The minimum is increased over the maximum: auto-increase the maximum.
+      if (getFlowPlans().getMax(Date::infiniteFuture) < f) 
+        setMaximumInventory(f);
     }
 
     /** Return the maximum inventory level to which we wish to replenish. */
-    double getMaximumInventory() const {return max_inventory;}
+    double getMaximumInventory() const 
+      {return getFlowPlans().getMax(Date::infiniteFuture);}
 
-    /** Update the inventory level to replenish to. */
+    /** Update the maximum inventory level to which we plan to replenish.<br>
+      * This is not a hard limit - other parameters can make that the actual
+      * inventory either never reaches this value or always exceeds it.
+      */    
     void setMaximumInventory(double f)
     {
       if (f<0)
         throw DataException("Procurement buffer can't have a negative maximum inventory");
-      max_inventory = f;
-      // maximum is lowered below the minimum: auto-decrease the minimum
-      if (max_inventory < min_inventory) min_inventory = max_inventory;
+      flowplanlist::EventMaxQuantity* max = getFlowPlans().getMaxEvent(Date::infiniteFuture);
+      if (max)
+        max->setMax(f);
+      else
+      {
+        // Create and insert a new maximum event
+        max = new flowplanlist::EventMaxQuantity(Date::infinitePast, f);
+        getFlowPlans().insert(max);
+      }
+      // The maximum is lowered below the minimum: auto-decrease the minimum
+      if (f < getFlowPlans().getMin(Date::infiniteFuture)) 
+        setMinimumInventory(f);
     }
 
     /** Return the minimum interval between purchasing operations.<br>
@@ -3317,19 +3345,6 @@ class BufferProcure : public Buffer
       * to be released.
       */
     TimePeriod fence;
-
-    /** Inventory level that will trigger the creation of a replenishment.<br>
-      * Because of the replenishment leadtime, the actual inventory will drop
-      * below this value. It is up to the user to set an appropriate minimum
-      * value.
-      */
-    double min_inventory;
-
-    /** The maximum inventory level to which we plan to replenish.<br>
-      * This is not a hard limit - other parameters can make that the actual
-      * inventory either never reaches this value or always exceeds it.
-      */
-    double max_inventory;
 
     /** Minimum time interval between purchasing operations. */
     TimePeriod min_interval;
@@ -4910,7 +4925,7 @@ class ProblemBeforeCurrent : public Problem
     bool isFeasible() const {return false;}
     double getWeight() const
     {return oper ? state.quantity : dynamic_cast<OperationPlan*>(getOwner())->getQuantity();}
-    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : oper(NULL), Problem(o)
+    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : Problem(o), oper(NULL) 
       {if (add) addProblem();}
     explicit ProblemBeforeCurrent(Operation* o, Date st, Date nd, double q) 
       : oper(o), state(st, nd, q) {}
@@ -4963,7 +4978,7 @@ class ProblemBeforeFence : public Problem
     double getWeight() const
     {return oper ? state.quantity : static_cast<OperationPlan*>(getOwner())->getQuantity();}
     explicit ProblemBeforeFence(OperationPlan* o, bool add = true) 
-      : oper(NULL), Problem(o)
+      : Problem(o), oper(NULL)
       {if (add) addProblem();}
     explicit ProblemBeforeFence(Operation* o, Date st, Date nd, double q) 
       : oper(o), state(st, nd, q) {}

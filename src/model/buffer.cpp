@@ -675,8 +675,8 @@ DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const Keyword &tag
   if (size_multiple) o->writeElement(Tags::tag_size_multiple, size_multiple);
   if (min_interval) o->writeElement(Tags::tag_mininterval, min_interval);
   if (max_interval) o->writeElement(Tags::tag_maxinterval, max_interval);
-  if (min_inventory) o->writeElement(Tags::tag_mininventory, min_inventory);
-  if (max_inventory) o->writeElement(Tags::tag_maxinventory, max_inventory);
+  if (getMinimumInventory()) o->writeElement(Tags::tag_mininventory, getMinimumInventory());
+  if (getMaximumInventory()) o->writeElement(Tags::tag_maxinventory, getMaximumInventory());
 
   // Write the fields and an ending tag
   Buffer::writeElement(o, tag, NOHEADER);
@@ -693,11 +693,12 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
       // Create the operation if it didn't exist yet
       o = new OperationFixedTime(PROCURE_OPERATION);
       static_cast<OperationFixedTime*>(o)->setDuration(leadtime);
+      o->setFence(getFence());
       // Ideally we would like to hide the procurement operation itself.
       // But in that case we need a different way to show the procurements
       // to the outside world.
       // o->setHidden(true);
-      Operation::add(o);  // No need to check again for existance
+      Operation::add(o);  // No need to check again for existence
       new FlowEnd(o, const_cast<BufferProcure*>(this), 1);
     }
     const_cast<BufferProcure*>(this)->oper = o;

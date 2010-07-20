@@ -279,7 +279,7 @@ DECLARE_EXPORT void SolverMRP::scanExcess(Command* cmd)
       if (dynamic_cast<CommandList*>(cmd))
         scanExcess(dynamic_cast<CommandList*>(cmd)->getFirstCommand());
       //else: Not a command creating an operationplan: move on
-     }
+    }
     else
     {
       // Detect excess operationplans and undo them

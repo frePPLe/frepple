@@ -741,17 +741,29 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
   {
     // Skip consuming flowplans
     if (i->getQuantity() <= 0) continue;
+
+    // Procurement buffers have their own logic to create operationplans.
+    // That logic can create excess, depending on the parameters.
+    if (i->getBuffer()->getType() == *(BufferProcure::metadata)) return false;
+      
     // Loop over all flowplans in the buffer (starting at the end) and verify
     // that the onhand is bigger than the flowplan quantity
+    double current_maximum(0.0);
     double current_minimum(0.0);
     Buffer::flowplanlist::const_iterator j = i->getBuffer()->getFlowPlans().rbegin();
     if (!strict && j != i->getBuffer()->getFlowPlans().end())
-      current_minimum = j->getMin();
-     for (; j !=  i->getBuffer()->getFlowPlans().end() && &*j != &*i; --j)
     {
-      if (j->getType() == 3 && !strict) current_minimum = j->getMin(false);
-      if (j->getOnhand() < i->getQuantity() + current_minimum + ROUNDING_ERROR)
+      current_maximum = i->getBuffer()->getFlowPlans().getMax(&*j);
+      current_minimum = i->getBuffer()->getFlowPlans().getMin(&*j);
+    }
+    for (; j !=  i->getBuffer()->getFlowPlans().end() && &*j != &*i; --j)
+    {
+      if ( (current_maximum > 0  
+             && j->getOnhand() < i->getQuantity() + current_maximum + ROUNDING_ERROR)
+        || j->getOnhand() < i->getQuantity() + current_minimum + ROUNDING_ERROR )
         return false;
+      if (j->getType() == 4 && !strict) current_maximum = j->getMax(false);
+      if (j->getType() == 3 && !strict) current_minimum = j->getMin(false);
     }
   }
   

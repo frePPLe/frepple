@@ -25,8 +25,9 @@ setup(name = 'freppledb',
       author_email = "info@www.frepple.com",
       url = "http://www.frepple.com",
       packages = [ 
-        'freppledb', 'freppledb.common', 'freppledb.execute', 
-        'freppledb.input', 'freppledb.output'
+        'freppledb', 'freppledb.common', 'freppledb.common.templatetags', 
+        'freppledb.execute', 'freppledb.execute.management', 
+        'freppledb.input', 'freppledb.output', 'freppledb.output.views', 
         ],
       package_dir = {'freppledb': 'freppledb'},
       package_data = {'freppledb': [

@@ -741,10 +741,6 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
   {
     // Skip consuming flowplans
     if (i->getQuantity() <= 0) continue;
-
-    // Procurement buffers have their own logic to create operationplans.
-    // That logic can create excess, depending on the parameters.
-    if (i->getBuffer()->getType() == *(BufferProcure::metadata)) return false;
       
     // Loop over all flowplans in the buffer (starting at the end) and verify
     // that the onhand is bigger than the flowplan quantity

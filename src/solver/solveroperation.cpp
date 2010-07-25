@@ -856,6 +856,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Process the result
       if (search == PRIORITY)
       {
+        // Undo the operationplans of this alternate
+        if (data->state->a_qty < ROUNDING_ERROR) data->undo(topcommand);
+
         // Prepare for the next loop
         a_qty -= data->state->a_qty;
         plannedAlternate = true;

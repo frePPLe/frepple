@@ -99,7 +99,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>..\..\bin\frepple_debug.lib</ImportLibrary>
+      <ImportLibrary>$(TargetDir)frepple_debug.bin</ImportLibrary>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>
@@ -165,7 +165,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>..\..\bin\frepple.lib</ImportLibrary>
+      <ImportLibrary>$(TargetDir)frepple.bin</ImportLibrary>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>

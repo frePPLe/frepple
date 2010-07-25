@@ -86,9 +86,9 @@ class ReportByDemand(ListReport):
     # query 1: pick up all resources loaded 
     resource = {}
     query = '''
-      select operationplan, theresource
+      select operationplan_id, theresource
       from out_loadplan
-      where operationplan in (
+      where operationplan_id in (
         select prod_operationplan as opplan_id
           from out_demandpegging
           where demand in (select dms.name from (%s) dms)
@@ -265,11 +265,11 @@ class ReportByBuffer(ListReport):
         select out_demandpegging.demand, prod_date as date, operation, sum(quantity_buffer) as quantity, demand.due as due 
         from out_flowplan                                                                        
         join out_operationplan                                                                          
-        on out_operationplan.id = out_flowplan.operationplan                                            
+        on out_operationplan.id = out_flowplan.operationplan_id                                            
           and %s                                                        
           and out_flowplan.quantity > 0                                                               
         join out_demandpegging                                                                                 
-        on out_demandpegging.prod_operationplan = out_flowplan.operationplan                            
+        on out_demandpegging.prod_operationplan = out_flowplan.operationplan_id                            
         left join demand 
         on demand.name = out_demandpegging.demand
         group by demand, prod_date, operation, out_operationplan.id, demand.due                                     
@@ -277,7 +277,7 @@ class ReportByBuffer(ListReport):
         select out_demandpegging.demand, cons_date as date, operation, -sum(quantity_buffer) as quantity, demand.due as due
         from out_flowplan                                                                               
         join out_operationplan                                                                          
-        on out_operationplan.id = out_flowplan.operationplan                                            
+        on out_operationplan.id = out_flowplan.operationplan_id                                            
           and %s                                                        
           and out_flowplan.quantity < 0                                                               
         join out_demandpegging                                                                          

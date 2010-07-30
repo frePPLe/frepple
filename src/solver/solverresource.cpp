@@ -289,8 +289,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           // Move the operationplan
           data->state->q_operationplan->setEnd(curdate);
 
-          // Check the leadtime constraints after the move
-          if (data->constrainedPlanning && (isLeadtimeConstrained() || isFenceConstrained()))
+          // Verify the move is successfull
+          // If there isn't availabile time in the location calendar, the move
+          // fail.
+          if (data->state->q_operationplan->getDates().getEnd() >= curdate)
+            data->state->a_qty = 0.0;
+          else if (data->constrainedPlanning && (isLeadtimeConstrained() || isFenceConstrained()))
+            // Check the leadtime constraints after the move
             // Note that the check function can update the answered date
             // and quantity
             checkOperationLeadtime(data->state->q_operationplan,*data,false);

@@ -290,9 +290,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           data->state->q_operationplan->setEnd(curdate);
 
           // Verify the move is successfull
-          // If there isn't availabile time in the location calendar, the move
-          // fail.
-          if (data->state->q_operationplan->getDates().getEnd() >= curdate)
+          if (data->state->q_operationplan->getDates().getEnd() > curdate)
+            // If there isn't available time in the location calendar, the move
+            // can fail.
             data->state->a_qty = 0.0;
           else if (data->constrainedPlanning && (isLeadtimeConstrained() || isFenceConstrained()))
             // Check the leadtime constraints after the move

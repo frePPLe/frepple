@@ -42,7 +42,8 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
       language = request.user.get_profile().language
     if language == 'auto':
       language = translation.get_language_from_request(request)
-    translation.activate(language)
+    if not language.startswith('en'):
+      translation.activate(language)
     request.LANGUAGE_CODE = translation.get_language()
 
 

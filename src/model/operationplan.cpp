@@ -755,8 +755,8 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
     for (; j != i->getBuffer()->getFlowPlans().end(); --j)
     {
       if ( (current_maximum > 0  
-             && j->getOnhand() < i->getQuantity() + current_maximum + ROUNDING_ERROR)
-        || j->getOnhand() < i->getQuantity() + current_minimum + ROUNDING_ERROR )
+             && j->getOnhand() < i->getQuantity() + current_maximum - ROUNDING_ERROR)
+        || j->getOnhand() < i->getQuantity() + current_minimum - ROUNDING_ERROR )
         return false;
       if (j->getType() == 4 && !strict) current_maximum = j->getMax(false);
       if (j->getType() == 3 && !strict) current_minimum = j->getMin(false);

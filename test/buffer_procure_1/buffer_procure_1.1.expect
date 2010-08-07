@@ -360,8 +360,7 @@ BUFFER	buffer 9	2009-03-01T00:00:00	-15	75
 BUFFER	buffer 9	2009-03-01T12:00:00	40	115
 BUFFER	buffer 9	2009-04-01T00:00:00	-15	100
 BUFFER	buffer 9	2009-05-01T00:00:00	-15	85
-BUFFER	buffer 9	2009-05-31T12:00:00	40	125
-BUFFER	buffer 9	2009-06-01T00:00:00	-15	110
+BUFFER	buffer 9	2009-06-01T00:00:00	-15	70
 DEMAND	order 01 for item 1	2009-01-01T00:00:00	10
 DEMAND	order 01 for item 2	2009-01-01T00:00:00	10
 DEMAND	order 01 for item 3	2009-01-01T00:00:00	10
@@ -717,7 +716,6 @@ OPERATION	Procure for buffer 'buffer 9'	2009-02-05T00:00:00	2009-02-08T12:00:00	
 OPERATION	Procure for buffer 'buffer 9'	2009-02-12T00:00:00	2009-02-15T12:00:00	40
 OPERATION	Procure for buffer 'buffer 9'	2009-02-19T00:00:00	2009-02-22T12:00:00	40
 OPERATION	Procure for buffer 'buffer 9'	2009-02-26T00:00:00	2009-03-01T12:00:00	40
-OPERATION	Procure for buffer 'buffer 9'	2009-05-28T00:00:00	2009-05-31T12:00:00	40
 OPERATION	delivery 1	2009-01-01T00:00:00	2009-01-01T00:00:00	10
 OPERATION	delivery 1	2009-01-02T00:00:00	2009-01-02T00:00:00	10
 OPERATION	delivery 1	2009-01-03T00:00:00	2009-01-03T00:00:00	5
@@ -1049,7 +1047,7 @@ PROBLEM	material excess	Buffer 'buffer 8' has material excess of 35	2009-01-10T0
 PROBLEM	material excess	Buffer 'buffer 8' has material excess of 35	2009-01-21T00:00:00 / 2009-01-28T00:00:00
 PROBLEM	material excess	Buffer 'buffer 8' has material excess of 30	2009-04-01T00:00:00 / 2009-06-01T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 8' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-04T12:00:00
-PROBLEM	material excess	Buffer 'buffer 9' has material excess of 55	2009-02-22T12:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'buffer 9' has material excess of 45	2009-02-22T12:00:00 / 2009-06-01T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-04T12:00:00
 PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 20	2009-01-05T00:00:00 / 2009-02-15T12:00:00
 PROBLEM	unplanned	Demand 'order 01 for item 4' is not planned	2009-01-01T00:00:00 / 2009-01-01T00:00:00

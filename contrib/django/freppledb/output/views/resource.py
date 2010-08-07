@@ -170,6 +170,7 @@ class OverviewReport(TableReport):
         'load': row[7],
         'setup': row[8],
         'utilization': util,
+        'units': units,
         }
 
 

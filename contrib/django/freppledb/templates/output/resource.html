@@ -3,7 +3,7 @@
 
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript">
-    function onChange(input, old, start, end)
+    function onChange(input, old, start, end, units)
     {
     // Update the utilization percentage immediately
     var el = $(input).next('span');
@@ -25,9 +25,9 @@
       el.addClassName('highutil');
     // Add the change
     if (old != 0) 
-      u = parseFloat(input.value) * (1 + unavailable / old);
+      u = parseFloat(input.value) * (1 + unavailable / old) / units;
     else
-      u = parseFloat(input.value); 
+      u = parseFloat(input.value) / units; 
     upload.add({entity: 'resource.maximum',
       name: input.form.name,
       startdate: start,
@@ -74,7 +74,7 @@
 {% block data %}
 {% if perms.input.change_resource %}
 {% for j in objectlist2 %}{% ifchanged j.resource %}{% if not forloop.first %}</form></tr>{% endif %}<tr class="{% cycle row1,row2 %}"><form name="{{j.resource|escape}}">{% endifchanged %}
-<td><input type="text" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this, {{j.available}}, '{{j.startdate}}', '{{j.enddate}}')"/><br/>
+<td><input type="text" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this, {{j.available}}, '{{j.startdate}}', '{{j.enddate}}', {{j.units}})"/><br/>
 <span>{{j.unavailable|floatformat:1}}</span><br/>
 {{j.setup|floatformat:1}}<br/>
 <span>{% if j.load %}<a href="?theresource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}" tabindex="-1" class="detail">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}</span><br/>

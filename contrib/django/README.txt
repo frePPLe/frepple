@@ -5,7 +5,7 @@ It is built using the incredible Django web application framework.
 
 The basic steps to set up a development environment:
 
-- Install python 2.4, 2.5 or 2.6 (recommended)
+- Install python 2.4 (deprecated), 2.5 (deprecated) or 2.6 (recommended)
 
 - Install django 1.2.1
   Later versions of django may or may not work with frePPLe...
@@ -64,7 +64,7 @@ For a production environment the following extra steps are required:
   The Django documentation describes different deployment options for the 
   web application:
   See http://docs.djangoproject.com/en/dev/howto/deployment/#howto-deployment-index
-
+  The preferred method is WSGI.
 
 For more detailed information please look at the Django documentation
 on http://www.djangoproject.com

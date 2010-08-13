@@ -254,7 +254,7 @@ class Bucket(AuditModel):
     # If the end date is specified, we take it for granted.
     # Ideally we would check all inserts, but that is very time consuming
     # when creating or restoring big datasets.
-    if instance.enddate == datetime(2030,12,31):
+    if instance.enddate == datetime(2030,12,31) or not kwargs['created']:
       Bucket.updateEndDate(instance)
 
 # This dispatcher function is called after a bucket is saved. There seems no cleaner way to do this, since

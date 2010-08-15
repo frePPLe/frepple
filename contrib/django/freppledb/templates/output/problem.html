@@ -3,6 +3,7 @@
 {% block contextmenus %}
 {% include "buffercontext.html" %}
 {% include "demandcontext.html" %}
+{% include "forecastcontext.html" %}
 {% include "resourcecontext.html" %}
 {% include "operationcontext.html" %}
 {% endblock %}
@@ -14,9 +15,9 @@
 <td>{{i.name}}</td>
 <td>{% ifequal i.entity 'material' %}{% superlink i.owner buffer %}{% else %} 
 {% ifequal i.entity 'capacity' %}{% superlink i.owner resource %}{% else %}
-{% ifequal i.entity 'demand' %}{% superlink i.owner demand %}{% else %}
+{% ifequal i.entity 'demand' %}{% if i.forecast %}{% superlink i.forecast forecast %}{% else %}{% superlink i.owner demand %}{% endif %}{% else %}
 {% superlink i.owner operation %}
-{% endifequal %} {% endifequal %}{% endifequal %}</td>
+{% endifequal %}{% endifequal %}{% endifequal %}</td>
 <td>{{i.description}}</td>
 <td>{{i.startdate}}</td>
 <td>{{i.enddate}}</td>

@@ -923,6 +923,7 @@ class Forecast(AuditModel):
     ordering = ['name']
 
 
+# @todo add logic to allow direct import and edit of the forecast demands. Similar to calendar buckets
 class ForecastDemand(AuditModel):
   # Database fields
   forecast = models.ForeignKey(Forecast, verbose_name=_('forecast'), null=False, db_index=True, related_name='entries')
@@ -937,7 +938,7 @@ class ForecastDemand(AuditModel):
     db_table = 'forecastdemand'
     verbose_name = _('forecast demand')
     verbose_name_plural = _('forecast demands')
-
+  
 
 class Dates(models.Model):
   # Database fields

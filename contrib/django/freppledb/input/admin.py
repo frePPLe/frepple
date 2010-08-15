@@ -60,6 +60,13 @@ class Bucket_inline(MultiDBTabularInline):
   model = Bucket
   extra = 3
 
+  
+class Bucket_admin(MultiDBModelAdmin):
+  model = Bucket
+  save_on_top = True
+  save_as = True
+site.register(Bucket,Bucket_admin)
+
 
 class Calendar_admin(MultiDBModelAdmin):
   model = Calendar

@@ -970,6 +970,51 @@ class CalendarList(ListReport):
     )
 
 
+class BucketList(ListReport):
+  '''
+  A list report to show calendar buckets.
+  '''
+  template = 'input/bucketlist.html'
+  title = _("Bucket List")
+  basequeryset = Bucket.objects.all()
+  model = Bucket
+  frozenColumns = 1
+  rows = (
+    ('id', {
+      'title': _('id'),
+      'filter': FilterNumber(),
+      }),
+    ('calendar', {
+      'title': _('calendar'),
+      'filter': FilterText(field='calendar__name'),
+      }),
+    ('startdate', {
+      'title': _('start date'),
+      'filter': FilterDate(),
+      }),
+    ('enddate', {
+      'title': _('end date'),
+      'filter': FilterDate(),
+      }),
+    ('value', {
+      'title': _('value'),
+      'filter': FilterNumber(),
+      }),
+    ('priority', {
+      'title': _('priority'),
+      'filter': FilterNumber(),
+      }),
+    ('name', {
+      'title': _('name'),
+      'sort': FilterText(),
+      }),
+    ('lastmodified', {
+      'title': _('last modified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
 class OperationList(ListReport):
   '''
   A list report to show operations.

@@ -71,7 +71,7 @@ class Report(ListReport):
   '''
   template = 'output/constraint.html'
   title = _("Constraint Report")
-  basequeryset = Constraint.objects.all()
+  basequeryset = Constraint.objects.extra(select={'forecast': "select name from forecast where out_constraint.demand like forecast.name || ' - %%'",})
   model = Constraint
   frozenColumns = 0
   editable = False

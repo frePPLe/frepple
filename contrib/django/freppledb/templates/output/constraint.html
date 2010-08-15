@@ -3,6 +3,7 @@
 {% block contextmenus %}
 {% include "buffercontext.html" %}
 {% include "demandcontext.html" %}
+{% include "forecastcontext.html" %}
 {% include "resourcecontext.html" %}
 {% include "operationcontext.html" %}
 {% endblock %}
@@ -10,7 +11,7 @@
 {% block data %}
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.demand demand %}</td>
+<td>{% if i.forecast %}{% superlink i.forecast i.demand forecast %}{% else %}{% superlink i.demand demand %}{% endif %}</td>
 <td>{{i.entity}}</td>
 <td>{{i.name}}</td>
 <td>{% ifequal i.entity 'material' %}{% superlink i.owner buffer %}{% else %} 

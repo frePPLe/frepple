@@ -15,7 +15,7 @@
 <td>{{i.name}}</td>
 <td>{% ifequal i.entity 'material' %}{% superlink i.owner buffer %}{% else %} 
 {% ifequal i.entity 'capacity' %}{% superlink i.owner resource %}{% else %}
-{% ifequal i.entity 'demand' %}{% if i.forecast %}{% superlink i.forecast forecast %}{% else %}{% superlink i.owner demand %}{% endif %}{% else %}
+{% ifequal i.entity 'demand' %}{% if i.forecast %}{% superlink i.forecast i.owner forecast %}{% else %}{% superlink i.owner demand %}{% endif %}{% else %}
 {% superlink i.owner operation %}
 {% endifequal %}{% endifequal %}{% endifequal %}</td>
 <td>{{i.description}}</td>

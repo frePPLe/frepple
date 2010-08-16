@@ -2221,7 +2221,7 @@ class OperationPlan
       * If the operationplan is invalid, it will be DELETED and the return value
       * is 'false'.
       */
-    virtual DECLARE_EXPORT bool instantiate();
+    virtual DECLARE_EXPORT bool instantiate(bool useMinCounter = true);
 
     /** This method links the operationplan in the list of all operationplans
       * maintained on the operation.<br>
@@ -2334,10 +2334,21 @@ class OperationPlan
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>
       * The value of the counter is the first available identifier value that
-      * can be used for a new operationplan.
+      * can be used for a new operationplan.<br>
+      * The first value is 1, and each operationplan increases it by 1.
+      * @see counterMax
       * @see getIdentifier()
       */
-    static DECLARE_EXPORT unsigned long counter;
+    static DECLARE_EXPORT unsigned long counterMin;
+    
+    /** Counter of OperationPlans, which is used to automatically assign a
+      * unique identifier for each operationplan.<br>
+      * The first value is a very high number, and each operationplan 
+      * decreases it by 1.
+      * @see counterMin
+      * @see getIdentifier()
+      */
+    static DECLARE_EXPORT unsigned long counterMax;
 
     /** Pointer to the demand.<br>
       * Only delivery operationplans have this field set. The field is NULL 

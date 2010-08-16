@@ -33,7 +33,8 @@ namespace frepple
 
 DECLARE_EXPORT const MetaClass* OperationPlan::metadata;
 DECLARE_EXPORT const MetaCategory* OperationPlan::metacategory;
-DECLARE_EXPORT unsigned long OperationPlan::counter = 1;
+DECLARE_EXPORT unsigned long OperationPlan::counterMin = 1;
+DECLARE_EXPORT unsigned long OperationPlan::counterMax = ULONG_MAX;
 
 
 int OperationPlan::initialize()
@@ -181,7 +182,7 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
   // We are garantueed that there are no operationplans that have an id equal
   // or higher than the current counter. This is garantueed by the
   // instantiate() method.
-  if (l >= counter) return NULL;
+  if (l >= counterMin && l <= counterMax) return NULL;
 
   // Loop through all operationplans.
   for (OperationPlan::iterator i = begin(); i != end(); ++i)
@@ -192,7 +193,7 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 }
 
 
-DECLARE_EXPORT bool OperationPlan::instantiate()
+DECLARE_EXPORT bool OperationPlan::instantiate(bool useMinCounter)
 {
   // At least a valid operation pointer must exist
   if (!oper) throw LogicException("Initializing an invalid operationplan");
@@ -228,7 +229,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
   if (id)
   {
     // An identifier was read in from input
-    if (id < counter)
+    if (id < counterMin || id > counterMax)
     {
       // The assigned id potentially clashes with an existing operationplan.
       // Check whether it clashes with existing operationplans
@@ -243,15 +244,22 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
         throw DataException(ch.str());
       }
     }
-    else
-      // The new operationplan definately doesn't clash with existing id's.
-      // The counter need updating to garantuee that counter is always
-      // a safe starting point for tagging new operationplans.
-      counter = id+1;
+    // The new operationplan definately doesn't clash with existing id's.
+    // The counter need updating to garantuee that counter is always
+    // a safe starting point for tagging new operationplans.
+    else if (useMinCounter)
+      counterMin = id+1;
+    else 
+      counterMax = id-1;
   }
-  else
-    // Fresh operationplan with blank id
-    id = counter++;
+  // Fresh operationplan with blank id
+  else if (useMinCounter)
+    id = counterMin++;
+  else 
+    id = counterMax--;
+  // Check whether the counters are still okay
+  if (counterMin >= counterMax)
+    throw RuntimeException("Exhausted the range of available operationplan identifiers");
   }
 
   // Insert into the doubly linked list of operationplans.

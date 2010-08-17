@@ -110,12 +110,12 @@
 		</flow>
 	</flows>
 	<operationplans>
-		<operationplan id="5" operation="make product in factory 1">
+		<operationplan id="4" operation="make product in factory 1">
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>5</quantity>
 		</operationplan>
-		<operationplan id="9" operation="make product in factory 2">
+		<operationplan id="8" operation="make product in factory 2">
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>10</quantity>

@@ -747,38 +747,25 @@ class Keyword : public NonCopyable
     /** This is the hash function. See the note on the perfectness of
       * this function at the start. This function should be as simple
       * as possible while still garantueeing the perfectness.<br>
-      * Currently we use the hash functions provided by Xerces. We use
-      * 954991 as the hash modulus (954991 being the first prime number lower
-      * than 1000000)
+      * The hash function is based on the Xerces-C implementation,
+      * with the difference that the hash calculated by our function is 
+      * portable between platforms.<br>
+      * The hash modulus is 954991 (which is the biggest prime number 
+      * lower than 1000000).
       */
-    #if !defined(WIN32) || defined(FREPPLE_CORE)
-    static DECLARE_EXPORT hashtype hash(const char* c)
-      {return xercesc::XMLString::hash(c,954991);}
-    #else
-    static DECLARE_EXPORT hashtype hash(const char* c);
-    #endif
+    static DECLARE_EXPORT hashtype hash(const char*);
 
     /** This is the hash function.
       * @see hash(const char*)
       */
-    #if !defined(WIN32) || defined(FREPPLE_CORE)
-    static DECLARE_EXPORT hashtype hash(const string& c)
-      {return xercesc::XMLString::hash(c.c_str(),954991);}
-    #else
-    static DECLARE_EXPORT hashtype hash(const string& c);
-    #endif
+    static hashtype hash(const string& c) {return hash(c.c_str());}
 
     /** This is the hash function taken an XML character string as input.<br>
       * The function is expected to return exactly the same result as when a
       * character pointer is passed as argument.
       * @see hash(const char*)
       */
-    #if !defined(WIN32) || defined(FREPPLE_CORE)
-    static DECLARE_EXPORT hashtype hash(const XMLCh* c)
-      {return xercesc::XMLString::hash(c,954991);}
-    #else
-    static DECLARE_EXPORT hashtype hash(const XMLCh* c);
-    #endif
+    static DECLARE_EXPORT hashtype hash(const XMLCh*);
 
     /** Finds a tag when passed a certain string. If no tag exists yet, it
       * will be created. */
@@ -4573,7 +4560,9 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       {
         // Category metadata passed: we need to look up the type
         const DataElement* type = in.get(Tags::tag_type);
-        j = static_cast<const MetaCategory&>(*cat).findClass(*type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash);
+        j = static_cast<const MetaCategory&>(*cat).findClass(
+          *type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash
+          );
         if (!j)
         {
           string t(*type ? type->getString() : "default");

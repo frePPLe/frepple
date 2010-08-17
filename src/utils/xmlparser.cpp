@@ -767,6 +767,42 @@ DECLARE_EXPORT Keyword::tagtable& Keyword::getTags()
 }
 
 
+DECLARE_EXPORT hashtype Keyword::hash(const char* c)
+{
+  if (c == 0 || *c == 0) return 0;
+
+  // Compute hash
+  const char* curCh = c;
+  hashtype hashVal = *curCh++;
+  while (*curCh)
+    hashVal = (hashVal * 38) + (hashVal >> 24) + *curCh++;
+
+  // Divide by modulus
+  return hashVal % 954991; 
+}
+
+
+DECLARE_EXPORT hashtype Keyword::hash(const XMLCh* t)
+{
+  char* c = xercesc::XMLString::transcode(t);
+  if (c == 0 || *c == 0)
+  {
+    xercesc::XMLString::release(&c);
+    return 0;
+  }
+  
+  // Compute hash
+  const char* curCh = c;
+  hashtype hashVal = *curCh++;
+  while (*curCh)
+    hashVal = (hashVal * 38) + (hashVal >> 24) + *curCh++;
+
+  // Divide by modulus
+  xercesc::XMLString::release(&c);
+  return hashVal % 954991;
+}
+
+
 DECLARE_EXPORT void Keyword::printTags()
 {
   for (tagtable::iterator i = getTags().begin(); i != getTags().end(); ++i)

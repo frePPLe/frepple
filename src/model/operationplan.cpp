@@ -34,7 +34,11 @@ namespace frepple
 DECLARE_EXPORT const MetaClass* OperationPlan::metadata;
 DECLARE_EXPORT const MetaCategory* OperationPlan::metacategory;
 DECLARE_EXPORT unsigned long OperationPlan::counterMin = 1;
-DECLARE_EXPORT unsigned long OperationPlan::counterMax = ULONG_MAX;
+// The value of the max counter is hard-coded. This value is what is guarantueed
+// to be the maximum unsigned long by the C++ standard.
+// An alternative approach is to use the value ULONG_MAX, but this has the 
+// disadvantage of not being portable across platforms and compilers.
+DECLARE_EXPORT unsigned long OperationPlan::counterMax = 4294967295;
 
 
 int OperationPlan::initialize()

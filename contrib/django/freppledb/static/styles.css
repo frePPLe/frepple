@@ -229,8 +229,22 @@ table thead th.sorted {
   background: #c0c0c0;
 }
 
-/* @todo remove this hardcoded width */
+/* Dashboard is a bit too narrow by default. */
 .dashboard #content { width: 600px; }
+
+/* Recent action window is too narrow by default. */
+#content-related {
+  width: 24em;
+  margin-right: -25em;
+}
+
+.colMS {
+  margin-right: 26em !important;
+}
+
+.colSM {
+  margin-left: 26em !important;
+}
 
 tr.level0 {font-weight: bold;}
 td.level0 {padding-left: 0px;}
@@ -246,21 +260,6 @@ td.level9 {padding-left: 90px;}
 td.level10 {padding-left: 100px;}
 td.level11 {padding-left: 110px;}
 td.level12 {padding-left: 120px;}
-
-/* Make sure the operator isn't put in bold, as the header line does. */
-thead th span {
-  font-weight: normal;
-  text-align: center;
-}
-
-/* Make sure the calendar icons for date filtering don't get a
- * sorting arrow, as the header line does. */
-table thead th.ascending span a { background: None; }
-table thead th.descending span a { background: None; }
-
-/* Make the calendar link doesn't behave as a block element, as the
- * row header line does. */
-thead th span a:link, thead th span a:visited { display: inline; }
 
 /* Style for the popup window. */
 div #popup

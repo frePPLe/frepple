@@ -177,9 +177,7 @@ def exportDemand(cursor):
 
   def deliveries(d):
     cumplanned = 0
-    n = d
-    while n.hidden and n.owner: n = n.owner
-    n = n and n.name or 'unspecified'
+    n = d and d.name or 'unspecified'
     # Loop over all delivery operationplans
     for i in d.operationplans:
       cumplanned += i.quantity

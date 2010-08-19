@@ -167,7 +167,7 @@ class DetailReport(ListReport):
   template = 'output/demandplan.html'
   title = _("Demand plan detail")
   reset_crumbs = False
-  basequeryset = Demand.objects.all()
+  basequeryset = Demand.objects.extra(select={'forecast': "select name from forecast where out_demand.demand like forecast.name || ' - %%'",})
   model = Demand
   frozenColumns = 0
   editable = False

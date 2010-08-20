@@ -21,6 +21,7 @@
 # date : $LastChangedDate$
 
 import os, os.path
+from datetime import datetime
 
 from django.conf import settings
 from django.core import management, serializers
@@ -32,9 +33,9 @@ from django.views.decorators.cache import never_cache
 from django.shortcuts import render_to_response, get_object_or_404
 from django.views.generic.simple import direct_to_template
 from django.utils.translation import ugettext_lazy as _
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, transaction
 
-from freppledb.execute.models import log
+from freppledb.execute.models import log, Scenario
 from freppledb.common.report import *
 
 
@@ -47,6 +48,8 @@ def main(request):
   '''
   try: constraint = int(request.session['constraint'])
   except: constraint = 15
+  # Synchronize the scenario table with the settings
+  Scenario.syncWithSettings()
   return direct_to_template(request,  template='execute/execute.html',
         extra_context={
           'title': _('Execute'), 
@@ -55,6 +58,7 @@ def main(request):
           'materialconstrained': constraint & 2, 
           'leadtimeconstrained': constraint & 1, 
           'fenceconstrained': constraint & 8,
+          'scenarios': Scenario.objects.all(),
           } )
 
 
@@ -293,3 +297,73 @@ class LogReport(ListReport):
       'title':_('message'),
       }),
     )
+
+
+@staff_member_required
+@transaction.commit_manually
+@csrf_protect
+def scenarios(request):
+  '''
+  This view implements the scenario management action.
+  '''
+  # Allow only post
+  if request.method != 'POST':
+    messages.add_message(request, messages.ERROR, 
+      force_unicode(_('Only POST method allowed')))
+    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+
+  # Execute the correct action
+  try:    
+    # ACTION 1: Updating the description
+    if 'update' in request.POST:      
+      for sc in Scenario.objects.all():
+        if request.POST.get(sc.name, 'off') == 'on':
+          sc.description = request.POST.get('description',None)
+          sc.save()
+          messages.add_message(request, messages.INFO, 
+            force_unicode(_("Updated scenario '%(scenario)s'") % {'scenario': sc.name}))
+          
+    # ACTION 2: Copying datasets
+    elif 'copy' in request.POST:
+      source = request.POST.get('source', DEFAULT_DB_ALIAS)
+      for sc in Scenario.objects.all():
+        if request.POST.get(sc.name,'off') == 'on' and sc.status == u'Free':
+          try:
+            management.call_command(
+              'frepple_copy',
+              source,
+              sc.name, 
+              user=request.user.username,
+              nonfatal=True,
+              force=True
+              )
+            messages.add_message(request, messages.INFO, 
+              force_unicode(_("Successfully copied scenario '%(source)s' to '%(destination)s'") % {'source': source, 'destination': sc.name}))
+          except Exception, e:
+            messages.add_message(request, messages.ERROR, 
+              force_unicode(_("Failure copying scenario '%(source)s' to '%(destination)s'") % {'source': source, 'destination':sc.name}))
+    
+    # ACTION 3: Release a copy
+    elif 'release' in request.POST:
+      for sc in Scenario.objects.all():
+        if request.POST.get(sc.name,'off') == u'on' and sc.status != u'Free':
+          sc.status = u'Free'
+          sc.lastrefresh = datetime.today()
+          sc.save()
+          messages.add_message(request, messages.INFO, 
+            force_unicode(_("Released scenario '%(scenario)s'") % {'scenario': sc.name}))
+
+    # INVALID ACTION
+    else:
+      messages.add_message(request, messages.ERROR, 
+        force_unicode(_('Invalid action')))
+      return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+      
+  except Exception, x:
+    print x
+    transaction.rollback()
+  finally:
+    transaction.commit()
+
+  # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+  return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)

@@ -22,6 +22,7 @@
 
 import os, shutil
 from optparse import make_option
+from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
@@ -29,7 +30,7 @@ from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from freppledb.execute.models import log
+from freppledb.execute.models import log, Scenario
 
 
 class Command(BaseCommand):
@@ -64,6 +65,10 @@ class Command(BaseCommand):
       help='User running the command'),
     make_option('--nonfatal', action="store_true", dest='nonfatal', 
       default=False, help='Dont abort the execution upon an error'),
+    make_option('--force', action="store_true", dest='force', 
+      default=False, help='Overwrite scenarios already in use'),
+    make_option('--description', dest='description', type='string',
+      help='Description of the destination scenario'),
     )
   args = 'source_database destination_database'
 
@@ -86,26 +91,41 @@ class Command(BaseCommand):
     else: user = ''
     nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
+    force = False
+    if 'force' in options: force = options['force']
+    
+    # Synchronize the scenario table with the settings
+    Scenario.syncWithSettings()
     
     # Validate the arguments
-    if len(args) != 2:
-      raise CommandError("Command takes exactly 2 arguments.")
-    source = args[0]
-    if source not in settings.DATABASES.keys():
-      raise CommandError("No source database defined with name '%s'" % source)
-    destination = args[1]
-    if destination not in settings.DATABASES.keys():
-      raise CommandError("No destination database defined with name '%s'" % destination)
-    if source == destination:
-      raise CommandError("Can't copy a schema on itself")
-    if settings.DATABASES[source]['ENGINE'] != settings.DATABASES[destination]['ENGINE']:
-      raise CommandError("Source and destination databases have a different engine")    
-
     try:
+      if len(args) != 2:
+        raise CommandError("Command takes exactly 2 arguments.")
+      source = args[0]
+      try:
+        sourcescenario = Scenario.objects.get(pk=source)
+      except:
+        raise CommandError("No source database defined with name '%s'" % source)
+      destination = args[1]
+      try:
+        destinationscenario = Scenario.objects.get(pk=destination)
+      except:
+        raise CommandError("No destination database defined with name '%s'" % destination)
+      if source == destination:
+        raise CommandError("Can't copy a schema on itself")
+      if settings.DATABASES[source]['ENGINE'] != settings.DATABASES[destination]['ENGINE']:
+        raise CommandError("Source and destination scenarios have a different engine")    
+      if sourcescenario.status != u'In use':
+        raise CommandError("Source scenario is not in use") 
+      if destinationscenario.status != u'Free' and not force:
+        raise CommandError("Destination scenario is not free") 
+         
       # Logging message (Always logging in the default database)
       log(category='COPY', theuser=user,
         message=_("Start copying database '%(source)s' to '%(destination)s'" % 
           {'source':source, 'destination':destination} )).save()
+      destinationscenario.status = u'Busy'
+      destinationscenario.save()
       transaction.commit()
       
       # Copying the data  
@@ -170,12 +190,25 @@ class Command(BaseCommand):
       # Logging message
       log(category='COPY', theuser=user,
         message=_("Finished copying database '%(source)s' to '%(destination)s'" % 
-          {'source':source, 'destination':destination} )).save()      
-    except Exception, e:
+          {'source':source, 'destination':destination} )).save() 
+          
+      # Update the scenario table
+      destinationscenario.status = 'In use'
+      destinationscenario.lastrefresh = datetime.today()
+      if 'description' in options: 
+        destinationscenario.description = options['description']
+      else:
+        destinationscenario.description = "Copied from scenario '%s'" % source
+      destinationscenario.save()
+          
+    except:
       try: log(category='COPY', theuser=user,
         message=_("Failed copying database '%(source)s' to '%(destination)s'" % 
           {'source':source, 'destination':destination} )).save()
       except: pass
+      if destinationscenario.status == u'Busy':
+        destinationscenario.status = u'Free'
+        destinationscenario.save()
       if nonfatal: raise e
       else: raise CommandError(e)
       

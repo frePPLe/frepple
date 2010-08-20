@@ -32,7 +32,7 @@
 {% if perms.execute.run_frepple %}
 <div class="module">
 <table summary="Extra commands.">
-<caption>frePPLe</caption>
+<caption>{% trans 'Create a plan' %}</caption>
 
 <form method="post" action="{{ request.prefix }}/execute/runfrepple/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Run frePPLe</a></th>
@@ -61,6 +61,42 @@ and export results into the database<br/>
 <td><input id="run" type="submit" value="{% trans "Run" %}" /></td>
 </tr></form>
 
+</table>
+</div>
+{% endif %}
+
+{% if scenarios.count > 1 %}
+<div class="module">
+<table style="width: 100%;" summary="Extra commands.">
+<caption>{% trans "Scenario management" %}</caption>
+<form method="post" action="{{ request.prefix }}/execute/scenarios/">{% csrf_token %}<tr>
+<th>{% trans 'Name' %}</th>
+<th>{% trans 'Status' %}</th>
+<th>{% trans 'Description' %}</th>
+<th>{% trans 'Last refresh' %}</th></tr>
+{% for j in scenarios %}{% ifnotequal j.name 'default' %}
+<tr><td><input type=checkbox name="{{j.name}}">{{j.name}}</input></td>
+<td>{{j.status}}</td>
+<td>{{j.description}}</td>
+<td>{{j.lastrefresh}}</td></tr>
+{% endifnotequal %}{% endfor %}
+</td></tr>
+{% if perms.execute.copy_scenario %}
+<tr><th scope="row" colspan="2">{% trans "Copy" %}</th>
+<td>{% trans "Copy" %} <select name="source">{% for j in scenarios %}{% ifequal j.status 'In use' %}<option value="{{j.name}}">{{j.name}}</option>{% endifequal %}{% endfor %}</select> {% trans "into selected scenarios" %}</td>
+<td><input name="copy" type="submit" value="{% trans "Copy" %}" /></td>
+</tr>{% endif %}
+{% if perms.execute.release_scenario %}
+<tr><th scope="row" colspan="2">{% trans "Release" %}</th>
+<td>{% trans "Release selected scenarios" %}</td>
+<td><input name="release" type="submit" value="{% trans "Release" %}" /></td>
+</tr>
+<tr><th scope="row" colspan="2">{% trans "Update" %}</th>
+<td>{% trans "Update description of selected scenarios" %}<br/>
+<input name="description" type="text" size="40" /></td>
+<td><input name="update" type="submit" value="{% trans "Update" %}"/></td>
+</tr>{% endif %}
+</form>
 </table>
 </div>
 {% endif %}

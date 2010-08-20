@@ -21,8 +21,9 @@
 # date : $LastChangedDate$
 
 
-from django.db import models
+from django.db import models, transaction, DEFAULT_DB_ALIAS
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 
 class log(models.Model):
@@ -42,3 +43,54 @@ class log(models.Model):
          )
       verbose_name_plural = _('log entries')
       verbose_name = _('log entry')
+
+
+scenarioStatus = (
+  ('free',_('Free')),
+  ('in use',_('In use')),
+  ('busy',_('Busy')),
+)
+
+
+class Scenario(models.Model):
+  # Database fields
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
+  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
+  status = models.CharField(_('status'), _('status'), max_length=10, 
+    null=False, blank=False, choices=scenarioStatus
+    )
+  lastrefresh = models.DateTimeField(_('last refreshed'), null=True, editable=False)
+
+  def __unicode__(self):
+    return self.name
+
+  @staticmethod
+  @transaction.commit_manually
+  def syncWithSettings():
+    try:
+      # Bring the scenario table in sync with settings.databases
+      dbs = [ i for i,j in settings.DATABASES.items() if j['NAME'] ]
+      for sc in Scenario.objects.all():
+        if sc.name not in dbs: 
+          sc.delete()
+      scs = [sc.name for sc in Scenario.objects.all()]
+      for db in dbs:
+        if db not in scs:
+          if db == DEFAULT_DB_ALIAS:
+            Scenario(name=db, status=u"In use", description='Production database').save()
+          else:
+            Scenario(name=db, status=u"Free").save()
+    except Exception, e:
+      print "Error synchronizing the scenario table with the settings:", e
+      transaction.rollback()      
+    finally:
+      transaction.commit()
+  
+  class Meta:
+    permissions = (
+        ("copy_scenario", "Can copy a scenario"),
+        ("release_scenario", "Can release a scenario"),
+       )
+    verbose_name_plural = _('scenarios')
+    verbose_name = _('scenario')
+    ordering = ['name']

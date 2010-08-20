@@ -29,6 +29,8 @@ from django.db import DEFAULT_DB_ALIAS
 from django.http import Http404
 from django.conf import settings
 
+from freppledb.execute.models import Scenario
+
 
 class LocaleMiddleware(DjangoLocaleMiddleware):
   """
@@ -36,7 +38,8 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     - Support for a user preference that overrides the browser default.
   """
   def process_request(self, request):
-    if isinstance(request.user,AnonymousUser):
+    if isinstance(request.user, AnonymousUser):
+      # Anonymous users don't have prefences
       language = 'auto'
     else:
       language = request.user.get_profile().language
@@ -59,13 +62,18 @@ class DatabaseSelectionMiddleware(object):
   This prefix is then stripped from the path while processing the view.
   """
   def process_request(self, request):
-    for i in settings.DATABASES:
-      if settings.DATABASES[i]['regexp'].match(request.path) and i != DEFAULT_DB_ALIAS:
-        request.prefix = '/%s' % i
-        request.path_info = request.path_info[len(request.prefix):]
-        request.path = request.path[len(request.prefix):]
-        request.database = i
-        return
+    for i in Scenario.objects.all():
+      try:
+        if settings.DATABASES[i.name]['regexp'].match(request.path) and i.name != DEFAULT_DB_ALIAS:
+          if i.status != u'In use':
+            raise Http404('Scenario not in use')
+          request.prefix = '/%s' % i.name
+          request.path_info = request.path_info[len(request.prefix):]
+          request.path = request.path[len(request.prefix):]
+          request.database = i.name
+          return
+      except:
+        pass
     request.database = DEFAULT_DB_ALIAS
     request.prefix = ''
       

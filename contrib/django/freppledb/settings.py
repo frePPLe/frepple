@@ -67,6 +67,33 @@ DATABASES = {
     'OPTIONS': {},  # Backend specific configuration parameters.
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
     },
+  'scenario1': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': 'scenario1',
+    'USER': '',
+    'PASSWORD': '',
+    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
+    'OPTIONS': {},  # Backend specific configuration parameters.
+    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
+    },
+  'scenario2': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': 'scenario2',
+    'USER': '',
+    'PASSWORD': '',
+    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
+    'OPTIONS': {},  # Backend specific configuration parameters.
+    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
+    },
+  'scenario3': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': 'scenario3',
+    'USER': '',
+    'PASSWORD': '',
+    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
+    'OPTIONS': {},  # Backend specific configuration parameters.
+    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
+    },
   }
 
 # Local time zone for this installation. All choices can be found here:

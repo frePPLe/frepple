@@ -25,6 +25,7 @@ from django.conf.urls.defaults import patterns
 import freppledb.execute.views
 
 urlpatterns = patterns('',
+    (r'^scenarios/$', 'freppledb.execute.views.scenarios'),
     (r'^logfrepple/$', 'freppledb.execute.views.logfile'),
     (r'^log/$', 'freppledb.common.report.view_report', {'report': freppledb.execute.views.LogReport,}),
     (r'^runfrepple/$', 'freppledb.execute.views.runfrepple'),

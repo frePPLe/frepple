@@ -57,9 +57,9 @@ def truncate(cursor):
     delete = "truncate table %s"
   else:
     delete = "delete from %s"
-  for table in ['out_problem', 'out_demandpegging', 'out_operationplan', 
-                'out_flowplan', 'out_loadplan', 'out_demand', 'out_forecast',
-                'out_constraint', 
+  for table in ['out_problem', 'out_demandpegging', 'out_flowplan',
+                'out_loadplan', 'out_operationplan', 'out_demand', 
+                'out_forecast', 'out_constraint', 
                ]:
     cursor.execute(delete % table)
     transaction.commit(using=database)

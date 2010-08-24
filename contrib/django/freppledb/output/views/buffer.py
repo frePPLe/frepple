@@ -199,16 +199,16 @@ def GraphData(request, entity):
   (bucket,start,end,bucketlist) = getBuckets(request)
   consumed = []
   produced = []
-  endoh = []
+  startoh = []
   for x in OverviewReport.resultlist2(request, basequery, bucket, start, end):
     consumed.append(x['consumed'])
     produced.append(x['produced'])
-    endoh.append(x['endoh'])
+    startoh.append(x['startoh'])
   context = { 
     'buckets': bucketlist, 
     'consumed': consumed, 
     'produced': produced, 
-    'endoh': endoh, 
+    'startoh': startoh, 
     'axis_nth': len(bucketlist) / 20 + 1,
     }
   return HttpResponse(

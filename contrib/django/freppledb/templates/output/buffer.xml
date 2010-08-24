@@ -3,7 +3,7 @@
   decimalPrecision='2' limitsDecimalPrecision='0' showShadow='0'
   divLineDecimalPrecision='0' connectNullData='0' numDivLines='4' 
   PYAxisName='{% trans "produced and consumed" %}' 
-  SYAxisName='{% trans "end inventory" %}' 
+  SYAxisName='{% trans "start inventory" %}' 
   formatNumberScale='1' bgcolor='f1f1f1' animation='0' 
   showalternateHGridColor='1' alternateHGridColor='eeeeee'>
 <categories>
@@ -18,9 +18,9 @@
 {% for j in consumed %}<set value='{{j}}' />
 {% endfor %}
 </dataset>
-<dataset seriesName='{% trans "end inventory" %}' color='8BBA00' showValues='0' 
+<dataset seriesName='{% trans "start inventory" %}' color='8BBA00' showValues='0' 
   parentYAxis='S' anchorSides='10' anchorBorderColor='8BBA00'>
-{% for j in endoh %}<set value='{{j}}' />
+{% for j in startoh %}<set value='{{j}}' />
 {% endfor %}
 </dataset>
 </graph>

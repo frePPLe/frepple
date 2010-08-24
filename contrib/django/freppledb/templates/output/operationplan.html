@@ -8,7 +8,7 @@
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{{i.id}}</td>
-<td>{% superlink i.operation operation %}</td>
+<td>{% if i.operation_in %}{% superlink i.operation operation %}{% else %}{{i.operation}}{% endif %}</td>
 <td>{{i.quantity}}</td>
 <td>{{i.startdate}}</td>
 <td>{{i.enddate}}</td>

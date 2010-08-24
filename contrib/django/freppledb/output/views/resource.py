@@ -181,7 +181,8 @@ class DetailReport(ListReport):
   template = 'output/loadplan.html'
   title = _("Resource detail report")
   reset_crumbs = False
-  basequeryset = LoadPlan.objects.select_related()
+  basequeryset = LoadPlan.objects.select_related() \
+    .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
   model = LoadPlan
   frozenColumns = 0
   editable = False
@@ -190,7 +191,7 @@ class DetailReport(ListReport):
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'theresource', 'operationplan__operation', 'quantity', 'startdate', 
-      'enddate', 'setup', 'operationplan'
+      'enddate', 'setup', 'operationplan', 'operation_in'
       )
   
   rows = (

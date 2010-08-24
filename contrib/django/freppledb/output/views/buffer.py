@@ -152,7 +152,8 @@ class DetailReport(ListReport):
   template = 'output/flowplan.html'
   title = _("Inventory detail report")
   reset_crumbs = False
-  basequeryset = FlowPlan.objects.select_related()
+  basequeryset = FlowPlan.objects.select_related() \
+    .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
   model = FlowPlan
   frozenColumns = 0
   editable = False
@@ -160,7 +161,8 @@ class DetailReport(ListReport):
   @staticmethod
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
-      'thebuffer', 'operationplan__operation', 'quantity', 'flowdate', 'onhand', 'operationplan'
+      'thebuffer', 'operationplan__operation', 'quantity', 'flowdate', 
+      'onhand', 'operationplan', 'operation_in'
       )
   
   rows = (

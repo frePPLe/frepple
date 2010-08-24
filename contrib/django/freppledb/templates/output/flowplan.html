@@ -9,7 +9,7 @@
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{% superlink i.thebuffer buffer %}</td>
-<td>{% superlink i.operationplan__operation operation %}</td>
+<td>{% if i.operation_in %}{% superlink i.operationplan__operation operation %}{% else %}{{i.operationplan__operation}}{% endif %}</td>
 <td>{{i.quantity}}</td>
 <td>{{i.flowdate}}</td>
 <td>{{i.onhand}}</td>

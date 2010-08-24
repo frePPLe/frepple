@@ -568,10 +568,9 @@ def loadfrepple():
     # are executed in parallel.
     # The entities are grouped based on their relations.
     #
-    # The parallel loading is currently in a "experimental" state only.
-    # Reason being that so far parallel loading doesn't bring a clear
-    # performance gain.
-    # Unclear what the limiting bottleneck is: python or frepple, definately
+    # The parallel loading is currently not enabled by default, since we
+    # don't see a clear performance gain.
+    # It is unclear what the limiting bottleneck is: python or frepple, definately
     # not the database...
     tasks = (
       DatabaseTask(loadParameter),

@@ -1,6 +1,74 @@
-H1 { text-align: center; }
+#container {
+  height: 100%; 
+}
 
-CAPTION { font-weight: bold }
 
-table { margin-top: 20; margin-bottom: 20; margin-left: 5%; margin-right: 5%; }
-th { background-color: #a5a5ff; font-weight: bold; font-size: larger; }
+#content {
+  margin: 0px 20px 0px 0px;
+  padding: 0px 20px 20px 20px;
+  top: 130px;
+  position: relative;
+}
+
+html { height: 100%; }
+
+#menubar {
+  top: 0px;
+  left: 0px;
+  height: 130px;
+  width: 100%;
+  position: fixed;
+  background-color: #a5a5ff;
+  z-index: 10;
+}
+
+#menubar #menu {
+  top:0px;
+  left: 180px;
+  height: 130px;
+  margin: 0px 20px 0px 20px;
+  position: fixed;
+  vertical-align: middle;   
+  z-index: 10;
+}
+
+#menubar #menu #search {
+  float:right;
+  position: relative;
+  display: inline;
+  margin: 0px 10px 0px 0px;
+  z-index: 10;
+}
+
+#menubar #logo {
+  top:0px;
+  left: 0px;
+  vertical-align: middle;
+  width: 180px;    
+  height: 130px;
+  position: fixed;
+  z-index: 10;
+}
+
+body {
+  margin: 0px 0px 0px 0px;
+  font-family: serif;
+  height: 100%;
+}
+
+#menubar #menu A {
+  font-size: 16px;
+  color: #222222;
+  background-color: #4f639b;
+  padding: 3px;
+}
+
+#menubar A:link {text-decoration: none; color: #222222;}
+#menubar A:visited {text-decoration: none; color: #222222;}
+#menubar #menu A:hover {background-color: #a5a5ff; }
+#menubar #menu H3 {
+  margin: 3px;
+  line-height: 40px;
+  text-decoration: none;
+  display: inline;
+}

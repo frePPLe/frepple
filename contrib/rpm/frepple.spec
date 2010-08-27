@@ -35,7 +35,7 @@ URL: http://www.frepple.com
 Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
 Requires: xerces-c, Django
-BuildRequires: doxygen, python-devel, xerces-c-devel, Django
+BuildRequires: python-devel, xerces-c-devel, Django
 
 %description
 FrePPLe stands for "Free Production Planning Library". It is a toolkit/
@@ -70,7 +70,8 @@ Documentation subpackage for frePPLe - the Free Production Planning Library.
 %configure \
   --disable-static \
   --disable-dependency-tracking \
-  --enable-doc \
+  --disable-webdoc \
+  --disable-apidoc \
   --enable-forecast \
   --disable-lp_solver \
   --disable-webservice 

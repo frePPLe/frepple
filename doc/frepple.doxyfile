@@ -298,7 +298,7 @@ SKIP_FUNCTION_MACROS   = YES
 
 TAGFILES               =
 
-GENERATE_TAGFILE       = frepple.tags
+GENERATE_TAGFILE       = 
 
 ALLEXTERNALS           = NO
 

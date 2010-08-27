@@ -5,7 +5,7 @@ EXTRA_DIST_WEB = Frepple UI Tutorial Main uploads uploads/Frepple uploads/UI upl
 EXTRA_DIST = ${EXTRA_DIST_COMMON} frepple.doxyfile frepple.1
 
 if APIDOC
-EXTRA_DIST += EXTRA_DIST_API
+EXTRA_DIST += ${EXTRA_DIST_API}
 apidoc: frepple.doxyfile
 	-rm -rf reference
 	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile

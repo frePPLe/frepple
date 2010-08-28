@@ -1,8 +1,11 @@
 
-EXTRA_DIST_COMMON = favicon.ico *.html *.css *.pdf *.gif *.bmp 
+EXTRA_DIST_COMMON = favicon.ico styles.css *.pdf *.gif *.bmp 
 EXTRA_DIST_API = reference
-EXTRA_DIST_WEB = Frepple UI Tutorial Main uploads uploads/Frepple uploads/UI uploads/Tutorial pmwiki.css
+EXTRA_DIST_WEB = Frepple UI Tutorial Main uploads uploads/Frepple uploads/UI uploads/Tutorial pmwiki.css index.html 
 EXTRA_DIST = ${EXTRA_DIST_COMMON} frepple.doxyfile frepple.1
+
+reference: apidoc
+Frepple: webdoc
 
 if APIDOC
 EXTRA_DIST += ${EXTRA_DIST_API}
@@ -39,7 +42,7 @@ webdoc:
 endif
 
 clean-local:
-	-rm -rf pmwiki.css index.html styles.css ${EXTRA_DIST_API} ${EXTRA_DIST_WEB}
+	-rm -rf pmwiki.css index.html ${EXTRA_DIST_API} ${EXTRA_DIST_WEB}
 
 all-local: apidoc webdoc
 

@@ -18,7 +18,7 @@ if WEBDOC
 EXTRA_DIST += ${EXTRA_DIST_WEB}
 webdoc:
 	-rm -rf www.frepple.com ${EXTRA_DIST_WEB}
-	-@WGET@ -r -k -p -l 0 --html-extension http://www.frepple.com/pmwiki/pmwiki.php/Main/HomePage?setskin=doc 
+	-@WGET@ -r -k -p -nv -l 0 --html-extension http://www.frepple.com/pmwiki/pmwiki.php/Main/HomePage?setskin=doc 
 	mv www.frepple.com/pmwiki/pmwiki.php/* .
 	mv www.frepple.com/pmwiki/uploads uploads
 	mv www.frepple.com/pmwiki/pub/skins/doc/pmwiki.css .
@@ -30,7 +30,8 @@ webdoc:
 	find . -regex '[^reference/].*\.html' -exec sed -i "s|href='\(\.\./\)*pub/skins/doc/pmwiki.css'|href='\1pmwiki.css'|" {} \; 
 	find . -regex '[^reference/].*\.html' -exec sed -i "s|src='\(\.\./\)*../uploads/|src='\1uploads/|g" {} \; 
 	find . -regex '[^reference/].*\.html' -exec sed -i "s|src='\(\.\./\)*../../images/frepple.bmp'|src='\1frepple.bmp'|" {} \; 
-	find . -regex '[^reference/].*\.html' -exec sed -i "s|src='\(\.\./\)*../../styles.css'|src='\1styles.css'|" {} \; 
+	find . -regex '[^reference/].*\.html' -exec sed -i "s|href='\(\.\./\)*../../styles.css'|href='\1styles.css'|" {} \; 
+	sed -i "s|src='../images/frepple.bmp'|src='frepple.bmp'|" index.html 
 	sed -i "s|href='../styles.css'|href='styles.css'|" index.html 
 else
 webdoc:

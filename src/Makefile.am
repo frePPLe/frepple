@@ -9,12 +9,12 @@ bin_PROGRAMS = frepple
 all-local: frepple$(EXEEXT)
 	if test -f .libs/frepple$(EXEEXT); then cp .libs/frepple$(EXEEXT) ../bin; fi
 	if test -f .libs/cygfrepple*.dll; then cp .libs/cygfrepple*.dll ../bin; fi
-	if test -f .libs/libfrepple*.so; then cp .libs/libfrepple*.so* ../bin; fi
+	if test -f .libs/libfrepple.so; then cp .libs/libfrepple*.so* ../bin; fi
 
 # Shared library
 lib_LTLIBRARIES = libfrepple.la
 libfrepple_la_SOURCES = dllmain.cpp tags.cpp
-libfrepple_la_LDFLAGS = -release $(PACKAGE_VERSION) -version-info @LIBRARY_VERSION@ -no-undefined
+libfrepple_la_LDFLAGS = -version-info @LIBRARY_VERSION@ -no-undefined
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
 libfrepple_la_LDFLAGS += -Wl,--export-all-symbols

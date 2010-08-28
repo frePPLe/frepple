@@ -23,10 +23,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-17 00:32+0200\n"
+"POT-Creation-Date: 2010-08-28 11:28+0200\n"
 "PO-Revision-Date: 2010-05-19 15:29+0100\n"
 "Last-Translator: Antonio Mascolo <tonio@purpless.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -75,8 +76,7 @@ msgstr "Filtro dati"
 msgid "Filter"
 msgstr "Filtro"
 
-#: static/frepple.js:392 static/frepple.js.py:576 static/frepple.js.py:602
-#: static/frepple.js:652
+#: static/frepple.js:392 static/frepple.js.py:576
 msgid "Cancel"
 msgstr "Cancella"
 
@@ -120,57 +120,44 @@ msgstr "CSV stile"
 msgid "Table"
 msgstr "Tabella"
 
-#: static/frepple.js:600
-msgid "List"
-msgstr "Lista"
+#~ msgid "List"
+#~ msgstr "Lista"
 
-#: static/frepple.js:601
-msgid "Export"
-msgstr "Esporta"
+#~ msgid "Export"
+#~ msgstr "Esporta"
 
-#: static/frepple.js:639
-msgid "Time buckets"
-msgstr "Intervalli di tempo"
+#~ msgid "Time buckets"
+#~ msgstr "Intervalli di tempo"
 
-#: static/frepple.js:641
-msgid "Buckets"
-msgstr "Intervalli"
+#~ msgid "Buckets"
+#~ msgstr "Intervalli"
 
-#: static/frepple.js:642
-msgid "Standard"
-msgstr "Standard"
+#~ msgid "Standard"
+#~ msgstr "Standard"
 
-#: static/frepple.js:643
-msgid "Day"
-msgstr "Giorno"
+#~ msgid "Day"
+#~ msgstr "Giorno"
 
-#: static/frepple.js:644
-msgid "Week"
-msgstr "Settimana"
+#~ msgid "Week"
+#~ msgstr "Settimana"
 
-#: static/frepple.js:645
-msgid "Month"
-msgstr "Mese"
+#~ msgid "Month"
+#~ msgstr "Mese"
 
-#: static/frepple.js:646
-msgid "Quarter"
-msgstr "Trimestre"
+#~ msgid "Quarter"
+#~ msgstr "Trimestre"
 
-#: static/frepple.js:647
-msgid "Year"
-msgstr "Anno"
+#~ msgid "Year"
+#~ msgstr "Anno"
 
-#: static/frepple.js:649
-msgid "Start&nbsp;date"
-msgstr "Inizio&nbsp;data"
+#~ msgid "Start&nbsp;date"
+#~ msgstr "Inizio&nbsp;data"
 
-#: static/frepple.js:650
-msgid "End&nbsp;date"
-msgstr "Fine&nbsp;data"
+#~ msgid "End&nbsp;date"
+#~ msgstr "Fine&nbsp;data"
 
-#: static/frepple.js:651
-msgid "OK"
-msgstr "OK"
+#~ msgid "OK"
+#~ msgstr "OK"
 
 #~ msgid "Close"
 #~ msgstr "Sluit"

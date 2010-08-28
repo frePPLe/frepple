@@ -70,10 +70,10 @@ and export results into the database<br/>
 <table style="width: 100%;" summary="Extra commands.">
 <caption>{% trans "Scenario management" %}</caption>
 <form method="post" action="{{ request.prefix }}/execute/scenarios/">{% csrf_token %}<tr>
-<th>{% trans 'Name' %}</th>
-<th>{% trans 'Status' %}</th>
-<th>{% trans 'Description' %}</th>
-<th>{% trans 'Last refresh' %}</th></tr>
+<th>{% trans 'name' %}</th>
+<th>{% trans 'status' %}</th>
+<th>{% trans 'description' %}</th>
+<th>{% trans 'last refresh' %}</th></tr>
 {% for j in scenarios %}{% ifnotequal j.name 'default' %}
 <tr><td><input type=checkbox name="{{j.name}}">{{j.name}}</input></td>
 <td>{{j.status}}</td>

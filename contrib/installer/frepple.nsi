@@ -254,6 +254,7 @@ Section "Application" SecAppl
     FileWrite $9 "    },$\r$\n"
   NoScenarios:
   FileWrite $9 "  }$\r$\n$\r$\n"
+  FileWrite $9 "DEBUG = False # Show verbose description of errors$\r$\n"
   FileWrite $9 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
   FileClose $9
 SectionEnd

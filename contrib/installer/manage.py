@@ -44,8 +44,7 @@ from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
 # Override the debugging settings
-settings.DEBUG = False
-settings.TEMPLATE_DEBUG = False
+settings.TEMPLATE_DEBUG = settings.DEBUG
 
 # Update the directories where fixtures are searched
 settings.FIXTURE_DIRS = (

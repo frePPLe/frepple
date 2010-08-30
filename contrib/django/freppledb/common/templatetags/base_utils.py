@@ -205,7 +205,7 @@ class SuperLink(Node):
       if self.key:
         # Key field in a popup window: the link won't display a context menu.
         # It will close the popup window instead.
-        return mark_safe('<a href="" onclick="opener.dismissRelatedLookupPopup(window, %s); return false;">%s</a>' % (repr(force_unicode(value))[1:], escape(value), escape(text)))
+        return mark_safe('<a href="" onclick="opener.dismissRelatedLookupPopup(window, %s); return false;">%s</a>' % (repr(force_unicode(value))[1:], escape(text or value)))
       else:
         # Non-key field in a popup window
         return mark_safe(escape(text or value))

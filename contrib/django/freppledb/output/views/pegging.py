@@ -234,6 +234,7 @@ class ReportByBuffer(ListReport):
   frozenColumns = 0
   editable = False
   timebuckets = False
+  default_sort = '3a'
   rows = (
     ('operation', {
       'title': _('operation'),
@@ -247,6 +248,9 @@ class ReportByBuffer(ListReport):
     ('quantity', {
       'title': _('quantity'),
       }),
+    ('item', {
+      'title': _('end item'),
+      }),
     )
 
   @staticmethod
@@ -259,10 +263,10 @@ class ReportByBuffer(ListReport):
     if not basesql: basesql = '1 = 1'
     
     query = '''    
-        select operation, date, demand, quantity, due                                                        
+        select operation, date, demand, quantity, ditem, fitem
         from                                                                                            
         (                                                                                               
-        select out_demandpegging.demand, prod_date as date, operation, sum(quantity_buffer) as quantity, demand.due as due 
+        select out_demandpegging.demand as demand, prod_date as date, operation, sum(quantity_buffer) as quantity, demand.item_id as ditem, forecast.item_id as fitem
         from out_flowplan                                                                        
         join out_operationplan                                                                          
         on out_operationplan.id = out_flowplan.operationplan_id                                            
@@ -272,9 +276,11 @@ class ReportByBuffer(ListReport):
         on out_demandpegging.prod_operationplan = out_flowplan.operationplan_id                            
         left join demand 
         on demand.name = out_demandpegging.demand
-        group by demand, prod_date, operation, out_operationplan.id, demand.due                                     
+        left join forecast 
+        on forecast.name = out_demandpegging.demand
+        group by out_demandpegging.demand, prod_date, operation, out_operationplan.id, demand.item_id, forecast.item_id                                     
         union                                                                                           
-        select out_demandpegging.demand, cons_date as date, operation, -sum(quantity_buffer) as quantity, demand.due as due
+        select out_demandpegging.demand, cons_date as date, operation, -sum(quantity_buffer) as quantity, demand.item_id as ditem, forecast.item_id as fitem
         from out_flowplan                                                                               
         join out_operationplan                                                                          
         on out_operationplan.id = out_flowplan.operationplan_id                                            
@@ -284,10 +290,12 @@ class ReportByBuffer(ListReport):
         on out_demandpegging.cons_operationplan = out_flowplan.operationplan_id                            
         left join demand 
         on demand.name = out_demandpegging.demand
-        group by demand, cons_date, operation, demand.due                                                           
+        left join forecast 
+        on forecast.name = out_demandpegging.demand
+        group by out_demandpegging.demand, cons_date, operation, demand.item_id, forecast.item_id
         ) a                                                                                             
-        order by demand, date, operation;                                                               
-      ''' % (basesql, basesql)
+        order by %s                                                               
+      ''' % (basesql, basesql, sortsql)
     cursor.execute(query, baseparams + baseparams)
 
     # Build the python result
@@ -297,7 +305,8 @@ class ReportByBuffer(ListReport):
           'date': row[1],
           'demand': row[2],
           'quantity': row[3],
-          'forecast': not row[4]
+          'forecast': not row[4],
+          'item': row[4] or row[5],
           }
 
 
@@ -312,6 +321,7 @@ class ReportByResource(ListReport):
   frozenColumns = 0
   editable = False
   timebuckets = False
+  default_sort = '3a'
   rows = (
     ('operation', {
       'title': _('operation'),
@@ -325,6 +335,9 @@ class ReportByResource(ListReport):
     ('quantity', {
       'title': _('quantity'),
       }),
+    ('item', {
+      'title': _('end item'),
+      }),
     )
 
   @staticmethod
@@ -337,7 +350,7 @@ class ReportByResource(ListReport):
     if not basesql: basesql = '1 = 1'
     
     query = '''    
-        select operation, out_loadplan.startdate as date, out_demandpegging.demand, sum(quantity_buffer), demand.due
+        select operation, out_loadplan.startdate as date, out_demandpegging.demand, sum(quantity_buffer), demand.item_id, forecast.item_id
         from out_loadplan
         join out_operationplan
         on out_operationplan.id = out_loadplan.operationplan_id
@@ -346,9 +359,11 @@ class ReportByResource(ListReport):
         on out_demandpegging.prod_operationplan = out_loadplan.operationplan_id
         left join demand 
         on demand.name = out_demandpegging.demand
-        group by out_demandpegging.demand, out_loadplan.startdate, operation, demand.due
-        order by out_demandpegging.demand, out_loadplan.startdate, operation
-      ''' % (basesql)
+        left join forecast 
+        on forecast.name = out_demandpegging.demand
+        group by out_demandpegging.demand, out_loadplan.startdate, operation, demand.item_id, forecast.item_id
+        order by %s
+      ''' % (basesql, sortsql)
     cursor.execute(query, baseparams)
 
     # Build the python result
@@ -358,6 +373,7 @@ class ReportByResource(ListReport):
           'date': row[1],
           'demand': row[2],
           'quantity': row[3],
-          'forecast': not row[4]
+          'forecast': not row[4],
+          'item': row[4] or row[5]
           }
 

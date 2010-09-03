@@ -410,13 +410,14 @@ def view_report(request, entity=None, **args):
   # Prepare template context
   head_frozen, head_scroll = _create_rowheader(request, sortfield, sortdirection, reportclass)
   filterdef, filternew = _create_filter(request, reportclass)
+  print reportclass.frozenColumns, entity, hits
   context = {
        'reportclass': reportclass,
        'model': model,
        'hasaddperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())),
        'haschangeperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
        'request': request,
-       'object': entity or (hits == 1 and counter[0].pk) or None,
+       'object': entity or (hits == 1 and reportclass.model and counter[0].pk) or None,
        'objectlist1': objectlist1,
        'objectlist2': objectlist2,
        'reportbucket': bucket,

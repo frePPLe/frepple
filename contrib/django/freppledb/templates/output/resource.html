@@ -77,7 +77,7 @@
 <td><input type="text" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this, {{j.available}}, '{{j.startdate}}', '{{j.enddate}}', {{j.units}})"/><br/>
 <span>{{j.unavailable|floatformat:1}}</span><br/>
 {{j.setup|floatformat:1}}<br/>
-<span>{% if j.load %}<a href="?theresource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}" tabindex="-1" class="detail">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}</span><br/>
+<span>{% if j.load %}<a href="?theresource={{j.resource|urlencode}}&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}" tabindex="-1" class="detail">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}</span><br/>
 <span{% if j.utilization > 95 %} class="highutil"{% endif %}>{{j.utilization|floatformat:0}}</span></td>
 {% if forloop.last %}</form></tr>{% endif %}{% endfor %}
 {% else %}
@@ -85,7 +85,7 @@
 <td>{{j.available|floatformat:1}}<br/>
 {{j.unavailable|floatformat:1}}<br/>
 {{j.setup|floatformat:1}}<br/>
-{% if j.load %}<a href="{{ request.prefix }}/loadplan/?theresource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
+{% if j.load %}<a href="{{ request.prefix }}/loadplan/?theresource={{j.resource|urlencode}}&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
 {{j.utilization|floatformat:0}}</td>
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endif %}

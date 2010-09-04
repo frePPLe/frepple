@@ -164,11 +164,11 @@ HTML_OUTPUT            = reference
 
 HTML_FILE_EXTENSION    = .html
 
-HTML_HEADER            =
+HTML_HEADER            = apiheader.html
 
-HTML_FOOTER            =
+HTML_FOOTER            = apifooter.html
 
-HTML_STYLESHEET        =
+HTML_STYLESHEET        = 
 
 HTML_ALIGN_MEMBERS     = YES
 

@@ -1,8 +1,8 @@
 
 EXTRA_DIST_COMMON = favicon.ico styles.css *.pdf *.gif *.bmp 
 EXTRA_DIST_API = reference
-EXTRA_DIST_WEB = Frepple UI Tutorial Main uploads uploads/Frepple uploads/UI uploads/Tutorial pmwiki.css index.html 
-EXTRA_DIST = ${EXTRA_DIST_COMMON} frepple.doxyfile frepple.1
+EXTRA_DIST_WEB = Frepple UI Tutorial Main uploads uploads/Frepple uploads/UI uploads/Tutorial index.html 
+EXTRA_DIST = ${EXTRA_DIST_COMMON} htmlindexer.py frepple.doxyfile frepple.1 apiheader.html apifooter.html
 
 reference: apidoc
 Frepple: webdoc
@@ -21,28 +21,27 @@ if WEBDOC
 EXTRA_DIST += ${EXTRA_DIST_WEB}
 webdoc:
 	-rm -rf www.frepple.com ${EXTRA_DIST_WEB}
-	-@WGET@ -r -k -p -nv -l 0 --html-extension http://www.frepple.com/pmwiki/pmwiki.php/Main/HomePage?setskin=doc 
+	-@WGET@ -k -r -nv --html-extension http://www.frepple.com/pmwiki/pmwiki.php/Main/HomePage?setskin=doc
 	mv www.frepple.com/pmwiki/pmwiki.php/* .
 	mv www.frepple.com/pmwiki/uploads uploads
-	mv www.frepple.com/pmwiki/pub/skins/doc/pmwiki.css .
 	mv www.frepple.com/pmwiki/pmwiki.php.1.html index.html
 	-rm -rf www.frepple.com
-	find . -regex '[^reference/].*\.html' -exec sed -i "s|href='\(\.\./\)*pmwiki.php.1.html'>Main|href='\1index.html'>Main|" {} \; 
-	find . -regex '[^reference/].*\.html' -exec sed -i "s|href='\(\.\./\)*pmwiki.php.1.html'>C++|href='\1reference/index.html'>C++|" {} \; 
-	find . -regex '[^reference/].*\.html' -exec sed -i "s|href='\(\.\./\)*pmwiki.php/|href='\1|g" {} \;
-	find . -regex '[^reference/].*\.html' -exec sed -i "s|href='\(\.\./\)*pub/skins/doc/pmwiki.css'|href='\1pmwiki.css'|" {} \; 
-	find . -regex '[^reference/].*\.html' -exec sed -i "s|src='\(\.\./\)*../uploads/|src='\1uploads/|g" {} \; 
-	find . -regex '[^reference/].*\.html' -exec sed -i "s|src='\(\.\./\)*../../images/frepple.bmp'|src='\1frepple.bmp'|" {} \; 
-	find . -regex '[^reference/].*\.html' -exec sed -i "s|href='\(\.\./\)*../../styles.css'|href='\1styles.css'|" {} \; 
+	sed -i "s|href='\(\.\./\)*pmwiki.php/|href='\1|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
+	sed -i "s|href='\(\.\./\)*Main/HomePage.html'>C++|href='\1reference/index.html'>C++|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
+	sed -i "s|src='\(\.\./\)*../uploads/|src='\1uploads/|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
+	sed -i "s|src='\(\.\./\)*../../images/frepple.bmp'|src='\1frepple.bmp'|" `find . -name '*\.html' -print | grep -v '^\./reference'` 
+	sed -i "s|href='\(\.\./\)*../../styles.css'|href='\1styles.css'|" `find . -name '*\.html' -print | grep -v '^\./reference'` 
 	sed -i "s|src='../images/frepple.bmp'|src='frepple.bmp'|" index.html 
 	sed -i "s|href='../styles.css'|href='styles.css'|" index.html 
+	sed -i "s|href='HomePage.html'>C++|href='../reference/index.html'>C++|g" Main/HomePage.html
+	`pwd`/htmlindexer.py UI Frepple Main Tutorial
 else
 webdoc:
 	-echo Skipping generation of WEB documentation...
 endif
 
 clean-local:
-	-rm -rf pmwiki.css index.html ${EXTRA_DIST_API} ${EXTRA_DIST_WEB}
+	-rm -rf index.js index.html ${EXTRA_DIST_API} ${EXTRA_DIST_WEB}
 
 all-local: apidoc webdoc
 

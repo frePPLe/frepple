@@ -23,11 +23,10 @@
 from datetime import timedelta, datetime
 
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Min, Max
-from django.db import connections, DEFAULT_DB_ALIAS
+from django.db import connections
 
 from freppledb.input.models import Parameter, Demand
-from freppledb.output.models import DemandPegging, FlowPlan, LoadPlan
+from freppledb.output.models import DemandPegging, FlowPlan, LoadPlan, OperationPlan
 from freppledb.common.report import *
  
     
@@ -258,8 +257,8 @@ class ReportByBuffer(ListReport):
     # Execute the query
     cursor = connections[request.database].cursor()                           
     basesql, baseparams = basequery.query.where.as_sql(
-      connections[DEFAULT_DB_ALIAS].ops.quote_name,
-      connections[DEFAULT_DB_ALIAS])                              
+      connections[request.database].ops.quote_name,
+      connections[request.database])                              
     if not basesql: basesql = '1 = 1'
     
     query = '''    
@@ -345,8 +344,8 @@ class ReportByResource(ListReport):
     # Execute the query
     cursor = connections[request.database].cursor()                           
     basesql, baseparams = basequery.query.where.as_sql(
-      connections[DEFAULT_DB_ALIAS].ops.quote_name,
-      connections[DEFAULT_DB_ALIAS])                              
+      connections[request.database].ops.quote_name,
+      connections[request.database])                              
     if not basesql: basesql = '1 = 1'
     
     query = '''    
@@ -377,3 +376,83 @@ class ReportByResource(ListReport):
           'item': row[4] or row[5]
           }
 
+
+class ReportByOperation(ListReport):
+  '''
+  A list report to show peggings.
+  '''
+  template = 'output/operationpegging.html'
+  title = _("Pegging report")
+  reset_crumbs = False
+  basequeryset = OperationPlan.objects.all()
+  frozenColumns = 0
+  editable = False
+  timebuckets = False
+  default_sort = '3a'
+  rows = (
+    ('operation', {
+      'title': _('operation'),
+      }),
+    ('date', {
+      'title': _('date'),
+      }),
+    ('demand', {
+      'title': _('demand'),
+      }),
+    ('quantity', {
+      'title': _('quantity'),
+      }),
+    ('item', {
+      'title': _('end item'),
+      }),
+    )
+
+  @staticmethod
+  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    # Execute the query
+    cursor = connections[request.database].cursor()                           
+    basesql, baseparams = basequery.query.where.as_sql(
+      connections[request.database].ops.quote_name,
+      connections[request.database])                              
+    if not basesql: basesql = '1 = 1'
+    
+    query = '''    
+        select operation, date, demand, quantity, ditem, fitem
+        from                                                                                            
+        (                                                                                               
+        select out_operationplan.operation as operation, out_operationplan.startdate as date, out_demandpegging.demand as demand, sum(quantity_buffer) as quantity, demand.item_id as ditem, forecast.item_id as fitem
+        from out_operationplan
+        join out_demandpegging
+        on out_demandpegging.prod_operationplan = out_operationplan.id
+          and %s
+        left join demand 
+        on demand.name = out_demandpegging.demand
+        left join forecast 
+        on forecast.name = out_demandpegging.demand
+        group by out_demandpegging.demand, out_operationplan.startdate, out_operationplan.operation, demand.item_id, forecast.item_id
+        union 
+        select out_operationplan.operation, out_operationplan.startdate as date, out_demand.demand, sum(out_operationplan.quantity), demand.item_id as ditem, forecast.item_id as fitem
+        from out_operationplan
+        join out_demand
+        on out_demand.operationplan = out_operationplan.id
+          and %s
+        left join demand 
+        on demand.name = out_demand.demand
+        left join forecast 
+        on forecast.name = out_demand.demand
+        group by out_demand.demand, out_operationplan.startdate, out_operationplan.operation, demand.item_id, forecast.item_id
+        ) a
+        order by %s
+      ''' % (basesql, basesql, sortsql)
+    cursor.execute(query, baseparams + baseparams)
+
+    # Build the python result
+    for row in cursor.fetchall():    
+      yield {
+          'operation': row[0],
+          'date': row[1],
+          'demand': row[2],
+          'quantity': row[3],
+          'forecast': not row[4],
+          'item': row[4] or row[5]
+          }

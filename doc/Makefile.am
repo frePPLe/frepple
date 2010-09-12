@@ -1,15 +1,26 @@
 
-EXTRA_DIST_COMMON = favicon.ico styles.css *.pdf *.gif *.bmp 
-EXTRA_DIST_API = reference
-EXTRA_DIST_WEB = Frepple UI Tutorial Main uploads uploads/Frepple uploads/UI uploads/Tutorial index.html 
-EXTRA_DIST = ${EXTRA_DIST_COMMON} htmlindexer.py frepple.doxyfile frepple.1 apiheader.html apifooter.html
-
-reference: apidoc
-Frepple: webdoc
+FILES_COMMON = favicon.ico styles.css *.pdf *.gif *.bmp 
+FILES_API = reference
+FILES_WEB = index.html Frepple UI Tutorial Main uploads uploads/Frepple uploads/UI uploads/Tutorial 
+FILES_EXTRA = htmlindexer.py frepple.doxyfile frepple.1 apiheader.html apifooter.html
 
 if APIDOC
-EXTRA_DIST += ${EXTRA_DIST_API}
-apidoc: frepple.doxyfile
+if WEBDOC 
+EXTRA_DIST = ${FILES_WEB} ${FILES_API} ${FILES_COMMON} ${FILES_EXTRA} 
+else
+EXTRA_DIST =  ${FILES_API} ${FILES_COMMON} ${FILES_EXTRA}
+endif
+else
+if WEBDOC 
+EXTRA_DIST = ${FILES_WEB} ${FILES_COMMON} ${FILES_EXTRA} 
+else
+EXTRA_DIST = ${FILES_COMMON} ${FILES_EXTRA}
+endif
+endif
+
+if APIDOC
+apidoc: reference
+reference: 
 	-rm -rf reference
 	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile
 else
@@ -18,9 +29,9 @@ apidoc:
 endif
 
 if WEBDOC
-EXTRA_DIST += ${EXTRA_DIST_WEB}
-webdoc:
-	-rm -rf www.frepple.com ${EXTRA_DIST_WEB}
+webdoc: index.html
+index.html: 
+	-rm -rf www.frepple.com ${FILES_WEB}
 	-@WGET@ -k -r -nv --html-extension http://www.frepple.com/pmwiki/pmwiki.php/Main/HomePage?setskin=doc
 	mv www.frepple.com/pmwiki/pmwiki.php/* .
 	mv www.frepple.com/pmwiki/uploads uploads
@@ -41,7 +52,7 @@ webdoc:
 endif
 
 clean-local:
-	-rm -rf index.js index.html ${EXTRA_DIST_API} ${EXTRA_DIST_WEB}
+	-rm -rf index.js index.html ${FILES_API} ${FILES_WEB}
 
 all-local: apidoc webdoc
 
@@ -50,7 +61,7 @@ man_MANS = frepple.1
 if DOC 
 install-data-local: apidoc webdoc
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \
-	for p in $(EXTRA_DIST_COMMON) $(EXTRA_DIST_API) $(EXTRA_DIST_WEB); do \
+	for p in $(FILES_COMMON) $(FILES_API) $(FILES_WEB); do \
 	  if test -e $$p; \
 	  then if test -d $$p; \
 	  then $(mkinstalldirs) "$(DESTDIR)$(docdir)/$$p"; \

@@ -46,7 +46,7 @@ STRIP_CODE_COMMENTS    = NO
 
 CASE_SENSE_NAMES       = NO
 
-SHORT_NAMES            = NO
+SHORT_NAMES            = YES  # Long filenames are not portable enough
 
 HIDE_SCOPE_NAMES       = NO
 

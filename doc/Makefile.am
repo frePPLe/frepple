@@ -33,7 +33,7 @@ webdoc:
 	sed -i "s|href='\(\.\./\)*../../styles.css'|href='\1styles.css'|" `find . -name '*\.html' -print | grep -v '^\./reference'` 
 	sed -i "s|src='../images/frepple.bmp'|src='frepple.bmp'|" index.html 
 	sed -i "s|href='../styles.css'|href='styles.css'|" index.html 
-	sed -i "s|href='HomePage.html'>C++|href='../reference/index.html'>C++|g" Main/HomePage.html
+	sed -i "s|href='HomePage.html'>C++|href='../reference/index.html'>C++|g" Main/HomePage.html Main/FAQ.html
 	`pwd`/htmlindexer.py UI Frepple Main Tutorial
 else
 webdoc:

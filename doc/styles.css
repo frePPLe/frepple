@@ -20,6 +20,8 @@ html { height: 100%; }
   position: fixed;
   background-color: #a5a5ff;
   z-index: 10;
+  font-family: serif;
+  font-size: 14px;
 }
 
 #menubar #menu {
@@ -30,6 +32,8 @@ html { height: 100%; }
   position: fixed;
   vertical-align: middle;   
   z-index: 10;
+  font-family: serif;
+  font-size: 14px;
 }
 
 #menubar #menu #search {
@@ -48,6 +52,8 @@ html { height: 100%; }
   height: 130px;
   position: fixed;
   z-index: 10;
+  font-family: serif;
+  font-size: 14px;
 }
 
 body {
@@ -61,6 +67,9 @@ body {
   color: #222222;
   background-color: #4f639b;
   padding: 3px;
+  font-family: serif;
+  font-weight: bold;
+  font-size: 14px;
 }
 
 #menubar A:link {text-decoration: none; color: #222222;}

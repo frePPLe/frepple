@@ -98,6 +98,7 @@ class Command(BaseCommand):
     Scenario.syncWithSettings()
     
     # Validate the arguments
+    destinationscenario = None
     try:
       if len(args) != 2:
         raise CommandError("Command takes exactly 2 arguments.")
@@ -206,7 +207,7 @@ class Command(BaseCommand):
         message=_("Failed copying database '%(source)s' to '%(destination)s'" % 
           {'source':source, 'destination':destination} )).save()
       except: pass
-      if destinationscenario.status == u'Busy':
+      if destinationscenario and destinationscenario.status == u'Busy':
         destinationscenario.status = u'Free'
         destinationscenario.save()
       if nonfatal: raise e

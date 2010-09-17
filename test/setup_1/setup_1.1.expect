@@ -45,5 +45,5 @@ OPERATION	setup operation	2008-12-27T00:00:00	2008-12-28T00:00:00	0
 OPERATION	setup operation	2009-01-22T00:00:00	2009-01-26T00:00:00	0
 OPERATION	setup operation	2009-01-26T00:00:00	2009-01-28T00:00:00	0
 OPERATION	setup operation	2009-02-03T00:00:00	2009-02-06T00:00:00	0
-PROBLEM	before current	Job '12' planned in the past	2008-12-28T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Job '11' planned in the past	2008-12-27T00:00:00 / 2008-12-28T00:00:00
+PROBLEM	before current	Operation 'make black product' planned in the past	2008-12-28T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation 'setup operation' planned in the past	2008-12-27T00:00:00 / 2008-12-28T00:00:00

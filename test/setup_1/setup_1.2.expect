@@ -81,3 +81,5 @@ OPERATION	setup operation	2009-01-23T00:00:00	2009-01-26T00:00:00	0
 OPERATION	setup operation	2009-02-04T00:00:00	2009-02-06T00:00:00	0
 PROBLEM	material excess	Buffer 'white product' has material excess of 3	2009-01-23T00:00:00 / 2009-01-31T00:00:00
 PROBLEM	late	Demand 'order 1 black' planned P2D after its due date	2009-01-05T00:00:00 / 2009-01-07T00:00:00
+DEMAND CONSTRAINT	order 1 black	Operation 'make black product' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1 black	Resource 'Painting line' has capacity shortage of 1	2009-01-01T00:00:00 / 2009-01-04T00:00:00	

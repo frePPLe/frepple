@@ -22,7 +22,7 @@
  USA
 -->
 <xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'
-  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="0.8.1">
+  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="0.8.2.beta">
   <!--
     This file should not be customized. In case you want to customize the schema
     with your own needs, you should define a new namespace and import the

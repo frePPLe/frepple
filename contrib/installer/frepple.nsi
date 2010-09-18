@@ -156,10 +156,8 @@ Section "Application" SecAppl
   File "..\bin\*.xsd"
   File "..\bin\init.xml"
 
-  ; Copy sqlite databases if they are available
+  ; Copy sqlite database if it is available
   File /nonfatal "..\bin\frepple.sqlite"
-  File /nonfatal "..\bin\scenario1.sqlite"
-  File /nonfatal "..\bin\scenario2.sqlite"
 
   ; Copy the django and python redistributables created by py2exe
   SetOutPath "$INSTDIR\bin"

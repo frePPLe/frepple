@@ -410,7 +410,6 @@ def view_report(request, entity=None, **args):
   # Prepare template context
   head_frozen, head_scroll = _create_rowheader(request, sortfield, sortdirection, reportclass)
   filterdef, filternew = _create_filter(request, reportclass)
-  print reportclass.frozenColumns, entity, hits
   context = {
        'reportclass': reportclass,
        'model': model,

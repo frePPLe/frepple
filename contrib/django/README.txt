@@ -42,7 +42,7 @@ The basic steps to set up a development environment:
 - Test your installation by starting the development web server:
       manage.py runserver
   or the PyCherry web server:
-      manage.py runserver
+      manage.py frepple_runserver
   and then pointing your browser to http://127.0.0.1:8000/admin
   A login page should come up.
   Use frepple/frepple or admin/admin as the user name and password.

@@ -221,7 +221,7 @@ def runTestSuite():
     else:
       print "Running", AllTests.countTestCases(), \
          "tests from directory", testdir
-    result = unittest.TextTestRunner(verbosity=2).run(AllTests)
+    result = unittest.TextTestRunner(verbosity=2,descriptions=False).run(AllTests)
     if not result.wasSuccessful(): sys.exit(1)
     
 
@@ -234,7 +234,7 @@ class freppleTest (unittest.TestCase):
         global testdir
         os.chdir(os.path.join(testdir, self.subdirectory))
 
-    def shortDescription(self):
+    def __str__(self):
         ''' Use the directory name as the test name.'''
         return self.subdirectory
 

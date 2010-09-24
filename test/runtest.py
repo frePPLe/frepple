@@ -277,7 +277,7 @@ class freppleTest (unittest.TestCase):
 
     def runScript(self):
         '''Running a test script'''
-        self.runProcess(os.path.join('.','runtest.py'))
+        self.runProcess('python %s' % os.path.join('.','runtest.py'))
 
     def runXML(self):
         '''Running the command line tool with an XML file as argument.'''
@@ -301,7 +301,7 @@ class freppleTest (unittest.TestCase):
                         "output."+str(nr)+".xml"):
                     self.assertFalse("Difference in output " + str(nr), "Difference in output " + str(nr))
             else:
-                self.assertFalse('Missing planner output file ' + str(nr), 'Missing planner output file ' + str(nr))
+                self.assertFalse('Missing frePPLe output file ' + str(nr), 'Missing frePPLe output file ' + str(nr))
             nr += 1;
 
 def diff(f1, f2):

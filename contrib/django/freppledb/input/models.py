@@ -40,6 +40,16 @@ from freppledb.common.fields import DurationField
 
 CALENDARID = None
    
+   
+class HierarchyModel(models.Model):
+  lft = models.PositiveIntegerField(db_index = True, editable=False, null=True, blank=True)
+  rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
+  owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='xchildren',
+    help_text=_('Hierarchical parent'))
+
+  class Meta:
+    abstract = True
+
 
 class AuditModel(models.Model):
   '''
@@ -50,6 +60,7 @@ class AuditModel(models.Model):
   lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now())
 
   def save(self, *args, **kwargs):
+    print self, args, kwargs
     # Update the field with every change
     self.lastmodified = datetime.now()
 
@@ -265,7 +276,7 @@ signals.post_save.connect(Bucket.insertBucket, sender=Bucket)
 signals.post_delete.connect(Bucket.updateEndDate, sender=Bucket)
 
 
-class Location(AuditModel):
+class Location(AuditModel, HierarchyModel):
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
@@ -274,8 +285,6 @@ class Location(AuditModel):
   available = models.ForeignKey(Calendar, verbose_name=_('available'),
     null=True, blank=True,
     help_text=_('Calendar defining the working hours and holidays of this location'))
-  owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
-    help_text=_('Hierarchical parent'))
 
   def __unicode__(self): return self.name
 
@@ -286,14 +295,12 @@ class Location(AuditModel):
     ordering = ['name']
 
 
-class Customer(AuditModel):
+class Customer(AuditModel,HierarchyModel):
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
-    help_text=_('Hierarchical parent'))
 
   def __unicode__(self): return self.name
 
@@ -304,7 +311,7 @@ class Customer(AuditModel):
     ordering = ['name']
 
 
-class Item(AuditModel):
+class Item(AuditModel,HierarchyModel):
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
@@ -314,8 +321,6 @@ class Item(AuditModel):
     help_text=_("Default operation used to ship a demand for this item"))
   price = models.DecimalField(_('price'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     help_text=_("Selling price of the item"))
-  owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
-    help_text=_('Hierarchical parent'))
 
   def __unicode__(self): return self.name
 
@@ -414,7 +419,7 @@ class SubOperation(AuditModel):
     verbose_name_plural = _('suboperations')
 
 
-class Buffer(AuditModel):
+class Buffer(AuditModel,HierarchyModel):
   # Types of buffers
   buffertypes = (
     ('',_('Default')),
@@ -537,7 +542,7 @@ class SetupRule(AuditModel):
     verbose_name_plural = _('setup matrix rules')
         
 
-class Resource(AuditModel):
+class Resource(AuditModel,HierarchyModel):
   # Types of resources
   resourcetypes = (
     ('',_('Default')),
@@ -692,7 +697,7 @@ class OperationPlan(AuditModel):
     ordering = ['id']
 
 
-class Demand(AuditModel):
+class Demand(AuditModel,HierarchyModel):
   # The priorities defined here are for convenience only. FrePPLe accepts any number as priority.
   demandpriorities = (
     (1,_('1 - high')),
@@ -718,8 +723,6 @@ class Demand(AuditModel):
     help_text=_('Minimum shipment quantity when planning this demand'))
   maxlateness = models.DecimalField(_('maximum lateness'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     help_text=_("Maximum lateness allowed when planning this demand"))
-  owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True,
-    help_text=_('Hierarchical parent'))
 
   # Convenience methods
   def __unicode__(self): return self.name

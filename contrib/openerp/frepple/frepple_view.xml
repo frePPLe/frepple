@@ -2,10 +2,42 @@
 <openerp>
   <data>
 
-    <!-- Setup Matrix -->
-    <record id="frepple_setupmatix_tree_view" model="ir.ui.view">
-      <field name="name">frepple.setupmatix.tree</field>
-      <field name="model">frepple.setupmatix</field>
+    <!-- Setup rules -->
+    <record id="frepple_setuprule_tree_view" model="ir.ui.view">
+        <field name="name">frepple.setuprule.tree</field>
+        <field name="model">frepple.setuprule</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Setup rules">
+                <field name="priority"/>
+                <field name="fromsetup"/>
+                <field name="tosetup"/>
+                <field name="duration"/>
+                <field name="cost"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>        
+    <record id="frepple_setuprule_form_view" model="ir.ui.view">
+        <field name="name">frepple.setuprule.form</field>
+        <field name="model">frepple.setuprule</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Setup rule">
+                <field name="priority" colspan="2"/>
+                <field name="active"/>
+                <field name="fromsetup" colspan="2" select="1"/>
+                <field name="tosetup" colspan="2" select="2"/>
+                <field name="duration" colspan="2" select="3"/>
+                <field name="cost" colspan="2" select="4"/>
+            </form>
+        </field>
+    </record>        
+
+    <!-- Setup matrices -->
+    <record id="frepple_setupmatrix_tree_view" model="ir.ui.view">
+      <field name="name">frepple.setupmatrix.tree</field>
+      <field name="model">frepple.setupmatrix</field>
       <field name="type">tree</field>
       <field name="arch" type="xml">
           <tree string="Setup Matrix">
@@ -14,55 +46,29 @@
           </tree>
       </field>
     </record>
-    <record id="frepple_setupmatix_view" model="ir.ui.view">
-        <field name="name">frepple.setupmatix.form</field>
-        <field name="model">frepple.setupmatix</field>
+    <record id="frepple_setupmatrix_form_view" model="ir.ui.view">
+        <field name="name">frepple.setupmatrix.form</field>
+        <field name="model">frepple.setupmatrix</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="Setup Matrix">
-                <group col="6" colspan="4">
-                    <field name="name" select="1"/>
-                    <field name="active" select="1"/>
-                    <field name="logic" select="2"/>
-                </group>
-                <!--
-                <notebook colspan="4">
-                    <page string="Workcenter">
-                        <field name="type"/>
-                        <field name="timesheet_id"/>
-                        <separator colspan="4" string="Description"/>
-                        <field colspan="4" name="note" nolabel="1"/>
-                        <separator colspan="4" string="Capacity Information"/>
-                        <group col="4" colspan="4">
-                            <field name="capacity_per_cycle"/>
-                            <newline/>
-                            <field name="time_cycle"/>
-                            <field name="time_efficiency"/>
-                            <field name="time_start"/>
-                            <field name="time_stop"/>
-                        </group>
-                    </page>
-                    <page string="Analytic Accounting">
-                        <field name="costs_hour"/>
-                        <field name="costs_hour_account_id"/>
-                        <field name="costs_cycle"/>
-                        <field name="costs_cycle_account_id"/>
-                        <field name="costs_journal_id"/>
-                        <field name="costs_general_account_id"/>
-                    </page>
-                </notebook>
-                -->
+                <field name="name" select="1"/>
+                <field name="active" select="2"/>
+                <separator colspan="4" string="Description"/>
+                <!-- <field colspan="4" name="note" nolabel="1"/> -->
+                <separator colspan="4" string="Setup rules"/>
+                <field colspan="4" name="setuprule_lines" nolabel="1" widget="one2many_list"/>
             </form>
         </field>
     </record>
-    <record id="frepple_setupmatix_action" model="ir.actions.act_window">
+    <record id="frepple_setupmatrix_action" model="ir.actions.act_window">
         <field name="name">Setup Matrices</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">frepple.setupmatrix</field>
         <field name="view_type">form</field>
-        <field name="view_id" ref="frepple_setupmatix_tree_view"/>
+        <field name="view_id" ref="frepple_setupmatrix_tree_view"/>
     </record>
-    <menuitem action="frepple_setupmatix_action" id="menu_frepple_setupmatrix_action" parent="mrp.menu_mrp_configuration" name="Setup Matrices"/>
+    <menuitem action="frepple_setupmatrix_action" id="menu_frepple_setupmatrix_action" parent="mrp.menu_mrp_configuration" name="Setup Matrices"/>
 
     <!-- NOT WORKING... -->
     <record model="ir.ui.view" id="product_template_form_view">

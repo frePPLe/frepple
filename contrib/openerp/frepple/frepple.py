@@ -1,4 +1,25 @@
 # -*- encoding: utf-8 -*-
+#
+# Copyright (C) 2010 by Johan De Taeye
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+#
+
+# file : $URL$
+# revision : $LastChangedRevision$  $LastChangedBy$
+# date : $LastChangedDate$
 
 from osv import fields
 from osv import osv
@@ -11,44 +32,14 @@ class frepple_setupmatrix(osv.osv):
     _columns = {
         'name': fields.char('Name', size=32, required=True),
         'active': fields.boolean('Active'),
-        'logic': fields.selection([('max','Order to Max'),('price','Best price (not yet active!)')], 'Reordering Mode', required=True),
-        'warehouse_id': fields.many2one('stock.warehouse', 'Warehouse', required=True, ondelete="cascade"),
-        'location_id': fields.many2one('stock.location', 'Location', required=True, ondelete="cascade"),
-        'product_id': fields.many2one('product.product', 'Product', required=True, domain=[('type','=','product')], ondelete="cascade"),
-        'product_uom': fields.many2one('product.uom', 'Product UOM', required=True),
-        'product_min_qty': fields.float('Min Quantity', required=True,
-            help="When the virtual stock goes belong the Min Quantity, Open ERP generates "\
-            "a procurement to bring the virtual stock to the Max Quantity."),
-        'product_max_qty': fields.float('Max Quantity', required=True,
-            help="When the virtual stock goes belong the Min Quantity, Open ERP generates "\
-            "a procurement to bring the virtual stock to the Max Quantity."),
-        'qty_multiple': fields.integer('Qty Multiple', required=True,
-            help="The procurement quantity will by rounded up to this multiple."),
+        'note': fields.text('Description', help="Notes on this matrix"),   # WHY IS THIS FIELD NOT BEING ADDED?????
+        'setuprule_lines': fields.one2many('frepple.setuprule', 'setupmatrix_id', 'Setup rules'),
     }
     _defaults = {
         'active': lambda *a: 1,
-        'logic': lambda *a: 'max',
-        'qty_multiple': lambda *a: 1,
         'name': lambda x,y,z,c: x.pool.get('ir.sequence').get(y,z,'frepple.setupmatrix') or '',
-        'product_uom': lambda sel, cr, uid, context: context.get('product_uom', False),
     }
     
-    _sql_constraints = [
-        ( 'qty_multiple_check', 'CHECK( qty_multiple > 0 )', _('Qty Multiple must be greater than zero.')),
-    ]
-    
-    def onchange_warehouse_id(self, cr, uid, ids, warehouse_id, context={}):
-        if warehouse_id:
-            w=self.pool.get('stock.warehouse').browse(cr,uid,warehouse_id, context)
-            v = {'location_id':w.lot_stock_id.id}
-            return {'value': v}
-        return {}
-    def onchange_product_id(self, cr, uid, ids, product_id, context={}):
-        if product_id:
-            prod=self.pool.get('product.product').browse(cr,uid,product_id)
-            v = {'product_uom':prod.uom_id.id}
-            return {'value': v}
-        return {}
     def copy(self, cr, uid, id, default=None,context={}):
         if not default:
             default = {}
@@ -57,6 +48,33 @@ class frepple_setupmatrix(osv.osv):
         })
         return super(frepple_setupmatrix, self).copy(cr, uid, id, default, context)
 frepple_setupmatrix()
+
+
+class frepple_setuprule(osv.osv):
+    _name = "frepple.setuprule"
+    _description = "Setup rule"
+    _columns = {
+        'fromsetup': fields.char('From setup', size=32, required=True),
+        'tosetup': fields.char('To setup', size=32, required=True),
+        'active': fields.boolean('Active'),
+        'setupmatrix_id': fields.many2one('frepple.setupmatrix', 'Setup Matrix', select=True, ondelete="cascade"),
+        'duration': fields.float('Duration', required=True,
+            help="Time taken for this conversion."),
+        'cost': fields.float('Cost', required=True,
+            help="Cost involved in this conversion."),
+        'priority': fields.integer('Priority', required=True,
+            help="The order of this rule in its matrix."),
+    }
+    _defaults = {
+        'fromsetup': lambda *a: '*',
+        'tosetup': lambda *a: '*',
+        'active': lambda *a: 1,
+        'duration': lambda *a: 0,
+        'priority': lambda *a: 1,
+        'cost': lambda *a: 0,
+        'name': lambda x,y,z,c: x.pool.get('ir.sequence').get(y,z,'frepple.setuprule') or '',
+    }    
+frepple_setuprule()
 
 
 class frepple_product(osv.osv):
@@ -70,6 +88,5 @@ class frepple_product(osv.osv):
         'frepple_field1': lambda *a: "turbo",
     }
 frepple_product()
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

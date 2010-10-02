@@ -7,5 +7,10 @@
             <field name="code">frepple.setupmatrix</field>
         </record>
         
+        <record id="frepple_setuprule" model="ir.sequence.type">
+            <field name="name">Setup Rule</field>
+            <field name="code">frepple.setuprule</field>
+        </record>
+        
     </data>
 </openerp>

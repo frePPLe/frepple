@@ -34,7 +34,7 @@ from django.utils.translation import ugettext as _
 from freppledb.input.models import Parameter
 from freppledb.execute.models import log
         
-
+      
 class Command(BaseCommand):
   help = "Loads data from an OpenERP instance into the frePPLe database"
 
@@ -131,6 +131,7 @@ class Command(BaseCommand):
       self.import_onhand(sock, cursor)
       self.import_purchaseorders(sock, cursor)
       self.import_boms(sock, cursor)
+      self.import_setupmatrices(sock, cursor)
       
       # Logging message
       log(category='IMPORT', theuser=user,
@@ -223,6 +224,7 @@ class Command(BaseCommand):
   #        - %id %name -> name
   #        - %code     -> description
   #        - 'OpenERP' -> subcategory
+  # TODO also get template.produce_delay    
   def import_products(self, sock, cursor):  
     transaction.enter_transaction_management(using=self.database)
     transaction.managed(True, using=self.database)
@@ -235,7 +237,7 @@ class Command(BaseCommand):
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
         'product.product', 'search', 
         ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
-      fields = ['name', 'code', 'active']
+      fields = ['name', 'code', 'active', 'product_tmpl_id']
       insert = []
       update = []
       delete = []
@@ -745,6 +747,7 @@ class Command(BaseCommand):
   #       the order is (when the work order is created)
   #   The first type is created here.
   #   TODO The second type should be created when we map the sales orders to frePPLe.
+  #   TODO Subcontracting boms are also of the second type. We need to create them at based on what?
   #
   def import_boms(self, sock, cursor):  
     transaction.enter_transaction_management(using=self.database)
@@ -826,101 +829,63 @@ class Command(BaseCommand):
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
       
-  # Load bom components  
-      
-  # Load reorder points      
 
-  # Load loads    
+  # Importing setup matrices
+  #   - extracting recently changed frepple.setupmatrix objects
+  #   - meeting the criterion: 
+  #        - %active = True
+  #   - mapped fields OpenERP -> frePPLe setupmatrix
+  #        - %id %name -> name
+  def import_setupmatrices(self, sock, cursor):  
+    transaction.enter_transaction_management(using=self.database)
+    transaction.managed(True, using=self.database)
+    try:
+      starttime = time()
+      if self.verbosity > 0:
+        print "Importing setup matrices..."
+      cursor.execute("SELECT name FROM setupmatrix")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
+        'frepple.setupmatrix', 'search', 
+        [ '|',('Create_date','>', self.delta),('write_date','>', self.delta)])
+      fields = ['name', 'active']
+      insert = []
+      update = []
+      delete = []
+      for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'frepple.setupmatrix', 'read', ids, fields):
+        name = u'%d %s' % (i['id'],i['name'])
+        if i['active']:
+          if not name in frepple_keys:
+            insert.append( (name,) )
+        elif name in frepple_keys:
+          delete.append( (name,) )
+      cursor.executemany(
+        "insert into setupmatrix \
+          (name,lastmodified) \
+          values (%%s,'%s')" % self.date,
+        insert)
+      cursor.executemany(
+        "delete from setupmatrix where name=%s",
+        delete)
+      transaction.commit(using=self.database)
+      if self.verbosity > 0:
+        print "Inserted %d new setup matrices" % len(insert)
+        print "Updated %d existing setup matrices" % len(update)
+        print "Deleted %d setup matrices" % len(delete)
+        print "Imported setup matrices in %.2f seconds" % (time() - starttime)
+    except Exception, e:
+      transaction.rollback(using=self.database)
+      print "Error importing setup matrices: %s" % e
+    finally:
+      transaction.commit(using=self.database)
+      transaction.leave_transaction_management(using=self.database)
 
-  # Load WIP
 
-
-# Bugs:
-#   - Mark a partner inactive. The xml api will still return it as active. Client correctly says inactive.
-
-
-      # Performance test: created 10000 partners in 22m44s, 7.3 per second
-      # Bottleneck is openerp server, not the db at all
-      #cnt = 1
-      #print datetime.now()
-      #while cnt < 10000:
-      #  partner = {
-      #     'name': 'customer %d' % cnt,
-      #     'active': True,
-      #     'customer': True,
-      #  }
-      #  partner_id = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'res.partner', 'create', partner)
-      #  cnt += 1
-      #print datetime.now()
-
-# update mrp_procurement where status is confirmed with the data of the frepple run
-
-
-
-
-#bin\addons\mrp\mrp.py
-#bin\addons\mrp\schedulers.py
-#
-#_procure_confirm:
-#For each mrp.procurement where state = 'confirmed' 
-#and procure_method 'make to order' and date_planned < scheduling window
-#  'check' button
-#        
-#_procure_orderpoint_confirm:
-#  if automatic: self.create_automatic_op(cr, uid, context=context)
-#  for all defined order points
-#    if virtual onhand < minimum at this location
-#              qty = max(op.product_min_qty, op.product_max_qty)-prods
-#              reste = qty % op.qty_multiple
-#              if reste > 0:
-#                  qty += op.qty_multiple - reste
-#              newdate = DateTime.now() + DateTime.RelativeDateTime(
-#                      days=int(op.product_id.seller_delay))
-#              if op.product_id.supply_method == 'buy':
-#                  location_id = op.warehouse_id.lot_input_id
-#              elif op.product_id.supply_method == 'produce':
-#                  location_id = op.warehouse_id.lot_stock_id
-#              else:
-#                  continue
-#              if qty <= 0:
-#                  continue
-#              if op.product_id.type not in ('consu'):
-#                  proc_id = procurement_obj.create(cr, uid, {
-#                      'name': 'OP:' + str(op.id),
-#                      'date_planned': newdate.strftime('%Y-%m-%d'),
-#                      'product_id': op.product_id.id,
-#                      'product_qty': qty,
-#                      'product_uom': op.product_uom.id,
-#                      'location_id': op.warehouse_id.lot_input_id.id,
-#                      'procure_method': 'make_to_order',
-#                      'origin': op.name
-#                  })
-#         wf_service.trg_validate(uid, 'mrp.procurement', proc_id,'button_confirm', cr)    
-#              State changes from 'draft' to 'confirmed'
-#              Confirmed status creates stock moves, and recursively creates extra mrp.procurement records
-#         wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_check', cr)
-#         orderpoint_obj.write(cr, uid, [op.id], {'procurement_id': proc_id})     WHY???? WHER USED???
-#
-#create_automatic_op:
-#For each product & warehouse combination
-#  if virtual inventory < 0
-#    create mrp.procurement with
-#        if product.supply_method == 'buy':
-#            location_id = warehouse.lot_input_id.id
-#        elif product.supply_method == 'produce':
-#            location_id = warehouse.lot_stock_id.id
-#        else:
-#            continue
-#        proc_id = proc_obj.create(cr, uid, {
-#            'name': 'Automatic OP: %s' % product.name,
-#            'origin': 'SCHEDULER',
-#            'date_planned': newdate.strftime('%Y-%m-%d %H:%M:%S'),
-#            'product_id': product.id,
-#            'product_qty': -product.virtual_available,
-#            'product_uom': product.uom_id.id,
-#            'location_id': location_id,
-#            'procure_method': 'make_to_order',
-#            })
-#    wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_confirm', cr)   (State changes from 'draft' to 'confirmed')
-#    wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_check', cr)
+# TODO:
+#   - renaming an entity while its id stays the same is not handled well.
+#   - inactive objects are not passed in the query. We can't mark them inactive on frepple side...
+#   - Load bom components  
+#   - Load reorder points      
+#   - Load loads    
+#   - Load WIP
                        

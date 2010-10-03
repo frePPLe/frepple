@@ -25,7 +25,7 @@ from decimal import Decimal
 import sys
 
 from django.db import models
-from django.db.utils import DEFAULT_DB_ALIAS
+from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.db.models import signals
 from django.http import HttpRequest
 from django.dispatch import dispatcher
@@ -44,12 +44,53 @@ CALENDARID = None
 class HierarchyModel(models.Model):
   lft = models.PositiveIntegerField(db_index = True, editable=False, null=True, blank=True)
   rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='xchildren',
     help_text=_('Hierarchical parent'))
 
   class Meta:
     abstract = True
 
+  @classmethod
+  def rebuildHierarchy(cls, database = DEFAULT_DB_ALIAS):
+  
+    tmp_debug = settings.DEBUG
+    settings.DEBUG = False
+    nodes = {}
+    transaction.enter_transaction_management(using=database)
+    transaction.managed(True, using=database)
+    cursor = connections[database].cursor()
+
+    def tagChildren(me, left):
+      right = left + 1   
+      # get all children of this node   
+      for i, j in nodes.items():
+        if j == me:
+          # Recursive execution of this function for each child of this node   
+          right = tagChildren(i, right)
+  
+      # After processing the children of this node now know its left and right values
+      cursor.execute(
+        'update %s set lft=%d, rght=%d where name = %%s' % (cls._meta.db_table, left, right),
+        [me]
+        )
+  
+      # Return the right value of this node + 1   
+      return right + 1
+       
+    # Load all nodes in memory
+    for i in cls.objects.using(database).values('name','owner'):
+      nodes[i['name']] = i['owner']
+      
+    # Loop over nodes without parent)
+    cnt = 1
+    for i, j in nodes.items():
+      if j == None: 
+        cnt = tagChildren(i,cnt) 
+    transaction.commit(using=database)
+    settings.DEBUG = tmp_debug
+    transaction.leave_transaction_management(using=database)
+  
 
 class AuditModel(models.Model):
   '''
@@ -278,7 +319,6 @@ signals.post_delete.connect(Bucket.updateEndDate, sender=Bucket)
 
 class Location(AuditModel, HierarchyModel):
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
@@ -297,7 +337,6 @@ class Location(AuditModel, HierarchyModel):
 
 class Customer(AuditModel,HierarchyModel):
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
@@ -313,7 +352,6 @@ class Customer(AuditModel,HierarchyModel):
 
 class Item(AuditModel,HierarchyModel):
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
@@ -428,7 +466,6 @@ class Buffer(AuditModel,HierarchyModel):
   )
 
   # Fields common to all buffer types
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
@@ -550,7 +587,6 @@ class Resource(AuditModel,HierarchyModel):
   )
 
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
@@ -706,7 +742,6 @@ class Demand(AuditModel,HierarchyModel):
   )
 
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)

@@ -101,7 +101,6 @@ class AuditModel(models.Model):
   lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now())
 
   def save(self, *args, **kwargs):
-    print self, args, kwargs
     # Update the field with every change
     self.lastmodified = datetime.now()
 

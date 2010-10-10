@@ -16,6 +16,7 @@ sys.path.append('/home/frepple/workspace/frepple/contrib/django')
 os.environ['LC_ALL'] = 'en_US.UTF-8'
 os.environ['FREPPLE_HOME'] = '/home/frepple/workspace/frepple/bin'
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
+#os.environ['NUMBER_OF_PROCESSORS'] = '2'
 
 import django.core.handlers.wsgi
 application = django.core.handlers.wsgi.WSGIHandler()

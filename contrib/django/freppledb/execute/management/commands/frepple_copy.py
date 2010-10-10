@@ -56,7 +56,7 @@ class Command(BaseCommand):
          create a database link. 
          If the database are on the same server, you might still use the database
          link to avoid create a temporary dump file.         
-       - Can't be run multiple copies in parallel!
+       - Can't run multiple copies in parallel!
        - For oracle, this script probably requires a bit of changing to optimize
          it for your particular usage. 
   '''

@@ -2,9 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = README.txt
-
-SUBDIRS = frepple openerp 
+EXTRA_DIST = README.txt frepple openerp
 
 clean-local:
 	-rm -rf `find . -name '*.pyc'`

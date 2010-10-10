@@ -352,6 +352,9 @@ def scenarios(request):
           sc.save()
           messages.add_message(request, messages.INFO, 
             force_unicode(_("Released scenario '%(scenario)s'") % {'scenario': sc.name}))
+          if request.database == sc.name:
+            # Erasing the database that is currently selected.
+            request.prefix = ''
 
     # INVALID ACTION
     else:

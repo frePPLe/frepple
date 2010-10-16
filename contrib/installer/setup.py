@@ -38,7 +38,7 @@ freppledirectory = freppledb.__path__[0]
 
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment
-            'django', 'freppledb', 'email', 'cherrypy.wsgiserver',
+            'django', 'email', 'cherrypy.wsgiserver', 'csv',
             # Added for MySQL
             'MySQLdb', 'MySQLdb.constants', 'MySQLdb.converters',
             # Added for PostgreSQL
@@ -57,7 +57,7 @@ includes = ['django.contrib.auth',
             'django.contrib.sessions',
             'django.contrib.sites',
            ]
-excludes = ['pydoc','Tkinter', 'tcl', 'Tkconstants',
+excludes = ['pydoc','Tkinter', 'tcl', 'Tkconstants', 'freppledb'
             ]
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
@@ -100,20 +100,16 @@ ignores = [# Not using docutils
            'frepple',
            ]
 
-# Collect all static files to be included in the distribution
+# Collect all static files to be included in the distribution.
+# This includes our custom python code as well.
 from distutils.command.install import INSTALL_SCHEMES
 for scheme in INSTALL_SCHEMES.values(): scheme['data'] = scheme['purelib']
 data_files = []
 for srcdir, targetdir in [
-   (os.path.join(djangodirectory,'contrib','admin','templates'), 'templates1'),
+   (os.path.join(djangodirectory,'contrib','admin','templates'), 'templates'),
    (os.path.join(djangodirectory,'contrib','admin','media'), 'media'),
    (os.path.join(djangodirectory,'conf','locale'), os.path.join('conf','locale')),
-   (os.path.join(freppledirectory,'templates'), 'templates2'),
-   (os.path.join(freppledirectory,'static'), 'static'),
-   (os.path.join(freppledirectory,'locale'), 'locale'),
-   (os.path.join(freppledirectory,'execute'), 'execute'),
-   (os.path.join(freppledirectory,'input','fixtures'), os.path.join('fixtures','input')),
-   (os.path.join(freppledirectory,'common','fixtures'), os.path.join('fixtures','common')),
+   (freppledirectory, os.path.join('custom','freppledb')),
    ]:
    root_path_length = len(srcdir) + 1
    for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
@@ -123,7 +119,7 @@ for srcdir, targetdir in [
      # Append data files for this subdirectory
      data_files.append([
        os.path.join(targetdir, dirpath[root_path_length:]),
-       [os.path.join(dirpath, f) for f in filenames]
+       [os.path.join(dirpath, f) for f in filenames if not f.endswith(".pyc") and not f.endswith(".pyo")]
        ])
 
 # Run the py2exe program

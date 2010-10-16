@@ -91,7 +91,7 @@ class Command(BaseCommand):
     media = os.path.join(django.__path__[0],'contrib','admin','media')
     if not os.path.exists(media)or not S_ISDIR(os.stat(media)[ST_MODE]):
       # Media path used by the py2exe executable
-      media = os.path.join(settings.FREPPLE_APP,'media')
+      media = os.path.join(settings.FREPPLE_HOME,'media')
       if not os.path.exists(media)or not S_ISDIR(os.stat(media)[ST_MODE]):
         raise Exception("No valid media directory found")
 

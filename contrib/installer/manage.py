@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -28,12 +28,11 @@ from django.core.management import execute_manager, call_command
 # Environment settings (which are used in the Django settings file and need
 # to be updated BEFORE importing the settings)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-os.environ['FREPPLE_APP'] = os.path.split(sys.path[0])[0]
+os.environ['FREPPLE_APP'] = os.path.join(os.path.split(sys.path[0])[0],'custom') 
 
 # Sys.path contains the zip file with all packages. We need to put the
-# freppledb subdirectory from the zip-file separately on the path because
-# our django applications never refer to the project name.
-sys.path = [ os.path.join(sys.path[0],'freppledb'), sys.path[0] ]
+# application directory into the path as well.
+sys.path += [ os.environ['FREPPLE_APP'] ]
 
 # Default command is to run the web server
 if len(sys.argv) <= 1:
@@ -45,20 +44,6 @@ from django.db import DEFAULT_DB_ALIAS
 
 # Override the debugging settings
 settings.TEMPLATE_DEBUG = settings.DEBUG
-
-# Update the directories where fixtures are searched
-settings.FIXTURE_DIRS = (
-  os.path.join(settings.FREPPLE_APP,'fixtures','input').replace('\\','/'),
-  os.path.join(settings.FREPPLE_APP,'fixtures','common').replace('\\','/'),
-)
-
-# Update the template dirs
-settings.TEMPLATE_DIRS = (
-    # Always use forward slashes, even on Windows.
-    os.path.join(settings.FREPPLE_APP,'templates2').replace('\\','/'),
-    os.path.join(settings.FREPPLE_APP,'templates1').replace('\\','/'),
-    settings.FREPPLE_HOME.replace('\\','/'),
-)
 
 # Create the database if it doesn't exist yet
 noDatabaseSchema = False

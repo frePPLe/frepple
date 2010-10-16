@@ -65,6 +65,6 @@ urlpatterns += patterns('',
 # these pages.
 if settings.STANDALONE == True:
   urlpatterns += patterns('',(r'^static/(?P<path>.*)$', 'django.views.static.serve',
-       {'document_root': os.path.join(settings.FREPPLE_APP,'static'),
+       {'document_root': os.path.join(settings.FREPPLE_APP,'freppledb','static'),
         'show_indexes': False}),
     )

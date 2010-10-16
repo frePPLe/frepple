@@ -210,7 +210,7 @@ Section "Application" SecAppl
   ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
 
   ; Create a settings file for the server
-  StrCpy $9 "$INSTDIR\bin\settings.py"
+  StrCpy $9 "$INSTDIR\bin\custom\settings.py"
   FileOpen $9 $9 w
   FileWrite $9 "# Django and frePPLe support the following database backends: $\r$\n"
   FileWrite $9 "#  'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.$\r$\n"

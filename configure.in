@@ -359,10 +359,6 @@ AC_CHECK_HEADER(windows.h,
 # Compiler&linker flags and include&library directories
 #
 CPPFLAGS="-I\$(top_builddir)/include $CPPFLAGS"
-if test x$multithread = xtrue
-then
-  CXXFLAGS="-pthread $CXXFLAGS"
-fi
 if test x$debug = xtrue ; then
   # The settings on the next line are the normal debugging parameters
   CXXFLAGS="-ggdb -Wall $CXXFLAGS"
@@ -387,12 +383,20 @@ then
   AC_DEFINE([MT], [], [My flag to mark multi-threaded builds])
 fi
 case $host_os in
-  linux-gnu*)
-    LIBS="-ldl $LIBS"
-    ;;
   cygwin*)
+    if test x$multithread = xtrue
+    then
+      LIBS="-lpthread $LIBS"
+    fi
     # Linker option to avoid some ugly warnings...
     LDFLAGS="$LDFLAGS -Wl,--enable-auto-import"
+    ;;
+  *)
+    LIBS="-ldl $LIBS"
+    if test x$multithread = xtrue
+    then
+      CXXFLAGS="-pthread $CXXFLAGS"
+    fi
     ;;
 esac
 AM_CONDITIONAL(CYGWIN, test x$host_os = xcygwin)

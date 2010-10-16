@@ -34,7 +34,7 @@ except:
 if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
-  FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
+  FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
 FREPPLE_VERSION = '0.8.2.beta'
 
 # Determing whether Django runs as a standalone application or is deployed on a web server
@@ -114,7 +114,7 @@ LANGUAGES = (
   ('zh-tw', ugettext('Traditional Chinese')),
 )
 if (STANDALONE):
-  LOCALE_PATHS = [ os.path.join(FREPPLE_APP, 'conf', 'locale'), os.path.join(FREPPLE_APP,'locale'), ]
+  LOCALE_PATHS = [ os.path.join(FREPPLE_HOME, 'conf', 'locale'), os.path.join(FREPPLE_APP,'locale'), ]
 
 
 SITE_ID = 1
@@ -142,8 +142,8 @@ ROOT_URLCONF = 'freppledb.urls'
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates".
     # Always use forward slashes, even on Windows.
-    os.path.join(FREPPLE_APP,'templates').replace('\\','/'),
-    FREPPLE_HOME.replace('\\','/'),
+    os.path.join(FREPPLE_APP,'freppledb','templates').replace('\\','/'),
+    os.path.join(FREPPLE_HOME,'templates').replace('\\','/'),
 )
 
 INSTALLED_APPS = (
@@ -152,11 +152,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     #'django.contrib.sites',
     'django.contrib.admin',
-    'input',
-    'output',
-    'execute',
-    'common',
-    'freppledb',
+    'freppledb.input',
+    'freppledb.output',
+    'freppledb.execute',
+    'freppledb.common',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -185,7 +184,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user 
 
 # To use a customized authentication backend.
 AUTHENTICATION_BACKENDS = (
-    "common.auth.EmailBackend",
+    "freppledb.common.auth.EmailBackend",
 )
 
 # To add the user preferences to the standard admin
@@ -200,7 +199,6 @@ INTERNAL_IPS = ( '127.0.0.1', )
 # For frePPLe this is important when downloading csv-files. FrePPLe encodes the
 # output in this encoding.
 DEFAULT_CHARSET = 'utf-8'
-
 
 # The size of the "name" key field of the database models
 NAMESIZE = 60
@@ -228,6 +226,7 @@ if os.path.normcase(os.path.abspath(os.path.dirname(__file__))) != os.path.normc
   localsettings = True
   try: execfile(os.path.join(FREPPLE_APP,'settings.py'))
   except IOError:
+    # The file doesn't exist. No problem - all settings are at defaults.
     pass
   except SyntaxError, e:
     print "Error parsing file %s:\n   %s" % (e.filename, e)

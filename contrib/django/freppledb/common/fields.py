@@ -88,6 +88,7 @@ class DurationFormField(fields.MultiValueField):
         )
     super(DurationFormField, self).__init__(
       fields=f, widget=DurationWidget(), 
+      label=kwargs.get('label',''),
       help_text=kwargs.get('help_text',None)
       )
     self.required = kwargs.get('required',False)

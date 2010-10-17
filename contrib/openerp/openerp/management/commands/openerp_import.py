@@ -830,12 +830,14 @@ class Command(BaseCommand):
       transaction.leave_transaction_management(using=self.database)
       
 
-  # Importing setup matrices
-  #   - extracting recently changed frepple.setupmatrix objects
+  # Importing setup matrices and setup rules
+  #   - extracting ALL frepple.setupmatrix and frepple.setuprule objects.
+  #     This mapping assumes ALL matrices are maintained in OpenERP only.
   #   - meeting the criterion: 
   #        - %active = True
   #   - mapped fields OpenERP -> frePPLe setupmatrix
   #        - %id %name -> name
+  #   - adapter is NOT implemented in delta mode!
   def import_setupmatrices(self, sock, cursor):  
     transaction.enter_transaction_management(using=self.database)
     transaction.managed(True, using=self.database)
@@ -843,39 +845,55 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print "Importing setup matrices..."
-      cursor.execute("SELECT name FROM setupmatrix")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      cursor.execute("delete FROM setuprule")
+      cursor.execute("delete FROM setupmatrix")
+      
+      # Get all setup matrices
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
-        'frepple.setupmatrix', 'search', 
-        [ '|',('Create_date','>', self.delta),('write_date','>', self.delta)])
-      fields = ['name', 'active']
-      insert = []
-      update = []
-      delete = []
+        'frepple.setupmatrix', 'search', [])
+      fields = ['name',]
+      datalist = []
       for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'frepple.setupmatrix', 'read', ids, fields):
-        name = u'%d %s' % (i['id'],i['name'])
-        if i['active']:
-          if not name in frepple_keys:
-            insert.append( (name,) )
-        elif name in frepple_keys:
-          delete.append( (name,) )
+        datalist.append((u'%d %s' % (i['id'],i['name']),))
       cursor.executemany(
         "insert into setupmatrix \
           (name,lastmodified) \
           values (%%s,'%s')" % self.date,
-        insert)
-      cursor.executemany(
-        "delete from setupmatrix where name=%s",
-        delete)
-      transaction.commit(using=self.database)
+        datalist
+        )
       if self.verbosity > 0:
-        print "Inserted %d new setup matrices" % len(insert)
-        print "Updated %d existing setup matrices" % len(update)
-        print "Deleted %d setup matrices" % len(delete)
-        print "Imported setup matrices in %.2f seconds" % (time() - starttime)
+        print "Inserted %d new setup matrices" % len(datalist)
+      
+      # Get all setup rules
+      ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
+        'frepple.setuprule', 'search', [])
+      fields = ['priority', 'fromsetup', 'tosetup', 'duration', 'cost', 'active', 'setupmatrix_id' ]
+      cnt = 0
+      datalist = []      
+      for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'frepple.setuprule', 'read', ids, fields):
+        datalist.append( (cnt, i['priority'], u'%d %s' % (i['setupmatrix_id'][0],i['setupmatrix_id'][1]), i['fromsetup'], i['tosetup'], i['duration']*3600, i['cost']) )
+        cnt += 1       
+      cursor.executemany(
+        "insert into setuprule \
+          (id, priority, setupmatrix_id, fromsetup, tosetup, duration, cost, lastmodified) \
+          values (%%s,%%s,%%s,%%s,%%s,%%s,%%s,'%s')" % self.date,
+        datalist
+        )               
+      if self.verbosity > 0:
+        print "Inserted %d new setup rules" % len(datalist)
+        
+      transaction.commit(using=self.database)        
     except Exception, e:
+      try:
+        if e.faultString.find("Object frepple.setupmatrix doesn't exist") >= 0:
+          print "Error importing setup matrices:"
+          print "  The frePPLe add-on is not installed on your OpenERP server."
+          print "  No setup matrices will be downloaded."
+        else:
+          print "Error importing setup matrices: %s" % e
+      except:
+        print "Error importing setup matrices: %s" % e
       transaction.rollback(using=self.database)
-      print "Error importing setup matrices: %s" % e
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)

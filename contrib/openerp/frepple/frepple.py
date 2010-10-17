@@ -59,7 +59,7 @@ class frepple_setuprule(osv.osv):
         'active': fields.boolean('Active'),
         'setupmatrix_id': fields.many2one('frepple.setupmatrix', 'Setup Matrix', select=True, ondelete="cascade"),
         'duration': fields.float('Duration', required=True,
-            help="Time taken for this conversion."),
+            help="Number of working hours taken for this conversion."),
         'cost': fields.float('Cost', required=True,
             help="Cost involved in this conversion."),
         'priority': fields.integer('Priority', required=True,

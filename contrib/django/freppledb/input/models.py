@@ -82,9 +82,9 @@ class HierarchyModel(models.Model):
     for i in cls.objects.using(database).values('name','owner'):
       nodes[i['name']] = i['owner']
       
-    # Loop over nodes without parent)
-    cnt = 1
-    for i, j in nodes.items():
+    # Loop over nodes without parent
+    cnt = 1    
+    for i, j in sorted(nodes.items()):
       if j == None: 
         cnt = tagChildren(i,cnt) 
     transaction.commit(using=database)

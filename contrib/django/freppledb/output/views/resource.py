@@ -95,8 +95,8 @@ class OverviewReport(TableReport):
        from (
          select res.name as name, res.location_id as location_id,
                d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-               coalesce(sum(bucket.value * %s),0) as total_available,
-               coalesce(sum(bucket.value * %s * coalesce(bucket2.value,1)),0) as real_available
+               coalesce(sum(calendarbucket.value * %s),0) as total_available,
+               coalesce(sum(calendarbucket.value * %s * coalesce(bucket2.value,1)),0) as real_available
          from (%s) res
          -- Multiply with buckets
          cross join (
@@ -106,14 +106,14 @@ class OverviewReport(TableReport):
               group by %s, %s_start, %s_end
               ) d
          -- Available capacity
-         left join bucket
-         on res.maximum_id = bucket.calendar_id
-         and d.startdate <= bucket.enddate
-         and d.enddate >= bucket.startdate
+         left join calendarbucket
+         on res.maximum_id = calendarbucket.calendar_id
+         and d.startdate <= calendarbucket.enddate
+         and d.enddate >= calendarbucket.startdate
          -- Unavailable capacity
          left join location on res.location_id = location.name
          left join calendar on location.available_id = calendar.name
-         left join bucket bucket2 on calendar.name = bucket2.calendar_id
+         left join calendarbucket bucket2 on calendar.name = bucket2.calendar_id
          and d.startdate <= bucket2.enddate
          and d.enddate >= bucket2.startdate
          -- Grouping
@@ -123,7 +123,7 @@ class OverviewReport(TableReport):
        left join (
          select theresource as resource_id, 
            out_loadplan.startdate as start1, out_loadplan.enddate as end1, 
-           bucket.startdate as start2, bucket.enddate as end2,
+           calendarbucket.startdate as start2, calendarbucket.enddate as end2,
            out_loadplan.quantity as quantity
          from out_loadplan
          inner join (%s) res2
@@ -134,10 +134,10 @@ class OverviewReport(TableReport):
          inner join operation on out_operationplan.operation = operation.name
          left join location on operation.location_id = location.name
          left join calendar on location.available_id = calendar.name
-         left join bucket bucket on calendar.name = bucket.calendar_id
-         and out_loadplan.startdate <= bucket.enddate
-         and out_loadplan.enddate >= bucket.startdate
-         and bucket.value > 0
+         left join calendarbucket on calendar.name = calendarbucket.calendar_id
+         and out_loadplan.startdate <= calendarbucket.enddate
+         and out_loadplan.enddate >= calendarbucket.startdate
+         and calendarbucket.value > 0
          ) loaddata
        on x.name = loaddata.resource_id
        and x.startdate <= loaddata.end1
@@ -148,8 +148,8 @@ class OverviewReport(TableReport):
        ''' % ( units, units, units, 
          sql_overlap3('loaddata.start1','loaddata.end1','x.startdate','x.enddate','loaddata.start2','loaddata.end2'),
          units, 
-         sql_overlap3('bucket.startdate','bucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
-         sql_overlap3('bucket.startdate','bucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
+         sql_overlap3('calendarbucket.startdate','calendarbucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
+         sql_overlap3('calendarbucket.startdate','calendarbucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
          basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
          connection.ops.quote_name(bucket),bucket,bucket,basesql,
          startdate,enddate,sortsql)

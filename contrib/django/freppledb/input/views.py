@@ -970,14 +970,14 @@ class CalendarList(ListReport):
     )
 
 
-class BucketList(ListReport):
+class CalendarBucketList(ListReport):
   '''
   A list report to show calendar buckets.
   '''
-  template = 'input/bucketlist.html'
-  title = _("Bucket List")
-  basequeryset = Bucket.objects.all()
-  model = Bucket
+  template = 'input/calendarbucketlist.html'
+  title = _("Calendar Bucket List")
+  basequeryset = CalendarBucket.objects.all()
+  model = CalendarBucket
   frozenColumns = 1
   rows = (
     ('id', {

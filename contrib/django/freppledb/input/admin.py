@@ -56,23 +56,23 @@ class Parameter_admin(MultiDBModelAdmin):
 site.register(Parameter,Parameter_admin)
 
 
-class Bucket_inline(MultiDBTabularInline):
-  model = Bucket
+class CalendarBucket_inline(MultiDBTabularInline):
+  model = CalendarBucket
   extra = 3
 
   
-class Bucket_admin(MultiDBModelAdmin):
-  model = Bucket
+class CalendarBucket_admin(MultiDBModelAdmin):
+  model = CalendarBucket
   save_on_top = True
   save_as = True
-site.register(Bucket,Bucket_admin)
+site.register(CalendarBucket,CalendarBucket_admin)
 
 
 class Calendar_admin(MultiDBModelAdmin):
   model = Calendar
   save_on_top = True
   save_as = True
-  inlines = [ Bucket_inline, ]
+  inlines = [ CalendarBucket_inline, ]
 site.register(Calendar,Calendar_admin)
 
 

@@ -58,7 +58,7 @@ urlpatterns = patterns('',
   (r'^admin/input/dates/$', 'freppledb.common.report.view_report',
     {'report': freppledb.input.views.DatesList,}),
   (r'^admin/input/bucket/$', 'freppledb.common.report.view_report',
-    {'report': freppledb.input.views.BucketList,}),
+    {'report': freppledb.input.views.CalendarBucketList,}),
   (r'^admin/input/parameter/$', 'freppledb.common.report.view_report',
     {'report': freppledb.input.views.ParameterList,}),
 

@@ -92,7 +92,7 @@ def loadCalendars(cursor):
   print 'Importing buckets...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT calendar_id, startdate, enddate, name, priority, value FROM bucket")
+  cursor.execute("SELECT calendar_id, startdate, enddate, name, priority, value FROM calendarbucket")
   x = [ header ]
   x.append('<calendars>')
   for i, j, k, l, m, n in cursor.fetchall():

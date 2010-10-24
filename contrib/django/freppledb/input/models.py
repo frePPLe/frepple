@@ -205,22 +205,22 @@ class Calendar(AuditModel):
         b.delete(using=db)
       elif b.startdate < start and b.enddate > end:
         # New value is completely within this bucket
-        Bucket(calendar=self, startdate=start, value=str(value)).save(using=db)
-        Bucket(calendar=self, startdate=end, value=str(b.value)).save(using=db)
+        CalendarBucket(calendar=self, startdate=start, value=str(value)).save(using=db)
+        CalendarBucket(calendar=self, startdate=end, value=str(b.value)).save(using=db)
       elif b.startdate < start:
         # An existing bucket is partially before the new daterange
         b.enddate = start
         b.save(using=db)
-        Bucket(calendar=self, startdate=start, enddate=end, value=str(value)).save(using=db)
+        CalendarBucket(calendar=self, startdate=start, enddate=end, value=str(value)).save(using=db)
       elif b.enddate > end:
         # An existing bucket is partially after the new daterange
-        Bucket(calendar=self, startdate=b.startdate, enddate=end, value=str(value)).save(using=db)
+        CalendarBucket(calendar=self, startdate=b.startdate, enddate=end, value=str(value)).save(using=db)
         b.startdate = end
         b.save(using=db)
     if self.buckets.count() == 0:
       # There wasn't any bucket yet...
-      Bucket(calendar=self, startdate=start, value=str(value)).save(using=db)
-      Bucket(calendar=self, startdate=end, value="0").save(using=db)
+      CalendarBucket(calendar=self, startdate=start, value=str(value)).save(using=db)
+      CalendarBucket(calendar=self, startdate=end, value="0").save(using=db)
     # Create a change log entry, if a user is specified
     if user:
       global CALENDARID
@@ -242,7 +242,7 @@ class Calendar(AuditModel):
     ordering = ['name']
 
 
-class Bucket(AuditModel):
+class CalendarBucket(AuditModel):
   '''
   @todo The calendar editing isnt as flexible as the frePPLe core: the
   user interface only support non-overlapping calendar entries to keep SQL
@@ -269,7 +269,7 @@ class Bucket(AuditModel):
 
   class Meta(AuditModel.Meta):
     ordering = ['startdate','name']
-    db_table = 'bucket'
+    db_table = 'calendarbucket'
     verbose_name = _('calendar bucket')
     verbose_name_plural = _('calendar buckets')
 
@@ -306,14 +306,14 @@ class Bucket(AuditModel):
     # Ideally we would check all inserts, but that is very time consuming
     # when creating or restoring big datasets.
     if instance.enddate == datetime(2030,12,31) or not kwargs['created']:
-      Bucket.updateEndDate(instance)
+      CalendarBucket.updateEndDate(instance)
 
 # This dispatcher function is called after a bucket is saved. There seems no cleaner way to do this, since
 # the method calendar.buckets.all() is only up to date after the save...
 # The method is not very efficient: called for every single bucket, and recursively triggers
 # another save and dispatcher event
-signals.post_save.connect(Bucket.insertBucket, sender=Bucket)
-signals.post_delete.connect(Bucket.updateEndDate, sender=Bucket)
+signals.post_save.connect(CalendarBucket.insertBucket, sender=CalendarBucket)
+signals.post_delete.connect(CalendarBucket.updateEndDate, sender=CalendarBucket)
 
 
 class Location(AuditModel, HierarchyModel):

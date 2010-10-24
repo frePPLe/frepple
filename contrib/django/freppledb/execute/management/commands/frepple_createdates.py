@@ -28,7 +28,7 @@ from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from freppledb.input.models import *
+from freppledb.input.models import Bucket, BucketDetail
 from freppledb.execute.models import log
 
 
@@ -82,7 +82,7 @@ class Command(BaseCommand):
     # Validate the date arguments
     try:
       curdate = datetime.strptime(start,'%Y-%m-%d')
-      end = datetime.strptime(end,'%Y-%m-%d')
+      enddate = datetime.strptime(end,'%Y-%m-%d')
     except Exception, e:
       raise CommandError("Date is not matching format YYYY-MM-DD")
 
@@ -93,12 +93,32 @@ class Command(BaseCommand):
       log( category='CREATE', theuser=user,
         message = _('Start initializing dates')).save(using=database)
 
-      # Delete the previous set of records
-      connections[database].cursor().execute('DELETE FROM dates')
-      transaction.commit(using=database)
+      # Delete previous contents
+      connections[database].cursor().execute(
+        "delete from bucketdetail where bucket_id in ('year', 'quarter','month','week','day')"
+        )
+      connections[database].cursor().execute(
+        "delete from bucket where name in ('year', 'quarter','month','week','day')"
+        )
+      
+      # Create buckets
+      y = Bucket(name='year',description='Yearly time buckets')
+      q = Bucket(name='quarter',description='Quarterly time buckets')
+      m = Bucket(name='month',description='Monthly time buckets')
+      w = Bucket(name='week',description='Weeky time buckets')
+      d = Bucket(name='day',description='Daily time buckets')
+      y.save(using=database)      
+      q.save(using=database)      
+      m.save(using=database)      
+      w.save(using=database)      
+      d.save(using=database)      
 
       # Loop over all days in the chosen horizon
-      while curdate < end:
+      prev_year = None
+      prev_quarter = None
+      prev_month = None    
+      prev_week = None    
+      while curdate < enddate:
         month = int(curdate.strftime("%m"))  # an integer in the range 1 - 12
         quarter = (month-1) / 3 + 1          # an integer in the range 1 - 4
         year = int(curdate.strftime("%Y"))
@@ -110,29 +130,49 @@ class Command(BaseCommand):
         if week_start.date() < year_start: week_start = year_start
         if week_end.date() > year_end: week_end = year_end
         
-        # Main entry
-        Dates(
-          day = str(curdate.date()),
-          day_start = curdate,
-          day_end = curdate + timedelta(1),
-          dayofweek = dayofweek,
-          week = curdate.strftime("%y W%W"),     # Weeks are starting on monday
-          week_start = week_start,
-          week_end = week_end,
-          month =  curdate.strftime("%b %y"),
-          month_start = date(year, month, 1),
-          month_end = date(year+month/12, month+1-12*(month/12), 1),
-          quarter = "%02d Q%s" % (year-2000,quarter),
-          quarter_start = date(year, quarter*3-2, 1),
-          quarter_end = date(year+quarter/4, quarter*3+1-12*(quarter/4), 1),
-          year = curdate.strftime("%Y"),
-          year_start = year_start,
-          year_end = year_end,
+        # Create buckets
+        if year != prev_year:
+          prev_year = year
+          BucketDetail(
+            bucket = y,
+            name = str(year),
+            startdate = year_start,
+            enddate = year_end
+            ).save(using=database)
+        if quarter != prev_quarter:
+          prev_quarter = quarter
+          BucketDetail(
+            bucket = q,
+            name = "%02d Q%s" % (year-2000,quarter),
+            startdate = date(year, quarter*3-2, 1),
+            enddate = date(year+quarter/4, quarter*3+1-12*(quarter/4), 1)
+            ).save(using=database)
+        if month != prev_month:
+          prev_month = month
+          BucketDetail(
+            bucket = m,
+            name = curdate.strftime("%b %y"),
+            startdate = date(year, month, 1),
+            enddate = date(year+month/12, month+1-12*(month/12), 1),
+            ).save(using=database)
+        if week_start != prev_week:
+          prev_week = week_start
+          BucketDetail(
+            bucket = w,
+            name = curdate.strftime("%y W%W"),
+            startdate = week_start,
+            enddate = week_end,
+            ).save(using=database)
+        BucketDetail(
+          bucket = d,
+          name = str(curdate.date()),
+          startdate = curdate,
+          enddate = curdate + timedelta(1),
           ).save(using=database)
 
         # Next date
         curdate = curdate + timedelta(1)
-
+              
       # Log success
       log(category='CREATE', theuser=user,
         message=_('Finished initializing dates')).save(using=database)

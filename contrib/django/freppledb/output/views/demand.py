@@ -100,11 +100,10 @@ class OverviewReport(TableReport):
           from (%s) items
           -- Multiply with buckets
           cross join (
-               select %s as bucket, %s_start as startdate, %s_end as enddate
-               from dates
-               where day_start >= '%s' and day_start < '%s'
-               group by %s, %s_start, %s_end
-               ) d
+             select name as bucket, startdate, enddate
+             from bucketdetail
+             where bucket_id = '%s' and startdate >= '%s' and startdate < '%s'
+             ) d
           -- Planned quantity
           left join out_demand
           on items.name = out_demand.item
@@ -135,8 +134,7 @@ class OverviewReport(TableReport):
         order by %s, y.startdate
        ''' % (sql_overlap('fcst.startdate','fcst.enddate','y.startdate','y.enddate'),
          sql_datediff('fcst.enddate','fcst.startdate'),
-         basesql,connection.ops.quote_name(bucket),bucket,bucket,
-       startdate,enddate,connection.ops.quote_name(bucket),bucket,bucket,sortsql)
+         basesql,bucket,startdate,enddate,sortsql)
     cursor.execute(query,baseparams)
 
     # Build the python result

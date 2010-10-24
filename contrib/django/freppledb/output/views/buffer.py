@@ -102,10 +102,9 @@ class OverviewReport(TableReport):
         from (%s) buf
         -- Multiply with buckets
         cross join (
-             select %s as bucket, %s_start as startdate, %s_end as enddate
-             from dates
-             where day_start >= '%s' and day_start < '%s'
-             group by %s, %s_start, %s_end
+             select name as bucket, startdate, enddate
+             from bucketdetail
+             where bucket_id = '%s' and startdate >= '%s' and startdate < '%s'
              ) d
         -- Consumed and produced quantities
         left join out_flowplan
@@ -116,8 +115,7 @@ class OverviewReport(TableReport):
         group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
         order by %s, d.startdate
       ''' % (sql_max('out_flowplan.quantity','0.0'),sql_min('out_flowplan.quantity','0.0'),
-        basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
-        connection.ops.quote_name(bucket),bucket,bucket,sortsql)
+        basesql,bucket,startdate,enddate,sortsql)
     cursor.execute(query, baseparams)
 
     # Build the python result

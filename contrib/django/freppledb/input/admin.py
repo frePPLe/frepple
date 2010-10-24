@@ -241,16 +241,21 @@ class Forecast_admin(MultiDBModelAdmin):
 site.register(Forecast,Forecast_admin)
 
 
-class Dates_admin(MultiDBModelAdmin):
-  model = Dates
-  fieldsets = (
-      (None, {'fields': (('day','day_start','day_end'),
-                         'dayofweek',
-                         ('week','week_start','week_end'),
-                         ('month','month_start','month_end'),
-                         ('quarter','quarter_start','quarter_end'),
-                         ('year','year_start','year_end'),
-                         ('standard','standard_start','standard_end'),
-                         )}),
-      )
-site.register(Dates,Dates_admin)
+class BucketDetail_inline(MultiDBTabularInline):
+  model = BucketDetail
+  extra = 3
+
+  
+class BucketDetail_admin(MultiDBModelAdmin):
+  model = BucketDetail
+  save_on_top = True
+  save_as = True
+site.register(BucketDetail,BucketDetail_admin)
+
+
+class Bucket_admin(MultiDBModelAdmin):
+  model = Bucket
+  save_on_top = True
+  save_as = True
+  inlines = [ BucketDetail_inline, ]
+site.register(Bucket,Bucket_admin)

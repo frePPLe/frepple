@@ -92,11 +92,10 @@ class OverviewReport(TableReport):
           from (%s) fcst
           -- Multiply with buckets
           cross join (
-               select %s as bucket, %s_start as startdate, %s_end as enddate
-               from dates
-               where day_start >= '%s' and day_start < '%s'
-               group by %s, %s_start, %s_end
-               ) d
+             select name as bucket, startdate, enddate
+             from bucketdetail
+             where bucket_id = '%s' and startdate >= '%s' and startdate < '%s'
+             ) d
           -- Forecasted quantity
           left join forecastdemand
           on fcst.name = forecastdemand.forecast_id
@@ -130,8 +129,7 @@ class OverviewReport(TableReport):
          sql_datediff('out_forecast.enddate','out_forecast.startdate'),
          sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
          sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),
-         basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
-         connection.ops.quote_name(bucket),bucket,bucket,sortsql)
+         basesql,bucket,startdate,enddate,sortsql)
     cursor.execute(query, baseparams)
 
     # Build the python result

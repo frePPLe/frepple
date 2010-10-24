@@ -83,11 +83,10 @@ class OverviewReport(TableReport):
           from (%s) oper
           -- Multiply with buckets
           cross join (
-               select %s as bucket, %s_start as startdate, %s_end as enddate
-               from dates
-               where day_start >= '%s' and day_start < '%s'
-               group by %s, %s_start, %s_end
-               ) d
+             select name as bucket, startdate, enddate
+             from bucketdetail
+             where bucket_id = '%s' and startdate >= '%s' and startdate < '%s'
+             ) d
           -- Planned and frozen quantity, based on start date
           left join out_operationplan o1
           on oper.name = o1.operation
@@ -104,9 +103,7 @@ class OverviewReport(TableReport):
         -- Grouping and ordering
         group by x.row1, x.row2, x.col1, x.col2, x.col3
         order by %s, x.col2
-      ''' % (sql_true(),sql_true(),basesql,
-      connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
-      connection.ops.quote_name(bucket),bucket,bucket,sortsql)
+      ''' % (sql_true(),sql_true(),basesql,bucket,startdate,enddate,sortsql)
     cursor.execute(query, baseparams)
 
     # Convert the SQl results to python

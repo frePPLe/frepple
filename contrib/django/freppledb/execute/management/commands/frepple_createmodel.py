@@ -25,6 +25,7 @@ from optparse import make_option
 from datetime import timedelta, datetime, date
 
 from django.core.management.base import BaseCommand, CommandError
+from django.core import management
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -179,40 +180,22 @@ class Command(BaseCommand):
 
       # Planning horizon
       # minimum 10 daily buckets, weekly buckets till 40 days after current
+      if verbosity>0: print "Updating buckets..."
+      management.call_command('frepple_createdates', user=user, nonfatal=True, database=database)      
       if verbosity>0: print "Updating horizon telescope..."
-      updateTelescope(10, 40)
-
+      updateTelescope(10, 40, 730)
+            
       # Working days calendar
       if verbosity>0: print "Creating working days..."
       workingdays = Calendar.objects.using(database).create(name="Working Days",type= "calendar_boolean")
       weeks = Calendar.objects.using(database).create(name="Weeks")
       cur = None
       cur2 = None
-      for i in Dates.objects.using(database).using(database).all():
-        curdate = datetime(i.day_start.year, i.day_start.month, i.day_start.day)
-        dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
-        if dayofweek == 1:
-          # A bucket for the working week: monday through friday
-          if cur:
-            cur.enddate = curdate
-            cur.save(using=database)
-          if cur2:
-            cur2.enddate = curdate
-            cur2.save(using=database)
-          cur = Bucket(startdate=curdate, value=1, calendar=workingdays)
-          cur2 = Bucket(startdate=curdate, value=1, calendar=weeks)
-        elif dayofweek == 6:
-          # A bucket for the weekend
-          if cur:
-            cur.enddate = curdate
-            cur.save(using=database)
-          if cur2:
-            cur2.enddate = curdate
-            cur2.save(using=database)
-          cur = Bucket(startdate=curdate, value=0, calendar=workingdays)
-          cur2 = Bucket(startdate=curdate, value=0, calendar=weeks)
-      if cur: cur.save(using=database)
-      if cur2: cur2.save(using=database)
+      for i in BucketDetail.objects.using(database).filter(bucket="week").all():
+        curdate = i.startdate + timedelta(5)
+        CalendarBucket(startdate=i.startdate, enddate=curdate, value=1, calendar=workingdays).save(using=database)
+        CalendarBucket(startdate=curdate, enddate=i.enddate, value=0, calendar=workingdays).save(using=database)
+        CalendarBucket(startdate=i.startdate, enddate=i.enddate, value=1, calendar=weeks).save(using=database)
       transaction.commit(using=database)
 
       # Create a random list of categories to choose from
@@ -233,7 +216,7 @@ class Command(BaseCommand):
         loc = Location(name='Loc %05d' % int(random.uniform(1,cluster)))
         loc.save(using=database)
         cal = Calendar(name='capacity for res %03d' %i, category='capacity')
-        bkt = Bucket(startdate=startdate, value=resource_size, calendar=cal)
+        bkt = CalendarBucket(startdate=startdate, value=resource_size, calendar=cal)
         cal.save(using=database)
         bkt.save(using=database)
         r = Resource.objects.using(database).create(name = 'Res %03d' % i, maximum=cal, location=loc)
@@ -386,7 +369,7 @@ class Command(BaseCommand):
       transaction.leave_transaction_management(using=database)
 
 
-def updateTelescope(min_day_horizon=10, min_week_horizon=40):
+def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=730):
   '''
   Update for the telescopic horizon.
   The first argument specifies the minimum number of daily buckets. Additional
@@ -404,43 +387,72 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
   tmp_debug = settings.DEBUG
   settings.DEBUG = False
 
-  first_date = Dates.objects.using(database).all()[0].day_start
-  current_date = datetime.strptime(Parameter.objects.using(database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
-  limit = current_date + timedelta(min_day_horizon)
-  mode = 'day'
   transaction.enter_transaction_management(using=database)
   transaction.managed(True, using=database)
   try:
-    m = []
-    for i in Dates.objects.using(database).all():
-      if i.day_start < current_date:
-        # A single bucket for all dates in the past
-        i.standard = 'past'
-        i.standard_start = first_date
-        i.standard_end = current_date
-      elif mode == 'day':
-        # Daily buckets
-        i.standard = str(i.day_start.date())[2:]  # Leave away the leading century, ie "20"
-        i.standard_start = i.day_start
-        i.standard_end = i.day_end
-        if i.day_start >= limit and i.dayofweek == 0:
-          mode = 'week'
-          limit = (current_date + timedelta(min_week_horizon)).date()
-          limit = datetime(limit.year+limit.month/12, limit.month+1-12*(limit.month/12), 1)
-      elif i.day_start < limit:
-        # Weekly buckets
-        i.standard = i.week
-        i.standard_start = i.week_start
-        i.standard_end = (i.week_end > limit and limit) or i.week_end
-      else:
-        # Monthly buckets
-        i.standard = i.month
-        i.standard_start = i.month_start
-        i.standard_end = i.month_end
-      m.append(i)
-    # Needed to create a temporary list of the objects to save, since the
-    # database table is locked during the iteration
-    for i in m: i.save(using=database)
+
+    # Delete previous contents
+    connections[database].cursor().execute(
+      "delete from bucketdetail where bucket_id = 'telescope'"
+      )
+    connections[database].cursor().execute(
+      "delete from bucket where name = 'telescope'"
+      )
+      
+    # Create bucket
+    b = Bucket(name='telescope',description='Time buckets with decreasing granularity')
+    b.save(using=database)
+    
+    # Create bucket for all dates in the past
+    startdate = datetime.strptime(Parameter.objects.using(database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
+    curdate = startdate
+    BucketDetail(
+      bucket = b,
+      name = 'past',
+      startdate = datetime(2000,1,1),
+      enddate = curdate, 
+      ).save(using=database)
+    
+    # Create daily buckets
+    limit = curdate + timedelta(min_day_horizon)
+    while curdate < limit or curdate.strftime("%w") != '0':
+      BucketDetail(
+        bucket = b,
+        name = str(curdate.date()),
+        startdate = curdate,
+        enddate = curdate + timedelta(1)
+        ).save(using=database)
+      curdate = curdate + timedelta(1)
+    
+    # Create weekly buckets
+    limit = startdate + timedelta(min_week_horizon)
+    stop = False
+    while not stop:
+      enddate = curdate + timedelta(7)
+      if curdate > limit and curdate.month != enddate.month:
+        stop = True
+        enddate = datetime(enddate.year, enddate.month, 1)
+      BucketDetail(
+        bucket = b,
+        name = curdate.strftime("%y W%W"),
+        startdate = curdate,
+        enddate = enddate
+        ).save(using=database)
+      curdate = enddate
+      
+    # Create monthly buckets
+    limit = startdate + timedelta(min_month_horizon)
+    while curdate < limit:
+      enddate = curdate + timedelta(32)
+      enddate = datetime(enddate.year, enddate.month, 1)
+      BucketDetail(
+        bucket = b,
+        name = curdate.strftime("%b %y"),
+        startdate = curdate,
+        enddate = enddate
+        ).save(using=database)
+      curdate = enddate
+          
     transaction.commit(using=database)
   finally:
     transaction.rollback(using=database)

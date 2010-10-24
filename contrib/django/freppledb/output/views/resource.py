@@ -100,11 +100,10 @@ class OverviewReport(TableReport):
          from (%s) res
          -- Multiply with buckets
          cross join (
-              select %s as bucket, %s_start as startdate, %s_end as enddate
-              from dates
-              where day_start >= '%s' and day_start < '%s'
-              group by %s, %s_start, %s_end
-              ) d
+             select name as bucket, startdate, enddate
+             from bucketdetail
+             where bucket_id = '%s' and startdate >= '%s' and startdate < '%s'
+             ) d
          -- Available capacity
          left join calendarbucket
          on res.maximum_id = calendarbucket.calendar_id
@@ -150,8 +149,7 @@ class OverviewReport(TableReport):
          units, 
          sql_overlap3('calendarbucket.startdate','calendarbucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
          sql_overlap3('calendarbucket.startdate','calendarbucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
-         basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
-         connection.ops.quote_name(bucket),bucket,bucket,basesql,
+         basesql,bucket,startdate,enddate,basesql,
          startdate,enddate,sortsql)
     cursor.execute(query, baseparams + baseparams)
     

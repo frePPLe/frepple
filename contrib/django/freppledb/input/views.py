@@ -1194,62 +1194,59 @@ class OperationPlanList(ListReport):
     )
 
 
-class DatesList(ListReport):
+class BucketList(ListReport):
   '''
   A list report to show dates.
   '''
-  template = 'input/dateslist.html'
-  title = _("Date List")
-  basequeryset = Dates.objects.all()
-  model = Dates
+  template = 'input/bucketlist.html'
+  title = _("Bucket List")
+  basequeryset = Bucket.objects.all()
+  model = Bucket
   frozenColumns = 1
   rows = (
-    ('day', {
-      'title': _('day'),
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(),
+      }),
+    ('lastmodified', {
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
-    ('dayofweek', {
-      'title': _('day of week'),
+    )
+
+
+class BucketDetailList(ListReport):
+  '''
+  A list report to show dates.
+  '''
+  template = 'input/bucketdetaillist.html'
+  title = _("Bucket Detail List")
+  basequeryset = BucketDetail.objects.all()
+  model = BucketDetail
+  frozenColumns = 1
+  rows = (
+    ('id', {
+      'title': _('id'),
       'filter': FilterNumber(),
       }),
-    ('week', {
-      'title': _('week'),
-      'filter': FilterText(),
+    ('bucket', {
+      'title': _('bucket'),
+      'filter': FilterText(field='bucket__name'),
       }),
-    ('month', {
-      'title': _('month'),
-      'filter': FilterText(),
-      }),
-    ('quarter', {
-      'title': _('quarter'),
-      'filter': FilterText(),
-      }),
-    ('year', {
-      'title': _('year'),
-      'filter': FilterText(),
-      }),
-    ('standard', {
-      'title': _('standard'),
-      'filter': FilterText(),
-      }),
-    ('week_start', {
-      'title': _('week start'),
+    ('startdate', {
+      'title': _('start date'),
       'filter': FilterDate(),
       }),
-    ('month_start', {
-      'title': _('month start'),
+    ('enddate', {
+      'title': _('end date'),
       'filter': FilterDate(),
       }),
-    ('quarter_start', {
-      'title': _('quarter start'),
-      'filter': FilterDate(),
-      }),
-    ('year_start', {
-      'title': _('year start'),
-      'filter': FilterDate(),
-      }),
-    ('standard_start', {
-      'title': _('standard start'),
+    ('lastmodified', {
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )

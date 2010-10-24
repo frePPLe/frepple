@@ -62,17 +62,13 @@ from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 
-from freppledb.input.models import Parameter, Buffer
+from freppledb.input.models import Parameter, Buffer, BucketDetail
 from freppledb.common.db import python_date
 
 
 # Parameter settings
 ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
 ON_ENDS = 2            # Number of pages shown at the start and the end of the page list
-
-# A variable to cache bucket information in memory
-datelist = {}
-
 
 # URL parameters that are not query arguments
 reservedParameters = ('o', 'p', 't', 'reporttype', 'pop', 'reportbucket', 'reportstart', 'reportend')
@@ -453,7 +449,7 @@ def _create_columnheader(req, cls, bucketlist):
   Generate html header row for the columns of a table report.
   '''
   # @todo not very clean and consistent with cross and row
-  return mark_safe(' '.join(['<th><a title="%s - %s">%s</a></th>' % (j['start'], j['end'], j['name']) for j in bucketlist]))
+  return mark_safe(' '.join(['<th><a title="%s - %s">%s</a></th>' % (j['startdate'], j['enddate'], j['name']) for j in bucketlist]))
 
 
 def _create_crossheader(req, cls):
@@ -678,7 +674,6 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
   The data are retrieved from the database table dates, and are
   stored in a python variable for performance
   '''
-  global datelist
 
   # Select the bucket size (unless it is passed as argument)
   if pref == None: pref = request.user.get_profile()
@@ -727,41 +722,15 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
       except:
         try: end = pref.enddate
         except: pass
-        if not end: end = date(2030,1,1)
     else:
       try: end = pref.enddate
       except: pass
-      if not end: end = date(2030,1,1)
-
-  # Check if the argument is valid
-  if bucket not in ('standard','day','week','month','quarter','year'):
-    raise Http404, "bucket name %s not valid" % bucket
-
-  # Pick up the buckets
-  # Assumption: all database schemas have the same buckets as the default database!
-  if not bucket in datelist:
-    # Read the buckets from the database if the data isn't available yet
-    cursor = connection.cursor()
-    field = bucket
-    cursor.execute('''
-      select %s, min(day_start), max(day_start)
-      from dates
-      group by %s
-      order by min(day_start)''' \
-      % (connection.ops.quote_name(field),connection.ops.quote_name(field)))
-    # Compute the data to store in memory
-    datelist[bucket] = [{'name': i, 'start': python_date(j), 'end': python_date(k)} for i,j,k in cursor.fetchall()]
     
   # Filter based on the start and end date
-  if start and end:
-    res = filter(lambda b: b['start'] < end and b['end'] >= start, datelist[bucket])
-  elif end:
-    res = filter(lambda b: b['start'] < end, datelist[bucket])
-  elif start:
-    res = filter(lambda b: b['end'] >= start, datelist[bucket])
-  else:
-    res = datelist[bucket]
-  return (bucket,start,end,res)
+  res = BucketDetail.objects.using(request.database).filter(bucket=bucket)
+  if start: res = res.filter(startdate__gte=start)
+  if end: res = res.filter(startdate__lt=end)
+  return (bucket, start, end, res.values('name','startdate','enddate'))
   
   
 def _create_rowheader(req, sortfield, sortdirection, cls):

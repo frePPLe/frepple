@@ -36,7 +36,7 @@
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
-!define PRODUCT_VERSION "0.8.2.beta"
+!define PRODUCT_VERSION "0.9.0.beta"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
@@ -83,8 +83,8 @@ Page custom finish finish_leave
 !insertmacro MUI_LANGUAGE "Italian" 
 
 ;Version Information
-VIProductVersion "0.8.2.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "0.8.2.0"
+VIProductVersion "0.9.0.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "0.9.0.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe Installer - free Production Planning Library"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"

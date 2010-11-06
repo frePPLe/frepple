@@ -108,9 +108,10 @@ ugettext = lambda s: s
 USE_I18N = True
 LANGUAGE_CODE = 'en-us'
 LANGUAGES = (
-  ('nl', ugettext('Dutch')),
   ('en', ugettext('English')),
+  ('fr', ugettext('French')),
   ('it', ugettext('Italian')),
+  ('nl', ugettext('Dutch')),
   ('zh-tw', ugettext('Traditional Chinese')),
 )
 if (STANDALONE):

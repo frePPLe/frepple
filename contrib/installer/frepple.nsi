@@ -78,9 +78,11 @@ Page custom finish finish_leave
 !insertmacro MUI_UNPAGE_FINISH
 
 ; Language files
+!insertmacro MUI_LANGUAGE "Dutch" 
 !insertmacro MUI_LANGUAGE "English"
-!insertmacro MUI_LANGUAGE "TradChinese" 
+!insertmacro MUI_LANGUAGE "French" 
 !insertmacro MUI_LANGUAGE "Italian" 
+!insertmacro MUI_LANGUAGE "TradChinese" 
 
 ;Version Information
 VIProductVersion "0.9.0.0"
@@ -179,6 +181,9 @@ Section "Application" SecAppl
     Goto ok2
   StrCmp $6 "Dutch" 0 +3
     StrCpy $6 "nl"
+    Goto ok2
+  StrCmp $6 "French" 0 +3
+    StrCpy $6 "fr"
     Goto ok2
   StrCmp $6 "Italian" 0 +3
     StrCpy $6 "it"

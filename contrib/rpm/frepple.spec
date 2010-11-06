@@ -38,7 +38,7 @@ Requires: xerces-c, Django
 BuildRequires: python-devel, xerces-c-devel, Django
 
 %description
-FrePPLe stands for "Free Production Planning Library". It is a toolkit/
+FrePPLe is an open source Production Planning solution. It is a toolkit/
 framework for modeling and solving production planning problems, targeted
 primarily at discrete manufacturing industries.
 

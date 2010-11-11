@@ -71,7 +71,7 @@
       <Culture>0x0813</Culture>
     </ResourceCompile>
     <Lib>
-      <AdditionalDependencies>xerces-c_static_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xerces-c_static_3D.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\utils\Debug\utils.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>

@@ -193,20 +193,20 @@ def GraphData(request, entity):
     todayline = current
   else:
     todayline = None
-
-  # Snap to dates
-  min = min.date()
-  max = max.date() + timedelta(1)
   
   # Get the time buckets
   (bucket,start,end,bucketlist) = getBuckets(request, start=min, end=max)  
   buckets = []
   for i in bucketlist:
-    if i['end'] >= min and i['start'] <= max:
-      if i['end'] - timedelta(1) >= i['start']:
-        buckets.append( {'start': i['start'], 'end': i['end'] - timedelta(1), 'name': i['name']} )
+    if i['enddate'] >= min and i['startdate'] <= max:
+      if i['enddate'] - timedelta(1) >= i['startdate']:
+        buckets.append( {'start': i['startdate'], 'end': i['enddate'] - timedelta(1), 'name': i['name']} )
       else:
-        buckets.append( {'start': i['start'], 'end': i['start'], 'name': i['name']} )
+        buckets.append( {'start': i['startdate'], 'end': i['startdate'], 'name': i['name']} )
+
+  # Snap to dates
+  min = min.date()
+  max = max.date() + timedelta(1)
         
   context = { 
     'buckets': buckets, 

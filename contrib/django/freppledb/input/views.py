@@ -1028,7 +1028,7 @@ class OperationList(ListReport):
   @staticmethod
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
-      'name','description','category','subcategory','type','location','fence','pretime','posttime','sizeminimum',
+      'name','description','category','subcategory','type','location','duration','duration_per','fence','pretime','posttime','sizeminimum',
       'sizemultiple','sizemaximum','cost','search','lastmodified'
       )
 
@@ -1056,6 +1056,14 @@ class OperationList(ListReport):
     ('location', {
       'title': _('location'),
       'filter': FilterText(field='location__name'),
+      }),
+    ('duration', {
+      'title': _('duration'),
+      'filter': FilterNumber(),
+      }),
+    ('duration_per', {
+      'title': _('duration_per'),
+      'filter': FilterNumber(),
       }),
     ('fence', {
       'title': _('fence'),

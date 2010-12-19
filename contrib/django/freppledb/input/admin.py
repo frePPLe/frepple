@@ -63,6 +63,7 @@ class CalendarBucket_inline(MultiDBTabularInline):
   
 class CalendarBucket_admin(MultiDBModelAdmin):
   model = CalendarBucket
+  raw_id_fields = ('calendar',)
   save_on_top = True
   save_as = True
 site.register(CalendarBucket,CalendarBucket_admin)

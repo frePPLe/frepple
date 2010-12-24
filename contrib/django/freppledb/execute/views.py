@@ -37,7 +37,7 @@ from django.db import DEFAULT_DB_ALIAS, transaction
 
 from freppledb.execute.models import log, Scenario
 from freppledb.common.report import *
-
+import freppledb.input
 
 @staff_member_required
 @csrf_protect
@@ -48,8 +48,20 @@ def main(request):
   '''
   try: constraint = int(request.session['constraint'])
   except: constraint = 15
+  
   # Synchronize the scenario table with the settings
   Scenario.syncWithSettings()
+  
+  # Load the list of fixtures in the "input" app
+  fixtures = []
+  try:
+    for root, dirs, files in os.walk(os.path.join(freppledb.input.__path__[0], 'fixtures')):
+      for i in files:
+        if i.endswith('.json'): fixtures.append(i[:-5])
+  except: 
+    pass  # Silently ignore failures
+  
+  # Send to template
   return direct_to_template(request,  template='execute/execute.html',
         extra_context={
           'title': _('Execute'), 
@@ -59,6 +71,7 @@ def main(request):
           'leadtimeconstrained': constraint & 1, 
           'fenceconstrained': constraint & 8,
           'scenarios': Scenario.objects.all(),
+          'fixtures': fixtures,
           } )
 
 

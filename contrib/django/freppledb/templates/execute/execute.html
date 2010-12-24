@@ -113,18 +113,15 @@ and export results into the database<br/>
 </tr></form>
 
 <form method="post" action="{{ request.prefix }}/execute/fixture/">{% csrf_token %}<tr>
-{% blocktrans %}<th scope="row"><a>Load a dataset</a></th>
-<td>Load a dataset from a file in the database.<br/>
-Available datasets: <select name="datafile" id="entity">
+<th scope="row"><a>{% trans "Load a dataset" %}</a></th>
+<td>{% trans "Load a dataset from a file in the database." %}<br/>
+{% trans "Available datasets:" %} <select name="datafile" id="entity">
 <option value="-" selected="selected">-</option>
-<option value="small_demo">Small demo dataset</option>
-<option value="jobshop">Jobshop</option>
-<option value="dates">Dates</option>
-<option value="unicode_test">Unicode test</option>
-<option value="tutorial_1">Tutorial 1</option>
+{% for i in fixtures %}<option value="{{i}}">{{i}}</option>
+{% endfor %}
 </select>
 </td>
-<td><input id="load" type="submit" value="Load"/></td>{% endblocktrans %}
+<td><input id="load" type="submit" value="{% trans "Load" %}"/></td>
 </tr></form>
 
 </table>

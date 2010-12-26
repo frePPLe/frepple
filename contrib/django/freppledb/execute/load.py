@@ -257,7 +257,7 @@ def loadBuffers(cursor):
     else:
       raise ValueError("Buffer type '%s' not recognized" % q)
     if k: b.location = frepple.location(name=k)
-    if n: b.minimum = frepple.calendar(name=n)
+    if n: b.minimum_calendar = frepple.calendar(name=n)
     if o: b.producing = frepple.operation(name=o)
     if p: b.carrying_cost = p
   print 'Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime)
@@ -296,7 +296,7 @@ def loadResources(cursor):
       if m == "resource_infinite":
         x = frepple.resource_infinite(name=i,description=j,category=r,subcategory=s)
       elif not m:
-        x = frepple.resource(name=i,description=j,maximum=frepple.calendar(name=k),category=r,subcategory=s)
+        x = frepple.resource(name=i,description=j,maximum_calendar=frepple.calendar(name=k),category=r,subcategory=s)
         if o: x.maxearly = o
       else:
         raise ValueError("Resource type '%s' not recognized" % m)

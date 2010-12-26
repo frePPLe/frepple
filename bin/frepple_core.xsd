@@ -352,7 +352,8 @@
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:group ref="common_fields" />
       <xsd:element name="location" type="location" />
-      <xsd:element name="maximum" type="calendar_double" />
+      <xsd:element name="maximum" type="positiveDouble" />
+      <xsd:element name="maximum_calendar" type="calendar_double" />
       <xsd:element name="maxearly" type="xsd:duration" />
       <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="owner" type="resource" />
@@ -372,6 +373,7 @@
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="maxearly" type="xsd:duration" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
+    <xsd:attribute name="maximum" type="positiveDouble" />
     <xsd:attribute name="cost" type="positiveDouble" />
     <xsd:attribute name="setup" type="non-empty-string" />
     <xsd:attribute name="setupmatrix" type="non-empty-string" />
@@ -412,8 +414,10 @@
       <xsd:element name="item" type="item" />
       <xsd:element name="onhand" type="xsd:double" />
       <xsd:element name="carrying_cost" type="positiveDouble" />
-      <xsd:element name="minimum" type="calendar" />
-      <xsd:element name="maximum" type="calendar" />
+      <xsd:element name="minimum" type="xsd:double" />
+      <xsd:element name="maximum" type="xsd:double" />
+      <xsd:element name="minimum_calendar" type="calendar" />
+      <xsd:element name="maximum_calendar" type="calendar" />
       <xsd:element name="producing" type="operation" />
       <xsd:element name="detectproblems" type="xsd:boolean" />
       <xsd:element name="flows" type="flowlist" />
@@ -422,6 +426,8 @@
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="onhand" type="xsd:double" />
     <xsd:attribute name="carrying_cost" type="positiveDouble" />
+    <xsd:attribute name="minimum" type="xsd:double" />
+    <xsd:attribute name="maximum" type="xsd:double" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
   </xsd:complexType>
 

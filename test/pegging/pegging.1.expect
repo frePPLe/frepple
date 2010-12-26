@@ -1139,7 +1139,7 @@
 			<producing name="make 1" xsi:type="operation_fixed_time"/>
 			<item name="item 1"/>
 			<onhand>10</onhand>
-			<minimum name="min inv for buffer 1" xsi:type="calendar_double"/>
+			<minimum_calendar name="min inv for buffer 1" xsi:type="calendar_double"/>
 			<flowplans>
 				<flowplan>
 					<date>1971-01-01T00:00:00</date>
@@ -1282,7 +1282,7 @@
 			<producing name="make 2" xsi:type="operation_fixed_time"/>
 			<item name="item 2"/>
 			<onhand>10</onhand>
-			<minimum name="min inv for buffer 2" xsi:type="calendar_double"/>
+			<minimum_calendar name="min inv for buffer 2" xsi:type="calendar_double"/>
 			<flowplans>
 				<flowplan>
 					<date>1971-01-01T00:00:00</date>
@@ -1417,7 +1417,7 @@
 			<producing name="make 3" xsi:type="operation_fixed_time"/>
 			<item name="item 3"/>
 			<onhand>10</onhand>
-			<minimum name="min inv for buffer 3" xsi:type="calendar_double"/>
+			<minimum_calendar name="min inv for buffer 3" xsi:type="calendar_double"/>
 			<flowplans>
 				<flowplan>
 					<date>1971-01-01T00:00:00</date>
@@ -1512,7 +1512,7 @@
 			<producing name="make 4" xsi:type="operation_fixed_time"/>
 			<item name="item 4"/>
 			<onhand>10</onhand>
-			<minimum name="min inv for buffer 4" xsi:type="calendar_double"/>
+			<minimum_calendar name="min inv for buffer 4" xsi:type="calendar_double"/>
 			<flowplans>
 				<flowplan>
 					<date>1971-01-01T00:00:00</date>

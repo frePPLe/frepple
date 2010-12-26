@@ -36,13 +36,7 @@
   </buffers>
   <resources>
     <resource name="Resource">
-      <maximum name="Capacity" xsi:type="calendar_double">
-        <buckets>
-          <bucket start="2004-01-01T00:00:00">
-            <value>3</value>
-          </bucket>
-        </buckets>
-      </maximum>
+      <maximum>3</maximum>
       <loads>
         <load>
           <operation name="make end item" />

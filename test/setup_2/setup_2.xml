@@ -21,37 +21,19 @@
   </setupmatrices>
   <resources>
     <resource name="Painting line A">
-      <maximum name="Capacity line A" xsi:type="calendar_double">
-        <buckets>
-          <bucket start="2000-01-01T00:00:00">
-            <value>1</value>
-          </bucket>
-        </buckets>
-      </maximum>
+      <maximum>1</maximum>
       <setupmatrix name="Painting line changeover"/>
       <setup>green</setup>
       <maxearly>P14D</maxearly>
     </resource>
     <resource name="Painting line B">
-      <maximum name="Capacity line B" xsi:type="calendar_double">
-        <buckets>
-          <bucket start="2000-01-01T00:00:00">
-            <value>1</value>
-          </bucket>
-        </buckets>
-      </maximum>
+      <maximum>1</maximum>
       <setupmatrix name="Painting line changeover"/>
       <setup>red</setup>
       <maxearly>P14D</maxearly>
     </resource>
     <resource name="Painting line C">
-      <maximum name="Capacity line C" xsi:type="calendar_double">
-        <buckets>
-          <bucket start="2000-01-01T00:00:00">
-            <value>1</value>
-          </bucket>
-        </buckets>
-      </maximum>
+      <maximum>1</maximum>
       <setupmatrix name="Painting line changeover"/>
       <setup>black</setup>
       <maxearly>P14D</maxearly>

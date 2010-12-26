@@ -110,14 +110,14 @@
   <resources>
     <resource name="assemble">
       <location name="Location 1" />
-      <maximum name="assembly capacity" xsi:type="calendar_double">
+      <maximum_calendar name="assembly capacity" xsi:type="calendar_double">
         <default>1</default>
         <buckets>
           <bucket start="2009-01-01T00:00:00" name="all">
             <value>2</value>
           </bucket>
         </buckets>
-      </maximum>
+      </maximum_calendar>
       <loads>
         <load>
           <operation name="make item 1" />

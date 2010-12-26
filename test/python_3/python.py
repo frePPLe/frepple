@@ -198,13 +198,13 @@ frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <resources>
     <resource name="Resource">
-      <maximum name="Capacity" xsi:type="calendar_double">
+      <maximum_calendar name="Capacity" xsi:type="calendar_double">
         <buckets>
           <bucket start="2009-01-01T00:00:00">
             <value>1</value>
           </bucket>
         </buckets>
-      </maximum>
+      </maximum_calendar>
       <loads>
         <load>
           <operation name="make item - step 1" />
@@ -254,7 +254,7 @@ except Exception, e:
 
 ###
 print "\nCreating a resource"
-frepple.resource(name="machine", maximum=frepple.calendar(name="doublecal"))
+frepple.resource(name="machine", maximum_calendar=frepple.calendar(name="doublecal"))
 
 ###
 print "\nCreating customers"

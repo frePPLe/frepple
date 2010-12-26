@@ -27,23 +27,23 @@
   <resources>
     <resource name="Resource 1 A">
       <cost>1</cost>
-      <maximum name="Capacity 1 A" xsi:type="calendar_double">
+      <maximum_calendar name="Capacity 1 A" xsi:type="calendar_double">
         <buckets>
           <bucket start="2009-01-01T00:00:00">
             <value>1</value>
           </bucket>
         </buckets>
-      </maximum>
+      </maximum_calendar>
     </resource>
     <resource name="Resource 1 B">
       <cost>0.25</cost>
-      <maximum name="Capacity 1 B" xsi:type="calendar_double">
+      <maximum_calendar name="Capacity 1 B" xsi:type="calendar_double">
         <buckets>
           <bucket start="2009-01-01T00:00:00">
             <value>1</value>
           </bucket>
         </buckets>
-      </maximum>
+      </maximum_calendar>
     </resource>
   </resources>
 	<operations>

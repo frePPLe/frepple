@@ -105,10 +105,10 @@
 	</demands>
 	<resources>
 		<resource name="capacity of factory 1">
-			<maximum name="capacity factory 1" xsi:type="calendar_double"/>
+			<maximum_calendar name="capacity factory 1" xsi:type="calendar_double"/>
 		</resource>
 		<resource name="capacity of factory 2">
-			<maximum name="capacity factory 2" xsi:type="calendar_double"/>
+			<maximum_calendar name="capacity factory 2" xsi:type="calendar_double"/>
 		</resource>
 	</resources>
 	<loads>

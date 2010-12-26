@@ -100,7 +100,7 @@
 	</demands>
 	<resources>
 		<resource name="Resource">
-			<maximum name="Capacity" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity" xsi:type="calendar_double"/>
 		</resource>
 	</resources>
 			<loads>

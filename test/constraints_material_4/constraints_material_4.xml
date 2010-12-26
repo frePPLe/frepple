@@ -17,8 +17,7 @@
 	    <producing name="make 1" xsi:type="operation_fixed_time" duration="P5D" 
 	       size_minimum="1000" size_maximum="1000"/>
 	  </buffer>
-	  <buffer name="raw material buffer 1">
-	    <minimum name="min inv for buffer 1" xsi:type="calendar_double" default="4"/>
+	  <buffer name="raw material buffer 1" minimum="4">
 	    <item name="item 1" />
 	    <producing name="supply 1" xsi:type="operation_fixed_time" duration="P5D"
 	      size_minimum="1000" size_maximum="1000"/>
@@ -49,13 +48,7 @@
 	</flows>
 	<resources>
 	  <resource name="Resource">
-	    <maximum name="Capacity" xsi:type="calendar_double">
-	      <buckets>
-	        <bucket start="2009-01-01T00:00:00">
-	          <value>1</value>
-	        </bucket>
-	      </buckets>
-	    </maximum>
+	    <maximum>1</maximum>
 	    <loads>
 	      <load>
 	        <operation name="make 1"/>

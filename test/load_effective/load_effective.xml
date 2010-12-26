@@ -49,15 +49,7 @@
     </operation>
   </operations>
   <resources>
-    <resource name="1. Resource">
-      <maximum name="1. Capacity" xsi:type="calendar_double">
-        <buckets>
-          <bucket start="2009-01-01T00:00:00">
-            <value>100</value>
-          </bucket>
-        </buckets>
-      </maximum>
-    </resource>
+    <resource name="1. Resource" maximum="100" />
   </resources>
   <items>
     <item name="1. end item">
@@ -141,15 +133,7 @@
     </operation>
   </operations>
   <resources>
-    <resource name="2. Resource">
-      <maximum name="2. Capacity" xsi:type="calendar_double">
-        <buckets>
-          <bucket start="2009-01-01T00:00:00">
-            <value>4</value>
-          </bucket>
-        </buckets>
-      </maximum>
-    </resource>
+    <resource name="2. Resource" maximum="4" />
   </resources>
   <items>
     <item name="2. end item">
@@ -220,15 +204,7 @@
     </operation>
   </operations>
   <resources>
-    <resource name="3. Resource">
-      <maximum name="3. Capacity" xsi:type="calendar_double">
-        <buckets>
-          <bucket start="2009-01-01T00:00:00">
-            <value>4</value>
-          </bucket>
-        </buckets>
-      </maximum>
-    </resource>
+    <resource name="3. Resource" maximum="4" />
   </resources>
   <items>
     <item name="3. end item">

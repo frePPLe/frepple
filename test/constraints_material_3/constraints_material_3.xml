@@ -38,7 +38,7 @@
 	  <buffer name="buffer 1">
 	    <item name="item 1" />
 	    <producing name="make 1" />
-	    <minimum name="min inv for buffer 1" xsi:type="calendar_double" default="4"/>
+	    <minimum>4</minimum>
 	    <onhand>10</onhand>
 	  </buffer>
 	  <buffer name="constraint buffer 1">
@@ -47,7 +47,7 @@
 	  <buffer name="buffer 2">
 	    <item name="item 2" />
 	    <producing name="make 2" />
-	    <minimum name="min inv for buffer 2" xsi:type="calendar_double" default="4"/>
+	    <minimum>4</minimum>
 	    <onhand>10</onhand>
 	  </buffer>
 	  <buffer name="constraint buffer 2">
@@ -56,12 +56,12 @@
 	  <buffer name="buffer 3">
 	    <item name="item 3" />
 	    <producing name="make 3" />
-	    <minimum name="min inv for buffer 3" xsi:type="calendar_double">
+	    <minimum_calendar name="min inv for buffer 3" xsi:type="calendar_double">
 	      <buckets>
 	        <bucket start="2009-01-01T00:00:00" value="4" priority="2"/>
 	        <bucket start="2009-01-12T00:00:00" value="2" priority="1"/>
 	      </buckets>
-	    </minimum>
+	    </minimum_calendar>
 	    <onhand>10</onhand>
 	  </buffer>
 	  <buffer name="constraint buffer 3">
@@ -70,12 +70,12 @@
 	  <buffer name="buffer 4">
 	    <item name="item 4" />
 	    <producing name="make 4" />
-	    <minimum name="min inv for buffer 4" xsi:type="calendar_double">
+	    <minimum_calendar name="min inv for buffer 4" xsi:type="calendar_double">
 	      <buckets>
 	        <bucket start="2009-01-01T00:00:00" value="4" priority="2"/>
 	        <bucket start="2009-01-12T00:00:00" value="6" priority="1"/>
 	      </buckets>
-	    </minimum>
+	    </minimum_calendar>
 	    <onhand>10</onhand>
 	  </buffer>
 	  <buffer name="constraint buffer 4">

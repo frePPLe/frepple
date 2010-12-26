@@ -104,12 +104,14 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_loglevel;
     static DECLARE_EXPORT const Keyword tag_maxearly;
     static DECLARE_EXPORT const Keyword tag_maximum;
+    static DECLARE_EXPORT const Keyword tag_maximum_calendar;
     static DECLARE_EXPORT const Keyword tag_maxinterval;
     static DECLARE_EXPORT const Keyword tag_maxinventory;
     static DECLARE_EXPORT const Keyword tag_maxlateness;
     static DECLARE_EXPORT const Keyword tag_maxparallel;
     static DECLARE_EXPORT const Keyword tag_members;
     static DECLARE_EXPORT const Keyword tag_minimum;
+    static DECLARE_EXPORT const Keyword tag_minimum_calendar;
     static DECLARE_EXPORT const Keyword tag_mininterval;
     static DECLARE_EXPORT const Keyword tag_mininventory;
     static DECLARE_EXPORT const Keyword tag_minshipment;

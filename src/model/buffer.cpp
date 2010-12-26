@@ -44,6 +44,7 @@ DECLARE_EXPORT const MetaCategory* Buffer::metadata;
 DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
   *BufferInfinite::metadata,
   *BufferProcure::metadata;
+DECLARE_EXPORT const double Buffer::default_max = 1e37;
 
 
 int Buffer::initialize()
@@ -242,8 +243,10 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
   }
 
   // Minimum and maximum inventory targets, carrying cost
-  o->writeElement(Tags::tag_minimum, min_cal);
-  o->writeElement(Tags::tag_maximum, max_cal);
+  if (min_val != 0) o->writeElement(Tags::tag_minimum, min_val);
+  o->writeElement(Tags::tag_minimum_calendar, min_cal);
+  if (max_val != default_max) o->writeElement(Tags::tag_maximum, max_val);
+  o->writeElement(Tags::tag_maximum_calendar, max_cal);
   if (getCarryingCost()!= 0.0)
     o->writeElement(Tags::tag_carrying_cost, getCarryingCost());
 
@@ -278,7 +281,8 @@ DECLARE_EXPORT void Buffer::beginElement(XMLInput& pIn, const Attribute& pAttr)
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_item))
     pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA(Tags::tag_minimum) || pAttr.isA(Tags::tag_maximum))
+  else if (pAttr.isA(Tags::tag_minimum_calendar) 
+    || pAttr.isA(Tags::tag_maximum_calendar))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_location))
     pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
@@ -306,11 +310,15 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, const Attribute& pAttr, co
   else if (pAttr.isA(Tags::tag_onhand))
     setOnHand(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_minimum))
+    setMinimum(pElement.getDouble());
+  else if (pAttr.isA(Tags::tag_maximum))
+    setMaximum(pElement.getDouble());
+  else if (pAttr.isA(Tags::tag_minimum_calendar))
   {
     CalendarDouble *mincal =
       dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
     if (mincal)
-      setMinimum(mincal);
+      setMinimumCalendar(mincal);
     else
     {
       Calendar *c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
@@ -320,12 +328,12 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, const Attribute& pAttr, co
           "' has invalid type for use as buffer min calendar");
     }
   }
-  else if (pAttr.isA(Tags::tag_maximum))
+  else if (pAttr.isA(Tags::tag_maximum_calendar))
   {
     CalendarDouble *maxcal =
       dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
     if (maxcal)
-      setMaximum(maxcal);
+      setMaximumCalendar(maxcal);
     else
     {
       Calendar *c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
@@ -352,7 +360,38 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, const Attribute& pAttr, co
 }
 
 
-DECLARE_EXPORT void Buffer::setMinimum(CalendarDouble *cal)
+DECLARE_EXPORT void Buffer::setMinimum(double m)
+{
+  // There is already a minimum calendar.
+  if (min_cal)
+  {
+    // We update the field, but don't use it yet.
+    min_val = m;
+    return;
+  }
+
+  // Mark as changed
+  setChanged();
+
+  // Set field
+  min_val = m;
+
+  // Create or update a single timeline min event
+  for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); oo++)
+    if (oo->getType() == 3)
+    {
+      // Update existing event
+      static_cast<flowplanlist::EventMinQuantity *>(&*oo)->setMin(min_val);
+      return;
+    }
+  // Create new event
+  flowplanlist::EventMinQuantity *newEvent =
+    new flowplanlist::EventMinQuantity(Date::infinitePast, min_val);
+  flowplans.insert(newEvent);  
+}
+
+
+DECLARE_EXPORT void Buffer::setMinimumCalendar(CalendarDouble *cal)
 {
   // Resetting the same calendar
   if (min_cal == cal) return;
@@ -360,20 +399,21 @@ DECLARE_EXPORT void Buffer::setMinimum(CalendarDouble *cal)
   // Mark as changed
   setChanged();
 
-  // Calendar is already set: delete previous events.
-  if (min_cal)
-  {
-    for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
-      if (oo->getType() == 3)
-      {
-        flowplans.erase(&(*oo));
-        delete &(*(oo++));
-      }
-      else ++oo;
-  }
+  // Delete previous events.
+  for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
+    if (oo->getType() == 3)
+    {
+      flowplans.erase(&(*oo));
+      delete &(*(oo++));
+    }
+    else ++oo;
 
-  // Null pointer passed
-  if (!cal) return;
+  // Null pointer passed. Change back to time independent min.
+  if (!cal)
+  {
+    setMinimum(min_val);
+    return;
+  }
 
   // Create timeline structures for every event. A new entry is created only
   // when the value changes.
@@ -390,7 +430,38 @@ DECLARE_EXPORT void Buffer::setMinimum(CalendarDouble *cal)
 }
 
 
-DECLARE_EXPORT void Buffer::setMaximum(CalendarDouble *cal)
+DECLARE_EXPORT void Buffer::setMaximum(double m)
+{
+  // There is already a maximum calendar.
+  if (max_cal)
+  {
+    // We update the field, but don't use it yet.
+    max_val = m;
+    return;
+  }
+
+  // Mark as changed
+  setChanged();
+
+  // Set field
+  max_val = m;
+
+  // Create or update a single timeline max event
+  for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); oo++)
+    if (oo->getType() == 4)
+    {
+      // Update existing event
+      static_cast<flowplanlist::EventMaxQuantity *>(&*oo)->setMax(max_val);
+      return;
+    }
+  // Create new event
+  flowplanlist::EventMaxQuantity *newEvent =
+    new flowplanlist::EventMaxQuantity(Date::infinitePast, max_val);
+  flowplans.insert(newEvent);  
+}
+
+
+DECLARE_EXPORT void Buffer::setMaximumCalendar(CalendarDouble *cal)
 {
   // Resetting the same calendar
   if (max_cal == cal) return;
@@ -398,26 +469,27 @@ DECLARE_EXPORT void Buffer::setMaximum(CalendarDouble *cal)
   // Mark as changed
   setChanged();
 
-  // Calendar is already set: delete previous events.
-  if (max_cal)
-  {
-    for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
-      if (oo->getType() == 4)
-      {
-        flowplans.erase(&(*oo));
-        delete &(*(oo++));
-      }
-      else ++oo;
-  }
+  // Delete previous events.
+  for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
+    if (oo->getType() == 4)
+    {
+      flowplans.erase(&(*oo));
+      delete &(*(oo++));
+    }
+    else ++oo;
 
-  // Null pointer passed
-  if (!cal) return;
+  // Null pointer passed. Change back to time independent max.
+  if (!cal)
+  {
+    setMaximum(max_val);
+    return;
+  }
 
   // Create timeline structures for every bucket. A new entry is created only
   // when the value changes.
   max_cal = const_cast<CalendarDouble*>(cal);
   double curMax = 0.0;
-  for (CalendarDouble::EventIterator x(min_cal); x.getDate()<Date::infiniteFuture; ++x)
+  for (CalendarDouble::EventIterator x(max_cal); x.getDate()<Date::infiniteFuture; ++x)
     if (curMax != x.getValue())
     {
       curMax = x.getValue();
@@ -734,6 +806,10 @@ DECLARE_EXPORT PyObject* Buffer::getattro(const Attribute& attr)
     return PythonObject(getMaximum());
   if (attr.isA(Tags::tag_minimum))
     return PythonObject(getMinimum());
+  if (attr.isA(Tags::tag_maximum_calendar))
+    return PythonObject(getMaximumCalendar());
+  if (attr.isA(Tags::tag_minimum_calendar))
+    return PythonObject(getMinimumCalendar());
   if (attr.isA(Tags::tag_carrying_cost))
     return PythonObject(getCarryingCost());
   if (attr.isA(Tags::tag_hidden))
@@ -791,7 +867,11 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
     Item* y = static_cast<Item*>(static_cast<PyObject*>(field));
     setItem(y);
   }
+  else if (attr.isA(Tags::tag_minimum))
+    setMinimum(field.getDouble());
   else if (attr.isA(Tags::tag_maximum))
+    setMaximum(field.getDouble());
+  else if (attr.isA(Tags::tag_maximum_calendar))
   {
     if (!field.check(CalendarDouble::metadata))
     {
@@ -799,9 +879,9 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
       return -1;
     }
     CalendarDouble* y = static_cast<CalendarDouble*>(static_cast<PyObject*>(field));
-    setMaximum(y);
+    setMaximumCalendar(y);
   }
-  else if (attr.isA(Tags::tag_minimum))
+  else if (attr.isA(Tags::tag_minimum_calendar))
   {
     if (!field.check(CalendarDouble::metadata))
     {
@@ -809,7 +889,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
       return -1;
     }
     CalendarDouble* y = static_cast<CalendarDouble*>(static_cast<PyObject*>(field));
-    setMinimum(y);
+    setMinimumCalendar(y);
   }
   else if (attr.isA(Tags::tag_onhand))
     setOnHand(field.getDouble());

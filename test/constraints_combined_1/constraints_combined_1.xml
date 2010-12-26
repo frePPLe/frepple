@@ -329,7 +329,7 @@
   </demands>
 	<resources>
 		<resource name="pack in factory 1">
-			<maximum name="pack capacity factory 1" xsi:type="calendar_double"/>
+			<maximum_calendar name="pack capacity factory 1" xsi:type="calendar_double"/>
 			<location name="factory 1"/>
 			<loads>
 				<load>
@@ -338,7 +338,7 @@
 			</loads>
 		</resource>
 		<resource name="pack in factory 2">
-			<maximum name="pack capacity factory 2" xsi:type="calendar_double"/>
+			<maximum_calendar name="pack capacity factory 2" xsi:type="calendar_double"/>
 			<location name="factory 2"/>
 			<loads>
 				<load>
@@ -347,7 +347,7 @@
 			</loads>
 		</resource>
 		<resource name="weave in factory 1">
-			<maximum name="weave capacity factory 1" xsi:type="calendar_double"/>
+			<maximum_calendar name="weave capacity factory 1" xsi:type="calendar_double"/>
 			<location name="factory 1"/>
 			<loads>
 				<load>

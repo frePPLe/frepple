@@ -53,7 +53,7 @@
   </buffers>
   <resources>
     <resource name="1. Resource">
-      <maximum name="Capacity"/>
+      <maximum_calendar name="Capacity"/>
       <loads>
         <load>
           <operation name="1. make end item" />
@@ -93,7 +93,7 @@
   </buffers>
   <resources>
     <resource name="2. Resource">
-      <maximum name="Capacity"/>
+      <maximum_calendar name="Capacity"/>
       <loads>
         <load>
           <operation name="2. make end item" />

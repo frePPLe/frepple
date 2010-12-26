@@ -2930,7 +2930,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Constructor. Implicit creation of instances is disallowed. */
     explicit Buffer(const string& str) : HasHierarchy<Buffer>(str),
         hidden(false), producing_operation(NULL), loc(NULL), it(NULL),
-        min_cal(NULL), max_cal(NULL), carrying_cost(0.0) {}
+        min_val(0), max_val(default_max), min_cal(NULL), max_cal(NULL), 
+        carrying_cost(0.0) {}
 
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
@@ -2953,19 +2954,31 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Updates the location of this buffer. */
     void setLocation(Location* i) {loc = i;}
 
+    /** Returns the minimum inventory level. */
+    double getMinimum() const {return min_val;}
+
     /** Returns a pointer to a calendar for storing the minimum inventory
       * level. */
-    CalendarDouble* getMinimum() const {return min_cal;}
+    CalendarDouble* getMinimumCalendar() const {return min_cal;}
+
+    /** Returns the maximum inventory level. */
+    double getMaximum() const {return max_val;}
 
     /** Returns a pointer to a calendar for storing the maximum inventory
       * level. */
-    CalendarDouble* getMaximum() const {return max_cal;}
+    CalendarDouble* getMaximumCalendar() const {return max_cal;}
 
     /** Updates the minimum inventory target for the buffer. */
-    DECLARE_EXPORT void setMinimum(CalendarDouble *);
+    DECLARE_EXPORT void setMinimum(double);
 
     /** Updates the minimum inventory target for the buffer. */
-    DECLARE_EXPORT void setMaximum(CalendarDouble *);
+    DECLARE_EXPORT void setMinimumCalendar(CalendarDouble *);
+
+    /** Updates the minimum inventory target for the buffer. */
+    DECLARE_EXPORT void setMaximum(double);
+
+    /** Updates the minimum inventory target for the buffer. */
+    DECLARE_EXPORT void setMaximumCalendar(CalendarDouble *);
 
     /** Return the carrying cost.<br>
       * The cost of carrying inventory in this buffer. The value is a
@@ -3051,6 +3064,12 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       (PeggingIterator&, FlowPlan*, short, double, double);
 
   private:
+    /** A constant defining the default max inventory target.\\
+      * Theoretically we should set this to DBL_MAX, but then the results
+      * are not portable across platforms.
+      */
+    static DECLARE_EXPORT const double default_max;
+
     /** This models the dynamic part of the plan, representing all planned
       * material flows on this buffer. */
     flowplanlist flowplans;
@@ -3074,6 +3093,18 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * The default value is NULL.
       */
     Item* it;
+
+    /** Minimum inventory target.<br>
+      * If a minimum calendar is specified this field is ignored.
+      * @see min_cal
+      */
+    double min_val;
+
+    /** Maximum inventory target. <br>
+      * If a maximum calendar is specified this field is ignored.
+      * @see max_cal
+      */
+    double max_val;
 
     /** Points to a calendar to store the minimum inventory level.<br>
       * The default value is NULL, resulting in a constant minimum level
@@ -3887,17 +3918,23 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Constructor. */
     explicit Resource(const string& str) : HasHierarchy<Resource>(str),
-      max_cal(NULL), loc(NULL), cost(0.0), hidden(false), maxearly(defaultMaxEarly),
-      setupmatrix(NULL) {};
+      size_max_cal(NULL), size_max(0), loc(NULL), cost(0.0), hidden(false), maxearly(defaultMaxEarly),
+      setupmatrix(NULL) { setMaximum(1); };
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Resource();
 
+    /** Updates the size of a resource, when it is time-dependent. */
+    DECLARE_EXPORT void setMaximumCalendar(CalendarDouble*);
+
     /** Updates the size of a resource. */
-    DECLARE_EXPORT void setMaximum(CalendarDouble* c);
+    DECLARE_EXPORT void setMaximum(double);
 
     /** Return a pointer to the maximum capacity profile. */
-    CalendarDouble* getMaximum() const {return max_cal;}
+    CalendarDouble* getMaximumCalendar() const {return size_max_cal;}
+
+    /** Return a pointer to the maximum capacity. */
+    double getMaximum() const {return size_max;}
 
     /** Returns the cost of using 1 unit of this resource for 1 hour.<br>
       * The default value is 0.0.
@@ -3993,7 +4030,12 @@ class Resource : public HasHierarchy<Resource>,
 
   private:
     /** This calendar is used to updates to the resource size. */
-    CalendarDouble* max_cal;
+    CalendarDouble* size_max_cal;
+
+    /** The maximum resource size.<br>
+      * If a calendar is specified, this field is ignored.
+      */
+    double size_max;
 
     /** Stores the collection of all loadplans of this resource. */
     loadplanlist loadplans;

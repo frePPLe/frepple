@@ -164,7 +164,7 @@
 	</setupmatrices>
 	<resources>
 		<resource name="assemble">
-			<maximum name="assembly capacity" xsi:type="calendar_double"/>
+			<maximum_calendar name="assembly capacity" xsi:type="calendar_double"/>
 			<location name="Location 1"/>
 			<setupmatrix name="assembly setup" xsi:type="setupmatrix_default"/>
 		</resource>

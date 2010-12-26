@@ -41,9 +41,9 @@
    mode.
 */
 #if defined(_DEBUG) && defined(_MSC_VER)
-#undef _DEBUG
+//#undef _DEBUG
 #include "Python.h"
-#define _DEBUG
+//#define _DEBUG
 #else
 #include "Python.h"
 #endif

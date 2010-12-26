@@ -67,7 +67,7 @@ frepple.loadmodule(".libs/mod_sample.so")
 	      <loads>
           <load>
             <resource name="capacity of factory 1">
-              <maximum name="capacity factory 1" />
+              <maximum_calendar name="capacity factory 1" />
             </resource>
           </load>
         </loads>
@@ -87,7 +87,7 @@ frepple.loadmodule(".libs/mod_sample.so")
   	    <loads>
           <load>
             <resource name="capacity of factory 2">
-              <maximum name="capacity factory 2" />
+              <maximum_calendar name="capacity factory 2" />
             </resource>
           </load>
         </loads>

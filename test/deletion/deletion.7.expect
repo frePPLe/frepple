@@ -133,7 +133,7 @@
 	</demands>
 	<resources>
 		<resource name="assemble">
-			<maximum name="assembly capacity" xsi:type="calendar_double"/>
+			<maximum_calendar name="assembly capacity" xsi:type="calendar_double"/>
 		</resource>
 		<resource name="transport">
 			<location name="Sublocation 1"/>

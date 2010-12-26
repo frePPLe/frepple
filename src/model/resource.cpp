@@ -74,33 +74,68 @@ int ResourceInfinite::initialize()
 }
 
 
-DECLARE_EXPORT void Resource::setMaximum(CalendarDouble* c)
+DECLARE_EXPORT void Resource::setMaximum(double m)
 {
-  // Resetting the same calendar
-  if (max_cal == c) return;
+  if (m < 0)
+    throw DataException("Maximum capacity for resource '" + getName() + "' must be postive");
+
+  // There is already a maximum calendar.
+  if (size_max_cal)
+  {
+    // We update the field, but don't use it yet.
+    size_max = m;
+    return;
+  }
 
   // Mark as changed
   setChanged();
 
-  // Calendar is already set. Need to remove the current max events.
-  if (max_cal)
+  // Set field
+  size_max = m;
+
+  // Create or update a single timeline max event
+  for (loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); oo++)
+    if (oo->getType() == 4)
+    {
+      // Update existing event
+      static_cast<loadplanlist::EventMaxQuantity *>(&*oo)->setMax(size_max);
+      return;
+    }
+  // Create new event
+  loadplanlist::EventMaxQuantity *newEvent =
+    new loadplanlist::EventMaxQuantity(Date::infinitePast, size_max);
+  loadplans.insert(newEvent);  
+}
+
+
+DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDouble* c)
+{
+  // Resetting the same calendar
+  if (size_max_cal == c) return;
+
+  // Mark as changed
+  setChanged();
+
+  // Remove the current max events.
+  for (loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); )
+    if (oo->getType() == 4)
+    {
+      loadplans.erase(&(*oo));
+      delete &(*(oo++));
+    }
+    else ++oo;
+
+  // Null pointer passed. Change back to time independent maximum size.
+  if (!c)
   {
-    for (loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); )
-      if (oo->getType() == 4)
-      {
-        loadplans.erase(&(*oo));
-        delete &(*(oo++));
-      }
-      else ++oo;
+    setMaximum(size_max);
+    return;
   }
 
-  // Null pointer passed
-  if (!c) return;
-
   // Create timeline structures for every bucket.
-  max_cal = c;
+  size_max_cal = c;
   double curMax = 0.0;
-  for (CalendarDouble::EventIterator x(max_cal); x.getDate()<Date::infiniteFuture; ++x)
+  for (CalendarDouble::EventIterator x(size_max_cal); x.getDate()<Date::infiniteFuture; ++x)
     if (curMax != x.getValue())
     {
       curMax = x.getValue();
@@ -126,7 +161,9 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
   // Write my fields
   HasDescription::writeElement(o, tag);
   HasHierarchy<Resource>::writeElement(o, tag);
-  o->writeElement(Tags::tag_maximum, max_cal);
+  if (getMaximum() != 1) 
+    o->writeElement(Tags::tag_maximum, getMaximum());
+  o->writeElement(Tags::tag_maximum_calendar, size_max_cal);
   if (getMaxEarly() != TimePeriod(defaultMaxEarly))
     o->writeElement(Tags::tag_maxearly, getMaxEarly());
   if (getCost() != 0.0) o->writeElement(Tags::tag_cost, getCost());
@@ -171,7 +208,7 @@ DECLARE_EXPORT void Resource::beginElement(XMLInput& pIn, const Attribute& pAttr
     l->setResource(this);
     pIn.readto(&*l);
   }
-  else if (pAttr.isA (Tags::tag_maximum))
+  else if (pAttr.isA (Tags::tag_maximum_calendar))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_loadplans))
     pIn.IgnoreElement();
@@ -190,10 +227,12 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr,
      automatically updated. The getDescription of the 'set_size' function may
      suggest this would be the case... */
   if (pAttr.isA (Tags::tag_maximum))
+    setMaximum(pElement.getDouble());
+  else if (pAttr.isA (Tags::tag_maximum_calendar))
   {
     CalendarDouble * c = dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
     if (c)
-      setMaximum(c);
+      setMaximumCalendar(c);
     else
     {
       Calendar *c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
@@ -331,6 +370,8 @@ DECLARE_EXPORT PyObject* Resource::getattro(const Attribute& attr)
     return PythonObject(getLocation());
   if (attr.isA(Tags::tag_maximum))
     return PythonObject(getMaximum());
+  if (attr.isA(Tags::tag_maximum_calendar))
+    return PythonObject(getMaximumCalendar());
   if (attr.isA(Tags::tag_maxearly))
     return PythonObject(getMaxEarly());
   if (attr.isA(Tags::tag_cost))
@@ -384,6 +425,8 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
     setLocation(y);
   }
   else if (attr.isA(Tags::tag_maximum))
+    setMaximum(field.getDouble());
+  else if (attr.isA(Tags::tag_maximum_calendar))
   {
     if (!field.check(CalendarDouble::metadata))
     {
@@ -391,7 +434,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
       return -1;
     }
     CalendarDouble* y = static_cast<CalendarDouble*>(static_cast<PyObject*>(field));
-    setMaximum(y);
+    setMaximumCalendar(y);
   }
   else if (attr.isA(Tags::tag_hidden))
     setHidden(field.getBool());

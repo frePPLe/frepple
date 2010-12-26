@@ -38,13 +38,13 @@
                   <!-- Level 5: load -->
                   <resource name="resource 1">
                     <!-- Level 6: resource -->
-                    <maximum name="weeks" xsi:type="calendar_double">
+                    <maximum_calendar name="weeks" xsi:type="calendar_double">
                       <!-- Level 7: calendar -->
                       <buckets>
                         <!-- Level 8: bucket -->
                         <bucket start="2009-01-01T00:00:00" name="Jan Week1" value="0"/>
                       </buckets>
-                    </maximum>
+                    </maximum_calendar>
                   </resource>
                 </load>
               </loads>

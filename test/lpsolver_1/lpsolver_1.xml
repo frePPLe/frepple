@@ -150,13 +150,7 @@
     <resource name="RES1">
       <category>assembly</category>
       <description>assembly resource 1</description>
-      <maximum name="Capacity" xsi:type="calendar_double">
-        <buckets>
-          <bucket start="2009-01-01T00:00:00">
-            <value>10</value>
-          </bucket>
-        </buckets>
-      </maximum>
+      <maximum>10</maximum>
       <loads>
         <load>
           <operation name="make STCK1" />

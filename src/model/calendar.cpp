@@ -173,13 +173,13 @@ DECLARE_EXPORT CalendarDouble::~CalendarDouble()
   // Remove all references from buffers
   for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
   {
-    if (b->getMinimum()==this) b->setMinimum(NULL);
-    if (b->getMaximum()==this) b->setMaximum(NULL);
+    if (b->getMinimumCalendar()==this) b->setMinimum(NULL);
+    if (b->getMaximumCalendar()==this) b->setMaximum(NULL);
   }
 
   // Remove all references from resources
   for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
-    if (r->getMaximum()==this) r->setMaximum(NULL);
+    if (r->getMaximumCalendar()==this) r->setMaximumCalendar(NULL);
 }
 
 

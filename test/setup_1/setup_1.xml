@@ -8,13 +8,7 @@
   <current>2009-01-01T00:00:00</current>
   <resources>
     <resource name="Painting line">
-      <maximum name="Capacity" xsi:type="calendar_double">
-        <buckets>
-          <bucket start="2000-01-01T00:00:00">
-            <value>2</value>
-          </bucket>
-        </buckets>
-      </maximum>
+      <maximum>2</maximum>
       <setupmatrix name="Painting line changeover">
         <rules>
           <rule priority="1" fromsetup="green" tosetup="*" duration="P1D" cost="10" />

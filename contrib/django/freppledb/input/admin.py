@@ -145,14 +145,14 @@ site.register(SubOperation,SubOperation_admin)
 
 
 class Buffer_admin(MultiDBModelAdmin):
-  raw_id_fields = ('location', 'item', 'minimum', 'producing', )
+  raw_id_fields = ('location', 'item', 'minimum_calendar', 'producing', )
   fieldsets = (
             (None,{
               'fields': (('name'), ('item', 'location'), 'description', ('category', 'subcategory'))}),
             (_('Inventory'), {
               'fields': ('onhand',)}),
             (_('Planning parameters'), {
-              'fields': ('type','minimum','producing','carrying_cost'),
+              'fields': ('type','minimum','minimum_calendar','producing','carrying_cost'),
               'classes': ('collapse',)},),
             (_('Planning parameters for procurement buffers'), {
               'fields': ('leadtime','fence','min_inventory','max_inventory','min_interval','max_interval','size_minimum','size_multiple','size_maximum'),
@@ -179,7 +179,7 @@ site.register(SetupMatrix,SetupMatrix_admin)
 
 class Resource_admin(MultiDBModelAdmin):
   model = Resource
-  raw_id_fields = ('maximum', 'location', 'setupmatrix')
+  raw_id_fields = ('maximum_calendar', 'location', 'setupmatrix')
   save_as = True
   save_on_top = True
   # TODO inlines = [ Load_inline, ]

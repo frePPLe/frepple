@@ -475,9 +475,12 @@ class Buffer(AuditModel,HierarchyModel):
   onhand = models.DecimalField(_('onhand'), 
     max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, 
     default="0.00", null=True, blank=True, help_text=_('current inventory'))
-  minimum = models.ForeignKey(Calendar, verbose_name=_('minimum'),
+  minimum = models.DecimalField(_('minimum'),
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, 
+    default="0.00", null=True, blank=True, help_text=_('Safety stock'))
+  minimum_calendar = models.ForeignKey(Calendar, verbose_name=_('minimum calendar'),
     null=True, blank=True,
-    help_text=_('Calendar storing the safety stock profile'))
+    help_text=_('Calendar storing a time-dependent safety stock profile'))
   producing = models.ForeignKey(Operation, verbose_name=_('producing'),
     null=True, blank=True, related_name='used_producing',
     help_text=_('Operation to replenish the buffer'))
@@ -590,8 +593,12 @@ class Resource(AuditModel,HierarchyModel):
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=resourcetypes, default='')
-  maximum = models.ForeignKey(Calendar, verbose_name=_('maximum'), null=True, blank=True,
-    help_text=_('Calendar defining the available capacity'))
+  maximum = models.DecimalField(_('maximum'),
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, 
+    default="1.00", null=True, blank=True, help_text=_('Size of the resource'))
+  maximum_calendar = models.ForeignKey(Calendar, verbose_name=_('maximum calendar'), 
+    null=True, blank=True,
+    help_text=_('Calendar defining the resource size varying over time'))
   location = models.ForeignKey(Location, verbose_name=_('location'),
     null=True, blank=True, db_index=True)
   cost = models.DecimalField(_('cost'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,

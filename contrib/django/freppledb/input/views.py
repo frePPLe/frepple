@@ -339,7 +339,7 @@ class BufferList(ListReport):
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','location','item',
-      'onhand','type','minimum','producing','carrying_cost','lastmodified'
+      'onhand','type','minimum','minimum_calendar','producing','carrying_cost','lastmodified'
       )
 
   rows = (
@@ -377,6 +377,10 @@ class BufferList(ListReport):
       }),
     ('minimum', {
       'title': _('minimum'),
+      'filter': FilterNumber(size=5, operator="lt"),
+      }),
+    ('minimum_calendar', {
+      'title': _('minimum calendar'),
       'filter': FilterText(field='minimum__name'),
       }),
     ('producing', {
@@ -434,7 +438,7 @@ class ResourceList(ListReport):
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','location','type',
-      'maximum','cost','maxearly','setupmatrix','setup','lastmodified'
+      'maximum','maximum_calendar','cost','maxearly','setupmatrix','setup','lastmodified'
       )
 
   rows = (
@@ -464,7 +468,11 @@ class ResourceList(ListReport):
       }),
     ('maximum', {
       'title': _('maximum'),
-      'filter': FilterText(field='maximum__name'),
+      'filter': FilterNumber(size=5, operator="lt"),
+      }),
+    ('maximum_calendar', {
+      'title': _('maximum calendar'),
+      'filter': FilterText(field='maximum_calendar__name'),
       }),
     ('cost', {
       'title': _('cost'),

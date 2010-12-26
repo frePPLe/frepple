@@ -224,11 +224,11 @@ def loadBuffers(cursor):
   cnt = 0
   starttime = time()
   cursor.execute('''SELECT name, description, location_id, item_id, onhand,
-     minimum_id, producing_id, type, leadtime, min_inventory,
+     minimum, minimum_calendar_id, producing_id, type, leadtime, min_inventory,
      max_inventory, min_interval, max_interval, size_minimum,
      size_multiple, size_maximum, fence, carrying_cost, 
      category, subcategory FROM buffer''')
-  for i,j,k,l,m,n,o,q,f1,f2,f3,f4,f5,f6,f7,f8,f9,p,r,s in cursor.fetchall():
+  for i,j,k,l,m,t,n,o,q,f1,f2,f3,f4,f5,f6,f7,f8,f9,p,r,s in cursor.fetchall():
     cnt += 1
     if q == "buffer_procure":
       b = frepple.buffer_procure(
@@ -257,6 +257,7 @@ def loadBuffers(cursor):
     else:
       raise ValueError("Buffer type '%s' not recognized" % q)
     if k: b.location = frepple.location(name=k)
+    if t: b.minimum = t
     if n: b.minimum_calendar = frepple.calendar(name=n)
     if o: b.producing = frepple.operation(name=o)
     if p: b.carrying_cost = p
@@ -287,10 +288,10 @@ def loadResources(cursor):
   cnt = 0
   starttime = time()
   cursor.execute('''SELECT 
-    name, description, maximum_id, location_id, type, cost, 
+    name, description, maximum, maximum_calendar_id, location_id, type, cost, 
     maxearly, setup, setupmatrix_id, category, subcategory 
     FROM %s''' % connections[database].ops.quote_name('resource'))
-  for i,j,k,l,m,n,o,p,q,r,s in cursor.fetchall():
+  for i,j,t,k,l,m,n,o,p,q,r,s in cursor.fetchall():
     cnt += 1
     try:
       if m == "resource_infinite":
@@ -298,6 +299,7 @@ def loadResources(cursor):
       elif not m:
         x = frepple.resource(name=i,description=j,maximum_calendar=frepple.calendar(name=k),category=r,subcategory=s)
         if o: x.maxearly = o
+        if t: x.maximum = t
       else:
         raise ValueError("Resource type '%s' not recognized" % m)
       if l: x.location = frepple.location(name=l)

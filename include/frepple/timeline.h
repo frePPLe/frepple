@@ -483,6 +483,36 @@ template <class type> void TimeLine<type>::erase(Event* e)
   e->prev = NULL;
   e->next = NULL;
 
+  // Remove the list of minima
+  if (e->getType() == 3)
+  {
+    EventMinQuantity *m = static_cast<EventMinQuantity*>(e);
+    if (lastMin == e)
+      // New last minimum
+      lastMin = m->prevMin;
+    else
+    {
+      EventMinQuantity *o = lastMin;
+      while (o->prevMin != e && o) o = o->prevMin;
+      if (o) o->prevMin = m->prevMin;
+    }
+  }
+
+  // Remove the list of maxima
+  else if (e->getType() == 4)
+  {
+    EventMaxQuantity *m = static_cast<EventMaxQuantity*>(e);
+    if (lastMax == e)
+      // New last maximum
+      lastMax = m->prevMax;
+    else
+    {
+      EventMaxQuantity * o = lastMax;
+      while (o->prevMax != e && o) o = o->prevMax;
+      if (o) o->prevMax = m->prevMax;
+    }
+  }
+
   // Final debugging check
   assert(check());
 }

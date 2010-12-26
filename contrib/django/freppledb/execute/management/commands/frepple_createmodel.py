@@ -219,7 +219,7 @@ class Command(BaseCommand):
         bkt = CalendarBucket(startdate=startdate, value=resource_size, calendar=cal)
         cal.save(using=database)
         bkt.save(using=database)
-        r = Resource.objects.using(database).create(name = 'Res %03d' % i, maximum=cal, location=loc)
+        r = Resource.objects.using(database).create(name = 'Res %03d' % i, maximum_calendar=cal, location=loc)
         res.append(r)
       transaction.commit(using=database)
       random.shuffle(res)

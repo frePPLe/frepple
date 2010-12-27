@@ -92,8 +92,8 @@ class Report(ListReport):
       ''' % (
         # Oracle needs conversion from the field out_problem.name
         # (in 'national character set') to the database 'character set'.
-        settings.DATABASE_ENGINE == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',   #todo not ready for multidb
-        settings.DATABASE_ENGINE == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',   #todo not ready for multidb
+        settings.DATABASES[request.database]['ENGINE'] == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
+        settings.DATABASES[request.database]['ENGINE'] == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
         sql_datediff('plandate','due'),
         sql_datediff('enddate','startdate')
         )

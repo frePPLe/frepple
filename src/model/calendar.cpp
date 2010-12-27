@@ -173,8 +173,8 @@ DECLARE_EXPORT CalendarDouble::~CalendarDouble()
   // Remove all references from buffers
   for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
   {
-    if (b->getMinimumCalendar()==this) b->setMinimum(NULL);
-    if (b->getMaximumCalendar()==this) b->setMaximum(NULL);
+    if (b->getMinimumCalendar()==this) b->setMinimumCalendar(NULL);
+    if (b->getMaximumCalendar()==this) b->setMaximumCalendar(NULL);
   }
 
   // Remove all references from resources
@@ -450,6 +450,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
   curPriority = DBL_MAX;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->nextEvent(this, d);
+  if (!curBucket) curBucket = theCalendar->findBucket(curDate);
   return *this;
 }
 
@@ -463,6 +464,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
   curPriority = DBL_MAX;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->prevEvent(this, d);
+  if (!curBucket) curBucket = theCalendar->findBucket(curDate,false);
   return *this;
 }
 
@@ -486,7 +488,7 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
   {
     // Next event is the end date of the bucket
     iter->curDate = enddate;
-    iter->curBucket = iter->theCalendar->findBucket(enddate);
+    iter->curBucket = NULL;
     iter->curPriority = priority;
     return;
   }
@@ -512,7 +514,7 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
   {
     // Previous event is the start date of the bucket
     iter->curDate = startdate;
-    iter->curBucket = iter->theCalendar->findBucket(startdate,false);
+    iter->curBucket = NULL;
     iter->curPriority = priority;
     return;
   }

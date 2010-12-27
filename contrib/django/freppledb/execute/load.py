@@ -535,6 +535,7 @@ def loadfrepple():
   # When it is set, the django database wrapper collects a list of all sql
   # statements executed and their timings. This consumes plenty of memory
   # and cpu time.
+  global database
   settings.DEBUG = False
   
   if 'FREPPLE_DATABASE' in os.environ: 

@@ -11,8 +11,8 @@
     <xsd:complexContent>
       <xsd:extension base="operation_fixed_time">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="from" type="buffer" />
-          <xsd:element name="to" type="buffer" />
+          <xsd:element name="frombuffer" type="buffer" />
+          <xsd:element name="tobuffer" type="buffer" />
         </xsd:choice>
       </xsd:extension>
     </xsd:complexContent>

@@ -141,7 +141,7 @@ int OperationTransport::setattro(const Attribute& attr, const PythonObject& fiel
     setFromBuffer(y);
   }
   else
-	return OperationFixedTime::setattro(attr, field);
+    return OperationFixedTime::setattro(attr, field);
   return 0;
 }
 

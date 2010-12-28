@@ -136,21 +136,21 @@ frepple.loadmodule("mod_sample.so")
 frepple.solver_mrp(name="MRP", constraints=15, loglevel=0, maxparallel=1).solve()
 frepple.saveXMLfile("output.1.xml")
 
-# Delete a buffer
-# The transport operations using it will be deleted as well
-frepple.buffer(name="product in distribution centre", action="R")
-frepple.saveXMLfile("output.2.xml")
-
 # Testing Python binding
 oper = frepple.operation(name="transport supply from factory 1")
 print oper, oper.frombuffer, oper.tobuffer
 oper = frepple.operation(name="transport supply from factory 2")
 print oper, oper.frombuffer, oper.tobuffer
-oper = frepple.operation(name="transport from factories 1 to factory 2",
+oper = frepple.operation_transport(name="transport from factories 1 to factory 2",
   frombuffer=frepple.buffer(name="product in factory 1"),
   tobuffer=frepple.buffer(name="product in factory 2"),
   duration=86400)
 print oper, oper.frombuffer, oper.tobuffer
+
+# Delete a buffer
+# The transport operations using it will be deleted as well
+frepple.buffer(name="product in distribution centre", action="R")
+frepple.saveXMLfile("output.2.xml")
 
 ?>
 

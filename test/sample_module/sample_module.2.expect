@@ -46,6 +46,11 @@
 			<alternates>
 			</alternates>
 		</operation>
+		<operation name="transport from factories 1 to factory 2" xsi:type="operation_transport">
+			<frombuffer name="product in factory 1"/>
+			<tobuffer name="product in factory 2"/>
+			<duration>P1D</duration>
+		</operation>
 	</operations>
 	<items>
 		<item name="product">
@@ -105,6 +110,16 @@
 		</flow>
 		<flow xsi:type="flow_end">
 			<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
+			<buffer name="product in factory 2"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow">
+			<operation name="transport from factories 1 to factory 2" xsi:type="operation_transport"/>
+			<buffer name="product in factory 1"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="transport from factories 1 to factory 2" xsi:type="operation_transport"/>
 			<buffer name="product in factory 2"/>
 			<quantity>1</quantity>
 		</flow>

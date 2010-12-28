@@ -200,7 +200,7 @@ DECLARE_EXPORT PyObject* SetupMatrix::getattro(const Attribute& attr)
     return PythonObject(getName());
   if (attr.isA(Tags::tag_rules))
     return new SetupMatrixRuleIterator(this);
-	return NULL;
+  return NULL;
 }
 
 
@@ -208,6 +208,8 @@ DECLARE_EXPORT int SetupMatrix::setattro(const Attribute& attr, const PythonObje
 {
   if (attr.isA(Tags::tag_name))
     setName(field.getString());
+  else
+    return -1;  // Error
   return 0;
 }
 

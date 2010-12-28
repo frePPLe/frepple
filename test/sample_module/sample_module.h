@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2010 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -73,7 +73,7 @@ class OperationTransport : public OperationFixedTime
   public:
     /** Constructor. */
     explicit OperationTransport(const string& s)
-        : OperationFixedTime(s), fromBuf(NULL), toBuf(NULL) {}
+      : OperationFixedTime(s), fromBuf(NULL), toBuf(NULL) {initType(metadata);}
 
     /** Returns a pointer to the source buffer. */
     Buffer* getFromBuffer() const {return fromBuf;}
@@ -101,6 +101,12 @@ class OperationTransport : public OperationFixedTime
 
     /** Handler for writing out the objects in XML format. */
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+
+    /** Handler for reading attributes from Python. */
+  	PyObject* getattro(const Attribute&);
+
+    /** Handler for updating attributes from Python. */
+    int setattro(const Attribute&, const PythonObject&);
 
     /** Returns a reference to this class' metadata. */
     virtual const MetaClass& getType() const {return *metadata;}

@@ -31,8 +31,8 @@ namespace sample_module
 {
 
 const MetaClass *OperationTransport::metadata;
-const Keyword tag_from("from");
-const Keyword tag_to("to");
+const Keyword tag_frombuffer("frombuffer");
+const Keyword tag_tobuffer("tobuffer");
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
@@ -44,8 +44,11 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     "operation_transport",
     Object::createString<OperationTransport>);
 
-  // Register a callback
+  // Register a callback when a buffer is removed from the model
   FunctorStatic<Buffer, OperationTransport>::connect(SIG_REMOVE);
+
+  // Initialize the new Python class 
+  FreppleClass<OperationTransport,Operation>::initialize();
 
   // Return the name of the module
   return name;
@@ -54,7 +57,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
 void OperationTransport::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pAttr.isA(tag_from) || pAttr.isA(tag_to))
+  if (pAttr.isA(tag_frombuffer) || pAttr.isA(tag_tobuffer))
     pIn.readto( Buffer::reader(Buffer::metadata,pIn.getAttributes()) );
   else
     OperationFixedTime::beginElement(pIn, pAttr);
@@ -78,8 +81,8 @@ void OperationTransport::writeElement
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the fields
-  o->writeElement(tag_from, fromBuf, REFERENCE);
-  o->writeElement(tag_to, toBuf, REFERENCE);
+  o->writeElement(tag_frombuffer, fromBuf, REFERENCE);
+  o->writeElement(tag_tobuffer, toBuf, REFERENCE);
 
   // Pass over to the parent class for the remaining fields
   OperationFixedTime::writeElement(o, tag, NOHEADER);
@@ -88,13 +91,13 @@ void OperationTransport::writeElement
 
 void OperationTransport::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
-  if (pAttr.isA(tag_from))
+  if (pAttr.isA(tag_frombuffer))
   {
     Buffer *l = dynamic_cast<Buffer*>(pIn.getPreviousObject());
     if (l) setFromBuffer(l);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pAttr.isA(tag_to))
+  else if (pAttr.isA(tag_tobuffer))
   {
     Buffer *l = dynamic_cast<Buffer*>(pIn.getPreviousObject());
     if (l) setToBuffer(l);
@@ -102,6 +105,44 @@ void OperationTransport::endElement(XMLInput& pIn, const Attribute& pAttr, const
   }
   else
     OperationFixedTime::endElement(pIn, pAttr, pElement);
+}
+
+
+PyObject* OperationTransport::getattro(const Attribute& attr)
+{
+  if (attr.isA(tag_tobuffer))
+    return PythonObject(getToBuffer());
+  if (attr.isA(tag_frombuffer))
+    return PythonObject(getFromBuffer());;
+  return OperationFixedTime::getattro(attr);
+}
+
+
+int OperationTransport::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(tag_tobuffer))
+  {
+    if (!field.check(Buffer::metadata))
+    {
+      PyErr_SetString(PythonDataException, "ToBuffer must be of type buffer");
+      return -1;
+    }
+    Buffer* y = static_cast<Buffer*>(static_cast<PyObject*>(field));
+    setToBuffer(y);
+  }
+  else if (attr.isA(tag_frombuffer))
+  {
+    if (!field.check(Buffer::metadata))
+    {
+      PyErr_SetString(PythonDataException, "FromBuffer must be of type buffer");
+      return -1;
+    }
+    Buffer* y = static_cast<Buffer*>(static_cast<PyObject*>(field));
+    setFromBuffer(y);
+  }
+  else
+	return OperationFixedTime::setattro(attr, field);
+  return 0;
 }
 
 

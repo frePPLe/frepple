@@ -55,13 +55,13 @@
 			</alternates>
 		</operation>
 		<operation name="transport supply from factory 1" xsi:type="operation_transport">
-			<from name="product in factory 1"/>
-			<to name="product in distribution centre"/>
+			<frombuffer name="product in factory 1"/>
+			<tobuffer name="product in distribution centre"/>
 			<duration>P1D</duration>
 		</operation>
 		<operation name="transport supply from factory 2" xsi:type="operation_transport">
-			<from name="product in factory 2"/>
-			<to name="product in distribution centre"/>
+			<frombuffer name="product in factory 2"/>
+			<tobuffer name="product in distribution centre"/>
 			<duration>P1D</duration>
 		</operation>
 	</operations>

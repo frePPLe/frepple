@@ -70,5 +70,5 @@
 {"pk": 1, "model": "input.load", "fields": {"resource": "pack in factory 1", "priority": 1, "operation": "Pack product @ factory 1", "quantity": "1"}},
 {"pk": 2, "model": "input.load", "fields": {"resource": "pack in factory 2", "priority": 1, "operation": "Pack product @ factory 2", "quantity": "1"}},
 {"pk": 3, "model": "input.load", "fields": {"resource": "weave in factory 1", "priority": 1, "operation": "Make fabric @ factory 1", "quantity": "1"}},
-{"pk": "Demand 1", "model": "input.demand", "fields": {"item": "product", "due": "2009-05-05 00:00:00", "priority": 1, "operation": "Deliver product from factory 1 or 2", "quantity": "100"}}
+{"pk": "Demand 1", "model": "input.demand", "fields": {"item": "product", "due": "2009-05-05 00:00:00", "priority": 1, "operation": "Deliver product from factory 1 or 2", "quantity": "100", "minshipment": "100"}}
 ]

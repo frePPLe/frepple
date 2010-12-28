@@ -94,9 +94,12 @@ def usage():
 
 
 def runTestSuite():
-    global debug, testdir
-    platform = 'GCC'
-
+    global debug, testdir    
+    if sys.platform in ['windows','win32','win64']:
+      platform = 'VCC'
+    else:
+      platform = 'GCC' 
+      
     # Frepple uses the time functions from the C-library, which is senstive to
     # timezone settings. In particular the daylight saving time of different
     # timezones is of interest: it applies only to some timezones, and different
@@ -110,7 +113,7 @@ def runTestSuite():
     tests = []
     excluded = []
     try:
-        opts, tests = getopt.getopt(sys.argv[1:], "dvhre:", ["debug", "vcc", "help", "regression", "exclude="])
+        opts, args = getopt.getopt(sys.argv[1:], "dvhre:", ["debug", "vcc", "help", "regression", "exclude="])
     except getopt.GetoptError:
       usage()
       sys.exit(1)
@@ -132,6 +135,8 @@ def runTestSuite():
         # Print help information and exit
         usage()
         sys.exit(1)
+    for i in args:
+      tests.extend(glob.glob(i))
 
     # Executable to run
     os.environ['FREPPLE_HOME'] = os.path.join(testdir,"..","bin")

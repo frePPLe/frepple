@@ -58,7 +58,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 void OperationTransport::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(tag_frombuffer) || pAttr.isA(tag_tobuffer))
-    pIn.readto( Buffer::reader(Buffer::metadata,pIn.getAttributes()) );
+      pIn.readto( Buffer::metadata->readFunction(Buffer::metadata,pIn.getAttributes()) );
   else
     OperationFixedTime::beginElement(pIn, pAttr);
 }
@@ -171,7 +171,7 @@ bool OperationTransport::callback(Buffer* l, const Signal a)
       {
         // Delete the operation, but increment the iterator first!
         Operation::iterator k = i++;
-        delete &*k;
+        delete &*k;    
         if (i == Operation::end()) break;
       }
       else ++i;

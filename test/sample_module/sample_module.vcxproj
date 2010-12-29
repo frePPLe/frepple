@@ -51,7 +51,7 @@
     <TargetName>mod_sample</TargetName>
     <TargetExt>.so</TargetExt>
     <OutDir>..\..\bin\</OutDir>
-    <IntDir>.\Release\</IntDir>
+    <IntDir>.\release\</IntDir>
     <IncludePath>C:\develop\frepple\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\develop\frepple\bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -68,7 +68,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);frepple.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);frepple_debug.lib</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>

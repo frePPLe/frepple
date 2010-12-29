@@ -53,7 +53,7 @@ void usage()
     "\nEnvironment: The variable FREPPLE_HOME optionally points to a\n"
     "     directory where the initialization files init.xml, init.py,\n"
     "     frepple.xsd and module libraries will be searched.\n"
-    "\nReturn codes: 0 when succesfull, non-zero in case of errors\n"
+    "\nReturn codes: 0 when successful, non-zero in case of errors\n"
     "\nMore information on this program: http://www.frepple.com\n\n"
     << endl;
 }

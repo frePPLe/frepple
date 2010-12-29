@@ -751,7 +751,7 @@ class Demand(AuditModel,HierarchyModel):
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, db_index=True)
+  customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, blank=True, db_index=True)
   item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True)
   due = models.DateTimeField(_('due'),help_text=_('Due date of the demand'))
   operation = models.ForeignKey(Operation,

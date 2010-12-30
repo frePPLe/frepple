@@ -27,7 +27,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, Http404
 from django.views.decorators.csrf import csrf_protect
 from django.core import serializers
-from django.utils.simplejson.decoder import JSONDecoder
+from django.utils import simplejson
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -60,7 +60,7 @@ class uploadjson:
           raise Exception('Invalid uploaded data')
 
       # Parse the uploaded data and go over each record
-      for i in JSONDecoder().decode(request.FILES['data'].read()):
+      for i in simplejson.JSONDecoder().decode(request.FILES['data'].read()):
         try:
           entity = i['entity']
 
@@ -77,12 +77,12 @@ class uploadjson:
               raise Exception('No permission to change resources')
             # b) Find the calendar
             res = Resource.objects.using(request.database).get(name = i['name'])
-            if not res.maximum:
+            if not res.maximum_calendar:
               raise Exception('Resource "%s" has no max calendar' % res.name)
             # c) Update the calendar
             start = datetime.strptime(i['startdate'],'%Y-%m-%d')
             end = datetime.strptime(i['enddate'],'%Y-%m-%d')
-            res.maximum.setvalue(
+            res.maximum_calendar.setvalue(
               start,
               end,
               float(i['value']) / (end - start).days,

@@ -106,7 +106,7 @@ class OverviewReport(TableReport):
              ) d
          -- Available capacity
          left join calendarbucket
-         on res.maximum_id = calendarbucket.calendar_id
+         on res.maximum_calendar_id = calendarbucket.calendar_id
          and d.startdate <= calendarbucket.enddate
          and d.enddate >= calendarbucket.startdate
          -- Unavailable capacity

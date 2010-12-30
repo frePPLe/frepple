@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2010 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -35,7 +35,7 @@ if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
   FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
-FREPPLE_VERSION = '0.8.2.beta'
+FREPPLE_VERSION = '0.9.0.beta'
 
 # Determing whether Django runs as a standalone application or is deployed on a web server
 STANDALONE = False

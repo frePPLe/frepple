@@ -18,7 +18,7 @@
 <td>{{i.date}}</td>
 <td>{% if i.forecast %}{% superlink i.demand forecast %}{% else %}{% superlink i.demand demand %}{% endif %}</td>
 <td>{{i.quantity}}</td>
-<td>{{i.item}}</td>
+<td>{% superlink i.item item %}</td>
 </tr>{% endfor %}
 {% endblock %}
 

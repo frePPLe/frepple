@@ -1959,7 +1959,7 @@ class OperationPlan
           if (!opplan && mode == 3)
           {
             do ++op;
-            while (op!=Operation::end() && (!op->getFirstOpPlan() || op->getHidden()));
+            while (op!=Operation::end() && (!op->getFirstOpPlan()));
             if (op!=Operation::end())
               opplan = op->getFirstOpPlan();
             else

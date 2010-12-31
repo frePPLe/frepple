@@ -618,6 +618,7 @@ class Resource(AuditModel,HierarchyModel):
     if self.type == 'resource_infinite':
         # These fields are not relevant for infinite resources
         self.maximum = None
+        self.maximum_calendar_id = None
         self.maxearly = None
     # Call the real save() method
     super(Resource, self).save(*args, **kwargs)

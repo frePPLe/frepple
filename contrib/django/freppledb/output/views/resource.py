@@ -86,17 +86,19 @@ class OverviewReport(TableReport):
     # Execute the query
     cursor = connections[request.database].cursor()
     query = '''
-       select x.name as row1, x.location_id as row2,
+       select x.name as row1, x.location_id as row2, 
+             x.maximum_calendar_id as maximum_calendar_id,
              x.bucket as col1, x.startdate as col2, x.enddate as col3,
              min(x.real_available) * %f, 
              (min(x.total_available) - min(x.real_available)) * %f as unavailable,
              coalesce(sum(loaddata.quantity * %f * %s ), 0) as loading,
              0 * %f as setup
        from (
-         select res.name as name, res.location_id as location_id,
+         select res.name as name, res.location_id as location_id, 
+               res.maximum_calendar_id as maximum_calendar_id,
                d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-               coalesce(sum(calendarbucket.value * %s),0) as total_available,
-               coalesce(sum(calendarbucket.value * %s * coalesce(bucket2.value,1)),0) as real_available
+               coalesce(sum(coalesce(calendarbucket.value,res.maximum) * %s),0) as total_available,
+               coalesce(sum(coalesce(calendarbucket.value,res.maximum) * %s * coalesce(bucket2.value,1)),0) as real_available
          from (%s) res
          -- Multiply with buckets
          cross join (
@@ -116,7 +118,7 @@ class OverviewReport(TableReport):
          and d.startdate <= bucket2.enddate
          and d.enddate >= bucket2.startdate
          -- Grouping
-         group by res.name, res.location_id, d.bucket, d.startdate, d.enddate
+         group by res.name, res.location_id, res.maximum_calendar_id, d.bucket, d.startdate, d.enddate
        ) x
        -- Load data
        left join (
@@ -142,7 +144,7 @@ class OverviewReport(TableReport):
        and x.startdate <= loaddata.end1
        and x.enddate >= loaddata.start1
        -- Grouping and ordering
-       group by x.name, x.location_id, x.bucket, x.startdate, x.enddate
+       group by x.name, x.location_id, x.maximum_calendar_id, x.bucket, x.startdate, x.enddate
        order by %s, x.startdate
        ''' % ( units, units, units, 
          sql_overlap3('loaddata.start1','loaddata.end1','x.startdate','x.enddate','loaddata.start2','loaddata.end2'),
@@ -155,18 +157,19 @@ class OverviewReport(TableReport):
     
     # Build the python result
     for row in cursor.fetchall():
-      if row[5] != 0: util = row[7] * 100 / row[5]
+      if row[6] != 0: util = row[8] * 100 / row[6]
       else: util = 0
       yield {
         'resource': row[0],
         'location': row[1],
-        'bucket': row[2],
-        'startdate': python_date(row[3]),
-        'enddate': python_date(row[4]),
-        'available': row[5],
-        'unavailable': row[6],
-        'load': row[7],
-        'setup': row[8],
+        'maximum_calendar_id': row[2],
+        'bucket': row[3],
+        'startdate': python_date(row[4]),
+        'enddate': python_date(row[5]),
+        'available': row[6],
+        'unavailable': row[7],
+        'load': row[8],
+        'setup': row[9],
         'utilization': util,
         'units': units,
         }

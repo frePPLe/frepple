@@ -16,7 +16,7 @@ soapC.cpp:
 
 BUILT_SOURCES = soapC.cpp soapServer.cpp
 
-lib_LTLIBRARIES = mod_webservice.la
+pkglib_LTLIBRARIES = mod_webservice.la
 mod_webservicedir = $(datadir)/frepple
 
 dist_mod_webservice_la_SOURCES = $(sources)

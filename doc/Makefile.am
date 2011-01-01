@@ -58,7 +58,6 @@ all-local: apidoc webdoc
 
 man_MANS = frepple.1
 
-if DOC 
 install-data-local: apidoc webdoc
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \
 	for p in $(FILES_COMMON) $(FILES_API) $(FILES_WEB); do \
@@ -70,7 +69,6 @@ install-data-local: apidoc webdoc
 	  fi; \
 	  fi; \
 	done
-endif
 
 uninstall-local:
 	-rm -rf $(DESTDIR)$(docdir)

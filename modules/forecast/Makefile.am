@@ -10,8 +10,7 @@ CLEANFILES = *.gcda *.gcov *.gcno
 
 if FORECAST
 
-usrlibdir = $(libdir)/frepple
-usrlib_LTLIBRARIES = mod_forecast.la
+pkglib_LTLIBRARIES = mod_forecast.la
 mod_forecastdir = $(datadir)/frepple
 mod_forecast_DATA = mod_forecast.xsd
 mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version

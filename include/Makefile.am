@@ -4,8 +4,6 @@
 
 SUBDIRS = frepple
 
-nobase_include_HEADERS = frepple.h freppleinterface.h frepple/*.h
+include_HEADERS = frepple.h freppleinterface.h
 
-uninstall-local:
-	-rm -rf $(DESTDIR)$(includedir)/frepple
 

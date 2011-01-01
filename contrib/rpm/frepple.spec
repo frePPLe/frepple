@@ -85,7 +85,7 @@ make %{?_smp_mflags} all
 
 %check
 # Run test suite, skipping some long and less interesting tests
-TESTARGS="--regression"
+TESTARGS="--regression -e setup_1 -e setup_2 -e setup_3 -e constraints_combined_1 -e operation_routing "
 export TESTARGS
 make check
 
@@ -113,8 +113,8 @@ rm -rf %{buildroot}
 %{_bindir}/frepple
 %dir %{_libdir}/frepple
 %{_libdir}/frepple/mod_forecast.so
-%{_libdir}/libfrepple.so.0
-%{_libdir}/libfrepple.so.0.0.0
+%{_libdir}/frepple/libfrepple.so.0
+%{_libdir}/frepple/libfrepple.so.0.0.0
 %dir %{_datadir}/frepple
 %{_datadir}/frepple/*.xsd
 %{_datadir}/frepple/*.xml
@@ -126,7 +126,7 @@ rm -rf %{buildroot}
 
 %files devel
 %defattr(-,root,root,-)
-%{_libdir}/libfrepple.so
+%{_libdir}/frepple/libfrepple.so
 %dir %{_includedir}/frepple
 %{_includedir}/frepple/*
 %{_includedir}/frepple.h

@@ -141,11 +141,11 @@ def runTestSuite():
     # Executable to run
     os.environ['FREPPLE_HOME'] = os.path.join(testdir,"..","bin")
     if platform == 'VCC':
-      os.environ['EXECUTABLE'] = os.path.join(testdir,"..","bin","frepple.exe")
+      os.environ['EXECUTABLE'] = '"' + os.path.join(testdir,"..","bin","frepple.exe") + '"'
     else:
       # Executable to be used for the tests. Exported as an environment variable.
       # This default executable is the one valid  for GCC cygwin and GCC *nux builds.
-      os.environ['EXECUTABLE'] = "%s --mode=execute %s" % (os.path.join(testdir,"..","libtool"), os.path.join(testdir,"..","src","frepple"))
+      os.environ['EXECUTABLE'] = '"%s" --mode=execute %s' % (os.path.join(testdir,"..","libtool"), os.path.join(testdir,"..","src","frepple"))
 
     # Argh... Special cases for that special platform again...
     if 'FREPPLE_HOME' in os.environ:

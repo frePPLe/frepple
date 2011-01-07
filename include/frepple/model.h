@@ -2062,15 +2062,16 @@ class OperationPlan
     virtual DECLARE_EXPORT double setQuantity(double f,
       bool roundDown = false, bool update = true, bool execute = true);
 
-    /** Returns a pointer to the demand for which this operation is a delivery.
-      * If the operationplan isn't a delivery operation, this is a NULL pointer.
+    /** Returns a pointer to the demand for which this operationplan is a delivery.
+      * If the operationplan isn't a delivery, this is a NULL pointer.
       */
     Demand* getDemand() const {return dmd;}
 
     /** Updates the demand to which this operationplan is a solution. */
     DECLARE_EXPORT void setDemand(Demand* l);
 
-    /** Calculate the penalty of an operationplan. */
+    /** Calculate the penalty of an operationplan.<br>
+      * It is the sum of all setup penalties of the resources it loads. */
     DECLARE_EXPORT double getPenalty() const;
 
     /** Calculate the unavailable time during the operationplan. The regular 

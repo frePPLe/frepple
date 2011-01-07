@@ -512,20 +512,16 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
   else
   {
     // Move all sub-operationplans in an orderly fashion
-    bool firstMove = true;
     for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
     {
       if (i->getOperation() == OperationSetup::setupoperation) continue;
-      if (i->getDates().getStart() < d || firstMove)
+      if (i->getDates().getStart() < d)
       {
         i->setStart(d);
-        // Comment out the next line to leave slack in the routing.
-        // With the line commented out routing slack is cleaned up aggressively.
-        //@todo firstMove = false;  
         d = i->getDates().getEnd();
       }
       else
-        // There is sufficient slack between the suboperation plans
+        // There is sufficient slack between the suboperationplans
         break;
     }
   }
@@ -546,20 +542,16 @@ void DECLARE_EXPORT OperationPlan::setEnd(Date d)
   else
   {
     // Move all sub-operationplans in an orderly fashion
-    bool firstMove = true;
     for (OperationPlan* i = lastsubopplan; i; i = i->prevsubopplan)
     {
       if (i->getOperation() == OperationSetup::setupoperation) break;
-      if (i->getDates().getEnd() > d || firstMove)
+      if (i->getDates().getEnd() > d)
       {
         i->setEnd(d);
-        // Comment out the next line to leave slack in the routing.
-        // With the line commented out routing slack is cleaned up aggressively.
-        // @todo firstMove = false;
         d = i->getDates().getStart();
       }
       else
-        // There is sufficient slack between the suboperations
+        // There is sufficient slack between the suboperationplans
         break;
     }
   }

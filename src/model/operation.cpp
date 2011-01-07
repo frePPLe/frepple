@@ -643,7 +643,7 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       y = &*x;
     if (y && y->getDates() == o->getDates() && !y->getOwner()
       && y->getDemand() == o->getDemand() && !y->getLocked() && y->getIdentifier()
-      && y->getQuantity() + o->getQuantity() < getSizeMaximum())  // @todo ignores multiple qty
+      && y->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
       // Check that the flowplans are on identical alternates
       OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();
@@ -662,7 +662,7 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
     }
     if (x!= OperationPlan::end() && x->getDates() == o->getDates() && !x->getOwner()
       && x->getDemand() == o->getDemand() && !x->getLocked() && x->getIdentifier()
-      && x->getQuantity() + o->getQuantity() < getSizeMaximum()) // @todo ignores multiple qty
+      && x->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
       // Check that the flowplans are on identical alternates
       OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();

@@ -27,10 +27,9 @@ Django URL mapping file.
 
 import os.path
 
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, include
 from django.conf import settings
 
-import freppledb.common.views
 import freppledb.output.urls
 import freppledb.input.urls
 import freppledb.common.urls

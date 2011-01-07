@@ -26,7 +26,6 @@ import sys, os, os.path
 sys.path.append(os.path.join(os.path.split(__file__)[0],'..','django'))
 import py2exe, django, freppledb
 from distutils.core import setup
-from freppledb.manage import *
 
 # Add default command lines
 if len(sys.argv) == 1:

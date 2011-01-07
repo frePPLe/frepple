@@ -20,7 +20,7 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-import sys, os, os.path, socket
+import sys, os.path, socket
 from threading import Thread
 from stat import S_ISDIR, ST_MODE
 from optparse import make_option

@@ -20,15 +20,12 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import datetime, date
+from datetime import datetime
 from decimal import Decimal
-import sys
 
 from django.db import models
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.db.models import signals
-from django.http import HttpRequest
-from django.dispatch import dispatcher
 from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _

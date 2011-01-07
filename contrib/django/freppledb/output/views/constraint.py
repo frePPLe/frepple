@@ -26,7 +26,7 @@ from django.db.models import Count
 
 from freppledb.output.models import Constraint
 from freppledb.common.report import ListReport, FilterText, FilterChoice, FilterDate, FilterNumber
-  
+
   
 entities = ( 
  ('demand',_('demand')),

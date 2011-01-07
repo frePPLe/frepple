@@ -24,10 +24,12 @@ from datetime import timedelta, datetime
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import connections
-
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponse
+from django.template import RequestContext, loader
 from freppledb.input.models import Parameter, Demand
-from freppledb.output.models import DemandPegging, FlowPlan, LoadPlan, OperationPlan
-from freppledb.common.report import *
+from freppledb.output.models import FlowPlan, LoadPlan, OperationPlan
+from freppledb.common.report import ListReport, getBuckets
  
     
 class ReportByDemand(ListReport):

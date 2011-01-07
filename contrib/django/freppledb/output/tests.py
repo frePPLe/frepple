@@ -22,8 +22,6 @@
 
 from django.test import TestCase
 
-from freppledb.input.models import *
-
 class OutputTest(TestCase):
 
   def setUp(self):

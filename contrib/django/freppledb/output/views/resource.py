@@ -24,11 +24,13 @@
 from django.db import connections
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponse
+from django.template import RequestContext, loader
 
-from freppledb.input.models import Resource
+from freppledb.input.models import Resource, Parameter
 from freppledb.output.models import LoadPlan
-from freppledb.common.db import *
-from freppledb.common.report import *
+from freppledb.common.db import sql_overlap3, python_date
+from freppledb.common.report import TableReport, ListReport, FilterText, FilterNumber, FilterDate, getBuckets
 
   
 class OverviewReport(TableReport):

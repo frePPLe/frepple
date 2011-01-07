@@ -25,8 +25,6 @@ create objects, access existing objects and change objects.
 '''
 
 import datetime
-from inspect import *
-from types import *
 
 
 def printModel(filename):

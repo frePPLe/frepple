@@ -24,7 +24,6 @@ import os
 
 from django.core import management
 from django.test import TransactionTestCase
-from django.test.testcases import restore_transaction_methods, disable_transaction_methods
 from django.conf import settings
 
 import freppledb.output as output

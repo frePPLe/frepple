@@ -25,7 +25,7 @@ from django.utils.translation import string_concat
 from django.db.models import Count
 
 from freppledb.output.models import Problem
-from freppledb.common.report import *
+from freppledb.common.report import ListReport, FilterText, FilterNumber, FilterDate, FilterChoice
 
 
 def getEntities(request):

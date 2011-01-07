@@ -25,9 +25,8 @@ from optparse import make_option
 from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
-from django.core.management.color import no_style
-from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
+from django.db import transaction
 from django.utils.translation import ugettext as _
 
 from freppledb.execute.models import log, Scenario

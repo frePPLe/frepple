@@ -20,7 +20,7 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns
 
 import freppledb.input.views
 

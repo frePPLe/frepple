@@ -29,8 +29,8 @@ from django import forms
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.common.models import *
-from freppledb.common.report import *
+from freppledb.common.models import Preferences
+from freppledb.common.report import ListReport, FilterText, FilterBool
 
 from django.contrib.auth.models import User, Group
 

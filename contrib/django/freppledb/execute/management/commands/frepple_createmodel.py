@@ -22,16 +22,18 @@
 
 import random
 from optparse import make_option
-from datetime import timedelta, datetime, date
+from datetime import timedelta, datetime
 
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.core import management
-from django.db import connections, DEFAULT_DB_ALIAS, transaction
-from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
+from django.db import connections, DEFAULT_DB_ALIAS, transaction
 
-from freppledb.input.models import *
+from freppledb.input.models import Operation, Buffer, Resource, Location, Calendar
+from freppledb.input.models import CalendarBucket, BucketDetail, Customer, Demand, Flow
+from freppledb.input.models import Load, Item, Parameter, Bucket, Forecast
 from freppledb.execute.models import log
 
 
@@ -138,7 +140,6 @@ class Command(BaseCommand):
       raise CommandError("No database settings known for '%s'" % database )
 
     random.seed(100) # Initialize random seed to get reproducible results
-    cnt = 100000     # A counter for operationplan identifiers
 
     transaction.enter_transaction_management(using=database)
     transaction.managed(True, using=database)
@@ -165,7 +166,7 @@ class Command(BaseCommand):
 
       # Plan start date
       if verbosity>0: print "Updating current date..."
-      param, created = Parameter.objects.using(database).get_or_create(name="currentdate")
+      param = Parameter.objects.using(database).get_or_create(name="currentdate")[0]
       param.value = datetime.strftime(startdate, "%Y-%m-%d %H:%M:%S")
       param.save(using=database)
 
@@ -189,8 +190,6 @@ class Command(BaseCommand):
       if verbosity>0: print "Creating working days..."
       workingdays = Calendar.objects.using(database).create(name="Working Days",type= "calendar_boolean")
       weeks = Calendar.objects.using(database).create(name="Weeks")
-      cur = None
-      cur2 = None
       for i in BucketDetail.objects.using(database).filter(bucket="week").all():
         curdate = i.startdate + timedelta(5)
         CalendarBucket(startdate=i.startdate, enddate=curdate, value=1, calendar=workingdays).save(using=database)
@@ -251,7 +250,7 @@ class Command(BaseCommand):
         if verbosity>0: print "Creating supply chain for end item %d..." % i
 
         # location
-        loc, created = Location.objects.using(database).get_or_create(name='Loc %05d' % i)
+        loc = Location.objects.using(database).get_or_create(name='Loc %05d' % i)[0]
         loc.available = workingdays
         loc.save(using=database)
         
@@ -278,11 +277,11 @@ class Command(BaseCommand):
           location=loc,
           category='00'
           )
-        fl = Flow.objects.using(database).create(operation=oper, thebuffer=buf, quantity=-1)
+        Flow.objects.using(database).create(operation=oper, thebuffer=buf, quantity=-1)
 
         # Demand
         for j in range(demand):
-          dm = Demand.objects.using(database).create(name='Dmd %05d %05d' % (i,j),
+          Demand.objects.using(database).create(name='Dmd %05d %05d' % (i,j),
             item=it,
             quantity=int(random.uniform(1,6)),
             # Exponential distribution of due dates, with an average of deliver_lt days.
@@ -336,14 +335,14 @@ class Command(BaseCommand):
         # Consume raw materials / components
         c = []
         for j in range(components_per):
-          o = operation = random.choice(ops)
+          o = random.choice(ops)
           b = random.choice(comps)
           while (o,b) in c:
             # A flow with the same operation and buffer already exists
-            o = operation = random.choice(ops)
+            o = random.choice(ops)
             b = random.choice(comps)
           c.append( (o,b) )
-          fl = Flow.objects.using(database).create(
+          Flow.objects.using(database).create(
             operation = o, thebuffer = b,
             quantity = random.choice([-1,-1,-1,-2,-3]))
 

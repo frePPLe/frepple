@@ -20,11 +20,10 @@
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
 
-import os
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction, connections, DEFAULT_DB_ALIAS
+from django.db import connections, DEFAULT_DB_ALIAS
 from django.conf import settings
 
 #TODO handling of suboperations!!!
@@ -124,8 +123,8 @@ class Command(BaseCommand):
       for o, r in cursor.fetchall():
         print '  "O%s"->"R%s";' % (o,r)
       print '}'
- 	    
-	    # Footer
+     
+      # Footer
       print '}'
 
     except Exception, e:

@@ -20,12 +20,13 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+from datetime import datetime
 import tempfile
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 
-from freppledb.input.models import *
+from freppledb.input.models import Location, Calendar
 
 class DataLoadTest(TestCase):
 

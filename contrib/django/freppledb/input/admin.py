@@ -27,7 +27,10 @@ from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.forms.util import ErrorList
 
-from freppledb.input.models import *
+from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix 
+from freppledb.input.models import Buffer, Customer, Demand, Parameter, Item, Load, Flow
+from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
+from freppledb.input.models import Bucket, BucketDetail, SetupRule, ForecastDemand
 from freppledb.admin import site
 from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
 
@@ -42,7 +45,7 @@ class ParameterForm(forms.ModelForm):
     value = cleaned_data.get("value")
     # Currentdate parameter must be a date+time value
     if name == "currentdate":
-      try: d = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+      try: datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
       except: 
         self._errors["value"] = ErrorList([_("Invalid date: expecting YYYY-MM-DD HH:MM:SS")])
         del cleaned_data["value"]

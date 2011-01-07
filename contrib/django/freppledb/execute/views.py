@@ -20,23 +20,23 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-import os, os.path
+import os.path
 from datetime import datetime
 
 from django.conf import settings
-from django.core import management, serializers
-from django.views.decorators.csrf import csrf_protect
-from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
-from django.http import Http404, HttpResponseRedirect
+from django.core import management
 from django.views.decorators.cache import never_cache
-from django.shortcuts import render_to_response, get_object_or_404
 from django.views.generic.simple import direct_to_template
 from django.utils.translation import ugettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS, transaction
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.csrf import csrf_protect
+from django.http import Http404, HttpResponseRedirect
+from django.contrib import messages
+from django.utils.encoding import force_unicode
 
 from freppledb.execute.models import log, Scenario
-from freppledb.common.report import *
+from freppledb.common.report import ListReport, FilterDate, FilterText 
 import freppledb.input
 
 @staff_member_required
@@ -352,7 +352,7 @@ def scenarios(request):
               )
             messages.add_message(request, messages.INFO, 
               force_unicode(_("Successfully copied scenario '%(source)s' to '%(destination)s'") % {'source': source, 'destination': sc.name}))
-          except Exception, e:
+          except Exception:
             messages.add_message(request, messages.ERROR, 
               force_unicode(_("Failure copying scenario '%(source)s' to '%(destination)s'") % {'source': source, 'destination':sc.name}))
     

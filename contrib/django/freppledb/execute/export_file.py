@@ -30,11 +30,8 @@ The code iterates over all objects in the C++ core engine, and writes this
 information to a set of text files.
 '''
 
-
 from time import time
 import csv, inspect
-from threading import Thread
-
 
 import frepple
 
@@ -164,7 +161,7 @@ def exportPegging():
 
 def exportForecast():
   # Detect whether the forecast module is available
-  if not 'demand_forecastbucket' in [ a for a, b in inspect.getmembers(frepple) ]:
+  if not 'demand_forecastbucket' in [ a for a in inspect.getmembers(frepple)[0] ]:
     return
 
   print "Exporting forecast plans..."

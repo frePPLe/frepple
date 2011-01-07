@@ -34,22 +34,18 @@ It provides the following functionality:
 '''
 
 from datetime import date, datetime
-from email.Utils import formatdate
-from calendar import timegm
 import csv, StringIO
 
 from django.conf import settings
 from django.core.paginator import QuerySetPaginator, InvalidPage
 from django.views.decorators.csrf import csrf_protect
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db import models, transaction, connection
+from django.db import transaction
 from django.db.models.fields import Field
 from django.db.models.fields.related import RelatedField, AutoField
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotModified
+from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.forms.models import modelform_factory
-from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
@@ -60,10 +56,8 @@ from django.utils.text import capfirst, get_text_list
 from django.utils.encoding import iri_to_uri, force_unicode
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import User
 
-from freppledb.input.models import Parameter, Buffer, BucketDetail
-from freppledb.common.db import python_date
+from freppledb.input.models import Parameter, BucketDetail
 
 
 # Parameter settings
@@ -269,13 +263,13 @@ def view_report(request, entity=None, **args):
     # The url doesn't specify a single entity, but may specify filters
     # Convert URL parameters into queryset filters.
     for key, valuelist in request.GET.lists():
-       # Ignore arguments that aren't filters
-       if key not in reservedParameters:
-         # Loop over all values, since the same filter key can be
-         # used multiple times!
-         for value in valuelist:
-           if len(value)>0:
-             counter = counter.filter( **{smart_str(key): value} )
+      # Ignore arguments that aren't filters
+      if key not in reservedParameters:
+        # Loop over all values, since the same filter key can be
+        # used multiple times!
+        for value in valuelist:
+          if len(value)>0:
+            counter = counter.filter( **{smart_str(key): value} )
 
   # Pick up the sort parameter from the url
   sortparam = request.GET.get('o', reportclass.default_sort)
@@ -313,7 +307,7 @@ def view_report(request, entity=None, **args):
         sortsql = '%d asc' % sortfield
     else:
       if sortdirection == 'd':
-        sortparm = '%dd' % sortfield
+        sortparam = '%dd' % sortfield
         if reportclass.default_sortdirection == 'a':
           counter = counter.order_by(
             '-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]),
@@ -740,7 +734,6 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
   number = 0
   args = req.GET.copy()  # used for the urls used in the sort header
   args2 = req.GET.copy() # used for additional, hidden filter fields
-  sortable = False
   result1 = []
   result2 = []
   
@@ -753,7 +746,6 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
     title = capfirst(escape((row[1].has_key('title') and row[1]['title']) or row[0]))
     if not row[1].has_key('sort') or row[1]['sort']:
       # Sorting is allowed
-      sortable = True
       if sortfield == number:
         if sortdirection == 'a':
           # Currently sorting in ascending order on this column

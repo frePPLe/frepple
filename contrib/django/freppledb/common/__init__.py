@@ -35,6 +35,7 @@ The common functionality handles:
 '''
 
 from django import template
+from django.core.exceptions import PermissionDenied
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse, HttpResponseRedirect, Http404

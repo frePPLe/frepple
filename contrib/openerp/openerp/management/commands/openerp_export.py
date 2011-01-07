@@ -34,9 +34,9 @@ from django.utils.translation import ugettext as _
 from freppledb.input.models import Parameter
 from freppledb.execute.models import log
         
-      
+
 class Command(BaseCommand):
-  help = "Uploads planning results from frePPle into an OpenERP instance"
+  help = "Upload planning results from frePPle into an OpenERP instance"
 
   option_list = BaseCommand.option_list + (
       make_option('--user', dest='user', type='string',
@@ -117,7 +117,7 @@ class Command(BaseCommand):
       cursor = connections[self.database].cursor()
       
       # Upload all data
-      #self.export_mrp(sock, cursor)
+      self.export_mrp(sock, cursor)
       
       # Logging message
       log(category='EXPORT', theuser=user,
@@ -132,9 +132,9 @@ class Command(BaseCommand):
       settings.DEBUG = tmp_debug
       transaction.leave_transaction_management(using=self.database)
       
-
+            
   # Upload MRP work order data
-  #   - extracting recently changed res.partner objects
+  #   - uploading frePPLe operationplans
   #   - meeting the criterion: 
   #        - %active = True
   #        - %customer = True
@@ -142,75 +142,111 @@ class Command(BaseCommand):
   #        - %id %name -> name
   #        - %ref     -> description
   #        - 'OpenERP' -> subcategory
+  # TODO Delete/net previous workorders
+  # TODO XML-RPC interface is too slow for this type of bulk upload! 
+  #      A faster alternative is to write to a file and code in the OpenERP module to import and confirm the orders
   def export_mrp(self, sock, cursor):  
-    # Performance test: created 10000 partners in 22m44s, 7.3 per second
-    # Bottleneck is openerp server, not the db at all
-    # cnt = 1
-    # print datetime.now()
-    # while cnt < 10000:
-    #   partner = {
-    #      'name': 'customer %d' % cnt,
-    #      'active': True,
-    #      'customer': True,
-    #   }
-    #   partner_id = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'res.partner', 'create', partner)
-    #   cnt += 1
-    # print datetime.now()
     transaction.enter_transaction_management(using=self.database)
     transaction.managed(True, using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Exporting MRP work orders..."
-      cursor.execute("SELECT name FROM customer")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
-        'res.partner', 'search', 
-        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
-      fields = ['name', 'active', 'customer', 'ref']
-      insert = []
-      update = []
-      delete = []
-      for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'res.partner', 'read', ids, fields):
-        name = u'%d %s' % (i['id'],i['name'])
-        if i['active'] and i['customer']:
-          if name in frepple_keys:
-            update.append(i)
-          else:
-            insert.append(i)
-        elif name in frepple_keys:
-          delete.append( (name,) )
-      cursor.executemany(
-        "insert into customer \
-          (name,description,subcategory,lastmodified) \
-          values (%%s,%%s,'OpenERP','%s')" % self.date,
-        [(
-           u'%d %s' % (i['id'],i['name']),
-           i['ref']
-         ) for i in insert
-        ])
-      cursor.executemany(
-        "update customer \
-          set description=%%s, subcategory='OpenERP',lastmodified='%s' \
-          where name=%%s" % self.date,
-        [(
-           i['ref'],
-           u'%d %s' % (i['id'],i['name'])
-         ) for i in update
-        ])
-      cursor.executemany(
-        "delete from customer where name=%s",
-        delete)
+        print "Exporting MRP work orders..."      
+      cursor.execute('''SELECT id, operation, quantity, startdate, enddate   
+         FROM out_operationplan, operation
+         WHERE out_operationplan.operation = operation.name
+         AND operation.subcategory = 'OpenERP'
+         AND out_operationplan.owner is null
+         ''') 
+      for i, j, k, l in cursor.fetchall():
+        print i,j,k,l
+        mrp_proc = {
+          'name': i,
+          'date_planned': l.strftime('%Y-%m-%d'),
+          'product_id': 1, #  TODO WHICH PRODUCT ID to use here
+          'product_qty': k,
+          'product_uom': 1, # This assumes PCE...
+          'location_id': 1, # TODO WHICH LOCATION ID to use here
+          'procure_method': 'make_to_order',
+          'origin': 'frePPLe'
+        }
+        mrp_proc_id = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'mrp.procurement', 'create', mrp_proc)
+        #xxx = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'mrp.procurement', 'exec_workflow', 'button_confirm', mrp_proc_id)
+        cnt += 1
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print "Inserted %d new customers" % len(insert)
-        print "Updated %d existing customers" % len(update)
-        print "Deleted %d customers" % len(delete)
-        print "Imported customers in %.2f seconds" % (time() - starttime)
+        print "Uploaded %d MRP work orders" % cnt
     except Exception, e:
       transaction.rollback(using=self.database)
       print "Error exporting MRP work orders: %s" % e
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
+
+
+#bin\addons\mrp\mrp.py
+#bin\addons\mrp\schedulers.py
+#
+#_procure_confirm:
+#For each mrp.procurement where state = 'confirmed' 
+#and procure_method 'make to order' and date_planned < scheduling window
+#  'check' button
+#        
+#_procure_orderpoint_confirm:
+#  if automatic: self.create_automatic_op(cr, uid, context=context)
+#  for all defined order points
+#    if virtual onhand < minimum at this location
+#              qty = max(op.product_min_qty, op.product_max_qty)-prods
+#              reste = qty % op.qty_multiple
+#              if reste > 0:
+#                  qty += op.qty_multiple - reste
+#              newdate = DateTime.now() + DateTime.RelativeDateTime(
+#                      days=int(op.product_id.seller_delay))
+#              if op.product_id.supply_method == 'buy':
+#                  location_id = op.warehouse_id.lot_input_id
+#              elif op.product_id.supply_method == 'produce':
+#                  location_id = op.warehouse_id.lot_stock_id
+#              else:
+#                  continue
+#              if qty <= 0:
+#                  continue
+#              if op.product_id.type not in ('consu'):
+#                  proc_id = procurement_obj.create(cr, uid, {
+#                      'name': 'OP:' + str(op.id),
+#                      'date_planned': newdate.strftime('%Y-%m-%d'),
+#                      'product_id': op.product_id.id,
+#                      'product_qty': qty,
+#                      'product_uom': op.product_uom.id,
+#                      'location_id': op.warehouse_id.lot_input_id.id,
+#                      'procure_method': 'make_to_order',
+#                      'origin': op.name
+#                  })
+#         wf_service.trg_validate(uid, 'mrp.procurement', proc_id,'button_confirm', cr)    
+#              State changes from 'draft' to 'confirmed'
+#              Confirmed status creates stock moves, and recursively creates extra mrp.procurement records
+#         wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_check', cr)
+#         orderpoint_obj.write(cr, uid, [op.id], {'procurement_id': proc_id})     WHY???? WHER USED???
+#
+#create_automatic_op:
+#For each product & warehouse combination
+#  if virtual inventory < 0
+#    create mrp.procurement with
+#        if product.supply_method == 'buy':
+#            location_id = warehouse.lot_input_id.id
+#        elif product.supply_method == 'produce':
+#            location_id = warehouse.lot_stock_id.id
+#        else:
+#            continue
+#        proc_id = proc_obj.create(cr, uid, {
+#            'name': 'Automatic OP: %s' % product.name,
+#            'origin': 'SCHEDULER',
+#            'date_planned': newdate.strftime('%Y-%m-%d %H:%M:%S'),
+#            'product_id': product.id,
+#            'product_qty': -product.virtual_available,
+#            'product_uom': product.uom_id.id,
+#            'location_id': location_id,
+#            'procure_method': 'make_to_order',
+#            })
+#    wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_confirm', cr)   (State changes from 'draft' to 'confirmed')
+#    wf_service.trg_validate(uid, 'mrp.procurement', proc_id, 'button_check', cr)
                        

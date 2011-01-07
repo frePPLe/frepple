@@ -20,21 +20,24 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import date, datetime
+from datetime import datetime
+from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, Http404
 from django.views.decorators.csrf import csrf_protect
-from django.core import serializers
 from django.utils import simplejson
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import iri_to_uri
+from django.utils.encoding import iri_to_uri, force_unicode
 
-from freppledb.input.models import *
-from freppledb.common.report import *
+from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix 
+from freppledb.input.models import Buffer, Customer, Demand, Parameter, Item, Load, Flow
+from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
+from freppledb.input.models import Bucket, BucketDetail
+from freppledb.common.report import ListReport, FilterText, FilterDate, FilterNumber, FilterBool
 
 
 class uploadjson:
@@ -140,7 +143,6 @@ class pathreport:
 
     todo: The current code only supports 1 level of super- or sub-operations.
     '''
-    from decimal import Decimal
     from django.core.exceptions import ObjectDoesNotExist
     if type == 'buffer':
       # Find the buffer

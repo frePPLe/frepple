@@ -25,6 +25,8 @@ create objects, access existing objects and change objects.
 '''
 
 import datetime
+import inspect
+import types
 
 
 def printModel(filename):
@@ -127,28 +129,28 @@ def printExtensions():
   Useful to create documentation.
   '''
   print "  Types:"
-  for name, o in getmembers(frepple):
-    if not isclass(o) or issubclass(o,Exception) or hasattr(o,"__iter__"): continue
-    print "    %s: %s" % (o.__name__, getdoc(o))
+  for name, o in inspect.getmembers(frepple):
+    if not inspect.isclass(o) or issubclass(o,Exception) or hasattr(o,"__iter__"): continue
+    print "    %s: %s" % (o.__name__, inspect.getdoc(o))
   print "  Methods:"
-  for name, o in getmembers(frepple):
-    if not isroutine(o): continue
-    print "    %s: %s" % (o.__name__, getdoc(o))
+  for name, o in inspect.getmembers(frepple):
+    if not inspect.isroutine(o): continue
+    print "    %s: %s" % (o.__name__, inspect.getdoc(o))
   print "  Exceptions:"
-  for name, o in getmembers(frepple):
-    if not isclass(o) or not issubclass(o,Exception): continue
+  for name, o in inspect.getmembers(frepple):
+    if not inspect.isclass(o) or not issubclass(o,Exception): continue
     print "    %s" % (o.__name__)
   print "  Iterators:"
-  for name, o in getmembers(frepple):
-    if not isclass(o) or not hasattr(o,"__iter__"): continue
-    print "    %s: %s" % (o.__name__, getdoc(o))
+  for name, o in inspect.getmembers(frepple):
+    if not inspect.isclass(o) or not hasattr(o,"__iter__"): continue
+    print "    %s: %s" % (o.__name__, inspect.getdoc(o))
   print "  Other:"
-  for name, o in getmembers(frepple):
+  for name, o in inspect.getmembers(frepple):
     # Negating the exact same filters as in the previous blocks
-    if not(not isclass(o) or issubclass(o,Exception) or hasattr(o,"__iter__")): continue
-    if isroutine(o): continue
-    if not(not isclass(o) or not issubclass(o,Exception)): continue
-    if not(not isclass(o) or not hasattr(o,"__iter__")): continue
+    if not(not inspect.isclass(o) or issubclass(o,Exception) or hasattr(o,"__iter__")): continue
+    if inspect.isroutine(o): continue
+    if not(not inspect.isclass(o) or not issubclass(o,Exception)): continue
+    if not(not inspect.isclass(o) or not hasattr(o,"__iter__")): continue
     print "    %s: %s" % (name, o)
 
 

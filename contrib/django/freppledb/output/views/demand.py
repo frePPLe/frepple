@@ -38,7 +38,7 @@ class OverviewReport(TableReport):
   '''
   template = 'output/demand.html'
   title = _('Demand report')
-  basequeryset = Item.objects.extra(where=('name in (select distinct item_id from demand union select distinct item_id from forecast)',))
+  basequeryset = Item.objects.all()
   model = Item
   rows = (
     ('item',{
@@ -69,15 +69,21 @@ class OverviewReport(TableReport):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connections[request.database].cursor()
 
+    # Assure the item hierarchy is up to date
+    Item.rebuildHierarchy(database=basequery.db)
+    
     # Execute a query to get the backlog at the start of the horizon
     startbacklogdict = {}
     query = '''
-      select item, sum(quantity)
-      from out_demand
-      where item in (select items.name from (%s) items)
+      select items.name, sum(quantity)
+      from (%s) items
+      inner join item 
+      on item.lft between items.lft and items.rght
+      inner join out_demand
+      on item.name = out_demand.item
         and (plandate is null or plandate >= '%s')
         and due < '%s'
-      group by item
+      group by items.name
       ''' % (basesql, startdate, startdate)
     cursor.execute(query, baseparams)
     for row in cursor.fetchall():
@@ -89,14 +95,14 @@ class OverviewReport(TableReport):
                y.bucket as col1, y.startdate as col2, y.enddate as col3,
                min(y.orders),
                coalesce(sum(fcst.quantity * %s / %s),0),
-               min(y.planned)
+               min(y.planned), y.lft as lft, y.rght as rght
         from (
-          select x.name as name,
+          select x.name as name, x.lft as lft, x.rght as rght,
                x.bucket as bucket, x.startdate as startdate, x.enddate as enddate,
                coalesce(sum(demand.quantity),0) as orders,
                min(x.planned) as planned
           from (
-          select items.name as name,
+          select items.name as name, items.lft as lft, items.rght as rght,
                  d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
                  coalesce(sum(out_demand.quantity),0) as planned
           from (%s) items
@@ -106,33 +112,40 @@ class OverviewReport(TableReport):
              from bucketdetail
              where bucket_id = '%s' and startdate >= '%s' and startdate < '%s'
              ) d
+          -- Include hierarchical children
+          inner join item
+          on item.lft between items.lft and items.rght
           -- Planned quantity
           left join out_demand
-          on items.name = out_demand.item
+          on item.name = out_demand.item 
           and d.startdate <= out_demand.plandate
           and d.enddate > out_demand.plandate
           -- Grouping
-          group by items.name, d.bucket, d.startdate, d.enddate
+          group by items.name, items.lft, items.rght, d.bucket, d.startdate, d.enddate
         ) x
         -- Requested quantity
+        inner join item
+        on item.lft between x.lft and x.rght
         left join demand
-        on x.name = demand.item_id
+        on item.name = demand.item_id
         and x.startdate <= demand.due
         and x.enddate > demand.due
         -- Grouping
-        group by x.name, x.bucket, x.startdate, x.enddate
+        group by x.name, x.lft, x.rght, x.bucket, x.startdate, x.enddate
         ) y
         -- Forecasted quantity
+        inner join item
+        on item.lft between y.lft and y.rght
         left join (select forecast.item_id as item_id, out_forecast.startdate as startdate,
 		        out_forecast.enddate as enddate, out_forecast.net as quantity
           from out_forecast, forecast
           where out_forecast.forecast = forecast.name
           ) fcst
-        on y.name = fcst.item_id
+        on item.name = fcst.item_id
         and fcst.enddate >= y.startdate
         and fcst.startdate <= y.enddate
         -- Ordering and grouping
-        group by y.name, y.bucket, y.startdate, y.enddate
+        group by y.name, y.lft, y.rght, y.bucket, y.startdate, y.enddate
         order by %s, y.startdate
        ''' % (sql_overlap('fcst.startdate','fcst.enddate','y.startdate','y.enddate'),
          sql_datediff('fcst.enddate','fcst.startdate'),

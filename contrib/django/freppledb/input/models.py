@@ -45,12 +45,25 @@ class HierarchyModel(models.Model):
   owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='xchildren',
     help_text=_('Hierarchical parent'))
 
+  def save(self, *args, **kwargs):
+    # Trigger recalculation of the hieracrhy
+    self.lft = None
+    self.rght = None
+
+    # Call the real save() method
+    super(HierarchyModel, self).save(*args, **kwargs)
+
   class Meta:
     abstract = True
 
   @classmethod
   def rebuildHierarchy(cls, database = DEFAULT_DB_ALIAS):
   
+    # Verify whether we need to rebuild or not.
+    # We search for the first record whose lft field is null. 
+    if len(cls.objects.using(database).filter(lft__isnull=True)[:1]) == 0: 
+      return 
+    
     tmp_debug = settings.DEBUG
     settings.DEBUG = False
     nodes = {}

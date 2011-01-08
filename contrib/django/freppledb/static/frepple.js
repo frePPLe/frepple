@@ -679,7 +679,6 @@ function export_show(list_or_table)
 }
 
 
-
 function export_close()
 {
   // Fetch the report data
@@ -687,6 +686,9 @@ function export_close()
   if (location.search.length > 0)
     // URL already has arguments
     url += "&reporttype=" + $('csvformat').value;
+  else if (url.charAt(url.length - 1) == '?')
+    // This is the first argument for the URL, but we already have a question mark at the end
+    url += "reporttype=" + $('csvformat').value;
   else
     // This is the first argument for the URL
     url += "?reporttype=" + $('csvformat').value;

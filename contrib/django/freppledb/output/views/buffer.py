@@ -75,20 +75,30 @@ class OverviewReport(TableReport):
   def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
+        
+    # Assure the item hierarchy is up to date
+    Buffer.rebuildHierarchy(database=basequery.db)
     
     # Execute a query  to get the onhand value at the start of our horizon
     startohdict = {}
     query = '''
-      select out_flowplan.thebuffer, out_flowplan.onhand
+      select buffers.name, sum(oh.onhand)
+      from (%s) buffers 
+      inner join buffer
+      on buffer.lft between buffers.lft and buffers.rght 
+      inner join (
+      select out_flowplan.thebuffer as thebuffer, out_flowplan.onhand as onhand
       from out_flowplan,
         (select thebuffer, max(id) as id
          from out_flowplan
-         where thebuffer in (select buf.name from (%s) buf)
-         and flowdate < '%s'
+         where flowdate < '%s'
          group by thebuffer
         ) maxid
       where maxid.thebuffer = out_flowplan.thebuffer
       and maxid.id = out_flowplan.id
+      ) oh
+      on oh.thebuffer = buffer.name
+      group by buffers.name
       ''' % (basesql, startdate)
     cursor.execute(query, baseparams)
     for row in cursor.fetchall(): startohdict[row[0]] = float(row[1])
@@ -106,9 +116,12 @@ class OverviewReport(TableReport):
              from bucketdetail
              where bucket_id = '%s' and startdate >= '%s' and startdate < '%s'
              ) d
+        -- Include child buffers
+        inner join buffer
+        on buffer.lft between buf.lft and buf.rght
         -- Consumed and produced quantities
         left join out_flowplan
-        on buf.name = out_flowplan.thebuffer
+        on buffer.name = out_flowplan.thebuffer
         and d.startdate <= out_flowplan.flowdate
         and d.enddate > out_flowplan.flowdate
         -- Grouping and sorting

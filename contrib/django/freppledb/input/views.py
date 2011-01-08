@@ -340,8 +340,8 @@ class BufferList(ListReport):
   @staticmethod
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
-      'name','description','category','subcategory','location','item',
-      'onhand','type','minimum','minimum_calendar','producing','carrying_cost','lastmodified'
+      'name','description','category','subcategory','location','item','onhand',
+      'owner','type','minimum','minimum_calendar','producing','carrying_cost','lastmodified'
       )
 
   rows = (
@@ -372,6 +372,10 @@ class BufferList(ListReport):
     ('onhand', {
       'title': _('onhand'),
       'filter': FilterNumber(size=5, operator="lt"),
+      }),
+    ('owner', {
+      'title': _('owner'),
+      'filter': FilterText(field='owner__name'),
       }),
     ('type', {
       'title': _('type'),
@@ -439,7 +443,7 @@ class ResourceList(ListReport):
   @staticmethod
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
-      'name','description','category','subcategory','location','type',
+      'name','description','category','subcategory','location','owner','type',
       'maximum','maximum_calendar','cost','maxearly','setupmatrix','setup','lastmodified'
       )
 
@@ -463,6 +467,10 @@ class ResourceList(ListReport):
     ('location', {
       'title': _('location'),
       'filter': FilterText(field='location__name'),
+      }),    
+    ('owner', {
+      'title': _('owner'),
+      'filter': FilterText(field='owner__name'),
       }),
     ('type', {
       'title': _('type'),

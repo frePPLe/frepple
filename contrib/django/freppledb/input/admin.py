@@ -68,14 +68,12 @@ class CalendarBucket_admin(MultiDBModelAdmin):
   model = CalendarBucket
   raw_id_fields = ('calendar',)
   save_on_top = True
-  save_as = True
 site.register(CalendarBucket,CalendarBucket_admin)
 
 
 class Calendar_admin(MultiDBModelAdmin):
   model = Calendar
   save_on_top = True
-  save_as = True
   inlines = [ CalendarBucket_inline, ]
 site.register(Calendar,Calendar_admin)
 
@@ -84,21 +82,18 @@ class Location_admin(MultiDBModelAdmin):
   model = Location
   raw_id_fields = ('available', 'owner',)
   save_on_top = True
-  save_as = True
 site.register(Location,Location_admin)
 
 
 class Customer_admin(MultiDBModelAdmin):
   model = Customer
   raw_id_fields = ('owner',)
-  save_on_top = True
-  save_as = True
+  save_on_top = True   
 site.register(Customer,Customer_admin)
 
 
 class Item_admin(MultiDBModelAdmin):
   model = Item
-  save_as = True
   save_on_top = True
   raw_id_fields = ('operation', 'owner',)
 site.register(Item,Item_admin)
@@ -127,7 +122,6 @@ class Operation_admin(MultiDBModelAdmin):
   model = Operation
   raw_id_fields = ('location',)
   save_on_top = True
-  save_as = True
   inlines = [ SubOperation_inline, ]
   # TODO inlines = [ SubOperation_inline, Flow_inline, Load_inline, ]
   fieldsets = (
@@ -161,7 +155,6 @@ class Buffer_admin(MultiDBModelAdmin):
               'fields': ('leadtime','fence','min_inventory','max_inventory','min_interval','max_interval','size_minimum','size_multiple','size_maximum'),
               'classes': ('collapse',)},),
         )
-  save_as = True
   save_on_top = True
   #TODO inlines = [ Flow_inline, ]
 site.register(Buffer,Buffer_admin)
@@ -174,7 +167,6 @@ class SetupRule_inline(MultiDBTabularInline):
 
 class SetupMatrix_admin(MultiDBModelAdmin):
   model = SetupMatrix
-  save_as = True
   save_on_top = True
   inlines = [ SetupRule_inline, ]
 site.register(SetupMatrix,SetupMatrix_admin)
@@ -183,7 +175,6 @@ site.register(SetupMatrix,SetupMatrix_admin)
 class Resource_admin(MultiDBModelAdmin):
   model = Resource
   raw_id_fields = ('maximum_calendar', 'location', 'setupmatrix', 'owner')
-  save_as = True
   save_on_top = True
   # TODO inlines = [ Load_inline, ]
 site.register(Resource,Resource_admin)
@@ -193,7 +184,6 @@ class Flow_admin(MultiDBModelAdmin):
   model = Flow
   raw_id_fields = ('operation', 'thebuffer',)
   save_on_top = True
-  save_as = True
 site.register(Flow,Flow_admin)
 
 
@@ -201,7 +191,6 @@ class Load_admin(MultiDBModelAdmin):
   model = Load
   raw_id_fields = ('operation', 'resource',)
   save_on_top = True
-  save_as = True
 site.register(Load,Load_admin)
 
 
@@ -209,7 +198,6 @@ class OperationPlan_admin(MultiDBModelAdmin):
   model = OperationPlan
   raw_id_fields = ('operation',)
   save_on_top = True
-  save_as = True
 site.register(OperationPlan,OperationPlan_admin)
 
 
@@ -222,7 +210,6 @@ class Demand_admin(MultiDBModelAdmin):
         )
   radio_fields = {'priority': admin.HORIZONTAL, }
   save_on_top = True
-  save_as = True
 site.register(Demand,Demand_admin)
 
 
@@ -241,7 +228,6 @@ class Forecast_admin(MultiDBModelAdmin):
   radio_fields = {'priority': admin.HORIZONTAL, }
   inlines = [ ForecastDemand_inline, ]
   save_on_top = True
-  save_as = True
 site.register(Forecast,Forecast_admin)
 
 
@@ -253,13 +239,11 @@ class BucketDetail_inline(MultiDBTabularInline):
 class BucketDetail_admin(MultiDBModelAdmin):
   model = BucketDetail
   save_on_top = True
-  save_as = True
 site.register(BucketDetail,BucketDetail_admin)
 
 
 class Bucket_admin(MultiDBModelAdmin):
   model = Bucket
   save_on_top = True
-  save_as = True
   inlines = [ BucketDetail_inline, ]
 site.register(Bucket,Bucket_admin)

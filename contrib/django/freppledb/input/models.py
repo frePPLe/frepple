@@ -41,7 +41,8 @@ CALENDARID = None
 class HierarchyModel(models.Model):
   lft = models.PositiveIntegerField(db_index = True, editable=False, null=True, blank=True)
   rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True, 
+    help_text=_('Unique identifier'))
   owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='xchildren',
     help_text=_('Hierarchical parent'))
 

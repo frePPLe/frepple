@@ -2,7 +2,7 @@
 FILES_COMMON = favicon.ico styles.css *.pdf *.gif *.bmp 
 FILES_API = reference
 FILES_WEB = index.html Frepple UI Tutorial Main uploads uploads/Frepple uploads/UI uploads/Tutorial 
-FILES_EXTRA = htmlindexer.py frepple.doxyfile frepple.1 apiheader.html apifooter.html
+FILES_EXTRA = htmlindexer.py frepple.doxyfile frepple.1 apiheader.html apifooter.html search.html
 
 if APIDOC
 if WEBDOC 
@@ -36,7 +36,8 @@ index.html:
 	mv www.frepple.com/pmwiki/pmwiki.php/* .
 	mv www.frepple.com/pmwiki/uploads uploads
 	mv www.frepple.com/pmwiki/pmwiki.php.1.html index.html
-	-rm -rf www.frepple.com
+	-rm -rf www.frepple.com	
+	sed -i "s|action='\(\.\./\)*Main/HomePage.html'>|action='\1search.html'>|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
 	sed -i "s|href='\(\.\./\)*pmwiki.php/|href='\1|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
 	sed -i "s|href='\(\.\./\)*Main/HomePage.html'>C++|href='\1reference/index.html'>C++|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
 	sed -i "s|src='\(\.\./\)*../uploads/|src='\1uploads/|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
@@ -45,6 +46,7 @@ index.html:
 	sed -i "s|src='../images/frepple.bmp'|src='frepple.bmp'|" index.html 
 	sed -i "s|href='../styles.css'|href='styles.css'|" index.html 
 	sed -i "s|href='HomePage.html'>C++|href='../reference/index.html'>C++|g" Main/HomePage.html Main/FAQ.html
+	sed -i "s|action='HomePage.html'>|action='../search.html'>|g" Main/HomePage.html Main/FAQ.html
 	`pwd`/htmlindexer.py UI Frepple Main Tutorial
 else
 webdoc:

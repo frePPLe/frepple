@@ -136,7 +136,7 @@ for d in sys.argv[1:]:
             parser.feed(data)
         finally:
           fd.close()
-        print >>outfile, "{name: '%s', title: '%s'}," % (os.path.join(root[2:],f), parser.get_title().strip())
+        print >>outfile, "{name: '%s', title: '%s'}," % (os.path.join(root,f), parser.get_title().strip())
         for i in parser.get_keywords():
           if not i in keys.keys():
             keys[i] = {'count': 1, 'filecount': 1, 'refs':{filecounter:1}}

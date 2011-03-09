@@ -208,7 +208,6 @@ class Demand_admin(MultiDBModelAdmin):
             (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority','owner')}),
             (_('Planning parameters'), {'fields': ('operation', 'minshipment', 'maxlateness'), 'classes': ('collapse')}),
         )
-  radio_fields = {'priority': admin.HORIZONTAL, }
   save_on_top = True
 site.register(Demand,Demand_admin)
 

@@ -754,9 +754,8 @@ class OperationPlan(AuditModel):
 class Demand(AuditModel,HierarchyModel):
   # The priorities defined here are for convenience only. FrePPLe accepts any number as priority.
   demandpriorities = (
-    (1,_('1 - high')),
-    (2,_('2 - normal')),
-    (3,_('3 - low'))
+    (1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5'),(6,'6'),(7,'7'),(8,'8'),(9,'9'),(10,'10'),
+    (11,'11'),(12,'12'),(13,'13'),(14,'14'),(15,'15'),(16,'16'),(17,'17'),(18,'18'),(19,'19'),(20,'20')
   )
 
   # Database fields
@@ -771,7 +770,8 @@ class Demand(AuditModel,HierarchyModel):
     related_name='used_demand',
     help_text=_('Operation used to satisfy this demand'))
   quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
-  priority = models.PositiveIntegerField(_('priority'),default=2, choices=demandpriorities)
+  priority = models.PositiveIntegerField(_('priority'), default=10, choices=demandpriorities, 
+    help_text=_('Priority of the demand (lower numbers indicate more important demands)'))
   minshipment = models.DecimalField(_('minimum shipment'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     help_text=_('Minimum shipment quantity when planning this demand'))
   maxlateness = models.DecimalField(_('maximum lateness'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,

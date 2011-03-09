@@ -36,6 +36,7 @@ if 'FREPPLE_APP' in os.environ:
 else:
   FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
 FREPPLE_VERSION = '0.9.0.beta'
+# sys.path.append(os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','openerp')))
 
 # Determing whether Django runs as a standalone application or is deployed on a web server
 STANDALONE = False
@@ -117,9 +118,6 @@ LANGUAGES = (
 if (STANDALONE):
   LOCALE_PATHS = [ os.path.join(FREPPLE_HOME, 'conf', 'locale'), os.path.join(FREPPLE_APP,'locale'), ]
 
-
-SITE_ID = 1
-
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
 
@@ -139,6 +137,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'freppledb.urls'
+ADMIN_MEDIA_PREFIX = '/media/'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates".
@@ -151,12 +150,12 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    #'django.contrib.sites',
     'django.contrib.admin',
     'freppledb.input',
     'freppledb.output',
     'freppledb.execute',
     'freppledb.common',
+    #'freppledb.openerp',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

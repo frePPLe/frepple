@@ -421,10 +421,6 @@ def verbose_name_plural(obj):
 	return obj._meta.verbose_name_plural
 register.filter(verbose_name_plural)
 
-def name(obj):
-	return obj.__name__
-register.filter(name)
-
 def app_label(obj):
 	return obj._meta.app_label
 register.filter(app_label)

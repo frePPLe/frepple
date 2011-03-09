@@ -43,6 +43,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.contrib.admin.util import unquote
 from django.utils.encoding import force_unicode
 from django.utils.html import escape
+from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst, get_text_list
 from django.utils.decorators import method_decorator
@@ -163,17 +164,17 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj)}
     # Here, we distinguish between different save types by checking for
     # the presence of keys in request.POST.
-    if request.POST.has_key("_continue"):
+    if "_continue" in request.POST:
       self.message_user(request, msg + ' ' + force_unicode(_("You may edit it again below.")))
-      if request.POST.has_key("_popup"):
+      if "_popup" in request.POST:
         post_url_continue += "?_popup=1"
       return HttpResponseRedirect(post_url_continue % pk_value)
 
-    if request.POST.has_key("_popup"):
+    if "_popup" in request.POST:
       return HttpResponse('<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % \
           # escape() calls force_unicode.
-          (escape(pk_value), escape(obj)))
-    elif request.POST.has_key("_addanother"):
+          (escape(pk_value), escapejs(obj)))
+    elif "_addanother" in request.POST:
       self.message_user(request, msg + ' ' + force_unicode(_("You may add another %s below.") % force_unicode(opts.verbose_name)))
       return HttpResponseRedirect(request.prefix + request.path)
     else:
@@ -188,21 +189,28 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     Determines the HttpResponse for the change_view stage.
     """
     opts = obj._meta
+
+    # Handle proxy models automatically created by .only() or .defer()
+    verbose_name = opts.verbose_name
+    if obj._deferred:
+      opts_ = opts.proxy_for_model._meta
+      verbose_name = opts_.verbose_name
+
     pk_value = obj._get_pk_val()
 
-    msg = _('The %(name)s "%(obj)s" was changed successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj)}
-    if request.POST.has_key("_continue"):
+    msg = _('The %(name)s "%(obj)s" was changed successfully.') % {'name': force_unicode(verbose_name), 'obj': force_unicode(obj)}
+    if "_continue" in request.POST:
       self.message_user(request, msg + ' ' + force_unicode(_("You may edit it again below.")))
-      if request.REQUEST.has_key('_popup'):
+      if "_popup" in request.REQUEST:
           return HttpResponseRedirect(request.prefix + request.path + "?_popup=1")
       else:
           return HttpResponseRedirect(request.prefix + request.path)
-    elif request.POST.has_key("_saveasnew"):
-      msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % {'name': force_unicode(opts.verbose_name), 'obj': obj}
+    elif "_saveasnew" in request.POST:
+      msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % {'name': force_unicode(verbose_name), 'obj': obj}
       self.message_user(request, msg)
       return HttpResponseRedirect("../%s/" % pk_value)
-    elif request.POST.has_key("_addanother"):
-      self.message_user(request, msg + ' ' + force_unicode(_("You may add another %s below.") % force_unicode(opts.verbose_name)))
+    elif "_addanother" in request.POST:
+      self.message_user(request, msg + ' ' + force_unicode(_("You may add another %s below.") % force_unicode(verbose_name)))
       return HttpResponseRedirect("../add/")
     else:
       self.message_user(request, msg)
@@ -210,6 +218,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       return HttpResponseRedirect(request.session['crumbs'][-2][2])
 
   @csrf_protect_m
+  @transaction.commit_on_success
   def delete_view(self, request, object_id, extra_context=None):
     "The 'delete' admin view for this model."
     opts = self.model._meta
@@ -223,28 +232,39 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     if obj is None:
       raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': force_unicode(opts.verbose_name), 'key': escape(object_id)})
 
+    using = request.database
+
     # Populate deleted_objects, a data structure of all related objects that
     # will also be deleted.
-    (deleted_objects, perms_needed) = get_deleted_objects((obj,), opts, request.user, self.admin_site)
-
+    (deleted_objects, perms_needed, protected) = get_deleted_objects(
+       [obj], opts, request.user, self.admin_site, using)
+    
     if request.POST: # The user has already confirmed the deletion.
       if perms_needed:
         raise PermissionDenied
       obj_display = force_unicode(obj)
       self.log_deletion(request, obj, obj_display)
-      obj.delete()
+      self.delete_model(request, obj)
 
       self.message_user(request, _('The %(name)s "%(obj)s" was deleted successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj_display)})
 
       # Redirect to previous crumb
       return HttpResponseRedirect(request.session['crumbs'][-3][2])
 
+    object_name = force_unicode(opts.verbose_name)
+
+    if perms_needed or protected:
+      title = _("Cannot delete %(name)s") % {"name": object_name}
+    else:
+      title = _("Are you sure?")
+    
     context = {
-        "title": _("Are you sure?"),
-        "object_name": force_unicode(opts.verbose_name),
+        "title": title,
+        "object_name": object_name,
         "object": obj,
         "deleted_objects": deleted_objects,
         "perms_lacking": perms_needed,
+        "protected": protected,
         "opts": opts,
         "root_path": self.admin_site.root_path,
         "app_label": app_label,

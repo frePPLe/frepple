@@ -303,6 +303,7 @@ class DatabaseTask(Thread):
 
     # Close the connection
     cursor.close()
+    transaction.commit(using=database)
 
 
 @transaction.commit_manually(using=database)
@@ -356,11 +357,12 @@ def exportfrepple():
     for i in tasks: i.start()
     # Wait for all threads to finish
     for i in tasks: i.join()
-
+  
   # Analyze
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
     print "Analyzing database tables..."
     cursor.execute("analyze")
-
-  # Close the database connection
+    
+  # Close the database connection  
   cursor.close()
+  transaction.commit(using=database)

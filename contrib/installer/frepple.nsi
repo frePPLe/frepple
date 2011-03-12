@@ -5,7 +5,7 @@
 ;  revision : $LastChangedRevision$  $LastChangedBy$
 ;  date     : $LastChangedDate$
 ;
-; Copyright (C) 2007-2010 by Johan De Taeye
+; Copyright (C) 2007-2011 by Johan De Taeye
 ;
 ; This library is free software; you can redistribute it and/or modify it
 ; under the terms of the GNU Lesser General Public License as published
@@ -41,23 +41,27 @@
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
-!define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
 ; Select compressor
 SetCompressor /SOLID lzma
-CRCCheck on
 
 ;Include for Modern UI and library installation
-!include "MUI.nsh"
+!define MULTIUSER_EXECUTIONLEVEL Highest
+!define MULTIUSER_MUI
+!define MULTIUSER_INSTALLMODE_COMMANDLINE
+!include MultiUser.nsh
+!include MUI2.nsh
 !include Library.nsh
 !include WinMessages.nsh
 !include "Sections.nsh"
+!include InstallOptions.nsh
+!include LogicLib.nsh
 
 ; MUI Settings
 !define MUI_ABORTWARNING
 !define MUI_WELCOMEFINISHPAGE_BITMAP "frepple.bmp"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "frepple.bmp"
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of frePPLe.\n\nIt is recommended to uninstall a previous version before this installing a new one.\n\nClick Next to continue"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of frePPLe.$\r$\n$\r$\nIt is recommended to uninstall a previous version before this installing a new one.$\r$\n$\r$\nClick Next to continue"
 !define MUI_HEADERIMAGE_BITMAP "..\..\doc\frepple.bmp"
 !define MUI_ICON "frepple.ico"
 !define MUI_UNICON "frepple.ico"
@@ -65,6 +69,7 @@ CRCCheck on
 ; Installer pages
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "../../COPYING"
+!insertmacro MULTIUSER_PAGE_INSTALLMODE
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 Page custom database database_leave
@@ -93,9 +98,6 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright "Licenced under the GNU Lesser General Public License"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "Install frePPLe - free Production Planning Library"
 
-
-; MUI end ------
-
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${PRODUCT_NAME}_${PRODUCT_VERSION}_setup.exe"
 InstallDir "$PROGRAMFILES\${PRODUCT_NAME} ${PRODUCT_VERSION}"
@@ -105,17 +107,28 @@ CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
 Var InstalledDocumentation
+Var EnvVar
 
 ReserveFile "parameters.ini"
 ReserveFile "finish.ini"
-!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-
+ReserveFile '${NSISDIR}\Plugins\InstallOptions.dll'
 
 Function .onInit
   ;Extract INI files
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "parameters.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "finish.ini"
-  SetShellVarContext all
+  !insertmacro INSTALLOPTIONS_EXTRACT "parameters.ini"
+  !insertmacro INSTALLOPTIONS_EXTRACT "finish.ini"
+  
+  !insertmacro MULTIUSER_INIT
+
+  ; Set to "yes" when the documentation is chosen to be installed
+  strcpy $InstalledDocumentation "no"
+  
+  ; Settings for environment variable storage
+  ${If} $MultiUser.InstallMode == "CurrentUser"
+	  StrCpy $EnvVar "Environment"
+	${Else}
+    StrCpy $EnvVar "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
+	${EndIf}
 FunctionEnd
 
 
@@ -130,22 +143,20 @@ Section -Start
   ; Expand the distribution
   !system "bash -c 'rm -rf frepple-${PRODUCT_VERSION}'"
   !system "bash -c 'tar -xzf frepple-${PRODUCT_VERSION}.tar.gz'"
-
-  ; Default content that is always installed
   !cd "frepple-${PRODUCT_VERSION}"
-  SetOutPath "$INSTDIR"
-  File "COPYING"
-  File "README"
-  strcpy $InstalledDocumentation "no"
 SectionEnd
 
 
 Section "Application" SecAppl
   SectionIn RO     ; The app section can't be deselected
-  SetOutPath "$INSTDIR\bin"
+
+  SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
+  File "COPYING"
+  File "README"
 
   ; Copy application, dll and libraries
+  SetOutPath "$INSTDIR\bin"
   File "..\bin\frepple.exe"
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
   File "..\bin\frepple.lib"
@@ -153,25 +164,27 @@ Section "Application" SecAppl
 
   ; Copy modules
   File "..\bin\mod_*.so"
-
-  ; Copy configuration files
+  
+   ; Copy configuration files
   File "..\bin\*.xsd"
   File "..\bin\init.xml"
-
+  File "..\bin\init.py" 
+  
   ; Copy sqlite database if it is available
   File /nonfatal "..\bin\frepple.sqlite"
-
+  
   ; Copy the django and python redistributables created by py2exe
   SetOutPath "$INSTDIR\bin"
   File /r "..\contrib\installer\dist\*.*"
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\bin\manage.exe"
+  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\bin\manage.exe" "frepple_runserver"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open customization folder.lnk" "$INSTDIR\bin\custom"
 
   ; Set an environment variable (and propagate immediately to other processes)
   System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("FREPPLE_HOME", "$INSTDIR\bin").r0'
-  WriteRegExpandStr HKEY_CURRENT_USER "Environment" "FREPPLE_HOME" "$INSTDIR\bin"
+  WriteRegExpandStr SHCTX "$EnvVar" "FREPPLE_HOME" "$INSTDIR\bin"
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
   ; Pick up the installation parameters
@@ -288,7 +301,7 @@ Function database
 
   ; Display the page
   !insertmacro MUI_HEADER_TEXT "Language selection and database configuration" "Specify the installation parameters."
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "parameters.ini"
+  !insertmacro INSTALLOPTIONS_DISPLAY "parameters.ini"
 FunctionEnd
 
 
@@ -331,38 +344,73 @@ FunctionEnd
 
 Function finish
   ; Display the page
+  ${If} $MultiUser.InstallMode == "CurrentUser"
+    WriteIniStr "$PLUGINSDIR\finish.ini" "Field 3" "Flags" "DISABLED"
+    WriteIniStr "$PLUGINSDIR\finish.ini" "Field 4" "Flags" "DISABLED"
+  ${EndIf}
   !insertmacro MUI_HEADER_TEXT "Completing the installation" "frePPLe has been installed on your computer"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "finish.ini"
+  !insertmacro INSTALLOPTIONS_DISPLAY "finish.ini"
 FunctionEnd
 
 
 Function finish_leave
+  ; Check how we left the screen: toggle "install service", toggle "run in console", or "next" button
+  ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Settings" "State"
+  ${If} $0 == 1
+     ; Toggling the "run in console" checkbox
+     ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 1" "State"
+     ${If} $0 == 1
+       ; Deactivate the "install service" checkbox
+       WriteIniStr "$PLUGINSDIR\finish.ini" "Field 3" "State" "0"
+       readinistr $2 "$PLUGINSDIR\finish.ini" "Field 3" "HWND"
+       SendMessage $2 ${BM_SETCHECK} 0 0
+     ${EndIf}
+     Abort  ; Return to the page
+  ${ElseIf} $0 == 3
+     ; Toggling the "install service" checkbox
+     ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 3" "State"
+     ${If} $0 == 1
+       ; Deactivate the "run in console" checkbox
+       WriteIniStr "$PLUGINSDIR\finish.ini" "Field 1" "State" "0"
+       readinistr $2 "$PLUGINSDIR\finish.ini" "Field 1" "HWND"
+       SendMessage $2 ${BM_SETCHECK} 0 0
+     ${EndIf}
+     Abort  ; Return to the page
+  ${EndIf}
+     
+  ; Start the server in console window
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 1" "State"
-  IntCmp $0 1 0 +2
+  ${If} $0 == 1
     Exec '"$INSTDIR\bin\manage.exe"'    
+  ${EndIf}
+  
+  ; View the documentation
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 2" "State"
-  IntCmp $0 1 0 docdone
-    StrCmp $InstalledDocumentation "yes" 0 +3
+  ${If} $0 == 1
+    ${If} $InstalledDocumentation == "yes"
       ExecShell open "$INSTDIR\doc\index.html"
-      goto docdone
+    ${Else}
       ExecShell open "http://www.frepple.com/pmwiki/pmwiki.php"
-  docdone:
+    ${EndIf}
+  ${EndIf}
+  
+  ; Install the service
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 3" "State"
-  IntCmp $0 1 0 done
+  ${If} $0 == 1
     nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --startup auto install'   
     sleep 2 
     nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" start'    
-    CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Start service.lnk" "$INSTDIR\bin\freppleservice.exe" "start"
-    CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Stop service.lnk" "$INSTDIR\bin\freppleservice.exe" "stop"
-  done:
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk" "$INSTDIR\bin\freppleservice.exe" "start"
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk" "$INSTDIR\bin\freppleservice.exe" "stop"
+  ${EndIf}
 FunctionEnd
 
 
 Section "Documentation" SecDoc
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
-  CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\doc\index.html"
+  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\doc\index.html"
   File /r "doc"
   StrCpy $InstalledDocumentation "yes"
 SectionEnd
@@ -402,9 +450,9 @@ SubSectionEnd
 
 Section -AdditionalIcons
   WriteIniStr "$INSTDIR\${PRODUCT_NAME} web site.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
-  CreateDirectory "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\frePPLe web site.lnk" "${PRODUCT_WEB_SITE}"
-  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Uninstall.lnk" "$INSTDIR\uninst.exe"
+  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\frePPLe web site.lnk" "${PRODUCT_WEB_SITE}"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Uninstall.lnk" "$INSTDIR\uninst.exe" "/$MultiUser.InstallMode"
 SectionEnd
 
 
@@ -415,13 +463,16 @@ Section -Post
 
   ; Create uninstaller
   WriteUninstaller "$INSTDIR\uninst.exe"
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\bin\frepple.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\bin\frepple.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
+  WriteRegStr SHCTX "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\bin\frepple.exe"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe /$MultiUser.InstallMode"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "QuietUninstallString" "$INSTDIR\uninst.exe /$MultiUser.InstallMode /S"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\bin\manage.exe"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "NoModify" "1" 
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "NoRepair" "1" 
 SectionEnd
 
 
@@ -445,8 +496,9 @@ FunctionEnd
 
 
 Function un.onInit
+  !insertmacro MULTIUSER_UNINIT
   MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to remove $(^Name) and all of its components?" IDYES +2
-  Abort
+    Abort
 FunctionEnd
 
 
@@ -458,17 +510,18 @@ Section Uninstall
 
   ; Remove the entries from the start menu
   SetShellVarContext all
-  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Uninstall.lnk"
-  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Documentation.lnk"
-  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk"
-  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\frePPLe web site.lnk"
-  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Start service.lnk"
-  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Stop service.lnk"
+  Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Uninstall.lnk"
+  Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk"
+  Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Run server.lnk"
+  Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\frePPLe web site.lnk"
+  Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk"
+  Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk"
+  Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open customization folder.lnk"
   
   ; Remove the folder in start menu
   RMDir "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
 
-  ; Removed the installation directory
+  ; Remove the installation directory
   RMDir /r "$INSTDIR"
   Sleep 500
   IfFileExists "$INSTDIR" 0 Finished
@@ -476,12 +529,12 @@ Section Uninstall
   Finished:
 
   ; Delete environment variable
-  DeleteRegValue HKEY_CURRENT_USER "Environment" "FREPPLE_HOME"
+  DeleteRegValue SHCTX "$EnvVar" "FREPPLE_HOME"
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
   ; Remove installation registration key
-  DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
-  DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+  DeleteRegKey SHCTX "${PRODUCT_UNINST_KEY}"
+  DeleteRegKey SHCTX "${PRODUCT_DIR_REGKEY}"
 
   ; Do not automatically close the window
   SetAutoClose false

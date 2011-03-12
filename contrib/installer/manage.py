@@ -34,10 +34,6 @@ os.environ['FREPPLE_APP'] = os.path.join(os.path.split(sys.path[0])[0],'custom')
 # application directory into the path as well.
 sys.path += [ os.environ['FREPPLE_APP'] ]
 
-# Default command is to run the web server
-if len(sys.argv) <= 1:
-  sys.argv.append('frepple_runserver')
-
 # Import django settings
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS

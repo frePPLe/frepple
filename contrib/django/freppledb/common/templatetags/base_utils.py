@@ -289,7 +289,7 @@ class SelectDatabaseNode(Node):
     try: req = context['request']
     except: return ''  # No request found in the context
     scenarios = Scenario.objects.filter(status=u'In use').values('name')
-    if len(scenarios) == 1: return ''
+    if len(scenarios) <= 1: return ''
     s = [u'<form action="">%s&nbsp;<select id="database" name="%s" onchange="selectDatabase()">' % (force_unicode(_("Model:")), req.database) ]
     for i in scenarios:
       i = i['name']

@@ -14,8 +14,8 @@ A free version, called "Visual C++ 2010 Express Edition", can be downloaded from
 the Microsoft website.
 
 
-BUILD INSTRUCTIONS
-------------------
+BUILD INSTRUCTIONS FROM THE IDE
+-------------------------------
 
 The following describes the steps you need to build Frepple.
 
@@ -47,3 +47,20 @@ The following describes the steps you need to build Frepple.
    directory and the module libraries are included in the path.
    The easiest approach is to have these files in the same directory as the
    application.
+
+
+BUILD INSTRUCTIONS FROM THE COMMAND LINE
+----------------------------------------
+
+A convenience build script is provided: build.bat
+
+1. Edit the file build.bat
+   The following variables need to be edited:
+     - VC: Installation directory of Visual Studio C++ 2010
+     - PYTHON: Installation directory of the Python language
+     - XERCES: Installation directory of the Xerces-C library
+     - DOTNET: Installation directory of the .NET framework
+     - GLPK:  Optional. Installation directory of the GNU Linear Programming Kit
+     
+2. Execute the build.bat command
+

@@ -414,13 +414,17 @@ register.filter('duration', duration)
 # 
 
 def verbose_name(obj):
-	return obj._meta.verbose_name
+  return obj._meta.verbose_name
 register.filter(verbose_name)
 
 def verbose_name_plural(obj):
-	return obj._meta.verbose_name_plural
+  return obj._meta.verbose_name_plural
 register.filter(verbose_name_plural)
 
 def app_label(obj):
-	return obj._meta.app_label
+  return obj._meta.app_label
 register.filter(app_label)
+
+def object_name(obj):
+  return obj._meta.object_name
+register.filter(object_name)

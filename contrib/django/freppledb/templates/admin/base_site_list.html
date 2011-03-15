@@ -11,7 +11,7 @@
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
 {% if filternew %}<a href="javascript:filter.show();"><img src="/media/img/admin/selector-search.gif"/>{% trans 'Filter' %}</a>{% endif %}
-{% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model.object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}"><img src="/media/img/admin/icon_addlink.gif"/>{% trans 'Add' %}</a>{% endif %}
+{% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}"><img src="/media/img/admin/icon_addlink.gif"/>{% trans 'Add' %}</a>{% endif %}
 {% if hasaddperm and model %}<a href="javascript:import_show();"><img src="/static/csv.png"/>{% trans 'Import' %}</a>{% endif %}
 <a href="javascript:export_show(true);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a><div id="popup"></div>
 </div>{% endblock %}

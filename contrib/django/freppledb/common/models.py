@@ -49,7 +49,7 @@ class Preferences(models.Model):
     ('semicolon',_('semicolon ";"')),
   )
   languageList = tuple( [ ('auto',_('Detect automatically')), ] + list(settings.LANGUAGES) )
-  user = models.ForeignKey(User, verbose_name=_('user'), unique=True)
+  user = models.ForeignKey(User, verbose_name=_('user'), primary_key=True)
   buckets = models.CharField(_('buckets'), max_length=10, choices=buckettype,
     default='standard')
   startdate = models.DateField(_('startdate'), blank=True, null=True)

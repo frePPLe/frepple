@@ -238,9 +238,9 @@ if os.path.normcase(os.path.abspath(os.path.dirname(__file__))) != os.path.normc
 for param in DATABASES.values():
   if param['ENGINE'] == 'django.db.backends.sqlite3':
     # Path to the sqlite3 test database file
-    param['TEST_NAME'] = os.path.join(FREPPLE_HOME,'test_%s.sqlite' % param['NAME'])
+    param['TEST_NAME'] = os.path.join(FREPPLE_APP,'test_%s.sqlite' % param['NAME'])
     # Path to sqlite3 database file
-    param['NAME'] = os.path.join(FREPPLE_HOME,'%s.sqlite' % param['NAME'])
+    param['NAME'] = os.path.join(FREPPLE_APP,'%s.sqlite' % param['NAME'])
     # Extra default settings for SQLITE
     if len(param['OPTIONS']) == 0:
       param['OPTIONS'] = {"timeout": 10, "check_same_thread": False}

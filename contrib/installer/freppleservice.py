@@ -50,13 +50,11 @@ class frePPLeService(win32serviceutil.ServiceFramework):
         # Environment settings (which are used in the Django settings file and need
         # to be updated BEFORE importing the settings)
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-        os.environ['FREPPLE_APP'] = os.path.split(sys.path[0])[0]
+        os.environ['FREPPLE_APP'] = os.path.join(os.path.split(sys.path[0])[0],'custom')
         os.environ['FREPPLE_HOME'] = os.path.abspath(os.path.dirname(sys.argv[0]))
         
-        # Sys.path contains the zip file with all packages. We need to put the
-        # freppledb subdirectory from the zip-file separately on the path because
-        # our django applications never refer to the project name.
-        sys.path = [ os.path.join(sys.path[0],'freppledb'), sys.path[0] ]
+        # Add the custom directory to the Python path.
+        sys.path = [ os.environ['FREPPLE_APP'], sys.path[0] ]
         
         # Import modules
         from django.conf import settings
@@ -71,40 +69,12 @@ class frePPLeService(win32serviceutil.ServiceFramework):
         settings.DEBUG = False
         settings.TEMPLATE_DEBUG = False
         settings.STANDALONE = True
-        
-        # Update the directories where fixtures are searched
-        settings.FIXTURE_DIRS = (
-          os.path.join(settings.FREPPLE_APP,'fixtures','input').replace('\\','/'),
-          os.path.join(settings.FREPPLE_APP,'fixtures','common').replace('\\','/'),
-        )
-        
-        # Update the template dirs
-        settings.TEMPLATE_DIRS = (
-            # Always use forward slashes, even on Windows.
-            os.path.join(settings.FREPPLE_APP,'templates2').replace('\\','/'),
-            os.path.join(settings.FREPPLE_APP,'templates1').replace('\\','/'),
-            settings.FREPPLE_HOME.replace('\\','/'),
-        )        
-        
+         
         # Pick up port and adress
         try: address = socket.gethostbyname(socket.gethostname())
         except: address = '127.0.0.1'
         port = settings.PORT
-        
-        # Update the directories where fixtures are searched
-        settings.FIXTURE_DIRS = (
-          os.path.join(settings.FREPPLE_APP,'fixtures','input').replace('\\','/'),
-          os.path.join(settings.FREPPLE_APP,'fixtures','common').replace('\\','/'),
-        )
-        
-        # Update the template dirs
-        settings.TEMPLATE_DIRS = (
-            # Always use forward slashes, even on Windows.
-            os.path.join(settings.FREPPLE_APP,'templates2').replace('\\','/'),
-            os.path.join(settings.FREPPLE_APP,'templates1').replace('\\','/'),
-            settings.FREPPLE_HOME.replace('\\','/'),
-        )
-        
+                
         cherrypy.config.update({
             'global':{
                 'log.screen': False,
@@ -115,7 +85,7 @@ class frePPLeService(win32serviceutil.ServiceFramework):
                 }
             })
         self.server = CherryPyWSGIServer((address, port),
-          AdminMediaHandler(WSGIHandler(), os.path.join(settings.FREPPLE_APP,'media'))
+          AdminMediaHandler(WSGIHandler(), os.path.join(settings.FREPPLE_HOME,'media'))
           )
 
         # Redirect all output and log a start event
@@ -125,7 +95,6 @@ class frePPLeService(win32serviceutil.ServiceFramework):
           msg = "frePPLe web server listening on http://%s:%d and logging to %s" % (address, port, log)
           servicemanager.LogInfoMsg(msg)
           print datetime.now().strftime("%Y-%m-%d %H:%M:%S"), msg
-          print os.environ['FREPPLE_APP'], os.environ['FREPPLE_HOME']
         except:
           # Too bad if we can't write log info
           servicemanager.LogInfoMsg("frePPLe web server listening on http://%s:%d without log file" % (address, port))

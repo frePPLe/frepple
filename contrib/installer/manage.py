@@ -53,7 +53,7 @@ elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] not in ['django.db.backends.
     sys.exit(1)
 else:
   # PostgreSQL, Oracle or MySQL database:
-  # Try connecting and check for a table called 'plan'.
+  # Try connecting and check for a table called 'parameter'.
   from django.db import connection, transaction
   try: cursor = connection.cursor()
   except Exception, e:

@@ -41,11 +41,6 @@ class PreferencesForm(forms.Form):
     choices=Preferences.languageList,
     help_text=_("Language of the user interface"),
     )
-  csvdelimiter = forms.ChoiceField(label = _("CSV delimiter"),
-    initial="comma",
-    choices=Preferences.csvDelimiter,
-    help_text=_("Delimiter used when exporting CSV files"),
-    )
   buckets = forms.ChoiceField(label = _("Buckets"),
     initial=_('Default'),
     choices=Preferences.buckettype,
@@ -75,7 +70,6 @@ def preferences(request):
         pref.buckets = newdata['buckets']
         pref.startdate = newdata['startdate']
         pref.enddate = newdata['enddate']
-        pref.csvdelimiter = newdata['csvdelimiter']
         pref.language = newdata['language']
         pref.save()
         messages.add_message(request, messages.INFO, force_unicode(_('Successfully updated preferences')))
@@ -87,7 +81,6 @@ def preferences(request):
       'buckets': pref.buckets,
       'startdate': pref.startdate,
       'enddate': pref.enddate,
-      'csvdelimiter': pref.csvdelimiter,
       'language': pref.language,
       })
   return render_to_response('common/preferences.html', {

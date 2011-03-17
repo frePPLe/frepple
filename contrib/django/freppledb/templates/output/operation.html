@@ -39,10 +39,10 @@
 {% ifchanged j.operation %}{% if not forloop.first %}</tr>{% endif %}
 <tr class="{% cycle row1,row2 %}">
 {% endifchanged %}
-<td>{% if j.locked_start %}<a href="?operation={{j.operation|urlencode}}&amp;startdate__gte={{j.startdate|date:"Y-m-d"}}&amp;startdate__lt={{j.enddate|date:"Y-m-d"}}&amp;locked=1" class="detail">{{j.locked_start|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
-{% if j.total_start %}<a href="?operation={{j.operation|urlencode}}&amp;startdate__gte={{j.startdate|date:"Y-m-d"}}&amp;startdate__lt={{j.enddate|date:"Y-m-d"}}" class="detail">{{j.total_start|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
-{% if j.locked_end %}<a href="?operation={{j.operation|urlencode}}&amp;enddate__gte={{j.startdate|date:"Y-m-d"}}&amp;enddate__lt={{j.enddate|date:"Y-m-d"}}&amp;locked=1" class="detail">{{j.locked_end|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
-{% if j.total_end %}<a href="?operation={{j.operation|urlencode}}&amp;enddate__gte={{j.startdate|date:"Y-m-d"}}&amp;enddate__lt={{j.enddate|date:"Y-m-d"}}" class="detail">{{j.total_end|floatformat:2}}</a>{% else %}0.00{% endif %}</td>
+<td>{% if j.locked_start %}<a href="?operation={{j.operation|urlencode}}&amp;startdate__gte={{j.startdate|date:"Y-m-d"}}&amp;startdate__lt={{j.enddate|date:"Y-m-d"}}&amp;locked=1" class="detail">{{j.locked_start|floatformat:2}}</a>{% else %}{{0|floatformat:2}}{% endif %}<br/>
+{% if j.total_start %}<a href="?operation={{j.operation|urlencode}}&amp;startdate__gte={{j.startdate|date:"Y-m-d"}}&amp;startdate__lt={{j.enddate|date:"Y-m-d"}}" class="detail">{{j.total_start|floatformat:2}}</a>{% else %}{{0|floatformat:2}}{% endif %}<br/>
+{% if j.locked_end %}<a href="?operation={{j.operation|urlencode}}&amp;enddate__gte={{j.startdate|date:"Y-m-d"}}&amp;enddate__lt={{j.enddate|date:"Y-m-d"}}&amp;locked=1" class="detail">{{j.locked_end|floatformat:2}}</a>{% else %}{{0|floatformat:2}}{% endif %}<br/>
+{% if j.total_end %}<a href="?operation={{j.operation|urlencode}}&amp;enddate__gte={{j.startdate|date:"Y-m-d"}}&amp;enddate__lt={{j.enddate|date:"Y-m-d"}}" class="detail">{{j.total_end|floatformat:2}}</a>{% else %}{{0|floatformat:2}}{% endif %}</td>
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endblock %}
 

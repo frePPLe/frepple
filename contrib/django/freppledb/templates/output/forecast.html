@@ -53,7 +53,7 @@
 <td><input type="text" name="{{j.startdate|date:"Y-m-d"}}" id="{{j.enddate|date:"Y-m-d"}}" value="{{j.total|floatformat:0}}" size="5" onchange="onChange(this)"/><br/>
 {{j.orders|floatformat:1}}<br/>
 {{j.net|floatformat:1}}<br/>
-{% if j.planned %}<a href="{{ request.prefix }}/demandplan/?demand={{j.forecast|urlencode}}&amp;o=5a&amp;plandate__gte={{j.startdate|date:"Y-m-d"}}&amp;plandate__lt={{j.enddate|date:"Y-m-d"}}" tabindex="-1">{{j.planned|floatformat:1}}</a>{% else %}0.0{% endif %}</td>
+{% if j.planned %}<a href="{{ request.prefix }}/demandplan/?demand={{j.forecast|urlencode}}&amp;o=5a&amp;plandate__gte={{j.startdate|date:"Y-m-d"}}&amp;plandate__lt={{j.enddate|date:"Y-m-d"}}" tabindex="-1">{{j.planned|floatformat:1}}</a>{% else %}{{0|floatformat:1}}{% endif %}</td>
 {% if forloop.last %}</form></tr>{% endif %}{% endfor %}
 {% else %}
 {% for j in objectlist2 %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
@@ -62,7 +62,7 @@
 <td>{{j.total|floatformat:0}}<br/>
 {{j.orders|floatformat:1}}<br/>
 {{j.net|floatformat:1}}<br/>
-{% if j.planned %}<a href="{{ request.prefix }}/demandplan/?demand={{j.forecast|urlencode}}&amp;o=5a&amp;plandate__gte={{j.startdate|date:"Y-m-d"}}&amp;plandate__lt={{j.enddate|date:"Y-m-d"}}">{{j.planned|floatformat:1}}</a>{% else %}0.0{% endif %}</td>
+{% if j.planned %}<a href="{{ request.prefix }}/demandplan/?demand={{j.forecast|urlencode}}&amp;o=5a&amp;plandate__gte={{j.startdate|date:"Y-m-d"}}&amp;plandate__lt={{j.enddate|date:"Y-m-d"}}">{{j.planned|floatformat:1}}</a>{% else %}{{0|floatformat:1}}{% endif %}</td>
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endif %}
 {% endblock %}

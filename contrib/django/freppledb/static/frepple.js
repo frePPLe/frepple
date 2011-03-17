@@ -771,8 +771,7 @@ function bucket_close()
 
 var dr,dl,ur,ul,dlt,drt,ult,urt;
 var scrollbarSize = 16;
-if (navigator.userAgent.toUpperCase().indexOf('MSIE 6') != -1 
-  || navigator.userAgent.toUpperCase().indexOf('MSIE 7') != -1)
+if (navigator.userAgent.toUpperCase().indexOf('MSIE') != -1)
   scrollbarSize = 11;
 
 
@@ -920,8 +919,8 @@ function syncInitialize()
   // Resize the available size for the table.
   syncResize();
 
-  // Watch all changes in window size (except in broken IE6)
-  if (navigator.userAgent.toUpperCase().indexOf('MSIE 6') == -1)
+  // Watch all changes in window size (except in broken IE)
+  if (navigator.userAgent.toUpperCase().indexOf('MSIE') == -1)
     Event.observe(window, 'resize', syncResize);
 }
 

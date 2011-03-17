@@ -138,6 +138,8 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'freppledb.urls'
 ADMIN_MEDIA_PREFIX = '/media/'
+USE_L10N=True    # Represent data in the local format
+USE_I18N=True    # Use translated strings
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates".

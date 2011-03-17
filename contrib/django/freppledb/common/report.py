@@ -34,7 +34,7 @@ It provides the following functionality:
 '''
 
 from datetime import date, datetime
-import csv, StringIO
+import csv, cStringIO
 
 from django.conf import settings
 from django.core.paginator import QuerySetPaginator, InvalidPage
@@ -48,9 +48,11 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpRespons
 from django.forms.models import modelform_factory
 from django.template import RequestContext, loader
 from django.utils.encoding import smart_str
+from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.utils.html import escape
+from django.utils.formats import localize, get_format
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst, get_text_list
 from django.utils.encoding import iri_to_uri, force_unicode
@@ -352,13 +354,13 @@ def view_report(request, entity=None, **args):
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
     if hasattr(reportclass,'resultlist2'):
       # SQL override provided of type 2
-      response._container = _generate_csv(reportclass, reportclass.resultlist2(request, counter, bucket, start, end, sortsql=sortsql), type, bucketlist, pref)
+      response._container = _generate_csv(reportclass, reportclass.resultlist2(request, counter, bucket, start, end, sortsql=sortsql), type, bucketlist, request)
     elif hasattr(reportclass,'resultlist1'):
       # SQL override provided of type 1
-      response._container = _generate_csv(reportclass, reportclass.resultlist1(request, counter, bucket, start, end, sortsql=sortsql), type, bucketlist, pref)
+      response._container = _generate_csv(reportclass, reportclass.resultlist1(request, counter, bucket, start, end, sortsql=sortsql), type, bucketlist, request)
     else:
       # No SQL override provided
-      response._container = _generate_csv(reportclass, counter, type, bucketlist, pref)
+      response._container = _generate_csv(reportclass, counter, type, bucketlist, request)
     response._is_string = False
     return response
 
@@ -562,26 +564,24 @@ def _get_javascript_imports(reportclass):
     return reportclass.javascript_imports
 
 
-def _generate_csv(rep, qs, format, bucketlist, pref):
+def _generate_csv(rep, qs, format, bucketlist, request):
   '''
   This is a generator function that iterates over the report data and
   returns the data row by row in CSV format.
-  '''
-  sf = StringIO.StringIO()
-  if pref.csvdelimiter == 'comma':
-    writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
-  elif pref.csvdelimiter == 'semicolon':
+  '''  
+  sf = cStringIO.StringIO()  
+  encoding = settings.DEFAULT_CHARSET
+  if get_format('DECIMAL_SEPARATOR',request.LANGUAGE_CODE, True) == ',':
     writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
   else:
-    raise Http404('Unknown CSV delimiter')    
-  encoding = settings.DEFAULT_CHARSET
+    writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
 
   # Write a header row
-  fields = [ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])).encode(encoding,"ignore") for s in rep.rows ]
+  fields = [ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in rep.rows ]
   if issubclass(rep,TableReport):
     if format == 'csvlist':
-      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])).encode(encoding,"ignore") for s in rep.columns ])
-      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])).encode(encoding,"ignore") for s in rep.crosses ])
+      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in rep.columns ])
+      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in rep.crosses ])
     else:
       fields.extend( [capfirst(_('data field')).encode(encoding,"ignore")])
       fields.extend([ unicode(b['name']).encode(encoding,"ignore") for b in bucketlist])
@@ -640,7 +640,7 @@ def _generate_csv(rep, qs, format, bucketlist, pref):
             # Clear the return string buffer
             sf.truncate(0)
             fields = [ unicode(row_of_buckets[0][s[0]]).encode(encoding,"ignore") for s in rep.rows ]
-            fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))) or capfirst(_(cross[0]))] )
+            fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
             fields.extend([ unicode(bucket[cross[0]]).encode(encoding,"ignore") for bucket in row_of_buckets ])
             # Return string
             writer.writerow(fields)
@@ -652,7 +652,7 @@ def _generate_csv(rep, qs, format, bucketlist, pref):
         # Clear the return string buffer
         sf.truncate(0)
         fields = [ unicode(row_of_buckets[0][s[0]]).encode(encoding,"ignore") for s in rep.rows ]
-        fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))) or capfirst(_(cross[0]))] )
+        fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
         fields.extend([ unicode(bucket[cross[0]]).encode(encoding,"ignore") for bucket in row_of_buckets ])
         # Return string
         writer.writerow(fields)

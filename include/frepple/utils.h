@@ -2990,6 +2990,12 @@ class PythonExtensionBase : public PyObject
           << (PyObject::ob_refcnt-1) << " times" << endl;
     }
 
+    /** A function to force an object to be destroyed by the Python garbage
+      * collection.<br>
+      * Be very careful to use this!
+      */
+    void resetReferenceCount() {PyObject::ob_refcnt = 0;}
+
     /** Initialize the object to a certain Python type. */
     inline void initType(const MetaClass *t)
     {

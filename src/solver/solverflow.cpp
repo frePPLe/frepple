@@ -69,7 +69,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
 
     // Remember the top constraint
     bool originalLogConstraints = data->logConstraints;
-    Problem* topConstraint = data->planningDemand->getConstraints().top();
+    //Problem* topConstraint = data->planningDemand->getConstraints().top();
 
     // 4) Loop through the alternates till we find a non-zero reply
     Date min_next_date(Date::infiniteFuture);
@@ -175,7 +175,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
       flplan->setQuantity(firstQuantity, true);
       data->state->q_qty = ask_qty = - flplan->getQuantity();
       data->state->q_date = flplan->getDate();
-      Command* topcommand = data->getLastCommand();
       firstAlternate->getBuffer()->solve(*this,data);
       data->state->a_qty = -flplan->getQuantity();
       // Restore original planning mode

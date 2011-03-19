@@ -391,8 +391,6 @@ def loadLoads(cursor):
       if o: curload.priority = o
       if p: curload.setup = p
       if q: curload.search = q
-      # todo: duplicate load crashes the application
-      #curload2 = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
     except Exception, e: print "Error:", e
   cursor.execute('''
     SELECT 

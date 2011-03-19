@@ -82,7 +82,6 @@ DECLARE_EXPORT void Load::validate(Action action)
   if (!oper || !res)
   {
     // Invalid load model
-    delete this;
     if (!oper && !res)
       throw DataException("Missing operation and resource on a load");
     else if (!oper)
@@ -108,18 +107,15 @@ DECLARE_EXPORT void Load::validate(Action action)
     case ADD:
       if (i != oper->getLoads().end())
       {
-        delete this;
         throw DataException("Load of '" + oper->getName() + "' and '"
             + res->getName() + "' already exists");
       }
       break;
     case CHANGE:
-      delete this;
       throw DataException("Can't update a load");
     case ADD_CHANGE:
       // ADD is handled in the code after the switch statement
       if (i == oper->getLoads().end()) break;
-      delete this;
       throw DataException("Can't update a load");
     case REMOVE:
       // This load was only used temporarily during the reading process
@@ -354,10 +350,16 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
   else if (pIn.isObjectEnd())
   {
     // The load data is now all read in. See if it makes sense now...
-    validate(!pIn.getUserArea() ?
+    try {
+      validate(!pIn.getUserArea() ?
              ADD_CHANGE :
              *static_cast<Action*>(pIn.getUserArea())
              );
+    }
+    catch (...) {
+      delete this;
+      throw;
+    }
     delete static_cast<Action*>(pIn.getUserArea());
   }
 }
@@ -464,28 +466,27 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     PyObject* q1 = PyDict_GetItemString(kwds,"quantity");
     double q2 = q1 ? PythonObject(q1).getDouble() : 1.0;
 
-    // Create the load
-    Load *l = new Load(
-      static_cast<Operation*>(oper),
-      static_cast<Resource*>(res),
-      q2
-      );
-
-    // Pick up the effective start date
+    // Pick up the effective dates
+    DateRange eff;
     PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
     if (eff_start)
     {
       PythonObject d(eff_start);
-      l->setEffectiveStart(d.getDate());
+      eff.setStart(d.getDate());
     }
-
-    // Pick up the effective end date
     PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
     if (eff_end)
     {
       PythonObject d(eff_end);
-      l->setEffectiveEnd(d.getDate());
+      eff.setEnd(d.getDate());
     }
+
+    // Create the load
+    Load *l = new Load(
+      static_cast<Operation*>(oper),
+      static_cast<Resource*>(res),
+      q2, eff
+      );
 
     // Return the object
     Py_INCREF(l);

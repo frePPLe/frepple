@@ -1674,7 +1674,7 @@ class Operation : public HasName<Operation>,
     /** Returns an reference to the list of flows. */
     const flowlist& getFlows() const {return flowdata;}
 
-    /** Returns an reference to the list of flows. */
+    /** Returns an reference to the list of loads. */
     const loadlist& getLoads() const {return loaddata;}
 
     /** Return the flow that is associates a given buffer with this
@@ -3432,8 +3432,33 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     {
       setOperation(o);
       setBuffer(b);
-      validate(ADD);
       initType(metadata);
+      try { validate(ADD); }
+      catch (...)
+      {
+        if (getOperation()) getOperation()->flowdata.erase(this);
+        if (getBuffer()) getBuffer()->flows.erase(this);
+    	resetReferenceCount();
+    	throw;
+      }
+    }
+
+    /** Constructor. */
+    explicit Flow(Operation* o, Buffer* b, double q, DateRange e)
+      : quantity(q), priority(1), hasAlts(false), altFlow(NULL), search(PRIORITY)
+    {
+      setOperation(o);
+      setBuffer(b);
+      setEffective(e);
+      initType(metadata);
+      try { validate(ADD); }
+      catch (...)
+      {
+      	if (getOperation()) getOperation()->flowdata.erase(this);
+      	if (getBuffer()) getBuffer()->flows.erase(this);
+    	resetReferenceCount();
+    	throw;
+      }
     }
 
     /** Returns the operation. */
@@ -3528,7 +3553,9 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       altFlow(NULL), search(PRIORITY) {initType(metadata);}
 
   private:
-    /** Verifies whether a flow meets all requirements to be valid. */
+    /** Verifies whether a flow meets all requirements to be valid. <br>
+      * An exception is thrown if the flow is invalid.
+      */
     DECLARE_EXPORT void validate(Action action);
 
     /** Quantity of the flow. */
@@ -3562,6 +3589,9 @@ class FlowStart : public Flow
     /** Constructor. */
     explicit FlowStart(Operation* o, Buffer* b, double q) : Flow(o,b,q) {}
 
+    /** Constructor. */
+    explicit FlowStart(Operation* o, Buffer* b, double q, DateRange e) : Flow(o,b,q,e) {}
+
     /** This constructor is called from the plan begin_element function. */
     explicit FlowStart() {}
 
@@ -3581,6 +3611,9 @@ class FlowEnd : public Flow
   public:
     /** Constructor. */
     explicit FlowEnd(Operation* o, Buffer* b, double q) : Flow(o,b,q) {}
+
+    /** Constructor. */
+    explicit FlowEnd(Operation* o, Buffer* b, double q, DateRange e) : Flow(o,b,q,e) {}
 
     /** This constructor is called from the plan begin_element function. */
     explicit FlowEnd() {}
@@ -4113,8 +4146,34 @@ class Load
       setOperation(o);
       setResource(r);
       setQuantity(u);
-      validate(ADD);
       initType(metadata);
+      try { validate(ADD); }
+      catch (...)
+      {
+      	if (getOperation()) getOperation()->loaddata.erase(this);
+      	if (getResource()) getResource()->loads.erase(this);
+    	resetReferenceCount();
+    	throw;
+      }
+    }
+
+    /** Constructor. */
+    explicit Load(Operation* o, Resource* r, double u, DateRange e)
+      : priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY)
+    {
+      setOperation(o);
+      setResource(r);
+      setQuantity(u);
+      setEffective(e);
+      initType(metadata);
+      try { validate(ADD); }
+      catch (...)
+      {
+    	if (getOperation()) getOperation()->loaddata.erase(this);
+    	if (getResource()) getResource()->loads.erase(this);
+    	resetReferenceCount();
+    	throw;
+      }
     }
 
     /** Destructor. */
@@ -4210,9 +4269,8 @@ class Load
     void setSearch(const string a) {search = decodeSearchMode(a);}
 
   private:
-    /** This method is called to check the validity of the object. It will
-      * delete the invalid loads: be careful with the 'this' pointer after
-      * calling this method!
+    /** This method is called to check the validity of the object.<br>
+      * An exception is thrown if the load is invalid.
       */
     DECLARE_EXPORT void validate(Action action);
 

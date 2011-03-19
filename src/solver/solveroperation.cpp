@@ -875,7 +875,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       }
       else
       {
-        double val;
+        double val = 0.0;
         switch (search)
         {
           case MINCOST:

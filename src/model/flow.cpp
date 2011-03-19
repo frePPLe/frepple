@@ -85,7 +85,6 @@ DECLARE_EXPORT void Flow::validate(Action action)
   if (!oper || !buf)
   {
     // This flow is not a valid one since it misses essential information
-    delete this;
     if (!oper && !buf)
       throw DataException("Missing operation and buffer on a flow");
     else if (!oper)
@@ -110,19 +109,14 @@ DECLARE_EXPORT void Flow::validate(Action action)
   {
     case ADD:
       if (i != oper->getFlows().end())
-      {
-        delete this;
         throw DataException("Flow of '" + oper->getName() + "' and '" +
             buf->getName() + "' already exists");
-      }
       break;
     case CHANGE:
-      delete this;
       throw DataException("Can't update a flow");
     case ADD_CHANGE:
       // ADD is handled in the code after the switch statement
       if (i == oper->getFlows().end()) break;
-      delete this;
       throw DataException("Can't update a flow");
     case REMOVE:
       // Delete the temporary flow object
@@ -332,7 +326,12 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, con
       *static_cast<Action*>(pIn.getUserArea()) :
       ADD_CHANGE;
     delete static_cast<Action*>(pIn.getUserArea());
-    validate(a);
+    try { validate(a); }
+    catch (...)
+    {
+      delete this;
+      throw;
+    }
   }
 }
 
@@ -473,6 +472,21 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     PyObject* q1 = PyDict_GetItemString(kwds,"quantity");
     double q2 = q1 ? PythonObject(q1).getDouble() : 1.0;
 
+    // Pick up the effectivity dates
+    DateRange eff;
+    PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
+    if (eff_start)
+    {
+      PythonObject d(eff_start);
+      eff.setStart(d.getDate());
+    }
+    PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
+    if (eff_end)
+    {
+      PythonObject d(eff_end);
+      eff.setEnd(d.getDate());
+    }
+
     // Pick up the type and create the flow
     Flow *l;
     PyObject* t = PyDict_GetItemString(kwds,"type");
@@ -483,37 +497,21 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
         l = new FlowEnd(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
-          q2
+          q2, eff
           );
       else
         l = new FlowStart(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
-          q2
+          q2, eff
           );
     }
     else
       l = new FlowStart(
         static_cast<Operation*>(oper),
         static_cast<Buffer*>(buf),
-        q2
+        q2, eff
         );
-
-    // Pick up the effective start date
-    PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
-    if (eff_start)
-    {
-      PythonObject d(eff_start);
-      l->setEffectiveStart(d.getDate());
-    }
-
-    // Pick up the effective end date
-    PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
-    if (eff_end)
-    {
-      PythonObject d(eff_end);
-      l->setEffectiveEnd(d.getDate());
-    }
 
     // Return the object
     Py_INCREF(l);

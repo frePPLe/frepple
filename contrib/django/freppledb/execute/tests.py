@@ -58,11 +58,9 @@ class execute_from_user_interface(TransactionTestCase):
     self.failIfEqual(input.models.Demand.objects.count(),0)
 
     # Run frePPLe,  and make sure the test database is used
-    try: os.environ['FREPPLE_DATABASE_NAME'] = settings.TEST_DATABASE_NAME
-    except: pass
-    try: os.environ['FREPPLE_DATABASE_USER'] = settings.TEST_DATABASE_USER
-    except: pass
+    os.environ['FREPPLE_TEST'] = "YES"
     response = self.client.post('/execute/runfrepple/', {'action':'run', 'constraint':'15', 'plantype':'1'})
+    del os.environ['FREPPLE_TEST']
     self.assertRedirects(response, '/execute/execute.html')
 
     # Count the output records
@@ -91,11 +89,9 @@ class execute_with_commands(TransactionTestCase):
     self.failIfEqual(input.models.Demand.objects.count(),0)
 
     # Run frePPLe, and make sure the test database is used
-    try: os.environ['FREPPLE_DATABASE_NAME'] = settings.TEST_DATABASE_NAME
-    except: pass
-    try: os.environ['FREPPLE_DATABASE_USER'] = settings.TEST_DATABASE_USER
-    except: pass
+    os.environ['FREPPLE_TEST'] = "YES"
     management.call_command('frepple_run', plantype='1', nonfatal=True)
+    del os.environ['FREPPLE_TEST']
     self.failUnlessEqual(output.models.Problem.objects.count(),26)
     self.failUnlessEqual(output.models.FlowPlan.objects.count(),234)
     self.failUnlessEqual(output.models.LoadPlan.objects.count(),58)

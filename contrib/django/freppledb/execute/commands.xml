@@ -19,6 +19,13 @@ if db == DEFAULT_DB_ALIAS:
 else:
   frepple.settings.logfile = os.path.join(os.environ['FREPPLE_APP'],'frepple_%s.log' % db)
 
+# use the test database if we are running the test suite
+if 'FREPPLE_TEST' in os.environ:
+  settings.DATABASES[db]['NAME'] = settings.DATABASES[db]['TEST_NAME']
+  settings.DATABASES[db]['CHARSET'] = settings.DATABASES[db]['TEST_CHARSET']
+  settings.DATABASES[db]['COLLATION'] = settings.DATABASES[db]['TEST_COLLATION']
+  settings.DATABASES[db]['USER'] = settings.DATABASES[db]['TEST_USER']
+  
 # Create a solver where the plan type are defined by an environment variable
 try: plantype = int(os.environ['PLANTYPE'])
 except: plantype = 1  # Default is a constrained plan

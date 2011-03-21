@@ -90,9 +90,9 @@ class execute_with_commands(TransactionTestCase):
 
     # Run frePPLe, and make sure the test database is used
     os.environ['FREPPLE_TEST'] = "YES"
-    management.call_command('frepple_run', plantype='1', nonfatal=True)
+    management.call_command('frepple_run', plantype=1, constraint=15, nonfatal=True)
     del os.environ['FREPPLE_TEST']
-    self.failUnlessEqual(output.models.Problem.objects.count(),26)
-    self.failUnlessEqual(output.models.FlowPlan.objects.count(),234)
-    self.failUnlessEqual(output.models.LoadPlan.objects.count(),58)
-    self.failUnlessEqual(output.models.OperationPlan.objects.count(),138)
+    self.failUnlessEqual(output.models.Problem.objects.count(),188)
+    self.failUnlessEqual(output.models.FlowPlan.objects.count(),662)
+    self.failUnlessEqual(output.models.LoadPlan.objects.count(),57)
+    self.failUnlessEqual(output.models.OperationPlan.objects.count(),374)

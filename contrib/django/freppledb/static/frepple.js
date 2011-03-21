@@ -23,7 +23,9 @@ var upload = {
   {
     // Send the update to the server, synchronously
     var payload =
-      '--7d79\r\nContent-Disposition: form-data; name="data";'
+      '--7d79\r\nContent-Disposition: form-data; name="csrfmiddlewaretoken"\r\n\r\n'
+      + getToken()
+      + '\r\n--7d79\r\nContent-Disposition: form-data; name="data";'
       + 'filename="data"\r\nContent-Type: application/json\r\n\r\n'
       + Object.toJSON(upload._data)
       + '\r\n\r\n--7d79--\r\n';

@@ -53,8 +53,6 @@ def truncate(cursor):
   starttime = time()
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2': 
     delete = "truncate table %s cascade"
-  elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.mysql':
-    delete = "truncate table %s"
   else:
     delete = "delete from %s"
   for table in ['out_problem', 'out_demandpegging', 'out_flowplan',

@@ -220,9 +220,9 @@ class Calendar(AuditModel):
         CalendarBucket(calendar=self, startdate=end, value=str(b.value)).save(using=db)
       elif b.startdate < start:
         # An existing bucket is partially before the new daterange
+        CalendarBucket(calendar=self, startdate=start, enddate=end, value=str(value)).save(using=db)
         b.enddate = start
         b.save(using=db)
-        CalendarBucket(calendar=self, startdate=start, enddate=end, value=str(value)).save(using=db)
       elif b.enddate > end:
         # An existing bucket is partially after the new daterange
         CalendarBucket(calendar=self, startdate=b.startdate, enddate=end, value=str(value)).save(using=db)

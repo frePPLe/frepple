@@ -76,7 +76,7 @@ class DataLoadTest(TestCase):
 
   def test_input_parameter(self):
     response = self.client.get('/admin/input/parameter/')
-    self.assertContains(response, '6 parameters')
+    self.assertContains(response, '2 parameters')
 
   def test_input_resource(self):
     response = self.client.get('/admin/input/resource/')
@@ -94,8 +94,8 @@ class DataLoadTest(TestCase):
     try:
       data = tempfile.TemporaryFile(mode='w+b')
       print >>data, 'name, category'
-      print >>data, 'Test Location 1, cat1'
-      print >>data, 'Test Location 2,'
+      print >>data, 'factory 3, cat1'
+      print >>data, 'factory 4,'
       data.seek(0)
       response = self.client.post('/admin/input/location/', {'csv_file': data})
       self.assertRedirects(response, '/admin/input/location/')
@@ -103,7 +103,7 @@ class DataLoadTest(TestCase):
       data.close()
     self.failUnlessEqual(
       [(i.name, i.category) for i in Location.objects.order_by('name')],
-      [(u'factory 1',u''), (u'factory 2',u''), (u'Test Location 1',u'cat1'), (u'Test Location 2',u'')]
+      [(u'factory 1',u''), (u'factory 2',u''), (u'factory 3',u'cat1'), (u'factory 4',u'')]
       )
 
   def test_buckets(self):

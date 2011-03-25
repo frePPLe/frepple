@@ -1,6 +1,6 @@
 Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 ===================================================================
---- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 15881)
+--- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 15908)
 +++ django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
 @@ -132,16 +132,18 @@
          var shortcuts_span = document.createElement('span');
@@ -52,7 +52,7 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
          addEvent(window.document, 'click', function() { DateTimeShortcuts.dismissCalendar(num); return true; });
 Index: django/contrib/admin/widgets.py
 ===================================================================
---- django/contrib/admin/widgets.py	(revision 15881)
+--- django/contrib/admin/widgets.py	(revision 15908)
 +++ django/contrib/admin/widgets.py	(working copy)
 @@ -14,6 +14,7 @@
  from django.utils.encoding import force_unicode
@@ -75,7 +75,7 @@ Index: django/contrib/admin/widgets.py
      def base_url_parameters(self):
 Index: django/core/management/__init__.py
 ===================================================================
---- django/core/management/__init__.py	(revision 15881)
+--- django/core/management/__init__.py	(revision 15908)
 +++ django/core/management/__init__.py	(working copy)
 @@ -14,50 +14,80 @@
  # doesn't have to reload every time it's called.
@@ -218,7 +218,7 @@ Index: django/core/management/__init__.py
  
 Index: django/db/backends/sqlite3/base.py
 ===================================================================
---- django/db/backends/sqlite3/base.py	(revision 15881)
+--- django/db/backends/sqlite3/base.py	(revision 15908)
 +++ django/db/backends/sqlite3/base.py	(working copy)
 @@ -220,7 +220,8 @@
          if self.settings_dict['NAME'] != ":memory:":
@@ -232,7 +232,7 @@ Index: django/db/backends/sqlite3/base.py
      """
 Index: django/db/models/fields/related.py
 ===================================================================
---- django/db/models/fields/related.py	(revision 15881)
+--- django/db/models/fields/related.py	(revision 15908)
 +++ django/db/models/fields/related.py	(working copy)
 @@ -846,7 +846,10 @@
          if value is None:
@@ -248,7 +248,7 @@ Index: django/db/models/fields/related.py
               )
 Index: django/db/models/sql/compiler.py
 ===================================================================
---- django/db/models/sql/compiler.py	(revision 15881)
+--- django/db/models/sql/compiler.py	(revision 15908)
 +++ django/db/models/sql/compiler.py	(working copy)
 @@ -202,8 +202,11 @@
  
@@ -280,7 +280,7 @@ Index: django/db/models/sql/compiler.py
                  col_aliases.add(c_alias)
 Index: django/views/i18n.py
 ===================================================================
---- django/views/i18n.py	(revision 15881)
+--- django/views/i18n.py	(revision 15908)
 +++ django/views/i18n.py	(working copy)
 @@ -277,5 +277,9 @@
      src.append(LibFormatHead)

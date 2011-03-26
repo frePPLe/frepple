@@ -36,9 +36,9 @@ from time import time
 from threading import Thread
 import inspect, os
 
-from django.db import connections, DEFAULT_DB_ALIAS
-from django.db import transaction
+from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
+from django.core.management.color import no_style
 
 import frepple
 
@@ -51,15 +51,13 @@ else:
 def truncate(cursor):
   print "Emptying database plan tables..."
   starttime = time()
-  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2': 
-    delete = "truncate table %s cascade"
-  else:
-    delete = "delete from %s"
-  for table in ['out_problem', 'out_demandpegging', 'out_flowplan',
-                'out_loadplan', 'out_operationplan', 'out_demand', 
-                'out_forecast', 'out_constraint', 
-               ]:
-    cursor.execute(delete % table)
+  sql_list = connections[database].ops.sql_flush(no_style(), [
+    'out_problem', 'out_demandpegging', 'out_flowplan',
+    'out_loadplan', 'out_operationplan', 'out_demand', 
+    'out_forecast', 'out_constraint', 
+    ], [] )
+  for sql in sql_list:
+    cursor.execute(sql)
     transaction.commit(using=database)
   print "Emptied plan tables in %.2f seconds" % (time() - starttime)
 

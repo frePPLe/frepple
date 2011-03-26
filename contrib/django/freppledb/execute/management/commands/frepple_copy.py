@@ -92,6 +92,7 @@ class Command(BaseCommand):
     if 'nonfatal' in options: nonfatal = options['nonfatal']
     force = False
     if 'force' in options: force = options['force']
+    test = 'FREPPLE_TEST' in os.environ
     
     # Synchronize the scenario table with the settings
     Scenario.syncWithSettings()
@@ -134,24 +135,27 @@ class Command(BaseCommand):
           settings.DATABASES[source]['USER'],
           settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',
           settings.DATABASES[source]['PORT'] and ("-p %s " % settings.DATABASES[source]['PORT']) or '',
-          settings.DATABASES[source]['NAME'],
+          test and settings.DATABASES[source]['TEST_NAME'] or settings.DATABASES[source]['NAME'],
           settings.DATABASES[destination]['USER'],
           settings.DATABASES[destination]['HOST'] and ("-h %s " % settings.DATABASES[destination]['HOST']) or '',
           settings.DATABASES[destination]['PORT'] and ("-p %s " % settings.DATABASES[destination]['PORT']) or '',
-          settings.DATABASES[destination]['NAME'],
+          test and settings.DATABASES[destination]['TEST_NAME'] or settings.DATABASES[destination]['NAME'],
           ))      
         if ret: raise Exception('Exit code of the database copy command is %d' % ret)
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.sqlite3':
         # A plain copy of the database file
-        shutil.copy2(settings.DATABASES[source]['NAME'], settings.DATABASES[destination]['NAME'])
+        if test:
+          shutil.copy2(settings.DATABASES[source]['TEST_NAME'], settings.DATABASES[destination]['TEST_NAME'])
+        else:
+          shutil.copy2(settings.DATABASES[source]['NAME'], settings.DATABASES[destination]['NAME'])
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.mysql':
         ret = os.system("mysqldump %s --password=%s --user=%s %s%s--quick --compress --extended-insert --add-drop-table | mysql %s --password=%s --user=%s %s%s" % (
-          settings.DATABASES[source]['NAME'],
+          test and settings.DATABASES[source]['TEST_NAME'] or settings.DATABASES[source]['NAME'],
           settings.DATABASES[source]['PASSWORD'],
           settings.DATABASES[source]['USER'],
           settings.DATABASES[source]['HOST'] and ("--host=%s " % settings.DATABASES[source]['HOST']) or '',
           settings.DATABASES[source]['PORT'] and ("--port=%s " % settings.DATABASES[source]['PORT']) or '',
-          settings.DATABASES[destination]['NAME'],
+          test and settings.DATABASES[destination]['TEST_NAME'] or settings.DATABASES[destination]['NAME'],
           settings.DATABASES[destination]['PASSWORD'],
           settings.DATABASES[destination]['USER'],
           settings.DATABASES[destination]['HOST'] and ("--host=%s " % settings.DATABASES[destination]['HOST']) or '',
@@ -163,22 +167,22 @@ class Command(BaseCommand):
           try: os.unlink('c:\\temp\\frepple.dmp')
           except: pass
           ret = os.system("expdp %s/%s@//%s:%s/%s schemas=%s directory=dump_dir nologfile=Y dumpfile=frepple.dmp" % (
-            settings.DATABASES[source]['USER'],
+            test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
             settings.DATABASES[source]['PASSWORD'],
             settings.DATABASES[source]['HOST'],
             settings.DATABASES[source]['PORT'],
-            settings.DATABASES[source]['NAME'],
-            settings.DATABASES[source]['USER'],
+            test and settings.DATABASES[source]['TEST_NAME'] or settings.DATABASES[source]['NAME'],
+            test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
             ))          
           if ret: raise Exception('Exit code of the database export command is %d' % ret)
           ret = os.system("impdp %s/%s@//%s:%s/%s remap_schema=%s:%s table_exists_action=replace directory=dump_dir nologfile=Y dumpfile=frepple.dmp" % (
-            settings.DATABASES[destination]['USER'],
+            test and settings.DATABASES[destination]['TEST_USER'] or settings.DATABASES[destination]['USER'],
             settings.DATABASES[destination]['PASSWORD'],
             settings.DATABASES[destination]['HOST'],
             settings.DATABASES[destination]['PORT'],
-            settings.DATABASES[destination]['NAME'],
-            settings.DATABASES[source]['USER'],
-            settings.DATABASES[destination]['USER'],
+            test and settings.DATABASES[destination]['TEST_NAME'] or settings.DATABASES[destination]['NAME'],
+            test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
+            test and settings.DATABASES[destination]['TEST_USER'] or settings.DATABASES[destination]['USER'],
             ))
           if ret: raise Exception('Exit code of the database import command is %d' % ret)
         finally:

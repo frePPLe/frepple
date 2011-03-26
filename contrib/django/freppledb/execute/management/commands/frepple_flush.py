@@ -89,7 +89,7 @@ class Command(BaseCommand):
         'forecastdemand','forecast','flow','resourceload','buffer','resource',
         'setuprule','setupmatrix','operationplan','item','suboperation','operation',
         'location','calendarbucket','calendar','customer',
-        # 'parameter','bucketdetail','bucket'
+        'parameter','bucketdetail','bucket'
         ], [] )
       for sql in sql_list:
         cursor.execute(sql)

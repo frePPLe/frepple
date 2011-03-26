@@ -25,9 +25,11 @@ import os
 from django.core import management
 from django.test import TransactionTestCase
 from django.conf import settings
+from django.db import DEFAULT_DB_ALIAS, connections, transaction
 
 import freppledb.output as output
 import freppledb.input as input
+
 
 class execute_from_user_interface(TransactionTestCase):
 
@@ -72,6 +74,12 @@ class execute_from_user_interface(TransactionTestCase):
 
 class execute_with_commands(TransactionTestCase):
 
+  def setUp(self):
+    os.environ['FREPPLE_TEST'] = "YES"
+
+  def tearDown(self):
+    del os.environ['FREPPLE_TEST']
+
   def test_run_cmd(self):
     # Empty the database tables
     self.failIfEqual(input.models.Calendar.objects.count(),0)
@@ -89,10 +97,71 @@ class execute_with_commands(TransactionTestCase):
     self.failIfEqual(input.models.Demand.objects.count(),0)
 
     # Run frePPLe, and make sure the test database is used
-    os.environ['FREPPLE_TEST'] = "YES"
     management.call_command('frepple_run', plantype=1, constraint=15, nonfatal=True)
-    del os.environ['FREPPLE_TEST']
     self.failUnlessEqual(output.models.Problem.objects.count(),188)
     self.failUnlessEqual(output.models.FlowPlan.objects.count(),662)
     self.failUnlessEqual(output.models.LoadPlan.objects.count(),57)
     self.failUnlessEqual(output.models.OperationPlan.objects.count(),374)
+
+
+class execute_multidb(TransactionTestCase):
+  multi_db = True
+
+  def setUp(self):
+    os.environ['FREPPLE_TEST'] = "YES"
+  
+  def tearDown(self):
+    del os.environ['FREPPLE_TEST']
+
+  def test_multidb_cmd(self):
+    # Find out which databases to use
+    db1 = DEFAULT_DB_ALIAS
+    db2 = None
+    for i in settings.DATABASES.keys():
+      if i != DEFAULT_DB_ALIAS:
+        db2 = i
+        break
+    if not db2:
+      # Only a single database is configured and we skip this test
+      return
+      
+    # Check count in both databases
+    count1 = output.models.FlowPlan.objects.all().using(db1).count()
+    count2 = output.models.FlowPlan.objects.all().using(db2).count()
+    self.failUnlessEqual(count1,0)
+    self.failUnlessEqual(count2,0)
+    
+    # Erase second database
+    count1 = input.models.Demand.objects.all().using(db1).count()
+    management.call_command('frepple_flush', database=db2)
+    count1new = input.models.Demand.objects.all().using(db1).count()
+    count2 = input.models.Demand.objects.all().using(db2).count()
+    self.failUnlessEqual(count1new,count1)
+    self.failUnlessEqual(count2,0)
+    
+    # Copy the db1 into db2.
+    # We need to close the transactions, since they can block the copy
+    transaction.commit(using=db1)
+    transaction.commit(using=db2)
+    management.call_command('frepple_copy', db1, db2, nonfatal=True)
+    count1 = output.models.Demand.objects.all().using(db1).count()
+    count2 = output.models.Demand.objects.all().using(db2).count()
+    self.failUnlessEqual(count1,count2)
+    
+    # Run the plan on db1.
+    # The count changes in db1 and not in db2.
+    management.call_command('frepple_run', plantype=1, constraint=15, nonfatal=True, database=db1)
+    count1 = output.models.FlowPlan.objects.all().using(db1).count()
+    count2 = output.models.FlowPlan.objects.all().using(db2).count()
+    self.failIfEqual(count1,0)
+    self.failUnlessEqual(count2,0)
+    
+    # Run a plan on db2.
+    # The count changes in db1 and not in db2.
+    # The count in both databases is expected to be different since we run a different plan
+    management.call_command('frepple_run', plantype=1, constraint=0, nonfatal=True, database=db2)
+    count1new = output.models.FlowPlan.objects.all().using(db1).count()
+    count2 = output.models.FlowPlan.objects.all().using(db2).count()
+    self.failUnlessEqual(count1new,count1)
+    self.failIfEqual(count2,0)
+    self.failIfEqual(count2,count1new)

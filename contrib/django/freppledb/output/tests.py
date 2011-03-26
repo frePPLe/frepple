@@ -98,3 +98,25 @@ class OutputTest(TestCase):
     response = self.client.get('/problem/', {'reporttype':'csvlist'})
     self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.__getitem__('Content-Type'), 'text/csv')
+
+  # Constraint
+  def test_output_constraint(self):
+    response = self.client.get('/constraint/')
+    self.failUnlessEqual(response.status_code, 200)
+    self.assertContains(response, '0 constraints')
+
+  def test_output_constraint_csvlist(self):
+    response = self.client.get('/constraint/', {'reporttype':'csvlist'})
+    self.failUnlessEqual(response.status_code, 200)
+    self.failUnlessEqual(response.__getitem__('Content-Type'), 'text/csv')
+
+  # KPI
+  def test_output_kpi(self):
+    response = self.client.get('/kpi/')
+    self.failUnlessEqual(response.status_code, 200)
+    self.assertContains(response, 'Performance Indicators')
+
+  def test_output_kpi_csvlist(self):
+    response = self.client.get('/kpi/', {'reporttype':'csvlist'})
+    self.failUnlessEqual(response.status_code, 200)
+    self.failUnlessEqual(response.__getitem__('Content-Type'), 'text/csv')

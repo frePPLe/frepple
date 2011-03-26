@@ -35,7 +35,7 @@ if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
   FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
-FREPPLE_VERSION = '0.9.0.beta'
+FREPPLE_VERSION = '0.9.0.alfa'
 # sys.path.append(os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','openerp')))
 
 # Determing whether Django runs as a standalone application or is deployed on a web server
@@ -71,8 +71,8 @@ DATABASES = {
   'scenario1': {
     'ENGINE': 'django.db.backends.sqlite3',
     'NAME': 'scenario1',
-    'USER': '',
-    'PASSWORD': '',
+    'USER': 'frepple',
+    'PASSWORD': 'frepple',
     'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
     'OPTIONS': {},  # Backend specific configuration parameters.
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
@@ -80,8 +80,8 @@ DATABASES = {
   'scenario2': {
     'ENGINE': 'django.db.backends.sqlite3',
     'NAME': 'scenario2',
-    'USER': '',
-    'PASSWORD': '',
+    'USER': 'frepple',
+    'PASSWORD': 'frepple',
     'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
     'OPTIONS': {},  # Backend specific configuration parameters.
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
@@ -89,8 +89,8 @@ DATABASES = {
   'scenario3': {
     'ENGINE': 'django.db.backends.sqlite3',
     'NAME': 'scenario3',
-    'USER': '',
-    'PASSWORD': '',
+    'USER': 'frepple',
+    'PASSWORD': 'frepple',
     'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
     'OPTIONS': {},  # Backend specific configuration parameters.
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.

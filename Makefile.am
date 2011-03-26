@@ -22,4 +22,3 @@ uninstall-local:
 # Avoid packaging any subversion subdirectories that may be left over
 dist-hook:
 	-rm -rf `find $(top_distdir) -name '.svn' -type d`
-

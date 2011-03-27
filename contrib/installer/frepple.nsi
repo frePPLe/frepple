@@ -381,7 +381,7 @@ Function finish_leave
   ; Start the server in console window
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 1" "State"
   ${If} $0 == 1
-    Exec '"$INSTDIR\bin\manage.exe"'    
+    Exec '"$INSTDIR\bin\manage.exe" "frepple_runserver"'    
   ${EndIf}
   
   ; View the documentation

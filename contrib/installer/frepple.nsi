@@ -170,12 +170,12 @@ Section "Application" SecAppl
   File "..\bin\init.xml"
   File "..\bin\init.py" 
   
-  ; Copy sqlite database if it is available
-  File /nonfatal "..\bin\frepple.sqlite"
-  
   ; Copy the django and python redistributables created by py2exe
-  SetOutPath "$INSTDIR\bin"
   File /r "..\contrib\installer\dist\*.*"
+  
+  ; Copy sqlite database if it is available
+  SetOutPath "$INSTDIR\bin\custom"
+  File /nonfatal "..\contrib\django\frepple.sqlite"
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"

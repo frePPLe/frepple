@@ -34,6 +34,7 @@ It provides the following functionality:
 '''
 
 from datetime import date, datetime
+from decimal import Decimal
 import csv, cStringIO
 
 from django.conf import settings
@@ -52,7 +53,7 @@ from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.utils.html import escape
-from django.utils.formats import localize, get_format
+from django.utils.formats import get_format, number_format
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst, get_text_list
 from django.utils.encoding import iri_to_uri, force_unicode
@@ -350,7 +351,7 @@ def view_report(request, entity=None, **args):
   # HTML output or CSV output?
   if type[:3] == 'csv':
     # CSV output
-    response = HttpResponse(mimetype='text/csv')
+    response = HttpResponse(content_type='text/csv; charset=%s' % settings.DEFAULT_CHARSET)
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
     if hasattr(reportclass,'resultlist2'):
       # SQL override provided of type 2
@@ -564,6 +565,17 @@ def _get_javascript_imports(reportclass):
     return reportclass.javascript_imports
 
 
+def _localize(value, use_l10n=None):
+  ''' 
+  Localize numbers.
+  Dates are always represented as YYYY-MM-DD hh:mm:ss since this is 
+  '''
+  if isinstance(value, (Decimal, float, int, long)):
+     return number_format(value, use_l10n=use_l10n)
+  else:
+     return value
+ 
+    
 def _generate_csv(rep, qs, format, bucketlist, request):
   '''
   This is a generator function that iterates over the report data and
@@ -571,11 +583,13 @@ def _generate_csv(rep, qs, format, bucketlist, request):
   '''  
   sf = cStringIO.StringIO()  
   encoding = settings.DEFAULT_CHARSET
-  if get_format('DECIMAL_SEPARATOR',request.LANGUAGE_CODE, True) == ',':
+  if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
     writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
   else:
     writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
-
+  if translation.get_language() != request.LANGUAGE_CODE:
+    translation.activate(request.LANGUAGE_CODE)
+  
   # Write a header row
   fields = [ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in rep.rows ]
   if issubclass(rep,TableReport):
@@ -597,9 +611,9 @@ def _generate_csv(rep, qs, format, bucketlist, request):
       sf.truncate(0)
       # Build the return value, encoding all output
       if hasattr(row, "__getitem__"):
-        fields = [ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
+        fields = [ row[s[0]]==None and ' ' or unicode(_localize(row[s[0]])).encode(encoding,"ignore") for s in rep.rows ]
       else:
-        fields = [ getattr(row,s[0])==None and ' ' or unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.rows ]
+        fields = [ getattr(row,s[0])==None and ' ' or unicode(_localize(getattr(row,s[0]))).encode(encoding,"ignore") for s in rep.rows ]
       # Return string
       writer.writerow(fields)
       yield sf.getvalue()
@@ -614,11 +628,11 @@ def _generate_csv(rep, qs, format, bucketlist, request):
         if hasattr(row, "__getitem__"):
           fields = [ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
           fields.extend([ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.columns ])
-          fields.extend([ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.crosses ])
+          fields.extend([ row[s[0]]==None and ' ' or unicode(_localize(row[s[0]])).encode(encoding,"ignore") for s in rep.crosses ])
         else:
           fields = [ getattr(row,s[0])==None and ' ' or unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.rows ]
           fields.extend([ getattr(row,s[0])==None and ' ' or unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.columns ])
-          fields.extend([ getattr(row,s[0])==None and ' ' or unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.crosses ])
+          fields.extend([ getattr(row,s[0])==None and ' ' or unicode(_localize(getattr(row,s[0]))).encode(encoding,"ignore") for s in rep.crosses ])
         # Return string
         writer.writerow(fields)
         yield sf.getvalue()
@@ -641,7 +655,7 @@ def _generate_csv(rep, qs, format, bucketlist, request):
             sf.truncate(0)
             fields = [ unicode(row_of_buckets[0][s[0]]).encode(encoding,"ignore") for s in rep.rows ]
             fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
-            fields.extend([ unicode(bucket[cross[0]]).encode(encoding,"ignore") for bucket in row_of_buckets ])
+            fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
             # Return string
             writer.writerow(fields)
             yield sf.getvalue()
@@ -653,7 +667,7 @@ def _generate_csv(rep, qs, format, bucketlist, request):
         sf.truncate(0)
         fields = [ unicode(row_of_buckets[0][s[0]]).encode(encoding,"ignore") for s in rep.rows ]
         fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
-        fields.extend([ unicode(bucket[cross[0]]).encode(encoding,"ignore") for bucket in row_of_buckets ])
+        fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
         # Return string
         writer.writerow(fields)
         yield sf.getvalue()

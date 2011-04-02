@@ -201,6 +201,11 @@ INTERNAL_IPS = ( '127.0.0.1', )
 # For frePPLe this is important when downloading csv-files. FrePPLe encodes the
 # output in this encoding.
 DEFAULT_CHARSET = 'utf-8'
+# Windows users might want to use a different encoding to make export/import to Excel 
+# more seamless (but with less functionality). Excel doesn't recognize UTF-8 encoding 
+# by default. Use the following 2 lines to replace the previous statement.
+#   import locale
+#   DEFAULT_CHARSET=locale.getpreferredencoding(False)
 
 # The size of the "name" key field of the database models
 NAMESIZE = 60

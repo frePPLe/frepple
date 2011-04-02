@@ -48,9 +48,10 @@ class ReportByDemand(ListReport):
     "/media/js/calendar.js",
     "/media/js/admin/DateTimeShortcuts.js",
     ]
-  rows = (
-    ('name', {   # XXX TODO
+  rows = ( 
+    ('depth', {
       'title': _('depth'),
+      'order_by': 'name',
       }),
     ('operation', {
       'title': _('operation'),
@@ -73,7 +74,7 @@ class ReportByDemand(ListReport):
     ('quantity', {
       'title': _('quantity'),
       }),
-    ('percent used', {
+    ('percent_used', {
       'title': _('% used'),
       }),
     )

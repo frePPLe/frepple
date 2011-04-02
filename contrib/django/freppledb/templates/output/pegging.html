@@ -17,7 +17,7 @@
 <form><input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px;" type="button" id="save" value="{% trans 'Save' %}" onclick="upload.save();"/>
 <input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px; margin-right: 10px; margin-left:10px;" type="button" id="undo" value="{% trans 'Undo' %}" onclick="upload.undo();"/>
 <a href="javascript:bucket_show();" id="bucketconfig"><img src="/media/img/admin/icon_clock.gif"/>{% trans 'Time' %}</a><span id="timebuckets">{{ reportbucket }},{{ reportstart}},{{ reportend }}</span>
-<a href="javascript:export_show(false);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
+<a href="javascript:export_show(true);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
 </form><div id="popup"></div></div>{% endblock %}
 
 {% block before_table %}

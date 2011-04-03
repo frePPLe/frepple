@@ -120,7 +120,7 @@ class DataLoadTest(TestCase):
     for i in buckets:
       self.assertNotEqual(i.startdate, None, 'Missing start date')
       self.assertNotEqual(i.enddate, None, 'Missing end date')
-      self.failUnless(i.startdate<i.enddate, 'End date before the start date')
+      self.assertTrue(i.startdate<i.enddate, 'End date before the start date')
       if prevend:
         self.assertEqual(i.startdate, prevend, 'Non-adjacent calendar buckets')
       prevend = i.enddate

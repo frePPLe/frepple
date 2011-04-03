@@ -29,6 +29,7 @@ import os.path
 
 from django.conf.urls.defaults import patterns, include
 from django.conf import settings
+from django.views.generic.base import RedirectView
 
 import freppledb.output.urls
 import freppledb.input.urls
@@ -40,7 +41,7 @@ urlpatterns = patterns('',
     (r'^execute/', include('freppledb.execute.urls')),
 
     # Root url redirects to the admin index page
-    (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),
+    (r'^$', RedirectView.as_view(url='/admin/')),
 )
 
 # Adding urls for each installed application.

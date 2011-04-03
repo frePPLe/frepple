@@ -122,11 +122,12 @@ SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.load_template_source',
+    'django.template.loaders.app_directories.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'freppledb.common.middleware.LocaleMiddleware',
     'freppledb.common.middleware.DatabaseSelectionMiddleware',
@@ -152,6 +153,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.admin',
+    'django.contrib.messages', 
     'freppledb.input',
     'freppledb.output',
     'freppledb.execute',
@@ -162,6 +164,7 @@ INSTALLED_APPS = (
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
     # The debug context keeps track of all sql statements
     # that are executed. Handy for debugging, but a memory killer when
     # huge numbers of queries are executed...
@@ -175,6 +178,8 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 *  2    # Age of cookie, in seconds: 2 days
 SESSION_COOKIE_DOMAIN = None              # A string, or None for standard domain cookie.
 SESSION_SAVE_EVERY_REQUEST = False        # Whether to save the session data on every request.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user closes his browser.
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 # Mail settings
 #DEFAULT_FROM_EMAIL #if not pass from_email to send_mail func.

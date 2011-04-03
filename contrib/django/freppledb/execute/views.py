@@ -26,7 +26,7 @@ from datetime import datetime
 from django.conf import settings
 from django.core import management
 from django.views.decorators.cache import never_cache
-from django.views.generic.simple import direct_to_template
+from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS, transaction
 from django.contrib.admin.views.decorators import staff_member_required
@@ -62,8 +62,7 @@ def main(request):
     pass  # Silently ignore failures
   
   # Send to template
-  return direct_to_template(request,  template='execute/execute.html',
-        extra_context={
+  return render(request, 'execute/execute.html', {
           'title': _('Execute'), 
           'reset_crumbs': True,
           'capacityconstrained': constraint & 4,
@@ -273,8 +272,7 @@ def logfile(request):
     finally:
       f.close()
 
-  return direct_to_template(request,  template='execute/logfrepple.html',
-    extra_context={
+  return render(request, 'execute/logfrepple.html', {
       'title': _('Log file'), 
       'logdata': logdata,
       } )

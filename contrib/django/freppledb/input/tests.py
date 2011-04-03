@@ -87,7 +87,7 @@ class DataLoadTest(TestCase):
     self.assertContains(response, '4 suboperations')
 
   def test_csv_upload(self):
-    self.failUnlessEqual(
+    self.assertEqual(
       [(i.name, i.category) for i in Location.objects.all()],
       [(u'factory 1',u''), (u'factory 2',u'')]
       )
@@ -101,7 +101,7 @@ class DataLoadTest(TestCase):
       self.assertRedirects(response, '/admin/input/location/')
     finally:
       data.close()
-    self.failUnlessEqual(
+    self.assertEqual(
       [(i.name, i.category) for i in Location.objects.order_by('name')],
       [(u'factory 1',u''), (u'factory 2',u''), (u'factory 3',u'cat1'), (u'factory 4',u'')]
       )
@@ -118,21 +118,21 @@ class DataLoadTest(TestCase):
     # Verify the bucket dates are filled in correctly
     prevend = None
     for i in buckets:
-      self.failIfEqual(i.startdate, None, 'Missing start date')
-      self.failIfEqual(i.enddate, None, 'Missing end date')
+      self.assertNotEqual(i.startdate, None, 'Missing start date')
+      self.assertNotEqual(i.enddate, None, 'Missing end date')
       self.failUnless(i.startdate<i.enddate, 'End date before the start date')
       if prevend:
-        self.failUnlessEqual(i.startdate, prevend, 'Non-adjacent calendar buckets')
+        self.assertEqual(i.startdate, prevend, 'Non-adjacent calendar buckets')
       prevend = i.enddate
     # Verify original buckets
-    self.failUnlessEqual(
+    self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
       [('2008-01-01 00:00:00', '2009-02-01 00:00:00', 1),
        ('2009-02-01 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # Create a new bucket - start date aligned with existing bucket
     calendar.setvalue(datetime(2009,2,1), datetime(2009,3,3), 12)
-    self.failUnlessEqual(
+    self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
       [('2008-01-01 00:00:00', '2009-02-01 00:00:00', 1),
        ('2009-02-01 00:00:00', '2009-03-03 00:00:00', 12),
@@ -140,7 +140,7 @@ class DataLoadTest(TestCase):
       ])
     # Create a new bucket - end date aligned with existing bucket
     calendar.setvalue(datetime(2009,2,10), datetime(2009,3,3), 100)
-    self.failUnlessEqual(
+    self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
       [('2008-01-01 00:00:00', '2009-02-01 00:00:00', 1),
        ('2009-02-01 00:00:00', '2009-02-10 00:00:00', 12),
@@ -149,7 +149,7 @@ class DataLoadTest(TestCase):
       ])
     # 2 buckets partially updates and one deleted
     calendar.setvalue(datetime(2009,1,10), datetime(2009,4,3), 3)
-    self.failUnlessEqual(
+    self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
       [('2008-01-01 00:00:00', '2009-01-10 00:00:00', 1),
        ('2009-01-10 00:00:00', '2009-03-03 00:00:00', 3),
@@ -158,7 +158,7 @@ class DataLoadTest(TestCase):
       ])
     # Create a new bucket - end date aligned with existing bucket
     calendar.setvalue(datetime(2009,2,10), datetime(2009,3,3), 4)
-    self.failUnlessEqual(
+    self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
       [('2008-01-01 00:00:00', '2009-01-10 00:00:00', 1),
        ('2009-01-10 00:00:00', '2009-02-10 00:00:00', 3),
@@ -168,7 +168,7 @@ class DataLoadTest(TestCase):
       ])
     # Completely override the value of an existing bucket
     calendar.setvalue(datetime(2009,3,3), datetime(2009,4,3), 5)
-    self.failUnlessEqual(
+    self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
       [('2008-01-01 00:00:00', '2009-01-10 00:00:00', 1),
        ('2009-01-10 00:00:00', '2009-02-10 00:00:00', 3),

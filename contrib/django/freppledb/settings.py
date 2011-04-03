@@ -115,17 +115,14 @@ LANGUAGES = (
   ('nl', ugettext('Dutch')),
   ('zh-tw', ugettext('Traditional Chinese')),
 )
-if (STANDALONE):
-  LOCALE_PATHS = [ os.path.join(FREPPLE_HOME, 'conf', 'locale'), os.path.join(FREPPLE_APP,'locale'), ]
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
+    'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -141,11 +138,13 @@ ADMIN_MEDIA_PREFIX = '/media/'
 USE_L10N=True    # Represent data in the local format
 USE_I18N=True    # Use translated strings
 
+LOCALE_PATHS = (
+    os.path.normpath(os.path.join(FREPPLE_APP,'freppledb','locale')),
+)
+
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates".
     # Always use forward slashes, even on Windows.
-    os.path.join(FREPPLE_APP,'freppledb','templates').replace('\\','/'),
-    os.path.join(FREPPLE_HOME,'templates').replace('\\','/'),
+    os.path.normpath(os.path.join(FREPPLE_APP,'freppledb','templates')),
 )
 
 INSTALLED_APPS = (
@@ -162,7 +161,7 @@ INSTALLED_APPS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
-    'django.core.context_processors.auth',
+    'django.contrib.auth.context_processors.auth',
     # The debug context keeps track of all sql statements
     # that are executed. Handy for debugging, but a memory killer when
     # huge numbers of queries are executed...

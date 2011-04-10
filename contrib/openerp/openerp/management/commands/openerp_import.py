@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2010-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -91,7 +91,7 @@ class Command(BaseCommand):
     if 'delta' in options: self.delta = float(options['delta'] or '3650')
     else: self.delta = 3650
     self.date = datetime.now()
-    self.delta = self.date - timedelta(days=self.delta)
+    self.delta = str(self.date - timedelta(days=self.delta))
     if 'database' in options: self.database = options['database'] or DEFAULT_DB_ALIAS
     else: self.database = DEFAULT_DB_ALIAS      
     if not self.database in settings.DATABASES.keys():
@@ -165,9 +165,11 @@ class Command(BaseCommand):
         print "Importing customers..."
       cursor.execute("SELECT name FROM customer")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      print self.delta
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
         'res.partner', 'search', 
-        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta),
+         '|',('active', '=', 1),('active', '=', 0)])
       fields = ['name', 'active', 'customer', 'ref']
       insert = []
       update = []
@@ -224,7 +226,7 @@ class Command(BaseCommand):
   #        - %id %name -> name
   #        - %code     -> description
   #        - 'OpenERP' -> subcategory
-  # TODO also get template.produce_delay    
+  # TODO also get template.produce_delay? 
   def import_products(self, sock, cursor):  
     transaction.enter_transaction_management(using=self.database)
     transaction.managed(True, using=self.database)
@@ -236,7 +238,8 @@ class Command(BaseCommand):
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
         'product.product', 'search', 
-        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta),
+         '|',('active', '=', 1),('active', '=', 0)])
       fields = ['name', 'code', 'active', 'product_tmpl_id']
       insert = []
       update = []
@@ -304,7 +307,8 @@ class Command(BaseCommand):
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
         'stock.location', 'search', 
-        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta),
+         '|',('active', '=', 1),('active', '=', 0)])
       fields = ['name', 'usage', 'active']
       insert = []
       update = []
@@ -334,6 +338,7 @@ class Command(BaseCommand):
            u'%d %s' % (i['id'],i['name']),
          ) for i in update
         ])
+      # TODO In case there are child records for the location defined in frePPLe, the delete will fail
       cursor.executemany(
         "delete from location where name=%s",
         delete)
@@ -374,7 +379,8 @@ class Command(BaseCommand):
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
         'sale.order.line', 'search', 
-        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta),
+         '|',('active', '=', 1),('active', '=', 0)])
       fields = ['sequence', 'state', 'type', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
       fields2 = ['partner_id', 'date_order', ]
       insert = []
@@ -436,6 +442,7 @@ class Command(BaseCommand):
   #   - mapped fields OpenERP -> frePPLe resource
   #        - %id %name -> name
   #        - %cost_hour -> cost
+  #        - capacity_per_cycle -> maximum
   #        - 'OpenERP' -> subcategory
   # Concept:
   #  A bit surprising, but OpenERP doesn't assign a location to a workcenter. 
@@ -453,8 +460,9 @@ class Command(BaseCommand):
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
         'mrp.workcenter', 'search', 
-        ['|',('Create_date','>', self.delta),('write_date','>', self.delta)])
-      fields = ['name', 'active', 'costs_hour',]
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta),
+         '|',('active', '=', 1),('active', '=', 0)])
+      fields = ['name', 'active', 'costs_hour', 'capacity_per_cycle']
       insert = []
       update = []
       delete = []
@@ -469,19 +477,21 @@ class Command(BaseCommand):
           delete.append( (name,) )                   
       cursor.executemany(
         "insert into resource \
-          (name,cost,subcategory,lastmodified) \
-          values (%%s,%%s,'OpenERP','%s')" % self.date,
+          (name,cost,maximum,subcategory,lastmodified) \
+          values (%%s,%%s,%%s,'OpenERP','%s')" % self.date,
         [(
            u'%d %s' % (i['id'],i['name']),
            i['costs_hour'] or 0,
+           i['capacity_per_cycle'] or 1,
          ) for i in insert
         ])
       cursor.executemany(
         "update resource \
-          set cost=%%s, subcategory='OpenERP', lastmodified='%s' \
+          set cost=%%s, maximum=%%s, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
         [(
            i['costs_hour'] or 0,
+           i['capacity_per_cycle'] or 1,
            u'%d %s' % (i['id'],i['name']),
          ) for i in update
         ])
@@ -601,8 +611,8 @@ class Command(BaseCommand):
   #        - %cost_hour -> cost
   #        - 'OpenERP' -> subcategory
   # 
-  # TODO: Possible to update PO without touching the date on the PO-lines? Rework code?
-  # TODO: Operationplan id is not a good way to find a match
+  # TODO Possible to update PO without touching the date on the PO-lines? Rework code?
+  # TODO Operationplan id is not a good way to find a match
   def import_purchaseorders(self, sock, cursor): 
     
     def newBuffers(insert):
@@ -850,7 +860,7 @@ class Command(BaseCommand):
       
       # Get all setup matrices
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
-        'frepple.setupmatrix', 'search', [])
+        'frepple.setupmatrix', 'search', ['|',('active', '=', 1),('active', '=', 0)])
       fields = ['name',]
       datalist = []
       for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'frepple.setupmatrix', 'read', ids, fields):
@@ -886,7 +896,7 @@ class Command(BaseCommand):
     except Exception, e:
       try:
         if e.faultString.find("Object frepple.setupmatrix doesn't exist") >= 0:
-          print "Error importing setup matrices:"
+          print "Warning importing setup matrices:"
           print "  The frePPLe add-on is not installed on your OpenERP server."
           print "  No setup matrices will be downloaded."
         else:

@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.9.0.alfa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-26 15:20+0100\n"
+"POT-Creation-Date: 2011-04-03 17:40+0200\n"
 "PO-Revision-Date: 2009-06-23 22:38+0100\n"
 "Last-Translator: \n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
@@ -32,92 +32,92 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/frepple.js:254
+#: static/frepple.js:256
 msgid "contains (no case)"
 msgstr ""
 
-#: static/frepple.js:255
+#: static/frepple.js:257
 msgid "contains"
 msgstr ""
 
-#: static/frepple.js:256
+#: static/frepple.js:258
 msgid "starts (no case)"
 msgstr ""
 
-#: static/frepple.js:257
+#: static/frepple.js:259
 msgid "starts"
 msgstr ""
 
-#: static/frepple.js:258
+#: static/frepple.js:260
 msgid "ends (no case)"
 msgstr ""
 
-#: static/frepple.js:259
+#: static/frepple.js:261
 msgid "ends"
 msgstr ""
 
-#: static/frepple.js:260
+#: static/frepple.js:262
 msgid "equals (no case)"
 msgstr ""
 
-#: static/frepple.js:261
+#: static/frepple.js:263
 msgid "equals"
 msgstr ""
 
-#: static/frepple.js:262
+#: static/frepple.js:264
 msgid "is null"
 msgstr ""
 
-#: static/frepple.js:322
+#: static/frepple.js:324
 msgid "Filter data"
 msgstr ""
 
-#: static/frepple.js:391
+#: static/frepple.js:393
 msgid "Filter"
 msgstr ""
 
-#: static/frepple.js:392 static/frepple.js.py:576
+#: static/frepple.js:394 static/frepple.js.py:578
 msgid "Cancel"
 msgstr ""
 
-#: static/frepple.js:524 static/frepple.js.py:529
+#: static/frepple.js:526 static/frepple.js.py:531
 #, fuzzy
 msgid "False"
 msgstr "Sluit"
 
-#: static/frepple.js:525 static/frepple.js.py:530
+#: static/frepple.js:527 static/frepple.js.py:532
 msgid "True"
 msgstr ""
 
-#: static/frepple.js:569
+#: static/frepple.js:571
 msgid "Import data"
 msgstr ""
 
-#: static/frepple.js:572
+#: static/frepple.js:574
 msgid "Load data from a CSV-formatted text file in the database."
 msgstr ""
 
-#: static/frepple.js:573
+#: static/frepple.js:575
 msgid "The first row should contain the field names."
 msgstr ""
 
-#: static/frepple.js:574
+#: static/frepple.js:576
 msgid "Data file"
 msgstr ""
 
-#: static/frepple.js:575
+#: static/frepple.js:577
 msgid "Upload"
 msgstr ""
 
-#: static/frepple.js:596
+#: static/frepple.js:598
 msgid "Export data"
 msgstr ""
 
-#: static/frepple.js:598
+#: static/frepple.js:600
 msgid "CSV style"
 msgstr ""
 
-#: static/frepple.js:599
+#: static/frepple.js:601
 msgid "Table"
 msgstr ""
 

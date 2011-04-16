@@ -201,9 +201,11 @@ class Command(BaseCommand):
            u'%d %s' % (i['id'],i['name'])
          ) for i in update
         ])
-      cursor.executemany(
-        "delete from customer where name=%s",
-        delete)
+      for i in delete:
+        try: cursor.execute("delete from customer where name=%s",i)
+        except: 
+          # Delete fails when there are dependent records in the database.
+          cursor.execute("update customer set subcategory = null where name=%s",i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print "Inserted %d new customers" % len(insert)
@@ -271,9 +273,11 @@ class Command(BaseCommand):
            i['code'] and u'%d [%s] %s' % (i['id'], i['code'], i['name']) or u'%d %s' % (i['id'], i['name'])
          ) for i in update
         ])
-      cursor.executemany(
-        "delete from item where name=%s",
-        delete)
+      for i in delete:
+        try: cursor.execute("delete from item where name=%s",i)
+        except: 
+          # Delete fails when there are dependent records in the database.
+          cursor.execute("update item set subcategory = null where name=%s",i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print "Inserted %d new products" % len(insert)
@@ -338,10 +342,11 @@ class Command(BaseCommand):
            u'%d %s' % (i['id'],i['name']),
          ) for i in update
         ])
-      # TODO In case there are child records for the location defined in frePPLe, the delete will fail
-      cursor.executemany(
-        "delete from location where name=%s",
-        delete)
+      for i in delete:
+        try: cursor.execute("delete from location where name=%s",i)
+        except: 
+          # Delete fails when there are dependent records in the database.
+          cursor.execute("update location set subcategory = null where name=%s",i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print "Inserted %d new locations" % len(insert)
@@ -418,9 +423,11 @@ class Command(BaseCommand):
           set item_id=%%s, customer_id=%%s, quantity=%%s, due=%%s, priority=1, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
         update)
-      cursor.executemany(
-        "delete from demand where name=%s",
-        delete)
+      for i in delete:
+        try: cursor.execute("delete from demand where name=%s",i)
+        except: 
+          # Delete fails when there are dependent records in the database.
+          cursor.execute("update demand set subcategory = null where name=%s",i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print "Inserted %d new sales orders" % len(insert)
@@ -495,9 +502,11 @@ class Command(BaseCommand):
            u'%d %s' % (i['id'],i['name']),
          ) for i in update
         ])
-      cursor.executemany(
-        "delete from resource where name=%s",
-        delete)
+      for i in delete:
+        try: cursor.execute("delete from resource where name=%s",i)
+        except: 
+          # Delete fails when there are dependent records in the database.
+          cursor.execute("update resource set subcategory = null where name=%s",i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print "Inserted %d new workcenters" % len(insert)
@@ -910,8 +919,7 @@ class Command(BaseCommand):
 
 
 # TODO:
-#   - renaming an entity while its id stays the same is not handled well.
-#   - inactive objects are not passed in the query. We can't mark them inactive on frepple side...
+#   - renaming an entity while its id stays the same is not handled right.
 #   - Load bom components  
 #   - Load reorder points      
 #   - Load loads    

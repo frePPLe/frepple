@@ -165,7 +165,6 @@ class Command(BaseCommand):
         print "Importing customers..."
       cursor.execute("SELECT name FROM customer")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      print self.delta
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
         'res.partner', 'search', 
         ['|',('Create_date','>', self.delta),('write_date','>', self.delta),
@@ -228,7 +227,12 @@ class Command(BaseCommand):
   #        - %id %name -> name
   #        - %code     -> description
   #        - 'OpenERP' -> subcategory
-  # TODO also get template.produce_delay? 
+  #   - The modeling in frePPLe is independent of the procurement method in
+  #     OpenERP. For both "on order" and "on stock" we bring the order to
+  #     frePPLe and propagate upstream.
+
+  # TODO also get template.produce_delay?
+  
   def import_products(self, sock, cursor):  
     transaction.enter_transaction_management(using=self.database)
     transaction.managed(True, using=self.database)
@@ -373,6 +377,9 @@ class Command(BaseCommand):
   #        - %so_date_order -> due
   #        - 'OpenERP' -> subcategory
   #        - 1 -> priority
+  #   - The picking policy 'complete' is supported at the sales order line 
+  #     level only in frePPLe. FrePPLe doesn't allow yet to coordinate the 
+  #     delivery of multiple lines in a sales order.
   def import_salesorders(self, sock, cursor):  
     transaction.enter_transaction_management(using=self.database)
     transaction.managed(True, using=self.database)
@@ -384,10 +391,9 @@ class Command(BaseCommand):
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
         'sale.order.line', 'search', 
-        ['|',('Create_date','>', self.delta),('write_date','>', self.delta),
-         '|',('active', '=', 1),('active', '=', 0)])
+        ['|',('Create_date','>', self.delta),('write_date','>', self.delta),])
       fields = ['sequence', 'state', 'type', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
-      fields2 = ['partner_id', 'date_order', ]
+      fields2 = ['partner_id', 'date_order', 'picking_policy' ]
       insert = []
       update = []
       delete = []
@@ -400,6 +406,7 @@ class Command(BaseCommand):
               u'%s %s' % (i['product_id'][0], i['product_id'][1]),
               u'%s %s' % (j['partner_id'][0], j['partner_id'][1]),
               i['product_uom_qty'],
+              j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               j['date_order'],
               u'%d %s %d' % (i['id'], i['order_id'][1], i['sequence']),
               ) )
@@ -409,18 +416,20 @@ class Command(BaseCommand):
               u'%d %s' % (i['product_id'][0], i['product_id'][1]),
               u'%d %s' % (j['partner_id'][0], j['partner_id'][1]),
               i['product_uom_qty'],
+              j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               j['date_order'],
               ) )      
         elif name in frepple_keys:
           delete.append( (name,) )
       cursor.executemany(
         "insert into demand \
-          (name,item_id,customer_id,quantity,due,priority,subcategory,lastmodified) \
-          values (%%s,%%s,%%s,%%s,%%s,1,'OpenERP','%s')" % self.date,
+          (name,item_id,customer_id,quantity,minshipment,due,priority,subcategory,lastmodified) \
+          values (%%s,%%s,%%s,%%s,%%s,%%s,1,'OpenERP','%s')" % self.date,
         insert)
+      for i in update: print i
       cursor.executemany(
         "update demand \
-          set item_id=%%s, customer_id=%%s, quantity=%%s, due=%%s, priority=1, subcategory='OpenERP', lastmodified='%s' \
+          set item_id=%%s, customer_id=%%s, quantity=%%s, minshipment=%%s, due=%%s, priority=1, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
         update)
       for i in delete:
@@ -525,14 +534,14 @@ class Command(BaseCommand):
   #   - extracting all stock.report.prodlots objects
   #   - No filtering for latest changes, ie always complete extract
   #   - meeting the criterion: 
-  #        - %name > 0
+  #        - %qty > 0
   #        - Location already mapped in frePPLe
   #        - Product already mapped in frePPLe
   #   - mapped fields OpenERP -> frePPLe buffer
   #        - %product_id %product_name @ %name -> name
   #        - %product_id %product_name -> item_id
   #        - %location_id %location_name -> location_id
-  #        - %name -> quantity
+  #        - %qty -> onhand
   #        - 'OpenERP' -> subcategory
   def import_onhand(self, sock, cursor):  
     transaction.enter_transaction_management(using=self.database)
@@ -550,8 +559,8 @@ class Command(BaseCommand):
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
         'stock.report.prodlots', 'search',  
-        [('name','>', 0),])
-      fields = ['prodlot_id', 'location_id', 'name', 'product_id']
+        [('qty','>=', 0),])
+      fields = ['prodlot_id', 'location_id', 'qty', 'product_id']
       insert = []
       update = []
       for i in sock.execute(self.openerp_db, self.uid, self.openerp_password, 'stock.report.prodlots', 'read', ids, fields):
@@ -571,7 +580,7 @@ class Command(BaseCommand):
            u'%d %s @ %d %s' % (i['product_id'][0], i['product_id'][1], i['location_id'][0], i['location_id'][1]),
            u'%d %s' % (i['product_id'][0], i['product_id'][1]),
            u'%d %s' % (i['location_id'][0], i['location_id'][1]),
-           i['name'],
+           i['qty'],
          ) for i in insert
         ])
       cursor.executemany(
@@ -579,7 +588,7 @@ class Command(BaseCommand):
           set onhand=%%s, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
         [(
-           i['name'],
+           i['qty'],
            u'%d %s @ %d %s' % (i['product_id'][0], i['product_id'][1], i['location_id'][0], i['location_id'][1]),
          ) for i in update
         ])
@@ -621,7 +630,7 @@ class Command(BaseCommand):
   #        - 'OpenERP' -> subcategory
   # 
   # TODO Possible to update PO without touching the date on the PO-lines? Rework code?
-  # TODO Operationplan id is not a good way to find a match
+  # TODO Operationplan id is not the most robust way to find a match
   def import_purchaseorders(self, sock, cursor): 
     
     def newBuffers(insert):
@@ -919,7 +928,7 @@ class Command(BaseCommand):
 
 
 # TODO:
-#   - renaming an entity while its id stays the same is not handled right.
+#   - renaming an entity in OpenERP is not handled right: id remains the same in OpenERP, but the object name in frePPLe is different.
 #   - Load bom components  
 #   - Load reorder points      
 #   - Load loads    

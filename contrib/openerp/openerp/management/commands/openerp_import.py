@@ -426,7 +426,6 @@ class Command(BaseCommand):
           (name,item_id,customer_id,quantity,minshipment,due,priority,subcategory,lastmodified) \
           values (%%s,%%s,%%s,%%s,%%s,%%s,1,'OpenERP','%s')" % self.date,
         insert)
-      for i in update: print i
       cursor.executemany(
         "update demand \
           set item_id=%%s, customer_id=%%s, quantity=%%s, minshipment=%%s, due=%%s, priority=1, subcategory='OpenERP', lastmodified='%s' \
@@ -550,16 +549,16 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print "Importing onhand..."
-      cursor.execute("update buffer set onhand = 0 where subcategory = 'OpenERP'")
       cursor.execute("SELECT name FROM item")
       frepple_items = set([ i[0] for i in cursor.fetchall()])
       cursor.execute("SELECT name FROM location")
       frepple_locations = set([ i[0] for i in cursor.fetchall()])
       cursor.execute("SELECT name FROM buffer")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      cursor.execute("update buffer set onhand = 0 where subcategory = 'OpenERP'")
       ids = sock.execute(self.openerp_db, self.uid, self.openerp_password, 
         'stock.report.prodlots', 'search',  
-        [('qty','>=', 0),])
+        [('qty','>', 0),])
       fields = ['prodlot_id', 'location_id', 'qty', 'product_id']
       insert = []
       update = []
@@ -928,9 +927,10 @@ class Command(BaseCommand):
 
 
 # TODO:
-#   - renaming an entity in OpenERP is not handled right: id remains the same in OpenERP, but the object name in frePPLe is different.
-#   - Load bom components  
-#   - Load reorder points      
-#   - Load loads    
-#   - Load WIP
+#  - renaming an entity in OpenERP is not handled right: id remains the same in OpenERP, but the object name in frePPLe is different.
+#  - Load bom components  
+#  - Load reorder points      
+#  - Load loads    
+#  - Load WIP
+#  - Unit of measures are not used
                        

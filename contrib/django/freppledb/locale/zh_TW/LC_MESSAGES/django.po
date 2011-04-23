@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.9.0.alfa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-03 17:40+0200\n"
+"POT-Creation-Date: 2011-04-23 13:38+0200\n"
 "PO-Revision-Date: 2009-06-28 12:56+0100\n"
 "Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
@@ -236,8 +236,9 @@ msgid "Permission denied"
 msgstr "權限不足"
 
 #: common/report.py:428
-msgid "for"
-msgstr "for"
+#, python-format
+msgid "%(title)s for %(entity)s"
+msgstr ""
 
 #: common/report.py:600
 msgid "data field"
@@ -1559,6 +1560,32 @@ msgstr "Buckets"
 msgid "Bucket Detail List"
 msgstr "Buckets"
 
+#: openerp/management/commands/openerp_export.py:106
+msgid "Start exporting to OpenERP"
+msgstr ""
+
+#: openerp/management/commands/openerp_export.py:124
+#, fuzzy
+msgid "Finished exporting to OpenERP"
+msgstr "結束清除資料庫"
+
+#: openerp/management/commands/openerp_export.py:128
+msgid "Failed exporting to OpenERP"
+msgstr ""
+
+#: openerp/management/commands/openerp_import.py:112
+msgid "Start importing from OpenERP"
+msgstr ""
+
+#: openerp/management/commands/openerp_import.py:138
+#, fuzzy
+msgid "Finished importing from OpenERP"
+msgstr "完成建立frePPLe計畫"
+
+#: openerp/management/commands/openerp_import.py:142
+msgid "Failed importing from OpenERP"
+msgstr ""
+
 #: output/models.py:33 output/views/operation.py:162
 #: output/views/resource.py:57 templates/output/resource.xml:9
 msgid "unavailable"
@@ -2481,6 +2508,9 @@ msgstr ""
 #: templates/registration/password_change_form.html:28
 msgid "Change my password"
 msgstr ""
+
+#~ msgid "for"
+#~ msgstr "for"
 
 #~ msgid "1 - high"
 #~ msgstr "1 - high"

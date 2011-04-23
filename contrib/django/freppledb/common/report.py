@@ -1,4 +1,4 @@
-#
+﻿#
 # Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
@@ -425,7 +425,7 @@ def view_report(request, entity=None, **args):
        # Never reset the breadcrumbs if an argument entity was passed.
        # Otherwise depend on the value in the report class.
        'reset_crumbs': reportclass.reset_crumbs and entity == None,
-       'title': (entity and '%s %s %s' % (unicode(reportclass.title),_('for'),entity)) or reportclass.title,
+       'title': (entity and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(entity)}) or reportclass.title,
        'rowheader': head_scroll,
        'rowheaderfrozen': head_frozen,
        'filterdef': filterdef,

@@ -23,8 +23,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-03 17:40+0200\n"
-"PO-Revision-Date: 2011-04-03 17:47+0100\n"
+"POT-Creation-Date: 2011-04-23 13:38+0200\n"
+"PO-Revision-Date: 2011-04-23 13:44+0100\n"
 "Last-Translator: johan de taeye <jdetaeye@users.sourceforge.net>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: \n"
@@ -114,6 +114,7 @@ msgstr ""
 msgid "The %(name)s \"%(obj)s\" was deleted successfully."
 msgstr ""
 
+# Translation included with django
 #: common/__init__.py:257
 #, python-format
 msgid "Cannot delete %(name)s"
@@ -279,8 +280,9 @@ msgid "Permission denied"
 msgstr "Autorisation refusée"
 
 #: common/report.py:428
-msgid "for"
-msgstr "pour"
+#, python-format
+msgid "%(title)s for %(entity)s"
+msgstr "%(title)s pour %(entity)s"
 
 #: common/report.py:600
 msgid "data field"
@@ -1826,6 +1828,30 @@ msgstr "Périodes temporelles"
 msgid "Bucket Detail List"
 msgstr ""
 
+#: openerp/management/commands/openerp_export.py:106
+msgid "Start exporting to OpenERP"
+msgstr ""
+
+#: openerp/management/commands/openerp_export.py:124
+msgid "Finished exporting to OpenERP"
+msgstr ""
+
+#: openerp/management/commands/openerp_export.py:128
+msgid "Failed exporting to OpenERP"
+msgstr ""
+
+#: openerp/management/commands/openerp_import.py:112
+msgid "Start importing from OpenERP"
+msgstr ""
+
+#: openerp/management/commands/openerp_import.py:138
+msgid "Finished importing from OpenERP"
+msgstr ""
+
+#: openerp/management/commands/openerp_import.py:142
+msgid "Failed importing from OpenERP"
+msgstr ""
+
 #: output/models.py:33
 #: output/views/operation.py:162
 #: output/views/resource.py:57
@@ -2747,6 +2773,9 @@ msgstr ""
 #: templates/registration/password_change_form.html:28
 msgid "Change my password"
 msgstr ""
+
+#~ msgid "for"
+#~ msgstr "pour"
 
 #~ msgid "comma \",\""
 #~ msgstr "virgule \",\""

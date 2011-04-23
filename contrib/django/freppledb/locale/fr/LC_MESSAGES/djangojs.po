@@ -1,0 +1,107 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-04-23 13:38+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n>1\n"
+
+#: static/frepple.js:256
+msgid "contains (no case)"
+msgstr ""
+
+#: static/frepple.js:257
+msgid "contains"
+msgstr ""
+
+#: static/frepple.js:258
+msgid "starts (no case)"
+msgstr ""
+
+#: static/frepple.js:259
+msgid "starts"
+msgstr ""
+
+#: static/frepple.js:260
+msgid "ends (no case)"
+msgstr ""
+
+#: static/frepple.js:261
+msgid "ends"
+msgstr ""
+
+#: static/frepple.js:262
+msgid "equals (no case)"
+msgstr ""
+
+#: static/frepple.js:263
+msgid "equals"
+msgstr ""
+
+#: static/frepple.js:264
+msgid "is null"
+msgstr ""
+
+#: static/frepple.js:324
+msgid "Filter data"
+msgstr ""
+
+#: static/frepple.js:393
+msgid "Filter"
+msgstr ""
+
+#: static/frepple.js:394 static/frepple.js.py:578
+msgid "Cancel"
+msgstr ""
+
+#: static/frepple.js:526 static/frepple.js.py:531
+msgid "False"
+msgstr ""
+
+#: static/frepple.js:527 static/frepple.js.py:532
+msgid "True"
+msgstr ""
+
+#: static/frepple.js:571
+msgid "Import data"
+msgstr ""
+
+#: static/frepple.js:574
+msgid "Load data from a CSV-formatted text file in the database."
+msgstr ""
+
+#: static/frepple.js:575
+msgid "The first row should contain the field names."
+msgstr ""
+
+#: static/frepple.js:576
+msgid "Data file"
+msgstr ""
+
+#: static/frepple.js:577
+msgid "Upload"
+msgstr ""
+
+#: static/frepple.js:598
+msgid "Export data"
+msgstr ""
+
+#: static/frepple.js:600
+msgid "CSV style"
+msgstr ""
+
+#: static/frepple.js:601
+msgid "Table"
+msgstr ""

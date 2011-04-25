@@ -10,12 +10,25 @@
 {% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
-<form><input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px;" type="button" id="save" value="{% trans 'Save' %}" onclick="upload.save();"/>
+<form action=""><input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px;" type="button" id="save" value="{% trans 'Save' %}" onclick="upload.save();"/>
 <input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px; margin-right: 10px; margin-left:10px;" type="button" id="undo" value="{% trans 'Undo' %}" onclick="upload.undo();"/>
 {% if filternew %}<a href="javascript:filter.show();"><img src="/media/img/admin/selector-search.gif"/>{% trans 'Filter' %}</a>{% endif %}
-<a href="javascript:bucket_show();" id="bucketconfig"><img src="/media/img/admin/icon_clock.gif"/>{% trans 'Time' %}</a><span id="timebuckets">{{ reportbucket }},{{ reportstart|date:"Y-m-d" }},{{ reportend|date:"Y-m-d" }}</span>
+<a href="javascript:bucket_show();" id="bucketconfig"><img src="/media/img/admin/icon_clock.gif"/>{% trans 'Time' %}</a>
 <a href="javascript:export_show(false);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
-</form><div id="popup"></div></div>{% endblock %}
+</form><div id="popup"></div></div>
+<div id="timebuckets">
+<h2>{% trans 'Time buckets' %}</h2><br/>
+<form method="get" action=""><table>
+<tr><th>{% trans 'Bucket' %}</th><td><select name="reportbucket" id="reportbucket">
+{% for i in bucketnames %}<option value="{{i}}"{% ifequal i reportbucket %} selected="selected"{% endifequal %}>{% trans i %}</option>
+{% endfor %}</select></td></tr>
+<tr><th>{% trans 'start date'|capfirst %}:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="{{ reportstart|date:"Y-m-d" }}" name="reportstart"/></td></tr>
+<tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{ reportend|date:"Y-m-d" }}" name="reportend" /></td></tr>
+<tr><td><input type="button" value="{% trans 'OK' %}" onclick="javascript:bucket_close(false,'{{reportbucket}}','{{reportstart|date:"Y-m-d"}}','{{reportend|date:"Y-m-d"}}');"/></td>
+<td><input type="button" value="{% trans 'Cancel' %}" onclick="javascript:bucket_close(true);"/></td></tr>
+</table></form>
+</div>
+{% endblock %}
 {% block content %}
 <div id="content-main">
 {% if filternew %}{{ filternew }}{% endif %}

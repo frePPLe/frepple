@@ -274,6 +274,11 @@ div #popup
 
 div #timebuckets
 {
+  z-index: 9;
+  border: 1px solid black;
+  background-color: white;
+  position: absolute;
+  padding: 10px;
   display: none;
 }
 

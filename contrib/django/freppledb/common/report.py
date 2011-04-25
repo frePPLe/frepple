@@ -1,4 +1,4 @@
-﻿#
+#
 # Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
@@ -60,7 +60,7 @@ from django.utils.encoding import iri_to_uri, force_unicode
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 
-from freppledb.input.models import Parameter, BucketDetail
+from freppledb.input.models import Parameter, BucketDetail, Bucket
 
 
 # Parameter settings
@@ -248,8 +248,9 @@ def view_report(request, entity=None, **args):
   pref = request.user.get_profile()
   if reportclass.timebuckets:
     (bucket,start,end,bucketlist) = getBuckets(request, pref)
+    bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
   else:
-    bucket = start = end = bucketlist = None
+    bucket = start = end = bucketlist = bucketnames = None
   type = request.GET.get('reporttype','html')  # HTML or CSV (table or list) output
 
   # Is this a popup window?
@@ -415,6 +416,7 @@ def view_report(request, entity=None, **args):
        'reportbucket': bucket,
        'reportstart': start,
        'reportend': end,
+       'bucketnames': bucketnames,
        'paginator': paginator,
        'hits' : hits,
        'fullhits': fullhits,
@@ -682,16 +684,22 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
   The data are retrieved from the database table dates, and are
   stored in a python variable for performance
   '''
+  # Pick up the user preferences
+  if pref == None: pref = request.user.get_profile()
 
   # Select the bucket size (unless it is passed as argument)
-  if pref == None: pref = request.user.get_profile()
   if not bucket:
     bucket = request.GET.get('reportbucket')
     if not bucket:
-      try: bucket = pref.buckets
-      except: bucket = 'default'
-    elif pref.buckets != bucket:
-      pref.buckets = bucket
+      try: bucket = pref.buckets.name
+      except: 
+        try: bucket = Bucket.objects.using(request.database).order_by('name')[0].name
+        except: bucket = None
+    elif not pref.buckets or pref.buckets.name != bucket:
+      try: pref.buckets = Bucket.objects.using(request.database).get(name=bucket)
+      except Exception, e: 
+          print e
+          pref.buckets = None
       pref.save()
 
   # Select the start date (unless it is passed as argument)
@@ -735,10 +743,13 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
       except: pass
     
   # Filter based on the start and end date
-  res = BucketDetail.objects.using(request.database).filter(bucket=bucket)
-  if start: res = res.filter(startdate__gte=start)
-  if end: res = res.filter(startdate__lt=end)
-  return (bucket, start, end, res.values('name','startdate','enddate'))
+  if not bucket: 
+    return (None, start, end, None)
+  else:
+    res = BucketDetail.objects.using(request.database).filter(bucket=bucket)
+    if start: res = res.filter(startdate__gte=start)
+    if end: res = res.filter(startdate__lt=end)
+    return (bucket, start, end, res.values('name','startdate','enddate'))
   
   
 def _create_rowheader(req, sortfield, sortdirection, cls):

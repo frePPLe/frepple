@@ -28,28 +28,21 @@ from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from freppledb.input.models import Parameter
+from freppledb.input.models import Parameter, Bucket   
 
 
+# TODO The bucket preference is not really generic. Different models could
+#      have seperate bucket definitions.
 class Preferences(models.Model):
-  buckettype = (
-    ('standard',_('Standard')),
-    ('day',_('Day')),
-    ('week',_('Week')),
-    ('month',_('Month')),
-    ('quarter',_('Quarter')),
-    ('year',_('Year')),
-  )
   csvOutputType = (
     ('table',_('Table')),
     ('list',_('List')),
   )
   languageList = tuple( [ ('auto',_('Detect automatically')), ] + list(settings.LANGUAGES) )
   user = models.ForeignKey(User, verbose_name=_('user'), primary_key=True)
-  buckets = models.CharField(_('buckets'), max_length=10, choices=buckettype,
-    default='standard')
-  startdate = models.DateField(_('startdate'), blank=True, null=True)
-  enddate = models.DateField(_('enddate'), blank=True, null=True)
+  buckets = models.ForeignKey(Bucket, verbose_name=_('buckets'), blank=True, null=True)   
+  startdate = models.DateField(_('start date'), blank=True, null=True)
+  enddate = models.DateField(_('end date'), blank=True, null=True)
   language = models.CharField(_('language'), max_length=10, choices=languageList,
     default='auto')
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)

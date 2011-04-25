@@ -28,11 +28,11 @@ from django.template import RequestContext
 from django import forms
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import User, Group
 
 from freppledb.common.models import Preferences
 from freppledb.common.report import ListReport, FilterText, FilterBool
-
-from django.contrib.auth.models import User, Group
+from freppledb.input.models import Bucket
 
 
 class PreferencesForm(forms.Form):
@@ -41,10 +41,10 @@ class PreferencesForm(forms.Form):
     choices=Preferences.languageList,
     help_text=_("Language of the user interface"),
     )
-  buckets = forms.ChoiceField(label = _("Buckets"),
-    initial=_('Default'),
-    choices=Preferences.buckettype,
-    help_text=_("Bucket size for reports"),
+  buckets = forms.ModelChoiceField(queryset=Bucket.objects.all(),
+    label=_("Buckets"),
+    required=False,
+    help_text=_("Time bucket size for reports"),
     )
   startdate = forms.DateField(label = _("Report start date"),
     required=False,

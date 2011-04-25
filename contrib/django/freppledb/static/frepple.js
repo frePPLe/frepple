@@ -463,6 +463,8 @@ var filter = {
     element.style.left = position[0]+'px';
     element.style.top  = position[1]+'px';
     element.style.position = "absolute";
+    var x = $('timebuckets');
+    if (x) x.style.display = 'none';
     element.style.display  = "block";
   },
   
@@ -650,7 +652,9 @@ function import_show(list_or_table)
   element.style.width = '290px';
   element.style.left = position[0]+'px';
   element.style.top  = position[1]+'px';
-  element.style.position = "absolute";
+  element.style.position = "absolute";  
+  var x = $('timebuckets');
+  if (x) x.style.display = 'none';
   element.style.display  = "block";
 }
 
@@ -677,6 +681,8 @@ function export_show(list_or_table)
   element.style.left = position[0]+'px';
   element.style.top  = position[1]+'px';
   element.style.position = "absolute";
+  var x = $('timebuckets');
+  if (x) x.style.display = 'none';
   element.style.display  = "block";
 }
 
@@ -702,72 +708,59 @@ function export_close()
 
 function bucket_show()
 {
-  // Pick up the arguments
-  var buckets = $('timebuckets').innerHTML.split(',');
   // Show popup
-  var element = $('popup');
-  element.innerHTML = '<h2>' + gettext("Time buckets") + '</h2><br/>'+
-    '<form method="get" action="javascript:bucket_close()"><table>'+
-    '<tr><th>' + gettext("Buckets") + ':</th><td><select name="buckets" id="reportbucket">'+
-    '<option value="standard"' + (buckets[0]=='standard' ? 'selected="selected"' : '') + '>' + gettext("Standard") + '</option>'+
-    '<option value="day"' + (buckets[0]=='day' ? 'selected="selected"' : '') + '>' + gettext("Day") + '</option>'+
-    '<option value="week"' + (buckets[0]=='week' ? 'selected="selected"' : '') + '>' + gettext("Week") + '</option>'+
-    '<option value="month"' + (buckets[0]=='month' ? 'selected="selected"' : '') + '>' + gettext("Month") + '</option>'+
-    '<option value="quarter"' + (buckets[0]=='quarter' ? 'selected="selected"' : '') + '>' + gettext("Quarter") + '</option>'+
-    '<option value="year"' + (buckets[0]=='year' ? 'selected="selected"' : '') + '>' + gettext("Year") + '</option>'+
-    '</select></td></tr>'+
-    '<tr><th>' + gettext("Start&nbsp;date") + ':</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="' + buckets[1] + '" name="startdate"/></td></tr>'+
-    '<tr><th>' + gettext("End&nbsp;date") + ':</th><td><input id="reportend" type="text" size="10" class="vDateField" value="' + buckets[2] + '" name="enddate" /></td></tr>'+
-    '<tr><td><input type="submit" value="' + gettext("OK") + '"/></td>'+
-    '<td><input type="button" value="' + gettext("Cancel") + '" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
-    '</table></form>';
+  var element = $('timebuckets');
   var position = $('csvexport').cumulativeOffset();
   position[0] -= 202;
   position[1] += 20;
   element.style.width = '200px';
   element.style.left = position[0]+'px';
-  element.style.top  = position[1]+'px';
+  element.style.top = position[1]+'px';
   element.style.position = "absolute";
-  DateTimeShortcuts.addCalendar($('reportstart'));
-  DateTimeShortcuts.addCalendar($('reportend'));
-  element.style.display  = "block";
+  $('popup').style.display = 'none';
+  element.style.display = "block";
 }
 
 
-function bucket_close()
+function bucket_close(canceled, curBuckets, curStart, curEnd)
 {
   // Determine the URL arguments
-  var currentvalues = $('timebuckets').innerHTML.split(',');
   var args = new Hash(location.search.toQueryParams());
   var changed = false;
-  if ($('reportbucket').value != currentvalues[0])
+  if (!canceled) 
   {
-    args.set('reportbucket', $('reportbucket').value);
-    changed = true;
+	  if ($('reportbucket').value != curBuckets)
+	  {
+	    args.set('reportbucket', $('reportbucket').value);
+	    changed = true;
+	  }
+	  else
+	    args.unset('reportbucket');
+	  if ($('reportstart').value != curStart)
+	  {
+	    args = args.merge({'reportstart': $('reportstart').value});
+	    changed = true;
+	  }
+	  else
+	    args.unset('reportstart');
+	  if ($('reportend').value != curEnd)
+	  {
+	    args = args.merge({'reportend':  $('reportend').value});
+	    changed = true;
+	  }
+	  else
+	    args.unset('reportend');
   }
-  else
-    args.unset('reportbucket');
-  if ($('reportstart').value != currentvalues[1])
-  {
-    args = args.merge({'reportstart': $('reportstart').value});
-    changed = true;
-  }
-  else
-    args.unset('reportstart');
-  if ($('reportend').value != currentvalues[2])
-  {
-    args = args.merge({'reportend':  $('reportend').value});
-    changed = true;
-  }
-  else
-    args.unset('reportend');
-
   if (!changed)
-    // No changes to the settings. Just close the popup.
-    $('popup').style.display = 'none';
+  {
+    // No changes to the settings. Close the popup.
+    $('timebuckets').style.display = 'none';
+    return true;
+  }
   else
     // Fetch the new report. This also hides the popup again.
     location.href = location.pathname + "?" + args.toQueryString();
+    
 }
 
 

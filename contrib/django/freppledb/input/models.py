@@ -997,6 +997,9 @@ class ForecastDemand(AuditModel):
 
   
 class Bucket(AuditModel):
+  # Create some dummy string for common bucket names to force them to be translated.  
+  extra_strings = ( _('day'), _('week'), _('month'), _('quarter'), _('year'), _('telescope') )
+
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)

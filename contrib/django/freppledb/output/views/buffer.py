@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -29,7 +29,7 @@ from django.template import RequestContext, loader
 from freppledb.input.models import Buffer
 from freppledb.output.models import FlowPlan
 from freppledb.common.db import sql_max, sql_min, python_date
-from freppledb.common.report import TableReport, ListReport, FilterText, FilterNumber, FilterDate, getBuckets
+from freppledb.common.report import TableReport, ListReport, FilterText, FilterNumber, FilterBool, FilterDate, getBuckets
 
 
 class OverviewReport(TableReport):
@@ -173,7 +173,7 @@ class DetailReport(ListReport):
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'thebuffer', 'operationplan__operation', 'quantity', 'flowdate', 
-      'onhand', 'operationplan', 'operation_in'
+      'onhand', 'operationplan', 'operation_in', 'operationplan__locked'
       )
   
   rows = (
@@ -196,6 +196,10 @@ class DetailReport(ListReport):
     ('onhand', {
       'title': _('onhand'),
       'filter': FilterNumber(),
+      }),
+    ('operationplan__locked', {
+      'title': _('locked'),
+      'filter': FilterBool(),
       }),
     ('operationplan', {
       'filter': FilterNumber(operator='exact', ),

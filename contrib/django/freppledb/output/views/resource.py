@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -30,7 +30,7 @@ from django.template import RequestContext, loader
 from freppledb.input.models import Resource, Parameter
 from freppledb.output.models import LoadPlan
 from freppledb.common.db import sql_overlap3, python_date
-from freppledb.common.report import TableReport, ListReport, FilterText, FilterNumber, FilterDate, getBuckets
+from freppledb.common.report import TableReport, ListReport, FilterText, FilterNumber, FilterDate, FilterBool, getBuckets
 
   
 class OverviewReport(TableReport):
@@ -194,7 +194,7 @@ class DetailReport(ListReport):
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'theresource', 'operationplan__operation', 'quantity', 'startdate', 
-      'enddate', 'setup', 'operationplan', 'operation_in'
+      'enddate', 'setup', 'operationplan', 'operation_in', 'operationplan__locked', 'operationplan__unavailable'
       )
   
   rows = (
@@ -221,6 +221,14 @@ class DetailReport(ListReport):
     ('setup', {
       'title': _('setup'),
       'filter': FilterText(),
+      }),
+    ('operationplan__locked', {
+      'title': _('locked'),
+      'filter': FilterBool(),
+      }),
+    ('operationplan__unavailable', {
+      'title': _('unavailable'),
+      'filter': FilterNumber(),
       }),
     ('operationplan', {
       'filter': FilterNumber(operator='exact',),

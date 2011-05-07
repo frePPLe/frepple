@@ -564,6 +564,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
 
   // Loop through the steps
   Date max_Date;
+  TimePeriod delay;
+  Date top_q_date(data->state->q_date);
+  Date q_date;
   for (Operation::Operationlist::const_reverse_iterator
       e = oper->getSubOperations().rbegin();
       e != oper->getSubOperations().rend() && a_qty > 0.0;
@@ -572,6 +575,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     // Plan the next step
     data->state->q_qty = a_qty;
     data->state->q_date = data->state->curOwnerOpplan->getDates().getStart();
+    q_date = data->state->q_date;
     (*e)->solve(*this,v);  // @todo if the step itself has child operations, the curOwnerOpplan field is changed here!!!
     a_qty = data->state->a_qty;
 
@@ -581,13 +585,15 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     // Maximum for the next date
     if (data->state->a_date != Date::infiniteFuture)
     {
+      if (delay < data->state->a_date - q_date)
+	delay = data->state->a_date - q_date;
       OperationPlanState at = data->state->curOwnerOpplan->getOperation()->setOperationPlanParameters(
         data->state->curOwnerOpplan, 0.01, //data->state->curOwnerOpplan->getQuantity(),
         data->state->a_date, Date::infinitePast, false, false
         );
       if (at.end > max_Date) max_Date = at.end;
     }
-  }
+  }    
 
   // Check the flows and loads on the top operationplan.
   // This can happen only after the suboperations have been dealt with
@@ -628,6 +634,11 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
 
   // Check positive reply quantity
   assert(data->state->a_qty >= 0);
+
+  if (data->state->a_date <= top_q_date && delay > TimePeriod(0L))
+    // At least one of the steps is late, but the reply date at the overall routing level is not late.
+    // This causes trouble, so we enforce a lateness of at least one hour. @todo not very cool/performant/generic...
+    data->state->a_date = top_q_date + delay; // xxx TimePeriod(3600L);
 
   // Check reply date is later than requested date
   assert(data->state->a_date >= data->state->q_date);

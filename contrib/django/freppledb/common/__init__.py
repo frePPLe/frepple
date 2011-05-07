@@ -42,7 +42,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render_to_response
 from django.contrib.admin.util import unquote
 from django.utils.encoding import force_unicode
-from django.utils.html import escape
+from django.utils.html import escape, escapejs
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst, get_text_list

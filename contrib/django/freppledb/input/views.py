@@ -179,11 +179,15 @@ class pathreport:
         }
 
       # Avoid infinite loops when the supply chain contains cycles
-      if curbuffer in visited: continue
-      else: visited.append(curbuffer)
+      if curbuffer:
+        if curbuffer in visited: continue
+        else: visited.append(curbuffer)    
+      else:
+        if curoperation and curoperation in visited: continue
+        else: visited.append(curoperation)
 
       if downstream:
-        # Find all operations consuming from this buffer...
+        # DOWNSTREAM: Find all operations consuming from this buffer...
         if curbuffer:
           start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database) ]
         else:
@@ -200,22 +204,28 @@ class pathreport:
 
           # Push the next buffer on the stack, based on super-operations
           for x in curoperation.superoperations.select_related(depth=1).using(request.database):
-            for prod_flow in x.suboperation.flows.filter(quantity__gt=0).using(request.database):
+            for prod_flow in x.operation.flows.filter(quantity__gt=0).using(request.database):
               ok = True
               root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
 
           # Push the next buffer on the stack, based on sub-operations
           for x in curoperation.suboperations.select_related(depth=1).using(request.database):
-            for prod_flow in x.operation.flows.filter(quantity__gt=0).using(request.database):
+            for prod_flow in x.suboperation.flows.filter(quantity__gt=0).using(request.database):
               ok = True
               root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
 
           if not ok and cons_flow:
             # No producing flow found: there are no more buffers downstream
             root.append( (level+1, None, None, curoperation, cons_flow, curqty * cons_flow.quantity * -1) )
+          if not ok:
+            # An operation without any flows (on itself, any of its suboperations or any of its superoperations)
+            for x in curoperation.suboperations.using(request.database):
+              root.append( (level+1, None, None, x.suboperation, None, curqty) )
+            for x in curoperation.superoperations.using(request.database):
+              root.append( (level+1, None, None, x.operation, None, curqty) )
 
       else:
-        # Find all operations producing into this buffer...
+        # UPSTREAM: Find all operations producing into this buffer...
         if curbuffer:
           if curbuffer.producing:
             start = [ (i, i.operation) for i in curbuffer.producing.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database) ]
@@ -235,13 +245,13 @@ class pathreport:
 
           # Push the next buffer on the stack, based on super-operations
           for x in curoperation.superoperations.select_related(depth=1).using(request.database):
-            for cons_flow in x.suboperation.flows.filter(quantity__lt=0).using(request.database):
+            for cons_flow in x.operation.flows.filter(quantity__lt=0).using(request.database):
               ok = True
               root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
 
           # Push the next buffer on the stack, based on sub-operations
           for x in curoperation.suboperations.select_related(depth=1).using(request.database):
-            for cons_flow in x.operation.flows.filter(quantity__lt=0).using(request.database):
+            for cons_flow in x.suboperation.flows.filter(quantity__lt=0).using(request.database):
               ok = True
               root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
 
@@ -249,7 +259,12 @@ class pathreport:
             # No consuming flow found: there are no more buffers upstream
             ok = True
             root.append( (level-1, None, prod_flow, prod_flow.operation, None, curqty / prod_flow.quantity) )
-
+          if not ok:
+            # An operation without any flows (on itself, any of its suboperations or any of its superoperations)
+            for x in curoperation.suboperations.using(request.database):
+              root.append( (level-1, None, None, x.suboperation, None, curqty) )
+            for x in curoperation.superoperations.using(request.database):
+              root.append( (level-1, None, None, x.operation, None, curqty) )
 
   @staticmethod
   @staff_member_required
@@ -1275,5 +1290,5 @@ class BucketDetailList(ListReport):
       'title': _('last modified'),
       'filter': FilterDate(),
       }),
-    )
-    
+    )    
+

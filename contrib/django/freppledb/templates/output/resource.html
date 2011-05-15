@@ -58,7 +58,7 @@
 	   var totalAvailable = document.viewport.getDimensions();
 	   var chart1 = new FusionCharts("/static/FCF_StackedColumn2D.swf", "sampleChart", totalAvailable.width-35, 350);
 	   chart1.setTransparent();
-	   chart1.setDataURL(escape("{{request.prefix}}/resourcegraph/{{object}}/?reportbucket={{reportbucket}}&reportstart={{reportstart}}&reportend={{reportend}}"));	   	   
+	   chart1.setDataURL(escape("{{request.prefix}}/resourcegraph/{{object}}/?reportbucket={{reportbucket}}&reportstart={{reportstart|date:"Y-m-d"}}&reportend={{reportend|date:"Y-m-d"}}"));	   	   
 	   chart1.render("chart1div");
 	</script>
 {% endifequal %}{% endblock %}

@@ -1,4 +1,4 @@
-﻿{% load i18n %}
+﻿<?xml version="1.0" encoding="UTF-8" ?>{% load i18n %}
 <graph shownames='1' showvalues='0'  
   decimalPrecision='2' limitsDecimalPrecision='0' 
   divLineDecimalPrecision='0' connectNullData='0' 
@@ -8,19 +8,15 @@
   animation='0' >
 <categories>
 {% for j in buckets %}<category name='{{j.name}}' {% if not forloop.counter|divisibleby:axis_nth %}showName="0"{% endif %}/>
-{% endfor %}
-</categories>
+{% endfor %}</categories>
 <dataset seriesName='{% trans "demand" %}' parentYAxis='P' color='AFD8F8' showValues='0'>
 {% for j in demand %}<set value='{{j}}' />
-{% endfor %}
-</dataset>
+{% endfor %}</dataset>
 <dataset seriesName='{% trans "supply" %}' parentYAxis='P'  color='F6BD0F' showValues='0'>
 {% for j in supply %}<set value='{{j}}' />
-{% endfor %}
-</dataset>
+{% endfor %}</dataset>
 <dataset seriesName='{% trans "backlog" %}' color='8BBA00' showValues='0' 
   parentYAxis='S' anchorSides='10' anchorBorderColor='8BBA00'>
 {% for j in backlog %}<set value='{{j}}' />
-{% endfor %}
-</dataset>
+{% endfor %}</dataset>
 </graph>

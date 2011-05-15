@@ -1,4 +1,4 @@
-﻿{% load i18n %}
+﻿<?xml version="1.0" encoding="UTF-8" ?>{% load i18n %}
 <graph shownames='1' showvalues='0'  
   decimalPrecision='2' limitsDecimalPrecision='0' showShadow='0'
   divLineDecimalPrecision='0' connectNullData='0' numDivLines='4' 
@@ -8,19 +8,15 @@
   showalternateHGridColor='1' alternateHGridColor='eeeeee'>
 <categories>
 {% for j in buckets %}<category name='{{j.name}}' {% if not forloop.counter|divisibleby:axis_nth %}showName="0"{% endif %}/>
-{% endfor %}
-</categories>
+{% endfor %}</categories>
 <dataset seriesName='{% trans "produced" %}' parentYAxis='P' color='AFD8F8' showValues='0'>
 {% for j in produced %}<set value='{{j}}' />
-{% endfor %}
-</dataset>
+{% endfor %}</dataset>
 <dataset seriesName='{% trans "consumed" %}' parentYAxis='P'  color='F6BD0F' showValues='0'>
 {% for j in consumed %}<set value='{{j}}' />
-{% endfor %}
-</dataset>
+{% endfor %}</dataset>
 <dataset seriesName='{% trans "start inventory" %}' color='8BBA00' showValues='0' 
   parentYAxis='S' anchorSides='10' anchorBorderColor='8BBA00'>
 {% for j in startoh %}<set value='{{j}}' />
-{% endfor %}
-</dataset>
+{% endfor %}</dataset>
 </graph>

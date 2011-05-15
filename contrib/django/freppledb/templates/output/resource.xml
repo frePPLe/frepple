@@ -1,4 +1,4 @@
-﻿{% load i18n %}
+﻿<?xml version="1.0" encoding="UTF-8" ?>{% load i18n %}
 <graph yAxisName='{{units}}' 
  decimalPrecision='2' numDivLines='4' 
  showValues='0' formatNumberScale='0' animation='0'>

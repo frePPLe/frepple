@@ -1,4 +1,4 @@
-﻿{% load i18n %}
+﻿<?xml version="1.0" encoding="UTF-8" ?>{% load i18n %}
 <chart dateFormat='yyyy/mm/dd' showTaskNames='0' ganttWidthPercent='75' 
   gridBorderAlpha='100' canvasBorderColor='333333' canvasBorderThickness='0' 
   hoverCapBgColor='FFFFFF' hoverCapBorderColor='333333' extendcategoryBg='0' 
@@ -31,13 +31,11 @@
         
 <connectors>
 {% for i in links %}<connector fromTaskId='{{ i.from }}' toTaskId='{{ i.to }}' color='99cc00' thickness='1' fromTaskConnectStart='1' toTaskConnectStart='0' />
-{% endfor %}
-</connectors>
+{% endfor %}</connectors>
 
 <milestones>
 {% for i in objectlist1 %}{% if i.due %}<milestone toolText='due {{i.due}}' date='{{i.due|date:"Y/m/d"}}' taskId='{{i.id}}' radius='5' color='333333' shape='Star' numSides='5' borderThickness='1'/>
-{% endif %}{% endfor %}
-</milestones> 
+{% endif %}{% endfor %}</milestones> 
 
 {% if todayline %}
 <trendlines>

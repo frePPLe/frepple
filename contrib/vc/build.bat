@@ -1,4 +1,5 @@
 rem Build frePPLe with Microsoft Visual C++ 2010
+setlocal
  
 rem EDIT THIS SECTION TO MATCH YOUR INSTALLATION
 set VC=C:\Program Files\Microsoft Visual Studio 10.0

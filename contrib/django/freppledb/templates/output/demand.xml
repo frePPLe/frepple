@@ -1,4 +1,4 @@
-{% load i18n %}
+﻿{% load i18n %}
 <graph shownames='1' showvalues='0'  
   decimalPrecision='2' limitsDecimalPrecision='0' 
   divLineDecimalPrecision='0' connectNullData='0' 

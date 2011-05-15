@@ -83,6 +83,8 @@ class Command(BaseCommand):
       cursor = connections[database].cursor()
 
       # Delete all records from the tables
+      cursor.execute('update common_preferences set buckets = null')
+      transaction.commit(using=database)
       sql_list = connections[database].ops.sql_flush(no_style(), [
         'out_problem','out_flowplan','out_loadplan','out_demandpegging',
         'out_operationplan','out_constraint','out_demand','out_forecast','demand',

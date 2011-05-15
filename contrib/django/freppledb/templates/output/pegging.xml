@@ -1,4 +1,4 @@
-{% load i18n %}
+﻿{% load i18n %}
 <chart dateFormat='yyyy/mm/dd' showTaskNames='0' ganttWidthPercent='75' 
   gridBorderAlpha='100' canvasBorderColor='333333' canvasBorderThickness='0' 
   hoverCapBgColor='FFFFFF' hoverCapBorderColor='333333' extendcategoryBg='0' 

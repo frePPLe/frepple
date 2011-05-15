@@ -1,4 +1,4 @@
-{% load i18n %}
+﻿{% load i18n %}
 <graph yAxisName='{% trans "units" %}' 
  decimalPrecision='0' numDivLines='4' 
  showValues='0' formatNumberScale='0' animation='0'>

@@ -693,15 +693,14 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
   if not bucket:
     bucket = request.GET.get('reportbucket')
     if not bucket:
-      try: bucket = pref.buckets.name
+      try: 
+        bucket = Bucket.objects.using(request.database).get(name=pref.buckets)
       except: 
         try: bucket = Bucket.objects.using(request.database).order_by('name')[0].name
         except: bucket = None
-    elif not pref.buckets or pref.buckets.name != bucket:
-      try: pref.buckets = Bucket.objects.using(request.database).get(name=bucket)
-      except Exception, e: 
-          print e
-          pref.buckets = None
+    elif pref.buckets != bucket:
+      try: pref.buckets = bucket
+      except: pass
       pref.save()
 
   # Select the start date (unless it is passed as argument)
@@ -1019,14 +1018,9 @@ def parseUpload(request, reportclass, data):
           # Abort when there are errors
           if len(errors) > 0: return (warnings,errors,0,0)
           # Create a form class that will be used to validate the data
-          def createmultidbformfield(f):
-            if isinstance(f, RelatedField):
-              return f.formfield(using=request.database)
-            else:
-              return f.formfield()
           UploadForm = modelform_factory(entityclass, 
             fields = tuple([i.name for i in headers if isinstance(i,Field)]),
-            formfield_callback = createmultidbformfield
+            formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
             )
   
         ### Case 2: Skip empty rows and comments rows

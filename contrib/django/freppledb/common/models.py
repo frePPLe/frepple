@@ -28,7 +28,7 @@ from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from freppledb.input.models import Parameter, Bucket   
+from freppledb.input.models import Parameter   
 
 
 # TODO The bucket preference is not really generic. Different models could
@@ -40,7 +40,7 @@ class Preferences(models.Model):
   )
   languageList = tuple( [ ('auto',_('Detect automatically')), ] + list(settings.LANGUAGES) )
   user = models.ForeignKey(User, verbose_name=_('user'), primary_key=True)
-  buckets = models.ForeignKey(Bucket, verbose_name=_('buckets'), blank=True, null=True)   
+  buckets = models.CharField(_('buckets'), max_length=settings.NAMESIZE, blank=True, null=True)   
   startdate = models.DateField(_('start date'), blank=True, null=True)
   enddate = models.DateField(_('end date'), blank=True, null=True)
   language = models.CharField(_('language'), max_length=10, choices=languageList,

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>actual plan</name>
   <description>
@@ -35,7 +35,8 @@
       <operation name="delivery end item" xsi:type="operation_fixed_time">
         <duration>P1D</duration>
       </operation>
-    </item>
+      <owner name="product group"/>
+    </item>    
   </items>
   <buffers>
     <buffer name="end item">

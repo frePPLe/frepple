@@ -145,7 +145,9 @@ DECLARE_EXPORT PyObject* Location::getattro(const Attribute& attr)
     return PythonObject(getAvailable());
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(getHidden());
-	return NULL;
+  if (attr.isA(Tags::tag_members))
+	return new LocationIterator(this);
+  return NULL;
 }
 
 

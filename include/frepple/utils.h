@@ -4672,16 +4672,27 @@ template <class T> class HasHierarchy : public HasName<T>
     /** @brief This class models an STL-like iterator that allows us to
       * iterate over the members.
       *
-      * Objects of this class are created by the begin() and end() functions.
+      * Objects of this class are created by the beginMember() method.
       */
     class memberIterator
     {
       public:
+        /** Constructor to iterate over member entities. */
+        memberIterator(const HasHierarchy<T>* x) : member_iter(true)
+          {curmember = const_cast<HasHierarchy<T>*>(x)->first_child;}
+
+        /** Constructor to iterate over all entities. */
+        memberIterator() : curmember(&*T::begin()), member_iter(false) {}
+
         /** Constructor. */
-        memberIterator(HasHierarchy<T>* x) : curmember(x) {}
+        memberIterator(const typename HasName<T>::iterator& it) : curmember(&*it), member_iter(false) {}
 
         /** Copy constructor. */
-        memberIterator(const memberIterator& it) {curmember = it.curmember;}
+        memberIterator(const memberIterator& it)
+        {
+          curmember = it.curmember;
+          member_iter = it.member_iter;
+        }
 
         /** Return the content of the current node. */
         T& operator*() const {return *static_cast<T*>(curmember);}
@@ -4689,17 +4700,24 @@ template <class T> class HasHierarchy : public HasName<T>
         /** Return the content of the current node. */
         T* operator->() const {return static_cast<T*>(curmember);}
 
-        /** Pre-increment operator which moves the pointer to the next
-          * member. */
+        /** Pre-increment operator which moves the pointer to the next member. */
         memberIterator& operator++()
-          {curmember = curmember->next_brother; return *this;}
+        {
+          if (member_iter)
+        	curmember = curmember->next_brother;
+          else
+        	curmember = static_cast<T*>(curmember->increment());
+          return *this;
+        }
 
-        /** Post-increment operator which moves the pointer to the next
-          * element. */
+        /** Post-increment operator which moves the pointer to the next member. */
         memberIterator operator++(int)
         {
           memberIterator tmp = *this;
-          curmember = curmember->next_brother;
+          if (member_iter)
+        	curmember = curmember->next_brother;
+          else
+        	curmember = static_cast<T*>(curmember->increment());
           return tmp;
         }
 
@@ -4711,9 +4729,18 @@ template <class T> class HasHierarchy : public HasName<T>
         bool operator!=(const memberIterator& y) const
           {return curmember != y.curmember;}
 
+        /** Comparison operator. */
+        bool operator==(const typename HasName<T>::iterator& y) const
+          {return curmember ? (curmember == &*y) : (y == T::end());}
+
+        /** Inequality operator. */
+        bool operator!=(const typename HasName<T>::iterator& y) const
+          {return curmember ? (curmember != &*y) : (y != T::end());}
+
       private:
         /** Points to a member. */
         HasHierarchy<T>* curmember;
+        bool member_iter;
     };
 
     /** The one and only constructor. */
@@ -4728,9 +4755,8 @@ template <class T> class HasHierarchy : public HasName<T>
       */
     ~HasHierarchy();
 
-    memberIterator beginMember() const {return first_child;}
-
-    memberIterator endMember() const {return NULL;}
+    /** Return a member iterator. */
+    memberIterator beginMember() const {return this;}
 
     /** Returns true if this entity belongs to a higher hierarchical level.<br>
       * An entity can have only a single owner, and can't belong to multiple
@@ -5224,11 +5250,14 @@ class FreppleIterator : public PythonExtension<ME>
       return x.typeReady();
     }
 
-    FreppleIterator() : i(DATACLASS::begin()) {initType(PythonExtension<ME>::getType().type_object());}
+    FreppleIterator() : i(DATACLASS::begin())
+      {initType(PythonExtension<ME>::getType().type_object());}
 
-    template <class OTHER> FreppleIterator(const OTHER *o) : i(o) {}
+    template <class OTHER> FreppleIterator(const OTHER *o) : i(o)
+      {initType(PythonExtension<ME>::getType().type_object());}
 
-    template <class OTHER> FreppleIterator(const OTHER &o) : i(o) {}
+    template <class OTHER> FreppleIterator(const OTHER &o) : i(o)
+      {initType(PythonExtension<ME>::getType().type_object());}
 
     static PyObject* create(PyObject* self, PyObject* args)
      {return new ME();}
@@ -5245,6 +5274,7 @@ class FreppleIterator : public PythonExtension<ME>
       return result;
     }
 };
+
 
 } // end namespace
 } // end namespace

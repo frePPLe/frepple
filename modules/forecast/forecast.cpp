@@ -103,7 +103,7 @@ Forecast::~Forecast()
     }
 
   // Delete all children demands
-  for(memberIterator i = beginMember(); i != endMember(); i = beginMember())
+  for(memberIterator i = beginMember(); i != end(); ++i)
     delete &*i;
 }
 
@@ -193,7 +193,7 @@ void Forecast::setDiscrete(const bool b)
 
   // Round down any forecast demands that may already exist.
   if (discrete)
-    for (memberIterator m = beginMember(); m!=endMember(); ++m)
+    for (memberIterator m = beginMember(); m!=end(); ++m)
       m->setQuantity(floor(m->getQuantity()));
 }
 
@@ -205,7 +205,7 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
 
   // Find all forecast demands, and sum their weights
   double weights = 0.0;
-  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+  for (memberIterator m = beginMember(); m!=end(); ++m)
   {
     ForecastBucket* x = dynamic_cast<ForecastBucket*>(&*m);
     if (!x)
@@ -231,7 +231,7 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
   // Update the forecast quantity, respecting the weights
   f /= weights;
   double carryover = 0.0;
-  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+  for (memberIterator m = beginMember(); m!=end(); ++m)
   {
     ForecastBucket* x = dynamic_cast<ForecastBucket*>(&*m);
     if (d.intersect(x->getDueRange()))
@@ -289,7 +289,7 @@ void Forecast::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
 
   // Write all entries
   o->BeginObject (Tags::tag_buckets);
-  for (memberIterator i = beginMember(); i != endMember(); ++i)
+  for (memberIterator i = beginMember(); i != end(); ++i)
   {
     ForecastBucket* f = dynamic_cast<ForecastBucket*>(&*i);
     o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(f->getDue()));
@@ -415,7 +415,7 @@ void Forecast::setItem(Item* i)
   Demand::setItem(i);
 
   // Update the item for all buckets/subdemands
-  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+  for (memberIterator m = beginMember(); m!=end(); ++m)
     m->setItem(i);
 }
 
@@ -442,7 +442,7 @@ void Forecast::setCustomer(Customer* i)
   Demand::setCustomer(i);
 
   // Update the customer for all buckets/subdemands
-  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+  for (memberIterator m = beginMember(); m!=end(); ++m)
     m->setCustomer(i);
 }
 
@@ -451,7 +451,7 @@ void Forecast::setMaxLateness(TimePeriod i)
 {
   Demand::setMaxLateness(i);
   // Update the maximum lateness for all buckets/subdemands
-  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+  for (memberIterator m = beginMember(); m!=end(); ++m)
     m->setMaxLateness(i);
 }
 
@@ -460,7 +460,7 @@ void Forecast::setMinShipment(double i)
 {
   Demand::setMinShipment(i);
   // Update the minimum shipment for all buckets/subdemands
-  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+  for (memberIterator m = beginMember(); m!=end(); ++m)
     m->setMinShipment(i);
 }
 
@@ -469,7 +469,7 @@ void Forecast::setPriority(int i)
 {
   Demand::setPriority(i);
   // Update the priority for all buckets/subdemands
-  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+  for (memberIterator m = beginMember(); m!=end(); ++m)
     m->setPriority(i);
 }
 
@@ -478,7 +478,7 @@ void Forecast::setOperation(Operation *o)
 {
   Demand::setOperation(o);
   // Update the priority for all buckets/subdemands
-  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+  for (memberIterator m = beginMember(); m!=end(); ++m)
     m->setOperation(o);
 }
 

@@ -390,7 +390,9 @@ DECLARE_EXPORT PyObject* Resource::getattro(const Attribute& attr)
     return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))
     return PythonObject(getCluster());
-	return NULL;
+  if (attr.isA(Tags::tag_members))
+	return new ResourceIterator(this);
+  return NULL;
 }
 
 

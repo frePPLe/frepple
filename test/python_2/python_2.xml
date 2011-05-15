@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <description>
   This test shows how we can access frePPLe objects from Python.
@@ -15,8 +15,15 @@ def printmodel():
   # Print information
   try:
 
+    print "start exporting the items"
+    print >>out, "Items:"
+    for i in frepple.items():
+      print >>out, i.name, "has owner", i.owner
+      for j in i.members:
+        print >>out, i.name, "has member", j.name      
+    
     print "start exporting the problems"
-    print >>out, "Problems:"
+    print >>out, "\nProblems:"
     for i in frepple.problems():
       print >>out, i.entity, i.name, i.start, i.end, i.description, i.weight
 

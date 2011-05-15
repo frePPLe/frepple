@@ -65,7 +65,13 @@
 	</operations>
 	<items>
 		<item name="end item">
+			<owner name="product group"/>
 			<operation name="delivery end item" xsi:type="operation_fixed_time"/>
+		</item>
+		<item name="product group">
+			<members>
+				<item name="end item"/>
+			</members>
 		</item>
 	</items>
 	<buffers>

@@ -820,10 +820,9 @@ DECLARE_EXPORT PyObject* Buffer::getattro(const Attribute& attr)
     return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))
     return PythonObject(getCluster());
-  // @todo support member iteration for buffer, res, dem, item, ...
-  // PythonBufferIterator becomes an abstract class: defines the pytype and an abstract iternext.
-  // 2 subclasses then implement it: an iterator over all buffers, and another one over all members.
-	return NULL;
+  if (attr.isA(Tags::tag_members))
+	return new BufferIterator(this);
+  return NULL;
 }
 
 

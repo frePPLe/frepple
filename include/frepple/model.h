@@ -6180,37 +6180,56 @@ class ProblemIterator
 
 
 class BufferIterator
-  : public FreppleIterator<BufferIterator,Buffer::iterator,Buffer>
+  : public FreppleIterator<BufferIterator,Buffer::memberIterator,Buffer>
 {
+  public:
+    BufferIterator(Buffer* b) : FreppleIterator<BufferIterator,Buffer::memberIterator,Buffer>(b) {}
+    BufferIterator() {}
 };
 
 
 class LocationIterator
-  : public FreppleIterator<LocationIterator,Location::iterator,Location>
+  : public FreppleIterator<LocationIterator,Location::memberIterator,Location>
 {
+  public:
+    LocationIterator(Location* b) : FreppleIterator<LocationIterator,Location::memberIterator,Location>(b) {}
+    LocationIterator() {}
 };
 
 
 class CustomerIterator
-  : public FreppleIterator<CustomerIterator,Customer::iterator,Customer>
+  : public FreppleIterator<CustomerIterator,Customer::memberIterator,Customer>
 {
+  public:
+    CustomerIterator(Customer* b) : FreppleIterator<CustomerIterator,Customer::memberIterator,Customer>(b) {}
+    CustomerIterator() {}
 };
 
 
 class ItemIterator
-  : public FreppleIterator<ItemIterator,Item::iterator,Item>
+  : public FreppleIterator<ItemIterator,Item::memberIterator,Item>
 {
+  public:
+    ItemIterator(Item* b) : FreppleIterator<ItemIterator,Item::memberIterator,Item>(b) {}
+    ItemIterator() {}
 };
 
+
 class DemandIterator
-  : public FreppleIterator<DemandIterator,Demand::iterator,Demand>
+  : public FreppleIterator<DemandIterator,Demand::memberIterator,Demand>
 {
+  public:
+    DemandIterator(Demand* b) : FreppleIterator<DemandIterator,Demand::memberIterator,Demand>(b) {}
+    DemandIterator() {}
 };
 
 
 class ResourceIterator
-  : public FreppleIterator<ResourceIterator,Resource::iterator,Resource>
+  : public FreppleIterator<ResourceIterator,Resource::memberIterator,Resource>
 {
+  public:
+    ResourceIterator(Resource* b) : FreppleIterator<ResourceIterator,Resource::memberIterator,Resource>(b) {}
+    ResourceIterator() {}
 };
 
 

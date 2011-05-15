@@ -193,7 +193,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
 {
   // Find the bucket with the due date
   ForecastBucket* zerobucket = NULL;
-  for (Forecast::memberIterator i = fcst->beginMember(); i != fcst->endMember(); ++i)
+  for (Forecast::memberIterator i = fcst->beginMember(); i != fcst->end(); ++i)
   {
     zerobucket = dynamic_cast<ForecastBucket*>(&*i);
     if (zerobucket && zerobucket->getDueRange().within(dmd->getDue())) break;

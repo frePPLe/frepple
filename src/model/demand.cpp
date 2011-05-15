@@ -385,6 +385,8 @@ DECLARE_EXPORT PyObject* Demand::getattro(const Attribute& attr)
     return new PeggingIterator(this);
   if (attr.isA(Tags::tag_constraints))
     return new ProblemIterator(*(constraints.begin()));
+  if (attr.isA(Tags::tag_members))
+	return new DemandIterator(this);
   return NULL;
 }
 

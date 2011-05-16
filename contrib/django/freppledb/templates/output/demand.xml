@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>{% load i18n %}
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+{% load i18n %}{% load l10n %}{% localize off %}
 <graph shownames='1' showvalues='0'  
   decimalPrecision='2' limitsDecimalPrecision='0' 
   divLineDecimalPrecision='0' connectNullData='0' 
@@ -19,4 +20,5 @@
   parentYAxis='S' anchorSides='10' anchorBorderColor='8BBA00'>
 {% for j in backlog %}<set value='{{j}}' />
 {% endfor %}</dataset>
+{% endlocalize %}
 </graph>

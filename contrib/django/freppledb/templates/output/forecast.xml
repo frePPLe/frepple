@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>{% load i18n %}
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+{% load i18n %}{% load l10n %}{% localize off %}
 <graph yAxisName='{% trans "units" %}' 
  decimalPrecision='0' numDivLines='4' 
  showValues='0' formatNumberScale='0' animation='0'>
@@ -14,5 +15,6 @@
 <dataset seriesName='{% trans "orders" %}' color='AFD8F8' showValues='0'>
 {% for j in orders %}<set value='{{j}}' />
 {% endfor %}</dataset>
+{% endlocalize %}
 </graph>
 

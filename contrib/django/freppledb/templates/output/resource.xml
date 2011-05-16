@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>{% load i18n %}
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+{% load i18n %}{% load l10n %}{% localize off %}
 <graph yAxisName='{{units}}' 
  decimalPrecision='2' numDivLines='4' 
  showValues='0' formatNumberScale='0' animation='0'>
@@ -20,5 +21,5 @@
 <dataset seriesName='{% trans "overload" %}' color='FF0000' showValues='0'>
 {% for j in overload %}<set value='{{j}}' />
 {% endfor %}</dataset>
+{% endlocalize %}
 </graph>
-

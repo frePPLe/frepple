@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>{% load i18n %}
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+{% load i18n %}{% load l10n %}{% localize off %}
 <chart dateFormat='yyyy/mm/dd' showTaskNames='0' ganttWidthPercent='75' 
   gridBorderAlpha='100' canvasBorderColor='333333' canvasBorderThickness='0' 
   hoverCapBgColor='FFFFFF' hoverCapBorderColor='333333' extendcategoryBg='0' 
@@ -43,4 +44,5 @@
 </trendlines>
 {% endif %}
 
+{% endlocalize %}
 </chart>

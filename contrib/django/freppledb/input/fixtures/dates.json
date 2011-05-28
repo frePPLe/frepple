@@ -1,5 +1,4 @@
 [
-{"pk": "currentdate", "model": "input.parameter", "fields": {"value": "2009-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH-MM-SS"}},
 {"pk": "telescope", "model": "input.bucket", "fields": {"description": "Time buckets with decreasing granularity"}},
 {"pk": "year", "model": "input.bucket", "fields": {"description": "Yearly time buckets"}},
 {"pk": "quarter", "model": "input.bucket", "fields": {"description": "Quarterly time buckets"}},

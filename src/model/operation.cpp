@@ -191,7 +191,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
     // a) operation's location
     if (loc && loc->getAvailable())
       cals[calcount++] = new Calendar::EventIterator(loc->getAvailable(), thedate, forward);
-    /* @todo multiple availability calendars are not implmented yet
+    /* @todo multiple availability calendars are not implemented yet
       for (Operation::loadlist::const_iterator g=loaddata.begin();
         g!=loaddata.end(); ++g)
     {

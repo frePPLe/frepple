@@ -350,8 +350,10 @@ PyObject* LoadPlan::getattro(const Attribute& attr)
     return PythonObject(getDate());
   if (attr.isA(Tags::tag_enddate))
     return PythonObject(getOtherLoadPlan()->getDate());
-  if (attr.isA(Tags::tag_resource))
+  if (attr.isA(Tags::tag_resource)) // Convenient shortcut
     return PythonObject(getLoad()->getResource());
+  if (attr.isA(Tags::tag_operation)) // Convenient shortcut
+    return PythonObject(getLoad()->getOperation());
   if (attr.isA(Tags::tag_load))
     return PythonObject(getLoad());
   if (attr.isA(Tags::tag_setup))

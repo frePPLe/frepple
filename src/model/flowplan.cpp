@@ -206,8 +206,10 @@ PyObject* FlowPlan::getattro(const Attribute& attr)
     return PythonObject(getDate());
   if (attr.isA(Tags::tag_onhand))
     return PythonObject(getOnhand());
-  if (attr.isA(Tags::tag_buffer))
+  if (attr.isA(Tags::tag_buffer)) // Convenient shortcut
     return PythonObject(getFlow()->getBuffer());
+  if (attr.isA(Tags::tag_operation)) // Convenient shortcut
+    return PythonObject(getFlow()->getOperation());
   return NULL;
 }
 

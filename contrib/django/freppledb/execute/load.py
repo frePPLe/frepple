@@ -80,7 +80,7 @@ def loadCalendars(cursor):
   cursor.execute("SELECT name, defaultvalue, type FROM calendar")
   for i, j, k in cursor.fetchall():
     cnt += 1
-    try: 
+    try:
       if k == "calendar_boolean":
         frepple.calendar_boolean(name=i, default=j)
       else:
@@ -130,8 +130,8 @@ def loadOperations(cursor):
   starttime = time()
   cursor.execute('''
     SELECT
-      name, fence, pretime, posttime, sizeminimum, sizemultiple, sizemaximum, 
-      type, duration, duration_per, location_id, cost, search, description, 
+      name, fence, pretime, posttime, sizeminimum, sizemultiple, sizemaximum,
+      type, duration, duration_per, location_id, cost, search, description,
       category, subcategory
     FROM operation
     ''')
@@ -204,9 +204,9 @@ def loadItems(cursor):
   print 'Importing items...'
   cnt = 0
   starttime = time()
-  cursor.execute('''SELECT 
-      name, description, operation_id, owner_id, 
-      price, category, subcategory 
+  cursor.execute('''SELECT
+      name, description, operation_id, owner_id,
+      price, category, subcategory
       FROM item''')
   for i,j,k,l,m,n,o in cursor.fetchall():
     cnt += 1
@@ -226,13 +226,13 @@ def loadBuffers(cursor):
   cursor.execute('''SELECT name, description, location_id, item_id, onhand,
      minimum, minimum_calendar_id, producing_id, type, leadtime, min_inventory,
      max_inventory, min_interval, max_interval, size_minimum,
-     size_multiple, size_maximum, fence, carrying_cost, 
+     size_multiple, size_maximum, fence, carrying_cost,
      category, subcategory FROM buffer''')
   for i,j,k,l,m,t,n,o,q,f1,f2,f3,f4,f5,f6,f7,f8,f9,p,r,s in cursor.fetchall():
     cnt += 1
     if q == "buffer_procure":
       b = frepple.buffer_procure(
-        name=i, description=j, item=frepple.item(name=l), onhand=m, 
+        name=i, description=j, item=frepple.item(name=l), onhand=m,
         category=r, subcategory=s
         )
       if f1: b.leadtime = f1
@@ -246,12 +246,12 @@ def loadBuffers(cursor):
       if f9: b.fence = f9
     elif q == "buffer_infinite":
       b = frepple.buffer_infinite(
-        name=i, description=j, item=frepple.item(name=l), onhand=m, 
+        name=i, description=j, item=frepple.item(name=l), onhand=m,
         category=r, subcategory=s
         )
     elif not q:
       b = frepple.buffer(
-        name=i, description=j, item=frepple.item(name=l), onhand=m, 
+        name=i, description=j, item=frepple.item(name=l), onhand=m,
         category=r, subcategory=s
         )
     else:
@@ -287,9 +287,9 @@ def loadResources(cursor):
   print 'Importing resources...'
   cnt = 0
   starttime = time()
-  cursor.execute('''SELECT 
-    name, description, maximum, maximum_calendar_id, location_id, type, cost, 
-    maxearly, setup, setupmatrix_id, category, subcategory 
+  cursor.execute('''SELECT
+    name, description, maximum, maximum_calendar_id, location_id, type, cost,
+    maxearly, setup, setupmatrix_id, category, subcategory
     FROM %s''' % connections[database].ops.quote_name('resource'))
   for i,j,t,k,l,m,n,o,p,q,r,s in cursor.fetchall():
     cnt += 1
@@ -297,7 +297,8 @@ def loadResources(cursor):
       if m == "resource_infinite":
         x = frepple.resource_infinite(name=i,description=j,category=r,subcategory=s)
       elif not m:
-        x = frepple.resource(name=i,description=j,maximum_calendar=frepple.calendar(name=k),category=r,subcategory=s)
+        x = frepple.resource_default(name=i,description=j,category=r,subcategory=s)
+        if k: x.maximum_calendar = frepple.calendar(name=k)
         if o: x.maxearly = o
         if t: x.maximum = t
       else:
@@ -316,8 +317,8 @@ def loadFlows(cursor):
   starttime = time()
   # Note: The sorting of the flows is not really necessary, but helps to make
   # the planning progress consistent across runs and database engines.
-  cursor.execute('''SELECT 
-      operation_id, thebuffer_id, quantity, type, effective_start, 
+  cursor.execute('''SELECT
+      operation_id, thebuffer_id, quantity, type, effective_start,
       effective_end, name, priority, search
     FROM flow
     WHERE alternate IS NULL OR alternate = ''
@@ -338,8 +339,8 @@ def loadFlows(cursor):
       if q: curflow.search = q
     except Exception, e: print "Error:", e
   cursor.execute('''
-    SELECT 
-      operation_id, thebuffer_id, quantity, type, effective_start, 
+    SELECT
+      operation_id, thebuffer_id, quantity, type, effective_start,
       effective_end, name, alternate, priority, search
     FROM flow
     WHERE alternate IS NOT NULL AND alternate <> ''
@@ -370,8 +371,8 @@ def loadLoads(cursor):
   # Note: The sorting of the loads is not really necessary, but helps to make
   # the planning progress consistent across runs and database engines.
   cursor.execute('''
-    SELECT 
-      operation_id, resource_id, quantity, effective_start, effective_end, name, 
+    SELECT
+      operation_id, resource_id, quantity, effective_start, effective_end, name,
       priority, setup, search
     FROM resourceload
     WHERE alternate IS NULL OR alternate = ''
@@ -393,8 +394,8 @@ def loadLoads(cursor):
       if q: curload.search = q
     except Exception, e: print "Error:", e
   cursor.execute('''
-    SELECT 
-      operation_id, resource_id, quantity, effective_start, effective_end, 
+    SELECT
+      operation_id, resource_id, quantity, effective_start, effective_end,
       name, alternate, priority, setup, search
     FROM resourceload
     WHERE alternate IS NOT NULL AND alternate <> ''
@@ -445,7 +446,7 @@ def loadForecast(cursor):
   print 'Importing forecast...'
   cnt = 0
   starttime = time()
-  cursor.execute('''SELECT name, customer_id, item_id, priority, 
+  cursor.execute('''SELECT name, customer_id, item_id, priority,
     operation_id, minshipment, calendar_id, discrete, maxlateness,
     category,subcategory
     FROM forecast''')
@@ -484,9 +485,9 @@ def loadDemand(cursor):
   print 'Importing demands...'
   cnt = 0
   starttime = time()
-  cursor.execute('''SELECT name, due, quantity, priority, item_id, 
+  cursor.execute('''SELECT name, due, quantity, priority, item_id,
      operation_id, customer_id, owner_id, minshipment, maxlateness,
-     category, subcategory 
+     category, subcategory
      FROM demand''')
   for i,j,k,l,m,n,o,p,q,r,s,t in cursor.fetchall():
     cnt += 1
@@ -535,14 +536,14 @@ def loadfrepple():
   # and cpu time.
   global database
   settings.DEBUG = False
-  
-  if 'FREPPLE_DATABASE' in os.environ: 
+
+  if 'FREPPLE_DATABASE' in os.environ:
     database = os.environ['FREPPLE_DATABASE']
 
   if True:
     # Create a database connection
     cursor = connections[database].cursor()
-    
+
     # Sequential load of all entities
     loadParameter(cursor)
     loadCalendars(cursor)
@@ -560,7 +561,7 @@ def loadfrepple():
     loadForecast(cursor)
     loadForecastdemand(cursor)
     loadDemand(cursor)
-    
+
     # Close the database connection
     cursor.close()
   else:

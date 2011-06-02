@@ -104,7 +104,7 @@ DECLARE_EXPORT void Resource::setMaximum(double m)
   // Create new event
   loadplanlist::EventMaxQuantity *newEvent =
     new loadplanlist::EventMaxQuantity(Date::infinitePast, size_max);
-  loadplans.insert(newEvent);  
+  loadplans.insert(newEvent);
 }
 
 
@@ -161,7 +161,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
   // Write my fields
   HasDescription::writeElement(o, tag);
   HasHierarchy<Resource>::writeElement(o, tag);
-  if (getMaximum() != 1) 
+  if (getMaximum() != 1)
     o->writeElement(Tags::tag_maximum, getMaximum());
   o->writeElement(Tags::tag_maximum_calendar, size_max_cal);
   if (getMaxEarly() != TimePeriod(defaultMaxEarly))
@@ -296,12 +296,12 @@ DECLARE_EXPORT Resource::~Resource()
 DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
 {
   // No updating required this resource
-  if (!getSetupMatrix() || (ldplan && ldplan->getOperationPlan()->getOperation() != OperationSetup::setupoperation)) 
+  if (!getSetupMatrix() || (ldplan && ldplan->getOperationPlan()->getOperation() != OperationSetup::setupoperation))
     return;
 
   // Update later setup opplans
   OperationPlan *opplan = ldplan ? ldplan->getOperationPlan() : NULL;
-  loadplanlist::const_iterator i = ldplan ? 
+  loadplanlist::const_iterator i = ldplan ?
     getLoadPlans().begin(ldplan) :
     getLoadPlans().begin();
   string prevsetup = ldplan ? ldplan->getSetup() : getSetup();
@@ -309,13 +309,13 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
   for (; i != getLoadPlans().end(); ++i)
   {
     const LoadPlan* l = dynamic_cast<const LoadPlan*>(&*i);
-    if (l && !l->getLoad()->getSetup().empty() 
+    if (l && !l->getLoad()->getSetup().empty()
       && l->getOperationPlan()->getOperation() == OperationSetup::setupoperation
       && l->getOperationPlan() != opplan
       && !l->isStart())
     {
       // Next conversion operation
-      OperationPlanState x = l->getOperationPlan()->getOperation()->setOperationPlanParameters( 
+      OperationPlanState x = l->getOperationPlan()->getOperation()->setOperationPlanParameters(
         l->getOperationPlan(),
         l->getOperationPlan()->getQuantity(),
         Date::infinitePast,
@@ -325,10 +325,10 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
       if (x.start != l->getOperationPlan()->getDates().getStart())
         // We need to change a setup plan
         l->getOperationPlan()->restore(x);
-      else if (ldplan && x.start == l->getOperationPlan()->getDates().getStart()) 
+      else if (ldplan && x.start == l->getOperationPlan()->getDates().getStart())
         // We found a setup plan that doesn't need updating. Later setup plans
         // won't require updating either
-        return;        
+        return;
     }
   }
 }
@@ -420,7 +420,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
   {
     if (!field.check(Location::metadata))
     {
-      PyErr_SetString(PythonDataException, "buffer location must be of type location");
+      PyErr_SetString(PythonDataException, "resource location must be of type location");
       return -1;
     }
     Location* y = static_cast<Location*>(static_cast<PyObject*>(field));
@@ -432,7 +432,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
   {
     if (!field.check(CalendarDouble::metadata))
     {
-      PyErr_SetString(PythonDataException, "resource maximum must be of type calendar_double");
+      PyErr_SetString(PythonDataException, "resource maximum_calendar must be of type calendar_double");
       return -1;
     }
     CalendarDouble* y = static_cast<CalendarDouble*>(static_cast<PyObject*>(field));

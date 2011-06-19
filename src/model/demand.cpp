@@ -262,7 +262,7 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
   if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
   if (getMaxLateness() != TimePeriod::MAX)
     o->writeElement(Tags::tag_maxlateness, getMaxLateness());
-  if (getMinShipment())
+  if (getMinShipment() != 1.0)
     o->writeElement(Tags::tag_minshipment, getMinShipment());
 
   // Write extra plan information

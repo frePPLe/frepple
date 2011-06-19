@@ -143,7 +143,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
     matnext.setStart(Date::infinitePast);
     matnext.setEnd(Date::infiniteFuture);
 
-    // Loop through all flowplans  // xxx @todo need some kind of coordination run here!!! see test alternate_flow_1
+    // Loop through all flowplans  // @todo need some kind of coordination run here!!! see test alternate_flow_1
     for (OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
         g!=opplan->endFlowPlans(); ++g)
       if (g->getFlow()->isConsumer())
@@ -638,7 +638,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   if (data->state->a_date <= top_q_date && delay > TimePeriod(0L))
     // At least one of the steps is late, but the reply date at the overall routing level is not late.
     // This causes trouble, so we enforce a lateness of at least one hour. @todo not very cool/performant/generic...
-    data->state->a_date = top_q_date + delay; // xxx TimePeriod(3600L);
+    data->state->a_date = top_q_date + delay; // TimePeriod(3600L);
 
   // Check reply date is later than requested date
   assert(data->state->a_date >= data->state->q_date);
@@ -698,7 +698,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
   // Try all alternates:
   // - First, all alternates that are fully effective in the order of priority.
-  // - Next, the alternates beyond their effectivity date.
+  // - Next, the alternates beyond their effective end date.
   //   We loop through these since they can help in meeting a demand on time,
   //   but using them will also create extra inventory or delays.
   double a_qty = data->state->q_qty;
@@ -1054,7 +1054,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   if (data->state->a_qty > 0.0)
     data->state->a_cost += data->state->curOwnerOpplan->getQuantity() * oper->getCost();
 
-  // Make other opplans don't take this one as owner any more.
+  // Make sure other operationplans don't take this one as owner any more.
   // We restore the previous owner, which could be NULL.
   data->state->curOwnerOpplan = prev_owner_opplan;
 

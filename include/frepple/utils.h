@@ -2922,7 +2922,7 @@ class XMLAttributeList : public AttributeList
 {
   private:
     const xercesc::Attributes* atts;
-    XMLElement result;   // @todo we don't want such an element as member...
+    XMLElement result;
   public:
     XMLAttributeList(const xercesc::Attributes* a) : atts(a) {}
 
@@ -2941,7 +2941,7 @@ class PythonAttributeList : public AttributeList
 {
   private:
     PyObject* kwds;
-    PythonObject result;   // @todo we don't want such an element as member...
+    PythonObject result;
 
   public:
     PythonAttributeList(PyObject* a) : kwds(a) {}

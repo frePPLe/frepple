@@ -68,6 +68,7 @@
       <xsd:enumeration value="R" />
     </xsd:restriction>
   </xsd:simpleType>
+  
   <xsd:simpleType name="search">
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="PRIORITY" />
@@ -76,9 +77,17 @@
       <xsd:enumeration value="MINCOSTPENALTY" />
     </xsd:restriction>
   </xsd:simpleType>
+  
   <xsd:simpleType name="positiveDouble">
     <xsd:restriction base="xsd:double">
       <xsd:minInclusive value="0" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <xsd:simpleType name="percentage">
+    <xsd:restriction base="xsd:double">
+      <xsd:minInclusive value="0" />
+      <xsd:maxInclusive value="100" />
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -917,6 +926,8 @@
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
           <xsd:element name="constraints" type="xsd:unsignedShort" />
           <xsd:element name="maxparallel" type="xsd:positiveInteger" />
+          <xsd:element name="iterationaccuracy" type="percentage" />
+          <xsd:element name="iterationthreshold" type="positiveDouble" />
           <xsd:element name="autocommit" type="xsd:boolean" />
           <xsd:element name="loglevel" type="loglevel" />
           <xsd:element name="userexit_flow" type="non-empty-string" />
@@ -928,6 +939,8 @@
         </xsd:choice>
         <xsd:attribute name="constraints" type="xsd:unsignedShort" />
         <xsd:attribute name="maxparallel" type="xsd:positiveInteger" />
+        <xsd:attribute name="iterationaccuracy" type="percentage" />
+        <xsd:attribute name="iterationthreshold" type="positiveDouble" />
         <xsd:attribute name="autocommit" type="xsd:boolean" />
         <xsd:attribute name="userexit_flow" type="non-empty-string" />
         <xsd:attribute name="userexit_demand" type="non-empty-string" />

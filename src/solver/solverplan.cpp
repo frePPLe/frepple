@@ -213,9 +213,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
 
   // @todo Check the resource setups that were broken - needs to be removed
   for (Resource::iterator gres = Resource::begin(); gres != Resource::end(); ++gres)
-  {
     if (gres->getSetupMatrix()) gres->updateSetups();
-  }
 }
 
 
@@ -237,6 +235,10 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
   if (constrts != 15) o->writeElement(Tags::tag_constraints, constrts);
   if (plantype != 1) o->writeElement(Tags::tag_plantype, plantype);
   if (maxparallel) o->writeElement(Tags::tag_maxparallel, maxparallel);
+  if (iteration_threshold != 1.0)
+    o->writeElement(Tags::tag_iterationthreshold, iteration_threshold);
+  if (iteration_accuracy != 0.01)
+    o->writeElement(Tags::tag_iterationaccuracy, iteration_accuracy);
   if (!autocommit) o->writeElement(Tags::tag_autocommit, autocommit);
   if (userexit_flow) 
     o->writeElement(Tags::tag_userexit_flow, static_cast<string>(userexit_flow));
@@ -260,6 +262,10 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
     setConstraints(pElement.getInt());
   else if (pAttr.isA(Tags::tag_maxparallel))
     setMaxParallel(pElement.getInt());
+  else if (pAttr.isA(Tags::tag_iterationthreshold))
+    setIterationThreshold(pElement.getDouble());
+  else if (pAttr.isA(Tags::tag_iterationaccuracy))
+    setIterationAccuracy(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_autocommit))
     setAutocommit(pElement.getBool());
   else if (pAttr.isA(Tags::tag_userexit_flow))
@@ -285,6 +291,10 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
     return PythonObject(getConstraints());
   if (attr.isA(Tags::tag_maxparallel))
     return PythonObject(getMaxParallel());
+  if (attr.isA(Tags::tag_iterationthreshold))
+    return PythonObject(getIterationThreshold());
+  if (attr.isA(Tags::tag_iterationaccuracy))
+    return PythonObject(getIterationAccuracy());
   if (attr.isA(Tags::tag_autocommit))
     return PythonObject(getAutocommit());
   if (attr.isA(Tags::tag_userexit_flow))
@@ -309,6 +319,10 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
     setConstraints(field.getInt());
   else if (attr.isA(Tags::tag_maxparallel))
     setMaxParallel(field.getInt());
+  else if (attr.isA(Tags::tag_iterationthreshold))
+    setIterationThreshold(field.getDouble());
+  else if (attr.isA(Tags::tag_iterationaccuracy))
+    setIterationAccuracy(field.getDouble());
   else if (attr.isA(Tags::tag_autocommit))
     setAutocommit(field.getBool());
   else if (attr.isA(Tags::tag_userexit_flow))

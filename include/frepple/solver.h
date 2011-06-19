@@ -196,8 +196,9 @@ class SolverMRP : public Solver
 
     /** Constructor. */
     SolverMRP(const string& n) : Solver(n), constrts(15), maxparallel(0),
-      plantype(1), lazydelay(86400L), autocommit(true)
-      {initType(metadata);}
+        plantype(1), lazydelay(86400L), iteration_threshold(1), iteration_accuracy(0.01),
+        autocommit(true)
+      { initType(metadata); }
 
     /** Destructor. */
     virtual ~SolverMRP() {}
@@ -289,10 +290,16 @@ class SolverMRP : public Solver
       *       problems when shortages are found. It doesn't evaluate availability
       *       on alternates.<br>
       *       The demand is always fully met on time.
+      * The default is 1.
       */
     short getPlanType() const {return plantype;}
 
-    void setPlanType(short b) {plantype = b;}
+    void setPlanType(short b)
+    {
+      if (b < 1 || b > 3)
+        throw DataException("Invalid plan type");
+      plantype = b;
+    }
 
     /** This function defines the order in which the demands are being
       * planned.<br>
@@ -313,8 +320,9 @@ class SolverMRP : public Solver
       */
     void setMaxParallel(int i)
     {
-      if (i >= 1) maxparallel = i;
-      else throw DataException("Invalid number of parallel solver threads");
+      if (i < 1)
+        throw DataException("Invalid number of parallel solver threads");
+      maxparallel = i;
     }
 
     /** Return the number of threads used for planning. */
@@ -334,8 +342,41 @@ class SolverMRP : public Solver
       * date isn't usable. */
     void setLazyDelay(TimePeriod l)
     {
-      if (l > 0L) lazydelay = l;
-      else throw DataException("Invalid lazy delay");
+      if (l <= 0L)
+    	throw DataException("Invalid lazy delay");
+      lazydelay = l;
+    }
+
+    /** Get the threshold to stop iterating when the delta between iterations
+      * is less than this absolute threshold.
+      */
+    double getIterationThreshold() const {return iteration_threshold;}
+
+    /** Set the threshold to stop iterating when the delta between iterations
+      * is less than this absolute threshold.<br>
+      * The value must be greater than or equal to zero and the default is 1.
+      */
+    void setIterationThreshold(double d)
+    {
+    	if (d<0.0)
+    	  throw DataException("Invalid iteration threshold: must be >= 0");
+    	iteration_threshold = d;
+    }
+
+    /** Get the threshold to stop iterating when the delta between iterations
+      * is less than this percentage threshold.
+      */
+    double getIterationAccuracy() const {return iteration_accuracy;}
+
+    /** Set the threshold to stop iterating when the delta between iterations
+      * is less than this percentage threshold.<br>
+      * The value must be between 0 and 100 and the default is 1%.
+      */
+    void setIterationAccuracy(double d)
+    {
+      if (d<0.0 || d>100.0)
+        throw DataException("Invalid iteration accuracy: must be >=0 and <= 100");
+      iteration_accuracy = d;
     }
 
     /** Return whether or not we automatically commit the changes after
@@ -426,6 +467,16 @@ class SolverMRP : public Solver
       * The default value is 1 day.
       */
     TimePeriod lazydelay;
+
+    /** Threshold to stop iterating when the delta between iterations is
+      * less than this absolute limit.
+      */
+    double iteration_threshold;
+
+    /** Threshold to stop iterating when the delta between iterations is
+      * less than this percentage limit.
+      */
+    double iteration_accuracy;
 
     /** Enable or disable automatically committing the changes in the plan
       * after planning each demand.<br>
@@ -541,7 +592,7 @@ class SolverMRP : public Solver
         /** Constructor. */
         SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
           : sol(s), cluster(c), demands(d), constrainedPlanning(true), 
-          state(statestack), prevstate(statestack-1) {}
+            state(statestack), prevstate(statestack-1) {}
 
         /** Verbose mode is inherited from the solver. */
         unsigned short getLogLevel() const {return sol ? sol->getLogLevel() : 0;}

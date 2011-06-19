@@ -4678,7 +4678,7 @@ class Demand
     /** Constructor. */
     explicit Demand(const string& str) : HasHierarchy<Demand>(str),
       it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0),
-      maxLateness(TimePeriod::MAX), minShipment(0), hidden(false) {}
+      maxLateness(TimePeriod::MAX), minShipment(1), hidden(false) {}
 
     /** Destructor. Deleting the demand will also delete all delivery operation
       * plans (including locked ones). */
@@ -4813,7 +4813,7 @@ class Demand
 
     /** Return the minimum shipment quantity allowed in satisfying this
       * demand.<br>
-      * The default value is 0, which allows deliveries of any size.
+      * The default value is 1.
       */
     double getMinShipment() const {return minShipment;}
 
@@ -5065,7 +5065,7 @@ class ProblemBeforeCurrent : public Problem
     static DECLARE_EXPORT const MetaClass* metadata;
 
   private:
-    Operation* oper;   // @todo not clean and consitents to have 'extra' owner here
+    Operation* oper;
     OperationPlanState state;
 };
 
@@ -5119,7 +5119,7 @@ class ProblemBeforeFence : public Problem
     static DECLARE_EXPORT const MetaClass* metadata;
 
   private:
-    Operation* oper; // @todo not clean and consitents to have 'extra' owner here
+    Operation* oper;
     OperationPlanState state;
 };
 
@@ -5134,7 +5134,7 @@ class ProblemPrecedence : public Problem
     {
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
       if (!o->nextsubopplan)
-        return string("Bogus precendence problem on '")
+        return string("Bogus precedence problem on '")
           + o->getOperation()->getName() + "'";
       else
         return string("Operation '") + o->getOperation()->getName()

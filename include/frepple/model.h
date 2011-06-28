@@ -1065,7 +1065,7 @@ class Problem::List
 
     /** Empty the list.<br>
       * If a problem is passed as argument, that problem and all problems 
-      * following it in the lsit are deleted.<br>
+      * following it in the list are deleted.<br>
       * If no argument is passed, the complete list is erased.
       */
     DECLARE_EXPORT void clear(Problem * = NULL);
@@ -1105,7 +1105,7 @@ class Problem::List
 
 
 /** @brief This class is an implementation of the "visitor" design pattern.
-  * It is intended as a basis for different algoritms processing the frePPLe
+  * It is intended as a basis for different algorithms processing the frePPLe
   * data.
   *
   * The goal is to decouple the solver/algorithms from the model/data

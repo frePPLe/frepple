@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>Test model for effective operations</name>
   <description>
@@ -14,8 +14,8 @@
       <available name="calendar of site 1" xsi:type="calendar_boolean">
         <default>true</default>
         <buckets>
-          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="false" /> 
-          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="false" /> 
+          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="false" />
+          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="false" />
         </buckets>
       </available>
     </location>
@@ -98,7 +98,7 @@
       <item name="1. item 20 days" />
     </demand>
   </demands>
-  
+
   <!--
     Case 2: Fixed_time operation with a single location calendar, with an AVAILABLE bucket.
   -->
@@ -107,8 +107,8 @@
       <available name="calendar of site 2" xsi:type="calendar_boolean">
         <default>false</default>
         <buckets>
-          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="true" /> 
-          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="true" /> 
+          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="true" />
+          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="true" />
         </buckets>
       </available>
     </location>
@@ -191,7 +191,7 @@
       <item name="2. item 3 days" />
     </demand>
   </demands>
-  
+
   <!--
     Case 3: Time_per operation with a single location calendar, with an UNAVAILABLE bucket.
   -->
@@ -200,8 +200,8 @@
       <available name="calendar of site 3" xsi:type="calendar_boolean">
         <default>true</default>
         <buckets>
-          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="false" /> 
-          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="false" /> 
+          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="false" />
+          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="false" />
         </buckets>
       </available>
     </location>
@@ -273,7 +273,7 @@
       <item name="3. item" />
     </demand>
   </demands>
-  
+
   <!--
     Case 4: Time_per operation with a single location calendar, with an AVAILABLE bucket.
   -->
@@ -282,8 +282,8 @@
       <available name="calendar of site 4" xsi:type="calendar_boolean">
         <default>false</default>
         <buckets>
-          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="true" /> 
-          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="true" /> 
+          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="true" />
+          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="true" />
         </buckets>
       </available>
     </location>
@@ -356,7 +356,7 @@
     </demand>
   </demands>
 
-  
+
   <!--
     Case 5: Same as case 3, but at a deeper level in the supply chain.
   -->
@@ -365,8 +365,8 @@
       <available name="calendar of site 5" xsi:type="calendar_boolean">
         <default>true</default>
         <buckets>
-          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="false" /> 
-          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="false" /> 
+          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="false" />
+          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="false" />
         </buckets>
       </available>
     </location>
@@ -455,6 +455,7 @@
     <demand name="5. order 6">
       <description>Across unavailable period</description>
       <quantity>10</quantity>
+      <minshipment>10</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>56</priority>
       <item name="5. item" />
@@ -462,6 +463,7 @@
     <demand name="5. order 7">
       <description>Across 2 unavailable periods</description>
       <quantity>20</quantity>
+      <minshipment>20</minshipment>
       <due>2009-01-28T00:00:00</due>
       <priority>57</priority>
       <item name="5. item" />
@@ -469,12 +471,13 @@
     <demand name="5. order 8">
       <description>Across 2 unavailable periods</description>
       <quantity>20</quantity>
+      <minshipment>20</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>58</priority>
       <item name="5. item" />
     </demand>
   </demands>
-    
+
 <?python
 print "CREATING CONSTRAINED PLAN"
 sol = frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2)

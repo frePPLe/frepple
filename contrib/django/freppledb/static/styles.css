@@ -48,7 +48,7 @@ div.OperatorMenu {
   list-style-type: none;
   z-index: 100;
 }
- 
+
 a {
   white-space: nowrap;
 }
@@ -178,7 +178,7 @@ a.detail {
   overflow: visible;
   padding-top: 3px;
   padding-bottom: 3px;
-  background-image: url(header.png); 
+  background-image: url(header.png);
   background-repeat: repeat-x;
 }
 
@@ -324,7 +324,7 @@ div.griddownright
   /* height and width are set dynamically from javascript */
 }
 
-.highutil 
+.highutil
 {
   color: red;
   font-weight: bold;

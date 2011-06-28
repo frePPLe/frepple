@@ -122,8 +122,7 @@ class Operation_admin(MultiDBModelAdmin):
   model = Operation
   raw_id_fields = ('location',)
   save_on_top = True
-  inlines = [ SubOperation_inline, ]
-  # TODO inlines = [ SubOperation_inline, Flow_inline, Load_inline, ]
+  inlines = [ SubOperation_inline, Flow_inline, Load_inline, ]
   fieldsets = (
           (None, {'fields': ('name', 'type', 'location', 'description', ('category', 'subcategory'))}),
           (_('Planning parameters'), {
@@ -156,7 +155,7 @@ class Buffer_admin(MultiDBModelAdmin):
               'classes': ('collapse',)},),
         )
   save_on_top = True
-  #TODO inlines = [ Flow_inline, ]
+  inlines = [ Flow_inline, ]
 site.register(Buffer,Buffer_admin)
 
 
@@ -176,7 +175,7 @@ class Resource_admin(MultiDBModelAdmin):
   model = Resource
   raw_id_fields = ('maximum_calendar', 'location', 'setupmatrix', 'owner')
   save_on_top = True
-  # TODO inlines = [ Load_inline, ]
+  inlines = [ Load_inline, ]
 site.register(Resource,Resource_admin)
 
 

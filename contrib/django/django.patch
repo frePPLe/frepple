@@ -1,6 +1,6 @@
 Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 ===================================================================
---- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 15908)
+--- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 16488)
 +++ django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
 @@ -132,16 +132,18 @@
          var shortcuts_span = document.createElement('span');
@@ -24,11 +24,11 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 +        //shortcuts_span.appendChild(today_link);
 +        //shortcuts_span.appendChild(document.createTextNode('\240|\240'));
          shortcuts_span.appendChild(cal_link);
- 
+
          // Create calendarbox div.
 @@ -213,18 +215,11 @@
          }
- 
+
          // Recalculate the clockbox position
 -        // is it left-to-right or right-to-left layout ?
 -        if (getStyle(document.body,'direction')!='rtl') {
@@ -47,19 +47,19 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 +        //
 +        cal_box.style.left = Math.max(0,findPosX(cal_link) - 90) + 'px';
 +        cal_box.style.top = findPosY(cal_link) + 17 + 'px';
- 
+
          cal_box.style.display = 'block';
          addEvent(window.document, 'click', function() { DateTimeShortcuts.dismissCalendar(num); return true; });
 Index: django/contrib/admin/widgets.py
 ===================================================================
---- django/contrib/admin/widgets.py	(revision 15908)
+--- django/contrib/admin/widgets.py	(revision 16488)
 +++ django/contrib/admin/widgets.py	(working copy)
 @@ -14,6 +14,7 @@
  from django.utils.encoding import force_unicode
  from django.conf import settings
  from django.core.urlresolvers import reverse, NoReverseMatch
 +from django.utils.http import urlquote
- 
+
  class FilteredSelectMultiple(forms.SelectMultiple):
      """
 @@ -139,7 +140,9 @@
@@ -71,16 +71,16 @@ Index: django/contrib/admin/widgets.py
 +           #output.append(self.label_for_value(value))
 +           output.append('<a href="%s%s/"> <img src="%simg/admin/icon_changelink.gif" width="16" height="16" alt="%s" /></a>' % (related_url, urlquote(value), settings.ADMIN_MEDIA_PREFIX, _('Edit')))
          return mark_safe(u''.join(output))
- 
+
      def base_url_parameters(self):
 Index: django/core/management/__init__.py
 ===================================================================
---- django/core/management/__init__.py	(revision 15908)
+--- django/core/management/__init__.py	(revision 16488)
 +++ django/core/management/__init__.py	(working copy)
 @@ -14,50 +14,80 @@
  # doesn't have to reload every time it's called.
  _commands = None
- 
+
 -def find_commands(management_dir):
 -    """
 -    Given a path to a management directory, returns a list of all the command
@@ -88,7 +88,7 @@ Index: django/core/management/__init__.py
 +try:
 +    from pkgutil import iter_modules
 +except:
- 
+
 -    Returns an empty list if no commands are defined.
 -    """
 -    command_dir = os.path.join(management_dir, 'commands')
@@ -98,7 +98,7 @@ Index: django/core/management/__init__.py
 -    except OSError:
 -        return []
 +    # Python versions earlier than 2.5 don't have the iter_modules function
- 
+
 -def find_management_module(app_name):
 -    """
 -    Determines the path to the management module for the given app_name,
@@ -107,7 +107,7 @@ Index: django/core/management/__init__.py
 +        """
 +        Determines the path to the management module for the given app_name,
 +        without actually importing the application or the management module.
- 
+
 -    Raises ImportError if the management module cannot be found for any reason.
 -    """
 -    parts = app_name.split('.')
@@ -122,7 +122,7 @@ Index: django/core/management/__init__.py
 +        parts.reverse()
 +        part = parts.pop()
 +        path = None
- 
+
 -    # When using manage.py, the project module is added to the path,
 -    # loaded, then removed from the path. This means that
 -    # testproject.testapp.models can be loaded in future, even if
@@ -145,7 +145,7 @@ Index: django/core/management/__init__.py
 +        except ImportError,e:
 +            if os.path.basename(os.getcwd()) != part:
 +                raise e
- 
+
 -    while parts:
 -        part = parts.pop()
 -        f, path, descr = imp.find_module(part, path and [path] or None)
@@ -154,7 +154,7 @@ Index: django/core/management/__init__.py
 +            part = parts.pop()
 +            f, path, descr = imp.find_module(part, path and [path] or None)
 +        return path
- 
+
 +    def find_commands(app_name):
 +        """
 +        Given a path to a management directory, returns a list of all the command
@@ -202,7 +202,7 @@ Index: django/core/management/__init__.py
      if _commands is None:
 -        _commands = dict([(name, 'django.core') for name in find_commands(__path__[0])])
 +        _commands = dict([(name, 'django.core') for name in find_commands('django.core')])
- 
+
          # Find the installed apps
          try:
 @@ -113,9 +143,8 @@
@@ -215,43 +215,43 @@ Index: django/core/management/__init__.py
 +                                       for name in find_commands(app_name)]))
              except ImportError:
                  pass # No management module - ignore this app
- 
+
 Index: django/db/backends/sqlite3/base.py
 ===================================================================
---- django/db/backends/sqlite3/base.py	(revision 15908)
+--- django/db/backends/sqlite3/base.py	(revision 16488)
 +++ django/db/backends/sqlite3/base.py	(working copy)
 @@ -220,7 +220,8 @@
          if self.settings_dict['NAME'] != ":memory:":
              BaseDatabaseWrapper.close(self)
- 
+
 -FORMAT_QMARK_REGEX = re.compile(r'(?![^%])%s')
 +# Fix required to correctly escape %s: See http://code.djangoproject.com/ticket/15155
 +FORMAT_QMARK_REGEX = re.compile(r'(?<![%])%s')
- 
+
  class SQLiteCursorWrapper(Database.Cursor):
      """
 Index: django/db/models/fields/related.py
 ===================================================================
---- django/db/models/fields/related.py	(revision 15908)
+--- django/db/models/fields/related.py	(revision 16488)
 +++ django/db/models/fields/related.py	(working copy)
 @@ -846,7 +846,10 @@
          if value is None:
              return
- 
+
 -        using = router.db_for_read(model_instance.__class__, instance=model_instance)
 +        using = model_instance._state.db
 +        if using is None:
-+            using = router.db_for_read(model_instance.__class__, instance=model_instance)            
++            using = router.db_for_read(model_instance.__class__, instance=model_instance)
 +        qs = self.rel.to._default_manager.using(using).filter(**{self.rel.field_name:value})
          qs = self.rel.to._default_manager.using(using).filter(
                  **{self.rel.field_name: value}
               )
 Index: django/db/models/sql/compiler.py
 ===================================================================
---- django/db/models/sql/compiler.py	(revision 15908)
+--- django/db/models/sql/compiler.py	(revision 16488)
 +++ django/db/models/sql/compiler.py	(working copy)
 @@ -202,8 +202,11 @@
- 
+
          for table, col in self.query.related_select_cols:
              r = '%s.%s' % (qn(table), qn(col))
 -            if with_aliases and col in col_aliases:
@@ -278,9 +278,50 @@ Index: django/db/models/sql/compiler.py
                  result.append('%s.%s AS %s' % (qn(alias),
                      qn2(field.column), c_alias))
                  col_aliases.add(c_alias)
+Index: django/utils/autoreload.py
+===================================================================
+--- django/utils/autoreload.py	(revision 16488)
++++ django/utils/autoreload.py	(working copy)
+@@ -88,7 +88,22 @@
+
+ def restart_with_reloader():
+     while True:
+-        args = [sys.executable] + ['-W%s' % o for o in sys.warnoptions] + sys.argv
++        # Fix for django+py2exe issue:
++        #
++        # Normally:
++        # sys.executable is 'python.exe' and the sys.argv[0] is the script name.
++        # The autoreload thread then runs 'python.exe script arguments'.
++        #
++        # When running from py2exe things are different:
++        # sys.executable is set to 'manage.exe' and sys.argv[0] is
++        # also 'manage.exe'.
++        # The autoreload thread should run "manage.exe arguments" and not
++        # "manage.exe manage.exe arguments". Now the interpreter and the script are
++        # basically one and the same.
++        #
++        #Original code:
++        # args = [sys.executable] + ['-W%s' % o for o in sys.warnoptions] + sys.argv
++        args = [sys.executable] + ['-W%s' % o for o in sys.warnoptions] + [i for i in sys.argv if not sys.executable.endswith(i)]
+         if sys.platform == "win32":
+             args = ['"%s"' % arg for arg in args]
+         new_environ = os.environ.copy()
+Index: django/utils/translation/trans_real.py
+===================================================================
+--- django/utils/translation/trans_real.py	(revision 16488)
++++ django/utils/translation/trans_real.py	(working copy)
+@@ -145,7 +145,7 @@
+         # doesn't affect en-gb), even though they will both use the core "en"
+         # translation. So we have to subvert Python's internal gettext caching.
+         base_lang = lambda x: x.split('-', 1)[0]
+-        if base_lang(lang) in [base_lang(trans) for trans in _translations]:
++        if res and base_lang(lang) in [base_lang(trans) for trans in _translations]:
+             res._info = res._info.copy()
+             res._catalog = res._catalog.copy()
+
 Index: django/views/i18n.py
 ===================================================================
---- django/views/i18n.py	(revision 15908)
+--- django/views/i18n.py	(revision 16488)
 +++ django/views/i18n.py	(working copy)
 @@ -277,5 +277,9 @@
      src.append(LibFormatHead)

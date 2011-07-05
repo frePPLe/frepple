@@ -83,11 +83,11 @@ Page custom finish finish_leave
 !insertmacro MUI_UNPAGE_FINISH
 
 ; Language files
-!insertmacro MUI_LANGUAGE "Dutch" 
+!insertmacro MUI_LANGUAGE "Dutch"
 !insertmacro MUI_LANGUAGE "English"
-!insertmacro MUI_LANGUAGE "French" 
-!insertmacro MUI_LANGUAGE "Italian" 
-!insertmacro MUI_LANGUAGE "TradChinese" 
+!insertmacro MUI_LANGUAGE "French"
+!insertmacro MUI_LANGUAGE "Italian"
+!insertmacro MUI_LANGUAGE "TradChinese"
 
 ;Version Information
 VIProductVersion "0.9.0.0"
@@ -107,7 +107,6 @@ CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
 Var InstalledDocumentation
-Var EnvVar
 
 ReserveFile "parameters.ini"
 ReserveFile "finish.ini"
@@ -117,18 +116,11 @@ Function .onInit
   ;Extract INI files
   !insertmacro INSTALLOPTIONS_EXTRACT "parameters.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "finish.ini"
-  
+
   !insertmacro MULTIUSER_INIT
 
   ; Set to "yes" when the documentation is chosen to be installed
   strcpy $InstalledDocumentation "no"
-  
-  ; Settings for environment variable storage
-  ${If} $MultiUser.InstallMode == "CurrentUser"
-	  StrCpy $EnvVar "Environment"
-	${Else}
-    StrCpy $EnvVar "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
-	${EndIf}
 FunctionEnd
 
 
@@ -164,15 +156,15 @@ Section "Application" SecAppl
 
   ; Copy modules
   File "..\bin\mod_*.so"
-  
+
    ; Copy configuration files
   File "..\bin\*.xsd"
   File "..\bin\init.xml"
-  File "..\bin\init.py" 
-  
+  File "..\bin\init.py"
+
   ; Copy the django and python redistributables created by py2exe
   File /r "..\contrib\installer\dist\*.*"
-  
+
   ; Copy sqlite database if it is available
   SetOutPath "$INSTDIR\bin\custom"
   File /nonfatal "..\contrib\django\frepple.sqlite"
@@ -181,11 +173,6 @@ Section "Application" SecAppl
   CreateDirectory "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\bin\manage.exe" "frepple_runserver"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open customization folder.lnk" "$INSTDIR\bin\custom"
-
-  ; Set an environment variable (and propagate immediately to other processes)
-  System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("FREPPLE_HOME", "$INSTDIR\bin").r0'
-  WriteRegExpandStr SHCTX "$EnvVar" "FREPPLE_HOME" "$INSTDIR\bin"
-  SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
   ; Pick up the installation parameters
   ReadINIStr $6 "$PLUGINSDIR\parameters.ini" "Field 8" "State"  # Language
@@ -377,13 +364,13 @@ Function finish_leave
      ${EndIf}
      Abort  ; Return to the page
   ${EndIf}
-     
+
   ; Start the server in console window
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 1" "State"
   ${If} $0 == 1
-    Exec '"$INSTDIR\bin\manage.exe" "frepple_runserver"'    
+    Exec '"$INSTDIR\bin\manage.exe" "frepple_runserver"'
   ${EndIf}
-  
+
   ; View the documentation
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 2" "State"
   ${If} $0 == 1
@@ -393,13 +380,13 @@ Function finish_leave
       ExecShell open "http://www.frepple.com/pmwiki/pmwiki.php"
     ${EndIf}
   ${EndIf}
-  
+
   ; Install the service
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 3" "State"
   ${If} $0 == 1
-    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --startup auto install'   
-    sleep 2 
-    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" start'    
+    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --startup auto install'
+    sleep 2
+    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" start'
     CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk" "$INSTDIR\bin\freppleservice.exe" "start"
     CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk" "$INSTDIR\bin\freppleservice.exe" "stop"
   ${EndIf}
@@ -471,8 +458,8 @@ Section -Post
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
-  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "NoModify" "1" 
-  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "NoRepair" "1" 
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "NoModify" "1"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "NoRepair" "1"
 SectionEnd
 
 
@@ -517,7 +504,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk"
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk"
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open customization folder.lnk"
-  
+
   ; Remove the folder in start menu
   RMDir "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
 
@@ -527,10 +514,6 @@ Section Uninstall
   IfFileExists "$INSTDIR" 0 Finished
   MessageBox MB_OK|MB_ICONEXCLAMATION "Alert: $INSTDIR could not be removed."
   Finished:
-
-  ; Delete environment variable
-  DeleteRegValue SHCTX "$EnvVar" "FREPPLE_HOME"
-  SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
   ; Remove installation registration key
   DeleteRegKey SHCTX "${PRODUCT_UNINST_KEY}"

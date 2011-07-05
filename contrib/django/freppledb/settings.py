@@ -140,12 +140,14 @@ USE_L10N=True    # Represent data in the local format
 USE_I18N=True    # Use translated strings
 
 LOCALE_PATHS = (
+    os.path.normpath(os.path.join(FREPPLE_HOME,'conf','locale')),
     os.path.normpath(os.path.join(FREPPLE_APP,'freppledb','locale')),
 )
 
 TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     os.path.normpath(os.path.join(FREPPLE_APP,'freppledb','templates')),
+    os.path.normpath(os.path.join(FREPPLE_HOME,'templates')),
 )
 
 INSTALLED_APPS = (
@@ -153,7 +155,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.admin',
-    'django.contrib.messages', 
+    'django.contrib.messages',
     'freppledb.input',
     'freppledb.output',
     'freppledb.execute',
@@ -205,8 +207,8 @@ INTERNAL_IPS = ( '127.0.0.1', )
 # For frePPLe this is important when downloading csv-files. FrePPLe encodes the
 # output in this encoding.
 DEFAULT_CHARSET = 'utf-8'
-# Windows users might want to use a different encoding to make export/import to Excel 
-# more seamless (but with less functionality). Excel doesn't recognize UTF-8 encoding 
+# Windows users might want to use a different encoding to make export/import to Excel
+# more seamless (but with less functionality). Excel doesn't recognize UTF-8 encoding
 # by default. Use the following 2 lines to replace the previous statement.
 #   import locale
 #   DEFAULT_CHARSET=locale.getpreferredencoding(False)

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -23,10 +23,10 @@
 import sys, os, os.path
 from stat import S_ISDIR, ST_MODE
 
-from django.core.management import execute_manager, call_command
-
 # Environment settings (which are used in the Django settings file and need
 # to be updated BEFORE importing the settings)
+if not 'FREPPLE_HOME' in os.environ:
+  os.environ['FREPPLE_HOME'] = os.path.split(sys.path[0])[0]
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
 os.environ['FREPPLE_APP'] = os.path.join(os.path.split(sys.path[0])[0],'custom') 
 
@@ -34,7 +34,8 @@ os.environ['FREPPLE_APP'] = os.path.join(os.path.split(sys.path[0])[0],'custom')
 # application directory into the path as well.
 sys.path += [ os.environ['FREPPLE_APP'] ]
 
-# Import django settings
+# Import django
+from django.core.management import execute_manager, call_command
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
@@ -65,9 +66,9 @@ else:
   except: noDatabaseSchema = True
   transaction.commit_unless_managed()
 
-if noDatabaseSchema:
-  print "\nDatabase schema %s doesn't exist." % settings.DATABASE_NAME
-  confirm = raw_input("Do you want to create it now? (yes/no): ")
+if noDatabaseSchema and len(sys.argv)>1 and sys.argv[1]!='syncdb':
+  print "\nDatabase schema has not been initialized yet."
+  confirm = raw_input("Do you want to do that now? (yes/no): ")
   while confirm not in ('yes', 'no'):
     confirm = raw_input('Please enter either "yes" or "no": ')
   if confirm == 'yes':

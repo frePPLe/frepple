@@ -38,7 +38,7 @@ freppledirectory = freppledb.__path__[0]
 
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment
-            'django', 'email', 'cherrypy.wsgiserver', 'csv',
+            'django', 'email', 'cherrypy.wsgiserver', 'csv', 
             # Added for MySQL
             'MySQLdb', 'MySQLdb.constants', 'MySQLdb.converters',
             # Added for PostgreSQL
@@ -53,12 +53,8 @@ packages = [# Required for django standalone deployment
             # Added for unicode and internationalization
             'encodings',
            ]
-includes = ['django.contrib.auth',
-            'django.contrib.sessions',
-            'django.contrib.sites',
-           ]
-excludes = ['pydoc','Tkinter', 'tcl', 'Tkconstants', 'freppledb'
-            ]
+includes = []
+excludes = ['pydoc','Tkinter', 'tcl', 'Tkconstants', 'freppledb',]
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
            # Not using Microsoft ADO

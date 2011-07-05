@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -39,8 +39,8 @@ class Command(BaseCommand):
       choices=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'], default='15',
       help='Constraints: 1=lead time, 2=capacity, 4=material, 8=release fence'),
     make_option('--plantype', dest='plantype', type='choice', choices=['1','2'],
-      default='1', help='Plan type: 1=constrained, 2=unconstrained'),      
-    make_option('--nonfatal', action="store_true", dest='nonfatal', 
+      default='1', help='Plan type: 1=constrained, 2=unconstrained'),
+    make_option('--nonfatal', action="store_true", dest='nonfatal',
       default=False, help='Dont abort the execution upon an error'),
     make_option('--database', action='store', dest='database',
       default=DEFAULT_DB_ALIAS, help='Nominates a specific database to load data from and export results into'),
@@ -59,7 +59,7 @@ class Command(BaseCommand):
       if constraint < 0 or constraint > 15:
         raise ValueError("Invalid constraint: %s" % options['constraint'])
     else: constraint = 15
-    if 'plantype' in options: 
+    if 'plantype' in options:
       plantype = int(options['plantype'])
       if plantype < 1 or plantype > 2:
         raise ValueError("Invalid plan type: %s" % options['plantype'])
@@ -68,7 +68,7 @@ class Command(BaseCommand):
     else: database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )
-        
+
     transaction.enter_transaction_management(managed=False, using=database)
     transaction.managed(False, using=database)
     try:
@@ -76,7 +76,7 @@ class Command(BaseCommand):
       log(category='RUN', theuser=user,
         message=_('Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d') % {'plantype': plantype, 'constraint': constraint}).save(using=database)
       transaction.commit(using=database)
-      
+
       # Execute
       os.environ['PLANTYPE'] = str(plantype)
       os.environ['CONSTRAINT'] = str(constraint)
@@ -87,9 +87,9 @@ class Command(BaseCommand):
       os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
       if 'DJANGO_SETTINGS_MODULE' not in os.environ.keys():
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-      if os.path.exists(os.path.join(os.environ['FREPPLE_HOME'],'python26.zip')):
+      if os.path.exists(os.path.join(os.environ['FREPPLE_HOME'],'python27.zip')):
         # For the py2exe executable
-        os.environ['PYTHONPATH'] = os.path.join(os.environ['FREPPLE_HOME'],'python26.zip') + ';' + os.path.normpath(os.environ['FREPPLE_APP'])
+        os.environ['PYTHONPATH'] = os.path.join(os.environ['FREPPLE_HOME'],'python27.zip') + ';' + os.path.normpath(os.environ['FREPPLE_APP'])
       else:
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(os.environ['FREPPLE_APP'])
@@ -108,4 +108,3 @@ class Command(BaseCommand):
     finally:
       transaction.commit(using=database)
       transaction.leave_transaction_management(using=database)
-      

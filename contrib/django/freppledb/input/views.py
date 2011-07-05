@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -33,7 +33,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import iri_to_uri, force_unicode
 
-from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix 
+from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix
 from freppledb.input.models import Buffer, Customer, Demand, Parameter, Item, Load, Flow
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.input.models import Bucket, BucketDetail
@@ -53,8 +53,8 @@ class uploadjson:
   def post(request):
     try:
       # Validate the upload form
-      if request.method != 'POST':
-        raise Exception(_('Only POST method allowed'))
+      if request.method != 'POST' or not request.is_ajax():
+        raise Exception(_('Only ajax POST method allowed'))
 
       # Validate uploaded file is present
       if len(request.FILES)!=1 or 'data' not in request.FILES \
@@ -81,7 +81,7 @@ class uploadjson:
             # b) Find the calendar
             res = Resource.objects.using(request.database).get(name = i['name'])
             if not res.maximum_calendar:
-              raise Exception('Resource "%s" has no max calendar' % res.name)
+              raise Exception('Resource "%s" has no maximum calendar' % res.name)
             # c) Update the calendar
             start = datetime.strptime(i['startdate'],'%Y-%m-%d')
             end = datetime.strptime(i['enddate'],'%Y-%m-%d')
@@ -114,14 +114,14 @@ class uploadjson:
             msg = "unknown action"
             raise Exception(_("Unknown action type '%(msg)s'") % {'msg':entity})
 
-        except Exception, e:
+        except Exception as e:
           messages.add_message(request, messages.ERROR, 'Error processing %s: %s' % (msg,e))
 
       # Processing went fine...
       return HttpResponse("OK")
 
-    except Exception, e:
-      print 'Error processing uploaded data: %s %s' % (type(e),e)
+    except Exception as e:
+      print('Error processing uploaded data: %s %s' % (type(e),e))
       return HttpResponseForbidden('Error processing uploaded data: %s' % e)
 
 
@@ -147,23 +147,23 @@ class pathreport:
     if type == 'buffer':
       # Find the buffer
       try: root = [ (0, Buffer.objects.using(request.database).get(name=entity), None, None, None, Decimal(1)) ]
-      except ObjectDoesNotExist: raise Http404, "buffer %s doesn't exist" % entity
+      except ObjectDoesNotExist: raise Http404("buffer %s doesn't exist" % entity)
     elif type == 'item':
       # Find the item
       try:
         root = [ (0, r, None, None, None, Decimal(1)) for r in Buffer.objects.filter(item=entity).using(request.database) ]
-      except ObjectDoesNotExist: raise Http404, "item %s doesn't exist" % entity
+      except ObjectDoesNotExist: raise Http404("item %s doesn't exist" % entity)
     elif type == 'operation':
       # Find the operation
       try: root = [ (0, None, None, Operation.objects.using(request.database).get(name=entity), None, Decimal(1)) ]
-      except ObjectDoesNotExist: raise Http404, "operation %s doesn't exist" % entity
+      except ObjectDoesNotExist: raise Http404("operation %s doesn't exist" % entity)
     elif type == 'resource':
       # Find the resource
       try: root = Resource.objects.using(request.database).get(name=entity)
-      except ObjectDoesNotExist: raise Http404, "resource %s doesn't exist" % entity
+      except ObjectDoesNotExist: raise Http404("resource %s doesn't exist" % entity)
       root = [ (0, None, None, i.operation, None, Decimal(1)) for i in root.loads.using(request.database).all() ]
     else:
-      raise Http404, "invalid entity type %s" % type
+      raise Http404("invalid entity type %s" % type)
 
     # Note that the root to start with can be either buffer or operation.
     visited = []
@@ -181,7 +181,7 @@ class pathreport:
       # Avoid infinite loops when the supply chain contains cycles
       if curbuffer:
         if curbuffer in visited: continue
-        else: visited.append(curbuffer)    
+        else: visited.append(curbuffer)
       else:
         if curoperation and curoperation in visited: continue
         else: visited.append(curoperation)
@@ -294,19 +294,19 @@ class pathreport:
 def location_calendar(request, location):
   # Check to find a location availability calendar
   loc = Location.objects.using(request.database).get(pk=location)
-  if loc: 
+  if loc:
     cal = loc.available
-  if cal: 
+  if cal:
     # Go to the calendar
     return HttpResponseRedirect('%s/admin/input/calendar/%s/' % (request.prefix, iri_to_uri(cal.name)) )
   # Generate a message
-  try: 
+  try:
     url = request.META.get('HTTP_REFERER')
-    messages.add_message(request, messages.ERROR, 
+    messages.add_message(request, messages.ERROR,
       force_unicode(_('No availability calendar found')))
     return HttpResponseRedirect(url)
   except: raise Http404
-    
+
 
 class ParameterList(ListReport):
   '''
@@ -340,7 +340,7 @@ class ParameterList(ListReport):
       'filter': FilterDate(),
       }),
     )
-    
+
 
 class BufferList(ListReport):
   '''
@@ -443,7 +443,7 @@ class SetupMatrixList(ListReport):
       'filter': FilterDate(),
       }),
     )
-     
+
 
 class ResourceList(ListReport):
   '''
@@ -482,7 +482,7 @@ class ResourceList(ListReport):
     ('location', {
       'title': _('location'),
       'filter': FilterText(field='location__name'),
-      }),    
+      }),
     ('owner', {
       'title': _('owner'),
       'filter': FilterText(field='owner__name'),
@@ -1290,5 +1290,5 @@ class BucketDetailList(ListReport):
       'title': _('last modified'),
       'filter': FilterDate(),
       }),
-    )    
+    )
 

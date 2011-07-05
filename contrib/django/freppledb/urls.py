@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -63,8 +63,12 @@ urlpatterns += patterns('',
 # the static pages.
 # In a production environment you need to configure your web server to take care of
 # these pages.
-if settings.STANDALONE == True:
-  urlpatterns += patterns('',(r'^static/(?P<path>.*)$', 'django.views.static.serve',
-       {'document_root': os.path.join(settings.FREPPLE_APP,'freppledb','static'),
-        'show_indexes': False}),
+if settings.STANDALONE:
+  urlpatterns += patterns('',
+     (r'^static/(?P<path>.*)$', 'django.views.static.serve',
+      {'document_root': os.path.join(settings.FREPPLE_APP,'freppledb','static'),
+         'show_indexes': False}),
+     (r'^media/(?P<path>.*)$', 'django.views.static.serve', 
+      {'document_root': os.path.join(settings.FREPPLE_HOME,'media'),
+       'show_indexes': False}),
     )

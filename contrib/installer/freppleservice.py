@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2010-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -45,36 +45,36 @@ class frePPLeService(win32serviceutil.ServiceFramework):
         msg = "frePPLe web server stopped"
         servicemanager.LogInfoMsg(msg)
         print datetime.now().strftime("%Y-%m-%d %H:%M:%S"), msg
-        
+
     def SvcDoRun(self):
         # Environment settings (which are used in the Django settings file and need
         # to be updated BEFORE importing the settings)
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
         os.environ['FREPPLE_APP'] = os.path.join(os.path.split(sys.path[0])[0],'custom')
         os.environ['FREPPLE_HOME'] = os.path.abspath(os.path.dirname(sys.argv[0]))
-        
+
         # Add the custom directory to the Python path.
         sys.path = [ os.environ['FREPPLE_APP'], sys.path[0] ]
-        
+
         # Import modules
         from django.conf import settings
         import cherrypy
         from cherrypy.wsgiserver import CherryPyWSGIServer
         import django
         from django.core.handlers.wsgi import WSGIHandler
-        from django.core.servers.basehttp import AdminMediaHandler        
+        from django.core.servers.basehttp import AdminMediaHandler
         from stat import S_ISDIR, ST_MODE
-        
+
         # Override the debugging settings
         settings.DEBUG = False
         settings.TEMPLATE_DEBUG = False
         settings.STANDALONE = True
-         
+
         # Pick up port and adress
         try: address = socket.gethostbyname(socket.gethostname())
         except: address = '127.0.0.1'
         port = settings.PORT
-                
+
         cherrypy.config.update({
             'global':{
                 'log.screen': False,
@@ -102,7 +102,7 @@ class frePPLeService(win32serviceutil.ServiceFramework):
         # Log usage
         from freppledb.execute.management.commands.frepple_runserver import CheckUpdates
         CheckUpdates().start()
-        
+
         # Infinite loop serving requests
         try:
           self.server.start()
@@ -111,9 +111,8 @@ class frePPLeService(win32serviceutil.ServiceFramework):
           msg = "frePPLe web server failed to start:\n%s" % e
           servicemanager.LogErrorMsg(msg)
           print datetime.now().strftime("%Y-%m-%d %H:%M:%S"), msg
-        
+
 
 if __name__=='__main__':
     # Do with the service whatever option is passed in the command line
     win32serviceutil.HandleCommandLine(frePPLeService)
-    

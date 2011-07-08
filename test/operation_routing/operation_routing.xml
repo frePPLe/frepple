@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>Test model for effective operations</name>
   <description>
@@ -142,6 +142,7 @@
     -->
     <demand name="order 1">
       <quantity>5</quantity>
+      <minshipment>5</minshipment>
       <due>2009-01-25T00:00:00</due>
       <priority>1</priority>
       <item name="product" />
@@ -152,6 +153,7 @@
     -->
     <demand name="order 2">
       <quantity>5</quantity>
+      <minshipment>5</minshipment>
       <due>2009-01-05T00:00:00</due>
       <priority>2</priority>
       <item name="product" />
@@ -212,7 +214,7 @@
     </demand>
 
     <!--
-      Case 6: Material constraint on first routing step
+      Case 6: Material constraint on first routing step.
     -->
     <demand name="order 6">
       <quantity>10</quantity>
@@ -222,7 +224,11 @@
     </demand>
 
     <!--
-      Case 7: Material constraint on total routing
+      Case 7: Material constraint on total routing.
+      We don't have enough of component D to build the complete order:
+         30 units are available as inventory.
+         there is no extra replenishment possible for the component D.
+         27 units are already consumed by the previous orders.
     -->
     <demand name="order 7">
       <quantity>10</quantity>

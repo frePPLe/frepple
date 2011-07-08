@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -27,14 +27,6 @@
 
 #define FREPPLE_CORE
 #include "frepple/utils.h"
-
-
-// These headers are required for the loading of dynamic libraries
-#ifdef WIN32
-  #include <windows.h>
-#else
-  #include <dlfcn.h>
-#endif
 
 
 namespace frepple
@@ -381,105 +373,11 @@ DECLARE_EXPORT CommandList::~CommandList()
 
 
 //
-// LOADLIBRARY COMMAND
+// LOADMODULE COMMAND
 //
 
 
-DECLARE_EXPORT void CommandLoadLibrary::execute()
-{
-  // Type definition of the initialization function
-  typedef const char* (*func)(const ParameterList&);
-
-  // Log
-  if (getVerbose())
-    logger << "Start loading library '" << lib << "' at " << Date::now() << endl;
-  Timer t;
-
-  // Validate
-  if (lib.empty())
-    throw DataException("Error: No library name specified for loading");
-
-#ifdef WIN32
-  // Load the library - The windows way
-
-  // Change the error mode: we handle errors now, not the operating system
-  UINT em = SetErrorMode(SEM_FAILCRITICALERRORS);
-  HINSTANCE handle = LoadLibraryEx(lib.c_str(),NULL,LOAD_WITH_ALTERED_SEARCH_PATH);
-  if (!handle) handle = LoadLibraryEx(lib.c_str(), NULL, 0);
-  if (!handle)
-  {
-    // Get the error description
-    char error[256];
-    FormatMessage(
-      FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-      NULL,
-      GetLastError(),
-      0,
-      error,
-      256,
-      NULL );
-    throw RuntimeException(error);
-  }
-  SetErrorMode(em);  // Restore the previous error mode
-
-  // Find the initialization routine
-  func inithandle =
-    reinterpret_cast<func>(GetProcAddress(HMODULE(handle), "initialize"));
-  if (!inithandle)
-  {
-    // Get the error description
-    char error[256];
-    FormatMessage(
-      FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-      NULL,
-      GetLastError(),
-      0,
-      error,
-      256,
-      NULL );
-    throw RuntimeException(error);
-  }
-
-#else
-  // Load the library - The UNIX way
-
-  // Search the frePPLe directories for the library
-  string fullpath = Environment::searchFile(lib);
-  if (fullpath.empty())
-	throw RuntimeException("Module '" + lib + "' not found");
-  dlerror(); // Clear the previous error
-  void *handle = dlopen(fullpath.c_str(), RTLD_NOW | RTLD_GLOBAL);
-  const char *err = dlerror();  // Pick up the error string
-  if (err)
-  {
-     // Search the normal path for the library
-     dlerror(); // Clear the previous error
-     handle = dlopen(lib.c_str(), RTLD_NOW | RTLD_GLOBAL);
-     err = dlerror();  // Pick up the error string
-     if (err) throw RuntimeException(err);
-  }
-
-  // Find the initialization routine
-  func inithandle = (func)(dlsym(handle, "initialize"));
-  err = dlerror(); // Pick up the error string
-  if (err) throw RuntimeException(err);
-#endif
-
-  // Call the initialization routine with the parameter list
-  string x = (inithandle)(parameters);
-  if (x.empty()) throw DataException("Invalid module name returned");
-
-  // Insert the new module in the registry
-  registry.insert(x);
-
-  // Log
-  if (getVerbose())
-    logger << "Finished loading module '" << x << "' from library '" << lib
-    << "' at " << Date::now() << " : " << t << endl;
-}
-
-
-DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
+DECLARE_EXPORT PyObject* loadModule
   (PyObject* self, PyObject* args, PyObject* kwds)
 {
 
@@ -487,18 +385,15 @@ DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
   char *data = NULL;
   int ok = PyArg_ParseTuple(args, "s:loadmodule", &data);
   if (!ok) return NULL;
-  CommandLoadLibrary cmd(data);
 
   // Load parameters for the module
+  Environment::ParameterList params;
   if (kwds)
   {
     PyObject *key, *value;
     Py_ssize_t pos = 0;
     while (PyDict_Next(kwds, &pos, &key, &value))
-      cmd.addParameter(
-        PythonObject(key).getString(),
-        PythonObject(value).getString()
-        );
+      params[PythonObject(key).getString()] = PythonObject(value).getString();
   }
 
   // Free Python interpreter for other threads.
@@ -507,7 +402,7 @@ DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
   Py_BEGIN_ALLOW_THREADS
   try {
     // Load the library
-    cmd.execute();
+    Environment::loadModule(data, params);
   }
   catch(...)
   {
@@ -520,10 +415,10 @@ DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
 }
 
 
-DECLARE_EXPORT void CommandLoadLibrary::printModules()
+DECLARE_EXPORT void Environment::printModules()
 {
   logger << "Loaded modules:" << endl;
-  for (set<string>::const_iterator i=registry.begin(); i!=registry.end(); ++i)
+  for (set<string>::const_iterator i=moduleRegistry.begin(); i!=moduleRegistry.end(); ++i)
     logger << "   " << *i << endl;
   logger << endl;
 }

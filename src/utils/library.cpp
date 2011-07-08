@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -29,6 +29,13 @@
 #include "frepple/utils.h"
 #include <sys/stat.h>
 
+// These headers are required for the loading of dynamic libraries
+#ifdef WIN32
+  #include <windows.h>
+#else
+  #include <dlfcn.h>
+#endif
+
 
 namespace frepple
 {
@@ -41,10 +48,7 @@ DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByTag;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 
 // Repository of loaded modules
-set<string> CommandLoadLibrary::registry;
-
-// Processing instruction metadata
-DECLARE_EXPORT const MetaCategory* Command::metadataInstruction;
+DECLARE_EXPORT set<string> Environment::moduleRegistry;
 
 // Number of processors.
 // The value initialized here is overwritten in the library initialization.
@@ -64,6 +68,56 @@ DECLARE_EXPORT string Environment::logfilename;
 DECLARE_EXPORT const hashtype MetaCategory::defaultHash(Keyword::hash("default"));
 
 vector<PythonType*> PythonExtensionBase::table;
+
+
+void LibraryUtils::initialize()
+{
+  // Initialize only once
+  static bool init = false;
+  if (init)
+  {
+    logger << "Warning: Calling frepple::LibraryUtils::initialize() more "
+    << "than once." << endl;
+    return;
+  }
+  init = true;
+
+  // Set the locale to the default setting.
+  // When not executed, the locale is the "C-locale", which restricts us to
+  // ascii data in the input.
+  // For Posix platforms the environment variable LC_ALL controls the locale.
+  // Most Linux distributions these days have a default locale that supports
+  // UTF-8 encoding, meaning that every unicode character can be
+  // represented.
+  // On Windows, the default is the system-default ANSI code page. The number
+  // of characters that frePPLe supports on Windows is constrained by this...
+  #if defined(HAVE_SETLOCALE) || defined(_MSC_VER)
+  setlocale(LC_ALL, "" );
+  #endif
+
+  // Initialize Xerces parser
+  xercesc::XMLPlatformUtils::Initialize();
+
+  // Initialize the Python interpreter
+  PythonInterpreter::initialize();
+
+  // Register new methods in Python
+  PythonInterpreter::registerGlobalMethod(
+    "loadmodule", loadModule, METH_VARARGS,
+    "Dynamically load a module in memory.");
+
+  // Query the system for the number of available processors.
+  // The environment variable NUMBER_OF_PROCESSORS is defined automatically on
+  // Windows platforms. On other platforms it'll have to be explicitly set
+  // since there isn't an easy and portable way of querying this system
+  // information.
+  const char *c = getenv("NUMBER_OF_PROCESSORS");
+  if (c)
+  {
+    int p = atoi(c);
+    Environment::setProcessors(p);
+  }
+}
 
 
 DECLARE_EXPORT string Environment::searchFile(const string filename)
@@ -164,56 +218,87 @@ DECLARE_EXPORT void Environment::setLogFile(const string& x)
 }
 
 
-void LibraryUtils::initialize()
+DECLARE_EXPORT void Environment::loadModule(string lib, ParameterList& parameters)
 {
-  // Initialize only once
-  static bool init = false;
-  if (init)
+  // Type definition of the initialization function
+  typedef const char* (*func)(const ParameterList&);
+
+  // Validate
+  if (lib.empty())
+    throw DataException("Error: No library name specified for loading");
+
+#ifdef WIN32
+  // Load the library - The windows way
+
+  // Change the error mode: we handle errors now, not the operating system
+  UINT em = SetErrorMode(SEM_FAILCRITICALERRORS);
+  HINSTANCE handle = LoadLibraryEx(lib.c_str(),NULL,LOAD_WITH_ALTERED_SEARCH_PATH);
+  if (!handle) handle = LoadLibraryEx(lib.c_str(), NULL, 0);
+  if (!handle)
   {
-    logger << "Warning: Calling frepple::LibraryUtils::initialize() more "
-    << "than once." << endl;
-    return;
+    // Get the error description
+    char error[256];
+    FormatMessage(
+      FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+      NULL,
+      GetLastError(),
+      0,
+      error,
+      256,
+      NULL );
+    throw RuntimeException(error);
   }
-  init = true;
+  SetErrorMode(em);  // Restore the previous error mode
 
-  // Set the locale to the default setting.
-  // When not executed, the locale is the "C-locale", which restricts us to
-  // ascii data in the input.
-  // For Posix platforms the environment variable LC_ALL controls the locale.
-  // Most Linux distributions these days have a default locale that supports
-  // UTF-8 encoding, meaning that every unicode character can be
-  // represented.
-  // On Windows, the default is the system-default ANSI code page. The number
-  // of characters that frePPLe supports on Windows is constrained by this...
-  #if defined(HAVE_SETLOCALE) || defined(_MSC_VER)
-  setlocale(LC_ALL, "" );
-  #endif
-
-  // Initialize Xerces parser
-  xercesc::XMLPlatformUtils::Initialize();
-
-  // Initialize the processing instruction metadata.
-  Command::metadataInstruction = new MetaCategory
-    ("instruction", "");
-
-  // Register Python as a processing instruction.
-  CommandPython::metadata2 = new MetaClass(
-    "instruction", "python", CommandPython::processorXMLInstruction);
-
-  // Initialize the Python interpreter
-  PythonInterpreter::initialize();
-
-  // Query the system for the number of available processors.
-  // The environment variable NUMBER_OF_PROCESSORS is defined automatically on
-  // Windows platforms. On other platforms it'll have to be explicitly set
-  // since there isn't an easy and portable way of querying this system
-  // information.
-  const char *c = getenv("NUMBER_OF_PROCESSORS");
-  if (c)
+  // Find the initialization routine
+  func inithandle =
+    reinterpret_cast<func>(GetProcAddress(HMODULE(handle), "initialize"));
+  if (!inithandle)
   {
-    int p = atoi(c);
-    Environment::setProcessors(p);
+    // Get the error description
+    char error[256];
+    FormatMessage(
+      FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+      NULL,
+      GetLastError(),
+      0,
+      error,
+      256,
+      NULL );
+    throw RuntimeException(error);
   }
+
+#else
+  // Load the library - The UNIX way
+
+  // Search the frePPLe directories for the library
+  string fullpath = Environment::searchFile(lib);
+  if (fullpath.empty())
+    throw RuntimeException("Module '" + lib + "' not found");
+  dlerror(); // Clear the previous error
+  void *handle = dlopen(fullpath.c_str(), RTLD_NOW | RTLD_GLOBAL);
+  const char *err = dlerror();  // Pick up the error string
+  if (err)
+  {
+     // Search the normal path for the library
+     dlerror(); // Clear the previous error
+     handle = dlopen(lib.c_str(), RTLD_NOW | RTLD_GLOBAL);
+     err = dlerror();  // Pick up the error string
+     if (err) throw RuntimeException(err);
+  }
+
+  // Find the initialization routine
+  func inithandle = (func)(dlsym(handle, "initialize"));
+  err = dlerror(); // Pick up the error string
+  if (err) throw RuntimeException(err);
+#endif
+
+  // Call the initialization routine with the parameter list
+  string x = (inithandle)(parameters);
+  if (x.empty()) throw DataException("Invalid module name returned");
+
+  // Insert the new module in the registry
+  moduleRegistry.insert(x);
 }
 
 

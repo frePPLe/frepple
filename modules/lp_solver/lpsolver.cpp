@@ -38,7 +38,7 @@ const Keyword tag_solutionfile("solutionfile");
 const Keyword tag_objective("objective");
 
 
-MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
+MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
 {
   // Initialize only once
   static bool init = false;

@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -35,50 +35,34 @@ namespace frepple
 // READ XML INPUT FILE
 //
 
-DECLARE_EXPORT void CommandReadXMLFile::execute()
-{
-  // Message
-  if (getVerbose())
-    logger << "Started reading model from file '" << filename
-    << "' at " << Date::now() << endl;
-  Timer t;
 
-  // Note: Reading the data files can throw exceptions...
-  if (filename.empty())
-  {
-    // Read from standard input
-    xercesc::StdInInputSource in;
-    if (validate_only)
-      // When no root object is passed, only the input validation happens
-      XMLInput().parse(in, NULL, true);
-    else
-      XMLInput().parse(in, &Plan::instance(), validate);
-  }
-  else if (validate_only)
-    // Read and validate a file
-    XMLInputFile(filename).parse(NULL, true);
-  else
-    // Read, execute and optionally validate a file
-    XMLInputFile(filename).parse(&Plan::instance(),validate);
-
-  // Message
-  if (getVerbose())
-    logger << "Finished reading model at " << Date::now()  << " : " << t << endl;
-}
-
-
-DECLARE_EXPORT PyObject* CommandReadXMLFile::executePython(PyObject* self, PyObject* args)
+DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
 {
   // Pick up arguments
-  char *data;
-  int i1(1), i2(0);
-  int ok = PyArg_ParseTuple(args, "s|ii:readXMLfile", &data, &i1, &i2);
+  char *filename = NULL;
+  int validate(1), validate_only(0);
+  int ok = PyArg_ParseTuple(args, "|sii:readXMLfile", &filename, &validate, &validate_only);
   if (!ok) return NULL;
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try {
-    CommandReadXMLFile(data, i1!=0, i2!=0).execute();
+    if (!filename)
+    {
+      // Read from standard input
+      xercesc::StdInInputSource in;
+      if (validate_only!=0)
+        // When no root object is passed, only the input validation happens
+        XMLInput().parse(in, NULL, true);
+      else
+        XMLInput().parse(in, &Plan::instance(), validate!=0);
+    }
+    else if (validate_only!=0)
+      // Read and validate a file
+      XMLInputFile(filename).parse(NULL, true);
+    else
+      // Read, execute and optionally validate a file
+      XMLInputFile(filename).parse(&Plan::instance(),validate!=0);
   }
   catch (...)
   {
@@ -95,38 +79,26 @@ DECLARE_EXPORT PyObject* CommandReadXMLFile::executePython(PyObject* self, PyObj
 // READ XML INPUT STRING
 //
 
-DECLARE_EXPORT void CommandReadXMLString::execute()
-{
-  // Message
-  if (getVerbose())
-    logger << "Started reading model from string at " << Date::now() << endl;
-  Timer t;
 
-  // Note: Reading the data can throw exceptions...
-  if (validate_only)
-    XMLInputString(data).parse(NULL, true);
-  else
-    // Locking the plan assures a single read command is running at any time.
-    XMLInputString(data).parse(&Plan::instance(), validate);
-
-  // Message
-  if (getVerbose())
-    logger << "Finished reading model at " << Date::now()  << " : " << t << endl;
-}
-
-
-PyObject* CommandReadXMLString::executePython(PyObject *self, PyObject *args)
+DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
 {
   // Pick up arguments
   char *data;
-  int i1(1), i2(0);
-  int ok = PyArg_ParseTuple(args, "s|ii:readXMLdata", &data, &i1, &i2);
+  int validate(1), validate_only(0);
+  int ok = PyArg_ParseTuple(args, "s|ii:readXMLdata", &data, &validate, &validate_only);
   if (!ok) return NULL;
 
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS
+
   // Execute and catch exceptions
-  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try {
-    if (data) CommandReadXMLString(string(data), i1!=0, i2!=0).execute();
+    if (!data)
+      throw DataException("No input data");
+    else if (validate_only!=0)
+      XMLInputString(data).parse(NULL, true);
+    else
+      XMLInputString(data).parse(&Plan::instance(), validate!=0);
   }
   catch (...)
   {
@@ -135,8 +107,7 @@ PyObject* CommandReadXMLString::executePython(PyObject *self, PyObject *args)
     return NULL;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  return Py_BuildValue("");  // Safer than using Py_None, which is not
-                             // portable across compilers
+  return Py_BuildValue("");  // Safer than using Py_None, which is not portable across compilers
 }
 
 
@@ -144,52 +115,31 @@ PyObject* CommandReadXMLString::executePython(PyObject *self, PyObject *args)
 // SAVE MODEL TO XML
 //
 
-DECLARE_EXPORT void CommandSave::execute()
-{
-  // Message
-  if (getVerbose())
-    logger << "Start saving model to file '" << filename
-    << "' at " << Date::now() << endl;
-  Timer t;
 
-  // Save the plan
-  XMLOutputFile o(filename);
-  if (!headerstart.empty()) o.setHeaderStart(headerstart);
-  if (!headeratts.empty()) o.setHeaderAtts(headeratts);
-  o.setContentType(content);
-  o.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
-
-  // Message
-  if (getVerbose())
-    logger << "Finished saving " << o.countObjects()
-    << " objects at " << Date::now() << " : " << t << endl;
-}
-
-
-PyObject* CommandSave::executePython(PyObject* self, PyObject* args)
+PyObject* saveXMLfile(PyObject* self, PyObject* args)
 {
   // Pick up arguments
-  char *data;
+  char *filename;
   char *content = NULL;
-  int ok = PyArg_ParseTuple(args, "s|s:save", &data, &content);
+  int ok = PyArg_ParseTuple(args, "s|s:save", &filename, &content);
   if (!ok) return NULL;
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try {
-    CommandSave cmd(data);
+    XMLOutputFile o(filename);
     if (content)
     {
       if (!strcmp(content,"STANDARD"))
-        cmd.setContent(XMLOutput::STANDARD);
+        o.setContentType(XMLOutput::STANDARD);
       else if (!strcmp(content,"PLAN"))
-        cmd.setContent(XMLOutput::PLAN);
+        o.setContentType(XMLOutput::PLAN);
       else if (!strcmp(content,"PLANDETAIL"))
-        cmd.setContent(XMLOutput::PLANDETAIL);
+        o.setContentType(XMLOutput::PLANDETAIL);
       else
         throw DataException("Invalid content type '" + string(content) + "'");
     }
-    cmd.execute();
+    o.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
   }
   catch (...)
   {
@@ -206,24 +156,23 @@ PyObject* CommandSave::executePython(PyObject* self, PyObject* args)
 // SAVE PLAN SUMMARY TO TEXT FILE
 //
 
-DECLARE_EXPORT void CommandSavePlan::execute()
+
+DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
 {
-  // Message
-  if (getVerbose())
-    logger << "Start saving plan to file '" << getFileName()
-    << "' at " << Date::now() << endl;
-  Timer t;
+  // Pick up arguments
+  char *filename = "plan.out";
+  int ok = PyArg_ParseTuple(args, "s:saveplan", &filename);
+  if (!ok) return NULL;
 
-  // Output steam
-  if (getFileName().empty())
-    throw RuntimeException("No file specified for export");
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS
+
+  // Execute and catch exceptions
   ofstream textoutput;
-
-  // Open the file, write to it and close it. Catch exceptions all along...
   try
   {
     // Open the output file
-    textoutput.open(getFileName().c_str(), ios::out);
+    textoutput.open(filename, ios::out);
 
     // Write the buffer summary
     for (Buffer::iterator gbuf = Buffer::begin();
@@ -315,39 +264,10 @@ DECLARE_EXPORT void CommandSavePlan::execute()
     // Close the output file
     textoutput.close();
   }
-  catch (exception& e)
-  {
-    textoutput.close();
-    throw RuntimeException("Error writing to file '"
-        + getFileName() + "':\n" + e.what());
-  }
   catch (...)
   {
-    textoutput.close();
-    throw RuntimeException("Error writing to file '"
-        + getFileName() + "'");
-  }
-
-  // Message
-  if (getVerbose())
-    logger << "Finished saving plan at " << Date::now() << " : " << t << endl;
-}
-
-
-PyObject* CommandSavePlan::executePython(PyObject* self, PyObject* args)
-{
-  // Pick up arguments
-  char *data;
-  int ok = PyArg_ParseTuple(args, "s:saveplan", &data);
-  if (!ok) return NULL;
-
-  // Execute and catch exceptions
-  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try {
-    CommandSavePlan(data).execute();
-  }
-  catch (...)
-  {
+    if (textoutput.is_open())
+      textoutput.close();
     Py_BLOCK_THREADS;
     PythonType::evalException();
     return NULL;
@@ -494,51 +414,7 @@ DECLARE_EXPORT void CommandDeleteOperationPlan::undo()
 //
 
 
-DECLARE_EXPORT void CommandErase::execute()
-{
-  // Starting message
-  if (getVerbose())
-  {
-    if (deleteStaticModel)
-      logger << "Start model erase command at " << Date::now() << endl;
-    else
-      logger << "Start plan erase command at " << Date::now() << endl;
-  }
-  Timer t;
-
-  if (deleteStaticModel)
-  {
-    // Delete all entities.
-    // The order is chosen to minimize the work of the individual destructors.
-    // E.g. the destructor of the item class recurses over all demands and
-    // all buffers. It is much faster if there are none already.
-    Demand::clear();
-    Operation::clear();  
-    Buffer::clear();     
-    Resource::clear();
-    SetupMatrix::clear();
-    Location::clear();
-    Customer::clear();
-    Calendar::clear();
-    Solver::clear();
-    Item::clear();
-    // The setup operation is a static singleton and should always be around
-    OperationSetup::setupoperation = Operation::add(new OperationSetup("setup operation"));
-  }
-  else
-    // Delete the operationplans only
-    for (Operation::iterator gop = Operation::begin();
-        gop != Operation::end(); ++gop)
-      gop->deleteOperationPlans();
-
-  // Ending message
-  if (getVerbose())
-    logger << "Finished erase command at " << Date::now()
-    << " : " << t << endl;
-}
-
-
-PyObject* CommandErase::executePython(PyObject* self, PyObject* args)
+DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
 {
   // Pick up arguments
   PyObject *obj = NULL;
@@ -546,13 +422,207 @@ PyObject* CommandErase::executePython(PyObject* self, PyObject* args)
   if (!ok) return NULL;
 
   // Validate the argument
-  bool staticalso = false;
-  if (obj) staticalso = PythonObject(obj).getBool();
+  bool deleteStaticModel = false;
+  if (obj) deleteStaticModel = PythonObject(obj).getBool();
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try {
-    CommandErase(staticalso).execute();
+    if (deleteStaticModel)
+    {
+      // Delete all entities.
+      // The order is chosen to minimize the work of the individual destructors.
+      // E.g. the destructor of the item class recurses over all demands and
+      // all buffers. It is much faster if there are none already.
+      Demand::clear();
+      Operation::clear();
+      Buffer::clear();
+      Resource::clear();
+      SetupMatrix::clear();
+      Location::clear();
+      Customer::clear();
+      Calendar::clear();
+      Solver::clear();
+      Item::clear();
+      // The setup operation is a static singleton and should always be around
+      OperationSetup::setupoperation = Operation::add(new OperationSetup("setup operation"));
+    }
+    else
+      // Delete the operationplans only
+      for (Operation::iterator gop = Operation::begin();
+          gop != Operation::end(); ++gop)
+        gop->deleteOperationPlans();
+  }
+  catch (...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
+}
+
+
+//
+// PRINT MODEL SIZE
+//
+
+
+DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
+{
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS
+
+  // Execute and catch exceptions
+  size_t count, memsize;
+  try
+  {
+
+    // Intro
+    logger << endl << "Size information of frePPLe " << PACKAGE_VERSION
+      << " (" << __DATE__ << ")" << endl << endl;
+
+    // Print current locale
+    #if defined(HAVE_SETLOCALE) || defined(_MSC_VER)
+    logger << "Locale: " << setlocale(LC_ALL,NULL) << endl << endl;
+    #else
+    logger << endl;
+    #endif
+
+    // Print loaded modules
+    Environment::printModules();
+
+    // Print the number of clusters
+    logger << "Clusters: " << HasLevel::getNumberOfClusters()
+      << " (hanging: " << HasLevel::getNumberOfHangingClusters() << ")"
+      << endl << endl;
+
+    // Header for memory size
+    logger << "Memory usage:" << endl;
+    logger << "Model        \tNumber\tMemory" << endl;
+    logger << "-----        \t------\t------" << endl;
+
+    // Plan
+    size_t total = Plan::instance().getSize();
+    logger << "Plan         \t1\t"<< Plan::instance().getSize() << endl;
+
+    // Locations
+    memsize = 0;
+    for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
+      memsize += l->getSize();
+    logger << "Location     \t" << Location::size() << "\t" << memsize << endl;
+    total += memsize;
+
+    // Customers
+    memsize = 0;
+    for (Customer::iterator c = Customer::begin(); c != Customer::end(); ++c)
+      memsize += c->getSize();
+    logger << "Customer     \t" << Customer::size() << "\t" << memsize << endl;
+    total += memsize;
+
+    // Buffers
+    memsize = 0;
+    for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
+      memsize += b->getSize();
+    logger << "Buffer       \t" << Buffer::size() << "\t" << memsize << endl;
+    total += memsize;
+
+    // Setup matrices
+    memsize = 0;
+    for (SetupMatrix::iterator s = SetupMatrix::begin(); s != SetupMatrix::end(); ++s)
+      memsize += s->getSize();
+    logger << "Setup matrix \t" << SetupMatrix::size() << "\t" << memsize << endl;
+    total += memsize;
+
+    // Resources
+    memsize = 0;
+    for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
+      memsize += r->getSize();
+    logger << "Resource     \t" << Resource::size() << "\t" << memsize << endl;
+    total += memsize;
+
+    // Operations, flows and loads
+    size_t countFlows(0), memFlows(0), countLoads(0), memLoads(0);
+    memsize = 0;
+    for (Operation::iterator o = Operation::begin(); o != Operation::end(); ++o)
+    {
+      memsize += o->getSize();
+      for (Operation::flowlist::const_iterator fl = o->getFlows().begin();
+          fl != o->getFlows().end(); ++ fl)
+      {
+        ++countFlows;
+        memFlows += fl->getSize();
+      }
+      for (Operation::loadlist::const_iterator ld = o->getLoads().begin();
+          ld != o->getLoads().end(); ++ ld)
+      {
+        ++countLoads;
+        memLoads += ld->getSize();
+      }
+    }
+    logger << "Operation    \t" << Operation::size() << "\t" << memsize << endl;
+    logger << "Flow         \t" << countFlows << "\t" << memFlows  << endl;
+    logger << "Load         \t" << countLoads << "\t" << memLoads  << endl;
+    total += memsize + memFlows + memLoads;
+
+    // Calendars (which includes the buckets)
+    memsize = 0;
+    for (Calendar::iterator cl = Calendar::begin(); cl != Calendar::end(); ++cl)
+      memsize += cl->getSize();
+    logger << "Calendar     \t" << Calendar::size() << "\t" << memsize  << endl;
+    total += memsize;
+
+    // Items
+    memsize = 0;
+    for (Item::iterator i = Item::begin(); i != Item::end(); ++i)
+      memsize += i->getSize();
+    logger << "Item         \t" << Item::size() << "\t" << memsize  << endl;
+    total += memsize;
+
+    // Demands
+    memsize = 0;
+    for (Demand::iterator dm = Demand::begin(); dm != Demand::end(); ++dm)
+      memsize += dm->getSize();
+    logger << "Demand       \t" << Demand::size() << "\t" << memsize  << endl;
+    total += memsize;
+
+    // Operationplans
+    size_t countloadplans(0), countflowplans(0);
+    memsize = count = 0;
+    for (OperationPlan::iterator j = OperationPlan::begin();
+        j!=OperationPlan::end(); ++j)
+    {
+      ++count;
+      memsize += sizeof(*j);
+      countloadplans += j->sizeLoadPlans();
+      countflowplans += j->sizeFlowPlans();
+    }
+    total += memsize;
+    logger << "OperationPlan\t" << count << "\t" << memsize << endl;
+
+    // Flowplans
+    memsize = countflowplans * sizeof(FlowPlan);
+    total +=  memsize;
+    logger << "FlowPlan     \t" << countflowplans << "\t" << memsize << endl;
+
+    // Loadplans
+    memsize = countloadplans * sizeof(LoadPlan);
+    total +=  memsize;
+    logger << "LoadPlan     \t" << countloadplans << "\t" << memsize << endl;
+
+    // Problems
+    memsize = count = 0;
+    for (Problem::const_iterator pr = Problem::begin(); pr!=Problem::end(); ++pr)
+    {
+      ++count;
+      memsize += pr->getSize();
+    }
+    total += memsize;
+    logger << "Problem      \t" << count << "\t" << memsize << endl;
+
+    // TOTAL
+    logger << "Total        \t\t" << total << endl << endl;
   }
   catch (...)
   {

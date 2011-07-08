@@ -40,7 +40,7 @@ double Forecast::Forecast_SmapeAlfa(0.95);
 unsigned long Forecast::Forecast_Skip(5);
 
 
-MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
+MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
 {
   // Initialize only once
   static bool init = false;
@@ -53,7 +53,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   init = true;
 
   // Process the module parameters
-  for (CommandLoadLibrary::ParameterList::const_iterator x = z.begin();
+  for (Environment::ParameterList::const_iterator x = z.begin();
     x != z.end(); ++x)
   try
   {

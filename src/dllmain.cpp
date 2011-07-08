@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -56,9 +56,7 @@ DECLARE_EXPORT(void) FreppleInitialize()
     // Execute the commands in the file
     try
     {
-      CommandPython cmd;
-      cmd.setFileName(init);
-      cmd.execute();
+      PythonInterpreter::executeFile(init);
     }
     catch (...)
     {
@@ -72,7 +70,7 @@ DECLARE_EXPORT(void) FreppleInitialize()
   if (!init.empty())
   {
     // Execute the commands in the file
-    try {CommandReadXMLFile(init).execute();}
+    try { XMLInputFile(init).parse(&Plan::instance(),true); }
     catch (...)
     {
       logger << "Exception caught during execution of 'init.xml'" << endl;
@@ -84,19 +82,39 @@ DECLARE_EXPORT(void) FreppleInitialize()
 
 DECLARE_EXPORT(void) FreppleReadXMLData (const char* x, bool validate, bool validateonly)
 {
-  if (x) CommandReadXMLString(string(x), validate, validateonly).execute();
+  if (!x) return;
+  if (validateonly)
+    XMLInputString(x).parse(NULL, true);
+  else
+    XMLInputString(x).parse(&Plan::instance(), validate);
 }
 
 
-DECLARE_EXPORT(void) FreppleReadXMLFile (const char* x, bool validate, bool validateonly)
+DECLARE_EXPORT(void) FreppleReadXMLFile (const char* filename, bool validate, bool validateonly)
 {
-  CommandReadXMLFile(x, validate, validateonly).execute();
+  if (!filename)
+  {
+    // Read from standard input
+    xercesc::StdInInputSource in;
+    if (validateonly)
+      // When no root object is passed, only the input validation happens
+      XMLInput().parse(in, NULL, true);
+    else
+      XMLInput().parse(in, &Plan::instance(), validate);
+  }
+  else if (validateonly)
+    // Read and validate a file
+    XMLInputFile(filename).parse(NULL, true);
+  else
+    // Read, execute and optionally validate a file
+    XMLInputFile(filename).parse(&Plan::instance(),validate);
 }
 
 
 DECLARE_EXPORT(void) FreppleSaveFile(const char* x)
 {
-  CommandSave(x).execute();
+  XMLOutputFile o(x);
+  o.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
 }
 
 

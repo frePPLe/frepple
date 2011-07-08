@@ -288,60 +288,6 @@ inline ostream& operator <<(ostream &os, const indent& i)
 }
 
 
-/** @brief This class groups some functions used to interact with the operating
-  * system environment.
-  *
-  * It handles:
-  *   - The location of the configuration files.
-  *   - The maximum number of processors / threads to be used by frePPLe.
-  *   - An output stream for logging all output.
-  */
-class Environment
-{
-  private:
-    /** Stores the number of processors on your machine.<br>
-      * On windows it is automatically initialized to the value of the
-      * environment variable NUMBER_OF_PROCESSORS.
-      */
-    static DECLARE_EXPORT int processors;
-
-    /** A file where output is directed to. */
-    static DECLARE_EXPORT ofstream logfile;
-
-    /** The name of the log file. */
-    static DECLARE_EXPORT string logfilename;
-
-  public:
-    /** Search for a file with a given name.<br>
-      * The following directories are searched in sequence to find a match:
-      *   - The current directory.
-      *   - The directory reffered to by the variable FREPPLE_HOME, if it
-      *     is defined.
-      *   - The data directory as configured during the compilation.
-      *     This applies only to linux / unix.
-      *   - The library directory as configured during the compilation.
-      *     This applies only to linux / unix.
-      */
-    static DECLARE_EXPORT string searchFile(const string);
-
-    /** Returns the number of processors on your machine. */
-    static int getProcessors() {return processors;}
-
-    /** Updates the number of processors available on your machine. */
-    static void setProcessors(int i) {if (i>=1) processors = i;}
-
-    /** Returns the name of the logfile. */
-    static const string& getLogFile() {return logfilename;}
-
-    /** Updates the filename for logging error messages and warnings.
-      * The file is also opened for writing and the standard output and
-      * standard error output streams are redirected to it.<br>
-      * If the filename starts with '+' the log file is appended to
-      * instead of being overwritten.
-      */
-    static DECLARE_EXPORT void setLogFile(const string& x);
-};
-
 
 //
 // CUSTOM EXCEPTION CLASSES
@@ -558,6 +504,9 @@ class PythonInterpreter
 
     /** Execute some python code. */
     static DECLARE_EXPORT void execute(const char*);
+
+    /** Execute a file with Python code. */
+    static DECLARE_EXPORT void executeFile(string);
 
     /** Register a new method to Python.<br>
       * Arguments:
@@ -1021,10 +970,6 @@ class MetaClass : public NonCopyable
       * takes a string as argument. */
     typedef Object* (*creatorString)(const string&);
 
-    /** Type definition for a method called to process an XML processing
-      * instruction. */
-    typedef void (*processorXMLInstruction)(const char *d);
-
     /** A string specifying the object type, i.e. the subclass within the
       * category. */
     string type;
@@ -1043,7 +988,6 @@ class MetaClass : public NonCopyable
     {
       creatorDefault factoryMethodDefault;
       creatorString factoryMethodString;
-      processorXMLInstruction processingInstruction;
     };
 
     /** Destructor. */
@@ -1076,15 +1020,6 @@ class MetaClass : public NonCopyable
     {
       registerClass(cat,cls,def);
       factoryMethodString = f;
-    }
-
-    /** This constructor registers the metadata of a class as an XML processing
-      * instruction. */
-    MetaClass (const string& cat, const string& cls,
-      processorXMLInstruction f, bool def = false) : pythonClass(NULL)
-    {
-      registerClass(cat,cls,def);
-      processingInstruction = f;
     }
 
     /** This function will analyze the string being passed, and return the
@@ -2591,6 +2526,84 @@ class XMLElement : public DataElement
 };
 
 
+/** @brief This class groups some functions used to interact with the operating
+  * system environment.
+  *
+  * It handles:
+  *   - The location of the configuration files.
+  *   - The maximum number of processors / threads to be used by frePPLe.
+  *   - An output stream for logging all output.
+  *   - Dynamic loading of a shared library.
+  */
+class Environment
+{
+  private:
+    /** Stores the number of processors on your machine.<br>
+      * On windows it is automatically initialized to the value of the
+      * environment variable NUMBER_OF_PROCESSORS.
+      */
+    static DECLARE_EXPORT int processors;
+
+    /** A file where output is directed to. */
+    static DECLARE_EXPORT ofstream logfile;
+
+    /** The name of the log file. */
+    static DECLARE_EXPORT string logfilename;
+
+    /** A list of all loaded modules. */
+    static DECLARE_EXPORT set<string> moduleRegistry;
+
+  public:
+    /** Search for a file with a given name.<br>
+      * The following directories are searched in sequence to find a match:
+      *   - The current directory.
+      *   - The directory reffered to by the variable FREPPLE_HOME, if it
+      *     is defined.
+      *   - The data directory as configured during the compilation.
+      *     This applies only to linux / unix.
+      *   - The library directory as configured during the compilation.
+      *     This applies only to linux / unix.
+      */
+    static DECLARE_EXPORT string searchFile(const string);
+
+    /** Returns the number of processors on your machine. */
+    static int getProcessors() {return processors;}
+
+    /** Updates the number of processors available on your machine. */
+    static void setProcessors(int i) {if (i>=1) processors = i;}
+
+    /** Returns the name of the logfile. */
+    static const string& getLogFile() {return logfilename;}
+
+    /** Updates the filename for logging error messages and warnings.
+      * The file is also opened for writing and the standard output and
+      * standard error output streams are redirected to it.<br>
+      * If the filename starts with '+' the log file is appended to
+      * instead of being overwritten.
+      */
+    static DECLARE_EXPORT void setLogFile(const string& x);
+
+    /** Type for storing parameters passed to a module that is loaded. */
+    typedef map<string,XMLElement> ParameterList;
+
+    /** @brief Command to dynamically load a shared library in frePPLe.
+      *
+      * After loading the library, the function "initialize" of the module
+      * is executed.
+      *
+      * The current implementation of the command works on the following platforms:
+      *  - Windows
+      *  - Linux
+      *  - Unix systems supporting the dlopen function in the standard way.
+      *    Some unix systems have other or deviating APIs. A pretty messy story :-<
+      */
+    static DECLARE_EXPORT void loadModule(string lib, ParameterList& parameters); //@todo replace argument with a AttributeList instead
+
+    /** Print all modules that have been loaded. */
+    static DECLARE_EXPORT void printModules();
+};
+
+
 /** @brief This class handles two-way translation between the data types
   * in C++ and Python.
   *
@@ -3624,9 +3637,6 @@ class Command
     /** Controls whether verbose output will be generated during execution. */
     void setVerbose(bool b) {verbose = (b ? YES : NO);}
 
-    /** A second metadata object for registering XML processing instructions. */
-    static DECLARE_EXPORT const MetaCategory* metadataInstruction;
-
     /** Return a pointer to the next command. */
     Command* getNext() const {return next;}
 
@@ -3819,131 +3829,6 @@ class CommandList : public Command
       * will be printed.
       */
     virtual DECLARE_EXPORT ~CommandList();
-};
-
-
-/** @brief Command to dynamically load a shared library in frePPLe.
-  *
-  * After loading the library, the function "initialize" of the module
-  * is executed.
-  *
-  * The current implementation of the command works on the following platforms:
-  *  - Windows
-  *  - Linux
-  *  - Unix systems supporting the dlopen function in the standard way.
-  *    Some unix systems have other or deviating APIs. A pretty messy story :-<
-  */
-class CommandLoadLibrary : public Command
-{
-  public:
-    /** Print all modules that have been loaded. */
-    static DECLARE_EXPORT void printModules();
-
-    /** Type for storing parameters. */
-    typedef map<string,XMLElement> ParameterList;
-
-    /** Constructor.
-      * @param libname File name of the library
-      */
-    explicit CommandLoadLibrary(const string& libname) : lib(libname) {};
-
-    /** Default constructor. */
-    explicit CommandLoadLibrary() {};
-
-    /** Updates the command line to be executed.<br>
-      * @param libname Path of the library to be loaded
-      */
-    void setLibraryName(const string& libname) {lib = libname;}
-
-    /** Returns the command line that will be run. */
-    string getLibraryName() {return lib;}
-
-    /** Load the library, and execute the initialize() method.
-      * @exception RuntimeException When the library can't be loaded
-      *     or when the initialize() method doesn't exist in the library.
-      */
-    DECLARE_EXPORT void execute();
-
-    /** Python equivalent of this command. */
-    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*, PyObject*);
-
-    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
-
-    /** Add a parameter for the module. */
-    void addParameter(const string& name, const string& value)
-    {parameters[name] = value;}
-
-    /** Returns true if a module with this name has been loaded. */
-    static bool isLoaded(const string& s)
-    {return registry.find(s) != registry.end();}
-
-  private:
-    /** Name of the library to be loaded. */
-    string lib;
-
-    /** List of parameters passed to the library. */
-    ParameterList parameters;
-
-    /** Temporary string used during the reading of the parameters. */
-    string tempName;
-
-    /** Temporary string used during the reading of the parameters. */
-    string tempValue;
-
-    /** A map of all modules that have been dynamically loaded. */
-    static set<string> registry;
-};
-
-
-/** @brief This command executes Python code in the embedded interpreter.
-  *
-  * The interpreter can execute generic scripts, and it also has access
-  * to the frePPLe objects.<br>
-  * The interpreter is multi-threaded. Multiple python scripts can run in
-  * parallel. Internally Python allows only one thread at a time to
-  * execute and the interpreter switches between the active threads, i.e.
-  * a quite primitive threading model.<br>
-  * FrePPLe uses a single global interpreter. A global Python variable or
-  * function is thus visible across multiple invocations of the Python
-  * interpreter.
-  */
-class CommandPython : public Command
-{
-  private:
-    /** Python commands to be executed. */
-    string cmd;
-
-    /** Python source file to be executed. */
-    string filename;
-
-  public:
-    /** Executes the python command or source file. */
-    void execute();
-
-    /** Default constructor. */
-    explicit CommandPython() {}
-
-    /** Destructor. */
-    virtual ~CommandPython() {}
-
-    /** Update the commandline field and clears the filename field. */
-    void setCommandLine(const string& s) {cmd = s; filename.clear();}
-
-    /** Return the command line. */
-    string getCommandLine() const {return cmd;}
-
-    /** Return the filename. */
-    string getFileName() const {return filename;}
-
-    /** Update the filename field and clear the filename field. */
-    void setFileName(const string& s) {filename = s; cmd.clear();}
-
-    /** Metadata for registration as an XML instruction. */
-    static const MetaClass *metadata2;
-
-    /** This method is called when a processing instruction is read. */
-    static void processorXMLInstruction(const char *d)
-      {PythonInterpreter::execute(d);}
 };
 
 
@@ -5274,6 +5159,9 @@ class FreppleIterator : public PythonExtension<ME>
       return result;
     }
 };
+
+/** @brief This Python function loads a frepple extension module in memory. */
+DECLARE_EXPORT PyObject* loadModule(PyObject*, PyObject*, PyObject*);
 
 
 } // end namespace

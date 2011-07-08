@@ -55,7 +55,7 @@ namespace sample_module
   * The initialization routine returns a pointer to a constant character
   * buffer with the module name.
   */
-MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
+MODULE_EXPORT const char* initialize(const Environment::ParameterList& z);
 
 
 /** @brief Operation type for modeling transportation efficiently.

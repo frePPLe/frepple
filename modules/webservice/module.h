@@ -54,7 +54,7 @@ namespace module_webservice
 
 
 /** Initialization routine for the library. */
-MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
+MODULE_EXPORT const char* initialize(const Environment::ParameterList& z);
 
 
 /** @brief This command runs a multi-threaded SOAP webservice server.

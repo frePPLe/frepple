@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -2400,9 +2400,9 @@ class OperationPlan
 };
 
 
-/** @brief A simple class to easily remember the date and quantity of
+/** @brief A simple class to easily remember the date, quantity and owner of
   * an operationplan. */
-class OperationPlanState  // @todo should also restore suboperationplans!!!  replace by move command???
+class OperationPlanState  // @todo should also be able to remember and restore suboperationplans!!!
 {
   public:
     Date start;
@@ -4390,280 +4390,6 @@ class Plan : public Plannable, public Object
 };
 
 
-/** @brief This command is used for reading XML input. The input comes either
-  * from a flatfile, or from the standard input.
-  *
-  * The command is not thread-safe: multiple threads can simultaneously access
-  * the same objects.
-  */
-class CommandReadXMLFile : public Command
-{
-  public:
-    /** Constructor. If no file or directory name is passed or specified later
-      * the standard input will be read during execution of the command. */
-    CommandReadXMLFile(const char* s = NULL, bool v = true, bool o = false)
-        : validate(v), validate_only(o) {if (s) filename = s;}
-
-    /** Constructor. */
-    CommandReadXMLFile(const string& s, bool v = true, bool o = false)
-        : filename(s), validate(v), validate_only(o) {}
-
-    /** Update the name of the input file. */
-    void setFileName(const string& v) {filename = v;}
-
-    /** Returns the name of the input file. */
-    string getFileName() {return filename;}
-
-    /** Enables or disables the validation. */
-    void setValidate(bool b) {validate = b;}
-
-    /** Returns true if the schema validation has been enabled. */
-    bool getValidate() {return validate;}
-
-    /** Only validate the input, do not really execute it. */
-    void setValidateOnly(bool b) {validate_only = b;}
-
-    /** Returns whether we only need to validate to data, or really execute
-      * them too. */
-    bool getValidateOnly() {return validate_only;}
-
-    /** The commit action reads the input. If a filename is specified (either
-      * in the constructor or with the setFileName function), a flat file is
-      * read. Otherwise, the standard input is read. */
-    DECLARE_EXPORT void execute();
-
-    /** Python interface for this command. */
-    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
-
-  private:
-    /** Name of the input to be read. An empty string means that we want to
-      * read from standard input rather than a file. */
-    string filename;
-
-    /** Specifies whether or not the input file needs to be validated against
-      * the schema definition. The validation is switched ON by default.
-      * Switching it ON is recommended in situations where there is not
-      * 100% garantuee on the validity of the input data.
-      */
-    bool validate;
-
-    /** If set to true the input data are validated against the schema, but the
-      * contents isn't executed. The default value is false. */
-    bool validate_only;
-};
-
-
-/** @brief This command is used for reading XML input from a certain string.
-  *
-  * The command is not thread-safe: multiple threads can simultaneously access
-  * the same objects.
-  */
-class CommandReadXMLString : public Command
-{
-  public:
-    /** Constructor. */
-    CommandReadXMLString(const string& s, const bool v=true, const bool o=false)
-        : data(s), validate(v), validate_only(o) {};
-
-    /** Default constructor. */
-    CommandReadXMLString(const bool v=true, const bool o=false)
-        : validate(v), validate_only(o) {};
-
-    /** Updates the data string. */
-    void setData(const string& v) {data = v;}
-
-    /** Returns the data string. */
-    string getData() {return data;}
-
-    /** Enables or disables the validation. */
-    void setValidate(bool b) {validate = b;}
-
-    /** Returns true if the schema validation has been enabled. */
-    bool getValidate() {return validate;}
-
-    /** Only validate the input, do not really execute it. */
-    void setValidateOnly(bool b) {validate_only = b;}
-
-    /** Returns whether we only need to validate to data, or really execute
-      * them too. */
-    bool getValidateOnly() {return validate_only;}
-
-    /** The commit action reads the input. */
-    DECLARE_EXPORT void execute();
-
-    /** Python interface for this command. */
-    static DECLARE_EXPORT PyObject* executePython(PyObject *, PyObject *);
-
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-
-  private:
-    /** Name of the input to be read. An empty string means that we want to
-      * read from standard input rather than a file. */
-    string data;
-
-    /** Specifies whether or not the input file needs to be validated against
-      * the schema definition. The validation is switched ON by default.
-      * Switching it ON is recommended in situations where there is not
-      * 100% garantuee on the validity of the input data.
-      */
-    bool validate;
-
-    /** If set to true the input data are validated against the schema, but the
-      * contents isn't executed. The default value is false. */
-    bool validate_only;
-};
-
-
-/** @brief This command writes the complete model to an XML-file.
-  *
-  * Both the static model (i.e. items, locations, buffers, resources,
-  * calendars, etc...) and the dynamic data (i.e. the actual plan including
-  * the operationplans, demand, problems, etc...).<br>
-  * The format is such that the output file can be re-read to restore the
-  * very same model.<br>
-  * The data is written by the execute() function.
-  * @see CommandSavePlan
-  */
-class CommandSave : public Command
-{
-  public:
-    /** Constructor. */
-    CommandSave(const string& v = "plan.out")
-        : filename(v), content(XMLOutput::STANDARD) {};
-
-    /** Destructor. */
-    virtual ~CommandSave() {};
-
-    /** Return the name of the output file. */
-    string getFileName() const {return filename;}
-
-    /** Update the name of the output file. */
-    void setFileName(const string& v) {filename = v;}
-
-    /** Execute the command, ie write the data into XML format. */
-    DECLARE_EXPORT void execute();
-
-    /** Python interface to this command. */
-    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
-
-    /** Return the type of output. */
-    XMLOutput::content_type getContent() const {return content;}
-
-    /** Update the type of output.
-      * @see XMLOutput::content_type
-      */
-    void setContent(XMLOutput::content_type t) {content = t;}
-
-    /** Updates the string that is printed as the first line of each XML
-      * document.<br>
-      * The default value is:
-      *   <?xml version="1.0" encoding="UTF-8"?>
-      */
-    void setHeaderStart(const string& s) {headerstart = s;}
-
-    /** Returns the string that is printed as the first line of each XML
-      * document. */
-    string getHeaderStart() const {return headerstart;}
-
-    /** Updates the attributes that are written for the root element of each
-      * XML document.<br>
-      * The default value is an empty string.
-      */
-    void setHeaderAtts(const string& s) {headeratts = s;}
-
-    /** Returns the attributes that are written for the root element of each
-      * XML document. */
-    string getHeaderAtts() const {return headeratts;}
-
-  private:
-    string filename;
-    string headerstart;
-    string headeratts;
-    XMLOutput::content_type content;
-};
-
-
-/** @brief This command writes the dynamic part of the plan to an  text file.
-  *
-  * This saved information covers the buffer flowplans, operationplans,
-  * resource loading, demand, problems, etc...<br>
-  * The main use of this function is in the test suite: a simple text file
-  * comparison allows us to identify changes quickly. The output format is
-  * only to be seen in this context of testing, and is not intended to be used
-  * as an official method for publishing plans to other systems.<br>
-  * The data file is written by the execute() function.
-  * @see CommandSave
-  */
-class CommandSavePlan : public Command
-{
-  public:
-    CommandSavePlan(const string& v = "plan.out") : filename(v) {};
-    string getFileName() const {return filename;}
-    void setFileName(const string& v) {filename = v;}
-    DECLARE_EXPORT void execute();
-
-    /** Python interface to this command. */
-    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
-
-  private:
-    string filename;
-};
-
-
-/** @brief This command prints a summary of the dynamically allocated memory
-  * to the standard output. This is useful for understanding better the size
-  * of your model.
-  *
-  * The numbers reported by this function won't match the memory size as
-  * reported by the operating system, since the dynamically allocated memory
-  * is only a part of the total memory used by a program.
-  */
-class CommandPlanSize : public Command
-{
-  public:
-    CommandPlanSize() {};
-    DECLARE_EXPORT void execute();
-    static PyObject* executePython(PyObject* self, PyObject* args)
-      {CommandPlanSize x;x.execute(); return Py_BuildValue("");}
-    void undo() {}
-    bool undoable() const {return true;}
-};
-
-
-/** @brief This command deletes part of the model or the plan from memory.
-  *
-  * The class allows the following modes to control what to delete:
-  *  - plan:<br>
-  *    Deletes the dynamic modelling constructs, such as operationplans,
-  *    loadplans and flowplans only. Locked operationplans are not
-  *    deleted.<br>
-  *    The static model is left intact.<br>
-  *    This is the default mode.
-  *  - model:<br>
-  *    The dynamic as well as the static objects are removed. You'll end
-  *    up with a completely empty model.
-  *    Due to the logic required in the object destructors this mode doesn't
-  *    scale linear with the model size.
-  */
-class CommandErase : public Command
-{
-  public:
-    CommandErase(bool staticAlso = false) : deleteStaticModel(staticAlso) {};
-
-    DECLARE_EXPORT void execute();
-
-    /** Python interface to this command. */
-    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
-
-    bool getDeleteStaticModel() const {return deleteStaticModel;}
-    void setDeleteStaticModel(bool b) {deleteStaticModel = b;}
-  private:
-    /** Flags whether to delete the complete static model or only the
-      * dynamic plan information. */
-    bool deleteStaticModel;
-};
-
-
 /** @brief Represents the (independent) demand in the system. It can represent a
   * customer order or a forecast.
   *
@@ -6536,6 +6262,93 @@ class FlowIterator : public PythonExtension<FlowIterator>
     Operation::flowlist::const_iterator io;
     PyObject *iternext();
 };
+
+
+/** @brief This Python function is used for reading XML input.
+  *
+  * The function takes up to three arguments:
+  *   - XML data file to be processed.
+  *     If this argument is omitted or None, the standard input is read.
+  *   - Optional validate flag, defining whether or not the input data needs to be
+  *     validated against the XML schema definition.
+  *     The validation is switched ON by default.
+  *     Switching it ON is recommended in situations where there is no 100% guarantee
+  *     on the validity of the input data.
+  *   - Optional validate_only flag, which allows us to validate the data but
+  *     skip any processing.
+  */
+DECLARE_EXPORT PyObject* readXMLfile(PyObject*, PyObject*);
+
+
+/** @brief This Python function is used for processing XML input data from a string.
+  *
+  * The function takes up to three arguments:
+  *   - XML data string to be processed
+  *   - Optional validate flag, defining whether or not the input data needs to be
+  *     validated against the XML schema definition.
+  *     The validation is switched ON by default.
+  *     Switching it ON is recommended in situations where there is no 100% guarantee
+  *     on the validity of the input data.
+  *   - Optional validate_only flag, which allows us to validate the data but
+  *     skip any processing.
+  */
+DECLARE_EXPORT PyObject* readXMLdata(PyObject *, PyObject *);
+
+
+/** @brief This Python function writes the dynamic part of the plan to an text file.
+  *
+  * This saved information covers the buffer flowplans, operationplans,
+  * resource loading, demand, problems, etc...<br>
+  * The main use of this function is in the test suite: a simple text file
+  * comparison allows us to identify changes quickly. The output format is
+  * only to be seen in this context of testing, and is not intended to be used
+  * as an official method for publishing plans to other systems.
+  */
+DECLARE_EXPORT PyObject* savePlan(PyObject*, PyObject*);
+
+
+/** @brief This Python function prints a summary of the dynamically allocated
+  * memory to the standard output. This is useful for understanding better the
+  * size of your model.
+  *
+  * The numbers reported by this function won't match the memory size as
+  * reported by the operating system, since the dynamically allocated memory
+  * is only a part of the total memory used by a program.
+  */
+DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args);
+
+
+/** @brief This python function writes the complete model to an XML-file.
+  *
+  * Both the static model (i.e. items, locations, buffers, resources,
+  * calendars, etc...) and the dynamic data (i.e. the actual plan including
+  * the operationplans, demand, problems, etc...).<br>
+  * The format is such that the output file can be re-read to restore the
+  * very same model.<br>
+  * The function takes the following arguments:
+  *   - Name of the output file
+  *   - Type of output desired: STANDARD, PLAN or PLANDETAIL.
+  *     The default value is STANDARD.
+  */
+DECLARE_EXPORT PyObject* saveXMLfile(PyObject*, PyObject*);
+
+
+/** @brief This Python function erases the model or the plan from memory.
+  *
+  * The function allows the following modes to control what to delete:
+  *  - plan:<br>
+  *    Deletes the dynamic modelling constructs, such as operationplans,
+  *    loadplans and flowplans only. Locked operationplans are not
+  *    deleted.<br>
+  *    The static model is left intact.<br>
+  *    This is the default mode.
+  *  - model:<br>
+  *    The dynamic as well as the static objects are removed. You'll end
+  *    up with a completely empty model.
+  *    Due to the logic required in the object destructors this mode doesn't
+  *    scale linear with the model size.
+  */
+DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args);
 
 
 }   // End namespace

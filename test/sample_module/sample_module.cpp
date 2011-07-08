@@ -35,7 +35,7 @@ const Keyword tag_frombuffer("frombuffer");
 const Keyword tag_tobuffer("tobuffer");
 
 
-MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
+MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
 {
   static const char* name = "sample";
   // Register the new class

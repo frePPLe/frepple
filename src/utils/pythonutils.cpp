@@ -45,56 +45,8 @@ DECLARE_EXPORT PyObject* PythonLogicException = NULL;
 DECLARE_EXPORT PyObject* PythonDataException = NULL;
 DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 
-const MetaClass* CommandPython::metadata2;
-
 DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;
 DECLARE_EXPORT string PythonInterpreter::encoding;
-
-
-void CommandPython::execute()
-{
-  // Log
-  if (getVerbose())
-  {
-    logger << "Start executing python ";
-    if (!cmd.empty()) logger << "command";
-    if (!filename.empty()) logger << "file";
-    logger << " at " << Date::now() << endl;
-  }
-  Timer t;
-
-  // Evaluate data fields
-  string c;
-  if (!cmd.empty())
-    // A command to be executed.
-    c = cmd + "\n";  // Make sure last line is ended properly
-  else if (!filename.empty())
-  {
-    // A file to be executed.
-    // We build an equivalent python command rather than using the
-    // PyRun_File function. On windows different versions of the
-    // VC compiler have a different structure for FILE, thus making it
-    // impossible to use a lib compiled in python version x when compiling
-    // under version y.  Quite ugly... :-( :-( :-(
-    c = filename;
-    for (string::size_type pos = c.find_first_of("'", 0);
-        pos < string::npos;
-        pos = c.find_first_of("'", pos))
-    {
-      c.replace(pos,1,"\\'",2); // Replacing ' with \'
-      pos+=2;
-    }
-    c = "execfile(ur'" + c + "')\n";
-  }
-  else throw DataException("Python command without statement or filename");
-
-  // Pass to the interpreter.
-  PythonInterpreter::execute(c.c_str());
-
-  // Log
-  if (getVerbose()) logger << "Finished executing python at "
-    << Date::now() << " : " << t << endl;
-}
 
 
 void PythonInterpreter::initialize()
@@ -237,6 +189,26 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
 
   // Release the global python lock
   PyEval_ReleaseLock();
+}
+
+
+DECLARE_EXPORT void PythonInterpreter::executeFile(string filename)
+{
+  // A file to be executed.
+  // We build an equivalent python command rather than using the
+  // PyRun_File function. On windows different versions of the
+  // VC compiler have a different structure for FILE, thus making it
+  // impossible to use a lib compiled in python version x when compiling
+  // under version y.  Quite ugly... :-( :-( :-(
+  for (string::size_type pos = filename.find_first_of("'", 0);
+      pos < string::npos;
+      pos = filename.find_first_of("'", pos))
+  {
+    filename.replace(pos,1,"\\'",2); // Replacing ' with \'
+    pos+=2;
+  }
+  string cmd = "execfile(ur'" + filename + "')\n";
+  execute(cmd.c_str());
 }
 
 

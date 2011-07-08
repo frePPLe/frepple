@@ -278,7 +278,7 @@ namespace module_forecast
 
 
 /** Initialization routine for the library. */
-MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList&);
+MODULE_EXPORT const char* initialize(const Environment::ParameterList&);
 
 /** @brief This class represents a bucketized demand signal.
   *

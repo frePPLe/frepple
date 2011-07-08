@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -75,29 +75,25 @@ void 	XMLInput::processingInstruction
   char* value = xercesc::XMLString::transcode(data);
   try
   {
-    // Look up the class
-    const MetaClass* j = Command::metadataInstruction->findClass(type);
-    if (!j || !j->processingInstruction)
+    if (!strcmp(type,"python"))
     {
-      string msg = string("Unknown processing instruction ") + type;
-      xercesc::XMLString::release(&type);
-      xercesc::XMLString::release(&value);
-      throw LogicException(msg);
-    }
-    try
-    {
-      // Execute the processing instruction
-      j->processingInstruction(value);
-    }
-    catch (DataException e)
-    {
-      if (abortOnDataException)
+      // "python" is the only processing instruction which we process.
+      // Others will be silently ignored
+      try
       {
-        xercesc::XMLString::release(&type);
-        xercesc::XMLString::release(&value);
-        throw;
+        // Execute the processing instruction
+        PythonInterpreter::execute(value);
       }
-      else logger << "Continuing after data error: " << e.what() << endl;
+      catch (DataException e)
+      {
+        if (abortOnDataException)
+        {
+          xercesc::XMLString::release(&type);
+          xercesc::XMLString::release(&value);
+          throw;
+        }
+        else logger << "Continuing after data error: " << e.what() << endl;
+      }
     }
     xercesc::XMLString::release(&type);
     xercesc::XMLString::release(&value);

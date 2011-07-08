@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -593,6 +593,11 @@ class SolverMRP : public Solver
         SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
           : sol(s), cluster(c), demands(d), constrainedPlanning(true), 
             state(statestack), prevstate(statestack-1) {}
+
+        /** Collect data of uncommitted operationplans in a list. This list can later
+          * be used to quickly restore the current state.
+          */
+        void collectOperationPlanStates(list<OperationPlanState>&);
 
         /** Verbose mode is inherited from the solver. */
         unsigned short getLogLevel() const {return sol ? sol->getLogLevel() : 0;}

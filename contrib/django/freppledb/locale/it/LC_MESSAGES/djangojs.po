@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-23 13:38+0200\n"
+"POT-Creation-Date: 2011-07-09 10:53+0200\n"
 "PO-Revision-Date: 2011-04-03 17:43+0100\n"
 "Last-Translator: johan de taeye <jdetaeye@users.sourceforge.net>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
@@ -76,47 +76,47 @@ msgstr "Filtro dati"
 msgid "Filter"
 msgstr "Filtro"
 
-#: static/frepple.js:394 static/frepple.js.py:578
+#: static/frepple.js:394 static/frepple.js.py:580
 msgid "Cancel"
 msgstr "Cancella"
 
-#: static/frepple.js:526 static/frepple.js.py:531
+#: static/frepple.js:528 static/frepple.js.py:533
 msgid "False"
 msgstr "Falso"
 
-#: static/frepple.js:527 static/frepple.js.py:532
+#: static/frepple.js:529 static/frepple.js.py:534
 msgid "True"
 msgstr "Vero"
 
-#: static/frepple.js:571
+#: static/frepple.js:573
 msgid "Import data"
 msgstr "Importa dati"
 
-#: static/frepple.js:574
+#: static/frepple.js:576
 msgid "Load data from a CSV-formatted text file in the database."
 msgstr "Carica dati nel database da un file di testo CSV."
 
-#: static/frepple.js:575
+#: static/frepple.js:577
 msgid "The first row should contain the field names."
 msgstr "La pirma riga dovrebbe contenere i nomi dei campi"
 
-#: static/frepple.js:576
+#: static/frepple.js:578
 msgid "Data file"
 msgstr "file di dati"
 
-#: static/frepple.js:577
+#: static/frepple.js:579
 msgid "Upload"
 msgstr "Caricamento"
 
-#: static/frepple.js:598
+#: static/frepple.js:602
 msgid "Export data"
 msgstr "Esporta i dati"
 
-#: static/frepple.js:600
+#: static/frepple.js:604
 msgid "CSV style"
 msgstr "CSV stile"
 
-#: static/frepple.js:601
+#: static/frepple.js:605
 msgid "Table"
 msgstr "Tabella"
 

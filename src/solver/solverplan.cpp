@@ -191,21 +191,17 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   int cl = demands_per_cluster.size();
   if (cl<1) return;
 
-  // Create the command list to control the execution
-  CommandList threads;
-
   // Solve in parallel threads.
   // When not solving in silent and autocommit mode, we only use a single
   // solver thread.
+  ThreadGroup threads;
   if (getLogLevel()>0 || !getAutocommit())
     threads.setMaxParallel(1);
-  else
-    threads.setMaxParallel( cl > getMaxParallel() ? getMaxParallel() : cl);
 
-  // Make sure a problem in a single cluster doesn't spoil it all
+  // Register all clusters to be solved
   for (classified_demand::iterator j = demands_per_cluster.begin();
       j != demands_per_cluster.end(); ++j)
-    threads.add(new SolverMRPdata(this, j->first, &(j->second)));
+    threads.add(SolverMRPdata::runme, new SolverMRPdata(this, j->first, &(j->second)));
 
   // Run the planning command threads and wait for them to exit
   threads.execute();

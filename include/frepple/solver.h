@@ -586,6 +586,11 @@ class SolverMRP : public Solver
     {
         friend class SolverMRP;
       public:
+        static void runme(void *args)
+        {
+          static_cast<SolverMRP::SolverMRPdata*>(args)->execute();
+        }
+
         /** Return the solver. */
         SolverMRP* getSolver() const {return sol;}
 

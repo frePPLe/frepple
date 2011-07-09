@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as Objecthed   *
@@ -574,53 +574,6 @@ DECLARE_EXPORT bool matchWildcard(const char*, const char*);
 
 
 //
-// UTILITY CLASSES FOR MULTITHREADING
-//
-
-/** @brief This class is a wrapper around platform specific mutex functions. */
-class Mutex: public NonCopyable
-{
-  public:
-#ifndef MT
-    // No threading support, empty class
-    Mutex() {}
-    ~Mutex()  {}
-    void lock() {}
-    void unlock() {}
-#elif defined(HAVE_PTHREAD_H)
-    // Pthreads
-    Mutex()         {pthread_mutex_init(&mtx, 0);}
-    ~Mutex()        {pthread_mutex_destroy(&mtx);}
-    void lock()     {pthread_mutex_lock(&mtx);}
-    void unlock()   {pthread_mutex_unlock(&mtx);}
-  private:
-    pthread_mutex_t mtx;
-#else
-    // Windows critical section
-    Mutex() {InitializeCriticalSection(&critsec);}
-    ~Mutex()  {DeleteCriticalSection(&critsec);}
-    void lock() {EnterCriticalSection(&critsec);}
-    void unlock() {LeaveCriticalSection(&critsec);}
-  private:
-    CRITICAL_SECTION critsec;
-#endif
-};
-
-
-/** @brief This is a convenience class that makes it easy (and
-  * exception-safe) to lock a mutex in a scope.
-  */
-class ScopeMutexLock: public NonCopyable
-{
-  protected:
-    Mutex& mtx;
-  public:
-    ScopeMutexLock(Mutex& imtx): mtx(imtx) {mtx.lock ();}
-    ~ScopeMutexLock() {mtx.unlock();}
-};
-
-
-//
 // METADATA AND OBJECT FACTORY
 //
 
@@ -696,9 +649,9 @@ class Keyword : public NonCopyable
       * this function at the start. This function should be as simple
       * as possible while still garantueeing the perfectness.<br>
       * The hash function is based on the Xerces-C implementation,
-      * with the difference that the hash calculated by our function is 
+      * with the difference that the hash calculated by our function is
       * portable between platforms.<br>
-      * The hash modulus is 954991 (which is the biggest prime number 
+      * The hash modulus is 954991 (which is the biggest prime number
       * lower than 1000000).
       */
     static DECLARE_EXPORT hashtype hash(const char*);
@@ -2585,12 +2538,12 @@ class Environment
     /** Type for storing parameters passed to a module that is loaded. */
     typedef map<string,XMLElement> ParameterList;
 
-    /** @brief Command to dynamically load a shared library in frePPLe.
+    /** @brief Function to dynamically load a shared library in frePPLe.
       *
       * After loading the library, the function "initialize" of the module
       * is executed.
       *
-      * The current implementation of the command works on the following platforms:
+      * The current implementation supports the following platforms:
       *  - Windows
       *  - Linux
       *  - Unix systems supporting the dlopen function in the standard way.
@@ -2647,10 +2600,10 @@ class PythonObject : public DataElement
     operator bool() const {return obj != NULL && obj != Py_None;}
 
     /** Assignment operator. */
-    PythonObject& operator = (const PythonObject& o) 
+    PythonObject& operator = (const PythonObject& o)
     {
       if (obj) {Py_DECREF(obj);}
-      obj = o.obj; 
+      obj = o.obj;
       if (obj) {Py_INCREF(obj);}
       return *this;
     }
@@ -2868,13 +2821,13 @@ class PythonFunction : public PythonObject
     DECLARE_EXPORT PythonFunction(PyObject*);
 
     /** Copy constructor. */
-    PythonFunction(const PythonFunction& o) : func(o.func) 
+    PythonFunction(const PythonFunction& o) : func(o.func)
     {
       if (func) {Py_INCREF(func);}
     }
 
     /** Assignment operator. */
-    PythonFunction& operator= (const PythonFunction& o) 
+    PythonFunction& operator= (const PythonFunction& o)
     {
       if (func) {Py_DECREF(func);}
       func = o.func;
@@ -2905,7 +2858,7 @@ class PythonFunction : public PythonObject
 
   private:
     /** A pointer to the Python object. */
-    PyObject* func; 
+    PyObject* func;
 };
 
 
@@ -3265,6 +3218,147 @@ class Object : public PythonExtensionBase
 
 
 //
+// UTILITY CLASSES FOR MULTITHREADING
+//
+
+
+/** @brief This class is a wrapper around platform specific mutex functions. */
+class Mutex: public NonCopyable
+{
+  public:
+#ifndef MT
+    // No threading support, empty class
+    Mutex() {}
+    ~Mutex()  {}
+    void lock() {}
+    void unlock() {}
+#elif defined(HAVE_PTHREAD_H)
+    // Pthreads
+    Mutex()         {pthread_mutex_init(&mtx, 0);}
+    ~Mutex()        {pthread_mutex_destroy(&mtx);}
+    void lock()     {pthread_mutex_lock(&mtx);}
+    void unlock()   {pthread_mutex_unlock(&mtx);}
+  private:
+    pthread_mutex_t mtx;
+#else
+    // Windows critical section
+    Mutex() {InitializeCriticalSection(&critsec);}
+    ~Mutex()  {DeleteCriticalSection(&critsec);}
+    void lock() {EnterCriticalSection(&critsec);}
+    void unlock() {LeaveCriticalSection(&critsec);}
+  private:
+    CRITICAL_SECTION critsec;
+#endif
+};
+
+
+/** @brief This is a convenience class that makes it easy (and
+  * exception-safe) to lock a mutex in a scope.
+  */
+class ScopeMutexLock: public NonCopyable
+{
+  protected:
+    Mutex& mtx;
+  public:
+    ScopeMutexLock(Mutex& imtx): mtx(imtx) {mtx.lock ();}
+    ~ScopeMutexLock() {mtx.unlock();}
+};
+
+
+/** @brief This class supports parallel execution of a number of functions.
+  *
+  * Currently Pthreads and Windows threads are supported as the implementation
+  * of the multithreading.
+  */
+class ThreadGroup : public NonCopyable
+{
+  public:
+    /** Prototype of the thread function. */
+    typedef void (*callable)(void*);
+
+    /** Constructor which defaults to have as many worker threads as there are
+      * cores on the machine.
+      */
+    ThreadGroup() : countCallables(0)
+    {
+      maxParallel = Environment::getProcessors();
+    };
+
+    /** Constructor with a predefined number of worker threads. */
+    ThreadGroup(int i) : countCallables(0)
+    {
+      setMaxParallel(i);
+    };
+
+    /** Add a new function to be called and its argument. */
+    void add(callable func, void* args)
+    {
+      callables.push( make_pair(func,args) );
+      ++countCallables;
+    }
+
+    /** Execute all functions and wait for them to finish. */
+    void execute();
+
+    /** Returns the number of parallel workers that is activated.<br>
+      * By default we activate as many worker threads as there are cores on
+      * the machine.
+      */
+    int getMaxParallel() const {return maxParallel;}
+
+    /** Updates the number of parallel workers that is activated. */
+    void setMaxParallel(int b)
+    {
+      if (b<1)
+        throw DataException("Invalid number of parallel execution threads");
+#ifndef MT
+      maxParallel = (b>1 ? 1 : b);
+#else
+      maxParallel = b;
+#endif
+    }
+
+  private:
+    typedef pair<callable,void*> callableWithArgument;
+
+    /** Mutex to protect the curCommand data field during multi-threaded
+      * execution.
+      * @see selectCommand
+      */
+    Mutex lock;
+
+    /** Specifies the maximum number of commands in the list that can be
+      * executed in parallel.
+      * The default value is 1, i.e. sequential execution.<br>
+      * The value of this field is NOT inherited from parent command lists.<br>
+      * Note that the maximum applies to this command list only, and it isn't
+      * a system-wide limit on the creation of threads.
+      */
+    int maxParallel;
+
+    /** Stack with all registered functions and their invocation arguments. */
+    stack<callableWithArgument> callables;
+
+    /** Count registered callables. */
+    unsigned int countCallables;
+
+    /** This functions runs a single command execution thread. It is used as
+      * a holder for the main routines of a trheaded routine.
+      */
+#if defined(HAVE_PTHREAD_H) || !defined(MT)
+    static void* wrapper(void *arg);
+#else
+    static unsigned __stdcall wrapper(void *);
+#endif
+
+    /** This method selects the next function to be executed.
+      * @see wrapper
+      */
+    DECLARE_EXPORT callableWithArgument selectNextCallable();
+};
+
+
+//
 // RED-BLACK TREE CLASS
 //
 
@@ -3572,11 +3666,8 @@ class Tree : public NonCopyable
 
 /** @brief Abstract base class for all commands.
   *
-  * All changes in the system state are expected to be wrapped in a command
-  * object. The execute() and undo() methods update the model.<br>
-  * Adhering to this principle makes it easy to trace, time and log changes
-  * appropriately.<br>
-  * Command objects can't be persisted.
+  * Command objects are designed for algorithms that need to keep track of
+  * their decision, efficiently undo them and redo them.
   */
 class Command
 {
@@ -3638,20 +3729,7 @@ class Command
 /** @brief A container command to group a series of commands together.
   *
   * This class implements the "composite" design pattern in order to get an
-  * efficient and intuitive hierarchical grouping of tasks.<br>
-  * A command list can be executed in three different modes:
-  *   - Run the commands in parallel with each other, in seperate threads.<br>
-  *     This is achieved by setting the sequential field to false.
-  *   - Run the commands in sequence, and abort the command sequence when one
-  *     of the commands in the list fails.<BR>
-  *     This mode requires the sequential field to be set to true, and the
-  *     AbortOnError field to true.
-  *   - Run the commands in sequence, and continue the command sequence when
-  *     some commands in the sequence fail.<BR>
-  *     This mode requires the sequential field to be set to true, and the
-  *     AbortOnError field to false.
-  * Currently Pthreads and Windows threads are supported as the implementation
-  * of the multithreading.
+  * efficient and intuitive hierarchical grouping of tasks.
   */
 class CommandList : public Command
 {
@@ -3668,35 +3746,6 @@ class CommandList : public Command
 
     /** Current command to be executed. */
     Command* curCommand;
-
-    /** Mutex to protect the curCommand data field during multi-threaded
-      * execution.
-      * @see selectCommand
-      */
-    Mutex lock;
-
-    /** Specifies the maximum number of commands in the list that can be
-      * executed in parallel.
-      * The default value is 1, i.e. sequential execution.<br>
-      * The value of this field is NOT inherited from parent command lists.<br>
-      * Note that the maximum applies to this command list only, and it isn't
-      * a system-wide limit on the creation of threads.
-      */
-    int maxparallel;
-
-    /** This functions runs a single command execution thread. It is used as
-      * a holder for the main routines of a trheaded routine.
-      */
-#if defined(HAVE_PTHREAD_H) || !defined(MT)
-     static void* wrapper(void *arg);
-#else
-     static unsigned __stdcall wrapper(void *);
-#endif
-
-    /** This method selects the next command to be executed.
-      * @see wrapper
-      */
-    DECLARE_EXPORT Command* selectCommand();
 
   public:
     /** Returns the number of commands stored in this list. */
@@ -3736,32 +3785,12 @@ class CommandList : public Command
       * of actions. */
     DECLARE_EXPORT void execute();
 
-    /** Returns whether the command list processes its commands sequentially or
-      * in parallel. The default is sequentially, and this field is NOT
-      * inherited down nested command list hierarchies. */
-    int getMaxParallel() const {return maxparallel;}
-
-    /** Updates whether the command list process its commands sequentially or
-      * in parallel. */
-    void setMaxParallel(int b)
-    {
-      if (b<1)
-        throw DataException("Invalid number of parallel execution threads");
-#ifndef MT
-      maxparallel = (b>1 ? 1 : b);
-#else
-      // Impose a hard limit of twice the number of available processors.
-      int max = Environment::getProcessors() * 2;
-      maxparallel = (b>max ? max : b);
-#endif
-    }
-
     /** Returns true if no commands have been added yet to the list. */
     bool empty() const {return firstCommand==NULL;}
 
     /** Default constructor. */
     explicit CommandList() : firstCommand(NULL), lastCommand(NULL),
-      curCommand(NULL), maxparallel(1) {}
+      curCommand(NULL) {}
 
     /** Destructor.<br>
       * A commandlist should only be deleted when all of its commands

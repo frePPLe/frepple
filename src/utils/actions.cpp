@@ -95,171 +95,11 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
 }
 
 
-DECLARE_EXPORT Command* CommandList::selectCommand()
-{
-  ScopeMutexLock l(lock );
-  Command *c = curCommand;
-  if (curCommand) curCommand = curCommand->next;
-  return c;
-}
-
-
 DECLARE_EXPORT void CommandList::execute()
 {
-  // Execute the actions
-  // This field is set asap in this method since it is used a flag to
-  // recognize that execution is in progress.
-  curCommand = firstCommand;
-
-#ifndef MT
-  // Compile 1: No multithreading
-  if (maxparallel>1) maxparallel = 1;
-#else
-  if (maxparallel>1)
-  {
-    // MODE 1: Parallel execution of the commands
-    int numthreads = getNumberOfCommands();
-    // Limit the number of threads to the maximum allowed
-    if (numthreads>maxparallel) numthreads = maxparallel;
-    if (numthreads == 1)
-      // Only a single command in the list: no need for threads
-      wrapper(curCommand);
-    else if (numthreads > 1)
-    {
-      int worker = 0;
-#ifdef HAVE_PTHREAD_H
-      // Create a thread for every command list. The main thread will then
-      // wait for all of them to finish.
-      pthread_t threads[numthreads];     // holds thread info
-      int errcode;                       // holds pthread error code
-
-      // Create the threads
-      for (; worker<numthreads; ++worker)
-      {
-        if ((errcode=pthread_create(&threads[worker],  // thread struct
-            NULL,                  // default thread attributes
-            wrapper,               // start routine
-            this)))                // arg to routine
-        {
-          if (!worker)
-          {
-            ostringstream ch;
-            ch << "Can't create any threads, error " << errcode;
-            throw RuntimeException(ch.str());
-          }
-          // Some threads could be created.
-          // Let these threads run and do all the work.
-          logger << "Warning: Could create only " << worker
-            << " threads, error " << errcode << endl;
-        }
-      }
-
-      // Wait for the threads as they exit
-      for (--worker; worker>=0; --worker)
-        // Wait for thread to terminate.
-        // The second arg is NULL, since we don't care about the return status
-        // of the finished threads.
-        if ((errcode=pthread_join(threads[worker],NULL)))
-        {
-          ostringstream ch;
-          ch << "Can't join with thread " << worker << ", error " << errcode;
-          throw RuntimeException(ch.str());
-        }
-#else
-      // Create a thread for every command list. The main thread will then
-      // wait for all of them to finish.
-      HANDLE* threads = new HANDLE[numthreads];
-      unsigned int * m_id = new unsigned int[numthreads];
-
-      // Create the threads
-      for (; worker<numthreads; ++worker)
-      {
-        threads[worker] =  reinterpret_cast<HANDLE>(
-          _beginthreadex(0,  // Security atrtributes
-          0,                 // Stack size
-          &wrapper,          // Thread function
-          this,              // Argument list
-          0,                 // Initial state is 0, "running"
-          &m_id[worker]));   // Address to receive the thread identifier
-        if (!threads[worker])
-        {
-          if (!worker)
-          {
-            // No threads could be created at all.
-            delete threads;
-            delete m_id;
-            throw RuntimeException("Can't create any threads, error " + errno);
-          }
-          // Some threads could be created.
-          // Let these threads run and do all the work.
-          logger << "Warning: Could create only " << worker
-            << " threads, error " << errno << endl;
-          break; // Step out of the thread creation loop
-        }
-      }
-
-      // Wait for the threads as they exit
-      int res = WaitForMultipleObjects(worker, threads, true, INFINITE);
-      if (res == WAIT_FAILED)
-      {
-        char error[256];
-        FormatMessage(
-          FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-          NULL,
-          GetLastError(),
-          0,
-          error,
-          256,
-          NULL );
-        delete threads;
-        delete m_id;
-        throw RuntimeException(string("Can't join threads: ") + error);
-      }
-
-      // Cleanup
-      for (--worker; worker>=0; --worker)
-        CloseHandle(threads[worker]);
-      delete threads;
-      delete m_id;
-#endif
-    }  // End: else if (numthreads>1)
-  }
-  else // Else: sequential
-#endif
-  // MODE 3: Sequential execution, and when a command in the sequence fails
-  // the rest continues
-  wrapper(this);
-
-  // Clean it up after executing ALL actions.
-  for (Command *i=lastCommand; i; )
-  {
-    Command *t = i;
-    i = i->prev;
-    delete t;
-  }
-  firstCommand = NULL;
-  lastCommand = NULL;
-}
-
-
-#if defined(HAVE_PTHREAD_H) || !defined(MT)
-void* CommandList::wrapper(void *arg)
-#else
-unsigned __stdcall CommandList::wrapper(void *arg)
-#endif
-{
-  // Each OS-level thread needs to initialize a Python thread state.
-  CommandList *l = static_cast<CommandList*>(arg);
-  bool threaded = l->getMaxParallel() > 1 && l->getNumberOfCommands() > 1;
-  if (threaded) PythonInterpreter::addThread();
-
   // Execute the commands
-  for (Command *c = l->selectCommand(); c; c = l->selectCommand())
+  for (Command *c = firstCommand; c; c = c->next)
   {
-#if defined(HAVE_PTHREAD_H) || !defined(MT)
-    // Verfiy whether there has been a cancellation request in the meantime
-    pthread_testcancel();
-#endif
     try {c->execute();}
     catch (...)
     {
@@ -270,6 +110,177 @@ unsigned __stdcall CommandList::wrapper(void *arg)
       catch (...) {logger << "  Unknown type" << endl;}
     }
   }
+};
+
+
+//
+// THREAD GROUP
+//
+
+
+DECLARE_EXPORT void ThreadGroup::execute()
+{
+#ifndef MT
+  // Sequential execution when compiled without multithreading
+  wrapper(this);
+#else
+  // No need to create worker threads when either a) only a single worker
+  // is allowed or b) only a single function needs to be called.
+  if (maxParallel<=1 && countCallables<=1)
+  {
+    wrapper(this);
+    return;
+  }
+
+  // Parallel execution in worker threads
+  int numthreads = countCallables;
+  // Limit the number of threads to the maximum allowed
+  if (numthreads > maxParallel) numthreads = maxParallel;
+  int worker = 0;
+#ifdef HAVE_PTHREAD_H
+  // Create a thread for every command list. The main thread will then
+  // wait for all of them to finish.
+  pthread_t threads[numthreads];     // holds thread info
+  int errcode;                       // holds pthread error code
+
+  // Create the threads
+  for (; worker<numthreads; ++worker)
+  {
+    if ((errcode=pthread_create(&threads[worker],  // thread struct
+        NULL,                  // default thread attributes
+        wrapper,               // start routine
+        this)))                // arg to routine
+    {
+      if (!worker)
+      {
+        ostringstream ch;
+        ch << "Can't create any threads, error " << errcode;
+        throw RuntimeException(ch.str());
+      }
+      // Some threads could be created.
+      // Let these threads run and do all the work.
+      logger << "Warning: Could create only " << worker
+        << " threads, error " << errcode << endl;
+    }
+  }
+
+  // Wait for the threads as they exit
+  for (--worker; worker>=0; --worker)
+    // Wait for thread to terminate.
+    // The second arg is NULL, since we don't care about the return status
+    // of the finished threads.
+    if ((errcode=pthread_join(threads[worker],NULL)))
+    {
+      ostringstream ch;
+      ch << "Can't join with thread " << worker << ", error " << errcode;
+      throw RuntimeException(ch.str());
+    }
+#else
+  // Create a thread for every command list. The main thread will then
+  // wait for all of them to finish.
+  HANDLE* threads = new HANDLE[numthreads];
+  unsigned int * m_id = new unsigned int[numthreads];
+
+  // Create the threads
+  for (; worker<numthreads; ++worker)
+  {
+    threads[worker] =  reinterpret_cast<HANDLE>(
+      _beginthreadex(0,  // Security atrtributes
+      0,                 // Stack size
+      &wrapper,          // Thread function
+      this,              // Argument list
+      0,                 // Initial state is 0, "running"
+      &m_id[worker]));   // Address to receive the thread identifier
+    if (!threads[worker])
+    {
+      if (!worker)
+      {
+        // No threads could be created at all.
+        delete threads;
+        delete m_id;
+        throw RuntimeException("Can't create any threads, error " + errno);
+      }
+      // Some threads could be created.
+      // Let these threads run and do all the work.
+      logger << "Warning: Could create only " << worker
+        << " threads, error " << errno << endl;
+      break; // Step out of the thread creation loop
+    }
+  }
+
+  // Wait for the threads as they exit
+  int res = WaitForMultipleObjects(worker, threads, true, INFINITE);
+  if (res == WAIT_FAILED)
+  {
+    char error[256];
+    FormatMessage(
+      FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+      NULL,
+      GetLastError(),
+      0,
+      error,
+      256,
+      NULL );
+    delete threads;
+    delete m_id;
+    throw RuntimeException(string("Can't join threads: ") + error);
+  }
+
+  // Cleanup
+  for (--worker; worker>=0; --worker)
+    CloseHandle(threads[worker]);
+  delete threads;
+  delete m_id;
+#endif    // End of #ifdef ifHAVE_PTHREAD_H
+#endif    // End of #ifndef MT
+}
+
+
+DECLARE_EXPORT ThreadGroup::callableWithArgument ThreadGroup::selectNextCallable()
+{
+  ScopeMutexLock l(lock );
+  if (callables.empty())
+  {
+    // No more functions
+    assert( countCallables == 0 );
+    return callableWithArgument(NULL,NULL);
+  }
+  callableWithArgument c = callables.top();
+  callables.pop();
+  --countCallables;
+  return c;
+}
+
+
+#if defined(HAVE_PTHREAD_H) || !defined(MT)
+void* ThreadGroup::wrapper(void *arg)
+#else
+unsigned __stdcall ThreadGroup::wrapper(void *arg)
+#endif
+{
+  // Each OS-level thread needs to initialize a Python thread state.
+  ThreadGroup *l = static_cast<ThreadGroup*>(arg);
+  bool threaded = l->maxParallel > 1 && l->countCallables > 1;
+  if (threaded) PythonInterpreter::addThread();
+
+  for (callableWithArgument nextfunc = l->selectNextCallable();
+       nextfunc.first;
+       nextfunc = l->selectNextCallable())
+  {
+#if defined(HAVE_PTHREAD_H) || !defined(MT)
+    // Verfiy whether there has been a cancellation request in the meantime  XXX
+    pthread_testcancel();
+#endif
+    try {nextfunc.first(nextfunc.second);}
+    catch (...)
+    {
+      // Error message
+      logger << "Error: Caught an exception while executing command:" << endl;
+      try {throw;}
+      catch (exception& e) {logger << "  " << e.what() << endl;}
+      catch (...) {logger << "  Unknown type" << endl;}
+    }
+  };
 
   // Finalize the Python thread state
   if (threaded) PythonInterpreter::deleteThread();

@@ -58,7 +58,7 @@ SOAP_FMAC5 int SOAP_FMAC6 frepple__demand(struct soap* soap, char *name, struct 
 SOAP_FMAC5 int SOAP_FMAC6 frepple__post(struct soap* soap, char *data, struct frepple__PostResponse &result)
 {
   try {
-    CommandReadXMLString(data, true, false).execute();
+    CommandReadXMLString(data, true, false).commit();
   }
   catch (DataException e)
     {return soap_sender_fault(soap, "Data Exception", e.what());}

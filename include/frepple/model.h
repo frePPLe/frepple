@@ -5272,7 +5272,7 @@ class CommandCreateOperationPlan : public Command
           o->createOperationPlan(q, d1, d2, l, ow, 0, makeflowsloads)
           : NULL;
     }
-    void execute()
+    void commit()
     {
       if (opplan)
       {
@@ -5280,7 +5280,7 @@ class CommandCreateOperationPlan : public Command
         opplan = NULL; // Avoid executing / initializing more than once
       }
     }
-    void undo() {delete opplan; opplan = NULL;}
+    void rollback() {delete opplan; opplan = NULL;}
     ~CommandCreateOperationPlan() {if (opplan) delete opplan;}
     OperationPlan *getOperationPlan() const {return opplan;}
 
@@ -5301,9 +5301,9 @@ class CommandDeleteOperationPlan : public Command
       * Unlike most other commands the constructor already executes the deletion.
       */
     DECLARE_EXPORT CommandDeleteOperationPlan(OperationPlan* o);
-    void execute() {oper = NULL;}
-    DECLARE_EXPORT void undo();
-    ~CommandDeleteOperationPlan() {if (oper) undo();}
+    void commit() {oper = NULL;}
+    DECLARE_EXPORT void rollback();
+    ~CommandDeleteOperationPlan() {if (oper) rollback();}
 
   private:
     /** Operation pointer of the original operationplan. */
@@ -5350,16 +5350,16 @@ class CommandMoveOperationPlan : public Command
     DECLARE_EXPORT CommandMoveOperationPlan(OperationPlan*);
 
     /** Commit the changes. */
-    void execute() {opplan=NULL;}
+    void commit() {opplan=NULL;}
 
     /** Undo the changes. */
-    void undo() {restore(true); opplan = NULL;}
+    void rollback() {restore(true); opplan = NULL;}
 
     /** Undo the changes. */
     DECLARE_EXPORT void restore(bool = false);
 
     /** Destructor. */
-    ~CommandMoveOperationPlan() {if (opplan) undo();}
+    ~CommandMoveOperationPlan() {if (opplan) rollback();}
 
     /** Returns the operationplan being manipulated. */
     OperationPlan* getOperationPlan() const {return opplan;}

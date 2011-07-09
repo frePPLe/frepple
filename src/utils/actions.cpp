@@ -44,8 +44,6 @@ DECLARE_EXPORT void CommandList::add(Command* c)
 {
   // Validity check
   if (!c) throw LogicException("Adding NULL command to a command list");
-  if (curCommand)
-    throw RuntimeException("Can't add a command to the list during execution");
 
   // Set the owner of the command
   c->owner = this;
@@ -62,11 +60,11 @@ DECLARE_EXPORT void CommandList::add(Command* c)
 }
 
 
-DECLARE_EXPORT void CommandList::undo(Command *c)
+DECLARE_EXPORT void CommandList::rollback(Command *c)
 {
   // Check validity of argument
   if (c && c->owner != this)
-    throw LogicException("Invalid call to CommandList::undo(Command*)");
+    throw LogicException("Invalid call to CommandList::rollback(Command*)");
 
   // Undo all commands and delete them.
   // Note that undoing an operation that hasn't been executed yet or has been
@@ -76,7 +74,7 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
   {
     Command *t = i;  // Temporarily store the pointer to be deleted
     i = i->prev;
-    delete t; // The delete is expected to also undo the command!
+    delete t; // The delete is expected to also revert the change!
   }
 
   // Maintain the linked list of commands still present
@@ -95,22 +93,74 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
 }
 
 
-DECLARE_EXPORT void CommandList::execute()
+DECLARE_EXPORT void CommandList::undo(Command *c)
 {
-  // Execute the commands
-  for (Command *c = firstCommand; c; c = c->next)
+  // Check validity of argument
+  if (c && c->owner != this)
+    throw LogicException("Invalid call to CommandList::undo(Command*)");
+
+  // Undo all commands and delete them.
+  // Note that undoing an operation that hasn't been executed yet or has been
+  // undone already is expected to be harmless, so we don't need to worry
+  // about that...
+  for (Command *i = lastCommand; i != c; i = i->prev)
+    i->undo();
+}
+
+
+DECLARE_EXPORT void CommandList::commit(Command *c)
+{
+  // Check validity of argument
+  if (c && c->owner != this)
+    throw LogicException("Invalid call to CommandList::commit(Command*)");
+
+  // Commit the commands
+  // TODO XXX also delete the command!
+  for (Command *i = c; i;)
   {
-    try {c->execute();}
-    catch (...)
-    {
-      // Error message
-      logger << "Error: Caught an exception while executing command:" << endl;
-      try {throw;}
-      catch (exception& e) {logger << "  " << e.what() << endl;}
-      catch (...) {logger << "  Unknown type" << endl;}
-    }
+    Command *t = i;  // Temporarily store the pointer to be deleted
+    i->commit();
+    i = i->next;
+    delete t; // The delete is expected to also revert the change!
   }
-};
+
+  // Remove from the list of commands
+  if (c == firstCommand)
+  {
+    firstCommand = NULL;
+    lastCommand = NULL;
+  }
+  else if (c)
+  {
+    c->next = NULL;
+    lastCommand = c;
+  }
+}
+
+
+DECLARE_EXPORT void CommandList::redo(Command *c)
+{
+  // Check validity of argument
+  if (c && c->owner != this)
+    throw LogicException("Invalid call to CommandList::redo(Command*)");
+
+  // Redo the commands
+  for (; c; c = c->next) c->redo();
+}
+
+
+DECLARE_EXPORT CommandList::~CommandList()
+{
+  if (!firstCommand)
+    logger << "Warning: Deleting a command list with commands that have"
+      << " not been committed or rolled back" << endl;
+  for (Command *i = lastCommand; i; )
+  {
+    Command *t = i;  // Temporary storage for the object to delete
+    i = i->prev;
+    delete t;
+  }
+}
 
 
 //
@@ -285,20 +335,6 @@ unsigned __stdcall ThreadGroup::wrapper(void *arg)
   // Finalize the Python thread state
   if (threaded) PythonInterpreter::deleteThread();
   return 0;
-}
-
-
-DECLARE_EXPORT CommandList::~CommandList()
-{
-  if (!firstCommand) return;
-    logger << "Warning: Deleting an action list with actions that have"
-      << " not been committed or undone" << endl;
-  for (Command *i = lastCommand; i; )
-  {
-    Command *t = i;  // Temporary storage for the object to delete
-    i = i->prev;
-    delete t;
-  }
 }
 
 

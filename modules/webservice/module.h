@@ -99,7 +99,7 @@ class CommandWebservice : public Command
     static PyObject* pythonService(PyObject*, PyObject*);
 
     /** Runs the webservice server. */
-    void execute();
+    void commit();
 
     /** Returns a descriptive string. */
     string getDescription() const {return "frePPLe webservice";}

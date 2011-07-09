@@ -3668,6 +3668,21 @@ class Tree : public NonCopyable
   *
   * Command objects are designed for algorithms that need to keep track of
   * their decision, efficiently undo them and redo them.
+  *
+  * The key methods are:
+  *   - The constructor or other methods on the concrete subclasses
+  *     implement the state change.
+  *   - commit():
+  *     Makes the change permanently.
+  *     Undoing the change is no longer possible after calling this method.
+  *   - rollback():
+  *     Reverts the change permanently.
+  *     Redoing the change is no longer possible after calling this method.
+  *   - undo():
+  *     Temporarily reverts the change.
+  *     Redoing the change is still possible.
+  *   - redo():
+  *     Reactivates the change that was previously undone.
   */
 class Command
 {
@@ -3680,27 +3695,39 @@ class Command
       */
     Command() : owner(NULL), next(NULL), prev(NULL) {};
 
-    /** This method is used to actually execute the action.<br>
+    /** This method makes the change permanent.<br>
+      * A couple of notes on how this method should be implemented by the
+      * subclasses:
+      *   - Calling the method multiple times is harmless. Only the first
+      *     call is expected to do something.
+      */
+    virtual void commit() {};
+
+    /** This method permanently undoes the change.<br>
+      * A couple of notes on how this method should be implemented by the
+      * subclasses:
+      *   - Calling the rollback() method multiple times is harmless. Only
+      *     the first call is expected to do something.
+      */
+    virtual void rollback() {};
+
+    /** This method temporarily undoes the change. The concrete subclasses
+      * most maintain information that enables redoing the changes
+      * efficiently.<br>
       * A couple of notes on how this method should be implemented by the
       * subclasses:
       *   - Calling the method multiple times is harmless and results in the
       *     same state change as calling it only once.
       */
-    virtual void execute() = 0;
+    virtual void undo() {};
 
-    /** This method is undoing the state change of the execute() method.<br>
-      * Reversing the action is not possible for all commands. Command
-      * subclasses should override the undo() and undoable() method in case
-      * they are reversible.<br>
+    /** This method reproduces a previously undone change.<br>
       * A couple of notes on how this method should be implemented by the
       * subclasses:
-      *   - Calling the undo() method is harmless if the execute() hasn't
-      *     been called yet.
-      *   - Calling the undo() method multiple times is harmless and results
-      *     in the same state change as calling it only once.
+      *   - Calling the method multiple times is harmless and results in the
+      *     same state change as calling it only once.
       */
-    virtual void undo()
-    {logger << "Warning: Can't undo command" << endl;}
+    virtual void redo() {};
 
     /** Destructor. */
     virtual ~Command() {};
@@ -3730,6 +3757,8 @@ class Command
   *
   * This class implements the "composite" design pattern in order to get an
   * efficient and intuitive hierarchical grouping of tasks.
+  * @TODO handle exceptions during commit, rollback, undo, redo
+  * @TODO how does add() work after undo/redo?  Ie append after new or old
   */
 class CommandList : public Command
 {
@@ -3743,9 +3772,6 @@ class CommandList : public Command
 
     /** Points to the last command in the list. */
     Command* lastCommand;
-
-    /** Current command to be executed. */
-    Command* curCommand;
 
   public:
     /** Returns the number of commands stored in this list. */
@@ -3765,32 +3791,35 @@ class CommandList : public Command
     /** Returns the last command that was added to the list. */
     Command* getLastCommand() const {return lastCommand;}
 
-    /** Undoes all actions on the list. At the end it also clears the list of
-      * actions. If one of the actions on the list is not undo-able, the whole
-      * list is non-undoable and a warning message will be printed.
+    /** Undoes all actions on the list.<br>
+      * At the end it also clears the list of actions.
       */
-    void undo() {undo(NULL);}
+    virtual void rollback() {rollback(NULL);}
+    DECLARE_EXPORT void rollback(Command *c);
 
-    /** Undoes all actions in the list beyond the argument and clear the list
-      * of actions.<br>
-      * As soon as one of the actions on the list is not undo-able or the
-      * execution is not sequential, the undo is aborted and a warning message
-      * is printed.<br>
-      * There is no need that the actions have actually been executed before
-      * the undo() is called.
+    /** Commits all actions on its list.<br>
+      * At the end it also clears the list of actions.
       */
-    DECLARE_EXPORT void undo(Command *c);
+    virtual DECLARE_EXPORT void commit() {commit(firstCommand);}
+    virtual DECLARE_EXPORT void commit(Command *c);
 
-    /** Commits all actions on its list. At the end it also clear the list
-      * of actions. */
-    DECLARE_EXPORT void execute();
+    /** Undoes all actions on its list.<br>
+      * The list of actions is left intact, so the changes can still be redone.
+      */
+    virtual void undo() {undo(NULL);}
+    DECLARE_EXPORT void undo(Command*);
+
+    /** Redoes all actions on its list.<br>
+      * The list of actions is left intact, so the changes can still be undone.
+      */
+    DECLARE_EXPORT void redo(Command*);
+    virtual void redo() {redo(firstCommand);}
 
     /** Returns true if no commands have been added yet to the list. */
     bool empty() const {return firstCommand==NULL;}
 
     /** Default constructor. */
-    explicit CommandList() : firstCommand(NULL), lastCommand(NULL),
-      curCommand(NULL) {}
+    explicit CommandList() : firstCommand(NULL), lastCommand(NULL) {}
 
     /** Destructor.<br>
       * A commandlist should only be deleted when all of its commands
@@ -3849,10 +3878,6 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * the parser.
       */
     const unsigned short maxdepth;
-
-    /** A list of commands that are to be executed at the end of processing
-      * the input data. */
-    CommandList cmds;
 
     /** Stack of states. */
     stack <state> states;
@@ -4073,9 +4098,6 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       */
     bool getAbortOnDataError() const {return abortOnDataException;}
 
-    /** Return a reference to the list of commands. */
-    CommandList& getCommands() {return cmds;}
-
   protected:
     /** The real parsing job is delegated to subclasses.
       * Subclass can then define the specifics for parsing a flat file,
@@ -4091,9 +4113,6 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     {
       throw LogicException("Unreachable code reached");
     }
-
-    /** Execute the commands that have been read from the input stream. */
-    DECLARE_EXPORT void executeCommands();
 };
 
 

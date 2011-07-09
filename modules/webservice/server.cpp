@@ -40,7 +40,7 @@ PyObject* CommandWebservice::pythonService(PyObject* self, PyObject* args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try {
-    CommandWebservice().execute();	
+    CommandWebservice().commit();	
   }
   catch (...)
   {
@@ -53,7 +53,7 @@ PyObject* CommandWebservice::pythonService(PyObject* self, PyObject* args)
 }
 
 
-void CommandWebservice::execute()
+void CommandWebservice::commit()
 {
   // Initialize
   thread_data threadinfo[threads];

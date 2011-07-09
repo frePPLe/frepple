@@ -530,10 +530,6 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
       "Parsing error: Unexpected exception during XML parsing");
   }
   reset();
-
-  // Execute the commands defined in the input stream.
-  // The commands are executed only after a successful parsing.
-  executeCommands();
 }
 
 
@@ -803,21 +799,6 @@ DECLARE_EXPORT void Keyword::printTags()
 {
   for (tagtable::iterator i = getTags().begin(); i != getTags().end(); ++i)
     logger << i->second->getName() << "   " << i->second->dw << endl;
-}
-
-
-DECLARE_EXPORT void XMLInput::executeCommands()
-{
-  try {cmds.execute();}
-  catch (...)
-  {
-    try {throw;}
-    catch (exception& e)
-    {logger << "Error executing commands: " << e.what() << endl;}
-    catch (...)
-    {logger << "Error executing commands: Unknown exception type" << endl;}
-    throw;
-  }
 }
 
 

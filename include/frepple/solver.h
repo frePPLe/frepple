@@ -588,7 +588,7 @@ class SolverMRP : public Solver
       public:
         static void runme(void *args)
         {
-          static_cast<SolverMRP::SolverMRPdata*>(args)->execute();
+          static_cast<SolverMRP::SolverMRPdata*>(args)->commit();
         }
 
         /** Return the solver. */
@@ -621,7 +621,7 @@ class SolverMRP : public Solver
           * @see demand_comparison
           * @see next_cluster
           */
-        virtual DECLARE_EXPORT void execute();
+        virtual DECLARE_EXPORT void commit();
 
         virtual const MetaClass& getType() const {return *SolverMRP::metadata;}
         virtual size_t getSize() const {return sizeof(SolverMRPdata);}

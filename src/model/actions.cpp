@@ -391,7 +391,7 @@ DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
 }
 
 
-DECLARE_EXPORT void CommandDeleteOperationPlan::undo()
+DECLARE_EXPORT void CommandDeleteOperationPlan::rollback()
 {
   // Already executed, or never initialized completely
   if (!oper) return;

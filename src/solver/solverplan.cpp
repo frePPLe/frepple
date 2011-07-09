@@ -76,7 +76,7 @@ DECLARE_EXPORT bool SolverMRP::demand_comparison(const Demand* l1, const Demand*
 }
 
 
-DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
+DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
 {
   // Check
   if (!demands || !getSolver())
@@ -382,7 +382,7 @@ DECLARE_EXPORT PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
   {
     SolverMRP * me = static_cast<SolverMRP*>(self);
     me->scanExcess(me->commands.getFirstCommand());    
-    me->commands.CommandList::execute();
+    me->commands.CommandList::commit();
   }
   catch(...)
   {
@@ -400,7 +400,7 @@ DECLARE_EXPORT PyObject* SolverMRP::undo(PyObject *self, PyObject *args)
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
-    static_cast<SolverMRP*>(self)->commands.undo();
+    static_cast<SolverMRP*>(self)->commands.rollback();
   }
   catch(...)
   {

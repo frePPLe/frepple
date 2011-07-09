@@ -287,7 +287,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       if (data->getSolver()->getAutocommit())
       {
         data->getSolver()->scanExcess(data->getFirstCommand());
-        data->CommandList::execute();
+        data->CommandList::commit();
       }
 
 
@@ -330,7 +330,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       if (data->getSolver()->getAutocommit())
       {
         data->getSolver()->scanExcess(data->getFirstCommand());
-        data->CommandList::execute();
+        data->CommandList::commit();
       }
     }
     catch (...)
@@ -366,7 +366,7 @@ DECLARE_EXPORT void SolverMRP::scanExcess(Command* cmd)
             << createcmd->getOperationPlan()->getOperation() << "  " 
             << createcmd->getOperationPlan()->getDates() << "  " 
             << createcmd->getOperationPlan()->getQuantity() << endl;
-        createcmd->undo();
+        createcmd->rollback();
       }
     }
   }

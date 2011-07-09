@@ -5281,7 +5281,6 @@ class CommandCreateOperationPlan : public Command
       }
     }
     void undo() {delete opplan; opplan = NULL;}
-    bool undoable() const {return true;}
     ~CommandCreateOperationPlan() {if (opplan) delete opplan;}
     OperationPlan *getOperationPlan() const {return opplan;}
 
@@ -5304,7 +5303,6 @@ class CommandDeleteOperationPlan : public Command
     DECLARE_EXPORT CommandDeleteOperationPlan(OperationPlan* o);
     void execute() {oper = NULL;}
     DECLARE_EXPORT void undo();
-    bool undoable() const {return true;}
     ~CommandDeleteOperationPlan() {if (oper) undo();}
 
   private:
@@ -5359,8 +5357,6 @@ class CommandMoveOperationPlan : public Command
 
     /** Undo the changes. */
     DECLARE_EXPORT void restore(bool = false);
-
-    bool undoable() const {return true;}
 
     /** Destructor. */
     ~CommandMoveOperationPlan() {if (opplan) undo();}

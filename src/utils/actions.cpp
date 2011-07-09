@@ -35,35 +35,9 @@ namespace utils
 {
 
 
-DECLARE_EXPORT bool Command::getVerbose() const
-{
-  if (verbose==INHERIT)
-    // Note: a command gets the level INHERIT by default. In case the command
-    // was never added to a commandlist, the owner field will be NULL. In such
-    // case the value INHERIT is interpreted as SILENT.
-    return owner ? owner->getVerbose() : false;
-  else
-    return verbose==YES;
-}
-
-
 //
 // COMMAND LIST
 //
-
-
-DECLARE_EXPORT bool CommandList::getAbortOnError() const
-{
-  if (abortOnError==INHERIT)
-  {
-    // A command list can be nested in another command list. In this case we
-    // inherit this field from the owning command list
-    CommandList *owning_list = dynamic_cast<CommandList*>(owner);
-    return owning_list ? owning_list->getAbortOnError() : true;
-  }
-  else
-    return abortOnError==YES;
-}
 
 
 DECLARE_EXPORT void CommandList::add(Command* c)
@@ -85,9 +59,6 @@ DECLARE_EXPORT void CommandList::add(Command* c)
     // This is the first command in this command list
     firstCommand = c;
   lastCommand = c;
-
-  // Update the undoable field
-  if (!c->undoable()) can_undo = false;
 }
 
 
@@ -96,11 +67,6 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
   // Check validity of argument
   if (c && c->owner != this)
     throw LogicException("Invalid call to CommandList::undo(Command*)");
-
-  // Don't even try to undo a list which can't be undone.
-  if (!c && !undoable(c))
-    throw RuntimeException("Trying to undo a CommandList which " \
-        "contains non-undoable actions or is executed in parallel");
 
   // Undo all commands and delete them.
   // Note that undoing an operation that hasn't been executed yet or has been
@@ -129,24 +95,6 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
 }
 
 
-DECLARE_EXPORT bool CommandList::undoable(const Command *c) const
-{
-  // Check validity of argument
-  if (c && c->owner!=this)
-    throw LogicException("Invalid call to CommandList::undoable(Command*)");
-
-  // Parallel commands can't be undone
-  if (maxparallel > 1) return false;
-
-  // Easy cases
-  if (!c || can_undo) return can_undo;
-
-  // Step over the remaining commands and check whether they can be undone
-  for (; c; c = c->next) if (!c->undoable()) return false;
-  return true;
-}
-
-
 DECLARE_EXPORT Command* CommandList::selectCommand()
 {
   ScopeMutexLock l(lock );
@@ -162,11 +110,6 @@ DECLARE_EXPORT void CommandList::execute()
   // This field is set asap in this method since it is used a flag to
   // recognize that execution is in progress.
   curCommand = firstCommand;
-
-  // Message
-  if (getVerbose())
-    logger << "Start executing command list at " << Date::now() << endl;
-  Timer t;
 
 #ifndef MT
   // Compile 1: No multithreading
@@ -283,28 +226,9 @@ DECLARE_EXPORT void CommandList::execute()
   }
   else // Else: sequential
 #endif
-  if (getAbortOnError())
-  {
-    // MODE 2: Sequential execution, and a single command failure aborts the
-    // whole sequence.
-    try
-    {
-      for (; curCommand; curCommand = curCommand->next) curCommand->execute();
-    }
-    catch (...)
-    {
-      logger << "Error: Caught an exception while executing command:" << endl;
-      try {throw;}
-      catch (exception& e) {logger << "  " << e.what() << endl;}
-      catch (...) {logger << "  Unknown type" << endl;}
-      // Undo all commands executed so far
-      if (undoable()) undo();
-    }
-  }
-  else
-    // MODE 3: Sequential execution, and when a command in the sequence fails
-    // the rest continues
-    wrapper(this);
+  // MODE 3: Sequential execution, and when a command in the sequence fails
+  // the rest continues
+  wrapper(this);
 
   // Clean it up after executing ALL actions.
   for (Command *i=lastCommand; i; )
@@ -315,11 +239,6 @@ DECLARE_EXPORT void CommandList::execute()
   }
   firstCommand = NULL;
   lastCommand = NULL;
-
-  // Log
-  if (getVerbose())
-    logger << "Finished executing command list at " << Date::now()
-    << " : " << t << endl;
 }
 
 
@@ -361,8 +280,8 @@ unsigned __stdcall CommandList::wrapper(void *arg)
 DECLARE_EXPORT CommandList::~CommandList()
 {
   if (!firstCommand) return;
-  logger << "Warning: Deleting an action list with actions that have"
-    << " not been committed or undone" << endl;
+    logger << "Warning: Deleting an action list with actions that have"
+      << " not been committed or undone" << endl;
   for (Command *i = lastCommand; i; )
   {
     Command *t = i;  // Temporary storage for the object to delete
@@ -373,7 +292,7 @@ DECLARE_EXPORT CommandList::~CommandList()
 
 
 //
-// LOADMODULE COMMAND
+// LOADMODULE FUNCTION
 //
 
 

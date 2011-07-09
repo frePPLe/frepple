@@ -97,7 +97,6 @@ using namespace gnu_cxx;
 #endif
 using namespace std;
 
-// Configuration file created by autoconf
 /** @def PACKAGE_VERSION
   * Defines the version of frePPLe.
   */
@@ -3584,23 +3583,11 @@ class Command
   friend class CommandList;
   friend class frepple::CommandMoveOperationPlan;
   public:
-    /** This structure defines a boolean value that can be set to TRUE,
-      * FALSE or INHERITed from a higher level.
-      * - INHERIT: Inherit the value from a higher level list.
-      * - YES: true = 1
-      * - NO: false = 0
-      */
-    enum inheritableBool {
-      INHERIT = -1,
-      YES = 0,
-      NO = 1
-    };
-
     /** Default constructor. The creation of a command should NOT execute the
       * command yet. The execute() method needs to be called explicitly to
       * do so.
       */
-    Command() : verbose(INHERIT), owner(NULL), next(NULL), prev(NULL) {};
+    Command() : owner(NULL), next(NULL), prev(NULL) {};
 
     /** This method is used to actually execute the action.<br>
       * A couple of notes on how this method should be implemented by the
@@ -3624,18 +3611,8 @@ class Command
     virtual void undo()
     {logger << "Warning: Can't undo command" << endl;}
 
-    /** Returns true if the execution of this command can be undone. */
-    virtual bool undoable() const {return false;}
-
     /** Destructor. */
     virtual ~Command() {};
-
-    /** Returns whether verbose output is required during the execution of
-      * the command. */
-    DECLARE_EXPORT bool getVerbose() const;
-
-    /** Controls whether verbose output will be generated during execution. */
-    void setVerbose(bool b) {verbose = (b ? YES : NO);}
 
     /** Return a pointer to the next command. */
     Command* getNext() const {return next;}
@@ -3644,14 +3621,6 @@ class Command
     Command* getPrev() const {return prev;}    
 
   private:
-    /** Specifies whether the execution of the command should remain silent
-      * (which is the default), or whether verbose output on the command
-      * execution is requested.<br>
-      * The default value is to inherit from a higher level, and false if
-      * unspecified.
-      */
-    inheritableBool verbose;
-
     /** Points to the commandlist which owns this command. The default value
       * is NULL, meaning there is no owner. */
     Command *owner;
@@ -3706,9 +3675,6 @@ class CommandList : public Command
       */
     Mutex lock;
 
-    /** Specifies whether the command list is undoable or not. */
-    bool can_undo;
-
     /** Specifies the maximum number of commands in the list that can be
       * executed in parallel.
       * The default value is 1, i.e. sequential execution.<br>
@@ -3717,14 +3683,6 @@ class CommandList : public Command
       * a system-wide limit on the creation of threads.
       */
     int maxparallel;
-
-    /** Specifies whether or not a single failure aborts the complete command
-      * list. The value is inherited from parent command lists, and will
-      * default to true if left unspecified.
-      * Note that this field is only relevant in case of sequential execution
-      * of the command list.
-      */
-    inheritableBool abortOnError;
 
     /** This functions runs a single command execution thread. It is used as
       * a holder for the main routines of a trheaded routine.
@@ -3778,17 +3736,6 @@ class CommandList : public Command
       * of actions. */
     DECLARE_EXPORT void execute();
 
-    /** Returns whether or not a single failure aborts the complete command
-      * list. */
-    DECLARE_EXPORT bool getAbortOnError() const;
-
-    /** If this field is set to true the failure of a single command in the
-      * list will abort the complete list of command.<br>
-      * If set to false, the remaining commands will still be run in case
-      * of a failure.
-      */
-    void setAbortOnError(bool b) {abortOnError = (b ? YES : NO);}
-
     /** Returns whether the command list processes its commands sequentially or
       * in parallel. The default is sequentially, and this field is NOT
       * inherited down nested command list hierarchies. */
@@ -3809,19 +3756,12 @@ class CommandList : public Command
 #endif
     }
 
-    /** Returns whether this command can be undone or not. */
-    bool undoable() const {return can_undo;}
-
-    /** Returns true when all commands beyond the argument can be undone. */
-    DECLARE_EXPORT bool undoable(const Command *c) const;
-
     /** Returns true if no commands have been added yet to the list. */
     bool empty() const {return firstCommand==NULL;}
 
     /** Default constructor. */
     explicit CommandList() : firstCommand(NULL), lastCommand(NULL),
-      curCommand(NULL), can_undo(true), maxparallel(1),
-      abortOnError(INHERIT) {}
+      curCommand(NULL), maxparallel(1) {}
 
     /** Destructor.<br>
       * A commandlist should only be deleted when all of its commands

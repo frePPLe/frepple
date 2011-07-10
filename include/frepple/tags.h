@@ -110,7 +110,6 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_maxinterval;
     static DECLARE_EXPORT const Keyword tag_maxinventory;
     static DECLARE_EXPORT const Keyword tag_maxlateness;
-    static DECLARE_EXPORT const Keyword tag_maxparallel;
     static DECLARE_EXPORT const Keyword tag_members;
     static DECLARE_EXPORT const Keyword tag_minimum;
     static DECLARE_EXPORT const Keyword tag_minimum_calendar;

@@ -194,6 +194,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   // Solve in parallel threads.
   // When not solving in silent and autocommit mode, we only use a single
   // solver thread.
+  // Otherwise we use as many worker threads as processor cores.
   ThreadGroup threads;
   if (getLogLevel()>0 || !getAutocommit())
     threads.setMaxParallel(1);
@@ -229,7 +230,6 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
   // Write the fields
   if (constrts != 15) o->writeElement(Tags::tag_constraints, constrts);
   if (plantype != 1) o->writeElement(Tags::tag_plantype, plantype);
-  if (maxparallel) o->writeElement(Tags::tag_maxparallel, maxparallel);
   if (iteration_threshold != 1.0)
     o->writeElement(Tags::tag_iterationthreshold, iteration_threshold);
   if (iteration_accuracy != 0.01)
@@ -255,8 +255,6 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
 {
   if (pAttr.isA(Tags::tag_constraints))
     setConstraints(pElement.getInt());
-  else if (pAttr.isA(Tags::tag_maxparallel))
-    setMaxParallel(pElement.getInt());
   else if (pAttr.isA(Tags::tag_iterationthreshold))
     setIterationThreshold(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_iterationaccuracy))
@@ -284,8 +282,6 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_constraints))
     return PythonObject(getConstraints());
-  if (attr.isA(Tags::tag_maxparallel))
-    return PythonObject(getMaxParallel());
   if (attr.isA(Tags::tag_iterationthreshold))
     return PythonObject(getIterationThreshold());
   if (attr.isA(Tags::tag_iterationaccuracy))
@@ -312,8 +308,6 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
 {
   if (attr.isA(Tags::tag_constraints))
     setConstraints(field.getInt());
-  else if (attr.isA(Tags::tag_maxparallel))
-    setMaxParallel(field.getInt());
   else if (attr.isA(Tags::tag_iterationthreshold))
     setIterationThreshold(field.getDouble());
   else if (attr.isA(Tags::tag_iterationaccuracy))

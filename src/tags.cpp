@@ -109,7 +109,6 @@ DECLARE_EXPORT const Keyword Tags::tag_maximum_calendar("maximum_calendar");
 DECLARE_EXPORT const Keyword Tags::tag_maxinterval("maxinterval");
 DECLARE_EXPORT const Keyword Tags::tag_maxinventory("maxinventory");
 DECLARE_EXPORT const Keyword Tags::tag_maxlateness("maxlateness");
-DECLARE_EXPORT const Keyword Tags::tag_maxparallel("maxparallel");
 DECLARE_EXPORT const Keyword Tags::tag_members("members");
 DECLARE_EXPORT const Keyword Tags::tag_minimum("minimum");
 DECLARE_EXPORT const Keyword Tags::tag_minimum_calendar("minimum_calendar");

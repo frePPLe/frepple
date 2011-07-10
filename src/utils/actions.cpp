@@ -121,7 +121,7 @@ DECLARE_EXPORT void CommandList::commit(Command *c)
     Command *t = i;  // Temporarily store the pointer to be deleted
     i->commit();
     i = i->next;
-    delete t; // The delete is expected to also revert the change!
+    delete t;
   }
 
   // Remove from the list of commands

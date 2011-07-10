@@ -566,11 +566,6 @@ class SolverMRP : public Solver
           : sol(s), cluster(c), demands(d), constrainedPlanning(true), 
             state(statestack), prevstate(statestack-1) {}
 
-        /** Collect data of uncommitted operationplans in a list. This list can later
-          * be used to quickly restore the current state.
-          */
-        void collectOperationPlanStates(list<OperationPlanState>&);
-
         /** Verbose mode is inherited from the solver. */
         unsigned short getLogLevel() const {return sol ? sol->getLogLevel() : 0;}
 

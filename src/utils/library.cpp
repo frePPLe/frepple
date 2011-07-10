@@ -178,9 +178,6 @@ DECLARE_EXPORT int Environment::getProcessorCores()
   SYSTEM_INFO sysinfo;
   GetSystemInfo(&sysinfo);
   processorcores = sysinfo.dwNumberOfProcessors;
-#elif defined(_GNU_SOURCE)
-  // Gnu C++ compiler extension
-  processorcores = get_nprocs();
 #else     
   // Linux, Solaris and AIX.
   // Tough luck for other platforms.

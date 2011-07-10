@@ -111,11 +111,11 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
 DECLARE_EXPORT void CommandList::commit(Command *c)
 {
   // Check validity of argument
-  if (c && c->owner != this)
+  if (!c || c->owner != this)
     throw LogicException("Invalid call to CommandList::commit(Command*)");
+  Command * prevCommand = c->prev;
 
   // Commit the commands
-  // TODO XXX also delete the command!
   for (Command *i = c; i;)
   {
     Command *t = i;  // Temporarily store the pointer to be deleted
@@ -125,15 +125,15 @@ DECLARE_EXPORT void CommandList::commit(Command *c)
   }
 
   // Remove from the list of commands
-  if (c == firstCommand)
+  if (prevCommand)
+  {
+    prevCommand->next = NULL;
+    lastCommand = prevCommand;
+  }
+  else
   {
     firstCommand = NULL;
     lastCommand = NULL;
-  }
-  else if (c)
-  {
-    c->next = NULL;
-    lastCommand = c;
   }
 }
 
@@ -171,18 +171,18 @@ DECLARE_EXPORT CommandList::~CommandList()
 DECLARE_EXPORT void ThreadGroup::execute()
 {
 #ifndef MT
-  // Sequential execution when compiled without multithreading
+  // CASE 1: Sequential execution when compiled without multithreading
   wrapper(this);
 #else
-  // No need to create worker threads when either a) only a single worker
-  // is allowed or b) only a single function needs to be called.
-  if (maxParallel<=1 && countCallables<=1)
+  // CASE 2: No need to create worker threads when either a) only a single
+  // worker is allowed or b) only a single function needs to be called.
+  if (maxParallel<=1 || countCallables<=1)
   {
     wrapper(this);
     return;
   }
 
-  // Parallel execution in worker threads
+  // CASE 3: Parallel execution in worker threads
   int numthreads = countCallables;
   // Limit the number of threads to the maximum allowed
   if (numthreads > maxParallel) numthreads = maxParallel;
@@ -293,7 +293,7 @@ DECLARE_EXPORT ThreadGroup::callableWithArgument ThreadGroup::selectNextCallable
   {
     // No more functions
     assert( countCallables == 0 );
-    return callableWithArgument(NULL,NULL);
+    return callableWithArgument(static_cast<callable>(NULL),static_cast<void*>(NULL));
   }
   callableWithArgument c = callables.top();
   callables.pop();

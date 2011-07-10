@@ -195,8 +195,8 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    SolverMRP(const string& n) : Solver(n), constrts(15), maxparallel(0),
-        plantype(1), lazydelay(86400L), iteration_threshold(1), iteration_accuracy(0.01),
+    SolverMRP(const string& n) : Solver(n), constrts(15), plantype(1),
+        lazydelay(86400L), iteration_threshold(1), iteration_accuracy(0.01),
         autocommit(true)
       { initType(metadata); }
 
@@ -310,30 +310,6 @@ class SolverMRP : public Solver
       */
     static DECLARE_EXPORT bool demand_comparison(const Demand*, const Demand*);
 
-    /** Update the number of parallel solver threads.<br>
-      * The default value depends on whether the solver is run in verbose mode
-      * or not:
-      *  - In normal mode the solver uses as many threads as specified by
-      *    the environment variable NUMBER_OF_PROCESSORS.
-      *  - In verbose mode the solver runs in a single thread to avoid
-      *    mangling the debugging output of different threads.
-      */
-    void setMaxParallel(int i)
-    {
-      if (i < 1)
-        throw DataException("Invalid number of parallel solver threads");
-      maxparallel = i;
-    }
-
-    /** Return the number of threads used for planning. */
-    int getMaxParallel() const
-    {
-      // Or: Explicitly specified number of threads
-      if (maxparallel) return maxparallel;
-      // Or: Default number of threads
-      else return getLogLevel()>0 ? 1 : Environment::getProcessors();
-    }
-
     /** Return the time increment between requests when the answered reply
       * date isn't usable. */
     TimePeriod getLazyDelay() const {return lazydelay;}
@@ -445,15 +421,6 @@ class SolverMRP : public Solver
     typedef map < int, deque<Demand*>, less<int> > classified_demand;
     typedef classified_demand::iterator cluster_iterator;
     classified_demand demands_per_cluster;
-
-    /** Number of parallel solver threads.<br>
-      * The default value depends on whether the solver is run in verbose mode
-      * or not:
-      *  - In normal mode the solver uses NUMBER_OF_PROCESSORS threads.
-      *  - In verbose mode the solver runs in a single thread to avoid
-      *    mangling the debugging output of different threads.
-      */
-    int maxparallel;
 
     /** Type of plan to be created. */
     short plantype;

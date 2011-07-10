@@ -29,11 +29,13 @@
 #include "frepple/utils.h"
 #include <sys/stat.h>
 
-// These headers are required for the loading of dynamic libraries
+// These headers are required for the loading of dynamic libraries and the
+// detection of the number of cores.
 #ifdef WIN32
   #include <windows.h>
 #else
   #include <dlfcn.h>
+  #include <unistd.h>
 #endif
 
 
@@ -51,8 +53,9 @@ DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 DECLARE_EXPORT set<string> Environment::moduleRegistry;
 
 // Number of processors.
-// The value initialized here is overwritten in the library initialization.
-DECLARE_EXPORT int Environment::processors = 1;
+// The value initialized here is updated when the getProcessorCores function
+// is called the first time.
+DECLARE_EXPORT int Environment::processorcores = -1;
 
 // Output logging stream, whose input buffer is shared with either
 // Environment::logfile or cout.
@@ -105,18 +108,6 @@ void LibraryUtils::initialize()
   PythonInterpreter::registerGlobalMethod(
     "loadmodule", loadModule, METH_VARARGS,
     "Dynamically load a module in memory.");
-
-  // Query the system for the number of available processors.
-  // The environment variable NUMBER_OF_PROCESSORS is defined automatically on
-  // Windows platforms. On other platforms it'll have to be explicitly set
-  // since there isn't an easy and portable way of querying this system
-  // information.
-  const char *c = getenv("NUMBER_OF_PROCESSORS");
-  if (c)
-  {
-    int p = atoi(c);
-    Environment::setProcessors(p);
-  }
 }
 
 
@@ -174,6 +165,31 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
   // Not found
   return "";
 }
+
+
+DECLARE_EXPORT int Environment::getProcessorCores()
+{ 
+  // Previously detected already
+  if (processorcores >= 1) return processorcores;
+
+  // Detect the number of cores on the machine
+#ifdef WIN32
+  // Windows
+  SYSTEM_INFO sysinfo;
+  GetSystemInfo(&sysinfo);
+  processorcores = sysinfo.dwNumberOfProcessors;
+#elif defined(_GNU_SOURCE)
+  // Gnu C++ compiler extension
+  processorcores = get_nprocs();
+#else     
+  // Linux, Solaris and AIX.
+  // Tough luck for other platforms.
+  processorcores = sysconf(_SC_NPROCESSORS_ONLN);
+#endif 
+  // Detection failed...
+  if (processorcores<1) processorcores = 1;
+  return processorcores;
+} 
 
 
 DECLARE_EXPORT void Environment::setLogFile(const string& x)

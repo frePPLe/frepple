@@ -2499,7 +2499,6 @@ class OperationFixedTime : public Operation
 /** @brief Models an operation to convert a setup on a resource. */
 class OperationSetup : public Operation
 {
-  friend class CommandErase;
   public:
     /** Constructor. */
     explicit OperationSetup(const string& s) : Operation(s) {initType(metadata);}

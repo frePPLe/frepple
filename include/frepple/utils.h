@@ -39,8 +39,26 @@
    For a debugging build on windows we avoid using the debug version of Python
    since that also requires Python and all its modules to be compiled in debug
    mode.
+   Visual Studio will complain if system headers are #included both with
+   and without _DEBUG defined, so we have to #include all the system headers
+   used by pyconfig.h right here.
 */
 #if defined(_DEBUG) && defined(_MSC_VER)
+#include <stddef.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <errno.h>
+#include <ctype.h>
+#include <wchar.h>
+#include <basetsd.h>
+#include <io.h>
+#include <limits.h>
+#include <float.h>
+#include <string.h>
+#include <math.h>
+#include <time.h>
 #undef _DEBUG
 #include "Python.h"
 #define _DEBUG
@@ -2490,11 +2508,8 @@ class XMLElement : public DataElement
 class Environment
 {
   private:
-    /** Stores the number of processors on your machine.<br>
-      * On windows it is automatically initialized to the value of the
-      * environment variable NUMBER_OF_PROCESSORS.
-      */
-    static DECLARE_EXPORT int processors;
+    /** Caches the number of processor cores. */
+    static DECLARE_EXPORT int processorcores;
 
     /** A file where output is directed to. */
     static DECLARE_EXPORT ofstream logfile;
@@ -2518,11 +2533,8 @@ class Environment
       */
     static DECLARE_EXPORT string searchFile(const string);
 
-    /** Returns the number of processors on your machine. */
-    static int getProcessors() {return processors;}
-
-    /** Updates the number of processors available on your machine. */
-    static void setProcessors(int i) {if (i>=1) processors = i;}
+    /** Returns the number of processor cores on your machine. */
+    static DECLARE_EXPORT int getProcessorCores();
 
     /** Returns the name of the logfile. */
     static const string& getLogFile() {return logfilename;}
@@ -3281,7 +3293,7 @@ class ThreadGroup : public NonCopyable
       */
     ThreadGroup() : countCallables(0)
     {
-      maxParallel = Environment::getProcessors();
+      maxParallel = Environment::getProcessorCores();
     };
 
     /** Constructor with a predefined number of worker threads. */
@@ -3298,7 +3310,7 @@ class ThreadGroup : public NonCopyable
     }
 
     /** Execute all functions and wait for them to finish. */
-    void execute();
+    DECLARE_EXPORT void execute();
 
     /** Returns the number of parallel workers that is activated.<br>
       * By default we activate as many worker threads as there are cores on

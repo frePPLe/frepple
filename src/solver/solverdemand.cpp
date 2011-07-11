@@ -132,7 +132,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
         // Try with the minimum shipment quantity.
         if (loglevel>0)
           logger << "Demand '" << l << "' tries planning minimum quantity " << l->getMinShipment() << endl;
-        data->undo(topcommand);
+        data->rollback(topcommand);
         data->state->curBuffer = NULL;
         data->state->q_qty = l->getMinShipment();
         data->state->q_date = plan_date;
@@ -153,7 +153,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
             double new_qty = floor((min_qty + max_qty) / 2); // @TODO not generic to round down to an integer here
             if (loglevel>0)
               logger << "Demand '" << l << "' tries planning a different quantity " << new_qty << endl;
-            data->undo(topcommand);
+            data->rollback(topcommand);
             data->state->curBuffer = NULL;
             data->state->q_qty = new_qty;
             data->state->q_date = plan_date;
@@ -175,7 +175,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
             if (loglevel>0)
               logger << "Demand '" << l << "' restores plan for quantity " << min_qty << endl;
             // Restore the last feasible plan
-            data->undo(topcommand);
+            data->rollback(topcommand);
             data->state->curBuffer = NULL;
             data->state->q_qty = min_qty;
             data->state->q_date = plan_date;
@@ -225,7 +225,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       }
 
       // Delete operationplans - Undo all changes
-      data->undo(topcommand);
+      data->rollback(topcommand);
 
       // Set the ask date for the next pass through the loop
       if (next_date <= copy_plan_date)
@@ -249,7 +249,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
         // 'coordinated' planning run.
 
         // Delete operationplans created in the 'testing round'
-        data->undo(topcommand);
+        data->rollback(topcommand);
 
         // Create the correct operationplans
         if (loglevel>=2) 

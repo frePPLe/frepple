@@ -207,7 +207,7 @@ void SolverMRP::solve(const Load* l, void* v)
         << data->state->a_date << endl;
 
     // 4d) Undo the plan on the alternate
-    data->undo(topcommand);
+    data->rollback(topcommand);
 
     // 4e) Prepare for the next alternate
     if (data->state->a_date < min_next_date)

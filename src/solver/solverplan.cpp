@@ -60,7 +60,7 @@ int SolverMRP::initialize()
   // Initialize the Python class
   FreppleClass<SolverMRP,Solver>::getType().addMethod("solve", solve, METH_VARARGS, "run the solver");
   FreppleClass<SolverMRP,Solver>::getType().addMethod("commit", commit, METH_NOARGS, "commit the plan changes");
-  FreppleClass<SolverMRP,Solver>::getType().addMethod("undo", undo, METH_NOARGS, "undo the plan changes");
+  FreppleClass<SolverMRP,Solver>::getType().addMethod("rollback", rollback, METH_NOARGS, "rollback the plan changes");
   return FreppleClass<SolverMRP,Solver>::initialize();
 }
 
@@ -132,7 +132,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
         catch (...) {logger << "  Unknown type" << endl;}
 
         // Cleaning up
-        undo(topcommand);
+        rollback(topcommand);
       }
     }
 
@@ -389,7 +389,7 @@ DECLARE_EXPORT PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
 }
 
 
-DECLARE_EXPORT PyObject* SolverMRP::undo(PyObject *self, PyObject *args)
+DECLARE_EXPORT PyObject* SolverMRP::rollback(PyObject *self, PyObject *args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try

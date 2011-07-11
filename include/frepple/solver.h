@@ -415,7 +415,7 @@ class SolverMRP : public Solver
     static DECLARE_EXPORT PyObject* commit(PyObject*, PyObject*);
 
     /** Python method for undoing the plan changes. */
-    static DECLARE_EXPORT PyObject* undo(PyObject*, PyObject*);
+    static DECLARE_EXPORT PyObject* rollback(PyObject*, PyObject*);
 
   private:
     typedef map < int, deque<Demand*>, less<int> > classified_demand;

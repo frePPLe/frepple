@@ -233,7 +233,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     data->state->a_qty = requested_qty - shortage;
     if (data->state->a_qty < ROUNDING_ERROR)
     {
-      data->undo(topcommand);
+      data->rollback(topcommand);
       data->state->a_qty = 0.0;
     }
     data->state->a_date = (extraInventoryDate < extraSupplyDate) ?

@@ -217,7 +217,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
         );
       okay = false;
       // Pop actions from the command "stack" in the command list
-      data.undo(topcommand);
+      data.rollback(topcommand);
       // Echo a message
       if (data.getSolver()->getLogLevel()>1)
         logger << indent(opplan->getOperation()->getLevel())
@@ -246,7 +246,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
         data.state->a_qty = data.state->q_qty;
         okay = false;
         // Pop actions from the command stack in the command list
-        data.undo(topcommand);
+        data.rollback(topcommand);
         // Echo a message
         if (data.getSolver()->getLogLevel()>1)
           logger << indent(opplan->getOperation()->getLevel())
@@ -298,7 +298,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
   else
   {
     // Undo the plan
-    data.undo(topcommand);
+    data.rollback(topcommand);
     return false;
   }
 }
@@ -868,7 +868,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       if (search == PRIORITY)
       {
         // Undo the operationplans of this alternate
-        if (data->state->a_qty < ROUNDING_ERROR) data->undo(topcommand);
+        if (data->state->a_qty < ROUNDING_ERROR) data->rollback(topcommand);
 
         // Prepare for the next loop
         a_qty -= data->state->a_qty;
@@ -916,7 +916,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
           bestQDate = ask_date;  
         }
         // This was only an evaluation
-        data->undo(topcommand);
+        data->rollback(topcommand);
       }
 
       // Select the next alternate

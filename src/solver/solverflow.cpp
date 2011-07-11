@@ -145,7 +145,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
       }
 
       // 4e) Undo the plan on the alternate
-      data->undo(topcommand);
+      data->rollback(topcommand);
 
       // 4f) Prepare for the next alternate
       if (data->state->a_date < min_next_date)

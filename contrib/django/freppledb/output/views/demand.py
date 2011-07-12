@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.template import RequestContext, loader
+from django.conf import settings
 
 from freppledb.input.models import Item
 from freppledb.output.models import Demand

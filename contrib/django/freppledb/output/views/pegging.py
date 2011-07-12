@@ -30,7 +30,8 @@ from django.template import RequestContext, loader
 from freppledb.input.models import Parameter, Demand
 from freppledb.output.models import FlowPlan, LoadPlan, OperationPlan
 from freppledb.common.report import ListReport, getBuckets
- 
+from django.conf import settings
+
     
 class ReportByDemand(ListReport):
   '''

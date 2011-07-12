@@ -127,25 +127,11 @@ int main (int argc, char *argv[])
 
     // 3: Plan erase the model
     logger << "Plan the model:" << endl;
-    FreppleReadXMLData(
-      "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" \
-      "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" \
-      "<?python\n" \
-      "frepple.solver_mrp(name=\"MRP\", constraints=0).solve()\n"  \
-      "?>\n" \
-      "</plan>", true, false
-    );
+    utils::PythonInterpreter::execute("frepple.solver_mrp(name=\"MRP\", constraints=0).solve()");
 
     // 4: Plan erase the model
     logger << "Erase the model:" << endl;
-    FreppleReadXMLData(
-      "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" \
-      "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" \
-      "<?python\n" \
-      "frepple.erase(True)\n"  \
-      "?>\n" \
-      "</plan>", true, false
-    );
+    utils::PythonInterpreter::execute("frepple.erase(True)");
 
     // 5: Remove the subscriptions
     // a) buffers

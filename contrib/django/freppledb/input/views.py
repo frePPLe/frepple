@@ -118,7 +118,7 @@ class uploadjson:
           messages.add_message(request, messages.ERROR, 'Error processing %s: %s' % (msg,e))
 
       # Processing went fine...
-      return HttpResponse("OK")
+      return HttpResponse("OK",mimetype='text/plain')
 
     except Exception as e:
       print('Error processing uploaded data: %s %s' % (type(e),e))

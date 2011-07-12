@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -173,5 +173,6 @@ def GraphData(request, entity):
     }
   return HttpResponse(
     loader.render_to_string("output/forecast.xml", context, context_instance=RequestContext(request)),
+    mimetype='application/xml; charset=%s' % settings.DEFAULT_CHARSET
     )
     

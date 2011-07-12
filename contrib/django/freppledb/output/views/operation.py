@@ -183,4 +183,5 @@ def GraphData(request, entity):
     }
   return HttpResponse(
     loader.render_to_string("output/operation.xml", context, context_instance=RequestContext(request)),
+    mimetype='application/xml; charset=%s' % settings.DEFAULT_CHARSET
     )

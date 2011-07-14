@@ -2222,17 +2222,28 @@ class OperationPlan
       * If the operationplan is invalid, it will be DELETED and the return value
       * is 'false'.
       */
-    virtual DECLARE_EXPORT bool instantiate(bool useMinCounter = true);
+    DECLARE_EXPORT bool activate(bool useMinCounter = true);
+
+    /** Remove an operationplan from the list of officially registered ones.<br>
+      * The operationplan will keep its loadplans and flowplans after unregistration.
+      */
+    DECLARE_EXPORT void deactivate();
 
     /** This method links the operationplan in the list of all operationplans
       * maintained on the operation.<br>
       * In most cases calling this method is not required since it included
-      * in the instantiate method. In exceptional cases the solver already
+      * in the activate method. In exceptional cases the solver already
       * needs to see uncommitted operationplans in the list - eg for the
       * procurement buffer.
-      * @see instantiate
+      * @see activate
       */
     DECLARE_EXPORT void insertInOperationplanList();
+
+    /** This method remove the operationplan from the list of all operationplans
+      * maintained on the operation.<br>
+      * @see deactivate
+      */
+    DECLARE_EXPORT void removeFromOperationplanList();
 
     /** Add a sub-operationplan to the list. */
     virtual DECLARE_EXPORT void addSubOperationPlan(OperationPlan*);
@@ -2240,9 +2251,15 @@ class OperationPlan
     /** Remove a sub-operation_plan from the list. */
     virtual DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan*);
 
-    /** This function is used to create the proper loadplan and flowplan
-      * objects associated with the operation. */
+    /** This function is used to create the loadplans, flowplans and
+      * setup operationplans.
+      */
     DECLARE_EXPORT void createFlowLoads();
+
+    /** This function is used to delete the loadplans, flowplans and
+      * setup operationplans.
+      */
+    DECLARE_EXPORT void deleteFlowLoads();
 
     bool getHidden() const {return getOperation()->getHidden();}
 
@@ -5255,7 +5272,7 @@ class ProblemMaterialExcess : public Problem
 
 /** @brief This command is used to create an operationplan.
   *
-  * The operationplan will have its load and loadplans created when the
+  * The operationplan will have its loadplans and flowplans created when the
   * command is created. It is assigned an id and added to the list of all
   * operationplans when the command is committed.
   */
@@ -5275,12 +5292,14 @@ class CommandCreateOperationPlan : public Command
     {
       if (opplan)
       {
-       opplan->instantiate();
+        opplan->activate();
         opplan = NULL; // Avoid executing / initializing more than once
       }
     }
-    void rollback() {delete opplan; opplan = NULL;}
-    ~CommandCreateOperationPlan() {if (opplan) delete opplan;}
+    virtual void rollback() {delete opplan; opplan = NULL;}
+    virtual void undo() {if (opplan) opplan->deleteFlowLoads();}
+    virtual void redo() {if (opplan) opplan->createFlowLoads();}
+    virtual ~CommandCreateOperationPlan() {if (opplan) delete opplan;}
     OperationPlan *getOperationPlan() const {return opplan;}
 
   private:
@@ -5289,39 +5308,52 @@ class CommandCreateOperationPlan : public Command
 };
 
 
-/** @brief This command is used to delete an operationplan.
-  *
-  * The operationplan will be deleted when the command is created.
-  */
+/** @brief This command is used to delete an operationplan. */
 class CommandDeleteOperationPlan : public Command
 {
   public:
-    /** Constructor.<br>
-      * Unlike most other commands the constructor already executes the deletion.
-      */
+    /** Constructor. */
     DECLARE_EXPORT CommandDeleteOperationPlan(OperationPlan* o);
-    void commit() {oper = NULL;}
-    DECLARE_EXPORT void rollback();
-    ~CommandDeleteOperationPlan() {if (oper) rollback();}
+    virtual void commit()
+    {
+      if (opplan) delete opplan;
+      opplan = NULL;
+    }
+    virtual void undo()
+    {
+      if (!opplan) return;
+      opplan->createFlowLoads();
+      if (opplan->getIdentifier())
+      {
+        opplan->insertInOperationplanList();
+        if (opplan->getDemand())
+          opplan->getDemand()->addDelivery(opplan);
+      }
+    }
+    virtual void redo()
+    {
+      if (!opplan) return;
+      opplan->deleteFlowLoads();
+      if (opplan->getIdentifier())
+      {
+        opplan->removeFromOperationplanList();
+        if (opplan->getDemand())
+          opplan->getDemand()->removeDelivery(opplan);
+      }
+    }
+    virtual void rollback()
+    {
+      undo();
+      opplan = NULL;
+    }
+    virtual ~CommandDeleteOperationPlan() {undo();}
 
   private:
-    /** Operation pointer of the original operationplan. */
-    Operation *oper;
-
-    /** Daterange of the original operationplan. */
-    DateRange dates;
-
-    /** Quantity of the original operationplan. */
-    double qty;
-
-    /** Identifier of the original operationplan. */
-    long unsigned id;
-
-    /** Demand pointer of the original operationplan. */
-    Demand *dmd;
-
-    /** Owner of the original operationplan. */
-    OperationPlan *ow;
+    /** Pointer to the operationplan being deleted.<br>
+      * Until the command is committed we don't deallocate the memory for the
+      * operationplan, but only remove all pointers to it from various places.
+      */
+    OperationPlan *opplan;
 };
 
 
@@ -5349,16 +5381,20 @@ class CommandMoveOperationPlan : public Command
     DECLARE_EXPORT CommandMoveOperationPlan(OperationPlan*);
 
     /** Commit the changes. */
-    void commit() {opplan=NULL;}
+    virtual void commit() {opplan=NULL;}
 
     /** Undo the changes. */
-    void rollback() {restore(true); opplan = NULL;}
+    virtual void rollback() {restore(true); opplan = NULL;}
 
-    /** Undo the changes. */
+    virtual void undo() {restore(false);}
+    virtual DECLARE_EXPORT void redo();
+
+    /** Undo the changes.<b>
+      * When the argument is true, subcommands for suboperationplans are deleted. */
     DECLARE_EXPORT void restore(bool = false);
 
     /** Destructor. */
-    ~CommandMoveOperationPlan() {if (opplan) rollback();}
+    virtual ~CommandMoveOperationPlan() {if (opplan) rollback();}
 
     /** Returns the operationplan being manipulated. */
     OperationPlan* getOperationPlan() const {return opplan;}

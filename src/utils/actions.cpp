@@ -157,7 +157,7 @@ DECLARE_EXPORT CommandList::~CommandList()
   for (Command *i = lastCommand; i; )
   {
     Command *t = i;  // Temporary storage for the object to delete
-    i = i->prev;
+    i = i->getPrev();
     delete t;
   }
 }
@@ -317,8 +317,8 @@ unsigned __stdcall ThreadGroup::wrapper(void *arg)
        nextfunc.first;
        nextfunc = l->selectNextCallable())
   {
-#if defined(HAVE_PTHREAD_H) || !defined(MT)
-    // Verfiy whether there has been a cancellation request in the meantime  XXX
+#if defined(HAVE_PTHREAD_H) && defined(MT)
+    // Verify whether there has been a cancellation request in the meantime
     pthread_testcancel();
 #endif
     try {nextfunc.first(nextfunc.second);}

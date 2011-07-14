@@ -197,7 +197,7 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 }
 
 
-DECLARE_EXPORT bool OperationPlan::instantiate(bool useMinCounter)
+DECLARE_EXPORT bool OperationPlan::activate(bool useMinCounter)
 {
   // At least a valid operation pointer must exist
   if (!oper) throw LogicException("Initializing an invalid operationplan");
@@ -218,7 +218,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate(bool useMinCounter)
 
   // Instantiate all suboperationplans as well
   for (OperationPlan::iterator x(this); x != end(); ++x)
-    x->instantiate();
+    x->activate();
 
   // Create unique identifier
   // Having an identifier assigned is an important flag.
@@ -290,6 +290,24 @@ DECLARE_EXPORT bool OperationPlan::instantiate(bool useMinCounter)
 }
 
 
+DECLARE_EXPORT void OperationPlan::deactivate()
+{
+  // Wasn't activated anyway
+  if (!id) return;
+
+  id = 0;
+
+  // Delete from the list of deliveries
+  if (id && dmd) dmd->removeDelivery(this);
+
+  // Delete from the operationplan list
+  removeFromOperationplanList();
+
+  // Mark the operation to detect its problems
+  oper->setChanged();
+}
+
+
 DECLARE_EXPORT void OperationPlan::insertInOperationplanList()
 {
 
@@ -331,6 +349,23 @@ DECLARE_EXPORT void OperationPlan::insertInOperationplanList()
     if (x) x->next = this;
     if (y) y->prev = this;
   }
+}
+
+
+DECLARE_EXPORT void OperationPlan::removeFromOperationplanList()
+{
+  if (prev)
+    // In the middle
+    prev->next = next;
+  else if (oper->first_opplan == this)
+    // First opplan in the list of this operation
+    oper->first_opplan = next;
+  if (next)
+    // In the middle
+    next->prev = prev;
+  else if (oper->last_opplan == this)
+    // Last opplan in the list of this operation
+    oper->last_opplan = prev;
 }
 
 
@@ -437,22 +472,33 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
 }
 
 
+DECLARE_EXPORT void OperationPlan::deleteFlowLoads()
+{
+  // If no flowplans and loadplans, the work is already done
+  if (!firstflowplan && !firstloadplan) return;
+
+  FlowPlanIterator e = beginFlowPlans();
+  firstflowplan = NULL;    // Important to do this before the delete!
+  LoadPlanIterator f = beginLoadPlans();
+  firstloadplan = NULL;  // Important to do this before the delete!
+
+  // Delete the flowplans
+  while (e != endFlowPlans()) delete &*(e++);
+
+  // Delete the loadplans (including the setup suboperationplan)
+  while (f != endLoadPlans()) delete &*(f++);
+}
+
+
 DECLARE_EXPORT OperationPlan::~OperationPlan()
 {
-  // Initialize
-  FlowPlanIterator e = beginFlowPlans();
-  LoadPlanIterator f = beginLoadPlans(); 
-  OperationPlan *x = firstsubopplan;
+  // Delete the flowplans and loadplan
+  deleteFlowLoads();
 
-  // Reset to avoid extra updates during the destruction
-  firstflowplan = NULL;
-  firstloadplan = NULL;
+  // Initialize
+  OperationPlan *x = firstsubopplan;
   firstsubopplan = NULL;
   lastsubopplan = NULL;
-
-  // Delete the flowplans and loadplan
-  while (e != endFlowPlans()) delete &*(e++);
-  while (f != endLoadPlans()) delete &*(f++);
 
   // Delete the sub operationplans
   while (x)
@@ -475,18 +521,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   if (id && dmd) dmd->removeDelivery(this);
 
   // Delete from the operationplan list
-  if (prev)
-    // In the middle
-    prev->next = next;
-  else if (oper->first_opplan == this)
-    // First opplan in the list of this operation
-    oper->first_opplan = next;
-  if (next)
-    // In the middle
-    next->prev = prev;
-  else if (oper->last_opplan == this)
-    // Last opplan in the list of this operation
-    oper->last_opplan = prev;
+  removeFromOperationplanList();
 }
 
 
@@ -865,7 +900,7 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, const Attribute& p
   else if (pIn.isObjectEnd())
   {
     // Initialize the operationplan
-    if (!instantiate())
+    if (!activate())
       // Initialization failed and the operationplan is deleted
       pIn.invalidateCurrentObject();
   }
@@ -914,7 +949,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
     PythonAttributeList atts(kwds);
     Object* x = createOperationPlan(OperationPlan::metadata,atts);
 
-    // Iterate over extra keywords, and set attributes.   @todo move this responsability to the readers...
+    // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
     if (x)
     {
       PyObject *key, *value;
@@ -934,7 +969,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
       };
     }
 
-    if (x && !static_cast<OperationPlan*>(x)->instantiate())
+    if (x && !static_cast<OperationPlan*>(x)->activate())
       return NULL;
     return x;
   }

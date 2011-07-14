@@ -341,6 +341,11 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
 }
 
 
+DECLARE_EXPORT void CommandMoveOperationPlan::redo()  // xxx TODO not implemented
+{
+}
+
+
 DECLARE_EXPORT void CommandMoveOperationPlan::restore(bool del)
 {
   // Restore all suboperationplans and (optionally) delete the subcommands
@@ -365,47 +370,20 @@ DECLARE_EXPORT void CommandMoveOperationPlan::restore(bool del)
 //
 
 DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
-  (OperationPlan* o)
+  (OperationPlan* o) : opplan(o)
 {
   // Validate input
-  if (!o)
-  {
-    oper = NULL;
-    return;
-  }
+  if (!o) return;
 
   // Avoid deleting locked operationplans
   if (o->getLocked())
+  {
+    opplan = NULL;
     throw DataException("Can't delete a locked operationplan");
+  }
 
-  // Register the fields of the operationplan before deletion
-  oper = o->getOperation();
-  qty = o->getQuantity();
-  dates = o->getDates();
-  id = o->getIdentifier();
-  dmd = o->getDemand();
-  ow = &*(o->getOwner());
-
-  // Delete the operationplan
-  delete o;
-}
-
-
-DECLARE_EXPORT void CommandDeleteOperationPlan::rollback()
-{
-  // Already executed, or never initialized completely
-  if (!oper) return;
-
-  // Recreate and register the operationplan.
-  // Note that the recreated operationplan has the same field values as the
-  // original one, but has a different memory address. Any pointers to the
-  // original operationplan are now dangling.
-  OperationPlan* opplan = oper->createOperationPlan(qty, dates.getStart(),
-    dates.getEnd(), dmd, const_cast<OperationPlan*>(ow), id);
-  if (opplan) opplan->instantiate();
-
-  // Avoid undoing multiple times!
-  oper = NULL;
+  // Delete all flowplans and loadplans, and unregister from operationplan list
+  redo();
 }
 
 

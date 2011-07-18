@@ -144,17 +144,33 @@ DECLARE_EXPORT CommandManager::Bookmark* CommandManager::setBookmark()
 
 DECLARE_EXPORT void CommandManager::undoBookmark(CommandManager::Bookmark* b)
 {
-  if (!b) 
-    throw LogicException("Can't undo NULL bookmark");
-  throw LogicException("NOT IMPLEMENTED YET"); // TODO
+  if (!b) throw LogicException("Can't undo NULL bookmark");
+
+  Bookmark* i = lastBookmark;
+  for (; i && i != b; i = i->prevBookmark)
+  {
+    if (i->isChildOf(b) && i->active)
+    {
+      i->undo();
+      i->active = false;
+    }
+  }
+  if (!i) throw LogicException("Can't find bookmark to undo");
 }
 
 
 DECLARE_EXPORT void CommandManager::redoBookmark(CommandManager::Bookmark* b)
 {
-  if (!b) 
-    throw LogicException("Can't redo NULL bookmark");
-  throw LogicException("NOT IMPLEMENTED YET"); // TODO
+  if (!b) throw LogicException("Can't redo NULL bookmark");
+
+  for (Bookmark* i = b; i; i = i->nextBookmark)
+  {
+    if (i->isChildOf(b) && !i->active)
+    {
+      i->redo();
+      i->active = true;
+    }
+  }
 }
 
 

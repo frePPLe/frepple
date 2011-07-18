@@ -81,9 +81,16 @@ double suggestQuantity(const BufferProcure* b, double f)
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v) 
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+
+  // TODO create a more performant procurement solver. Instead of creating a list of operationplans
+  // moves and creations, we can create a custom command "updateProcurements". The commit of
+  // this command will update the operationplans.
+  // The solve method is only worried about getting a Yes/No reply. The reply is almost always yes,
+  // except a) when the request is inside max(current + the lead time, latest procurement + min time 
+  // after locked procurement), or b) when the min time > 0 and max qty > 0
 
   // Call the user exit
   if (userexit_buffer) userexit_buffer.call(b, PythonObject(data->constrainedPlanning));

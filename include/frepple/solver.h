@@ -549,7 +549,7 @@ class SolverMRP : public Solver
       * It stores the solver state maintained by each solver thread.
       * @see SolverMRP
       */
-    class SolverMRPdata : public CommandList
+    class SolverMRPdata : public CommandManager
     {
         friend class SolverMRP;
       public:
@@ -679,7 +679,12 @@ class SolverMRP : public Solver
     /** Scan the operationplans that are about to be committed to verify that
       * they are not creating any excess. 
       */
-    DECLARE_EXPORT void scanExcess(Command*);
+    DECLARE_EXPORT void scanExcess(CommandManager*);  
+
+    /** Scan the operationplans that are about to be committed to verify that
+      * they are not creating any excess. 
+      */
+    DECLARE_EXPORT void scanExcess(CommandList*);  
 };
 
 

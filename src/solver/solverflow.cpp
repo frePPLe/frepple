@@ -123,7 +123,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
       // 4c) Ask the buffer
       data->state->q_qty = ask_qty = - data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
-      Command* topcommand = data->getLastCommand();
+      CommandManager::Bookmark* topcommand = data->setBookmark();
       curflow->getBuffer()->solve(*this,data);
 
       // 4d) A positive reply: exit the loop

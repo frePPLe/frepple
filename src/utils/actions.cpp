@@ -60,63 +60,40 @@ DECLARE_EXPORT void CommandList::add(Command* c)
 }
 
 
-DECLARE_EXPORT void CommandList::rollback(Command *c)
+DECLARE_EXPORT void CommandList::rollback()
 {
-  // Check validity of argument
-  if (c && c->owner != this)
-    throw LogicException("Invalid call to CommandList::rollback(Command*)");
-
   // Undo all commands and delete them.
   // Note that undoing an operation that hasn't been executed yet or has been
   // undone already is expected to be harmless, so we don't need to worry
   // about that...
-  for (Command *i = lastCommand; i != c; )
+  for (Command *i = lastCommand; i; )
   {
     Command *t = i;  // Temporarily store the pointer to be deleted
     i = i->prev;
     delete t; // The delete is expected to also revert the change!
   }
 
-  // Maintain the linked list of commands still present
-  if (c)
-  {
-    // Partially undo
-    c->next = NULL;
-    lastCommand = c;
-  }
-  else
-  {
-    // Completely erase the list
-    firstCommand = NULL;
-    lastCommand = NULL;
-  }
+  // Reset the list
+  firstCommand = NULL;
+  lastCommand = NULL;
 }
 
 
-DECLARE_EXPORT void CommandList::undo(Command *c)
+DECLARE_EXPORT void CommandList::undo()
 {
-  // Check validity of argument
-  if (c && c->owner != this)
-    throw LogicException("Invalid call to CommandList::undo(Command*)");
-
   // Undo all commands and delete them.
   // Note that undoing an operation that hasn't been executed yet or has been
   // undone already is expected to be harmless, so we don't need to worry
   // about that...
-  for (Command *i = lastCommand; i != c; i = i->prev)
+  for (Command *i = lastCommand; i; i = i->prev)
     i->undo();
 }
 
 
-DECLARE_EXPORT void CommandList::commit(Command *c)
+DECLARE_EXPORT void CommandList::commit()
 {
-  // Check validity of argument
-  if (!c || c->owner != this)
-    throw LogicException("Invalid call to CommandList::commit(Command*)");
-  Command * prevCommand = c->prev;
-
   // Commit the commands
-  for (Command *i = c; i;)
+  for (Command *i = firstCommand; i;)
   {
     Command *t = i;  // Temporarily store the pointer to be deleted
     i->commit();
@@ -124,42 +101,128 @@ DECLARE_EXPORT void CommandList::commit(Command *c)
     delete t;
   }
 
-  // Remove from the list of commands
-  if (prevCommand)
-  {
-    prevCommand->next = NULL;
-    lastCommand = prevCommand;
-  }
-  else
-  {
-    firstCommand = NULL;
-    lastCommand = NULL;
-  }
+  // Reset the list
+  firstCommand = NULL;
+  lastCommand = NULL;
 }
 
 
-DECLARE_EXPORT void CommandList::redo(Command *c)
+DECLARE_EXPORT void CommandList::redo()
 {
-  // Check validity of argument
-  if (c && c->owner != this)
-    throw LogicException("Invalid call to CommandList::redo(Command*)");
-
   // Redo the commands
-  for (; c; c = c->next) c->redo();
+  for (Command* c = firstCommand; c; c = c->next) 
+    c->redo();
 }
 
 
 DECLARE_EXPORT CommandList::~CommandList()
 {
-  if (!firstCommand)
+  if (firstCommand)
+  {
     logger << "Warning: Deleting a command list with commands that have"
       << " not been committed or rolled back" << endl;
-  for (Command *i = lastCommand; i; )
-  {
-    Command *t = i;  // Temporary storage for the object to delete
-    i = i->getPrev();
-    delete t;
+    rollback();
   }
+}
+
+
+//
+// COMMAND MANAGER
+//
+
+
+DECLARE_EXPORT CommandManager::Bookmark* CommandManager::setBookmark()
+{
+  Bookmark* n = new Bookmark(currentBookmark);
+  lastBookmark->nextBookmark = n;
+  n->prevBookmark = lastBookmark;
+  lastBookmark = n;
+  currentBookmark = n;
+  return n;
+}
+
+
+DECLARE_EXPORT void CommandManager::undoBookmark(CommandManager::Bookmark* b)
+{
+  if (!b) 
+    throw LogicException("Can't undo NULL bookmark");
+  throw LogicException("NOT IMPLEMENTED YET"); // TODO
+}
+
+
+DECLARE_EXPORT void CommandManager::redoBookmark(CommandManager::Bookmark* b)
+{
+  if (!b) 
+    throw LogicException("Can't redo NULL bookmark");
+  throw LogicException("NOT IMPLEMENTED YET"); // TODO
+}
+
+
+DECLARE_EXPORT void CommandManager::rollback(CommandManager::Bookmark* b)
+{
+  if (!b) 
+    throw LogicException("Can't rollback NULL bookmark");
+  if (b == &firstBookmark) 
+    throw LogicException("Can't rollback default bookmark");
+
+  // Remove all later child bookmarks
+  Bookmark* i = lastBookmark;
+  while (i && i != b)
+  {
+    if (i->isChildOf(b))
+    {
+      // Remove from bookmark list
+      if (i->prevBookmark)
+        i->prevBookmark->nextBookmark = i->nextBookmark;
+      if (i->nextBookmark)
+        i->nextBookmark->prevBookmark = i->prevBookmark;
+      else
+        lastBookmark = i->prevBookmark; 
+      i->rollback();
+      if (currentBookmark == i) 
+        currentBookmark = b;
+      Bookmark* tmp = i;
+      i = i->prevBookmark;
+      delete tmp; 
+    }
+    else
+      // Bookmark has a different parent
+      i = i->prevBookmark;
+  }
+  if (!i) throw LogicException("Can't find bookmark to rollback");
+  b->rollback();
+}
+
+
+DECLARE_EXPORT void CommandManager::commit()
+{
+  if (firstBookmark.active) firstBookmark.commit();
+  for (Bookmark* i = firstBookmark.nextBookmark; i; )
+  {
+    if (i->active) i->commit();
+    Bookmark *tmp = i;
+    i = i->nextBookmark;
+    delete tmp;
+  }
+  firstBookmark.nextBookmark = NULL;
+  currentBookmark = &firstBookmark;
+  lastBookmark = &firstBookmark;
+}
+
+
+DECLARE_EXPORT void CommandManager::rollback()
+{
+  for (Bookmark* i = lastBookmark; i != &firstBookmark;)
+  {
+    i->rollback();
+    Bookmark *tmp = i;
+    i = i->prevBookmark;
+    delete tmp;
+  }
+  firstBookmark.rollback();
+  firstBookmark.nextBookmark = NULL;
+  currentBookmark = &firstBookmark;
+  lastBookmark = &firstBookmark;
 }
 
 

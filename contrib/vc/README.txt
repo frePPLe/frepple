@@ -10,49 +10,25 @@ use these workspaces and some notes specific to the use of this compiler.
 
 The project configuration files are generated with version 10 of Visual C++.
 Unfortunately these are not compatible with earlier releases.
-A free version, called "Visual C++ 2010 Express Edition", can be downloaded from
-the Microsoft website.
+A free version, called "Visual C++ 2010 Express Edition", can be downloaded
+from the Microsoft website.
+
+Only 32-bit builds are supported, since 64-bit compilation is not available
+with the Express Edition.
 
 
-BUILD INSTRUCTIONS FROM THE IDE
--------------------------------
+PREREQUISITES
+-------------
 
-The following describes the steps you need to build Frepple.
-
-1. Install xerces-c and follow the build instructions for the Visual C++.
-   The binary release package of Xerces-c may have been built with an
-   earlier release of Visual C++ and it is therefore recommended to recompile
-   xerces-c from the source code.
-
-2. Make sure to add the xerces-c include and library directory to the paths
-   used in your Visual C++ environment.
-
-3. Double-click the solution file "contrib/vc/frepple.sln".
-
-4. The configuration 'release' builds the projects 'main' and 'dll', i.e. the
-   console application and the dynamic library.
-
-5. The configuration 'modules' builds the extension modules 'forecast',
-   'lp_solver', 'python',... etc.
-   Depending on the nature of the module, additional software may need to be
-   installed:
-     lp_solver requires the glpk toolkit
-     python requires the python interpreter
-   The Visual C++ include and library paths need to be updated accordingly.
-
-   A BUILD FAILURE IS NOT CIRITICAL. THE MODULE INVOLVED WILL NOT BE AVAILABLE
-   BUT THE CORE FREPPLE APPLICATION WILL BE FINE, AND CAN BE USED ON ITS OWN.
-
-6. When using the program, the path should be set such that the xercess dll
-   directory and the module libraries are included in the path.
-   The easiest approach is to have these files in the same directory as the
-   application.
+1. Install xerces-c 3.*
+   Installing the 32-bit pre-compiled binaries for vc10 are easiest.
+2. Install Python 2.7.*
 
 
 BUILD INSTRUCTIONS FROM THE COMMAND LINE
 ----------------------------------------
 
-A convenience build script is provided: build.bat
+A convenience build script is provided to compile frePPle.
 
 1. Edit the file build.bat
    The following variables need to be edited:
@@ -61,6 +37,31 @@ A convenience build script is provided: build.bat
      - XERCES: Installation directory of the Xerces-C library
      - DOTNET: Installation directory of the .NET framework
      - GLPK:  Optional. Installation directory of the GNU Linear Programming Kit
-     
+
 2. Execute the build.bat command
+   The following options can be given on the command line:
+      -r:  completely "rebuild" the solution, rather than "build".
+      -d:  create a "debug" version, rather than a "release" version
+
+
+BUILD INSTRUCTIONS FROM THE IDE
+-------------------------------
+
+The following describes the steps you need to build frePPLe.
+
+1. Add the xerces-c and python include and library directory to the paths
+   used in your Visual C++ environment.
+
+2. Double-click the solution file "contrib/vc/frepple.sln".
+
+4. The configuration 'release' builds the projects 'main' (console application)
+   'dll' (shared library), as well as the mail modules.
+
+5. *Optionally* you may want to use the linear programming module.
+   If so, install "glpk" and configure its paths in VC++.
+
+6. When using the application, the path should be set such that 
+   the module libraries are found in the path.
+   The easiest way is to have these files in the same directory as the
+   application.
 

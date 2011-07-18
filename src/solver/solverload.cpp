@@ -118,7 +118,7 @@ void SolverMRP::solve(const Load* l, void* v)
     data->state->q_date = lplan->getDate();
 
     // 4b) Ask the resource
-    Command* topcommand = data->getLastCommand();
+    CommandManager::Bookmark* topcommand = data->setBookmark();
     if (search == PRIORITY) 
       curload->getResource()->solve(*this,data);
     else

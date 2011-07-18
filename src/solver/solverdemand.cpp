@@ -110,7 +110,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 
     // Store the last command in the list, in order to undo the following
     // commands if required.
-    Command* topcommand = data->getLastCommand();
+    CommandManager::Bookmark* topcommand = data->setBookmark();
 
     // Plan the demand by asking the delivery operation to plan
     double q_qty = plan_qty;
@@ -286,8 +286,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       // correct execute method is called!
       if (data->getSolver()->getAutocommit())
       {
-        data->getSolver()->scanExcess(data->getFirstCommand());
-        data->CommandList::commit();
+        data->getSolver()->scanExcess(data);
+        data->CommandManager::commit();
       }
 
 
@@ -329,8 +329,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       }
       if (data->getSolver()->getAutocommit())
       {
-        data->getSolver()->scanExcess(data->getFirstCommand());
-        data->CommandList::commit();
+        data->getSolver()->scanExcess(data);
+        data->CommandManager::commit();
       }
     }
     catch (...)
@@ -343,17 +343,24 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 }
 
 
-DECLARE_EXPORT void SolverMRP::scanExcess(Command* cmd)
+DECLARE_EXPORT void SolverMRP::scanExcess(CommandManager* mgr)
+{
+  for(CommandManager::iterator i = mgr->begin(); i != mgr->end(); ++i)
+    if (i->isActive()) scanExcess(&*i);
+}
+
+
+DECLARE_EXPORT void SolverMRP::scanExcess(CommandList* l)
 {
   // Loop over all newly created operationplans found in the command stack
-  for(; cmd; cmd = cmd->getNext())
+  for(CommandList::iterator cmd = l->begin(); cmd != l->end(); ++cmd)
   {
-    CommandCreateOperationPlan* createcmd = dynamic_cast<CommandCreateOperationPlan*>(cmd);
+    CommandCreateOperationPlan* createcmd = dynamic_cast<CommandCreateOperationPlan*>(&*cmd);
     if (!createcmd)
     {           
       // If the command is a list: recursively call this function
-      if (dynamic_cast<CommandList*>(cmd))
-        scanExcess(dynamic_cast<CommandList*>(cmd)->getFirstCommand());
+      if (dynamic_cast<CommandList*>(&*cmd))
+        scanExcess(dynamic_cast<CommandList*>(&*cmd));
       //else: Not a command creating an operationplan: move on
     }
     else

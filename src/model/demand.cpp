@@ -72,7 +72,7 @@ DECLARE_EXPORT void Demand::setQuantity(double f)
 
 
 DECLARE_EXPORT void Demand::deleteOperationPlans
-  (bool deleteLocked, CommandList* cmds)
+  (bool deleteLocked, CommandManager* cmds)
 {
   // Delete all opplans
   // Note that an extra loop is used to assure that our iterator doesn't get

@@ -100,7 +100,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
     for (deque<Demand*>::const_iterator i = demands->begin();
         i != demands->end(); ++i)
     {
-      Command* topcommand = getLastCommand();
+      CommandManager::Bookmark* topcommand = setBookmark();
       try
       {
         // Delete previous constraints
@@ -375,8 +375,8 @@ DECLARE_EXPORT PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
   try
   {
     SolverMRP * me = static_cast<SolverMRP*>(self);
-    me->scanExcess(me->commands.getFirstCommand());    
-    me->commands.CommandList::commit();
+    me->scanExcess(&(me->commands));
+    me->commands.CommandManager::commit();
   }
   catch(...)
   {

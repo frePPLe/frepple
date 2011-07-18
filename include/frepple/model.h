@@ -4499,7 +4499,7 @@ class Demand
       * remove the operationplans in an undo-able way.
       */
     DECLARE_EXPORT void deleteOperationPlans
-      (bool deleteLockedOpplans = false, CommandList* = NULL);
+      (bool deleteLockedOpplans = false, CommandManager* = NULL);
 
     /** Returns the due date of the demand. */
     const Date& getDue() const {return dueDate;}

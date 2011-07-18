@@ -871,6 +871,7 @@ class PythonType : public NonCopyable
     /** This method needs to be called after the type information has all
       * been updated. It adds the type to the frepple module. */
     DECLARE_EXPORT int typeReady();
+
     /** Comparison operator. */
     bool operator == (const PythonType& i) const
     {
@@ -3699,6 +3700,7 @@ class Tree : public NonCopyable
 class Command
 {
   friend class CommandList;
+  friend class CommandManager;
   friend class frepple::CommandMoveOperationPlan;
   public:
     /** Default constructor. The creation of a command should NOT execute the
@@ -3744,12 +3746,6 @@ class Command
     /** Destructor. */
     virtual ~Command() {};
 
-    /** Return a pointer to the next command. */
-    Command* getNext() const {return next;}
-
-    /** Return a pointer to the previous command. */
-    Command* getPrev() const {return prev;}    
-
   private:
     /** Points to the commandlist which owns this command. The default value
       * is NULL, meaning there is no owner. */
@@ -3768,9 +3764,8 @@ class Command
 /** @brief A container command to group a series of commands together.
   *
   * This class implements the "composite" design pattern in order to get an
-  * efficient and intuitive hierarchical grouping of tasks.
+  * efficient and intuitive hierarchical grouping of commands.
   * @TODO handle exceptions during commit, rollback, undo, redo
-  * @TODO how does add() work after undo/redo?  Ie append after new or old
   */
 class CommandList : public Command
 {
@@ -3784,48 +3779,77 @@ class CommandList : public Command
 
     /** Points to the last command in the list. */
     Command* lastCommand;
-
   public:
-    /** Returns the number of commands stored in this list. */
-    int getNumberOfCommands() const
+    class iterator
     {
-      int cnt = 0;
-      for(Command *i = firstCommand; i; i = i->next) ++cnt;
-      return cnt;
-    }
+      public:
+        /** Constructor. */
+        iterator(Command* x) : cur(x) {}
+
+        /** Copy constructor. */
+        iterator(const iterator& it) {cur = it.cur;}
+
+        /** Return the content of the current node. */
+        Command& operator*() const {return *cur;}
+
+        /** Return the content of the current node. */
+        Command* operator->() const {return cur;}
+
+        /** Pre-increment operator which moves the pointer to the next
+          * element. */
+        iterator& operator++() 
+        {
+          cur = cur->next;
+          return *this;
+        }
+
+        /** Post-increment operator which moves the pointer to the next
+          * element. */
+        iterator operator++(int)
+        {
+          iterator tmp = *this;
+          cur = cur->next;
+          return tmp;
+        }
+
+        /** Comparison operator. */
+        bool operator==(const iterator& y) const {return cur==y.cur;}
+
+        /** Inequality operator. */
+        bool operator!=(const iterator& y) const {return cur!=y.cur;}
+
+      private:
+        Command* cur;
+    };
+
+    /** Returns an iterator over all commands in the list. */
+    iterator begin() const {return iterator(firstCommand);}
+
+    /** Returns an iterator beyond the last command. */
+    iterator end() const {return iterator(NULL);}
 
     /** Append an additional command to the end of the list. */
     DECLARE_EXPORT void add(Command* c);
 
-    /** Returns the first command that was added to the list. */
-    Command* getFirstCommand() const {return firstCommand;}
-
-    /** Returns the last command that was added to the list. */
-    Command* getLastCommand() const {return lastCommand;}
-
     /** Undoes all actions on the list.<br>
       * At the end it also clears the list of actions.
       */
-    virtual void rollback() {rollback(NULL);}
-    DECLARE_EXPORT void rollback(Command *c);
+    virtual DECLARE_EXPORT void rollback();
 
     /** Commits all actions on its list.<br>
       * At the end it also clears the list of actions.
       */
-    virtual DECLARE_EXPORT void commit() {commit(firstCommand);}
-    virtual DECLARE_EXPORT void commit(Command *c);
+    virtual DECLARE_EXPORT void commit();
 
     /** Undoes all actions on its list.<br>
       * The list of actions is left intact, so the changes can still be redone.
       */
-    virtual void undo() {undo(NULL);}
-    DECLARE_EXPORT void undo(Command*);
+    virtual DECLARE_EXPORT void undo();
 
     /** Redoes all actions on its list.<br>
       * The list of actions is left intact, so the changes can still be undone.
       */
-    DECLARE_EXPORT void redo(Command*);
-    virtual void redo() {redo(firstCommand);}
+    DECLARE_EXPORT void redo();
 
     /** Returns true if no commands have been added yet to the list. */
     bool empty() const {return firstCommand==NULL;}
@@ -3839,6 +3863,195 @@ class CommandList : public Command
       * will be printed.
       */
     virtual DECLARE_EXPORT ~CommandList();
+};
+
+
+/** @brief This class allows management of tasks with supporting commiting them, 
+  * rolling them back, and setting bookmarks which can be undone and redone.
+  */
+class CommandManager
+{
+  public:
+    /** A bookmark that keeps track of commands that can be undone and redone. */
+    class Bookmark : public CommandList
+    { 
+      friend class CommandManager;
+      private:
+        bool active;
+        Bookmark* nextBookmark;
+        Bookmark* prevBookmark;
+        Bookmark* parent;
+        Bookmark(Bookmark* p=NULL) : active(true), 
+          nextBookmark(NULL), prevBookmark(NULL), parent(p) {}
+      public:
+        /** Returns true if the bookmark commands are active. */
+        bool isActive() const {return active;}
+
+        /** Returns true if the bookmark is a child, grand-child or 
+          * grand-grand-child of the argument bookmark. 
+          */
+        bool isChildOf(const Bookmark* b) const
+        {
+          for (const Bookmark* p = this; p; p = p->parent)
+            if (p == b) return true;
+          return false;
+        }
+    };
+
+    /** An STL-like iterator to move over all bookmarks in forward order. */
+    class iterator
+    {
+      public:
+        /** Constructor. */
+        iterator(Bookmark* x) : cur(x) {}
+
+        /** Copy constructor. */
+        iterator(const iterator& it) {cur = it.cur;}
+
+        /** Return the content of the current node. */
+        Bookmark& operator*() const {return *cur;}
+
+        /** Return the content of the current node. */
+        Bookmark* operator->() const {return cur;}
+
+        /** Pre-increment operator which moves the pointer to the next
+          * element. */
+        iterator& operator++() 
+        {
+          cur = cur->nextBookmark;
+          return *this;
+        }
+
+        /** Post-increment operator which moves the pointer to the next
+          * element. */
+        iterator operator++(int)
+        {
+          iterator tmp = *this;
+          cur = cur->nextBookmark;
+          return tmp;
+        }
+
+        /** Comparison operator. */
+        bool operator==(const iterator& y) const {return cur==y.cur;}
+
+        /** Inequality operator. */
+        bool operator!=(const iterator& y) const {return cur!=y.cur;}
+
+      private:
+        Bookmark* cur;
+    };
+
+    /** An STL-like iterator to move over all bookmarks in reverse order. */
+    class reverse_iterator
+    {
+      public:
+        /** Constructor. */
+        reverse_iterator(Bookmark* x) : cur(x) {}
+
+        /** Copy constructor. */
+        reverse_iterator(const reverse_iterator& it) {cur = it.cur;}
+
+        /** Return the content of the current node. */
+        Bookmark& operator*() const {return *cur;}
+
+        /** Return the content of the current node. */
+        Bookmark* operator->() const {return cur;}
+
+        /** Pre-increment operator which moves the pointer to the next
+          * element. */
+        reverse_iterator& operator++() 
+        {
+          cur = cur->prevBookmark;
+          return *this;
+        }
+
+        /** Post-increment operator which moves the pointer to the next
+          * element. */
+        reverse_iterator operator++(int)
+        {
+          reverse_iterator tmp = *this;
+          cur = cur->prevBookmark;
+          return tmp;
+        }
+
+        /** Comparison operator. */
+        bool operator==(const reverse_iterator& y) const {return cur==y.cur;}
+
+        /** Inequality operator. */
+        bool operator!=(const reverse_iterator& y) const {return cur!=y.cur;}
+
+      private:
+        Bookmark* cur;
+    };
+
+  private:
+    /** Head of a list of bookmarks.<br>
+      * A command manager has always at least this default bookmark.
+      */
+    Bookmark firstBookmark;
+
+    /** Tail of a list of bookmarks. */
+    Bookmark* lastBookmark;
+    
+    /** Current bookmarks.<br>
+      * If commands are added to the manager, this is the bookmark where 
+      * they'll be appended to.
+      */
+    Bookmark* currentBookmark;
+
+  public:
+    /** Constructor. */
+    CommandManager()
+    {
+      lastBookmark = &firstBookmark;
+      currentBookmark = &firstBookmark;
+    }
+
+    /** Destructor. */
+    ~CommandManager() 
+    {
+      for (Bookmark* i = lastBookmark; i; i = i->prevBookmark)
+        delete i;
+    }
+
+    /** Returns an iterator over all bookmarks in forward direction. */
+    iterator begin() {return iterator(&firstBookmark);}
+
+    /** Returns an iterator beyond the last bookmark in forward direction. */
+    iterator end() {return iterator(NULL);}
+
+    /** Returns an iterator over all bookmarks in reverse direction. */
+    reverse_iterator rbegin() {return reverse_iterator(lastBookmark);}
+
+    /** Returns an iterator beyond the last bookmark in reverse direction. */
+    reverse_iterator rend() {return reverse_iterator(NULL);}
+
+    /** Add a command to the active bookmark. */
+    void add(Command* c) {currentBookmark->add(c);}
+
+    /** Create a new bookmark. */
+    DECLARE_EXPORT Bookmark* setBookmark();
+
+    /** Undo all commands in a bookmark (and its children).<br>
+      * It can later be redone. 
+      */
+    DECLARE_EXPORT void undoBookmark(Bookmark*);
+
+    /** Redo all commands in a bookmark (and its children).<br>
+      * It can later still be undone. 
+      */
+    DECLARE_EXPORT void redoBookmark(Bookmark*);
+
+    /** Undo all commands in a bookmark (and its children).<br>
+      * It can no longer be redone. The bookmark does however still exist.
+      */
+    DECLARE_EXPORT void rollback(Bookmark*);
+
+    /** Commit all commands. */
+    DECLARE_EXPORT void commit();
+
+    /** Rolling back all commands. */
+    DECLARE_EXPORT void rollback();
 };
 
 

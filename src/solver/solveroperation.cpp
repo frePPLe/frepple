@@ -103,9 +103,8 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
     // leadtime constraints
     return false;
 
-  // Store the last command in the list, in order to undo the following
-  // commands if required.
-  Command* topcommand = data.getLastCommand();
+  // Set a bookmark in the command list.
+  CommandManager::Bookmark* topcommand = data.setBookmark();
 
   // Temporary variables
   DateRange orig_dates = opplan->getDates();
@@ -720,9 +719,8 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         = oper->getSubOperations().begin();
         altIter != oper->getSubOperations().end(); )
     {
-      // Store the last command in the list, in order to undo the following
-      // commands if required.
-      Command* topcommand = data->getLastCommand();
+      // Set a bookmark in the command list.
+      CommandManager::Bookmark* topcommand = data->setBookmark();
       bool nextalternate = true;
 
       // Operations with 0 priority are considered unavailable

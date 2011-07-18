@@ -56,7 +56,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 
   // Store the last command in the list, in order to undo the following
   // commands if required.
-  Command* topcommand = data->getLastCommand();
+  CommandManager::Bookmark* topcommand = data->setBookmark();
 
   // Make sure the new operationplans don't inherit an owner.
   // When an operation calls the solve method of suboperations, this field is

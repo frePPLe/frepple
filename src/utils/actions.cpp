@@ -156,6 +156,7 @@ DECLARE_EXPORT void CommandManager::undoBookmark(CommandManager::Bookmark* b)
     }
   }
   if (!i) throw LogicException("Can't find bookmark to undo");
+  currentBookmark = b->parent;
 }
 
 
@@ -171,6 +172,7 @@ DECLARE_EXPORT void CommandManager::redoBookmark(CommandManager::Bookmark* b)
       i->active = true;
     }
   }
+  currentBookmark = b;
 }
 
 

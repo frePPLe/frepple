@@ -290,7 +290,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
         data->CommandManager::commit();
       }
 
-
       // Update the quantity to plan in the next loop
       plan_qty -= data->state->a_qty;
       best_a_qty = 0.0;  // Reset 'best-answer' remember

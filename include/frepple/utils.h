@@ -4033,12 +4033,15 @@ class CommandManager
     DECLARE_EXPORT Bookmark* setBookmark();
 
     /** Undo all commands in a bookmark (and its children).<br>
-      * It can later be redone. 
+      * It can later be redone.<br>
+      * The active bookmark in the manager is set to the parent of
+      * argument bookmark.
       */
     DECLARE_EXPORT void undoBookmark(Bookmark*);
 
     /** Redo all commands in a bookmark (and its children).<br>
-      * It can later still be undone. 
+      * It can later still be undone.<b>
+      * The active bookmark in the manager is set to the argument bookmark.
       */
     DECLARE_EXPORT void redoBookmark(Bookmark*);
 

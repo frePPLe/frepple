@@ -4010,7 +4010,7 @@ class CommandManager
     /** Destructor. */
     ~CommandManager() 
     {
-      for (Bookmark* i = lastBookmark; i; i = i->prevBookmark)
+      for (Bookmark* i = lastBookmark; i && i != &firstBookmark; i = i->prevBookmark)
         delete i;
     }
 

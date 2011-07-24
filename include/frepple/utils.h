@@ -2644,14 +2644,28 @@ class PythonObject : public DataElement
     /** Convert a Python string into a C++ string. */
     inline string getString() const
     {
-      if (obj == Py_None) return string();
-      if (PyUnicode_Check(obj))
+      if (obj == Py_None)
+        return string();
+      else if (PyUnicode_Check(obj))
       {
-        // Replace the unicode object with a string encoded in the correct locale
-        const_cast<PyObject*&>(obj) =
-          PyUnicode_AsEncodedString(obj, PythonInterpreter::getPythonEncoding(), "ignore");
+        // It's a Python unicode string
+        PyObject* x = PyUnicode_AsEncodedString(obj,
+            PythonInterpreter::getPythonEncoding(), "ignore");
+        string result = PyString_AsString(x);
+        Py_DECREF(x);
+        return result;
       }
-      return PyString_AsString(PyObject_Str(obj));
+      else if (PyString_Check(obj))
+        // It's a Python string
+        return PyString_AsString(obj);
+      else
+      {
+        // It's not a Python string object, call the str() function on the object
+        PyObject* x = PyObject_Str(obj);
+        string result = PyString_AsString(x);
+        Py_DECREF(x);
+        return result;
+      }
     }
 
     /** Extract an unsigned long from the Python object. */

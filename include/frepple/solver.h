@@ -555,7 +555,9 @@ class SolverMRP : public Solver
       public:
         static void runme(void *args)
         {
-          static_cast<SolverMRP::SolverMRPdata*>(args)->commit();
+          SolverMRP::SolverMRPdata* x = static_cast<SolverMRP::SolverMRPdata*>(args);
+          x->commit();
+          delete x;
         }
 
         /** Return the solver. */

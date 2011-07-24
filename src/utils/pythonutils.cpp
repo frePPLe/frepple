@@ -173,21 +173,21 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
     throw RuntimeException("Can't initialize Python interpreter");
   }
 
-  // Execute the Python code. Note that during the call the python lock can be
+  // Execute the Python code. Note that during the call the Python lock can be
   // temporarily released.
   PyObject *v = PyRun_String(cmd, Py_file_input, d, d);
   if (!v)
   {
     // Print the error message
     PyErr_Print();
-    // Release the global python lock
+    // Release the global Python lock
     PyEval_ReleaseLock();
     throw RuntimeException("Error executing Python command");
   }
   Py_DECREF(v);
   if (Py_FlushLine()) PyErr_Clear();
 
-  // Release the global python lock
+  // Release the global Python lock
   PyEval_ReleaseLock();
 }
 

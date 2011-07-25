@@ -30,6 +30,7 @@ from django.core import management
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
+from django.db.models import Min, Max
 
 from freppledb.input.models import Operation, Buffer, Resource, Location, Calendar
 from freppledb.input.models import CalendarBucket, BucketDetail, Customer, Demand, Flow
@@ -186,15 +187,27 @@ class Command(BaseCommand):
       if verbosity>0: print "Updating horizon telescope..."
       updateTelescope(10, 40, 730)
             
+      # Weeks calendar
+      if verbosity>0: print "Creating weeks calendar..."
+      weeks = Calendar.objects.using(database).create(name="Weeks")
+      for i in BucketDetail.objects.using(database).filter(bucket="week").all():
+        CalendarBucket(startdate=i.startdate, enddate=i.enddate, value=1, calendar=weeks).save(using=database)
+      transaction.commit(using=database)
+            
       # Working days calendar
       if verbosity>0: print "Creating working days..."
       workingdays = Calendar.objects.using(database).create(name="Working Days",type= "calendar_boolean")
-      weeks = Calendar.objects.using(database).create(name="Weeks")
-      for i in BucketDetail.objects.using(database).filter(bucket="week").all():
-        curdate = i.startdate + timedelta(5)
-        CalendarBucket(startdate=i.startdate, enddate=curdate, value=1, calendar=workingdays).save(using=database)
-        CalendarBucket(startdate=curdate, enddate=i.enddate, value=0, calendar=workingdays).save(using=database)
-        CalendarBucket(startdate=i.startdate, enddate=i.enddate, value=1, calendar=weeks).save(using=database)
+      minmax = BucketDetail.objects.using(database).filter(bucket="week").aggregate(Min('startdate'),Max('startdate'))
+      curdate = minmax['startdate__min']
+      curdate = curdate - timedelta(curdate.weekday())  # Align on mondays
+      count = 0
+      while curdate < minmax['startdate__max']:
+        boundarydate = curdate + timedelta(5)
+        nextdate = curdate + timedelta(7)
+        CalendarBucket(startdate=curdate, enddate=boundarydate, value=1, calendar=workingdays, priority=count).save(using=database)
+        CalendarBucket(startdate=boundarydate, enddate=nextdate, value=0, calendar=workingdays, priority=count+1).save(using=database)
+        curdate = nextdate
+        count += 2
       transaction.commit(using=database)
 
       # Create a random list of categories to choose from

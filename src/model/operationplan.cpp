@@ -704,6 +704,75 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 }
 
 
+DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src, bool init)
+{
+  if (src.owner)
+    throw LogicException("Can't copy suboperationplans. Copy the owner instead.");
+
+  // Identifier can't be inherited, but a new one will be generated when we activate the operationplan
+  id = 0;
+
+  // Copy the fields
+  quantity = src.quantity;
+  flags = src.flags;
+  dmd = src.dmd;
+  oper = src.oper;
+  firstflowplan = NULL;
+  firstloadplan = NULL;
+  dates = src.dates;
+  prev = NULL;
+  next = NULL;
+  owner = NULL;
+  firstsubopplan = NULL;
+  lastsubopplan = NULL;
+  nextsubopplan = NULL;
+  prevsubopplan = NULL;
+  initType(metadata);
+
+  // Clone the suboperationplans
+  for (OperationPlan::iterator x(&src); x != end(); ++x)
+    new OperationPlan(*x, this);
+
+  // Activate
+  if (init) activate();
+}
+
+
+DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src,
+  OperationPlan* newOwner)
+{
+  if (!newOwner)
+    throw LogicException("No new owner passed in private copy constructor.");
+
+  // Identifier can't be inherited, but a new one will be generated when we activate the operationplan
+  id = 0;
+
+  // Copy the fields
+  quantity = src.quantity;
+  flags = src.flags;
+  dmd = src.dmd;
+  oper = src.oper;
+  firstflowplan = NULL;
+  firstloadplan = NULL;
+  dates = src.dates;
+  prev = NULL;
+  next = NULL;
+  owner = NULL;
+  firstsubopplan = NULL;
+  lastsubopplan = NULL;
+  nextsubopplan = NULL;
+  prevsubopplan = NULL;
+  initType(metadata);
+
+  // Set owner of a
+  setOwner(newOwner);
+
+  // Clone the suboperationplans
+  for (OperationPlan::iterator x(&src); x != end(); ++x)
+    new OperationPlan(*x, this);
+}
+
+
 DECLARE_EXPORT void OperationPlan::update()
 {
   if (lastsubopplan && lastsubopplan->getOperation() != OperationSetup::setupoperation)  

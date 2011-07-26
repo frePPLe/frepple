@@ -1856,11 +1856,11 @@ class Operation : public HasName<Operation>,
   *
   * From a coding perspective:
   *  - Operationplans are created by the factory method createOperationPlan()
-  *    on the matching operation class.
+  *    on the matching Operation class.
   *  - The createLoadAndFlowplans() can optionally be called to also create
   *    the loadplans and flowplans, to take care of the material and
   *    capacity consumption.
-  *  - Once you're sure about creating the operationplan, the instantiate()
+  *  - Once you're sure about creating the operationplan, the activate()
   *    method should be called. It will assign the operationplan a unique
   *    numeric identifier, register the operationplan in a container owned
   *    by the operation instance, and also create loadplans and flowplans
@@ -2305,7 +2305,19 @@ class OperationPlan
       */
     DECLARE_EXPORT bool operator < (const OperationPlan& a) const;
 
+    /** Copy constructor.<br>
+      * If the optional argument is false, the new copy is not initialized
+      * and won't have flowplans and loadplans.
+      */
+    DECLARE_EXPORT OperationPlan(const OperationPlan&, bool = true);
+
   private:
+    /** Private copy constructor.<br>
+      * It is used in the public copy constructor to make a deep clone of suboperationplans.
+      * @see OperationPlan(const OperationPlan&, bool = true)
+      */
+    DECLARE_EXPORT OperationPlan(const OperationPlan&, OperationPlan*);
+
     /** Updates the operationplan based on the latest information of quantity,
       * date and locked flag.<br>
       * This method will also update parent and child operationplans.
@@ -2319,12 +2331,6 @@ class OperationPlan
       * @see update
       */
     DECLARE_EXPORT void resizeFlowLoadPlans();
-
-    /** Pointer to a higher level OperationPlan. */
-    OperationPlan *owner;
-
-    /** Quantity. */
-    double quantity;
 
     /** Default constructor.<br>
       * This way of creating operationplan objects is not intended for use by
@@ -2344,6 +2350,12 @@ class OperationPlan
     static const short IS_LOCKED = 1;
     static const short IS_SETUP = 2;
     static const short HAS_SETUP = 4;
+
+    /** Pointer to a higher level OperationPlan. */
+    OperationPlan *owner;
+
+    /** Quantity. */
+    double quantity;
 
     /** Is this operationplan locked? A locked operationplan doesn't accept
       * any changes. This field is only relevant for top-operationplans. */

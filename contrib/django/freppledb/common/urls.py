@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -35,4 +35,9 @@ urlpatterns = patterns('',
   (r'^admin/auth/group/$', 'freppledb.common.report.view_report',
     {'report': freppledb.common.views.GroupList,}),
 
+  # RSS feed with recently changed objects
+  # IMPORTANT NOTE: 
+  # The RSS feed is not authenticated. Everybody can see the change list.
+  # For security sensitive environments the RSS feed should be deactivated.
+  (r'^rss/$', freppledb.common.views.RSSFeed()),
 )

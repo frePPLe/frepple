@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -29,6 +29,8 @@ from django import forms
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User, Group
+from django.contrib.admin.models import LogEntry
+from django.contrib.syndication.views import Feed
 
 from freppledb.common.models import Preferences
 from freppledb.common.report import ListReport, FilterText, FilterBool
@@ -141,3 +143,43 @@ class GroupList(ListReport):
       'filter': FilterText(),
       }),
     )
+
+ 
+class RSSFeed(Feed):
+  title = _("frePPLe recent changes")
+
+  def __call__(self, request, *args, **kwargs):
+    # HTTP auth check inspired by http://djangosnippets.org/snippets/243/
+    self.link = "%s/rss/" % request.prefix
+    self.request = request
+    return super(RSSFeed, self).__call__(request, *args, **kwargs)
+
+  def items(self):
+    return LogEntry.objects.all().using(self.request.database).order_by('-action_time')[:50]
+
+  def item_title(self, action):
+    if action.is_addition():
+      return _("Added %(name)s \"%(obj)s\"") % {'name': action.content_type.name, 'obj': action.object_repr}
+    elif action.is_change():
+      return _("Changed %(name)s \"%(obj)s\"") % {'name': action.content_type.name, 'obj': action.object_repr}
+    elif action.is_deletion():
+      return _("Deleted %(name)s \"%(obj)s\"") % {'name': action.content_type.name, 'obj': action.object_repr}
+
+  def author_name(self, action):
+    if action and action.user:
+      return action.user.get_full_name
+    else:
+      return ''
+
+  def item_categories(self, action):
+    return ( action.content_type.name, )
+
+  def item_pubdate(self, action):
+    return action.action_time
+
+  def item_description(self, action):
+    return action.change_message
+    
+  def item_link(self, action):
+    if action.is_deletion(): return ''
+    return action.get_admin_url() and ("%s/admin/%s" % (self.request.prefix, action.get_admin_url())) or ''

@@ -133,7 +133,6 @@ class OverviewReport(TableReport):
          sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
          sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),
          basesql,bucket,startdate,enddate,sortsql)
-    print query
     cursor.execute(query, baseparams)
 
 

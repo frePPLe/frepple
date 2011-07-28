@@ -440,7 +440,7 @@ def loadOperationPlans(cursor):
 
 def loadForecast(cursor):
   # Detect whether the forecast module is available
-  if not 'demand_forecast' in [ a for a in inspect.getmembers(frepple)[0] ]:
+  if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
     return
 
   print 'Importing forecast...'
@@ -465,7 +465,7 @@ def loadForecast(cursor):
 
 def loadForecastdemand(cursor):
   # Detect whether the forecast module is available
-  if not 'demand_forecast' in [ a for a in inspect.getmembers(frepple)[0] ]:
+  if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
     return
 
   print 'Importing forecast demand...'

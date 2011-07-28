@@ -286,7 +286,7 @@ class Calendar : public HasName<Calendar>
         const Calendar* theCalendar;
         const Bucket* curBucket;
         Date curDate;
-        double curPriority;
+        int curPriority;
       public:
         const Date& getDate() const {return curDate;}
         const Bucket* getBucket() const {return curBucket;}
@@ -3466,8 +3466,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       {
         if (getOperation()) getOperation()->flowdata.erase(this);
         if (getBuffer()) getBuffer()->flows.erase(this);
-    	resetReferenceCount();
-    	throw;
+        resetReferenceCount();
+        throw;
       }
     }
 
@@ -3484,8 +3484,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       {
       	if (getOperation()) getOperation()->flowdata.erase(this);
       	if (getBuffer()) getBuffer()->flows.erase(this);
-    	resetReferenceCount();
-    	throw;
+        resetReferenceCount();
+        throw;
       }
     }
 

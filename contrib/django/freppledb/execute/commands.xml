@@ -11,6 +11,13 @@ from freppledb.execute.export_database import exportfrepple as export_to_databas
 from freppledb.execute.export_file import exportfrepple as export_to_file
 from freppledb.execute.load import loadfrepple
 
+# Auxilary functions for debugging
+
+def debugResource(res,mode):
+   print "=> Situation on resource", res.name
+   for j in res.loadplans:
+     print "=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup
+ 
 # Send the output to a logfile
 try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
 except: db = DEFAULT_DB_ALIAS
@@ -34,7 +41,12 @@ try: plantype = int(os.environ['PLANTYPE'])
 except: plantype = 1  # Default is a constrained plan
 try: constraint = int(os.environ['CONSTRAINT'])
 except: constraint = 15  # Default is with all constraints enabled
-mrp = frepple.solver_mrp(name="MRP", constraints=constraint, plantype=plantype, loglevel=0)
+solver = frepple.solver_mrp(name="MRP", 
+  constraints=constraint, 
+  plantype=plantype, 
+  #userexit_resource=debugResource,
+  loglevel=0
+  )
 print "Plan type: ", plantype
 print "Constraints: ", constraint
 
@@ -64,7 +76,7 @@ if 'solver_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
   print "\nStart forecast netting at", datetime.now().strftime("%H:%M:%S")
   frepple.solver_forecast(name="Netting orders from forecast",loglevel=0).solve()
 print "\nStart plan generation at", datetime.now().strftime("%H:%M:%S")
-mrp.solve()
+solver.solve()
 frepple.printsize()
 
 print "\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S")

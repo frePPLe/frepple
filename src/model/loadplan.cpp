@@ -356,6 +356,8 @@ PyObject* LoadPlan::getattro(const Attribute& attr)
     return PythonObject(getLoad()->getOperation());
   if (attr.isA(Tags::tag_load))
     return PythonObject(getLoad());
+  if (attr.isA(Tags::tag_onhand))
+    return PythonObject(getOnhand());
   if (attr.isA(Tags::tag_setup))
     return PythonObject(getSetup());
   return NULL;
@@ -378,8 +380,8 @@ PyObject* LoadPlanIterator::iternext()
   LoadPlan* ld;
   if (resource_or_opplan)
   {
-    // Skip zero quantity loadplans and load ends
-    while (*resiter != res->getLoadPlans().end() && (*resiter)->getQuantity()<=0.0)
+    // Skip zero quantity loadplans
+    while (*resiter != res->getLoadPlans().end() && (*resiter)->getQuantity()==0.0)
       ++(*resiter);
     if (*resiter == res->getLoadPlans().end()) return NULL;
 

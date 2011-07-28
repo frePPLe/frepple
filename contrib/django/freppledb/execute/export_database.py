@@ -160,7 +160,7 @@ def exportLoadplans(cursor):
          j.operationplan.id, j.resource.name,
          round(j.quantity,settings.DECIMAL_PLACES),
          str(j.startdate), str(j.enddate), j.setup
-       ) for j in i.loadplans
+       ) for j in i.loadplans if j.quantity > 0
       ])
     cnt += 1
     if cnt % 100 == 0: transaction.commit(using=database)

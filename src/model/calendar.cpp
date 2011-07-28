@@ -445,9 +445,9 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
 {
   // Go over all entries and ask them to update the iterator
   Date d = curDate;
-  curDate = Date::infiniteFuture;  // Cause end date is not included
+  curDate = Date::infiniteFuture;
   curBucket = NULL;
-  curPriority = DBL_MAX;
+  curPriority = INT_MAX;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->nextEvent(this, d);
   if (!curBucket) curBucket = theCalendar->findBucket(curDate);
@@ -461,7 +461,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
   Date d = curDate;
   curDate = Date::infinitePast;
   curBucket = NULL;
-  curPriority = DBL_MAX;
+  curPriority = INT_MAX;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->prevEvent(this, d);
   if (!curBucket) curBucket = theCalendar->findBucket(curDate,false);
@@ -475,21 +475,20 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
     // Priority isn't low enough to overrule current date
     return;
 
+  // First evaluate the start date of the bucket
   if (refDate < startdate && startdate <= iter->curDate)
   {
-    // Next event is the start date of the bucket
     iter->curDate = startdate;
     iter->curBucket = this;
     iter->curPriority = priority;
     return;
   }
 
-  if (refDate < enddate && enddate < iter->curDate)
+  // Next evaluate the end date of the bucket
+  if (refDate < enddate && enddate <= iter->curDate && iter->curPriority == INT_MAX)
   {
-    // Next event is the end date of the bucket
     iter->curDate = enddate;
     iter->curBucket = NULL;
-    iter->curPriority = priority;
     return;
   }
 }
@@ -501,18 +500,17 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
     // Priority isn't low enough to overrule current date
     return;
 
-  if (refDate > enddate && enddate >= iter->curDate)
+  // First evaluate the end date of the bucket
+  if (refDate > enddate && enddate >= iter->curDate && iter->curPriority == INT_MAX)
   {
-    // Previous event is the end date of the bucket
     iter->curDate = enddate;
     iter->curBucket = this;
-    iter->curPriority = priority;
     return;
   }
 
+  // Next evaluate the start date of the bucket
   if (refDate > startdate && startdate > iter->curDate)
   {
-    // Previous event is the start date of the bucket
     iter->curDate = startdate;
     iter->curBucket = NULL;
     iter->curPriority = priority;

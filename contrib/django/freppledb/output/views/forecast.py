@@ -119,7 +119,7 @@ class OverviewReport(TableReport):
         ) y
         -- Planned quantity
         left join out_demand
-        on y.name = out_demand.demand
+        on out_demand.demand like y.name || ' - %%%%'
         and y.startdate <= out_demand.plandate
         and y.enddate > out_demand.plandate
         -- Ordering and grouping
@@ -133,7 +133,9 @@ class OverviewReport(TableReport):
          sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
          sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),
          basesql,bucket,startdate,enddate,sortsql)
+    print query
     cursor.execute(query, baseparams)
+
 
     # Build the python result
     for row in cursor.fetchall():

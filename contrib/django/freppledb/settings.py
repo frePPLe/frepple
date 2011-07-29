@@ -129,6 +129,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # Uncomment for external authentication.
+    # The authentication backend RemoteUserBackend also needs to be activated.
+    #'django.contrib.auth.middleware.RemoteUserMiddleware',
     'freppledb.common.middleware.LocaleMiddleware',
     'freppledb.common.middleware.DatabaseSelectionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -192,6 +195,9 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
 
 # To use a customized authentication backend.
 AUTHENTICATION_BACKENDS = (
+    # Uncomment for external authentication.
+    # The middleware RemoteUserMiddleware also needs to be activated.
+    #"django.contrib.auth.backends.RemoteUserBackend",
     "freppledb.common.auth.EmailBackend",
 )
 

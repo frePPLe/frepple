@@ -229,6 +229,14 @@ table thead th.sorted {
   background: #c0c0c0;
 }
 
+table#drt td {
+  white-space: nowrap;
+}
+
+table#dlt td {
+  white-space: nowrap;
+}
+
 /* Dashboard is a bit too narrow by default. */
 .dashboard #content { width: 600px; }
 
@@ -245,7 +253,7 @@ table thead th.sorted {
 .colSM {
   margin-left: 26em !important;
 }
-
+ 
 tr.level0 {font-weight: bold;}
 td.level0 {padding-left: 0px;}
 td.level1 {padding-left: 10px;}

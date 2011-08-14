@@ -685,7 +685,7 @@ class Flow(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'flow'
-    unique_together = (('operation','thebuffer'),)
+    unique_together = (('operation','thebuffer'),) # TODO also include effectivity in this
     verbose_name = _('flow')
     verbose_name_plural = _('flows')
 

@@ -1,28 +1,31 @@
 
                BUILD INSTRUCTIONS ON WINDOWS
                -----------------------------
-              USING MICROSOFT VISUAL C++ 2010
+              USING MICROSOFT VISUAL C++ 2008
               -------------------------------
 
 The frePPLe source distribution comes with Microsoft Visual C++ projects and
 workspaces to build the package. This document contains instructions on how to
 use these workspaces and some notes specific to the use of this compiler.
 
-The project configuration files are generated with version 10 of Visual C++.
-Unfortunately these are not compatible with earlier releases.
-A free version, called "Visual C++ 2010 Express Edition", can be downloaded
-from the Microsoft website.
+Note:
+Using Visual Studio 2010 will NOT work: Python and its extension modules
+are all compiled with Visual C++ 2008, and the frePPle-Python requires you
+to use the same compiler and CRTs. Failure to use the same CRT causes trouble.
 
-Only 32-bit builds are supported, since 64-bit compilation is not available
-with the Express Edition.
+Note:
+Only 32-bit builds are currently supported on Windows. FrePPLe compiles and 
+works fine in 64-bit environments, but there is no reason right now to 
+support both on Windows.
 
 
 PREREQUISITES
 -------------
 
-1. Install xerces-c 3.*
-   Installing the 32-bit pre-compiled binaries for vc10 are easiest.
-2. Install Python 2.7.*
+1. Install Visual Studio 2008 (aka vc9)
+2. Install xerces-c 3.*
+   Installing the 32-bit pre-compiled binaries for vc9 are easiest.
+3. Install Python 2.7.*
 
 
 BUILD INSTRUCTIONS FROM THE COMMAND LINE
@@ -32,11 +35,10 @@ A convenience build script is provided to compile frePPle.
 
 1. Edit the file build.bat
    The following variables need to be edited:
-     - VC: Installation directory of Visual Studio C++ 2010
+     - VC: Installation directory of Visual Studio C++ 2008
      - PYTHON: Installation directory of the Python language
      - XERCES: Installation directory of the Xerces-C library
-     - DOTNET: Installation directory of the .NET framework
-     - GLPK:  Optional. Installation directory of the GNU Linear Programming Kit
+     - GLPK:  *Optional.* Installation directory of the GNU Linear Programming Kit
 
 2. Execute the build.bat command
    The following options can be given on the command line:
@@ -60,8 +62,7 @@ The following describes the steps you need to build frePPLe.
 5. *Optionally* you may want to use the linear programming module.
    If so, install "glpk" and configure its paths in VC++.
 
-6. When using the application, the path should be set such that 
+6. When using the application, the path should be set such that
    the module libraries are found in the path.
    The easiest way is to have these files in the same directory as the
    application.
-

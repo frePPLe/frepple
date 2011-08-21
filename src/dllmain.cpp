@@ -181,3 +181,17 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperExit()
   return EXIT_SUCCESS;
 }
 
+
+/** Used to initialize frePPLe as a Python extension module. */
+PyMODINIT_FUNC initfrepple(void)
+{
+  try {FreppleInitialize();}
+  catch(exception e) 
+  {
+    logger << "Initialization failed: " << e.what() << endl;
+  }
+  catch (...) 
+  {
+    logger << "Initialization failed: reason unknown" << endl;
+  }
+}

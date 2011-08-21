@@ -2,8 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = frepple.sln README.txt build.bat model.vcxproj utils.vcxproj main.vcxproj module_forecast.vcxproj solver.vcxproj dll.vcxproj module_lp_solver.vcxproj module_webservice.vcxproj
+EXTRA_DIST = frepple.sln README.txt model.vcproj utils.vcproj main.vcproj module_forecast.vcproj solver.vcproj dll.vcproj module_lp_solver.vcproj module_webservice.vcproj
 
 clean-local:
-	-rm -rf model utils module_forecast main dll solver module_lp_solver module_webservice *.vcxproj.* *.opt *.ncb *.suo *.log *.sdf ipch
-
+	-rm -rf model utils module_forecast main dll solver module_lp_solver module_webservice *.vcproj.* *.vcxproj* *.opt *.ncb *.suo *.log *.sdf ipch

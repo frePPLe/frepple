@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007 by Johan De Taeye, frePPLe bvba                                    *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -73,7 +73,7 @@ DECLARE_EXPORT(const char*) FreppleVersion();
 /** This function should be called once when the client application starts,
   * and before calling any other function in the API.
   *
-  * This method is synchroneous, i.e. it returns only when the complete
+  * This method is synchronous, i.e. it returns only when the complete
   * processing is finished. The method can throw exceptions, and the client
   * is responsible for defining the correct handlers for these.
   */

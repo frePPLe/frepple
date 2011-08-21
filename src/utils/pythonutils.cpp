@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -51,10 +51,14 @@ DECLARE_EXPORT string PythonInterpreter::encoding;
 
 void PythonInterpreter::initialize()
 {
-  // Initialize the interpreter and the frepple module
-  Py_InitializeEx(0);  // The arg 0 indicates that the interpreter doesn't
-                       // implement its own signal handler
+  // Initialize the Python interpreter in case we are embedding the Python
+  // interpreter in frePPLe.
+  if(!Py_IsInitialized())
+    Py_InitializeEx(0);  // The arg 0 indicates that the interpreter doesn't
+                         // implement its own signal handler
   PyEval_InitThreads();  // Initializes threads and captures global lock
+
+  // Create the frePPLe module
   module = Py_InitModule3("frepple", NULL, "Access to the frePPLe library");
   if (!module)
   {

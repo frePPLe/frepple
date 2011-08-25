@@ -160,7 +160,7 @@ PyObject* saveXMLfile(PyObject* self, PyObject* args)
 DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
 {
   // Pick up arguments
-  char *filename = "plan.out";
+  const char *filename = "plan.out";
   int ok = PyArg_ParseTuple(args, "s:saveplan", &filename);
   if (!ok) return NULL;
 

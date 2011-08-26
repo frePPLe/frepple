@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -25,8 +25,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "soapfreppleProxy.h" 
-#include "frepple.nsmap" 
+#include "soapfreppleProxy.h"
+#include "frepple.nsmap"
 
 
 int main(int argc, char *argv[])
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
      std::cout << "  " << argv[0] << " post <data>" << std::endl << std::endl;
      return 1;
    }
-     
+
    frepple svc;
 
    // Return demand information

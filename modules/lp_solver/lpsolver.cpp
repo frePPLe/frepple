@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -50,35 +50,23 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
   }
   init = true;
 
+  // Register the Python extension
+  PyGILState_STATE state = PyGILState_Ensure();
   try
   {
-    // Register the Python extension
-    PyThreadState *myThreadState = PyGILState_GetThisThreadState();
-    if (!Py_IsInitialized() || !myThreadState)
-      throw RuntimeException("Python isn't initialized correctly");
-    try
-    {
-      // Get the global lock.
-      PyEval_RestoreThread(myThreadState);
-      // Register new Python data types
-      if (LPSolver::initialize())
-        throw RuntimeException("Error registering Python solver_lp extension");
-    }
-    // Release the global lock when leaving the function
-    catch (...)
-    {
-      PyEval_ReleaseLock();
-      throw;  // Rethrow the exception
-    }
-    PyEval_ReleaseLock();
+    // Register new Python data types
+    if (LPSolver::initialize())
+      throw RuntimeException("Error registering Python solver_lp extension");
+    PyGILState_Release(state);
   }
   catch (exception &e)
   {
-    // Avoid throwing errors during the initialization!
+    PyGILState_Release(state);
     logger << "Error: " << e.what() << endl;
   }
   catch (...)
   {
+    PyGILState_Release(state);
     logger << "Error: unknown exception" << endl;
   }
 

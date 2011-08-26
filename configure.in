@@ -3,7 +3,7 @@
 #
 
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -248,7 +248,7 @@ AC_TRY_COMPILE(
   [AC_MSG_ERROR([
   This package requires a C++ compiler that supports namespaces.
   ])])
-  
+
 #
 # Verify installation of XERCES-C
 #
@@ -283,14 +283,14 @@ AC_COMPILE_IFELSE([
 #
 if test x$lp = xtrue
 then
-AC_CHECK_LIB(glpk, glp_simplex, 
+AC_CHECK_LIB(glpk, glp_simplex,
 [ true ], # dummy action to avoid that glpk is added to the list list of required libraries
 [AC_MSG_ERROR([
   Can't link with the glpk library.en
   This package requires the GLPK linear programming solver.
   Install its development library, or reconfigure with the option '--disable-lp_solver'
 ])])
-AC_CHECK_HEADERS([glpk.h], [], 
+AC_CHECK_HEADERS([glpk.h], [],
 [AC_CHECK_HEADERS([glpk/glpk.h], [],
 [AC_MSG_ERROR([
   The glpk libray has been installed, but its header file could not be found

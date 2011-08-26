@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -104,7 +104,7 @@ class Report(object):
 
   # Number of columns frozen in the report
   frozenColumns = 0
-  
+
   # Time buckets in this report
   timebuckets = False
 
@@ -189,7 +189,7 @@ class TableReport(Report):
   permissions = []
 
   frozenColumns = 1000
-  
+
   timebuckets = True
 
 
@@ -370,9 +370,9 @@ def view_report(request, entity=None, **args):
   page = int(request.GET.get('p', '1'))
   paginator = QuerySetPaginator(counter, reportclass.paginate_by)
   if paginator.page(page).start_index():
-    counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]    
+    counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]
   hits = paginator.count
-    
+
   # Calculate the content of the page
   if hasattr(reportclass,'resultlist1'):
     # SQL override provided
@@ -568,24 +568,24 @@ def _get_javascript_imports(reportclass):
 
 
 def _localize(value, use_l10n=None):
-  ''' 
+  '''
   Localize numbers.
-  Dates are always represented as YYYY-MM-DD hh:mm:ss since this is 
-  '''  
+  Dates are always represented as YYYY-MM-DD hh:mm:ss since this is
+  '''
   if isinstance(value, (Decimal, float, int, long)):
      return number_format(value, use_l10n=use_l10n)
   elif isinstance(value, (list,tuple) ):
      return "|".join([ unicode(_localize(i)) for i in value ])
   else:
      return value
- 
-    
+
+
 def _generate_csv(rep, qs, format, bucketlist, request):
   '''
   This is a generator function that iterates over the report data and
   returns the data row by row in CSV format.
-  '''  
-  sf = cStringIO.StringIO()  
+  '''
+  sf = cStringIO.StringIO()
   encoding = settings.DEFAULT_CHARSET
   if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
     writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
@@ -593,7 +593,7 @@ def _generate_csv(rep, qs, format, bucketlist, request):
     writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
   if translation.get_language() != request.LANGUAGE_CODE:
     translation.activate(request.LANGUAGE_CODE)
-  
+
   # Write a header row
   fields = [ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in rep.rows ]
   if issubclass(rep,TableReport):
@@ -693,9 +693,9 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
   if not bucket:
     bucket = request.GET.get('reportbucket')
     if not bucket:
-      try: 
+      try:
         bucket = Bucket.objects.using(request.database).get(name=pref.buckets)
-      except: 
+      except:
         try: bucket = Bucket.objects.using(request.database).order_by('name')[0].name
         except: bucket = None
     elif pref.buckets != bucket:
@@ -716,13 +716,13 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
       except:
         try: start = pref.startdate
         except: pass
-        if not start: 
+        if not start:
           try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S").date()
           except: start = datetime.now()
     else:
       try: start = pref.startdate
       except: pass
-      if not start: 
+      if not start:
         try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S").date()
         except: start = datetime.now()
 
@@ -742,17 +742,17 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
     else:
       try: end = pref.enddate
       except: pass
-    
+
   # Filter based on the start and end date
-  if not bucket: 
+  if not bucket:
     return (None, start, end, None)
   else:
     res = BucketDetail.objects.using(request.database).filter(bucket=bucket)
     if start: res = res.filter(startdate__gte=start)
     if end: res = res.filter(startdate__lt=end)
     return (bucket, start, end, res.values('name','startdate','enddate'))
-  
-  
+
+
 def _create_rowheader(req, sortfield, sortdirection, cls):
   '''
   Generate html header row for the columns of a table or list report.
@@ -762,7 +762,7 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
   args2 = req.GET.copy() # used for additional, hidden filter fields
   result1 = []
   result2 = []
-  
+
   # When we update the sorting, we always want to see page 1 again
   if 'p' in args: del args['p']
 
@@ -788,7 +788,7 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
       # Which widget to use
       if 'filter' in row[1]:
         # Filtering allowed
-        if issubclass(cls,ListReport) and number <= cls.frozenColumns:       
+        if issubclass(cls,ListReport) and number <= cls.frozenColumns:
           result1.append( u'<th %s><a href="%s%s?%s">%s</a></th>' \
             % (y, req.prefix, escape(req.path), escape(args.urlencode()), title) )
         else:
@@ -797,7 +797,7 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
         rowfield = row[1]['filter'].field or row[0]
       else:
         # No filtering allowed
-        if issubclass(cls,ListReport) and number <= cls.frozenColumns:       
+        if issubclass(cls,ListReport) and number <= cls.frozenColumns:
           result1.append( u'<th %s><a href="%s%s?%s">%s</a></th>' \
             % (y, req.prefix, escape(req.path), escape(args.urlencode()), title) )
         else:
@@ -810,7 +810,7 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
     else:
       # No sorting is allowed on this field
       # If there is no sorting allowed, then there is also no filtering
-      if issubclass(cls,ListReport) and number <= cls.frozenColumns:       
+      if issubclass(cls,ListReport) and number <= cls.frozenColumns:
         result1.append( u'<th>%s</th>' % title )
       else:
         result2.append( u'<th>%s</th>' % title )
@@ -821,15 +821,15 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
   # Final result
   return (mark_safe(string_concat(*result1)), mark_safe(string_concat(*result2)))
 
-  
+
 filteroperator = {
-  'icontains': _('contains (no case)'), 
+  'icontains': _('contains (no case)'),
   'contains': _('contains'),
-  'istartswith': _('starts (no case)'),  
-  'startswith': _('starts'),  
-  'iendswith': _('ends (no case)'), 
-  'endswith': _('ends'),  
-  'iexact': _('equals (no case)'), 
+  'istartswith': _('starts (no case)'),
+  'startswith': _('starts'),
+  'iendswith': _('ends (no case)'),
+  'endswith': _('ends'),
+  'iexact': _('equals (no case)'),
   'exact': _('equals'),
   'isnull': _('is null'),
   '': _('='),
@@ -839,33 +839,33 @@ filteroperator = {
   'gte': u'&gt;=',
 }
 
-  
+
 def _create_filter(req, cls):
   # Initialisation
   result1 = [u'<form id="filters" action="%s%s">' % (req.prefix,escape(req.path))]
   result2 = [u'<div id="fields" style="display: none"><form action="">\n']
   empty = True
-    
+
   # Loop over the row fields - to make sure the filters are shown in the same order
   filtercounter = 0
   for row, attribs in cls.rows:
     try: filtertitle = attribs['title']
     except: filtertitle = row
-    try: 
+    try:
       filter = attribs['filter']
       filterfield = filter.field or row
       result2.append(u'<span title="%s" class="%s">' % (filterfield, filter.__class__.__name__))
       if hasattr(filter, "text2"):
         result2.append(filter.text2(filtertitle, filterfield, cls, req))
       else:
-        result2.append(filtertitle)      
+        result2.append(filtertitle)
       result2.append(u'</span>\n')
-    except: 
+    except:
       filter = None
       filterfield = ''
       result2.append(u'<span>%s</span>\n' % filtertitle)
     for i in req.GET:
-      if i in reservedParameters: 
+      if i in reservedParameters:
         if filtercounter > 1: continue
         result1.append(u'<input type="hidden" name="%s" value="%s"/>' % (i,escape(req.GET[i])))
       field, sep, operator = i.rpartition('__')
@@ -873,7 +873,7 @@ def _create_filter(req, cls):
         field = operator
         operator = 'exact'
       if filterfield == field:
-        if empty: 
+        if empty:
           result1.append(u'where\n')
           empty = False
         else:
@@ -883,7 +883,7 @@ def _create_filter(req, cls):
         else:
           result1.append(u'%s %s <input type="text" class="filter" onChange="filterform()" name="%s" value="%s"/>' % (filtertitle, filteroperator[operator], i, escape(req.GET[i])))
         filtercounter += 1
-      
+
   # Return result
   result2.append(u'</form></div>')
   if empty: return (None, mark_safe(string_concat(*result2)))
@@ -896,7 +896,7 @@ class FilterText(object):
     self.operator = operator
     self.field = field
     self.size = size
-    
+
   def text1(self, a,b,c,d,cls, req):
     return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', max(len(d),self.size), u'"/>')
 
@@ -906,7 +906,7 @@ class FilterNumber(object):
     self.operator = operator
     self.field = field
     self.size = size
-    
+
   def text1(self, a,b,c,d,cls, req):
     return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', self.size, u'"/>')
 
@@ -916,20 +916,20 @@ class FilterDate(object):
     self.operator = operator
     self.field = field
     self.size = size
-    
+
   def text1(self, a,b,c,d,cls, req):
     return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="vDateField filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', self.size, u'"/>')
-    
+
 
 class FilterChoice(object):
   def __init__(self, field=None, choices=None):
     self.field = field
     self.choices = choices
-    
+
   def text1(self, a,b,c,d,cls, req):
     result = [string_concat(a, u' ', filteroperator[b], u'<select class="filter" onChange="javascript:this.form.submit();" name="', c, u'" >')]
     try:
-      for code, label in callable(self.choices) and self.choices(req) or self.choices:    
+      for code, label in callable(self.choices) and self.choices(req) or self.choices:
         if (code == d):
           result.append(string_concat(u'<option value="',code,u'" selected="yes">',unicode(label),u'</option>\n'))
         else:
@@ -937,11 +937,11 @@ class FilterChoice(object):
     except TypeError: pass
     result.append(u'</select>\n')
     return string_concat(*result)
-    
+
   def text2(self, a,b,cls, req):
     result = [string_concat(a, u'<select>')]
     try:
-      for code, label in callable(self.choices) and self.choices(req) or self.choices:    
+      for code, label in callable(self.choices) and self.choices(req) or self.choices:
         result.append(string_concat(u'<option value="',code,u'">',unicode(label),u'</option>\n'))
     except TypeError: pass
     result.append(u'</select>\n')
@@ -983,7 +983,7 @@ def parseUpload(request, reportclass, data):
     warnings = []
     errors = []
     content_type_id = ContentType.objects.get_for_model(entityclass).pk
-    
+
     transaction.enter_transaction_management(using=request.database)
     transaction.managed(True, using=request.database)
     try:
@@ -991,12 +991,12 @@ def parseUpload(request, reportclass, data):
       has_pk_field = False
       for row in csv.reader(data.splitlines()):
         rownumber += 1
-  
+
         ### Case 1: The first line is read as a header line
         if rownumber == 1:
           for col in row:
             col = col.strip().strip('#').lower()
-            if col == "": 
+            if col == "":
               headers.append(False)
               continue
             ok = False
@@ -1018,15 +1018,15 @@ def parseUpload(request, reportclass, data):
           # Abort when there are errors
           if len(errors) > 0: return (warnings,errors,0,0)
           # Create a form class that will be used to validate the data
-          UploadForm = modelform_factory(entityclass, 
+          UploadForm = modelform_factory(entityclass,
             fields = tuple([i.name for i in headers if isinstance(i,Field)]),
             formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
             )
-  
+
         ### Case 2: Skip empty rows and comments rows
         elif len(row) == 0 or row[0].startswith('#'):
           continue
-  
+
         ### Case 3: Process a data row
         else:
           try:
@@ -1035,10 +1035,10 @@ def parseUpload(request, reportclass, data):
             colnum = 0
             for col in row:
               # More fields in data row than headers. Move on to the next row.
-              if colnum >= len(headers): break      
+              if colnum >= len(headers): break
               if isinstance(headers[colnum],Field): d[headers[colnum].name] = col.strip()
               colnum += 1
-  
+
             # Step 2: Fill the form with data, either updating an existing
             # instance or creating a new one.
             if has_pk_field:
@@ -1054,7 +1054,7 @@ def parseUpload(request, reportclass, data):
               # No primary key required for this model
               form = UploadForm(d)
               it = None
-            
+
             # Step 3: Validate the data and save to the database
             if form.has_changed():
               try:
@@ -1069,7 +1069,7 @@ def parseUpload(request, reportclass, data):
                 ).save(using=request.database)
                 if it:
                   changed += 1
-                else: 
+                else:
                   added += 1
               except Exception, e:
                 # Validation fails
@@ -1085,7 +1085,7 @@ def parseUpload(request, reportclass, data):
                         'rownum': rownumber, 'data': d[field.name],
                         'field': field.name, 'message': error
                       })
-  
+
             # Step 4: Commit the database changes from time to time
             if rownumber % 500 == 0: transaction.commit(using=request.database)
           except Exception, e:

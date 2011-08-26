@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -32,7 +32,7 @@ from django.conf import settings
 
 #
 # DURATIONFIELD
-# 
+#
 # This field is stored in the database as an Decimal field, but it is displayed
 # in forms as a combination of a text window and a dropdown to select the time units.
 #
@@ -40,7 +40,7 @@ from django.conf import settings
 class DurationWidget(MultiWidget):
   def __init__(self, attrs=None):
     widgets = (
-      TextInput(attrs), 
+      TextInput(attrs),
       Select(choices=(
             ("",""),
             ("seconds",_("seconds")),
@@ -62,15 +62,15 @@ class DurationWidget(MultiWidget):
 
   def format_output(self, rendered_widgets):
     return "%s&nbsp;%s" % (rendered_widgets[0], rendered_widgets[1])
-    
+
   def value_from_datadict(self, data, files, name):
     return [data.get(name,data.get('%s_0' % name,0)), data.get('%s_1' % name,'seconds')]
-      
+
 
 class DurationFormField(fields.MultiValueField):
 
   widget = DurationWidget
-  
+
   def __init__(self, *args, **kwargs):
     self.max_digits = kwargs.pop('decimal_places', settings.DECIMAL_PLACES)
     self.decimal_places = kwargs.pop('max_digits', settings.MAX_DIGITS)
@@ -87,16 +87,16 @@ class DurationFormField(fields.MultiValueField):
             ), required=False)
         )
     super(DurationFormField, self).__init__(
-      fields=f, widget=DurationWidget(), 
+      fields=f, widget=DurationWidget(),
       label=kwargs.get('label',''),
       help_text=kwargs.get('help_text',None)
       )
     self.required = kwargs.get('required',False)
-  
+
   def compress(self, data_list):
     if len(data_list) == 0: return None
-    val, unit = data_list 
-    if val == None or val == u'': return None    
+    val, unit = data_list
+    if val == None or val == u'': return None
     elif unit == 'hours': val = val * Decimal(3600)
     elif unit == 'minutes': val = val * Decimal(60)
     elif unit == 'days': val = val * Decimal(86400)
@@ -105,8 +105,8 @@ class DurationFormField(fields.MultiValueField):
 
 
 class DurationField(models.DecimalField):
-  
+
   def formfield(self, **kwargs):
     defaults = {'form_class': DurationFormField, }
-    defaults.update(kwargs)  
-    return super(DurationField, self).formfield(**defaults)  
+    defaults.update(kwargs)
+    return super(DurationField, self).formfield(**defaults)

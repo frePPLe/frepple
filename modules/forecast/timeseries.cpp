@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -43,10 +43,10 @@ void Forecast::generateFutureValues(
   if (bucketcount < 2)
     throw DataException("Need at least 2 forecast dates");
 
-  // Strip zero demand buckets at the start.  
-  // Eg when demand only starts in the middle of horizon, we only want to 
+  // Strip zero demand buckets at the start.
+  // Eg when demand only starts in the middle of horizon, we only want to
   // use the second part of the horizon for forecasting. The zeros before the
-  // demand start would distort the results. 
+  // demand start would distort the results.
   while (historycount >= 1 && *history == 0.0)
   {
     ++history;
@@ -211,7 +211,7 @@ double Forecast::SingleExponential::generateForecast
     df_dalfa_i = sum_11 = sum_12 = error_smape = error = 0.0;
 
     // Initialize the iteration with the average of the first 3 values.
-    f_i = (history[0] + history[1] + history[2]) / 3; 
+    f_i = (history[0] + history[1] + history[2]) / 3;
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
@@ -220,7 +220,7 @@ double Forecast::SingleExponential::generateForecast
       df_dalfa_i = history[i-1] - f_i + (1 - alfa) * df_dalfa_i;
       f_i = history[i-1] * alfa + (1 - alfa) * f_i;
       if (i == count) break;
-      sum_12 += df_dalfa_i * (history[i] - f_i) * weight[i];  
+      sum_12 += df_dalfa_i * (history[i] - f_i) * weight[i];
       sum_11 += df_dalfa_i * df_dalfa_i * weight[i];
       if (i >= fcst->getForecastSkip())
       {
@@ -320,7 +320,7 @@ double Forecast::DoubleExponential::generateForecast
   // Define variables
   double error = 0.0, error_smape = 0.0, delta_alfa, delta_gamma, determinant;
   double constant_i_prev, trend_i_prev, d_constant_d_gamma_prev,
-    d_constant_d_alfa_prev, d_constant_d_alfa, d_constant_d_gamma,	
+    d_constant_d_alfa_prev, d_constant_d_alfa, d_constant_d_gamma,
     d_trend_d_alfa, d_trend_d_gamma, d_forecast_d_alfa, d_forecast_d_gamma,
     sum11, sum12, sum22, sum13, sum23;
   double best_error = DBL_MAX, best_smape = 0, best_alfa = initial_alfa,
@@ -396,10 +396,10 @@ double Forecast::DoubleExponential::generateForecast
       sum11 -= error / iteration;
       sum22 -= error / iteration;
       determinant = sum11 * sum22 - sum12 * sum12;
-      if (fabs(determinant) < ROUNDING_ERROR) 
+      if (fabs(determinant) < ROUNDING_ERROR)
         // Still singular - stop iterations here
-        break; 
-    }    
+        break;
+    }
     delta_alfa = (sum13 * sum22 - sum23 * sum12) / determinant;
     delta_gamma = (sum23 * sum11 - sum13 * sum12) / determinant;
 
@@ -487,7 +487,7 @@ void Forecast::Seasonal::detectCycle(const double history[], unsigned int count)
   // We need at least 2 cycles
   if (count < min_period*2) return;
 
-  // Compute the average value 
+  // Compute the average value
   double average = 0.0;
   for (unsigned int i = 0; i < count; ++i)
     average += history[i];
@@ -550,7 +550,7 @@ double Forecast::Seasonal::generateForecast
 
     // Initialize the iteration
     // L_i = average over first cycle
-    // T_i = average delta measured in second cycle 
+    // T_i = average delta measured in second cycle
     // S_i[index] = actual divided by average in first cycle
     L_i = 0.0;
     for (unsigned long i = 0; i < period; ++i)
@@ -575,7 +575,7 @@ double Forecast::Seasonal::generateForecast
       else
         L_i = (1 - alfa) * (L_i + T_i);
       T_i = beta * (L_i - L_i_prev) + (1 - beta) * T_i;
-      S_i[cycleindex] = gamma * history[i-1] / L_i + (1 - gamma) * S_i[cycleindex];  
+      S_i[cycleindex] = gamma * history[i-1] / L_i + (1 - gamma) * S_i[cycleindex];
       if (i == count) break;
       if (i >= fcst->getForecastSkip()) // Don't measure during the warmup period
       {
@@ -618,9 +618,9 @@ double Forecast::Seasonal::generateForecast
       det = determinant(sum11, sum12, sum13,
         sum12, sum22, sum23,
         sum13, sum23, sum33);
-      if (fabs(det) < ROUNDING_ERROR) 
+      if (fabs(det) < ROUNDING_ERROR)
         // Still singular - stop iterations here
-        break; 
+        break;
     }
     delta_alfa = determinant(sum14, sum12, sum13,
       sum24, sum22, sum23,
@@ -633,7 +633,7 @@ double Forecast::Seasonal::generateForecast
       sum13, sum23, sum34) / det;
 
     // Stop when we are close enough and have tried hard enough
-    if (fabs(delta_alfa) + fabs(delta_beta) + fabs(delta_gamma) < 3 * ACCURACY 
+    if (fabs(delta_alfa) + fabs(delta_beta) + fabs(delta_gamma) < 3 * ACCURACY
       && iteration > 3)
       break;
 
@@ -666,7 +666,7 @@ double Forecast::Seasonal::generateForecast
   }
 
   if (period > fcst->getForecastSkip())
-    // Correction on the error: we counted less buckets. We now 
+    // Correction on the error: we counted less buckets. We now
     // proportionally increase the error to account for this and have a
     // value that can be compared with the other forecast methods.
     best_smape *= (count - fcst->getForecastSkip()) / (count - period);
@@ -695,14 +695,14 @@ void Forecast::Seasonal::applyForecast
 {
   // Loop over all buckets and set the forecast to a linearly changing value
   for (unsigned int i = 1; i < bucketcount; ++i)
-  {    
+  {
     L_i += T_i;
     T_i *= dampenTrend; // Reduce slope in the future
     if (L_i * S_i[cycleindex] > 0)
       forecast->setTotalQuantity(
         DateRange(buckets[i-1], buckets[i]),
         L_i * S_i[cycleindex]
-        );    
+        );
     if (++cycleindex >= period) cycleindex = 0;
   }
 }
@@ -736,7 +736,7 @@ double Forecast::Croston::generateForecast
 
     // Initialize the iteration.
     q_i = f_i = history[0];
-    p_i = 0; 
+    p_i = 0;
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
@@ -747,8 +747,8 @@ double Forecast::Croston::generateForecast
         // Non-zero bucket
         d_p_i = between_demands - p_i + (1 - alfa) * d_p_i;
         d_q_i = history[i-1] - q_i + (1 - alfa) * d_q_i;
-        q_i = alfa * history[i-1] + (1 - alfa) * q_i; 
-        p_i = alfa * between_demands + (1 - alfa) * q_i; 
+        q_i = alfa * history[i-1] + (1 - alfa) * q_i;
+        p_i = alfa * between_demands + (1 - alfa) * q_i;
         f_i = q_i / p_i;
         d_f_i = (d_q_i - d_p_i * q_i / p_i) / p_i;
         between_demands = 1;

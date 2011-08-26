@@ -108,6 +108,14 @@ DECLARE_EXPORT(void) FreppleReadXMLData(const char*, bool, bool);
   */
 DECLARE_EXPORT(void) FreppleReadXMLFile(const char*, bool, bool);
 
+/** Execute the Python code in a file.
+  *
+  * This method is synchroneous, i.e. it returns only when the complete
+  * processing is finished. The method can throw exceptions, and the client
+  * is responsible for defining the correct handlers for these.
+  */
+DECLARE_EXPORT(void) FreppleReadPythonFile(const char*);
+
 /** Calling this function will save the frePPLe data in the file that
   * is passed as the argument.
   *
@@ -168,6 +176,14 @@ extern "C"
     * @see FreppleReadXMLFile
     */
   DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char*, bool, bool);
+
+  /** Same as FreppleReadPythonFile, but catches all exceptions and returns a
+    * status instead.
+    *
+    * Use this function when calling the library from C or VB applications.
+    * @see FreppleReadPythonFile
+    */
+  DECLARE_EXPORT(int) FreppleWrapperReadPythonFile(const char*);
 
   /** Same as FreppleSaveFile, but catches all exceptions and returns a
     * status instead.

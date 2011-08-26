@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -94,7 +94,7 @@ void SolverMRP::solve(const Load* l, void* v)
   bool originalLogConstraints = data->logConstraints;
   data->logConstraints = false;
 
-  // 4) Loop through all alternates or till we find a non-zero 
+  // 4) Loop through all alternates or till we find a non-zero
   // reply (priority search)
   Date min_next_date(Date::infiniteFuture);
   LoadPlan *lplan = data->state->q_loadplan;
@@ -119,7 +119,7 @@ void SolverMRP::solve(const Load* l, void* v)
 
     // 4b) Ask the resource
     CommandManager::Bookmark* topcommand = data->setBookmark();
-    if (search == PRIORITY) 
+    if (search == PRIORITY)
       curload->getResource()->solve(*this,data);
     else
     {
@@ -137,8 +137,8 @@ void SolverMRP::solve(const Load* l, void* v)
     }
 
     // 4c) Evaluate the result
-    if (data->state->a_qty > ROUNDING_ERROR 
-      && lplan->getOperationPlan()->getQuantity() > 0) 
+    if (data->state->a_qty > ROUNDING_ERROR
+      && lplan->getOperationPlan()->getQuantity() > 0)
     {
       if (search == PRIORITY)
       {
@@ -155,7 +155,7 @@ void SolverMRP::solve(const Load* l, void* v)
         double deltaPenalty = data->state->a_penalty - beforePenalty;
         // Message
         if (loglevel>1 && search != PRIORITY)
-          logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
+          logger << indent(l->getOperation()->getLevel()) << "   Operation '"
             << l->getOperation()->getName() << "' evaluates alternate '"
             << curload->getResource() << "': cost " << deltaCost
             << ", penalty " << deltaPenalty << endl;
@@ -164,7 +164,7 @@ void SolverMRP::solve(const Load* l, void* v)
           // Zero cost and zero penalty on this alternate. It won't get any better
           // than this, so we accept this alternate.
           if (loglevel)
-            logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
+            logger << indent(l->getOperation()->getLevel()) << "   Operation '"
               << l->getOperation()->getName() << "' chooses alternate '"
               << curload->getResource() << "' " << search << endl;
           // Restore the planning mode
@@ -188,9 +188,9 @@ void SolverMRP::solve(const Load* l, void* v)
             break;
           default:
             LogicException("Unsupported search mode for alternate load");
-        }    
-        if (val + ROUNDING_ERROR < bestAlternateValue 
-          || (fabs(val - bestAlternateValue) < ROUNDING_ERROR 
+        }
+        if (val + ROUNDING_ERROR < bestAlternateValue
+          || (fabs(val - bestAlternateValue) < ROUNDING_ERROR
               && lplan->getOperationPlan()->getQuantity() > bestAlternateQuantity))
         {
           // Found a better alternate
@@ -201,9 +201,9 @@ void SolverMRP::solve(const Load* l, void* v)
       }
     }
     else if (loglevel>1 && search != PRIORITY)
-      logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
+      logger << indent(l->getOperation()->getLevel()) << "   Operation '"
         << l->getOperation()->getName() << "' evaluates alternate '"
-        << curload->getResource() << "': not available before " 
+        << curload->getResource() << "': not available before "
         << data->state->a_date << endl;
 
     // 4d) Undo the plan on the alternate
@@ -221,7 +221,7 @@ void SolverMRP::solve(const Load* l, void* v)
   // 5) Unconstrained plan: plan on the first alternate
   if (!originalPlanningMode && !(search != PRIORITY && bestAlternateSelection))
   {
-    // Switch to unconstrained planning 
+    // Switch to unconstrained planning
     data->constrainedPlanning = false;
     bestAlternateSelection = *(thealternates.begin());
   }
@@ -231,7 +231,7 @@ void SolverMRP::solve(const Load* l, void* v)
   {
     // Message
     if (loglevel)
-      logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
+      logger << indent(l->getOperation()->getLevel()) << "   Operation '"
         << l->getOperation()->getName() << "' chooses alternate '"
         << bestAlternateSelection->getResource() << "' " << search << endl;
 
@@ -265,7 +265,7 @@ void SolverMRP::solve(const Load* l, void* v)
     const Load *primary = *(thealternates.begin());
     data->planningDemand->getConstraints().push(
       ProblemCapacityOverload::metadata,
-      primary->getResource(), originalOpplan.start, originalOpplan.end, 
+      primary->getResource(), originalOpplan.start, originalOpplan.end,
       -originalLoadplanQuantity);
   }
   data->logConstraints = originalLogConstraints;

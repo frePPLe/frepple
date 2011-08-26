@@ -48,7 +48,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../include"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MT;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				BasicRuntimeChecks="3"
@@ -114,6 +114,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy the output as a Python module"
+				CommandLine="copy $(TargetDir)\..\bin\frepple_debug.dll  $(TargetDir)\..\bin\frepple_d.pyd"
 			/>
 		</Configuration>
 		<Configuration
@@ -190,6 +192,7 @@
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=""
 				ProgramDatabaseFile=".\dll\Release\frepple.pdb"
 				SubSystem="0"
@@ -218,6 +221,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy the output as a Python module"
+				CommandLine="copy $(TargetDir)\..\bin\frepple.dll  $(TargetDir)\..\bin\frepple.pyd"
 			/>
 		</Configuration>
 	</Configurations>

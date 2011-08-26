@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.forms.util import ErrorList
 
-from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix 
+from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix
 from freppledb.input.models import Buffer, Customer, Demand, Parameter, Item, Load, Flow
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.input.models import Bucket, BucketDetail, SetupRule, ForecastDemand
@@ -46,7 +46,7 @@ class ParameterForm(forms.ModelForm):
     # Currentdate parameter must be a date+time value
     if name == "currentdate":
       try: datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-      except: 
+      except:
         self._errors["value"] = ErrorList([_("Invalid date: expecting YYYY-MM-DD HH:MM:SS")])
         del cleaned_data["value"]
     return cleaned_data
@@ -63,7 +63,7 @@ class CalendarBucket_inline(MultiDBTabularInline):
   model = CalendarBucket
   extra = 3
 
-  
+
 class CalendarBucket_admin(MultiDBModelAdmin):
   model = CalendarBucket
   raw_id_fields = ('calendar',)
@@ -88,7 +88,7 @@ site.register(Location,Location_admin)
 class Customer_admin(MultiDBModelAdmin):
   model = Customer
   raw_id_fields = ('owner',)
-  save_on_top = True   
+  save_on_top = True
 site.register(Customer,Customer_admin)
 
 
@@ -116,7 +116,7 @@ class Load_inline(MultiDBTabularInline):
   model = Load
   raw_id_fields = ('operation', 'resource',)
   extra = 1
-  
+
 
 class Operation_admin(MultiDBModelAdmin):
   model = Operation
@@ -233,7 +233,7 @@ class BucketDetail_inline(MultiDBTabularInline):
   model = BucketDetail
   extra = 3
 
-  
+
 class BucketDetail_admin(MultiDBModelAdmin):
   model = BucketDetail
   save_on_top = True

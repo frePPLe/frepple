@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2010-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -36,10 +36,10 @@ class Command(BaseCommand):
   help = '''
   This command copies the contents of a database into another.
   The original data in the destination database are lost.
-  
+
   To use this command the following prerequisites need to be met:
     * MySQL:
-        - mysqldump and mysql need to be in the path       
+        - mysqldump and mysql need to be in the path
     * PostgreSQL:
        - pg_dump and psql need to be in the path
        - The passwords need to be specified upfront in a file ~/.pgpass
@@ -52,19 +52,19 @@ class Command(BaseCommand):
            GRANT READ, WRITE ON DIRECTORY dump_dir TO usr1;
            GRANT READ, WRITE ON DIRECTORY dump_dir TO usr2;
        - If the schemas reside on different servers, the DB will need to
-         create a database link. 
+         create a database link.
          If the database are on the same server, you might still use the database
-         link to avoid create a temporary dump file.         
+         link to avoid create a temporary dump file.
        - Can't run multiple copies in parallel!
        - For oracle, this script probably requires a bit of changing to optimize
-         it for your particular usage. 
+         it for your particular usage.
   '''
   option_list = BaseCommand.option_list + (
     make_option('--user', dest='user', type='string',
       help='User running the command'),
-    make_option('--nonfatal', action="store_true", dest='nonfatal', 
+    make_option('--nonfatal', action="store_true", dest='nonfatal',
       default=False, help='Dont abort the execution upon an error'),
-    make_option('--force', action="store_true", dest='force', 
+    make_option('--force', action="store_true", dest='force',
       default=False, help='Overwrite scenarios already in use'),
     make_option('--description', dest='description', type='string',
       help='Description of the destination scenario'),
@@ -93,10 +93,10 @@ class Command(BaseCommand):
     force = False
     if 'force' in options: force = options['force']
     test = 'FREPPLE_TEST' in os.environ
-    
+
     # Synchronize the scenario table with the settings
     Scenario.syncWithSettings()
-    
+
     # Validate the arguments
     destinationscenario = None
     try:
@@ -115,21 +115,21 @@ class Command(BaseCommand):
       if source == destination:
         raise CommandError("Can't copy a schema on itself")
       if settings.DATABASES[source]['ENGINE'] != settings.DATABASES[destination]['ENGINE']:
-        raise CommandError("Source and destination scenarios have a different engine")    
+        raise CommandError("Source and destination scenarios have a different engine")
       if sourcescenario.status != u'In use':
-        raise CommandError("Source scenario is not in use") 
+        raise CommandError("Source scenario is not in use")
       if destinationscenario.status != u'Free' and not force:
-        raise CommandError("Destination scenario is not free") 
-         
+        raise CommandError("Destination scenario is not free")
+
       # Logging message (Always logging in the default database)
       log(category='COPY', theuser=user,
-        message=_("Start copying database '%(source)s' to '%(destination)s'" % 
+        message=_("Start copying database '%(source)s' to '%(destination)s'" %
           {'source':source, 'destination':destination} )).save()
       destinationscenario.status = u'Busy'
       destinationscenario.save()
       transaction.commit()
-      
-      # Copying the data  
+
+      # Copying the data
       if settings.DATABASES[source]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
         ret = os.system("pg_dump -c -U%s -Fp %s%s%s | psql -U%s %s%s%s" % (
           settings.DATABASES[source]['USER'],
@@ -140,7 +140,7 @@ class Command(BaseCommand):
           settings.DATABASES[destination]['HOST'] and ("-h %s " % settings.DATABASES[destination]['HOST']) or '',
           settings.DATABASES[destination]['PORT'] and ("-p %s " % settings.DATABASES[destination]['PORT']) or '',
           test and settings.DATABASES[destination]['TEST_NAME'] or settings.DATABASES[destination]['NAME'],
-          ))      
+          ))
         if ret: raise Exception('Exit code of the database copy command is %d' % ret)
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.sqlite3':
         # A plain copy of the database file
@@ -160,7 +160,7 @@ class Command(BaseCommand):
           settings.DATABASES[destination]['USER'],
           settings.DATABASES[destination]['HOST'] and ("--host=%s " % settings.DATABASES[destination]['HOST']) or '',
           settings.DATABASES[destination]['PORT'] and ("--port=%s " % settings.DATABASES[destination]['PORT']) or '',
-          ))      
+          ))
         if ret: raise Exception('Exit code of the database copy command is %d' % ret)
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.oracle':
         try:
@@ -173,7 +173,7 @@ class Command(BaseCommand):
             settings.DATABASES[source]['PORT'],
             test and settings.DATABASES[source]['TEST_NAME'] or settings.DATABASES[source]['NAME'],
             test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
-            ))          
+            ))
           if ret: raise Exception('Exit code of the database export command is %d' % ret)
           ret = os.system("impdp %s/%s@//%s:%s/%s remap_schema=%s:%s table_exists_action=replace directory=dump_dir nologfile=Y dumpfile=frepple.dmp" % (
             test and settings.DATABASES[destination]['TEST_USER'] or settings.DATABASES[destination]['USER'],
@@ -190,24 +190,24 @@ class Command(BaseCommand):
           except: pass
       else:
         raise Exception('Copy command not supported for database engine %s' % settings.DATABASES[source]['ENGINE'])
-                      
+
       # Logging message
       log(category='COPY', theuser=user,
-        message=_("Finished copying database '%(source)s' to '%(destination)s'" % 
-          {'source':source, 'destination':destination} )).save() 
-          
+        message=_("Finished copying database '%(source)s' to '%(destination)s'" %
+          {'source':source, 'destination':destination} )).save()
+
       # Update the scenario table
       destinationscenario.status = 'In use'
       destinationscenario.lastrefresh = datetime.today()
-      if 'description' in options: 
+      if 'description' in options:
         destinationscenario.description = options['description']
       else:
         destinationscenario.description = "Copied from scenario '%s'" % source
       destinationscenario.save()
-          
+
     except Exception, e:
       try: log(category='COPY', theuser=user,
-        message=_("Failed copying database '%(source)s' to '%(destination)s'" % 
+        message=_("Failed copying database '%(source)s' to '%(destination)s'" %
           {'source':source, 'destination':destination} )).save()
       except: pass
       if destinationscenario and destinationscenario.status == u'Busy':
@@ -215,7 +215,7 @@ class Command(BaseCommand):
         destinationscenario.save()
       if nonfatal: raise e
       else: raise CommandError(e)
-      
+
     finally:
       transaction.commit()
       settings.DEBUG = tmp_debug

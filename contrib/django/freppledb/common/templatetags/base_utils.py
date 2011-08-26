@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -189,7 +189,7 @@ class SuperLink(Node):
     self.var = Variable(varname)
     self.text = vartext and Variable(vartext) or None
     self.type = type
-    self.key = key    
+    self.key = key
 
   def __repr__(self):
     return "<SuperLink Node>"
@@ -302,7 +302,7 @@ class SelectDatabaseNode(Node):
 
   def __repr__(self):
     return "<SelectDatabase Node>"
-  
+
 def selectDatabase(parser, token):
     return SelectDatabaseNode()
 
@@ -372,8 +372,8 @@ class DoGetMultiDBAdminLog:
     return MultiDBAdminLogNode(limit=tokens[1], varname=tokens[3], user=(len(tokens) > 5 and tokens[5] or None))
 
 register.tag('get_multidbadmin_log', DoGetMultiDBAdminLog('get_admin_log'))
-        
-        
+
+
 #
 # A simple tag returning the frePPLe version
 #
@@ -389,13 +389,13 @@ version.is_safe = True
 
 
 #
-# A filter to format a duration 
+# A filter to format a duration
 #
 
-def duration(value): 
+def duration(value):
   try:
     if value == None: return ''
-    value = Decimal(force_unicode(value))  
+    value = Decimal(force_unicode(value))
     if value == 0: return '0 s'
     if value % 604800 == 0: return '%.2f w' % (value/Decimal('604800.0'))
     if value % 3600 != 0 and value < 86400: return '%.2f s' % value
@@ -404,14 +404,14 @@ def duration(value):
   except Exception, e:
     print e
     return ''
-    
+
 duration.is_safe = True
 register.filter('duration', duration)
 
 
 #
 # Filters to get the verbose name of a model
-# 
+#
 
 def verbose_name(obj):
   return obj._meta.verbose_name

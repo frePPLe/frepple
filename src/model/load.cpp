@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -248,8 +248,8 @@ DECLARE_EXPORT void Load::setSetup(const string n)
     // Alternates of that load can have a setup as well.
     for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
       i != getOperation()->loaddata.end(); ++i)
-      if (&*i != this && !i->setup.empty() 
-        && i->getAlternate() != this && getAlternate() != &*i 
+      if (&*i != this && !i->setup.empty()
+        && i->getAlternate() != this && getAlternate() != &*i
         && i->getAlternate() != getAlternate())
         throw DataException("Only a single load of an operation can specify a setup");
   }

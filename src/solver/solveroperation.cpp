@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -267,7 +267,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
 
   if (a_qty <= ROUNDING_ERROR && !data.state->forceLate
       && isPlannedEarly
-      && matnext.getStart() != Date::infiniteFuture 
+      && matnext.getStart() != Date::infiniteFuture
       && matnext.getStart() != Date::infinitePast
       && (data.constrainedPlanning && isCapacityConstrained()))
     {
@@ -307,7 +307,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
 (OperationPlan* opplan, SolverMRP::SolverMRPdata& data, bool extra)
 {
   // No lead time constraints
-  if (!data.constrainedPlanning || (!isFenceConstrained() && !isLeadtimeConstrained())) 
+  if (!data.constrainedPlanning || (!isFenceConstrained() && !isLeadtimeConstrained()))
     return true;
 
   // Compute offset from the current date: A fence problem uses the release
@@ -315,7 +315,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
   // If both constraints apply, we need the bigger of the two (since it is the
   // most constraining date.
   Date threshold = Plan::instance().getCurrent();
-  if (isFenceConstrained() 
+  if (isFenceConstrained()
     && !(isLeadtimeConstrained() && opplan->getOperation()->getFence()<0L))
     threshold += opplan->getOperation()->getFence();
 
@@ -330,7 +330,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
   // this assumption. The resource solver takes care of the constraints.
   if (extra && isCapacityConstrained())
     for (Operation::loadlist::const_iterator j = opplan->getOperation()->getLoads().begin();
-      j != opplan->getOperation()->getLoads().end(); ++j)  
+      j != opplan->getOperation()->getLoads().end(); ++j)
       if (j->hasAlternates())
       {
         checkSetup = false;
@@ -339,11 +339,11 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
   if (checkSetup)
   {
     OperationPlan::iterator i(opplan);
-    if (i != opplan->end() 
-      && i->getOperation() == OperationSetup::setupoperation 
+    if (i != opplan->end()
+      && i->getOperation() == OperationSetup::setupoperation
       && i->getDates().getStart() < threshold)
     {
-      // The setup operationplan is violating the lead time and/or fence 
+      // The setup operationplan is violating the lead time and/or fence
       // constraint. We move it to start on the earliest allowed date,
       // which automatically also moves the owner operationplan.
       i->setStart(threshold);
@@ -409,7 +409,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
         (threshold == Plan::instance().getCurrent()) ?
           ProblemBeforeCurrent::metadata :
           ProblemBeforeFence::metadata,
-         opplan->getOperation(), original.start, original.end, 
+         opplan->getOperation(), original.start, original.end,
          original.quantity
         );
 
@@ -592,7 +592,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
         );
       if (at.end > max_Date) max_Date = at.end;
     }
-  }    
+  }
 
   // Check the flows and loads on the top operationplan.
   // This can happen only after the suboperations have been dealt with
@@ -779,9 +779,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       if (*altIter != firstAlternate)
         // Only enabled on first alternate
         data->logConstraints = false;
-      else 
+      else
       {
-        // Forget previous constraints if we are replanning the first alternate 
+        // Forget previous constraints if we are replanning the first alternate
         // multiple times
         data->planningDemand->getConstraints().pop(topConstraint);
         // Potentially keep track of constraints
@@ -902,7 +902,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         }
         if (data->state->a_qty > ROUNDING_ERROR && (
           val + ROUNDING_ERROR < bestAlternateValue
-          || (fabs(val - bestAlternateValue) < ROUNDING_ERROR 
+          || (fabs(val - bestAlternateValue) < ROUNDING_ERROR
               && data->state->a_qty > bestAlternateQuantity)
           ))
         {
@@ -911,7 +911,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
           bestAlternateSelection = *altIter;
           bestAlternateQuantity = data->state->a_qty;
           bestFlowPer = sub_flow_qty_per + top_flow_qty_per;
-          bestQDate = ask_date;  
+          bestQDate = ask_date;
         }
         // This was only an evaluation
         data->rollback(topcommand);
@@ -993,13 +993,13 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   if (a_qty < ROUNDING_ERROR || !originalLogConstraints)
     data->planningDemand->getConstraints().pop(topConstraint);
 
-  // Unconstrained plan: If some unplanned quantity remains, switch to 
+  // Unconstrained plan: If some unplanned quantity remains, switch to
   // unconstrained planning on the first alternate.
-  // If something could be planned, we expect the caller to re-ask this 
+  // If something could be planned, we expect the caller to re-ask this
   // operation.
   if (!originalPlanningMode && fabs(origQqty - a_qty) < ROUNDING_ERROR && firstAlternate)
   {
-    // Switch to unconstrained planning 
+    // Switch to unconstrained planning
     data->constrainedPlanning = false;
     data->logConstraints = false;
 

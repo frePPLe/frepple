@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -28,7 +28,7 @@ from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from freppledb.input.models import Parameter   
+from freppledb.input.models import Parameter
 
 
 # TODO The bucket preference is not really generic. Different models could
@@ -40,7 +40,7 @@ class Preferences(models.Model):
   )
   languageList = tuple( [ ('auto',_('Detect automatically')), ] + list(settings.LANGUAGES) )
   user = models.ForeignKey(User, verbose_name=_('user'), primary_key=True)
-  buckets = models.CharField(_('buckets'), max_length=settings.NAMESIZE, blank=True, null=True)   
+  buckets = models.CharField(_('buckets'), max_length=settings.NAMESIZE, blank=True, null=True)
   startdate = models.DateField(_('start date'), blank=True, null=True)
   enddate = models.DateField(_('end date'), blank=True, null=True)
   language = models.CharField(_('language'), max_length=10, choices=languageList,
@@ -54,7 +54,7 @@ def CreatePreferenceModel(instance, **kwargs):
   if created:
     try:
       pref.startdate = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S").date()
-    except: 
+    except:
       pref.startdate = datetime.now().date()
     pref.enddate = pref.startdate + timedelta(365)
     pref.save()

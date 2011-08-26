@@ -191,6 +191,7 @@
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=""
 				DelayLoadDLLs=""
 				ProgramDatabaseFile=".\module_lp_solver\Release/module_lp_solver.pdb"

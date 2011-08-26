@@ -149,39 +149,27 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
     logger << "Error: unknown exception" << endl;
   }
 
+  // Register the Python extensions
+  PyGILState_STATE state = PyGILState_Ensure();
   try
   {
-    // Register the Python extensions
-    PyThreadState *myThreadState = PyGILState_GetThisThreadState();
-    if (!Py_IsInitialized() || !myThreadState)
-      throw RuntimeException("Python isn't initialized correctly");
-    try
-    {
-      // Get the global lock.
-      PyEval_RestoreThread(myThreadState);
-      // Register new Python data types
-      if (Forecast::initialize())
-        throw RuntimeException("Error registering forecast");
-      if (ForecastBucket::initialize())
-        throw RuntimeException("Error registering forecastbucket");
-      if (ForecastSolver::initialize())
-        throw RuntimeException("Error registering forecastsolver");
-    }
-    // Release the global lock when leaving the function
-    catch (...)
-    {
-      PyEval_ReleaseLock();
-      throw;  // Rethrow the exception
-    }
-    PyEval_ReleaseLock();
+    // Register new Python data types
+    if (Forecast::initialize())
+      throw RuntimeException("Error registering forecast");
+    if (ForecastBucket::initialize())
+      throw RuntimeException("Error registering forecastbucket");
+    if (ForecastSolver::initialize())
+      throw RuntimeException("Error registering forecastsolver");
+    PyGILState_Release(state);
   }
   catch (exception &e)
   {
-    // Avoid throwing errors during the initialization!
+    PyGILState_Release(state);      
     logger << "Error: " << e.what() << endl;
   }
   catch (...)
   {
+    PyGILState_Release(state);      
     logger << "Error: unknown exception" << endl;
   }
 

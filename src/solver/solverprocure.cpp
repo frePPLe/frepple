@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -81,7 +81,7 @@ double suggestQuantity(const BufferProcure* b, double f)
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v) 
+DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
@@ -89,7 +89,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   // moves and creations, we can create a custom command "updateProcurements". The commit of
   // this command will update the operationplans.
   // The solve method is only worried about getting a Yes/No reply. The reply is almost always yes,
-  // except a) when the request is inside max(current + the lead time, latest procurement + min time 
+  // except a) when the request is inside max(current + the lead time, latest procurement + min time
   // after locked procurement), or b) when the min time > 0 and max qty > 0
 
   // Call the user exit
@@ -313,7 +313,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     // Check if the inventory drops below zero somewhere
     double shortage = 0;
     Date startdate;
-    for (Buffer::flowplanlist::const_iterator cur = b->getFlowPlans().begin(); 
+    for (Buffer::flowplanlist::const_iterator cur = b->getFlowPlans().begin();
       cur != b->getFlowPlans().end(); ++cur)
       if (cur->getDate() >= data->state->q_date
         && cur->getOnhand() < -ROUNDING_ERROR

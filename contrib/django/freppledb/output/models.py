@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -36,7 +36,7 @@ class OperationPlan(models.Model):
   locked = models.BooleanField(_('locked'), default=True)
   owner = models.IntegerField(_('owner'), null=True, blank=True, db_index=True)
 
-  def __unicode__(self): 
+  def __unicode__(self):
     return "Operationplan %s" % self.id
 
   class Meta:
@@ -95,7 +95,7 @@ class LoadPlan(models.Model):
   enddate = models.DateTimeField(_('enddate'), db_index=True)
   operationplan = models.ForeignKey(OperationPlan, verbose_name=_('operationplan'), db_index=True, related_name='loadplans')
   setup = models.CharField(_('setup'), max_length=settings.NAMESIZE, null=True)
-  
+
   def __unicode__(self):
       return self.resource.name + ' ' + str(self.startdate) + ' ' + str(self.enddate)
 

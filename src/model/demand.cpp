@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -266,7 +266,7 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
     o->writeElement(Tags::tag_minshipment, getMinShipment());
 
   // Write extra plan information
-  if (o->getContentType() == XMLOutput::PLAN 
+  if (o->getContentType() == XMLOutput::PLAN
     || o->getContentType() == XMLOutput::PLANDETAIL)
   {
     if (!deli.empty())

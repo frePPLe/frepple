@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -34,9 +34,9 @@ namespace frepple
 DECLARE_EXPORT const MetaClass* OperationPlan::metadata;
 DECLARE_EXPORT const MetaCategory* OperationPlan::metacategory;
 DECLARE_EXPORT unsigned long OperationPlan::counterMin = 1;
-// The value of the max counter is hard-coded to 2^31 - 1. This value is the 
+// The value of the max counter is hard-coded to 2^31 - 1. This value is the
 // highest positive integer number that can safely be used on 32-bit platforms.
-// An alternative approach is to use the value ULONG_MAX, but this has the 
+// An alternative approach is to use the value ULONG_MAX, but this has the
 // disadvantage of not being portable across platforms and tools.
 DECLARE_EXPORT unsigned long OperationPlan::counterMax = 2147483647;
 
@@ -253,13 +253,13 @@ DECLARE_EXPORT bool OperationPlan::activate(bool useMinCounter)
     // a safe starting point for tagging new operationplans.
     else if (useMinCounter)
       counterMin = id+1;
-    else 
+    else
       counterMax = id-1;
   }
   // Fresh operationplan with blank id
   else if (useMinCounter)
     id = counterMin++;
-  else 
+  else
     id = counterMax--;
   // Check whether the counters are still okay
   if (counterMin >= counterMax)
@@ -387,7 +387,7 @@ DECLARE_EXPORT void OperationPlan::addSubOperationPlan(OperationPlan* o)
     firstsubopplan = o;
     lastsubopplan = o;
   }
-  else if (firstsubopplan->getOperation() != OperationSetup::setupoperation)    
+  else if (firstsubopplan->getOperation() != OperationSetup::setupoperation)
   {
     // New head
     o->nextsubopplan = firstsubopplan;
@@ -679,7 +679,7 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 
   // Align the end of the setup operationplan with the start of the operation
   if (firstsubopplan && firstsubopplan->getOperation() == OperationSetup::setupoperation
-    && firstsubopplan->getDates().getEnd() != getDates().getStart()) 
+    && firstsubopplan->getDates().getEnd() != getDates().getStart())
     firstsubopplan->setEnd(getDates().getStart());
   else if (getOperation() == OperationSetup::setupoperation
     && getDates().getEnd() != getOwner()->getDates().getStart())
@@ -690,8 +690,8 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
   // sense if the operationplan was created to satisfy a demand.
   // It is not valid though when the purpose of the operationplan was to push
   // some material downstream.
-        
-  // Resize children 
+
+  // Resize children
   for (OperationPlan *j = firstsubopplan; j; j = j->nextsubopplan)
     if (j->getOperation() != OperationSetup::setupoperation)
     {
@@ -775,7 +775,7 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src,
 
 DECLARE_EXPORT void OperationPlan::update()
 {
-  if (lastsubopplan && lastsubopplan->getOperation() != OperationSetup::setupoperation)  
+  if (lastsubopplan && lastsubopplan->getOperation() != OperationSetup::setupoperation)
   {
     // Inherit the start and end date of the child operationplans
     OperationPlan *tmp = firstsubopplan;
@@ -842,14 +842,14 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
   // Recursive call for suboperationplans
   for (OperationPlan* subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
     if (!subopplan->isExcess()) return false;
-  
-  // Loop over all producing flowplans 
+
+  // Loop over all producing flowplans
   for (OperationPlan::FlowPlanIterator i = beginFlowPlans();
         i != endFlowPlans(); ++i)
   {
     // Skip consuming flowplans
     if (i->getQuantity() <= 0) continue;
-      
+
     // Loop over all flowplans in the buffer (starting at the end) and verify
     // that the onhand is bigger than the flowplan quantity
     double current_maximum(0.0);
@@ -862,7 +862,7 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
     }
     for (; j != i->getBuffer()->getFlowPlans().end(); --j)
     {
-      if ( (current_maximum > 0  
+      if ( (current_maximum > 0
              && j->getOnhand() < i->getQuantity() + current_maximum - ROUNDING_ERROR)
         || j->getOnhand() < i->getQuantity() + current_minimum - ROUNDING_ERROR )
         return false;
@@ -871,12 +871,12 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
       if (&*j == &*i) break;
     }
   }
-  
+
   // If we remove this operationplan the onhand in all buffers remains positive.
   return true;
 }
 
-  
+
 DECLARE_EXPORT TimePeriod OperationPlan::getUnavailable() const
 {
   TimePeriod x;

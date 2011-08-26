@@ -111,6 +111,14 @@ DECLARE_EXPORT(void) FreppleReadXMLFile (const char* filename, bool validate, bo
 }
 
 
+DECLARE_EXPORT(void) FreppleReadPythonFile(const char* filename)
+{
+  if (!filename)
+    throw DataException("No Python file passed to execute");
+  PythonInterpreter::executeFile(filename);
+}
+
+
 DECLARE_EXPORT(void) FreppleSaveFile(const char* x)
 {
   XMLOutputFile o(x);
@@ -161,6 +169,14 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLData(char* d, bool v, bool c
 extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char* f, bool v, bool c)
 {
   try {FreppleReadXMLFile(f, v, c);}
+  catch (...) {return EXIT_FAILURE;}
+  return EXIT_SUCCESS;
+}
+
+
+extern "C" DECLARE_EXPORT(int) FreppleWrapperReadPythonFile(const char* f)
+{
+  try {FreppleReadPythonFile(f);}
   catch (...) {return EXIT_FAILURE;}
   return EXIT_SUCCESS;
 }

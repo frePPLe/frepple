@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -47,7 +47,7 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
   // Register a callback when a buffer is removed from the model
   FunctorStatic<Buffer, OperationTransport>::connect(SIG_REMOVE);
 
-  // Initialize the new Python class 
+  // Initialize the new Python class
   FreppleClass<OperationTransport,Operation>::initialize();
 
   // Return the name of the module
@@ -171,7 +171,7 @@ bool OperationTransport::callback(Buffer* l, const Signal a)
       {
         // Delete the operation, but increment the iterator first!
         Operation::iterator k = i++;
-        delete &*k;    
+        delete &*k;
         if (i == Operation::end()) break;
       }
       else ++i;

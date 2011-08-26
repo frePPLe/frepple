@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -40,7 +40,7 @@ PyObject* CommandWebservice::pythonService(PyObject* self, PyObject* args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try {
-    CommandWebservice().commit();	
+    CommandWebservice().commit();
   }
   catch (...)
   {

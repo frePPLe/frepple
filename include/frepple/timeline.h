@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -163,7 +163,7 @@ template <class type> class TimeLine
         EventMinQuantity(Date d, double f=0.0) : newMin(f), prevMin(NULL)
           {this->dt = d;}
         void setMin(double f) {newMin = f;}
-        virtual double getMin(bool inclusive = true) const 
+        virtual double getMin(bool inclusive = true) const
         {
           if (inclusive) return newMin;
           else return prevMin ? prevMin->newMin : 0.0;
@@ -188,7 +188,7 @@ template <class type> class TimeLine
         {
           if (inclusive) return newMax;
           else return prevMax ? prevMax->newMax : 0.0;
-        }      
+        }
         virtual unsigned short getType() const {return 4;}
     };
 
@@ -478,7 +478,7 @@ template <class type> void TimeLine<type>::erase(Event* e)
   else
     // Erasing the tail
     last = e->prev;
-  
+
   // Clear prev and next pointers
   e->prev = NULL;
   e->next = NULL;

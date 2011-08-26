@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -62,13 +62,13 @@
   *    The following classical forecasting methods are implemented:
   *       - <b>Single exponential smoothing</b>, which is applicable for
   *         constant demands .
-  *       - <b>Double exponential smoothing</b>, which is applicable for 
+  *       - <b>Double exponential smoothing</b>, which is applicable for
   *         trended demands.
-  *       - <b>Holt-Winter's exponential smoothing with mutiplicative 
-  *         seasonality</b>, which is applicable for seasonal demands. 
-  *       - <b>Croston's method</b>, which is applicable for intermittent  
+  *       - <b>Holt-Winter's exponential smoothing with mutiplicative
+  *         seasonality</b>, which is applicable for seasonal demands.
+  *       - <b>Croston's method</b>, which is applicable for intermittent
   *         demand (i.e. demand patterns with a lot of zero demand buckets).
-  *       - <b>Moving average</b>, which is applicable when there is little 
+  *       - <b>Moving average</b>, which is applicable when there is little
   *         demand history to rely on.
   *    The forecast method giving the smallest symmetric mean percentage error (aka
   *    "smape"-error) will be automatically picked to produce the forecast.<br>
@@ -136,11 +136,11 @@
   * The module support the following configuration parameters:
   *
   *   - DueAtEndOfBucket:<br>
-  *     By default forecast demand is due at the start of the forecasting 
+  *     By default forecast demand is due at the start of the forecasting
   *     bucket. Since the actual customer demand will come in any time in the
   *     bucket this is a conservative setting.<br>
-  *     By setting this flag to true, the forecast will be due at the end of 
-  *     the forecast bucket. 
+  *     By setting this flag to true, the forecast will be due at the end of
+  *     the forecast bucket.
   *
   *   - Net_CustomerThenItemHierarchy:<br>
   *     As part of the forecast netting a demand is assiociated with a certain
@@ -216,55 +216,55 @@
   *
   *   - Forecast_DoubleExponential_dampenTrend:<br>
   *     Specifies how the trend is dampened for future buckets.<br>
-  *     The allowed range is between 0 and 1, and the default value is 0.8. 
+  *     The allowed range is between 0 and 1, and the default value is 0.8.
   *
-  *   - Forecast_Seasonal_initialAlfa,<br> 
-  *     Forecast_Seasonal_minAlfa,<br> 
+  *   - Forecast_Seasonal_initialAlfa,<br>
+  *     Forecast_Seasonal_minAlfa,<br>
   *     Forecast_Seasonal_maxAlfa:<br>
-  *     Specifies the initial value and the allowed range of the smoothing 
+  *     Specifies the initial value and the allowed range of the smoothing
   *     parameter in the seasonal forecasting method.<br>
   *     The allowed range is between 0 and 1. Values lower than about 0.05 are
   *     not advisible.
   *
-  *   - Forecast_Seasonal_initialBeta,<br> 
-  *     Forecast_Seasonal_minBeta,<br> 
+  *   - Forecast_Seasonal_initialBeta,<br>
+  *     Forecast_Seasonal_minBeta,<br>
   *     Forecast_Seasonal_maxBeta:<br>
-  *     Specifies the initial value and the allowed range of the trend 
+  *     Specifies the initial value and the allowed range of the trend
   *     smoothing parameter in the seasonal forecasting method.<br>
   *     The allowed range is between 0 and 1.
   *
-  *   - Forecast_Seasonal_initialGamma,<br> 
-  *     Forecast_Seasonal_minGamma,<br> 
+  *   - Forecast_Seasonal_initialGamma,<br>
+  *     Forecast_Seasonal_minGamma,<br>
   *     Forecast_Seasonal_maxGamma:<br>
-  *     Specifies the initial value and the allowed range of the seasonal 
+  *     Specifies the initial value and the allowed range of the seasonal
   *     smoothing parameter in the seasonal forecasting method.<br>
   *     The allowed range is between 0 and 1.
   *
-  *   - Forecast_Seasonal_minPeriod,<br> 
+  *   - Forecast_Seasonal_minPeriod,<br>
   *     Forecast_Seasonal_maxPeriod:<br>
   *     Specifies the periodicity of the seasonal cycles to check for.<br>
-  *     The interval of cycles we try to detect should be broad enough. For 
-  *     instance, if we expect to find a yearly cycle use a minimum period of 
-  *     10 and maximum period of 14. 
+  *     The interval of cycles we try to detect should be broad enough. For
+  *     instance, if we expect to find a yearly cycle use a minimum period of
+  *     10 and maximum period of 14.
   *
   *   - Forecast_Seasonal_dampenTrend<br>
   *     Specifies how the trend is dampened for future buckets.<br>
-  *     The allowed range is between 0 and 1, and the default value is 0.8. 
+  *     The allowed range is between 0 and 1, and the default value is 0.8.
   *
-  *   - Forecast_Croston_initialAlfa,<br> 
-  *     Forecast_Croston_minAlfa,<br> 
+  *   - Forecast_Croston_initialAlfa,<br>
+  *     Forecast_Croston_minAlfa,<br>
   *     Forecast_Croston_maxAlfa:<br>
-  *     Specifies the initial value and the allowed range of the smoothing 
+  *     Specifies the initial value and the allowed range of the smoothing
   *     parameter in the Croston forecasting method.<br>
-  *     The allowed range is between 0 and 1. Values lower than about 0.05 
-  *     are not advisible. 
+  *     The allowed range is between 0 and 1. Values lower than about 0.05
+  *     are not advisible.
   *
   *   - Forecast_Croston_minIntermittence:<br>
-  *     Minimum intermittence (defined as the percentage of zero demand 
+  *     Minimum intermittence (defined as the percentage of zero demand
   *     buckets) before the Croston method is applied. When the intermittence
-  *     exceeds this value, only Croston and moving average are considered 
+  *     exceeds this value, only Croston and moving average are considered
   *     suitable forecast methods.<br>
-  *     The default value is 0.33. 
+  *     The default value is 0.33.
   */
 
 #ifndef FORECAST_H
@@ -478,7 +478,7 @@ class Forecast : public Demand
           * Used to carry results between the evaluation and applying of the forecast.
           */
         double constant_i;
-        
+
         /* Factor used to smoothen the trend in the future buckets. */
         static double dampenTrend;
 
@@ -632,7 +632,7 @@ class Forecast : public Demand
           * The interval of cycles we try to detect should be broad enough.
           * If eg we normally expect a yearly cycle use a maximum cycle of 14.
           */
-        static unsigned int max_period; 
+        static unsigned int max_period;
 
         /** Period of the cycle. */
         unsigned short period;
@@ -656,15 +656,15 @@ class Forecast : public Demand
         unsigned int cycleindex;
 
         /** A check for seasonality.<br>
-          * The cycle period is returned if seasonality is detected. Zero is 
-          * returned in case no seasonality is present. 
+          * The cycle period is returned if seasonality is detected. Zero is
+          * returned in case no seasonality is present.
           */
         void detectCycle(const double[], unsigned int);
 
         /** Compute the determinant of a 3x3 matrix. */
-        inline double determinant(const double a, const double b, const double c, 
-          const double d, const double e, const double f, 
-          const double g, const double h, const double i) 
+        inline double determinant(const double a, const double b, const double c,
+          const double d, const double e, const double f,
+          const double g, const double h, const double i)
         { return a * e * i + b * f * g + c * d * h - a * f * h - b * d * i - c * e * g; }
 
 	    public:
@@ -681,7 +681,7 @@ class Forecast : public Demand
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
- 
+
         /** Update the minimum period that can be detected. */
         static void setMinPeriod(int x)
         {
@@ -689,7 +689,7 @@ class Forecast : public Demand
             "Parameter Seasonal.minPeriod must be greater than 1");
           min_period = x;
         }
- 
+
         /** Update the maximum period that can be detected. */
         static void setMaxPeriod(int x)
         {
@@ -1205,7 +1205,7 @@ class ForecastBucket : public Demand
     /** Return a pointer to the previous forecast bucket. */
     ForecastBucket* getPreviousBucket() const {return prev;}
 
-    /** A flag to mark whether forecast is due at the start or at the end of a 
+    /** A flag to mark whether forecast is due at the start or at the end of a
       * bucket.<br>
       * The default is false, ie due at the start of the bucket.
       */
@@ -1223,7 +1223,7 @@ class ForecastBucket : public Demand
     ForecastBucket* prev;
     ForecastBucket* next;
 
-    /** A flag to mark whether forecast is due at the start or at the end of a 
+    /** A flag to mark whether forecast is due at the start or at the end of a
       * bucket. */
     static bool DueAtEndOfBucket;
 };

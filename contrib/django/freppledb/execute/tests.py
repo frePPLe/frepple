@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -109,7 +109,7 @@ class execute_multidb(TransactionTestCase):
 
   def setUp(self):
     os.environ['FREPPLE_TEST'] = "YES"
-  
+
   def tearDown(self):
     del os.environ['FREPPLE_TEST']
 
@@ -124,13 +124,13 @@ class execute_multidb(TransactionTestCase):
     if not db2:
       # Only a single database is configured and we skip this test
       return
-      
+
     # Check count in both databases
     count1 = output.models.FlowPlan.objects.all().using(db1).count()
     count2 = output.models.FlowPlan.objects.all().using(db2).count()
     self.assertEqual(count1,0)
     self.assertEqual(count2,0)
-    
+
     # Erase second database
     count1 = input.models.Demand.objects.all().using(db1).count()
     management.call_command('frepple_flush', database=db2)
@@ -138,7 +138,7 @@ class execute_multidb(TransactionTestCase):
     count2 = input.models.Demand.objects.all().using(db2).count()
     self.assertEqual(count1new,count1)
     self.assertEqual(count2,0)
-    
+
     # Copy the db1 into db2.
     # We need to close the transactions, since they can block the copy
     transaction.commit(using=db1)
@@ -147,7 +147,7 @@ class execute_multidb(TransactionTestCase):
     count1 = output.models.Demand.objects.all().using(db1).count()
     count2 = output.models.Demand.objects.all().using(db2).count()
     self.assertEqual(count1,count2)
-    
+
     # Run the plan on db1.
     # The count changes in db1 and not in db2.
     management.call_command('frepple_run', plantype=1, constraint=15, nonfatal=True, database=db1)
@@ -155,7 +155,7 @@ class execute_multidb(TransactionTestCase):
     count2 = output.models.FlowPlan.objects.all().using(db2).count()
     self.assertNotEqual(count1,0)
     self.assertEqual(count2,0)
-    
+
     # Run a plan on db2.
     # The count changes in db1 and not in db2.
     # The count in both databases is expected to be different since we run a different plan

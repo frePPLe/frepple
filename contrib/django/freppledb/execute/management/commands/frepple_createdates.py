@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -45,7 +45,7 @@ class Command(BaseCommand):
           help='End date in YYYY-MM-DD format'),
       make_option('--user', dest='user', type='string',
           help='User running the command'),
-      make_option('--nonfatal', action="store_true", dest='nonfatal', 
+      make_option('--nonfatal', action="store_true", dest='nonfatal',
         default=False, help='Dont abort the execution upon an error'),
       make_option('--database', action='store', dest='database',
         default=DEFAULT_DB_ALIAS, help='Nominates a specific database to populate date information into'),
@@ -75,7 +75,7 @@ class Command(BaseCommand):
     nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
     if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
-    else: database = DEFAULT_DB_ALIAS      
+    else: database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )
 
@@ -100,24 +100,24 @@ class Command(BaseCommand):
       connections[database].cursor().execute(
         "delete from bucket where name in ('year', 'quarter','month','week','day')"
         )
-      
+
       # Create buckets
       y = Bucket(name='year',description='Yearly time buckets')
       q = Bucket(name='quarter',description='Quarterly time buckets')
       m = Bucket(name='month',description='Monthly time buckets')
       w = Bucket(name='week',description='Weeky time buckets')
       d = Bucket(name='day',description='Daily time buckets')
-      y.save(using=database)      
-      q.save(using=database)      
-      m.save(using=database)      
-      w.save(using=database)      
-      d.save(using=database)      
+      y.save(using=database)
+      q.save(using=database)
+      m.save(using=database)
+      w.save(using=database)
+      d.save(using=database)
 
       # Loop over all days in the chosen horizon
       prev_year = None
       prev_quarter = None
-      prev_month = None    
-      prev_week = None    
+      prev_month = None
+      prev_week = None
       while curdate < enddate:
         month = int(curdate.strftime("%m"))  # an integer in the range 1 - 12
         quarter = (month-1) / 3 + 1          # an integer in the range 1 - 4
@@ -129,7 +129,7 @@ class Command(BaseCommand):
         week_end = curdate - timedelta((dayofweek+6)%7-7)
         if week_start.date() < year_start: week_start = year_start
         if week_end.date() > year_end: week_end = year_end
-        
+
         # Create buckets
         if year != prev_year:
           prev_year = year
@@ -172,7 +172,7 @@ class Command(BaseCommand):
 
         # Next date
         curdate = curdate + timedelta(1)
-              
+
       # Log success
       log(category='CREATE', theuser=user,
         message=_('Finished initializing dates')).save(using=database)
@@ -184,7 +184,7 @@ class Command(BaseCommand):
       except: pass
       if nonfatal: raise e
       else: raise CommandError(e)
-      
+
     finally:
       # Commit it all, even in case of exceptions
       try: transaction.commit(using=database)

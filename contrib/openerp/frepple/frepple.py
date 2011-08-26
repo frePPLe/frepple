@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 #
-# Copyright (C) 2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2010-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -39,7 +39,7 @@ class frepple_setupmatrix(osv.osv):
         'active': lambda *a: 1,
         'name': lambda x,y,z,c: x.pool.get('ir.sequence').get(y,z,'frepple.setupmatrix') or '',
     }
-    
+
     def copy(self, cr, uid, id, default=None,context={}):
         if not default:
             default = {}
@@ -73,7 +73,7 @@ class frepple_setuprule(osv.osv):
         'priority': lambda *a: 1,
         'cost': lambda *a: 0,
         'name': lambda x,y,z,c: x.pool.get('ir.sequence').get(y,z,'frepple.setuprule') or '',
-    }    
+    }
 frepple_setuprule()
 
 

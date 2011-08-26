@@ -140,7 +140,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include;&quot;C:\develop\packages\xerces-c-src_2_6_0\src&quot;"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE,MT,_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				BasicRuntimeChecks="3"

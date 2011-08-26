@@ -47,22 +47,30 @@ DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 
 DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;
 DECLARE_EXPORT string PythonInterpreter::encoding;
+DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
 
 
-void PythonInterpreter::initialize()
+DECLARE_EXPORT void PythonInterpreter::initialize()
 {
   // Initialize the Python interpreter in case we are embedding the Python
   // interpreter in frePPLe.
   if(!Py_IsInitialized())
-    Py_InitializeEx(0);  // The arg 0 indicates that the interpreter doesn't
-                         // implement its own signal handler
-  PyEval_InitThreads();  // Initializes threads and captures global lock
+  {
+    Py_InitializeEx(0);   // The arg 0 indicates that the interpreter doesn't
+                          // implement its own signal handler
+    // Initializes threads
+    PyEval_InitThreads();  
+    mainThreadState = PyEval_SaveThread();
+  }
+  
+  // Capture global lock
+  PyGILState_STATE state = PyGILState_Ensure();
 
   // Create the frePPLe module
   module = Py_InitModule3("frepple", NULL, "Access to the frePPLe library");
   if (!module)
   {
-    PyEval_ReleaseLock();
+    PyGILState_Release(state);
     throw RuntimeException("Can't initialize Python interpreter");
   }
 
@@ -99,13 +107,19 @@ void PythonInterpreter::initialize()
   // Get the preferred Python locale
   PyObject* localemodule = PyImport_ImportModule("locale");
   if (!localemodule)
+  {
+    PyGILState_Release(state);
     throw RuntimeException("Can't import 'locale' Python module");
+  }
   else
   {
     PyObject* moduledict = PyModule_GetDict(localemodule);
     PyObject* func = PyDict_GetItemString(moduledict, "getpreferredencoding");
     if (!func)
+    {
+      PyGILState_Release(state);
       throw RuntimeException("Can't find 'getpreferredencoding' Python function");
+    }
     PyObject* retval = PyEval_CallObject(func, NULL);
     if (retval)
     {
@@ -116,10 +130,22 @@ void PythonInterpreter::initialize()
   }
 
   // Release the lock
-  PyEval_ReleaseLock();
+  PyGILState_Release(state);
 
   // A final check...
   if (nok) throw RuntimeException("Can't initialize Python interpreter");
+}
+
+
+DECLARE_EXPORT void PythonInterpreter::finalize() 
+{
+  // Only valid if this is an embedded interpreter
+  if (!mainThreadState) return;
+
+  // Swap to the main thread and exit
+  PyEval_AcquireLock();
+  PyEval_RestoreThread(mainThreadState);
+  Py_Finalize();
 }
 
 
@@ -232,26 +258,21 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
   newMethod->ml_doc = leakingDoc->c_str();	
 
   // Lock the interpreter
-  if (lock)
-  {
-    PyThreadState *myThreadState = PyGILState_GetThisThreadState();
-    if (!Py_IsInitialized() || !myThreadState)
-      throw RuntimeException("Python isn't initialized correctly");
-      PyEval_RestoreThread(myThreadState);
-  }
+  PyGILState_STATE state;
+  if (lock) state = PyGILState_Ensure();
 
   // Register a new C function in Python
   PyObject* mod = PyString_FromString("frepple");
 	if (!mod)
   {
-    if (lock) PyEval_ReleaseLock();
+    if (lock) PyGILState_Release(state);;
     throw RuntimeException("Error registering a new Python method");
   }
   PyObject* func = PyCFunction_NewEx(newMethod, NULL, mod);
   Py_DECREF(mod);
   if (!func)
   {
-    if (lock) PyEval_ReleaseLock();
+    if (lock) PyGILState_Release(state);
     throw RuntimeException("Error registering a new Python method");
   }
 
@@ -260,26 +281,26 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
   if (!moduledict)
   {
     Py_DECREF(func);
-    if (lock) PyEval_ReleaseLock();
+    if (lock) PyGILState_Release(state);
     throw RuntimeException("Error registering a new Python method");
   }
   if (PyDict_SetItemString(moduledict ,leakingName->c_str(), func) < 0)
   {
     Py_DECREF(func);
-    if (lock) PyEval_ReleaseLock();
+    if (lock) PyGILState_Release(state);
     throw RuntimeException("Error registering a new Python method");
   }
   Py_DECREF(func);
 
   // Release the interpeter
-  if (lock) PyEval_ReleaseLock();
+  if (lock) PyGILState_Release(state);
 }
 
 
 DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod
-  (const char* c, PyCFunctionWithKeywords f, int i, const char* d)
+  (const char* c, PyCFunctionWithKeywords f, int i, const char* d, bool b)
 {
-  registerGlobalMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d);
+  registerGlobalMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d, b);
 }
 
 
@@ -523,14 +544,20 @@ DECLARE_EXPORT void PythonType::addMethod
 DECLARE_EXPORT int PythonType::typeReady()
 {
   // Register the new type in the module
+  PyGILState_STATE state = PyGILState_Ensure();
   if (PyType_Ready(table) < 0)
+  {
+    PyGILState_Release(state);
     throw RuntimeException(string("Can't register python type ") + table->tp_name);
+  }
   Py_INCREF(table);
-  return PyModule_AddObject(
+  int result = PyModule_AddObject(
     PythonInterpreter::getModule(),
     table->tp_name + 8, // Note: +8 is to skip the "frepple." characters in the name
     reinterpret_cast<PyObject*>(table)
     );
+  PyGILState_Release(state);
+  return result;
 }
 
 

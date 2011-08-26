@@ -103,8 +103,12 @@ Forecast::~Forecast()
     }
 
   // Delete all children demands
-  for(memberIterator i = beginMember(); i != end(); ++i)
-    delete &*i;
+  for(memberIterator i = beginMember(); i != end(); )
+  {
+    Demand *tmp = &*i;
+    ++i;
+    delete tmp;
+  }
 }
 
 

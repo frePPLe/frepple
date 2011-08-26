@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -58,9 +58,9 @@ class Command(BaseCommand):
 
   def handle(self, **options):
     # Determine the port number
-    if 'port' in options: 
+    if 'port' in options:
       port = int(options['port'] or settings.PORT)
-    else: 
+    else:
       port = settings.PORT
 
     # Determine the IP-address to listen on:
@@ -98,7 +98,7 @@ class Command(BaseCommand):
     # Start a seperate thread that will check for updates
     # We don't wait for it to finish
     CheckUpdates().start()
-    
+
     # Run the WSGI server
     server = CherryPyWSGIServer((address, port),
       AdminMediaHandler(WSGIHandler(), media)
@@ -116,9 +116,9 @@ class CheckUpdates(Thread):
   def run(self):
     if settings.DEBUG == False:
       try:
-        import urllib 
-        import urllib2 
-        import re 
+        import urllib
+        import urllib2
+        import re
         values = {
           'platform' : sys.platform,
           'executable' : sys.executable,
@@ -131,6 +131,5 @@ class CheckUpdates(Thread):
         if release > settings.FREPPLE_VERSION:
           print "A new frePPLe release %s is available. Your current release is %s." % (release, settings.FREPPLE_VERSION)
       except:
-        # Don't worry if something went wrong. 
+        # Don't worry if something went wrong.
         pass
-      

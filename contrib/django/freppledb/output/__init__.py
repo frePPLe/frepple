@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -23,6 +23,6 @@
 r'''
 An application that handles the frePPLe output.
 
-It defines the database structure to store the plan information and provides 
+It defines the database structure to store the plan information and provides
 reports to summarize the results.
 '''

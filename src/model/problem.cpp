@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -553,7 +553,7 @@ PyObject* Problem::getattro(const Attribute& attr)
 }
 
 
-DECLARE_EXPORT void Problem::List::clear(Problem *c) 
+DECLARE_EXPORT void Problem::List::clear(Problem *c)
 {
   // Unchain the predecessor
   if (c)
@@ -580,7 +580,7 @@ DECLARE_EXPORT void Problem::List::clear(Problem *c)
 }
 
 
-DECLARE_EXPORT Problem* Problem::List::push(const MetaClass* m, 
+DECLARE_EXPORT Problem* Problem::List::push(const MetaClass* m,
   const Object* o, Date st, Date nd, double w)
 {
   // Find the end of the list
@@ -589,7 +589,7 @@ DECLARE_EXPORT Problem* Problem::List::push(const MetaClass* m,
     cur = cur->nextProblem;
   if (cur && cur->getOwner() == o)
     // Duplicate problem: stop here.
-    return cur; 
+    return cur;
 
   // Create a new problem
   Problem *p;
@@ -613,9 +613,9 @@ DECLARE_EXPORT Problem* Problem::List::push(const MetaClass* m,
 }
 
 
-DECLARE_EXPORT void Problem::List::pop(Problem *p) 
+DECLARE_EXPORT void Problem::List::pop(Problem *p)
 {
-  Problem *q = NULL; 
+  Problem *q = NULL;
   if (p)
   {
     // Skip the problem that was passed as argument

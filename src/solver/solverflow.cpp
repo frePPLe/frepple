@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -116,7 +116,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
       if (*i != firstAlternate)
         // Only enabled on first alternate
         data->logConstraints = false;
-      else 
+      else
         // Keep track of constraints, if enabled
         data->logConstraints = originalLogConstraints;
 
@@ -127,7 +127,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
       curflow->getBuffer()->solve(*this,data);
 
       // 4d) A positive reply: exit the loop
-      if (data->state->a_qty > ROUNDING_ERROR) 
+      if (data->state->a_qty > ROUNDING_ERROR)
       {
         // Update the opplan, which is required to (1) update the flowplans
         // and to (2) take care of lot sizing constraints of this operation.
@@ -166,7 +166,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
         flplan->setFlow(firstAlternate);
       // Message
       if (data->getSolver()->getLogLevel()>1)
-        logger << indent(fl->getOperation()->getLevel()) 
+        logger << indent(fl->getOperation()->getLevel())
           << "   Alternate flow plans unconstrained on alternate '"
           << firstAlternate->getBuffer()->getName() << "'" << endl;
       // Plan unconstrained

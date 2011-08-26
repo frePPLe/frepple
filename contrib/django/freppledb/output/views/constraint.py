@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2010-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -27,8 +27,8 @@ from django.db.models import Count
 from freppledb.output.models import Constraint
 from freppledb.common.report import ListReport, FilterText, FilterChoice, FilterDate, FilterNumber
 
-  
-entities = ( 
+
+entities = (
  ('demand',_('demand')),
  ('material',_('material')),
  ('capacity',_('capacity')),
@@ -36,32 +36,32 @@ entities = (
  )
 
 names = (
-  ('overload',_('overload')), 
-  ('underload',_('underload')), 
-  ('material excess',_('material excess')), 
+  ('overload',_('overload')),
+  ('underload',_('underload')),
+  ('material excess',_('material excess')),
   ('material shortage',_('material shortage')),
-  ('excess',_('excess')), 
-  ('short',_('short')), 
-  ('early',_('early')), 
-  ('late',_('late')), 
+  ('excess',_('excess')),
+  ('short',_('short')),
+  ('early',_('early')),
+  ('late',_('late')),
   ('unplanned',_('unplanned')),
-  ('precedence',_('precedence')), 
-  ('before fence',_('before fence')), 
+  ('precedence',_('precedence')),
+  ('before fence',_('before fence')),
   ('before current',_('before current'))
-  ) 
+  )
 
 
 def getEntities(request):
-  return tuple([ 
-    (i['entity'], string_concat(_(i['entity']),":",i['id__count'])) 
-    for i in Constraint.objects.using(request.database).values('entity').annotate(Count('id')).order_by('entity') 
+  return tuple([
+    (i['entity'], string_concat(_(i['entity']),":",i['id__count']))
+    for i in Constraint.objects.using(request.database).values('entity').annotate(Count('id')).order_by('entity')
     ])
-    
+
 
 def getNames(request):
-  return tuple([ 
+  return tuple([
     (i['name'], string_concat(_(i['name']),":",i['id__count']))
-    for i in Constraint.objects.using(request.database).values('name').annotate(Count('id')).order_by('name') 
+    for i in Constraint.objects.using(request.database).values('name').annotate(Count('id')).order_by('name')
     ])
 
 

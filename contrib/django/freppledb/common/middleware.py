@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2010-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -20,7 +20,7 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-import re 
+import re
 
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
@@ -55,9 +55,9 @@ for i in settings.DATABASES:
 
 class DatabaseSelectionMiddleware(object):
   """
-  This middleware examines the URL of the incoming request, and determines the 
+  This middleware examines the URL of the incoming request, and determines the
   name of database to use.
-  URLs starting with the name of a configured database will be executed on that 
+  URLs starting with the name of a configured database will be executed on that
   database. Extra fields are set on the request to set the selected database.
   This prefix is then stripped from the path while processing the view.
   """
@@ -76,4 +76,3 @@ class DatabaseSelectionMiddleware(object):
         pass
     request.database = DEFAULT_DB_ALIAS
     request.prefix = ''
-      

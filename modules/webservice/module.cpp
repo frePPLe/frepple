@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -62,35 +62,26 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
     }
 
     // Initialize the Python extension.
-    PyThreadState *myThreadState = PyGILState_GetThisThreadState();
-    if (!Py_IsInitialized() || !myThreadState)
-      throw RuntimeException("Python isn't initialized correctly");
+    PyGILState_STATE state = PyGILState_Ensure();
     try
     {
-      // Get the global lock.
-      PyEval_RestoreThread(myThreadState);
       // Register new Python data types
       PythonInterpreter::registerGlobalMethod(
         "webservice", CommandWebservice::pythonService, METH_NOARGS,
         "Starts the webservice to listen for HTTP requests");
+      PyGILState_Release(state);
     }
-    // Release the global lock when leaving the function
+    catch (exception &e)
+    {
+      PyGILState_Release(state);
+      logger << "Error: " << e.what() << endl;
+    }
     catch (...)
     {
-      PyEval_ReleaseLock();
-      throw;  // Rethrow the exception
+      PyGILState_Release(state);
+      logger << "Error: unknown exception" << endl;
     }
-    PyEval_ReleaseLock();
-  }
-  catch (exception &e)
-  {
-    // Avoid throwing errors during the initialization!
-    logger << "Error: " << e.what() << endl;
-  }
-  catch (...)
-  {
-    logger << "Error: unknown exception" << endl;
-  }
+
   // Return the name of the module
   return name;
 }

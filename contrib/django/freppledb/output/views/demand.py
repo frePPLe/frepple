@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -72,13 +72,13 @@ class OverviewReport(TableReport):
 
     # Assure the item hierarchy is up to date
     Item.rebuildHierarchy(database=basequery.db)
-    
+
     # Execute a query to get the backlog at the start of the horizon
     startbacklogdict = {}
     query = '''
       select items.name, sum(quantity)
       from (%s) items
-      inner join item 
+      inner join item
       on item.lft between items.lft and items.rght
       inner join out_demand
       on item.name = out_demand.item
@@ -118,7 +118,7 @@ class OverviewReport(TableReport):
           on item.lft between items.lft and items.rght
           -- Planned quantity
           left join out_demand
-          on item.name = out_demand.item 
+          on item.name = out_demand.item
           and d.startdate <= out_demand.plandate
           and d.enddate > out_demand.plandate
           -- Grouping
@@ -229,11 +229,11 @@ def GraphData(request, entity):
     demand.append(x['demand'])
     supply.append(x['supply'])
     backlog.append(x['backlog'])
-  context = { 
-    'buckets': bucketlist, 
-    'demand': demand, 
-    'supply': supply, 
-    'backlog': backlog, 
+  context = {
+    'buckets': bucketlist,
+    'demand': demand,
+    'supply': supply,
+    'backlog': backlog,
     'axis_nth': len(bucketlist) / 20 + 1,
     }
   return HttpResponse(

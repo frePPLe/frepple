@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -42,7 +42,7 @@ from django.core.management.color import no_style
 
 import frepple
 
-if 'FREPPLE_DATABASE' in os.environ: 
+if 'FREPPLE_DATABASE' in os.environ:
   database = os.environ['FREPPLE_DATABASE']
 else:
   database = DEFAULT_DB_ALIAS
@@ -53,8 +53,8 @@ def truncate(cursor):
   starttime = time()
   sql_list = connections[database].ops.sql_flush(no_style(), [
     'out_problem', 'out_demandpegging', 'out_flowplan',
-    'out_loadplan', 'out_operationplan', 'out_demand', 
-    'out_forecast', 'out_constraint', 
+    'out_loadplan', 'out_operationplan', 'out_demand',
+    'out_forecast', 'out_constraint',
     ], [] )
   for sql in sql_list:
     cursor.execute(sql)
@@ -70,8 +70,8 @@ def exportProblems(cursor):
     (entity,name,owner,description,startdate,enddate,weight) \
     values(%s,%s,%s,%s,%s,%s,%s)",
     [(
-       i.entity, i.name, 
-       isinstance(i.owner,frepple.operationplan) and str(i.owner.operation) or str(i.owner), 
+       i.entity, i.name,
+       isinstance(i.owner,frepple.operationplan) and str(i.owner.operation) or str(i.owner),
        i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
        round(i.weight,settings.DECIMAL_PLACES)
      ) for i in frepple.problems()
@@ -91,8 +91,8 @@ def exportConstraints(cursor):
       (demand,entity,name,owner,description,startdate,enddate,weight) \
       values(%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
-         d.name,i.entity, i.name, 
-         isinstance(i.owner,frepple.operationplan) and str(i.owner.operation) or str(i.owner), 
+         d.name,i.entity, i.name,
+         isinstance(i.owner,frepple.operationplan) and str(i.owner.operation) or str(i.owner),
          i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
          round(i.weight,settings.DECIMAL_PLACES)
        ) for i in d.constraints
@@ -135,7 +135,7 @@ def exportFlowplans(cursor):
       (operationplan_id, thebuffer, quantity, flowdate, onhand) \
       values (%s,%s,%s,%s,%s)",
       [(
-         j.operationplan.id, j.buffer.name, 
+         j.operationplan.id, j.buffer.name,
          round(j.quantity,settings.DECIMAL_PLACES),
          str(j.date), round(j.onhand,settings.DECIMAL_PLACES)
        ) for j in i.flowplans
@@ -182,14 +182,14 @@ def exportDemand(cursor):
         cur -= cumplanned - d.quantity
         if cur < 0: cur = 0
       yield (
-        n, d.item.name, d.customer and d.customer.name or None, str(d.due), 
+        n, d.item.name, d.customer and d.customer.name or None, str(d.due),
         round(cur,settings.DECIMAL_PLACES), str(i.end),
         round(i.quantity,settings.DECIMAL_PLACES), i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
-        n, d.item.name, d.customer and d.customer.name or None, str(d.due), 
+        n, d.item.name, d.customer and d.customer.name or None, str(d.due),
         round(d.quantity - cumplanned,settings.DECIMAL_PLACES), None,
         None, None
         )
@@ -353,12 +353,12 @@ def exportfrepple():
     for i in tasks: i.start()
     # Wait for all threads to finish
     for i in tasks: i.join()
-  
+
   # Analyze
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
     print "Analyzing database tables..."
     cursor.execute("analyze")
-    
-  # Close the database connection  
+
+  # Close the database connection
   cursor.close()
   transaction.commit(using=database)

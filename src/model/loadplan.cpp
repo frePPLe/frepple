@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -158,7 +158,7 @@ DECLARE_EXPORT const string& LoadPlan::getSetup(bool current) const
   if (!ld->getSetup().empty() && current) return ld->getSetup();
 
   // Scan earlier setups
-  for (Resource::loadplanlist::const_iterator i(this); 
+  for (Resource::loadplanlist::const_iterator i(this);
     i != getResource()->getLoadPlans().end(); --i)
   {
     const LoadPlan* j = dynamic_cast<const LoadPlan*>(&*i);
@@ -203,10 +203,10 @@ DECLARE_EXPORT LoadPlan::~LoadPlan()
           break;
         }
       }
-    }    
+    }
   }
   ld->getResource()->loadplans.erase(this);
-  if (prevldplan) ld->getResource()->updateSetups(prevldplan); 
+  if (prevldplan) ld->getResource()->updateSetups(prevldplan);
 }
 
 
@@ -228,9 +228,9 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   // Update also the setup operationplan
   if (oper && oper->getOperation() != OperationSetup::setupoperation)
   {
-    bool oldHasSetup = ld && !ld->getSetup().empty() 
+    bool oldHasSetup = ld && !ld->getSetup().empty()
       && ld->getResource()->getSetupMatrix();
-    bool newHasSetup = !newld->getSetup().empty() 
+    bool newHasSetup = !newld->getSetup().empty()
       && newld->getResource()->getSetupMatrix();
     OperationPlan *setupOpplan = NULL;
     if (oldHasSetup)
@@ -276,7 +276,7 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
         OperationSetup::setupoperation->createOperationPlan(
           1, Date::infinitePast, oper->getDates().getEnd(), NULL, oper);
       }
-      //else: 
+      //else:
       // Case 4: No setup for the old or new load
     }
   }
@@ -320,7 +320,7 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
    // Remove from the old resource, if there is one
     if (ldplan->ld)
       ldplan->ld->getResource()->loadplans.erase(ldplan);
-    
+
     // Insert in the new resource
     ldplan->ld = newld;
     newld->getResource()->loadplans.insert(

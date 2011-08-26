@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -235,15 +235,15 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
   if (iteration_accuracy != 0.01)
     o->writeElement(Tags::tag_iterationaccuracy, iteration_accuracy);
   if (!autocommit) o->writeElement(Tags::tag_autocommit, autocommit);
-  if (userexit_flow) 
+  if (userexit_flow)
     o->writeElement(Tags::tag_userexit_flow, static_cast<string>(userexit_flow));
-  if (userexit_demand) 
+  if (userexit_demand)
     o->writeElement(Tags::tag_userexit_demand, static_cast<string>(userexit_demand));
-  if (userexit_buffer) 
+  if (userexit_buffer)
     o->writeElement(Tags::tag_userexit_buffer, static_cast<string>(userexit_buffer));
-  if (userexit_resource) 
+  if (userexit_resource)
     o->writeElement(Tags::tag_userexit_resource, static_cast<string>(userexit_resource));
-  if (userexit_operation) 
+  if (userexit_operation)
     o->writeElement(Tags::tag_userexit_operation, static_cast<string>(userexit_operation));
 
   // Write the parent class

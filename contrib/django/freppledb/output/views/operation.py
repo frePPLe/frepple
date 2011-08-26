@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -165,8 +165,8 @@ class DetailReport(ListReport):
       }),
     ('owner', {'title': _('owner')}),
     )
-    
-    
+
+
 @staff_member_required
 def GraphData(request, entity):
   basequery = Operation.objects.filter(pk__exact=entity)
@@ -176,10 +176,10 @@ def GraphData(request, entity):
   for x in OverviewReport.resultlist2(request, basequery, bucket, start, end):
     total_start.append(x['total_start'])
     total_end.append(x['total_end'])
-  context = { 
-    'buckets': bucketlist, 
-    'total_end': total_end, 
-    'total_start': total_start, 
+  context = {
+    'buckets': bucketlist,
+    'total_end': total_end,
+    'total_start': total_start,
     'axis_nth': len(bucketlist) / 20 + 1,
     }
   return HttpResponse(

@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -588,7 +588,7 @@ OperationFixedTime::setOperationPlanParameters
   if (opplan->getLocked())
     return OperationPlanState(opplan);
 
-  // All quantities are valid, as long as they are above the minimum size and 
+  // All quantities are valid, as long as they are above the minimum size and
   // below the maximum size
   if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
   if (q > getSizeMaximum()) q = getSizeMaximum();
@@ -743,7 +743,7 @@ OperationTimePer::setOperationPlanParameters
       // part of the operation duration. This is infeasible.
       if (!execute) return OperationPlanState(x,0);
       opplan->setQuantity(0,true,false,execute);
-      opplan->setEnd(e);  
+      opplan->setEnd(e);
     }
     else
     {
@@ -757,7 +757,7 @@ OperationTimePer::setOperationPlanParameters
         else
           // Calculate the maximum operationplan that will fit in the window
           q = opplan->setQuantity(
-            static_cast<double>(actual - duration) / duration_per, 
+            static_cast<double>(actual - duration) / duration_per,
             true, false, execute);
       }
       else
@@ -970,7 +970,7 @@ DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
       if (i->getOperation() == OperationSetup::setupoperation) continue;
       x = i->getOperation()->setOperationPlanParameters(i,q,Date::infinitePast,e,preferEnd,execute);
       e = x.start;
-      if (realfirst) 
+      if (realfirst)
       {
         y = x.end;
         realfirst = false;
@@ -1225,7 +1225,7 @@ OperationAlternate::setOperationPlanParameters
     return OperationPlanState(opplan);
 
   OperationPlan *x = opplan->lastsubopplan;
-  while (x && x->getOperation() == OperationSetup::setupoperation) 
+  while (x && x->getOperation() == OperationSetup::setupoperation)
     x = x->prevsubopplan;
   if (!x)
   {
@@ -1308,7 +1308,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
     // Create a new one
     if (!opplan->getOwner())
       throw LogicException("Setup operationplan always must have an owner");
-    for (loadlist::const_iterator g=opplan->getOwner()->getOperation()->getLoads().begin(); 
+    for (loadlist::const_iterator g=opplan->getOwner()->getOperation()->getLoads().begin();
       g!=opplan->getOwner()->getOperation()->getLoads().end(); ++g)
       if (g->getResource()->getSetupMatrix() && !g->getSetup().empty())
       {
@@ -1316,7 +1316,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
         break;
       }
     if (!ldplan)
-      throw LogicException("Can't find a setup on operation '" 
+      throw LogicException("Can't find a setup on operation '"
         + opplan->getOwner()->getOperation()->getName() + "'");
   }
 
@@ -1329,7 +1329,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
       i != ldplan->getResource()->getLoadPlans().end() && i->getDate() <= boundary; ++i)
     {
       const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
-      if (l && i->getQuantity() != 0.0 
+      if (l && i->getQuantity() != 0.0
         && l->getOperationPlan() != opplan
         && l->getOperationPlan() != opplan->getOwner()
         && !l->getLoad()->getSetup().empty())
@@ -1342,7 +1342,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
       i != ldplan->getResource()->getLoadPlans().end(); --i)
     {
       const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
-      if (l && i->getQuantity() != 0.0 
+      if (l && i->getQuantity() != 0.0
         && l->getOperationPlan() != opplan
         && l->getOperationPlan() != opplan->getOwner()
         && !l->getLoad()->getSetup().empty()

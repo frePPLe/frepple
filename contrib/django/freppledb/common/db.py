@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -25,7 +25,7 @@ This module holds a number of functions that are useful to make SQL statements
 portable across different databases.
 
 Django also includes a set of wrapper functions around incompatible
-database functionality. A seperate one was required to add functions and 
+database functionality. A seperate one was required to add functions and
 enhance others.
   - sql_datediff:
     Returns the time diffence between 2 datetime values, expressed in days.
@@ -43,8 +43,8 @@ enhance others.
     This method does what one might intuitively expect: a python date object
     is always returned.
 
-The code assumes that all database engines are identical in the frePPLe 
-application. 
+The code assumes that all database engines are identical in the frePPLe
+application.
 '''
 
 from datetime import date, datetime

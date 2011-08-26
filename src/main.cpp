@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -99,7 +99,12 @@ int main (int argc, char *argv[])
           FreppleInitialize();
           input = true;
         }
-        FreppleReadXMLFile(argv[i], validate, validate_only);
+        if (strlen(argv[i])>=3 && !strcmp(argv[i]+strlen(argv[i])-3,".py"))
+          // Execute as Python file
+          FreppleReadPythonFile(argv[i]);
+        else
+          // Execute as XML file
+          FreppleReadXMLFile(argv[i], validate, validate_only);        
       }
     }
 

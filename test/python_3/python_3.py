@@ -1,5 +1,6 @@
+#!/usr/bin/python
 #
-# Copyright (C) 2007 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -22,8 +23,19 @@
 '''
 This test shows how we can use Python to create a frePPLe model: we can
 create objects, access existing objects and change objects.
+
+All other tests are running the Python interpreter embedded in the frePPLe
+executable.
+This test however runs frePPLe as Python extension module.
 '''
 
+# Add the frePPLe directory to the Python module search path
+import os
+import site
+if 'FREPPLE_HOME' in os.environ:
+   site.addsitedir(os.environ['FREPPLE_HOME'])
+
+import frepple
 import datetime
 import inspect
 import types

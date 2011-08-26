@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -53,7 +53,7 @@ from django.contrib.admin.util import get_deleted_objects
 # Make our tags built-in, so we don't have to load them any more in our
 # templates with a 'load' tag.
 template.add_to_builtins('freppledb.common.templatetags.base_utils')
- 
+
 csrf_protect_m = method_decorator(csrf_protect)
 
 class MultiDBModelAdmin(admin.ModelAdmin):
@@ -67,10 +67,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
      - different logic to determine the next page to display
 
   See the standard code in the file django\contrib\admin\options.py
-  The level of customization is relatively high, and this code is a bit of a 
+  The level of customization is relatively high, and this code is a bit of a
   concern for future upgrades of Django...
-  ''' 
-  
+  '''
+
   def save_model(self, request, obj, form, change):
     # Tell Django to save objects to the 'other' database.
     obj.save(using=request.database)
@@ -153,7 +153,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       "admin/%s/object_history.html" % app_label,
       "admin/object_history.html"
     ], context, context_instance=context_instance)
-      
+
   def response_add(self, request, obj, post_url_continue='../%s/'):
     """
     Determines the HttpResponse for the add_view stage.
@@ -238,7 +238,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     # will also be deleted.
     (deleted_objects, perms_needed, protected) = get_deleted_objects(
        [obj], opts, request.user, self.admin_site, using)
-    
+
     if request.POST: # The user has already confirmed the deletion.
       if perms_needed:
         raise PermissionDenied
@@ -257,7 +257,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       title = _("Cannot delete %(name)s") % {"name": object_name}
     else:
       title = _("Are you sure?")
-    
+
     context = {
         "title": title,
         "object_name": object_name,
@@ -276,7 +276,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         "admin/%s/delete_confirmation.html" % app_label,
         "admin/delete_confirmation.html"
     ], context, context_instance=context_instance)
-                            
+
   # TODO: allow permissions per schema
   # def has_add_permission(self, request):
   # def has_change_permission(self, request, obj=None):
@@ -293,4 +293,4 @@ class MultiDBTabularInline(admin.TabularInline):
 
   def formfield_for_manytomany(self, db_field, request=None, **kwargs):
     return super(MultiDBTabularInline, self).formfield_for_manytomany(db_field, request=request, using=request.database, **kwargs)
-  
+

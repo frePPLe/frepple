@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -87,7 +87,7 @@ class Command(BaseCommand):
         help='Average procurement lead time'),
       make_option('--currentdate', dest='currentdate', type="string",
         help='Current date of the plan in YYYY-MM-DD format'),
-      make_option('--nonfatal', action="store_true", dest='nonfatal', 
+      make_option('--nonfatal', action="store_true", dest='nonfatal',
         default=False, help='Dont abort the execution upon an error'),
       make_option('--database', action='store', dest='database',
         default=DEFAULT_DB_ALIAS, help='Nominates a specific database to populate'),
@@ -136,7 +136,7 @@ class Command(BaseCommand):
     else: currentdate = '2009-01-01'
     nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
-    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS      
+    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )
 
@@ -150,7 +150,7 @@ class Command(BaseCommand):
         startdate = datetime.strptime(currentdate,'%Y-%m-%d')
       except Exception, e:
         raise CommandError("current date is not matching format YYYY-MM-DD")
-  
+
       # Check whether the database is empty
       if Buffer.objects.using(database).count()>0 or Item.objects.using(database).count()>0:
         raise CommandError("Database must be empty before creating a model")
@@ -183,17 +183,17 @@ class Command(BaseCommand):
       # Planning horizon
       # minimum 10 daily buckets, weekly buckets till 40 days after current
       if verbosity>0: print "Updating buckets..."
-      management.call_command('frepple_createdates', user=user, nonfatal=True, database=database)      
+      management.call_command('frepple_createdates', user=user, nonfatal=True, database=database)
       if verbosity>0: print "Updating horizon telescope..."
       updateTelescope(10, 40, 730)
-            
+
       # Weeks calendar
       if verbosity>0: print "Creating weeks calendar..."
       weeks = Calendar.objects.using(database).create(name="Weeks")
       for i in BucketDetail.objects.using(database).filter(bucket="week").all():
         CalendarBucket(startdate=i.startdate, enddate=i.enddate, value=1, calendar=weeks).save(using=database)
       transaction.commit(using=database)
-            
+
       # Working days calendar
       if verbosity>0: print "Creating working days..."
       workingdays = Calendar.objects.using(database).create(name="Working Days",type= "calendar_boolean")
@@ -266,7 +266,7 @@ class Command(BaseCommand):
         loc = Location.objects.using(database).get_or_create(name='Loc %05d' % i)[0]
         loc.available = workingdays
         loc.save(using=database)
-        
+
         # Item and delivery operation
         oper = Operation.objects.using(database).create(name='Del %05d' % i, sizemultiple=1, location=loc)
         it = Item.objects.using(database).create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
@@ -373,7 +373,7 @@ class Command(BaseCommand):
       except: pass
       if nonfatal: raise e
       else: raise CommandError(e)
-            
+
     finally:
       # Commit it all, even in case of exceptions
       transaction.commit(using=database)
@@ -410,11 +410,11 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
     connections[database].cursor().execute(
       "delete from bucket where name = 'telescope'"
       )
-      
+
     # Create bucket
     b = Bucket(name='telescope',description='Time buckets with decreasing granularity')
     b.save(using=database)
-    
+
     # Create bucket for all dates in the past
     startdate = datetime.strptime(Parameter.objects.using(database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
     curdate = startdate
@@ -422,9 +422,9 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
       bucket = b,
       name = 'past',
       startdate = datetime(2000,1,1),
-      enddate = curdate, 
+      enddate = curdate,
       ).save(using=database)
-    
+
     # Create daily buckets
     limit = curdate + timedelta(min_day_horizon)
     while curdate < limit or curdate.strftime("%w") != '0':
@@ -435,7 +435,7 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
         enddate = curdate + timedelta(1)
         ).save(using=database)
       curdate = curdate + timedelta(1)
-    
+
     # Create weekly buckets
     limit = startdate + timedelta(min_week_horizon)
     stop = False
@@ -451,7 +451,7 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
         enddate = enddate
         ).save(using=database)
       curdate = enddate
-      
+
     # Create monthly buckets
     limit = startdate + timedelta(min_month_horizon)
     while curdate < limit:
@@ -464,7 +464,7 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
         enddate = enddate
         ).save(using=database)
       curdate = enddate
-          
+
     transaction.commit(using=database)
   finally:
     transaction.rollback(using=database)

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -36,7 +36,7 @@ from django.contrib import messages
 from django.utils.encoding import force_unicode
 
 from freppledb.execute.models import log, Scenario
-from freppledb.common.report import ListReport, FilterDate, FilterText 
+from freppledb.common.report import ListReport, FilterDate, FilterText
 import freppledb.input
 
 @staff_member_required
@@ -48,26 +48,26 @@ def main(request):
   '''
   try: constraint = int(request.session['constraint'])
   except: constraint = 15
-  
+
   # Synchronize the scenario table with the settings
   Scenario.syncWithSettings()
-  
+
   # Load the list of fixtures in the "input" app
   fixtures = []
   try:
     for root, dirs, files in os.walk(os.path.join(freppledb.input.__path__[0], 'fixtures')):
       for i in files:
         if i.endswith('.json'): fixtures.append(i[:-5])
-  except: 
+  except:
     pass  # Silently ignore failures
-  
+
   # Send to template
   return render(request, 'execute/execute.html', {
-          'title': _('Execute'), 
+          'title': _('Execute'),
           'reset_crumbs': True,
           'capacityconstrained': constraint & 4,
-          'materialconstrained': constraint & 2, 
-          'leadtimeconstrained': constraint & 1, 
+          'materialconstrained': constraint & 2,
+          'leadtimeconstrained': constraint & 1,
           'fenceconstrained': constraint & 8,
           'scenarios': Scenario.objects.all(),
           'fixtures': fixtures,
@@ -88,7 +88,7 @@ def erase(request):
 
   # Erase the database contents
   try:
-    management.call_command('frepple_flush', user=request.user.username, 
+    management.call_command('frepple_flush', user=request.user.username,
       nonfatal=True, database=request.database)
     messages.add_message(request, messages.INFO, force_unicode(_('Erased the database')))
   except Exception, e:
@@ -107,7 +107,7 @@ def create(request):
   '''
   # Allow only post
   if request.method != 'POST':
-    messages.add_message(request, messages.ERROR, 
+    messages.add_message(request, messages.ERROR,
       force_unicode(_('Only POST method allowed')))
     return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
@@ -135,7 +135,7 @@ def create(request):
   except KeyError:
     raise Http404
   except ValueError, e:
-    messages.add_message(request, messages.ERROR, 
+    messages.add_message(request, messages.ERROR,
       force_unicode(_('Invalid input field')))
   else:
     # Execute
@@ -149,10 +149,10 @@ def create(request):
         procure_lt=procure_lt, user=request.user.username,
         nonfatal=True, database=request.database
         )
-      messages.add_message(request, messages.INFO, 
+      messages.add_message(request, messages.INFO,
         force_unicode(_('Created sample model in the database')))
     except Exception, e:
-      messages.add_message(request, messages.ERROR, 
+      messages.add_message(request, messages.ERROR,
         force_unicode(_('Failure during sample model creation: %(msg)s') % {'msg':e}))
 
   # Show the main screen again
@@ -169,7 +169,7 @@ def runfrepple(request):
   '''
   # Allow only post
   if request.method != 'POST':
-    messages.add_message(request, messages.ERROR, 
+    messages.add_message(request, messages.ERROR,
       force_unicode(_('Only POST method allowed')))
     return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
@@ -181,23 +181,23 @@ def runfrepple(request):
   plantype = 1
   try: plantype = request.POST.get('plantype')
   except: pass
-  
+
   # Update the session object
   request.session['plantype'] = plantype
   request.session['constraint'] = constraint
-  
+
   # Run frepple
   try:
     management.call_command(
-      'frepple_run', 
-      user=request.user.username, 
-      plantype=plantype, constraint=constraint, 
+      'frepple_run',
+      user=request.user.username,
+      plantype=plantype, constraint=constraint,
       nonfatal=True, database=request.database
       )
-    messages.add_message(request, messages.INFO, 
+    messages.add_message(request, messages.INFO,
       force_unicode(_('Successfully created a plan')))
   except Exception, e:
-    messages.add_message(request, messages.ERROR, 
+    messages.add_message(request, messages.ERROR,
       force_unicode(_('Failure creating a plan: %(msg)s') % {'msg':e}))
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
   return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
@@ -212,7 +212,7 @@ def fixture(request):
   """
   # Validate the request
   if request.method != 'POST':
-    messages.add_message(request, messages.ERROR, 
+    messages.add_message(request, messages.ERROR,
       force_unicode(_('Only POST method allowed')))
     # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
     return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
@@ -222,7 +222,7 @@ def fixture(request):
     fixture = request.POST['datafile']
     if fixture == '-': raise
   except:
-    messages.add_message(request, messages.ERROR, 
+    messages.add_message(request, messages.ERROR,
       force_unicode(_('Missing dataset name')))
     return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
@@ -233,12 +233,12 @@ def fixture(request):
     log(category='LOAD', theuser=request.user.username,
       message='Start loading dataset "%s"' % fixture).save(using=request.database)
     management.call_command('loaddata', fixture, verbosity=0, database=request.database)
-    messages.add_message(request, messages.INFO, 
+    messages.add_message(request, messages.INFO,
       force_unicode(_('Loaded dataset')))
     log(category='LOAD', theuser=request.user.username,
       message='Finished loading dataset "%s"' % fixture).save(using=request.database)
   except Exception, e:
-    messages.add_message(request, messages.ERROR, 
+    messages.add_message(request, messages.ERROR,
       force_unicode(_('Error while loading dataset: %(msg)s') % {'msg':e}))
     log(category='LOAD', theuser=request.user.username,
       message='Failed loading dataset "%s": %s' % (fixture,e)).save(using=request.database)
@@ -253,7 +253,7 @@ def logfile(request):
   '''
   try:
     if request.database == DEFAULT_DB_ALIAS:
-      f = open(os.path.join(settings.FREPPLE_APP, 'frepple.log'), 'rb')     
+      f = open(os.path.join(settings.FREPPLE_APP, 'frepple.log'), 'rb')
     else:
       f = open(os.path.join(settings.FREPPLE_APP, 'frepple_%s.log' % request.database), 'rb')
   except:
@@ -273,7 +273,7 @@ def logfile(request):
       f.close()
 
   return render(request, 'execute/logfrepple.html', {
-      'title': _('Log file'), 
+      'title': _('Log file'),
       'logdata': logdata,
       } )
 
@@ -319,21 +319,21 @@ def scenarios(request):
   '''
   # Allow only post
   if request.method != 'POST':
-    messages.add_message(request, messages.ERROR, 
+    messages.add_message(request, messages.ERROR,
       force_unicode(_('Only POST method allowed')))
     return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
 
   # Execute the correct action
-  try:    
+  try:
     # ACTION 1: Updating the description
-    if 'update' in request.POST:      
+    if 'update' in request.POST:
       for sc in Scenario.objects.all():
         if request.POST.get(sc.name, 'off') == 'on':
           sc.description = request.POST.get('description',None)
           sc.save()
-          messages.add_message(request, messages.INFO, 
+          messages.add_message(request, messages.INFO,
             force_unicode(_("Updated scenario '%(scenario)s'") % {'scenario': sc.name}))
-          
+
     # ACTION 2: Copying datasets
     elif 'copy' in request.POST:
       source = request.POST.get('source', DEFAULT_DB_ALIAS)
@@ -343,17 +343,17 @@ def scenarios(request):
             management.call_command(
               'frepple_copy',
               source,
-              sc.name, 
+              sc.name,
               user=request.user.username,
               nonfatal=True,
               force=True
               )
-            messages.add_message(request, messages.INFO, 
+            messages.add_message(request, messages.INFO,
               force_unicode(_("Successfully copied scenario '%(source)s' to '%(destination)s'") % {'source': source, 'destination': sc.name}))
           except Exception:
-            messages.add_message(request, messages.ERROR, 
+            messages.add_message(request, messages.ERROR,
               force_unicode(_("Failure copying scenario '%(source)s' to '%(destination)s'") % {'source': source, 'destination':sc.name}))
-    
+
     # ACTION 3: Release a copy
     elif 'release' in request.POST:
       for sc in Scenario.objects.all():
@@ -361,7 +361,7 @@ def scenarios(request):
           sc.status = u'Free'
           sc.lastrefresh = datetime.today()
           sc.save()
-          messages.add_message(request, messages.INFO, 
+          messages.add_message(request, messages.INFO,
             force_unicode(_("Released scenario '%(scenario)s'") % {'scenario': sc.name}))
           if request.database == sc.name:
             # Erasing the database that is currently selected.
@@ -369,10 +369,10 @@ def scenarios(request):
 
     # INVALID ACTION
     else:
-      messages.add_message(request, messages.ERROR, 
+      messages.add_message(request, messages.ERROR,
         force_unicode(_('Invalid action')))
       return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
-      
+
   except Exception, x:
     print x
     transaction.rollback()

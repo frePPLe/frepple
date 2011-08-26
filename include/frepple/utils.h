@@ -512,12 +512,19 @@ class NonCopyable
   *     Erase the model (arg true) or only the plan (arg false, default).
   *   - <b>version</b>:<br>
   *     A string variable with the version number.
+  *
+  * The technical implementation is inspired by and inherited from the following 
+  * article: "Embedding Python in Multi-Threaded C/C++ Applications", see
+  * http://www.linuxjournal.com/article/3641 
   */
 class PythonInterpreter
 {
   public:
     /** Initializes the interpreter. */
-    static void initialize();
+    static DECLARE_EXPORT void initialize();
+
+    /** Finalizes the interpreter. */
+    static DECLARE_EXPORT void finalize();
 
     /** Execute some python code. */
     static DECLARE_EXPORT void execute(const char*);
@@ -539,7 +546,7 @@ class PythonInterpreter
 
     /** Register a new method to Python. */
     static DECLARE_EXPORT void registerGlobalMethod
-      (const char*, PyCFunctionWithKeywords, int, const char*);
+      (const char*, PyCFunctionWithKeywords, int, const char*, bool = true);
 
     /** Return a pointer to the main extension module. */
     static PyObject* getModule() {return module;}
@@ -576,6 +583,9 @@ class PythonInterpreter
       * frePPLe.<br>
       */
     static DECLARE_EXPORT string encoding;
+
+    /** Main thread info. */
+    static DECLARE_EXPORT PyThreadState* mainThreadState;
 };
 
 
@@ -4024,8 +4034,12 @@ class CommandManager
     /** Destructor. */
     ~CommandManager() 
     {
-      for (Bookmark* i = lastBookmark; i && i != &firstBookmark; i = i->prevBookmark)
-        delete i;
+      for (Bookmark* i = lastBookmark; i && i != &firstBookmark; )
+      {
+        Bookmark* tmp = i;
+        i = i->prevBookmark;
+        delete tmp;
+      }
     }
 
     /** Returns an iterator over all bookmarks in forward direction. */

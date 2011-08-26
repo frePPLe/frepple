@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -82,8 +82,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
       ; ++cur)
   {
     const FlowPlan* fplan = dynamic_cast<const FlowPlan*>(&*cur);
-    if (fplan && !fplan->getOperationPlan()->getIdentifier() 
-      && fplan->getQuantity()>0 
+    if (fplan && !fplan->getOperationPlan()->getIdentifier()
+      && fplan->getQuantity()>0
       && fplan->getOperationPlan()->getOperation() != b->getProducingOperation())
       unconfirmed_supply += fplan->getQuantity();
 
@@ -159,7 +159,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
         // material arrivals, surplus material created by lotsized operations,
         // etc...)
         // The unconfirmed_supply element is required to exclude any of the
-        // excess inventory we may have caused ourselves. Such situations are 
+        // excess inventory we may have caused ourselves. Such situations are
         // possible when there are loops in the supply chain.
         if (theDate > requested_date
             && extraInventoryDate == Date::infiniteFuture)
@@ -240,7 +240,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
         extraInventoryDate :
         extraSupplyDate;
     // Monitor as a constraint if there is no producing operation.
-    // Note that if there is a producing operation the constraint is flagged 
+    // Note that if there is a producing operation the constraint is flagged
     // on the operation instead of on this buffer.
     if (!b->getProducingOperation() && data->logConstraints && shortage > ROUNDING_ERROR)
       data->planningDemand->getConstraints().push(ProblemMaterialShortage::metadata,

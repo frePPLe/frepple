@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -67,7 +67,7 @@ def exportOperationplans():
   writer = csv.writer(open("operations.csv", "wb"), quoting=csv.QUOTE_ALL)
   writer.writerow(('#id','operation','quantity','start date','end date','locked'))
   for i in frepple.operationplans():
-    writer.writerow(( 
+    writer.writerow((
        i.id, i.operation.name, i.quantity, i.start, i.end,
        i.locked, i.unavailable, i.owner and i.owner.id or None
      ))
@@ -120,7 +120,7 @@ def exportDemand():
       yield (n, d.item.name, d.due, cur, i.end, i.quantity, i.id)
     # Extra record if planned short
     if cumplanned < d.quantity:
-      yield (n, d.item.name, d.customer and d.customer.name or None, d.due, 
+      yield (n, d.item.name, d.customer and d.customer.name or None, d.due,
         d.quantity - cumplanned, None, None, None)
 
   print "Exporting demand plans..."

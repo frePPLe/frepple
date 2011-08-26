@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -281,7 +281,7 @@ DECLARE_EXPORT void Buffer::beginElement(XMLInput& pIn, const Attribute& pAttr)
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_item))
     pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA(Tags::tag_minimum_calendar) 
+  else if (pAttr.isA(Tags::tag_minimum_calendar)
     || pAttr.isA(Tags::tag_maximum_calendar))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_location))
@@ -387,7 +387,7 @@ DECLARE_EXPORT void Buffer::setMinimum(double m)
   // Create new event
   flowplanlist::EventMinQuantity *newEvent =
     new flowplanlist::EventMinQuantity(Date::infinitePast, min_val);
-  flowplans.insert(newEvent);  
+  flowplans.insert(newEvent);
 }
 
 
@@ -457,7 +457,7 @@ DECLARE_EXPORT void Buffer::setMaximum(double m)
   // Create new event
   flowplanlist::EventMaxQuantity *newEvent =
     new flowplanlist::EventMaxQuantity(Date::infinitePast, max_val);
-  flowplans.insert(newEvent);  
+  flowplans.insert(newEvent);
 }
 
 

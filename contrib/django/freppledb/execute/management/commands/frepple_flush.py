@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -43,7 +43,7 @@ class Command(BaseCommand):
   option_list = BaseCommand.option_list + (
     make_option('--user', dest='user', type='string',
       help='User running the command'),
-    make_option('--nonfatal', action="store_true", dest='nonfatal', 
+    make_option('--nonfatal', action="store_true", dest='nonfatal',
       default=False, help='Dont abort the execution upon an error'),
     make_option('--database', action='store', dest='database',
       default=DEFAULT_DB_ALIAS, help='Nominates a specific database to delete data from'),
@@ -68,7 +68,7 @@ class Command(BaseCommand):
     nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
     if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
-    else: database = DEFAULT_DB_ALIAS      
+    else: database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )
 
@@ -78,7 +78,7 @@ class Command(BaseCommand):
       # Logging message
       log(category='ERASE', theuser=user,
         message=_('Start erasing the database')).save(using=database)
-        
+
       # Create a database connection
       cursor = connections[database].cursor()
 
@@ -104,16 +104,15 @@ class Command(BaseCommand):
       # Logging message
       log(category='ERASE', theuser=user,
         message=_('Finished erasing the database')).save(using=database)
-        
+
     except Exception, e:
       try: log(category='ERASE', theuser=user,
         message=u'%s: %s' % (_('Failed erasing the database'),e)).save(using=database)
       except: pass
       if nonfatal: raise e
       else: raise CommandError(e)
-      
+
     finally:
       transaction.commit(using=database)
       settings.DEBUG = tmp_debug
       transaction.leave_transaction_management(using=database)
-      

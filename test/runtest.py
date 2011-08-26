@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright (C) 2009-2010 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2009-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -41,8 +41,8 @@
 #    If a file runtest.py is found in the test directory, it is being run
 #    and its exit code is used as the criterium for a successful test.
 #
-#  - Type 3: Process an XML file
-#    If a file {testdir}.xml is found in the test directory, the frepple
+#  - Type 3: Process an XML or PY file
+#    If a file {testdir}.xml or {testdir}.py is found in the test directory, the frepple
 #    commandline executable is called to process the file.
 #    The test is successful if both:
 #      1) the exit code of the program is 0
@@ -94,12 +94,12 @@ def usage():
 
 
 def runTestSuite():
-    global debug, testdir    
+    global debug, testdir
     if sys.platform in ['windows','win32','win64']:
       platform = 'VCC'
     else:
-      platform = 'GCC' 
-      
+      platform = 'GCC'
+
     # Frepple uses the time functions from the C-library, which is senstive to
     # timezone settings. In particular the daylight saving time of different
     # timezones is of interest: it applies only to some timezones, and different
@@ -192,10 +192,10 @@ def runTestSuite():
     # Now define the test suite
     AllTests = unittest.TestSuite()
     for i in tests:
-        
+
         # Skip excluded tests
         if i in excluded: continue
-        
+
         # Expand to directory names
         i = os.path.normpath(i)
         tmp = os.path.join(testdir, i, i)
@@ -209,10 +209,10 @@ def runTestSuite():
             # Type 1: (compiled) executable
             AllTests.addTest(freppleTest(i, 'runExecutable'))
         elif os.path.isfile(os.path.join(testdir, i, 'runtest.py')):
-            # Type 2: perl script runtest.pl available
+            # Type 2: Python script runtest.py available
             AllTests.addTest(freppleTest(i, 'runScript'))
-        elif os.path.isfile(tmp + '.xml'):
-            # Type 3: input xml file specified
+        elif os.path.isfile(tmp + '.xml') or os.path.isfile(tmp + '.py'):
+            # Type 3: input XML or Python file specified
             AllTests.addTest(freppleTest(i, 'runXML'))
         else:
             # Undetermined - not a test directory
@@ -228,7 +228,7 @@ def runTestSuite():
          "tests from directory", testdir
     result = unittest.TextTestRunner(verbosity=2,descriptions=False).run(AllTests)
     if not result.wasSuccessful(): sys.exit(1)
-    
+
 
 class freppleTest (unittest.TestCase):
     def __init__(self, directoryname, methodName):
@@ -285,7 +285,7 @@ class freppleTest (unittest.TestCase):
         self.runProcess('python %s' % os.path.join('.','runtest.py'))
 
     def runXML(self):
-        '''Running the command line tool with an XML file as argument.'''
+        '''Running the command line tool with an XML or Python file as argument.'''
         global debug
 
         # Delete previous output
@@ -295,7 +295,10 @@ class freppleTest (unittest.TestCase):
         for i in self.output: os.remove(i)
 
         # Run the executable
-        self.runProcess(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml")
+        if os.path.isfile(self.subdirectory + '.xml'):
+          self.runProcess(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml")
+        else:
+          self.runProcess(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".py")
 
         # Now check the output file, if there is an expected output given
         nr = 1;

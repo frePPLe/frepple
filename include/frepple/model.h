@@ -5401,7 +5401,7 @@ class CommandMoveOperationPlan : public Command
     virtual void undo() {restore(false);}
     virtual DECLARE_EXPORT void redo();
 
-    /** Undo the changes.<b>
+    /** Undo the changes.<br>
       * When the argument is true, subcommands for suboperationplans are deleted. */
     DECLARE_EXPORT void restore(bool = false);
 

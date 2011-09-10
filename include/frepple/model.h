@@ -146,9 +146,9 @@ class Calendar : public HasName<Calendar>
 
       protected:
         /** Constructor. */
-        Bucket(Calendar *c, Date start, Date end, string name) : nm(name),
-          startdate(start), enddate(end), nextBucket(NULL), prevBucket(NULL),
-          priority(0), cal(c) {initType(metadata);}
+        Bucket(Calendar *c, Date start, Date end, string name, int priority=0) :
+          nm(name), startdate(start), enddate(end), nextBucket(NULL),
+          prevBucket(NULL), priority(priority), cal(c) {initType(metadata);}
 
         /** Auxilary function to write out the start of the XML. */
         DECLARE_EXPORT void writeHeader(XMLOutput *, const Keyword&) const;
@@ -372,8 +372,8 @@ class Calendar : public HasName<Calendar>
 
     /** This is the factory method used to generate new buckets. Each subclass
       * should provide an override for this function. */
-    virtual Bucket* createNewBucket(Date start, Date end, string name)
-      {return new Bucket(this, start,end,name);}
+    virtual Bucket* createNewBucket(Date start, Date end, string name, int priority=0)
+      {return new Bucket(this, start, end, name, priority);}
 };
 
 
@@ -400,8 +400,8 @@ template <typename T> class CalendarValue : public Calendar
         T val;
 
         /** Constructor. */
-        BucketValue(CalendarValue<T> *c, Date start, Date end, string name)
-          : Bucket(c,start,end,name), val(c->getDefault()) {}
+        BucketValue(CalendarValue<T> *c, Date start, Date end, string name, int priority=0)
+          : Bucket(c,start,end,name,priority), val(c->getDefault()) {}
 
       public:
         /** Returns the value of this bucket. */
@@ -538,8 +538,8 @@ template <typename T> class CalendarValue : public Calendar
     /** Factory method to add new buckets to the calendar.
       * @see Calendar::addBucket()
       */
-    Bucket* createNewBucket(Date start, Date end, string name)
-      {return new BucketValue(this,start,end,name);}
+    Bucket* createNewBucket(Date start, Date end, string name, int priority=0)
+      {return new BucketValue(this, start, end, name, priority);}
 
     /** Value when no bucket is matching a certain date. */
     T defaultValue;
@@ -575,8 +575,8 @@ template <typename T> class CalendarPointer : public Calendar
         T* val;
 
         /** Constructor. */
-        BucketPointer(CalendarPointer<T> *c, Date start, Date end, string name)
-          : Bucket(c,start,end,name), val(c->getDefault()) {};
+        BucketPointer(CalendarPointer<T> *c, Date start, Date end, string name, int priority=0)
+          : Bucket(c,start,end,name,priority), val(c->getDefault()) {};
 
       public:
         /** Returns the value stored in this bucket. */
@@ -739,8 +739,8 @@ template <typename T> class CalendarPointer : public Calendar
     /** Factory method to add new buckets to the calendar.
       * @see Calendar::addBucket()
       */
-    Bucket* createNewBucket(Date start, Date end, string name)
-      {return new BucketPointer(this,start,end,name);}
+    Bucket* createNewBucket(Date start, Date end, string name, int priority=0)
+      {return new BucketPointer(this,start,end,name,priority);}
 
     /** Value when no bucket is matching a certain date. */
     T* defaultValue;

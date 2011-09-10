@@ -471,13 +471,10 @@ def loadForecastdemand(cursor):
   print 'Importing forecast demand...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT forecast_id, startdate, enddate, quantity FROM forecastdemand")
-  x = [ header, '<demands>' ]    # todo use python api to read forecast buckets
+  cursor.execute("SELECT forecast_id, quantity, startdate, enddate FROM forecastdemand")
   for i, j, k, l in cursor.fetchall():
     cnt += 1
-    x.append('<demand name=%s><buckets><bucket start="%sT00:00:00" end="%sT00:00:00" total="%s"/></buckets></demand>' % (quoteattr(i), j.isoformat(), k.isoformat(), l))
-  x.append('</demands></plan>')
-  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
+    frepple.demand_forecast(name=i).setQuantity(j,k,l)
   print 'Loaded %d forecast demands in %.2f seconds' % (cnt, time() - starttime)
 
 

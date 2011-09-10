@@ -48,6 +48,8 @@ int Forecast::initialize()
   FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
 
   // Initialize the Python class
+  FreppleClass<Forecast,Demand>::getType().addMethod("setQuantity", Forecast::setPythonTotalQuantity, METH_VARARGS,
+     "Update the total quantity in one or more buckets");
   FreppleClass<Forecast,Demand>::getType().addMethod("timeseries", Forecast::timeseries, METH_VARARGS,
      "Set the future based on the timeseries of historical data");
   return FreppleClass<Forecast,Demand>::initialize();
@@ -266,6 +268,27 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
           // The bucket is completely updated
           x->setTotal(f * percent);
       }
+    }
+  }
+}
+
+
+void Forecast::setTotalQuantity(const Date d, double f)
+{
+  // Initialize, if not done yet
+  if (!isGroup()) instantiate();
+
+  // Find the bucket
+  for (memberIterator m = beginMember(); m!=end(); ++m)
+  {
+    ForecastBucket* x = dynamic_cast<ForecastBucket*>(&*m);
+    if (!x)
+      throw DataException("Invalid subdemand of forecast '" + getName() +"'");
+    if (x->getDueRange().within(d))
+    {
+      // Update the bucket
+      x->setTotal(f);
+      return;
     }
   }
 }

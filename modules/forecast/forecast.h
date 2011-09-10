@@ -897,6 +897,14 @@ class Forecast : public Demand
       */
     virtual void setTotalQuantity(const DateRange& , double);
 
+    /** Update the gross quantity in a single forecast bucket. */
+    virtual void setTotalQuantity(const Date , double);
+
+    /** Python method to update the total quantity of one or more
+      * forecast buckets.
+      */
+    static PyObject* setPythonTotalQuantity(PyObject *, PyObject *);
+
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     void beginElement(XMLInput& pIn, const Attribute& pAttr);

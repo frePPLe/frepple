@@ -55,7 +55,7 @@ int Calendar::initialize()
 }
 
 
-int Calendar::Bucket::initialize()
+int Calendar::Bucket::initialize()  // @TODO a single Python type is used as frontend for multiple C++ types.  Fancy, but not clean
 {
   // Initialize the metadata
   metadata = new MetaCategory("bucket", "buckets");

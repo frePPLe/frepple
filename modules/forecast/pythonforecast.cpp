@@ -61,6 +61,36 @@ int Forecast::setattro(const Attribute& attr, const PythonObject& field)
 }
 
 
+extern "C" PyObject* Forecast::setPythonTotalQuantity(PyObject *self, PyObject *args)
+{
+  try
+  {
+    // Get the forecast model
+    Forecast* forecast = static_cast<Forecast*>(self);
+
+    // Parse the Python arguments
+    double value;
+    PyObject* pystart;
+    PyObject* pyend = NULL;
+    int ok = PyArg_ParseTuple(args, "fO|O:setQuantity", &value, &pystart, &pyend);
+    if (!ok) return NULL;
+
+    // Update the forecast
+    PythonObject start(pystart), end(pyend);
+    if (pyend)
+      forecast->setTotalQuantity(DateRange(start.getDate(), end.getDate()), value);
+    else
+      forecast->setTotalQuantity(start.getDate(), value);
+  }
+  catch(...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+  return Py_BuildValue("");
+}
+
+
 extern "C" PyObject* Forecast::timeseries(PyObject *self, PyObject *args)
 {
   // Get the forecast model
@@ -69,7 +99,7 @@ extern "C" PyObject* Forecast::timeseries(PyObject *self, PyObject *args)
   // Parse the Python arguments
   PyObject* history;
   PyObject* buckets = NULL;
-  int ok = PyArg_ParseTuple(args, "O|O", &history, &buckets);
+  int ok = PyArg_ParseTuple(args, "O|O:timeseries", &history, &buckets);
   if (!ok) return NULL;
 
   // Verify we can iterate over the arguments

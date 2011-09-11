@@ -1039,7 +1039,10 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
     }
 
     if (x && !static_cast<OperationPlan*>(x)->activate())
+    {
+      PyErr_SetString(PythonRuntimeException, "operationplan activation failed");
       return NULL;
+    }
     return x;
   }
   catch (...)

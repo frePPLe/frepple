@@ -1199,7 +1199,7 @@ class OperationPlanList(ListReport):
   @staticmethod
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
-      'id','operation','startdate','enddate','quantity','locked',
+      'id','operation','startdate','enddate','quantity','locked', 'owner', 
       'lastmodified'
       )
 
@@ -1227,6 +1227,10 @@ class OperationPlanList(ListReport):
     ('locked', {
       'title': _('locked'),
       'filter': FilterBool(),
+      }),
+    ('owner', {
+      'title': _('owner'),
+      'filter': FilterNumber(),
       }),
     ('lastmodified', {
       'title': _('last modified'),

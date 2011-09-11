@@ -7,7 +7,7 @@
 {% block frozendata %}
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
-<td><a href="{{i.id}}/">{{i.id}}</a></td>
+<td>{% if is_popup %}<a href="" onclick="opener.dismissRelatedLookupPopup(window, {{i.id}}); return false;">{{i.id}}</a>{% else %}<a href="{{i.id}}/">{{i.id}}</a>{% endif %}</td>
 </tr>{% endfor %}
 {% endblock %}
 
@@ -19,6 +19,7 @@
 <td>{{i.enddate}}</td>
 <td>{{i.quantity|floatformat:1}}</td>
 <td>{{i.locked}}</td>
+<td>{% if i.owner %}{% if is_popup %}{{i.owner}}{% else %}<a href="{{i.owner}}/">{{i.owner}}</a>{% endif %}{% endif %}</td>
 <td>{{i.lastmodified}}</td>
 </tr>{% endfor %}
 {% endblock %}

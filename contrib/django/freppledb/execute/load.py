@@ -420,21 +420,26 @@ def loadLoads(cursor):
   print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
 
 
-def loadOperationPlans(cursor):
+def loadOperationPlans(cursor):  
   print 'Importing operationplans...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT id, operation_id, quantity, startdate, enddate, locked FROM operationplan order by id asc")
-  x = [ header , '<operationplans>' ]   # todo use python api to create operationplan
+  cursor.execute('''SELECT operation_id, id, quantity, startdate, enddate, locked 
+     FROM operationplan
+     where owner_id is null 
+     order by id asc''')
   for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
-    x.append('<operationplan id="%d" operation=%s quantity="%s">' % (i, quoteattr(j), k))
-    if l: x.append( '<start>%s</start>' % l.isoformat())
-    if m: x.append( '<end>%s</end>' % m.isoformat())
-    if n: x.append( '<locked>true</locked>')
-    x.append('</operationplan>')
-  x.append('</operationplans></plan>')
-  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
+    frepple.operationplan(operation=frepple.operation(name=i),
+      id=j, quantity=k, start=l, end=m).locked = n
+  cursor.execute('''SELECT operation_id, id, quantity, startdate, enddate, locked, owner_id 
+     FROM operationplan
+     where owner_id is not null 
+     order by id asc''')
+  for i, j, k, l, m, n, o in cursor.fetchall():
+    cnt += 1
+    frepple.operationplan(operation=frepple.operation(name=i),
+      id=j, quantity=k, start=l, end=m, owner=frepple.operationplan(id=o)).locked = n
   print 'Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime)
 
 

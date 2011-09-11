@@ -741,6 +741,8 @@ class OperationPlan(AuditModel):
   enddate = models.DateTimeField(_('end date'),help_text=_('end date'))
   locked = models.BooleanField(_('locked'),default=True,
     help_text=_('Prevent or allow changes'))
+  owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, 
+    related_name='xchildren', help_text=_('Hierarchical parent'))
 
   def __unicode__(self): return str(self.id)
 

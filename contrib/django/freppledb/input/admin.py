@@ -195,7 +195,7 @@ site.register(Load,Load_admin)
 
 class OperationPlan_admin(MultiDBModelAdmin):
   model = OperationPlan
-  raw_id_fields = ('operation',)
+  raw_id_fields = ('operation','owner',)
   save_on_top = True
 site.register(OperationPlan,OperationPlan_admin)
 

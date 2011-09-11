@@ -128,7 +128,7 @@ def printModel(filename):
     print >>output, "  Operationplan:", b.operation.name, b.quantity, b.start, b.end
     for s in b.operationplans:
       print >>output, "       ", s.operation.name, s.quantity, s.start, s.end
-      
+
   # Problems
   print >>output, "\nPrinting problems"
   for i in frepple.problems():
@@ -195,7 +195,7 @@ c = frepple.calendar_operation(name="operationcal", default=choice)
 c.setValue(datetime.datetime(2009,1,1), datetime.datetime(2009,3,1), makeoper)
 c.setValue(datetime.datetime(2009,6,1), datetime.datetime(2009,9,1), buyoper)
 
-### 
+###
 print "\nTesting the calendar iterator"
 print"calendar events:"
 for date, value in c.events():
@@ -364,3 +364,7 @@ for i in frepple.problems():
 ###
 print "\nDocumenting all available Python entities defined by frePPLe:"
 printExtensions()
+
+###
+print "\nPrinting memory consumption estimate:"
+frepple.printsize()

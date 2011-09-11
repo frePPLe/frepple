@@ -82,7 +82,8 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
 
   // Decode the attributes
   const DataElement* opnameElement = in.get(Tags::tag_operation);
-  if (!*opnameElement && action!=REMOVE)
+  if (!*opnameElement && action==ADD)
+    // Operation name required
     throw DataException("Missing operation attribute");
   string opname = *opnameElement ? opnameElement->getString() : "";
 
@@ -90,10 +91,13 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   unsigned long id = 0;
   const DataElement* idfier = in.get(Tags::tag_id);
   if (*idfier) id = idfier->getUnsignedLong();
+  if (!id && (action==CHANGE || action==REMOVE))
+    // Identifier is required
+    throw DataException("Missing operationplan identifier");
 
-  // If an ID is specified, we look up this operation plan
+  // If an identifier is specified, we look up this operation plan
   OperationPlan* opplan = NULL;
-  if (idfier)
+  if (id)
   {
     opplan = OperationPlan::findId(id);
     if (opplan && !opname.empty()
@@ -101,7 +105,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
     {
       // Previous and current operations don't match.
       ostringstream ch;
-      ch << "Operationplan id " << id
+      ch << "Operationplan identifier " << id
       << " defined multiple times with different operations: '"
       << opplan->getOperation() << "' & '" << opname << "'";
       throw DataException(ch.str());
@@ -122,15 +126,14 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
         {
           // The callbacks disallowed the deletion!
           ostringstream ch;
-          ch << "Can't delete operationplan with id " << id;
+          ch << "Can't delete operationplan with identifier " << id;
           throw DataException(ch.str());
         }
       }
       else
       {
         ostringstream ch;
-        ch << "Can't find operationplan with identifier "
-        << id << " for removal";
+        ch << "Operationplan with identifier " << id << " doesn't exist";
         throw DataException(ch.str());
       }
       return NULL;
@@ -1017,6 +1020,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
     // Find or create the C++ object
     PythonAttributeList atts(kwds);
     Object* x = createOperationPlan(OperationPlan::metadata,atts);
+    Py_INCREF(x);
 
     // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
     if (x)

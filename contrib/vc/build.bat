@@ -4,7 +4,7 @@ setlocal
 rem EDIT THIS SECTION TO MATCH YOUR INSTALLATION
 set VC=C:\Program Files\Microsoft Visual Studio 9.0
 set PYTHON=C:\develop\python27
-set XERCES=C:\packages\xerces-c-3.1.1-x86-windows-vc-9.0
+set XERCES=C:\develop\xerces-c-3.1.1-x86-windows-vc-9.0
 set GLPK=C:\develop\glpk-4.46
 set DOTNET=C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319
 

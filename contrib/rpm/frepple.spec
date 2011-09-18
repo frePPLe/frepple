@@ -94,7 +94,7 @@ rm -rf %{buildroot}
 make install DESTDIR=%{buildroot} 
 # Do not package .la files created by libtool
 find %{buildroot} -name '*.la' -exec rm {} \;
-# Use %doc instead of install to create the documentation
+# Use explicit list of docs instead of install to create the documentation
 rm -rf %{buildroot}%{_docdir}/%{name}
 # Language files; not under /usr/share, need to be handled manually
 (cd $RPM_BUILD_ROOT && find . -name 'django*.mo') | %{__sed} -e 's|^.||' | %{__sed} -e \

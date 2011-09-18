@@ -35,7 +35,7 @@ if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
   FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
-FREPPLE_VERSION = '0.9.0.alfa'
+FREPPLE_VERSION = '0.9.0'
 # sys.path.append(os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','openerp')))
 
 # Determing whether Django runs as a standalone application or is deployed on a web server
@@ -268,7 +268,7 @@ for param in DATABASES.values():
     # InnoDB has the proper support for transactions that is required for
     # frePPLe in a production environment.
     if len(param['OPTIONS']) == 0:
-      param['OPTIONS'] = {"init_command": "SET storage_engine=INNODB"}
+      param['OPTIONS'] = {"init_command": "SET storage_engine=INNODB, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"}
     param['TEST_NAME'] = 'test_%s' % param['NAME']
   elif param['ENGINE'] == 'django.db.backends.oracle':
     param['TEST_NAME'] = param['NAME']

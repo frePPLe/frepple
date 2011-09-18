@@ -121,7 +121,9 @@ def runTestSuite():
       if o in ("-r", "--regression"):
         # THE HARD_CODED TESTS LISTED HERE ARE SKIPPED WHEN RUNNING A REGRESSION TEST.
         # These test verify other aspects of the application.
-        excluded = ["xml_remote", "scalability_1", "scalability_2", "scalability_3", "forecast_6", "jobshop", "multithreading"]
+        excluded = ["xml_remote", "scalability_1", "scalability_2", "scalability_3", 
+                    "forecast_6", "jobshop", "multithreading", "setup_1", "setup_2",
+                    "setup_3", "constraints_combined_1", "operation_routing", ]
         break
     for o, a in opts:
       if o in ("-v" "--vcc"):

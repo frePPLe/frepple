@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2009 by Johan De Taeye
+# Copyright (C) 2007-2011 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -24,7 +24,7 @@
 
 Summary: Free Production Planning Library
 Name: frepple
-Version: 0.9.0.alfa
+Version: 0.9.0
 Release: 1%{?dist}
 # Note on the license: frePPle is released with the LGPL license, version 2.1 or higher. 
 # The optional plugin module mod_lpsolver depends on the GLPK package which is 

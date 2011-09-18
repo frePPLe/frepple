@@ -66,9 +66,9 @@ class execute_from_user_interface(TransactionTestCase):
     self.assertRedirects(response, '/execute/execute.html')
 
     # Count the output records
-    self.assertEqual(output.models.Problem.objects.count(),26)
-    self.assertEqual(output.models.FlowPlan.objects.count(),234)
-    self.assertEqual(output.models.LoadPlan.objects.count(),58)
+    self.assertEqual(output.models.Problem.objects.count(),27)
+    self.assertEqual(output.models.FlowPlan.objects.count(),231)
+    self.assertEqual(output.models.LoadPlan.objects.count(),57)
     self.assertEqual(output.models.OperationPlan.objects.count(),138)
 
 
@@ -98,10 +98,10 @@ class execute_with_commands(TransactionTestCase):
 
     # Run frePPLe, and make sure the test database is used
     management.call_command('frepple_run', plantype=1, constraint=15, nonfatal=True)
-    self.assertEqual(output.models.Problem.objects.count(),188)
-    self.assertEqual(output.models.FlowPlan.objects.count(),662)
-    self.assertEqual(output.models.LoadPlan.objects.count(),57)
-    self.assertEqual(output.models.OperationPlan.objects.count(),374)
+    self.assertEqual(output.models.Problem.objects.count(),194)
+    self.assertEqual(output.models.FlowPlan.objects.count(),795)
+    self.assertEqual(output.models.LoadPlan.objects.count(),84)
+    self.assertEqual(output.models.OperationPlan.objects.count(),413)
 
 
 class execute_multidb(TransactionTestCase):

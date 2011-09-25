@@ -159,11 +159,11 @@ class RSSFeed(Feed):
 
   def item_title(self, action):
     if action.is_addition():
-      return _("Added %(name)s \"%(obj)s\"") % {'name': action.content_type.name, 'obj': action.object_repr}
+      return _("Added %(name)s \"%(object)s\".") % {'name': action.content_type.name, 'object': action.object_repr}
     elif action.is_change():
-      return _("Changed %(name)s \"%(obj)s\"") % {'name': action.content_type.name, 'obj': action.object_repr}
+      return _("Changed %(name)s \"%(object)s\".") % {'name': action.content_type.name, 'object': action.object_repr}
     elif action.is_deletion():
-      return _("Deleted %(name)s \"%(obj)s\"") % {'name': action.content_type.name, 'obj': action.object_repr}
+      return _("Deleted %(name)s \"%(object)s\".") % {'name': action.content_type.name, 'object': action.object_repr}
 
   def author_name(self, action):
     if action and action.user:

@@ -76,7 +76,7 @@ class ReportByDemand(ListReport):
       'title': _('quantity'),
       }),
     ('percent_used', {
-      'title': _('% used'),
+      'title': _('percent used'),
       }),
     )
 

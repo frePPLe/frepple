@@ -3789,7 +3789,7 @@ class Command
   *
   * This class implements the "composite" design pattern in order to get an
   * efficient and intuitive hierarchical grouping of commands.
-  * @TODO handle exceptions during commit, rollback, undo, redo
+  * @todo handle exceptions during commit, rollback, undo, redo
   */
 class CommandList : public Command
 {

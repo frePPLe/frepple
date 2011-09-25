@@ -1868,7 +1868,7 @@ class Operation : public HasName<Operation>,
   *  - Operationplans can be organized in hierarchical structure, matching
   *    the operation hierarchies they belong to.
   *
-  * @TODO reading suboperationplans can be improved
+  * @todo reading suboperationplans can be improved
   */
 class OperationPlan
       : public Object, public HasProblems, public NonCopyable

@@ -2,7 +2,7 @@
 FILES_COMMON = favicon.ico styles.css *.pdf *.gif *.bmp 
 FILES_API = reference
 FILES_WEB = index.html Frepple UI Tutorial Main uploads uploads/Frepple uploads/UI uploads/Tutorial 
-FILES_EXTRA = htmlindexer.py frepple.doxyfile frepple.1 apiheader.html apifooter.html search.html
+FILES_EXTRA = htmlindexer.py frepple.doxyfile frepple.1 apiheader.html apifooter.html search.html index.js
 
 if APIDOC
 if WEBDOC 

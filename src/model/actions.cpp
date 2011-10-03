@@ -341,7 +341,7 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
 }
 
 
-DECLARE_EXPORT void CommandMoveOperationPlan::redo()  // xxx TODO not implemented
+DECLARE_EXPORT void CommandMoveOperationPlan::redo()  // @todo not implemented
 {
 }
 

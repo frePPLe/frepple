@@ -573,11 +573,11 @@ def _localize(value, use_l10n=None):
   Dates are always represented as YYYY-MM-DD hh:mm:ss since this is
   '''
   if isinstance(value, (Decimal, float, int, long)):
-     return number_format(value, use_l10n=use_l10n)
+    return number_format(value, use_l10n=use_l10n)
   elif isinstance(value, (list,tuple) ):
-     return "|".join([ unicode(_localize(i)) for i in value ])
+    return "|".join([ unicode(_localize(i)) for i in value ])
   else:
-     return value
+    return value
 
 
 def _generate_csv(rep, qs, format, bucketlist, request):

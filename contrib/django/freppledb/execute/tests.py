@@ -67,9 +67,9 @@ class execute_from_user_interface(TransactionTestCase):
 
     # Count the output records
     self.assertEqual(output.models.Problem.objects.count(),27)
-    self.assertEqual(output.models.FlowPlan.objects.count(),231)
-    self.assertEqual(output.models.LoadPlan.objects.count(),57)
-    self.assertEqual(output.models.OperationPlan.objects.count(),138)
+    self.assertEqual(output.models.FlowPlan.objects.count(),211)
+    self.assertEqual(output.models.LoadPlan.objects.count(),51)
+    self.assertEqual(output.models.OperationPlan.objects.count(),128)
 
 
 class execute_with_commands(TransactionTestCase):

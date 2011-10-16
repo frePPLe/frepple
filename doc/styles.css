@@ -20,7 +20,6 @@ html { height: 100%; }
   position: fixed;
   background-color: #a5a5ff;
   z-index: 10;
-  font-family: serif;
   font-size: 14px;
 }
 
@@ -32,7 +31,6 @@ html { height: 100%; }
   position: fixed;
   vertical-align: middle;   
   z-index: 10;
-  font-family: serif;
   font-size: 14px;
 }
 
@@ -52,13 +50,11 @@ html { height: 100%; }
   height: 130px;
   position: fixed;
   z-index: 10;
-  font-family: serif;
   font-size: 14px;
 }
 
 body {
   margin: 0px 0px 0px 0px;
-  font-family: serif;
   height: 100%;
 }
 
@@ -67,7 +63,6 @@ body {
   color: #222222;
   background-color: #4f639b;
   padding: 3px;
-  font-family: serif;
   font-weight: bold;
   font-size: 14px;
 }

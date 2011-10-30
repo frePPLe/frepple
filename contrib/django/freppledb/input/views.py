@@ -992,7 +992,7 @@ class CalendarList(ListReport):
       'title': _('default value'),
       'sort': FilterNumber(),
       }),
-    ('currentvalue', {      # @todo this field doesn't show up nice in the CSV export
+    ('currentvalue', {
       'title': _('current value'),
       'sort': False,
       }),

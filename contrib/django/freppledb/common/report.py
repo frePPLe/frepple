@@ -571,12 +571,16 @@ def _localize(value, use_l10n=None):
   '''
   Localize numbers.
   Dates are always represented as YYYY-MM-DD hh:mm:ss since this is
+  a format that is understood uniformly across different regions in the
+  world.
   '''
+  if callable(value): 
+    value = value()
   if isinstance(value, (Decimal, float, int, long)):
     return number_format(value, use_l10n=use_l10n)
   elif isinstance(value, (list,tuple) ):
     return "|".join([ unicode(_localize(i)) for i in value ])
-  else:
+  else: 
     return value
 
 

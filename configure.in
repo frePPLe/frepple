@@ -28,7 +28,7 @@
 # Initialization
 #
 AC_PREREQ(2.60)
-AC_INIT([frepple], [0.9.0])
+AC_INIT([frepple], [0.9.1])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([1.9])

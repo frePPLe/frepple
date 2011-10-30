@@ -127,7 +127,7 @@ using namespace std;
 #include <config.h>
 #else
 // Define the version for (windows) compilers that don't use autoconf
-#define PACKAGE_VERSION "0.9.0"
+#define PACKAGE_VERSION "0.9.1"
 #endif
 
 // Header for multithreading

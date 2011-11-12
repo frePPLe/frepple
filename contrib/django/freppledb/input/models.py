@@ -41,6 +41,7 @@ CALENDARID = None
 class HierarchyModel(models.Model):
   lft = models.PositiveIntegerField(db_index = True, editable=False, null=True, blank=True)
   rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
+  level = models.PositiveIntegerField(null=True, editable=False, blank=True)
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True,
     help_text=_('Unique identifier'))
   owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='xchildren',
@@ -50,6 +51,7 @@ class HierarchyModel(models.Model):
     # Trigger recalculation of the hieracrhy
     self.lft = None
     self.rght = None
+    self.level = None
 
     # Call the real save() method
     super(HierarchyModel, self).save(*args, **kwargs)
@@ -72,17 +74,17 @@ class HierarchyModel(models.Model):
     transaction.managed(True, using=database)
     cursor = connections[database].cursor()
 
-    def tagChildren(me, left):
+    def tagChildren(me, left, level):
       right = left + 1
       # get all children of this node
       for i, j in nodes.items():
         if j == me:
           # Recursive execution of this function for each child of this node
-          right = tagChildren(i, right)
+          right = tagChildren(i, right, level + 1)
 
       # After processing the children of this node now know its left and right values
       cursor.execute(
-        'update %s set lft=%d, rght=%d where name = %%s' % (cls._meta.db_table, left, right),
+        'update %s set lft=%d, rght=%d, level=%d where name = %%s' % (cls._meta.db_table, left, right, level),
         [me]
         )
 
@@ -97,7 +99,7 @@ class HierarchyModel(models.Model):
     cnt = 1
     for i, j in sorted(nodes.items()):
       if j == None:
-        cnt = tagChildren(i,cnt)
+        cnt = tagChildren(i,cnt,0)
     transaction.commit(using=database)
     settings.DEBUG = tmp_debug
     transaction.leave_transaction_management(using=database)

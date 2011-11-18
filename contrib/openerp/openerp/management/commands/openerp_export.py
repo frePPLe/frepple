@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 by Johan De Taeye
+# Copyright (C) 2010-2011 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -50,7 +50,7 @@ class Command(BaseCommand):
       make_option('--openerp_url', action='store', dest='openerp_url',
         help='OpenERP XMLRPC connection URL'),
       make_option('--database', action='store', dest='database',
-        default=DEFAULT_DB_ALIAS, help='Nominates the frePPLe database to load'),
+        default=DEFAULT_DB_ALIAS, help='Nominates the frePPLe database to export from'),
   )
 
   requires_model_validation = False
@@ -143,8 +143,7 @@ class Command(BaseCommand):
   #        - %ref     -> description
   #        - 'OpenERP' -> subcategory
   # TODO Delete/net previous workorders
-  # TODO XML-RPC interface is too slow for this type of bulk upload! 
-  #      A faster alternative is to write to a file and code in the OpenERP module to import and confirm the orders
+  # TODO XML-RPC interface is too slow! Instead, write to a file and code in the OpenERP module to import and confirm the orders
   def export_mrp(self, sock, cursor):  
     transaction.enter_transaction_management(using=self.database)
     transaction.managed(True, using=self.database)
@@ -157,7 +156,8 @@ class Command(BaseCommand):
          WHERE out_operationplan.operation = operation.name
          AND operation.subcategory = 'OpenERP'
          AND out_operationplan.owner is null
-         ''') 
+         ''')
+      cnt = 0    
       for i, j, k, l in cursor.fetchall():
         print i,j,k,l
         mrp_proc = {
@@ -166,12 +166,11 @@ class Command(BaseCommand):
           'product_id': 1, #  TODO WHICH PRODUCT ID to use here
           'product_qty': k,
           'product_uom': 1, # This assumes PCE...
-          'location_id': 1, # TODO WHICH LOCATION ID to use here
+          'location_id': 1 # TODO WHICH LOCATION ID to use here
           'procure_method': 'make_to_order',
           'origin': 'frePPLe'
         }
         mrp_proc_id = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'mrp.procurement', 'create', mrp_proc)
-        #xxx = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'mrp.procurement', 'exec_workflow', 'button_confirm', mrp_proc_id)
         cnt += 1
       transaction.commit(using=self.database)
       if self.verbosity > 0:

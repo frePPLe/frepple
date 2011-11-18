@@ -77,7 +77,7 @@ class HierarchyModel(models.Model):
     def tagChildren(me, left, level):
       right = left + 1
       # get all children of this node
-      for i, j in nodes.items():
+      for i, j in keys:
         if j == me:
           # Recursive execution of this function for each child of this node
           right = tagChildren(i, right, level + 1)
@@ -94,10 +94,11 @@ class HierarchyModel(models.Model):
     # Load all nodes in memory
     for i in cls.objects.using(database).values('name','owner'):
       nodes[i['name']] = i['owner']
+    keys = sorted(nodes.items())
 
     # Loop over nodes without parent
     cnt = 1
-    for i, j in sorted(nodes.items()):
+    for i, j in keys:
       if j == None:
         cnt = tagChildren(i,cnt,0)
     transaction.commit(using=database)

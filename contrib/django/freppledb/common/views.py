@@ -43,7 +43,7 @@ class PreferencesForm(forms.Form):
     choices=Preferences.languageList,
     help_text=_("Language of the user interface"),
     )
-  buckets = forms.ModelChoiceField(queryset=Bucket.objects.all().values('name'),
+  buckets = forms.ModelChoiceField(queryset=Bucket.objects.all().values_list('name', flat=True),
     label=_("Buckets"),
     required=False,
     help_text=_("Time bucket size for reports"),

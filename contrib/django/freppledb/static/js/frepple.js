@@ -9,8 +9,8 @@ var upload = {
   add : function (e)
   {
     upload._data.push(e);
-    $('save').style.display = 'inline';
-    $('undo').style.display = 'inline';
+    $('#save').css('display', 'inline');
+    $('#undo').css('display', 'inline');
   },
 
   undo : function ()
@@ -29,7 +29,7 @@ var upload = {
       + 'filename="data"\r\nContent-Type: application/json\r\n\r\n'
       + Object.toJSON(upload._data)
       + '\r\n\r\n--7d79--\r\n';
-    el = $("database");
+    el = $("#database");
     if (el == undefined)
       u = "/edit/";
     else if (el.name == "default")
@@ -50,237 +50,179 @@ var upload = {
 }
 
 
-var ContextMenu = {
+//----------------------------------------------------------------------------
+// Formatter functions for the grid cells.
+//----------------------------------------------------------------------------
 
-	// private attributes
-	_attachedElement : null,
-	_menuElement : null,
-
-  // A private hash mapping each class to a menu id
-  _menus : {
-    'detail': 'detailcontext',
-    'buffer': 'buffercontext',
-		'resource': 'resourcecontext',
-		'operation': 'operationcontext',
-		'location': 'locationcontext',
-		'item': 'itemcontext',
-    'demand': 'demandcontext',
-		'forecast': 'forecastcontext',
-		'customer': 'customercontext',
-		'calendar': 'calendarcontext',
-		'setupmatrix': 'setupmatrixcontext'
-	},
-
-	// private method. Get which context menu to show
-	_getMenuElementId : function (e)
-	{
-	  ContextMenu._attachedElement = Prototype.Browser.IE ?
-	    event.srcElement :
-	    e.target;
-
-		while(ContextMenu._attachedElement != null)
-		{
-			var className = ContextMenu._attachedElement.className;
-
-			if (typeof(className) != "undefined")
-			{
-				className = className.replace(/^\s+/g, "").replace(/\s+$/g, "")
-				var classArray = className.split(/[ ]+/g);
-
-				for (i = 0; i < classArray.length; i++)
-					if (ContextMenu._menus[classArray[i]])
-						return ContextMenu._menus[classArray[i]];
-			}
-
-		  ContextMenu._attachedElement = Prototype.Browser.IE ?
-		    ContextMenu._attachedElement.parentElement :
-		    ContextMenu._attachedElement.parentNode;
-		}
-		return null;
-	},
-
-
-	// private method. User clicked somewhere in the screen
-	_onclick : function (e)
-	{
-
-		// Hide the previous context menu
-		if (ContextMenu._menuElement)
-			ContextMenu._menuElement.style.display = 'none';
-
-    // No further handling for rightclicks
-    if (e!=undefined && !Event.isLeftClick(e)) return true;
-
-    // Find the id of the menu to display
-		var menuElementId = ContextMenu._getMenuElementId(e);
-		if (menuElementId)
-		{
-			var m = ContextMenu._getMousePosition(e);
-			var s = ContextMenu._getScrollPosition(e);
-
-			ContextMenu._menuElement = $(menuElementId);
-      if (ContextMenu._menuElement == null) return false;
-
-      // Get the entity name:
-      // If href is equal to '#' we use the inner html of the link.
-      // Otherwise we use the href value.
-			var item = $(ContextMenu._attachedElement).readAttribute('href');
-			if (item == '#')
-			{
-			  item = ContextMenu._attachedElement.innerHTML;
-			  // Unescape all escaped characters and urlencode the result for usage as a URL
-			  item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-			    .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
-      }
-
-			// Build the urls for the menu
-			var l = ContextMenu._menuElement.getElementsByTagName("a");
-			for (x=0; x<l.length; x++)
-			  l[x].href = l[x].id.replace(/%s/,item);
-
-      // Display the menu at the right location
-			ContextMenu._menuElement.style.left = m.x + s.x + 'px';
-			ContextMenu._menuElement.style.top = m.y + s.y + 'px';
-			ContextMenu._menuElement.style.display = 'block';
-			return false;
-		}
-
-		var returnValue = true;
-		var evt = Prototype.Browser.IE ? window.event : e;
-
-		if (evt.button != 1)
-		{
-			if (evt.target) var el = evt.target;
-			else if (evt.srcElement) var el = evt.srcElement;
-			var tname = el.tagName.toLowerCase();
-			if ((tname == "input" || tname == "textarea")) return true;
-		}
-	  else
-		  return  false;
-	},
-
-
-	// private method. Returns mouse position
-	_getMousePosition : function (e)
-	{
-		e = e ? e : window.event;
-		return {'x' : e.clientX, 'y' : e.clientY}
-	},
-
-
-	// private method. Get document scroll position
-	_getScrollPosition : function ()
-	{
-		if( typeof( window.pageYOffset ) == 'number' )
-		  return {'x' : window.pageXOffset, 'y' : window.pageYOffset}
-		else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) )
-		  return {'x' : document.documentElement.scrollLeft, 'y' : document.documentElement.scrollTop}
-		else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) )
-		  return {'x' : document.body.scrollLeft, 'y' : document.body.scrollTop}
-		return {'x' : 0, 'y' : 0}
-	},
-
-  // Hide the menu
-  hide : function ()
-  {
-		if (ContextMenu._menuElement)
-			ContextMenu._menuElement.style.display = 'none';
-  }
+function linkunformat (cellvalue, options, cell) {
+  return cellvalue;
 }
 
-// Install a handler for all clicks on the page
-document.onclick = ContextMenu._onclick;
+function itemformatter (cellvalue, options, rowObject) {
+  return '<a href="' + cellvalue + '" class="item context">' + cellvalue + "</a>";
+}
+
+function bufferformatter (cellvalue, options, rowObject) {
+  return '<a href="' + cellvalue + '" class="buffer context">' + cellvalue + "</a>";
+}
+
+function resourceformatter (cellvalue, options, rowObject) {
+  return '<a href="' + cellvalue + '" class="resource context">' + cellvalue + "</a>";
+}
+
+function detailformatter (cellvalue, options, rowObject) {
+  return '<a href="' + cellvalue + '" class="detail context">' + cellvalue + "</a>";
+}
+
+function forecastformatter (cellvalue, options, rowObject) {
+  return '<a href="' + cellvalue + '" class="forecast context">' + cellvalue + "</a>";
+}
+
+function customerformatter (cellvalue, options, rowObject) {
+  return '<a href="' + cellvalue + '" class="customer context">' + cellvalue + "</a>";
+}
+
+function demandformatter (cellvalue, options, rowObject) {
+  return '<a href="' + cellvalue + '" class="demand context">' + cellvalue + "</a>";
+}
 
 
 //----------------------------------------------------------------------------
-// Code for handling the menu bar and active button.
+// Code for handling the menu bar, context menu and active button.
 //----------------------------------------------------------------------------
 
 var activeButton = null;
+var contextMenu = null;
+  
+$(function() {
+  
+  // Install code executed when you click on a menu button
+  $(".menuButton").click( function(event) {
+    // Get the target button element
+    var button = $(event.target);
+    var menu = button.next(".menu");
+    
+    // Blur focus from the link to remove that annoying outline.
+    button.blur();
+  
+    // Reset the currently active button, if any.
+    if (activeButton) {
+      activeButton.removeClass("menuButtonActive");
+      activeButton.next(".menu").css('visibility', "hidden");      
+    }
+  
+    // Activate this button, unless it was the currently active one.
+    if (button != activeButton)
+    {
+      // Update the button's style class to make it look like it's depressed.
+      button.addClass("menuButtonActive");
+  
+      // Position the associated drop down menu under the button and show it.
+      var pos = button.offset();
+      menu.css({
+        left: pos.left + "px",
+        top: (pos.top + button.outerHeight() + 1) + "px",
+        visibility: "visible"
+        });
+      activeButton = button;
+    }
+    else    
+      activeButton = null;
+  });
+  
+  $('.menuButton').mouseenter( function(event) {
+    // If another button menu is active and we move the mouse into a new menu button, 
+    // we make this one active instead.
+    if (activeButton != null && activeButton != $(event.target))
+      $(event.target).click();
+  });
+
+  // Send django's CRSF token with every POST request to the same site
+  $(document).ajaxSend(function(event, xhr, settings) {
+    if (!/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type) && sameOrigin(settings.url)) 
+      xhr.setRequestHeader("X-CSRFToken", getToken());
+    });
+
+});
+
 
 // Capture mouse clicks on the page so any active button can be deactivated.
-document.observe('mousedown',  function (event) {
+$(document).mousedown(function (event) {
+
+  // Hide any context menu
+	if (contextMenu)
+	{
+		contextMenu.css('display', 'none');
+		contextMenu = null;
+	}
+
+  // We clicked not on a context menu. Display that now.
+  if ($(event.target).hasClass('context')) 
+  {      
+    // Find the id of the menu to display    
+    contextMenu = $('#' + $(event.target).attr('class').replace(" ",""));
+
+    // Get the entity name:
+    // If href is equal to '#' we use the inner html of the link.
+    // Otherwise we use the href value.
+		var item = $(event.target).attr('href');
+		if (item == '#')
+		{
+		  item = $(contextMenu).html();
+		  // Unescape all escaped characters and urlencode the result for usage as a URL
+		  item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+		    .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
+    }
+  
+		// Build the urls for the menu
+		contextMenu.find('a').each( function(i) {
+		  $(this).attr('href', $(this).attr('id').replace(/%s/,item));
+		});
+
+    // Display the menu at the right location
+		$(contextMenu).css({
+		  left: event.pageX,
+		  top: event.pageY,
+		  display: 'block'
+		  });
+		event.preventDefault();
+		event.stopImmediatePropagation();
+	};
 
   // If there is no active button, exit.
-  if (activeButton == null) return;
+  if (!activeButton || event.target == activeButton) return;
 
-  // Find the element that was clicked on.
-  var el = Event.element(event);
-
-  // If the active button was clicked on, exit.
-  if (el == activeButton) return;
-
-  // If the element is not part of a menu, reset and clear the active button.
-  if (el.up('div.menu') == undefined) {
-    resetButton(activeButton);
+  // If the element is not part of a menu, hide the menu
+  if ($(event.target).parent('div.menu').length < 1) {
+    activeButton.removeClass("menuButtonActive");
+    activeButton.next(".menu").css('visibility', "hidden");      
     activeButton = null;
   }
-}, true);
-
-
-function buttonClick(event, menuId)
-{
-  // Get the target button element.
-  var button = $(Event.element(event));
-
-  // Blur focus from the link to remove that annoying outline.
-  button.blur();
-
-  // Associate the named menu to this button if not already done.
-  // Additionally, initialize menu display.
-  if (button.menu == null) button.menu = $(menuId);
-
-  // Reset the currently active button, if any.
-  if (activeButton != null) resetButton(activeButton);
-
-  // Activate this button, unless it was the currently active one.
-  if (button != activeButton)
-  {
-    // Update the button's style class to make it look like it's depressed.
-    button.addClassName("menuButtonActive");
-
-    // Position the associated drop down menu under the button and show it.
-    var pos = button.cumulativeOffset();
-    pos[1] += button.getHeight();
-    button.menu.style.left = pos[0] + "px";
-    button.menu.style.top  = pos[1] + "px";
-
-    button.menu.style.visibility = "visible";
-    activeButton = button;
-  }
-  else
-    activeButton = null;
-
-  return false;
-}
-
-
-function buttonMouseover(event, menuId)
-{
-  // If any other button menu is active, make this one active instead.
-  if (activeButton != null && activeButton != $(Event.element(event)))
-    buttonClick(event, menuId);
-}
-
-
-function resetButton(button)
-{
-  // Restore the button's style class.
-  button.removeClassName("menuButtonActive");
-
-  // Hide the button's menu
-  if (button.menu != null) button.menu.style.visibility = "hidden";
-}
+});
 
 
 // Return the value of the csrf-token
 function getToken() 
 {
   var allcookies = document.cookie.split(';');
-  for ( i = 0; i < allcookies.length; i++ ) 
-    if (allcookies[i].strip().indexOf("csrftoken=") == 0)
-      return allcookies[i].strip().substr(10).strip();
+  for ( i = allcookies.length; i >= 0; i-- ) 
+    if (jQuery.trim(allcookies[i]).indexOf("csrftoken=") == 0)
+      return jQuery.trim(jQuery.trim(allcookies[i]).substr(10));
   return 'none';
+}
+
+
+function sameOrigin(url) {
+    // url could be relative or scheme relative or absolute
+    var host = document.location.host; // host + port
+    var protocol = document.location.protocol;
+    var sr_origin = '//' + host;
+    var origin = protocol + sr_origin;
+    // Allow absolute or scheme relative URLs to same origin
+    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
 }
 
 
@@ -322,13 +264,14 @@ var filter = {
   {
     // Collect the value of all filters.
     var data = {}
-    $('popup').select('span').each(function(element) {
-        if (element.id.indexOf('filter') == 0 && !element.hasClassName('datetimeshortcuts'))
+    $('#popup').find('span').each(function() {
+        var element = $(this);
+        if (element.id.indexOf('filter') == 0 && !element.hasClass('datetimeshortcuts'))
         {
           index = element.id.substring(6);
-          tmp = element.select('[name="filterfield' + index + '"]')[0];
+          tmp = element.find('[name="filterfield' + index + '"]')[0];
           field = tmp.options[tmp.selectedIndex].value;
-          tmp = element.select('[name="filterval' + index + '"]')[0];
+          tmp = element.find('[name="filterval' + index + '"]')[0];
           if (tmp.type == 'select-one')
           {
             value = tmp.options[tmp.selectedIndex].value;
@@ -336,9 +279,9 @@ var filter = {
           }
           else
           {
-            tmp = element.select('[name="filteroper' + index + '"]')[0];
+            tmp = element.find('[name="filteroper' + index + '"]')[0];
             oper = tmp.options[tmp.selectedIndex].value;
-            value = element.select('[name="filterval' + index + '"]')[0].value;
+            value = element.find('[name="filterval' + index + '"]')[0].value;
             if (value.length > 0)
             { 
               if (oper.length > 0)
@@ -369,11 +312,12 @@ var filter = {
     
     // Display form fields for existing filters
     counter = 0;
-    element = $('filters');
+    element = $('#filters');
     if (element != null)
-      element.childElements().each(function(element) {
+      element.children().each(function() {
         
         // Find value
+        var element = $(this);
         if (element.type == 'text')
           value = element.value;
         else if (element.type == 'select-one')
@@ -397,18 +341,19 @@ var filter = {
         }
         
         // Create the field select list
-        $('fields').select('span').each(function(element) {          
-          if (element.title == field) thefield = element;
+        $('#fields').find('span').each(function() {          
+          if ($(this).title == field) thefield = $(this);
         })
         data += '<span id="filter' + counter + '" class="' + thefield.className + '">';
         data += '<a href="javascript:filter.remove(' +  counter + ');"><img style="float:right;" src="/media/img/admin/icon_deletelink.gif"/></a>';
         data += '<select name="filterfield' + counter + '" onchange="filter.change_field(this)">';
-        $('fields').select('span').each(function(element) {          
-          d = element.innerHTML.indexOf('<');
+        $('#fields').find('span').each(function() {  
+          var element = $(this);        
+          d = element.html().indexOf('<');
           if (d > 0)
-            n = element.innerHTML.substring(0,d);
+            n = element.html().substring(0,d);
           else
-            n = element.innerHTML;
+            n = element.html();
           if (element.title == field) 
             data += '<option value="' + element.title + '" selected="yes">' + n + '</option>';
           else
@@ -427,15 +372,16 @@ var filter = {
     data += '<span id="newfilter">';
     data += '<a href="javascript:filter.add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a>';
     data += '<select onchange="filter.change_field(this);"><option value=""></option>';
-    $('fields').select('span').each(function(element) {
-      if (element.hasClassName('FilterChoice') || element.hasClassName('FilterText') || 
-          element.hasClassName('FilterNumber') || element.hasClassName('FilterDate'))    
+    $('#fields').find('span').each(function() {
+      var element = $(this);
+      if (element.hasClass('FilterChoice') || element.hasClass('FilterText') || 
+          element.hasClass('FilterNumber') || element.hasClass('FilterDate'))    
       {
-        d = element.innerHTML.indexOf('<');
+        d = element.html().indexOf('<');
         if (d > 0)
-          data += '<option value="' + element.title + '">' + element.innerHTML.substring(0,d) + '</option>';
+          data += '<option value="' + element.title + '">' + element.html().substring(0,d) + '</option>';
         else
-          data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
+          data += '<option value="' + element.title + '">' + element.html() + '</option>';
       }
     })
     data += '</select><br/></span>';
@@ -443,48 +389,48 @@ var filter = {
     // Set form footer
     data += '<br/><input type="submit" value="' + gettext("Filter") + '"/>&nbsp;&nbsp;';
     data += '<input type="button" value="' + gettext("Cancel");
-    data += '" onclick="$(\'popup\').style.display = \'none\';"/></form></div>';
+    data += '" onclick="$(\'#popup\').css(\'display\',\'none\');"/></form></div>';
   
     // Replace the popup content
-    var element = $('popup');
-    element.innerHTML = data;
+    var element = $('#popup');
+    element.html(data);
     
     // Add date picker
-    element.select('input').each(function(element) {
-      if (element.hasClassName('vDateField'))
-       DateTimeShortcuts.addCalendar(element);
+    element.find('input').each(function() {
+      if ($(this).hasClass('vDateField'))
+       DateTimeShortcuts.addCalendar($(this));
     })
 
     // Position the popup
-    var position = $('csvexport').cumulativeOffset();
-    position[0] -= 352;
-    position[1] += 20;
-    element.style.width = '350px';
-    element.style.left = position[0]+'px';
-    element.style.top  = position[1]+'px';
-    element.style.position = "absolute";
-    var x = $('timebuckets');
-    if (x) x.style.display = 'none';
-    element.style.display  = "block";
+    var position = $('#csvexport').offset();
+    element.css({
+      width: "350px",
+      left: (position[0] - 352) + 'px',
+      top: (position.top + 20) + 'px',
+      position: "absolute"
+      });
+    var x = $('#timebuckets');
+    if (x) x.css('display', 'none');
+    element.css('display', "block");
   },
   
   // Function called when changing the field of a filter
   change_field : function(me)
   {
     var span = $(me).up('span');
-    var tmp = span.select('select')[0];
+    var tmp = span.find('select')[0];
       
     // Find the field
     field = tmp.options[tmp.selectedIndex].value;
-    $('fields').select('span').each(function(element) {          
-      if (element.title == field) thefield = element;
+    $('#fields').find('span').each(function() {          
+      if ($(this).attr('title') == field) thefield = $(this);
     });
     if (span.id == "newfilter")
     {
       // Find a free index number
       counter = 0;
       do 
-        y = $('popup').select('#filter' + (++counter));
+        y = $('#popup').find('#filter' + (++counter));
       while (y.length > 0);
         
       // Change the span element
@@ -501,20 +447,20 @@ var filter = {
     {
       // Changing the field of an existing filter
       // Same field type - leave operator and value field unchanged
-      if (thefield.className == span.className && !thefield.hasClassName('FilterChoice')) 
+      if (thefield.className == span.className && !thefield.hasClass('FilterChoice')) 
         return;        
       index = span.id.substring(6);
       // Delete fields of previous type
-      span.removeChild(span.select('[name="filteroper' + index + '"]')[0]);
-      span.removeChild(span.select('[name="filterval' + index + '"]')[0]);
+      span.removeChild(span.find('[name="filteroper' + index + '"]')[0]);
+      span.removeChild(span.find('[name="filterval' + index + '"]')[0]);
       // Inser fields of the new type
       tmp.insert({after: filter._build_row(thefield, '', '', index)});
     }
         
     // Add date picker
-    span.select('input').each(function(element) {
-      if (element.hasClassName('vDateField'))
-       DateTimeShortcuts.addCalendar(element);
+    span.find('input').each(function() {
+      if ($(this).hasClass('vDateField'))
+       DateTimeShortcuts.addCalendar($(this));
     });
   },
   
@@ -522,15 +468,15 @@ var filter = {
   remove : function(row)
   {
     // Remove a filter from the popup window
-    var x = $('popup').select('#filter' + row)[0];
+    var x = $('#popup').find('#filter' + row)[0];
     x.parentNode.removeChild(x);  
   },
   
   // Function called when adding a filter
   add : function ()
   {
-    var x = document.getElementById('popup').select('#newfiltericon')[0];
-    tmp = x.up('span').select('select')[0];
+    var x = document.getElementById('popup').find('#newfiltericon')[0];
+    tmp = x.up('span').find('select')[0];
   
     // Exit if no filter information is available
     if (tmp.selectedIndex == 0) return;
@@ -544,12 +490,12 @@ var filter = {
   
     // Append a new filter
     data = '<span id="newfilter"><a href="javascript:filter.add();"><img id="newfiltericon" style="float:right;" src="/media/img/admin/icon_addlink.gif"/></a><select onchange="filter.change_field(this);"><option value=""></option>';
-    $('fields').select('span').each(function(element) {
-      d = element.innerHTML.indexOf('<');
+    $('#fields').find('span').each(function() {
+      d = $(this).html().indexOf('<');
       if (d>0)
-        data += '<option value="' + element.title + '">' + element.innerHTML.substring(0,d) + '</option>';
+        data += '<option value="' + $(this).title + '">' + $(this).html().substring(0,d) + '</option>';
       else
-        data += '<option value="' + element.title + '">' + element.innerHTML + '</option>';
+        data += '<option value="' + $(this).title + '">' + $(this).html() + '</option>';
     });
     data += '</select><br/></span>';
     x.up('span').insert({after: data});
@@ -559,33 +505,33 @@ var filter = {
   _build_row : function(thefield, oper, value, index)
   {
     var result = '';
-    if (thefield.hasClassName('FilterNumber'))
+    if (thefield.hasClass('FilterNumber'))
     {
       // Filter for number fields
       result += '</select>\n<select name="filteroper' + index + '">';
-      filter.numberoperators.each(function(curoper) {
-        if (oper == curoper)
-           result += '<option value="' + curoper + '" selected="yes">' + filter.description[curoper] + '</option>';
+      filter.numberoperators.each(function() {
+        if (oper == $(this))
+           result += '<option value="' + $(this) + '" selected="yes">' + filter.description[curoper] + '</option>';
         else
-           result += '<option value="' + curoper + '">' + filter.description[curoper] + '</option>';
+           result += '<option value="' + $(this) + '">' + filter.description[curoper] + '</option>';
       })
       result += '</select>';
       result += '<input type="text" name="filterval' + index + '" value="' + value + '" size="10"/>\n';
     } 
-    else if (thefield.hasClassName('FilterDate'))
+    else if (thefield.hasClass('FilterDate'))
     {
       // Filter for date fields
       result += '<select name="filteroper' + index + '">';
-      filter.numberoperators.each(function(curoper) {
-        if (oper == curoper)
-           result += '<option value="' + curoper + '" selected="yes">' + filter.description[curoper] + '</option>';
+      filter.numberoperators.each(function() {
+        if (oper == $(this))
+           result += '<option value="' + $(this) + '" selected="yes">' + filter.description[curoper] + '</option>';
         else
-           result += '<option value="' + curoper + '">' + filter.description[curoper] + '</option>';
+           result += '<option value="' + $(this) + '">' + filter.description[curoper] + '</option>';
       })
       result += '</select>';
       result += '<input type="text" class="vDateField" name="filterval' + index + '" value="' + value + '" size="10"/>\n';
     } 
-    else if (thefield.hasClassName('FilterBool'))
+    else if (thefield.hasClass('FilterBool'))
     {
       // Filter for boolean fields
       result += '<span name="filteroper' + index + '">equals </span><select name="filterval' + index + '">';
@@ -601,15 +547,15 @@ var filter = {
       }
       result += '</select>';
     } 
-    else if (thefield.hasClassName('FilterChoice'))
+    else if (thefield.hasClass('FilterChoice'))
     {
       // Filter for choice fields
       result += '<span name="filteroper' + index + '">equals </span><select name="filterval' + index + '">';
-      thefield.select('option').each(function(element) {
-        if (element.value == value) 
-          result += '<option value="' + element.value + '" selected="yes">' + element.text + '</option>';
+      thefield.find('option').each(function() {
+        if ($(this).value == value) 
+          result += '<option value="' + $(this).value + '" selected="yes">' + $(this).text + '</option>';
         else
-          result += '<option value="' + element.value + '">' + element.text + '</option>';
+          result += '<option value="' + $(this).value + '">' + $(this).text + '</option>';
         });
       result += '</select>';    
     } 
@@ -617,11 +563,11 @@ var filter = {
     {
       // Filter for text fields, also used as default
       result += '<select name="filteroper' + index + '">';
-      filter.textoperators.each(function(curoper) {
-        if (oper == curoper)
-           result += '<option value="' + curoper + '" selected="yes">' + filter.description[curoper] + '</option>';
+      filter.textoperators.each(function() {
+        if (oper == $(this))
+           result += '<option value="' + $(this) + '" selected="yes">' + filter.description[$(this)] + '</option>';
         else
-           result += '<option value="' + curoper + '">' + filter.description[curoper] + '</option>';
+           result += '<option value="' + $(this) + '">' + filter.description[$(this)] + '</option>';
       })
       result += '</select>';
       result += '<input type="text" name="filterval' + index + '" value="' + value + '" size="10"/>\n';
@@ -634,28 +580,30 @@ var filter = {
 
 function import_show(list_or_table)
 {
-  var element = $('popup');
+  var element = $('#popup');
   // Replace the content
-  element.innerHTML = '<h2>' + gettext("Import data") + '</h2><br/>' +
+  element.html(
+    '<h2>' + gettext("Import data") + '</h2><br/>' +
     '<form enctype="multipart/form-data" method="post" action=""><table><tr>'+
     '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
     '<td colspan="2">' + gettext('Load data from a CSV-formatted text file in the database.') + '<br/>'+
     gettext('The first row should contain the field names.') + '</td></tr>'+
     '<tr><td>'+gettext('Data file') + ':</td><td><input type="file" id="csv_file" name="csv_file"/></td></tr>'+
     '<tr><td><input id="upload" type="submit" value="' + gettext('Upload') + '"/></td>'+
-    '<td><input type="button" value="' + gettext('Cancel') + '" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
-    '</table></form>';
+    '<td><input type="button" value="' + gettext('Cancel') + '" onclick="$(\'#popup\').css(\'display\',\'none\');"/></td></tr>'+
+    '</table></form>'
+    );
   // Position the popup
-  var position = $('csvexport').cumulativeOffset();
-  position[0] -= 292;
-  position[1] += 20;
-  element.style.width = '290px';
-  element.style.left = position[0]+'px';
-  element.style.top  = position[1]+'px';
-  element.style.position = "absolute";  
-  var x = $('timebuckets');
-  if (x) x.style.display = 'none';
-  element.style.display  = "block";
+  var position = $('#csvexport').offset();
+  element.css({
+    width: "290px", 
+    left: (position.left-292)+"px",
+    top: (position.top+20)+"px",
+    position: "absolute"
+  });
+  var x = $('#timebuckets');
+  if (x) x.css('display', 'none');
+  element.css('display', 'block');
 }
 
 
@@ -663,27 +611,31 @@ function export_show(list_or_table)
 {
   // The argument is true when we show a "list" report.
   // It is false for "table" reports.
-  var element = $('popup');
+  var element = $('#popup');
   // Replace the content
-  element.innerHTML = '<h2>' + gettext("Export data") +'</h2><br/>'+
+  element.html(
+    '<h2>' + gettext("Export data") +'</h2><br/>'+
     '<form method="get" action="javascript:export_close()"><table>'+
     '<tr><th>' + gettext("CSV style") + ':</th><td><select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
     '<option value="csv"' + (list_or_table ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
     '<option value="csvlist"' + (list_or_table ?  ' selected="selected"' : '') + '>' + gettext("List") +'</option></select></td></tr>'+
     '<tr><td><input type="submit" value="' + gettext("Export") +'"/></td>'+
-    '<td><input type="button" value="' + gettext("Cancel") +'" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
-    '</table></form>';
+    '<td><input type="button" value="' + gettext("Cancel") +'" onclick="$(\'#popup\').css(\'display\',\'none\');"/></td></tr>'+
+    '</table></form>'
+    );
   // Position the popup
-  var position = $('csvexport').cumulativeOffset();
+  var position = $('#csvexport').offset();
   position[0] -= 202;
   position[1] += 20;
-  element.style.width = '200px';
-  element.style.left = position[0]+'px';
-  element.style.top  = position[1]+'px';
-  element.style.position = "absolute";
-  var x = $('timebuckets');
-  if (x) x.style.display = 'none';
-  element.style.display  = "block";
+  element.css({
+    width: '200px',
+    left: (position.left-202) + 'px',
+    top: (position>top + 20) + 'px',
+    position: "absolute"
+    });
+  var x = $('#timebuckets');
+  if (x) x.css('display', 'none');
+  element.css('display', "block");
 }
 
 
@@ -693,81 +645,92 @@ function export_close()
   var url = location.href;
   if (location.search.length > 0)
     // URL already has arguments
-    url += "&reporttype=" + $('csvformat').value;
+    url += "&reporttype=" + $('#csvformat').val();
   else if (url.charAt(url.length - 1) == '?')
     // This is the first argument for the URL, but we already have a question mark at the end
-    url += "reporttype=" + $('csvformat').value;
+    url += "reporttype=" + $('#csvformat').val();
   else
     // This is the first argument for the URL
-    url += "?reporttype=" + $('csvformat').value;
+    url += "?reporttype=" + $('#csvformat').val();
   window.open(url,'_blank');
   // Hide the popup window
-  $('popup').style.display = 'none';
+  $('#popup').css('display','none');
 }
 
 
 function bucket_show()
 {
   // Show popup
-  var element = $('timebuckets');
-  var position = $('csvexport').cumulativeOffset();
-  position[0] -= 202;
-  position[1] += 20;
-  element.style.width = '200px';
-  element.style.left = position[0]+'px';
-  element.style.top = position[1]+'px';
-  element.style.position = "absolute";
-  $('popup').style.display = 'none';
-  element.style.display = "block";
+  var element = $('#timebuckets');
+  var position = $('#csvexport').offset();
+  element.css({
+    width: '200px',
+    left: (position.left - 202) + 'px',
+    top: (position.top + 20) + 'px',
+    position: "absolute"
+    })
+  $('#popup').css('display', 'none');
+  element.css('display', 'block');
+}
+
+
+function getURLparameters() 
+{
+  // This function returns all arguments in the current URL as an associated array.
+  if (window.location.search.length == 0) return {};
+  var params = {};
+	jQuery.each(window.location.search.match(/^\??(.*)$/)[1].split('&'), function(i,p){
+		p = p.split('=');
+		p[1] = unescape(p[1]).replace(/\+/g,' ');
+		params[p[0]] = params[p[0]]?((params[p[0]] instanceof Array)?(params[p[0]].push(p[1]),params[p[0]]):[params[p[0]],p[1]]):p[1];
+	});
+	return params;
 }
 
 
 function bucket_close(canceled, curBuckets, curStart, curEnd)
 {
   // Determine the URL arguments
-  var args = new Hash(location.search.toQueryParams());
+  var args = getURLparameters();
   var changed = false;
   if (!canceled) 
   {
-	  if ($('reportbucket').value != curBuckets)
+	  if ($('#reportbucket').val() != curBuckets)
 	  {
-	    args.set('reportbucket', $('reportbucket').value);
+	    args['reportbucket'] = $('#reportbucket').val();
 	    changed = true;
 	  }
 	  else
-	    args.unset('reportbucket');
-	  if ($('reportstart').value != curStart)
+	    delete args['reportbucket'];
+	  if ($('#reportstart').val() != curStart)
 	  {
-	    args = args.merge({'reportstart': $('reportstart').value});
+	    args['reportstart'] = $('#reportstart').val();
 	    changed = true;
 	  }
 	  else
-	    args.unset('reportstart');
-	  if ($('reportend').value != curEnd)
+	    delete args['reportstart'];
+	  if ($('#reportend').val() != curEnd)
 	  {
-	    args = args.merge({'reportend':  $('reportend').value});
+	    args['reportend'] = $('#reportend').val();
 	    changed = true;
 	  }
 	  else
-	    args.unset('reportend');
+	    delete args['reportend'];
   }
   if (!changed)
   {
     // No changes to the settings. Close the popup.
-    $('timebuckets').style.display = 'none';
+    $('#timebuckets').css('display', 'none');
     return true;
   }
   else
     // Fetch the new report. This also hides the popup again.
-    location.href = location.pathname + "?" + args.toQueryString();
-    
+    location.href = location.pathname + "?" + $.param(args);    
 }
 
 
 var dr,dl,ur,ul,dlt,drt,ult,urt;
-var scrollbarSize = 16;
-if (navigator.userAgent.toUpperCase().indexOf('MSIE') != -1)
-  scrollbarSize = 11;
+var scrollbarSize = $.browser.msie ? 16 : 11;
 
 
 /* The scrolling table is built from 4 divs, each with a nested table in it:
@@ -790,25 +753,25 @@ function installLoadHandler()
   // Install our own handler, which will explicitly call the django function.
   // This is the only cross-browser method to garantuee that the django handler is
   // called before our own one.
-  Event.observe(window, 'load', syncInitialize);
+  $(window).load(syncInitialize);
 }
 
 
 function syncInitialize()
 {
   // Variables for the data grid
-  dr = $('dr');
-  dl = $('dl');
-  ur = $('ur');
-  ul = $('ul');
-  dlt = $('dlt');
-  drt = $('drt');
-  ult = $('ult');
-  urt = $('urt');
-
-  var hasFrozenColumns = dlt ? true : false;
-  var hasData = drt.down('tr') ? true : false;
-
+  dr = $('#dr');
+  dl = $('#dl');
+  ur = $('#ur');
+  ul = $('#ul');
+  dlt = $('#dlt');
+  drt = $('#drt');
+  ult = $('#ult');
+  urt = $('#urt');
+  
+  var hasFrozenColumns = dlt.length > 0 ? true : false;
+  var hasData = drt.find('tr').length > 0 ? true : false;
+  
   // Call the django-supplied javascript function to initialize calendar menus.
   // This needs to be done upfront to make sure that the elements get their
   // correct size right away.
@@ -819,94 +782,88 @@ function syncInitialize()
   var CellWidth = new Array();
   var CellHeight = new Array();
   var TotalFrozenWidth = 0;
-  var i;
 
   if (hasData)
   {
-
     // First step: Measure the dimensions of the rows and columns
 
     // Measure cell width
-    var columnheaders = urt.select('th');
-    var columndata = drt.down('tr').select('td');
+    var columnheaders = urt.find('th');
+    var columndata = $(drt.find('tr')[0]).find('td');
     var left;
     var right;
-    i = 0;
     var TotalWidth = 0;
-    columndata.each(function(s) {
-      left = s.getWidth();
-      right = columnheaders[i].getWidth();
-      CellWidth[i] = right > left ? right : left;
-      TotalWidth += CellWidth[i++];
+    columndata.each(function(index) {
+      left = $(this).width();
+      right = $(columnheaders[index]).width();
+      CellWidth[index] = right > left ? right : left;
+      TotalWidth += CellWidth[index];
       });
 
     if (hasFrozenColumns)
     {
       // Measure frozen cell width
-      var columnheaders = ult.select('th');
-      var columndata = dlt.down('tr').select('td');
-      i = 0;
-      columndata.each(function(s) {
-        left = s.getWidth();
-        right = columnheaders[i].getWidth();
-        CellFrozenWidth[i] = right > left ? right : left;
-        TotalFrozenWidth += CellFrozenWidth[i++];
+      var columnheaders = ult.find('th');
+      var columndata = $(dlt.find('tr')[0]).find('td');
+      columndata.each(function(index) {
+        left = $(this).width();
+        right = $(columnheaders[index]).width();
+        CellFrozenWidth[index] = right > left ? right : left;
+        TotalFrozenWidth += CellFrozenWidth[index];
         });
 
-      // Sync cell height
-      var rowheaders = dlt.select('tr');
-      var rowdata = drt.select('tr');
-      i = 0;
-      rowheaders.each(function(s) {
-        left = s.getHeight();
-        right = rowdata[i].getHeight();
-        CellHeight[i++] = right > left ? right : left;
+      // Measure cell height
+      var rowheaders = dlt.find('tr');
+      var rowdata = drt.find('tr');
+      rowheaders.each(function(index) {
+        left = $(this).height();
+        right = $(rowdata[index]).height();
+        CellHeight[index] = right > left ? right : left;
         });
     }
 
     // Second step: Updates the dimensions of the rows and columns
     // We only start resizing after all cells are measured, because the
-    // updating also could influence the measuring...
+    // updating also influences the measuring...
 
     var cellPadding = 10; // Hardcoded... I know it is 10.
 
     // Resize the width of the scrollable columns, up and down.
-    var columnheaders = urt.select('th');
-    var columndata = drt.down('tr').select('td');
-    i = 0;
-    columndata.each(function(s) {
-      columnheaders[i].style.width = (CellWidth[i]-cellPadding) + 'px';
-      s.style.width = (CellWidth[i++]-cellPadding) + 'px';
+    var columnheaders = urt.find('th');
+    var columndata = $(drt.find('tr')[0]).find('td');
+    columndata.each(function(index) {
+      $(columnheaders[index]).width(CellWidth[index]-cellPadding);
+      $(this).width(CellWidth[index]-cellPadding);
       });
-    drt.style.width = TotalWidth + 'px';
-    urt.style.width = TotalWidth + 'px';
+    drt.width(TotalWidth);
+    urt.width(TotalWidth);
 
     if (hasFrozenColumns)
     {
       // Resize the height of the header row, frozen and scrolling sides
-      var left = ult.getHeight();
-      var right = urt.getHeight();
+      var left = ult.height();
+      var right = urt.height();
       if (left < right) left = right;
-      urt.style.height = ult.style.height = left + 'px';
+      urt.height(left);
+      ult.height(left);
 
       // Resize the width of the frozen columns, up and down.
       // The constant 10 is taking into account the padding... Ugly hardcode.
-      var columnheaders = ult.select('th');
-      var columndata = dlt.down('tr').select('td');
-      i = 0;
-      columndata.each(function(s) {
-        columnheaders[i].style.width = (CellFrozenWidth[i]-cellPadding) + 'px';
-        s.style.width = (CellFrozenWidth[i++]-cellPadding) + 'px';
+      var columnheaders = ult.find('th');
+      var columndata = $(dlt.find('tr')[0]).find('td');
+      columndata.each(function(index) {
+        $(columnheaders[index]).width(CellFrozenWidth[index]-cellPadding);
+        $(this).width(CellFrozenWidth[index]-cellPadding);
         });
-      dlt.style.width = ult.style.width = TotalFrozenWidth + 'px';
+      dlt.width(TotalFrozenWidth);
+      ult.width(TotalFrozenWidth);
 
       // Resize the height of the data rows, frozen and scrolling sides
-      var rowheaders = dlt.select('tr');
-      var rowdata = drt.select('tr');
-      i = 0;
-      rowheaders.each(function(s) {
-        rowdata[i].style.height = CellHeight[i] + 'px';
-        s.style.height = CellHeight[i++] + 'px';
+      var rowheaders = dlt.find('tr');
+      var rowdata = drt.find('tr');
+      rowheaders.each(function(index) {
+        $(rowdata[index]).height(CellHeight[index]);
+        $(this).height(CellHeight[index]);
         });
     }
   }
@@ -915,8 +872,8 @@ function syncInitialize()
   syncResize();
 
   // Watch all changes in window size (except in broken IE)
-  if (navigator.userAgent.toUpperCase().indexOf('MSIE') == -1)
-    Event.observe(window, 'resize', syncResize);
+  if (!$.browser.msie)
+    $(window).resize(syncResize);
 }
 
 
@@ -928,41 +885,36 @@ function syncResize()
   // we use a scrollbar on the window rather than resizing the container.
   // Assumption: The table in the down right corner of the grid is the only
   // container that can be resized for this purpose.
-
-  // Measure the total screen size and the resizable part of the grid
-  var currentResizable = dr.getDimensions();
-  var currentPosition = dr.viewportOffset();
-  var totalAvailable = document.viewport.getDimensions();
-  var totalResizableY = $(document.documentElement).scrollHeight;
-
+  
   // Calculate width
-  var width = totalAvailable.width - currentPosition.left - scrollbarSize;
+  var width = $(window).width() - dr.offset().left - scrollbarSize;
   if (width < 150)
   {
     width = 150;
-    $(document.documentElement).style.overflowX = 'scroll';
+    $(document.documentElement).css('overflowX', 'scroll');
   }
   else
-    $(document.documentElement).style.overflowX = 'auto';
+    $(document.documentElement).css('overflowX', 'auto');
   if (width > dr.scrollWidth + scrollbarSize)
     width = dr.scrollWidth + scrollbarSize;
   
   // Calculate height
-  var height = currentResizable.height + totalAvailable.height - totalResizableY + scrollbarSize;
+  var height = dr.height() + $(window).height() - $(document).attr('scrollHeight') + scrollbarSize;
   if (height < 150)
   {
     height = 150;
-    $(document.documentElement).style.overflowY = 'scroll';
+    $(document.documentElement).css('overflowY', 'scroll');
   }
   else
-    $(document.documentElement).style.overflowY = 'auto';
+    $(document.documentElement).css('overflowY', 'auto');
   if (height > dr.scrollHeight + scrollbarSize) 
     height = dr.scrollHeight + scrollbarSize;
   
   // Update the size of the grid
-  ur.style.width = dr.style.width = width + "px";
-  if (dl) dl.style.height = dr.style.height = height + "px";
-  else dr.style.height = height + "px";
+  ur.width(width);
+  dr.width(width);
+  if (dl) dl.height(height);
+  dr.height(height);
 }
 
 
@@ -973,15 +925,15 @@ function syncScroll(left_or_right)
   if (left_or_right == 1)
   {
     // Scrolling the main data panel down right
-    if (dlt) dlt.style.bottom = dr.scrollTop + 'px';
-    urt.style.right = dr.scrollLeft + 'px';
+    if (dlt) dlt.css('bottom', dr.scrollTop() + 'px');
+    urt.css('right', dr.scrollLeft() + 'px');
   }
   else
   {
     // Scrolling the panel with the pinned data column.
     // How does one scroll it when there is no scrollbar? Well, you can scroll
     // down using the search function of your browser
-    dr.style.bottom = dl.scrollTop + 'px';
+    dr.css('bottom', dl.scrollTop() + 'px');
   }
   ContextMenu.hide();
 
@@ -1023,19 +975,17 @@ function setUnits(unitselector)
 
 function selectDatabase()
 {
-  el = $("database");
-  // Find new database
-  db = el.options[el.selectedIndex].value;
-  // Current database
-  cur = el.name;
+  // Find new database and current database
+  var el = $('#database');
+  var db = el.val();
+  var cur = el.attr('name');
   // Change the location
-  if (cur != db)
-  {
-    if (cur == 'default')
-      window.location.href = window.location.href.replace(window.location.pathname, "/"+db+window.location.pathname);
-    else if (db == 'default')
-      window.location.href = window.location.href.replace("/"+cur+"/", "/");
-    else
-      window.location.href = window.location.href.replace("/"+cur+"/", "/"+db+"/");
-  }
+  if (cur == db) 
+    return;
+  else if (cur == 'default')
+    window.location.href = window.location.href.replace(window.location.pathname, "/"+db+window.location.pathname);
+  else if (db == 'default')
+    window.location.href = window.location.href.replace("/"+cur+"/", "/");
+  else
+    window.location.href = window.location.href.replace("/"+cur+"/", "/"+db+"/");
 }

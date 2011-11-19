@@ -5,19 +5,19 @@
 <script type="text/javascript">
   function calcUtil()
   {
-    var clusters = parseInt(document.getElementById("create0").value);
-    var fcst = parseInt(document.getElementById("create1").value);
-    var demands = parseInt(document.getElementById("create2").value);
-    var levels = parseInt(document.getElementById("create3").value);
-    var rsrc_number = parseInt(document.getElementById("create8").value);
-    var rsrc_size = parseInt(document.getElementById("create9").value);
+    var clusters = parseInt($("#create0").val());
+    var fcst = parseInt($("#create1").val());
+    var demands = parseInt($("#create2").val());
+    var levels = parseInt($("#create3").val());
+    var rsrc_number = parseInt($("#create8").val());
+    var rsrc_size = parseInt($("#create9").val());
     // Available capacity:  rsrc_number * rsrc_size * 365 days/year
     // Required capacity: clusters * fcst * 12 months/day * 1 day/unit
     // Levels has no influence since we load a resource only at 1 step
     // Demands also has no influence, as we assume that the forecast quantity is bigger than the orders.
     // * 7 / 5: to account for non-working weekends
     var util = (clusters * fcst * 12) / (rsrc_number * rsrc_size * 365) * 7.0 / 5.0
-	  document.getElementById("util").innerHTML = (util * 100).toFixed(1);
+	  $("#util").html( (util * 100).toFixed(1) );
   }
 </script>
 

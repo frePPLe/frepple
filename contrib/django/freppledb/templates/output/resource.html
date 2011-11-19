@@ -6,23 +6,23 @@
     function onChange(input, old, start, end, units)
     {
     // Update the utilization percentage immediately
-    var el = $(input).next('span');
-    var unavailable = parseFloat(el.innerHTML);
-    el = el.next('span');
-    var a = el.down('a');
+    var el = $(input).find('span')[0];
+    var unavailable = parseFloat($(el).html());
+    el = $(el).find('span')[0];
+    var a = $(el).find('a')[0];
     if (a == undefined)
-      var u = parseFloat(el.innerHTML);
+      var u = parseFloat($(el).html());
     else
-      var u = parseFloat(a.innerHTML);
-    u /= parseFloat(input.value);
+      var u = parseFloat($(a).html());
+    u /= parseFloat($(Input).val());
     if (isNaN(u) == true) u = 0.0;
     else u = u * 100;      
-    el = el.next('span');
-    el.innerHTML = u.round();
+    el = $(el).find('span')[0];
+    $(el).html(u.round());
     if (u < 95)
-      el.removeClassName('highutil');
+      $(el).removeClass('highutil');
     else
-      el.addClassName('highutil');
+      $(el).addClass('highutil');
     // Add the change
     if (old != 0) 
       u = parseFloat(input.value) * (1 + unavailable / old) / units;

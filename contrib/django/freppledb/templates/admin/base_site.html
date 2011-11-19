@@ -2,11 +2,13 @@
 {% load i18n %}
 {% block title %}frePPLe{% if title %} - {{title}}{% endif %}{% endblock %}
 {% block branding %}<h1 id="site-name">frePPLe {% version %}</h1>{% endblock %}
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="/static/styles.css" />
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" media="screen" href="/static/css/redmond/jquery-ui-1.8.16.custom.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/frepple.css" />
 {% endblock %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="/admin/jsi18n/"></script>
-<script type="text/javascript" src="/static/prototype.js"></script>
+<script type="text/javascript" src="/static/js/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-ui-1.8.16.min.js"></script>
 <script type="text/javascript" src="/static/frepple.js"></script>
 {% endblock %}
 {% block breadcrumbs %}<div class="breadcrumbs">{% crumbs %}</div>{% endblock %}

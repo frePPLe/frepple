@@ -703,8 +703,8 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
         try: bucket = Bucket.objects.using(request.database).order_by('name')[0].name
         except: bucket = None
     elif pref.buckets != bucket:
-      try: pref.buckets = bucket
-      except: pass
+      try: pref.buckets = Bucket.objects.using(request.database).get(name=bucket).name
+      except: bucket = None
       pref.save()
 
   # Select the start date (unless it is passed as argument)
@@ -754,7 +754,7 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
     res = BucketDetail.objects.using(request.database).filter(bucket=bucket)
     if start: res = res.filter(startdate__gte=start)
     if end: res = res.filter(startdate__lt=end)
-    return (bucket, start, end, res.values('name','startdate','enddate'))
+    return (unicode(bucket), start, end, res.values('name','startdate','enddate'))
 
 
 def _create_rowheader(req, sortfield, sortdirection, cls):

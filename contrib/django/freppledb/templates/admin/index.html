@@ -54,22 +54,6 @@
     <p>{% trans "You don't have permission to edit anything." %}</p>
 {% endif %}
 
-{% if perms.execute %}
-<h3><a href="#">{% trans "Extra commands" %}</a></h3>
-<div>
-<table>
-<tr>
-<th scope="row" style="width: 100%;"><a href="{{request.prefix }}/execute/execute.html">{% trans "Execute" %}</a></th>
-<td>&nbsp;</td><td>&nbsp;</td>
-</tr>
-<tr>
-<th scope="row" style="width: 100%;"><a href="{{request.prefix }}/execute/log/">{% trans "Log" %}</a></th>
-<td>&nbsp;</td><td>&nbsp;</td>
-</tr>
-</table>
-</div>
-{% endif %}
-
 <h3><a href="#">{% trans "Reports" %}</a></h3>
 <div>
 <table>
@@ -115,6 +99,22 @@
 </tr>
 </table>
 </div>
+
+{% if perms.execute %}
+<h3><a href="#">{% trans "Extra commands" %}</a></h3>
+<div>
+<table>
+<tr>
+<th scope="row" style="width: 100%;"><a href="{{request.prefix }}/execute/execute.html">{% trans "Execute" %}</a></th>
+<td>&nbsp;</td><td>&nbsp;</td>
+</tr>
+<tr>
+<th scope="row" style="width: 100%;"><a href="{{request.prefix }}/execute/log/">{% trans "Log" %}</a></th>
+<td>&nbsp;</td><td>&nbsp;</td>
+</tr>
+</table>
+</div>
+{% endif %}
 
 </div>
 {% endblock %}

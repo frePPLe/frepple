@@ -37,14 +37,14 @@
             {% endif %}
 
             {%ifnotequal app.name "Output"%}{% if model.perms.add %}
-                <td><a href="{{ request.prefix }}/admin/{{ model.admin_url }}add/" class="addlink">{% trans 'Add' %}</a></td>
+                <td><a href="{{ request.prefix }}/admin/{{ model.admin_url }}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
             {% else %}
                 <td>&nbsp;</td>
             {% endif %}
             {% else %}
                 <td>&nbsp;</td>
             {% endifnotequal %}
-            <td><a href="{{request.prefix }}/admin/{{ model.admin_url }}?reporttype=csv" class="changelink">csv</a></td>
+            <td><a href="{{request.prefix }}/admin/{{ model.admin_url }}?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
             </tr>
         {% endfor %}
         </table>
@@ -59,43 +59,43 @@
 <table>
 <tr>
 <th scope="row" style="width: 100%;"><a href="{{request.prefix }}/problem/">{% trans "Problem report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/problem/?reporttype=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="{{request.prefix }}/problem/?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
 </tr>
 <tr>
 <th scope="row" style="width: 100%;"><a href="{{request.prefix }}/buffer/">{% trans "Inventory report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/buffer/?reporttype=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="{{request.prefix }}/buffer/?reporttype=csv class="icon""><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
 </tr>
 <tr>
 <th scope="row" style="width: 100%;"><a href="{{request.prefix }}/resource/">{% trans "Resource report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/resource/?reporttype=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="{{request.prefix }}/resource/?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
 </tr>
 <tr>
 <th scope="row" style="width: 100%;"><a href="{{request.prefix }}/demand/">{% trans "Demand report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/demand/?reporttype=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="{{request.prefix }}/demand/?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
 </tr>
 <tr>
 <th scope="row" style="width: 100%;"><a href="{{request.prefix }}/forecast/">{% trans "Forecast report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/forecast/?reporttype=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="{{request.prefix }}/forecast/?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
 </tr>
 <tr>
 <th scope="row" style="width: 100%;"><a href="{{request.prefix }}/operation/">{% trans "Operation report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/operation/?reporttype=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="{{request.prefix }}/operation/?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
 </tr>
 <tr>
 <th scope="row" style="width: 100%;"><a href="{{request.prefix }}/operationplan/">{% trans "Operation detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/operationplan/?reporttype=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="{{request.prefix }}/operationplan/?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
 </tr>
 <tr>
 <th scope="row" style="width: 100%;"><a href="{{request.prefix }}/loadplan/">{% trans "Resource detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/loadplan/?reporttype=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="{{request.prefix }}/loadplan/?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
 </tr>
 <tr>
 <th scope="row" style="width: 100%;"><a href="{{request.prefix }}/flowplan/">{% trans "Inventory detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/flowplan/?reporttype=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="{{request.prefix }}/flowplan/?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
 </tr>
 <tr>
 <th scope="row" style="width: 100%;"><a href="{{request.prefix }}/kpi/">{% trans "Performance Indicators" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/kpi/?reporttype=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="{{request.prefix }}/kpi/?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
 </tr>
 </table>
 </div>

@@ -49,6 +49,21 @@ div.OperatorMenu {
   z-index: 100;
 }
 
+/* Show an icon next to the link text. */
+a.icon {
+  padding:0.4em 1em 0.4em 20px;
+  position:relative;
+  text-decoration:none;
+}
+
+/* Show an icon next to the link text. */
+span.ui-icon {
+  left:0.2em;
+  margin:-8px 5px 0 0;
+  position:absolute;
+  top:50%;
+}
+
 a {
   white-space: nowrap;
 }

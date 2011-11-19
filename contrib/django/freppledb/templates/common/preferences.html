@@ -6,7 +6,14 @@
 <link rel="stylesheet" type="text/css" href="/media/css/widgets.css" />
 <script type="text/javascript" src="/media/js/core.js"></script>
 <script type="text/javascript" src="/media/js/calendar.js"></script>
-<script type="text/javascript" src="/media/js/admin/DateTimeShortcuts.js"></script>
+<script type="text/javascript">
+  $(function() {
+    $(".vDateField").datepicker({
+      showOtherMonths: true, selectOtherMonths: true,
+      dateFormat: 'yy-mm-dd'
+    });
+  });
+</script>
 {% endblock %}
 {% block bodyclass %}dashboard{% endblock %}
 {% block content %}

@@ -638,6 +638,14 @@ function bucket_show()
 {
   // Show popup
   $('#popup').dialog('close');
+  $( "#reportstart" ).datepicker({
+      showOtherMonths: true, selectOtherMonths: true,
+      dateFormat: 'yy-mm-dd'
+    });  
+  $( "#reportend" ).datepicker({
+      showOtherMonths: true, selectOtherMonths: true,
+      dateFormat: 'yy-mm-dd'
+    });
   $('#timebuckets').dialog({
      autoOpen: true, resizable: false
     });
@@ -741,11 +749,6 @@ function syncInitialize()
   
   var hasFrozenColumns = dlt.length > 0 ? true : false;
   var hasData = drt.find('tr').length > 0 ? true : false;
-  
-  // Call the django-supplied javascript function to initialize calendar menus.
-  // This needs to be done upfront to make sure that the elements get their
-  // correct size right away.
-  try {DateTimeShortcuts.init();} catch (error) {;};
 
   // Variables for the cell dimensions
   var CellFrozenWidth = new Array();

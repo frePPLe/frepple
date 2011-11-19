@@ -19,6 +19,11 @@
     var util = (clusters * fcst * 12) / (rsrc_number * rsrc_size * 365) * 7.0 / 5.0
 	  $("#util").html( (util * 100).toFixed(1) );
   }
+  
+  $(function() {
+    $( "#content-main" ).accordion();
+  });
+ 
 </script>
 
 {% endblock %}
@@ -30,9 +35,9 @@
 {% if perms.execute %}
 
 {% if perms.execute.run_frepple %}
-<div class="module">
-<table summary="Extra commands.">
-<caption>{% trans 'Create a plan' %}</caption>
+<h3><a href="#">{% trans 'Create a plan' %}</a></h3>
+<div>
+<table>
 
 <form method="post" action="{{ request.prefix }}/execute/runfrepple/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Run frePPLe</a></th>
@@ -66,9 +71,9 @@ and export results into the database<br/>
 {% endif %}
 
 {% if scenarios.count > 1 %}
-<div class="module">
-<table style="width: 100%;" summary="Extra commands.">
-<caption>{% trans "Scenario management" %}</caption>
+<h3><a href="#">{% trans "Scenario management" %}</a></h3>
+<div>
+<table style="width: 100%;">
 <form method="post" action="{{ request.prefix }}/execute/scenarios/">{% csrf_token %}<tr>
 <th>{% trans 'name' %}</th>
 <th>{% trans 'status' %}</th>
@@ -102,9 +107,9 @@ and export results into the database<br/>
 {% endif %}
 
 {% if perms.execute.run_db %}
-<div class="module">
-<table summary="Extra commands.">
-<caption>{% trans "Database" %}</caption>
+<h3><a href="#">{% trans "Database" %}</a></h3>
+<div>
+<table>
 
 <form method="post" action="{{ request.prefix }}/execute/erase/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Erase</a></th>
@@ -129,9 +134,9 @@ and export results into the database<br/>
 {% endif %}
 
 {% if perms.execute.run_db %}
-<div class="module">
-<table summary="Extra commands.">
-<caption>{% trans "Model generator" %}</caption>
+<h3><a href="#">{% trans "Model generator" %}</a></h3>
+<div>
+<table>
 
 <form method="post" action="{{ request.prefix }}/execute/create/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Create a model</a></th>

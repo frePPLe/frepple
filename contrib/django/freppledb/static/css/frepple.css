@@ -53,76 +53,7 @@ a {
   white-space: nowrap;
 }
 
-a.buffer {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap;
-  display: inline-block; /* IE8 is broken and needs this */
-}
-a.item {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap;
-  display: inline-block; /* IE8 is broken and needs this */
-}
-a.demand {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap; /* IE8 is broken and needs this */
-}
-a.resource {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap;
-  display: inline-block; /* IE8 is broken and needs this */
-}
-a.location {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap;
-  display: inline-block; /* IE8 is broken and needs this */
-}
-a.operation {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap;
-  display: inline-block; /* IE8 is broken and needs this */
-}
-a.forecast {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap;
-  display: inline-block; /* IE8 is broken and needs this */
-}
-a.customer {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap;
-  display: inline-block; /* IE8 is broken and needs this */
-}
-a.calendar {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap;
-  display: inline-block; /* IE8 is broken and needs this */
-}
-a.setupmatrix {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap;
-  display: inline-block; /* IE8 is broken and needs this */
-}
-a.detail {
+a.context {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) right center no-repeat;
@@ -268,27 +199,6 @@ td.level9 {padding-left: 90px;}
 td.level10 {padding-left: 100px;}
 td.level11 {padding-left: 110px;}
 td.level12 {padding-left: 120px;}
-
-/* Style for the popup window. */
-div #popup
-{
-  z-index: 9;
-  border: 1px solid black;
-  background-color: white;
-  position: absolute;
-  padding: 10px;
-  display: none;
-}
-
-div #timebuckets
-{
-  z-index: 9;
-  border: 1px solid black;
-  background-color: white;
-  position: absolute;
-  padding: 10px;
-  display: none;
-}
 
 div.calendarbox
 {

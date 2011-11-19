@@ -580,62 +580,38 @@ var filter = {
 
 function import_show(list_or_table)
 {
-  var element = $('#popup');
-  // Replace the content
-  element.html(
-    '<h2>' + gettext("Import data") + '</h2><br/>' +
+  $('#popup').html(    
     '<form enctype="multipart/form-data" method="post" action=""><table><tr>'+
     '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
     '<td colspan="2">' + gettext('Load data from a CSV-formatted text file in the database.') + '<br/>'+
     gettext('The first row should contain the field names.') + '</td></tr>'+
     '<tr><td>'+gettext('Data file') + ':</td><td><input type="file" id="csv_file" name="csv_file"/></td></tr>'+
     '<tr><td><input id="upload" type="submit" value="' + gettext('Upload') + '"/></td>'+
-    '<td><input type="button" value="' + gettext('Cancel') + '" onclick="$(\'#popup\').css(\'display\',\'none\');"/></td></tr>'+
+    '<td><input type="button" value="' + gettext('Cancel') + '" onclick="$(\'#popup\').dialog(\'close\');"/></td></tr>'+
     '</table></form>'
-    );
-  // Position the popup
-  var position = $('#csvexport').offset();
-  element.css({
-    width: "290px", 
-    left: (position.left-292)+"px",
-    top: (position.top+20)+"px",
-    position: "absolute"
-  });
-  var x = $('#timebuckets');
-  if (x) x.css('display', 'none');
-  element.css('display', 'block');
+    ).dialog({
+      title: gettext("Import data"), autoOpen: true, resizable: false, 
+    });
+  $('#timebuckets').css('display', 'none');
 }
 
 
 function export_show(list_or_table)
 {
   // The argument is true when we show a "list" report.
-  // It is false for "table" reports.
-  var element = $('#popup');
-  // Replace the content
-  element.html(
-    '<h2>' + gettext("Export data") +'</h2><br/>'+
+  // It is false for "table" reports.  
+  $('#popup').html(    
     '<form method="get" action="javascript:export_close()"><table>'+
     '<tr><th>' + gettext("CSV style") + ':</th><td><select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
     '<option value="csv"' + (list_or_table ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
     '<option value="csvlist"' + (list_or_table ?  ' selected="selected"' : '') + '>' + gettext("List") +'</option></select></td></tr>'+
     '<tr><td><input type="submit" value="' + gettext("Export") +'"/></td>'+
-    '<td><input type="button" value="' + gettext("Cancel") +'" onclick="$(\'#popup\').css(\'display\',\'none\');"/></td></tr>'+
+    '<td><input type="button" value="' + gettext("Cancel") +'" onclick="$(\'#popup\').dialog(\'close\');"/></td></tr>'+
     '</table></form>'
-    );
-  // Position the popup
-  var position = $('#csvexport').offset();
-  position[0] -= 202;
-  position[1] += 20;
-  element.css({
-    width: '200px',
-    left: (position.left-202) + 'px',
-    top: (position>top + 20) + 'px',
-    position: "absolute"
-    });
-  var x = $('#timebuckets');
-  if (x) x.css('display', 'none');
-  element.css('display', "block");
+    ).dialog({ 
+      title: gettext("Export data"), autoOpen: true, resizable: false  
+      });
+  $('#timebuckets').dialog('close');
 }
 
 
@@ -654,23 +630,17 @@ function export_close()
     url += "?reporttype=" + $('#csvformat').val();
   window.open(url,'_blank');
   // Hide the popup window
-  $('#popup').css('display','none');
+  $('#popup').dialog('close');
 }
 
 
 function bucket_show()
 {
   // Show popup
-  var element = $('#timebuckets');
-  var position = $('#csvexport').offset();
-  element.css({
-    width: '200px',
-    left: (position.left - 202) + 'px',
-    top: (position.top + 20) + 'px',
-    position: "absolute"
-    })
-  $('#popup').css('display', 'none');
-  element.css('display', 'block');
+  $('#popup').dialog('close');
+  $('#timebuckets').dialog({
+     autoOpen: true, resizable: false
+    });
 }
 
 
@@ -720,7 +690,7 @@ function bucket_close(canceled, curBuckets, curStart, curEnd)
   if (!changed)
   {
     // No changes to the settings. Close the popup.
-    $('#timebuckets').css('display', 'none');
+    $('#timebuckets').dialog('close');
     return true;
   }
   else

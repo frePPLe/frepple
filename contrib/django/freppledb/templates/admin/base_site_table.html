@@ -15,9 +15,8 @@
 {% if filternew %}<a href="javascript:filter.show();"><img src="/media/img/admin/selector-search.gif"/>{% trans 'Filter' %}</a>{% endif %}
 <a href="javascript:bucket_show();" id="bucketconfig"><img src="/media/img/admin/icon_clock.gif"/>{% trans 'Time' %}</a>
 <a href="javascript:export_show(false);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
-</form><div id="popup"></div></div>
-<div id="timebuckets">
-<h2>{% trans 'Time buckets' %}</h2><br/>
+</form><div id="popup" class="ui-helper-hidden"></div></div>
+<div id="timebuckets" class="ui-helper-hidden" title="{% trans 'Time buckets' %}">
 <form method="get" action=""><table>
 <tr><th>{% trans 'Bucket' %}</th><td><select name="reportbucket" id="reportbucket">
 {% for i in bucketnames %}<option value="{{i}}"{% ifequal i reportbucket %} selected="selected"{% endifequal %}>{% trans i %}</option>

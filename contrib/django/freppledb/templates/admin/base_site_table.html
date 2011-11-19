@@ -12,9 +12,9 @@
 {% block tools %}<div class="tools">
 <form action=""><input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px;" type="button" id="save" value="{% trans 'Save' %}" onclick="upload.save();"/>
 <input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px; margin-right: 10px; margin-left:10px;" type="button" id="undo" value="{% trans 'Undo' %}" onclick="upload.undo();"/>
-{% if filternew %}<a href="javascript:filter.show();"><img src="/media/img/admin/selector-search.gif"/>{% trans 'Filter' %}</a>{% endif %}
-<a href="javascript:bucket_show();" id="bucketconfig"><img src="/media/img/admin/icon_clock.gif"/>{% trans 'Time' %}</a>
-<a href="javascript:export_show(false);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
+{% if filternew %}<a href="javascript:filter.show();"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
+<a href="javascript:bucket_show();" id="bucketconfig"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
+<a href="javascript:export_show(false);" id="csvexport"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
 </form><div id="popup" class="ui-helper-hidden"></div></div>
 <div id="timebuckets" class="ui-helper-hidden" title="{% trans 'Time buckets' %}">
 <form method="get" action=""><table>

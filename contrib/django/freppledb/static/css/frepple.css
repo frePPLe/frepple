@@ -64,17 +64,6 @@ a.context {
 
 /* Style for main navigation menu */
 
-#header div.menuBar,
-#header div.menuBar a.menuButton,
-#header div.menu,
-#header div.menu a.menuItem
-{
-  font-family: "MS Sans Serif", Arial, sans-serif;
-  font-size: 8pt;
-  font-style: normal;
-  font-weight: normal;
-}
-
 #header div.menuBar {
   padding: 4px 2px 4px 2px;
   margin: 5px 5px 5px 5px;

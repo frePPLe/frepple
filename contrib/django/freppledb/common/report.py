@@ -89,8 +89,8 @@ class GridField(object):
     if not 'title' in kwargs: self.title = _(self.name)
     if not 'field_name' in kwargs: self.field_name = self.name     
   
-  def __str__(self):
-    o = [ "{name:'%s',label:'%s',width:%d,align:'%s'," % (self.name, force_unicode(self.title).title(), self.width, self.align), ]
+  def __unicode__(self):
+    o = [ "{name:'%s',label:'%s',width:%d,align:'%s'," % (self.name, force_unicode(self.title).title().replace("'","\\'"), self.width, self.align), ]
     if self.key: o.append( "key:true," )
     if not self.sortable: o.append("sortable:false,")
     if not self.editable: o.append("editable:false,")
@@ -201,59 +201,10 @@ class Report(object):
 
 
 class ListReport(Report):
-  '''
-  Row definitions.
-
-  Supported class methods:
-    - resultlist1():
-      Returns an iterable that returns the FROZEN data to be displayed.
-      If not specified, the basequeryset is used.
-    - resultlist2():
-      Returns an iterable that returns the SCROLLABLE data to be displayed.
-      If not specified, the basequeryset is used.
-
-  Possible attributes for a row field are:
-    - filter:
-      Specifies a widget for filtering the data.
-    - order_by:
-      Model field to user for the sorting.
-      It defaults to the name of the field.
-    - title:
-      Name of the row that is displayed to the user.
-      It defaults to the name of the field.
-    - sort:
-      Whether or not this column can be used for sorting or not.
-      The default is true.
-    - javascript_imports:
-      Extra javascript files to import for running the report
-  '''
   rows = ()
 
 
 class TableReport(Report):
-  '''
-  Row definitions.
-
-  Supported class methods:
-    - resultlist1():
-      Returns an iterable that returns the data to be displayed.
-      If not specified, the basequeryset is used.
-
-  Possible attributes for a row field are:
-    - filter:
-      Specifies a widget for filtering the data.
-    - order_by:
-      Model field to user for the sorting.
-      It defaults to the name of the field.
-    - title:
-      Name of the row that is displayed to the user.
-      It defaults to the name of the field.
-    - sort:
-      Whether or not this column can be used for sorting or not.
-      The default is true.
-    - javascript_imports:
-      Extra javascript files to import for running the report
-  '''
   rows = ()
 
   # Cross definitions.
@@ -720,7 +671,6 @@ class GridReport(View, Report):
     sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
     if 'sord' in request.GET and request.GET['sord'] == 'desc':
       sort = "-%s" % sort
-    print request.GET
     query = filter_items(request, reportclass, reportclass.basequeryset)
     recs = query.count()
     yield '{"total":%d,\n' % (recs/100)
@@ -760,7 +710,6 @@ class GridReport(View, Report):
     #  fields.append('rght')
     #  fields.append('isLeaf')
     #  fields.append('expanded')
-    print sort
     for i in query.order_by(sort)[cnt-1:cnt+100].values(*fields):
       if first:
         r = [ '{' ]

@@ -38,13 +38,14 @@ $(function(){
     {},
     {multipleSearch:true, multipleGroup:true, showQuery: true}
     );
-
+  });
+/*
   $("#savebutton").click(function() {
     alert(JSON.stringify($("#jsonmap").getChangedCells('dirty')));
     });
-  });
 
-/*
+
+
 $(window).bind('beforeunload', function() {
    var rows = $("#jsonmap").getChangedCells('dirty');
    alert(JSON.stringify(rows));
@@ -81,11 +82,10 @@ $(window).bind('resize', function() {
 {% endblock %}
 {% endblock %}
 {% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">
-{% if filternew %}<a href="javascript:filter.show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
+{% block tools %}<div class="tools">{{filternew}}{{hasaddperm}}
+<a href="javascript:filter.show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
 {% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>{% endif %}
 {% if hasaddperm and model %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>{% endif %}
-<a href="#" id="savebutton" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Save' %}</a>
 <a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a><div id="popup" class="ui-helper-hidden"></div>
 <div id="popup"></div>
 

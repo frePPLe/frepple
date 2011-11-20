@@ -31,6 +31,7 @@ import freppledb.output.views.resource
 import freppledb.output.views.operation
 import freppledb.output.views.pegging
 import freppledb.output.views.kpi
+from freppledb.common.report import GridReport
 
 
 urlpatterns = patterns('',
@@ -68,18 +69,18 @@ urlpatterns = patterns('',
       {'report': freppledb.output.views.pegging.ReportByResource,}),
     (r'^operationpegging/$', 'freppledb.common.report.view_report',
       {'report': freppledb.output.views.pegging.ReportByOperation,}),
-    (r'^flowplan/$', 'freppledb.common.report.view_report',
+    (r'^flowplan/$', GridReport.as_view(),
       {'report': freppledb.output.views.buffer.DetailReport,}),
-    (r'^problem/$', 'freppledb.common.report.view_report',
+    (r'^problem/$', GridReport.as_view(),
       {'report': freppledb.output.views.problem.Report,}),
-    (r'^constraint/$', 'freppledb.common.report.view_report',
+    (r'^constraint/$', GridReport.as_view(),
       {'report': freppledb.output.views.constraint.Report,}),
-    (r'^operationplan/$', 'freppledb.common.report.view_report',
+    (r'^operationplan/$', GridReport.as_view(),
       {'report': freppledb.output.views.operation.DetailReport,}),
-    (r'^loadplan/$', 'freppledb.common.report.view_report',
+    (r'^loadplan/$', GridReport.as_view(),
       {'report': freppledb.output.views.resource.DetailReport,}),
-    (r'^demandplan/$', 'freppledb.common.report.view_report',
+    (r'^demandplan/$', GridReport.as_view(),
       {'report': freppledb.output.views.demand.DetailReport,}),
-    (r'^kpi/$', 'freppledb.common.report.view_report',
+    (r'^kpi/$', GridReport.as_view(),
       {'report': freppledb.output.views.kpi.Report,}),
 )

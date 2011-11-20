@@ -37,7 +37,8 @@ from freppledb.input.models import Resource, Forecast, Operation, Location, Setu
 from freppledb.input.models import Buffer, Customer, Demand, Parameter, Item, Load, Flow
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.input.models import Bucket, BucketDetail
-from freppledb.common.report import ListReport, FilterText, FilterDate, FilterNumber, FilterBool
+from freppledb.common.report import GridReport, BoolGridField, LastModifiedGridField, DateTimeGridField
+from freppledb.common.report import TextGridField, NumberGridField, IntegerGridField, CurrencyGridField
 
 
 class uploadjson:
@@ -308,7 +309,7 @@ def location_calendar(request, location):
   except: raise Http404
 
 
-class ParameterList(ListReport):
+class ParameterList(GridReport):
   '''
   A list report to show all configurable parameters.
   '''
@@ -323,26 +324,14 @@ class ParameterList(ListReport):
     return basequery.values('name','value','description','lastmodified')
 
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('value', {
-      'title': _('value'),
-      'filter': FilterText(),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('value', title=_('value')),
+    TextGridField('description', title=_('description')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class BufferList(ListReport):
+class BufferList(GridReport):
   '''
   A list report to show buffers.
   '''
@@ -360,66 +349,24 @@ class BufferList(ListReport):
       )
 
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('category', {
-      'title': _('category'),
-      'filter': FilterText(),
-      }),
-    ('subcategory', {
-      'title': _('subcategory'),
-      'filter': FilterText(),
-      }),
-    ('location', {
-      'title': _('location'),
-      'filter': FilterText(field='location__name'),
-      }),
-    ('item', {
-      'title': _('item'),
-      'filter': FilterText(field='item__name'),
-      }),
-    ('onhand', {
-      'title': _('onhand'),
-      'filter': FilterNumber(size=5, operator="lt"),
-      }),
-    ('owner', {
-      'title': _('owner'),
-      'filter': FilterText(field='owner__name'),
-      }),
-    ('type', {
-      'title': _('type'),
-      'filter': FilterText(),
-      }),
-    ('minimum', {
-      'title': _('minimum'),
-      'filter': FilterNumber(size=5, operator="lt"),
-      }),
-    ('minimum_calendar', {
-      'title': _('minimum calendar'),
-      'filter': FilterText(field='minimum__name'),
-      }),
-    ('producing', {
-      'title': _('producing'),
-      'filter': FilterText(field='producing__name'),
-      }),
-    ('carrying_cost', {
-      'title': _('carrying cost'),
-      'filter': FilterNumber(size=5, operator="lt"),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('description', title=_('description')),
+    TextGridField('category', title=_('category')),
+    TextGridField('subcategory', title=_('subcategory')),
+    TextGridField('location', title=_('location'), field_name='location__name', formatter='location'),
+    TextGridField('item', title=_('item'), field_name='item__name', formatter='item'),
+    NumberGridField('onhand', title=_('onhand')),
+    TextGridField('owner', title=_('owner'), field_name='owner__name', formatter='buffer'),
+    TextGridField('type', title=_('type')),
+    NumberGridField('minimum', title=_('minimum')),
+    TextGridField('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='calendar'),
+    TextGridField('producing', title=_('producing'), field_name='producing__name', formatter='operation'),
+    CurrencyGridField('carrying_cost', title=_('carrying cost')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class SetupMatrixList(ListReport):
+class SetupMatrixList(GridReport):
   '''
   A list report to show setup matrices.
   '''
@@ -434,18 +381,12 @@ class SetupMatrixList(ListReport):
     return basequery.values('name','lastmodified')
 
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class ResourceList(ListReport):
+class ResourceList(GridReport):
   '''
   A list report to show resources.
   '''
@@ -463,66 +404,24 @@ class ResourceList(ListReport):
       )
 
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('category', {
-      'title': _('category'),
-      'filter': FilterText(),
-      }),
-    ('subcategory', {
-      'title': _('subcategory'),
-      'filter': FilterText(),
-      }),
-    ('location', {
-      'title': _('location'),
-      'filter': FilterText(field='location__name'),
-      }),
-    ('owner', {
-      'title': _('owner'),
-      'filter': FilterText(field='owner__name'),
-      }),
-    ('type', {
-      'title': _('type'),
-      'filter': FilterText(),
-      }),
-    ('maximum', {
-      'title': _('maximum'),
-      'filter': FilterNumber(size=5, operator="lt"),
-      }),
-    ('maximum_calendar', {
-      'title': _('maximum calendar'),
-      'filter': FilterText(field='maximum_calendar__name'),
-      }),
-    ('cost', {
-      'title': _('cost'),
-      'filter': FilterNumber(size=5, operator="lt"),
-      }),
-    ('maxearly', {
-      'title': _('max early'),
-      'filter': FilterNumber(),
-      }),
-    ('setupmatrix', {
-      'title': _('setup matrix'),
-      'filter': FilterText(),
-      }),
-    ('setup', {
-      'title': _('setup'),
-      'filter': FilterText(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('description', title=_('description')),
+    TextGridField('category', title=_('category')),
+    TextGridField('subcategory', title=_('subcategory')),
+    TextGridField('location', title=_('location'), field_name='location__name', formatter='location'),
+    TextGridField('owner', title=_('owner'), field_name='owner__name', formatter='resource'),
+    TextGridField('type', title=_('type')),
+    NumberGridField('maximum', title=_('maximum')),
+    TextGridField('maximum_calendar', title=_('maximum calendar'), field_name='maximum_calendar__name', formatter='calendar'),
+    CurrencyGridField('cost', title=_('cost')),
+    NumberGridField('maxearly', title=_('maxearly')),
+    TextGridField('setupmatrix', title=_('setup matrix'), formatter='setupmatrix'),
+    TextGridField('setup', title=_('setup')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class LocationList(ListReport):
+class LocationList(GridReport):
   '''
   A list report to show locations.
   '''
@@ -540,40 +439,19 @@ class LocationList(ListReport):
       )
 
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('category', {
-      'title': _('category'),
-      'filter': FilterText(),
-      }),
-    ('subcategory', {
-      'title': _('subcategory'),
-      'filter': FilterText(),
-      }),
-    ('available', {
-      'title': _('available'),
-      'filter': FilterText(field='available__name'),
-      }),
-    ('owner', {
-      'title': _('owner'),
-      'filter': FilterText(field='owner__name'),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('description', title=_('description')),
+    TextGridField('category', title=_('category')),
+    TextGridField('subcategory', title=_('subcategory')),
+    TextGridField('available', title=_('available'), field_name='available__name', formatter='calendar'),
+    TextGridField('owner', title=_('owner'), field_name='owner__name', formatter='location'),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class CustomerList(ListReport):
+class CustomerList(GridReport):
   '''
-  A list report to show locations.
+  A list report to show customers.
   '''
   template = 'input/customerlist.html'
   title = _("Customer List")
@@ -588,34 +466,16 @@ class CustomerList(ListReport):
       )
 
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('category', {
-      'title': _('category'),
-      'filter': FilterText(),
-      }),
-    ('subcategory', {
-      'title': _('subcategory'),
-      'filter': FilterText(),
-      }),
-    ('owner', {
-      'title': _('owner'),
-      'filter': FilterText(field='owner__name'),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('description', title=_('description')),
+    TextGridField('category', title=_('category')),
+    TextGridField('subcategory', title=_('subcategory')),
+    TextGridField('owner', title=_('owner'), field_name='owner__name', formatter='customer'),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class ItemList(ListReport):
+class ItemList(GridReport):
   '''
   A list report to show items.
   '''
@@ -633,42 +493,18 @@ class ItemList(ListReport):
       )
 
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('category', {
-      'title': _('category'),
-      'filter': FilterText(),
-      }),
-    ('subcategory', {
-      'title': _('subcategory'),
-      'filter': FilterText(),
-      }),
-    ('operation', {
-      'title': _('operation'),
-      'filter': FilterText(field='operation__name'),
-      }),
-    ('owner', {
-      'title': _('owner'),
-      'filter': FilterText(field='owner__name'),
-      }),
-    ('price', {
-      'title': _('price'),
-      'filter': FilterNumber(size=5, operator="lt"),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('description', title=_('description')),
+    TextGridField('category', title=_('category')),
+    TextGridField('subcategory', title=_('subcategory')),
+    TextGridField('operation', title=_('operation'), field_name='operation__name'),
+    TextGridField('owner', title=_('owner'), field_name='owner__name'),
+    CurrencyGridField('price', title=_('price')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class LoadList(ListReport):
+class LoadList(GridReport):
   '''
   A list report to show loads.
   '''
@@ -686,58 +522,22 @@ class LoadList(ListReport):
       )
 
   rows = (
-    ('id', {
-      'title': _('identifier'),
-      'filter': FilterNumber(),
-      }),
-    ('operation', {
-      'title': _('operation'),
-      'filter': FilterText(field='operation__name'),
-      }),
-    ('resource', {
-      'title': _('resource'),
-      'filter': FilterText(field='resource__name'),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      'filter': FilterNumber(),
-      }),
-    ('effective_start', {
-      'title': _('effective start'),
-      'filter': FilterDate(),
-      }),
-    ('effective_end', {
-      'title': _('effective end'),
-      'filter': FilterDate(),
-      }),
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('alternate', {
-      'title': _('alternate'),
-      'filter': FilterText(),
-      }),
-    ('priority', {
-      'title': _('priority'),
-      'filter': FilterNumber(),
-      }),
-    ('setup', {
-      'title': _('setup'),
-      'filter': FilterText(),
-      }),
-    ('search', {
-      'title': _('search mode'),
-      'filter': FilterText(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    NumberGridField('id', title=_('identifier'), key=True),
+    TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    TextGridField('resource', title=_('resource'), field_name='resource__name', formatter='resource'),
+    NumberGridField('quantity', title=_('quantity')),
+    DateTimeGridField('effective_start', title=_('effective start')),
+    DateTimeGridField('effective_end', title=_('effective end')),
+    TextGridField('name', title=_('name')),
+    TextGridField('alternate', title=_('alternate')),
+    NumberGridField('priority', title=_('priority')),
+    TextGridField('setup', title=_('setup')),
+    TextGridField('search', title=_('search mode')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class FlowList(ListReport):
+class FlowList(GridReport):
   '''
   A list report to show flows.
   '''
@@ -755,58 +555,22 @@ class FlowList(ListReport):
       )
 
   rows = (
-    ('id', {
-      'title': _('identifier'),
-      'filter': FilterNumber(),
-      }),
-    ('operation', {
-      'title': _('operation'),
-      'filter': FilterText(field='operation__name'),
-      }),
-    ('thebuffer', {
-      'title': _('buffer'),
-      'filter': FilterText(field='thebuffer__name'),
-      }),
-    ('type', {
-      'title': _('type'),
-      'filter': FilterText(),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      'filter': FilterNumber(),
-      }),
-    ('effective_start', {
-      'title': _('effective start'),
-      'filter': FilterDate(),
-      }),
-    ('effective_end', {
-      'title': _('effective end'),
-      'filter': FilterDate(),
-      }),
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('alternate', {
-      'title': _('alternate'),
-      'filter': FilterText(),
-      }),
-    ('priority', {
-      'title': _('priority'),
-      'filter': FilterNumber(),
-      }),
-    ('search', {
-      'title': _('search mode'),
-      'filter': FilterText(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    NumberGridField('id', title=_('identifier'), key=True),
+    TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    TextGridField('thebuffer', title=_('buffer'), field_name='thebuffer__name', formatter='buffer'),
+    TextGridField('type', title=_('type')),
+    NumberGridField('quantity', title=_('quantity')),
+    DateTimeGridField('effective_start', title=_('effective start')),
+    DateTimeGridField('effective_end', title=_('effective end')),
+    TextGridField('name', title=_('name')),
+    TextGridField('alternate', title=_('alternate')),
+    NumberGridField('priority', title=_('priority')),
+    TextGridField('search', title=_('search mode')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class DemandList(ListReport):
+class DemandList(GridReport):
   '''
   A list report to show demands.
   '''
@@ -825,66 +589,24 @@ class DemandList(ListReport):
       )
 
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('item', {
-      'title': _('item'),
-      'filter': FilterText(field="item__name"),
-      }),
-    ('customer', {
-      'title': _('customer'),
-      'filter': FilterText(field="customer__name"),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('category', {
-      'title': _('category'),
-      'filter': FilterText(),
-      }),
-    ('subcategory', {
-      'title': _('subcategory'),
-      'filter': FilterText(),
-      }),
-    ('due', {
-      'title': _('due'),
-      'filter': FilterDate(),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      'filter': FilterNumber(),
-      }),
-    ('operation', {
-      'title': _('delivery operation'),
-      'filter': FilterText(),
-      }),
-    ('priority', {
-      'title': _('priority'),
-      'filter': FilterNumber(),
-      }),
-    ('owner', {
-      'title': _('owner'),
-      'filter': FilterText(field='owner__name'),
-      }),
-    ('maxlateness', {
-      'title': _('maximum lateness'),
-      'filter': FilterNumber(),
-      }),
-    ('minshipment', {
-      'title': _('minimum shipment'),
-      'filter': FilterNumber(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('item', title=_('item_name'), field_name='item__name', formatter='item'),
+    TextGridField('customer', title=_('customer'), field_name='customer__name', formatter='location'),
+    TextGridField('description', title=_('description')),
+    TextGridField('category', title=_('category')),
+    TextGridField('subcategory', title=_('subcategory')),
+    DateTimeGridField('due', title=_('due')),
+    NumberGridField('quantity', title=_('quantity')),
+    TextGridField('operation', title=_('delivery operation'), formatter='operation'),
+    NumberGridField('priority', title=_('priority')),
+    TextGridField('owner', title=_('owner'), formatter='demand'),
+    NumberGridField('maxlateness', title=_('maximum lateness')),
+    NumberGridField('minshipment', title=_('minimum shipment')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class ForecastList(ListReport):
+class ForecastList(GridReport):
   '''
   A list report to show forecasts.
   '''
@@ -903,62 +625,23 @@ class ForecastList(ListReport):
       )
 
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('item', {
-      'title': _('item'),
-      'filter': FilterText(field="item__name"),
-      }),
-    ('customer', {
-      'title': _('customer'),
-      'filter': FilterText(field="customer__name"),
-      }),
-    ('calendar', {
-      'title': _('calendar'),
-      'filter': FilterText(field="calendar__name"),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('category', {
-      'title': _('category'),
-      'filter': FilterText(),
-      }),
-    ('subcategory', {
-      'title': _('subcategory'),
-      'filter': FilterText(),
-      }),
-    ('operation', {
-      'title': _('operation'),
-      'filter': FilterText(),
-      }),
-    ('priority', {
-      'title': _('priority'),
-      'filter': FilterNumber(),
-      }),
-    ('minshipment', {
-      'title': _('minshipment'),
-      'filter': FilterNumber(),
-      }),
-    ('maxlateness', {
-      'title': _('maxlateness'),
-      'filter': FilterNumber(),
-      }),
-    ('discrete', {
-      'title': _('discrete'),
-      'filter': FilterBool(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('item', title=_('item'), field_name='item__name', formatter='item'),
+    TextGridField('customer', title=_('customer'), field_name='customer__name', formatter='customer'),
+    TextGridField('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
+    TextGridField('description', title=_('description')),
+    TextGridField('category', title=_('category')),
+    TextGridField('subcategory', title=_('subcategory')),
+    TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    NumberGridField('priority', title=_('priority')),
+    NumberGridField('maxlateness', title=_('maximum lateness')),
+    NumberGridField('minshipment', title=_('minimum shipment')),
+    BoolGridField('discrete', title=_('discrete')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class CalendarList(ListReport):
+class CalendarList(GridReport):
   '''
   A list report to show calendars.
   '''
@@ -968,42 +651,18 @@ class CalendarList(ListReport):
   model = Calendar
   frozenColumns = 1
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('type', {
-      'title': _('type'),
-      'filter': FilterText(),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('category', {
-      'title': _('category'),
-      'filter': FilterText(),
-      }),
-    ('subcategory', {
-      'title': _('subcategory'),
-      'filter': FilterText(),
-      }),
-    ('defaultvalue', {
-      'title': _('default value'),
-      'sort': FilterNumber(),
-      }),
-    ('currentvalue', {
-      'title': _('current value'),
-      'sort': False,
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('type', title=_('type')),
+    TextGridField('description', title=_('description')),
+    TextGridField('category', title=_('category')),
+    TextGridField('subcategory', title=_('subcategory')),
+    NumberGridField('defaultvalue', title=_('default value')),
+    NumberGridField('currentvalue', title=_('current value'), sortable=False),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class CalendarBucketList(ListReport):
+class CalendarBucketList(GridReport):
   '''
   A list report to show calendar buckets.
   '''
@@ -1013,42 +672,18 @@ class CalendarBucketList(ListReport):
   model = CalendarBucket
   frozenColumns = 1
   rows = (
-    ('id', {
-      'title': _('id'),
-      'filter': FilterNumber(),
-      }),
-    ('calendar', {
-      'title': _('calendar'),
-      'filter': FilterText(field='calendar__name'),
-      }),
-    ('startdate', {
-      'title': _('start date'),
-      'filter': FilterDate(),
-      }),
-    ('enddate', {
-      'title': _('end date'),
-      'filter': FilterDate(),
-      }),
-    ('value', {
-      'title': _('value'),
-      'filter': FilterNumber(),
-      }),
-    ('priority', {
-      'title': _('priority'),
-      'filter': FilterNumber(),
-      }),
-    ('name', {
-      'title': _('name'),
-      'sort': FilterText(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    NumberGridField('id', title=_('identifier'), key=True),
+    TextGridField('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
+    DateTimeGridField('startdate', title=_('start date')),
+    DateTimeGridField('enddate', title=_('end date')),
+    NumberGridField('value', title=_('value')),
+    NumberGridField('priority', title=_('priority')),
+    TextGridField('name', title=_('name')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class OperationList(ListReport):
+class OperationList(GridReport):
   '''
   A list report to show operations.
   '''
@@ -1066,78 +701,27 @@ class OperationList(ListReport):
       )
 
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('category', {
-      'title': _('category'),
-      'filter': FilterText(),
-      }),
-    ('subcategory', {
-      'title': _('subcategory'),
-      'filter': FilterText(),
-      }),
-    ('type', {
-      'title': _('type'),
-      'filter': FilterText(),
-      }),
-    ('location', {
-      'title': _('location'),
-      'filter': FilterText(field='location__name'),
-      }),
-    ('duration', {
-      'title': _('duration'),
-      'filter': FilterNumber(),
-      }),
-    ('duration_per', {
-      'title': _('duration_per'),
-      'filter': FilterNumber(),
-      }),
-    ('fence', {
-      'title': _('fence'),
-      'filter': FilterNumber(),
-      }),
-    ('pretime', {
-      'title': _('pre-op time'),
-      'filter': FilterNumber(),
-      }),
-    ('posttime', {
-      'title': _('post-op time'),
-      'filter': FilterNumber(),
-      }),
-    ('sizeminimum', {
-      'title': _('size minimum'),
-      'filter': FilterNumber(),
-      }),
-    ('sizemultiple', {
-      'title': _('size multiple'),
-      'filter': FilterNumber(),
-      }),
-    ('sizemaximum', {
-      'title': _('size maximum'),
-      'filter': FilterNumber(),
-      }),
-    ('cost', {
-      'title': _('cost'),
-      'filter': FilterNumber(size=5, operator="lt"),
-      }),
-    ('search', {
-      'title': _('search mode'),
-      'filter': FilterText(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('description', title=_('description')),
+    TextGridField('category', title=_('category')),
+    TextGridField('subcategory', title=_('subcategory')),
+    TextGridField('type', title=_('type')),
+    TextGridField('location', title=_('location'), field_name='location__name', formatter='location'),
+    NumberGridField('duration', title=_('duration')),
+    NumberGridField('duration_per', title=_('duration_per')),
+    NumberGridField('fence', title=_('fence')),
+    NumberGridField('pretime', title=_('pre-op time')),
+    NumberGridField('posttime', title=_('post-op time')),
+    NumberGridField('sizeminimum', title=_('size minimum')),
+    NumberGridField('sizemultiple', title=_('size multiple')),
+    NumberGridField('sizemaximum', title=_('size maximum')),
+    CurrencyGridField('cost', title=_('cost')),
+    TextGridField('search', title=_('search mode')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class SubOperationList(ListReport):
+class SubOperationList(GridReport):
   '''
   A list report to show suboperations.
   '''
@@ -1155,38 +739,17 @@ class SubOperationList(ListReport):
       )
 
   rows = (
-    ('id', {
-      'title': _('identifier'),
-      'filter': FilterNumber(),
-      }),
-    ('operation', {
-      'title': _('operation'),
-      'filter': FilterText(field='operation__name'),
-      }),
-    ('suboperation', {
-      'title': _('suboperation'),
-      'filter': FilterText(field='suboperation__name'),
-      }),
-    ('priority', {
-      'title': _('priority'),
-      'filter': FilterNumber(),
-      }),
-    ('effective_start', {
-      'title': _('effective start'),
-      'filter': FilterDate(),
-      }),
-    ('effective_end', {
-      'title': _('effective end'),
-      'filter': FilterDate(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    NumberGridField('id', title=_('identifier'), key=True),
+    TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    TextGridField('suboperation', title=_('suboperation'), field_name='suboperation__name', formatter='operation'),
+    NumberGridField('priority', title=_('priority')),
+    DateTimeGridField('effective_start', title=_('effective start')),
+    DateTimeGridField('effective_end', title=_('effective end')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class OperationPlanList(ListReport):
+class OperationPlanList(GridReport):
   '''
   A list report to show operationplans.
   '''
@@ -1204,42 +767,18 @@ class OperationPlanList(ListReport):
       )
 
   rows = (
-    ('id', {
-      'title': _('identifier'),
-      'filter': FilterNumber(),
-      }),
-    ('operation', {
-      'title': _('operation'),
-      'filter': FilterText(field='operation__name'),
-      }),
-    ('startdate', {
-      'title': _('start date'),
-      'filter': FilterDate(),
-      }),
-    ('enddate', {
-      'title': _('end date'),
-      'filter': FilterDate(),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      'filter': FilterNumber(),
-      }),
-    ('locked', {
-      'title': _('locked'),
-      'filter': FilterBool(),
-      }),
-    ('owner', {
-      'title': _('owner'),
-      'filter': FilterNumber(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    NumberGridField('id', title=_('identifier'), key=True),
+    TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    DateTimeGridField('startdate', title=_('start date')),
+    DateTimeGridField('enddate', title=_('end date')),
+    NumberGridField('quantity', title=_('quantity')),
+    BoolGridField('locked', title=_('locked')),
+    IntegerGridField('owner', title=_('owner')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class BucketList(ListReport):
+class BucketList(GridReport):
   '''
   A list report to show dates.
   '''
@@ -1249,22 +788,13 @@ class BucketList(ListReport):
   model = Bucket
   frozenColumns = 1
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    TextGridField('name', title=_('name'), key=True),
+    TextGridField('description', title=_('description')),
+    LastModifiedGridField('lastmodified'),
     )
 
 
-class BucketDetailList(ListReport):
+class BucketDetailList(GridReport):
   '''
   A list report to show dates.
   '''
@@ -1274,25 +804,9 @@ class BucketDetailList(ListReport):
   model = BucketDetail
   frozenColumns = 1
   rows = (
-    ('id', {
-      'title': _('id'),
-      'filter': FilterNumber(),
-      }),
-    ('bucket', {
-      'title': _('bucket'),
-      'filter': FilterText(field='bucket__name'),
-      }),
-    ('startdate', {
-      'title': _('start date'),
-      'filter': FilterDate(),
-      }),
-    ('enddate', {
-      'title': _('end date'),
-      'filter': FilterDate(),
-      }),
-    ('lastmodified', {
-      'title': _('last modified'),
-      'filter': FilterDate(),
-      }),
+    NumberGridField('id', title=_('identifier'), key=True),
+    TextGridField('bucket', title=_('bucket'), field_name='bucket__name'),
+    DateTimeGridField('startdate', title=_('start date')),
+    DateTimeGridField('enddate', title=_('end date')),
+    LastModifiedGridField('lastmodified'),
     )
-

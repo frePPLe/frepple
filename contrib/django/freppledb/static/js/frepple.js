@@ -51,40 +51,63 @@ var upload = {
 
 
 //----------------------------------------------------------------------------
-// Formatter functions for the grid cells.
+// Customer formatter functions for the grid cells.
 //----------------------------------------------------------------------------
 
 function linkunformat (cellvalue, options, cell) {
   return cellvalue;
 }
 
-function itemformatter (cellvalue, options, rowObject) {
-  return '<a href="' + cellvalue + '" class="item context">' + cellvalue + "</a>";
-}
-
-function bufferformatter (cellvalue, options, rowObject) {
-  return '<a href="' + cellvalue + '" class="buffer context">' + cellvalue + "</a>";
-}
-
-function resourceformatter (cellvalue, options, rowObject) {
-  return '<a href="' + cellvalue + '" class="resource context">' + cellvalue + "</a>";
-}
-
-function detailformatter (cellvalue, options, rowObject) {
-  return '<a href="' + cellvalue + '" class="detail context">' + cellvalue + "</a>";
-}
-
-function forecastformatter (cellvalue, options, rowObject) {
-  return '<a href="' + cellvalue + '" class="forecast context">' + cellvalue + "</a>";
-}
-
-function customerformatter (cellvalue, options, rowObject) {
-  return '<a href="' + cellvalue + '" class="customer context">' + cellvalue + "</a>";
-}
-
-function demandformatter (cellvalue, options, rowObject) {
-  return '<a href="' + cellvalue + '" class="demand context">' + cellvalue + "</a>";
-}
+jQuery.extend($.fn.fmatter, {
+  item : function(cellvalue, options, rowdata) {
+    return '<a href="' + cellvalue + '" class="item context">' + cellvalue + "</a>";
+  },
+  customer : function(cellvalue, options, rowdata) {
+    return '<a href="' + cellvalue + '" class="customer context">' + cellvalue + "</a>";
+  },
+  buffer : function(cellvalue, options, rowdata) {
+    return '<a href="' + cellvalue + '" class="buffer context">' + cellvalue + "</a>";
+  },  
+  resource : function(cellvalue, options, rowdata) {
+    return '<a href="' + cellvalue + '" class="resource context">' + cellvalue + "</a>";
+  },
+  forecast : function(cellvalue, options, rowdata) {
+    return '<a href="' + cellvalue + '" class="forecast context">' + cellvalue + "</a>";
+  },
+  demand : function(cellvalue, options, rowdata) {
+    return '<a href="' + cellvalue + '" class="demand context">' + cellvalue + "</a>";
+  },
+  operation : function(cellvalue, options, rowdata) {
+    return '<a href="' + cellvalue + '" class="operation context">' + cellvalue + "</a>";
+  },
+  calendar : function(cellvalue, options, rowdata) {
+    return '<a href="' + cellvalue + '" class="calendar context">' + cellvalue + "</a>";
+  }
+});
+jQuery.extend($.fn.fmatter.item, {
+    unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.buffer, {
+    unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.resource, {
+    unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.forecast, {
+    unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.customer, {
+    unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.operation, {
+    unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.demand, {
+    unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.calendar, {
+    unformat : linkunformat
+});
 
 
 //----------------------------------------------------------------------------

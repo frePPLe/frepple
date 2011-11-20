@@ -1,47 +1,100 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_list %}
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="/media/css/changelists.css" />{% endblock %}
-{% block extrahead %}{{ block.super }}
-{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
-{% endfor %}
-<script type="text/javascript">
-    installLoadHandler();
-</script>
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" media="screen" href="/static/css/ui.jqgrid.css" />
+{% endblock %}
+{% block extrahead %}{{ block.super }} 
+{% block extrajavascript %}<script type="text/javascript">
+var original;
+$(function(){ 
+
+  jQuery("#jsonmap").jqGrid({        
+   	url: window.location.href + (window.location.href.indexOf("?") == -1 ? "?format=json" : "&format=json"),
+	  datatype: "json",
+	  jsonReader : {id: "{{reportclass.keyfield}}", repeatitems:false},
+   	colModel:[
+   	  {% for f in reportclass.rows %}{% if not forloop.first %},
+   	  {% endif %}{{f|safe}}{% endfor %}
+   	  ],
+    //cellEdit: true,
+    //cellsubmit: 'clientArray',
+    //editurl: location.pathname,
+   	rowNum: 100,
+   	pager: '#pjmap',
+   	sortname: '{{reportclass.keyfield}}',
+    viewrecords: true,    
+    sortorder: "asc",	
+    hidegrid: false,
+    scrollRows: true,
+	  altRows: true,
+	  scroll: 1,
+    autowidth: true,    
+	  shrinkToFit: false,
+	  height: $(window).height() - $("#jsonmap").offset().top - 70
+    });
+  
+  jQuery("#jsonmap").jqGrid('navGrid','#pjmap',
+    {edit:true,add:false,del:false,refresh:false},{},
+    {},
+    {},
+    {multipleSearch:true, multipleGroup:true, showQuery: true}
+    );
+
+  $("#savebutton").click(function() {
+    alert(JSON.stringify($("#jsonmap").getChangedCells('dirty')));
+    });
+  });
+
+/*
+$(window).bind('beforeunload', function() {
+   var rows = $("#jsonmap").getChangedCells('dirty');
+   alert(JSON.stringify(rows));
+   if (rows != null && rows.length > 0) 
+   {
+     $("#popup").html("Discard saved data").dialog({ 
+       title: gettext("Export data"), autoOpen: true, resizable: false,
+       modal: true,
+       buttons: 
+          {
+          "Save": function() {
+            $( this ).dialog( "close" );
+            return false;
+            },
+          "Discard": function() {
+            $( this ).dialog( "close" );
+            return true;
+            }       
+          }  
+      });
+      return true;
+  };
+  return true;
+});
+*/
+
+$(window).bind('resize', function() {
+  $("#jsonmap")
+   .setGridWidth($('#content-main').width()) 
+   .setGridHeight($(window).height() - $("#jsonmap").offset().top - 70);
+}); 
+
+</script> 
+{% endblock %}
 {% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
 {% if filternew %}<a href="javascript:filter.show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
 {% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>{% endif %}
 {% if hasaddperm and model %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>{% endif %}
+<a href="#" id="savebutton" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Save' %}</a>
 <a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a><div id="popup" class="ui-helper-hidden"></div>
+<div id="popup"></div>
+
 </div>{% endblock %}
 {% block content %}
-<div id="content-main">
-{% if filternew %}{{ filternew }}{% endif %}
 {% block contextmenus %}{% endblock %}
-{% if filterdef %}{{ filterdef }}{% endif %}
+<div id="content-main" style="margin-right: 16px;">
 {% block before_table %}{% endblock %}
-<table><tr>{% if reportclass.frozenColumns %}<td style="padding:0px;"><div id="ul" class="gridupleft"><table id="ult">
-<thead><tr>{{ rowheaderfrozen }}</tr></thead>
-</table></div></td>{% endif %}
-
-<td style="padding:0px;"><div id="ur" class="gridupright"><table id="urt" style="position: relative;">
-<thead><tr>{{ rowheader }}</tr></thead>
-</table></div></td></tr>
-
-<tr>{% if reportclass.frozenColumns %}<td style="padding:0px;"><div id="dl" class="griddownleft" onscroll="syncScroll(0);">
-<table id="dlt" style="float: left; position: relative;"><tbody>
-{% block frozendata %}{% endblock %}
-</tbody></table></div></td>{% endif %}
-
-<td style="padding:0px;"><div id="dr" class="griddownright" onscroll="syncScroll(1);">
-<table id="drt"><tbody>
-{% block data %}{% endblock %}
-</tbody></table></div></td></tr></table>
-
-{% block pagination %}<p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} {% if reportclass.model %}{{ reportclass.model|verbose_name_plural }} {% endif %}{% ifnotequal hits fullhits %} (total <a class="showall" href="{{base_request_path}}{% if is_popup %}?pop=1{% endif %}">{{fullhits}}</a>){% endifnotequal %}
-{% endblock %}
-{% block after_table %}{% endblock %}
+<table id="jsonmap"></table>
+<div id="pjmap"></div>
 </div>
 {% endblock %}

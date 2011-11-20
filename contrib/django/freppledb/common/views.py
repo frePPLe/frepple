@@ -33,7 +33,7 @@ from django.contrib.admin.models import LogEntry
 from django.contrib.syndication.views import Feed
 
 from freppledb.common.models import Preferences
-from freppledb.common.report import ListReport, FilterText, FilterBool
+from freppledb.common.report import GridReport, TextGridField, BoolGridField
 from freppledb.input.models import Bucket
 
 
@@ -93,7 +93,7 @@ def preferences(request):
      context_instance=RequestContext(request))
 
 
-class UserList(ListReport):
+class UserList(GridReport):
   '''
   A list report to show users.
   '''
@@ -104,30 +104,15 @@ class UserList(ListReport):
   frozenColumns = 1
 
   rows = (
-    ('username', {
-      'title': _('username'),
-      'filter': FilterText(),
-      }),
-    ('email', {
-      'title': _('E-mail'),
-      'filter': FilterText(),
-      }),
-    ('first_name', {
-      'title': _('first name'),
-      'filter': FilterText(),
-      }),
-    ('last_name', {
-      'title': _('last name'),
-      'filter': FilterText(),
-      }),
-    ('is_staff', {
-      'title': _('staff status'),
-      'filter': FilterBool(),
-      }),
+    TextGridField('username', title=_('username'), key=True),          
+    TextGridField('email', title=_('E-mail'), formatter='email', width=200),          
+    TextGridField('first_name', title=_('first_name')),          
+    TextGridField('last_name', title=_('last name')),          
+    BoolGridField('is_staff', title=_('staff status')),          
     )
 
 
-class GroupList(ListReport):
+class GroupList(GridReport):
   '''
   A list report to show groups.
   '''
@@ -136,12 +121,8 @@ class GroupList(ListReport):
   basequeryset = Group.objects.all()
   model = Group
   frozenColumns = 0
-
   rows = (
-    ('name', {
-      'title': _('name'),
-      'filter': FilterText(),
-      }),
+    TextGridField('name', title=_('name'), key=True, width=200),          
     )
 
  

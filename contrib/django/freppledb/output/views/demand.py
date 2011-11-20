@@ -30,7 +30,8 @@ from django.conf import settings
 from freppledb.input.models import Item
 from freppledb.output.models import Demand
 from freppledb.common.db import python_date, sql_datediff, sql_overlap
-from freppledb.common.report import TableReport, ListReport, FilterText, FilterNumber, FilterDate, getBuckets
+from freppledb.common.report import TableReport, FilterText, FilterNumber, FilterDate, getBuckets
+from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
 
 
 class OverviewReport(TableReport):
@@ -174,7 +175,7 @@ class OverviewReport(TableReport):
         }
 
 
-class DetailReport(ListReport):
+class DetailReport(GridReport):
   '''
   A list report to show delivery plans for demand.
   '''
@@ -186,35 +187,14 @@ class DetailReport(ListReport):
   frozenColumns = 0
   editable = False
   rows = (
-    ('demand', {
-      'filter': FilterText(),
-      'title': _('demand')
-      }),
-    ('item', {
-      'title': _('item'),
-      'filter': FilterText(),
-      }),
-    ('customer', {
-      'title': _('customer'),
-      'filter': FilterText(),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      'filter': FilterNumber(),
-      }),
-    ('planquantity', {
-      'title': _('planned quantity'),
-      'filter': FilterNumber(),
-      }),
-    ('due', {
-      'title': _('due date'),
-      'filter': FilterDate(field='due'),
-      }),
-    ('plandate', {
-      'title': _('planned date'),
-      'filter': FilterDate(field='plandate'),
-      }),
-    ('operationplan', {'title': _('operationplan')}),
+    TextGridField('demand', title=_('demand'), key=True, editable=False, formatter='demand'),
+    TextGridField('item', title=_('item'), formatter='item', editable=False),
+    TextGridField('customer', title=_('customer'), formatter='customer', editable=False),
+    NumberGridField('quantity', title=_('quantity'), editable=False),
+    NumberGridField('planquantity', title=_('planned quantity'), editable=False),
+    DateTimeGridField('due', title=_('due date'), editable=False),
+    DateTimeGridField('plandate', title=_('planned date'), editable=False),
+    IntegerGridField('operationplan', title=_('operationplan'), editable=False),
     )
 
 

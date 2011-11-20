@@ -25,7 +25,7 @@ from django.utils.translation import string_concat
 from django.db.models import Count
 
 from freppledb.output.models import Constraint
-from freppledb.common.report import ListReport, FilterText, FilterChoice, FilterDate, FilterNumber
+from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField
 
 
 entities = (
@@ -65,7 +65,7 @@ def getNames(request):
     ])
 
 
-class Report(ListReport):
+class Report(GridReport):
   '''
   A list report to show constraints.
   '''
@@ -76,36 +76,12 @@ class Report(ListReport):
   frozenColumns = 0
   editable = False
   rows = (
-    ('demand', {
-      'title': _('demand'),
-      'filter': FilterText(size=30),
-      }),
-    ('entity', {
-      'title': _('entity'),
-      'filter': FilterChoice(choices=getEntities),
-      }),
-    ('name', {
-      'title': _('name'),
-      'filter': FilterChoice(choices=getNames),
-      }),
-    ('owner', {
-      'title': _('owner'),
-      'filter': FilterText(size=30),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(size=30),
-      }),
-    ('startdate', {
-      'title': _('startdate'),
-      'filter': FilterDate(),
-      }),
-    ('enddate', {
-      'title': _('enddate'),
-      'filter': FilterDate(),
-      }),
-    ('weight', {
-      'title': _('weight'),
-      'filter': FilterNumber(size=5, operator="lt"),
-      }),
+    TextGridField('demand', title=_('demand'), editable=False, formatter='demand'),
+    TextGridField('entity', title=_('entity'), editable=False, width=80), # choices=getEntities),  TODO
+    TextGridField('name', title=_('name'), editable=False, width=100, align='center'),
+    TextGridField('owner', title=_('owner'), editable=False, align='center'),
+    TextGridField('description', title=_('description'), editable=False, width=250),
+    DateTimeGridField('startdate', title=_('start date'), editable=False),
+    DateTimeGridField('enddate', title=_('end date'), editable=False),
+    NumberGridField('weight', title=_('weight'), editable=False),
     )

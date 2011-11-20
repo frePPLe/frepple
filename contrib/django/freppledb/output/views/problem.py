@@ -25,7 +25,7 @@ from django.utils.translation import string_concat
 from django.db.models import Count
 
 from freppledb.output.models import Problem
-from freppledb.common.report import ListReport, FilterText, FilterNumber, FilterDate, FilterChoice
+from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField
 
 
 def getEntities(request):
@@ -42,7 +42,7 @@ def getNames(request):
     ])
 
 
-class Report(ListReport):
+class Report(GridReport):
   '''
   A list report to show problems.
   '''
@@ -53,32 +53,11 @@ class Report(ListReport):
   frozenColumns = 0
   editable = False
   rows = (
-    ('entity', {
-      'title': _('entity'),
-      'filter': FilterChoice(choices=getEntities),
-      }),
-    ('name', {
-      'title': _('name'),
-      'filter': FilterChoice(choices=getNames),
-      }),
-    ('owner', {
-      'title': _('owner'),
-      'filter': FilterText(size=30),
-      }),
-    ('description', {
-      'title': _('description'),
-      'filter': FilterText(size=30),
-      }),
-    ('startdate', {
-      'title': _('startdate'),
-      'filter': FilterDate(),
-      }),
-    ('enddate', {
-      'title': _('enddate'),
-      'filter': FilterDate(),
-      }),
-    ('weight', {
-      'title': _('weight'),
-      'filter': FilterNumber(size=5, operator="lt"),
-      }),
+    TextGridField('entity', title=_('entity'), editable=False, align='center'), # TODO choices=getEntities
+    TextGridField('name', title=_('name'), editable=False, align='center'),  # TODO choices=getNames
+    TextGridField('owner', title=_('owner'), editable=False),
+    TextGridField('description', title=_('description'), editable=False, width=250),
+    DateTimeGridField('startdate', title=_('start date'), editable=False),
+    DateTimeGridField('enddate', title=_('end date'), editable=False),
+    NumberGridField('weight', title=_('weight'), editable=False),
     )

@@ -36,7 +36,7 @@ from django.contrib import messages
 from django.utils.encoding import force_unicode
 
 from freppledb.execute.models import log, Scenario
-from freppledb.common.report import ListReport, FilterDate, FilterText
+from freppledb.common.report import GridReport, LastModifiedGridField, TextGridField, IntegerGridField
 import freppledb.input
 
 @staff_member_required
@@ -84,7 +84,7 @@ def erase(request):
   # Allow only post
   if request.method != 'POST':
     messages.add_message(request, messages.ERROR, force_unicode(_('Only POST method allowed')))
-    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+    return HttpResponseRedirect('%s/execute/execute.html#database' % request.prefix)
 
   # Erase the database contents
   try:
@@ -95,7 +95,7 @@ def erase(request):
     messages.add_message(request, messages.ERROR, force_unicode(_('Failure during database erasing: %(msg)s') % {'msg':e}))
 
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-  return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+  return HttpResponseRedirect('%s/execute/execute.html#database' % request.prefix)
 
 
 @staff_member_required
@@ -109,7 +109,7 @@ def create(request):
   if request.method != 'POST':
     messages.add_message(request, messages.ERROR,
       force_unicode(_('Only POST method allowed')))
-    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+    return HttpResponseRedirect('%s/execute/execute.html#generator' % request.prefix)
 
   # Validate the input form data
   try:
@@ -157,7 +157,7 @@ def create(request):
 
   # Show the main screen again
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-  return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+  return HttpResponseRedirect('%s/execute/execute.html#generator' % request.prefix)
 
 
 @staff_member_required
@@ -171,7 +171,7 @@ def runfrepple(request):
   if request.method != 'POST':
     messages.add_message(request, messages.ERROR,
       force_unicode(_('Only POST method allowed')))
-    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+    return HttpResponseRedirect('%s/execute/execute.html#plan' % request.prefix)
 
   # Decode form input
   constraint = 0
@@ -200,7 +200,7 @@ def runfrepple(request):
     messages.add_message(request, messages.ERROR,
       force_unicode(_('Failure creating a plan: %(msg)s') % {'msg':e}))
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-  return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+  return HttpResponseRedirect('%s/execute/execute.html/#plan' % request.prefix)
 
 
 @staff_member_required
@@ -215,7 +215,7 @@ def fixture(request):
     messages.add_message(request, messages.ERROR,
       force_unicode(_('Only POST method allowed')))
     # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+    return HttpResponseRedirect('%s/execute/execute.html#database' % request.prefix)
 
   # Decode the input data from the form
   try:
@@ -224,7 +224,7 @@ def fixture(request):
   except:
     messages.add_message(request, messages.ERROR,
       force_unicode(_('Missing dataset name')))
-    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+    return HttpResponseRedirect('%s/execute/execute.html#database' % request.prefix)
 
   # Load the fixture
   # The fixture loading code is unfornately such that no exceptions are
@@ -242,7 +242,7 @@ def fixture(request):
       force_unicode(_('Error while loading dataset: %(msg)s') % {'msg':e}))
     log(category='LOAD', theuser=request.user.username,
       message='Failed loading dataset "%s": %s' % (fixture,e)).save(using=request.database)
-  return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+  return HttpResponseRedirect('%s/execute/execute.html#database' % request.prefix)
 
 
 @staff_member_required
@@ -278,7 +278,7 @@ def logfile(request):
       } )
 
 
-class LogReport(ListReport):
+class LogReport(GridReport):
   '''
   A list report to review the history of actions.
   '''
@@ -289,24 +289,12 @@ class LogReport(ListReport):
   default_sort = '1d'
   model = log
   frozenColumns = 0
-  editable = False
   rows = (
-    ('lastmodified', {
-      'title':_('last modified'),
-      'filter': FilterDate(),
-      }),
-    ('category', {
-      'filter': FilterText(),
-      'title': _('category'),
-      }),
-    ('theuser', {
-      'filter': FilterText(),
-      'title': _('user'),
-      }),
-    ('message', {
-      'filter': FilterText(size=30),
-      'title':_('message'),
-      }),
+    IntegerGridField('id', title=_('identifier'), key=True),
+    LastModifiedGridField('lastmodified'),
+    TextGridField('category', title=_('category'), editable=False, align='center'),
+    TextGridField('theuser', title=_('user'), editable=False, align='center'),
+    TextGridField('message', title=_('message'), editable=False, width=500),
     )
 
 
@@ -321,7 +309,7 @@ def scenarios(request):
   if request.method != 'POST':
     messages.add_message(request, messages.ERROR,
       force_unicode(_('Only POST method allowed')))
-    return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+    return HttpResponseRedirect('%s/execute/execute.html#scenarios' % request.prefix)
 
   # Execute the correct action
   try:
@@ -371,7 +359,7 @@ def scenarios(request):
     else:
       messages.add_message(request, messages.ERROR,
         force_unicode(_('Invalid action')))
-      return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+      return HttpResponseRedirect('%s/execute/execute.html#scenarios' % request.prefix)
 
   except Exception, x:
     print x
@@ -380,4 +368,4 @@ def scenarios(request):
     transaction.commit()
 
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-  return HttpResponseRedirect('%s/execute/execute.html' % request.prefix)
+  return HttpResponseRedirect('%s/execute/execute.html#scenarios' % request.prefix)

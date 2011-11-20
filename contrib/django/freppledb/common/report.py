@@ -36,6 +36,7 @@ It provides the following functionality:
 from datetime import date, datetime
 from decimal import Decimal
 import csv, cStringIO
+import operator
 
 from django.conf import settings
 from django.core.paginator import QuerySetPaginator, InvalidPage
@@ -43,22 +44,26 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
+from django.db import models
 from django.db.models.fields import Field
 from django.db.models.fields.related import RelatedField, AutoField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.forms.models import modelform_factory
+from django.shortcuts import render
 from django.template import RequestContext, loader
-from django.utils.encoding import smart_str
 from django.utils import translation
+from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.utils.html import escape
 from django.utils.formats import get_format, number_format
 from django.utils.safestring import mark_safe
+from django.utils import simplejson as json
 from django.utils.text import capfirst, get_text_list
 from django.utils.encoding import iri_to_uri, force_unicode
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
+from django.views.generic.base import View
 
 from freppledb.input.models import Parameter, BucketDetail, Bucket
 
@@ -70,6 +75,89 @@ ON_ENDS = 2            # Number of pages shown at the start and the end of the p
 # URL parameters that are not query arguments
 reservedParameters = ('o', 'p', 't', 'reporttype', 'pop', 'reportbucket', 'reportstart', 'reportend')
 
+
+class GridField(object):
+  ''' 
+  Base field for fields in grid reports.
+  '''
+    
+  def __init__(self, name, **kwargs):
+    self.name = name
+    for key in kwargs:
+      setattr(self, key, kwargs[key])
+    if 'key' in kwargs: self.editable = False
+    if not 'title' in kwargs: self.title = _(self.name)
+    if not 'field_name' in kwargs: self.field_name = self.name     
+  
+  def __str__(self):
+    o = [ "{name:'%s',label:'%s',width:%d,align:'%s'," % (self.name, force_unicode(self.title).title(), self.width, self.align), ]
+    if self.key: o.append( "key:true," )
+    if not self.sortable: o.append("sortable:false,")
+    if not self.editable: o.append("editable:false,")
+    if self.formatter: o.append("formatter:'%s'," % self.formatter) 
+    if self.unformat: o.append("unformat:%s," % self.unformat) 
+    if self.extra: o.append(self.extra)
+    o.append('}')
+    return ''.join(o)
+    
+  name = None
+  field_name = None
+  formatter = None
+  width = 100
+  editable = True 
+  sortable = True
+  key = False
+  unformat = None
+  title = None
+  extra = None
+  align = 'center'
+  
+    
+class DateTimeGridField(GridField):
+  formatter = 'date'
+  extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d H:i:s'}"
+  width = 140
+  
+    
+class DateGridField(GridField):
+  formatter = 'date'
+  extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d'}"
+  width = 140
+  
+    
+class IntegerGridField(GridField):
+  formatter = 'integer'
+  width = 70
+  
+    
+class NumberGridField(GridField):
+  formatter = 'number'
+  width = 70
+  
+    
+class BoolGridField(GridField):
+  formatter = 'checkbox'
+  width = 60
+    
+    
+class LastModifiedGridField(GridField):
+  formatter = 'date'
+  extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d H:i:s'}"
+  title = _('last modified')
+  editable = False
+  width = 140
+    
+    
+class TextGridField(GridField):
+  width = 200
+  align = 'left'    
+    
+class CurrencyGridField(GridField):
+  formatter = 'currency'
+  extra = "formatoptions:{prefix:'$'}"
+  width = 80
+  
+  
 class Report(object):
   '''
   The base class for all reports.
@@ -107,6 +195,9 @@ class Report(object):
 
   # Time buckets in this report
   timebuckets = False
+  
+  # A list with required user permissions to view the report
+  permissions = []
 
 
 class ListReport(Report):
@@ -137,9 +228,6 @@ class ListReport(Report):
       Extra javascript files to import for running the report
   '''
   rows = ()
-
-  # A list with required user permissions to view the report
-  permissions = []
 
 
 class TableReport(Report):
@@ -545,26 +633,189 @@ def _get_paginator_html(request, paginator, page):
   return mark_safe(' '.join(page_htmls))
 
 
-def _get_javascript_imports(reportclass):
-  '''
-  Put in any necessary JavaScript imports.
-  '''
-  # Check for the presence of a date filter
-  if issubclass(reportclass, TableReport):
-    add = True
+def get_filters(request):
+  _search = request.GET.get('_search')
+  filters = None
+
+  if _search == 'true':
+      _filters = request.GET.get('filters')
+      try:
+          filters = _filters and json.loads(_filters)
+      except ValueError:
+          return None
+
+      if filters is None:
+          field = request.GET.get('searchField')
+          op = request.GET.get('searchOper')
+          data = request.GET.get('searchString')
+
+          if all([field, op, data]):
+              filters = {
+                  'groupOp': 'AND',
+                  'rules': [{ 'op': op, 'field': field, 'data': data }]
+              }
+  return filters
+
+
+def filter_items(request, reportclass, items):
+  # TODO: Add option to use case insensitive filters
+  # TODO: Add more support for RelatedFields (searching and displaying)
+  # FIXME: Validate data types are correct for field being searched.
+  filter_map = {
+      # jqgrid op: (django_lookup, use_exclude)
+      'ne': ('%(field)s__exact', True),
+      'bn': ('%(field)s__startswith', True),
+      'en': ('%(field)s__endswith',  True),
+      'nc': ('%(field)s__contains', True),
+      'ni': ('%(field)s__in', True),
+      'in': ('%(field)s__in', False),
+      'eq': ('%(field)s__exact', False),
+      'bw': ('%(field)s__startswith', False),
+      'gt': ('%(field)s__gt', False),
+      'ge': ('%(field)s__gte', False),
+      'lt': ('%(field)s__lt', False),
+      'le': ('%(field)s__lte', False),
+      'ew': ('%(field)s__endswith', False),
+      'cn': ('%(field)s__contains', False)
+  }
+  _filters = get_filters(request)
+  if _filters is None:
+      return items
+
+  q_filters = []
+  for rule in _filters['rules']:
+      op, field, data = rule['op'], rule['field'], rule['data']
+      # FIXME: Restrict what lookups performed against RelatedFields
+      field_class = reportclass.model._meta.get_field_by_name(field)[0]
+      if isinstance(field_class, models.related.RelatedField):
+          op = 'eq'
+      filter_fmt, exclude = filter_map[op]
+      filter_str = smart_str(filter_fmt % {'field': field})
+      if filter_fmt.endswith('__in'):
+          d_split = data.split(',')
+          filter_kwargs = {filter_str: data.split(',')}
+      else:
+          filter_kwargs = {filter_str: smart_str(data)}
+
+      if exclude:
+          q_filters.append(~models.Q(**filter_kwargs))
+      else:
+          q_filters.append(models.Q(**filter_kwargs))
+
+  if _filters['groupOp'].upper() == 'OR':
+      filters = reduce(operator.ior, q_filters)
   else:
-    add = False
-    for row in reportclass.rows:
-      if 'filter' in row[1] and isinstance(row[1]['filter'], FilterDate):
-        add = True
-  if add:
-    return reportclass.javascript_imports + [
-      "/media/js/core.js",
-      "/media/js/calendar.js",
-      "/media/js/admin/DateTimeShortcuts.js",
-      ]
-  else:
-    return reportclass.javascript_imports
+      filters = reduce(operator.iand, q_filters)
+  return items.filter(filters)
+
+
+class GridReport(View, Report):
+
+  model = None
+  
+  @staticmethod
+  def _generate_json_data(reportclass, request):
+    model = reportclass.model
+    page = 'page' in request.GET and int(request.GET['page']) or 1
+    sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
+    if 'sord' in request.GET and request.GET['sord'] == 'desc':
+      sort = "-%s" % sort
+    print request.GET
+    query = filter_items(request, reportclass, reportclass.basequeryset)
+    recs = query.count()
+    yield '{"total":%d,\n' % (recs/100)
+    yield '"page":%d,\n' % page
+    yield '"records":%d,\n' % recs
+    yield '"rows":[\n'
+    cnt = (page-1)*100+1
+    first = True
+    
+    # # TREEGRID 
+    #from django.db import connections, DEFAULT_DB_ALIAS
+    #cursor = connections[DEFAULT_DB_ALIAS].cursor()
+    #cursor.execute('''
+    #  select node.name,node.description,node.category,node.subcategory,node.operation_id,node.owner_id,node.price,node.lastmodified,node.level,node.lft,node.rght,node.rght=node.lft+1
+    #  from item as node
+    #  left outer join item as parent0
+    #    on node.lft between parent0.lft and parent0.rght and parent0.level = 0 and node.level >= 0
+    #  left outer join item as parent1
+    #    on node.lft between parent1.lft and parent1.rght and parent1.level = 1 and node.level >= 1
+    #  left outer join item as parent2  
+    #    on node.lft between parent2.lft and parent2.rght and parent2.level = 2 and node.level >= 2  
+    #  where node.level = 0
+    #  order by parent0.description asc, parent1.description asc, parent2.description asc, node.level, node.description, node.name
+    #  ''')
+    #for row in cursor.fetchall():
+    #  if first:
+    #    first = False
+    #    yield '{"%s","%s","%s","%s","%s","%s","%s","%s",%d,%d,%d,%s,false]}\n' %(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11] and 'true' or 'false')
+    #  else:
+    #    yield ',{"%s","%s","%s","%s","%s","%s","%s","%s",%d,%d,%d,%s,false]}\n' %(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11] and 'true' or 'false')
+    #yield ']}\n'
+        
+    fields = [ i.field_name for i in reportclass.rows ]
+    #if False: # TREEGRID
+    #  fields.append('level')
+    #  fields.append('lft')
+    #  fields.append('rght')
+    #  fields.append('isLeaf')
+    #  fields.append('expanded')
+    print sort
+    for i in query.order_by(sort)[cnt-1:cnt+100].values(*fields):
+      if first:
+        r = [ '{' ]
+        first = False
+      else:
+        r = [ ',\n{' ]
+      first2 = True
+      for f in reportclass.rows:
+        if first2:
+          r.append('"%s":"%s"' % (f.name,i[f.field_name])) 
+          first2 = False
+        elif i[f.field_name] != None:
+          r.append(', "%s":"%s"' % (f.name,i[f.field_name]))
+      #if False:    # TREEGRID 
+      #  r.append(', %d, %d, %d, %s, %s' % (i['level'],i['lft'],i['rght'], i['isLeaf'] and 'true' or 'false', i['expanded'] and 'true' or 'false' ))
+      r.append('}')
+      yield ''.join(r)
+      cnt = cnt + 1
+    yield '\n]}\n'
+  
+    
+  @staticmethod
+  @staff_member_required
+  @csrf_protect  
+  def post(request, **args):   
+    d = args['report'].model.objects.get(pk=request.POST['id'])
+    for i in request.POST:
+      setattr(d, i, request.POST[i])
+    d.save()
+    resp = HttpResponse()
+    resp.content = "OK"
+    resp.status_code = 200
+    return resp
+  
+   
+  @staticmethod
+  @staff_member_required
+  @csrf_protect  
+  def get(request, **args):   
+    if request.method == 'POST':
+      messages.add_message(request, messages.ERROR, _('Invalid upload request'))
+      return HttpResponseRedirect(request.prefix + request.get_full_path())
+    if 'format' in request.GET:
+      # Return JSON data to fill the page
+      response = HttpResponse(content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET)
+      response._container = GridReport._generate_json_data(args['report'], request)
+      response._is_string = False
+      return response
+    else:
+      # Return HTML page
+      reportclass = args['report']
+      return render(request, 'admin/base_site_list.html', {
+        'reportclass': reportclass,
+        'title': reportclass.title
+        })
 
 
 def _localize(value, use_l10n=None):

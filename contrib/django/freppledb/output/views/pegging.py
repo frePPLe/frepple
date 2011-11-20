@@ -22,18 +22,19 @@
 
 from datetime import timedelta, datetime
 
-from django.utils.translation import ugettext_lazy as _
-from django.db import connections
+from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db import connections
 from django.http import HttpResponse
 from django.template import RequestContext, loader
+from django.utils.translation import ugettext_lazy as _
+
 from freppledb.input.models import Parameter, Demand
 from freppledb.output.models import FlowPlan, LoadPlan, OperationPlan
-from freppledb.common.report import ListReport, getBuckets
-from django.conf import settings
+from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, getBuckets
 
 
-class ReportByDemand(ListReport):
+class ReportByDemand(GridReport):
   '''
   A list report to show peggings.
   '''
@@ -50,34 +51,15 @@ class ReportByDemand(ListReport):
     "/media/js/admin/DateTimeShortcuts.js",
     ]
   rows = (
-    ('depth', {
-      'title': _('depth'),
-      'order_by': 'name',
-      }),
-    ('operation', {
-      'title': _('operation'),
-      }),
-    ('buffer', {
-      'title': _('buffer'),
-      }),
-    ('item', {
-      'title': _('item'),
-      }),
-    ('resource', {
-      'title': _('resource'),
-      }),
-    ('startdate', {
-      'title': _('startdate'),
-      }),
-    ('enddate', {
-      'title': _('enddate'),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      }),
-    ('percent_used', {
-      'title': _('percent used'),
-      }),
+    TextGridField('depth', title=_('depth'), editable=False),
+    TextGridField('operation', title=_('operation'), formatter='operation', editable=False),
+    TextGridField('buffer', title=_('buffer'), formatter='buffer', editable=False),
+    TextGridField('item', title=_('item'), formatter='item', editable=False),
+    TextGridField('resource', title=_('resource'), formatter='resource', editable=False),
+    DateTimeGridField('startdate', title=_('start date'), editable=False),
+    DateTimeGridField('enddate', title=_('end date'), editable=False),
+    NumberGridField('quantity', title=_('quantity'), editable=False),
+    NumberGridField('percent_used', title=_('percent_used'), editable=False),
     )
 
   @staticmethod
@@ -227,7 +209,7 @@ def GraphData(request, entity):
     )
 
 
-class ReportByBuffer(ListReport):
+class ReportByBuffer(GridReport):
   '''
   A list report to show peggings.
   '''
@@ -240,21 +222,11 @@ class ReportByBuffer(ListReport):
   timebuckets = False
   default_sort = '3a'
   rows = (
-    ('operation', {
-      'title': _('operation'),
-      }),
-    ('date', {
-      'title': _('date'),
-      }),
-    ('demand', {
-      'title': _('demand'),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      }),
-    ('item', {
-      'title': _('end item'),
-      }),
+    TextGridField('operation', title=_('operation'), formatter='operation', editable=False),
+    DateTimeGridField('date', title=_('date'), editable=False),
+    TextGridField('demand', title=_('demand'), formatter='demand', editable=False),
+    NumberGridField('quantity', title=_('quantity'), editable=False),
+    TextGridField('item', title=_('end item'), formatter='item', editable=False),
     )
 
   @staticmethod
@@ -314,7 +286,7 @@ class ReportByBuffer(ListReport):
           }
 
 
-class ReportByResource(ListReport):
+class ReportByResource(GridReport):
   '''
   A list report to show peggings.
   '''
@@ -327,21 +299,11 @@ class ReportByResource(ListReport):
   timebuckets = False
   default_sort = '3a'
   rows = (
-    ('operation', {
-      'title': _('operation'),
-      }),
-    ('date', {
-      'title': _('date'),
-      }),
-    ('demand', {
-      'title': _('demand'),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      }),
-    ('item', {
-      'title': _('end item'),
-      }),
+    TextGridField('operation', title=_('operation'), formatter='operation', editable=False),
+    DateTimeGridField('date', title=_('date'), editable=False),
+    TextGridField('demand', title=_('demand'), formatter='demand', editable=False),
+    NumberGridField('quantity', title=_('quantity'), editable=False),
+    TextGridField('item', title=_('end item'), formatter='item', editable=False),
     )
 
   @staticmethod
@@ -382,7 +344,7 @@ class ReportByResource(ListReport):
           }
 
 
-class ReportByOperation(ListReport):
+class ReportByOperation(GridReport):
   '''
   A list report to show peggings.
   '''
@@ -395,21 +357,11 @@ class ReportByOperation(ListReport):
   timebuckets = False
   default_sort = '3a'
   rows = (
-    ('operation', {
-      'title': _('operation'),
-      }),
-    ('date', {
-      'title': _('date'),
-      }),
-    ('demand', {
-      'title': _('demand'),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      }),
-    ('item', {
-      'title': _('end item'),
-      }),
+    TextGridField('operation', title=_('operation'), formatter='operation', editable=False),
+    DateTimeGridField('date', title=_('date'), editable=False),
+    TextGridField('demand', title=_('demand'), formatter='demand', editable=False),
+    NumberGridField('quantity', title=_('quantity'), editable=False),
+    TextGridField('item', title=_('end item'), formatter='item', editable=False),
     )
 
   @staticmethod

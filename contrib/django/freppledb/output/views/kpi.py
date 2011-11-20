@@ -26,19 +26,19 @@ from django.conf import settings
 
 from freppledb.common.db import sql_datediff
 from freppledb.input.models import Parameter
-from freppledb.common.report import ListReport
+from freppledb.common.report import GridReport, TextGridField, NumberGridField
 
 
-class Report(ListReport):
+class Report(GridReport):
   template = 'output/kpi.html'
   title = _("Performance Indicators")
   reset_crumbs = True
   frozenColumns = 0
   basequeryset = Parameter.objects.all()
   rows = (
-    ('category', {'sort': False, 'title': _('category')}),
-    ('name', {'sort': False, 'title': _('name')}),
-    ('value', {'sort': False, 'title': _('value')}),
+    TextGridField('category', title=_('category'), sortable=False, editable=False, align='center'),
+    TextGridField('name', title=_('category'), sortable=False, editable=False, align='center'),
+    NumberGridField('value', title=_('category'), sortable=False, editable=False, align='center'),
     )
   default_sort = '2a'
 

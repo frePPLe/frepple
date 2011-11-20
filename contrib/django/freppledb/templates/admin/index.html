@@ -7,7 +7,9 @@
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript">
   $(function() {
-    $( "#content-main" ).accordion();
+    $( "#content-main" ).accordion({
+      collapsible: true 
+      });
   });
 </script>
 {% endblock %}

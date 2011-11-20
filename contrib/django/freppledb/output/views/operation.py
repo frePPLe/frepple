@@ -30,7 +30,8 @@ from django.conf import settings
 from freppledb.input.models import Operation
 from freppledb.output.models import OperationPlan
 from freppledb.common.db import sql_true, python_date
-from freppledb.common.report import TableReport, ListReport, FilterText, FilterNumber, FilterDate, getBuckets, FilterBool
+from freppledb.common.report import TableReport, FilterText, FilterNumber, FilterDate, getBuckets, FilterBool
+from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
 
 
 class OverviewReport(TableReport):
@@ -124,7 +125,7 @@ class OverviewReport(TableReport):
         }
 
 
-class DetailReport(ListReport):
+class DetailReport(GridReport):
   '''
   A list report to show operationplans.
   '''
@@ -136,34 +137,14 @@ class DetailReport(ListReport):
   frozenColumns = 0
   editable = False
   rows = (
-    ('id', {
-      'filter': FilterNumber(operator='exact', ),
-      'title': _('operationplan'),
-      }),
-    ('operation', {
-      'filter': FilterText(size=15),
-      'title': _('operation')}),
-    ('quantity', {
-      'title': _('quantity'),
-      'filter': FilterNumber(),
-      }),
-    ('startdate', {
-      'title': _('startdate'),
-      'filter': FilterDate(),
-      }),
-    ('enddate', {
-      'title': _('enddate'),
-      'filter': FilterDate(),
-      }),
-    ('locked', {
-      'title': _('locked'),
-      'filter': FilterBool(),
-      }),
-    ('unavailable', {
-      'title': _('unavailable'),
-      'filter': FilterNumber(),
-      }),
-    ('owner', {'title': _('owner')}),
+    IntegerGridField('id', title=_('operationplan'), key=True, editable=False),
+    TextGridField('operation', title=_('operation'), formatter='operation', editable=False),
+    NumberGridField('quantity', title=_('quantity'), editable=False),
+    DateTimeGridField('startdate', title=_('start date'), editable=False),
+    DateTimeGridField('enddate', title=_('end date'), editable=False),
+    BoolGridField('locked', title=_('locked'), editable=False),
+    NumberGridField('unavailable', title=_('unavailable'), editable=False),
+    IntegerGridField('owner', title=_('owner'), editable=False),
     )
 
 

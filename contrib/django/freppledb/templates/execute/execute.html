@@ -21,7 +21,9 @@
   }
   
   $(function() {
-    $( "#content-main" ).accordion();
+    $( "#content-main" ).accordion({
+      collapsible: true, navigation: true
+      });
   });
  
 </script>
@@ -35,7 +37,7 @@
 {% if perms.execute %}
 
 {% if perms.execute.run_frepple %}
-<h3><a href="#">{% trans 'Create a plan' %}</a></h3>
+<h3><a href="#plan">{% trans 'Create a plan' %}</a></h3>
 <div>
 <table>
 
@@ -71,7 +73,7 @@ and export results into the database<br/>
 {% endif %}
 
 {% if scenarios.count > 1 %}
-<h3><a href="#">{% trans "Scenario management" %}</a></h3>
+<h3><a href="#scenarios">{% trans "Scenario management" %}</a></h3>
 <div>
 <table style="width: 100%;">
 <form method="post" action="{{ request.prefix }}/execute/scenarios/">{% csrf_token %}<tr>
@@ -80,10 +82,10 @@ and export results into the database<br/>
 <th>{% trans 'description' %}</th>
 <th>{% trans 'last refresh' %}</th></tr>
 {% for j in scenarios %}{% ifnotequal j.name 'default' %}
-<tr><td><input type=checkbox name="{{j.name}}">{{j.name}}</input></td>
+<tr><td style="white-space: nowrap;"><input type=checkbox name="{{j.name}}">{{j.name}}</input></td>
 <td>{{j.status}}</td>
 <td>{{j.description}}</td>
-<td>{{j.lastrefresh}}</td></tr>
+<td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td></tr>
 {% endifnotequal %}{% endfor %}
 </td></tr>
 {% if perms.execute.copy_scenario %}
@@ -107,7 +109,7 @@ and export results into the database<br/>
 {% endif %}
 
 {% if perms.execute.run_db %}
-<h3><a href="#">{% trans "Database" %}</a></h3>
+<h3><a href="#database">{% trans "Database" %}</a></h3>
 <div>
 <table>
 
@@ -134,7 +136,7 @@ and export results into the database<br/>
 {% endif %}
 
 {% if perms.execute.run_db %}
-<h3><a href="#">{% trans "Model generator" %}</a></h3>
+<h3><a href="#generator">{% trans "Model generator" %}</a></h3>
 <div>
 <table>
 

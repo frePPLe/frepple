@@ -31,7 +31,8 @@ from django.conf import settings
 from freppledb.input.models import Resource, Parameter
 from freppledb.output.models import LoadPlan
 from freppledb.common.db import sql_overlap3, python_date
-from freppledb.common.report import TableReport, ListReport, FilterText, FilterNumber, FilterDate, FilterBool, getBuckets
+from freppledb.common.report import TableReport, FilterText, FilterNumber, FilterDate, FilterBool, getBuckets
+from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
 
   
 class OverviewReport(TableReport):
@@ -178,7 +179,7 @@ class OverviewReport(TableReport):
         }
 
 
-class DetailReport(ListReport):
+class DetailReport(GridReport):
   '''
   A list report to show loadplans.
   '''
@@ -199,42 +200,15 @@ class DetailReport(ListReport):
       )
   
   rows = (
-    ('theresource', {
-      'filter': FilterText(),
-      'title': _('resource')
-      }),
-     ('operationplan__operation', {
-      'title': _('operation'),
-      'filter': FilterText(),
-      }),
-    ('startdate', {
-      'title': _('startdate'),
-      'filter': FilterDate(),
-      }),
-    ('enddate', {
-      'title': _('enddate'),
-      'filter': FilterDate(),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      'filter': FilterNumber(),
-      }),
-    ('setup', {
-      'title': _('setup'),
-      'filter': FilterText(),
-      }),
-    ('operationplan__locked', {
-      'title': _('locked'),
-      'filter': FilterBool(),
-      }),
-    ('operationplan__unavailable', {
-      'title': _('unavailable'),
-      'filter': FilterNumber(),
-      }),
-    ('operationplan', {
-      'filter': FilterNumber(operator='exact',),
-      'title': _('operationplan')
-      }),
+    TextGridField('theresource', title=_('resource'), key=True, formatter='resource', editable=False),
+    TextGridField('operationplan__operation', title=_('operation'), formatter='operation', editable=False),
+    DateTimeGridField('startdate', title=_('start date'), editable=False),
+    DateTimeGridField('enddate', title=_('end date'), editable=False),
+    NumberGridField('quantity', title=_('quantity'), editable=False),
+    TextGridField('setup', title=_('setup'), editable=False),
+    BoolGridField('operationplan__locked', title=_('locked'), editable=False),
+    NumberGridField('operationplan__unavailable', title=_('unavailable'), editable=False),
+    IntegerGridField('operationplan', title=_('operationplan'), editable=False),
     )
 
 

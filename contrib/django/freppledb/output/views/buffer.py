@@ -30,7 +30,8 @@ from django.conf import settings
 from freppledb.input.models import Buffer
 from freppledb.output.models import FlowPlan
 from freppledb.common.db import sql_max, sql_min, python_date
-from freppledb.common.report import TableReport, ListReport, FilterText, FilterNumber, FilterBool, FilterDate, getBuckets
+from freppledb.common.report import TableReport, FilterText, FilterNumber, FilterBool, FilterDate, getBuckets
+from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
 
 
 class OverviewReport(TableReport):
@@ -157,7 +158,7 @@ class OverviewReport(TableReport):
         }
 
 
-class DetailReport(ListReport):
+class DetailReport(GridReport):
   '''
   A list report to show flowplans.
   '''
@@ -178,34 +179,13 @@ class DetailReport(ListReport):
       )
   
   rows = (
-    ('thebuffer', {
-      'filter': FilterText(),
-      'title': _('buffer')
-      }),
-    ('operationplan__operation', {
-      'title': _('operation'),
-      'filter': FilterText(),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      'filter': FilterNumber(),
-      }),
-    ('flowdate', {
-      'title': _('date'),
-      'filter': FilterDate(),
-      }),
-    ('onhand', {
-      'title': _('onhand'),
-      'filter': FilterNumber(),
-      }),
-    ('operationplan__locked', {
-      'title': _('locked'),
-      'filter': FilterBool(),
-      }),
-    ('operationplan', {
-      'filter': FilterNumber(operator='exact', ),
-      'title': _('operationplan'),
-      }),
+    TextGridField('thebuffer', title=_('buffer'), key=True, formatter='buffer', editable=False),
+    TextGridField('operationplan__operation', title=_('operation'), formatter='operation', editable=False),
+    NumberGridField('quantity', title=_('quantity'), editable=False),
+    DateTimeGridField('flowdate', title=_('date'), editable=False),
+    NumberGridField('onhand', title=_('onhand'), editable=False),
+    BoolGridField('operationplan__locked', title=_('locked'), editable=False),
+    IntegerGridField('operationplan', title=_('operationplan'), editable=False),
     )
 
 

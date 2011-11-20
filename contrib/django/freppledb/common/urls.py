@@ -23,6 +23,7 @@
 from django.conf.urls.defaults import patterns
 
 import freppledb.common.views
+from freppledb.common.report import GridReport
 
 urlpatterns = patterns('',
 
@@ -30,9 +31,9 @@ urlpatterns = patterns('',
   (r'^preferences/$', freppledb.common.views.preferences),
 
   # Model list reports, which override standard admin screens
-  (r'^admin/auth/user/$', 'freppledb.common.report.view_report',
+  (r'^admin/auth/user/$', GridReport.as_view(),
     {'report': freppledb.common.views.UserList,}),
-  (r'^admin/auth/group/$', 'freppledb.common.report.view_report',
+  (r'^admin/auth/group/$', GridReport.as_view(),
     {'report': freppledb.common.views.GroupList,}),
 
   # RSS feed with recently changed objects

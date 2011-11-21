@@ -6,7 +6,6 @@
 {% block extrajavascript %}<script type="text/javascript">
 var original;
 $(function(){ 
-
   jQuery("#jsonmap").jqGrid({        
    	url: window.location.href + (window.location.href.indexOf("?") == -1 ? "?format=json" : "&format=json"),
 	  datatype: "json",
@@ -14,11 +13,11 @@ $(function(){
    	colModel:[
    	  {% for f in reportclass.rows %}{% if not forloop.first %},
    	  {% endif %}{{f|safe}}{% endfor %}
-   	  ],
-    //cellEdit: true,
-    //cellsubmit: 'clientArray',
-    //editurl: location.pathname,
-   	rowNum: 100,
+   	  ],{% if reportclass.editable %}
+    cellEdit: true,
+    cellsubmit: 'clientArray',
+    editurl: location.pathname,
+   	{% endif %}rowNum: 100,
    	pager: '#pjmap',
    	sortname: '{{reportclass.keyfield}}',
     viewrecords: true,    
@@ -31,13 +30,8 @@ $(function(){
 	  shrinkToFit: false,
 	  height: $(window).height() - $("#jsonmap").offset().top - 70
     });
-  
-  jQuery("#jsonmap").jqGrid('navGrid','#pjmap',
-    {edit:true,add:false,del:false,refresh:false},{},
-    {},
-    {},
-    {multipleSearch:true, multipleGroup:true, showQuery: true}
-    );
+  // Initial search string:
+  // jQuery('#jsonmap').jqGrid('setGridParam', {postData: mypostdata, search:true});
   });
 /*
   $("#savebutton").click(function() {
@@ -81,15 +75,15 @@ $(window).bind('resize', function() {
 </script> 
 {% endblock %}
 {% endblock %}
+{% block content_title %}{{ block.super }}{% endblock %}
 {% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">{{filternew}}{{hasaddperm}}
-<a href="javascript:filter.show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
+{% block tools %}<div class="tools">
+<a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
 {% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>{% endif %}
 {% if hasaddperm and model %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>{% endif %}
 <a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a><div id="popup" class="ui-helper-hidden"></div>
-<div id="popup"></div>
 
-</div>{% endblock %}
+</div><span id="curfilter"></span>{% endblock %}
 {% block content %}
 {% block contextmenus %}{% endblock %}
 <div id="content-main" style="margin-right: 16px;">

@@ -484,6 +484,7 @@ class ItemList(GridReport):
   basequeryset = Item.objects.all()
   model = Item
   frozenColumns = 1
+  editable = True
 
   @staticmethod
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):

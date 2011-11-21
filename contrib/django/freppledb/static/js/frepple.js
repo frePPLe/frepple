@@ -615,9 +615,27 @@ function import_show(list_or_table)
     ).dialog({
       title: gettext("Import data"), autoOpen: true, resizable: false, 
     });
-  $('#timebuckets').css('display', 'none');
+  $('#timebuckets').dialog('close');;
 }
 
+
+function filter_show() 
+{
+  $('#timebuckets').dialog('close');
+  $('#popup').dialog('close');
+  jQuery("#jsonmap").jqGrid('searchGrid', {
+    closeOnEscape: true, 
+    multipleSearch:true,
+    multipleGroup:true, 
+    onSearch : function() {
+      var postdata = $("#jsonmap").jqGrid('getGridParam', 'postData');
+      $('#curfilter').html(postdata.filters);
+      },
+    onReset : function() {
+      $('#curfilter').html('');
+      },
+    });
+}
 
 function export_show(list_or_table)
 {

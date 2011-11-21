@@ -96,6 +96,7 @@ class GridField(object):
     if not self.editable: o.append("editable:false,")
     if self.formatter: o.append("formatter:'%s'," % self.formatter) 
     if self.unformat: o.append("unformat:%s," % self.unformat) 
+    if self.searchrules: o.append("searchrules:{%s}," % self.searchrules)
     if self.extra: o.append(self.extra)
     o.append('}')
     return ''.join(o)
@@ -111,6 +112,7 @@ class GridField(object):
   title = None
   extra = None
   align = 'center'
+  searchrules = None
   
     
 class DateTimeGridField(GridField):
@@ -128,11 +130,13 @@ class DateGridField(GridField):
 class IntegerGridField(GridField):
   formatter = 'integer'
   width = 70
-  
+  searchrules = 'integer:true'
+    
     
 class NumberGridField(GridField):
   formatter = 'number'
   width = 70
+  searchrules = 'number:true'
   
     
 class BoolGridField(GridField):

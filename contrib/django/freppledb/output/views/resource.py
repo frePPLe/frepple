@@ -31,11 +31,11 @@ from django.conf import settings
 from freppledb.input.models import Resource, Parameter
 from freppledb.output.models import LoadPlan
 from freppledb.common.db import sql_overlap3, python_date
-from freppledb.common.report import TableReport, FilterText, FilterNumber, FilterDate, FilterBool, getBuckets
-from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
+from freppledb.common.report import getBuckets
+from freppledb.common.report import GridReport, GridPivot, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
 
   
-class OverviewReport(TableReport):
+class OverviewReport(GridPivot):
   '''
   A report showing the loading of each resource.
   '''
@@ -44,15 +44,8 @@ class OverviewReport(TableReport):
   basequeryset = Resource.objects.all()
   model = Resource
   rows = (
-    ('resource',{
-      'filter': FilterText(field='name'),
-      'order_by': 'name',
-      'title': _('resource'),
-      }),
-    ('location',{
-      'filter': FilterText(field='location__name'),
-      'title': _('location'),
-      }),
+    TextGridField('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
+    TextGridField('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
     )
   crosses = (
     ('available',{'title': _('available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
@@ -61,10 +54,7 @@ class OverviewReport(TableReport):
     ('load',{'title': _('load')}),
     ('utilization',{'title': _('utilization %'),}),
     )
-  columns = (
-    ('bucket',{'title': _('bucket')}),
-    )
-
+  
   javascript_imports = ['/static/FusionCharts.js',]
 
   @staticmethod

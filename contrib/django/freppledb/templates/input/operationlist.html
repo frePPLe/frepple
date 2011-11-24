@@ -4,32 +4,3 @@
 {% include "operationcontext.html" %}
 {% include "locationcontext.html" %}
 {% endblock %}
-
-{% block frozendata %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.name operation key %}</td>
-</tr>{% endfor %}
-{% endblock %}
-
-{% block data %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{{i.description}}</td>
-<td>{{i.category}}</td>
-<td>{{i.subcategory}}</td>
-<td>{{i.type}}</td>
-<td>{% superlink i.location location %}</td>
-<td>{{i.duration|duration}}</td>
-<td>{{i.duration_per|duration}}</td>
-<td>{{i.fence|duration}}</td>
-<td>{{i.pretime|duration}}</td>
-<td>{{i.posttime|duration}}</td>
-<td>{{i.sizeminimum}}</td>
-<td>{{i.sizemultiple}}</td>
-<td>{{i.sizemaximum}}</td>
-<td>{{i.cost}}</td>
-<td>{{i.search}}</td>
-<td>{{i.lastmodified}}</td>
-</tr>{% endfor %}
-{% endblock %}

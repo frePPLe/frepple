@@ -3,21 +3,3 @@
 {% block contextmenus %}
 {% include "customercontext.html" %}
 {% endblock %}
-
-{% block frozendata %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.name customer key %}</td>
-</tr>{% endfor %}
-{% endblock %}
-
-{% block data %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{{i.description}}</td>
-<td>{{i.category}}</td>
-<td>{{i.subcategory}}</td>
-<td>{% superlink i.owner customer %}</td>
-<td>{{i.lastmodified}}</td>
-</tr>{% endfor %}
-{% endblock %}

@@ -249,7 +249,7 @@ def fixture(request):
 @never_cache
 def logfile(request):
   '''
-  This view shows the frepple log file of the last planning run in this database.
+  This view shows the frePPLe log file of the last planning run in this database.
   '''
   try:
     if request.database == DEFAULT_DB_ALIAS:
@@ -282,7 +282,6 @@ class LogReport(GridReport):
   '''
   A list report to review the history of actions.
   '''
-  template = 'execute/log.html'
   title = _('Command log')
   reset_crumbs = True
   basequeryset = log.objects.all()

@@ -4,23 +4,3 @@
 {% include "itemcontext.html" %}
 {% include "operationcontext.html" %}
 {% endblock %}
-
-{% block frozendata %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.name item key %}</td>
-</tr>{% endfor %}
-{% endblock %}
-
-{% block data %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{{i.description}}</td>
-<td>{{i.category}}</td>
-<td>{{i.subcategory}}</td>
-<td>{% superlink i.operation operation %}</td>
-<td>{% superlink i.owner item %}</td>
-<td>{{i.price}}</td>
-<td>{{i.lastmodified}}</td>
-</tr>{% endfor %}
-{% endblock %}

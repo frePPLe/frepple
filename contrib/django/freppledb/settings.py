@@ -219,6 +219,22 @@ DEFAULT_CHARSET = 'utf-8'
 #   import locale
 #   DEFAULT_CHARSET=locale.getpreferredencoding(False)
 
+# A list of available user interface themes
+THEMES = (
+ ('redmond','redmond'),
+ ('sunny','sunny'),
+ ('overcast','overcast'),
+ ('smoothness','smoothness'),
+ ('ui-lightness','ui-lightness'),
+ ('ui-darkness','ui-darkness'),
+ )
+
+# The default user interface theme
+DEFAULT_THEME = 'redmond'
+
+# The default number of records to pull from the server as a page
+DEFAULT_PAGESIZE = 100
+
 # The size of the "name" key field of the database models
 NAMESIZE = 60
 

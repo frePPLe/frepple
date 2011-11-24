@@ -313,7 +313,6 @@ class ParameterList(GridReport):
   '''
   A list report to show all configurable parameters.
   '''
-  template = 'input/parameterlist.html'
   title = _("Parameter List")
   basequeryset = Parameter.objects.all()
   model = Parameter
@@ -783,7 +782,6 @@ class BucketList(GridReport):
   '''
   A list report to show dates.
   '''
-  template = 'input/bucketlist.html'
   title = _("Bucket List")
   basequeryset = Bucket.objects.all()
   model = Bucket
@@ -799,7 +797,6 @@ class BucketDetailList(GridReport):
   '''
   A list report to show dates.
   '''
-  template = 'input/bucketdetaillist.html'
   title = _("Bucket Detail List")
   basequeryset = BucketDetail.objects.all()
   model = BucketDetail

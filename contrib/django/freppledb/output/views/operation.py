@@ -30,11 +30,11 @@ from django.conf import settings
 from freppledb.input.models import Operation
 from freppledb.output.models import OperationPlan
 from freppledb.common.db import sql_true, python_date
-from freppledb.common.report import TableReport, FilterText, FilterNumber, FilterDate, getBuckets, FilterBool
-from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
+from freppledb.common.report import getBuckets
+from freppledb.common.report import GridReport, GridPivot, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
 
 
-class OverviewReport(TableReport):
+class OverviewReport(GridPivot):
   '''
   A report showing the planned starts of each operation.
   '''
@@ -43,24 +43,14 @@ class OverviewReport(TableReport):
   basequeryset = Operation.objects.all()
   model = Operation
   rows = (
-    ('operation',{
-      'filter': FilterText(field='name'),
-      'order_by': 'name',
-      'title': _('operation'),
-      }),
-    ('location',{
-      'filter': FilterText(field='location__name'),
-      'title': _('location'),
-      }),
+    TextGridField('operation', title=_('operation'), key=True, field_name='name', formatter='operation', editable=False),
+    TextGridField('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
     )
   crosses = (
     ('locked_start', {'title': _('locked starts'),}),
     ('total_start', {'title': _('total starts'),}),
     ('locked_end', {'title': _('locked ends'),}),
     ('total_end', {'title': _('total ends'),}),
-    )
-  columns = (
-    ('bucket',{'title': _('bucket')}),
     )
 
   javascript_imports = ['/static/FusionCharts.js',]

@@ -613,7 +613,9 @@ function import_show(list_or_table)
     '<td><input type="button" value="' + gettext('Cancel') + '" onclick="$(\'#popup\').dialog(\'close\');"/></td></tr>'+
     '</table></form>'
     ).dialog({
-      title: gettext("Import data"), autoOpen: true, resizable: false, 
+      title: gettext("Import data"), 
+      autoOpen: true, 
+      resizable: false, 
     });
   $('#timebuckets').dialog('close');;
 }
@@ -629,7 +631,7 @@ function filter_show()
     multipleGroup:true, 
     onSearch : function() {
       var postdata = $("#jsonmap").jqGrid('getGridParam', 'postData');
-      $('#curfilter').html(postdata.filters);
+      $('#curfilter').html(postdata.filters); // TODO transform to user friendly form & position text correctly
       },
     onReset : function() {
       $('#curfilter').html('');
@@ -637,20 +639,40 @@ function filter_show()
     });
 }
 
+function edit_show()
+{
+  var selectedrow = $("#jsonmap").jqGrid('getGridParam', 'selrow');
+  if (selectedrow == null) return;
+  $('#timebuckets').dialog('close');
+  $('#popup').dialog('close');
+  jQuery("#jsonmap").jqGrid('editGridRow', selectedrow, {
+    closeOnEscape: true, 
+    });
+}
+
+
 function export_show(list_or_table)
 {
   // The argument is true when we show a "list" report.
   // It is false for "table" reports.  
   $('#popup').html(    
-    '<form method="get" action="javascript:export_close()"><table>'+
-    '<tr><th>' + gettext("CSV style") + ':</th><td><select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
-    '<option value="csv"' + (list_or_table ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
-    '<option value="csvlist"' + (list_or_table ?  ' selected="selected"' : '') + '>' + gettext("List") +'</option></select></td></tr>'+
-    '<tr><td><input type="submit" value="' + gettext("Export") +'"/></td>'+
-    '<td><input type="button" value="' + gettext("Cancel") +'" onclick="$(\'#popup\').dialog(\'close\');"/></td></tr>'+
-    '</table></form>'
+    gettext("CSV style") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
+    '<option value="csvtable"' + (list_or_table ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
+    '<option value="csvlist"' + (list_or_table ?  ' selected="selected"' : '') + '>' + gettext("List") +'</option></select>'
     ).dialog({ 
-      title: gettext("Export data"), autoOpen: true, resizable: false  
+      title: gettext("Export data"), 
+      autoOpen: true, resizable: false,
+      buttons: [
+        {
+          text: gettext("Export"),
+          click: function() { export_close(); },
+          primary:'ui-icon-gear'
+        },          
+        {
+          text: gettext("Cancel"),
+          click: function() { $(this).dialog("close"); }
+        }
+        ]  
       });
   $('#timebuckets').dialog('close');
 }
@@ -658,17 +680,18 @@ function export_show(list_or_table)
 
 function export_close()
 {
+  // TODO THE REQUEST DOESN'T HAVE THE SAME FILTER AND SORT ARGUMENTS AS THE JSON DATA REQUEST!
   // Fetch the report data
   var url = location.href;
   if (location.search.length > 0)
     // URL already has arguments
-    url += "&reporttype=" + $('#csvformat').val();
+    url += "&format=" + $('#csvformat').val();
   else if (url.charAt(url.length - 1) == '?')
     // This is the first argument for the URL, but we already have a question mark at the end
-    url += "reporttype=" + $('#csvformat').val();
+    url += "format=" + $('#csvformat').val();
   else
     // This is the first argument for the URL
-    url += "?reporttype=" + $('#csvformat').val();
+    url += "?format=" + $('#csvformat').val();
   window.open(url,'_blank');
   // Hide the popup window
   $('#popup').dialog('close');

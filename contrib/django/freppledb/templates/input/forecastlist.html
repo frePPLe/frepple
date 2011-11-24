@@ -7,28 +7,3 @@
 {% include "operationcontext.html" %}
 {% include "calendarcontext.html" %}
 {% endblock %}
-
-{% block frozendata %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.name forecast key %}</td>
-</tr>{% endfor %}
-{% endblock %}
-
-{% block data %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.item item %}</td>
-<td>{% superlink i.customer customer %}</td>
-<td>{% superlink i.calendar calendar %}</td>
-<td>{{i.description}}</td>
-<td>{{i.category}}</td>
-<td>{{i.subcategory}}</td>
-<td>{% superlink i.operation operation %}</td>
-<td>{{i.priority}}</td>
-<td>{{i.minshipment}}</td>
-<td>{{i.maxlateness}}</td>
-<td>{{i.discrete}}</td>
-<td>{{i.lastmodified}}</td>
-</tr>{% endfor %}
-{% endblock %}

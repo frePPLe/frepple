@@ -30,11 +30,11 @@ from django.conf import settings
 from freppledb.input.models import Buffer
 from freppledb.output.models import FlowPlan
 from freppledb.common.db import sql_max, sql_min, python_date
-from freppledb.common.report import TableReport, FilterText, FilterNumber, FilterBool, FilterDate, getBuckets
-from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
+from freppledb.common.report import getBuckets
+from freppledb.common.report import GridReport, GridPivot, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
 
 
-class OverviewReport(TableReport):
+class OverviewReport(GridPivot):
   '''
   A report showing the inventory profile of buffers.
   '''
@@ -43,28 +43,15 @@ class OverviewReport(TableReport):
   basequeryset = Buffer.objects.all()
   model = Buffer
   rows = (
-    ('buffer', {
-      'filter': FilterText(field='name'),
-      'order_by': 'name',
-      'title': _('buffer')
-      }),
-    ('item', {
-      'filter': FilterText(field='item__name'),
-      'title': _('item')
-      }),
-    ('location', {
-      'filter': FilterText(field='location__name'),
-      'title': _('location')
-      }),
+    TextGridField('buffer', title=_('buffer'), key=True, field_name='name', formatter='buffer', editable=False),
+    TextGridField('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
+    TextGridField('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
     )
   crosses = (
     ('startoh', {'title': _('start inventory'),}),
     ('produced', {'title': _('produced'),}),
     ('consumed', {'title': _('consumed'),}),
     ('endoh', {'title': _('end inventory'),}),
-    )
-  columns = (
-    ('bucket', {'title': _('bucket')}),
     )
 
   javascript_imports = ['/static/FusionCharts.js',]

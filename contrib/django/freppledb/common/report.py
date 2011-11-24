@@ -52,6 +52,7 @@ from django.forms.models import modelform_factory
 from django.shortcuts import render
 from django.template import RequestContext, loader
 from django.utils import translation
+from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
@@ -67,10 +68,6 @@ from django.views.generic.base import View
 
 from freppledb.input.models import Parameter, BucketDetail, Bucket
 
-
-# Parameter settings
-ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
-ON_ENDS = 2            # Number of pages shown at the start and the end of the page list
 
 # URL parameters that are not query arguments
 reservedParameters = ('o', 'p', 't', 'reporttype', 'pop', 'reportbucket', 'reportstart', 'reportend')
@@ -169,7 +166,7 @@ class Report(object):
   can be overwritten.
   '''
   # Points to templates to be used for different output formats
-  template = {}
+  template = 'admin/base_site_list.html'
   # The title of the report. Used for the window title
   title = ''
   # The default number of entities to put on a page
@@ -220,13 +217,6 @@ class TableReport(Report):
   #     True when the field is editable in the page.
   #     The default value is false.
   crosses = ()
-
-  # Column definitions
-  # Possible attributes for a row field are:
-  #   - title:
-  #     Name of the cross that is displayed to the user.
-  #     It defaults to the name of the field.
-  columns = ()
 
   # A list with required user permissions to view the report
   permissions = []
@@ -510,84 +500,6 @@ def _create_crossheader(req, cls):
   return mark_safe('<br/>'.join(res))
 
 
-def _get_paginator_html(request, paginator, page):
-  # Django has standard some very similar code in the tags 'paginator_number'
-  # and 'pagination' in the file django\contrib\admin\templatetags\admin_list.py.
-  # Functionally there is no real difference. The implementation below relies
-  # less on the template engine.
-  global ON_EACH_SIDE
-  global ON_ENDS
-  page_htmls = []
-  parameters = request.GET.copy()
-  if 'p' in parameters: parameters.__delitem__('p')
-
-  if paginator.num_pages <= 10 and paginator.num_pages > 1:
-    # If there are less than 10 pages, show them all
-    for n in paginator.page_range:
-      if n == page:
-        page_htmls.append('<span class="this-page">%d</span>' % page)
-      elif n == 1 and len(parameters) == 0:
-        page_htmls.append('<a href="%s%s">1</a>' % (request.prefix, request.path))
-      else:
-        if n>1: parameters.__setitem__('p', n)
-        page_htmls.append('<a href="%s%s?%s">%s</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
-  elif paginator.num_pages > 1:
-      # Insert "smart" pagination links, so that there are always ON_ENDS
-      # links at either end of the list of pages, and there are always
-      # ON_EACH_SIDE links at either end of the "current page" link.
-      if page <= ON_ENDS + ON_EACH_SIDE + 1:
-          # 1 2 *3* 4 5 6 ... 99 100
-          for n in range(1, page + max(ON_EACH_SIDE, ON_ENDS)+1):
-            if n == page:
-              page_htmls.append('<span class="this-page">%d</span>' % page)
-            elif n == 1 and len(parameters) == 0:
-              page_htmls.append('<a href="%s%s">1</a>' % (request.prefix,  request.path))
-            else:
-              if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s%s?%s">%s</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
-          page_htmls.append('...')
-          for n in range(paginator.num_pages - ON_ENDS, paginator.num_pages + 1):
-            parameters.__setitem__('p', n)
-            page_htmls.append('<a href="%s%s?%s">%s</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
-      elif page >= (paginator.num_pages - ON_EACH_SIDE - ON_ENDS):
-          # 1 2 ... 95 96 97 *98* 99 100
-          for n in range(1, ON_ENDS + 1):
-            if n == 1 and len(parameters) == 0:
-              page_htmls.append('<a href="%s%s">1</a>' % (request.prefix, request.path))
-            else:
-              if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s%s?%s">%s</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
-          page_htmls.append('...')
-          for n in range(page - max(ON_EACH_SIDE, ON_ENDS), paginator.num_pages + 1):
-            if n == page:
-              page_htmls.append('<span class="this-page">%d</span>' % page)
-            else:
-              if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s%s?%s">%d</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
-      else:
-          # 1 2 ... 45 46 47 *48* 49 50 51 ... 99 100
-          for n in range(1, ON_ENDS + 1):
-            if n == 1 and len(parameters) == 0:
-              page_htmls.append('<a href="%s%s">1</a>' % (request.prefix, request.path))
-            else:
-              if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s%s?%s">%d</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
-          page_htmls.append('...')
-          for n in range(page - ON_EACH_SIDE, page + ON_EACH_SIDE + 1):
-            if n == page:
-              page_htmls.append('<span class="this-page">%s</span>' % page)
-            elif n == '.':
-              page_htmls.append('...')
-            else:
-              if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s%s?%s">%s</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
-          page_htmls.append('...')
-          for n in range(paginator.num_pages - ON_ENDS + 1, paginator.num_pages + 1):
-              if n>1: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s%s?%s">%d</a>' % (request.prefix, request.path, escape(parameters.urlencode()),n))
-  return mark_safe(' '.join(page_htmls))
-
-
 def get_filters(request):
   _search = request.GET.get('_search')
   filters = None
@@ -668,9 +580,49 @@ class GridReport(View, Report):
 
   model = None
   
-  @staticmethod
+  @method_decorator(staff_member_required)
+  @method_decorator(csrf_protect)  
+  def dispatch(self, *args, **kwargs):
+      return super(GridReport, self).dispatch(*args, **kwargs)
+
+
+  @classmethod
+  def _generate_csv_data(reportclass, request):
+    sf = cStringIO.StringIO()
+    encoding = settings.DEFAULT_CHARSET
+    if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
+      writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
+    else:
+      writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
+    if translation.get_language() != request.LANGUAGE_CODE:
+      translation.activate(request.LANGUAGE_CODE)
+    
+    # Write a header row
+    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows ]
+    writer.writerow(fields)
+    yield sf.getvalue()
+    
+    # Write the report content
+    sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
+    if 'sord' in request.GET and request.GET['sord'] == 'desc':
+      sort = "-%s" % sort
+    query = filter_items(request, reportclass, reportclass.basequeryset)
+    fields = [ i.field_name for i in reportclass.rows ]
+    for row in query.order_by(sort).values(*fields):
+      # Clear the return string buffer
+      sf.truncate(0)
+      # Build the return value, encoding all output
+      if hasattr(row, "__getitem__"):
+        fields = [ row[f.field_name]==None and ' ' or unicode(_localize(row[f.field_name])).encode(encoding,"ignore") for f in reportclass.rows ]
+      else:
+        fields = [ getattr(row,f.field_name)==None and ' ' or unicode(_localize(getattr(row,f.field_name))).encode(encoding,"ignore") for f in reportclass.rows ]
+      # Return string
+      writer.writerow(fields)
+      yield sf.getvalue()
+      
+        
+  @classmethod
   def _generate_json_data(reportclass, request):
-    model = reportclass.model
     page = 'page' in request.GET and int(request.GET['page']) or 1
     sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
     if 'sord' in request.GET and request.GET['sord'] == 'desc':
@@ -735,10 +687,8 @@ class GridReport(View, Report):
     yield '\n]}\n'
   
     
-  @staticmethod
-  @staff_member_required
-  @csrf_protect  
-  def post(request, **args):   
+  @classmethod
+  def post(reportclass, request, **args):   
     d = args['report'].model.objects.get(pk=request.POST['id'])
     for i in request.POST:
       setattr(d, i, request.POST[i])
@@ -748,27 +698,36 @@ class GridReport(View, Report):
     resp.status_code = 200
     return resp
   
-   
-  @staticmethod
-  @staff_member_required
-  @csrf_protect  
-  def get(request, **args):   
-    if request.method == 'POST':
-      messages.add_message(request, messages.ERROR, _('Invalid upload request'))
-      return HttpResponseRedirect(request.prefix + request.get_full_path())
-    if 'format' in request.GET:
-      # Return JSON data to fill the page
-      response = HttpResponse(content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET)
-      response._container = GridReport._generate_json_data(args['report'], request)
-      response._is_string = False
-      return response
-    else:
+  
+  @classmethod
+  def get(reportclass, request, **args):
+    format = request.GET.get('format', None)   
+    if not format:
       # Return HTML page
-      reportclass = args['report']
-      return render(request, 'admin/base_site_list.html', {
+      # Also add permissions to the context!!!
+      return render(request, reportclass.template, {
         'reportclass': reportclass,
         'title': reportclass.title
         })
+    elif format == 'json':
+      # Return JSON data to fill the grid
+      response = HttpResponse(content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET)
+      response._container = reportclass._generate_json_data(request)
+      response._is_string = False
+      return response
+    elif format == 'csvlist' or format == 'csvtable':
+      # Return CSV data to export the data
+      response = HttpResponse(content_type='text/csv; charset=%s' % settings.DEFAULT_CHARSET)
+      response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
+      response._container = reportclass._generate_csv_data(request)
+      response._is_string = False
+      return response
+    else:
+      raise Http404('Unknown format type')
+
+
+class GridPivot(GridReport):
+  pass
 
 
 def _localize(value, use_l10n=None):
@@ -1029,143 +988,6 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
   # Final result
   return (mark_safe(string_concat(*result1)), mark_safe(string_concat(*result2)))
 
-
-filteroperator = {
-  'icontains': _('contains (no case)'),
-  'contains': _('contains'),
-  'istartswith': _('starts (no case)'),
-  'startswith': _('starts'),
-  'iendswith': _('ends (no case)'),
-  'endswith': _('ends'),
-  'iexact': _('equals (no case)'),
-  'exact': _('equals'),
-  'isnull': _('is null'),
-  '': _('='),
-  'lt': u'&lt;',
-  'gt': u'&gt;',
-  'lte': u'&lt;=',
-  'gte': u'&gt;=',
-}
-
-
-def _create_filter(req, cls):
-  # Initialisation
-  result1 = [u'<form id="filters" action="%s%s">' % (req.prefix,escape(req.path))]
-  result2 = [u'<div id="fields" style="display: none"><form action="">\n']
-  empty = True
-
-  # Loop over the row fields - to make sure the filters are shown in the same order
-  filtercounter = 0
-  for row, attribs in cls.rows:
-    try: filtertitle = attribs['title']
-    except: filtertitle = row
-    try:
-      filter = attribs['filter']
-      filterfield = filter.field or row
-      result2.append(u'<span title="%s" class="%s">' % (filterfield, filter.__class__.__name__))
-      if hasattr(filter, "text2"):
-        result2.append(filter.text2(filtertitle, filterfield, cls, req))
-      else:
-        result2.append(filtertitle)
-      result2.append(u'</span>\n')
-    except:
-      filter = None
-      filterfield = ''
-      result2.append(u'<span>%s</span>\n' % filtertitle)
-    for i in req.GET:
-      if i in reservedParameters:
-        if filtercounter > 1: continue
-        result1.append(u'<input type="hidden" name="%s" value="%s"/>' % (i,escape(req.GET[i])))
-      field, sep, operator = i.rpartition('__')
-      if field == '':
-        field = operator
-        operator = 'exact'
-      if filterfield == field:
-        if empty:
-          result1.append(u'where\n')
-          empty = False
-        else:
-          result1.append(u' and\n')
-        if filter:
-          result1.append(filter.text1(filtertitle, operator, i, escape(req.GET[i]), cls, req))
-        else:
-          result1.append(u'%s %s <input type="text" class="filter" onChange="filterform()" name="%s" value="%s"/>' % (filtertitle, filteroperator[operator], i, escape(req.GET[i])))
-        filtercounter += 1
-
-  # Return result
-  result2.append(u'</form></div>')
-  if empty: return (None, mark_safe(string_concat(*result2)))
-  result1.append(u'</form>')
-  return ( mark_safe(string_concat(*result1)), mark_safe(string_concat(*result2)) )
-
-
-class FilterText(object):
-  def __init__(self, operator="icontains", field=None, size=10):
-    self.operator = operator
-    self.field = field
-    self.size = size
-
-  def text1(self, a,b,c,d,cls, req):
-    return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', max(len(d),self.size), u'"/>')
-
-
-class FilterNumber(object):
-  def __init__(self, operator="lt", field=None, size=9):
-    self.operator = operator
-    self.field = field
-    self.size = size
-
-  def text1(self, a,b,c,d,cls, req):
-    return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', self.size, u'"/>')
-
-
-class FilterDate(object):
-  def __init__(self, operator="lt", field=None, size=9):
-    self.operator = operator
-    self.field = field
-    self.size = size
-
-  def text1(self, a,b,c,d,cls, req):
-    return string_concat(a, u' ', filteroperator[b], u' <input type="text" class="vDateField filter" onChange="javascript:this.form.submit();" name="', c, u'" value="', d, u'" size="', self.size, u'"/>')
-
-
-class FilterChoice(object):
-  def __init__(self, field=None, choices=None):
-    self.field = field
-    self.choices = choices
-
-  def text1(self, a,b,c,d,cls, req):
-    result = [string_concat(a, u' ', filteroperator[b], u'<select class="filter" onChange="javascript:this.form.submit();" name="', c, u'" >')]
-    try:
-      for code, label in callable(self.choices) and self.choices(req) or self.choices:
-        if (code == d):
-          result.append(string_concat(u'<option value="',code,u'" selected="yes">',unicode(label),u'</option>\n'))
-        else:
-          result.append(string_concat(u'<option value="',code,u'">',unicode(label),u'</option>\n'))
-    except TypeError: pass
-    result.append(u'</select>\n')
-    return string_concat(*result)
-
-  def text2(self, a,b,cls, req):
-    result = [string_concat(a, u'<select>')]
-    try:
-      for code, label in callable(self.choices) and self.choices(req) or self.choices:
-        result.append(string_concat(u'<option value="',code,u'">',unicode(label),u'</option>\n'))
-    except TypeError: pass
-    result.append(u'</select>\n')
-    return string_concat(*result)
-
-
-class FilterBool(FilterChoice):
-  '''
-  A boolean filter is a special case of the choice filter: the choices
-  are limited to 0/false and 1/true.
-  '''
-  def __init__(self, field=None):
-    super(FilterBool, self).__init__(
-      field=field,
-      choices=( ('0',_('False')), ('1',_('True')), ),
-      )
 
 
 def parseUpload(request, reportclass, data):

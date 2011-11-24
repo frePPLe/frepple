@@ -3,23 +3,3 @@
 {% block contextmenus %}
 {% include "calendarcontext.html" %}
 {% endblock %}
-
-{% block frozendata %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.name calendar key %}</td>
-</tr>{% endfor %}
-{% endblock %}
-
-{% block data %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{{i.type}}</td>
-<td>{{i.description}}</td>
-<td>{{i.category}}</td>
-<td>{{i.subcategory}}</td>
-<td>{{i.defaultvalue}}</td>
-<td>{{i.currentvalue}}</td>
-<td>{{i.lastmodified}}</td>
-</tr>{% endfor %}
-{% endblock %}

@@ -30,11 +30,11 @@ from django.conf import settings
 from freppledb.input.models import Item
 from freppledb.output.models import Demand
 from freppledb.common.db import python_date, sql_datediff, sql_overlap
-from freppledb.common.report import TableReport, FilterText, FilterNumber, FilterDate, getBuckets
-from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
+from freppledb.common.report import getBuckets
+from freppledb.common.report import GridReport, GridPivot, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
 
 
-class OverviewReport(TableReport):
+class OverviewReport(GridPivot):
   '''
   A report showing the independent demand for each item.
   '''
@@ -43,11 +43,7 @@ class OverviewReport(TableReport):
   basequeryset = Item.objects.all()
   model = Item
   rows = (
-    ('item',{
-      'filter': FilterText(field='name'),
-      'order_by': 'name',
-      'title': _('item')
-      }),
+    TextGridField('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
     )
   crosses = (
     ('forecast',{'title': _('net forecast')}),
@@ -55,9 +51,6 @@ class OverviewReport(TableReport):
     ('demand',{'title': _('total demand')}),
     ('supply',{'title': _('total supply')}),
     ('backlog',{'title': _('backlog')}),
-    )
-  columns = (
-    ('bucket',{'title': _('bucket')}),
     )
 
   javascript_imports = ['/static/FusionCharts.js',]

@@ -30,19 +30,27 @@ from django.http import Http404
 from django.conf import settings
 
 from freppledb.execute.models import Scenario
+from freppledb.common.models import Preferences
 
 
 class LocaleMiddleware(DjangoLocaleMiddleware):
   """
-  This middleware extends the Django default locale middleware:
-    - Support for a user preference that overrides the browser default.
+  This middleware extends the Django default locale middleware with the user
+  preferences used in frePPLe:
+    - language choice to override the browser default
+    - user interface theme to be used
   """
   def process_request(self, request):
     if isinstance(request.user, AnonymousUser):
-      # Anonymous users don't have prefences
+      # Anonymous users don't have prefences      
       language = 'auto'
+      request.theme = settings.DEFAULT_THEME
+      request.pagesize = settings.DEFAULT_PAGESIZE
     else:
-      language = request.user.get_profile().language
+      prefs = request.user.get_profile()
+      language = prefs.language
+      request.theme = prefs.theme or settings.DEFAULT_THEME
+      request.pagesize = prefs.pagesize or settings.DEFAULT_PAGESIZE
     if language == 'auto':
       language = translation.get_language_from_request(request)
     if translation.get_language() != language:
@@ -52,6 +60,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
 
 for i in settings.DATABASES:
   settings.DATABASES[i]['regexp'] = re.compile("^/%s/" % i)
+
 
 class DatabaseSelectionMiddleware(object):
   """

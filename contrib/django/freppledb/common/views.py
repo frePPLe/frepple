@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User, Group
 from django.contrib.admin.models import LogEntry
 from django.contrib.syndication.views import Feed
+from django.conf import settings
 
 from freppledb.common.models import Preferences
 from freppledb.common.report import GridReport, TextGridField, BoolGridField
@@ -58,7 +59,17 @@ class PreferencesForm(forms.Form):
     help_text=_("End date for filtering report data"),
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
-
+  pagesize = forms.IntegerField(label = _('Page size'),
+    required=False,
+    initial=100,
+    min_value=100,
+    help_text = _('Number of records to fetch in a single page from the server'),                            
+    )
+  theme = forms.ChoiceField(label = _('Theme'),
+    required=False,
+    choices=settings.THEMES,
+    help_text=_('Theme for the user interface'),
+    )
 
 @login_required
 @csrf_protect
@@ -73,6 +84,8 @@ def preferences(request):
         pref.startdate = newdata['startdate']
         pref.enddate = newdata['enddate']
         pref.language = newdata['language']
+        pref.theme = newdata['theme']
+        pref.pagesize = newdata['pagesize']
         pref.save()
         messages.add_message(request, messages.INFO, force_unicode(_('Successfully updated preferences')))
       except:
@@ -84,6 +97,8 @@ def preferences(request):
       'startdate': pref.startdate,
       'enddate': pref.enddate,
       'language': pref.language,
+      'theme': pref.theme,
+      'pagesize': pref.pagesize,
       })
   return render_to_response('common/preferences.html', {
      'title': _('Edit my preferences'),

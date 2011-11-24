@@ -7,9 +7,9 @@
 var original;
 $(function(){ 
   jQuery("#jsonmap").jqGrid({        
-   	url: window.location.href + (window.location.href.indexOf("?") == -1 ? "?format=json" : "&format=json"),
+   	url: window.location.href + (location.search.length > 0 ? "&format=json" : "?format=json"),
 	  datatype: "json",
-	  jsonReader : {id: "{{reportclass.keyfield}}", repeatitems:false},
+	  jsonReader : {repeatitems:false},
    	colModel:[
    	  {% for f in reportclass.rows %}{% if not forloop.first %},
    	  {% endif %}{{f|safe}}{% endfor %}
@@ -17,7 +17,7 @@ $(function(){
     cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname,
-   	{% endif %}rowNum: 100,
+   	{% endif %}rowNum: {{request.pagesize}},
    	pager: '#pjmap',
    	sortname: '{{reportclass.keyfield}}',
     viewrecords: true,    
@@ -37,8 +37,6 @@ $(function(){
   $("#savebutton").click(function() {
     alert(JSON.stringify($("#jsonmap").getChangedCells('dirty')));
     });
-
-
 
 $(window).bind('beforeunload', function() {
    var rows = $("#jsonmap").getChangedCells('dirty');
@@ -79,6 +77,7 @@ $(window).bind('resize', function() {
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
 <a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
+<a href="javascript:edit_show();" class="icon"><span class="ui-icon ui-icon-pencil"></span>{% trans 'Edit' %}</a>
 {% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>{% endif %}
 {% if hasaddperm and model %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>{% endif %}
 <a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a><div id="popup" class="ui-helper-hidden"></div>

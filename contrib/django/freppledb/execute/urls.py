@@ -23,12 +23,11 @@
 from django.conf.urls.defaults import patterns
 
 import freppledb.execute.views
-from freppledb.common.report import GridReport
 
 urlpatterns = patterns('',
     (r'^scenarios/$', 'freppledb.execute.views.scenarios'),
     (r'^logfrepple/$', 'freppledb.execute.views.logfile'),
-    (r'^log/$', GridReport.as_view(), {'report': freppledb.execute.views.LogReport,}),
+    (r'^log/$', freppledb.execute.views.LogReport.as_view()),
     (r'^runfrepple/$', 'freppledb.execute.views.runfrepple'),
     (r'^erase/$', 'freppledb.execute.views.erase'),
     (r'^create/$', 'freppledb.execute.views.create'),

@@ -4,27 +4,3 @@
 {% include "resourcecontext.html" %}
 {% include "operationcontext.html" %}
 {% endblock %}
-
-{% block frozendata %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td><a href="{{i.id}}/">{{i.id}}</a></td>
-</tr>{% endfor %}
-{% endblock %}
-
-{% block data %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.operation operation %}</td>
-<td>{% superlink i.resource resource %}</td>
-<td>{{i.quantity}}</td>
-<td>{{i.effective_start}}</td>
-<td>{{i.effective_end}}</td>
-<td>{{i.name}}</td>
-<td>{{i.alternate}}</td>
-<td>{{i.priority}}</td>
-<td>{{i.setup}}</td>
-<td>{{i.search}}</td>
-<td>{{i.lastmodified}}</td>
-</tr>{% endfor %}
-{% endblock %}

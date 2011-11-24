@@ -30,7 +30,6 @@ from freppledb.common.report import GridReport, TextGridField, NumberGridField
 
 
 class Report(GridReport):
-  template = 'output/kpi.html'
   title = _("Performance Indicators")
   reset_crumbs = True
   frozenColumns = 0

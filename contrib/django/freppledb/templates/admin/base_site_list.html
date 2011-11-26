@@ -77,17 +77,16 @@ $(window).bind('resize', function() {
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
 <a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
-<a href="javascript:edit_show();" class="icon"><span class="ui-icon ui-icon-pencil"></span>{% trans 'Edit' %}</a>
-{% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>{% endif %}
-{% if hasaddperm and model %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>{% endif %}
-<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a><div id="popup" class="ui-helper-hidden"></div>
-
-</div><span id="curfilter"></span>{% endblock %}
+{% if haschangeperm %}<a href="javascript:edit_show();" class="icon"><span class="ui-icon ui-icon-pencil"></span>{% trans 'Edit' %}</a>
+{% endif %}{% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
+{% endif %}{% if hasaddperm %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
+{% endif %}<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a><div id="popup" class="ui-helper-hidden"></div>
+</div>{% endblock %}
 {% block content %}
-{% block contextmenus %}{% endblock %}
 <div id="content-main" style="margin-right: 16px;">
 {% block before_table %}{% endblock %}
 <table id="jsonmap"></table>
 <div id="pjmap"></div>
 </div>
+{% block contextmenus %}{% endblock %}
 {% endblock %}

@@ -590,7 +590,7 @@ class DemandList(GridReport):
 
   rows = (
     TextGridField('name', title=_('name'), key=True),
-    TextGridField('item', title=_('item_name'), field_name='item__name', formatter='item'),
+    TextGridField('item', title=_('item'), field_name='item__name', formatter='item'),
     TextGridField('customer', title=_('customer'), field_name='customer__name', formatter='location'),
     TextGridField('description', title=_('description')),
     TextGridField('category', title=_('category')),
@@ -762,7 +762,7 @@ class OperationPlanList(GridReport):
   @staticmethod
   def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
-      'id','operation','startdate','enddate','quantity','locked', 'owner', 
+      'id','operation','startdate','enddate','quantity','locked', 'owner',
       'lastmodified'
       )
 

@@ -74,35 +74,35 @@ reservedParameters = ('o', 'p', 't', 'reporttype', 'pop', 'reportbucket', 'repor
 
 
 class GridField(object):
-  ''' 
+  '''
   Base field for fields in grid reports.
   '''
-    
+
   def __init__(self, name, **kwargs):
     self.name = name
     for key in kwargs:
       setattr(self, key, kwargs[key])
     if 'key' in kwargs: self.editable = False
     if not 'title' in kwargs: self.title = _(self.name)
-    if not 'field_name' in kwargs: self.field_name = self.name     
-  
+    if not 'field_name' in kwargs: self.field_name = self.name
+
   def __unicode__(self):
     o = [ "{name:'%s',label:'%s',width:%d,align:'%s'," % (self.name, force_unicode(self.title).title().replace("'","\\'"), self.width, self.align), ]
     if self.key: o.append( "key:true," )
     if not self.sortable: o.append("sortable:false,")
     if not self.editable: o.append("editable:false,")
-    if self.formatter: o.append("formatter:'%s'," % self.formatter) 
-    if self.unformat: o.append("unformat:%s," % self.unformat) 
+    if self.formatter: o.append("formatter:'%s'," % self.formatter)
+    if self.unformat: o.append("unformat:%s," % self.unformat)
     if self.searchrules: o.append("searchrules:{%s}," % self.searchrules)
     if self.extra: o.append(self.extra)
     o.append('}')
     return ''.join(o)
-    
+
   name = None
   field_name = None
   formatter = None
   width = 100
-  editable = True 
+  editable = True
   sortable = True
   key = False
   unformat = None
@@ -110,55 +110,55 @@ class GridField(object):
   extra = None
   align = 'center'
   searchrules = None
-  
-    
+
+
 class DateTimeGridField(GridField):
   formatter = 'date'
   extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d H:i:s'}"
   width = 140
-  
-    
+
+
 class DateGridField(GridField):
   formatter = 'date'
   extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d'}"
   width = 140
-  
-    
+
+
 class IntegerGridField(GridField):
   formatter = 'integer'
   width = 70
   searchrules = 'integer:true'
-    
-    
+
+
 class NumberGridField(GridField):
   formatter = 'number'
   width = 70
   searchrules = 'number:true'
-  
-    
+
+
 class BoolGridField(GridField):
   formatter = 'checkbox'
   width = 60
-    
-    
+
+
 class LastModifiedGridField(GridField):
   formatter = 'date'
   extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d H:i:s'}"
   title = _('last modified')
   editable = False
   width = 140
-    
-    
+
+
 class TextGridField(GridField):
   width = 200
-  align = 'left'    
-    
+  align = 'left'
+
 class CurrencyGridField(GridField):
   formatter = 'currency'
   extra = "formatoptions:{prefix:'$'}"
   width = 80
-  
-  
+
+
 class Report(object):
   '''
   The base class for all reports.
@@ -196,7 +196,7 @@ class Report(object):
 
   # Time buckets in this report
   timebuckets = False
-  
+
   # A list with required user permissions to view the report
   permissions = []
 
@@ -579,9 +579,9 @@ def filter_items(request, reportclass, items):
 class GridReport(View, Report):
 
   model = None
-  
+
   @method_decorator(staff_member_required)
-  @method_decorator(csrf_protect)  
+  @method_decorator(csrf_protect)
   def dispatch(self, *args, **kwargs):
       return super(GridReport, self).dispatch(*args, **kwargs)
 
@@ -596,12 +596,12 @@ class GridReport(View, Report):
       writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
     if translation.get_language() != request.LANGUAGE_CODE:
       translation.activate(request.LANGUAGE_CODE)
-    
+
     # Write a header row
     fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows ]
     writer.writerow(fields)
     yield sf.getvalue()
-    
+
     # Write the report content
     sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
     if 'sord' in request.GET and request.GET['sord'] == 'desc':
@@ -619,8 +619,8 @@ class GridReport(View, Report):
       # Return string
       writer.writerow(fields)
       yield sf.getvalue()
-      
-        
+
+
   @classmethod
   def _generate_json_data(reportclass, request):
     page = 'page' in request.GET and int(request.GET['page']) or 1
@@ -629,14 +629,14 @@ class GridReport(View, Report):
       sort = "-%s" % sort
     query = filter_items(request, reportclass, reportclass.basequeryset)
     recs = query.count()
-    yield '{"total":%d,\n' % (recs/100)
+    yield '{"total":%d,\n' % (recs/request.pagesize)
     yield '"page":%d,\n' % page
     yield '"records":%d,\n' % recs
     yield '"rows":[\n'
-    cnt = (page-1)*100+1
+    cnt = (page-1)*request.pagesize+1
     first = True
-    
-    # # TREEGRID 
+
+    # # TREEGRID
     #from django.db import connections, DEFAULT_DB_ALIAS
     #cursor = connections[DEFAULT_DB_ALIAS].cursor()
     #cursor.execute('''
@@ -646,8 +646,8 @@ class GridReport(View, Report):
     #    on node.lft between parent0.lft and parent0.rght and parent0.level = 0 and node.level >= 0
     #  left outer join item as parent1
     #    on node.lft between parent1.lft and parent1.rght and parent1.level = 1 and node.level >= 1
-    #  left outer join item as parent2  
-    #    on node.lft between parent2.lft and parent2.rght and parent2.level = 2 and node.level >= 2  
+    #  left outer join item as parent2
+    #    on node.lft between parent2.lft and parent2.rght and parent2.level = 2 and node.level >= 2
     #  where node.level = 0
     #  order by parent0.description asc, parent1.description asc, parent2.description asc, node.level, node.description, node.name
     #  ''')
@@ -658,7 +658,7 @@ class GridReport(View, Report):
     #  else:
     #    yield ',{"%s","%s","%s","%s","%s","%s","%s","%s",%d,%d,%d,%s,false]}\n' %(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11] and 'true' or 'false')
     #yield ']}\n'
-        
+
     fields = [ i.field_name for i in reportclass.rows ]
     #if False: # TREEGRID
     #  fields.append('level')
@@ -666,7 +666,7 @@ class GridReport(View, Report):
     #  fields.append('rght')
     #  fields.append('isLeaf')
     #  fields.append('expanded')
-    for i in query.order_by(sort)[cnt-1:cnt+100].values(*fields):
+    for i in query.order_by(sort)[cnt-1:cnt+request.pagesize].values(*fields):
       if first:
         r = [ '{' ]
         first = False
@@ -675,20 +675,20 @@ class GridReport(View, Report):
       first2 = True
       for f in reportclass.rows:
         if first2:
-          r.append('"%s":"%s"' % (f.name,i[f.field_name])) 
+          r.append('"%s":"%s"' % (f.name,i[f.field_name]))
           first2 = False
         elif i[f.field_name] != None:
           r.append(', "%s":"%s"' % (f.name,i[f.field_name]))
-      #if False:    # TREEGRID 
+      #if False:    # TREEGRID
       #  r.append(', %d, %d, %d, %s, %s' % (i['level'],i['lft'],i['rght'], i['isLeaf'] and 'true' or 'false', i['expanded'] and 'true' or 'false' ))
       r.append('}')
       yield ''.join(r)
       cnt = cnt + 1
     yield '\n]}\n'
-  
-    
+
+
   @classmethod
-  def post(reportclass, request, **args):   
+  def post(reportclass, request, **args):
     d = args['report'].model.objects.get(pk=request.POST['id'])
     for i in request.POST:
       setattr(d, i, request.POST[i])
@@ -697,25 +697,27 @@ class GridReport(View, Report):
     resp.content = "OK"
     resp.status_code = 200
     return resp
-  
-  
+
+
   @classmethod
   def get(reportclass, request, **args):
-    format = request.GET.get('format', None)   
-    if not format:
+    fmt = request.GET.get('format', None)
+    if not fmt:
       # Return HTML page
-      # Also add permissions to the context!!!
       return render(request, reportclass.template, {
         'reportclass': reportclass,
-        'title': reportclass.title
+        'title': reportclass.title,
+        'model': reportclass.model,
+        'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())),
+        'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())),
         })
-    elif format == 'json':
+    elif fmt == 'json':
       # Return JSON data to fill the grid
       response = HttpResponse(content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET)
       response._container = reportclass._generate_json_data(request)
       response._is_string = False
       return response
-    elif format == 'csvlist' or format == 'csvtable':
+    elif fmt == 'csvlist' or fmt == 'csvtable':
       # Return CSV data to export the data
       response = HttpResponse(content_type='text/csv; charset=%s' % settings.DEFAULT_CHARSET)
       response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
@@ -737,13 +739,13 @@ def _localize(value, use_l10n=None):
   a format that is understood uniformly across different regions in the
   world.
   '''
-  if callable(value): 
+  if callable(value):
     value = value()
   if isinstance(value, (Decimal, float, int, long)):
     return number_format(value, use_l10n=use_l10n)
   elif isinstance(value, (list,tuple) ):
     return "|".join([ unicode(_localize(i)) for i in value ])
-  else: 
+  else:
     return value
 
 

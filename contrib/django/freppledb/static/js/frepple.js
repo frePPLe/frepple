@@ -252,18 +252,25 @@ function sameOrigin(url) {
 function import_show(list_or_table)
 {
   $('#popup').html(
-    '<form enctype="multipart/form-data" method="post" action=""><table><tr>'+
+    '<form id="uploadform" enctype="multipart/form-data" method="post" action="">'+
     '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
-    '<td colspan="2">' + gettext('Load data from a CSV-formatted text file in the database.') + '<br/>'+
-    gettext('The first row should contain the field names.') + '</td></tr>'+
-    '<tr><td>'+gettext('Data file') + ':</td><td><input type="file" id="csv_file" name="csv_file"/></td></tr>'+
-    '<tr><td><input id="upload" type="submit" value="' + gettext('Upload') + '"/></td>'+
-    '<td><input type="button" value="' + gettext('Cancel') + '" onclick="$(\'#popup\').dialog(\'close\');"/></td></tr>'+
-    '</table></form>'
+    gettext('Load a CSV-formatted text file.') + '<br/>' +
+    gettext('The first row should contain the field names.') + '<br/>' +
+    gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/></form>'
     ).dialog({
       title: gettext("Import data"),
       autoOpen: true,
       resizable: false,
+      buttons: [
+        {
+          text: gettext("Import"),
+          click: function() { $("#uploadform").submit(); },
+        },
+        {
+          text: gettext("Cancel"),
+          click: function() { $(this).dialog("close"); }
+        }
+        ]
     });
   $('#timebuckets').dialog('close');;
 }
@@ -304,9 +311,6 @@ function export_show(list_or_table)
 {
   // The argument is true when we show a "list" report.
   // It is false for "table" reports.
-  $("#popup").load("/admin/input/item/box/").dialog({title:"whop", autoOpen: true});
-  $("#curfilter").load("/admin/input/item/fabric/").dialog({title:"whop", autoOpen: true});
-  /*
   $('#popup').html(
     gettext("CSV style") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
     '<option value="csvtable"' + (list_or_table ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
@@ -318,7 +322,6 @@ function export_show(list_or_table)
         {
           text: gettext("Export"),
           click: function() { export_close(); },
-          primary:'ui-icon-gear'
         },
         {
           text: gettext("Cancel"),
@@ -326,7 +329,6 @@ function export_show(list_or_table)
         }
         ]
       });
-  */
   $('#timebuckets').dialog('close');
 }
 

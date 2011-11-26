@@ -424,9 +424,6 @@ def view_report(request, entity=None, **args):
     # No SQL override provided
     objectlist2 = objectlist1
 
-  # Build the paginator html
-  page_htmls = _get_paginator_html(request, paginator, page)
-
   # Build the path for the complete list.
   # We need to treat URLs for a specific entity a bit differently
   if entity:
@@ -436,7 +433,6 @@ def view_report(request, entity=None, **args):
 
   # Prepare template context
   head_frozen, head_scroll = _create_rowheader(request, sortfield, sortdirection, reportclass)
-  filterdef, filternew = _create_filter(request, reportclass)
   context = {
        'reportclass': reportclass,
        'model': model,
@@ -455,16 +451,12 @@ def view_report(request, entity=None, **args):
        'fullhits': fullhits,
        'is_popup': is_popup,
        'base_request_path': base_request_path,
-       'paginator_html': mark_safe(page_htmls),
-       'javascript_imports': _get_javascript_imports(reportclass),
        # Never reset the breadcrumbs if an argument entity was passed.
        # Otherwise depend on the value in the report class.
        'reset_crumbs': reportclass.reset_crumbs and entity == None,
        'title': (entity and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(entity)}) or reportclass.title,
        'rowheader': head_scroll,
        'rowheaderfrozen': head_frozen,
-       'filterdef': filterdef,
-       'filternew': filternew,
        'crossheader': issubclass(reportclass, TableReport) and _create_crossheader(request, reportclass),
        'columnheader': issubclass(reportclass, TableReport) and _create_columnheader(request, reportclass, bucketlist),
      }
@@ -689,15 +681,40 @@ class GridReport(View, Report):
 
   @classmethod
   def post(reportclass, request, **args):
-    d = args['report'].model.objects.get(pk=request.POST['id'])
-    for i in request.POST:
-      setattr(d, i, request.POST[i])
-    d.save()
-    resp = HttpResponse()
-    resp.content = "OK"
-    resp.status_code = 200
-    return resp
-
+    if "csv_file" in request.FILES:
+      # Uploading a CSV file
+      if not reportclass.model:
+        messages.add_message(request, messages.ERROR, _('Invalid upload request'))
+        return HttpResponseRedirect(request.prefix + request.get_full_path())
+      if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())):
+        messages.add_message(request, messages.ERROR, _('Not authorized'))
+        return HttpResponseRedirect(request.prefix + request.get_full_path())
+      (warnings,errors,changed,added) = reportclass.parseUpload(request, request.FILES['csv_file'].read())
+      if len(errors) > 0:
+        messages.add_message(request, messages.INFO,
+         _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+         )
+        for i in errors: messages.add_message(request, messages.INFO, i)
+      elif len(warnings) > 0:
+        messages.add_message(request, messages.INFO,
+          _('Uploaded file processed with warnings: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+          )
+        for i in warnings: messages.add_message(request, messages.INFO, i)
+      else:
+        messages.add_message(request, messages.INFO,
+          _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+          )
+      return HttpResponseRedirect(request.prefix + request.get_full_path())      
+    else:
+      # Inline edit
+      d = reportclass.model.objects.get(pk=request.POST['id'])
+      for i in request.POST:
+        setattr(d, i, request.POST[i])
+      d.save()
+      resp = HttpResponse()
+      resp.content = "OK"
+      resp.status_code = 200
+      return resp
 
   @classmethod
   def get(reportclass, request, **args):
@@ -727,7 +744,145 @@ class GridReport(View, Report):
     else:
       raise Http404('Unknown format type')
 
+  @classmethod
+  def parseUpload(reportclass, request, data):
+      '''
+      This method reads CSV data from a string (in memory) and creates or updates
+      the database records.
+      The data must follow the following format:
+        - the first row contains a header, listing all field names
+        - a first character # marks a comment line
+        - empty rows are skipped
+  
+      Limitation: SQLite doesnt validate the input data appropriately.
+      E.g. It is possible to store character strings in a number field. An error
+      is generated only when reading the record and trying to convert it to a
+      Python number.
+      E.g. It is possible to store invalid strings in a Date field.
+      '''
+      entityclass = reportclass.model
+      headers = []
+      rownumber = 0
+      changed = 0
+      added = 0
+      warnings = []
+      errors = []
+      content_type_id = ContentType.objects.get_for_model(entityclass).pk
+  
+      transaction.enter_transaction_management(using=request.database)
+      transaction.managed(True, using=request.database)
+      try:
+        # Loop through the data records
+        has_pk_field = False
+        for row in csv.reader(data.splitlines()):
+          rownumber += 1
+  
+          ### Case 1: The first line is read as a header line
+          if rownumber == 1:
+            for col in row:
+              col = col.strip().strip('#').lower()
+              if col == "":
+                headers.append(False)
+                continue
+              ok = False
+              for i in entityclass._meta.fields:
+                if col == i.name.lower() or col == i.verbose_name.lower():
+                  if i.editable == True:
+                    headers.append(i)
+                  else:
+                    headers.append(False)
+                  ok = True
+                  break
+              if not ok: errors.append(_('Incorrect field %(column)s') % {'column': col})
+              if col == entityclass._meta.pk.name.lower() \
+                or col == entityclass._meta.pk.verbose_name.lower():
+                  has_pk_field = True
+            if not has_pk_field and not isinstance(entityclass._meta.pk, AutoField):
+              # The primary key is not an auto-generated id and it is not mapped in the input...
+              errors.append(_('Missing primary key field %(key)s') % {'key': entityclass._meta.pk.name})
+            # Abort when there are errors
+            if len(errors) > 0: return (warnings,errors,0,0)
+            # Create a form class that will be used to validate the data
+            UploadForm = modelform_factory(entityclass,
+              fields = tuple([i.name for i in headers if isinstance(i,Field)]),
+              formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
+              )
+  
+          ### Case 2: Skip empty rows and comments rows
+          elif len(row) == 0 or row[0].startswith('#'):
+            continue
+  
+          ### Case 3: Process a data row
+          else:
+            try:
+              # Step 1: Build a dictionary with all data fields
+              d = {}
+              colnum = 0
+              for col in row:
+                # More fields in data row than headers. Move on to the next row.
+                if colnum >= len(headers): break
+                if isinstance(headers[colnum],Field): d[headers[colnum].name] = col.strip()
+                colnum += 1
+  
+              # Step 2: Fill the form with data, either updating an existing
+              # instance or creating a new one.
+              if has_pk_field:
+                # A primary key is part of the input fields
+                try:
+                  # Try to find an existing record with the same primary key
+                  it = entityclass.objects.using(request.database).get(pk=d[entityclass._meta.pk.name])
+                  form = UploadForm(d, instance=it)
+                except entityclass.DoesNotExist:
+                  form = UploadForm(d)
+                  it = None
+              else:
+                # No primary key required for this model
+                form = UploadForm(d)
+                it = None
+  
+              # Step 3: Validate the data and save to the database
+              if form.has_changed():
+                try:
+                  obj = form.save()
+                  LogEntry(
+                      user_id         = request.user.pk,
+                      content_type_id = content_type_id,
+                      object_id       = obj.pk,
+                      object_repr     = force_unicode(obj),
+                      action_flag     = it and CHANGE or ADDITION,
+                      change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                  ).save(using=request.database)
+                  if it:
+                    changed += 1
+                  else:
+                    added += 1
+                except Exception, e:
+                  # Validation fails
+                  for error in form.non_field_errors():
+                    warnings.append(
+                      _('Row %(rownum)s: %(message)s') % {
+                        'rownum': rownumber, 'message': error
+                      })
+                  for field in form:
+                    for error in field.errors:
+                      warnings.append(
+                        _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                          'rownum': rownumber, 'data': d[field.name],
+                          'field': field.name, 'message': error
+                        })
+  
+              # Step 4: Commit the database changes from time to time
+              if rownumber % 500 == 0: transaction.commit(using=request.database)
+            except Exception, e:
+              errors.append(_("Exception during upload: %(message)s") % {'message': e,})
+      finally:
+        transaction.commit(using=request.database)
+        transaction.leave_transaction_management(using=request.database)
+  
+      # Report all failed records
+      return (warnings, errors, changed, added)
 
+  
 class GridPivot(GridReport):
   pass
 
@@ -989,142 +1144,3 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
 
   # Final result
   return (mark_safe(string_concat(*result1)), mark_safe(string_concat(*result2)))
-
-
-
-def parseUpload(request, reportclass, data):
-    '''
-    This method reads CSV data from a string (in memory) and creates or updates
-    the database records.
-    The data must follow the following format:
-      - the first row contains a header, listing all field names
-      - a first character # marks a comment line
-      - empty rows are skipped
-
-    Limitation: SQLite doesnt validate the input data appropriately.
-    E.g. It is possible to store character strings in a number field. An error
-    is generated only when reading the record and trying to convert it to a
-    Python number.
-    E.g. It is possible to store invalid strings in a Date field.
-    '''
-    entityclass = reportclass.model
-    headers = []
-    rownumber = 0
-    changed = 0
-    added = 0
-    warnings = []
-    errors = []
-    content_type_id = ContentType.objects.get_for_model(entityclass).pk
-
-    transaction.enter_transaction_management(using=request.database)
-    transaction.managed(True, using=request.database)
-    try:
-      # Loop through the data records
-      has_pk_field = False
-      for row in csv.reader(data.splitlines()):
-        rownumber += 1
-
-        ### Case 1: The first line is read as a header line
-        if rownumber == 1:
-          for col in row:
-            col = col.strip().strip('#').lower()
-            if col == "":
-              headers.append(False)
-              continue
-            ok = False
-            for i in entityclass._meta.fields:
-              if col == i.name.lower() or col == i.verbose_name.lower():
-                if i.editable == True:
-                  headers.append(i)
-                else:
-                  headers.append(False)
-                ok = True
-                break
-            if not ok: errors.append(_('Incorrect field %(column)s') % {'column': col})
-            if col == entityclass._meta.pk.name.lower() \
-              or col == entityclass._meta.pk.verbose_name.lower():
-                has_pk_field = True
-          if not has_pk_field and not isinstance(entityclass._meta.pk, AutoField):
-            # The primary key is not an auto-generated id and it is not mapped in the input...
-            errors.append(_('Missing primary key field %(key)s') % {'key': entityclass._meta.pk.name})
-          # Abort when there are errors
-          if len(errors) > 0: return (warnings,errors,0,0)
-          # Create a form class that will be used to validate the data
-          UploadForm = modelform_factory(entityclass,
-            fields = tuple([i.name for i in headers if isinstance(i,Field)]),
-            formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
-            )
-
-        ### Case 2: Skip empty rows and comments rows
-        elif len(row) == 0 or row[0].startswith('#'):
-          continue
-
-        ### Case 3: Process a data row
-        else:
-          try:
-            # Step 1: Build a dictionary with all data fields
-            d = {}
-            colnum = 0
-            for col in row:
-              # More fields in data row than headers. Move on to the next row.
-              if colnum >= len(headers): break
-              if isinstance(headers[colnum],Field): d[headers[colnum].name] = col.strip()
-              colnum += 1
-
-            # Step 2: Fill the form with data, either updating an existing
-            # instance or creating a new one.
-            if has_pk_field:
-              # A primary key is part of the input fields
-              try:
-                # Try to find an existing record with the same primary key
-                it = entityclass.objects.using(request.database).get(pk=d[entityclass._meta.pk.name])
-                form = UploadForm(d, instance=it)
-              except entityclass.DoesNotExist:
-                form = UploadForm(d)
-                it = None
-            else:
-              # No primary key required for this model
-              form = UploadForm(d)
-              it = None
-
-            # Step 3: Validate the data and save to the database
-            if form.has_changed():
-              try:
-                obj = form.save()
-                LogEntry(
-                    user_id         = request.user.pk,
-                    content_type_id = content_type_id,
-                    object_id       = obj.pk,
-                    object_repr     = force_unicode(obj),
-                    action_flag     = it and CHANGE or ADDITION,
-                    change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                ).save(using=request.database)
-                if it:
-                  changed += 1
-                else:
-                  added += 1
-              except Exception, e:
-                # Validation fails
-                for error in form.non_field_errors():
-                  warnings.append(
-                    _('Row %(rownum)s: %(message)s') % {
-                      'rownum': rownumber, 'message': error
-                    })
-                for field in form:
-                  for error in field.errors:
-                    warnings.append(
-                      _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
-                        'rownum': rownumber, 'data': d[field.name],
-                        'field': field.name, 'message': error
-                      })
-
-            # Step 4: Commit the database changes from time to time
-            if rownumber % 500 == 0: transaction.commit(using=request.database)
-          except Exception, e:
-            errors.append(_("Exception during upload: %(message)s") % {'message': e,})
-    finally:
-      transaction.commit(using=request.database)
-      transaction.leave_transaction_management(using=request.database)
-
-    # Report all failed records
-    return (warnings, errors, changed, added)

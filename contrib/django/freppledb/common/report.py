@@ -47,7 +47,7 @@ from django.db import transaction
 from django.db import models
 from django.db.models.fields import Field
 from django.db.models.fields.related import RelatedField, AutoField
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
 from django.forms.models import modelform_factory
 from django.shortcuts import render
 from django.template import RequestContext, loader
@@ -75,7 +75,7 @@ reservedParameters = ('o', 'p', 't', 'reporttype', 'pop', 'reportbucket', 'repor
 
 class GridField(object):
   '''
-  Base field for fields in grid reports.
+  Base field for columns in grid views.
   '''
 
   def __init__(self, name, **kwargs):
@@ -166,7 +166,7 @@ class Report(object):
   can be overwritten.
   '''
   # Points to templates to be used for different output formats
-  template = 'admin/base_site_list.html'
+  template = 'admin/base_site_grid.html'
   # The title of the report. Used for the window title
   title = ''
   # The default number of entities to put on a page
@@ -246,36 +246,6 @@ def view_report(request, entity=None, **args):
   global reservedParameters
   reportclass = args['report']
   model = reportclass.model
-
-  # Process uploaded data files
-  if request.method == 'POST':
-    if not reportclass.model or "csv_file" not in request.FILES:
-      messages.add_message(request, messages.ERROR, _('Invalid upload request'))
-      return HttpResponseRedirect(request.prefix + request.get_full_path())
-    if not reportclass.editable or not request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())):
-      messages.add_message(request, messages.ERROR, _('Not authorized'))
-      return HttpResponseRedirect(request.prefix + request.get_full_path())
-    (warnings,errors,changed,added) = parseUpload(request, reportclass, request.FILES['csv_file'].read())
-    if len(errors) > 0:
-      messages.add_message(request, messages.INFO,
-       _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-       )
-      for i in errors: messages.add_message(request, messages.INFO, i)
-    elif len(warnings) > 0:
-      messages.add_message(request, messages.INFO,
-        _('Uploaded file processed with warnings: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-        )
-      for i in warnings: messages.add_message(request, messages.INFO, i)
-    else:
-      messages.add_message(request, messages.INFO,
-        _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-        )
-    return HttpResponseRedirect(request.prefix + request.get_full_path())
-
-  # Verify the user is authorirzed to view the report
-  for perm in reportclass.permissions:
-    if not request.user.has_perm(perm):
-      return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
 
   # Pick up the list of time buckets
   pref = request.user.get_profile()
@@ -492,80 +462,6 @@ def _create_crossheader(req, cls):
   return mark_safe('<br/>'.join(res))
 
 
-def get_filters(request):
-  _search = request.GET.get('_search')
-  filters = None
-
-  if _search == 'true':
-      _filters = request.GET.get('filters')
-      try:
-          filters = _filters and json.loads(_filters)
-      except ValueError:
-          return None
-
-      if filters is None:
-          field = request.GET.get('searchField')
-          op = request.GET.get('searchOper')
-          data = request.GET.get('searchString')
-
-          if all([field, op, data]):
-              filters = {
-                  'groupOp': 'AND',
-                  'rules': [{ 'op': op, 'field': field, 'data': data }]
-              }
-  return filters
-
-
-def filter_items(request, reportclass, items):
-  # TODO: Add option to use case insensitive filters
-  # TODO: Add more support for RelatedFields (searching and displaying)
-  # FIXME: Validate data types are correct for field being searched.
-  filter_map = {
-      # jqgrid op: (django_lookup, use_exclude)
-      'ne': ('%(field)s__exact', True),
-      'bn': ('%(field)s__startswith', True),
-      'en': ('%(field)s__endswith',  True),
-      'nc': ('%(field)s__contains', True),
-      'ni': ('%(field)s__in', True),
-      'in': ('%(field)s__in', False),
-      'eq': ('%(field)s__exact', False),
-      'bw': ('%(field)s__startswith', False),
-      'gt': ('%(field)s__gt', False),
-      'ge': ('%(field)s__gte', False),
-      'lt': ('%(field)s__lt', False),
-      'le': ('%(field)s__lte', False),
-      'ew': ('%(field)s__endswith', False),
-      'cn': ('%(field)s__contains', False)
-  }
-  _filters = get_filters(request)
-  if _filters is None:
-      return items
-
-  q_filters = []
-  for rule in _filters['rules']:
-      op, field, data = rule['op'], rule['field'], rule['data']
-      # FIXME: Restrict what lookups performed against RelatedFields
-      field_class = reportclass.model._meta.get_field_by_name(field)[0]
-      if isinstance(field_class, models.related.RelatedField):
-          op = 'eq'
-      filter_fmt, exclude = filter_map[op]
-      filter_str = smart_str(filter_fmt % {'field': field})
-      if filter_fmt.endswith('__in'):
-          d_split = data.split(',')
-          filter_kwargs = {filter_str: data.split(',')}
-      else:
-          filter_kwargs = {filter_str: smart_str(data)}
-
-      if exclude:
-          q_filters.append(~models.Q(**filter_kwargs))
-      else:
-          q_filters.append(models.Q(**filter_kwargs))
-
-  if _filters['groupOp'].upper() == 'OR':
-      filters = reduce(operator.ior, q_filters)
-  else:
-      filters = reduce(operator.iand, q_filters)
-  return items.filter(filters)
 
 
 class GridReport(View, Report):
@@ -574,8 +470,20 @@ class GridReport(View, Report):
 
   @method_decorator(staff_member_required)
   @method_decorator(csrf_protect)
-  def dispatch(self, *args, **kwargs):
-      return super(GridReport, self).dispatch(*args, **kwargs)
+  def dispatch(self, request, *args, **kwargs):    
+    # Verify the user is authorized to view the report
+    for perm in self.permissions:
+      if not request.user.has_perm(perm):
+        return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
+    
+    # Dispatch to the correct method
+    method = request.method.lower()
+    if method == 'get':
+      return self.get(request, *args, **kwargs)
+    elif method == 'post':
+      return self.post(request, *args, **kwargs)
+    else:
+      return HttpResponseNotAllowed(['get','post'])
 
 
   @classmethod
@@ -598,7 +506,7 @@ class GridReport(View, Report):
     sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
     if 'sord' in request.GET and request.GET['sord'] == 'desc':
       sort = "-%s" % sort
-    query = filter_items(request, reportclass, reportclass.basequeryset)
+    query = reportclass.filter_items(request, reportclass.basequeryset)
     fields = [ i.field_name for i in reportclass.rows ]
     for row in query.order_by(sort).values(*fields):
       # Clear the return string buffer
@@ -619,7 +527,7 @@ class GridReport(View, Report):
     sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
     if 'sord' in request.GET and request.GET['sord'] == 'desc':
       sort = "-%s" % sort
-    query = filter_items(request, reportclass, reportclass.basequeryset)
+    query = reportclass.filter_items(request, reportclass.basequeryset)
     recs = query.count()
     yield '{"total":%d,\n' % (recs/request.pagesize)
     yield '"page":%d,\n' % page
@@ -690,6 +598,7 @@ class GridReport(View, Report):
         messages.add_message(request, messages.ERROR, _('Not authorized'))
         return HttpResponseRedirect(request.prefix + request.get_full_path())
       (warnings,errors,changed,added) = reportclass.parseUpload(request, request.FILES['csv_file'].read())
+      # TODO display errors as a downloadable list in the dialog?
       if len(errors) > 0:
         messages.add_message(request, messages.INFO,
          _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
@@ -881,6 +790,82 @@ class GridReport(View, Report):
   
       # Report all failed records
       return (warnings, errors, changed, added)
+
+  @classmethod
+  def get_filters(reportclass, request):
+    _search = request.GET.get('_search')
+    filters = None
+  
+    if _search == 'true':
+        _filters = request.GET.get('filters')
+        try:
+            filters = _filters and json.loads(_filters)
+        except ValueError:
+            return None
+  
+        if filters is None:
+            field = request.GET.get('searchField')
+            op = request.GET.get('searchOper')
+            data = request.GET.get('searchString')
+  
+            if all([field, op, data]):
+                filters = {
+                    'groupOp': 'AND',
+                    'rules': [{ 'op': op, 'field': field, 'data': data }]
+                }
+    return filters
+  
+  
+  @classmethod
+  def filter_items(reportclass, request, items):
+    # TODO: Add option to use case insensitive filters
+    # TODO: Add more support for RelatedFields (searching and displaying)
+    # FIXME: Validate data types are correct for field being searched.
+    filter_map = {
+        # jqgrid op: (django_lookup, use_exclude)
+        'ne': ('%(field)s__exact', True),
+        'bn': ('%(field)s__startswith', True),
+        'en': ('%(field)s__endswith',  True),
+        'nc': ('%(field)s__contains', True),
+        'ni': ('%(field)s__in', True),
+        'in': ('%(field)s__in', False),
+        'eq': ('%(field)s__exact', False),
+        'bw': ('%(field)s__startswith', False),
+        'gt': ('%(field)s__gt', False),
+        'ge': ('%(field)s__gte', False),
+        'lt': ('%(field)s__lt', False),
+        'le': ('%(field)s__lte', False),
+        'ew': ('%(field)s__endswith', False),
+        'cn': ('%(field)s__contains', False)
+    }
+    _filters = reportclass.get_filters(request)
+    if _filters is None:
+        return items
+  
+    q_filters = []
+    for rule in _filters['rules']:
+        op, field, data = rule['op'], rule['field'], rule['data']
+        # FIXME: Restrict what lookups performed against RelatedFields
+        field_class = reportclass.model._meta.get_field_by_name(field)[0]
+        if isinstance(field_class, models.related.RelatedObject):
+            op = 'eq'
+        filter_fmt, exclude = filter_map[op]
+        filter_str = smart_str(filter_fmt % {'field': field})
+        if filter_fmt.endswith('__in'):
+            filter_kwargs = {filter_str: data.split(',')}
+        else:
+            filter_kwargs = {filter_str: smart_str(data)}
+  
+        if exclude:
+            q_filters.append(~models.Q(**filter_kwargs))
+        else:
+            q_filters.append(models.Q(**filter_kwargs))
+  
+    if _filters['groupOp'].upper() == 'OR':
+        filters = reduce(operator.ior, q_filters)
+    else:
+        filters = reduce(operator.iand, q_filters)
+    return items.filter(filters)
 
   
 class GridPivot(GridReport):

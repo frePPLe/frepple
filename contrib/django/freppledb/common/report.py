@@ -503,12 +503,9 @@ class GridReport(View, Report):
     yield sf.getvalue()
 
     # Write the report content
-    sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
-    if 'sord' in request.GET and request.GET['sord'] == 'desc':
-      sort = "-%s" % sort
-    query = reportclass.filter_items(request, reportclass.basequeryset)
+    query = reportclass._get_query(request)
     fields = [ i.field_name for i in reportclass.rows ]
-    for row in query.order_by(sort).values(*fields):
+    for row in query.values(*fields):
       # Clear the return string buffer
       sf.truncate(0)
       # Build the return value, encoding all output
@@ -520,14 +517,17 @@ class GridReport(View, Report):
       writer.writerow(fields)
       yield sf.getvalue()
 
+  @classmethod
+  def _get_query(reportclass, request):
+    sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
+    if 'sord' in request.GET and request.GET['sord'] == 'desc':
+      sort = "-%s" % sort
+    return reportclass.filter_items(request, reportclass.basequeryset).order_by(sort)
 
   @classmethod
   def _generate_json_data(reportclass, request):
     page = 'page' in request.GET and int(request.GET['page']) or 1
-    sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
-    if 'sord' in request.GET and request.GET['sord'] == 'desc':
-      sort = "-%s" % sort
-    query = reportclass.filter_items(request, reportclass.basequeryset)
+    query = reportclass._get_query(request)
     recs = query.count()
     yield '{"total":%d,\n' % (recs/request.pagesize)
     yield '"page":%d,\n' % page
@@ -566,7 +566,7 @@ class GridReport(View, Report):
     #  fields.append('rght')
     #  fields.append('isLeaf')
     #  fields.append('expanded')
-    for i in query.order_by(sort)[cnt-1:cnt+request.pagesize].values(*fields):
+    for i in query[cnt-1:cnt+request.pagesize].values(*fields):
       if first:
         r = [ '{' ]
         first = False

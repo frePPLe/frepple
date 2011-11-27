@@ -285,7 +285,6 @@ function filter_show()
     multipleSearch:true,
     multipleGroup:true,
     onSearch : function() {
-      var postdata = $("#jsonmap").jqGrid('getGridParam', 'postData');
       $('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_jsonmap").jqFilter('toSQLString'));
       },
     onReset : function() {
@@ -335,7 +334,6 @@ function export_show(list_or_table)
 
 function export_close()
 {
-  // TODO THE REQUEST DOESN'T HAVE THE SAME FILTER AND SORT ARGUMENTS AS THE JSON DATA REQUEST!
   // Fetch the report data
   var url = location.href;
   if (location.search.length > 0)
@@ -347,9 +345,11 @@ function export_close()
   else
     // This is the first argument for the URL
     url += "?format=" + $('#csvformat').val();
+  // Append current filter and sort settings to the URL
+  var postdata = $("#jsonmap").jqGrid('getGridParam', 'postData');
+  url +=  "&" + jQuery.param(postdata);
+  // Open the window
   window.open(url,'_blank');
-  // Hide the popup window
-  $('#popup').dialog('close');
 }
 
 

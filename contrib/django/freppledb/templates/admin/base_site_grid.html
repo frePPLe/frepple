@@ -12,7 +12,7 @@ $(function(){
 	  jsonReader : {repeatitems:false},
    	colModel:[
    	  {% for f in reportclass.rows %}{% if not forloop.first %},
-   	  {% endif %}{{f|safe}}{% endfor %}
+   	  {% endif %}{ {{f|safe}} }{% endfor %}
    	  ],{% if reportclass.editable %}
     cellEdit: true,
     cellsubmit: 'clientArray',
@@ -87,6 +87,7 @@ $(window).bind('resize', function() {
 {% block before_table %}{% endblock %}
 <table id="jsonmap"></table>
 <div id="pjmap"></div>
+{% block after_table %}{% endblock %}
 </div>
 {% block contextmenus %}{% endblock %}
 {% endblock %}

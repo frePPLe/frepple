@@ -87,7 +87,7 @@ class GridField(object):
     if not 'field_name' in kwargs: self.field_name = self.name
 
   def __unicode__(self):
-    o = [ "{name:'%s',label:'%s',width:%d,align:'%s'," % (self.name, force_unicode(self.title).title().replace("'","\\'"), self.width, self.align), ]
+    o = [ "name:'%s',label:'%s',width:%d,align:'%s'," % (self.name, force_unicode(self.title).title().replace("'","\\'"), self.width, self.align), ]
     if self.key: o.append( "key:true," )
     if not self.sortable: o.append("sortable:false,")
     if not self.editable: o.append("editable:false,")
@@ -95,7 +95,6 @@ class GridField(object):
     if self.unformat: o.append("unformat:%s," % self.unformat)
     if self.searchrules: o.append("searchrules:{%s}," % self.searchrules)
     if self.extra: o.append(self.extra)
-    o.append('}')
     return ''.join(o)
 
   name = None
@@ -446,24 +445,6 @@ def _create_columnheader(req, cls, bucketlist):
   return mark_safe(' '.join(['<th><a title="%s - %s">%s</a></th>' % (j['startdate'], j['enddate'], j['name']) for j in bucketlist]))
 
 
-def _create_crossheader(req, cls):
-  '''
-  Generate html for the crosses of a table report.
-  '''
-  res = []
-  for crs in cls.crosses:
-    title = capfirst((crs[1].has_key('title') and crs[1]['title']) or crs[0]).replace(' ','&nbsp;')
-    # Editable crosses need to be a bit higher @todo Not very clean...
-    if crs[1].has_key('editable'):
-      if (callable(crs[1]['editable']) and crs[1]['editable'](req)) \
-      or (not callable(crs[1]['editable']) and crs[1]['editable']):
-        title = '<span style="line-height:18pt;">' + title + '</span>'
-    res.append(title)
-  return mark_safe('<br/>'.join(res))
-
-
-
-
 class GridReport(View, Report):
 
   model = None
@@ -517,12 +498,14 @@ class GridReport(View, Report):
       writer.writerow(fields)
       yield sf.getvalue()
 
+
   @classmethod
   def _get_query(reportclass, request):
     sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
     if 'sord' in request.GET and request.GET['sord'] == 'desc':
       sort = "-%s" % sort
     return reportclass.filter_items(request, reportclass.basequeryset).order_by(sort)
+
 
   @classmethod
   def _generate_json_data(reportclass, request):
@@ -581,6 +564,7 @@ class GridReport(View, Report):
           r.append(', "%s":"%s"' % (f.name,i[f.field_name]))
       #if False:    # TREEGRID
       #  r.append(', %d, %d, %d, %s, %s' % (i['level'],i['lft'],i['rght'], i['isLeaf'] and 'true' or 'false', i['expanded'] and 'true' or 'false' ))
+      r.append(',"b1":"y","b2":"z"')
       r.append('}')
       yield ''.join(r)
       cnt = cnt + 1
@@ -630,10 +614,24 @@ class GridReport(View, Report):
     fmt = request.GET.get('format', None)
     if not fmt:
       # Return HTML page
+      # Pick up the list of time buckets      
+      if issubclass(reportclass, GridPivot):
+        pref = request.user.get_profile()
+        (bucket,start,end,bucketlist) = getBuckets(request, pref)
+        bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
+      else:
+        bucket = start = end = bucketlist = bucketnames = None
+      
       return render(request, reportclass.template, {
         'reportclass': reportclass,
         'title': reportclass.title,
+        'reportbucket': bucket,
+        'reportstart': start,
+        'reportend': end,
+        'bucketnames': bucketnames,
+        'bucketlist': bucketlist,
         'model': reportclass.model,
+        'reset_crumbs': reportclass.reset_crumbs,
         'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())),
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())),
         })
@@ -869,7 +867,7 @@ class GridReport(View, Report):
 
   
 class GridPivot(GridReport):
-  pass
+  template = 'admin/base_site_gridpivot.html'
 
 
 def _localize(value, use_l10n=None):

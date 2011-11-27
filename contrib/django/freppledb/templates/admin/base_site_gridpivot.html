@@ -1,0 +1,109 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n admin_list %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" media="screen" href="/static/css/ui.jqgrid.css" />
+{% endblock %}
+{% block extrahead %}{{ block.super }} 
+{% block extrajavascript %}<script type="text/javascript">
+
+function columns (cellvalue, options, rowdata) {
+  return "{% for f in reportclass.crosses %}{% if not forloop.first %}<br/>{% endif %}{{f.1.title|title}}{% endfor %}";
+};
+
+$(function(){ 
+  jQuery("#jsonmap").jqGrid({        
+   	url: window.location.href + (location.search.length > 0 ? "&format=json" : "?format=json"),
+	  datatype: "json",
+	  jsonReader : {repeatitems:false},
+   	colModel:[
+   	  {% for f in reportclass.rows %}{% if not forloop.first %},
+   	  {% endif %}{ {{f|safe}} }{% endfor %},
+      { name:'columns',label:'',sortable:false,width:200,align:'left',formatter:columns,search:false },
+      {% for f in bucketlist %}{% if not forloop.first %},
+      {% endif %}{ name:'{{f.name|safe}}',sortable:false,width:90,search:false }{% endfor %}
+   	  ],{% if reportclass.editable %}
+    cellEdit: true,
+    cellsubmit: 'clientArray',
+    editurl: location.pathname,
+   	{% endif %}rowNum: {{request.pagesize}},
+   	pager: '#pjmap',
+   	sortname: '{{reportclass.keyfield}}',
+    viewrecords: true,    
+    sortorder: "asc",	
+    hidegrid: false,
+    scrollRows: true,
+	  altRows: true,
+	  scroll: 1,
+    autowidth: true,    
+	  shrinkToFit: false,
+	  height: $(window).height() - $("#jsonmap").offset().top - 70
+    });
+  // Initial search string:
+  // jQuery('#jsonmap').jqGrid('setGridParam', {postData: mypostdata, search:true});
+  });
+/*
+  $("#savebutton").click(function() {
+    alert(JSON.stringify($("#jsonmap").getChangedCells('dirty')));
+    });
+
+$(window).bind('beforeunload', function() {
+   var rows = $("#jsonmap").getChangedCells('dirty');
+   alert(JSON.stringify(rows));
+   if (rows != null && rows.length > 0) 
+   {
+     $("#popup").html("Discard saved data").dialog({ 
+       title: gettext("Export data"), autoOpen: true, resizable: false,
+       modal: true,
+       buttons: 
+          {
+          "Save": function() {
+            $( this ).dialog( "close" );
+            return false;
+            },
+          "Discard": function() {
+            $( this ).dialog( "close" );
+            return true;
+            }       
+          }  
+      });
+      return true;
+  };
+  return true;
+});
+*/
+
+$(window).bind('resize', function() {
+  $("#jsonmap")
+   .setGridWidth($('#content-main').width()) 
+   .setGridHeight($(window).height() - $("#jsonmap").offset().top - 70);
+}); 
+
+</script> 
+{% endblock %}
+{% endblock %}
+{% block content_title %}{{ block.super }}{% endblock %}
+{% block coltype %}colM{% endblock %}
+{% block tools %}<div class="tools">
+<a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
+<a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
+<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a><div id="popup" class="ui-helper-hidden"></div>
+</div>{% endblock %}
+{% block content %}
+<div id="content-main" style="margin-right: 16px;">
+{% block before_table %}{% endblock %}
+<table id="jsonmap"></table>
+<div id="pjmap"></div>
+</div>
+{% block after_table %}{% endblock %}
+<div id="timebuckets" class="ui-helper-hidden" title="{% trans 'Time buckets' %}">
+<form method="get" action=""><table>
+<tr><th>{% trans 'Bucket' %}</th><td><select name="reportbucket" id="reportbucket">
+{% for i in bucketnames %}<option value="{{i}}"{% ifequal i reportbucket %} selected="selected"{% endifequal %}>{% trans i %}</option>
+{% endfor %}</select></td></tr>
+<tr><th>{% trans 'start date'|capfirst %}:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="{{ reportstart|date:"Y-m-d" }}" name="reportstart"/></td></tr>
+<tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{ reportend|date:"Y-m-d" }}" name="reportend" /></td></tr>
+<tr><td><input type="button" value="{% trans 'OK' %}" onclick="javascript:bucket_close(false,'{{reportbucket}}','{{reportstart|date:"Y-m-d"}}','{{reportend|date:"Y-m-d"}}');"/></td>
+</tr>
+</table></form>
+</div>
+{% block contextmenus %}{% endblock %}
+{% endblock %}

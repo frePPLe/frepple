@@ -272,18 +272,19 @@ function import_show(list_or_table)
         }
         ]
     });
-  $('#timebuckets').dialog('close');;
+  $('#timebuckets,#fbox_jsonmap').dialog('close');  
 }
 
 
 function filter_show()
 {
-  $('#timebuckets').dialog('close');
-  $('#popup').dialog('close');
+  $('#timebuckets,#popup').dialog('close');
   jQuery("#jsonmap").jqGrid('searchGrid', {
     closeOnEscape: true,
     multipleSearch:true,
     multipleGroup:true,
+    overlay: 0,
+    sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
     onSearch : function() {
       $('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_jsonmap").jqFilter('toSQLString'));
       },
@@ -291,15 +292,13 @@ function filter_show()
       $('#curfilter').html('');
       },
     });
-
 }
 
 function edit_show()
 {
   var selectedrow = $("#jsonmap").jqGrid('getGridParam', 'selrow');
   if (selectedrow == null) return;
-  $('#timebuckets').dialog('close');
-  $('#popup').dialog('close');
+  $('#timebuckets,#popup').dialog('close');
   jQuery("#jsonmap").jqGrid('editGridRow', selectedrow, {
     closeOnEscape: true,
     });
@@ -366,7 +365,17 @@ function bucket_show()
       dateFormat: 'yy-mm-dd'
     });
   $('#timebuckets').dialog({
-     autoOpen: true, resizable: false
+     autoOpen: true, resizable: false,	 
+     buttons: [
+       {
+         text: gettext("OK"),
+         click: function() { export_close(); },
+       },
+       {
+         text: gettext("Cancel"),
+         click: function() { $(this).dialog("close"); }
+       }
+       ]
     });
 }
 

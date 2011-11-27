@@ -767,7 +767,7 @@ class OperationPlanList(GridReport):
       )
 
   rows = (
-    NumberGridField('id', title=_('identifier'), key=True),
+    IntegerGridField('id', title=_('identifier'), key=True),
     TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
     DateTimeGridField('startdate', title=_('start date')),
     DateTimeGridField('enddate', title=_('end date')),

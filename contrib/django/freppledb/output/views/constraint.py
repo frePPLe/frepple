@@ -77,7 +77,7 @@ class Report(GridReport):
   editable = False
   rows = (
     TextGridField('demand', title=_('demand'), editable=False, formatter='demand'),
-    TextGridField('entity', title=_('entity'), editable=False, width=80), # choices=getEntities),  TODO
+    TextGridField('entity', title=_('entity'), editable=False, width=80, align='center'), # choices=getEntities),  TODO
     TextGridField('name', title=_('name'), editable=False, width=100, align='center'),
     TextGridField('owner', title=_('owner'), editable=False, align='center'),
     TextGridField('description', title=_('description'), editable=False, width=250),

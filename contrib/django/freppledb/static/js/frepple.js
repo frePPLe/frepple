@@ -272,7 +272,8 @@ function import_show(list_or_table)
         }
         ]
     });
-  $('#timebuckets,#fbox_jsonmap').dialog('close');  
+  $('#timebuckets').dialog('close');  
+  $.jgrid.hideModal("#searchmodfbox_jsonmap");
 }
 
 
@@ -328,6 +329,7 @@ function export_show(list_or_table)
         ]
       });
   $('#timebuckets').dialog('close');
+  $.jgrid.hideModal("#searchmodfbox_jsonmap");
 }
 
 
@@ -356,6 +358,7 @@ function bucket_show()
 {
   // Show popup
   $('#popup').dialog('close');
+  $.jgrid.hideModal("#searchmodfbox_jsonmap");
   $( "#reportstart" ).datepicker({
       showOtherMonths: true, selectOtherMonths: true,
       dateFormat: 'yy-mm-dd'

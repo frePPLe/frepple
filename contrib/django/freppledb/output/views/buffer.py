@@ -55,10 +55,6 @@ class OverviewReport(GridPivot):
     )
 
   javascript_imports = ['/static/FusionCharts.js',]
-  
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):    
-    return basequery.values('name','item','location')
 
   @staticmethod
   def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
@@ -157,13 +153,6 @@ class DetailReport(GridReport):
   model = FlowPlan
   frozenColumns = 0
   editable = False
-  
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'thebuffer', 'operationplan__operation', 'quantity', 'flowdate', 
-      'onhand', 'operationplan', 'operation_in', 'operationplan__locked'
-      )
   
   rows = (
     TextGridField('thebuffer', title=_('buffer'), key=True, formatter='buffer', editable=False),

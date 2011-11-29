@@ -42,7 +42,7 @@ class Report(GridReport):
   default_sort = '2a'
 
   @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connections[request.database].cursor()
     query = '''

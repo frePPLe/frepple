@@ -318,10 +318,6 @@ class ParameterList(GridReport):
   model = Parameter
   frozenColumns = 1
 
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values('name','value','description','lastmodified')
-
   rows = (
     TextGridField('name', title=_('name'), key=True),
     TextGridField('value', title=_('value')),
@@ -339,13 +335,6 @@ class BufferList(GridReport):
   basequeryset = Buffer.objects.all()
   model = Buffer
   frozenColumns = 1
-
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'name','description','category','subcategory','location','item','onhand',
-      'owner','type','minimum','minimum_calendar','producing','carrying_cost','lastmodified'
-      )
 
   rows = (
     TextGridField('name', title=_('name'), key=True),
@@ -375,10 +364,6 @@ class SetupMatrixList(GridReport):
   model = SetupMatrix
   frozenColumns = 1
 
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values('name','lastmodified')
-
   rows = (
     TextGridField('name', title=_('name'), key=True),
     LastModifiedGridField('lastmodified'),
@@ -394,13 +379,6 @@ class ResourceList(GridReport):
   basequeryset = Resource.objects.all()
   model = Resource
   frozenColumns = 1
-
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'name','description','category','subcategory','location','owner','type',
-      'maximum','maximum_calendar','cost','maxearly','setupmatrix','setup','lastmodified'
-      )
 
   rows = (
     TextGridField('name', title=_('name'), key=True),
@@ -430,13 +408,6 @@ class LocationList(GridReport):
   model = Location
   frozenColumns = 1
 
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'name','description','category','subcategory','available','owner',
-      'lastmodified'
-      )
-
   rows = (
     TextGridField('name', title=_('name'), key=True),
     TextGridField('description', title=_('description')),
@@ -457,12 +428,6 @@ class CustomerList(GridReport):
   basequeryset = Customer.objects.all()
   model = Customer
   frozenColumns = 1
-
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'name','description','category','subcategory','owner','lastmodified'
-      )
 
   rows = (
     TextGridField('name', title=_('name'), key=True),
@@ -485,13 +450,6 @@ class ItemList(GridReport):
   frozenColumns = 1
   editable = True
 
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'name','description','category','subcategory','operation','owner',
-      'price','lastmodified'
-      )
-
   rows = (
     TextGridField('name', title=_('name'), key=True),
     TextGridField('description', title=_('description')),
@@ -513,13 +471,6 @@ class LoadList(GridReport):
   basequeryset = Load.objects.all()
   model = Load
   frozenColumns = 1
-
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'id','operation','resource','quantity','effective_start','effective_end',
-      'name','alternate','priority','setup','search','lastmodified'
-      )
 
   rows = (
     NumberGridField('id', title=_('identifier'), key=True),
@@ -547,13 +498,6 @@ class FlowList(GridReport):
   model = Flow
   frozenColumns = 1
 
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'id','operation','thebuffer','type','quantity','effective_start',
-      'effective_end','name','alternate','priority','search','lastmodified'
-      )
-
   rows = (
     NumberGridField('id', title=_('identifier'), key=True),
     TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
@@ -579,14 +523,6 @@ class DemandList(GridReport):
   basequeryset = Demand.objects.all()
   model = Demand
   frozenColumns = 1
-
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'name','item','customer','description','category','subcategory',
-      'due','quantity','operation','priority','owner','maxlateness',
-      'minshipment','lastmodified'
-      )
 
   rows = (
     TextGridField('name', title=_('name'), key=True),
@@ -615,14 +551,6 @@ class ForecastList(GridReport):
   basequeryset = Forecast.objects.all()
   model = Forecast
   frozenColumns = 1
-
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'name','item','customer','calendar','description','category',
-      'subcategory','operation','priority','minshipment','maxlateness',
-      'discrete','lastmodified'
-      )
 
   rows = (
     TextGridField('name', title=_('name'), key=True),
@@ -693,13 +621,6 @@ class OperationList(GridReport):
   model = Operation
   frozenColumns = 1
 
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'name','description','category','subcategory','type','location','duration','duration_per','fence','pretime','posttime','sizeminimum',
-      'sizemultiple','sizemaximum','cost','search','lastmodified'
-      )
-
   rows = (
     TextGridField('name', title=_('name'), key=True),
     TextGridField('description', title=_('description')),
@@ -731,13 +652,6 @@ class SubOperationList(GridReport):
   model = SubOperation
   frozenColumns = 1
 
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'id','operation','suboperation','priority','effective_start','effective_end',
-      'lastmodified'
-      )
-
   rows = (
     NumberGridField('id', title=_('identifier'), key=True),
     TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
@@ -758,13 +672,6 @@ class OperationPlanList(GridReport):
   basequeryset = OperationPlan.objects.all()
   model = OperationPlan
   frozenColumns = 1
-
-  @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'id','operation','startdate','enddate','quantity','locked', 'owner',
-      'lastmodified'
-      )
 
   rows = (
     IntegerGridField('id', title=_('identifier'), key=True),

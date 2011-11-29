@@ -56,10 +56,6 @@ class OverviewReport(GridPivot):
   javascript_imports = ['/static/FusionCharts.js',]
 
   @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values('name','location')
-
-  @staticmethod
   def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     # Run the query

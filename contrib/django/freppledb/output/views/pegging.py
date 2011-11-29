@@ -63,7 +63,7 @@ class ReportByDemand(GridReport):
     )
 
   @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connections[request.database].cursor()
@@ -146,7 +146,7 @@ def GraphData(request, entity):
   except:
     current = datetime.now()
   (bucket,start,end,bucketlist) = getBuckets(request)
-  result = [ i for i in ReportByDemand.resultlist1(request,basequery,bucket,start,end) ]
+  result = [ i for i in ReportByDemand.resultlist2(request,basequery,bucket,start,end) ]
   min = None
   max = None
 
@@ -230,7 +230,7 @@ class ReportByBuffer(GridReport):
     )
 
   @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(
@@ -307,7 +307,7 @@ class ReportByResource(GridReport):
     )
 
   @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(
@@ -365,7 +365,7 @@ class ReportByOperation(GridReport):
     )
 
   @staticmethod
-  def resultlist1(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(

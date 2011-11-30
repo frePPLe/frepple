@@ -31,7 +31,7 @@ from freppledb.input.models import Operation
 from freppledb.output.models import OperationPlan
 from freppledb.common.db import sql_true, python_date
 from freppledb.common.report import getBuckets
-from freppledb.common.report import GridReport, GridPivot, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
+from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
 
 class OverviewReport(GridPivot):
@@ -43,8 +43,8 @@ class OverviewReport(GridPivot):
   basequeryset = Operation.objects.all()
   model = Operation
   rows = (
-    TextGridField('operation', title=_('operation'), key=True, field_name='name', formatter='operation', editable=False),
-    TextGridField('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
+    GridFieldText('operation', title=_('operation'), key=True, field_name='name', formatter='operation', editable=False),
+    GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
     )
   crosses = (
     ('locked_start', {'title': _('locked starts'),}),
@@ -123,14 +123,14 @@ class DetailReport(GridReport):
   frozenColumns = 0
   editable = False
   rows = (
-    IntegerGridField('id', title=_('operationplan'), key=True, editable=False),
-    TextGridField('operation', title=_('operation'), formatter='operation', editable=False),
-    NumberGridField('quantity', title=_('quantity'), editable=False),
-    DateTimeGridField('startdate', title=_('start date'), editable=False),
-    DateTimeGridField('enddate', title=_('end date'), editable=False),
-    BoolGridField('locked', title=_('locked'), editable=False),
-    NumberGridField('unavailable', title=_('unavailable'), editable=False),
-    IntegerGridField('owner', title=_('owner'), editable=False),
+    GridFieldInteger('id', title=_('operationplan'), key=True, editable=False),
+    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False),
+    GridFieldDateTime('startdate', title=_('start date'), editable=False),
+    GridFieldDateTime('enddate', title=_('end date'), editable=False),
+    GridFieldBool('locked', title=_('locked'), editable=False),
+    GridFieldNumber('unavailable', title=_('unavailable'), editable=False),
+    GridFieldInteger('owner', title=_('owner'), editable=False),
     )
 
 

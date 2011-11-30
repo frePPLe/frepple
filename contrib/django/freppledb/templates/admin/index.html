@@ -46,7 +46,7 @@
             {% else %}
                 <td>&nbsp;</td>
             {% endifnotequal %}
-            <td><a href="{{request.prefix }}/admin/{{ model.admin_url }}?reporttype=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
+            <td><a href="{{request.prefix }}/admin/{{ model.admin_url }}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>csv</a></td>
             </tr>
         {% endfor %}
         </table>

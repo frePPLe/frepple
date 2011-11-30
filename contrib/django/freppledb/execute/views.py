@@ -36,7 +36,7 @@ from django.contrib import messages
 from django.utils.encoding import force_unicode
 
 from freppledb.execute.models import log, Scenario
-from freppledb.common.report import GridReport, LastModifiedGridField, TextGridField, IntegerGridField
+from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText, GridFieldInteger
 import freppledb.input
 
 @staff_member_required
@@ -289,11 +289,11 @@ class LogReport(GridReport):
   model = log
   frozenColumns = 0
   rows = (
-    IntegerGridField('id', title=_('identifier'), key=True),
-    LastModifiedGridField('lastmodified'),
-    TextGridField('category', title=_('category'), editable=False, align='center'),
-    TextGridField('theuser', title=_('user'), editable=False, align='center'),
-    TextGridField('message', title=_('message'), editable=False, width=500),
+    GridFieldInteger('id', title=_('identifier'), key=True),
+    GridFieldLastModified('lastmodified'),
+    GridFieldText('category', title=_('category'), editable=False, align='center'),
+    GridFieldText('theuser', title=_('user'), editable=False, align='center'),
+    GridFieldText('message', title=_('message'), editable=False, width=500),
     )
 
 

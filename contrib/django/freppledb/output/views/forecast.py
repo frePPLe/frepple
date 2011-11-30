@@ -29,7 +29,7 @@ from django.conf import settings
 
 from freppledb.input.models import Forecast
 from freppledb.common.db import python_date, sql_datediff, sql_overlap
-from freppledb.common.report import GridPivot, TextGridField, getBuckets
+from freppledb.common.report import GridPivot, GridFieldText, getBuckets
 
 
 class OverviewReport(GridPivot):
@@ -41,9 +41,9 @@ class OverviewReport(GridPivot):
   basequeryset = Forecast.objects.all()
   model = Forecast
   rows = (
-    TextGridField('forecast', title=_('forecast'), key=True, field_name='name', formatter='item', editable=False),
-    TextGridField('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
-    TextGridField('customer', title=_('customer'), key=True, field_name='customer__name', formatter='customer', editable=False),
+    GridFieldText('forecast', title=_('forecast'), key=True, field_name='name', formatter='item', editable=False),
+    GridFieldText('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
+    GridFieldText('customer', title=_('customer'), key=True, field_name='customer__name', formatter='customer', editable=False),
     )
   crosses = (
     ('total',{'title': _('total forecast'), 'editable': lambda req: req.user.has_perm('input.change_forecastdemand'),}),

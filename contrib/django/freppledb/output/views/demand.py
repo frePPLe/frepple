@@ -31,7 +31,7 @@ from freppledb.input.models import Item
 from freppledb.output.models import Demand
 from freppledb.common.db import python_date, sql_datediff, sql_overlap
 from freppledb.common.report import getBuckets
-from freppledb.common.report import GridReport, GridPivot, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
+from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
 
 class OverviewReport(GridPivot):
@@ -43,7 +43,7 @@ class OverviewReport(GridPivot):
   basequeryset = Item.objects.all()
   model = Item
   rows = (
-    TextGridField('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
+    GridFieldText('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
     )
   crosses = (
     ('forecast',{'title': _('net forecast')}),
@@ -176,14 +176,14 @@ class DetailReport(GridReport):
   frozenColumns = 0
   editable = False
   rows = (
-    TextGridField('demand', title=_('demand'), key=True, editable=False, formatter='demand'),
-    TextGridField('item', title=_('item'), formatter='item', editable=False),
-    TextGridField('customer', title=_('customer'), formatter='customer', editable=False),
-    NumberGridField('quantity', title=_('quantity'), editable=False),
-    NumberGridField('planquantity', title=_('planned quantity'), editable=False),
-    DateTimeGridField('due', title=_('due date'), editable=False),
-    DateTimeGridField('plandate', title=_('planned date'), editable=False),
-    IntegerGridField('operationplan', title=_('operationplan'), editable=False),
+    GridFieldText('demand', title=_('demand'), key=True, editable=False, formatter='demand'),
+    GridFieldText('item', title=_('item'), formatter='item', editable=False),
+    GridFieldText('customer', title=_('customer'), formatter='customer', editable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False),
+    GridFieldNumber('planquantity', title=_('planned quantity'), editable=False),
+    GridFieldDateTime('due', title=_('due date'), editable=False),
+    GridFieldDateTime('plandate', title=_('planned date'), editable=False),
+    GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
     )
 
 

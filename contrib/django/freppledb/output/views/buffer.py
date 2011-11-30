@@ -31,7 +31,7 @@ from freppledb.input.models import Buffer
 from freppledb.output.models import FlowPlan
 from freppledb.common.db import sql_max, sql_min, python_date
 from freppledb.common.report import getBuckets
-from freppledb.common.report import GridReport, GridPivot, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
+from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
 
 class OverviewReport(GridPivot):
@@ -43,9 +43,9 @@ class OverviewReport(GridPivot):
   basequeryset = Buffer.objects.all()
   model = Buffer
   rows = (
-    TextGridField('buffer', title=_('buffer'), key=True, field_name='name', formatter='buffer', editable=False),
-    TextGridField('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
-    TextGridField('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
+    GridFieldText('buffer', title=_('buffer'), key=True, field_name='name', formatter='buffer', editable=False),
+    GridFieldText('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
+    GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
     )
   crosses = (
     ('startoh', {'title': _('start inventory'),}),
@@ -155,13 +155,13 @@ class DetailReport(GridReport):
   editable = False
   
   rows = (
-    TextGridField('thebuffer', title=_('buffer'), key=True, formatter='buffer', editable=False),
-    TextGridField('operationplan__operation', title=_('operation'), formatter='operation', editable=False),
-    NumberGridField('quantity', title=_('quantity'), editable=False),
-    DateTimeGridField('flowdate', title=_('date'), editable=False),
-    NumberGridField('onhand', title=_('onhand'), editable=False),
-    BoolGridField('operationplan__locked', title=_('locked'), editable=False),
-    IntegerGridField('operationplan', title=_('operationplan'), editable=False),
+    GridFieldText('thebuffer', title=_('buffer'), key=True, formatter='buffer', editable=False),
+    GridFieldText('operationplan__operation', title=_('operation'), formatter='operation', editable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False),
+    GridFieldDateTime('flowdate', title=_('date'), editable=False),
+    GridFieldNumber('onhand', title=_('onhand'), editable=False),
+    GridFieldBool('operationplan__locked', title=_('locked'), editable=False),
+    GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
     )
 
 

@@ -37,8 +37,8 @@ from freppledb.input.models import Resource, Forecast, Operation, Location, Setu
 from freppledb.input.models import Buffer, Customer, Demand, Parameter, Item, Load, Flow
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.input.models import Bucket, BucketDetail
-from freppledb.common.report import GridReport, BoolGridField, LastModifiedGridField, DateTimeGridField
-from freppledb.common.report import TextGridField, NumberGridField, IntegerGridField, CurrencyGridField
+from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified, GridFieldDateTime
+from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldInteger, GridFieldCurrency
 
 
 class uploadjson:
@@ -319,10 +319,10 @@ class ParameterList(GridReport):
   frozenColumns = 1
 
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('value', title=_('value')),
-    TextGridField('description', title=_('description')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('value', title=_('value')),
+    GridFieldText('description', title=_('description')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -337,20 +337,20 @@ class BufferList(GridReport):
   frozenColumns = 1
 
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('description', title=_('description')),
-    TextGridField('category', title=_('category')),
-    TextGridField('subcategory', title=_('subcategory')),
-    TextGridField('location', title=_('location'), field_name='location__name', formatter='location'),
-    TextGridField('item', title=_('item'), field_name='item__name', formatter='item'),
-    NumberGridField('onhand', title=_('onhand')),
-    TextGridField('owner', title=_('owner'), field_name='owner__name', formatter='buffer'),
-    TextGridField('type', title=_('type')),
-    NumberGridField('minimum', title=_('minimum')),
-    TextGridField('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='calendar'),
-    TextGridField('producing', title=_('producing'), field_name='producing__name', formatter='operation'),
-    CurrencyGridField('carrying_cost', title=_('carrying cost')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('description', title=_('description')),
+    GridFieldText('category', title=_('category')),
+    GridFieldText('subcategory', title=_('subcategory')),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
+    GridFieldNumber('onhand', title=_('onhand')),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='buffer'),
+    GridFieldText('type', title=_('type')),
+    GridFieldNumber('minimum', title=_('minimum')),
+    GridFieldText('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='calendar'),
+    GridFieldText('producing', title=_('producing'), field_name='producing__name', formatter='operation'),
+    GridFieldCurrency('carrying_cost', title=_('carrying cost')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -365,8 +365,8 @@ class SetupMatrixList(GridReport):
   frozenColumns = 1
 
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -381,20 +381,20 @@ class ResourceList(GridReport):
   frozenColumns = 1
 
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('description', title=_('description')),
-    TextGridField('category', title=_('category')),
-    TextGridField('subcategory', title=_('subcategory')),
-    TextGridField('location', title=_('location'), field_name='location__name', formatter='location'),
-    TextGridField('owner', title=_('owner'), field_name='owner__name', formatter='resource'),
-    TextGridField('type', title=_('type')),
-    NumberGridField('maximum', title=_('maximum')),
-    TextGridField('maximum_calendar', title=_('maximum calendar'), field_name='maximum_calendar__name', formatter='calendar'),
-    CurrencyGridField('cost', title=_('cost')),
-    NumberGridField('maxearly', title=_('maxearly')),
-    TextGridField('setupmatrix', title=_('setup matrix'), formatter='setupmatrix'),
-    TextGridField('setup', title=_('setup')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('description', title=_('description')),
+    GridFieldText('category', title=_('category')),
+    GridFieldText('subcategory', title=_('subcategory')),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='resource'),
+    GridFieldText('type', title=_('type')),
+    GridFieldNumber('maximum', title=_('maximum')),
+    GridFieldText('maximum_calendar', title=_('maximum calendar'), field_name='maximum_calendar__name', formatter='calendar'),
+    GridFieldCurrency('cost', title=_('cost')),
+    GridFieldNumber('maxearly', title=_('maxearly')),
+    GridFieldText('setupmatrix', title=_('setup matrix'), formatter='setupmatrix'),
+    GridFieldText('setup', title=_('setup')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -409,13 +409,13 @@ class LocationList(GridReport):
   frozenColumns = 1
 
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('description', title=_('description')),
-    TextGridField('category', title=_('category')),
-    TextGridField('subcategory', title=_('subcategory')),
-    TextGridField('available', title=_('available'), field_name='available__name', formatter='calendar'),
-    TextGridField('owner', title=_('owner'), field_name='owner__name', formatter='location'),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('description', title=_('description')),
+    GridFieldText('category', title=_('category')),
+    GridFieldText('subcategory', title=_('subcategory')),
+    GridFieldText('available', title=_('available'), field_name='available__name', formatter='calendar'),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='location'),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -430,12 +430,12 @@ class CustomerList(GridReport):
   frozenColumns = 1
 
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('description', title=_('description')),
-    TextGridField('category', title=_('category')),
-    TextGridField('subcategory', title=_('subcategory')),
-    TextGridField('owner', title=_('owner'), field_name='owner__name', formatter='customer'),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('description', title=_('description')),
+    GridFieldText('category', title=_('category')),
+    GridFieldText('subcategory', title=_('subcategory')),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='customer'),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -451,14 +451,14 @@ class ItemList(GridReport):
   editable = True
 
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('description', title=_('description')),
-    TextGridField('category', title=_('category')),
-    TextGridField('subcategory', title=_('subcategory')),
-    TextGridField('operation', title=_('operation'), field_name='operation__name'),
-    TextGridField('owner', title=_('owner'), field_name='owner__name'),
-    CurrencyGridField('price', title=_('price')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('description', title=_('description')),
+    GridFieldText('category', title=_('category')),
+    GridFieldText('subcategory', title=_('subcategory')),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name'),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name'),
+    GridFieldCurrency('price', title=_('price')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -473,18 +473,18 @@ class LoadList(GridReport):
   frozenColumns = 1
 
   rows = (
-    NumberGridField('id', title=_('identifier'), key=True),
-    TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
-    TextGridField('resource', title=_('resource'), field_name='resource__name', formatter='resource'),
-    NumberGridField('quantity', title=_('quantity')),
-    DateTimeGridField('effective_start', title=_('effective start')),
-    DateTimeGridField('effective_end', title=_('effective end')),
-    TextGridField('name', title=_('name')),
-    TextGridField('alternate', title=_('alternate')),
-    NumberGridField('priority', title=_('priority')),
-    TextGridField('setup', title=_('setup')),
-    TextGridField('search', title=_('search mode')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldNumber('id', title=_('identifier'), key=True),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='resource'),
+    GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldDateTime('effective_start', title=_('effective start')),
+    GridFieldDateTime('effective_end', title=_('effective end')),
+    GridFieldText('name', title=_('name')),
+    GridFieldText('alternate', title=_('alternate')),
+    GridFieldNumber('priority', title=_('priority')),
+    GridFieldText('setup', title=_('setup')),
+    GridFieldText('search', title=_('search mode')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -499,18 +499,18 @@ class FlowList(GridReport):
   frozenColumns = 1
 
   rows = (
-    NumberGridField('id', title=_('identifier'), key=True),
-    TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
-    TextGridField('thebuffer', title=_('buffer'), field_name='thebuffer__name', formatter='buffer'),
-    TextGridField('type', title=_('type')),
-    NumberGridField('quantity', title=_('quantity')),
-    DateTimeGridField('effective_start', title=_('effective start')),
-    DateTimeGridField('effective_end', title=_('effective end')),
-    TextGridField('name', title=_('name')),
-    TextGridField('alternate', title=_('alternate')),
-    NumberGridField('priority', title=_('priority')),
-    TextGridField('search', title=_('search mode')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldNumber('id', title=_('identifier'), key=True),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    GridFieldText('thebuffer', title=_('buffer'), field_name='thebuffer__name', formatter='buffer'),
+    GridFieldText('type', title=_('type')),
+    GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldDateTime('effective_start', title=_('effective start')),
+    GridFieldDateTime('effective_end', title=_('effective end')),
+    GridFieldText('name', title=_('name')),
+    GridFieldText('alternate', title=_('alternate')),
+    GridFieldNumber('priority', title=_('priority')),
+    GridFieldText('search', title=_('search mode')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -525,20 +525,20 @@ class DemandList(GridReport):
   frozenColumns = 1
 
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('item', title=_('item'), field_name='item__name', formatter='item'),
-    TextGridField('customer', title=_('customer'), field_name='customer__name', formatter='location'),
-    TextGridField('description', title=_('description')),
-    TextGridField('category', title=_('category')),
-    TextGridField('subcategory', title=_('subcategory')),
-    DateTimeGridField('due', title=_('due')),
-    NumberGridField('quantity', title=_('quantity')),
-    TextGridField('operation', title=_('delivery operation'), formatter='operation'),
-    NumberGridField('priority', title=_('priority')),
-    TextGridField('owner', title=_('owner'), formatter='demand'),
-    NumberGridField('maxlateness', title=_('maximum lateness')),
-    NumberGridField('minshipment', title=_('minimum shipment')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
+    GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='location'),
+    GridFieldText('description', title=_('description')),
+    GridFieldText('category', title=_('category')),
+    GridFieldText('subcategory', title=_('subcategory')),
+    GridFieldDateTime('due', title=_('due')),
+    GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldText('operation', title=_('delivery operation'), formatter='operation'),
+    GridFieldNumber('priority', title=_('priority')),
+    GridFieldText('owner', title=_('owner'), formatter='demand'),
+    GridFieldNumber('maxlateness', title=_('maximum lateness')),
+    GridFieldNumber('minshipment', title=_('minimum shipment')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -553,19 +553,19 @@ class ForecastList(GridReport):
   frozenColumns = 1
 
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('item', title=_('item'), field_name='item__name', formatter='item'),
-    TextGridField('customer', title=_('customer'), field_name='customer__name', formatter='customer'),
-    TextGridField('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
-    TextGridField('description', title=_('description')),
-    TextGridField('category', title=_('category')),
-    TextGridField('subcategory', title=_('subcategory')),
-    TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
-    NumberGridField('priority', title=_('priority')),
-    NumberGridField('maxlateness', title=_('maximum lateness')),
-    NumberGridField('minshipment', title=_('minimum shipment')),
-    BoolGridField('discrete', title=_('discrete')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
+    GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='customer'),
+    GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
+    GridFieldText('description', title=_('description')),
+    GridFieldText('category', title=_('category')),
+    GridFieldText('subcategory', title=_('subcategory')),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    GridFieldNumber('priority', title=_('priority')),
+    GridFieldNumber('maxlateness', title=_('maximum lateness')),
+    GridFieldNumber('minshipment', title=_('minimum shipment')),
+    GridFieldBool('discrete', title=_('discrete')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -579,14 +579,14 @@ class CalendarList(GridReport):
   model = Calendar
   frozenColumns = 1
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('type', title=_('type')),
-    TextGridField('description', title=_('description')),
-    TextGridField('category', title=_('category')),
-    TextGridField('subcategory', title=_('subcategory')),
-    NumberGridField('defaultvalue', title=_('default value')),
-    NumberGridField('currentvalue', title=_('current value'), sortable=False),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('type', title=_('type')),
+    GridFieldText('description', title=_('description')),
+    GridFieldText('category', title=_('category')),
+    GridFieldText('subcategory', title=_('subcategory')),
+    GridFieldNumber('defaultvalue', title=_('default value')),
+    GridFieldNumber('currentvalue', title=_('current value'), sortable=False),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -600,14 +600,14 @@ class CalendarBucketList(GridReport):
   model = CalendarBucket
   frozenColumns = 1
   rows = (
-    NumberGridField('id', title=_('identifier'), key=True),
-    TextGridField('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
-    DateTimeGridField('startdate', title=_('start date')),
-    DateTimeGridField('enddate', title=_('end date')),
-    NumberGridField('value', title=_('value')),
-    NumberGridField('priority', title=_('priority')),
-    TextGridField('name', title=_('name')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldNumber('id', title=_('identifier'), key=True),
+    GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
+    GridFieldDateTime('startdate', title=_('start date')),
+    GridFieldDateTime('enddate', title=_('end date')),
+    GridFieldNumber('value', title=_('value')),
+    GridFieldNumber('priority', title=_('priority')),
+    GridFieldText('name', title=_('name')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -622,23 +622,23 @@ class OperationList(GridReport):
   frozenColumns = 1
 
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('description', title=_('description')),
-    TextGridField('category', title=_('category')),
-    TextGridField('subcategory', title=_('subcategory')),
-    TextGridField('type', title=_('type')),
-    TextGridField('location', title=_('location'), field_name='location__name', formatter='location'),
-    NumberGridField('duration', title=_('duration')),
-    NumberGridField('duration_per', title=_('duration_per')),
-    NumberGridField('fence', title=_('fence')),
-    NumberGridField('pretime', title=_('pre-op time')),
-    NumberGridField('posttime', title=_('post-op time')),
-    NumberGridField('sizeminimum', title=_('size minimum')),
-    NumberGridField('sizemultiple', title=_('size multiple')),
-    NumberGridField('sizemaximum', title=_('size maximum')),
-    CurrencyGridField('cost', title=_('cost')),
-    TextGridField('search', title=_('search mode')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('description', title=_('description')),
+    GridFieldText('category', title=_('category')),
+    GridFieldText('subcategory', title=_('subcategory')),
+    GridFieldText('type', title=_('type')),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
+    GridFieldNumber('duration', title=_('duration')),
+    GridFieldNumber('duration_per', title=_('duration_per')),
+    GridFieldNumber('fence', title=_('fence')),
+    GridFieldNumber('pretime', title=_('pre-op time')),
+    GridFieldNumber('posttime', title=_('post-op time')),
+    GridFieldNumber('sizeminimum', title=_('size minimum')),
+    GridFieldNumber('sizemultiple', title=_('size multiple')),
+    GridFieldNumber('sizemaximum', title=_('size maximum')),
+    GridFieldCurrency('cost', title=_('cost')),
+    GridFieldText('search', title=_('search mode')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -653,13 +653,13 @@ class SubOperationList(GridReport):
   frozenColumns = 1
 
   rows = (
-    NumberGridField('id', title=_('identifier'), key=True),
-    TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
-    TextGridField('suboperation', title=_('suboperation'), field_name='suboperation__name', formatter='operation'),
-    NumberGridField('priority', title=_('priority')),
-    DateTimeGridField('effective_start', title=_('effective start')),
-    DateTimeGridField('effective_end', title=_('effective end')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldNumber('id', title=_('identifier'), key=True),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    GridFieldText('suboperation', title=_('suboperation'), field_name='suboperation__name', formatter='operation'),
+    GridFieldNumber('priority', title=_('priority')),
+    GridFieldDateTime('effective_start', title=_('effective start')),
+    GridFieldDateTime('effective_end', title=_('effective end')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -674,14 +674,14 @@ class OperationPlanList(GridReport):
   frozenColumns = 1
 
   rows = (
-    IntegerGridField('id', title=_('identifier'), key=True),
-    TextGridField('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
-    DateTimeGridField('startdate', title=_('start date')),
-    DateTimeGridField('enddate', title=_('end date')),
-    NumberGridField('quantity', title=_('quantity')),
-    BoolGridField('locked', title=_('locked')),
-    IntegerGridField('owner', title=_('owner')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldInteger('id', title=_('identifier'), key=True),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    GridFieldDateTime('startdate', title=_('start date')),
+    GridFieldDateTime('enddate', title=_('end date')),
+    GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldBool('locked', title=_('locked')),
+    GridFieldInteger('owner', title=_('owner')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -694,9 +694,9 @@ class BucketList(GridReport):
   model = Bucket
   frozenColumns = 1
   rows = (
-    TextGridField('name', title=_('name'), key=True),
-    TextGridField('description', title=_('description')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('description', title=_('description')),
+    GridFieldLastModified('lastmodified'),
     )
 
 
@@ -709,9 +709,9 @@ class BucketDetailList(GridReport):
   model = BucketDetail
   frozenColumns = 1
   rows = (
-    NumberGridField('id', title=_('identifier'), key=True),
-    TextGridField('bucket', title=_('bucket'), field_name='bucket__name'),
-    DateTimeGridField('startdate', title=_('start date')),
-    DateTimeGridField('enddate', title=_('end date')),
-    LastModifiedGridField('lastmodified'),
+    GridFieldNumber('id', title=_('identifier'), key=True),
+    GridFieldText('bucket', title=_('bucket'), field_name='bucket__name'),
+    GridFieldDateTime('startdate', title=_('start date')),
+    GridFieldDateTime('enddate', title=_('end date')),
+    GridFieldLastModified('lastmodified'),
     )

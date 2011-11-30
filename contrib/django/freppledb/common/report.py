@@ -55,12 +55,9 @@ from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
-from django.utils.translation import string_concat
-from django.utils.html import escape
 from django.utils.formats import get_format, number_format
-from django.utils.safestring import mark_safe
 from django.utils import simplejson as json
-from django.utils.text import capfirst, get_text_list
+from django.utils.text import get_text_list
 from django.utils.encoding import iri_to_uri, force_unicode
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
@@ -111,36 +108,36 @@ class GridField(object):
   searchrules = None
 
 
-class DateTimeGridField(GridField):
+class GridFieldDateTime(GridField):
   formatter = 'date'
   extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d H:i:s'}"
   width = 140
 
 
-class DateGridField(GridField):
+class GridFieldDate(GridField):
   formatter = 'date'
   extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d'}"
   width = 140
 
 
-class IntegerGridField(GridField):
+class GridFieldInteger(GridField):
   formatter = 'integer'
   width = 70
   searchrules = 'integer:true'
 
 
-class NumberGridField(GridField):
+class GridFieldNumber(GridField):
   formatter = 'number'
   width = 70
   searchrules = 'number:true'
 
 
-class BoolGridField(GridField):
+class GridFieldBool(GridField):
   formatter = 'checkbox'
   width = 60
 
 
-class LastModifiedGridField(GridField):
+class GridFieldLastModified(GridField):
   formatter = 'date'
   extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d H:i:s'}"
   title = _('last modified')
@@ -148,81 +145,15 @@ class LastModifiedGridField(GridField):
   width = 140
 
 
-class TextGridField(GridField):
+class GridFieldText(GridField):
   width = 200
   align = 'left'
 
-class CurrencyGridField(GridField):
+
+class GridFieldCurrency(GridField):
   formatter = 'currency'
-  extra = "formatoptions:{prefix:'$'}"
+  extra = "formatoptions:{prefix:'$'}"   #TODO make the currency symbol configurable
   width = 80
-
-
-class Report(object):
-  '''
-  The base class for all reports.
-  The parameter values defined here are used as defaults for all reports, but
-  can be overwritten.
-  '''
-  # Points to templates to be used for different output formats
-  template = 'admin/base_site_grid.html'
-  # The title of the report. Used for the window title
-  title = ''
-  # The default number of entities to put on a page
-  paginate_by = 25
-
-  # The resultset that returns a list of entities that are to be
-  # included in the report.
-  basequeryset = None
-
-  # Whether or not the breadcrumbs are reset when we open the report
-  reset_crumbs = True
-
-  # Extra javascript files to import for running the report
-  javascript_imports = []
-
-  # Specifies which column is used for an initial filter
-  default_sort = '1a'
-
-  # A model class from which we can inherit information.
-  model = None
-
-  # Allow editing in this report or not
-  editable = True
-
-  # Number of columns frozen in the report
-  frozenColumns = 0
-
-  # Time buckets in this report
-  timebuckets = False
-
-  # A list with required user permissions to view the report
-  permissions = []
-
-
-class ListReport(Report):
-  rows = ()
-
-
-class TableReport(Report):
-  rows = ()
-
-  # Cross definitions.
-  # Possible attributes for a cross field are:
-  #   - title:
-  #     Name of the cross that is displayed to the user.
-  #     It defaults to the name of the field.
-  #   - editable:
-  #     True when the field is editable in the page.
-  #     The default value is false.
-  crosses = ()
-
-  # A list with required user permissions to view the report
-  permissions = []
-
-  frozenColumns = 1000
-
-  timebuckets = True
 
 
 @staff_member_required
@@ -437,17 +368,45 @@ def view_report(request, entity=None, **args):
     )
 
 
-def _create_columnheader(req, cls, bucketlist):
+class GridReport(View):
   '''
-  Generate html header row for the columns of a table report.
+  The base class for all jqgrid views.
+  The parameter values defined here are used as defaults for all reports, but
+  can be overwritten.
   '''
-  # @todo not very clean and consistent with cross and row
-  return mark_safe(' '.join(['<th><a title="%s - %s">%s</a></th>' % (j['startdate'], j['enddate'], j['name']) for j in bucketlist]))
+  # Points to template to be used
+  template = 'admin/base_site_grid.html'
+  
+  # The title of the report. Used for the window title
+  title = ''
 
+  # The resultset that returns a list of entities that are to be
+  # included in the report.
+  # This query is used to return the number of records.
+  # It is also used to generate the actual results, in case no method
+  # "resultlist2" is provided on the class.
+  basequeryset = None
+  
+  # Whether or not the breadcrumbs are reset when we open the report
+  reset_crumbs = True
 
-class GridReport(View, Report):
+  # Extra javascript files to import for running the report
+  javascript_imports = []   #TODO not used yet
 
+  # Specifies which column is used for an initial filter
+  default_sort = '1a'
+
+  # A model class from which we can inherit information.
   model = None
+
+  # Allow editing in this report or not
+  editable = True
+
+  # Number of columns frozen in the report
+  frozenColumns = 0
+
+  # A list with required user permissions to view the report
+  permissions = []
 
   @method_decorator(staff_member_required)
   @method_decorator(csrf_protect)
@@ -484,7 +443,7 @@ class GridReport(View, Report):
     yield sf.getvalue()
 
     # Write the report content
-    query = reportclass._get_query(request)
+    query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
     fields = [ i.field_name for i in reportclass.rows ]
     for row in query.values(*fields):
       # Clear the return string buffer
@@ -500,19 +459,30 @@ class GridReport(View, Report):
 
 
   @classmethod
-  def _get_query(reportclass, request):
+  def _apply_sort(reportclass, request, query):
     sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
     if 'sord' in request.GET and request.GET['sord'] == 'desc':
       sort = "-%s" % sort
-    return reportclass.filter_items(request, reportclass.basequeryset).order_by(sort)
+    return reportclass.filter_items(request, query).order_by(sort)
 
 
   @classmethod
   def _generate_json_data(reportclass, request):
     page = 'page' in request.GET and int(request.GET['page']) or 1
-    query = reportclass._get_query(request)
-    recs = query.count()
-    yield '{"total":%d,\n' % (recs/request.pagesize)
+    recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
+    total_pages = recs / request.pagesize + 1
+    if page > total_pages: page = total_pages
+    #if hasattr(reportclass,'resultlist2'):
+      # SQL override provided of type 2
+    #  query = reportclass._apply_filter_and_sort(request, reportclass.resultlist2(request, counter, bucket, start, end, sortsql=sortsql))
+    #elif hasattr(reportclass,'resultlist1'):
+      # SQL override provided of type 1
+    #  query = reportclass._apply_filter_and_sort(request, reportclass.resultlist1(request, counter, bucket, start, end, sortsql=sortsql))
+    #else:
+      # No SQL override provided
+    query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
+
+    yield '{"total":%d,\n' % total_pages
     yield '"page":%d,\n' % page
     yield '"records":%d,\n' % recs
     yield '"rows":[\n'
@@ -620,14 +590,14 @@ class GridReport(View, Report):
         (bucket,start,end,bucketlist) = getBuckets(request, pref)
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
       else:
-        bucket = start = end = bucketlist = bucketnames = None
-      
+        bucket = start = end = bucketlist = bucketnames = None      
       return render(request, reportclass.template, {
         'reportclass': reportclass,
         'title': reportclass.title,
         'reportbucket': bucket,
         'reportstart': start,
         'reportend': end,
+        'is_popup': request.GET.has_key('pop'),
         'bucketnames': bucketnames,
         'bucketlist': bucketlist,
         'model': reportclass.model,
@@ -637,16 +607,17 @@ class GridReport(View, Report):
         })
     elif fmt == 'json':
       # Return JSON data to fill the grid
-      response = HttpResponse(content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET)
-      response._container = reportclass._generate_json_data(request)
-      response._is_string = False
-      return response
+      return HttpResponse(
+         mimetype = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
+         content = reportclass._generate_json_data(request)
+         )
     elif fmt == 'csvlist' or fmt == 'csvtable':
       # Return CSV data to export the data
-      response = HttpResponse(content_type='text/csv; charset=%s' % settings.DEFAULT_CHARSET)
+      response = HttpResponse(
+         mimetype= 'text/csv; charset=%s' % settings.DEFAULT_CHARSET,
+         content = reportclass._generate_csv_data(request)
+         )
       response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
-      response._container = reportclass._generate_csv_data(request)
-      response._is_string = False
       return response
     else:
       raise Http404('Unknown format type')
@@ -867,6 +838,17 @@ class GridReport(View, Report):
 
   
 class GridPivot(GridReport):
+
+  # Cross definitions.
+  # Possible attributes for a cross field are:
+  #   - title:
+  #     Name of the cross that is displayed to the user.
+  #     It defaults to the name of the field.
+  #   - editable:
+  #     True when the field is editable in the page.
+  #     The default value is false.
+  crosses = ()
+
   template = 'admin/base_site_gridpivot.html'
 
 
@@ -885,105 +867,6 @@ def _localize(value, use_l10n=None):
     return "|".join([ unicode(_localize(i)) for i in value ])
   else:
     return value
-
-
-def _generate_csv(rep, qs, format, bucketlist, request):
-  '''
-  This is a generator function that iterates over the report data and
-  returns the data row by row in CSV format.
-  '''
-  sf = cStringIO.StringIO()
-  encoding = settings.DEFAULT_CHARSET
-  if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
-    writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
-  else:
-    writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
-  if translation.get_language() != request.LANGUAGE_CODE:
-    translation.activate(request.LANGUAGE_CODE)
-
-  # Write a header row
-  fields = [ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in rep.rows ]
-  if issubclass(rep,TableReport):
-    if format == 'csvlist':
-      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in rep.columns ])
-      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in rep.crosses ])
-    else:
-      fields.extend( [capfirst(_('data field')).encode(encoding,"ignore")])
-      fields.extend([ unicode(b['name']).encode(encoding,"ignore") for b in bucketlist])
-  writer.writerow(fields)
-  yield sf.getvalue()
-
-  # Write the report content
-  if issubclass(rep,ListReport):
-    # Type 1: A "list report"
-    # Iterate over all rows
-    for row in qs:
-      # Clear the return string buffer
-      sf.truncate(0)
-      # Build the return value, encoding all output
-      if hasattr(row, "__getitem__"):
-        fields = [ row[s[0]]==None and ' ' or unicode(_localize(row[s[0]])).encode(encoding,"ignore") for s in rep.rows ]
-      else:
-        fields = [ getattr(row,s[0])==None and ' ' or unicode(_localize(getattr(row,s[0]))).encode(encoding,"ignore") for s in rep.rows ]
-      # Return string
-      writer.writerow(fields)
-      yield sf.getvalue()
-  elif issubclass(rep,TableReport):
-    if format == 'csvlist':
-      # Type 2: "table report in list format"
-      # Iterate over all rows and columns
-      for row in qs:
-        # Clear the return string buffer
-        sf.truncate(0)
-        # Build the return value
-        if hasattr(row, "__getitem__"):
-          fields = [ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
-          fields.extend([ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.columns ])
-          fields.extend([ row[s[0]]==None and ' ' or unicode(_localize(row[s[0]])).encode(encoding,"ignore") for s in rep.crosses ])
-        else:
-          fields = [ getattr(row,s[0])==None and ' ' or unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.rows ]
-          fields.extend([ getattr(row,s[0])==None and ' ' or unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.columns ])
-          fields.extend([ getattr(row,s[0])==None and ' ' or unicode(_localize(getattr(row,s[0]))).encode(encoding,"ignore") for s in rep.crosses ])
-        # Return string
-        writer.writerow(fields)
-        yield sf.getvalue()
-    else:
-      # Type 3: A "table report in table format"
-      # Iterate over all rows, crosses and columns
-      prev_row = None
-      for row in qs:
-        # We use the first field in the output to recognize new rows.
-        # This isn't really generic.
-        if not prev_row:
-          prev_row = row[rep.rows[0][0]]
-          row_of_buckets = [row]
-        elif prev_row == row[rep.rows[0][0]]:
-          row_of_buckets.append(row)
-        else:
-          # Write an entity
-          for cross in rep.crosses:
-            # Clear the return string buffer
-            sf.truncate(0)
-            fields = [ unicode(row_of_buckets[0][s[0]]).encode(encoding,"ignore") for s in rep.rows ]
-            fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
-            fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
-            # Return string
-            writer.writerow(fields)
-            yield sf.getvalue()
-          prev_row = row[rep.rows[0][0]]
-          row_of_buckets = [row]
-      # Write the last entity
-      for cross in rep.crosses:
-        # Clear the return string buffer
-        sf.truncate(0)
-        fields = [ unicode(row_of_buckets[0][s[0]]).encode(encoding,"ignore") for s in rep.rows ]
-        fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
-        fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
-        # Return string
-        writer.writerow(fields)
-        yield sf.getvalue()
-  else:
-    raise Http404('Unknown report type')
 
 
 def getBuckets(request, pref=None, bucket=None, start=None, end=None):
@@ -1058,72 +941,3 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
     if start: res = res.filter(startdate__gte=start)
     if end: res = res.filter(startdate__lt=end)
     return (unicode(bucket), start, end, res.values('name','startdate','enddate'))
-
-
-def _create_rowheader(req, sortfield, sortdirection, cls):
-  '''
-  Generate html header row for the columns of a table or list report.
-  '''
-  number = 0
-  args = req.GET.copy()  # used for the urls used in the sort header
-  args2 = req.GET.copy() # used for additional, hidden filter fields
-  result1 = []
-  result2 = []
-
-  # When we update the sorting, we always want to see page 1 again
-  if 'p' in args: del args['p']
-
-  # A header cell for each row
-  for row in cls.rows:
-    number = number + 1
-    title = capfirst(escape((row[1].has_key('title') and row[1]['title']) or row[0]))
-    if not row[1].has_key('sort') or row[1]['sort']:
-      # Sorting is allowed
-      if sortfield == number:
-        if sortdirection == 'a':
-          # Currently sorting in ascending order on this column
-          args['o'] = '%dd' % number
-          y = 'class="sorted ascending"'
-        else:
-          # Currently sorting in descending order on this column
-          args['o'] = '%da' % number
-          y = 'class="sorted descending"'
-      else:
-        # Sorted on another column
-        args['o'] = '%da' % number
-        y = ''
-      # Which widget to use
-      if 'filter' in row[1]:
-        # Filtering allowed
-        if issubclass(cls,ListReport) and number <= cls.frozenColumns:
-          result1.append( u'<th %s><a href="%s%s?%s">%s</a></th>' \
-            % (y, req.prefix, escape(req.path), escape(args.urlencode()), title) )
-        else:
-          result2.append( u'<th %s><a href="%s%s?%s">%s</a></th>' \
-            % (y, req.prefix, escape(req.path), escape(args.urlencode()), title) )
-        rowfield = row[1]['filter'].field or row[0]
-      else:
-        # No filtering allowed
-        if issubclass(cls,ListReport) and number <= cls.frozenColumns:
-          result1.append( u'<th %s><a href="%s%s?%s">%s</a></th>' \
-            % (y, req.prefix, escape(req.path), escape(args.urlencode()), title) )
-        else:
-          result2.append( u'<th %s><a href="%s%s?%s">%s</a></th>' \
-            % (y, req.prefix, escape(req.path), escape(args.urlencode()), title) )
-        rowfield = row[0]
-      for i in args:
-        field, sep, operator = i.rpartition('__')
-        if (field or operator) == rowfield and i in args2: del args2[i]
-    else:
-      # No sorting is allowed on this field
-      # If there is no sorting allowed, then there is also no filtering
-      if issubclass(cls,ListReport) and number <= cls.frozenColumns:
-        result1.append( u'<th>%s</th>' % title )
-      else:
-        result2.append( u'<th>%s</th>' % title )
-
-  if issubclass(cls,TableReport):
-    result2.append('<th>&nbsp;</th>')
-
-  # Final result
-  return (mark_safe(string_concat(*result1)), mark_safe(string_concat(*result2)))

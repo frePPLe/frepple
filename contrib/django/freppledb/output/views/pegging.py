@@ -31,7 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Parameter, Demand
 from freppledb.output.models import FlowPlan, LoadPlan, OperationPlan
-from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, getBuckets
+from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, getBuckets
 
 
 class ReportByDemand(GridReport):
@@ -51,15 +51,15 @@ class ReportByDemand(GridReport):
     "/media/js/admin/DateTimeShortcuts.js",
     ]
   rows = (
-    TextGridField('depth', title=_('depth'), editable=False),
-    TextGridField('operation', title=_('operation'), formatter='operation', editable=False),
-    TextGridField('buffer', title=_('buffer'), formatter='buffer', editable=False),
-    TextGridField('item', title=_('item'), formatter='item', editable=False),
-    TextGridField('resource', title=_('resource'), formatter='resource', editable=False),
-    DateTimeGridField('startdate', title=_('start date'), editable=False),
-    DateTimeGridField('enddate', title=_('end date'), editable=False),
-    NumberGridField('quantity', title=_('quantity'), editable=False),
-    NumberGridField('percent_used', title=_('percent_used'), editable=False),
+    GridFieldText('depth', title=_('depth'), editable=False),
+    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
+    GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False),
+    GridFieldText('item', title=_('item'), formatter='item', editable=False),
+    GridFieldText('resource', title=_('resource'), formatter='resource', editable=False),
+    GridFieldDateTime('startdate', title=_('start date'), editable=False),
+    GridFieldDateTime('enddate', title=_('end date'), editable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False),
+    GridFieldNumber('percent_used', title=_('percent_used'), editable=False),
     )
 
   @staticmethod
@@ -222,11 +222,11 @@ class ReportByBuffer(GridReport):
   timebuckets = False
   default_sort = '3a'
   rows = (
-    TextGridField('operation', title=_('operation'), formatter='operation', editable=False),
-    DateTimeGridField('date', title=_('date'), editable=False),
-    TextGridField('demand', title=_('demand'), formatter='demand', editable=False),
-    NumberGridField('quantity', title=_('quantity'), editable=False),
-    TextGridField('item', title=_('end item'), formatter='item', editable=False),
+    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
+    GridFieldDateTime('date', title=_('date'), editable=False),
+    GridFieldText('demand', title=_('demand'), formatter='demand', editable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False),
+    GridFieldText('item', title=_('end item'), formatter='item', editable=False),
     )
 
   @staticmethod
@@ -299,11 +299,11 @@ class ReportByResource(GridReport):
   timebuckets = False
   default_sort = '3a'
   rows = (
-    TextGridField('operation', title=_('operation'), formatter='operation', editable=False),
-    DateTimeGridField('date', title=_('date'), editable=False),
-    TextGridField('demand', title=_('demand'), formatter='demand', editable=False),
-    NumberGridField('quantity', title=_('quantity'), editable=False),
-    TextGridField('item', title=_('end item'), formatter='item', editable=False),
+    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
+    GridFieldDateTime('date', title=_('date'), editable=False),
+    GridFieldText('demand', title=_('demand'), formatter='demand', editable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False),
+    GridFieldText('item', title=_('end item'), formatter='item', editable=False),
     )
 
   @staticmethod
@@ -357,11 +357,11 @@ class ReportByOperation(GridReport):
   timebuckets = False
   default_sort = '3a'
   rows = (
-    TextGridField('operation', title=_('operation'), formatter='operation', editable=False),
-    DateTimeGridField('date', title=_('date'), editable=False),
-    TextGridField('demand', title=_('demand'), formatter='demand', editable=False),
-    NumberGridField('quantity', title=_('quantity'), editable=False),
-    TextGridField('item', title=_('end item'), formatter='item', editable=False),
+    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
+    GridFieldDateTime('date', title=_('date'), editable=False),
+    GridFieldText('demand', title=_('demand'), formatter='demand', editable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False),
+    GridFieldText('item', title=_('end item'), formatter='item', editable=False),
     )
 
   @staticmethod

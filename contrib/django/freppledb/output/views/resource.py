@@ -32,7 +32,7 @@ from freppledb.input.models import Resource, Parameter
 from freppledb.output.models import LoadPlan
 from freppledb.common.db import sql_overlap3, python_date
 from freppledb.common.report import getBuckets
-from freppledb.common.report import GridReport, GridPivot, TextGridField, NumberGridField, DateTimeGridField, BoolGridField, IntegerGridField
+from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
   
 class OverviewReport(GridPivot):
@@ -44,8 +44,8 @@ class OverviewReport(GridPivot):
   basequeryset = Resource.objects.all()
   model = Resource
   rows = (
-    TextGridField('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
-    TextGridField('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
+    GridFieldText('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
+    GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
     )
   crosses = (
     ('available',{'title': _('available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
@@ -179,15 +179,15 @@ class DetailReport(GridReport):
   editable = False
   
   rows = (
-    TextGridField('theresource', title=_('resource'), key=True, formatter='resource', editable=False),
-    TextGridField('operationplan__operation', title=_('operation'), formatter='operation', editable=False),
-    DateTimeGridField('startdate', title=_('start date'), editable=False),
-    DateTimeGridField('enddate', title=_('end date'), editable=False),
-    NumberGridField('quantity', title=_('quantity'), editable=False),
-    TextGridField('setup', title=_('setup'), editable=False),
-    BoolGridField('operationplan__locked', title=_('locked'), editable=False),
-    NumberGridField('operationplan__unavailable', title=_('unavailable'), editable=False),
-    IntegerGridField('operationplan', title=_('operationplan'), editable=False),
+    GridFieldText('theresource', title=_('resource'), key=True, formatter='resource', editable=False),
+    GridFieldText('operationplan__operation', title=_('operation'), formatter='operation', editable=False),
+    GridFieldDateTime('startdate', title=_('start date'), editable=False),
+    GridFieldDateTime('enddate', title=_('end date'), editable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False),
+    GridFieldText('setup', title=_('setup'), editable=False),
+    GridFieldBool('operationplan__locked', title=_('locked'), editable=False),
+    GridFieldNumber('operationplan__unavailable', title=_('unavailable'), editable=False),
+    GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
     )
 
 

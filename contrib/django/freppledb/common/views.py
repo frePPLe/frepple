@@ -34,7 +34,7 @@ from django.contrib.syndication.views import Feed
 from django.conf import settings
 
 from freppledb.common.models import Preferences
-from freppledb.common.report import GridReport, TextGridField, BoolGridField
+from freppledb.common.report import GridReport, GridFieldText, GridFieldBool
 from freppledb.input.models import Bucket
 
 
@@ -119,11 +119,11 @@ class UserList(GridReport):
   frozenColumns = 1
 
   rows = (
-    TextGridField('username', title=_('username'), key=True),          
-    TextGridField('email', title=_('E-mail'), formatter='email', width=200),          
-    TextGridField('first_name', title=_('first_name')),          
-    TextGridField('last_name', title=_('last name')),          
-    BoolGridField('is_staff', title=_('staff status')),          
+    GridFieldText('username', title=_('username'), key=True),          
+    GridFieldText('email', title=_('E-mail'), formatter='email', width=200),          
+    GridFieldText('first_name', title=_('first_name')),          
+    GridFieldText('last_name', title=_('last name')),          
+    GridFieldBool('is_staff', title=_('staff status')),          
     )
 
 
@@ -137,7 +137,7 @@ class GroupList(GridReport):
   model = Group
   frozenColumns = 0
   rows = (
-    TextGridField('name', title=_('name'), key=True, width=200),          
+    GridFieldText('name', title=_('name'), key=True, width=200),          
     )
 
  

@@ -25,7 +25,7 @@ from django.utils.translation import string_concat
 from django.db.models import Count
 
 from freppledb.output.models import Constraint
-from freppledb.common.report import GridReport, TextGridField, NumberGridField, DateTimeGridField
+from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime
 
 
 entities = (
@@ -76,12 +76,12 @@ class Report(GridReport):
   frozenColumns = 0
   editable = False
   rows = (
-    TextGridField('demand', title=_('demand'), editable=False, formatter='demand'),
-    TextGridField('entity', title=_('entity'), editable=False, width=80, align='center'), # choices=getEntities),  TODO
-    TextGridField('name', title=_('name'), editable=False, width=100, align='center'),
-    TextGridField('owner', title=_('owner'), editable=False, align='center'),
-    TextGridField('description', title=_('description'), editable=False, width=250),
-    DateTimeGridField('startdate', title=_('start date'), editable=False),
-    DateTimeGridField('enddate', title=_('end date'), editable=False),
-    NumberGridField('weight', title=_('weight'), editable=False),
+    GridFieldText('demand', title=_('demand'), editable=False, formatter='demand'),
+    GridFieldText('entity', title=_('entity'), editable=False, width=80, align='center'), # choices=getEntities),  TODO
+    GridFieldText('name', title=_('name'), editable=False, width=100, align='center'),
+    GridFieldText('owner', title=_('owner'), editable=False, align='center'),
+    GridFieldText('description', title=_('description'), editable=False, width=250),
+    GridFieldDateTime('startdate', title=_('start date'), editable=False),
+    GridFieldDateTime('enddate', title=_('end date'), editable=False),
+    GridFieldNumber('weight', title=_('weight'), editable=False),
     )

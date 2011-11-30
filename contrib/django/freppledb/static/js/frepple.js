@@ -60,28 +60,36 @@ function linkunformat (cellvalue, options, cell) {
 
 jQuery.extend($.fn.fmatter, {
   item : function(cellvalue, options, rowdata) {
-    return '<a href="' + cellvalue + '" class="item context">' + cellvalue + "</a>";
+    if (cellvalue === undefined) return ''; 
+    else return '<a href="' + cellvalue + '" class="item context">' + cellvalue + "</a>";
   },
   customer : function(cellvalue, options, rowdata) {
-    return '<a href="' + cellvalue + '" class="customer context">' + cellvalue + "</a>";
+	if (cellvalue === undefined) return ''; 
+	else return '<a href="' + cellvalue + '" class="customer context">' + cellvalue + "</a>";
   },
   buffer : function(cellvalue, options, rowdata) {
-    return '<a href="' + cellvalue + '" class="buffer context">' + cellvalue + "</a>";
+	if (cellvalue === undefined) return ''; 
+	else return '<a href="' + cellvalue + '" class="buffer context">' + cellvalue + "</a>";
   },
   resource : function(cellvalue, options, rowdata) {
-    return '<a href="' + cellvalue + '" class="resource context">' + cellvalue + "</a>";
+	if (cellvalue === undefined) return ''; 
+	else return '<a href="' + cellvalue + '" class="resource context">' + cellvalue + "</a>";
   },
   forecast : function(cellvalue, options, rowdata) {
-    return '<a href="' + cellvalue + '" class="forecast context">' + cellvalue + "</a>";
+	if (cellvalue === undefined) return ''; 
+	else return '<a href="' + cellvalue + '" class="forecast context">' + cellvalue + "</a>";
   },
   demand : function(cellvalue, options, rowdata) {
-    return '<a href="' + cellvalue + '" class="demand context">' + cellvalue + "</a>";
+	if (cellvalue === undefined) return ''; 
+	else return '<a href="' + cellvalue + '" class="demand context">' + cellvalue + "</a>";
   },
   operation : function(cellvalue, options, rowdata) {
-    return '<a href="' + cellvalue + '" class="operation context">' + cellvalue + "</a>";
+	if (cellvalue === undefined) return ''; 
+	else return '<a href="' + cellvalue + '" class="operation context">' + cellvalue + "</a>";
   },
   calendar : function(cellvalue, options, rowdata) {
-    return '<a href="' + cellvalue + '" class="calendar context">' + cellvalue + "</a>";
+	if (cellvalue === undefined) return ''; 
+	else return '<a href="' + cellvalue + '" class="calendar context">' + cellvalue + "</a>";
   }
 });
 jQuery.extend($.fn.fmatter.item, {

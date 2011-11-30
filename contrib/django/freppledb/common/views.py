@@ -87,6 +87,7 @@ def preferences(request):
         pref.theme = newdata['theme']
         pref.pagesize = newdata['pagesize']
         pref.save()
+        request.theme = newdata['theme']
         messages.add_message(request, messages.INFO, force_unicode(_('Successfully updated preferences')))
       except:
         messages.add_message(request, messages.ERROR, force_unicode(_('Failure updating preferences')))

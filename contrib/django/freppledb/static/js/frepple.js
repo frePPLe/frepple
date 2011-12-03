@@ -359,6 +359,7 @@ function export_close()
   url +=  "&" + jQuery.param(postdata);
   // Open the window
   window.open(url,'_blank');
+  $('#popup').dialog('close');
 }
 
 

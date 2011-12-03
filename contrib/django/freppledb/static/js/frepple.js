@@ -380,7 +380,39 @@ function bucket_show()
      buttons: [
        {
          text: gettext("OK"),
-         click: function() { export_close(); },
+         click: function() { 
+        	// Determine the URL arguments
+        	var args = getURLparameters();
+        	var changed = false;
+        	var original = $('#reportoriginal').val().split('|');
+			if ($('#reportbucket').val() != original[0])
+			{
+			  args['reportbucket'] = $('#reportbucket').val();
+			  changed = true;
+			}
+			else
+			  delete args['reportbucket'];
+			if ($('#reportstart').val() != original[1])
+			{
+			  args['reportstart'] = $('#reportstart').val();
+			  changed = true;
+			}
+			else
+			  delete args['reportstart'];
+			if ($('#reportend').val() != original[2])
+			{
+			  args['reportend'] = $('#reportend').val();
+			  changed = true;
+			}
+			else
+			  delete args['reportend'];
+        	if (!changed)
+        	  // No changes to the settings. Close the popup.
+        	  $(this).dialog('close');
+        	else
+        	  // Fetch the new report. This also hides the popup again.
+        	  location.href = location.pathname + "?" + $.param(args);
+         },
        },
        {
          text: gettext("Cancel"),
@@ -403,48 +435,6 @@ function getURLparameters()
 	});
 	return params;
 }
-
-
-function bucket_close(canceled, curBuckets, curStart, curEnd)
-{
-  // Determine the URL arguments
-  var args = getURLparameters();
-  var changed = false;
-  if (!canceled)
-  {
-	  if ($('#reportbucket').val() != curBuckets)
-	  {
-	    args['reportbucket'] = $('#reportbucket').val();
-	    changed = true;
-	  }
-	  else
-	    delete args['reportbucket'];
-	  if ($('#reportstart').val() != curStart)
-	  {
-	    args['reportstart'] = $('#reportstart').val();
-	    changed = true;
-	  }
-	  else
-	    delete args['reportstart'];
-	  if ($('#reportend').val() != curEnd)
-	  {
-	    args['reportend'] = $('#reportend').val();
-	    changed = true;
-	  }
-	  else
-	    delete args['reportend'];
-  }
-  if (!changed)
-  {
-    // No changes to the settings. Close the popup.
-    $('#timebuckets').dialog('close');
-    return true;
-  }
-  else
-    // Fetch the new report. This also hides the popup again.
-    location.href = location.pathname + "?" + $.param(args);
-}
-
 
 
 function installLoadHandler()

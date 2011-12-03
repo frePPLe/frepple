@@ -105,9 +105,9 @@ $(window).bind('resize', function() {
 <tr><th>{% trans 'Bucket' %}</th><td><select name="reportbucket" id="reportbucket">
 {% for i in bucketnames %}<option value="{{i}}"{% ifequal i reportbucket %} selected="selected"{% endifequal %}>{% trans i %}</option>
 {% endfor %}</select></td></tr>
-<tr><th>{% trans 'start date'|capfirst %}:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="{{ reportstart|date:"Y-m-d" }}" name="reportstart"/></td></tr>
-<tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{ reportend|date:"Y-m-d" }}" name="reportend" /></td></tr>
-<tr><td><input type="button" value="{% trans 'OK' %}" onclick="javascript:bucket_close(false,'{{reportbucket}}','{{reportstart|date:"Y-m-d"}}','{{reportend|date:"Y-m-d"}}');"/></td>
+<tr><th>{% trans 'start date'|capfirst %}:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="{{ reportstart|date:"Y-m-d" }}"/></td></tr>
+<tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{ reportend|date:"Y-m-d" }}"/></td></tr>
+<input id="reportoriginal" type="hidden" value="{{reportbucket}}|{{ reportstart|date:"Y-m-d" }}|{{ reportend|date:"Y-m-d" }}"/>
 </tr>
 </table></form>
 </div>

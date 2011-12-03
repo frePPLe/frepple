@@ -39,7 +39,6 @@ import csv, cStringIO
 import operator
 
 from django.conf import settings
-from django.core.paginator import QuerySetPaginator, InvalidPage
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -50,7 +49,6 @@ from django.db.models.fields.related import RelatedField, AutoField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
 from django.forms.models import modelform_factory
 from django.shortcuts import render
-from django.template import RequestContext, loader
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
@@ -64,10 +62,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
 
 from freppledb.input.models import Parameter, BucketDetail, Bucket
-
-
-# URL parameters that are not query arguments
-reservedParameters = ('o', 'p', 't', 'reporttype', 'pop', 'reportbucket', 'reportstart', 'reportend')
 
 
 class GridField(object):
@@ -156,218 +150,6 @@ class GridFieldCurrency(GridField):
   width = 80
 
 
-@staff_member_required
-@csrf_protect
-def view_report(request, entity=None, **args):
-  '''
-  This is a generic view for two types of reports:
-    - List reports, showing a list of values are rows
-    - Table reports, showing in addition values per time buckets as columns
-  The following arguments can be passed to the view:
-    - report:
-      Points to a subclass of Report.
-      This is a required attribute.
-    - extra_context:
-      An additional set of records added to the context for rendering the
-      view.
-  '''
-
-  # Pick up the report class
-  global reservedParameters
-  reportclass = args['report']
-  model = reportclass.model
-
-  # Pick up the list of time buckets
-  pref = request.user.get_profile()
-  if reportclass.timebuckets:
-    (bucket,start,end,bucketlist) = getBuckets(request, pref)
-    bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
-  else:
-    bucket = start = end = bucketlist = bucketnames = None
-  type = request.GET.get('reporttype','html')  # HTML or CSV (table or list) output
-
-  # Is this a popup window?
-  is_popup = request.GET.has_key('pop')
-
-  # Pick up the filter parameters from the url
-  counter = reportclass.basequeryset.using(request.database)
-  fullhits = counter.count()
-  if entity:
-    # The url path specifies a single entity.
-    # We ignore all other filters.
-    counter = counter.filter(pk__exact=entity)
-  else:
-    # The url doesn't specify a single entity, but may specify filters
-    # Convert URL parameters into queryset filters.
-    for key, valuelist in request.GET.lists():
-      # Ignore arguments that aren't filters
-      if key not in reservedParameters:
-        # Loop over all values, since the same filter key can be
-        # used multiple times!
-        for value in valuelist:
-          if len(value)>0:
-            counter = counter.filter( **{smart_str(key): value} )
-
-  # Pick up the sort parameter from the url
-  sortparam = request.GET.get('o', reportclass.default_sort)
-  try:
-    # Pick up the sorting arguments
-    sortfield = 0
-    for i in sortparam:
-      if i.isdigit():
-        sortfield = sortfield * 10 + int(i)
-      else:
-        break
-    sortdirection = sortparam[-1]
-    if not hasattr(reportclass,'default_sortfield'):
-      # Create an attribute to store the index of the default sort
-      reportclass.default_sortfield = 0
-      for i in reportclass.default_sort:
-        if i.isdigit():
-          reportclass.default_sortfield = reportclass.default_sortfield * 10 + int(i)
-        else:
-          break
-      reportclass.default_sortdirection = reportclass.default_sort[-1]
-    if sortfield<=0 or sortfield > len(reportclass.rows) \
-      or (reportclass.rows[sortfield-1][1].has_key('sort') and reportclass.rows[sortfield-1][1]['sort']):
-        # Invalid sort
-        raise
-    # Create sort parameters
-    if sortfield == reportclass.default_sortfield:
-      if sortdirection == 'd':
-        sortparam = '%dd' % sortfield
-        counter = counter.order_by('-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]))
-        sortsql = '%d desc' % sortfield
-      else:
-        sortparam = '%da' % sortfield
-        counter = counter.order_by(('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0])
-        sortsql = '%d asc' % sortfield
-    else:
-      if sortdirection == 'd':
-        sortparam = '%dd' % sortfield
-        if reportclass.default_sortdirection == 'a':
-          counter = counter.order_by(
-            '-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]),
-            ('order_by' in reportclass.rows[reportclass.default_sortfield-1][1] and reportclass.rows[reportclass.default_sortfield-1][1]['order_by']) or reportclass.rows[reportclass.default_sortfield-1][0]
-            )
-          sortsql = '%d desc, %d asc' % (sortfield, reportclass.default_sortfield)
-        else:
-          counter = counter.order_by(
-            '-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]),
-            '-%s' % (('order_by' in reportclass.rows[reportclass.default_sortfield-1][1] and reportclass.rows[reportclass.default_sortfield-1][1]['order_by']) or reportclass.rows[reportclass.default_sortfield-1][0])
-            )
-          sortsql = '%d desc, %d desc' % (sortfield, reportclass.default_sortfield)
-      else:
-        sortparam = '%da' % sortfield
-        if reportclass.default_sortdirection == 'a':
-          counter = counter.order_by(
-            ('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0],
-            ('order_by' in reportclass.rows[reportclass.default_sortfield-1][1] and reportclass.rows[reportclass.default_sortfield-1][1]['order_by']) or reportclass.rows[reportclass.default_sortfield-1][0]
-            )
-          sortsql = '%d asc, %d asc' % (sortfield, reportclass.default_sortfield)
-        else:
-          counter = counter.order_by(
-            ('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0],
-            '-%s' % (('order_by' in reportclass.rows[reportclass.default_sortfield-1][1] and reportclass.rows[reportclass.default_sortfield-1][1]['order_by']) or reportclass.rows[reportclass.default_sortfield-1][0])
-            )
-          sortsql = '%d asc, %d desc' % (sortfield, reportclass.default_sortfield)
-  except:
-    # A silent and safe exit in case of any exception
-    sortparam = reportclass.default_sort
-    sortfield = reportclass.default_sortfield
-    sortdirection = reportclass.default_sortdirection
-    sortsql = '%d asc' % sortfield
-    if sortdirection == 'a':
-      counter = counter.order_by(('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0])
-    else:
-      counter = counter.order_by('-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]))
-
-  # HTML output or CSV output?
-  if type[:3] == 'csv':
-    # CSV output
-    response = HttpResponse(content_type='text/csv; charset=%s' % settings.DEFAULT_CHARSET)
-    response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
-    if hasattr(reportclass,'resultlist2'):
-      # SQL override provided of type 2
-      response._container = _generate_csv(reportclass, reportclass.resultlist2(request, counter, bucket, start, end, sortsql=sortsql), type, bucketlist, request)
-    elif hasattr(reportclass,'resultlist1'):
-      # SQL override provided of type 1
-      response._container = _generate_csv(reportclass, reportclass.resultlist1(request, counter, bucket, start, end, sortsql=sortsql), type, bucketlist, request)
-    else:
-      # No SQL override provided
-      response._container = _generate_csv(reportclass, counter, type, bucketlist, request)
-    response._is_string = False
-    return response
-
-  # Build paginator
-  page = int(request.GET.get('p', '1'))
-  paginator = QuerySetPaginator(counter, reportclass.paginate_by)
-  if paginator.page(page).start_index():
-    counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]
-  hits = paginator.count
-
-  # Calculate the content of the page
-  if hasattr(reportclass,'resultlist1'):
-    # SQL override provided
-    try:
-      objectlist1 = reportclass.resultlist1(request, counter, bucket, start, end, sortsql=sortsql)
-    except InvalidPage: raise Http404
-  else:
-    # No SQL override provided
-    objectlist1 = counter
-  if hasattr(reportclass,'resultlist2'):
-    # SQL override provided
-    try:
-      objectlist2 = reportclass.resultlist2(request, counter, bucket, start, end, sortsql=sortsql)
-    except InvalidPage: raise Http404
-  else:
-    # No SQL override provided
-    objectlist2 = objectlist1
-
-  # Build the path for the complete list.
-  # We need to treat URLs for a specific entity a bit differently
-  if entity:
-    base_request_path = "%s%s/" % (request.prefix, request.path.rstrip("/").rpartition("/")[0])
-  else:
-    base_request_path = "%s%s" %(request.prefix, request.path)
-
-  # Prepare template context
-  head_frozen, head_scroll = _create_rowheader(request, sortfield, sortdirection, reportclass)
-  context = {
-       'reportclass': reportclass,
-       'model': model,
-       'hasaddperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())),
-       'haschangeperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
-       'request': request,
-       'object': entity or (hits == 1 and reportclass.model and counter[0].pk) or None,
-       'objectlist1': objectlist1,
-       'objectlist2': objectlist2,
-       'reportbucket': bucket,
-       'reportstart': start,
-       'reportend': end,
-       'bucketnames': bucketnames,
-       'paginator': paginator,
-       'hits' : hits,
-       'fullhits': fullhits,
-       'is_popup': is_popup,
-       'base_request_path': base_request_path,
-       # Never reset the breadcrumbs if an argument entity was passed.
-       # Otherwise depend on the value in the report class.
-       'reset_crumbs': reportclass.reset_crumbs and entity == None,
-       'title': (entity and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(entity)}) or reportclass.title,
-       'rowheader': head_scroll,
-       'rowheaderfrozen': head_frozen,
-       'crossheader': issubclass(reportclass, TableReport) and _create_crossheader(request, reportclass),
-       'columnheader': issubclass(reportclass, TableReport) and _create_columnheader(request, reportclass, bucketlist),
-     }
-  if 'extra_context' in args: context.update(args['extra_context'])
-
-  # Render the view, optionally setting the last-modified http header
-  return HttpResponse(
-    loader.render_to_string(reportclass.template, context, context_instance=RequestContext(request)),
-    )
-
-
 class GridReport(View):
   '''
   The base class for all jqgrid views.
@@ -384,14 +166,11 @@ class GridReport(View):
   # included in the report.
   # This query is used to return the number of records.
   # It is also used to generate the actual results, in case no method
-  # "resultlist2" is provided on the class.
+  # "query" is provided on the class.
   basequeryset = None
   
   # Whether or not the breadcrumbs are reset when we open the report
   reset_crumbs = True
-
-  # Extra javascript files to import for running the report
-  javascript_imports = []   #TODO not used yet
 
   # Specifies which column is used for an initial filter
   default_sort = '1a'
@@ -427,7 +206,7 @@ class GridReport(View):
 
 
   @classmethod
-  def _generate_csv_data(reportclass, request):
+  def _generate_csv_data(reportclass, request, *args, **kwargs):
     sf = cStringIO.StringIO()
     encoding = settings.DEFAULT_CHARSET
     if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
@@ -467,17 +246,14 @@ class GridReport(View):
 
 
   @classmethod
-  def _generate_json_data(reportclass, request):
+  def _generate_json_data(reportclass, request, *args, **kwargs):
     page = 'page' in request.GET and int(request.GET['page']) or 1
     recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
     total_pages = recs / request.pagesize + 1
     if page > total_pages: page = total_pages
-    #if hasattr(reportclass,'resultlist2'):
+    #if hasattr(reportclass,'query'):
       # SQL override provided of type 2
-    #  query = reportclass._apply_filter_and_sort(request, reportclass.resultlist2(request, counter, bucket, start, end, sortsql=sortsql))
-    #elif hasattr(reportclass,'resultlist1'):
-      # SQL override provided of type 1
-    #  query = reportclass._apply_filter_and_sort(request, reportclass.resultlist1(request, counter, bucket, start, end, sortsql=sortsql))
+    #  query = reportclass._apply_filter_and_sort(request, reportclass.query(request, counter, bucket, start, end, sortsql=sortsql))
     #else:
       # No SQL override provided
     query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
@@ -512,6 +288,7 @@ class GridReport(View):
     #    yield ',{"%s","%s","%s","%s","%s","%s","%s","%s",%d,%d,%d,%s,false]}\n' %(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11] and 'true' or 'false')
     #yield ']}\n'
 
+    # GridReport
     fields = [ i.field_name for i in reportclass.rows ]
     #if False: # TREEGRID
     #  fields.append('level')
@@ -537,12 +314,11 @@ class GridReport(View):
       r.append(',"b1":"y","b2":"z"')
       r.append('}')
       yield ''.join(r)
-      cnt = cnt + 1
     yield '\n]}\n'
 
 
   @classmethod
-  def post(reportclass, request, **args):
+  def post(reportclass, request, *args, **kwargs):
     if "csv_file" in request.FILES:
       # Uploading a CSV file
       if not reportclass.model:
@@ -580,7 +356,7 @@ class GridReport(View):
       return resp
 
   @classmethod
-  def get(reportclass, request, **args):
+  def get(reportclass, request, *args, **kwargs):
     fmt = request.GET.get('format', None)
     if not fmt:
       # Return HTML page
@@ -593,11 +369,12 @@ class GridReport(View):
         bucket = start = end = bucketlist = bucketnames = None      
       return render(request, reportclass.template, {
         'reportclass': reportclass,
-        'title': reportclass.title,
+        'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
         'reportbucket': bucket,
         'reportstart': start,
         'reportend': end,
         'is_popup': request.GET.has_key('pop'),
+        'args': args,
         'bucketnames': bucketnames,
         'bucketlist': bucketlist,
         'model': reportclass.model,
@@ -609,13 +386,13 @@ class GridReport(View):
       # Return JSON data to fill the grid
       return HttpResponse(
          mimetype = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
-         content = reportclass._generate_json_data(request)
+         content = reportclass._generate_json_data(request, *args, **kwargs)
          )
     elif fmt == 'csvlist' or fmt == 'csvtable':
       # Return CSV data to export the data
       response = HttpResponse(
          mimetype= 'text/csv; charset=%s' % settings.DEFAULT_CHARSET,
-         content = reportclass._generate_csv_data(request)
+         content = reportclass._generate_csv_data(request, *args, **kwargs)
          )
       response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
       return response
@@ -850,7 +627,66 @@ class GridPivot(GridReport):
   crosses = ()
 
   template = 'admin/base_site_gridpivot.html'
+  
+  @classmethod
+  def _generate_json_data(reportclass, request, *args, **kwargs):
 
+    # Pick up the list of time buckets      
+    pref = request.user.get_profile()
+    (bucket,start,end,bucketlist) = getBuckets(request, pref)
+
+    # Prepare the query
+    if args and args[0]:
+      page = 1
+      recs = 1
+      total_pages = 1
+      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]), bucket, start, end, sortsql="1 asc")
+    else:
+      page = 'page' in request.GET and int(request.GET['page']) or 1
+      recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
+      total_pages = recs / request.pagesize + 1
+      if page > total_pages: page = total_pages
+      cnt = (page-1)*request.pagesize+1
+      query = reportclass.query(request, reportclass.basequeryset[cnt-1:cnt+request.pagesize], bucket, start, end, sortsql="1 asc")
+
+    # Generate header of the output
+    yield '{"total":%d,\n' % total_pages
+    yield '"page":%d,\n' % page
+    yield '"records":%d,\n' % recs
+    yield '"rows":[\n'
+    
+    # Generate output
+    currentkey = None
+    r = []
+    for i in query:
+      if currentkey <> i[reportclass.rows[0].name]:
+        # New line
+        if currentkey:
+          yield ''.join(r)
+          r = [ '},\n{' ]
+        else:
+          r = [ '{' ] 
+        currentkey = i[reportclass.rows[0].name]
+        first2 = True
+        for f in reportclass.rows:
+          if first2:
+            r.append('"%s":"%s"' % (f.name,i[f.name]))
+            first2 = False
+          else:
+            r.append(', "%s":"%s"' % (f.name,i[f.name]))
+      r.append(', "%s":[' % i['bucket'])
+      first2 = True
+      for f in reportclass.crosses:
+        if first2:
+          r.append('%s' % i[f[0]])
+          first2 = False
+        else:
+          r.append(', %s' % i[f[0]])
+      r.append(']')
+    r.append('}')
+    r.append('\n]}\n')
+    yield ''.join(r)
+      
 
 def _localize(value, use_l10n=None):
   '''

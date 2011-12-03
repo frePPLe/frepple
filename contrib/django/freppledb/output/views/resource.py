@@ -54,11 +54,9 @@ class OverviewReport(GridPivot):
     ('load',{'title': _('load')}),
     ('utilization',{'title': _('utilization %'),}),
     )
-  
-  javascript_imports = ['/static/FusionCharts.js',]
 
   @staticmethod
-  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)        
         
     # Get the time units
@@ -200,7 +198,7 @@ def GraphData(request, entity):
   overload = []
   unavailable = []
   setup = []
-  for x in OverviewReport.resultlist2(request, basequery, bucket, start, end):
+  for x in OverviewReport.query(request, basequery, bucket, start, end):
     if x['available'] > x['load']:
       free.append(x['available'] - x['load'])
       overload.append(0)

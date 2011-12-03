@@ -45,11 +45,6 @@ class ReportByDemand(GridReport):
   frozenColumns = 0
   editable = False
   timebuckets = True
-  javascript_imports = [
-    "/media/js/core.js",
-    "/media/js/calendar.js",
-    "/media/js/admin/DateTimeShortcuts.js",
-    ]
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False),
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
@@ -63,7 +58,7 @@ class ReportByDemand(GridReport):
     )
 
   @staticmethod
-  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connections[request.database].cursor()
@@ -146,7 +141,7 @@ def GraphData(request, entity):
   except:
     current = datetime.now()
   (bucket,start,end,bucketlist) = getBuckets(request)
-  result = [ i for i in ReportByDemand.resultlist2(request,basequery,bucket,start,end) ]
+  result = [ i for i in ReportByDemand.query(request,basequery,bucket,start,end) ]
   min = None
   max = None
 
@@ -230,7 +225,7 @@ class ReportByBuffer(GridReport):
     )
 
   @staticmethod
-  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(
@@ -307,7 +302,7 @@ class ReportByResource(GridReport):
     )
 
   @staticmethod
-  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(
@@ -365,7 +360,7 @@ class ReportByOperation(GridReport):
     )
 
   @staticmethod
-  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(

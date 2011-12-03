@@ -3,8 +3,7 @@
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" media="screen" href="/static/css/ui.jqgrid.css" />
 {% endblock %}
 {% block extrahead %}{{ block.super }} 
-{% block extrajavascript %}<script type="text/javascript">
-var original;
+<script type="text/javascript">
 $(function(){ 
   jQuery("#jsonmap").jqGrid({        
    	url: window.location.href + (location.search.length > 0 ? "&format=json" : "?format=json"),
@@ -71,7 +70,6 @@ $(window).bind('resize', function() {
 }); 
 
 </script> 
-{% endblock %}
 {% endblock %}
 {% block content_title %}{{ block.super }}{% endblock %}
 {% block coltype %}colM{% endblock %}

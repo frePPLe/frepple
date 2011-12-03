@@ -54,10 +54,8 @@ class OverviewReport(GridPivot):
     ('endoh', {'title': _('end inventory'),}),
     )
 
-  javascript_imports = ['/static/FusionCharts.js',]
-
   @staticmethod
-  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
         
@@ -172,7 +170,7 @@ def GraphData(request, entity):
   consumed = []
   produced = []
   startoh = []
-  for x in OverviewReport.resultlist2(request, basequery, bucket, start, end):
+  for x in OverviewReport.query(request, basequery, bucket, start, end):
     consumed.append(x['consumed'])
     produced.append(x['produced'])
     startoh.append(x['startoh'])

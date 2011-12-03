@@ -53,10 +53,8 @@ class OverviewReport(GridPivot):
     ('backlog',{'title': _('backlog')}),
     )
 
-  javascript_imports = ['/static/FusionCharts.js',]
-
   @staticmethod
-  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connections[request.database].cursor()
 
@@ -194,7 +192,7 @@ def GraphData(request, entity):
   demand = []
   supply = []
   backlog = []
-  for x in OverviewReport.resultlist2(request, basequery, bucket, start, end):
+  for x in OverviewReport.query(request, basequery, bucket, start, end):
     demand.append(x['demand'])
     supply.append(x['supply'])
     backlog.append(x['backlog'])

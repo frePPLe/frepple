@@ -3,10 +3,17 @@
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" media="screen" href="/static/css/ui.jqgrid.css" />
 {% endblock %}
 {% block extrahead %}{{ block.super }} 
-{% block extrajavascript %}<script type="text/javascript">
+<script type="text/javascript">
 
 function columns (cellvalue, options, rowdata) {
   return "{% for f in reportclass.crosses %}{% if not forloop.first %}<br/>{% endif %}{{f.1.title|title}}{% endfor %}";
+};
+
+function crosses (cellvalue, options, rowdata) {
+  for (i in cellvalue)
+    if (i == 0) res = cellvalue[i];
+    else res += '<br/>' + cellvalue[i];
+  return res;
 };
 
 $(function(){ 
@@ -17,9 +24,9 @@ $(function(){
    	colModel:[
    	  {% for f in reportclass.rows %}{% if not forloop.first %},
    	  {% endif %}{ {{f|safe}} }{% endfor %},
-      { name:'columns',label:'',sortable:false,width:200,align:'left',formatter:columns,search:false },
+      { name:'columns',label:' ',sortable:false,width:200,align:'left',formatter:columns,search:false },
       {% for f in bucketlist %}{% if not forloop.first %},
-      {% endif %}{ name:'{{f.name|safe}}',sortable:false,width:90,search:false }{% endfor %}
+      {% endif %}{ name:'{{f.name|safe}}',sortable:false,width:90,align:'center',formatter:crosses,search:false }{% endfor %}
    	  ],{% if reportclass.editable %}
     cellEdit: true,
     cellsubmit: 'clientArray',
@@ -78,7 +85,6 @@ $(window).bind('resize', function() {
 }); 
 
 </script> 
-{% endblock %}
 {% endblock %}
 {% block content_title %}{{ block.super }}{% endblock %}
 {% block coltype %}colM{% endblock %}

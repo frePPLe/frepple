@@ -53,10 +53,8 @@ class OverviewReport(GridPivot):
     ('total_end', {'title': _('total ends'),}),
     )
 
-  javascript_imports = ['/static/FusionCharts.js',]
-
   @staticmethod
-  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     # Run the query
     cursor = connections[request.database].cursor()
@@ -140,7 +138,7 @@ def GraphData(request, entity):
   (bucket,start,end,bucketlist) = getBuckets(request)
   total_start = []
   total_end = []
-  for x in OverviewReport.resultlist2(request, basequery, bucket, start, end):
+  for x in OverviewReport.query(request, basequery, bucket, start, end):
     total_start.append(x['total_start'])
     total_end.append(x['total_end'])
   context = {

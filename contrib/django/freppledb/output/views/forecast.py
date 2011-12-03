@@ -52,10 +52,8 @@ class OverviewReport(GridPivot):
     ('planned',{'title': _('planned net forecast')}),
     )
 
-  javascript_imports = ['/static/FusionCharts.js',]
-
   @staticmethod
-  def resultlist2(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     # Execute the query
     cursor = connections[request.database].cursor()
@@ -144,7 +142,7 @@ def GraphData(request, entity):
   net = []
   orders = []
   planned = []
-  for x in OverviewReport.resultlist2(request, basequery, bucket, start, end):
+  for x in OverviewReport.query(request, basequery, bucket, start, end):
     total.append(x['total'])
     net.append(x['net'])
     orders.append(x['orders'])

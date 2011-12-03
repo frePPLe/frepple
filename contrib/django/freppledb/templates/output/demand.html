@@ -1,12 +1,16 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
+{% block extrahead %}{{ block.super }} 
+{% if args.0 %}<script type="text/javascript" src="/static/FusionCharts.js"></script>{% endif %}
+{% endblock %}
+
 {% block contextmenus %}
 {% include "itemcontext.html" %}
 {% endblock %}
 
 {% block before_table %}
-{% ifequal hits 1 %}<div id="chart1div" style="z-index: 1000;">
+{% if args.0 %}<div id="chart1div" style="z-index: 1000;">
 	  <p>&nbsp;</p>
 	  <p>{% blocktrans %}frePPLe needs Adobe Flash Player to display graphs. If you're unable to see 
 	  the chart here, it means that your browser does not seem to have the Flash Player 
@@ -14,13 +18,12 @@
 	  You can downloaded it <a href="http://www.adobe.com/products/flashplayer/" target="_blank"><u>here</u></a> for free.{% endblocktrans %}</p>
 	</div>
 	<script language="javascript" type="text/javascript">
-	   var totalAvailable = document.viewport.getDimensions();
-	   var chart1 = new FusionCharts("/static/FCF_MSColumn2DLineDY.swf", "sampleChart", totalAvailable.width-35, 350);
+	   var chart1 = new FusionCharts("/static/FCF_MSColumn2DLineDY.swf", "chart1", $(window).width()-35, 350);
 	   chart1.setTransparent();
-	   chart1.setDataURL(escape("{{request.prefix}}/demandgraph/{{object}}/?reportbucket={{reportbucket}}&reportstart={{reportstart|date:"Y-m-d"}}&reportend={{reportend|date:"Y-m-d"}}"));	   	   
+	   chart1.setDataURL(escape("{{request.prefix}}/demandgraph/{{args.0}}/?reportbucket={{reportbucket}}&reportstart={{reportstart|date:"Y-m-d"}}&reportend={{reportend|date:"Y-m-d"}}"));	   	   
 	   chart1.render("chart1div");
 	</script>
-{% endifequal %}{% endblock %}
+{% endif %}{% endblock %}
 
 {% block frozendata %}
 {% for j in objectlist1 %}

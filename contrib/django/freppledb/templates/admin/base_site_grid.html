@@ -1,11 +1,9 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_list %}
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" media="screen" href="/static/css/ui.jqgrid.css" />
-{% endblock %}
 {% block extrahead %}{{ block.super }} 
 <script type="text/javascript">
 $(function(){ 
-  jQuery("#jsonmap").jqGrid({        
+  jQuery("#grid").jqGrid({        
    	url: window.location.href + (location.search.length > 0 ? "&format=json" : "?format=json"),
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
@@ -26,18 +24,18 @@ $(function(){
 	  scroll: 1,
     autowidth: true,    
 	  shrinkToFit: false,
-	  height: $(window).height() - $("#jsonmap").offset().top - 70
+	  height: $(window).height() - $("#grid").offset().top - 70
     });
   // Initial search string:
-  // jQuery('#jsonmap').jqGrid('setGridParam', {postData: mypostdata, search:true});
+  // jQuery('#grid').jqGrid('setGridParam', {postData: mypostdata, search:true});
   });
 /*
   $("#savebutton").click(function() {
-    alert(JSON.stringify($("#jsonmap").getChangedCells('dirty')));
+    alert(JSON.stringify($("#grid").getChangedCells('dirty')));
     });
 
 $(window).bind('beforeunload', function() {
-   var rows = $("#jsonmap").getChangedCells('dirty');
+   var rows = $("#grid").getChangedCells('dirty');
    alert(JSON.stringify(rows));
    if (rows != null && rows.length > 0) 
    {
@@ -63,9 +61,9 @@ $(window).bind('beforeunload', function() {
 */
 
 $(window).bind('resize', function() {
-  $("#jsonmap")
+  $("#grid")
    .setGridWidth($('#content-main').width()) 
-   .setGridHeight($(window).height() - $("#jsonmap").offset().top - 70);
+   .setGridHeight($(window).height() - $("#grid").offset().top - 70);
 }); 
 
 </script> 
@@ -82,7 +80,7 @@ $(window).bind('resize', function() {
 {% block content %}
 <div id="content-main" style="margin-right: 16px;">
 {% block before_table %}{% endblock %}
-<table id="jsonmap"></table>
+<table id="grid"></table>
 <div id="pjmap"></div>
 {% block after_table %}{% endblock %}
 </div>

@@ -3,6 +3,7 @@
 {% block title %}frePPLe{% if title %} - {{title}}{% endif %}{% endblock %}
 {% block branding %}<a href="http://www.frepple.com" target="_">frePPLe {% version %}</a>{% endblock %}
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" media="screen" href="/static/css/{{request.theme}}/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/ui.jqgrid.css" />
 <link rel="stylesheet" type="text/css" href="/static/css/frepple.css" />
 {% endblock %}
 {% block extrahead %}{{ block.super }}
@@ -13,5 +14,5 @@
 <script src="/static/js/jquery.jqGrid.src.js" type="text/javascript"></script>
 <script type="text/javascript" src="/static/js/frepple.js"></script>
 {% endblock %}
-{% block breadcrumbs %}<div class="breadcrumbs">{% crumbs %}</div>{% endblock %}
+{% block breadcrumbs %}<div class="crumbtrail">{% crumbs %}</div>{% endblock %}
 {% block nav-global %}{% endblock %}

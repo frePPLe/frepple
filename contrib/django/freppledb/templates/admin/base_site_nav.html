@@ -32,7 +32,7 @@
 </div>{% endif %}
 
 {% if modelsAuth %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'Admin' %}</a>
-<div id="authMenu" class="ui-menu ui-widget ui-widget-content ui-corner-all">
+<div id="authMenu" class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 {% for m in modelsAuth %}
 <a class="ui-menu-item" href="{{m.admin_url}}">{{ m.name }}</a>{% endfor %}
 </div>{% endif %}

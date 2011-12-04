@@ -282,21 +282,21 @@ function import_show(url)
         ]
     });
   $('#timebuckets').dialog('close');  
-  $.jgrid.hideModal("#searchmodfbox_jsonmap");
+  $.jgrid.hideModal("#searchmodfbox_grid");
 }
 
 
 function filter_show()
 {
   $('#timebuckets,#popup').dialog('close');
-  jQuery("#jsonmap").jqGrid('searchGrid', {
+  jQuery("#grid").jqGrid('searchGrid', {
     closeOnEscape: true,
     multipleSearch:true,
     multipleGroup:true,
     overlay: 0,
     sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
     onSearch : function() {
-      $('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_jsonmap").jqFilter('toSQLString'));
+      $('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_grid").jqFilter('toSQLString'));
       },
     onReset : function() {
       $('#curfilter').html('');
@@ -306,10 +306,10 @@ function filter_show()
 
 function edit_show()
 {
-  var selectedrow = $("#jsonmap").jqGrid('getGridParam', 'selrow');
+  var selectedrow = $("#grid").jqGrid('getGridParam', 'selrow');
   if (selectedrow == null) return;
   $('#timebuckets,#popup').dialog('close');
-  jQuery("#jsonmap").jqGrid('editGridRow', selectedrow, {
+  jQuery("#grid").jqGrid('editGridRow', selectedrow, {
     closeOnEscape: true,
     });
 }
@@ -338,7 +338,7 @@ function export_show(only_list)
         ]
       });
   $('#timebuckets').dialog('close');
-  $.jgrid.hideModal("#searchmodfbox_jsonmap");
+  $.jgrid.hideModal("#searchmodfbox_grid");
 }
 
 
@@ -356,7 +356,7 @@ function export_close()
     // This is the first argument for the URL
     url += "?format=" + $('#csvformat').val();
   // Append current filter and sort settings to the URL
-  var postdata = $("#jsonmap").jqGrid('getGridParam', 'postData');
+  var postdata = $("#grid").jqGrid('getGridParam', 'postData');
   url +=  "&" + jQuery.param(postdata);
   // Open the window
   window.open(url,'_blank');
@@ -368,7 +368,7 @@ function bucket_show()
 {
   // Show popup
   $('#popup').dialog('close');
-  $.jgrid.hideModal("#searchmodfbox_jsonmap");
+  $.jgrid.hideModal("#searchmodfbox_grid");
   $( "#reportstart" ).datepicker({
       showOtherMonths: true, selectOtherMonths: true,
       dateFormat: 'yy-mm-dd'

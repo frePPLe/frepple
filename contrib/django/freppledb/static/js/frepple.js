@@ -314,14 +314,14 @@ function edit_show()
 }
 
 
-function export_show(list_or_table)
+function export_show(only_list)
 {
   // The argument is true when we show a "list" report.
   // It is false for "table" reports.
   $('#popup').html(
-    gettext("CSV style") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
-    '<option value="csvtable"' + (list_or_table ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
-    '<option value="csvlist"' + (list_or_table ?  ' selected="selected"' : '') + '>' + gettext("List") +'</option></select>'
+    gettext("CSV style") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat"' + (only_list ? ' disabled="true"' : '')+ '>'+
+    '<option value="csvtable"' + (only_list ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
+    '<option value="csvlist"' + (only_list ?  ' selected="selected"' : '') + '>' + gettext("List") +'</option></select>'
     ).dialog({
       title: gettext("Export data"),
       autoOpen: true, resizable: false,

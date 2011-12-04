@@ -52,10 +52,11 @@ from django.shortcuts import render
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
+from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.formats import get_format, number_format
 from django.utils import simplejson as json
-from django.utils.text import get_text_list
+from django.utils.text import capfirst, get_text_list
 from django.utils.encoding import iri_to_uri, force_unicode
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
@@ -173,7 +174,7 @@ class GridReport(View):
   reset_crumbs = True
 
   # Specifies which column is used for an initial filter
-  default_sort = '1a'
+  default_sort = '1a'    # TODO "default_sort" not used yet
 
   # A model class from which we can inherit information.
   model = None
@@ -304,14 +305,14 @@ class GridReport(View):
         r = [ ',\n{' ]
       first2 = True
       for f in reportclass.rows:
+        s = isinstance(i[f.field_name], basestring) and escape(i[f.field_name]) or i[f.field_name]
         if first2:
-          r.append('"%s":"%s"' % (f.name,i[f.field_name]))
+          r.append('"%s":"%s"' % (f.name,s))
           first2 = False
         elif i[f.field_name] != None:
-          r.append(', "%s":"%s"' % (f.name,i[f.field_name]))
+          r.append(', "%s":"%s"' % (f.name,s))
       #if False:    # TREEGRID
       #  r.append(', %d, %d, %d, %s, %s' % (i['level'],i['lft'],i['rght'], i['isLeaf'] and 'true' or 'false', i['expanded'] and 'true' or 'false' ))
-      r.append(',"b1":"y","b2":"z"')
       r.append('}')
       yield ''.join(r)
     yield '\n]}\n'
@@ -354,6 +355,7 @@ class GridReport(View):
       resp.content = "OK"
       resp.status_code = 200
       return resp
+
 
   @classmethod
   def get(reportclass, request, *args, **kwargs):
@@ -398,6 +400,7 @@ class GridReport(View):
       return response
     else:
       raise Http404('Unknown format type')
+
 
   @classmethod
   def parseUpload(reportclass, request, data):
@@ -537,6 +540,7 @@ class GridReport(View):
       # Report all failed records
       return (warnings, errors, changed, added)
 
+
   @classmethod
   def get_filters(reportclass, request):
     _search = request.GET.get('_search')
@@ -628,6 +632,7 @@ class GridPivot(GridReport):
 
   template = 'admin/base_site_gridpivot.html'
   
+  
   @classmethod
   def _generate_json_data(reportclass, request, *args, **kwargs):
 
@@ -659,6 +664,7 @@ class GridPivot(GridReport):
     currentkey = None
     r = []
     for i in query:
+      # We use the first field in the output to recognize new rows.
       if currentkey <> i[reportclass.rows[0].name]:
         # New line
         if currentkey:
@@ -669,11 +675,12 @@ class GridPivot(GridReport):
         currentkey = i[reportclass.rows[0].name]
         first2 = True
         for f in reportclass.rows:
+          s = isinstance(i[f.name], basestring) and escape(i[f.name]) or i[f.name]
           if first2:
-            r.append('"%s":"%s"' % (f.name,i[f.name]))
+            r.append('"%s":"%s"' % (f.name,s))
             first2 = False
           else:
-            r.append(', "%s":"%s"' % (f.name,i[f.name]))
+            r.append(', "%s":"%s"' % (f.name,s))
       r.append(', "%s":[' % i['bucket'])
       first2 = True
       for f in reportclass.crosses:
@@ -686,7 +693,91 @@ class GridPivot(GridReport):
     r.append('}')
     r.append('\n]}\n')
     yield ''.join(r)
+
+
+  @classmethod
+  def _generate_csv_data(reportclass, request, *args, **kwargs):  # TODO
+    sf = cStringIO.StringIO()
+    encoding = settings.DEFAULT_CHARSET
+    if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
+      writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
+    else:
+      writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
+    if translation.get_language() != request.LANGUAGE_CODE:
+      translation.activate(request.LANGUAGE_CODE)
+    listformat = (request.GET.get('format','csvlist') == 'csvlist')
       
+    # Pick up the list of time buckets      
+    pref = request.user.get_profile()
+    (bucket,start,end,bucketlist) = getBuckets(request, pref)
+
+    # Prepare the query
+    if args and args[0]:
+      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]), bucket, start, end, sortsql="1 asc")
+    else:
+      query = reportclass.query(request, reportclass.basequeryset, bucket, start, end, sortsql="1 asc")
+
+    # Write a header row
+    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows ]
+    if listformat:
+      fields.extend([ capfirst(force_unicode(_('bucket'))).encode(encoding,"ignore") ])
+      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in reportclass.crosses ])
+    else:
+      fields.extend( [capfirst(_('data field')).encode(encoding,"ignore")])
+      fields.extend([ unicode(b['name']).encode(encoding,"ignore") for b in bucketlist])
+    writer.writerow(fields)
+    yield sf.getvalue()
+
+    # Write the report content
+    if listformat:
+      for row in query:
+        # Clear the return string buffer
+        sf.truncate(0)
+        # Data for rows
+        if hasattr(row, "__getitem__"):
+          fields = [ row[f.name]==None and ' ' or unicode(row[f.name]).encode(encoding,"ignore") for f in reportclass.rows ]
+          fields.extend([ row['bucket'].encode(encoding,"ignore") ])
+          fields.extend([ row[f[0]]==None and ' ' or unicode(_localize(row[f[0]])).encode(encoding,"ignore") for f in reportclass.crosses ])
+        else:
+          fields = [ getattr(row,f.name)==None and ' ' or unicode(getattr(row,f.name)).encode(encoding,"ignore") for f in reportclass.rows ]
+          fields.extend([ getattr(row,'bucket').encode(encoding,"ignore") ])
+          fields.extend([ getattr(row,f[0])==None and ' ' or unicode(_localize(getattr(row,f[0]))).encode(encoding,"ignore") for f in reportclass.crosses ])
+        # Return string
+        writer.writerow(fields)
+        yield sf.getvalue()
+    else:
+      currentkey = None
+      for row in query:
+        # We use the first field in the output to recognize new rows.
+        if not currentkey:
+          currentkey = row[reportclass.rows[0].name]
+          row_of_buckets = [ row ]
+        elif currentkey == row[reportclass.rows[0].name]:
+          row_of_buckets.append(row)
+        else:
+          # Write an entity
+          for cross in reportclass.crosses:
+            # Clear the return string buffer
+            sf.truncate(0)
+            fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows ]
+            fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
+            fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
+            # Return string
+            writer.writerow(fields)
+            yield sf.getvalue()
+          currentkey = row[reportclass.rows[0].name]
+          row_of_buckets = [row]
+      # Write the last entity
+      for cross in reportclass.crosses:
+        # Clear the return string buffer
+        sf.truncate(0)
+        fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows ]
+        fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
+        fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
+        # Return string
+        writer.writerow(fields)
+        yield sf.getvalue()
+            
 
 def _localize(value, use_l10n=None):
   '''

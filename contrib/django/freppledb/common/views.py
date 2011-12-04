@@ -62,7 +62,7 @@ class PreferencesForm(forms.Form):
   pagesize = forms.IntegerField(label = _('Page size'),
     required=False,
     initial=100,
-    min_value=100,
+    min_value=25,
     help_text = _('Number of records to fetch in a single page from the server'),                            
     )
   theme = forms.ChoiceField(label = _('Theme'),

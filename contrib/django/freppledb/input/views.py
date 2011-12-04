@@ -585,7 +585,6 @@ class CalendarList(GridReport):
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldNumber('defaultvalue', title=_('default value')),
-    GridFieldNumber('currentvalue', title=_('current value'), sortable=False),
     GridFieldLastModified('lastmodified'),
     )
 

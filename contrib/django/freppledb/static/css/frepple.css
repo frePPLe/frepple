@@ -24,7 +24,6 @@ div.ContextMenu a {
   width: 100px;
   padding: 3px 10px 3px 10px;
   text-decoration: none;
-  font-family: "MS Sans Serif", Arial, sans-serif;
   color: black;
   background: #cccccc;
 }
@@ -79,15 +78,14 @@ a.context {
 
 /* Style for main navigation menu */
 
-#header div.menuBar {
+#headerbar div.menuBar {
   padding: 4px 2px 4px 2px;
   margin: 5px 5px 5px 5px;
   text-align: left;
 }
 
-#header div.menuBar a.menuButton {
+#headerbar div.menuBar a.menuButton {
   background-color: transparent;
-  border: 1px solid #d0d0d0;
   cursor: default;
   left: 0px;
   margin: 1px;
@@ -97,17 +95,7 @@ a.context {
   top: 0px;
 }
 
-#header div.menuBar a.menuButton:hover {
-  background-color: #a0a0a0;
-  text-decoration: none;
-}
-
-#header div.menuBar a.menuButtonActive,
-#header div.menuBar a.menuButtonActive:hover {
-  background-color: #a0a0a0;
-}
-
-#header {
+#headerbar {
   position: relative;
   z-index: 3;
   overflow: visible;
@@ -115,9 +103,7 @@ a.context {
   padding-bottom: 3px;
 }
 
-
-#header div.menu {
-  background-color: #cccccc;
+#headerbar div.ui-menu {  
   left: 0px;
   padding: 0px 1px 1px 0px;
   position: absolute;
@@ -126,7 +112,7 @@ a.context {
   z-index: 10000;
 }
 
-#header div.menu a.menuItem {
+#headerbar div.ui-menu a.menuItem {
   cursor: default;
   display: block;
   padding: 3px 1em;
@@ -134,17 +120,21 @@ a.context {
   color: black;
 }
 
-#header div.menu a.menuItem:hover, div.menu a.menuItemHighlight {
+#headerbar div.ui-menu {
+  padding: 5px 10px 5px 10px;
+}
+
+#headerbar div.ui-menu a.menuItem:hover, div.menu a.menuItemHighlight {
   background-color: #417690;
   text-decoration: none;
   color: black;
 }
 
-#header div.menu a.menuItem span.menuItemArrow {
+#headerbar div.ui-menu a.menuItem span.menuItemArrow {
   margin-right: -.75em;
 }
 
-#header div.menu div.menuItemSep {
+#headerbar div.ui-menu div.menuItemSep {
   border-top: 1px solid #909090;
   border-bottom: 1px solid #f0f0f0;
   margin: 4px 2px;
@@ -162,12 +152,11 @@ table thead th.sorted {
   background: #c0c0c0;
 }
 
-table#drt td {
-  white-space: nowrap;
-}
-
-table#dlt td {
-  white-space: nowrap;
+#branding {
+    padding: 0 10px;
+    font-size: 18px;
+    margin: 8px 0;
+    font-weight: normal;
 }
 
 /* Dashboard is a bit too narrow by default. */
@@ -205,43 +194,6 @@ td.level12 {padding-left: 120px;}
 div.calendarbox
 {
   z-index: 10;
-}
-
-div.gridupleft
-{
-  position: relative;
-  float: left;
-  z-index: 0;
-  /* height and width are set dynamically from javascript */
-}
-
-div.gridupright
-{
-  position: relative;
-  overflow: hidden;
-  z-index: 0;
-  min-width: 150px;
-  /* height and width are set dynamically from javascript */
-}
-
-div.griddownleft
-{
-  position: relative;
-  float: left;
-  overflow: hidden;
-  z-index: 0;
-  min-height: 150px;
-  /* height and width are set dynamically from javascript */
-}
-
-div.griddownright
-{
-  position: relative;
-  overflow: auto;
-  z-index: 0;
-  min-height: 150px;
-  min-width: 150px;
-  /* height and width are set dynamically from javascript */
 }
 
 .highutil

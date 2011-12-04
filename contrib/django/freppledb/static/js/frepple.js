@@ -126,12 +126,12 @@ var activeButton = null;
 var contextMenu = null;
 
 $(function() {
-
+  
   // Install code executed when you click on a menu button
   $(".menuButton").click( function(event) {
     // Get the target button element
     var button = $(event.target);
-    var menu = button.next(".menu");
+    var menu = button.next(".ui-menu");
 
     // Blur focus from the link to remove that annoying outline.
     button.blur();
@@ -139,7 +139,7 @@ $(function() {
     // Reset the currently active button, if any.
     if (activeButton) {
       activeButton.removeClass("menuButtonActive");
-      activeButton.next(".menu").css('visibility', "hidden");
+      activeButton.next(".ui-menu").css('visibility', "hidden");
     }
 
     // Activate this button, unless it was the currently active one.
@@ -224,9 +224,9 @@ $(document).mousedown(function (event) {
   if (!activeButton || event.target == activeButton) return;
 
   // If the element is not part of a menu, hide the menu
-  if ($(event.target).parent('div.menu').length < 1) {
+  if ($(event.target).parent('div.ui-menu').length < 1) {
     activeButton.removeClass("menuButtonActive");
-    activeButton.next(".menu").css('visibility', "hidden");
+    activeButton.next(".ui-menu").css('visibility', "hidden");
     activeButton = null;
   }
 });
@@ -257,10 +257,11 @@ function sameOrigin(url) {
 }
 
 
-function import_show(list_or_table)
+function import_show(url)
 {
   $('#popup').html(
-    '<form id="uploadform" enctype="multipart/form-data" method="post" action="">'+
+    '<form id="uploadform" enctype="multipart/form-data" method="post" action="' 
+	  + (typeof(url) != 'undefined' ? url : '') + '">' +
     '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
     gettext('Load a CSV-formatted text file.') + '<br/>' +
     gettext('The first row should contain the field names.') + '<br/>' +

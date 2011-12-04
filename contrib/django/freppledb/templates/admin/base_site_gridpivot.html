@@ -30,7 +30,7 @@ $(function(){
     cellsubmit: 'clientArray',
     editurl: location.pathname,
    	{% endif %}rowNum: {{request.pagesize}},
-   	pager: '#pjmap',
+   	pager: '#gridpager',
    	sortname: '{{reportclass.keyfield}}',
     viewrecords: true,    
     sortorder: "asc",	
@@ -89,13 +89,13 @@ $(window).bind('resize', function() {
 {% block tools %}<div class="tools">
 <a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
 <a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
-<a href="javascript:export_show(false);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a><div id="popup" class="ui-helper-hidden"></div>
+<a href="javascript:export_show(false);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
 </div>{% endblock %}
 {% block content %}
-<div id="content-main" style="margin-right: 16px;">
+<div id="content-main" style="margin-right: 15px;">
 {% block before_table %}{% endblock %}
 <table id="grid"></table>
-<div id="pjmap"></div>
+<div id="gridpager"></div>
 </div>
 {% block after_table %}{% endblock %}
 <div id="timebuckets" class="ui-helper-hidden" title="{% trans 'Time buckets' %}">

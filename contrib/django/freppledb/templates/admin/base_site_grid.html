@@ -15,7 +15,7 @@ $(function(){
     cellsubmit: 'clientArray',
     editurl: location.pathname,
    	{% endif %}rowNum: {{request.pagesize}},
-   	pager: '#pjmap',
+   	pager: '#gridpager',
     viewrecords: true,    
     sortorder: "asc",	
     hidegrid: false,
@@ -29,6 +29,7 @@ $(function(){
   // Initial search string:
   // jQuery('#grid').jqGrid('setGridParam', {postData: mypostdata, search:true});
   });
+  
 /*
   $("#savebutton").click(function() {
     alert(JSON.stringify($("#grid").getChangedCells('dirty')));
@@ -75,13 +76,13 @@ $(window).bind('resize', function() {
 {% if haschangeperm %}<a href="javascript:edit_show();" class="icon"><span class="ui-icon ui-icon-pencil"></span>{% trans 'Edit' %}</a>
 {% endif %}{% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
 {% endif %}{% if hasaddperm %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
-{% endif %}<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a><div id="popup" class="ui-helper-hidden"></div>
+{% endif %}<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
 </div>{% endblock %}
 {% block content %}
-<div id="content-main" style="margin-right: 16px;">
+<div id="content-main" style="margin-right: 15px;">
 {% block before_table %}{% endblock %}
 <table id="grid"></table>
-<div id="pjmap"></div>
+<div id="gridpager"></div>
 {% block after_table %}{% endblock %}
 </div>
 {% block contextmenus %}{% endblock %}

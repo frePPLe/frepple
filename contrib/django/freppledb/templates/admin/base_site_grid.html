@@ -7,14 +7,15 @@ $(function(){
    	url: window.location.href + (location.search.length > 0 ? "&format=json" : "?format=json"),
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
-   	colModel:[
-   	  {% for f in reportclass.rows %}{% if not forloop.first %},
-   	  {% endif %}{ {{f|safe}} }{% endfor %}
+   	colModel:[{% if is_popup %}
+      {name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false},
+      {% endif %}{% for f in reportclass.rows %}{% if not forloop.first %},
+   	  {% endif %}{ {{f|safe}} }{% endfor %}   	  
    	  ],{% if reportclass.editable %}
-    cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname,
-   	{% endif %}rowNum: {{request.pagesize}},
+   	{% endif %}rowNum: {{request.pagesize}},{% if is_popup %}
+   	onSelectRow: setSelectedRow,{% endif %}
    	pager: '#gridpager',
     viewrecords: true,    
     sortorder: "asc",	

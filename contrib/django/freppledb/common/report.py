@@ -61,7 +61,6 @@ from django.utils.encoding import iri_to_uri, force_unicode
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
-
 from freppledb.input.models import Parameter, BucketDetail, Bucket
 
 
@@ -84,7 +83,7 @@ class GridField(object):
     if not self.sortable: o.append("sortable:false,")
     if not self.editable: o.append("editable:false,")
     if self.formatter: o.append("formatter:'%s'," % self.formatter)
-    if self.unformat: o.append("unformat:%s," % self.unformat)
+    if self.unformat: o.append("unformat:'%s'," % self.unformat)
     if self.searchrules: o.append("searchrules:{%s}," % self.searchrules)
     if self.extra: o.append(self.extra)
     return ''.join(o)
@@ -542,80 +541,82 @@ class GridReport(View):
 
 
   @classmethod
-  def get_filters(reportclass, request):
-    _search = request.GET.get('_search')
-    filters = None
+  def _getRowByName(reportclass, name):
+    if not hasattr(reportclass,'_rowsByName'):
+      reportclass._rowsByName = {}
+      for i in reportclass.rows:
+        reportclass._rowsByName[i.name] = i
+    return reportclass._rowsByName[name]
+
   
-    if _search == 'true':
-        _filters = request.GET.get('filters')
-        try:
-            filters = _filters and json.loads(_filters)
-        except ValueError:
-            return None
-  
-        if filters is None:
-            field = request.GET.get('searchField')
-            op = request.GET.get('searchOper')
-            data = request.GET.get('searchString')
-  
-            if all([field, op, data]):
-                filters = {
-                    'groupOp': 'AND',
-                    'rules': [{ 'op': op, 'field': field, 'data': data }]
-                }
-    return filters
-  
-  
+  _filter_map = {
+      # jqgrid op: (django_lookup, use_exclude)
+      'ne': ('%(field)s__exact', True),
+      'bn': ('%(field)s__startswith', True),
+      'en': ('%(field)s__endswith',  True),
+      'nc': ('%(field)s__contains', True),
+      'ni': ('%(field)s__in', True),
+      'in': ('%(field)s__in', False),
+      'eq': ('%(field)s__exact', False),
+      'bw': ('%(field)s__startswith', False),
+      'gt': ('%(field)s__gt', False),
+      'ge': ('%(field)s__gte', False),
+      'lt': ('%(field)s__lt', False),
+      'le': ('%(field)s__lte', False),
+      'ew': ('%(field)s__endswith', False),
+      'cn': ('%(field)s__contains', False)
+  }
+      
   @classmethod
-  def filter_items(reportclass, request, items):
-    # TODO: Add option to use case insensitive filters
-    # TODO: Add more support for RelatedFields (searching and displaying)
-    # FIXME: Validate data types are correct for field being searched.
-    filter_map = {
-        # jqgrid op: (django_lookup, use_exclude)
-        'ne': ('%(field)s__exact', True),
-        'bn': ('%(field)s__startswith', True),
-        'en': ('%(field)s__endswith',  True),
-        'nc': ('%(field)s__contains', True),
-        'ni': ('%(field)s__in', True),
-        'in': ('%(field)s__in', False),
-        'eq': ('%(field)s__exact', False),
-        'bw': ('%(field)s__startswith', False),
-        'gt': ('%(field)s__gt', False),
-        'ge': ('%(field)s__gte', False),
-        'lt': ('%(field)s__lt', False),
-        'le': ('%(field)s__lte', False),
-        'ew': ('%(field)s__endswith', False),
-        'cn': ('%(field)s__contains', False)
-    }
-    _filters = reportclass.get_filters(request)
-    if _filters is None:
-        return items
-  
+  def _get_q_filter(reportclass, filterdata):
     q_filters = []
-    for rule in _filters['rules']:
+    for rule in filterdata['rules']:
         op, field, data = rule['op'], rule['field'], rule['data']
-        # FIXME: Restrict what lookups performed against RelatedFields
-        field_class = reportclass.model._meta.get_field_by_name(field)[0]
-        if isinstance(field_class, models.related.RelatedObject):
-            op = 'eq'
-        filter_fmt, exclude = filter_map[op]
-        filter_str = smart_str(filter_fmt % {'field': field})
+        filter_fmt, exclude = reportclass._filter_map[op]
+        filter_str = smart_str(filter_fmt % {'field': reportclass._getRowByName(field).field_name})
         if filter_fmt.endswith('__in'):
             filter_kwargs = {filter_str: data.split(',')}
         else:
             filter_kwargs = {filter_str: smart_str(data)}
-  
         if exclude:
             q_filters.append(~models.Q(**filter_kwargs))
         else:
-            q_filters.append(models.Q(**filter_kwargs))
-  
-    if _filters['groupOp'].upper() == 'OR':
-        filters = reduce(operator.ior, q_filters)
+            q_filters.append(models.Q(**filter_kwargs))    
+    if u'groups' in filterdata:
+      for group in filterdata['groups']:
+        q_filters.append(reportclass._get_q_filter(group))
+    if filterdata['groupOp'].upper() == 'OR':
+      return reduce(operator.ior, q_filters)
     else:
-        filters = reduce(operator.iand, q_filters)
-    return items.filter(filters)
+      return reduce(operator.iand, q_filters)
+
+      
+  @classmethod
+  def filter_items(reportclass, request, items):
+
+    filters = None
+
+    # Check whether a search is enabled
+    if request.GET.get('_search') == 'true':     
+      # Validate complex search JSON data
+      _filters = request.GET.get('filters')
+      try:
+        filters = _filters and json.loads(_filters)
+      except ValueError:
+        filters = None
+  
+      # Single field searching, which is currently not used
+      if filters is None:
+        field = request.GET.get('searchField')
+        op = request.GET.get('searchOper')
+        data = request.GET.get('searchString')
+        if all([field, op, data]):
+          filters = {
+              'groupOp': 'AND',
+              'rules': [{ 'op': op, 'field': field, 'data': data }]
+          }
+    
+    return filters and items.filter(reportclass._get_q_filter(filters)) or items
 
   
 class GridPivot(GridReport):

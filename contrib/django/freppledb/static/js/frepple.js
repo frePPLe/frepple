@@ -50,13 +50,22 @@ var upload = {
 }
 
 
+var selected;
+function setSelectedRow(id) {  
+  if (selected!=undefined)
+   	$(this).jqGrid('setCell', selected, 'select', null); 
+  selected = id;
+  $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, selected);" class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text" style="font-size:66%">'+gettext('Select')+'</span></button>');
+}
+
 //----------------------------------------------------------------------------
 // Customer formatter functions for the grid cells.
 //----------------------------------------------------------------------------
 
 function linkunformat (cellvalue, options, cell) {
-  return cellvalue;
-}
+	  return cellvalue;
+	}
+
 
 jQuery.extend($.fn.fmatter, {
   item : function(cellvalue, options, rowdata) {
@@ -90,7 +99,7 @@ jQuery.extend($.fn.fmatter, {
   calendar : function(cellvalue, options, rowdata) {
 	if (cellvalue === undefined) return ''; 
 	else return '<a href="' + cellvalue + '" class="calendar context">' + cellvalue + "</a>";
-  }
+  },
 });
 jQuery.extend($.fn.fmatter.item, {
     unformat : linkunformat

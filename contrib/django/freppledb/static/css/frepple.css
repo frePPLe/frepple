@@ -196,6 +196,21 @@ div.calendarbox
   z-index: 10;
 }
 
+.ui-autocomplete-loading 
+{ 
+  background: white url('/static/ui-anim_basic_16x16.gif') right center no-repeat; 
+}
+
+.ui-autocomplete 
+{
+  max-height: 200px;
+  overflow-y: auto;  
+  /* prevent horizontal scrollbar */
+  overflow-x: hidden; 
+  /* add padding to account for vertical scrollbar */
+  padding-right: 20px;
+}
+    
 .highutil
 {
   color: red;

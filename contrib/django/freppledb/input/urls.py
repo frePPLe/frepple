@@ -51,4 +51,5 @@ urlpatterns = patterns('',
   (r'^supplypath/([^/]+)/([^/]+)/$', freppledb.input.views.pathreport.viewupstream),
   (r'^whereused/([^/]+)/([^/]+)/$', freppledb.input.views.pathreport.viewdownstream),
   (r'^edit/$', freppledb.input.views.uploadjson.post),  
+  (r'^search/$', freppledb.input.views.search),  
 )

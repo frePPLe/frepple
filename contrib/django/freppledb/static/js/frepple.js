@@ -128,11 +128,28 @@ jQuery.extend($.fn.fmatter.calendar, {
 
 
 //----------------------------------------------------------------------------
+//Code for customized autocomplete widget
+//----------------------------------------------------------------------------
+
+$.widget( "custom.catcomplete", $.ui.autocomplete, {
+  _renderItem: function( ul, item) {
+    if (item.value == undefined)
+      return $( "<li class='ui-autocomplete-category'>" + item.label + "</li>" ).appendTo( ul );
+    else
+      return $( "<li></li>" )
+      .data( "item.autocomplete", item )
+      .append( $( "<a></a>" ).text( item.value ) )
+      .appendTo( ul );
+  }
+});
+
+//----------------------------------------------------------------------------
 // Code for handling the menu bar, context menu and active button.
 //----------------------------------------------------------------------------
 
 var activeButton = null;
 var contextMenu = null;
+
 
 $(function() {
   
@@ -183,6 +200,14 @@ $(function() {
       xhr.setRequestHeader("X-CSRFToken", getToken());
     });
 
+  // Autocomplete search functionality
+  $( "#search" ).catcomplete({
+    source: "/search/",
+    minLength: 2,
+    select: function( event, ui ) {
+      window.location.href = "/admin/input/" + ui.item.label + "/" + ui.item.value + "/";
+    }
+  });
 });
 
 

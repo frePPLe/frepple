@@ -22,7 +22,9 @@
 
 from datetime import datetime
 from decimal import Decimal
+import json
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, Http404
@@ -31,6 +33,7 @@ from django.utils import simplejson
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext 
 from django.utils.encoding import iri_to_uri, force_unicode
 
 from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix
@@ -41,6 +44,72 @@ from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModi
 from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldInteger, GridFieldCurrency
 
 
+def search(request):
+  term = request.GET.get('term')
+  result = []
+  
+  # Search demands
+  if term and request.user.has_perm('input.change_demand'):
+    query = Demand.objects.using(request.database).filter(name__contains=term).order_by('name').values_list('name')
+    count = len(query)
+    if count > 0:
+      result.append( {'value': None, 'label': (ungettext(
+         '%(name)s - %(count)d match', 
+         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('demand')), 'count': count}).capitalize()
+         })
+      result.extend([ {'label':'demand', 'value':i[0]} for i in query[:10] ])
+  
+  # Search customers
+  if term and request.user.has_perm('input.change_customer'):
+    query = Customer.objects.using(request.database).filter(name__contains=term).order_by('name').values_list('name')
+    count = len(query)
+    if count > 0:
+      result.append( {'value': None, 'label': (ungettext(
+         '%(name)s - %(count)d match', 
+         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('customer')), 'count': count}).capitalize()
+         })
+      result.extend([ {'label':'customer', 'value':i[0]} for i in query[:10] ])
+    
+  # Search items
+  if term and request.user.has_perm('input.change_item'):
+    query = Item.objects.using(request.database).filter(name__contains=term).order_by('name').values_list('name')
+    count = len(query)
+    if count > 0:
+      result.append( {'value': None, 'label': (ungettext(
+         '%(name)s - %(count)d match', 
+         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('item')), 'count': count}).capitalize()
+         })
+      result.extend([ {'label':'item', 'value':i[0]} for i in query[:10] ])
+  
+  # Search buffers
+  if term and request.user.has_perm('input.change_buffer'):
+    query = Buffer.objects.using(request.database).filter(name__contains=term).order_by('name').values_list('name')
+    count = len(query)
+    if count > 0:
+      result.append( {'value': None, 'label': (ungettext(
+         '%(name)s - %(count)d match', 
+         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('buffer')), 'count': count}).capitalize()
+         })
+      result.extend([ {'label':'buffer', 'value':i[0]} for i in query[:10] ])
+    
+  # Search resources
+  if term and request.user.has_perm('input.change_resource'):
+    query = Resource.objects.using(request.database).filter(name__contains=term).order_by('name').values_list('name')
+    count = len(query)
+    if count > 0:
+      result.append( {'value': None, 'label': (ungettext(
+         '%(name)s - %(count)d match', 
+         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('resource')), 'count': count}).capitalize()
+         })
+      result.extend([ {'label':'resource', 'value':i[0]} for i in query[:10] ])
+    
+  # Construct reply
+  return HttpResponse(
+     mimetype = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
+     content = json.dumps(result, encoding=settings.DEFAULT_CHARSET, ensure_ascii=False)
+     )
+  
+  
 class uploadjson:
   '''
   This class allows us to process json-formatted post requests.

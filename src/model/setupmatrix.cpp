@@ -320,6 +320,8 @@ DECLARE_EXPORT PyObject* SetupMatrix::Rule::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_priority))
     return PythonObject(priority);
+  if (attr.isA(Tags::tag_setupmatrix))
+    return PythonObject(matrix);
   if (attr.isA(Tags::tag_fromsetup))
     return PythonObject(from);
   if (attr.isA(Tags::tag_tosetup))

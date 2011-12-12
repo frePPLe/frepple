@@ -3802,6 +3802,9 @@ class SetupMatrix : public HasName<SetupMatrix>
           */
         DECLARE_EXPORT void setPriority(const int);
 
+        /** Return the matrix owning this rule. */
+        SetupMatrix* getSetupMatrix() const {return matrix;}
+
         /** Return the priority. */
         double getPriority() const {return priority;}
 

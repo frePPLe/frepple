@@ -44,6 +44,7 @@ from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModi
 from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldInteger, GridFieldCurrency
 
 
+@staff_member_required
 def search(request):
   term = request.GET.get('term')
   result = []

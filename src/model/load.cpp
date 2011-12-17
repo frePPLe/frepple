@@ -381,6 +381,8 @@ DECLARE_EXPORT PyObject* Load::getattro(const Attribute& attr)
     return PythonObject(getEffective().getStart());
   if (attr.isA(Tags::tag_name))
     return PythonObject(getName());
+  if (attr.isA(Tags::tag_hidden))
+    return PythonObject(getHidden());
   if (attr.isA(Tags::tag_alternate))
     return PythonObject(getAlternate());
   if (attr.isA(Tags::tag_search))

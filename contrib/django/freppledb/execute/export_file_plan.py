@@ -52,7 +52,7 @@ def exportConstraints():
   print "Exporting constraints..."
   starttime = time()
   writer = csv.writer(open("constraints.csv", "wb"), quoting=csv.QUOTE_ALL)
-  writer.writerow(('#demand','entity','name','description','start date','end date','weight'))
+  writer.writerow(('#demand','entity','name','owner','description','start date','end date','weight'))
   for d in frepple.demands():
     for i in d.constraints:
       writer.writerow(

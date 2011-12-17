@@ -1498,7 +1498,7 @@ DECLARE_EXPORT PyObject* OperationTimePer::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_duration))
     return PythonObject(getDuration());
-  if (attr.isA(Tags::tag_duration))
+  if (attr.isA(Tags::tag_duration_per))
     return PythonObject(getDurationPer());
   return Operation::getattro(attr);
 }

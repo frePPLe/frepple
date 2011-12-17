@@ -847,6 +847,8 @@ DECLARE_EXPORT PyObject* Calendar::Bucket::getattro(const Attribute& attr)
     return PythonObject(getPriority());
   if (attr.isA(Tags::tag_name))
     return PythonObject(getName());
+  if (attr.isA(Tags::tag_calendar))
+    return PythonObject(getCalendar());
   return NULL;
 }
 

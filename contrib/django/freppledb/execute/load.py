@@ -88,8 +88,9 @@ def loadCalendars(cursor):
     except Exception, e: print "Error:", e
   print 'Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime)
 
-  # Bucket
-  print 'Importing buckets...'
+
+def loadCalendarBuckets(cursor):
+  print 'Importing calendar buckets...'
   cnt = 0
   starttime = time()
   cursor.execute("SELECT calendar_id, startdate, enddate, name, priority, value FROM calendarbucket")
@@ -549,6 +550,7 @@ def loadfrepple():
     # Sequential load of all entities
     loadParameter(cursor)
     loadCalendars(cursor)
+    loadCalendarBuckets(cursor)
     loadLocations(cursor)
     loadCustomers(cursor)
     loadOperations(cursor)
@@ -577,8 +579,8 @@ def loadfrepple():
     # It is unclear what the limiting bottleneck is: python or frepple, definately
     # not the database...
     tasks = (
-      DatabaseTask(loadParameter),
-      DatabaseTask(loadCalendars, loadLocations),
+      DatabaseTask(loadParameter, loadLocations),
+      DatabaseTask(loadCalendars, loadCalendarBuckets),
       DatabaseTask(loadCustomers),
       )
     for i in tasks: i.start()

@@ -186,7 +186,7 @@ def runfrepple(request):
   request.session['plantype'] = plantype
   request.session['constraint'] = constraint
 
-  # Run frepple
+  # Run frePPLe
   try:
     management.call_command(
       'frepple_run',

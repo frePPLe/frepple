@@ -93,7 +93,7 @@ class Command(BaseCommand):
       else:
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(os.environ['FREPPLE_APP'])
-      ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.xml'))
+      ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.py'))
       if ret: raise Exception('Exit code of the batch run is %d' % ret)
 
       # Log message

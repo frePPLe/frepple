@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (C) 2009 by Johan De Taeye
+.\" Copyright (C) 2009-2011 by Johan De Taeye, frePPLe bvba
 .\"
 .\" This library is free software; you can redistribute it and/or modify it
 .\" under the terms of the GNU Lesser General Public License as published
@@ -40,10 +40,12 @@ This program reads XML input data, and executes the modeling and
 Python commands included in them.
 .P
 The xml input can be provided in the following ways:
-  - Passing one or more XML files
+  - Passing one or more XML files.
   - Passing one or more directories as arguments.
     The program will process all files with the extension '.xml' found
     in the directories in alphabetical order.
+  - Passing one or more Python files with the extension '.py'.
+    The Python commands are executed in the embedded interpreter.
   - When passing no file or directory arguments, input will be read
     from the standard input. XML data can be redirected or piped to the
     application.

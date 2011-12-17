@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007 by Johan De Taeye                                    *
+ * Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -50,13 +50,13 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "frePPLe"
       VALUE "FileDescription",
-            "frePPLe Console Application - Free Production Planning Library"
+            "frePPLe - an open source Production Planning solution"
       VALUE "FileVersion", "0, 9, 1, 0"
       VALUE "InternalName", "frepple.exe"
       VALUE "LegalCopyright",
             "Licenced under the GNU Lesser General Public License"
       VALUE "OriginalFilename", "frepple.exe"
-      VALUE "ProductName", " frePPLe Console Application"
+      VALUE "ProductName", "frePPLe"
       VALUE "ProductVersion", "0, 9, 1, 0"
     END
   END

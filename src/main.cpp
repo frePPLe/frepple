@@ -44,6 +44,8 @@ void usage()
     "  - Passing one or more XML files and/or directories as arguments.\n"
     "    When a directory is specified, the application will process\n"
     "    all files with the extension '.xml'.\n"
+    "  - Passing one or more Python files with the extension '.py'\n"
+    "    The Python commands are executed in the embedded interpreter.\n"
     "  - When passing no file or directory arguments, input will be read\n"
     "    from the standard input. XML data can be piped to the application.\n"
     "\nOptions:\n"

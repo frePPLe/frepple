@@ -35,7 +35,7 @@ from freppledb.execute.models import log
 class Command(BaseCommand):
 
   help = '''
-  This command initiliazes the date bucketization table in the database.
+  This command initializes the date bucketization table in the database.
   '''
 
   option_list = BaseCommand.option_list + (
@@ -68,8 +68,8 @@ class Command(BaseCommand):
     # Pick up the options
     if 'start' in options: start = options['start'] or '2008-1-1'
     else: start = '2008-1-1'
-    if 'end' in options: end = options['end'] or '2012-1-1'
-    else: end = '2012-1-1'
+    if 'end' in options: end = options['end'] or '2016-1-1'
+    else: end = '2016-1-1'
     if 'user' in options: user = options['user'] or ''
     else: user = ''
     nonfatal = False

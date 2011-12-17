@@ -778,7 +778,7 @@ class BucketDetailList(GridReport):
   model = BucketDetail
   frozenColumns = 1
   rows = (
-    GridFieldNumber('id', title=_('identifier'), key=True),
+    GridFieldInteger('id', title=_('identifier'), key=True),
     GridFieldText('bucket', title=_('bucket'), field_name='bucket__name'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),

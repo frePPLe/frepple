@@ -1,9 +1,9 @@
 {% load i18n %}
-<div id="resourcecontext" class="ContextMenu">
-{% if perms.input.change_resource %}<a id="{{ request.prefix }}/admin/input/resource/%s/">{% trans 'Resource' %}</a>{% endif %}
-<a id="{{ request.prefix }}/whereused/resource/%s/">{% trans 'Where Used' %}</a>
-<a id="{{ request.prefix }}/supplypath/resource/%s/">{% trans 'Supply Path' %}</a>
-<a id="{{ request.prefix }}/resource/%s/">{% trans 'Plan' %}</a>
-<a id="{{ request.prefix }}/loadplan/?theresource__exact=%s">{% trans 'Plan detail' %}</a>
-<a id="{{ request.prefix }}/constraint/?entity=capacity&owner=%s">{% trans 'Constrained demand' %}</a>
-</div>
+<div id="resourcecontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+{% if perms.input.change_resource %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/input/resource/%s/">{% trans 'Resource' %}</a></li>{% endif %}
+<li class="ui-menu-item"><a id="{{ request.prefix }}/whereused/resource/%s/">{% trans 'Where Used' %}</a></li>
+<li class="ui-menu-item"><a id="{{ request.prefix }}/supplypath/resource/%s/">{% trans 'Supply Path' %}</a></li>
+<li class="ui-menu-item"><a id="{{ request.prefix }}/resource/%s/">{% trans 'Plan' %}</a></li>
+<li class="ui-menu-item"><a id="{{ request.prefix }}/loadplan/?theresource__exact=%s">{% trans 'Plan detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{ request.prefix }}/constraint/?entity=capacity&owner=%s">{% trans 'Constrained demand' %}</a></li>
+</ul></div>

@@ -70,36 +70,44 @@ function linkunformat (cellvalue, options, cell) {
 jQuery.extend($.fn.fmatter, {
   item : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined) return ''; 
-    else return '<a href="' + cellvalue + '" class="item context">' + cellvalue + "</a>";
+    else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='item'></span>";
   },
   customer : function(cellvalue, options, rowdata) {
 	if (cellvalue === undefined) return ''; 
-	else return '<a href="' + cellvalue + '" class="customer context">' + cellvalue + "</a>";
+	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='customer'></span>";
   },
   buffer : function(cellvalue, options, rowdata) {
 	if (cellvalue === undefined) return ''; 
-	else return '<a href="' + cellvalue + '" class="buffer context">' + cellvalue + "</a>";
+	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>";
   },
   resource : function(cellvalue, options, rowdata) {
 	if (cellvalue === undefined) return ''; 
-	else return '<a href="' + cellvalue + '" class="resource context">' + cellvalue + "</a>";
+	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
   },
   forecast : function(cellvalue, options, rowdata) {
 	if (cellvalue === undefined) return ''; 
-	else return '<a href="' + cellvalue + '" class="forecast context">' + cellvalue + "</a>";
+	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='forecast'></span>";
   },
   demand : function(cellvalue, options, rowdata) {
 	if (cellvalue === undefined) return ''; 
-	else return '<a href="' + cellvalue + '" class="demand context">' + cellvalue + "</a>";
+	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='demand'></span>";
   },
   operation : function(cellvalue, options, rowdata) {
 	if (cellvalue === undefined) return ''; 
-	else return '<a href="' + cellvalue + '" class="operation context">' + cellvalue + "</a>";
+	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>";
   },
   calendar : function(cellvalue, options, rowdata) {
-	if (cellvalue === undefined) return ''; 
-	else return '<a href="' + cellvalue + '" class="calendar context">' + cellvalue + "</a>";
-  },
+    if (cellvalue === undefined) return ''; 
+    else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='calendar'></span>";
+    },
+  location : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined) return ''; 
+    else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='location'></span>";
+    },
+  setupmatrix : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined) return ''; 
+    else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='setupmatrix'></span>";
+    },
 });
 jQuery.extend($.fn.fmatter.item, {
     unformat : linkunformat
@@ -120,15 +128,21 @@ jQuery.extend($.fn.fmatter.operation, {
     unformat : linkunformat
 });
 jQuery.extend($.fn.fmatter.demand, {
-    unformat : linkunformat
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.location, {
+  unformat : linkunformat
 });
 jQuery.extend($.fn.fmatter.calendar, {
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.setupmatrix, {
     unformat : linkunformat
 });
 
 
 //----------------------------------------------------------------------------
-//Code for customized autocomplete widget
+// Code for customized autocomplete widget
 //----------------------------------------------------------------------------
 
 $.widget( "custom.catcomplete", $.ui.autocomplete, {
@@ -157,7 +171,7 @@ $(function() {
   $(".menuButton").click( function(event) {
     // Get the target button element
     var button = $(event.target);
-    var menu = button.next(".ui-menu");
+    var menu = button.next("div");
 
     // Blur focus from the link to remove that annoying outline.
     button.blur();
@@ -165,7 +179,7 @@ $(function() {
     // Reset the currently active button, if any.
     if (activeButton) {
       activeButton.removeClass("menuButtonActive");
-      activeButton.next(".ui-menu").css('visibility', "hidden");
+      activeButton.next("div").css('visibility', "hidden");
     }
 
     // Activate this button, unless it was the currently active one.
@@ -178,7 +192,7 @@ $(function() {
       var pos = button.offset();
       menu.css({
         left: pos.left + "px",
-        top: (pos.top + button.outerHeight() + 1) + "px",
+        top: (pos.top + button.outerHeight() + 1) + "px",        
         visibility: "visible"
         });
       activeButton = button;
@@ -208,38 +222,31 @@ $(function() {
       window.location.href = "/admin/input/" + ui.item.label + "/" + ui.item.value + "/";
     }
   });
+
 });
 
 
 // Capture mouse clicks on the page so any active button can be deactivated.
 $(document).mousedown(function (event) {
 
-  // Hide any context menu
-	if (contextMenu)
-	{
-		contextMenu.css('display', 'none');
-		contextMenu = null;
-	}
-
-  // We clicked not on a context menu. Display that now.
-  if ($(event.target).hasClass('context'))
+  if (contextMenu && $(event.target).parent('.ui-menu-item').length < 1)
   {
-    // Find the id of the menu to display
-    contextMenu = $('#' + $(event.target).attr('class').replace(" ",""));
+    // Hide any context menu
+    contextMenu.css('display', 'none');
+    contextMenu = null;
+  }
 
-    // Get the entity name:
-    // If href is equal to '#' we use the inner html of the link.
-    // Otherwise we use the href value.
-		var item = $(event.target).attr('href');
-		if (item == '#')
-		{
-		  item = $(contextMenu).html();
-		  // Unescape all escaped characters and urlencode the result for usage as a URL
-		  item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-		    .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
-    }
+  // We clicked on a context menu. Display that now.
+  if ($(event.target).hasClass('context'))
+  {        
+    // Find the id of the menu to display   
+    contextMenu = $('#' + $(event.target).attr('role') + "context");
+    // Get the entity name. Unescape all escaped characters and urlencode the result.
+		var item = $(event.target).parent().text();
+		item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+		    .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));    
 
-		// Build the urls for the menu
+		// Build the URLs for the menu
 		contextMenu.find('a').each( function(i) {
 		  $(this).attr('href', $(this).attr('id').replace(/%s/,item));
 		});
@@ -251,16 +258,16 @@ $(document).mousedown(function (event) {
 		  display: 'block'
 		  });
 		event.preventDefault();
-		event.stopImmediatePropagation();
-	};
+    event.stopImmediatePropagation();
+	}
 
   // If there is no active button, exit.
   if (!activeButton || event.target == activeButton) return;
 
   // If the element is not part of a menu, hide the menu
-  if ($(event.target).parent('div.ui-menu').length < 1) {
+  if ($(event.target).parent('.ui-menu-item').length < 1) {
     activeButton.removeClass("menuButtonActive");
-    activeButton.next(".ui-menu").css('visibility', "hidden");
+    activeButton.next("div").css('visibility', "hidden");
     activeButton = null;
   }
 });

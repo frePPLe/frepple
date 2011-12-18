@@ -407,7 +407,7 @@ class BufferList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='buffer'),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
@@ -451,7 +451,7 @@ class ResourceList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='resource'),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
@@ -479,7 +479,7 @@ class LocationList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='location'),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
@@ -500,7 +500,7 @@ class CustomerList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='location'),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
@@ -521,7 +521,7 @@ class ItemList(GridReport):
   editable = True
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='item'),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
@@ -595,9 +595,9 @@ class DemandList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='demand'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
-    GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='location'),
+    GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='customer'),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
@@ -623,7 +623,7 @@ class ForecastList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='forecast'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
     GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='customer'),
     GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
@@ -649,7 +649,7 @@ class CalendarList(GridReport):
   model = Calendar
   frozenColumns = 1
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='calendar'),
     GridFieldText('type', title=_('type')),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
@@ -691,7 +691,7 @@ class OperationList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='operation'),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),

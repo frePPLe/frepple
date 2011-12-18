@@ -14,38 +14,23 @@ div.tools {
 div.ContextMenu {
   display: none;
   position: absolute;
+  z-index: 100;
+}
+
+div.ContextMenu ul {
+  position: absolute;
   list-style-type: none;
   z-index: 100;
 }
 
-/* Style for links in the context menu. */
-div.ContextMenu a {
-  display: block;
-  width: 100px;
-  padding: 3px 10px 3px 10px;
-  text-decoration: none;
-  color: black;
-  background: #cccccc;
+div ul li {
+    list-style-type: none;
 }
+
 
 /* Raw id fields are too small by default. */
 .vForeignKeyRawIdAdminField {
     width: 20em;
-}
-
-/* Style when hovering over links in the context menus. */
-div.ContextMenu a:hover {
-  text-decoration: none;
-  color: white;
-  background: #417690;
-}
-
-/* Style for the context menu. */
-div.OperatorMenu {
-  display: none;
-  position: absolute;
-  list-style-type: none;
-  z-index: 100;
 }
 
 /* Show an icon next to the link text. */
@@ -67,14 +52,14 @@ a {
   white-space: nowrap;
 }
 
-a.context {
-  margin-right: 17px;
-  padding-right: 17px;
-  background: url(/static/context.gif) right center no-repeat;
-  white-space: nowrap;
-  display: inline-block; /* IE8 is broken and needs this */
+span.context {
+  display: inline-block;
+  vertical-align: bottom;
 }
 
+.ui-autocomplete-category {
+  font-weight:bold; 
+}
 
 /* Style for main navigation menu */
 
@@ -103,7 +88,13 @@ a.context {
   padding-bottom: 3px;
 }
 
-#headerbar div.ui-menu {  
+#headerbar div.menuBar div {
+  position: absolute;
+  visibility: hidden;
+  z-index: 10000;
+}
+
+#headerbar div.menu {  
   left: 0px;
   padding: 0px 1px 1px 0px;
   position: absolute;

@@ -85,7 +85,7 @@ class GridField(object):
     if self.formatter: o.append("formatter:'%s'," % self.formatter)
     if self.unformat: o.append("unformat:'%s'," % self.unformat)
     if self.searchrules: o.append("searchrules:{%s}," % self.searchrules)
-    if self.extra: o.append(self.extra)
+    if self.extra: o.append("%s," % self.extra)
     return ''.join(o)
 
   name = None

@@ -1,6 +1,20 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
+{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1>{{ title|escape }}</h1>{% endif %}
+
+<div id="tabs">
+  {{ title|escape }}<ul>
+    <li><a href="#content-main">Edit</a></li>
+    <li><a href="/content1.html">Plan</a></li>
+    <li><a href="/content2.html">Where Used</a></li>
+    <li><a href="/content3.html">History</a></li>
+  </ul>
+  
+</div>
+
+</div>{% endblock %}
+
 {% block content %}
 <div id="content-main">
 <div class="module">

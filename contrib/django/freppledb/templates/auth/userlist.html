@@ -1,18 +1,8 @@
 {% extends "admin/base_site_grid.html" %}
+{% load i18n %}
 
-{% block frozendata %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td><a href="{{i.id}}">{{i.username}}</a></td>
-</tr>{% endfor %}
-{% endblock %}
-
-{% block data %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{{i.email}}</td>
-<td>{{i.first_name}}</td>
-<td>{{i.last_name}}</td>
-<td>{{i.is_staff}}</td>
-</tr>{% endfor %}
+{% block contextmenus %}
+<div id="usercontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+{% if perms.auth.change_user %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/auth/user/%s/">{% trans 'user' %}</a></li>{% endif %}
+</ul></div>
 {% endblock %}

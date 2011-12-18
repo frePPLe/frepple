@@ -66,48 +66,67 @@ function linkunformat (cellvalue, options, cell) {
 	  return cellvalue;
 	}
 
-
 jQuery.extend($.fn.fmatter, {
   item : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined) return ''; 
-    else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='item'></span>";
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='item'></span>";
   },
   customer : function(cellvalue, options, rowdata) {
-	if (cellvalue === undefined) return ''; 
-	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='customer'></span>";
+  	if (cellvalue === undefined) return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='customer'></span>";
   },
   buffer : function(cellvalue, options, rowdata) {
-	if (cellvalue === undefined) return ''; 
-	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>";
+  	if (cellvalue === undefined) return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>";
   },
   resource : function(cellvalue, options, rowdata) {
-	if (cellvalue === undefined) return ''; 
-	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
+  	if (cellvalue === undefined) return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
   },
   forecast : function(cellvalue, options, rowdata) {
-	if (cellvalue === undefined) return ''; 
-	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='forecast'></span>";
+  	if (cellvalue === undefined) return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='forecast'></span>";
   },
   demand : function(cellvalue, options, rowdata) {
-	if (cellvalue === undefined) return ''; 
-	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='demand'></span>";
+  	if (cellvalue === undefined) return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='demand'></span>";
   },
   operation : function(cellvalue, options, rowdata) {
-	if (cellvalue === undefined) return ''; 
-	else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>";
+  	if (cellvalue === undefined) return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>";
   },
   calendar : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined) return ''; 
-    else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='calendar'></span>";
-    },
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='calendar'></span>";
+  },
   location : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined) return ''; 
-    else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='location'></span>";
-    },
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='location'></span>";
+  },
   setupmatrix : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined) return ''; 
-    else return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='setupmatrix'></span>";
-    },
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='setupmatrix'></span>";
+  },
+  user : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined) return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='user'></span>";
+  },
+  group : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined) return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='group'></span>";
+  },
 });
 jQuery.extend($.fn.fmatter.item, {
     unformat : linkunformat
@@ -137,7 +156,13 @@ jQuery.extend($.fn.fmatter.calendar, {
   unformat : linkunformat
 });
 jQuery.extend($.fn.fmatter.setupmatrix, {
-    unformat : linkunformat
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.user, {
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.group, {
+  unformat : linkunformat
 });
 
 
@@ -223,6 +248,19 @@ $(function() {
     }
   });
 
+  $( "#tabs" ).tabs({
+    selected: 1,
+    select: function(event, ui) 
+    {
+      var url = $.data(ui.tab, 'load.tabs');
+      if(url) 
+      {
+        location.href = url;
+        return false;       
+      }
+      return true;
+    }
+  });
 });
 
 

@@ -1,8 +1,8 @@
 {% extends "admin/base_site_grid.html" %}
+{% load i18n %}
 
-{% block data %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td><a href="{{i.id}}">{{i.name}}</a></td>
-</tr>{% endfor %}
+{% block contextmenus %}
+<div id="groupcontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+{% if perms.auth.change_group %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/auth/group/%s/">{% trans 'group' %}</a></li>{% endif %}
+</ul></div>
 {% endblock %}

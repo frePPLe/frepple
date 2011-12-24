@@ -16,19 +16,18 @@
 {% block tools %}<div class="tools">
 <form><input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px;" type="button" id="save" value="{% trans 'Save' %}" onclick="upload.save();"/>
 <input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px; margin-right: 10px; margin-left:10px;" type="button" id="undo" value="{% trans 'Undo' %}" onclick="upload.undo();"/>
-<a href="javascript:bucket_show();" id="bucketconfig"><img src="/media/img/admin/icon_clock.gif"/>{% trans 'Time' %}</a>
-<a href="javascript:export_show(true);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
+<a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
+<a href="javascript:export_show(false);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
 </form></div>
-<div id="timebuckets">
-<h2>{% trans 'Time buckets' %}</h2><br/>
+<div id="timebuckets" class="ui-helper-hidden" title="{% trans 'Time buckets' %}">
 <form method="get" action=""><table>
 <tr><th>{% trans 'Bucket' %}</th><td><select name="reportbucket" id="reportbucket">
 {% for i in bucketnames %}<option value="{{i}}"{% ifequal i reportbucket %} selected="selected"{% endifequal %}>{% trans i %}</option>
 {% endfor %}</select></td></tr>
-<tr><th>{% trans 'start date'|capfirst %}:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="{{ reportstart|date:"Y-m-d" }}" name="reportstart"/></td></tr>
-<tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{ reportend|date:"Y-m-d" }}" name="reportend" /></td></tr>
-<tr><td><input type="button" value="{% trans 'OK' %}" onclick="javascript:bucket_close(false,'{{reportbucket}}','{{reportstart|date:"Y-m-d"}}','{{reportend|date:"Y-m-d"}}');"/></td>
-<td><input type="button" value="{% trans 'Cancel' %}" onclick="javascript:bucket_close(true);"/></td></tr>
+<tr><th>{% trans 'start date'|capfirst %}:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="{{ reportstart|date:"Y-m-d" }}"/></td></tr>
+<tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{ reportend|date:"Y-m-d" }}"/></td></tr>
+<input id="reportoriginal" type="hidden" value="{{reportbucket}}|{{ reportstart|date:"Y-m-d" }}|{{ reportend|date:"Y-m-d" }}"/>
+</tr>
 </table></form>
 </div>
 {% endblock %}
@@ -61,8 +60,4 @@
 <td>{{i.quantity}}</td>
 <td>{{i.percent_used|floatformat:1}}</td>
 </tr>{% endfor %}
-{% endblock %}
-
-{% block pagination %}<p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} {% if reportclass.model %}{{ reportclass.model|verbose_name_plural }} {% endif %}
 {% endblock %}

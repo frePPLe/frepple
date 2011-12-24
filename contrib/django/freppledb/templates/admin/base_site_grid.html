@@ -10,7 +10,7 @@ $(function(){
    	colModel:[{% if is_popup %}
       {name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false},
       {% endif %}{% for f in reportclass.rows %}{% if not forloop.first %},
-   	  {% endif %}{ {{f|safe}} {% if is_popup %}popup:true{% endif %} }{% endfor %}   	  
+   	  {% endif %}{ {{f|safe}}{% if forloop.counter <= reportclass.frozenColumns %}frozen:true,{% endif %}{% if is_popup %}popup:true{% endif %} }{% endfor %}   	  
    	  ],{% if reportclass.editable %}
     cellsubmit: 'clientArray',
     editurl: location.pathname,
@@ -21,12 +21,14 @@ $(function(){
     sortorder: "asc",	
     hidegrid: false,
     scrollRows: true,
-	  altRows: true,
-	  scroll: 1,
+	  //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
+	  //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
+	  //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns  
     autowidth: true,    
 	  shrinkToFit: false,
 	  height: $(window).height() - $("#grid").offset().top - 70
-    });
+    });{% if reportclass.frozenColumns > 0 %}
+  jQuery("#grid").jqGrid('setFrozenColumns');{% endif %} 
   // Initial search string:
   // jQuery('#grid').jqGrid('setGridParam', {postData: mypostdata, search:true});
   });

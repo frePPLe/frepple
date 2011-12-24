@@ -37,6 +37,7 @@ from datetime import date, datetime
 from decimal import Decimal
 import csv, cStringIO
 import operator
+import math
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
@@ -249,7 +250,7 @@ class GridReport(View):
   def _generate_json_data(reportclass, request, *args, **kwargs):
     page = 'page' in request.GET and int(request.GET['page']) or 1
     recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
-    total_pages = recs / request.pagesize + 1
+    total_pages = math.ceil(float(recs) / request.pagesize)
     if page > total_pages: page = total_pages
     #if hasattr(reportclass,'query'):
       # SQL override provided of type 2
@@ -650,7 +651,7 @@ class GridPivot(GridReport):
     else:
       page = 'page' in request.GET and int(request.GET['page']) or 1
       recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
-      total_pages = recs / request.pagesize + 1
+      total_pages = math.ceil(float(recs) / request.pagesize)
       if page > total_pages: page = total_pages
       cnt = (page-1)*request.pagesize+1
       query = reportclass.query(request, reportclass.basequeryset[cnt-1:cnt+request.pagesize], bucket, start, end, sortsql="1 asc")

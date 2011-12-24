@@ -21,27 +21,26 @@ $(function(){
 	  jsonReader : {repeatitems:false},
    	colModel:[
    	  {% for f in reportclass.rows %}{% if not forloop.first %},
-   	  {% endif %}{ {{f|safe}} }{% endfor %},
-      { name:'columns',label:' ',sortable:false,width:200,align:'left',formatter:columns,search:false },
+   	  {% endif %}{ {{f|safe}}frozen:true }{% endfor %},
+      { name:'columns',label:' ',sortable:false,width:200,align:'left',formatter:columns,search:false,frozen:true },
       {% for f in bucketlist %}{% if not forloop.first %},
       {% endif %}{ name:'{{f.name|safe}}',sortable:false,width:90,align:'center',formatter:crosses,search:false }{% endfor %}
    	  ],{% if reportclass.editable %}
-    cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname,
    	{% endif %}rowNum: {{request.pagesize}},
    	pager: '#gridpager',
-   	sortname: '{{reportclass.keyfield}}',
     viewrecords: true,    
     sortorder: "asc",	
     hidegrid: false,
     scrollRows: true,
-	  altRows: true,
-	  scroll: 1,
+    //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
+    //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
     autowidth: true,    
 	  shrinkToFit: false,
 	  height: $(window).height() - $("#grid").offset().top - 70
     });
+  jQuery("#grid").jqGrid('setFrozenColumns');
   // Initial search string:
   // jQuery('#grid').jqGrid('setGridParam', {postData: mypostdata, search:true});
   });

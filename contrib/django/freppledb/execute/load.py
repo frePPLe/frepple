@@ -250,7 +250,7 @@ def loadBuffers(cursor):
         name=i, description=j, item=frepple.item(name=l), onhand=m,
         category=r, subcategory=s
         )
-    elif not q:
+    elif not q or q == "buffer_default":
       b = frepple.buffer(
         name=i, description=j, item=frepple.item(name=l), onhand=m,
         category=r, subcategory=s
@@ -297,7 +297,7 @@ def loadResources(cursor):
     try:
       if m == "resource_infinite":
         x = frepple.resource_infinite(name=i,description=j,category=r,subcategory=s)
-      elif not m:
+      elif not m or m == "resource_default":
         x = frepple.resource_default(name=i,description=j,category=r,subcategory=s)
         if k: x.maximum_calendar = frepple.calendar(name=k)
         if o: x.maxearly = o

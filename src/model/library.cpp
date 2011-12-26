@@ -44,9 +44,6 @@ void LibraryModel::initialize()
   }
   init = true;
 
-  // Initialize the utilities library
-  LibraryUtils::initialize();
-
   // Register new types in Python
   int nok = 0;
   nok += Plan::initialize();

@@ -152,7 +152,8 @@ def exportOperations(cursor):
     values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
     [(
        i.name, i.fence, i.pretime, i.posttime, round(i.size_minimum,settings.DECIMAL_PLACES),
-       round(i.size_multiple,settings.DECIMAL_PLACES), round(i.size_maximum,settings.DECIMAL_PLACES),
+       round(i.size_multiple,settings.DECIMAL_PLACES), 
+       i.size_maximum<9999999999999 and round(i.size_maximum,settings.DECIMAL_PLACES) or None,
        i.__class__.__name__,
        isinstance(i,(frepple.operation_fixed_time,frepple.operation_time_per)) and i.duration or None,
        isinstance(i,frepple.operation_time_per) and i.duration_per or None,
@@ -169,7 +170,8 @@ def exportOperations(cursor):
      where name=%s''',
     [(
        i.fence, i.pretime, i.posttime, round(i.size_minimum,settings.DECIMAL_PLACES),
-       round(i.size_multiple,settings.DECIMAL_PLACES), round(i.size_maximum,settings.DECIMAL_PLACES),
+       round(i.size_multiple,settings.DECIMAL_PLACES), 
+       i.size_maximum<9999999999999 and round(i.size_maximum,settings.DECIMAL_PLACES) or None,
        i.__class__.__name__,
        isinstance(i,(frepple.operation_fixed_time,frepple.operation_time_per)) and i.duration or None,
        isinstance(i,frepple.operation_time_per) and i.duration_per or None,
@@ -182,7 +184,8 @@ def exportOperations(cursor):
   print 'Exported operations in %.2f seconds' % (time() - starttime)
   
 
-def exportSubOperations(cursor): # TODO
+def exportSubOperations(cursor): 
+  return # TODO
   print "Exporting suboperations..."  
   starttime = time()
   cursor.execute("SELECT operation_id, suboperation_id FROM suboperation")
@@ -310,7 +313,8 @@ def exportBuffers(cursor):
      carrying_cost,category,subcategory,lastmodified) 
     values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
     [(
-       i.name, i.description, i.location and i.location.name or None, i.item.name, 
+       i.name, i.description, i.location and i.location.name or None, 
+       i.item and i.item.name or None, 
        round(i.onhand,settings.DECIMAL_PLACES), round(i.minimum,settings.DECIMAL_PLACES), 
        i.minimum_calendar and i.minimum_calendar.name or None,
        i.producing and i.producing.name or None, i.__class__.__name__, 
@@ -321,7 +325,7 @@ def exportBuffers(cursor):
        isinstance(i,frepple.buffer_procure) and i.maxinterval or None,
        isinstance(i,frepple.buffer_procure) and round(i.size_minimum,settings.DECIMAL_PLACES) or None, 
        isinstance(i,frepple.buffer_procure) and round(i.size_multiple,settings.DECIMAL_PLACES) or None, 
-       isinstance(i,frepple.buffer_procure) and round(i.size_maximum,settings.DECIMAL_PLACES) or None, 
+       isinstance(i,frepple.buffer_procure) and i.size_maximum<9999999999999 and round(i.size_maximum,settings.DECIMAL_PLACES) or None, 
        isinstance(i,frepple.buffer_procure) and i.fence or None,       
        round(i.carrying_cost,settings.DECIMAL_PLACES), i.category, i.subcategory, timestamp 
       ) for i in frepple.buffers() if i.name not in primary_keys and not i.hidden 
@@ -334,7 +338,7 @@ def exportBuffers(cursor):
      carrying_cost=%s, category=%s, subcategory=%s, lastmodified=%s 
      where name=%s''',
     [(
-       i.description, i.location and i.location.name or None, i.item.name, 
+       i.description, i.location and i.location.name or None, i.item and i.item.name or None, 
        round(i.onhand,settings.DECIMAL_PLACES), round(i.minimum,settings.DECIMAL_PLACES), 
        i.minimum_calendar and i.minimum_calendar.name or None,
        i.producing and i.producing.name or None, i.__class__.__name__, 
@@ -774,20 +778,23 @@ def exportfrepple():
     # OPTION 2: Parallel export of entities in groups.
     # The groups are running in separate threads, and all functions in a group
     # are run in sequence.
-    exportCalendars(cursor)
-    exportLocations(cursor)
-    exportOperations(cursor)
-    exportItems(cursor)
-    tasks = (
-      DatabaseTask(exportCalendarBuckets, exportSubOperations, exportOperationPlans, exportParameters),
-      DatabaseTask(exportBuffers, exportFlows),
-      DatabaseTask(exportSetupMatrices, exportSetupMatricesRules, exportResources, exportLoads),
-      DatabaseTask(exportCustomers, exportDemands, exportForecasts, exportForecastDemands),
-      )
-    # Start all threads
-    for i in tasks: i.start()
-    # Wait for all threads to finish
-    for i in tasks: i.join()
+    try:
+      exportCalendars(cursor)
+      exportLocations(cursor)
+      exportOperations(cursor)
+      exportItems(cursor)
+      tasks = (
+        DatabaseTask(exportCalendarBuckets, exportSubOperations, exportOperationPlans, exportParameters),
+        DatabaseTask(exportBuffers, exportFlows),
+        DatabaseTask(exportSetupMatrices, exportSetupMatricesRules, exportResources, exportLoads),
+        DatabaseTask(exportCustomers, exportDemands, exportForecasts, exportForecastDemands),
+        )
+      # Start all threads
+      for i in tasks: i.start()
+      # Wait for all threads to finish
+      for i in tasks: i.join()
+    except Exception, e:
+      print e
 
   # Analyze
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':

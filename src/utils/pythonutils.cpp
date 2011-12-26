@@ -50,14 +50,15 @@ DECLARE_EXPORT string PythonInterpreter::encoding;
 DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
 
 
-DECLARE_EXPORT void PythonInterpreter::initialize()
+DECLARE_EXPORT void PythonInterpreter::initialize(int argc, char *argv[])
 {
-  // Initialize the Python interpreter in case we are embedding the Python
-  // interpreter in frePPLe.
+  // Initialize the Python interpreter in case we are embedding it in frePPLe.
   if(!Py_IsInitialized())
   {
     Py_InitializeEx(0);   // The arg 0 indicates that the interpreter doesn't
                           // implement its own signal handler
+    // Pass the command line arguments to Python as well
+    if (argc>0) PySys_SetArgvEx(argc, argv, 0);
     // Initializes threads
     PyEval_InitThreads();  
     mainThreadState = PyEval_SaveThread();

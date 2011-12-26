@@ -51,7 +51,7 @@ def search(request):
   
   # Search demands
   if term and request.user.has_perm('input.change_demand'):
-    query = Demand.objects.using(request.database).filter(name__contains=term).order_by('name').values_list('name')
+    query = Demand.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
     count = len(query)
     if count > 0:
       result.append( {'value': None, 'label': (ungettext(
@@ -62,7 +62,7 @@ def search(request):
   
   # Search customers
   if term and request.user.has_perm('input.change_customer'):
-    query = Customer.objects.using(request.database).filter(name__contains=term).order_by('name').values_list('name')
+    query = Customer.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
     count = len(query)
     if count > 0:
       result.append( {'value': None, 'label': (ungettext(
@@ -73,7 +73,7 @@ def search(request):
     
   # Search items
   if term and request.user.has_perm('input.change_item'):
-    query = Item.objects.using(request.database).filter(name__contains=term).order_by('name').values_list('name')
+    query = Item.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
     count = len(query)
     if count > 0:
       result.append( {'value': None, 'label': (ungettext(
@@ -84,7 +84,7 @@ def search(request):
   
   # Search buffers
   if term and request.user.has_perm('input.change_buffer'):
-    query = Buffer.objects.using(request.database).filter(name__contains=term).order_by('name').values_list('name')
+    query = Buffer.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
     count = len(query)
     if count > 0:
       result.append( {'value': None, 'label': (ungettext(
@@ -95,7 +95,7 @@ def search(request):
     
   # Search resources
   if term and request.user.has_perm('input.change_resource'):
-    query = Resource.objects.using(request.database).filter(name__contains=term).order_by('name').values_list('name')
+    query = Resource.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
     count = len(query)
     if count > 0:
       result.append( {'value': None, 'label': (ungettext(

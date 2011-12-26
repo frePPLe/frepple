@@ -38,7 +38,7 @@ DECLARE_EXPORT(const char*) FreppleVersion()
 }
 
 
-DECLARE_EXPORT(void) FreppleInitialize()
+DECLARE_EXPORT(void) FreppleInitialize(int argc, char *argv[])
 {
   // Initialize only once
   static bool initialized = false;
@@ -46,7 +46,8 @@ DECLARE_EXPORT(void) FreppleInitialize()
   initialized = true;
 
   // Initialize the libraries
-  LibraryModel::initialize(); // also initializes the utils library
+  LibraryUtils::initialize(argc, argv);
+  LibraryModel::initialize();
   LibrarySolver::initialize();
 
   // Search for the initialization PY file
@@ -150,9 +151,9 @@ extern "C" DECLARE_EXPORT(void) FreppleLog(const char* msg)
 }
 
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize()
+extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize(int argc, char* argv[])
 {
-  try {FreppleInitialize();}
+  try {FreppleInitialize(argc, argv);}
   catch (...) {return EXIT_FAILURE;}
   return EXIT_SUCCESS;
 }
@@ -201,7 +202,7 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperExit()
 /** Used to initialize frePPLe as a Python extension module. */
 PyMODINIT_FUNC initfrepple(void)
 {
-  try {FreppleInitialize();}
+  try {FreppleInitialize(0, NULL);}
   catch(exception e) 
   {
     logger << "Initialization failed: " << e.what() << endl;

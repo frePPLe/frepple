@@ -521,7 +521,7 @@ class PythonInterpreter
 {
   public:
     /** Initializes the interpreter. */
-    static DECLARE_EXPORT void initialize();
+    static DECLARE_EXPORT void initialize(int argc, char** argv);
 
     /** Finalizes the interpreter. */
     static DECLARE_EXPORT void finalize();
@@ -5361,7 +5361,7 @@ template <class A, class B, class C> class Association
 class LibraryUtils
 {
   public:
-    static void initialize();
+    static void initialize(int argc, char* argv[]);
 };
 
 /** @brief A template class to expose iterators to Python. */

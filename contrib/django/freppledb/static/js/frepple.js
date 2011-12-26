@@ -240,11 +240,13 @@ $(function() {
     });
 
   // Autocomplete search functionality
+  var database = $('#database').val();
+  database = (database===undefined) ? '' : '/' + database;
   $( "#search" ).catcomplete({
-    source: "/search/",
+    source: database + "/search/",
     minLength: 2,
     select: function( event, ui ) {
-      window.location.href = "/admin/input/" + ui.item.label + "/" + ui.item.value + "/";
+      window.location.href = database + "/admin/input/" + ui.item.label + "/" + ui.item.value + "/";
     }
   });
 

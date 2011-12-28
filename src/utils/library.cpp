@@ -122,7 +122,7 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
   // First: check the current directory
   struct stat stat_p;
   int result = stat(filename.c_str(), &stat_p);
-  if (!result && stat_p.st_mode & S_IREAD)
+  if (!result && (stat_p.st_mode & S_IREAD))
     return filename;
 
   // Second: check the FREPPLE_HOME directory, if it is defined

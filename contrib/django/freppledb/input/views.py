@@ -207,7 +207,7 @@ class pathreport:
   '''
 
   @staticmethod
-  def getPath(request, type, entity, downstream):
+  def getPath(request, objecttype, entity, downstream):
     '''
     A generator function that recurses upstream or downstream in the supply
     chain.
@@ -215,26 +215,26 @@ class pathreport:
     todo: The current code only supports 1 level of super- or sub-operations.
     '''
     from django.core.exceptions import ObjectDoesNotExist
-    if type == 'buffer':
+    if objecttype == 'buffer':
       # Find the buffer
       try: root = [ (0, Buffer.objects.using(request.database).get(name=entity), None, None, None, Decimal(1)) ]
       except ObjectDoesNotExist: raise Http404("buffer %s doesn't exist" % entity)
-    elif type == 'item':
+    elif objecttype == 'item':
       # Find the item
       try:
         root = [ (0, r, None, None, None, Decimal(1)) for r in Buffer.objects.filter(item=entity).using(request.database) ]
       except ObjectDoesNotExist: raise Http404("item %s doesn't exist" % entity)
-    elif type == 'operation':
+    elif objecttype == 'operation':
       # Find the operation
       try: root = [ (0, None, None, Operation.objects.using(request.database).get(name=entity), None, Decimal(1)) ]
       except ObjectDoesNotExist: raise Http404("operation %s doesn't exist" % entity)
-    elif type == 'resource':
+    elif objecttype == 'resource':
       # Find the resource
       try: root = Resource.objects.using(request.database).get(name=entity)
       except ObjectDoesNotExist: raise Http404("resource %s doesn't exist" % entity)
       root = [ (0, None, None, i.operation, None, Decimal(1)) for i in root.loads.using(request.database).all() ]
     else:
-      raise Http404("invalid entity type %s" % type)
+      raise Http404("invalid entity type %s" % objecttype)
 
     # Note that the root to start with can be either buffer or operation.
     visited = []
@@ -339,11 +339,11 @@ class pathreport:
 
   @staticmethod
   @staff_member_required
-  def viewdownstream(request, type, entity):
+  def viewdownstream(request, objecttype, entity):
     return render_to_response('input/path.html', RequestContext(request,{
-       'title': _('Where-used report for %(type)s %(entity)s') % {'type':_(type), 'entity':entity},
-       'supplypath': pathreport.getPath(request, type, entity, True),
-       'type': type,
+       'title': _('Where-used report for %(type)s %(entity)s') % {'type':_(objecttype), 'entity':entity},
+       'supplypath': pathreport.getPath(request, objecttype, entity, True),
+       'type': objecttype,
        'entity': entity,
        'downstream': True,
        }))
@@ -351,11 +351,11 @@ class pathreport:
 
   @staticmethod
   @staff_member_required
-  def viewupstream(request, type, entity):
+  def viewupstream(request, objecttype, entity):
     return render_to_response('input/path.html', RequestContext(request,{
-       'title': _('Supply path report for %(type)s %(entity)s') % {'type':_(type), 'entity':entity},
-       'supplypath': pathreport.getPath(request, type, entity, False),
-       'type': type,
+       'title': _('Supply path report for %(type)s %(entity)s') % {'type':_(objecttype), 'entity':entity},
+       'supplypath': pathreport.getPath(request, objecttype, entity, False),
+       'type': objecttype,
        'entity': entity,
        'downstream': False,
        }))

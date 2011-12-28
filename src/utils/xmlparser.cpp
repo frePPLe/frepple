@@ -167,7 +167,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
       // Call the handler of the object
       assert(!m_EHStack.empty());
       try {getCurrentObject()->beginElement(*this, pElement->first);}
-      catch (DataException e)
+      catch (const DataException& e)
       {
         if (abortOnDataException) throw;
         else logger << "Continuing after data error: " << e.what() << endl;
@@ -189,7 +189,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
           xercesc::XMLString::release(&attname);
           #endif
           try {getCurrentObject()->endElement(*this, m_EStack[numElements+1].first, m_EStack[numElements+1].second);}
-          catch (DataException e)
+          catch (const DataException& e)
           {
             if (abortOnDataException) throw;
             else logger << "Continuing after data error: " << e.what() << endl;
@@ -264,7 +264,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         // flag to specify that this object is now ended
         objectEnded = true;
         try {getCurrentObject()->endElement(*this, pElement->first, pElement->second);}
-        catch (DataException e)
+        catch (const DataException& e)
         {
           if (abortOnDataException) throw;
           else logger << "Continuing after data error: " << e.what() << endl;
@@ -286,7 +286,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         {
           // Call also the endElement function on the owning object
           try {getCurrentObject()->endElement(*this, pElement->first, pElement->second);}
-          catch (DataException e)
+          catch (const DataException& e)
           {
             if (abortOnDataException) throw;
             else logger << "Continuing after data error: " << e.what() << endl;
@@ -301,7 +301,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         // This tag is not the ending tag of an object
         // Call the function of the Object
         try {getCurrentObject()->endElement(*this, pElement->first, pElement->second);}
-        catch (DataException e)
+        catch (const DataException& e)
         {
           if (abortOnDataException) throw;
           else logger << "Continuing after data error: " << e.what() << endl;
@@ -389,7 +389,7 @@ void XMLInput::shutdown()
   while (!m_EHStack.empty())
   {
     try {getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);}
-    catch (DataException e)
+    catch (const DataException& e)
     {
       if (abortOnDataException) throw;
       else logger << "Continuing after data error: " << e.what() << endl;
@@ -420,7 +420,7 @@ void XMLInput::reset()
     while (!m_EHStack.empty())
     {
       try {getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);}
-      catch (DataException e)
+      catch (const DataException& e)
       {
         if (abortOnDataException) throw;
         else logger << "Continuing after data error: " << e.what() << endl;

@@ -88,7 +88,7 @@ int main (int argc, char *argv[])
   try
   {
     // 0: Initialize
-    FreppleInitialize();
+    FreppleInitialize(0,NULL);
 
     // 1: Create subscriptions
     // a) buffers

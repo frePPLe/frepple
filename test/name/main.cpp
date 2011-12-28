@@ -220,7 +220,7 @@ int main (int argc, char *argv[])
 {
   try
   {
-    FreppleInitialize();
+    FreppleInitialize(0,NULL);
     logger << endl << "FUNCTIONAL TEST:" << endl << endl;
     functionality_test();
     // The scalability test shows that the tree operations scale

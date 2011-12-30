@@ -22,7 +22,7 @@ $(function(){
    	colModel:[
    	  {% for f in reportclass.rows %}{% if not forloop.first %},
    	  {% endif %}{ {{f|safe}}frozen:true }{% endfor %},
-      { name:'columns',label:' ',sortable:false,width:200,align:'left',formatter:columns,search:false,frozen:true,title:false },
+      { name:'columns',label:' ',sortable:false,width:150,align:'left',formatter:columns,search:false,frozen:true,title:false },
       {% for f in bucketlist %}{% if not forloop.first %},
       {% endif %}{ name:'{{f.name|safe}}',startdate:'{{f.startdate|date:"Y-m-d"}}',enddate:'{{f.enddate|date:"Y-m-d"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
    	  ],{% if reportclass.editable %}

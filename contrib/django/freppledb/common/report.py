@@ -547,7 +547,7 @@ class GridReport(View):
     return reportclass._rowsByName[name]
 
   
-  _filter_map = {
+  _filter_map_jqgrid_django = {
       # jqgrid op: (django_lookup, use_exclude)
       'ne': ('%(field)s__exact', True),
       'bn': ('%(field)s__startswith', True),
@@ -564,20 +564,33 @@ class GridReport(View):
       'ew': ('%(field)s__endswith', False),
       'cn': ('%(field)s__contains', False)
   }
+
+  _filter_map_django_jqgrid = {
+      # django lookup: jqgrid op
+      'in': 'in',
+      'exact': 'eq',
+      'startswith': 'bw',
+      'gt': 'gt',
+      'gte': 'ge',
+      'lt': 'lt',
+      'lte': 'le',
+      'endswith': 'ew',
+      'contains': 'cn',
+  }
       
   @classmethod
   def getQueryString(reportclass, request):
-    # Django-style filtering, using URL parameters
+    # Django-style filtering (which uses URL parameters) are converted to a jqgrid filter expression
     filtered = False
     filters = ['{"groupOp":"AND","rules":[']
     for i,j in request.GET.iteritems():
       for r in reportclass.rows:
         if i.startswith(r.field_name):
           filtered = True
-          filters.append('{"field":"%s","op":"eq","data":"%s"},' % (i,j))
+          operator = (i==r.field_name) and 'exact' or i[i.rfind('_')+1:]
+          filters.append('{"field":"%s","op":"%s","data":"%s"},' % (r.field_name, reportclass._filter_map_django_jqgrid[operator], j))
     if not filtered: return None
     filters.append(']}')
-    print ''.join(filters)
     return ''.join(filters)
         
         
@@ -586,7 +599,7 @@ class GridReport(View):
     q_filters = []
     for rule in filterdata['rules']:
         op, field, data = rule['op'], rule['field'], rule['data']
-        filter_fmt, exclude = reportclass._filter_map[op]
+        filter_fmt, exclude = reportclass._filter_map_jqgrid_django[op]
         filter_str = smart_str(filter_fmt % {'field': reportclass._getRowByName(field).field_name})
         if filter_fmt.endswith('__in'):
             filter_kwargs = {filter_str: data.split(',')}

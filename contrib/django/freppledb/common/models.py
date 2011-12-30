@@ -45,7 +45,7 @@ class Preferences(models.Model):
   enddate = models.DateField(_('end date'), blank=True, null=True)
   language = models.CharField(_('language'), max_length=10, choices=languageList,
     default='auto')
-  theme = models.CharField(_('theme'), max_length=10, default=settings.DEFAULT_THEME, 
+  theme = models.CharField(_('theme'), max_length=20, default=settings.DEFAULT_THEME, 
     choices=settings.THEMES)
   pagesize = models.PositiveIntegerField(_('page size'), default=settings.DEFAULT_PAGESIZE)
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)

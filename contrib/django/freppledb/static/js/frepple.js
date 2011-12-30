@@ -241,7 +241,7 @@ $(function() {
 
   // Autocomplete search functionality
   var database = $('#database').val();
-  database = (database===undefined) ? '' : '/' + database;
+  database = (database===undefined || database==='default') ? '' : '/' + database;
   $( "#search" ).catcomplete({
     source: database + "/search/",
     minLength: 2,
@@ -281,23 +281,40 @@ $(document).mousedown(function (event) {
   {        
     // Find the id of the menu to display   
     contextMenu = $('#' + $(event.target).attr('role') + "context");
+	
     // Get the entity name. Unescape all escaped characters and urlencode the result.
-		var item = $(event.target).parent().text();
-		item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-		    .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));    
+	if ($(event.target).hasClass('cross'))
+	{
+      var item = $(event.target).closest("tr.jqgrow")[0].id;
+ 	  item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+		.replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));    
+      var params = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[jQuery.jgrid.getCellIndex($(event.target).closest("td,th"))];
+      params['value'] = item;
+	}
+    else
+    {
+      var item = $(event.target).parent().text();
+ 	  item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+		.replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));    
+      var params = {value: item};
+    }
 
-		// Build the URLs for the menu
-		contextMenu.find('a').each( function(i) {
-		  $(this).attr('href', $(this).attr('id').replace(/%s/,item));
-		});
+	// Build the URLs for the menu
+	contextMenu.find('a').each( function() {
+	  $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) { 
+		var key = match.substring(1,match.length-1);
+		return key in params ? params[key] : match;
+		}
+	  ))
+	});
 
     // Display the menu at the right location
-		$(contextMenu).css({
-		  left: event.pageX,
-		  top: event.pageY,
-		  display: 'block'
-		  });
-		event.preventDefault();
+	$(contextMenu).css({
+	  left: event.pageX,
+	  top: event.pageY,
+	  display: 'block'
+	  });
+	event.preventDefault();
     event.stopImmediatePropagation();
 	}
 

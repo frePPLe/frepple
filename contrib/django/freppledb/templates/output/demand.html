@@ -7,6 +7,15 @@
 
 {% block contextmenus %}
 {% include "itemcontext.html" %}
+<div id="detail0context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a id="{{request.prefix}}/forecast/?o=5a&amp;item={value}">{% trans 'Detail' %}</a></li>
+</ul></div>
+<div id="detail1context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/?o=5a&amp;item={value}&amp;due__gte={startdate}&amp;due__lt={enddate}">{% trans 'Detail' %}</a></li>
+</ul></div>
+<div id="detail2context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/?o=5a&amp;item={value}&amp;plandate__gte={startdate}&amp;plandate__lt={enddate}">{% trans 'Detail' %}</a></li>
+</ul></div>
 {% endblock %}
 
 {% block before_table %}
@@ -25,23 +34,24 @@
 	</script>
 {% endif %}{% endblock %}
 
-{% block frozendata %}
-{% for j in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink j.name item %}</td>
-<td>{{ crossheader }}</td>
-</tr>{% endfor %}
+{% block crosses %}
+function crosses (cellvalue, options, rowdata) {
+  var result = cellvalue[0] + '<br/>';
+  if (cellvalue[0] != 0.0)
+    var result = cellvalue[0] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail0'></span><br/>";
+  else
+    var result = '0.0<br/>';
+  if (cellvalue[1] != 0.0)
+    result += cellvalue[1] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail1'></span><br/>";
+  else
+    result += '0.0<br/>';
+  result += cellvalue[2] + '<br/>';
+  if (cellvalue[3] != 0.0)
+    result += cellvalue[3] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail2'></span><br/>";
+  else
+    result += '0.0<br/>';
+  result += cellvalue[4];  
+  return result;
+};
 {% endblock %}
 
-{% block data %}
-{% for j in objectlist2 %}{% ifchanged j.item %}{% if not forloop.first %}</tr>{% endif %}
-<tr class="{% cycle row1,row2 %}">{% endifchanged %}
-<td>{% if j.forecast %}<a href="{{ request.prefix }}/forecast/?o=5a&amp;item={{j.item|urlencode}}">{{j.forecast|floatformat:1}}</a>{% else %}{{0|floatformat:1}}{% endif %}<br/>
-{% if j.orders %}<a href="{{ request.prefix }}/demandplan/?o=5a&amp;item={{j.item|urlencode}}&amp;due__gte={{j.startdate|date:"Y-m-d"}}&amp;due__lt={{j.enddate|date:"Y-m-d"}}">{{j.orders|floatformat:1}}</a>{% else %}{{0|floatformat:1}}{% endif %}<br/>
-{{j.demand|floatformat:1}}<br/>
-{% if j.supply %}<a href="{{ request.prefix }}/demandplan/?o=5a&amp;item={{j.item|urlencode}}&amp;plandate__gte={{j.startdate|date:"Y-m-d"}}&amp;plandate__lt={{j.enddate|date:"Y-m-d"}}">{{j.supply|floatformat:1}}</a>{% else %}{{0|floatformat:1}}{% endif %}<br/>
-{{j.backlog|floatformat:1}}</td>
-{% if forloop.last %}</tr>{% endif %}{% endfor %}
-{% endblock %}
-
-{% block pagination %}{% ifnotequal hits 1 %}{{ block.super }}{% endifnotequal %}{% endblock %}

@@ -21,7 +21,3 @@
 <td>{% superlink i.item item %}</td>
 </tr>{% endfor %}
 {% endblock %}
-
-{% block pagination %}<p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} {% if reportclass.model %}{{ reportclass.model|verbose_name_plural }} {% endif %}
-{% endblock %}

@@ -64,14 +64,6 @@
 	</script>
 {% endif %}{% endblock %}
 
-{% block frozendata %}{% for j in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink j.name resource %}</td>
-<td>{% if perms.input.change_location %}{% superlink j.location location %}{% else %}{{j.location}}{% endif %}</td>
-<td>{{ crossheader }}</td>
-</tr>{% endfor %}
-{% endblock %}
-
 {% block data %}
 {% for j in objectlist2 %}{% if perms.input.change_resource and j.maximum_calendar_id %}
 {% ifchanged j.resource %}{% if not forloop.first %}</form></tr>{% endif %}<tr class="{% cycle row1,row2 %}"><form name="{{j.resource|escape}}">{% endifchanged %}
@@ -91,5 +83,3 @@
 {% if forloop.last %}</tr>{% endif %}
 {% endif %}{% endfor %}
 {% endblock %}
-
-{% block pagination %}{% ifnotequal hits 1 %}{{ block.super }}{% endifnotequal %}{% endblock %}

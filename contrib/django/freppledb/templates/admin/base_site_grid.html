@@ -28,9 +28,11 @@ $(function(){
 	  shrinkToFit: false,
 	  height: $(window).height() - $("#grid").offset().top - 70
     });{% if reportclass.frozenColumns > 0 %}
-  jQuery("#grid").jqGrid('setFrozenColumns');{% endif %} 
-  // Initial search string:
-  // jQuery('#grid').jqGrid('setGridParam', {postData: mypostdata, search:true});
+  jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if filters %}
+  var postdata = jQuery("#grid").jqGrid('getGridParam','postData');
+  jQuery.extend(postdata, {filters: '{{filters|safe}}' });
+  jQuery('#grid').jqGrid('setGridParam', {postData: postdata, search:true});
+  //$('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_grid").jqFilter('toSQLString'));{% endif %}
   });
   
 /*

@@ -1,6 +1,6 @@
 {% load i18n %}
 <div id="forecastcontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-{% if perms.input.change_forecast %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/input/forecast/%s/">{% trans 'Forecast' %}</a><li>{% endif %}
-<li class="ui-menu-item"><a id="{{ request.prefix }}/constraint/?demand__startswith=%s -">{% trans 'Why short or late?' %}</a></li>
-<li class="ui-menu-item"><a id="{{ request.prefix }}/forecast/%s/">{% trans 'Plan' %}</a></li>
+{% if perms.input.change_forecast %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/input/forecast/{value}/">{% trans 'Forecast' %}</a><li>{% endif %}
+<li class="ui-menu-item"><a id="{{ request.prefix }}/constraint/?demand__startswith={value} -">{% trans 'Why short or late?' %}</a></li>
+<li class="ui-menu-item"><a id="{{ request.prefix }}/forecast/{value}/">{% trans 'Plan' %}</a></li>
 </ul></div>

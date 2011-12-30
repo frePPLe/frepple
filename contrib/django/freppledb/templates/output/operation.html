@@ -8,10 +8,22 @@
 {% block contextmenus %}
 {% include "operationcontext.html" %}
 {% include "locationcontext.html" %}
-<div id="detailcontext" class="ContextMenu">
-<a id="{{request.prefix}}/operationplan/%s">{% trans 'Detail' %}</a>
-<a id="{{request.prefix}}/operationpegging/%s">{% trans 'Pegging' %}</a>
-</div>
+<div id="detail0context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/?operation={value}&amp;startdate__gte={startdate}&amp;startdate__lt={enddate}&amp;locked=1">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationpegging/?operation={value}&amp;startdate__gte={startdate}&amp;startdate__lt={enddate}&amp;locked=1">{% trans 'Pegging' %}</a></li>
+</ul></div>
+<div id="detail1context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/?operation={value}&amp;startdate__gte={startdate}&amp;startdate__lt={enddate}">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationpegging/?operation={value}&amp;startdate__gte={startdate}&amp;startdate__lt={enddate}">{% trans 'Pegging' %}</a></li>
+</ul></div>
+<div id="detail2context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/?operation={value}&amp;enddate__gte={startdate}&amp;enddate__lt={enddate}&amp;locked=1">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationpegging/?operation={value}&amp;enddate__gte={startdate}&amp;enddate__lt={enddate}&amp;locked=1">{% trans 'Pegging' %}</a></li>
+</ul></div>
+<div id="detail3context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default"></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/?operation={value}&amp;enddate__gte={startdate}&amp;enddate__lt={enddate}">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationpegging/?operation={value}&amp;enddate__gte={startdate}&amp;enddate__lt={enddate}">{% trans 'Pegging' %}</a></li>
+</ul></div>
 {% endblock %}
 
 {% block before_table %}
@@ -30,23 +42,25 @@
 	</script>
 {% endif %}{% endblock %}
 
-{% block frozendata %}{% for j in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink j.name operation %}</td>
-<td>{% superlink j.location location %}</td>
-<td>{{ crossheader }}</td>
-</tr>{% endfor %}{% endblock %}
-
-{% block data %}
-{% for j in objectlist2 %}
-{% ifchanged j.operation %}{% if not forloop.first %}</tr>{% endif %}
-<tr class="{% cycle row1,row2 %}">
-{% endifchanged %}
-<td>{% if j.locked_start %}<a href="?operation={{j.operation|urlencode}}&amp;startdate__gte={{j.startdate|date:"Y-m-d"}}&amp;startdate__lt={{j.enddate|date:"Y-m-d"}}&amp;locked=1" class="detail">{{j.locked_start|floatformat:2}}</a>{% else %}{{0|floatformat:2}}{% endif %}<br/>
-{% if j.total_start %}<a href="?operation={{j.operation|urlencode}}&amp;startdate__gte={{j.startdate|date:"Y-m-d"}}&amp;startdate__lt={{j.enddate|date:"Y-m-d"}}" class="detail">{{j.total_start|floatformat:2}}</a>{% else %}{{0|floatformat:2}}{% endif %}<br/>
-{% if j.locked_end %}<a href="?operation={{j.operation|urlencode}}&amp;enddate__gte={{j.startdate|date:"Y-m-d"}}&amp;enddate__lt={{j.enddate|date:"Y-m-d"}}&amp;locked=1" class="detail">{{j.locked_end|floatformat:2}}</a>{% else %}{{0|floatformat:2}}{% endif %}<br/>
-{% if j.total_end %}<a href="?operation={{j.operation|urlencode}}&amp;enddate__gte={{j.startdate|date:"Y-m-d"}}&amp;enddate__lt={{j.enddate|date:"Y-m-d"}}" class="detail">{{j.total_end|floatformat:2}}</a>{% else %}{{0|floatformat:2}}{% endif %}</td>
-{% if forloop.last %}</tr>{% endif %}{% endfor %}
+{% block crosses %}
+function crosses (cellvalue, options, rowdata) {
+  if (cellvalue[0] != 0.0)
+    var result = cellvalue[0] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail0'></span><br/>";
+  else
+    result = '0.0<br/>';
+  if (cellvalue[1] != 0.0)
+    result += cellvalue[1] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail1'></span><br/>";
+  else
+    result += '0.0<br/>';
+  if (cellvalue[2] != 0.0)
+    result += cellvalue[2] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail2'></span><br/>";
+  else
+    result += '0.0<br/>';
+  if (cellvalue[2] != 0.0 || cellvalue[1] != 0.0)
+    result += cellvalue[3] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail3'></span>";
+  else
+    result += cellvalue[3];  
+  return result;
+};
 {% endblock %}
 
-{% block pagination %}{% ifnotequal hits 1 %}{{ block.super }}{% endifnotequal %}{% endblock %}

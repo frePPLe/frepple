@@ -135,7 +135,7 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
       fullname += pathseperator;
     fullname += filename;
     result = stat(fullname.c_str(), &stat_p);
-    if (!result && stat_p.st_mode & S_IREAD)
+    if (!result && (stat_p.st_mode & S_IREAD))
       return fullname;
   }
 
@@ -146,7 +146,7 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
     fullname += pathseperator;
   fullname.append(filename);
   result = stat(fullname.c_str(), &stat_p);
-  if (!result && stat_p.st_mode & S_IREAD)
+  if (!result && (stat_p.st_mode & S_IREAD))
     return fullname;
 #endif
 
@@ -158,7 +158,7 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
   fullname += "frepple/";
   fullname += filename;
   result = stat(fullname.c_str(), &stat_p);
-  if (!result && stat_p.st_mode & S_IREAD)
+  if (!result && (stat_p.st_mode & S_IREAD))
     return fullname;
 #endif
 

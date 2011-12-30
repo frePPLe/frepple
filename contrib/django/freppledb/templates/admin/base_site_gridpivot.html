@@ -6,14 +6,14 @@
 function columns (cellvalue, options, rowdata) {
   return "{% for f in reportclass.crosses %}{% if not forloop.first %}<br/>{% endif %}{{f.1.title|title}}{% endfor %}";
 };
-
+{% block crosses %}
 function crosses (cellvalue, options, rowdata) {
   for (i in cellvalue)
     if (i == 0) res = cellvalue[i];
     else res += '<br/>' + cellvalue[i];
   return res;
 };
-
+{% endblock %}
 $(function(){ 
   jQuery("#grid").jqGrid({        
    	url: window.location.href + (location.search.length > 0 ? "&format=json" : "?format=json"),
@@ -22,9 +22,9 @@ $(function(){
    	colModel:[
    	  {% for f in reportclass.rows %}{% if not forloop.first %},
    	  {% endif %}{ {{f|safe}}frozen:true }{% endfor %},
-      { name:'columns',label:' ',sortable:false,width:200,align:'left',formatter:columns,search:false,frozen:true },
+      { name:'columns',label:' ',sortable:false,width:200,align:'left',formatter:columns,search:false,frozen:true,title:false },
       {% for f in bucketlist %}{% if not forloop.first %},
-      {% endif %}{ name:'{{f.name|safe}}',sortable:false,width:90,align:'center',formatter:crosses,search:false }{% endfor %}
+      {% endif %}{ name:'{{f.name|safe}}',startdate:'{{f.startdate|date:"Y-m-d"}}',enddate:'{{f.enddate|date:"Y-m-d"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
    	  ],{% if reportclass.editable %}
     cellsubmit: 'clientArray',
     editurl: location.pathname,
@@ -40,9 +40,11 @@ $(function(){
 	  shrinkToFit: false,
 	  height: $(window).height() - $("#grid").offset().top - 70
     });
-  jQuery("#grid").jqGrid('setFrozenColumns');
-  // Initial search string:
-  // jQuery('#grid').jqGrid('setGridParam', {postData: mypostdata, search:true});
+  jQuery("#grid").jqGrid('setFrozenColumns');{% if filters %}
+  var postdata = jQuery("#grid").jqGrid('getGridParam','postData');
+  jQuery.extend(postdata, {filters: '{{filters|safe}}' });
+  jQuery('#grid').jqGrid('setGridParam', {postData: postdata, search:true});
+  //$('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_grid").jqFilter('toSQLString'));{% endif %}
   });
 /*
   $("#savebutton").click(function() {

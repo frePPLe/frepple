@@ -37,14 +37,6 @@
 	</script>
 {% endif %}{% endblock %}
 
-{% block frozendata %}{% for j in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink j.name forecast %}</td>
-<td>{% superlink j.item item %}</td>
-<td>{% superlink j.customer customer %}</td>
-<td>{{ crossheader }}</td>
-</tr>{% endfor %}{% endblock %}
-
 {% block data %}
 {% if perms.input.change_forecastdemand %}
 {% for j in objectlist2 %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
@@ -66,5 +58,3 @@
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endif %}
 {% endblock %}
-
-{% block pagination %}{% ifnotequal hits 1 %}{{ block.super }}{% endifnotequal %}{% endblock %}

@@ -9,10 +9,18 @@
 {% include "buffercontext.html" %}
 {% include "itemcontext.html" %}
 {% include "locationcontext.html" %}
-<div id="detailcontext" class="ContextMenu">
-<a id="{{request.prefix}}/flowplan/%s">{% trans 'Detail' %}</a>
-<a id="{{request.prefix}}/bufferpegging/%s">{% trans 'Pegging' %}</a>
-</div>
+<div id="detail0context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a id="{{request.prefix}}/flowplan?thebuffer={value}&amp;flowdate__gte={startdate}&amp;flowdate__lt={enddate}&amp;quantity__gte=0">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/bufferpegging?thebuffer={value}&amp;flowdate__gte={startdate}&amp;flowdate__lt={enddate}">{% trans 'Pegging' %}</a></li>
+</ul></div>
+<div id="detail1context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a id="{{request.prefix}}/flowplan?thebuffer={value}&amp;flowdate__gte={startdate}&amp;flowdate__lt={enddate}&amp;quantity__lt=0">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/bufferpegging?thebuffer={value}&amp;flowdate__gte={startdate}&amp;flowdate__lt={enddate}">{% trans 'Pegging' %}</a></li>
+</ul></div>
+<div id="detail2context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a id="{{request.prefix}}/flowplan?thebuffer={value}&amp;flowdate__gte={startdate}&amp;flowdate__lt={enddate}">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/bufferpegging?thebuffer={value}&amp;flowdate__gte={startdate}&amp;flowdate__lt={enddate}">{% trans 'Pegging' %}</a></li>
+</ul></div>
 {% endblock %}
 
 {% block before_table %}
@@ -24,30 +32,29 @@
 	  You can downloaded it <a href="http://www.adobe.com/products/flashplayer/" target="_blank"><u>here</u></a> for free.{% endblocktrans %}</p>
 	</div>
 	<script language="javascript" type="text/javascript">
-	   var chart1 = new FusionCharts("/static/FCF_MSColumn2DLineDY.swf", "chart1qq", $(window).width()-35, 350);
+	   var chart1 = new FusionCharts("/static/FCF_MSColumn2DLineDY.swf", "chart1", $(window).width()-35, 350);
 	   chart1.setTransparent();
 	   chart1.setDataURL(escape("{{request.prefix}}/buffergraph/{{args.0}}/?reportbucket={{reportbucket}}&reportstart={{reportstart|date:"Y-m-d"}}&reportend={{reportend|date:"Y-m-d"}}"));	   	   
 	   chart1.render("chart1div");
 	</script>
 {% endif %}{% endblock %}
 
-{% block frozendata %}{% for j in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink j.name buffer %}</td>
-<td>{% superlink j.item item %}</td>
-<td>{% if perms.input.change_location %}{% superlink j.location location %}{% else %}{{j.location}}{% endif %}</td>
-<td>{{ crossheader }}</td>
-</tr>{% endfor %}
+{% block crosses %}
+function crosses (cellvalue, options, rowdata) {
+  var result = cellvalue[0] + '<br/>';
+  if (cellvalue[1] != 0.0)
+    result += cellvalue[1] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail0'></span><br/>";
+  else
+    result += '0.0<br/>';
+  if (cellvalue[2] != 0.0)
+    result += cellvalue[2] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail1'></span><br/>";
+  else
+    result += '0.0<br/>';
+  if (cellvalue[2] != 0.0 || cellvalue[1] != 0.0)
+    result += cellvalue[3] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail2'></span>";
+  else
+    result += cellvalue[3];  
+  return result;
+};
 {% endblock %}
 
-{% block data %}
-{% for j in objectlist2 %}
-{% ifchanged j.buffer %}{% if not forloop.first %}</tr>{% endif %}<tr class="{% cycle row1,row2 %}">{% endifchanged %}
-<td>{{j.startoh|floatformat:1}}<br/>
-{% if j.produced %}<a href="?thebuffer={{j.buffer|urlencode}}&amp;flowdate__gte={{j.startdate|date:"Y-m-d"}}&amp;flowdate__lt={{j.enddate|date:"Y-m-d"}}&amp;quantity__gte=0" class="detail">{{j.produced|floatformat:1}}</a>{% else %}{{0|floatformat:1}}{% endif %}<br/>
-{% if j.consumed %}<a href="?thebuffer={{j.buffer|urlencode}}&amp;flowdate__gte={{j.startdate|date:"Y-m-d"}}&amp;flowdate__lt={{j.enddate|date:"Y-m-d"}}&amp;quantity__lt=0" class="detail">{{j.consumed|floatformat:1}}</a>{% else %}{{0|floatformat:2}}{% endif %}<br/>
-{% if j.consumed or j.produced %}<a href="?thebuffer={{j.buffer|urlencode}}&amp;flowdate__gte={{j.startdate|date:"Y-m-d"}}&amp;flowdate__lt={{j.enddate|date:"Y-m-d"}}" class="detail">{{j.endoh|floatformat:1}}</a>{% else %}{{j.endoh|floatformat:1}}{% endif %}</td>
-{% if forloop.last %}</tr>{% endif %}{% endfor %}
-{% endblock %}
-
-{% block pagination %}{% ifnotequal hits 1 %}{{ block.super }}{% endifnotequal %}{% endblock %}

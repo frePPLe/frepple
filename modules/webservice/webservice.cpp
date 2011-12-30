@@ -60,11 +60,11 @@ SOAP_FMAC5 int SOAP_FMAC6 frepple__post(struct soap* soap, char *data, struct fr
   try {
     CommandReadXMLString(data, true, false).commit();
   }
-  catch (DataException e)
+  catch (const DataException& e)
     {return soap_sender_fault(soap, "Data Exception", e.what());}
-  catch (LogicException e)
+  catch (const LogicException& e)
     {return soap_sender_fault(soap, "Logic Exception", e.what());}
-  catch (RuntimeException e)
+  catch (const RuntimeException& e)
     {return soap_sender_fault(soap, "Runtime Exception", e.what());}
   catch (...)
     {return soap_sender_fault(soap, "Exception", "Unidentified");}

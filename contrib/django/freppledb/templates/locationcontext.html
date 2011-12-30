@@ -1,5 +1,5 @@
 {% load i18n %}
 <div id="locationcontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-{% if perms.input.change_location %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/input/location/%s/">{% trans 'Location' %}</a></li>{% endif %}
-{% if perms.input.change_calendar %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/input/calendar/location/%s/">{% trans 'Edit availability' %}</a></li>{% endif %}
+{% if perms.input.change_location %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/input/location/{value}/">{% trans 'Location' %}</a></li>{% endif %}
+{% if perms.input.change_calendar %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/input/calendar/location/{value}/">{% trans 'Edit availability' %}</a></li>{% endif %}
 </ul></div>

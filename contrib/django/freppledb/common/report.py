@@ -243,21 +243,17 @@ class GridReport(View):
     sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
     if 'sord' in request.GET and request.GET['sord'] == 'desc':
       sort = "-%s" % sort
-    return reportclass.filter_items(request, query).order_by(sort)
+    return query.order_by(sort)
 
 
   @classmethod
   def _generate_json_data(reportclass, request, *args, **kwargs):
     page = 'page' in request.GET and int(request.GET['page']) or 1
-    recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
+    query = reportclass.filter_items(request, reportclass.basequeryset).using(request.database)
+    recs = query.count()
     total_pages = math.ceil(float(recs) / request.pagesize)
     if page > total_pages: page = total_pages
-    #if hasattr(reportclass,'query'):
-      # SQL override provided of type 2
-    #  query = reportclass._apply_filter_and_sort(request, reportclass.query(request, counter, bucket, start, end, sortsql=sortsql))
-    #else:
-      # No SQL override provided
-    query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
+    query = reportclass._apply_sort(request, query)
 
     yield '{"total":%d,\n' % total_pages
     yield '"page":%d,\n' % page
@@ -377,6 +373,7 @@ class GridReport(View):
         'reportend': end,
         'is_popup': request.GET.has_key('pop'),
         'args': args,
+        'filters': reportclass.getQueryString(request),
         'bucketnames': bucketnames,
         'bucketlist': bucketlist,
         'model': reportclass.model,
@@ -569,6 +566,22 @@ class GridReport(View):
   }
       
   @classmethod
+  def getQueryString(reportclass, request):
+    # Django-style filtering, using URL parameters
+    filtered = False
+    filters = ['{"groupOp":"AND","rules":[']
+    for i,j in request.GET.iteritems():
+      for r in reportclass.rows:
+        if i.startswith(r.field_name):
+          filtered = True
+          filters.append('{"field":"%s","op":"eq","data":"%s"},' % (i,j))
+    if not filtered: return None
+    filters.append(']}')
+    print ''.join(filters)
+    return ''.join(filters)
+        
+        
+  @classmethod
   def _get_q_filter(reportclass, filterdata):
     q_filters = []
     for rule in filterdata['rules']:
@@ -597,7 +610,7 @@ class GridReport(View):
 
     filters = None
 
-    # Check whether a search is enabled
+    # Jqgrid-style filtering
     if request.GET.get('_search') == 'true':     
       # Validate complex search JSON data
       _filters = request.GET.get('filters')
@@ -615,9 +628,16 @@ class GridReport(View):
           filters = {
               'groupOp': 'AND',
               'rules': [{ 'op': op, 'field': field, 'data': data }]
-          }
+          }    
+    if filters:
+      return items.filter(reportclass._get_q_filter(filters))
     
-    return filters and items.filter(reportclass._get_q_filter(filters)) or items
+    # Django-style filtering, using URL parameters
+    for i,j in request.GET.iteritems():
+      for r in reportclass.rows:
+        if i.startswith(r.field_name):
+          items = items.filter(**{i:j})
+    return items
 
   
 class GridPivot(GridReport):

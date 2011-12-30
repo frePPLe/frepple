@@ -562,13 +562,13 @@ DECLARE_EXPORT void PythonType::evalException()
 {
   // Rethrowing the exception to catch its type better
   try {throw;}
-  catch (DataException e)
+  catch (const DataException& e)
     {PyErr_SetString(PythonDataException, e.what());}
-  catch (LogicException e)
+  catch (const LogicException& e)
     {PyErr_SetString(PythonLogicException, e.what());}
-  catch (RuntimeException e)
+  catch (const RuntimeException& e)
     {PyErr_SetString(PythonRuntimeException, e.what());}
-  catch (exception e)
+  catch (const exception& e)
     {PyErr_SetString(PyExc_Exception, e.what());}
   catch (...)
     {PyErr_SetString(PyExc_Exception, "Unidentified exception");}

@@ -139,7 +139,7 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
   }
-  catch (exception &e)
+  catch (const exception &e)
   {
     // Avoid throwing errors during the initialization!
     logger << "Error: " << e.what() << endl;
@@ -162,7 +162,7 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
       throw RuntimeException("Error registering forecastsolver");
     PyGILState_Release(state);
   }
-  catch (exception &e)
+  catch (const exception &e)
   {
     PyGILState_Release(state);      
     logger << "Error: " << e.what() << endl;

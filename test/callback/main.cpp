@@ -172,7 +172,7 @@ int main (int argc, char *argv[])
   {
     logger << "Error: Caught an exception in main routine:" <<  endl;
     try { throw; }
-    catch (exception& e) {logger << "  " << e.what() << endl;}
+    catch (const exception& e) {logger << "  " << e.what() << endl;}
     catch (...) {logger << "  Unknown type" << endl;}
     return EXIT_FAILURE;
   }

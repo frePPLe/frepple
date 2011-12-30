@@ -127,8 +127,8 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
         logger << "Error: Caught an exception while solving demand '"
           << (*i)->getName() << "':" << endl;
         try {throw;}
-        catch (bad_exception&) {logger << "  bad exception" << endl;}
-        catch (exception& e) {logger << "  " << e.what() << endl;}
+        catch (const bad_exception&) {logger << "  bad exception" << endl;}
+        catch (const exception& e) {logger << "  " << e.what() << endl;}
         catch (...) {logger << "  Unknown type" << endl;}
 
         // Cleaning up
@@ -150,8 +150,8 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
     logger << "Error: Caught an exception while solving cluster "
     << cluster << ":" << endl;
     try {throw;}
-    catch (bad_exception&){logger << "  bad exception" << endl;}
-    catch (exception& e) {logger << "  " << e.what() << endl;}
+    catch (const bad_exception&){logger << "  bad exception" << endl;}
+    catch (const exception& e) {logger << "  " << e.what() << endl;}
     catch (...) {logger << "  Unknown type" << endl;}
 
     // Clean up the operationplans of this cluster

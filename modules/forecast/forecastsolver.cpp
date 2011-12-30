@@ -121,8 +121,8 @@ void ForecastSolver::solve(void *v)
       logger << "Error: Caught an exception while netting demand '"
         << (*i)->getName() << "':" << endl;
       try {throw;}
-      catch (bad_exception&) {logger << "  bad exception" << endl;}
-      catch (exception& e) {logger << "  " << e.what() << endl;}
+      catch (const bad_exception&) {logger << "  bad exception" << endl;}
+      catch (const exception& e) {logger << "  " << e.what() << endl;}
       catch (...) {logger << "  Unknown type" << endl;}
     }
 }

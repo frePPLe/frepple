@@ -59,7 +59,7 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
       throw RuntimeException("Error registering Python solver_lp extension");
     PyGILState_Release(state);
   }
-  catch (exception &e)
+  catch (const exception &e)
   {
     PyGILState_Release(state);
     logger << "Error: " << e.what() << endl;

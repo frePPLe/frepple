@@ -408,7 +408,7 @@ unsigned __stdcall ThreadGroup::wrapper(void *arg)
       // Error message
       logger << "Error: Caught an exception while executing command:" << endl;
       try {throw;}
-      catch (exception& e) {logger << "  " << e.what() << endl;}
+      catch (const exception& e) {logger << "  " << e.what() << endl;}
       catch (...) {logger << "  Unknown type" << endl;}
     }
   };

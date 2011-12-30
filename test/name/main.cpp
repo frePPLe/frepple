@@ -232,7 +232,7 @@ int main (int argc, char *argv[])
     //scalability_test();
     return EXIT_SUCCESS;
   }
-  catch (exception& e)
+  catch (const exception& e)
   {
     logger << "Error: " << e.what() << endl;
     return EXIT_FAILURE;

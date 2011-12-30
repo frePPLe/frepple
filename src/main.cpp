@@ -117,7 +117,7 @@ int main (int argc, char *argv[])
       FreppleReadXMLFile(NULL, validate, validate_only);
     }
   }
-  catch (exception& e)
+  catch (const exception& e)
   {
     ostringstream ch;
     ch << "Error: " << e.what();

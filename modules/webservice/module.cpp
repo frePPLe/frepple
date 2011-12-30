@@ -71,7 +71,7 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
         "Starts the webservice to listen for HTTP requests");
       PyGILState_Release(state);
     }
-    catch (exception &e)
+    catch (const exception &e)
     {
       PyGILState_Release(state);
       logger << "Error: " << e.what() << endl;

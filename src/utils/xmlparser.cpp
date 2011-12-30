@@ -84,7 +84,7 @@ void 	XMLInput::processingInstruction
         // Execute the processing instruction
         PythonInterpreter::execute(value);
       }
-      catch (DataException e)
+      catch (const DataException& e)
       {
         if (abortOnDataException)
         {

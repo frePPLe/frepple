@@ -564,6 +564,7 @@ class GridReport(View):
       'ew': ('%(field)s__endswith', False),
       'cn': ('%(field)s__contains', False)
   }
+  
 
   _filter_map_django_jqgrid = {
       # django lookup: jqgrid op
@@ -577,6 +578,7 @@ class GridReport(View):
       'endswith': 'ew',
       'contains': 'cn',
   }
+      
       
   @classmethod
   def getQueryString(reportclass, request):
@@ -593,7 +595,7 @@ class GridReport(View):
     filters.append(']}')
     return ''.join(filters)
         
-        
+                
   @classmethod
   def _get_q_filter(reportclass, filterdata):
     q_filters = []
@@ -611,8 +613,11 @@ class GridReport(View):
             q_filters.append(models.Q(**filter_kwargs))    
     if u'groups' in filterdata:
       for group in filterdata['groups']:
-        q_filters.append(reportclass._get_q_filter(group))
-    if filterdata['groupOp'].upper() == 'OR':
+        z = reportclass._get_q_filter(group)
+        if z: q_filters.append(z)
+    if len(q_filters) == 0:
+      return None
+    elif filterdata['groupOp'].upper() == 'OR':
       return reduce(operator.ior, q_filters)
     else:
       return reduce(operator.iand, q_filters)
@@ -643,7 +648,8 @@ class GridReport(View):
               'rules': [{ 'op': op, 'field': field, 'data': data }]
           }    
     if filters:
-      return items.filter(reportclass._get_q_filter(filters))
+      z = reportclass._get_q_filter(filters)
+      return z and items.filter(z) or items
     
     # Django-style filtering, using URL parameters
     for i,j in request.GET.iteritems():

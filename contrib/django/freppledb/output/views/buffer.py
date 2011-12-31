@@ -132,10 +132,10 @@ class OverviewReport(GridPivot):
         'bucket': row[3],
         'startdate': python_date(row[4]),
         'enddate': python_date(row[5]),
-        'startoh': startoh,
-        'produced': row[6],
-        'consumed': row[7],
-        'endoh': endoh,
+        'startoh': round(startoh,1),
+        'produced': round(row[6],1),
+        'consumed': round(row[7],1),
+        'endoh': round(endoh,1),
         }
 
 

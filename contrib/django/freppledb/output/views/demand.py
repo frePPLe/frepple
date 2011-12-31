@@ -154,11 +154,11 @@ class OverviewReport(GridPivot):
         'bucket': row[1],
         'startdate': python_date(row[2]),
         'enddate': python_date(row[3]),
-        'orders': row[4],
-        'forecast': row[5],
-        'demand': float(row[4]) + float(row[5]),
-        'supply': row[6],
-        'backlog': backlog,
+        'orders': round(row[4],1),
+        'forecast': round(row[5],1),
+        'demand': round(float(row[4]) + float(row[5]),1),
+        'supply': round(row[6],1),
+        'backlog': round(backlog,1),
         }
 
 

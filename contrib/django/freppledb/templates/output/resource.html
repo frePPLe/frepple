@@ -1,6 +1,12 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
+{% comment %} 
+TODO EDIT IS STILL BROKEN
+TODO conditional adding of input is not implemented yet
+TODO ROW HEIGHT NOT SYNCED between frozen and other columns
+{% endcomment %}
+
 {% block extrahead %}{{ block.super }} 
 {% if args.0 %}<script type="text/javascript" src="/static/FusionCharts.js"></script>{% endif %}
 <script type="text/javascript">
@@ -42,10 +48,10 @@
 {% block contextmenus %}
 {% include "resourcecontext.html" %}
 {% include "locationcontext.html" %}
-<div id="detailcontext" class="ContextMenu">
-<a id="{{request.prefix}}/loadplan/%s">{% trans 'Detail' %}</a>
-<a id="{{request.prefix}}/resourcepegging/%s">{% trans 'Pegging' %}</a>
-</div>
+<div id="detailcontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a id="{{request.prefix}}/loadplan/?theresource={value}&amp;startdate__lt={enddate}&amp;enddate__gte={startdate}">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/resourcepegging/?theresource={value}&amp;startdate__lt={enddate}&amp;enddate__gte={startdate}">{% trans 'Pegging' %}</a></li>
+</ul></div>
 {% endblock %}
 
 {% block before_table %}
@@ -64,22 +70,21 @@
 	</script>
 {% endif %}{% endblock %}
 
-{% block data %}
-{% for j in objectlist2 %}{% if perms.input.change_resource and j.maximum_calendar_id %}
-{% ifchanged j.resource %}{% if not forloop.first %}</form></tr>{% endif %}<tr class="{% cycle row1,row2 %}"><form name="{{j.resource|escape}}">{% endifchanged %}
-<td><input type="text" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this, {{j.available}}, '{{j.startdate|date:"Y-m-d"}}', '{{j.enddate|date:"Y-m-d"}}', {{j.units}})"/><br/>
-<span>{{j.unavailable|floatformat:1}}</span><br/>
-{{j.setup|floatformat:1}}<br/>
-<span>{% if j.load %}<a href="?theresource={{j.resource|urlencode}}&amp;startdate__lt={{j.enddate|date:"Y-m-d"}}&amp;enddate__gte={{j.startdate|date:"Y-m-d"}}" tabindex="-1" class="detail">{{j.load|floatformat:2}}</a>{% else %}{{0|floatformat:2}}{% endif %}</span><br/>
-<span{% if j.utilization > 95 %} class="highutil"{% endif %}>{{j.utilization|floatformat:0}}</span></td>
-{% if forloop.last %}</form></tr>{% endif %}
+{% block crosses %}
+function crosses (cellvalue, options, rowdata) {
+{% if perms.input.change_resource %}
+  var result = '<input type="text" value="' + cellvalue[0] + '" size="5" onchange="onChange(this)"/><br/>' + cellvalue[2] + '<br/>' + cellvalue[2] + '<br/>';
 {% else %}
-{% ifchanged j.resource %}{% if not forloop.first %}</tr>{% endif %}<tr class="{% cycle row1,row2 %}">{% endifchanged %}
-<td>{{j.available|floatformat:1}}<br/>
-{{j.unavailable|floatformat:1}}<br/>
-{{j.setup|floatformat:1}}<br/>
-{% if j.load %}<a href="{{ request.prefix }}/loadplan/?theresource={{j.resource|urlencode}}&amp;startdate__lt={{j.enddate|date:"Y-m-d"}}&amp;enddate__gte={{j.startdate|date:"Y-m-d"}}">{{j.load|floatformat:2}}</a>{% else %}{{0|floatformat:2}}{% endif %}<br/>
-{{j.utilization|floatformat:0}}</td>
-{% if forloop.last %}</tr>{% endif %}
-{% endif %}{% endfor %}
+  var result = cellvalue[0] + '<br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
+{% endif %}
+  if (cellvalue[3] != 0.0)
+    result += cellvalue[3] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail'></span><br/>";
+  else
+    result += '0.0<br/>';
+  if (cellvalue[4] > 95)
+    result += '<span class="highutil">' + cellvalue[4] + '</span>';
+  else
+    result += cellvalue[4];
+  return result;
+};
 {% endblock %}

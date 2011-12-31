@@ -69,6 +69,7 @@ span.context {
 
 .ui-autocomplete-category {
   font-weight:bold; 
+  list-style-type: none;
 }
 
 /* Style for main navigation menu */

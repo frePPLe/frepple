@@ -154,11 +154,11 @@ class OverviewReport(GridPivot):
         'bucket': row[3],
         'startdate': python_date(row[4]),
         'enddate': python_date(row[5]),
-        'available': row[6],
-        'unavailable': row[7],
-        'load': row[8],
-        'setup': row[9],
-        'utilization': util,
+        'available': round(row[6],1),
+        'unavailable': round(row[7],1),
+        'load': round(row[8],1),
+        'setup': round(row[9],1),
+        'utilization': round(util,2),
         'units': units,
         }
 

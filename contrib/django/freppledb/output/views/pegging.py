@@ -44,7 +44,6 @@ class ReportByDemand(GridReport):
   basequeryset = Demand.objects.all().values('name')
   frozenColumns = 0
   editable = False
-  timebuckets = True
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False),
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
@@ -214,7 +213,6 @@ class ReportByBuffer(GridReport):
   basequeryset = FlowPlan.objects.all()
   frozenColumns = 0
   editable = False
-  timebuckets = False
   default_sort = '3a'
   rows = (
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
@@ -291,7 +289,6 @@ class ReportByResource(GridReport):
   basequeryset = LoadPlan.objects.all()
   frozenColumns = 0
   editable = False
-  timebuckets = False
   default_sort = '3a'
   rows = (
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
@@ -349,7 +346,6 @@ class ReportByOperation(GridReport):
   basequeryset = OperationPlan.objects.all()
   frozenColumns = 0
   editable = False
-  timebuckets = False
   default_sort = '3a'
   rows = (
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),

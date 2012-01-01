@@ -88,7 +88,6 @@ and export results into the database<br/>
 <td>{{j.description}}</td>
 <td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td></tr>
 {% endifnotequal %}{% endfor %}
-</td></tr>
 {% if perms.execute.copy_scenario %}
 <tr><th scope="row" colspan="2">{% trans "Copy" %}</th>
 <td>{% trans "Copy" %} <select name="source">{% for j in scenarios %}{% ifequal j.status 'In use' %}<option value="{{j.name}}">{{j.name}}</option>{% endifequal %}{% endfor %}</select> {% trans "into selected scenarios" %}</td>

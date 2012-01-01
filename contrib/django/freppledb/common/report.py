@@ -217,6 +217,10 @@ class GridReport(View):
     if translation.get_language() != request.LANGUAGE_CODE:
       translation.activate(request.LANGUAGE_CODE)
 
+    # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
+    if encoding in ['utf-8', 'utf-16']: 
+      sf.write(u'\ufeff'.encode(encoding))
+      
     # Write a header row
     fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows ]
     writer.writerow(fields)
@@ -757,6 +761,10 @@ class GridPivot(GridReport):
       query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]), bucket, start, end, sortsql="1 asc")
     else:
       query = reportclass.query(request, reportclass.basequeryset, bucket, start, end, sortsql="1 asc")
+
+    # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
+    if encoding in ['utf-8', 'utf-16']: 
+      sf.write(u'\ufeff'.encode(encoding))
 
     # Write a header row
     fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows ]

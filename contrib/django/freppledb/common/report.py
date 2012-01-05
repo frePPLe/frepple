@@ -38,6 +38,7 @@ from decimal import Decimal
 import csv, cStringIO
 import operator
 import math
+import codecs
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
@@ -150,7 +151,65 @@ class GridFieldCurrency(GridField):
   extra = "formatoptions:{prefix:'$'}"   #TODO make the currency symbol configurable
   width = 80
 
+    
+def getBOM(encoding):
+  if encoding == 'utf_32_be': return codecs.BOM_UTF32_BE
+  elif encoding == 'utf_32_le': return codecs.BOM_UTF32_LE
+  elif encoding == 'utf_16_be': return codecs.BOM_UTF16_BE
+  elif encoding == 'utf_16_le': return codecs.BOM_UTF16_LE
+  elif encoding == 'utf-8': return codecs.BOM_UTF8
+  else: return ''
+  
+  
+class UTF8Recoder:
+  """
+  Iterator that reads an encoded data buffer and re-encodes the input to UTF-8.
+  """
+  def __init__(self, data):
+    # Detect the encoding of the data by scanning the BOM. 
+    # Skip the BOM header if it is found.
+    if data.startswith(codecs.BOM_UTF32_BE): 
+      self.reader = codecs.getreader('utf_32_be')(cStringIO.StringIO(data))
+      self.reader.read(1)      
+    elif data.startswith(codecs.BOM_UTF32_LE): 
+      self.reader = codecs.getreader('utf_32_le')(cStringIO.StringIO(data))
+      self.reader.read(1)      
+    elif data.startswith(codecs.BOM_UTF16_BE): 
+      self.reader = codecs.getreader('utf_16_be')(cStringIO.StringIO(data))
+      self.reader.read(1)      
+    elif data.startswith(codecs.BOM_UTF16_LE): 
+      self.reader = codecs.getreader('utf_16_le')(cStringIO.StringIO(data))
+      self.reader.read(1)      
+    elif data.startswith(codecs.BOM_UTF8): 
+      self.reader = codecs.getreader('utf-8')(cStringIO.StringIO(data))
+      self.reader.read(1)      
+    else:       
+      # No BOM header found. We assume the data is encoded in the default CSV character set.
+      self.reader = codecs.getreader(settings.CSV_CHARSET)(cStringIO.StringIO(data)) 
 
+  def __iter__(self):
+    return self
+
+  def next(self):
+    return self.reader.next().encode("utf-8")
+
+
+class UnicodeReader:
+  """
+  A CSV reader which will iterate over lines in the CSV data buffer.
+  The reader will scan the BOM header in the data to detect the right encoding. 
+  """
+  def __init__(self, data, **kwds):
+    self.reader = csv.reader(UTF8Recoder(data), **kwds)
+
+  def next(self):
+    row = self.reader.next()
+    return [unicode(s, "utf-8") for s in row]
+
+  def __iter__(self):
+    return self
+
+    
 class GridReport(View):
   '''
   The base class for all jqgrid views.
@@ -208,8 +267,7 @@ class GridReport(View):
 
   @classmethod
   def _generate_csv_data(reportclass, request, *args, **kwargs):
-    sf = cStringIO.StringIO()
-    encoding = settings.DEFAULT_CHARSET
+    sf = cStringIO.StringIO()    
     if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
       writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
     else:
@@ -218,8 +276,8 @@ class GridReport(View):
       translation.activate(request.LANGUAGE_CODE)
 
     # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
-    if encoding in ['utf-8', 'utf-16']: 
-      sf.write(u'\ufeff'.encode(encoding))
+    encoding = settings.CSV_CHARSET
+    sf.write(getBOM(encoding))
       
     # Write a header row
     fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows ]
@@ -401,8 +459,8 @@ class GridReport(View):
       return response
     else:
       raise Http404('Unknown format type')
-
-
+  
+  
   @classmethod
   def parseUpload(reportclass, request, data):
       '''
@@ -427,13 +485,13 @@ class GridReport(View):
       warnings = []
       errors = []
       content_type_id = ContentType.objects.get_for_model(entityclass).pk
-  
+            
       transaction.enter_transaction_management(using=request.database)
       transaction.managed(True, using=request.database)
       try:
         # Loop through the data records
         has_pk_field = False
-        for row in csv.reader(data.splitlines()):
+        for row in UnicodeReader(data):
           rownumber += 1
   
           ### Case 1: The first line is read as a header line
@@ -685,7 +743,7 @@ class GridPivot(GridReport):
     pref = request.user.get_profile()
     (bucket,start,end,bucketlist) = getBuckets(request, pref)
 
-    # Prepare the query
+    # Prepare the query    
     if args and args[0]:
       page = 1
       recs = 1
@@ -720,7 +778,7 @@ class GridPivot(GridReport):
         currentkey = i[reportclass.rows[0].name]
         first2 = True
         for f in reportclass.rows:
-          s = isinstance(i[f.name], basestring) and escape(i[f.name]) or i[f.name]
+          s = isinstance(i[f.name], basestring) and escape(i[f.name].encode(settings.DEFAULT_CHARSET,"ignore")) or i[f.name]
           if first2:
             r.append('"%s":"%s"' % (f.name,s))
             first2 = False
@@ -742,8 +800,7 @@ class GridPivot(GridReport):
 
   @classmethod
   def _generate_csv_data(reportclass, request, *args, **kwargs):  # TODO
-    sf = cStringIO.StringIO()
-    encoding = settings.DEFAULT_CHARSET
+    sf = cStringIO.StringIO()    
     if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
       writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
     else:
@@ -763,8 +820,8 @@ class GridPivot(GridReport):
       query = reportclass.query(request, reportclass.basequeryset, bucket, start, end, sortsql="1 asc")
 
     # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
-    if encoding in ['utf-8', 'utf-16']: 
-      sf.write(u'\ufeff'.encode(encoding))
+    encoding = settings.CSV_CHARSET
+    sf.write(getBOM(encoding))
 
     # Write a header row
     fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows ]

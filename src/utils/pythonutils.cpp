@@ -58,7 +58,9 @@ DECLARE_EXPORT void PythonInterpreter::initialize(int argc, char *argv[])
     Py_InitializeEx(0);   // The arg 0 indicates that the interpreter doesn't
                           // implement its own signal handler
     // Pass the command line arguments to Python as well
+#if PY_VERSION_HEX > 0x02060600
     if (argc>0) PySys_SetArgvEx(argc, argv, 0);
+#endif
     // Initializes threads
     PyEval_InitThreads();  
     mainThreadState = PyEval_SaveThread();

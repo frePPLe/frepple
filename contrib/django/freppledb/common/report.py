@@ -750,9 +750,9 @@ class GridPivot(GridReport):
     for i in reportclass.rows:
       if i.name == sort: 
         if 'sord' in request.GET and request.GET['sord'] == 'desc':
-          return idx > 1 and "%d desc, 1 asc" % idx or "%d desc" % idx
+          return idx > 1 and "%d desc, 1 asc" % idx or "1 desc"
         else:
-          return idx > 1 and "%d asc, 1 asc" % idx or "%d asc" % idx
+          return idx > 1 and "%d asc, 1 asc" % idx or "1 asc"
       else:
         idx += 1 
     return "1 asc"

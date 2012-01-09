@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -302,6 +302,9 @@ class GridReport(View):
 
   @classmethod
   def _apply_sort(reportclass, request, query):
+    '''
+    Applies a sort to the query. 
+    '''
     sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
     if 'sord' in request.GET and request.GET['sord'] == 'desc':
       sort = "-%s" % sort
@@ -315,6 +318,7 @@ class GridReport(View):
     recs = query.count()
     total_pages = math.ceil(float(recs) / request.pagesize)
     if page > total_pages: page = total_pages
+    if page < 1: page = 1
     query = reportclass._apply_sort(request, query)
 
     yield '{"total":%d,\n' % total_pages
@@ -452,7 +456,7 @@ class GridReport(View):
     elif fmt == 'csvlist' or fmt == 'csvtable':
       # Return CSV data to export the data
       response = HttpResponse(
-         mimetype= 'text/csv; charset=%s' % settings.DEFAULT_CHARSET,
+         mimetype= 'text/csv; charset=%s' % settings.CSV_CHARSET,
          content = reportclass._generate_csv_data(request, *args, **kwargs)
          )
       response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
@@ -735,6 +739,24 @@ class GridPivot(GridReport):
 
   template = 'admin/base_site_gridpivot.html'
   
+
+  @classmethod
+  def _apply_sort(reportclass, request):
+    '''
+    Returns the index of the column to sort on. 
+    '''
+    sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
+    idx = 1
+    for i in reportclass.rows:
+      if i.name == sort: 
+        if 'sord' in request.GET and request.GET['sord'] == 'desc':
+          return idx > 1 and "%d desc, 1 asc" % idx or "%d desc" % idx
+        else:
+          return idx > 1 and "%d asc, 1 asc" % idx or "%d asc" % idx
+      else:
+        idx += 1 
+    return "1 asc"
+
   
   @classmethod
   def _generate_json_data(reportclass, request, *args, **kwargs):
@@ -743,19 +765,20 @@ class GridPivot(GridReport):
     pref = request.user.get_profile()
     (bucket,start,end,bucketlist) = getBuckets(request, pref)
 
-    # Prepare the query    
+    # Prepare the query   
     if args and args[0]:
       page = 1
       recs = 1
       total_pages = 1
-      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]), bucket, start, end, sortsql="1 asc")
+      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), bucket, start, end, sortsql="1 asc")
     else:
       page = 'page' in request.GET and int(request.GET['page']) or 1
       recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
       total_pages = math.ceil(float(recs) / request.pagesize)
       if page > total_pages: page = total_pages
+      if page < 1: page = 1
       cnt = (page-1)*request.pagesize+1
-      query = reportclass.query(request, reportclass.basequeryset[cnt-1:cnt+request.pagesize], bucket, start, end, sortsql="1 asc")
+      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt-1:cnt+request.pagesize], bucket, start, end, sortsql=reportclass._apply_sort(request))
 
     # Generate header of the output
     yield '{"total":%d,\n' % total_pages
@@ -815,9 +838,9 @@ class GridPivot(GridReport):
 
     # Prepare the query
     if args and args[0]:
-      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]), bucket, start, end, sortsql="1 asc")
+      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), bucket, start, end, sortsql="1 asc")
     else:
-      query = reportclass.query(request, reportclass.basequeryset, bucket, start, end, sortsql="1 asc")
+      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database), bucket, start, end, sortsql=reportclass._apply_sort(request))
 
     # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
     encoding = settings.CSV_CHARSET

@@ -394,10 +394,14 @@ function filter_show()
     overlay: 0,
     sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
     onSearch : function() {
-      $('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_grid").jqFilter('toSQLString'));
+      var s = jQuery("#fbox_grid").jqFilter('toSQLString');
+      if (s) $('#curfilter').html(gettext("Filtered where") + " " + s);
+      else $('#curfilter').html("");
       },
     onReset : function() {
-      $('#curfilter').html('');
+      var s = jQuery("#fbox_grid").jqFilter('toSQLString');
+      if (s) $('#curfilter').html(gettext("Filtered where") + " " + s);
+      else $('#curfilter').html("");
       },
     });
 }

@@ -57,7 +57,7 @@ class ReportByDemand(GridReport):
     )
 
   @staticmethod
-  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery):
     # Execute the query
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connections[request.database].cursor()
@@ -223,7 +223,7 @@ class ReportByBuffer(GridReport):
     )
 
   @staticmethod
-  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(
@@ -299,7 +299,7 @@ class ReportByResource(GridReport):
     )
 
   @staticmethod
-  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(
@@ -356,7 +356,7 @@ class ReportByOperation(GridReport):
     )
 
   @staticmethod
-  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(

@@ -40,9 +40,10 @@ class Report(GridReport):
     GridFieldNumber('value', title=_('category'), sortable=False, editable=False, align='center'),
     )
   default_sort = '2a'
+  filterable = False
 
   @staticmethod
-  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery):
     # Execute the query
     cursor = connections[request.database].cursor()
     query = '''
@@ -88,6 +89,7 @@ class Report(GridReport):
       select 402, 'Material', 'Consumed', round(sum(-quantity))
       from out_flowplan
       where quantity<0
+      order by 1
       ''' % (
         # Oracle needs conversion from the field out_problem.name
         # (in 'national character set') to the database 'character set'.

@@ -240,7 +240,10 @@ class GridReport(View):
 
   # Allow editing in this report or not
   editable = True
-
+  
+  # Allow filtering of the results or not
+  filterable = True
+  
   # Number of columns frozen in the report
   frozenColumns = 0
 
@@ -287,7 +290,7 @@ class GridReport(View):
     # Write the report content
     query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
     fields = [ i.field_name for i in reportclass.rows ]
-    for row in query.values(*fields):
+    for row in hasattr(reportclass,'query') and reportclass.query(request,query) or query.values(*fields):
       # Clear the return string buffer
       sf.truncate(0)
       # Build the return value, encoding all output
@@ -359,7 +362,7 @@ class GridReport(View):
     #  fields.append('rght')
     #  fields.append('isLeaf')
     #  fields.append('expanded')
-    for i in query[cnt-1:cnt+request.pagesize].values(*fields):
+    for i in hasattr(reportclass,'query') and reportclass.query(request,query) or query[cnt-1:cnt+request.pagesize].values(*fields):
       if first:
         r = [ '{' ]
         first = False
@@ -654,9 +657,12 @@ class GridReport(View):
     for i,j in request.GET.iteritems():
       for r in reportclass.rows:
         if i.startswith(r.field_name):
-          filtered = True
           operator = (i==r.field_name) and 'exact' or i[i.rfind('_')+1:]
-          filters.append('{"field":"%s","op":"%s","data":"%s"},' % (r.field_name, reportclass._filter_map_django_jqgrid[operator], j))
+          try: 
+            filters.append('{"field":"%s","op":"%s","data":"%s"},' % (r.field_name, reportclass._filter_map_django_jqgrid[operator], j))
+            filtered = True
+          except:
+            pass # Ignore invalid operators
     if not filtered: return None
     filters.append(']}')
     return ''.join(filters)
@@ -721,7 +727,8 @@ class GridReport(View):
     for i,j in request.GET.iteritems():
       for r in reportclass.rows:
         if i.startswith(r.field_name):
-          items = items.filter(**{i:j})
+          try: items = items.filter(**{i:j})
+          except: pass # silently ignore invalid filters
     return items
 
   

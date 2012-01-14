@@ -5380,13 +5380,13 @@ class FreppleIterator : public PythonExtension<ME>
     }
 
     FreppleIterator() : i(DATACLASS::begin())
-      {initType(PythonExtension<ME>::getType().type_object());}
+      {this->initType(PythonExtension<ME>::getType().type_object());}
 
     template <class OTHER> FreppleIterator(const OTHER *o) : i(o)
-      {initType(PythonExtension<ME>::getType().type_object());}
+      {this->initType(PythonExtension<ME>::getType().type_object());}
 
     template <class OTHER> FreppleIterator(const OTHER &o) : i(o)
-      {initType(PythonExtension<ME>::getType().type_object());}
+      {this->initType(PythonExtension<ME>::getType().type_object());}
 
     static PyObject* create(PyObject* self, PyObject* args)
      {return new ME();}

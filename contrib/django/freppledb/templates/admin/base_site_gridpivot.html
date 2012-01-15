@@ -6,14 +6,13 @@
 function columns (cellvalue, options, rowdata) {
   return "{% for f in reportclass.crosses %}{% if not forloop.first %}<br/>{% endif %}{{f.1.title|title}}{% endfor %}";
 };
-{% block crosses %}
-function crosses (cellvalue, options, rowdata) {
+
+{% block crosses %}function crosses (cellvalue, options, rowdata) {
   for (i in cellvalue)
     if (i == 0) res = cellvalue[i];
     else res += '<br/>' + cellvalue[i];
   return res;
-};
-{% endblock %}
+};{% endblock %}
 
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 

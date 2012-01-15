@@ -106,7 +106,6 @@ TIME_ZONE = 'Europe/Brussels'
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 # http://blogs.law.harvard.edu/tech/stories/storyReader$15
 ugettext = lambda s: s
-USE_I18N = True
 LANGUAGE_CODE = 'en'
 LANGUAGES = (
   ('en', ugettext('English')),
@@ -141,8 +140,9 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'freppledb.urls'
 ADMIN_MEDIA_PREFIX = '/media/'
-USE_L10N=True    # Represent data in the local format
-USE_I18N=True    # Use translated strings
+USE_L10N=True        # Represent data in the local format
+USE_I18N=True        # Use translated strings
+CURRENCY=("","$")    # Prefix and suffix for currency strings
 
 LOCALE_PATHS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'conf','locale')),
@@ -212,14 +212,13 @@ INTERNAL_IPS = ( '127.0.0.1', )
 
 # Default charset to use for all ``HttpResponse`` objects, if a MIME type isn't
 # manually specified.
-# For frePPLe this is important when downloading csv-files. FrePPLe encodes the
-# output in this encoding.
 DEFAULT_CHARSET = 'utf-8'
-# Windows users might want to use a different encoding to make export/import to Excel
-# more seamless (but with less functionality). Excel doesn't recognize UTF-8 encoding
-# by default. Use the following 2 lines to replace the previous statement.
-#   import locale
-#   DEFAULT_CHARSET=locale.getpreferredencoding(False)
+
+# Default characterset for writing and reading CSV files.
+# By default this is equal to the default application-wide character set.
+# Windows users can set this to the encoding that is better suited for Excel or other office tools.
+#    Windows - western europe -> 'cp1252'
+CSV_CHARSET = DEFAULT_CHARSET
 
 # A list of available user interface themes.
 # The current selection is nothing but the pack of standard themes of JQuery UI.
@@ -232,7 +231,7 @@ THEMES = [ (i,i) for i in (
   )] 
 
 # The default user interface theme
-DEFAULT_THEME = 'redmond'
+DEFAULT_THEME = 'sunny'
 
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100

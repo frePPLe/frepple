@@ -18,28 +18,28 @@ $(function(){
    	  ],{% if reportclass.editable %}
     cellsubmit: 'clientArray',
     editurl: location.pathname,
-   	{% endif %}rowNum: {{request.pagesize}},{% if is_popup %}
+    {% endif %}rowNum: {{request.pagesize}},{% if is_popup %}
    	onSelectRow: setSelectedRow,{% else %}
-   	onSelectRow: function(id){
+    onSelectRow: function(id){
      if(id && id!==lastSel){ 
         jQuery('#grid').restoreRow(lastSel); 
         lastSel=id; 
      }
      jQuery('#grid').editRow(id, true); 
     },{% endif %}
-   	pager: '#gridpager',
+    pager: '#gridpager',
     viewrecords: true,    
     sortorder: "asc",	
     hidegrid: false,
     scrollRows: true,
-	  //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
-	  //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
-	  //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns  
+    //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
+    //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
+    //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns  
     autowidth: true,{% if filters %}    
     postData: {filters: initialfilter},
     search : true,{% endif %}
-	  shrinkToFit: false,
-	  height: $(window).height() - $("#grid").offset().top - 70
+    shrinkToFit: false,
+    height: $(window).height() - $("#grid").offset().top - 70
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}
   });

@@ -38,6 +38,7 @@ from decimal import Decimal
 import csv, cStringIO
 import operator
 import math
+import locale
 import codecs
 
 from django.conf import settings
@@ -146,9 +147,9 @@ class GridFieldText(GridField):
   align = 'left'
 
 
-class GridFieldCurrency(GridField):
+class GridFieldCurrency(GridField):   
   formatter = 'currency'
-  extra = "formatoptions:{prefix:'$'}"   #TODO make the currency symbol configurable
+  extra = "formatoptions:{prefix:'%s', suffix:'%s'}"  % settings.CURRENCY
   width = 80
 
     

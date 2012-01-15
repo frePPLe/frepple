@@ -399,8 +399,7 @@ function filter_show()
       else $('#curfilter').html("");
       },
     onReset : function() {
-      var s = jQuery("#fbox_grid").jqFilter('toSQLString');
-      if (s) $('#curfilter').html(gettext("Filtered where") + " " + s);
+      if (initialfilter != '') $('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_grid").jqFilter('toSQLString'));
       else $('#curfilter').html("");
       },
     });

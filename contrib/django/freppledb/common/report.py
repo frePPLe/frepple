@@ -661,8 +661,7 @@ class GridReport(View):
           try: 
             filters.append('{"field":"%s","op":"%s","data":"%s"},' % (r.field_name, reportclass._filter_map_django_jqgrid[operator], j))
             filtered = True
-          except:
-            pass # Ignore invalid operators
+          except: pass # Ignore invalid operators
     if not filtered: return None
     filters.append(']}')
     return ''.join(filters)
@@ -672,21 +671,27 @@ class GridReport(View):
   def _get_q_filter(reportclass, filterdata):
     q_filters = []
     for rule in filterdata['rules']:
-        op, field, data = rule['op'], rule['field'], rule['data']
-        filter_fmt, exclude = reportclass._filter_map_jqgrid_django[op]
-        filter_str = smart_str(filter_fmt % {'field': reportclass._getRowByName(field).field_name})
-        if filter_fmt.endswith('__in'):
-            filter_kwargs = {filter_str: data.split(',')}
-        else:
-            filter_kwargs = {filter_str: smart_str(data)}
-        if exclude:
-            q_filters.append(~models.Q(**filter_kwargs))
-        else:
-            q_filters.append(models.Q(**filter_kwargs))    
+        try: 
+          op, field, data = rule['op'], rule['field'], rule['data']
+          filter_fmt, exclude = reportclass._filter_map_jqgrid_django[op]
+          filter_str = smart_str(filter_fmt % {'field': reportclass._getRowByName(field).field_name})
+          if filter_fmt.endswith('__in'):
+              filter_kwargs = {filter_str: data.split(',')}
+          else:
+              filter_kwargs = {filter_str: smart_str(data)}
+          if exclude:
+              q_filters.append(~models.Q(**filter_kwargs))
+          else:
+              q_filters.append(models.Q(**filter_kwargs))
+        except:
+          pass # Silently ignore invalid filters    
     if u'groups' in filterdata:
       for group in filterdata['groups']:
-        z = reportclass._get_q_filter(group)
-        if z: q_filters.append(z)
+        try:
+          z = reportclass._get_q_filter(group)
+          if z: q_filters.append(z)
+        except:
+          pass # Silently ignore invalid groups
     if len(q_filters) == 0:
       return None
     elif filterdata['groupOp'].upper() == 'OR':

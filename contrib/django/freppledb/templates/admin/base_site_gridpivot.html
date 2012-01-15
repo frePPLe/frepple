@@ -14,9 +14,12 @@ function crosses (cellvalue, options, rowdata) {
   return res;
 };
 {% endblock %}
+
+var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
+
 $(function(){ 
   jQuery("#grid").jqGrid({        
-   	url: window.location.href + (location.search.length > 0 ? "&format=json" : "?format=json"),
+   	url: window.location.href + (window.location.href.indexOf('?') == -1 ? "?format=json" : "&format=json"),
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
    	colModel:[
@@ -37,14 +40,12 @@ $(function(){
     //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
     autowidth: true,    
-	  shrinkToFit: false,
+	  shrinkToFit: false,{% if filters %}    
+    postData: {filters: initialfilter},
+    search : true,{% endif %}
 	  height: $(window).height() - $("#grid").offset().top - 70
     });
-  jQuery("#grid").jqGrid('setFrozenColumns');{% if filters %}
-  var postdata = jQuery("#grid").jqGrid('getGridParam','postData');
-  jQuery.extend(postdata, {filters: '{{filters|safe}}' });
-  jQuery('#grid').jqGrid('setGridParam', {postData: postdata, search:true});
-  //$('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_grid").jqFilter('toSQLString'));{% endif %}
+  jQuery("#grid").jqGrid('setFrozenColumns');
   });
 /*
   $("#savebutton").click(function() {

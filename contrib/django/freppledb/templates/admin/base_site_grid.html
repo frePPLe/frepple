@@ -2,9 +2,13 @@
 {% load i18n admin_list %}
 {% block extrahead %}{{ block.super }} 
 <script type="text/javascript">
-$(function(){ 
+
+var lastSel;
+var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
+
+$(function(){
   jQuery("#grid").jqGrid({        
-   	url: window.location.href + (location.search.length > 0 ? "&format=json" : "?format=json"),
+   	url: window.location.href + (window.location.href.indexOf('?') == -1 ? "?format=json" : "&format=json"),
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
    	colModel:[{% if is_popup %}
@@ -15,7 +19,14 @@ $(function(){
     cellsubmit: 'clientArray',
     editurl: location.pathname,
    	{% endif %}rowNum: {{request.pagesize}},{% if is_popup %}
-   	onSelectRow: setSelectedRow,{% endif %}
+   	onSelectRow: setSelectedRow,{% else %}
+   	onSelectRow: function(id){
+     if(id && id!==lastSel){ 
+        jQuery('#grid').restoreRow(lastSel); 
+        lastSel=id; 
+     }
+     jQuery('#grid').editRow(id, true); 
+    },{% endif %}
    	pager: '#gridpager',
     viewrecords: true,    
     sortorder: "asc",	
@@ -24,15 +35,13 @@ $(function(){
 	  //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
 	  //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
 	  //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns  
-    autowidth: true,    
+    autowidth: true,{% if filters %}    
+    postData: {filters: initialfilter},
+    search : true,{% endif %}
 	  shrinkToFit: false,
 	  height: $(window).height() - $("#grid").offset().top - 70
     });{% if reportclass.frozenColumns > 0 %}
-  jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if filters %}
-  var postdata = jQuery("#grid").jqGrid('getGridParam','postData');
-  jQuery.extend(postdata, {filters: '{{filters|safe}}' });
-  jQuery('#grid').jqGrid('setGridParam', {postData: postdata, search:true});
-  //$('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_grid").jqFilter('toSQLString'));{% endif %}
+  jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}
   });
   
 /*
@@ -76,8 +85,8 @@ $(window).bind('resize', function() {
 {% endblock %}
 {% block content_title %}{{ block.super }}{% endblock %}
 {% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">
-<a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
+{% block tools %}<div class="tools">{% if reportclass.filterable %}
+<a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
 {% if haschangeperm and not is_popup %}<a href="javascript:edit_show();" class="icon"><span class="ui-icon ui-icon-pencil"></span>{% trans 'Edit' %}</a>
 {% endif %}{% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
 {% endif %}{% if hasaddperm %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>

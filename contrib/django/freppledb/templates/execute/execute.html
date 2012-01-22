@@ -21,10 +21,10 @@
   }
   
   $(function() {
+    $("input:submit,#logfile").button();
     $( "#content-main" ).accordion({
       collapsible: true, navigation: true
       });
-    $("input:submit").button();
   });
  
 </script>
@@ -65,7 +65,7 @@ and export results into the database<br/>
 <input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked="true"{% endif %} value="1"/>{% trans "Lead time: do not plan in the past" %}<br/>
 <input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8"/>{% trans "Release fence: do not plan within the release time window" %}<br/>
 <br/>
-<a href="{{ request.prefix }}/execute/logfrepple/">{% trans "View latest log file" %}</a></td>
+<a id="logfile" href="{{ request.prefix }}/execute/logfrepple/">{% trans "View latest log file" %}</a></td>
 <td><input id="run" type="submit" value="{% trans "Run" %}" /></td>
 </tr></form>
 

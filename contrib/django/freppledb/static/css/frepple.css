@@ -161,6 +161,10 @@ table thead th.sorted {
     font-weight: normal;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 /* Dashboard is a bit too narrow by default. */
 .dashboard #content { width: 600px; }
 

@@ -3,30 +3,24 @@
 {% block extrahead %}{{ block.super }} 
 <script type="text/javascript">
 
-var lastSel;
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 
 $(function(){
   jQuery("#grid").jqGrid({        
-   	url: window.location.href + (window.location.href.indexOf('?') == -1 ? "?format=json" : "&format=json"),
+   	url: location.pathname + "?format=json",
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
    	colModel:[{% if is_popup %}
       {name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false},
       {% endif %}{% for f in reportclass.rows %}{% if not forloop.first %},
    	  {% endif %}{ {{f|safe}}{% if forloop.counter <= reportclass.frozenColumns %}frozen:true,{% endif %}{% if is_popup %}popup:true{% endif %} }{% endfor %}   	  
-   	  ],{% if reportclass.editable %}
+   	  ],
+   	rowNum: {{request.pagesize}},{% if is_popup %}
+    onSelectRow: setSelectedRow,{% else %}{% if reportclass.editable %}
+    cellEdit: true,
     cellsubmit: 'clientArray',
-    editurl: location.pathname,
-    {% endif %}rowNum: {{request.pagesize}},{% if is_popup %}
-   	onSelectRow: setSelectedRow,{% else %}
-    onSelectRow: function(id){
-     if(id && id!==lastSel){ 
-        jQuery('#grid').restoreRow(lastSel); 
-        lastSel=id; 
-     }
-     jQuery('#grid').editRow(id, true); 
-    },{% endif %}
+    editurl: location.pathname,    
+    beforeEditCell: upload.select,{% endif %}{% endif %}
     pager: '#gridpager',
     viewrecords: true,    
     sortorder: "asc",	
@@ -42,20 +36,16 @@ $(function(){
     height: $(window).height() - $("#grid").offset().top - 70
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}
-  });
   
-/*
-  $("#savebutton").click(function() {
-    alert(JSON.stringify($("#grid").getChangedCells('dirty')));
-    });
+  });
 
-$(window).bind('beforeunload', function() {
-   var rows = $("#grid").getChangedCells('dirty');
-   alert(JSON.stringify(rows));
+{% if not is_popup and reportclass.editable %}$(window).bind('beforeunload', function() {
+   rows = $("#grid").getChangedCells('dirty');
    if (rows != null && rows.length > 0) 
    {
-     $("#popup").html("Discard saved data").dialog({ 
-       title: gettext("Export data"), autoOpen: true, resizable: false,
+   return "{% trans "There are unsaved changes on this page." %}";
+     $("#popup").html("{% trans "Discard saved data" %}").dialog({ 
+       title: gettext("{% trans "Discard saved data" %}"), autoOpen: true, resizable: false,
        modal: true,
        buttons: 
           {
@@ -71,9 +61,8 @@ $(window).bind('beforeunload', function() {
       });
       return true;
   };
-  return true;
-});
-*/
+  return false;
+});{% endif %}
 
 $(window).bind('resize', function() {
   $("#grid")
@@ -87,9 +76,12 @@ $(window).bind('resize', function() {
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">{% if reportclass.filterable %}
 <a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
-{% if haschangeperm and not is_popup %}<a href="javascript:edit_show();" class="icon"><span class="ui-icon ui-icon-pencil"></span>{% trans 'Edit' %}</a>
-{% endif %}{% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
-{% endif %}{% if hasaddperm %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
+{% if not is_popup and reportclass.editable %}
+<a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
+<a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>
+{% endif %}
+{% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
+<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
 {% endif %}<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
 </div>{% endblock %}
 {% block content %}

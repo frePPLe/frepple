@@ -81,10 +81,13 @@ class GridField(object):
     if not 'field_name' in kwargs: self.field_name = self.name
 
   def __unicode__(self):
-    o = [ "name:'%s',label:'%s',width:%d,align:'%s'," % (self.name, force_unicode(self.title).title().replace("'","\\'"), self.width, self.align), ]
+    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%d,align:'%s'," % 
+          (self.name, self.name, self.editable and "true" or "false", 
+           force_unicode(self.title).title().replace("'","\\'"), 
+           self.width, self.align
+           ), ]
     if self.key: o.append( "key:true," )
     if not self.sortable: o.append("sortable:false,")
-    if not self.editable: o.append("editable:false,")
     if self.formatter: o.append("formatter:'%s'," % self.formatter)
     if self.unformat: o.append("unformat:'%s'," % self.unformat)
     if self.searchrules: o.append("searchrules:{%s}," % self.searchrules)

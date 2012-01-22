@@ -18,7 +18,7 @@ var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 
 $(function(){ 
   jQuery("#grid").jqGrid({        
-   	url: window.location.href + (window.location.href.indexOf('?') == -1 ? "?format=json" : "&format=json"),
+   	url: location.pathname + "?format=json",
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
    	colModel:[

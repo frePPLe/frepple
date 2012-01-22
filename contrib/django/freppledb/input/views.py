@@ -419,7 +419,7 @@ class BufferList(GridReport):
     GridFieldNumber('minimum', title=_('minimum')),
     GridFieldText('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='calendar'),
     GridFieldText('producing', title=_('producing'), field_name='producing__name', formatter='operation'),
-    GridFieldCurrency('carrying_cost', title=_('carrying cost')),
+    GridFieldNumber('carrying_cost', title=_('carrying cost')),
     GridFieldLastModified('lastmodified'),
     )
 

@@ -3,6 +3,6 @@
 
 {% block contextmenus %}
 <div id="usercontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-{% if perms.auth.change_user %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/auth/user/%s/">{% trans 'user' %}</a></li>{% endif %}
+{% if perms.auth.change_user %}<li class="ui-menu-item"><a id="{{ request.prefix }}/admin/auth/user/{value}/">{% trans 'user' %}</a></li>{% endif %}
 </ul></div>
 {% endblock %}

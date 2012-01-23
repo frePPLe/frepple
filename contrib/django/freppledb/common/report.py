@@ -52,7 +52,7 @@ from django.db.models.fields.related import RelatedField, AutoField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
 from django.forms.models import modelform_factory
 from django.shortcuts import render
-from django.utils import translation
+from django.utils import translation, simplejson
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
 from django.utils.html import escape
@@ -391,39 +391,10 @@ class GridReport(View):
   def post(reportclass, request, *args, **kwargs):
     if "csv_file" in request.FILES:
       # Uploading a CSV file
-      if not reportclass.model:
-        messages.add_message(request, messages.ERROR, _('Invalid upload request'))
-        return HttpResponseRedirect(request.prefix + request.get_full_path())
-      if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())):
-        messages.add_message(request, messages.ERROR, _('Not authorized'))
-        return HttpResponseRedirect(request.prefix + request.get_full_path())
-      (warnings,errors,changed,added) = reportclass.parseUpload(request, request.FILES['csv_file'].read())
-      # TODO display errors as a downloadable list in the dialog?
-      if len(errors) > 0:
-        messages.add_message(request, messages.INFO,
-         _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-         )
-        for i in errors: messages.add_message(request, messages.INFO, i)
-      elif len(warnings) > 0:
-        messages.add_message(request, messages.INFO,
-          _('Uploaded file processed with warnings: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-          )
-        for i in warnings: messages.add_message(request, messages.INFO, i)
-      else:
-        messages.add_message(request, messages.INFO,
-          _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-          )
-      return HttpResponseRedirect(request.prefix + request.get_full_path())      
+      return reportclass.parseCSVupload(request)   
     else:
       # Inline edit
-      d = reportclass.model.objects.get(pk=request.POST['id'])
-      for i in request.POST:
-        setattr(d, i, request.POST[i])
-      d.save()
-      resp = HttpResponse()
-      resp.content = "OK"
-      resp.status_code = 200
-      return resp
+      return reportclass.parseJSONupload(request)
 
 
   @classmethod
@@ -473,7 +444,50 @@ class GridReport(View):
   
   
   @classmethod
-  def parseUpload(reportclass, request, data):
+  def parseJSONupload(reportclass, request):
+    # Check permissions
+    if not reportclass.model or not reportclass.editable:
+      return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
+    if not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())):
+      return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
+  
+    # Loop over the data records 
+    transaction.enter_transaction_management(using=request.database)
+    transaction.managed(True, using=request.database)
+    resp = HttpResponse()
+    ok = True
+    try:
+      content_type_id = ContentType.objects.get_for_model(reportclass.model).pk      
+      for rec in simplejson.JSONDecoder().decode(request.read()):
+        try:
+          obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
+          del rec['id']
+          for key, value in rec.items():
+            # TODO HANDLE FOREIGN KEY RELATIONS
+            #print reportclass.model._meta.get_field_by_name(key)
+            setattr(obj, key, value)
+          obj.save(using=request.database, force_update=True)      
+          LogEntry(
+              user_id         = request.user.pk,
+              content_type_id = content_type_id,
+              object_id       = obj.pk,
+              object_repr     = force_unicode(obj),
+              action_flag     = CHANGE,
+              change_message  = _('Changed %s.') % get_text_list(rec.keys(), _('and'))
+          ).save(using=request.database)
+        except Exception, e: 
+          resp.write(e)
+          ok = False               
+    finally:
+      transaction.commit(using=request.database)
+      transaction.leave_transaction_management(using=request.database)
+    if ok: resp.write("OK")
+    resp.status_code = ok and 200 or 405
+    return resp
+  
+      
+  @classmethod
+  def parseCSVupload(reportclass, request):
       '''
       This method reads CSV data from a string (in memory) and creates or updates
       the database records.
@@ -487,22 +501,29 @@ class GridReport(View):
       is generated only when reading the record and trying to convert it to a
       Python number.
       E.g. It is possible to store invalid strings in a Date field.
-      '''
-      entityclass = reportclass.model
+      '''      
+      # Check permissions
+      if not reportclass.model:
+        messages.add_message(request, messages.ERROR, _('Invalid upload request'))
+        return HttpResponseRedirect(request.prefix + request.get_full_path())
+      if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())):
+        messages.add_message(request, messages.ERROR, _('Not authorized'))
+        return HttpResponseRedirect(request.prefix + request.get_full_path())
+    
       headers = []
       rownumber = 0
       changed = 0
       added = 0
       warnings = []
       errors = []
-      content_type_id = ContentType.objects.get_for_model(entityclass).pk
+      content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
             
       transaction.enter_transaction_management(using=request.database)
       transaction.managed(True, using=request.database)
       try:
         # Loop through the data records
         has_pk_field = False
-        for row in UnicodeReader(data):
+        for row in UnicodeReader(request.FILES['csv_file'].read()):
           rownumber += 1
   
           ### Case 1: The first line is read as a header line
@@ -513,7 +534,7 @@ class GridReport(View):
                 headers.append(False)
                 continue
               ok = False
-              for i in entityclass._meta.fields:
+              for i in reportclass.model._meta.fields:
                 if col == i.name.lower() or col == i.verbose_name.lower():
                   if i.editable == True:
                     headers.append(i)
@@ -522,16 +543,17 @@ class GridReport(View):
                   ok = True
                   break
               if not ok: errors.append(_('Incorrect field %(column)s') % {'column': col})
-              if col == entityclass._meta.pk.name.lower() \
-                or col == entityclass._meta.pk.verbose_name.lower():
+              if col == reportclass.model._meta.pk.name.lower() \
+                or col == reportclass.model._meta.pk.verbose_name.lower():
                   has_pk_field = True
-            if not has_pk_field and not isinstance(entityclass._meta.pk, AutoField):
+            if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
               # The primary key is not an auto-generated id and it is not mapped in the input...
-              errors.append(_('Missing primary key field %(key)s') % {'key': entityclass._meta.pk.name})
+              errors.append(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name})
             # Abort when there are errors
-            if len(errors) > 0: return (warnings,errors,0,0)
+            if len(errors) > 0: break   
+
             # Create a form class that will be used to validate the data
-            UploadForm = modelform_factory(entityclass,
+            UploadForm = modelform_factory(reportclass.model,
               fields = tuple([i.name for i in headers if isinstance(i,Field)]),
               formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
               )
@@ -558,9 +580,9 @@ class GridReport(View):
                 # A primary key is part of the input fields
                 try:
                   # Try to find an existing record with the same primary key
-                  it = entityclass.objects.using(request.database).get(pk=d[entityclass._meta.pk.name])
+                  it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
                   form = UploadForm(d, instance=it)
-                except entityclass.DoesNotExist:
+                except reportclass.model.DoesNotExist:
                   form = UploadForm(d)
                   it = None
               else:
@@ -608,7 +630,21 @@ class GridReport(View):
         transaction.leave_transaction_management(using=request.database)
   
       # Report all failed records
-      return (warnings, errors, changed, added)
+      if len(errors) > 0:
+        messages.add_message(request, messages.INFO,
+         _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+         )
+        for i in errors: messages.add_message(request, messages.INFO, i)
+      elif len(warnings) > 0:
+        messages.add_message(request, messages.INFO,
+          _('Uploaded file processed with warnings: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+          )
+        for i in warnings: messages.add_message(request, messages.INFO, i)
+      else:
+        messages.add_message(request, messages.INFO,
+          _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+          )
+      return HttpResponseRedirect(request.prefix + request.get_full_path())   
 
 
   @classmethod

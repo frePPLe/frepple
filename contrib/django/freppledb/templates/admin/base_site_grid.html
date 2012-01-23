@@ -39,7 +39,7 @@ $(function(){
   
   });
 
-{% if not is_popup and reportclass.editable %}$(window).bind('beforeunload', function() {
+{% if not is_popup and reportclass.editable %}/*$(window).bind('beforeunload', function() {
    rows = $("#grid").getChangedCells('dirty');
    if (rows != null && rows.length > 0) 
    {
@@ -62,7 +62,7 @@ $(function(){
       return true;
   };
   return false;
-});{% endif %}
+});*/{% endif %}
 
 $(window).bind('resize', function() {
   $("#grid")
@@ -75,7 +75,7 @@ $(window).bind('resize', function() {
 {% block content_title %}{{ block.super }}{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">{% if reportclass.filterable %}
-<a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
+<a id="filter" href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
 {% if not is_popup and reportclass.editable %}
 <a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
 <a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>

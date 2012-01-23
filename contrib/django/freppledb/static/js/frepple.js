@@ -9,48 +9,58 @@ var upload = {
   add : function (e)
   {
     upload._data.push(e);
-    $('#save').css('display', 'inline');
-    $('#undo').css('display', 'inline');
+    $('#filter').addClass("ui-state-disabled");
+    $.jgrid.hideModal("#searchmodfbox_grid");
+    $('#save').removeClass("ui-state-disabled").addClass("bold");
+    $('#undo').removeClass("ui-state-disabled").addClass("bold");
   },
 
   undo : function ()
   {
+    if ($('#undo').hasClass("ui-state-disabled")) return;
+    $("#grid").trigger("reloadGrid"); 
+    $('#save').addClass("ui-state-disabled").removeClass("bold");
+    $('#undo').addClass("ui-state-disabled").removeClass("bold");
+    $('#filter').removeClass("ui-state-disabled");
+  },
+
+  select : function ()
+  {
     // Refresh the page
-    window.location.href=window.location.href;
+    $('#filter').addClass("ui-state-disabled");
+    $.jgrid.hideModal("#searchmodfbox_grid");
+    $('#save').removeClass("ui-state-disabled").addClass("bold");
+    $('#undo').removeClass("ui-state-disabled").addClass("bold");
   },
 
   save : function (e)
   {
-    // Send the update to the server, synchronously
-    var payload =
-      '--7d79\r\nContent-Disposition: form-data; name="csrfmiddlewaretoken"\r\n\r\n'
-      + getToken()
-      + '\r\n--7d79\r\nContent-Disposition: form-data; name="data";'
-      + 'filename="data"\r\nContent-Type: application/json\r\n\r\n'
-      + Object.toJSON(upload._data)
-      + '\r\n\r\n--7d79--\r\n';
-    el = $("#database");
-    if (el == undefined)
-      u = "/edit/";
-    else if (el.name == "default")
-      u = "/edit/";
-    else
-      u = "/" + el.name + "/edit/";
-    new Ajax.Request(u, {
-        method: 'post',
-        asynchronous: false,
-        contentType: 'multipart/form-data; boundary=7d79',
-        postBody: payload,
-        onComplete: function(transport) {
-          // Refresh the page
-          window.location.href=window.location.href;
-          }
-        });
+    if ($('#save').hasClass("ui-state-disabled")) return;
+    rows = $("#grid").getChangedCells('dirty');
+    if (rows != null && rows.length > 0) 
+      // Send the update to the server    
+      $.ajax({
+          url: location.pathname,
+          data: JSON.stringify(rows),
+          type: "POST",
+          contentType: "application/json",
+          success: function () {
+            upload.undo();
+            },
+          error: function (result, stat) {
+            alert(result + " ERROR  " + stat);
+            },
+        });        
   }
 }
 
 
+//----------------------------------------------------------------------------
+// Popup row selection
+//----------------------------------------------------------------------------
+
 var selected;
+
 function setSelectedRow(id) {  
   if (selected!=undefined)
    	$(this).jqGrid('setCell', selected, 'select', null); 
@@ -58,9 +68,11 @@ function setSelectedRow(id) {
   $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, selected);" class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text" style="font-size:66%">'+gettext('Select')+'</span></button>');
 }
 
+
 //----------------------------------------------------------------------------
-// Customer formatter functions for the grid cells.
+// Custom formatter functions for the grid cells.
 //----------------------------------------------------------------------------
+
 
 function linkunformat (cellvalue, options, cell) {
 	  return cellvalue;
@@ -242,7 +254,7 @@ $(function() {
   // Autocomplete search functionality
   var database = $('#database').val();
   database = (database===undefined || database==='default') ? '' : '/' + database;
-  $( "#search" ).catcomplete({
+  $("#search").catcomplete({
     source: database + "/search/",
     minLength: 2,
     select: function( event, ui ) {
@@ -386,6 +398,7 @@ function import_show(url)
 
 function filter_show()
 {
+  if ($('#filter').hasClass("ui-state-disabled")) return;
   $('#timebuckets,#popup').dialog('close');
   jQuery("#grid").jqGrid('searchGrid', {
     closeOnEscape: true,

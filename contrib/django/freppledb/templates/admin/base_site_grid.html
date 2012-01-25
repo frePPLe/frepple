@@ -30,7 +30,7 @@ $(function(){
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
     //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns  
     autowidth: true,{% if filters %}    
-    postData: {filters: initialfilter},
+    postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
     shrinkToFit: false,
     height: $(window).height() - $("#grid").offset().top - 70

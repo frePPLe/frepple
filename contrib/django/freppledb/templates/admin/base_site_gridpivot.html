@@ -40,7 +40,7 @@ $(function(){
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
     autowidth: true,    
 	  shrinkToFit: false,{% if filters %}    
-    postData: {filters: initialfilter},
+    postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
 	  height: $(window).height() - $("#grid").offset().top - 70
     });

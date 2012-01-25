@@ -47,8 +47,15 @@ var upload = {
           success: function () {
             upload.undo();
             },
-          error: function (result, stat) {
-            alert(result + " ERROR  " + stat);
+          error: function (result, stat, errorThrown) {
+            $('#popup').html(result.responseText)
+              .dialog({
+                title: gettext("Error saving data"),
+                autoOpen: true,
+                resizable: false,
+              });
+              $('#timebuckets').dialog('close');  
+            $.jgrid.hideModal("#searchmodfbox_grid");
             },
         });        
   }

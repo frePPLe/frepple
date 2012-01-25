@@ -456,33 +456,45 @@ class GridReport(View):
     transaction.managed(True, using=request.database)
     resp = HttpResponse()
     ok = True
-    try:
+    try:          
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk      
       for rec in simplejson.JSONDecoder().decode(request.read()):
         try:
           obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
           del rec['id']
-          for key, value in rec.items():
-            # TODO HANDLE FOREIGN KEY RELATIONS
-            #print reportclass.model._meta.get_field_by_name(key)
-            setattr(obj, key, value)
-          obj.save(using=request.database, force_update=True)      
-          LogEntry(
-              user_id         = request.user.pk,
-              content_type_id = content_type_id,
-              object_id       = obj.pk,
-              object_repr     = force_unicode(obj),
-              action_flag     = CHANGE,
-              change_message  = _('Changed %s.') % get_text_list(rec.keys(), _('and'))
-          ).save(using=request.database)
+          UploadForm = modelform_factory(reportclass.model,
+            fields = tuple(rec.keys()),
+            formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
+            )
+          form = UploadForm(rec, instance=obj)
+          if form.has_changed():
+            obj = form.save()
+            LogEntry(
+                user_id         = request.user.pk,
+                content_type_id = content_type_id,
+                object_id       = obj.pk,
+                object_repr     = force_unicode(obj),
+                action_flag     = CHANGE,
+                change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
+            ).save(using=request.database)
+        except reportclass.model.DoesNotExist:
+          ok = False
+          resp.write(_("Can't find %s" % obj.pk)) 
+          resp.write('<br/>')                          
         except Exception, e: 
-          resp.write(e)
-          ok = False               
+          ok = False
+          for error in form.non_field_errors():
+            resp.write('%s: %s</br>' % (obj.pk, error))            
+            resp.write('<br/>')                          
+          for field in form:
+            for error in field.errors:
+              resp.write('%s %s: %s: %s' % (obj.pk, field.name, rec[field.name], error))                        
+              resp.write('<br/>')                          
     finally:
       transaction.commit(using=request.database)
       transaction.leave_transaction_management(using=request.database)
     if ok: resp.write("OK")
-    resp.status_code = ok and 200 or 405
+    resp.status_code = ok and 200 or 403
     return resp
   
       
@@ -874,7 +886,7 @@ class GridPivot(GridReport):
 
 
   @classmethod
-  def _generate_csv_data(reportclass, request, *args, **kwargs):  # TODO
+  def _generate_csv_data(reportclass, request, *args, **kwargs):
     sf = cStringIO.StringIO()    
     if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
       writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')

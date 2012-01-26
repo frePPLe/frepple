@@ -543,7 +543,7 @@ class LoadList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='load'),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
     GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='resource'),
     GridFieldNumber('quantity', title=_('quantity')),
@@ -569,7 +569,7 @@ class FlowList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='flow'),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
     GridFieldText('thebuffer', title=_('buffer'), field_name='thebuffer__name', formatter='buffer'),
     GridFieldText('type', title=_('type')),

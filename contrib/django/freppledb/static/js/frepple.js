@@ -146,6 +146,16 @@ jQuery.extend($.fn.fmatter, {
     if (options['colModel']['popup']) return cellvalue;     
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='group'></span>";
   },
+  flow : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined) return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='flow'></span>";
+  },
+  load : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined) return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='load'></span>";
+  },
 });
 jQuery.extend($.fn.fmatter.item, {
     unformat : linkunformat
@@ -181,6 +191,12 @@ jQuery.extend($.fn.fmatter.user, {
   unformat : linkunformat
 });
 jQuery.extend($.fn.fmatter.group, {
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.flow, {
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.load, {
   unformat : linkunformat
 });
 

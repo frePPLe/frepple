@@ -26,17 +26,16 @@ var upload = {
 
   select : function ()
   {
-    // Refresh the page
     $('#filter').addClass("ui-state-disabled");
     $.jgrid.hideModal("#searchmodfbox_grid");
     $('#save').removeClass("ui-state-disabled").addClass("bold");
     $('#undo').removeClass("ui-state-disabled").addClass("bold");
   },
 
-  save : function (e)
+  save : function(customdata)
   {
     if ($('#save').hasClass("ui-state-disabled")) return;
-    rows = $("#grid").getChangedCells('dirty');
+    rows = customdata ? getData() : $("#grid").getChangedCells('dirty');
     if (rows != null && rows.length > 0) 
       // Send the update to the server    
       $.ajax({

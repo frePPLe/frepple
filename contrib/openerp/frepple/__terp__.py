@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 #
-# Copyright (C) 2010-2011 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2010-2012 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published

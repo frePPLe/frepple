@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -23,9 +23,9 @@
 r'''
 Main Django configuration file.
 '''
+import os, os.path, sys, locale
 
 # frePPLe specific variables  # TODO remove these
-import os, os.path, sys
 try:
   FREPPLE_HOME = os.environ['FREPPLE_HOME']
 except:
@@ -186,7 +186,7 @@ SESSION_COOKIE_DOMAIN = None              # A string, or None for standard domai
 SESSION_SAVE_EVERY_REQUEST = False        # Whether to save the session data on every request.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user closes his browser.
 
-MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
+MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.SessionStorage'
 
 # Mail settings
 #DEFAULT_FROM_EMAIL #if not pass from_email to send_mail func.
@@ -215,10 +215,12 @@ INTERNAL_IPS = ( '127.0.0.1', )
 DEFAULT_CHARSET = 'utf-8'
 
 # Default characterset for writing and reading CSV files.
-# By default this is equal to the default application-wide character set.
-# Windows users can set this to the encoding that is better suited for Excel or other office tools.
+# We are assuming here that the default encoding of clients is the same as the server. 
+# If the server is on Linux and the clients are using Windows, this guess will not be good.
+# For Windows clients you should set this to the encoding that is better suited for Excel or 
+# other office tools.
 #    Windows - western europe -> 'cp1252'
-CSV_CHARSET = DEFAULT_CHARSET
+CSV_CHARSET = locale.getdefaultlocale()[1]
 
 # A list of available user interface themes.
 # The current selection is nothing but the pack of standard themes of JQuery UI.

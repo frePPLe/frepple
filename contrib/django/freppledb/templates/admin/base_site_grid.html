@@ -16,11 +16,11 @@ $(function(){
    	  {% endif %}{ {{f|safe}}{% if forloop.counter <= reportclass.frozenColumns %}frozen:true,{% endif %}{% if is_popup %}popup:true{% endif %} }{% endfor %}   	  
    	  ],
    	rowNum: {{request.pagesize}},{% if is_popup %}
-    onSelectRow: setSelectedRow,{% else %}{% if reportclass.editable %}
+    onSelectRow: setSelectedRow,{% else %}{% if reportclass.editable and haschangeperm %}
     cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname,    
-    beforeEditCell: upload.select,{% endif %}{% endif %}
+    afterEditCell: upload.select,{% endif %}{% endif %}
     pager: '#gridpager',
     viewrecords: true,    
     sortorder: "asc",	
@@ -76,8 +76,8 @@ $(window).bind('resize', function() {
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">{% if reportclass.filterable %}
 <a id="filter" href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
-{% if not is_popup and reportclass.editable %}
-<a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
+{% if not is_popup and reportclass.editable and haschangeperm %}
+<a id="save" href="javascript:upload.save(false);" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
 <a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>
 {% endif %}
 {% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>

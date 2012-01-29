@@ -181,7 +181,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       self.message_user(request, msg)
 
       # Redirect to previous crumb
-      return HttpResponseRedirect(request.session['crumbs'][-2][2])
+      return HttpResponseRedirect(request.session['crumbs'][request.prefix][-2][2])
 
 
   def response_change(self, request, obj):
@@ -215,7 +215,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     else:
       self.message_user(request, msg)
       # Redirect to previous crumb
-      return HttpResponseRedirect(request.session['crumbs'][-2][2])
+      return HttpResponseRedirect(request.session['crumbs'][request.prefix][-2][2])
 
   @csrf_protect_m
   @transaction.commit_on_success
@@ -249,7 +249,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       self.message_user(request, _('The %(name)s "%(obj)s" was deleted successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj_display)})
 
       # Redirect to previous crumb
-      return HttpResponseRedirect(request.session['crumbs'][-3][2])
+      return HttpResponseRedirect(request.session['crumbs'][request.prefix][-3][2])
 
     object_name = force_unicode(opts.verbose_name)
 

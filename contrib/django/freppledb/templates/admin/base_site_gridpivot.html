@@ -27,10 +27,12 @@ $(function(){
       { name:'columns',label:' ',sortable:false,width:150,align:'left',formatter:columns,search:false,frozen:true,title:false },
       {% for f in bucketlist %}{% if not forloop.first %},
       {% endif %}{ name:'{{f.name|safe}}',startdate:'{{f.startdate|date:"Y-m-d"}}',enddate:'{{f.enddate|date:"Y-m-d"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
-   	  ],{% if reportclass.editable %}
+   	  ],{% if reportclass.editable and haschangeperm %}
+    cellEdit: true,
     cellsubmit: 'clientArray',
-    editurl: location.pathname,
-   	{% endif %}rowNum: {{request.pagesize}},
+    editurl: location.pathname,    
+    afterEditCell: upload.select,
+    {% endif %}rowNum: {{request.pagesize}},
    	pager: '#gridpager',
     viewrecords: true,    
     sortorder: "asc",	
@@ -85,6 +87,10 @@ $(window).bind('resize', function() {
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">{% if reportclass.filterable %}
 <a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
+{% if reportclass.editable and haschangeperm %}
+<a id="save" href="javascript:upload.save(true);" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
+<a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>
+{% endif %}
 <a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
 <a href="javascript:export_show(false);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
 </div>{% endblock %}

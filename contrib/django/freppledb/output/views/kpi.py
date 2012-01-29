@@ -31,7 +31,6 @@ from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber
 
 class Report(GridReport):
   title = _("Performance Indicators")
-  reset_crumbs = True
   frozenColumns = 0
   basequeryset = Parameter.objects.all()
   rows = (

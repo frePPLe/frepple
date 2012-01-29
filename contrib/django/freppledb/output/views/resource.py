@@ -169,7 +169,6 @@ class DetailReport(GridReport):
   '''
   template = 'output/loadplan.html'
   title = _("Resource detail report")
-  reset_crumbs = False
   basequeryset = LoadPlan.objects.select_related() \
     .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
   model = LoadPlan

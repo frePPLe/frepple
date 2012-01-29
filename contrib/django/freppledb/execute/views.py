@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -64,7 +64,6 @@ def main(request):
   # Send to template
   return render(request, 'execute/execute.html', {
           'title': _('Execute'),
-          'reset_crumbs': True,
           'capacityconstrained': constraint & 4,
           'materialconstrained': constraint & 2,
           'leadtimeconstrained': constraint & 1,
@@ -283,7 +282,6 @@ class LogReport(GridReport):
   A list report to review the history of actions.
   '''
   title = _('Command log')
-  reset_crumbs = True
   basequeryset = log.objects.all()
   default_sort = '1d'
   model = log

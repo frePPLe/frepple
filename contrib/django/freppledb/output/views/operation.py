@@ -115,7 +115,6 @@ class DetailReport(GridReport):
   '''
   template = 'output/operationplan.html'
   title = _("Operation detail report")
-  reset_crumbs = False
   basequeryset = OperationPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
   model = OperationPlan
   frozenColumns = 0

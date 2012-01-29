@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2011 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -103,6 +103,17 @@ def search(request):
          '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('resource')), 'count': count}).capitalize()
          })
       result.extend([ {'label':'resource', 'value':i[0]} for i in query[:10] ])
+    
+  # Search operations
+  if term and request.user.has_perm('input.change_operation'):
+    query = Operation.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
+    count = len(query)
+    if count > 0:
+      result.append( {'value': None, 'label': (ungettext(
+         '%(name)s - %(count)d match', 
+         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('operation')), 'count': count}).capitalize()
+         })
+      result.extend([ {'label':'operation', 'value':i[0]} for i in query[:10] ])
     
   # Construct reply
   return HttpResponse(

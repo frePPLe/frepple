@@ -161,7 +161,7 @@ table thead th.sorted {
     font-weight: normal;
 }
 
-.ui-jqgrid tr.jqgrow td.dirty-cell {
+.ui-jqgrid tr.jqgrow td.dirty-cell, input.dirty-cell {
   font-weight: bold;
 }
 

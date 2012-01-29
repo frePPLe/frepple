@@ -157,11 +157,16 @@ class GridFieldCurrency(GridField):
 
     
 def getBOM(encoding):
-  if encoding == 'utf_32_be': return codecs.BOM_UTF32_BE
-  elif encoding == 'utf_32_le': return codecs.BOM_UTF32_LE
-  elif encoding == 'utf_16_be': return codecs.BOM_UTF16_BE
-  elif encoding == 'utf_16_le': return codecs.BOM_UTF16_LE
-  elif encoding == 'utf-8': return codecs.BOM_UTF8
+  try: 
+    # Get the official name of the encoding (since encodings can have many alias names)
+    name = codecs.lookup(encoding).name  
+  except:
+    return ''  # Unknown encoding, without BOM header
+  if name == 'utf-32-be': return codecs.BOM_UTF32_BE
+  elif name == 'utf-32-le': return codecs.BOM_UTF32_LE
+  elif name == 'utf-16-be': return codecs.BOM_UTF16_BE
+  elif name == 'utf-16-le': return codecs.BOM_UTF16_LE
+  elif name == 'utf-8': return codecs.BOM_UTF8
   else: return ''
   
   
@@ -232,9 +237,6 @@ class GridReport(View):
   # It is also used to generate the actual results, in case no method
   # "query" is provided on the class.
   basequeryset = None
-  
-  # Whether or not the breadcrumbs are reset when we open the report
-  reset_crumbs = True
 
   # Specifies which column is used for an initial filter
   default_sort = '1a'    # TODO "default_sort" not used yet
@@ -421,7 +423,6 @@ class GridReport(View):
         'bucketnames': bucketnames,
         'bucketlist': bucketlist,
         'model': reportclass.model,
-        'reset_crumbs': reportclass.reset_crumbs,
         'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())),
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())),
         })
@@ -447,9 +448,9 @@ class GridReport(View):
   def parseJSONupload(reportclass, request):
     # Check permissions
     if not reportclass.model or not reportclass.editable:
-      return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
+      return HttpResponseForbidden(_('Permission denied'))
     if not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())):
-      return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
+      return HttpResponseForbidden(_('Permission denied'))
   
     # Loop over the data records 
     transaction.enter_transaction_management(using=request.database)
@@ -479,16 +480,16 @@ class GridReport(View):
             ).save(using=request.database)
         except reportclass.model.DoesNotExist:
           ok = False
-          resp.write(_("Can't find %s" % obj.pk)) 
+          resp.write(escape(_("Can't find %s" % obj.pk))) 
           resp.write('<br/>')                          
         except Exception, e: 
           ok = False
           for error in form.non_field_errors():
-            resp.write('%s: %s</br>' % (obj.pk, error))            
+            resp.write(escape('%s: %s</br>' % (obj.pk, error)))            
             resp.write('<br/>')                          
           for field in form:
             for error in field.errors:
-              resp.write('%s %s: %s: %s' % (obj.pk, field.name, rec[field.name], error))                        
+              resp.write(escape('%s %s: %s: %s' % (obj.pk, field.name, rec[field.name], error)))                        
               resp.write('<br/>')                          
     finally:
       transaction.commit(using=request.database)
@@ -595,11 +596,15 @@ class GridReport(View):
                   it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
                   form = UploadForm(d, instance=it)
                 except reportclass.model.DoesNotExist:
-                  form = UploadForm(d)   # TODO Always creates the model in the default database
+                  try: it = reportclass.model.objects.using(request.database).get_or_create(pk=d[reportclass.model._meta.pk.name])
+                  except Exception, e: 
+                    print e
+                    #pass   # This save can fail, eg for non-nullable fields
+                  form = UploadForm(d,it)
                   it = None
               else:
                 # No primary key required for this model
-                form = UploadForm(d)
+                form = UploadForm(d)  # TODO object is always saved in the default database
                 it = None
   
               # Step 3: Validate the data and save to the database

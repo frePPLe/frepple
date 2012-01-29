@@ -40,7 +40,6 @@ class ReportByDemand(GridReport):
   '''
   template = 'output/pegging.html'
   title = _("Demand plan")
-  reset_crumbs = False
   basequeryset = Demand.objects.all().values('name')
   frozenColumns = 0
   editable = False
@@ -209,7 +208,6 @@ class ReportByBuffer(GridReport):
   '''
   template = 'output/operationpegging.html'
   title = _("Pegging report")
-  reset_crumbs = False
   basequeryset = FlowPlan.objects.all()
   frozenColumns = 0
   editable = False
@@ -285,7 +283,6 @@ class ReportByResource(GridReport):
   '''
   template = 'output/operationpegging.html'
   title = _("Pegging report")
-  reset_crumbs = False
   basequeryset = LoadPlan.objects.all()
   frozenColumns = 0
   editable = False
@@ -342,7 +339,6 @@ class ReportByOperation(GridReport):
   '''
   template = 'output/operationpegging.html'
   title = _("Pegging report")
-  reset_crumbs = False
   basequeryset = OperationPlan.objects.all()
   frozenColumns = 0
   editable = False

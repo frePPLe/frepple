@@ -38,7 +38,8 @@ from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.execute.models import Scenario
 
-HOMECRUMB = '<a href="%s/admin/">%s</a>'
+HOME_CRUMB = '<a href="%s/admin/">%s</a>'
+NUMBER_OF_CRUMBS = 5
 
 register = Library()
 variable_title = Variable("title")
@@ -119,28 +120,21 @@ class CrumbsNode(Node):
   The admin app already defines a block for crumbs, so the typical usage of the
   crumbs tag is as follows:
   {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
-
-  When the context variable 'reset_crumbs' is defined and set to True, the trail of
-  breadcrumbs is truncated and restarted.
-  The variable can be set either as an extra context variable in the view
-  code, or with the 'set' template tag in the template:
-  {% set reset_crumbs "True" %}
   '''
   def render(self, context):
-    global HOMECRUMB
-    global variable_title
     try: req = context['request']
     except: return ''  # No request found in the context: no crumbs...
+
     # Pick up the current crumbs from the session cookie
-    try: cur = req.session['crumbs']
-    except: cur = [(_('Home'), HOMECRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
+    try: 
+      cur = req.session['crumbs']
+      try: cur = cur[req.prefix]
+      except: cur = [(_('Home'), HOME_CRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
+    except: 
+      req.session['crumbs'] = {}
+      cur = [(_('Home'), HOME_CRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
 
-    # Check if we need to reset the crumbs
-    try:
-      if context['reset_crumbs']: cur = [(_('Home'), HOMECRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
-    except: pass
-
-    # Pop from the stack if the same url is already in the crumbs
+    # Pop from the stack if the same URL is already in the crumbs
     try: title = variable_title.resolve(context)
     except: title = req.get_full_path()
     # A special case to work around the hardcoded title of the main admin page
@@ -152,6 +146,9 @@ class CrumbsNode(Node):
          break
        cnt += 1
 
+    # Keep only a limited number of links in the history
+    while len(cur) > NUMBER_OF_CRUMBS: del cur[1]
+    
     # Push current url on the stack
     cur.append( (unicode(title),
       '<a href="%s%s%s">%s</a>' % (
@@ -166,7 +163,7 @@ class CrumbsNode(Node):
       ))
 
     # Update the current session
-    req.session['crumbs'] = cur
+    req.session['crumbs'][req.prefix] = cur
 
     # Now create HTML code to return
     return '  >  '.join([i[1] for i in cur])

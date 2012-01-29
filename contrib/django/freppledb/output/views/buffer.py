@@ -145,7 +145,6 @@ class DetailReport(GridReport):
   '''
   template = 'output/flowplan.html'
   title = _("Inventory detail report")
-  reset_crumbs = False
   basequeryset = FlowPlan.objects.select_related() \
     .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
   model = FlowPlan

@@ -520,7 +520,7 @@ class GridReport(View):
         messages.add_message(request, messages.ERROR, _('Invalid upload request'))
         return HttpResponseRedirect(request.prefix + request.get_full_path())
       if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())):
-        messages.add_message(request, messages.ERROR, _('Not authorized'))
+        messages.add_message(request, messages.ERROR, _('Permission denied'))
         return HttpResponseRedirect(request.prefix + request.get_full_path())
     
       headers = []

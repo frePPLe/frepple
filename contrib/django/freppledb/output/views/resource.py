@@ -20,13 +20,17 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+from datetime import datetime
 
-from django.db import connections
+from django.db import connections, transaction
+from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.conf import settings
+from django.http import HttpResponse, HttpResponseForbidden
 
 from freppledb.input.models import Resource, Parameter
 from freppledb.output.models import LoadPlan
@@ -55,6 +59,46 @@ class OverviewReport(GridPivot):
     ('utilization',{'title': _('utilization %'),}),
     )
 
+  @classmethod
+  def parseJSONupload(reportclass, request): 
+    # Check permissions
+    if not request.user.has_perm('input.change_resource'):
+      return HttpResponseForbidden(_('Permission denied'))
+
+    # Loop over the data records 
+    transaction.enter_transaction_management(using=request.database)
+    transaction.managed(True, using=request.database)
+    resp = HttpResponse()
+    ok = True
+    try:          
+      for rec in simplejson.JSONDecoder().decode(request.read()):
+        try:
+          # Find the resource
+          res = Resource.objects.using(request.database).get(name = rec['id'])
+          if not res.maximum_calendar:
+            ok = False
+            resp.write("%s: %s<br/>" % (escape(rec['id']), _('Resource has no maximum calendar')))
+            continue
+          # Update the calendar
+          start = datetime.strptime(rec['startdate'],'%Y-%m-%d')
+          end = datetime.strptime(rec['enddate'],'%Y-%m-%d')
+          res.maximum_calendar.setvalue(
+            start,
+            end,
+            float(rec['value']) / (end - start).days,
+            user = request.user)            
+        except Exception, e:
+          ok = False
+          resp.write(e)
+          resp.write('<br/>')                          
+    finally:
+      transaction.commit(using=request.database)
+      transaction.leave_transaction_management(using=request.database)
+    if ok: resp.write("OK")
+    resp.status_code = ok and 200 or 403
+    return resp
+  
+      
   @staticmethod
   def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)        

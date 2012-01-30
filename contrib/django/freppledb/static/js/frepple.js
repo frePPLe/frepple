@@ -32,10 +32,16 @@ var upload = {
     $('#undo').removeClass("ui-state-disabled").addClass("bold");
   },
 
-  save : function(customdata)
+  save : function()
   {
     if ($('#save').hasClass("ui-state-disabled")) return;
-    rows = customdata ? getData() : $("#grid").getChangedCells('dirty');
+    
+    // Pick up all changed cells. If a function "getData" is defined on the 
+    // page we use that, otherwise we use the standard functionality of jqgrid.
+    if (typeof getDirtyData == 'function')
+      rows = getDirtyData();
+    else
+      rows = $("#grid").getChangedCells('dirty');
     if (rows != null && rows.length > 0) 
       // Send the update to the server    
       $.ajax({

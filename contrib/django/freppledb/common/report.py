@@ -395,7 +395,7 @@ class GridReport(View):
       # Uploading a CSV file
       return reportclass.parseCSVupload(request)   
     else:
-      # Inline edit
+      # Saving after inline edits
       return reportclass.parseJSONupload(request)
 
 
@@ -485,7 +485,7 @@ class GridReport(View):
         except Exception, e: 
           ok = False
           for error in form.non_field_errors():
-            resp.write(escape('%s: %s</br>' % (obj.pk, error)))            
+            resp.write(escape('%s: %s' % (obj.pk, error)))            
             resp.write('<br/>')                          
           for field in form:
             for error in field.errors:
@@ -509,7 +509,7 @@ class GridReport(View):
         - a first character # marks a comment line
         - empty rows are skipped
   
-      Limitation: SQLite doesnt validate the input data appropriately.
+      Limitation: SQLite doesnt validate the input data appropriately.    # TODO check this statement!!!
       E.g. It is possible to store character strings in a number field. An error
       is generated only when reading the record and trying to convert it to a
       Python number.

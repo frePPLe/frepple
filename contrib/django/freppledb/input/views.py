@@ -149,32 +149,8 @@ class uploadjson:
         try:
           entity = i['entity']
 
-          # CASE 1: The maximum calendar of a resource is being edited
-          if entity == 'resource.maximum':
-            # Create a message
-            try:
-              msg = "capacity change for '%s' between %s and %s to %s" % \
-                    (i['name'],i['startdate'],i['enddate'],i['value'])
-            except:
-              msg = "capacity change"
-            # a) Verify permissions
-            if not request.user.has_perm('input.change_resource'):
-              raise Exception('No permission to change resources')
-            # b) Find the calendar
-            res = Resource.objects.using(request.database).get(name = i['name'])
-            if not res.maximum_calendar:
-              raise Exception('Resource "%s" has no maximum calendar' % res.name)
-            # c) Update the calendar
-            start = datetime.strptime(i['startdate'],'%Y-%m-%d')
-            end = datetime.strptime(i['enddate'],'%Y-%m-%d')
-            res.maximum_calendar.setvalue(
-              start,
-              end,
-              float(i['value']) / (end - start).days,
-              user = request.user)
-
-          # CASE 2: The forecast quantity is being edited
-          elif entity == 'forecast.total':
+          # CASE 2: The forecast quantity is being edited   # TODO factor out to different method
+          if entity == 'forecast.total':
             # Create a message
             try:
               msg = "forecast change for '%s' between %s and %s to %s" % \

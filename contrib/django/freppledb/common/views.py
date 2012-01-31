@@ -39,7 +39,7 @@ from freppledb.input.models import Bucket
 
 
 class PreferencesForm(forms.Form):
-  language = forms.ChoiceField(label = _("Language"),
+  language = forms.ChoiceField(label = _("language"),
     initial="auto",
     choices=Preferences.languageList,
     help_text=_("Language of the user interface"),
@@ -49,23 +49,23 @@ class PreferencesForm(forms.Form):
     required=False,
     help_text=_("Time bucket size for reports"),
     )
-  startdate = forms.DateField(label = _("Report start date"),
+  startdate = forms.DateField(label = _("report start date"),
     required=False,
     help_text=_("Start date for filtering report data"),
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
-  enddate = forms.DateField(label = _("Report end date"),
+  enddate = forms.DateField(label = _("report end date"),
     required=False,
     help_text=_("End date for filtering report data"),
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
-  pagesize = forms.IntegerField(label = _('Page size'),
+  pagesize = forms.IntegerField(label = _('page size'),
     required=False,
     initial=100,
     min_value=25,
     help_text = _('Number of records to fetch in a single page from the server'),                            
     )
-  theme = forms.ChoiceField(label = _('Theme'),
+  theme = forms.ChoiceField(label = _('theme'),
     required=False,
     choices=settings.THEMES,
     help_text=_('Theme for the user interface'),

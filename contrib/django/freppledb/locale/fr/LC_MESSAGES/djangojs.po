@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-09 10:53+0200\n"
+"POT-Creation-Date: 2012-01-31 08:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,90 +18,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1\n"
 
-#: static/frepple.js:256
-msgid "contains (no case)"
+#: static/js/frepple.js:56
+msgid "Error saving data"
 msgstr ""
 
-#: static/frepple.js:257
-msgid "contains"
+#: static/js/frepple.js:76
+msgid "Select"
 msgstr ""
 
-#: static/frepple.js:258
-msgid "starts (no case)"
+#: static/js/frepple.js:378
+msgid "Load a CSV-formatted text file."
 msgstr ""
 
-#: static/frepple.js:259
-msgid "starts"
-msgstr ""
-
-#: static/frepple.js:260
-msgid "ends (no case)"
-msgstr ""
-
-#: static/frepple.js:261
-msgid "ends"
-msgstr ""
-
-#: static/frepple.js:262
-msgid "equals (no case)"
-msgstr ""
-
-#: static/frepple.js:263
-msgid "equals"
-msgstr ""
-
-#: static/frepple.js:264
-msgid "is null"
-msgstr ""
-
-#: static/frepple.js:324
-msgid "Filter data"
-msgstr ""
-
-#: static/frepple.js:393
-msgid "Filter"
-msgstr ""
-
-#: static/frepple.js:394 static/frepple.js.py:580
-msgid "Cancel"
-msgstr ""
-
-#: static/frepple.js:528 static/frepple.js.py:533
-msgid "False"
-msgstr ""
-
-#: static/frepple.js:529 static/frepple.js.py:534
-msgid "True"
-msgstr ""
-
-#: static/frepple.js:573
-msgid "Import data"
-msgstr ""
-
-#: static/frepple.js:576
-msgid "Load data from a CSV-formatted text file in the database."
-msgstr ""
-
-#: static/frepple.js:577
+#: static/js/frepple.js:379
 msgid "The first row should contain the field names."
 msgstr ""
 
-#: static/frepple.js:578
+#: static/js/frepple.js:380
 msgid "Data file"
 msgstr ""
 
-#: static/frepple.js:579
-msgid "Upload"
+#: static/js/frepple.js:382
+msgid "Import data"
 msgstr ""
 
-#: static/frepple.js:602
-msgid "Export data"
+#: static/js/frepple.js:387
+msgid "Import"
 msgstr ""
 
-#: static/frepple.js:604
+#: static/js/frepple.js:391 static/js/frepple.js.py:536
+msgid "Cancel"
+msgstr ""
+
+#: static/js/frepple.js:439
 msgid "CSV style"
 msgstr ""
 
-#: static/frepple.js:605
+#: static/js/frepple.js:440
 msgid "Table"
+msgstr ""
+
+#: static/js/frepple.js:500
+msgid "OK"
 msgstr ""

@@ -23,99 +23,100 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-09 10:53+0200\n"
-"PO-Revision-Date: 2011-04-03 17:43+0100\n"
-"Last-Translator: johan de taeye <jdetaeye@users.sourceforge.net>\n"
+"POT-Creation-Date: 2012-01-31 08:44+0100\n"
+"PO-Revision-Date: 2012-01-31 08:43+0100\n"
+"Last-Translator: Johan De Taeye <jdetaeye@users.sourceforge.net>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/frepple.js:256
-msgid "contains (no case)"
-msgstr "contiene (no case)"
+#: static/js/frepple.js:56
+msgid "Error saving data"
+msgstr ""
 
-#: static/frepple.js:257
-msgid "contains"
-msgstr "contiene"
+#: static/js/frepple.js:76
+msgid "Select"
+msgstr ""
 
-#: static/frepple.js:258
-msgid "starts (no case)"
-msgstr "inizia (no case)"
+#: static/js/frepple.js:378
+msgid "Load a CSV-formatted text file."
+msgstr ""
 
-#: static/frepple.js:259
-msgid "starts"
-msgstr "inizia"
-
-#: static/frepple.js:260
-msgid "ends (no case)"
-msgstr "finisce (no case)"
-
-#: static/frepple.js:261
-msgid "ends"
-msgstr "finisce"
-
-#: static/frepple.js:262
-msgid "equals (no case)"
-msgstr "uguale (no case)"
-
-#: static/frepple.js:263
-msgid "equals"
-msgstr "uguale"
-
-#: static/frepple.js:264
-msgid "is null"
-msgstr "e' nullo"
-
-#: static/frepple.js:324
-msgid "Filter data"
-msgstr "Filtro dati"
-
-#: static/frepple.js:393
-msgid "Filter"
-msgstr "Filtro"
-
-#: static/frepple.js:394 static/frepple.js.py:580
-msgid "Cancel"
-msgstr "Cancella"
-
-#: static/frepple.js:528 static/frepple.js.py:533
-msgid "False"
-msgstr "Falso"
-
-#: static/frepple.js:529 static/frepple.js.py:534
-msgid "True"
-msgstr "Vero"
-
-#: static/frepple.js:573
-msgid "Import data"
-msgstr "Importa dati"
-
-#: static/frepple.js:576
-msgid "Load data from a CSV-formatted text file in the database."
-msgstr "Carica dati nel database da un file di testo CSV."
-
-#: static/frepple.js:577
+#: static/js/frepple.js:379
 msgid "The first row should contain the field names."
 msgstr "La pirma riga dovrebbe contenere i nomi dei campi"
 
-#: static/frepple.js:578
+#: static/js/frepple.js:380
 msgid "Data file"
 msgstr "file di dati"
 
-#: static/frepple.js:579
-msgid "Upload"
-msgstr "Caricamento"
+#: static/js/frepple.js:382
+msgid "Import data"
+msgstr "Importa dati"
 
-#: static/frepple.js:602
-msgid "Export data"
-msgstr "Esporta i dati"
+#: static/js/frepple.js:387
+msgid "Import"
+msgstr "Importa dati"
 
-#: static/frepple.js:604
+#: static/js/frepple.js:391 static/js/frepple.js.py:536
+msgid "Cancel"
+msgstr "Cancella"
+
+#: static/js/frepple.js:439
 msgid "CSV style"
 msgstr "CSV stile"
 
-#: static/frepple.js:605
+#: static/js/frepple.js:440
 msgid "Table"
 msgstr "Tabella"
+
+#: static/js/frepple.js:500
+msgid "OK"
+msgstr ""
+
+#~ msgid "contains (no case)"
+#~ msgstr "contiene (no case)"
+
+#~ msgid "contains"
+#~ msgstr "contiene"
+
+#~ msgid "starts (no case)"
+#~ msgstr "inizia (no case)"
+
+#~ msgid "starts"
+#~ msgstr "inizia"
+
+#~ msgid "ends (no case)"
+#~ msgstr "finisce (no case)"
+
+#~ msgid "ends"
+#~ msgstr "finisce"
+
+#~ msgid "equals (no case)"
+#~ msgstr "uguale (no case)"
+
+#~ msgid "equals"
+#~ msgstr "uguale"
+
+#~ msgid "is null"
+#~ msgstr "e' nullo"
+
+#~ msgid "Filter data"
+#~ msgstr "Filtro dati"
+
+#~ msgid "Filter"
+#~ msgstr "Filtro"
+
+#~ msgid "False"
+#~ msgstr "Falso"
+
+#~ msgid "True"
+#~ msgstr "Vero"
+
+#~ msgid "Upload"
+#~ msgstr "Caricamento"
+
+#~ msgid "Export data"
+#~ msgstr "Esporta i dati"

@@ -23,99 +23,100 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-09 10:53+0200\n"
-"PO-Revision-Date: 2010-05-15 23:22+0100\n"
-"Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
+"POT-Creation-Date: 2012-01-31 08:44+0100\n"
+"PO-Revision-Date: 2012-01-31 08:40+0100\n"
+"Last-Translator: Johan De Taeye <jdetaeye@users.sourceforge.net>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/frepple.js:256
-msgid "contains (no case)"
-msgstr "bevat (no case)"
+#: static/js/frepple.js:56
+msgid "Error saving data"
+msgstr "Foutmelding tijdens wegschrijven gegevens"
 
-#: static/frepple.js:257
-msgid "contains"
-msgstr "bevat"
+#: static/js/frepple.js:76
+msgid "Select"
+msgstr "Selecteer"
 
-#: static/frepple.js:258
-msgid "starts (no case)"
-msgstr "begint (no case)"
+#: static/js/frepple.js:378
+msgid "Load a CSV-formatted text file."
+msgstr "Laad een bestand in CSV-formaat."
 
-#: static/frepple.js:259
-msgid "starts"
-msgstr "start"
-
-#: static/frepple.js:260
-msgid "ends (no case)"
-msgstr "eindigt (no case)"
-
-#: static/frepple.js:261
-msgid "ends"
-msgstr "eindigt"
-
-#: static/frepple.js:262
-msgid "equals (no case)"
-msgstr "is (no case)"
-
-#: static/frepple.js:263
-msgid "equals"
-msgstr "is"
-
-#: static/frepple.js:264
-msgid "is null"
-msgstr "is nul"
-
-#: static/frepple.js:324
-msgid "Filter data"
-msgstr "Filter gegevens"
-
-#: static/frepple.js:393
-msgid "Filter"
-msgstr "Filter"
-
-#: static/frepple.js:394 static/frepple.js.py:580
-msgid "Cancel"
-msgstr "Annuleer"
-
-#: static/frepple.js:528 static/frepple.js.py:533
-msgid "False"
-msgstr "Onwaar"
-
-#: static/frepple.js:529 static/frepple.js.py:534
-msgid "True"
-msgstr "Waar"
-
-#: static/frepple.js:573
-msgid "Import data"
-msgstr "Importeer gegevens"
-
-#: static/frepple.js:576
-msgid "Load data from a CSV-formatted text file in the database."
-msgstr "Laad een bestand in CSV-formaat in de database."
-
-#: static/frepple.js:577
+#: static/js/frepple.js:379
 msgid "The first row should contain the field names."
 msgstr "De eerste rij moet de veldnamen bevatten."
 
-#: static/frepple.js:578
+#: static/js/frepple.js:380
 msgid "Data file"
 msgstr "Gegevensbestand"
 
-#: static/frepple.js:579
-msgid "Upload"
-msgstr "Laad"
+#: static/js/frepple.js:382
+msgid "Import data"
+msgstr "Importeer gegevens"
 
-#: static/frepple.js:602
-msgid "Export data"
-msgstr "Exporteer gegevens"
+#: static/js/frepple.js:387
+msgid "Import"
+msgstr "Importeer gegevens"
 
-#: static/frepple.js:604
+#: static/js/frepple.js:391 static/js/frepple.js.py:536
+msgid "Cancel"
+msgstr "Annuleer"
+
+#: static/js/frepple.js:439
 msgid "CSV style"
 msgstr "CSV stijl"
 
-#: static/frepple.js:605
+#: static/js/frepple.js:440
 msgid "Table"
 msgstr "Tabel"
+
+#: static/js/frepple.js:500
+msgid "OK"
+msgstr "OK"
+
+#~ msgid "contains (no case)"
+#~ msgstr "bevat (no case)"
+
+#~ msgid "contains"
+#~ msgstr "bevat"
+
+#~ msgid "starts (no case)"
+#~ msgstr "begint (no case)"
+
+#~ msgid "starts"
+#~ msgstr "start"
+
+#~ msgid "ends (no case)"
+#~ msgstr "eindigt (no case)"
+
+#~ msgid "ends"
+#~ msgstr "eindigt"
+
+#~ msgid "equals (no case)"
+#~ msgstr "is (no case)"
+
+#~ msgid "equals"
+#~ msgstr "is"
+
+#~ msgid "is null"
+#~ msgstr "is nul"
+
+#~ msgid "Filter data"
+#~ msgstr "Filter gegevens"
+
+#~ msgid "Filter"
+#~ msgstr "Filter"
+
+#~ msgid "False"
+#~ msgstr "Onwaar"
+
+#~ msgid "True"
+#~ msgstr "Waar"
+
+#~ msgid "Upload"
+#~ msgstr "Laad"
+
+#~ msgid "Export data"
+#~ msgstr "Exporteer gegevens"

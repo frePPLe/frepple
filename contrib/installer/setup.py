@@ -104,7 +104,12 @@ data_files = []
 for srcdir, targetdir in [
    (os.path.join(djangodirectory,'contrib','admin','templates'), 'templates'),
    (os.path.join(djangodirectory,'contrib','admin','media'), 'media'),
-   (os.path.join(djangodirectory,'conf','locale'), os.path.join('conf','locale')),
+   (os.path.join(djangodirectory,'conf','locale'), os.path.join('locale','django')),
+   (os.path.join(djangodirectory,'contrib','auth','locale'), os.path.join('locale','auth')),
+   (os.path.join(djangodirectory,'contrib','contenttypes','locale'), os.path.join('locale','contenttypes')),
+   (os.path.join(djangodirectory,'contrib','sessions','locale'), os.path.join('locale','sessions')),
+   (os.path.join(djangodirectory,'contrib','admin','locale'), os.path.join('locale','admin')),
+   (os.path.join(djangodirectory,'contrib','messages','locale'), os.path.join('locale','messages')),
    (freppledirectory, os.path.join('custom','freppledb')),
    ]:
    root_path_length = len(srcdir) + 1

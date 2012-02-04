@@ -134,23 +134,12 @@ class CrumbsNode(Node):
       req.session['crumbs'] = {}
       cur = [(_('Home'), HOME_CRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
 
-    # Pop from the stack if the same URL is already in the crumbs
+    # Compute the new crumb node
     try: title = variable_title.resolve(context)
     except: title = req.get_full_path()
     # A special case to work around the hardcoded title of the main admin page
     if title == _('Site administration'): title = _('Home')
-    cnt = 0
-    for i in cur:
-       if i[0] == title:
-         cur = cur[0:cnt]   # Pop all remaining elements from the stack
-         break
-       cnt += 1
-
-    # Keep only a limited number of links in the history
-    while len(cur) > NUMBER_OF_CRUMBS: del cur[1]
-    
-    # Push current url on the stack
-    cur.append( (unicode(title),
+    node = (unicode(title),
       '<a href="%s%s%s">%s</a>' % (
         req.prefix, urlquote(req.path),
         req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
@@ -160,7 +149,21 @@ class CrumbsNode(Node):
         req.prefix, urlquote(req.path),
         req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
         ),
-      ))
+      )
+    
+    # Pop from the stack if the same URL is already in the crumbs
+    cnt = 0
+    for i in cur:
+       if i == node:
+         cur = cur[0:cnt]   # Pop all remaining elements from the stack
+         break
+       cnt += 1
+
+    # Keep only a limited number of links in the history
+    while len(cur) > NUMBER_OF_CRUMBS: del cur[1]
+    
+    # Push current URL on the stack
+    cur.append( node )
 
     # Update the current session
     req.session['crumbs'][req.prefix] = cur

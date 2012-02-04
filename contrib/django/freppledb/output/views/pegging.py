@@ -40,6 +40,7 @@ class ReportByDemand(GridReport):
   '''
   template = 'output/pegging.html'
   title = _("Demand plan")
+  filterable = False
   basequeryset = Demand.objects.all().values('name')
   frozenColumns = 0
   editable = False
@@ -55,8 +56,8 @@ class ReportByDemand(GridReport):
     GridFieldNumber('percent_used', title=_('percent_used'), editable=False),
     )
 
-  @staticmethod
-  def query(request, basequery):
+  @classmethod
+  def query(reportclass, request, basequery):
     # Execute the query
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connections[request.database].cursor()
@@ -208,10 +209,11 @@ class ReportByBuffer(GridReport):
   '''
   template = 'output/operationpegging.html'
   title = _("Pegging report")
+  filterable = False
   basequeryset = FlowPlan.objects.all()
   frozenColumns = 0
   editable = False
-  default_sort = '3a'
+  default_sort = (2,'asc')
   rows = (
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
     GridFieldDateTime('date', title=_('date'), editable=False),
@@ -220,15 +222,15 @@ class ReportByBuffer(GridReport):
     GridFieldText('item', title=_('end item'), formatter='item', editable=False),
     )
 
-  @staticmethod
-  def query(request, basequery):
+  @classmethod
+  def query(reportclass, request, basequery):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(
       connections[request.database].ops.quote_name,
       connections[request.database])
     if not basesql: basesql = '1 = 1'
-
+    
     query = '''
         select operation, date, demand, quantity, ditem, fitem
         from
@@ -262,7 +264,7 @@ class ReportByBuffer(GridReport):
         group by out_demandpegging.demand, cons_date, operation, demand.item_id, forecast.item_id
         ) a
         order by %s
-      ''' % (basesql, basesql, sortsql)
+      ''' % (basesql, basesql, reportclass.get_sort(request))
     cursor.execute(query, baseparams + baseparams)
 
     # Build the python result
@@ -283,10 +285,11 @@ class ReportByResource(GridReport):
   '''
   template = 'output/operationpegging.html'
   title = _("Pegging report")
+  filterable = False
   basequeryset = LoadPlan.objects.all()
   frozenColumns = 0
   editable = False
-  default_sort = '3a'
+  default_sort = (2,'asc')
   rows = (
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
     GridFieldDateTime('date', title=_('date'), editable=False),
@@ -295,8 +298,8 @@ class ReportByResource(GridReport):
     GridFieldText('item', title=_('end item'), formatter='item', editable=False),
     )
 
-  @staticmethod
-  def query(request, basequery):
+  @classmethod
+  def query(reportclass, request, basequery):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(
@@ -318,7 +321,7 @@ class ReportByResource(GridReport):
         on forecast.name = out_demandpegging.demand
         group by out_demandpegging.demand, out_loadplan.startdate, operation, demand.item_id, forecast.item_id
         order by %s
-      ''' % (basesql, sortsql)
+      ''' % (basesql, reportclass.get_sort(request))
     cursor.execute(query, baseparams)
 
     # Build the python result
@@ -339,10 +342,11 @@ class ReportByOperation(GridReport):
   '''
   template = 'output/operationpegging.html'
   title = _("Pegging report")
+  filterable = False
   basequeryset = OperationPlan.objects.all()
   frozenColumns = 0
   editable = False
-  default_sort = '3a'
+  default_sort = (2,'asc')
   rows = (
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
     GridFieldDateTime('date', title=_('date'), editable=False),
@@ -351,8 +355,8 @@ class ReportByOperation(GridReport):
     GridFieldText('item', title=_('end item'), formatter='item', editable=False),
     )
 
-  @staticmethod
-  def query(request, basequery):
+  @classmethod
+  def query(reportclass, request, basequery):
     # Execute the query
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.where.as_sql(
@@ -387,7 +391,7 @@ class ReportByOperation(GridReport):
         group by out_demand.demand, out_operationplan.startdate, out_operationplan.operation, demand.item_id, forecast.item_id
         ) a
         order by %s
-      ''' % (basesql, basesql, sortsql)
+      ''' % (basesql, basesql, reportclass.get_sort(request))
     cursor.execute(query, baseparams + baseparams)
 
     # Build the python result

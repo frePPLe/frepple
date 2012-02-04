@@ -145,12 +145,16 @@ USE_I18N=True        # Use translated strings
 CURRENCY=("","$")    # Prefix and suffix for currency strings
 
 LOCALE_PATHS = (
-    os.path.normpath(os.path.join(FREPPLE_HOME,'conf','locale')),
+    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','django')),
+    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','auth')),
+    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','contenttypes')),
+    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','sessions')),
+    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','admin')),
+    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','messages')),
     os.path.normpath(os.path.join(FREPPLE_APP,'freppledb','locale')),
 )
 
 TEMPLATE_DIRS = (
-    # Always use forward slashes, even on Windows.
     os.path.normpath(os.path.join(FREPPLE_APP,'freppledb','templates')),
     os.path.normpath(os.path.join(FREPPLE_HOME,'templates')),
 )
@@ -183,7 +187,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 SESSION_COOKIE_NAME = 'sessionid'         # Cookie name. This can be whatever you want.
 SESSION_COOKIE_AGE = 60 * 60 * 24 *  2    # Age of cookie, in seconds: 2 days
 SESSION_COOKIE_DOMAIN = None              # A string, or None for standard domain cookie.
-SESSION_SAVE_EVERY_REQUEST = False        # Whether to save the session data on every request.
+SESSION_SAVE_EVERY_REQUEST = True         # Whether to save the session data on every request.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user closes his browser.
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.SessionStorage'

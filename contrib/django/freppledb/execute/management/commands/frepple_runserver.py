@@ -65,14 +65,9 @@ class Command(BaseCommand):
 
     # Determine the IP-address to listen on:
     # - either as command line argument
-    # - automatically detected IP-address
-    # - use 127.0.0.1 as a safe fallback
-    address = None
-    if 'address' in options: address = options['address']
-    if address == None:
-      try: address = socket.gethostbyname(socket.gethostname())
-      except: address = '127.0.0.1'
-
+    # - either 0.0.0.0 by default, which means all active IPv4 interfaces
+    address = 'address' in options and options['address'] or '0.0.0.0'
+    
     # Validate the address and port number
     try:
       s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -82,9 +77,16 @@ class Command(BaseCommand):
       raise Exception("Invalid address '%s' and/or port '%s': %s" % (address, port, e))
 
     # Print a header message
-    print 'Running frePPLe %s with database %s\n' % (settings.FREPPLE_VERSION, settings.DATABASES[DEFAULT_DB_ALIAS]['NAME'])
-    print 'To access the server, point your browser to http://%s:%s/' % (address, port)
-    print 'Three users are created by default: "admin", "frepple" and "guest" (the password is equal to the user name)\n'
+    hostname = socket.getfqdn()
+    print 'Starting frePPLe %s web server\n' % settings.FREPPLE_VERSION
+    print 'To access the server, point your browser to either of the following URLS:'
+    if address == '0.0.0.0':
+      print '    http://%s:%s/' % (hostname, port)
+      for ip in socket.gethostbyname_ex(socket.gethostname())[2]:
+        print '    http://%s:%s/' % (ip, port)
+    else:
+      print '    http://%s:%s/' % (address, port)
+    print '\nThree users are created by default: "admin", "frepple" and "guest" (the default password is equal to the user name)\n'
     print 'Quit the server with CTRL-C.\n'
 
     # Detect the media directory

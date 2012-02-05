@@ -58,6 +58,7 @@ MANAGERS = ADMINS
 
 # FrePPLe is tested with the following database backends:
 # 'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.
+# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.sqlite3',
@@ -97,6 +98,9 @@ DATABASES = {
     },
   }
 
+LANGUAGE_CODE = 'en'
+# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
+
 # Local time zone for this installation. All choices can be found here:
 # http://www.postgresql.org/docs/current/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
 TIME_ZONE = 'Europe/Brussels'
@@ -106,7 +110,6 @@ TIME_ZONE = 'Europe/Brussels'
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 # http://blogs.law.harvard.edu/tech/stories/storyReader$15
 ugettext = lambda s: s
-LANGUAGE_CODE = 'en'
 LANGUAGES = (
   ('en', ugettext('English')),
   ('fr', ugettext('French')),
@@ -259,22 +262,6 @@ DECIMAL_PLACES = 4
 
 # Port number for the CherryPy web server
 PORT = 8000
-
-# Allow overriding the settings
-# This is useful for the py2exe distribution: this settings file will be
-# compiled and included in a compressed zip-file, and we need to give users a
-# way to pass parameters and settings to Django.
-if os.path.normcase(os.path.abspath(os.path.dirname(__file__))) != os.path.normcase(FREPPLE_APP) and not 'localsettings' in vars():
-  localsettings = True
-  try: execfile(os.path.join(FREPPLE_APP,'settings.py'))
-  except IOError:
-    # The file doesn't exist. No problem - all settings are at defaults.
-    pass
-  except SyntaxError, e:
-    print "Error parsing file %s:\n   %s" % (e.filename, e)
-    print "Error at character %d in line %d:\n  %s" % (e.offset, e.lineno, e.text)
-  except Exception, e:
-    print "Error parsing file %s:\n  %s" % (os.path.join(FREPPLE_APP,'settings.py'),e)
 
 # Extra database parameters
 for param in DATABASES.values():

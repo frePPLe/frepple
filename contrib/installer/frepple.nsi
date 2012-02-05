@@ -197,7 +197,7 @@ Section "Application" SecAppl
   StrCmp $0 "SQLite" 0 +3
     StrCpy $0 "sqlite3"
     Goto ok
-  StrCmp $0 "PostgreSQL 8" 0 +3
+  StrCmp $0 "PostgreSQL 9" 0 +3
     StrCpy $0 "postgresql_psycopg2"
     Goto ok
   StrCmp $0 "MySQL" 0 +3
@@ -214,79 +214,81 @@ Section "Application" SecAppl
   ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 13" "State"  # DB host
   ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
 
-  ; Create a settings file for the server
-  StrCpy $9 "$INSTDIR\bin\custom\settings.py"
-  FileOpen $9 $9 w
-  FileWrite $9 "# Django and frePPLe support the following database backends: $\r$\n"
-  FileWrite $9 "#  'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.$\r$\n"
-  FileWrite $9 "DATABASES = {$\r$\n"
-  FileWrite $9 "  'default': {$\r$\n"
-  FileWrite $9 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
-  FileWrite $9 "    'NAME': '$1',  # Database name $\r$\n"
-  FileWrite $9 "    'USER': '$2',  # Not used with sqlite3.$\r$\n"
-  FileWrite $9 "    'PASSWORD': '$3', # Not used with sqlite3.$\r$\n"
-  FileWrite $9 "    'HOST': '$4',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
-  FileWrite $9 "    'PORT': '$5',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
-  FileWrite $9 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
-  FileWrite $9 "    },$\r$\n"
+  ; Update the settings.py file
+  StrCpy $R1 "$INSTDIR\bin\custom\freppledb\settings.py"
+  FileOpen $R2 $R1 "r"
+  GetTempFileName $R3
+  FileOpen $R4 $R3 "w"
+  ; Read the first section in settings.py and write unmodified to the output file
+  read1_loop:       
+    FileRead $R2 $R5
+    IfErrors end_loop
+    FileWrite $R4 "$R5"
+    StrCmp "$R5" "# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
+  Goto read1_loop
+  ; Read the second section in settings.py and write a different text to the output file
+  read2_loop:       
+    FileRead $R2 $R5
+    IfErrors end_loop
+    StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
+  Goto read2_loop
+  FileWrite $R4 "DATABASES = {$\r$\n"
+  FileWrite $R4 "  'default': {$\r$\n"
+  FileWrite $R4 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
+  FileWrite $R4 "    'NAME': '$1',  # Database name $\r$\n"
+  FileWrite $R4 "    'USER': '$2',  # Not used with sqlite3.$\r$\n"
+  FileWrite $R4 "    'PASSWORD': '$3', # Not used with sqlite3.$\r$\n"
+  FileWrite $R4 "    'HOST': '$4',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
+  FileWrite $R4 "    'PORT': '$5',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
+  FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
+  FileWrite $R4 "    },$\r$\n"
   StrCmp $0 "sqlite3" 0 NoScenarios
-    FileWrite $9 "  'scenario1': {$\r$\n"
-    FileWrite $9 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
-    FileWrite $9 "    'NAME': 'scenario1',  # Database name $\r$\n"
-    FileWrite $9 "    'USER': '',  # Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'PASSWORD': '', # Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'PORT': '',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
-    FileWrite $9 "    },$\r$\n"
-    FileWrite $9 "  'scenario2': {$\r$\n"
-    FileWrite $9 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
-    FileWrite $9 "    'NAME': 'scenario2',  # Database name $\r$\n"
-    FileWrite $9 "    'USER': '',  # Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'PASSWORD': '', # Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'PORT': '',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
-    FileWrite $9 "    },$\r$\n"
-    FileWrite $9 "  'scenario3': {$\r$\n"
-    FileWrite $9 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
-    FileWrite $9 "    'NAME': 'scenario3',  # Database name $\r$\n"
-    FileWrite $9 "    'USER': '',  # Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'PASSWORD': '', # Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'PORT': '',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
-    FileWrite $9 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
-    FileWrite $9 "    },$\r$\n"
+    FileWrite $R4 "  'scenario1': {$\r$\n"
+    FileWrite $R4 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
+    FileWrite $R4 "    'NAME': 'scenario1',  # Database name $\r$\n"
+    FileWrite $R4 "    'USER': '',  # Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'PASSWORD': '', # Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'PORT': '',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
+    FileWrite $R4 "    },$\r$\n"
+    FileWrite $R4 "  'scenario2': {$\r$\n"
+    FileWrite $R4 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
+    FileWrite $R4 "    'NAME': 'scenario2',  # Database name $\r$\n"
+    FileWrite $R4 "    'USER': '',  # Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'PASSWORD': '', # Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'PORT': '',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
+    FileWrite $R4 "    },$\r$\n"
+    FileWrite $R4 "  'scenario3': {$\r$\n"
+    FileWrite $R4 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
+    FileWrite $R4 "    'NAME': 'scenario3',  # Database name $\r$\n"
+    FileWrite $R4 "    'USER': '',  # Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'PASSWORD': '', # Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'PORT': '',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
+    FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
+    FileWrite $R4 "    },$\r$\n"
   NoScenarios:
-  FileWrite $9 "  }$\r$\n$\r$\n"
-  FileWrite $9 "DEBUG = False # Show verbose description of errors$\r$\n"
-  FileWrite $9 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
-  FileClose $9
+  FileWrite $R4 "  }$\r$\n$\r$\n"
+  FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
+  ; Read the third section in settings.py and write unmodified to the output file
+  read3_loop:
+    FileWrite $R4 "$R5"
+    FileRead $R2 $R5
+    IfErrors end_loop
+  Goto read3_loop
+  end_loop:
+    FileClose $R2
+    FileClose $R4
+    Rename "$R1" "$R1.old"
+    Rename "$R3" "$R1"
+    ClearErrors
 SectionEnd
 
 
 Function database
-  StrCpy $1 "SQLite"
-
-  ; Detect MySQL installation
-  EnumRegKey $0 HKLM "software\MySQL AB" 0
-  StrCmp $0 "" +2 0
-  StrCpy $1 "$1|MySQL"
-
-  ; Detect PostgreSQL installation
-  EnumRegKey $0 HKLM "software\PostgreSQL" 0
-  StrCmp $0 "" +2 0
-  StrCpy $1 "$1|PostgreSQL 8"
-
-  ; Detect Oracle installation
-  EnumRegKey $0 HKLM "software\ORACLE" 0
-  StrCmp $0 "" +2 0
-  StrCpy $1 "$1|Oracle 11g"
-
-  ; Update the dropdown with available databases
-  WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 9" "ListItems" "$1"
-
-  ; Display the page
   !insertmacro MUI_HEADER_TEXT "Language selection and database configuration" "Specify the installation parameters."
   !insertmacro INSTALLOPTIONS_DISPLAY "parameters.ini"
 FunctionEnd

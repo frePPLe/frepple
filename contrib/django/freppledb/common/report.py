@@ -239,8 +239,8 @@ class GridReport(View):
   basequeryset = None
 
   # Specifies which column is used for an initial filter
-  default_sort = '1a'    # TODO "default_sort" not used yet
-
+  default_sort = (0, 'asc')
+  
   # A model class from which we can inherit information.
   model = None
 
@@ -314,10 +314,22 @@ class GridReport(View):
     '''
     Applies a sort to the query. 
     '''
-    sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
-    if 'sord' in request.GET and request.GET['sord'] == 'desc':
-      sort = "-%s" % sort
+    sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[reportclass.default_sort[0]].name
+    if ('sord' in request.GET and request.GET['sord'] == 'desc') or reportclass.default_sort[1] == 'desc':
+      sort = "-%s" % sort  
     return query.order_by(sort)
+
+
+  @classmethod
+  def get_sort(reportclass, request):
+    try: 
+      sort = 'sidx' in request.GET and int(request.GET['sidx'])+1 or reportclass.default_sort[0]
+    except: 
+      sort = reportclass.default_sort[0]
+    if ('sord' in request.GET and request.GET['sord'] == 'desc') or reportclass.default_sort[1] == 'desc':
+      return "%s asc" % sort
+    else:
+      return "%s desc" % sort  
 
 
   @classmethod

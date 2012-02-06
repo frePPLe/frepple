@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User, Group
 from django.contrib.admin.models import LogEntry
 from django.contrib.syndication.views import Feed
+from django.utils import translation
 from django.conf import settings
 
 from freppledb.common.models import Preferences
@@ -87,7 +88,11 @@ def preferences(request):
         pref.theme = newdata['theme']
         pref.pagesize = newdata['pagesize']
         pref.save()
+        # Switch to the new theme and language immediately
         request.theme = newdata['theme']
+        if translation.get_language() != newdata['language']:
+          translation.activate(newdata['language'])
+          request.LANGUAGE_CODE = translation.get_language()
         messages.add_message(request, messages.INFO, force_unicode(_('Successfully updated preferences')))
       except:
         messages.add_message(request, messages.ERROR, force_unicode(_('Failure updating preferences')))

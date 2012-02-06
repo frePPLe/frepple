@@ -38,7 +38,7 @@ class Report(GridReport):
     GridFieldText('name', title=_('category'), sortable=False, editable=False, align='center'),
     GridFieldNumber('value', title=_('category'), sortable=False, editable=False, align='center'),
     )
-  default_sort = '2a'
+  default_sort = (1,'asc')
   filterable = False
 
   @staticmethod

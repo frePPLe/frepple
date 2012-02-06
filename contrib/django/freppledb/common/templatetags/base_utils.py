@@ -129,10 +129,10 @@ class CrumbsNode(Node):
     try: 
       cur = req.session['crumbs']
       try: cur = cur[req.prefix]
-      except: cur = [(_('Home'), HOME_CRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
+      except: cur = [(unicode(_('Home')), HOME_CRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
     except: 
       req.session['crumbs'] = {}
-      cur = [(_('Home'), HOME_CRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
+      cur = [(unicode(_('Home')), HOME_CRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
 
     # Compute the new crumb node
     try: title = variable_title.resolve(context)
@@ -153,8 +153,8 @@ class CrumbsNode(Node):
     
     # Pop from the stack if the same URL is already in the crumbs
     cnt = 0
-    for i in cur:
-       if i == node:
+    for i in cur:       
+       if i[2] == node[2]:
          cur = cur[0:cnt]   # Pop all remaining elements from the stack
          break
        cnt += 1

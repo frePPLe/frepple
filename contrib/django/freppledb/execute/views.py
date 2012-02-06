@@ -283,7 +283,7 @@ class LogReport(GridReport):
   '''
   title = _('Command log')
   basequeryset = log.objects.all()
-  default_sort = '1d'
+  default_sort = (0,'desc')
   model = log
   frozenColumns = 0
   rows = (

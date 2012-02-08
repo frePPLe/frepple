@@ -120,67 +120,6 @@ def search(request):
      mimetype = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
      content = json.dumps(result, encoding=settings.DEFAULT_CHARSET, ensure_ascii=False)
      )
-  
-  
-class uploadjson:
-  '''
-  This class allows us to process json-formatted post requests.
-
-  The current implementation is only temporary until a more generic REST interface
-  becomes available in Django: see http://code.google.com/p/django-rest-interface/
-  '''
-  @staticmethod
-  @csrf_protect
-  @staff_member_required
-  def post(request):
-    try:
-      # Validate the upload form
-      if request.method != 'POST' or not request.is_ajax():
-        raise Exception(_('Only ajax POST method allowed'))
-
-      # Validate uploaded file is present
-      if len(request.FILES)!=1 or 'data' not in request.FILES \
-        or request.FILES['data'].content_type != 'application/json' \
-        or request.FILES['data'].size > 1000000:
-          raise Exception('Invalid uploaded data')
-
-      # Parse the uploaded data and go over each record
-      for i in simplejson.JSONDecoder().decode(request.FILES['data'].read()):
-        try:
-          entity = i['entity']
-
-          # CASE 2: The forecast quantity is being edited   # TODO factor out to different method
-          if entity == 'forecast.total':
-            # Create a message
-            try:
-              msg = "forecast change for '%s' between %s and %s to %s" % \
-                      (i['name'],i['startdate'],i['enddate'],i['value'])
-            except:
-              msg = "forecast change"
-            # a) Verify permissions
-            if not request.user.has_perm('input.change_forecastdemand'):
-              raise Exception('No permission to change forecast demand')
-            # b) Find the forecast
-            start = datetime.strptime(i['startdate'],'%Y-%m-%d')
-            end = datetime.strptime(i['enddate'],'%Y-%m-%d')
-            fcst = Forecast.objects.using(request.database).get(name = i['name'])
-            # c) Update the forecast
-            fcst.setTotal(start,end,i['value'])
-
-          # All the rest is garbage
-          else:
-            msg = "unknown action"
-            raise Exception(_("Unknown action type '%(msg)s'") % {'msg':entity})
-
-        except Exception as e:
-          messages.add_message(request, messages.ERROR, 'Error processing %s: %s' % (msg,e))
-
-      # Processing went fine...
-      return HttpResponse("OK",mimetype='text/plain')
-
-    except Exception as e:
-      print('Error processing uploaded data: %s %s' % (type(e),e))
-      return HttpResponseForbidden('Error processing uploaded data: %s' % e)
 
 
 class pathreport:

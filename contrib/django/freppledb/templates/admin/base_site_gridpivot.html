@@ -4,10 +4,10 @@
 <script type="text/javascript">
 
 function columns (cellvalue, options, rowdata) {
-  return "{% for f in reportclass.crosses %}{% if not forloop.first %}<br/>{% endif %}{{f.1.title|title}}{% endfor %}";
+  return "{% for f in reportclass.crosses %}{% if not forloop.first %}{% if reportclass.editable and haschangeperm %}</span>{% endif %}<br/>{% else %}{% if reportclass.editable and haschangeperm %}<span style='line-height:20px'>{% endif %}{% endif %}{{f.1.title|title}}{% endfor %}";
 };
 
-{% block crosses %}function crosses (cellvalue, options, rowdata) {
+{% block crosses %}function crosses (cellvalue, options, rowdata) {  
   for (i in cellvalue)
     if (i == 0) res = cellvalue[i];
     else res += '<br/>' + cellvalue[i];
@@ -31,7 +31,7 @@ $(function(){
     cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname,    
-    afterEditCell: upload.select,
+    beforeSaveCell: upload.select,
     {% endif %}rowNum: {{request.pagesize}},
    	pager: '#gridpager',
     viewrecords: true,    

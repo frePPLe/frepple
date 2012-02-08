@@ -165,6 +165,10 @@ table thead th.sorted {
   font-weight: bold;
 }
 
+.smallpadding {
+  padding: 0px 3px;
+}
+
 .bold {
   font-weight: bold;
 }

@@ -20,7 +20,10 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from django.db import connections
+from datetime import datetime
+
+from django.db import connections, transaction
+from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
@@ -41,7 +44,7 @@ class OverviewReport(GridPivot):
   basequeryset = Forecast.objects.all()
   model = Forecast
   rows = (
-    GridFieldText('forecast', title=_('forecast'), key=True, field_name='name', formatter='item', editable=False),
+    GridFieldText('forecast', title=_('forecast'), key=True, field_name='name', formatter='forecast', editable=False),
     GridFieldText('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
     GridFieldText('customer', title=_('customer'), key=True, field_name='customer__name', formatter='customer', editable=False),
     )
@@ -52,6 +55,40 @@ class OverviewReport(GridPivot):
     ('planned',{'title': _('planned net forecast')}),
     )
 
+
+
+  @classmethod
+  def parseJSONupload(reportclass, request): 
+    # Check permissions
+    if not request.user.has_perm('input.change_forecastdemand'):
+      return HttpResponseForbidden(_('Permission denied'))
+
+    # Loop over the data records 
+    transaction.enter_transaction_management(using=request.database)
+    transaction.managed(True, using=request.database)
+    resp = HttpResponse()
+    ok = True
+    try:          
+      for rec in simplejson.JSONDecoder().decode(request.read()):
+        try:
+          # Find the forecast
+          start = datetime.strptime(rec['startdate'],'%Y-%m-%d')
+          end = datetime.strptime(rec['enddate'],'%Y-%m-%d')
+          fcst = Forecast.objects.using(request.database).get(name = rec['id'])
+          # Update the forecast
+          fcst.setTotal(start,end,rec['value'])      
+        except Exception, e:
+          ok = False
+          resp.write(e)
+          resp.write('<br/>')                          
+    finally:
+      transaction.commit(using=request.database)
+      transaction.leave_transaction_management(using=request.database)
+    if ok: resp.write("OK")
+    resp.status_code = ok and 200 or 403
+    return resp            
+            
+            
   @staticmethod
   def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)

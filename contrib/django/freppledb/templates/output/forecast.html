@@ -1,22 +1,27 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
-{% comment %} 
-TODO EDIT IS STILL BROKEN
-TODO ROW HEIGHT NOT SYNCED between frozen and other columns
-{% endcomment %}
-
 {% block extrahead %}{{ block.super }} 
 {% if args.0 %}<script type="text/javascript" src="/static/FusionCharts.js"></script>{% endif %}
 <script type="text/javascript">
-  function onChange(input)
-  {
-  upload.add({entity: 'forecast.total',
-    name: input.form.name,
-    startdate: input.name,
-    enddate: input.id,
-    value: input.value});
-  }
+
+function getDirtyData()
+{
+  var changes = [];
+  $(".dirty-cell").each( function() {
+    var curCol = jQuery.jgrid.getCellIndex($(this).closest("td,th"));
+    var curRow = $(this).closest("tr").attr('id');
+    var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[curCol];
+    changes.push({'id': curRow, 'startdate': colmodel['startdate'], 'enddate': colmodel['enddate'], 'value': $(this).val()});    
+    });    
+  return changes;
+}
+  
+function onChange(event) 
+{
+  $(event.target).addClass('dirty-cell');
+  upload.select();
+}
 </script>
 {% endblock %}
 
@@ -48,7 +53,7 @@ TODO ROW HEIGHT NOT SYNCED between frozen and other columns
 {% block crosses %}
 function crosses (cellvalue, options, rowdata) {
 {% if perms.input.change_forecastdemand %}
-  var result = '<input type="text" value="' + cellvalue[0] + '" size="5" onchange="onChange(this)"/><br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
+  var result = '<input type="text" class="smallpadding" value="' + cellvalue[0] + '" size="5" onchange="onChange(event)"/><br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
 {% else %}
   var result = cellvalue[0] + '<br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
 {% endif %}
@@ -59,3 +64,4 @@ function crosses (cellvalue, options, rowdata) {
   return result;
 };
 {% endblock %}
+

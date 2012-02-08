@@ -20,7 +20,7 @@ $(function(){
     cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname,    
-    afterEditCell: upload.select,{% endif %}{% endif %}
+    beforeSaveCell: upload.select,{% endif %}{% endif %}
     pager: '#gridpager',
     viewrecords: true,    
     sortorder: "asc",	

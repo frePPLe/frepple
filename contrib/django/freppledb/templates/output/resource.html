@@ -1,20 +1,30 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
-{% comment %} 
-TODO EDIT IS STILL BROKEN
-TODO conditional adding of input is not implemented yet
-TODO ROW HEIGHT NOT SYNCED between frozen and other columns
-{% endcomment %}
-
 {% block extrahead %}{{ block.super }} 
 {% if args.0 %}<script type="text/javascript" src="/static/FusionCharts.js"></script>{% endif %}
 <script type="text/javascript">
 
-  function onChange(input, old, start, end, units)
-  {
-  // Update the utilization percentage immediately
-  var el = $(input).find('span')[0];
+function getDirtyData()
+{
+  var changes = [];
+  $(".dirty-cell").each( function() {
+    var curCol = jQuery.jgrid.getCellIndex($(this).closest("td,th"));
+    var curRow = $(this).closest("tr").attr('id');
+    var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[curCol];
+    changes.push({'id': curRow, 'startdate': colmodel['startdate'], 'enddate': colmodel['enddate'], 'value': $(this).val()});    
+    });
+  return changes;
+}
+  
+function onChange(event) //input, old, start, end, units)
+{
+  $(event.target).addClass('dirty-cell');
+  upload.select();
+    
+  // Update the utilization percentage immediately  TODO
+  /*
+  var el = $(event.target).find('span')[0];
   var unavailable = parseFloat($(el).html());
   el = $(el).find('span')[0];
   var a = $(el).find('a')[0];
@@ -31,6 +41,7 @@ TODO ROW HEIGHT NOT SYNCED between frozen and other columns
     $(el).removeClass('highutil');
   else
     $(el).addClass('highutil');
+    
   // Add the change
   if (old != 0) 
     u = parseFloat(input.value) * (1 + unavailable / old) / units;
@@ -41,6 +52,7 @@ TODO ROW HEIGHT NOT SYNCED between frozen and other columns
     startdate: start,
     enddate: end,
     value: u});
+  */
   }
 </script>
 {% endblock %}
@@ -73,7 +85,7 @@ TODO ROW HEIGHT NOT SYNCED between frozen and other columns
 {% block crosses %}
 function crosses (cellvalue, options, rowdata) {
 {% if perms.input.change_resource %}
-  var result = '<input type="text" value="' + cellvalue[0] + '" size="5" onchange="onChange(this)"/><br/>' + cellvalue[2] + '<br/>' + cellvalue[2] + '<br/>';
+  var result = '<input type="text" class="smallpadding" value="' + cellvalue[0] + '" size="5" onchange="onChange(event)"/><br/>' + cellvalue[2] + '<br/>' + cellvalue[2] + '<br/>';
 {% else %}
   var result = cellvalue[0] + '<br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
 {% endif %}

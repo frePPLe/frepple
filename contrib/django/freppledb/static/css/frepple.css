@@ -174,7 +174,9 @@ table thead th.sorted {
 }
 
 /* Dashboard is a bit too narrow by default. */
-.dashboard #content { width: 600px; }
+.dashboard #content { width: 800px; }
+
+#recent-actions-module { width: 400px; }
 
 /* Recent action window is too narrow by default. */
 #content-related {

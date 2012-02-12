@@ -255,7 +255,12 @@ class GridReport(View):
 
   # A list with required user permissions to view the report
   permissions = []
-
+  
+  # Extra variables added to the report template
+  @classmethod
+  def extra_context(reportclass, request):
+    return {}
+  
   @method_decorator(staff_member_required)
   @method_decorator(csrf_protect)
   def dispatch(self, request, *args, **kwargs):    
@@ -422,8 +427,8 @@ class GridReport(View):
         (bucket,start,end,bucketlist) = getBuckets(request, pref)
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
       else:
-        bucket = start = end = bucketlist = bucketnames = None      
-      return render(request, reportclass.template, {
+        bucket = start = end = bucketlist = bucketnames = None
+      context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
         'reportbucket': bucket,
@@ -437,7 +442,10 @@ class GridReport(View):
         'model': reportclass.model,
         'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())),
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())),
-        })
+        }  
+      for k, v in reportclass.extra_context(request).iteritems():
+        context[k] = v  
+      return render(request, reportclass.template, context)
     elif fmt == 'json':
       # Return JSON data to fill the grid
       return HttpResponse(

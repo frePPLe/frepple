@@ -58,7 +58,11 @@ class OverviewReport(GridPivot):
     ('load',{'title': _('load')}),
     ('utilization',{'title': _('utilization %'),}),
     )
-
+  
+  @classmethod 
+  def extra_context(reportclass, request):
+    return {'units' : reportclass.getUnits()}
+  
   @classmethod
   def parseJSONupload(reportclass, request): 
     # Check permissions
@@ -98,22 +102,26 @@ class OverviewReport(GridPivot):
     resp.status_code = ok and 200 or 403
     return resp
   
+  @classmethod
+  def getUnits(reportclass):    
+    try:
+      units = Parameter.objects.using(request.database).get(name="loading_time_units")
+      if units.value == 'hours':
+        return 24.0
+      elif units.value == 'weeks':
+        return 1.0 / 7.0
+      else:
+        return 1.0
+    except:
+      return 1.0
+    
       
   @staticmethod
   def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)        
         
     # Get the time units
-    try:
-      units = Parameter.objects.using(request.database).get(name="loading_time_units")
-      if units.value == 'hours':
-        units = 24.0
-      elif units.value == 'weeks':
-        units = 1.0 / 7.0
-      else:
-        units = 1.0
-    except:
-      units = 1.0
+    units = OverviewReport.getUnits()
     
     # Execute the query
     cursor = connections[request.database].cursor()
@@ -203,7 +211,6 @@ class OverviewReport(GridPivot):
         'load': round(row[8],1),
         'setup': round(row[9],1),
         'utilization': round(util,2),
-        'units': units,
         }
 
 

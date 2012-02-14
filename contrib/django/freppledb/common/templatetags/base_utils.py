@@ -39,7 +39,7 @@ from django.db import DEFAULT_DB_ALIAS
 from freppledb.execute.models import Scenario
 
 HOME_CRUMB = '<a href="%s/admin/">%s</a>'
-NUMBER_OF_CRUMBS = 5
+NUMBER_OF_CRUMBS = 7
 
 register = Library()
 variable_title = Variable("title")
@@ -151,15 +151,16 @@ class CrumbsNode(Node):
         ),
       )
     
-    # Pop from the stack if the same URL is already in the crumbs
+    # Pop from the stack if the same title is already in the crumbs
     cnt = 0
     for i in cur:       
-       if i[2] == node[2]:
+       if i[0] == node[0]:
          cur = cur[0:cnt]   # Pop all remaining elements from the stack
          break
        cnt += 1
 
-    # Keep only a limited number of links in the history
+    # Keep only a limited number of links in the history.
+    # We delete the second element to keep "home" at the head of the list.
     while len(cur) > NUMBER_OF_CRUMBS: del cur[1]
     
     # Push current URL on the stack

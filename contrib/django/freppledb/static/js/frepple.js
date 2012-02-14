@@ -6,15 +6,6 @@ window.__admin_media_prefix__ = "/media/";
 var upload = {
   _data : [],
 
-  add : function (e)
-  {
-    upload._data.push(e);
-    $('#filter').addClass("ui-state-disabled");
-    $.jgrid.hideModal("#searchmodfbox_grid");
-    $('#save').removeClass("ui-state-disabled").addClass("bold");
-    $('#undo').removeClass("ui-state-disabled").addClass("bold");
-  },
-
   undo : function ()
   {
     if ($('#undo').hasClass("ui-state-disabled")) return;
@@ -23,7 +14,7 @@ var upload = {
     $('#undo').addClass("ui-state-disabled").removeClass("bold");
     $('#filter').removeClass("ui-state-disabled");
   },
-
+  
   select : function ()
   {
     $('#filter').addClass("ui-state-disabled");

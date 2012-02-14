@@ -81,7 +81,7 @@ function onChange(event) //input, old, start, end, units)
 {% block crosses %}
 function crosses (cellvalue, options, rowdata) {
 {% if perms.input.change_resource %}
-  var result = '<input type="text" class="smallpadding" value="' + cellvalue[0] + '" size="5" onchange="onChange(event)"/><br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
+  var result = '<input type="text" class="smallpadding" value="' + cellvalue[0] + '" size="5" onchange="onChange(event)" onclick="$(this).select();"/><br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
 {% else %}
   var result = cellvalue[0] + '<br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
 {% endif %}

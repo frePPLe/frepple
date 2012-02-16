@@ -144,7 +144,7 @@ class OverviewReport(GridPivot):
          cross join (
              select name as bucket, startdate, enddate
              from bucketdetail
-             where bucket_id = '%s' and startdate >= '%s' and startdate < '%s'
+             where bucket_id = '%s' and enddate > '%s' and startdate <= '%s'
              ) d
          -- Available capacity
          left join calendarbucket

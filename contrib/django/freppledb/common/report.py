@@ -1083,6 +1083,6 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
     return (None, start, end, None)
   else:
     res = BucketDetail.objects.using(request.database).filter(bucket=bucket)
-    if start: res = res.filter(startdate__gte=start)
-    if end: res = res.filter(startdate__lt=end)
+    if start: res = res.filter(enddate__gt=start)
+    if end: res = res.filter(startdate__lte=end)
     return (unicode(bucket), start, end, res.values('name','startdate','enddate'))

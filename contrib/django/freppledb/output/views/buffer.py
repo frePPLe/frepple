@@ -107,11 +107,13 @@ class OverviewReport(GridPivot):
         on buffer.name = out_flowplan.thebuffer
         and d.startdate <= out_flowplan.flowdate
         and d.enddate > out_flowplan.flowdate
+        and out_flowplan.flowdate >= '%s'
+        and out_flowplan.flowdate < '%s'
         -- Grouping and sorting
         group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
         order by %s, d.startdate
-      ''' % (sql_max('out_flowplan.quantity','0.0'),sql_min('out_flowplan.quantity','0.0'),
-        basesql,bucket,startdate,enddate,sortsql)
+      ''' % (sql_max('out_flowplan.quantity','0.0'), sql_min('out_flowplan.quantity','0.0'),
+        basesql, bucket, startdate, enddate, startdate, enddate, sortsql)
     cursor.execute(query, baseparams)
 
     # Build the python result

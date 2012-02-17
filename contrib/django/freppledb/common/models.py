@@ -32,7 +32,7 @@ from freppledb.input.models import Parameter
 
 
 # TODO The bucket preference is not really generic. Different models could
-#      have seperate bucket definitions.
+#      have separate bucket definitions.
 class Preferences(models.Model):
   csvOutputType = (
     ('table',_('Table')),
@@ -41,8 +41,8 @@ class Preferences(models.Model):
   languageList = tuple( [ ('auto',_('Detect automatically')), ] + list(settings.LANGUAGES) )
   user = models.ForeignKey(User, verbose_name=_('user'), primary_key=True)
   buckets = models.CharField(_('buckets'), max_length=settings.NAMESIZE, blank=True, null=True)
-  startdate = models.DateField(_('start date'), blank=True, null=True)
-  enddate = models.DateField(_('end date'), blank=True, null=True)
+  startdate = models.DateTimeField(_('start date'), blank=True, null=True)
+  enddate = models.DateTimeField(_('end date'), blank=True, null=True)
   language = models.CharField(_('language'), max_length=10, choices=languageList,
     default='auto')
   theme = models.CharField(_('theme'), max_length=20, default=settings.DEFAULT_THEME, 
@@ -56,9 +56,9 @@ def CreatePreferenceModel(instance, **kwargs):
   pref, created = Preferences.objects.get_or_create(user=instance)
   if created:
     try:
-      pref.startdate = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S").date()
+      pref.startdate = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
     except:
-      pref.startdate = datetime.now().date()
+      pref.startdate = datetime.now()
     pref.enddate = pref.startdate + timedelta(365)
     pref.save()
 

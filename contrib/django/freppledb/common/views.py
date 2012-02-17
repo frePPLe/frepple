@@ -20,6 +20,8 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+from datetime import datetime
+
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
@@ -82,8 +84,8 @@ def preferences(request):
         pref = Preferences.objects.get(user=request.user)
         newdata = form.cleaned_data
         pref.buckets = newdata['buckets']
-        pref.startdate = newdata['startdate']
-        pref.enddate = newdata['enddate']
+        pref.startdate = datetime(newdata['startdate'])
+        pref.enddate = datetime(newdata['enddate'])
         pref.language = newdata['language']
         pref.theme = newdata['theme']
         pref.pagesize = newdata['pagesize']

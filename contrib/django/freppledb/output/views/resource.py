@@ -124,6 +124,7 @@ class OverviewReport(GridPivot):
     units = OverviewReport.getUnits()
     
     # Execute the query
+    # TODO available field takes the whole bucket.  Load field only considers the dates that are in the reporting interval - could be part of a bucket
     cursor = connections[request.database].cursor()
     query = '''
        select x.name as row1, x.location_id as row2, 

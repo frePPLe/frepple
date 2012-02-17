@@ -141,6 +141,8 @@ class OverviewReport(GridPivot):
         on out_demand.demand like y.name || ' - %%%%'
         and y.startdate <= out_demand.plandate
         and y.enddate > out_demand.plandate
+        and out_demand.plandate >= '%s'
+        and out_demand.plandate < '%s'
         -- Ordering and grouping
         group by y.name, y.item_id, y.customer_id,
            y.bucket, y.startdate, y.enddate
@@ -151,7 +153,7 @@ class OverviewReport(GridPivot):
          sql_datediff('out_forecast.enddate','out_forecast.startdate'),
          sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
          sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),
-         basesql,bucket,startdate,enddate,sortsql)
+         basesql,bucket,startdate,enddate,startdate,enddate,sortsql)
     cursor.execute(query, baseparams)
 
 

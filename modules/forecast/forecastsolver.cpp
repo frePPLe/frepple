@@ -191,6 +191,17 @@ Forecast* ForecastSolver::matchDemandToForecast(const Demand* l)
 
 void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
 {
+
+  // Empty forecast model
+  if (!fcst->isGroup())
+  {
+	if (getLogLevel()>1)
+	  logger << "    Empty forecast model" << endl;
+	if (getLogLevel()>0)
+	  logger << "    Remains " << dmd->getQuantity() << " that can't be netted" << endl;
+	return;
+  }
+
   // Find the bucket with the due date
   ForecastBucket* zerobucket = NULL;
   for (Forecast::memberIterator i = fcst->beginMember(); i != fcst->end(); ++i)
@@ -218,7 +229,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
       if (available >= remaining)
       {
         // Partially consume a bucket
-        if (getLogLevel()>=2)
+        if (getLogLevel()>1)
           logger << "    Consuming " << remaining << " from bucket "
             << curbucket->getDueRange() << " (" << available
             << " available)" << endl;
@@ -228,7 +239,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
       else
       {
         // Completely consume a bucket
-        if (getLogLevel()>=2)
+        if (getLogLevel()>1)
           logger << "    Consuming " << available << " from bucket "
             << curbucket->getDueRange() << " (" << available
             << " available)" << endl;
@@ -236,7 +247,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
         curbucket->incConsumed(available);
       }
     }
-    else if (getLogLevel()>=2)
+    else if (getLogLevel()>1)
       logger << "    Nothing available in bucket "
         << curbucket->getDueRange() << endl;
 
@@ -257,7 +268,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
   }
 
   // Quantity for which no bucket is found
-  if (remaining > 0 && getLogLevel()>=2)
+  if (remaining > 0 && getLogLevel()>0)
     logger << "    Remains " << remaining << " that can't be netted" << endl;
 
 }

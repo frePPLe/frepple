@@ -109,6 +109,8 @@ class OverviewReport(GridPivot):
           on item.name = out_demand.item
           and d.startdate <= out_demand.plandate
           and d.enddate > out_demand.plandate
+          and out_demand.plandate >= '%s'
+          and out_demand.plandate < '%s'          
           -- Grouping
           group by items.name, items.lft, items.rght, d.bucket, d.startdate, d.enddate
         ) x
@@ -119,6 +121,8 @@ class OverviewReport(GridPivot):
         on item.name = demand.item_id
         and x.startdate <= demand.due
         and x.enddate > demand.due
+        and demand.due >= '%s'
+        and demand.due < '%s'          
         -- Grouping
         group by x.name, x.lft, x.rght, x.bucket, x.startdate, x.enddate
         ) y
@@ -138,7 +142,7 @@ class OverviewReport(GridPivot):
         order by %s, y.startdate
        ''' % (sql_overlap('fcst.startdate','fcst.enddate','y.startdate','y.enddate'),
          sql_datediff('fcst.enddate','fcst.startdate'),
-         basesql,bucket,startdate,enddate,sortsql)
+         basesql,bucket,startdate,enddate,startdate,enddate,startdate,enddate,sortsql)
     cursor.execute(query,baseparams)
 
     # Build the python result

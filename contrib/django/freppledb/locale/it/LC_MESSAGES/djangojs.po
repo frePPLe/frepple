@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-31 08:44+0100\n"
+"POT-Creation-Date: 2012-02-18 08:42+0100\n"
 "PO-Revision-Date: 2012-01-31 08:43+0100\n"
 "Last-Translator: Johan De Taeye <jdetaeye@users.sourceforge.net>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
@@ -32,47 +32,47 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/js/frepple.js:56
+#: static/js/frepple.js:47
 msgid "Error saving data"
 msgstr ""
 
-#: static/js/frepple.js:76
+#: static/js/frepple.js:67
 msgid "Select"
 msgstr ""
 
-#: static/js/frepple.js:378
+#: static/js/frepple.js:369
 msgid "Load a CSV-formatted text file."
 msgstr ""
 
-#: static/js/frepple.js:379
+#: static/js/frepple.js:370
 msgid "The first row should contain the field names."
 msgstr "La pirma riga dovrebbe contenere i nomi dei campi"
 
-#: static/js/frepple.js:380
+#: static/js/frepple.js:371
 msgid "Data file"
 msgstr "file di dati"
 
-#: static/js/frepple.js:382
+#: static/js/frepple.js:373
 msgid "Import data"
 msgstr "Importa dati"
 
-#: static/js/frepple.js:387
+#: static/js/frepple.js:378
 msgid "Import"
 msgstr "Importa dati"
 
-#: static/js/frepple.js:391 static/js/frepple.js.py:536
+#: static/js/frepple.js:382 static/js/frepple.js.py:527
 msgid "Cancel"
 msgstr "Cancella"
 
-#: static/js/frepple.js:439
+#: static/js/frepple.js:430
 msgid "CSV style"
 msgstr "CSV stile"
 
-#: static/js/frepple.js:440
+#: static/js/frepple.js:431
 msgid "Table"
 msgstr "Tabella"
 
-#: static/js/frepple.js:500
+#: static/js/frepple.js:491
 msgid "OK"
 msgstr ""
 

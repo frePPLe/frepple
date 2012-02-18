@@ -47,8 +47,8 @@ $(function(){
    if (rows != null && rows.length > 0) 
    {
    return "{% trans "There are unsaved changes on this page." %}";
-     $("#popup").html("{% trans "Discard saved data" %}").dialog({ 
-       title: gettext("{% trans "Discard saved data" %}"), autoOpen: true, resizable: false,
+     $("#popup").html("{% trans "Discard unsaved changes" %}").dialog({ 
+       title: gettext("{% trans "Discard unsaved changes" %}"), autoOpen: true, resizable: false,
        modal: true,
        buttons: 
           {

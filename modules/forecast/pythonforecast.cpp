@@ -72,7 +72,7 @@ extern "C" PyObject* Forecast::setPythonTotalQuantity(PyObject *self, PyObject *
     double value;
     PyObject* pystart;
     PyObject* pyend = NULL;
-    int ok = PyArg_ParseTuple(args, "fO|O:setQuantity", &value, &pystart, &pyend);
+    int ok = PyArg_ParseTuple(args, "dO|O:setQuantity", &value, &pystart, &pyend);
     if (!ok) return NULL;
 
     // Update the forecast

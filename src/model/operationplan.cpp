@@ -1004,7 +1004,7 @@ DECLARE_EXPORT void OperationPlan::setDemand(Demand* l)
   // No change
   if (l==dmd) return;
 
-  // Unregister from previous lot
+  // Unregister from previous demand
   if (dmd) dmd->removeDelivery(this);
 
   // Register the new demand and mark it changed

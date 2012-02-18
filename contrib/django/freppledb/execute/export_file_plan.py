@@ -162,7 +162,7 @@ def exportPegging():
 
 def exportForecast():
   # Detect whether the forecast module is available
-  if not 'demand_forecastbucket' in [ a for a in inspect.getmembers(frepple)[0] ]:
+  if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
     return
 
   print "Exporting forecast plans..."

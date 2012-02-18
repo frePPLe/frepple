@@ -244,7 +244,7 @@ def exportPegging(cursor):
 
 def exportForecast(cursor):
   # Detect whether the forecast module is available
-  if not 'demand_forecastbucket' in [ a for a in inspect.getmembers(frepple)[0] ]:
+  if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
     return
 
   print "Exporting forecast plans..."
@@ -253,7 +253,7 @@ def exportForecast(cursor):
   for i in frepple.demands():
     if not isinstance(i, frepple.demand_forecastbucket) or i.total <= 0.0:
       continue
-    cursor.executemany(
+    cursor.executemany(   # TODO Not very efficient... Use a generator function instead
       "insert into out_forecast \
       (forecast,startdate,enddate,total,net,consumed) \
       values (%s,%s,%s,%s,%s,%s)",

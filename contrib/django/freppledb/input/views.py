@@ -557,7 +557,7 @@ class ForecastList(GridReport):
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
-    GridFieldNumber('priority', title=_('priority')),
+    GridFieldInteger('priority', title=_('priority')),
     GridFieldNumber('maxlateness', title=_('maximum lateness')),
     GridFieldNumber('minshipment', title=_('minimum shipment')),
     GridFieldBool('discrete', title=_('discrete')),

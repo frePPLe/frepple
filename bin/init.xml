@@ -39,7 +39,7 @@ frepple.loadmodule("mod_forecast.so",
   Net_MatchUsingDeliveryOperation=False,
   Net_NetEarly="P4W",
   Net_NetLate="P4W",
-  DueAtEndOfBucket=False)
+  DueAtEndOfBucket=True)
   
 ## Linear Programming solver module  
 #frepple.loadmodule("mod_lpsolver.so")

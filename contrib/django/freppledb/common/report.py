@@ -616,15 +616,11 @@ class GridReport(View):
                   it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
                   form = UploadForm(d, instance=it)
                 except reportclass.model.DoesNotExist:
-                  try: it = reportclass.model.objects.using(request.database).get_or_create(pk=d[reportclass.model._meta.pk.name])
-                  except Exception, e: 
-                    print e
-                    #pass   # This save can fail, eg for non-nullable fields
-                  form = UploadForm(d,it)
+                  form = UploadForm(d)
                   it = None
               else:
                 # No primary key required for this model
-                form = UploadForm(d)  # TODO object is always saved in the default database
+                form = UploadForm(d)
                 it = None
   
               # Step 3: Validate the data and save to the database

@@ -132,6 +132,8 @@ class OverviewReport(GridPivot):
         on x.name = out_forecast.forecast
         and out_forecast.enddate >= x.startdate
         and out_forecast.startdate <= x.enddate
+        and out_forecast.enddate >= '%s'
+        and out_forecast.enddate < '%s'
         -- Grouping
         group by x.name, x.item_id, x.customer_id,
                x.bucket, x.startdate, x.enddate
@@ -153,9 +155,8 @@ class OverviewReport(GridPivot):
          sql_datediff('out_forecast.enddate','out_forecast.startdate'),
          sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
          sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),
-         basesql,bucket,startdate,enddate,startdate,enddate,sortsql)
+         basesql,bucket,startdate,enddate,startdate,enddate,startdate,enddate,sortsql)
     cursor.execute(query, baseparams)
-
 
     # Build the python result
     for row in cursor.fetchall():

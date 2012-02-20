@@ -12,7 +12,7 @@
 {% include "forecastcontext.html" %}
 {% endblock %}
 
-{% block data %}
+{% comment %} TODO
 {% for i in objectlist1 %}<tr class="{% cycle row1,row2 %}">
 <td>{% superlink i.operation operation %}</td>
 <td>{{i.date}}</td>
@@ -20,4 +20,4 @@
 <td>{{i.quantity}}</td>
 <td>{% superlink i.item item %}</td>
 </tr>{% endfor %}
-{% endblock %}
+{% endcomment %}

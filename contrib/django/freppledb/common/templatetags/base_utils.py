@@ -39,7 +39,7 @@ from django.db import DEFAULT_DB_ALIAS
 from freppledb.execute.models import Scenario
 
 HOME_CRUMB = '<a href="%s/admin/">%s</a>'
-NUMBER_OF_CRUMBS = 7
+NUMBER_OF_CRUMBS = 5
 
 register = Library()
 variable_title = Variable("title")
@@ -179,66 +179,6 @@ def do_crumbs(parser, token):
     return CrumbsNode()
 
 register.tag('crumbs', do_crumbs)
-
-
-#
-# A tag to create a superlink, which is a hyperlink with a context menu
-#
-
-class SuperLink(Node):
-  def __init__(self, varname, vartext, type, key):
-    self.var = Variable(varname)
-    self.text = vartext and Variable(vartext) or None
-    self.type = type
-    self.key = key
-
-  def __repr__(self):
-    return "<SuperLink Node>"
-
-  def render(self, context):
-    value = self.var.resolve(context)
-    if value == '' or value == None:
-      return mark_safe('')
-    text = self.text and self.text.resolve(context) or None
-    try: popup = variable_popup.resolve(context)
-    except: popup = False
-    if popup:
-      if self.key:
-        # Key field in a popup window: the link won't display a context menu.
-        # It will close the popup window instead.
-        return mark_safe('<a href="" onclick="opener.dismissRelatedLookupPopup(window, %s); return false;">%s</a>' % (repr(force_unicode(value))[1:], escape(text or value)))
-      else:
-        # Non-key field in a popup window
-        return mark_safe(escape(text or value))
-    else:
-      # Not a popup window
-      return mark_safe('<a href="%s" class="%s">%s</a>' % (text and escape(value) or '#', self.type, escape(text or value)))
-
-def superlinknode(parser, token):
-  from re import split
-  bits = split(r'\s+', token.contents, 4)
-  argumentcount = len(bits)
-  if argumentcount == 3:
-    # Format:  value type
-    return SuperLink(bits[1], None, bits[2], False)
-  elif argumentcount == 4:
-    if bits[3] == 'key':
-      # Format: value type 'key'
-      return SuperLink(bits[1], None, bits[2], True)
-    else:
-      # Format: value text type
-      return SuperLink(bits[1], bits[2], bits[3], False)
-      TemplateSyntaxError, "'%s' only accepts 'key' as last optional argument" % bits[0]
-  elif argumentcount == 5:
-    if bits[4] == 'key':
-      # Format: value text type 'key'
-      return SuperLink(bits[1], bits[2], bits[3], True)
-    else:
-      TemplateSyntaxError, "'%s' only accepts 'key' as last optional argument" % bits[0]
-  else:
-    raise TemplateSyntaxError, "'%s' tag uses maximum 4 arguments" % bits[0]
-
-register.tag('superlink',superlinknode)
 
 
 #

@@ -5,7 +5,7 @@
 {% include "operationcontext.html" %}
 {% endblock %}
 
-{% block data %}
+{% comment %} TODO
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{% superlink i.thebuffer buffer %}</td>
@@ -16,4 +16,4 @@
 <td>{{i.operationplan__locked}}</td>
 <td>{{i.operationplan}}</td>
 </tr>{% endfor %}
-{% endblock %}
+{% endcomment %}

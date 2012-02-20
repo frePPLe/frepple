@@ -6,7 +6,7 @@
 {% include "itemcontext.html" %}
 {% endblock %}
 
-{% block data %}
+{% comment %} TODO
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{% if i.forecast %}{% superlink i.forecast i.demand forecast %}{% else %}{% superlink i.demand demand %}{% endif %}</td>
@@ -18,5 +18,5 @@
 <td>{{i.plandate}}</td>
 <td>{{i.operationplan}}</td>
 </tr>{% endfor %}
-{% endblock %}
+{% endcomment %}
 

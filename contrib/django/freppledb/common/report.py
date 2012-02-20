@@ -393,7 +393,7 @@ class GridReport(View):
         r = [ ',\n{' ]
       first2 = True
       for f in reportclass.rows:
-        s = isinstance(i[f.field_name], basestring) and escape(i[f.field_name]) or i[f.field_name]
+        s = isinstance(i[f.field_name], basestring) and escape(i[f.field_name].encode(settings.DEFAULT_CHARSET,"ignore")) or i[f.field_name]
         if first2:
           r.append('"%s":"%s"' % (f.name,s))
           first2 = False
@@ -885,12 +885,12 @@ class GridPivot(GridReport):
           r = [ '{' ] 
         currentkey = i[reportclass.rows[0].name]
         first2 = True
-        for f in reportclass.rows:
+        for f in reportclass.rows:          
           s = isinstance(i[f.name], basestring) and escape(i[f.name].encode(settings.DEFAULT_CHARSET,"ignore")) or i[f.name]
           if first2:
             r.append('"%s":"%s"' % (f.name,s))
             first2 = False
-          else:
+          elif i[f.name] != None:
             r.append(', "%s":"%s"' % (f.name,s))
       r.append(', "%s":[' % i['bucket'])
       first2 = True

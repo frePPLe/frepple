@@ -4,7 +4,7 @@
 {% include "operationcontext.html" %}
 {% endblock %}
 
-{% block data %}
+{% comment %} TODO
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{{i.id}}</td>
@@ -16,4 +16,4 @@
 <td>{{i.unavailable}}</td>
 <td>{{i.owner}}</td>
 </tr>{% endfor %}
-{% endblock %}
+{% endcomment %}

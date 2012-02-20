@@ -48,7 +48,7 @@
 	</script>
 {% endblock %}
 
-{% block data %}
+{% comment %} TODO
 {% for i in objectlist1 %}<tr class="{% cycle row1,row2 %}">
 <td>{{i.depth}}</td>
 <td>{% if i.hidden %}{{i.operation}}{% else %}{% superlink i.operation operation %}{% endif %}</td>
@@ -60,4 +60,4 @@
 <td>{{i.quantity}}</td>
 <td>{{i.percent_used|floatformat:1}}</td>
 </tr>{% endfor %}
-{% endblock %}
+{% endcomment %}

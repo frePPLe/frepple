@@ -6,9 +6,17 @@ from django.conf import settings
 
 # Auxilary functions for debugging
 def debugResource(res,mode):
+  # if res.name != 'my favorite resource': return 
   print "=> Situation on resource", res.name
   for j in res.loadplans:
     print "=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup
+    
+def debugDemand(dem,mode):
+  if dem.name == 'my favorite demand': 
+    print "=> Starting to plan demand ", dem.name
+    solver.loglevel = 2
+  else:
+    solver.loglevel = 0
  
 # Send the output to a logfile
 try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
@@ -37,6 +45,7 @@ solver = frepple.solver_mrp(name="MRP",
   constraints=constraint, 
   plantype=plantype, 
   #userexit_resource=debugResource,
+  #userexit_demand=debugDemand,
   loglevel=0
   )
 print "Plan type: ", plantype

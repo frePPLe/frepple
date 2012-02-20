@@ -8,20 +8,23 @@
 {% include "operationcontext.html" %}
 {% endblock %}
 
-{% comment %} TODO
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% if i.forecast %}{% superlink i.forecast i.demand forecast %}{% else %}{% superlink i.demand demand %}{% endif %}</td>
-<td>{{i.entity}}</td>
-<td>{{i.name}}</td>
-<td>{% ifequal i.entity 'material' %}{% superlink i.owner buffer %}{% else %} 
-{% ifequal i.entity 'capacity' %}{% superlink i.owner resource %}{% else %}
-{% ifequal i.entity 'demand' %}{% superlink i.owner demand %}{% else %}
-{% superlink i.owner operation %}
-{% endifequal %} {% endifequal %}{% endifequal %}</td>
-<td>{{i.description}}</td>
-<td>{{i.startdate}}</td>
-<td>{{i.enddate}}</td>
-<td>{{i.weight}}</td>
-</tr>{% endfor %}
-{% endcomment %}
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">
+
+// TODO demand column needs seperate formatter for demand and forecasts
+
+function probfmt(cellvalue, options, row)
+{
+  if (row['entity'] == 'material')
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>";
+  if (row['entity'] == 'capacity')
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
+  if (row['entity'] == 'demand') // TODO distinguish between forecast and demand
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='demand'></span>";
+  else
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>";
+}
+
+</script>
+{% endblock %}
+

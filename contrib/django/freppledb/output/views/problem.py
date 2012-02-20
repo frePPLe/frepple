@@ -55,8 +55,8 @@ class Report(GridReport):
   rows = (
     GridFieldText('entity', title=_('entity'), editable=False, align='center'), # TODO choices=getEntities
     GridFieldText('name', title=_('name'), editable=False, align='center'),  # TODO choices=getNames
-    GridFieldText('owner', title=_('owner'), editable=False),
-    GridFieldText('description', title=_('description'), editable=False, width=250),
+    GridFieldText('owner', title=_('owner'), editable=False, extra='formatter:probfmt'),
+    GridFieldText('description', title=_('description'), editable=False, width=350),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldNumber('weight', title=_('weight'), editable=False),

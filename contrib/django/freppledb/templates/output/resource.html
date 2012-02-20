@@ -93,9 +93,9 @@ function crosses (cellvalue, options, rowdata) {
   else
     result += '0.0<br/>';
   if (cellvalue[4] > 95)
-    result += '<span class="highutil">' + cellvalue[4] + '</span>';
+    result += '<span class="highutil">' + cellvalue[4] + '%</span>';
   else
-    result += cellvalue[4];
+    result += cellvalue[4] + '%';
   return result;
 };
 {% endblock %}

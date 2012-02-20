@@ -334,16 +334,18 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       curMax = data->state->q_loadplan->getMax();
       double curOnhand = data->state->q_loadplan->getOnhand();
 
-      // Find how many uncommitted operationplans are loading the resource before of the loadplan
+      // Find how many uncommitted operationplans are loading the resource
+      // before of the loadplan.
+      // If the same resource is used multiple times in the supply path of a
+      // demand we need to use only the capacity used by other demands. Otherwise
+      // our estimate is of the feasible next date is too pessimistic.
       double ignored = 0.0;
-      /*
       for (cur = res->getLoadPlans().begin(); cur!=res->getLoadPlans().begin(data->state->q_loadplan); ++cur)
       {
     	const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
     	if (ldplan && !ldplan->getOperationPlan()->getIdentifier() && ldplan->getOperationPlan()!=data->state->q_operationplan )
     	  ignored += ldplan->getQuantity();
       }
-      */
 
       for (cur=res->getLoadPlans().begin(data->state->q_loadplan);
           !(HasOverload && newDate) && cur != res->getLoadPlans().end(); )
@@ -363,11 +365,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           continue;
         }
         */
-        /*
         const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
     	if (ldplan && !ldplan->getOperationPlan()->getIdentifier() && ldplan->getOperationPlan()!=data->state->q_operationplan)
     	  ignored += ldplan->getQuantity();
-        */
 
         // Only consider the last loadplan for a certain date
         const TimeLine<LoadPlan>::Event *loadpl = &*(cur++);

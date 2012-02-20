@@ -81,10 +81,6 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
       first = false;
     }
     data.logConstraints = false; // Only first loop collects constraint info
-    /* XXX if (opplan->getDates()==orig && data.state->a_qty==0.0 && data.state->forceLate && !backupForceLate)
-      // All loadplans are feasible at the late date, but the a_qty is left at zero
-      // because of the forceLate flag.
-      data.state->a_qty = loadqty;*/
   }
   // Imagine there are multiple loads. As soon as one of them is moved, we
   // need to redo the capacity check for the ones we already checked.

@@ -100,6 +100,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   bool HasOverload;
   bool HasSetupOverload;
   bool noRestore = data->state->forceLate;
+  bool forced_late = data->state->forceLate;
 
   // Initialize the default reply
   data->state->a_date = data->state->q_date;
@@ -308,8 +309,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
     while (HasOverload && data->state->a_qty!=0.0);
 
   // Loop for a valid location by using LATER capacity
-  // If the answered quantity is 0, the operationplan is moved into the
-  // past.
+  // If the answered quantity is 0, the operationplan is moved into the past.
   // Or, the solver may be forced to produce a late reply.
   // In these cases we need to search for capacity at later dates.
   if (data->constrainedPlanning && (data->state->a_qty == 0.0 || data->state->forceLate))
@@ -333,6 +333,18 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       newDate = Date::infinitePast;
       curMax = data->state->q_loadplan->getMax();
       double curOnhand = data->state->q_loadplan->getOnhand();
+
+      // Find how many uncommitted operationplans are loading the resource before of the loadplan
+      double ignored = 0.0;
+      /*
+      for (cur = res->getLoadPlans().begin(); cur!=res->getLoadPlans().begin(data->state->q_loadplan); ++cur)
+      {
+    	const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
+    	if (ldplan && !ldplan->getOperationPlan()->getIdentifier() && ldplan->getOperationPlan()!=data->state->q_operationplan )
+    	  ignored += ldplan->getQuantity();
+      }
+      */
+
       for (cur=res->getLoadPlans().begin(data->state->q_loadplan);
           !(HasOverload && newDate) && cur != res->getLoadPlans().end(); )
       {
@@ -351,6 +363,11 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           continue;
         }
         */
+        /*
+        const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
+    	if (ldplan && !ldplan->getOperationPlan()->getIdentifier() && ldplan->getOperationPlan()!=data->state->q_operationplan)
+    	  ignored += ldplan->getQuantity();
+        */
 
         // Only consider the last loadplan for a certain date
         const TimeLine<LoadPlan>::Event *loadpl = &*(cur++);
@@ -359,7 +376,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         curOnhand = loadpl->getOnhand();
 
         // Check if overloaded
-        if (loadpl->getOnhand() > curMax + ROUNDING_ERROR)
+        if (loadpl->getOnhand() - ignored > curMax + ROUNDING_ERROR)
           // There is still a capacity problem
           HasOverload = true;
         else if (!HasOverload && loadpl->getDate() > data->state->q_operationplan->getDates().getEnd())
@@ -383,7 +400,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         // Move the operationplan to the new date
         data->state->q_operationplan->getOperation()->setOperationPlanParameters(
             data->state->q_operationplan,
-            currentOpplan.quantity / parallelOps, // 0.001  @todo this calculation doesn't give minimization of the lateness
+            (currentOpplan.quantity ? currentOpplan.quantity : 0.001) / parallelOps, // 0.001  @todo this calculation doesn't give minimization of the lateness
             newDate,
             Date::infinitePast
             );
@@ -435,8 +452,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       data->state->a_penalty +=
         (currentOpplan.end - data->state->q_operationplan->getDates().getEnd()) / 86400.0;
   }
-  else if (data->state->q_operationplan->getQuantity() > 0.0)
-    data->state->q_operationplan->setQuantity(0.0);
 
   // Maintain the constraint list
   if (data->state->a_qty == 0.0 && data->logConstraints)

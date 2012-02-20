@@ -49,7 +49,6 @@ void SolverMRP::solve(const Load* l, void* v)
   {
     // The loadplan is an increase in size, and the resource solver only needs
     // the decreases.
-    // Or, it's a zero quantity loadplan. E.g. because it is not effective.
     data->state->a_qty = data->state->q_qty;
     data->state->a_date = data->state->q_date;
     return;
@@ -60,12 +59,6 @@ void SolverMRP::solve(const Load* l, void* v)
     // CASE I: It is not an alternate load.
     // Delegate the answer to the resource
     l->getResource()->solve(*this,v);
-    if (data->state->a_qty == 0.0
-      && data->state->q_operationplan->getQuantity() != 0.0)
-      // In case of a zero reply, we resize the operationplan to 0 right away.
-      // This is required to make sure that the buffer inventory profile also
-      // respects this answer.
-      data->state->q_operationplan->setQuantity(0.0);
     return;
   }
 
@@ -270,11 +263,6 @@ void SolverMRP::solve(const Load* l, void* v)
   }
   data->logConstraints = originalLogConstraints;
 
-  if (lplan->getOperationPlan()->getQuantity() != 0.0)
-    // In case of a zero reply, we resize the operationplan to 0 right away.
-    // This is required to make sure that the buffer inventory profile also
-    // respects this answer.
-    lplan->getOperationPlan()->setQuantity(0.0);
   if (loglevel>1)
     logger << indent(lplan->getOperationPlan()->getOperation()->getLevel()) <<
       "   Alternate load doesn't find supply on any alternate : "

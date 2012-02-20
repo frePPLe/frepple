@@ -43,31 +43,67 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
       if (++constrainedLoads > 1) break;
     }
   DateRange orig;
+  Date minimumEndDate = opplan->getDates().getEnd();
+  bool backuplogconstraints = data.logConstraints;
+  bool backupForceLate = data.state->forceLate;
+  bool recheck, first;
+  double loadqty = 1.0;
 
   // Loop through all loadplans, and solve for the resource.
   // This may move an operationplan early or late.
-  Problem* curConstraint = data.planningDemand->getConstraints().top();
   do
   {
-    data.planningDemand->getConstraints().pop(curConstraint);
     orig = opplan->getDates();
+    recheck = false;
+    first = true;
     for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
       h!=opplan->endLoadPlans() && opplan->getDates()==orig; ++h)
     {
+      if (h->getLoad()->getQuantity() == 0.0 || h->getQuantity() == 0.0)
+    	// Empty load or loadplan (eg when load is not effective)
+    	continue;
+      // Call the load solver - which will call the resource solver.
       data.state->q_operationplan = opplan;
       data.state->q_loadplan = &*h;
       data.state->q_qty = h->getQuantity();
+      loadqty = h->getQuantity();
       data.state->q_date = h->getDate();
-      // Call the load solver - which will call the resource solver.
-      if (h->getLoad()->getQuantity() != 0.0)
-        h->getLoad()->solve(*this,&data);
+      h->getLoad()->solve(*this,&data);
+      if (opplan->getDates()!=orig)
+      {
+    	if (data.state->a_qty==0)
+    	  // One of the resources is late. We want to prevent that other resources
+    	  // are trying to pull in the operationplan again. It can only be delayed
+    	  // from now on in this loop.
+          data.state->forceLate = true;
+    	if (!first) recheck = true;
+      }
+      first = false;
     }
+    data.logConstraints = false; // Only first loop collects constraint info
+    /* XXX if (opplan->getDates()==orig && data.state->a_qty==0.0 && data.state->forceLate && !backupForceLate)
+      // All loadplans are feasible at the late date, but the a_qty is left at zero
+      // because of the forceLate flag.
+      data.state->a_qty = loadqty;*/
   }
   // Imagine there are multiple loads. As soon as one of them is moved, we
   // need to redo the capacity check for the ones we already checked.
   // Repeat until no load has touched the opplan, or till proven infeasible.
   // No need to reloop if there is only a single load (= 2 loadplans)
-  while (constrainedLoads>1 && opplan->getDates()!=orig && (data.state->a_qty!=0.0 || data.state->forceLate));
+  while (constrainedLoads>1 && opplan->getDates()!=orig
+    && ((data.state->a_qty==0.0 && data.state->a_date > minimumEndDate)
+    	 || recheck));
+  // TODO doesn't this loop increment a_penalty incorrectly???
+
+  // Restore original flags
+  data.logConstraints = backuplogconstraints; // restore the original value
+  data.state->forceLate = backupForceLate;
+
+  // In case of a zero reply, we resize the operationplan to 0 right away.
+  // This is required to make sure that the buffer inventory profile also
+  // respects this answer.
+  if (data.state->a_qty==0.0 && opplan->getQuantity() > 0.0)
+	opplan->setQuantity(0.0);
 }
 
 
@@ -271,13 +307,18 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
       && matnext.getStart() != Date::infinitePast
       && (data.constrainedPlanning && isCapacityConstrained()))
     {
-      // The operationplan was moved early (because of a resource constraint)
+	  // The operationplan was moved early (because of a resource constraint)
       // and we can't properly trust the reply date in such cases...
       // We want to enforce rechecking the next date.
+	  if (data.getSolver()->getLogLevel()>1)
+        logger << indent(opplan->getOperation()->getLevel())
+               << "   Recheck capacity" << endl;
 
-      // Move the operationplan to the next date where the material is feasible
+	  // Move the operationplan to the next date where the material is feasible
       opplan->getOperation()->setOperationPlanParameters
-        (opplan, orig_opplan_qty, matnext.getStart(), Date::infinitePast);
+        (opplan, orig_opplan_qty,
+         matnext.getStart()>orig_dates.getStart() ? matnext.getStart() : orig_dates.getStart(),
+         Date::infinitePast);
 
       // Move the operationplan to a later date where it is feasible.
       data.state->forceLate = true;

@@ -151,7 +151,7 @@ class CrumbsNode(Node):
         ),
       )
     
-    # Pop from the stack if the same title is already in the crumbs
+    # Pop from the stack if the same title is already in the crumbs.
     cnt = 0
     for i in cur:       
        if i[0] == node[0]:

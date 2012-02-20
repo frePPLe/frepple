@@ -497,8 +497,7 @@ class SolverMRP : public Solver
       Buffer* curBuffer;
 
       /** A flag to force the resource solver to move the operationplan to
-        * a later date where it is feasible.<br>
-        * Admittedly this is an ugly hack...
+        * a later date where it is feasible.
         */
       bool forceLate;
 

@@ -203,7 +203,7 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperExit()
 PyMODINIT_FUNC initfrepple(void)
 {
   try {FreppleInitialize(0, NULL);}
-  catch(exception e) 
+  catch(const exception& e)
   {
     logger << "Initialization failed: " << e.what() << endl;
   }

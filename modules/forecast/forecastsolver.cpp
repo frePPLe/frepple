@@ -197,7 +197,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
   {
 	if (getLogLevel()>1)
 	  logger << "    Empty forecast model" << endl;
-	if (getLogLevel()>0)
+	if (getLogLevel()>0 && dmd->getQuantity()>0.0)
 	  logger << "    Remains " << dmd->getQuantity() << " that can't be netted" << endl;
 	return;
   }

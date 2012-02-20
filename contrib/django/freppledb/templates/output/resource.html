@@ -14,20 +14,23 @@ function getDirtyData()
     var curCol = jQuery.jgrid.getCellIndex($(this).closest("td,th"));
     var curRow = $(this).closest("tr").attr('id');
     var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[curCol];
-    /* TODO
-    var     if (old != 0) 
-      u = parseFloat(input.value) * (1 + unavailable / old) / units;
+    var value = $(this).data('old');
+    if (value != 0)
+      value = parseFloat($(this).val()) * (1 + $(this).data('unavailable') / value) / units;
     else
-      u = parseFloat(input.value) / units; 
-    */
-    changes.push({'id': curRow, 'startdate': colmodel['startdate'], 'enddate': colmodel['enddate'], 'value': $(this).val()});    
+      value = parseFloat($(this).val()) / units;
+    changes.push({'id': curRow, 
+      'startdate': colmodel['startdate'], 
+      'enddate': colmodel['enddate'], 
+      'value': value
+      });    
     });
   return changes;
 }
   
-function onChange(event) //input, old, start, end, units)
+function onChange(event, old, unavailable)
 {
-  $(event.target).addClass('dirty-cell');
+  $(event.target).addClass('dirty-cell').data('old',old).data('unavailable',unavailable);
   upload.select();
   /*
   // Update the utilization percentage immediately  TODO
@@ -81,7 +84,7 @@ function onChange(event) //input, old, start, end, units)
 {% block crosses %}
 function crosses (cellvalue, options, rowdata) {
 {% if perms.input.change_resource %}
-  var result = '<input type="text" class="smallpadding" value="' + cellvalue[0] + '" size="5" onchange="onChange(event)" onclick="$(this).select();"/><br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
+  var result = '<input type="text" class="smallpadding" value="' + cellvalue[0] + '" size="5" onchange="onChange(event,' + cellvalue[0] + ',' + cellvalue[1] + ')" onclick="$(this).select();"/><br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
 {% else %}
   var result = cellvalue[0] + '<br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
 {% endif %}

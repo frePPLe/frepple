@@ -5,15 +5,6 @@
 {% include "operationcontext.html" %}
 {% endblock %}
 
-{% comment %} TODO
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.thebuffer buffer %}</td>
+{% comment %} TODO operation column needs to distinguish between existing and non-existing operations
 <td>{% if i.operation_in %}{% superlink i.operationplan__operation operation %}{% else %}{{i.operationplan__operation}}{% endif %}</td>
-<td>{{i.quantity}}</td>
-<td>{{i.flowdate}}</td>
-<td>{{i.onhand}}</td>
-<td>{{i.operationplan__locked}}</td>
-<td>{{i.operationplan}}</td>
-</tr>{% endfor %}
 {% endcomment %}

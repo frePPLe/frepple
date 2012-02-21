@@ -5,19 +5,8 @@
 {% include "resourcecontext.html" %}
 {% endblock %}
 
-{% comment %} TODO
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.theresource resource %}</td>
+{% comment %} TODO operation column needs to distinguish between existing and non-existing operations
 <td>{% if i.operation_in %}{% superlink i.operationplan__operation operation %}{% else %}{{i.operationplan__operation}}{% endif %}</td>
-<td>{{i.startdate}}</td>
-<td>{{i.enddate}}</td>
-<td>{{i.quantity}}</td>
-<td>{{i.setup}}</td>
-<td>{{i.operationplan__locked}}</td>
-<td>{{i.operationplan__unavailable}}</td>
-<td>{{i.operationplan}}</td>
-</tr>{% endfor %}
 {% endcomment %}
 
 

@@ -140,7 +140,7 @@ def GraphData(request, entity):
   except:
     current = datetime.now()
   (bucket,start,end,bucketlist) = getBuckets(request)
-  result = [ i for i in ReportByDemand.query(request,basequery,bucket,start,end) ]
+  result = [ i for i in ReportByDemand.query(request,basequery) ]
   min = None
   max = None
 

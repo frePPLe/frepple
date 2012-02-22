@@ -84,8 +84,8 @@ def preferences(request):
         pref = Preferences.objects.get(user=request.user)
         newdata = form.cleaned_data
         pref.buckets = newdata['buckets']
-        pref.startdate = datetime(newdata['startdate'])
-        pref.enddate = datetime(newdata['enddate'])
+        pref.startdate = datetime(newdata['startdate'].year, newdata['startdate'].month, newdata['startdate'].day)
+        pref.enddate = datetime(newdata['enddate'].year, newdata['enddate'].month, newdata['enddate'].day)
         pref.language = newdata['language']
         pref.theme = newdata['theme']
         pref.pagesize = newdata['pagesize']
@@ -102,8 +102,8 @@ def preferences(request):
     pref = request.user.get_profile()
     form = PreferencesForm({
       'buckets': pref.buckets,
-      'startdate': pref.startdate,
-      'enddate': pref.enddate,
+      'startdate': pref.startdate.date(),
+      'enddate': pref.enddate.date(),
       'language': pref.language,
       'theme': pref.theme,
       'pagesize': pref.pagesize,

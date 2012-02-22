@@ -76,7 +76,7 @@ function onChange(event, old, unavailable)
 	<script language="javascript" type="text/javascript">
 	   var chart1 = new FusionCharts("/static/FCF_StackedColumn2D.swf", "chart1", $(window).width()-35, 350);
 	   chart1.setTransparent();
-	   chart1.setDataURL(escape("{{request.prefix}}/resourcegraph/{{args.0}}/?reportbucket={{reportbucket}}&reportstart={{reportstart|date:"Y-m-d"}}&reportend={{reportend|date:"Y-m-d"}}"));	   	   
+	   chart1.setDataURL(escape("{{request.prefix}}/resourcegraph/{{args.0|urlencode}}/?reportbucket={{reportbucket}}&reportstart={{reportstart|date:"Y-m-d"}}&reportend={{reportend|date:"Y-m-d"}}"));	   	   
 	   chart1.render("chart1div");
 	</script>
 {% endif %}{% endblock %}

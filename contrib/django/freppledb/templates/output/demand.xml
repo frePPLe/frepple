@@ -3,7 +3,7 @@
 <graph shownames='1' showvalues='0'  
   decimalPrecision='2' limitsDecimalPrecision='0' 
   divLineDecimalPrecision='0' connectNullData='0' 
-  PYAxisName='{% trans "Demand and supply"}' SYAxisName='{% trans "backlog" %}' numDivLines='4' 
+  PYAxisName='{% trans "Demand and supply" %}' SYAxisName='{% trans "backlog" %}' numDivLines='4' 
   formatNumberScale='1' showShadow='0' bgColor='f1f1f1' 
   showalternateHGridColor='1' alternateHGridColor='eeeeee'
   animation='0' >

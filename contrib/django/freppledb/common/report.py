@@ -686,6 +686,8 @@ class GridReport(View):
       reportclass._rowsByName = {}
       for i in reportclass.rows:
         reportclass._rowsByName[i.name] = i
+        if i.field_name != i.name:
+          reportclass._rowsByName[i.field_name] = i
     return reportclass._rowsByName[name]
 
   
@@ -799,7 +801,10 @@ class GridReport(View):
           }    
     if filters:
       z = reportclass._get_q_filter(filters)
-      return z and items.filter(z) or items
+      if z: 
+        return items.filter(z)
+      else: 
+        return items
     
     # Django-style filtering, using URL parameters
     for i,j in request.GET.iteritems():
@@ -1040,7 +1045,7 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
     if start:
       try:
         (y,m,d) = start.split('-')
-        start = date(int(y),int(m),int(d))
+        start = datetime(int(y),int(m),int(d))
         if pref.startdate != start:
           pref.startdate = start
           pref.save()
@@ -1048,13 +1053,13 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
         try: start = pref.startdate
         except: pass
         if not start:
-          try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S").date()
+          try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
           except: start = datetime.now()
     else:
       try: start = pref.startdate
       except: pass
       if not start:
-        try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S").date()
+        try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
         except: start = datetime.now()
 
   # Select the end date (unless it is passed as argument)
@@ -1063,7 +1068,7 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
     if end:
       try:
         (y,m,d) = end.split('-')
-        end = date(int(y),int(m),int(d))
+        end = datetime(int(y),int(m),int(d))
         if pref.enddate != end:
           pref.enddate = end
           pref.save()

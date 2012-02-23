@@ -1,10 +1,6 @@
 {% extends "admin/base_site_grid.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="/static/FusionCharts.js"></script>
-{% endblock %}
-
 {% block contextmenus %}
 {% include "operationcontext.html" %}
 {% include "itemcontext.html" %}
@@ -32,6 +28,19 @@
 </div>
 {% endblock %}
 
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="/static/FusionCharts.js"></script>
+<script type="text/javascript">
+
+function reslistfmt(cellvalue, options, row)
+{
+  if (cellvalue === undefined || cellvalue ==='') return ''; 
+  return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
+}
+
+</script>
+{% endblock %}
+
 {% block before_table %}
 <div id="chart1div" style="z-index: 1000;">
 	  <p>&nbsp;</p>
@@ -41,7 +50,7 @@
 	  You can downloaded it <a href="http://www.adobe.com/products/flashplayer/" target="_blank"><u>here</u></a> for free.{% endblocktrans %}</p>
 	</div>
 	<script language="javascript" type="text/javascript">
-	   var chart1 = new FusionCharts("/static/FCF_Gantt.swf", "chart1", $(window).width()-35, 500);
+	   var chart1 = new FusionCharts("/static/FCF_Gantt.swf", "chart1", $(window).width()-35, 350);
 	   chart1.setTransparent();
 	   chart1.setDataURL(escape("{{request.prefix}}/pegginggraph/{{args.0|urlencode}}/"));
 	   chart1.render("chart1div");

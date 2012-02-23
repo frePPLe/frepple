@@ -15,7 +15,13 @@
 {% block content %}<div id="content-main">
 {% block object-tools %}
 {% if change %}{% if not is_popup %}
-  <ul class="object-tools"><li><a href="history/" class="historylink">{% trans "History" %}</a></li>
+  <ul class="object-tools">
+  {% if opts.object_name.lower == "demand" %}<li><a href="{{ request.prefix }}/demandpegging/{{ object_id }}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
+  {% if opts.object_name.lower == "buffer" %}<li><a href="{{ request.prefix }}/buffer/{{ object_id }}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
+  {% if opts.object_name.lower == "operation" %}<li><a href="{{ request.prefix }}/operation/{{ object_id }}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
+  {% if opts.object_name.lower == "resource" %}<li><a href="{{ request.prefix }}/resource/{{ object_id }}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
+  {% if opts.object_name.lower == "item" %}<li><a href="{{ request.prefix }}/demand/{{ object_id }}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
+  <li><a href="history/" class="historylink">{% trans "History" %}</a></li>
   {% if has_absolute_url %}<li><a href="../../../r/{{ content_type_id }}/{{ object_id }}/" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif%}
   </ul>
 {% endif %}{% endif %}

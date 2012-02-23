@@ -44,16 +44,17 @@ class ReportByDemand(GridReport):
   basequeryset = Demand.objects.all().values('name')
   frozenColumns = 0
   editable = False
+  default_sort = None
   rows = (
-    GridFieldText('depth', title=_('depth'), editable=False),
-    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
-    GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False),
-    GridFieldText('item', title=_('item'), formatter='item', editable=False),
-    GridFieldText('resource', title=_('resource'), formatter='resource', editable=False),
-    GridFieldDateTime('startdate', title=_('start date'), editable=False),
-    GridFieldDateTime('enddate', title=_('end date'), editable=False),
-    GridFieldNumber('quantity', title=_('quantity'), editable=False),
-    GridFieldNumber('percent_used', title=_('percent_used'), editable=False),
+    GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
+    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False, sortable=False),
+    GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False, sortable=False),
+    GridFieldText('item', title=_('item'), formatter='item', editable=False, sortable=False),
+    GridFieldText('resource', title=_('resource'), editable=False, sortable=False, extra='formatter:reslistfmt'),
+    GridFieldDateTime('startdate', title=_('start date'), editable=False, sortable=False),
+    GridFieldDateTime('enddate', title=_('end date'), editable=False, sortable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False, sortable=False),
+    GridFieldNumber('percent_used', title=_('percent_used'), editable=False, sortable=False),
     )
 
   @classmethod

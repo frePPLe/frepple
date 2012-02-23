@@ -319,7 +319,14 @@ class GridReport(View):
     '''
     Applies a sort to the query. 
     '''
-    sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[reportclass.default_sort[0]].name
+    sort = None
+    if 'sidx' in request.GET: sort = request.GET['sidx']
+    print sort, not sort, reportclass.default_sort
+    if not sort:
+      if reportclass.default_sort:      
+        sort = reportclass.rows[reportclass.default_sort[0]].name
+      else:
+        return query # No sorting 
     if ('sord' in request.GET and request.GET['sord'] == 'desc') or reportclass.default_sort[1] == 'desc':
       sort = "-%s" % sort  
     return query.order_by(sort)
@@ -395,6 +402,7 @@ class GridReport(View):
       for f in reportclass.rows:
         s = isinstance(i[f.field_name], basestring) and escape(i[f.field_name].encode(settings.DEFAULT_CHARSET,"ignore")) or i[f.field_name]
         if first2:
+          # if isinstance(i[f.field_name], (list,tuple)): pegging report has a tuple of strings...
           r.append('"%s":"%s"' % (f.name,s))
           first2 = False
         elif i[f.field_name] != None:

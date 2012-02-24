@@ -517,6 +517,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
         data->state->curOwnerOpplan
         );
     data->state->curDemand = NULL;
+    a->getOperationPlan()->setMotive(data->state->motive);
     z = a->getOperationPlan();
     data->add(a);
   }
@@ -593,6 +594,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     data->state->q_date, data->state->curDemand, data->state->curOwnerOpplan, false
     );
   data->state->curDemand = NULL;
+  a->getOperationPlan()->setMotive(data->state->motive);
 
   // Make sure the subopplans know their owner & store the previous value
   OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;
@@ -832,6 +834,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
           oper, a_qty, Date::infinitePast, ask_date,
           d, prev_owner_opplan, false
           );
+      a->getOperationPlan()->setMotive(data->state->motive);
       if (!prev_owner_opplan) data->add(a);
 
       // Create a sub operationplan
@@ -982,6 +985,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
           oper, a_qty, Date::infinitePast, bestQDate,
           d, prev_owner_opplan, false
           );
+      a->getOperationPlan()->setMotive(data->state->motive);
       if (!prev_owner_opplan) data->add(a);
 
       // Recreate the ask
@@ -1052,6 +1056,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         oper, a_qty, Date::infinitePast, origQDate,
         d, prev_owner_opplan, false
         );
+    a->getOperationPlan()->setMotive(data->state->motive);
     if (!prev_owner_opplan) data->add(a);
 
     // Recreate the ask

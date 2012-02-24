@@ -541,6 +541,9 @@ class SolverMRP : public Solver
         * inventory carrying costs, ...
         */
       double a_penalty;
+
+      /** Motive of the current solver. */
+      Plannable* motive;
     };
 
     /** @brief This class is a helper class of the SolverMRP class.

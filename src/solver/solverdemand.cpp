@@ -118,6 +118,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     data->state->q_qty = plan_qty;
     data->state->q_date = plan_date;
     data->state->curDemand = const_cast<Demand*>(l);
+    data->state->motive = const_cast<Demand*>(l);
     deliveryoper->solve(*this,v);
     Date next_date = data->state->a_date;
 

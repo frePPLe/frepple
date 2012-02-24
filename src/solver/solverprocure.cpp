@@ -251,6 +251,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
           new CommandCreateOperationPlan(b->getOperation(), order_qty,
             Date::infinitePast, current_date, data->state->curDemand);
         last_operationplan = a->getOperationPlan();
+        a->getOperationPlan()->setMotive(data->state->motive);
         last_operationplan->insertInOperationplanList(); // TODO Not very nice: unregistered opplan in the list!
         produced += last_operationplan->getQuantity();
         data->add(a);

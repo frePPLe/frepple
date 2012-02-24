@@ -2311,6 +2311,15 @@ class OperationPlan
       */
     DECLARE_EXPORT OperationPlan(const OperationPlan&, bool = true);
 
+    /** Return the plannable object that caused the creation of this
+      * operationplan. Usage of this field can vary by solver.
+      * The information is normally not relevant for end users.
+      */
+    DECLARE_EXPORT Plannable* getMotive() const {return motive;}
+
+    /** Update the plannable object that created this operationplan. */
+    DECLARE_EXPORT void setMotive(Plannable* v) {motive = v;}
+
   private:
     /** Private copy constructor.<br>
       * It is used in the public copy constructor to make a deep clone of suboperationplans.
@@ -2343,7 +2352,7 @@ class OperationPlan
     OperationPlan() : owner(NULL), quantity(0.0), flags(0), dmd(NULL),
       id(0), oper(NULL), firstflowplan(NULL), firstloadplan(NULL),
       prev(NULL), next(NULL), firstsubopplan(NULL), lastsubopplan(NULL),
-      nextsubopplan(NULL), prevsubopplan(NULL)
+      nextsubopplan(NULL), prevsubopplan(NULL), motive(NULL)
         {initType(metadata);}
 
   private:
@@ -2426,6 +2435,9 @@ class OperationPlan
 
     /** Pointer to the previous suboperationplan of the parent operationplan. */
     OperationPlan* prevsubopplan;
+
+    /** Pointer to the demand that caused the creation of this operationplan. */
+    Plannable* motive;
 };
 
 

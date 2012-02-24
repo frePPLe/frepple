@@ -730,6 +730,7 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src, bool init)
   lastsubopplan = NULL;
   nextsubopplan = NULL;
   prevsubopplan = NULL;
+  motive = NULL;
   initType(metadata);
 
   // Clone the suboperationplans
@@ -765,6 +766,7 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src,
   lastsubopplan = NULL;
   nextsubopplan = NULL;
   prevsubopplan = NULL;
+  motive = NULL;
   initType(metadata);
 
   // Set owner of a
@@ -1085,6 +1087,31 @@ DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_unavailable))
     return PythonObject(getUnavailable());
+  if (attr.isA(Tags::tag_motive))
+  {
+	// Null
+	if (!getMotive())
+	{
+	  Py_INCREF(Py_None);
+	  return Py_None;
+	}
+
+	// Demand
+	Demand* d = dynamic_cast<Demand*>(getMotive());
+	if (d) return PythonObject(d);
+
+	// Buffer
+	Buffer* b = dynamic_cast<Buffer*>(getMotive());
+	if (b) return PythonObject(b);
+
+	// Resource
+	Resource* r = dynamic_cast<Resource*>(getMotive());
+	if (r) return PythonObject(r);
+
+	// Unknown type
+	PyErr_SetString(PythonLogicException, "Unhandled motive type");
+	return NULL;
+  }
   return NULL;
 }
 
@@ -1118,6 +1145,24 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
     }
     OperationPlan* y = static_cast<OperationPlan*>(static_cast<PyObject*>(field));
     setOwner(y);
+  }
+  else if (attr.isA(Tags::tag_motive))
+  {
+	Plannable* y;
+	if (static_cast<PyObject*>(field) == Py_None)
+	  y = NULL;
+    if (field.check(Demand::metadata))
+      y = static_cast<Demand*>(static_cast<PyObject*>(field));
+    else if (field.check(Buffer::metadata))
+      y = static_cast<Buffer*>(static_cast<PyObject*>(field));
+    else if (field.check(Resource::metadata))
+      y = static_cast<Resource*>(static_cast<PyObject*>(field));
+    else
+    {
+      PyErr_SetString(PythonDataException, "operationplan motive must be of type demand, buffer or resource");
+      return -1;
+    }
+  	setMotive(y);
   }
   else
     return -1;

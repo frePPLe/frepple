@@ -115,6 +115,7 @@ DECLARE_EXPORT const Keyword Tags::tag_minimum_calendar("minimum_calendar");
 DECLARE_EXPORT const Keyword Tags::tag_mininterval("mininterval");
 DECLARE_EXPORT const Keyword Tags::tag_mininventory("mininventory");
 DECLARE_EXPORT const Keyword Tags::tag_minshipment("minshipment");
+DECLARE_EXPORT const Keyword Tags::tag_motive("motive");
 DECLARE_EXPORT const Keyword Tags::tag_name("name");
 DECLARE_EXPORT const Keyword Tags::tag_onhand("onhand");
 DECLARE_EXPORT const Keyword Tags::tag_operation("operation");

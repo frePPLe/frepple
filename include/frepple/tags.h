@@ -116,6 +116,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_mininterval;
     static DECLARE_EXPORT const Keyword tag_mininventory;
     static DECLARE_EXPORT const Keyword tag_minshipment;
+    static DECLARE_EXPORT const Keyword tag_motive;
     static DECLARE_EXPORT const Keyword tag_name;
     static DECLARE_EXPORT const Keyword tag_onhand;
     static DECLARE_EXPORT const Keyword tag_operation;

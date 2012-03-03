@@ -134,8 +134,8 @@ astyle:
 #    using '-' (which causes problems for the RPMs)
 old1 = 0
 old2 = 9
-old3 = 0
-old4 = 
+old3 = 1
+old4 = .beta
 new1 = 0
 new2 = 9
 new3 = 1

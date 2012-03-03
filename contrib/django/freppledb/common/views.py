@@ -102,8 +102,8 @@ def preferences(request):
     pref = request.user.get_profile()
     form = PreferencesForm({
       'buckets': pref.buckets,
-      'startdate': pref.startdate.date(),
-      'enddate': pref.enddate.date(),
+      'startdate': pref.startdate and pref.startdate.date() or None,
+      'enddate': pref.enddate and pref.enddate.date() or None,
       'language': pref.language,
       'theme': pref.theme,
       'pagesize': pref.pagesize,

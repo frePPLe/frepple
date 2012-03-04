@@ -199,7 +199,7 @@ def runfrepple(request):
     messages.add_message(request, messages.ERROR,
       force_unicode(_('Failure creating a plan: %(msg)s') % {'msg':e}))
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-  return HttpResponseRedirect('%s/execute/execute.html/#plan' % request.prefix)
+  return HttpResponseRedirect('%s/execute/execute.html#plan' % request.prefix)
 
 
 @staff_member_required

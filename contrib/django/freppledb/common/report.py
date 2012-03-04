@@ -321,7 +321,6 @@ class GridReport(View):
     '''
     sort = None
     if 'sidx' in request.GET: sort = request.GET['sidx']
-    print sort, not sort, reportclass.default_sort
     if not sort:
       if reportclass.default_sort:      
         sort = reportclass.rows[reportclass.default_sort[0]].name

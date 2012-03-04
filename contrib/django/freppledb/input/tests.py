@@ -35,56 +35,56 @@ class DataLoadTest(TestCase):
     self.client.login(username='frepple', password='frepple')
 
   def test_input_customer(self):
-    response = self.client.get('/admin/input/customer/')
-    self.assertContains(response, '2 customers')
+    response = self.client.get('/admin/input/customer/?format=json')
+    self.assertContains(response, '"records":2,')
 
   def test_input_flow(self):
-    response = self.client.get('/admin/input/flow/')
-    self.assertContains(response, '19 flows')
+    response = self.client.get('/admin/input/flow/?format=json')
+    self.assertContains(response, '"records":19,')
 
   def test_input_buffer(self):
-    response = self.client.get('/admin/input/buffer/')
-    self.assertContains(response, '8 buffers')
+    response = self.client.get('/admin/input/buffer/?format=json')
+    self.assertContains(response, '"records":8,')
 
   def test_input_calendar(self):
-    response = self.client.get('/admin/input/calendar/')
-    self.assertContains(response, '4 calendars')
+    response = self.client.get('/admin/input/calendar/?format=json')
+    self.assertContains(response, '"records":4,')
 
   def test_input_demand(self):
-    response = self.client.get('/admin/input/demand/')
-    self.assertContains(response, '14 demands')
+    response = self.client.get('/admin/input/demand/?format=json')
+    self.assertContains(response, '"records":14,')
 
   def test_input_item(self):
-    response = self.client.get('/admin/input/item/')
-    self.assertContains(response, '5 items')
+    response = self.client.get('/admin/input/item/?format=json')
+    self.assertContains(response, '"records":5,')
 
   def test_input_load(self):
-    response = self.client.get('/admin/input/load/')
-    self.assertContains(response, '3 loads')
+    response = self.client.get('/admin/input/load/?format=json')
+    self.assertContains(response, '"records":3,')
 
   def test_input_location(self):
-    response = self.client.get('/admin/input/location/')
-    self.assertContains(response, '2 locations')
+    response = self.client.get('/admin/input/location/?format=json')
+    self.assertContains(response, '"records":2,')
 
   def test_input_operation(self):
-    response = self.client.get('/admin/input/operation/')
-    self.assertContains(response, '14 operations')
+    response = self.client.get('/admin/input/operation/?format=json')
+    self.assertContains(response, '"records":14,')
 
   def test_input_operationplan(self):
-    response = self.client.get('/admin/input/operationplan/')
-    self.assertContains(response, '4 operationplans')
+    response = self.client.get('/admin/input/operationplan/?format=json')
+    self.assertContains(response, '"records":4,')
 
   def test_input_parameter(self):
-    response = self.client.get('/admin/input/parameter/')
-    self.assertContains(response, '2 parameters')
+    response = self.client.get('/admin/input/parameter/?format=json')
+    self.assertContains(response, '"records":2,')
 
   def test_input_resource(self):
-    response = self.client.get('/admin/input/resource/')
-    self.assertContains(response, '3 resources')
+    response = self.client.get('/admin/input/resource/?format=json')
+    self.assertContains(response, '"records":3,')
 
   def test_input_suboperation(self):
-    response = self.client.get('/admin/input/suboperation/')
-    self.assertContains(response, '4 suboperations')
+    response = self.client.get('/admin/input/suboperation/?format=json')
+    self.assertContains(response, '"records":4,')
 
   def test_csv_upload(self):
     self.assertEqual(
@@ -127,52 +127,52 @@ class DataLoadTest(TestCase):
     # Verify original buckets
     self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2008-01-01 00:00:00', '2009-02-01 00:00:00', 1),
-       ('2009-02-01 00:00:00', '2030-12-31 00:00:00', 2)
+      [('2012-01-01 00:00:00', '2012-02-01 00:00:00', 1),
+       ('2012-02-01 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # Create a new bucket - start date aligned with existing bucket
-    calendar.setvalue(datetime(2009,2,1), datetime(2009,3,3), 12)
+    calendar.setvalue(datetime(2012,2,1), datetime(2012,3,3), 12)
     self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2008-01-01 00:00:00', '2009-02-01 00:00:00', 1),
-       ('2009-02-01 00:00:00', '2009-03-03 00:00:00', 12),
-       ('2009-03-03 00:00:00', '2030-12-31 00:00:00', 2)
+      [('2012-01-01 00:00:00', '2012-02-01 00:00:00', 1),
+       ('2012-02-01 00:00:00', '2012-03-03 00:00:00', 12),
+       ('2012-03-03 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # Create a new bucket - end date aligned with existing bucket
-    calendar.setvalue(datetime(2009,2,10), datetime(2009,3,3), 100)
+    calendar.setvalue(datetime(2012,2,10), datetime(2012,3,3), 100)
     self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2008-01-01 00:00:00', '2009-02-01 00:00:00', 1),
-       ('2009-02-01 00:00:00', '2009-02-10 00:00:00', 12),
-       ('2009-02-10 00:00:00', '2009-03-03 00:00:00', 100),
-       ('2009-03-03 00:00:00', '2030-12-31 00:00:00', 2)
+      [('2012-01-01 00:00:00', '2012-02-01 00:00:00', 1),
+       ('2012-02-01 00:00:00', '2012-02-10 00:00:00', 12),
+       ('2012-02-10 00:00:00', '2012-03-03 00:00:00', 100),
+       ('2012-03-03 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # 2 buckets partially updates and one deleted
-    calendar.setvalue(datetime(2009,1,10), datetime(2009,4,3), 3)
+    calendar.setvalue(datetime(2012,1,10), datetime(2012,4,3), 3)
     self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2008-01-01 00:00:00', '2009-01-10 00:00:00', 1),
-       ('2009-01-10 00:00:00', '2009-03-03 00:00:00', 3),
-       ('2009-03-03 00:00:00', '2009-04-03 00:00:00', 3),
-       ('2009-04-03 00:00:00', '2030-12-31 00:00:00', 2)
+      [('2012-01-01 00:00:00', '2012-01-10 00:00:00', 1),
+       ('2012-01-10 00:00:00', '2012-03-03 00:00:00', 3),
+       ('2012-03-03 00:00:00', '2012-04-03 00:00:00', 3),
+       ('2012-04-03 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # Create a new bucket - end date aligned with existing bucket
-    calendar.setvalue(datetime(2009,2,10), datetime(2009,3,3), 4)
+    calendar.setvalue(datetime(2012,2,10), datetime(2012,3,3), 4)
     self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2008-01-01 00:00:00', '2009-01-10 00:00:00', 1),
-       ('2009-01-10 00:00:00', '2009-02-10 00:00:00', 3),
-       ('2009-02-10 00:00:00', '2009-03-03 00:00:00', 4),
-       ('2009-03-03 00:00:00', '2009-04-03 00:00:00', 3),
-       ('2009-04-03 00:00:00', '2030-12-31 00:00:00', 2)
+      [('2012-01-01 00:00:00', '2012-01-10 00:00:00', 1),
+       ('2012-01-10 00:00:00', '2012-02-10 00:00:00', 3),
+       ('2012-02-10 00:00:00', '2012-03-03 00:00:00', 4),
+       ('2012-03-03 00:00:00', '2012-04-03 00:00:00', 3),
+       ('2012-04-03 00:00:00', '2030-12-31 00:00:00', 2)
       ])
     # Completely override the value of an existing bucket
-    calendar.setvalue(datetime(2009,3,3), datetime(2009,4,3), 5)
+    calendar.setvalue(datetime(2012,3,3), datetime(2012,4,3), 5)
     self.assertEqual(
       [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2008-01-01 00:00:00', '2009-01-10 00:00:00', 1),
-       ('2009-01-10 00:00:00', '2009-02-10 00:00:00', 3),
-       ('2009-02-10 00:00:00', '2009-03-03 00:00:00', 4),
-       ('2009-03-03 00:00:00', '2009-04-03 00:00:00', 5),
-       ('2009-04-03 00:00:00', '2030-12-31 00:00:00', 2)
+      [('2012-01-01 00:00:00', '2012-01-10 00:00:00', 1),
+       ('2012-01-10 00:00:00', '2012-02-10 00:00:00', 3),
+       ('2012-02-10 00:00:00', '2012-03-03 00:00:00', 4),
+       ('2012-03-03 00:00:00', '2012-04-03 00:00:00', 5),
+       ('2012-04-03 00:00:00', '2030-12-31 00:00:00', 2)
       ])

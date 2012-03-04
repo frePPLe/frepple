@@ -45,7 +45,7 @@ class execute_from_user_interface(TransactionTestCase):
     # Empty the database tables
     response = self.client.post('/execute/erase/', {'action':'erase'})
     # The answer is a redirect to a new page, which also contains the success message
-    self.assertRedirects(response, '/execute/execute.html')
+    self.assertRedirects(response, '/execute/execute.html#database')
     self.assertEqual(input.models.Calendar.objects.count(),0)
     self.assertEqual(input.models.Demand.objects.count(),0)
     self.assertEqual(output.models.Problem.objects.count(),0)
@@ -55,7 +55,7 @@ class execute_from_user_interface(TransactionTestCase):
 
     # Load a dataset
     response = self.client.post('/execute/fixture/', {'action':'load', 'datafile':'small_demo'})
-    self.assertRedirects(response, '/execute/execute.html')
+    self.assertRedirects(response, '/execute/execute.html#database')
     self.assertNotEqual(input.models.Calendar.objects.count(),0)
     self.assertNotEqual(input.models.Demand.objects.count(),0)
 
@@ -63,7 +63,7 @@ class execute_from_user_interface(TransactionTestCase):
     os.environ['FREPPLE_TEST'] = "YES"
     response = self.client.post('/execute/runfrepple/', {'action':'run', 'constraint':'15', 'plantype':'1'})
     del os.environ['FREPPLE_TEST']
-    self.assertRedirects(response, '/execute/execute.html')
+    self.assertRedirects(response, '/execute/execute.html#plan')
 
     # Count the output records
     self.assertEqual(output.models.Problem.objects.count(),27)

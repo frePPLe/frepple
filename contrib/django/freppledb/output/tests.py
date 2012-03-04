@@ -30,28 +30,28 @@ class OutputTest(TestCase):
 
   # Buffer
   def test_output_buffer(self):
-    response = self.client.get('/buffer/')
+    response = self.client.get('/buffer/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '8 buffers')
+    self.assertContains(response, '"records":8,')
 
   def test_output_buffer_csvtable(self):
-    response = self.client.get('/buffer/', {'reporttype':'csv'})
+    response = self.client.get('/buffer/?format=csvtable')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
 
   def test_output_buffer_csvlist(self):
-    response = self.client.get('/buffer/', {'reporttype':'csvlist'})
+    response = self.client.get('/buffer/?format=csvlist')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
 
   # Resource
   def test_output_resource(self):
-    response = self.client.get('/resource/')
+    response = self.client.get('/resource/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '3 resources')
+    self.assertContains(response, '"records":3,')
 
   def test_output_resource_csvtable(self):
-    response = self.client.get('/resource/', {'reporttype':'csv'})
+    response = self.client.get('/resource/?format=csvtable')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
 
@@ -62,51 +62,51 @@ class OutputTest(TestCase):
     self.assertContains(response, 'Demand report')
 
   def test_output_demand_csvlist(self):
-    response = self.client.get('/demand/', {'reporttype':'csvlist'})
+    response = self.client.get('/demand/?format=csvlist')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
 
   # Forecast
   def test_output_forecast(self):
-    response = self.client.get('/forecast/')
+    response = self.client.get('/forecast/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '2 forecasts')
+    self.assertContains(response, '"records":2,')
 
   def test_output_forecast_csvlist(self):
-    response = self.client.get('/forecast/', {'reporttype':'csvlist'})
+    response = self.client.get('/forecast/?format=csvlist')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
 
   # Operation
   def test_output_operation(self):
-    response = self.client.get('/operation/')
+    response = self.client.get('/operation/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '14 operations')
+    self.assertContains(response, '"records":14,')
 
   def test_output_operation_csvtable(self):
-    response = self.client.get('/operation/', {'reporttype':'csv'})
+    response = self.client.get('/operation/?format=csvtable')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
 
   # Problem
   def test_output_problem(self):
-    response = self.client.get('/problem/')
+    response = self.client.get('/problem/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '0 problems')
+    self.assertContains(response, '"records":0,')
 
   def test_output_problem_csvlist(self):
-    response = self.client.get('/problem/', {'reporttype':'csvlist'})
+    response = self.client.get('/problem/?format=csvlist')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
 
   # Constraint
   def test_output_constraint(self):
-    response = self.client.get('/constraint/')
+    response = self.client.get('/constraint/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '0 constraints')
+    self.assertContains(response, '"records":0,')
 
   def test_output_constraint_csvlist(self):
-    response = self.client.get('/constraint/', {'reporttype':'csvlist'})
+    response = self.client.get('/constraint/?format=csvlist')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
 
@@ -117,6 +117,6 @@ class OutputTest(TestCase):
     self.assertContains(response, 'Performance Indicators')
 
   def test_output_kpi_csvlist(self):
-    response = self.client.get('/kpi/', {'reporttype':'csvlist'})
+    response = self.client.get('/kpi/?format=csvlist')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))

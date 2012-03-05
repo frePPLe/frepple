@@ -31,7 +31,7 @@ AC_PREREQ(2.60)
 AC_INIT([frepple], [0.9.1.beta])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
-AM_INIT_AUTOMAKE([1.9])
+AM_INIT_AUTOMAKE([1.9 tar-ustar])
 
 #
 # Checks for programs and initialize libtool

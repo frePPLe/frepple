@@ -45,6 +45,7 @@ class ReportByDemand(GridReport):
   frozenColumns = 0
   editable = False
   default_sort = None
+  hasTimeBuckets = True
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False, sortable=False),

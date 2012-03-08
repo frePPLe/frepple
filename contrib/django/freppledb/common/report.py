@@ -254,6 +254,9 @@ class GridReport(View):
   # Allow filtering of the results or not
   filterable = True
   
+  # Include time bucket support in the report
+  hasTimeBuckets = False
+  
   # Number of columns frozen in the report
   frozenColumns = 0
 
@@ -433,7 +436,7 @@ class GridReport(View):
     if not fmt:
       # Return HTML page
       # Pick up the list of time buckets      
-      if issubclass(reportclass, GridPivot):
+      if reportclass.hasTimeBuckets:
         pref = request.user.get_profile()
         (bucket,start,end,bucketlist) = getBuckets(request, pref)
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
@@ -840,6 +843,7 @@ class GridPivot(GridReport):
 
   template = 'admin/base_site_gridpivot.html'
   
+  hasTimeBuckets = True
 
   @classmethod
   def _apply_sort(reportclass, request):

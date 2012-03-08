@@ -67,6 +67,10 @@ from django.views.generic.base import View
 from freppledb.input.models import Parameter, BucketDetail, Bucket
 
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 class GridField(object):
   '''
   Base field for columns in grid views.

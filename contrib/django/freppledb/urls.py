@@ -42,6 +42,9 @@ urlpatterns = patterns('',
 
     # Root url redirects to the admin index page
     (r'^$', RedirectView.as_view(url='/admin/')),
+    
+    # Handle browser icon
+    (r'^favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico')),    
 )
 
 # Adding urls for each installed application.

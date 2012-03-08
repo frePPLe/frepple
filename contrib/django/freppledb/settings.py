@@ -179,18 +179,59 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
-    # The debug context keeps track of all sql statements
-    # that are executed. Handy for debugging, but a memory killer when
-    # huge numbers of queries are executed...
-    #'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'null': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler',
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'mail_admins': {
+            'level': 'CRITICAL',
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
+    },
+    'loggers': {
+        # A handler to log all SQL queries. 
+        # The setting "DEBUG" also needs to be set to True higher up in this file.
+        #'django.db.backends': {
+        #    'handlers': ['console'],
+        #    'level': 'DEBUG', 
+        #    'propagate': False, 
+        #},
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'freppledb': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        }
+    }
+}
 
 # Sessions
 SESSION_COOKIE_NAME = 'sessionid'         # Cookie name. This can be whatever you want.
 SESSION_COOKIE_AGE = 60 * 60 * 24 *  2    # Age of cookie, in seconds: 2 days
 SESSION_COOKIE_DOMAIN = None              # A string, or None for standard domain cookie.
-SESSION_SAVE_EVERY_REQUEST = True         # Whether to save the session data on every request.
+SESSION_SAVE_EVERY_REQUEST = False         # Whether to save the session data on every request.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user closes his browser.
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.SessionStorage'

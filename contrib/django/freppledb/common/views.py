@@ -40,6 +40,9 @@ from freppledb.common.models import Preferences
 from freppledb.common.report import GridReport, GridFieldText, GridFieldBool, GridFieldInteger
 from freppledb.input.models import Bucket
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class PreferencesForm(forms.Form):
   language = forms.ChoiceField(label = _("language"),
@@ -84,8 +87,10 @@ def preferences(request):
         pref = Preferences.objects.get(user=request.user)
         newdata = form.cleaned_data
         pref.buckets = newdata['buckets']
-        pref.startdate = datetime(newdata['startdate'].year, newdata['startdate'].month, newdata['startdate'].day)
-        pref.enddate = datetime(newdata['enddate'].year, newdata['enddate'].month, newdata['enddate'].day)
+        if newdata['startdate']:
+          pref.startdate = datetime(newdata['startdate'].year, newdata['startdate'].month, newdata['startdate'].day)
+        if newdata['enddate']:
+          pref.enddate = datetime(newdata['enddate'].year, newdata['enddate'].month, newdata['enddate'].day)
         pref.language = newdata['language']
         pref.theme = newdata['theme']
         pref.pagesize = newdata['pagesize']
@@ -96,7 +101,8 @@ def preferences(request):
           translation.activate(newdata['language'])
           request.LANGUAGE_CODE = translation.get_language()
         messages.add_message(request, messages.INFO, force_unicode(_('Successfully updated preferences')))
-      except:
+      except Exception, e:
+        logger.error("Failure updating preferences: %s" % e)
         messages.add_message(request, messages.ERROR, force_unicode(_('Failure updating preferences')))
   else:
     pref = request.user.get_profile()

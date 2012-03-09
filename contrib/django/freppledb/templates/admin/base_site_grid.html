@@ -20,9 +20,7 @@ $(function(){
     cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname, 
-    afterEditCell:function (rowid, cellname, value, iRow, iCol) {
-      document.getElementById(iRow+'_'+cellname).select();   
-    },
+    afterEditCell: afterEditCell,
     beforeSaveCell: upload.select,{% endif %}{% endif %}
     pager: '#gridpager',
     viewrecords: true,    

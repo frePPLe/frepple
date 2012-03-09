@@ -197,6 +197,17 @@ jQuery.extend($.fn.fmatter.load, {
 });
 
 
+function afterEditCell(rowid, cellname, value, iRow, iCol) 
+{
+  var cell = document.getElementById(iRow+'_'+cellname);
+  var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[iCol];
+  if (colmodel.formatter == 'date')
+    $(cell).datepicker({dateFormat:"yy-mm-dd 00:00:00", changeMonth:true});
+  else
+    $(cell).select();   
+}
+
+
 //----------------------------------------------------------------------------
 // Code for customized autocomplete widget
 //----------------------------------------------------------------------------

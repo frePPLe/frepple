@@ -3,7 +3,7 @@
 {% block nav-global %}
 {% get_models from auth freppledb.admin.site as modelsAuth %}
 {% get_models from input freppledb.admin.site as modelsIn %}
-<div class="menuBar">
+<div class="menuBar ui-widget">
   
 {% if modelsIn %}<a href="#" class="menuButton ui-widget-content ui-corner-all ui-state-default">{% trans 'Input' %}</a>
 <div id="inputMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">

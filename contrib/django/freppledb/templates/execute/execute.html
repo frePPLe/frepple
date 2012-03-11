@@ -30,8 +30,6 @@
 </script>
 
 {% endblock %}
-{% block coltype %}colM{% endblock %}
-{% block bodyclass %}dashboard{% endblock %}
 {% block content %}
 <div id="content-main">
 
@@ -76,7 +74,7 @@ and export results into the database<br/>
 {% if scenarios.count > 1 %}
 <h3><a href="#scenarios">{% trans "Scenario management" %}</a></h3>
 <div>
-<table style="width: 100%;">
+<table>
 <form method="post" action="{{ request.prefix }}/execute/scenarios/">{% csrf_token %}<tr>
 <th>{% trans 'name' %}</th>
 <th>{% trans 'status' %}</th>

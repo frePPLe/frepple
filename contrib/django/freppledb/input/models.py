@@ -1025,6 +1025,8 @@ class BucketDetail(AuditModel):
   startdate = models.DateTimeField(_('start date'))
   enddate = models.DateTimeField(_('end date'))
 
+  def __unicode__(self): return u"%s %s" % (self.bucket.name or "", self.name or "")
+
   class Meta:
     verbose_name = _('bucket date')
     verbose_name_plural = _('bucket dates')

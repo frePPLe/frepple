@@ -1,5 +1,18 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="/media/css/base.css" />
+{{ block.super }}{% endblock %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">
+ $(function() {
+    $("input:submit").button();
+ });
+</script>
+{% endblock %}
+
 {% block content %}
 {% if perms_lacking %}
     <p>{% blocktrans with object as escaped_object %}Deleting the {{ object_name }} '{{ escaped_object }}' would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:{% endblocktrans %}</p>

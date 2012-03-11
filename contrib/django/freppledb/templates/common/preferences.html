@@ -1,7 +1,5 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_list %}
-{% block stylesheet %}/media/css/base.css{% endblock %}
-{% block coltype %}colM{% endblock %}
 {% block extrahead %}{{ block.super }}
 <link rel="stylesheet" type="text/css" href="/media/css/widgets.css" />
 <script type="text/javascript">
@@ -14,7 +12,6 @@
   });
 </script>
 {% endblock %}
-{% block bodyclass %}dashboard{% endblock %}
 {% block content %}
 <div id="content-main">
 

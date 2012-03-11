@@ -5,10 +5,10 @@
 {{ media }}
 {% endblock %}
 
-{% block extrastyle %}<link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="/media/css/base.css" />
+<link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
 {{ block.super }}{% endblock %}
-
-{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
 
 {% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
 {% block breadcrumbs %}{% if not is_popup %}{{ block.super }}{% endif %}{% endblock %}

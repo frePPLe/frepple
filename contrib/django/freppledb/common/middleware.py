@@ -56,6 +56,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     if translation.get_language() != language:
       translation.activate(language)
     request.LANGUAGE_CODE = translation.get_language()
+    request.charset = settings.DEFAULT_CHARSET
 
 
 for i in settings.DATABASES:

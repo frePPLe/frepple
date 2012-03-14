@@ -262,6 +262,7 @@ div.system-message p.system-message-title {
   float: left;
   width: 18em;
   margin-left: 30px;
+  padding: 10px;
 }
 
 
@@ -279,6 +280,7 @@ div.ContextMenu {
   display: none;
   position: absolute;
   z-index: 100;
+  font-size: 80%;
 }
 
 div.ContextMenu ul {
@@ -339,6 +341,7 @@ span.context {
   padding: 4px 2px 4px 2px;
   margin: 5px 5px 5px 5px;
   text-align: left;
+  font-size: 1em;
 }
 
 #headerbar div.menuBar a.menuButton {

@@ -231,7 +231,8 @@ LOGGING = {
 SESSION_COOKIE_NAME = 'sessionid'         # Cookie name. This can be whatever you want.
 SESSION_COOKIE_AGE = 60 * 60 * 24 *  2    # Age of cookie, in seconds: 2 days
 SESSION_COOKIE_DOMAIN = None              # A string, or None for standard domain cookie.
-SESSION_SAVE_EVERY_REQUEST = False         # Whether to save the session data on every request.
+SESSION_SAVE_EVERY_REQUEST = True         # Whether to save the session data on every request. 
+                                          # Needs to be True to have the breadcrumbs working correctly!
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user closes his browser.
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.SessionStorage'

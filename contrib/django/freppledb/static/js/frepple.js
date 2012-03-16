@@ -152,6 +152,11 @@ jQuery.extend($.fn.fmatter, {
     if (options['colModel']['popup']) return cellvalue;     
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='load'></span>";
   },
+  bucket : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='bucket'></span>";
+  },
 });
 jQuery.extend($.fn.fmatter.item, {
     unformat : linkunformat
@@ -193,6 +198,9 @@ jQuery.extend($.fn.fmatter.flow, {
   unformat : linkunformat
 });
 jQuery.extend($.fn.fmatter.load, {
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.bucket, {
   unformat : linkunformat
 });
 

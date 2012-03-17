@@ -61,17 +61,3 @@ urlpatterns += patterns('',
     (r'^admin/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf','freppledb'),}),
     (r'^admin/', include(freppledb.admin.site.urls)),
 )
-
-# Allows the standalone development server (and the py2exe executable) to serve
-# the static pages.
-# In a production environment you need to configure your web server to take care of
-# these pages.
-if settings.STANDALONE:
-  urlpatterns += patterns('',
-     (r'^static/(?P<path>.*)$', 'django.views.static.serve',
-      {'document_root': os.path.join(settings.FREPPLE_APP,'freppledb','static'),
-         'show_indexes': False}),
-     (r'^media/(?P<path>.*)$', 'django.views.static.serve', 
-      {'document_root': os.path.join(settings.FREPPLE_HOME,'media'),
-       'show_indexes': False}),
-    )

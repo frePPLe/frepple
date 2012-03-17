@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2009 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2009-2012 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -32,8 +32,8 @@ setup(name = 'freppledb',
       package_dir = {'freppledb': 'freppledb'},
       package_data = {'freppledb': [
          'common/fixtures/*', 'input/fixtures/*', 
-         'locale/*/*/*', 'static/*', 'execute/*.xml', 
-         'templates/*.*', 'templates/*/*'
+         'locale/*/*/*', 'common/static/*',
+         'templates/*'
          ]},
       options = { "install" : {'optimize': 2}},
       classifiers = [

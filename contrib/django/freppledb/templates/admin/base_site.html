@@ -2,17 +2,17 @@
 {% load i18n %}
 {% block title %}frePPLe{% if title %} - {{title}}{% endif %}{% endblock %}
 {% block branding %}<a href="http://www.frepple.com" target="_blank">frePPLe {% version %}</a>{% endblock %}
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" media="screen" href="/static/css/{{request.theme}}/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/static/css/ui.jqgrid.css" />
-<link rel="stylesheet" type="text/css" href="/static/css/frepple.css" />
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/{{request.theme}}/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/frepple.css" />
 {% endblock %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="/admin/jsi18n/"></script>
-<script type="text/javascript" src="/static/js/jquery-1.6.4.min.js"></script>
-<script type="text/javascript" src="/static/js/jquery-ui-1.8.16.min.js"></script>
-<script src="/static/js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js" type="text/javascript"></script>
-<script src="/static/js/jquery.jqGrid.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="/static/js/frepple.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.8.16.min.js"></script>
+<script src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js" type="text/javascript"></script>
+<script src="{{STATIC_URL}}js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/frepple.js"></script>
 {% endblock %}
 {% block breadcrumbs %}<div class="breadcrumbs">{% crumbs %}</div>{% endblock %}
 {% block nav-global %}{% endblock %}

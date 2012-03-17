@@ -158,7 +158,7 @@ class Calendar(AuditModel):
 
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  type = models.CharField(_('type'), _('type'), max_length=20,
+  type = models.CharField(_('type'), max_length=20,
     null=True, blank=True, choices=calendartypes,
     help_text= _('Type of data values stored in the calendar')
     )
@@ -394,7 +394,7 @@ class Operation(AuditModel):
 
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  type = models.CharField(_('type'), _('type'), max_length=20, null=True, blank=True, choices=operationtypes)
+  type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=operationtypes)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
@@ -419,7 +419,7 @@ class Operation(AuditModel):
     help_text=_("A fixed duration for the operation"))
   duration_per = DurationField(_('duration per unit'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     help_text=_("A variable duration for the operation"))
-  search = models.CharField(_('search mode'), _('search mode'), max_length=20,
+  search = models.CharField(_('search mode'), max_length=20,
     null=True, blank=True, choices=searchmode,
     help_text=_('Method to select prefered alternate')
     )
@@ -678,7 +678,7 @@ class Flow(AuditModel):
     help_text=_('Puts the flow in a group of alternate flows'))
   priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
     help_text=_('Priority of this flow in a group of alternates'))
-  search = models.CharField(_('search mode'), _('search mode'), max_length=20,
+  search = models.CharField(_('search mode'), max_length=20,
     null=True, blank=True, choices=searchmode,
     help_text=_('Method to select prefered alternate')
     )
@@ -717,7 +717,7 @@ class Load(AuditModel):
   setup = models.CharField(_('setup'), max_length=settings.NAMESIZE, null=True, blank=True,
     help_text=_('Setup required on the resource for this operation')
     )
-  search = models.CharField(_('search mode'), _('search mode'), max_length=20,
+  search = models.CharField(_('search mode'), max_length=20,
     null=True, blank=True, choices=searchmode,
     help_text=_('Method to select prefered alternate')
     )

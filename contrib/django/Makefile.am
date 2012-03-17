@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = freppledb django.patch README.txt httpd.conf setup.py freppledb.wsgi
+EXTRA_DIST = freppledb django.patch README.txt httpd.conf setup.py
 
 install-data-local:
 	echo "installing Django web application to $(DESTDIR)$(pythondir)"; \

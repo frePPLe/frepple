@@ -179,15 +179,15 @@ ul.messagelist li {
     margin: 0 0 3px 0;
     border-bottom: 1px solid #ddd;
     color: #666;
-    background: #ffc url(/media/img/admin/icon_success.gif) 5px .3em no-repeat;
+    background: #ffc url(../admin/img/icon_success.gif) 5px .3em no-repeat;
 }
 
 ul.messagelist li.warning{
-    background-image: url(/media/img/admin/icon_alert.gif);
+    background-image: url(../admin/img/icon_alert.gif);
 }
 
 ul.messagelist li.error{
-    background-image: url(/media/img/admin/icon_error.gif);
+    background-image: url(../admin/img/icon_error.gif);
 }
 
 .errornote {
@@ -197,7 +197,7 @@ ul.messagelist li.error{
     margin: 0 0 3px 0;
     border: 1px solid red;
     color: red;
-    background: #ffc url(/media/img/admin/icon_error.gif) 5px .3em no-repeat;
+    background: #ffc url(../admin/img/icon_error.gif) 5px .3em no-repeat;
 }
 
 ul.errorlist {
@@ -212,7 +212,7 @@ ul.errorlist {
     margin: 0 0 3px 0;
     border: 1px solid red;
     color: white;
-    background: red url(/media/img/admin/icon_alert.gif) 5px .3em no-repeat;
+    background: red url(../admin/img/icon_alert.gif) 5px .3em no-repeat;
 }
 
 .errorlist li a {
@@ -248,7 +248,7 @@ div.system-message p.system-message-title {
     padding: 4px 5px 4px 25px;
     margin: 0;
     color: red;
-    background: #ffc url(/media/img/admin/icon_error.gif) 5px .3em no-repeat;
+    background: #ffc url(../admin/img/icon_error.gif) 5px .3em no-repeat;
 }
 
 .description {
@@ -260,14 +260,14 @@ div.system-message p.system-message-title {
 
 #recent-actions {
   float: left;
-  width: 18em;
+  min-width: 20em;
   margin-left: 30px;
   padding: 10px;
 }
 
 
 /* Import the django admin widget styles. */
-@import url('/media/css/widgets.css');
+@import url('../admin/css/widgets.css');
 
 
 /* Style for the actions items at the top of a report */
@@ -460,7 +460,7 @@ div.calendarbox
 
 .ui-autocomplete-loading 
 { 
-  background: white url('/static/ui-anim_basic_16x16.gif') right center no-repeat; 
+  background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat; 
 }
 
 .ui-autocomplete 

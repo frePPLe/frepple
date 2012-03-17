@@ -684,12 +684,13 @@ class BucketList(GridReport):
   '''
   A list report to show dates.
   '''
+  template = 'input/bucketlist.html'
   title = _("Bucket List")
   basequeryset = Bucket.objects.all()
   model = Bucket
   frozenColumns = 1
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter="bucket"),
     GridFieldText('description', title=_('description')),
     GridFieldLastModified('lastmodified'),
     )
@@ -699,13 +700,14 @@ class BucketDetailList(GridReport):
   '''
   A list report to show dates.
   '''
+  template = 'input/bucketlist.html'
   title = _("Bucket Detail List")
   basequeryset = BucketDetail.objects.all()
   model = BucketDetail
   frozenColumns = 1
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),
-    GridFieldText('bucket', title=_('bucket'), field_name='bucket__name'),
+    GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter="bucket"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldLastModified('lastmodified'),

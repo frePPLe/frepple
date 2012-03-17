@@ -30,7 +30,7 @@ import django
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.handlers.wsgi import WSGIHandler
-from django.core.servers.basehttp import AdminMediaHandler
+from django.contrib.staticfiles.handlers import StaticFilesHandler
 from django.db.utils import DEFAULT_DB_ALIAS
 
 class Command(BaseCommand):
@@ -89,23 +89,15 @@ class Command(BaseCommand):
     print '\nThree users are created by default: "admin", "frepple" and "guest" (the default password is equal to the user name)\n'
     print 'Quit the server with CTRL-C.\n'
 
-    # Detect the media directory
-    media = os.path.join(django.__path__[0],'contrib','admin','media')
-    if not os.path.exists(media)or not S_ISDIR(os.stat(media)[ST_MODE]):
-      # Media path used by the py2exe executable
-      media = os.path.join(settings.FREPPLE_HOME,'media')
-      if not os.path.exists(media)or not S_ISDIR(os.stat(media)[ST_MODE]):
-        raise Exception("No valid media directory found")
-
     # Start a seperate thread that will check for updates
     # We don't wait for it to finish
     CheckUpdates().start()
 
     # Run the WSGI server
     server = CherryPyWSGIServer((address, port),
-      AdminMediaHandler(WSGIHandler(), media)
+      StaticFilesHandler(WSGIHandler())
       )
-    # Want SSL support? Just set these attributes apparantly, but I haven't tested or verified this
+    # Want SSL support? Just set these attributes apparently, but I haven't tested or verified this
     #  server.ssl_certificate = <filename>
     #  server.ssl_private_key = <filename>
     try:

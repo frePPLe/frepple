@@ -1,6 +1,6 @@
 
 // Django sets this variable in the admin/base.html template.
-window.__admin_media_prefix__ = "/media/";
+window.__admin_media_prefix__ = "/static/admin/";
 
 // A class to store changes in memory till the save button is hit.
 var upload = {
@@ -210,7 +210,10 @@ function afterEditCell(rowid, cellname, value, iRow, iCol)
   var cell = document.getElementById(iRow+'_'+cellname);
   var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[iCol];
   if (colmodel.formatter == 'date')
-    $(cell).datepicker({dateFormat:"yy-mm-dd 00:00:00", changeMonth:true});
+    $(cell).datepicker({
+      showOtherMonths: true, selectOtherMonths: true,
+      dateFormat:"yy-mm-dd 00:00:00", changeMonth:true
+      });
   else
     $(cell).select();   
 }
@@ -523,11 +526,11 @@ function bucket_show()
   $.jgrid.hideModal("#searchmodfbox_grid");
   $( "#reportstart" ).datepicker({
       showOtherMonths: true, selectOtherMonths: true,
-      dateFormat: 'yy-mm-dd'
+      changeMonth:true, dateFormat: 'yy-mm-dd'
     });
   $( "#reportend" ).datepicker({
       showOtherMonths: true, selectOtherMonths: true,
-      dateFormat: 'yy-mm-dd'
+      changeMonth:true, dateFormat: 'yy-mm-dd'
     });
   $('#timebuckets').dialog({
      autoOpen: true, resizable: false,	 

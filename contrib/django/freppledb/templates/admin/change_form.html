@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block extrastyle %}
-<link rel="stylesheet" type="text/css" href="/media/css/base.css" />
-<link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/base.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/forms.css" />
 {{ block.super }}{% endblock %}
 
 {% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}

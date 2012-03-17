@@ -62,13 +62,12 @@ class frePPLeService(win32serviceutil.ServiceFramework):
         from cherrypy.wsgiserver import CherryPyWSGIServer
         import django
         from django.core.handlers.wsgi import WSGIHandler
-        from django.core.servers.basehttp import AdminMediaHandler
+        from django.contrib.staticfiles.handlers import StaticFilesHandler
         from stat import S_ISDIR, ST_MODE
 
         # Override the debugging settings
         settings.DEBUG = False
         settings.TEMPLATE_DEBUG = False
-        settings.STANDALONE = True
 
         # Pick up port and adress
         try: address = socket.gethostbyname(socket.gethostname())
@@ -85,7 +84,7 @@ class frePPLeService(win32serviceutil.ServiceFramework):
                 }
             })
         self.server = CherryPyWSGIServer((address, port),
-          AdminMediaHandler(WSGIHandler(), os.path.join(settings.FREPPLE_HOME,'media'))
+          StaticFilesHandler(WSGIHandler())
           )
 
         # Redirect all output and log a start event

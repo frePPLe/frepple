@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block extrahead %}{{ block.super }} 
-{% if args.0 %}<script type="text/javascript" src="/static/FusionCharts.js"></script>{% endif %}
+{% if args.0 %}<script type="text/javascript" src="{{STATIC_URL}}FusionCharts.js"></script>{% endif %}
 {% endblock %}
 
 {% block contextmenus %}
@@ -35,7 +35,7 @@
 	  You can downloaded it <a href="http://www.adobe.com/products/flashplayer/" target="_blank"><u>here</u></a> for free.{% endblocktrans %}</p>
 	</div>
 	<script language="javascript" type="text/javascript">
-	   var chart1 = new FusionCharts("/static/FCF_MSColumn2D.swf", "chart1", $(window).width()-35, 350);
+	   var chart1 = new FusionCharts("{{STATIC_URL}}FCF_MSColumn2D.swf", "chart1", $(window).width()-35, 350);
 	   chart1.setTransparent();
 	   chart1.setDataURL(escape("{{request.prefix}}/operationgraph/{{args.0|urlencode}}/?reportbucket={{reportbucket}}&reportstart={{reportstart|date:"Y-m-d"}}&reportend={{reportend|date:"Y-m-d"}}"));	   	   
 	   chart1.render("chart1div");

@@ -4,7 +4,7 @@
 <script type="text/javascript">
 
 function columns (cellvalue, options, rowdata) {
-  return "{% for f in reportclass.crosses %}{% if not forloop.first %}{% if reportclass.editable and haschangeperm %}</span>{% endif %}<br/>{% else %}{% if reportclass.editable and haschangeperm %}<span style='line-height:20px'>{% endif %}{% endif %}{{f.1.title|title}}{% endfor %}";
+  return "{% for f in reportclass.crosses %}{% if not forloop.first %}{% if reportclass.editable and haschangeperm %}</span>{% endif %}<br/>{% elif reportclass.editable and haschangeperm %}<span style='line-height:20px'>{% endif %}{{f.1.title|title}}{% endfor %}";
 };
 
 {% block crosses %}function crosses (cellvalue, options, rowdata) {  

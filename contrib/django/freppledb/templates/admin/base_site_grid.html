@@ -16,12 +16,12 @@ $(function(){
    	  {% endif %}{ {{f|safe}}{% if forloop.counter <= reportclass.frozenColumns %}frozen:true,{% endif %}{% if is_popup %}popup:true{% endif %} }{% endfor %}   	  
    	  ],
    	rowNum: {{request.pagesize}},{% if is_popup %}
-    onSelectRow: setSelectedRow,{% else %}{% if reportclass.editable and haschangeperm %}
+    onSelectRow: setSelectedRow,{% elif reportclass.editable and haschangeperm %}
     cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname, 
     afterEditCell: afterEditCell,
-    beforeSaveCell: upload.select,{% endif %}{% endif %}
+    beforeSaveCell: upload.select,{% endif %}
     pager: '#gridpager',
     viewrecords: true,    
     sortorder: "asc",	

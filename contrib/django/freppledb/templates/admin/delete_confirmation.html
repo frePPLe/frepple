@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block extrastyle %}
-<link rel="stylesheet" type="text/css" href="/media/css/base.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/base.css" />
 {{ block.super }}{% endblock %}
 
 {% block extrahead %}{{ block.super }}

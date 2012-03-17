@@ -29,14 +29,14 @@ th {
         <h3 id="{{app.name|lower}}" ><a href="#{{app.name|lower}}">{% trans app.name %}</a></h3>
         <div><table>        
         {% for model in app.models %}<tr>
-            {% if model.perms.change %}<th scope="row"><a href="{{ request.prefix }}/admin/{{ model.admin_url }}">{{ model.name }}</a></th>
+            {% if model.perms.change %}<th scope="row"><a href="{{ request.prefix }}{{ model.admin_url }}">{{ model.name }}</a></th>
             {% else %}<th scope="row">{{ model.name }}</th>
             {% endif %}{%ifnotequal app.name "Output"%}
-            {% if model.perms.add %}<td><a href="{{ request.prefix }}/admin/{{ model.admin_url }}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
-            <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix }}/admin/{{ model.admin_url }}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
+            {% if model.perms.add %}<td><a href="{{ request.prefix }}{{ model.admin_url }}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
+            <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix }}{{ model.admin_url }}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
             {% else %}<td>&nbsp;</td>
             {% endif %}{% else %}<td>&nbsp;</td>{% endifnotequal %}
-            <td><a href="{{request.prefix }}/admin/{{ model.admin_url }}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+            <td><a href="{{request.prefix }}{{ model.admin_url }}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
         </tr>{% endfor %}
         </table></div>
     {% endifnotequal %}{% endfor %}

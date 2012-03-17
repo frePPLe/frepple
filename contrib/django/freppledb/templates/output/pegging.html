@@ -29,7 +29,7 @@
 {% endblock %}
 
 {% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="/static/FusionCharts.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}FusionCharts.js"></script>
 <script type="text/javascript">
 
 function reslistfmt(cellvalue, options, row)
@@ -50,7 +50,7 @@ function reslistfmt(cellvalue, options, row)
 	  You can downloaded it <a href="http://www.adobe.com/products/flashplayer/" target="_blank"><u>here</u></a> for free.{% endblocktrans %}</p>
 	</div>
 	<script language="javascript" type="text/javascript">
-	   var chart1 = new FusionCharts("/static/FCF_Gantt.swf", "chart1", $(window).width()-35, 350);
+	   var chart1 = new FusionCharts("{{STATIC_URL}}FCF_Gantt.swf", "chart1", $(window).width()-35, 350);
 	   chart1.setTransparent();
 	   chart1.setDataURL(escape("{{request.prefix}}/pegginggraph/{{args.0|urlencode}}/"));
 	   chart1.render("chart1div");

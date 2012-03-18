@@ -38,14 +38,6 @@ else:
 FREPPLE_VERSION = '0.9.1.beta'
 # sys.path.append(os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','openerp')))
 
-# Determing whether Django runs as a standalone application or is deployed on a web server
-STANDALONE = False
-try:
-  for i in sys.argv:
-    STANDALONE = STANDALONE or i.find('runserver')>=0
-except:
-  pass
-
 # Django settings for freppledb project.
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -141,8 +133,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
 )
 
+WSGI_APPLICATION = 'freppledb.wsgi.application'
 ROOT_URLCONF = 'freppledb.urls'
-ADMIN_MEDIA_PREFIX = '/media/'
+STATIC_ROOT = 'static'
+STATIC_URL = '/static/'
 USE_L10N=True        # Represent data in the local format
 USE_I18N=True        # Use translated strings
 CURRENCY=("","$")    # Prefix and suffix for currency strings
@@ -168,6 +162,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'freppledb.input',
     'freppledb.output',
     'freppledb.execute',
@@ -180,6 +175,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.i18n',
+    'django.core.context_processors.static',
 )
 
 LOGGING = {

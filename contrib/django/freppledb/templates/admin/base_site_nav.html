@@ -44,7 +44,13 @@
 <li class="ui-menu-item"><a href="{{request.prefix }}/preferences/">{% trans 'Preferences' %}</a></li>
 <li class="ui-menu-item"><a href="{{request.prefix }}/admin/password_change/">{% trans 'Change password' %}</a></li>
 {% else %}<li class="ui-menu-item"><a href="{{request.prefix }}/admin/auth/user/">{% trans 'Log in' %}</a></li>
-{% endif %}</ul></div>
+{% endif %}
+</ul></div>
+
+<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">?</a>
+<div id="userMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<li class="ui-menu-item"><a target="_blank" href="{{ STATIC_URL}}doc/index.html">{% trans 'Help' %}</a></li>
+</ul></div>
 
 <input id="search" class="ui-corner-all" size="35"/>
 

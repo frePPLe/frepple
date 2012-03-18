@@ -141,6 +141,20 @@ USE_L10N=True        # Represent data in the local format
 USE_I18N=True        # Use translated strings
 CURRENCY=("","$")    # Prefix and suffix for currency strings
 
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.admin',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'freppledb.input',
+    'freppledb.output',
+    'freppledb.execute',
+    'freppledb.common',
+    #'freppledb.openerp',
+)
+
 LOCALE_PATHS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','django')),
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','auth')),
@@ -156,19 +170,9 @@ TEMPLATE_DIRS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'templates')),
 )
 
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.admin',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'freppledb.input',
-    'freppledb.output',
-    'freppledb.execute',
-    'freppledb.common',
-    #'freppledb.openerp',
-)
+STATICFILES_DIRS = (
+  ('doc',os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc'))),
+  )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',

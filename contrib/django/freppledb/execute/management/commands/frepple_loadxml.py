@@ -50,8 +50,8 @@ class Command(BaseCommand):
 
   def handle(self, *args, **options):
     # Pick up the options
-    nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
+    else: nonfatal = False
     if 'user' in options: user = options['user'] or ''
     else: user = ''
     if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS

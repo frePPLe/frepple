@@ -72,8 +72,8 @@ class Command(BaseCommand):
     else: end = '2016-1-1'
     if 'user' in options: user = options['user'] or ''
     else: user = ''
-    nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
+    else: nonfatal = False
     if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
     else: database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():

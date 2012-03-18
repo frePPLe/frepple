@@ -50,8 +50,9 @@ class Command(BaseCommand):
   requires_model_validation = False
 
   def handle(self, **options):
-    # Pick up the options
-    nonfatal = False
+    # Pick up the options    
+    if 'nonfatal' in options: nonfatal = options['nonfatal']
+    else: nonfatal = False
     if 'user' in options: user = options['user'] or ''
     else: user = ''
     if 'constraint' in options:

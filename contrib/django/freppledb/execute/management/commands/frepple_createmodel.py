@@ -134,8 +134,8 @@ class Command(BaseCommand):
     else: procure_lt = 40
     if 'currentdate' in options: currentdate = options['currentdate'] or '2009-01-01'
     else: currentdate = '2009-01-01'
-    nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
+    else: nonfatal = False
     if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )

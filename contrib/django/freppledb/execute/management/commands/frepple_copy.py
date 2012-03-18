@@ -88,10 +88,10 @@ class Command(BaseCommand):
     # Pick up options
     if 'user' in options: user = options['user'] or ''
     else: user = ''
-    nonfatal = False
     if 'nonfatal' in options: nonfatal = options['nonfatal']
-    force = False
+    else: nonfatal = False
     if 'force' in options: force = options['force']
+    else: force = False
     test = 'FREPPLE_TEST' in os.environ
 
     # Synchronize the scenario table with the settings

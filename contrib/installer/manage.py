@@ -25,17 +25,16 @@ from stat import S_ISDIR, ST_MODE
 
 # Environment settings (which are used in the Django settings file and need
 # to be updated BEFORE importing the settings)
-if not 'FREPPLE_HOME' in os.environ:
-  os.environ['FREPPLE_HOME'] = os.path.split(sys.path[0])[0]
-os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-os.environ['FREPPLE_APP'] = os.path.join(os.path.split(sys.path[0])[0],'custom') 
+os.environ.setdefault('FREPPLE_HOME', os.path.split(sys.path[0])[0])
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', "freppledb.settings")
+os.environ.setdefault('FREPPLE_APP', os.path.join(os.path.split(sys.path[0])[0],'custom')) 
 
 # Sys.path contains the zip file with all packages. We need to put the
 # application directory into the path as well.
 sys.path += [ os.environ['FREPPLE_APP'] ]
 
 # Import django
-from django.core.management import execute_manager, call_command
+from django.core.management import execute_from_command_line, call_command
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
@@ -77,5 +76,4 @@ if noDatabaseSchema and len(sys.argv)>1 and sys.argv[1]!='syncdb':
     call_command('syncdb', verbosity=1)
 
 # Execute the command
-import freppledb.settings
-execute_manager(freppledb.settings, sys.argv)
+execute_from_command_line(sys.argv)

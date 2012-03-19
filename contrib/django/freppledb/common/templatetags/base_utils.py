@@ -37,6 +37,8 @@ from django.contrib.admin import sites
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.execute.models import Scenario
+from freppledb import VERSION
+
 
 HOME_CRUMB = '<a href="%s/admin/">%s</a>'
 NUMBER_OF_CRUMBS = 5
@@ -322,9 +324,9 @@ register.tag('get_multidbadmin_log', DoGetMultiDBAdminLog('get_admin_log'))
 @register.simple_tag
 def version():
   '''
-  A simple tag returning the version of the frepple application.
+  A simple tag returning the version of the frePPLe application.
   '''
-  return settings.FREPPLE_VERSION
+  return VERSION
 
 version.is_safe = True
 

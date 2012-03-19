@@ -29,6 +29,7 @@ from django.db import transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
 
 from freppledb.execute.models import log
+from freppledb import VERSION
 
 
 class Command(BaseCommand):
@@ -46,7 +47,7 @@ class Command(BaseCommand):
   requires_model_validation = False
 
   def get_version(self):
-    return settings.FREPPLE_VERSION
+    return VERSION
 
   def handle(self, *args, **options):
     # Pick up the options

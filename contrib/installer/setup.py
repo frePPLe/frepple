@@ -25,7 +25,7 @@
 import sys, os, os.path
 sys.path.append(os.path.join(os.path.split(__file__)[0],'..','django'))
 import py2exe, django, freppledb
-from freppledb import settings
+from freppledb import VERSION
 from distutils.core import setup
 
 # Add default command lines
@@ -144,7 +144,7 @@ setup(
           }},
     data_files = data_files,
     # Attributes
-    version = settings.FREPPLE_VERSION.split('-',1)[0].split(' ',1)[0],
+    version = VERSION,
     description = "frePPLe web application",
     name = "frePPLe",
     author = "www.frepple.com",

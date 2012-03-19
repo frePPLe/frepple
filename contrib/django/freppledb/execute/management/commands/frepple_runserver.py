@@ -26,12 +26,14 @@ from stat import S_ISDIR, ST_MODE
 from optparse import make_option
 from cherrypy.wsgiserver import CherryPyWSGIServer
 
-import django
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.handlers.wsgi import WSGIHandler
 from django.contrib.staticfiles.handlers import StaticFilesHandler
 from django.db.utils import DEFAULT_DB_ALIAS
+
+from freppledb import VERSION
+
 
 class Command(BaseCommand):
 
@@ -54,7 +56,7 @@ class Command(BaseCommand):
   requires_model_validation = False
 
   def get_version(self):
-    return settings.FREPPLE_VERSION
+    return VERSION
 
   def handle(self, **options):
     # Determine the port number
@@ -78,7 +80,7 @@ class Command(BaseCommand):
 
     # Print a header message
     hostname = socket.getfqdn()
-    print 'Starting frePPLe %s web server\n' % settings.FREPPLE_VERSION
+    print 'Starting frePPLe %s web server\n' % VERSION
     print 'To access the server, point your browser to either of the following URLS:'
     if address == '0.0.0.0':
       print '    http://%s:%s/' % (hostname, port)
@@ -116,14 +118,14 @@ class CheckUpdates(Thread):
         values = {
           'platform' : sys.platform,
           'executable' : sys.executable,
-          'version' : settings.FREPPLE_VERSION,
+          'version' : VERSION,
           }
         request = urllib2.Request('http://www.frepple.com/usage.php?' + urllib.urlencode(values))
         response = urllib2.urlopen(request).read()
         match = re.search("<release>(.*)</release>", response)
         release = match.group(1)
-        if release > settings.FREPPLE_VERSION:
-          print "A new frePPLe release %s is available. Your current release is %s." % (release, settings.FREPPLE_VERSION)
+        if release > VERSION:
+          print "A new frePPLe release %s is available. Your current release is %s." % (release, VERSION)
       except:
         # Don't worry if something went wrong.
         pass

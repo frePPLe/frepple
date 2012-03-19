@@ -35,7 +35,6 @@ if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
   FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
-FREPPLE_VERSION = '0.9.1.beta'
 # sys.path.append(os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','openerp')))
 
 # Django settings for freppledb project.

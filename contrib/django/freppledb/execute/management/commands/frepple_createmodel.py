@@ -36,6 +36,7 @@ from freppledb.input.models import Operation, Buffer, Resource, Location, Calend
 from freppledb.input.models import CalendarBucket, BucketDetail, Customer, Demand, Flow
 from freppledb.input.models import Load, Item, Parameter, Bucket, Forecast
 from freppledb.execute.models import log
+from freppledb import VERSION
 
 
 database = DEFAULT_DB_ALIAS
@@ -96,7 +97,7 @@ class Command(BaseCommand):
   requires_model_validation = False
 
   def get_version(self):
-    return settings.FREPPLE_VERSION
+    return VERSION
 
 
   def handle(self, **options):

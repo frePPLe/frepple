@@ -30,6 +30,7 @@ from django.db import transaction
 from django.utils.translation import ugettext as _
 
 from freppledb.execute.models import log, Scenario
+from freppledb import VERSION
 
 
 class Command(BaseCommand):
@@ -74,7 +75,7 @@ class Command(BaseCommand):
   requires_model_validation = False
 
   def get_version(self):
-    return settings.FREPPLE_VERSION
+    return VERSION
 
   @transaction.commit_manually
   def handle(self, *args, **options):

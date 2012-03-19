@@ -30,6 +30,7 @@ from django.utils.translation import ugettext as _
 
 from freppledb.input.models import Bucket, BucketDetail
 from freppledb.execute.models import log
+from freppledb import VERSION
 
 
 class Command(BaseCommand):
@@ -54,7 +55,7 @@ class Command(BaseCommand):
   requires_model_validation = False
 
   def get_version(self):
-    return settings.FREPPLE_VERSION
+    return VERSION
 
 
   def handle(self, **options):

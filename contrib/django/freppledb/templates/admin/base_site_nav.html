@@ -7,49 +7,50 @@
   
 {% if modelsIn %}<a href="#" class="menuButton ui-widget-content ui-corner-all ui-state-default">{% trans 'Input' %}</a>
 <div id="inputMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-{% for m in modelsIn %}<li class="ui-menu-item"><a href="{{request.prefix }}{{m.admin_url}}">{{ m.name }}</a></li>
+{% for m in modelsIn %}<li class="ui-menu-item"><a href="{{request.prefix}}{{m.admin_url}}">{{m.name}}</a></li>
 {% endfor %}</ul></div>{% endif %}
 
 <a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'Reports' %}</a>
 <div id="outputMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default ">
-<li class="ui-menu-item"><a href="{{request.prefix }}/buffer/">{% trans "Inventory report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/resource/">{% trans "Resource report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/demand/">{% trans "Demand report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/forecast/">{% trans "Forecast report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/operation/">{% trans "Operation report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/operationplan/">{% trans "Operation detail report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/loadplan/">{% trans "Resource detail report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/flowplan/">{% trans "Inventory detail report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/demandplan/">{% trans "Demand detail report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/problem/">{% trans "Problem report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/constraint/">{% trans "Constraint report" %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/kpi/">{% trans "Performance Indicators" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/buffer/">{% trans "Inventory report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/resource/">{% trans "Resource report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/demand/">{% trans "Demand report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/forecast/">{% trans "Forecast report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/operation/">{% trans "Operation report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/operationplan/">{% trans "Operation detail report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/loadplan/">{% trans "Resource detail report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/flowplan/">{% trans "Inventory detail report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/demandplan/">{% trans "Demand detail report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/problem/">{% trans "Problem report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/constraint/">{% trans "Constraint report" %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/kpi/">{% trans "Performance Indicators" %}</a></li>
 </ul></div>
 
 {% if perms.execute %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'Tools' %}</a>
 <div id="toolsMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a href="{{request.prefix }}/execute/">{% trans 'Execute' %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/execute/log/">{% trans 'Log' %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/execute/">{% trans 'Execute' %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/execute/log/">{% trans 'Log' %}</a></li>
 </ul></div>{% endif %}
 
 {% if modelsAuth %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'Admin' %}</a>
 <div id="authMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 {% for m in modelsAuth %}
-<li class="ui-menu-item"><a href="{{m.admin_url}}">{{ m.name }}</a></li>{% endfor %}
+<li class="ui-menu-item"><a href="{{m.admin_url}}">{{m.name}}</a></li>{% endfor %}
 </ul></div>{% endif %}
 
 <a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'User' %}</a>
 <div id="userMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">{% if request.user.is_authenticated %}
-<li class="ui-menu-item"><a href="{{request.prefix }}/admin/logout/">{% trans 'Log out' %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/preferences/">{% trans 'Preferences' %}</a></li>
-<li class="ui-menu-item"><a href="{{request.prefix }}/admin/password_change/">{% trans 'Change password' %}</a></li>
-{% else %}<li class="ui-menu-item"><a href="{{request.prefix }}/admin/auth/user/">{% trans 'Log in' %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/admin/logout/">{% trans 'Log out' %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/preferences/">{% trans 'Preferences' %}</a></li>
+<li class="ui-menu-item"><a href="{{request.prefix}}/admin/password_change/">{% trans 'Change password' %}</a></li>
+{% else %}<li class="ui-menu-item"><a href="{{request.prefix}}/admin/auth/user/">{% trans 'Log in' %}</a></li>
 {% endif %}
 </ul></div>
 
 <a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">?</a>
 <div id="userMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a target="_blank" href="{{ STATIC_URL}}doc/index.html">{% trans 'Help' %}</a></li>
+<li class="ui-menu-item"><a target="_blank" href="{{STATIC_URL}}doc/index.html">{% trans 'Help' %}</a></li>
+<li class="ui-menu-item"><a target="_blank" href="http://www.frepple.com">{% trans 'frePPLe website' %}</a></li>
 </ul></div>
 
 <input id="search" class="ui-corner-all" size="35"/>

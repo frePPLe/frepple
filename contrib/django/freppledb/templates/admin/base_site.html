@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
 {% block title %}frePPLe{% if title %} - {{title}}{% endif %}{% endblock %}
-{% block branding %}<a href="http://www.frepple.com" target="_blank">frePPLe {% version %}</a>{% endblock %}
+{% block branding %}frePPLe {% version %}{% endblock %}
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/{{request.theme}}/jquery-ui.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/ui.jqgrid.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/frepple.css" />

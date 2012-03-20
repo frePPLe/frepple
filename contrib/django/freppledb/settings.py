@@ -132,6 +132,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
 )
 
+# The default redirects URLs not ending with a slash.
+# This causes trouble in combination with the DatabaseSelectionMiddleware.
+# We prefer not to redirect and report this as an incorrect URL.
+APPEND_SLASH = False
+
 WSGI_APPLICATION = 'freppledb.wsgi.application'
 ROOT_URLCONF = 'freppledb.urls'
 STATIC_ROOT = 'static'

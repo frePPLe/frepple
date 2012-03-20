@@ -47,6 +47,7 @@ class OverviewReport(GridPivot):
   title = _('Resource report')
   basequeryset = Resource.objects.all()
   model = Resource
+  editable = True
   rows = (
     GridFieldText('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
     GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),

@@ -843,7 +843,9 @@ class GridPivot(GridReport):
 
   template = 'admin/base_site_gridpivot.html'
   
-  hasTimeBuckets = True
+  hasTimeBuckets = True  
+
+  editable = False
 
   @classmethod
   def _apply_sort(reportclass, request):

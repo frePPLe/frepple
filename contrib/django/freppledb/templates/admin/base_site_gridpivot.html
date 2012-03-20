@@ -84,7 +84,7 @@ $(window).bind('resize', function() {
 </script> 
 {% endblock %}
 {% block content_title %}{{block.super}}{% endblock %}
-{% block tools %}<div class="tools">{% if reportclass.filterable %}
+{% block tools %}<div class="tools">{% if reportclass.filterable and not args.0 %}
 <a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
 {% if reportclass.editable and haschangeperm %}
 <a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>

@@ -43,6 +43,7 @@ class OverviewReport(GridPivot):
   title = _('Forecast Report')
   basequeryset = Forecast.objects.all()
   model = Forecast
+  editable = True
   rows = (
     GridFieldText('forecast', title=_('forecast'), key=True, field_name='name', formatter='forecast', editable=False),
     GridFieldText('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),

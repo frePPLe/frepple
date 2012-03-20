@@ -1,6 +1,6 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_list %}
-{% block extrahead %}{{ block.super }} 
+{% block extrahead %}{{block.super}} 
 <script type="text/javascript">
 
 function columns (cellvalue, options, rowdata) {
@@ -83,7 +83,7 @@ $(window).bind('resize', function() {
 
 </script> 
 {% endblock %}
-{% block content_title %}{{ block.super }}{% endblock %}
+{% block content_title %}{{block.super}}{% endblock %}
 {% block tools %}<div class="tools">{% if reportclass.filterable %}
 <a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
 {% if reportclass.editable and haschangeperm %}
@@ -105,9 +105,9 @@ $(window).bind('resize', function() {
 <tr><th>{% trans 'Bucket' %}</th><td><select name="reportbucket" id="reportbucket">
 {% for i in bucketnames %}<option value="{{i}}"{% ifequal i reportbucket %} selected="selected"{% endifequal %}>{% trans i %}</option>
 {% endfor %}</select></td></tr>
-<tr><th>{% trans 'start date'|capfirst %}:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="{{ reportstart|date:"Y-m-d" }}"/></td></tr>
-<tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{ reportend|date:"Y-m-d" }}"/>
-<input id="reportoriginal" type="hidden" value="{{reportbucket}}|{{ reportstart|date:"Y-m-d" }}|{{ reportend|date:"Y-m-d" }}"/></td></tr>
+<tr><th>{% trans 'start date'|capfirst %}:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="{{reportstart|date:"Y-m-d"}}"/></td></tr>
+<tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{reportend|date:"Y-m-d"}}"/>
+<input id="reportoriginal" type="hidden" value="{{reportbucket}}|{{reportstart|date:"Y-m-d"}}|{{reportend|date:"Y-m-d"}}"/></td></tr>
 </table></form>
 </div>
 {% block contextmenus %}{% endblock %}

@@ -1,6 +1,6 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_list %}
-{% block extrahead %}{{ block.super }} 
+{% block extrahead %}{{block.super}} 
 <script type="text/javascript">
 
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
@@ -73,14 +73,14 @@ $(window).bind('resize', function() {
 
 </script> 
 {% endblock %}
-{% block content_title %}{{ block.super }}{% endblock %}
+{% block content_title %}{{block.super}}{% endblock %}
 {% block tools %}<div class="tools">{% if reportclass.filterable %}
 <a id="filter" href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
 <a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
 <a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>
 {% endif %}
-{% if hasaddperm %}<a href="{{ request.prefix }}/admin/{{ model|app_label }}/{{ model|object_name|lower }}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
+{% if hasaddperm %}<a href="{{request.prefix}}/admin/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
 <a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
 {% endif %}<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
 </div>{% endblock %}

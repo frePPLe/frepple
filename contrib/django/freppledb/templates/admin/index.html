@@ -4,7 +4,7 @@
 {% block title %}frePPLe - {% trans "Home" %}{% endblock %}
 {% block content_title %}<h1>{% trans "Home" %}</h1>{% endblock %}
 
-{% block extrahead %}{{ block.super }}
+{% block extrahead %}{{block.super}}
 <script type="text/javascript">
   $(function() {
     $( "#content-main" ).accordion({
@@ -29,14 +29,14 @@ th {
         <h3 id="{{app.name|lower}}" ><a href="#{{app.name|lower}}">{% trans app.name %}</a></h3>
         <div><table>        
         {% for model in app.models %}<tr>
-            {% if model.perms.change %}<th scope="row"><a href="{{ request.prefix }}{{ model.admin_url }}">{{ model.name }}</a></th>
-            {% else %}<th scope="row">{{ model.name }}</th>
+            {% if model.perms.change %}<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
+            {% else %}<th scope="row">{{model.name}}</th>
             {% endif %}{%ifnotequal app.name "Output"%}
-            {% if model.perms.add %}<td><a href="{{ request.prefix }}{{ model.admin_url }}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
-            <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix }}{{ model.admin_url }}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
+            {% if model.perms.add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
+            <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
             {% else %}<td>&nbsp;</td>
             {% endif %}{% else %}<td>&nbsp;</td>{% endifnotequal %}
-            <td><a href="{{request.prefix }}{{ model.admin_url }}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+            <td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
         </tr>{% endfor %}
         </table></div>
     {% endifnotequal %}{% endfor %}
@@ -48,48 +48,48 @@ th {
 <div>
 <table>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/problem/">{% trans "Problem report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/problem/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/problem/">{% trans "Problem report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/problem/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/buffer/">{% trans "Inventory report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/buffer/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/buffer/">{% trans "Inventory report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/buffer/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/resource/">{% trans "Resource report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/resource/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/resource/">{% trans "Resource report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/resource/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/demand/">{% trans "Demand report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/demand/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/demand/">{% trans "Demand report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/demand/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/forecast/">{% trans "Forecast report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/forecast/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/forecast/">{% trans "Forecast report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/forecast/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/operation/">{% trans "Operation report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/operation/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/operation/">{% trans "Operation report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/operation/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/operationplan/">{% trans "Operation detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/operationplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/operationplan/">{% trans "Operation detail report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/operationplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/loadplan/">{% trans "Resource detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/loadplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/loadplan/">{% trans "Resource detail report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/loadplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/flowplan/">{% trans "Inventory detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/flowplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/flowplan/">{% trans "Inventory detail report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/flowplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/demandplan/">{% trans "Demand detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/demandplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/demandplan/">{% trans "Demand detail report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/demandplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/kpi/">{% trans "Performance Indicators" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/kpi/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/kpi/">{% trans "Performance Indicators" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/kpi/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 </table>
 </div>
@@ -99,12 +99,12 @@ th {
 <div>
 <table>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/execute/execute.html">{% trans "Execute" %}</a></th>
+<th scope="row"><a href="{{request.prefix}}/execute/execute.html">{% trans "Execute" %}</a></th>
 <td>&nbsp;</td><td>&nbsp;</td>
 </tr>
 <tr>
-<th scope="row"><a href="{{request.prefix }}/execute/log/">{% trans "Log" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix }}/execute/log/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+<th scope="row"><a href="{{request.prefix}}/execute/log/">{% trans "Log" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/execute/log/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 </table>
 </div>
@@ -122,9 +122,9 @@ th {
   {% for entry in admin_log %}
   <span style="display: inline-block;" class="ui-icon ui-icon-{% if entry.is_addition %}plusthick{% endif %}{% if entry.is_change %}pencil{% endif %}{% if entry.is_deletion %}minusthick{% endif %}"></span>
       {% if entry.is_deletion %}
-          {{ entry.object_repr }}
+          {{entry.object_repr}}
       {% else %}
-          <a href="{{ request.prefix }}/admin/{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+          <a href="{{request.prefix}}/admin/{{entry.get_admin_url}}">{{entry.object_repr}}</a>
       {% endif %}
       <span class="mini">{% if entry.content_type %}{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}{% else %}{% trans 'Unknown content' %}{% endif %}</span>
       <br/>

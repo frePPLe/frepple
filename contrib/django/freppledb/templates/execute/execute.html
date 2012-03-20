@@ -1,6 +1,6 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
-{% block extrahead %}{{ block.super }}
+{% block extrahead %}{{block.super}}
 <script type="text/javascript">
   function calcUtil()
   {
@@ -39,7 +39,7 @@
 <div>
 <table>
 
-<form method="post" action="{{ request.prefix }}/execute/runfrepple/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/runfrepple/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Run frePPLe</a></th>
 <td>Load frePPLe from the database...  <br/>
 and create a plan in frePPLe...<br/>
@@ -62,7 +62,7 @@ and export results into the database<br/>
 <input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked="true"{% endif %} value="1"/>{% trans "Lead time: do not plan in the past" %}<br/>
 <input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8"/>{% trans "Release fence: do not plan within the release time window" %}<br/>
 <br/>
-<a id="logfile" href="{{ request.prefix }}/execute/logfrepple/">{% trans "View latest log file" %}</a></td>
+<a id="logfile" href="{{request.prefix}}/execute/logfrepple/">{% trans "View latest log file" %}</a></td>
 <td><input id="run" type="submit" value="{% trans "Run" %}" /></td>
 </tr></form>
 
@@ -74,7 +74,7 @@ and export results into the database<br/>
 <h3><a href="#scenarios">{% trans "Scenario management" %}</a></h3>
 <div>
 <table>
-<form method="post" action="{{ request.prefix }}/execute/scenarios/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/scenarios/">{% csrf_token %}<tr>
 <th>{% trans 'name' %}</th>
 <th>{% trans 'status' %}</th>
 <th>{% trans 'description' %}</th>
@@ -110,13 +110,13 @@ and export results into the database<br/>
 <div>
 <table>
 
-<form method="post" action="{{ request.prefix }}/execute/erase/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/erase/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Erase</a></th>
 <td>Erase all data from the database.</td>
 <td><input id="erase" type="submit" value="Erase" /></td>{% endblocktrans %}
 </tr></form>
 
-<form method="post" action="{{ request.prefix }}/execute/fixture/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/fixture/">{% csrf_token %}<tr>
 <th scope="row"><a>{% trans "Load a dataset" %}</a></th>
 <td>{% trans "Load a dataset from a file in the database." %}<br/>
 {% trans "Available datasets:" %} <select name="datafile" id="entity">
@@ -137,7 +137,7 @@ and export results into the database<br/>
 <div>
 <table>
 
-<form method="post" action="{{ request.prefix }}/execute/create/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/create/">{% csrf_token %}<tr>
 {% blocktrans %}<th scope="row"><a>Create a model</a></th>
 <td>Create a sample model in the database.<br/>
 The parameters control the size and complexity.<br/>

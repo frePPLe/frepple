@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE|default:"en-us" }}">
+<html lang="{{LANGUAGE_CODE|default:"en-us"}}">
 
 {% load i18n %}
 <head>
 <title>{% block title %}{% endblock %}</title>
 <meta http-equiv="Content-Type" content="text/html; charset={{request.charset}}" />
 <meta name="robots" content="NONE,NOARCHIVE" />
-<link rel="alternate" type="application/rss+xml" href="{{request.prefix }}/rss/" />
+<link rel="alternate" type="application/rss+xml" href="{{request.prefix}}/rss/" />
 {% block extrastyle %}{% endblock %}
 {% block extrahead %}{% endblock %}
 </head>
@@ -26,18 +26,18 @@
 {% block nav-global %}{% endblock %}
 </div>
 <!-- END Header -->
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="{{ request.prefix }}/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{ title }}{% endif %}</div>{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{{request.prefix}}/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{title}}{% endif %}</div>{% endblock %}
 {% endif %}
 
- {% if messages %}<ul class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
+ {% if messages %}<ul class="messagelist">{% for message in messages %}<li>{{message}}</li>{% endfor %}</ul>{% endif %}
 
 <!-- Content -->
 <div id="content">
     {% block pretitle %}{% endblock %}
-    {% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1>{{ title|escape }}</h1><span id="curfilter"></span>{% endif %}</div>{% endblock %}
+    {% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1>{{title|escape}}</h1><span id="curfilter"></span>{% endif %}</div>{% endblock %}
     {% block content %}
     {% block object-tools %}{% endblock %}
-    {{ content }}
+    {{content}}
     {% endblock %}
     <br class="clear" />
 </div>

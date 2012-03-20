@@ -2,10 +2,10 @@
 {% output_all bound_field.form_fields %}
 {% if bound_field.raw_id_admin %}
     {% if bound_field.field.rel.limit_choices_to %}
-        <a href="{{ bound_field.related_url }}?{% for limit_choice in bound_field.field.rel.limit_choices_to.items %}{% if not forloop.first %}&amp;{% endif %}{{ limit_choice|join:"=" }}{% endfor %}" class="related-lookup" id="lookup_{{ bound_field.element_id }}" onclick="return showRelatedObjectLookupPopup(this);"> <img src="{{STATIC_URL}}admin/img/selector-search.gif" width="16" height="16" alt="Lookup"/></a>
+        <a href="{{bound_field.related_url}}?{% for limit_choice in bound_field.field.rel.limit_choices_to.items %}{% if not forloop.first %}&amp;{% endif %}{{limit_choice|join:"="}}{% endfor %}" class="related-lookup" id="lookup_{{bound_field.element_id}}" onclick="return showRelatedObjectLookupPopup(this);"> <img src="{{STATIC_URL}}admin/img/selector-search.gif" width="16" height="16" alt="Lookup"/></a>
     {% else %}
-        <a href="{{ bound_field.related_url }}" class="related-lookup" id="lookup_{{ bound_field.element_id }}" onclick="return showRelatedObjectLookupPopup(this);"> <img src="{{STATIC_URL}}admin/img/selector-search.gif" width="16" height="16" alt="Lookup"/></a>
+        <a href="{{bound_field.related_url}}" class="related-lookup" id="lookup_{{bound_field.element_id}}" onclick="return showRelatedObjectLookupPopup(this);"> <img src="{{STATIC_URL}}admin/img/selector-search.gif" width="16" height="16" alt="Lookup"/></a>
     {% endif %}
 {% elif bound_field.needs_add_label %}
-    <a href="{{ bound_field.related_url }}add/" class="add-another" id="add_{{ bound_field.element_id }}" onclick="return showAddAnotherPopup(this);"> <img src="{{STATIC_URL}}admin/img/icon_addlink.gif" width="10" height="10" alt="Add Another"/></a>
+    <a href="{{bound_field.related_url}}add/" class="add-another" id="add_{{bound_field.element_id}}" onclick="return showAddAnotherPopup(this);"> <img src="{{STATIC_URL}}admin/img/icon_addlink.gif" width="10" height="10" alt="Add Another"/></a>
 {% endif %}

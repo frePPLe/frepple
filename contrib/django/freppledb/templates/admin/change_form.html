@@ -1,32 +1,32 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_modify %}
 
-{% block extrahead %}{{ block.super }}
-{{ media }}
+{% block extrahead %}{{block.super}}
+{{media}}
 {% endblock %}
 
 {% block extrastyle %}
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/base.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/forms.css" />
-{{ block.super }}{% endblock %}
+{{block.super}}{% endblock %}
 
-{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
-{% block breadcrumbs %}{% if not is_popup %}{{ block.super }}{% endif %}{% endblock %}
+{% block bodyclass %}{{opts.app_label}}-{{opts.object_name.lower}} change-form{% endblock %}
+{% block breadcrumbs %}{% if not is_popup %}{{block.super}}{% endif %}{% endblock %}
 {% block content %}<div id="content-main">
 {% block object-tools %}
 {% if change %}{% if not is_popup %}
   <ul class="object-tools">
-  {% if opts.object_name.lower == "demand" %}<li><a href="{{ request.prefix }}/demandpegging/{{ object_id }}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
-  {% if opts.object_name.lower == "buffer" %}<li><a href="{{ request.prefix }}/buffer/{{ object_id }}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
-  {% if opts.object_name.lower == "operation" %}<li><a href="{{ request.prefix }}/operation/{{ object_id }}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
-  {% if opts.object_name.lower == "resource" %}<li><a href="{{ request.prefix }}/resource/{{ object_id }}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
-  {% if opts.object_name.lower == "item" %}<li><a href="{{ request.prefix }}/demand/{{ object_id }}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
+  {% if opts.object_name.lower == "demand" %}<li><a href="{{request.prefix}}/demandpegging/{{object_id}}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
+  {% if opts.object_name.lower == "buffer" %}<li><a href="{{request.prefix}}/buffer/{{object_id}}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
+  {% if opts.object_name.lower == "operation" %}<li><a href="{{request.prefix}}/operation/{{object_id}}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
+  {% if opts.object_name.lower == "resource" %}<li><a href="{{request.prefix}}/resource/{{object_id}}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
+  {% if opts.object_name.lower == "item" %}<li><a href="{{request.prefix}}/demand/{{object_id}}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
   <li><a href="history/" class="historylink">{% trans "History" %}</a></li>
-  {% if has_absolute_url %}<li><a href="../../../r/{{ content_type_id }}/{{ object_id }}/" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif%}
+  {% if has_absolute_url %}<li><a href="../../../r/{{content_type_id}}/{{object_id}}/" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif%}
   </ul>
 {% endif %}{% endif %}
 {% endblock %}
-<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.module_name }}_form">{% csrf_token %}{% block form_top %}{% endblock %}
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{form_url}}" method="post" id="{{opts.module_name}}_form">{% csrf_token %}{% block form_top %}{% endblock %}
 <div>
 {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
 {% if save_on_top %}{% submit_row %}{% endif %}
@@ -34,7 +34,7 @@
     <p class="errornote">
     {% blocktrans count errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
     </p>
-    {{ adminform.form.non_field_errors }}
+    {{adminform.form.non_field_errors}}
 {% endif %}
 
 {% for fieldset in adminform %}
@@ -52,7 +52,7 @@
 {% submit_row %}
 
 {% if adminform and add %}
-   <script type="text/javascript">document.getElementById("{{ adminform.first_field.auto_id }}").focus();</script>
+   <script type="text/javascript">document.getElementById("{{adminform.first_field.auto_id}}").focus();</script>
 {% endif %}
 
 {# JavaScript for prepopulated fields #}

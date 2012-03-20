@@ -1,7 +1,7 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{ block.super }} 
+{% block extrahead %}{{block.super}} 
 {% if args.0 %}<script type="text/javascript" src="{{STATIC_URL}}FusionCharts.js"></script>{% endif %}
 {% endblock %}
 

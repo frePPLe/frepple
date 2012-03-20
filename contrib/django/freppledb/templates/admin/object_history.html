@@ -1,10 +1,10 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1>{{ title|escape }}</h1>{% endif %}
+{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1>{{title|escape}}</h1>{% endif %}
 
 <div id="tabs">
-  {{ title|escape }}<ul>
+  {{title|escape}}<ul>
     <li><a href="#content-main">Edit</a></li>
     <li><a href="/content1.html">Plan</a></li>
     <li><a href="/content2.html">Where Used</a></li>
@@ -31,9 +31,9 @@
         <tbody>
         {% for action in action_list %}
         <tr>
-            <th scope="row">{{ action.action_time|date:"DATETIME_FORMAT" }}</th>
-            <td>{{ action.user.username }}{% if action.user.get_full_name %} ({{ action.user.get_full_name }}){% endif %}</td>
-            <td>{{ action.change_message }}</td>
+            <th scope="row">{{action.action_time|date:"DATETIME_FORMAT"}}</th>
+            <td>{{action.user.username}}{% if action.user.get_full_name %} ({{action.user.get_full_name}}){% endif %}</td>
+            <td>{{action.change_message}}</td>
         </tr>
         {% endfor %}
         </tbody>

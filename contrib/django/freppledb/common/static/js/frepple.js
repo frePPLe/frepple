@@ -303,19 +303,6 @@ $(function() {
     }
   });
 
-  $( "#tabs" ).tabs({
-    selected: 1,
-    select: function(event, ui) 
-    {
-      var url = $.data(ui.tab, 'load.tabs');
-      if(url) 
-      {
-        location.href = url;
-        return false;       
-      }
-      return true;
-    }
-  });
 });
 
 

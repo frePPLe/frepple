@@ -73,7 +73,6 @@ $(window).bind('resize', function() {
 
 </script> 
 {% endblock %}
-{% block content_title %}{{block.super}}{% endblock %}
 {% block tools %}<div class="tools">{% if reportclass.filterable %}
 <a id="filter" href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
 {% if not is_popup and reportclass.editable and haschangeperm %}

@@ -34,7 +34,7 @@
 <!-- Content -->
 <div id="content">
     {% block pretitle %}{% endblock %}
-    {% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1>{{title|escape}}</h1><span id="curfilter"></span>{% endif %}</div>{% endblock %}
+    {% block content_title %}<div>{% if title %}<h1 style="float: left">{{title|escape}}</h1>{% block tools %}{% endblock %}<span id="curfilter"></span>{% endif %}</div>{% endblock %}
     {% block content %}
     {% block object-tools %}{% endblock %}
     {{content}}

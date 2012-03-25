@@ -2,9 +2,10 @@
 // Django sets this variable in the admin/base.html template.
 window.__admin_media_prefix__ = "/static/admin/";
 
-// A class to store changes in memory till the save button is hit.
+//----------------------------------------------------------------------------
+// A class to handle changes to a grid.
+//----------------------------------------------------------------------------
 var upload = {
-  _data : [],
 
   undo : function ()
   {
@@ -59,7 +60,10 @@ var upload = {
 
 
 //----------------------------------------------------------------------------
-// Popup row selection
+// Popup row selection.
+// The popup window present a list of objects. The user clicks on a row to 
+// select it and a "select" button appears. When this button is clicked the 
+// popup is closed and the selected id is passed to the calling page.
 //----------------------------------------------------------------------------
 
 var selected;
@@ -73,9 +77,9 @@ function setSelectedRow(id) {
 
 
 //----------------------------------------------------------------------------
-// Custom formatter functions for the grid cells.
+// Custom formatter functions for the grid cells. Most of the custom handlers
+// just add an appropriate context menu. 
 //----------------------------------------------------------------------------
-
 
 function linkunformat (cellvalue, options, cell) {
 	  return cellvalue;
@@ -205,6 +209,13 @@ jQuery.extend($.fn.fmatter.bucket, {
 });
 
 
+//----------------------------------------------------------------------------
+// This function is called when a cell is just being selected in an editable
+// grid. It is used to either a) select the content of the cell (to make 
+// editing it easier) or b) display a date picker it the field is of type
+// date.
+//----------------------------------------------------------------------------
+
 function afterEditCell(rowid, cellname, value, iRow, iCol) 
 {
   var cell = document.getElementById(iRow+'_'+cellname);
@@ -220,7 +231,9 @@ function afterEditCell(rowid, cellname, value, iRow, iCol)
 
 
 //----------------------------------------------------------------------------
-// Code for customized autocomplete widget
+// Code for customized autocomplete widget.
+// The customization creates unselectable categories and selectable list 
+// items.
 //----------------------------------------------------------------------------
 
 $.widget( "custom.catcomplete", $.ui.autocomplete, {
@@ -235,13 +248,13 @@ $.widget( "custom.catcomplete", $.ui.autocomplete, {
   }
 });
 
+
 //----------------------------------------------------------------------------
 // Code for handling the menu bar, context menu and active button.
 //----------------------------------------------------------------------------
 
 var activeButton = null;
 var contextMenu = null;
-
 
 $(function() {
   
@@ -306,7 +319,7 @@ $(function() {
 });
 
 
-// Capture mouse clicks on the page so any active button can be deactivated.
+// Capture mouse clicks on the page so any active menu can be deactivated.
 $(document).mousedown(function (event) {
 
   if (contextMenu && $(event.target).parent('.ui-menu-item').length < 1)
@@ -370,7 +383,10 @@ $(document).mousedown(function (event) {
 });
 
 
+//----------------------------------------------------------------------------
 // Return the value of the csrf-token
+//----------------------------------------------------------------------------
+
 function getToken()
 {
   var allcookies = document.cookie.split(';');
@@ -381,8 +397,14 @@ function getToken()
 }
 
 
+//----------------------------------------------------------------------------
+// Check whether a URL is on the same domain as the current location or not.
+// We use it to avoid send the CSRF-token to ajax requests submitted to other
+// sites - for security reasons.
+//----------------------------------------------------------------------------
+
 function sameOrigin(url) {
-    // url could be relative or scheme relative or absolute
+    // URL could be relative or scheme relative or absolute
     var host = document.location.host; // host + port
     var protocol = document.location.protocol;
     var sr_origin = '//' + host;
@@ -394,6 +416,10 @@ function sameOrigin(url) {
         !(/^(\/\/|http:|https:).*/.test(url));
 }
 
+
+//----------------------------------------------------------------------------
+// Display import dialog for CSV-files
+//----------------------------------------------------------------------------
 
 function import_show(url)
 {
@@ -424,6 +450,10 @@ function import_show(url)
 }
 
 
+//----------------------------------------------------------------------------
+// Display filter dialog
+//----------------------------------------------------------------------------
+
 function filter_show()
 {
   if ($('#filter').hasClass("ui-state-disabled")) return;
@@ -446,16 +476,10 @@ function filter_show()
     });
 }
 
-function edit_show()
-{
-  var selectedrow = $("#grid").jqGrid('getGridParam', 'selrow');
-  if (selectedrow == null) return;
-  $('#timebuckets,#popup').dialog('close');
-  jQuery("#grid").jqGrid('editGridRow', selectedrow, {
-    closeOnEscape: true,
-    });
-}
 
+//----------------------------------------------------------------------------
+// Display and close export dialog for CSV-files
+//----------------------------------------------------------------------------
 
 function export_show(only_list)
 {
@@ -505,6 +529,10 @@ function export_close()
   $('#popup').dialog('close');
 }
 
+
+//----------------------------------------------------------------------------
+// Display time bucket selection dialog
+//----------------------------------------------------------------------------
 
 function bucket_show()
 {
@@ -567,9 +595,13 @@ function bucket_show()
 }
 
 
+//----------------------------------------------------------------------------
+// This function returns all arguments in the current URL as a dictionary.
+//----------------------------------------------------------------------------
+
 function getURLparameters()
 {
-  // This function returns all arguments in the current URL as an associated array.
+  
   if (window.location.search.length == 0) return {};
   var params = {};
 	jQuery.each(window.location.search.match(/^\??(.*)$/)[1].split('&'), function(i,p){
@@ -581,16 +613,9 @@ function getURLparameters()
 }
 
 
-function installLoadHandler()
-{
-  // Disable the django-supplied event handler to initialize calendar menus.
-  try {removeEvent(window,'load',DateTimeShortcuts.init);} catch (error) {;};
-}
-
-
-//
+//----------------------------------------------------------------------------
 // Functions to convert units for the duration fields
-//
+//----------------------------------------------------------------------------
 
 var _currentunits = null;
 
@@ -620,6 +645,10 @@ function setUnits(unitselector)
   _currentunits = unitselector.value;
 }
 
+
+//----------------------------------------------------------------------------
+// Dropdown list to select the model.
+//----------------------------------------------------------------------------
 
 function selectDatabase()
 {

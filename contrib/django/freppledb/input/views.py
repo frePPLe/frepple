@@ -265,25 +265,27 @@ class pathreport:
 
   @staticmethod
   @staff_member_required
-  def viewdownstream(request, objecttype, entity):
+  def viewdownstream(request, model, object_id):
     return render_to_response('input/path.html', RequestContext(request,{
-       'title': _('Where-used report for %(type)s %(entity)s') % {'type':_(objecttype), 'entity':entity},
-       'supplypath': pathreport.getPath(request, objecttype, entity, True),
-       'type': objecttype,
-       'entity': entity,
+       'title': _('Where-used report for %(type)s %(entity)s') % {'type':_(model), 'entity':object_id},
+       'supplypath': pathreport.getPath(request, model, object_id, True),
+       'model': model,
+       'object_id': object_id,
        'downstream': True,
+       'active_tab': 'whereused',
        }))
 
 
   @staticmethod
   @staff_member_required
-  def viewupstream(request, objecttype, entity):
+  def viewupstream(request, model, object_id):
     return render_to_response('input/path.html', RequestContext(request,{
-       'title': _('Supply path report for %(type)s %(entity)s') % {'type':_(objecttype), 'entity':entity},
-       'supplypath': pathreport.getPath(request, objecttype, entity, False),
-       'type': objecttype,
-       'entity': entity,
+       'title': _('Supply path report for %(type)s %(entity)s') % {'type':_(model), 'entity':object_id},
+       'supplypath': pathreport.getPath(request, model, object_id, False),
+       'model': model,
+       'object_id': object_id,
        'downstream': False,
+       'active_tab': 'supplypath',
        }))
 
 
@@ -593,9 +595,8 @@ class CalendarBucketList(GridReport):
   title = _("Calendar Bucket List")
   basequeryset = CalendarBucket.objects.all()
   model = CalendarBucket
-  frozenColumns = 1
+  frozenColumns = 3
   rows = (
-    GridFieldNumber('id', title=_('identifier'), key=True),
     GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date'),editable=False),

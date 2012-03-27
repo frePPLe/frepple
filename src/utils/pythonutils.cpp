@@ -323,45 +323,45 @@ PyObject* PythonInterpreter::python_log(PyObject *self, PyObject *args)
 const PyTypeObject PythonType::PyTypeObjectTemplate =
   {
     PyObject_HEAD_INIT(NULL)
-    0,					/* ob_size */
+    0,  /* ob_size */
     "frepple.unspecified",	/* WILL BE UPDATED tp_name */
     0,	/* WILL BE UPDATED tp_basicsize */
-    0,					/* tp_itemsize */
+    0,  /* tp_itemsize */
     0,  /* CAN BE UPDATED tp_dealloc */
-    0,					/* tp_print */
-    0,					/* tp_getattr */
-    0,					/* tp_setattr */
-    0,					/* tp_compare */
-    0,	        /* tp_repr */
-    0,					/* tp_as_number */
-    0,					/* tp_as_sequence */
-    0,					/* tp_as_mapping */
-    0,					/* tp_hash */
+    0,  /* tp_print */
+    0,  /* tp_getattr */
+    0,  /* tp_setattr */
+    0,  /* CAN BE UPDATED tp_compare */
+    0,  /* tp_repr */
+    0,  /* tp_as_number */
+    0,  /* tp_as_sequence */
+    0,  /* tp_as_mapping */
+    reinterpret_cast<hashfunc>(_Py_HashPointer),  /* tp_hash */
     0,  /* CAN BE UPDATED tp_call */
     0,	/* CAN BE UPDATED tp_str */
     0,	/* CAN BE UPDATED tp_getattro */
     0,	/* CAN BE UPDATED tp_setattro */
-    0,					/* tp_as_buffer */
+    0,  /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */
     "std doc", /* CAN BE UPDATED  tp_doc */
-    0,					/* tp_traverse */
-    0,					/* tp_clear */
-    0,					/* tp_richcompare */
-    0,					/* tp_weaklistoffset */
-    0,   /* CAN BE UPDATED tp_iter */
-    0,	 /* CAN BE UPDATED tp_iternext */
-    0,				  /* tp_methods */
-    0,					/* tp_members */
-    0,					/* tp_getset */
-    0,					/* tp_base */
-    0,					/* tp_dict */
-    0,					/* tp_descr_get */
-    0,					/* tp_descr_set */
-    0,					/* tp_dictoffset */
-    0,          /* tp_init */
-    0,          /* tp_alloc */
+    0,  /* tp_traverse */
+    0,  /* tp_clear */
+    0,  /* tp_richcompare */
+    0,  /* tp_weaklistoffset */
+    0,  /* CAN BE UPDATED tp_iter */
+    0,	/* CAN BE UPDATED tp_iternext */
+    0,  /* tp_methods */
+    0,  /* tp_members */
+    0,  /* tp_getset */
+    0,  /* tp_base */
+    0,  /* tp_dict */
+    0,  /* tp_descr_get */
+    0,  /* tp_descr_set */
+    0,  /* tp_dictoffset */
+    0,  /* tp_init */
+    0,  /* tp_alloc */
     0,	/* CAN BE UPDATED tp_new */
-    0,					/* tp_free */
+    0,  /* tp_free */
   };
 
 

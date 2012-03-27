@@ -52,7 +52,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
-      << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+        << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Store the last command in the list, in order to undo the following
   // commands if required.
@@ -83,8 +83,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   {
     const FlowPlan* fplan = dynamic_cast<const FlowPlan*>(&*cur);
     if (fplan && !fplan->getOperationPlan()->getIdentifier()
-      && fplan->getQuantity()>0
-      && fplan->getOperationPlan()->getOperation() != b->getProducingOperation())
+        && fplan->getQuantity()>0
+        && fplan->getOperationPlan()->getOperation() != b->getProducingOperation())
       unconfirmed_supply += fplan->getQuantity();
 
     // Iterator has now changed to a new date or we have arrived at the end.
@@ -128,13 +128,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // the date when the producing operation tells us it can get extra
           // supply.
           if (data->state->a_date < extraSupplyDate
-            && data->state->a_date > requested_date)
+              && data->state->a_date > requested_date)
             extraSupplyDate = data->state->a_date;
 
           // If we got some extra supply, we retry to get some more supply.
           // Only when no extra material is obtained, we give up.
           if (data->state->a_qty > ROUNDING_ERROR
-            && data->state->a_qty < -theDelta - ROUNDING_ERROR)
+              && data->state->a_qty < -theDelta - ROUNDING_ERROR)
             theDelta += data->state->a_qty;
           else
             loop = false;
@@ -218,7 +218,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     b->getProducingOperation()->solve(*this,v);
     // Evaluate the reply
     if (data->state->a_date < extraSupplyDate
-      && data->state->a_date > requested_date)
+        && data->state->a_date > requested_date)
       extraSupplyDate = data->state->a_date;
     if (data->state->a_qty > ROUNDING_ERROR)
       shortage -= data->state->a_qty;
@@ -277,8 +277,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
-    << "' answers: " << data->state->a_qty << "  " << data->state->a_date << "  "
-    << data->state->a_cost << "  " << data->state->a_penalty << endl;
+        << "' answers: " << data->state->a_qty << "  " << data->state->a_date << "  "
+        << data->state->a_cost << "  " << data->state->a_penalty << endl;
 }
 
 
@@ -292,7 +292,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferInfinite* b, void* v)
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Infinite buffer '" << b << "' is asked: "
-    << data->state->q_qty << "  " << data->state->q_date << endl;
+        << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Reply whatever is requested, regardless of date, quantity or supply.
   // The demand is not propagated upstream either.
@@ -304,8 +304,8 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferInfinite* b, void* v)
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Infinite buffer '" << b << "' answers: "
-    << data->state->a_qty << "  " << data->state->a_date << "  "
-    << data->state->a_cost << "  " << data->state->a_penalty << endl;
+        << data->state->a_qty << "  " << data->state->a_date << "  "
+        << data->state->a_cost << "  " << data->state->a_penalty << endl;
 }
 
 

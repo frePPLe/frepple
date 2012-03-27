@@ -302,26 +302,26 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
   // Update later setup opplans
   OperationPlan *opplan = ldplan ? ldplan->getOperationPlan() : NULL;
   loadplanlist::const_iterator i = ldplan ?
-    getLoadPlans().begin(ldplan) :
-    getLoadPlans().begin();
+      getLoadPlans().begin(ldplan) :
+      getLoadPlans().begin();
   string prevsetup = ldplan ? ldplan->getSetup() : getSetup();
   Date latestCheckDate = ldplan ? ldplan->getDate() : Date::infiniteFuture;
   for (; i != getLoadPlans().end(); ++i)
   {
     const LoadPlan* l = dynamic_cast<const LoadPlan*>(&*i);
     if (l && !l->getLoad()->getSetup().empty()
-      && l->getOperationPlan()->getOperation() == OperationSetup::setupoperation
-      && l->getOperationPlan() != opplan
-      && !l->isStart())
+        && l->getOperationPlan()->getOperation() == OperationSetup::setupoperation
+        && l->getOperationPlan() != opplan
+        && !l->isStart())
     {
       // Next conversion operation
       OperationPlanState x = l->getOperationPlan()->getOperation()->setOperationPlanParameters(
-        l->getOperationPlan(),
-        l->getOperationPlan()->getQuantity(),
-        Date::infinitePast,
-        l->getOperationPlan()->getDates().getEnd(),
-        true,
-        false);
+          l->getOperationPlan(),
+          l->getOperationPlan()->getQuantity(),
+          Date::infinitePast,
+          l->getOperationPlan()->getDates().getEnd(),
+          true,
+          false);
       if (x.start != l->getOperationPlan()->getDates().getStart())
         // We need to change a setup plan
         l->getOperationPlan()->restore(x);
@@ -341,7 +341,7 @@ DECLARE_EXPORT void ResourceInfinite::writeElement
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 
@@ -391,7 +391,7 @@ DECLARE_EXPORT PyObject* Resource::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_cluster))
     return PythonObject(getCluster());
   if (attr.isA(Tags::tag_members))
-	return new ResourceIterator(this);
+    return new ResourceIterator(this);
   return NULL;
 }
 

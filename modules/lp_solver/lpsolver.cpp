@@ -79,7 +79,7 @@ int LPSolver::initialize()
 {
   // Initialize the metadata.
   metadata = new MetaClass("solver", "solver_lp",
-    Object::createString<LPSolver>);
+      Object::createString<LPSolver>);
 
   // Initialize the Python class
   return FreppleClass<LPSolver,Solver>::initialize();
@@ -114,8 +114,8 @@ void LPSolver::solveObjective(const string& colname)
 
   // Freeze the column bounds
   lpx_set_col_bnds(lp, col, LPX_DB,
-    val>=ROUNDING_ERROR ? val-ROUNDING_ERROR : 0.0,
-    val>=-ROUNDING_ERROR ? val+ROUNDING_ERROR : 0.0);
+      val>=ROUNDING_ERROR ? val-ROUNDING_ERROR : 0.0,
+      val>=-ROUNDING_ERROR ? val+ROUNDING_ERROR : 0.0);
 
   // Remove from the objective
   lpx_set_obj_coef(lp, col, 0.0);
@@ -182,8 +182,8 @@ void LPSolver::solve(void *v)
   if (objectives.empty())
     throw DataException("No solver objectives are specified");
   for (list<string>::const_iterator i = objectives.begin();
-    i != objectives.end(); ++i)
-      solveObjective(*i);
+      i != objectives.end(); ++i)
+    solveObjective(*i);
 
   // Write solution
   if (!solutionfilename.empty())
@@ -229,8 +229,8 @@ void LPSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
   o->writeElement(tag_datafile, getDataFile());
   o->writeElement(tag_solutionfile, getSolutionFile());
   for (list<string>::const_iterator i = objectives.begin();
-    i != objectives.end(); ++i)
-      o->writeElement(tag_objective, *i);
+      i != objectives.end(); ++i)
+    o->writeElement(tag_objective, *i);
   Solver::writeElement(o, tag, NOHEADER);
 }
 
@@ -269,7 +269,7 @@ PyObject* LPSolver::getattro(const Attribute& attr)
     return PythonObject(getSolutionFile());
   else if (attr.isA(tag_objective))
   {
-	  // The list of objectives is returned as a list of strings
+    // The list of objectives is returned as a list of strings
     PyObject* result = PyList_New(getObjectives().size());
     int count = 0;
     for (list<string>::const_iterator i = getObjectives().begin();
@@ -286,28 +286,28 @@ int LPSolver::setattro(const Attribute& attr, const PythonObject& field)
   if (attr.isA(Tags::tag_minimum))
     setMinimum(field.getBool());
   else if (attr.isA(Tags::tag_maximum))
-	  setMinimum(!field.getBool());
+    setMinimum(!field.getBool());
   else if (attr.isA(tag_datafile))
-	  setDataFile(field.getString());
+    setDataFile(field.getString());
   else if (attr.isA(tag_modelfile))
-	  setModelFile(field.getString());
+    setModelFile(field.getString());
   else if (attr.isA(tag_solutionfile))
-	  setSolutionFile(field.getString());
+    setSolutionFile(field.getString());
   else if (attr.isA(tag_objective))
   {
-	  // The objective argument is a list of strings
+    // The objective argument is a list of strings
     PyObject* seq = PySequence_Fast(static_cast<PyObject*>(field), "expected a list");
     if (!PyList_Check(seq))
     {
       PyErr_SetString(PythonDataException, "expected a list");
-	    return -1; // Error
-	  }
-	  int len = PySequence_Size(static_cast<PyObject*>(field));
-	  PythonObject item;
+      return -1; // Error
+    }
+    int len = PySequence_Size(static_cast<PyObject*>(field));
+    PythonObject item;
     for (int i = 0; i < len; i++)
     {
-	    item = PyList_GET_ITEM(seq, i);
-	    addObjective(item.getString());
+      item = PyList_GET_ITEM(seq, i);
+      addObjective(item.getString());
     }
   }
   else

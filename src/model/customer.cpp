@@ -114,7 +114,7 @@ DECLARE_EXPORT PyObject* Customer::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_members))
-	return new CustomerIterator(this);
+    return new CustomerIterator(this);
   return NULL;
 }
 

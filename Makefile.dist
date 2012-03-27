@@ -121,7 +121,7 @@ todo:
 
 # Reformats the code to comply to some common standard
 # Our formatting is closely aligned with the CoreLinux standards
-astyleoptions = --style=ansi --indent=spaces=2 --indent-classes --indent-switches --min-conditional-indent=2 --one-line=keep-statements --one-line=keep-blocks --max-instatement-indent=2 --convert-tabs
+astyleoptions = --style=ansi --indent=spaces=2 --indent-classes --indent-switches --min-conditional-indent=2 --keep-one-line-statements --keep-one-line-blocks --max-instatement-indent=2 --convert-tabs
 astyle:
 	astyle --mode=c $(astyleoptions) `find . -name '*.cpp'`
 	astyle --mode=c $(astyleoptions) `find . -name '*.h'`

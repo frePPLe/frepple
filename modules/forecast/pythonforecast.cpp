@@ -141,10 +141,11 @@ extern "C" PyObject* Forecast::timeseries(PyObject *self, PyObject *args)
   Py_DECREF(bucketiterator);
 
   Py_BEGIN_ALLOW_THREADS  // Free the Python interpreter for other threads
-  try {
+  try
+  {
     // Generate the forecast
     forecast->generateFutureValues
-      (data, historycount, bucketdata, bucketcount, true);
+    (data, historycount, bucketdata, bucketcount, true);
   }
   catch (...)
   {

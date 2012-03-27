@@ -63,10 +63,10 @@ int main (int argc, char *argv[])
   TimePeriod t3;
   t3.parse("P1D");
   logger << "time \"P1D\" => " << t3 << "    "
-  << static_cast<long>(t3) << endl;
+      << static_cast<long>(t3) << endl;
   t3.parse("PT9M");
   logger << "time \"PT9M\" => " << t3 << "    "
-  << static_cast<long>(t3) << endl;
+      << static_cast<long>(t3) << endl;
   try
   {
     t3.parse("Pwrong");
@@ -74,19 +74,19 @@ int main (int argc, char *argv[])
   catch (const DataException& e)
   { logger << "Data exception caught: " << e.what() << endl; }
   logger << "time \"Pwrong\" => " << t3 << "    "
-  << static_cast<long>(t3) << endl;
+      << static_cast<long>(t3) << endl;
   t3.parse("PT79M");
   logger << "time \"PT79M\" => " << t3 << "    "
-  << static_cast<long>(t3) << endl;
+      << static_cast<long>(t3) << endl;
   t3.parse("P1W1DT1H");
   logger << "time \"P1W1DT1H\" => " << t3 << "    "
-  << static_cast<long>(t3) << endl;
+      << static_cast<long>(t3) << endl;
   t3.parse("PT0S");
   logger << "time \"PT0S\" => " << t3 << "    "
-  << static_cast<long>(t3) << endl;
+      << static_cast<long>(t3) << endl;
   t3.parse("-PT1M1S");
   logger << "time \"-PT1M1S\" => " << t3 << "    "
-  << static_cast<long>(t3) << endl;
+      << static_cast<long>(t3) << endl;
 
   logger << "infinite past: " << Date::infinitePast << endl;
   logger << "infinite future: " << Date::infiniteFuture << endl;

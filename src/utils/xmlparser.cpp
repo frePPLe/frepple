@@ -68,7 +68,7 @@ DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLAN = 2;
 DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
 
 
-void 	XMLInput::processingInstruction
+void  XMLInput::processingInstruction
 (const XMLCh *const target, const XMLCh *const data)
 {
   char* type = xercesc::XMLString::transcode(target);
@@ -146,8 +146,8 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
 #ifdef PARSE_DEBUG
       if (!m_EHStack.empty())
         logger << "Initialize root tag for reading object "
-        << getCurrentObject() << " ("
-        << typeid(*getCurrentObject()).name() << ")" << endl;
+            << getCurrentObject() << " ("
+            << typeid(*getCurrentObject()).name() << ")" << endl;
       else
         logger << "Initialize root tag for reading object NULL" << endl;
 #endif
@@ -161,7 +161,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
       // Debug
 #ifdef PARSE_DEBUG
       logger << "   Start element " << pElement->first.getName()
-      << " - object " << getCurrentObject() << endl;
+          << " - object " << getCurrentObject() << endl;
 #endif
 
       // Call the handler of the object
@@ -182,12 +182,12 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
           char* val = xercesc::XMLString::transcode(atts.getValue(i));
           m_EStack[numElements+1].first.reset(atts.getLocalName(i));
           m_EStack[numElements+1].second.setData(val);
-          #ifdef PARSE_DEBUG
+#ifdef PARSE_DEBUG
           char* attname = xercesc::XMLString::transcode(atts.getQName(i));
           logger << "   Processing attribute " << attname
-          << " - object " << getCurrentObject() << endl;
+              << " - object " << getCurrentObject() << endl;
           xercesc::XMLString::release(&attname);
-          #endif
+#endif
           try {getCurrentObject()->endElement(*this, m_EStack[numElements+1].first, m_EStack[numElements+1].second);}
           catch (const DataException& e)
           {
@@ -232,7 +232,7 @@ void XMLInput::endElement(const XMLCh* const uri,
       // STATE: Parser is ignoring a part of the input
 #ifdef PARSE_DEBUG
       logger << "   End element " << pElement->first.getName()
-      << " - IGNOREINPUT state" << endl;
+          << " - IGNOREINPUT state" << endl;
 #endif
       // Continue if we aren't dealing with the tag being ignored
       if (pElement->first.getHash() != endingHashes.top()) return;
@@ -253,7 +253,7 @@ void XMLInput::endElement(const XMLCh* const uri,
       // STATE: Parser is reading data elements of an object
 #ifdef PARSE_DEBUG
       logger << "   End element " << pElement->first.getName()
-      << " - object " << getCurrentObject() << endl;
+          << " - object " << getCurrentObject() << endl;
 #endif
 
       // Check if we finished with the current handler
@@ -293,7 +293,7 @@ void XMLInput::endElement(const XMLCh* const uri,
           }
 #ifdef PARSE_DEBUG
           logger << "   End element " << pElement->first.getName()
-          << " - object " << getCurrentObject() << endl;
+              << " - object " << getCurrentObject() << endl;
 #endif
         }
       }
@@ -310,7 +310,7 @@ void XMLInput::endElement(const XMLCh* const uri,
 }
 
 
-// Unfortunately the prototype for this handler function differs between 
+// Unfortunately the prototype for this handler function differs between
 // Xerces-c 2.x and 3.x
 #if XERCES_VERSION_MAJOR==2
 void XMLInput::characters(const XMLCh *const c, const unsigned int n)
@@ -332,7 +332,7 @@ void XMLInput::warning(const xercesc::SAXParseException& exception)
 {
   char* message = xercesc::XMLString::transcode(exception.getMessage());
   logger << "Warning: " << message
-  << " at line: " << exception.getLineNumber() << endl;
+      << " at line: " << exception.getLineNumber() << endl;
   xercesc::XMLString::release(&message);
 }
 
@@ -347,7 +347,7 @@ DECLARE_EXPORT void XMLInput::readto(Object * pPI)
     // Push a new object on the handler stack
 #ifdef PARSE_DEBUG
     logger << "Start reading object " << pPI
-    << " (" << typeid(*pPI).name() << ")" << endl;
+        << " (" << typeid(*pPI).name() << ")" << endl;
 #endif
     prev = getCurrentObject();
     m_EHStack.push_back(make_pair(pPI,static_cast<void*>(NULL)));
@@ -770,7 +770,7 @@ DECLARE_EXPORT hashtype Keyword::hash(const char* c)
     hashVal = (hashVal * 38) + (hashVal >> 24) + *curCh++;
 
   // Divide by modulus
-  return hashVal % 954991; 
+  return hashVal % 954991;
 }
 
 
@@ -782,7 +782,7 @@ DECLARE_EXPORT hashtype Keyword::hash(const XMLCh* t)
     xercesc::XMLString::release(&c);
     return 0;
   }
-  
+
   // Compute hash
   const char* curCh = c;
   hashtype hashVal = *curCh++;

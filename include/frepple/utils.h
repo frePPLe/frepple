@@ -513,9 +513,9 @@ class NonCopyable
   *   - <b>version</b>:<br>
   *     A string variable with the version number.
   *
-  * The technical implementation is inspired by and inherited from the following 
+  * The technical implementation is inspired by and inherited from the following
   * article: "Embedding Python in Multi-Threaded C/C++ Applications", see
-  * http://www.linuxjournal.com/article/3641 
+  * http://www.linuxjournal.com/article/3641
   */
 class PythonInterpreter
 {
@@ -541,12 +541,12 @@ class PythonInterpreter
       * - The __doc__ attribute, or NULL.
       */
     static DECLARE_EXPORT void registerGlobalMethod(
-      const char*, PyCFunction, int, const char*, bool = true	
-     );
+      const char*, PyCFunction, int, const char*, bool = true
+    );
 
     /** Register a new method to Python. */
     static DECLARE_EXPORT void registerGlobalMethod
-      (const char*, PyCFunctionWithKeywords, int, const char*, bool = true);
+    (const char*, PyCFunctionWithKeywords, int, const char*, bool = true);
 
     /** Return a pointer to the main extension module. */
     static PyObject* getModule() {return module;}
@@ -700,8 +700,8 @@ class Keyword : public NonCopyable
       * will be created. */
     static DECLARE_EXPORT const Keyword& find(const char*);
 
-	  /** Return a reference to a table with all defined tags. */
-	  static DECLARE_EXPORT tagtable& getTags();
+    /** Return a reference to a table with all defined tags. */
+    static DECLARE_EXPORT tagtable& getTags();
 
     /** Prints a list of all tags that have been defined. This can be useful
       * for debugging and also for creating a good hashing function.<br>
@@ -776,11 +776,11 @@ class PythonType : public NonCopyable
     PyTypeObject* table;
 
   public:
-   /** A static function that evaluates an exception and sets the Python
-      * error string properly.<br>
-      * This function should only be called from within a catch-block, since
-      * internally it rethrows the exception!
-      */
+    /** A static function that evaluates an exception and sets the Python
+       * error string properly.<br>
+       * This function should only be called from within a catch-block, since
+       * internally it rethrows the exception!
+       */
     static DECLARE_EXPORT void evalException();
 
     /** Constructor, sets the tp_base_size member. */
@@ -827,7 +827,7 @@ class PythonType : public NonCopyable
       *   PythonObject getattro(const XMLElement& name)
       */
     void supportgetattro()
-      {table->tp_getattro = getattro_handler;}
+    {table->tp_getattro = getattro_handler;}
 
     /** Updates tp_setattro.<br>
       * The extension class will need to define a member function with this
@@ -835,7 +835,7 @@ class PythonType : public NonCopyable
       *   int setattro(const Attribute& attr, const PythonObject& field)
       */
     void supportsetattro()
-      {table->tp_setattro = setattro_handler;}
+    {table->tp_setattro = setattro_handler;}
 
     /** Updates tp_compare.<br>
       * The extension class will need to define a member function with this
@@ -843,7 +843,7 @@ class PythonType : public NonCopyable
       *   int compare(const PyObject* other) const
       */
     void supportcompare()
-      {table->tp_compare = compare_handler;}
+    {table->tp_compare = compare_handler;}
 
     /** Updates tp_iter and tp_iternext.<br>
       * The extension class will need to define a member function with this
@@ -862,7 +862,7 @@ class PythonType : public NonCopyable
       *   PyObject* call(const PythonObject& args, const PythonObject& kwds)
       */
     void supportcall()
-      {table->tp_call = call_handler;}
+    {table->tp_call = call_handler;}
 
     /** Updates tp_str.<br>
       * The extension class will need to define a member function with this
@@ -870,7 +870,7 @@ class PythonType : public NonCopyable
       *   PyObject* str()
       */
     void supportstr()
-      {table->tp_str = str_handler;}
+    {table->tp_str = str_handler;}
 
     /** Type definition for create functions. */
     typedef PyObject* (*createfunc)(PyTypeObject*, PyObject*, PyObject*);
@@ -938,13 +938,13 @@ class MetaCategory;
   */
 class MetaClass : public NonCopyable
 {
-  friend class MetaCategory;
-  template <class T, class U> friend class FunctorStatic;
-  template <class T, class U> friend class FunctorInstance;
+    friend class MetaCategory;
+    template <class T, class U> friend class FunctorStatic;
+    template <class T, class U> friend class FunctorInstance;
 
   public:
-     /** Type definition for a factory method calling the default
-      * constructor.. */
+    /** Type definition for a factory method calling the default
+     * constructor.. */
     typedef Object* (*creatorDefault)();
 
     /** Type definition for a factory method calling the constructor that
@@ -976,11 +976,11 @@ class MetaClass : public NonCopyable
 
     /** Initialize the data structure and register the class. */
     DECLARE_EXPORT void registerClass(const string&, const string&,
-      bool = false, creatorDefault = NULL);
+        bool = false, creatorDefault = NULL);
 
     /** This constructor registers the metadata of a class. */
     MetaClass (const string& cat, const string& cls, bool def = false)
-       : pythonClass(NULL)
+      : pythonClass(NULL)
     {
       registerClass(cat,cls,def);
     }
@@ -988,7 +988,7 @@ class MetaClass : public NonCopyable
     /** This constructor registers the metadata of a class, with a factory
       * method that uses the default constructor of the class. */
     MetaClass (const string& cat, const string& cls, creatorDefault f,
-      bool def = false) : pythonClass(NULL)
+        bool def = false) : pythonClass(NULL)
     {
       registerClass(cat,cls,def);
       factoryMethodDefault = f;
@@ -997,7 +997,7 @@ class MetaClass : public NonCopyable
     /** This constructor registers the metadata of a class, with a factory
       * method that uses a constructor with a string argument. */
     MetaClass (const string& cat, const string& cls, creatorString f,
-      bool def = false) : pythonClass(NULL)
+        bool def = false) : pythonClass(NULL)
     {
       registerClass(cat,cls,def);
       factoryMethodString = f;
@@ -1063,11 +1063,11 @@ class MetaClass : public NonCopyable
 
     /** Connect a new subscriber to the class. */
     void connect(Functor *c, Signal a) const
-      {const_cast<MetaClass*>(this)->subscribers[a].push_front(c);}
+    {const_cast<MetaClass*>(this)->subscribers[a].push_front(c);}
 
     /** Disconnect a subscriber from the class. */
     void disconnect(Functor *c, Signal a) const
-      {const_cast<MetaClass*>(this)->subscribers[a].remove(c);}
+    {const_cast<MetaClass*>(this)->subscribers[a].remove(c);}
 
     /** Print all registered factory methods to the standard output for
       * debugging purposes. */
@@ -1114,8 +1114,8 @@ class XMLOutput;
   */
 class MetaCategory : public MetaClass
 {
-  friend class MetaClass;
-  template<class T> friend class HasName;
+    friend class MetaClass;
+    template<class T> friend class HasName;
   public:
     /** The name used to name a collection of objects of this category. */
     string group;
@@ -1139,7 +1139,7 @@ class MetaCategory : public MetaClass
 
     /** Constructor. */
     DECLARE_EXPORT MetaCategory (const string& t, const string& g,
-      readController = NULL, writeController = NULL);
+        readController = NULL, writeController = NULL);
 
     /** Type definition for the map of all registered classes. */
     typedef map < hashtype, const MetaClass*, less<hashtype> > ClassMap;
@@ -1222,11 +1222,11 @@ class MetaCategory : public MetaClass
   */
 template <class T, class U> class FunctorStatic : public Functor
 {
-  friend class MetaClass;
+    friend class MetaClass;
   public:
     /** Add a signal subscriber. */
     static void connect(const Signal a)
-      {T::metadata->connect(new FunctorStatic<T,U>(), a);}
+    {T::metadata->connect(new FunctorStatic<T,U>(), a);}
 
     /** Remove a signal subscriber. */
     static void disconnect(const Signal a)
@@ -1235,7 +1235,7 @@ template <class T, class U> class FunctorStatic : public Functor
         const_cast<MetaClass&>(static_cast<const MetaClass&>(*T::metadata));
       // Loop through all subscriptions
       for (list<Functor*>::iterator i = t.subscribers[a].begin();
-        i != t.subscribers[a].end(); ++i)
+          i != t.subscribers[a].end(); ++i)
       {
         // Try casting the functor to the right type
         FunctorStatic<T,U> *f = dynamic_cast< FunctorStatic<T,U>* >(*i);
@@ -1256,7 +1256,7 @@ template <class T, class U> class FunctorStatic : public Functor
       * method of the subscribing class.
       */
     virtual bool callback(Object* v, const Signal a) const
-      {return U::callback(static_cast<T*>(v),a);}
+    {return U::callback(static_cast<T*>(v),a);}
 };
 
 
@@ -1274,7 +1274,7 @@ template <class T, class U> class FunctorInstance : public Functor
       * will crash.
       */
     static void connect(U* u, const Signal a)
-      {if (u) T::metadata.connect(new FunctorInstance(u), a);}
+    {if (u) T::metadata.connect(new FunctorInstance(u), a);}
 
     /** Disconnect from a signal. */
     static void disconnect(U *u, const Signal a)
@@ -1283,7 +1283,7 @@ template <class T, class U> class FunctorInstance : public Functor
         const_cast<MetaClass&>(static_cast<const MetaClass&>(T::metadata));
       // Loop through all subscriptions
       for (list<Functor*>::iterator i = t.subscribers[a].begin();
-        i != t.subscribers[a].end(); ++i)
+          i != t.subscribers[a].end(); ++i)
       {
         // Try casting the functor to the right type
         FunctorInstance<T,U> *f = dynamic_cast< FunctorInstance<T,U>* >(*i);
@@ -1370,7 +1370,7 @@ inline ostream & operator << (ostream& os, const Timer& t)
   */
 class TimePeriod
 {
-  friend ostream& operator << (ostream &, const TimePeriod &);
+    friend ostream& operator << (ostream &, const TimePeriod &);
   public:
     /** Default constructor and constructor with timeperiod passed. */
     TimePeriod(const long l = 0) : lval(l) {}
@@ -1486,7 +1486,7 @@ inline ostream & operator << (ostream & os, const TimePeriod & t)
   * one second. */
 class Date
 {
-  friend ostream& operator << (ostream &, const Date &);
+    friend ostream& operator << (ostream &, const Date &);
   private:
     /** This string is a format string to be used to convert a date to and
       * from a string format. The formats codes that are allowed are the
@@ -1548,8 +1548,8 @@ class Date
       * and seconds can optionally be passed too.
       */
     DECLARE_EXPORT Date(int year, int month, int day,
-      int hr=0, int min=0, int sec=0
-      );
+        int hr=0, int min=0, int sec=0
+                       );
 
     /** Comparison between dates. */
     bool operator < (const Date& b) const {return lval < b.lval;}
@@ -1599,7 +1599,7 @@ class Date
     /** Subtracting two date values returns the time difference in a
       * TimePeriod object. */
     TimePeriod operator - (const Date& l) const
-      {return static_cast<long>(lval - l.lval);}
+    {return static_cast<long>(lval - l.lval);}
 
     /** Check whether the date has been initialized. */
     bool operator ! () const {return lval == infinitePast.lval;}
@@ -1724,11 +1724,11 @@ class DateRange
 
     /** Equality of date ranges. */
     bool operator == (const DateRange& b) const
-      {return start==b.start && end==b.end;}
+    {return start==b.start && end==b.end;}
 
     /** Inequality of date ranges. */
     bool operator != (const DateRange& b) const
-      {return start!=b.start || end!=b.end;}
+    {return start!=b.start || end!=b.end;}
 
     /** Move the daterange later in time. */
     void operator += (const TimePeriod& l) {start += l; end += l;}
@@ -1746,7 +1746,7 @@ class DateRange
       * not nessarily true.
       */
     bool intersect(const DateRange& dr) const
-      {return dr.start<=end && dr.end>start;}
+    {return dr.start<=end && dr.end>start;}
 
     /** Returns the number of seconds the two dateranges overlap. */
     TimePeriod overlap(const DateRange& dr) const
@@ -1846,7 +1846,7 @@ enum mode
   */
 class XMLEscape
 {
-  friend DECLARE_EXPORT ostream& operator << (ostream&, const XMLEscape&);
+    friend DECLARE_EXPORT ostream& operator << (ostream&, const XMLEscape&);
   private:
     const char* data;
   public:
@@ -1944,7 +1944,7 @@ class XMLOutput
       numParents(0), currentObject(NULL), parentObject(NULL), content(STANDARD),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
-      {m_fp = &os; indentstring[0] = '\0';}
+    {m_fp = &os; indentstring[0] = '\0';}
 
     /** Default constructor. */
     XMLOutput() : m_nIndent(0), numObjects(0), numParents(0),
@@ -1966,31 +1966,31 @@ class XMLOutput
     void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1)
     {
       *m_fp << indentstring << t.stringStartElement()
-      << attr1.stringAttribute() << XMLEscape(val1) << "\">\n";
+          << attr1.stringAttribute() << XMLEscape(val1) << "\">\n";
       incIndent();
     }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG_T TAG_T1="val1" TAG_T2="val2"\> */
     void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
-                     const Keyword& attr2, const string& val2)
+        const Keyword& attr2, const string& val2)
     {
       *m_fp << indentstring << t.stringStartElement()
-      << attr1.stringAttribute() << XMLEscape(val1) << "\""
-      << attr2.stringAttribute() << XMLEscape(val2) << "\">\n";
+          << attr1.stringAttribute() << XMLEscape(val1) << "\""
+          << attr2.stringAttribute() << XMLEscape(val2) << "\">\n";
       incIndent();
     }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG_T TAG_U="val1" TAG_V="val2" TAG_W="val3"\> */
     void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
-      const Keyword& attr2, const string& val2,
-      const Keyword& attr3, const string& val3)
+        const Keyword& attr2, const string& val2,
+        const Keyword& attr3, const string& val3)
     {
       *m_fp << indentstring << t.stringStartElement()
-      << attr1.stringAttribute() << XMLEscape(val1) << "\""
-      << attr2.stringAttribute() << XMLEscape(val2) << "\""
-      << attr3.stringAttribute() << XMLEscape(val3) << "\">\n";
+          << attr1.stringAttribute() << XMLEscape(val1) << "\""
+          << attr2.stringAttribute() << XMLEscape(val2) << "\""
+          << attr3.stringAttribute() << XMLEscape(val3) << "\">\n";
       incIndent();
     }
 
@@ -2006,18 +2006,18 @@ class XMLOutput
     void BeginObject(const Keyword& t, const Keyword& attr1, const long val1)
     {
       *m_fp << indentstring << t.stringStartElement()
-      << attr1.stringAttribute() << val1 << "\">\n";
+          << attr1.stringAttribute() << val1 << "\">\n";
       incIndent();
     }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG_T TAG_T1="val1" TAG_T2="val2"\> */
     void BeginObject(const Keyword& t, const Keyword& attr1, unsigned long val1,
-                     const Keyword& attr2, const string& val2)
+        const Keyword& attr2, const string& val2)
     {
       *m_fp << indentstring << t.stringStartElement()
-      << attr1.stringAttribute() << val1 << "\""
-      << attr2.stringAttribute() << XMLEscape(val2) << "\">\n";
+          << attr1.stringAttribute() << val1 << "\""
+          << attr2.stringAttribute() << XMLEscape(val2) << "\">\n";
       incIndent();
     }
 
@@ -2066,7 +2066,7 @@ class XMLOutput
     void writeElement(const Keyword& t, const bool val)
     {
       *m_fp << indentstring << t.stringElement()
-      << (val ? "true" : "false") << t.stringEndElement();
+          << (val ? "true" : "false") << t.stringEndElement();
     }
 
     /** Write a string value enclosed opening and closing tags. Special
@@ -2076,7 +2076,7 @@ class XMLOutput
     {
       if (!val.empty())
         *m_fp << indentstring << t.stringElement()
-        << XMLEscape(val) << t.stringEndElement();
+            << XMLEscape(val) << t.stringEndElement();
     }
 
     /** Writes an element with a string attribute.<br>
@@ -2087,8 +2087,8 @@ class XMLOutput
         *m_fp << indentstring << u.stringStartElement() << "/>\n";
       else
         *m_fp << indentstring << u.stringStartElement()
-        << t.stringAttribute() << XMLEscape(val)
-        << "\"/>\n";
+            << t.stringAttribute() << XMLEscape(val)
+            << "\"/>\n";
     }
 
     /** Writes an element with a long attribute.<br>
@@ -2096,7 +2096,7 @@ class XMLOutput
     void writeElement(const Keyword& u, const Keyword& t, const long val)
     {
       *m_fp << indentstring << u.stringStartElement()
-      << t.stringAttribute() << val << "\"/>\n";
+          << t.stringAttribute() << val << "\"/>\n";
     }
 
     /** Writes an element with a date attribute.<br>
@@ -2104,32 +2104,32 @@ class XMLOutput
     void writeElement(const Keyword& u, const Keyword& t, const Date& val)
     {
       *m_fp << indentstring << u.stringStartElement()
-      << t.stringAttribute() << string(val) << "\"/>\n";
+          << t.stringAttribute() << string(val) << "\"/>\n";
     }
 
     /** Writes an element with 2 string attributes.<br>
       * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2"/\> */
     void writeElement(const Keyword& u, const Keyword& t1, const string& val1,
-      const Keyword& t2, const string& val2)
+        const Keyword& t2, const string& val2)
     {
       if(val1.empty())
         *m_fp << indentstring << u.stringStartElement() << "/>\n";
       else
         *m_fp << indentstring << u.stringStartElement()
-        << t1.stringAttribute() << XMLEscape(val1.c_str()) << "\""
-        << t2.stringAttribute() << XMLEscape(val2.c_str())
-        << "\"/>\n";
+            << t1.stringAttribute() << XMLEscape(val1.c_str()) << "\""
+            << t2.stringAttribute() << XMLEscape(val2.c_str())
+            << "\"/>\n";
     }
 
     /** Writes an element with a string and a long attribute.<br>
       * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2"/\> */
     void writeElement(const Keyword& u, const Keyword& t1, unsigned long val1,
-      const Keyword& t2, const string& val2)
+        const Keyword& t2, const string& val2)
     {
       *m_fp << indentstring << u.stringStartElement()
-      << t1.stringAttribute() << val1 << "\""
-      << t2.stringAttribute() << XMLEscape(val2.c_str())
-      << "\"/>\n";
+          << t1.stringAttribute() << val1 << "\""
+          << t2.stringAttribute() << XMLEscape(val2.c_str())
+          << "\"/>\n";
     }
 
     /** Writes a C-type character string.<br>
@@ -2138,7 +2138,7 @@ class XMLOutput
     {
       if (val)
         *m_fp << indentstring << t.stringElement()
-        << XMLEscape(val) << t.stringEndElement();
+            << XMLEscape(val) << t.stringEndElement();
     }
 
     /** Writes an timeperiod element.<br>
@@ -2174,7 +2174,7 @@ class XMLOutput
 
     /** @see writeElement(const Keyword&, const Object*, mode) */
     void writeElement(const Keyword& t, const Object& o, mode m = DEFAULT)
-      {writeElement(t,&o,m);}
+    {writeElement(t,&o,m);}
 
     /** This method writes a serializable object with a complete XML compliant
       * header.<br>
@@ -2198,11 +2198,11 @@ class XMLOutput
 
     /** Returns a pointer to the object that is currently being saved. */
     Object* getCurrentObject() const
-      {return const_cast<Object*>(currentObject);}
+    {return const_cast<Object*>(currentObject);}
 
     /** Returns a pointer to the parent of the object that is being saved. */
     Object* getPreviousObject() const
-      {return const_cast<Object*>(parentObject);}
+    {return const_cast<Object*>(parentObject);}
 
     /** Returns the number of objects that have been serialized. */
     unsigned long countObjects() const {return numObjects;}
@@ -2393,10 +2393,10 @@ class DataElement
 {
   public:
     virtual operator bool() const
-      {throw LogicException("DataElement is an abstract class");}
+    {throw LogicException("DataElement is an abstract class");}
 
-   /** Destructor. */
-   virtual ~DataElement() {}
+    /** Destructor. */
+    virtual ~DataElement() {}
 
     void operator >> (unsigned long int& val) const {val = getUnsignedLong();}
 
@@ -2415,28 +2415,28 @@ class DataElement
     void operator >> (string& val) const {val = getString();}
 
     virtual long getLong() const
-      {throw LogicException("DataElement is an abstract class");}
+    {throw LogicException("DataElement is an abstract class");}
 
     virtual unsigned long getUnsignedLong() const
-      {throw LogicException("DataElement is an abstract class");}
+    {throw LogicException("DataElement is an abstract class");}
 
     virtual TimePeriod getTimeperiod() const
-      {throw LogicException("DataElement is an abstract class");}
+    {throw LogicException("DataElement is an abstract class");}
 
     virtual int getInt() const
-      {throw LogicException("DataElement is an abstract class");}
+    {throw LogicException("DataElement is an abstract class");}
 
     virtual double getDouble() const
-      {throw LogicException("DataElement is an abstract class");}
+    {throw LogicException("DataElement is an abstract class");}
 
     virtual Date getDate() const
-      {throw LogicException("DataElement is an abstract class");}
+    {throw LogicException("DataElement is an abstract class");}
 
     virtual string getString() const
-      {throw LogicException("DataElement is an abstract class");}
+    {throw LogicException("DataElement is an abstract class");}
 
     virtual bool getBool() const
-      {throw LogicException("DataElement is an abstract class");}
+    {throw LogicException("DataElement is an abstract class");}
 };
 
 
@@ -2457,8 +2457,8 @@ class XMLElement : public DataElement
     /** Constructor. */
     XMLElement(const string& v) : m_strData(v) {}
 
-   /** Destructor. */
-   virtual ~XMLElement() {}
+    /** Destructor. */
+    virtual ~XMLElement() {}
 
     /** Re-initializes an existing element. Using this method we can avoid
       * destroying and recreating XMLelement objects too frequently. Instead
@@ -2637,8 +2637,8 @@ class PythonObject : public DataElement
     bool check(const MetaClass* c) const
     {
       return obj ?
-        PyObject_TypeCheck(obj, c->pythonClass) :
-        false;
+          PyObject_TypeCheck(obj, c->pythonClass) :
+          false;
     }
 
     /** Check whether the Python object is of a certain type.<br>
@@ -2647,8 +2647,8 @@ class PythonObject : public DataElement
     bool check(const PythonType& c) const
     {
       return obj ?
-        PyObject_TypeCheck(obj, c.type_object()) :
-        false;
+          PyObject_TypeCheck(obj, c.type_object()) :
+          false;
     }
 
     /** Convert a Python string into a C++ string. */
@@ -2703,7 +2703,7 @@ class PythonObject : public DataElement
     inline double getDouble() const
     {
       if (obj == Py_None) return 0;
-	    if (PyString_Check(obj))
+      if (PyString_Check(obj))
       {
         PyObject* t = PyFloat_FromString(obj, NULL);
         if (!t) throw DataException("Invalid number");
@@ -2711,7 +2711,7 @@ class PythonObject : public DataElement
         Py_DECREF(t);
         return x;
       }
-	    return PyFloat_AsDouble(obj);
+      return PyFloat_AsDouble(obj);
     }
 
     /** Convert a Python number or string into a C++ integer. */
@@ -2728,9 +2728,9 @@ class PythonObject : public DataElement
         return static_cast<int>(x);
       }
       int result = PyInt_AsLong(obj);
-	    if (result == -1 && PyErr_Occurred())
-		    throw DataException("Invalid number");
-	    return result;
+      if (result == -1 && PyErr_Occurred())
+        throw DataException("Invalid number");
+      return result;
     }
 
     /** Convert a Python number into a C++ long. */
@@ -2747,10 +2747,10 @@ class PythonObject : public DataElement
         return static_cast<long>(x);
       }
       int result = PyInt_AsLong(obj);
-	    if (result == -1 && PyErr_Occurred())
-		    throw DataException("Invalid number");
-	    return result;
-	  }
+      if (result == -1 && PyErr_Occurred())
+        throw DataException("Invalid number");
+      return result;
+    }
 
     /** Convert a Python number into a C++ bool. */
     inline bool getBool() const
@@ -2760,8 +2760,8 @@ class PythonObject : public DataElement
 
     /** Convert a Python number as a number of seconds into a frePPLe
       * TimePeriod.<br>
-	    * A TimePeriod is represented as a number of seconds in Python.
-	    */
+      * A TimePeriod is represented as a number of seconds in Python.
+      */
     TimePeriod getTimeperiod() const
     {
       if (PyString_Check(obj))
@@ -2775,10 +2775,10 @@ class PythonObject : public DataElement
         return TimePeriod(PyString_AsString(PyObject_Str(obj)));
       }
       int result = PyInt_AsLong(obj);
-	    if (result == -1 && PyErr_Occurred())
-		    throw DataException("Invalid number");
-	    return result;
-  	}
+      if (result == -1 && PyErr_Occurred())
+        throw DataException("Invalid number");
+      return result;
+    }
 
     /** Constructor from a pointer to an Object.<br>
       * The metadata of the Object instances allow us to create a Python
@@ -2914,8 +2914,8 @@ class AttributeList
     virtual const DataElement* get(const Keyword&) const = 0;
     // @todo Iterator???
 
-   /** Destructor. */
-   virtual ~AttributeList() {}
+    /** Destructor. */
+    virtual ~AttributeList() {}
 };
 
 
@@ -2988,8 +2988,8 @@ class PythonExtensionBase : public PyObject
     {
       if (PyObject::ob_refcnt > 1)
         logger << "Warning: Deleting " << PyObject::ob_type->tp_name
-          << " object that is still referenced "
-          << (PyObject::ob_refcnt-1) << " times" << endl;
+            << " object that is still referenced "
+            << (PyObject::ob_refcnt-1) << " times" << endl;
     }
 
     /** A function to force an object to be destroyed by the Python garbage
@@ -3155,7 +3155,7 @@ class Object : public PythonExtensionBase
       * E.g. Command
       */
     virtual void writeElement(XMLOutput *, const Keyword &, mode=DEFAULT) const
-      {throw LogicException("Class can't be persisted");}
+    {throw LogicException("Class can't be persisted");}
 
     /** Called while restoring the model from an XML-file.<br>
       * This is called for each element within the "this" element,
@@ -3204,7 +3204,7 @@ class Object : public PythonExtensionBase
       * from Python. */
     template<class T>
     static PyObject* create
-      (PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+    (PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     {
       try
       {
@@ -3231,8 +3231,8 @@ class Object : public PythonExtensionBase
             int result = x->setattro(attr, field);
             if (result && !PyErr_Occurred())
               PyErr_Format(PyExc_AttributeError,
-                "attribute '%s' on '%s' can't be updated",
-                PyString_AsString(key), x->ob_type->tp_name);
+                  "attribute '%s' on '%s' can't be updated",
+                  PyString_AsString(key), x->ob_type->tp_name);
           }
         };
         Py_INCREF(x);
@@ -3423,7 +3423,7 @@ class Tree : public NonCopyable
       */
     class TreeNode
     {
-      friend class Tree;
+        friend class Tree;
 
       public:
         /** Destructor. */
@@ -3554,7 +3554,7 @@ class Tree : public NonCopyable
       findLowerBound(newname, &found);
       if (found)
         throw DataException("Can't rename '" + obj->nm + "' to '"
-          + newname + "': name already in use");
+            + newname + "': name already in use");
       erase(obj);
       // @todo: there is a small risk for multithreading trouble when the tree is unlocked between the delete and re-insert
       obj->nm = newname;
@@ -3592,11 +3592,11 @@ class Tree : public NonCopyable
     {
       ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
       int comp;
-	    for (TreeNode* x = header.parent; x; x = comp<0 ? x->left : x->right)
+      for (TreeNode* x = header.parent; x; x = comp<0 ? x->left : x->right)
       {
-		    comp = k.compare(x->nm);
-		    if (!comp) return x;
-	    }
+        comp = k.compare(x->nm);
+        if (!comp) return x;
+      }
       TreeNode* result = end();
       return result;
     }
@@ -3723,9 +3723,9 @@ class Tree : public NonCopyable
   */
 class Command
 {
-  friend class CommandList;
-  friend class CommandManager;
-  friend class frepple::CommandMoveOperationPlan;
+    friend class CommandList;
+    friend class CommandManager;
+    friend class frepple::CommandMoveOperationPlan;
   public:
     /** Default constructor. The creation of a command should NOT execute the
       * command yet. The execute() method needs to be called explicitly to
@@ -3821,7 +3821,7 @@ class CommandList : public Command
 
         /** Pre-increment operator which moves the pointer to the next
           * element. */
-        iterator& operator++() 
+        iterator& operator++()
         {
           cur = cur->next;
           return *this;
@@ -3890,7 +3890,7 @@ class CommandList : public Command
 };
 
 
-/** @brief This class allows management of tasks with supporting commiting them, 
+/** @brief This class allows management of tasks with supporting commiting them,
   * rolling them back, and setting bookmarks which can be undone and redone.
   */
 class CommandManager
@@ -3898,21 +3898,21 @@ class CommandManager
   public:
     /** A bookmark that keeps track of commands that can be undone and redone. */
     class Bookmark : public CommandList
-    { 
-      friend class CommandManager;
+    {
+        friend class CommandManager;
       private:
         bool active;
         Bookmark* nextBookmark;
         Bookmark* prevBookmark;
         Bookmark* parent;
-        Bookmark(Bookmark* p=NULL) : active(true), 
+        Bookmark(Bookmark* p=NULL) : active(true),
           nextBookmark(NULL), prevBookmark(NULL), parent(p) {}
       public:
         /** Returns true if the bookmark commands are active. */
         bool isActive() const {return active;}
 
-        /** Returns true if the bookmark is a child, grand-child or 
-          * grand-grand-child of the argument bookmark. 
+        /** Returns true if the bookmark is a child, grand-child or
+          * grand-grand-child of the argument bookmark.
           */
         bool isChildOf(const Bookmark* b) const
         {
@@ -3940,7 +3940,7 @@ class CommandManager
 
         /** Pre-increment operator which moves the pointer to the next
           * element. */
-        iterator& operator++() 
+        iterator& operator++()
         {
           cur = cur->nextBookmark;
           return *this;
@@ -3983,7 +3983,7 @@ class CommandManager
 
         /** Pre-increment operator which moves the pointer to the next
           * element. */
-        reverse_iterator& operator++() 
+        reverse_iterator& operator++()
         {
           cur = cur->prevBookmark;
           return *this;
@@ -4016,9 +4016,9 @@ class CommandManager
 
     /** Tail of a list of bookmarks. */
     Bookmark* lastBookmark;
-    
+
     /** Current bookmarks.<br>
-      * If commands are added to the manager, this is the bookmark where 
+      * If commands are added to the manager, this is the bookmark where
       * they'll be appended to.
       */
     Bookmark* currentBookmark;
@@ -4032,7 +4032,7 @@ class CommandManager
     }
 
     /** Destructor. */
-    ~CommandManager() 
+    ~CommandManager()
     {
       for (Bookmark* i = lastBookmark; i && i != &firstBookmark; )
       {
@@ -4201,7 +4201,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * It pushes a new element on the stack and calls the current handler.
       */
     void startElement (const XMLCh* const, const XMLCh* const,
-      const XMLCh* const, const xercesc::Attributes&);
+        const XMLCh* const, const xercesc::Attributes&);
 
     /** Handler called when closing element tag is encountered.
       * If this is the closing tag for the current event handler, pop it
@@ -4211,16 +4211,16 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * stack.
       */
     void endElement
-      (const XMLCh* const, const XMLCh* const, const XMLCh* const);
+    (const XMLCh* const, const XMLCh* const, const XMLCh* const);
 
     /** Handler called when character data are read in.
       * The data string is add it to the current element data.
       */
-    #if XERCES_VERSION_MAJOR==2
+#if XERCES_VERSION_MAJOR==2
     void characters(const XMLCh *const, const unsigned int);
-    #else
+#else
     void characters(const XMLCh *const, const XMLSize_t);
-    #endif    
+#endif
 
     /** Handler called by Xerces in fatal error conditions. It throws an
       * exception to abort the parsing procedure. */
@@ -4253,9 +4253,9 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * document is allowed to have. The default is 20.
       */
     XMLInput(unsigned short maxNestedElmnts = 20)
-     : parser(NULL), maxdepth(maxNestedElmnts), m_EStack(maxNestedElmnts+2),
-       numElements(-1), ignore(0), objectEnded(false),
-       abortOnDataException(true), attributes(NULL) {}
+      : parser(NULL), maxdepth(maxNestedElmnts), m_EStack(maxNestedElmnts+2),
+        numElements(-1), ignore(0), objectEnded(false),
+        abortOnDataException(true), attributes(NULL) {}
 
     /** Destructor. */
     virtual ~XMLInput() {reset();}
@@ -4320,11 +4320,11 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
 
     /** Returns a reference to the parent element. */
     const datapair& getParentElement() const
-      {return m_EStack[numElements>0 ? numElements : 0];}
+    {return m_EStack[numElements>0 ? numElements : 0];}
 
     /** Returns a reference to the current element. */
     const datapair& getCurrentElement() const
-      {return m_EStack[numElements>-1 ? numElements+1 : 0];}
+    {return m_EStack[numElements>-1 ? numElements+1 : 0];}
 
     /** This is the core parsing function, which triggers the XML parser to
       * start processing the input. It is normally called from the method
@@ -4336,11 +4336,11 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     /** Updates the user definable pointer. This pointer is used to store
       * status information between handler calls. */
     void setUserArea(void* v)
-      {if (!m_EHStack.empty()) m_EHStack[m_EHStack.size()-1].second = v;}
+    {if (!m_EHStack.empty()) m_EHStack[m_EHStack.size()-1].second = v;}
 
     /** Returns the user definable pointer. */
     void* getUserArea() const
-      {return m_EHStack.empty() ? NULL : m_EHStack[m_EHStack.size()-1].second;}
+    {return m_EHStack.empty() ? NULL : m_EHStack[m_EHStack.size()-1].second;}
 
     /** Updates whether we ignore data exceptions or whether we abort the
       * processing of the XML data stream. */
@@ -4509,8 +4509,8 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
         iterator operator--(int)
         {
           Tree::TreeNode* tmp = node;
-	        node = node->decrement();
-	        return tmp;
+          node = node->decrement();
+          return tmp;
         }
 
         /** Comparison operator. */
@@ -4561,7 +4561,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     int compare(const PyObject* other) const
     {
       if (this->ob_type == other->ob_type
-        || this->ob_type->tp_base == other->ob_type->tp_base)
+          || this->ob_type->tp_base == other->ob_type->tp_base)
         return getName().compare(static_cast<const T*>(other)->getName());
       else
       {
@@ -4597,7 +4597,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       if (i!=st.end()) return static_cast<T*>(i); // Exists already
       if (*(cls.category) != T::metadata)
         throw LogicException("Invalid type " + cls.type +
-        " for creating an object of category " + T::metadata.type);
+            " for creating an object of category " + T::metadata.type);
       T *t = dynamic_cast<T*>(cls.factoryMethodString(k));
       st.insert(t);
       return t;
@@ -4624,7 +4624,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       * - type:<br>
       *   Determines the subclass to be created.<br>
       *   The default value is "default".
-    	* - action:<br>
+      * - action:<br>
       *   Determines the action to be performed on the object.<br>
       *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change')
       *   or R (for 'remove').<br>
@@ -4696,8 +4696,8 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
         // Category metadata passed: we need to look up the type
         const DataElement* type = in.get(Tags::tag_type);
         j = static_cast<const MetaCategory&>(*cat).findClass(
-          *type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash
-          );
+            *type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash
+            );
         if (!j)
         {
           string t(*type ? type->getString() : "default");
@@ -4731,7 +4731,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       if (empty()) return;
       o->BeginObject(*(c->grouptag));
       for (iterator i = begin(); i != end(); ++i)
-          o->writeElement(*(c->typetag), *i);
+        o->writeElement(*(c->typetag), *i);
       o->EndObject(*(c->grouptag));
     }
 };
@@ -4790,9 +4790,9 @@ class HasDescription
 template <class T> class HasHierarchy : public HasName<T>
 {
 #if  (defined _MSC_VER) || (defined __BORLANDC__)
-  // Visual C++ 6.0 and Borland C++ 5.5 seem to get confused with the private
-  // template members
-  friend class HasHierarchy<T>;
+    // Visual C++ 6.0 and Borland C++ 5.5 seem to get confused with the private
+    // template members
+    friend class HasHierarchy<T>;
 #endif
 
   public:
@@ -4808,7 +4808,7 @@ template <class T> class HasHierarchy : public HasName<T>
       public:
         /** Constructor to iterate over member entities. */
         memberIterator(const HasHierarchy<T>* x) : member_iter(true)
-          {curmember = const_cast<HasHierarchy<T>*>(x)->first_child;}
+        {curmember = const_cast<HasHierarchy<T>*>(x)->first_child;}
 
         /** Constructor to iterate over all entities. */
         memberIterator() : curmember(&*T::begin()), member_iter(false) {}
@@ -4833,9 +4833,9 @@ template <class T> class HasHierarchy : public HasName<T>
         memberIterator& operator++()
         {
           if (member_iter)
-        	curmember = curmember->next_brother;
+            curmember = curmember->next_brother;
           else
-        	curmember = static_cast<T*>(curmember->increment());
+            curmember = static_cast<T*>(curmember->increment());
           return *this;
         }
 
@@ -4844,27 +4844,27 @@ template <class T> class HasHierarchy : public HasName<T>
         {
           memberIterator tmp = *this;
           if (member_iter)
-        	curmember = curmember->next_brother;
+            curmember = curmember->next_brother;
           else
-        	curmember = static_cast<T*>(curmember->increment());
+            curmember = static_cast<T*>(curmember->increment());
           return tmp;
         }
 
         /** Comparison operator. */
         bool operator==(const memberIterator& y) const
-          {return curmember == y.curmember;}
+        {return curmember == y.curmember;}
 
         /** Inequality operator. */
         bool operator!=(const memberIterator& y) const
-          {return curmember != y.curmember;}
+        {return curmember != y.curmember;}
 
         /** Comparison operator. */
         bool operator==(const typename HasName<T>::iterator& y) const
-          {return curmember ? (curmember == &*y) : (y == T::end());}
+        {return curmember ? (curmember == &*y) : (y == T::end());}
 
         /** Inequality operator. */
         bool operator!=(const typename HasName<T>::iterator& y) const
-          {return curmember ? (curmember != &*y) : (y != T::end());}
+        {return curmember ? (curmember != &*y) : (y != T::end());}
 
       private:
         /** Points to a member. */
@@ -4964,7 +4964,7 @@ template <class A, class B, class C> class Association
       */
     class List
     {
-      friend class Node;
+        friend class Node;
       public:
         C* first;
       public:
@@ -4974,7 +4974,7 @@ template <class A, class B, class C> class Association
 
   public:
     /** @brief A list type of the "first" / "from" part of the association. */
-	  class ListA : public List
+    class ListA : public List
     {
       public:
         ListA() {};
@@ -4988,11 +4988,11 @@ template <class A, class B, class C> class Association
             C& operator*() const {return *nodeptr;}
             C* operator->() const {return nodeptr;}
             bool operator==(const iterator& x) const
-              {return nodeptr == x.nodeptr;}
+            {return nodeptr == x.nodeptr;}
             bool operator!=(const iterator& x) const
-              {return nodeptr != x.nodeptr;}
+            {return nodeptr != x.nodeptr;}
             iterator& operator++()
-              {nodeptr = nodeptr->nextA; return *this;}
+            {nodeptr = nodeptr->nextA; return *this;}
             iterator operator++(int i)
             {
               iterator j = *this;
@@ -5010,11 +5010,11 @@ template <class A, class B, class C> class Association
             const C& operator*() const {return *nodeptr;}
             const C* operator->() const {return nodeptr;}
             bool operator==(const const_iterator& x) const
-              {return nodeptr == x.nodeptr;}
+            {return nodeptr == x.nodeptr;}
             bool operator!=(const const_iterator& x) const
-              {return nodeptr != x.nodeptr;}
+            {return nodeptr != x.nodeptr;}
             const_iterator& operator++()
-              {nodeptr = nodeptr->nextA; return *this;}
+            {nodeptr = nodeptr->nextA; return *this;}
             const_iterator operator++(int i)
             {
               const_iterator j = *this;
@@ -5118,11 +5118,11 @@ template <class A, class B, class C> class Association
             C& operator*() const {return *nodeptr;}
             C* operator->() const {return nodeptr;}
             bool operator==(const iterator& x) const
-              {return nodeptr == x.nodeptr;}
+            {return nodeptr == x.nodeptr;}
             bool operator!=(const iterator& x) const
-              {return nodeptr != x.nodeptr;}
+            {return nodeptr != x.nodeptr;}
             iterator& operator++()
-              {nodeptr = nodeptr->nextB; return *this;}
+            {nodeptr = nodeptr->nextB; return *this;}
             iterator operator++(int i)
             {
               iterator j = *this;
@@ -5140,11 +5140,11 @@ template <class A, class B, class C> class Association
             const C& operator*() const {return *nodeptr;}
             const C* operator->() const {return nodeptr;}
             bool operator==(const const_iterator& x) const
-              {return nodeptr == x.nodeptr;}
+            {return nodeptr == x.nodeptr;}
             bool operator!=(const const_iterator& x) const
-              {return nodeptr != x.nodeptr;}
+            {return nodeptr != x.nodeptr;}
             const_iterator& operator++()
-              {nodeptr = nodeptr->nextB; return *this;}
+            {nodeptr = nodeptr->nextB; return *this;}
             const_iterator operator++(int i)
             {
               const_iterator j = *this;
@@ -5251,7 +5251,7 @@ template <class A, class B, class C> class Association
 
         /** Constructor. */
         Node(A* a, B* b, const ListA& al, const ListB& bl)
-            : ptrA(a), ptrB(b), nextA(NULL), nextB(NULL)
+          : ptrA(a), ptrB(b), nextA(NULL), nextB(NULL)
         {
           if (al.first)
           {
@@ -5380,16 +5380,16 @@ class FreppleIterator : public PythonExtension<ME>
     }
 
     FreppleIterator() : i(DATACLASS::begin())
-      {this->initType(PythonExtension<ME>::getType().type_object());}
+    {this->initType(PythonExtension<ME>::getType().type_object());}
 
     template <class OTHER> FreppleIterator(const OTHER *o) : i(o)
-      {this->initType(PythonExtension<ME>::getType().type_object());}
+    {this->initType(PythonExtension<ME>::getType().type_object());}
 
     template <class OTHER> FreppleIterator(const OTHER &o) : i(o)
-      {this->initType(PythonExtension<ME>::getType().type_object());}
+    {this->initType(PythonExtension<ME>::getType().type_object());}
 
     static PyObject* create(PyObject* self, PyObject* args)
-     {return new ME();}
+    {return new ME();}
 
   private:
     ITERCLASS i;

@@ -36,7 +36,7 @@ int ForecastSolver::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("solver", "solver_forecast",
-    Object::createString<ForecastSolver>);
+      Object::createString<ForecastSolver>);
 
   // Initialize the Python class
   return FreppleClass<ForecastSolver,Solver>::initialize();
@@ -80,8 +80,8 @@ void ForecastSolver::solve(const Demand* l, void* v)
   // Message
   if (getLogLevel()>0)
     logger << "  Netting of demand '" << l << "'  ('" << l->getCustomer()
-      << "','" << l->getItem() << "', '" << l->getDeliveryOperation()
-      << "'): " << l->getDue() << ", " << l->getQuantity() << endl;
+        << "','" << l->getItem() << "', '" << l->getDeliveryOperation()
+        << "'): " << l->getDue() << ", " << l->getQuantity() << endl;
 
   // Find a matching forecast
   Forecast *fcst = matchDemandToForecast(l);
@@ -109,8 +109,8 @@ void ForecastSolver::solve(void *v)
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
     // Only sort non-forecast demand.
     if (!dynamic_cast<Forecast*>(&*i)
-      && !dynamic_cast<ForecastBucket*>(&*i))
-        l.insert(&*i);
+        && !dynamic_cast<ForecastBucket*>(&*i))
+      l.insert(&*i);
 
   // Netting loop
   for(sortedDemandList::iterator i = l.begin(); i != l.end(); ++i)
@@ -119,7 +119,7 @@ void ForecastSolver::solve(void *v)
     {
       // Error message
       logger << "Error: Caught an exception while netting demand '"
-        << (*i)->getName() << "':" << endl;
+          << (*i)->getName() << "':" << endl;
       try {throw;}
       catch (const bad_exception&) {logger << "  bad exception" << endl;}
       catch (const exception& e) {logger << "  " << e.what() << endl;}
@@ -143,7 +143,7 @@ Forecast* ForecastSolver::matchDemandToForecast(const Demand* l)
       while (x != Forecast::ForecastDictionary.end() && x->first == key)
       {
         if (!Forecast::getMatchUsingDeliveryOperation()
-          || x->second->getDeliveryOperation() == l->getDeliveryOperation())
+            || x->second->getDeliveryOperation() == l->getDeliveryOperation())
           // Bingo! Found a matching key, if required plus matching delivery operation
           return x->second;
         else
@@ -195,11 +195,11 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
   // Empty forecast model
   if (!fcst->isGroup())
   {
-	if (getLogLevel()>1)
-	  logger << "    Empty forecast model" << endl;
-	if (getLogLevel()>0 && dmd->getQuantity()>0.0)
-	  logger << "    Remains " << dmd->getQuantity() << " that can't be netted" << endl;
-	return;
+    if (getLogLevel()>1)
+      logger << "    Empty forecast model" << endl;
+    if (getLogLevel()>0 && dmd->getQuantity()>0.0)
+      logger << "    Remains " << dmd->getQuantity() << " that can't be netted" << endl;
+    return;
   }
 
   // Find the bucket with the due date
@@ -211,16 +211,16 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
   }
   if (!zerobucket)
     throw LogicException("Can't find forecast bucket for "
-      + string(dmd->getDue()) + " in forecast '" + fcst->getName() + "'");
+        + string(dmd->getDue()) + " in forecast '" + fcst->getName() + "'");
 
   // Netting - looking for time buckets with net forecast
   double remaining = dmd->getQuantity();
   ForecastBucket* curbucket = zerobucket;
   bool backward = true;
   while ( remaining > 0 && curbucket
-    && (dmd->getDue()-Forecast::getNetEarly() < curbucket->getDueRange().getEnd())
-    && (dmd->getDue()+Forecast::getNetLate() >= curbucket->getDueRange().getStart())
-    )
+      && (dmd->getDue()-Forecast::getNetEarly() < curbucket->getDueRange().getEnd())
+      && (dmd->getDue()+Forecast::getNetLate() >= curbucket->getDueRange().getStart())
+        )
   {
     // Net from the current bucket
     double available = curbucket->getQuantity();
@@ -231,8 +231,8 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
         // Partially consume a bucket
         if (getLogLevel()>1)
           logger << "    Consuming " << remaining << " from bucket "
-            << curbucket->getDueRange() << " (" << available
-            << " available)" << endl;
+              << curbucket->getDueRange() << " (" << available
+              << " available)" << endl;
         curbucket->incConsumed(remaining);
         remaining = 0;
       }
@@ -241,15 +241,15 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
         // Completely consume a bucket
         if (getLogLevel()>1)
           logger << "    Consuming " << available << " from bucket "
-            << curbucket->getDueRange() << " (" << available
-            << " available)" << endl;
+              << curbucket->getDueRange() << " (" << available
+              << " available)" << endl;
         remaining -= available;
         curbucket->incConsumed(available);
       }
     }
     else if (getLogLevel()>1)
       logger << "    Nothing available in bucket "
-        << curbucket->getDueRange() << endl;
+          << curbucket->getDueRange() << endl;
 
     // Find the next forecast bucket
     if (backward)

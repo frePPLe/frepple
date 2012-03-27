@@ -184,7 +184,7 @@ class SolverMRP : public Solver
       * @see solve
       */
     DECLARE_EXPORT void solve(const Demand*, void* = NULL);
-   
+
   public:
     /** This is the main solver method that will appropriately call the other
       * solve methods.<br>
@@ -196,9 +196,9 @@ class SolverMRP : public Solver
 
     /** Constructor. */
     SolverMRP(const string& n) : Solver(n), constrts(15), plantype(1),
-        lazydelay(86400L), iteration_threshold(1), iteration_accuracy(0.01),
-        autocommit(true)
-      { initType(metadata); }
+      lazydelay(86400L), iteration_threshold(1), iteration_accuracy(0.01),
+      autocommit(true)
+    { initType(metadata); }
 
     /** Destructor. */
     virtual ~SolverMRP() {}
@@ -263,7 +263,7 @@ class SolverMRP : public Solver
       */
     bool isLeadtimeConstrained() const {return (constrts & LEADTIME)>0;}
 
-    /** Returns true if the solver respects the material procurement 
+    /** Returns true if the solver respects the material procurement
       * constraints on procurement buffers.
       */
     bool isMaterialConstrained() const {return (constrts & MATERIAL)>0;}
@@ -282,7 +282,7 @@ class SolverMRP : public Solver
       *  - 2: Unconstrained plan with alternate search.<br>
       *       This unconstrained plan leaves material, capacity and operation
       *       problems when shortages are found. Availability is searched across
-      *       alternates and the remaining shortage is shown on the primary 
+      *       alternates and the remaining shortage is shown on the primary
       *       alternate.<br>
       *       The demand is always fully met on time.
       *  - 3: Unconstrained plan without alternate search.<br>
@@ -319,7 +319,7 @@ class SolverMRP : public Solver
     void setLazyDelay(TimePeriod l)
     {
       if (l <= 0L)
-    	throw DataException("Invalid lazy delay");
+        throw DataException("Invalid lazy delay");
       lazydelay = l;
     }
 
@@ -334,9 +334,9 @@ class SolverMRP : public Solver
       */
     void setIterationThreshold(double d)
     {
-    	if (d<0.0)
-    	  throw DataException("Invalid iteration threshold: must be >= 0");
-    	iteration_threshold = d;
+      if (d<0.0)
+        throw DataException("Invalid iteration threshold: must be >= 0");
+      iteration_threshold = d;
     }
 
     /** Get the threshold to stop iterating when the delta between iterations
@@ -485,7 +485,7 @@ class SolverMRP : public Solver
     struct State
     {
       /** Points to the demand being planned.<br>
-        * This field is only non-null when planning the delivery operation. 
+        * This field is only non-null when planning the delivery operation.
         */
       Demand* curDemand;
 
@@ -567,7 +567,7 @@ class SolverMRP : public Solver
 
         /** Constructor. */
         SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
-          : sol(s), cluster(c), demands(d), constrainedPlanning(true), 
+          : sol(s), cluster(c), demands(d), constrainedPlanning(true),
             state(statestack), prevstate(statestack-1) {}
 
         /** Verbose mode is inherited from the solver. */
@@ -639,7 +639,7 @@ class SolverMRP : public Solver
 
         /** Stack of solver status information. */
         State statestack[MAXSTATES];
-        
+
         /** True when planning in constrained mode. */
         bool constrainedPlanning;
 
@@ -656,7 +656,7 @@ class SolverMRP : public Solver
         /** Pointer to the solver status one level higher on the stack. */
         State* prevstate;
     };
- 
+
     /** When autocommit is switched off, this command structure will contain
       * all plan changes.
       */
@@ -681,14 +681,14 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void checkOperationCapacity(OperationPlan*, SolverMRPdata&);
 
     /** Scan the operationplans that are about to be committed to verify that
-      * they are not creating any excess. 
+      * they are not creating any excess.
       */
-    DECLARE_EXPORT void scanExcess(CommandManager*);  
+    DECLARE_EXPORT void scanExcess(CommandManager*);
 
     /** Scan the operationplans that are about to be committed to verify that
-      * they are not creating any excess. 
+      * they are not creating any excess.
       */
-    DECLARE_EXPORT void scanExcess(CommandList*);  
+    DECLARE_EXPORT void scanExcess(CommandList*);
 };
 
 

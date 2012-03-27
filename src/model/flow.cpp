@@ -32,18 +32,18 @@ namespace frepple
 
 DECLARE_EXPORT const MetaCategory* Flow::metadata;
 DECLARE_EXPORT const MetaClass* FlowStart::metadata,
-  *FlowEnd::metadata;
+               *FlowEnd::metadata;
 
 
 int Flow::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory
-    ("flow", "flows", MetaCategory::ControllerDefault, writer);
+  ("flow", "flows", MetaCategory::ControllerDefault, writer);
   FlowStart::metadata = new MetaClass("flow", "flow_start",
-    Object::createDefault<FlowStart>, true);
+      Object::createDefault<FlowStart>, true);
   FlowEnd::metadata = new MetaClass("flow", "flow_end",
-    Object::createDefault<FlowEnd>);
+      Object::createDefault<FlowEnd>);
 
   // Initialize the type
   PythonType& x = FreppleCategory<Flow>::getType();
@@ -100,9 +100,9 @@ DECLARE_EXPORT void Flow::validate(Action action)
   Operation::flowlist::const_iterator i = oper->getFlows().begin();
   for (; i != oper->getFlows().end(); ++i)
     if (i->getBuffer() == buf
-      && i->getEffective().overlap(getEffective())
-      && &*i != this)
-        break;
+        && i->getEffective().overlap(getEffective())
+        && &*i != this)
+      break;
 
   // Apply the appropriate action
   switch (action)
@@ -127,7 +127,7 @@ DECLARE_EXPORT void Flow::validate(Action action)
             + oper->getName() + "' and '" + buf->getName() + "'");
       // Delete
       delete &*i;
- }
+  }
 
   // Attach to buffers higher up in the hierarchy
   // Note that the owner can create more loads if it has an owner too.
@@ -147,7 +147,7 @@ DECLARE_EXPORT Flow::~Flow()
   if (getOperation() && getBuffer())
   {
     // Loop over operationplans
-	  for(OperationPlan::iterator i(getOperation()); i != OperationPlan::end(); ++i)
+    for(OperationPlan::iterator i(getOperation()); i != OperationPlan::end(); ++i)
       // Loop over flowplans
       for(OperationPlan::FlowPlanIterator j = i->beginFlowPlans(); j != i->endFlowPlans(); )
         if (j->getFlow() == this) j.deleteFlowPlan();
@@ -168,7 +168,7 @@ DECLARE_EXPORT Flow::~Flow()
     int minprio = INT_MAX;
     Flow* newLeader = NULL;
     for (Operation::flowlist::iterator i = getOperation()->flowdata.begin();
-      i != getOperation()->flowdata.end(); ++i)
+        i != getOperation()->flowdata.end(); ++i)
       if (i->altFlow == this)
       {
         cnt++;
@@ -189,7 +189,7 @@ DECLARE_EXPORT Flow::~Flow()
       newLeader->hasAlts = true;
       newLeader->altFlow = NULL;
       for (Operation::flowlist::iterator i = getOperation()->flowdata.begin();
-        i != getOperation()->flowdata.end(); ++i)
+          i != getOperation()->flowdata.end(); ++i)
         if (i->altFlow == this) i->altFlow = newLeader;
     }
   }
@@ -200,7 +200,7 @@ DECLARE_EXPORT Flow::~Flow()
     // flow needs to be set back to false
     bool only_one = true;
     for (Operation::flowlist::iterator i = getOperation()->flowdata.begin();
-      i != getOperation()->flowdata.end(); ++i)
+        i != getOperation()->flowdata.end(); ++i)
       if (i->altFlow == altFlow)
       {
         only_one = false;
@@ -323,8 +323,8 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, con
   {
     // The flow data are now all read in. See if it makes sense now...
     Action a = pIn.getUserArea() ?
-      *static_cast<Action*>(pIn.getUserArea()) :
-      ADD_CHANGE;
+        *static_cast<Action*>(pIn.getUserArea()) :
+        ADD_CHANGE;
     delete static_cast<Action*>(pIn.getUserArea());
     try { validate(a); }
     catch (...)
@@ -500,20 +500,20 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
           q2, eff
-          );
+        );
       else
         l = new FlowStart(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
           q2, eff
-          );
+        );
     }
     else
       l = new FlowStart(
         static_cast<Operation*>(oper),
         static_cast<Buffer*>(buf),
         q2, eff
-        );
+      );
 
     // Return the object
     Py_INCREF(l);

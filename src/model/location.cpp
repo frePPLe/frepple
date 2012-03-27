@@ -50,7 +50,7 @@ int LocationDefault::initialize()
 {
   // Initialize the metadata
   LocationDefault::metadata = new MetaClass("location", "location_default",
-    Object::createString<LocationDefault>, true);
+      Object::createString<LocationDefault>, true);
 
   // Initialize the Python class
   return FreppleClass<LocationDefault,Location>::initialize();
@@ -146,7 +146,7 @@ DECLARE_EXPORT PyObject* Location::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_members))
-	return new LocationIterator(this);
+    return new LocationIterator(this);
   return NULL;
 }
 

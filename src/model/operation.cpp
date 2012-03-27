@@ -34,10 +34,10 @@ namespace frepple
 template<class Operation> DECLARE_EXPORT Tree utils::HasName<Operation>::st;
 DECLARE_EXPORT const MetaCategory* Operation::metadata;
 DECLARE_EXPORT const MetaClass* OperationFixedTime::metadata,
-  *OperationTimePer::metadata,
-  *OperationRouting::metadata,
-  *OperationAlternate::metadata,
-  *OperationSetup::metadata;
+               *OperationTimePer::metadata,
+               *OperationRouting::metadata,
+               *OperationAlternate::metadata,
+               *OperationSetup::metadata;
 DECLARE_EXPORT Operation::Operationlist Operation::nosubOperations;
 DECLARE_EXPORT const Operation* OperationSetup::setupoperation;
 
@@ -56,7 +56,7 @@ int OperationFixedTime::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("operation", "operation_fixed_time",
-    Object::createString<OperationFixedTime>, true);
+      Object::createString<OperationFixedTime>, true);
 
   // Initialize the Python class
   return FreppleClass<OperationFixedTime,Operation>::initialize();
@@ -67,7 +67,7 @@ int OperationTimePer::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("operation", "operation_time_per",
-    Object::createString<OperationTimePer>);
+      Object::createString<OperationTimePer>);
 
   // Initialize the Python class
   return FreppleClass<OperationTimePer,Operation>::initialize();
@@ -78,7 +78,7 @@ int OperationAlternate::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("operation", "operation_alternate",
-    Object::createString<OperationAlternate>);
+      Object::createString<OperationAlternate>);
 
   // Initialize the Python class
   FreppleClass<OperationAlternate,Operation>::getType().addMethod("addAlternate", OperationAlternate::addAlternate, METH_KEYWORDS, "add an alternate");
@@ -90,7 +90,7 @@ int OperationRouting::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("operation", "operation_routing",
-    Object::createString<OperationRouting>);
+      Object::createString<OperationRouting>);
 
   // Initialize the Python class
   FreppleClass<OperationRouting,Operation>::getType().addMethod("addStep", OperationRouting::addStep, METH_VARARGS , "add steps to the routing");
@@ -175,8 +175,8 @@ DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (double q, Date s, 
 
 
 DECLARE_EXPORT DateRange Operation::calculateOperationTime
-  (Date thedate, TimePeriod duration, bool forward,
-    TimePeriod *actualduration) const
+(Date thedate, TimePeriod duration, bool forward,
+ TimePeriod *actualduration) const
 {
   int calcount = 0;
   // Initial size of 10 should do for 99.99% of all cases
@@ -214,8 +214,8 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
     // Special case: no calendars at all
     if (calcount == 0)
       return forward ?
-        DateRange(thedate, thedate+duration) :
-        DateRange(thedate-duration, thedate);
+          DateRange(thedate, thedate+duration) :
+          DateRange(thedate-duration, thedate);
 
     // Step 2: Iterate over the calendar dates to find periods where all
     // calendars are simultaneously effective.
@@ -328,7 +328,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
 
 
 DECLARE_EXPORT DateRange Operation::calculateOperationTime
-  (Date start, Date end, TimePeriod *actualduration) const
+(Date start, Date end, TimePeriod *actualduration) const
 {
   // Switch start and end if required
   if (end < start)
@@ -343,7 +343,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
   vector<Calendar::EventIterator*> cals(10);
 
   // Default actual duration
-   if (actualduration) *actualduration = 0L;
+  if (actualduration) *actualduration = 0L;
 
   try
   {
@@ -374,7 +374,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
     // Special case: no calendars at all
     if (calcount == 0)
     {
-       if (actualduration) *actualduration = end - start;
+      if (actualduration) *actualduration = end - start;
       return DateRange(start, end);
     }
 
@@ -417,12 +417,12 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
         if (curdate >= end)
         {
           // Leaving the desired date range
-           if (actualduration) *actualduration += end - start;
+          if (actualduration) *actualduration += end - start;
           result.setEnd(end);
           break;
         }
         status = false;
-         if (actualduration) *actualduration += curdate - start;
+        if (actualduration) *actualduration += curdate - start;
         start = curdate;
       }
       else if (curdate >= end)
@@ -430,7 +430,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
         // Leaving the desired date range
         if (available)
         {
-           if (actualduration) *actualduration += end - start;
+          if (actualduration) *actualduration += end - start;
           result.setEnd(end);
           break;
         }
@@ -642,8 +642,8 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
     for (; x != OperationPlan::end() && *x < *o; ++x)
       y = &*x;
     if (y && y->getDates() == o->getDates() && !y->getOwner()
-      && y->getDemand() == o->getDemand() && !y->getLocked() && y->getIdentifier()
-      && y->getQuantity() + o->getQuantity() < getSizeMaximum())
+        && y->getDemand() == o->getDemand() && !y->getLocked() && y->getIdentifier()
+        && y->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
       // Check that the flowplans are on identical alternates
       OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();
@@ -661,8 +661,8 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       return false;
     }
     if (x!= OperationPlan::end() && x->getDates() == o->getDates() && !x->getOwner()
-      && x->getDemand() == o->getDemand() && !x->getLocked() && x->getIdentifier()
-      && x->getQuantity() + o->getQuantity() < getSizeMaximum())
+        && x->getDemand() == o->getDemand() && !x->getLocked() && x->getIdentifier()
+        && x->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
       // Check that the flowplans are on identical alternates
       OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();
@@ -691,7 +691,7 @@ DECLARE_EXPORT void OperationFixedTime::writeElement
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 
@@ -757,8 +757,8 @@ OperationTimePer::setOperationPlanParameters
         else
           // Calculate the maximum operationplan that will fit in the window
           q = opplan->setQuantity(
-            static_cast<double>(actual - duration) / duration_per,
-            true, false, execute);
+              static_cast<double>(actual - duration) / duration_per,
+              true, false, execute);
       }
       else
         // No duration_per field given, so any quantity will go
@@ -767,7 +767,7 @@ OperationTimePer::setOperationPlanParameters
       // Updates the dates
       TimePeriod wanted(
         duration + static_cast<long>(duration_per * q)
-        );
+      );
       if (preferEnd) x = calculateOperationTime(e, wanted, false, &actual);
       else x = calculateOperationTime(s, wanted, true, &actual);
       if (!execute) return OperationPlanState(x,q);
@@ -800,8 +800,8 @@ OperationTimePer::setOperationPlanParameters
     {
       // Resize the quantity to be feasible
       double max_q = duration_per ?
-        static_cast<double>(actual-duration) / duration_per :
-        q;
+          static_cast<double>(actual-duration) / duration_per :
+          q;
       q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
       wanted = duration + static_cast<long>(duration_per * q);
       x = calculateOperationTime(e, wanted, false, &actual);
@@ -816,7 +816,7 @@ OperationTimePer::setOperationPlanParameters
     q = opplan->setQuantity(q,true,false,execute); // Round and size the quantity
     TimePeriod wanted(
       duration + static_cast<long>(duration_per * q)
-      );
+    );
     TimePeriod actual;
     x = calculateOperationTime(s, wanted, true, &actual);
     if (actual == wanted)
@@ -836,8 +836,8 @@ OperationTimePer::setOperationPlanParameters
     {
       // Resize the quantity to be feasible
       double max_q = duration_per ?
-        static_cast<double>(actual-duration) / duration_per :
-        q;
+          static_cast<double>(actual-duration) / duration_per :
+          q;
       q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
       wanted = duration + static_cast<long>(duration_per * q);
       x = calculateOperationTime(e, wanted, false, &actual);
@@ -858,7 +858,7 @@ DECLARE_EXPORT void OperationTimePer::writeElement
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 
@@ -892,7 +892,7 @@ DECLARE_EXPORT void OperationRouting::writeElement
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 
@@ -1013,7 +1013,7 @@ DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
     {
       // Using the end date
       for (Operation::Operationlist::const_reverse_iterator e =
-            getSubOperations().rbegin(); e != getSubOperations().rend(); ++e)
+          getSubOperations().rbegin(); e != getSubOperations().rend(); ++e)
       {
         p = (*e)->createOperationPlan(o->getQuantity(), Date::infinitePast,
             d, NULL, o, 0, true);
@@ -1027,7 +1027,7 @@ DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
       // Using the current date when both the start and end date are missing
       if (!d) d = Plan::instance().getCurrent();
       for (Operation::Operationlist::const_iterator e =
-            getSubOperations().begin(); e != getSubOperations().end(); ++e)
+          getSubOperations().begin(); e != getSubOperations().end(); ++e)
       {
         p = (*e)->createOperationPlan(o->getQuantity(), d,
             Date::infinitePast, NULL, o, 0, true);
@@ -1050,7 +1050,7 @@ DECLARE_EXPORT SearchMode decodeSearchMode(const string& c)
 
 
 DECLARE_EXPORT void OperationAlternate::addAlternate
-  (Operation* o, int prio, DateRange eff)
+(Operation* o, int prio, DateRange eff)
 {
   if (!o) return;
   Operationlist::iterator altIter = alternates.begin();
@@ -1067,7 +1067,7 @@ DECLARE_EXPORT void OperationAlternate::addAlternate
 
 
 DECLARE_EXPORT const OperationAlternate::alternateProperty&
-  OperationAlternate::getProperties(Operation* o) const
+OperationAlternate::getProperties(Operation* o) const
 {
   if (!o)
     throw LogicException("Null pointer passed when searching for a \
@@ -1128,7 +1128,7 @@ DECLARE_EXPORT void OperationAlternate::writeElement
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 
@@ -1215,8 +1215,8 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribu
 
 DECLARE_EXPORT OperationPlanState
 OperationAlternate::setOperationPlanParameters
-  (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
-  bool execute) const
+(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
+ bool execute) const
 {
   // Invalid calls to this function
   if (!opplan || q<0)
@@ -1242,7 +1242,7 @@ OperationAlternate::setOperationPlanParameters
   else
     // Pass the call to the sub-operation
     return x->getOperation()
-      ->setOperationPlanParameters(x,q,s,e,preferEnd, execute);
+        ->setOperationPlanParameters(x,q,s,e,preferEnd, execute);
 }
 
 
@@ -1289,8 +1289,8 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
   }
   else
     logger << "Warning: operation '" << *o
-    << "' isn't a suboperation of alternate operation '" << *this
-    << "'" << endl;
+        << "' isn't a suboperation of alternate operation '" << *this
+        << "'" << endl;
 }
 
 
@@ -1309,7 +1309,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
     if (!opplan->getOwner())
       throw LogicException("Setup operationplan always must have an owner");
     for (loadlist::const_iterator g=opplan->getOwner()->getOperation()->getLoads().begin();
-      g!=opplan->getOwner()->getOperation()->getLoads().end(); ++g)
+        g!=opplan->getOwner()->getOperation()->getLoads().end(); ++g)
       if (g->getResource()->getSetupMatrix() && !g->getSetup().empty())
       {
         ldplan = new LoadPlan(opplan, &*g);
@@ -1317,7 +1317,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
       }
     if (!ldplan)
       throw LogicException("Can't find a setup on operation '"
-        + opplan->getOwner()->getOperation()->getName() + "'");
+          + opplan->getOwner()->getOperation()->getName() + "'");
   }
 
   // Find the setup of the resource at the start of the conversion
@@ -1326,31 +1326,31 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
   if (ldplan->getDate() < boundary)
   {
     for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin(ldplan);
-      i != ldplan->getResource()->getLoadPlans().end() && i->getDate() <= boundary; ++i)
+        i != ldplan->getResource()->getLoadPlans().end() && i->getDate() <= boundary; ++i)
     {
       const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
       if (l && i->getQuantity() != 0.0
-        && l->getOperationPlan() != opplan
-        && l->getOperationPlan() != opplan->getOwner()
-        && !l->getLoad()->getSetup().empty())
-          lastld = l->getLoad();
+          && l->getOperationPlan() != opplan
+          && l->getOperationPlan() != opplan->getOwner()
+          && !l->getLoad()->getSetup().empty())
+        lastld = l->getLoad();
     }
   }
   if (!lastld)
   {
     for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin(ldplan);
-      i != ldplan->getResource()->getLoadPlans().end(); --i)
+        i != ldplan->getResource()->getLoadPlans().end(); --i)
     {
       const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
       if (l && i->getQuantity() != 0.0
-        && l->getOperationPlan() != opplan
-        && l->getOperationPlan() != opplan->getOwner()
-        && !l->getLoad()->getSetup().empty()
-        && l->getDate() <= boundary)
-        {
-          lastld = l->getLoad();
-          break;
-        }
+          && l->getOperationPlan() != opplan
+          && l->getOperationPlan() != opplan->getOwner()
+          && !l->getLoad()->getSetup().empty()
+          && l->getDate() <= boundary)
+      {
+        lastld = l->getLoad();
+        break;
+      }
     }
   }
   string lastsetup = lastld ? lastld->getSetup() : ldplan->getResource()->getSetup();
@@ -1360,7 +1360,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
   {
     // Calculate the setup time
     SetupMatrix::Rule *conversionrule = ldplan->getLoad()->getResource()->getSetupMatrix()
-      ->calculateSetup(lastsetup, ldplan->getLoad()->getSetup());
+        ->calculateSetup(lastsetup, ldplan->getLoad()->getSetup());
     duration = conversionrule ? conversionrule->getDuration() : TimePeriod(365L*86400L);
   }
 
@@ -1560,10 +1560,10 @@ DECLARE_EXPORT PyObject* OperationAlternate::addAlternate(PyObject* self, PyObje
     PyObject *eff_start = NULL;
     PyObject *eff_end = NULL;
     static const char *kwlist[] = {"operation", "priority", "effective_start", "effective_end", NULL};
-	  if (!PyArg_ParseTupleAndKeywords(args, kwdict,
-      "O|iOO:addAlternate",
-      const_cast<char**>(kwlist), &oper, &prio, &eff_start, &eff_end))
-        return NULL;
+    if (!PyArg_ParseTupleAndKeywords(args, kwdict,
+        "O|iOO:addAlternate",
+        const_cast<char**>(kwlist), &oper, &prio, &eff_start, &eff_end))
+      return NULL;
     if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
       throw DataException("alternate operation must be of type operation");
     DateRange eff;
@@ -1580,7 +1580,7 @@ DECLARE_EXPORT PyObject* OperationAlternate::addAlternate(PyObject* self, PyObje
 
     // Add the alternate
     altoper->addAlternate(static_cast<Operation*>(oper), prio, eff);
- }
+  }
   catch(...)
   {
     PythonType::evalException();

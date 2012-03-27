@@ -39,7 +39,8 @@ namespace module_webservice
 PyObject* CommandWebservice::pythonService(PyObject* self, PyObject* args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try {
+  try
+  {
     CommandWebservice().commit();
   }
   catch (...)
@@ -96,8 +97,8 @@ void CommandWebservice::commit()
       }
     }
     logger << "Connection from " << ((soap.ip >> 24)&0xFF) << "."
-      << ((soap.ip >> 16)&0xFF) << "." << ((soap.ip >> 8)&0xFF) << "."
-      << (soap.ip&0xFF) << endl;
+        << ((soap.ip >> 16)&0xFF) << "." << ((soap.ip >> 8)&0xFF) << "."
+        << (soap.ip&0xFF) << endl;
 
     // Loop until the request could be entered in the request queue
     while (enqueue(slavesocket) == SOAP_EOM)
@@ -129,56 +130,56 @@ void CommandWebservice::commit()
 
 void* CommandWebservice::process_queue(void *soap)
 {
-   struct thread_data *mydata = (struct thread_data*)soap;
-   // Loop forever
-   for (;;)
-   {
-      // Pick a request from my master's queue
-      mydata->soap_thr->socket = mydata->master->dequeue();
+  struct thread_data *mydata = (struct thread_data*)soap;
+  // Loop forever
+  for (;;)
+  {
+    // Pick a request from my master's queue
+    mydata->soap_thr->socket = mydata->master->dequeue();
 
-      // Break out of the loop if an invalid socket is put in the queue
-      if (!soap_valid_socket(mydata->soap_thr->socket)) break;
+    // Break out of the loop if an invalid socket is put in the queue
+    if (!soap_valid_socket(mydata->soap_thr->socket)) break;
 
-      // Process the request
-      soap_serve(mydata->soap_thr);
-      soap_destroy(mydata->soap_thr);
-      soap_end(mydata->soap_thr);
-   }
-   return NULL;
+    // Process the request
+    soap_serve(mydata->soap_thr);
+    soap_destroy(mydata->soap_thr);
+    soap_end(mydata->soap_thr);
+  }
+  return NULL;
 }
 
 
 int CommandWebservice::enqueue(SOAP_SOCKET sock)
 {
-   int status = SOAP_OK;
-   int next;
-   pthread_mutex_lock(&queue_cs);
-   next = tail + 1;
-   if (next >= MAX_QUEUE)
-      next = 0;
-   if (next == head)
-      status = SOAP_EOM;
-   else
-   {
-      queue[tail] = sock;
-      tail = next;
-   }
-   pthread_cond_signal(&queue_cv);
-   pthread_mutex_unlock(&queue_cs);
-   return status;
+  int status = SOAP_OK;
+  int next;
+  pthread_mutex_lock(&queue_cs);
+  next = tail + 1;
+  if (next >= MAX_QUEUE)
+    next = 0;
+  if (next == head)
+    status = SOAP_EOM;
+  else
+  {
+    queue[tail] = sock;
+    tail = next;
+  }
+  pthread_cond_signal(&queue_cv);
+  pthread_mutex_unlock(&queue_cs);
+  return status;
 }
 
 
 SOAP_SOCKET CommandWebservice::dequeue()
 {
-   SOAP_SOCKET sock;
-   pthread_mutex_lock(&queue_cs);
-   while (head == tail) pthread_cond_wait(&queue_cv, &queue_cs);
-   sock = queue[head++];
-   if (head >= MAX_QUEUE)
-      head = 0;
-   pthread_mutex_unlock(&queue_cs);
-   return sock;
+  SOAP_SOCKET sock;
+  pthread_mutex_lock(&queue_cs);
+  while (head == tail) pthread_cond_wait(&queue_cv, &queue_cs);
+  sock = queue[head++];
+  if (head >= MAX_QUEUE)
+    head = 0;
+  pthread_mutex_unlock(&queue_cs);
+  return sock;
 }
 
 }

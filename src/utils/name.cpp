@@ -202,135 +202,135 @@ void Tree::erase(TreeNode* z)
   --count;
   if (y->left == NULL)     // z has at most one non-null child. y == z.
     x = y->right;     // x might be null.
+  else if (y->right == NULL) // z has exactly one non-null child. y == z.
+    x = y->left;    // x is not null.
   else
-    if (y->right == NULL)  // z has exactly one non-null child. y == z.
-      x = y->left;    // x is not null.
-    else
+  {
+    // z has two non-null children.  Set y to
+    y = y->right;   //   z's successor.  x might be null.
+    while (y->left != NULL) y = y->left;
+    x = y->right;
+  }
+  if (y != z)
+  {
+    // relink y in place of z.  y is z's successor
+    z->left->parent = y;
+    y->left = z->left;
+    if (y != z->right)
     {
-      // z has two non-null children.  Set y to
-      y = y->right;   //   z's successor.  x might be null.
-      while (y->left != NULL) y = y->left;
-      x = y->right;
-    }
-    if (y != z)
-    {
-      // relink y in place of z.  y is z's successor
-      z->left->parent = y;
-      y->left = z->left;
-      if (y != z->right)
-      {
-        x_parent = y->parent;
-        if (x) x->parent = y->parent;
-        y->parent->left = x;   // y must be a child of left
-        y->right = z->right;
-        z->right->parent = y;
-      }
-      else
-        x_parent = y;
-      if (header.parent == z) header.parent = y;
-      else if (z->parent->left == z) z->parent->left = y;
-      else z->parent->right = y;
-      y->parent = z->parent;
-      std::swap(y->color, z->color);
-      y = z;
-      // y now points to node to be actually deleted
-    }
-    else
-    {                      // y == z
       x_parent = y->parent;
       if (x) x->parent = y->parent;
-      if (header.parent == z) header.parent = x;
-      else if (z->parent->left == z) z->parent->left = x;
-      else z->parent->right = x;
-      if (header.left == z)
-      {
-        if (z->right == NULL)    // z->left must be null also
-          header.left = z->parent;
-          // makes leftmost == header if z == root
-        else
-          header.left = minimum(x);
-      }
-      if (header.right == z)
-      {
-        if (z->left == NULL)     // z->right must be null also
-          header.right = z->parent;
-          // makes rightmost == header if z == root
-        else                      // x == z->left
-          header.right = maximum(x);
-      }
+      y->parent->left = x;   // y must be a child of left
+      y->right = z->right;
+      z->right->parent = y;
     }
-    if (y->color != red)
+    else
+      x_parent = y;
+    if (header.parent == z) header.parent = y;
+    else if (z->parent->left == z) z->parent->left = y;
+    else z->parent->right = y;
+    y->parent = z->parent;
+    std::swap(y->color, z->color);
+    y = z;
+    // y now points to node to be actually deleted
+  }
+  else
+  {
+    // y == z
+    x_parent = y->parent;
+    if (x) x->parent = y->parent;
+    if (header.parent == z) header.parent = x;
+    else if (z->parent->left == z) z->parent->left = x;
+    else z->parent->right = x;
+    if (header.left == z)
     {
-      while (x != header.parent && (x == NULL || x->color == black))
-        if (x == x_parent->left)
+      if (z->right == NULL)    // z->left must be null also
+        header.left = z->parent;
+      // makes leftmost == header if z == root
+      else
+        header.left = minimum(x);
+    }
+    if (header.right == z)
+    {
+      if (z->left == NULL)     // z->right must be null also
+        header.right = z->parent;
+      // makes rightmost == header if z == root
+      else                      // x == z->left
+        header.right = maximum(x);
+    }
+  }
+  if (y->color != red)
+  {
+    while (x != header.parent && (x == NULL || x->color == black))
+      if (x == x_parent->left)
+      {
+        TreeNode* w = x_parent->right;
+        if (w->color == red)
         {
-          TreeNode* w = x_parent->right;
-          if (w->color == red)
+          w->color = black;
+          x_parent->color = red;
+          rotateLeft(x_parent);
+          w = x_parent->right;
+        }
+        if ((w->left == NULL || w->left->color == black) &&
+            (w->right == NULL || w->right->color == black))
+        {
+          w->color = red;
+          x = x_parent;
+          x_parent = x_parent->parent;
+        }
+        else
+        {
+          if (w->right == NULL || w->right->color == black)
           {
-            w->color = black;
-            x_parent->color = red;
-            rotateLeft(x_parent);
+            w->left->color = black;
+            w->color = red;
+            rotateRight(w);
             w = x_parent->right;
           }
-          if ((w->left == NULL || w->left->color == black) &&
-            (w->right == NULL || w->right->color == black))
-          {
-            w->color = red;
-            x = x_parent;
-            x_parent = x_parent->parent;
-          }
-          else
-          {
-            if (w->right == NULL || w->right->color == black)
-            {
-              w->left->color = black;
-              w->color = red;
-              rotateRight(w);
-              w = x_parent->right;
-            }
-            w->color = x_parent->color;
-            x_parent->color = black;
-            if (w->right) w->right->color = black;
-            rotateLeft(x_parent);
-            break;
-          }
+          w->color = x_parent->color;
+          x_parent->color = black;
+          if (w->right) w->right->color = black;
+          rotateLeft(x_parent);
+          break;
+        }
+      }
+      else
+      {
+        // same as above, with right <-> left.
+        TreeNode* w = x_parent->left;
+        if (w->color == red)
+        {
+          w->color = black;
+          x_parent->color = red;
+          rotateRight(x_parent);
+          w = x_parent->left;
+        }
+        if ((w->right == NULL || w->right->color == black) &&
+            (w->left == NULL || w->left->color == black))
+        {
+          w->color = red;
+          x = x_parent;
+          x_parent = x_parent->parent;
         }
         else
         {
-          // same as above, with right <-> left.
-          TreeNode* w = x_parent->left;
-          if (w->color == red)
+          if (w->left == NULL || w->left->color == black)
           {
-            w->color = black;
-            x_parent->color = red;
-            rotateRight(x_parent);
+            w->right->color = black;
+            w->color = red;
+            rotateLeft(w);
             w = x_parent->left;
           }
-          if ((w->right == NULL || w->right->color == black) &&
-            (w->left == NULL || w->left->color == black))
-          {
-            w->color = red;
-            x = x_parent;
-            x_parent = x_parent->parent;
-          }
-          else
-          {
-            if (w->left == NULL || w->left->color == black)
-            {
-              w->right->color = black;
-              w->color = red;
-              rotateLeft(w);
-              w = x_parent->left;
-            }
-            w->color = x_parent->color;
-            x_parent->color = black;
-            if (w->left) w->left->color = black;
-            rotateRight(x_parent);
-            break;
-          }
+          w->color = x_parent->color;
+          x_parent->color = black;
+          if (w->left) w->left->color = black;
+          rotateRight(x_parent);
+          break;
         }
-        if (x) x->color = black;
-    }
+      }
+    if (x) x->color = black;
+  }
 }
 
 

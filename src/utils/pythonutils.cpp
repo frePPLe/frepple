@@ -56,16 +56,16 @@ DECLARE_EXPORT void PythonInterpreter::initialize(int argc, char *argv[])
   if(!Py_IsInitialized())
   {
     Py_InitializeEx(0);   // The arg 0 indicates that the interpreter doesn't
-                          // implement its own signal handler
+    // implement its own signal handler
     // Pass the command line arguments to Python as well
 #if PY_VERSION_HEX > 0x02060600
     if (argc>0) PySys_SetArgvEx(argc, argv, 0);
 #endif
     // Initializes threads
-    PyEval_InitThreads();  
+    PyEval_InitThreads();
     mainThreadState = PyEval_SaveThread();
   }
-  
+
   // Capture global lock
   PyGILState_STATE state = PyGILState_Ensure();
 
@@ -97,7 +97,7 @@ DECLARE_EXPORT void PythonInterpreter::initialize(int argc, char *argv[])
 
   // Redirect the stderr and stdout streams of Python
   registerGlobalMethod("log", python_log, METH_VARARGS,
-    "Prints a string to the frePPLe log file.", false);
+      "Prints a string to the frePPLe log file.", false);
   PyRun_SimpleString(
     "import frepple, sys\n"
     "class redirect:\n"
@@ -140,7 +140,7 @@ DECLARE_EXPORT void PythonInterpreter::initialize(int argc, char *argv[])
 }
 
 
-DECLARE_EXPORT void PythonInterpreter::finalize() 
+DECLARE_EXPORT void PythonInterpreter::finalize()
 {
   // Only valid if this is an embedded interpreter
   if (!mainThreadState) return;
@@ -243,7 +243,7 @@ DECLARE_EXPORT void PythonInterpreter::executeFile(string filename)
 
 DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
   const char* name, PyCFunction method, int flags, const char* doc, bool lock
-  )
+)
 {
   // Define a new method object.
   // We need are leaking the memory allocated for it to assure the data
@@ -252,9 +252,9 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
   string *leakingDoc = new string(doc);
   PyMethodDef *newMethod = new PyMethodDef;
   newMethod->ml_name = leakingName->c_str();
-  newMethod->ml_meth = method;	
-  newMethod->ml_flags = flags;	
-  newMethod->ml_doc = leakingDoc->c_str();	
+  newMethod->ml_meth = method;
+  newMethod->ml_flags = flags;
+  newMethod->ml_doc = leakingDoc->c_str();
 
   // Lock the interpreter
   PyGILState_STATE state;
@@ -262,7 +262,7 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
 
   // Register a new C function in Python
   PyObject* mod = PyString_FromString("frepple");
-	if (!mod)
+  if (!mod)
   {
     if (lock) PyGILState_Release(state);;
     throw RuntimeException("Error registering a new Python method");
@@ -297,7 +297,7 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
 
 
 DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod
-  (const char* c, PyCFunctionWithKeywords f, int i, const char* d, bool b)
+(const char* c, PyCFunctionWithKeywords f, int i, const char* d, bool b)
 {
   registerGlobalMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d, b);
 }
@@ -316,53 +316,53 @@ PyObject* PythonInterpreter::python_log(PyObject *self, PyObject *args)
 
   // Return code
   return Py_BuildValue("");  // Safer than using Py_None, which is not
-                             // portable across compilers
+  // portable across compilers
 }
 
 
 const PyTypeObject PythonType::PyTypeObjectTemplate =
-  {
-    PyObject_HEAD_INIT(NULL)
-    0,  /* ob_size */
-    "frepple.unspecified",	/* WILL BE UPDATED tp_name */
-    0,	/* WILL BE UPDATED tp_basicsize */
-    0,  /* tp_itemsize */
-    0,  /* CAN BE UPDATED tp_dealloc */
-    0,  /* tp_print */
-    0,  /* tp_getattr */
-    0,  /* tp_setattr */
-    0,  /* CAN BE UPDATED tp_compare */
-    0,  /* tp_repr */
-    0,  /* tp_as_number */
-    0,  /* tp_as_sequence */
-    0,  /* tp_as_mapping */
-    reinterpret_cast<hashfunc>(_Py_HashPointer),  /* tp_hash */
-    0,  /* CAN BE UPDATED tp_call */
-    0,	/* CAN BE UPDATED tp_str */
-    0,	/* CAN BE UPDATED tp_getattro */
-    0,	/* CAN BE UPDATED tp_setattro */
-    0,  /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */
-    "std doc", /* CAN BE UPDATED  tp_doc */
-    0,  /* tp_traverse */
-    0,  /* tp_clear */
-    0,  /* tp_richcompare */
-    0,  /* tp_weaklistoffset */
-    0,  /* CAN BE UPDATED tp_iter */
-    0,	/* CAN BE UPDATED tp_iternext */
-    0,  /* tp_methods */
-    0,  /* tp_members */
-    0,  /* tp_getset */
-    0,  /* tp_base */
-    0,  /* tp_dict */
-    0,  /* tp_descr_get */
-    0,  /* tp_descr_set */
-    0,  /* tp_dictoffset */
-    0,  /* tp_init */
-    0,  /* tp_alloc */
-    0,	/* CAN BE UPDATED tp_new */
-    0,  /* tp_free */
-  };
+{
+  PyObject_HEAD_INIT(NULL)
+  0,  /* ob_size */
+  "frepple.unspecified",  /* WILL BE UPDATED tp_name */
+  0,  /* WILL BE UPDATED tp_basicsize */
+  0,  /* tp_itemsize */
+  0,  /* CAN BE UPDATED tp_dealloc */
+  0,  /* tp_print */
+  0,  /* tp_getattr */
+  0,  /* tp_setattr */
+  0,  /* CAN BE UPDATED tp_compare */
+  0,  /* tp_repr */
+  0,  /* tp_as_number */
+  0,  /* tp_as_sequence */
+  0,  /* tp_as_mapping */
+  reinterpret_cast<hashfunc>(_Py_HashPointer),  /* tp_hash */
+  0,  /* CAN BE UPDATED tp_call */
+  0,  /* CAN BE UPDATED tp_str */
+  0,  /* CAN BE UPDATED tp_getattro */
+  0,  /* CAN BE UPDATED tp_setattro */
+  0,  /* tp_as_buffer */
+  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+  "std doc", /* CAN BE UPDATED  tp_doc */
+  0,  /* tp_traverse */
+  0,  /* tp_clear */
+  0,  /* tp_richcompare */
+  0,  /* tp_weaklistoffset */
+  0,  /* CAN BE UPDATED tp_iter */
+  0,  /* CAN BE UPDATED tp_iternext */
+  0,  /* tp_methods */
+  0,  /* tp_members */
+  0,  /* tp_getset */
+  0,  /* tp_base */
+  0,  /* tp_dict */
+  0,  /* tp_descr_get */
+  0,  /* tp_descr_set */
+  0,  /* tp_dictoffset */
+  0,  /* tp_init */
+  0,  /* tp_alloc */
+  0,  /* CAN BE UPDATED tp_new */
+  0,  /* tp_free */
+};
 
 
 DECLARE_EXPORT PythonObject::PythonObject(const Date& d)
@@ -392,19 +392,19 @@ DECLARE_EXPORT Date PythonObject::getDate() const
   PyDateTime_IMPORT;
   if (PyDateTime_Check(obj))
     return Date(
-      PyDateTime_GET_YEAR(obj),
-      PyDateTime_GET_MONTH(obj),
-      PyDateTime_GET_DAY(obj),
-      PyDateTime_DATE_GET_HOUR(obj),
-      PyDateTime_DATE_GET_MINUTE(obj),
-      PyDateTime_DATE_GET_SECOND(obj)
-      );
+        PyDateTime_GET_YEAR(obj),
+        PyDateTime_GET_MONTH(obj),
+        PyDateTime_GET_DAY(obj),
+        PyDateTime_DATE_GET_HOUR(obj),
+        PyDateTime_DATE_GET_MINUTE(obj),
+        PyDateTime_DATE_GET_SECOND(obj)
+        );
   else if (PyDate_Check(obj))
     return Date(
-      PyDateTime_GET_YEAR(obj),
-      PyDateTime_GET_MONTH(obj),
-      PyDateTime_GET_DAY(obj)
-      );
+        PyDateTime_GET_YEAR(obj),
+        PyDateTime_GET_MONTH(obj),
+        PyDateTime_GET_DAY(obj)
+        );
   else if (PyString_Check(obj))
   {
     if (PyUnicode_Check(obj))
@@ -416,8 +416,8 @@ DECLARE_EXPORT Date PythonObject::getDate() const
     return Date(PyString_AsString(PyObject_Str(obj)));
   }
   else
-   throw DataException(
-    "Invalid data type. Expecting datetime.date, datetime.datetime or string"
+    throw DataException(
+      "Invalid data type. Expecting datetime.date, datetime.datetime or string"
     );
 }
 
@@ -466,7 +466,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
       // The next call only works if the self argument is effectively an
       // instance of the Object base class! We don't check this.
       static_cast<Object*>(self)->writeElement
-        (&x, *(static_cast<Object*>(self)->getType().category->typetag));
+      (&x, *(static_cast<Object*>(self)->getType().category->typetag));
       // Write the output...
       if (filearg)
       {
@@ -474,8 +474,8 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
         {
           // ... to a file
           return PyFile_WriteString(ch.str().c_str(), filearg) ?
-            NULL : // Error writing to the file
-            Py_BuildValue("");
+              NULL : // Error writing to the file
+              Py_BuildValue("");
         }
         else
           // The argument is not a file
@@ -496,7 +496,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
 
 
 DECLARE_EXPORT void PythonType::addMethod
-  (const char* method_name, PyCFunction f, int flags, const char* doc )
+(const char* method_name, PyCFunction f, int flags, const char* doc )
 {
   unsigned short i = 0;
 
@@ -534,7 +534,7 @@ DECLARE_EXPORT void PythonType::addMethod
 
 
 DECLARE_EXPORT void PythonType::addMethod
-  (const char* c, PyCFunctionWithKeywords f, int i, const char* d)
+(const char* c, PyCFunctionWithKeywords f, int i, const char* d)
 {
   addMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d);
 }
@@ -551,10 +551,10 @@ DECLARE_EXPORT int PythonType::typeReady()
   }
   Py_INCREF(table);
   int result = PyModule_AddObject(
-    PythonInterpreter::getModule(),
-    table->tp_name + 8, // Note: +8 is to skip the "frepple." characters in the name
-    reinterpret_cast<PyObject*>(table)
-    );
+      PythonInterpreter::getModule(),
+      table->tp_name + 8, // Note: +8 is to skip the "frepple." characters in the name
+      reinterpret_cast<PyObject*>(table)
+      );
   PyGILState_Release(state);
   return result;
 }
@@ -565,15 +565,15 @@ DECLARE_EXPORT void PythonType::evalException()
   // Rethrowing the exception to catch its type better
   try {throw;}
   catch (const DataException& e)
-    {PyErr_SetString(PythonDataException, e.what());}
+  {PyErr_SetString(PythonDataException, e.what());}
   catch (const LogicException& e)
-    {PyErr_SetString(PythonLogicException, e.what());}
+  {PyErr_SetString(PythonLogicException, e.what());}
   catch (const RuntimeException& e)
-    {PyErr_SetString(PythonRuntimeException, e.what());}
+  {PyErr_SetString(PythonRuntimeException, e.what());}
   catch (const exception& e)
-    {PyErr_SetString(PyExc_Exception, e.what());}
+  {PyErr_SetString(PyExc_Exception, e.what());}
   catch (...)
-    {PyErr_SetString(PyExc_Exception, "Unidentified exception");}
+  {PyErr_SetString(PyExc_Exception, "Unidentified exception");}
 }
 
 
@@ -589,7 +589,7 @@ DECLARE_EXPORT PythonFunction::PythonFunction(const string& n)
   // Find the Python function
   PyGILState_STATE pythonstate = PyGILState_Ensure();
   func = PyRun_String(n.c_str(), Py_eval_input,
-    PyEval_GetGlobals(), PyEval_GetLocals() );
+      PyEval_GetGlobals(), PyEval_GetLocals() );
   if (!func)
   {
     PyGILState_Release(pythonstate);
@@ -615,15 +615,15 @@ DECLARE_EXPORT PythonFunction::PythonFunction(PyObject* p)
     func = NULL;
     return;
   }
-  
+
   if (!PyCallable_Check(p))
   {
-    // It's not a callable object. Interprete it as a function name and 
+    // It's not a callable object. Interprete it as a function name and
     // look it up.
     string n = PythonObject(p).getString();
     PyGILState_STATE pythonstate = PyGILState_Ensure();
-    p = PyRun_String(n.c_str(), Py_eval_input, 
-      PyEval_GetGlobals(), PyEval_GetLocals() );
+    p = PyRun_String(n.c_str(), Py_eval_input,
+        PyEval_GetGlobals(), PyEval_GetLocals() );
     if (!p)
     {
       PyGILState_Release(pythonstate);
@@ -650,8 +650,8 @@ DECLARE_EXPORT PythonObject PythonFunction::call() const
   PyObject* result = PyEval_CallFunction(func, "()");
   if (!result)
   {
-    logger << "Error: Exception caught when calling Python function '" 
-      << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
+    logger << "Error: Exception caught when calling Python function '"
+        << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -666,8 +666,8 @@ DECLARE_EXPORT PythonObject PythonFunction::call(const PyObject* p) const
   PyObject* result = PyEval_CallFunction(func, "(O)", p);
   if (!result)
   {
-    logger << "Error: Exception caught when calling Python function '" 
-      << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
+    logger << "Error: Exception caught when calling Python function '"
+        << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -682,8 +682,8 @@ DECLARE_EXPORT PythonObject PythonFunction::call(const PyObject* p, const PyObje
   PyObject* result = PyEval_CallFunction(func, "(OO)", p, q);
   if (!result)
   {
-    logger << "Error: Exception caught when calling Python function '" 
-      << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
+    logger << "Error: Exception caught when calling Python function '"
+        << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -696,12 +696,12 @@ extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *n
   try
   {
     if (!PyString_Check(name))
-		{
+    {
       PyErr_Format(PyExc_TypeError,
-        "attribute name must be string, not '%s'",
-        name->ob_type->tp_name);
-			return NULL;
-		}
+          "attribute name must be string, not '%s'",
+          name->ob_type->tp_name);
+      return NULL;
+    }
     PyObject* result = static_cast<PythonExtensionBase*>(self)->getattro(Attribute(PyString_AsString(name)));
     // Exit 1: Normal
     if (result) return result;
@@ -728,12 +728,12 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
   {
     // Pick up the field name
     if (!PyString_Check(name))
-		{
+    {
       PyErr_Format(PyExc_TypeError,
-        "attribute name must be string, not '%s'",
-        name->ob_type->tp_name);
-			return -1;
-		}
+          "attribute name must be string, not '%s'",
+          name->ob_type->tp_name);
+      return -1;
+    }
     PythonObject field(value);
 
     // Call the object to update the attribute
@@ -745,9 +745,9 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
     // Process 'not OK' result - set python error string if it isn't set yet
     if (!PyErr_Occurred())
       PyErr_Format(PyExc_AttributeError,
-        "attribute '%s' on '%s' can't be updated",
-        PyString_AsString(name), self->ob_type->tp_name);
-		return -1;
+          "attribute '%s' on '%s' can't be updated",
+          PyString_AsString(name), self->ob_type->tp_name);
+    return -1;
   }
   catch (...)
   {

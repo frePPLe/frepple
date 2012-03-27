@@ -122,15 +122,15 @@
   * </xsd:complexType>
   *
   * <!-- Define the netting solver. -->
-	* <xsd:complexType name="solver_forecast">
-	*	<xsd:complexContent>
-	*		<xsd:extension base="solver">
-	*			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-	*				<xsd:element name="loglevel" type="loglevel" />
-	*			</xsd:choice>
-	*		</xsd:extension>
-	*	</xsd:complexContent>
-	* </xsd:complexType>
+  * <xsd:complexType name="solver_forecast">
+  * <xsd:complexContent>
+  *   <xsd:extension base="solver">
+  *     <xsd:choice minOccurs="0" maxOccurs="unbounded">
+  *       <xsd:element name="loglevel" type="loglevel" />
+  *     </xsd:choice>
+  *   </xsd:extension>
+  * </xsd:complexContent>
+  * </xsd:complexType>
   * </PRE>
   *
   * The module support the following configuration parameters:
@@ -304,13 +304,13 @@ class Forecast : public Demand
       public:
         /** Forecast evaluation. */
         virtual double generateForecast
-          (Forecast*, const double[], unsigned int, const double[], bool) = 0;
+        (Forecast*, const double[], unsigned int, const double[], bool) = 0;
 
         /** This method is called when this forecast method has generated the
           * lowest forecast error and now needs to set the forecast values.
           */
         virtual void applyForecast
-          (Forecast*, const Date[], unsigned int, bool) = 0;
+        (Forecast*, const Date[], unsigned int, bool) = 0;
 
         /** The name of the method. */
         virtual string getName() = 0;
@@ -342,7 +342,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double weight[], bool debug);
+            unsigned int count, const double weight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -352,11 +352,11 @@ class Forecast : public Demand
         {
           if (x < 1)
             throw DataException("Parameter MovingAverage.buckets needs to smooth over at least 1 bucket");
-         defaultbuckets = x;
+          defaultbuckets = x;
         }
 
         string getName() {return "moving average";}
-   };
+    };
 
     /** @brief A class to perform single exponential smoothing on a time series. */
     class SingleExponential : public ForecastMethod
@@ -395,7 +395,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double weight[], bool debug);
+            unsigned int count, const double weight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -404,15 +404,15 @@ class Forecast : public Demand
         static void setInitialAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter SingleExponential.initialAlfa must be between 0 and 1");
-         initial_alfa = x;
+              "Parameter SingleExponential.initialAlfa must be between 0 and 1");
+          initial_alfa = x;
         }
 
         /** Update the minimum value for the alfa parameter. */
         static void setMinAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter SingleExponential.minAlfa must be between 0 and 1");
+              "Parameter SingleExponential.minAlfa must be between 0 and 1");
           min_alfa = x;
         }
 
@@ -420,7 +420,7 @@ class Forecast : public Demand
         static void setMaxAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter SingleExponential.maxAlfa must be between 0 and 1");
+              "Parameter SingleExponential.maxAlfa must be between 0 and 1");
           max_alfa = x;
         }
 
@@ -489,7 +489,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double weight[], bool debug);
+            unsigned int count, const double weight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -498,7 +498,7 @@ class Forecast : public Demand
         static void setInitialAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.initialAlfa must be between 0 and 1");
+              "Parameter DoubleExponential.initialAlfa must be between 0 and 1");
           initial_alfa = x;
         }
 
@@ -506,7 +506,7 @@ class Forecast : public Demand
         static void setMinAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.minAlfa must be between 0 and 1");
+              "Parameter DoubleExponential.minAlfa must be between 0 and 1");
           min_alfa = x;
         }
 
@@ -514,7 +514,7 @@ class Forecast : public Demand
         static void setMaxAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.maxAlfa must be between 0 and 1");
+              "Parameter DoubleExponential.maxAlfa must be between 0 and 1");
           max_alfa = x;
         }
 
@@ -528,7 +528,7 @@ class Forecast : public Demand
         static void setInitialGamma(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.initialGamma must be between 0 and 1");
+              "Parameter DoubleExponential.initialGamma must be between 0 and 1");
           initial_gamma = x;
         }
 
@@ -536,7 +536,7 @@ class Forecast : public Demand
         static void setMinGamma(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.minGamma must be between 0 and 1");
+              "Parameter DoubleExponential.minGamma must be between 0 and 1");
           min_gamma = x;
         }
 
@@ -544,7 +544,7 @@ class Forecast : public Demand
         static void setMaxGamma(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.maxGamma must be between 0 and 1");
+              "Parameter DoubleExponential.maxGamma must be between 0 and 1");
           max_gamma = x;
         }
 
@@ -552,7 +552,7 @@ class Forecast : public Demand
         static void setDampenTrend(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.dampenTrend must be between 0 and 1");
+              "Parameter DoubleExponential.dampenTrend must be between 0 and 1");
           dampenTrend = x;
         }
 
@@ -563,7 +563,7 @@ class Forecast : public Demand
       * series.
       */
     class Seasonal : public ForecastMethod
-	  {
+    {
       private:
         /** Smoothing constant. */
         double alfa;
@@ -663,11 +663,11 @@ class Forecast : public Demand
 
         /** Compute the determinant of a 3x3 matrix. */
         inline double determinant(const double a, const double b, const double c,
-          const double d, const double e, const double f,
-          const double g, const double h, const double i)
+            const double d, const double e, const double f,
+            const double g, const double h, const double i)
         { return a * e * i + b * f * g + c * d * h - a * f * h - b * d * i - c * e * g; }
 
-	    public:
+      public:
         /** Constructor. */
         Seasonal(double a = initial_alfa, double b = initial_beta, double g = initial_gamma)
           : alfa(a), beta(b), gamma(g), period(0), L_i(0), T_i(0), S_i(NULL) {}
@@ -677,7 +677,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double weight[], bool debug);
+            unsigned int count, const double weight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -686,7 +686,7 @@ class Forecast : public Demand
         static void setMinPeriod(int x)
         {
           if (x <= 1) throw DataException(
-            "Parameter Seasonal.minPeriod must be greater than 1");
+              "Parameter Seasonal.minPeriod must be greater than 1");
           min_period = x;
         }
 
@@ -694,7 +694,7 @@ class Forecast : public Demand
         static void setMaxPeriod(int x)
         {
           if (x <= 1) throw DataException(
-            "Parameter Seasonal.maxPeriod must be greater than 1");
+              "Parameter Seasonal.maxPeriod must be greater than 1");
           max_period = x;
         }
 
@@ -702,7 +702,7 @@ class Forecast : public Demand
         static void setInitialAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Seasonal.initialAlfa must be between 0 and 1");
+              "Parameter Seasonal.initialAlfa must be between 0 and 1");
           initial_alfa = x;
         }
 
@@ -710,7 +710,7 @@ class Forecast : public Demand
         static void setMinAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Seasonal.minAlfa must be between 0 and 1");
+              "Parameter Seasonal.minAlfa must be between 0 and 1");
           min_alfa = x;
         }
 
@@ -718,7 +718,7 @@ class Forecast : public Demand
         static void setMaxAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Seasonal.maxAlfa must be between 0 and 1");
+              "Parameter Seasonal.maxAlfa must be between 0 and 1");
           max_alfa = x;
         }
 
@@ -726,7 +726,7 @@ class Forecast : public Demand
         static void setInitialBeta(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Seasonal.initialBeta must be between 0 and 1");
+              "Parameter Seasonal.initialBeta must be between 0 and 1");
           initial_beta = x;
         }
 
@@ -734,7 +734,7 @@ class Forecast : public Demand
         static void setMinBeta(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Seasonal.minBeta must be between 0 and 1");
+              "Parameter Seasonal.minBeta must be between 0 and 1");
           min_beta = x;
         }
 
@@ -742,7 +742,7 @@ class Forecast : public Demand
         static void setMaxBeta(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Seasonal.maxBeta must be between 0 and 1");
+              "Parameter Seasonal.maxBeta must be between 0 and 1");
           max_beta = x;
         }
 
@@ -752,7 +752,7 @@ class Forecast : public Demand
         static void setInitialGamma(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Seasonal.initialGamma must be between 0 and 1");
+              "Parameter Seasonal.initialGamma must be between 0 and 1");
           initial_gamma = x;
         }
 
@@ -760,7 +760,7 @@ class Forecast : public Demand
         static void setMinGamma(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Seasonal.minGamma must be between 0 and 1");
+              "Parameter Seasonal.minGamma must be between 0 and 1");
           min_gamma = x;
         }
 
@@ -768,7 +768,7 @@ class Forecast : public Demand
         static void setMaxGamma(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Seasonal.maxGamma must be between 0 and 1");
+              "Parameter Seasonal.maxGamma must be between 0 and 1");
           max_gamma = x;
         }
 
@@ -776,12 +776,12 @@ class Forecast : public Demand
         static void setDampenTrend(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Seasonal.dampenTrend must be between 0 and 1");
+              "Parameter Seasonal.dampenTrend must be between 0 and 1");
           dampenTrend = x;
         }
 
         string getName() {return "seasonal";}
-	  };
+    };
 
     /** @brief A class to calculate a forecast with Croston's method. */
     class Croston : public ForecastMethod
@@ -823,7 +823,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, const double weight[], bool debug);
+            unsigned int count, const double weight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -832,15 +832,15 @@ class Forecast : public Demand
         static void setInitialAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Croston.initialAlfa must be between 0 and 1");
-         initial_alfa = x;
+              "Parameter Croston.initialAlfa must be between 0 and 1");
+          initial_alfa = x;
         }
 
         /** Update the minimum value for the alfa parameter. */
         static void setMinAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Croston.minAlfa must be between 0 and 1");
+              "Parameter Croston.minAlfa must be between 0 and 1");
           min_alfa = x;
         }
 
@@ -848,7 +848,7 @@ class Forecast : public Demand
         static void setMaxAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Croston.maxAlfa must be between 0 and 1");
+              "Parameter Croston.maxAlfa must be between 0 and 1");
           max_alfa = x;
         }
 
@@ -856,7 +856,7 @@ class Forecast : public Demand
         static void setMinIntermittence(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter Croston.minIntermittence must be between 0 and 1");
+              "Parameter Croston.minIntermittence must be between 0 and 1");
           min_intermittence = x;
         }
 
@@ -876,7 +876,7 @@ class Forecast : public Demand
 
     /** Updates the quantity of the forecast. This method is empty. */
     virtual void setQuantity(double f)
-      {throw DataException("Can't set quantity of a forecast");}
+    {throw DataException("Can't set quantity of a forecast");}
 
     /** Update the forecast quantity.<br>
       * The forecast quantity will be distributed equally among the buckets
@@ -945,7 +945,7 @@ class Forecast : public Demand
       * each of the time buckets passed.
       */
     void generateFutureValues
-      (const double[], unsigned int, const Date[], unsigned int, bool=false);
+    (const double[], unsigned int, const Date[], unsigned int, bool=false);
 
     /** Updates the due date of the demand. Lower numbers indicate a
       * higher priority level. The method also updates the priority
@@ -965,28 +965,28 @@ class Forecast : public Demand
     virtual size_t getSize() const
     {
       return sizeof(Forecast) + Demand::extrasize()
-        + 6 * sizeof(void*); // Approx. size of an entry in forecast dictionary
+          + 6 * sizeof(void*); // Approx. size of an entry in forecast dictionary
     }
 
     /** Updates the value of the Customer_Then_Item_Hierarchy module
       * parameter. */
     static void setCustomerThenItemHierarchy(bool b)
-      {Customer_Then_Item_Hierarchy = b;}
+    {Customer_Then_Item_Hierarchy = b;}
 
     /** Returns the value of the Customer_Then_Item_Hierarchy module
       * parameter. */
     static bool getCustomerThenItemHierarchy()
-      {return Customer_Then_Item_Hierarchy;}
+    {return Customer_Then_Item_Hierarchy;}
 
     /** Updates the value of the Match_Using_Delivery_Operation module
       * parameter. */
     static void setMatchUsingDeliveryOperation(bool b)
-      {Match_Using_Delivery_Operation = b;}
+    {Match_Using_Delivery_Operation = b;}
 
     /** Returns the value of the Match_Using_Delivery_Operation module
       * parameter. */
     static bool getMatchUsingDeliveryOperation()
-      {return Match_Using_Delivery_Operation;}
+    {return Match_Using_Delivery_Operation;}
 
     /** Updates the value of the Net_Early module parameter. */
     static void setNetEarly(TimePeriod t) {Net_Early = t;}
@@ -1004,7 +1004,7 @@ class Forecast : public Demand
     static void setForecastSmapeAlfa(double t)
     {
       if (t<=0.5 || t>1.0) throw DataException(
-        "Parameter Forecast.smapeAlfa must be between 0.5 and 1.0"
+          "Parameter Forecast.smapeAlfa must be between 0.5 and 1.0"
         );
       Forecast_SmapeAlfa = t;
     }
@@ -1016,7 +1016,7 @@ class Forecast : public Demand
     static void setForecastIterations(unsigned long t)
     {
       if (t<=0) throw DataException(
-        "Parameter Forecast.Iterations must be bigger than 0"
+          "Parameter Forecast.Iterations must be bigger than 0"
         );
       Forecast_Iterations = t;
     }
@@ -1028,7 +1028,7 @@ class Forecast : public Demand
     static void setForecastSkip(unsigned int t)
     {
       if (t<0) throw DataException(
-        "Parameter Forecast.Skip must be bigger than or equal to 0"
+          "Parameter Forecast.Skip must be bigger than or equal to 0"
         );
       Forecast_Skip = t;
     }
@@ -1300,9 +1300,9 @@ class ForecastSolver : public Solver
     /** Used for sorting demands during netting. */
     struct sorter
     {
-  	  bool operator()(const Demand* x, const Demand* y) const
-		    {return SolverMRP::demand_comparison(x,y);}
-	  };
+      bool operator()(const Demand* x, const Demand* y) const
+      {return SolverMRP::demand_comparison(x,y);}
+    };
 
     /** Used for sorting demands during netting. */
     typedef multiset < Demand*, sorter > sortedDemandList;

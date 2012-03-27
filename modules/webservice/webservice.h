@@ -37,7 +37,7 @@ typedef double xsd__double;
 typedef long int xsd__int;
 typedef bool xsd__boolean;
 typedef char* xsd__string;
-typedef time_t 	xsd__dateTime;
+typedef time_t  xsd__dateTime;
 
 //gsoap frepple service name: frepple
 //gsoap frepple service namespace: urn:frepple

@@ -45,7 +45,7 @@ int OperationPlan::initialize()
 {
   // Initialize the metadata
   OperationPlan::metacategory = new MetaCategory("operationplan", "operationplans",
-    OperationPlan::createOperationPlan, OperationPlan::writer);
+      OperationPlan::createOperationPlan, OperationPlan::writer);
   OperationPlan::metadata = new MetaClass("operationplan", "operationplan");
 
   // Initialize the Python type
@@ -106,8 +106,8 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
       // Previous and current operations don't match.
       ostringstream ch;
       ch << "Operationplan identifier " << id
-      << " defined multiple times with different operations: '"
-      << opplan->getOperation() << "' & '" << opname << "'";
+          << " defined multiple times with different operations: '"
+          << opplan->getOperation() << "' & '" << opname << "'";
       throw DataException(ch.str());
     }
   }
@@ -142,12 +142,12 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
       {
         ostringstream ch;
         ch << "Operationplan with identifier " << id
-        << " already exists and can't be added again";
+            << " already exists and can't be added again";
         throw DataException(ch.str());
       }
       if (opname.empty())
         throw DataException
-          ("Operation name missing for creating an operationplan");
+        ("Operation name missing for creating an operationplan");
       break;
     case CHANGE:
       if (!opplan)
@@ -232,41 +232,41 @@ DECLARE_EXPORT bool OperationPlan::activate(bool useMinCounter)
   // These properties allow us to delete operation plans without an id faster.
   static Mutex onlyOne;
   {
-  ScopeMutexLock l(onlyOne);  // Need to assure that ids are unique!
-  if (id)
-  {
-    // An identifier was read in from input
-    if (id < counterMin || id > counterMax)
+    ScopeMutexLock l(onlyOne);  // Need to assure that ids are unique!
+    if (id)
     {
-      // The assigned id potentially clashes with an existing operationplan.
-      // Check whether it clashes with existing operationplans
-      OperationPlan* opplan = findId(id);
-      if (opplan && opplan->getOperation()!=oper)
+      // An identifier was read in from input
+      if (id < counterMin || id > counterMax)
       {
-        ostringstream ch;
-        ch << "Operationplan id " << id
-          << " defined multiple times with different operations: '"
-          << opplan->getOperation() << "' & '" << oper << "'";
-        delete this;
-        throw DataException(ch.str());
+        // The assigned id potentially clashes with an existing operationplan.
+        // Check whether it clashes with existing operationplans
+        OperationPlan* opplan = findId(id);
+        if (opplan && opplan->getOperation()!=oper)
+        {
+          ostringstream ch;
+          ch << "Operationplan id " << id
+              << " defined multiple times with different operations: '"
+              << opplan->getOperation() << "' & '" << oper << "'";
+          delete this;
+          throw DataException(ch.str());
+        }
       }
+      // The new operationplan definately doesn't clash with existing id's.
+      // The counter need updating to garantuee that counter is always
+      // a safe starting point for tagging new operationplans.
+      else if (useMinCounter)
+        counterMin = id+1;
+      else
+        counterMax = id-1;
     }
-    // The new operationplan definately doesn't clash with existing id's.
-    // The counter need updating to garantuee that counter is always
-    // a safe starting point for tagging new operationplans.
+    // Fresh operationplan with blank id
     else if (useMinCounter)
-      counterMin = id+1;
+      id = counterMin++;
     else
-      counterMax = id-1;
-  }
-  // Fresh operationplan with blank id
-  else if (useMinCounter)
-    id = counterMin++;
-  else
-    id = counterMax--;
-  // Check whether the counters are still okay
-  if (counterMin >= counterMax)
-    throw RuntimeException("Exhausted the range of available operationplan identifiers");
+      id = counterMax--;
+    // Check whether the counters are still okay
+    if (counterMin >= counterMax)
+      throw RuntimeException("Exhausted the range of available operationplan identifiers");
   }
 
   // Insert into the doubly linked list of operationplans.
@@ -649,7 +649,7 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
 
   // Update the parent of an alternate operationplan
   if (execute && owner
-    && owner->getOperation()->getType() == *OperationAlternate::metadata)
+      && owner->getOperation()->getType() == *OperationAlternate::metadata)
   {
     owner->quantity = quantity;
     if (upd) owner->resizeFlowLoadPlans();
@@ -682,10 +682,10 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 
   // Align the end of the setup operationplan with the start of the operation
   if (firstsubopplan && firstsubopplan->getOperation() == OperationSetup::setupoperation
-    && firstsubopplan->getDates().getEnd() != getDates().getStart())
+      && firstsubopplan->getDates().getEnd() != getDates().getStart())
     firstsubopplan->setEnd(getDates().getStart());
   else if (getOperation() == OperationSetup::setupoperation
-    && getDates().getEnd() != getOwner()->getDates().getStart())
+      && getDates().getEnd() != getOwner()->getDates().getStart())
     getOwner()->setStart(getDates().getEnd());
 
   // Allow the operation length to be changed now that the quantity has changed
@@ -743,7 +743,7 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src, bool init)
 
 
 DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src,
-  OperationPlan* newOwner)
+    OperationPlan* newOwner)
 {
   if (!newOwner)
     throw LogicException("No new owner passed in private copy constructor.");
@@ -828,11 +828,11 @@ DECLARE_EXPORT double OperationPlan::getPenalty() const
 {
   double penalty = 0;
   for (OperationPlan::LoadPlanIterator i = beginLoadPlans();
-    i != endLoadPlans(); ++i)
+      i != endLoadPlans(); ++i)
     if (i->isStart() && !i->getLoad()->getSetup().empty() && i->getResource()->getSetupMatrix())
     {
       SetupMatrix::Rule *rule = i->getResource()->getSetupMatrix()
-        ->calculateSetup(i->getSetup(false), i->getSetup(true));
+          ->calculateSetup(i->getSetup(false), i->getSetup(true));
       if (rule) penalty += rule->getCost();
     }
   return penalty;
@@ -850,7 +850,7 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
 
   // Loop over all producing flowplans
   for (OperationPlan::FlowPlanIterator i = beginFlowPlans();
-        i != endFlowPlans(); ++i)
+      i != endFlowPlans(); ++i)
   {
     // Skip consuming flowplans
     if (i->getQuantity() <= 0) continue;
@@ -868,8 +868,8 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
     for (; j != i->getBuffer()->getFlowPlans().end(); --j)
     {
       if ( (current_maximum > 0
-             && j->getOnhand() < i->getQuantity() + current_maximum - ROUNDING_ERROR)
-        || j->getOnhand() < i->getQuantity() + current_minimum - ROUNDING_ERROR )
+          && j->getOnhand() < i->getQuantity() + current_maximum - ROUNDING_ERROR)
+          || j->getOnhand() < i->getQuantity() + current_minimum - ROUNDING_ERROR )
         return false;
       if (j->getType() == 4 && !strict) current_maximum = j->getMax(false);
       if (j->getType() == 3 && !strict) current_minimum = j->getMin(false);
@@ -911,7 +911,7 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_id, id, Tags::tag_operation, oper->getName());
+    (tag, Tags::tag_id, id, Tags::tag_operation, oper->getName());
     return;
   }
 
@@ -1038,8 +1038,8 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
           int result = x->setattro(attr, field);
           if (result && !PyErr_Occurred())
             PyErr_Format(PyExc_AttributeError,
-              "attribute '%s' on '%s' can't be updated",
-              PyString_AsString(key), x->ob_type->tp_name);
+                "attribute '%s' on '%s' can't be updated",
+                PyString_AsString(key), x->ob_type->tp_name);
         }
       };
     }
@@ -1089,28 +1089,28 @@ DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
     return PythonObject(getUnavailable());
   if (attr.isA(Tags::tag_motive))
   {
-	// Null
-	if (!getMotive())
-	{
-	  Py_INCREF(Py_None);
-	  return Py_None;
-	}
+    // Null
+    if (!getMotive())
+    {
+      Py_INCREF(Py_None);
+      return Py_None;
+    }
 
-	// Demand
-	Demand* d = dynamic_cast<Demand*>(getMotive());
-	if (d) return PythonObject(d);
+    // Demand
+    Demand* d = dynamic_cast<Demand*>(getMotive());
+    if (d) return PythonObject(d);
 
-	// Buffer
-	Buffer* b = dynamic_cast<Buffer*>(getMotive());
-	if (b) return PythonObject(b);
+    // Buffer
+    Buffer* b = dynamic_cast<Buffer*>(getMotive());
+    if (b) return PythonObject(b);
 
-	// Resource
-	Resource* r = dynamic_cast<Resource*>(getMotive());
-	if (r) return PythonObject(r);
+    // Resource
+    Resource* r = dynamic_cast<Resource*>(getMotive());
+    if (r) return PythonObject(r);
 
-	// Unknown type
-	PyErr_SetString(PythonLogicException, "Unhandled motive type");
-	return NULL;
+    // Unknown type
+    PyErr_SetString(PythonLogicException, "Unhandled motive type");
+    return NULL;
   }
   return NULL;
 }
@@ -1148,9 +1148,9 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
   }
   else if (attr.isA(Tags::tag_motive))
   {
-	Plannable* y;
-	if (static_cast<PyObject*>(field) == Py_None)
-	  y = NULL;
+    Plannable* y;
+    if (static_cast<PyObject*>(field) == Py_None)
+      y = NULL;
     if (field.check(Demand::metadata))
       y = static_cast<Demand*>(static_cast<PyObject*>(field));
     else if (field.check(Buffer::metadata))
@@ -1162,7 +1162,7 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
       PyErr_SetString(PythonDataException, "operationplan motive must be of type demand, buffer or resource");
       return -1;
     }
-  	setMotive(y);
+    setMotive(y);
   }
   else
     return -1;

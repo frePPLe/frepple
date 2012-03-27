@@ -40,7 +40,7 @@ void LibrarySolver::initialize()
   if (init)
   {
     logger << "Warning: Calling frepple::LibrarySolver::initialize() more "
-    << "than once." << endl;
+        << "than once." << endl;
     return;
   }
   init = true;
@@ -55,7 +55,7 @@ int SolverMRP::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass
-    ("solver","solver_mrp",Object::createString<SolverMRP>,true);
+  ("solver","solver_mrp",Object::createString<SolverMRP>,true);
 
   // Initialize the Python class
   FreppleClass<SolverMRP,Solver>::getType().addMethod("solve", solve, METH_VARARGS, "run the solver");
@@ -125,7 +125,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
       {
         // Error message
         logger << "Error: Caught an exception while solving demand '"
-          << (*i)->getName() << "':" << endl;
+            << (*i)->getName() << "':" << endl;
         try {throw;}
         catch (const bad_exception&) {logger << "  bad exception" << endl;}
         catch (const exception& e) {logger << "  " << e.what() << endl;}
@@ -148,9 +148,9 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
 
     // Error message
     logger << "Error: Caught an exception while solving cluster "
-    << cluster << ":" << endl;
+        << cluster << ":" << endl;
     try {throw;}
-    catch (const bad_exception&){logger << "  bad exception" << endl;}
+    catch (const bad_exception&) {logger << "  bad exception" << endl;}
     catch (const exception& e) {logger << "  " << e.what() << endl;}
     catch (...) {logger << "  Unknown type" << endl;}
 

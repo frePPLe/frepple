@@ -207,7 +207,7 @@ PyMODINIT_FUNC initfrepple(void)
   {
     logger << "Initialization failed: " << e.what() << endl;
   }
-  catch (...) 
+  catch (...)
   {
     logger << "Initialization failed: reason unknown" << endl;
   }

@@ -145,19 +145,19 @@ class LPSolver : public Solver
     /** Append a new objective to the list. */
     void addObjective(const string& c) {objectives.push_back(c);}
 
-	  /** Return a reference to the list of objectives. */
-	  const list<string>& getObjectives() const {return objectives;}
-	
+    /** Return a reference to the list of objectives. */
+    const list<string>& getObjectives() const {return objectives;}
+
     virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     virtual PyObject* getattro(const Attribute&);
     virtual int setattro(const Attribute&, const PythonObject&);
     static int initialize();
 
-	  /** Constructor. */
+    /** Constructor. */
     LPSolver(const string& n) : Solver(n), minimum(true) {initType(metadata);}
-	
-	  /** Destructor. */
+
+    /** Destructor. */
     ~LPSolver() {};
 
     virtual const MetaClass& getType() const {return *metadata;}

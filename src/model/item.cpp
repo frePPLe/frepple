@@ -50,7 +50,7 @@ int ItemDefault::initialize()
 {
   // Initialize the metadata
   ItemDefault::metadata = new MetaClass("item", "item_default",
-    Object::createString<ItemDefault>, true);
+      Object::createString<ItemDefault>, true);
 
   // Initialize the Python class
   return FreppleClass<ItemDefault,Item>::initialize();
@@ -136,7 +136,7 @@ DECLARE_EXPORT PyObject* Item::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_members))
-	return new ItemIterator(this);
+    return new ItemIterator(this);
   // @todo support member iteration for res, item, ...
   return NULL;
 }

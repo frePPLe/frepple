@@ -39,7 +39,7 @@ void LibraryModel::initialize()
   if (init)
   {
     logger << "Warning: Calling frepple::LibraryModel::initialize() more "
-    << "than once." << endl;
+        << "than once." << endl;
     return;
   }
   init = true;

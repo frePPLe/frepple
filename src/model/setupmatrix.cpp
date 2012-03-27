@@ -45,8 +45,8 @@ int SetupMatrix::initialize()
   // Initialize the Python class
   FreppleCategory<SetupMatrix>::getType().addMethod("addRule", addPythonRule, METH_KEYWORDS, "add a new setup rule");
   return FreppleCategory<SetupMatrix>::initialize()
-    + Rule::initialize()
-    + SetupMatrixRuleIterator::initialize();
+      + Rule::initialize()
+      + SetupMatrixRuleIterator::initialize();
 }
 
 
@@ -97,7 +97,7 @@ DECLARE_EXPORT void SetupMatrix::writeElement(XMLOutput *o, const Keyword& tag, 
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 
@@ -229,10 +229,10 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
     long duration = 0;
     double cost = 0;
     static const char *kwlist[] = {"priority", "fromsetup", "tosetup", "duration", "cost", NULL};
-	  if (!PyArg_ParseTupleAndKeywords(args, kwdict,
-      "i|ssld:addRule",
-      const_cast<char**>(kwlist), &prio, &pyfrom, &pyto, &duration, &cost))
-        return NULL;
+    if (!PyArg_ParseTupleAndKeywords(args, kwdict,
+        "i|ssld:addRule",
+        const_cast<char**>(kwlist), &prio, &pyfrom, &pyto, &duration, &cost))
+      return NULL;
 
     // Add the new rule
     Rule * r = new Rule(matrix, prio);
@@ -330,7 +330,7 @@ DECLARE_EXPORT PyObject* SetupMatrix::Rule::getattro(const Attribute& attr)
     return PythonObject(duration);
   if (attr.isA(Tags::tag_cost))
     return PythonObject(cost);
-	return NULL;
+  return NULL;
 }
 
 
@@ -387,7 +387,7 @@ DECLARE_EXPORT void SetupMatrix::Rule::setPriority(const int n)
 
   // Check for duplicate priorities
   if ((prevRule && prevRule->priority == priority)
-    || (nextRule && nextRule->priority == priority))
+      || (nextRule && nextRule->priority == priority))
   {
     ostringstream o;
     o << "Duplicate priority " << priority << " in setup matrix '"
@@ -418,7 +418,7 @@ PyObject* SetupMatrixRuleIterator::iternext()
 
 
 DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::calculateSetup
-  (const string oldsetup, const string newsetup) const
+(const string oldsetup, const string newsetup) const
 {
   // No need to look
   if (oldsetup == newsetup) return NULL;
@@ -428,19 +428,19 @@ DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::calculateSetup
   {
     // Need a match on the fromsetup
     if (!curRule->getFromSetup().empty()
-      && !matchWildcard(curRule->getFromSetup().c_str(), oldsetup.c_str()))
-        continue;
+        && !matchWildcard(curRule->getFromSetup().c_str(), oldsetup.c_str()))
+      continue;
     // Need a match on the tosetup
     if (!curRule->getToSetup().empty()
-      && !matchWildcard(curRule->getToSetup().c_str(), newsetup.c_str()))
-        continue;
+        && !matchWildcard(curRule->getToSetup().c_str(), newsetup.c_str()))
+      continue;
     // Found a match
     return curRule;
   }
 
   // No matching rule was found
-  logger << "Warning: Conversion from '" << oldsetup << "' to '" << newsetup 
-    << "' undefined in setup matrix '" << getName() << endl;
+  logger << "Warning: Conversion from '" << oldsetup << "' to '" << newsetup
+      << "' undefined in setup matrix '" << getName() << endl;
   return NULL;
 }
 

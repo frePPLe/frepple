@@ -72,7 +72,7 @@ DECLARE_EXPORT void Demand::setQuantity(double f)
 
 
 DECLARE_EXPORT void Demand::deleteOperationPlans
-  (bool deleteLocked, CommandManager* cmds)
+(bool deleteLocked, CommandManager* cmds)
 {
   // Delete all opplans
   // Note that an extra loop is used to assure that our iterator doesn't get
@@ -143,7 +143,7 @@ DECLARE_EXPORT const Demand::OperationPlan_list& Demand::getDelivery() const
     OperationPlan_list::iterator j = const_cast<Demand*>(this)->deli.begin();
     ++j;
     for (OperationPlan_list::iterator i =
-          const_cast<Demand*>(this)->deli.begin();
+        const_cast<Demand*>(this)->deli.begin();
         j!=const_cast<Demand*>(this)->deli.end(); ++j)
     {
       if ((*i)->getDates().getEnd() < (*j)->getDates().getEnd())
@@ -212,8 +212,8 @@ DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
   Operation* tmpOper = getDeliveryOperation();
   if (tmpOper && tmpOper != o->getOperation())
     logger << "Warning: Delivery Operation '" << o->getOperation()
-    << "' different than expected '" << tmpOper
-    << "' for demand '" << this << "'" << endl;
+        << "' different than expected '" << tmpOper
+        << "' for demand '" << this << "'" << endl;
 }
 
 
@@ -267,7 +267,7 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
 
   // Write extra plan information
   if (o->getContentType() == XMLOutput::PLAN
-    || o->getContentType() == XMLOutput::PLANDETAIL)
+      || o->getContentType() == XMLOutput::PLANDETAIL)
   {
     if (!deli.empty())
     {
@@ -386,7 +386,7 @@ DECLARE_EXPORT PyObject* Demand::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_constraints))
     return new ProblemIterator(*(constraints.begin()));
   if (attr.isA(Tags::tag_members))
-	return new DemandIterator(this);
+    return new DemandIterator(this);
   return NULL;
 }
 

@@ -74,7 +74,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
     this,
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
-    );
+  );
 
   // Initialize the Python type
   initType(metadata);
@@ -113,7 +113,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
     this,
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
-    );
+  );
 
   // Initialize the Python type
   initType(metadata);
@@ -135,7 +135,7 @@ DECLARE_EXPORT void LoadPlan::update()
     this,
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
-    );
+  );
 
   // Review adjacent setups
   if (!isStart()) ld->getResource()->updateSetups(this);
@@ -159,7 +159,7 @@ DECLARE_EXPORT const string& LoadPlan::getSetup(bool current) const
 
   // Scan earlier setups
   for (Resource::loadplanlist::const_iterator i(this);
-    i != getResource()->getLoadPlans().end(); --i)
+      i != getResource()->getLoadPlans().end(); --i)
   {
     const LoadPlan* j = dynamic_cast<const LoadPlan*>(&*i);
     if (j && !j->getLoad()->getSetup().empty() && (current || j != this))
@@ -178,12 +178,12 @@ DECLARE_EXPORT LoadPlan::~LoadPlan()
   if (!isStart() && oper->getOperation() == OperationSetup::setupoperation)
   {
     for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
-      i != getResource()->getLoadPlans().end(); --i)
+        i != getResource()->getLoadPlans().end(); --i)
     {
       const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
       if (l && l->getOperationPlan() != getOperationPlan()
-        && l->getOperationPlan() != getOperationPlan()->getOwner()
-        && !l->isStart())
+          && l->getOperationPlan() != getOperationPlan()->getOwner()
+          && !l->isStart())
       {
         prevldplan = const_cast<LoadPlan*>(l);
         break;
@@ -192,12 +192,12 @@ DECLARE_EXPORT LoadPlan::~LoadPlan()
     if (!prevldplan)
     {
       for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
-        i != getResource()->getLoadPlans().end(); ++i)
+          i != getResource()->getLoadPlans().end(); ++i)
       {
         const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
         if (l && l->getOperationPlan() != getOperationPlan()
-          && l->getOperationPlan() != getOperationPlan()->getOwner()
-          && !l->isStart())
+            && l->getOperationPlan() != getOperationPlan()->getOwner()
+            && !l->isStart())
         {
           prevldplan = const_cast<LoadPlan*>(l);
           break;
@@ -229,9 +229,9 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   if (oper && oper->getOperation() != OperationSetup::setupoperation)
   {
     bool oldHasSetup = ld && !ld->getSetup().empty()
-      && ld->getResource()->getSetupMatrix();
+        && ld->getResource()->getSetupMatrix();
     bool newHasSetup = !newld->getSetup().empty()
-      && newld->getResource()->getSetupMatrix();
+        && newld->getResource()->getSetupMatrix();
     OperationPlan *setupOpplan = NULL;
     if (oldHasSetup)
     {
@@ -250,7 +250,7 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
         // Case 1: Both the old and new load require a setup
         LoadPlan *setupLdplan = NULL;
         for (OperationPlan::LoadPlanIterator j = setupOpplan->beginLoadPlans();
-          j != setupOpplan->endLoadPlans(); ++j)
+            j != setupOpplan->endLoadPlans(); ++j)
           if (j->getLoad() == ld)
           {
             setupLdplan = &*j;
@@ -286,12 +286,12 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   if (getOperationPlan()->getOperation() == OperationSetup::setupoperation)
   {
     for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
-      i != getResource()->getLoadPlans().end(); --i)
+        i != getResource()->getLoadPlans().end(); --i)
     {
       const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
       if (l && l->getOperationPlan() != getOperationPlan()
-        && l->getOperationPlan() != getOperationPlan()->getOwner()
-        && !l->isStart())
+          && l->getOperationPlan() != getOperationPlan()->getOwner()
+          && !l->isStart())
       {
         prevldplan = const_cast<LoadPlan*>(l);
         break;
@@ -300,12 +300,12 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
     if (!prevldplan)
     {
       for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
-        i != getResource()->getLoadPlans().end(); ++i)
+          i != getResource()->getLoadPlans().end(); ++i)
       {
         const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
         if (l && l->getOperationPlan() != getOperationPlan()
-          && l->getOperationPlan() != getOperationPlan()->getOwner()
-          && !l->isStart())
+            && l->getOperationPlan() != getOperationPlan()->getOwner()
+            && !l->isStart())
         {
           prevldplan = const_cast<LoadPlan*>(l);
           break;
@@ -317,7 +317,7 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   // Change this loadplan and its brother
   for (LoadPlan *ldplan = getOtherLoadPlan(); true; )
   {
-   // Remove from the old resource, if there is one
+    // Remove from the old resource, if there is one
     if (ldplan->ld)
       ldplan->ld->getResource()->loadplans.erase(ldplan);
 
@@ -327,7 +327,7 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
       ldplan,
       newld->getLoadplanQuantity(ldplan),
       newld->getLoadplanDate(ldplan)
-      );
+    );
 
     // Repeat for the brother loadplan or exit
     if (ldplan != this) ldplan = this;

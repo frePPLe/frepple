@@ -53,9 +53,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
     list<const Flow*> thealternates;
     const Flow *x = fl->hasAlternates() ? fl : fl->getAlternate();
     for (Operation::flowlist::const_iterator i = fl->getOperation()->getFlows().begin();
-      i != fl->getOperation()->getFlows().end(); ++i)
+        i != fl->getOperation()->getFlows().end(); ++i)
       if ((i->getAlternate() == x || &*i == x)
-        && i->getEffective().within(data->state->q_flowplan->getDate()))
+          && i->getEffective().within(data->state->q_flowplan->getDate()))
         thealternates.push_front(&*i);
 
     // 2) Sort the list
@@ -76,7 +76,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
     double ask_qty;
     FlowPlan *flplan = data->state->q_flowplan;
     for (list<const Flow*>::const_iterator i = thealternates.begin();
-      i != thealternates.end();)
+        i != thealternates.end();)
     {
       const Flow *curflow = *i;
       data->state->q_flowplan = flplan; // because q_flowplan can change
@@ -94,13 +94,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
           // Return value is false, alternate rejected
           if (data->getSolver()->getLogLevel()>1)
             logger << indent(curflow->getOperation()->getLevel())
-              << "   User exit disallows consumption from '"
-              << (*i)->getBuffer()->getName() << "'" << endl;
+                << "   User exit disallows consumption from '"
+                << (*i)->getBuffer()->getName() << "'" << endl;
           // Move to the next alternate
           if (++i != thealternates.end() && data->getSolver()->getLogLevel()>1)
             logger << indent(curflow->getOperation()->getLevel()) << "   Alternate flow switches from '"
-                  << curflow->getBuffer()->getName() << "' to '"
-                  << (*i)->getBuffer()->getName() << "'" << endl;
+                << curflow->getBuffer()->getName() << "' to '"
+                << (*i)->getBuffer()->getName() << "'" << endl;
           continue;
         }
       }
@@ -152,8 +152,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
         min_next_date = data->state->a_date;
       if (++i != thealternates.end() && data->getSolver()->getLogLevel()>1)
         logger << indent(curflow->getOperation()->getLevel()) << "   Alternate flow switches from '"
-              << curflow->getBuffer()->getName() << "' to '"
-              << (*i)->getBuffer()->getName() << "'" << endl;
+            << curflow->getBuffer()->getName() << "' to '"
+            << (*i)->getBuffer()->getName() << "'" << endl;
     }
 
     // 5) No reply found, all alternates are infeasible
@@ -167,8 +167,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
       // Message
       if (data->getSolver()->getLogLevel()>1)
         logger << indent(fl->getOperation()->getLevel())
-          << "   Alternate flow plans unconstrained on alternate '"
-          << firstAlternate->getBuffer()->getName() << "'" << endl;
+            << "   Alternate flow plans unconstrained on alternate '"
+            << firstAlternate->getBuffer()->getName() << "'" << endl;
       // Plan unconstrained
       data->constrainedPlanning = false;
       data->state->q_flowplan = flplan; // because q_flowplan can change
@@ -187,8 +187,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
       data->state->a_qty = 0;
       if (data->getSolver()->getLogLevel()>1)
         logger << indent(fl->getOperation()->getLevel()) <<
-          "   Alternate flow doesn't find supply on any alternate : "
-          << data->state->a_qty << "  " << data->state->a_date << endl;
+            "   Alternate flow doesn't find supply on any alternate : "
+            << data->state->a_qty << "  " << data->state->a_date << endl;
     }
   }
   else
@@ -205,11 +205,11 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
         // The reply date must be less than the effectivity end date: after
         // that date the flow in question won't consume any material any more.
         if (data->getSolver()->getLogLevel()>1
-          && data->state->a_qty < ROUNDING_ERROR)
+            && data->state->a_qty < ROUNDING_ERROR)
           logger << indent(fl->getBuffer()->getLevel()) << "  Buffer '"
-            << fl->getBuffer()->getName() << "' answer date is adjusted to "
-            << fl->getEffective().getEnd()
-            << " because of a date effective flow" << endl;
+              << fl->getBuffer()->getName() << "' answer date is adjusted to "
+              << fl->getEffective().getEnd()
+              << " because of a date effective flow" << endl;
         data->state->a_date = fl->getEffective().getEnd();
       }
     }

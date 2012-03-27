@@ -60,9 +60,9 @@ template <class type> class TimeLine
     /** @brief Base class for nodes in the timeline. */
     class Event : public NonCopyable
     {
-      friend class TimeLine<type>;
-      friend class const_iterator;
-      friend class iterator;
+        friend class TimeLine<type>;
+        friend class const_iterator;
+        friend class iterator;
       protected:
         Date dt;
         double oh;
@@ -141,7 +141,7 @@ template <class type> class TimeLine
     /** @brief A timeline event representing a change of the current value. */
     class EventChangeOnhand : public Event
     {
-      friend class TimeLine<type>;
+        friend class TimeLine<type>;
       private:
         double quantity;
       public:
@@ -153,15 +153,15 @@ template <class type> class TimeLine
     /** @brief A timeline event representing a change of the minimum target. */
     class EventMinQuantity : public Event
     {
-      friend class TimeLine<type>;
-      friend class Event;
+        friend class TimeLine<type>;
+        friend class Event;
       private:
         double newMin;
       protected:
         EventMinQuantity *prevMin;
       public:
         EventMinQuantity(Date d, double f=0.0) : newMin(f), prevMin(NULL)
-          {this->dt = d;}
+        {this->dt = d;}
         void setMin(double f) {newMin = f;}
         virtual double getMin(bool inclusive = true) const
         {
@@ -174,15 +174,15 @@ template <class type> class TimeLine
     /** @brief A timeline event representing a change of the maximum target. */
     class EventMaxQuantity : public Event
     {
-      friend class Event;
-      friend class TimeLine<type>;
+        friend class Event;
+        friend class TimeLine<type>;
       private:
         double newMax;
       protected:
         EventMaxQuantity *prevMax;
       public:
         EventMaxQuantity(Date d, double f=0.0) : newMax(f), prevMax(NULL)
-          {this->dt = d;}
+        {this->dt = d;}
         void setMax(double f) {newMax = f;}
         virtual double getMax(bool inclusive = true) const
         {
@@ -211,10 +211,10 @@ template <class type> class TimeLine
         const Event* operator->() const {return cur;}
         const_iterator& operator++() {cur = cur->next; return *this;}
         const_iterator operator++(int)
-          {const_iterator tmp = *this; ++*this; return tmp;}
+        {const_iterator tmp = *this; ++*this; return tmp;}
         const_iterator& operator--() {cur = cur->prev; return *this;}
         const_iterator operator--(int)
-          {const_iterator tmp = *this; --*this; return tmp;}
+        {const_iterator tmp = *this; --*this; return tmp;}
         bool operator==(const const_iterator& x) const {return cur == x.cur;}
         bool operator!=(const const_iterator& x) const {return cur != x.cur;}
     };
@@ -270,8 +270,8 @@ template <class type> class TimeLine
       logger << "Inspecting  " << this << ": \"" << name << "\":" << endl;
       for (const_iterator oo=begin(); oo!=end(); ++oo)
         logger << "  " << oo->getDate() << "   "
-        << oo->getQuantity() << "    " << oo->getOnhand()
-        << "    " << oo->getCumulativeProduced() <<  &*oo << endl;
+            << oo->getQuantity() << "    " << oo->getOnhand()
+            << "    " << oo->getCumulativeProduced() <<  &*oo << endl;
     }
 
     /** This functions returns the mimimum valid at a certain date. */

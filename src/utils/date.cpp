@@ -244,7 +244,7 @@ DECLARE_EXPORT void Date::parse (const char* s, const string& fmt)
 
 
 DECLARE_EXPORT Date::Date
-  (int year, int month, int day, int hr, int min, int sec)
+(int year, int month, int day, int hr, int min, int sec)
 {
   struct tm p;
   p.tm_isdst = -1;
@@ -289,33 +289,44 @@ DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm 
 
   // The "length" fields in this structure MUST match the values in the strings.
   static struct dtconv En_US =
+  {
     {
-      { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-      },
-      {   3,     3,     3,     3,     3,     3,
-          3,     3,     3,     3,     3,     3},
-      { "January", "February", "March", "April", "May", "June", "July", "August",
-        "September", "October", "November", "December" },
-      {     8,         8,         5,       5,      3,     4,       4,      6,
-          9,          7,          8,          8},
-      { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" },
-      {   3,     3,     3,     3,     3,     3,     3},
-      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
-        "Saturday" },
-      {   6,        6,         7,          9,           8,        6,
-          8},
-      "%H:%M:%S",
-      "%m/%d/%y",
-      "%a %b %e %T %Z %Y",
-      "AM",
-      2,
-      "PM",
-      2,
-      "%A, %B, %e, %Y",
-      7,
-      12
-    };
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    },
+    {
+      3,     3,     3,     3,     3,     3,
+      3,     3,     3,     3,     3,     3
+    },
+    {
+      "January", "February", "March", "April", "May", "June", "July", "August",
+      "September", "October", "November", "December"
+    },
+    {
+      8,         8,         5,       5,      3,     4,       4,      6,
+      9,          7,          8,          8
+    },
+    { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" },
+    {   3,     3,     3,     3,     3,     3,     3},
+    {
+      "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+      "Saturday"
+    },
+    {
+      6,        6,         7,          9,           8,        6,
+      8
+    },
+    "%H:%M:%S",
+    "%m/%d/%y",
+    "%a %b %e %T %Z %Y",
+    "AM",
+    2,
+    "PM",
+    2,
+    "%A, %B, %e, %Y",
+    7,
+    12
+  };
 
   char c, *ptr;
   short i, len = 0;

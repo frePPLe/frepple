@@ -147,7 +147,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_search;
     static DECLARE_EXPORT const Keyword tag_setup;
     static DECLARE_EXPORT const Keyword tag_setupmatrices;
-    static DECLARE_EXPORT const Keyword tag_setupmatrix;  
+    static DECLARE_EXPORT const Keyword tag_setupmatrix;
     static DECLARE_EXPORT const Keyword tag_size_maximum;
     static DECLARE_EXPORT const Keyword tag_size_minimum;
     static DECLARE_EXPORT const Keyword tag_size_multiple;

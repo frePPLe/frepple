@@ -42,8 +42,8 @@ namespace frepple
 template<class Buffer> DECLARE_EXPORT Tree utils::HasName<Buffer>::st;
 DECLARE_EXPORT const MetaCategory* Buffer::metadata;
 DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
-  *BufferInfinite::metadata,
-  *BufferProcure::metadata;
+               *BufferInfinite::metadata,
+               *BufferProcure::metadata;
 DECLARE_EXPORT const double Buffer::default_max = 1e37;
 
 
@@ -129,7 +129,7 @@ DECLARE_EXPORT void Buffer::setOnHand(double f)
   {
     // No operationplan exists yet
     OperationPlan *opplan = o->createOperationPlan(
-      fabs(f), Date::infinitePast, Date::infinitePast);
+        fabs(f), Date::infinitePast, Date::infinitePast);
     opplan->setLocked(true);
     // Note that we use the max counter for the onhand operationplans.
     opplan->activate(false);
@@ -282,7 +282,7 @@ DECLARE_EXPORT void Buffer::beginElement(XMLInput& pIn, const Attribute& pAttr)
   else if (pAttr.isA(Tags::tag_item))
     pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_minimum_calendar)
-    || pAttr.isA(Tags::tag_maximum_calendar))
+      || pAttr.isA(Tags::tag_maximum_calendar))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_location))
     pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
@@ -529,7 +529,7 @@ DECLARE_EXPORT Buffer::~Buffer()
 
 
 DECLARE_EXPORT void Buffer::followPegging
-  (PeggingIterator& iter, FlowPlan* curflowplan, short nextlevel, double curqty, double curfactor)
+(PeggingIterator& iter, FlowPlan* curflowplan, short nextlevel, double curqty, double curfactor)
 {
 
   double peggedQty(0);
@@ -563,9 +563,9 @@ DECLARE_EXPORT void Buffer::followPegging
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
           iter.updateStack(nextlevel,
-            -curqty*newqty/curflowplan->getQuantity(),
-            curfactor*newqty/f->getQuantity(),
-            curflowplan, x);
+              -curqty*newqty/curflowplan->getQuantity(),
+              curfactor*newqty/f->getQuantity(),
+              curflowplan, x);
         }
         ++f;
       }
@@ -636,9 +636,9 @@ DECLARE_EXPORT void Buffer::followPegging
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
           iter.updateStack(nextlevel,
-            curqty*newqty/curflowplan->getQuantity(),
-            -curfactor*newqty/f->getQuantity(),
-            x, curflowplan);
+              curqty*newqty/curflowplan->getQuantity(),
+              -curfactor*newqty/f->getQuantity(),
+              x, curflowplan);
         }
         ++f;
       }
@@ -661,9 +661,9 @@ DECLARE_EXPORT void Buffer::followPegging
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
           iter.updateStack(nextlevel,
-            curqty*newqty/curflowplan->getQuantity(),
-            -curfactor*newqty/f->getQuantity(),
-            x, curflowplan);
+              curqty*newqty/curflowplan->getQuantity(),
+              -curfactor*newqty/f->getQuantity(),
+              x, curflowplan);
         }
         --f;
       }
@@ -672,10 +672,10 @@ DECLARE_EXPORT void Buffer::followPegging
       // Unpegged material (i.e. material that is produced but never consumed)
       // is handled with a special entry on the stack.
       iter.updateStack(nextlevel,
-        curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(),
-        curfactor,
-        NULL, curflowplan,
-        false);
+          curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(),
+          curfactor,
+          NULL, curflowplan,
+          false);
     return;
   }
 }
@@ -688,7 +688,7 @@ DECLARE_EXPORT void BufferInfinite::writeElement
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 
@@ -732,7 +732,7 @@ DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const Keyword &tag
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 
@@ -821,7 +821,7 @@ DECLARE_EXPORT PyObject* Buffer::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_cluster))
     return PythonObject(getCluster());
   if (attr.isA(Tags::tag_members))
-	return new BufferIterator(this);
+    return new BufferIterator(this);
   return NULL;
 }
 

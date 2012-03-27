@@ -47,8 +47,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   if (loglevel>0)
   {
     logger << "Planning demand '" << l->getName() << "' (" << l->getPriority()
-    << ", " << l->getDue() << ", " << l->getQuantity() << ")";
-    if (!data->constrainedPlanning || !data->getSolver()->isConstrained()) 
+        << ", " << l->getDue() << ", " << l->getQuantity() << ")";
+    if (!data->constrainedPlanning || !data->getSolver()->isConstrained())
       logger << " in unconstrained mode";
     logger << endl;
   }
@@ -82,17 +82,17 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   if (!deliveryoper)
   {
     // Create a problem
-    new ProblemInvalidData(const_cast<Demand*>(l), problemtext, "demand", 
-      l->getDue(), l->getDue(), l->getQuantity());
+    new ProblemInvalidData(const_cast<Demand*>(l), problemtext, "demand",
+        l->getDue(), l->getDue(), l->getQuantity());
     // Abort planning of this demand
     throw DataException("Demand '" + l->getName() + "' can't be planned");
   }
   else
   {
     // Remove problem that may already exist
-    for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(l), false); 
-      j!=Problem::end(); ++j)
-      if (&(j->getType()) == ProblemInvalidData::metadata 
+    for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(l), false);
+        j!=Problem::end(); ++j)
+      if (&(j->getType()) == ProblemInvalidData::metadata
           && j->getDescription() == problemtext)
       {
         delete &*j;
@@ -106,7 +106,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     // Message
     if (loglevel>0)
       logger << "Demand '" << l << "' asks: "
-      << plan_qty << "  " << plan_date << endl;
+          << plan_qty << "  " << plan_date << endl;
 
     // Store the last command in the list, in order to undo the following
     // commands if required.
@@ -123,10 +123,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     Date next_date = data->state->a_date;
 
     if (data->state->a_qty < ROUNDING_ERROR
-      && plan_qty > l->getMinShipment() && l->getMinShipment() > 0)
+        && plan_qty > l->getMinShipment() && l->getMinShipment() > 0)
     {
       bool originalLogConstraints = data->logConstraints;
-	    data->logConstraints = false;
+      data->logConstraints = false;
       try
       {
         // The full asked quantity is not possible.
@@ -196,8 +196,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     // Message
     if (loglevel>0)
       logger << "Demand '" << l << "' gets answer: "
-      << data->state->a_qty << "  " << next_date << "  "
-      << data->state->a_cost << "  " << data->state->a_penalty << endl;
+          << data->state->a_qty << "  " << next_date << "  "
+          << data->state->a_cost << "  " << data->state->a_penalty << endl;
 
     // Update the date to plan in the next loop
     Date copy_plan_date = plan_date;
@@ -209,13 +209,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     // 3) The remaining quantity after accepting this answer is less than
     //    the minimum quantity.
     if (data->state->a_qty < ROUNDING_ERROR
-      || data->state->a_qty + ROUNDING_ERROR < l->getMinShipment()
-      || (q_qty - data->state->a_qty < l->getMinShipment()
-          && q_qty - data->state->a_qty > ROUNDING_ERROR))
+        || data->state->a_qty + ROUNDING_ERROR < l->getMinShipment()
+        || (q_qty - data->state->a_qty < l->getMinShipment()
+            && q_qty - data->state->a_qty > ROUNDING_ERROR))
     {
       if (q_qty - data->state->a_qty < l->getMinShipment()
-        && data->state->a_qty + ROUNDING_ERROR >= l->getMinShipment()
-        && data->state->a_qty > best_a_qty )
+          && data->state->a_qty + ROUNDING_ERROR >= l->getMinShipment()
+          && data->state->a_qty > best_a_qty )
       {
         // The remaining quantity after accepting this answer is less than
         // the minimum quantity. Therefore, we delay accepting it now, but
@@ -253,14 +253,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
         data->rollback(topcommand);
 
         // Create the correct operationplans
-        if (loglevel>=2) 
+        if (loglevel>=2)
           logger << "Demand '" << l << "' plans coordination." << endl;
         data->getSolver()->setLogLevel(0);
         double tmpresult = data->state->a_qty;
         try
         {
           for(double remainder = data->state->a_qty;
-            remainder > ROUNDING_ERROR; remainder -= data->state->a_qty)
+              remainder > ROUNDING_ERROR; remainder -= data->state->a_qty)
           {
             data->state->q_qty = remainder;
             data->state->q_date = copy_plan_date;
@@ -300,10 +300,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   // Repeat while there is still a quantity left to plan and we aren't
   // exceeding the maximum delivery delay.
   while (plan_qty > ROUNDING_ERROR
-    && ((data->getSolver()->getPlanType() != 2 && plan_date < l->getDue() + l->getMaxLateness()) 
-        || (data->getSolver()->getPlanType() == 2 && !data->constrainedPlanning && plan_date < l->getDue() + l->getMaxLateness()) 
-        || (data->getSolver()->getPlanType() == 2 && data->constrainedPlanning && plan_date == l->getDue())
-    ));
+      && ((data->getSolver()->getPlanType() != 2 && plan_date < l->getDue() + l->getMaxLateness())
+          || (data->getSolver()->getPlanType() == 2 && !data->constrainedPlanning && plan_date < l->getDue() + l->getMaxLateness())
+          || (data->getSolver()->getPlanType() == 2 && data->constrainedPlanning && plan_date == l->getDue())
+         ));
 
   // Accept the best possible answer.
   // We may have skipped it in the previous loop, awaiting a still better answer
@@ -314,7 +314,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     try
     {
       for(double remainder = best_q_qty;
-        remainder > ROUNDING_ERROR; remainder -= data->state->a_qty)
+          remainder > ROUNDING_ERROR; remainder -= data->state->a_qty)
       {
         data->state->q_qty = remainder;
         data->state->q_date = best_q_date;
@@ -357,7 +357,7 @@ DECLARE_EXPORT void SolverMRP::scanExcess(CommandList* l)
   {
     CommandCreateOperationPlan* createcmd = dynamic_cast<CommandCreateOperationPlan*>(&*cmd);
     if (!createcmd)
-    {           
+    {
       // If the command is a list: recursively call this function
       if (dynamic_cast<CommandList*>(&*cmd))
         scanExcess(dynamic_cast<CommandList*>(&*cmd));
@@ -369,10 +369,10 @@ DECLARE_EXPORT void SolverMRP::scanExcess(CommandList* l)
       if (createcmd->getOperationPlan() && createcmd->getOperationPlan()->isExcess())
       {
         if (getLogLevel())
-          logger << "Denying creation of redundant operationplan " 
-            << createcmd->getOperationPlan()->getOperation() << "  " 
-            << createcmd->getOperationPlan()->getDates() << "  " 
-            << createcmd->getOperationPlan()->getQuantity() << endl;
+          logger << "Denying creation of redundant operationplan "
+              << createcmd->getOperationPlan()->getOperation() << "  "
+              << createcmd->getOperationPlan()->getDates() << "  "
+              << createcmd->getOperationPlan()->getQuantity() << endl;
         createcmd->rollback();
       }
     }

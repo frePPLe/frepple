@@ -58,7 +58,7 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
 void OperationTransport::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(tag_frombuffer) || pAttr.isA(tag_tobuffer))
-      pIn.readto( Buffer::metadata->readFunction(Buffer::metadata,pIn.getAttributes()) );
+    pIn.readto( Buffer::metadata->readFunction(Buffer::metadata,pIn.getAttributes()) );
   else
     OperationFixedTime::beginElement(pIn, pAttr);
 }

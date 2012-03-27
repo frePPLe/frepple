@@ -32,10 +32,10 @@
 // These headers are required for the loading of dynamic libraries and the
 // detection of the number of cores.
 #ifdef WIN32
-  #include <windows.h>
+#include <windows.h>
 #else
-  #include <dlfcn.h>
-  #include <unistd.h>
+#include <dlfcn.h>
+#include <unistd.h>
 #endif
 
 
@@ -80,7 +80,7 @@ void LibraryUtils::initialize(int argc, char *argv[])
   if (init)
   {
     logger << "Warning: Calling frepple::LibraryUtils::initialize() more "
-    << "than once." << endl;
+        << "than once." << endl;
     return;
   }
   init = true;
@@ -94,9 +94,9 @@ void LibraryUtils::initialize(int argc, char *argv[])
   // represented.
   // On Windows, the default is the system-default ANSI code page. The number
   // of characters that frePPLe supports on Windows is constrained by this...
-  #if defined(HAVE_SETLOCALE) || defined(_MSC_VER)
+#if defined(HAVE_SETLOCALE) || defined(_MSC_VER)
   setlocale(LC_ALL, "" );
-  #endif
+#endif
 
   // Initialize Xerces parser
   xercesc::XMLPlatformUtils::Initialize();
@@ -168,7 +168,7 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 
 
 DECLARE_EXPORT int Environment::getProcessorCores()
-{ 
+{
   // Previously detected already
   if (processorcores >= 1) return processorcores;
 
@@ -178,15 +178,15 @@ DECLARE_EXPORT int Environment::getProcessorCores()
   SYSTEM_INFO sysinfo;
   GetSystemInfo(&sysinfo);
   processorcores = sysinfo.dwNumberOfProcessors;
-#else     
+#else
   // Linux, Solaris and AIX.
   // Tough luck for other platforms.
   processorcores = sysconf(_SC_NPROCESSORS_ONLN);
-#endif 
+#endif
   // Detection failed...
   if (processorcores<1) processorcores = 1;
   return processorcores;
-} 
+}
 
 
 DECLARE_EXPORT void Environment::setLogFile(const string& x)
@@ -227,7 +227,7 @@ DECLARE_EXPORT void Environment::setLogFile(const string& x)
 
   // Print a nice header
   logger << "Start logging frePPLe " << PACKAGE_VERSION << " ("
-    << __DATE__ << ") at " << Date::now() << endl;
+      << __DATE__ << ") at " << Date::now() << endl;
 }
 
 
@@ -293,11 +293,11 @@ DECLARE_EXPORT void Environment::loadModule(string lib, ParameterList& parameter
   const char *err = dlerror();  // Pick up the error string
   if (err)
   {
-     // Search the normal path for the library
-     dlerror(); // Clear the previous error
-     handle = dlopen(lib.c_str(), RTLD_NOW | RTLD_GLOBAL);
-     err = dlerror();  // Pick up the error string
-     if (err) throw RuntimeException(err);
+    // Search the normal path for the library
+    dlerror(); // Clear the previous error
+    handle = dlopen(lib.c_str(), RTLD_NOW | RTLD_GLOBAL);
+    err = dlerror();  // Pick up the error string
+    if (err) throw RuntimeException(err);
   }
 
   // Find the initialization routine
@@ -316,7 +316,7 @@ DECLARE_EXPORT void Environment::loadModule(string lib, ParameterList& parameter
 
 
 DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b,
-  bool def, creatorDefault f)
+    bool def, creatorDefault f)
 {
   // Find or create the category
   MetaCategory* cat
@@ -344,7 +344,7 @@ DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b,
 
 
 DECLARE_EXPORT MetaCategory::MetaCategory (const string& a, const string& gr,
-  readController f, writeController w)
+    readController f, writeController w)
 {
   // Update registry
   if (!a.empty()) categoriesByTag[Keyword::hash(a)] = this;

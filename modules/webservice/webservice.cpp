@@ -57,17 +57,18 @@ SOAP_FMAC5 int SOAP_FMAC6 frepple__demand(struct soap* soap, char *name, struct 
 /** Implementation of the webservice method to post XML data. */
 SOAP_FMAC5 int SOAP_FMAC6 frepple__post(struct soap* soap, char *data, struct frepple__PostResponse &result)
 {
-  try {
+  try
+  {
     CommandReadXMLString(data, true, false).commit();
   }
   catch (const DataException& e)
-    {return soap_sender_fault(soap, "Data Exception", e.what());}
+  {return soap_sender_fault(soap, "Data Exception", e.what());}
   catch (const LogicException& e)
-    {return soap_sender_fault(soap, "Logic Exception", e.what());}
+  {return soap_sender_fault(soap, "Logic Exception", e.what());}
   catch (const RuntimeException& e)
-    {return soap_sender_fault(soap, "Runtime Exception", e.what());}
+  {return soap_sender_fault(soap, "Runtime Exception", e.what());}
   catch (...)
-    {return soap_sender_fault(soap, "Exception", "Unidentified");}
+  {return soap_sender_fault(soap, "Exception", "Unidentified");}
   result._return = 11;
   return SOAP_OK;
 }

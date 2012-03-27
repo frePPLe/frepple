@@ -37,10 +37,10 @@ int Load::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory
-    ("load", "loads", MetaCategory::ControllerDefault, writer);
+  ("load", "loads", MetaCategory::ControllerDefault, writer);
   const_cast<MetaCategory*>(metadata)->registerClass(
     "load","load",true,Object::createDefault<Load>
-    );
+  );
 
   // Initialize the Python class
   PythonType& x = FreppleCategory<Load>::getType();
@@ -95,11 +95,11 @@ DECLARE_EXPORT void Load::validate(Action action)
   // Check if a load with 1) identical resource, 2) identical operation and
   // 3) overlapping effectivity dates already exists
   Operation::loadlist::const_iterator i = oper->getLoads().begin();
-  for (;i != oper->getLoads().end(); ++i)
+  for (; i != oper->getLoads().end(); ++i)
     if (i->getResource() == res
-      && i->getEffective().overlap(getEffective())
-      && &*i != this)
-        break;
+        && i->getEffective().overlap(getEffective())
+        && &*i != this)
+      break;
 
   // Apply the appropriate action
   switch (action)
@@ -150,7 +150,7 @@ DECLARE_EXPORT Load::~Load()
   if (getOperation() && getResource())
   {
     // Loop over operationplans
-	  for(OperationPlan::iterator i(getOperation()); i != OperationPlan::end(); ++i)
+    for(OperationPlan::iterator i(getOperation()); i != OperationPlan::end(); ++i)
       // Loop over loadplans
       for(OperationPlan::LoadPlanIterator j = i->beginLoadPlans(); j != i->endLoadPlans(); )
         if (j->getLoad() == this) j.deleteLoadPlan();
@@ -171,7 +171,7 @@ DECLARE_EXPORT Load::~Load()
     int minprio = INT_MAX;
     Load* newLeader = NULL;
     for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
-      i != getOperation()->loaddata.end(); ++i)
+        i != getOperation()->loaddata.end(); ++i)
       if (i->altLoad == this)
       {
         cnt++;
@@ -192,7 +192,7 @@ DECLARE_EXPORT Load::~Load()
       newLeader->hasAlts = true;
       newLeader->altLoad = NULL;
       for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
-        i != getOperation()->loaddata.end(); ++i)
+          i != getOperation()->loaddata.end(); ++i)
         if (i->altLoad == this) i->altLoad = newLeader;
     }
   }
@@ -203,7 +203,7 @@ DECLARE_EXPORT Load::~Load()
     // load needs to be set back to false
     bool only_one = true;
     for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
-      i != getOperation()->loaddata.end(); ++i)
+        i != getOperation()->loaddata.end(); ++i)
       if (i->altLoad == altLoad)
       {
         only_one = false;
@@ -247,10 +247,10 @@ DECLARE_EXPORT void Load::setSetup(const string n)
     // Guarantuee that only a single load has a setup.
     // Alternates of that load can have a setup as well.
     for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
-      i != getOperation()->loaddata.end(); ++i)
+        i != getOperation()->loaddata.end(); ++i)
       if (&*i != this && !i->setup.empty()
-        && i->getAlternate() != this && getAlternate() != &*i
-        && i->getAlternate() != getAlternate())
+          && i->getAlternate() != this && getAlternate() != &*i
+          && i->getAlternate() != getAlternate())
         throw DataException("Only a single load of an operation can specify a setup");
   }
 }
@@ -350,13 +350,15 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
   else if (pIn.isObjectEnd())
   {
     // The load data is now all read in. See if it makes sense now...
-    try {
+    try
+    {
       validate(!pIn.getUserArea() ?
-             ADD_CHANGE :
-             *static_cast<Action*>(pIn.getUserArea())
-             );
+          ADD_CHANGE :
+          *static_cast<Action*>(pIn.getUserArea())
+              );
     }
-    catch (...) {
+    catch (...)
+    {
       delete this;
       throw;
     }
@@ -488,7 +490,7 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
       static_cast<Operation*>(oper),
       static_cast<Resource*>(res),
       q2, eff
-      );
+    );
 
     // Return the object
     Py_INCREF(l);

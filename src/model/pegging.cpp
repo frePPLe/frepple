@@ -56,7 +56,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
   // Loop through all delivery operationplans
   first = false;  // ... because the stack is still empty
   for (Demand::OperationPlan_list::const_iterator opplaniter = d->getDelivery().begin();
-    opplaniter != d->getDelivery().end(); ++opplaniter)
+      opplaniter != d->getDelivery().end(); ++opplaniter)
     followPegging(*opplaniter, 0, (*opplaniter)->getQuantity(), 1.0);
 
   // Initialize Python type information
@@ -65,7 +65,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
 
 
 DECLARE_EXPORT void PeggingIterator::updateStack
-  (short l, double q, double f, const FlowPlan* fc, const FlowPlan* fp, bool p)
+(short l, double q, double f, const FlowPlan* fc, const FlowPlan* fp, bool p)
 {
   // Avoid very small pegging quantities
   if (q < 0.1) return;
@@ -110,7 +110,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
   // Take the consuming flowplan and follow the pegging
   if (st.cons_flowplan)
     followPegging(st.cons_flowplan->getOperationPlan()->getTopOwner(),
-      st.level-1, st.qty, st.factor);
+        st.level-1, st.qty, st.factor);
 
   // Pop invalid entries from the stack
   if (first) states.pop();
@@ -141,7 +141,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
   // Take the producing flowplan and follow the pegging
   if (st.prod_flowplan)
     followPegging(st.prod_flowplan->getOperationPlan()->getTopOwner(),
-      st.level+1, st.qty, st.factor);
+        st.level+1, st.qty, st.factor);
 
   // Pop invalid entries from the stack
   if (first) states.pop();
@@ -151,7 +151,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 
 
 DECLARE_EXPORT void PeggingIterator::followPegging
-  (const OperationPlan* op, short nextlevel, double qty, double factor)
+(const OperationPlan* op, short nextlevel, double qty, double factor)
 {
   // For each flowplan (producing or consuming depending on whether we go
   // upstream or downstream) ask the buffer to give us the pegged flowplans.
@@ -222,7 +222,7 @@ DECLARE_EXPORT PyObject* PeggingIterator::getattro(const Attribute& attr)
     return PythonObject(getConsumingDate());
   if (attr.isA(Tags::tag_producing_date))
     return PythonObject(getProducingDate());
-	return NULL;
+  return NULL;
 }
 
 

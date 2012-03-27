@@ -98,7 +98,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
 
 #ifdef CLUSTERDEBUG
       logger << "Investigating operation '" << &*g
-      << "' - current cluster " << g->cluster << endl;
+          << "' - current cluster " << g->cluster << endl;
 #endif
 
       // Select a new cluster number
@@ -112,9 +112,9 @@ DECLARE_EXPORT void HasLevel::computeLevels()
 
         // Detect hanging operations
         if (g->getFlows().empty() && g->getLoads().empty()
-          && g->getSuperOperations().empty()
-          && g->getSubOperations().empty()
-          )
+            && g->getSuperOperations().empty()
+            && g->getSubOperations().empty()
+           )
         {
           ++numberOfHangingClusters;
           g->lvl = 0;
@@ -170,7 +170,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
 
 #ifdef CLUSTERDEBUG
         logger << "    Recursing in Operation '" << *(cur_oper)
-        << "' - current level " << cur_level << endl;
+            << "' - current level " << cur_level << endl;
 #endif
         // Detect loops in the supply chain
         map<Operation*,short>::iterator detectloop = visited.find(cur_oper);
@@ -227,7 +227,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
 
         // Update level of resources linked to current operation
         for (Operation::loadlist::const_iterator gres =
-              cur_oper->getLoads().begin();
+            cur_oper->getLoads().begin();
             gres != cur_oper->getLoads().end(); ++gres)
         {
           Resource *resptr = gres->getResource();
@@ -239,7 +239,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
             resptr->cluster = cur_cluster;
             // Find more operations connected to this cluster by the resource
             for (Resource::loadlist::const_iterator resops =
-                  resptr->getLoads().begin();
+                resptr->getLoads().begin();
                 resops != resptr->getLoads().end(); ++resops)
               if (!resops->getOperation()->cluster)
               {

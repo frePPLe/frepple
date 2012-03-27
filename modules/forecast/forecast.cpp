@@ -42,16 +42,16 @@ int Forecast::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("demand", "demand_forecast",
-    Object::createString<Forecast>);
+      Object::createString<Forecast>);
 
   // Get notified when a calendar is deleted
   FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
 
   // Initialize the Python class
   FreppleClass<Forecast,Demand>::getType().addMethod("setQuantity", Forecast::setPythonTotalQuantity, METH_VARARGS,
-     "Update the total quantity in one or more buckets");
+      "Update the total quantity in one or more buckets");
   FreppleClass<Forecast,Demand>::getType().addMethod("timeseries", Forecast::timeseries, METH_VARARGS,
-     "Set the future based on the timeseries of historical data");
+      "Set the future based on the timeseries of historical data");
   return FreppleClass<Forecast,Demand>::initialize();
 }
 
@@ -84,7 +84,7 @@ bool Forecast::callback(Calendar* l, const Signal a)
   // If that calendar is being used for a forecast we reset the calendar
   // pointer to null.
   for (MapOfForecasts::iterator x = ForecastDictionary.begin();
-    x != ForecastDictionary.end(); ++x)
+      x != ForecastDictionary.end(); ++x)
     if (x->second->calptr == l)
       // Calendar in use for this forecast
       x->second->calptr = NULL;
@@ -96,8 +96,8 @@ Forecast::~Forecast()
 {
   // Update the dictionary
   for (MapOfForecasts::iterator x=
-    ForecastDictionary.lower_bound(make_pair(&*getItem(),&*getCustomer()));
-    x != ForecastDictionary.end(); ++x)
+      ForecastDictionary.lower_bound(make_pair(&*getItem(),&*getCustomer()));
+      x != ForecastDictionary.end(); ++x)
     if (x->second == this)
     {
       ForecastDictionary.erase(x);
@@ -131,7 +131,7 @@ void Forecast::instantiate()
       if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValue > 0.0)
       {
         prev = new ForecastBucket
-          (this, prevDate, i.getDate(), prevValue, prev);
+        (this, prevDate, i.getDate(), prevValue, prev);
         Demand::add(prev);
       }
       if (i.getDate() == Date::infiniteFuture) break;
@@ -148,7 +148,7 @@ void Forecast::instantiate()
         if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValue > 0)
         {
           prev = new ForecastBucket
-            (this, prevDate, i.getDate(), prevValue, prev);
+          (this, prevDate, i.getDate(), prevValue, prev);
           Demand::add(prev);
         }
         if (i.getDate() == Date::infiniteFuture) break;
@@ -166,9 +166,9 @@ void Forecast::instantiate()
           if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValueBool)
           {
             prev = new ForecastBucket
-                (this, prevDate, i.getDate(), 1.0, prev);
+            (this, prevDate, i.getDate(), 1.0, prev);
             Demand::add(prev);
-            }
+          }
           if (i.getDate() == Date::infiniteFuture) break;
           prevDate = i.getDate();
           prevValueBool = i.getValue();
@@ -232,7 +232,7 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
   // Expect to find at least one non-zero weight...
   if (!weights)
     throw DataException("No valid forecast date in range "
-      + string(d) + " of forecast '" + getName() +"'");
+        + string(d) + " of forecast '" + getName() +"'");
 
   // Update the forecast quantity, respecting the weights
   f /= weights;
@@ -366,7 +366,7 @@ void Forecast::endElement(XMLInput& pIn, const Attribute& pAttr, const DataEleme
     {
       if (d) d->second = pElement.getDouble();
       else pIn.setUserArea(
-        new pair<DateRange,double>(DateRange(),pElement.getDouble())
+          new pair<DateRange,double>(DateRange(),pElement.getDouble())
         );
     }
     else if (pAttr.isA(Tags::tag_start))
@@ -427,10 +427,10 @@ void Forecast::setItem(Item* i)
 
   // Update the dictionary
   for (MapOfForecasts::iterator x =
-    ForecastDictionary.lower_bound(make_pair(
-      &*getItem(),&*getCustomer()
-      ));
-    x != ForecastDictionary.end(); ++x)
+      ForecastDictionary.lower_bound(make_pair(
+          &*getItem(),&*getCustomer()
+          ));
+      x != ForecastDictionary.end(); ++x)
     if (x->second == this)
     {
       ForecastDictionary.erase(x);
@@ -454,10 +454,10 @@ void Forecast::setCustomer(Customer* i)
 
   // Update the dictionary
   for (MapOfForecasts::iterator x =
-    ForecastDictionary.lower_bound(make_pair(
-      getItem(), getCustomer()
-      ));
-    x != ForecastDictionary.end(); ++x)
+      ForecastDictionary.lower_bound(make_pair(
+          getItem(), getCustomer()
+          ));
+      x != ForecastDictionary.end(); ++x)
     if (x->second == this)
     {
       ForecastDictionary.erase(x);

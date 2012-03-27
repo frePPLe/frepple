@@ -78,7 +78,7 @@ DECLARE_EXPORT PyObject* Solver::getattro(const Attribute& attr)
     return PythonObject(getName());
   if (attr.isA(Tags::tag_loglevel))
     return PythonObject(getLogLevel());
-	return NULL;
+  return NULL;
 }
 
 

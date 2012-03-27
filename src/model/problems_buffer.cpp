@@ -50,7 +50,7 @@ DECLARE_EXPORT void Buffer::updateProblems()
   double curMin(0.0);
   double excessQty(0.0);
   for (flowplanlist::const_iterator iter = flowplans.begin();
-    iter != flowplans.end(); )
+      iter != flowplans.end(); )
   {
     // Process changes in the maximum or minimum targets
     if (iter->getType() == 4)
@@ -84,7 +84,7 @@ DECLARE_EXPORT void Buffer::updateProblems()
         // New problem now ends
         if (f->getDate() != shortageProblemStart)
           new ProblemMaterialShortage
-            (this, shortageProblemStart, f->getDate(), -shortageQty);
+          (this, shortageProblemStart, f->getDate(), -shortageQty);
         shortageProblem = false;
       }
     }
@@ -114,7 +114,7 @@ DECLARE_EXPORT void Buffer::updateProblems()
         // New problem now ends
         if (f->getDate() != excessProblemStart)
           new ProblemMaterialExcess
-            (this, excessProblemStart, f->getDate(), excessQty);
+          (this, excessProblemStart, f->getDate(), excessQty);
         excessProblem = false;
       }
     }
@@ -124,12 +124,12 @@ DECLARE_EXPORT void Buffer::updateProblems()
   // The excess lasts till the end of the horizon...
   if (excessProblem)
     new ProblemMaterialExcess
-      (this, excessProblemStart, Date::infiniteFuture, excessQty);
+    (this, excessProblemStart, Date::infiniteFuture, excessQty);
 
   // The shortage lasts till the end of the horizon...
   if (shortageProblem)
     new ProblemMaterialShortage
-      (this, shortageProblemStart, Date::infiniteFuture, -shortageQty);
+    (this, shortageProblemStart, Date::infiniteFuture, -shortageQty);
 }
 
 

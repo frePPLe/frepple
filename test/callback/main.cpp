@@ -67,7 +67,7 @@ class SignalSniffer
     static bool callback(Flow* l, const Signal a)
     {
       logger << "  Flow between '" << l->getBuffer() << "' and '"
-      << l->getOperation() << "' receives signal " << a << endl;
+          << l->getOperation() << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Demand* l, const Signal a)

@@ -110,7 +110,7 @@ DECLARE_EXPORT void CommandList::commit()
 DECLARE_EXPORT void CommandList::redo()
 {
   // Redo the commands
-  for (Command* c = firstCommand; c; c = c->next) 
+  for (Command* c = firstCommand; c; c = c->next)
     c->redo();
 }
 
@@ -120,7 +120,7 @@ DECLARE_EXPORT CommandList::~CommandList()
   if (firstCommand)
   {
     logger << "Warning: Deleting a command list with commands that have"
-      << " not been committed or rolled back" << endl;
+        << " not been committed or rolled back" << endl;
     rollback();
   }
 }
@@ -178,9 +178,9 @@ DECLARE_EXPORT void CommandManager::redoBookmark(CommandManager::Bookmark* b)
 
 DECLARE_EXPORT void CommandManager::rollback(CommandManager::Bookmark* b)
 {
-  if (!b) 
+  if (!b)
     throw LogicException("Can't rollback NULL bookmark");
-  if (b == &firstBookmark) 
+  if (b == &firstBookmark)
     throw LogicException("Can't rollback default bookmark");
 
   // Remove all later child bookmarks
@@ -195,13 +195,13 @@ DECLARE_EXPORT void CommandManager::rollback(CommandManager::Bookmark* b)
       if (i->nextBookmark)
         i->nextBookmark->prevBookmark = i->prevBookmark;
       else
-        lastBookmark = i->prevBookmark; 
+        lastBookmark = i->prevBookmark;
       i->rollback();
-      if (currentBookmark == i) 
+      if (currentBookmark == i)
         currentBookmark = b;
       Bookmark* tmp = i;
       i = i->prevBookmark;
-      delete tmp; 
+      delete tmp;
     }
     else
       // Bookmark has a different parent
@@ -291,7 +291,7 @@ DECLARE_EXPORT void ThreadGroup::execute()
       // Some threads could be created.
       // Let these threads run and do all the work.
       logger << "Warning: Could create only " << worker
-        << " threads, error " << errcode << endl;
+          << " threads, error " << errcode << endl;
     }
   }
 
@@ -316,12 +316,12 @@ DECLARE_EXPORT void ThreadGroup::execute()
   for (; worker<numthreads; ++worker)
   {
     threads[worker] =  reinterpret_cast<HANDLE>(
-      _beginthreadex(0,  // Security atrtributes
-      0,                 // Stack size
-      &wrapper,          // Thread function
-      this,              // Argument list
-      0,                 // Initial state is 0, "running"
-      &m_id[worker]));   // Address to receive the thread identifier
+        _beginthreadex(0,  // Security atrtributes
+            0,                 // Stack size
+            &wrapper,          // Thread function
+            this,              // Argument list
+            0,                 // Initial state is 0, "running"
+            &m_id[worker]));   // Address to receive the thread identifier
     if (!threads[worker])
     {
       if (!worker)
@@ -334,7 +334,7 @@ DECLARE_EXPORT void ThreadGroup::execute()
       // Some threads could be created.
       // Let these threads run and do all the work.
       logger << "Warning: Could create only " << worker
-        << " threads, error " << errno << endl;
+          << " threads, error " << errno << endl;
       break; // Step out of the thread creation loop
     }
   }
@@ -395,8 +395,8 @@ unsigned __stdcall ThreadGroup::wrapper(void *arg)
   if (threaded) PythonInterpreter::addThread();
 
   for (callableWithArgument nextfunc = l->selectNextCallable();
-       nextfunc.first;
-       nextfunc = l->selectNextCallable())
+      nextfunc.first;
+      nextfunc = l->selectNextCallable())
   {
 #if defined(HAVE_PTHREAD_H) && defined(MT)
     // Verify whether there has been a cancellation request in the meantime
@@ -425,7 +425,7 @@ unsigned __stdcall ThreadGroup::wrapper(void *arg)
 
 
 DECLARE_EXPORT PyObject* loadModule
-  (PyObject* self, PyObject* args, PyObject* kwds)
+(PyObject* self, PyObject* args, PyObject* kwds)
 {
 
   // Create the command
@@ -447,7 +447,8 @@ DECLARE_EXPORT PyObject* loadModule
   // This is important since the module may also need access to Python
   // during its initialization...
   Py_BEGIN_ALLOW_THREADS
-  try {
+  try
+  {
     // Load the library
     Environment::loadModule(data, params);
   }

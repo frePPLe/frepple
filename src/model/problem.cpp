@@ -35,51 +35,51 @@ DECLARE_EXPORT bool Plannable::anyChange = false;
 DECLARE_EXPORT bool Plannable::computationBusy = false;
 DECLARE_EXPORT const MetaCategory* Problem::metadata;
 DECLARE_EXPORT const MetaClass* ProblemMaterialExcess::metadata,
-  *ProblemMaterialShortage::metadata,
-  *ProblemExcess::metadata,
-  *ProblemShort::metadata,
-  *ProblemEarly::metadata,
-  *ProblemLate::metadata,
-  *ProblemInvalidData::metadata,
-  *ProblemDemandNotPlanned::metadata,
-  *ProblemPrecedence::metadata,
-  *ProblemBeforeFence::metadata,
-  *ProblemBeforeCurrent::metadata,
-  *ProblemCapacityUnderload::metadata,
-  *ProblemCapacityOverload::metadata;
+               *ProblemMaterialShortage::metadata,
+               *ProblemExcess::metadata,
+               *ProblemShort::metadata,
+               *ProblemEarly::metadata,
+               *ProblemLate::metadata,
+               *ProblemInvalidData::metadata,
+               *ProblemDemandNotPlanned::metadata,
+               *ProblemPrecedence::metadata,
+               *ProblemBeforeFence::metadata,
+               *ProblemBeforeCurrent::metadata,
+               *ProblemCapacityUnderload::metadata,
+               *ProblemCapacityOverload::metadata;
 
 
 int Problem::initialize()
 {
   // Initialize the problem metadata.
   Problem::metadata = new MetaCategory
-    ("problem", "problems", NULL, Problem::writer);
+  ("problem", "problems", NULL, Problem::writer);
   ProblemMaterialExcess::metadata = new MetaClass
-    ("problem","material excess");
+  ("problem","material excess");
   ProblemMaterialShortage::metadata = new MetaClass
-    ("problem","material shortage");
+  ("problem","material shortage");
   ProblemExcess::metadata = new MetaClass
-    ("problem","excess");
+  ("problem","excess");
   ProblemShort::metadata = new MetaClass
-    ("problem","short");
+  ("problem","short");
   ProblemEarly::metadata = new MetaClass
-    ("problem","early");
+  ("problem","early");
   ProblemLate::metadata = new MetaClass
-    ("problem","late");
+  ("problem","late");
   ProblemInvalidData::metadata = new MetaClass
-    ("problem","invalid data");
+  ("problem","invalid data");
   ProblemDemandNotPlanned::metadata = new MetaClass
-    ("problem","unplanned");
+  ("problem","unplanned");
   ProblemPrecedence::metadata = new MetaClass
-    ("problem","precedence");
+  ("problem","precedence");
   ProblemBeforeFence::metadata = new MetaClass
-    ("problem","before fence");
+  ("problem","before fence");
   ProblemBeforeCurrent::metadata = new MetaClass
-    ("problem","before current");
+  ("problem","before current");
   ProblemCapacityUnderload::metadata = new MetaClass
-    ("problem","underload");
+  ("problem","underload");
   ProblemCapacityOverload::metadata = new MetaClass
-    ("problem","overload");
+  ("problem","overload");
 
   // Initialize the Python type
   PythonType& x = PythonExtension<Problem>::getType();
@@ -376,13 +376,13 @@ DECLARE_EXPORT HasProblems::EntityIterator::~EntityIterator()
 {
   switch (type)
   {
-    // Buffer
+      // Buffer
     case 0: delete bufIter; return;
-    // Resource
+      // Resource
     case 1: delete resIter; return;
-    // Operation
+      // Operation
     case 2: delete operIter; return;
-    // Demand
+      // Demand
     case 3: delete demIter; return;
   }
 }
@@ -427,16 +427,16 @@ HasProblems::EntityIterator::operator != (const EntityIterator& t) const
   // Same iterator type, more granular comparison required
   switch (type)
   {
-    // Buffer
+      // Buffer
     case 0: return *bufIter != *(t.bufIter);
-    // Resource
+      // Resource
     case 1: return *resIter != *(t.resIter);
-    // Operationplan
+      // Operationplan
     case 2: return *operIter != *(t.operIter);
-    // Demand
+      // Demand
     case 3: return *demIter != *(t.demIter);
-    // Always return true for higher type numbers. This should happen only
-    // when comparing with the end of list element.
+      // Always return true for higher type numbers. This should happen only
+      // when comparing with the end of list element.
     default: return false;
   }
 }
@@ -446,13 +446,13 @@ DECLARE_EXPORT HasProblems& HasProblems::EntityIterator::operator*() const
 {
   switch (type)
   {
-    // Buffer
+      // Buffer
     case 0: return **bufIter;
-    // Resource
+      // Resource
     case 1: return **resIter;
-    // Operation
+      // Operation
     case 2: return **operIter;
-    // Demand
+      // Demand
     case 3: return **demIter;
     default: throw LogicException("Unreachable code reached");
   }
@@ -463,13 +463,13 @@ DECLARE_EXPORT HasProblems* HasProblems::EntityIterator::operator->() const
 {
   switch (type)
   {
-    // Buffer
+      // Buffer
     case 0: return &**bufIter;
-    // Resource
+      // Resource
     case 1: return &**resIter;
-    // Operationplan
+      // Operationplan
     case 2: return &**operIter;
-    // Demand
+      // Demand
     case 3: return &**demIter;
     default: throw LogicException("Unreachable code reached");
   }
@@ -581,7 +581,7 @@ DECLARE_EXPORT void Problem::List::clear(Problem *c)
 
 
 DECLARE_EXPORT Problem* Problem::List::push(const MetaClass* m,
-  const Object* o, Date st, Date nd, double w)
+    const Object* o, Date st, Date nd, double w)
 {
   // Find the end of the list
   Problem* cur = first;

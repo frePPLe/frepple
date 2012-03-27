@@ -46,7 +46,8 @@ DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try {
+  try
+  {
     if (!filename)
     {
       // Read from standard input
@@ -92,7 +93,8 @@ DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
   Py_BEGIN_ALLOW_THREADS
 
   // Execute and catch exceptions
-  try {
+  try
+  {
     if (!data)
       throw DataException("No input data");
     else if (validate_only!=0)
@@ -126,7 +128,8 @@ PyObject* saveXMLfile(PyObject* self, PyObject* args)
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try {
+  try
+  {
     XMLOutputFile o(filename);
     if (content)
     {
@@ -186,9 +189,9 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
           if (oo->getType() == 1 && oo->getQuantity() != 0.0)
           {
             textoutput << "BUFFER\t" << *gbuf << '\t'
-            << oo->getDate() << '\t'
-            << oo->getQuantity() << '\t'
-            << oo->getOnhand() << endl;
+                << oo->getDate() << '\t'
+                << oo->getQuantity() << '\t'
+                << oo->getOnhand() << endl;
           }
     }
 
@@ -203,8 +206,8 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
             pp != gdem->getDelivery().end();
             ++pp)
           textoutput << "DEMAND\t" << (*gdem) << '\t'
-            << (*pp)->getDates().getEnd() << '\t'
-            << (*pp)->getQuantity() << endl;
+              << (*pp)->getDates().getEnd() << '\t'
+              << (*pp)->getQuantity() << endl;
       }
     }
 
@@ -220,9 +223,9 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
           if (qq->getType() == 1 && qq->getQuantity() != 0.0)
           {
             textoutput << "RESOURCE\t" << *gres << '\t'
-            << qq->getDate() << '\t'
-            << qq->getQuantity() << '\t'
-            << qq->getOnhand() << endl;
+                << qq->getDate() << '\t'
+                << qq->getQuantity() << '\t'
+                << qq->getOnhand() << endl;
           }
     }
 
@@ -232,9 +235,9 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
     {
       if (rr->getOperation()->getHidden()) continue;
       textoutput << "OPERATION\t" << rr->getOperation() << '\t'
-      << rr->getDates().getStart() << '\t'
-      << rr->getDates().getEnd() << '\t'
-      << rr->getQuantity() << endl;
+          << rr->getDates().getStart() << '\t'
+          << rr->getDates().getEnd() << '\t'
+          << rr->getQuantity() << endl;
     }
 
     // Write the problem summary.
@@ -242,8 +245,8 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
         gprob != Problem::end(); ++gprob)
     {
       textoutput << "PROBLEM\t" << gprob->getType().type << '\t'
-      << gprob->getDescription() << '\t'
-      << gprob->getDates() << endl;
+          << gprob->getDescription() << '\t'
+          << gprob->getDates() << endl;
     }
 
     // Write the constraint summary
@@ -256,8 +259,8 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
             i != gdem->getConstraints().end();
             ++i)
           textoutput << "DEMAND CONSTRAINT\t" << (*gdem) << '\t'
-            << i->getDescription() << '\t'
-            << i->getDates() << '\t' << endl;
+              << i->getDescription() << '\t'
+              << i->getDates() << '\t' << endl;
       }
     }
 
@@ -280,11 +283,11 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
 //
 // MOVE OPERATIONPLAN
 //
-               
+
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-  (OperationPlan* o) : opplan(o), firstCommand(NULL)
+(OperationPlan* o) : opplan(o), firstCommand(NULL)
 {
-  if (!o) 
+  if (!o)
   {
     originalqty = 0;
     return;
@@ -309,7 +312,7 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
 
 
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-(OperationPlan* o, Date newstart, Date newend, double newQty) 
+(OperationPlan* o, Date newstart, Date newend, double newQty)
   : opplan(o), firstCommand(NULL)
 {
   if (!opplan) return;
@@ -370,7 +373,7 @@ DECLARE_EXPORT void CommandMoveOperationPlan::restore(bool del)
 //
 
 DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
-  (OperationPlan* o) : opplan(o)
+(OperationPlan* o) : opplan(o)
 {
   // Validate input
   if (!o) return;
@@ -405,7 +408,8 @@ DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try {
+  try
+  {
     if (deleteStaticModel)
     {
       // Delete all entities.
@@ -459,22 +463,22 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
 
     // Intro
     logger << endl << "Size information of frePPLe " << PACKAGE_VERSION
-      << " (" << __DATE__ << ")" << endl << endl;
+        << " (" << __DATE__ << ")" << endl << endl;
 
     // Print current locale
-    #if defined(HAVE_SETLOCALE) || defined(_MSC_VER)
+#if defined(HAVE_SETLOCALE) || defined(_MSC_VER)
     logger << "Locale: " << setlocale(LC_ALL,NULL) << endl << endl;
-    #else
+#else
     logger << endl;
-    #endif
+#endif
 
     // Print loaded modules
     Environment::printModules();
 
     // Print the number of clusters
     logger << "Clusters: " << HasLevel::getNumberOfClusters()
-      << " (hanging: " << HasLevel::getNumberOfHangingClusters() << ")"
-      << endl << endl;
+        << " (hanging: " << HasLevel::getNumberOfHangingClusters() << ")"
+        << endl << endl;
 
     // Header for memory size
     logger << "Memory usage:" << endl;

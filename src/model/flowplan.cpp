@@ -75,7 +75,7 @@ DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
     this,
     fl->getFlowplanQuantity(this),
     fl->getFlowplanDate(this)
-    );
+  );
 
   // Mark the operation and buffer as having changed. This will trigger the
   // recomputation of their problems
@@ -91,7 +91,7 @@ DECLARE_EXPORT void FlowPlan::update()
     this,
     fl->getFlowplanQuantity(this),
     fl->getFlowplanDate(this)
-    );
+  );
 
   // Mark the operation and buffer as having changed. This will trigger the
   // recomputation of their problems
@@ -123,7 +123,7 @@ DECLARE_EXPORT void FlowPlan::setFlow(const Flow* newfl)
     this,
     fl->getFlowplanQuantity(this),
     fl->getFlowplanDate(this)
-    );
+  );
   fl->getBuffer()->setChanged();
   fl->getOperation()->setChanged();
 }
@@ -157,12 +157,12 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mod
       o->writeElement(Tags::tag_buffer, Tags::tag_name, k.getBuffer()->getName());
       if (k.getConsumingOperationplan())
         o->writeElement(Tags::tag_consuming,
-          Tags::tag_id, k.getConsumingOperationplan()->getIdentifier(),
-          Tags::tag_operation, k.getConsumingOperationplan()->getOperation()->getName());
+            Tags::tag_id, k.getConsumingOperationplan()->getIdentifier(),
+            Tags::tag_operation, k.getConsumingOperationplan()->getOperation()->getName());
       if (k.getProducingOperationplan())
         o->writeElement(Tags::tag_producing,
-          Tags::tag_id, k.getProducingOperationplan()->getIdentifier(),
-          Tags::tag_operation, k.getProducingOperationplan()->getOperation()->getName());
+            Tags::tag_id, k.getProducingOperationplan()->getIdentifier(),
+            Tags::tag_operation, k.getProducingOperationplan()->getOperation()->getName());
       o->writeElement(Tags::tag_dates, DateRange(k.getProducingDate(),k.getConsumingDate()));
       o->EndObject(Tags::tag_pegging);
     }
@@ -179,12 +179,12 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mod
       o->writeElement(Tags::tag_buffer, Tags::tag_name, l.getBuffer()->getName());
       if (l.getConsumingOperationplan())
         o->writeElement(Tags::tag_consuming,
-          Tags::tag_id, l.getConsumingOperationplan()->getIdentifier(),
-          Tags::tag_operation, l.getConsumingOperationplan()->getOperation()->getName());
+            Tags::tag_id, l.getConsumingOperationplan()->getIdentifier(),
+            Tags::tag_operation, l.getConsumingOperationplan()->getOperation()->getName());
       if (l.getProducingOperationplan())
         o->writeElement(Tags::tag_producing,
-          Tags::tag_id, l.getProducingOperationplan()->getIdentifier(),
-          Tags::tag_operation, l.getProducingOperationplan()->getOperation()->getName());
+            Tags::tag_id, l.getProducingOperationplan()->getIdentifier(),
+            Tags::tag_operation, l.getProducingOperationplan()->getOperation()->getName());
       o->writeElement(Tags::tag_dates, DateRange(l.getProducingDate(),l.getConsumingDate()));
       o->EndObject(Tags::tag_pegging);
     }

@@ -221,7 +221,7 @@ class Calendar : public HasName<Calendar>
         virtual bool getBool() const {return true;}
 
         virtual DECLARE_EXPORT void writeElement
-          (XMLOutput*, const Keyword&, mode=DEFAULT) const;
+        (XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
         /** Reads the bucket information from the input. Only the fields "name"
           * and "start" are read in. Other fields as also written out but these
@@ -230,9 +230,9 @@ class Calendar : public HasName<Calendar>
         DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
 
         virtual const MetaClass& getType() const
-          {return *metadata;}
+        {return *metadata;}
         virtual size_t getSize() const
-          {return sizeof(Bucket) + nm.size();}
+        {return sizeof(Bucket) + nm.size();}
         static DECLARE_EXPORT const MetaCategory* metadata;
         virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
         virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
@@ -281,7 +281,7 @@ class Calendar : public HasName<Calendar>
       * value changes.*/
     class EventIterator
     {
-      friend class Calendar::Bucket;
+        friend class Calendar::Bucket;
       protected:
         const Calendar* theCalendar;
         const Bucket* curBucket;
@@ -292,7 +292,7 @@ class Calendar : public HasName<Calendar>
         const Bucket* getBucket() const {return curBucket;}
         const Calendar* getCalendar() const {return theCalendar;}
         EventIterator(const Calendar* c, Date d = Date::infinitePast,
-          bool forward = true) : theCalendar(c), curDate(d)
+            bool forward = true) : theCalendar(c), curDate(d)
         {
           if (!c)
             throw LogicException("Creating iterator for NULL calendar");
@@ -301,9 +301,9 @@ class Calendar : public HasName<Calendar>
         DECLARE_EXPORT EventIterator& operator++();
         DECLARE_EXPORT EventIterator& operator--();
         EventIterator operator++(int)
-          {EventIterator tmp = *this; ++*this; return tmp;}
+        {EventIterator tmp = *this; ++*this; return tmp;}
         EventIterator operator--(int)
-          {EventIterator tmp = *this; --*this; return tmp;}
+        {EventIterator tmp = *this; --*this; return tmp;}
     };
 
     /** @brief An iterator class to go through all buckets of the calendar. */
@@ -314,17 +314,17 @@ class Calendar : public HasName<Calendar>
       public:
         BucketIterator(Bucket* b = NULL) : curBucket(b) {}
         bool operator != (const BucketIterator &b) const
-          {return b.curBucket != curBucket;}
+        {return b.curBucket != curBucket;}
         bool operator == (const BucketIterator &b) const
-          {return b.curBucket == curBucket;}
+        {return b.curBucket == curBucket;}
         BucketIterator& operator++()
-          {if (curBucket) curBucket = curBucket->nextBucket; return *this;}
+        {if (curBucket) curBucket = curBucket->nextBucket; return *this;}
         BucketIterator operator++(int)
-          {BucketIterator tmp = *this; ++*this; return tmp;}
+        {BucketIterator tmp = *this; ++*this; return tmp;}
         BucketIterator& operator--()
-          {if(curBucket) curBucket = curBucket->prevBucket; return *this;}
+        {if(curBucket) curBucket = curBucket->prevBucket; return *this;}
         BucketIterator operator--(int)
-          {BucketIterator tmp = *this; --*this; return tmp;}
+        {BucketIterator tmp = *this; --*this; return tmp;}
         Bucket* operator ->() const {return curBucket;}
         Bucket& operator *() const {return *curBucket;}
     };
@@ -373,7 +373,7 @@ class Calendar : public HasName<Calendar>
     /** This is the factory method used to generate new buckets. Each subclass
       * should provide an override for this function. */
     virtual Bucket* createNewBucket(Date start, Date end, string name, int priority=0)
-      {return new Bucket(this, start, end, name, priority);}
+    {return new Bucket(this, start, end, name, priority);}
 };
 
 
@@ -432,10 +432,10 @@ template <typename T> class CalendarValue : public Calendar
         }
 
         virtual const MetaClass& getType() const
-          {return *Calendar::Bucket::metadata;}
+        {return *Calendar::Bucket::metadata;}
 
         virtual size_t getSize() const
-          {return sizeof(typename CalendarValue<T>::BucketValue) + getName().size();}
+        {return sizeof(typename CalendarValue<T>::BucketValue) + getName().size();}
     };
 
     /** @brief A special event iterator, providing also access to the
@@ -445,7 +445,7 @@ template <typename T> class CalendarValue : public Calendar
       public:
         /** Constructor. */
         EventIterator(const Calendar* c, Date d = Date::infinitePast,
-          bool f = true) : Calendar::EventIterator(c,d,f) {}
+            bool f = true) : Calendar::EventIterator(c,d,f) {}
 
         /** Return the current value of the iterator at this date. */
         T getValue()
@@ -453,8 +453,8 @@ template <typename T> class CalendarValue : public Calendar
           typedef CalendarValue<T> calendarvaluetype;
           typedef typename CalendarValue<T>::BucketValue bucketvaluetype;
           return curBucket ?
-            static_cast<const bucketvaluetype*>(curBucket)->getValue() :
-            static_cast<const calendarvaluetype*>(theCalendar)->getDefault();
+              static_cast<const bucketvaluetype*>(curBucket)->getValue() :
+              static_cast<const calendarvaluetype*>(theCalendar)->getDefault();
         }
     };
 
@@ -487,7 +487,7 @@ template <typename T> class CalendarValue : public Calendar
     virtual const MetaClass& getType() const = 0;
 
     const T& getValue(Calendar::BucketIterator& i) const
-      {return reinterpret_cast<BucketValue&>(*i).getValue();}
+    {return reinterpret_cast<BucketValue&>(*i).getValue();}
 
     /** Returns the default calendar value when no entry is matching. */
     virtual T getDefault() const {return defaultValue;}
@@ -504,7 +504,7 @@ template <typename T> class CalendarValue : public Calendar
       if (m == REFERENCE)
       {
         o->writeElement
-          (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+        (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
         return;
       }
 
@@ -539,7 +539,7 @@ template <typename T> class CalendarValue : public Calendar
       * @see Calendar::addBucket()
       */
     Bucket* createNewBucket(Date start, Date end, string name, int priority=0)
-      {return new BucketValue(this, start, end, name, priority);}
+    {return new BucketValue(this, start, end, name, priority);}
 
     /** Value when no bucket is matching a certain date. */
     T defaultValue;
@@ -623,10 +623,10 @@ template <typename T> class CalendarPointer : public Calendar
         }
 
         virtual const MetaClass& getType() const
-          {return *Calendar::Bucket::metadata;}
+        {return *Calendar::Bucket::metadata;}
 
         virtual size_t getSize() const
-          {return sizeof(typename CalendarPointer<T>::BucketPointer) + getName().size();}
+        {return sizeof(typename CalendarPointer<T>::BucketPointer) + getName().size();}
     };
 
     /** @brief A special event iterator, providing also access to the
@@ -636,7 +636,7 @@ template <typename T> class CalendarPointer : public Calendar
       public:
         /** Constructor. */
         EventIterator(const Calendar* c, Date d = Date::infinitePast,
-          bool f = true) : Calendar::EventIterator(c,d,f) {}
+            bool f = true) : Calendar::EventIterator(c,d,f) {}
 
         /** Return the current value of the iterator at this date. */
         const T* getValue()
@@ -644,8 +644,8 @@ template <typename T> class CalendarPointer : public Calendar
           typedef CalendarPointer<T> calendarpointertype;
           typedef typename CalendarPointer<T>::BucketPointer bucketpointertype;
           return curBucket ?
-            static_cast<const bucketpointertype*>(curBucket)->getValue() :
-            static_cast<const calendarpointertype*>(theCalendar)->getDefault();
+              static_cast<const bucketpointertype*>(curBucket)->getValue() :
+              static_cast<const calendarpointertype*>(theCalendar)->getDefault();
         }
     };
 
@@ -692,7 +692,7 @@ template <typename T> class CalendarPointer : public Calendar
       if (m == REFERENCE)
       {
         o->writeElement
-          (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+        (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
         return;
       }
 
@@ -740,7 +740,7 @@ template <typename T> class CalendarPointer : public Calendar
       * @see Calendar::addBucket()
       */
     Bucket* createNewBucket(Date start, Date end, string name, int priority=0)
-      {return new BucketPointer(this,start,end,name,priority);}
+    {return new BucketPointer(this,start,end,name,priority);}
 
     /** Value when no bucket is matching a certain date. */
     T* defaultValue;
@@ -765,7 +765,7 @@ class CalendarDouble : public CalendarValue<double>
 {
   public:
     CalendarDouble(const string& n) : CalendarValue<double>(n)
-      {setDefault(0.0); initType(metadata);}
+    {setDefault(0.0); initType(metadata);}
     DECLARE_EXPORT ~CalendarDouble();
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -782,7 +782,7 @@ class CalendarInt : public CalendarValue<int>
 {
   public:
     CalendarInt(const string& n) : CalendarValue<int>(n)
-      {setDefault(0); initType(metadata);}
+    {setDefault(0); initType(metadata);}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
@@ -798,7 +798,7 @@ class CalendarBool : public CalendarValue<bool>
 {
   public:
     CalendarBool(const string& n) : CalendarValue<bool>(n)
-      {setDefault(false); initType(metadata);}
+    {setDefault(false); initType(metadata);}
     DECLARE_EXPORT ~CalendarBool();
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -839,7 +839,7 @@ class CalendarOperation : public CalendarPointer<Operation>
 {
   public:
     CalendarOperation(const string& n) : CalendarPointer<Operation>(n)
-      {initType(metadata);}
+    {initType(metadata);}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
@@ -885,7 +885,7 @@ class Problem : public NonCopyable, public Object
       * @see addProblem
       */
     explicit Problem(HasProblems *p = NULL) : owner(p), nextProblem(NULL)
-      {initType(metadata);}
+    {initType(metadata);}
 
     /** Initialize the class. */
     static int initialize();
@@ -1054,17 +1054,17 @@ class HasProblems
 
 
 /** @brief This auxilary class is used to maintain a list of problem models. */
-class Problem::List 
+class Problem::List
 {
   public:
     /** Constructor. */
     List() : first(NULL) {};
-    
+
     /** Destructor. */
     ~List() {clear();}
 
     /** Empty the list.<br>
-      * If a problem is passed as argument, that problem and all problems 
+      * If a problem is passed as argument, that problem and all problems
       * following it in the list are deleted.<br>
       * If no argument is passed, the complete list is erased.
       */
@@ -1072,9 +1072,9 @@ class Problem::List
 
     /** Add a problem to the list. */
     DECLARE_EXPORT Problem* push
-      (const MetaClass*, const Object*, Date, Date, double);
+    (const MetaClass*, const Object*, Date, Date, double);
 
-    /** Remove all problems from the list that appear AFTER the one 
+    /** Remove all problems from the list that appear AFTER the one
       * passed as argument. */
     DECLARE_EXPORT void pop(Problem *);
 
@@ -1128,35 +1128,35 @@ class Solver : public HasName<Solver>
 
     virtual void solve(void* = NULL) = 0;
     virtual void solve(const Demand*,void* = NULL)
-      {throw LogicException("Called undefined solve(Demand*) method");}
+    {throw LogicException("Called undefined solve(Demand*) method");}
     virtual void solve(const Operation*,void* = NULL)
-      {throw LogicException("Called undefined solve(Operation*) method");}
+    {throw LogicException("Called undefined solve(Operation*) method");}
     virtual void solve(const OperationFixedTime* o, void* v = NULL)
-      {solve(reinterpret_cast<const Operation*>(o),v);}
+    {solve(reinterpret_cast<const Operation*>(o),v);}
     virtual void solve(const OperationTimePer* o, void* v = NULL)
-      {solve(reinterpret_cast<const Operation*>(o),v);}
+    {solve(reinterpret_cast<const Operation*>(o),v);}
     virtual void solve(const OperationRouting* o, void* v = NULL)
-      {solve(reinterpret_cast<const Operation*>(o),v);}
+    {solve(reinterpret_cast<const Operation*>(o),v);}
     virtual void solve(const OperationAlternate* o, void* v = NULL)
-      {solve(reinterpret_cast<const Operation*>(o),v);}
+    {solve(reinterpret_cast<const Operation*>(o),v);}
     virtual void solve(const Resource*,void* = NULL)
-      {throw LogicException("Called undefined solve(Resource*) method");}
+    {throw LogicException("Called undefined solve(Resource*) method");}
     virtual void solve(const ResourceInfinite* r, void* v = NULL)
-      {solve(reinterpret_cast<const Resource*>(r),v);}
+    {solve(reinterpret_cast<const Resource*>(r),v);}
     virtual void solve(const Buffer*,void* = NULL)
-      {throw LogicException("Called undefined solve(Buffer*) method");}
+    {throw LogicException("Called undefined solve(Buffer*) method");}
     virtual void solve(const BufferInfinite* b, void* v = NULL)
-      {solve(reinterpret_cast<const Buffer*>(b),v);}
+    {solve(reinterpret_cast<const Buffer*>(b),v);}
     virtual void solve(const BufferProcure* b, void* v = NULL)
-      {solve(reinterpret_cast<const Buffer*>(b),v);}
+    {solve(reinterpret_cast<const Buffer*>(b),v);}
     virtual void solve(const Load* b, void* v = NULL)
-      {throw LogicException("Called undefined solve(Load*) method");}
+    {throw LogicException("Called undefined solve(Load*) method");}
     virtual void solve(const Flow* b, void* v = NULL)
-      {throw LogicException("Called undefined solve(Flow*) method");}
+    {throw LogicException("Called undefined solve(Flow*) method");}
     virtual void solve(const FlowEnd* b, void* v = NULL)
-      {solve(reinterpret_cast<const Flow*>(b),v);}
+    {solve(reinterpret_cast<const Flow*>(b),v);}
     virtual void solve(const Solvable*,void* = NULL)
-      {throw LogicException("Called undefined solve(Solvable*) method");}
+    {throw LogicException("Called undefined solve(Solvable*) method");}
 
     /** Returns how elaborate and verbose output is requested.<br>
       * As a guideline solvers should respect the following guidelines:
@@ -1216,7 +1216,7 @@ class Plannable : public HasProblems, public Solvable
   public:
     /** Constructor. */
     Plannable() : useProblemDetection(true), changed(true)
-     {anyChange = true;}
+    {anyChange = true;}
 
     /** Specify whether this entity reports problems. */
     DECLARE_EXPORT void setDetectProblems(bool b);
@@ -1496,13 +1496,13 @@ class CustomerDefault : public Customer
   * This is an abstract base class for all different operation types.
   */
 class Operation : public HasName<Operation>,
-      public HasLevel, public Plannable, public HasDescription
+  public HasLevel, public Plannable, public HasDescription
 {
     friend class Flow;
     friend class Load;
     friend class OperationPlan;
-    friend class OperationRouting;   
-    friend class OperationAlternate; 
+    friend class OperationRouting;
+    friend class OperationAlternate;
 
   protected:
     /** Constructor. Don't use it directly. */
@@ -1583,8 +1583,8 @@ class Operation : public HasName<Operation>,
     /** This is the factory method which creates all operationplans of the
       * operation. */
     DECLARE_EXPORT OperationPlan* createOperationPlan(double, Date,
-      Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
-      bool makeflowsloads=true) const;
+        Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
+        bool makeflowsloads=true) const;
 
     /** Calculates the daterange starting from (or ending at) a certain date
       * and using a certain amount of effective available time on the
@@ -1603,8 +1603,8 @@ class Operation : public HasName<Operation>,
       *             amount of available time found.
       */
     DECLARE_EXPORT DateRange calculateOperationTime
-      (Date thedate, TimePeriod duration, bool forward,
-        TimePeriod* actualduration = NULL) const;
+    (Date thedate, TimePeriod duration, bool forward,
+     TimePeriod* actualduration = NULL) const;
 
     /** Calculates the effective, available time between two dates.
       *
@@ -1620,7 +1620,7 @@ class Operation : public HasName<Operation>,
       *             amount of available time found.
       */
     DECLARE_EXPORT DateRange calculateOperationTime
-      (Date start, Date end, TimePeriod* actualduration = NULL) const;
+    (Date start, Date end, TimePeriod* actualduration = NULL) const;
 
     /** This method stores ALL logic the operation needs to compute the
       * correct relationship between the quantity, startdate and enddate
@@ -1661,7 +1661,7 @@ class Operation : public HasName<Operation>,
       * logic.
       */
     virtual OperationPlanState setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool=true, bool=true) const = 0;
+    (OperationPlan*, double, Date, Date, bool=true, bool=true) const = 0;
 
     /** Returns the location of the operation, which is used to model the
       * working hours and holidays. */
@@ -1789,7 +1789,7 @@ class Operation : public HasName<Operation>,
     Operationlist superoplist;
 
     /** Empty list of operations.<br>
-      * For operation types which have no suboperations this list is 
+      * For operation types which have no suboperations this list is
       * used as the list of suboperations.
       */
     static DECLARE_EXPORT Operationlist nosubOperations;
@@ -1871,7 +1871,7 @@ class Operation : public HasName<Operation>,
   * @todo reading suboperationplans can be improved
   */
 class OperationPlan
-      : public Object, public HasProblems, public NonCopyable
+  : public Object, public HasProblems, public NonCopyable
 {
     friend class FlowPlan;
     friend class LoadPlan;
@@ -2060,7 +2060,7 @@ class OperationPlan
       * plans should pass on a call to the parent operationplan.
       */
     virtual DECLARE_EXPORT double setQuantity(double f,
-      bool roundDown = false, bool update = true, bool execute = true);
+        bool roundDown = false, bool update = true, bool execute = true);
 
     /** Returns a pointer to the demand for which this operationplan is a delivery.
       * If the operationplan isn't a delivery, this is a NULL pointer.
@@ -2074,7 +2074,7 @@ class OperationPlan
       * It is the sum of all setup penalties of the resources it loads. */
     DECLARE_EXPORT double getPenalty() const;
 
-    /** Calculate the unavailable time during the operationplan. The regular 
+    /** Calculate the unavailable time during the operationplan. The regular
       * duration is extended with this amount.
       */
     DECLARE_EXPORT TimePeriod getUnavailable() const;
@@ -2154,7 +2154,7 @@ class OperationPlan
 
     /** Return true if the operationplan is redundant, ie all material
       * it produces is not used at all.<br>
-      * If the optional argument is false (which is the default value), we 
+      * If the optional argument is false (which is the default value), we
       * check with the minimum stock level of the buffers. If the argument
       * is true, we check with 0.
       */
@@ -2196,7 +2196,7 @@ class OperationPlan
     static int initialize();
 
     PyObject* str() const
-    {          
+    {
       ostringstream ch;
       ch << id;
       return PythonObject(ch.str());
@@ -2290,7 +2290,7 @@ class OperationPlan
     static DECLARE_EXPORT const MetaCategory* metacategory;
 
     virtual size_t getSize() const
-      {return sizeof(OperationPlan);}
+    {return sizeof(OperationPlan);}
 
     /** Handles the persistence of operationplan objects. */
     static DECLARE_EXPORT void writer(const MetaCategory*, XMLOutput*);
@@ -2334,9 +2334,9 @@ class OperationPlan
       */
     virtual DECLARE_EXPORT void update();
 
-    /** Update the loadplans and flowplans of the operationplan based on the 
+    /** Update the loadplans and flowplans of the operationplan based on the
       * latest information of quantity, date and locked flag.<br>
-      * This method will NOT update parent or child operationplans. 
+      * This method will NOT update parent or child operationplans.
       * @see update
       */
     DECLARE_EXPORT void resizeFlowLoadPlans();
@@ -2353,7 +2353,7 @@ class OperationPlan
       id(0), oper(NULL), firstflowplan(NULL), firstloadplan(NULL),
       prev(NULL), next(NULL), firstsubopplan(NULL), lastsubopplan(NULL),
       nextsubopplan(NULL), prevsubopplan(NULL), motive(NULL)
-        {initType(metadata);}
+    {initType(metadata);}
 
   private:
     static const short IS_LOCKED = 1;
@@ -2379,10 +2379,10 @@ class OperationPlan
       * @see getIdentifier()
       */
     static DECLARE_EXPORT unsigned long counterMin;
-    
+
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>
-      * The first value is a very high number, and each operationplan 
+      * The first value is a very high number, and each operationplan
       * decreases it by 1.
       * @see counterMin
       * @see getIdentifier()
@@ -2390,8 +2390,8 @@ class OperationPlan
     static DECLARE_EXPORT unsigned long counterMax;
 
     /** Pointer to the demand.<br>
-      * Only delivery operationplans have this field set. The field is NULL 
-      * for all other operationplans. 
+      * Only delivery operationplans have this field set. The field is NULL
+      * for all other operationplans.
       */
     Demand *dmd;
 
@@ -2456,7 +2456,7 @@ class OperationPlanState  // @todo should also be able to remember and restore s
     /** Constructor. */
     OperationPlanState(const OperationPlan* x)
     {
-      if (!x) 
+      if (!x)
       {
         quantity = 0.0;
         return;
@@ -2470,11 +2470,11 @@ class OperationPlanState  // @todo should also be able to remember and restore s
     }
 
     /** Constructor. */
-    OperationPlanState(const Date x, const Date y, double q) 
+    OperationPlanState(const Date x, const Date y, double q)
       : start(x), end(y), quantity(q) {}
 
     /** Constructor. */
-    OperationPlanState(const DateRange& x, double q) 
+    OperationPlanState(const DateRange& x, double q)
       : start(x.getStart()), end(x.getEnd()), quantity(q) {}
 };
 
@@ -2526,8 +2526,8 @@ class OperationFixedTime : public Operation
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
-  
+    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+
   protected:
     DECLARE_EXPORT virtual bool extraInstantiate(OperationPlan* o);
 
@@ -2560,7 +2560,7 @@ class OperationSetup : public Operation
       *  - The duration is calculated based on the conversion type.
       */
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     /** A pointer to the operation that is instantiated for all conversions. */
     static DECLARE_EXPORT const Operation* setupoperation;
@@ -2613,7 +2613,7 @@ class OperationTimePer : public Operation
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
@@ -2688,7 +2688,7 @@ class OperationRouting : public Operation
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -2706,7 +2706,7 @@ class OperationRouting : public Operation
     virtual size_t getSize() const
     {
       return sizeof(OperationRouting) + Operation::extrasize()
-        + steps.size() * 2 * sizeof(Operation*);
+          + steps.size() * 2 * sizeof(Operation*);
     }
 
   protected:
@@ -2782,7 +2782,7 @@ class OperationAlternate : public Operation
       * The lower the priority value, the more important this alternate
       * operation is. */
     DECLARE_EXPORT void addAlternate
-      (Operation*, int = 1, DateRange = DateRange());
+    (Operation*, int = 1, DateRange = DateRange());
 
     /** Removes an alternate from the list. */
     DECLARE_EXPORT void removeSubOperation(Operation *);
@@ -2818,7 +2818,7 @@ class OperationAlternate : public Operation
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -2949,7 +2949,7 @@ class ItemDefault : public Item
     virtual size_t getSize() const
     {
       return sizeof(ItemDefault) + getName().size()
-        + HasDescription::extrasize();
+          + HasDescription::extrasize();
     }
     static int initialize();
 };
@@ -2959,7 +2959,7 @@ class ItemDefault : public Item
   * It is the entity for keeping modeling inventory.
   */
 class Buffer : public HasHierarchy<Buffer>, public HasLevel,
-      public Plannable, public HasDescription
+  public Plannable, public HasDescription
 {
     friend class Flow;
     friend class FlowPlan;
@@ -2970,9 +2970,9 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Constructor. Implicit creation of instances is disallowed. */
     explicit Buffer(const string& str) : HasHierarchy<Buffer>(str),
-        hidden(false), producing_operation(NULL), loc(NULL), it(NULL),
-        min_val(0), max_val(default_max), min_cal(NULL), max_cal(NULL), 
-        carrying_cost(0.0) {}
+      hidden(false), producing_operation(NULL), loc(NULL), it(NULL),
+      min_val(0), max_val(default_max), min_cal(NULL), max_cal(NULL),
+      carrying_cost(0.0) {}
 
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
@@ -2981,7 +2981,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Updates the operation that is used to supply extra supply into this
       * buffer. */
     void setProducingOperation(Operation* o)
-      {producing_operation = o; setChanged();}
+    {producing_operation = o; setChanged();}
 
     /** Returns the item stored in this buffer. */
     Item* getItem() const {return it;}
@@ -3102,7 +3102,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * with each other, and updates the pegging iterator accordingly.
       */
     virtual DECLARE_EXPORT void followPegging
-      (PeggingIterator&, FlowPlan*, short, double, double);
+    (PeggingIterator&, FlowPlan*, short, double, double);
 
   private:
     /** A constant defining the default max inventory target.\\
@@ -3194,9 +3194,9 @@ class BufferInfinite : public Buffer
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return *metadata;}
     virtual size_t getSize() const
-      {return sizeof(BufferInfinite) + Buffer::extrasize();}
+    {return sizeof(BufferInfinite) + Buffer::extrasize();}
     explicit BufferInfinite(const string& c) : Buffer(c)
-      {setDetectProblems(false); initType(metadata);}
+    {setDetectProblems(false); initType(metadata);}
     static DECLARE_EXPORT const MetaClass* metadata;
     static int initialize();
 };
@@ -3261,13 +3261,13 @@ class BufferProcure : public Buffer
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return *metadata;}
     virtual size_t getSize() const
-      {return sizeof(BufferProcure) + Buffer::extrasize();}
+    {return sizeof(BufferProcure) + Buffer::extrasize();}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
 
     /** Constructor. */
-    explicit BufferProcure(const string& c) : Buffer(c), 
+    explicit BufferProcure(const string& c) : Buffer(c),
       size_minimum(0), size_maximum(DBL_MAX), size_multiple(0),
       oper(NULL) {initType(metadata);}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -3292,10 +3292,10 @@ class BufferProcure : public Buffer
     /** Return the inventory level that will trigger creation of a
       * purchasing.
       */
-    double getMinimumInventory() const 
-      {return getFlowPlans().getMin(Date::infiniteFuture);}
+    double getMinimumInventory() const
+    {return getFlowPlans().getMin(Date::infiniteFuture);}
 
-    /** Update the inventory level that will trigger the creation of a 
+    /** Update the inventory level that will trigger the creation of a
       * replenishment.<br>
       * Because of the replenishment leadtime, the actual inventory will drop
       * below this value. It is up to the user to set an appropriate minimum
@@ -3315,18 +3315,18 @@ class BufferProcure : public Buffer
         getFlowPlans().insert(min);
       }
       // The minimum is increased over the maximum: auto-increase the maximum.
-      if (getFlowPlans().getMax(Date::infiniteFuture) < f) 
+      if (getFlowPlans().getMax(Date::infiniteFuture) < f)
         setMaximumInventory(f);
     }
 
     /** Return the maximum inventory level to which we wish to replenish. */
-    double getMaximumInventory() const 
-      {return getFlowPlans().getMax(Date::infiniteFuture);}
+    double getMaximumInventory() const
+    {return getFlowPlans().getMax(Date::infiniteFuture);}
 
     /** Update the maximum inventory level to which we plan to replenish.<br>
       * This is not a hard limit - other parameters can make that the actual
       * inventory either never reaches this value or always exceeds it.
-      */    
+      */
     void setMaximumInventory(double f)
     {
       if (f<0)
@@ -3341,7 +3341,7 @@ class BufferProcure : public Buffer
         getFlowPlans().insert(max);
       }
       // The maximum is lowered below the minimum: auto-decrease the minimum
-      if (f < getFlowPlans().getMin(Date::infiniteFuture)) 
+      if (f < getFlowPlans().getMin(Date::infiniteFuture))
         setMinimumInventory(f);
     }
 
@@ -3387,7 +3387,7 @@ class BufferProcure : public Buffer
       size_minimum = f;
       // minimum is increased over the maximum: auto-increase the maximum
       if (size_maximum < size_minimum) size_maximum = size_minimum;
-   }
+    }
 
     /** Return the maximum quantity of a purchasing operation. */
     double getSizeMaximum() const {return size_maximum;}
@@ -3460,7 +3460,7 @@ class BufferProcure : public Buffer
   * start of the operation.
   */
 class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
-      public Solvable
+  public Solvable
 {
   public:
     /** Destructor. */
@@ -3494,8 +3494,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       try { validate(ADD); }
       catch (...)
       {
-      	if (getOperation()) getOperation()->flowdata.erase(this);
-      	if (getBuffer()) getBuffer()->flows.erase(this);
+        if (getOperation()) getOperation()->flowdata.erase(this);
+        if (getBuffer()) getBuffer()->flows.erase(this);
         resetReferenceCount();
         throw;
       }
@@ -3566,7 +3566,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual bool getHidden() const
     {
       return (getBuffer() && getBuffer()->getHidden())
-        || (getOperation() && getOperation()->getHidden());
+          || (getOperation() && getOperation()->getHidden());
     }
 
     /** This method holds the logic the compute the date of a flowplan. */
@@ -3589,7 +3589,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   protected:
     /** Default constructor. */
-    explicit Flow() : quantity(0.0), priority(1), hasAlts(false), 
+    explicit Flow() : quantity(0.0), priority(1), hasAlts(false),
       altFlow(NULL), search(PRIORITY) {initType(metadata);}
 
   private:
@@ -3728,7 +3728,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public PythonExte
       * Object at all.
       */
     void DECLARE_EXPORT writeElement
-      (XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    (XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.<br>
@@ -3760,8 +3760,8 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public PythonExte
 inline double Flow::getFlowplanQuantity(const FlowPlan* fl) const
 {
   return getEffective().within(fl->getDate()) ?
-    fl->getOperationPlan()->getQuantity() * getQuantity() :
-    0.0;
+      fl->getOperationPlan()->getQuantity() * getQuantity() :
+      0.0;
 }
 
 
@@ -3784,11 +3784,11 @@ class SetupMatrix : public HasName<SetupMatrix>
 {
   public:
     class RuleIterator; // Forward declaration
-   /** @brief An specific changeover rule in a setup matrix. */
-   class Rule : public Object
+    /** @brief An specific changeover rule in a setup matrix. */
+    class Rule : public Object
     {
-      friend class RuleIterator;
-      friend class SetupMatrix;
+        friend class RuleIterator;
+        friend class SetupMatrix;
       public:
         /** Constructor. */
         DECLARE_EXPORT Rule(SetupMatrix *s, int p = 0);
@@ -3806,7 +3806,7 @@ class SetupMatrix : public HasName<SetupMatrix>
         static DECLARE_EXPORT const MetaCategory* metadata;
 
         size_t getSize() const
-          {return sizeof(Rule) + from.size() + to.size();}
+        {return sizeof(Rule) + from.size() + to.size();}
 
         /** Update the priority.<br>
           * The priority value is a key field. If multiple rules have the
@@ -3882,17 +3882,17 @@ class SetupMatrix : public HasName<SetupMatrix>
         /** Constructor. */
         RuleIterator(Rule* c = NULL) : curRule(c) {}
         bool operator != (const RuleIterator &b) const
-          {return b.curRule != curRule;}
+        {return b.curRule != curRule;}
         bool operator == (const RuleIterator &b) const
-          {return b.curRule == curRule;}
+        {return b.curRule == curRule;}
         RuleIterator& operator++()
-          {if (curRule) curRule = curRule->nextRule; return *this;}
+        {if (curRule) curRule = curRule->nextRule; return *this;}
         RuleIterator operator++(int)
-          {RuleIterator tmp = *this; ++*this; return tmp;}
+        {RuleIterator tmp = *this; ++*this; return tmp;}
         RuleIterator& operator--()
-          {if(curRule) curRule = curRule->prevRule; return *this;}
+        {if(curRule) curRule = curRule->prevRule; return *this;}
         RuleIterator operator--(int)
-          {RuleIterator tmp = *this; --*this; return tmp;}
+        {RuleIterator tmp = *this; --*this; return tmp;}
         Rule* operator ->() const {return curRule;}
         Rule& operator *() const {return *curRule;}
     };
@@ -3983,7 +3983,7 @@ class SetupMatrixDefault : public SetupMatrix
   * representation of capacity.
   */
 class Resource : public HasHierarchy<Resource>,
-      public HasLevel, public Plannable, public HasDescription
+  public HasLevel, public Plannable, public HasDescription
 {
     friend class Load;
     friend class LoadPlan;
@@ -4165,7 +4165,7 @@ class ResourceInfinite : public Resource
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return *metadata;}
     explicit ResourceInfinite(const string& c) : Resource(c)
-      {setDetectProblems(false); initType(metadata);}
+    {setDetectProblems(false); initType(metadata);}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(ResourceInfinite) + Resource::extrasize();}
@@ -4175,8 +4175,8 @@ class ResourceInfinite : public Resource
 
 /** @brief This class links a resource to a certain operation. */
 class Load
-      : public Object, public Association<Operation,Resource,Load>::Node,
-      public Solvable
+  : public Object, public Association<Operation,Resource,Load>::Node,
+  public Solvable
 {
     friend class Resource;
     friend class Operation;
@@ -4193,10 +4193,10 @@ class Load
       try { validate(ADD); }
       catch (...)
       {
-      	if (getOperation()) getOperation()->loaddata.erase(this);
-      	if (getResource()) getResource()->loads.erase(this);
-    	resetReferenceCount();
-    	throw;
+        if (getOperation()) getOperation()->loaddata.erase(this);
+        if (getResource()) getResource()->loads.erase(this);
+        resetReferenceCount();
+        throw;
       }
     }
 
@@ -4212,10 +4212,10 @@ class Load
       try { validate(ADD); }
       catch (...)
       {
-    	if (getOperation()) getOperation()->loaddata.erase(this);
-    	if (getResource()) getResource()->loads.erase(this);
-    	resetReferenceCount();
-    	throw;
+        if (getOperation()) getOperation()->loaddata.erase(this);
+        if (getResource()) getResource()->loads.erase(this);
+        resetReferenceCount();
+        throw;
       }
     }
 
@@ -4290,20 +4290,20 @@ class Load
     static void writer(const MetaCategory*, XMLOutput*);
 
     bool getHidden() const
-     {
+    {
       return (getResource() && getResource()->getHidden())
-        || (getOperation() && getOperation()->getHidden());
+          || (getOperation() && getOperation()->getHidden());
     }
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
     virtual size_t getSize() const
-      {return sizeof(Load) + getName().size() + getSetup().size();}
+    {return sizeof(Load) + getName().size() + getSetup().size();}
 
     /** Default constructor. */
     Load() : qty(1.0), priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY)
-      {initType(metadata);}
+    {initType(metadata);}
 
     /** Return the search mode. */
     SearchMode getSearch() const {return search;}
@@ -4429,7 +4429,7 @@ class Plan : public Plannable, public Object
     const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
     virtual size_t getSize() const
-      {return sizeof(Plan) + name.size() + descr.size();}
+    {return sizeof(Plan) + name.size() + descr.size();}
 };
 
 
@@ -4439,7 +4439,7 @@ class Plan : public Plannable, public Object
   * This is an abstract class.
   */
 class Demand
-      : public HasHierarchy<Demand>, public Plannable, public HasDescription
+  : public HasHierarchy<Demand>, public Plannable, public HasDescription
 {
   public:
     typedef slist<OperationPlan*> OperationPlan_list;
@@ -4451,7 +4451,7 @@ class Demand
 
     /** Destructor. Deleting the demand will also delete all delivery operation
       * plans (including locked ones). */
-    virtual ~Demand() 
+    virtual ~Demand()
     {
       deleteOperationPlans(true);
     }
@@ -4526,7 +4526,7 @@ class Demand
       * remove the operationplans in an undo-able way.
       */
     DECLARE_EXPORT void deleteOperationPlans
-      (bool deleteLockedOpplans = false, CommandManager* = NULL);
+    (bool deleteLockedOpplans = false, CommandManager* = NULL);
 
     /** Returns the due date of the demand. */
     const Date& getDue() const {return dueDate;}
@@ -4559,7 +4559,7 @@ class Demand
     size_t extrasize() const
     {
       return getName().size() + HasDescription::extrasize()
-        + sizeof(void*) * 2 * deli.size();
+          + sizeof(void*) * 2 * deli.size();
     }
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
@@ -4711,7 +4711,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
     TimeLine<LoadPlan>* getTimeLine() const
     {return &(ld->getResource()->loadplans);}
 
-    /** Returns the current setup of the resource.<br> 
+    /** Returns the current setup of the resource.<br>
       * When the argument is true (= default) the current setup is returned.<br>
       * When the argument is false the setup just before the loadplan is returned.
       */
@@ -4765,20 +4765,20 @@ inline Date Load::getLoadplanDate(const LoadPlan* lp) const
   const DateRange & dr = lp->getOperationPlan()->getDates();
   if (lp->isStart())
     return dr.getStart() > getEffective().getStart() ?
-      dr.getStart() :
-      getEffective().getStart();
+        dr.getStart() :
+        getEffective().getStart();
   else
     return dr.getEnd() < getEffective().getEnd() ?
-      dr.getEnd() :
-      getEffective().getEnd();
+        dr.getEnd() :
+        getEffective().getEnd();
 }
 
 
 inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
 {
-  if (!lp->getOperationPlan()->getDates().overlap(getEffective()) 
-    && (lp->getOperationPlan()->getDates().getDuration() 
-         || !getEffective().within(lp->getOperationPlan()->getDates().getStart())))
+  if (!lp->getOperationPlan()->getDates().overlap(getEffective())
+      && (lp->getOperationPlan()->getDates().getDuration()
+          || !getEffective().within(lp->getOperationPlan()->getDates().getStart())))
     // Load is not effective during this time.
     // The extra check is required to make sure that zero duration operationplans
     // operationplans don't get resized to 0
@@ -4798,22 +4798,22 @@ class ProblemBeforeCurrent : public Problem
     string getDescription() const
     {
       ostringstream ch;
-      ch << "Operation '" 
-        << (oper ? oper : static_cast<OperationPlan*>(getOwner())->getOperation())
-        << "' planned in the past";
+      ch << "Operation '"
+          << (oper ? oper : static_cast<OperationPlan*>(getOwner())->getOperation())
+          << "' planned in the past";
       return ch.str();
     }
     bool isFeasible() const {return false;}
     double getWeight() const
     {return oper ? state.quantity : dynamic_cast<OperationPlan*>(getOwner())->getQuantity();}
-    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : Problem(o), oper(NULL) 
-      {if (add) addProblem();}
-    explicit ProblemBeforeCurrent(Operation* o, Date st, Date nd, double q) 
+    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : Problem(o), oper(NULL)
+    {if (add) addProblem();}
+    explicit ProblemBeforeCurrent(Operation* o, Date st, Date nd, double q)
       : oper(o), state(st, nd, q) {}
     ~ProblemBeforeCurrent() {removeProblem();}
     string getEntity() const {return "operation";}
-    Object* getOwner() const 
-      {return oper ? static_cast<Object*>(oper) : dynamic_cast<OperationPlan*>(owner);}
+    Object* getOwner() const
+    {return oper ? static_cast<Object*>(oper) : dynamic_cast<OperationPlan*>(owner);}
     const DateRange getDates() const
     {
       if (oper) return DateRange(state.start, state.end);
@@ -4850,23 +4850,23 @@ class ProblemBeforeFence : public Problem
     string getDescription() const
     {
       ostringstream ch;
-      ch << "Operation '" 
-        << (oper ? oper : static_cast<OperationPlan*>(getOwner())->getOperation())
-        << "' planned before fence";
+      ch << "Operation '"
+          << (oper ? oper : static_cast<OperationPlan*>(getOwner())->getOperation())
+          << "' planned before fence";
       return ch.str();
     }
     bool isFeasible() const {return true;}
     double getWeight() const
     {return oper ? state.quantity : static_cast<OperationPlan*>(getOwner())->getQuantity();}
-    explicit ProblemBeforeFence(OperationPlan* o, bool add = true) 
+    explicit ProblemBeforeFence(OperationPlan* o, bool add = true)
       : Problem(o), oper(NULL)
-      {if (add) addProblem();}
-    explicit ProblemBeforeFence(Operation* o, Date st, Date nd, double q) 
+    {if (add) addProblem();}
+    explicit ProblemBeforeFence(Operation* o, Date st, Date nd, double q)
       : oper(o), state(st, nd, q) {}
     ~ProblemBeforeFence() {removeProblem();}
     string getEntity() const {return "operation";}
-    Object* getOwner() const 
-      {return oper ? static_cast<Object*>(oper) : dynamic_cast<OperationPlan*>(owner);}
+    Object* getOwner() const
+    {return oper ? static_cast<Object*>(oper) : dynamic_cast<OperationPlan*>(owner);}
     const DateRange getDates() const
     {
       if (oper) return DateRange(state.start, state.end);
@@ -4904,11 +4904,11 @@ class ProblemPrecedence : public Problem
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
       if (!o->nextsubopplan)
         return string("Bogus precedence problem on '")
-          + o->getOperation()->getName() + "'";
+            + o->getOperation()->getName() + "'";
       else
         return string("Operation '") + o->getOperation()->getName()
-          + "' starts before operation '"
-          + o->nextsubopplan->getOperation()->getName() +"' ends";
+            + "' starts before operation '"
+            + o->nextsubopplan->getOperation()->getName() +"' ends";
     }
     bool isFeasible() const {return false;}
     /** The weight of the problem is equal to the duration in days. */
@@ -4916,8 +4916,8 @@ class ProblemPrecedence : public Problem
     {
       return static_cast<double>(getDates().getDuration()) / 86400;
     }
-    explicit ProblemPrecedence(OperationPlan* o, bool add = true) : Problem(o) 
-      {if (add) addProblem();}
+    explicit ProblemPrecedence(OperationPlan* o, bool add = true) : Problem(o)
+    {if (add) addProblem();}
     ~ProblemPrecedence() {removeProblem();}
     string getEntity() const {return "operation";}
     Object* getOwner() const {return dynamic_cast<OperationPlan*>(owner);}
@@ -4925,7 +4925,7 @@ class ProblemPrecedence : public Problem
     {
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
       return DateRange(o->nextsubopplan->getDates().getStart(),
-        o->getDates().getEnd());
+          o->getDates().getEnd());
     }
 
     /** Return a reference to the metadata structure. */
@@ -4947,15 +4947,15 @@ class ProblemDemandNotPlanned : public Problem
 {
   public:
     string getDescription() const
-      {return string("Demand '") + getDemand()->getName() + "' is not planned";}
+    {return string("Demand '") + getDemand()->getName() + "' is not planned";}
     bool isFeasible() const {return false;}
     double getWeight() const {return getDemand()->getQuantity();}
-    explicit ProblemDemandNotPlanned(Demand* d, bool add = true) : Problem(d) 
-      {if (add) addProblem();}
+    explicit ProblemDemandNotPlanned(Demand* d, bool add = true) : Problem(d)
+    {if (add) addProblem();}
     ~ProblemDemandNotPlanned() {removeProblem();}
     string getEntity() const {return "demand";}
     const DateRange getDates() const
-      {return DateRange(getDemand()->getDue(),getDemand()->getDue());}
+    {return DateRange(getDemand()->getDue(),getDemand()->getDue());}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
     Demand* getDemand() const {return dynamic_cast<Demand*>(owner);}
     size_t getSize() const {return sizeof(ProblemDemandNotPlanned);}
@@ -4984,14 +4984,14 @@ class ProblemLate : public Problem
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());
       return static_cast<double>(DateRange(
-        getDemand()->getDue(),
-        getDemand()->getLatestDelivery()->getDates().getEnd()
-        ).getDuration()) / 86400;
+          getDemand()->getDue(),
+          getDemand()->getLatestDelivery()->getDates().getEnd()
+          ).getDuration()) / 86400;
     }
 
     /** Constructor. */
-    explicit ProblemLate(Demand* d, bool add = true) : Problem(d) 
-      {if (add) addProblem();}
+    explicit ProblemLate(Demand* d, bool add = true) : Problem(d)
+    {if (add) addProblem();}
 
     /** Destructor. */
     ~ProblemLate() {removeProblem();}
@@ -5027,12 +5027,12 @@ class ProblemEarly : public Problem
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());
       return static_cast<double>(DateRange(
-        getDemand()->getDue(),
-        getDemand()->getEarliestDelivery()->getDates().getEnd()
-        ).getDuration()) / 86400;
+          getDemand()->getDue(),
+          getDemand()->getEarliestDelivery()->getDates().getEnd()
+          ).getDuration()) / 86400;
     }
-    explicit ProblemEarly(Demand* d, bool add = true) : Problem(d) 
-      {if (add) addProblem();}
+    explicit ProblemEarly(Demand* d, bool add = true) : Problem(d)
+    {if (add) addProblem();}
     ~ProblemEarly() {removeProblem();}
     string getEntity() const {return "demand";}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
@@ -5053,7 +5053,7 @@ class ProblemEarly : public Problem
 };
 
 
-/** @brief A Problem of this class is created in the model when a data exception 
+/** @brief A Problem of this class is created in the model when a data exception
   * prevents planning of certain objects
   */
 class ProblemInvalidData : public Problem
@@ -5062,10 +5062,10 @@ class ProblemInvalidData : public Problem
     string getDescription() const {return description;}
     bool isFeasible() const {return false;}
     double getWeight() const {return qty;}
-    explicit ProblemInvalidData(HasProblems* o, string d, string e, 
-      Date st, Date nd, double q, bool add = true) 
+    explicit ProblemInvalidData(HasProblems* o, string d, string e,
+        Date st, Date nd, double q, bool add = true)
       : Problem(o), description(d), entity(e), dates(st,nd), qty(q)
-        {if (add) addProblem();}
+    {if (add) addProblem();}
     ~ProblemInvalidData() {removeProblem();}
     string getEntity() const {return entity;}
     const DateRange getDates() const {return dates;}
@@ -5077,8 +5077,8 @@ class ProblemInvalidData : public Problem
       if (entity == "operation") return dynamic_cast<Operation*>(owner);
       throw LogicException("Unknown problem entity type");
     }
-    size_t getSize() const 
-      {return sizeof(ProblemInvalidData) + description.size() + entity.size();}
+    size_t getSize() const
+    {return sizeof(ProblemInvalidData) + description.size() + entity.size();}
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return *metadata;}
@@ -5105,19 +5105,19 @@ class ProblemShort : public Problem
     {
       ostringstream ch;
       ch << "Demand '" << getDemand()->getName() << "' planned "
-      << (getDemand()->getQuantity() - getDemand()->getPlannedQuantity())
-      << " units short";
+          << (getDemand()->getQuantity() - getDemand()->getPlannedQuantity())
+          << " units short";
       return ch.str();
     }
     bool isFeasible() const {return true;}
     double getWeight() const
-      {return getDemand()->getQuantity() - getDemand()->getPlannedQuantity();}
-    explicit ProblemShort(Demand* d, bool add = true) : Problem(d) 
-      {if (add) addProblem();}
+    {return getDemand()->getQuantity() - getDemand()->getPlannedQuantity();}
+    explicit ProblemShort(Demand* d, bool add = true) : Problem(d)
+    {if (add) addProblem();}
     ~ProblemShort() {removeProblem();}
     string getEntity() const {return "demand";}
     const DateRange getDates() const
-      {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
+    {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
     Demand* getDemand() const {return dynamic_cast<Demand*>(owner);}
     size_t getSize() const {return sizeof(ProblemShort);}
@@ -5140,20 +5140,20 @@ class ProblemExcess : public Problem
     {
       ostringstream ch;
       ch << "Demand '" << getDemand()->getName() << "' planned "
-      << (getDemand()->getPlannedQuantity() - getDemand()->getQuantity())
-      << " units excess";
+          << (getDemand()->getPlannedQuantity() - getDemand()->getQuantity())
+          << " units excess";
       return ch.str();
     }
     bool isFeasible() const {return true;}
     double getWeight() const
-      {return getDemand()->getPlannedQuantity() - getDemand()->getQuantity();}
-    explicit ProblemExcess(Demand* d, bool add = true) : Problem(d) 
-      {if (add) addProblem();}
+    {return getDemand()->getPlannedQuantity() - getDemand()->getQuantity();}
+    explicit ProblemExcess(Demand* d, bool add = true) : Problem(d)
+    {if (add) addProblem();}
     string getEntity() const {return "demand";}
     Object* getOwner() const {return dynamic_cast<Demand*>(owner);}
     ~ProblemExcess() {removeProblem();}
     const DateRange getDates() const
-      {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
+    {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemExcess);}
 
@@ -5175,7 +5175,7 @@ class ProblemCapacityOverload : public Problem
     bool isFeasible() const {return false;}
     double getWeight() const {return qty;}
     ProblemCapacityOverload(Resource* r, Date st, Date nd, double q, bool add = true)
-        : Problem(r), qty(q), dr(st,nd) {if (add) addProblem();}
+      : Problem(r), qty(q), dr(st,nd) {if (add) addProblem();}
     ~ProblemCapacityOverload() {removeProblem();}
     string getEntity() const {return "capacity";}
     Object* getOwner() const {return dynamic_cast<Resource*>(owner);}
@@ -5208,7 +5208,7 @@ class ProblemCapacityUnderload : public Problem
     bool isFeasible() const {return true;}
     double getWeight() const {return qty;}
     ProblemCapacityUnderload(Resource* r, DateRange d, double q, bool add = true)
-        : Problem(r), qty(q), dr(d) {if (add) addProblem();}
+      : Problem(r), qty(q), dr(d) {if (add) addProblem();}
     ~ProblemCapacityUnderload() {removeProblem();}
     string getEntity() const {return "capacity";}
     Object* getOwner() const {return dynamic_cast<Resource*>(owner);}
@@ -5241,7 +5241,7 @@ class ProblemMaterialShortage : public Problem
     bool isFeasible() const {return false;}
     double getWeight() const {return qty;}
     ProblemMaterialShortage(Buffer* b, Date st, Date nd, double q, bool add = true)
-        : Problem(b), qty(q), dr(st,nd) {if (add) addProblem();}
+      : Problem(b), qty(q), dr(st,nd) {if (add) addProblem();}
     string getEntity() const {return "material";}
     Object* getOwner() const {return dynamic_cast<Buffer*>(owner);}
     ~ProblemMaterialShortage() {removeProblem();}
@@ -5274,7 +5274,7 @@ class ProblemMaterialExcess : public Problem
     bool isFeasible() const {return true;}
     double getWeight() const {return qty;}
     ProblemMaterialExcess(Buffer* b, Date st, Date nd, double q, bool add = true)
-        : Problem(b), qty(q), dr(st,nd) {if (add) addProblem();}
+      : Problem(b), qty(q), dr(st,nd) {if (add) addProblem();}
     string getEntity() const {return "material";}
     ~ProblemMaterialExcess() {removeProblem();}
     const DateRange getDates() const {return dr;}
@@ -5308,8 +5308,8 @@ class CommandCreateOperationPlan : public Command
   public:
     /** Constructor. */
     CommandCreateOperationPlan
-      (const Operation* o, double q, Date d1, Date d2, Demand* l,
-      OperationPlan* ow=NULL, bool makeflowsloads=true)
+    (const Operation* o, double q, Date d1, Date d2, Demand* l,
+     OperationPlan* ow=NULL, bool makeflowsloads=true)
     {
       opplan = o ?
           o->createOperationPlan(q, d1, d2, l, ow, 0, makeflowsloads)
@@ -5402,7 +5402,7 @@ class CommandMoveOperationPlan : public Command
       * which indicates to leave the quantity unchanged.
       */
     DECLARE_EXPORT CommandMoveOperationPlan(OperationPlan* opplanptr,
-      Date newStart, Date newEnd, double newQty = -1.0);
+        Date newStart, Date newEnd, double newQty = -1.0);
 
     /** Default constructor. */
     DECLARE_EXPORT CommandMoveOperationPlan(OperationPlan*);
@@ -5430,10 +5430,10 @@ class CommandMoveOperationPlan : public Command
     void setStart(Date d) {if (opplan) opplan->setStart(d);}
 
     /** Set another start date, end date and quantity for the operationplan. */
-    void setParameters(Date s, Date e, double q, bool b) 
+    void setParameters(Date s, Date e, double q, bool b)
     {
       assert(opplan->getOperation());
-      if (opplan) 
+      if (opplan)
         opplan->getOperation()->setOperationPlanParameters(opplan, q, s, e, b);
     }
 
@@ -5594,13 +5594,13 @@ class Problem::const_iterator
 
 
 /** Retrieve an iterator for the list. */
-inline Problem::const_iterator Problem::List::begin() const 
-  {return Problem::const_iterator(first);}
+inline Problem::const_iterator Problem::List::begin() const
+{return Problem::const_iterator(first);}
 
 
 /** Stop iterator. */
 inline Problem::const_iterator Problem::List::end() const
-  {return Problem::const_iterator(static_cast<Problem*>(NULL));}
+{return Problem::const_iterator(static_cast<Problem*>(NULL));}
 
 
 /** @brief This class allows upstream and downstream navigation through
@@ -5686,8 +5686,8 @@ class PeggingIterator : public Object
     {
       const state& t = states.top();
       return t.prod_flowplan
-        ? t.factor * t.prod_flowplan->getOperationPlan()->getQuantity()
-        : 0;
+          ? t.factor * t.prod_flowplan->getOperationPlan()->getQuantity()
+          : 0;
     }
 
     /** Returns which portion of the current flowplan is fed/supplied by the
@@ -5707,7 +5707,7 @@ class PeggingIterator : public Object
       * operator.
       */
     PeggingIterator operator++(int)
-      {PeggingIterator tmp = *this; ++*this; return tmp;}
+    {PeggingIterator tmp = *this; ++*this; return tmp;}
 
     /** Move the iterator foward to the next upstream flowplan. */
     DECLARE_EXPORT PeggingIterator& operator--();
@@ -5717,7 +5717,7 @@ class PeggingIterator : public Object
       * operator.
       */
     PeggingIterator operator--(int)
-      {PeggingIterator tmp = *this; --*this; return tmp;}
+    {PeggingIterator tmp = *this; --*this; return tmp;}
 
     /** Comparison operator. */
     bool operator==(const PeggingIterator& x) const {return states == x.states;}
@@ -5777,24 +5777,24 @@ class PeggingIterator : public Object
 
       /** Constructor. */
       state(unsigned int l, double d, double f,
-        const FlowPlan* fc, const FlowPlan* fp, bool p = true)
-          : qty(d), factor(f), level(l),
+          const FlowPlan* fc, const FlowPlan* fp, bool p = true)
+        : qty(d), factor(f), level(l),
           cons_flowplan(fc), prod_flowplan(fp), pegged(p) {};
 
       /** Inequality operator. */
       bool operator != (const state& s) const
       {
         return cons_flowplan != s.cons_flowplan
-          || prod_flowplan != s.prod_flowplan
-          || level != s.level;
+            || prod_flowplan != s.prod_flowplan
+            || level != s.level;
       }
 
       /** Equality operator. */
       bool operator == (const state& s) const
       {
         return cons_flowplan == s.cons_flowplan
-          && prod_flowplan == s.prod_flowplan
-          && level == s.level;
+            && prod_flowplan == s.prod_flowplan
+            && level == s.level;
       }
     };
 
@@ -5846,9 +5846,9 @@ class OperationPlan::FlowPlanIterator
       prevflowplan = b.prevflowplan;
     }
     bool operator != (const FlowPlanIterator &b) const
-      {return b.curflowplan != curflowplan;}
+    {return b.curflowplan != curflowplan;}
     bool operator == (const FlowPlanIterator &b) const
-      {return b.curflowplan == curflowplan;}
+    {return b.curflowplan == curflowplan;}
     FlowPlanIterator& operator++()
     {
       prevflowplan = curflowplan;
@@ -5856,7 +5856,7 @@ class OperationPlan::FlowPlanIterator
       return *this;
     }
     FlowPlanIterator operator++(int)
-      {FlowPlanIterator tmp = *this; ++*this; return tmp;}
+    {FlowPlanIterator tmp = *this; ++*this; return tmp;}
     FlowPlan* operator ->() const {return curflowplan;}
     FlowPlan& operator *() const {return *curflowplan;}
     void deleteFlowPlan()
@@ -5872,10 +5872,10 @@ class OperationPlan::FlowPlanIterator
 };
 
 inline OperationPlan::FlowPlanIterator OperationPlan::beginFlowPlans() const
-  {return OperationPlan::FlowPlanIterator(firstflowplan);}
+{return OperationPlan::FlowPlanIterator(firstflowplan);}
 
 inline OperationPlan::FlowPlanIterator OperationPlan::endFlowPlans() const
-  {return OperationPlan::FlowPlanIterator(NULL);}
+{return OperationPlan::FlowPlanIterator(NULL);}
 
 inline int OperationPlan::sizeFlowPlans() const
 {
@@ -5903,9 +5903,9 @@ class OperationPlan::LoadPlanIterator
       prevloadplan = b.prevloadplan;
     }
     bool operator != (const LoadPlanIterator &b) const
-      {return b.curloadplan != curloadplan;}
+    {return b.curloadplan != curloadplan;}
     bool operator == (const LoadPlanIterator &b) const
-      {return b.curloadplan == curloadplan;}
+    {return b.curloadplan == curloadplan;}
     LoadPlanIterator& operator++()
     {
       prevloadplan = curloadplan;
@@ -5913,7 +5913,7 @@ class OperationPlan::LoadPlanIterator
       return *this;
     }
     LoadPlanIterator operator++(int)
-      {LoadPlanIterator tmp = *this; ++*this; return tmp;}
+    {LoadPlanIterator tmp = *this; ++*this; return tmp;}
     LoadPlan* operator ->() const {return curloadplan;}
     LoadPlan& operator *() const {return *curloadplan;}
     void deleteLoadPlan()
@@ -5930,11 +5930,11 @@ class OperationPlan::LoadPlanIterator
 
 
 inline OperationPlan::LoadPlanIterator OperationPlan::beginLoadPlans() const
-  {return OperationPlan::LoadPlanIterator(firstloadplan);}
+{return OperationPlan::LoadPlanIterator(firstloadplan);}
 
 
 inline OperationPlan::LoadPlanIterator OperationPlan::endLoadPlans() const
-  {return OperationPlan::LoadPlanIterator(NULL);}
+{return OperationPlan::LoadPlanIterator(NULL);}
 
 
 inline int OperationPlan::sizeLoadPlans() const
@@ -5950,16 +5950,16 @@ class ProblemIterator
 {
   public:
     /** Constructor starting the iteration from a certain problem. */
-    ProblemIterator(Problem *x) : 
-        FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>(x) {}
+    ProblemIterator(Problem *x) :
+      FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>(x) {}
 
     /** Constructor starting the iteration from a certain problem. */
-    ProblemIterator(Problem &x) : 
-        FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>(&x) {}
+    ProblemIterator(Problem &x) :
+      FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>(&x) {}
 
     /** Default constructor. */
-    ProblemIterator() : 
-        FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>() {}
+    ProblemIterator() :
+      FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>() {}
 };
 
 

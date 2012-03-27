@@ -50,7 +50,7 @@ DECLARE_EXPORT void Resource::updateProblems()
   double curMin(0.0);
   double excessQty(0.0);
   for (loadplanlist::const_iterator iter = loadplans.begin();
-    iter != loadplans.end(); )
+      iter != loadplans.end(); )
   {
     // Process changes in the maximum or minimum targets
     if (iter->getType() == 4)

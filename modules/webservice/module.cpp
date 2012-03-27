@@ -51,7 +51,7 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
   {
     // Process the module parameters
     for (Environment::ParameterList::const_iterator x = z.begin();
-      x != z.end(); ++x)
+        x != z.end(); ++x)
     {
       if (x->first == "port")
         CommandWebservice::setPort(x->second.getInt());
@@ -82,9 +82,9 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z)
       logger << "Error: unknown exception" << endl;
     }
 
-  // Return the name of the module
-  return name;
-}
+    // Return the name of the module
+    return name;
+  }
 
 
 }       // end namespace

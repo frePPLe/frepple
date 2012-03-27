@@ -36,28 +36,28 @@ using namespace std;
 void usage()
 {
   cout << "\nfrePPLe v" << FreppleVersion() << " command line application\n"
-    "\nUsage:\n"
-    "  frepple [options] [files | directories]\n"
-    "\nThis program reads XML input data, and executes the modeling and\n"
-    "planning commands included in them.\n"
-    "The XML input can be provided in the following ways:\n"
-    "  - Passing one or more XML files and/or directories as arguments.\n"
-    "    When a directory is specified, the application will process\n"
-    "    all files with the extension '.xml'.\n"
-    "  - Passing one or more Python files with the extension '.py'\n"
-    "    The Python commands are executed in the embedded interpreter.\n"
-    "  - When passing no file or directory arguments, input will be read\n"
-    "    from the standard input. XML data can be piped to the application.\n"
-    "\nOptions:\n"
-    "  -validate -v  Validate the XML input for correctness.\n"
-    "  -check -c     Only validate the input, without executing the content.\n"
-    "  -? -h -help   Show these instructions.\n"
-    "\nEnvironment: The variable FREPPLE_HOME optionally points to a\n"
-    "     directory where the initialization files init.xml, init.py,\n"
-    "     frepple.xsd and module libraries will be searched.\n"
-    "\nReturn codes: 0 when successful, non-zero in case of errors\n"
-    "\nMore information on this program: http://www.frepple.com\n\n"
-    << endl;
+      "\nUsage:\n"
+      "  frepple [options] [files | directories]\n"
+      "\nThis program reads XML input data, and executes the modeling and\n"
+      "planning commands included in them.\n"
+      "The XML input can be provided in the following ways:\n"
+      "  - Passing one or more XML files and/or directories as arguments.\n"
+      "    When a directory is specified, the application will process\n"
+      "    all files with the extension '.xml'.\n"
+      "  - Passing one or more Python files with the extension '.py'\n"
+      "    The Python commands are executed in the embedded interpreter.\n"
+      "  - When passing no file or directory arguments, input will be read\n"
+      "    from the standard input. XML data can be piped to the application.\n"
+      "\nOptions:\n"
+      "  -validate -v  Validate the XML input for correctness.\n"
+      "  -check -c     Only validate the input, without executing the content.\n"
+      "  -? -h -help   Show these instructions.\n"
+      "\nEnvironment: The variable FREPPLE_HOME optionally points to a\n"
+      "     directory where the initialization files init.xml, init.py,\n"
+      "     frepple.xsd and module libraries will be searched.\n"
+      "\nReturn codes: 0 when successful, non-zero in case of errors\n"
+      "\nMore information on this program: http://www.frepple.com\n\n"
+      << endl;
 }
 
 
@@ -87,7 +87,7 @@ int main (int argc, char *argv[])
               && strcmp(argv[i],"-h")
               && strcmp(argv[i],"-help"))
             cout << "\nError: Option '" << argv[i]
-            << "' not recognized." << endl;
+                << "' not recognized." << endl;
           usage();
           return EXIT_FAILURE;
         }
@@ -106,7 +106,7 @@ int main (int argc, char *argv[])
           FreppleReadPythonFile(argv[i]);
         else
           // Execute as XML file
-          FreppleReadXMLFile(argv[i], validate, validate_only);        
+          FreppleReadXMLFile(argv[i], validate, validate_only);
       }
     }
 

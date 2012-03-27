@@ -103,7 +103,7 @@ class OperationTransport : public OperationFixedTime
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
     /** Handler for reading attributes from Python. */
-  	PyObject* getattro(const Attribute&);
+    PyObject* getattro(const Attribute&);
 
     /** Handler for updating attributes from Python. */
     int setattro(const Attribute&, const PythonObject&);

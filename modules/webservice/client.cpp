@@ -31,44 +31,44 @@
 
 int main(int argc, char *argv[])
 {
-   if  (argc <= 2 || (strcmp(argv[1],"get") && strcmp(argv[1],"post")))
-   {
-     std::cout << "Usage:" << std::endl;
-     std::cout << "  " << argv[0] << " get <demand name>" << std::endl << std::endl;
-     std::cout << "  " << argv[0] << " post <data>" << std::endl << std::endl;
-     return 1;
-   }
+  if  (argc <= 2 || (strcmp(argv[1],"get") && strcmp(argv[1],"post")))
+  {
+    std::cout << "Usage:" << std::endl;
+    std::cout << "  " << argv[0] << " get <demand name>" << std::endl << std::endl;
+    std::cout << "  " << argv[0] << " post <data>" << std::endl << std::endl;
+    return 1;
+  }
 
-   frepple svc;
+  frepple svc;
 
-   // Return demand information
-   if (!strcmp(argv[1],"get"))
-   {
-     struct frepple__DemandInfoResponse result;
-     if (svc.frepple__demand(argv[2], result) == SOAP_OK)
-     {
-       std::cout << "Name: " << result._return.name << std::endl
-         << "Item: " << result._return.item << std::endl
-         << "Quantity: " << result._return.quantity << std::endl
-         << "Due date: " << asctime(gmtime(&result._return.due))
-         << "Priority: " << result._return.priority << std::endl;
-     }
-     else
-        soap_print_fault(svc.soap, stderr);
-   }
+  // Return demand information
+  if (!strcmp(argv[1],"get"))
+  {
+    struct frepple__DemandInfoResponse result;
+    if (svc.frepple__demand(argv[2], result) == SOAP_OK)
+    {
+      std::cout << "Name: " << result._return.name << std::endl
+          << "Item: " << result._return.item << std::endl
+          << "Quantity: " << result._return.quantity << std::endl
+          << "Due date: " << asctime(gmtime(&result._return.due))
+          << "Priority: " << result._return.priority << std::endl;
+    }
+    else
+      soap_print_fault(svc.soap, stderr);
+  }
 
-   // Post new XML data
-   if (!strcmp(argv[1],"post"))
-   {
-     struct frepple__PostResponse result;
-     if (svc.frepple__post(argv[2], result) == SOAP_OK)
-     {
-       std::cout << "answer: " << result._return << std::endl;
-     }
-     else
-        soap_print_fault(svc.soap, stderr);
-   }
+  // Post new XML data
+  if (!strcmp(argv[1],"post"))
+  {
+    struct frepple__PostResponse result;
+    if (svc.frepple__post(argv[2], result) == SOAP_OK)
+    {
+      std::cout << "answer: " << result._return << std::endl;
+    }
+    else
+      soap_print_fault(svc.soap, stderr);
+  }
 
-   return 0;
+  return 0;
 }
 

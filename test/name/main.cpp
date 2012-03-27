@@ -153,7 +153,7 @@ void scalability_test()
   logger << "Elements   Time per operation"  << endl;
   double ref1=0.0f, ref2=0.0f, a=0.0f, b=0.0f, size1, size2;
   int testpoints[] =
-    {300000, 5000, 250000, 200000, 150000, 100000, 50000, 25000};
+  {300000, 5000, 250000, 200000, 150000, 100000, 50000, 25000};
   int cnt=0;
   //for (int scale = 400000; scale >= 100; scale*=0.75)
   for (int scale=testpoints[0]; cnt<=7; scale=testpoints[++cnt])
@@ -207,8 +207,8 @@ void scalability_test()
       // Other data points
       float compare = (curtime * 1000 / scale) / (a+b*log(scale));
       logger << scale << "   "
-      <<  (curtime * 1000 / scale) / ref1 << "  "
-      << (fabs(compare-1) < 0.05 ? "OK" : "NOK") << endl;
+          <<  (curtime * 1000 / scale) / ref1 << "  "
+          << (fabs(compare-1) < 0.05 ? "OK" : "NOK") << endl;
     }
   }
   //logger.precision(3);

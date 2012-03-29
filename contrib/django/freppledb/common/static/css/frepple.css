@@ -108,6 +108,11 @@ input[type=text], input[type=password], textarea, select, .vTextField {
     border: 1px solid #ccc;
 }
 
+div #tabs  {
+    float: right;
+    font-size: 1em;
+}
+
 /* BREADCRUMBS */
 
 div.breadcrumbs, div.breadcrumbs a {
@@ -273,6 +278,7 @@ div.system-message p.system-message-title {
 /* Style for the actions items at the top of a report */
 div.tools {
   float: right;
+  padding: 5px 5px 5px 5px;
 }
 
 /* Style for the context menu. */

@@ -73,7 +73,8 @@ $(window).bind('resize', function() {
 
 </script> 
 {% endblock %}
-{% block tools %}<div class="tools">{% if reportclass.filterable %}
+{% block content %}
+{% block before_table %}{% endblock %}<div class="tools">{% if reportclass.filterable %}
 <a id="filter" href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
 <a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
@@ -82,10 +83,8 @@ $(window).bind('resize', function() {
 {% if hasaddperm %}<a href="{{request.prefix}}/admin/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
 <a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
 {% endif %}<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
-</div>{% endblock %}
-{% block content %}
+</div>
 <div id="content-main" style="margin-right: 15px;">
-{% block before_table %}{% endblock %}
 <table id="grid"></table>
 <div id="gridpager"></div>
 {% block after_table %}{% endblock %}

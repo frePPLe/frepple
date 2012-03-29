@@ -84,7 +84,8 @@ $(window).bind('resize', function() {
 </script> 
 {% endblock %}
 {% block content_title %}{{block.super}}{% endblock %}
-{% block tools %}<div class="tools">{% if reportclass.filterable and not args.0 %}
+{% block content %}
+{% block before_table %}{% endblock %}<div class="tools">{% if reportclass.filterable and not args.0 %}
 <a href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
 {% if reportclass.editable and haschangeperm %}
 <a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
@@ -92,10 +93,8 @@ $(window).bind('resize', function() {
 {% endif %}
 <a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
 <a href="javascript:export_show(false);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
-</div>{% endblock %}
-{% block content %}
+</div>
 <div id="content-main" style="margin-right: 15px;">
-{% block before_table %}{% endblock %}
 <table id="grid"></table>
 <div id="gridpager"></div>
 </div>

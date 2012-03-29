@@ -23,6 +23,12 @@
 </ul></div>
 {% endblock %}
 
+
+{% block tools %}{% if args.0 %}
+{% include "buffertabs.html" %}
+{% endif %}{{block.super}}
+{% endblock %}
+
 {% block before_table %}
 {% if args.0 %}<div id="chart1div" style="z-index: 1000;">
 	  <p>&nbsp;</p>

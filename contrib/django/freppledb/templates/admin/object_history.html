@@ -1,18 +1,22 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1>{{title|escape}}</h1>{% endif %}
-
-<div id="tabs">
-  {{title|escape}}<ul>
-    <li><a href="#content-main">Edit</a></li>
-    <li><a href="/content1.html">Plan</a></li>
-    <li><a href="/content2.html">Where Used</a></li>
-    <li><a href="/content3.html">History</a></li>
-  </ul>
-  
-</div>
-
+{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|escape}}</h1>{% endif %}
+{% if model == 'bucket' %}{% include "buckettabs.html" %}
+{% elif model == 'buffer' %}{% include "buffertabs.html" %}
+{% elif model == 'calendar' %}{% include "calendartabs.html" %}
+{% elif model == 'customer' %}{% include "customertabs.html" %}
+{% elif model == 'demand' %}{% include "demandtabs.html" %}
+{% elif model == 'flow' %}{% include "flowtabs.html" %}
+{% elif model == 'forecast' %}{% include "forecasttabs.html" %}
+{% elif model == 'group' %}{% include "grouptabs.html" %}
+{% elif model == 'item' %}{% include "itemtabs.html" %}
+{% elif model == 'load' %}{% include "loadtabs.html" %}
+{% elif model == 'location' %}{% include "locationtabs.html" %}
+{% elif model == 'operation' %}{% include "operationtabs.html" %}
+{% elif model == 'resource' %}{% include "resourcetabs.html" %}
+{% elif model == 'setupmatrix' %}{% include "setupmatrixtabs.html" %}
+{% endif %} 
 </div>{% endblock %}
 
 {% block content %}

@@ -1,4 +1,5 @@
 {% load i18n %}
 <div id="flowcontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-{% if perms.input.change_flow %}<li class="ui-menu-item"><a id="{{request.prefix}}/admin/input/flow/{value}/">{% trans 'flow' %}</a></li>{% endif %}
+{% if perms.input.change_flow %}<li class="ui-menu-item"><a id="{{request.prefix}}/admin/input/flow/{value}/">{% trans 'Edit' %}</a></li>{% endif %}
+<li class="ui-menu-item"><a id="{{request.prefix}}/admin/input/flow/{value}/history/">{% trans 'History' %}</a></li>
 </ul></div>

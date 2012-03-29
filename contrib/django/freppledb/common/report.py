@@ -445,6 +445,7 @@ class GridReport(View):
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
+        'object_id': args and args[0] or None,
         'reportbucket': bucket,
         'reportstart': start,
         'reportend': end,
@@ -456,6 +457,7 @@ class GridReport(View):
         'model': reportclass.model,
         'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())),
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())),
+        'active_tab': 'plan',
         }  
       for k, v in reportclass.extra_context(request).iteritems():
         context[k] = v  

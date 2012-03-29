@@ -705,11 +705,11 @@ class BucketDetailList(GridReport):
   title = _("Bucket Detail List")
   basequeryset = BucketDetail.objects.all()
   model = BucketDetail
-  frozenColumns = 1
+  frozenColumns = 2
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True),
     GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter="bucket"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
+    GridFieldText('name', title=_('name')),
     GridFieldLastModified('lastmodified'),
     )

@@ -145,6 +145,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       'object': obj,
       'app_label': app_label,
       'opts': opts,
+      'active_tab': 'history',
+      'object_id': object_id,
+      'model': ContentType.objects.get_for_model(model).model,
     }
     context.update(extra_context or {})
     return TemplateResponse(request, self.object_history_template or [

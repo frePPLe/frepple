@@ -10,22 +10,27 @@
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/forms.css" />
 {{block.super}}{% endblock %}
 
-{% block bodyclass %}{{opts.app_label}}-{{opts.object_name.lower}} change-form{% endblock %}
-{% block breadcrumbs %}{% if not is_popup %}{{block.super}}{% endif %}{% endblock %}
+{% block bodyclass %}change-form{% endblock %}
+
+{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|escape}}</h1>{% endif %}
+{% if object_id %}{% set active_tab 'edit' %}
+{% if opts.object_name.lower == 'bucket' %}{% include "buckettabs.html" %}
+{% elif opts.object_name.lower == 'buffer' %}{% include "buffertabs.html" %}
+{% elif opts.object_name.lower == 'calendar' %}{% include "calendartabs.html" %}
+{% elif opts.object_name.lower == 'customer' %}{% include "customertabs.html" %}
+{% elif opts.object_name.lower == 'demand' %}{% include "demandtabs.html" %}
+{% elif opts.object_name.lower == 'flow' %}{% include "flowtabs.html" %}
+{% elif opts.object_name.lower == 'forecast' %}{% include "forecasttabs.html" %}
+{% elif opts.object_name.lower == 'group' %}{% include "grouptabs.html" %}
+{% elif opts.object_name.lower == 'item' %}{% include "itemtabs.html" %}
+{% elif opts.object_name.lower == 'load' %}{% include "loadtabs.html" %}
+{% elif opts.object_name.lower == 'location' %}{% include "locationtabs.html" %}
+{% elif opts.object_name.lower == 'operation' %}{% include "operationtabs.html" %}
+{% elif opts.object_name.lower == 'resource' %}{% include "resourcetabs.html" %}
+{% elif opts.object_name.lower == 'setupmatrix' %}{% include "setupmatrixtabs.html" %}
+{% endif %}{% endif %}{% endblock %}
+
 {% block content %}<div id="content-main">
-{% block object-tools %}
-{% if change %}{% if not is_popup %}
-  <ul class="object-tools">
-  {% if opts.object_name.lower == "demand" %}<li><a href="{{request.prefix}}/demandpegging/{{object_id}}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
-  {% if opts.object_name.lower == "buffer" %}<li><a href="{{request.prefix}}/buffer/{{object_id}}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
-  {% if opts.object_name.lower == "operation" %}<li><a href="{{request.prefix}}/operation/{{object_id}}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
-  {% if opts.object_name.lower == "resource" %}<li><a href="{{request.prefix}}/resource/{{object_id}}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
-  {% if opts.object_name.lower == "item" %}<li><a href="{{request.prefix}}/demand/{{object_id}}/" class="historylink">{% trans "Plan" %}</a></li>{% endif %}
-  <li><a href="history/" class="historylink">{% trans "History" %}</a></li>
-  {% if has_absolute_url %}<li><a href="../../../r/{{content_type_id}}/{{object_id}}/" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif%}
-  </ul>
-{% endif %}{% endif %}
-{% endblock %}
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{form_url}}" method="post" id="{{opts.module_name}}_form">{% csrf_token %}{% block form_top %}{% endblock %}
 <div>
 {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}

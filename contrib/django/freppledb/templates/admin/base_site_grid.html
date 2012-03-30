@@ -82,6 +82,7 @@ $(window).bind('resize', function() {
 {% endif %}
 {% if hasaddperm %}<a href="{{request.prefix}}/admin/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
 <a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
+{% endif %}{% if reportclass.hasTimeBuckets %}<a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
 {% endif %}<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
 </div>
 <div id="content-main" style="margin-right: 15px;">
@@ -89,5 +90,15 @@ $(window).bind('resize', function() {
 <div id="gridpager"></div>
 {% block after_table %}{% endblock %}
 </div>
+{% if reportclass.hasTimeBuckets %}<div id="timebuckets" class="ui-helper-hidden" title="{% trans 'Time buckets' %}">
+<form method="get" action=""><table>
+<tr><th>{% trans 'Bucket' %}</th><td><select name="reportbucket" id="reportbucket">
+{% for i in bucketnames %}<option value="{{i}}"{% ifequal i reportbucket %} selected="selected"{% endifequal %}>{% trans i %}</option>
+{% endfor %}</select></td></tr>
+<tr><th>{% trans 'start date'|capfirst %}:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="{{reportstart|date:"Y-m-d"}}"/></td></tr>
+<tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{reportend|date:"Y-m-d"}}"/>
+<input id="reportoriginal" type="hidden" value="{{reportbucket}}|{{reportstart|date:"Y-m-d"}}|{{reportend|date:"Y-m-d"}}"/></td></tr>
+</table></form>
+</div>{% endif %}
 {% block contextmenus %}{% endblock %}
 {% endblock %}

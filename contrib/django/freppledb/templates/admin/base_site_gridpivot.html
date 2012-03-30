@@ -91,15 +91,15 @@ $(window).bind('resize', function() {
 <a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
 <a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>
 {% endif %}
-<a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
-<a href="javascript:export_show(false);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
+{% if reportclass.hasTimeBuckets %}<a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
+{% endif %}<a href="javascript:export_show(false);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
 </div>
 <div id="content-main" style="margin-right: 15px;">
 <table id="grid"></table>
 <div id="gridpager"></div>
 </div>
 {% block after_table %}{% endblock %}
-<div id="timebuckets" class="ui-helper-hidden" title="{% trans 'Time buckets' %}">
+{% if reportclass.hasTimeBuckets %}<div id="timebuckets" class="ui-helper-hidden" title="{% trans 'Time buckets' %}">
 <form method="get" action=""><table>
 <tr><th>{% trans 'Bucket' %}</th><td><select name="reportbucket" id="reportbucket">
 {% for i in bucketnames %}<option value="{{i}}"{% ifequal i reportbucket %} selected="selected"{% endifequal %}>{% trans i %}</option>
@@ -108,6 +108,6 @@ $(window).bind('resize', function() {
 <tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{reportend|date:"Y-m-d"}}"/>
 <input id="reportoriginal" type="hidden" value="{{reportbucket}}|{{reportstart|date:"Y-m-d"}}|{{reportend|date:"Y-m-d"}}"/></td></tr>
 </table></form>
-</div>
+</div>{% endif %}
 {% block contextmenus %}{% endblock %}
 {% endblock %}

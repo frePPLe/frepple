@@ -206,7 +206,7 @@ class Command(BaseCommand):
         destinationscenario.description = "Copied from scenario '%s'" % source
       destinationscenario.save()
 
-    except Exception, e:
+    except Exception as e:
       try: log(category='COPY', theuser=user,
         message=_("Failed copying database '%(source)s' to '%(destination)s'" %
           {'source':source, 'destination':destination} )).save()

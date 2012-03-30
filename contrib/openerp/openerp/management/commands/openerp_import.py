@@ -81,7 +81,7 @@ class Command(BaseCommand):
     if not self.openerp_db:
       try:
         self.openerp_db = Parameter.objects.get(name="openerp_db").value
-      except Exception, e:
+      except Exception as e:
         self.openerp_db = 'openerp'
     self.openerp_url = options['openerp_url']
     if not self.openerp_url:
@@ -138,7 +138,7 @@ class Command(BaseCommand):
       log(category='IMPORT', theuser=user,
         message=_('Finished importing from OpenERP')).save(using=self.database)
       
-    except Exception, e:
+    except Exception as e:
       log(category='IMPORT', theuser=user,
         message=u'%s: %s' % (_('Failed importing from OpenERP'),e)).save(using=self.database)
       raise CommandError(e)    
@@ -212,7 +212,7 @@ class Command(BaseCommand):
         print "Updated %d existing customers" % len(update)
         print "Deleted %d customers" % len(delete)
         print "Imported customers in %.2f seconds" % (time() - starttime)
-    except Exception, e:
+    except Exception as e:
       transaction.rollback(using=self.database)
       print "Error importing customers: %s" % e
     finally:
@@ -295,7 +295,7 @@ class Command(BaseCommand):
         print "Updated %d existing products" % len(update)
         print "Deleted %d products" % len(delete)
         print "Imported products in %.2f seconds" % (time() - starttime)
-    except Exception, e:
+    except Exception as e:
       transaction.rollback(using=self.database)
       print "Error importing products: %s" % e
     finally:
@@ -364,7 +364,7 @@ class Command(BaseCommand):
         print "Updated %d existing locations" % len(update)
         print "Deleted %d locations" % len(delete)
         print "Imported locations in %.2f seconds" % (time() - starttime)
-    except Exception, e:
+    except Exception as e:
       transaction.rollback(using=self.database)
       print "Error importing locations: %s" % e
     finally:
@@ -450,7 +450,7 @@ class Command(BaseCommand):
         print "Updated %d existing sales orders" % len(update)
         print "Deleted %d sales orders" % len(delete)
         print "Imported sales orders in %.2f seconds" % (time() - starttime)
-    except Exception, e:
+    except Exception as e:
       transaction.rollback(using=self.database)
       print "Error importing sales orders: %s" % e
     finally:
@@ -529,7 +529,7 @@ class Command(BaseCommand):
         print "Updated %d existing workcenters" % len(update)
         print "Deleted %d workcenters" % len(delete)
         print "Imported workcenters in %.2f seconds" % (time() - starttime)
-    except Exception, e:
+    except Exception as e:
       transaction.rollback(using=self.database)
       print "Error importing workcenters: %s" % e
     finally:
@@ -604,7 +604,7 @@ class Command(BaseCommand):
         print "Inserted onhand for %d new buffers" % len(insert)
         print "Updated onhand for %d existing buffers" % len(update)
         print "Imported onhand in %.2f seconds" % (time() - starttime)
-    except Exception, e:
+    except Exception as e:
       transaction.rollback(using=self.database)
       print "Error importing onhand: %s" % e
     finally:
@@ -739,7 +739,7 @@ class Command(BaseCommand):
         print "Updated %d purchase orders" % len(update)
         print "Deleted %d purchase orders" % len(delete)
         print "Imported purchase orders in %.2f seconds" % (time() - starttime)               
-    except Exception, e:
+    except Exception as e:
       transaction.rollback(using=self.database)
       print "Error importing purchase orders: %s" % e
     finally:
@@ -953,7 +953,7 @@ class Command(BaseCommand):
         print "Updated %d existing bills of material flows" % len(flow_update)
         print "Deleted %d bills of material flows" % len(flow_delete)
         print "Imported bills of material in %.2f seconds" % (time() - starttime)    
-    except Exception, e:
+    except Exception as e:
       transaction.rollback(using=self.database)
       print "Error importing bills of material: %s" % e
     finally:
@@ -1014,7 +1014,7 @@ class Command(BaseCommand):
         print "Inserted %d new setup rules" % len(datalist)
         
       transaction.commit(using=self.database)        
-    except Exception, e:
+    except Exception as e:
       try:
         if e.faultString.find("Object frepple.setupmatrix doesn't exist") >= 0:
           print "Warning importing setup matrices:"

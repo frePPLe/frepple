@@ -518,7 +518,7 @@ class GridReport(View):
           ok = False
           resp.write(escape(_("Can't find %s" % obj.pk))) 
           resp.write('<br/>')                          
-        except Exception, e: 
+        except Exception as e: 
           ok = False
           for error in form.non_field_errors():
             resp.write(escape('%s: %s' % (obj.pk, error)))            
@@ -655,7 +655,7 @@ class GridReport(View):
                     changed += 1
                   else:
                     added += 1
-                except Exception, e:
+                except Exception as e:
                   # Validation fails
                   for error in form.non_field_errors():
                     warnings.append(
@@ -672,7 +672,7 @@ class GridReport(View):
   
               # Step 4: Commit the database changes from time to time
               if rownumber % 500 == 0: transaction.commit(using=request.database)
-            except Exception, e:
+            except Exception as e:
               errors.append(_("Exception during upload: %(message)s") % {'message': e,})
       finally:
         transaction.commit(using=request.database)

@@ -105,7 +105,7 @@ class frePPLeService(win32serviceutil.ServiceFramework):
         # Infinite loop serving requests
         try:
           self.server.start()
-        except Exception, e:
+        except Exception as e:
           # Log an error event
           msg = "frePPLe web server failed to start:\n%s" % e
           servicemanager.LogErrorMsg(msg)

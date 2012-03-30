@@ -94,7 +94,7 @@ class Command(BaseCommand):
       # Log message
       log(category='LOAD XML', theuser=user,
         message=_('Finished loading XML data file in the database')).save(using=database)
-    except Exception, e:
+    except Exception as e:
       try: log(category='LOAD XML', theuser=user,
         message=u'%s: %s' % (_('Failure loading XML data file in the database'),e)).save(using=database)
       except: pass

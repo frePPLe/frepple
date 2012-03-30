@@ -94,7 +94,7 @@ try:
   print " OK"
 
   print "End of frepple commands"
-except RuntimeError, inst:
+except RuntimeError as inst:
   print "Runtime exception caught: " + str(inst)
 except:
   print "Caught an unknown exception"

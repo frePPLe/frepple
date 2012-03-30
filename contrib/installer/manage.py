@@ -56,7 +56,7 @@ else:
   # Try connecting and check for a table called 'parameter'.
   from django.db import connection, transaction
   try: cursor = connection.cursor()
-  except Exception, e:
+  except Exception as e:
     print "Aborting: Can't connect to the database"
     print "   %s" % e
     raw_input("Hit any key to continue...")

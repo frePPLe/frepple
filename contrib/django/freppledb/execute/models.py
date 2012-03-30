@@ -80,7 +80,7 @@ class Scenario(models.Model):
             Scenario(name=db, status=u"In use", description='Production database').save()
           else:
             Scenario(name=db, status=u"Free").save()
-    except Exception, e:
+    except Exception as e:
       print "Error synchronizing the scenario table with the settings:", e
       transaction.rollback()
     finally:

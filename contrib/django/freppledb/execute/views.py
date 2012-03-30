@@ -90,7 +90,7 @@ def erase(request):
     management.call_command('frepple_flush', user=request.user.username,
       nonfatal=True, database=request.database)
     messages.add_message(request, messages.INFO, force_unicode(_('Erased the database')))
-  except Exception, e:
+  except Exception as e:
     messages.add_message(request, messages.ERROR, force_unicode(_('Failure during database erasing: %(msg)s') % {'msg':e}))
 
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
@@ -133,7 +133,7 @@ def create(request):
         raise ValueError("Invalid parameters")
   except KeyError:
     raise Http404
-  except ValueError, e:
+  except ValueError as e:
     messages.add_message(request, messages.ERROR,
       force_unicode(_('Invalid input field')))
   else:
@@ -150,7 +150,7 @@ def create(request):
         )
       messages.add_message(request, messages.INFO,
         force_unicode(_('Created sample model in the database')))
-    except Exception, e:
+    except Exception as e:
       messages.add_message(request, messages.ERROR,
         force_unicode(_('Failure during sample model creation: %(msg)s') % {'msg':e}))
 
@@ -195,7 +195,7 @@ def runfrepple(request):
       )
     messages.add_message(request, messages.INFO,
       force_unicode(_('Successfully created a plan')))
-  except Exception, e:
+  except Exception as e:
     messages.add_message(request, messages.ERROR,
       force_unicode(_('Failure creating a plan: %(msg)s') % {'msg':e}))
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
@@ -236,7 +236,7 @@ def fixture(request):
       force_unicode(_('Loaded dataset')))
     log(category='LOAD', theuser=request.user.username,
       message='Finished loading dataset "%s"' % fixture).save(using=request.database)
-  except Exception, e:
+  except Exception as e:
     messages.add_message(request, messages.ERROR,
       force_unicode(_('Error while loading dataset: %(msg)s') % {'msg':e}))
     log(category='LOAD', theuser=request.user.username,
@@ -358,7 +358,7 @@ def scenarios(request):
         force_unicode(_('Invalid action')))
       return HttpResponseRedirect('%s/execute/execute.html#scenarios' % request.prefix)
 
-  except Exception, x:
+  except Exception as x:
     print x
     transaction.rollback()
   finally:

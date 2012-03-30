@@ -344,7 +344,7 @@ def duration(value):
     if value % 3600 != 0 and value < 86400: return '%.2f s' % value
     if value % 86400 != 0 and value < 604800: return '%.2f h' % (value/Decimal('3600'))
     return '%.2f d' % (value/Decimal('86400'))
-  except Exception, e:
+  except Exception as e:
     print e
     return ''
 

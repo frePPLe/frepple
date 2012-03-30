@@ -75,7 +75,7 @@ class Command(BaseCommand):
       s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
       s.bind( (address, port) )
       s.close()
-    except socket.error, e:
+    except socket.error as e:
       raise Exception("Invalid address '%s' and/or port '%s': %s" % (address, port, e))
 
     # Print a header message

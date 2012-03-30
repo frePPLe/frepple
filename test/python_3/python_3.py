@@ -261,7 +261,7 @@ print "shipoper == makeoper", shipoper == makeoper
 print "shipoper == shipoper", shipoper == shipoper
 try:
   print "makeoper == item", makeoper == item
-except Exception, e:
+except Exception as e:
   print "Catching exception %s: %s" % (e.__class__.__name__, e)
 
 ###
@@ -302,17 +302,17 @@ print buf2, buf2.__class__, buf2.location, isinstance(buf2, frepple.buffer), \
 print "\nCatching some exceptions"
 try:
   print buf1.crazyfield
-except Exception, e:
+except Exception as e:
   print "Catching exception %s: %s" % (e.__class__.__name__, e)
 
 try:
   buf1.crazyfield = "doesn't exist"
-except Exception, e:
+except Exception as e:
   print "Catching exception %s: %s" % (e.__class__.__name__, e)
 
 try:
   buf1.owner = buf2
-except Exception, e:
+except Exception as e:
   print "Catching exception %s: %s" % (e.__class__.__name__, e)
 
 ###

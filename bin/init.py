@@ -48,7 +48,7 @@ else:
       s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
       s.bind( (address, port) )
       s.close()
-    except socket.error, e:
+    except socket.error as e:
       raise Exception("Invalid address '%s' and/or port '%s': %s" % (address, port, e))
 
     cherrypy.config.update({
@@ -162,7 +162,7 @@ else:
         for f in cherrypy.request.params:
           try:
             frepple.readXMLdata(cherrypy.request.params[f].file.read())
-          except Exception, e:
+          except Exception as e:
             error.append("%s : %s" % (f,e))
         if len(error) > 0:
           return '\n'.join(error)
@@ -225,7 +225,7 @@ else:
         for i in cherrypy.request.params:
           try:
             setattr(loc, i, cherrypy.request.params[i])
-          except Exception, e:
+          except Exception as e:
             yield "Error: %s\n" % e
             ok = False
         if ok: yield "OK\n"
@@ -261,7 +261,7 @@ else:
         for i in cherrypy.request.params:
           try:
             setattr(loc, i, cherrypy.request.params[i])
-          except Exception, e:
+          except Exception as e:
             yield "Error: %s\n" % e
             ok = False
         if ok: yield "OK\n"
@@ -297,7 +297,7 @@ else:
         for i in cherrypy.request.params:
           try:
             setattr(loc, i, cherrypy.request.params[i])
-          except Exception, e:
+          except Exception as e:
             yield "Error: %s\n" % e
             ok = False
         if ok: yield "OK\n"
@@ -333,7 +333,7 @@ else:
         for i in cherrypy.request.params:
           try:
             setattr(loc, i, cherrypy.request.params[i])
-          except Exception, e:
+          except Exception as e:
             yield "Error: %s\n" % e
             ok = False
         if ok: yield "OK\n"
@@ -369,7 +369,7 @@ else:
         for i in cherrypy.request.params:
           try:
             setattr(loc, i, cherrypy.request.params[i])
-          except Exception, e:
+          except Exception as e:
             yield "Error: %s\n" % e
             ok = False
         if ok: yield "OK\n"
@@ -405,7 +405,7 @@ else:
         for i in cherrypy.request.params:
           try:
             setattr(loc, i, cherrypy.request.params[i])
-          except Exception, e:
+          except Exception as e:
             yield "Error: %s\n" % e
             ok = False
         if ok: yield "OK\n"
@@ -441,7 +441,7 @@ else:
         for i in cherrypy.request.params:
           try:
             setattr(loc, i, cherrypy.request.params[i])
-          except Exception, e:
+          except Exception as e:
             yield "Error: %s\n" % e
             ok = False
         if ok: yield "OK\n"
@@ -477,7 +477,7 @@ else:
         for i in cherrypy.request.params:
           try:
             setattr(loc, i, cherrypy.request.params[i])
-          except Exception, e:
+          except Exception as e:
             yield "Error: %s\n" % e
             ok = False
         if ok: yield "OK\n"

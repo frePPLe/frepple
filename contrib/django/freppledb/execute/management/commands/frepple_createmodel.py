@@ -149,7 +149,7 @@ class Command(BaseCommand):
       # Pick up the startdate
       try:
         startdate = datetime.strptime(currentdate,'%Y-%m-%d')
-      except Exception, e:
+      except Exception as e:
         raise CommandError("current date is not matching format YYYY-MM-DD")
 
       # Check whether the database is empty
@@ -367,7 +367,7 @@ class Command(BaseCommand):
       log(category='CREATE', theuser=user,
         message=_('Finished creating sample model')).save(using=database)
 
-    except Exception, e:
+    except Exception as e:
       # Log failure and rethrow exception
       try: log(category='CREATE', theuser=user,
         message=u'%s: %s' % (_('Failure creating sample model'),e)).save(using=database)

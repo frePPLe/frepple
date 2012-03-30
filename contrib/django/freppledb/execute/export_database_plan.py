@@ -295,7 +295,7 @@ class DatabaseTask(Thread):
     # Run the functions sequentially
     for f in self.functions:
       try: f(cursor)
-      except Exception, e: print e
+      except Exception as e: print e
 
     # Close the connection
     cursor.close()

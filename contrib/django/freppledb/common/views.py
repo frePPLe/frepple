@@ -101,7 +101,7 @@ def preferences(request):
           translation.activate(newdata['language'])
           request.LANGUAGE_CODE = translation.get_language()
         messages.add_message(request, messages.INFO, force_unicode(_('Successfully updated preferences')))
-      except Exception, e:
+      except Exception as e:
         logger.error("Failure updating preferences: %s" % e)
         messages.add_message(request, messages.ERROR, force_unicode(_('Failure updating preferences')))
   else:

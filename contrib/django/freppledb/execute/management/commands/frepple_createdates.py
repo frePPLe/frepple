@@ -84,7 +84,7 @@ class Command(BaseCommand):
     try:
       curdate = datetime.strptime(start,'%Y-%m-%d')
       enddate = datetime.strptime(end,'%Y-%m-%d')
-    except Exception, e:
+    except Exception as e:
       raise CommandError("Date is not matching format YYYY-MM-DD")
 
     transaction.enter_transaction_management(using=database)
@@ -178,7 +178,7 @@ class Command(BaseCommand):
       log(category='CREATE', theuser=user,
         message=_('Finished initializing dates')).save(using=database)
 
-    except Exception, e:
+    except Exception as e:
       # Log failure and rethrow exception
       try: log(category='CREATE', theuser=user,
         message=u'%s: %s' % (_('Failure initializing dates'),e)).save(using=database)

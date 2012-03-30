@@ -100,7 +100,7 @@ class Command(BaseCommand):
       # Log message
       log(category='RUN', theuser=user,
         message=_('Finished creating frePPLe plan')).save(using=database)
-    except Exception, e:
+    except Exception as e:
       try: log(category='RUN', theuser=user,
         message=u'%s: %s' % (_('Failure when creating frePPLe plan'),e)).save(using=database)
       except: pass

@@ -78,7 +78,7 @@ class Command(BaseCommand):
     if not self.openerp_db:
       try:
         self.openerp_db = Parameter.objects.get(name="openerp_db").value
-      except Exception, e:
+      except Exception as e:
         self.openerp_db = 'openerp'
     self.openerp_url = options['openerp_url']
     if not self.openerp_url:
@@ -123,7 +123,7 @@ class Command(BaseCommand):
       log(category='EXPORT', theuser=user,
         message=_('Finished exporting to OpenERP')).save(using=self.database)
       
-    except Exception, e:
+    except Exception as e:
       log(category='EXPORT', theuser=user,
         message=u'%s: %s' % (_('Failed exporting to OpenERP'),e)).save(using=self.database)
       raise CommandError(e)    
@@ -166,7 +166,7 @@ class Command(BaseCommand):
           'product_id': 1, #  TODO WHICH PRODUCT ID to use here
           'product_qty': k,
           'product_uom': 1, # This assumes PCE...
-          'location_id': 1 # TODO WHICH LOCATION ID to use here
+          'location_id': 1, # TODO WHICH LOCATION ID to use here
           'procure_method': 'make_to_order',
           'origin': 'frePPLe'
         }
@@ -175,7 +175,7 @@ class Command(BaseCommand):
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print "Uploaded %d MRP work orders" % cnt
-    except Exception, e:
+    except Exception as e:
       transaction.rollback(using=self.database)
       print "Error exporting MRP work orders: %s" % e
     finally:

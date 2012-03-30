@@ -718,7 +718,7 @@ class DatabaseTask(Thread):
     # Run the functions sequentially
     for f in self.functions:
       try: f(cursor)
-      except Exception, e: print e
+      except Exception as e: print e
 
     # Close the connection
     cursor.close()
@@ -771,7 +771,7 @@ def exportfrepple():
       exportDemands(cursor)
       exportForecasts(cursor)
       exportForecastDemands(cursor)
-    except Exception, e:
+    except Exception as e:
       print e
 
   else:
@@ -793,7 +793,7 @@ def exportfrepple():
       for i in tasks: i.start()
       # Wait for all threads to finish
       for i in tasks: i.join()
-    except Exception, e:
+    except Exception as e:
       print e
 
   # Analyze

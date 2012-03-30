@@ -78,7 +78,7 @@ class OverviewReport(GridPivot):
           fcst = Forecast.objects.using(request.database).get(name = rec['id'])
           # Update the forecast
           fcst.setTotal(start,end,rec['value'])      
-        except Exception, e:
+        except Exception as e:
           ok = False
           resp.write(e)
           resp.write('<br/>')                          

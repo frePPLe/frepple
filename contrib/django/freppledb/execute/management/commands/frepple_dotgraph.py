@@ -127,5 +127,5 @@ class Command(BaseCommand):
       # Footer
       print '}'
 
-    except Exception, e:
+    except Exception as e:
       raise CommandError(e)

@@ -92,7 +92,7 @@ class OverviewReport(GridPivot):
             end,
             float(rec['value']) / (end - start).days,
             user = request.user)            
-        except Exception, e:
+        except Exception as e:
           ok = False
           resp.write(e)
           resp.write('<br/>')                          

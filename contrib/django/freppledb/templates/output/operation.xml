@@ -6,10 +6,10 @@
 <categories>
 {% for j in buckets %}<category name='{{j.name}}' {% if not forloop.counter|divisibleby:axis_nth %}showName="0"{% endif %}/>
 {% endfor %}</categories>
-<dataset seriesName='{% trans "total starts" %}' color='AFD8F8' showValues='0'>
+<dataset seriesName='{% filter force_escape %}{% trans "total starts" %}{% endfilter %}' color='AFD8F8' showValues='0'>
 {% for j in total_start %}<set value='{{j}}' />
 {% endfor %}</dataset>
-<dataset seriesName='{% trans "total ends" %}'  color='F6BD0F' showValues='0'>
+<dataset seriesName='{% filter force_escape %}{% trans "total ends" %}{% endfilter %}'  color='F6BD0F' showValues='0'>
 {% for j in total_end %}<set value='{{j}}' />
 {% endfor %}</dataset>
 {% endlocalize %}

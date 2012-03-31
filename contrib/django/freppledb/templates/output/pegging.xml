@@ -10,24 +10,24 @@
 {% for i in buckets %}<category start='{{ i.start|date:"Y/m/d" }}' end='{{ i.end|date:"Y/m/d" }}' name='{{i.name}}' />
 {% endfor %}</categories>
 
-<processes positionInGrid='right' align='center' headerText='{% trans 'operation' %}' 
+<processes positionInGrid='right' align='center' headerText='{% filter force_escape %}{% trans 'operation' %}{% endfilter %}' 
   bgcolor='edf3fe' fontColor='666666'  
   headerbgColor='0d0d0d0' headerFontColor='666666' >
-{% for i in objectlist1 %}<process Name='{{i.operation}}' id='{{ i.id }}' align='left'/>
+{% for i in objectlist1 %}<process Name='{% filter force_escape %}{{i.operation}}{% endfilter %}' id='{{ i.id }}' align='left'/>
 {% endfor %}</processes>
 
 {% comment %}
 <dataTable fontColor='333333' headerFontColor='000000' headerFontSize='11' >
 <dataColumn headerbgColor='333333' 
   headerAlign='left' headerfontcolor='99cc00' bgColor='99cc00' 
-  headerText='{% trans 'operation' %}' align='left' bgAlpha='65'>
-{% for i in objectlist1 %}<text label='{{i.operation}}'/>
+  headerText='{% filter force_escape %}{% trans 'operation' %}{% endfilter %}' align='left' bgAlpha='65'>
+{% for i in objectlist1 %}<text label='{% filter force_escape %}{{i.operation}}{% endfilter %}'/>
 {% endfor %}</dataColumn>
 </dataTable>
 {% endcomment %}
     
 <tasks>
-{% for i in objectlist1 %}<task hoverText='{{i.operation}}, {{i.quantity|floatformat:0}}, {{i.percent_used|floatformat:1 }}%' name='{{i.operation}}' processId='{{ i.id }}' start='{{ i.startdate|date:"Y/m/d" }}' end='{{ i.enddate|date:"Y/m/d" }}' id='{{ i.id }}' color='99cc00' alpha='60'  />
+{% for i in objectlist1 %}<task hoverText='{% filter force_escape %}{{i.operation}}, {{i.quantity|floatformat:0}}, {{i.percent_used|floatformat:1 }}%{% endfilter %}' name='{% filter force_escape %}{{i.operation}}{% endfilter %}' processId='{{ i.id }}' start='{{ i.startdate|date:"Y/m/d" }}' end='{{ i.enddate|date:"Y/m/d" }}' id='{{ i.id }}' color='99cc00' alpha='60'  />
 {% endfor %}</tasks>
         
 <connectors>
@@ -40,7 +40,7 @@
 
 {% if todayline %}
 <trendlines>
-<line start='{{ todayline|date:"Y/m/d" }}' displayValue='Today' color='666666' isTrendZone='0' thickness='2'/> 
+<line start='{{ todayline|date:"Y/m/d" }}' displayValue='{% filter force_escape %}{% trans 'Today' %}{% endfilter %}' color='666666' isTrendZone='0' thickness='2'/> 
 </trendlines>
 {% endif %}
 

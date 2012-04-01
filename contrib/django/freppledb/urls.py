@@ -27,7 +27,7 @@ Django URL mapping file.
 
 import os.path
 
-from django.conf.urls.defaults import patterns, include
+from django.conf.urls import patterns, include
 from django.conf import settings
 from django.views.generic.base import RedirectView
 

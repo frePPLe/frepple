@@ -40,8 +40,7 @@ class ReportByDemand(GridReport):
   '''
   template = 'output/pegging.html'
   title = _("Demand plan")
-  filterable = False
-  basequeryset = Demand.objects.all().values('name')
+  filterable = False  
   frozenColumns = 0
   editable = False
   default_sort = None
@@ -58,6 +57,10 @@ class ReportByDemand(GridReport):
     GridFieldNumber('percent_used', title=_('percent_used'), editable=False, sortable=False),
     )
 
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    return Demand.objects.filter(name__exact=args[0]).values('name')
+  
   @classmethod
   def query(reportclass, request, basequery):
     # Execute the query
@@ -212,7 +215,6 @@ class ReportByBuffer(GridReport):
   template = 'output/operationpegging.html'
   title = _("Pegging report")
   filterable = False
-  basequeryset = FlowPlan.objects.all()
   frozenColumns = 0
   editable = False
   default_sort = (2,'asc')
@@ -224,6 +226,16 @@ class ReportByBuffer(GridReport):
     GridFieldText('item', title=_('end item'), formatter='item', editable=False),
     )
 
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    # The base query uses different fields than the main query. 
+    query = FlowPlan.objects.all()
+    for i,j in request.GET.iteritems():
+      if i.startswith('thebuffer') or i.startswith('flowdate'):
+        try: query = query.filter(**{i:j})
+        except: pass # silently ignore invalid filters
+    return query
+  
   @classmethod
   def query(reportclass, request, basequery):
     # Execute the query
@@ -288,7 +300,6 @@ class ReportByResource(GridReport):
   template = 'output/operationpegging.html'
   title = _("Pegging report")
   filterable = False
-  basequeryset = LoadPlan.objects.all()
   frozenColumns = 0
   editable = False
   default_sort = (2,'asc')
@@ -299,6 +310,16 @@ class ReportByResource(GridReport):
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldText('item', title=_('end item'), formatter='item', editable=False),
     )
+
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    # The base query uses different fields than the main query. 
+    query = LoadPlan.objects.all()
+    for i,j in request.GET.iteritems():
+      if i.startswith('theresource') or i.startswith('startdate') or i.startswith('enddate'):
+        try: query = query.filter(**{i:j})
+        except: pass # silently ignore invalid filters
+    return query
 
   @classmethod
   def query(reportclass, request, basequery):
@@ -345,7 +366,6 @@ class ReportByOperation(GridReport):
   template = 'output/operationpegging.html'
   title = _("Pegging report")
   filterable = False
-  basequeryset = OperationPlan.objects.all()
   frozenColumns = 0
   editable = False
   default_sort = (2,'asc')
@@ -356,6 +376,16 @@ class ReportByOperation(GridReport):
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldText('item', title=_('end item'), formatter='item', editable=False),
     )
+
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+     # The base query uses different fields than the main query. 
+    query = OperationPlan.objects.all()
+    for i,j in request.GET.iteritems():
+      if i.startswith('operation') or i.startswith('startdate') or i.startswith('enddate'):
+        try: query = query.filter(**{i:j})
+        except: pass # silently ignore invalid filters
+    return query
 
   @classmethod
   def query(reportclass, request, basequery):

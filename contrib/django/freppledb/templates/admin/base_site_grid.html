@@ -7,7 +7,7 @@ var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 
 $(function(){
   jQuery("#grid").jqGrid({        
-   	url: location.pathname + "?format=json",
+   	url: window.location.href + (location.search.length > 0 ? "&format=json" : "?format=json"),
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
    	colModel:[{% if is_popup %}

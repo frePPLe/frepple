@@ -42,16 +42,7 @@ function reslistfmt(cellvalue, options, row)
 	</script>
 {% endblock %}
 
-{% comment %} TODO
-{% for i in objectlist1 %}<tr class="{% cycle row1,row2 %}">
-<td>{{i.depth}}</td>
-<td>{% if i.hidden %}{{i.operation}}{% else %}{% superlink i.operation operation %}{% endif %}</td>
-<td>{% superlink i.buffer buffer %}</td>
-<td>{% superlink i.item item %}</td>
-<td>{% for j in i.resource %}{% superlink j resource %}<br/>{% endfor %}</td>
-<td>{{i.startdate}}</td>
-<td>{{i.enddate}}</td>
-<td>{{i.quantity}}</td>
-<td>{{i.percent_used|floatformat:1}}</td>
-</tr>{% endfor %}
+{% comment %} 
+TODO operation can be hidden and have no link
+TODO resouce field is a list of resources
 {% endcomment %}

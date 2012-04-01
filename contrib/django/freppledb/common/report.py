@@ -306,7 +306,11 @@ class GridReport(View):
     yield sf.getvalue()
 
     # Write the report content
-    query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
+    if callable(reportclass.basequeryset):
+      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database))
+    else:
+      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
+        
     fields = [ i.field_name for i in reportclass.rows ]
     for row in hasattr(reportclass,'query') and reportclass.query(request,query) or query.values(*fields):
       # Clear the return string buffer
@@ -353,7 +357,10 @@ class GridReport(View):
   @classmethod
   def _generate_json_data(reportclass, request, *args, **kwargs):
     page = 'page' in request.GET and int(request.GET['page']) or 1
-    query = reportclass.filter_items(request, reportclass.basequeryset).using(request.database)
+    if callable(reportclass.basequeryset):
+      query = reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)
+    else:
+      query = reportclass.filter_items(request, reportclass.basequeryset).using(request.database)
     recs = query.count()
     total_pages = math.ceil(float(recs) / request.pagesize)
     if page > total_pages: page = total_pages
@@ -792,7 +799,7 @@ class GridReport(View):
 
       
   @classmethod
-  def filter_items(reportclass, request, items):
+  def filter_items(reportclass, request, items, plus_django_style=True):
 
     filters = None
 
@@ -823,11 +830,12 @@ class GridReport(View):
         return items
     
     # Django-style filtering, using URL parameters
-    for i,j in request.GET.iteritems():
-      for r in reportclass.rows:
-        if i.startswith(r.field_name):
-          try: items = items.filter(**{i:j})
-          except: pass # silently ignore invalid filters
+    if plus_django_style:
+      for i,j in request.GET.iteritems():
+        for r in reportclass.rows:
+          if i.startswith(r.field_name):
+            try: items = items.filter(**{i:j})
+            except: pass # silently ignore invalid filters
     return items
 
   
@@ -882,12 +890,18 @@ class GridPivot(GridReport):
       query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), bucket, start, end, sortsql="1 asc")
     else:
       page = 'page' in request.GET and int(request.GET['page']) or 1
-      recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
+      if callable(reportclass.basequeryset):
+        recs = reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database).count()
+      else:
+        recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
       total_pages = math.ceil(float(recs) / request.pagesize)
       if page > total_pages: page = total_pages
       if page < 1: page = 1
       cnt = (page-1)*request.pagesize+1
-      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt-1:cnt+request.pagesize], bucket, start, end, sortsql=reportclass._apply_sort(request))
+      if callable(reportclass.basequeryset):
+        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)[cnt-1:cnt+request.pagesize], bucket, start, end, sortsql=reportclass._apply_sort(request))
+      else:
+        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt-1:cnt+request.pagesize], bucket, start, end, sortsql=reportclass._apply_sort(request))
 
     # Generate header of the output
     yield '{"total":%d,\n' % total_pages
@@ -948,6 +962,8 @@ class GridPivot(GridReport):
     # Prepare the query
     if args and args[0]:
       query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), bucket, start, end, sortsql="1 asc")
+    elif callable(reportclass.basequeryset):
+      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database), bucket, start, end, sortsql=reportclass._apply_sort(request))
     else:
       query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database), bucket, start, end, sortsql=reportclass._apply_sort(request))
 

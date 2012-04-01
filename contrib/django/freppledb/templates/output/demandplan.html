@@ -6,17 +6,4 @@
 {% include "itemcontext.html" %}
 {% endblock %}
 
-{% comment %} TODO
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% if i.forecast %}{% superlink i.forecast i.demand forecast %}{% else %}{% superlink i.demand demand %}{% endif %}</td>
-<td>{% superlink i.item item %}</td>
-<td>{% superlink i.customer customer %}</td>
-<td>{{i.quantity}}</td>
-<td>{{i.planquantity}}</td>
-<td>{{i.due}}</td>
-<td>{{i.plandate}}</td>
-<td>{{i.operationplan}}</td>
-</tr>{% endfor %}
-{% endcomment %}
-
+{% comment %} TODO demand field can point to a demand or a forecast {% endcomment %}

@@ -339,6 +339,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       // If the same resource is used multiple times in the supply path of a
       // demand we need to use only the capacity used by other demands. Otherwise
       // our estimate is of the feasible next date is too pessimistic.
+      // If the operation is the same, the operationplans are at the same stage
+      // in the supply path and we need to include these in our estimate of the
+      // next date.
       double ignored = 0.0;
       for (cur = res->getLoadPlans().begin(); cur!=res->getLoadPlans().begin(data->state->q_loadplan); ++cur)
       {

@@ -342,9 +342,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       double ignored = 0.0;
       for (cur = res->getLoadPlans().begin(); cur!=res->getLoadPlans().begin(data->state->q_loadplan); ++cur)
       {
-    	const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
-    	if (ldplan && !ldplan->getOperationPlan()->getIdentifier() && ldplan->getOperationPlan()!=data->state->q_operationplan )
-    	  ignored += ldplan->getQuantity();
+        const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
+        if (ldplan && !ldplan->getOperationPlan()->getIdentifier() 
+          && ldplan->getOperationPlan()->getOperation()!=data->state->q_operationplan->getOperation() )
+          ignored += ldplan->getQuantity();
       }
 
       for (cur=res->getLoadPlans().begin(data->state->q_loadplan);
@@ -366,8 +367,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         }
         */
         const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
-    	if (ldplan && !ldplan->getOperationPlan()->getIdentifier() && ldplan->getOperationPlan()!=data->state->q_operationplan)
-    	  ignored += ldplan->getQuantity();
+        if (ldplan && !ldplan->getOperationPlan()->getIdentifier() 
+          && ldplan->getOperationPlan()->getOperation()!=data->state->q_operationplan->getOperation())
+          ignored += ldplan->getQuantity();
 
         // Only consider the last loadplan for a certain date
         const TimeLine<LoadPlan>::Event *loadpl = &*(cur++);

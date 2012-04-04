@@ -551,12 +551,6 @@ class GridReport(View):
         - the first row contains a header, listing all field names
         - a first character # marks a comment line
         - empty rows are skipped
-  
-      Limitation: SQLite doesnt validate the input data appropriately.    # TODO check this statement!!!
-      E.g. It is possible to store character strings in a number field. An error
-      is generated only when reading the record and trying to convert it to a
-      Python number.
-      E.g. It is possible to store invalid strings in a Date field.
       '''      
       # Check permissions
       if not reportclass.model:

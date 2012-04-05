@@ -139,7 +139,7 @@ APPEND_SLASH = False
 
 WSGI_APPLICATION = 'freppledb.wsgi.application'
 ROOT_URLCONF = 'freppledb.urls'
-STATIC_ROOT = 'static'
+STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP,'static'))
 STATIC_URL = '/static/'
 USE_L10N=True        # Represent data in the local format
 USE_I18N=True        # Use translated strings
@@ -176,6 +176,7 @@ TEMPLATE_DIRS = (
 
 STATICFILES_DIRS = (
   ('doc',os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc'))),
+  os.path.normpath(os.path.join(FREPPLE_HOME,'static'))
   )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

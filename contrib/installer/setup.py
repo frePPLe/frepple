@@ -103,7 +103,7 @@ for scheme in INSTALL_SCHEMES.values(): scheme['data'] = scheme['purelib']
 data_files = []
 for srcdir, targetdir in [
    (os.path.join(djangodirectory,'contrib','admin','templates'), 'templates'),
-   (os.path.join(djangodirectory,'contrib','admin','media'), 'media'),
+   (os.path.join(djangodirectory,'contrib','admin','static'), os.path.join('static','admin')),
    (os.path.join(djangodirectory,'conf','locale'), os.path.join('locale','django')),
    (os.path.join(djangodirectory,'contrib','auth','locale'), os.path.join('locale','auth')),
    (os.path.join(djangodirectory,'contrib','contenttypes','locale'), os.path.join('locale','contenttypes')),

@@ -431,7 +431,7 @@ class GridReport(View):
   def post(reportclass, request, *args, **kwargs):
     if "csv_file" in request.FILES:
       # Uploading a CSV file
-      return reportclass.parseCSVupload(request)   
+      return reportclass.parseCSVupload(request)
     else:
       # Saving after inline edits
       return reportclass.parseJSONupload(request)
@@ -559,7 +559,13 @@ class GridReport(View):
       if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())):
         messages.add_message(request, messages.ERROR, _('Permission denied'))
         return HttpResponseRedirect(request.prefix + request.get_full_path())
-    
+
+      # Choose the right delimiter and language
+      delimiter= get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',' and ';' or ','
+      if translation.get_language() != request.LANGUAGE_CODE:
+        translation.activate(request.LANGUAGE_CODE)
+
+      # Init
       headers = []
       rownumber = 0
       changed = 0
@@ -573,7 +579,7 @@ class GridReport(View):
       try:
         # Loop through the data records
         has_pk_field = False
-        for row in UnicodeReader(request.FILES['csv_file'].read()):
+        for row in UnicodeReader(request.FILES['csv_file'].read(), delimiter=delimiter):
           rownumber += 1
   
           ### Case 1: The first line is read as a header line
@@ -605,7 +611,7 @@ class GridReport(View):
             # Create a form class that will be used to validate the data
             UploadForm = modelform_factory(reportclass.model,
               fields = tuple([i.name for i in headers if isinstance(i,Field)]),
-              formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
+              formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
               )
   
           ### Case 2: Skip empty rows and comments rows

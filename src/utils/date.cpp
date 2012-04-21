@@ -331,7 +331,7 @@ DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm 
   char c, *ptr;
   short i, len = 0;
 
-  // No clude whether daylight saving time is in effect...
+  // No clue whether daylight saving time is in effect...
   tm->tm_isdst = -1;
 
   ptr = (char*) fmt;

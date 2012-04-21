@@ -1096,6 +1096,58 @@ class MetaClass : public NonCopyable
 
 
 class XMLOutput;
+
+/** @brief This class stores metadata on a data field of a class. 
+  *
+  * A field
+  */
+//class MetaField : public NonCopyable
+//{
+//  private:
+//    Keyword& name;
+//    
+//  public:
+//    typedef double (*getDouble)() const;
+//    typedef void (*setDouble)(double);
+//    typedef int (*getInt)() const;
+//    typedef void (*setInt)(int);
+//    typedef long (*getLong)() const;
+//    typedef void (*setLong)(long);
+//    typedef unsigned long (*getUnsignedLong)() const;
+//    typedef void (*setUnsignedLong)(unsigned long);
+//    typedef bool (*getBool)() const;
+//    typedef void (*setBool)(int);
+//    typedef bool (*getString)() const;
+//    typedef void (*setString)(string);
+//    typedef Date (*getDate)() const;
+//    typedef void (*setDate)(Date);
+//    typedef TimePeriod (*getTimePeriod)() const;
+//    typedef void (*setTimePeriod)(TimePeriod);
+//    /* Other types: list of things... */
+//
+//    /** Constructor. */
+//    MetaField(Keyword&, getDouble, setDouble);
+//    MetaField(Keyword&, getInt, setInt);
+//    MetaField(Keyword&, getBool, setBool);
+//    MetaField(Keyword&, getString, setString );
+//    template <class T> MetaField(Keyword&, T*(*getFunction)() const, void (*setFunction)(T*));
+//
+//    bool get(Object*);
+//    int get(Object*);
+//    double get(Object*);
+//    string get(Object*);
+//    
+//    void set(Object*, bool);
+//    void set(Object*, int);
+//    void set(Object*, double);
+//    void set(Object*, string);
+//
+//    /* for class MetaClass: */
+//    void write(writer, object*);
+//    void read(reader, Object*);
+//};
+
+
 /** @brief A MetaCategory instance represents metadata for a category of
   * object.
   *
@@ -1528,10 +1580,31 @@ class Date
       * infiniteFuture constants. */
     Date(const char* s, bool dummy) {parse(s);}
 
+    /** A utility function that uses the C function localtime to compute the
+      * details of the current time: day of the week, day of the month,
+      * day of the year, hour, minutes, seconds
+      */
+    void getInfo(struct tm* tm_struct) const 
+    {
+      // The standard library function localtime() is not re-entrant: the same
+      // static structure is used for all calls. In a multi-threaded environment
+      // the function is not to be used.
+      // The POSIX standard defines a re-entrant version of the function:
+      // localtime_r.
+      // Visual C++ 6.0 and Borland 5.5 are missing it, but provide a thread-safe
+      // variant without changing the function semantics.
+      #ifdef HAVE_LOCALTIME_R
+        localtime_r(&lval, tm_struct);
+      #else
+        *tm_struct = *localtime(&lval);
+      #endif
+    }
+
+  public:
+
     /** Constructor initialized with a long value. */
     Date(const time_t l) : lval(l) {checkFinite(lval);}
 
-  public:
     /** Default constructor. */
     // This constructor can skip the check for finite dates, and
     // thus gives the best performance.
@@ -1652,6 +1725,40 @@ class Date
       * This value is currently set to 2030-12-31T00:00:00.
       */
     static DECLARE_EXPORT const Date infiniteFuture;
+
+    /** Return the number of seconds since january 1st. */
+    long getSecondsYear() const 
+    { 
+      struct tm t;
+      getInfo(&t);
+      return t.tm_yday * 86400 + t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
+    } 
+
+    /** Return the number of seconds since the start of the month. */
+    long getSecondsMonth() const 
+    { 
+      struct tm t;
+      getInfo(&t);
+      return (t.tm_mday-1) * 86400 + t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
+    } 
+
+    /** Return the number of seconds since the start of the week. 
+      * The week is starting on Sunday.
+      */
+    long getSecondsWeek() const
+    { 
+      struct tm t;
+      getInfo(&t);
+      return t.tm_wday * 86400 + t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
+    } 
+
+    /** Return the number of seconds since the start of the day. */
+    long getSecondsDay() const 
+    { 
+      struct tm t;
+      getInfo(&t);
+      return t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
+    } 
 
 #ifndef HAVE_STRPTIME
   private:
@@ -3092,7 +3199,9 @@ template<class T>
 class PythonExtension: public PythonExtensionBase, public NonCopyable
 {
   public:
-    /** Constructor. */
+    /** Constructor.<br> 
+      * The Python metadata fields always need to be set correctly.
+      */
     explicit PythonExtension()
     {
       PyObject_Init(this, getType().type_object());

@@ -17,16 +17,38 @@ frePPLe that much better:
 
 FrePPLe redistributes parts of the following third party software components:
 
-* contrib\django\freppledb\static\prototype.js 
-     Redistributed from Prototype JavaScript framework
-     Licensed under an MIT-style license
-     Copyright with Sam Stephenson
-     See http://www.prototypejs.org/
-
 * contrib\django\freppledb\static\FusionCharts.js
   contrib\django\freppledb\static\FCF_*.swf
      Redistributed components of FusionCharts Free
      Licensed allows free use http://www.fusioncharts.com/free/TermsOfUse.asp
      Copyright with InfoSoft Global
      See http://www.fusioncharts.com/free/
-  
+
+* contrib\django\freppledb\common\static\js\jquery.js     
+     Redistributed from jQuery JavaScript Library 
+     See http://jquery.com/
+     Copyright 2011, John Resig
+     Dual licensed under the MIT or GPL Version 2 licenses.
+     Includes Sizzle.js
+     See http://sizzlejs.com/
+     Copyright 2011, The Dojo Foundation
+     Released under the MIT, BSD, and GPL Licenses.
+ 
+* contrib\django\freppledb\common\static\js\jquery-ui.js
+  contrib\django\freppledb\common\static\css\*\images\*.png
+  contrib\django\freppledb\common\static\css\*\jquery-ui.css
+     Redistributed from jQuery UI   
+     Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+     Dual licensed under the MIT or GPL Version 2 licenses.     
+     
+* contrib\django\freppledb\common\static\js\jquery.jqgid*.js
+  contrib\django\freppledb\common\static\js\i18n\grid.locale-*.js
+  contrib\django\freppledb\common\static\css\ui.jqgrid.css
+    Redistributed from jqGrid - jQuery Grid
+    Copyright (c) 2008, Tony Tomov, tony@trirand.com
+    Dual licensed under the MIT and GPL licenses 
+    See http://www.trirand.com/blog/    
+    
+
+    
+ 

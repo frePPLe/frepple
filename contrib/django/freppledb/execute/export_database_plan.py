@@ -32,6 +32,7 @@ to keep the code portable between different databases.
 '''
 
 
+from datetime import timedelta, datetime, date
 from time import time
 from threading import Thread
 import inspect, os
@@ -53,8 +54,8 @@ def truncate(cursor):
   starttime = time()
   sql_list = connections[database].ops.sql_flush(no_style(), [
     'out_problem', 'out_demandpegging', 'out_flowplan',
-    'out_loadplan', 'out_operationplan', 'out_demand',
-    'out_forecast', 'out_constraint',
+    'out_loadplan', 'out_resourceplan', 'out_operationplan', 
+    'out_demand', 'out_forecast', 'out_constraint',
     ], [] )
   for sql in sql_list:
     cursor.execute(sql)
@@ -167,6 +168,63 @@ def exportLoadplans(cursor):
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_loadplan")
   print 'Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+
+
+def exportResourceplans(cursor):
+  print "Exporting resourceplans..."
+  starttime = time()
+  
+  # Determine start and end date of the reporting horizon
+  # The start date is computed as 5 weeks before the start of the earliest loadplan in 
+  # the entire plan.
+  # The end date is computed as 5 weeks after the end of the latest loadplan in 
+  # the entire plan.
+  # If no loadplans exist at all we use the current date +- 1 month.
+  startdate = datetime.max
+  enddate = datetime.min
+  for i in frepple.resources():
+    for j in i.loadplans:
+      if j.startdate < startdate: startdate = j.startdate
+      if j.enddate > enddate: enddate = j.enddate
+  if not startdate: startdate = frepple.settings.current 
+  if not enddate: enddate = frepple.settings.current
+  startdate -= timedelta(days=30)
+  enddate += timedelta(days=30)
+    
+  # Build a list of horizon buckets
+  buckets = []
+  while startdate < enddate:
+    buckets.append(startdate)
+    startdate += timedelta(days=1)
+  
+  # Loop over all reporting buckets of all resources
+  cnt = 0
+  try:
+      for i in frepple.resources():
+        cursor.executemany(
+          "insert into out_resourceplan \
+          (theresource,startdate,available,unavailable,setup,load,free) \
+          values (%s,%s,%s,%s,%s,%s,%s)",
+          [(
+             i.name, str(j['start']),
+             round(j['available'],settings.DECIMAL_PLACES),
+             round(j['unavailable'],settings.DECIMAL_PLACES),
+             round(j['setup'],settings.DECIMAL_PLACES),
+             round(j['load'],settings.DECIMAL_PLACES),
+             round(j['free'],settings.DECIMAL_PLACES)           
+           ) for j in i.plan(buckets)
+          ])
+        cnt += 1
+        if cnt % 100 == 0: transaction.commit(using=database)
+  except exception as e:    
+    print e
+  finally: 
+    transaction.commit(using=database)
+  
+  # Finalize
+  transaction.commit(using=database)
+  cursor.execute("select count(*) from out_resourceplan")
+  print 'Exported %d resourceplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
 
 def exportDemand(cursor):
@@ -335,17 +393,19 @@ def exportfrepple():
     exportOperationplans(cursor)
     exportFlowplans(cursor)
     exportLoadplans(cursor)
+    exportResourceplans(cursor)
     exportDemand(cursor)
     exportForecast(cursor)
     exportPegging(cursor)
 
   else:
     # OPTION 2: Parallel export of entities in groups.
-    # The groups are running in seperate threads, and all functions in a group
+    # The groups are running in separate threads, and all functions in a group
     # are run in sequence.
     tasks = (
       DatabaseTask(exportProblems, exportConstraints),
-      DatabaseTask(exportOperationplans, exportFlowplans, exportLoadplans),
+      DatabaseTask(exportOperationplans, exportFlowplans),
+      DatabaseTask(exportLoadplans, exportResourceplans),
       DatabaseTask(exportForecast, exportDemand),
       DatabaseTask(exportPegging),
       )

@@ -40,7 +40,7 @@ tr.ui-search-toolbar select {margin: 1px 0px 0px 0px}
 .ui-jqgrid tr.ui-row-ltr td {text-align:left;border-right-width: 1px; border-right-color: inherit; border-right-style: solid;}
 .ui-jqgrid tr.ui-row-rtl td {text-align:right;border-left-width: 1px; border-left-color: inherit; border-left-style: solid;}
 .ui-jqgrid td.jqgrid-rownum { padding: 0 2px 0 2px; margin: 0px; border: 0px none;}
-.ui-jqgrid .ui-jqgrid-resize-mark { width:2px; left:0; background-color:#777; cursor: e-resize; cursor: col-resize; position:absolute; top:0; height:100px; overflow:hidden; display:none;	border:0 none;}
+.ui-jqgrid .ui-jqgrid-resize-mark { width:2px; left:0; background-color:#777; cursor: e-resize; cursor: col-resize; position:absolute; top:0; height:100px; overflow:hidden; display:none; border:0 none; z-index: 99999;}
 /* footer */
 .ui-jqgrid .ui-jqgrid-sdiv {position: relative; margin: 0em;padding: 0em; overflow: hidden; border-left: 0px none !important; border-top : 0px none !important; border-right : 0px none !important;}
 .ui-jqgrid .ui-jqgrid-ftable {table-layout:fixed; margin-bottom:0em;}
@@ -60,12 +60,15 @@ tr.ui-search-toolbar select {margin: 1px 0px 0px 0px}
 .ui-jqgrid .ui-pg-selbox {font-size:.8em; line-height:18px; display:block; height:18px; margin: 0em;}
 .ui-jqgrid .ui-separator {height: 18px; border-left: 1px solid #ccc ; border-right: 1px solid #ccc ; margin: 1px; float: right;}
 .ui-jqgrid .ui-paging-info {font-weight: normal;height:19px; margin-top:3px;margin-right:4px;}
-.ui-jqgrid .ui-jqgrid-pager .ui-pg-div {padding:1px 0;float:left;list-style-image:none;list-style-position:outside;list-style-type:none;position:relative;}
+.ui-jqgrid .ui-jqgrid-pager .ui-pg-div {padding:1px 0;float:left;position:relative;}
 .ui-jqgrid .ui-jqgrid-pager .ui-pg-button { cursor:pointer; }
 .ui-jqgrid .ui-jqgrid-pager .ui-pg-div  span.ui-icon {float:left;margin:0 2px;}
 .ui-jqgrid td input, .ui-jqgrid td select .ui-jqgrid td textarea { margin: 0em;}
 .ui-jqgrid td textarea {width:auto;height:auto;}
 .ui-jqgrid .ui-jqgrid-toppager {border-left: 0px none !important;border-right: 0px none !important; border-top: 0px none !important; margin: 0px !important; padding: 0px !important; position: relative; height: 25px !important;white-space: nowrap;overflow: hidden;}
+.ui-jqgrid .ui-jqgrid-toppager .ui-pg-div {padding:1px 0;float:left;position:relative;}
+.ui-jqgrid .ui-jqgrid-toppager .ui-pg-button { cursor:pointer; }
+.ui-jqgrid .ui-jqgrid-toppager .ui-pg-div  span.ui-icon {float:left;margin:0 2px;}
 /*subgrid*/
 .ui-jqgrid .ui-jqgrid-btable .ui-sgcollapsed span {display: block;}
 .ui-jqgrid .ui-subgrid {margin:0em;padding:0em; width:100%;}
@@ -104,7 +107,7 @@ tr.ui-search-toolbar select {margin: 1px 0px 0px 0px}
 .ui-jqdialog-content input.FormElement {padding:.3em}
 .ui-jqdialog-content .data-line {padding-top:.1em;border: 0px none;}
 
-.ui-jqdialog-content .CaptionTD {text-align: left; vertical-align: middle;border: 0px none; padding: 2px;white-space: nowrap;}
+.ui-jqdialog-content .CaptionTD {vertical-align: middle;border: 0px none; padding: 2px;white-space: nowrap;}
 .ui-jqdialog-content .DataTD {padding: 2px; border: 0px none; vertical-align: top;}
 .ui-jqdialog-content .form-view-data {white-space:pre}
 .fm-button { display: inline-block; margin:0 4px 0 0; padding: .4em .5em; text-decoration:none !important; cursor:pointer; position: relative; text-align: center; zoom: 1; }
@@ -116,6 +119,11 @@ tr.ui-search-toolbar select {margin: 1px 0px 0px 0px}
 /* End Eorm edit */
 /*.ui-jqgrid .edit-cell {}*/
 .ui-jqgrid .selected-row, div.ui-jqgrid .selected-row td {font-style : normal;border-left: 0px none;}
+/* inline edit actions button*/
+.ui-inline-del.ui-state-hover span, .ui-inline-edit.ui-state-hover span,
+.ui-inline-save.ui-state-hover span, .ui-inline-cancel.ui-state-hover span {
+    margin: -1px;
+}
 /* Tree Grid */
 .ui-jqgrid .tree-wrap {float: left; position: relative;height: 18px;white-space: nowrap;overflow: hidden;}
 .ui-jqgrid .tree-minus {position: absolute; height: 18px; width: 18px; overflow: hidden;}
@@ -133,4 +141,4 @@ tr.ui-search-toolbar select {margin: 1px 0px 0px 0px}
 .ui-jqgrid .ui-sort-rtl {left:0px;}
 .ui-jqgrid .tree-wrap-ltr {float: left;}
 .ui-jqgrid .tree-wrap-rtl {float: right;}
-.ui-jqgrid .ui-ellipsis {text-overflow:ellipsis; -moz-binding:url('ellipsis-xbl.xml#ellipsis');}
+.ui-jqgrid .ui-ellipsis {text-overflow:ellipsis;}

@@ -1584,7 +1584,7 @@ class Date
       * details of the current time: day of the week, day of the month,
       * day of the year, hour, minutes, seconds
       */
-    void getInfo(struct tm* tm_struct) const 
+    inline void getInfo(struct tm* tm_struct) const 
     {
       // The standard library function localtime() is not re-entrant: the same
       // static structure is used for all calls. In a multi-threaded environment
@@ -1699,7 +1699,12 @@ class Date
       * at least 30 characters. 30 characters should be sufficient for even
       * the most funky date format.
       */
-    DECLARE_EXPORT size_t toCharBuffer(char*) const;
+    size_t toCharBuffer(char* str) const
+    {
+      struct tm t;
+      getInfo(&t);
+      return strftime(str, 30, format.c_str(), &t);
+    }
 
     /** Return the seconds since the epoch, which is also the internal
       * representation of a date. */

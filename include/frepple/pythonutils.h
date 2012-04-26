@@ -39,7 +39,7 @@ namespace utils
 {
 
 /** @brief A template class to expose category classes which use a string
-  * as the key to Python . */
+  * as the key to Python. */
 template <class T>
 class FreppleCategory : public PythonExtension< FreppleCategory<T> >
 {

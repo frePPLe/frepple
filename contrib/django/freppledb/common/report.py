@@ -54,13 +54,13 @@ from django.forms.models import modelform_factory
 from django.shortcuts import render
 from django.utils import translation, simplejson
 from django.utils.decorators import method_decorator
-from django.utils.encoding import smart_str
+from django.utils.encoding import smart_str, iri_to_uri, force_unicode
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.formats import get_format, number_format
 from django.utils import simplejson as json
 from django.utils.text import capfirst, get_text_list
-from django.utils.encoding import iri_to_uri, force_unicode
+from django.utils.translation import string_concat
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
@@ -95,7 +95,7 @@ class GridField(object):
     if self.formatter: o.append("formatter:'%s'," % self.formatter)
     if self.unformat: o.append("unformat:'%s'," % self.unformat)
     if self.searchrules: o.append("searchrules:{%s}," % self.searchrules)
-    if self.extra: o.append("%s," % self.extra)
+    if self.extra: o.append("%s," % force_unicode(self.extra))
     return ''.join(o)
 
   name = None
@@ -117,6 +117,12 @@ class GridFieldDateTime(GridField):
   extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d H:i:s'}"
   width = 140
 
+  
+class GridFieldTime(GridField):
+  formatter = 'time'
+  extra = "formatoptions:{srcformat:'H:i:s',newformat:'H:i:s'}"
+  width = 80
+
 
 class GridFieldDate(GridField):
   formatter = 'date'
@@ -137,7 +143,7 @@ class GridFieldNumber(GridField):
 
 
 class GridFieldBool(GridField):
-  formatter = 'checkbox'
+  extra = "formatoptions:{disabled:false}, edittype:'checkbox', editoptions:{value:'True:False'}"
   width = 60
 
 
@@ -154,6 +160,24 @@ class GridFieldText(GridField):
   align = 'left'
 
 
+class GridFieldChoice(GridField):
+  width = 100  
+  align = 'center'
+  def __init__(self, name, **kwargs):
+    super(GridFieldChoice,self).__init__(name, **kwargs)
+    e = ["edittype:'select', editoptions:{value:'"]
+    first = True
+    for i in kwargs["choices"]:
+      if first:
+        first = False
+        e.append("%s:" % i[0])
+      else:
+        e.append(";%s:" % i[0])
+      e.append(i[1])
+    e.append("'}")
+    self.extra = string_concat(*e)
+    
+    
 class GridFieldCurrency(GridField):   
   formatter = 'currency'
   extra = "formatoptions:{prefix:'%s', suffix:'%s'}"  % settings.CURRENCY

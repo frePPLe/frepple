@@ -121,25 +121,6 @@ DECLARE_EXPORT DateRange::operator string() const
 }
 
 
-DECLARE_EXPORT size_t Date::toCharBuffer(char* str) const
-{
-  // The standard library function localtime() is not re-entrant: the same
-  // static structure is used for all calls. In a multi-threaded environment
-  // the function is not to be used.
-  // The POSIX standard defines a re-entrant version of the function:
-  // localtime_r.
-  // Visual C++ 6.0 and Borland 5.5 are missing it, but provide a thread-safe
-  // variant without changing the function semantics.
-#ifdef HAVE_LOCALTIME_R
-  struct tm timeStruct;
-  localtime_r(&lval, &timeStruct);
-#else
-  struct tm timeStruct = *localtime(&lval);
-#endif
-  return strftime(str, 30,  format.c_str(), &timeStruct);
-}
-
-
 DECLARE_EXPORT void TimePeriod::parse (const char* s)
 {
   long totalvalue = 0;

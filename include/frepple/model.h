@@ -129,25 +129,32 @@ class Calendar : public HasName<Calendar>
           */
         int priority;
 
-        /** Weekly pattern of the entry. 
-          *   - Bit 0: Sunday
-          *   - Bit 1: Monday
-          *   - Bit 2: Tueday
-          *   - Bit 3: Wednesday
-          *   - Bit 4: Thursday
-          *   - Bit 5: Friday
-          *   - Bit 6: Saturday
+        /** Weekdays on which the entry is effective. 
+          * - Bit 0: Sunday
+          * - Bit 1: Monday
+          * - Bit 2: Tueday
+          * - Bit 3: Wednesday
+          * - Bit 4: Thursday
+          * - Bit 5: Friday
+          * - Bit 6: Saturday
           */ 
-        short pattern;
+        short days;
 
         /** Starting time on the effective days. */
-        int starttime;
+        TimePeriod starttime;
 
         /** Ending time on the effective days. */
-        int endtime;
+        TimePeriod endtime;
 
         /** A pointer to the owning calendar. */
         Calendar *cal;
+
+        /** An internally managed data structure to keep the offsets
+          * inside the week where the entry changes effectivity. */
+        TimePeriod offsets[14];
+
+        /** Updates the offsets data structure. */
+        DECLARE_EXPORT void updateOffsets();
 
         /** Increments an iterator to the next change event.<br>
           * A bucket will evaluate the current state of the iterator, and
@@ -165,8 +172,8 @@ class Calendar : public HasName<Calendar>
         /** Constructor. */
         Bucket(Calendar *c, Date start, Date end, string name, int priority=0) :
           nm(name), startdate(start), enddate(end), nextBucket(NULL),
-          prevBucket(NULL), priority(priority), pattern(255), starttime(0), 
-          endtime(86400), cal(c) {initType(metadata);}
+          prevBucket(NULL), priority(priority), days(127), starttime(0L), 
+          endtime(86400L), cal(c) {initType(metadata); updateOffsets();}
 
         /** Auxilary function to write out the start of the XML. */
         DECLARE_EXPORT void writeHeader(XMLOutput *, const Keyword&) const;
@@ -228,6 +235,50 @@ class Calendar : public HasName<Calendar>
           * The default value is 0.
           */
         void setPriority(int f) {priority = f;}
+
+        /** Get the days on which the entry is valid.<br>
+          * The value is a bit pattern with bit 0 representing sunday, bit 1
+          * monday, ... and bit 6 representing saturday.
+          * The default value is 127.
+          */
+        short getDays() const {return days;}
+
+        /** Update the days on which the entry is valid. */
+        void setDays(short p) 
+        {
+          if (p<0 || p>127)
+            throw DataException("Calendar bucket days must be between 0 and 127");
+          days = p;
+          updateOffsets();
+        }
+
+        /** Return the time of the day when the entry becomes valid.<br>
+          * The default value is 0 or midnight.
+          */
+        TimePeriod getStartTime() const {return starttime;}
+
+        /** Update the time of the day when the entry becomes valid. */
+        void setStartTime(TimePeriod t)
+        {
+          if (t > 86399L || t < 0L)
+            throw DataException("Calendar bucket start time must be between 0 and 86399 seconds");
+          starttime = t;
+          updateOffsets();
+        }
+
+        /** Return the time of the day when the entry becomes invalid.<br>
+          * The default value is 23h59m59s.
+          */
+        TimePeriod getEndTime() const {return endtime;}
+
+        /** Update the time of the day when the entry becomes invalid. */
+        void setEndTime(TimePeriod t)
+        {
+          if (t > 86399L || t < 0L)
+            throw DataException("Calendar bucket end time must be between 0 and 86399 seconds");
+          endtime = t;
+          updateOffsets();
+        }
 
         /** Verifies whether this entry is effective on a given date. */
         bool checkValid(Date d) const

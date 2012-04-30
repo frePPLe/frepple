@@ -62,6 +62,7 @@ DECLARE_EXPORT const Keyword Tags::tag_customers("customers");
 DECLARE_EXPORT const Keyword Tags::tag_data("data");
 DECLARE_EXPORT const Keyword Tags::tag_date("date");
 DECLARE_EXPORT const Keyword Tags::tag_dates("dates");
+DECLARE_EXPORT const Keyword Tags::tag_days("days");
 DECLARE_EXPORT const Keyword Tags::tag_default("default");
 DECLARE_EXPORT const Keyword Tags::tag_demand("demand");
 DECLARE_EXPORT const Keyword Tags::tag_demands("demands");

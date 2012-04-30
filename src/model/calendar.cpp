@@ -430,13 +430,10 @@ DECLARE_EXPORT void Calendar::Bucket::writeElement
   assert(m == DEFAULT || m == FULL);
   writeHeader(o,tag);
   if (priority) o->writeElement(Tags::tag_priority, priority);
-  if (pattern != 255) 
-  {
-     // XXX TODO
-  }
+  if (days != 127) o->writeElement(Tags::tag_days, days);
   if (starttime)
     o->writeElement(Tags::tag_starttime, starttime);
-  if (endtime != 86400)
+  if (endtime != TimePeriod(86400L))
     o->writeElement(Tags::tag_endtime, endtime);
   o->EndObject(tag);
 }
@@ -446,6 +443,12 @@ DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, const Attribute
 {
   if (pAttr.isA(Tags::tag_priority))
     pElement >> priority;
+  else if (pAttr.isA(Tags::tag_days))
+    setDays(pElement.getInt());
+  else if (pAttr.isA(Tags::tag_starttime))
+    setStartTime(pElement.getTimeperiod());
+  else if (pAttr.isA(Tags::tag_endtime))
+    setEndTime(pElement.getTimeperiod());
 }
 
 
@@ -859,6 +862,12 @@ DECLARE_EXPORT PyObject* Calendar::Bucket::getattro(const Attribute& attr)
   }
   if (attr.isA(Tags::tag_priority))
     return PythonObject(getPriority());
+  if (attr.isA(Tags::tag_days))
+    return PythonObject(getDays());
+  if (attr.isA(Tags::tag_starttime))
+    return PythonObject(getStartTime());
+  if (attr.isA(Tags::tag_endtime))
+    return PythonObject(getEndTime());
   if (attr.isA(Tags::tag_name))
     return PythonObject(getName());
   if (attr.isA(Tags::tag_calendar))
@@ -877,6 +886,12 @@ DECLARE_EXPORT int Calendar::Bucket::setattro(const Attribute& attr, const Pytho
     setEnd(field.getDate());
   else if (attr.isA(Tags::tag_priority))
     setPriority(field.getInt());
+  else if (attr.isA(Tags::tag_days))
+    setDays(field.getInt());
+  else if (attr.isA(Tags::tag_starttime))
+    setStartTime(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_endtime))
+    setEndTime(field.getTimeperiod());
   else if (attr.isA(Tags::tag_value))
   {
     if (cal->getType() == *CalendarDouble::metadata)
@@ -1015,6 +1030,26 @@ PyObject* CalendarEventIterator::iternext()
   else
     --eventiter;
   return result;
+}
+
+
+DECLARE_EXPORT void Calendar::Bucket::updateOffsets()
+{
+  short cnt = 0;
+  short tmp = days;
+  for (short i=0; i<=6; ++i)
+  {
+    // Loop over all days in the week
+    if (tmp & 1)
+    {
+      offsets[cnt++] = 86400L * i + starttime; 
+      offsets[cnt++] = 86400L * i + endtime; 
+    }
+    tmp = tmp>>1; // Shift to the next bit
+  }
+  // Set all unused entries in the array to -1
+  while (cnt<13)
+    offsets[cnt++] = -1;
 }
 
 } // end namespace

@@ -657,7 +657,14 @@
       <xsd:element name="calendar" type="calendar" />
     </xsd:choice>
   </xsd:complexType>
-
+  
+  <xsd:simpleType name="bucketdays">
+    <xsd:restriction base="xsd:integer">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="127"/>
+    </xsd:restriction>
+  </xsd:simpleType>   
+  
   <xsd:complexType name="calendar_void">
     <xsd:complexContent>
       <xsd:extension base="calendar">
@@ -669,11 +676,17 @@
                   <xsd:complexType>
                     <xsd:all>
                       <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
+                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
+                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
+                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />
                     </xsd:all>
                     <xsd:attribute name="start" type="xsd:dateTime" />
                     <xsd:attribute name="name" type="xsd:normalizedString" />
                     <xsd:attribute name="end" type="xsd:dateTime" />
                     <xsd:attribute name="priority" type="xsd:integer" />
+                    <xsd:attribute name="days" type="bucketdays" />
+                    <xsd:attribute name="starttime" type="xsd:duration" />
+                    <xsd:attribute name="endtime" type="xsd:duration" />
                     <xsd:attribute name="action" type="action" />
                   </xsd:complexType>
                 </xsd:element>
@@ -698,12 +711,18 @@
                     <xsd:all>
                       <xsd:element name="value" type="xsd:double" minOccurs="0" />
                       <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
+                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
+                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
+                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />                      
                     </xsd:all>
                     <xsd:attribute name="start" type="xsd:dateTime" />
                     <xsd:attribute name="name" type="xsd:normalizedString" />
                     <xsd:attribute name="end" type="xsd:dateTime" />
                     <xsd:attribute name="value" type="xsd:double" />
                     <xsd:attribute name="priority" type="xsd:integer" />
+                    <xsd:attribute name="days" type="bucketdays" />
+                    <xsd:attribute name="starttime" type="xsd:duration" />
+                    <xsd:attribute name="endtime" type="xsd:duration" />                    
                     <xsd:attribute name="action" type="action" />
                   </xsd:complexType>
                 </xsd:element>
@@ -729,12 +748,18 @@
                     <xsd:all>
                       <xsd:element name="value" type="xsd:integer" minOccurs="0" />
                       <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
+                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
+                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
+                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />                      
                     </xsd:all>
                     <xsd:attribute name="value" type="xsd:integer" />
                     <xsd:attribute name="start" type="xsd:dateTime" />
                     <xsd:attribute name="name" type="xsd:normalizedString" />
                     <xsd:attribute name="end" type="xsd:dateTime" />
                     <xsd:attribute name="priority" type="xsd:integer" />
+                    <xsd:attribute name="days" type="bucketdays" />
+                    <xsd:attribute name="starttime" type="xsd:duration" />
+                    <xsd:attribute name="endtime" type="xsd:duration" />                    
                     <xsd:attribute name="action" type="action" />
                   </xsd:complexType>
                 </xsd:element>
@@ -760,12 +785,18 @@
                     <xsd:all>
                       <xsd:element name="value" type="xsd:boolean" minOccurs="0" />
                       <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
+                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
+                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
+                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />                      
                     </xsd:all>
                     <xsd:attribute name="value" type="xsd:boolean" />
                     <xsd:attribute name="start" type="xsd:dateTime" />
                     <xsd:attribute name="name" type="xsd:normalizedString" />
                     <xsd:attribute name="end" type="xsd:dateTime" />
                     <xsd:attribute name="priority" type="xsd:integer" />
+                    <xsd:attribute name="days" type="bucketdays" />
+                    <xsd:attribute name="starttime" type="xsd:duration" />
+                    <xsd:attribute name="endtime" type="xsd:duration" />                    
                     <xsd:attribute name="action" type="action" />
                   </xsd:complexType>
                 </xsd:element>
@@ -791,12 +822,18 @@
                     <xsd:all>
                       <xsd:element name="value" type="xsd:string" minOccurs="0" />
                       <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
+                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
+                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
+                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />                      
                     </xsd:all>
                     <xsd:attribute name="value" type="xsd:normalizedString" />
                     <xsd:attribute name="start" type="xsd:dateTime" />
                     <xsd:attribute name="name" type="xsd:normalizedString" />
                     <xsd:attribute name="end" type="xsd:dateTime" />
                     <xsd:attribute name="priority" type="xsd:integer" />
+                    <xsd:attribute name="days" type="bucketdays" />
+                    <xsd:attribute name="starttime" type="xsd:duration" />
+                    <xsd:attribute name="endtime" type="xsd:duration" />                    
                     <xsd:attribute name="action" type="action" />
                   </xsd:complexType>
                 </xsd:element>
@@ -822,11 +859,17 @@
                     <xsd:all>
                       <xsd:element name="value" type="operation" minOccurs="0" />
                       <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
+                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
+                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
+                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />
                     </xsd:all>
                     <xsd:attribute name="start" type="xsd:dateTime" />
                     <xsd:attribute name="name" type="xsd:normalizedString" />
                     <xsd:attribute name="end" type="xsd:dateTime" />
                     <xsd:attribute name="priority" type="xsd:integer" />
+                    <xsd:attribute name="days" type="bucketdays" />
+                    <xsd:attribute name="starttime" type="xsd:duration" />
+                    <xsd:attribute name="endtime" type="xsd:duration" />                    
                     <xsd:attribute name="action" type="action" />
                   </xsd:complexType>
                 </xsd:element>

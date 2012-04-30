@@ -63,6 +63,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_data;
     static DECLARE_EXPORT const Keyword tag_date;
     static DECLARE_EXPORT const Keyword tag_dates;
+    static DECLARE_EXPORT const Keyword tag_days;
     static DECLARE_EXPORT const Keyword tag_default;
     static DECLARE_EXPORT const Keyword tag_demand;
     static DECLARE_EXPORT const Keyword tag_demands;

@@ -173,12 +173,7 @@ DECLARE_EXPORT int Location::setattro(const Attribute& attr, const PythonObject&
   }
   else if (attr.isA(Tags::tag_available))
   {
-    if (!field.check(CalendarBool::metadata))
-    {
-      PyErr_SetString(PythonDataException, "location calendar must be of type calendar_bool");
-      return -1;
-    }
-    CalendarBool* y = static_cast<CalendarBool*>(static_cast<PyObject*>(field));
+    Calendar* y = static_cast<Calendar*>(static_cast<PyObject*>(field));
     setAvailable(y);
   }
   else if (attr.isA(Tags::tag_hidden))

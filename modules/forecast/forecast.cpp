@@ -130,8 +130,7 @@ void Forecast::instantiate()
     {
       if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValue > 0.0)
       {
-        prev = new ForecastBucket
-        (this, prevDate, i.getDate(), prevValue, prev);
+        prev = new ForecastBucket(this, prevDate, i.getDate(), prevValue, prev);
         Demand::add(prev);
       }
       if (i.getDate() == Date::infiniteFuture) break;
@@ -147,8 +146,7 @@ void Forecast::instantiate()
       {
         if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValue > 0)
         {
-          prev = new ForecastBucket
-          (this, prevDate, i.getDate(), prevValue, prev);
+          prev = new ForecastBucket(this, prevDate, i.getDate(), prevValue, prev);
           Demand::add(prev);
         }
         if (i.getDate() == Date::infiniteFuture) break;
@@ -165,8 +163,7 @@ void Forecast::instantiate()
         {
           if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValueBool)
           {
-            prev = new ForecastBucket
-            (this, prevDate, i.getDate(), 1.0, prev);
+            prev = new ForecastBucket(this, prevDate, i.getDate(), 1.0, prev);
             Demand::add(prev);
           }
           if (i.getDate() == Date::infiniteFuture) break;

@@ -129,6 +129,23 @@ class Calendar : public HasName<Calendar>
           */
         int priority;
 
+        /** Weekly pattern of the entry. 
+          *   - Bit 0: Sunday
+          *   - Bit 1: Monday
+          *   - Bit 2: Tueday
+          *   - Bit 3: Wednesday
+          *   - Bit 4: Thursday
+          *   - Bit 5: Friday
+          *   - Bit 6: Saturday
+          */ 
+        short pattern;
+
+        /** Starting time on the effective days. */
+        int starttime;
+
+        /** Ending time on the effective days. */
+        int endtime;
+
         /** A pointer to the owning calendar. */
         Calendar *cal;
 
@@ -148,7 +165,8 @@ class Calendar : public HasName<Calendar>
         /** Constructor. */
         Bucket(Calendar *c, Date start, Date end, string name, int priority=0) :
           nm(name), startdate(start), enddate(end), nextBucket(NULL),
-          prevBucket(NULL), priority(priority), cal(c) {initType(metadata);}
+          prevBucket(NULL), priority(priority), pattern(255), starttime(0), 
+          endtime(86400), cal(c) {initType(metadata);}
 
         /** Auxilary function to write out the start of the XML. */
         DECLARE_EXPORT void writeHeader(XMLOutput *, const Keyword&) const;
@@ -291,19 +309,21 @@ class Calendar : public HasName<Calendar>
         const Date& getDate() const {return curDate;}
         const Bucket* getBucket() const {return curBucket;}
         const Calendar* getCalendar() const {return theCalendar;}
-        EventIterator(const Calendar* c, Date d = Date::infinitePast,
+        EventIterator(const Calendar* c = NULL, Date d = Date::infinitePast,
             bool forward = true) : theCalendar(c), curDate(d)
         {
-          if (!c)
-            throw LogicException("Creating iterator for NULL calendar");
-          curBucket = c->findBucket(d,forward);
+          curBucket = c ? c->findBucket(d,forward) : NULL;
         };
         DECLARE_EXPORT EventIterator& operator++();
         DECLARE_EXPORT EventIterator& operator--();
         EventIterator operator++(int)
-        {EventIterator tmp = *this; ++*this; return tmp;}
+        {
+          EventIterator tmp = *this; ++*this; return tmp;
+        }
         EventIterator operator--(int)
-        {EventIterator tmp = *this; --*this; return tmp;}
+        {
+          EventIterator tmp = *this; --*this; return tmp;
+        }
     };
 
     /** @brief An iterator class to go through all buckets of the calendar. */
@@ -1414,10 +1434,10 @@ class Location : public HasHierarchy<Location>, public HasDescription
       * The availability calendar models the working hours and holidays. It
       * applies to all operations, resources and buffers using this location.
       */
-    CalendarBool *getAvailable() const {return available;}
+    Calendar *getAvailable() const {return available;}
 
-    /** Updates the availability calend of the location. */
-    void setAvailable(CalendarBool* b) {available = b;}
+    /** Updates the availability calendar of the location. */
+    void setAvailable(Calendar* b) {available = b;}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
@@ -1434,7 +1454,7 @@ class Location : public HasHierarchy<Location>, public HasDescription
     /** The availability calendar models the working hours and holidays. It
       * applies to all operations, resources and buffers using this location.
       */
-    CalendarBool* available;
+    Calendar* available;
 };
 
 
@@ -3989,6 +4009,8 @@ class Resource : public HasHierarchy<Resource>,
     friend class LoadPlan;
 
   public:
+    class PlanIterator;
+
     /** The default time window before the ask date where we look for
       * available capacity. */
     static const long defaultMaxEarly = 100*86400L;
@@ -4138,6 +4160,63 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Current setup. */
     string setup;
+
+    /** Python method that returns an iterator over the resource plan. */
+    static PyObject* plan(PyObject*, PyObject*);
+};
+
+
+/** @brief This class provides an efficient way to iterate over
+  * the plan of a resource aggregated in time buckets.
+  */
+class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator>
+{
+  public:
+    static int initialize();
+
+    /** Constructor.
+      * The first argument is the resource whose plan we're looking at.
+      * The second argument is a Python iterator over a list of dates. These
+      * dates define the buckets at which we aggregate the resource plan.
+      */
+    PlanIterator(Resource*, PyObject*);
+
+    /** Destructor. */ 
+    ~PlanIterator(); 
+
+  private:
+    /** Pointer to the resource we're investigating. */
+    Resource* res;
+
+    /** A Python object pointing to a list of start dates of buckets. */
+    PyObject* bucketiterator;    
+
+    /** An iterator over all events in the resource timeline. */
+    Resource::loadplanlist::iterator ldplaniter;    
+
+    /** Python function to iterate over the periods. */
+    PyObject* iternext();
+
+    double cur_setup;
+    double cur_load;
+    double cur_size;
+    Date cur_date;
+    Date prev_date;
+    bool prev_value;
+    Calendar::EventIterator unavailableIterator;
+    bool hasUnavailability;
+    double bucket_available;
+    double bucket_load;
+    double bucket_setup;
+    double bucket_unavailable;
+
+    void update(Date till);
+
+    /** Python object pointing to the start date of the plan bucket. */
+    PyObject* start_date;
+
+    /** Python object pointing to the start date of the plan bucket. */
+    PyObject* end_date;
 };
 
 
@@ -6138,8 +6217,10 @@ class OperationPlanIterator
 class FlowPlanIterator : public PythonExtension<FlowPlanIterator>
 {
   public:
+    /** Registration of the Python class and its metadata. */
     static int initialize();
 
+    /** Constructor to iterate over the flowplans of a buffer. */
     FlowPlanIterator(Buffer* b) : buf(b), buffer_or_opplan(true)
     {
       if (!b)
@@ -6147,6 +6228,7 @@ class FlowPlanIterator : public PythonExtension<FlowPlanIterator>
       bufiter = new Buffer::flowplanlist::const_iterator(b->getFlowPlans().begin());
     }
 
+    /** Constructor to iterate over the flowplans of an operationplan. */
     FlowPlanIterator(OperationPlan* o) : opplan(o), buffer_or_opplan(false)
     {
       if (!o)

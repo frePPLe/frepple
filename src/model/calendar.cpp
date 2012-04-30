@@ -430,6 +430,14 @@ DECLARE_EXPORT void Calendar::Bucket::writeElement
   assert(m == DEFAULT || m == FULL);
   writeHeader(o,tag);
   if (priority) o->writeElement(Tags::tag_priority, priority);
+  if (pattern != 255) 
+  {
+     // XXX TODO
+  }
+  if (starttime)
+    o->writeElement(Tags::tag_starttime, starttime);
+  if (endtime != 86400)
+    o->writeElement(Tags::tag_endtime, endtime);
   o->EndObject(tag);
 }
 
@@ -443,6 +451,9 @@ DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, const Attribute
 
 DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
 {
+  if (!theCalendar)
+    throw LogicException("Can't walk forward on event iterator of NULL calendar.");
+
   // Go over all entries and ask them to update the iterator
   Date d = curDate;
   curDate = Date::infiniteFuture;
@@ -457,6 +468,9 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
 
 DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
 {
+  if (!theCalendar)
+    throw LogicException("Can't walk backward on event iterator of NULL calendar.");
+
   // Go over all entries and ask them to update the iterator
   Date d = curDate;
   curDate = Date::infinitePast;

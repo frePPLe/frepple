@@ -76,6 +76,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_effective_end;
     static DECLARE_EXPORT const Keyword tag_end;
     static DECLARE_EXPORT const Keyword tag_enddate;
+    static DECLARE_EXPORT const Keyword tag_endtime;
     static DECLARE_EXPORT const Keyword tag_entity;
     static DECLARE_EXPORT const Keyword tag_fence;
     static DECLARE_EXPORT const Keyword tag_factor;
@@ -156,6 +157,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_start;
     static DECLARE_EXPORT const Keyword tag_startorend;
     static DECLARE_EXPORT const Keyword tag_startdate;
+    static DECLARE_EXPORT const Keyword tag_starttime;
     static DECLARE_EXPORT const Keyword tag_steps;
     static DECLARE_EXPORT const Keyword tag_subcategory;
     static DECLARE_EXPORT const Keyword tag_supply;

@@ -43,6 +43,8 @@ int Resource::initialize()
   metadata = new MetaCategory("resource", "resources", reader, writer);
 
   // Initialize the Python class
+  FreppleCategory<Resource>::getType().addMethod("plan", Resource::plan, METH_VARARGS,
+      "Return an iterator with tuples representing the resource plan in each time bucket");
   return FreppleCategory<Resource>::initialize();
 }
 
@@ -460,5 +462,205 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
     return -1;  // Error
   return 0;  // OK
 }
+
+
+extern "C" PyObject* Resource::plan(PyObject *self, PyObject *args)
+{
+  // Get the resource model
+  Resource* resource = static_cast<Resource*>(self);
+
+  // Parse the Python arguments
+  PyObject* buckets = NULL;
+  int ok = PyArg_ParseTuple(args, "O:plan", &buckets);
+  if (!ok) return NULL;
+
+  // Validate that the argument supports iteration.
+  PyObject* iter = PyObject_GetIter(buckets);
+  if (!iter) 
+  {
+    PyErr_Format(PyExc_AttributeError,"Argument to resource.plan() must support iteration");
+    return NULL;
+  }
+
+  // Return the iterator
+  return new Resource::PlanIterator(resource, iter);
+}
+
+
+int Resource::PlanIterator::initialize()
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<Resource::PlanIterator>::getType();
+  x.setName("resourceplanIterator");
+  x.setDoc("frePPLe iterator for resourceplan");
+  x.supportiter();
+  return x.typeReady();
+}
+
+
+Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) : 
+  res(r), bucketiterator(o), ldplaniter(r ? r->getLoadPlans().begin() : NULL),
+  cur_setup(0.0), cur_load(0.0), cur_size(0.0), start_date(NULL), end_date(NULL)
+{
+  if (!r)
+  {
+    bucketiterator = NULL;
+    throw LogicException("Creating resource plan iterator for NULL resource");   
+  }
+
+  // Start date of the first bucket
+  end_date = PyIter_Next(bucketiterator);
+  if (!end_date) throw LogicException("Expecting at least two dates as argument");
+  cur_date = PythonObject(end_date).getDate();
+  prev_date = cur_date;
+
+  // A flag to remember whether this resource has an unavailability calendar.
+  hasUnavailability = r->getLocation() && r->getLocation()->getAvailable();
+  if (hasUnavailability)
+  {
+    unavailableIterator = Calendar::EventIterator(res->getLocation()->getAvailable(), cur_date);
+    prev_value = unavailableIterator.getBucket()->getBool();
+  }
+
+  // Advance loadplan iterator just beyond the starting date
+  while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getDate() <= cur_date)
+  {
+    if (ldplaniter->getType() == 4)
+      // New max size
+      cur_size = ldplaniter->getMax();
+    else
+    {
+      const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*ldplaniter);
+      if (!ldplan) continue;
+      if (ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation)
+        // Setup starting or ending
+        cur_setup = ldplan->getQuantity() < 0 ? 0.0 : cur_size;
+      else
+        // Normal load
+        cur_load = ldplan->getOnhand();
+    }
+    ++ldplaniter;
+  }
+}
+
+
+Resource::PlanIterator::~PlanIterator() 
+{ 
+  if (bucketiterator) Py_DECREF(bucketiterator); 
+  if (start_date) Py_DECREF(start_date); 
+  if (end_date) Py_DECREF(end_date); 
+}
+
+
+void Resource::PlanIterator::update(Date till)
+{    
+  long timedelta;
+  if (hasUnavailability)
+  {
+    // Advance till the iterator exceeds the target date
+    while (unavailableIterator.getDate() <= till)
+    {
+      timedelta = unavailableIterator.getDate() - prev_date;
+      if (prev_value)
+      {
+        bucket_available += cur_size * timedelta;
+        bucket_load += cur_load * timedelta;
+        bucket_setup += cur_setup * timedelta;
+      }
+      else
+        bucket_unavailable += cur_size * timedelta;
+      prev_value = unavailableIterator.getBucket()->getBool();
+      prev_date = unavailableIterator.getDate();
+      ++unavailableIterator;
+    }
+    // Account for time period finishing at the "till" date
+    timedelta = till - prev_date;
+    if (prev_value)
+    {
+      bucket_available += cur_size * timedelta;
+      bucket_load += cur_load * timedelta;
+      bucket_setup += cur_setup * timedelta;
+    }
+    else
+      bucket_unavailable += cur_size * timedelta;
+  }
+  else
+  {
+    // All time is available on this resource
+    timedelta = till - prev_date;
+    bucket_available += cur_size * timedelta;
+    bucket_load += cur_load  * timedelta;
+    bucket_setup += cur_setup * timedelta;
+  }
+  // Remember till which date we already have reported
+  prev_date = till;
+}
+
+
+PyObject* Resource::PlanIterator::iternext()
+{
+  // Reset counters
+  bucket_available = 0.0;
+  bucket_unavailable = 0.0;
+  bucket_load = 0.0;
+  bucket_setup = 0.0;
+ 
+  // Get the start and end date of the current bucket
+  if (start_date) Py_DECREF(start_date);
+  start_date = end_date;
+  end_date = PyIter_Next(bucketiterator);
+  if (!end_date) return NULL;
+  cur_date = PythonObject(end_date).getDate();
+
+  // Measure from beginning of the bucket till the first event in this bucket
+  if (ldplaniter != res->getLoadPlans().end() && ldplaniter->getDate() < cur_date)
+    update(ldplaniter->getDate()); 
+
+  // Advance the loadplan iterator to the next event date
+  while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getDate() <= cur_date)
+  {
+    // Measure from the previous event till the current one
+    update(ldplaniter->getDate());
+
+    // Process the event    
+    if (ldplaniter->getType() == 4)
+      // New max size
+      cur_size = ldplaniter->getMax();
+    else
+    {
+      const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*ldplaniter);
+      assert(ldplan);
+      if (ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation)
+        // Setup starting or ending
+        cur_setup = ldplan->getQuantity() < 0 ? 0.0 : cur_size;
+      else
+        // Normal load
+        cur_load = ldplan->getOnhand();
+    }
+
+    // Move to the next event
+    ++ldplaniter;
+  }
+
+  // Measure from the previous event till the end of the bucket
+  update(cur_date);
+
+  // Convert from seconds to hours
+  bucket_available /= 3600;
+  bucket_load /= 3600;
+  bucket_unavailable /= 3600;
+  bucket_setup /= 3600;
+
+  // Return the result
+  return Py_BuildValue("{s:O,s:O,s:d,s:d,s:d,s:d,s:d}", 
+    "start", start_date, 
+    "end", end_date, 
+    "available", bucket_available, 
+    "load", bucket_load, 
+    "unavailable", bucket_unavailable, 
+    "setup", bucket_setup,
+    "free", bucket_available - bucket_load - bucket_setup);
+}
+
 
 }

@@ -43,7 +43,7 @@ void LibraryModel::initialize()
     return;
   }
   init = true;
-
+  
   // Register new types in Python
   int nok = 0;
   nok += Plan::initialize();
@@ -109,6 +109,7 @@ void LibraryModel::initialize()
   nok += ResourceDefault::initialize();
   nok += ResourceInfinite::initialize();
   nok += ResourceIterator::initialize();
+  nok += Resource::PlanIterator::initialize();
 
   // Initialize the load metadata.
   nok += Load::initialize();

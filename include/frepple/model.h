@@ -151,7 +151,7 @@ class Calendar : public HasName<Calendar>
 
         /** An internally managed data structure to keep the offsets
           * inside the week where the entry changes effectivity. */
-        TimePeriod offsets[14];
+        long offsets[14];
 
         /** Updates the offsets data structure. */
         DECLARE_EXPORT void updateOffsets();
@@ -278,12 +278,6 @@ class Calendar : public HasName<Calendar>
             throw DataException("Calendar bucket end time must be between 0 and 86399 seconds");
           endtime = t;
           updateOffsets();
-        }
-
-        /** Verifies whether this entry is effective on a given date. */
-        bool checkValid(Date d) const
-        {
-          return true;
         }
 
         /** Convert the value of the bucket to a boolean value. */

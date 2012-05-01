@@ -260,20 +260,40 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
 {
   Calendar::Bucket *curBucket = NULL;
   double curPriority = DBL_MAX;
+  long timeInWeek = 0l;
   for (Bucket *b = firstBucket; b; b = b->nextBucket)
   {
     if (b->getStart() > d)
       // Buckets are sorted by the start date. Other entries definately
       // won't be effective.
       break;
-    else if (curPriority > b->getPriority() && b->checkValid(d)
+    else if (curPriority > b->getPriority()
         && ( (fwd && d >= b->getStart() && d < b->getEnd()) ||
             (!fwd && d > b->getStart() && d <= b->getEnd())
            ))
     {
-      // Bucket is effective and has lower priority than other effective ones.
-      curPriority = b->getPriority();
-      curBucket = &*b;
+      if (b->offsets[0] == 0L && b->offsets[1] == 604800L)
+      {
+        // Continuously effective
+        curPriority = b->getPriority();
+        curBucket = &*b;
+      }
+      else
+      {
+        // There are ineffective periods during the week 
+        if (!timeInWeek) 
+		  // Lazy initialization
+          timeInWeek = d.getSecondsWeek();
+        for (short i=0; b->offsets[i]!=-1 && i<12; i+=2)
+          if ((fwd && timeInWeek >= b->offsets[i] && timeInWeek < b->offsets[i+1]) ||
+              (!fwd && timeInWeek > b->offsets[i] && timeInWeek <= b->offsets[i+1]))
+          {
+            // All conditions are met!
+            curPriority = b->getPriority();
+            curBucket = &*b;
+            break;
+          }
+      }
     }
   }
   return curBucket;
@@ -1035,21 +1055,30 @@ PyObject* CalendarEventIterator::iternext()
 
 DECLARE_EXPORT void Calendar::Bucket::updateOffsets()
 {
-  short cnt = 0;
+  short cnt = -1;
   short tmp = days;
   for (short i=0; i<=6; ++i)
   {
     // Loop over all days in the week
     if (tmp & 1)
     {
-      offsets[cnt++] = 86400L * i + starttime; 
-      offsets[cnt++] = 86400L * i + endtime; 
+      if (cnt>=1 && (offsets[cnt] == 86400*i + starttime))
+        // Special case: the start date of todays offset entry
+        // is the end date yesterdays entry. We can just update the
+        // end date of that entry.
+        offsets[cnt] = 86400*i + endtime;
+      else
+      {
+        // New offset pair
+        offsets[++cnt] = 86400*i + starttime; 
+        offsets[++cnt] = 86400*i + endtime; 
+      }
     }
     tmp = tmp>>1; // Shift to the next bit
   }
-  // Set all unused entries in the array to -1
-  while (cnt<13)
-    offsets[cnt++] = -1;
+
+  // Fill all unused entries in the array with -1
+  while (cnt<13) offsets[++cnt] = -1;
 }
 
 } // end namespace

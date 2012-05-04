@@ -274,8 +274,8 @@ class Calendar : public HasName<Calendar>
         /** Update the time of the day when the entry becomes invalid. */
         void setEndTime(TimePeriod t)
         {
-          if (t > 86399L || t < 0L)
-            throw DataException("Calendar bucket end time must be between 0 and 86399 seconds");
+          if (t > 86400L || t < 0L)
+            throw DataException("Calendar bucket end time must be between 0 and 86400 seconds");
           endtime = t;
           updateOffsets();
         }
@@ -864,7 +864,6 @@ class CalendarBool : public CalendarValue<bool>
   public:
     CalendarBool(const string& n) : CalendarValue<bool>(n)
     {setDefault(false); initType(metadata);}
-    DECLARE_EXPORT ~CalendarBool();
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);

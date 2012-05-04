@@ -165,6 +165,13 @@ DECLARE_EXPORT Calendar::~Calendar()
     firstBucket = firstBucket->nextBucket;
     delete tmp;
   }
+
+  // Remove all references from locations
+  for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
+  {
+    if (l->getAvailable() == this)
+      l->setAvailable(NULL);
+  }
 }
 
 
@@ -180,17 +187,6 @@ DECLARE_EXPORT CalendarDouble::~CalendarDouble()
   // Remove all references from resources
   for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
     if (r->getMaximumCalendar()==this) r->setMaximumCalendar(NULL);
-}
-
-
-DECLARE_EXPORT CalendarBool::~CalendarBool()
-{
-  // Remove all references from locations
-  for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
-  {
-    if (l->getAvailable() == this)
-      l->setAvailable(NULL);
-  }
 }
 
 

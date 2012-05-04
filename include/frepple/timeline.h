@@ -204,15 +204,15 @@ template <class type> class TimeLine
       protected:
         const Event* cur;
       public:
-        const_iterator() {}
+        const_iterator() : cur(NULL) {}
         const_iterator(const Event* e) : cur(e) {};
         const_iterator(const iterator& c) : cur(c.cur) {}
         const Event& operator*() const {return *cur;}
         const Event* operator->() const {return cur;}
-        const_iterator& operator++() {cur = cur->next; return *this;}
+        const_iterator& operator++() {if (cur) cur = cur->next; return *this;}
         const_iterator operator++(int)
         {const_iterator tmp = *this; ++*this; return tmp;}
-        const_iterator& operator--() {cur = cur->prev; return *this;}
+        const_iterator& operator--() {if (cur) cur = cur->prev; return *this;}
         const_iterator operator--(int)
         {const_iterator tmp = *this; --*this; return tmp;}
         bool operator==(const const_iterator& x) const {return cur == x.cur;}
@@ -227,9 +227,9 @@ template <class type> class TimeLine
         iterator(Event* e) : const_iterator(e) {};
         Event& operator*() const {return *const_cast<Event*>(this->cur);}
         Event* operator->() const {return const_cast<Event*>(this->cur);}
-        iterator& operator++() {this->cur = this->cur->next; return *this;}
+        iterator& operator++() {if (this->cur) this->cur = this->cur->next; return *this;}
         iterator operator++(int) {iterator tmp = *this; ++*this; return tmp;}
-        iterator& operator--() {this->cur = this->cur->prev; return *this;}
+        iterator& operator--() {if (this->cur) this->cur = this->cur->prev; return *this;}
         iterator operator--(int) {iterator tmp = *this; --*this; return tmp;}
         bool operator==(const iterator& x) const {return this->cur == x.cur;}
         bool operator!=(const iterator& x) const {return this->cur != x.cur;}
@@ -535,7 +535,8 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
   while ( e->next && !(*e<*e->next) )
   {
     // Move to a later date
-    Event *theNext = e->next, *theNextNext = theNext->next;
+    Event *theNext = e->next;
+    Event *theNextNext = theNext->next;
     if (e->prev) e->prev->next = theNext;
     theNext->prev = e->prev;
     theNext->next = e;
@@ -554,7 +555,8 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
   while ( e->prev && !(*e->prev<*e) )
   {
     // Move to an earlier date
-    Event *thePrev = e->prev, *thePrevPrev = thePrev->prev;
+    Event *thePrev = e->prev;
+    Event *thePrevPrev = thePrev->prev;
     if (e->next) e->next->prev = thePrev;
     thePrev->next = e->next;
     thePrev->prev = e;

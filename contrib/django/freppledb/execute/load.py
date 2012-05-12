@@ -81,7 +81,7 @@ def loadCalendars(cursor):
   for i, j, k in cursor.fetchall():
     cnt += 1
     try:
-      if k == "calendar_boolean":
+      if k == "boolean":
         frepple.calendar_boolean(name=i, default=j)
       else:
         frepple.calendar_double(name=i, default=j)
@@ -93,17 +93,35 @@ def loadCalendarBuckets(cursor):
   print 'Importing calendar buckets...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT calendar_id, startdate, enddate, name, priority, value FROM calendarbucket")
+  cursor.execute('''
+     SELECT 
+       calendar_id, startdate, enddate, name, priority, value, 
+       sunday, monday, tuesday, wednesday, thursday, friday, saturday, 
+       starttime, endtime 
+    FROM calendarbucket
+    ORDER BY calendar_id, startdate
+    ''')
   x = [ header ]
   x.append('<calendars>')
-  for i, j, k, l, m, n in cursor.fetchall():
+  for i, j, k, l, m, n, o1, o2, o3, o4, o5, o6, o7, t1, t2 in cursor.fetchall():
     cnt += 1
-    x.append('<calendar name=%s><buckets><bucket%s%s%s%s value="%f"/></buckets></calendar>' % (
+    days = 0
+    if o1: days += 1
+    if o2: days += 2
+    if o3: days += 4
+    if o4: days += 8
+    if o5: days += 16
+    if o6: days += 32
+    if o7: days += 64
+    x.append('<calendar name=%s><buckets><bucket%s%s%s%s%s starttime="PT%sS" endtime="PT%sS" value="%f"/></buckets></calendar>' % (
        quoteattr(i),
        (j and ' start="%s"' % j.isoformat()) or '',
        (k and ' end="%s"' % k.isoformat()) or '',
        (l and ' name=%s' % quoteattr(l)) or '',
        (m and ' priority="%s"' % m) or '',
+       (days != 127 and ' days ="%s"' % days) or '',
+       t1.hour*3600 + t1.minute*60 + t1.second,
+       t2.hour*3600 + t2.minute*60 + t2.second + 1,
        n,
       ))
   x.append('</calendars></plan>')
@@ -139,16 +157,16 @@ def loadOperations(cursor):
   for i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x in cursor.fetchall():
     cnt += 1
     try:
-      if not p or p == "operation_fixed_time":
+      if not p or p == "fixed_time":
         x = frepple.operation_fixed_time(name=i, description=v, category=w, subcategory=x)
         if q: x.duration = q
-      elif p == "operation_time_per":
+      elif p == "time_per":
         x = frepple.operation_time_per(name=i, description=v, category=w, subcategory=x)
         if q: x.duration = q
         if r: x.duration_per = r
-      elif p == "operation_alternate":
+      elif p == "alternate":
         x = frepple.operation_alternate(name=i, description=v, category=w, subcategory=x)
-      elif p == "operation_routing":
+      elif p == "routing":
         x = frepple.operation_routing(name=i, description=v, category=w, subcategory=x)
       else:
         raise ValueError("Operation type '%s' not recognized" % p)
@@ -181,7 +199,7 @@ def loadSuboperations(cursor):
     try:
       if i != curopername:
         curopername = i
-        if n == 'operation_alternate':
+        if n == 'alternate':
           curoper = frepple.operation_alternate(name=curopername)
         else:
           curoper = frepple.operation_routing(name=curopername)
@@ -231,7 +249,7 @@ def loadBuffers(cursor):
      category, subcategory FROM buffer''')
   for i,j,k,l,m,t,n,o,q,f1,f2,f3,f4,f5,f6,f7,f8,f9,p,r,s in cursor.fetchall():
     cnt += 1
-    if q == "buffer_procure":
+    if q == "procure":
       b = frepple.buffer_procure(
         name=i, description=j, item=frepple.item(name=l), onhand=m,
         category=r, subcategory=s
@@ -245,12 +263,12 @@ def loadBuffers(cursor):
       if f7: b.size_multiple = f7
       if f8: b.size_maximum = f8
       if f9: b.fence = f9
-    elif q == "buffer_infinite":
+    elif q == "infinite":
       b = frepple.buffer_infinite(
         name=i, description=j, item=frepple.item(name=l), onhand=m,
         category=r, subcategory=s
         )
-    elif not q or q == "buffer_default":
+    elif not q or q == "default":
       b = frepple.buffer(
         name=i, description=j, item=frepple.item(name=l), onhand=m,
         category=r, subcategory=s
@@ -295,9 +313,9 @@ def loadResources(cursor):
   for i,j,t,k,l,m,n,o,p,q,r,s in cursor.fetchall():
     cnt += 1
     try:
-      if m == "resource_infinite":
+      if m == "infinite":
         x = frepple.resource_infinite(name=i,description=j,category=r,subcategory=s)
-      elif not m or m == "resource_default":
+      elif not m or m == "default":
         x = frepple.resource_default(name=i,description=j,category=r,subcategory=s)
         if k: x.maximum_calendar = frepple.calendar(name=k)
         if o: x.maxearly = o
@@ -332,7 +350,7 @@ def loadFlows(cursor):
       if j != curbufname:
         curbufname = j
         curbuf = frepple.buffer(name=curbufname)
-      curflow = frepple.flow(operation=frepple.operation(name=i), type=l, buffer=curbuf, quantity=k)
+      curflow = frepple.flow(operation=frepple.operation(name=i), type="flow_%s" % l, buffer=curbuf, quantity=k)
       if m: curflow.effective_start = m
       if n: curflow.effective_end = n
       if o: curflow.name = o

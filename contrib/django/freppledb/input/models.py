@@ -20,7 +20,7 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import datetime
+from datetime import datetime, time
 from decimal import Decimal
 
 from django.db import models
@@ -150,16 +150,15 @@ class Parameter(AuditModel):
 
 class Calendar(AuditModel):
   # Types of calendars
-  calendartypes = (
-    ('',_('double')),
-    ('calendar_double',_('double')),
-    ('calendar_boolean',_('boolean')),
+  types = (
+    ('double',_('double')),
+    ('boolean',_('boolean')),
   )
 
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   type = models.CharField(_('type'), max_length=20,
-    null=True, blank=True, choices=calendartypes,
+    null=True, blank=True, choices=types, default='double', 
     help_text= _('Type of data values stored in the calendar')
     )
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True,
@@ -173,80 +172,6 @@ class Calendar(AuditModel):
     help_text= _('Value to be used when no entry is effective')
     )
 
-  def currentvalue(self):
-    ''' Returns the value of the calendar on this moment.'''
-    return self.getvalue(datetime.now())
-  currentvalue.short_description = 'current value'
-
-  def getvalue(self, when):
-    '''Return the value of the calendar on a certain day.'''
-    curValue = self.defaultvalue
-    curPriority = None
-    # Loop through the entries to find the effective one
-    for b in self.buckets.all():
-      if not curPriority or curPriority > b.priority:
-        thisValue = b.getvalue(when)
-        if thisValue:
-          # The entry is valid value on this day, and has
-          # a higher priority than other entries.
-          curValue = thisValue
-          curPriority = b.priority
-    return curValue
-
-  def setvalue(self, start, end, value, user=None):
-    '''Update calendar buckets such that the calendar value is changed
-    in the specified date range.
-    The admin log is updated if a user is passed as argument.
-
-    @todo The calendar editing isnt as flexible as the frePPLe core: the
-    user interface only support non-overlapping calendar entries to keep SQL
-    statements easy.
-    '''
-    db = self._state.db
-    for b in self.buckets.filter(enddate__gt=start,startdate__lt=end).order_by('startdate'):
-      if b.enddate <= start:
-        # Earlier bucket
-        continue
-      elif b.startdate >= end:
-        # Later bucket
-        return
-      elif b.startdate == start and b.enddate <= end:
-        # Overwrite entire bucket
-        b.value = str(value)
-        b.save(using=db)
-      elif b.startdate >= start and b.enddate <= end:
-        # Bucket became redundant
-        b.delete(using=db)
-      elif b.startdate < start and b.enddate > end:
-        # New value is completely within this bucket
-        CalendarBucket(calendar=self, startdate=start, value=str(value)).save(using=db)
-        CalendarBucket(calendar=self, startdate=end, value=str(b.value)).save(using=db)
-      elif b.startdate < start:
-        # An existing bucket is partially before the new daterange
-        CalendarBucket(calendar=self, startdate=start, enddate=end, value=str(value)).save(using=db)
-        b.enddate = start
-        b.save(using=db)
-      elif b.enddate > end:
-        # An existing bucket is partially after the new daterange
-        CalendarBucket(calendar=self, startdate=b.startdate, enddate=end, value=str(value)).save(using=db)
-        b.startdate = end
-        b.save(using=db)
-    if self.buckets.count() == 0:
-      # There wasn't any bucket yet...
-      CalendarBucket(calendar=self, startdate=start, value=str(value)).save(using=db)
-      CalendarBucket(calendar=self, startdate=end, value="0").save(using=db)
-    # Create a change log entry, if a user is specified
-    if user:
-      global CALENDARID
-      if not CALENDARID:
-        CALENDARID = ContentType.objects.get_for_model(models.get_model('input','calendar')).id
-      LogEntry(
-        user_id = user.id, content_type_id = CALENDARID,
-        object_id = self.name, object_repr = force_unicode(self)[:200],
-        action_flag = CHANGE,
-        change_message = "Updated value to %s for the daterange %s to %s" % (value, start, end)
-        ).save(using=db)
-
   def __unicode__(self): return self.name
 
   class Meta(AuditModel.Meta):
@@ -257,12 +182,7 @@ class Calendar(AuditModel):
 
 
 class CalendarBucket(AuditModel):
-  '''
-  @todo The calendar editing isnt as flexible as the frePPLe core: the
-  user interface only support non-overlapping calendar entries to keep SQL
-  statements easy.
-  The core engine allows the end date to be edited independently.
-  '''
+
   # Database fields
   calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), related_name='buckets')
   startdate = models.DateTimeField(_('start date'), null=True, blank=True)
@@ -270,13 +190,25 @@ class CalendarBucket(AuditModel):
   value = models.DecimalField(_('value'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00', blank=True)
   priority = models.IntegerField(_('priority'), default=0, blank=True)
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, null=True, blank=True)
-
-  def getvalue(self, when):
-    if (self.startdate and when < self.startdate) or (self.enddate and when >= self.enddate):
-      # Outside of validity range
-      return None
-    return self.value
-
+  monday = models.BooleanField(_('monday'), blank=True, default=True, 
+     help_text=_('Defines whether this entry is valid on mondays.'))
+  tuesday = models.BooleanField(_('tuesday'), blank=True, default=True,
+     help_text=_('Defines whether this entry is valid on tuesdays'))
+  wednesday = models.BooleanField(_('wednesday'), blank=True, default=True,
+     help_text=_('Defines whether this entry is valid on wednesdays'))
+  thursday = models.BooleanField(_('thursday'), blank=True, default=True,
+     help_text=_('Defines whether this entry is valid on thursdays'))
+  friday = models.BooleanField(_('friday'), blank=True, default=True,
+     help_text=_('Defines whether this entry is valid on fridays'))
+  saturday = models.BooleanField(_('saturday'), blank=True, default=True,
+     help_text=_('Defines whether this entry is valid on saturdays'))
+  sunday = models.BooleanField(_('sunday'), blank=True, default=True, 
+     help_text=_('Defines whether this entry is valid on sundays'))
+  starttime = models.TimeField(_('start time'), blank=True, default=time(0,0,0),
+     help_text=_('Defines whether this starting time of the entry on its valid days'))
+  endtime = models.TimeField(_('end time'), blank=True, default=time(23,59,59),
+     help_text=_('Defines whether this ending time of the entry on its valid days'))
+  
   def __unicode__(self):
     if self.name: return self.name
     return u"%s - %s" % (self.startdate, self.enddate)
@@ -286,48 +218,6 @@ class CalendarBucket(AuditModel):
     db_table = 'calendarbucket'
     verbose_name = _('calendar bucket')
     verbose_name_plural = _('calendar buckets')
-
-  @staticmethod
-  def updateEndDate(instance, **kwargs):
-    '''
-    The user edits the start date of the calendar buckets.
-    This method will automatically update the end date of a bucket to be
-    equal to the start date of the next bucket.
-
-    @todo The calendar editing isnt as flexible as the frePPLe core: the
-    user interface only support non-overlapping calendar entries to keep SQL
-    statements easy.
-    '''
-    # Loop through all buckets
-    prev = None
-    for i in instance.calendar.buckets.all():
-      if prev and i.startdate != prev.enddate:
-        # Update the end date of the previous bucket to the start date of this one
-        prev.enddate = i.startdate
-        if prev.enddate == prev.startdate:
-          prev.delete()
-        else:
-          prev.save()
-      prev = i
-    if prev and prev.enddate != datetime(2030,12,31):
-      # Update the last entry
-      prev.enddate = datetime(2030,12,31)
-      prev.save()
-
-  @staticmethod
-  def insertBucket(instance, **kwargs):
-    # If the end date is specified, we take it for granted.
-    # Ideally we would check all inserts, but that is very time consuming
-    # when creating or restoring big datasets.
-    if instance.enddate == datetime(2030,12,31) or not kwargs['created']:
-      CalendarBucket.updateEndDate(instance)
-
-# This dispatcher function is called after a bucket is saved. There seems no cleaner way to do this, since
-# the method calendar.buckets.all() is only up to date after the save...
-# The method is not very efficient: called for every single bucket, and recursively triggers
-# another save and dispatcher event
-signals.post_save.connect(CalendarBucket.insertBucket, sender=CalendarBucket)
-signals.post_delete.connect(CalendarBucket.updateEndDate, sender=CalendarBucket)
 
 
 class Location(AuditModel, HierarchyModel):
@@ -384,17 +274,16 @@ class Item(AuditModel,HierarchyModel):
 
 class Operation(AuditModel):
   # Types of operations
-  operationtypes = (
-    ('',_('fixed_time')),
-    ('operation_fixed_time',_('fixed_time')),
-    ('operation_time_per',_('time_per')),
-    ('operation_routing',_('routing')),
-    ('operation_alternate',_('alternate')),
+  types = (
+    ('fixed_time',_('fixed_time')),
+    ('time_per',_('time_per')),
+    ('routing',_('routing')),
+    ('alternate',_('alternate')),
   )
 
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=operationtypes)
+  type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='fixed_time')
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
@@ -472,17 +361,17 @@ class SubOperation(AuditModel):
 
 class Buffer(AuditModel,HierarchyModel):
   # Types of buffers
-  buffertypes = (
-    ('',_('Default')),
-    ('buffer_infinite',_('Infinite')),
-    ('buffer_procure',_('Procure')),
+  types = (
+    ('default',_('Default')),
+    ('infinite',_('Infinite')),
+    ('procure',_('Procure')),
   )
 
   # Fields common to all buffer types
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=buffertypes, default='')
+  type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='default')
   location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
     blank=True, db_index=True)
   item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, null=True)
@@ -597,16 +486,16 @@ class SetupRule(AuditModel):
 
 class Resource(AuditModel,HierarchyModel):
   # Types of resources
-  resourcetypes = (
-    ('',_('Default')),
-    ('resource_infinite',_('Infinite')),
+  types = (
+    ('default',_('Default')),
+    ('infinite',_('Infinite')),
   )
 
   # Database fields
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=resourcetypes, default='')
+  type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='default')
   maximum = models.DecimalField(_('maximum'),
     max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
     default="1.00", null=True, blank=True, help_text=_('Size of the resource'))
@@ -646,10 +535,9 @@ class Resource(AuditModel,HierarchyModel):
 
 class Flow(AuditModel):
   # Types of flow
-  flowtypes = (
-    ('',_('Start')),
-    ('flow_start',_('Start')),
-    ('flow_end',_('End')),
+  types = (
+    ('start',_('Start')),
+    ('end',_('End')),
   )
 
   # Database fields
@@ -662,8 +550,7 @@ class Flow(AuditModel):
     default='1.00',
     help_text=_('Quantity to consume or produce per operationplan unit')
     )
-  type = models.CharField(_('type'), max_length=20, null=True, blank=True,
-    choices=flowtypes,
+  type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='start',
     help_text=_('Consume/produce material at the start or the end of the operationplan'),
     )
   effective_start = models.DateTimeField(_('effective start'), null=True, blank=True,

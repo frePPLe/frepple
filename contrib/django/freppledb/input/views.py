@@ -40,8 +40,10 @@ from freppledb.input.models import Resource, Forecast, Operation, Location, Setu
 from freppledb.input.models import Buffer, Customer, Demand, Parameter, Item, Load, Flow
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.input.models import Bucket, BucketDetail
-from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified, GridFieldDateTime
-from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldInteger, GridFieldCurrency
+from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
+from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
+from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
+from freppledb.common.report import GridFieldChoice
 
 
 @staff_member_required
@@ -343,7 +345,7 @@ class BufferList(GridReport):
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
     GridFieldNumber('onhand', title=_('onhand')),
     GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='buffer'),
-    GridFieldText('type', title=_('type')),
+    GridFieldChoice('type', title=_('type'), choices=Buffer.types),
     GridFieldNumber('minimum', title=_('minimum')),
     GridFieldText('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='calendar'),
     GridFieldText('producing', title=_('producing'), field_name='producing__name', formatter='operation'),
@@ -385,7 +387,7 @@ class ResourceList(GridReport):
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
     GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='resource'),
-    GridFieldText('type', title=_('type')),
+    GridFieldChoice('type', title=_('type'), choices=Resource.types),
     GridFieldNumber('maximum', title=_('maximum')),
     GridFieldText('maximum_calendar', title=_('maximum calendar'), field_name='maximum_calendar__name', formatter='calendar'),
     GridFieldCurrency('cost', title=_('cost')),
@@ -500,7 +502,7 @@ class FlowList(GridReport):
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='flow'),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
     GridFieldText('thebuffer', title=_('buffer'), field_name='thebuffer__name', formatter='buffer'),
-    GridFieldText('type', title=_('type')),
+    GridFieldChoice('type', title=_('type'), choices=Flow.types),
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
@@ -578,7 +580,7 @@ class CalendarList(GridReport):
   frozenColumns = 1
   rows = (
     GridFieldText('name', title=_('name'), key=True, formatter='calendar'),
-    GridFieldText('type', title=_('type')),
+    GridFieldChoice('type', title=_('type'), choices=Calendar.types),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
@@ -603,6 +605,15 @@ class CalendarBucketList(GridReport):
     GridFieldNumber('value', title=_('value')),
     GridFieldNumber('priority', title=_('priority')),
     GridFieldText('name', title=_('name')),
+    GridFieldBool('monday', title=_('monday')),
+    GridFieldBool('tuesday', title=_('tuesday')),
+    GridFieldBool('wednesday', title=_('wednesday')),
+    GridFieldBool('thursday', title=_('thursday')),
+    GridFieldBool('friday', title=_('friday')),
+    GridFieldBool('saturday', title=_('saturday')),
+    GridFieldBool('sunday', title=_('sunday')),
+    GridFieldTime('starttime', title=_('start time')),
+    GridFieldTime('endtime', title=_('start end')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -622,7 +633,7 @@ class OperationList(GridReport):
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
-    GridFieldText('type', title=_('type')),
+    GridFieldChoice('type', title=_('type'), choices=Operation.types),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
     GridFieldNumber('duration', title=_('duration')),
     GridFieldNumber('duration_per', title=_('duration_per')),
@@ -676,7 +687,7 @@ class OperationPlanList(GridReport):
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldBool('locked', title=_('locked')),
-    GridFieldInteger('owner', title=_('owner')),
+    GridFieldInteger('owner', title=_('owner'), extra="formatoptions:{defaultValue:''}"),
     GridFieldLastModified('lastmodified'),
     )
 

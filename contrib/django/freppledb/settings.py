@@ -176,7 +176,6 @@ TEMPLATE_DIRS = (
 
 STATICFILES_DIRS = (
   ('doc',os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc'))),
-  os.path.normpath(os.path.join(FREPPLE_HOME,'static'))
   )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

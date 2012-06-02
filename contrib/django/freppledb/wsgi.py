@@ -13,8 +13,8 @@ import os, sys
 from django.core.wsgi import get_wsgi_application
 
 # Assure frePPLe is found in the Python path.
-#sys.path.append('/home/frepple/workspace/frepple/contrib/django')
-#os.environ['FREPPLE_HOME'] = '/home/frepple/workspace/frepple/bin'
+sys.path.append('/home/frepple/workspace/frepple/contrib/django')
+os.environ['FREPPLE_HOME'] = '/home/frepple/workspace/frepple/bin'
 
 os.environ['LC_ALL'] = 'en_US.UTF-8'
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'

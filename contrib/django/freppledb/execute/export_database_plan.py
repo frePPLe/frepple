@@ -404,8 +404,8 @@ def exportfrepple():
     # are run in sequence.
     tasks = (
       DatabaseTask(exportProblems, exportConstraints),
-      DatabaseTask(exportOperationplans, exportFlowplans),
-      DatabaseTask(exportLoadplans, exportResourceplans),
+      DatabaseTask(exportOperationplans, exportFlowplans, exportLoadplans),
+      DatabaseTask(exportResourceplans),
       DatabaseTask(exportForecast, exportDemand),
       DatabaseTask(exportPegging),
       )

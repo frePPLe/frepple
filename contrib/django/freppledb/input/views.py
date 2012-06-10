@@ -580,7 +580,6 @@ class CalendarList(GridReport):
   frozenColumns = 1
   rows = (
     GridFieldText('name', title=_('name'), key=True, formatter='calendar'),
-    GridFieldChoice('type', title=_('type'), choices=Calendar.types),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),

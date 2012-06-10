@@ -149,18 +149,8 @@ class Parameter(AuditModel):
 
 
 class Calendar(AuditModel):
-  # Types of calendars
-  types = (
-    ('double',_('double')),
-    ('boolean',_('boolean')),
-  )
-
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  type = models.CharField(_('type'), max_length=20,
-    null=True, blank=True, choices=types, default='double', 
-    help_text= _('Type of data values stored in the calendar')
-    )
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True,
     blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True,

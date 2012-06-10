@@ -77,14 +77,10 @@ def loadCalendars(cursor):
   print 'Importing calendars...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, defaultvalue, type FROM calendar")
-  for i, j, k in cursor.fetchall():
+  cursor.execute("SELECT name, defaultvalue FROM calendar")
+  for i, j in cursor.fetchall():
     cnt += 1
-    try:
-      if k == "boolean":
-        frepple.calendar_boolean(name=i, default=j)
-      else:
-        frepple.calendar_double(name=i, default=j)
+    frepple.calendar(name=i, default=j)
     except Exception as e: print "Error:", e
   print 'Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime)
 

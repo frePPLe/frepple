@@ -88,25 +88,25 @@ def exportCalendars(cursor):
   primary_keys = set([ i[0] for i in cursor.fetchall()])
   cursor.executemany(
     "insert into calendar \
-    (name,defaultvalue,type,lastmodified) \
-    values(%s,%s,%s,%s)",
+    (name,defaultvalue,lastmodified) \
+    values(%s,%s,%s)",
     [(
-       i.name, round(i.default,settings.DECIMAL_PLACES), i.__class__.__name__, timestamp
-     ) for i in frepple.calendars() if i.name not in primary_keys and isinstance(i,(frepple.calendar_boolean,frepple.calendar_double))
+       i.name, round(i.default,settings.DECIMAL_PLACES), timestamp
+     ) for i in frepple.calendars() if i.name not in primary_keys
     ])
   cursor.executemany(
     "update calendar \
-     set defaultvalue=%s, type=%s, lastmodified=%s \
+     set defaultvalue=%s, lastmodified=%s \
      where name=%s",
     [(
-       round(i.default,settings.DECIMAL_PLACES), i.__class__.__name__, timestamp, i.name
-     ) for i in frepple.calendars() if i.name in primary_keys and isinstance(i,(frepple.calendar_boolean,frepple.calendar_double))
+       round(i.default,settings.DECIMAL_PLACES), timestamp, i.name
+     ) for i in frepple.calendars() if i.name in primary_keys
     ])
   transaction.commit(using=database)
   print 'Exported calendars in %.2f seconds' % (time() - starttime)
 
 
-def exportCalendarBuckets(cursor): 
+def exportCalendarBuckets(cursor): # TODO Update for the new calendar bucket fields!!!
   print "Exporting calendar buckets..."  
   starttime = time()
   cursor.execute("SELECT calendar_id, startdate FROM calendarbucket")
@@ -114,9 +114,8 @@ def exportCalendarBuckets(cursor):
   
   def buckets():
     for c in frepple.calendars():
-      if isinstance(c,(frepple.calendar_boolean,frepple.calendar_double)):
-        for i in c.buckets:
-          yield i
+      for i in c.buckets:
+        yield i
        
   cursor.executemany(
     '''insert into calendarbucket

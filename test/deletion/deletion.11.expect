@@ -33,7 +33,7 @@
 		</customer>
 	</customers>
 	<calendars>
-		<calendar name="assembly capacity" xsi:type="calendar_double">
+		<calendar name="assembly capacity">
 			<default>1</default>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00" name="all">
@@ -41,7 +41,7 @@
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="months" xsi:type="calendar_void">
+		<calendar name="months">
 			<buckets>
 				<bucket start="2009-01-01T00:00:00" name="jan">
 				</bucket>

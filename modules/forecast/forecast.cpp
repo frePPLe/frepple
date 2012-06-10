@@ -125,6 +125,7 @@ void Forecast::instantiate()
   Date prevDate;
   double prevValue(0.0);
   if (c)
+  {
     // Double calendar
     for (CalendarDouble::EventIterator i(c); i.getDate()<=Date::infiniteFuture; ++i)
     {
@@ -137,53 +138,19 @@ void Forecast::instantiate()
       prevDate = i.getDate();
       prevValue = i.getValue();
     }
+  }
   else
   {
-    const CalendarInt* c = dynamic_cast<const CalendarInt*>(calptr);
-    if (c)
-      // Integer calendar
-      for (CalendarInt::EventIterator i(c); i.getDate()<=Date::infiniteFuture; ++i)
-      {
-        if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValue > 0)
-        {
-          prev = new ForecastBucket(this, prevDate, i.getDate(), prevValue, prev);
-          Demand::add(prev);
-        }
-        if (i.getDate() == Date::infiniteFuture) break;
-        prevDate = i.getDate();
-        prevValue = static_cast<double>(i.getValue());
-      }
-    else
+    // Other calendar
+    for (Calendar::EventIterator i(calptr); true; ++i)
     {
-      const CalendarBool* c = dynamic_cast<const CalendarBool*>(calptr);
-      bool prevValueBool = false;
-      if (c)
-        // Boolean calendar
-        for (CalendarBool::EventIterator i(c); true; ++i)
-        {
-          if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValueBool)
-          {
-            prev = new ForecastBucket(this, prevDate, i.getDate(), 1.0, prev);
-            Demand::add(prev);
-          }
-          if (i.getDate() == Date::infiniteFuture) break;
-          prevDate = i.getDate();
-          prevValueBool = i.getValue();
-        }
-      else
+      if (prevDate || i.getDate() == Date::infiniteFuture)
       {
-        // Other calendar
-        for (Calendar::EventIterator i(calptr); true; ++i)
-        {
-          if (prevDate || i.getDate() == Date::infiniteFuture)
-          {
-            prev = new ForecastBucket(this, prevDate, i.getDate(), 1.0, prev);
-            Demand::add(prev);
-            if (i.getDate() == Date::infiniteFuture) break;
-          }
-          prevDate = i.getDate();
-        }
+        prev = new ForecastBucket(this, prevDate, i.getDate(), 1.0, prev);
+        Demand::add(prev);
+        if (i.getDate() == Date::infiniteFuture) break;
       }
+      prevDate = i.getDate();
     }
   }
 }

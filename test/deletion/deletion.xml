@@ -10,7 +10,7 @@
   </description>
   <current>2009-01-01T00:00:00</current>
   <calendars>
-    <calendar name="months" xsi:type="calendar_void">
+    <calendar name="months">
       <buckets>
         <bucket start="2009-01-01T00:00:00" name="jan" />
         <bucket start="2009-02-01T00:00:00" name="feb" />
@@ -110,7 +110,7 @@
   <resources>
     <resource name="assemble">
       <location name="Location 1" />
-      <maximum_calendar name="assembly capacity" xsi:type="calendar_double">
+      <maximum_calendar name="assembly capacity">
         <default>1</default>
         <buckets>
           <bucket start="2009-01-01T00:00:00" name="all">
@@ -241,7 +241,7 @@ frepple.readXMLdata(r'''
 	<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 		<calendars>
 			 <calendar name="assembly capacity" action="R"/>
-			 <calendar name="months" xsi:type="calendar_void">
+			 <calendar name="months">
 				<buckets>
 					<bucket name="jan" action="R"/>
 					<bucket name="may" action="R"/>

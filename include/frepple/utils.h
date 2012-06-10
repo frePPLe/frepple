@@ -1754,7 +1754,9 @@ class Date
     { 
       struct tm t;
       getInfo(&t);
-      return t.tm_wday * 86400 + t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
+      int result = t.tm_wday * 86400 + t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
+      assert(result >= 0 && result < 604800L);
+      return result;
     } 
 
     /** Return the number of seconds since the start of the day. */
@@ -1762,7 +1764,9 @@ class Date
     { 
       struct tm t;
       getInfo(&t);
-      return t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
+      int result = t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
+      assert(result >= 0 && result < 86400L);
+      return result;
     } 
 
 #ifndef HAVE_STRPTIME

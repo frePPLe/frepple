@@ -9,47 +9,47 @@
 	<locations>
 		<location name="factory 1">
 			<description>A factory that manufactures, stores and packages products</description>
-			<available name="Working Days" xsi:type="calendar_boolean"/>
+			<available name="Working Days"/>
 		</location>
 		<location name="factory 2">
 			<description>A factory that stores and packages products</description>
-			<available name="Working Days" xsi:type="calendar_boolean"/>
+			<available name="Working Days"/>
 		</location>
 	</locations>
 	<calendars>
-		<calendar name="Working Days" xsi:type="calendar_boolean">
-			<default>true</default>
+		<calendar name="Working Days">
+			<default>1</default>
 			<buckets>
 				<bucket start="2009-01-03T00:00:00" end="2009-01-05T00:00:00">
-					<value>false</value>
+					<value>0</value>
 				</bucket>
 				<bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00">
-					<value>false</value>
+					<value>0</value>
 				</bucket>
 				<bucket start="2009-01-17T00:00:00" end="2009-01-19T00:00:00">
-					<value>false</value>
+					<value>0</value>
 				</bucket>
 				<bucket start="2009-01-24T00:00:00" end="2009-01-26T00:00:00">
-					<value>false</value>
+					<value>0</value>
 				</bucket>
 				<bucket start="2009-01-31T00:00:00" end="2009-02-02T00:00:00">
-					<value>false</value>
+					<value>0</value>
 				</bucket>
 				<bucket start="2009-02-07T00:00:00" end="2009-02-09T00:00:00">
-					<value>false</value>
+					<value>0</value>
 				</bucket>
 				<bucket start="2009-02-14T00:00:00" end="2009-02-16T00:00:00">
-					<value>false</value>
+					<value>0</value>
 				</bucket>
 				<bucket start="2009-02-21T00:00:00" end="2009-02-23T00:00:00">
-					<value>false</value>
+					<value>0</value>
 				</bucket>
 				<bucket start="2009-02-28T00:00:00" end="2009-03-02T00:00:00">
-					<value>false</value>
+					<value>0</value>
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="pack capacity factory 1" xsi:type="calendar_double">
+		<calendar name="pack capacity factory 1">
 			<default>0</default>
 			<buckets>
 				<bucket start="2008-01-01T00:00:00" end="2009-02-01T00:00:00">
@@ -57,7 +57,7 @@
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="pack capacity factory 2" xsi:type="calendar_double">
+		<calendar name="pack capacity factory 2">
 			<default>0</default>
 			<buckets>
 				<bucket start="2008-01-01T00:00:00">
@@ -65,7 +65,7 @@
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="weave capacity factory 1" xsi:type="calendar_double">
+		<calendar name="weave capacity factory 1">
 			<default>0</default>
 			<buckets>
 				<bucket start="2008-01-01T00:00:00">
@@ -329,7 +329,7 @@
   </demands>
 	<resources>
 		<resource name="pack in factory 1">
-			<maximum_calendar name="pack capacity factory 1" xsi:type="calendar_double"/>
+			<maximum_calendar name="pack capacity factory 1"/>
 			<location name="factory 1"/>
 			<loads>
 				<load>
@@ -338,7 +338,7 @@
 			</loads>
 		</resource>
 		<resource name="pack in factory 2">
-			<maximum_calendar name="pack capacity factory 2" xsi:type="calendar_double"/>
+			<maximum_calendar name="pack capacity factory 2"/>
 			<location name="factory 2"/>
 			<loads>
 				<load>
@@ -347,7 +347,7 @@
 			</loads>
 		</resource>
 		<resource name="weave in factory 1">
-			<maximum_calendar name="weave capacity factory 1" xsi:type="calendar_double"/>
+			<maximum_calendar name="weave capacity factory 1"/>
 			<location name="factory 1"/>
 			<loads>
 				<load>

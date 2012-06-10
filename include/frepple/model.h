@@ -453,30 +453,40 @@ class Calendar : public HasName<Calendar>
 template <typename T> class CalendarValue : public Calendar
 {
   public:
+
+
+
+};
+
+
+/** @brief A calendar storing double values in its buckets. */
+class CalendarDouble : public Calendar
+{
+  public:
     /** @brief A special type of calendar bucket, designed to hold a
       * a value.
       * @see Calendar::Bucket
       */
-    class BucketValue : public Calendar::Bucket
+    class BucketDouble : public Calendar::Bucket
     {
-        friend class CalendarValue<T>;
+        friend class CalendarDouble;
       private:
         /** This is the value stored in this bucket. */
-        T val;
+        double val;
 
         /** Constructor. */
-        BucketValue(CalendarValue<T> *c, Date start, Date end, string name, int priority=0)
-          : Bucket(c,start,end,name,priority), val(c->getDefault()) {}
+        BucketDouble(CalendarDouble *c, Date start, Date end, string name, int priority=0)
+          : Bucket(c,start,end,name,priority), val(0) {}
 
       public:
         /** Returns the value of this bucket. */
-        const T& getValue() const {return val;}
+        const double& getValue() const {return val;}
 
         /** Convert the value of the bucket to a boolean value. */
         bool getBool() const {return val != 0;}
 
         /** Updates the value of this bucket. */
-        void setValue(const T& v) {val = v;}
+        void setValue(const double& v) {val = v;}
 
         void writeElement
         (XMLOutput *o, const Keyword& tag, mode m = DEFAULT) const
@@ -484,7 +494,7 @@ template <typename T> class CalendarValue : public Calendar
           assert(m == DEFAULT || m == FULL);
           writeHeader(o, tag);
           if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
-          o->writeElement(Tags::tag_value, val);
+          if (val) o->writeElement(Tags::tag_value, val);
           o->EndObject(tag);
         }
 
@@ -500,7 +510,7 @@ template <typename T> class CalendarValue : public Calendar
         {return *Calendar::Bucket::metadata;}
 
         virtual size_t getSize() const
-        {return sizeof(typename CalendarValue<T>::BucketValue) + getName().size();}
+        {return sizeof(CalendarDouble::BucketDouble) + getName().size();}
     };
 
     /** @brief A special event iterator, providing also access to the
@@ -513,404 +523,66 @@ template <typename T> class CalendarValue : public Calendar
             bool f = true) : Calendar::EventIterator(c,d,f) {}
 
         /** Return the current value of the iterator at this date. */
-        T getValue()
+        double getValue()
         {
-          typedef CalendarValue<T> calendarvaluetype;
-          typedef typename CalendarValue<T>::BucketValue bucketvaluetype;
           return curBucket ?
-              static_cast<const bucketvaluetype*>(curBucket)->getValue() :
-              static_cast<const calendarvaluetype*>(theCalendar)->getDefault();
+              static_cast<const CalendarDouble::BucketDouble*>(curBucket)->getValue() :
+              static_cast<const CalendarDouble*>(theCalendar)->getDefault();
         }
     };
 
+  public:
     /** Default constructor. */
-    CalendarValue(const string& n) : Calendar(n) {}
+    CalendarDouble(const string& n) : Calendar(n)
+    {setDefault(0.0); initType(metadata);}
+
+    /** Destructor. */
+    DECLARE_EXPORT ~CalendarDouble();
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize();
+
+    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
+
+    void endElement(XMLInput&, const Attribute&, const DataElement&);
+    void writeElement(XMLOutput*, const Keyword&, mode m=DEFAULT) const;
 
     /** Returns the value on the specified date. */
-    const T& getValue(const Date d) const
+    const double& getValue(const Date d) const
     {
-      BucketValue* x = static_cast<BucketValue*>(findBucket(d));
+      BucketDouble* x = static_cast<BucketDouble*>(findBucket(d));
       return x ? x->getValue() : defaultValue;
     }
 
     /** Updates the value in a certain date range.<br>
-      * This will create a new bucket if required. */
-    void setValue(Date start, Date end, const T& v)
-    {
-      BucketValue* x = static_cast<BucketValue*>(findBucket(start));
-      if (x && x->getStart() == start && x->getEnd() <= end)
-        // We can update an existing bucket: it has the same start date
-        // and ends before the new effective period ends.
-        x->setEnd(end);
-      else
-        // Creating a new bucket
-        x = static_cast<BucketValue*>(addBucket(start,end,""));
-      x->setValue(v);
-      x->setPriority(lowestPriority()-1);
-    }
+      * This will create a new bucket if required. 
+      */
+    void setValue(Date start, Date end, const double& v);
 
-    virtual const MetaClass& getType() const = 0;
-
-    const T& getValue(Calendar::BucketIterator& i) const
-    {return reinterpret_cast<BucketValue&>(*i).getValue();}
+    const double& getValue(Calendar::BucketIterator& i) const
+    {return reinterpret_cast<BucketDouble&>(*i).getValue();}
 
     /** Returns the default calendar value when no entry is matching. */
-    virtual T getDefault() const {return defaultValue;}
+    double getDefault() const {return defaultValue;}
 
     /** Convert the value of the calendar to a boolean value. */
     virtual bool getBool() const {return defaultValue != 0;}
 
     /** Update the default calendar value when no entry is matching. */
-    virtual void setDefault(const T v) {defaultValue = v;}
+    virtual void setDefault(const double v) {defaultValue = v;}
 
-    void writeElement(XMLOutput *o, const Keyword& tag, mode m=DEFAULT) const
-    {
-      // Writing a reference
-      if (m == REFERENCE)
-      {
-        o->writeElement
-        (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-        return;
-      }
-
-      // Write the complete object
-      if (m != NOHEADER) o->BeginObject
-        (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-      // Write my own fields
-      o->writeElement(Tags::tag_default, getDefault());
-
-      // Write all buckets
-      o->BeginObject (Tags::tag_buckets);
-      for (BucketIterator i = beginBuckets(); i != endBuckets(); ++i)
-        // We use the FULL mode, to force the buckets being written regardless
-        // of the depth in the XML tree.
-        o->writeElement(Tags::tag_bucket, *i, FULL);
-      o->EndObject(Tags::tag_buckets);
-
-      o->EndObject(tag);
-    }
-
-    void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-    {
-      if (pAttr.isA(Tags::tag_default))
-        pElement >> defaultValue;
-      else
-        Calendar::endElement(pIn, pAttr, pElement);
-    }
-
-  private:
+  private: 
     /** Factory method to add new buckets to the calendar.
       * @see Calendar::addBucket()
       */
     Bucket* createNewBucket(Date start, Date end, string name, int priority=0)
-    {return new BucketValue(this, start, end, name, priority);}
+    {return new BucketDouble(this, start, end, name, priority);}
 
     /** Value when no bucket is matching a certain date. */
-    T defaultValue;
-};
-
-
-/* Declaration of specialized template functions. */
-template <> DECLARE_EXPORT bool CalendarValue<string>::getBool() const;
-template <> DECLARE_EXPORT bool CalendarValue<string>::BucketValue::getBool() const;
-
-
-/** @brief This calendar type is used to store object pointers in its buckets.
-  *
-  * The template type must statisfy the following requirements:
-  *   - It must be a subclass of the Object class and implement the
-  *     beginElement(), writeElement() and endElement() as appropriate.
-  *   - Implement a metadata data element
-  * Subclasses will need to implement the getType() method.
-  * @see CalendarValue
-  */
-template <typename T> class CalendarPointer : public Calendar
-{
-  public:
-    /** @brief A special type of calendar bucket, designed to hold a pointer
-      * to an object.
-      * @see Calendar::Bucket
-      */
-    class BucketPointer : public Calendar::Bucket
-    {
-        friend class CalendarPointer<T>;
-      private:
-        /** The object stored in this bucket. */
-        T* val;
-
-        /** Constructor. */
-        BucketPointer(CalendarPointer<T> *c, Date start, Date end, string name, int priority=0)
-          : Bucket(c,start,end,name,priority), val(c->getDefault()) {};
-
-      public:
-        /** Returns the value stored in this bucket. */
-        T* getValue() const {return val;}
-
-        /** Convert the value of the bucket to a boolean value. */
-        bool getBool() const {return val != NULL;}
-
-        /** Updates the value of this bucket. */
-        void setValue(T* v) {val = v;}
-
-        void writeElement
-        (XMLOutput *o, const Keyword& tag, mode m = DEFAULT) const
-        {
-          assert(m == DEFAULT || m == FULL);
-          writeHeader(o, tag);
-          if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
-          if (val) o->writeElement(Tags::tag_value, val);
-          o->EndObject(tag);
-        }
-
-        void beginElement(XMLInput& pIn, const Attribute& pAttr)
-        {
-          if (pAttr.isA(Tags::tag_value))
-            pIn.readto(
-              MetaCategory::ControllerDefault(T::metadata,pIn.getAttributes())
-            );
-          else
-            Bucket::beginElement(pIn, pAttr);
-        }
-
-        void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-        {
-          if (pAttr.isA(Tags::tag_value))
-          {
-            T *o = dynamic_cast<T*>(pIn.getPreviousObject());
-            if (!o)
-              throw LogicException
-              ("Incorrect object type during read operation");
-            val = o;
-          }
-          else
-            Bucket::endElement(pIn, pAttr, pElement);
-        }
-
-        virtual const MetaClass& getType() const
-        {return *Calendar::Bucket::metadata;}
-
-        virtual size_t getSize() const
-        {return sizeof(typename CalendarPointer<T>::BucketPointer) + getName().size();}
-    };
-
-    /** @brief A special event iterator, providing also access to the
-      * current value. */
-    class EventIterator : public Calendar::EventIterator
-    {
-      public:
-        /** Constructor. */
-        EventIterator(const Calendar* c, Date d = Date::infinitePast,
-            bool f = true) : Calendar::EventIterator(c,d,f) {}
-
-        /** Return the current value of the iterator at this date. */
-        const T* getValue()
-        {
-          typedef CalendarPointer<T> calendarpointertype;
-          typedef typename CalendarPointer<T>::BucketPointer bucketpointertype;
-          return curBucket ?
-              static_cast<const bucketpointertype*>(curBucket)->getValue() :
-              static_cast<const calendarpointertype*>(theCalendar)->getDefault();
-        }
-    };
-
-    /** Default constructor. */
-    CalendarPointer(const string& n) : Calendar(n), defaultValue(NULL) {}
-
-    /** Returns the value on the specified date. */
-    T* getValue(const Date d) const
-    {
-      BucketPointer* x = static_cast<BucketPointer*>(findBucket(d));
-      return x ? x->getValue() : defaultValue;
-    }
-
-    /** Convert the value of the calendar to a boolean value. */
-    virtual bool getBool() const {return defaultValue != NULL;}
-
-    /** Updates the value in a certain date range.<br>
-      * This will create a new bucket if required. */
-    void setValue(Date start, Date end, T* v)
-    {
-      BucketPointer* x = static_cast<BucketPointer*>(findBucket(start));
-      if (x && x->getStart() == start && x->getEnd() <= end)
-        // We can update an existing bucket: it has the same start date
-        // and ends before the new effective period ends.
-        x->setEnd(end);
-      else
-        // Creating a new bucket
-        x = static_cast<BucketPointer*>(addBucket(start,end,""));
-      x->setValue(v);
-      x->setPriority(lowestPriority()-1);
-    }
-
-    /** Returns the default calendar value when no entry is matching. */
-    virtual T* getDefault() const {return defaultValue;}
-
-    /** Update the default calendar value when no entry is matching. */
-    virtual void setDefault(T* v) {defaultValue = v;}
-
-    virtual const MetaClass& getType() const = 0;
-
-    void writeElement(XMLOutput *o, const Keyword& tag, mode m=DEFAULT) const
-    {
-      // Writing a reference
-      if (m == REFERENCE)
-      {
-        o->writeElement
-        (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-        return;
-      }
-
-      // Write the complete object
-      if (m != NOHEADER) o->BeginObject
-        (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-      // Write my own fields
-      if (defaultValue) o->writeElement(Tags::tag_default, defaultValue);
-
-      // Write all buckets
-      o->BeginObject (Tags::tag_buckets);
-      for (BucketIterator i = beginBuckets(); i != endBuckets(); ++i)
-        // We use the FULL mode, to force the buckets being written regardless
-        // of the depth in the XML tree.
-        o->writeElement(Tags::tag_bucket, *i, FULL);
-      o->EndObject(Tags::tag_buckets);
-
-      o->EndObject(tag);
-    }
-
-    void beginElement(XMLInput& pIn, const Attribute& pAttr)
-    {
-      if (pAttr.isA (Tags::tag_default))
-        pIn.readto(T::reader(T::metadata,pIn.getAttributes()));
-      else
-        Calendar::beginElement(pIn, pAttr);
-    }
-
-    void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-    {
-      if (pAttr.isA(Tags::tag_default))
-      {
-        T *o = dynamic_cast<T*>(pIn.getPreviousObject());
-        if (!o)
-          throw LogicException("Incorrect object type during read operation");
-        defaultValue = o;
-      }
-      else
-        Calendar::endElement(pIn, pAttr, pElement);
-    }
-
-  private:
-    /** Factory method to add new buckets to the calendar.
-      * @see Calendar::addBucket()
-      */
-    Bucket* createNewBucket(Date start, Date end, string name, int priority=0)
-    {return new BucketPointer(this,start,end,name,priority);}
-
-    /** Value when no bucket is matching a certain date. */
-    T* defaultValue;
-};
-
-
-/** @brief A calendar only defining time buckets and not storing any data
-  * fields. */
-class CalendarVoid : public Calendar
-{
-  public:
-    CalendarVoid(const string& n) : Calendar(n) {initType(metadata);}
-    virtual const MetaClass& getType() const {return *metadata;}
-    static DECLARE_EXPORT const MetaClass* metadata;
-    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
-    static int initialize();
-};
-
-
-/** @brief A calendar storing double values in its buckets. */
-class CalendarDouble : public CalendarValue<double>
-{
-  public:
-    CalendarDouble(const string& n) : CalendarValue<double>(n)
-    {setDefault(0.0); initType(metadata);}
-    DECLARE_EXPORT ~CalendarDouble();
-    virtual const MetaClass& getType() const {return *metadata;}
-    static DECLARE_EXPORT const MetaClass* metadata;
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize();
-
-    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
-};
-
-
-/** @brief A calendar storing integer values in its buckets. */
-class CalendarInt : public CalendarValue<int>
-{
-  public:
-    CalendarInt(const string& n) : CalendarValue<int>(n)
-    {setDefault(0); initType(metadata);}
-    virtual const MetaClass& getType() const {return *metadata;}
-    static DECLARE_EXPORT const MetaClass* metadata;
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize();
-
-    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
-};
-
-
-/** @brief A calendar storing boolean values in its buckets. */
-class CalendarBool : public CalendarValue<bool>
-{
-  public:
-    CalendarBool(const string& n) : CalendarValue<bool>(n)
-    {setDefault(false); initType(metadata);}
-    virtual const MetaClass& getType() const {return *metadata;}
-    static DECLARE_EXPORT const MetaClass* metadata;
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize();
-
-    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
-};
-
-
-/** @brief A calendar storing strings in its buckets. */
-class CalendarString : public CalendarValue<string>
-{
-  public:
-    CalendarString(const string& n) : CalendarValue<string>(n) {initType(metadata);}
-    virtual const MetaClass& getType() const {return *metadata;}
-    bool getBool() const {return getDefault().empty();}
-    static DECLARE_EXPORT const MetaClass* metadata;
-    virtual size_t getSize() const
-    {
-      size_t i = sizeof(CalendarString);
-      for (BucketIterator j = beginBuckets(); j!= endBuckets(); ++j)
-        i += j->getSize()
-            + static_cast<CalendarValue<string>::BucketValue&>(*j).getValue().size();
-      return i;
-    }
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize();
-
-    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
-};
-
-
-/** @brief A calendar storing pointers to operations in its buckets. */
-class CalendarOperation : public CalendarPointer<Operation>
-{
-  public:
-    CalendarOperation(const string& n) : CalendarPointer<Operation>(n)
-    {initType(metadata);}
-    virtual const MetaClass& getType() const {return *metadata;}
-    static DECLARE_EXPORT const MetaClass* metadata;
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize();
-
-    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
+    double defaultValue;
 };
 
 

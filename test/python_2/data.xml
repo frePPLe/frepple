@@ -6,7 +6,7 @@
   </description>
   <current>2009-01-01T00:00:00</current>
   <calendars>
-    <calendar name="Weeks" xsi:type="calendar_void">
+    <calendar name="Weeks">
       <buckets>
         <bucket start="2009-01-01T00:00:00" name="Jan Week1"/>
         <bucket start="2009-01-07T00:00:00" name="Jan Week2"/>
@@ -46,7 +46,7 @@
   </buffers>
   <resources>
     <resource name="Resource">
-      <maximum_calendar name="Capacity" xsi:type="calendar_double">
+      <maximum_calendar name="Capacity">
         <buckets>
           <bucket start="2009-01-01T00:00:00">
             <value>1</value>

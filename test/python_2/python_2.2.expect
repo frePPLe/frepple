@@ -14,7 +14,7 @@
 		</customer>
 	</customers>
 	<calendars>
-		<calendar name="Capacity" xsi:type="calendar_double">
+		<calendar name="Capacity">
 			<default>0</default>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
@@ -22,7 +22,7 @@
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="Weeks" xsi:type="calendar_void">
+		<calendar name="Weeks">
 			<buckets>
 				<bucket start="2009-01-01T00:00:00" name="Jan Week1">
 				</bucket>
@@ -106,7 +106,7 @@
 	</demands>
 	<resources>
 		<resource name="Resource">
-			<maximum_calendar name="Capacity" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity"/>
 		</resource>
 	</resources>
 			<loads>

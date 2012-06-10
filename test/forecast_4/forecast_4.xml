@@ -11,7 +11,7 @@
   This calendar defines how forecast values are disaggregated.
   -->
   <calendars>
-    <calendar name="planningbuckets" xsi:type="calendar_double">
+    <calendar name="planningbuckets">
       <buckets>
         <bucket start="2009-01-01T00:00:00" name="Mon Jan 01" value="1"/>
         <bucket start="2009-01-02T00:00:00" name="Tue Jan 02" value="1"/>

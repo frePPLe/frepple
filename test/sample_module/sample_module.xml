@@ -11,14 +11,14 @@ frepple.loadmodule("mod_sample.so")
   <name>Sample Module</name>
   <current>2009-01-01T00:00:00</current>
   <calendars>
-    <calendar name="capacity factory 1" xsi:type="calendar_double">
+    <calendar name="capacity factory 1">
       <buckets>
         <bucket start="2009-01-01T00:00:00">
           <value>1</value>
         </bucket>
       </buckets>
     </calendar>
-    <calendar name="capacity factory 2" xsi:type="calendar_double">
+    <calendar name="capacity factory 2">
       <buckets>
         <bucket start="2009-01-01T00:00:00">
           <value>1</value>

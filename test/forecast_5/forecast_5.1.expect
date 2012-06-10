@@ -18,8 +18,7 @@
 		</customer>
 	</customers>
 	<calendars>
-		<calendar name="planningbuckets" xsi:type="calendar_double">
-			<default>0</default>
+		<calendar name="planningbuckets">
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<value>1</value>
@@ -51,7 +50,7 @@
 	<demands>
 		<demand name="constant plus trend" xsi:type="demand_forecast">
 			<item name="item"/>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>60</total>
@@ -87,7 +86,7 @@
 		</demand>
 		<demand name="flat demand" xsi:type="demand_forecast">
 			<item name="item"/>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
@@ -123,7 +122,7 @@
 		</demand>
 		<demand name="intermittent" xsi:type="demand_forecast">
 			<item name="item"/>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>1</total>
@@ -159,7 +158,7 @@
 		</demand>
 		<demand name="irregular demand" xsi:type="demand_forecast">
 			<item name="item"/>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>66</total>
@@ -195,7 +194,7 @@
 		</demand>
 		<demand name="little history" xsi:type="demand_forecast">
 			<item name="item"/>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>15</total>
@@ -231,7 +230,7 @@
 		</demand>
 		<demand name="seasonal demand" xsi:type="demand_forecast">
 			<item name="item"/>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>11</total>
@@ -266,14 +265,14 @@
 			</buckets>
 		</demand>
 		<demand name="test" xsi:type="demand_forecast">
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<discrete>false</discrete>
 			<buckets>
 			</buckets>
 		</demand>
 		<demand name="trend plus constant" xsi:type="demand_forecast">
 			<item name="item"/>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>70</total>
@@ -309,7 +308,7 @@
 		</demand>
 		<demand name="trended demand" xsi:type="demand_forecast">
 			<item name="item"/>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>160</total>

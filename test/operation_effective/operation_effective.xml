@@ -38,7 +38,7 @@
         <loads>
           <load>
             <resource name="1. capacity in A">
-              <maximum_calendar name="1. capacity A" xsi:type="calendar_double">
+              <maximum_calendar name="1. capacity A">
                 <buckets>
                   <bucket start="2009-01-01T00:00:00" value="2"/>
                   <bucket start="2009-01-15T00:00:00" value="3"/>
@@ -65,7 +65,7 @@
         <loads>
           <load>
             <resource name="1. capacity in B">
-              <maximum_calendar name="1. capacity B" xsi:type="calendar_double">
+              <maximum_calendar name="1. capacity B">
                 <buckets>
                   <bucket start="2009-01-01T00:00:00">
                     <value>1</value>
@@ -159,7 +159,7 @@
         <loads>
           <load>
             <resource name="2. capacity in A">
-              <maximum_calendar name="2. capacity A" xsi:type="calendar_double">
+              <maximum_calendar name="2. capacity A">
                 <buckets>
                   <bucket start="2009-01-01T00:00:00" value="2"/>
                   <bucket start="2009-01-15T00:00:00" value="3"/>
@@ -186,7 +186,7 @@
         <loads>
           <load>
             <resource name="2. capacity in B">
-              <maximum_calendar name="2. capacity B" xsi:type="calendar_double">
+              <maximum_calendar name="2. capacity B">
                 <buckets>
                   <bucket start="2009-01-01T00:00:00">
                     <value>1</value>
@@ -265,7 +265,7 @@
         <loads>
           <load>
             <resource name="3. capacity in A">
-              <maximum_calendar name="3. capacity A" xsi:type="calendar_double">
+              <maximum_calendar name="3. capacity A">
                 <buckets>
                   <bucket start="2009-01-01T00:00:00" value="2"/>
                   <bucket start="2009-01-15T00:00:00" value="3"/>
@@ -292,7 +292,7 @@
         <loads>
           <load>
             <resource name="3. capacity in B">
-              <maximum_calendar name="3. capacity B" xsi:type="calendar_double">
+              <maximum_calendar name="3. capacity B">
                 <buckets>
                   <bucket start="2009-01-01T00:00:00">
                     <value>1</value>

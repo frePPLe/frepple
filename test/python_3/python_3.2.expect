@@ -19,46 +19,33 @@
 		</customer>
 	</customers>
 	<calendars>
-		<calendar name="Capacity" xsi:type="calendar_double">
-			<default>0</default>
-			<buckets>
-				<bucket start="2009-01-01T00:00:00">
-					<value>1</value>
-				</bucket>
-			</buckets>
-		</calendar>
-		<calendar name="boolcal" xsi:type="calendar_boolean">
-			<default>false</default>
+		<calendar name="Cal1">
+			<default>4.56</default>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00" end="2009-03-01T00:00:00">
 					<priority>-1</priority>
-					<value>true</value>
+					<value>1</value>
 				</bucket>
 				<bucket start="2009-02-01T00:00:00" end="2009-03-01T00:00:00">
 					<priority>-3</priority>
-					<value>false</value>
+					<value>3</value>
 				</bucket>
 				<bucket start="2009-02-01T00:00:00" end="2009-05-01T00:00:00">
 					<priority>-2</priority>
-					<value>true</value>
+					<value>2</value>
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="doublecal" xsi:type="calendar_double">
+		<calendar name="Cal2">
 			<default>1.23</default>
 			<buckets>
 			</buckets>
 		</calendar>
-		<calendar name="operationcal" xsi:type="calendar_operation">
-			<default name="make or buy item" xsi:type="operation_alternate"/>
+		<calendar name="Capacity">
+			<default>0</default>
 			<buckets>
-				<bucket start="2009-01-01T00:00:00" end="2009-03-01T00:00:00">
-					<priority>-1</priority>
-					<value name="make item" xsi:type="operation_routing"/>
-				</bucket>
-				<bucket start="2009-06-01T00:00:00" end="2009-09-01T00:00:00">
-					<priority>-2</priority>
-					<value name="buy item" xsi:type="operation_fixed_time"/>
+				<bucket start="2009-01-01T00:00:00">
+					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
@@ -166,10 +153,10 @@
 	</demands>
 	<resources>
 		<resource name="Resource">
-			<maximum_calendar name="Capacity" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity"/>
 		</resource>
 		<resource name="machine">
-			<maximum_calendar name="doublecal" xsi:type="calendar_double"/>
+			<maximum_calendar name="Cal2"/>
 		</resource>
 	</resources>
 			<loads>

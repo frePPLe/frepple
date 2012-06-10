@@ -33,7 +33,7 @@
       <!-- Notice the calendar for the safety stock target... -->
       <producing name="make end item 1" />
       <item name="end item 1" />
-      <minimum_calendar name="safety stock target" xsi:type="calendar_double">
+      <minimum_calendar name="safety stock target">
 	      <buckets>
 	        <bucket start="2009-01-01T00:00:00" name="january">
 	          <value>10</value>

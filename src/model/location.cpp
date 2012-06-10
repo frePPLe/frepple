@@ -90,7 +90,7 @@ DECLARE_EXPORT void Location::endElement(XMLInput& pIn, const Attribute& pAttr, 
 {
   if (pAttr.isA(Tags::tag_available))
   {
-    CalendarBool *cal = dynamic_cast<CalendarBool*>(pIn.getPreviousObject());
+    Calendar *cal = dynamic_cast<Calendar*>(pIn.getPreviousObject());
     if (cal)
       setAvailable(cal);
     else

@@ -7,8 +7,7 @@
   </description>
 	<current>2009-01-01T00:00:00</current>
 	<calendars>
-		<calendar name="planningbuckets" xsi:type="calendar_double">
-			<default>0</default>
+		<calendar name="planningbuckets">
 			<buckets>
 				<bucket start="2009-01-01T00:00:00" name="Mon Jan 01">
 					<value>1</value>
@@ -116,7 +115,7 @@
 		<demand name="Forecast 1" xsi:type="demand_forecast">
 			<item name="Product 1"/>
 			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>0</total>
@@ -278,7 +277,7 @@
 		<demand name="Forecast 2" xsi:type="demand_forecast">
 			<item name="Product 1"/>
 			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>0</total>
@@ -440,7 +439,7 @@
 		<demand name="Forecast 26" xsi:type="demand_forecast">
 			<item name="Product 1"/>
 			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>1</total>
@@ -602,7 +601,7 @@
 		<demand name="Forecast 27" xsi:type="demand_forecast">
 			<item name="Product 1"/>
 			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>1</total>
@@ -764,7 +763,7 @@
 		<demand name="Forecast 3" xsi:type="demand_forecast">
 			<item name="Product 1"/>
 			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>0</total>
@@ -926,7 +925,7 @@
 		<demand name="Forecast 4" xsi:type="demand_forecast">
 			<item name="Product 1"/>
 			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>0</total>
@@ -1088,7 +1087,7 @@
 		<demand name="Forecast 5" xsi:type="demand_forecast">
 			<item name="Product 1"/>
 			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>0</total>

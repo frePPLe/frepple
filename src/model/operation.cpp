@@ -229,8 +229,9 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
       bool available = true;
       for (int c = 0; c < calcount && available; c++)
       {
-        if (cals[c]->getBucket())
-          available = cals[c]->getBucket()->getBool();
+    	const Calendar::Bucket *tmp = cals[c]->getBucket();
+        if (tmp)
+          available = tmp->getBool();
         else
           available = cals[c]->getCalendar()->getBool();
       }

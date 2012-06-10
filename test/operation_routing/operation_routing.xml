@@ -79,7 +79,7 @@
   </buffers>
   <resources>
     <resource name="operator A &amp; B">
-      <maximum_calendar name="Capacity A &amp; B" xsi:type="calendar_double">
+      <maximum_calendar name="Capacity A &amp; B">
         <buckets>
           <bucket start="2009-01-01T00:00:00">
             <value>1</value>
@@ -96,7 +96,7 @@
       </loads>
     </resource>
     <resource name="operator C">
-      <maximum_calendar name="Capacity C" xsi:type="calendar_double">
+      <maximum_calendar name="Capacity C">
         <buckets>
           <bucket start="2009-01-01T00:00:00" value="1" />
           <bucket start="2009-02-11T00:00:00" value="2" />
@@ -109,7 +109,7 @@
       </loads>
     </resource>
     <resource name="assemble">
-      <maximum_calendar name="Capacity assembly" xsi:type="calendar_double">
+      <maximum_calendar name="Capacity assembly">
         <buckets>
           <bucket start="2009-01-01T00:00:00">
             <value>2</value>

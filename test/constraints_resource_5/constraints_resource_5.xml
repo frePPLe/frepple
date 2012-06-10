@@ -14,7 +14,7 @@
   <current>2009-01-01T00:00:00</current>
 
   <calendars>
-    <calendar name="Capacity" xsi:type="calendar_double">
+    <calendar name="Capacity">
       <default>1</default>
       <buckets>
         <!-- From the infinite past till 2007-01-02 no entry is in effect.

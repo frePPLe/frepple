@@ -33,7 +33,7 @@
 		</customer>
 	</customers>
 	<calendars>
-		<calendar name="months" xsi:type="calendar_void">
+		<calendar name="months">
 			<buckets>
 				<bucket start="2009-02-01T00:00:00" name="feb">
 				</bucket>

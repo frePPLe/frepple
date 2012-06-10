@@ -125,7 +125,7 @@
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:group ref="common_fields" />
       <xsd:element name="owner" type="location" />
-      <xsd:element name="available" type="calendar_boolean" />
+      <xsd:element name="available" type="calendar" />
       <xsd:element name="members">
         <xsd:complexType>
           <xsd:sequence minOccurs="0" maxOccurs="unbounded">
@@ -362,7 +362,7 @@
       <xsd:group ref="common_fields" />
       <xsd:element name="location" type="location" />
       <xsd:element name="maximum" type="positiveDouble" />
-      <xsd:element name="maximum_calendar" type="calendar_double" />
+      <xsd:element name="maximum_calendar" type="calendar" />
       <xsd:element name="maxearly" type="xsd:duration" />
       <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="owner" type="resource" />
@@ -641,13 +641,50 @@
     </xsd:choice>
   </xsd:complexType>
 
-  <!-- CALENDAR -->
+  <!-- CALENDAR -->  
+  <xsd:simpleType name="bucketdays">
+    <xsd:restriction base="xsd:integer">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="127"/>
+    </xsd:restriction>
+  </xsd:simpleType>   
+
   <xsd:complexType name="calendar">
     <xsd:annotation>
       <xsd:documentation>
         A calendar is used to represent time dependent parameters.
       </xsd:documentation>
     </xsd:annotation>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="default" type="xsd:double" minOccurs="0"/>
+      <xsd:element name="buckets">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="bucket" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:all>
+                  <xsd:element name="value" type="xsd:double" minOccurs="0" />
+                  <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
+                  <xsd:element name="days" type="bucketdays" minOccurs="0" />
+                  <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
+                  <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />
+                </xsd:all>
+                <xsd:attribute name="start" type="xsd:dateTime" />
+                <xsd:attribute name="name" type="xsd:normalizedString" />
+                <xsd:attribute name="end" type="xsd:dateTime" />
+                <xsd:attribute name="value" type="xsd:double" />
+                <xsd:attribute name="priority" type="xsd:integer" />
+                <xsd:attribute name="days" type="bucketdays" />
+                <xsd:attribute name="starttime" type="xsd:duration" />
+                <xsd:attribute name="endtime" type="xsd:duration" />
+                <xsd:attribute name="action" type="action" />
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:choice>
+    <xsd:attribute name="default" type="xsd:double" />
     <xsd:attribute name="name" type="non-empty-string" use="required" />
     <xsd:attribute name="action" type="action" />
   </xsd:complexType>
@@ -656,229 +693,6 @@
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="calendar" type="calendar" />
     </xsd:choice>
-  </xsd:complexType>
-  
-  <xsd:simpleType name="bucketdays">
-    <xsd:restriction base="xsd:integer">
-      <xsd:minInclusive value="0"/>
-      <xsd:maxInclusive value="127"/>
-    </xsd:restriction>
-  </xsd:simpleType>   
-  
-  <xsd:complexType name="calendar_void">
-    <xsd:complexContent>
-      <xsd:extension base="calendar">
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="buckets">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="bucket" minOccurs="0" maxOccurs="unbounded">
-                  <xsd:complexType>
-                    <xsd:all>
-                      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
-                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
-                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
-                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />
-                    </xsd:all>
-                    <xsd:attribute name="start" type="xsd:dateTime" />
-                    <xsd:attribute name="name" type="xsd:normalizedString" />
-                    <xsd:attribute name="end" type="xsd:dateTime" />
-                    <xsd:attribute name="priority" type="xsd:integer" />
-                    <xsd:attribute name="days" type="bucketdays" />
-                    <xsd:attribute name="starttime" type="xsd:duration" />
-                    <xsd:attribute name="endtime" type="xsd:duration" />
-                    <xsd:attribute name="action" type="action" />
-                  </xsd:complexType>
-                </xsd:element>
-              </xsd:sequence>
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="calendar_double">
-    <xsd:complexContent>
-      <xsd:extension base="calendar">
-        <xsd:sequence>
-          <xsd:element name="default" type="xsd:double" minOccurs="0"/>
-          <xsd:element name="buckets" minOccurs="0">
-            <xsd:complexType>
-              <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                <xsd:element name="bucket" minOccurs="0">
-                  <xsd:complexType>
-                    <xsd:all>
-                      <xsd:element name="value" type="xsd:double" minOccurs="0" />
-                      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
-                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
-                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
-                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />                      
-                    </xsd:all>
-                    <xsd:attribute name="start" type="xsd:dateTime" />
-                    <xsd:attribute name="name" type="xsd:normalizedString" />
-                    <xsd:attribute name="end" type="xsd:dateTime" />
-                    <xsd:attribute name="value" type="xsd:double" />
-                    <xsd:attribute name="priority" type="xsd:integer" />
-                    <xsd:attribute name="days" type="bucketdays" />
-                    <xsd:attribute name="starttime" type="xsd:duration" />
-                    <xsd:attribute name="endtime" type="xsd:duration" />                    
-                    <xsd:attribute name="action" type="action" />
-                  </xsd:complexType>
-                </xsd:element>
-              </xsd:choice>
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:sequence>
-        <xsd:attribute name="default" type="xsd:double" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="calendar_integer">
-    <xsd:complexContent>
-      <xsd:extension base="calendar">
-        <xsd:sequence>
-          <xsd:element name="default" type="xsd:integer" minOccurs="0"/>
-          <xsd:element name="buckets" minOccurs="0">
-            <xsd:complexType>
-              <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                <xsd:element name="bucket">
-                  <xsd:complexType>
-                    <xsd:all>
-                      <xsd:element name="value" type="xsd:integer" minOccurs="0" />
-                      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
-                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
-                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
-                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />                      
-                    </xsd:all>
-                    <xsd:attribute name="value" type="xsd:integer" />
-                    <xsd:attribute name="start" type="xsd:dateTime" />
-                    <xsd:attribute name="name" type="xsd:normalizedString" />
-                    <xsd:attribute name="end" type="xsd:dateTime" />
-                    <xsd:attribute name="priority" type="xsd:integer" />
-                    <xsd:attribute name="days" type="bucketdays" />
-                    <xsd:attribute name="starttime" type="xsd:duration" />
-                    <xsd:attribute name="endtime" type="xsd:duration" />                    
-                    <xsd:attribute name="action" type="action" />
-                  </xsd:complexType>
-                </xsd:element>
-              </xsd:choice>
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:sequence>
-        <xsd:attribute name="default" type="xsd:integer" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="calendar_boolean">
-    <xsd:complexContent>
-      <xsd:extension base="calendar">
-        <xsd:sequence>
-          <xsd:element name="default" type="xsd:boolean" minOccurs="0"/>
-          <xsd:element name="buckets" minOccurs="0">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="bucket" minOccurs="0" maxOccurs="unbounded">
-                  <xsd:complexType>
-                    <xsd:all>
-                      <xsd:element name="value" type="xsd:boolean" minOccurs="0" />
-                      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
-                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
-                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
-                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />                      
-                    </xsd:all>
-                    <xsd:attribute name="value" type="xsd:boolean" />
-                    <xsd:attribute name="start" type="xsd:dateTime" />
-                    <xsd:attribute name="name" type="xsd:normalizedString" />
-                    <xsd:attribute name="end" type="xsd:dateTime" />
-                    <xsd:attribute name="priority" type="xsd:integer" />
-                    <xsd:attribute name="days" type="bucketdays" />
-                    <xsd:attribute name="starttime" type="xsd:duration" />
-                    <xsd:attribute name="endtime" type="xsd:duration" />                    
-                    <xsd:attribute name="action" type="action" />
-                  </xsd:complexType>
-                </xsd:element>
-              </xsd:sequence>
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:sequence>
-        <xsd:attribute name="default" type="xsd:boolean" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="calendar_string">
-    <xsd:complexContent>
-      <xsd:extension base="calendar">
-        <xsd:sequence>
-          <xsd:element name="default" type="xsd:string" minOccurs="0"/>
-          <xsd:element name="buckets" minOccurs="0">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="bucket" minOccurs="0" maxOccurs="unbounded">
-                  <xsd:complexType>
-                    <xsd:all>
-                      <xsd:element name="value" type="xsd:string" minOccurs="0" />
-                      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
-                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
-                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
-                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />                      
-                    </xsd:all>
-                    <xsd:attribute name="value" type="xsd:normalizedString" />
-                    <xsd:attribute name="start" type="xsd:dateTime" />
-                    <xsd:attribute name="name" type="xsd:normalizedString" />
-                    <xsd:attribute name="end" type="xsd:dateTime" />
-                    <xsd:attribute name="priority" type="xsd:integer" />
-                    <xsd:attribute name="days" type="bucketdays" />
-                    <xsd:attribute name="starttime" type="xsd:duration" />
-                    <xsd:attribute name="endtime" type="xsd:duration" />                    
-                    <xsd:attribute name="action" type="action" />
-                  </xsd:complexType>
-                </xsd:element>
-              </xsd:sequence>
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:sequence>
-        <xsd:attribute name="default" type="xsd:string" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="calendar_operation">
-    <xsd:complexContent>
-      <xsd:extension base="calendar">
-        <xsd:sequence>
-          <xsd:element name="default" type="operation" minOccurs="0"/>
-          <xsd:element name="buckets" minOccurs="0">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="bucket" minOccurs="0" maxOccurs="unbounded">
-                  <xsd:complexType>
-                    <xsd:all>
-                      <xsd:element name="value" type="operation" minOccurs="0" />
-                      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
-                      <xsd:element name="days" type="bucketdays" minOccurs="0" />
-                      <xsd:element name="starttime" type="xsd:duration" minOccurs="0" />
-                      <xsd:element name="endtime" type="xsd:duration" minOccurs="0" />
-                    </xsd:all>
-                    <xsd:attribute name="start" type="xsd:dateTime" />
-                    <xsd:attribute name="name" type="xsd:normalizedString" />
-                    <xsd:attribute name="end" type="xsd:dateTime" />
-                    <xsd:attribute name="priority" type="xsd:integer" />
-                    <xsd:attribute name="days" type="bucketdays" />
-                    <xsd:attribute name="starttime" type="xsd:duration" />
-                    <xsd:attribute name="endtime" type="xsd:duration" />                    
-                    <xsd:attribute name="action" type="action" />
-                  </xsd:complexType>
-                </xsd:element>
-              </xsd:sequence>
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:sequence>
-      </xsd:extension>
-    </xsd:complexContent>
   </xsd:complexType>
 
   <!-- OPERATIONPLAN -->

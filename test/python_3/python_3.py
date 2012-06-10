@@ -185,15 +185,12 @@ choice.addAlternate(operation=buyoper, priority=2)
 
 ###
 print "\nCreating calendars"
-c = frepple.calendar_boolean(name="boolcal", default=False)
-c.setValue(datetime.datetime(2009,1,1), datetime.datetime(2009,3,1), True)
-c.setValue(datetime.datetime(2009,2,1), datetime.datetime(2009,5,1), True)
-c.setValue(datetime.datetime(2009,2,1), datetime.datetime(2009,3,1), False)
-frepple.calendar(name="doublecal", default=1.23)
-frepple.calendar_void(name="voidcal")
-c = frepple.calendar_operation(name="operationcal", default=choice)
-c.setValue(datetime.datetime(2009,1,1), datetime.datetime(2009,3,1), makeoper)
-c.setValue(datetime.datetime(2009,6,1), datetime.datetime(2009,9,1), buyoper)
+c = frepple.calendar(name="Cal1", default=4.56)
+c.setValue(datetime.datetime(2009,1,1), datetime.datetime(2009,3,1), 1)
+c.setValue(datetime.datetime(2009,2,1), datetime.datetime(2009,5,1), 2)
+c.setValue(datetime.datetime(2009,2,1), datetime.datetime(2009,3,1), 3)
+frepple.calendar(name="Cal2", default=1.23)
+frepple.calendar(name="Cal3", default=1.23)
 
 ###
 print "\nTesting the calendar iterator"
@@ -203,14 +200,14 @@ for date, value in c.events():
 
 ###
 print "\nDeleting a calendar"
-frepple.calendar(name="voidcal", action="R")
+frepple.calendar(name="Cal3", action="R")
 
 # Load some data - These things can't be done yet from Python
 frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <resources>
     <resource name="Resource">
-      <maximum_calendar name="Capacity" xsi:type="calendar_double">
+      <maximum_calendar name="Capacity">
         <buckets>
           <bucket start="2009-01-01T00:00:00">
             <value>1</value>
@@ -266,7 +263,7 @@ except Exception as e:
 
 ###
 print "\nCreating a resource"
-frepple.resource(name="machine", maximum_calendar=frepple.calendar(name="doublecal"))
+frepple.resource(name="machine", maximum_calendar=frepple.calendar(name="Cal2"))
 
 ###
 print "\nCreating customers"

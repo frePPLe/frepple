@@ -12,7 +12,7 @@
   </description>
   <current>2009-01-01T00:00:00</current>  
   <calendars>
-    <calendar name="Weeks" xsi:type="calendar_void">
+    <calendar name="Weeks">
       <buckets>
         <bucket start="2009-01-01T00:00:00"/>
         <bucket start="2009-02-01T00:00:00"/>

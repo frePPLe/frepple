@@ -28,7 +28,7 @@
 	  <buffer name="buffer 1">
 	    <item name="item 1" />
 	    <producing name="make 1" />
-	    <minimum_calendar name="min inv for buffer 1" xsi:type="calendar_double">
+	    <minimum_calendar name="min inv for buffer 1">
 	      <buckets>
 	        <bucket start="2009-01-01T00:00:00">
 	          <value>4</value>
@@ -44,7 +44,7 @@
 	  <buffer name="buffer 2">
 	    <item name="item 2" />
 	    <producing name="make 2" />
-	    <minimum_calendar name="min inv for buffer 2" xsi:type="calendar_double">
+	    <minimum_calendar name="min inv for buffer 2">
 	      <buckets>
 	        <bucket start="2009-01-01T00:00:00">
 	          <value>4</value>
@@ -59,7 +59,7 @@
 	  <buffer name="buffer 3">
 	    <item name="item 3" />
 	    <producing name="make 3" />
-	    <minimum_calendar name="min inv for buffer 3" xsi:type="calendar_double">
+	    <minimum_calendar name="min inv for buffer 3">
 	      <buckets>
 	        <bucket start="2009-01-01T00:00:00">
 	          <value>4</value>
@@ -77,7 +77,7 @@
 	  <buffer name="buffer 4">
 	    <item name="item 4" />
 	    <producing name="make 4" />
-	    <minimum_calendar name="min inv for buffer 4" xsi:type="calendar_double">
+	    <minimum_calendar name="min inv for buffer 4">
 	      <buckets>
 	        <bucket start="2009-01-01T00:00:00">
 	          <value>4</value>

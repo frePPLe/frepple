@@ -11,11 +11,11 @@
   -->
   <locations>
     <location name="site 1">
-      <available name="calendar of site 1" xsi:type="calendar_boolean">
-        <default>true</default>
+      <available name="calendar of site 1">
+        <default>1</default>
         <buckets>
-          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="false" />
-          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="false" />
+          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="0" />
+          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="0" />
         </buckets>
       </available>
     </location>
@@ -104,11 +104,11 @@
   -->
   <locations>
     <location name="site 2">
-      <available name="calendar of site 2" xsi:type="calendar_boolean">
-        <default>false</default>
+      <available name="calendar of site 2">
+        <default>0</default>
         <buckets>
-          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="true" />
-          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="true" />
+          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="1" />
+          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="1" />
         </buckets>
       </available>
     </location>
@@ -197,11 +197,11 @@
   -->
   <locations>
     <location name="site 3">
-      <available name="calendar of site 3" xsi:type="calendar_boolean">
-        <default>true</default>
+      <available name="calendar of site 3">
+        <default>1</default>
         <buckets>
-          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="false" />
-          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="false" />
+          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="0" />
+          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="0" />
         </buckets>
       </available>
     </location>
@@ -279,11 +279,11 @@
   -->
   <locations>
     <location name="site 4">
-      <available name="calendar of site 4" xsi:type="calendar_boolean">
-        <default>false</default>
+      <available name="calendar of site 4">
+        <default>0</default>
         <buckets>
-          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="true" />
-          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="true" />
+          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="1" />
+          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="1" />
         </buckets>
       </available>
     </location>
@@ -362,11 +362,11 @@
   -->
   <locations>
     <location name="site 5">
-      <available name="calendar of site 5" xsi:type="calendar_boolean">
-        <default>true</default>
+      <available name="calendar of site 5">
+        <default>1</default>
         <buckets>
-          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="false" />
-          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="false" />
+          <bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00" value="0" />
+          <bucket start="2009-01-20T00:00:00" end="2009-01-22T00:00:00" value="0" />
         </buckets>
       </available>
     </location>
@@ -385,7 +385,7 @@
       <loads>
         <load>
           <resource name="5. resource">
-          <maximum_calendar name="Capacity" xsi:type="calendar_double">
+          <maximum_calendar name="Capacity">
             <buckets>
               <bucket start="2009-01-07T00:00:00">
                 <value>3</value>

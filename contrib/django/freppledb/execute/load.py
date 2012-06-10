@@ -80,7 +80,7 @@ def loadCalendars(cursor):
   cursor.execute("SELECT name, defaultvalue FROM calendar")
   for i, j in cursor.fetchall():
     cnt += 1
-    frepple.calendar(name=i, default=j)
+    try: frepple.calendar(name=i, default=j)
     except Exception as e: print "Error:", e
   print 'Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime)
 

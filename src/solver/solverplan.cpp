@@ -225,7 +225,7 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the fields
   if (constrts != 15) o->writeElement(Tags::tag_constraints, constrts);

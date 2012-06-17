@@ -218,7 +218,7 @@ void LPSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Fields
   if (getMinimum())

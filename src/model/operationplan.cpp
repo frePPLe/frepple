@@ -916,7 +916,7 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
   }
 
   if (m != NOHEADER)
-    o->BeginObject(tag, Tags::tag_id, id, Tags::tag_operation,oper->getName());
+    o->BeginObject(tag, Tags::tag_id, id, Tags::tag_operation, XMLEscape(oper->getName()));
 
   // The demand reference is only valid for delivery operationplans,
   // and it should only be written if this tag is not being written

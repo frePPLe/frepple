@@ -109,8 +109,8 @@ class Calendar : public HasName<Calendar>
         friend class BucketIterator;
         friend class EventIterator;
       private:
-        /** Name of the bucket. */
-        string nm;
+        /** Unique identifier of the bucket within the calendar. */
+        int id;
 
         /** Start date of the bucket. */
         Date startdate;
@@ -170,10 +170,15 @@ class Calendar : public HasName<Calendar>
 
       protected:
         /** Constructor. */
-        Bucket(Calendar *c, Date start, Date end, string name, int priority=0) :
-          nm(name), startdate(start), enddate(end), nextBucket(NULL),
+        Bucket(Calendar *c, Date start, Date end, int ident=INT_MIN, int priority=0) :
+          startdate(start), enddate(end), nextBucket(NULL),
           prevBucket(NULL), priority(priority), days(127), starttime(0L), 
-          endtime(86400L), cal(c) {initType(metadata); updateOffsets();}
+          endtime(86400L), cal(c) 
+        {
+          setId(ident);
+          initType(metadata); 
+          updateOffsets();
+        }
 
         /** Auxilary function to write out the start of the XML. */
         DECLARE_EXPORT void writeHeader(XMLOutput *, const Keyword&) const;
@@ -182,33 +187,15 @@ class Calendar : public HasName<Calendar>
         /** Return the calendar to whom the bucket belongs. */
         Calendar* getCalendar() const {return cal;}
 
-        /** This method is here only to keep the API of all calendar classes
-          * consistent.<br>
-          * Note that this isn't exactly a virtual method, since the return
-          * value is different for different calendar types.
+        /** Get the identifier. */
+        int getId() const {return id;}
+
+        /** Generate the identfier.<br> 
+          * If a bucket with the given identifier already exists a unique
+          * number is generated instead. This is done by incrementing the
+          * value passed until it is unique.
           */
-        void getValue() const {}
-
-        /** This method is here only to keep the API of all calendar classes
-          * consistent.
-          */
-        void setValue() {}
-
-        /** Returns the name of the bucket. If no name was ever explicitly
-          * specified with the setName() method, a default name is generated
-          * by converting the start date into a string.<br>
-          * To reduce the memory needs, this default string is computed with
-          * every call to the getName() method and never stored internally.
-          * Only explicitly specified names are kept in memory.
-          */
-        string getName() const {return nm.empty() ? string(startdate) : nm;}
-
-        /** Returns true if the name of the bucket has not been explicitly
-          * specified. */
-        bool useDefaultName() const {return nm.empty();}
-
-        /** Updates the name of a bucket. */
-        void setName(const string& s) {nm=s;}
+        DECLARE_EXPORT void setId(int ident=INT_MIN);
 
         /** Returns the end date of the bucket. */
         Date getEnd() const {return enddate;}
@@ -292,10 +279,8 @@ class Calendar : public HasName<Calendar>
           */
         DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
 
-        virtual const MetaClass& getType() const
-        {return *metadata;}
-        virtual size_t getSize() const
-        {return sizeof(Bucket) + nm.size();}
+        virtual const MetaClass& getType() const {return *metadata;}
+        virtual size_t getSize() const {return sizeof(Bucket);}
         static DECLARE_EXPORT const MetaCategory* metadata;
         virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
         virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
@@ -322,23 +307,21 @@ class Calendar : public HasName<Calendar>
     DECLARE_EXPORT Bucket* createBucket(const AttributeList&);
 
     /** Adds a new bucket to the list. */
-    DECLARE_EXPORT Bucket* addBucket(Date, Date, string);
+    DECLARE_EXPORT Bucket* addBucket(Date, Date, int = 1);
 
     /** Removes a bucket from the list. */
     DECLARE_EXPORT void removeBucket(Bucket* bkt);
 
     /** Returns the bucket where a certain date belongs to.
-      * A bucket will always be returned, i.e. the data structure is such
-      * that we all dates between infinitePast and infiniteFuture match
-      * with one (and only one) bucket.
+      * A NULL pointer is returned when no bucket is effective.
       */
     DECLARE_EXPORT Bucket* findBucket(Date d, bool fwd = true) const;
 
-    /** Returns the bucket with a certain name.
+    /** Returns the bucket with a certain identifier.
       * A NULL pointer is returned in case no bucket can be found with the
-      * given name.
+      * given identifier.
       */
-    DECLARE_EXPORT Bucket* findBucket(const string&) const;
+    DECLARE_EXPORT Bucket* findBucket(int ident) const;
 
     /** @brief An iterator class to go through all dates where the calendar
       * value changes.*/
@@ -437,25 +420,8 @@ class Calendar : public HasName<Calendar>
 
     /** This is the factory method used to generate new buckets. Each subclass
       * should provide an override for this function. */
-    virtual Bucket* createNewBucket(Date start, Date end, string name, int priority=0)
-    {return new Bucket(this, start, end, name, priority);}
-};
-
-
-/** @brief This calendar type is used to store values in its buckets.
-  *
-  * The template type must statisfy the following requirements:
-  *   - XML import supported by the operator >> of the class DataElement.
-  *   - XML export supported by the method writeElement of the class XMLOutput.
-  * Subclasses will need to implement the getType() method.
-  * @see CalendarPointer
-  */
-template <typename T> class CalendarValue : public Calendar
-{
-  public:
-
-
-
+    virtual Bucket* createNewBucket(Date start, Date end, int id=1, int priority=0)
+    {return new Bucket(this, start, end, id, priority);}
 };
 
 
@@ -475,8 +441,8 @@ class CalendarDouble : public Calendar
         double val;
 
         /** Constructor. */
-        BucketDouble(CalendarDouble *c, Date start, Date end, string name, int priority=0)
-          : Bucket(c,start,end,name,priority), val(0) {}
+        BucketDouble(CalendarDouble *c, Date start, Date end, int id=INT_MIN, int priority=0)
+          : Bucket(c, start, end, id, priority), val(0) {}
 
       public:
         /** Returns the value of this bucket. */
@@ -510,7 +476,7 @@ class CalendarDouble : public Calendar
         {return *Calendar::Bucket::metadata;}
 
         virtual size_t getSize() const
-        {return sizeof(CalendarDouble::BucketDouble) + getName().size();}
+        {return sizeof(CalendarDouble::BucketDouble);}
     };
 
     /** @brief A special event iterator, providing also access to the
@@ -578,8 +544,8 @@ class CalendarDouble : public Calendar
     /** Factory method to add new buckets to the calendar.
       * @see Calendar::addBucket()
       */
-    Bucket* createNewBucket(Date start, Date end, string name, int priority=0)
-    {return new BucketDouble(this, start, end, name, priority);}
+    Bucket* createNewBucket(Date start, Date end, int id, int priority=0)
+    {return new BucketDouble(this, start, end, id, priority);}
 
     /** Value when no bucket is matching a certain date. */
     double defaultValue;

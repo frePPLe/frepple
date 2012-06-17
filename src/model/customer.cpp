@@ -69,7 +69,7 @@ DECLARE_EXPORT void Customer::writeElement(XMLOutput* o, const Keyword& tag, mod
   }
 
   // Write the complete object
-  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, getName());
+  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write the fields
   HasDescription::writeElement(o, tag);

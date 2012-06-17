@@ -22,15 +22,15 @@
 		<calendar name="Cal1">
 			<default>4.56</default>
 			<buckets>
-				<bucket start="2009-01-01T00:00:00" end="2009-03-01T00:00:00">
+				<bucket id="1" start="2009-01-01T00:00:00" end="2009-03-01T00:00:00">
 					<priority>-1</priority>
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-02-01T00:00:00" end="2009-03-01T00:00:00">
+				<bucket id="3" start="2009-02-01T00:00:00" end="2009-03-01T00:00:00">
 					<priority>-3</priority>
 					<value>3</value>
 				</bucket>
-				<bucket start="2009-02-01T00:00:00" end="2009-05-01T00:00:00">
+				<bucket id="2" start="2009-02-01T00:00:00" end="2009-05-01T00:00:00">
 					<priority>-2</priority>
 					<value>2</value>
 				</bucket>
@@ -42,9 +42,8 @@
 			</buckets>
 		</calendar>
 		<calendar name="Capacity">
-			<default>0</default>
 			<buckets>
-				<bucket start="2009-01-01T00:00:00">
+				<bucket id="1" start="2009-01-01T00:00:00">
 					<value>1</value>
 				</bucket>
 			</buckets>

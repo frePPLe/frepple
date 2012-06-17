@@ -91,11 +91,11 @@ def loadCalendarBuckets(cursor):
   starttime = time()
   cursor.execute('''
      SELECT 
-       calendar_id, startdate, enddate, name, priority, value, 
+       calendar_id, startdate, enddate, id, priority, value, 
        sunday, monday, tuesday, wednesday, thursday, friday, saturday, 
        starttime, endtime 
     FROM calendarbucket
-    ORDER BY calendar_id, startdate
+    ORDER BY calendar_id, id
     ''')
   x = [ header ]
   x.append('<calendars>')
@@ -109,11 +109,10 @@ def loadCalendarBuckets(cursor):
     if o5: days += 16
     if o6: days += 32
     if o7: days += 64
-    x.append('<calendar name=%s><buckets><bucket%s%s%s%s%s starttime="PT%sS" endtime="PT%sS" value="%f"/></buckets></calendar>' % (
-       quoteattr(i),
+    x.append('<calendar name=%s><buckets><bucket id="%i" %s%s%s%s starttime="PT%sS" endtime="PT%sS" value="%f"/></buckets></calendar>' % (
+       quoteattr(i), l,
        (j and ' start="%s"' % j.isoformat()) or '',
        (k and ' end="%s"' % k.isoformat()) or '',
-       (l and ' name=%s' % quoteattr(l)) or '',
        (m and ' priority="%s"' % m) or '',
        (days != 127 and ' days ="%s"' % days) or '',
        t1.hour*3600 + t1.minute*60 + t1.second,

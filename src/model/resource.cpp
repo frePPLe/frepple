@@ -158,7 +158,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
   }
 
   // Write the complete object
-  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, getName());
+  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write my fields
   HasDescription::writeElement(o, tag);
@@ -349,7 +349,7 @@ DECLARE_EXPORT void ResourceInfinite::writeElement
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the fields
   Resource::writeElement(o, tag, NOHEADER);

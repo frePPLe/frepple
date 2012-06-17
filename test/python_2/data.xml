@@ -8,20 +8,20 @@
   <calendars>
     <calendar name="Weeks">
       <buckets>
-        <bucket start="2009-01-01T00:00:00" name="Jan Week1"/>
-        <bucket start="2009-01-07T00:00:00" name="Jan Week2"/>
-        <bucket start="2009-01-14T00:00:00" name="Jan Week3"/>
-        <bucket start="2009-01-21T00:00:00" name="Jan Week4"/>
-        <bucket start="2009-01-28T00:00:00" name="Jan Week5"/>
-        <bucket start="2009-02-04T00:00:00" name="Feb Week1"/>
-        <bucket start="2009-02-11T00:00:00" name="Feb Week2"/>
-        <bucket start="2009-02-18T00:00:00" name="Feb Week3"/>
-        <bucket start="2009-02-25T00:00:00" name="Feb Week4"/>
-        <bucket start="2009-03-04T00:00:00" name="Mar Week1"/>
-        <bucket start="2009-03-11T00:00:00" name="Mar Week2"/>
-        <bucket start="2009-03-18T00:00:00" name="Mar Week3"/>
-        <bucket start="2009-03-25T00:00:00" name="Mar Week4"/>
-        <bucket start="2009-04-01T00:00:00" name="Remainder"/>
+        <bucket start="2009-01-01T00:00:00" end="2009-01-07T00:00:00"/>
+        <bucket start="2009-01-07T00:00:00" end="2009-01-14T00:00:00"/>
+        <bucket start="2009-01-14T00:00:00" end="2009-01-21T00:00:00"/>
+        <bucket start="2009-01-21T00:00:00" end="2009-01-28T00:00:00"/>
+        <bucket start="2009-01-28T00:00:00" end="2009-02-04T00:00:00"/>
+        <bucket start="2009-02-04T00:00:00" end="2009-02-11T00:00:00"/>
+        <bucket start="2009-02-11T00:00:00" end="2009-02-18T00:00:00"/>
+        <bucket start="2009-02-18T00:00:00" end="2009-02-25T00:00:00"/>
+        <bucket start="2009-02-25T00:00:00" end="2009-03-04T00:00:00"/>
+        <bucket start="2009-03-04T00:00:00" end="2009-03-11T00:00:00"/>
+        <bucket start="2009-03-11T00:00:00" end="2009-03-18T00:00:00"/>
+        <bucket start="2009-03-18T00:00:00" end="2009-03-25T00:00:00"/>
+        <bucket start="2009-03-25T00:00:00" end="2009-04-01T00:00:00"/>
+        <bucket start="2009-04-01T00:00:00" end="2009-04-07T00:00:00"/>
       </buckets>
     </calendar>
   </calendars>

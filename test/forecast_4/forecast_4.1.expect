@@ -9,97 +9,97 @@
 	<calendars>
 		<calendar name="planningbuckets">
 			<buckets>
-				<bucket start="2009-01-01T00:00:00" name="Mon Jan 01">
+				<bucket id="1" start="2009-01-01T00:00:00" end="2009-01-02T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-02T00:00:00" name="Tue Jan 02">
+				<bucket id="2" start="2009-01-02T00:00:00" end="2009-01-03T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-03T00:00:00" name="Wed Jan 03">
+				<bucket id="3" start="2009-01-03T00:00:00" end="2009-01-04T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-04T00:00:00" name="Thu Jan 04">
+				<bucket id="4" start="2009-01-04T00:00:00" end="2009-01-05T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-05T00:00:00" name="Fri Jan 05">
+				<bucket id="5" start="2009-01-05T00:00:00" end="2009-01-06T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-06T00:00:00" name="Sat Jan 06">
+				<bucket id="6" start="2009-01-06T00:00:00" end="2009-01-07T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-07T00:00:00" name="Sun Jan 07">
+				<bucket id="7" start="2009-01-07T00:00:00" end="2009-01-08T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-08T00:00:00" name="Mon Jan 08">
+				<bucket id="8" start="2009-01-08T00:00:00" end="2009-01-09T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-09T00:00:00" name="Tue Jan 09">
+				<bucket id="9" start="2009-01-09T00:00:00" end="2009-01-10T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-10T00:00:00" name="Wed Jan 10">
+				<bucket id="10" start="2009-01-10T00:00:00" end="2009-01-11T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-11T00:00:00" name="Thu Jan 11">
+				<bucket id="11" start="2009-01-11T00:00:00" end="2009-01-12T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-12T00:00:00" name="Fri Jan 12">
+				<bucket id="12" start="2009-01-12T00:00:00" end="2009-01-13T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-13T00:00:00" name="Sat Jan 13">
+				<bucket id="13" start="2009-01-13T00:00:00" end="2009-01-14T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-14T00:00:00" name="Sun Jan 14">
+				<bucket id="14" start="2009-01-14T00:00:00" end="2009-01-15T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-15T00:00:00" name="Mon Jan 15">
+				<bucket id="15" start="2009-01-15T00:00:00" end="2009-01-16T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-16T00:00:00" name="Tue Jan 16">
+				<bucket id="16" start="2009-01-16T00:00:00" end="2009-01-17T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-17T00:00:00" name="Wed Jan 17">
+				<bucket id="17" start="2009-01-17T00:00:00" end="2009-01-18T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-18T00:00:00" name="Thu Jan 18">
+				<bucket id="18" start="2009-01-18T00:00:00" end="2009-01-19T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-19T00:00:00" name="Fri Jan 19">
+				<bucket id="19" start="2009-01-19T00:00:00" end="2009-01-20T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-20T00:00:00" name="Sat Jan 20">
+				<bucket id="20" start="2009-01-20T00:00:00" end="2009-01-21T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-21T00:00:00" name="Sun Jan 21">
+				<bucket id="21" start="2009-01-21T00:00:00" end="2009-01-22T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-22T00:00:00" name="Mon Jan 22">
+				<bucket id="22" start="2009-01-22T00:00:00" end="2009-01-23T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-23T00:00:00" name="Tue Jan 23">
+				<bucket id="23" start="2009-01-23T00:00:00" end="2009-01-24T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-24T00:00:00" name="Wed Jan 24">
+				<bucket id="24" start="2009-01-24T00:00:00" end="2009-01-25T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-25T00:00:00" name="Thu Jan 25">
+				<bucket id="25" start="2009-01-25T00:00:00" end="2009-01-26T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-26T00:00:00" name="Fri Jan 26">
+				<bucket id="26" start="2009-01-26T00:00:00" end="2009-01-27T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-27T00:00:00" name="Sat Jan 27">
+				<bucket id="27" start="2009-01-27T00:00:00" end="2009-01-28T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-28T00:00:00" name="Sun Jan 28">
+				<bucket id="28" start="2009-01-28T00:00:00" end="2009-01-29T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-29T00:00:00" name="Mon Jan 29">
+				<bucket id="29" start="2009-01-29T00:00:00" end="2009-01-30T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-30T00:00:00" name="Tue Jan 30">
+				<bucket id="30" start="2009-01-30T00:00:00" end="2009-01-31T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2009-01-31T00:00:00" name="Wed Jan 31">
+				<bucket id="31" start="2009-01-31T00:00:00" end="2009-02-01T00:00:00">
 					<value>1</value>
 				</bucket>
 			</buckets>

@@ -89,13 +89,16 @@
 		</customer>
 	</customers>
 	<calendars>
-		<calendar name="Weeks" xsi:type="calendar_void">
+		<calendar name="Months">
 			<buckets>
-				<bucket start="2009-01-01T00:00:00">
+				<bucket id="1" start="2009-01-01T00:00:00" end="2009-02-01T00:00:00">
+					<value>1</value>
 				</bucket>
-				<bucket start="2009-02-01T00:00:00">
+				<bucket id="2" start="2009-02-01T00:00:00" end="2009-03-01T00:00:00">
+					<value>1</value>
 				</bucket>
-				<bucket start="2009-03-01T00:00:00">
+				<bucket id="3" start="2009-03-01T00:00:00" end="2009-04-01T00:00:00">
+					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
@@ -197,7 +200,7 @@
 	<demands>
 		<demand name="A forecast" xsi:type="demand_forecast">
 			<item name="A item"/>
-			<calendar name="Weeks" xsi:type="calendar_void"/>
+			<calendar name="Months"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
@@ -218,7 +221,7 @@
 		</demand>
 		<demand name="A forecast not selected" xsi:type="demand_forecast">
 			<item name="A parent item"/>
-			<calendar name="Weeks" xsi:type="calendar_void"/>
+			<calendar name="Months"/>
 			<buckets>
 			</buckets>
 		</demand>
@@ -230,7 +233,7 @@
 		</demand>
 		<demand name="B forecast" xsi:type="demand_forecast">
 			<item name="B item"/>
-			<calendar name="Weeks" xsi:type="calendar_void"/>
+			<calendar name="Months"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
@@ -262,7 +265,7 @@
 		</demand>
 		<demand name="C forecast" xsi:type="demand_forecast">
 			<item name="C item"/>
-			<calendar name="Weeks" xsi:type="calendar_void"/>
+			<calendar name="Months"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
@@ -283,7 +286,7 @@
 		</demand>
 		<demand name="C forecast not selected" xsi:type="demand_forecast">
 			<item name="C parent item"/>
-			<calendar name="Weeks" xsi:type="calendar_void"/>
+			<calendar name="Months"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
@@ -310,7 +313,7 @@
 		</demand>
 		<demand name="D forecast" xsi:type="demand_forecast">
 			<item name="D parent item"/>
-			<calendar name="Weeks" xsi:type="calendar_void"/>
+			<calendar name="Months"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
@@ -337,7 +340,7 @@
 		</demand>
 		<demand name="E forecast" xsi:type="demand_forecast">
 			<item name="E parent item"/>
-			<calendar name="Weeks" xsi:type="calendar_void"/>
+			<calendar name="Months"/>
 			<buckets>
 				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>

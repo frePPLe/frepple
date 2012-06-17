@@ -2077,39 +2077,6 @@ class XMLOutput
       incIndent();
     }
 
-    /** Start writing a new object. This method will open a new XML-tag.<br>
-      * Output: \<TAG_T TAG_U="val1"\> */
-    void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1)
-    {
-      *m_fp << indentstring << t.stringStartElement()
-          << attr1.stringAttribute() << XMLEscape(val1) << "\">\n";
-      incIndent();
-    }
-
-    /** Start writing a new object. This method will open a new XML-tag.<br>
-      * Output: \<TAG_T TAG_T1="val1" TAG_T2="val2"\> */
-    void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
-        const Keyword& attr2, const string& val2)
-    {
-      *m_fp << indentstring << t.stringStartElement()
-          << attr1.stringAttribute() << XMLEscape(val1) << "\""
-          << attr2.stringAttribute() << XMLEscape(val2) << "\">\n";
-      incIndent();
-    }
-
-    /** Start writing a new object. This method will open a new XML-tag.<br>
-      * Output: \<TAG_T TAG_U="val1" TAG_V="val2" TAG_W="val3"\> */
-    void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
-        const Keyword& attr2, const string& val2,
-        const Keyword& attr3, const string& val3)
-    {
-      *m_fp << indentstring << t.stringStartElement()
-          << attr1.stringAttribute() << XMLEscape(val1) << "\""
-          << attr2.stringAttribute() << XMLEscape(val2) << "\""
-          << attr3.stringAttribute() << XMLEscape(val3) << "\">\n";
-      incIndent();
-    }
-
     /** Start writing a new object. This method will open a new XML-tag. */
     void BeginObject(const Keyword& t, const string& atts)
     {
@@ -2118,8 +2085,9 @@ class XMLOutput
     }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
-      * Output: \<TAG_T TAG_U="long"\> */
-    void BeginObject(const Keyword& t, const Keyword& attr1, const long val1)
+      * Output: \<TAG_T TAG_U="val1"\> */
+    template <class T>
+    void BeginObject(const Keyword& t, const Keyword& attr1, const typename T& val1)
     {
       *m_fp << indentstring << t.stringStartElement()
           << attr1.stringAttribute() << val1 << "\">\n";
@@ -2127,13 +2095,28 @@ class XMLOutput
     }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
-      * Output: \<TAG_T TAG_T1="val1" TAG_T2="val2"\> */
-    void BeginObject(const Keyword& t, const Keyword& attr1, unsigned long val1,
-        const Keyword& attr2, const string& val2)
+      * Output: \<TAG_T TAG_U="val1"\> */
+    template <class T, class U>
+    void BeginObject(const Keyword& t, const Keyword& attr1, const typename T& val1, 
+      const Keyword& attr2, const typename U& val2)
     {
       *m_fp << indentstring << t.stringStartElement()
           << attr1.stringAttribute() << val1 << "\""
-          << attr2.stringAttribute() << XMLEscape(val2) << "\">\n";
+          << attr2.stringAttribute() << val2 << "\">\n";
+      incIndent();
+    }
+
+    /** Start writing a new object. This method will open a new XML-tag.<br>
+      * Output: \<TAG_T TAG_U="val1"\> */
+    template <class T, class U, class V>
+    void BeginObject(const Keyword& t, const Keyword& attr1, const typename T& val1,
+      const Keyword& attr2, const typename U& val2,
+      const Keyword& attr3, const typename V& val3)
+    {
+      *m_fp << indentstring << t.stringStartElement()
+          << attr1.stringAttribute() << val1 << "\""
+          << attr2.stringAttribute() << val2 << "\""
+          << attr3.stringAttribute() << val3 << "\">\n";
       incIndent();
     }
 

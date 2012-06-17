@@ -42,7 +42,7 @@
                       <!-- Level 7: calendar -->
                       <buckets>
                         <!-- Level 8: bucket -->
-                        <bucket start="2009-01-01T00:00:00" name="Jan Week1" value="0"/>
+                        <bucket start="2009-01-01T00:00:00" value="0"/>
                       </buckets>
                     </maximum_calendar>
                   </resource>

@@ -103,7 +103,7 @@ DECLARE_EXPORT void SetupMatrix::writeElement(XMLOutput *o, const Keyword& tag, 
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write all rules
   o->BeginObject (Tags::tag_rules);

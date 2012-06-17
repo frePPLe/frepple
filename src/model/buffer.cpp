@@ -218,7 +218,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
   }
 
   // Write the complete object
-  if (m!= NOHEADER) o->BeginObject(tag, Tags::tag_name, getName());
+  if (m!= NOHEADER) o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write own fields
   HasDescription::writeElement(o, tag);
@@ -694,7 +694,7 @@ DECLARE_EXPORT void BufferInfinite::writeElement
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the fields and an ending tag
   Buffer::writeElement(o, tag, NOHEADER);
@@ -738,7 +738,7 @@ DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const Keyword &tag
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the extra fields
   if (leadtime) o->writeElement(Tags::tag_leadtime, leadtime);

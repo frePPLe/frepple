@@ -195,8 +195,12 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
 
   // Expect to find at least one non-zero weight...
   if (!weights)
-    throw DataException("No valid forecast date in range "
-        + string(d) + " of forecast '" + getName() +"'");
+  {
+    ostringstream o;
+    o << "No valid forecast date in range " << d 
+      << " of forecast '" << getName() << "'";
+    throw DataException(o.str());
+  }
 
   // Update the forecast quantity, respecting the weights
   f /= weights;
@@ -270,7 +274,7 @@ void Forecast::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   o->writeElement(Tags::tag_item, &*getItem());
   o->writeElement(Tags::tag_operation, &*getOperation());
@@ -283,7 +287,7 @@ void Forecast::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
   for (memberIterator i = beginMember(); i != end(); ++i)
   {
     ForecastBucket* f = dynamic_cast<ForecastBucket*>(&*i);
-    o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(f->getDue()));
+    o->BeginObject(Tags::tag_bucket, Tags::tag_start, f->getDue());
     o->writeElement(tag_total, f->getTotal());
     o->writeElement(Tags::tag_quantity, f->getQuantity());
     o->writeElement(tag_consumed, f->getConsumed());

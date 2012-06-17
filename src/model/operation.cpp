@@ -698,7 +698,7 @@ DECLARE_EXPORT void OperationFixedTime::writeElement
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the fields
   Operation::writeElement(o, tag, NOHEADER);
@@ -865,7 +865,7 @@ DECLARE_EXPORT void OperationTimePer::writeElement
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the complete object
   Operation::writeElement(o, tag, NOHEADER);
@@ -899,7 +899,7 @@ DECLARE_EXPORT void OperationRouting::writeElement
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the fields
   Operation::writeElement(o, tag, NOHEADER);
@@ -1135,7 +1135,7 @@ DECLARE_EXPORT void OperationAlternate::writeElement
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the standard fields
   Operation::writeElement(o, tag, NOHEADER);

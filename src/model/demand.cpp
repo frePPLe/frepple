@@ -247,7 +247,7 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
   }
 
   // Write the complete object
-  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, getName());
+  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write the fields
   HasDescription::writeElement(o, tag);

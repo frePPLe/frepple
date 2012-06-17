@@ -10,7 +10,7 @@
 	<calendars>
 		<calendar name="min inv for buffer 1">
 			<buckets>
-				<bucket start="2009-01-01T00:00:00">
+				<bucket id="1" start="2009-01-01T00:00:00">
 					<priority>1</priority>
 					<value>4</value>
 				</bucket>
@@ -18,27 +18,27 @@
 		</calendar>
 		<calendar name="min inv for buffer 2">
 			<buckets>
-				<bucket start="2009-01-01T00:00:00">
+				<bucket id="1" start="2009-01-01T00:00:00">
 					<value>4</value>
 				</bucket>
 			</buckets>
 		</calendar>
 		<calendar name="min inv for buffer 3">
 			<buckets>
-				<bucket start="2009-01-01T00:00:00">
+				<bucket id="1" start="2009-01-01T00:00:00">
 					<value>4</value>
 				</bucket>
-				<bucket start="2009-01-12T00:00:00">
+				<bucket id="2" start="2009-01-12T00:00:00">
 					<value>2</value>
 				</bucket>
 			</buckets>
 		</calendar>
 		<calendar name="min inv for buffer 4">
 			<buckets>
-				<bucket start="2009-01-01T00:00:00">
+				<bucket id="1" start="2009-01-01T00:00:00">
 					<value>4</value>
 				</bucket>
-				<bucket start="2009-01-12T00:00:00">
+				<bucket id="2" start="2009-01-12T00:00:00">
 					<value>6</value>
 				</bucket>
 			</buckets>

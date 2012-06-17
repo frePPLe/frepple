@@ -7,177 +7,69 @@
 	</solvers>
 	<locations>
 		<location name="Factory 1">
-			<members>
-				<location name="Line 1"/>
-				<location name="Finished goods"/>
-			</members>
-			<available name="Working Days" xsi:type="calendar_boolean"/>
+			<available name="Working Days"/>
 		</location>
 		<location name="Finished goods">
 			<owner name="Factory 1"/>
-			<available name="Working Days" xsi:type="calendar_boolean"/>
+			<available name="Working Days"/>
 		</location>
 		<location name="Line 1">
 			<owner name="Factory 1"/>
-			<available name="Working Days" xsi:type="calendar_boolean"/>
+			<available name="Working Days"/>
 		</location>
 	</locations>
 	<calendars>
-		<calendar name="Capacity line 1 station 2" xsi:type="calendar_double">
+		<calendar name="Capacity line 1 station 2">
 			<buckets>
 				<bucket start="2011-02-01T00:00:00" value="2"/>
 			</buckets>
 		</calendar>
-		<calendar name="Capacity line 1 station 1b" xsi:type="calendar_double">
+		<calendar name="Capacity line 1 station 1b">
 			<buckets>
 				<bucket start="2011-02-01T00:00:00" value="1"/>
 			</buckets>
 		</calendar>
-		<calendar name="Capacity line 1 station 4" xsi:type="calendar_double">
+		<calendar name="Capacity line 1 station 4">
 			<buckets>
 				<bucket start="2011-02-01T00:00:00" value="2"/>
 			</buckets>
 		</calendar>
-		<calendar name="Capacity line 1 station 5" xsi:type="calendar_double">
+		<calendar name="Capacity line 1 station 5">
 			<buckets>
 				<bucket start="2011-02-01T00:00:00" value="1"/>
 			</buckets>
 		</calendar>
-		<calendar name="Capacity line 1 station 6" xsi:type="calendar_double">
+		<calendar name="Capacity line 1 station 6">
 			<buckets>
 				<bucket start="2011-02-01T00:00:00" value="1"/>
 			</buckets>
 		</calendar>
-		<calendar name="Capacity line 1 station 1a" xsi:type="calendar_double">
+		<calendar name="Capacity line 1 station 1a">
 			<buckets>
 				<bucket start="2011-02-01T00:00:00"  value="1"/>
 			</buckets>
 		</calendar>
-		<calendar name="Capacity line 1 station 7" xsi:type="calendar_double">
+		<calendar name="Capacity line 1 station 7">
 			<buckets>
 				<bucket start="2011-02-01T00:00:00"  value="1"/>
 			</buckets>
 		</calendar>
-		<calendar name="Capacity line 1 station 3" xsi:type="calendar_double">
+		<calendar name="Capacity line 1 station 3">
 			<buckets>
 				<bucket start="2011-02-01T00:00:00"  value="4"/>
 			</buckets>
 		</calendar>
-		<calendar name="Operators line 1" xsi:type="calendar_double">
+		<calendar name="Operators line 1">
 			<buckets>
 				<bucket start="2011-01-01T00:00:00" value="9"/>
 			</buckets>
 		</calendar>
-		<calendar name="Working Days" xsi:type="calendar_boolean">
-			<default>true</default>
+		<calendar name="Working Days">
+			<default>1</default>
 			<buckets>
-				<bucket start="2011-12-31T00:00:00" end="2012-01-02T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-01-02T00:00:00" end="2012-01-07T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-01-07T00:00:00" end="2012-01-09T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-01-09T00:00:00" end="2012-01-14T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-01-14T00:00:00" end="2012-01-16T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-01-16T00:00:00" end="2012-01-21T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-01-21T00:00:00" end="2012-01-23T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-01-23T00:00:00" end="2012-01-28T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-01-28T00:00:00" end="2012-01-30T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-01-30T00:00:00" end="2012-02-04T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-02-04T00:00:00" end="2012-02-06T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-02-06T00:00:00" end="2012-02-11T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-02-11T00:00:00" end="2012-02-13T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-02-13T00:00:00" end="2012-02-18T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-02-18T00:00:00" end="2012-02-20T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-02-20T00:00:00" end="2012-02-25T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-02-25T00:00:00" end="2012-02-27T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-02-27T00:00:00" end="2012-03-03T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-03-03T00:00:00" end="2012-03-05T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-03-05T00:00:00" end="2012-03-10T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-03-10T00:00:00" end="2012-03-12T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-03-12T00:00:00" end="2012-03-17T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-03-17T00:00:00" end="2012-03-19T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-03-19T00:00:00" end="2012-03-24T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-03-24T00:00:00" end="2012-03-26T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-03-26T00:00:00" end="2012-03-31T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-03-31T00:00:00" end="2012-04-02T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-04-02T00:00:00" end="2012-04-07T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-04-07T00:00:00" end="2012-04-09T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-04-09T00:00:00" end="2012-04-14T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-04-14T00:00:00" end="2012-04-16T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-04-16T00:00:00" end="2012-04-21T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-04-21T00:00:00" end="2012-04-23T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-04-23T00:00:00" end="2012-04-28T00:00:00">
-					<value>true</value>
-				</bucket>
-				<bucket start="2012-04-28T00:00:00" end="2012-04-30T00:00:00">
-					<value>false</value>
-				</bucket>
-				<bucket start="2012-04-30T00:00:00">
-					<value>true</value>
+				<!-- 65 = effective on saturday and sunday -->               
+				<bucket start="2011-12-31T00:00:00" end="2012-04-30T00:00:00" days="65">
+					<value>0</value>
 				</bucket>
 			</buckets>
 		</calendar>
@@ -673,8 +565,8 @@
 			<duration>P0D</duration>
 			<duration_per>PT10S</duration_per>
 		</operation>
-		<operation name="ship product 1" xsi:type="operation_fixed_time">
-			<location name="Finished goods"/>
+		<operation name="ship product 1" xsi:type="operation_fixed_time">			
+            <location name="Finished goods"/>
 		</operation>
 		<operation name="ship product 10" xsi:type="operation_fixed_time">
 			<location name="Finished goods"/>
@@ -690,6 +582,7 @@
 		</operation>
 		<operation name="ship product 5" xsi:type="operation_fixed_time">
 			<location name="Finished goods"/>
+            <duration>PT1S</duration>
 		</operation>
 		<operation name="ship product 6" xsi:type="operation_fixed_time">
 			<location name="Finished goods"/>
@@ -1222,39 +1115,39 @@
 	</demands>
 	<resources>
 		<resource name="Line 1 station 1a">
-			<maximum_calendar name="Capacity line 1 station 1a" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity line 1 station 1a"/>
 			<location name="Line 1"/>
 		</resource>
 		<resource name="Line 1 station 1b">
-			<maximum_calendar name="Capacity line 1 station 1b" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity line 1 station 1b"/>
 			<location name="Line 1"/>
 		</resource>
 		<resource name="Line 1 station 2">
-			<maximum_calendar name="Capacity line 1 station 2" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity line 1 station 2"/>
 			<location name="Line 1"/>
 		</resource>
 		<resource name="Line 1 station 3">
-			<maximum_calendar name="Capacity line 1 station 3" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity line 1 station 3"/>
 			<location name="Line 1"/>
 		</resource>
 		<resource name="Line 1 station 4">
-			<maximum_calendar name="Capacity line 1 station 4" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity line 1 station 4"/>
 			<location name="Line 1"/>
 		</resource>
 		<resource name="Line 1 station 5">
-			<maximum_calendar name="Capacity line 1 station 5" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity line 1 station 5"/>
 			<location name="Line 1"/>
 		</resource>
 		<resource name="Line 1 station 6">
-			<maximum_calendar name="Capacity line 1 station 6" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity line 1 station 6"/>
 			<location name="Line 1"/>
 		</resource>
 		<resource name="Line 1 station 7">
-			<maximum_calendar name="Capacity line 1 station 7" xsi:type="calendar_double"/>
+			<maximum_calendar name="Capacity line 1 station 7"/>
 			<location name="Line 1"/>
 		</resource>        
 		<resource name="Operators line 1">
-			<maximum_calendar name="Operators line 1" xsi:type="calendar_double"/>
+			<maximum_calendar name="Operators line 1"/>
 			<location name="Line 1"/>
 		</resource>
 	</resources>

@@ -90,7 +90,7 @@ void CalendarDouble::setValue(Date start, Date end, const double& v)
     x->setEnd(end);
   else
     // Creating a new bucket
-    x = static_cast<BucketDouble*>(addBucket(start,end,""));
+    x = static_cast<BucketDouble*>(addBucket(start,end));
   x->setValue(v);
   x->setPriority(lowestPriority()-1);
 }
@@ -106,7 +106,7 @@ void CalendarDouble::writeElement(XMLOutput *o, const Keyword& tag, mode m) cons
   }
 
   // Write the complete object
-  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, getName());
+  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write the default value
   if (getDefault()) o->writeElement(Tags::tag_default, getDefault());
@@ -167,7 +167,7 @@ DECLARE_EXPORT CalendarDouble::~CalendarDouble()
 
 
 DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket
-(Date start, Date end, string name)
+(Date start, Date end, int id)
 {
   // Assure the start is before the end.
   if (start > end)
@@ -187,7 +187,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket
   }
 
   // Create the new bucket
-  Bucket *c = createNewBucket(start,end,name);
+  Bucket *c = createNewBucket(start, end, id);
   c->nextBucket = next;
   c->prevBucket = prev;
 
@@ -277,10 +277,10 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
 }
 
 
-DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(const string& d) const
+DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(int ident) const
 {
   for (Bucket *b = firstBucket; b; b = b->nextBucket)
-    if (b->getName() == d) return b;
+    if (b->id == ident) return b;
   return NULL;
 }
 
@@ -297,7 +297,7 @@ DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const Keyword& tag, mod
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write all buckets
   o->BeginObject (Tags::tag_buckets);
@@ -314,23 +314,15 @@ DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const Keyword& tag, mod
 DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const AttributeList& atts)
 {
   // Pick up the start, end and name attributes
-  Date startdate = atts.get(Tags::tag_start)->getDate();
-  const DataElement* d = atts.get(Tags::tag_end);
+  const DataElement* d = atts.get(Tags::tag_start);
+  Date startdate = *d ? d->getDate() : Date::infinitePast;
+  d = atts.get(Tags::tag_end);
   Date enddate = *d ? d->getDate() : Date::infiniteFuture;
-  string name = atts.get(Tags::tag_name)->getString();
+  d = atts.get(Tags::tag_id);
+  int id = *d ? d->getInt() : INT_MIN;
 
-  // Check for existence of the bucket: same name, start date and end date
-  Calendar::Bucket* result = NULL;
-  for (BucketIterator x = beginBuckets(); x!=endBuckets(); ++x)
-  {
-    if ((!name.empty() && x->nm==name)
-        || (name.empty() && x->startdate==startdate && x->enddate==enddate))
-    {
-      // Found!
-      result = &*x;
-      break;
-    }
-  }
+  // Check for existence of the bucket with the same identifier
+  Calendar::Bucket* result = findBucket(id);
 
   // Pick up the action attribute and update the bucket accordingly
   switch (MetaClass::decodeAction(atts))
@@ -338,22 +330,30 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const AttributeList& att
     case ADD:
       // Only additions are allowed
       if (result)
-        throw DataException("Bucket " + string(startdate) + " "
-            + string(enddate) + " " + name
-            + " already exists in calendar '" + getName() + "'");
-      result = addBucket(startdate, enddate, name);
+      {
+        ostringstream o;
+        o << "Bucket " << id << " already exists in calendar '" << getName() << "'";
+        throw DataException(o.str());
+      }
+      result = addBucket(startdate, enddate, id);
       return result;
     case CHANGE:
       // Only changes are allowed
       if (!result)
-        throw DataException("Bucket " + string(startdate) + " " + string(enddate)
-            + " " + name + " doesn't exist in calendar '" + getName() + "'");
+      {
+        ostringstream o;
+        o << "Bucket " << id << " doesn't exist in calendar '" << getName() << "'";
+        throw DataException(o.str());
+      }
       return result;
     case REMOVE:
       // Delete the entity
       if (!result)
-        throw DataException("Bucket " + string(startdate) + " " + string(enddate)
-            + " " + name + " doesn't exist in calendar '" + getName() + "'");
+      {
+        ostringstream o;
+        o << "Bucket " << id << " doesn't exist in calendar '" << getName() << "'";
+        throw DataException(o.str());
+      }
       else
       {
         // Delete it
@@ -363,7 +363,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const AttributeList& att
     case ADD_CHANGE:
       if (!result)
         // Adding a new bucket
-        result = addBucket(startdate, enddate, name);
+        result = addBucket(startdate, enddate, id);
       return result;
   }
 
@@ -387,36 +387,16 @@ DECLARE_EXPORT void Calendar::Bucket::writeHeader(XMLOutput *o, const Keyword& t
   if (startdate != Date::infinitePast)
   {
     if (enddate != Date::infiniteFuture)
-    {
-      if (!nm.empty())
-        o->BeginObject(tag, Tags::tag_start, string(startdate), Tags::tag_end, string(enddate), Tags::tag_name, nm);
-      else
-        o->BeginObject(tag, Tags::tag_start, string(startdate), Tags::tag_end, string(enddate));
-    }
+      o->BeginObject(tag, Tags::tag_id, id, Tags::tag_start, startdate, Tags::tag_end, enddate);
     else
-    {
-      if (!nm.empty())
-        o->BeginObject(tag, Tags::tag_start, string(startdate), Tags::tag_name, nm);
-      else
-        o->BeginObject(tag, Tags::tag_start, string(startdate));
-    }
+      o->BeginObject(tag, Tags::tag_id, id, Tags::tag_start, startdate);
   }
   else
   {
     if (enddate != Date::infiniteFuture)
-    {
-      if (!nm.empty())
-        o->BeginObject(tag, Tags::tag_end, string(enddate), Tags::tag_name, nm);
-      else
-        o->BeginObject(tag, Tags::tag_end, string(enddate));
-    }
+      o->BeginObject(tag, Tags::tag_id, id, Tags::tag_end, enddate);
     else
-    {
-      if (!nm.empty())
-        o->BeginObject(tag, Tags::tag_name, nm);
-      else
-        o->BeginObject(tag);
-    }
+      o->BeginObject(tag, Tags::tag_id, id);
   }
 }
 
@@ -446,6 +426,44 @@ DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, const Attribute
     setStartTime(pElement.getTimeperiod());
   else if (pAttr.isA(Tags::tag_endtime))
     setEndTime(pElement.getTimeperiod());
+}
+
+
+DECLARE_EXPORT void Calendar::Bucket::setId(int ident)
+{
+  // Check non-null calendar
+  if (!cal) 
+    throw LogicException("Generating calendar bucket without calendar");
+
+  if (ident == INT_MIN)
+  {
+    // Force generation of a new identifier.
+    // This is done by taking the highest existing id and adding 1.
+    for (BucketIterator i = cal->beginBuckets(); i != cal->endBuckets(); ++i)
+      if (i->id >= ident) ident = i->id + 1;
+    if (ident == INT_MIN) ident = 1;
+  }
+  else
+  {
+    // Check & enforce uniqueness of the argument identifier  
+    bool unique;
+    do
+    {
+      unique = true;
+      for (BucketIterator i = cal->beginBuckets(); i != cal->endBuckets(); ++i)
+        if (i->id == ident && &(*i) != this)
+        {
+          // Update the indentifier to avoid violating the uniqueness
+          unique = false;
+          ++ident;
+          break;
+        }
+    }
+    while (!unique);
+  }
+
+  // Update the identifier
+  id = ident;
 }
 
 
@@ -491,7 +509,7 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
 
   // First evaluate the start date of the bucket
   if (refDate < startdate && startdate <= iter->curDate)
-  {
+    {
     iter->curDate = startdate;
 	    iter->curBucket = this;
 	    iter->curPriority = priority;
@@ -639,8 +657,8 @@ DECLARE_EXPORT PyObject* Calendar::Bucket::getattro(const Attribute& attr)
     return PythonObject(getStartTime());
   if (attr.isA(Tags::tag_endtime))
     return PythonObject(getEndTime());
-  if (attr.isA(Tags::tag_name))
-    return PythonObject(getName());
+  if (attr.isA(Tags::tag_id))
+    return PythonObject(getId());
   if (attr.isA(Tags::tag_calendar))
     return PythonObject(getCalendar());
   return NULL;
@@ -649,8 +667,8 @@ DECLARE_EXPORT PyObject* Calendar::Bucket::getattro(const Attribute& attr)
 
 DECLARE_EXPORT int Calendar::Bucket::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (attr.isA(Tags::tag_name))
-    setName(field.getString());
+  if (attr.isA(Tags::tag_id))
+    setId(field.getInt());
   else if (attr.isA(Tags::tag_start))
     setStart(field.getDate());
   else if (attr.isA(Tags::tag_end))

@@ -12,11 +12,11 @@
   </description>
   <current>2009-01-01T00:00:00</current>  
   <calendars>
-    <calendar name="Weeks">
+    <calendar name="Months">
       <buckets>
-        <bucket start="2009-01-01T00:00:00"/>
-        <bucket start="2009-02-01T00:00:00"/>
-        <bucket start="2009-03-01T00:00:00"/>
+        <bucket start="2009-01-01T00:00:00" end="2009-02-01T00:00:00" value="1"/>
+        <bucket start="2009-02-01T00:00:00" end="2009-03-01T00:00:00" value="1"/>
+        <bucket start="2009-03-01T00:00:00" end="2009-04-01T00:00:00" value="1"/>
       </buckets>
     </calendar>
   </calendars>
@@ -119,7 +119,7 @@
     <demand name="A forecast" xsi:type="demand_forecast">
       <item name="A item" />
       <customer name="A customer" />
-      <calendar name="Weeks" />
+      <calendar name="Months" />
       <buckets>
         <bucket>
           <start>2009-01-01T00:00:00</start>
@@ -133,7 +133,7 @@
       matches take precedence.</description>
       <item name="A parent item" />
       <customer name="A parent customer" />
-      <calendar name="Weeks" />
+      <calendar name="Months" />
     </demand>
     <!-- Actual orders -->
     <demand name="A order">
@@ -149,7 +149,7 @@
     <!-- Forecasts -->
     <demand name="B forecast" xsi:type="demand_forecast">
       <item name="B item" />
-      <calendar name="Weeks" />
+      <calendar name="Months" />
       <buckets>
         <bucket>
           <start>2009-01-01T00:00:00</start>
@@ -178,7 +178,7 @@
     <demand name="C forecast" xsi:type="demand_forecast">
       <item name="C item" />
       <customer name="C parent customer" />
-      <calendar name="Weeks" />
+      <calendar name="Months" />
       <buckets>
         <bucket>
           <start>2009-01-01T00:00:00</start>
@@ -194,7 +194,7 @@
       flip the search order around.</description>
       <item name="C parent item" />
       <customer name="C customer" />
-      <calendar name="Weeks" />
+      <calendar name="Months" />
       <buckets>
         <bucket>
           <start>2009-01-01T00:00:00</start>
@@ -218,7 +218,7 @@
     <demand name="D forecast" xsi:type="demand_forecast">
       <item name="D parent item" />
       <customer name="D customer" />
-      <calendar name="Weeks" />
+      <calendar name="Months" />
       <buckets>
         <bucket>
           <start>2009-01-01T00:00:00</start>
@@ -242,7 +242,7 @@
     <demand name="E forecast" xsi:type="demand_forecast">
       <item name="E parent item" />
       <customer name="E parent customer" />
-      <calendar name="Weeks" />
+      <calendar name="Months" />
       <buckets>
         <bucket>
           <start>2009-01-01T00:00:00</start>

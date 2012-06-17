@@ -106,10 +106,10 @@ def exportCalendars(cursor):
   print 'Exported calendars in %.2f seconds' % (time() - starttime)
 
 
-def exportCalendarBuckets(cursor): # TODO Update for the new calendar bucket fields!!!
+def exportCalendarBuckets(cursor):
   print "Exporting calendar buckets..."  
   starttime = time()
-  cursor.execute("SELECT calendar_id, startdate FROM calendarbucket")
+  cursor.execute("SELECT calendar_id, id FROM calendarbucket")
   primary_keys = set([ i for i in cursor.fetchall()]) 
   
   def buckets():
@@ -119,21 +119,21 @@ def exportCalendarBuckets(cursor): # TODO Update for the new calendar bucket fie
        
   cursor.executemany(
     '''insert into calendarbucket
-    (calendar_id,startdate,enddate,name,priority,value,lastmodified) 
+    (calendar_id,startdate,enddate,id,priority,value,lastmodified) 
     values(%s,%s,%s,%s,%s,%s,%s)''',
     [(
-       i.calendar.name, str(i.start), str(i.end), i.name, i.priority, 
+       i.calendar.name, str(i.start), str(i.end), i.id, i.priority, 
        round(i.value,settings.DECIMAL_PLACES), timestamp 
-      ) for i in buckets() if (i.calendar.name, i.start) not in primary_keys 
+      ) for i in buckets() if (i.calendar.name, i.id) not in primary_keys 
     ])
   cursor.executemany(
     '''update calendarbucket 
-     set enddate=%s, name=%s, priority=%s, value=%s, lastmodified=%s 
-     where calendar_id=%s and startdate=%s''',
+     set enddate=%s, startdate=%s, priority=%s, value=%s, lastmodified=%s 
+     where calendar_id=%s and id=%s''',
     [(
-       str(i.end), i.name, i.priority, 
-       round(i.value,settings.DECIMAL_PLACES), timestamp, i.calendar.name, str(i.start)  
-     ) for i in buckets() if (i.calendar.name, i.start) in primary_keys
+       str(i.end), str(i.start), i.priority, 
+       round(i.value,settings.DECIMAL_PLACES), timestamp, i.calendar.name, i.id  
+     ) for i in buckets() if (i.calendar.name, i.id) in primary_keys
     ])
   transaction.commit(using=database)
   print 'Exported calendar buckets in %.2f seconds' % (time() - starttime)    

@@ -35,13 +35,13 @@
       <item name="end item 1" />
       <minimum_calendar name="safety stock target">
 	      <buckets>
-	        <bucket start="2009-01-01T00:00:00" name="january">
+	        <bucket start="2009-01-01T00:00:00">
 	          <value>10</value>
 	        </bucket>
-	        <bucket start="2009-02-01T00:00:00" name="february">
+	        <bucket start="2009-02-01T00:00:00">
 	          <value>20</value>
 	        </bucket>
-	        <bucket start="2009-03-01T00:00:00" name="march and remainder">
+	        <bucket start="2009-03-01T00:00:00">
 	          <value>5</value>
 	        </bucket>
 	      </buckets>

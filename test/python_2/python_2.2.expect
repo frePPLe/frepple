@@ -15,42 +15,41 @@
 	</customers>
 	<calendars>
 		<calendar name="Capacity">
-			<default>0</default>
 			<buckets>
-				<bucket start="2009-01-01T00:00:00">
+				<bucket id="1" start="2009-01-01T00:00:00">
 					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
 		<calendar name="Weeks">
 			<buckets>
-				<bucket start="2009-01-01T00:00:00" name="Jan Week1">
+				<bucket id="1" start="2009-01-01T00:00:00" end="2009-01-07T00:00:00">
 				</bucket>
-				<bucket start="2009-01-07T00:00:00" name="Jan Week2">
+				<bucket id="2" start="2009-01-07T00:00:00" end="2009-01-14T00:00:00">
 				</bucket>
-				<bucket start="2009-01-14T00:00:00" name="Jan Week3">
+				<bucket id="3" start="2009-01-14T00:00:00" end="2009-01-21T00:00:00">
 				</bucket>
-				<bucket start="2009-01-21T00:00:00" name="Jan Week4">
+				<bucket id="4" start="2009-01-21T00:00:00" end="2009-01-28T00:00:00">
 				</bucket>
-				<bucket start="2009-01-28T00:00:00" name="Jan Week5">
+				<bucket id="5" start="2009-01-28T00:00:00" end="2009-02-04T00:00:00">
 				</bucket>
-				<bucket start="2009-02-04T00:00:00" name="Feb Week1">
+				<bucket id="6" start="2009-02-04T00:00:00" end="2009-02-11T00:00:00">
 				</bucket>
-				<bucket start="2009-02-11T00:00:00" name="Feb Week2">
+				<bucket id="7" start="2009-02-11T00:00:00" end="2009-02-18T00:00:00">
 				</bucket>
-				<bucket start="2009-02-18T00:00:00" name="Feb Week3">
+				<bucket id="8" start="2009-02-18T00:00:00" end="2009-02-25T00:00:00">
 				</bucket>
-				<bucket start="2009-02-25T00:00:00" name="Feb Week4">
+				<bucket id="9" start="2009-02-25T00:00:00" end="2009-03-04T00:00:00">
 				</bucket>
-				<bucket start="2009-03-04T00:00:00" name="Mar Week1">
+				<bucket id="10" start="2009-03-04T00:00:00" end="2009-03-11T00:00:00">
 				</bucket>
-				<bucket start="2009-03-11T00:00:00" name="Mar Week2">
+				<bucket id="11" start="2009-03-11T00:00:00" end="2009-03-18T00:00:00">
 				</bucket>
-				<bucket start="2009-03-18T00:00:00" name="Mar Week3">
+				<bucket id="12" start="2009-03-18T00:00:00" end="2009-03-25T00:00:00">
 				</bucket>
-				<bucket start="2009-03-25T00:00:00" name="Mar Week4">
+				<bucket id="13" start="2009-03-25T00:00:00" end="2009-04-01T00:00:00">
 				</bucket>
-				<bucket start="2009-04-01T00:00:00" name="Remainder">
+				<bucket id="14" start="2009-04-01T00:00:00" end="2009-04-07T00:00:00">
 				</bucket>
 			</buckets>
 		</calendar>

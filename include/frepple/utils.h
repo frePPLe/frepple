@@ -2070,14 +2070,17 @@ class XMLOutput
     {m_fp = &logger; indentstring[0] = '\0';}
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
-      * Output: \<TAG_T\> */
+      * Output: \<TAG\> 
+      */
     void BeginObject(const Keyword& t)
     {
       *m_fp << indentstring << t.stringElement() << "\n";
       incIndent();
     }
 
-    /** Start writing a new object. This method will open a new XML-tag. */
+    /** Start writing a new object. This method will open a new XML-tag. 
+      * Output: \<TAG attributes\> 
+      */
     void BeginObject(const Keyword& t, const string& atts)
     {
       *m_fp << indentstring << t.stringStartElement() << " " << atts << ">\n";
@@ -2085,7 +2088,10 @@ class XMLOutput
     }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
-      * Output: \<TAG_T TAG_U="val1"\> */
+      * The user is responsible to assure string values are escaped correctly with the XMLEscape class.<br>
+      * Output: \<TAG TAG1="val1"\> 
+      * @see XMLEscape
+      */
     template <class T>
     void BeginObject(const Keyword& t, const Keyword& attr1, const typename T& val1)
     {
@@ -2095,7 +2101,10 @@ class XMLOutput
     }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
-      * Output: \<TAG_T TAG_U="val1"\> */
+      * The user is responsible to assure string values are escaped correctly with the XMLEscape class.<br>
+      * Output: \<TAG TAG1="val1" TAG2="val2"\> 
+      * @see XMLEscape
+      */
     template <class T, class U>
     void BeginObject(const Keyword& t, const Keyword& attr1, const typename T& val1, 
       const Keyword& attr2, const typename U& val2)
@@ -2107,7 +2116,10 @@ class XMLOutput
     }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
-      * Output: \<TAG_T TAG_U="val1"\> */
+      * The user is responsible to assure string values are escaped correctly with the XMLEscape class.<br>
+      * Output: \<TAG TAG1="val1" TAG2="val2" TAG3="val3"\>
+      * @see XMLEscape
+      */
     template <class T, class U, class V>
     void BeginObject(const Keyword& t, const Keyword& attr1, const typename T& val1,
       const Keyword& attr2, const typename U& val2,

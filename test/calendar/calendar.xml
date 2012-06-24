@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<current>2012-01-01T00:00:00</current>
+	<calendars>
+
+		<!-- Effective all week -->
+		<calendar name="case 1 - Continuous">
+			<default>0</default>
+			<buckets>
+				<bucket start="2011-12-31T00:00:00" end="2012-04-30T00:00:00" value="1" />
+			</buckets>
+		</calendar>
+
+		<!-- Effective on weekdays. -->
+		<calendar name="case 2 - Weekdays">
+			<default>0</default>
+			<buckets>
+				<!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday -->               
+				<bucket start="2012-01-02T00:00:00" end="2012-04-30T00:00:00" 
+				  days="62" value="1" />
+			</buckets>
+		</calendar>
+
+		<!-- Effective between 9am and 5pm on weekdays. -->
+		<calendar name="case 3 - Business hours on weekdays">
+			<default>0</default>
+			<buckets>
+				<bucket start="2011-12-31T00:00:00" end="2012-04-30T00:00:00" 
+				  days="62" starttime="PT9H" endtime="PT17H" value="1" />
+			</buckets>
+		</calendar>
+
+		<!-- Effective between 9am and 5pm on weekdays, except on public holidays. -->
+		<calendar name="case 3 - Business hours on weekdays, with holidays">
+			<default>0</default>
+			<buckets>
+				<bucket start="2011-12-31T00:00:00" end="2012-04-30T00:00:00" 
+				  days="62" starttime="PT9H" endtime="PT17H" value="1" priority="10"/>
+				<!-- Lower priority to override the previous bucket definition -->   
+				<bucket start="2012-02-01T00:00:00" end="2012-02-03T00:00:00" 
+				  value="0" priority="0"/>
+				<bucket start="2012-02-09T00:00:00" end="2012-02-10T00:00:00" 
+				  value="0" priority="0"/>
+				<bucket start="2012-02-11T00:00:00" end="2012-02-12T00:00:00" 
+				  value="0" priority="0"/>
+			</buckets>
+		</calendar>
+
+	</calendars>
+
+<?python
+
+from datetime import datetime
+
+output = open("output.1.xml","wt")
+
+print >>output, "FORWARD ITERATION"
+for cal in frepple.calendars():
+  print >>output, " ", cal.name, ":"
+  for ev_date, ev_value in cal.events():
+    print >>output, "   ", ev_date, "-", ev_value
+
+print >>output, "BACKWARD ITERATION"
+enddate = datetime(2012,12,31)
+for cal in frepple.calendars():
+  print >>output, " ", cal.name, ":"
+  for ev_date, ev_value in cal.events(enddate, False):
+    print >>output, "   ", ev_date, "-", ev_value
+
+?>
+
+</plan>

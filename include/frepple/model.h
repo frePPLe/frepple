@@ -190,6 +190,14 @@ class Calendar : public HasName<Calendar>
         /** Get the identifier. */
         int getId() const {return id;}
 
+        /** Returns true if this bucket is effective without interruptions 
+          * between its start and end date.
+          */
+        bool isContinuous() const 
+        {
+          return days==127 && !starttime && endtime==TimePeriod(86400L);
+        };
+
         /** Generate the identfier.<br> 
           * If a bucket with the given identifier already exists a unique
           * number is generated instead. This is done by incrementing the
@@ -201,13 +209,13 @@ class Calendar : public HasName<Calendar>
         Date getEnd() const {return enddate;}
 
         /** Updates the end date of the bucket. */
-        void setEnd(const Date& d) {enddate = d;}
+        DECLARE_EXPORT void setEnd(const Date d); 
 
         /** Returns the start date of the bucket. */
         Date getStart() const {return startdate;}
 
-        /** Updates the end date of the bucket. */
-        void setStart(const Date& d) {startdate = d;}
+        /** Updates the start date of the bucket. */
+        DECLARE_EXPORT void setStart(const Date d);
 
         /** Returns the priority of this bucket, compared to other buckets
           * effective at a certain time.<br>
@@ -446,13 +454,13 @@ class CalendarDouble : public Calendar
 
       public:
         /** Returns the value of this bucket. */
-        const double& getValue() const {return val;}
+        double getValue() const {return val;}
 
         /** Convert the value of the bucket to a boolean value. */
         bool getBool() const {return val != 0;}
 
         /** Updates the value of this bucket. */
-        void setValue(const double& v) {val = v;}
+        void setValue(const double v) {val = v;}
 
         void writeElement
         (XMLOutput *o, const Keyword& tag, mode m = DEFAULT) const
@@ -517,7 +525,7 @@ class CalendarDouble : public Calendar
     void writeElement(XMLOutput*, const Keyword&, mode m=DEFAULT) const;
 
     /** Returns the value on the specified date. */
-    const double& getValue(const Date d) const
+    double getValue(const Date d) const
     {
       BucketDouble* x = static_cast<BucketDouble*>(findBucket(d));
       return x ? x->getValue() : defaultValue;
@@ -526,10 +534,12 @@ class CalendarDouble : public Calendar
     /** Updates the value in a certain date range.<br>
       * This will create a new bucket if required. 
       */
-    void setValue(Date start, Date end, const double& v);
+    void setValue(Date start, Date end, const double v);
 
-    const double& getValue(Calendar::BucketIterator& i) const
-    {return reinterpret_cast<BucketDouble&>(*i).getValue();}
+    double getValue(Calendar::BucketIterator& i) const
+    {
+      return reinterpret_cast<BucketDouble&>(*i).getValue();
+    }
 
     /** Returns the default calendar value when no entry is matching. */
     double getDefault() const {return defaultValue;}

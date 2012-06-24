@@ -68,9 +68,7 @@
 			<default>1</default>
 			<buckets>
 				<!-- 65 = effective on saturday and sunday -->               
-				<bucket start="2011-12-31T00:00:00" end="2012-04-30T00:00:00" days="65">
-					<value>0</value>
-				</bucket>
+				<bucket start="2011-12-31T00:00:00" end="2012-04-30T00:00:00" days="65" value="0"/>
 			</buckets>
 		</calendar>
 	</calendars>
@@ -582,7 +580,6 @@
 		</operation>
 		<operation name="ship product 5" xsi:type="operation_fixed_time">
 			<location name="Finished goods"/>
-            <duration>PT1S</duration>
 		</operation>
 		<operation name="ship product 6" xsi:type="operation_fixed_time">
 			<location name="Finished goods"/>

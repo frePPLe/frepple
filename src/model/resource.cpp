@@ -232,7 +232,7 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr,
     setMaximum(pElement.getDouble());
   else if (pAttr.isA (Tags::tag_maximum_calendar))
   {
-    CalendarDouble * c = dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
+    CalendarDouble *c = dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
     if (c)
       setMaximumCalendar(c);
     else

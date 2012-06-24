@@ -81,7 +81,7 @@ int CalendarDouble::initialize()
 
 /** Updates the value in a certain date range.<br>
   * This will create a new bucket if required. */
-void CalendarDouble::setValue(Date start, Date end, const double& v)
+void CalendarDouble::setValue(Date start, Date end, const double v)
 {
   BucketDouble* x = static_cast<BucketDouble*>(findBucket(start));
   if (x && x->getStart() == start && x->getEnd() <= end)
@@ -178,7 +178,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket
     start = end;
   }
 
-  // Create new bucket and insert in the list
+  // Find the insert place in the list
   Bucket *next = firstBucket, *prev = NULL;
   while (next && next->startdate < start)
   {
@@ -228,6 +228,61 @@ DECLARE_EXPORT void Calendar::removeBucket(Calendar::Bucket* bkt)
 }
 
 
+DECLARE_EXPORT void Calendar::Bucket::setEnd(const Date d)
+{
+  // Check
+  if (d < startdate) 
+    throw DataException("Calendar bucket end must be later than its start");
+
+  // Update
+  enddate = d;
+}
+
+
+DECLARE_EXPORT void Calendar::Bucket::setStart(const Date d) 
+{
+  // Check
+  if (d > enddate) 
+    throw DataException("Calendar bucket start must be earlier than its end");
+
+  // Update the field
+  startdate = d;
+
+  // Update the position in the list
+  bool ok = true;
+  do
+  {
+    if (nextBucket && nextBucket->startdate < startdate)
+    {
+      // Move a position later in the list
+      if (nextBucket->nextBucket)
+        nextBucket->nextBucket->prevBucket = this;      
+      if (prevBucket)
+        prevBucket->nextBucket = nextBucket;
+      nextBucket->prevBucket = prevBucket;
+      nextBucket->nextBucket = this;
+      prevBucket = nextBucket;
+      nextBucket = nextBucket->nextBucket;
+      ok = false;
+    }
+    else if (prevBucket && prevBucket->startdate >= startdate)
+    {
+      // Move a position earlier in the list
+      if (prevBucket->prevBucket)
+        prevBucket->prevBucket->nextBucket = this;      
+      if (nextBucket)
+        nextBucket->prevBucket = prevBucket;
+      prevBucket->nextBucket = nextBucket;
+      prevBucket->prevBucket = this;
+      nextBucket = prevBucket;
+      prevBucket = prevBucket->prevBucket;
+      ok = false;
+    }
+  }
+  while (!ok); // Repeat till in place
+}
+
+
 DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
 {
   Calendar::Bucket *curBucket = NULL;
@@ -244,7 +299,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
             (!fwd && d > b->getStart() && d <= b->getEnd())
            ))
     {
-      if (b->offsets[0] == 0L && b->offsets[1] == 604800L)
+      if (b->isContinuous())
       {
         // Continuously effective
         curPriority = b->getPriority();
@@ -255,7 +310,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
         // There are ineffective periods during the week 
         if (timeInWeek < 0)  // XXX NOT A GOOD TEST...
         {
-		  // Lazy initialization
+          // Lazy initialization
           timeInWeek = d.getSecondsWeek();
           // Special case: asking backward while at first second of the week
           if (!fwd && timeInWeek == 0L) timeInWeek = 604800L;
@@ -475,11 +530,11 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
   // Go over all entries and ask them to update the iterator
   Date d = curDate;
   curDate = Date::infiniteFuture;
-  curBucket = NULL;
-  curPriority = INT_MAX;
+  curBucket = NULL;  
+  curPriority = curBucket ? curBucket->priority : INT_MAX;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->nextEvent(this, d);
-  if (!curBucket) curBucket = theCalendar->findBucket(curDate);
+  if (!curBucket) curBucket = theCalendar->findBucket(curDate);  // TODO avoid this extra call?  
   return *this;
 }
 
@@ -496,7 +551,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
   curPriority = INT_MAX;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->prevEvent(this, d);
-  if (!curBucket) curBucket = theCalendar->findBucket(curDate,false);
+  if (!curBucket) curBucket = theCalendar->findBucket(curDate,false); // TODO avoid this extra call?
   return *this;
 }
 
@@ -507,22 +562,101 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
     // Priority isn't low enough to overrule current date
     return;
 
-  // First evaluate the start date of the bucket
-  if (refDate < startdate && startdate <= iter->curDate)
+  // FIRST CASE: Bucket that is continuously effective
+  if (isContinuous())
+  {
+    // Evaluate the start date of the bucket
+    if (refDate < startdate && startdate <= iter->curDate)
     {
-    iter->curDate = startdate;
-	    iter->curBucket = this;
-	    iter->curPriority = priority;
+      iter->curDate = startdate;
+      iter->curBucket = this;
+      iter->curPriority = priority;
       return;
-	  }
+    }
 
-  // Next evaluate the end date of the bucket
-  if (refDate < enddate && enddate <= iter->curDate && iter->curPriority == INT_MAX)
+    // Next evaluate the end date of the bucket
+    if (refDate < enddate && enddate <= iter->curDate && iter->curPriority == INT_MAX)
     {
-    iter->curDate = enddate;
+      iter->curDate = enddate;
       iter->curBucket = NULL;
       return;
     }
+
+    // End function: this bucket won't create next event
+    return;
+  }
+
+  // SECOND CASE: Interruptions in effectivity.
+
+  // Jump to the start date
+  bool allowEqualAtStart = false;
+  if (refDate < startdate && startdate <= iter->curDate)
+  {
+    refDate = startdate;
+    allowEqualAtStart = true;
+  }
+
+  // Find position in the week
+  long timeInWeek = refDate.getSecondsWeek();
+
+  // Loop over all effective days in the week in which refDate falls
+  for (short i=0; offsets[i]!=-1 && i<=12; i+=2)
+  {
+    // Start and end date of this effective period
+    Date st = refDate + TimePeriod(offsets[i] - timeInWeek);
+    Date nd = refDate + TimePeriod(offsets[i+1] - timeInWeek);
+
+    // Move to next week if required
+    bool canReturn = true;
+    if (refDate >= nd)
+    {
+      st += TimePeriod(86400L*7);
+      nd += TimePeriod(86400L*7);
+      canReturn = false;
+    }
+
+    // Check enddate and startdate are not violated
+    if (st < startdate)
+      if (nd < startdate)
+        continue;  // No overlap with overall effective dates
+      else
+        st = startdate;
+    if (nd >= enddate)
+      if (st >= enddate)
+        continue;  // No overlap with effective range
+      else
+        nd = enddate;
+
+    if (refDate < st || (allowEqualAtStart && refDate == st))
+    {
+      if (st > iter->curDate)
+      {
+        // Another bucket is doing better already
+        if (canReturn) break;
+        else continue;
+      }
+      // The effective start on this weekday qualifies as the next event
+      iter->curDate = st;
+      iter->curBucket = this;
+      iter->curPriority = priority;
+      if (canReturn) return;
+    }
+    if (refDate < nd 
+      && (iter->curPriority == INT_MAX || iter->curBucket == this))
+    {
+      if (nd > iter->curDate)
+      {
+        // Another bucket is doing better already
+        if (canReturn) break;
+        else continue;
+      }
+      // This bucket is currently effective.
+      // The effective end on this weekday qualifies as the next event.
+      iter->curDate = nd;
+      iter->curBucket = NULL;      
+      if (canReturn) return;
+    }
+  }
 }
 
 
@@ -532,23 +666,104 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
     // Priority isn't low enough to overrule current date
     return;
 
-  // First evaluate the end date of the bucket
-  if (refDate > enddate && enddate >= iter->curDate && iter->curPriority == INT_MAX)
+  // FIRST CASE: Bucket that is continuously effective
+  if (isContinuous())
+  {
+    // First evaluate the end date of the bucket
+    if (refDate > enddate && enddate >= iter->curDate && iter->curPriority == INT_MAX)
     {      
-    iter->curDate = enddate;
+      iter->curDate = enddate;
 	    iter->curBucket = this;
       return;
     }
 
-  // Next evaluate the start date of the bucket
-  if (refDate > startdate && startdate > iter->curDate)
+    // Next evaluate the start date of the bucket
+    if (refDate > startdate && startdate > iter->curDate)
 	  {
-    iter->curDate = startdate;
+      iter->curDate = startdate;
       iter->curBucket = NULL;
-    iter->curPriority = priority;
+      iter->curPriority = priority;
       return;
 	  }
 
+    // End function: this bucket won't create the previous event
+    return;
+  }
+
+  // SECOND CASE: Interruptions in effectivity.
+
+  // Jump to the end date
+  bool allowEqualAtEnd = false;
+  if (refDate > enddate && enddate > iter->curDate)
+  {
+    refDate = enddate;
+    allowEqualAtEnd = true;
+  }
+
+  // Find position in the week
+  long timeInWeek = refDate.getSecondsWeek();
+
+  // Loop over all effective days in the week in which refDate falls
+  for (short i=12; i>=0; i-=2)
+  {
+    // Dummy bucket
+    if (offsets[i] == -1) continue;
+
+    // Start and end date of this effective period
+    Date st = refDate + TimePeriod(offsets[i] - timeInWeek);
+    Date nd = refDate + TimePeriod(offsets[i+1] - timeInWeek);
+
+    // Move to previous week if required
+    bool canReturn = true;
+    if (refDate <= st)
+    {
+      st -= TimePeriod(86400L*7);
+      nd -= TimePeriod(86400L*7);
+      canReturn = false;
+    }
+
+    // Check enddate and startdate are not violated
+    if (st <= startdate)
+      if (nd <= startdate)
+        continue;  // No overlap with overall effective dates
+      else
+        st = startdate;
+    if (nd > enddate)
+      if (st > enddate)
+        continue;  // No overlap with effective range
+      else
+        nd = enddate;
+
+    if ((refDate > nd || (allowEqualAtEnd && refDate == nd))
+      && (iter->curPriority == INT_MAX || iter->curBucket == this))
+    {
+      if (nd < iter->curDate)
+      {
+        // Another bucket is doing better already
+        if (canReturn) break;
+        else continue;
+      }
+      // The effective end on this weekday qualifies as the next event
+      iter->curDate = nd;
+      iter->curBucket = this;
+      if (canReturn) return;
+    }
+    if (refDate > st)
+    {
+      if (st < iter->curDate)
+      {
+        // Another bucket is doing better already
+        if (canReturn) break;
+        else continue;
+      }
+      // This bucket is currently effective.
+      // The effective end on this weekday qualifies as the next event.
+      iter->curDate = st;
+      iter->curBucket = NULL;      
+      iter->curPriority = priority;
+      if (canReturn) return;
+    }
+  }
 }
 
 
@@ -791,6 +1006,14 @@ DECLARE_EXPORT void Calendar::Bucket::updateOffsets()
       }
     }
     tmp = tmp>>1; // Shift to the next bit
+  }
+
+  // Special case: there is no gap between the end of the last event in the 
+  // week and the next event in the following week.
+  if (cnt >= 1 && offsets[0]==0 && offsets[cnt]==86400*7)
+  {
+    offsets[0] = offsets[cnt-1] - 86400*7;
+    offsets[cnt] = 86400*7 + offsets[1]; 
   }
 
   // Fill all unused entries in the array with -1

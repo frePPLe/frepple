@@ -287,7 +287,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
 {
   Calendar::Bucket *curBucket = NULL;
   double curPriority = DBL_MAX;
-  long timeInWeek = -1L;  // XXX NOT A GOOD DEFAULT
+  long timeInWeek = INT_MIN;  
   for (Bucket *b = firstBucket; b; b = b->nextBucket)
   {
     if (b->getStart() > d)
@@ -299,7 +299,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
             (!fwd && d > b->getStart() && d <= b->getEnd())
            ))
     {
-      if (b->isContinuous())
+      if (!b->offsetcounter)
       {
         // Continuously effective
         curPriority = b->getPriority();
@@ -308,7 +308,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
       else
       {
         // There are ineffective periods during the week 
-        if (timeInWeek < 0)  // XXX NOT A GOOD TEST...
+        if (timeInWeek == INT_MIN) 
         {
           // Lazy initialization
           timeInWeek = d.getSecondsWeek();
@@ -316,7 +316,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
           if (!fwd && timeInWeek == 0L) timeInWeek = 604800L;
         }
         // Check all intervals
-        for (short i=0; b->offsets[i]!=-1 && i<=12; i+=2)
+        for (short i=0; i<b->offsetcounter; i+=2)
           if ((fwd && timeInWeek >= b->offsets[i] && timeInWeek < b->offsets[i+1]) ||
               (!fwd && timeInWeek > b->offsets[i] && timeInWeek <= b->offsets[i+1]))
           {
@@ -563,7 +563,7 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
     return;
 
   // FIRST CASE: Bucket that is continuously effective
-  if (isContinuous())
+  if (!offsetcounter)
   {
     // Evaluate the start date of the bucket
     if (refDate < startdate && startdate <= iter->curDate)
@@ -600,7 +600,7 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
   long timeInWeek = refDate.getSecondsWeek();
 
   // Loop over all effective days in the week in which refDate falls
-  for (short i=0; offsets[i]!=-1 && i<=12; i+=2)
+  for (short i=0; i<offsetcounter; i+=2)
   {
     // Start and end date of this effective period
     Date st = refDate + TimePeriod(offsets[i] - timeInWeek);
@@ -667,7 +667,7 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
     return;
 
   // FIRST CASE: Bucket that is continuously effective
-  if (isContinuous())
+  if (!offsetcounter)
   {
     // First evaluate the end date of the bucket
     if (refDate > enddate && enddate >= iter->curDate && iter->curPriority == INT_MAX)
@@ -704,11 +704,8 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
   long timeInWeek = refDate.getSecondsWeek();
 
   // Loop over all effective days in the week in which refDate falls
-  for (short i=12; i>=0; i-=2)
+  for (short i=offsetcounter-1; i>=0; i-=2)
   {
-    // Dummy bucket
-    if (offsets[i] == -1) continue;
-
     // Start and end date of this effective period
     Date st = refDate + TimePeriod(offsets[i] - timeInWeek);
     Date nd = refDate + TimePeriod(offsets[i+1] - timeInWeek);
@@ -986,23 +983,30 @@ PyObject* CalendarEventIterator::iternext()
 
 DECLARE_EXPORT void Calendar::Bucket::updateOffsets()
 {
-  short cnt = -1;
+  if (days==127 && !starttime && endtime==TimePeriod(86400L))
+  {
+    // Bucket is effective continuously. No need to update the structure.
+    offsetcounter = 0;
+    return;
+  }
+
+  offsetcounter = -1;
   short tmp = days;
   for (short i=0; i<=6; ++i)
   {
     // Loop over all days in the week
     if (tmp & 1)
     {
-      if (cnt>=1 && (offsets[cnt] == 86400*i + starttime))
+      if (offsetcounter>=1 && (offsets[offsetcounter] == 86400*i + starttime))
         // Special case: the start date of todays offset entry
         // is the end date yesterdays entry. We can just update the
         // end date of that entry.
-        offsets[cnt] = 86400*i + endtime;
+        offsets[offsetcounter] = 86400*i + endtime;
       else
       {
         // New offset pair
-        offsets[++cnt] = 86400*i + starttime; 
-        offsets[++cnt] = 86400*i + endtime; 
+        offsets[++offsetcounter] = 86400*i + starttime; 
+        offsets[++offsetcounter] = 86400*i + endtime; 
       }
     }
     tmp = tmp>>1; // Shift to the next bit
@@ -1010,14 +1014,11 @@ DECLARE_EXPORT void Calendar::Bucket::updateOffsets()
 
   // Special case: there is no gap between the end of the last event in the 
   // week and the next event in the following week.
-  if (cnt >= 1 && offsets[0]==0 && offsets[cnt]==86400*7)
+  if (offsetcounter >= 1 && offsets[0]==0 && offsets[offsetcounter]==86400*7)
   {
-    offsets[0] = offsets[cnt-1] - 86400*7;
-    offsets[cnt] = 86400*7 + offsets[1]; 
+    offsets[0] = offsets[offsetcounter-1] - 86400*7;
+    offsets[offsetcounter] = 86400*7 + offsets[1]; 
   }
-
-  // Fill all unused entries in the array with -1
-  while (cnt<13) offsets[++cnt] = -1;
 }
 
 } // end namespace

@@ -153,6 +153,10 @@ class Calendar : public HasName<Calendar>
           * inside the week where the entry changes effectivity. */
         long offsets[14];
 
+        /** An internal counter for the number of indices used in the 
+          * offset array. */
+        short offsetcounter;
+
         /** Updates the offsets data structure. */
         DECLARE_EXPORT void updateOffsets();
 
@@ -173,7 +177,7 @@ class Calendar : public HasName<Calendar>
         Bucket(Calendar *c, Date start, Date end, int ident=INT_MIN, int priority=0) :
           startdate(start), enddate(end), nextBucket(NULL),
           prevBucket(NULL), priority(priority), days(127), starttime(0L), 
-          endtime(86400L), cal(c) 
+          endtime(86400L), cal(c)
         {
           setId(ident);
           initType(metadata); 
@@ -189,14 +193,6 @@ class Calendar : public HasName<Calendar>
 
         /** Get the identifier. */
         int getId() const {return id;}
-
-        /** Returns true if this bucket is effective without interruptions 
-          * between its start and end date.
-          */
-        bool isContinuous() const 
-        {
-          return days==127 && !starttime && endtime==TimePeriod(86400L);
-        };
 
         /** Generate the identfier.<br> 
           * If a bucket with the given identifier already exists a unique

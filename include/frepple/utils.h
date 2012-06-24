@@ -2093,7 +2093,7 @@ class XMLOutput
       * @see XMLEscape
       */
     template <class T>
-    void BeginObject(const Keyword& t, const Keyword& attr1, const typename T& val1)
+    void BeginObject(const Keyword& t, const Keyword& attr1, const T& val1)
     {
       *m_fp << indentstring << t.stringStartElement()
           << attr1.stringAttribute() << val1 << "\">\n";
@@ -2106,8 +2106,8 @@ class XMLOutput
       * @see XMLEscape
       */
     template <class T, class U>
-    void BeginObject(const Keyword& t, const Keyword& attr1, const typename T& val1, 
-      const Keyword& attr2, const typename U& val2)
+    void BeginObject(const Keyword& t, const Keyword& attr1, const T& val1, 
+      const Keyword& attr2, const U& val2)
     {
       *m_fp << indentstring << t.stringStartElement()
           << attr1.stringAttribute() << val1 << "\""
@@ -2121,9 +2121,9 @@ class XMLOutput
       * @see XMLEscape
       */
     template <class T, class U, class V>
-    void BeginObject(const Keyword& t, const Keyword& attr1, const typename T& val1,
-      const Keyword& attr2, const typename U& val2,
-      const Keyword& attr3, const typename V& val3)
+    void BeginObject(const Keyword& t, const Keyword& attr1, const T& val1,
+      const Keyword& attr2, const U& val2,
+      const Keyword& attr3, const V& val3)
     {
       *m_fp << indentstring << t.stringStartElement()
           << attr1.stringAttribute() << val1 << "\""

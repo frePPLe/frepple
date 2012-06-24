@@ -15,18 +15,16 @@
 		</location>
 	</locations>
 	<calendars>
-		<calendar name="capacity factory 1" xsi:type="calendar_double">
-			<default>0</default>
+		<calendar name="capacity factory 1">
 			<buckets>
-				<bucket start="2009-01-01T00:00:00">
+				<bucket id="1" start="2009-01-01T00:00:00">
 					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="capacity factory 2" xsi:type="calendar_double">
-			<default>0</default>
+		<calendar name="capacity factory 2">
 			<buckets>
-				<bucket start="2009-01-01T00:00:00">
+				<bucket id="1" start="2009-01-01T00:00:00">
 					<value>1</value>
 				</bucket>
 			</buckets>
@@ -104,10 +102,10 @@
 	</demands>
 	<resources>
 		<resource name="capacity of factory 1">
-			<maximum_calendar name="capacity factory 1" xsi:type="calendar_double"/>
+			<maximum_calendar name="capacity factory 1"/>
 		</resource>
 		<resource name="capacity of factory 2">
-			<maximum_calendar name="capacity factory 2" xsi:type="calendar_double"/>
+			<maximum_calendar name="capacity factory 2"/>
 		</resource>
 	</resources>
 	<loads>

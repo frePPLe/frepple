@@ -25,8 +25,8 @@ from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django import forms
 from django.forms.util import ErrorList
 
-from freppledb.common.models import Parameter, Comment
-from freppledb.common import MultiDBModelAdmin
+from freppledb.common.models import Parameter, Comment, Bucket, BucketDetail, Parameter
+from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
 from freppledb.admin import site
 
 
@@ -65,3 +65,20 @@ class Comment_admin(MultiDBModelAdmin):
   save_on_top = True
 site.register(Comment, Comment_admin)
 
+
+class BucketDetail_inline(MultiDBTabularInline):
+  model = BucketDetail
+  extra = 3
+
+
+class BucketDetail_admin(MultiDBModelAdmin):
+  model = BucketDetail
+  save_on_top = True
+site.register(BucketDetail, BucketDetail_admin)
+
+
+class Bucket_admin(MultiDBModelAdmin):
+  model = Bucket
+  save_on_top = True
+  inlines = [ BucketDetail_inline, ]
+site.register(Bucket, Bucket_admin)

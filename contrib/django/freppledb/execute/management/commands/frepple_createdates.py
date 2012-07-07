@@ -96,10 +96,10 @@ class Command(BaseCommand):
 
       # Delete previous contents
       connections[database].cursor().execute(
-        "delete from bucketdetail where bucket_id in ('year', 'quarter','month','week','day')"
+        "delete from common_bucketdetail where bucket_id in ('year', 'quarter','month','week','day')"
         )
       connections[database].cursor().execute(
-        "delete from bucket where name in ('year', 'quarter','month','week','day')"
+        "delete from common_bucket where name in ('year', 'quarter','month','week','day')"
         )
 
       # Create buckets

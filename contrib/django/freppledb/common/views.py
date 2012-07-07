@@ -40,9 +40,10 @@ from django.utils import translation
 from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
 
-from freppledb.common.models import Preferences, Comment
-from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText, GridFieldBool, GridFieldInteger
-from freppledb.input.models import Bucket
+from freppledb.common.models import Preferences, Parameter, Comment, Bucket, BucketDetail
+from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
+from freppledb.common.report import GridFieldBool, GridFieldDateTime, GridFieldInteger
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -159,6 +160,23 @@ class GroupList(GridReport):
     GridFieldText('name', title=_('name'), key=True, width=200),          
     )
 
+
+class ParameterList(GridReport):
+  '''
+  A list report to show all configurable parameters.
+  '''
+  title = _("Parameter List")
+  basequeryset = Parameter.objects.all()
+  model = Parameter
+  frozenColumns = 1
+
+  rows = (
+    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('value', title=_('value')),
+    GridFieldText('description', title=_('description')),
+    GridFieldLastModified('lastmodified'),
+    )
+
  
 class RSSFeed(Feed):
   title = _("frePPLe recent changes")
@@ -245,6 +263,41 @@ class CommentList(GridReport):
     GridFieldInteger('id', title=_('identifier'), key=True),
     GridFieldLastModified('lastmodified'),
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center', width=80),
+    GridFieldText('type', title=_('type'), field_name='content_type__name', editable=False, align='center'),
+    GridFieldText('object', title=_('object'), field_name='object_pk', editable=False, align='center', extra='formatter:objectfmt'),
     GridFieldText('comment', title=_('comment'), editable=False, align='center'),
     )  
 
+
+class BucketList(GridReport):
+  '''
+  A list report to show dates.
+  '''
+  template = 'input/bucketlist.html'
+  title = _("Bucket List")
+  basequeryset = Bucket.objects.all()
+  model = Bucket
+  frozenColumns = 1
+  rows = (
+    GridFieldText('name', title=_('name'), key=True, formatter="bucket"),
+    GridFieldText('description', title=_('description')),
+    GridFieldLastModified('lastmodified'),
+    )
+
+
+class BucketDetailList(GridReport):
+  '''
+  A list report to show dates.
+  '''
+  template = 'input/bucketlist.html'
+  title = _("Bucket Detail List")
+  basequeryset = BucketDetail.objects.all()
+  model = BucketDetail
+  frozenColumns = 2
+  rows = (
+    GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter="bucket"),
+    GridFieldDateTime('startdate', title=_('start date')),
+    GridFieldDateTime('enddate', title=_('end date')),
+    GridFieldText('name', title=_('name')),
+    GridFieldLastModified('lastmodified'),
+    )

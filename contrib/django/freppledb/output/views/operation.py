@@ -72,7 +72,7 @@ class OverviewReport(GridPivot):
           -- Multiply with buckets
           cross join (
              select name as bucket, startdate, enddate
-             from bucketdetail
+             from common_bucketdetail
              where bucket_id = '%s' and enddate > '%s' and startdate <= '%s'
              ) d
           -- Planned and frozen quantity, based on start date

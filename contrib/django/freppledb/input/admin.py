@@ -28,7 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
-from freppledb.input.models import Bucket, BucketDetail, SetupRule, ForecastDemand
+from freppledb.input.models import SetupRule, ForecastDemand
 from freppledb.admin import site
 from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
 
@@ -209,20 +209,3 @@ class Forecast_admin(MultiDBModelAdmin):
   save_on_top = True
 site.register(Forecast,Forecast_admin)
 
-
-class BucketDetail_inline(MultiDBTabularInline):
-  model = BucketDetail
-  extra = 3
-
-
-class BucketDetail_admin(MultiDBModelAdmin):
-  model = BucketDetail
-  save_on_top = True
-site.register(BucketDetail,BucketDetail_admin)
-
-
-class Bucket_admin(MultiDBModelAdmin):
-  model = Bucket
-  save_on_top = True
-  inlines = [ BucketDetail_inline, ]
-site.register(Bucket,Bucket_admin)

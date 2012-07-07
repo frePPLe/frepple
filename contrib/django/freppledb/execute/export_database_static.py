@@ -677,17 +677,17 @@ def exportItems(cursor):
 def exportParameters(cursor):
   print "Exporting parameters..."  
   starttime = time()
-  cursor.execute("SELECT name FROM parameter")
+  cursor.execute("SELECT name FROM common_parameter")
   primary_keys = set([ i[0] for i in cursor.fetchall()])
   data = [      
     ('currentdate', frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S")),
     ]
   cursor.executemany(
-    "INSERT INTO parameter (name,value,lastmodified) VALUES (%s,%s,%s)",
+    "INSERT INTO common_parameter (name,value,lastmodified) VALUES (%s,%s,%s)",
     [ (i[0],i[1],timestamp) for i in data if i[0] not in primary_keys ]
     )
   cursor.executemany(
-    "UPDATE parameter SET value=%s, lastmodified=%s WHERE name=%s",
+    "UPDATE common_parameter SET value=%s, lastmodified=%s WHERE name=%s",
     [ (i[1],timestamp, i[0]) for i in data if i[0] in primary_keys ]
     )
   transaction.commit(using=database)

@@ -52,7 +52,7 @@ MANAGERS = ADMINS
 # ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================
 DATABASES = {
   'default': {
-    'ENGINE': 'django.db.backends.sqlite3',
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'frepple',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
@@ -61,7 +61,7 @@ DATABASES = {
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
     },
   'scenario1': {
-    'ENGINE': 'django.db.backends.sqlite3',
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'scenario1',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
@@ -70,7 +70,7 @@ DATABASES = {
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
     },
   'scenario2': {
-    'ENGINE': 'django.db.backends.sqlite3',
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'scenario2',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
@@ -79,7 +79,7 @@ DATABASES = {
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
     },
   'scenario3': {
-    'ENGINE': 'django.db.backends.sqlite3',
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'scenario3',
     'USER': 'frepple',
     'PASSWORD': 'frepple',

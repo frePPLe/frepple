@@ -767,37 +767,3 @@ class ForecastDemand(AuditModel):
     verbose_name = _('forecast demand')
     verbose_name_plural = _('forecast demands')
 
-
-class Bucket(AuditModel):
-  # Create some dummy string for common bucket names to force them to be translated.
-  extra_strings = ( _('day'), _('week'), _('month'), _('quarter'), _('year'), _('telescope') )
-
-  # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-
-  def __unicode__(self): return str(self.name)
-
-  class Meta:
-    verbose_name = _('bucket')
-    verbose_name_plural = _('buckets')
-    db_table = 'bucket'
-
-
-class BucketDetail(AuditModel):
-  # Database fields
-  id = models.AutoField(_('identifier'), primary_key=True)
-  bucket = models.ForeignKey(Bucket, verbose_name=_('bucket'), db_index=True)
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE)
-  startdate = models.DateTimeField(_('start date'))
-  enddate = models.DateTimeField(_('end date'))
-
-  def __unicode__(self): return u"%s %s" % (self.bucket.name or "", self.startdate)
-
-  class Meta:
-    verbose_name = _('bucket date')
-    verbose_name_plural = _('bucket dates')
-    db_table = 'bucketdetail'
-    unique_together = (('bucket', 'startdate'),)
-    ordering = ['bucket','startdate']
-

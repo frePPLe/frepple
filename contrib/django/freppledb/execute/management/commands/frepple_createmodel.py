@@ -407,10 +407,10 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
 
     # Delete previous contents
     connections[database].cursor().execute(
-      "delete from bucketdetail where bucket_id = 'telescope'"
+      "delete from common_bucketdetail where bucket_id = 'telescope'"
       )
     connections[database].cursor().execute(
-      "delete from bucket where name = 'telescope'"
+      "delete from common_bucket where name = 'telescope'"
       )
 
     # Create bucket

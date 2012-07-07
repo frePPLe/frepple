@@ -22,7 +22,7 @@
 
 from datetime import timedelta, datetime
 
-from django.db import models, DEFAULT_DB_ALIAS
+from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
@@ -127,7 +127,7 @@ class Parameter(AuditModel):
   def __unicode__(self): return self.name
 
   class Meta(AuditModel.Meta):
-    db_table = 'parameter'
+    db_table = 'common_parameter'
     verbose_name = _('parameter')
     verbose_name_plural = _('parameters')
 
@@ -150,6 +150,9 @@ class Preferences(models.Model):
     choices=settings.THEMES)
   pagesize = models.PositiveIntegerField(_('page size'), default=settings.DEFAULT_PAGESIZE)
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
+
+  class Meta:
+      db_table = "common_preference"
 
 
 def CreatePreferenceModel(instance, **kwargs):
@@ -180,10 +183,45 @@ class Comment(models.Model):
   lastmodified = models.DateTimeField(_('last modified'), default=datetime.now(), editable=False)
   
   class Meta:
-      db_table = "common_comments"
+      db_table = "common_comment"
       ordering = ('id',)
       verbose_name = _('comment')
       verbose_name_plural = _('comments')
 
   def __unicode__(self):
       return "%s: %s..." % (self.object_pk, self.comment[:50])
+
+
+class Bucket(AuditModel):
+  # Create some dummy string for common bucket names to force them to be translated.
+  extra_strings = ( _('day'), _('week'), _('month'), _('quarter'), _('year'), _('telescope') )
+
+  # Database fields
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
+  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
+
+  def __unicode__(self): return str(self.name)
+
+  class Meta:
+    verbose_name = _('bucket')
+    verbose_name_plural = _('buckets')
+    db_table = 'common_bucket'
+
+
+class BucketDetail(AuditModel):
+  # Database fields
+  id = models.AutoField(_('identifier'), primary_key=True)
+  bucket = models.ForeignKey(Bucket, verbose_name=_('bucket'), db_index=True)
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE)
+  startdate = models.DateTimeField(_('start date'))
+  enddate = models.DateTimeField(_('end date'))
+
+  def __unicode__(self): return u"%s %s" % (self.bucket.name or "", self.startdate)
+
+  class Meta:
+    verbose_name = _('bucket date')
+    verbose_name_plural = _('bucket dates')
+    db_table = 'common_bucketdetail'
+    unique_together = (('bucket', 'startdate'),)
+    ordering = ['bucket','startdate']
+

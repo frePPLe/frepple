@@ -50,7 +50,7 @@ database = DEFAULT_DB_ALIAS
 def loadParameter(cursor):
   print 'Importing parameters...'
   try:
-    cursor.execute("SELECT value FROM parameter where name='currentdate'")
+    cursor.execute("SELECT value FROM common_parameter where name='currentdate'")
     d = cursor.fetchone()
     frepple.settings.current = datetime.strptime(d[0], "%Y-%m-%d %H:%M:%S")
   except:

@@ -22,15 +22,116 @@
 
 from datetime import timedelta, datetime
 
-from django.db import models
+from django.db import models, DEFAULT_DB_ALIAS
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
-
-from freppledb.input.models import Parameter
+from django.conf import settings 
 
 
+class HierarchyModel(models.Model):
+  lft = models.PositiveIntegerField(db_index = True, editable=False, null=True, blank=True)
+  rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
+  level = models.PositiveIntegerField(null=True, editable=False, blank=True)
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True,
+    help_text=_('Unique identifier'))
+  owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='xchildren',
+    help_text=_('Hierarchical parent'))
+
+  def save(self, *args, **kwargs):
+    # Trigger recalculation of the hieracrhy
+    self.lft = None
+    self.rght = None
+    self.level = None
+
+    # Call the real save() method
+    super(HierarchyModel, self).save(*args, **kwargs)
+
+  class Meta:
+    abstract = True
+
+  @classmethod
+  def rebuildHierarchy(cls, database = DEFAULT_DB_ALIAS):
+
+    # Verify whether we need to rebuild or not.
+    # We search for the first record whose lft field is null.
+    if len(cls.objects.using(database).filter(lft__isnull=True)[:1]) == 0:
+      return
+
+    tmp_debug = settings.DEBUG
+    settings.DEBUG = False
+    nodes = {}
+    transaction.enter_transaction_management(using=database)
+    transaction.managed(True, using=database)
+    cursor = connections[database].cursor()
+
+    def tagChildren(me, left, level):
+      right = left + 1
+      # get all children of this node
+      for i, j in keys:
+        if j == me:
+          # Recursive execution of this function for each child of this node
+          right = tagChildren(i, right, level + 1)
+
+      # After processing the children of this node now know its left and right values
+      cursor.execute(
+        'update %s set lft=%d, rght=%d, level=%d where name = %%s' % (cls._meta.db_table, left, right, level),
+        [me]
+        )
+
+      # Return the right value of this node + 1
+      return right + 1
+
+    # Load all nodes in memory
+    for i in cls.objects.using(database).values('name','owner'):
+      nodes[i['name']] = i['owner']
+    keys = sorted(nodes.items())
+
+    # Loop over nodes without parent
+    cnt = 1
+    for i, j in keys:
+      if j == None:
+        cnt = tagChildren(i,cnt,0)
+    transaction.commit(using=database)
+    settings.DEBUG = tmp_debug
+    transaction.leave_transaction_management(using=database)
+
+
+class AuditModel(models.Model):
+  '''
+  This is an abstract base model.
+  It implements the capability to maintain the date of the last modification of the record.
+  '''
+  # Database fields
+  lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now())
+
+  def save(self, *args, **kwargs):
+    # Update the field with every change
+    self.lastmodified = datetime.now()
+
+    # Call the real save() method
+    super(AuditModel, self).save(*args, **kwargs)
+
+  class Meta:
+    abstract = True
+    
+    
+class Parameter(AuditModel):
+  # Database fields
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
+  value = models.CharField(_('value'), max_length=settings.NAMESIZE, null=True, blank=True)
+  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
+
+  def __unicode__(self): return self.name
+
+  class Meta(AuditModel.Meta):
+    db_table = 'parameter'
+    verbose_name = _('parameter')
+    verbose_name_plural = _('parameters')
+
+    
 # TODO The bucket preference is not really generic. Different models could
 #      have separate bucket definitions.
 class Preferences(models.Model):
@@ -65,3 +166,24 @@ def CreatePreferenceModel(instance, **kwargs):
 # This signal will make sure a preference model is created when a user is added.
 # The preference model is automatically deleted again when the user is deleted.
 signals.post_save.connect(CreatePreferenceModel, sender=User)
+
+
+class Comment(models.Model):
+  id = models.AutoField(_('identifier'), primary_key=True)
+  content_type = models.ForeignKey(ContentType,
+          verbose_name=_('content type'),
+          related_name="content_type_set_for_%(class)s")
+  object_pk = models.TextField(_('object ID'))
+  content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
+  comment = models.TextField(_('comment'), max_length=settings.COMMENT_MAX_LENGTH)
+  user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
+  lastmodified = models.DateTimeField(_('last modified'), default=datetime.now(), editable=False)
+  
+  class Meta:
+      db_table = "common_comments"
+      ordering = ('id',)
+      verbose_name = _('comment')
+      verbose_name_plural = _('comments')
+
+  def __unicode__(self):
+      return "%s: %s..." % (self.object_pk, self.comment[:50])

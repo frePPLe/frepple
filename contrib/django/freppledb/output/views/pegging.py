@@ -29,8 +29,9 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.input.models import Parameter, Demand
+from freppledb.input.models import Demand
 from freppledb.output.models import FlowPlan, LoadPlan, OperationPlan
+from freppledb.common.models import Parameter
 from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, getBuckets
 
 

@@ -312,6 +312,9 @@ MAX_DIGITS = 15
 # The number of decimal places for a number in the database models
 DECIMAL_PLACES = 4
 
+# The maximum allowed length of a comment
+COMMENT_MAX_LENGTH = 3000
+
 # Port number for the CherryPy web server
 PORT = 8000
 

@@ -26,8 +26,11 @@ from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.contenttypes.models import ContentType
 from django.template import RequestContext
 from django import forms
+from django.forms.models import modelformset_factory
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User, Group
@@ -35,9 +38,10 @@ from django.contrib.admin.models import LogEntry
 from django.contrib.syndication.views import Feed
 from django.utils import translation
 from django.conf import settings
+from django.http import Http404, HttpResponseRedirect
 
-from freppledb.common.models import Preferences
-from freppledb.common.report import GridReport, GridFieldText, GridFieldBool, GridFieldInteger
+from freppledb.common.models import Preferences, Comment
+from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText, GridFieldBool, GridFieldInteger
 from freppledb.input.models import Bucket
 
 import logging
@@ -194,3 +198,53 @@ class RSSFeed(Feed):
   def item_link(self, action):
     if action.is_deletion(): return ''
     return action.get_admin_url() and ("%s/admin/%s" % (self.request.prefix, action.get_admin_url())) or ''
+    
+
+@staff_member_required
+@csrf_protect
+def Comments(request, app, model, object_id):
+  try:
+    modeltype = ContentType.objects.get(app_label=app, model=model)
+    modelinstance = modeltype.get_object_for_this_type(pk=object_id)  
+    comments = Comment.objects.using(request.database). \
+      filter(content_type__pk = modeltype.id, object_pk = object_id). \
+      order_by('-id')
+  except:
+    raise Http404  
+  if request.method == 'POST':    
+    comment = request.POST['comment']
+    if comment:
+      Comment(
+           content_object = modelinstance,
+           user = request.user,
+           comment = comment
+           ).save(using=request.database)
+    return HttpResponseRedirect('%s/comments/%s/%s/%s/' % (request.prefix,app, model, object_id))
+  else:       
+    return render_to_response('common/comments.html', { 
+      'title': _('Comments: %(object_id)s') % {'object_id': object_id},
+      'model': model,
+      'object_id': object_id,
+      'comments': comments
+      },
+      context_instance=RequestContext(request))   
+   
+
+class CommentList(GridReport):
+  '''
+  A list report to review the history of actions.
+  '''
+  template = 'common/commentlist.html'
+  title = _('Comments')
+  basequeryset = Comment.objects.all()
+  default_sort = (0,'desc')
+  model = Comment
+  editable = False
+  frozenColumns = 0
+  rows = (
+    GridFieldInteger('id', title=_('identifier'), key=True),
+    GridFieldLastModified('lastmodified'),
+    GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center', width=80),
+    GridFieldText('comment', title=_('comment'), editable=False, align='center'),
+    )  
+

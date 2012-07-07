@@ -1,0 +1,46 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n %}
+{% block extrahead %}{{block.super}}
+<script type="text/javascript">
+  $(function() {
+    $("input:submit").button();
+  }); 
+</script>
+{% endblock %}
+
+{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|escape}}</h1>{% endif %}
+{% if model == 'bucket' %}{% include "buckettabs.html" %}
+{% elif model == 'buffer' %}{% include "buffertabs.html" %}
+{% elif model == 'calendar' %}{% include "calendartabs.html" %}
+{% elif model == 'customer' %}{% include "customertabs.html" %}
+{% elif model == 'demand' %}{% include "demandtabs.html" %}
+{% elif model == 'flow' %}{% include "flowtabs.html" %}
+{% elif model == 'forecast' %}{% include "forecasttabs.html" %}
+{% elif model == 'group' %}{% include "grouptabs.html" %}
+{% elif model == 'item' %}{% include "itemtabs.html" %}
+{% elif model == 'load' %}{% include "loadtabs.html" %}
+{% elif model == 'location' %}{% include "locationtabs.html" %}
+{% elif model == 'operation' %}{% include "operationtabs.html" %}
+{% elif model == 'resource' %}{% include "resourcetabs.html" %}
+{% elif model == 'setupmatrix' %}{% include "setupmatrixtabs.html" %}
+{% endif %} 
+</div>{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<div class="module">
+
+<form method="post" action="">
+  {% csrf_token %}
+  <textarea id="comment" name="comment" rows="10" style="width:100%" ></textarea>
+  <input id="submit" type="submit" value="{% trans 'Save' %}"/>
+</form>
+
+{% for c in comments %}
+<hr/><h3>{{c.user}} ({{c.user.get_full_name}})<span class="float_right">{{c.submit_date}}</span></h3>
+<pre>{{c.comment}}</pre> 
+{% endfor %}
+
+</div>
+</div>
+{% endblock %}

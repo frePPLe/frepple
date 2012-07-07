@@ -484,3 +484,7 @@ div.calendarbox
   color: red;
   font-weight: bold;
 }
+
+.float_right {
+  float: right;
+}

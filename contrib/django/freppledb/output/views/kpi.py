@@ -25,7 +25,7 @@ from django.db import connections
 from django.conf import settings
 
 from freppledb.common.db import sql_datediff
-from freppledb.input.models import Parameter
+from freppledb.common.models import Parameter
 from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber
 
 

@@ -33,96 +33,10 @@ from django.conf import settings
 from django.utils.encoding import force_unicode
 
 from freppledb.common.fields import DurationField
+from freppledb.common.models import HierarchyModel, AuditModel
 
 
 CALENDARID = None
-
-
-class HierarchyModel(models.Model):
-  lft = models.PositiveIntegerField(db_index = True, editable=False, null=True, blank=True)
-  rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
-  level = models.PositiveIntegerField(null=True, editable=False, blank=True)
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True,
-    help_text=_('Unique identifier'))
-  owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='xchildren',
-    help_text=_('Hierarchical parent'))
-
-  def save(self, *args, **kwargs):
-    # Trigger recalculation of the hieracrhy
-    self.lft = None
-    self.rght = None
-    self.level = None
-
-    # Call the real save() method
-    super(HierarchyModel, self).save(*args, **kwargs)
-
-  class Meta:
-    abstract = True
-
-  @classmethod
-  def rebuildHierarchy(cls, database = DEFAULT_DB_ALIAS):
-
-    # Verify whether we need to rebuild or not.
-    # We search for the first record whose lft field is null.
-    if len(cls.objects.using(database).filter(lft__isnull=True)[:1]) == 0:
-      return
-
-    tmp_debug = settings.DEBUG
-    settings.DEBUG = False
-    nodes = {}
-    transaction.enter_transaction_management(using=database)
-    transaction.managed(True, using=database)
-    cursor = connections[database].cursor()
-
-    def tagChildren(me, left, level):
-      right = left + 1
-      # get all children of this node
-      for i, j in keys:
-        if j == me:
-          # Recursive execution of this function for each child of this node
-          right = tagChildren(i, right, level + 1)
-
-      # After processing the children of this node now know its left and right values
-      cursor.execute(
-        'update %s set lft=%d, rght=%d, level=%d where name = %%s' % (cls._meta.db_table, left, right, level),
-        [me]
-        )
-
-      # Return the right value of this node + 1
-      return right + 1
-
-    # Load all nodes in memory
-    for i in cls.objects.using(database).values('name','owner'):
-      nodes[i['name']] = i['owner']
-    keys = sorted(nodes.items())
-
-    # Loop over nodes without parent
-    cnt = 1
-    for i, j in keys:
-      if j == None:
-        cnt = tagChildren(i,cnt,0)
-    transaction.commit(using=database)
-    settings.DEBUG = tmp_debug
-    transaction.leave_transaction_management(using=database)
-
-
-class AuditModel(models.Model):
-  '''
-  This is an abstract base model.
-  It implements the capability to maintain the date of the last modification of the record.
-  '''
-  # Database fields
-  lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now())
-
-  def save(self, *args, **kwargs):
-    # Update the field with every change
-    self.lastmodified = datetime.now()
-
-    # Call the real save() method
-    super(AuditModel, self).save(*args, **kwargs)
-
-  class Meta:
-    abstract = True
 
 
 searchmode = (
@@ -132,20 +46,6 @@ searchmode = (
   ('MINPENALTY',_('minimum penalty')),
   ('MINCOSTPENALTY',_('minimum cost plus penalty'))
 )
-
-
-class Parameter(AuditModel):
-  # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  value = models.CharField(_('value'), max_length=settings.NAMESIZE, null=True, blank=True)
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-
-  def __unicode__(self): return self.name
-
-  class Meta(AuditModel.Meta):
-    db_table = 'parameter'
-    verbose_name = _('parameter')
-    verbose_name_plural = _('parameters')
 
 
 class Calendar(AuditModel):
@@ -161,7 +61,7 @@ class Calendar(AuditModel):
     decimal_places=settings.DECIMAL_PLACES, default='0.00',
     help_text= _('Value to be used when no entry is effective')
     )
-
+  
   def __unicode__(self): return self.name
 
   class Meta(AuditModel.Meta):
@@ -177,27 +77,18 @@ class CalendarBucket(AuditModel):
   id = models.AutoField(_('identifier'), primary_key=True)
   calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), related_name='buckets')
   startdate = models.DateTimeField(_('start date'), null=True, blank=True)
-  enddate = models.DateTimeField(_('end date'), editable=False, null=True, blank=True, default=datetime(2030,12,31))
-  priority = models.IntegerField(_('priority'), default=0, blank=True)
+  enddate = models.DateTimeField(_('end date'), null=True, blank=True, default=datetime(2030,12,31))
   value = models.DecimalField(_('value'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00', blank=True)
-  monday = models.BooleanField(_('monday'), blank=True, default=True, 
-     help_text=_('Defines whether this entry is valid on mondays.'))
-  tuesday = models.BooleanField(_('tuesday'), blank=True, default=True,
-     help_text=_('Defines whether this entry is valid on tuesdays'))
-  wednesday = models.BooleanField(_('wednesday'), blank=True, default=True,
-     help_text=_('Defines whether this entry is valid on wednesdays'))
-  thursday = models.BooleanField(_('thursday'), blank=True, default=True,
-     help_text=_('Defines whether this entry is valid on thursdays'))
-  friday = models.BooleanField(_('friday'), blank=True, default=True,
-     help_text=_('Defines whether this entry is valid on fridays'))
-  saturday = models.BooleanField(_('saturday'), blank=True, default=True,
-     help_text=_('Defines whether this entry is valid on saturdays'))
-  sunday = models.BooleanField(_('sunday'), blank=True, default=True, 
-     help_text=_('Defines whether this entry is valid on sundays'))
-  starttime = models.TimeField(_('start time'), blank=True, default=time(0,0,0),
-     help_text=_('Defines whether this starting time of the entry on its valid days'))
-  endtime = models.TimeField(_('end time'), blank=True, default=time(23,59,59),
-     help_text=_('Defines whether this ending time of the entry on its valid days'))
+  priority = models.IntegerField(_('priority'), default=0, blank=True)
+  monday = models.BooleanField(_('monday'), blank=True, default=True)
+  tuesday = models.BooleanField(_('tuesday'), blank=True, default=True)
+  wednesday = models.BooleanField(_('wednesday'), blank=True, default=True)
+  thursday = models.BooleanField(_('thursday'), blank=True, default=True)
+  friday = models.BooleanField(_('friday'), blank=True, default=True)
+  saturday = models.BooleanField(_('saturday'), blank=True, default=True)
+  sunday = models.BooleanField(_('sunday'), blank=True, default=True)
+  starttime = models.TimeField(_('start time'), blank=True, default=time(0,0,0))
+  endtime = models.TimeField(_('end time'), blank=True, default=time(23,59,59))
   
   def __unicode__(self):
     return u"%s" % self.id

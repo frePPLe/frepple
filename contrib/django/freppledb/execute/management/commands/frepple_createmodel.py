@@ -32,9 +32,10 @@ from django.contrib.auth.models import User
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.db.models import Min, Max
 
+from freppledb.common.models import Parameter
 from freppledb.input.models import Operation, Buffer, Resource, Location, Calendar
 from freppledb.input.models import CalendarBucket, BucketDetail, Customer, Demand, Flow
-from freppledb.input.models import Load, Item, Parameter, Bucket, Forecast
+from freppledb.input.models import Load, Item, Bucket, Forecast
 from freppledb.execute.models import log
 from freppledb import VERSION
 

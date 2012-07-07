@@ -37,13 +37,14 @@ from django.utils.translation import ungettext
 from django.utils.encoding import iri_to_uri, force_unicode
 
 from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix
-from freppledb.input.models import Buffer, Customer, Demand, Parameter, Item, Load, Flow
+from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.input.models import Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
 from freppledb.common.report import GridFieldChoice
+from freppledb.common.models import Parameter
 
 
 @staff_member_required

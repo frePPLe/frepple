@@ -24,39 +24,14 @@ from datetime import datetime
 
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from django import forms
-from django.forms.util import ErrorList
 
 from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix
-from freppledb.input.models import Buffer, Customer, Demand, Parameter, Item, Load, Flow
+from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.input.models import Bucket, BucketDetail, SetupRule, ForecastDemand
 from freppledb.admin import site
 from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
 
-
-class ParameterForm(forms.ModelForm):
-  class Meta:
-    model = Parameter
-
-  def clean(self):
-    cleaned_data = self.cleaned_data
-    name = cleaned_data.get("name")
-    value = cleaned_data.get("value")
-    # Currentdate parameter must be a date+time value
-    if name == "currentdate":
-      try: datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-      except:
-        self._errors["value"] = ErrorList([_("Invalid date: expecting YYYY-MM-DD HH:MM:SS")])
-        del cleaned_data["value"]
-    return cleaned_data
-
-
-class Parameter_admin(MultiDBModelAdmin):
-  model = Parameter
-  save_on_top = True
-  form = ParameterForm
-site.register(Parameter,Parameter_admin)
 
 
 class CalendarBucket_inline(MultiDBTabularInline):
@@ -68,6 +43,12 @@ class CalendarBucket_admin(MultiDBModelAdmin):
   model = CalendarBucket
   raw_id_fields = ('calendar',)
   save_on_top = True
+  fieldsets = (
+          (None, {'fields': ('calendar', ('startdate', 'enddate'), 'value', 'priority')}),
+          (_('Repeating pattern'), {
+             'fields': (('starttime', 'endtime'),('monday','tuesday','wednesday','thursday','friday','saturday','sunday')),
+             }),
+      )
 site.register(CalendarBucket,CalendarBucket_admin)
 
 

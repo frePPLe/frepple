@@ -44,7 +44,7 @@ urlpatterns = patterns('',
   (r'^admin/input/bucket/$', freppledb.input.views.BucketList.as_view()),
   (r'^admin/input/bucketdetail/$', freppledb.input.views.BucketDetailList.as_view()),
   (r'^admin/input/calendarbucket/$', freppledb.input.views.CalendarBucketList.as_view()),
-  (r'^admin/input/parameter/$', freppledb.input.views.ParameterList.as_view()),
+  (r'^admin/common/parameter/$', freppledb.input.views.ParameterList.as_view()),
 
   # Special reports
   (r'^admin/input/calendar/location/([^/]+)/$', freppledb.input.views.location_calendar),

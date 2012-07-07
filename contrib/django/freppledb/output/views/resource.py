@@ -32,11 +32,12 @@ from django.template import RequestContext, loader
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 
-from freppledb.input.models import Resource, Parameter
+from freppledb.input.models import Resource
 from freppledb.output.models import LoadPlan
+from freppledb.common.models import Parameter
 from freppledb.common.db import sql_overlap3, python_date
-from freppledb.common.report import getBuckets
-from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
+from freppledb.common.report import getBuckets, GridReport, GridPivot
+from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
   
 class OverviewReport(GridPivot):

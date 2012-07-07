@@ -33,6 +33,10 @@ urlpatterns = patterns('',
   (r'^admin/auth/user/$', freppledb.common.views.UserList.as_view()),
   (r'^admin/auth/group/$', freppledb.common.views.GroupList.as_view()),
 
+  # Comment view
+  (r'^comments/([^/]+)/([^/]+)/([^/]+)/$', freppledb.common.views.Comments),
+  (r'^admin/common/comment/$', freppledb.common.views.CommentList.as_view()),
+  
   # RSS feed with recently changed objects
   # IMPORTANT NOTE: 
   # The RSS feed is not authenticated. Everybody can see the change list.

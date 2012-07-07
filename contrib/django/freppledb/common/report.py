@@ -64,7 +64,9 @@ from django.utils.translation import string_concat
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
-from freppledb.input.models import Parameter, BucketDetail, Bucket
+
+from freppledb.input.models import BucketDetail, Bucket
+from freppledb.common.models import Parameter
 
 
 import logging

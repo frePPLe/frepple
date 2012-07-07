@@ -75,7 +75,7 @@ class DataLoadTest(TestCase):
     self.assertContains(response, '"records":4,')
 
   def test_input_parameter(self):
-    response = self.client.get('/admin/input/parameter/?format=json')
+    response = self.client.get('/admin/common/parameter/?format=json')
     self.assertContains(response, '"records":2,')
 
   def test_input_resource(self):

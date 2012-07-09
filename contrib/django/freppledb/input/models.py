@@ -196,13 +196,13 @@ class Operation(AuditModel):
   def __unicode__(self): return self.name
 
   def save(self, *args, **kwargs):
-    if self.type is None or self.type == '' or self.type == 'operation_fixed_time':
+    if self.type is None or self.type == '' or self.type == 'fixed_time':
       self.duration_per = None
       self.search = None
-    elif self.type == 'operation_alternate':
+    elif self.type == 'alternate':
       self.duration = None
       self.duration_per = None
-    elif self.type != 'operation_time_per':
+    elif self.type != 'time_per':
       self.duration = None
       self.duration_per = None
       self.search = None
@@ -300,10 +300,10 @@ class Buffer(AuditModel,HierarchyModel):
   def __unicode__(self): return self.name
 
   def save(self, *args, **kwargs):
-    if self.type == 'buffer_infinite' or self.type == 'buffer_procure':
+    if self.type == 'infinite' or self.type == 'procure':
       # Handle irrelevant fields for infinite and procure buffers
       self.producing = None
-    if self.type != 'buffer_procure':
+    if self.type != 'procure':
       # Handle irrelevant fields for non-procure buffers
       self.leadtime = None
       self.fence = None
@@ -398,7 +398,7 @@ class Resource(AuditModel,HierarchyModel):
   def __unicode__(self): return self.name
 
   def save(self, *args, **kwargs):
-    if self.type == 'resource_infinite':
+    if self.type == 'infinite':
         # These fields are not relevant for infinite resources
         self.maximum = None
         self.maximum_calendar_id = None

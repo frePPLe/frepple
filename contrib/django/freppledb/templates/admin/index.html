@@ -1,8 +1,5 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
-{% get_models from auth freppledb.admin.site as modelsAuth %}
-{% get_models from input freppledb.admin.site as modelsIn %}
-{% get_models from common freppledb.admin.site as modelsCommon %}
 
 {% block title %}frePPLe - {% trans "Home" %}{% endblock %}
 {% block content_title %}<h1>{% trans "Home" %}</h1>{% endblock %}
@@ -27,6 +24,9 @@ th {
 {% block content %}
 
 <div id="content-main" style="max-width: 500px;">
+{% get_models from auth freppledb.admin.site as modelsAuth %}
+{% get_models from input freppledb.admin.site as modelsIn %}
+{% get_models from common freppledb.admin.site as modelsCommon %}
 
 {% if modelsIn %}<h3><a href="#input">{% trans "Input" %}</a></h3>
 <div><table>

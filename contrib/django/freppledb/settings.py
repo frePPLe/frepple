@@ -52,7 +52,7 @@ MANAGERS = ADMINS
 # ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================
 DATABASES = {
   'default': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'ENGINE': 'django.db.backends.sqlite3',
     'NAME': 'frepple',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
@@ -61,7 +61,7 @@ DATABASES = {
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
     },
   'scenario1': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'ENGINE': 'django.db.backends.sqlite3',
     'NAME': 'scenario1',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
@@ -70,7 +70,7 @@ DATABASES = {
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
     },
   'scenario2': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'ENGINE': 'django.db.backends.sqlite3',
     'NAME': 'scenario2',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
@@ -79,7 +79,7 @@ DATABASES = {
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
     },
   'scenario3': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'ENGINE': 'django.db.backends.sqlite3',
     'NAME': 'scenario3',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
@@ -92,8 +92,13 @@ DATABASES = {
 LANGUAGE_CODE = 'en'
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
 
-# Local time zone for this installation. All choices can be found here:
-# http://www.postgresql.org/docs/current/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
+# Local time zone for this installation. Choices can be found here:
+# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+# although not all choices may be available on all operating systems.
+# On Unix systems, a value of None will cause Django to use the same
+# timezone as the operating system.
+# If running in a Windows environment this must be set to the same as your
+# system time zone.
 TIME_ZONE = 'Europe/Brussels'
 
 # Internationalization is switched on by default.

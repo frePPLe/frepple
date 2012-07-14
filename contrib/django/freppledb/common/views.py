@@ -28,6 +28,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
+from django.db import DEFAULT_DB_ALIAS
 from django.template import RequestContext
 from django import forms
 from django.forms.models import modelformset_factory
@@ -222,16 +223,18 @@ class RSSFeed(Feed):
 @csrf_protect
 def Comments(request, app, model, object_id):
   try:
-    modeltype = ContentType.objects.get(app_label=app, model=model)
-    modelinstance = modeltype.get_object_for_this_type(pk=object_id)  
+    modeltype = ContentType.objects.using(request.database).get(app_label=app, model=model)
+    modeltype._state.db = request.database
+    modelinstance = modeltype.get_object_for_this_type(pk=object_id) 
     comments = Comment.objects.using(request.database). \
       filter(content_type__pk = modeltype.id, object_pk = object_id). \
       order_by('-id')
   except:
-    raise Http404  
+    raise Http404('Object not found')  
   if request.method == 'POST':    
     comment = request.POST['comment']
     if comment:
+      request.user._state.db = request.database  # Need to lie a bit
       Comment(
            content_object = modelinstance,
            user = request.user,

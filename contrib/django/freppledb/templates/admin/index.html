@@ -1,5 +1,8 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
+{% get_models from auth freppledb.admin.site as modelsAuth %}
+{% get_models from input freppledb.admin.site as modelsIn %}
+{% get_models from common freppledb.admin.site as modelsCommon %}
 
 {% block title %}frePPLe - {% trans "Home" %}{% endblock %}
 {% block content_title %}<h1>{% trans "Home" %}</h1>{% endblock %}
@@ -22,27 +25,19 @@ th {
 {% endblock %}
 
 {% block content %}
+
 <div id="content-main" style="max-width: 500px;">
 
-{% if app_list %}
-    {% for app in app_list %}{%ifnotequal app.name "Execute"%}
-        <h3 id="{{app.name|lower}}" ><a href="#{{app.name|lower}}">{% trans app.name %}</a></h3>
-        <div><table>        
-        {% for model in app.models %}<tr>
-            {% if model.perms.change %}<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
-            {% else %}<th scope="row">{{model.name}}</th>
-            {% endif %}{%ifnotequal app.name "Output"%}
-            {% if model.perms.add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
-            <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
-            {% else %}<td>&nbsp;</td>
-            {% endif %}{% else %}<td>&nbsp;</td>{% endifnotequal %}
-            <td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-        </tr>{% endfor %}
-        </table></div>
-    {% endifnotequal %}{% endfor %}
-{% else %}
-    <p>{% trans "You don't have permission to edit anything." %}</p>
-{% endif %}
+{% if modelsIn %}<h3><a href="#input">{% trans "Input" %}</a></h3>
+<div><table>
+{% for model in modelsIn %}<tr>
+<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
+{% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
+<td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
+{% else %}<td>&nbsp;</td>{% endif %}
+<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+{% endfor %}</table></div>{% endif %}
 
 <h3><a href="#reports">{% trans "Reports" %}</a></h3>
 <div>
@@ -109,6 +104,24 @@ th {
 </table>
 </div>
 {% endif %}
+
+{% if modelsAuth or modelsCommon %}<h3><a href="#admin">{% trans "Admin" %}</a></h3>
+<div><table>{% for model in modelsAuth %}<tr>
+<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
+{% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
+<td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
+{% else %}<td>&nbsp;</td>{% endif %}
+<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+{% endfor %}
+{% for model in modelsCommon %}<tr>
+<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
+{% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
+<td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
+{% else %}<td>&nbsp;</td>{% endif %}
+<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+{% endfor %}</table></div>{% endif %}
 
 </div>
 

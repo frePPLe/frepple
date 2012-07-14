@@ -76,6 +76,7 @@ class ModelsNode(Node):
                    'name': capfirst(m._meta.verbose_name_plural),
                    'verbose_name': capfirst(m._meta.verbose_name),
                    'admin_url': '/admin/%s/%s/' % (self.appname, m.__name__.lower()),
+                   'can_add': user.has_perm("%s.%s" % (self.appname, m._meta.get_add_permission()))
                    })
           model_list.sort(key = lambda m : m['verbose_name'])
         context[self.varname] = model_list

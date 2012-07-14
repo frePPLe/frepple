@@ -3,8 +3,9 @@
 {% block nav-global %}
 {% get_models from auth freppledb.admin.site as modelsAuth %}
 {% get_models from input freppledb.admin.site as modelsIn %}
+{% get_models from common freppledb.admin.site as modelsCommon %}
 <div class="menuBar ui-widget">
-  
+ 
 {% if modelsIn %}<a href="#" class="menuButton ui-widget-content ui-corner-all ui-state-default">{% trans 'Input' %}</a>
 <div id="inputMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 {% for m in modelsIn %}<li class="ui-menu-item"><a href="{{request.prefix}}{{m.admin_url}}">{{m.name}}</a></li>
@@ -32,11 +33,12 @@
 <li class="ui-menu-item"><a href="{{request.prefix}}/execute/log/">{% trans 'Log' %}</a></li>
 </ul></div>{% endif %}
 
-{% if modelsAuth %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'Admin' %}</a>
+{% if modelsAuth or modelsCommon %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'Admin' %}</a>
 <div id="authMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-{% for m in modelsAuth %}
-<li class="ui-menu-item"><a href="{{m.admin_url}}">{{m.name}}</a></li>{% endfor %}
-</ul></div>{% endif %}
+{% for m in modelsAuth %}<li class="ui-menu-item"><a href="{{m.admin_url}}">{{m.name}}</a></li>
+{% endfor %}
+{% for m in modelsCommon %}<li class="ui-menu-item"><a href="{{request.prefix}}{{m.admin_url}}">{{m.name}}</a></li>
+{% endfor %}</ul></div>{% endif %}
 
 <a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'User' %}</a>
 <div id="userMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">{% if request.user.is_authenticated %}

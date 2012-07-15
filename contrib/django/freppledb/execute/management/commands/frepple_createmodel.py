@@ -32,10 +32,10 @@ from django.contrib.auth.models import User
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.db.models import Min, Max
 
-from freppledb.common.models import Parameter
+from freppledb.common.models import Parameter, Bucket, BucketDetail
 from freppledb.input.models import Operation, Buffer, Resource, Location, Calendar
-from freppledb.input.models import CalendarBucket, BucketDetail, Customer, Demand, Flow
-from freppledb.input.models import Load, Item, Bucket, Forecast
+from freppledb.input.models import CalendarBucket, Customer, Demand, Flow
+from freppledb.input.models import Load, Item, Forecast
 from freppledb.execute.models import log
 from freppledb import VERSION
 
@@ -198,7 +198,7 @@ class Command(BaseCommand):
 
       # Working days calendar
       if verbosity>0: print "Creating working days..."
-      workingdays = Calendar.objects.using(database).create(name="Working Days",type= "calendar_boolean")
+      workingdays = Calendar.objects.using(database).create(name="Working Days")
       minmax = BucketDetail.objects.using(database).filter(bucket="week").aggregate(Min('startdate'),Max('startdate'))
       curdate = minmax['startdate__min']
       curdate = curdate - timedelta(curdate.weekday())  # Align on mondays

@@ -40,31 +40,6 @@ $(function(){
   
   });
 
-{% if not is_popup and reportclass.editable %}/*$(window).bind('beforeunload', function() {
-   rows = $("#grid").getChangedCells('dirty');
-   if (rows != null && rows.length > 0) 
-   {
-   return "{% trans "There are unsaved changes on this page." %}";
-     $("#popup").html("{% trans "Discard unsaved changes" %}").dialog({ 
-       title: gettext("{% trans "Discard unsaved changes" %}"), autoOpen: true, resizable: false,
-       modal: true,
-       buttons: 
-          {
-          "Save": function() {
-            $( this ).dialog( "close" );
-            return false;
-            },
-          "Discard": function() {
-            $( this ).dialog( "close" );
-            return true;
-            }       
-          }  
-      });
-      return true;
-  };
-  return false;
-});*/{% endif %}
-
 $(window).bind('resize', function() {
   $("#grid")
    .setGridWidth($('#content-main').width()) 

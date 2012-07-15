@@ -48,32 +48,6 @@ $(function(){
     });
   jQuery("#grid").jqGrid('setFrozenColumns');
   });
-/*
-$(window).bind('beforeunload', function() {
-   var rows = $("#grid").getChangedCells('dirty');
-   alert(JSON.stringify(rows));
-   if (rows != null && rows.length > 0) 
-   {
-     $("#popup").html("Discard saved data").dialog({ 
-       title: gettext("Export data"), autoOpen: true, resizable: false,
-       modal: true,
-       buttons: 
-          {
-          "Save": function() {
-            $( this ).dialog( "close" );
-            return false;
-            },
-          "Discard": function() {
-            $( this ).dialog( "close" );
-            return true;
-            }       
-          }  
-      });
-      return true;
-  };
-  return true;
-});
-*/
 
 $(window).bind('resize', function() {
   $("#grid")

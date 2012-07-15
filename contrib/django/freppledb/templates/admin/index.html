@@ -8,7 +8,7 @@
 <script type="text/javascript">
   $(function() {
     $( "#content-main" ).accordion({
-      collapsible: true, navigation: true, active: '#input' 
+      collapsible: true, navigation: true, active: 0
       });
   });
 </script>
@@ -34,8 +34,8 @@ th {
 <th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
 {% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
 <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
-{% else %}<td>&nbsp;</td>{% endif %}
-<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+{% else %}<td>&nbsp;</td>
+{% endif %}<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 {% endfor %}</table></div>{% endif %}
 
@@ -110,38 +110,28 @@ th {
 <th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
 {% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
 <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
-{% else %}<td>&nbsp;</td>{% endif %}
-<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+{% else %}<td>&nbsp;</td>
+{% endif %}<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
-{% endfor %}
-{% for model in modelsCommon %}<tr>
+{% endfor %}{% for model in modelsCommon %}<tr>
 <th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
 {% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
 <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
-{% else %}<td>&nbsp;</td>{% endif %}
-<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+{% else %}<td>&nbsp;</td>
+{% endif %}<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
 {% endfor %}</table></div>{% endif %}
 
 </div>
 
 <div id="recent-actions" class="ui-widget-content ui-corner-all">
-  <h2>{% trans 'My Actions' %}</h2>
-  {% load log %}
-  {% get_multidbadmin_log 10 as admin_log for_user user %}
-  {% if not admin_log %}
-  <p>{% trans 'None available' %}</p>
-  {% else %}
-  {% for entry in admin_log %}
-  <span style="display: inline-block;" class="ui-icon ui-icon-{% if entry.is_addition %}plusthick{% endif %}{% if entry.is_change %}pencil{% endif %}{% if entry.is_deletion %}minusthick{% endif %}"></span>
-      {% if entry.is_deletion %}
-          {{entry.object_repr}}
-      {% else %}
-          <a href="{{request.prefix}}/admin/{{entry.get_admin_url}}">{{entry.object_repr}}</a>
-      {% endif %}
-      <span class="mini">{% if entry.content_type %}{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}{% else %}{% trans 'Unknown content' %}{% endif %}</span>
-      <br/>
-  {% endfor %}
-  {% endif %}
-</div>
+<h2>{% trans 'My Actions' %}</h2>
+{% load log %}
+{% get_multidbadmin_log 10 as admin_log for_user user %}
+{% if not admin_log %}<p>{% trans 'None available' %}</p>
+{% else %}{% for entry in admin_log %}<span style="display: inline-block;" class="ui-icon ui-icon-{% if entry.is_addition %}plusthick{% endif %}{% if entry.is_change %}pencil{% endif %}{% if entry.is_deletion %}minusthick{% endif %}"></span>
+{% if entry.is_deletion %}{{entry.object_repr}}
+{% else %}<a href="{{request.prefix}}/admin/{{entry.get_admin_url}}">{{entry.object_repr}}</a>
+{% endif %}<span class="mini">{% if entry.content_type %}{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}{% else %}{% trans 'Unknown content' %}{% endif %}</span><br/>{% endfor %}
+{% endif %}</div>
 {% endblock %}

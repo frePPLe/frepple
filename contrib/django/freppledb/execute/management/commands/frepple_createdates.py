@@ -28,7 +28,7 @@ from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from freppledb.input.models import Bucket, BucketDetail
+from freppledb.common.models import Bucket, BucketDetail
 from freppledb.execute.models import log
 from freppledb import VERSION
 

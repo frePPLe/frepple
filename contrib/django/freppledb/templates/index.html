@@ -1,0 +1,137 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n %}
+
+{% block title %}frePPLe - {% trans "Home" %}{% endblock %}
+{% block content_title %}<h1>{% trans "Home" %}</h1>{% endblock %}
+
+{% block extrahead %}{{block.super}}
+<script type="text/javascript">
+  $(function() {
+    $( "#content-main" ).accordion({
+      collapsible: true, navigation: true, active: 0
+      });
+  });
+</script>
+<style type="text/css">
+th {
+  width: 100%;
+  text-align: left;
+  padding: 0.25em;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div id="content-main" style="max-width: 500px;">
+{% get_models from auth freppledb.admin.site as modelsAuth %}
+{% get_models from input freppledb.admin.site as modelsIn %}
+{% get_models from common freppledb.admin.site as modelsCommon %}
+
+{% if modelsIn %}<h3><a href="#input">{% trans "Input" %}</a></h3>
+<div><table>
+{% for model in modelsIn %}<tr>
+<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
+{% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
+<td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
+{% else %}<td>&nbsp;</td>
+{% endif %}<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+{% endfor %}</table></div>{% endif %}
+
+<h3><a href="#reports">{% trans "Reports" %}</a></h3>
+<div>
+<table>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/problem/">{% trans "Problem report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/problem/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/buffer/">{% trans "Inventory report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/buffer/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/resource/">{% trans "Resource report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/resource/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/demand/">{% trans "Demand report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/demand/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/forecast/">{% trans "Forecast report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/forecast/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/operation/">{% trans "Operation report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/operation/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/operationplan/">{% trans "Operation detail report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/operationplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/loadplan/">{% trans "Resource detail report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/loadplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/flowplan/">{% trans "Inventory detail report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/flowplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/demandplan/">{% trans "Demand detail report" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/demandplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/kpi/">{% trans "Performance Indicators" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/kpi/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+</table>
+</div>
+
+{% if perms.execute %}
+<h3><a href="#tools">{% trans "Tools" %}</a></h3>
+<div>
+<table>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/execute/execute.html">{% trans "Execute" %}</a></th>
+<td>&nbsp;</td><td>&nbsp;</td>
+</tr>
+<tr>
+<th scope="row"><a href="{{request.prefix}}/execute/log/">{% trans "Log" %}</a></th>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/execute/log/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+</table>
+</div>
+{% endif %}
+
+{% if modelsAuth or modelsCommon %}<h3><a href="#admin">{% trans "Admin" %}</a></h3>
+<div><table>{% for model in modelsAuth %}<tr>
+<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
+{% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
+<td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
+{% else %}<td>&nbsp;</td>
+{% endif %}<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+{% endfor %}{% for model in modelsCommon %}<tr>
+<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
+{% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
+<td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
+{% else %}<td>&nbsp;</td>
+{% endif %}<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
+</tr>
+{% endfor %}</table></div>{% endif %}
+
+</div>
+
+<div id="recent-actions" class="ui-widget-content ui-corner-all">
+<h2>{% trans 'My Actions' %}</h2>
+{% load log %}
+{% get_multidbadmin_log 10 as admin_log for_user user %}
+{% if not admin_log %}<p>{% trans 'None available' %}</p>
+{% else %}{% for entry in admin_log %}<span style="display: inline-block;" class="ui-icon ui-icon-{% if entry.is_addition %}plusthick{% endif %}{% if entry.is_change %}pencil{% endif %}{% if entry.is_deletion %}minusthick{% endif %}"></span>
+{% if entry.is_deletion %}{{entry.object_repr}}
+{% else %}<a href="{{request.prefix}}/admin/{{entry.get_admin_url}}">{{entry.object_repr}}</a>
+{% endif %}<span class="mini">{% if entry.content_type %}{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}{% else %}{% trans 'Unknown content' %}{% endif %}</span><br/>{% endfor %}
+{% endif %}</div>
+{% endblock %}

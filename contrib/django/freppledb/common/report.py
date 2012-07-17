@@ -664,11 +664,11 @@ class GridReport(View):
                   it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
                   form = UploadForm(d, instance=it)
                 except reportclass.model.DoesNotExist:
-                  form = UploadForm(d)
+                  form = UploadForm(d)   # TODO this creation is in the wrong database!!!!
                   it = None
               else:
                 # No primary key required for this model
-                form = UploadForm(d)
+                form = UploadForm(d)  # TODO this creation is in the wrong database!!!!
                 it = None
   
               # Step 3: Validate the data and save to the database

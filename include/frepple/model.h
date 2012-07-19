@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU Affero General Public        *
  * License along with this program.                                        *
  * If not, see <http://www.gnu.org/licenses/>.                             *
- * USA                                                                     *
  *                                                                         *
  ***************************************************************************/
 
@@ -335,8 +334,10 @@ class Calendar : public HasName<Calendar>
       protected:
         const Calendar* theCalendar;
         const Bucket* curBucket;
+        const Bucket* lastBucket;
         Date curDate;
-        int curPriority;
+        int curPriority;        
+        int lastPriority;
       public:
         const Date& getDate() const {return curDate;}
         const Bucket* getBucket() const {return curBucket;}
@@ -344,7 +345,8 @@ class Calendar : public HasName<Calendar>
         EventIterator(const Calendar* c = NULL, Date d = Date::infinitePast,
             bool forward = true) : theCalendar(c), curDate(d)
         {
-          curBucket = c ? c->findBucket(d,forward) : NULL;
+          curBucket = lastBucket = c ? c->findBucket(d,forward) : NULL;
+          curPriority = lastPriority = curBucket ? curBucket->priority : INT_MAX;
         };
         DECLARE_EXPORT EventIterator& operator++();
         DECLARE_EXPORT EventIterator& operator--();

@@ -6,7 +6,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007 by Johan De Taeye, frePPLe bvba                                    *
+ * Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU Affero General Public        *
  * License along with this program.                                        *
  * If not, see <http://www.gnu.org/licenses/>.                             *
- * USA                                                                     *
  *                                                                         *
  ***************************************************************************/
 

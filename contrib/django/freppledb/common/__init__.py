@@ -37,6 +37,7 @@ from django import template
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.contrib import admin
+from django.contrib.admin.models import LogEntry
 from django.contrib.admin.util import unquote, get_deleted_objects
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
@@ -49,6 +50,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst, get_text_list
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
+
+from freppledb.common.models import Comment
 
 # Make our tags built-in, so we don't have to load them any more in our
 # templates with a 'load' tag.
@@ -64,6 +67,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
           - store and load history information in the right database
           - assure prefix is maintained in the URLs
           - check for related objects in the right database
+     - support for changing the primary key of an object
      - different logic to determine the next page to display
 
   See the standard code in the file django\contrib\admin\options.py
@@ -71,8 +75,33 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   concern for future upgrades of Django...
   '''
 
-  def save_model(self, request, obj, form, change):
-    # Tell Django to save objects to the 'other' database.
+  def save_model(self, request, obj, form, change):        
+    # TODO saving the object under a new key, but which already exists
+    # TODO make this work from a form with an inline admin section
+    if change:
+      old_pk = request.path_info.rsplit("/",2)[1]
+      if old_pk != obj.pk:
+        # We are renaming an existing object.        
+        # a) Save the new record in the right database
+        obj.save(using=request.database)
+        # b) All linked fields need updating.
+        for related in obj._meta.get_all_related_objects():
+          related.model._base_manager.using(request.database) \
+            .filter(**{related.field.name: old_pk}) \
+            .update(**{related.field.name: obj})
+        # c) Move the comments and audit trail to the new key
+        model_type = ContentType.objects.get_for_model(obj)
+        Comment.objects.using(request.database). \
+          filter(content_type__pk=model_type.id, object_pk=old_pk). \
+          update(object_pk=obj.pk)
+        LogEntry.objects.using(request.database). \
+          filter(content_type__pk=model_type.id, object_id=old_pk). \
+          update(object_id=obj.pk)
+        # e) Delete the old record
+        self.queryset(request).get(pk=old_pk).delete() 
+        return        
+
+    # New object or existing object without key change
     obj.save(using=request.database)
 
   def queryset(self, request):

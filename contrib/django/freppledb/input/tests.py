@@ -49,6 +49,10 @@ class DataLoadTest(TestCase):
     response = self.client.get('/admin/input/calendar/?format=json')
     self.assertContains(response, '"records":4,')
 
+  def test_input_calendar(self):
+    response = self.client.get('/admin/input/calendarbucket/?format=json')
+    self.assertContains(response, '"records":5,')
+
   def test_input_demand(self):
     response = self.client.get('/admin/input/demand/?format=json')
     self.assertContains(response, '"records":14,')
@@ -104,74 +108,3 @@ class DataLoadTest(TestCase):
       [(i.name, i.category) for i in Location.objects.order_by('name')],
       [(u'factory 1',u''), (u'factory 2',u''), (u'factory 3',u'cat1'), (u'factory 4',u'')]
       )
-
-  def test_buckets(self):
-    # Find the calendar
-    try:
-      calendar = Calendar.objects.get(name='pack capacity factory 1')
-    except ObjectDoesNotExist:
-      self.fail("Calendar 'pack capacity factory 1' not found")
-    buckets = calendar.buckets.all()
-    # Assure it has 2 buckets
-    self.assertEqual(len(buckets),2)
-    # Verify the bucket dates are filled in correctly
-    prevend = None
-    for i in buckets:
-      self.assertNotEqual(i.startdate, None, 'Missing start date')
-      self.assertNotEqual(i.enddate, None, 'Missing end date')
-      self.assertTrue(i.startdate<i.enddate, 'End date before the start date')
-      if prevend:
-        self.assertEqual(i.startdate, prevend, 'Non-adjacent calendar buckets')
-      prevend = i.enddate
-    # Verify original buckets
-    self.assertEqual(
-      [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2012-01-01 00:00:00', '2012-02-01 00:00:00', 1),
-       ('2012-02-01 00:00:00', '2030-12-31 00:00:00', 2)
-      ])
-    # Create a new bucket - start date aligned with existing bucket
-    calendar.setvalue(datetime(2012,2,1), datetime(2012,3,3), 12)
-    self.assertEqual(
-      [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2012-01-01 00:00:00', '2012-02-01 00:00:00', 1),
-       ('2012-02-01 00:00:00', '2012-03-03 00:00:00', 12),
-       ('2012-03-03 00:00:00', '2030-12-31 00:00:00', 2)
-      ])
-    # Create a new bucket - end date aligned with existing bucket
-    calendar.setvalue(datetime(2012,2,10), datetime(2012,3,3), 100)
-    self.assertEqual(
-      [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2012-01-01 00:00:00', '2012-02-01 00:00:00', 1),
-       ('2012-02-01 00:00:00', '2012-02-10 00:00:00', 12),
-       ('2012-02-10 00:00:00', '2012-03-03 00:00:00', 100),
-       ('2012-03-03 00:00:00', '2030-12-31 00:00:00', 2)
-      ])
-    # 2 buckets partially updates and one deleted
-    calendar.setvalue(datetime(2012,1,10), datetime(2012,4,3), 3)
-    self.assertEqual(
-      [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2012-01-01 00:00:00', '2012-01-10 00:00:00', 1),
-       ('2012-01-10 00:00:00', '2012-03-03 00:00:00', 3),
-       ('2012-03-03 00:00:00', '2012-04-03 00:00:00', 3),
-       ('2012-04-03 00:00:00', '2030-12-31 00:00:00', 2)
-      ])
-    # Create a new bucket - end date aligned with existing bucket
-    calendar.setvalue(datetime(2012,2,10), datetime(2012,3,3), 4)
-    self.assertEqual(
-      [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2012-01-01 00:00:00', '2012-01-10 00:00:00', 1),
-       ('2012-01-10 00:00:00', '2012-02-10 00:00:00', 3),
-       ('2012-02-10 00:00:00', '2012-03-03 00:00:00', 4),
-       ('2012-03-03 00:00:00', '2012-04-03 00:00:00', 3),
-       ('2012-04-03 00:00:00', '2030-12-31 00:00:00', 2)
-      ])
-    # Completely override the value of an existing bucket
-    calendar.setvalue(datetime(2012,3,3), datetime(2012,4,3), 5)
-    self.assertEqual(
-      [(str(i.startdate), str(i.enddate), int(i.value)) for i in calendar.buckets.all()],
-      [('2012-01-01 00:00:00', '2012-01-10 00:00:00', 1),
-       ('2012-01-10 00:00:00', '2012-02-10 00:00:00', 3),
-       ('2012-02-10 00:00:00', '2012-03-03 00:00:00', 4),
-       ('2012-03-03 00:00:00', '2012-04-03 00:00:00', 5),
-       ('2012-04-03 00:00:00', '2030-12-31 00:00:00', 2)
-      ])

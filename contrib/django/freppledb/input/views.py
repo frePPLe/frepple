@@ -585,7 +585,7 @@ class CalendarBucketList(GridReport):
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date'),editable=False),
     GridFieldNumber('value', title=_('value')),
-    GridFieldNumber('priority', title=_('priority')),
+    GridFieldInteger('priority', title=_('priority')),
     GridFieldBool('monday', title=_('monday')),
     GridFieldBool('tuesday', title=_('tuesday')),
     GridFieldBool('wednesday', title=_('wednesday')),

@@ -31,7 +31,6 @@
 {"pk": "\u0e4f \u0e41\u0e1c\u0e48\u0e19\u0e14\u0e34\u0e19\u0e2e\u0e31\u0e48\u0e19\u0e40\u0e2a\u0e37\u0e48\u0e2d\u0e21\u0e42\u0e17\u0e23\u0e21\u0e41\u0e2a\u0e19\u0e2a\u0e31\u0e07\u0e40\u0e27\u0e0a  \u0e1e\u0e23\u0e30\u0e1b\u0e01\u0e40\u0e01\u0e28\u0e01\u0e2d\u0e07\u0e1a\u0e39\u0e4a\u0e01\u0e39\u0e49\u0e02\u0e36\u0e49\u0e19\u0e43\u0e2b\u0e21\u0e48", "model": "input.buffer", "fields": {"description": "Thai", "item": "\u00df \u017f", "location": "\u20ac \u00a5 $ \u00a3", "onhand": "0", "type": ""}},
 {"pk": "\u9762\u5411\u5f00\u53d1\u4eba\u5458", "model": "input.buffer", "fields": {"description": "Simplified chinese", "item": "\u00df \u017f", "location": "\u20ac \u00a5 $ \u00a3", "onhand": "0", "type": "infinite"}},
 {"pk": 1, "model": "input.flow", "fields": {"operation": "< > \" ' & ` # = ;", "type": "", "thebuffer": "\u9762\u5411\u5f00\u53d1\u4eba\u5458", "quantity": "-1"}},
-{"pk": "Working Days", "model": "input.calendar", "fields": {"description": "calendar with working days Mon-Fri"}},
 {"pk": "year", "model": "input.bucket", "fields": {"description": "Yearly time buckets"}},
 {"pk": "quarter", "model": "input.bucket", "fields": {"description": "Quarterly time buckets"}},
 {"pk": "month", "model": "input.bucket", "fields": {"description": "Monthly time buckets"}},

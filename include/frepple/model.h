@@ -171,6 +171,11 @@ class Calendar : public HasName<Calendar>
           */
         DECLARE_EXPORT void prevEvent(EventIterator*, Date) const;
 
+        /** Keep all calendar buckets sorted in ascending order of start date
+          * and use the priority as a tie breaker.
+          */
+        DECLARE_EXPORT void updateSort();
+
       protected:
         /** Constructor. */
         Bucket(Calendar *c, Date start, Date end, int ident=INT_MIN, int priority=0) :
@@ -181,6 +186,7 @@ class Calendar : public HasName<Calendar>
           setId(ident);
           initType(metadata); 
           updateOffsets();
+          updateSort();
         }
 
         /** Auxilary function to write out the start of the XML. */
@@ -224,11 +230,11 @@ class Calendar : public HasName<Calendar>
           * Lower numbers indicate a higher priority level.<br>
           * The default value is 0.
           */
-        void setPriority(int f) {priority = f;}
+        void setPriority(int f) {priority = f; updateSort();}
 
         /** Get the days on which the entry is valid.<br>
           * The value is a bit pattern with bit 0 representing sunday, bit 1
-          * monday, ... and bit 6 representing saturday.
+          * monday, ... and bit 6 representing saturday.<br>
           * The default value is 127.
           */
         short getDays() const {return days;}

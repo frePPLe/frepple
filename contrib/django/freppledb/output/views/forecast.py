@@ -55,8 +55,7 @@ class OverviewReport(GridPivot):
     ('planned',{'title': _('planned net forecast')}),
     )
 
-
-
+    
   @classmethod
   def parseJSONupload(reportclass, request): 
     # Check permissions

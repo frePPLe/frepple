@@ -586,11 +586,8 @@ class Forecast(AuditModel):
       - If one or more forecast entries already exist in the daterange, the
         quantities of those entries are proportionally rescaled to fit the
         new quantity.
-      - If no forecast entries exist yet, we create a new set of entries
-        based on the bucket definition of the forecast calendar. This respects
-        the weight ratios as defined in the calendar buckets.
-      - In case no calendar or no calendar buckets can be identified, we simply
-        create a single forecast entry for the specified daterange.
+      - When no entry exists yet, we simply create a single forecast entry 
+        for the specified daterange.
     '''
     # Assure the end date is later than the start date.
     if startdate > enddate:
@@ -605,8 +602,14 @@ class Forecast(AuditModel):
     startdate = startdate.date()
     enddate = enddate.date()
     entries = self.entries.filter(enddate__gt=startdate).filter(startdate__lt=enddate)
-    if entries:
-      # Case 1: Entries already exist in this daterange, which will be rescaled
+    if not entries:
+      # Case 1: No intersecting forecast entries exist yet. 
+      # We just create an entry for the given start and end date
+      # Note: if the calendar values are updated later on, such changes are
+      # obviously not reflected any more in the forecast entries.
+      self.entries.create(startdate=startdate,enddate=enddate,quantity=str(quantity)).save()
+    else:
+      # Case 2: Entries already exist in this daterange, which will be rescaled
       # Case 1, step 1: calculate current quantity and "clip" the existing entries
       # if required.
       current = 0
@@ -701,47 +704,6 @@ class Forecast(AuditModel):
           i.quantity *= factor
           i.quantity = str(i.quantity)
           i.save()
-    else:
-      # Case 2: No intersecting forecast entries exist yet. We use the
-      # calendar buckets to create a new set of forecast entries, respecting
-      # the weight of each bucket.
-      # Note: if the calendar values are updated later on, such changes are
-      # obviously not reflected any more in the forecast entries.
-      cal = self.calendar
-      if cal:
-        entries = cal.buckets.filter(enddate__gt=startdate).filter(startdate__lte=enddate)
-      if entries:
-        # Case 2a: We found calendar buckets
-        # Case 2a, step 1: compute total sum of weight values
-        weights = 0
-        for i in entries:
-          p = min(i.enddate.date(),enddate) - max(i.startdate.date(),startdate)
-          q = i.enddate.date() - i.startdate.date()
-          weights +=  i.value * (p.days+86400*p.seconds) / (q.days+86400*q.seconds)
-        # Case 2a, step 2: create a forecast entry for each calendar bucket
-        remainder = Decimal(0)
-        if weights == 0:
-          # No non-zero weight buckets found: the update is infeasible
-          return
-        for i in entries:
-          p = min(i.enddate.date(),enddate) - max(i.startdate.date(),startdate)
-          q = i.enddate.date() - i.startdate.date()
-          q = Decimal(quantity * i.value * (p.days+86400*p.seconds) / (q.days+86400*q.seconds) / weights)
-          if self.discrete:
-            q += remainder
-            k = q.to_integral()
-            remainder = q - k
-            q = k
-          if q > 0:
-            self.entries.create( \
-              startdate=max(i.startdate.date(),startdate),
-              enddate=min(i.enddate.date(),enddate),
-              quantity=str(q),
-              ).save()
-      else:
-        # Case 2b: No calendar buckets found at all
-        # Create a new entry for the daterange
-        self.entries.create(startdate=startdate,enddate=enddate,quantity=str(quantity)).save()
 
   class Meta(AuditModel.Meta):
     db_table = 'forecast'

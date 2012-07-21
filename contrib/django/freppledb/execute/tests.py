@@ -65,15 +65,16 @@ class execute_from_user_interface(TransactionTestCase):
     self.assertRedirects(response, '/execute/execute.html#plan')
 
     # Count the output records
-    self.assertEqual(output.models.Problem.objects.count(),27)
-    self.assertEqual(output.models.FlowPlan.objects.count(),211)
-    self.assertEqual(output.models.LoadPlan.objects.count(),51)
-    self.assertEqual(output.models.OperationPlan.objects.count(),128)
+    self.assertEqual(output.models.Problem.objects.count(),22)
+    self.assertEqual(output.models.FlowPlan.objects.count(),207)
+    self.assertEqual(output.models.LoadPlan.objects.count(),50)
+    self.assertEqual(output.models.OperationPlan.objects.count(),126)
 
 
 class execute_with_commands(TransactionTestCase):
 
   def setUp(self):
+    # Make sure the test database is used
     os.environ['FREPPLE_TEST'] = "YES"
 
   def tearDown(self):
@@ -95,12 +96,12 @@ class execute_with_commands(TransactionTestCase):
     self.assertNotEqual(input.models.Calendar.objects.count(),0)
     self.assertNotEqual(input.models.Demand.objects.count(),0)
 
-    # Run frePPLe, and make sure the test database is used
+    # Run frePPLe on the test database
     management.call_command('frepple_run', plantype=1, constraint=15, nonfatal=True)
-    self.assertEqual(output.models.Problem.objects.count(),194)
-    self.assertEqual(output.models.FlowPlan.objects.count(),795)
-    self.assertEqual(output.models.LoadPlan.objects.count(),84)
-    self.assertEqual(output.models.OperationPlan.objects.count(),413)
+    self.assertEqual(output.models.Problem.objects.count(),193)
+    self.assertEqual(output.models.FlowPlan.objects.count(),540)
+    self.assertEqual(output.models.LoadPlan.objects.count(),48)
+    self.assertEqual(output.models.OperationPlan.objects.count(),329)
 
 
 class execute_multidb(TransactionTestCase):

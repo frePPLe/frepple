@@ -518,7 +518,9 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
   if (hasUnavailability)
   {
     unavailableIterator = Calendar::EventIterator(res->getLocation()->getAvailable(), cur_date);
-    prev_value = unavailableIterator.getBucket()->getBool();
+    prev_value = unavailableIterator.getBucket() ? 
+      unavailableIterator.getBucket()->getBool() : 
+      res->getLocation()->getAvailable()->getDefault()!=0;
   }
 
   // Advance loadplan iterator just beyond the starting date
@@ -568,7 +570,9 @@ void Resource::PlanIterator::update(Date till)
       }
       else
         bucket_unavailable += cur_size * timedelta;
-      prev_value = unavailableIterator.getBucket()->getBool();
+      prev_value = unavailableIterator.getBucket() ? 
+        unavailableIterator.getBucket()->getBool() : 
+        res->getLocation()->getAvailable()->getDefault()!=0;
       prev_date = unavailableIterator.getDate();
       ++unavailableIterator;
     }

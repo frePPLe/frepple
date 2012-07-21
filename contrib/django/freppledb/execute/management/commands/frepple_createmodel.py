@@ -248,7 +248,7 @@ class Command(BaseCommand):
              location = comploc,
              category = 'Procured',
              item = it,
-             type = 'buffer_procure',
+             type = 'procure',
              min_inventory = 20,
              max_inventory = 100,
              size_multiple = 10,

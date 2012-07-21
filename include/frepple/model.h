@@ -1130,10 +1130,10 @@ class Location : public HasHierarchy<Location>, public HasDescription
       * The availability calendar models the working hours and holidays. It
       * applies to all operations, resources and buffers using this location.
       */
-    Calendar *getAvailable() const {return available;}
+    CalendarDouble *getAvailable() const {return available;}
 
     /** Updates the availability calendar of the location. */
-    void setAvailable(Calendar* b) {available = b;}
+    void setAvailable(CalendarDouble* b) {available = b;}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
@@ -1150,7 +1150,7 @@ class Location : public HasHierarchy<Location>, public HasDescription
     /** The availability calendar models the working hours and holidays. It
       * applies to all operations, resources and buffers using this location.
       */
-    Calendar* available;
+    CalendarDouble* available;
 };
 
 

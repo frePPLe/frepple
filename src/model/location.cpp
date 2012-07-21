@@ -89,7 +89,7 @@ DECLARE_EXPORT void Location::endElement(XMLInput& pIn, const Attribute& pAttr, 
 {
   if (pAttr.isA(Tags::tag_available))
   {
-    Calendar *cal = dynamic_cast<Calendar*>(pIn.getPreviousObject());
+    CalendarDouble *cal = dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
     if (cal)
       setAvailable(cal);
     else
@@ -172,7 +172,12 @@ DECLARE_EXPORT int Location::setattro(const Attribute& attr, const PythonObject&
   }
   else if (attr.isA(Tags::tag_available))
   {
-    Calendar* y = static_cast<Calendar*>(static_cast<PyObject*>(field));
+    if (!field.check(CalendarDouble::metadata))
+    {
+      PyErr_SetString(PythonDataException, "location availability must be of type double calendar");
+      return -1;
+    }
+    CalendarDouble* y = static_cast<CalendarDouble*>(static_cast<PyObject*>(field));
     setAvailable(y);
   }
   else if (attr.isA(Tags::tag_hidden))

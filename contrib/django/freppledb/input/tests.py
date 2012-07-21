@@ -91,7 +91,7 @@ class DataLoadTest(TestCase):
 
   def test_csv_upload(self):
     self.assertEqual(
-      [(i.name, i.category) for i in Location.objects.all()],
+      [(i.name, i.category or u'') for i in Location.objects.all()],
       [(u'factory 1',u''), (u'factory 2',u'')]
       )
     try:
@@ -105,6 +105,6 @@ class DataLoadTest(TestCase):
     finally:
       data.close()
     self.assertEqual(
-      [(i.name, i.category) for i in Location.objects.order_by('name')],
+      [(i.name, i.category or u'') for i in Location.objects.order_by('name')],
       [(u'factory 1',u''), (u'factory 2',u''), (u'factory 3',u'cat1'), (u'factory 4',u'')]
       )

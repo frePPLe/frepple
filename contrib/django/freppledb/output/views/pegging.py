@@ -172,7 +172,11 @@ def GraphData(request, entity):
     if max == None or i['enddate'] > max: max = i['enddate']
     if min == None or i['due'] and i['due'] < min: min = i['due']
     if max == None or i['due'] and i['due'] > max: max = i['due']
-
+  
+  # Assure min and max are always set
+  if not min: min = current
+  if not max: max = current + timedelta(7) 
+  
   # Add a line to mark the current date
   if min <= current and max >= current:
     todayline = current

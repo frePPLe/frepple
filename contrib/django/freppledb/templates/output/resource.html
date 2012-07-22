@@ -3,57 +3,6 @@
 
 {% block extrahead %}{{block.super}} 
 {% if args.0 %}<script type="text/javascript" src="{{STATIC_URL}}FusionCharts.js"></script>{% endif %}
-<script type="text/javascript">
-
-var units = {{units}};
-
-function getDirtyData()
-{
-  var changes = [];
-  $(".dirty-cell").each( function() {
-    var curCol = jQuery.jgrid.getCellIndex($(this).closest("td,th"));
-    var curRow = $(this).closest("tr").attr('id');
-    var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[curCol];
-    var value = $(this).data('old');
-    if (value != 0)
-      value = parseFloat($(this).val()) * (1 + $(this).data('unavailable') / value) / units;
-    else
-      value = parseFloat($(this).val()) / units;
-    changes.push({'id': curRow, 
-      'startdate': colmodel['startdate'], 
-      'enddate': colmodel['enddate'], 
-      'value': value
-      });    
-    });
-  return changes;
-}
-  
-function onChange(event, old, unavailable)
-{
-  $(event.target).addClass('dirty-cell').data('old',old).data('unavailable',unavailable);
-  upload.select();
-  /*
-  // Update the utilization percentage immediately  TODO
-  var el = $(event.target).find('span')[0];
-  var unavailable = parseFloat($(el).html());
-  el = $(el).find('span')[0];
-  var a = $(el).find('a')[0];
-  if (a == undefined)
-    var u = parseFloat($(el).html());
-  else
-    var u = parseFloat($(a).html());
-  u /= parseFloat($(Input).val());
-  if (isNaN(u) == true) u = 0.0;
-  else u = u * 100;      
-  el = $(el).find('span')[0];
-  $(el).html(u.round());
-  if (u < 95)
-    $(el).removeClass('highutil');
-  else
-    $(el).addClass('highutil');
-  */
-  }
-</script>
 {% endblock %}
 
 {% block contextmenus %}
@@ -88,11 +37,7 @@ function onChange(event, old, unavailable)
 
 {% block crosses %}
 function crosses (cellvalue, options, rowdata) {
-{% if perms.input.change_resource %}
-  var result = '<input type="text" class="smallpadding" value="' + cellvalue[0] + '" size="5" onchange="onChange(event,' + cellvalue[0] + ',' + cellvalue[1] + ')" onclick="$(this).select();"/><br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
-{% else %}
   var result = cellvalue[0] + '<br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
-{% endif %}
   if (cellvalue[3] != 0.0)
     result += cellvalue[3] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail'></span><br/>";
   else

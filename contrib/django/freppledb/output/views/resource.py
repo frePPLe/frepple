@@ -47,7 +47,7 @@ class OverviewReport(GridPivot):
   title = _('Resource report')
   basequeryset = Resource.objects.all()
   model = Resource
-  editable = True
+  editable = False
   rows = (
     GridFieldText('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
     GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
@@ -63,45 +63,7 @@ class OverviewReport(GridPivot):
   @classmethod 
   def extra_context(reportclass, request):
     return {'units' : reportclass.getUnits()}
-  
-  @classmethod
-  def parseJSONupload(reportclass, request): 
-    # Check permissions
-    if not request.user.has_perm('input.change_resource'):
-      return HttpResponseForbidden(_('Permission denied'))
 
-    # Loop over the data records 
-    transaction.enter_transaction_management(using=request.database)
-    transaction.managed(True, using=request.database)
-    resp = HttpResponse()
-    ok = True
-    try:          
-      for rec in simplejson.JSONDecoder().decode(request.read()):
-        try:
-          # Find the resource
-          res = Resource.objects.using(request.database).get(name = rec['id'])
-          if not res.maximum_calendar:
-            ok = False
-            resp.write("%s: %s<br/>" % (escape(rec['id']), _('Resource has no maximum calendar')))
-            continue
-          # Update the calendar
-          start = datetime.strptime(rec['startdate'],'%Y-%m-%d')
-          end = datetime.strptime(rec['enddate'],'%Y-%m-%d')
-          res.maximum_calendar.setvalue(
-            start,
-            end,
-            float(rec['value']) / (end - start).days,
-            user = request.user)            
-        except Exception as e:
-          ok = False
-          resp.write(e)
-          resp.write('<br/>')                          
-    finally:
-      transaction.commit(using=request.database)
-      transaction.leave_transaction_management(using=request.database)
-    if ok: resp.write("OK")
-    resp.status_code = ok and 200 or 403
-    return resp
   
   @classmethod
   def getUnits(reportclass):    

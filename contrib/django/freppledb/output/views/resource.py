@@ -108,13 +108,13 @@ class OverviewReport(GridPivot):
     try:
       units = Parameter.objects.using(request.database).get(name="loading_time_units")
       if units.value == 'hours':
-        return 24.0
-      elif units.value == 'weeks':
-        return 1.0 / 7.0
-      else:
         return 1.0
+      elif units.value == 'weeks':
+        return 1.0 / 168.0
+      else:
+        return 1.0 / 24.0
     except:
-      return 1.0
+      return 1.0 / 24.0
     
       
   @staticmethod
@@ -123,95 +123,60 @@ class OverviewReport(GridPivot):
         
     # Get the time units
     units = OverviewReport.getUnits()
+        
+    # Assure the item hierarchy is up to date
+    Resource.rebuildHierarchy(database=basequery.db)
     
     # Execute the query
     # TODO available field takes the whole bucket.  Load field only considers the dates that are in the reporting interval - could be part of a bucket
     cursor = connections[request.database].cursor()
     query = '''
-       select x.name as row1, x.location_id as row2, 
-             x.maximum_calendar_id as maximum_calendar_id,
-             x.bucket as col1, x.startdate as col2, x.enddate as col3,
-             min(x.real_available) * %f, 
-             (min(x.total_available) - min(x.real_available)) * %f as unavailable,
-             coalesce(sum(loaddata.quantity * %f * %s ), 0) as loading,
-             0 * %f as setup
-       from (
-         select res.name as name, res.location_id as location_id, 
-               res.maximum_calendar_id as maximum_calendar_id,
-               d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-               coalesce(sum(coalesce(calendarbucket.value,res.maximum) * %s),0) as total_available,
-               coalesce(sum(coalesce(calendarbucket.value,res.maximum) * %s * coalesce(bucket2.value,1)),0) as real_available
-         from (%s) res
-         -- Multiply with buckets
-         cross join (
-             select name as bucket, startdate, enddate
-             from common_bucketdetail
-             where bucket_id = '%s' and enddate > '%s' and startdate <= '%s'
-             ) d
-         -- Available capacity
-         left join calendarbucket
-         on res.maximum_calendar_id = calendarbucket.calendar_id
-         and d.startdate <= calendarbucket.enddate
-         and d.enddate >= calendarbucket.startdate
-         -- Unavailable capacity
-         left join location on res.location_id = location.name
-         left join calendar on location.available_id = calendar.name
-         left join calendarbucket bucket2 on calendar.name = bucket2.calendar_id
-         and d.startdate <= bucket2.enddate
-         and d.enddate >= bucket2.startdate
-         -- Grouping
-         group by res.name, res.location_id, res.maximum_calendar_id, d.bucket, d.startdate, d.enddate
-       ) x
-       -- Load data
-       left join (
-         select theresource as resource_id, 
-           out_loadplan.startdate as start1, out_loadplan.enddate as end1, 
-           calendarbucket.startdate as start2, calendarbucket.enddate as end2,
-           out_loadplan.quantity as quantity
-         from out_loadplan
-         inner join (%s) res2
-         on out_loadplan.theresource = res2.name
-         and out_loadplan.startdate > '%s' and out_loadplan.enddate < '%s'
-         -- Unavailable capacity
-         inner join out_operationplan on out_loadplan.operationplan_id = out_operationplan.id
-         inner join operation on out_operationplan.operation = operation.name
-         left join location on operation.location_id = location.name
-         left join calendar on location.available_id = calendar.name
-         left join calendarbucket on calendar.name = calendarbucket.calendar_id
-         and out_loadplan.startdate <= calendarbucket.enddate
-         and out_loadplan.enddate >= calendarbucket.startdate
-         and calendarbucket.value > 0
-         ) loaddata
-       on x.name = loaddata.resource_id
-       and x.startdate <= loaddata.end1
-       and x.enddate >= loaddata.start1
-       -- Grouping and ordering
-       group by x.name, x.location_id, x.maximum_calendar_id, x.bucket, x.startdate, x.enddate
-       order by %s, x.startdate
-       ''' % ( units, units, units, 
-         sql_overlap3('loaddata.start1','loaddata.end1','x.startdate','x.enddate','loaddata.start2','loaddata.end2'),
-         units, 
-         sql_overlap3('calendarbucket.startdate','calendarbucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
-         sql_overlap3('calendarbucket.startdate','calendarbucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
-         basesql,bucket,startdate,enddate,basesql,
-         startdate,enddate,sortsql)
-    cursor.execute(query, baseparams + baseparams)
+      select res.name as row1, res.location_id as row2,
+                   d.bucket as col1, d.startdate as col2,
+                   coalesce(sum(out_resourceplan.available),0) * %f as available, 
+                   coalesce(sum(out_resourceplan.unavailable),0) * %f as unavailable,
+                   coalesce(sum(out_resourceplan.load),0) * %f as loading,
+                   coalesce(sum(out_resourceplan.setup),0) * %f as setup
+      from (%s) res
+      -- Multiply with buckets
+      cross join (
+                   select name as bucket, startdate, enddate
+                   from common_bucketdetail
+                   where bucket_id = '%s' and enddate > '%s' and startdate <= '%s'
+                   ) d
+      -- Include child buffers
+      inner join resource
+      on resource.lft between res.lft and res.rght
+      -- Utilization info
+      left join out_resourceplan
+      on resource.name = out_resourceplan.theresource
+      and d.startdate <= out_resourceplan.startdate
+      and d.enddate > out_resourceplan.startdate
+      and out_resourceplan.startdate >= '%s'
+      and out_resourceplan.startdate < '%s'
+      -- Grouping and sorting
+      group by res.name, res.location_id, d.bucket, d.startdate
+      order by %s, d.startdate    
+      ''' % ( units, units, units, units,
+        basesql, bucket, startdate, enddate,
+        startdate, enddate, sortsql
+       )
+    print query
+    cursor.execute(query, baseparams)
     
     # Build the python result
     for row in cursor.fetchall():
-      if row[6] != 0: util = row[8] * 100 / row[6]
+      if row[4] != 0: util = row[6] * 100 / row[4]
       else: util = 0
       yield {
         'resource': row[0],
         'location': row[1],
-        'maximum_calendar_id': row[2],
-        'bucket': row[3],
-        'startdate': python_date(row[4]),
-        'enddate': python_date(row[5]),
-        'available': round(row[6],1),
-        'unavailable': round(row[7],1),
-        'load': round(row[8],1),
-        'setup': round(row[9],1),
+        'bucket': row[2],
+        'startdate': python_date(row[3]),
+        'available': round(row[4],1),
+        'unavailable': round(row[5],1),
+        'load': round(row[6],1),
+        'setup': round(row[7],1),
         'utilization': round(util,2),
         }
 

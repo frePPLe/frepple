@@ -161,7 +161,6 @@ class OverviewReport(GridPivot):
         basesql, bucket, startdate, enddate,
         startdate, enddate, sortsql
        )
-    print query
     cursor.execute(query, baseparams)
     
     # Build the python result

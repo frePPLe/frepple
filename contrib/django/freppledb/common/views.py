@@ -33,12 +33,14 @@ from django import forms
 from django.forms.models import modelformset_factory
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
+from django.utils.text import capfirst
 from django.contrib.auth.models import User, Group
 from django.contrib.admin.models import LogEntry
 from django.contrib.syndication.views import Feed
 from django.utils import translation
 from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
+
 
 from freppledb.common.models import Preferences, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
@@ -242,9 +244,10 @@ def Comments(request, app, model, object_id):
     return HttpResponseRedirect('%s/comments/%s/%s/%s/' % (request.prefix,app, model, object_id))
   else:       
     return render_to_response('common/comments.html', { 
-      'title': _('Comments: %(object_id)s') % {'object_id': object_id},
+      'title': capfirst(force_unicode(modelinstance._meta.verbose_name) + " " + object_id),
       'model': model,
       'object_id': object_id,
+      'active_tab': 'comments',
       'comments': comments
       },
       context_instance=RequestContext(request))   

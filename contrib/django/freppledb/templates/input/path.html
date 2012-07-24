@@ -1,7 +1,7 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|escape}}</h1>{% endif %}
+{% block content_title %}<div>{% block tools %}{% endblock %}<h1 style="float:left">{{title|escape}}: {% if downstream %}{% trans "Where Used"|capfirst|escape %}{% else %}{% trans "Supply Path"|capfirst|escape %}{% endif %}</h1>
 {% if model == 'bucket' %}{% include "buckettabs.html" %}
 {% elif model == 'buffer' %}{% include "buffertabs.html" %}
 {% elif model == 'calendar' %}{% include "calendartabs.html" %}

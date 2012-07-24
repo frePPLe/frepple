@@ -8,7 +8,7 @@
 </script>
 {% endblock %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|escape}}</h1>{% endif %}
+{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|capfirst|escape}}: {% trans 'comments'|capfirst|escape %}</h1>{% endif %}
 {% if model == 'bucket' %}{% include "buckettabs.html" %}
 {% elif model == 'buffer' %}{% include "buffertabs.html" %}
 {% elif model == 'calendar' %}{% include "calendartabs.html" %}

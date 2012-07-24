@@ -165,9 +165,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       content_type__id__exact = ContentType.objects.get_for_model(model).id
     ).select_related().order_by('action_time')
     # If no history was found, see whether this object even exists.
-    obj = get_object_or_404(model.objects.using(request.database), pk=unquote(object_id))
+    obj = get_object_or_404(model.objects.using(request.database), pk=unquote(object_id)) 
     context = {
-      'title': _('Change history: %s') % force_unicode(obj),
+      'title': capfirst(force_unicode(opts.verbose_name) + " " + object_id),      
       'action_list': action_list,
       'module_name': capfirst(force_unicode(opts.verbose_name_plural)),
       'object': obj,
@@ -263,6 +263,15 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       # Redirect to previous crumb
       return HttpResponseRedirect(request.session['crumbs'][request.prefix][-2][2])
 
+
+  @csrf_protect_m
+  @transaction.commit_on_success
+  def change_view(self, request, object_id, form_url='', extra_context=None):
+    new_extra_context = extra_context or {}
+    new_extra_context['title'] = capfirst(force_unicode(self.model._meta.verbose_name) + ' ' + object_id)
+    return super(MultiDBModelAdmin, self).change_view(request, object_id, form_url, new_extra_context) 
+  
+  
   @csrf_protect_m
   @transaction.commit_on_success
   def delete_view(self, request, object_id, extra_context=None):

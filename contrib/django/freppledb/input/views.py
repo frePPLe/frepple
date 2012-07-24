@@ -32,8 +32,9 @@ from django.utils import simplejson
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ungettext 
+from django.utils.translation import ungettext
 from django.utils.encoding import iri_to_uri, force_unicode
+from django.utils.text import capfirst
 
 from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow
@@ -268,7 +269,7 @@ class pathreport:
   @staff_member_required
   def viewdownstream(request, model, object_id):
     return render_to_response('input/path.html', RequestContext(request,{
-       'title': _('Where-used report for %(type)s %(entity)s') % {'type':_(model), 'entity':object_id},
+       'title': capfirst(force_unicode(_(model)) + " " + object_id),
        'supplypath': pathreport.getPath(request, model, object_id, True),
        'model': model,
        'object_id': object_id,
@@ -281,7 +282,7 @@ class pathreport:
   @staff_member_required
   def viewupstream(request, model, object_id):
     return render_to_response('input/path.html', RequestContext(request,{
-       'title': _('Supply path report for %(type)s %(entity)s') % {'type':_(model), 'entity':object_id},
+       'title': capfirst(force_unicode(_(model)) + " " + object_id),
        'supplypath': pathreport.getPath(request, model, object_id, False),
        'model': model,
        'object_id': object_id,

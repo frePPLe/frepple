@@ -25,6 +25,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.conf import settings
+from django.utils.text import capfirst
+from django.utils.encoding import force_unicode
 
 from freppledb.input.models import Buffer
 from freppledb.output.models import FlowPlan
@@ -45,6 +47,7 @@ class OverviewReport(GridPivot):
     GridFieldText('buffer', title=_('buffer'), key=True, field_name='name', formatter='buffer', editable=False),
     GridFieldText('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
     GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
+    # xxx GridFieldText('', extra='formatter:graph', editable=False),
     )
   crosses = (
     ('startoh', {'title': _('start inventory'),}),
@@ -53,6 +56,16 @@ class OverviewReport(GridPivot):
     ('endoh', {'title': _('end inventory'),}),
     )
 
+  @classmethod 
+  def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      return {
+        'title': capfirst(force_unicode(Buffer._meta.verbose_name) + " " + args[0]),
+        'post_title': ': ' + capfirst(force_unicode(_('plan'))),
+        }      
+    else:
+      return {}
+    
   @staticmethod
   def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     cursor = connections[request.database].cursor()

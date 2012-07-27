@@ -13,7 +13,7 @@ $(function(){
    	colModel:[{% if is_popup %}
       {name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false},
       {% endif %}{% for f in reportclass.rows %}{% if not forloop.first %},
-   	  {% endif %}{ {{f|safe}}{% if forloop.counter <= reportclass.frozenColumns %}frozen:true,{% endif %}{% if is_popup %}popup:true{% endif %} }{% endfor %}   	  
+   	  {% endif %}{ {{f|safe}}{% if forloop.counter <= reportclass.frozenColumns %},frozen:true{% endif %}{% if is_popup %},popup:true{% endif %} }{% endfor %}   	  
    	  ],
    	rowNum: {{request.pagesize}},{% if is_popup %}
     onSelectRow: setSelectedRow,{% elif reportclass.editable and haschangeperm %}

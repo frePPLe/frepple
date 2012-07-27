@@ -130,7 +130,8 @@ class OverviewReport(GridPivot):
       left join (
                 select 
                   theresource, 
-                  coalesce(sum(out_resourceplan.load),0) / coalesce(sum(out_resourceplan.available),1) * 100 as avg_util
+                  ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) ) 
+                    / coalesce(sum(out_resourceplan.available),1) * 100 as avg_util
                 from out_resourceplan
                 where out_resourceplan.startdate >= '%s'
                 and out_resourceplan.startdate < '%s'
@@ -199,14 +200,15 @@ def GraphData(request, entity):
   unavailable = []
   setup = []
   for x in OverviewReport.query(request, basequery, bucket, start, end):
-    if x['available'] > x['load']:
-      free.append(x['available'] - x['load'])
+    delta = x['available'] - x['load'] - x['setup']
+    if delta > 0:
+      free.append(delta)
       overload.append(0)
       load.append(x['load'])
     else:
-      load.append(x['available'])
+      load.append(x['available'] - x['setup'])
       free.append(0)
-      overload.append(x['load'] - x['available'])
+      overload.append(-delta)
     unavailable.append(x['unavailable'])
     setup.append(x['setup'])
   # Get the time units

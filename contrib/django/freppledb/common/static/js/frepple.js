@@ -49,11 +49,11 @@ var upload = {
               .dialog({
                 title: gettext("Error saving data"),
                 autoOpen: true,
-                resizable: false,
+                resizable: false
               });
               $('#timebuckets').dialog('close');  
             $.jgrid.hideModal("#searchmodfbox_grid");
-            },
+            }
         });        
   }
 }
@@ -84,8 +84,12 @@ function setSelectedRow(id) {
 function linkunformat (cellvalue, options, cell) {
 	  return cellvalue;
 	}
-
+	 
 jQuery.extend($.fn.fmatter, {
+  percentage : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
+    return cellvalue + "%";
+  },
   item : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
@@ -160,7 +164,12 @@ jQuery.extend($.fn.fmatter, {
     if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='bucket'></span>";
-  },
+  }
+});
+jQuery.extend($.fn.fmatter.percentage, {
+    unformat : function(cellvalue, options, cell) {
+      return cellvalue;
+      }
 });
 jQuery.extend($.fn.fmatter.item, {
     unformat : linkunformat
@@ -437,7 +446,7 @@ function import_show(url)
       buttons: [
         {
           text: gettext("Import"),
-          click: function() { $("#uploadform").submit(); },
+          click: function() { $("#uploadform").submit(); }
         },
         {
           text: gettext("Cancel"),
@@ -472,7 +481,7 @@ function filter_show()
     onReset : function() {
       if (initialfilter != '') $('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_grid").jqFilter('toSQLString'));
       else $('#curfilter').html("");
-      },
+      }
     });
 }
 
@@ -495,7 +504,7 @@ function export_show(only_list)
       buttons: [
         {
           text: gettext("Export"),
-          click: function() { export_close(); },
+          click: function() { export_close(); }
         },
         {
           text: gettext("Cancel"),
@@ -584,7 +593,7 @@ function bucket_show()
         	else
         	  // Fetch the new report. This also hides the popup again.
         	  location.href = location.pathname + "?" + $.param(args);
-         },
+         }
        },
        {
          text: gettext("Cancel"),

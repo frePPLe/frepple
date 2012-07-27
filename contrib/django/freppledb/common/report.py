@@ -81,21 +81,23 @@ class GridField(object):
     for key in kwargs:
       setattr(self, key, kwargs[key])
     if 'key' in kwargs: self.editable = False
-    if not 'title' in kwargs: self.title = _(self.name)
+    if not 'title' in kwargs: 
+      self.title = self.name and _(self.name) or ''
+    if not self.name: self.sortable = False
     if not 'field_name' in kwargs: self.field_name = self.name
 
   def __unicode__(self):
-    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%d,align:'%s'," % 
-          (self.name, self.name, self.editable and "true" or "false", 
+    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%d,align:'%s'" % 
+          (self.name or '', self.name or '', self.editable and "true" or "false", 
            force_unicode(self.title).title().replace("'","\\'"), 
            self.width, self.align
            ), ]
-    if self.key: o.append( "key:true," )
-    if not self.sortable: o.append("sortable:false,")
-    if self.formatter: o.append("formatter:'%s'," % self.formatter)
-    if self.unformat: o.append("unformat:'%s'," % self.unformat)
-    if self.searchrules: o.append("searchrules:{%s}," % self.searchrules)
-    if self.extra: o.append("%s," % force_unicode(self.extra))
+    if self.key: o.append( ",key:true" )
+    if not self.sortable: o.append(",sortable:false")
+    if self.formatter: o.append(",formatter:'%s'" % self.formatter)
+    if self.unformat: o.append(",unformat:'%s'" % self.unformat)
+    if self.searchrules: o.append(",searchrules:{%s}" % self.searchrules)
+    if self.extra: o.append(",%s" % force_unicode(self.extra))
     return ''.join(o)
 
   name = None
@@ -289,7 +291,7 @@ class GridReport(View):
   
   # Extra variables added to the report template
   @classmethod
-  def extra_context(reportclass, request):
+  def extra_context(reportclass, request, *args, **kwargs):
     return {}
   
   @method_decorator(staff_member_required)
@@ -325,7 +327,7 @@ class GridReport(View):
     sf.write(getBOM(encoding))
       
     # Write a header row
-    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows ]
+    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.title ]
     writer.writerow(fields)
     yield sf.getvalue()
 
@@ -335,15 +337,15 @@ class GridReport(View):
     else:
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
         
-    fields = [ i.field_name for i in reportclass.rows ]
+    fields = [ i.field_name for i in reportclass.rows if i.field_name ]
     for row in hasattr(reportclass,'query') and reportclass.query(request,query) or query.values(*fields):
       # Clear the return string buffer
       sf.truncate(0)
       # Build the return value, encoding all output
       if hasattr(row, "__getitem__"):
-        fields = [ row[f.field_name]==None and ' ' or unicode(_localize(row[f.field_name])).encode(encoding,"ignore") for f in reportclass.rows ]
+        fields = [ row[f.field_name]==None and ' ' or unicode(_localize(row[f.field_name])).encode(encoding,"ignore") for f in reportclass.rows if f.name ]
       else:
-        fields = [ getattr(row,f.field_name)==None and ' ' or unicode(_localize(getattr(row,f.field_name))).encode(encoding,"ignore") for f in reportclass.rows ]
+        fields = [ getattr(row,f.field_name)==None and ' ' or unicode(_localize(getattr(row,f.field_name))).encode(encoding,"ignore") for f in reportclass.rows if f.name ]
       # Return string
       writer.writerow(fields)
       yield sf.getvalue()
@@ -422,7 +424,7 @@ class GridReport(View):
     #yield ']}\n'
 
     # GridReport
-    fields = [ i.field_name for i in reportclass.rows ]
+    fields = [ i.field_name for i in reportclass.rows if i.field_name ]
     #if False: # TREEGRID
     #  fields.append('level')
     #  fields.append('lft')
@@ -437,6 +439,7 @@ class GridReport(View):
         r = [ ',\n{' ]
       first2 = True
       for f in reportclass.rows:
+        if not f.name: continue
         s = isinstance(i[f.field_name], basestring) and escape(i[f.field_name].encode(settings.DEFAULT_CHARSET,"ignore")) or i[f.field_name]
         if first2:
           # if isinstance(i[f.field_name], (list,tuple)): pegging report has a tuple of strings...
@@ -490,7 +493,7 @@ class GridReport(View):
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())),
         'active_tab': 'plan',
         }  
-      for k, v in reportclass.extra_context(request).iteritems():
+      for k, v in reportclass.extra_context(request, *args, **kwargs).iteritems():
         context[k] = v  
       return render(request, reportclass.template, context)
     elif fmt == 'json':
@@ -778,7 +781,7 @@ class GridReport(View):
     filters = ['{"groupOp":"AND","rules":[']
     for i,j in request.GET.iteritems():
       for r in reportclass.rows:
-        if i.startswith(r.field_name):
+        if r.field_name and i.startswith(r.field_name):
           operator = (i==r.field_name) and 'exact' or i[i.rfind('_')+1:]
           try: 
             filters.append('{"field":"%s","op":"%s","data":"%s"},' % (r.field_name, reportclass._filter_map_django_jqgrid[operator], j))
@@ -857,7 +860,7 @@ class GridReport(View):
     if plus_django_style:
       for i,j in request.GET.iteritems():
         for r in reportclass.rows:
-          if i.startswith(r.field_name):
+          if r.name and i.startswith(r.field_name):
             try: items = items.filter(**{i:j})
             except: pass # silently ignore invalid filters
     return items
@@ -947,13 +950,15 @@ class GridPivot(GridReport):
           r = [ '{' ] 
         currentkey = i[reportclass.rows[0].name]
         first2 = True
-        for f in reportclass.rows:          
-          s = isinstance(i[f.name], basestring) and escape(i[f.name].encode(settings.DEFAULT_CHARSET,"ignore")) or i[f.name]
-          if first2:
-            r.append('"%s":"%s"' % (f.name,s))
-            first2 = False
-          elif i[f.name] != None:
-            r.append(', "%s":"%s"' % (f.name,s))
+        for f in reportclass.rows:   
+          try:       
+            s = isinstance(i[f.name], basestring) and escape(i[f.name].encode(settings.DEFAULT_CHARSET,"ignore")) or i[f.name]
+            if first2:
+              r.append('"%s":"%s"' % (f.name,s))
+              first2 = False
+            elif i[f.name] != None:
+              r.append(', "%s":"%s"' % (f.name,s))
+          except: pass
       r.append(', "%s":[' % i['bucket'])
       first2 = True
       for f in reportclass.crosses:
@@ -996,7 +1001,7 @@ class GridPivot(GridReport):
     sf.write(getBOM(encoding))
 
     # Write a header row
-    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows ]
+    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.name ]
     if listformat:
       fields.extend([ capfirst(force_unicode(_('bucket'))).encode(encoding,"ignore") ])
       fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in reportclass.crosses ])
@@ -1037,7 +1042,7 @@ class GridPivot(GridReport):
           for cross in reportclass.crosses:
             # Clear the return string buffer
             sf.truncate(0)
-            fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows ]
+            fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name ]
             fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
             fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
             # Return string
@@ -1049,7 +1054,7 @@ class GridPivot(GridReport):
       for cross in reportclass.crosses:
         # Clear the return string buffer
         sf.truncate(0)
-        fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows ]
+        fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name ]
         fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
         fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
         # Return string

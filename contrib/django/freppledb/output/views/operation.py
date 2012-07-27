@@ -21,6 +21,8 @@
 
 from django.db import connections
 from django.utils.translation import ugettext_lazy as _
+from django.utils.text import capfirst
+from django.utils.encoding import force_unicode
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.template import RequestContext, loader
@@ -51,6 +53,16 @@ class OverviewReport(GridPivot):
     ('locked_end', {'title': _('locked ends'),}),
     ('total_end', {'title': _('total ends'),}),
     )
+
+  @classmethod 
+  def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      return {
+        'title': capfirst(force_unicode(Operation._meta.verbose_name) + " " + args[0]),
+        'post_title': ': ' + capfirst(force_unicode(_('plan'))),
+        }      
+    else:
+      return {}
 
   @staticmethod
   def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):

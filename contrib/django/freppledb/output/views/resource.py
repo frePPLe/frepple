@@ -23,8 +23,10 @@ from datetime import datetime
 
 from django.db import connections, transaction
 from django.utils import simplejson
-from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_unicode
 from django.utils.html import escape
+from django.utils.translation import ugettext_lazy as _
+from django.utils.text import capfirst
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.template import RequestContext, loader
@@ -34,7 +36,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from freppledb.input.models import Resource
 from freppledb.output.models import LoadPlan
 from freppledb.common.models import Parameter
-from freppledb.common.db import sql_overlap3, python_date
+from freppledb.common.db import python_date
 from freppledb.common.report import getBuckets, GridReport, GridPivot
 from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
@@ -51,6 +53,8 @@ class OverviewReport(GridPivot):
   rows = (
     GridFieldText('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
     GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
+    GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center'),
+    GridFieldText(None, width=50, extra='formatter:graph', editable=False),
     )
   crosses = (
     ('available',{'title': _('available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
@@ -59,12 +63,18 @@ class OverviewReport(GridPivot):
     ('load',{'title': _('load')}),
     ('utilization',{'title': _('utilization %'),}),
     )
-  
-  @classmethod 
-  def extra_context(reportclass, request):
-    return {'units' : reportclass.getUnits()}
 
-  
+  @classmethod 
+  def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      return {
+        'units': reportclass.getUnits(), 
+        'title': capfirst(force_unicode(Resource._meta.verbose_name) + " " + args[0]),
+        'post_title': ': ' + capfirst(force_unicode(_('plan'))),
+        }
+    else:
+      return {'units': reportclass.getUnits()}
+
   @classmethod
   def getUnits(reportclass):    
     try:
@@ -90,15 +100,15 @@ class OverviewReport(GridPivot):
     Resource.rebuildHierarchy(database=basequery.db)
     
     # Execute the query
-    # TODO available field takes the whole bucket.  Load field only considers the dates that are in the reporting interval - could be part of a bucket
     cursor = connections[request.database].cursor()
     query = '''
       select res.name as row1, res.location_id as row2,
-                   d.bucket as col1, d.startdate as col2,
-                   coalesce(sum(out_resourceplan.available),0) * %f as available, 
-                   coalesce(sum(out_resourceplan.unavailable),0) * %f as unavailable,
-                   coalesce(sum(out_resourceplan.load),0) * %f as loading,
-                   coalesce(sum(out_resourceplan.setup),0) * %f as setup
+             coalesce(max(plan_summary.avg_util),0) as avgutil,
+             d.bucket as col1, d.startdate as col2,                   
+             coalesce(sum(out_resourceplan.available),0) * %f as available, 
+             coalesce(sum(out_resourceplan.unavailable),0) * %f as unavailable,
+             coalesce(sum(out_resourceplan.load),0) * %f as loading,
+             coalesce(sum(out_resourceplan.setup),0) * %f as setup                   
       from (%s) res
       -- Multiply with buckets
       cross join (
@@ -116,28 +126,40 @@ class OverviewReport(GridPivot):
       and d.enddate > out_resourceplan.startdate
       and out_resourceplan.startdate >= '%s'
       and out_resourceplan.startdate < '%s'
+      -- Average utilization info
+      left join (
+                select 
+                  theresource, 
+                  coalesce(sum(out_resourceplan.load),0) / coalesce(sum(out_resourceplan.available),1) * 100 as avg_util
+                from out_resourceplan
+                where out_resourceplan.startdate >= '%s'
+                and out_resourceplan.startdate < '%s'
+                group by theresource
+                ) plan_summary
+      on resource.name = plan_summary.theresource
       -- Grouping and sorting
       group by res.name, res.location_id, d.bucket, d.startdate
       order by %s, d.startdate    
       ''' % ( units, units, units, units,
         basesql, bucket, startdate, enddate,
-        startdate, enddate, sortsql
+        startdate, enddate, startdate, enddate, sortsql
        )
     cursor.execute(query, baseparams)
     
     # Build the python result
     for row in cursor.fetchall():
-      if row[4] != 0: util = row[6] * 100 / row[4]
+      if row[5] != 0: util = row[7] * 100 / row[5]
       else: util = 0
       yield {
         'resource': row[0],
         'location': row[1],
-        'bucket': row[2],
-        'startdate': python_date(row[3]),
-        'available': round(row[4],1),
-        'unavailable': round(row[5],1),
-        'load': round(row[6],1),
-        'setup': round(row[7],1),
+        'avgutil': round(row[2],2),
+        'bucket': row[3],
+        'startdate': python_date(row[4]),
+        'available': round(row[5],1),
+        'unavailable': round(row[6],1),
+        'load': round(row[7],1),
+        'setup': round(row[8],1),
         'utilization': round(util,2),
         }
 

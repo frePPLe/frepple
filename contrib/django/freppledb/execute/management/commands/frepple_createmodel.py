@@ -21,7 +21,7 @@
 
 import random
 from optparse import make_option
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -133,8 +133,8 @@ class Command(BaseCommand):
     else: deliver_lt = 30
     if 'procure_lt' in options: procure_lt = int(options['procure_lt'] or '40')
     else: procure_lt = 40
-    if 'currentdate' in options: currentdate = options['currentdate'] or '2009-01-01'
-    else: currentdate = '2009-01-01'
+    if 'currentdate' in options: currentdate = options['currentdate'] or datetime.strftime(date.today(),'%Y-%m-%d')
+    else: currentdate = datetime.strftime(date.today(),'%Y-%m-%d')
     if 'nonfatal' in options: nonfatal = options['nonfatal']
     else: nonfatal = False
     if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
@@ -197,18 +197,10 @@ class Command(BaseCommand):
 
       # Working days calendar
       if verbosity>0: print "Creating working days..."
-      workingdays = Calendar.objects.using(database).create(name="Working Days")
+      workingdays = Calendar.objects.using(database).create(name="Working Days", defaultvalue=0)
       minmax = BucketDetail.objects.using(database).filter(bucket="week").aggregate(Min('startdate'),Max('startdate'))
-      curdate = minmax['startdate__min']
-      curdate = curdate - timedelta(curdate.weekday())  # Align on mondays
-      count = 0
-      while curdate < minmax['startdate__max']:
-        boundarydate = curdate + timedelta(5)
-        nextdate = curdate + timedelta(7)
-        CalendarBucket(startdate=curdate, enddate=boundarydate, value=1, calendar=workingdays, priority=count).save(using=database)
-        CalendarBucket(startdate=boundarydate, enddate=nextdate, value=0, calendar=workingdays, priority=count+1).save(using=database)
-        curdate = nextdate
-        count += 2
+      CalendarBucket(startdate=minmax['startdate__min'], enddate=minmax['startdate__max'], 
+          value=1, calendar=workingdays, priority=1, saturday=False, sunday=False).save(using=database)
       transaction.commit(using=database)
 
       # Create a random list of categories to choose from
@@ -312,7 +304,7 @@ class Command(BaseCommand):
           if k == 1 and res:
             # Create a resource load for operations on level 1
             oper = Operation.objects.using(database).create(name='Oper %05d L%02d' % (i,k),
-              type='operation_time_per',
+              type='time_per',
               location=loc,
               duration_per=86400,
               sizemultiple=1,

@@ -24,6 +24,8 @@ from datetime import datetime
 from django.db import connections, transaction
 from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
+from django.utils.text import capfirst
+from django.utils.encoding import force_unicode
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.template import RequestContext, loader
@@ -87,7 +89,16 @@ class OverviewReport(GridPivot):
     resp.status_code = ok and 200 or 403
     return resp            
             
-            
+  @classmethod 
+  def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      return {
+        'title': capfirst(force_unicode(Forecast._meta.verbose_name) + " " + args[0]),
+        'post_title': ': ' + capfirst(force_unicode(_('plan'))),
+        }      
+    else:
+      return {}
+                
   @staticmethod
   def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)

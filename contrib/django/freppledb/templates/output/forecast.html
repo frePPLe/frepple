@@ -3,26 +3,7 @@
 
 {% block extrahead %}{{block.super}} 
 {% if args.0 %}<script type="text/javascript" src="{{STATIC_URL}}FusionCharts.js"></script>{% endif %}
-<script type="text/javascript">
-
-function getDirtyData()
-{
-  var changes = [];
-  $(".dirty-cell").each( function() {
-    var curCol = jQuery.jgrid.getCellIndex($(this).closest("td,th"));
-    var curRow = $(this).closest("tr").attr('id');
-    var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[curCol];
-    changes.push({'id': curRow, 'startdate': colmodel['startdate'], 'enddate': colmodel['enddate'], 'value': $(this).val()});    
-    });    
-  return changes;
-}
-  
-function onChange(event) 
-{
-  $(event.target).addClass('dirty-cell');
-  upload.select();
-}
-</script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.sparkline.js"></script>
 {% endblock %}
 
 {% block contextmenus %}
@@ -56,6 +37,50 @@ function onChange(event)
 {% endif %}{% endblock %}
 
 {% block crosses %}
+function graph(cellvalue, options, rowdata) {
+    var str = ['<span class="sparkline"><!--'];
+    var cols = jQuery("#grid").jqGrid('getGridParam', 'colModel'); 
+    var first = true; 
+    for (var i in cols) {       
+       if ('startdate' in cols[i]) {
+          var data = rowdata[cols[i]['name']];
+          if (first) {
+            str.push(data[0]);
+            first = false;
+          }
+          else
+            str.push(',' + data[0]);
+       }       
+    }      
+    str.push('--></span>');     
+    return str.join('');
+ };
+
+function drawGraphs() {
+  $('.sparkline').sparkline('html', { 
+     type:'bar', disableHiddenCheck:true, chartRangeMin:0, 
+     barColor:'#2B95EC', width:'100px', height:'60px' 
+     });
+};  
+
+function getDirtyData()
+{
+  var changes = [];
+  $(".dirty-cell").each( function() {
+    var curCol = jQuery.jgrid.getCellIndex($(this).closest("td,th"));
+    var curRow = $(this).closest("tr").attr('id');
+    var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[curCol];
+    changes.push({'id': curRow, 'startdate': colmodel['startdate'], 'enddate': colmodel['enddate'], 'value': $(this).val()});    
+    });    
+  return changes;
+}
+  
+function onChange(event) 
+{
+  $(event.target).addClass('dirty-cell');
+  upload.select();
+}
+
 function crosses (cellvalue, options, rowdata) {
 {% if perms.input.change_forecastdemand %}
   var result = '<input type="text" class="smallpadding" value="' + Math.round(cellvalue[0]) + '" size="5" onchange="onChange(event)" onclick="$(this).select();"/><br/>' + Math.round(cellvalue[1]) + '<br/>' + Math.round(cellvalue[2]) + '<br/>';
@@ -70,3 +95,5 @@ function crosses (cellvalue, options, rowdata) {
 };
 {% endblock %}
 
+{% block extra_grid %}gridComplete: drawGraphs,
+{% endblock %}

@@ -54,7 +54,7 @@ class OverviewReport(GridPivot):
     GridFieldText('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
     GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
     GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center'),
-    GridFieldText(None, width=50, extra='formatter:graph', editable=False),
+    GridFieldText(None, width=100, extra='formatter:graph', editable=False),
     )
   crosses = (
     ('available',{'title': _('available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),

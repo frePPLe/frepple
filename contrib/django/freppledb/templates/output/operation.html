@@ -3,6 +3,7 @@
 
 {% block extrahead %}{{block.super}} 
 {% if args.0 %}<script type="text/javascript" src="{{STATIC_URL}}FusionCharts.js"></script>{% endif %}
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.sparkline.js"></script>
 {% endblock %}
 
 {% block contextmenus %}
@@ -48,6 +49,32 @@
 {% endif %}{% endblock %}
 
 {% block crosses %}
+function graph(cellvalue, options, rowdata) {
+    var str = ['<span class="sparkline"><!--'];
+    var cols = jQuery("#grid").jqGrid('getGridParam', 'colModel'); 
+    var first = true; 
+    for (var i in cols) {       
+       if ('startdate' in cols[i]) {
+          var data = rowdata[cols[i]['name']];
+          if (first) {
+            str.push(data[1]);
+            first = false;
+          }
+          else
+            str.push(',' + data[1]);
+       }       
+    }      
+    str.push('--></span>');     
+    return str.join('');
+ };
+
+function drawGraphs() {
+  $('.sparkline').sparkline('html', { 
+     type:'bar', disableHiddenCheck:true,  
+     barColor:'#2B95EC', width:'100px', height:'60px' 
+     });
+};  
+
 function crosses (cellvalue, options, rowdata) {
   if (cellvalue[0] != 0.0)
     var result = cellvalue[0] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail0'></span><br/>";
@@ -69,3 +96,5 @@ function crosses (cellvalue, options, rowdata) {
 };
 {% endblock %}
 
+{% block extra_grid %}gridComplete: drawGraphs,
+{% endblock %}

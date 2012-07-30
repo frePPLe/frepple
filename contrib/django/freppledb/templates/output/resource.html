@@ -39,7 +39,7 @@
 {% block crosses %}
 
 function graph(cellvalue, options, rowdata) {
-    var str = '<span class="sparkline"><!--';
+    var str = ['<span class="sparkline"><!--'];
     var cols = jQuery("#grid").jqGrid('getGridParam', 'colModel'); 
     var first = true; 
     for (var i in cols) {       
@@ -56,18 +56,19 @@ function graph(cellvalue, options, rowdata) {
             overload = -Math.round(delta*10)/10;
           }
           if (first) {
-            str += data[1] + ':' + data[2] + ':' + load + ':' + free + ':' + overload;
+            str.push(data[1] + ':' + data[2] + ':' + load + ':' + free + ':' + overload);
             first = false;
           }
           else
-            str += ',' + data[1] + ':' + data[2] + ':' + load + ':' + + free + ':' + overload;
+            str.push(',' + data[1] + ':' + data[2] + ':' + load + ':' + + free + ':' + overload);
        }       
-    }           
-    return str + '--></span>';
-  };
+    }      
+    str.push('--></span>');     
+    return str.join('');
+ };
 
 function drawGraphs() {
-  $('#grid .sparkline').sparkline('html', { 
+  $('.sparkline').sparkline('html', { 
      type:'bar', disableHiddenCheck:true, 
      stackedBarColor:['#F6BD0F','#2B95EC','#AFD8F8','#8BBA00','#FF0000'], 
      width:'100px', height:'80px' 

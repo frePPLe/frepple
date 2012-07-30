@@ -47,7 +47,7 @@ class OverviewReport(GridPivot):
     GridFieldText('buffer', title=_('buffer'), key=True, field_name='name', formatter='buffer', editable=False),
     GridFieldText('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
     GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
-    # xxx GridFieldText('', extra='formatter:graph', editable=False),
+    GridFieldText(None, width=100, extra='formatter:graph', editable=False),
     )
   crosses = (
     ('startoh', {'title': _('start inventory'),}),

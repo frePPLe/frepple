@@ -4153,7 +4153,11 @@ $.jgrid.extend({
 			if ( !this.grid ) {return;}
 			var $t = this, cm = $t.p.colModel,i=0, len = cm.length, maxfrozen = -1, frozen= false;
 			// TODO treeGrid and grouping  Support
+			/* JDETAEYE: Allowed frozen columns also for celledit
+            Original code:
 			if($t.p.subGrid === true || $t.p.treeGrid === true || $t.p.cellEdit === true || $t.p.sortable || $t.p.scroll || $t.p.grouping )
+            */
+            if($t.p.subGrid === true || $t.p.treeGrid === true || $t.p.sortable || $t.p.scroll || $t.p.grouping )
 			{
 				return;
 			}
@@ -4261,7 +4265,17 @@ $.jgrid.extend({
 					$("tr",btbl).each(function(){
 						$("td:gt("+maxfrozen+")",this).remove();
 					});
-
+					
+					// JDETAEYE: A cloned canvas doesn't have the content of the original.
+					// Moving old canvas to the new position instead.
+					var original_canvas = $("#"+$.jgrid.jqID($t.p.id)).find('canvas');
+					$(btbl).find('canvas').each( function(index) {
+						var p = $(this).parent();
+						$(this).remove();
+						p.append(original_canvas[index]);
+					});
+					// End addition JDETAEYE
+          
 					$(btbl).width(1).attr("id",$t.p.id+"_frozen");
 					$($t.grid.fbDiv).append(btbl);
 					if($t.p.hoverrows === true) {

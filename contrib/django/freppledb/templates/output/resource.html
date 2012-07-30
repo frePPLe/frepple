@@ -3,6 +3,7 @@
 
 {% block extrahead %}{{block.super}} 
 {% if args.0 %}<script type="text/javascript" src="{{STATIC_URL}}FusionCharts.js"></script>{% endif %}
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.sparkline.js"></script>
 {% endblock %}
 
 {% block contextmenus %}
@@ -36,6 +37,43 @@
 {% endif %}{% endblock %}
 
 {% block crosses %}
+
+function graph(cellvalue, options, rowdata) {
+    var str = '<span class="sparkline"><!--';
+    var cols = jQuery("#grid").jqGrid('getGridParam', 'colModel'); 
+    var first = true; 
+    for (var i in cols) {       
+       if ('startdate' in cols[i]) {
+          var data = rowdata[cols[i]['name']];
+          var load = data[3];
+          var delta = data[0] - data[2] - data[3];
+          if (delta > 0) {
+            free = Math.round(delta*10)/10;
+            overload = 0;
+          } else {
+            free = 0;
+            load = Math.round((data[0] - data[2])*10)/10;
+            overload = -Math.round(delta*10)/10;
+          }
+          if (first) {
+            str += data[1] + ':' + data[2] + ':' + load + ':' + free + ':' + overload;
+            first = false;
+          }
+          else
+            str += ',' + data[1] + ':' + data[2] + ':' + load + ':' + + free + ':' + overload;
+       }       
+    }           
+    return str + '--></span>';
+  };
+
+function drawGraphs() {
+  $('#grid .sparkline').sparkline('html', { 
+     type:'bar', disableHiddenCheck:true, 
+     stackedBarColor:['#F6BD0F','#2B95EC','#AFD8F8','#8BBA00','#FF0000'], 
+     width:'100px', height:'80px' 
+     });
+};  
+
 function crosses (cellvalue, options, rowdata) {
   var result = cellvalue[0] + '<br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
   if (cellvalue[3] != 0.0)
@@ -48,4 +86,7 @@ function crosses (cellvalue, options, rowdata) {
     result += cellvalue[4] + '%';
   return result;
 };
+{% endblock %}
+
+{% block extra_grid %}gridComplete: drawGraphs,
 {% endblock %}

@@ -49,6 +49,9 @@ FrePPLe redistributes parts of the following third party software components:
     Dual licensed under the MIT and GPL licenses 
     See http://www.trirand.com/blog/    
     
-
-    
+* contrib\django\freppledb\common\static\js\jquery.sparkline*.js
+    Redistributed from jQuery Sparklines
+    Copyright (c) 2012, Splunk Inc.
+    Licensed under New BSD License
+    See http://omnipotent.net/jquery.sparkline/#s-about
  

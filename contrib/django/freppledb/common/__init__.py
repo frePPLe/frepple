@@ -268,7 +268,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   @transaction.commit_on_success
   def change_view(self, request, object_id, form_url='', extra_context=None):
     new_extra_context = extra_context or {}
-    new_extra_context['title'] = capfirst(force_unicode(self.model._meta.verbose_name) + ' ' + object_id)
+    new_extra_context['title'] = capfirst(force_unicode(self.model._meta.verbose_name) + ' ' + unquote(object_id))
     return super(MultiDBModelAdmin, self).change_view(request, object_id, form_url, new_extra_context) 
   
   
@@ -314,7 +314,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       title = _("Are you sure?")
 
     context = {
-        "title": title,
+        "title": capfirst(force_unicode(self.model._meta.verbose_name) + ' ' + unquote(object_id)), 
         "object_name": object_name,
         "object": obj,
         "deleted_objects": deleted_objects,

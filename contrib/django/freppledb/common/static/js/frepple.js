@@ -33,7 +33,7 @@ var upload = {
     if (typeof getDirtyData == 'function')
       rows = getDirtyData();
     else
-      rows = $("#grid").getChangedCells('dirty');
+      rows = $("#grid").getChangedCells('dirty');    
     if (rows != null && rows.length > 0) 
       // Send the update to the server    
       $.ajax({
@@ -51,7 +51,7 @@ var upload = {
                 autoOpen: true,
                 resizable: false
               });
-              $('#timebuckets').dialog('close');  
+            $('#timebuckets').dialog('close');  
             $.jgrid.hideModal("#searchmodfbox_grid");
             }
         });        
@@ -423,6 +423,90 @@ function sameOrigin(url) {
         (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
         // or any other URL that isn't scheme relative or absolute i.e relative.
         !(/^(\/\/|http:|https:).*/.test(url));
+}
+
+//----------------------------------------------------------------------------
+// Display dialog for deleting records
+//----------------------------------------------------------------------------
+
+function delete_show()
+{
+  if ($('#select').hasClass("ui-state-disabled")) return;
+  var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
+  if (sel.length == 1)
+  {
+    // Redirect to a page for deleting a single entity
+    location.href = location.pathname + encodeURI(sel[0]) + '/delete/';
+  }
+  else if (sel.length > 0)
+  {
+    $('#popup').html(     
+      ngettext('Your are about to delete %s objects AND ALL RELATED RECORDS!', sel.length)
+      ).dialog({
+        title: gettext("Delete data"),
+        autoOpen: true,
+        resizable: false,
+        buttons: [
+          {
+            text: gettext("Confirm"),
+            click: function() {
+              $.ajax({
+                url: location.pathname,
+                data: JSON.stringify([{'delete': sel}]),
+                type: "POST",
+                contentType: "application/json",
+                success: function () {
+                  $("#select").addClass("ui-state-disabled").removeClass("bold");
+                  $('.cbox').prop("checked", false);
+                  $('#cb_grid.cbox').prop("checked", false);
+                  $("#grid").trigger("reloadGrid");
+                  $('#popup').dialog('close');
+                  },
+                error: function (result, stat, errorThrown) {
+                  $('#popup').html(result.responseText)
+                    .dialog({
+                      title: gettext("Error deleting data"),
+                      autoOpen: true,
+                      resizable: false
+                    });
+                  $('#timebuckets').dialog('close');  
+                  $.jgrid.hideModal("#searchmodfbox_grid");
+                  }
+              });    
+            }
+          },
+          {
+            text: gettext("Cancel"),
+            click: function() { $(this).dialog("close"); }
+          }
+          ]
+      });
+    $('#timebuckets').dialog('close');  
+    $.jgrid.hideModal("#searchmodfbox_grid");
+  }
+}
+
+function markSelectedRow(id)
+{
+  var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow').length;
+  if (sel > 0)
+    $("#select").removeClass("ui-state-disabled").addClass("bold");
+  else
+    $("#select").addClass("ui-state-disabled").removeClass("bold");
+}
+
+function markAllRows()
+{
+  if ($(this).is(':checked'))
+  {
+    $("#select").removeClass("ui-state-disabled").addClass("bold");
+    $('.cbox').prop("checked", true);
+  }
+  else
+  {
+    $("#select").addClass("ui-state-disabled").removeClass("bold");
+    $('.cbox').prop("checked", false);
+  }
 }
 
 

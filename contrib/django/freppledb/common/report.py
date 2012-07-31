@@ -82,9 +82,12 @@ class GridField(object):
       setattr(self, key, kwargs[key])
     if 'key' in kwargs: self.editable = False
     if not 'title' in kwargs: 
-      self.title = self.name and _(self.name) or ''
-    if not self.name: self.sortable = False
-    if not 'field_name' in kwargs: self.field_name = self.name
+      self.title = self.name and _(self.name) or ''      
+    if not self.name: 
+      self.sortable = False
+      self.search = False
+    if not 'field_name' in kwargs: 
+      self.field_name = self.name
 
   def __unicode__(self):
     o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%d,align:'%s'" % 
@@ -94,6 +97,7 @@ class GridField(object):
            ), ]
     if self.key: o.append( ",key:true" )
     if not self.sortable: o.append(",sortable:false")
+    if not self.search: o.append(",search:false")
     if self.formatter: o.append(",formatter:'%s'" % self.formatter)
     if self.unformat: o.append(",unformat:'%s'" % self.unformat)
     if self.searchrules: o.append(",searchrules:{%s}" % self.searchrules)
@@ -106,6 +110,7 @@ class GridField(object):
   width = 100
   editable = True
   sortable = True
+  search = True
   key = False
   unformat = None
   title = None
@@ -282,6 +287,9 @@ class GridReport(View):
   
   # Include time bucket support in the report
   hasTimeBuckets = False
+  
+  # Show a select box in front to allow selection of records
+  multiselect = True
   
   # Number of columns frozen in the report
   frozenColumns = 0
@@ -490,6 +498,7 @@ class GridReport(View):
         'bucketlist': bucketlist,
         'model': reportclass.model,
         'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())),
+        'hasdeleteperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_delete_permission())),
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())),
         'active_tab': 'plan',
         }  
@@ -529,38 +538,56 @@ class GridReport(View):
     ok = True
     try:          
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk      
-      for rec in simplejson.JSONDecoder().decode(request.read()):
-        try:
-          obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
-          del rec['id']
-          UploadForm = modelform_factory(reportclass.model,
-            fields = tuple(rec.keys()),
-            formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
-            )
-          form = UploadForm(rec, instance=obj)
-          if form.has_changed():
-            obj = form.save()
-            LogEntry(
-                user_id         = request.user.pk,
-                content_type_id = content_type_id,
-                object_id       = obj.pk,
-                object_repr     = force_unicode(obj),
-                action_flag     = CHANGE,
-                change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
-            ).save(using=request.database)
-        except reportclass.model.DoesNotExist:
-          ok = False
-          resp.write(escape(_("Can't find %s" % obj.pk))) 
-          resp.write('<br/>')                          
-        except Exception as e: 
-          ok = False
-          for error in form.non_field_errors():
-            resp.write(escape('%s: %s' % (obj.pk, error)))            
+      for rec in simplejson.JSONDecoder().decode(request.read()):     
+        if 'delete' in rec:
+          # Deleting records
+          for key in rec['delete']:
+            try: 
+              obj = reportclass.model.objects.using(request.database).get(pk=key)
+              obj.delete()
+            except reportclass.model.DoesNotExist:
+              ok = False
+              resp.write(escape(_("Can't find %s" % key))) 
+              resp.write('<br/>')
+              pass
+            except Exception as e:
+              ok = False
+              resp.write(escape(e))
+              resp.write('<br/>')
+              pass
+        else:   
+          # Editing records
+          try:
+            obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
+            del rec['id']
+            UploadForm = modelform_factory(reportclass.model,
+              fields = tuple(rec.keys()),
+              formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
+              )
+            form = UploadForm(rec, instance=obj)
+            if form.has_changed():
+              obj = form.save()
+              LogEntry(
+                  user_id         = request.user.pk,
+                  content_type_id = content_type_id,
+                  object_id       = obj.pk,
+                  object_repr     = force_unicode(obj),
+                  action_flag     = CHANGE,
+                  change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
+              ).save(using=request.database)
+          except reportclass.model.DoesNotExist:
+            ok = False
+            resp.write(escape(_("Can't find %s" % obj.pk))) 
             resp.write('<br/>')                          
-          for field in form:
-            for error in field.errors:
-              resp.write(escape('%s %s: %s: %s' % (obj.pk, field.name, rec[field.name], error)))                        
+          except Exception as e: 
+            ok = False
+            for error in form.non_field_errors():
+              resp.write(escape('%s: %s' % (obj.pk, error)))            
               resp.write('<br/>')                          
+            for field in form:
+              for error in field.errors:
+                resp.write(escape('%s %s: %s: %s' % (obj.pk, field.name, rec[field.name], error)))                        
+                resp.write('<br/>')                          
     finally:
       transaction.commit(using=request.database)
       transaction.leave_transaction_management(using=request.database)
@@ -884,6 +911,8 @@ class GridPivot(GridReport):
 
   editable = False
 
+  multiselect = False
+  
   @classmethod
   def _apply_sort(reportclass, request):
     '''

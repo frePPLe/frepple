@@ -53,7 +53,7 @@ class OverviewReport(GridPivot):
   rows = (
     GridFieldText('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
     GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
-    GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center'),
+    GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center', search=False),
     GridFieldText(None, width=100, extra='formatter:graph', editable=False),
     )
   crosses = (

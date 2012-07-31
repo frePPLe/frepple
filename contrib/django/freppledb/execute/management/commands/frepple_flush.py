@@ -82,20 +82,26 @@ class Command(BaseCommand):
       # Create a database connection
       cursor = connections[database].cursor()
 
-      # Delete all records from the tables
+      # Delete all records from the tables.
+      # We split the tables in groups to speed things up in postgreSQL.
       cursor.execute('update common_preference set buckets = null')
       transaction.commit(using=database)
-      sql_list = connections[database].ops.sql_flush(no_style(), [
-        'out_problem','out_flowplan','out_loadplan','out_demandpegging',
-        'out_operationplan','out_constraint','out_demand','out_forecast','demand',
-        'forecastdemand','forecast','flow','resourceload','buffer','resource',
-        'setuprule','setupmatrix','operationplan','item','suboperation','operation',
-        'location','calendarbucket','calendar','customer',
-        'common_parameter','common_bucketdetail','common_bucket'
-        ], [] )
-      for sql in sql_list:
-        cursor.execute(sql)
-        transaction.commit(using=database)
+      tables = [ 
+        ['out_problem','out_flowplan','out_loadplan','out_demandpegging',
+        'out_operationplan','out_constraint','out_demand','out_forecast'
+        ],
+        ['demand','forecastdemand','forecast','flow','resourceload','buffer',
+         'resource','setuprule','setupmatrix','operationplan','item',
+         'suboperation','operation','location','calendarbucket','calendar',
+         'customer'
+        ],
+        ['common_parameter','common_bucketdetail','common_bucket']
+        ]
+      for group in tables:
+        sql_list = connections[database].ops.sql_flush(no_style(), group, [] )
+        for sql in sql_list:
+          cursor.execute(sql)
+          transaction.commit(using=database)
 
       # SQLite specials
       if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':

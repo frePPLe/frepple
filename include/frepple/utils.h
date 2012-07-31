@@ -2645,7 +2645,7 @@ class Environment
     /** Search for a file with a given name.<br>
       * The following directories are searched in sequence to find a match:
       *   - The current directory.
-      *   - The directory reffered to by the variable FREPPLE_HOME, if it
+      *   - The directory referred to by the variable FREPPLE_HOME, if it
       *     is defined.
       *   - The data directory as configured during the compilation.
       *     This applies only to linux / unix.

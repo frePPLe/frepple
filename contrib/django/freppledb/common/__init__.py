@@ -308,13 +308,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
     object_name = force_unicode(opts.verbose_name)
 
-    if perms_needed or protected:
-      title = _("Cannot delete %(name)s") % {"name": object_name}
-    else:
-      title = _("Are you sure?")
-
     context = {
-        "title": capfirst(force_unicode(self.model._meta.verbose_name) + ' ' + unquote(object_id)), 
+        "title": capfirst(object_name + ' ' + unquote(object_id)), 
         "object_name": object_name,
         "object": obj,
         "deleted_objects": deleted_objects,

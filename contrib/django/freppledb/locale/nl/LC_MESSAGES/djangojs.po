@@ -21,9 +21,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.9.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-04 15:09+0200\n"
-"PO-Revision-Date: 2012-04-04 15:45+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@users.sourceforge.net>\n"
+"POT-Creation-Date: 2012-08-02 22:35+0200\n"
+"PO-Revision-Date: 2012-08-02 22:33+0100\n"
+"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -38,96 +38,74 @@ msgstr "Foutmelding tijdens wegschrijven gegevens"
 msgid "Select"
 msgstr "Selecteer"
 
-#: common/static/js/frepple.js:430
-msgid "Load a CSV-formatted text file."
-msgstr "Laad een bestand in CSV-formaat."
+#: common/static/js/frepple.js:444
+#, c-format
+msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
+msgstr ""
+"U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
 
-#: common/static/js/frepple.js:431
-msgid "The first row should contain the field names."
-msgstr "De eerste rij moet de veldnamen bevatten."
+#: common/static/js/frepple.js:446
+msgid "Delete data"
+msgstr "Verwijder gegevens"
 
-#: common/static/js/frepple.js:432
-msgid "Data file"
-msgstr "Gegevensbestand"
+#: common/static/js/frepple.js:451
+msgid "Confirm"
+msgstr "Bevestig"
 
-#: common/static/js/frepple.js:434
-msgid "Import data"
-msgstr "Importeer gegevens"
+#: common/static/js/frepple.js:468
+msgid "Error deleting data"
+msgstr "Foutmelding tijdens verwijderen gegevens"
 
-#: common/static/js/frepple.js:439
-msgid "Import"
-msgstr "Importeer gegevens"
-
-#: common/static/js/frepple.js:443
-#: common/static/js/frepple.js.c:501
-#: common/static/js/frepple.js:590
+#: common/static/js/frepple.js:479 common/static/js/frepple.js.c:536
+#: common/static/js/frepple.js:594 common/static/js/frepple.js.c:683
 msgid "Cancel"
 msgstr "Annuleer"
 
-#: common/static/js/frepple.js:469
-#: common/static/js/frepple.js.c:473
+#: common/static/js/frepple.js:523
+msgid "Load a CSV-formatted text file."
+msgstr "Laad een bestand in CSV-formaat."
+
+#: common/static/js/frepple.js:524
+msgid "The first row should contain the field names."
+msgstr "De eerste rij moet de veldnamen bevatten."
+
+#: common/static/js/frepple.js:525
+msgid "Data file"
+msgstr "Gegevensbestand"
+
+#: common/static/js/frepple.js:527
+msgid "Import data"
+msgstr "Importeer gegevens"
+
+#: common/static/js/frepple.js:532
+msgid "Import"
+msgstr "Importeer gegevens"
+
+#: common/static/js/frepple.js:562 common/static/js/frepple.js.c:566
 msgid "Filtered where"
 msgstr "Gefilterd waar"
 
-#: common/static/js/frepple.js:489
+#: common/static/js/frepple.js:582
 msgid "CSV style"
 msgstr "CSV stijl"
 
-#: common/static/js/frepple.js:490
+#: common/static/js/frepple.js:583
 msgid "Table"
 msgstr "Tabel"
 
-#: common/static/js/frepple.js:491
+#: common/static/js/frepple.js:584
 msgid "List"
 msgstr "Lijst"
 
-#: common/static/js/frepple.js:493
+#: common/static/js/frepple.js:586
 msgid "Export data"
 msgstr "Exporteer gegevens"
 
-#: common/static/js/frepple.js:497
+#: common/static/js/frepple.js:590
 msgid "Export"
 msgstr "Exporteer"
 
-#: common/static/js/frepple.js:554
+#: common/static/js/frepple.js:647
 msgid "OK"
 msgstr "OK"
 
-#~ msgid "contains (no case)"
-#~ msgstr "bevat (no case)"
-
-#~ msgid "contains"
-#~ msgstr "bevat"
-
-#~ msgid "starts (no case)"
-#~ msgstr "begint (no case)"
-
-#~ msgid "starts"
-#~ msgstr "start"
-
-#~ msgid "ends (no case)"
-#~ msgstr "eindigt (no case)"
-
-#~ msgid "ends"
-#~ msgstr "eindigt"
-
-#~ msgid "equals (no case)"
-#~ msgstr "is (no case)"
-
-#~ msgid "equals"
-#~ msgstr "is"
-
-#~ msgid "is null"
-#~ msgstr "is nul"
-
-#~ msgid "Filter data"
-#~ msgstr "Filter gegevens"
-
-#~ msgid "False"
-#~ msgstr "Onwaar"
-
-#~ msgid "True"
-#~ msgstr "Waar"
-
-#~ msgid "Upload"
-#~ msgstr "Laad"

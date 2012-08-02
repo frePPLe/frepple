@@ -1,7 +1,7 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}<h1 style="float:left">{{title|capfirst|escape}}: {% trans 'change history'|capfirst|escape %}</h1>
+{% block content_title %}<div>{% block tools %}{% endblock %}<h1 style="float:left">{{title|capfirst|escape}}: {% trans 'Change history'|escape %}</h1>
 {% if model == 'bucket' %}{% include "buckettabs.html" %}
 {% elif model == 'buffer' %}{% include "buffertabs.html" %}
 {% elif model == 'calendar' %}{% include "calendartabs.html" %}

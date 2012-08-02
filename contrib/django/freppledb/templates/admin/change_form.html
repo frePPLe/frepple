@@ -12,7 +12,7 @@
 
 {% block bodyclass %}change-form{% endblock %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left; color:#333">{{title|escape}}: {% trans "edit"|capfirst|escape %}</h1>{% endif %}
+{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left; color:#333">{{title|escape}}: {% trans "Edit"|escape %}</h1>{% endif %}
 {% if object_id %}{% set active_tab 'edit' %}
 {% if opts.object_name.lower == 'bucket' %}{% include "buckettabs.html" %}
 {% elif opts.object_name.lower == 'buffer' %}{% include "buffertabs.html" %}

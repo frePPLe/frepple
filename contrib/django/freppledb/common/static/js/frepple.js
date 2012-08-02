@@ -441,7 +441,7 @@ function delete_show()
   else if (sel.length > 0)
   {
     $('#popup').html(     
-      ngettext('Your are about to delete %s objects AND ALL RELATED RECORDS!', sel.length)
+      interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false)
       ).dialog({
         title: gettext("Delete data"),
         autoOpen: true,

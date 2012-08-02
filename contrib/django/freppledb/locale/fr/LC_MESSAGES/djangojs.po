@@ -21,9 +21,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-04 15:09+0200\n"
-"PO-Revision-Date: 2012-04-04 15:38+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@users.sourceforge.net>\n"
+"POT-Creation-Date: 2012-08-02 22:35+0200\n"
+"PO-Revision-Date: 2012-08-02 22:46+0100\n"
+"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -38,148 +38,76 @@ msgstr "Erreur enregistrant les données"
 msgid "Select"
 msgstr "Selectionner"
 
-#: common/static/js/frepple.js:430
-msgid "Load a CSV-formatted text file."
-msgstr "Importer les données depuis un fichier CSV dans la base de données"
+#: common/static/js/frepple.js:444
+#, c-format
+msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
+msgstr "Vous allez effacer %s objets ET TOUTES LES LIGNES RELATEES!"
 
-#: common/static/js/frepple.js:431
-msgid "The first row should contain the field names."
-msgstr "La première ligne devrait contenir les noms des champs"
+#: common/static/js/frepple.js:446
+msgid "Delete data"
+msgstr "Effacer les données"
 
-#: common/static/js/frepple.js:432
-msgid "Data file"
-msgstr "Fichier de données"
+#: common/static/js/frepple.js:451
+msgid "Confirm"
+msgstr "Confirmer"
 
-#: common/static/js/frepple.js:434
-msgid "Import data"
-msgstr "Importer les données"
+#: common/static/js/frepple.js:468
+msgid "Error deleting data"
+msgstr "Erreur effacant les données"
 
-#: common/static/js/frepple.js:439
-msgid "Import"
-msgstr "Importer les données"
-
-#: common/static/js/frepple.js:443
-#: common/static/js/frepple.js.c:501
-#: common/static/js/frepple.js:590
+#: common/static/js/frepple.js:479
+#: common/static/js/frepple.js.c:536
+#: common/static/js/frepple.js:594
+#: common/static/js/frepple.js.c:683
 msgid "Cancel"
 msgstr "Annuler"
 
-#: common/static/js/frepple.js:469
-#: common/static/js/frepple.js.c:473
+#: common/static/js/frepple.js:523
+msgid "Load a CSV-formatted text file."
+msgstr "Importer les données depuis un fichier CSV dans la base de données"
+
+#: common/static/js/frepple.js:524
+msgid "The first row should contain the field names."
+msgstr "La première ligne devrait contenir les noms des champs"
+
+#: common/static/js/frepple.js:525
+msgid "Data file"
+msgstr "Fichier de données"
+
+#: common/static/js/frepple.js:527
+msgid "Import data"
+msgstr "Importer les données"
+
+#: common/static/js/frepple.js:532
+msgid "Import"
+msgstr "Importer"
+
+#: common/static/js/frepple.js:562
+#: common/static/js/frepple.js.c:566
 msgid "Filtered where"
 msgstr "Filtrer où"
 
-#: common/static/js/frepple.js:489
+#: common/static/js/frepple.js:582
 msgid "CSV style"
 msgstr "Style CSV"
 
-#: common/static/js/frepple.js:490
+#: common/static/js/frepple.js:583
 msgid "Table"
 msgstr "Table"
 
-#: common/static/js/frepple.js:491
+#: common/static/js/frepple.js:584
 msgid "List"
 msgstr "Liste"
 
-#: common/static/js/frepple.js:493
+#: common/static/js/frepple.js:586
 msgid "Export data"
 msgstr "Exporter les données"
 
-#: common/static/js/frepple.js:497
+#: common/static/js/frepple.js:590
 msgid "Export"
 msgstr "Exporter"
 
-#: common/static/js/frepple.js:554
+#: common/static/js/frepple.js:647
 msgid "OK"
 msgstr "OK"
 
-#~ msgid "contains (no case)"
-#~ msgstr "contient (insensible à la casse)"
-
-#~ msgid "contains"
-#~ msgstr "contient"
-
-#~ msgid "starts (no case)"
-#~ msgstr "commence par (insensible à la casse)"
-
-#~ msgid "starts"
-#~ msgstr "commence par"
-
-#~ msgid "ends (no case)"
-#~ msgstr "se termine par (insensible à la casse)"
-
-#~ msgid "ends"
-#~ msgstr "se termine par"
-
-#~ msgid "equals (no case)"
-#~ msgstr "égale (insensible à la casse)"
-
-#~ msgid "equals"
-#~ msgstr "égale"
-
-#~ msgid "is null"
-#~ msgstr "est nul"
-
-#~ msgid "Filter data"
-#~ msgstr "Filtrer les données"
-
-#~ msgid "False"
-#~ msgstr "Faux"
-
-#~ msgid "True"
-#~ msgstr "Vrai"
-
-#~ msgid "Upload"
-#~ msgstr "Charger"
-
-#~ msgid "Time buckets"
-#~ msgstr "Intervalles de temps (???)"
-
-#~ msgid "Buckets"
-#~ msgstr "Intervalles"
-
-#~ msgid "Standard"
-#~ msgstr "Standard"
-
-#~ msgid "Day"
-#~ msgstr "Jour"
-
-#~ msgid "Week"
-#~ msgstr "Semaine"
-
-#~ msgid "Month"
-#~ msgstr "Mois"
-
-#~ msgid "Quarter"
-#~ msgstr "Trimestre"
-
-#~ msgid "Year"
-#~ msgstr "Année"
-
-#~ msgid "Start&nbsp;date"
-#~ msgstr "Date de début"
-
-#~ msgid "End&nbsp;date"
-#~ msgstr "Date de fin"
-
-#~ msgid "Close"
-#~ msgstr "Fermer"
-
-#~ msgid ""
-#~ "<h2>Import data</h2><br/><form enctype=\"multipart/form-data\" method="
-#~ "\"post\" action=\"%s\"><table><tr><td colspan=\"2\">Load data from a CSV-"
-#~ "formatted text file in the database.<br/>The first row should contain the "
-#~ "field names.</td></tr><tr><td>Data file:</td><td><input type=\"file\" id="
-#~ "\"csv_file\" name=\"csv_file\"/></td></tr><tr><td><input id=\"upload\" "
-#~ "type=\"submit\" value=\"Upload\"/></td><td><input type=\"button\" value="
-#~ "\"Close\" onclick=\"$('popup').style.display = 'none';\"/></td></tr></"
-#~ "table></form>"
-#~ msgstr ""
-#~ "<h2>Importer les données</h2><br/><form enctype=\"multipart/form-data\" "
-#~ "method=\"post\" action=\"%s\"><table><tr><td colspan=\"2\">Charger les "
-#~ "données depuis unfichier formaté CSV dans la base de données.<br/>La "
-#~ "première ligne peut contenir les noms des champs</td></tr><tr><td>Fichier "
-#~ "de données :</td><td><input type=\"file\" id=\"csv_file\" name=\"csv_file"
-#~ "\"/></td></tr><tr><td><input id=\"upload\" type=\"submit\" value=\"Upload"
-#~ "\"/></td><td><input type=\"button\" value=\"Close\" onclick=\"$('popup')."
-#~ "style.display = 'none';\"/></td></tr></table></form>"

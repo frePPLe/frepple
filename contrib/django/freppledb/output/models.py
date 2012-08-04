@@ -87,7 +87,7 @@ class Constraint(models.Model):
 
 
 class ResourceSummary(models.Model):
-  theresource = models.CharField(_('resource'), max_length=settings.NAMESIZE, db_index=True)
+  theresource = models.CharField(_('resource'), max_length=settings.NAMESIZE)
   startdate = models.DateTimeField(_('startdate'))
   available = models.DecimalField(_('available'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)
   unavailable = models.DecimalField(_('unavailable'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)

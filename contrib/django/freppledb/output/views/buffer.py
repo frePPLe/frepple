@@ -41,7 +41,7 @@ class OverviewReport(GridPivot):
   '''
   template = 'output/buffer.html'
   title = _('Inventory report')
-  basequeryset = Buffer.objects.all()
+  basequeryset = Buffer.objects.only('name','item__name','location__name','lft','rght','onhand')
   model = Buffer
   rows = (
     GridFieldText('buffer', title=_('buffer'), key=True, field_name='name', formatter='buffer', editable=False),

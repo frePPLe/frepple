@@ -51,13 +51,14 @@ else:
 def truncate(cursor):
   print "Emptying database plan tables..."
   starttime = time()
-  sql_list = connections[database].ops.sql_flush(no_style(), [
+  tables = [
     'out_problem', 'out_demandpegging', 'out_flowplan',
     'out_loadplan', 'out_resourceplan', 'out_operationplan', 
     'out_demand', 'out_forecast', 'out_constraint',
-    ], [] )
-  for sql in sql_list:
-    cursor.execute(sql)
+    ]
+  for table in tables:
+    for sql in connections[database].ops.sql_flush(no_style(), [table], []):
+      cursor.execute(sql)
     transaction.commit(using=database)
   print "Emptied plan tables in %.2f seconds" % (time() - starttime)
 
@@ -202,8 +203,8 @@ def exportResourceplans(cursor):
       for i in frepple.resources():
         cursor.executemany(
           "insert into out_resourceplan \
-          (theresource,startdate,available,unavailable,setup,load,free) \
-          values (%s,%s,%s,%s,%s,%s,%s)",
+          (theresource,startdate,available,unavailable,setup,%s,free) \
+          values (%%s,%%s,%%s,%%s,%%s,%%s,%%s)" % connections[database].ops.quote_name('load'),
           [(
              i.name, str(j['start']),
              round(j['available'],settings.DECIMAL_PLACES),
@@ -215,7 +216,7 @@ def exportResourceplans(cursor):
           ])
         cnt += 1
         if cnt % 100 == 0: transaction.commit(using=database)
-  except exception as e:    
+  except Exception as e:    
     print e
   finally: 
     transaction.commit(using=database)

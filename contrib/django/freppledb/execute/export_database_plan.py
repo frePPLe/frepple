@@ -52,14 +52,15 @@ def truncate(cursor):
   print "Emptying database plan tables..."
   starttime = time()
   tables = [
-    'out_problem', 'out_demandpegging', 'out_flowplan',
-    'out_loadplan', 'out_resourceplan', 'out_operationplan', 
-    'out_demand', 'out_forecast', 'out_constraint',
+    ['out_demandpegging'],
+    ['out_problem', 'out_resourceplan', 'out_constraint'],
+    ['out_loadplan', 'out_flowplan', 'out_operationplan'], 
+    ['out_demand', 'out_forecast'],
     ]
-  for table in tables:
-    for sql in connections[database].ops.sql_flush(no_style(), [table], []):
+  for group in tables:
+    for sql in connections[database].ops.sql_flush(no_style(), group, []):
       cursor.execute(sql)
-    transaction.commit(using=database)
+      transaction.commit(using=database)
   print "Emptied plan tables in %.2f seconds" % (time() - starttime)
 
 

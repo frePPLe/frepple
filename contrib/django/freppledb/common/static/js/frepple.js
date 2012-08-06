@@ -232,7 +232,8 @@ function afterEditCell(rowid, cellname, value, iRow, iCol)
   if (colmodel.formatter == 'date')
     $(cell).datepicker({
       showOtherMonths: true, selectOtherMonths: true,
-      dateFormat:"yy-mm-dd 00:00:00", changeMonth:true
+      dateFormat:"yy-mm-dd 00:00:00", changeMonth:true,
+      changeYear:true, yearRange: "c-1:c+5"
       });
   else
     $(cell).select();   
@@ -634,11 +635,11 @@ function bucket_show()
   $.jgrid.hideModal("#searchmodfbox_grid");
   $( "#reportstart" ).datepicker({
       showOtherMonths: true, selectOtherMonths: true,
-      changeMonth:true, dateFormat: 'yy-mm-dd'
+      changeMonth:true, changeYear:true, yearRange: "c-1:c+5", dateFormat: 'yy-mm-dd'
     });
   $( "#reportend" ).datepicker({
       showOtherMonths: true, selectOtherMonths: true,
-      changeMonth:true, dateFormat: 'yy-mm-dd'
+      changeMonth:true, changeYear:true, yearRange: "c-1:c+5", dateFormat: 'yy-mm-dd'
     });
   $('#timebuckets').dialog({
      autoOpen: true, resizable: false,	 

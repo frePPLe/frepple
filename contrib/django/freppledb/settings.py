@@ -23,20 +23,28 @@ r'''
 Main Django configuration file.
 '''
 import os, os.path, sys, locale
+import django
+import freppledb
 
-# frePPLe specific variables  # TODO remove these
-try:
-  FREPPLE_HOME = os.environ['FREPPLE_HOME']
-except:
-  print 'Error: Environment variable FREPPLE_HOME is not defined'
-  sys.exit(1)
+# FrePPLe directories  
 if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
-  FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
+  FREPPLE_APP = os.path.abspath(os.path.join(os.path.dirname(freppledb.__file__),'..'))
+if 'FREPPLE_HOME' in os.environ:
+  FREPPLE_HOME = os.environ['FREPPLE_HOME']
+elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','frepple.xsd'))):
+  # Py2exe layout
+  FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP,'..'))
+elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin','frepple.xsd'))):
+  # Development layout
+  FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin'))
+else:
+  print "Error: Can't locate frepple.xsd" 
+  sys.exit(1)                         
+
 # sys.path.append(os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','openerp')))
 
-# Django settings for freppledb project.
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 

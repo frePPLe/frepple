@@ -6,9 +6,6 @@ EXTRA_DIST = freppledb django.patch README.txt httpd.conf manage.py setup.py
 
 install-data-local:
 	echo "installing Django web application to $(DESTDIR)$(pythondir)"; \
-	export FREPPLE_APP=$(DESTDIR)$(pythondir)/freppledb; \
-	export DJANGO_SETTINGS_MODULE=freppledb.settings; \
-	export FREPPLE_HOME=dummy; \
 	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix)
 	
 uninstall-local:

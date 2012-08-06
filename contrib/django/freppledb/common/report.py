@@ -44,8 +44,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db import transaction
-from django.db import models
+from django.db import transaction, models
 from django.db.models.fields import Field
 from django.db.models.fields.related import RelatedField, AutoField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed

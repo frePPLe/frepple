@@ -87,15 +87,16 @@ class Command(BaseCommand):
       cursor.execute('update common_preference set buckets = null')
       transaction.commit(using=database)
       tables = [ 
-        ['out_problem','out_flowplan','out_loadplan','out_demandpegging',
-        'out_operationplan','out_constraint','out_demand','out_forecast'
-        ],
-        ['demand','forecastdemand','forecast','flow','resourceload','buffer',
-         'resource','setuprule','setupmatrix','operationplan','item',
-         'suboperation','operation','location','calendarbucket','calendar',
-         'customer'
-        ],
-        ['common_parameter','common_bucketdetail','common_bucket']
+        ['out_demandpegging'],
+        ['out_problem','out_resourceplan','out_constraint'],
+        ['out_loadplan','out_flowplan','out_operationplan'], 
+        ['out_demand','out_forecast'],
+        ['demand','forecastdemand','forecast','customer',
+         'setuprule','setupmatrix','resourceload','resource',
+         'flow','buffer','operationplan','item',
+         'suboperation','operation',
+         'location','calendarbucket','calendar'],
+        ['common_parameter','common_bucketdetail','common_bucket'],
         ]
       for group in tables:
         sql_list = connections[database].ops.sql_flush(no_style(), group, [] )

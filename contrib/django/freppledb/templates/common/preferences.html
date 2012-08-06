@@ -5,7 +5,7 @@
   $(function() {
     $(".vDateField").datepicker({
       showOtherMonths: true, selectOtherMonths: true,
-      changeMonth:true, dateFormat: 'yy-mm-dd'
+      changeMonth:true, changeYear:true, yearRange: "c-1:c+5", dateFormat: 'yy-mm-dd'
       });
     $("input:submit").button();
   });

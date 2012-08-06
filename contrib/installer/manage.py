@@ -37,9 +37,6 @@ from django.core.management import execute_from_command_line, call_command
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
-# Override the debugging settings
-settings.TEMPLATE_DEBUG = settings.DEBUG
-
 # Create the database if it doesn't exist yet
 noDatabaseSchema = False
 if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3':
@@ -60,7 +57,7 @@ else:
     print "   %s" % e
     raw_input("Hit any key to continue...")
     sys.exit(1)
-  try: cursor.execute("SELECT 1 FROM parameter")
+  try: cursor.execute("SELECT 1 FROM common_parameter")
   except: noDatabaseSchema = True
   transaction.commit_unless_managed()
 

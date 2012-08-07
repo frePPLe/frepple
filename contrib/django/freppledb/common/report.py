@@ -505,16 +505,20 @@ class GridReport(View):
         context[k] = v  
       return render(request, reportclass.template, context)
     elif fmt == 'json':
-      # Return JSON data to fill the grid
+      # Return JSON data to fill the grid.
+      # Response is not returned as an iterator to assure that the database 
+      # connection is properly closed.
       return HttpResponse(
          mimetype = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
-         content = reportclass._generate_json_data(request, *args, **kwargs)
+         content = ''.join(reportclass._generate_json_data(request, *args, **kwargs))
          )
     elif fmt == 'csvlist' or fmt == 'csvtable':
       # Return CSV data to export the data
+      # Response is not returned as an iterator to assure that the database 
+      # connection is properly closed.
       response = HttpResponse(
          mimetype= 'text/csv; charset=%s' % settings.CSV_CHARSET,
-         content = reportclass._generate_csv_data(request, *args, **kwargs)
+         content = ''.join(reportclass._generate_csv_data(request, *args, **kwargs))
          )
       response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
       return response

@@ -37,7 +37,7 @@ from django import template
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.contrib import admin
-from django.contrib.admin.models import LogEntry
+from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.admin.util import unquote, get_deleted_objects
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
@@ -74,35 +74,18 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   The level of customization is relatively high, and this code is a bit of a
   concern for future upgrades of Django...
   '''
-
-  def save_model(self, request, obj, form, change):        
-    # TODO saving the object under a new key, but which already exists
-    # TODO make this work from a form with an inline admin section
+    
+  def save_form(self, request, form, change):        
+    obj = super(MultiDBModelAdmin, self).save_form(request, form, change)
     if change:
-      old_pk = request.path_info.rsplit("/",2)[1]
+      old_pk = unquote(request.path_info.rsplit("/",2)[1])
       if old_pk != obj.pk:
-        # We are renaming an existing object.        
-        # a) Save the new record in the right database
-        obj.save(using=request.database)
-        # b) All linked fields need updating.
-        for related in obj._meta.get_all_related_objects():
-          related.model._base_manager.using(request.database) \
-            .filter(**{related.field.name: old_pk}) \
-            .update(**{related.field.name: obj})
-        # c) Move the comments and audit trail to the new key
-        model_type = ContentType.objects.get_for_model(obj)
-        Comment.objects.using(request.database). \
-          filter(content_type__pk=model_type.id, object_pk=old_pk). \
-          update(object_pk=obj.pk)
-        LogEntry.objects.using(request.database). \
-          filter(content_type__pk=model_type.id, object_id=old_pk). \
-          update(object_id=obj.pk)
-        # e) Delete the old record
-        self.queryset(request).get(pk=old_pk).delete() 
-        return        
-
-    # New object or existing object without key change
-    obj.save(using=request.database)
+        # The object was renamed. We continue handling the updates on the
+        # old object. Only at the very end we will rename whatever needs to
+        # be renamed.
+        obj.new_pk = obj.pk       
+        obj.pk = old_pk 
+    return obj
 
   def queryset(self, request):
     return super(MultiDBModelAdmin, self).queryset(request).using(request.database)
@@ -129,8 +112,28 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   def log_change(self, request, object, message):
     """
     Log that an object has been successfully changed.
-    """
-    from django.contrib.admin.models import LogEntry, CHANGE
+    """    
+    if hasattr(object, 'new_pk'):
+      # We are renaming an existing object.        
+      # a) Save the new record in the right database
+      old_pk = object.pk
+      object.pk = object.new_pk
+      object.save(using=request.database)
+      # b) All linked fields need updating.
+      for related in object._meta.get_all_related_objects():
+        related.model._base_manager.using(request.database) \
+          .filter(**{related.field.name: old_pk}) \
+          .update(**{related.field.name: object})
+      # c) Move the comments and audit trail to the new key
+      model_type = ContentType.objects.get_for_model(object)
+      Comment.objects.using(request.database). \
+        filter(content_type__pk=model_type.id, object_pk=old_pk). \
+        update(object_pk=object.pk)
+      LogEntry.objects.using(request.database). \
+        filter(content_type__pk=model_type.id, object_id=old_pk). \
+        update(object_id=object.pk)
+      # e) Delete the old record
+      self.queryset(request).get(pk=old_pk).delete()             
     LogEntry(
         user_id         = request.user.pk,
         content_type_id = ContentType.objects.get_for_model(object).pk,

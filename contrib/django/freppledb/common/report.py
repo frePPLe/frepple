@@ -695,12 +695,12 @@ class GridReport(View):
                   # Try to find an existing record with the same primary key
                   it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
                   form = UploadForm(d, instance=it)
-                except reportclass.model.DoesNotExist:
-                  form = UploadForm(d)   # TODO this creation is in the wrong database!!!!
+                except reportclass.model.DoesNotExist:                  
+                  form = UploadForm(d)
                   it = None
               else:
-                # No primary key required for this model
-                form = UploadForm(d)  # TODO this creation is in the wrong database!!!!
+                # No primary key required for this model                
+                form = UploadForm(d)
                 it = None
   
               # Step 3: Validate the data and save to the database

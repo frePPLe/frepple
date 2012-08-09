@@ -34,7 +34,7 @@ URL: http://www.frepple.com
 Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
 Requires: xerces-c, Django
-BuildRequires: python-devel, xerces-c-devel, Django
+BuildRequires: python-devel, xerces-c-devel
 
 %description
 FrePPLe is an open source Production Planning solution. It is a toolkit/

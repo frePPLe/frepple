@@ -1050,11 +1050,11 @@ class GridPivot(GridReport):
         sf.truncate(0)
         # Data for rows
         if hasattr(row, "__getitem__"):
-          fields = [ row[f.name]==None and ' ' or unicode(row[f.name]).encode(encoding,"ignore") for f in reportclass.rows ]
+          fields = [ row[f.name]==None and ' ' or unicode(row[f.name]).encode(encoding,"ignore") for f in reportclass.rows if f.name ]
           fields.extend([ row['bucket'].encode(encoding,"ignore") ])
           fields.extend([ row[f[0]]==None and ' ' or unicode(_localize(row[f[0]])).encode(encoding,"ignore") for f in reportclass.crosses ])
         else:
-          fields = [ getattr(row,f.name)==None and ' ' or unicode(getattr(row,f.name)).encode(encoding,"ignore") for f in reportclass.rows ]
+          fields = [ getattr(row,f.name)==None and ' ' or unicode(getattr(row,f.name)).encode(encoding,"ignore") for f in reportclass.rows if f.name ]
           fields.extend([ getattr(row,'bucket').encode(encoding,"ignore") ])
           fields.extend([ getattr(row,f[0])==None and ' ' or unicode(_localize(getattr(row,f[0]))).encode(encoding,"ignore") for f in reportclass.crosses ])
         # Return string

@@ -131,6 +131,8 @@ class DetailReport(GridReport):
   model = OperationPlan
   frozenColumns = 0
   editable = False
+  multiselect = False
+    
   rows = (
     GridFieldInteger('id', title=_('operationplan'), key=True, editable=False),
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),

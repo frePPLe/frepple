@@ -156,12 +156,11 @@ def runTestSuite():
     #  SHLIB_PATH for HPUX
     #  PATH for windows, cygwin
     # We set all variables anyway.
-    if 'FREPPLE_HOME' in os.environ:
-      for var in ('LD_LIBRARY_PATH','LIBPATH','SHLIB_PATH','PATH'):
-        if var in os.environ:
-          os.environ[var] += os.pathsep + os.environ['FREPPLE_HOME']
-        else:
-          os.environ[var] = os.environ['FREPPLE_HOME']
+    for var in ('LD_LIBRARY_PATH','LIBPATH','SHLIB_PATH','PATH'):
+      if var in os.environ:
+        os.environ[var] += os.pathsep + os.environ['FREPPLE_HOME']
+      else:
+        os.environ[var] = os.environ['FREPPLE_HOME']
 
     # Define a list with tests to run
     if len(tests) == 0:

@@ -188,6 +188,7 @@ class DetailReport(GridReport):
   model = Demand
   frozenColumns = 0
   editable = False
+  multiselect = False
   rows = (
     GridFieldText('demand', title=_('demand'), key=True, editable=False, formatter='demand'),
     GridFieldText('item', title=_('item'), formatter='item', editable=False),

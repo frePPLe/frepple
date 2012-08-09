@@ -176,6 +176,7 @@ class DetailReport(GridReport):
   model = LoadPlan
   frozenColumns = 0
   editable = False
+  multiselect = False
   
   rows = (
     GridFieldText('theresource', title=_('resource'), key=True, formatter='resource', editable=False),

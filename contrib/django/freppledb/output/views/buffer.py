@@ -164,6 +164,7 @@ class DetailReport(GridReport):
   model = FlowPlan
   frozenColumns = 0
   editable = False
+  multiselect = False
   
   rows = (
     GridFieldText('thebuffer', title=_('buffer'), key=True, formatter='buffer', editable=False),

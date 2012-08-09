@@ -137,7 +137,8 @@ class UserList(GridReport):
   basequeryset = User.objects.all()
   model = User
   frozenColumns = 1
-
+  multiselect = False
+  
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='user'),          
     GridFieldText('username', title=_('username')),          
@@ -157,6 +158,7 @@ class GroupList(GridReport):
   basequeryset = Group.objects.all()
   model = Group
   frozenColumns = 0
+  multiselect = False
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='group'),          
     GridFieldText('name', title=_('name'), key=True, width=200),          
@@ -263,7 +265,9 @@ class CommentList(GridReport):
   default_sort = (0,'desc')
   model = Comment
   editable = False
+  multiselect = False
   frozenColumns = 0
+  
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),
     GridFieldLastModified('lastmodified'),

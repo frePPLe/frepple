@@ -285,6 +285,9 @@ class LogReport(GridReport):
   default_sort = (0,'desc')
   model = log
   frozenColumns = 0
+  multiselect = False
+  editable = False
+  
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),
     GridFieldLastModified('lastmodified'),

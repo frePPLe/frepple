@@ -74,6 +74,7 @@ class Report(GridReport):
   model = Constraint
   frozenColumns = 0
   editable = False
+  multiselect = False
   rows = (
     GridFieldText('demand', title=_('demand'), editable=False, formatter='demand'),
     GridFieldText('entity', title=_('entity'), editable=False, width=80, align='center'), # choices=getEntities),  TODO

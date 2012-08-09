@@ -51,6 +51,7 @@ class Report(GridReport):
   model = Problem
   frozenColumns = 0
   editable = False
+  multiselect = False
   rows = (
     GridFieldText('entity', title=_('entity'), editable=False, align='center'), # TODO choices=getEntities
     GridFieldText('name', title=_('name'), editable=False, align='center'),  # TODO choices=getNames

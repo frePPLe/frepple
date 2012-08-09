@@ -39,6 +39,7 @@ class Report(GridReport):
     )
   default_sort = (1,'asc')
   filterable = False
+  multiselect = False
 
   @staticmethod
   def query(request, basequery):

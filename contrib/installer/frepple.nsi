@@ -48,6 +48,7 @@ SetCompressor /SOLID lzma
 !define MULTIUSER_EXECUTIONLEVEL Highest
 !define MULTIUSER_MUI
 !define MULTIUSER_INSTALLMODE_COMMANDLINE
+!define MULTIUSER_INSTALLMODE_INSTDIR "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 !include MultiUser.nsh
 !include MUI2.nsh
 !include Library.nsh
@@ -69,8 +70,8 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "../../COPYING"
 !insertmacro MULTIUSER_PAGE_INSTALLMODE
-!insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_COMPONENTS
 Page custom database database_leave
 !insertmacro MUI_PAGE_INSTFILES
 Page custom finish finish_leave
@@ -94,13 +95,11 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "0.9.2.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe Installer - free Production Planning Library"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright "Licensed under the GNU Affero General Public License"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright "Dual licensed under the AGPL and commercial license"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "Install frePPLe - free Production Planning Library"
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${PRODUCT_NAME}_${PRODUCT_VERSION}_setup.exe"
-InstallDir "$PROGRAMFILES\${PRODUCT_NAME} ${PRODUCT_VERSION}"
-InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 CRCcheck on
 ShowInstDetails show

@@ -89,11 +89,11 @@ class Command(BaseCommand):
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
       if os.path.exists(os.path.join(os.environ['FREPPLE_HOME'],'python27.zip')):
         # For the py2exe executable
-        os.environ['PYTHONPATH'] = os.path.join(os.environ['FREPPLE_HOME'],'python27.zip') + ';' + os.path.normpath(os.environ['FREPPLE_APP'])
+        os.environ['PYTHONPATH'] = os.path.join(os.environ['FREPPLE_HOME'],'python27.zip') + os.pathsep + os.path.normpath(os.environ['FREPPLE_APP'])
       else:
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(os.environ['FREPPLE_APP'])
-      ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.py'))
+      ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.py').replace('\\','\\\\'))
       if ret: raise Exception('Exit code of the batch run is %d' % ret)
 
       # Log message

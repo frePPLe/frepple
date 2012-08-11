@@ -53,7 +53,7 @@ packages = [# Required for django standalone deployment
             'encodings',
            ]
 includes = []
-excludes = ['pydoc','Tkinter', 'tcl', 'Tkconstants', 'freppledb',]
+excludes = ['pydoc', 'Tkinter', 'tcl', 'Tkconstants', 'freppledb']
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
            # Not using Microsoft ADO
@@ -64,13 +64,6 @@ ignores = [# Not using docutils
            'pysqlite2',
            # Not using mod_python
            'mod_python', 'mod_python.util',
-           # Not using email functionality
-           'email.Encoders', 'email.Errors', 'email.Generator',
-           'email.Iterators', 'email.MIMEBase', 'email.MIMEMultipart',
-           'email.MIMEText', 'email.Message','email.MIMEMultipart',
-           'email.Parser', 'email.Utils', 'email.base64MIME', 'email.Charset',
-           'email.MIMEAudio', 'email.MIMEImage', 'email.MIMEMessage',
-           'email.quopriMIME', 'email.Header',
            # Not using memcache
            'cmemcache', 'memcache',
            # Not using markdown tags of django

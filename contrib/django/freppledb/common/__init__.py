@@ -75,8 +75,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   concern for future upgrades of Django...
   '''
     
-  def save_form(self, request, form, change):        
-    obj = super(MultiDBModelAdmin, self).save_form(request, form, change)
+  def save_form(self, request, form, change): 
+    obj = super(MultiDBModelAdmin, self).save_form(request, form, change)       
     if change:
       old_pk = unquote(request.path_info.rsplit("/",2)[1])
       if old_pk != obj.pk:
@@ -86,6 +86,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         obj.new_pk = obj.pk       
         obj.pk = old_pk 
     return obj
+  
+  def save_model(self, request, obj, form, change):
+    # Tell Django to save objects to the 'other' database.
+    obj.save(using=request.database)
 
   def queryset(self, request):
     return super(MultiDBModelAdmin, self).queryset(request).using(request.database)

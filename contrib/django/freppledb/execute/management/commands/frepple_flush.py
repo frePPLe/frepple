@@ -97,6 +97,7 @@ class Command(BaseCommand):
          'suboperation','operation',
          'location','calendarbucket','calendar'],
         ['common_parameter','common_bucketdetail','common_bucket'],
+        ['common_comment','django_admin_log'],
         ]
       for group in tables:
         sql_list = connections[database].ops.sql_flush(no_style(), group, [] )

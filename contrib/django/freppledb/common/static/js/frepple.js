@@ -427,12 +427,12 @@ function sameOrigin(url) {
 }
 
 //----------------------------------------------------------------------------
-// Display dialog for deleting records
+// Display dialog for copying or deleting records
 //----------------------------------------------------------------------------
 
 function delete_show()
 {
-  if ($('#select').hasClass("ui-state-disabled")) return;
+  if ($('#delete_selected').hasClass("ui-state-disabled")) return;
   var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
   if (sel.length == 1)
   {
@@ -457,7 +457,8 @@ function delete_show()
                 type: "POST",
                 contentType: "application/json",
                 success: function () {
-                  $("#select").addClass("ui-state-disabled").removeClass("bold");
+                  $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
+                  $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
                   $('.cbox').prop("checked", false);
                   $('#cb_grid.cbox').prop("checked", false);
                   $("#grid").trigger("reloadGrid");
@@ -468,7 +469,61 @@ function delete_show()
                     .dialog({
                       title: gettext("Error deleting data"),
                       autoOpen: true,
-                      resizable: false
+                      resizable: true
+                    });
+                  $('#timebuckets').dialog('close');  
+                  $.jgrid.hideModal("#searchmodfbox_grid");
+                  }
+              });    
+            }
+          },
+          {
+            text: gettext("Cancel"),
+            click: function() { $(this).dialog("close"); }
+          }
+          ]
+      });
+    $('#timebuckets').dialog('close');  
+    $.jgrid.hideModal("#searchmodfbox_grid");
+  }
+}
+
+
+function copy_show()
+{
+  if ($('#copy_selected').hasClass("ui-state-disabled")) return;
+  var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
+  if (sel.length > 0)
+  {
+    $('#popup').html(     
+      interpolate(gettext('You are about to duplicate %s objects'), [sel.length], false)
+      ).dialog({
+        title: gettext("Copy data"),
+        autoOpen: true,
+        resizable: false,
+        buttons: [
+          {
+            text: gettext("Confirm"),
+            click: function() {
+              $.ajax({
+                url: location.pathname,
+                data: JSON.stringify([{'copy': sel}]),
+                type: "POST",
+                contentType: "application/json",
+                success: function () {
+                  $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
+                  $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
+                  $('.cbox').prop("checked", false);
+                  $('#cb_grid.cbox').prop("checked", false);
+                  $("#grid").trigger("reloadGrid");
+                  $('#popup').dialog('close');
+                  },
+                error: function (result, stat, errorThrown) {
+                  $('#popup').html(result.responseText)
+                    .dialog({
+                      title: gettext("Error copying data"),
+                      autoOpen: true,
+                      resizable: true
                     });
                   $('#timebuckets').dialog('close');  
                   $.jgrid.hideModal("#searchmodfbox_grid");
@@ -490,22 +545,30 @@ function delete_show()
 function markSelectedRow(id)
 {
   var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow').length;
-  if (sel > 0)
-    $("#select").removeClass("ui-state-disabled").addClass("bold");
+  if (sel > 0) 
+  {
+    $("#copy_selected").removeClass("ui-state-disabled").addClass("bold");
+    $("#delete_selected").removeClass("ui-state-disabled").addClass("bold");
+  }
   else
-    $("#select").addClass("ui-state-disabled").removeClass("bold");
+  {
+	$("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
+	$("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
+  }
 }
 
 function markAllRows()
 {
   if ($(this).is(':checked'))
   {
-    $("#select").removeClass("ui-state-disabled").addClass("bold");
+    $("#copy_selected").removeClass("ui-state-disabled").addClass("bold");
+    $("#delete_selected").removeClass("ui-state-disabled").addClass("bold");
     $('.cbox').prop("checked", true);
   }
   else
   {
-    $("#select").addClass("ui-state-disabled").removeClass("bold");
+    $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
+    $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
     $('.cbox').prop("checked", false);
   }
 }

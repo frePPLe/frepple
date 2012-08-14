@@ -39,14 +39,14 @@ import operator
 import math
 import locale
 import codecs
-
+          
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction, models
-from django.db.models.fields import Field
-from django.db.models.fields.related import RelatedField, AutoField
+from django.db.models.fields import Field, CharField, AutoField
+from django.db.models.fields.related import RelatedField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
 from django.forms.models import modelform_factory
 from django.shortcuts import render
@@ -59,12 +59,11 @@ from django.utils.formats import get_format, number_format
 from django.utils import simplejson as json
 from django.utils.text import capfirst, get_text_list
 from django.utils.translation import string_concat
-from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
+from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
 
-from freppledb.common.models import Parameter, BucketDetail, Bucket
-
+from freppledb.common.models import Parameter, BucketDetail, Bucket, Comment
 
 import logging
 logger = logging.getLogger(__name__)
@@ -548,6 +547,13 @@ class GridReport(View):
             try: 
               obj = reportclass.model.objects.using(request.database).get(pk=key)
               obj.delete()
+              LogEntry(
+                  user_id         = request.user.id,
+                  content_type_id = content_type_id,
+                  object_id       = force_unicode(key),
+                  object_repr     = force_unicode(key)[:200],
+                  action_flag     = DELETION
+              ).save(using=request.database)       
             except reportclass.model.DoesNotExist:
               ok = False
               resp.write(escape(_("Can't find %s" % key))) 
@@ -558,6 +564,41 @@ class GridReport(View):
               resp.write(escape(e))
               resp.write('<br/>')
               pass
+        elif 'copy' in rec:
+          # Copying records
+          for key in rec['copy']:
+            try: 
+              obj = reportclass.model.objects.using(request.database).get(pk=key)
+              if isinstance(reportclass.model._meta.pk, CharField):
+                # The primary key is a string
+                obj.pk = "Copy of %s" % key
+              elif isinstance(reportclass.model._meta.pk, AutoField):
+                # The primary key is an auto-generated number
+                obj.pk = None
+              else:
+                raise Exception(_("Can't copy %s") % reportclass.model._meta.app_label)
+              obj.save(using=request.database, force_insert=True)
+              LogEntry(
+                  user_id         = request.user.pk,
+                  content_type_id = content_type_id,
+                  object_id       = obj.pk,
+                  object_repr     = force_unicode(obj),
+                  action_flag     = ADDITION,
+                  change_message  = _('Copied from %s.') % key
+              ).save(using=request.database)   
+              transaction.commit(using=request.database)            
+            except reportclass.model.DoesNotExist:
+              ok = False
+              resp.write(escape(_("Can't find %s" % key))) 
+              resp.write('<br/>')
+              transaction.rollback(using=request.database)
+              pass
+            except Exception as e:
+              ok = False
+              resp.write(escape(e))
+              resp.write('<br/>')
+              transaction.rollback(using=request.database)
+              pass        
         else:   
           # Editing records
           try:

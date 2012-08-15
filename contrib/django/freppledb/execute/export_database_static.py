@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2011-2012 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -53,7 +53,7 @@ def exportLocations(cursor):
   print "Exporting locations..."  
   starttime = time()
   cursor.execute("SELECT name FROM location")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
   cursor.executemany(
     "insert into location \
     (name,description,available_id,category,subcategory,lastmodified) \
@@ -84,7 +84,7 @@ def exportCalendars(cursor):
   print "Exporting calendars..."  
   starttime = time()
   cursor.execute("SELECT name FROM calendar")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
   cursor.executemany(
     "insert into calendar \
     (name,defaultvalue,lastmodified) \
@@ -109,7 +109,7 @@ def exportCalendarBuckets(cursor):
   print "Exporting calendar buckets..."  
   starttime = time()
   cursor.execute("SELECT calendar_id, id FROM calendarbucket")
-  primary_keys = set([ i for i in cursor.fetchall()]) 
+  primary_keys = set([ i for i in cursor.fetchall() ]) 
   
   def buckets():
     for c in frepple.calendars():
@@ -142,7 +142,7 @@ def exportOperations(cursor):
   print "Exporting operations..."  
   starttime = time()
   cursor.execute("SELECT name FROM operation")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])  
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])  
   cursor.executemany(
     '''insert into operation
     (name,fence,pretime,posttime,sizeminimum,sizemultiple,sizemaximum,type,duration,
@@ -152,13 +152,13 @@ def exportOperations(cursor):
        i.name, i.fence, i.pretime, i.posttime, round(i.size_minimum,settings.DECIMAL_PLACES),
        round(i.size_multiple,settings.DECIMAL_PLACES), 
        i.size_maximum<9999999999999 and round(i.size_maximum,settings.DECIMAL_PLACES) or None,
-       i.__class__.__name__,
+       i.__class__.__name__[10:], 
        isinstance(i,(frepple.operation_fixed_time,frepple.operation_time_per)) and i.duration or None,
        isinstance(i,frepple.operation_time_per) and i.duration_per or None,
        i.location and i.location.name or None, round(i.cost,settings.DECIMAL_PLACES),
        isinstance(i,frepple.operation_alternate) and i.search or None, 
        i.description, i.category, i.subcategory, timestamp 
-      ) for i in frepple.operations() if i.name not in primary_keys and not i.hidden 
+      ) for i in frepple.operations() if i.name not in primary_keys and not i.hidden and i.name != 'setup operation'
     ])
   cursor.executemany(
     '''update operation 
@@ -170,13 +170,13 @@ def exportOperations(cursor):
        i.fence, i.pretime, i.posttime, round(i.size_minimum,settings.DECIMAL_PLACES),
        round(i.size_multiple,settings.DECIMAL_PLACES), 
        i.size_maximum<9999999999999 and round(i.size_maximum,settings.DECIMAL_PLACES) or None,
-       i.__class__.__name__,
+       i.__class__.__name__[10:],
        isinstance(i,(frepple.operation_fixed_time,frepple.operation_time_per)) and i.duration or None,
        isinstance(i,frepple.operation_time_per) and i.duration_per or None,
        i.location and i.location.name or None, round(i.cost,settings.DECIMAL_PLACES),
        isinstance(i,frepple.operation_alternate) and i.search or None, 
        i.description, i.category, i.subcategory, timestamp, i.name 
-     ) for i in frepple.operations() if i.name in primary_keys and not i.hidden
+     ) for i in frepple.operations() if i.name in primary_keys and not i.hidden and i.name != 'setup operation'
     ])
   transaction.commit(using=database)
   print 'Exported operations in %.2f seconds' % (time() - starttime)
@@ -187,7 +187,7 @@ def exportSubOperations(cursor):
   print "Exporting suboperations..."  
   starttime = time()
   cursor.execute("SELECT operation_id, suboperation_id FROM suboperation")
-  primary_keys = set([ i for i in cursor.fetchall()])
+  primary_keys = set([ i for i in cursor.fetchall() ])
   
   def subops():
     for i in frepple.operations():
@@ -225,7 +225,7 @@ def exportFlows(cursor):
   print "Exporting flows..."  
   starttime = time()
   cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
-  primary_keys = set([ i for i in cursor.fetchall()]) 
+  primary_keys = set([ i for i in cursor.fetchall() ]) 
   
   def flows():
     for o in frepple.operations():
@@ -239,7 +239,7 @@ def exportFlows(cursor):
     values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
     [(
        i.operation.name, i.buffer.name, round(i.quantity,settings.DECIMAL_PLACES),
-       i.__class__.__name__, str(i.effective_start), str(i.effective_end), 
+       i.__class__.__name__[5:], str(i.effective_start), str(i.effective_end), 
        i.name, i.priority, i.search != 'PRIORITY' and i.search or None, timestamp 
       ) for i in flows() if (i.operation.name, i.buffer.name) not in primary_keys and not i.hidden 
     ])
@@ -250,7 +250,7 @@ def exportFlows(cursor):
      where operation_id=%s and thebuffer_id=%s''',
     [(
        round(i.quantity,settings.DECIMAL_PLACES),
-       i.__class__.__name__, str(i.effective_start), str(i.effective_end), 
+       i.__class__.__name__[5:], str(i.effective_start), str(i.effective_end), 
        i.name, i.priority, i.search != 'PRIORITY' and i.search or None, timestamp, 
        i.operation.name, i.buffer.name, 
      ) for i in flows() if (i.operation.name, i.buffer.name) in primary_keys and not i.hidden
@@ -263,7 +263,7 @@ def exportLoads(cursor):
   print "Exporting loads..."  
   starttime = time()
   cursor.execute("SELECT operation_id, resource_id FROM resourceload")
-  primary_keys = set([ i for i in cursor.fetchall()]) 
+  primary_keys = set([ i for i in cursor.fetchall() ]) 
   
   def loads():
     for o in frepple.operations():
@@ -301,7 +301,7 @@ def exportBuffers(cursor):
   print "Exporting buffers..."  
   starttime = time()
   cursor.execute("SELECT name FROM buffer")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])  
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])  
   cursor.executemany(
     '''insert into buffer
     (name,description,location_id,item_id,onhand,minimum,minimum_calendar_id,
@@ -315,7 +315,7 @@ def exportBuffers(cursor):
        i.item and i.item.name or None, 
        round(i.onhand,settings.DECIMAL_PLACES), round(i.minimum,settings.DECIMAL_PLACES), 
        i.minimum_calendar and i.minimum_calendar.name or None,
-       i.producing and i.producing.name or None, i.__class__.__name__, 
+       i.producing and i.producing.name or None, i.__class__.__name__[7:], 
        isinstance(i,frepple.buffer_procure) and i.leadtime or None, 
        isinstance(i,frepple.buffer_procure) and round(i.mininventory,settings.DECIMAL_PLACES) or None, 
        isinstance(i,frepple.buffer_procure) and round(i.maxinventory,settings.DECIMAL_PLACES) or None, 
@@ -339,7 +339,7 @@ def exportBuffers(cursor):
        i.description, i.location and i.location.name or None, i.item and i.item.name or None, 
        round(i.onhand,settings.DECIMAL_PLACES), round(i.minimum,settings.DECIMAL_PLACES), 
        i.minimum_calendar and i.minimum_calendar.name or None,
-       i.producing and i.producing.name or None, i.__class__.__name__, 
+       i.producing and i.producing.name or None, i.__class__.__name__[7:], 
        isinstance(i,frepple.buffer_procure) and i.leadtime or None, 
        isinstance(i,frepple.buffer_procure) and round(i.mininventory,settings.DECIMAL_PLACES) or None, 
        isinstance(i,frepple.buffer_procure) and round(i.maxinventory,settings.DECIMAL_PLACES) or None, 
@@ -365,7 +365,7 @@ def exportCustomers(cursor):
   print "Exporting customers..."  
   starttime = time()
   cursor.execute("SELECT name FROM customer")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
   cursor.executemany(
     "insert into customer \
     (name,description,category,subcategory,lastmodified) \
@@ -396,7 +396,7 @@ def exportDemands(cursor):
   print "Exporting demands..."  
   starttime = time()
   cursor.execute("SELECT name FROM demand")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
   cursor.executemany(
     '''insert into demand 
     (name,due,quantity,priority,item_id,operation_id,customer_id, 
@@ -440,7 +440,7 @@ def exportForecasts(cursor):
   print "Exporting forecast..."  
   starttime = time()
   cursor.execute("SELECT name FROM forecast")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
   cursor.executemany(
     '''insert into forecast 
     (name,customer_id,item_id,priority,operation_id,minshipment,
@@ -476,7 +476,7 @@ def exportForecastDemands(cursor):
   print "Exporting forecast demands..."  
   starttime = time()
   cursor.execute("SELECT forecast_id, startdate, enddate FROM forecastdemand")
-  primary_keys = set([ i for i in cursor.fetchall()])
+  primary_keys = set([ i for i in cursor.fetchall() ])
   cursor.executemany(
     '''insert into forecastdemand 
     (forecast_id,startdate,enddate,quantity,lastmodified) 
@@ -507,7 +507,7 @@ def exportOperationPlans(cursor):
   print "Exporting operationplans..."  
   starttime = time()
   cursor.execute("SELECT id FROM operationplan")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
   cursor.executemany(
     '''insert into operationplan
     (id,operation_id,quantity,startdate,enddate,locked,lastmodified) 
@@ -542,7 +542,7 @@ def exportResources(cursor):
   print "Exporting resources..."  
   starttime = time()
   cursor.execute("SELECT name FROM %s" % connections[database].ops.quote_name('resource'))
-  primary_keys = set([ i[0] for i in cursor.fetchall()])
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
   cursor.executemany(
     '''insert into %s
     (name,description,maximum,maximum_calendar_id,location_id,type,cost,
@@ -550,7 +550,7 @@ def exportResources(cursor):
     values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s)''' % connections[database].ops.quote_name('resource'),
     [(
        i.name, i.description, i.maximum, i.maximum_calendar and i.maximum_calendar.name or None, 
-       i.location and i.location.name or None, i.__class__.__name__, 
+       i.location and i.location.name or None, i.__class__.__name__[9:], 
        round(i.cost,settings.DECIMAL_PLACES), round(i.maxearly,settings.DECIMAL_PLACES),
        i.setup, i.setupmatrix and i.setupmatrix.name or None, 
        i.category, i.subcategory, timestamp
@@ -565,7 +565,7 @@ def exportResources(cursor):
      where name=%%s''' % connections[database].ops.quote_name('resource'),
     [(
        i.description, i.maximum, i.maximum_calendar and i.maximum_calendar.name or None, 
-       i.location and i.location.name or None, i.__class__.__name__, 
+       i.location and i.location.name or None, i.__class__.__name__[9:], 
        round(i.cost,settings.DECIMAL_PLACES), round(i.maxearly,settings.DECIMAL_PLACES),
        i.setup, i.setupmatrix and i.setupmatrix.name or None, 
        i.category, i.subcategory, timestamp, i.name 
@@ -586,7 +586,7 @@ def exportSetupMatrices(cursor):
   print "Exporting setup matrices..."  
   starttime = time()
   cursor.execute("SELECT name FROM setupmatrix")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
   cursor.executemany(
     "insert into setupmatrix \
     (name,lastmodified) \
@@ -611,7 +611,7 @@ def exportSetupMatricesRules(cursor):
   print "Exporting setup matrix rules..."  
   starttime = time()
   cursor.execute("SELECT setupmatrix_id, priority FROM setuprule")
-  primary_keys = set([ i for i in cursor.fetchall()])
+  primary_keys = set([ i for i in cursor.fetchall() ])
   
   def matrixrules():
     for m in frepple.setupmatrices():
@@ -644,7 +644,7 @@ def exportItems(cursor):
   print "Exporting items..."  
   starttime = time()
   cursor.execute("SELECT name FROM item")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
   cursor.executemany(
     "insert into item \
     (name,description,operation_id,price,category,subcategory,lastmodified) \
@@ -677,7 +677,7 @@ def exportParameters(cursor):
   print "Exporting parameters..."  
   starttime = time()
   cursor.execute("SELECT name FROM common_parameter")
-  primary_keys = set([ i[0] for i in cursor.fetchall()])
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
   data = [      
     ('currentdate', frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S")),
     ]
@@ -687,7 +687,7 @@ def exportParameters(cursor):
     )
   cursor.executemany(
     "UPDATE common_parameter SET value=%s, lastmodified=%s WHERE name=%s",
-    [ (i[1],timestamp, i[0]) for i in data if i[0] in primary_keys ]
+    [ (i[1],timestamp,i[0]) for i in data if i[0] in primary_keys ]
     )
   transaction.commit(using=database)
   print 'Exported parameters in %.2f seconds' % (time() - starttime)

@@ -28,6 +28,7 @@
 {% elif opts.object_name.lower == 'operation' %}{% include "operationtabs.html" %}
 {% elif opts.object_name.lower == 'resource' %}{% include "resourcetabs.html" %}
 {% elif opts.object_name.lower == 'setupmatrix' %}{% include "setupmatrixtabs.html" %}
+{% elif opts.object_name.lower == 'parameter' %}{% include "parametertabs.html" %}
 {% endif %}{% endif %}{% endblock %}
 
 {% block content %}<div id="content-main">

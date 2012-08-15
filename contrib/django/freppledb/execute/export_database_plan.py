@@ -187,8 +187,8 @@ def exportResourceplans(cursor):
     for j in i.loadplans:
       if j.startdate < startdate: startdate = j.startdate
       if j.enddate > enddate: enddate = j.enddate
-  if not startdate: startdate = frepple.settings.current 
-  if not enddate: enddate = frepple.settings.current
+  if startdate == datetime.max: startdate = frepple.settings.current 
+  if enddate == datetime.min: enddate = frepple.settings.current
   startdate -= timedelta(days=30)
   enddate += timedelta(days=30)
     

@@ -169,13 +169,14 @@ class ParameterList(GridReport):
   '''
   A list report to show all configurable parameters.
   '''
+  template = 'common/parameterlist.html'
   title = _("Parameter List")
   basequeryset = Parameter.objects.all()
   model = Parameter
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='parameter'),
     GridFieldText('value', title=_('value')),
     GridFieldText('description', title=_('description')),
     GridFieldLastModified('lastmodified'),
@@ -282,7 +283,7 @@ class BucketList(GridReport):
   '''
   A list report to show dates.
   '''
-  template = 'input/bucketlist.html'
+  template = 'common/bucketlist.html'
   title = _("Bucket List")
   basequeryset = Bucket.objects.all()
   model = Bucket
@@ -298,7 +299,7 @@ class BucketDetailList(GridReport):
   '''
   A list report to show dates.
   '''
-  template = 'input/bucketlist.html'
+  template = 'common/bucketlist.html'
   title = _("Bucket Detail List")
   basequeryset = BucketDetail.objects.all()
   model = BucketDetail

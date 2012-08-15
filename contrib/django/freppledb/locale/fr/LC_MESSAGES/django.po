@@ -22,8 +22,8 @@ msgstr ""
 "Project-Id-Version: 0.8.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-08-02 22:35+0200\n"
-"PO-Revision-Date: 2012-08-02 22:50+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
+"PO-Revision-Date: 2012-08-15 11:10+0100\n"
+"Last-Translator: Guy Ollagnon <guy.ollagnon@demand2plan.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -177,7 +177,7 @@ msgstr "nom"
 
 #: common/models.py:38
 msgid "Unique identifier"
-msgstr "Numéro unique"
+msgstr "Identifiant unique"
 
 #: common/models.py:39
 #: input/models.py:513
@@ -360,7 +360,7 @@ msgstr "numéro"
 
 #: common/models.py:176
 msgid "content type"
-msgstr ""
+msgstr "type de contenu"
 
 # Translation included with django
 #: common/models.py:178
@@ -776,7 +776,7 @@ msgstr "Erreur durant la création du modèle exemple : %(msg)s"
 
 #: execute/views.py:196
 msgid "Successfully created a plan"
-msgstr "Plan crée avec succès"
+msgstr "Plan créé avec succès"
 
 #: execute/views.py:199
 #, python-format
@@ -907,7 +907,7 @@ msgstr "Problème de création du plan frePPLe"
 
 #: input/admin.py:47
 msgid "Repeating pattern"
-msgstr ""
+msgstr "Motif répété"
 
 #: input/admin.py:108
 #: input/admin.py:130
@@ -1041,12 +1041,12 @@ msgstr ""
 #: input/models.py:89
 #: input/views.py:597
 msgid "start time"
-msgstr ""
+msgstr "date de début"
 
 #: input/models.py:90
 #: input/views.py:598
 msgid "end time"
-msgstr ""
+msgstr "date de fin"
 
 #: input/models.py:98
 msgid "calendar bucket"
@@ -2066,7 +2066,7 @@ msgstr "stock de fin"
 #: output/views/operation.py:63
 #: output/views/resource.py:73
 msgid "plan"
-msgstr ""
+msgstr "plan"
 
 #: output/views/buffer.py:161
 #: templates/admin/base_site_nav.html:23

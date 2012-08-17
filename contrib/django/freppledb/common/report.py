@@ -39,6 +39,7 @@ import operator
 import math
 import locale
 import codecs
+import json
           
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
@@ -88,7 +89,7 @@ class GridField(object):
       self.field_name = self.name
 
   def __unicode__(self):
-    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%d,align:'%s'" % 
+    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%d,align:'%s',title:false" % 
           (self.name or '', self.name or '', self.editable and "true" or "false", 
            force_unicode(self.title).title().replace("'","\\'"), 
            self.width, self.align
@@ -377,7 +378,17 @@ class GridReport(View):
   @classmethod
   def get_sort(reportclass, request):
     try: 
-      sort = 'sidx' in request.GET and int(request.GET['sidx'])+1 or reportclass.default_sort[0]
+      if 'sidx' in request.GET:
+        sort = 1
+        ok = False
+        for r in reportclass.rows:
+          if r.name == request.GET['sidx']:
+            ok = True 
+            break
+          sort += 1
+        if not ok: sort = reportclass.default_sort[0] 
+      else: 
+        sort = reportclass.default_sort[0]      
     except: 
       sort = reportclass.default_sort[0]
     if ('sord' in request.GET and request.GET['sord'] == 'desc') or reportclass.default_sort[1] == 'desc':
@@ -446,13 +457,18 @@ class GridReport(View):
       first2 = True
       for f in reportclass.rows:
         if not f.name: continue
-        s = isinstance(i[f.field_name], basestring) and escape(i[f.field_name].encode(settings.DEFAULT_CHARSET,"ignore")) or i[f.field_name]
+        if isinstance(i[f.field_name], basestring):
+          s = '"%s"' % escape(i[f.field_name].encode(settings.DEFAULT_CHARSET,"ignore"))
+        elif isinstance(i[f.field_name], (list,tuple)): 
+          s = json.dumps(i[f.field_name], encoding = settings.DEFAULT_CHARSET)
+        else:
+          s = '"%s"' % i[f.field_name]
         if first2:
           # if isinstance(i[f.field_name], (list,tuple)): pegging report has a tuple of strings...
-          r.append('"%s":"%s"' % (f.name,s))
+          r.append('"%s":%s' % (f.name,s))
           first2 = False
         elif i[f.field_name] != None:
-          r.append(', "%s":"%s"' % (f.name,s))
+          r.append(', "%s":%s' % (f.name,s))
       #if False:    # TREEGRID
       #  r.append(', %d, %d, %d, %s, %s' % (i['level'],i['lft'],i['rght'], i['isLeaf'] and 'true' or 'false', i['expanded'] and 'true' or 'false' ))
       r.append('}')

@@ -36,7 +36,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from freppledb.input.models import Resource
 from freppledb.output.models import LoadPlan
 from freppledb.common.models import Parameter
-from freppledb.common.db import python_date
+from freppledb.common.db import python_date, sql_max
 from freppledb.common.report import getBuckets, GridReport, GridPivot
 from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
@@ -131,7 +131,7 @@ class OverviewReport(GridPivot):
                 select 
                   theresource, 
                   ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) ) 
-                    / coalesce(sum(out_resourceplan.available),1) * 100 as avg_util
+                    / coalesce(%s,1) * 100 as avg_util
                 from out_resourceplan
                 where out_resourceplan.startdate >= '%s'
                 and out_resourceplan.startdate < '%s'
@@ -143,7 +143,9 @@ class OverviewReport(GridPivot):
       order by %s, d.startdate    
       ''' % ( units, units, units, units,
         basesql, bucket, startdate, enddate,
-        startdate, enddate, startdate, enddate, sortsql
+        startdate, enddate,
+        sql_max('sum(out_resourceplan.available)','0.0001'), 
+        startdate, enddate, sortsql
        )
     cursor.execute(query, baseparams)
     

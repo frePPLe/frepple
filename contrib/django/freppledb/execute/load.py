@@ -113,7 +113,7 @@ def loadCalendarBuckets(cursor):
        (j and ' start="%s"' % j.isoformat()) or '',
        (k and ' end="%s"' % k.isoformat()) or '',
        (m and ' priority="%s"' % m) or '',
-       (days != 127 and ' days ="%s"' % days) or '',
+       (days != 127 and ' days="%s"' % days) or '',
        t1.hour*3600 + t1.minute*60 + t1.second,
        t2.hour*3600 + t2.minute*60 + t2.second + 1,
        n,

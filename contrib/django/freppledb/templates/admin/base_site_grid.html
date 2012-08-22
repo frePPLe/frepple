@@ -4,6 +4,8 @@
 <script type="text/javascript">
 
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
+{% if reportclass.hasTimeBuckets %}var numbuckets = {{bucketlist|length}};
+{% endif %}
 
 $(function(){
   jQuery("#grid").jqGrid({        

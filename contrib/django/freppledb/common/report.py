@@ -89,7 +89,7 @@ class GridField(object):
       self.field_name = self.name
 
   def __unicode__(self):
-    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%d,align:'%s',title:false" % 
+    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%s,align:'%s',title:false" % 
           (self.name or '', self.name or '', self.editable and "true" or "false", 
            force_unicode(self.title).title().replace("'","\\'"), 
            self.width, self.align

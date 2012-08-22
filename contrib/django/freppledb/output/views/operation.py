@@ -46,7 +46,7 @@ class OverviewReport(GridPivot):
   rows = (
     GridFieldText('operation', title=_('operation'), key=True, field_name='name', formatter='operation', editable=False),
     GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
-    GridFieldText(None, width=100, extra='formatter:graph', editable=False),
+    GridFieldText(None, width="(5*numbuckets<200 ? 5*numbuckets : 200)", extra='formatter:graph', editable=False),
     )
   crosses = (
     ('locked_start', {'title': _('locked starts'),}),

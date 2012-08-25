@@ -27,6 +27,7 @@ from django.utils.translation import ugettext as _
 from django.db import transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
 
+from freppledb.common.models import Parameter
 from freppledb.execute.models import log
 
 
@@ -72,6 +73,13 @@ class Command(BaseCommand):
     transaction.enter_transaction_management(managed=False, using=database)
     transaction.managed(False, using=database)
     try:
+      # Check if already running
+      param = Parameter.objects.using(database).get_or_create(name="Plan executing")[0]
+      if param.value == 'True': raise Exception('Plan is already running')
+      param.value = 'True'
+      param.description = 'If this parameter exists, it indicates that the plan is currently being generated.'
+      param.save(using=database)
+      
       # Log message
       log(category='RUN', theuser=user,
         message=_('Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d') % {'plantype': plantype, 'constraint': constraint}).save(using=database)
@@ -94,11 +102,17 @@ class Command(BaseCommand):
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(os.environ['FREPPLE_APP'])
       ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.py').replace('\\','\\\\'))
-      if ret: raise Exception('Exit code of the batch run is %d' % ret)
+      if ret: 
+        Parameter.objects.using(database).filter(name="Plan executing").delete()
+        raise Exception('Exit code of the batch run is %d' % ret)
 
       # Log message
       log(category='RUN', theuser=user,
         message=_('Finished creating frePPLe plan')).save(using=database)
+
+      # Remove flag of running plan
+      Parameter.objects.using(database).filter(name="Plan executing").delete()
+
     except Exception as e:
       try: log(category='RUN', theuser=user,
         message=u'%s: %s' % (_('Failure when creating frePPLe plan'),e)).save(using=database)

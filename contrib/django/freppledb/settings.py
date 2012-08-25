@@ -251,6 +251,7 @@ LOGGING = {
 }
 
 # Sessions
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_NAME = 'sessionid'         # Cookie name. This can be whatever you want.
 SESSION_COOKIE_AGE = 60 * 60 * 24 *  2    # Age of cookie, in seconds: 2 days
 SESSION_COOKIE_DOMAIN = None              # A string, or None for standard domain cookie.

@@ -34,6 +34,7 @@ template<class Calendar> DECLARE_EXPORT Tree utils::HasName<Calendar>::st;
 DECLARE_EXPORT const MetaCategory* Calendar::metadata;
 DECLARE_EXPORT const MetaCategory* Calendar::Bucket::metadata;
 DECLARE_EXPORT const MetaClass *CalendarDouble::metadata;
+DECLARE_EXPORT const MetaClass *CalendarDouble::BucketDouble::metadata;
 
 
 int Calendar::initialize()
@@ -42,24 +43,29 @@ int Calendar::initialize()
   metadata = new MetaCategory("calendar", "calendars", reader, writer);
 
   // Initialize the Python class
-  return Calendar::Bucket::initialize() +
-      FreppleCategory<Calendar>::initialize() +
-      CalendarBucketIterator::initialize() +
-      CalendarEventIterator::initialize();
+  FreppleCategory<Calendar>::getType().addMethod("addBucket", addPythonBucket, METH_KEYWORDS, "find a bucket or create a new one");
+  int ok = Calendar::Bucket::initialize();
+  ok +=  FreppleCategory<Calendar>::initialize();
+  ok += CalendarBucketIterator::initialize();
+  ok += CalendarEventIterator::initialize();
+  ok += CalendarDouble::BucketDouble::initialize();
+  return ok;
 }
 
 
-int Calendar::Bucket::initialize()  // @TODO a single Python type is used as frontend for multiple C++ types.  Fancy, but not clean
+int Calendar::Bucket::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory("bucket", "buckets");
 
   // Initialize the Python class
-  PythonType& x = PythonExtension<Calendar::Bucket>::getType();
-  x.setName("calendarBucket");
-  x.setDoc("frePPLe calendar bucket");
+  PythonType& x = FreppleCategory<Calendar::Bucket>::getType();
+  x.setName(metadata->type);
+  x.setDoc("frePPLe " + metadata->type);
   x.supportgetattro();
   x.supportsetattro();
+  x.supportstr();
+  x.supportcompare();
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
@@ -75,6 +81,26 @@ int CalendarDouble::initialize()
   FreppleClass<CalendarDouble,Calendar>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
   FreppleClass<CalendarDouble,Calendar>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
   return FreppleClass<CalendarDouble,Calendar>::initialize();
+}
+
+
+int CalendarDouble::BucketDouble::initialize()
+{
+  // Initialize the metadata
+  metadata = new MetaClass("bucket", "bucket_double"); // xxx, NULL, true);
+
+  // Initialize the Python class
+  PythonType& x = FreppleClass<CalendarDouble::BucketDouble,Calendar::Bucket>::getType();
+  x.setName(metadata->type);
+  x.setDoc("frePPLe " + metadata->type);
+  x.supportgetattro();
+  x.supportsetattro();
+  x.supportstr();
+  x.supportcompare();
+  x.setBase(Calendar::Bucket::metadata->pythonClass);
+  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady();
 }
 
 
@@ -170,33 +196,9 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket
 {
   // Assure the start is before the end.
   if (start > end)
-  {
-    // Switch arguments
-    Date tmp = end;
-    end = start;
-    start = end;
-  }
-
-  // Find the insert place in the list
-  Bucket *next = firstBucket, *prev = NULL;
-  while (next && next->startdate < start)
-  {
-    prev = next;
-    next = next->nextBucket;
-  }
-
-  // Create the new bucket
-  Bucket *c = createNewBucket(start, end, id);
-  c->nextBucket = next;
-  c->prevBucket = prev;
-
-  // Maintain linked list
-  if (prev) prev->nextBucket = c;
-  else firstBucket = c;
-  if (next) next->prevBucket = c;
-
-  // Return the new bucket
-  return c;
+    return createNewBucket(end, start, id);
+  else
+    return createNewBucket(start, end, id);
 }
 
 
@@ -258,6 +260,7 @@ DECLARE_EXPORT void Calendar::Bucket::updateSort()
   bool ok = true;
   do
   {
+    ok = true;
     if (nextBucket && (
       nextBucket->startdate < startdate ||
       (nextBucket->startdate == startdate && nextBucket->priority < priority)
@@ -265,18 +268,21 @@ DECLARE_EXPORT void Calendar::Bucket::updateSort()
     {
       // Move a position later in the list
       if (nextBucket->nextBucket)
-        nextBucket->nextBucket->prevBucket = this;      
+        nextBucket->nextBucket->prevBucket = this;
       if (prevBucket)
         prevBucket->nextBucket = nextBucket;
+      else
+        cal->firstBucket = nextBucket;
       nextBucket->prevBucket = prevBucket;
-      nextBucket->nextBucket = this;
       prevBucket = nextBucket;
-      nextBucket = nextBucket->nextBucket;
+      Calendar::Bucket* tmp = nextBucket->nextBucket;
+      nextBucket->nextBucket = this;
+      nextBucket = tmp;
       ok = false;
     }
     else if (prevBucket && (
-      prevBucket->startdate >= startdate ||
-      (prevBucket->startdate >= startdate && nextBucket->priority > priority)
+      prevBucket->startdate > startdate ||
+      (prevBucket->startdate == startdate && prevBucket->priority > priority)
       ))
     {
       // Move a position earlier in the list
@@ -285,9 +291,10 @@ DECLARE_EXPORT void Calendar::Bucket::updateSort()
       if (nextBucket)
         nextBucket->prevBucket = prevBucket;
       prevBucket->nextBucket = nextBucket;
-      prevBucket->prevBucket = this;
       nextBucket = prevBucket;
-      prevBucket = prevBucket->prevBucket;
+      Calendar::Bucket* tmp = prevBucket->prevBucket;
+      prevBucket->prevBucket = this;
+      prevBucket = tmp;
       ok = false;
     }
   }
@@ -838,6 +845,36 @@ DECLARE_EXPORT PyObject* CalendarDouble::setPythonValue(PyObject* self, PyObject
     // Update the calendar
     PythonObject start(pystart), end(pyend), val(pyval);
     cal->setValue(start.getDate(), end.getDate(), val.getDouble());
+  }
+  catch(...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+  return Py_BuildValue("");
+}
+
+
+DECLARE_EXPORT PyObject* Calendar::addPythonBucket(PyObject* self, PyObject* args, PyObject* kwdict)
+{
+  try
+  {
+    // Pick up the calendar
+    Calendar* cal = static_cast<Calendar*>(self);
+    if (!cal) throw LogicException("Can't set value of a NULL calendar");
+
+    // Parse the arguments
+    int id = 1;
+    if (!PyArg_ParseTuple(args, "|i:addBucket", &id))
+      return NULL;
+
+    // See if the bucket exists, or create it
+    Bucket * b = cal->findBucket(id);
+    if (!b) b = cal->addBucket(Date::infinitePast, Date::infiniteFuture, id);
+
+    // Return a reference
+    Py_INCREF(b);
+    return b;
   }
   catch(...)
   {

@@ -184,7 +184,9 @@ class Calendar : public HasName<Calendar>
           endtime(86400L), cal(c)
         {
           setId(ident);
-          initType(metadata); 
+          if (c->firstBucket) c->firstBucket->prevBucket = this;
+          nextBucket = c->firstBucket;
+          c->firstBucket = this;
           updateOffsets();
           updateSort();
         }
@@ -332,6 +334,12 @@ class Calendar : public HasName<Calendar>
       */
     DECLARE_EXPORT Bucket* findBucket(int ident) const;
 
+    /** Find an existing bucket with a given identifier, or create a new one.
+      * If no identifier is passed, we always create a new bucket and automatically
+      * generate a unique identifier for it.
+      */
+    static DECLARE_EXPORT PyObject* addPythonBucket(PyObject*, PyObject*, PyObject*);
+
     /** @brief An iterator class to go through all dates where the calendar
       * value changes.*/
     class EventIterator
@@ -454,7 +462,7 @@ class CalendarDouble : public Calendar
 
         /** Constructor. */
         BucketDouble(CalendarDouble *c, Date start, Date end, int id=INT_MIN, int priority=0)
-          : Bucket(c, start, end, id, priority), val(0) {}
+          : Bucket(c, start, end, id, priority), val(0) {initType(metadata);}
 
       public:
         /** Returns the value of this bucket. */
@@ -484,11 +492,13 @@ class CalendarDouble : public Calendar
             Bucket::endElement(pIn, pAttr, pElement);
         }
 
-        virtual const MetaClass& getType() const
-        {return *Calendar::Bucket::metadata;}
 
         virtual size_t getSize() const
         {return sizeof(CalendarDouble::BucketDouble);}
+
+        static DECLARE_EXPORT const MetaClass* metadata;
+        virtual const MetaClass& getType() const {return *metadata;}
+        static int initialize();
     };
 
     /** @brief A special event iterator, providing also access to the
@@ -1918,6 +1928,7 @@ class OperationPlan
       return PythonObject(ch.str());
     }
 
+    /** Python factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
     /** Initialize the operationplan. The initialization function should be

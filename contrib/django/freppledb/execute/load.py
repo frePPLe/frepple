@@ -40,9 +40,6 @@ from django.conf import settings
 
 import frepple
 
-
-header = '<?xml version="1.0" encoding="UTF-8" ?><plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
-
 database = DEFAULT_DB_ALIAS
 
 
@@ -94,32 +91,28 @@ def loadCalendarBuckets(cursor):
        sunday, monday, tuesday, wednesday, thursday, friday, saturday, 
        starttime, endtime 
     FROM calendarbucket
-    ORDER BY calendar_id, id
+    ORDER BY calendar_id, startdate desc
     ''')
-  x = [ header ]
-  x.append('<calendars>')
   for i, j, k, l, m, n, o1, o2, o3, o4, o5, o6, o7, t1, t2 in cursor.fetchall():
     cnt += 1
-    days = 0
-    if o1: days += 1
-    if o2: days += 2
-    if o3: days += 4
-    if o4: days += 8
-    if o5: days += 16
-    if o6: days += 32
-    if o7: days += 64
-    x.append('<calendar name=%s><buckets><bucket id="%i" %s%s%s%s starttime="PT%sS" endtime="PT%sS" value="%f"/></buckets></calendar>' % (
-       quoteattr(i), l,
-       (j and ' start="%s"' % j.isoformat()) or '',
-       (k and ' end="%s"' % k.isoformat()) or '',
-       (m and ' priority="%s"' % m) or '',
-       (days != 127 and ' days="%s"' % days) or '',
-       t1.hour*3600 + t1.minute*60 + t1.second,
-       t2.hour*3600 + t2.minute*60 + t2.second + 1,
-       n,
-      ))
-  x.append('</calendars></plan>')
-  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
+    try:
+      days = 0
+      if o1: days += 1
+      if o2: days += 2
+      if o3: days += 4
+      if o4: days += 8
+      if o5: days += 16
+      if o6: days += 32
+      if o7: days += 64
+      b = frepple.calendar(name=i).addBucket(l)
+      b.value = n
+      b.days = days
+      b.starttime = t1.hour*3600 + t1.minute*60 + t1.second
+      b.endtime = t2.hour*3600 + t2.minute*60 + t2.second + 1
+      if m: b.priority = m
+      if j: b.start = j
+      if k: b.end = k
+    except Exception as e: print "Error:", e
   print 'Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime)
 
 

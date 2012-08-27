@@ -10,11 +10,19 @@ The changes are:
 
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">
- $(function() {
-    $('#id_username').focus();
-    $("input:submit").button();
- });
+$(function() {
+  $('#id_username').focus();
+  $("input:submit").button();
+});
 </script>
+<!--[if lte IE 8]>
+<script type="text/javascript">
+$(function() {
+  $('#login-form').hide();
+});
+</script>
+<![endif]-->
+
 {% endblock %}
 
 {% block bodyclass %}login{% endblock %}
@@ -53,9 +61,17 @@ The changes are:
     <input type="hidden" name="next" value="{{request.prefix}}{{next}}" />
   </div>
   <div class="submit-row">
-    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}" />
+    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}"/>
   </div>
 </form>
 
+<!--[if lte IE 8]><br/><span style="font-weight: bold">FrePPLe does NOT support Internet Explorer 8!</span><br/><br/>
+Upgrade to Internet Explorer 9 or, even better, use a better browser: Chrome, Firefox, Safari or Opera.
+<![endif]-->
+
 </div>
 {% endblock %}
+
+
+
+

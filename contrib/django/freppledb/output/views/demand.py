@@ -44,7 +44,7 @@ class OverviewReport(GridPivot):
   basequeryset = Item.objects.all()
   model = Item
   rows = (
-    GridFieldText('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
+    GridFieldText('item', title=_('item'), key=True, field_name='name', formatter='item', editable=False),
     GridFieldText(None, width="(5*numbuckets<200 ? 5*numbuckets : 200)", extra='formatter:graph', editable=False),
     )
   crosses = (

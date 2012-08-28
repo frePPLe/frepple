@@ -134,13 +134,13 @@ astyle:
 old1 = 0
 old2 = 9
 old3 = 2
-old4 = .beta 
+old4 = .beta
 new1 = 0
 new2 = 9
 new3 = 2
 new4 = 
 set_release:
-	for i in "configure.in" "doc/menu.html" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "contrib/django/freppledb/__init__.py" "contrib/django/freppledb/locale/nl/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/nl/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/djangojs.po" "bin/frepple.xsd" "bin/frepple_core.xsd"; do \
+	for i in "configure.in" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "contrib/django/freppledb/__init__.py" "contrib/django/freppledb/locale/nl/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/nl/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/djangojs.po" "bin/frepple.xsd" "bin/frepple_core.xsd"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)$(old4)/$(new1).$(new2).$(new3)$(new4)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done

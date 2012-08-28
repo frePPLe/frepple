@@ -117,11 +117,11 @@ class OverviewReport(GridPivot):
                    where bucket_id = '%s' and enddate > '%s' and startdate <= '%s'
                    ) d
       -- Include child buffers
-      inner join resource
-      on resource.lft between res.lft and res.rght
+      inner join %s res2
+      on res2.lft between res.lft and res.rght
       -- Utilization info
       left join out_resourceplan
-      on resource.name = out_resourceplan.theresource
+      on res2.name = out_resourceplan.theresource
       and d.startdate <= out_resourceplan.startdate
       and d.enddate > out_resourceplan.startdate
       and out_resourceplan.startdate >= '%s'
@@ -137,12 +137,13 @@ class OverviewReport(GridPivot):
                 and out_resourceplan.startdate < '%s'
                 group by theresource
                 ) plan_summary
-      on resource.name = plan_summary.theresource
+      on res2.name = plan_summary.theresource
       -- Grouping and sorting
       group by res.name, res.location_id, d.bucket, d.startdate
       order by %s, d.startdate    
       ''' % ( units, units, units, units,
         basesql, bucket, startdate, enddate,
+        connections[basequery.db].ops.quote_name('resource'),
         startdate, enddate,
         sql_max('sum(out_resourceplan.available)','0.0001'), 
         startdate, enddate, sortsql

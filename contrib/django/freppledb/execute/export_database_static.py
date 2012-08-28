@@ -118,20 +118,31 @@ def exportCalendarBuckets(cursor):
        
   cursor.executemany(
     '''insert into calendarbucket
-    (calendar_id,startdate,enddate,id,priority,value,lastmodified) 
+    (calendar_id,startdate,enddate,id,priority,value,
+     monday,tuesday,wednesday,thursday,friday,saturday,sunday,
+     starttime,endtime,lastmodified) 
     values(%s,%s,%s,%s,%s,%s,%s)''',
     [(
        i.calendar.name, str(i.start), str(i.end), i.id, i.priority, 
-       round(i.value,settings.DECIMAL_PLACES), timestamp 
+       round(i.value,settings.DECIMAL_PLACES), 
+       (i.days & 1) and true or false, (i.days & 2) and true or false, (i.days & 4) and true or false,
+       (i.days & 8) and true or false, (i.days & 16) and true or false, (i.days & 32) and true or false,
+       (i.days & 64) and true or false, i.starttime, i.endtime, timestamp 
       ) for i in buckets() if (i.calendar.name, i.id) not in primary_keys 
     ])
   cursor.executemany(
     '''update calendarbucket 
-     set enddate=%s, startdate=%s, priority=%s, value=%s, lastmodified=%s 
+     set enddate=%s, startdate=%s, priority=%s, value=%s, lastmodified=%s,
+     sunday=%s, monday=%s, tuesday=%s, wednesday=%s, thursday=%s, friday=%s, saturday=%s,  
+     starttime=%s, endtime=%s 
      where calendar_id=%s and id=%s''',
     [(
        str(i.end), str(i.start), i.priority, 
-       round(i.value,settings.DECIMAL_PLACES), timestamp, i.calendar.name, i.id  
+       round(i.value,settings.DECIMAL_PLACES), timestamp,
+       (i.days & 1) and true or false, (i.days & 2) and true or false, (i.days & 4) and true or false,
+       (i.days & 8) and true or false, (i.days & 16) and true or false, (i.days & 32) and true or false,
+       (i.days & 64) and true or false, i.starttime, i.endtime, 
+       i.calendar.name, i.id  
      ) for i in buckets() if (i.calendar.name, i.id) in primary_keys
     ])
   transaction.commit(using=database)

@@ -33,7 +33,7 @@ from django.conf import settings
 class HierarchyModel(models.Model):
   lft = models.PositiveIntegerField(db_index = True, editable=False, null=True, blank=True)
   rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
-  level = models.PositiveIntegerField(null=True, editable=False, blank=True)
+  lvl = models.PositiveIntegerField(null=True, editable=False, blank=True)
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True,
     help_text=_('Unique identifier'))
   owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='xchildren',
@@ -43,7 +43,7 @@ class HierarchyModel(models.Model):
     # Trigger recalculation of the hieracrhy
     self.lft = None
     self.rght = None
-    self.level = None
+    self.lvl = None
 
     # Call the real save() method
     super(HierarchyModel, self).save(*args, **kwargs)
@@ -76,7 +76,9 @@ class HierarchyModel(models.Model):
 
       # After processing the children of this node now know its left and right values
       cursor.execute(
-        'update %s set lft=%d, rght=%d, level=%d where name = %%s' % (cls._meta.db_table, left, right, level),
+        'update %s set lft=%d, rght=%d, lvl=%d where name = %%s' % (
+          connections[database].ops.quote_name(cls._meta.db_table), left, right, level
+          ),
         [me]
         )
 

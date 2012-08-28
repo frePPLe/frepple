@@ -48,7 +48,7 @@ class Command(BaseCommand):
     * Oracle:
        - impdp and expdp need to be in the path
        - The DBA has to create a server side directory and grant rights to it:
-           CREATE OR REPLACE DIRECTORY dump_dir AS 'c:\temp';
+           CREATE OR REPLACE DIRECTORY dump_dir AS 'c:\\temp';
            GRANT READ, WRITE ON DIRECTORY dump_dir TO usr1;
            GRANT READ, WRITE ON DIRECTORY dump_dir TO usr2;
        - If the schemas reside on different servers, the DB will need to

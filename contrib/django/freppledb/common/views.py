@@ -182,46 +182,6 @@ class ParameterList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
- 
-class RSSFeed(Feed):
-  title = _("frePPLe recent changes")
-
-  def __call__(self, request, *args, **kwargs):
-    # HTTP auth check inspired by http://djangosnippets.org/snippets/243/
-    self.link = "%s/rss/" % request.prefix
-    self.request = request
-    return super(RSSFeed, self).__call__(request, *args, **kwargs)
-
-  def items(self):
-    return LogEntry.objects.all().using(self.request.database).order_by('-action_time')[:50]
-
-  def item_title(self, action):
-    if action.is_addition():
-      return _("Added %(name)s \"%(object)s\".") % {'name': action.content_type.name, 'object': action.object_repr}
-    elif action.is_change():
-      return _("Changed %(name)s \"%(object)s\".") % {'name': action.content_type.name, 'object': action.object_repr}
-    elif action.is_deletion():
-      return _("Deleted %(name)s \"%(object)s\".") % {'name': action.content_type.name, 'object': action.object_repr}
-
-  def author_name(self, action):
-    if action and action.user:
-      return action.user.get_full_name
-    else:
-      return ''
-
-  def item_categories(self, action):
-    return ( action.content_type.name, )
-
-  def item_pubdate(self, action):
-    return action.action_time
-
-  def item_description(self, action):
-    return action.change_message
-    
-  def item_link(self, action):
-    if action.is_deletion(): return ''
-    return action.get_admin_url() and ("%s/admin/%s" % (self.request.prefix, action.get_admin_url())) or ''
-    
 
 @staff_member_required
 @csrf_protect

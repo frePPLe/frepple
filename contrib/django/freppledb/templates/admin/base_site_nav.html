@@ -42,7 +42,7 @@
 
 <a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'User' %}</a>
 <div id="userMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">{% if request.user.is_authenticated %}
-<li class="ui-menu-item"><a href="{{request.prefix}}/admin/logout/">{% trans 'Log out' %}</a></li>
+<li class="ui-menu-item"><a href="/admin/logout/">{% trans 'Log out' %}</a></li>
 <li class="ui-menu-item"><a href="{{request.prefix}}/preferences/">{% trans 'Preferences' %}</a></li>
 <li class="ui-menu-item"><a href="{{request.prefix}}/admin/password_change/">{% trans 'Change password' %}</a></li>
 {% else %}<li class="ui-menu-item"><a href="{{request.prefix}}/admin/auth/user/">{% trans 'Log in' %}</a></li>

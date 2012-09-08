@@ -568,6 +568,9 @@ class SolverMRP : public Solver
         SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
           : sol(s), cluster(c), demands(d), constrainedPlanning(true),
             state(statestack), prevstate(statestack-1) {}
+            
+        /** Destructor. */
+        virtual ~SolverMRPdata() {};
 
         /** Verbose mode is inherited from the solver. */
         unsigned short getLogLevel() const {return sol ? sol->getLogLevel() : 0;}

@@ -81,13 +81,13 @@ DECLARE_EXPORT void PythonInterpreter::initialize(int argc, char *argv[])
 
   // Create python exception types
   int nok = 0;
-  PythonLogicException = PyErr_NewException("frepple.LogicException", NULL, NULL);
+  PythonLogicException = PyErr_NewException((char*)"frepple.LogicException", NULL, NULL);
   Py_IncRef(PythonLogicException);
   nok += PyModule_AddObject(module, "LogicException", PythonLogicException);
-  PythonDataException = PyErr_NewException("frepple.DataException", NULL, NULL);
+  PythonDataException = PyErr_NewException((char*)"frepple.DataException", NULL, NULL);
   Py_IncRef(PythonDataException);
   nok += PyModule_AddObject(module, "DataException", PythonDataException);
-  PythonRuntimeException = PyErr_NewException("frepple.RuntimeException", NULL, NULL);
+  PythonRuntimeException = PyErr_NewException((char*)"frepple.RuntimeException", NULL, NULL);
   Py_IncRef(PythonRuntimeException);
   nok += PyModule_AddObject(module, "RuntimeException", PythonRuntimeException);
 

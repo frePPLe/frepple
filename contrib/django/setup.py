@@ -18,11 +18,7 @@
 #
 
 from distutils.core import setup
-import sys
-from django.conf import settings
-
-import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
+import sys, os
 
 def fullsplit(path, result=None):
     """

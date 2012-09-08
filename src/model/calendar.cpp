@@ -641,16 +641,20 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
 
     // Check enddate and startdate are not violated
     if (st < startdate)
+    {
       if (nd < startdate)
         continue;  // No overlap with overall effective dates
       else
         st = startdate;
+    }
     if (nd >= enddate)
+    {
       if (st >= enddate)
         continue;  // No overlap with effective range
       else
         nd = enddate;
-
+    }
+    
     if ((refDate < st || (allowEqualAtStart && refDate == st)) && priority <= iter->lastPriority)
     {
       if (st > iter->curDate || (st == iter->curDate && priority > iter->curPriority))
@@ -748,16 +752,20 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
 
     // Check enddate and startdate are not violated
     if (st <= startdate)
+    {
       if (nd <= startdate)
         continue;  // No overlap with overall effective dates
       else
         st = startdate;
+    }
     if (nd > enddate)
+    {
       if (st > enddate)
         continue;  // No overlap with effective range
       else
         nd = enddate;
-
+    }
+    
     if ((refDate > nd || (allowEqualAtEnd && refDate == nd))
       && priority <= iter->lastPriority)
     {

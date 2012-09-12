@@ -109,29 +109,30 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up the options
-    if 'verbosity' in options: verbosity = int(options['verbosity'] or '1')
+    if 'verbosity' in options: verbosity = int(options['verbosity'])
     else: verbosity = 1
     if 'user' in options: user = options['user']
     else: user = ''
-    if 'cluster' in options: cluster = int(options['cluster'] or '100')
+    if 'cluster' in options: cluster = int(options['cluster'])
     else: cluster = 100
-    if 'demand' in options: demand = int(options['demand'] or '30')
+    if 'demand' in options: demand = int(options['demand'])
     else: demand = 30
-    if 'forecast_per_item' in options: forecast_per_item = int(options['forecast_per_item'] or '50')
+    if 'forecast_per_item' in options: forecast_per_item = int(options['forecast_per_item'])
     else: forecast_per_item = 50
-    if 'level' in options: level = int(options['level'] or '5')
+    if 'level' in options: level = int(options['level'])
     else: level = 5
-    if 'resource' in options: resource = int(options['resource'] or '60')
+    if 'resource' in options: resource = int(options['resource'])
     else: resource = 60
-    if 'resource_size' in options: resource_size = int(options['resource_size'] or '5')
+    if 'resource_size' in options: resource_size = int(options['resource_size'])
     else: resource_size = 5
-    if 'components' in options: components = int(options['components'] or '200')
+    if 'components' in options: components = int(options['components'])
     else: components = 200
-    if 'components_per' in options: components_per = int(options['components_per'] or '5')
+    if 'components_per' in options: components_per = int(options['components_per'])
     else: components_per = 5
-    if 'deliver_lt' in options: deliver_lt = int(options['deliver_lt'] or '30')
+    if components == 0: components_per = 0
+    if 'deliver_lt' in options: deliver_lt = int(options['deliver_lt'])
     else: deliver_lt = 30
-    if 'procure_lt' in options: procure_lt = int(options['procure_lt'] or '40')
+    if 'procure_lt' in options: procure_lt = int(options['procure_lt'])
     else: procure_lt = 40
     if 'currentdate' in options: currentdate = options['currentdate'] or datetime.strftime(date.today(),'%Y-%m-%d')
     else: currentdate = datetime.strftime(date.today(),'%Y-%m-%d')

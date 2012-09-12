@@ -563,10 +563,20 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
 
     // Demands
     memsize = 0;
+    size_t c_count = 0, c_memsize = 0;
     for (Demand::iterator dm = Demand::begin(); dm != Demand::end(); ++dm)
+    {
       memsize += dm->getSize();
+      for (Problem::const_iterator cstrnt(dm->getConstraints().begin()); 
+        cstrnt != dm->getConstraints().end(); ++cstrnt)
+      {
+        ++c_count;
+        c_memsize += cstrnt->getSize();
+      }
+    }
     logger << "Demand       \t" << Demand::size() << "\t" << memsize  << endl;
-    total += memsize;
+    logger << "Constraints  \t" << c_count << "\t" << c_memsize  << endl;
+    total += memsize + c_memsize;
 
     // Operationplans
     size_t countloadplans(0), countflowplans(0);

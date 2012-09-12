@@ -27,9 +27,9 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-/** @mainpage frePPLe API
-  * FrePPLe provides a framework for modeling a manufacturing environment and
-  * computing production plans.<br>
+/** @mainpage <br>
+  * FrePPLe provides a framework for modeling a manufacturing environment 
+  * and generating production plans.<br>
   * This document describes its C++ API.<P>
   *
   * @namespace frepple

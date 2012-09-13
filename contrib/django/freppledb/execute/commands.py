@@ -87,7 +87,10 @@ frepple.printsize()
 #export_static_to_database()
 
 print "\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S")
-from freppledb.execute.export_database_plan import exportfrepple as export_plan_to_database
+if settings.DATABASES[db]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+  from freppledb.execute.export_database_plan_postgresql import exportfrepple as export_plan_to_database
+else:
+  from freppledb.execute.export_database_plan import exportfrepple as export_plan_to_database
 export_plan_to_database()
 
 #print "\nStart saving the plan to flat files at", datetime.now().strftime("%H:%M:%S")

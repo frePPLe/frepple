@@ -364,7 +364,7 @@ class DatabaseTask(Thread):
 @transaction.commit_manually(using=database)
 def exportfrepple():
   '''
-  This function exports the data from the frepple memory into the database.
+  This function exports the data from the frePPLe memory into the database.
   '''
   # Make sure the debug flag is not set!
   # When it is set, the django database wrapper collects a list of all sql
@@ -380,7 +380,7 @@ def exportfrepple():
     cursor.execute('PRAGMA cache_size = 8000')
   elif settings.DATABASES[database]['ENGINE'] == 'oracle':
     cursor.execute("ALTER SESSION SET COMMIT_WRITE='BATCH,NOWAIT'")
-
+  
   # Erase previous output
   truncate(cursor)
 

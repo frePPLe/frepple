@@ -267,7 +267,7 @@ def exportfrepple():
   test = 'FREPPLE_TEST' in os.environ  
 
   # Start a PSQL process
-  process = Popen("psql -U%s %s%s%s " % (
+  process = Popen("psql -q -U%s %s%s%s " % (
       settings.DATABASES[database]['USER'],
      settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
      settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<?python
-# Forecasting module
-frepple.loadmodule("mod_forecast.so",
-  Net_CustomerThenItemHierarchy=True,
-  Net_MatchUsingDeliveryOperation=False)
-?>
-</plan>

@@ -36,7 +36,7 @@ from django.utils.translation import ungettext
 from django.utils.encoding import iri_to_uri, force_unicode
 from django.utils.text import capfirst
 
-from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix
+from freppledb.input.models import Resource, Operation, Location, SetupMatrix
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
@@ -521,33 +521,6 @@ class DemandList(GridReport):
     GridFieldText('owner', title=_('owner'), formatter='demand'),
     GridFieldNumber('maxlateness', title=_('maximum lateness')),
     GridFieldNumber('minshipment', title=_('minimum shipment')),
-    GridFieldLastModified('lastmodified'),
-    )
-
-
-class ForecastList(GridReport):
-  '''
-  A list report to show forecasts.
-  '''
-  template = 'input/forecastlist.html'
-  title = _("Forecast List")
-  basequeryset = Forecast.objects.all()
-  model = Forecast
-  frozenColumns = 1
-
-  rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='forecast'),
-    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
-    GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='customer'),
-    GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
-    GridFieldText('description', title=_('description')),
-    GridFieldText('category', title=_('category')),
-    GridFieldText('subcategory', title=_('subcategory')),
-    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
-    GridFieldInteger('priority', title=_('priority')),
-    GridFieldNumber('maxlateness', title=_('maximum lateness')),
-    GridFieldNumber('minshipment', title=_('minimum shipment')),
-    GridFieldBool('discrete', title=_('discrete')),
     GridFieldLastModified('lastmodified'),
     )
 

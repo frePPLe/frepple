@@ -25,12 +25,10 @@ import freppledb.output.views.buffer
 import freppledb.output.views.demand
 import freppledb.output.views.problem
 import freppledb.output.views.constraint
-import freppledb.output.views.forecast
 import freppledb.output.views.resource
 import freppledb.output.views.operation
 import freppledb.output.views.pegging
 import freppledb.output.views.kpi
-
 
 urlpatterns = patterns('',
     (r'^buffer/([^/]+)/$', freppledb.output.views.buffer.OverviewReport.as_view()),
@@ -45,9 +43,6 @@ urlpatterns = patterns('',
     (r'^operation/([^/]+)/$', freppledb.output.views.operation.OverviewReport.as_view()),
     (r'^operationgraph/([^/]+)/$', freppledb.output.views.operation.GraphData),
     (r'^operation/$',  freppledb.output.views.operation.OverviewReport.as_view()),
-    (r'^forecast/([^/]+)/$',  freppledb.output.views.forecast.OverviewReport.as_view()),
-    (r'^forecastgraph/([^/]+)/$', freppledb.output.views.forecast.GraphData),
-    (r'^forecast/$', freppledb.output.views.forecast.OverviewReport.as_view()),
     (r'^demandpegging/([^/]+)/$', freppledb.output.views.pegging.ReportByDemand.as_view()),
     (r'^pegginggraph/([^/]+)/$', freppledb.output.views.pegging.GraphData),
     (r'^bufferpegging/$', freppledb.output.views.pegging.ReportByBuffer.as_view()),

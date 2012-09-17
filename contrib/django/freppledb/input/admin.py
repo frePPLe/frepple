@@ -24,10 +24,9 @@ from datetime import datetime
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.input.models import Resource, Forecast, Operation, Location, SetupMatrix
+from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
-from freppledb.input.models import SetupRule, ForecastDemand
 from freppledb.admin import site
 from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
 
@@ -189,22 +188,3 @@ class Demand_admin(MultiDBModelAdmin):
         )
   save_on_top = True
 site.register(Demand,Demand_admin)
-
-
-class ForecastDemand_inline(MultiDBTabularInline):
-  model = ForecastDemand
-  extra = 5
-
-
-class Forecast_admin(MultiDBModelAdmin):
-  model = Forecast
-  raw_id_fields = ('customer', 'item', 'calendar', 'operation')
-  fieldsets = (
-            (None, {'fields': ('name', 'item', 'customer', 'calendar', 'description', 'category','subcategory', 'priority')}),
-            (_('Planning parameters'), {'fields': ('discrete', 'operation', 'minshipment', 'maxlateness'), 'classes': ('collapse')}),
-        )
-  radio_fields = {'priority': admin.HORIZONTAL, }
-  inlines = [ ForecastDemand_inline, ]
-  save_on_top = True
-site.register(Forecast,Forecast_admin)
-

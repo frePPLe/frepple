@@ -81,7 +81,10 @@ class HierarchyModel(models.Model):
           ),
         [me]
         )
-
+        
+      # Remove from node list (to mark as processed)
+      del nodes[me]
+      
       # Return the right value of this node + 1
       return right + 1
 
@@ -95,6 +98,14 @@ class HierarchyModel(models.Model):
     for i, j in keys:
       if j == None:
         cnt = tagChildren(i,cnt,0)
+    
+    # Loop over all nodes that were not processed in the previous loop.
+    # These are loops in your hierarchy, ie parent-chains not ending 
+    # at a top-level node without parent.
+    for i in nodes:
+      print "Data error: Hierachy loop at '%s'. Considering it as a top-level node now." % i 
+      cnt = tagChildren(i,cnt,0)
+        
     transaction.commit(using=database)
     settings.DEBUG = tmp_debug
     transaction.leave_transaction_management(using=database)

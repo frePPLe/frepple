@@ -23,6 +23,9 @@ from django.conf.urls import patterns
 
 import freppledb.input.views
 
+# Automatically add these URLs when the application is installed
+autodiscover = True
+
 urlpatterns = patterns('',
 
   # Model list reports, which override standard admin screens

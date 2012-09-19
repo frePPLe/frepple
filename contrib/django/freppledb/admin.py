@@ -19,11 +19,17 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+from django.conf import settings
 from django.contrib import admin
+from django.utils.importlib import import_module
 
 # Create an admin site where all our apps will register their models
 site = admin.sites.AdminSite()
 
-# Call the admin modules of our applications
-import freppledb.input.admin
-import freppledb.common.admin
+# Adding the admin modules of each installed application.
+for app in settings.INSTALLED_APPS:
+  try:
+    mod = import_module('%s.admin' % app)
+  except ImportError, e:
+    # Silently ignore 
+    pass

@@ -30,6 +30,9 @@ import freppledb.output.views.operation
 import freppledb.output.views.pegging
 import freppledb.output.views.kpi
 
+# Automatically add these URLs when the application is installed
+autodiscover = True
+
 urlpatterns = patterns('',
     (r'^buffer/([^/]+)/$', freppledb.output.views.buffer.OverviewReport.as_view()),
     (r'^buffergraph/([^/]+)/$', freppledb.output.views.buffer.GraphData),

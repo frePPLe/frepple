@@ -23,13 +23,16 @@ from django.conf.urls import patterns
 
 import freppledb.execute.views
 
+# Automatically add these URLs when the application is installed
+autodiscover = True
+
 urlpatterns = patterns('',
-    (r'^scenarios/$', 'freppledb.execute.views.scenarios'),
-    (r'^logfrepple/$', 'freppledb.execute.views.logfile'),
-    (r'^log/$', freppledb.execute.views.LogReport.as_view()),
-    (r'^runfrepple/$', 'freppledb.execute.views.runfrepple'),
-    (r'^erase/$', 'freppledb.execute.views.erase'),
-    (r'^create/$', 'freppledb.execute.views.create'),
-    (r'^fixture/$', 'freppledb.execute.views.fixture'),
-    (r'^', 'freppledb.execute.views.main'),
+    (r'^execute/scenarios/$', 'freppledb.execute.views.scenarios'),
+    (r'^execute/logfrepple/$', 'freppledb.execute.views.logfile'),
+    (r'^execute/log/$', freppledb.execute.views.LogReport.as_view()),
+    (r'^execute/runfrepple/$', 'freppledb.execute.views.runfrepple'),
+    (r'^execute/erase/$', 'freppledb.execute.views.erase'),
+    (r'^execute/create/$', 'freppledb.execute.views.create'),
+    (r'^execute/fixture/$', 'freppledb.execute.views.fixture'),
+    (r'^execute/$', 'freppledb.execute.views.main'),
 )

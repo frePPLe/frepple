@@ -29,7 +29,7 @@
     For each module we want to use the extra schema definitions need to be included.
     Manually edit this section.
   -->
-  <xsd:include schemaLocation="mod_forecast.xsd" />
+  <!-- <xsd:include schemaLocation="mod_forecast.xsd" /> -->
   <!-- <xsd:include schemaLocation="mod_lpsolver.xsd" /> -->
   <!-- <xsd:include schemaLocation="mod_webservice.xsd" /> -->
 

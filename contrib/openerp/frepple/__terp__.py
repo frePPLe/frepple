@@ -26,7 +26,7 @@
     "author" : "frePPLe",
     "website" : "http://www.frepple.com",
     "category" : "Generic Modules/Production",
-    "depends" : ["mrp"],
+    "depends" : ["mrp","sale_order_dates"],
     "license" : "Other OSI approved license",
     "description": """
     This module performs constrained planning scheduling with frePPLe.

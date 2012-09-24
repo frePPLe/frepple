@@ -90,7 +90,7 @@ class Command(BaseCommand):
     print '\nThree users are created by default: "admin", "frepple" and "guest" (the default password is equal to the user name)\n'
     print 'Quit the server with CTRL-C.\n'
 
-    # Start a seperate thread that will check for updates
+    # Start a separate thread that will check for updates
     # We don't wait for it to finish
     CheckUpdates().start()
 
@@ -109,22 +109,21 @@ class Command(BaseCommand):
 
 class CheckUpdates(Thread):
   def run(self):
-    if settings.DEBUG == False:
-      try:
-        import urllib
-        import urllib2
-        import re
-        values = {
-          'platform' : sys.platform,
-          'executable' : sys.executable,
-          'version' : VERSION,
-          }
-        request = urllib2.Request('http://www.frepple.com/usage.php?' + urllib.urlencode(values))
-        response = urllib2.urlopen(request).read()
-        match = re.search("<release>(.*)</release>", response)
-        release = match.group(1)
-        if release > VERSION:
-          print "A new frePPLe release %s is available. Your current release is %s." % (release, VERSION)
-      except:
-        # Don't worry if something went wrong.
-        pass
+    try:
+      import urllib
+      import urllib2
+      import re
+      values = {
+        'platform' : sys.platform,
+        'executable' : sys.executable,
+        'version' : VERSION,
+        }
+      request = urllib2.Request('http://www.frepple.com/usage.php?' + urllib.urlencode(values))
+      response = urllib2.urlopen(request).read()
+      match = re.search("<release>(.*)</release>", response)
+      release = match.group(1)
+      if release > VERSION:
+        print "A new frePPLe release %s is available. Your current release is %s." % (release, VERSION)
+    except:
+      # Don't worry if something went wrong.
+      pass

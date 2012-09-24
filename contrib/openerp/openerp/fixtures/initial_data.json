@@ -1,6 +1,6 @@
 [
-{"pk": "openerp_user", "model": "input.parameter", "fields": {"value": "admin", "description": "OpenERP connector: user for the connection"}},
-{"pk": "openerp_password", "model": "input.parameter", "fields": {"value": "admin", "description": "OpenERP connector: password for the connection"}},
-{"pk": "openerp_db", "model": "input.parameter", "fields": {"value": "openerp", "description": "OpenERP connector: database to connect to"}},
-{"pk": "openerp_url", "model": "input.parameter", "fields": {"value": "http://localhost:8069/", "description": "OpenERP connector: URL for the XML-RPC server"}}
+{"pk": "openerp_user", "model": "common.parameter", "fields": {"value": "admin", "description": "OpenERP connector: User for the connection"}},
+{"pk": "openerp_password", "model": "common.parameter", "fields": {"value": "admin", "description": "OpenERP connector: Password for the connection"}},
+{"pk": "openerp_db", "model": "common.parameter", "fields": {"value": "openerp", "description": "OpenERP connector: Database to connect to"}},
+{"pk": "openerp_url", "model": "common.parameter", "fields": {"value": "http://localhost:8069/", "description": "OpenERP connector: URL for the XML-RPC server"}}
 ]

@@ -87,7 +87,5 @@
 {"pk": "1", "model": "input.suboperation", "fields": {"priority": "1", "suboperation": "Deliver product from factory 2 - 1 day", "operation": "Deliver product from factory 2 or 1"}},
 {"pk": "2", "model": "input.suboperation", "fields": {"priority": "2", "suboperation": "Deliver product from factory 2 - 7 day", "operation": "Deliver product from factory 1 or 2"}},
 {"pk": "3", "model": "input.suboperation", "fields": {"priority": "1", "suboperation": "Deliver product from factory 1 - 1 day", "operation": "Deliver product from factory 1 or 2"}},
-{"pk": "4", "model": "input.suboperation", "fields": {"priority": "2", "suboperation": "Deliver product from factory 1 - 7 day", "operation": "Deliver product from factory 2 or 1"}},
-{"pk": "Forecast area of factory 1", "model": "input.forecast", "fields": {"customer": "Customer near factory 1", "priority": 2, "item": "product", "calendar": "Working Days", "operation": "Deliver product from factory 1 or 2"}},
-{"pk": "Forecast area of factory 2", "model": "input.forecast", "fields": {"customer": "Customer near factory 2", "priority": 2, "item": "product", "calendar": "Working Days", "operation": "Deliver product from factory 2 or 1"}}
+{"pk": "4", "model": "input.suboperation", "fields": {"priority": "2", "suboperation": "Deliver product from factory 1 - 7 day", "operation": "Deliver product from factory 2 or 1"}}
 ]

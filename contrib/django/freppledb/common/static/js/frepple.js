@@ -603,7 +603,7 @@ function import_show(url)
       buttons: [
         {
           text: gettext("Import"),
-          click: function() { $("#uploadform").submit(); }
+          click: function() { if ($("#csv_file").val() != "") $("#uploadform").submit(); }
         },
         {
           text: gettext("Cancel"),

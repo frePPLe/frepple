@@ -593,7 +593,8 @@ function import_show(url)
 	  + (typeof(url) != 'undefined' ? url : '') + '">' +
     '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
     gettext('Load a CSV-formatted text file.') + '<br/>' +
-    gettext('The first row should contain the field names.') + '<br/>' +
+    gettext('The first row should contain the field names.') + '<br/><br/>' +
+    '<input type="checkbox" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
     gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/></form>'
     ).dialog({
       title: gettext("Import data"),

@@ -45,7 +45,8 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db import transaction, models
+from django.core.management.color import no_style
+from django.db import connections, transaction, models
 from django.db.models.fields import Field, CharField, AutoField
 from django.db.models.fields.related import RelatedField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
@@ -655,7 +656,46 @@ class GridReport(View):
     resp.status_code = ok and 200 or 403
     return resp
   
-      
+  
+  @staticmethod
+  def dependent_models(m, found):
+    ''' An auxilary method that constructs a set of all dependent models'''
+    for f in m._meta.get_all_related_objects_with_model():
+      if f[0].model != m and not f[0].model in found:
+        found.update([f[0].model])
+        GridReport.dependent_models(f[0].model, found)
+                        
+        
+  @classmethod
+  def erase(reportclass, request):
+    # Build a list of dependencies
+    deps = set([reportclass.model])
+    GridReport.dependent_models(reportclass.model, deps)
+    
+    # Check the delete permissions for all related objects
+    for m in deps:
+      if not request.user.has_perm('%s.%s' % (m._meta.app_label, m._meta.get_delete_permission())):
+        return string_concat(m._meta.verbose_name, ':', _('Permission denied'))
+    
+    # Delete the data records
+    transaction.enter_transaction_management(using=request.database)
+    transaction.managed(True, using=request.database)
+    try:
+      cursor = connections[request.database].cursor()
+      sql_list = connections[request.database].ops.sql_flush(no_style(), [m._meta.db_table for m in deps], [] )
+      for sql in sql_list:
+        cursor.execute(sql)
+        transaction.commit(using=request.database)
+    except Exception as e:
+      return str(e)
+    finally:
+      transaction.commit(using=request.database)
+      transaction.leave_transaction_management(using=request.database)
+    
+    # Finished successfully
+    return None
+  
+        
   @classmethod
   def parseCSVupload(reportclass, request):
       '''
@@ -674,6 +714,13 @@ class GridReport(View):
         messages.add_message(request, messages.ERROR, _('Permission denied'))
         return HttpResponseRedirect(request.prefix + request.get_full_path())
 
+      # Erase all records and related tables
+      if 'erase' in request.POST: 
+        returnvalue = reportclass.erase(request)
+        if returnvalue:
+          messages.add_message(request, messages.ERROR, returnvalue)
+          return HttpResponseRedirect(request.prefix + request.get_full_path())
+                
       # Choose the right delimiter and language
       delimiter= get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',' and ';' or ','
       if translation.get_language() != request.LANGUAGE_CODE:

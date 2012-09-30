@@ -97,7 +97,7 @@ def exportOperationplans(process):
   for i in frepple.operations():
     for j in i.operationplans:
       process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-        j.id, i.name,
+        j.id, i.name[0:settings.NAMESIZE],
         round(j.quantity,settings.DECIMAL_PLACES), str(j.start), str(j.end),
         j.locked, j.unavailable, j.owner and j.owner.id or "\\N"
         ))
@@ -267,12 +267,12 @@ def exportfrepple():
   test = 'FREPPLE_TEST' in os.environ  
 
   # Start a PSQL process
-  process = Popen("psql -q -U%s %s%s%s " % (
+  process = Popen("psql -q -U%s %s%s%s" % (
       settings.DATABASES[database]['USER'],
      settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
      settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
      test and settings.DATABASES[database]['TEST_NAME'] or settings.DATABASES[database]['NAME'],
-   ), stdin=PIPE, bufsize=0, universal_newlines=True)
+   ), stdin=PIPE, stderr=PIPE, bufsize=0, universal_newlines=True)  
   
   # Send all output to the PSQL process through a pipe
   try:
@@ -290,6 +290,8 @@ def exportfrepple():
     # Close the pipe and PSQL process
     process.stdin.write('\\q\n')
     process.stdin.close()
+    # Collect error messages
+    print process.communicate()[1]
   
   cursor = connections[database].cursor()
   cursor.execute('''

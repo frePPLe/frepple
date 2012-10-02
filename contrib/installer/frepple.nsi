@@ -222,12 +222,14 @@ Section "Application" SecAppl
     FileRead $R2 $R5
     IfErrors end_loop
     FileWrite $R4 "$R5"
+    StrCmp "$R5" "# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================$\n" +3 0
     StrCmp "$R5" "# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
   Goto read1_loop
   ; Read the second section in settings.py and write a different text to the output file
   read2_loop:       
     FileRead $R2 $R5
     IfErrors end_loop
+    StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\n" +3 0
     StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
   Goto read2_loop
   FileWrite $R4 "DATABASES = {$\r$\n"

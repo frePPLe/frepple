@@ -598,8 +598,7 @@ function import_show(url)
     gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/></form>'
     ).dialog({
       title: gettext("Import data"),
-      autoOpen: true,
-      resizable: false,
+      autoOpen: true, resizable: false, width: 390,
       buttons: [
         {
           text: gettext("Import"),
@@ -657,7 +656,7 @@ function export_show(only_list)
     '<option value="csvlist"' + (only_list ?  ' selected="selected"' : '') + '>' + gettext("List") +'</option></select>'
     ).dialog({
       title: gettext("Export data"),
-      autoOpen: true, resizable: false,
+      autoOpen: true, resizable: false, width: 390,
       buttons: [
         {
           text: gettext("Export"),
@@ -703,53 +702,51 @@ function export_close()
 function bucket_show()
 {
   // Show popup
-  $('#popup').dialog('close');
+  $('#popup').dialog('close');  
   $.jgrid.hideModal("#searchmodfbox_grid");
-  $( "#reportstart" ).datepicker({
+  $( "#horizonstart" ).datepicker({
       showOtherMonths: true, selectOtherMonths: true,
       changeMonth:true, changeYear:true, yearRange: "c-1:c+5", dateFormat: 'yy-mm-dd'
     });
-  $( "#reportend" ).datepicker({
+  $( "#horizonend" ).datepicker({
       showOtherMonths: true, selectOtherMonths: true,
       changeMonth:true, changeYear:true, yearRange: "c-1:c+5", dateFormat: 'yy-mm-dd'
     });
   $('#timebuckets').dialog({
-     autoOpen: true, resizable: false,	 
+     autoOpen: true, resizable: false, width: 390, 	 
      buttons: [
        {
          text: gettext("OK"),
          click: function() { 
-        	// Determine the URL arguments
-        	var args = getURLparameters();
-        	var changed = false;
-        	var original = $('#reportoriginal').val().split('|');
-			if ($('#reportbucket').val() != original[0])
-			{
-			  args['reportbucket'] = $('#reportbucket').val();
-			  changed = true;
-			}
-			else
-			  delete args['reportbucket'];
-			if ($('#reportstart').val() != original[1])
-			{
-			  args['reportstart'] = $('#reportstart').val();
-			  changed = true;
-			}
-			else
-			  delete args['reportstart'];
-			if ($('#reportend').val() != original[2])
-			{
-			  args['reportend'] = $('#reportend').val();
-			  changed = true;
-			}
-			else
-			  delete args['reportend'];
-        	if (!changed)
+        	// Compare old and new parameters
+        	var params = $('#horizonbuckets').val() + '|' + 
+        	  $('#horizonstart').val() + '|' +
+        	  $('#horizonend').val() + '|' +
+        	  ($('#horizontype').is(':checked') ? "True" : "False") + '|' +
+        	  $('#horizonlength').val() + '|' +
+        	  $('#horizonunit').val();
+        	if (params == $('#horizonoriginal').val())
         	  // No changes to the settings. Close the popup.
         	  $(this).dialog('close');
-        	else
-        	  // Fetch the new report. This also hides the popup again.
-        	  location.href = location.pathname + "?" + $.param(args);
+        	else {
+        	  // Ajax request to update the horizon preferences
+              $.ajax({
+                type: 'POST',
+        		url: '/horizon/',
+        		data: { 
+        		  horizonbuckets: $('#horizonbuckets').val(),
+        		  horizonstart: $('#horizonstart').val(), 
+        		  horizonend: $('#horizonend').val(),
+        		  horizontype: ($('#horizontype').is(':checked') ? '1' : '0'),
+            	  horizonlength: $('#horizonlength').val(),
+            	  horizonunit: $('#horizonunit').val()
+            	  },
+        		dataType: 'text/html',
+        		async: false  // Need to wait for the update to be processed!
+        		});
+        	  // Reload the report
+        	  window.location.href = window.location.href;
+        	}
          }
        },
        {

@@ -144,8 +144,6 @@ class Parameter(AuditModel):
     verbose_name_plural = _('parameters')
 
     
-# TODO The bucket preference is not really generic. Different models could
-#      have separate bucket definitions.
 class Preferences(models.Model):
   csvOutputType = (
     ('table',_('Table')),
@@ -153,14 +151,18 @@ class Preferences(models.Model):
   )
   languageList = tuple( [ ('auto',_('Detect automatically')), ] + list(settings.LANGUAGES) )
   user = models.ForeignKey(User, verbose_name=_('user'), primary_key=True)
-  buckets = models.CharField(_('buckets'), max_length=settings.NAMESIZE, blank=True, null=True)
-  startdate = models.DateTimeField(_('start date'), blank=True, null=True)
-  enddate = models.DateTimeField(_('end date'), blank=True, null=True)
   language = models.CharField(_('language'), max_length=10, choices=languageList,
     default='auto')
   theme = models.CharField(_('theme'), max_length=20, default=settings.DEFAULT_THEME, 
     choices=settings.THEMES)
   pagesize = models.PositiveIntegerField(_('page size'), default=settings.DEFAULT_PAGESIZE)
+  horizonbuckets = models.CharField(max_length=settings.NAMESIZE, blank=True, null=True)
+  horizonstart = models.DateTimeField(blank=True, null=True)
+  horizonend = models.DateTimeField(blank=True, null=True)
+  horizontype = models.BooleanField(blank=True, default=True)
+  horizonlength = models.IntegerField(blank=True, default=6, null=True)
+  horizonunit = models.CharField(blank=True, max_length=5, default='month', null=True, 
+    choices=(("day","day"),("week","week"),("month","month")))
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
   class Meta:
@@ -171,11 +173,9 @@ def CreatePreferenceModel(instance, **kwargs):
   '''Create a preference model for a new user.'''
   pref, created = Preferences.objects.get_or_create(user=instance)
   if created:
-    try:
-      pref.startdate = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
-    except:
-      pref.startdate = datetime.now()
-    pref.enddate = pref.startdate + timedelta(365)
+    pref.horizontype = True
+    pref.horizonlength = 6
+    pref.horizonunit = 'month'
     pref.save()
 
 # This signal will make sure a preference model is created when a user is added.

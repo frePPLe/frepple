@@ -35,7 +35,10 @@ $(function(){
     autowidth: true,{% if filters %}    
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
-    shrinkToFit: false,{% if reportclass.multiselect and not is_popup %}
+    shrinkToFit: false,
+    loadError: function(xhr,st,err) {
+      $('#curfilter').html("{% trans 'Error retrieving report data' %}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
+    },{% if reportclass.multiselect and not is_popup %}
     multiselect: true,
     onSelectRow: markSelectedRow,{% endif %}
     {% block extra_grid %}{% endblock %}

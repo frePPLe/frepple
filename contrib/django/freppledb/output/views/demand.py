@@ -111,7 +111,7 @@ class OverviewReport(GridPivot):
           cross join (
              select name as bucket, startdate, enddate
              from common_bucketdetail
-             where bucket_id = '%s' and enddate > '%s' and startdate <= '%s'
+             where bucket_id = '%s' and enddate > '%s' and startdate < '%s'
              ) d
           -- Include hierarchical children
           inner join item

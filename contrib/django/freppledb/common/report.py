@@ -32,14 +32,10 @@ It provides the following functionality:
    The time buckets and time boundaries can easily be updated.
 '''
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
-import csv, cStringIO
-import operator
-import math
-import locale
-import codecs
-import json
+import csv, cStringIO, operator, math, locale
+import codecs, json, calendar
           
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
@@ -498,14 +494,12 @@ class GridReport(View):
         (bucket,start,end,bucketlist) = getBuckets(request, pref)
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
       else:
-        bucket = start = end = bucketlist = bucketnames = None
+        pref = bucketnames = bucketlist = None
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
         'object_id': args and args[0] or None,
-        'reportbucket': bucket,
-        'reportstart': start,
-        'reportend': end,
+        'preferences': pref,
         'is_popup': request.GET.has_key('pop'),
         'args': args,
         'filters': reportclass.getQueryString(request),
@@ -686,6 +680,7 @@ class GridReport(View):
       for sql in sql_list:
         cursor.execute(sql)
         transaction.commit(using=request.database)
+      # TODO Also erase comments and history
     except Exception as e:
       return str(e)
     finally:
@@ -1218,66 +1213,54 @@ def _localize(value, use_l10n=None):
 def getBuckets(request, pref=None, bucket=None, start=None, end=None):
   '''
   This function gets passed a name of a bucketization.
-  It returns a list of buckets.
-  The data are retrieved from the database table dates, and are
-  stored in a python variable for performance
+  It returns a tuple with:
+    - the start date of the report horizon
+    - the end date of the reporting horizon
+    - a list of buckets.
   '''
   # Pick up the user preferences
   if pref == None: pref = request.user.get_profile()
 
   # Select the bucket size (unless it is passed as argument)
   if not bucket:
-    bucket = request.GET.get('reportbucket')
-    if not bucket:
-      try:
-        bucket = Bucket.objects.using(request.database).get(name=pref.buckets)
-      except:
-        try: bucket = Bucket.objects.using(request.database).order_by('name')[0].name
-        except: bucket = None
-    elif pref.buckets != bucket:
-      try: pref.buckets = Bucket.objects.using(request.database).get(name=bucket).name
+    try:
+      bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets)
+    except:
+      try: bucket = Bucket.objects.using(request.database).order_by('name')[0].name
       except: bucket = None
-      pref.save()
-
-  # Select the start date (unless it is passed as argument)
-  if not start:
-    start = request.GET.get('reportstart')
-    if start:
-      try:
-        (y,m,d) = start.split('-')
-        start = datetime(int(y),int(m),int(d))
-        if pref.startdate != start:
-          pref.startdate = start
-          pref.save()
-      except:
-        try: start = pref.startdate
-        except: pass
-        if not start:
-          try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
-          except: start = datetime.now()
+  
+  if pref.horizontype and not start and not end:  
+    # First type: Start and end dates relative to current
+    try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
+    except: start = datetime.now()
+    if pref.horizonunit == 'day':
+      end = start + timedelta(days=pref.horizonlength)
+      end = end.replace(hour=0, minute=0, second=0)
+    elif pref.horizonunit == 'week':
+      end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength, days=7-start.weekday()) 
     else:
-      try: start = pref.startdate
-      except: pass
+      y = start.year
+      m = start.month + pref.horizonlength + (start.day > 1 and 1 or 0)
+      while m > 12:
+        y += 1
+        m -= 12
+      end = datetime(y,m,1)
+  else:
+    # Second type: Absolute start and end dates given
+    if not start:      
+      start = pref.horizonstart
       if not start:
         try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
         except: start = datetime.now()
-
-  # Select the end date (unless it is passed as argument)
-  if not end:
-    end = request.GET.get('reportend')
-    if end:
-      try:
-        (y,m,d) = end.split('-')
-        end = datetime(int(y),int(m),int(d))
-        if pref.enddate != end:
-          pref.enddate = end
-          pref.save()
-      except:
-        try: end = pref.enddate
-        except: pass
-    else:
-      try: end = pref.enddate
-      except: pass
+    if not end:
+      end = pref.horizonend
+      if not end:
+        if pref.horizonunit == 'day':
+          end = start + timedelta(days=pref.horizonlength)
+        elif pref.horizonunit == 'week':
+          end = start + timedelta(weeks=pref.horizonlength)  
+        else:
+          end = start + timedelta(weeks=pref.horizonlength)  
 
   # Filter based on the start and end date
   if not bucket:
@@ -1285,5 +1268,5 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
   else:
     res = BucketDetail.objects.using(request.database).filter(bucket=bucket)
     if start: res = res.filter(enddate__gt=start)
-    if end: res = res.filter(startdate__lte=end)
+    if end: res = res.filter(startdate__lt=end)
     return (unicode(bucket), start, end, res.values('name','startdate','enddate'))

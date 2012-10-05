@@ -43,7 +43,11 @@ $(function(){
     //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
     autowidth: true,    
-	  shrinkToFit: false,{% if filters %}    
+	  shrinkToFit: false,
+	  loadError: function(xhr,st,err) {
+	    $('#load_grid').show();
+	    $('#curfilter').html("{% trans 'Error retrieving report data' %}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
+    },{% if filters %}    
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
     {% block extra_grid %}{% endblock %}
@@ -76,14 +80,24 @@ $(window).bind('resize', function() {
 </div>
 {% block after_table %}{% endblock %}
 {% if reportclass.hasTimeBuckets %}<div id="timebuckets" class="ui-helper-hidden" title="{% trans 'Time buckets' %}">
-<form method="get" action=""><table>
-<tr><th>{% trans 'Bucket' %}</th><td><select name="reportbucket" id="reportbucket">
-{% for i in bucketnames %}<option value="{{i}}"{% ifequal i reportbucket %} selected="selected"{% endifequal %}>{% trans i %}</option>
-{% endfor %}</select></td></tr>
-<tr><th>{% trans 'start date'|capfirst %}:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="{{reportstart|date:"Y-m-d"}}"/></td></tr>
-<tr><th>{% trans 'end date'|capfirst %}:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="{{reportend|date:"Y-m-d"}}"/>
-<input id="reportoriginal" type="hidden" value="{{reportbucket}}|{{reportstart|date:"Y-m-d"}}|{{reportend|date:"Y-m-d"}}"/></td></tr>
-</table></form>
+<form method="get" action="">
+{% trans 'Bucket size' %}&nbsp;&nbsp;<select name="horizonbuckets" id="horizonbuckets">
+{% for i in bucketnames %}<option value="{{i}}"{% ifequal i preferences.horizonbuckets %} selected="selected"{% endifequal %}>{% trans i %}</option>
+{% endfor %}</select><br/>
+<input type="radio" name="horizontype" value="0"{% if not preferences.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
+{% trans 'from'|capfirst %}&nbsp;
+<input id="horizonstart" type="text" size="9" class="vDateField" value="{{preferences.horizonstart|date:"Y-m-d"}}"/>
+{% trans 'to' %}&nbsp;
+<input id="horizonend" type="text" size="9" class="vDateField" value="{{preferences.horizonend|date:"Y-m-d"}}"/><br/>
+<input type="radio" id="horizontype" name="horizontype" value="1"{% if preferences.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
+<input id="horizonlength" name="horizonlength" type="text" size="2" value="{{preferences.horizonlength}}"/>&nbsp;
+<select name="horizonunit" id="horizonunit">
+<option value="day"{% ifequal preferences.horizonunit 'day' %} selected="selected"{% endifequal %}>{% trans 'days' %}</option>
+<option value="week"{% ifequal preferences.horizonunit 'week' %} selected="selected"{% endifequal %}>{% trans 'weeks' %}</option>
+<option value="month"{% ifequal preferences.horizonunit 'month' %} selected="selected"{% endifequal %}>{% trans 'months' %}</option>
+</select>&nbsp;{% trans 'after plan current date' %}
+<input id="horizonoriginal" type="hidden" value="{{preferences.horizonbuckets}}|{{preferences.horizonstart|date:"Y-m-d"}}|{{preferences.horizonend|date:"Y-m-d"}}|{{preferences.horizontype}}|{{preferences.horizonlength}}|{{preferences.horizonunit}}"/>
+</form>
 </div>{% endif %}
 {% block contextmenus %}{% endblock %}
 {% endblock %}

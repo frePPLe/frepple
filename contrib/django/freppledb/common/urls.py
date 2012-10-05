@@ -31,6 +31,9 @@ urlpatterns = patterns('',
   # User preferences
   (r'^preferences/$', freppledb.common.views.preferences),
 
+  # Horizon updates
+  (r'^horizon/$', freppledb.common.views.horizon),
+
   # Model list reports, which override standard admin screens
   (r'^admin/auth/user/$', freppledb.common.views.UserList.as_view()),
   (r'^admin/auth/group/$', freppledb.common.views.GroupList.as_view()),

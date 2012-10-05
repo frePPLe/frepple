@@ -39,8 +39,7 @@ from django.contrib.admin.models import LogEntry
 from django.contrib.syndication.views import Feed
 from django.utils import translation
 from django.conf import settings
-from django.http import Http404, HttpResponseRedirect
-
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 
 from freppledb.common.models import Preferences, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
@@ -56,21 +55,6 @@ class PreferencesForm(forms.Form):
     initial="auto",
     choices=Preferences.languageList,
     help_text=_("Language of the user interface"),
-    )
-  buckets = forms.ModelChoiceField(queryset=Bucket.objects.all().values_list('name', flat=True),
-    label=_("Buckets"),
-    required=False,
-    help_text=_("Time bucket size for reports"),
-    )
-  startdate = forms.DateField(label = _("report start date"),
-    required=False,
-    help_text=_("Start date for filtering report data"),
-    widget=forms.TextInput(attrs={'class':"vDateField"}),
-    )
-  enddate = forms.DateField(label = _("report end date"),
-    required=False,
-    help_text=_("End date for filtering report data"),
-    widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
   pagesize = forms.IntegerField(label = _('page size'),
     required=False,
@@ -93,11 +77,6 @@ def preferences(request):
       try:
         pref = Preferences.objects.get(user=request.user)
         newdata = form.cleaned_data
-        pref.buckets = newdata['buckets']
-        if newdata['startdate']:
-          pref.startdate = datetime(newdata['startdate'].year, newdata['startdate'].month, newdata['startdate'].day)
-        if newdata['enddate']:
-          pref.enddate = datetime(newdata['enddate'].year, newdata['enddate'].month, newdata['enddate'].day)
         pref.language = newdata['language']
         pref.theme = newdata['theme']
         pref.pagesize = newdata['pagesize']
@@ -114,9 +93,6 @@ def preferences(request):
   else:
     pref = request.user.get_profile()
     form = PreferencesForm({
-      'buckets': pref.buckets,
-      'startdate': pref.startdate and pref.startdate.date() or None,
-      'enddate': pref.enddate and pref.enddate.date() or None,
       'language': pref.language,
       'theme': pref.theme,
       'pagesize': pref.pagesize,
@@ -127,6 +103,38 @@ def preferences(request):
      },
      context_instance=RequestContext(request))
 
+
+class HorizonForm(forms.Form):
+  horizonbuckets = forms.ModelChoiceField(queryset=Bucket.objects.all().values_list('name', flat=True))
+  horizonstart = forms.DateField(required=False)
+  horizonend = forms.DateField(required=False)
+  horizontype = forms.ChoiceField(choices=(("1","1"),("0","0")))
+  horizonlength = forms.IntegerField(required=False, min_value=1)
+  horizonunit = forms.ChoiceField(choices=(("day","day"),("week","week"),("month","month")))
+    
+  
+@login_required
+@csrf_protect
+def horizon(request):
+  if request.method != 'POST':
+    raise Http404('Only post requests allowed')  
+  form = HorizonForm(request.POST)
+  if not form.is_valid(): 
+    raise Http404('Invalid form data')
+  try:      
+    pref = Preferences.objects.get(user=request.user)
+    pref.horizonstart = form.cleaned_data['horizonstart'] 
+    pref.horizonbuckets = form.cleaned_data['horizonbuckets']
+    pref.horizonstart = form.cleaned_data['horizonstart'] 
+    pref.horizonend = form.cleaned_data['horizonend']
+    pref.horizontype = form.cleaned_data['horizontype'] == '1'
+    pref.horizonlength = form.cleaned_data['horizonlength']
+    pref.horizonunit = form.cleaned_data['horizonunit']
+    pref.save()
+    return HttpResponse(content="OK")     
+  except Exception:
+    raise Http404('Error saving horizon settings') 
+  
 
 class UserList(GridReport):
   '''

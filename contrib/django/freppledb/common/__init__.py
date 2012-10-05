@@ -79,7 +79,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     obj = super(MultiDBModelAdmin, self).save_form(request, form, change)       
     if change:      
       old_pk = unquote(request.path_info.rsplit("/",2)[1])
-      if old_pk != str(obj.pk):
+      if old_pk != (isinstance(obj.pk,basestring) and obj.pk or str(obj.pk)):
         # The object was renamed. We continue handling the updates on the
         # old object. Only at the very end we will rename whatever needs to
         # be renamed.

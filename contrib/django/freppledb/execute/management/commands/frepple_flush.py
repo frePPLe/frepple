@@ -84,7 +84,7 @@ class Command(BaseCommand):
 
       # Delete all records from the tables.
       # We split the tables in groups to speed things up in postgreSQL.
-      cursor.execute('update common_preference set buckets = null')
+      cursor.execute('update common_preference set horizonbuckets = null')
       transaction.commit(using=database)
       tables = [ 
         ['out_demandpegging'],

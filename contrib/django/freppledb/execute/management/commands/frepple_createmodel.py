@@ -403,12 +403,12 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
     connections[database].cursor().execute(
       "delete from common_bucketdetail where bucket_id = 'telescope'"
       )
-    connections[database].cursor().execute(
-      "delete from common_bucket where name = 'telescope'"
-      )
 
     # Create bucket
-    b = Bucket(name='telescope',description='Time buckets with decreasing granularity')
+    try:
+      b = Bucket.objects.using(database).get(name='telescope')
+    except Bucket.DoesNotExist:
+      b = Bucket(name='telescope', description='Time buckets with decreasing granularity')
     b.save(using=database)
 
     # Create bucket for all dates in the past

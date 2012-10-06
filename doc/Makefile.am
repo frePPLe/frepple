@@ -41,20 +41,20 @@ index.html:
 	sed -i "s|href='\(\.\./\)*pmwiki.php/|href='\1|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
 	sed -i "s|href='\(\.\./\)*Main/HomePage.html'>C++|href='\1reference/index.html'>C++|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
 	sed -i "s|src='\(\.\./\)*../uploads/|src='\1uploads/|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
-	sed -i "s|src='\(\.\./\)*../../images/frepple.bmp'|src='\1frepple.bmp'|" `find . -name '*\.html' -print | grep -v '^\./reference'` 
+	sed -i "s|src='\(\.\./\)*../../images/header.jpg'|src='\1header.jpg'|" `find . -name '*\.html' -print | grep -v '^\./reference'` 
 	sed -i "s|href='\(\.\./\)*../../styles.css'|href='\1styles.css'|" `find . -name '*\.html' -print | grep -v '^\./reference'` 
 	sed -i "s|src='../images/frepple.bmp'|src='frepple.bmp'|" index.html 
 	sed -i "s|href='../styles.css'|href='styles.css'|" index.html 
 	sed -i "s|href='HomePage.html'>C++|href='../reference/index.html'>C++|g" Main/HomePage.html Main/FAQ.html
 	sed -i "s|action='HomePage.html'>|action='../search.html'>|g" Main/HomePage.html Main/FAQ.html
-	`pwd`/htmlindexer.py UI Frepple Main Tutorial
+	`pwd`/htmlindexer.py UI Frepple Main Tutorial License Installation Developer
 else
 webdoc:
 	-echo Skipping generation of WEB documentation...
 endif
 
 clean-local:
-	-rm -rf index.js index.html ${FILES_API} ${FILES_WEB}
+	-rm -rf index.js index.html ${FILES_API} ${FILES_WEB} www.frepple.com
 
 all-local: apidoc webdoc
 

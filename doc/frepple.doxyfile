@@ -168,8 +168,6 @@ HTML_FOOTER            = apifooter.html
 
 HTML_STYLESHEET        = 
 
-HTML_ALIGN_MEMBERS     = YES
-
 GENERATE_HTMLHELP      = NO
 
 CHM_FILE               =

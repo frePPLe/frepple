@@ -166,7 +166,7 @@ HTML_HEADER            = apiheader.html
 
 HTML_FOOTER            = apifooter.html
 
-HTML_STYLESHEET        = 
+HTML_STYLESHEET        = api_styles.css
 
 GENERATE_HTMLHELP      = NO
 
@@ -323,9 +323,7 @@ INCLUDE_GRAPH          = YES
 
 INCLUDED_BY_GRAPH      = YES
 
-DIRECTORY_GRAPH        = NO
-
-GRAPHICAL_HIERARCHY    = NO
+GRAPHICAL_HIERARCHY    = YES
 
 # UML look is nice and complete, but overloaded
 UML_LOOK = NO

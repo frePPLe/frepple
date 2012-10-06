@@ -92,8 +92,8 @@ Page custom finish finish_leave
 ;Version Information
 VIProductVersion "0.9.3.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "0.9.3.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe Installer"
-VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe Installer - free Production Planning Library"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe installer"
+VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe installer - free Production Planning Library"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright "Dual licensed under the AGPL and commercial license"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "Install frePPLe - free Production Planning Library"

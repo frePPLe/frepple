@@ -21,8 +21,8 @@
 
 import os
 
-from django.core import management
-from django.test import TransactionTestCase
+from django.core import management, serializers
+from django.test import TransactionTestCase, TestCase
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS, connections, transaction
 
@@ -165,3 +165,41 @@ class execute_multidb(TransactionTestCase):
     self.assertEqual(count1new,count1)
     self.assertNotEqual(count2,0)
     self.assertNotEqual(count2,count1new)
+
+
+class FixtureTest(TestCase):
+
+  def setUp(self):
+    self.fixture_dir = os.path.join(settings.FREPPLE_APP, 'freppledb', 'input', 'fixtures')
+    
+  def test_fixture_tutorial_1(self):
+    try:
+      full_path = os.path.join(self.fixture_dir, 'tutorial_1.json')
+      objects = serializers.deserialize("json", open(full_path, 'r'))
+      for obj in objects: True
+    except Exception as e: 
+      self.fail("Invalid fixture: %s" % e)
+
+  def test_fixture_small_demo(self):
+    try:
+      full_path = os.path.join(self.fixture_dir, 'small_demo.json')
+      objects = serializers.deserialize("json", open(full_path, 'r'))
+      for obj in objects: True
+    except Exception as e: 
+      self.fail("Invalid fixture: %s" % e)
+
+  def test_fixture_jobshop(self):
+    try:
+      full_path = os.path.join(self.fixture_dir, 'jobshop.json')
+      objects = serializers.deserialize("json", open(full_path, 'r'))
+      for obj in objects: True
+    except Exception as e: 
+      self.fail("Invalid fixture: %s" % e)
+      
+  def test_fixture_unicode_test(self):
+    try:
+      full_path = os.path.join(self.fixture_dir, 'unicode_test.json')
+      objects = serializers.deserialize("json", open(full_path, 'r'))
+      for obj in objects: True
+    except Exception as e: 
+      self.fail("Invalid fixture: %s" % e)

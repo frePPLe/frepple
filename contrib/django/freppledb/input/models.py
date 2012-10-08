@@ -215,6 +215,7 @@ class Operation(AuditModel):
 
 class SubOperation(AuditModel):
   # Database fields
+  id = models.AutoField(_('identifier'), primary_key=True)
   operation = models.ForeignKey(Operation, verbose_name=_('operation'),
     related_name='suboperations')
   priority = models.IntegerField(_('priority'), default=1)

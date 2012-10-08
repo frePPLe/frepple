@@ -615,7 +615,7 @@ class SubOperationList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldNumber('id', title=_('identifier'), key=True),
+    GridFieldInteger('id', title=_('identifier'), key=True),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
     GridFieldText('suboperation', title=_('suboperation'), field_name='suboperation__name', formatter='operation'),
     GridFieldInteger('priority', title=_('priority')),

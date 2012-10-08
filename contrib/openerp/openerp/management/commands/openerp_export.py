@@ -30,7 +30,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from freppledb.input.models import Parameter
+from freppledb.common.models import Parameter
 from freppledb.execute.models import log
         
 
@@ -91,7 +91,7 @@ class Command(BaseCommand):
       raise CommandError("No database settings known for '%s'" % self.database )
     
     # Make sure the debug flag is not set!
-    # When it is set, the django database wrapper collects a list of all sql
+    # When it is set, the django database wrapper collects a list of all SQL
     # statements executed and their timings. This consumes plenty of memory
     # and cpu time.
     tmp_debug = settings.DEBUG
@@ -116,7 +116,8 @@ class Command(BaseCommand):
       cursor = connections[self.database].cursor()
       
       # Upload all data
-      self.export_mrp(sock, cursor)
+      #self.export_mrp(sock, cursor)
+      self.export_sales_order(sock, cursor)
       
       # Logging message
       log(category='EXPORT', theuser=user,
@@ -130,8 +131,42 @@ class Command(BaseCommand):
       transaction.commit(using=self.database)
       settings.DEBUG = tmp_debug
       transaction.leave_transaction_management(using=self.database)
+    
       
-            
+  # Update the committed date of sales orders
+  #   - uploading for each frePPLe demand whose subcategory = 'OpenERP'
+  #   - mapped fields frePPLe -> OpenERP sale.order
+  #        - max(out_demand.plandate) -> requested_date
+  # Note: Ideally we'ld like to update the committed date instead. (But it is read-only)  
+  def export_sales_order(self, sock, cursor):
+    transaction.enter_transaction_management(using=self.database)
+    transaction.managed(True, using=self.database)
+    try:    
+      starttime = time()
+      if self.verbosity > 0:
+        print "Exporting requested date of sales orders..."      
+      cursor.execute('''select substring(name from '^.*? '), max(plandate)
+          from demand
+          left outer join out_demand
+            on demand.name = out_demand.demand
+            and demand.subcategory = 'OpenERP'
+            group by substring(name from '^.*? ')
+         ''')
+      cnt = 0    
+      for i, j in cursor.fetchall():
+        result = sock.execute(self.openerp_db, self.uid, self.openerp_password, 'sale.order', 'write', 
+          [int(i)], {'requested_date': j and j.strftime('%Y-%m-%d') or 0,})
+        cnt += 1
+      if self.verbosity > 0:
+        print "Updated %d sales orders in %.2f seconds" % (cnt, (time() - starttime))
+    except Exception as e:
+      transaction.rollback(using=self.database)
+      print "Error updating sales orders: %s" % e
+    finally:
+      transaction.commit(using=self.database)
+      transaction.leave_transaction_management(using=self.database)
+      
+                    
   # Upload MRP work order data
   #   - uploading frePPLe operationplans
   #   - meeting the criterion: 

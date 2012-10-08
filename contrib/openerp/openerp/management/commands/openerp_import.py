@@ -452,7 +452,7 @@ class Command(BaseCommand):
       update = []
       delete = []
       for i in self.openerp_data('sale.order.line', ids, fields):
-        name = u'%d %s %d' % (i['id'], i['order_id'][1], i['sequence'])
+        name = u'%d %d %s %d' % (i['order_id'][0], i['id'], i['order_id'][1], i['sequence'])
         if i['state'] == 'confirmed':
           product = u'%s %s' % (i['product_id'][0], i['product_id'][1])
           j = self.openerp_data('sale.order', [i['order_id'][0],], fields2)[0]
@@ -468,11 +468,11 @@ class Command(BaseCommand):
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               j['requested_date'] or j['date_order'],
               operation,
-              u'%d %s %d' % (i['id'], i['order_id'][1], i['sequence']),
+              name,
               ) )
           else:
             insert.append( (
-              u'%d %s %d' % (i['id'], i['order_id'][1], i['sequence']),
+              name,
               product,
               u'%d %s' % (j['partner_id'][0], j['partner_id'][1]),
               i['product_uom_qty'],

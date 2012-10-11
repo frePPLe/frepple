@@ -704,30 +704,27 @@ class Command(BaseCommand):
       transaction.leave_transaction_management(using=self.database)
       
         
-  # Load open purchase orders
+  # Load open purchase orders and quotations
   #   - extracting recently changed purchase.order.line objects
   #   - meeting the criterion: 
   #        - %product_id already exists in frePPLe
   #        - %location_id already exists in frePPLe
-  #        - %state = 'approved'
-  # Q: Should purchase orders in state 'draft' be shown in frePPLe?
+  #        - %state = 'approved' or 'draft'
   #   - mapped fields OpenERP -> frePPLe buffer
   #        - %id %name -> name
-  #        - %cost_hour -> cost
   #        - 'OpenERP' -> subcategory
   #   - mapped fields OpenERP -> frePPLe operation
   #        - %id %name -> name
-  #        - %cost_hour -> cost
   #        - 'OpenERP' -> subcategory
   #   - mapped fields OpenERP -> frePPLe flow
   #        - %id %name -> name
-  #        - %cost_hour -> cost
   #        - 'OpenERP' -> subcategory
   #   - mapped fields OpenERP -> frePPLe operationplan
   #        - %id %name -> name
-  #        - %cost_hour -> cost
   #        - 'OpenERP' -> subcategory
-  # 
+  #   - Note that the current logic also treats the (draft) purchase quotations in the
+  #     very same way as the (confirmed) purchase orders.
+  #  
   # TODO Possible to update PO without touching the date on the PO-lines? Rework code?
   # TODO Operationplan id is not the most robust way to find a match
   def import_purchaseorders(self, cursor): 
@@ -780,7 +777,7 @@ class Command(BaseCommand):
         item = u'%d %s' % (i['product_id'][0], i['product_id'][1])   
         j = self.openerp_data('purchase.order', [i['order_id'][0],], fields2)[0]
         location = u'%d %s' % (j['location_id'][0], j['location_id'][1])
-        if location in frepple_locations and item in frepple_items and j['state'] == 'approved':
+        if location in frepple_locations and item in frepple_items and j['state'] in ('approved','draft'):
           if i['id'] in frepple_keys:          
             update.append( (
                u'procure for %s @ %s' %(item,location), i['date_planned'], i['date_planned'], i['product_qty'], i['id'] 

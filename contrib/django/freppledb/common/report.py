@@ -1231,13 +1231,17 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
   
   if pref.horizontype and not start and not end:  
     # First type: Start and end dates relative to current
-    try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
-    except: start = datetime.now()
+    try: 
+      start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
+    except: 
+      start = datetime.now()
+      start = start.replace(microsecond=0)
     if pref.horizonunit == 'day':
       end = start + timedelta(days=pref.horizonlength)
       end = end.replace(hour=0, minute=0, second=0)
     elif pref.horizonunit == 'week':
       end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength, days=7-start.weekday()) 
+      print start, end
     else:
       y = start.year
       m = start.month + pref.horizonlength + (start.day > 1 and 1 or 0)
@@ -1250,8 +1254,11 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
     if not start:      
       start = pref.horizonstart
       if not start:
-        try: start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
-        except: start = datetime.now()
+        try: 
+          start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
+        except: 
+          start = datetime.now()
+          start = start.replace(microsecond=0)
     if not end:
       end = pref.horizonend
       if not end:

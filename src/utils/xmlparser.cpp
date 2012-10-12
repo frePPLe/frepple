@@ -262,7 +262,11 @@ void XMLInput::endElement(const XMLCh* const uri,
         // Call the ending handler of the Object, with a special
         // flag to specify that this object is now ended
         objectEnded = true;
-        try {getCurrentObject()->endElement(*this, pElement->first, pElement->second);}
+        try 
+        {
+          getCurrentObject()->endElement(*this, pElement->first, pElement->second);
+          if (userexit) userexit.call(getCurrentObject());
+        }
         catch (const DataException& e)
         {
           if (abortOnDataException) throw;
@@ -387,7 +391,11 @@ void XMLInput::shutdown()
   m_EStack[numElements].second.reset();
   while (!m_EHStack.empty())
   {
-    try {getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);}
+    try 
+    {
+      getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);
+      if (userexit) userexit.call(getCurrentObject());
+    }
     catch (const DataException& e)
     {
       if (abortOnDataException) throw;
@@ -418,7 +426,11 @@ void XMLInput::reset()
     m_EStack[++numElements].second.reset();
     while (!m_EHStack.empty())
     {
-      try {getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);}
+      try 
+      {
+        getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);
+        if (userexit) userexit.call(getCurrentObject());
+      }
       catch (const DataException& e)
       {
         if (abortOnDataException) throw;

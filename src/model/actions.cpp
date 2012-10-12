@@ -40,7 +40,9 @@ DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
   // Pick up arguments
   char *filename = NULL;
   int validate(1), validate_only(0);
-  int ok = PyArg_ParseTuple(args, "|sii:readXMLfile", &filename, &validate, &validate_only);
+  PyObject *userexit = NULL;
+  int ok = PyArg_ParseTuple(args, "|siiO:readXMLfile", 
+    &filename, &validate, &validate_only, &userexit);
   if (!ok) return NULL;
 
   // Execute and catch exceptions
@@ -51,18 +53,25 @@ DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
     {
       // Read from standard input
       xercesc::StdInInputSource in;
+      XMLInput p;
+      if (userexit) p.setUserExit(userexit);
       if (validate_only!=0)
         // When no root object is passed, only the input validation happens
-        XMLInput().parse(in, NULL, true);
+        p.parse(in, NULL, true);
       else
-        XMLInput().parse(in, &Plan::instance(), validate!=0);
+        p.parse(in, &Plan::instance(), validate!=0);
     }
-    else if (validate_only!=0)
-      // Read and validate a file
-      XMLInputFile(filename).parse(NULL, true);
-    else
-      // Read, execute and optionally validate a file
-      XMLInputFile(filename).parse(&Plan::instance(),validate!=0);
+    else 
+    {
+      XMLInputFile p(filename);
+      if (userexit) p.setUserExit(userexit);
+      if (validate_only!=0)
+        // Read and validate a file
+        p.parse(NULL, true);
+      else
+        // Read, execute and optionally validate a file
+        p.parse(&Plan::instance(),validate!=0);
+    }
   }
   catch (...)
   {
@@ -85,7 +94,9 @@ DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
   // Pick up arguments
   char *data;
   int validate(1), validate_only(0);
-  int ok = PyArg_ParseTuple(args, "s|ii:readXMLdata", &data, &validate, &validate_only);
+  PyObject *userexit = NULL;
+  int ok = PyArg_ParseTuple(args, "s|iiO:readXMLdata", 
+    &data, &validate, &validate_only, &userexit);
   if (!ok) return NULL;
 
   // Free Python interpreter for other threads
@@ -94,12 +105,13 @@ DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
   // Execute and catch exceptions
   try
   {
-    if (!data)
-      throw DataException("No input data");
-    else if (validate_only!=0)
-      XMLInputString(data).parse(NULL, true);
+    if (!data) throw DataException("No input data");
+    XMLInputString p(data);
+    if (userexit) p.setUserExit(userexit);
+    if (validate_only!=0)
+      p.parse(NULL, true);
     else
-      XMLInputString(data).parse(&Plan::instance(), validate!=0);
+      p.parse(&Plan::instance(), validate!=0);
   }
   catch (...)
   {

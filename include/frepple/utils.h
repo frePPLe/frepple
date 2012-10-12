@@ -4309,6 +4309,11 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       */
     XMLAttributeList attributes;
 
+    /** A Python callback function that is called once an object has been read
+      * from the XML input. The return value is not used.
+      */
+    PythonFunction userexit;
+
     /** Handler called when a new element tag is encountered.
       * It pushes a new element on the stack and calls the current handler.
       */
@@ -4465,6 +4470,14 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * False indicates that the processing of the XML stream is aborted.
       */
     bool getAbortOnDataError() const {return abortOnDataException;}
+
+    /** Specify a Python callback function that is for every object read 
+      * from the input stream. 
+      */
+    DECLARE_EXPORT void setUserExit(PyObject* p) {userexit = p;}
+
+    /** Return the Python callback function. */
+    PythonFunction getUserExit() const {return userexit;}
 
   protected:
     /** The real parsing job is delegated to subclasses.

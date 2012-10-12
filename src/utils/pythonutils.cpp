@@ -619,8 +619,8 @@ DECLARE_EXPORT PythonFunction::PythonFunction(PyObject* p)
   {
     // It's not a callable object. Interprete it as a function name and
     // look it up.
-    string n = PythonObject(p).getString();
     PyGILState_STATE pythonstate = PyGILState_Ensure();
+    string n = PythonObject(p).getString();
     p = PyRun_String(n.c_str(), Py_eval_input,
         PyEval_GetGlobals(), PyEval_GetLocals() );
     if (!p)

@@ -29,30 +29,30 @@ import os.path
 from django.conf.urls import patterns, include
 from django.conf import settings
 from django.views.generic.base import RedirectView
+from django.utils.importlib import import_module
 
-import freppledb.output.urls
-import freppledb.input.urls
-import freppledb.common.urls
 import freppledb.admin
 
 urlpatterns = patterns('',
-    # frePPLe execution application
-    (r'^execute/', include('freppledb.execute.urls')),
-
     # Root url redirects to the admin index page
     (r'^$', RedirectView.as_view(url='/admin/')),
     
-    # Handle browser icon
-    (r'^favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico')),    
+    # Handle browser icon and robots.txt
+    (r'favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico')),    
+    (r'robots\.txt$', RedirectView.as_view(url='/static/robots.txt')),    
 )
 
 # Adding urls for each installed application.
-# Since the URLs don't have a common prefix (maybe they should...) we can't
-# use an "include" in the previous section
-urlpatterns += freppledb.output.urls.urlpatterns
-urlpatterns += freppledb.input.urls.urlpatterns
-urlpatterns += freppledb.common.urls.urlpatterns
-
+for app in settings.INSTALLED_APPS:
+  try:
+    mod = import_module('%s.urls' % app)
+    if hasattr(mod, 'urlpatterns'):
+      if getattr(mod, 'autodiscover', False):
+        urlpatterns += mod.urlpatterns
+  except ImportError:
+    # Silently ignore 
+    pass
+    
 # Admin pages, and the Javascript i18n library.
 # It needs to be added as the last item since the applications can
 # hide/override some admin urls.

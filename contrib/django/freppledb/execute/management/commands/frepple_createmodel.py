@@ -34,10 +34,15 @@ from django.db.models import Min, Max
 from freppledb.common.models import Parameter, Bucket, BucketDetail
 from freppledb.input.models import Operation, Buffer, Resource, Location, Calendar
 from freppledb.input.models import CalendarBucket, Customer, Demand, Flow
-from freppledb.input.models import Load, Item, Forecast
+from freppledb.input.models import Load, Item
 from freppledb.execute.models import log
 from freppledb import VERSION
 
+try:
+  from freppledb_extra.models import Forecast
+  has_forecast = True
+except:
+  has_forecast = False
 
 database = DEFAULT_DB_ALIAS
 
@@ -267,18 +272,19 @@ class Command(BaseCommand):
         oper = Operation.objects.using(database).create(name='Del %05d' % i, sizemultiple=1, location=loc)
         it = Item.objects.using(database).create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
 
-        # Forecast
-        fcst = Forecast.objects.using(database).create( \
-          name='Forecast item %05d' % i,
-          calendar=workingdays,
-          item=it,
-          maxlateness=60*86400, # Forecast can only be planned 2 months late
-          priority=3, # Low priority: prefer planning orders over forecast
-          )
-
-        # This method will take care of distributing a forecast quantity over the entire
-        # horizon, respecting the bucket weights.
-        fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item * 12)
+        if has_forecast:
+          # Forecast
+          fcst = Forecast.objects.using(database).create( \
+            name='Forecast item %05d' % i,
+            calendar=workingdays,
+            item=it,
+            maxlateness=60*86400, # Forecast can only be planned 2 months late
+            priority=3, # Low priority: prefer planning orders over forecast
+            )
+  
+          # This method will take care of distributing a forecast quantity over the entire
+          # horizon, respecting the bucket weights.
+          fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item * 12)
 
         # Level 0 buffer
         buf = Buffer.objects.using(database).create(name='Buf %05d L00' % i,

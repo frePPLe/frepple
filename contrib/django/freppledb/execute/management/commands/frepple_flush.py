@@ -90,7 +90,7 @@ class Command(BaseCommand):
         ['out_demandpegging'],
         ['out_problem','out_resourceplan','out_constraint'],
         ['out_loadplan','out_flowplan','out_operationplan'], 
-        ['out_demand','out_forecast'],
+        ['out_demand','out_forecast'],    # TODO Table may not exist!
         ['demand','forecastdemand','forecast','customer',
          'setuprule','setupmatrix','resourceload','resource',
          'flow','buffer','operationplan','item',

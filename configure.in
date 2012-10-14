@@ -145,19 +145,6 @@ esac], [AC_CHECK_PROG(lp, [glpsol], true, false)])
 AM_CONDITIONAL(LP, test x$lp = xtrue)
 
 #
-# Define a configure argument to enable/disable the webservice
-#
-AC_ARG_ENABLE(webservice,
-AC_HELP_STRING([--enable-webservice],
-[Build the webservice (default: false)]),
-[case "${enableval}" in
-  yes) webservice=true ;;
-  no)  webservice=false ;;
-  *) AC_MSG_ERROR([bad value ${enableval} for --enable-webservice]) ;;
-esac], [webservice=false])
-AM_CONDITIONAL(WEBSERVICE, test x$webservice = xtrue)
-
-#
 # Define a configure argument to enable/disable building of the documentation
 #
 AC_ARG_ENABLE(apidoc,
@@ -307,34 +294,6 @@ AC_CHECK_HEADER([Python.h], [],
 ])])
 
 #
-# Verify installation of gSOAP
-#
-if test x$webservice = xtrue
-then
-AC_CHECK_PROGS(SOAPCPP2, soapcpp2, notavailable)
-if test x$SOAPCPP2 = xnotavailable
-then
-AC_MSG_ERROR([
-  This package requires the gSOAP toolkit...
-  Install gSOAP, or reconfigure with the option '--disable-webservice'
-])
-else
-#AC_CHECK_LIB(gsoap, soap_init, [],      @todo not working...
-#[AC_MSG_ERROR([
-#  Can't link with the gsoap library.
-#  This package requires the gsoap development library.
-#  Install or configure it, or reconfigure with the option '--without-webservice'
-#])])
-AC_CHECK_HEADER(stdsoap2.h, [],
-[AC_MSG_ERROR([
-  The gsoap libray has been installed, but its header file could not be found.
-  This package requires the gsoap development library.
-  Install or configure it, or reconfigure with the option '--without-webservice'
-])])
-fi
-fi
-
-#
 # Check whether we are running on a Windows operating system
 #
 AC_CHECK_HEADER(windows.h,
@@ -391,7 +350,7 @@ AM_CONDITIONAL(CYGWIN, test x$host_os = xcygwin)
 AC_CONFIG_FILES([ Makefile bin/Makefile doc/Makefile ])
 AC_CONFIG_FILES([ include/Makefile include/frepple/Makefile ])
 AC_CONFIG_FILES([ src/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile ])
-AC_CONFIG_FILES([ modules/Makefile modules/lp_solver/Makefile modules/webservice/Makefile ])
+AC_CONFIG_FILES([ modules/Makefile modules/lp_solver/Makefile ])
 AC_CONFIG_FILES([ contrib/Makefile contrib/vc/Makefile contrib/django/Makefile contrib/installer/Makefile contrib/openerp/Makefile contrib/scripting/Makefile contrib/rpm/Makefile contrib/debian/Makefile ])
 AC_CONFIG_FILES([ test/Makefile test/cluster/Makefile test/calendar/Makefile test/constraints_combined_1/Makefile test/constraints_combined_2/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/constraints_material_4/Makefile test/datetime/Makefile test/flow_alternate_1/Makefile test/flow_alternate_2/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/jobshop/Makefile test/xml/Makefile test/xml_remote/Makefile  test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/constraints_resource_4/Makefile  test/constraints_resource_5/Makefile test/problems/Makefile test/deletion/Makefile test/demand_policy/Makefile test/operation_alternate/Makefile test/operation_available/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/operation_routing/Makefile test/multithreading/Makefile test/name/Makefile test/python_1/Makefile test/python_2/Makefile test/python_3/Makefile test/sample_module/Makefile test/callback/Makefile test/pegging/Makefile test/safety_stock/Makefile test/buffer_procure_1/Makefile test/flow_effective/Makefile test/load_alternate/Makefile test/load_effective/Makefile test/setup_1/Makefile test/setup_2/Makefile test/setup_3/Makefile ])
 AC_OUTPUT

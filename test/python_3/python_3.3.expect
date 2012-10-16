@@ -12,20 +12,13 @@
 </operationplan>
 
 <item name="end item">
-	<operation name="delivery end item" xsi:type="operation_fixed_time">
-		<duration>P1D</duration>
-	</operation>
+	<operation name="delivery end item" xsi:type="operation_fixed_time"/>
 </item>
 
 <demand name="order 1">
-	<customer name="client">
-	</customer>
+	<customer name="client"/>
 	<quantity>10</quantity>
-	<item name="end item">
-		<operation name="delivery end item" xsi:type="operation_fixed_time">
-			<duration>P1D</duration>
-		</operation>
-	</item>
+	<item name="end item"/>
 	<due>2009-03-02T09:00:00</due>
 	<priority>1</priority>
 	<maxlateness>P0D</maxlateness>
@@ -35,22 +28,10 @@
 	<category>My category</category>
 	<description>My description</description>
 	<members>
-		<buffer name="buffer2">
-			<owner name="buffer1" xsi:type="buffer_procure">
-				<category>My category</category>
-				<description>My description</description>
-				<members>
-					<buffer name="buffer2"/>
-				</members>
-				<item name="item 1"/>
-				<location name="locA"/>
-			</owner>
-		</buffer>
+		<buffer name="buffer2"/>
 	</members>
-	<item name="item 1">
-	</item>
-	<location name="locA">
-	</location>
+	<item name="item 1"/>
+	<location name="locA"/>
 </buffer>
 
 <operation name="make item" xsi:type="operation_routing">

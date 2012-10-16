@@ -90,19 +90,17 @@ class Command(BaseCommand):
       # Execute
       os.environ['PLANTYPE'] = str(plantype)
       os.environ['CONSTRAINT'] = str(constraint)
-      os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
-      os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
       os.environ['FREPPLE_DATABASE'] = database
       os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
       os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
       if 'DJANGO_SETTINGS_MODULE' not in os.environ.keys():
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-      if os.path.exists(os.path.join(os.environ['FREPPLE_HOME'],'python27.zip')):
+      if os.path.exists(os.path.join(settings.FREPPLE_HOME,'python27.zip')):
         # For the py2exe executable
-        os.environ['PYTHONPATH'] = os.path.join(os.environ['FREPPLE_HOME'],'python27.zip') + os.pathsep + os.path.normpath(os.environ['FREPPLE_APP'])
+        os.environ['PYTHONPATH'] = os.path.join(settings.FREPPLE_HOME,'python27.zip') + os.pathsep + os.path.normpath(os.environ['FREPPLE_APP'])
       else:
         # Other executables
-        os.environ['PYTHONPATH'] = os.path.normpath(os.environ['FREPPLE_APP'])
+        os.environ['PYTHONPATH'] = os.path.normpath(settings.FREPPLE_APP)
       ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.py').replace('\\','\\\\'))
       if ret: 
         raise Exception('Exit code of the batch run is %d' % ret)

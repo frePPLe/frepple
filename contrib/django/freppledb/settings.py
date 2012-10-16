@@ -42,8 +42,7 @@ elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin','fr
 else:
   print "Error: Can't locate frepple.xsd" 
   sys.exit(1)                         
-
-# sys.path.append(os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','openerp')))
+os.environ['FREPPLE_HOME'] = FREPPLE_HOME
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -125,13 +124,20 @@ LANGUAGES = (
 SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
 
 # List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    #('django.template.loaders.cached.Loader', (
+# We don't use cached templates when in development mode 
+if DEBUG:
+  TEMPLATE_LOADERS = (
+     'django.template.loaders.filesystem.Loader',
+     'django.template.loaders.app_directories.Loader',
+  )
+else:
+  TEMPLATE_LOADERS = (
+    ('django.template.loaders.cached.Loader', (
        'django.template.loaders.filesystem.Loader',
        'django.template.loaders.app_directories.Loader',
-    #)),
-)
-
+    )),
+  )
+  
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -168,7 +174,8 @@ INSTALLED_APPS = (
     'freppledb.output',
     'freppledb.execute',
     'freppledb.common',
-    #'freppledb.openerp',
+    #'freppledb_extra',
+    #'openerp',
 )
 
 LOCALE_PATHS = (

@@ -2068,6 +2068,12 @@ class XMLOutput
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
     {m_fp = &logger; indentstring[0] = '\0';}
 
+    /** Force writing only references for nested objects. */
+    void setReferencesOnly(bool b) {numParents = b ? 2 : 0;}
+
+    /** Returns whether we write only references for nested objects or not. */
+    bool getReferencesOnly() const {return numParents>0;}
+
     /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG\> 
       */
@@ -2272,10 +2278,9 @@ class XMLOutput
       *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
     }
 
-    /** This method writes a serializable object. It maintains a STL-map of
-      * all objects that have been saved already. For objects that have
-      * already been saved earlier, the method will instruct the serializable
-      * object to write only a reference, rather than the complete object.
+    /** This method writes a serializable object.<br>
+      * If an object is nested more than 2 levels deep only a reference
+      * to it is written, rather than the complete object.
       * You should call this method for all objects in your xml document,
       * except for the root object.
       * @see writeElementWithHeader(const Keyword&, Object*)

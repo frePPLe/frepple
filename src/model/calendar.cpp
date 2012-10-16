@@ -87,7 +87,7 @@ int CalendarDouble::initialize()
 int CalendarDouble::BucketDouble::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaClass("bucket", "bucket_double"); // xxx, NULL, true);
+  metadata = new MetaClass("bucket", "bucket_double");
 
   // Initialize the Python class
   PythonType& x = FreppleClass<CalendarDouble::BucketDouble,Calendar::Bucket>::getType();

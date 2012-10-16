@@ -35,7 +35,7 @@ namespace frepple
 DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 {
   // Call the user exit
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);  
   if (userexit_demand) userexit_demand.call(l, PythonObject(data->constrainedPlanning));
   unsigned int loglevel = data->getSolver()->getLogLevel();
 
@@ -116,8 +116,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     data->state->curBuffer = NULL;
     data->state->q_qty = plan_qty;
     data->state->q_date = plan_date;
+    data->planningDemand = const_cast<Demand*>(l);
     data->state->curDemand = const_cast<Demand*>(l);
     data->state->motive = const_cast<Demand*>(l);
+    data->state->curOwnerOpplan = NULL;
     deliveryoper->solve(*this,v);
     Date next_date = data->state->a_date;
 

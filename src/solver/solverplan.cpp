@@ -110,7 +110,6 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
         push();
 
         // Plan the demand
-        planningDemand = *i;
         logConstraints = (Solver->getPlanType() == 1);
         try {(*i)->solve(*Solver,this);}
         catch (...)

@@ -22,9 +22,9 @@ def debugDemand(dem,mode):
 try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
 except: db = DEFAULT_DB_ALIAS
 if db == DEFAULT_DB_ALIAS:
-  frepple.settings.logfile = os.path.join(os.environ['FREPPLE_APP'],'frepple.log')
+  frepple.settings.logfile = os.path.join(settings.FREPPLE_APP,'frepple.log')
 else:
-  frepple.settings.logfile = os.path.join(os.environ['FREPPLE_APP'],'frepple_%s.log' % db)
+  frepple.settings.logfile = os.path.join(settings.FREPPLE_APP,'frepple_%s.log' % db)
 
 # use the test database if we are running the test suite
 if 'FREPPLE_TEST' in os.environ:
@@ -81,7 +81,7 @@ if 'solver_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
 print "\nStart plan generation at", datetime.now().strftime("%H:%M:%S")
 solver.solve()
 frepple.printsize()
-
+                    
 #print "\nStart exporting static model to the database at", datetime.now().strftime("%H:%M:%S")
 #from freppledb.execute.export_database_static import exportfrepple as export_static_to_database
 #export_static_to_database()

@@ -20,7 +20,7 @@
 {% elif opts.object_name.lower == 'customer' %}{% include "customertabs.html" %}
 {% elif opts.object_name.lower == 'demand' %}{% include "demandtabs.html" %}
 {% elif opts.object_name.lower == 'flow' %}{% include "flowtabs.html" %}
-{% elif opts.object_name.lower == 'forecast' %}{% include "forecasttabs.html" %}
+{% comment %}TODO{% elif opts.object_name.lower == 'forecast' %}{% include "forecasttabs.html" %}{% endcomment %}
 {% elif opts.object_name.lower == 'group' %}{% include "grouptabs.html" %}
 {% elif opts.object_name.lower == 'item' %}{% include "itemtabs.html" %}
 {% elif opts.object_name.lower == 'load' %}{% include "loadtabs.html" %}

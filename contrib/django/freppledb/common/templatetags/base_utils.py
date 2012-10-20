@@ -24,6 +24,7 @@ from decimal import Decimal
 from django.template import Library, Node, NodeList, Variable, resolve_variable
 from django.template import VariableDoesNotExist, TemplateSyntaxError
 from django.template.defaultfilters import stringfilter
+from django.template.loader import get_template
 from django.conf import settings
 from django.contrib.admin.views.main import quote
 from django.contrib.admin.models import LogEntry
@@ -218,6 +219,41 @@ def set_var(parser, token):
   return SetVariable(bits[1],bits[2])
 
 register.tag('set', set_var)
+
+
+
+#
+# A tag to include the tabs for a model
+#
+
+class ModelTabs(Node):
+  def __init__(self, model):
+    self.model = model
+    
+  def render(self, context):
+    try:
+      model = Variable(self.model).resolve(context)
+      template = get_template("%stabs.html" % model)
+      print model, template 
+      return template.render(context)
+    except:
+      if settings.TEMPLATE_DEBUG: raise
+      return ''
+
+
+def get_modeltabs(parser, token):
+  r'''
+  {% tabs "customer" %}
+  {% tabs myvariable %}
+  '''
+  from re import split
+  bits = split(r'\s+', token.contents, 1)
+  if len(bits) != 2:
+    raise TemplateSyntaxError, "'%s' tag requires 1 argument" % bits[0]
+  return ModelTabs(bits[1]) 
+   
+register.tag('tabs', get_modeltabs)
+
 
 
 #

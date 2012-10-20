@@ -2,22 +2,7 @@
 {% load i18n %}
 
 {% block content_title %}<div>{% block tools %}{% endblock %}<h1 style="float:left">{{title|capfirst|escape}}: {% trans 'Change history'|escape %}</h1>
-{% if model == 'bucket' %}{% include "buckettabs.html" %}
-{% elif model == 'buffer' %}{% include "buffertabs.html" %}
-{% elif model == 'calendar' %}{% include "calendartabs.html" %}
-{% elif model == 'customer' %}{% include "customertabs.html" %}
-{% elif model == 'demand' %}{% include "demandtabs.html" %}
-{% elif model == 'flow' %}{% include "flowtabs.html" %}
-{% comment %}TODO{% elif model == 'forecast' %}{% include "forecasttabs.html" %}{% endcomment %}
-{% elif model == 'group' %}{% include "grouptabs.html" %}
-{% elif model == 'item' %}{% include "itemtabs.html" %}
-{% elif model == 'load' %}{% include "loadtabs.html" %}
-{% elif model == 'location' %}{% include "locationtabs.html" %}
-{% elif model == 'operation' %}{% include "operationtabs.html" %}
-{% elif model == 'resource' %}{% include "resourcetabs.html" %}
-{% elif model == 'setupmatrix' %}{% include "setupmatrixtabs.html" %}
-{% elif model == 'parameter' %}{% include "parametertabs.html" %}
-{% endif %} 
+{% tabs model %} 
 </div>{% endblock %}
 
 {% block content %}

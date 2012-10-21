@@ -1,20 +1,16 @@
 <customer name="client">
 </customer>
-
 <location name="locA">
 </location>
-
 <operationplan id="3" operation="make item">
 	<start>2010-12-25T00:00:00</start>
 	<end>2011-01-01T00:00:00</end>
 	<quantity>9</quantity>
 	<locked>true</locked>
 </operationplan>
-
 <item name="end item">
 	<operation name="delivery end item" xsi:type="operation_fixed_time"/>
 </item>
-
 <demand name="order 1">
 	<customer name="client"/>
 	<quantity>10</quantity>
@@ -22,8 +18,15 @@
 	<due>2009-03-02T09:00:00</due>
 	<priority>1</priority>
 	<maxlateness>P0D</maxlateness>
+	<operationplans>
+		<operationplan id="4" operation="delivery end item">
+			<demand name="order 1"/>
+			<start>2009-03-01T09:00:00</start>
+			<end>2009-03-02T09:00:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+	</operationplans>
 </demand>
-
 <buffer name="buffer1" xsi:type="buffer_procure">
 	<category>My category</category>
 	<description>My description</description>
@@ -33,14 +36,38 @@
 	<item name="item 1"/>
 	<location name="locA"/>
 </buffer>
-
 <operation name="make item" xsi:type="operation_routing">
+	<operationplans>
+		<operationplan id="17" operation="make item">
+			<start>2009-02-08T09:00:00</start>
+			<end>2009-02-15T09:00:00</end>
+			<quantity>10</quantity>
+			<owner id="18" operation="make or buy item"/>
+		</operationplan>
+		<operationplan id="12" operation="make item">
+			<start>2009-02-15T09:00:00</start>
+			<end>2009-02-22T09:00:00</end>
+			<quantity>10</quantity>
+			<owner id="13" operation="make or buy item"/>
+		</operationplan>
+		<operationplan id="7" operation="make item">
+			<start>2009-02-22T09:00:00</start>
+			<end>2009-03-01T09:00:00</end>
+			<quantity>10</quantity>
+			<owner id="8" operation="make or buy item"/>
+		</operationplan>
+		<operationplan id="3" operation="make item">
+			<start>2010-12-25T00:00:00</start>
+			<end>2011-01-01T00:00:00</end>
+			<quantity>9</quantity>
+			<locked>true</locked>
+		</operationplan>
+	</operationplans>
 	<steps>
 		<operation name="make item - step 1" xsi:type="operation_fixed_time"/>
 		<operation name="make item - step 2" xsi:type="operation_fixed_time"/>
 	</steps>
 </operation>
-
 <problem>
 	<name>material excess</name>
 	<description>Buffer &apos;end item&apos; has material excess of 20</description>
@@ -48,4 +75,3 @@
 	<end>2009-03-01T20:00:00</end>
 	<weight>20</weight>
 </problem>
-

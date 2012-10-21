@@ -136,7 +136,6 @@ DECLARE_EXPORT PyObject* Item::getattro(const Attribute& attr)
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_members))
     return new ItemIterator(this);
-  // @todo support member iteration for res, item, ...
   return NULL;
 }
 

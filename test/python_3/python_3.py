@@ -347,15 +347,15 @@ for i in frepple.problems():
 ###
 print "\nPrinting some models in XML format to a file"
 output = open("output.3.xml","wt")
-print >>output, mycustomer.toXML()
-print >>output, locA.toXML()
-print >>output, opplan.toXML()
-print >>output, item.toXML()
-print >>output, order1.toXML()
-print >>output, buf1.toXML()
-print >>output, makeoper.toXML()
+mycustomer.toXML('P',output)
+locA.toXML('P',output)
+opplan.toXML('P',output)
+item.toXML('P',output)
+order1.toXML('P',output)
+buf1.toXML('P',output)
+makeoper.toXML('P',output)
 for i in frepple.problems():
-  print >>output, i.toXML()
+  i.toXML('P',output)
 
 ###
 print "\nDocumenting all available Python entities defined by frePPLe:"

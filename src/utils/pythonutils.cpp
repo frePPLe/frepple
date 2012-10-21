@@ -481,7 +481,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
     // Write the output...
     if (filearg)
     {
-      if (PyFile_Check(filearg))    // TODO Untested functionality 
+      if (PyFile_Check(filearg))
       {
         // ... to a file
         return PyFile_WriteString(ch.str().c_str(), filearg) ?

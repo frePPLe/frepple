@@ -474,8 +474,9 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
     else
       throw DataException("Invalid output mode");
 
-    // The next call only works if the self argument is effectively an
-    // instance of the Object base class! We don't check this.
+    // The next call assumes the self argument is an instance of the Object
+    // base class. We don't need to check this explicitly since we expose
+    // this method only on subclasses.
     static_cast<Object*>(self)->writeElement
     (&x, *(static_cast<Object*>(self)->getType().category->typetag));
     // Write the output...

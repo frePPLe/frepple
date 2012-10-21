@@ -32,9 +32,9 @@ It provides the following functionality:
    The time buckets and time boundaries can easily be updated.
 '''
 
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal
-import csv, cStringIO, operator, math, locale
+import csv, cStringIO, operator, math
 import codecs, json, calendar
           
 from django.conf import settings
@@ -670,17 +670,22 @@ class GridReport(View):
     for m in deps:
       if not request.user.has_perm('%s.%s' % (m._meta.app_label, m._meta.get_delete_permission())):
         return string_concat(m._meta.verbose_name, ':', _('Permission denied'))
-    
-    # Delete the data records
+        
     transaction.enter_transaction_management(using=request.database)
     transaction.managed(True, using=request.database)
     try:
+      # Delete the data records
       cursor = connections[request.database].cursor()
       sql_list = connections[request.database].ops.sql_flush(no_style(), [m._meta.db_table for m in deps], [] )
       for sql in sql_list:
         cursor.execute(sql)
         transaction.commit(using=request.database)
-      # TODO Also erase comments and history
+      # Erase comments and history
+      content_ids = [ContentType.objects.get_for_model(m) for m in deps]
+      LogEntry.objects.filter(content_type__in=content_ids).delete()
+      transaction.commit(using=request.database)
+      Comment.objects.filter(content_type__in=content_ids).delete()
+      transaction.commit(using=request.database)
     except Exception as e:
       return str(e)
     finally:

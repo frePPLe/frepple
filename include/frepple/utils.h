@@ -435,6 +435,8 @@ class NonCopyable
   *       - buffer_infinite
   *       - buffer_procure
   *       - calendar
+  *           - addBucket(integer identifier)
+  *           - events()
   *       - calendarBucket
   *       - calendar_boolean
   *       - calendar_double
@@ -462,6 +464,7 @@ class NonCopyable
   *       - parameters
   *       - problem  (read-only)
   *       - resource
+  *           - plan(list of dates to define the time periods)
   *       - resource_default
   *       - resource_infinite
   *       - setup_matrix
@@ -469,25 +472,33 @@ class NonCopyable
   *       - solver
   *           - solve()
   *       - solver_mrp
+  *           - commit()
+  *           - rollback()
   *   - The following functions or attributes return <b>iterators</b> over the
   *     frePPLe objects:<br>
   *       - buffers()
+  *       - buffer.members
   *       - buffer.flows
   *       - buffer.flowplans
   *       - calendar.buckets
   *       - calendars()
   *       - customers()
+  *       - customer.members
   *       - demands()
   *       - demand.operationplans
   *       - demand.pegging
+  *       - demand.members
   *       - operation.flows
   *       - operation.loads
   *       - items()
+  *       - item.members
   *       - locations()
+  *       - location.members
   *       - operations()
   *       - operation.operationplans
   *       - problems()
   *       - resources()
+  *       - resource.members
   *       - resource.loads
   *       - resource.loadplans
   *       - setup_matrices()

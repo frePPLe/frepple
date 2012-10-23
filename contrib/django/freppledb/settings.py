@@ -23,7 +23,6 @@ r'''
 Main Django configuration file.
 '''
 import os, os.path, sys, locale
-import django
 import freppledb
 
 # FrePPLe directories  
@@ -41,7 +40,7 @@ elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin','fr
   FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin'))
 else:
   print "Error: Can't locate frepple.xsd" 
-  sys.exit(1)                         
+  sys.exit(1)     
 os.environ['FREPPLE_HOME'] = FREPPLE_HOME
 
 DEBUG = True
@@ -94,6 +93,11 @@ DATABASES = {
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
     },
   }
+
+if 'FREPPLE_LOGDIR' in os.environ:
+  FREPPLE_LOGDIR = os.environ['FREPPLE_LOGDIR']
+else:
+  FREPPLE_LOGDIR = FREPPLE_APP   
 
 LANGUAGE_CODE = 'en'
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
@@ -343,9 +347,9 @@ PORT = 8000
 for param in DATABASES.values():
   if param['ENGINE'] == 'django.db.backends.sqlite3':
     # Path to the sqlite3 test database file
-    param['TEST_NAME'] = os.path.join(FREPPLE_APP,'test_%s.sqlite' % param['NAME'])
+    param['TEST_NAME'] = os.path.join(FREPPLE_LOGDIR,'test_%s.sqlite' % param['NAME'])
     # Path to sqlite3 database file
-    param['NAME'] = os.path.join(FREPPLE_APP,'%s.sqlite' % param['NAME'])
+    param['NAME'] = os.path.join(FREPPLE_LOGDIR,'%s.sqlite' % param['NAME'])
     # Extra default settings for SQLITE
     if len(param['OPTIONS']) == 0:
       param['OPTIONS'] = {"timeout": 10, "check_same_thread": False}

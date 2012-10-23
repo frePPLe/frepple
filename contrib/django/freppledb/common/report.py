@@ -35,7 +35,7 @@ It provides the following functionality:
 from datetime import datetime, timedelta
 from decimal import Decimal
 import csv, cStringIO, operator, math
-import codecs, json, calendar
+import codecs, json
           
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
@@ -48,13 +48,12 @@ from django.db.models.fields.related import RelatedField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
 from django.forms.models import modelform_factory
 from django.shortcuts import render
-from django.utils import translation, simplejson
+from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str, iri_to_uri, force_unicode
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.formats import get_format, number_format
-from django.utils import simplejson as json
 from django.utils.text import capfirst, get_text_list
 from django.utils.translation import string_concat
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
@@ -551,7 +550,7 @@ class GridReport(View):
     ok = True
     try:          
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk      
-      for rec in simplejson.JSONDecoder().decode(request.read()):     
+      for rec in json.JSONDecoder().decode(request.read()):     
         if 'delete' in rec:
           # Deleting records
           for key in rec['delete']:
@@ -1246,7 +1245,6 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
       end = end.replace(hour=0, minute=0, second=0)
     elif pref.horizonunit == 'week':
       end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength, days=7-start.weekday()) 
-      print start, end
     else:
       y = start.year
       m = start.month + pref.horizonlength + (start.day > 1 and 1 or 0)

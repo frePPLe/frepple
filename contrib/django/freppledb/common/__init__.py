@@ -100,70 +100,69 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   def formfield_for_manytomany(self, db_field, request=None, **kwargs):
     return super(MultiDBModelAdmin, self).formfield_for_manytomany(db_field, request=request, using=request.database, **kwargs)
 
-  def log_addition(self, request, object):
+  def log_addition(self, request, obj):
     """
     Log that an object has been successfully added.
     """
-    from django.contrib.admin.models import LogEntry, ADDITION
+    from django.contrib.admin.models import ADDITION
     LogEntry(
         user_id         = request.user.pk,
-        content_type_id = ContentType.objects.get_for_model(object).pk,
-        object_id       = force_unicode(object.pk),
-        object_repr     = force_unicode(object)[:200],
+        content_type_id = ContentType.objects.get_for_model(obj).pk,
+        object_id       = force_unicode(obj.pk),
+        object_repr     = force_unicode(obj)[:200],
         action_flag     = ADDITION
     ).save(using=request.database)
 
-  def log_change(self, request, object, message):
+  def log_change(self, request, obj, message):
     """
     Log that an object has been successfully changed.
     """    
-    if hasattr(object, 'new_pk'):
+    if hasattr(obj, 'new_pk'):
       # We are renaming an existing object.        
       # a) Save the new record in the right database
-      old_pk = object.pk
-      object.pk = object.new_pk
-      object.save(using=request.database)
+      old_pk = obj.pk
+      obj.pk = obj.new_pk
+      obj.save(using=request.database)
       # b) All linked fields need updating.
-      for related in object._meta.get_all_related_objects():
+      for related in obj._meta.get_all_related_objects():
         related.model._base_manager.using(request.database) \
           .filter(**{related.field.name: old_pk}) \
-          .update(**{related.field.name: object})
+          .update(**{related.field.name: obj})
       # c) Move the comments and audit trail to the new key
-      model_type = ContentType.objects.get_for_model(object)
+      model_type = ContentType.objects.get_for_model(obj)
       Comment.objects.using(request.database). \
         filter(content_type__pk=model_type.id, object_pk=old_pk). \
-        update(object_pk=object.pk)
+        update(object_pk=obj.pk)
       LogEntry.objects.using(request.database). \
         filter(content_type__pk=model_type.id, object_id=old_pk). \
-        update(object_id=object.pk)
+        update(object_id=obj.pk)
       # e) Delete the old record
       self.queryset(request).get(pk=old_pk).delete()             
     LogEntry(
         user_id         = request.user.pk,
-        content_type_id = ContentType.objects.get_for_model(object).pk,
-        object_id       = force_unicode(object.pk),
-        object_repr     = force_unicode(object)[:200],
+        content_type_id = ContentType.objects.get_for_model(obj).pk,
+        object_id       = force_unicode(obj.pk),
+        object_repr     = force_unicode(obj)[:200],
         action_flag     = CHANGE,
         change_message  = message
     ).save(using=request.database)
 
-  def log_deletion(self, request, object, object_repr):
+  def log_deletion(self, request, obj, object_repr):
     """
         Log that an object will be deleted. Note that this method is called
         before the deletion.
     """
-    from django.contrib.admin.models import LogEntry, DELETION
+    from django.contrib.admin.models import DELETION
     LogEntry(
         user_id         = request.user.id,
         content_type_id = ContentType.objects.get_for_model(self.model).pk,
-        object_id       = force_unicode(object.pk),
+        object_id       = force_unicode(obj.pk),
         object_repr     = object_repr[:200],
         action_flag     = DELETION
     ).save(using=request.database)
 
   def history_view(self, request, object_id, extra_context=None):
     "The 'history' admin view for this model."
-    from django.contrib.admin.models import LogEntry
     model = self.model
     opts = model._meta
     app_label = opts.app_label

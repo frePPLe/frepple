@@ -234,7 +234,6 @@ class ModelTabs(Node):
     try:
       model = Variable(self.model).resolve(context)
       template = get_template("%stabs.html" % model)
-      print model, template 
       return template.render(context)
     except:
       if settings.TEMPLATE_DEBUG: raise
@@ -381,7 +380,6 @@ def duration(value):
     if value % 86400 != 0 and value < 604800: return '%.2f h' % (value/Decimal('3600'))
     return '%.2f d' % (value/Decimal('86400'))
   except Exception as e:
-    print e
     return ''
 
 duration.is_safe = True

@@ -251,9 +251,9 @@ def logfile(request):
   '''
   try:
     if request.database == DEFAULT_DB_ALIAS:
-      f = open(os.path.join(settings.FREPPLE_APP, 'frepple.log'), 'rb')
+      f = open(os.path.join(settings.FREPPLE_LOGDIR, 'frepple.log'), 'rb')
     else:
-      f = open(os.path.join(settings.FREPPLE_APP, 'frepple_%s.log' % request.database), 'rb')
+      f = open(os.path.join(settings.FREPPLE_LOGDIR, 'frepple_%s.log' % request.database), 'rb')
   except:
     logdata = "File not found"
   else:

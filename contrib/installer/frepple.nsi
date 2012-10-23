@@ -162,13 +162,14 @@ Section "Application" SecAppl
   ; Copy the django and python redistributables created by py2exe
   File /r "..\contrib\installer\dist\*.*"
 
-  ; Copy sqlite database if it is available
-  SetOutPath "$INSTDIR\bin\custom"
+  ; Copy sqlite database if it is available.
+  ; This file shouldn't be put in the read-only "Program files" directory.
+  SetOutPath "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
   File /nonfatal "..\contrib\django\frepple.sqlite"
 
   ; Create menu
-  CreateDirectory "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\bin\manage.exe" "frepple_runserver"
+  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\bin\manage.exe" "frepple_runserver"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open customization folder.lnk" "$INSTDIR\bin\custom"
 
   ; Pick up the installation parameters
@@ -271,6 +272,7 @@ Section "Application" SecAppl
     FileWrite $R4 "    },$\r$\n"
   NoScenarios:
   FileWrite $R4 "  }$\r$\n$\r$\n"
+  FileWrite $R4 "FREPPLE_LOGDIR = r'$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
   FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
   ; Read the third section in settings.py and write unmodified to the output file
   read3_loop:
@@ -497,7 +499,6 @@ Section Uninstall
   nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" remove'
 
   ; Remove the entries from the start menu
-  SetShellVarContext all
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Uninstall.lnk"
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk"
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Run server.lnk"
@@ -507,8 +508,14 @@ Section Uninstall
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open customization folder.lnk"
 
   ; Remove the folder in start menu
-  RMDir "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
+  RMDir "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 
+  ; Remove the log directory
+  ; Version subdirectory is always removed. 
+  ; FrePPLe subdirectory is removed if it is empty.
+  RMDir /r "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
+  RMDir "$APPDATA\${PRODUCT_NAME}"
+  
   ; Remove the installation directory
   RMDir /r "$INSTDIR"
   Sleep 500

@@ -1236,7 +1236,10 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
   if pref.horizontype and not start and not end:  
     # First type: Start and end dates relative to current
     try: 
-      start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
+      start = datetime.strptime(
+        Parameter.objects.using(request.database).get(name="currentdate").value, 
+        "%Y-%m-%d %H:%M:%S"
+        )
     except: 
       start = datetime.now()
       start = start.replace(microsecond=0)
@@ -1258,7 +1261,10 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
       start = pref.horizonstart
       if not start:
         try: 
-          start = datetime.strptime(Parameter.objects.get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
+          start = datetime.strptime(
+            Parameter.objects.using(request.database).get(name="currentdate").value, 
+            "%Y-%m-%d %H:%M:%S"
+            )
         except: 
           start = datetime.now()
           start = start.replace(microsecond=0)

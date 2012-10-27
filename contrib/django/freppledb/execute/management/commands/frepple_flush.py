@@ -91,7 +91,7 @@ class Command(BaseCommand):
         ['out_problem','out_resourceplan','out_constraint'],
         ['out_loadplan','out_flowplan','out_operationplan'], 
         ['out_demand','out_forecast'],    # TODO Table may not exist!
-        ['demand','forecastdemand','forecast','customer',
+        ['demand','customer',
          'setuprule','setupmatrix','resourceload','resource',
          'flow','buffer','operationplan','item',
          'suboperation','operation',
@@ -105,6 +105,7 @@ class Command(BaseCommand):
           cursor.execute(sql)
           transaction.commit(using=database)
 
+      # TODO how to clean also the extra tables 'forecastdemand','forecast',
       # SQLite specials
       if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
         cursor.execute('vacuum')   # Shrink the database file

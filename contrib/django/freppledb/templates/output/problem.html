@@ -3,7 +3,6 @@
 {% block contextmenus %}
 {% include "buffercontext.html" %}
 {% include "demandcontext.html" %}
-{% include "forecastcontext.html" %}
 {% include "resourcecontext.html" %}
 {% include "operationcontext.html" %}
 {% endblock %}
@@ -17,7 +16,7 @@ function probfmt(cellvalue, options, row)
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>";
   if (row['entity'] == 'capacity')
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
-  if (row['entity'] == 'demand') // TODO distinguish between forecast and demand
+  if (row['entity'] == 'demand')
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='demand'></span>";
   else
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>";

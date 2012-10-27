@@ -32,7 +32,7 @@ from freppledb.input.models import Item
 from freppledb.output.models import Demand
 from freppledb.common.db import python_date, sql_datediff, sql_overlap
 from freppledb.common.report import getBuckets
-from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
+from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
 
 class OverviewReport(GridPivot):

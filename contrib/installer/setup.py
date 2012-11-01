@@ -46,6 +46,8 @@ packages = [# Required for django standalone deployment
             'cx_Oracle',
             # Required for the python initialization
             'site',
+			# Required for graphing
+			'pygraphviz',
             # Added to package a more complete python library with frePPLe
             'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',  
             'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer', 

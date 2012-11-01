@@ -1,8 +1,63 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
+{% block extrahead %}{{block.super}}{% if graphdata %} 
+<style type="text/css">
+#graph {
+  overflow:auto; 
+  border: 1px black solid; 
+  margin: 10px;
+  //padding: 10px;
+}
+</style>
+<script type="text/javascript">
+
+function clickedShaped(event) {
+    
+  var tgt = event.currentTarget.firstChild.textContent;
+
+  // Find which contextmenu to use
+  if (/^B/.test(tgt)) contextMenu = $('#buffercontext');
+  if (/^R/.test(tgt)) contextMenu = $('#resourcecontext');
+  if (/^O/.test(tgt)) contextMenu = $('#operationcontext');
+  
+  // Find the id of the menu to display   
+  name_escaped = encodeURIComponent(tgt.substring(1).replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+    .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F")); 
+  
+  // Build the URLs for the menu
+  var params = {value: name_escaped};
+  contextMenu.find('a').each( function() {
+    $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) { 
+    var key = match.substring(1,match.length-1);
+    return key in params ? params[key] : match;
+    }
+    ))
+  });
+
+  // Display the menu at the right location
+  $(contextMenu).css({
+    left: event.pageX,
+    top: event.pageY,
+    display: 'block'
+    });
+  event.preventDefault();
+  event.stopImmediatePropagation();
+}
+  
+  
+$(function(){
+  $("#graph").resizable({ handles: "s,se", maxWidth: "100%"});
+  $("g.node").click(clickedShaped);
+  $("svg").click(function() {
+    $(".ContextMenu").css('display', 'none');
+    });
+});
+
+</script>{% endif %}{% endblock %}
+
 {% block content_title %}<div>{% block tools %}{% endblock %}<h1 style="float:left">{{title|escape}}: {% if downstream %}{% trans "Where Used"|capfirst|escape %}{% else %}{% trans "Supply Path"|capfirst|escape %}{% endif %}</h1>
-{% tabs opts.object_name.lower %}
+{% tabs model %}
 </div>{% endblock %}
 
 {% block content %}
@@ -14,6 +69,11 @@
 {% include "locationcontext.html" %}
 {% include "itemcontext.html" %}
 
+{% if graphdata %}<div id="graph">
+{{graphdata|safe}}
+</div>{% endif %}
+
+<div>
 <table><thead><tr>
 <th rowspan="2">Operation</th>
 <th rowspan="2">Resource</th>
@@ -38,7 +98,7 @@
 <td>{% if i.consumingflow %}<center>{{i.consumingflow.quantity|floatformat:2}}</center>{% endif %}</td>
 <td><center>{{i.cumquantity|floatformat:2}}</center></td>
 </tr>{% endfor %}
-</tbody></table>
+</tbody></table></div>
 
 </div>
 {% endblock %}

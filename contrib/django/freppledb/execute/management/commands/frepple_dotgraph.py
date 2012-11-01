@@ -78,7 +78,7 @@ class Command(BaseCommand):
       print 'subgraph operations {'
       print '	 node[shape=rectangle,color=green];'
       cursor.execute('''
-         select name, type, suboperation_id
+         select name, suboperation_id
          from operation
          left join suboperation
          on name = operation_id
@@ -87,7 +87,7 @@ class Command(BaseCommand):
          ''')
       previous = None
       needs_closure = 0
-      for o, t, s in cursor.fetchall():
+      for o, s in cursor.fetchall():
         if o != previous and needs_closure > 0:
           needs_closure -= 1
           print '  }'

@@ -19,16 +19,13 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import datetime
 from decimal import Decimal
 import json
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, Http404
-from django.views.decorators.csrf import csrf_protect
-from django.utils import simplejson
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -43,7 +40,6 @@ from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModi
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
 from freppledb.common.report import GridFieldChoice
-from freppledb.common.models import Parameter, Bucket, BucketDetail
 
 
 @staff_member_required
@@ -137,10 +133,9 @@ class pathreport:
   @staticmethod
   def getPath(request, objecttype, entity, downstream):
     '''
-    A generator function that recurses upstream or downstream in the supply
-    chain.
+    A function that recurses upstream or downstream in the supply chain.
 
-    todo: The current code only supports 1 level of super- or sub-operations.
+    todo: The current code doesn't handle suboperations correctly
     '''
     from django.core.exceptions import ObjectDoesNotExist
     if objecttype == 'buffer':
@@ -164,26 +159,75 @@ class pathreport:
     else:
       raise Http404("invalid entity type %s" % objecttype)
 
+    # Result data structures
+    bufs = set()
+    ops = set()
+    path = []
+
+    # Check the availability of pygraphviz
+    try: 
+      import pygraphviz
+      G = pygraphviz.AGraph(strict=True, directed=True, 
+            rankdir="LR", href="javascript:parent.info()", splines='true',
+            bgcolor='white', tooltip=" ")  
+      G._get_prog("dot")
+    except: 
+      # Silently fail
+      G = None
+    
+    # Initialize the graph
+    if G != None:
+      G.edge_attr['color']='black'
+      G.node_attr['style'] = 'filled'
+      G.node_attr['fontsize'] = '8'
+
     # Note that the root to start with can be either buffer or operation.
-    visited = []
     while len(root) > 0:
       level, curbuffer, curprodflow, curoperation, curconsflow, curqty = root.pop()
-      yield {
+      path.append({
         'buffer': curbuffer,
         'producingflow': curprodflow,
         'operation': curoperation,
         'level': abs(level),
         'consumingflow': curconsflow,
         'cumquantity': curqty,
-        }
+        })
+
+      if G != None:
+        if curprodflow: 
+          G.add_node("B%s" % curprodflow.thebuffer.name, label=curprodflow.thebuffer.name, tooltip=curprodflow.thebuffer.name, shape='trapezium', color='red')
+          G.add_node("O%s" % curprodflow.operation.name, label=curprodflow.operation.name, tooltip=curprodflow.operation.name, shape='rectangle', color='green')
+          if curprodflow.quantity > 0:
+            G.add_edge("O%s" % curprodflow.operation.name,"B%s" % curprodflow.thebuffer.name, label=str(curprodflow.quantity), tooltip=str(curprodflow.quantity), weight='100')
+          else:
+            G.add_edge("B%s" % curprodflow.thebuffer.name,"O%s" % curprodflow.operation.name, label=str(curprodflow.quantity), tooltip=str(curprodflow.quantity), weight='100')
+        if curconsflow: 
+          G.add_node("B%s" % curconsflow.thebuffer.name, label=curconsflow.thebuffer.name, tooltip=curconsflow.thebuffer.name, shape='trapezium', color='red')
+          G.add_node("O%s" % curconsflow.operation.name, label=curconsflow.operation.name, tooltip=curconsflow.thebuffer.name, shape='rectangle', color='green')
+          if curconsflow.quantity > 0:
+            G.add_edge("O%s" % curconsflow.operation.name,"B%s" % curconsflow.thebuffer.name, label=str(curconsflow.quantity), tooltip=str(curconsflow.quantity), weight='100')
+          else:
+            G.add_edge("B%s" % curconsflow.thebuffer.name,"O%s" % curconsflow.operation.name, label=str(curconsflow.quantity), tooltip=str(curconsflow.quantity), weight='100')
 
       # Avoid infinite loops when the supply chain contains cycles
       if curbuffer:
-        if curbuffer in visited: continue
-        else: visited.append(curbuffer)
+        if curbuffer in bufs: continue
       else:
-        if curoperation and curoperation in visited: continue
-        else: visited.append(curoperation)
+        if curoperation and curoperation in ops: continue
+
+      if curprodflow: 
+        ops.add(curprodflow.operation)          
+      if curconsflow: 
+        ops.add(curconsflow.operation)
+      if curbuffer: 
+        bufs.add(curbuffer)          
+      if curoperation: 
+        ops.add(curoperation)        
+        if G != None:
+          G.add_node("O%s" % curoperation.name, label=curoperation.name, tooltip=curoperation.name, shape='rectangle', color='green')
+          for i in curoperation.loads.all():
+            G.add_node("R%s" % i.resource.name, tooltip=i.resource.name, label=i.resource.name, shape='hexagon', color='blue')
+            G.add_edge("O%s" % i.operation.name,"R%s" % i.resource.name, label=str(i.quantity), tooltip=str(i.quantity), style='dashed', dir='none', weight='100')
 
       if downstream:
         # DOWNSTREAM: Find all operations consuming from this buffer...
@@ -264,31 +308,32 @@ class pathreport:
               root.append( (level-1, None, None, x.suboperation, None, curqty) )
             for x in curoperation.superoperations.using(request.database):
               root.append( (level-1, None, None, x.operation, None, curqty) )
-
+    
+    # Layout the graph
+    if G != None: G.layout(prog='dot')
+    print G  
+    
+    # Final result
+    return render_to_response('input/path.html', RequestContext(request,{
+       'title': capfirst(force_unicode(_(objecttype)) + " " + entity),
+       'supplypath': path,
+       'model': objecttype,
+       'object_id': entity,
+       'downstream': downstream,
+       'active_tab': downstream and 'whereused' or 'supplypath',
+       'graphdata': G!=None and G.draw(format="svg") or ""
+       }))    
+          
+    
   @staticmethod
   @staff_member_required
   def viewdownstream(request, model, object_id):
-    return render_to_response('input/path.html', RequestContext(request,{
-       'title': capfirst(force_unicode(_(model)) + " " + object_id),
-       'supplypath': pathreport.getPath(request, model, object_id, True),
-       'model': model,
-       'object_id': object_id,
-       'downstream': True,
-       'active_tab': 'whereused',
-       }))
-
+    return pathreport.getPath(request, model, object_id, True)
 
   @staticmethod
   @staff_member_required
   def viewupstream(request, model, object_id):
-    return render_to_response('input/path.html', RequestContext(request,{
-       'title': capfirst(force_unicode(_(model)) + " " + object_id),
-       'supplypath': pathreport.getPath(request, model, object_id, False),
-       'model': model,
-       'object_id': object_id,
-       'downstream': False,
-       'active_tab': 'supplypath',
-       }))
+    return pathreport.getPath(request, model, object_id, False)
 
 
 @staff_member_required

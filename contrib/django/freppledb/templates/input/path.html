@@ -7,7 +7,7 @@
   overflow:auto; 
   border: 1px black solid; 
   margin: 10px;
-  //padding: 10px;
+  padding: 10px;
 }
 </style>
 <script type="text/javascript">
@@ -47,7 +47,9 @@ function clickedShaped(event) {
   
   
 $(function(){
-  $("#graph").resizable({ handles: "s,se", maxWidth: "100%"});
+  if ($("#graph").height() > $(window).height() - 350)
+    $("#graph").height($(window).height() - 350);
+  $("#graph").resizable({handles: "s,se"});
   $("g.node").click(clickedShaped);
   $("svg").click(function() {
     $(".ContextMenu").css('display', 'none');

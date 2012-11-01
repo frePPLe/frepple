@@ -20,16 +20,10 @@
 # date : $LastChangedDate$
 
 from datetime import datetime, time
-from decimal import Decimal
 
 from django.db import models
-from django.db import connections, transaction, DEFAULT_DB_ALIAS
-from django.db.models import signals
-from django.contrib.admin.models import LogEntry, CHANGE
-from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.utils.encoding import force_unicode
 
 from freppledb.common.fields import DurationField
 from freppledb.common.models import HierarchyModel, AuditModel
@@ -83,8 +77,8 @@ class CalendarBucket(AuditModel):
   friday = models.BooleanField(_('Friday'), blank=True, default=True)
   saturday = models.BooleanField(_('Saturday'), blank=True, default=True)
   sunday = models.BooleanField(_('Sunday'), blank=True, default=True)
-  starttime = models.TimeField(_('start time'), blank=True, default=time(0,0,0))
-  endtime = models.TimeField(_('end time'), blank=True, default=time(23,59,59))
+  starttime = models.TimeField(_('start time'), blank=True, null=True, default=time(0,0,0))
+  endtime = models.TimeField(_('end time'), blank=True, null=True, default=time(23,59,59))
   
   def __unicode__(self):
     return u"%s" % self.id

@@ -121,13 +121,13 @@ def exportCalendarBuckets(cursor):
     (calendar_id,startdate,enddate,id,priority,value,
      monday,tuesday,wednesday,thursday,friday,saturday,sunday,
      starttime,endtime,lastmodified) 
-    values(%s,%s,%s,%s,%s,%s,%s)''',
+    values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
     [(
        i.calendar.name, str(i.start), str(i.end), i.id, i.priority, 
        round(i.value,settings.DECIMAL_PLACES), 
-       (i.days & 1) and true or false, (i.days & 2) and true or false, (i.days & 4) and true or false,
-       (i.days & 8) and true or false, (i.days & 16) and true or false, (i.days & 32) and true or false,
-       (i.days & 64) and true or false, i.starttime, i.endtime, timestamp 
+       (i.days & 1) and True or False, (i.days & 2) and True or False, (i.days & 4) and True or False,
+       (i.days & 8) and True or False, (i.days & 16) and True or False, (i.days & 32) and True or False,
+       (i.days & 64) and True or False, i.starttime, i.endtime, timestamp 
       ) for i in buckets() if (i.calendar.name, i.id) not in primary_keys 
     ])
   cursor.executemany(
@@ -139,9 +139,9 @@ def exportCalendarBuckets(cursor):
     [(
        str(i.end), str(i.start), i.priority, 
        round(i.value,settings.DECIMAL_PLACES), timestamp,
-       (i.days & 1) and true or false, (i.days & 2) and true or false, (i.days & 4) and true or false,
-       (i.days & 8) and true or false, (i.days & 16) and true or false, (i.days & 32) and true or false,
-       (i.days & 64) and true or false, i.starttime, i.endtime, 
+       (i.days & 1) and True or False, (i.days & 2) and True or False, (i.days & 4) and True or False,
+       (i.days & 8) and True or False, (i.days & 16) and True or False, (i.days & 32) and True or False,
+       (i.days & 64) and True or False, i.starttime, i.endtime, 
        i.calendar.name, i.id  
      ) for i in buckets() if (i.calendar.name, i.id) in primary_keys
     ])

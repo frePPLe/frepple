@@ -311,7 +311,6 @@ class pathreport:
     
     # Layout the graph
     if G != None: G.layout(prog='dot')
-    print G  
     
     # Final result
     return render_to_response('input/path.html', RequestContext(request,{

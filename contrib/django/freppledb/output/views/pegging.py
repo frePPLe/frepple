@@ -31,7 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 from freppledb.input.models import Demand
 from freppledb.output.models import FlowPlan, LoadPlan, OperationPlan
 from freppledb.common.models import Parameter
-from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, getBuckets
+from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime, getBuckets
 
 
 class ReportByDemand(GridReport):
@@ -383,7 +383,7 @@ class ReportByOperation(GridReport):
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
-     # The base query uses different fields than the main query. 
+    # The base query uses different fields than the main query. 
     query = OperationPlan.objects.all()
     for i,j in request.GET.iteritems():
       if i.startswith('operation') or i.startswith('startdate') or i.startswith('enddate'):
@@ -401,30 +401,26 @@ class ReportByOperation(GridReport):
     if not basesql: basesql = '1 = 1'
 
     query = '''
-        select operation, date, demand, quantity, ditem, fitem
+        select operation, date, demand, quantity, ditem
         from
         (
-        select out_operationplan.operation as operation, out_operationplan.startdate as date, out_demandpegging.demand as demand, sum(quantity_buffer) as quantity, demand.item_id as ditem, forecast.item_id as fitem
+        select out_operationplan.operation as operation, out_operationplan.startdate as date, out_demandpegging.demand as demand, sum(quantity_buffer) as quantity, demand.item_id as ditem
         from out_operationplan
         join out_demandpegging
         on out_demandpegging.prod_operationplan = out_operationplan.id
           and %s
         left join demand
         on demand.name = out_demandpegging.demand
-        left join forecast
-        on forecast.name = out_demandpegging.demand
-        group by out_demandpegging.demand, out_operationplan.startdate, out_operationplan.operation, demand.item_id, forecast.item_id
+        group by out_demandpegging.demand, out_operationplan.startdate, out_operationplan.operation, demand.item_id
         union
-        select out_operationplan.operation, out_operationplan.startdate as date, out_demand.demand, sum(out_operationplan.quantity), demand.item_id as ditem, forecast.item_id as fitem
+        select out_operationplan.operation, out_operationplan.startdate as date, out_demand.demand, sum(out_operationplan.quantity), demand.item_id as ditem
         from out_operationplan
         join out_demand
         on out_demand.operationplan = out_operationplan.id
           and %s
         left join demand
         on demand.name = out_demand.demand
-        left join forecast
-        on forecast.name = out_demand.demand
-        group by out_demand.demand, out_operationplan.startdate, out_operationplan.operation, demand.item_id, forecast.item_id
+        group by out_demand.demand, out_operationplan.startdate, out_operationplan.operation, demand.item_id
         ) a
         order by %s
       ''' % (basesql, basesql, reportclass.get_sort(request))
@@ -437,6 +433,5 @@ class ReportByOperation(GridReport):
           'date': row[1],
           'demand': row[2],
           'quantity': row[3],
-          'forecast': not row[4],
-          'item': row[4] or row[5]
+          'item': row[4]
           }

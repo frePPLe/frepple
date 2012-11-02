@@ -60,7 +60,7 @@ function graph(cellvalue, options, rowdata) {
 function drawGraphs() {
   $('.sparkline').sparkline('html', { 
      type:'bar', disableHiddenCheck:true, chartRangeMin:0, 
-     stackedBarColor:['#2B95EC','#FF0000'], width:'100px', height:'60px' 
+     stackedBarColor:['#2B95EC','#FF0000'], width:'100px', height:'45px' 
      });
 };  
 
@@ -71,7 +71,7 @@ function crosses (cellvalue, options, rowdata) {
   else
     var result = '0.0<br/>';
   if (cellvalue[1] != 0.0)
-    result += cellvalue[1] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail1'></span><br/>";
+    result += cellvalue[1] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail2'></span><br/>";
   else
     result += '0.0<br/>';
   result += cellvalue[2];  

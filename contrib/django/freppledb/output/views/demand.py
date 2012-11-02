@@ -48,9 +48,7 @@ class OverviewReport(GridPivot):
     GridFieldText(None, width="(5*numbuckets<200 ? 5*numbuckets : 200)", extra='formatter:graph', editable=False),
     )
   crosses = (
-    ('forecast',{'title': _('net forecast')}),
-    ('orders',{'title': _('orders')}),
-    ('demand',{'title': _('total demand')}),
+    ('demand',{'title': _('demand')}),
     ('supply',{'title': _('total supply')}),
     ('backlog',{'title': _('backlog')}),
     )
@@ -59,7 +57,7 @@ class OverviewReport(GridPivot):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       return {
-        'title': capfirst(force_unicode(Item._meta.verbose_name) + " " + args[0]),
+        'title': capfirst(force_unicode(Item.Meta.verbose_name) + " " + args[0]),
         'post_title': ': ' + capfirst(force_unicode(_('plan'))),
         }      
     else:
@@ -95,8 +93,7 @@ class OverviewReport(GridPivot):
         select y.name as row1,
                y.bucket as col1, y.startdate as col2, y.enddate as col3,
                min(y.orders),
-               coalesce(sum(fcst.quantity * %s / %s),0),
-               min(y.planned), y.lft as lft, y.rght as rght
+               min(y.planned)
         from (
           select x.name as name, x.lft as lft, x.rght as rght,
                x.bucket as bucket, x.startdate as startdate, x.enddate as enddate,
@@ -138,23 +135,10 @@ class OverviewReport(GridPivot):
         -- Grouping
         group by x.name, x.lft, x.rght, x.bucket, x.startdate, x.enddate
         ) y
-        -- Forecasted quantity
-        inner join item
-        on item.lft between y.lft and y.rght
-        left join (select forecast.item_id as item_id, out_forecast.startdate as startdate,
-		        out_forecast.enddate as enddate, out_forecast.net as quantity
-          from out_forecast, forecast
-          where out_forecast.forecast = forecast.name
-          ) fcst
-        on item.name = fcst.item_id
-        and fcst.enddate >= y.startdate
-        and fcst.startdate <= y.enddate
         -- Ordering and grouping
         group by y.name, y.lft, y.rght, y.bucket, y.startdate, y.enddate
         order by %s, y.startdate
-       ''' % (sql_overlap('fcst.startdate','fcst.enddate','y.startdate','y.enddate'),
-         sql_datediff('fcst.enddate','fcst.startdate'),
-         basesql,bucket,startdate,enddate,startdate,enddate,startdate,enddate,sortsql)
+       ''' % (basesql,bucket,startdate,enddate,startdate,enddate,startdate,enddate,sortsql)
     cursor.execute(query,baseparams)
 
     # Build the python result
@@ -164,16 +148,14 @@ class OverviewReport(GridPivot):
         try: backlog =  startbacklogdict[row[0]]
         except: backlog = 0
         previtem = row[0]
-      backlog += float(row[4]) + float(row[5]) - float(row[6])
+      backlog += float(row[4]) - float(row[5])
       yield {
         'item': row[0],
         'bucket': row[1],
         'startdate': python_date(row[2]),
         'enddate': python_date(row[3]),
-        'orders': round(row[4],1),
-        'forecast': round(row[5],1),
-        'demand': round(float(row[4]) + float(row[5]),1),
-        'supply': round(row[6],1),
+        'demand': round(row[4],1),
+        'supply': round(row[5],1),
         'backlog': round(backlog,1),
         }
 
@@ -184,7 +166,7 @@ class DetailReport(GridReport):
   '''
   template = 'output/demandplan.html'
   title = _("Demand plan detail")
-  basequeryset = Demand.objects.extra(select={'forecast': "select name from forecast where out_demand.demand like forecast.name || ' - %%'",})
+  basequeryset = Demand.objects.all()
   model = Demand
   frozenColumns = 0
   editable = False

@@ -19,9 +19,6 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import datetime
-
-from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule

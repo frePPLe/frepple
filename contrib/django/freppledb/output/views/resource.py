@@ -19,19 +19,14 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import datetime
-
-from django.db import connections, transaction
-from django.utils import simplejson
+from django.db import connections
 from django.utils.encoding import force_unicode
-from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseForbidden
 
 from freppledb.input.models import Resource
 from freppledb.output.models import LoadPlan
@@ -68,15 +63,15 @@ class OverviewReport(GridPivot):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       return {
-        'units': reportclass.getUnits(), 
+        'units': reportclass.getUnits(request), 
         'title': capfirst(force_unicode(Resource._meta.verbose_name) + " " + args[0]),
         'post_title': ': ' + capfirst(force_unicode(_('plan'))),
         }
     else:
-      return {'units': reportclass.getUnits()}
+      return {'units': reportclass.getUnits(request)}
 
   @classmethod
-  def getUnits(reportclass):    
+  def getUnits(reportclass, request):    
     try:
       units = Parameter.objects.using(request.database).get(name="loading_time_units")
       if units.value == 'hours':
@@ -94,7 +89,7 @@ class OverviewReport(GridPivot):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)        
         
     # Get the time units
-    units = OverviewReport.getUnits()
+    units = OverviewReport.getUnits(request)
         
     # Assure the item hierarchy is up to date
     Resource.rebuildHierarchy(database=basequery.db)

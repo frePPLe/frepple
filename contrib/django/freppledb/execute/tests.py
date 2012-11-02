@@ -24,7 +24,7 @@ import os
 from django.core import management, serializers
 from django.test import TransactionTestCase, TestCase
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS, connections, transaction
+from django.db import DEFAULT_DB_ALIAS, transaction
 
 import freppledb.output as output
 import freppledb.input as input

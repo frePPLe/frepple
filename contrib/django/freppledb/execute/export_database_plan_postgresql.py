@@ -31,15 +31,13 @@ to keep the code portable between different databases.
 '''
 
 
-from datetime import timedelta, datetime, date
-from time import time, sleep
-from threading import Thread
+from datetime import timedelta, datetime
+from time import time
 import inspect, os
 from subprocess import Popen, PIPE
 
-from django.db import connections, transaction, DEFAULT_DB_ALIAS
+from django.db import connections, DEFAULT_DB_ALIAS
 from django.conf import settings
-from django.core.management.color import no_style
 
 import frepple
 
@@ -166,15 +164,15 @@ def exportResourceplans(process):
   # Loop over all reporting buckets of all resources
   process.stdin.write('COPY out_resourceplan (theresource,startdate,available,unavailable,setup,load,free) FROM STDIN;\n')
   for i in frepple.resources():
-	for j in i.plan(buckets):
-	  process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-		 i.name, str(j['start']),
-		 round(j['available'],settings.DECIMAL_PLACES),
-		 round(j['unavailable'],settings.DECIMAL_PLACES),
-		 round(j['setup'],settings.DECIMAL_PLACES),
-		 round(j['load'],settings.DECIMAL_PLACES),
-		 round(j['free'],settings.DECIMAL_PLACES)           
-	   ))
+    for j in i.plan(buckets):
+      process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+  		 i.name, str(j['start']),
+  		 round(j['available'],settings.DECIMAL_PLACES),
+  		 round(j['unavailable'],settings.DECIMAL_PLACES),
+  		 round(j['setup'],settings.DECIMAL_PLACES),
+  		 round(j['load'],settings.DECIMAL_PLACES),
+  		 round(j['free'],settings.DECIMAL_PLACES)           
+  	   ))
   process.stdin.write('\\.\n')
   print 'Exported resourceplans in %.2f seconds' % (time() - starttime)
 

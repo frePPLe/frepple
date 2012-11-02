@@ -19,7 +19,7 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import timedelta, datetime
+from datetime import datetime
 
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.contrib.auth.models import User

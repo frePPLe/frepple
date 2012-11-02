@@ -46,7 +46,7 @@ The code assumes that all database engines are identical in the frePPLe
 application.
 '''
 
-from datetime import date, datetime
+from datetime import datetime
 
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS

@@ -19,13 +19,12 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import datetime
 import tempfile
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 
-from freppledb.input.models import Location, Calendar
+from freppledb.input.models import Location
+
 
 class DataLoadTest(TestCase):
 
@@ -49,7 +48,7 @@ class DataLoadTest(TestCase):
     response = self.client.get('/admin/input/calendar/?format=json')
     self.assertContains(response, '"records":4,')
 
-  def test_input_calendar(self):
+  def test_input_calendarbucket(self):
     response = self.client.get('/admin/input/calendarbucket/?format=json')
     self.assertContains(response, '"records":5,')
 

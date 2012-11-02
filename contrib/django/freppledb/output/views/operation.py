@@ -59,7 +59,7 @@ class OverviewReport(GridPivot):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       return {
-        'title': capfirst(force_unicode(Operation.Meta.verbose_name) + " " + args[0]),
+        'title': capfirst(force_unicode(Operation._meta.verbose_name) + " " + args[0]),
         'post_title': ': ' + capfirst(force_unicode(_('plan'))),
         }      
     else:

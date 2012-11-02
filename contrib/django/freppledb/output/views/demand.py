@@ -30,7 +30,7 @@ from django.conf import settings
 
 from freppledb.input.models import Item
 from freppledb.output.models import Demand
-from freppledb.common.db import python_date, sql_datediff, sql_overlap
+from freppledb.common.db import python_date
 from freppledb.common.report import getBuckets
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
@@ -57,7 +57,7 @@ class OverviewReport(GridPivot):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       return {
-        'title': capfirst(force_unicode(Item.Meta.verbose_name) + " " + args[0]),
+        'title': capfirst(force_unicode(Item._meta.verbose_name) + " " + args[0]),
         'post_title': ': ' + capfirst(force_unicode(_('plan'))),
         }      
     else:

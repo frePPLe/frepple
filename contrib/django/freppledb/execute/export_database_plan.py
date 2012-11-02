@@ -31,7 +31,7 @@ to keep the code portable between different databases.
 '''
 
 
-from datetime import timedelta, datetime, date
+from datetime import timedelta, datetime
 from time import time
 from threading import Thread
 import inspect, os

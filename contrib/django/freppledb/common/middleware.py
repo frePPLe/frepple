@@ -29,7 +29,6 @@ from django.http import Http404
 from django.conf import settings
 
 from freppledb.execute.models import Scenario
-from freppledb.common.models import Preferences
 
 
 class LocaleMiddleware(DjangoLocaleMiddleware):

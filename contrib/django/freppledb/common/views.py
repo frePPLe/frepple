@@ -19,24 +19,18 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import datetime
-
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
-from django.db import DEFAULT_DB_ALIAS
 from django.template import RequestContext
 from django import forms
-from django.forms.models import modelformset_factory
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.contrib.auth.models import User, Group
-from django.contrib.admin.models import LogEntry
-from django.contrib.syndication.views import Feed
 from django.utils import translation
 from django.conf import settings
 from django.http import Http404, HttpResponseRedirect, HttpResponse

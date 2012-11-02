@@ -189,7 +189,7 @@ class DemandPegging(models.Model):
     verbose_name_plural = _('demand peggings')
 
 
-class Forecast(models.Model):
+class Forecast(models.Model):    # TODO this model should be moved to the enterprise version
   # Database fields
   forecast = models.CharField(_('forecast'), max_length=settings.NAMESIZE, db_index=True)
   startdate = models.DateTimeField(_('start date'), null=False, db_index=True)

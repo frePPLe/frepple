@@ -71,7 +71,6 @@ Documentation subpackage for frePPLe - the Free Production Planning Library.
   --disable-dependency-tracking \
   --disable-webdoc \
   --disable-apidoc \
-  --enable-forecast \
   --disable-lp_solver \
   --disable-webservice 
 # Remove rpath from libtool
@@ -111,7 +110,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{_bindir}/frepple
 %dir %{_libdir}/frepple
-%{_libdir}/frepple/mod_forecast.so
 %{_libdir}/frepple/libfrepple.so.0
 %{_libdir}/frepple/libfrepple.so.0.0.0
 %dir %{_datadir}/frepple

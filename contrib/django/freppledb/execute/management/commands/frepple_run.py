@@ -76,9 +76,9 @@ class Command(BaseCommand):
     try:
       # Check if already running
       param = Parameter.objects.using(database).get_or_create(name="Plan executing")[0]
-      if param.value and param.value != "100": 
+      if param.value and param.value != "100" and param.value != "1": 
         raise Exception('Plan is already running')
-      param.value = '1'
+      param.value = '2'
       param.description = 'If this parameter exists, it indicates that the plan is currently being generated.'
       param.save(using=database)
       started = True

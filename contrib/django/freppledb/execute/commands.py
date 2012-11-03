@@ -28,8 +28,10 @@ def logProgress(val):
   transaction.managed(False, using=db)
   try:
     p = Parameter.objects.using(db).get_or_create(name="Plan executing")[0]
-    if p.value == "Canceling":
+    if "Canceling" in p.value:
       print "Run canceled by the user.\n" 
+      p.value = 0
+      p.save(using=db)
       sys.exit(2)
     p.value = val
     p.save(using=db)

@@ -215,7 +215,10 @@ def runfrepple(request):
   request.session['plantype'] = plantype
   request.session['constraint'] = constraint
 
-  # Run frePPLe in a seperate Python thread
+  # Run frePPLe in a separate Python thread
+  p = Parameter.objects.using(request.database).get_or_create(name="Plan executing")[0]
+  p.value = "1"
+  p.save(using=request.database)
   runfrepple_async(request, plantype, constraint).start()
 
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
@@ -236,12 +239,11 @@ def cancelfrepple(request):
     return HttpResponseRedirect('%s/execute/execute.html#plan' % request.prefix)
   try:
     p = Parameter.objects.using(request.database).get(name="Plan executing")
-    p.value = 'Canceling'
+    p.value = p.value + ' Canceling'
     p.save(using=request.database)
   except: 
     pass
   return HttpResponseRedirect('%s/execute/execute.html#plan' % request.prefix)
-
 
 
 @staff_member_required
@@ -252,7 +254,7 @@ def progressfrepple(request):
   FrePPLe progress bar.
   '''
   try:
-    percentage = int(Parameter.objects.using(request.database).get(name="Plan executing").value)
+    percentage = Parameter.objects.using(request.database).get(name="Plan executing").value
   except: 
     percentage = 0
   return HttpResponse(

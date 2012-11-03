@@ -128,19 +128,12 @@ LANGUAGES = (
 SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
 
 # List of callables that know how to import templates from various sources.
-# We don't use cached templates when in development mode 
-if DEBUG:
-  TEMPLATE_LOADERS = (
+TEMPLATE_LOADERS = (
+   #('django.template.loaders.cached.Loader', (
      'django.template.loaders.filesystem.Loader',
      'django.template.loaders.app_directories.Loader',
-  )
-else:
-  TEMPLATE_LOADERS = (
-    ('django.template.loaders.cached.Loader', (
-       'django.template.loaders.filesystem.Loader',
-       'django.template.loaders.app_directories.Loader',
-    )),
-  )
+   #))
+   )
   
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

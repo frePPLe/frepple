@@ -18,12 +18,41 @@
     var util = (clusters * fcst * 12) / (rsrc_number * rsrc_size * 365) * 7.0 / 5.0
 	  $("#util").html( (util * 100).toFixed(1) );
   }
-  
+
+  function launchfrepple() 
+  {
+    if ($("#run").val() == "{% trans "Cancel" %}")
+      $("#runform").attr("action","{{request.prefix}}/execute/cancelfrepple/")
+    else
+      $("#runform").attr("action","{{request.prefix}}/execute/runfrepple/")
+    return true; // Continue with default form submission
+  }
+    
   $(function() {
     $("input:submit,#logfile").button();
     $( "#content-main" ).accordion({
       collapsible: true, navigation: true
       });
+    $("#progress").progressbar({
+      value: {{progress}}
+      });
+    if ({{progress}} > 0 && {{progress}} < 100)
+    {
+      var interval = setInterval(function() {         
+         $.ajax({
+           url: "{{request.prefix}}/execute/progressfrepple/",  
+           success: function(prct) {
+             $('#progress').progressbar("option", "value", parseInt(prct));
+             if (prct >= 100) {
+               clearInterval(interval);
+               $("#run").val("{% trans "Run" %}");
+               }
+             }
+           });          
+         },
+         2000 // Repeat after 2 seconds
+         );
+    }
   });
  
 </script>
@@ -37,11 +66,12 @@
 {% if perms.execute.run_frepple %}
 <h3><a href="#plan">{% trans 'Create a plan' %}</a></h3>
 <div>
-<table>
-
-<form method="post" action="{{request.prefix}}/execute/runfrepple/">{% csrf_token %}<tr>
-{% blocktrans %}<th scope="row"><a>Run frePPLe</a></th>
-<td>Load frePPLe from the database...  <br/>
+<form id="runform" method="post" action="{{request.prefix}}/execute/runfrepple/" onsubmit="launchfrepple()">{% csrf_token %}<tr>
+<div id="progress" style="width:200px; height:1.1em; float:left; margin:0.4em;"></div>
+&nbsp;&nbsp;&nbsp;<input id="run" type="submit" value="{% if progress > 0 and progress < 100 %}{% trans "Cancel" %}{% else %}{% trans "Run" %}{% endif %}" />
+<br/>
+{% blocktrans %}
+Load frePPLe from the database...<br/>
 and create a plan in frePPLe...<br/>
 and export results into the database<br/>
 <br/>
@@ -62,11 +92,8 @@ and export results into the database<br/>
 <input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked="true"{% endif %} value="1"/>{% trans "Lead time: do not plan in the past" %}<br/>
 <input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8"/>{% trans "Release fence: do not plan within the release time window" %}<br/>
 <br/>
-<a id="logfile" href="{{request.prefix}}/execute/logfrepple/">{% trans "View latest log file" %}</a></td>
-<td><input id="run" type="submit" value="{% trans "Run" %}" /></td>
-</tr></form>
-
-</table>
+<a id="logfile" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a></td>
+</form>
 </div>
 {% endif %}
 

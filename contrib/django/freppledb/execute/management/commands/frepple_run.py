@@ -76,8 +76,9 @@ class Command(BaseCommand):
     try:
       # Check if already running
       param = Parameter.objects.using(database).get_or_create(name="Plan executing")[0]
-      if param.value == 'True': raise Exception('Plan is already running')
-      param.value = 'True'
+      if param.value and param.value != "100": 
+        raise Exception('Plan is already running')
+      param.value = '1'
       param.description = 'If this parameter exists, it indicates that the plan is currently being generated.'
       param.save(using=database)
       started = True
@@ -102,7 +103,9 @@ class Command(BaseCommand):
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(settings.FREPPLE_APP)
       ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.py').replace('\\','\\\\'))
-      if ret: 
+      if ret == 2: 
+        raise Exception('Run canceled by the user')
+      elif ret: 
         raise Exception('Exit code of the batch run is %d' % ret)
 
       # Log message
@@ -110,14 +113,14 @@ class Command(BaseCommand):
         message=_('Finished creating frePPLe plan')).save(using=database)
 
     except Exception as e:
+      if started:
+        # Remove flag of running plan
+        Parameter.objects.using(database).filter(name="Plan executing").delete()
       try: log(category='RUN', theuser=user,
         message=u'%s: %s' % (_('Failure when creating frePPLe plan'),e)).save(using=database)
       except: pass
       if nonfatal: raise e
       else: raise CommandError(e)
     finally:
-      if started:
-        # Remove flag of running plan
-        Parameter.objects.using(database).filter(name="Plan executing").delete()
       transaction.commit(using=database)
       transaction.leave_transaction_management(using=database)

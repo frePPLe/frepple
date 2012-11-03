@@ -1,8 +1,11 @@
 import os, sys, inspect
 from datetime import datetime
 
-from django.db import DEFAULT_DB_ALIAS
+from django.db import transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
+
+from freppledb.common.models import Parameter
+
 
 # Auxilary functions for debugging
 def debugResource(res,mode):
@@ -10,6 +13,7 @@ def debugResource(res,mode):
   print "=> Situation on resource", res.name
   for j in res.loadplans:
     print "=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup
+   
     
 def debugDemand(dem,mode):
   if dem.name == 'my favorite demand': 
@@ -18,6 +22,22 @@ def debugDemand(dem,mode):
   else:
     solver.loglevel = 0
  
+ 
+def logProgress(val):  
+  transaction.enter_transaction_management(managed=False, using=db)
+  transaction.managed(False, using=db)
+  try:
+    p = Parameter.objects.using(db).get_or_create(name="Plan executing")[0]
+    if p.value == "Canceling":
+      print "Run canceled by the user.\n" 
+      sys.exit(2)
+    p.value = val
+    p.save(using=db)
+  finally:
+    transaction.commit(using=db)
+    transaction.leave_transaction_management(using=db)
+
+      
 # Send the output to a logfile
 try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
 except: db = DEFAULT_DB_ALIAS
@@ -26,7 +46,7 @@ if db == DEFAULT_DB_ALIAS:
 else:
   frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'frepple_%s.log' % db)
 
-# use the test database if we are running the test suite
+# Use the test database if we are running the test suite
 if 'FREPPLE_TEST' in os.environ:
   settings.DATABASES[db]['NAME'] = settings.DATABASES[db]['TEST_NAME']
   if 'TEST_CHARSET' in os.environ:
@@ -37,6 +57,7 @@ if 'FREPPLE_TEST' in os.environ:
     settings.DATABASES[db]['USER'] = settings.DATABASES[db]['TEST_USER']
   
 # Create a solver where the plan type are defined by an environment variable
+logProgress(1)
 try: plantype = int(os.environ['PLANTYPE'])
 except: plantype = 1  # Default is a constrained plan
 try: constraint = int(os.environ['CONSTRAINT'])
@@ -72,6 +93,7 @@ frepple.printsize()
 from freppledb.execute.load import loadfrepple
 loadfrepple()
 frepple.printsize()
+logProgress(33)
   
 if 'solver_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
   # The forecast module is available
@@ -81,6 +103,7 @@ if 'solver_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
 print "\nStart plan generation at", datetime.now().strftime("%H:%M:%S")
 solver.solve()
 frepple.printsize()
+logProgress(66)
                     
 #print "\nStart exporting static model to the database at", datetime.now().strftime("%H:%M:%S")
 #from freppledb.execute.export_database_static import exportfrepple as export_static_to_database
@@ -107,3 +130,4 @@ export_plan_to_database()
 #frepple.printsize()
 
 print "\nFinished planning at", datetime.now().strftime("%H:%M:%S")
+logProgress(100)

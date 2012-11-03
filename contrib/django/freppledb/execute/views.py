@@ -21,6 +21,7 @@
 
 import os.path
 from datetime import datetime
+from threading import Thread
 
 from django.conf import settings
 from django.core import management
@@ -30,12 +31,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS, transaction
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_protect
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.utils.encoding import force_unicode
 
 from freppledb.execute.models import log, Scenario
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText, GridFieldInteger
+from freppledb.common.models import Parameter
 import freppledb.input
 
 @staff_member_required
@@ -51,6 +53,12 @@ def main(request):
   # Synchronize the scenario table with the settings
   Scenario.syncWithSettings()
 
+  # Check if a plan is running
+  try:
+    progress = float(Parameter.objects.using(request.database).get(name="Plan executing").value)
+  except:
+    progress = 0
+  
   # Load the list of fixtures in the "input" app
   fixtures = []
   try:
@@ -69,6 +77,7 @@ def main(request):
           'fenceconstrained': constraint & 8,
           'scenarios': Scenario.objects.all(),
           'fixtures': fixtures,
+          'progress': progress
           } )
 
 
@@ -158,6 +167,28 @@ def create(request):
   return HttpResponseRedirect('%s/execute/execute.html#generator' % request.prefix)
 
 
+class runfrepple_async(Thread):
+  def __init__(self, request, plantype, constraint):
+    self.request = request
+    self.plantype = plantype
+    self.constraint = constraint
+    Thread.__init__(self)
+ 
+  def run(self):
+    try:
+      management.call_command(
+        'frepple_run',
+        user=self.request.user.username,
+        plantype=self.plantype, constraint=self.constraint,
+        nonfatal=True, database=self.request.database
+        )
+      messages.add_message(self.request, messages.INFO,
+        force_unicode(_('Successfully created a plan')))
+    except Exception as e:
+      messages.add_message(self.request, messages.ERROR,
+        force_unicode(_('Failure creating a plan: %(msg)s') % {'msg':e}))
+
+        
 @staff_member_required
 @never_cache
 @csrf_protect
@@ -184,20 +215,50 @@ def runfrepple(request):
   request.session['plantype'] = plantype
   request.session['constraint'] = constraint
 
-  # Run frePPLe
-  try:
-    management.call_command(
-      'frepple_run',
-      user=request.user.username,
-      plantype=plantype, constraint=constraint,
-      nonfatal=True, database=request.database
-      )
-    messages.add_message(request, messages.INFO,
-      force_unicode(_('Successfully created a plan')))
-  except Exception as e:
-    messages.add_message(request, messages.ERROR,
-      force_unicode(_('Failure creating a plan: %(msg)s') % {'msg':e}))
+  # Run frePPLe in a seperate Python thread
+  runfrepple_async(request, plantype, constraint).start()
+
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+  return HttpResponseRedirect('%s/execute/execute.html#plan' % request.prefix)
+
+
+@staff_member_required
+@never_cache
+@csrf_protect
+def cancelfrepple(request):
+  '''
+  FrePPLe cancel button.
+  '''
+  # Allow only post
+  if request.method != 'POST':
+    messages.add_message(request, messages.ERROR,
+      force_unicode(_('Only POST method allowed')))
+    return HttpResponseRedirect('%s/execute/execute.html#plan' % request.prefix)
+  try:
+    p = Parameter.objects.using(request.database).get(name="Plan executing")
+    p.value = 'Canceling'
+    p.save(using=request.database)
+  except: 
+    pass
+  return HttpResponseRedirect('%s/execute/execute.html#plan' % request.prefix)
+
+
+
+@staff_member_required
+@never_cache
+@csrf_protect
+def progressfrepple(request):
+  '''
+  FrePPLe progress bar.
+  '''
+  try:
+    percentage = int(Parameter.objects.using(request.database).get(name="Plan executing").value)
+  except: 
+    percentage = 0
+  return HttpResponse(
+     mimetype = 'text/html; charset=%s' % settings.DEFAULT_CHARSET,
+     content = percentage
+     )
   return HttpResponseRedirect('%s/execute/execute.html#plan' % request.prefix)
 
 

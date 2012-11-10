@@ -139,8 +139,6 @@ class OverviewReport(GridPivot):
         sql_max('sum(out_resourceplan.available)','0.0001'), 
         startdate, enddate, sortsql
        )
-    print query
-    print baseparams
     cursor.execute(query, baseparams)
     
     # Build the python result

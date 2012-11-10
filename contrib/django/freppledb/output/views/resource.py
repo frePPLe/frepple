@@ -47,7 +47,7 @@ class OverviewReport(GridPivot):
   editable = False
   rows = (
     GridFieldText('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
-    GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location', editable=False),
     GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center', search=False),
     GridFieldText(None, width="(5*numbuckets<200 ? 5*numbuckets : 200)", extra='formatter:graph', editable=False),
     )
@@ -75,13 +75,13 @@ class OverviewReport(GridPivot):
     try:
       units = Parameter.objects.using(request.database).get(name="loading_time_units")
       if units.value == 'hours':
-        return 1.0
+        return (1.0, _('hours'))
       elif units.value == 'weeks':
-        return 1.0 / 168.0
+        return (1.0 / 168.0, _('weeks'))
       else:
-        return 1.0 / 24.0
+        return (1.0 / 24.0, _('days'))
     except:
-      return 1.0 / 24.0
+      return (1.0 / 24.0, _('days'))
     
       
   @staticmethod
@@ -121,12 +121,12 @@ class OverviewReport(GridPivot):
       and d.enddate > out_resourceplan.startdate
       and out_resourceplan.startdate >= '%s'
       and out_resourceplan.startdate < '%s'
-      -- Average utilization info
+      -- Average utilization info ("*1.0" is to force a float division in SQLite)
       left join (
                 select 
                   theresource, 
                   ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) ) 
-                    / coalesce(%s,1) * 100 as avg_util
+                   * 1.0 / coalesce(%s,1) * 100 as avg_util
                 from out_resourceplan
                 where out_resourceplan.startdate >= '%s'
                 and out_resourceplan.startdate < '%s'
@@ -136,13 +136,15 @@ class OverviewReport(GridPivot):
       -- Grouping and sorting
       group by res.name, res.location_id, d.bucket, d.startdate
       order by %s, d.startdate    
-      ''' % ( units, units, units, units,
+      ''' % ( units[0], units[0], units[0], units[0],
         basesql, bucket, startdate, enddate,
         connections[basequery.db].ops.quote_name('resource'),
         startdate, enddate,
         sql_max('sum(out_resourceplan.available)','0.0001'), 
         startdate, enddate, sortsql
        )
+    print query
+    print baseparams
     cursor.execute(query, baseparams)
     
     # Build the python result
@@ -188,50 +190,3 @@ class DetailReport(GridReport):
     GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
     )
 
-
-@staff_member_required
-def GraphData(request, entity):
-  basequery = Resource.objects.filter(pk__exact=entity)
-  (bucket,start,end,bucketlist) = getBuckets(request)
-  load = []
-  free = []
-  overload = []
-  unavailable = []
-  setup = []
-  for x in OverviewReport.query(request, basequery, bucket, start, end):
-    delta = x['available'] - x['load'] - x['setup']
-    if delta > 0:
-      free.append(delta)
-      overload.append(0)
-      load.append(x['load'])
-    else:
-      load.append(x['available'] - x['setup'])
-      free.append(0)
-      overload.append(-delta)
-    unavailable.append(x['unavailable'])
-    setup.append(x['setup'])
-  # Get the time units
-  try:
-    units = Parameter.objects.using(request.database).get(name="loading_time_units")
-    if units.value == 'hours':
-      units = _('hours')
-    elif units.value == 'weeks':
-      units = _('weeks')
-    else:
-      units = _('days')
-  except:
-    units = _('days')
-  context = { 
-    'buckets': bucketlist, 
-    'load': load, 
-    'setup': setup, 
-    'free': free, 
-    'overload': overload, 
-    'unavailable': unavailable, 
-    'axis_nth': len(bucketlist) / 20 + 1,
-    'units': units,
-    }
-  return HttpResponse(
-    loader.render_to_string("output/resource.xml", context, context_instance=RequestContext(request)),
-    mimetype='application/xml; charset=%s' % settings.DEFAULT_CHARSET
-    )

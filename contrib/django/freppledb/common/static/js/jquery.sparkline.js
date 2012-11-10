@@ -2,7 +2,7 @@
 *
 * jquery.sparkline.js
 *
-* v2.0
+* v2.1
 * (c) Splunk, Inc
 * Contact: Gareth Watts (gareth@splunk.com)
 * http://omnipotent.net/jquery.sparkline/
@@ -179,7 +179,7 @@
 *             When set to false you can supply any number of values and the box plot will
 *             be computed for you.  Default is false.
 *       showOutliers - Set to true (default) to display outliers as circles
-*       outlierIRQ - Interquartile range used to determine outliers.  Default 1.5
+*       outlierIQR - Interquartile range used to determine outliers.  Default 1.5
 *       boxLineColor - Outline color of the box
 *       boxFillColor - Fill color for the box
 *       whiskerColor - Line color used for whiskers
@@ -202,7 +202,15 @@
 
 /*jslint regexp: true, browser: true, jquery: true, white: true, nomen: false, plusplus: false, maxerr: 500, indent: 4 */
 
-(function ($) {
+(function(factory) {
+    if(typeof define === 'function' && define.amd) {
+		define(['jquery'], factory);
+	}
+	else {
+		factory(jQuery);
+	}
+}
+(function($) {
     'use strict';
 
     var UNSET_OPTION = {},
@@ -359,18 +367,13 @@
             'white-space: nowrap;' +
             'padding: 5px;' +
             'border: 1px solid white;' +
+            'z-index: 10000;' +
             '}' +
             '.jqsfield { ' +
             'color: white;' +
             'font: 10px arial, san serif;' +
             'text-align: left;' +
             '}';
-
-    initStyles = function() {
-        addCSS(defaultStyles);
-    };
-
-    $(initStyles);
 
     /**
      * Utilities
@@ -476,10 +479,16 @@
         var vl;
         if (q === 2) {
             vl = Math.floor(values.length / 2);
-            return values.length % 2 ? values[vl] : (values[vl] + values[vl + 1]) / 2;
+            return values.length % 2 ? values[vl] : (values[vl-1] + values[vl]) / 2;
         } else {
-            vl = Math.floor(values.length / 4);
-            return values.length % 2 ? (values[vl * q] + values[vl * q + 1]) / 2 : values[vl * q];
+            if (values.length % 2 ) { // odd
+                vl = (values.length * q + q) / 4;
+                return vl % 1 ? (values[Math.floor(vl)] + values[Math.floor(vl) - 1]) / 2 : values[vl-1];
+            } else { //even
+                vl = (values.length * q + 2) / 4;
+                return vl % 1 ? (values[Math.floor(vl)] + values[Math.floor(vl) - 1]) / 2 :  values[vl-1];
+
+            }
         }
     };
 
@@ -547,7 +556,8 @@
     all = function (val, arr, ignoreNull) {
         var i;
         for (i = arr.length; i--; ) {
-            if (arr[i] !== val || (!ignoreNull && val === null)) {
+            if (ignoreNull && arr[i] === null) continue;
+            if (arr[i] !== val) {
                 return false;
             }
         }
@@ -899,6 +909,12 @@
             $(window).unbind('resize.jqs scroll.jqs');
         }
     });
+
+    initStyles = function() {
+        addCSS(defaultStyles);
+    };
+
+    $(initStyles);
 
     pending = [];
     $.fn.sparkline = function (userValues, userOptions) {
@@ -1484,7 +1500,7 @@
                 canvasTop, canvasLeft,
                 vertex, path, paths, x, y, xnext, xpos, xposnext,
                 last, next, yvalcount, lineShapes, fillShapes, plen,
-                valueSpots, color, xvalues, yvalues, i;
+                valueSpots, hlSpotsEnabled, color, xvalues, yvalues, i;
 
             if (!line._super.render.call(this)) {
                 return;
@@ -1512,18 +1528,20 @@
             }
             if (spotRadius) {
                 // adjust the canvas size as required so that spots will fit
-                if (options.get('minSpotColor') || (options.get('spotColor') && yvalues[yvallast] === this.miny)) {
+                hlSpotsEnabled = options.get('highlightSpotColor') &&  !options.get('disableInteraction');
+                if (hlSpotsEnabled || options.get('minSpotColor') || (options.get('spotColor') && yvalues[yvallast] === this.miny)) {
                     canvasHeight -= Math.ceil(spotRadius);
                 }
-                if (options.get('maxSpotColor') || (options.get('spotColor') && yvalues[yvallast] === this.maxy)) {
+                if (hlSpotsEnabled || options.get('maxSpotColor') || (options.get('spotColor') && yvalues[yvallast] === this.maxy)) {
                     canvasHeight -= Math.ceil(spotRadius);
                     canvasTop += Math.ceil(spotRadius);
                 }
-                if ((options.get('minSpotColor') || options.get('maxSpotColor')) && (yvalues[0] === this.miny || yvalues[0] === this.maxy)) {
+                if (hlSpotsEnabled ||
+                     ((options.get('minSpotColor') || options.get('maxSpotColor')) && (yvalues[0] === this.miny || yvalues[0] === this.maxy))) {
                     canvasLeft += Math.ceil(spotRadius);
                     canvasWidth -= Math.ceil(spotRadius);
                 }
-                if (options.get('spotColor') ||
+                if (hlSpotsEnabled || options.get('spotColor') ||
                     (options.get('minSpotColor') || options.get('maxSpotColor') &&
                         (yvalues[yvallast] === this.miny || yvalues[yvallast] === this.maxy))) {
                     canvasWidth -= Math.ceil(spotRadius);
@@ -1533,7 +1551,7 @@
 
             canvasHeight--;
 
-            if (options.get('normalRangeMin') && !options.get('drawNormalOnTop')) {
+            if (options.get('normalRangeMin') !== undefined && !options.get('drawNormalOnTop')) {
                 this.drawNormalRange(canvasLeft, canvasTop, canvasHeight, canvasWidth, rangey);
             }
 
@@ -1555,8 +1573,8 @@
                         if (yvalues[i - 1] !== null) {
                             path = [];
                             paths.push(path);
-                            vertices.push(null);
                         }
+                        vertices.push(null);
                     }
                 } else {
                     if (y < this.miny) {
@@ -1603,7 +1621,7 @@
                     options.get('fillColor'), options.get('fillColor')).append();
             }
 
-            if (options.get('normalRangeMin') && options.get('drawNormalOnTop')) {
+            if (options.get('normalRangeMin') !== undefined && options.get('drawNormalOnTop')) {
                 this.drawNormalRange(canvasLeft, canvasTop, canvasHeight, canvasWidth, rangey);
             }
 
@@ -2085,11 +2103,15 @@
         type: 'bullet',
 
         init: function (el, values, options, width, height) {
-            var min, max;
+            var min, max, vals;
             bullet._super.init.call(this, el, values, options, width, height);
 
             // values: target, performance, range1, range2, range3
-            values = $.map(values, Number);
+            this.values = values = normalizeValues(values);
+            // target or performance could be null
+            vals = values.slice();
+            vals[0] = vals[0] === null ? vals[2] : vals[0];
+            vals[1] = values[1] === null ? vals[2] : vals[1];
             min = Math.min.apply(Math, values);
             max = Math.max.apply(Math, values);
             if (options.get('base') === undefined) {
@@ -2191,12 +2213,16 @@
                 this.shapes[shape.id] = 'r' + i;
                 this.valueShapes['r' + i] = shape.id;
             }
-            shape = this.renderPerformance().append();
-            this.shapes[shape.id] = 'p1';
-            this.valueShapes.p1 = shape.id;
-            shape = this.renderTarget().append();
-            this.shapes[shape.id] = 't0';
-            this.valueShapes.t0 = shape.id;
+            if (this.values[1] !== null) {
+                shape = this.renderPerformance().append();
+                this.shapes[shape.id] = 'p1';
+                this.valueShapes.p1 = shape.id;
+            }
+            if (this.values[0] !== null) {
+                shape = this.renderTarget().append();
+                this.shapes[shape.id] = 't0';
+                this.valueShapes.t0 = shape.id;
+            }
             target.render();
         }
     });
@@ -2303,9 +2329,11 @@
                     options.get('borderColor'), undefined, borderWidth).append();
             }
             for (i = values.length; i--;) {
-                shape = this.renderSlice(i).append();
-                this.valueShapes[i] = shape.id; // store just the shapeid
-                this.shapes[shape.id] = i;
+                if (values[i]) { // don't render zero values
+                    shape = this.renderSlice(i).append();
+                    this.valueShapes[i] = shape.id; // store just the shapeid
+                    this.shapes[shape.id] = i;
+                }
             }
             target.render();
         }
@@ -2338,10 +2366,14 @@
             var result = [
                 { field: 'lq', value: this.quartiles[0] },
                 { field: 'med', value: this.quartiles[1] },
-                { field: 'uq', value: this.quartiles[2] },
-                { field: 'lo', value: this.loutlier },
-                { field: 'ro', value: this.routlier }
+                { field: 'uq', value: this.quartiles[2] }
             ];
+            if (this.loutlier !== undefined) {
+                result.push({ field: 'lo', value: this.loutlier});
+            }
+            if (this.routlier !== undefined) {
+                result.push({ field: 'ro', value: this.routlier});
+            }
             if (this.lwhisker !== undefined) {
                 result.push({ field: 'lw', value: this.lwhisker});
             }
@@ -2496,7 +2528,7 @@
     // Setup a very simple "virtual canvas" to make drawing the few shapes we need easier
     // This is accessible as $(foo).simpledraw()
 
-    if ($.browser.msie && !document.namespaces.v) {
+    if ($.browser.msie && document.namespaces && !document.namespaces.v) {
         document.namespaces.add('v', 'urn:schemas-microsoft-com:vml', '#default#VML');
     }
 
@@ -2997,5 +3029,4 @@
         }
     });
 
-
-})(jQuery);
+}));

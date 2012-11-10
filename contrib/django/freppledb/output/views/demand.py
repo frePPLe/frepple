@@ -49,7 +49,7 @@ class OverviewReport(GridPivot):
     )
   crosses = (
     ('demand',{'title': _('demand')}),
-    ('supply',{'title': _('total supply')}),
+    ('supply',{'title': _('supply')}),
     ('backlog',{'title': _('backlog')}),
     )
 
@@ -180,28 +180,4 @@ class DetailReport(GridReport):
     GridFieldDateTime('due', title=_('due date'), editable=False),
     GridFieldDateTime('plandate', title=_('planned date'), editable=False),
     GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
-    )
-
-
-@staff_member_required
-def GraphData(request, entity):
-  basequery = Item.objects.filter(pk__exact=entity)
-  (bucket,start,end,bucketlist) = getBuckets(request)
-  demand = []
-  supply = []
-  backlog = []
-  for x in OverviewReport.query(request, basequery, bucket, start, end):
-    demand.append(x['demand'])
-    supply.append(x['supply'])
-    backlog.append(x['backlog'])
-  context = {
-    'buckets': bucketlist,
-    'demand': demand,
-    'supply': supply,
-    'backlog': backlog,
-    'axis_nth': len(bucketlist) / 20 + 1,
-    }
-  return HttpResponse(
-    loader.render_to_string("output/demand.xml", context, context_instance=RequestContext(request)),
-    mimetype='application/xml; charset=%s' % settings.DEFAULT_CHARSET
     )

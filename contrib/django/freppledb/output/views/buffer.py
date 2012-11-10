@@ -45,8 +45,8 @@ class OverviewReport(GridPivot):
   model = Buffer
   rows = (
     GridFieldText('buffer', title=_('buffer'), key=True, field_name='name', formatter='buffer', editable=False),
-    GridFieldText('item', title=_('item'), key=True, field_name='item__name', formatter='item', editable=False),
-    GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item', editable=False),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location', editable=False),
     GridFieldText(None, width=100, extra='formatter:graph', editable=False),
     )
   crosses = (
@@ -176,27 +176,3 @@ class DetailReport(GridReport):
     GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
     )
 
-
-@staff_member_required
-def GraphData(request, entity):
-  basequery = Buffer.objects.filter(pk__exact=entity)
-  (bucket,start,end,bucketlist) = getBuckets(request)
-  consumed = []
-  produced = []
-  startoh = []
-  for x in OverviewReport.query(request, basequery, bucket, start, end):
-    consumed.append(x['consumed'])
-    produced.append(x['produced'])
-    startoh.append(x['startoh'])
-  context = { 
-    'buckets': bucketlist, 
-    'consumed': consumed, 
-    'produced': produced, 
-    'startoh': startoh, 
-    'axis_nth': len(bucketlist) / 20 + 1,
-    }
-  return HttpResponse(
-    loader.render_to_string("output/buffer.xml", context, context_instance=RequestContext(request)),
-    mimetype='application/xml; charset=%s' % settings.DEFAULT_CHARSET
-    )
-    

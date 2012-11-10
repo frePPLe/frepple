@@ -45,7 +45,7 @@ class OverviewReport(GridPivot):
   model = Operation
   rows = (
     GridFieldText('operation', title=_('operation'), key=True, field_name='name', formatter='operation', editable=False),
-    GridFieldText('location', title=_('location'), key=True, field_name='location__name', formatter='location', editable=False),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location', editable=False),
     GridFieldText(None, width="(5*numbuckets<200 ? 5*numbuckets : 200)", extra='formatter:graph', editable=False),
     )
   crosses = (
@@ -144,23 +144,3 @@ class DetailReport(GridReport):
     GridFieldInteger('owner', title=_('owner'), editable=False),
     )
 
-
-@staff_member_required
-def GraphData(request, entity):
-  basequery = Operation.objects.filter(pk__exact=entity)
-  (bucket,start,end,bucketlist) = getBuckets(request)
-  total_start = []
-  total_end = []
-  for x in OverviewReport.query(request, basequery, bucket, start, end):
-    total_start.append(x['total_start'])
-    total_end.append(x['total_end'])
-  context = {
-    'buckets': bucketlist,
-    'total_end': total_end,
-    'total_start': total_start,
-    'axis_nth': len(bucketlist) / 20 + 1,
-    }
-  return HttpResponse(
-    loader.render_to_string("output/operation.xml", context, context_instance=RequestContext(request)),
-    mimetype='application/xml; charset=%s' % settings.DEFAULT_CHARSET
-    )

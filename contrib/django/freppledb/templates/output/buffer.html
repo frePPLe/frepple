@@ -34,15 +34,18 @@
 {% endif %}{% endblock %}
 
 {% block crosses %}
+{% if args.0 %}$(function(){
+  // Resize top graph
+  var h = $(window).height(); 
+  $("#graph").width($(window).width()-55).height(h>800 || h<400 ? 400 : h-350);
+});{% endif %} 
+
 function drawGraphs(jsondata) 
 {  
   var cols = jQuery("#grid").jqGrid('getGridParam', 'colModel'); 
   var x = [];
   var first = true;
-  
-  {% if args.0 %}// Resize top graph
-  $("#graph").width($(window).width()-55);{% endif %} 
-  
+    
   // Loop over all graph cells
   $("#grid_frozen").find(".graph").each(function(index) 
   {

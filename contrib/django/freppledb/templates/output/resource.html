@@ -122,7 +122,7 @@ function drawGraphs(jsondata)
         track : true,
         relative : true,
         trackFormatter: function(obj) {
-          return x[Math.round(obj.x)][1] + " " + obj.y; // TODO not good JSON.stringify(obj); 
+          return x[Math.round(obj.x)][1] + "<br/>" + obj.y; // TODO not good JSON.stringify(obj); 
           }        
         },
       colors: ['#F6BD0F','#2B95EC','#AFD8F8','#8BBA00','#FF0000'],

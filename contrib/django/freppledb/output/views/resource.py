@@ -23,16 +23,12 @@ from django.db import connections
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
-from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse
-from django.template import RequestContext, loader
-from django.conf import settings
 
 from freppledb.input.models import Resource
 from freppledb.output.models import LoadPlan
 from freppledb.common.models import Parameter
 from freppledb.common.db import python_date, sql_max
-from freppledb.common.report import getBuckets, GridReport, GridPivot
+from freppledb.common.report import GridReport, GridPivot
 from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
   

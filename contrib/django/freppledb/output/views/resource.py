@@ -121,12 +121,12 @@ class OverviewReport(GridPivot):
       and d.enddate > out_resourceplan.startdate
       and out_resourceplan.startdate >= '%s'
       and out_resourceplan.startdate < '%s'
-      -- Average utilization info ("*1.0" is to force a float division in SQLite)
+      -- Average utilization info
       left join (
                 select 
                   theresource, 
                   ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) ) 
-                   * 1.0 / coalesce(%s,1) * 100 as avg_util
+                   * 100.0 / coalesce(%s,1) as avg_util
                 from out_resourceplan
                 where out_resourceplan.startdate >= '%s'
                 and out_resourceplan.startdate < '%s'

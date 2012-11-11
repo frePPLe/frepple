@@ -19,11 +19,15 @@ function clickedShaped(event) {
   // Find which contextmenu to use
   if (/^B/.test(tgt)) contextMenu = $('#buffercontext');
   if (/^R/.test(tgt)) contextMenu = $('#resourcecontext');
-  if (/^O/.test(tgt)) contextMenu = $('#operationcontext');
+  if (/^O/.test(tgt) || /^cluster_O/.test(tgt)) contextMenu = $('#operationcontext');
   
-  // Find the id of the menu to display   
-  name_escaped = encodeURIComponent(tgt.substring(1).replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-    .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F")); 
+  // Find the id of the menu to display
+  if (/^cluster_O/.test(tgt))   
+    name_escaped = encodeURIComponent(tgt.substring(9).replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+      .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F")); 
+  else
+    name_escaped = encodeURIComponent(tgt.substring(1).replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+      .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F")); 
   
   // Build the URLs for the menu
   var params = {value: name_escaped};
@@ -51,6 +55,7 @@ $(function(){
     $("#graph").height($(window).height() - 350);
   $("#graph").resizable({handles: "s,se"});
   $("g.node").click(clickedShaped);
+  $("g.cluster").click(clickedShaped);
   $("svg").click(function() {
     $(".ContextMenu").css('display', 'none');
     });

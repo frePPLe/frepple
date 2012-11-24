@@ -21,14 +21,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-02 22:35+0200\n"
-"PO-Revision-Date: 2012-08-02 22:40+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
-"Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
-"Language: \n"
+"POT-Creation-Date: 2012-11-24 16:01+0100\n"
+"PO-Revision-Date: 2012-11-24 16:24+0100\n"
+"Last-Translator: Johan\n"
+"Language-Team: American English <kde-i18n-doc@kde.org>\n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 1.5\n"
 
 #: common/static/js/frepple.js:50
 msgid "Error saving data"
@@ -38,76 +40,91 @@ msgstr ""
 msgid "Select"
 msgstr "Selezione"
 
-#: common/static/js/frepple.js:444
+#: common/static/js/frepple.js:453
 #, c-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr ""
 
-#: common/static/js/frepple.js:446
+#: common/static/js/frepple.js:455
 msgid "Delete data"
 msgstr ""
 
-#: common/static/js/frepple.js:451
+#: common/static/js/frepple.js:460 common/static/js/frepple.js.c:514
 msgid "Confirm"
 msgstr "Conferma"
 
-#: common/static/js/frepple.js:468
+#: common/static/js/frepple.js:478
 msgid "Error deleting data"
 msgstr ""
 
-#: common/static/js/frepple.js:479
-#: common/static/js/frepple.js.c:536
-#: common/static/js/frepple.js:594
-#: common/static/js/frepple.js.c:683
+#: common/static/js/frepple.js:489 common/static/js/frepple.js.c:543
+#: common/static/js/frepple.js:608 common/static/js/frepple.js.c:666
+#: common/static/js/frepple.js:753
 msgid "Cancel"
 msgstr "Cancella"
 
-#: common/static/js/frepple.js:523
+#: common/static/js/frepple.js:507
+#, c-format
+msgid "You are about to duplicate %s objects"
+msgstr ""
+
+#: common/static/js/frepple.js:509
+msgid "Copy data"
+msgstr ""
+
+#: common/static/js/frepple.js:532
+msgid "Error copying data"
+msgstr ""
+
+#: common/static/js/frepple.js:595
 msgid "Load a CSV-formatted text file."
 msgstr ""
 
-#: common/static/js/frepple.js:524
+#: common/static/js/frepple.js:596
 msgid "The first row should contain the field names."
 msgstr "La pirma riga dovrebbe contenere i nomi dei campi"
 
-#: common/static/js/frepple.js:525
+#: common/static/js/frepple.js:597
+msgid "First delete all existing records AND ALL RELATED TABLES"
+msgstr ""
+
+#: common/static/js/frepple.js:598
 msgid "Data file"
 msgstr "file di dati"
 
-#: common/static/js/frepple.js:527
+#: common/static/js/frepple.js:600
 msgid "Import data"
 msgstr "Importa dati"
 
-#: common/static/js/frepple.js:532
+#: common/static/js/frepple.js:604
 msgid "Import"
 msgstr "Importa dati"
 
-#: common/static/js/frepple.js:562
-#: common/static/js/frepple.js.c:566
+#: common/static/js/frepple.js:634 common/static/js/frepple.js.c:638
 msgid "Filtered where"
 msgstr ""
 
-#: common/static/js/frepple.js:582
+#: common/static/js/frepple.js:654
 msgid "CSV style"
 msgstr "CSV stile"
 
-#: common/static/js/frepple.js:583
+#: common/static/js/frepple.js:655
 msgid "Table"
 msgstr "Tabella"
 
-#: common/static/js/frepple.js:584
+#: common/static/js/frepple.js:656
 msgid "List"
 msgstr "Lista"
 
-#: common/static/js/frepple.js:586
+#: common/static/js/frepple.js:658
 msgid "Export data"
 msgstr "Esporta i dati"
 
-#: common/static/js/frepple.js:590
+#: common/static/js/frepple.js:662
 msgid "Export"
 msgstr "Esporta"
 
-#: common/static/js/frepple.js:647
+#: common/static/js/frepple.js:719
 msgid "OK"
 msgstr "OK"
 

@@ -21,157 +21,124 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-02 22:35+0200\n"
-"PO-Revision-Date: 2012-08-02 22:47+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
-"Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
-"Language: \n"
+"POT-Creation-Date: 2012-11-24 16:01+0100\n"
+"PO-Revision-Date: 2012-11-24 16:24+0100\n"
+"Last-Translator: Johan\n"
+"Language-Team: American English <kde-i18n-doc@kde.org>\n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
-"X-Generator: Lokalize 0.2\n"
+"X-Generator: Lokalize 1.5\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: \n"
 
 # Translation included with django
-#: settings.py:109
-#: settings_postgresql.py:109
+#: settings.py:120
 msgid "English"
 msgstr ""
 
 # Translation included with django
-#: settings.py:110
-#: settings_postgresql.py:110
+#: settings.py:121
 msgid "French"
 msgstr ""
 
 # Translation included with django
-#: settings.py:111
-#: settings_postgresql.py:111
+#: settings.py:122
 msgid "Italian"
 msgstr ""
 
 # Translation included with django
-#: settings.py:112
-#: settings_postgresql.py:112
+#: settings.py:123
 msgid "Dutch"
 msgstr ""
 
 # Translation included with django
-#: settings.py:113
-#: settings_postgresql.py:113
+#: settings.py:124
 msgid "Traditional Chinese"
 msgstr ""
 
 # Translation included with django
-#: common/__init__.py:194
+#: common/__init__.py:200
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was added successfully."
 msgstr ""
 
 # Translation included with django
-#: common/__init__.py:203
-#: common/__init__.py:242
+#: common/__init__.py:209 common/__init__.py:248
 msgid "You may edit it again below."
 msgstr ""
 
 # Translation included with django
-#: common/__init__.py:215
-#: common/__init__.py:256
+#: common/__init__.py:221 common/__init__.py:262
 #, python-format
 msgid "You may add another %s below."
 msgstr ""
 
 # Translation included with django
-#: common/__init__.py:240
+#: common/__init__.py:246
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was changed successfully."
 msgstr ""
 
 # Translation included with django
-#: common/__init__.py:248
+#: common/__init__.py:254
 #, python-format
-msgid "The %(name)s \"%(obj)s\" was added successfully. You may edit it again below."
+msgid ""
+"The %(name)s \"%(obj)s\" was added successfully. You may edit it again below."
 msgstr ""
 
 # Translation included with django
-#: common/__init__.py:288
+#: common/__init__.py:294
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
 msgstr ""
 
 # Translation included with django
-#: common/__init__.py:304
+#: common/__init__.py:310
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was deleted successfully."
 msgstr ""
 
-#: common/admin.py:50
+#: common/admin.py:53
 msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
 msgstr "Data non valida:  si attende YYYY-MM-DD HH:MM:SS"
 
-#: common/fields.py:45
-#: common/fields.py:81
+#: common/fields.py:45 common/fields.py:81
 msgid "seconds"
 msgstr "secondi"
 
-#: common/fields.py:46
-#: common/fields.py:82
+#: common/fields.py:46 common/fields.py:82
 msgid "minutes"
 msgstr "minuti"
 
-#: common/fields.py:47
-#: common/fields.py:83
-#: output/views/resource.py:218
+#: common/fields.py:47 common/fields.py:83 output/views/resource.py:74
 msgid "hours"
 msgstr "ore"
 
-#: common/fields.py:48
-#: common/fields.py:84
-#: output/views/resource.py:222
-#: output/views/resource.py:224
+#: common/fields.py:48 common/fields.py:84 output/views/resource.py:78
+#: output/views/resource.py:80 templates/admin/base_site_grid.html:91
+#: templates/admin/base_site_gridpivot.html:95
 msgid "days"
 msgstr "giorni"
 
-#: common/fields.py:49
-#: common/fields.py:85
-#: output/views/resource.py:220
+#: common/fields.py:49 common/fields.py:85 output/views/resource.py:76
+#: templates/admin/base_site_grid.html:92
+#: templates/admin/base_site_gridpivot.html:96
 msgid "weeks"
 msgstr "settimane"
 
-#: common/models.py:37
-#: common/models.py:122
-#: common/models.py:199
-#: common/models.py:214
-#: common/views.py:162
-#: common/views.py:176
-#: common/views.py:287
-#: common/views.py:306
-#: execute/models.py:56
-#: input/models.py:52
-#: input/models.py:164
-#: input/models.py:327
-#: input/models.py:441
-#: input/models.py:474
-#: input/models.py:563
-#: input/views.py:323
-#: input/views.py:351
-#: input/views.py:367
-#: input/views.py:395
-#: input/views.py:416
-#: input/views.py:437
-#: input/views.py:465
-#: input/views.py:492
-#: input/views.py:511
-#: input/views.py:539
-#: input/views.py:565
-#: input/views.py:614
-#: output/models.py:52
-#: output/models.py:73
-#: output/views/constraint.py:80
-#: output/views/problem.py:56
-#: templates/execute/execute.html:78
+#: common/models.py:37 common/models.py:135 common/models.py:212
+#: common/models.py:227 common/views.py:166 common/views.py:181
+#: common/views.py:254 common/views.py:273 execute/models.py:56
+#: input/models.py:43 input/models.py:155 input/models.py:319
+#: input/models.py:433 input/models.py:466 input/views.py:367
+#: input/views.py:395 input/views.py:411 input/views.py:439 input/views.py:460
+#: input/views.py:481 input/views.py:509 input/views.py:536 input/views.py:555
+#: input/views.py:582 input/views.py:631 output/models.py:52
+#: output/models.py:73 output/views/constraint.py:81
+#: output/views/problem.py:57 templates/execute/execute.html:107
 msgid "name"
 msgstr "nome"
 
@@ -179,483 +146,346 @@ msgstr "nome"
 msgid "Unique identifier"
 msgstr ""
 
-#: common/models.py:39
-#: input/models.py:513
-#: input/views.py:330
-#: input/views.py:372
-#: input/views.py:400
-#: input/views.py:420
-#: input/views.py:442
-#: input/views.py:521
-#: input/views.py:672
-#: output/models.py:36
-#: output/models.py:51
-#: output/models.py:72
-#: output/views/constraint.py:81
-#: output/views/operation.py:142
-#: output/views/problem.py:57
+#: common/models.py:39 input/models.py:505 input/views.py:374
+#: input/views.py:416 input/views.py:444 input/views.py:464 input/views.py:486
+#: input/views.py:565 input/views.py:689 output/models.py:36
+#: output/models.py:51 output/models.py:72 output/views/constraint.py:82
+#: output/views/operation.py:139 output/views/problem.py:58
 msgid "owner"
 msgstr "dipendenza"
 
-#: common/models.py:40
-#: input/models.py:514
+#: common/models.py:40 input/models.py:506
 msgid "Hierarchical parent"
 msgstr "Genitore gerarchico"
 
-#: common/models.py:107
-#: common/models.py:151
-#: common/models.py:182
-#: common/report.py:160
-#: execute/models.py:30
+#: common/models.py:120 common/models.py:166 common/models.py:195
+#: common/report.py:155 execute/models.py:30
 msgid "last modified"
 msgstr "modificato in data"
 
-#: common/models.py:123
-#: common/views.py:177
-#: input/models.py:80
-#: input/views.py:588
+#: common/models.py:136 common/views.py:182 input/models.py:71
+#: input/views.py:605
 msgid "value"
 msgstr "valore"
 
-#: common/models.py:124
-#: common/models.py:200
-#: common/views.py:178
-#: common/views.py:288
-#: execute/models.py:57
-#: input/models.py:53
-#: input/models.py:104
-#: input/models.py:122
-#: input/models.py:137
-#: input/models.py:166
-#: input/models.py:250
-#: input/models.py:374
-#: input/models.py:533
-#: input/models.py:564
-#: input/views.py:324
-#: input/views.py:368
-#: input/views.py:396
-#: input/views.py:417
-#: input/views.py:438
-#: input/views.py:514
-#: input/views.py:543
-#: input/views.py:566
-#: input/views.py:615
-#: output/models.py:53
-#: output/models.py:74
-#: output/views/constraint.py:82
-#: output/views/problem.py:58
-#: templates/execute/execute.html:80
+#: common/models.py:137 common/models.py:213 common/views.py:183
+#: common/views.py:255 execute/models.py:57 input/models.py:44
+#: input/models.py:95 input/models.py:113 input/models.py:128
+#: input/models.py:157 input/models.py:242 input/models.py:366
+#: input/models.py:525 input/views.py:368 input/views.py:412
+#: input/views.py:440 input/views.py:461 input/views.py:482 input/views.py:558
+#: input/views.py:583 input/views.py:632 output/models.py:53
+#: output/models.py:74 output/views/constraint.py:83
+#: output/views/problem.py:59 templates/execute/execute.html:109
 msgid "description"
 msgstr "descrizione"
 
-#: common/models.py:130
+#: common/models.py:143
 msgid "parameter"
 msgstr "Parametri di pianificazione"
 
-#: common/models.py:131
+#: common/models.py:144
 msgid "parameters"
 msgstr "Parametri di pianificazione"
 
-#: common/models.py:138
+#: common/models.py:149
 msgid "Table"
 msgstr "Tabella"
 
-#: common/models.py:139
+#: common/models.py:150
 msgid "List"
 msgstr "Lista"
 
-#: common/models.py:141
+#: common/models.py:152
 msgid "Detect automatically"
 msgstr "Individua autoamaticamente"
 
-#: common/models.py:142
-#: common/models.py:181
-#: common/views.py:270
-#: execute/models.py:33
-#: execute/views.py:292
-#: templates/usercontext.html:3
+#: common/models.py:153 common/models.py:194 common/views.py:237
+#: execute/models.py:33 execute/views.py:358 templates/usercontext.html:3
 msgid "user"
 msgstr "utilizzatore"
 
-#: common/models.py:143
-#: common/models.py:206
-msgid "buckets"
-msgstr "buckets"
-
-#: common/models.py:144
-#: common/models.py:215
-#: common/views.py:304
-#: input/models.py:78
-#: input/models.py:509
-#: input/models.py:719
-#: input/views.py:586
-#: input/views.py:668
-#: output/models.py:54
-#: output/models.py:75
-#: output/models.py:195
-#: output/views/constraint.py:83
-#: output/views/operation.py:138
-#: output/views/pegging.py:54
-#: output/views/problem.py:59
-#: output/views/resource.py:183
-#: templates/admin/base_site_grid.html:76
-#: templates/admin/base_site_gridpivot.html:81
-msgid "start date"
-msgstr "Data d'inizio"
-
-#: common/models.py:145
-#: common/models.py:216
-#: common/views.py:305
-#: input/models.py:79
-#: input/models.py:510
-#: input/models.py:720
-#: input/views.py:587
-#: input/views.py:669
-#: output/models.py:55
-#: output/models.py:76
-#: output/models.py:196
-#: output/views/constraint.py:84
-#: output/views/operation.py:139
-#: output/views/pegging.py:55
-#: output/views/problem.py:60
-#: output/views/resource.py:184
-#: templates/admin/base_site_grid.html:77
-#: templates/admin/base_site_gridpivot.html:82
-msgid "end date"
-msgstr "Data di fine"
-
-#: common/models.py:146
-#: common/views.py:55
+#: common/models.py:154 common/views.py:48
 msgid "language"
 msgstr "lingua"
 
-#: common/models.py:148
-#: common/views.py:81
+#: common/models.py:156 common/views.py:59
 msgid "theme"
 msgstr ""
 
-#: common/models.py:150
-#: common/views.py:75
+#: common/models.py:158 common/views.py:53
 msgid "page size"
 msgstr ""
 
-#: common/models.py:174
-#: common/models.py:212
-#: common/views.py:142
-#: common/views.py:161
-#: common/views.py:268
-#: execute/views.py:289
-#: input/models.py:76
-#: input/models.py:423
-#: input/models.py:464
-#: input/models.py:503
-#: input/views.py:459
-#: input/views.py:485
-#: input/views.py:584
-#: input/views.py:645
-#: input/views.py:666
+#: common/models.py:187 common/models.py:225 common/views.py:145
+#: common/views.py:165 common/views.py:235 execute/views.py:355
+#: input/models.py:67 input/models.py:212 input/models.py:415
+#: input/models.py:456 input/models.py:495 input/views.py:503
+#: input/views.py:529 input/views.py:601 input/views.py:662 input/views.py:683
 #: output/models.py:29
 msgid "identifier"
 msgstr "identificativo"
 
-#: common/models.py:176
+#: common/models.py:189
 msgid "content type"
 msgstr ""
 
 # Translation included with django
-#: common/models.py:178
-#: common/views.py:272
+#: common/models.py:191 common/views.py:239
 msgid "object ID"
 msgstr ""
 
-#: common/models.py:180
-#: common/models.py:187
-#: common/views.py:273
+#: common/models.py:193 common/models.py:200 common/views.py:240
 msgid "comment"
 msgstr ""
 
-#: common/models.py:188
-#: templates/common/comments.html:11
+#: common/models.py:201 templates/common/comments.html:11
 msgid "comments"
 msgstr ""
 
-#: common/models.py:196
+#: common/models.py:209
 msgid "day"
 msgstr "giorno"
 
-#: common/models.py:196
+#: common/models.py:209
 msgid "week"
 msgstr "settimana"
 
-#: common/models.py:196
+#: common/models.py:209
 msgid "month"
 msgstr "mese"
 
-#: common/models.py:196
+#: common/models.py:209
 msgid "quarter"
 msgstr "quadrimestre"
 
-#: common/models.py:196
+#: common/models.py:209
 msgid "year"
 msgstr "anno"
 
-#: common/models.py:196
+#: common/models.py:209
 msgid "telescope"
 msgstr ""
 
-#: common/models.py:205
-#: common/models.py:213
-#: common/report.py:1035
-#: common/views.py:303
+#: common/models.py:218 common/models.py:226 common/report.py:1141
+#: common/views.py:270
 msgid "bucket"
 msgstr "bucket"
 
-#: common/models.py:221
+#: common/models.py:219
+msgid "buckets"
+msgstr "buckets"
+
+#: common/models.py:228 common/views.py:271 input/models.py:69
+#: input/models.py:501 input/views.py:603 input/views.py:685
+#: output/models.py:54 output/models.py:75 output/models.py:195
+#: output/views/constraint.py:84 output/views/operation.py:135
+#: output/views/pegging.py:54 output/views/problem.py:60
+#: output/views/resource.py:178
+msgid "start date"
+msgstr "Data d'inizio"
+
+#: common/models.py:229 common/views.py:272 input/models.py:70
+#: input/models.py:502 input/views.py:604 input/views.py:686
+#: output/models.py:55 output/models.py:76 output/models.py:196
+#: output/views/constraint.py:85 output/views/operation.py:136
+#: output/views/pegging.py:55 output/views/problem.py:61
+#: output/views/resource.py:179
+msgid "end date"
+msgstr "Data di fine"
+
+#: common/models.py:234
 msgid "bucket date"
 msgstr ""
 
-#: common/models.py:222
+#: common/models.py:235
 msgid "bucket dates"
 msgstr ""
 
-#: common/report.py:311
-#: common/report.py:530
-#: common/report.py:532
-#: common/report.py:614
-#: output/views/forecast.py:66
+#: common/report.py:306 common/report.py:542 common/report.py:544
+#: common/report.py:671 common/report.py:713
 msgid "Permission denied"
 msgstr "Permesso negato"
 
-#: common/report.py:489
+#: common/report.py:499
 #, python-format
 msgid "%(title)s for %(entity)s"
 msgstr "%(title)s per %(entity)s"
 
-#: common/report.py:550
-#: common/report.py:580
+#: common/report.py:569 common/report.py:602 common/report.py:634
 #, python-format
 msgid "Can't find %s"
 msgstr ""
 
-#: common/report.py:576
-#: common/report.py:713
+#: common/report.py:589
+#, python-format
+msgid "Can't copy %s"
+msgstr ""
+
+#: common/report.py:597
+#, python-format
+msgid "Copied from %s."
+msgstr ""
+
+#: common/report.py:630 common/report.py:819
 #, python-format
 msgid "Changed %s."
 msgstr "Variato %s."
 
-#: common/report.py:576
-#: common/report.py:713
+#: common/report.py:630 common/report.py:819
 msgid "and"
 msgstr "e"
 
-#: common/report.py:611
+#: common/report.py:710
 msgid "Invalid upload request"
 msgstr "richiesta di upload non valida"
 
-#: common/report.py:655
+#: common/report.py:761
 #, python-format
 msgid "Incorrect field %(column)s"
 msgstr "Campo errato %(column)s"
 
-#: common/report.py:661
+#: common/report.py:767
 #, python-format
 msgid "Missing primary key field %(key)s"
 msgstr "Manca il campo della chiave primaria %(key)s"
 
-#: common/report.py:723
+#: common/report.py:829
 #, python-format
 msgid "Row %(rownum)s: %(message)s"
 msgstr "Riga %(rownum)s: %(message)s"
 
-#: common/report.py:729
+#: common/report.py:835
 #, python-format
 msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
 msgstr "Riga %(rownum)s field %(field)s: %(data)s: %(message)s"
 
-#: common/report.py:737
+#: common/report.py:843
 #, python-format
 msgid "Exception during upload: %(message)s"
 msgstr "Eccezione durante l'upload: %(message)s"
 
-#: common/report.py:745
+#: common/report.py:851
 #, python-format
-msgid "File upload aborted with errors: changed %(changed)d and added %(added)d records"
-msgstr "Upload del file abortito con errori: changed %(changed)d and added %(added)d records"
+msgid ""
+"File upload aborted with errors: changed %(changed)d and added %(added)d "
+"records"
+msgstr ""
+"Upload del file abortito con errori: changed %(changed)d and added %(added)d "
+"records"
 
-#: common/report.py:750
+#: common/report.py:856
 #, python-format
-msgid "Uploaded file processed with warnings: changed %(changed)d and added %(added)d records"
-msgstr "Uploaded file processed with warnings: changed %(changed)d and added %(added)d records"
+msgid ""
+"Uploaded file processed with warnings: changed %(changed)d and added "
+"%(added)d records"
+msgstr ""
+"Uploaded file processed with warnings: changed %(changed)d and added "
+"%(added)d records"
 
-#: common/report.py:755
+#: common/report.py:861
 #, python-format
-msgid "Uploaded data successfully: changed %(changed)d and added %(added)d records"
-msgstr "Uploaded data successfully: changed %(changed)d and added %(added)d records"
+msgid ""
+"Uploaded data successfully: changed %(changed)d and added %(added)d records"
+msgstr ""
+"Uploaded data successfully: changed %(changed)d and added %(added)d records"
 
-#: common/report.py:1038
+#: common/report.py:1144
 msgid "data field"
 msgstr "campo dati"
 
-#: common/views.py:58
+#: common/views.py:51
 msgid "Language of the user interface"
 msgstr "Lingua dell'interfaccia utente"
 
-#: common/views.py:61
-msgid "Buckets"
-msgstr "Buckets"
-
-#: common/views.py:63
-msgid "Time bucket size for reports"
-msgstr "Dimensione del bucket per i rapporti"
-
-#: common/views.py:65
-msgid "report start date"
-msgstr "Data di inizio del rapporto"
-
-#: common/views.py:67
-msgid "Start date for filtering report data"
-msgstr "Data di inizio per il filtro sui dati contenuti nel rapporto"
-
-#: common/views.py:70
-msgid "report end date"
-msgstr "Data di fine del rapporto"
-
-#: common/views.py:72
-msgid "End date for filtering report data"
-msgstr "Data di fine per il filtro sui dati contenuti nel rapporto"
-
-#: common/views.py:79
+#: common/views.py:57
 msgid "Number of records to fetch in a single page from the server"
 msgstr ""
 
-#: common/views.py:84
+#: common/views.py:62
 msgid "Theme for the user interface"
 msgstr ""
 
-#: common/views.py:110
+#: common/views.py:83
 msgid "Successfully updated preferences"
 msgstr "Preferenze aggiornate con successo"
 
-#: common/views.py:113
+#: common/views.py:86
 msgid "Failure updating preferences"
 msgstr "Aggiornamento preferenze fallito"
 
-#: common/views.py:125
+#: common/views.py:95
 msgid "Edit my preferences"
 msgstr "Editare le mie preferenze"
 
-#: common/views.py:136
+#: common/views.py:138
 msgid "User List"
 msgstr "Lista degli utilizzatori"
 
-#: common/views.py:143
+#: common/views.py:146
 msgid "username"
 msgstr "username"
 
 # Translation included with django
-#: common/views.py:144
+#: common/views.py:147
 msgid "E-mail"
 msgstr ""
 
-#: common/views.py:145
+#: common/views.py:148
 msgid "first_name"
 msgstr ""
 
-#: common/views.py:146
+#: common/views.py:149
 msgid "last name"
 msgstr "Cognome"
 
 # Translation included with django
-#: common/views.py:147
+#: common/views.py:150
 msgid "staff status"
 msgstr ""
 
-#: common/views.py:156
+#: common/views.py:159
 msgid "Group List"
 msgstr "Lista dei gruppi"
 
-#: common/views.py:170
+#: common/views.py:175
 msgid "Parameter List"
 msgstr "Lista dei Parametri"
 
-#: common/views.py:184
-msgid "frePPLe recent changes"
-msgstr ""
-
-# Translation included with django
-#: common/views.py:197
-#, python-format
-msgid "Added %(name)s \"%(object)s\"."
-msgstr ""
-
-# Translation included with django
-#: common/views.py:199
-#, python-format
-msgid "Changed %(name)s \"%(object)s\"."
-msgstr ""
-
-# Translation included with django
-#: common/views.py:201
-#, python-format
-msgid "Deleted %(name)s \"%(object)s\"."
-msgstr ""
-
-#: common/views.py:261
-#: templates/bucketcontext.html:4
-#: templates/buckettabs.html:5
-#: templates/buffercontext.html:9
-#: templates/buffertabs.html:10
-#: templates/calendarcontext.html:4
-#: templates/calendartabs.html:5
-#: templates/customercontext.html:4
-#: templates/customertabs.html:5
-#: templates/demandcontext.html:6
-#: templates/demandtabs.html:7
-#: templates/flowcontext.html:4
-#: templates/flowtabs.html:5
-#: templates/forecastcontext.html:6
-#: templates/forecasttabs.html:7
-#: templates/grouptabs.html:5
-#: templates/itemcontext.html:7
-#: templates/itemtabs.html:8
-#: templates/loadcontext.html:4
-#: templates/loadtabs.html:5
-#: templates/locationcontext.html:5
-#: templates/locationtabs.html:5
-#: templates/operationcontext.html:9
-#: templates/operationtabs.html:10
-#: templates/resourcecontext.html:9
-#: templates/resourcetabs.html:10
-#: templates/setupmatrixcontext.html:4
-#: templates/setupmatrixtabs.html:5
+#: common/views.py:226 templates/bucketcontext.html:4
+#: templates/buckettabs.html:5 templates/buffercontext.html:9
+#: templates/buffertabs.html:10 templates/calendarcontext.html:4
+#: templates/calendartabs.html:5 templates/customercontext.html:4
+#: templates/customertabs.html:5 templates/demandcontext.html:6
+#: templates/demandtabs.html:7 templates/flowcontext.html:4
+#: templates/flowtabs.html:5 templates/grouptabs.html:5
+#: templates/itemcontext.html:7 templates/itemtabs.html:8
+#: templates/loadcontext.html:4 templates/loadtabs.html:5
+#: templates/locationcontext.html:5 templates/locationtabs.html:5
+#: templates/operationcontext.html:9 templates/operationtabs.html:10
+#: templates/parametercontext.html:4 templates/parametertabs.html:5
+#: templates/resourcecontext.html:9 templates/resourcetabs.html:10
+#: templates/setupmatrixcontext.html:4 templates/setupmatrixtabs.html:5
 msgid "Comments"
 msgstr ""
 
-#: common/views.py:271
-#: input/models.py:165
-#: input/models.py:253
-#: input/models.py:377
-#: input/models.py:432
-#: input/views.py:331
-#: input/views.py:373
-#: input/views.py:488
-#: input/views.py:618
+#: common/views.py:238 input/models.py:156 input/models.py:245
+#: input/models.py:369 input/models.py:424 input/views.py:375
+#: input/views.py:417 input/views.py:532 input/views.py:635
 msgid "type"
 msgstr "tipo"
 
-#: common/views.py:282
+#: common/views.py:249
 msgid "Bucket List"
 msgstr ""
 
-#: common/views.py:298
+#: common/views.py:265
 msgid "Bucket Detail List"
 msgstr ""
 
 # Translation included with django
-#: common/templatetags/base_utils.py:134
-#: common/templatetags/base_utils.py:137
-#: common/templatetags/base_utils.py:143
-#: templates/admin/base.html:29
+#: common/templatetags/base_utils.py:135 common/templatetags/base_utils.py:138
+#: common/templatetags/base_utils.py:144 templates/admin/base.html:28
 #: templates/admin/index.html:5
 #: templates/registration/password_change_done.html:8
 #: templates/registration/password_change_form.html:9
@@ -663,42 +493,25 @@ msgid "Home"
 msgstr ""
 
 # Translation included with django
-#: common/templatetags/base_utils.py:143
+#: common/templatetags/base_utils.py:144
 msgid "Site administration"
 msgstr ""
 
-#: common/templatetags/base_utils.py:236
+#: common/templatetags/base_utils.py:271
 msgid "Model:"
 msgstr ""
 
-#: execute/models.py:31
-#: execute/views.py:291
-#: input/models.py:55
-#: input/models.py:105
-#: input/models.py:123
-#: input/models.py:138
-#: input/models.py:167
-#: input/models.py:251
-#: input/models.py:375
-#: input/models.py:534
-#: input/models.py:565
-#: input/views.py:325
-#: input/views.py:369
-#: input/views.py:397
-#: input/views.py:418
-#: input/views.py:439
-#: input/views.py:515
-#: input/views.py:544
-#: input/views.py:567
-#: input/views.py:616
-#: output/views/kpi.py:36
-#: output/views/kpi.py:37
-#: output/views/kpi.py:38
+#: execute/models.py:31 execute/views.py:357 input/models.py:46
+#: input/models.py:96 input/models.py:114 input/models.py:129
+#: input/models.py:158 input/models.py:243 input/models.py:367
+#: input/models.py:526 input/views.py:369 input/views.py:413
+#: input/views.py:441 input/views.py:462 input/views.py:483 input/views.py:559
+#: input/views.py:584 input/views.py:633 output/views/kpi.py:36
+#: output/views/kpi.py:37 output/views/kpi.py:38
 msgid "category"
 msgstr "categoria"
 
-#: execute/models.py:32
-#: execute/views.py:293
+#: execute/models.py:32 execute/views.py:359
 msgid "message"
 msgstr "messaggio"
 
@@ -722,8 +535,7 @@ msgstr ""
 msgid "Busy"
 msgstr ""
 
-#: execute/models.py:58
-#: templates/execute/execute.html:79
+#: execute/models.py:58 templates/execute/execute.html:108
 msgid "status"
 msgstr ""
 
@@ -739,94 +551,89 @@ msgstr ""
 msgid "scenario"
 msgstr ""
 
-#: execute/views.py:65
-#: templates/admin/base_site_nav.html:32
-#: templates/admin/index.html:97
+#: execute/views.py:73 templates/admin/base_site_nav.html:31
+#: templates/admin/index.html:93
 msgid "Execute"
 msgstr "Esegui"
 
-#: execute/views.py:84
-#: execute/views.py:109
-#: execute/views.py:171
-#: execute/views.py:214
-#: execute/views.py:307
+#: execute/views.py:93 execute/views.py:118 execute/views.py:202
+#: execute/views.py:238 execute/views.py:277 execute/views.py:373
 msgid "Only POST method allowed"
 msgstr "Solo metodo POST permesso"
 
-#: execute/views.py:91
+#: execute/views.py:100
 msgid "Erased the database"
 msgstr "Avvio cancellazione banca dati"
 
-#: execute/views.py:93
+#: execute/views.py:102
 #, python-format
 msgid "Failure during database erasing: %(msg)s"
 msgstr "Fallimento durante la cancellazione del database: %(msg)s"
 
-#: execute/views.py:137
+#: execute/views.py:146
 msgid "Invalid input field"
 msgstr "Campo di input non valido"
 
-#: execute/views.py:151
+#: execute/views.py:160
 msgid "Created sample model in the database"
 msgstr "Modello di esempio creato nel databese"
 
-#: execute/views.py:154
+#: execute/views.py:163
 #, python-format
 msgid "Failure during sample model creation: %(msg)s"
 msgstr "Errore creazione modello di esempio: %(msg)s"
 
-#: execute/views.py:196
+#: execute/views.py:186
 msgid "Successfully created a plan"
 msgstr "Piano creato con successo"
 
-#: execute/views.py:199
+#: execute/views.py:189
 #, python-format
 msgid "Failure creating a plan: %(msg)s"
 msgstr "Errore creazione modello di esempio: %(msg)s"
 
-#: execute/views.py:224
+#: execute/views.py:287
 msgid "Missing dataset name"
 msgstr "Nome del dataset mancante"
 
-#: execute/views.py:235
+#: execute/views.py:298
 msgid "Loaded dataset"
 msgstr "Dataset caricato"
 
-#: execute/views.py:240
+#: execute/views.py:303
 #, python-format
 msgid "Error while loading dataset: %(msg)s"
 msgstr "Errore nel caricamento del dataset: %(msg)s"
 
-#: execute/views.py:274
-#: templates/execute/logfrepple.html:6
+#: execute/views.py:337 templates/execute/logfrepple.html:6
 msgid "Log file"
 msgstr ""
 
-#: execute/views.py:283
+#: execute/views.py:346
 msgid "Command log"
 msgstr "Registrazione dei comandi"
 
-#: execute/views.py:319
+#: execute/views.py:385
 #, python-format
 msgid "Updated scenario '%(scenario)s'"
 msgstr ""
 
-#: execute/views.py:336
+#: execute/views.py:402
 #, python-format
 msgid "Successfully copied scenario '%(source)s' to '%(destination)s'"
 msgstr ""
 
-#: execute/views.py:339
+#: execute/views.py:405
 #, python-format
 msgid "Failure copying scenario '%(source)s' to '%(destination)s'"
 msgstr ""
 
-#: execute/views.py:349
+#: execute/views.py:415
 #, python-format
 msgid "Released scenario '%(scenario)s'"
 msgstr ""
 
-#: execute/views.py:357
+#: execute/views.py:423
 msgid "Invalid action"
 msgstr ""
 
@@ -857,15 +664,15 @@ msgstr "Fine inizializzazione date"
 msgid "Failure initializing dates"
 msgstr "Errore inizializzazione date"
 
-#: execute/management/commands/frepple_createmodel.py:163
+#: execute/management/commands/frepple_createmodel.py:171
 msgid "Start creating sample model with parameters"
 msgstr "Avvio creazione modello di esempio con i parametri"
 
-#: execute/management/commands/frepple_createmodel.py:360
+#: execute/management/commands/frepple_createmodel.py:369
 msgid "Finished creating sample model"
 msgstr "Fine creazione modello di esempio"
 
-#: execute/management/commands/frepple_createmodel.py:365
+#: execute/management/commands/frepple_createmodel.py:374
 msgid "Failure creating sample model"
 msgstr "Errore creazione modello di esempio"
 
@@ -873,11 +680,11 @@ msgstr "Errore creazione modello di esempio"
 msgid "Start erasing the database"
 msgstr "Avvio cancellazione banca dati"
 
-#: execute/management/commands/frepple_flush.py:112
+#: execute/management/commands/frepple_flush.py:115
 msgid "Finished erasing the database"
 msgstr "Fine cancellazione banca dati"
 
-#: execute/management/commands/frepple_flush.py:116
+#: execute/management/commands/frepple_flush.py:119
 msgid "Failed erasing the database"
 msgstr "Errore cancellazione banca dati"
 
@@ -893,1029 +700,818 @@ msgstr ""
 msgid "Failure loading XML data file in the database"
 msgstr ""
 
-#: execute/management/commands/frepple_run.py:77
+#: execute/management/commands/frepple_run.py:88
 #, python-format
-msgid "Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d"
-msgstr "Avvio creazione piano frePPLe del tipo %(plantype)d e vincoli %(constraint)d"
+msgid ""
+"Start creating frePPLe plan of type %(plantype)d and constraints "
+"%(constraint)d"
+msgstr ""
+"Avvio creazione piano frePPLe del tipo %(plantype)d e vincoli %(constraint)d"
 
-#: execute/management/commands/frepple_run.py:101
+#: execute/management/commands/frepple_run.py:113
 msgid "Finished creating frePPLe plan"
 msgstr "Fine creazione del piano frePPLe"
 
-#: execute/management/commands/frepple_run.py:104
+#: execute/management/commands/frepple_run.py:120
 msgid "Failure when creating frePPLe plan"
 msgstr "Errore nella creazione del piano frePPLe"
 
-#: input/admin.py:47
+#: input/admin.py:43
 msgid "Repeating pattern"
 msgstr ""
 
-#: input/admin.py:108
-#: input/admin.py:130
-#: input/admin.py:188
-#: input/admin.py:204
+#: input/admin.py:104 input/admin.py:126 input/admin.py:184
 msgid "Planning parameters"
 msgstr "Parametri di pianificazione"
 
-#: input/admin.py:128
+#: input/admin.py:124
 msgid "Inventory"
 msgstr "Scorte"
 
-#: input/admin.py:133
+#: input/admin.py:129
 msgid "Planning parameters for procurement buffers"
 msgstr "Parametri di pianificazione dei buffer di fornitura"
 
-#: input/models.py:42
-#: input/models.py:43
-#: input/models.py:81
-#: input/models.py:223
-#: input/models.py:345
-#: input/models.py:445
-#: input/models.py:480
-#: input/models.py:544
-#: input/models.py:572
-#: input/views.py:467
-#: input/views.py:494
-#: input/views.py:520
-#: input/views.py:547
-#: input/views.py:589
-#: input/views.py:648
+#: input/models.py:33 input/models.py:34 input/models.py:72
+#: input/models.py:215 input/models.py:337 input/models.py:437
+#: input/models.py:472 input/models.py:536 input/views.py:511
+#: input/views.py:538 input/views.py:564 input/views.py:606 input/views.py:665
 msgid "priority"
 msgstr "priorità"
 
-#: input/models.py:44
+#: input/models.py:35
 msgid "minimum cost"
 msgstr "costo minimo"
 
-#: input/models.py:45
+#: input/models.py:36
 msgid "minimum penalty"
 msgstr "penalità minima"
 
-#: input/models.py:46
+#: input/models.py:37
 msgid "minimum cost plus penalty"
 msgstr "costo minimo più la penalità"
 
-#: input/models.py:57
-#: input/models.py:106
-#: input/models.py:124
-#: input/models.py:139
-#: input/models.py:168
-#: input/models.py:252
-#: input/models.py:376
-#: input/models.py:535
-#: input/models.py:566
-#: input/views.py:326
-#: input/views.py:370
-#: input/views.py:398
-#: input/views.py:419
-#: input/views.py:440
-#: input/views.py:516
-#: input/views.py:545
-#: input/views.py:568
-#: input/views.py:617
+#: input/models.py:48 input/models.py:97 input/models.py:115
+#: input/models.py:130 input/models.py:159 input/models.py:244
+#: input/models.py:368 input/models.py:527 input/views.py:370
+#: input/views.py:414 input/views.py:442 input/views.py:463 input/views.py:484
+#: input/views.py:560 input/views.py:585 input/views.py:634
 msgid "subcategory"
 msgstr "sotto categoria"
 
-#: input/models.py:59
-#: input/views.py:569
+#: input/models.py:50 input/views.py:586
 msgid "default value"
 msgstr "valore di default"
 
-#: input/models.py:61
+#: input/models.py:52
 msgid "Value to be used when no entry is effective"
 msgstr "Valore da utilizzare nel caso non vi siano registrazioni attive"
 
-#: input/models.py:68
-#: input/models.py:77
-#: input/models.py:569
-#: input/views.py:542
-#: input/views.py:585
+#: input/models.py:59 input/models.py:68 input/views.py:602
 msgid "calendar"
 msgstr "calendario"
 
-#: input/models.py:69
+#: input/models.py:60
 msgid "calendars"
 msgstr "calendari"
 
 # Translation included with django
-#: input/models.py:82
-#: input/views.py:590
+#: input/models.py:73 input/views.py:607
 msgid "Monday"
 msgstr ""
 
 # Translation included with django
-#: input/models.py:83
-#: input/views.py:591
+#: input/models.py:74 input/views.py:608
 msgid "Tuesday"
 msgstr ""
 
 # Translation included with django
-#: input/models.py:84
-#: input/views.py:592
+#: input/models.py:75 input/views.py:609
 msgid "Wednesday"
 msgstr ""
 
 # Translation included with django
-#: input/models.py:85
-#: input/views.py:593
+#: input/models.py:76 input/views.py:610
 msgid "Thursday"
 msgstr ""
 
 # Translation included with django
-#: input/models.py:86
-#: input/views.py:594
+#: input/models.py:77 input/views.py:611
 msgid "Friday"
 msgstr ""
 
 # Translation included with django
-#: input/models.py:87
-#: input/views.py:595
+#: input/models.py:78 input/views.py:612
 msgid "Saturday"
 msgstr ""
 
 # Translation included with django
-#: input/models.py:88
-#: input/views.py:596
+#: input/models.py:79 input/views.py:613
 msgid "Sunday"
 msgstr ""
 
-#: input/models.py:89
-#: input/views.py:597
+#: input/models.py:80 input/views.py:614
 msgid "start time"
 msgstr ""
 
-#: input/models.py:90
-#: input/views.py:598
+#: input/models.py:81 input/views.py:615
 msgid "end time"
 msgstr ""
 
-#: input/models.py:98
+#: input/models.py:89
 msgid "calendar bucket"
 msgstr "bucket di calendario"
 
-#: input/models.py:99
+#: input/models.py:90
 msgid "calendar buckets"
 msgstr "buckets di calendario"
 
-#: input/models.py:107
-#: input/views.py:399
-#: output/models.py:92
-#: output/views/resource.py:60
+#: input/models.py:98 input/views.py:443 output/models.py:92
+#: output/views/resource.py:51
 msgid "available"
 msgstr "disponibile"
 
-#: input/models.py:109
+#: input/models.py:100
 msgid "Calendar defining the working hours and holidays of this location"
-msgstr "Calendario che definisce le ore di lavoro e le vacanze in questa localizzazione"
+msgstr ""
+"Calendario che definisce le ore di lavoro e le vacanze in questa "
+"localizzazione"
 
-#: input/models.py:115
-#: input/models.py:169
-#: input/models.py:254
-#: input/models.py:384
-#: input/views.py:327
-#: input/views.py:371
-#: input/views.py:619
-#: output/views/buffer.py:49
-#: output/views/operation.py:48
-#: output/views/resource.py:55
+#: input/models.py:106 input/models.py:160 input/models.py:246
+#: input/models.py:376 input/views.py:371 input/views.py:415
+#: input/views.py:636 output/views/buffer.py:44 output/views/operation.py:43
+#: output/views/resource.py:46
 msgid "location"
 msgstr "localizzazione"
 
-#: input/models.py:116
+#: input/models.py:107
 msgid "locations"
 msgstr "localizzazioni"
 
-#: input/models.py:130
-#: input/models.py:536
-#: input/models.py:567
-#: input/views.py:72
-#: input/views.py:513
-#: input/views.py:541
-#: output/models.py:150
-#: output/views/demand.py:194
-#: output/views/forecast.py:51
+#: input/models.py:121 input/models.py:528 input/views.py:68
+#: input/views.py:557 output/models.py:150 output/views/demand.py:172
 msgid "customer"
 msgstr "cliente"
 
-#: input/models.py:131
+#: input/models.py:122
 msgid "customers"
 msgstr "clienti"
 
-#: input/models.py:140
-#: input/models.py:540
-#: input/models.py:570
-#: input/views.py:519
+#: input/models.py:131 input/models.py:532 input/views.py:563
 msgid "delivery operation"
 msgstr "operazione di consegna"
 
-#: input/models.py:141
+#: input/models.py:132
 msgid "Default operation used to ship a demand for this item"
 msgstr "Operazione di default utilizzata per spedire questo articolo"
 
-#: input/models.py:142
-#: input/views.py:443
+#: input/models.py:133 input/views.py:487
 msgid "price"
 msgstr "prezzo"
 
-#: input/models.py:143
+#: input/models.py:134
 msgid "Selling price of the item"
 msgstr "Prezzo di vendita dell'articolo"
 
-#: input/models.py:149
-#: input/models.py:256
-#: input/models.py:537
-#: input/models.py:568
-#: input/views.py:83
-#: input/views.py:328
-#: input/views.py:512
-#: input/views.py:540
-#: output/models.py:149
-#: output/models.py:176
-#: output/views/buffer.py:48
-#: output/views/demand.py:47
-#: output/views/demand.py:193
-#: output/views/forecast.py:50
+#: input/models.py:140 input/models.py:248 input/models.py:529
+#: input/views.py:79 input/views.py:372 input/views.py:556
+#: output/models.py:149 output/models.py:176 output/views/buffer.py:43
+#: output/views/demand.py:42 output/views/demand.py:171
 #: output/views/pegging.py:52
 msgid "item"
 msgstr "articolo"
 
-#: input/models.py:150
+#: input/models.py:141
 msgid "items"
 msgstr "articoli"
 
-#: input/models.py:157
+#: input/models.py:148
 msgid "fixed_time"
 msgstr "tempo fisso"
 
-#: input/models.py:158
+#: input/models.py:149
 msgid "time_per"
 msgstr "tempo per"
 
-#: input/models.py:159
+#: input/models.py:150
 msgid "routing"
 msgstr "ciclo"
 
-#: input/models.py:160
-#: input/models.py:443
-#: input/models.py:477
-#: input/views.py:466
-#: input/views.py:493
+#: input/models.py:151 input/models.py:435 input/models.py:469
+#: input/views.py:510 input/views.py:537
 msgid "alternate"
 msgstr "alternativo"
 
-#: input/models.py:171
+#: input/models.py:162
 msgid "release fence"
 msgstr "limite di rilascio"
 
-#: input/models.py:172
-msgid "Operationplans within this time window from the current day are expected to be released to production ERP"
-msgstr "I piani operativi all'interno di questa finestra temporale a partire dalla data corrente si prevede saranno rilasciati all'ERP di produzione"
+#: input/models.py:163
+msgid ""
+"Operationplans within this time window from the current day are expected to "
+"be released to production ERP"
+msgstr ""
+"I piani operativi all'interno di questa finestra temporale a partire dalla "
+"data corrente si prevede saranno rilasciati all'ERP di produzione"
 
-#: input/models.py:173
-#: input/views.py:623
+#: input/models.py:164 input/views.py:640
 msgid "pre-op time"
 msgstr "tempo di pre operazione"
 
-#: input/models.py:174
-msgid "A delay time to be respected as a soft constraint before starting the operation"
-msgstr "Un ritardo da rispettare come vincolo lieve prima dell'inizio dell'operazione"
+#: input/models.py:165
+msgid ""
+"A delay time to be respected as a soft constraint before starting the "
+"operation"
+msgstr ""
+"Un ritardo da rispettare come vincolo lieve prima dell'inizio dell'operazione"
 
-#: input/models.py:175
-#: input/views.py:624
+#: input/models.py:166 input/views.py:641
 msgid "post-op time"
 msgstr "tempo di post operazione"
 
-#: input/models.py:176
-msgid "A delay time to be respected as a soft constraint after ending the operation"
+#: input/models.py:167
+msgid ""
+"A delay time to be respected as a soft constraint after ending the operation"
 msgstr "Un ritardo da rispettare come vincolo lieve alla fine dell'operazione"
 
-#: input/models.py:177
-#: input/views.py:625
+#: input/models.py:168 input/views.py:642
 msgid "size minimum"
 msgstr "grandezza minima"
 
-#: input/models.py:179
+#: input/models.py:170
 msgid "A minimum quantity for operationplans"
 msgstr "Una quantità minima per i piani operativi"
 
-#: input/models.py:180
-#: input/views.py:626
+#: input/models.py:171 input/views.py:643
 msgid "size multiple"
 msgstr "grandezza multipla"
 
-#: input/models.py:181
+#: input/models.py:172
 msgid "A multiple quantity for operationplans"
 msgstr "Una quantità multipla per i piani operativi"
 
-#: input/models.py:182
-#: input/views.py:627
+#: input/models.py:173 input/views.py:644
 msgid "size maximum"
 msgstr "massima dimensione"
 
-#: input/models.py:183
+#: input/models.py:174
 msgid "A maximum quantity for operationplans"
 msgstr "Una quantità minima per i piani operativi"
 
-#: input/models.py:184
-#: input/models.py:352
-#: input/models.py:386
-#: input/views.py:376
-#: input/views.py:628
+#: input/models.py:175 input/models.py:344 input/models.py:378
+#: input/views.py:420 input/views.py:645
 msgid "cost"
 msgstr "costo"
 
-#: input/models.py:185
+#: input/models.py:176
 msgid "Cost per operationplan unit"
 msgstr "Costo per unità di piano operativo"
 
-#: input/models.py:186
-#: input/models.py:350
-#: input/views.py:620
+#: input/models.py:177 input/models.py:342 input/views.py:637
 msgid "duration"
 msgstr "durata"
 
-#: input/models.py:187
+#: input/models.py:178
 msgid "A fixed duration for the operation"
 msgstr "Una durata fissa per l'operazione"
 
-#: input/models.py:188
+#: input/models.py:179
 msgid "duration per unit"
 msgstr "durata per unità"
 
-#: input/models.py:189
+#: input/models.py:180
 msgid "A variable duration for the operation"
 msgstr "Una durata variabile per l'operazione"
 
-#: input/models.py:190
-#: input/models.py:447
-#: input/models.py:486
-#: input/views.py:469
-#: input/views.py:495
-#: input/views.py:629
+#: input/models.py:181 input/models.py:439 input/models.py:478
+#: input/views.py:513 input/views.py:539 input/views.py:646
 msgid "search mode"
 msgstr "metodo di ricerca"
 
-#: input/models.py:192
-#: input/models.py:449
-#: input/models.py:488
+#: input/models.py:183 input/models.py:441 input/models.py:480
 msgid "Method to select prefered alternate"
 msgstr "Metodo di selezione delle alternative preferite"
 
-#: input/models.py:214
-#: input/models.py:221
-#: input/models.py:424
-#: input/models.py:465
-#: input/models.py:505
-#: input/views.py:116
-#: input/views.py:441
-#: input/views.py:460
-#: input/views.py:486
-#: input/views.py:546
-#: input/views.py:646
-#: input/views.py:667
-#: output/models.py:30
-#: output/views/buffer.py:170
-#: output/views/constraint.py:34
-#: output/views/operation.py:47
-#: output/views/operation.py:136
-#: output/views/pegging.py:50
-#: output/views/pegging.py:226
-#: output/views/pegging.py:311
-#: output/views/pegging.py:377
-#: output/views/resource.py:182
+#: input/models.py:205 input/models.py:213 input/models.py:416
+#: input/models.py:457 input/models.py:497 input/views.py:112
+#: input/views.py:485 input/views.py:504 input/views.py:530 input/views.py:663
+#: input/views.py:684 output/models.py:30 output/views/buffer.py:166
+#: output/views/constraint.py:34 output/views/operation.py:42
+#: output/views/operation.py:133 output/views/pegging.py:50
+#: output/views/pegging.py:226 output/views/pegging.py:311
+#: output/views/pegging.py:377 output/views/resource.py:177
 #: templates/output/pegging.xml:13
 msgid "operation"
 msgstr "operazione"
 
-#: input/models.py:215
+#: input/models.py:206
 msgid "operations"
 msgstr "operazioni"
 
-#: input/models.py:224
-#: input/models.py:237
-#: input/views.py:647
+#: input/models.py:216 input/models.py:229 input/views.py:664
 msgid "suboperation"
 msgstr "sotto operazioni"
 
-#: input/models.py:226
-#: input/models.py:435
-#: input/models.py:468
-#: input/views.py:463
-#: input/views.py:490
-#: input/views.py:649
+#: input/models.py:218 input/models.py:427 input/models.py:460
+#: input/views.py:507 input/views.py:534 input/views.py:666
 msgid "effective start"
 msgstr "inizo effettivo"
 
-#: input/models.py:227
-#: input/models.py:438
-#: input/models.py:471
-#: input/views.py:464
-#: input/views.py:491
-#: input/views.py:650
+#: input/models.py:219 input/models.py:430 input/models.py:463
+#: input/views.py:508 input/views.py:535 input/views.py:667
 msgid "effective end"
 msgstr "fine effettiva"
 
-#: input/models.py:238
+#: input/models.py:230
 msgid "suboperations"
 msgstr "sotto operazioni"
 
-#: input/models.py:244
-#: input/models.py:369
+#: input/models.py:236 input/models.py:361
 msgid "Default"
 msgstr "Default"
 
-#: input/models.py:245
-#: input/models.py:370
+#: input/models.py:237 input/models.py:362
 msgid "Infinite"
 msgstr "Infinito"
 
-#: input/models.py:246
+#: input/models.py:238
 msgid "Procure"
 msgstr "Fornisci"
 
-#: input/models.py:257
-#: input/views.py:329
-#: output/models.py:133
-#: output/views/buffer.py:173
+#: input/models.py:249 input/views.py:373 output/models.py:133
+#: output/views/buffer.py:169
 msgid "onhand"
 msgstr "disponibilità in stock"
 
-#: input/models.py:259
+#: input/models.py:251
 msgid "current inventory"
 msgstr "scorte attuali"
 
-#: input/models.py:260
-#: input/views.py:332
+#: input/models.py:252 input/views.py:376
 msgid "minimum"
 msgstr "minimo"
 
-#: input/models.py:262
+#: input/models.py:254
 msgid "Safety stock"
 msgstr ""
 
-#: input/models.py:263
-#: input/views.py:333
+#: input/models.py:255 input/views.py:377
 msgid "minimum calendar"
 msgstr ""
 
-#: input/models.py:265
+#: input/models.py:257
 msgid "Calendar storing a time-dependent safety stock profile"
 msgstr ""
 
-#: input/models.py:266
-#: input/views.py:334
+#: input/models.py:258 input/views.py:378
 msgid "producing"
 msgstr "in produzione"
 
-#: input/models.py:268
+#: input/models.py:260
 msgid "Operation to replenish the buffer"
 msgstr "Operazione per rifornire il buffer"
 
-#: input/models.py:269
-#: input/views.py:335
+#: input/models.py:261 input/views.py:379
 msgid "carrying cost"
 msgstr "costo di matenimento"
 
-#: input/models.py:271
-msgid "Cost of holding inventory in this buffer, expressed as an annual percentage of the item price."
-msgstr "Costo di mantenimento delle scorte in questo buffer, espresso come percentuale annuale del prezzo dell'articolo."
+#: input/models.py:263
+msgid ""
+"Cost of holding inventory in this buffer, expressed as an annual percentage "
+"of the item price."
+msgstr ""
+"Costo di mantenimento delle scorte in questo buffer, espresso come "
+"percentuale annuale del prezzo dell'articolo."
 
-#: input/models.py:273
+#: input/models.py:265
 msgid "leadtime"
 msgstr "lead time"
 
-#: input/models.py:275
+#: input/models.py:267
 msgid "Leadtime for supplier of a procure buffer"
 msgstr "Lead time per il fornitore di un buffer di fornitura"
 
-#: input/models.py:276
-#: input/views.py:622
+#: input/models.py:268 input/views.py:639
 msgid "fence"
 msgstr "limite"
 
-#: input/models.py:278
+#: input/models.py:270
 msgid "Frozen fence for creating new procurements"
 msgstr "Limite per la creazione di nuove forniture"
 
-#: input/models.py:279
+#: input/models.py:271
 msgid "min_inventory"
 msgstr "scorta minima"
 
-#: input/models.py:281
+#: input/models.py:273
 msgid "Inventory level that triggers replenishment of a procure buffer"
 msgstr "Livello di scorta che avvia il rifornimento di un buffer di fornitura"
 
-#: input/models.py:282
+#: input/models.py:274
 msgid "max_inventory"
 msgstr "scorta massima"
 
-#: input/models.py:283
+#: input/models.py:275
 msgid "Inventory level to which a procure buffer is replenished"
 msgstr "Livello di scorta al quale un buffer di fornitura è rifornito"
 
-#: input/models.py:284
+#: input/models.py:276
 msgid "min_interval"
 msgstr "intervallo minimo"
 
-#: input/models.py:286
+#: input/models.py:278
 msgid "Minimum time interval between replenishments of a procure buffer"
 msgstr "Intervallo minimo tra i rifornimenti di un buffer di fornitura"
 
-#: input/models.py:287
+#: input/models.py:279
 msgid "max_interval"
 msgstr "intervallo massimo"
 
-#: input/models.py:289
+#: input/models.py:281
 msgid "Maximum time interval between replenishments of a procure buffer"
 msgstr "Massimo intervallo tra i rifornimenti di un buffer di fornitura"
 
-#: input/models.py:290
+#: input/models.py:282
 msgid "size_minimum"
 msgstr "grandezza minima"
 
-#: input/models.py:292
+#: input/models.py:284
 msgid "Minimum size of replenishments of a procure buffer"
 msgstr "Grandezza minima dei rifornimenti di un buffer di fornitura"
 
-#: input/models.py:293
+#: input/models.py:285
 msgid "size_multiple"
 msgstr "grandezza multipla"
 
-#: input/models.py:295
+#: input/models.py:287
 msgid "Replenishments of a procure buffer are a multiple of this quantity"
-msgstr "I rifornimenti di un buffer di fornitura sono dei multipli di questa quantità"
+msgstr ""
+"I rifornimenti di un buffer di fornitura sono dei multipli di questa quantità"
 
-#: input/models.py:296
+#: input/models.py:288
 msgid "size_maximum"
 msgstr "grandezza massima"
 
-#: input/models.py:297
+#: input/models.py:289
 msgid "Maximum size of replenishments of a procure buffer"
 msgstr "Grandezza massima dei rifornimenti di un buffer di fornitura"
 
-#: input/models.py:320
-#: input/models.py:426
-#: input/views.py:94
-#: input/views.py:487
-#: output/models.py:129
-#: output/models.py:175
-#: output/views/buffer.py:47
-#: output/views/buffer.py:169
+#: input/models.py:312 input/models.py:418 input/views.py:90
+#: input/views.py:531 output/models.py:129 output/models.py:175
+#: output/views/buffer.py:42 output/views/buffer.py:165
 #: output/views/pegging.py:51
 msgid "buffer"
 msgstr "buffer"
 
-#: input/models.py:321
+#: input/models.py:313
 msgid "buffers"
 msgstr "buffers"
 
-#: input/models.py:334
-#: input/models.py:344
-#: input/models.py:390
-#: input/views.py:378
-#: templates/setupmatrixcontext.html:3
+#: input/models.py:326 input/models.py:336 input/models.py:382
+#: input/views.py:422 templates/setupmatrixcontext.html:3
 msgid "setup matrix"
 msgstr "Matrice di setup"
 
-#: input/models.py:335
+#: input/models.py:327
 msgid "setup matrices"
 msgstr "Matrici di setup"
 
-#: input/models.py:346
+#: input/models.py:338
 msgid "from setup"
 msgstr "da setup"
 
-#: input/models.py:347
+#: input/models.py:339
 msgid "Name of the old setup (wildcard characters are supported)"
 msgstr "Nome del vecchio setup (caratteri wildcard non sono supportati)"
 
-#: input/models.py:348
+#: input/models.py:340
 msgid "to setup"
 msgstr "al setup"
 
-#: input/models.py:349
+#: input/models.py:341
 msgid "Name of the new setup (wildcard characters are supported)"
 msgstr "Nome del nuovo setuo (caratteri wildcard non sono supportati)"
 
-#: input/models.py:351
+#: input/models.py:343
 msgid "Duration of the changeover"
 msgstr "Durata della conversione"
 
-#: input/models.py:353
+#: input/models.py:345
 msgid "Cost of the conversion"
 msgstr "Costo della conversione"
 
-#: input/models.py:362
+#: input/models.py:354
 msgid "setup matrix rule"
 msgstr "Regola della matrice di setup"
 
-#: input/models.py:363
+#: input/models.py:355
 msgid "setup matrix rules"
 msgstr "Regole delle matrici di setup"
 
-#: input/models.py:378
-#: input/views.py:374
+#: input/models.py:370 input/views.py:418
 msgid "maximum"
 msgstr "massimo"
 
-#: input/models.py:380
+#: input/models.py:372
 msgid "Size of the resource"
 msgstr ""
 
-#: input/models.py:381
-#: input/views.py:375
+#: input/models.py:373 input/views.py:419
 msgid "maximum calendar"
 msgstr ""
 
-#: input/models.py:383
+#: input/models.py:375
 msgid "Calendar defining the resource size varying over time"
 msgstr ""
 
-#: input/models.py:387
+#: input/models.py:379
 msgid "Cost for using 1 unit of the resource for 1 hour"
 msgstr "Costo di utilizzo di 1 unità della risorsa per 1 ora"
 
-#: input/models.py:388
+#: input/models.py:380
 msgid "max early"
 msgstr "massimo anticipo"
 
-#: input/models.py:389
+#: input/models.py:381
 msgid "Time window before the ask date where we look for available capacity"
-msgstr "Finestra di tempo prima della data richiesta liddove si ricerca la capacità disponibile"
+msgstr ""
+"Finestra di tempo prima della data richiesta liddove si ricerca la capacità "
+"disponibile"
 
-#: input/models.py:392
+#: input/models.py:384
 msgid "Setup matrix defining the conversion time and cost"
 msgstr "Matrice di setup che difinisce il tempo ed il costo della conversione"
 
-#: input/models.py:393
-#: input/models.py:483
-#: input/views.py:379
-#: input/views.py:468
-#: output/models.py:94
-#: output/models.py:114
-#: output/views/resource.py:62
-#: output/views/resource.py:186
-#: templates/output/resource.xml:12
+#: input/models.py:385 input/models.py:475 input/views.py:423
+#: input/views.py:512 output/models.py:94 output/models.py:114
+#: output/views/resource.py:53 output/views/resource.py:181
+#: templates/output/resource.html:76
 msgid "setup"
 msgstr "setup"
 
-#: input/models.py:394
+#: input/models.py:386
 msgid "Setup of the resource at the start of the plan"
 msgstr "Setup della risorsa all'inizio del piano"
 
-#: input/models.py:410
-#: input/models.py:466
-#: input/views.py:105
-#: input/views.py:461
-#: output/models.py:90
-#: output/models.py:109
-#: output/views/pegging.py:53
-#: output/views/resource.py:54
-#: output/views/resource.py:181
+#: input/models.py:402 input/models.py:458 input/views.py:101
+#: input/views.py:505 output/models.py:90 output/models.py:109
+#: output/views/pegging.py:53 output/views/resource.py:45
+#: output/views/resource.py:176
 msgid "resource"
 msgstr "risorsa"
 
-#: input/models.py:411
+#: input/models.py:403
 msgid "resources"
 msgstr "risorse"
 
-#: input/models.py:418
+#: input/models.py:410
 msgid "Start"
 msgstr "Inizio"
 
-#: input/models.py:419
+#: input/models.py:411
 msgid "End"
 msgstr "Fine"
 
-#: input/models.py:428
-#: input/models.py:467
-#: input/models.py:507
-#: input/models.py:543
-#: input/models.py:721
-#: input/views.py:462
-#: input/views.py:489
-#: input/views.py:518
-#: input/views.py:670
-#: output/models.py:31
-#: output/models.py:110
-#: output/models.py:131
-#: output/views/buffer.py:171
-#: output/views/demand.py:195
-#: output/views/operation.py:137
-#: output/views/pegging.py:56
-#: output/views/pegging.py:229
-#: output/views/pegging.py:314
-#: output/views/pegging.py:380
-#: output/views/resource.py:185
+#: input/models.py:420 input/models.py:459 input/models.py:499
+#: input/models.py:535 input/views.py:506 input/views.py:533
+#: input/views.py:562 input/views.py:687 output/models.py:31
+#: output/models.py:110 output/models.py:131 output/views/buffer.py:167
+#: output/views/demand.py:173 output/views/operation.py:134
+#: output/views/pegging.py:56 output/views/pegging.py:229
+#: output/views/pegging.py:314 output/views/pegging.py:380
+#: output/views/resource.py:180
 msgid "quantity"
 msgstr "quantità"
 
-#: input/models.py:430
+#: input/models.py:422
 msgid "Quantity to consume or produce per operationplan unit"
 msgstr "Quantità da consuma o produrre per unità di piano operativo"
 
-#: input/models.py:433
+#: input/models.py:425
 msgid "Consume/produce material at the start or the end of the operationplan"
-msgstr "Consuma/produce materiale all'inizio oppure alla fine del piano operativo"
+msgstr ""
+"Consuma/produce materiale all'inizio oppure alla fine del piano operativo"
 
-#: input/models.py:436
-#: input/models.py:469
+#: input/models.py:428 input/models.py:461
 msgid "Validity start date"
 msgstr "Validità della data d'inizio"
 
-#: input/models.py:439
-#: input/models.py:472
+#: input/models.py:431 input/models.py:464
 msgid "Validity end date"
 msgstr "Validità della data di fine"
 
-#: input/models.py:442
+#: input/models.py:434
 msgid "Optional name of this flow"
 msgstr "Nome opzionale di questo flusso"
 
-#: input/models.py:444
+#: input/models.py:436
 msgid "Puts the flow in a group of alternate flows"
 msgstr "Inserisci il flusso in un gruppo di flussi alternativi"
 
-#: input/models.py:446
+#: input/models.py:438
 msgid "Priority of this flow in a group of alternates"
 msgstr "Priorità di questo flusso in un gruppo di alternativi"
 
-#: input/models.py:458
+#: input/models.py:450
 msgid "flow"
 msgstr "flusso"
 
-#: input/models.py:459
+#: input/models.py:451
 msgid "flows"
 msgstr "flussi"
 
-#: input/models.py:475
+#: input/models.py:467
 msgid "Optional name of this load"
 msgstr "Nome opzionale per questo carico"
 
-#: input/models.py:478
+#: input/models.py:470
 msgid "Puts the load in a group of alternate loads"
 msgstr "Inserisci il carico in un gruppo di carichi alternativi"
 
-#: input/models.py:481
+#: input/models.py:473
 msgid "Priority of this load in a group of alternates"
 msgstr "Priorità di questo carico in un gruppo di alternativi"
 
-#: input/models.py:484
+#: input/models.py:476
 msgid "Setup required on the resource for this operation"
 msgstr "Setup richiesto sulla risorsa per questa oerazione"
 
-#: input/models.py:497
-#: output/models.py:95
-#: output/views/resource.py:63
-#: templates/output/resource.xml:15
+#: input/models.py:489 output/models.py:95 output/views/resource.py:54
+#: templates/output/resource.html:77
 msgid "load"
 msgstr "carico"
 
-#: input/models.py:498
+#: input/models.py:490
 msgid "loads"
 msgstr "carichi"
 
-#: input/models.py:504
+#: input/models.py:496
 msgid "Unique identifier of an operationplan"
 msgstr "Identificativo unico del piano operativo"
 
-#: input/models.py:511
-#: input/views.py:671
-#: output/models.py:35
-#: output/views/buffer.py:174
-#: output/views/operation.py:140
-#: output/views/resource.py:187
+#: input/models.py:503 input/views.py:688 output/models.py:35
+#: output/views/buffer.py:170 output/views/operation.py:137
+#: output/views/resource.py:182
 msgid "locked"
 msgstr "bloccato"
 
-#: input/models.py:512
+#: input/models.py:504
 msgid "Prevent or allow changes"
 msgstr "Previeni o permetti le variazioni"
 
-#: input/models.py:520
-#: output/models.py:44
-#: output/models.py:113
-#: output/models.py:130
-#: output/models.py:155
-#: output/views/buffer.py:175
-#: output/views/demand.py:199
-#: output/views/operation.py:135
-#: output/views/resource.py:189
+#: input/models.py:512 output/models.py:44 output/models.py:113
+#: output/models.py:130 output/models.py:155 output/views/buffer.py:171
+#: output/views/demand.py:177 output/views/operation.py:132
+#: output/views/resource.py:184
 msgid "operationplan"
 msgstr "piano operativo"
 
-#: input/models.py:521
-#: output/models.py:45
+#: input/models.py:513 output/models.py:45
 msgid "operationplans"
 msgstr "piani operativi"
 
-#: input/models.py:538
-#: input/views.py:517
-#: output/models.py:151
+#: input/models.py:530 input/views.py:561 output/models.py:151
 msgid "due"
 msgstr "scadenza"
 
-#: input/models.py:538
+#: input/models.py:530
 msgid "Due date of the demand"
 msgstr "Data di scadenza dell'ordine"
 
-#: input/models.py:542
-#: input/models.py:571
+#: input/models.py:534
 msgid "Operation used to satisfy this demand"
 msgstr "Operazione utilizzata per soddisfare l'ordine"
 
-#: input/models.py:545
+#: input/models.py:537
 msgid "Priority of the demand (lower numbers indicate more important demands)"
 msgstr ""
 
-#: input/models.py:546
-#: input/models.py:573
-#: input/views.py:523
-#: input/views.py:549
+#: input/models.py:538 input/views.py:567
 msgid "minimum shipment"
 msgstr "spedizione minima"
 
-#: input/models.py:547
-#: input/models.py:574
+#: input/models.py:539
 msgid "Minimum shipment quantity when planning this demand"
 msgstr "Quantità minima di spedizione nel pianificare l'ordine"
 
-#: input/models.py:548
-#: input/models.py:575
-#: input/views.py:522
-#: input/views.py:548
+#: input/models.py:540 input/views.py:566
 msgid "maximum lateness"
 msgstr "Ritardo massimo"
 
-#: input/models.py:549
-#: input/models.py:576
+#: input/models.py:541
 msgid "Maximum lateness allowed when planning this demand"
 msgstr "Quantità massima di spedizione nel pianificare l'ordine"
 
-#: input/models.py:556
-#: input/views.py:61
-#: output/models.py:70
-#: output/models.py:148
-#: output/models.py:163
-#: output/models.py:169
-#: output/views/constraint.py:31
-#: output/views/constraint.py:78
-#: output/views/demand.py:192
-#: output/views/pegging.py:228
-#: output/views/pegging.py:313
-#: output/views/pegging.py:379
-#: templates/output/demand.xml:13
+#: input/models.py:548 input/views.py:57 output/models.py:70
+#: output/models.py:148 output/models.py:163 output/models.py:169
+#: output/views/constraint.py:31 output/views/constraint.py:79
+#: output/views/demand.py:46 output/views/demand.py:170
+#: output/views/pegging.py:228 output/views/pegging.py:313
+#: output/views/pegging.py:379 templates/output/demand.html:65
 msgid "demand"
 msgstr "ordine"
 
-#: input/models.py:557
-#: output/models.py:164
+#: input/models.py:549 output/models.py:164
 msgid "demands"
 msgstr "ordini"
 
-#: input/models.py:577
-#: input/views.py:550
-msgid "discrete"
-msgstr "discreto"
-
-#: input/models.py:577
-msgid "Round forecast numbers to integers"
-msgstr "Arrotonda i valori delle previsioni all'intero"
-
-#: input/models.py:710
-#: input/models.py:718
-#: output/models.py:194
-#: output/views/forecast.py:49
-msgid "forecast"
-msgstr "previsione"
-
-#: input/models.py:711
-msgid "forecasts"
-msgstr "previsioni"
-
-#: input/models.py:728
-msgid "forecast demand"
-msgstr "domanda previsionale"
-
-#: input/models.py:729
-msgid "forecast demands"
-msgstr "domande previsionali"
-
-#: input/views.py:60
-#: input/views.py:71
-#: input/views.py:82
-#: input/views.py:93
-#: input/views.py:104
-#: input/views.py:115
+#: input/views.py:56 input/views.py:67 input/views.py:78 input/views.py:89
+#: input/views.py:100 input/views.py:111
 #, python-format
 msgid "%(name)s - %(count)d match"
 msgid_plural "%(name)s - %(count)d matches"
 msgstr[0] ""
 msgstr[1] ""
 
-#: input/views.py:307
+#: input/views.py:351
 msgid "No availability calendar found"
 msgstr ""
 
-#: input/views.py:317
+#: input/views.py:361
 msgid "Buffer List"
 msgstr "Lista dei Buffer"
 
-#: input/views.py:345
+#: input/views.py:389
 msgid "Setup Matrix List"
 msgstr "Lista delle matrici di setup"
 
-#: input/views.py:361
+#: input/views.py:405
 msgid "Resource List"
 msgstr "Lista delle Risorse"
 
-#: input/views.py:377
+#: input/views.py:421
 msgid "maxearly"
 msgstr "massimo anticipo"
 
-#: input/views.py:389
+#: input/views.py:433
 msgid "Location List"
 msgstr "Lista delle localizzazioni"
 
-#: input/views.py:410
+#: input/views.py:454
 msgid "Customer List"
 msgstr "Lista dei Clienti"
 
-#: input/views.py:430
+#: input/views.py:474
 msgid "Item List"
 msgstr "Lista degli Articoli"
 
-#: input/views.py:453
+#: input/views.py:497
 msgid "Load List"
 msgstr "Lista dei Carichi"
 
-#: input/views.py:479
+#: input/views.py:523
 msgid "Flow List"
 msgstr "Lista dei Flussi"
 
-#: input/views.py:505
+#: input/views.py:549
 msgid "Demand List"
 msgstr "Lista degli Ordini"
 
-#: input/views.py:533
-msgid "Forecast List"
-msgstr "Lista delle Previsioni"
-
-#: input/views.py:560
+#: input/views.py:577
 msgid "Calendar List"
 msgstr "Lista dei calendari"
 
-#: input/views.py:579
+#: input/views.py:596
 msgid "Calendar Bucket List"
 msgstr ""
 
-#: input/views.py:608
+#: input/views.py:625
 msgid "Operation List"
 msgstr "Lista delle Operazioni"
 
-#: input/views.py:621
+#: input/views.py:638
 msgid "duration_per"
 msgstr ""
 
-#: input/views.py:639
+#: input/views.py:656
 msgid "Suboperation List"
 msgstr "Lista delle Sotto Operazioni"
 
-#: input/views.py:660
+#: input/views.py:677
 msgid "Operationplan List"
 msgstr "Lista del Piano Operativo"
 
-#: output/models.py:32
-#: output/models.py:93
-#: output/views/operation.py:141
-#: output/views/resource.py:61
-#: output/views/resource.py:188
-#: templates/output/resource.xml:9
+#: output/models.py:32 output/models.py:93 output/views/operation.py:138
+#: output/views/resource.py:52 output/views/resource.py:183
+#: templates/output/resource.html:75
 msgid "unavailable"
 msgstr "indisponibile"
 
-#: output/models.py:33
-#: output/models.py:91
-#: output/models.py:111
+#: output/models.py:33 output/models.py:91 output/models.py:111
 msgid "startdate"
 msgstr "data di inizio"
 
-#: output/models.py:34
-#: output/models.py:112
+#: output/models.py:34 output/models.py:112
 msgid "enddate"
 msgstr "data di fine"
 
-#: output/models.py:50
-#: output/models.py:71
-#: output/views/constraint.py:79
-#: output/views/problem.py:55
+#: output/models.py:50 output/models.py:71 output/views/constraint.py:80
+#: output/views/problem.py:56
 msgid "entity"
 msgstr "entità"
 
-#: output/models.py:56
-#: output/models.py:77
-#: output/views/constraint.py:85
-#: output/views/problem.py:61
+#: output/models.py:56 output/models.py:77 output/views/constraint.py:86
+#: output/views/problem.py:62
 msgid "weight"
 msgstr "importanza"
 
@@ -1935,8 +1531,7 @@ msgstr "vincolo"
 msgid "constraints"
 msgstr "vincoli"
 
-#: output/models.py:96
-#: templates/output/resource.xml:18
+#: output/models.py:96 templates/output/resource.html:78
 msgid "free"
 msgstr "libero"
 
@@ -1948,11 +1543,8 @@ msgstr "Piano di Carico"
 msgid "loadplans"
 msgstr "Piani di Carico"
 
-#: output/models.py:132
-#: output/views/buffer.py:172
-#: output/views/pegging.py:227
-#: output/views/pegging.py:312
-#: output/views/pegging.py:378
+#: output/models.py:132 output/views/buffer.py:168 output/views/pegging.py:227
+#: output/views/pegging.py:312 output/views/pegging.py:378
 msgid "date"
 msgstr "data"
 
@@ -1968,18 +1560,15 @@ msgstr "Piani dei Flussi"
 msgid "demand quantity"
 msgstr "Quantità dell'Ordine"
 
-#: output/models.py:153
-#: output/views/demand.py:196
+#: output/models.py:153 output/views/demand.py:174
 msgid "planned quantity"
 msgstr "quantità pianificata"
 
-#: output/models.py:154
-#: output/views/demand.py:198
+#: output/models.py:154 output/views/demand.py:176
 msgid "planned date"
 msgstr "data pianificata"
 
-#: output/models.py:170
-#: output/views/pegging.py:49
+#: output/models.py:170 output/views/pegging.py:49
 msgid "depth"
 msgstr "profondità"
 
@@ -2015,6 +1604,10 @@ msgstr "pegging dell'ordine"
 msgid "demand peggings"
 msgstr "peggings degli ordini"
 
+#: output/models.py:194
+msgid "forecast"
+msgstr "previsione"
+
 #: output/models.py:197
 msgid "total quantity"
 msgstr "quantità totale"
@@ -2035,43 +1628,34 @@ msgstr "piano previsionale"
 msgid "forecast plans"
 msgstr "piani previsionali"
 
-#: output/views/buffer.py:43
-#: templates/admin/base_site_nav.html:16
+#: output/views/buffer.py:38 templates/admin/base_site_nav.html:16
 #: templates/admin/index.html:50
 msgid "Inventory report"
 msgstr "Rapporto sulle scorte"
 
-#: output/views/buffer.py:53
-#: templates/output/buffer.xml:7
-#: templates/output/buffer.xml.py:19
+#: output/views/buffer.py:48 templates/output/buffer.html:94
 msgid "start inventory"
 msgstr "livello iniziale di scorte"
 
-#: output/views/buffer.py:54
-#: templates/output/buffer.xml:13
+#: output/views/buffer.py:49 templates/output/buffer.html:73
 msgid "produced"
 msgstr "prodotto"
 
-#: output/views/buffer.py:55
-#: templates/output/buffer.xml:16
+#: output/views/buffer.py:50 templates/output/buffer.html:83
 msgid "consumed"
 msgstr "consumato"
 
-#: output/views/buffer.py:56
+#: output/views/buffer.py:51
 msgid "end inventory"
 msgstr "livello di scorte finale"
 
-#: output/views/buffer.py:64
-#: output/views/demand.py:63
-#: output/views/forecast.py:98
-#: output/views/operation.py:63
-#: output/views/resource.py:73
+#: output/views/buffer.py:59 output/views/demand.py:56
+#: output/views/operation.py:58 output/views/resource.py:64
 msgid "plan"
 msgstr "piano"
 
-#: output/views/buffer.py:161
-#: templates/admin/base_site_nav.html:23
-#: templates/admin/index.html:78
+#: output/views/buffer.py:156 templates/admin/base_site_nav.html:22
+#: templates/admin/index.html:74
 msgid "Inventory detail report"
 msgstr "Rapporto dettagliato sulle scorte"
 
@@ -2083,8 +1667,7 @@ msgstr "materiale"
 msgid "capacity"
 msgstr "capacità"
 
-#: output/views/constraint.py:38
-#: templates/output/resource.xml:21
+#: output/views/constraint.py:38 templates/output/resource.html:79
 msgid "overload"
 msgstr "sovraccarico"
 
@@ -2136,92 +1719,55 @@ msgstr "prima del corrente"
 msgid "Constraint Report"
 msgstr "Rapporto sui Vincoli"
 
-#: output/views/demand.py:43
-#: templates/admin/base_site_nav.html:18
+#: output/views/demand.py:38 templates/admin/base_site_nav.html:18
 #: templates/admin/index.html:58
 msgid "Demand report"
 msgstr "Rapporto sugli ordini"
 
-#: output/views/demand.py:51
-#: output/views/forecast.py:57
-msgid "net forecast"
-msgstr "previsione netta"
+#: output/views/demand.py:47 templates/output/demand.html:75
+msgid "supply"
+msgstr "fornitura"
 
-#: output/views/demand.py:52
-#: output/views/forecast.py:56
-#: templates/output/forecast.xml:15
-msgid "orders"
-msgstr "ordini"
-
-#: output/views/demand.py:53
-msgid "total demand"
-msgstr "domanda totale"
-
-#: output/views/demand.py:54
-msgid "total supply"
-msgstr "fornitura totale"
-
-#: output/views/demand.py:55
-#: templates/output/demand.xml:6
-#: templates/output/demand.xml.py:19
+#: output/views/demand.py:48 templates/output/demand.html:86
 msgid "backlog"
 msgstr "backlog"
 
-#: output/views/demand.py:186
+#: output/views/demand.py:163
 msgid "Demand plan detail"
 msgstr "Dettaglio del piano della domanda"
 
-#: output/views/demand.py:197
+#: output/views/demand.py:175
 msgid "due date"
 msgstr "due date"
 
-#: output/views/forecast.py:44
-msgid "Forecast Report"
-msgstr "Rapporto Previsionale"
-
-#: output/views/forecast.py:55
-#: templates/output/forecast.xml:9
-msgid "total forecast"
-msgstr "previsione totale"
-
-#: output/views/forecast.py:58
-#: templates/output/forecast.xml:12
-msgid "planned net forecast"
-msgstr "previsione netta pianificata"
-
-#: output/views/kpi.py:32
-#: templates/admin/base_site_nav.html:27
-#: templates/admin/index.html:86
+#: output/views/kpi.py:32 templates/admin/base_site_nav.html:26
+#: templates/admin/index.html:82
 msgid "Performance Indicators"
 msgstr "Indicatori di Prestazione"
 
-#: output/views/operation.py:43
-#: templates/admin/base_site_nav.html:20
-#: templates/admin/index.html:66
+#: output/views/operation.py:38 templates/admin/base_site_nav.html:19
+#: templates/admin/index.html:62
 msgid "Operation report"
 msgstr "Rapporto sulle operazioni"
 
-#: output/views/operation.py:52
+#: output/views/operation.py:47
 msgid "locked starts"
 msgstr "il blocco comincia"
 
-#: output/views/operation.py:53
-#: templates/output/operation.xml:9
+#: output/views/operation.py:48 templates/output/operation.html:73
 msgid "total starts"
 msgstr "inizio del totale"
 
-#: output/views/operation.py:54
+#: output/views/operation.py:49
 msgid "locked ends"
 msgstr "il blocco finisce"
 
-#: output/views/operation.py:55
-#: templates/output/operation.xml:12
+#: output/views/operation.py:50 templates/output/operation.html:74
 msgid "total ends"
 msgstr "fine del totale"
 
-#: output/views/operation.py:129
-#: templates/admin/base_site_nav.html:21
-#: templates/admin/index.html:70
+#: output/views/operation.py:124 templates/admin/base_site_nav.html:20
+#: templates/admin/index.html:66
 msgid "Operation detail report"
 msgstr "Rapporto sui dettagli delle operazioni"
 
@@ -2233,14 +1779,12 @@ msgstr "Piano della Domanda"
 msgid "percent_used"
 msgstr ""
 
-#: output/views/pegging.py:220
-#: output/views/pegging.py:305
+#: output/views/pegging.py:220 output/views/pegging.py:305
 #: output/views/pegging.py:371
 msgid "Pegging report"
 msgstr "Rapporto sul Pegging"
 
-#: output/views/pegging.py:230
-#: output/views/pegging.py:315
+#: output/views/pegging.py:230 output/views/pegging.py:315
 #: output/views/pegging.py:381
 msgid "end item"
 msgstr ""
@@ -2249,26 +1793,22 @@ msgstr ""
 msgid "Problem Report"
 msgstr "Rapporto sui Problemi"
 
-#: output/views/resource.py:49
-#: templates/admin/base_site_nav.html:17
+#: output/views/resource.py:40 templates/admin/base_site_nav.html:17
 #: templates/admin/index.html:54
 msgid "Resource report"
 msgstr "Rapporto sulle risorse"
 
-#: output/views/resource.py:56
-#: output/views/resource.py:64
+#: output/views/resource.py:47 output/views/resource.py:55
 msgid "utilization %"
 msgstr "utilizzazione %"
 
-#: output/views/resource.py:173
-#: templates/admin/base_site_nav.html:22
-#: templates/admin/index.html:74
+#: output/views/resource.py:167 templates/admin/base_site_nav.html:21
+#: templates/admin/index.html:70
 msgid "Resource detail report"
 msgstr "Rapporto sui dettagli delle risorse"
 
 # Translation included with django
-#: templates/404.html:4
-#: templates/404.html.py:8
+#: templates/404.html:4 templates/404.html.py:8
 msgid "Page not found"
 msgstr ""
 
@@ -2289,132 +1829,83 @@ msgstr ""
 
 # Translation included with django
 #: templates/500.html:8
-msgid "There's been an error. It's been reported to the site administrators via e-mail and should be fixed shortly. Thanks for your patience."
+msgid ""
+"There's been an error. It's been reported to the site administrators via e-"
+"mail and should be fixed shortly. Thanks for your patience."
 msgstr ""
 
-#: templates/bucketcontext.html:3
-#: templates/buckettabs.html:4
-#: templates/buffercontext.html:3
-#: templates/buffertabs.html:4
-#: templates/calendarcontext.html:3
-#: templates/calendartabs.html:4
-#: templates/customercontext.html:3
-#: templates/customertabs.html:4
-#: templates/demandcontext.html:3
-#: templates/demandtabs.html:4
-#: templates/flowcontext.html:3
-#: templates/flowtabs.html:4
-#: templates/forecastcontext.html:3
-#: templates/forecasttabs.html:4
-#: templates/groupcontext.html:3
-#: templates/grouptabs.html:4
-#: templates/itemcontext.html:3
-#: templates/itemtabs.html:4
-#: templates/loadcontext.html:3
-#: templates/loadtabs.html:4
-#: templates/locationcontext.html:3
-#: templates/locationtabs.html:4
-#: templates/operationcontext.html:3
-#: templates/operationtabs.html:4
-#: templates/resourcecontext.html:3
-#: templates/resourcetabs.html:4
-#: templates/setupmatrixtabs.html:4
-#: templates/admin/change_form.html:15
+#: templates/bucketcontext.html:3 templates/buckettabs.html:4
+#: templates/buffercontext.html:3 templates/buffertabs.html:4
+#: templates/calendarcontext.html:3 templates/calendartabs.html:4
+#: templates/customercontext.html:3 templates/customertabs.html:4
+#: templates/demandcontext.html:3 templates/demandtabs.html:4
+#: templates/flowcontext.html:3 templates/flowtabs.html:4
+#: templates/groupcontext.html:3 templates/grouptabs.html:4
+#: templates/itemcontext.html:3 templates/itemtabs.html:4
+#: templates/loadcontext.html:3 templates/loadtabs.html:4
+#: templates/locationcontext.html:3 templates/locationtabs.html:4
+#: templates/operationcontext.html:3 templates/operationtabs.html:4
+#: templates/parametercontext.html:3 templates/parametertabs.html:4
+#: templates/resourcecontext.html:3 templates/resourcetabs.html:4
+#: templates/setupmatrixtabs.html:4 templates/admin/change_form.html:15
 msgid "Edit"
 msgstr ""
 
 # Translation included with django
-#: templates/bucketcontext.html:5
-#: templates/buckettabs.html:6
-#: templates/buffercontext.html:10
-#: templates/buffertabs.html:11
-#: templates/calendarcontext.html:5
-#: templates/calendartabs.html:6
-#: templates/customercontext.html:5
-#: templates/customertabs.html:6
-#: templates/demandcontext.html:7
-#: templates/demandtabs.html:8
-#: templates/flowcontext.html:5
-#: templates/flowtabs.html:6
-#: templates/forecastcontext.html:7
-#: templates/forecasttabs.html:8
-#: templates/grouptabs.html:6
-#: templates/itemcontext.html:8
-#: templates/itemtabs.html:9
-#: templates/loadcontext.html:5
-#: templates/loadtabs.html:6
-#: templates/locationcontext.html:6
-#: templates/locationtabs.html:6
-#: templates/operationcontext.html:10
-#: templates/operationtabs.html:11
-#: templates/resourcecontext.html:10
-#: templates/resourcetabs.html:11
-#: templates/setupmatrixcontext.html:5
+#: templates/bucketcontext.html:5 templates/buckettabs.html:6
+#: templates/buffercontext.html:10 templates/buffertabs.html:11
+#: templates/calendarcontext.html:5 templates/calendartabs.html:6
+#: templates/customercontext.html:5 templates/customertabs.html:6
+#: templates/demandcontext.html:7 templates/demandtabs.html:8
+#: templates/flowcontext.html:5 templates/flowtabs.html:6
+#: templates/grouptabs.html:6 templates/itemcontext.html:8
+#: templates/itemtabs.html:9 templates/loadcontext.html:5
+#: templates/loadtabs.html:6 templates/locationcontext.html:6
+#: templates/locationtabs.html:6 templates/operationcontext.html:10
+#: templates/operationtabs.html:11 templates/parametercontext.html:5
+#: templates/parametertabs.html:6 templates/resourcecontext.html:10
+#: templates/resourcetabs.html:11 templates/setupmatrixcontext.html:5
 #: templates/setupmatrixtabs.html:6
 msgid "History"
 msgstr ""
 
-#: templates/buffercontext.html:4
-#: templates/buffertabs.html:5
-#: templates/itemcontext.html:4
-#: templates/itemtabs.html:5
-#: templates/operationcontext.html:4
-#: templates/operationtabs.html:5
-#: templates/resourcecontext.html:5
-#: templates/resourcetabs.html:5
-#: templates/input/path.html:4
+#: templates/buffercontext.html:4 templates/buffertabs.html:5
+#: templates/itemcontext.html:4 templates/itemtabs.html:5
+#: templates/operationcontext.html:4 templates/operationtabs.html:5
+#: templates/resourcecontext.html:4 templates/resourcetabs.html:5
+#: templates/input/path.html:66
 msgid "Supply Path"
 msgstr "Percorso di Fornitura"
 
-#: templates/buffercontext.html:5
-#: templates/buffertabs.html:6
-#: templates/itemcontext.html:5
-#: templates/itemtabs.html:6
-#: templates/operationcontext.html:5
-#: templates/operationtabs.html:6
-#: templates/resourcecontext.html:4
-#: templates/resourcetabs.html:6
-#: templates/input/path.html:4
+#: templates/buffercontext.html:5 templates/buffertabs.html:6
+#: templates/itemcontext.html:5 templates/itemtabs.html:6
+#: templates/operationcontext.html:5 templates/operationtabs.html:6
+#: templates/resourcecontext.html:5 templates/resourcetabs.html:6
+#: templates/input/path.html:66
 msgid "Where Used"
 msgstr "Dove Utilizzato"
 
-#: templates/buffercontext.html:6
-#: templates/buffertabs.html:7
-#: templates/demandcontext.html:5
-#: templates/demandtabs.html:6
-#: templates/forecastcontext.html:4
-#: templates/forecasttabs.html:5
-#: templates/itemcontext.html:6
-#: templates/itemtabs.html:7
-#: templates/operationcontext.html:6
-#: templates/operationtabs.html:7
-#: templates/resourcecontext.html:6
-#: templates/resourcetabs.html:7
+#: templates/buffercontext.html:6 templates/buffertabs.html:7
+#: templates/demandcontext.html:5 templates/demandtabs.html:6
+#: templates/itemcontext.html:6 templates/itemtabs.html:7
+#: templates/operationcontext.html:6 templates/operationtabs.html:7
+#: templates/resourcecontext.html:6 templates/resourcetabs.html:7
 msgid "Plan"
 msgstr "Parametri"
 
-#: templates/buffercontext.html:7
-#: templates/buffertabs.html:8
-#: templates/operationcontext.html:7
-#: templates/operationtabs.html:8
-#: templates/resourcecontext.html:7
-#: templates/resourcetabs.html:8
+#: templates/buffercontext.html:7 templates/buffertabs.html:8
+#: templates/operationcontext.html:7 templates/operationtabs.html:8
+#: templates/resourcecontext.html:7 templates/resourcetabs.html:8
 msgid "Plan detail"
 msgstr "Dettaglio del piano"
 
-#: templates/buffercontext.html:8
-#: templates/buffertabs.html:9
-#: templates/operationcontext.html:8
-#: templates/operationtabs.html:9
-#: templates/resourcecontext.html:8
-#: templates/resourcetabs.html:9
+#: templates/buffercontext.html:8 templates/buffertabs.html:9
+#: templates/operationcontext.html:8 templates/operationtabs.html:9
+#: templates/resourcecontext.html:8 templates/resourcetabs.html:9
 msgid "Constrained demand"
 msgstr "Domanda vincolata"
 
-#: templates/demandcontext.html:4
-#: templates/demandtabs.html:5
-#: templates/forecastcontext.html:5
-#: templates/forecasttabs.html:6
+#: templates/demandcontext.html:4 templates/demandtabs.html:5
 msgid "Why short or late?"
 msgstr "Perche' parziale ed in ritardo?"
 
@@ -2423,161 +1914,164 @@ msgid "Edit availability"
 msgstr ""
 
 # Translation included with django
-#: templates/admin/base.html:24
-#: templates/admin/base_site_nav.html:45
+#: templates/admin/base.html:23 templates/admin/base_site_nav.html:44
 msgid "Log out"
 msgstr ""
 
-#: templates/admin/base_site_grid.html:55
-#: templates/admin/base_site_gridpivot.html:63
+#: templates/admin/base_site_grid.html:40
+#: templates/admin/base_site_gridpivot.html:49
+msgid "Error retrieving report data"
+msgstr ""
+
+#: templates/admin/base_site_grid.html:61
+#: templates/admin/base_site_gridpivot.html:69
 msgid "Filter"
 msgstr "Filtro"
 
 # Translation included with django
-#: templates/admin/base_site_grid.html:57
-#: templates/admin/base_site_gridpivot.html:65
-#: templates/common/comments.html:36
-#: templates/common/preferences.html:19
+#: templates/admin/base_site_grid.html:63
+#: templates/admin/base_site_gridpivot.html:71
+#: templates/common/comments.html:22 templates/common/preferences.html:19
 msgid "Save"
 msgstr ""
 
 # Translation included with django
-#: templates/admin/base_site_grid.html:58
-#: templates/admin/base_site_gridpivot.html:66
+#: templates/admin/base_site_grid.html:64
+#: templates/admin/base_site_gridpivot.html:72
 msgid "Undo"
 msgstr ""
 
 # Translation included with django
-#: templates/admin/base_site_grid.html:60
-#: templates/admin/index.html:35
-#: templates/admin/index.html.py:111
-#: templates/admin/index.html:118
+#: templates/admin/base_site_grid.html:66 templates/admin/index.html:35
+#: templates/admin/index.html.py:107 templates/admin/index.html:114
 msgid "Add"
 msgstr ""
 
-#: templates/admin/base_site_grid.html:61
+#: templates/admin/base_site_grid.html:67 templates/execute/execute.html:118
+#: templates/execute/execute.html.py:119 templates/execute/execute.html:120
+msgid "Copy"
+msgstr ""
+
+#: templates/admin/base_site_grid.html:68
 #: templates/admin/delete_confirmation.html:16
+#: templates/admin/object_history.html:27
 msgid "Delete"
 msgstr ""
 
-#: templates/admin/base_site_grid.html:62
-#: templates/admin/index.html:36
-#: templates/admin/index.html.py:112
-#: templates/admin/index.html:119
-msgid "Import"
-msgstr "Importa"
-
-#: templates/admin/base_site_grid.html:63
-#: templates/admin/base_site_gridpivot.html:68
+#: templates/admin/base_site_grid.html:69
+#: templates/admin/base_site_gridpivot.html:74
 msgid "Time"
 msgstr "Tempo"
 
-#: templates/admin/base_site_grid.html:64
-#: templates/admin/base_site_gridpivot.html:69
-#: templates/admin/index.html:38
-#: templates/admin/index.html.py:47
-#: templates/admin/index.html:51
-#: templates/admin/index.html.py:55
-#: templates/admin/index.html:59
-#: templates/admin/index.html.py:63
-#: templates/admin/index.html:67
-#: templates/admin/index.html.py:71
-#: templates/admin/index.html:75
-#: templates/admin/index.html.py:79
-#: templates/admin/index.html:83
-#: templates/admin/index.html.py:87
-#: templates/admin/index.html:102
-#: templates/admin/index.html.py:114
-#: templates/admin/index.html:121
+#: templates/admin/base_site_grid.html:70 templates/admin/index.html:36
+#: templates/admin/index.html.py:108 templates/admin/index.html:115
+msgid "Import"
+msgstr "Importa"
+
+#: templates/admin/base_site_grid.html:71
+#: templates/admin/base_site_gridpivot.html:75 templates/admin/index.html:38
+#: templates/admin/index.html.py:47 templates/admin/index.html:51
+#: templates/admin/index.html.py:55 templates/admin/index.html:59
+#: templates/admin/index.html.py:63 templates/admin/index.html:67
+#: templates/admin/index.html.py:71 templates/admin/index.html:75
+#: templates/admin/index.html.py:79 templates/admin/index.html:83
+#: templates/admin/index.html.py:98 templates/admin/index.html:110
+#: templates/admin/index.html.py:117
 msgid "Export"
 msgstr "Esporta"
 
-#: templates/admin/base_site_grid.html:71
-#: templates/admin/base_site_gridpivot.html:76
+#: templates/admin/base_site_grid.html:78
+#: templates/admin/base_site_gridpivot.html:82
 msgid "Time buckets"
 msgstr ""
 
-#: templates/admin/base_site_grid.html:73
-#: templates/admin/base_site_gridpivot.html:78
-msgid "Bucket"
+#: templates/admin/base_site_grid.html:80
+#: templates/admin/base_site_gridpivot.html:84
+msgid "Bucket size"
 msgstr ""
 
-#: templates/admin/base_site_nav.html:9
-#: templates/admin/index.html:31
+#: templates/admin/base_site_grid.html:84
+#: templates/admin/base_site_gridpivot.html:88
+msgid "from"
+msgstr ""
+
+#: templates/admin/base_site_grid.html:86
+#: templates/admin/base_site_gridpivot.html:90
+msgid "to"
+msgstr ""
+
+#: templates/admin/base_site_grid.html:93
+#: templates/admin/base_site_gridpivot.html:97
+msgid "months"
+msgstr "mese"
+
+#: templates/admin/base_site_grid.html:94
+#: templates/admin/base_site_gridpivot.html:98
+msgid "after plan current date"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:9 templates/admin/index.html:31
 msgid "Input"
 msgstr "Input"
 
-#: templates/admin/base_site_nav.html:14
-#: templates/admin/index.html:42
+#: templates/admin/base_site_nav.html:14 templates/admin/index.html:42
 msgid "Reports"
 msgstr "Rapporti"
 
-#: templates/admin/base_site_nav.html:19
-#: templates/admin/index.html:62
-msgid "Forecast report"
-msgstr "Rapporto sulle previsioni"
-
-#: templates/admin/base_site_nav.html:24
-#: templates/admin/index.html:82
+#: templates/admin/base_site_nav.html:23 templates/admin/index.html:78
 msgid "Demand detail report"
 msgstr ""
 
-#: templates/admin/base_site_nav.html:25
-#: templates/admin/index.html:46
+#: templates/admin/base_site_nav.html:24 templates/admin/index.html:46
 msgid "Problem report"
 msgstr "Rapporto sui problemi"
 
-#: templates/admin/base_site_nav.html:26
+#: templates/admin/base_site_nav.html:25
 msgid "Constraint report"
 msgstr "Rapporto sui vincoli"
 
-#: templates/admin/base_site_nav.html:30
-#: templates/admin/index.html:93
+#: templates/admin/base_site_nav.html:29 templates/admin/index.html:89
 msgid "Tools"
 msgstr "Tools"
 
-#: templates/admin/base_site_nav.html:33
-#: templates/admin/index.html:101
+#: templates/admin/base_site_nav.html:32 templates/admin/index.html:97
 msgid "Log"
 msgstr "Log"
 
-#: templates/admin/base_site_nav.html:36
-#: templates/admin/index.html:108
+#: templates/admin/base_site_nav.html:35 templates/admin/index.html:104
 msgid "Admin"
 msgstr "Amministrazione"
 
 # Translation included with django
-#: templates/admin/base_site_nav.html:43
-#: templates/admin/object_history.html:31
+#: templates/admin/base_site_nav.html:42
+#: templates/admin/object_history.html:17
 msgid "User"
 msgstr ""
 
-#: templates/admin/base_site_nav.html:46
+#: templates/admin/base_site_nav.html:45
 msgid "Preferences"
 msgstr "Preferenze"
 
 # Translation included with django
-#: templates/admin/base_site_nav.html:47
+#: templates/admin/base_site_nav.html:46
 msgid "Change password"
 msgstr ""
 
 # Translation included with django
-#: templates/admin/base_site_nav.html:48
-#: templates/admin/login.html:56
+#: templates/admin/base_site_nav.html:47 templates/admin/login.html:64
 msgid "Log in"
 msgstr ""
 
-#: templates/admin/base_site_nav.html:54
+#: templates/admin/base_site_nav.html:53
 msgid "Help"
 msgstr ""
 
-#: templates/admin/base_site_nav.html:55
+#: templates/admin/base_site_nav.html:54
 msgid "frePPLe website"
 msgstr ""
 
 # Translation included with django
-#: templates/admin/change_form.html:40
-#: templates/admin/login.html:31
+#: templates/admin/change_form.html:25 templates/admin/login.html:39
 msgid "Please correct the error below."
 msgid_plural "Please correct the errors below."
 msgstr[0] ""
@@ -2586,13 +2080,18 @@ msgstr[1] "Per favore correggere gli errori in basso"
 # Translation included with django
 #: templates/admin/delete_confirmation.html:19
 #, python-format
-msgid "Deleting the %(object_name)s '%(escaped_object)s' would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:"
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would result in deleting "
+"related objects, but your account doesn't have permission to delete the "
+"following types of objects:"
 msgstr ""
 
 # Translation included with django
 #: templates/admin/delete_confirmation.html:26
 #, python-format
-msgid "Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? All of the following related items will be deleted:"
+msgid ""
+"Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? "
+"All of the following related items will be deleted:"
 msgstr ""
 
 # Translation included with django
@@ -2601,26 +2100,26 @@ msgid "Yes, I'm sure"
 msgstr ""
 
 # Translation included with django
-#: templates/admin/index.html:128
+#: templates/admin/index.html:124
 msgid "My Actions"
 msgstr ""
 
 # Translation included with django
-#: templates/admin/index.html:131
+#: templates/admin/index.html:127
 msgid "None available"
 msgstr ""
 
-#: templates/admin/index.html:135
+#: templates/admin/index.html:131
 msgid "Unknown content"
 msgstr "Contenuto sconosciuto"
 
 # Translation included with django
-#: templates/admin/login.html:47
+#: templates/admin/login.html:55
 msgid "Username:"
 msgstr ""
 
 # Translation included with django
-#: templates/admin/login.html:51
+#: templates/admin/login.html:59
 msgid "Password:"
 msgstr ""
 
@@ -2629,248 +2128,282 @@ msgid "Change history"
 msgstr ""
 
 # Translation included with django
-#: templates/admin/object_history.html:30
+#: templates/admin/object_history.html:16
 msgid "Date/time"
 msgstr ""
 
-#: templates/admin/object_history.html:32
+#: templates/admin/object_history.html:18
+msgid "Action Type"
+msgstr ""
+
+#: templates/admin/object_history.html:19
 msgid "Action"
 msgstr ""
 
-# Translation included with django
-#: templates/admin/object_history.html:46
-msgid "This object doesn't have a change history. It probably wasn't added via this admin site."
+#: templates/admin/object_history.html:27
+msgid "Create"
 msgstr ""
 
-#: templates/execute/execute.html:38
+#: templates/admin/object_history.html:27
+msgid "Change"
+msgstr ""
+
+# Translation included with django
+#: templates/admin/object_history.html:34
+msgid ""
+"This object doesn't have a change history. It probably wasn't added via this "
+"admin site."
+msgstr ""
+
+#: templates/execute/execute.html:24 templates/execute/execute.html.py:73
+msgid "Cancel"
+msgstr ""
+
+#: templates/execute/execute.html:50 templates/execute/execute.html.py:73
+msgid "Run"
+msgstr ""
+
+#: templates/execute/execute.html:69
 msgid "Create a plan"
 msgstr ""
 
-#: templates/execute/execute.html:43
+#: templates/execute/execute.html:75
 msgid ""
-"<th scope=\"row\"><a>Run frePPLe</a></th>\n"
-"<td>Load frePPLe from the database...  <br/>\n"
+"\n"
+"Load frePPLe from the database...<br/>\n"
 "and create a plan in frePPLe...<br/>\n"
 "and export results into the database<br/>\n"
 "<br/>\n"
 "<b>Plan type</b>:<br/>"
 msgstr ""
 
-#: templates/execute/execute.html:50
+#: templates/execute/execute.html:82
 msgid ""
 "<b>Constrained plan</b><br/>\n"
-"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan respects the constraints enabled below.<br/>\n"
-"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In case of shortages the demand is planned late or short.<br/>"
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan respects the constraints enabled "
+"below.<br/>\n"
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In case of shortages the demand is planned "
+"late or short.<br/>"
 msgstr ""
 
-#: templates/execute/execute.html:54
+#: templates/execute/execute.html:86
 msgid ""
 "<b>Unconstrained plan</b><br/>\n"
-"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan shows material, capacity and operation problems<br/>\n"
-"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that prevent the demand from being planned in time.<br/>\n"
-"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The demand is always met completely and on time.<br/>"
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan shows material, capacity and "
+"operation problems<br/>\n"
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that prevent the demand from being planned in "
+"time.<br/>\n"
+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The demand is always met completely and on "
+"time.<br/>"
 msgstr ""
 
-#: templates/execute/execute.html:59
+#: templates/execute/execute.html:91
 msgid "Constraints"
 msgstr "Vincoli"
 
-#: templates/execute/execute.html:60
+#: templates/execute/execute.html:92
 msgid "Capacity: respect capacity limits"
 msgstr "Capacità: rispetto dei limiti di capacità"
 
-#: templates/execute/execute.html:61
+#: templates/execute/execute.html:93
 msgid "Material: respect procurement limits"
 msgstr "Materiale: rispetto dei limiti di fornitura"
 
-#: templates/execute/execute.html:62
+#: templates/execute/execute.html:94
 msgid "Lead time: do not plan in the past"
 msgstr "Lead Time: non si creano piani nel passato"
 
-#: templates/execute/execute.html:63
+#: templates/execute/execute.html:95
 msgid "Release fence: do not plan within the release time window"
-msgstr "Limite di rilascio: non si creano piani all'interno della finestra di rilascio"
+msgstr ""
+"Limite di rilascio: non si creano piani all'interno della finestra di "
+"rilascio"
 
-#: templates/execute/execute.html:65
-msgid "View latest log file"
+#: templates/execute/execute.html:97
+msgid "View log file"
 msgstr ""
 
-#: templates/execute/execute.html:66
-msgid "Run"
-msgstr ""
-
-#: templates/execute/execute.html:74
+#: templates/execute/execute.html:103
 msgid "Scenario management"
 msgstr ""
 
-#: templates/execute/execute.html:81
+#: templates/execute/execute.html:110
 msgid "last refresh"
 msgstr ""
 
-#: templates/execute/execute.html:89
-#: templates/execute/execute.html.py:90
-#: templates/execute/execute.html:91
-msgid "Copy"
-msgstr ""
-
-#: templates/execute/execute.html:90
+#: templates/execute/execute.html:119
 msgid "into selected scenarios"
 msgstr ""
 
-#: templates/execute/execute.html:94
-#: templates/execute/execute.html.py:96
+#: templates/execute/execute.html:123 templates/execute/execute.html.py:125
 msgid "Release"
 msgstr ""
 
-#: templates/execute/execute.html:95
+#: templates/execute/execute.html:124
 msgid "Release selected scenarios"
 msgstr ""
 
-#: templates/execute/execute.html:98
-#: templates/execute/execute.html.py:101
+#: templates/execute/execute.html:127 templates/execute/execute.html.py:130
 msgid "Update"
 msgstr ""
 
-#: templates/execute/execute.html:99
+#: templates/execute/execute.html:128
 msgid "Update description of selected scenarios"
 msgstr ""
 
-#: templates/execute/execute.html:109
+#: templates/execute/execute.html:138
 msgid "Database"
 msgstr "Database"
 
-#: templates/execute/execute.html:114
+#: templates/execute/execute.html:143
 msgid ""
 "<th scope=\"row\"><a>Erase</a></th>\n"
 "<td>Erase all data from the database.</td>\n"
 "<td><input id=\"erase\" type=\"submit\" value=\"Erase\" /></td>"
 msgstr ""
 
-#: templates/execute/execute.html:120
+#: templates/execute/execute.html:149
 msgid "Load a dataset"
 msgstr ""
 
-#: templates/execute/execute.html:121
+#: templates/execute/execute.html:150
 msgid "Load a dataset from a file in the database."
 msgstr ""
 
-#: templates/execute/execute.html:122
+#: templates/execute/execute.html:151
 msgid "Available datasets:"
 msgstr ""
 
-#: templates/execute/execute.html:128
+#: templates/execute/execute.html:157
 msgid "Load"
 msgstr ""
 
-#: templates/execute/execute.html:136
+#: templates/execute/execute.html:165
 msgid "Model generator"
 msgstr "Generatore del modello"
 
-#: templates/execute/execute.html:141
+#: templates/execute/execute.html:170
 msgid ""
 "<th scope=\"row\"><a>Create a model</a></th>\n"
 "<td>Create a sample model in the database.<br/>\n"
 "The parameters control the size and complexity.<br/>\n"
-"Number of end items: <input id=\"create0\" name=\"clusters\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
+"Number of end items: <input id=\"create0\" name=\"clusters\" type=\"text\" "
+"maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
 "<b>Demand:</b><br/>\n"
-"&nbsp;&nbsp;Monthly forecast per end item: <input id=\"create1\" name=\"fcst\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Demands per end item: <input id=\"create2\" name=\"demands\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Average delivery lead time: <input id=\"create3\" name=\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/> days<br/>\n"
+"&nbsp;&nbsp;Monthly forecast per end item: <input id=\"create1\" name=\"fcst"
+"\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil"
+"()\"/><br/>\n"
+"&nbsp;&nbsp;Demands per end item: <input id=\"create2\" name=\"demands\" "
+"type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil"
+"()\"/><br/>\n"
+"&nbsp;&nbsp;Average delivery lead time: <input id=\"create3\" name="
+"\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" "
+"onchange=\"calcUtil()\"/> days<br/>\n"
 "<b>Raw Materials:</b><br/>\n"
-"&nbsp;&nbsp;Depth of bill-of-material: <input id=\"create4\" name=\"levels\" type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Total number of components: <input id=\"create5\" name=\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Number of components per end item: <input id=\"create6\" name=\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Average procurement lead time: <input id=\"create7\" name=\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" onchange=\"calcUtil()\"/> days<br/>\n"
+"&nbsp;&nbsp;Depth of bill-of-material: <input id=\"create4\" name=\"levels\" "
+"type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/"
+"><br/>\n"
+"&nbsp;&nbsp;Total number of components: <input id=\"create5\" name="
+"\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" "
+"onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Number of components per end item: <input id=\"create6\" name="
+"\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" "
+"onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Average procurement lead time: <input id=\"create7\" name="
+"\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" "
+"onchange=\"calcUtil()\"/> days<br/>\n"
 "<b>Capacity:</b><br/>\n"
-"&nbsp;&nbsp;Number of resources: <input id=\"create8\" name=\"rsrc_number\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"60\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Size of each resource: <input id=\"create9\" name=\"rsrc_size\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"5\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Expected average resource utilization: <span id=\"util\">76.7</span>&#37;<br/>\n"
+"&nbsp;&nbsp;Number of resources: <input id=\"create8\" name=\"rsrc_number\" "
+"type=\"text\" maxlength=\"3\" size=\"3\" value=\"60\" onchange=\"calcUtil"
+"()\"/><br/>\n"
+"&nbsp;&nbsp;Size of each resource: <input id=\"create9\" name=\"rsrc_size\" "
+"type=\"text\" maxlength=\"3\" size=\"3\" value=\"5\" onchange=\"calcUtil()\"/"
+"><br/>\n"
+"&nbsp;&nbsp;Expected average resource utilization: <span id=\"util\">76.7</"
+"span>&#37;<br/>\n"
 "</td>\n"
 "<td><input id=\"create\" type=\"submit\" value=\"Create\"/></td>"
 msgstr ""
 "<th scope=\"row\"><a>Create a model</a></th>\n"
 "<td>Create a sample model in the database.<br/>\n"
 "The parameters control the size and complexity.<br/>\n"
-"Number of end items: <input id=\"create0\" name=\"clusters\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
+"Number of end items: <input id=\"create0\" name=\"clusters\" type=\"text\" "
+"maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
 "<b>Demand:</b><br/>\n"
-"&nbsp;&nbsp;Monthly forecast per end item: <input id=\"create1\" name=\"fcst\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Demands per end item: <input id=\"create2\" name=\"demands\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Average delivery lead time: <input id=\"create3\" name=\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/> days<br/>\n"
+"&nbsp;&nbsp;Monthly forecast per end item: <input id=\"create1\" name=\"fcst"
+"\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil"
+"()\"/><br/>\n"
+"&nbsp;&nbsp;Demands per end item: <input id=\"create2\" name=\"demands\" "
+"type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil"
+"()\"/><br/>\n"
+"&nbsp;&nbsp;Average delivery lead time: <input id=\"create3\" name="
+"\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" "
+"onchange=\"calcUtil()\"/> days<br/>\n"
 "<b>Raw Materials:</b><br/>\n"
-"&nbsp;&nbsp;Depth of bill-of-material: <input id=\"create4\" name=\"levels\" type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Total number of components: <input id=\"create5\" name=\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Number of components per end item: <input id=\"create6\" name=\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Average procurement lead time: <input id=\"create7\" name=\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" onchange=\"calcUtil()\"/> days<br/>\n"
+"&nbsp;&nbsp;Depth of bill-of-material: <input id=\"create4\" name=\"levels\" "
+"type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/"
+"><br/>\n"
+"&nbsp;&nbsp;Total number of components: <input id=\"create5\" name="
+"\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" "
+"onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Number of components per end item: <input id=\"create6\" name="
+"\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" "
+"onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Average procurement lead time: <input id=\"create7\" name="
+"\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" "
+"onchange=\"calcUtil()\"/> days<br/>\n"
 "<b>Capacity:</b><br/>\n"
-"&nbsp;&nbsp;Number of resources: <input id=\"create8\" name=\"rsrc_number\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Size of each resource: <input id=\"create9\" name=\"rsrc_size\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"4\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Expected average resource utilization: <span id=\"util\">76.7</span>&#37;<br/>\n"
+"&nbsp;&nbsp;Number of resources: <input id=\"create8\" name=\"rsrc_number\" "
+"type=\"text\" maxlength=\"3\" size=\"3\" value=\"50\" onchange=\"calcUtil"
+"()\"/><br/>\n"
+"&nbsp;&nbsp;Size of each resource: <input id=\"create9\" name=\"rsrc_size\" "
+"type=\"text\" maxlength=\"3\" size=\"3\" value=\"4\" onchange=\"calcUtil()\"/"
+"><br/>\n"
+"&nbsp;&nbsp;Expected average resource utilization: <span id=\"util\">76.7</"
+"span>&#37;<br/>\n"
 "</td>\n"
 "<td><input id=\"create\" type=\"submit\" value=\"Create\"/></td>"
 
-#: templates/execute/execute.html:167
+#: templates/execute/execute.html:196
 msgid "Sorry, You don't have any execute permissions..."
 msgstr "Ci scusiamo ma non avete nessun permesso per lanciare ..."
 
-#: templates/output/buffer.html:14
-#: templates/output/buffer.html.py:18
-#: templates/output/buffer.html:22
-#: templates/output/demand.html:12
-#: templates/output/demand.html.py:15
-#: templates/output/demand.html:18
-#: templates/output/forecast.html:14
-#: templates/output/operation.html:13
-#: templates/output/operation.html.py:17
-#: templates/output/operation.html:21
-#: templates/output/operation.html.py:25
-#: templates/output/resource.html:13
+#: templates/output/buffer.html:13 templates/output/buffer.html.py:17
+#: templates/output/buffer.html:21 templates/output/demand.html:11
+#: templates/output/demand.html.py:14 templates/output/operation.html:12
+#: templates/output/operation.html.py:16 templates/output/operation.html:20
+#: templates/output/operation.html.py:24 templates/output/resource.html:12
 msgid "Detail"
 msgstr "Dettaglio"
 
-#: templates/output/buffer.html:15
-#: templates/output/buffer.html.py:19
-#: templates/output/buffer.html:23
-#: templates/output/operation.html:14
-#: templates/output/operation.html.py:18
-#: templates/output/operation.html:22
-#: templates/output/operation.html.py:26
-#: templates/output/resource.html:14
+#: templates/output/buffer.html:14 templates/output/buffer.html.py:18
+#: templates/output/buffer.html:22 templates/output/operation.html:13
+#: templates/output/operation.html.py:17 templates/output/operation.html:21
+#: templates/output/operation.html.py:25 templates/output/resource.html:13
 msgid "Pegging"
 msgstr "Pegging"
 
-#: templates/output/buffer.html:36
-#: templates/output/demand.html:30
-#: templates/output/forecast.html:26
-#: templates/output/operation.html:38
-#: templates/output/pegging.html:32
-#: templates/output/resource.html:26
-msgid ""
-"frePPLe needs Adobe Flash Player to display graphs. If you're unable to see \n"
-"\t  the chart here, it means that your browser does not seem to have the Flash Player \n"
-"\t  installed.<br/>\n"
-"\t  You can downloaded it <a href=\"http://www.adobe.com/products/flashplayer/\" target=\"_blank\"><u>here</u></a> for free."
-msgstr ""
-"frePPLe ha bisogno di Adobe Flash Player per mostrare i grafici. Se il grafico non è visibile \n"
-"\t significa che il browser potrebbe non avere il Flash Player \n"
-"\t  installato.<br/>\n"
-"\t  E' possibile scaricarlo liberamente da <a href=\"http://www.adobe.com/products/flashplayer/\" target=\"_blank\"><u>here</u></a>."
-
-#: templates/output/buffer.xml:6
-msgid "produced and consumed"
-msgstr "pianificato e consumato"
-
-#: templates/output/demand.xml:6
-msgid "Demand and supply"
-msgstr ""
-
-#: templates/output/demand.xml:16
-msgid "supply"
-msgstr "fornitura"
-
-#: templates/output/forecast.xml:3
-#: templates/output/operation.xml:3
+#: templates/output/buffer.html:118 templates/output/demand.html:111
+#: templates/output/operation.html:97
 msgid "units"
 msgstr "unità"
+
+#: templates/output/pegging.html:32
+msgid ""
+"frePPLe needs Adobe Flash Player to display graphs. If you're unable to "
+"see \n"
+"\t  the chart here, it means that your browser does not seem to have the "
+"Flash Player \n"
+"\t  installed.<br/>\n"
+"\t  You can downloaded it <a href=\"http://www.adobe.com/products/"
+"flashplayer/\" target=\"_blank\"><u>here</u></a> for free."
+msgstr ""
+"frePPLe ha bisogno di Adobe Flash Player per mostrare i grafici. Se il "
+"grafico non è visibile \n"
+"\t significa che il browser potrebbe non avere il Flash Player \n"
+"\t  installato.<br/>\n"
+"\t  E' possibile scaricarlo liberamente da <a href=\"http://www.adobe.com/"
+"products/flashplayer/\" target=\"_blank\"><u>here</u></a>."
 
 # Translation included with django
 #: templates/output/pegging.xml:43
@@ -2898,7 +2431,9 @@ msgstr ""
 
 # Translation included with django
 #: templates/registration/password_change_form.html:17
-msgid "Please enter your old password, for security's sake, and then enter your new password twice so we can verify you typed it in correctly."
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
 msgstr ""
 
 # Translation included with django
@@ -2921,3 +2456,59 @@ msgstr ""
 msgid "Change my password"
 msgstr ""
 
+#~ msgid "Time bucket size for reports"
+#~ msgstr "Dimensione del bucket per i rapporti"
+
+#~ msgid "report start date"
+#~ msgstr "Data di inizio del rapporto"
+
+#~ msgid "Start date for filtering report data"
+#~ msgstr "Data di inizio per il filtro sui dati contenuti nel rapporto"
+
+#~ msgid "report end date"
+#~ msgstr "Data di fine del rapporto"
+
+#~ msgid "discrete"
+#~ msgstr "discreto"
+
+#~ msgid "Round forecast numbers to integers"
+#~ msgstr "Arrotonda i valori delle previsioni all'intero"
+
+#~ msgid "forecasts"
+#~ msgstr "previsioni"
+
+#~ msgid "forecast demand"
+#~ msgstr "domanda previsionale"
+
+#~ msgid "forecast demands"
+#~ msgstr "domande previsionali"
+
+#~ msgid "Forecast List"
+#~ msgstr "Lista delle Previsioni"
+
+#~ msgid "net forecast"
+#~ msgstr "previsione netta"
+
+#~ msgid "orders"
+#~ msgstr "ordini"
+
+#~ msgid "total demand"
+#~ msgstr "domanda totale"
+
+#~ msgid "total supply"
+#~ msgstr "fornitura totale"
+
+#~ msgid "Forecast Report"
+#~ msgstr "Rapporto Previsionale"
+
+#~ msgid "total forecast"
+#~ msgstr "previsione totale"
+
+#~ msgid "planned net forecast"
+#~ msgstr "previsione netta pianificata"
+
+#~ msgid "Forecast report"
+#~ msgstr "Rapporto sulle previsioni"
+
+#~ msgid "produced and consumed"
+#~ msgstr "pianificato e consumato"

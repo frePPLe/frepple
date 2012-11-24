@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.9.3.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-02 22:35+0200\n"
+"POT-Creation-Date: 2012-11-24 16:01+0100\n"
 "PO-Revision-Date: 2009-06-23 22:38+0100\n"
 "Last-Translator: \n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
@@ -38,73 +38,90 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: common/static/js/frepple.js:444
+#: common/static/js/frepple.js:453
 #, c-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr ""
 
-#: common/static/js/frepple.js:446
+#: common/static/js/frepple.js:455
 msgid "Delete data"
 msgstr ""
 
-#: common/static/js/frepple.js:451
+#: common/static/js/frepple.js:460 common/static/js/frepple.js.c:514
 msgid "Confirm"
 msgstr ""
 
-#: common/static/js/frepple.js:468
+#: common/static/js/frepple.js:478
 msgid "Error deleting data"
 msgstr ""
 
-#: common/static/js/frepple.js:479 common/static/js/frepple.js.c:536
-#: common/static/js/frepple.js:594 common/static/js/frepple.js.c:683
+#: common/static/js/frepple.js:489 common/static/js/frepple.js.c:543
+#: common/static/js/frepple.js:608 common/static/js/frepple.js.c:666
+#: common/static/js/frepple.js:753
 msgid "Cancel"
 msgstr ""
 
-#: common/static/js/frepple.js:523
-msgid "Load a CSV-formatted text file."
+#: common/static/js/frepple.js:507
+#, c-format
+msgid "You are about to duplicate %s objects"
 msgstr ""
 
-#: common/static/js/frepple.js:524
-msgid "The first row should contain the field names."
-msgstr ""
-
-#: common/static/js/frepple.js:525
-msgid "Data file"
-msgstr ""
-
-#: common/static/js/frepple.js:527
-msgid "Import data"
+#: common/static/js/frepple.js:509
+msgid "Copy data"
 msgstr ""
 
 #: common/static/js/frepple.js:532
+msgid "Error copying data"
+msgstr ""
+
+#: common/static/js/frepple.js:595
+msgid "Load a CSV-formatted text file."
+msgstr ""
+
+#: common/static/js/frepple.js:596
+msgid "The first row should contain the field names."
+msgstr ""
+
+#: common/static/js/frepple.js:597
+msgid "First delete all existing records AND ALL RELATED TABLES"
+msgstr ""
+
+#: common/static/js/frepple.js:598
+msgid "Data file"
+msgstr ""
+
+#: common/static/js/frepple.js:600
+msgid "Import data"
+msgstr ""
+
+#: common/static/js/frepple.js:604
 msgid "Import"
 msgstr ""
 
-#: common/static/js/frepple.js:562 common/static/js/frepple.js.c:566
+#: common/static/js/frepple.js:634 common/static/js/frepple.js.c:638
 msgid "Filtered where"
 msgstr ""
 
-#: common/static/js/frepple.js:582
+#: common/static/js/frepple.js:654
 msgid "CSV style"
 msgstr ""
 
-#: common/static/js/frepple.js:583
+#: common/static/js/frepple.js:655
 msgid "Table"
 msgstr ""
 
-#: common/static/js/frepple.js:584
+#: common/static/js/frepple.js:656
 msgid "List"
 msgstr ""
 
-#: common/static/js/frepple.js:586
+#: common/static/js/frepple.js:658
 msgid "Export data"
 msgstr ""
 
-#: common/static/js/frepple.js:590
+#: common/static/js/frepple.js:662
 msgid "Export"
 msgstr ""
 
-#: common/static/js/frepple.js:647
+#: common/static/js/frepple.js:719
 msgid "OK"
 msgstr ""
-

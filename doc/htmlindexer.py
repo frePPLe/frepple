@@ -22,6 +22,9 @@
 
 import HTMLParser, os, os.path, sys
 
+# List of stopwords, loosely based on: 
+#    http://en.wikipedia.org/wiki/Stop_words
+#    http://armandbrahaj.blog.al/2009/04/14/list-of-english-stop-words/
 stoplist = frozenset(["able", "about", "above", "frepple", "according", "accordingly",
   "across", "actually", "after", "afterwards", "again", "against", "ain't", "all", "allow",
   "allows", "almost", "alone", "along", "already", "also", "although", "always", "am",

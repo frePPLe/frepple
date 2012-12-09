@@ -47,7 +47,7 @@ class Report(GridReport):
   '''
   template = 'output/problem.html'
   title = _("Problem Report")
-  basequeryset = Problem.objects.extra(select={'forecast': "select name from forecast where out_problem.owner like forecast.name || ' - %%'",})
+  # TODO basequeryset = Problem.objects.extra(select={'forecast': "select name from forecast where out_problem.owner like forecast.name || ' - %%'",})
   model = Problem
   frozenColumns = 0
   editable = False

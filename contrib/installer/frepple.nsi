@@ -56,6 +56,7 @@ SetCompressor /SOLID lzma
 !include "Sections.nsh"
 !include InstallOptions.nsh
 !include LogicLib.nsh
+!include "FileFunc.nsh"
 
 ; MUI Settings
 !define MUI_ABORTWARNING
@@ -213,8 +214,8 @@ Section "Application" SecAppl
   ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
 
   ; Update the settings.py file
-  StrCpy $R1 "$INSTDIR\bin\custom\freppledb\settings.py"
-  FileOpen $R2 $R1 "r"
+  SetOutPath "$INSTDIR\bin\custom\freppledb"
+  FileOpen $R2 "settings.py" "r"
   GetTempFileName $R3
   FileOpen $R4 $R3 "w"
   ; Read the first section in settings.py and write unmodified to the output file
@@ -283,8 +284,8 @@ Section "Application" SecAppl
   end_loop:
     FileClose $R2
     FileClose $R4
-    Rename "$R1" "$R1.old"
-    Rename "$R3" "$R1"
+    Rename "settings.py" "settings.py.old"
+    Rename "$R3" "settings.py"
     ClearErrors
 SectionEnd
 
@@ -453,16 +454,19 @@ Section -Post
 
   ; Create uninstaller
   WriteUninstaller "$INSTDIR\uninst.exe"
-  WriteRegStr SHCTX "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\bin\frepple.exe"
+  WriteRegStr SHCTX "${PRODUCT_DIR_REGKEY}" "" "$\"$INSTDIR\bin\frepple.exe$\""
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
-  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe /$MultiUser.InstallMode"
-  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "QuietUninstallString" "$INSTDIR\uninst.exe /$MultiUser.InstallMode /S"
-  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\bin\manage.exe"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "UninstallString" "$\"$INSTDIR\uninst.exe$\" /$MultiUser.InstallMode"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "QuietUninstallString" "$\"$INSTDIR\uninst.exe$\" /$MultiUser.InstallMode /S"
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$\"$INSTDIR\bin\manage.exe$\""
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "NoModify" "1"
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "NoRepair" "1"
+  ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+  IntFmt $0 "0x%08X" $0
+  WriteRegDWORD SHCTX "${PRODUCT_UNINST_KEY}" "EstimatedSize" "$0"
 SectionEnd
 
 

@@ -104,10 +104,10 @@ and export results into the database<br/>
 <div>
 <table>
 <form method="post" action="{{request.prefix}}/execute/scenarios/">{% csrf_token %}<tr>
-<th>{% trans 'name' %}</th>
-<th>{% trans 'status' %}</th>
-<th>{% trans 'description' %}</th>
-<th>{% trans 'last refresh' %}</th></tr>
+<th>{% trans 'name'|capfirst %}</th>
+<th>{% trans 'status'|capfirst %}</th>
+<th>{% trans 'description'|capfirst %}</th>
+<th>{% trans 'last refresh'|capfirst %}</th></tr>
 {% for j in scenarios %}{% ifnotequal j.name 'default' %}
 <tr><td style="white-space: nowrap;"><input type=checkbox name="{{j.name}}">{{j.name}}</input></td>
 <td>{{j.status}}</td>

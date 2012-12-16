@@ -42,7 +42,7 @@ $(function(){
     multiselect: true,
     onSelectRow: markSelectedRow,{% endif %}
     {% block extra_grid %}{% endblock %}
-    height: $(window).height() - $("#grid").offset().top - 70
+    height: $(window).height() - $("#grid").offset().top - 75
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
   $('#cb_grid.cbox').click(markAllRows);{% endif %}

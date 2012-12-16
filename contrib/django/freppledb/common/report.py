@@ -493,7 +493,7 @@ class GridReport(View):
         (bucket,start,end,bucketlist) = getBuckets(request, pref)
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
       else:
-        pref = bucketnames = bucketlist = None
+        pref = bucketnames = bucketlist = start = end = bucket = None
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
@@ -504,6 +504,9 @@ class GridReport(View):
         'filters': reportclass.getQueryString(request),
         'bucketnames': bucketnames,
         'bucketlist': bucketlist,
+        'bucketstart': start,
+        'bucketend': end,
+        'bucket': bucket,
         'model': reportclass.model,
         'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())),
         'hasdeleteperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_delete_permission())),

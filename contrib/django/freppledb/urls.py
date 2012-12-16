@@ -24,8 +24,6 @@ r'''
 Django URL mapping file.
 '''
 
-import os.path
-
 from django.conf.urls import patterns, include
 from django.conf import settings
 from django.views.generic.base import RedirectView
@@ -41,6 +39,9 @@ urlpatterns = patterns('',
     (r'favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico')),    
     (r'robots\.txt$', RedirectView.as_view(url='/static/robots.txt')),    
 )
+
+# Custom handler for page-not-found errors. It does a redirect to the main page.
+handler404 = 'freppledb.common.views.handler404'
 
 # Adding urls for each installed application.
 for app in settings.INSTALLED_APPS:

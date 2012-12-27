@@ -766,10 +766,9 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
       o = new OperationFixedTime(PROCURE_OPERATION);
       static_cast<OperationFixedTime*>(o)->setDuration(leadtime);
       o->setFence(getFence());
-      // Ideally we would like to hide the procurement operation itself.
-      // But in that case we need a different way to show the procurements
-      // to the outside world.
-      // o->setHidden(true);
+      o->setSizeMaximum(getSizeMaximum());
+      o->setSizeMinimum(getSizeMinimum());
+      o->setSizeMultiple(getSizeMultiple());
       Operation::add(o);  // No need to check again for existence
       new FlowEnd(o, const_cast<BufferProcure*>(this), 1);
     }

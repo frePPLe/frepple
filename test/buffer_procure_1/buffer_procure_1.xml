@@ -15,6 +15,7 @@
 		- 7: Procurement with fixed interval
 		- 8: Procurement in fixed quantity
 		- 9: Procurement in fixed quantity with fixed interval
+		- 10: Constrained procurement test  
 	</description>
 	<current>2009-01-01T00:00:00</current>
 	<buffers>
@@ -115,6 +116,16 @@
 	    <size_maximum>40</size_maximum>
 	    <size_minimum>40</size_minimum>
 	  </buffer>
+	  <buffer name="buffer 10" xsi:type="buffer_procure">
+	    <description>10: Constrained procurement</description>
+	    <item name="item 10" />
+	    <onhand>0</onhand>
+	    <leadtime>P10D</leadtime>		
+	    <mininterval>P10D</mininterval>
+	    <size_multiple>1</size_multiple>
+	    <size_minimum>1</size_minimum>
+	    <size_maximum>20</size_maximum>
+	  </buffer>
 	</buffers>
 	<items>
 	  <item name="item 1">
@@ -202,6 +213,16 @@
       	<flows>
       	  <flow xsi:type="flow_end">
       	    <buffer name="buffer 9" />
+      	    <quantity>-1</quantity>
+      	  </flow>
+      	</flows>
+      </operation>
+	  </item>
+	  <item name="item 10">
+	    <operation name="delivery 10" xsi:type="operation_fixed_time">
+      	<flows>
+      	  <flow xsi:type="flow_end">
+      	    <buffer name="buffer 10" />
       	    <quantity>-1</quantity>
       	  </flow>
       	</flows>
@@ -1665,6 +1686,17 @@
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 9" />
 	  </demand>
+	  <!-- demand for item 10 -->
+	  <demand name="order 01 for item 10">
+	    <quantity>70</quantity>
+	    <due>2009-01-01T00:00:00</due>
+	    <item name="item 10" />
+	  </demand>
+	  <demand name="order 02 for item 10">
+	    <quantity>70</quantity>
+	    <due>2009-06-01T00:00:00</due>
+	    <item name="item 10" />
+	  </demand>	
 	</demands>
 
 <?python

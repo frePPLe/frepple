@@ -31,55 +31,6 @@ namespace frepple
 {
 
 
-double suggestQuantity(const BufferProcure* b, double f)
-{
-  // Standard answer
-  double order_qty = f;
-
-  // Round to a multiple
-  if (b->getSizeMultiple()>0.0)
-  {
-    int mult = static_cast<int>(order_qty / b->getSizeMultiple() + 0.99999999);
-    order_qty = mult * b->getSizeMultiple();
-  }
-
-  // Respect minimum size
-  if (order_qty < b->getSizeMinimum())
-  {
-    order_qty = b->getSizeMinimum();
-    // round up to multiple
-    if (b->getSizeMultiple()>0.0)
-    {
-      int mult = static_cast<int>(order_qty / b->getSizeMultiple() + 0.99999999);
-      order_qty = mult * b->getSizeMultiple();
-    }
-    // if now bigger than max -> infeasible
-    if (order_qty > b->getSizeMaximum())
-      throw DataException("Inconsistent procurement parameters on buffer '"
-          + b->getName() + "'");
-  }
-
-  // Respect maximum size
-  if (order_qty > b->getSizeMaximum())
-  {
-    order_qty = b->getSizeMaximum();
-    // round down
-    if (b->getSizeMultiple()>0.0)
-    {
-      int mult = static_cast<int>(order_qty / b->getSizeMultiple());
-      order_qty = mult * b->getSizeMultiple();
-    }
-    // if now smaller than min -> infeasible
-    if (order_qty < b->getSizeMinimum())
-      throw DataException("Inconsistent procurement parameters on buffer '"
-          + b->getName() + "'");
-  }
-
-  // Reply
-  return order_qty;
-}
-
-
 DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
@@ -102,21 +53,21 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   // Standard reply date
   data->state->a_date = Date::infiniteFuture;
 
-  // Initialize an iterator over reusable existing procurements
-  OperationPlan *last_operationplan = NULL;
-  OperationPlan::iterator curProcure(b->getOperation());
-  while (curProcure != OperationPlan::end() && curProcure->getLocked())
-    ++curProcure;
-  set<OperationPlan*> moved;
-
-  // Find the latest locked procurement operation. It is used to know what
+  // Collect all reusable existing procurements in a vector data structure.
+  // Also find the latest locked procurement operation. It is used to know what
   // the earliest date is for a new procurement.
+  int countProcurements = 0;
+  int indexProcurements = -1;
   Date earliest_next;
-  for (OperationPlan::iterator procs(b->getOperation());
-      procs != OperationPlan::end(); ++procs)
-    if (procs->getLocked())
-      earliest_next = procs->getDates().getEnd();
   Date latest_next = Date::infiniteFuture;
+  vector<OperationPlan*> procurements(30); // Initial size of 30
+  for (OperationPlan::iterator i(b->getOperation()); i!=OperationPlan::end(); ++i)
+  {
+    if (i->getLocked()) 
+      earliest_next = i->getDates().getEnd();
+    else
+      procurements[countProcurements++] = &*i;
+  }
 
   // Find constraints on earliest and latest date for the next procurement
   if (earliest_next && b->getMaximumInterval())
@@ -216,74 +167,83 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     }
 
     // When we are within the minimum interval, we may need to increase the
-    // size of the latest procurement.
-    if (current_date == earliest_next
-        && last_operationplan
-        && current_inventory < b->getMinimumInventory())
+    // size of the previous procurements.
+    if (current_date == earliest_next      
+        && current_inventory < b->getMinimumInventory() - ROUNDING_ERROR)
     {
-      double origqty = last_operationplan->getQuantity();
-      last_operationplan->setQuantity(suggestQuantity(b,
-          last_operationplan->getQuantity()
-          + b->getMinimumInventory() - current_inventory));
-      produced += last_operationplan->getQuantity() - origqty;
-      current_inventory = produced - consumed;
+      logger << "resize on " << current_date << endl;
+      for (int cnt=indexProcurements; 
+        cnt>=0 && current_inventory < b->getMinimumInventory() - ROUNDING_ERROR;
+        cnt--)
+      {
+        double origqty = procurements[cnt]->getQuantity();
+        procurements[cnt]->setQuantity(
+            procurements[cnt]->getQuantity()
+            + b->getMinimumInventory() - current_inventory);
+        produced += procurements[cnt]->getQuantity() - origqty;
+        current_inventory = produced - consumed;
+      }
       if (current_inventory < -ROUNDING_ERROR
-          && data->state->a_date > earliest_next + b->getMinimumInterval()
-          && earliest_next + b->getMinimumInterval() > data->state->q_date
+          && data->state->a_date > earliest_next
+          && earliest_next > data->state->q_date
           && data->getSolver()->isMaterialConstrained()
           && data->constrainedPlanning)
-        // Resizing didn't work, and we still have shortage
-        data->state->a_date = earliest_next + b->getMinimumInterval();
+        // Resizing didn't work, and we still have shortage (not only compared 
+        // to the minimum, but also to 0.
+        data->state->a_date = earliest_next;      
     }
 
     // At this point, we know we need to reorder...
     earliest_next = Date::infinitePast;
-    double order_qty = suggestQuantity(b,
-        b->getMaximumInventory() - current_inventory);
-    if (order_qty > 0)
+    double order_qty = b->getMaximumInventory() - current_inventory;
+    do
     {
+      if (order_qty <= 0)
+      {
+        if (latest_next == current_date && b->getSizeMinimum())
+          // Forced to buy the minumum quantity
+          order_qty = b->getSizeMinimum();
+        else 
+          break; 
+      }
       // Create a procurement or update an existing one
-      if (curProcure == OperationPlan::end())
+      indexProcurements++;
+      if (indexProcurements >= countProcurements)
       {
         // No existing procurement can be reused. Create a new one.
         CommandCreateOperationPlan *a =
           new CommandCreateOperationPlan(b->getOperation(), order_qty,
               Date::infinitePast, current_date, data->state->curDemand);
-        last_operationplan = a->getOperationPlan();
         a->getOperationPlan()->setMotive(data->state->motive);
-        last_operationplan->insertInOperationplanList(); // TODO Not very nice: unregistered opplan in the list!
-        produced += last_operationplan->getQuantity();
+        a->getOperationPlan()->insertInOperationplanList(); // TODO Not very nice: unregistered opplan in the list!
+        produced += a->getOperationPlan()->getQuantity();
+        order_qty -= a->getOperationPlan()->getQuantity();
         data->add(a);
+        procurements[countProcurements++] = a->getOperationPlan();       
       }
-      else if (curProcure->getDates().getEnd() == current_date
-          && curProcure->getQuantity() == order_qty)
+      else if (procurements[indexProcurements]->getDates().getEnd() == current_date
+        && procurements[indexProcurements]->getQuantity() == order_qty)
       {
-        // We can reuse this existing procurement unchanged.
-        produced += order_qty;
-        last_operationplan = &*curProcure;
-        moved.insert(last_operationplan);
-        do
-          ++curProcure;
-        while (curProcure != OperationPlan::end()
-            && curProcure->getLocked() && moved.find(&*curProcure)!=moved.end());
+        // Reuse existing procurement unchanged.
+        produced += order_qty; 
+        order_qty = 0;
       }
       else
       {
         // Update an existing procurement to meet current needs
         CommandMoveOperationPlan *a =
-          new CommandMoveOperationPlan(&*curProcure, Date::infinitePast, current_date, order_qty);
-        last_operationplan = a->getOperationPlan();
-        moved.insert(last_operationplan);
+          new CommandMoveOperationPlan(procurements[indexProcurements], Date::infinitePast, current_date, order_qty);
+        produced += procurements[indexProcurements]->getQuantity();
+        order_qty -= procurements[indexProcurements]->getQuantity();
         data->add(a);
-        produced += last_operationplan->getQuantity();
-        do
-          ++curProcure;
-        while (curProcure != OperationPlan::end()
-            && curProcure->getLocked() && moved.find(&*curProcure)!=moved.end());
       }
       if (b->getMinimumInterval())
+      {
         earliest_next = current_date + b->getMinimumInterval();
+        break;  // Only 1 procurement allowed at this time...
+      }
     }
+    while (order_qty > 0 && order_qty >= b->getSizeMinimum());
     if (b->getMaximumInterval())
     {
       current_inventory = produced - consumed;
@@ -298,12 +258,8 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   }
 
   // Get rid of extra procurements that have become redundant
-  while (curProcure != OperationPlan::end())
-  {
-    OperationPlan *opplan = &*(curProcure++);
-    if (!opplan->getLocked() && moved.find(opplan)!=moved.end())
-      data->add(new CommandDeleteOperationPlan(opplan));
-  }
+  while (indexProcurements <= countProcurements)
+    data->add(new CommandDeleteOperationPlan(procurements[++indexProcurements]));
 
   // Create the answer
   if (data->constrainedPlanning && (data->getSolver()->isFenceConstrained()

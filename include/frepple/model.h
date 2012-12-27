@@ -3008,13 +3008,18 @@ class BufferProcure : public Buffer
       if (p<0L)
         throw DataException("Procurement buffer can't have a negative lead time");
       leadtime = p;
+      static_cast<OperationFixedTime*>(getOperation())->setDuration(leadtime);
     }
 
     /** Return the release time fence. */
     TimePeriod getFence() const {return fence;}
 
     /** Update the release time fence. */
-    void setFence(TimePeriod p) {fence = p;}
+    void setFence(TimePeriod p) 
+    {
+      fence = p;
+      getOperation()->setFence(p);
+    }
 
     /** Return the inventory level that will trigger creation of a
       * purchasing.
@@ -3112,6 +3117,7 @@ class BufferProcure : public Buffer
       if (f<0)
         throw DataException("Procurement buffer can't have a negative minimum size");
       size_minimum = f;
+      getOperation()->setSizeMinimum(f);
       // minimum is increased over the maximum: auto-increase the maximum
       if (size_maximum < size_minimum) size_maximum = size_minimum;
     }
@@ -3125,6 +3131,7 @@ class BufferProcure : public Buffer
       if (f<0)
         throw DataException("Procurement buffer can't have a negative maximum size");
       size_maximum = f;
+      getOperation()->setSizeMaximum(f);
       // maximum is lowered below the minimum: auto-decrease the minimum
       if (size_maximum < size_minimum) size_minimum = size_maximum;
     }
@@ -3138,6 +3145,7 @@ class BufferProcure : public Buffer
       if (f<0)
         throw DataException("Procurement buffer can't have a negative multiple size");
       size_multiple = f;
+      getOperation()->setSizeMultiple(f);
     }
 
     /** Returns the operation that is automatically created to represent the

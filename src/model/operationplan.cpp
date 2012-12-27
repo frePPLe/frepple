@@ -637,8 +637,11 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
   {
     int mult = static_cast<int> (f / getOperation()->getSizeMultiple()
         + (roundDown ? 0.0 : 0.99999999));
-    if (!execute) return mult * getOperation()->getSizeMultiple();
-    quantity = mult * getOperation()->getSizeMultiple();
+    double q = mult * getOperation()->getSizeMultiple();
+    if (q < getOperation()->getSizeMinimum() || q > getOperation()->getSizeMaximum())
+      throw DataException("Invalid sizing parameters for operation " + getOperation()->getName());
+    if (!execute) return q;
+    quantity = q;
   }
   else
   {

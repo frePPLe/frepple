@@ -169,6 +169,16 @@ jQuery.extend($.fn.fmatter, {
     if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='parameter'></span>";
+  },
+  skill : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='skill'></span>";
+  },
+  resourceskill : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resourceskill'></span>";
   }
 });
 jQuery.extend($.fn.fmatter.percentage, {
@@ -222,6 +232,12 @@ jQuery.extend($.fn.fmatter.bucket, {
   unformat : linkunformat
 });
 jQuery.extend($.fn.fmatter.parameter, {
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.skill, {
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.resourceskill, {
   unformat : linkunformat
 });
 

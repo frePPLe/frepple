@@ -404,6 +404,32 @@ class Resource(AuditModel,HierarchyModel):
     ordering = ['name']
 
 
+class Skill(AuditModel):
+  # Database fields
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True,
+     help_text=_('Unique identifier'))
+                            
+  class Meta(AuditModel.Meta): 
+    db_table = 'skill'
+    verbose_name = _('skill')
+    verbose_name_plural = _('skills')
+    ordering = ['name']     
+
+
+class ResourceSkill(AuditModel):
+  # Database fields
+  id = models.AutoField(_('identifier'), primary_key=True)
+  resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, related_name='skills')
+  skill = models.ForeignKey(Skill, verbose_name=_('skill'), db_index=True, related_name='resources')
+                            
+  class Meta(AuditModel.Meta): 
+    db_table = 'resource_skill'
+    unique_together = (('resource','skill'),)
+    verbose_name = _('resource skill')
+    verbose_name_plural = _('resource skills')
+    ordering = ['resource','skill']
+    
+    
 class Flow(AuditModel):
   # Types of flow
   types = (
@@ -456,6 +482,7 @@ class Load(AuditModel):
   id = models.AutoField(_('identifier'), primary_key=True)
   operation = models.ForeignKey(Operation, verbose_name=_('operation'), db_index=True, related_name='loads')
   resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, related_name='loads')
+  skill = models.ForeignKey(Skill, verbose_name=_('skill'), null=True, blank=True, db_index=True, related_name='loads')
   quantity = models.DecimalField(_('quantity'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='1.00')
   effective_start = models.DateTimeField(_('effective start'), null=True, blank=True,
     help_text=_('Validity start date')
@@ -485,7 +512,7 @@ class Load(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'resourceload'
-    unique_together = (('operation','resource'),)
+    unique_together = (('operation','resource'),) # TODO also include effectivity in this
     verbose_name = _('load')
     verbose_name_plural = _('loads')
 

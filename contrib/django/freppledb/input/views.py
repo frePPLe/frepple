@@ -34,8 +34,9 @@ from django.utils.encoding import iri_to_uri, force_unicode
 from django.utils.text import capfirst
 
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix
-from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow
+from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow, Skill
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
+from freppledb.input.models import ResourceSkill
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
@@ -224,7 +225,7 @@ class pathreport:
       if curoperation: 
         ops.add(curoperation)        
         if G != None:
-          G.add_node("O%s" % curoperation.name, label=curoperation.name, tooltip=curoperation.name, shape='rectangle', color='green')
+            G.add_node("O%s" % curoperation.name, label=curoperation.name, tooltip=curoperation.name, shape='rectangle', color='green')
           for i in curoperation.loads.all():
             G.add_node("R%s" % i.resource.name, tooltip=i.resource.name, label=i.resource.name, shape='hexagon', color='blue')
             G.add_edge("O%s" % i.operation.name,"R%s" % i.resource.name, label=str(i.quantity), tooltip=str(i.quantity), style='dashed', dir='none', weight='100')
@@ -489,6 +490,40 @@ class ItemList(GridReport):
     )
 
 
+class SkillList(GridReport):
+  '''
+  A list report to show skills.
+  '''
+  template = 'input/skilllist.html'
+  title = _("Skill List")
+  basequeryset = Skill.objects.all()
+  model = Skill
+  frozenColumns = 1
+
+  rows = (
+    GridFieldText('name', title=_('name'), key=True, formatter='skill'),
+    GridFieldLastModified('lastmodified'),
+    )
+
+
+class ResourceSkillList(GridReport):
+  '''
+  A list report to show resource skills.
+  '''
+  template = 'input/resourceskilllist.html'
+  title = _("Resource skill List")
+  basequeryset = ResourceSkill.objects.all()
+  model = ResourceSkill
+  frozenColumns = 1
+
+  rows = (
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='resourceskill'),
+    GridFieldText('resource', title=_('resource'), formatter='resource'),
+    GridFieldText('skill', title=_('skill'), formatter='skill'),
+    GridFieldLastModified('lastmodified'),
+    )
+
+
 class LoadList(GridReport):
   '''
   A list report to show loads.
@@ -503,6 +538,7 @@ class LoadList(GridReport):
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='load'),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
     GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='resource'),
+    GridFieldText('skill', title=_('skill'), formatter='skill'),
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),

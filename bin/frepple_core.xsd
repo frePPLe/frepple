@@ -349,6 +349,25 @@
     </xsd:sequence>
   </xsd:complexType>
 
+  <!-- SKILL -->  
+  <xsd:complexType name="skill">
+    <xsd:annotation>
+      <xsd:documentation>
+        A skill that can be assigned to a resource.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+       <xsd:element name="resources" type="resourcelist" minOccurs="0" />
+    </xsd:choice>
+    <xsd:attribute name="name" type="non-empty-string" use="required" />     
+  </xsd:complexType>
+  
+  <xsd:complexType name="skilllist">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="skill" type="skill" />
+    </xsd:sequence>
+  </xsd:complexType>
+  
   <!-- RESOURCE -->
   <xsd:complexType name="resource">
     <xsd:annotation>
@@ -377,6 +396,7 @@
       <xsd:element name="loadplans" type="loadplanlist"/>
       <xsd:element name="setup" type="non-empty-string" minOccurs="0" />
       <xsd:element name="setupmatrix" type="setupmatrix" minOccurs="0" />
+      <xsd:element name="skills" type="skilllist" minOccurs="0" />  
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="maxearly" type="xsd:duration" />
@@ -560,6 +580,7 @@
       <xsd:element name="alternate" type="non-empty-string" />
       <xsd:element name="search" type="search" />
       <xsd:element name="setup" type="non-empty-string" />
+      <xsd:element name="skill" type="skill" />
     </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
     <xsd:attribute name="priority" type="xsd:integer" />

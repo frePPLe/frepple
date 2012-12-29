@@ -22,7 +22,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
-from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow
+from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow, Skill, ResourceSkill
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.admin import site
 from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
@@ -94,6 +94,13 @@ class Load_inline(MultiDBTabularInline):
   extra = 1
 
 
+class ResourceSkill_inline(MultiDBTabularInline):
+  model = ResourceSkill
+  fk_name = 'resource'
+  raw_id_fields = ('skill',)
+  extra = 1
+
+
 class Operation_admin(MultiDBModelAdmin):
   model = Operation
   raw_id_fields = ('location',)
@@ -147,11 +154,24 @@ class SetupMatrix_admin(MultiDBModelAdmin):
 site.register(SetupMatrix,SetupMatrix_admin)
 
 
+class Skill_admin(MultiDBModelAdmin):
+  model = Skill
+  save_on_top = True
+site.register(Skill,Skill_admin)
+
+
+class ResourceSkill_admin(MultiDBModelAdmin):
+  model = ResourceSkill
+  raw_id_fields = ('resource', 'skill')
+  save_on_top = True
+site.register(ResourceSkill,ResourceSkill_admin)
+
+
 class Resource_admin(MultiDBModelAdmin):
   model = Resource
   raw_id_fields = ('maximum_calendar', 'location', 'setupmatrix', 'owner')
   save_on_top = True
-  inlines = [ Load_inline, ]
+  inlines = [ Load_inline, ResourceSkill_inline, ]
 site.register(Resource,Resource_admin)
 
 

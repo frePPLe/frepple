@@ -270,7 +270,7 @@ def exportfrepple():
      settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
      settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
      test and settings.DATABASES[database]['TEST_NAME'] or settings.DATABASES[database]['NAME'],
-   ), stdin=PIPE, stderr=PIPE, bufsize=0, universal_newlines=True)  
+   ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, universal_newlines=True)  
   
   # Send all output to the PSQL process through a pipe
   try:
@@ -288,8 +288,8 @@ def exportfrepple():
     # Close the pipe and PSQL process
     process.stdin.write('\\q\n')
     process.stdin.close()
-    # Collect error messages
-    print process.communicate()[1]
+    # Collect error messages  TODO Only works on Windows?
+    # print process.communicate()[1]
   
   cursor = connections[database].cursor()
   cursor.execute('''

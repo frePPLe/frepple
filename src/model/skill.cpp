@@ -85,7 +85,7 @@ DECLARE_EXPORT void Skill::deleteResource(Resource* res)
     {
       // Remove from resource list on the skill model
       resources.erase(i);
-      for (Resource::skilllist::const_iterator j = res->getSkills().begin(); 
+      for (Resource::skilllist::iterator j = const_cast<Resource::skilllist&>(res->getSkills()).begin(); 
         j != res->getSkills().end(); ++j)
           if (*j == this) 
           {

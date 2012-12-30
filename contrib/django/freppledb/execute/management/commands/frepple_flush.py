@@ -91,11 +91,11 @@ class Command(BaseCommand):
         ['out_problem','out_resourceplan','out_constraint'],
         ['out_loadplan','out_flowplan','out_operationplan'], 
         ['out_demand','out_forecast'],    # TODO Table may not exist!
-        ['demand','customer',
+        ['demand','customer','resourceskill','skill',
          'setuprule','setupmatrix','resourceload','resource',
          'flow','buffer','operationplan','item',
          'suboperation','operation',
-         'location','calendarbucket','calendar'],
+         'location','calendarbucket','calendar',],
         ['common_parameter','common_bucketdetail','common_bucket'],
         ['common_comment','django_admin_log'],
         ]

@@ -225,7 +225,7 @@ class pathreport:
       if curoperation: 
         ops.add(curoperation)        
         if G != None:
-            G.add_node("O%s" % curoperation.name, label=curoperation.name, tooltip=curoperation.name, shape='rectangle', color='green')
+          G.add_node("O%s" % curoperation.name, label=curoperation.name, tooltip=curoperation.name, shape='rectangle', color='green')
           for i in curoperation.loads.all():
             G.add_node("R%s" % i.resource.name, tooltip=i.resource.name, label=i.resource.name, shape='hexagon', color='blue')
             G.add_edge("O%s" % i.operation.name,"R%s" % i.resource.name, label=str(i.quantity), tooltip=str(i.quantity), style='dashed', dir='none', weight='100')

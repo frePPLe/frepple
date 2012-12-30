@@ -423,7 +423,7 @@ class ResourceSkill(AuditModel):
   skill = models.ForeignKey(Skill, verbose_name=_('skill'), db_index=True, related_name='resources')
                             
   class Meta(AuditModel.Meta): 
-    db_table = 'resource_skill'
+    db_table = 'resourceskill'
     unique_together = (('resource','skill'),)
     verbose_name = _('resource skill')
     verbose_name_plural = _('resource skills')

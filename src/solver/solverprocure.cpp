@@ -171,7 +171,6 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     if (current_date == earliest_next      
         && current_inventory < b->getMinimumInventory() - ROUNDING_ERROR)
     {
-      logger << "resize on " << current_date << endl;
       for (int cnt=indexProcurements; 
         cnt>=0 && current_inventory < b->getMinimumInventory() - ROUNDING_ERROR;
         cnt--)

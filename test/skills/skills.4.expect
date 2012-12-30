@@ -1,0 +1,29 @@
+Skill Qualification A :
+      Neil
+      Paul
+Skill Qualification B :
+      Neil
+      Bob
+      Paul
+Skill Qualification C :
+      Neil
+      Bob
+      John
+      Paul
+Skill turbo :
+      Bob
+Resource Bob :
+      Qualification B
+      Qualification C
+      turbo
+Resource John :
+      Qualification C
+Resource Neil :
+      Qualification A
+      Qualification B
+      Qualification C
+Resource Operators :
+Resource Paul :
+      Qualification A
+      Qualification B
+      Qualification C

@@ -78,8 +78,10 @@ int CalendarDouble::initialize()
       Object::createString<CalendarDouble>, true);
 
   // Initialize the Python class
-  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
-  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("setValue", 
+    setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("events", 
+    getEvents, METH_VARARGS, "return an event iterator");
   return FreppleClass<CalendarDouble,Calendar>::initialize();
 }
 
@@ -975,7 +977,7 @@ DECLARE_EXPORT int Calendar::Bucket::setattro(const Attribute& attr, const Pytho
 
 
 DECLARE_EXPORT PyObject* Calendar::getEvents(
-  PyObject* self, PyObject* args, PyObject* kwdict
+  PyObject* self, PyObject* args
 )
 {
   try

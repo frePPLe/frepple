@@ -278,6 +278,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\model\skill.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\model\solver.cpp"
 				>
 			</File>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for resource skills</name>
+  <description>
+  In this test our resources represent a group of operators, with various skills
+  and organized in various levels of qualification.
+  </description>
+  <current>2009-01-01T00:00:00</current>
+  <skills>
+    <skill name="Qualification A">
+	  <resources>
+	     <resource name="Neil"/>
+	  </resources>
+	</skill>
+  </skills>
+  <resources>
+    <resource name="Operators"></resource>
+    <resource name="Neil">
+	  <owner name="Operators"/>
+	  <skills>
+	    <skill name="Qualification B" />
+	    <skill name="Qualification C" />
+	  </skills>
+	</resource>
+    <resource name="Bob">
+	  <owner name="Operators"/>
+	  <skills>
+	    <skill name="Qualification B" />
+	    <skill name="Qualification C" />
+	  </skills>
+	</resource>
+    <resource name="John">
+	  <owner name="Operators"/>
+	  <skills>
+	    <skill name="Qualification C" />
+	  </skills>
+	</resource>
+    <resource name="Paul">
+	  <owner name="Operators"/>
+	  <skills>
+	    <skill name="Qualification A" />
+	    <skill name="Qualification B" />
+	    <skill name="Qualification C" />
+	  </skills>
+	</resource>
+  </resources>
+  <operations>
+	<operation name="1. make end item">
+      <loads>
+        <load>
+          <resource name="Operators" />
+		  <skill name="Qualification B" />
+        </load>
+      </loads>
+	  <flows>
+		<flow xsi:type="flow_end">
+		  <buffer name="1. end item" />
+		  <quantity>1</quantity>
+		</flow>
+	  </flows>	
+	</operation>
+  </operations>
+
+  <demands>
+    <!-- Demand model 1: search for capacity backwards in time -->
+    <demand name="1. order">
+      <quantity>201</quantity>
+      <due>2009-03-06T00:00:00</due>
+      <priority>1</priority>
+      <item name="1. end item" />
+	  <operation name="1. delivery end item">
+	    <flows>
+		  <flow xsi:type="flow_start">
+		    <buffer name="1. end item">
+			  <producing name="1. make end item" />
+			</buffer>
+		    <quantity>-1</quantity>
+		  </flow>
+	    </flows>
+	  </operation>
+    </demand>
+  </demands>
+
+<?python
+
+print "SAVING MODEL IN XML FORMAT"
+frepple.saveXMLfile("output.1.xml")
+	
+print "CREATING CONSTRAINED PLAN"
+frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+
+print "CREATING UNCONSTRAINED PLAN"
+frepple.solver_mrp(name="MRP", plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+
+print "TESTING PYTHON API"
+s = frepple.skill(name="turbo")
+r = frepple.resource(name='Bob')
+s.addresource(r)
+output = open("output.4.xml","wt")
+for i in frepple.skills():
+  print >>output, "Skill", i.name, ":"
+  for j in i.resources:
+    print >>output, "     ", j.name
+for i in frepple.resources():
+  print >>output, "Resource", i.name, ":"
+  for j in i.skills:
+    print >>output, "     ", j.name
+?>
+
+</plan>

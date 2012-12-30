@@ -410,7 +410,7 @@ class Calendar : public HasName<Calendar>
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
 
-    static DECLARE_EXPORT PyObject* getEvents(PyObject*, PyObject*, PyObject*);
+    static DECLARE_EXPORT PyObject* getEvents(PyObject*, PyObject*);
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
@@ -3665,10 +3665,10 @@ class SetupMatrix : public HasName<SetupMatrix>
 
     size_t extrasize() const {return getName().size();}
 
-    /** Returns an iterator to go through the list of buckets. */
+    /** Returns an iterator to go through the list of rules. */
     RuleIterator beginRules() const {return RuleIterator(firstRule);}
 
-    /** Returns an iterator to go through the list of buckets. */
+    /** Returns an iterator to go through the list of rules. */
     RuleIterator endRules() const {return RuleIterator(NULL);}
 
     /** Python interface to add a new rule. */
@@ -3710,6 +3710,69 @@ class SetupMatrixDefault : public SetupMatrix
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(SetupMatrixDefault) + SetupMatrix::extrasize();}
+    static int initialize();
+};
+
+
+/** @brief This class models skills that can be assigned to resources. */
+class Skill : public HasName<Skill>
+{
+  public:
+    /** Default constructor. */
+    Skill(const string& n) : HasName<Skill>(n) {}
+
+    /** Destructor. */
+    DECLARE_EXPORT ~Skill();
+
+    typedef list<Resource*> resourcelist;
+
+    /** Returns an reference to the list of resources. */
+    const resourcelist& getResources() const {return resources;}
+
+    /** Assign the skill to a resource. */
+    DECLARE_EXPORT void addResource(Resource*);
+
+    /** Remove a skill from a resource. */
+    DECLARE_EXPORT void deleteResource(Resource*);
+
+    /** Python interface to add a new resource. */
+    static DECLARE_EXPORT PyObject* addPythonResource(PyObject*, PyObject*);
+
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize();
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
+
+    virtual size_t getSize() const
+    {
+      size_t i = sizeof(Skill) + getName().size();
+      return i;
+    }
+
+    size_t extrasize() const {return getName().size();}
+
+  private:
+    /** A list storing all resources having the skill. */
+    resourcelist resources;
+};
+
+
+/** @brief this class is the default implementation of the abstract
+  * Skill class.
+  */
+class SkillDefault : public Skill
+{
+  public:
+    explicit SkillDefault(const string& str) : Skill(str) {initType(metadata);}
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
+    virtual size_t getSize() const
+    {return sizeof(SkillDefault) + Skill::extrasize();}
     static int initialize();
 };
 
@@ -3763,6 +3826,7 @@ class Resource : public HasHierarchy<Resource>,
     }
 
     typedef Association<Operation,Resource,Load>::ListB loadlist;
+    typedef list<Skill*> skilllist;
     typedef TimeLine<LoadPlan> loadplanlist;
 
     /** Returns a reference to the list of loadplans. */
@@ -3775,6 +3839,11 @@ class Resource : public HasHierarchy<Resource>,
       * which operations are using the resource.
       */
     const loadlist& getLoads() const {return loads;}
+
+    /** Returns a constant reference to the list of loads. It defines
+      * which operations are using the resource.
+      */
+    const skilllist& getSkills() const {return skills;}
 
     /** Return the load that is associates a given operation with this
       * resource. Returns NULL is no such load exists. */
@@ -3875,6 +3944,9 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Current setup. */
     string setup;
+
+    /** List of assigned skills. */
+    skilllist skills;
 
     /** Python method that returns an iterator over the resource plan. */
     static PyObject* plan(PyObject*, PyObject*);
@@ -3978,7 +4050,7 @@ class Load
   public:
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u)
-      : priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY)
+      : priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY), skill(NULL)
     {
       setOperation(o);
       setResource(r);
@@ -3996,7 +4068,7 @@ class Load
 
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u, DateRange e)
-      : priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY)
+      : priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY), skill(NULL)
     {
       setOperation(o);
       setResource(r);
@@ -4069,6 +4141,12 @@ class Load
     /** Return the required resource setup. */
     const string& getSetup() const {return setup;}
 
+    /** Update the required skill. */
+    void setSkill(Skill* s) {skill = s;}
+
+    /** Return the required skill. */
+    Skill* getSkill() const {return skill;}
+
     /** This method holds the logic the compute the date of a loadplan. */
     virtual Date getLoadplanDate(const LoadPlan*) const;
 
@@ -4096,8 +4174,8 @@ class Load
     {return sizeof(Load) + getName().size() + getSetup().size();}
 
     /** Default constructor. */
-    Load() : qty(1.0), priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY)
-    {initType(metadata);}
+    Load() : qty(1.0), priority(1), hasAlts(false), altLoad(NULL), 
+      search(PRIORITY), skill(NULL) {initType(metadata);}
 
     /** Return the search mode. */
     SearchMode getSearch() const {return search;}
@@ -4129,6 +4207,9 @@ class Load
 
     /** Mode to select the preferred alternates. */
     SearchMode search;
+
+    /** Required skill. */
+    Skill* skill;
 
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
@@ -5835,6 +5916,12 @@ class SetupMatrixIterator
 };
 
 
+class SkillIterator
+  : public FreppleIterator<SkillIterator,Skill::iterator,Skill>
+{
+};
+
+
 //
 // SETUP MATRIX RULES
 //
@@ -5855,6 +5942,50 @@ class SetupMatrixRuleIterator : public PythonExtension<SetupMatrixRuleIterator>
   private:
     SetupMatrix* matrix;
     SetupMatrix::RuleIterator currule;
+    PyObject *iternext();
+};
+
+
+//
+// RESOURCE SKILLS
+//
+
+
+class ResourceSkillIterator : public PythonExtension<ResourceSkillIterator>
+{
+  public:
+    static int initialize();
+
+    ResourceSkillIterator(Resource* r) : resource(r)
+    {
+      if (!r)
+        throw LogicException("Creating skill iterator for NULL resource");
+      cur = const_cast<Resource::skilllist&>(r->getSkills()).begin();
+    }
+
+  private:
+    Resource* resource;
+    Resource::skilllist::iterator cur;
+    PyObject *iternext();
+};
+
+
+
+class SkillResourceIterator : public PythonExtension<SkillResourceIterator>
+{
+  public:
+    static int initialize();
+
+    SkillResourceIterator(Skill* s) : skill(s)
+    {
+      if (!s)
+        throw LogicException("Creating resource iterator for NULL skill");
+      cur = const_cast<Skill::resourcelist&>(s->getResources()).begin();
+    }
+
+  private:
+    Skill* skill;
+    Skill::resourcelist::iterator cur;
     PyObject *iternext();
 };
 

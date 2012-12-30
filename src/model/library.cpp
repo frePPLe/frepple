@@ -98,6 +98,11 @@ void LibraryModel::initialize()
   nok += SetupMatrixDefault::initialize();
   nok += SetupMatrixIterator::initialize();
 
+  // Initialize the skill metadata
+  nok += Skill::initialize();
+  nok += SkillDefault::initialize();
+  nok += SkillIterator::initialize();
+
   // Initialize the resource metadata.
   nok += Resource::initialize();
   nok += ResourceDefault::initialize();
@@ -186,6 +191,9 @@ void LibraryModel::initialize()
   PythonInterpreter::registerGlobalMethod(
     "solvers", SolverIterator::create, METH_NOARGS,
     "Returns an iterator over the solvers.");
+  PythonInterpreter::registerGlobalMethod(
+    "skills", SkillIterator::create, METH_NOARGS,
+    "Returns an iterator over the skills.");
 }
 
 

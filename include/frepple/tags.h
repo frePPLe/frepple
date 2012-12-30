@@ -152,6 +152,8 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_size_maximum;
     static DECLARE_EXPORT const Keyword tag_size_minimum;
     static DECLARE_EXPORT const Keyword tag_size_multiple;
+    static DECLARE_EXPORT const Keyword tag_skill;
+    static DECLARE_EXPORT const Keyword tag_skills;
     static DECLARE_EXPORT const Keyword tag_solver;
     static DECLARE_EXPORT const Keyword tag_solvers;
     static DECLARE_EXPORT const Keyword tag_start;

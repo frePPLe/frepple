@@ -151,6 +151,8 @@ DECLARE_EXPORT const Keyword Tags::tag_setupmatrix("setupmatrix");
 DECLARE_EXPORT const Keyword Tags::tag_size_maximum("size_maximum");
 DECLARE_EXPORT const Keyword Tags::tag_size_minimum("size_minimum");
 DECLARE_EXPORT const Keyword Tags::tag_size_multiple("size_multiple");
+DECLARE_EXPORT const Keyword Tags::tag_skill("skill");
+DECLARE_EXPORT const Keyword Tags::tag_skills("skills");
 DECLARE_EXPORT const Keyword Tags::tag_solver("solver");
 DECLARE_EXPORT const Keyword Tags::tag_solvers("solvers");
 DECLARE_EXPORT const Keyword Tags::tag_start("start");

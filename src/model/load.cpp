@@ -296,6 +296,9 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   // Write the required setup
   if (!setup.empty()) o->writeElement(Tags::tag_setup, setup);
 
+  // Write the required skill
+  if (skill) o->writeElement(Tags::tag_skill, skill);
+
   o->EndObject(tag);
 }
 
@@ -306,6 +309,8 @@ DECLARE_EXPORT void Load::beginElement(XMLInput& pIn, const Attribute& pAttr)
     pIn.readto( Resource::reader(Resource::metadata,pIn.getAttributes()) );
   else if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
+  else if (pAttr.isA (Tags::tag_skill))
+    pIn.readto( Skill::reader(Skill::metadata,pIn.getAttributes()) );
 }
 
 
@@ -346,6 +351,12 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
     setEffectiveEnd(pElement.getDate());
   else if (pAttr.isA(Tags::tag_effective_start))
     setEffectiveStart(pElement.getDate());
+  else if (pAttr.isA (Tags::tag_skill))
+  {
+    Skill *s = dynamic_cast<Skill*>(pIn.getPreviousObject());
+    if (s) setSkill(s);
+    else throw LogicException("Incorrect object type during read operation");
+  }
   else if (pIn.isObjectEnd())
   {
     // The load data is now all read in. See if it makes sense now...
@@ -394,6 +405,8 @@ DECLARE_EXPORT PyObject* Load::getattro(const Attribute& attr)
   }
   if (attr.isA(Tags::tag_setup))
     return PythonObject(getSetup());
+  if (attr.isA(Tags::tag_skill))
+    return PythonObject(getSkill());
   return NULL;
 }
 
@@ -444,6 +457,16 @@ DECLARE_EXPORT int Load::setattro(const Attribute& attr, const PythonObject& fie
     setSearch(field.getString());
   else if (attr.isA(Tags::tag_setup))
     setSetup(field.getString());
+  else if (attr.isA(Tags::tag_skill))
+  {
+    if (!field.check(Skill::metadata))
+    {
+      PyErr_SetString(PythonDataException, "load skill must be of type skill");
+      return -1;
+    }
+    Skill* y = static_cast<Skill*>(static_cast<PyObject*>(field));
+    setSkill(y);
+  }
   else
     return -1;
   return 0;

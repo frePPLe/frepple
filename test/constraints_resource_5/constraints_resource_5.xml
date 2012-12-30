@@ -17,7 +17,7 @@
     <calendar name="Capacity">
       <default>1</default>
       <buckets>
-        <!-- From the infinite past till 2007-01-02 no entry is in effect.
+        <!-- From the infinite past till 2009-01-02 no entry is in effect.
              The default value is used -->
         <bucket start="2009-01-02T00:00:00" end="2009-01-06T00:00:00" value="2"/>
         <!-- This entry overrules the previous one: same priority, but later start date -->
@@ -26,9 +26,9 @@
              The second one has the lowest priority number. -->
         <bucket start="2009-01-04T00:00:00" end="2009-02-01T00:00:00" value="4" priority="-1"/>
         <bucket start="2009-01-04T00:00:00" end="2009-02-01T00:00:00" value="5" priority="-2"/>
-        <!-- Between 2007-02-01 and 2007-03-03 no entry is in effect.
+        <!-- Between 2009-02-01 and 2009-03-03 no entry is in effect.
              The default value is used. -->
-        <!-- From 2007-03-03 till the infinite future this entry rules. -->
+        <!-- From 2009-03-03 till the infinite future this entry rules. -->
         <bucket start="2009-03-03T00:00:00" value="6"/>
       </buckets>
     </calendar>

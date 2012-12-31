@@ -28,7 +28,7 @@ def logProgress(val):
   transaction.managed(False, using=db)
   try:
     p = Parameter.objects.using(db).get_or_create(name="Plan executing")[0]
-    if "Canceling" in p.value:
+    if p.value and "Canceling" in p.value:
       print "Run canceled by the user.\n" 
       p.value = 0
       p.save(using=db)

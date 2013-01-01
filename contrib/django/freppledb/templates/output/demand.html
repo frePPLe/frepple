@@ -8,10 +8,10 @@
 {% block contextmenus %}
 {% include "itemcontext.html" %}
 <div id="detail1context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/?o=5a&amp;item={value}&amp;due__gte={startdate}&amp;due__lt={enddate}">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/{value}/?o=5a&amp;due__gte={startdate}&amp;due__lt={enddate}">{% trans 'Detail' %}</a></li>
 </ul></div>
 <div id="detail2context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/?o=5a&amp;item={value}&amp;plandate__gte={startdate}&amp;plandate__lt={enddate}">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/{value}/?o=5a&amp;plandate__gte={startdate}&amp;plandate__lt={enddate}">{% trans 'Detail' %}</a></li>
 </ul></div>
 {% endblock %}
 

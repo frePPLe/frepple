@@ -122,12 +122,22 @@ class DetailReport(GridReport):
   '''
   template = 'output/operationplan.html'
   title = _("Operation detail report")
-  basequeryset = OperationPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
   model = OperationPlan
   frozenColumns = 0
   editable = False
   multiselect = False
-    
+
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    if args and args[0]:
+      return OperationPlan.objects.filter(operation__exact=args[0]).extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+    else:
+      return OperationPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+
+  @classmethod 
+  def extra_context(reportclass, request, *args, **kwargs):
+    return {'active_tab': 'plandetail'}
+      
   rows = (
     GridFieldInteger('id', title=_('operationplan'), key=True, editable=False),
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),

@@ -9,7 +9,7 @@
 {% include "resourcecontext.html" %}
 {% include "locationcontext.html" %}
 <div id="detailcontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a id="{{request.prefix}}/loadplan/?theresource={value}&amp;startdate__lt={enddate}&amp;enddate__gte={startdate}">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/loadplan/{value}/?startdate__lt={enddate}&amp;enddate__gte={startdate}">{% trans 'Detail' %}</a></li>
 <li class="ui-menu-item"><a id="{{request.prefix}}/resourcepegging/?theresource={value}&amp;startdate__lt={enddate}&amp;enddate__gte={startdate}">{% trans 'Pegging' %}</a></li>
 </ul></div>
 {% endblock %}

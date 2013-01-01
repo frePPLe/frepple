@@ -154,12 +154,21 @@ class DetailReport(GridReport):
   '''
   template = 'output/flowplan.html'
   title = _("Inventory detail report")
-  basequeryset = FlowPlan.objects.select_related() \
-    .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
   model = FlowPlan
   frozenColumns = 0
   editable = False
   multiselect = False
+
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    if args and args[0]:
+      return FlowPlan.objects.filter(thebuffer__exact=args[0]).extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+    else:
+      return FlowPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+
+  @classmethod 
+  def extra_context(reportclass, request, *args, **kwargs):
+    return {'active_tab': 'plandetail'}
   
   rows = (
     GridFieldText('thebuffer', title=_('buffer'), key=True, formatter='buffer', editable=False),

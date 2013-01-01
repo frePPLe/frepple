@@ -161,11 +161,22 @@ class DetailReport(GridReport):
   '''
   template = 'output/demandplan.html'
   title = _("Demand plan detail")
-  basequeryset = Demand.objects.all()
   model = Demand
   frozenColumns = 0
   editable = False
-  multiselect = False
+  multiselect = False  
+      
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    if args and args[0]:
+      return Demand.objects.filter(item__exact=args[0])
+    else:
+      return Demand.objects.all()
+
+  @classmethod 
+  def extra_context(reportclass, request, *args, **kwargs):
+    return {'active_tab': 'plandetail'}
+
   rows = (
     GridFieldText('demand', title=_('demand'), key=True, editable=False, formatter='demand'),
     GridFieldText('item', title=_('item'), formatter='item', editable=False),

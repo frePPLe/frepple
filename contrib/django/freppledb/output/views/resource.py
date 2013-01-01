@@ -78,8 +78,7 @@ class OverviewReport(GridPivot):
         return (1.0 / 24.0, _('days'))
     except:
       return (1.0 / 24.0, _('days'))
-    
-      
+          
   @staticmethod
   def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)        
@@ -165,13 +164,24 @@ class DetailReport(GridReport):
   '''
   template = 'output/loadplan.html'
   title = _("Resource detail report")
-  basequeryset = LoadPlan.objects.select_related() \
-    .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
   model = LoadPlan
   frozenColumns = 0
   editable = False
   multiselect = False
-  
+    
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    if args and args[0]:
+      return LoadPlan.objects.filter(theresource__exact=args[0]).select_related() \
+        .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+    else:
+      return LoadPlan.objects.select_related() \
+        .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+
+  @classmethod 
+  def extra_context(reportclass, request, *args, **kwargs):
+    return {'active_tab': 'plandetail'}
+
   rows = (
     GridFieldText('theresource', title=_('resource'), key=True, formatter='resource', editable=False),
     GridFieldText('operationplan__operation', title=_('operation'), formatter='operation', editable=False),

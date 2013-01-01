@@ -4,6 +4,11 @@
 {% include "operationcontext.html" %}
 {% endblock %}
 
+{% block before_table %}{% if args.0 %}
+{% include "operationtabs.html" %}<div style="clear:both"></div>
+{% endif %}{{block.super}}
+{% endblock %}
+
 {% comment %} TODO
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">

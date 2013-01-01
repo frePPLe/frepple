@@ -33,8 +33,10 @@
 function drawGraphs(jsondata) 
 {  
   var cols = jQuery("#grid").jqGrid('getGridParam', 'colModel'); 
-  var x = [];
+  var x_major = [];
+  var x_minor = [];
   var first = true;
+  var ticks = Math.ceil((cols.length-5)/20.0);
   
   // Loop over all graph cells
   $("#grid_frozen").find(".graph").each(function(index) 
@@ -46,7 +48,11 @@ function drawGraphs(jsondata)
     {
        if ('startdate' in cols[i]) 
        {
-          if (first) x.push([j,cols[i]['name']]);
+          if (first) 
+          {
+            x_minor.push([j,cols[i]['name']]);
+            if (j % ticks == 0) x_major.push([j,cols[i]['name']]);
+          } 
           var data = jsondata['rows'][index][cols[i]['name']];
           var load = data[3];
           var delta = data[0] - data[2] - data[3];
@@ -98,7 +104,7 @@ function drawGraphs(jsondata)
         horizontalLines : true,
         },
       xaxis: {
-        ticks: x,
+        ticks: x_major
         },
       yaxis: {
         title: '{{units.1|capfirst}}',
@@ -124,7 +130,7 @@ function drawGraphs(jsondata)
         track : true,
         relative : true,
         trackFormatter: function(obj) {
-          return x[Math.round(obj.x)][1] + "<br/>" + obj.y; // TODO not good JSON.stringify(obj); 
+          return x_minor[Math.round(obj.x)][1] + "<br/>" + obj.y; // TODO not good JSON.stringify(obj); 
           }        
         },
       colors: ['#F6BD0F','#2B95EC','#AFD8F8','#8BBA00','#FF0000'],

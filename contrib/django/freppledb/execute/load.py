@@ -316,6 +316,22 @@ def loadResources(cursor):
   print 'Loaded %d resources in %.2f seconds' % (cnt, time() - starttime)
 
 
+def loadResourceSkills(cursor):
+  print 'Importing resource skills...'
+  cnt = 0
+  starttime = time()
+  cursor.execute('''SELECT
+    resource_id, skill_id
+    FROM resourceskill
+    ORDER BY resource_id''')
+  for i,j in cursor.fetchall():
+    cnt += 1
+    try:
+      frepple.skill(name=j).addresource(frepple.resource(name=i))
+    except Exception as e: print "Error:", e
+  print 'Loaded %d resource skills in %.2f seconds' % (cnt, time() - starttime)
+
+
 def loadFlows(cursor):
   print 'Importing flows...'
   cnt = 0
@@ -378,32 +394,9 @@ def loadLoads(cursor):
   cursor.execute('''
     SELECT
       operation_id, resource_id, quantity, effective_start, effective_end, name,
-      priority, setup, search
+      priority, setup, search, skill_id
     FROM resourceload
     WHERE alternate IS NULL OR alternate = ''
-    ORDER BY operation_id, resource_id
-    ''')
-  curresname = None
-  for i, j, k, l, m, n, o, p, q in cursor.fetchall():
-    cnt += 1
-    try:
-      if j != curresname:
-        curresname = j
-        curres = frepple.resource(name=curresname)
-      curload = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
-      if l: curload.effective_start = l
-      if m: curload.effective_end = m
-      if n: curload.name = n
-      if o: curload.priority = o
-      if p: curload.setup = p
-      if q: curload.search = q
-    except Exception as e: print "Error:", e
-  cursor.execute('''
-    SELECT
-      operation_id, resource_id, quantity, effective_start, effective_end,
-      name, alternate, priority, setup, search
-    FROM resourceload
-    WHERE alternate IS NOT NULL AND alternate <> ''
     ORDER BY operation_id, resource_id
     ''')
   curresname = None
@@ -417,10 +410,35 @@ def loadLoads(cursor):
       if l: curload.effective_start = l
       if m: curload.effective_end = m
       if n: curload.name = n
+      if o: curload.priority = o
+      if p: curload.setup = p
+      if q: curload.search = q
+      if r: curload.skill = frepple.skill(name=r)
+    except Exception as e: print "Error:", e
+  cursor.execute('''
+    SELECT
+      operation_id, resource_id, quantity, effective_start, effective_end,
+      name, alternate, priority, setup, search, skill_id
+    FROM resourceload
+    WHERE alternate IS NOT NULL AND alternate <> ''
+    ORDER BY operation_id, resource_id
+    ''')
+  curresname = None
+  for i, j, k, l, m, n, o, p, q, r, s in cursor.fetchall():
+    cnt += 1
+    try:
+      if j != curresname:
+        curresname = j
+        curres = frepple.resource(name=curresname)
+      curload = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
+      if l: curload.effective_start = l
+      if m: curload.effective_end = m
+      if n: curload.name = n
       if o: curload.alternate = o
       if p: curload.priority = p
       if q: curload.setup = q
       if r: curload.search = r
+      if s: curload.skill = frepple.skill(name=s)
     except Exception as e: print "Error:", e
   print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
 
@@ -563,6 +581,7 @@ def loadfrepple():
     loadBuffers(cursor)
     loadSetupMatrices(cursor)
     loadResources(cursor)
+    loadResourceSkills(cursor)
     loadFlows(cursor)
     loadLoads(cursor)
     loadOperationPlans(cursor)

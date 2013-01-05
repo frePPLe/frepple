@@ -535,6 +535,13 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     logger << "Resource     \t" << Resource::size() << "\t" << memsize << endl;
     total += memsize;
 
+    // Skills
+    memsize = 0;
+    for (Skill::iterator sk = Skill::begin(); sk != Skill::end(); ++sk)
+      memsize += sk->getSize();
+    logger << "Skill     \t" << Skill::size() << "\t" << memsize << endl;
+    total += memsize;
+
     // Operations, flows and loads
     size_t countFlows(0), memFlows(0), countLoads(0), memLoads(0);
     memsize = 0;

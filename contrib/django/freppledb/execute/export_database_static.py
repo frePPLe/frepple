@@ -593,6 +593,43 @@ def exportResources(cursor):
   print 'Exported resources in %.2f seconds' % (time() - starttime)
 
 
+def exportSkills(cursor): 
+  print "Exporting skills..."  
+  starttime = time()
+  cursor.execute("SELECT name FROM skill")
+  primary_keys = set([ i[0] for i in cursor.fetchall() ])
+  cursor.executemany(
+    '''insert into skill (name,lastmodified) values(%s,%s)''',
+    [( i.name, timestamp ) for i in frepple.skills() 
+     if i.name not in primary_keys
+    ])
+  transaction.commit(using=database)
+  print 'Exported skills in %.2f seconds' % (time() - starttime)
+
+
+def exportResourceSkills(cursor):
+  print "Exporting resource skills..."  
+  starttime = time()
+  cursor.execute("SELECT resource_id, skill_id FROM resourceskill")
+  primary_keys = set([ i for i in cursor.fetchall() ]) 
+  
+  def res_skills():
+    for s in frepple.skills():
+      for r in s.resources:
+        yield (r.name, s.name)
+       
+  cursor.executemany(
+    '''insert into resourceskill
+    (resource_id,skill_id,lastmodified) 
+    values(%s,%s,%s)''',
+    [(
+       i[0], i[1], timestamp 
+      ) for i in res_skills() if i not in primary_keys
+    ])
+  transaction.commit(using=database)
+  print 'Exported resource skills in %.2f seconds' % (time() - starttime)
+    
+
 def exportSetupMatrices(cursor): 
   print "Exporting setup matrices..."  
   starttime = time()
@@ -775,6 +812,8 @@ def exportfrepple():
       exportSetupMatrices(cursor)
       exportSetupMatricesRules(cursor)
       exportResources(cursor)
+      exportSkills(cursor)
+      exportResourceSkills(cursor)
       exportLoads(cursor)
       exportCustomers(cursor)
       exportDemands(cursor)
@@ -795,7 +834,7 @@ def exportfrepple():
       tasks = (
         DatabaseTask(exportCalendarBuckets, exportSubOperations, exportOperationPlans, exportParameters),
         DatabaseTask(exportBuffers, exportFlows),
-        DatabaseTask(exportSetupMatrices, exportSetupMatricesRules, exportResources, exportLoads),
+        DatabaseTask(exportSetupMatrices, exportSetupMatricesRules, exportResources, exportSkills, exportResourceSkills, exportLoads),
         DatabaseTask(exportCustomers, exportDemands, exportForecasts, exportForecastDemands),
         )
       # Start all threads

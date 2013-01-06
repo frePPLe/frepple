@@ -1005,13 +1005,6 @@ class Plannable : public HasProblems, public Solvable
   */
 class HasLevel
 {
-
-#if defined(_MSC_VER) || defined(__BORLANDC__)
-    // Visual C++ 6.0 and Borland C++ 5.5. seem to get confused. Static
-    // functions can't access private members.
-    friend class HasLevel;
-#endif
-
   private:
     /** Flags whether the current computation is still up to date or not.
       * The flag is set when new objects of this are created or updated.
@@ -3663,7 +3656,13 @@ class SetupMatrix : public HasName<SetupMatrix>
       return i;
     }
 
-    size_t extrasize() const {return getName().size();}
+    size_t extrasize() const 
+    {
+      size_t i = getName().size();
+      for (RuleIterator j = beginRules(); j!= endRules(); ++j)
+        i += j->getSize();
+      return i;
+    }
 
     /** Returns an iterator to go through the list of rules. */
     RuleIterator beginRules() const {return RuleIterator(firstRule);}
@@ -3750,11 +3749,14 @@ class Skill : public HasName<Skill>
 
     virtual size_t getSize() const
     {
-      size_t i = sizeof(Skill) + getName().size();
+      size_t i = sizeof(Skill) + getName().size() + resources.size() * 3 * sizeof(Resource*);
       return i;
     }
 
-    size_t extrasize() const {return getName().size();}
+    size_t extrasize() const 
+    {
+      return getName().size() + resources.size() * 3 * sizeof(Resource*);
+    }
 
   private:
     /** A list storing all resources having the skill. */
@@ -3860,7 +3862,10 @@ class Resource : public HasHierarchy<Resource>,
     static int initialize();
 
     size_t extrasize() const
-    {return getName().size() + HasDescription::extrasize() + setup.size();}
+    {
+      return getName().size() + HasDescription::extrasize() 
+        + setup.size() + skills.size() * 3 * sizeof(Skill*);
+    }
 
     /** Returns the location of this resource. */
     Location* getLocation() const {return loc;}
@@ -4563,8 +4568,16 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
     /** Return the load of which this is a plan instance. */
     const Load* getLoad() const {return ld;}
 
+    /** Update the resource.<br>
+      * The optional second argument specifies whether or not we need to verify
+      * if the assigned resource is valid. A valid resource must a) be a 
+      * subresource of the resource specified on the load, and b) must also
+      * have the skill specified on the resource.
+      */
+    DECLARE_EXPORT void setResource(Resource*, bool = false);
+
     /** Return the resource. */
-    const Resource* getResource() const {return ld->getResource();}
+    Resource* getResource() const {return res;}
 
     /** Update the load of an already existing flowplan.<br>
       * The new load must belong to the same operation.
@@ -4584,7 +4597,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
 
     /** Return a pointer to the timeline data structure owning this loadplan. */
     TimeLine<LoadPlan>* getTimeLine() const
-    {return &(ld->getResource()->loadplans);}
+    {return &(res->loadplans);}
 
     /** Returns the current setup of the resource.<br>
       * When the argument is true (= default) the current setup is returned.<br>
@@ -4609,6 +4622,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
     static int initialize();
     static DECLARE_EXPORT const MetaCategory* metadata;
     PyObject* getattro(const Attribute&);
+    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
   private:
     /** Private constructor. It is called from the public constructor.<br>
@@ -4626,6 +4640,12 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
 
     /** A pointer to the load model. */
     const Load *ld;
+
+    /** A pointer to the selected resource.<br> 
+      * In case we use skills, the resource of the loadplan can be different 
+      * than the resource on the load.
+      */
+    Resource *res;
 
     /** A pointer to the operationplan owning this loadplan. */
     OperationPlan *oper;

@@ -43,6 +43,7 @@ int LoadPlan::initialize()
   x.setName("loadplan");
   x.setDoc("frePPLe loadplan");
   x.supportgetattro();
+  x.supportsetattro();
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
@@ -54,6 +55,9 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
   ld = const_cast<Load*>(r);
   oper = o;
   start_or_end = START;
+
+  // Update the resource field
+  res = r->getResource();
 
   // Add to the operationplan
   nextLoadPlan = NULL;
@@ -69,7 +73,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
     o->firstloadplan = this;
 
   // Insert in the resource timeline
-  r->getResource()->loadplans.insert(
+  getResource()->loadplans.insert(
     this,
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
@@ -83,7 +87,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
 
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems
-  r->getResource()->setChanged();
+  getResource()->setChanged();
   r->getOperation()->setChanged();
 }
 
@@ -93,6 +97,9 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
   ld = const_cast<Load*>(r);
   oper = o;
   start_or_end = END;
+
+  // Update the resource field
+  res = lp->getResource();
 
   // Add to the operationplan
   nextLoadPlan = NULL;
@@ -108,7 +115,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
     o->firstloadplan = this;
 
   // Insert in the resource timeline
-  r->getResource()->loadplans.insert(
+  getResource()->loadplans.insert(
     this,
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
@@ -119,118 +126,46 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
 }
 
 
-DECLARE_EXPORT LoadPlan* LoadPlan::getOtherLoadPlan() const
+DECLARE_EXPORT void LoadPlan::setResource(Resource* newres, bool check)
 {
-  for (LoadPlan *i = oper->firstloadplan; i; i = i->nextLoadPlan)
-    if (i->ld == ld && i != this) return i;
-  throw LogicException("No matching loadplan found");
-}
+  // Nothing to do
+  if (res == newres) return;
 
-
-DECLARE_EXPORT void LoadPlan::update()
-{
-  // Update the timeline data structure
-  ld->getResource()->getLoadPlans().update(
-    this,
-    ld->getLoadplanQuantity(this),
-    ld->getLoadplanDate(this)
-  );
-
-  // Review adjacent setups
-  if (!isStart()) ld->getResource()->updateSetups(this);
-
-  // Mark the operation and resource as being changed. This will trigger
-  // the recomputation of their problems
-  ld->getResource()->setChanged();
-  ld->getOperation()->setChanged();
-}
-
-
-DECLARE_EXPORT const string& LoadPlan::getSetup(bool current) const
-{
-  // This resource has no setupmatrix
-  static string nosetup;
-  assert(ld);
-  if (!ld->getResource()->getSetupMatrix()) return nosetup;
-
-  // Current load has a setup
-  if (!ld->getSetup().empty() && current) return ld->getSetup();
-
-  // Scan earlier setups
-  for (Resource::loadplanlist::const_iterator i(this);
-      i != getResource()->getLoadPlans().end(); --i)
+  // Validate the argument
+  if (!newres) throw DataException("Can't switch to NULL resource");
+  if (check)
   {
-    const LoadPlan* j = dynamic_cast<const LoadPlan*>(&*i);
-    if (j && !j->getLoad()->getSetup().empty() && (current || j != this))
-      return j->getLoad()->getSetup();
-  }
+    // New resource must be a subresource of the load's resource.
+    bool ok = false;
+    for (const Resource* i = newres; i && !ok; i = i->getOwner())
+      if (i == getLoad()->getResource()) ok = true;
+    if (!ok)
+      throw DataException("Resource isn't matching the resource specified on the load");
 
-  // No conversions found - return the original setup
-  return ld->getResource()->getSetup();
-}
-
-
-DECLARE_EXPORT LoadPlan::~LoadPlan()
-{
-  ld->getResource()->setChanged();
-  LoadPlan *prevldplan = NULL;
-  if (!isStart() && oper->getOperation() == OperationSetup::setupoperation)
-  {
-    for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
-        i != getResource()->getLoadPlans().end(); --i)
+    // New resource must have the required skill
+    if (getLoad()->getSkill())
     {
-      const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
-      if (l && l->getOperationPlan() != getOperationPlan()
-          && l->getOperationPlan() != getOperationPlan()->getOwner()
-          && !l->isStart())
-      {
-        prevldplan = const_cast<LoadPlan*>(l);
-        break;
-      }
-    }
-    if (!prevldplan)
-    {
-      for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
-          i != getResource()->getLoadPlans().end(); ++i)
-      {
-        const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
-        if (l && l->getOperationPlan() != getOperationPlan()
-            && l->getOperationPlan() != getOperationPlan()->getOwner()
-            && !l->isStart())
-        {
-          prevldplan = const_cast<LoadPlan*>(l);
-          break;
-        }
-      }
+      ok = false;
+      for(Resource::skilllist::const_iterator s = newres->getSkills().begin();
+        s != newres->getSkills().end() && !ok; s++)
+        if (*s == getLoad()->getSkill()) ok = true;
+      if (!ok)
+        throw DataException("Resource misses the skill specified on the load");
     }
   }
-  ld->getResource()->loadplans.erase(this);
-  if (prevldplan) ld->getResource()->updateSetups(prevldplan);
-}
-
-
-DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
-{
-  // No change
-  if (newld == ld) return;
-
-  // Verify the data
-  if (!newld) throw LogicException("Can't switch to NULL load");
-  if (ld && ld->getOperation() != newld->getOperation())
-    throw LogicException("Only switching to a load on the same operation is allowed");
 
   // Mark entities as changed
   if (oper) oper->getOperation()->setChanged();
-  if (ld) ld->getResource()->setChanged();
-  newld->getResource()->setChanged();
+  if (res && res!=newres) res->setChanged();
+  newres->setChanged();
 
-  // Update also the setup operationplan
+  // Update also the setup operationplans
   if (oper && oper->getOperation() != OperationSetup::setupoperation)
   {
-    bool oldHasSetup = ld && !ld->getSetup().empty()
-        && ld->getResource()->getSetupMatrix();
-    bool newHasSetup = !newld->getSetup().empty()
-        && newld->getResource()->getSetupMatrix();
+    bool oldHasSetup = ld && !ld->getSetup().empty()  // TODO not fully correct. If the load is changed, it is still possible that the old load had a setup, while ld doesn't have one any more...
+        && res && res->getSetupMatrix();
+    bool newHasSetup = ld && !ld->getSetup().empty()
+        && newres->getSetupMatrix();
     OperationPlan *setupOpplan = NULL;
     if (oldHasSetup)
     {
@@ -258,7 +193,6 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
         if (!setupLdplan)
           throw LogicException("Can't find loadplan on setup operationplan");
         // Update the loadplan
-        setupLdplan->setLoad(newld);
         setupOpplan->setEnd(setupOpplan->getDates().getEnd());
       }
       else
@@ -317,15 +251,20 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   for (LoadPlan *ldplan = getOtherLoadPlan(); true; )
   {
     // Remove from the old resource, if there is one
-    if (ldplan->ld)
-      ldplan->ld->getResource()->loadplans.erase(ldplan);
+    if (res)
+    {
+      res->loadplans.erase(ldplan);
+      res->setChanged();
+    }
 
-    // Insert in the new resource
-    ldplan->ld = newld;
-    newld->getResource()->loadplans.insert(
+    // Insert in the new resource. 
+    // This code assumes the date and quantity of the loadplan don't change
+    // when a new resource is assigned.
+    ldplan->res = newres;
+    newres->loadplans.insert(
       ldplan,
-      newld->getLoadplanQuantity(ldplan),
-      newld->getLoadplanDate(ldplan)
+      ld->getLoadplanQuantity(ldplan),
+      ld->getLoadplanDate(ldplan)
     );
 
     // Repeat for the brother loadplan or exit
@@ -334,8 +273,118 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   }
 
   // Update the setups on the old resource
-  if (prevldplan)
-    prevldplan->ld->getResource()->updateSetups(prevldplan);
+  if (prevldplan) prevldplan->res->updateSetups(prevldplan);
+
+  // Change the resource
+  newres->setChanged();
+}
+
+
+DECLARE_EXPORT LoadPlan* LoadPlan::getOtherLoadPlan() const
+{
+  for (LoadPlan *i = oper->firstloadplan; i; i = i->nextLoadPlan)
+    if (i->ld == ld && i != this) return i;
+  throw LogicException("No matching loadplan found");
+}
+
+
+DECLARE_EXPORT void LoadPlan::update()
+{
+  // Update the timeline data structure
+  getResource()->getLoadPlans().update(
+    this,
+    ld->getLoadplanQuantity(this),
+    ld->getLoadplanDate(this)
+  );
+
+  // Review adjacent setups
+  if (!isStart()) getResource()->updateSetups(this);
+
+  // Mark the operation and resource as being changed. This will trigger
+  // the recomputation of their problems
+  getResource()->setChanged();
+  ld->getOperation()->setChanged();
+}
+
+
+DECLARE_EXPORT const string& LoadPlan::getSetup(bool current) const
+{
+  // This resource has no setupmatrix
+  static string nosetup;
+  assert(ld);
+  if (!getResource()->getSetupMatrix()) return nosetup;
+
+  // Current load has a setup
+  if (!ld->getSetup().empty() && current) return ld->getSetup();
+
+  // Scan earlier setups
+  for (Resource::loadplanlist::const_iterator i(this);
+      i != getResource()->getLoadPlans().end(); --i)
+  {
+    const LoadPlan* j = dynamic_cast<const LoadPlan*>(&*i);
+    if (j && !j->getLoad()->getSetup().empty() && (current || j != this))
+      return j->getLoad()->getSetup();
+  }
+
+  // No conversions found - return the original setup
+  return getResource()->getSetup();
+}
+
+
+DECLARE_EXPORT LoadPlan::~LoadPlan()
+{
+  getResource()->setChanged();
+  LoadPlan *prevldplan = NULL;
+  if (!isStart() && oper->getOperation() == OperationSetup::setupoperation)
+  {
+    for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
+        i != getResource()->getLoadPlans().end(); --i)
+    {
+      const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
+      if (l && l->getOperationPlan() != getOperationPlan()
+          && l->getOperationPlan() != getOperationPlan()->getOwner()
+          && !l->isStart())
+      {
+        prevldplan = const_cast<LoadPlan*>(l);
+        break;
+      }
+    }
+    if (!prevldplan)
+    {
+      for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
+          i != getResource()->getLoadPlans().end(); ++i)
+      {
+        const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
+        if (l && l->getOperationPlan() != getOperationPlan()
+            && l->getOperationPlan() != getOperationPlan()->getOwner()
+            && !l->isStart())
+        {
+          prevldplan = const_cast<LoadPlan*>(l);
+          break;
+        }
+      }
+    }
+  }
+  getResource()->loadplans.erase(this);
+  if (prevldplan) getResource()->updateSetups(prevldplan);
+}
+
+
+DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
+{
+  // No change
+  if (newld == ld) return;
+
+  // Verify the data
+  if (!newld) throw DataException("Can't switch to NULL load");
+  if (ld && ld->getOperation() != newld->getOperation())
+    throw DataException("Only switching to a load on the same operation is allowed");
+
+  // Update the load and resource fields
+  LoadPlan* o = getOtherLoadPlan();
+  if (o) o->ld = newld;
+  ld = newld;
+  setResource(newld->getResource());
 }
 
 
@@ -349,8 +398,8 @@ PyObject* LoadPlan::getattro(const Attribute& attr)
     return PythonObject(getDate());
   if (attr.isA(Tags::tag_enddate))
     return PythonObject(getOtherLoadPlan()->getDate());
-  if (attr.isA(Tags::tag_resource)) // Convenient shortcut
-    return PythonObject(getLoad()->getResource());
+  if (attr.isA(Tags::tag_resource))
+    return PythonObject(getResource());
   if (attr.isA(Tags::tag_operation)) // Convenient shortcut
     return PythonObject(getLoad()->getOperation());
   if (attr.isA(Tags::tag_load))
@@ -360,6 +409,34 @@ PyObject* LoadPlan::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_setup))
     return PythonObject(getSetup());
   return NULL;
+}
+
+
+DECLARE_EXPORT int LoadPlan::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_resource))
+  {
+    if (!field.check(Resource::metadata))
+    {
+      PyErr_SetString(PythonDataException, "loadplan resource must be of type resource");
+      return -1;
+    }
+    Resource* y = static_cast<Resource*>(static_cast<PyObject*>(field));
+    setResource(y, true);
+  }
+  else if (attr.isA(Tags::tag_load))
+  {
+    if (!field.check(Load::metadata))
+    {
+      PyErr_SetString(PythonDataException, "loadplan load must be of type load");
+      return -1;
+    }
+    Load* y = static_cast<Load*>(static_cast<PyObject*>(field));
+    setLoad(y);
+  }
+  else
+    return -1;
+  return 0;
 }
 
 

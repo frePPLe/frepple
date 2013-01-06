@@ -4930,12 +4930,6 @@ class HasDescription
   */
 template <class T> class HasHierarchy : public HasName<T>
 {
-#if  (defined _MSC_VER) || (defined __BORLANDC__)
-    // Visual C++ 6.0 and Borland C++ 5.5 seem to get confused with the private
-    // template members
-    friend class HasHierarchy<T>;
-#endif
-
   public:
     class memberIterator;
     friend class memberIterator;

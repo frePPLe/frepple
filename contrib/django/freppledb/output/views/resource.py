@@ -106,7 +106,7 @@ class OverviewReport(GridPivot):
                    from common_bucketdetail
                    where bucket_id = '%s' and enddate > '%s' and startdate < '%s'
                    ) d
-      -- Include child buffers
+      -- Include child resources
       inner join %s res2
       on res2.lft between res.lft and res.rght
       -- Utilization info

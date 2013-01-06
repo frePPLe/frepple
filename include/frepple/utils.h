@@ -3669,11 +3669,7 @@ class Tree : public NonCopyable
 
     /** Returns true if the list is empty.<br>
       * Its complexity is O(1). */
-    bool empty() const
-    {
-      ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
-      return header.parent == NULL;
-    }
+    bool empty() const {return header.parent == NULL;}
 
     /** Renames an existing node, and adjusts its position in the tree. */
     void rename(TreeNode* obj, string newname)
@@ -3693,11 +3689,7 @@ class Tree : public NonCopyable
       * Its complexity is O(1), so it can be called on large trees without any
       * performance impact.
       */
-    size_t size() const
-    {
-      ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
-      return count;
-    }
+    size_t size() const {return count;}
 
     /** Verifies the integrity of the tree and returns true if everything
       * is correct.<br>
@@ -3718,7 +3710,6 @@ class Tree : public NonCopyable
       */
     TreeNode* find(const string& k) const
     {
-      ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
       int comp;
       for (TreeNode* x = header.parent; x; x = comp<0 ? x->left : x->right)
       {
@@ -3736,7 +3727,6 @@ class Tree : public NonCopyable
       */
     TreeNode* findLowerBound(const string& k, bool* f) const
     {
-      ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
       TreeNode* lower = end();
       for (TreeNode* x = header.parent; x;)
       {
@@ -3807,12 +3797,6 @@ class Tree : public NonCopyable
 
     /** Stores the number of elements in the tree. */
     size_t count;
-
-    /** Controls concurrent access to the tree from different trheads.<br>
-      * Every function reading or updating the tree should keep this mutex
-      * locked during the operation.
-      */
-    Mutex treeaccess;
 
     /** Controls whether the destructor needs to be clear all objects in the
       * tree in its destructor.<br>
@@ -4611,7 +4595,6 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       * iterate over the named entities in a simple and safe way.
       *
       * Objects of this class are created by the begin() and end() functions.
-      * @todo not thread-safe: needs to lock the tree during iteration
       */
     class iterator
     {

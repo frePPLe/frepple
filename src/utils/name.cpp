@@ -37,10 +37,6 @@ DECLARE_EXPORT void Tree::clear()
   // Tree is already empty
   if (empty()) return;
 
-  // Locking the tree is not required: the delete method locks
-  // the tree during the deletion.
-  //ScopeMutexLock l(treeaccess);
-
   // Erase all elements
   for (TreeNode* x = begin(); x != end(); x = begin())
   {
@@ -56,9 +52,6 @@ DECLARE_EXPORT void Tree::clear()
 Tree::TreeNode* Tree::insert(TreeNode* z, TreeNode *hint)
 {
   if (!z) throw LogicException("Inserting null pointer in tree");
-
-  // Lock the tree
-  ScopeMutexLock l(treeaccess);
 
   // Use the hint to create the proper starting point in the tree
   int comp;
@@ -191,9 +184,6 @@ void Tree::erase(TreeNode* z)
   // A colorless node was never inserted in the tree, and shouldn't be
   // removed from it either...
   if (!z || z->color == none) return;
-
-  // Lock the tree
-  ScopeMutexLock l(treeaccess);
 
   TreeNode* y = z;
   TreeNode* x = NULL;

@@ -191,13 +191,7 @@ template <class type> class TimeLine
         virtual unsigned short getType() const {return 4;}
     };
 
-    /** @brief This is bi-directional iterator through the timeline.
-      *
-      * It looks a bit STL-compliant, but this is only superficially. The
-      * class doesn't meet all requirements for a full STL-compliant
-      * iterator.
-      * @todo Make the timeline iterators fully STL compliant.
-      */
+    /** @brief This is bi-directional iterator through the timeline. */
     class const_iterator
     {
       protected:

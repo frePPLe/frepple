@@ -89,6 +89,8 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
   // Solve the planning problem
   try
   {
+    // TODO Propagate & solve initial shortages in buffers
+
     // Sort the demands of this problem.
     // We use a stable sort to get reproducible results between platforms
     // and STL implementations.
@@ -136,6 +138,9 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
 
     // Clean the list of demands of this cluster
     demands->clear();
+
+    // TODO Solve for safety stock in buffers that haven't been planned by any demand yet.
+    
   }
   catch (...)
   {

@@ -34,8 +34,8 @@ class Report(GridReport):
   basequeryset = Parameter.objects.all()
   rows = (
     GridFieldText('category', title=_('category'), sortable=False, editable=False, align='center'),
-    GridFieldText('name', title=_('category'), sortable=False, editable=False, align='center'),
-    GridFieldNumber('value', title=_('category'), sortable=False, editable=False, align='center'),
+    GridFieldText('name', title=_('name'), sortable=False, editable=False, align='center'),
+    GridFieldNumber('value', title=_('value'), sortable=False, editable=False, align='center'),
     )
   default_sort = (1,'asc')
   filterable = False

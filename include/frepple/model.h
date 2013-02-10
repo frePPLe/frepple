@@ -3196,7 +3196,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Constructor. */
     explicit Flow(Operation* o, Buffer* b, double q)
-      : quantity(q), priority(1), hasAlts(false), altFlow(NULL), search(PRIORITY)
+      : quantity(q), hasAlts(false), altFlow(NULL), search(PRIORITY)
     {
       setOperation(o);
       setBuffer(b);
@@ -3213,7 +3213,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Constructor. */
     explicit Flow(Operation* o, Buffer* b, double q, DateRange e)
-      : quantity(q), priority(1), hasAlts(false), altFlow(NULL), search(PRIORITY)
+      : quantity(q), hasAlts(false), altFlow(NULL), search(PRIORITY)
     {
       setOperation(o);
       setBuffer(b);
@@ -3263,12 +3263,6 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       */
     void setBuffer(Buffer* b) {if (b) setPtrB(b,b->getFlows());}
 
-    /** Update the priority of a flow. */
-    void setPriority(int i) {priority = i;}
-
-    /** Return the priority of a flow. */
-    int getPriority() const {return priority;}
-
     /** Returns true if there are alternates for this flow. */
     bool hasAlternates() const {return hasAlts;}
 
@@ -3317,7 +3311,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   protected:
     /** Default constructor. */
-    explicit Flow() : quantity(0.0), priority(1), hasAlts(false),
+    explicit Flow() : quantity(0.0), hasAlts(false),
       altFlow(NULL), search(PRIORITY) {initType(metadata);}
 
   private:
@@ -3328,9 +3322,6 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Quantity of the flow. */
     double quantity;
-
-    /** Priority of the flow - used in case of alternate flows. */
-    int priority;
 
     /** Flag that is set to true when a flow has alternates. */
     bool hasAlts;
@@ -4055,7 +4046,7 @@ class Load
   public:
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u)
-      : priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY), skill(NULL)
+      : hasAlts(false), altLoad(NULL), search(PRIORITY), skill(NULL)
     {
       setOperation(o);
       setResource(r);
@@ -4073,7 +4064,7 @@ class Load
 
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u, DateRange e)
-      : priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY), skill(NULL)
+      : hasAlts(false), altLoad(NULL), search(PRIORITY), skill(NULL)
     {
       setOperation(o);
       setResource(r);
@@ -4119,12 +4110,6 @@ class Load
       if (f < 0) throw DataException("Load quantity can't be negative");
       qty = f;
     }
-
-    /** Update the priority of a load. */
-    void setPriority(int i) {priority = i;}
-
-    /** Return the priority of a load. */
-    int getPriority() const {return priority;}
 
     /** Returns true if there are alternates for this load. */
     bool hasAlternates() const {return hasAlts;}
@@ -4179,7 +4164,7 @@ class Load
     {return sizeof(Load) + getName().size() + getSetup().size();}
 
     /** Default constructor. */
-    Load() : qty(1.0), priority(1), hasAlts(false), altLoad(NULL), 
+    Load() : qty(1.0), hasAlts(false), altLoad(NULL), 
       search(PRIORITY), skill(NULL) {initType(metadata);}
 
     /** Return the search mode. */
@@ -4197,9 +4182,6 @@ class Load
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
     double qty;
-
-    /** Priority of the load - used in case of alternate loads. */
-    int priority;
 
     /** Flag that is set to true when a load has alternates. */
     bool hasAlts;

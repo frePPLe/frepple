@@ -5363,13 +5363,14 @@ template <class A, class B, class C> class Association
         C* nextB;
         DateRange effectivity;
         string name;
+        int priority;
       public:
         /** Constructor. */
-        Node() : ptrA(NULL), ptrB(NULL), nextA(NULL), nextB(NULL) {};
+        Node() : ptrA(NULL), ptrB(NULL), nextA(NULL), nextB(NULL), priority(1) {};
 
         /** Constructor. */
         Node(A* a, B* b, const ListA& al, const ListB& bl)
-          : ptrA(a), ptrB(b), nextA(NULL), nextB(NULL)
+          : ptrA(a), ptrB(b), nextA(NULL), nextB(NULL), priority(1)
         {
           if (al.first)
           {
@@ -5458,6 +5459,12 @@ template <class A, class B, class C> class Association
 
         /** Return the optional name of the association. */
         const string& getName() const {return name;}
+        
+        /** Update the priority. */
+        void setPriority(int i) {priority = i;}
+
+        /** Return the priority. */
+        int getPriority() const {return priority;}
     };
 };
 

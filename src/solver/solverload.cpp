@@ -37,6 +37,180 @@ bool sortLoad(const Load* lhs, const Load* rhs)
 }
 
 
+DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconstrained plan!!!!
+{
+  if (!l->getSkill())           // @todo also move to the next loop in case of an aggregate resource
+  {
+    // CASE 1: No skill involved
+    l->getResource()->solve(*this, v);
+    return;
+  }
+  
+  // CASE 2: Skill involved
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  unsigned int loglevel = data->getSolver()->getLogLevel();
+
+  // Control the planning mode
+  bool originalPlanningMode = data->constrainedPlanning;
+  data->constrainedPlanning = true;
+
+  // Don't keep track of the constraints right now
+  bool originalLogConstraints = data->logConstraints;
+  data->logConstraints = false;
+  
+  // Loop over all candidate resources
+  Date min_next_date(Date::infiniteFuture);
+  LoadPlan *lplan = data->state->q_loadplan;
+  Resource *bestAlternateSelection = NULL;
+  double bestCost = DBL_MAX;
+  bool qualified_resource_exists = false;
+  double bestAlternateValue = DBL_MAX;
+  double bestAlternateQuantity = DBL_MIN;
+  double beforeCost = data->state->a_cost;
+  double beforePenalty = data->state->a_penalty;
+  OperationPlanState originalOpplan(lplan->getOperationPlan());
+  double originalLoadplanQuantity = lplan->getQuantity();
+  data->getSolver()->setLogLevel(0);  // Silence during this loop
+  for (Skill::resourcelist::const_iterator i = l->getSkill()->getResources().begin();
+    i != l->getSkill()->getResources().end(); i++)
+  {
+    // Check if the resource is appropriate
+    // The resource must have the right skill, and also be a subresource of the  
+    // resource specified on the load.    
+    const Resource* j = *i;
+    while (j && j!=l->getResource()) 
+      j = j->getOwner();
+    if (!j) continue;
+    qualified_resource_exists = true;
+
+    // Switch to this resource
+    data->state->q_loadplan = lplan; // because q_loadplan can change!
+    lplan->setResource(*i);
+    lplan->getOperationPlan()->restore(originalOpplan);
+    data->state->q_qty = lplan->getQuantity();
+    data->state->q_date = lplan->getDate();
+
+    // Plan the resource
+    CommandManager::Bookmark* topcommand = data->setBookmark();
+    try { (*i)->solve(*this,data); }
+    catch (...)
+    {
+      data->getSolver()->setLogLevel(loglevel);
+      data->constrainedPlanning = originalPlanningMode;
+      data->logConstraints = originalLogConstraints;
+      data->rollback(topcommand);
+      throw;
+    }
+    data->rollback(topcommand);
+
+    // Evaluate the result
+    if (data->state->a_qty > ROUNDING_ERROR
+        && lplan->getOperationPlan()->getQuantity() > 0)
+    {
+      double deltaCost = data->state->a_cost - beforeCost;
+      double deltaPenalty = data->state->a_penalty - beforePenalty;
+      // Message
+      if (loglevel>1)
+        logger << indent(l->getOperation()->getLevel()) << "   Operation '"
+            << l->getOperation()->getName() << "' evaluates alternate '"
+            << *i << "': cost " << deltaCost
+            << ", penalty " << deltaPenalty << endl;
+      data->state->a_cost = beforeCost;
+      data->state->a_penalty = beforePenalty;
+      double val = 0.0;
+      switch (l->getSearch())
+      {
+      case PRIORITY:
+          val = 1; // @todo skill-resource model doesn't have a priority field yet
+          break;
+        case MINCOST:
+          val = deltaCost / lplan->getOperationPlan()->getQuantity();
+          break;
+        case MINPENALTY:
+          val = deltaPenalty / lplan->getOperationPlan()->getQuantity();
+          break;
+        case MINCOSTPENALTY:
+          val = (deltaCost + deltaPenalty) / lplan->getOperationPlan()->getQuantity();
+          break;
+        default:
+          LogicException("Unsupported search mode for alternate load");
+      }
+      if (val + ROUNDING_ERROR < bestAlternateValue
+          || (fabs(val - bestAlternateValue) < ROUNDING_ERROR
+              && lplan->getOperationPlan()->getQuantity() > bestAlternateQuantity))
+      {
+        // Found a better alternate
+        bestAlternateValue = val;
+        bestAlternateSelection = *i;
+        bestAlternateQuantity = lplan->getOperationPlan()->getQuantity();
+      }
+    }
+    else if (loglevel>1)
+      logger << indent(l->getOperation()->getLevel()) << "   Operation '"
+          << l->getOperation()->getName() << "' evaluates alternate '"
+          << lplan->getResource() << "': not available before "
+          << data->state->a_date << endl;
+    
+    // Keep track of best next date
+    if (data->state->a_date < min_next_date)
+      min_next_date = data->state->a_date;
+  }
+  data->getSolver()->setLogLevel(loglevel); 
+
+  // Not a single resource has the appropriate skills. You're joking?
+  if (!qualified_resource_exists)
+    throw DataException("No qualified resource exists for load");
+
+  // Restore the best candidate we found in the loop above
+  if (bestAlternateSelection)
+  {
+    // Message
+    if (loglevel)
+      logger << indent(l->getOperation()->getLevel()) << "   Operation '"
+          << l->getOperation()->getName() << "' chooses alternate '"
+          << bestAlternateSelection << "' " << l->getSearch() << endl;
+
+    // Switch back
+    data->state->q_loadplan = lplan; // because q_loadplan can change!
+    data->state->a_cost = beforeCost;
+    data->state->a_penalty = beforePenalty;
+    if (lplan->getResource() != bestAlternateSelection)
+      lplan->setResource(bestAlternateSelection);
+    lplan->getOperationPlan()->restore(originalOpplan);
+    data->state->q_qty = lplan->getQuantity();
+    data->state->q_date = lplan->getDate();
+    bestAlternateSelection->solve(*this,data);
+
+    // Restore the planning mode
+    data->constrainedPlanning = originalPlanningMode;
+    data->logConstraints = originalLogConstraints;
+    return;
+  }
+
+  // 7) No alternate gave a good result
+  data->state->a_date = min_next_date;
+  data->state->a_qty = 0;
+
+  // Restore the planning mode
+  data->constrainedPlanning = originalPlanningMode;
+
+  // Maintain the constraint list
+  if (originalLogConstraints)
+  {
+    data->planningDemand->getConstraints().push(
+      ProblemCapacityOverload::metadata,
+      l->getResource(), originalOpplan.start, originalOpplan.end,
+      -originalLoadplanQuantity);
+  }
+  data->logConstraints = originalLogConstraints;
+
+  if (loglevel>1)
+    logger << indent(lplan->getOperationPlan()->getOperation()->getLevel()) <<
+        "   Alternate load doesn't find supply on any alternate : "
+        << data->state->a_qty << "  " << data->state->a_date << endl;
+}
+
+
 void SolverMRP::solve(const Load* l, void* v)
 {
   // Note: This method is only called for decrease loadplans and for the leading
@@ -56,13 +230,13 @@ void SolverMRP::solve(const Load* l, void* v)
   if (!l->hasAlternates() && !l->getAlternate())
   {
     // CASE I: It is not an alternate load.
-    // Delegate the answer to the resource
-    l->getResource()->solve(*this,v);
+    // Delegate the answer immediately to the resource
+    chooseResource(l, data);
     return;
   }
-
+    
   // CASE II: It is an alternate load.
-  // We ask each alternate load in order of priority till we find a flow
+  // We ask each alternate load in order of priority till we find a load
   // that has a non-zero reply.
 
   // 1) collect a list of alternates
@@ -110,6 +284,9 @@ void SolverMRP::solve(const Load* l, void* v)
     data->state->q_date = lplan->getDate();
 
     // 4b) Ask the resource
+    // TODO XXX Need to insert another loop here! It goes over all resources qualified for the required skill.
+    // The qualified resources need to be sorted based on their cost. If the cost is the same we should use a decent tie breaker, eg number of skills or number of loads.
+    // The first resource with the qualified skill that is available will be used.
     CommandManager::Bookmark* topcommand = data->setBookmark();
     if (search == PRIORITY)
       curload->getResource()->solve(*this,data);
@@ -234,6 +411,7 @@ void SolverMRP::solve(const Load* l, void* v)
     if (lplan->getLoad() != bestAlternateSelection)
       lplan->setLoad(bestAlternateSelection);
     lplan->getOperationPlan()->restore(originalOpplan);
+    // TODO XXX need to restore also the selected resource with the right skill!
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
     bestAlternateSelection->getResource()->solve(*this,data);

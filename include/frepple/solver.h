@@ -184,6 +184,14 @@ class SolverMRP : public Solver
       */
     DECLARE_EXPORT void solve(const Demand*, void* = NULL);
 
+    /** Choose a resource.<br>
+      * Normally the chosen resource is simply the resource specified on the 
+      * load.<br>
+      * When the load specifies a certain skill and an aggregate resource, then
+      * we search for appropriate child resources.
+      */
+    DECLARE_EXPORT void chooseResource(const Load*, void*);
+
   public:
     /** This is the main solver method that will appropriately call the other
       * solve methods.<br>

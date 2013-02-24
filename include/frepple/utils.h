@@ -1087,7 +1087,6 @@ class MetaClass : public NonCopyable
       * value is NULL. */
     static DECLARE_EXPORT const MetaClass* findClass(const char*);
 
-  protected:
     /** Default constructor. */
     MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")),
       category(NULL), pythonClass(NULL), factoryMethodDefault(NULL) {}

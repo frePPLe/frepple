@@ -3054,7 +3054,7 @@ class XMLAttributeList : public AttributeList
   public:
     XMLAttributeList(const xercesc::Attributes* a) : atts(a) {}
 
-    const XMLElement* get(const Keyword& key) const
+    DECLARE_EXPORT const XMLElement* get(const Keyword& key) const
     {
       char* s = xercesc::XMLString::transcode(atts->getValue(key.getXMLCharacters()));
       const_cast<XMLAttributeList*>(this)->result.setData(s ? s : "");
@@ -4317,7 +4317,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     /** Handler called when a new element tag is encountered.
       * It pushes a new element on the stack and calls the current handler.
       */
-    void startElement (const XMLCh* const, const XMLCh* const,
+    DECLARE_EXPORT void startElement (const XMLCh* const, const XMLCh* const,
         const XMLCh* const, const xercesc::Attributes&);
 
     /** Handler called when closing element tag is encountered.
@@ -4327,39 +4327,39 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * data section to the current handler, then pop it off the element
       * stack.
       */
-    void endElement
+    DECLARE_EXPORT void endElement
     (const XMLCh* const, const XMLCh* const, const XMLCh* const);
 
     /** Handler called when character data are read in.
       * The data string is add it to the current element data.
       */
 #if XERCES_VERSION_MAJOR==2
-    void characters(const XMLCh *const, const unsigned int);
+    DECLARE_EXPORT void characters(const XMLCh *const, const unsigned int);
 #else
-    void characters(const XMLCh *const, const XMLSize_t);
+    DECLARE_EXPORT void characters(const XMLCh *const, const XMLSize_t);
 #endif
 
     /** Handler called by Xerces in fatal error conditions. It throws an
       * exception to abort the parsing procedure. */
-    void fatalError (const xercesc::SAXParseException& e) {throw e;}
+    DECLARE_EXPORT void fatalError (const xercesc::SAXParseException&);
 
     /** Handler called by Xercess when reading a processing instruction. The
       * handler looks up the target in the repository and will call the
       * registered XMLinstruction.
       * @see XMLinstruction
       */
-    void processingInstruction (const XMLCh *const, const XMLCh *const);
+    DECLARE_EXPORT void processingInstruction (const XMLCh *const, const XMLCh *const);
 
     /** Handler called by Xerces in error conditions. It throws an exception
       * to abort the parsing procedure. */
-    void error (const xercesc::SAXParseException& e) {throw e;}
+    DECLARE_EXPORT void error (const xercesc::SAXParseException&);
 
     /** Handler called by Xerces for warnings. */
-    void warning (const xercesc::SAXParseException&);
+    DECLARE_EXPORT void warning (const xercesc::SAXParseException&);
 
     /** This method cleans up the parser state to get it ready for processing
       * a new document. */
-    void reset();
+    DECLARE_EXPORT void reset();
 
     /** Return a pointer to the current object being read in.  */
     inline Object* getCurrentObject() const {return m_EHStack[m_EHStack.size()-1].first;}
@@ -4484,8 +4484,8 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * Subclass can then define the specifics for parsing a flat file,
       * a string, a SOAP message, etc...
       * @exception RuntimeException Thrown in the following situations:
-      *    - the xml-document is incorrectly formatted
-      *    - the xml-parser librabry can't be initialized
+      *    - the XML-document is incorrectly formatted
+      *    - the XML-parser librabry can't be initialized
       *    - no memory can be allocated to the xml-parser
       * @exception DataException Thrown when the data can't be processed
       *   normally by the objects being created or updated.
@@ -4562,7 +4562,7 @@ class XMLInputFile : public XMLInput
       *    - read access to the input file is not available
       *    - the program doesn't support reading directories on your platform
       */
-    void parse(Object*, bool=false);
+    DECLARE_EXPORT void parse(Object*, bool=false);
 
   private:
     /** Name of the file to be opened. */

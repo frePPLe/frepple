@@ -67,7 +67,7 @@ DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLAN = 2;
 DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
 
 
-void  XMLInput::processingInstruction
+DECLARE_EXPORT void  XMLInput::processingInstruction
 (const XMLCh *const target, const XMLCh *const data)
 {
   char* type = xercesc::XMLString::transcode(target);
@@ -106,8 +106,9 @@ void  XMLInput::processingInstruction
 }
 
 
-void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
-    const XMLCh* const qname, const xercesc::Attributes& atts)
+DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri, 
+  const XMLCh* const n, const XMLCh* const qname, 
+  const xercesc::Attributes& atts)
 {
   // Validate the state
   assert(!states.empty());
@@ -204,7 +205,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
 }
 
 
-void XMLInput::endElement(const XMLCh* const uri,
+DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
     const XMLCh* const s,
     const XMLCh* const qname)
 {
@@ -316,9 +317,9 @@ void XMLInput::endElement(const XMLCh* const uri,
 // Unfortunately the prototype for this handler function differs between
 // Xerces-c 2.x and 3.x
 #if XERCES_VERSION_MAJOR==2
-void XMLInput::characters(const XMLCh *const c, const unsigned int n)
+DECLARE_EXPORT void XMLInput::characters(const XMLCh *const c, const unsigned int n)
 #else
-void XMLInput::characters(const XMLCh *const c, const XMLSize_t n)
+DECLARE_EXPORT void XMLInput::characters(const XMLCh *const c, const XMLSize_t n)
 #endif
 {
   // No data capture during the ignore state
@@ -331,12 +332,35 @@ void XMLInput::characters(const XMLCh *const c, const XMLSize_t n)
 }
 
 
-void XMLInput::warning(const xercesc::SAXParseException& exception)
+DECLARE_EXPORT void XMLInput::warning(const xercesc::SAXParseException& e)
 {
-  char* message = xercesc::XMLString::transcode(exception.getMessage());
-  logger << "Warning: " << message
-      << " at line: " << exception.getLineNumber() << endl;
+  char* message = xercesc::XMLString::transcode(e.getMessage());
+  logger << "Warning: " << message;
+  if (e.getLineNumber() > 0) logger << " at line: " << e.getLineNumber();
+  logger << endl;
   xercesc::XMLString::release(&message);
+}
+
+
+DECLARE_EXPORT void XMLInput::fatalError(const xercesc::SAXParseException& e) 
+{   
+  char* message = xercesc::XMLString::transcode(e.getMessage());
+  ostringstream ch;
+  ch << message;
+  if (e.getLineNumber() > 0) ch << " at line " << e.getLineNumber();
+  xercesc::XMLString::release(&message);
+  throw DataException(ch.str());
+}
+
+
+DECLARE_EXPORT void XMLInput::error(const xercesc::SAXParseException& e) 
+{   
+  char* message = xercesc::XMLString::transcode(e.getMessage());
+  ostringstream ch;
+  ch << message;
+  if (e.getLineNumber() > 0) ch << " at line " << e.getLineNumber();
+  xercesc::XMLString::release(&message);
+  throw DataException(ch.str());
 }
 
 
@@ -406,7 +430,7 @@ void XMLInput::shutdown()
 }
 
 
-void XMLInput::reset()
+DECLARE_EXPORT void XMLInput::reset()
 {
   // Delete the xerces parser object
   delete parser;
@@ -514,18 +538,6 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
     xercesc::XMLString::release(&message);
     reset();
     throw RuntimeException("Parsing error: " + msg);
-  }
-  catch (const xercesc::SAXParseException& toCatch)
-  {
-    char* message = xercesc::XMLString::transcode(toCatch.getMessage());
-    ostringstream msg;
-    if (toCatch.getLineNumber() > 0)
-      msg << "Parsing error: " << message << " at line " << toCatch.getLineNumber();
-    else
-      msg << "Parsing error: " << message;
-    xercesc::XMLString::release(&message);
-    reset();
-    throw RuntimeException(msg.str());
   }
   catch (const exception& toCatch)
   {
@@ -813,7 +825,7 @@ DECLARE_EXPORT void Keyword::printTags()
 }
 
 
-void XMLInputFile::parse(Object *pRoot, bool validate)
+DECLARE_EXPORT void XMLInputFile::parse(Object *pRoot, bool validate)
 {
   // Check if string has been set
   if (filename.empty())

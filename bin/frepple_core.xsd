@@ -357,7 +357,7 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
-       <xsd:element name="resources" type="resourcelist" minOccurs="0" />
+      <xsd:element name="resourceskills" type="resourceskilllist" minOccurs="0" />  
     </xsd:choice>
     <xsd:attribute name="name" type="non-empty-string" use="required" />     
   </xsd:complexType>
@@ -396,7 +396,7 @@
       <xsd:element name="loadplans" type="loadplanlist"/>
       <xsd:element name="setup" type="non-empty-string" minOccurs="0" />
       <xsd:element name="setupmatrix" type="setupmatrix" minOccurs="0" />
-      <xsd:element name="skills" type="skilllist" minOccurs="0" />  
+      <xsd:element name="resourceskills" type="resourceskilllist" minOccurs="0" />  
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="maxearly" type="xsd:duration" />
@@ -419,6 +419,32 @@
     </xsd:complexContent>
   </xsd:complexType>
 
+  <!-- RESOURCESKILL -->
+  <xsd:complexType name="resourceskill">
+    <xsd:annotation>
+      <xsd:documentation>
+        A resourceskill specifies a skill which a certain resource has.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="skill" type="skill" />
+      <xsd:element name="resource" type="resource" />
+      <xsd:element name="priority" type="xsd:integer" />
+      <xsd:element name="effective_start" type="xsd:dateTime" />
+      <xsd:element name="effective_end" type="xsd:dateTime" />
+    </xsd:choice>
+    <xsd:attribute name="priority" type="xsd:integer" />
+    <xsd:attribute name="effective_start" type="xsd:dateTime" />
+    <xsd:attribute name="effective_end" type="xsd:dateTime" />
+    <xsd:attribute name="action" type="action" />
+  </xsd:complexType>
+
+  <xsd:complexType name="resourceskilllist">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="resourceskill" type="resourceskill" />
+    </xsd:choice>
+  </xsd:complexType>
+  
   <!-- BUFFER -->
   <xsd:complexType name="buffer">
     <xsd:annotation>

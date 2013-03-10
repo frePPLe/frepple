@@ -421,7 +421,15 @@ class ResourceSkill(AuditModel):
   id = models.AutoField(_('identifier'), primary_key=True)
   resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, related_name='skills')
   skill = models.ForeignKey(Skill, verbose_name=_('skill'), db_index=True, related_name='resources')
-                            
+  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True,
+    help_text=_('Validity start date')
+    )
+  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True,
+    help_text=_('Validity end date')
+    )
+  priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
+    help_text=_('Priority of this flow in a group of alternates'))                            
+	
   class Meta(AuditModel.Meta): 
     db_table = 'resourceskill'
     unique_together = (('resource','skill'),)

@@ -142,6 +142,8 @@ DECLARE_EXPORT const Keyword Tags::tag_quantity_buffer("quantity_buffer");
 DECLARE_EXPORT const Keyword Tags::tag_quantity_demand("quantity_demand");
 DECLARE_EXPORT const Keyword Tags::tag_resource("resource");
 DECLARE_EXPORT const Keyword Tags::tag_resources("resources");
+DECLARE_EXPORT const Keyword Tags::tag_resourceskill("resourceskill");
+DECLARE_EXPORT const Keyword Tags::tag_resourceskills("resourceskills");
 DECLARE_EXPORT const Keyword Tags::tag_rule("rule");
 DECLARE_EXPORT const Keyword Tags::tag_rules("rules");
 DECLARE_EXPORT const Keyword Tags::tag_search("search");

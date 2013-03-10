@@ -535,11 +535,21 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     logger << "Resource     \t" << Resource::size() << "\t" << memsize << endl;
     total += memsize;
 
-    // Skills
+    // Skills and resourceskills
+    size_t countResourceSkills(0), memResourceSkills(0);
     memsize = 0;
     for (Skill::iterator sk = Skill::begin(); sk != Skill::end(); ++sk)
+    {
       memsize += sk->getSize();
+      for (Skill::resourcelist::const_iterator rs = sk->getResources().begin();
+          rs != sk->getResources().end(); ++rs)
+      {
+        ++countResourceSkills;
+        memResourceSkills += rs->getSize();
+      }
+    }
     logger << "Skill     \t" << Skill::size() << "\t" << memsize << endl;
+    logger << "ResourceSkill     \t" << countResourceSkills << "\t" << memResourceSkills << endl;
     total += memsize;
 
     // Operations, flows and loads

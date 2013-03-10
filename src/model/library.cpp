@@ -110,6 +110,10 @@ void LibraryModel::initialize()
   nok += ResourceIterator::initialize();
   nok += Resource::PlanIterator::initialize();
 
+  // Initialize the resourceskill metadata
+  nok += ResourceSkill::initialize();
+  nok += ResourceSkillIterator::initialize();
+
   // Initialize the load metadata.
   nok += Load::initialize();
   nok += LoadIterator::initialize();

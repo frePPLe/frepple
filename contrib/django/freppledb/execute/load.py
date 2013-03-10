@@ -321,13 +321,15 @@ def loadResourceSkills(cursor):
   cnt = 0
   starttime = time()
   cursor.execute('''SELECT
-    resource_id, skill_id
+    resource_id, skill_id, effective_start, effective_end, priority
     FROM resourceskill
-    ORDER BY resource_id''')
-  for i,j in cursor.fetchall():
+    ORDER BY skill_id, priority, resource_id''')
+  for i,j,k,l,m in cursor.fetchall():
     cnt += 1
     try:
-      frepple.skill(name=j).addresource(frepple.resource(name=i))
+      cur = frepple.resourceskill(resource=frepple.resource(name=i), skill=frepple.skill(name=j), priority=m or 1)
+      if k: cur.effective_start = k
+      if l: cur.effective_end = l
     except Exception as e: print "Error:", e
   print 'Loaded %d resource skills in %.2f seconds' % (cnt, time() - starttime)
 

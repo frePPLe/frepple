@@ -3123,6 +3123,9 @@ class PythonExtensionBase : public PyObject
       */
     void resetReferenceCount() {PyObject::ob_refcnt = 0;}
 
+    /** Returns the current reference count. */
+    Py_ssize_t getReferenceCount() const {return PyObject::ob_refcnt;}
+
     /** Initialize the object to a certain Python type. */
     inline void initType(const MetaClass *t)
     {

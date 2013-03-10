@@ -235,7 +235,7 @@ def exportSubOperations(cursor):
 def exportFlows(cursor):
   print "Exporting flows..."  
   starttime = time()
-  cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
+  cursor.execute("SELECT operation_id, thebuffer_id FROM flow")  # todo oper&buffer are not necesarily unique
   primary_keys = set([ i for i in cursor.fetchall() ]) 
   
   def flows():
@@ -273,7 +273,7 @@ def exportFlows(cursor):
 def exportLoads(cursor): 
   print "Exporting loads..."  
   starttime = time()
-  cursor.execute("SELECT operation_id, resource_id FROM resourceload")
+  cursor.execute("SELECT operation_id, resource_id FROM resourceload")  # todo oper&resource are not necesarily unique
   primary_keys = set([ i for i in cursor.fetchall() ]) 
   
   def loads():
@@ -610,21 +610,19 @@ def exportSkills(cursor):
 def exportResourceSkills(cursor):
   print "Exporting resource skills..."  
   starttime = time()
-  cursor.execute("SELECT resource_id, skill_id FROM resourceskill")
+  cursor.execute("SELECT resource_id, skill_id FROM resourceskill")  # todo resource&skill are not necesarily unique
   primary_keys = set([ i for i in cursor.fetchall() ]) 
   
   def res_skills():
     for s in frepple.skills():
       for r in s.resources:
-        yield (r.name, s.name)
+        yield (r.name, s.name, r.effective_start, r.effective_end, r.priority, timestamp)
        
   cursor.executemany(
     '''insert into resourceskill
-    (resource_id,skill_id,lastmodified) 
-    values(%s,%s,%s)''',
-    [(
-       i[0], i[1], timestamp 
-      ) for i in res_skills() if i not in primary_keys
+    (resource_id,skill_id,effective_start,effective_end,priority,lastmodified) 
+    values(%s,%s,%s,%s,%s,%s)''',
+    [i for i in res_skills() if i not in primary_keys
     ])
   transaction.commit(using=database)
   print 'Exported resource skills in %.2f seconds' % (time() - starttime)

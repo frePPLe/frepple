@@ -77,7 +77,7 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
     // Check if the resource is appropriate
     // The resource must have the right skill, and also be a subresource of the  
     // resource specified on the load.    
-    const Resource* j = *i;
+    const Resource* j = i->getResource();
     while (j && j!=l->getResource()) 
       j = j->getOwner();
     if (!j) continue;
@@ -85,14 +85,14 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
 
     // Switch to this resource
     data->state->q_loadplan = lplan; // because q_loadplan can change!
-    lplan->setResource(*i);
+    lplan->setResource(i->getResource());
     lplan->getOperationPlan()->restore(originalOpplan);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
 
     // Plan the resource
     CommandManager::Bookmark* topcommand = data->setBookmark();
-    try { (*i)->solve(*this,data); }
+    try { (i->getResource())->solve(*this,data); }
     catch (...)
     {
       data->getSolver()->setLogLevel(loglevel);
@@ -113,7 +113,7 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
       if (loglevel>1)
         logger << indent(l->getOperation()->getLevel()) << "   Operation '"
             << l->getOperation()->getName() << "' evaluates alternate '"
-            << *i << "': cost " << deltaCost
+            << i->getResource() << "': cost " << deltaCost
             << ", penalty " << deltaPenalty << endl;
       data->state->a_cost = beforeCost;
       data->state->a_penalty = beforePenalty;
@@ -141,7 +141,7 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
       {
         // Found a better alternate
         bestAlternateValue = val;
-        bestAlternateSelection = *i;
+        bestAlternateSelection = i->getResource();
         bestAlternateQuantity = lplan->getOperationPlan()->getQuantity();
       }
     }

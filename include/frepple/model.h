@@ -71,6 +71,8 @@ class Customer;
 class HasProblems;
 class Solvable;
 class PeggingIterator;
+class Skill;
+class ResourceSkill;
 
 
 /** @brief This class is used for initialization. */
@@ -1297,7 +1299,7 @@ class Operation : public HasName<Operation>,
     }
 
     typedef Association<Operation,Buffer,Flow>::ListA flowlist;
-    typedef Association<Operation,Resource,Load>::ListA  loadlist;
+    typedef Association<Operation,Resource,Load>::ListA loadlist;
 
     /** This is the factory method which creates all operationplans of the
       * operation. */
@@ -3707,6 +3709,8 @@ class SetupMatrixDefault : public SetupMatrix
 /** @brief This class models skills that can be assigned to resources. */
 class Skill : public HasName<Skill>
 {
+  friend class ResourceSkill;
+
   public:
     /** Default constructor. */
     Skill(const string& n) : HasName<Skill>(n) {}
@@ -3714,16 +3718,10 @@ class Skill : public HasName<Skill>
     /** Destructor. */
     DECLARE_EXPORT ~Skill();
 
-    typedef list<Resource*> resourcelist;
+    typedef Association<Resource,Skill,ResourceSkill>::ListB resourcelist;
 
-    /** Returns an reference to the list of resources. */
+    /** Returns an reference to the list of resources having this skill. */
     const resourcelist& getResources() const {return resources;}
-
-    /** Assign the skill to a resource. */
-    DECLARE_EXPORT void addResource(Resource*);
-
-    /** Remove a skill from a resource. */
-    DECLARE_EXPORT void deleteResource(Resource*);
 
     /** Python interface to add a new resource. */
     static DECLARE_EXPORT PyObject* addPythonResource(PyObject*, PyObject*);
@@ -3750,7 +3748,7 @@ class Skill : public HasName<Skill>
     }
 
   private:
-    /** A list storing all resources having the skill. */
+    /** This is a list of resources having this skill. */
     resourcelist resources;
 };
 
@@ -3778,6 +3776,7 @@ class Resource : public HasHierarchy<Resource>,
 {
     friend class Load;
     friend class LoadPlan;
+    friend class ResourceSkill;
 
   public:
     class PlanIterator;
@@ -3819,7 +3818,7 @@ class Resource : public HasHierarchy<Resource>,
     }
 
     typedef Association<Operation,Resource,Load>::ListB loadlist;
-    typedef list<Skill*> skilllist;
+    typedef Association<Resource,Skill,ResourceSkill>::ListA skilllist;
     typedef TimeLine<LoadPlan> loadplanlist;
 
     /** Returns a reference to the list of loadplans. */
@@ -3833,9 +3832,7 @@ class Resource : public HasHierarchy<Resource>,
       */
     const loadlist& getLoads() const {return loads;}
 
-    /** Returns a constant reference to the list of loads. It defines
-      * which operations are using the resource.
-      */
+    /** Returns a constant reference to the list of skills. */
     const skilllist& getSkills() const {return skills;}
 
     /** Return the load that is associates a given operation with this
@@ -3923,6 +3920,9 @@ class Resource : public HasHierarchy<Resource>,
       * operations. */
     loadlist loads;
 
+    /** This is a list of skills this resource has. */
+    skilllist skills;
+
     /** A pointer to the location of the resource. */
     Location* loc;
 
@@ -3940,9 +3940,6 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Current setup. */
     string setup;
-
-    /** List of assigned skills. */
-    skilllist skills;
 
     /** Python method that returns an iterator over the resource plan. */
     static PyObject* plan(PyObject*, PyObject*);
@@ -4032,6 +4029,55 @@ class ResourceInfinite : public Resource
     virtual size_t getSize() const
     {return sizeof(ResourceInfinite) + Resource::extrasize();}
     static int initialize();
+};
+
+
+/** @brief This class associates a resource with its skills. */
+class ResourceSkill : public Object, public Association<Resource,Skill,ResourceSkill>::Node 
+{
+  public:
+    /** Default constructor. */
+    explicit ResourceSkill() {initType(metadata);}
+
+    /** Constructor. */
+    explicit DECLARE_EXPORT ResourceSkill(Skill*, Resource*, int);
+
+    /** Constructor. */
+    explicit DECLARE_EXPORT ResourceSkill(Skill*, Resource*, int, DateRange);
+
+    /** Initialize the class. */
+    static int initialize();
+    static void writer(const MetaCategory*, XMLOutput*);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    /** Returns the resource. */
+    Resource* getResource() const {return getPtrA();}
+
+    /** Updates the resource. This method can only be called on an instance. */
+    void setResource(Resource* r) {if (r) setPtrA(r,r->getSkills());}
+
+    /** Returns the skill. */
+    Skill* getSkill() const {return getPtrB();}
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
+    virtual size_t getSize() const {return sizeof(ResourceSkill);}
+
+    /** Updates the skill. This method can only be called on an instance. */
+    void setSkill(Skill* s) {if (s) setPtrB(s,s->getResources());}
+
+  private:
+    /** Factory method. */
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+
+    /** This method is called to check the validity of the object.<br>
+      * An exception is thrown if the resourceskill is invalid.
+      */
+    DECLARE_EXPORT void validate(Action action);
 };
 
 
@@ -4272,7 +4318,6 @@ class Plan : public Plannable, public Object
     /** This method writes out the model information. Depending on a flag in
       * the XMLOutput object a complete model is written, or only the
       * dynamic plan information.
-      * @see CommandSave, CommandSavePlan
       */
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
@@ -5952,42 +5997,30 @@ class SetupMatrixRuleIterator : public PythonExtension<SetupMatrixRuleIterator>
 // RESOURCE SKILLS
 //
 
-
 class ResourceSkillIterator : public PythonExtension<ResourceSkillIterator>
 {
   public:
     static int initialize();
 
-    ResourceSkillIterator(Resource* r) : resource(r)
+    ResourceSkillIterator(Resource* r)
+      : res(r), ir(r ? r->getSkills().begin() : NULL), skill(NULL), is(NULL)
     {
       if (!r)
-        throw LogicException("Creating skill iterator for NULL resource");
-      cur = const_cast<Resource::skilllist&>(r->getSkills()).begin();
+        throw LogicException("Creating resourceskill iterator for NULL resource");
     }
 
-  private:
-    Resource* resource;
-    Resource::skilllist::iterator cur;
-    PyObject *iternext();
-};
-
-
-
-class SkillResourceIterator : public PythonExtension<SkillResourceIterator>
-{
-  public:
-    static int initialize();
-
-    SkillResourceIterator(Skill* s) : skill(s)
+    ResourceSkillIterator(Skill* s)
+      : res(NULL), ir(NULL), skill(s), is(s ? s->getResources().begin() : NULL)
     {
       if (!s)
-        throw LogicException("Creating resource iterator for NULL skill");
-      cur = const_cast<Skill::resourcelist&>(s->getResources()).begin();
+        throw LogicException("Creating resourceskill iterator for NULL skill");
     }
 
   private:
+    Resource* res;
+    Resource::skilllist::const_iterator ir;
     Skill* skill;
-    Skill::resourcelist::iterator cur;
+    Skill::resourcelist::const_iterator is;
     PyObject *iternext();
 };
 

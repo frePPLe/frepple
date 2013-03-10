@@ -173,13 +173,6 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
   if (getSetupMatrix())
     o->writeElement(Tags::tag_setupmatrix, getSetupMatrix());
   Plannable::writeElement(o, tag);
-  if (!skills.empty())
-  {
-    o->BeginObject(Tags::tag_skills);
-    for (skilllist::const_iterator i=skills.begin(); i!=skills.end(); i++)
-      (*i)->writeElement(o, Tags::tag_skill, REFERENCE);
-    o->EndObject(Tags::tag_skills);
-  }
 
   // Write extra plan information
   loadplanlist::const_iterator i = loadplans.begin();
@@ -215,6 +208,14 @@ DECLARE_EXPORT void Resource::beginElement(XMLInput& pIn, const Attribute& pAttr
     Load* l = new Load();
     l->setResource(this);
     pIn.readto(&*l);
+  }
+  else if (pAttr.isA(Tags::tag_resourceskill)
+      && pIn.getParentElement().first.isA(Tags::tag_resourceskills))
+  {
+    ResourceSkill *s =
+      dynamic_cast<ResourceSkill*>(MetaCategory::ControllerDefault(ResourceSkill::metadata,pIn.getAttributes()));
+    if (s) s->setResource(this);
+    pIn.readto(s);
   }
   else if (pAttr.isA(Tags::tag_maximum_calendar))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
@@ -271,12 +272,6 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr,
     if (d) setSetupMatrix(d);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pAttr.isA(Tags::tag_skill))
-  {
-    Skill* s = dynamic_cast<Skill*>(pIn.getPreviousObject());
-    if (s) s->addResource(this);
-    else throw LogicException("Incorrect object type during read operation");
-  }
   else
   {
     Plannable::endElement(pIn, pAttr, pElement);
@@ -305,12 +300,8 @@ DECLARE_EXPORT Resource::~Resource()
   // implemented method is way more drastic...
   deleteOperationPlans(true);
 
-  // Clean up the reference on the skill models
-  while(!skills.empty())
-    skills.front()->deleteResource(this);
-
-  // The Load objects are automatically deleted by the destructor
-  // of the Association list class.
+  // The Load and ResourceSkill objects are automatically deleted by the 
+  // destructor of the Association list class.
 }
 
 
@@ -413,7 +404,7 @@ DECLARE_EXPORT PyObject* Resource::getattro(const Attribute& attr)
     return PythonObject(getCluster());
   if (attr.isA(Tags::tag_members))
     return new ResourceIterator(this);
-  if (attr.isA(Tags::tag_skills))
+  if (attr.isA(Tags::tag_resourceskills))
     return new ResourceSkillIterator(this);
   return NULL;
 }

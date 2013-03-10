@@ -128,10 +128,6 @@ DECLARE_EXPORT void Flow::validate(Action action)
       delete &*i;
   }
 
-  // Attach to buffers higher up in the hierarchy
-  // Note that the owner can create more loads if it has an owner too.
-  if (buf->hasOwner() && action!=REMOVE) new Flow(oper, buf->getOwner(), quantity);
-
   // Set a flag to make sure the level computation is triggered again
   HasLevel::triggerLazyRecomputation();
 }

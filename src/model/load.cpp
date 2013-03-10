@@ -131,10 +131,6 @@ DECLARE_EXPORT void Load::validate(Action action)
 
   // The statements below should be executed only when a new load is created.
 
-  // If the resource has an owner, also load the owner
-  // Note that the owner load can create more loads if it has an owner too.
-  if (res->hasOwner() && action!=REMOVE) new Load(oper, res->getOwner(), qty);
-
   // Set a flag to make sure the level computation is triggered again
   HasLevel::triggerLazyRecomputation();
 }
@@ -318,13 +314,13 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
 {
   if (pAttr.isA (Tags::tag_resource))
   {
-    Resource * r = dynamic_cast<Resource*>(pIn.getPreviousObject());
+    Resource *r = dynamic_cast<Resource*>(pIn.getPreviousObject());
     if (r) setResource(r);
     else throw LogicException("Incorrect object type during read operation");
   }
   else if (pAttr.isA (Tags::tag_operation))
   {
-    Operation * o = dynamic_cast<Operation*>(pIn.getPreviousObject());
+    Operation *o = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (o) setOperation(o);
     else throw LogicException("Incorrect object type during read operation");
   }
@@ -360,19 +356,16 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
   else if (pIn.isObjectEnd())
   {
     // The load data is now all read in. See if it makes sense now...
-    try
-    {
-      validate(!pIn.getUserArea() ?
-          ADD_CHANGE :
-          *static_cast<Action*>(pIn.getUserArea())
-              );
-    }
+    Action a = pIn.getUserArea() ?
+        *static_cast<Action*>(pIn.getUserArea()) :
+        ADD_CHANGE;
+    delete static_cast<Action*>(pIn.getUserArea());
+    try { validate(a); }
     catch (...)
     {
       delete this;
       throw;
     }
-    delete static_cast<Action*>(pIn.getUserArea());
   }
 }
 

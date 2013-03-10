@@ -143,6 +143,8 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_quantity_demand;
     static DECLARE_EXPORT const Keyword tag_resource;
     static DECLARE_EXPORT const Keyword tag_resources;
+    static DECLARE_EXPORT const Keyword tag_resourceskill;
+    static DECLARE_EXPORT const Keyword tag_resourceskills;
     static DECLARE_EXPORT const Keyword tag_rule;
     static DECLARE_EXPORT const Keyword tag_rules;
     static DECLARE_EXPORT const Keyword tag_search;

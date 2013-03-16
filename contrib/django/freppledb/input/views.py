@@ -146,7 +146,7 @@ class pathreport:
     elif objecttype == 'item':
       # Find the item
       try:
-        root = [ (0, r, None, None, None, Decimal(1)) for r in Buffer.objects.filter(item=entity).using(request.database) ]
+          root = [ (0, r, None, None, None, Decimal(1)) for r in Buffer.objects.filter(item=entity).using(request.database) ]
       except ObjectDoesNotExist: raise Http404("item %s doesn't exist" % entity)
     elif objecttype == 'operation':
       # Find the operation
@@ -198,7 +198,7 @@ class pathreport:
         if curprodflow: 
           G.add_node("B%s" % curprodflow.thebuffer.name, label=curprodflow.thebuffer.name, tooltip=curprodflow.thebuffer.name, shape='trapezium', color='red')
           G.add_node("O%s" % curprodflow.operation.name, label=curprodflow.operation.name, tooltip=curprodflow.operation.name, shape='rectangle', color='green')
-          if curprodflow.quantity > 0:
+          if curprodflow.quantity > 0:            
             G.add_edge("O%s" % curprodflow.operation.name,"B%s" % curprodflow.thebuffer.name, label=str(curprodflow.quantity), tooltip=str(curprodflow.quantity), weight='100')
           else:
             G.add_edge("B%s" % curprodflow.thebuffer.name,"O%s" % curprodflow.operation.name, label=str(curprodflow.quantity), tooltip=str(curprodflow.quantity), weight='100')
@@ -520,6 +520,9 @@ class ResourceSkillList(GridReport):
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='resourceskill'),
     GridFieldText('resource', title=_('resource'), formatter='resource'),
     GridFieldText('skill', title=_('skill'), formatter='skill'),
+    GridFieldDateTime('effective_start', title=_('effective start')),
+    GridFieldDateTime('effective_end', title=_('effective end')),
+    GridFieldNumber('priority', title=_('priority')),	
     GridFieldLastModified('lastmodified'),
     )
 

@@ -335,7 +335,7 @@ class ReportByResource(GridReport):
     if not basesql: basesql = '1 = 1'
 
     query = '''
-        select operation, out_loadplan.startdate as date, out_demandpegging.demand, sum(quantity_buffer), demand.item_id, forecast.item_id
+        select operation, out_loadplan.startdate as date, out_demandpegging.demand, sum(quantity_buffer), demand.item_id, null
         from out_loadplan
         join out_operationplan
         on out_operationplan.id = out_loadplan.operationplan_id
@@ -344,9 +344,7 @@ class ReportByResource(GridReport):
         on out_demandpegging.prod_operationplan = out_loadplan.operationplan_id
         left join demand
         on demand.name = out_demandpegging.demand
-        left join forecast
-        on forecast.name = out_demandpegging.demand
-        group by out_demandpegging.demand, out_loadplan.startdate, operation, demand.item_id, forecast.item_id
+        group by out_demandpegging.demand, out_loadplan.startdate, operation, demand.item_id
         order by %s
       ''' % (basesql, reportclass.get_sort(request))
     cursor.execute(query, baseparams)

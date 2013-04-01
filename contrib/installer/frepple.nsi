@@ -34,7 +34,7 @@
 !endif
 
 ; Main definitions
-!define PRODUCT_NAME "frePPLe"
+!define PRODUCT_NAME "frePPLe community edition"
 !define PRODUCT_VERSION "0.9.3.beta"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
@@ -138,11 +138,11 @@ Page custom finish finish_leave
 ;Version Information
 VIProductVersion "0.9.3.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "0.9.3.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe installer"
-VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe installer - free Production Planning Library"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe community edition installer"
+VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe community edition installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright "Dual licensed under the AGPL and commercial license"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "Install frePPLe - free Production Planning Library"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "frePPLe community edition installer"
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${PRODUCT_NAME}_${PRODUCT_VERSION}_setup.exe"

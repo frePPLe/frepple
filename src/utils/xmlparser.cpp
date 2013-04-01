@@ -663,6 +663,15 @@ DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& tag)
 }
 
 
+DECLARE_EXPORT const XMLElement* XMLAttributeList::get(const Keyword& key) const
+{
+  char* s = xercesc::XMLString::transcode(atts->getValue(key.getXMLCharacters()));
+  const_cast<XMLAttributeList*>(this)->result.setData(s ? s : "");
+  xercesc::XMLString::release(&s);
+  return &result;
+}
+
+
 DECLARE_EXPORT bool XMLElement::getBool() const
 {
   switch (getData()[0])

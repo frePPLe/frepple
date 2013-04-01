@@ -40,7 +40,7 @@ DECLARE_EXPORT string DateRange::separator = " / ";
 DECLARE_EXPORT size_t DateRange::separatorlength = 3;
 
 /* This is the earliest date that we can represent. This not the
- * traditional epcoh start, but a year later. 1/1/1970 gave troubles
+ * traditional epoch start, but a year later. 1/1/1970 gave troubles
  * when using a timezone with positive offset to GMT.
  */
 DECLARE_EXPORT const Date Date::infinitePast("1971-01-01T00:00:00",true);

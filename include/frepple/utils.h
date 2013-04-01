@@ -562,7 +562,7 @@ class PythonInterpreter
     static PyObject* getModule() {return module;}
 
     /** Return the preferred encoding of the Python interpreter. */
-    static const char* getPythonEncoding() {return encoding.c_str();}
+    static DECLARE_EXPORT const char* getPythonEncoding();
 
     /** Create a new Python thread state.<br>
       * Each OS-level thread needs to initialize a Python thread state as well.
@@ -3053,13 +3053,7 @@ class XMLAttributeList : public AttributeList
   public:
     XMLAttributeList(const xercesc::Attributes* a) : atts(a) {}
 
-    DECLARE_EXPORT const XMLElement* get(const Keyword& key) const
-    {
-      char* s = xercesc::XMLString::transcode(atts->getValue(key.getXMLCharacters()));
-      const_cast<XMLAttributeList*>(this)->result.setData(s ? s : "");
-      xercesc::XMLString::release(&s);
-      return &result;
-    }
+    DECLARE_EXPORT const XMLElement* get(const Keyword& key) const;
 };
 
 
@@ -4476,7 +4470,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     /** Specify a Python callback function that is for every object read 
       * from the input stream. 
       */
-    DECLARE_EXPORT void setUserExit(PyObject* p) {userexit = p;}
+    void setUserExit(PyObject* p) {userexit = p;}
 
     /** Return the Python callback function. */
     PythonFunction getUserExit() const {return userexit;}

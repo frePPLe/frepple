@@ -49,6 +49,12 @@ DECLARE_EXPORT string PythonInterpreter::encoding;
 DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
 
 
+DECLARE_EXPORT const char* PythonInterpreter::getPythonEncoding() 
+{
+  return encoding.c_str();
+}
+
+
 DECLARE_EXPORT void PythonInterpreter::initialize(int argc, char *argv[])
 {
   // Initialize the Python interpreter in case we are embedding it in frePPLe.

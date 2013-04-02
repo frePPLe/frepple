@@ -253,7 +253,7 @@ class ReportByBuffer(GridReport):
         select operation, date, demand, quantity, ditem, fitem
         from
         (
-        select out_demandpegging.demand as demand, prod_date as date, operation, sum(quantity_buffer) as quantity, demand.item_id as ditem, forecast.item_id as fitem
+        select out_demandpegging.demand as demand, prod_date as date, operation, sum(quantity_buffer) as quantity, demand.item_id as ditem
         from out_flowplan
         join out_operationplan
         on out_operationplan.id = out_flowplan.operationplan_id
@@ -263,11 +263,9 @@ class ReportByBuffer(GridReport):
         on out_demandpegging.prod_operationplan = out_flowplan.operationplan_id
         left join demand
         on demand.name = out_demandpegging.demand
-        left join forecast
-        on forecast.name = out_demandpegging.demand
-        group by out_demandpegging.demand, prod_date, operation, out_operationplan.id, demand.item_id, forecast.item_id
+        group by out_demandpegging.demand, prod_date, operation, out_operationplan.id, demand.item_id
         union
-        select out_demandpegging.demand, cons_date as date, operation, -sum(quantity_buffer) as quantity, demand.item_id as ditem, forecast.item_id as fitem
+        select out_demandpegging.demand, cons_date as date, operation, -sum(quantity_buffer) as quantity, demand.item_id as ditem
         from out_flowplan
         join out_operationplan
         on out_operationplan.id = out_flowplan.operationplan_id
@@ -277,9 +275,7 @@ class ReportByBuffer(GridReport):
         on out_demandpegging.cons_operationplan = out_flowplan.operationplan_id
         left join demand
         on demand.name = out_demandpegging.demand
-        left join forecast
-        on forecast.name = out_demandpegging.demand
-        group by out_demandpegging.demand, cons_date, operation, demand.item_id, forecast.item_id
+        group by out_demandpegging.demand, cons_date, operation, demand.item_id
         ) a
         order by %s
       ''' % (basesql, basesql, reportclass.get_sort(request))

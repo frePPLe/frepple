@@ -50,42 +50,42 @@ class Report(GridReport):
       from out_problem
       group by name
       union
-      select 102, 'Problem weight', %s, round(sum(weight))
+      select 102, 'Problem weight', %s, floor(sum(weight))
       from out_problem
       group by name
       union
-      select 201, 'Demand', 'Requested', round(sum(quantity))
+      select 201, 'Demand', 'Requested', floor(sum(quantity))
       from out_demand
       union
-      select 202, 'Demand', 'Planned', round(sum(planquantity))
+      select 202, 'Demand', 'Planned', floor(sum(planquantity))
       from out_demand
       union
-      select 203, 'Demand', 'Planned late', coalesce(round(sum(planquantity)),0)
+      select 203, 'Demand', 'Planned late', coalesce(floor(sum(planquantity)),0)
       from out_demand
       where plandate > due and plandate is not null
       union
-      select 204, 'Demand', 'Unplanned', coalesce(round(sum(quantity)),0)
+      select 204, 'Demand', 'Unplanned', coalesce(floor(sum(quantity)),0)
       from out_demand
       where planquantity is null
       union
-      select 205, 'Demand', 'Total lateness', coalesce(round(sum(planquantity * %s)),0)
+      select 205, 'Demand', 'Total lateness', coalesce(floor(sum(planquantity * %s)),0)
       from out_demand
       where plandate > due and plandate is not null
       union
       select 301, 'Operation', 'Count', count(*)
       from out_operationplan
       union
-      select 301, 'Operation', 'Quantity', round(sum(quantity))
+      select 301, 'Operation', 'Quantity', floor(sum(quantity))
       from out_operationplan
       union
-      select 302, 'Resource', 'Usage', round(sum(quantity * %s))
+      select 302, 'Resource', 'Usage', floor(sum(quantity * %s))
       from out_loadplan
       union
-      select 401, 'Material', 'Produced', round(sum(quantity))
+      select 401, 'Material', 'Produced', floor(sum(quantity))
       from out_flowplan
       where quantity>0
       union
-      select 402, 'Material', 'Consumed', round(sum(-quantity))
+      select 402, 'Material', 'Consumed', floor(sum(-quantity))
       from out_flowplan
       where quantity<0
       order by 1

@@ -189,9 +189,9 @@ def exportResourceplans(cursor):
       if j.enddate > enddate: enddate = j.enddate
   if startdate == datetime.max: startdate = frepple.settings.current 
   if enddate == datetime.min: enddate = frepple.settings.current
-  startdate -= timedelta(days=30)
-  enddate += timedelta(days=30)
-    
+  startdate = (startdate - timedelta(days=30)).date()
+  enddate = (enddate - timedelta(days=30)).date()
+      
   # Build a list of horizon buckets
   buckets = []
   while startdate < enddate:

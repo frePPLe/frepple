@@ -31,7 +31,7 @@ to keep the code portable between different databases.
 '''
 
 
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from time import time
 import inspect, os
 from subprocess import Popen, PIPE
@@ -152,8 +152,8 @@ def exportResourceplans(process):
       if j.enddate > enddate: enddate = j.enddate
   if startdate == datetime.max: startdate = frepple.settings.current 
   if enddate == datetime.min: enddate = frepple.settings.current
-  startdate -= timedelta(days=30)
-  enddate += timedelta(days=30)
+  startdate = (startdate - timedelta(days=30)).date()
+  enddate = (enddate - timedelta(days=30)).date()
     
   # Build a list of horizon buckets
   buckets = []

@@ -179,7 +179,7 @@ jQuery.extend($.fn.fmatter, {
     if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resourceskill'></span>";
-  }
+  }  
 });
 jQuery.extend($.fn.fmatter.percentage, {
     unformat : function(cellvalue, options, cell) {
@@ -507,7 +507,7 @@ function delete_show()
           }
           ]
       });
-    $('#timebuckets').dialog('close');  
+    $('#timebuckets').dialog().dialog('close');  
     $.jgrid.hideModal("#searchmodfbox_grid");
   }
 }
@@ -540,7 +540,7 @@ function copy_show()
                   $('.cbox').prop("checked", false);
                   $('#cb_grid.cbox').prop("checked", false);
                   $("#grid").trigger("reloadGrid");
-                  $('#popup').dialog('close');
+                  $('#popup').dialog().dialog('close');
                   },
                 error: function (result, stat, errorThrown) {
                   $('#popup').html(result.responseText)
@@ -549,7 +549,7 @@ function copy_show()
                       autoOpen: true,
                       resizable: true
                     });
-                  $('#timebuckets').dialog('close');  
+                  $('#timebuckets').dialog().dialog('close');  
                   $.jgrid.hideModal("#searchmodfbox_grid");
                   }
               });    
@@ -561,7 +561,7 @@ function copy_show()
           }
           ]
       });
-    $('#timebuckets').dialog('close');  
+    $('#timebuckets').dialog().dialog('close');  
     $.jgrid.hideModal("#searchmodfbox_grid");
   }
 }
@@ -626,7 +626,7 @@ function import_show(url)
         }
         ]
     });
-  $('#timebuckets').dialog('close');  
+  $('#timebuckets').dialog().dialog('close');  
   $.jgrid.hideModal("#searchmodfbox_grid");
 }
 
@@ -638,7 +638,7 @@ function import_show(url)
 function filter_show()
 {
   if ($('#filter').hasClass("ui-state-disabled")) return;
-  $('#timebuckets,#popup').dialog('close');
+  $('#timebuckets,#popup').dialog().dialog('close');
   jQuery("#grid").jqGrid('searchGrid', {
     closeOnEscape: true,
     multipleSearch:true,
@@ -684,7 +684,7 @@ function export_show(only_list)
         }
         ]
       });
-  $('#timebuckets').dialog('close');
+  $('#timebuckets').dialog().dialog('close');
   $.jgrid.hideModal("#searchmodfbox_grid");
 }
 
@@ -707,7 +707,7 @@ function export_close()
   url +=  "&" + jQuery.param(postdata);
   // Open the window
   window.open(url,'_blank');
-  $('#popup').dialog('close');
+  $('#popup').dialog().dialog('close');
 }
 
 
@@ -718,7 +718,7 @@ function export_close()
 function bucket_show()
 {
   // Show popup
-  $('#popup').dialog('close');  
+  $('#popup').dialog().dialog('close');  
   $.jgrid.hideModal("#searchmodfbox_grid");
   $( "#horizonstart" ).datepicker({
       showOtherMonths: true, selectOtherMonths: true,

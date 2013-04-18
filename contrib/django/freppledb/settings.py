@@ -190,10 +190,15 @@ TEMPLATE_DIRS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'templates')),
 )
 
-STATICFILES_DIRS = (
+if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'static'))):
+	STATICFILES_DIRS = (
   ('doc',os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc'))),
   os.path.normpath(os.path.join(FREPPLE_HOME,'static')),
   )
+else:
+	STATICFILES_DIRS = (
+	  ('doc',os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc'))),
+	  )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
@@ -303,7 +308,7 @@ CSV_CHARSET = locale.getdefaultlocale()[1]
 # The current selection is nothing but the pack of standard themes of JQuery UI.
 # Check out http://jqueryui.com/themeroller/ to roll your own theme.
 THEMES = [ (i,i) for i in (
-  'base', 'black-tie', 'blitzer', 'cupertino', 'dark-hive', 'dot-luv', 'eggplant',
+  'black-tie', 'blitzer', 'cupertino', 'dark-hive', 'dot-luv', 'eggplant',
   'excite-bike', 'flick', 'hot-sneaks', 'humanity', 'le-frog', 'mint-choc',
   'overcast', 'pepper-grinder', 'redmond', 'smoothness', 'south-street', 'start',
   'sunny', 'swanky-purse', 'trontastic', 'ui-darkness', 'ui-lightness', 'vader'

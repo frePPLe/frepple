@@ -72,6 +72,10 @@ a:link, a:visited {
     font-size: 9px;
 }
 
+.reduced {
+    font-size: 75%;
+}
+
 hr {
     clear: both;
     color: #eee;
@@ -487,4 +491,9 @@ div.calendarbox
 
 .float_right {
   float: right;
+}
+
+.ui-menu .ui-menu-item a 
+{
+  font-weight: bold;
 }

@@ -37,7 +37,7 @@ class Command(BaseCommand):
       help='User running the command'),
     make_option('--constraint', dest='constraint', type='choice',
       choices=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'], default='15',
-      help='Constraints: 1=lead time, 2=capacity, 4=material, 8=release fence'),
+      help='Constraints: 1=lead time, 2=material, 4=capacity, 8=release fence'),
     make_option('--plantype', dest='plantype', type='choice', choices=['1','2'],
       default='1', help='Plan type: 1=constrained, 2=unconstrained'),
     make_option('--nonfatal', action="store_true", dest='nonfatal',

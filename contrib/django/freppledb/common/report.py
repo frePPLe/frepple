@@ -128,7 +128,7 @@ class GridFieldTime(GridField):
 
 class GridFieldDate(GridField):
   formatter = 'date'
-  extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d'}"
+  extra = "formatoptions:{srcformat:'Y-m-d',newformat:'Y-m-d'}"
   width = 140
 
 
@@ -453,9 +453,7 @@ class GridReport(View):
       first2 = True
       for f in reportclass.rows:
         if not f.name: continue
-        if isinstance(i[f.field_name], basestring):
-          s = '"%s"' % escape(i[f.field_name].encode(settings.DEFAULT_CHARSET,"ignore"))
-        elif isinstance(i[f.field_name], (list,tuple)): 
+        if isinstance(i[f.field_name], basestring) or isinstance(i[f.field_name], (list,tuple)):
           s = json.dumps(i[f.field_name], encoding = settings.DEFAULT_CHARSET)
         else:
           s = '"%s"' % i[f.field_name]
@@ -553,7 +551,8 @@ class GridReport(View):
     ok = True
     try:          
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk      
-      for rec in json.JSONDecoder().decode(request.read()):     
+      for rec in json.JSONDecoder().decode(request.read()):  
+        print rec 
         if 'delete' in rec:
           # Deleting records
           for key in rec['delete']:

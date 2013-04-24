@@ -149,7 +149,7 @@ function crosses (cellvalue, options, rowdata) {
     result += cellvalue[2] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail2'></span><br/>";
   else
     result += '0.0<br/>';
-  if (cellvalue[2] != 0.0 || cellvalue[1] != 0.0)
+  if (cellvalue[3] != 0.0)
     result += cellvalue[3] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail3'></span>";
   else
     result += cellvalue[3];  

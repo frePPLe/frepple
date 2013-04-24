@@ -179,7 +179,17 @@ jQuery.extend($.fn.fmatter, {
     if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resourceskill'></span>";
-  }  
+  },
+  project : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='project'></span>";
+  },
+  projectdeel : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (options['colModel']['popup']) return cellvalue;     
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='projectdeel'></span>";
+  }
 });
 jQuery.extend($.fn.fmatter.percentage, {
     unformat : function(cellvalue, options, cell) {
@@ -254,12 +264,21 @@ function afterEditCell(rowid, cellname, value, iRow, iCol)
   var cell = document.getElementById(iRow+'_'+cellname);
   var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[iCol];
   if (colmodel.formatter == 'date')
-    $(cell).datepicker({
-      showOtherMonths: true, selectOtherMonths: true,
-      dateFormat:"yy-mm-dd 00:00:00", changeMonth:true,
-      changeYear:true, yearRange: "c-1:c+5"
-      });
-  else
+  { 
+	if (colmodel.formatoptions['srcformat'] == "Y-m-d")
+      $(cell).datepicker({
+        showOtherMonths: true, selectOtherMonths: true,
+        dateFormat: "yy-mm-dd", changeMonth:true,
+        changeYear:true, yearRange: "c-1:c+5"
+        });
+    else
+      $(cell).datepicker({
+        showOtherMonths: true, selectOtherMonths: true,
+        dateFormat: "yy-mm-dd 00:00:00", changeMonth:true,
+        changeYear:true, yearRange: "c-1:c+5"
+        });
+  }
+  else 
     $(cell).select();   
 }
 

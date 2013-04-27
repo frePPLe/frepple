@@ -5,9 +5,10 @@ It is built using the incredible Django web application framework.
 
 The basic steps to set up a development environment:
 
-- Install python 2.5 (deprecated), 2.6 or 2.7(recommended).
+- Install python 2.6 or 2.7(recommended).
+  Python 3 is not supported yet.
 
-- Install Django 1.4.1
+- Install Django 1.5.1
   Different versions of Django may or may not work with frePPLe...
   (The frePPLe user interface is a customized version of the Django admin.
   The MultiDBModelAdmin class and the template overrides in the admin folder

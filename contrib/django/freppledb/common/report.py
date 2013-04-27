@@ -73,8 +73,8 @@ class GridField(object):
 
   def __init__(self, name, **kwargs):
     self.name = name
-    for key in kwargs:
-      setattr(self, key, kwargs[key])
+    for key, value in kwargs.iteritems():
+      setattr(self, key, value)
     if 'key' in kwargs: self.editable = False
     if not 'title' in kwargs: 
       self.title = self.name and _(self.name) or ''      
@@ -552,7 +552,6 @@ class GridReport(View):
     try:          
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk      
       for rec in json.JSONDecoder().decode(request.read()):  
-        print rec 
         if 'delete' in rec:
           # Deleting records
           for key in rec['delete']:

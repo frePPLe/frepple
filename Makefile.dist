@@ -127,28 +127,24 @@ astyle:
 
 # The release number is (unfortunately) stored in a number of independent places:
 # This make target is used to consistently update all those places.
-#  * All arguments, except the 4th, need to be integers.
-#  * Only the fourth argument can be empty.
-#  * When the argument 4 is used, it should start with a '.' and avoid
-#    using '-' (which causes problems for the RPMs)
-old1 = 0
-old2 = 9
-old3 = 3
-old4 = .beta
-new1 = 0
-new2 = 9
-new3 = 3
-new4 = 
+#  * The  first 2 arguments need to be integers.
+#  * The third argument can be empty. Or it can be a string starting with a '.'/dot.
+old1 = 2
+old2 = 0
+old3 = .rc1
+new1 = 2
+new2 = 0
+new3 = .rc2
 set_release:
-	for i in "configure.in" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "contrib/django/freppledb/__init__.py" "contrib/django/freppledb/locale/nl/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/nl/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/djangojs.po" "bin/frepple.xsd" "bin/frepple_core.xsd"; do \
-		sed 's/$(old1)\.$(old2)\.$(old3)$(old4)/$(new1).$(new2).$(new3)$(new4)/g' $$i >out.tmp; \
+	for i in "configure.in" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "contrib/django/freppledb/__init__.py" "contrib/django/freppledb/locale/nl/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/nl/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/it/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/it/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/fr/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/fr/LC_MESSAGES/djangojs.po" "bin/frepple.xsd" "bin/frepple_core.xsd"; do \
+		sed 's/$(old1)\.$(old2)$(old3)/$(new1).$(new2)$(new3)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done
-	sed 's/Version "$(old1)\.$(old2)\.$(old3)/Version "$(new1).$(new2).$(new3)/g' "contrib/installer/frepple.nsi" >out.tmp
-	sed 's/PRODUCT_VERSION "$(old1)\.$(old2)\.$(old3)$(old4)"/PRODUCT_VERSION "$(new1).$(new2).$(new3)$(new4)"/' out.tmp >"contrib/installer/frepple.nsi"
+	sed 's/Version "$(old1)\.$(old2)$(old3)/Version "$(new1).$(new2)$(new3)/g' "contrib/installer/frepple.nsi" >out.tmp
+	sed 's/PRODUCT_VERSION "$(old1)\.$(old2)$(old3)"/PRODUCT_VERSION "$(new1).$(new2)$(new3)"/' out.tmp >"contrib/installer/frepple.nsi"
 	for i in "src/dll.rc" "src/exe.rc"; do \
-		sed 's/$(old1),$(old2),$(old3)/$(new1),$(new2),$(new3)/g' $$i >out.tmp; \
-		sed 's/$(old1), $(old2), $(old3)/$(new1), $(new2), $(new3)/g' out.tmp >$$i; \
+		sed 's/$(old1),$(old2),/$(new1),$(new2),/g' $$i >out.tmp; \
+		sed 's/$(old1), $(old2),/$(new1), $(new2),/g' out.tmp >$$i; \
 		rm out.tmp; \
 	done
 

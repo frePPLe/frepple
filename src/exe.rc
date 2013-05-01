@@ -31,8 +31,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Version
 VS_VERSION_INFO VERSIONINFO
-  FILEVERSION 0,9,3,0
-  PRODUCTVERSION 0,9,3,0
+  FILEVERSION 2,0,0,0
+  PRODUCTVERSION 2,0,0,0
   FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
   FILEFLAGS 0x1L
@@ -50,13 +50,13 @@ BEGIN
       VALUE "CompanyName", "frePPLe"
       VALUE "FileDescription",
             "frePPLe - an open source Production Planning solution"
-      VALUE "FileVersion", "0, 9, 3, 0"
+      VALUE "FileVersion", "2, 0, 0, 0"
       VALUE "InternalName", "frepple.exe"
       VALUE "LegalCopyright",
-            "Licensed under the GNU Affero General Public License"
+            "Licensed under AGPL - Affero General Public License"
       VALUE "OriginalFilename", "frepple.exe"
       VALUE "ProductName", "frePPLe"
-      VALUE "ProductVersion", "0, 9, 3, 0"
+      VALUE "ProductVersion", "2, 0, 0, 0"
     END
   END
   BLOCK "VarFileInfo"

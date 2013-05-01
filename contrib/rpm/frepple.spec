@@ -23,7 +23,7 @@
 
 Summary: Free Production Planning Library
 Name: frepple
-Version: 0.9.3.beta
+Version: 2.0.rc1
 Release: 1%{?dist}
 # Note on the license: frePPle is released with the AGPL license, version 3 or higher. 
 # The optional plugin module mod_lpsolver depends on the GLPK package which is 

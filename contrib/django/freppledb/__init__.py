@@ -1,4 +1,4 @@
 r'''
 A Django project implementing a web-based user interface for frePPLe.
 '''
-VERSION = '0.9.3.beta'
+VERSION = '2.0.rc1'

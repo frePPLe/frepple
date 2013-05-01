@@ -211,12 +211,15 @@ class SubOperation(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
   operation = models.ForeignKey(Operation, verbose_name=_('operation'),
-    related_name='suboperations')
-  priority = models.IntegerField(_('priority'), default=1)
+    related_name='suboperations', help_text=_("Parent operation"))
+  priority = models.IntegerField(_('priority'), default=1,
+    help_text=_("Sequence of this operation among the suboperations. Negative values are ignored."))
   suboperation = models.ForeignKey(Operation, verbose_name=_('suboperation'),
-    related_name='superoperations')
-  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
-  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
+    related_name='superoperations', help_text=_("Child operation"))
+  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True,
+    help_text=_("Validity start date"))
+  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True,
+    help_text=_("Validity end date"))
 
   def __unicode__(self):
     return self.operation.name \
@@ -429,7 +432,7 @@ class ResourceSkill(AuditModel):
     )
   priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
     help_text=_('Priority of this flow in a group of alternates'))                            
-	
+  
   class Meta(AuditModel.Meta): 
     db_table = 'resourceskill'
     unique_together = (('resource','skill'),)

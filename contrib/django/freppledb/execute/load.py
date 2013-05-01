@@ -177,6 +177,7 @@ def loadSuboperations(cursor):
     SELECT operation_id, suboperation_id, priority, effective_start, effective_end, operation.type
     FROM suboperation, operation
     WHERE suboperation.operation_id = operation.name
+      AND priority >= 0
     ORDER BY operation_id, priority
     ''')
   curopername = None

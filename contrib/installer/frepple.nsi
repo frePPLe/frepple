@@ -584,7 +584,7 @@ Section Uninstall
   SetAutoClose false
 
   ; Open the post-installation page
-  Push "http://www.frepple.com/post-uninstall/version=${PRODUCT_VERSION}"
+  Push "http://www.frepple.com/post-uninstall/?version=${PRODUCT_VERSION}"
   Call un.openLinkNewWindow
   
 SectionEnd

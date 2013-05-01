@@ -38,6 +38,7 @@ freppledirectory = freppledb.__path__[0]
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment
             'django', 'email', 'cherrypy.wsgiserver', 'csv', 
+            'htmlentitydefs','HTMLParser','markupbase',
             # Added for MySQL
             'MySQLdb', 'MySQLdb.constants', 'MySQLdb.converters',
             # Added for PostgreSQL
@@ -51,7 +52,6 @@ packages = [# Required for django standalone deployment
             # Added to package a more complete python library with frePPLe
             'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',  
             'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer', 
-            'htmlentitydefs',
             # Added for unicode and internationalization
             'encodings',
            ]

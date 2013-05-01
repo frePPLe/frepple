@@ -426,7 +426,7 @@ Function finish_leave
     ${If} $InstalledDocumentation == "yes"
       ExecShell open "$INSTDIR\doc\index.html"
     ${Else}
-      ExecShell open "http://www.frepple.com/pmwiki/pmwiki.php"
+      ExecShell open "http://www.frepple.com/documentation/"
     ${EndIf}
   ${EndIf}
 
@@ -498,7 +498,7 @@ Section -Post
   !system "sh -c 'rm -rf frepple-${PRODUCT_VERSION}'"
 
   ; Open the post-installation page
-  Push "http://www.frepple.com/postinstall.php?version=${PRODUCT_VERSION}"
+  Push "http://www.frepple.com/post-install/?version=${PRODUCT_VERSION}"
   Call openLinkNewWindow
 
   ; Create uninstaller
@@ -584,7 +584,7 @@ Section Uninstall
   SetAutoClose false
 
   ; Open the post-installation page
-  Push "http://www.frepple.com/postuninstall.php?version=${PRODUCT_VERSION}"
+  Push "http://www.frepple.com/post-uninstall/version=${PRODUCT_VERSION}"
   Call un.openLinkNewWindow
   
 SectionEnd

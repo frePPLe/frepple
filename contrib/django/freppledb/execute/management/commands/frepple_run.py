@@ -98,7 +98,7 @@ class Command(BaseCommand):
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
       if os.path.exists(os.path.join(settings.FREPPLE_HOME,'python27.zip')):
         # For the py2exe executable
-        os.environ['PYTHONPATH'] = os.path.join(settings.FREPPLE_HOME,'python27.zip') + os.pathsep + os.path.normpath(os.environ['FREPPLE_APP'])
+        os.environ['PYTHONPATH'] = os.path.join(settings.FREPPLE_HOME,'python27.zip') + os.pathsep + os.path.normpath(settings.FREPPLE_APP)
       else:
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(settings.FREPPLE_APP)

@@ -94,7 +94,7 @@ class Command(BaseCommand):
         ['demand','customer','resourceskill','skill',
          'setuprule','setupmatrix','resourceload','resource',
          'flow','buffer','operationplan','item',
-         'suboperation','operation',
+         'suboperation','operation', # TODO Required to add for enterprise version on postgresql :'forecast','forecastdemand',
          'location','calendarbucket','calendar',],
         ['common_parameter','common_bucketdetail','common_bucket'],
         ['common_comment','django_admin_log'],

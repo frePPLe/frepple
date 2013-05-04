@@ -5,7 +5,7 @@
 ;  revision : $LastChangedRevision$  $LastChangedBy$
 ;  date     : $LastChangedDate$
 ;
-; Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
+; Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba
 ;
 ; This library is free software; you can redistribute it and/or modify it
 ; under the terms of the GNU Affero General Public License as published
@@ -35,7 +35,7 @@
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe community edition"
-!define PRODUCT_VERSION "2.0.rc1"
+!define PRODUCT_VERSION "2.0.rc2"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
@@ -129,8 +129,8 @@ Page custom finish finish_leave
 !insertmacro MUI_UNPAGE_FINISH
 
 ; Language files
+!insertmacro MUI_LANGUAGE "English"   ; First option is the default language
 !insertmacro MUI_LANGUAGE "Dutch"
-!insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "French"
 !insertmacro MUI_LANGUAGE "Italian"
 !insertmacro MUI_LANGUAGE "TradChinese"

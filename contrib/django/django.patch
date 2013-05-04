@@ -1,69 +1,43 @@
-Index: django/conf/project_template/__init__.py
-===================================================================
---- django/conf/project_template/__init__.py	(revision 0)
-+++ django/conf/project_template/__init__.py	(working copy)
-@@ -0,0 +1 @@
-+
-Index: django/conf/project_template/__init__.py
-===================================================================
---- django/conf/project_template/__init__.py	(revision 0)
-+++ django/conf/project_template/__init__.py	(working copy)
-
-Property changes on: django/conf/project_template/__init__.py
-___________________________________________________________________
-Added: svn:eol-style
-## -0,0 +1 ##
-+native
-\ No newline at end of property
-Index: django/contrib/admin/widgets.py
-===================================================================
---- django/contrib/admin/widgets.py	(revision 17769)
-+++ django/contrib/admin/widgets.py	(working copy)
-@@ -4,6 +4,7 @@
- 
+Only in Django-1.5.1/django/conf/project_template: __init__.py
+diff -ur Django-1.5.1-original/django/contrib/admin/widgets.py Django-1.5.1/django/contrib/admin/widgets.py
+--- Django-1.5.1-original/django/contrib/admin/widgets.py	2013-03-28 21:07:20.000000000 +0100
++++ Django-1.5.1/django/contrib/admin/widgets.py	2013-04-11 22:47:03.981034100 +0200
+@@ -6,6 +6,7 @@
  import copy
+ 
  from django import forms
 +from django.db import DEFAULT_DB_ALIAS
  from django.contrib.admin.templatetags.admin_static import static
  from django.core.urlresolvers import reverse
  from django.forms.widgets import RadioFieldRenderer
-@@ -13,6 +14,7 @@
+@@ -15,6 +16,7 @@
  from django.utils.translation import ugettext as _
  from django.utils.safestring import mark_safe
- from django.utils.encoding import force_unicode
+ from django.utils.encoding import force_text
 +from django.utils.http import urlquote
+ from django.utils import six
  
  
- class FilteredSelectMultiple(forms.SelectMultiple):
-@@ -139,12 +141,16 @@
+@@ -143,6 +145,10 @@
          if attrs is None:
              attrs = {}
          extra = []
 +        if self.db == DEFAULT_DB_ALIAS:
 +          prefix = ''
 +        else:
-+          prefix = '/%s' % self.db
++          prefix = '/%s' % self.db        
          if rel_to in self.admin_site._registry:
              # The related object is registered with the same AdminSite
              related_url = reverse('admin:%s_%s_changelist' %
--                                    (rel_to._meta.app_label,
--                                    rel_to._meta.module_name),
--                                    current_app=self.admin_site.name)
-+                                      (rel_to._meta.app_label,
-+                                      rel_to._meta.module_name),
-+                                      current_app=self.admin_site.name)
- 
-             params = self.url_parameters()
-             if params:
-@@ -155,13 +161,15 @@
+@@ -159,13 +165,16 @@
                  attrs['class'] = 'vForeignKeyRawIdAdminField' # The JavaScript code looks for this hook.
              # TODO: "lookup_id_" is hard-coded here. This should instead use
              # the correct API to determine the ID dynamically.
--            extra.append(u'<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> '
+-            extra.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> '
 -                            % (related_url, url, name))
-+            extra.append(u'<a href="%s%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> '
++            extra.append('<a href="%s%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> '
 +                            % (prefix, related_url, url, name))
-             extra.append(u'<img src="%s" width="16" height="16" alt="%s" /></a>'
+             extra.append('<img src="%s" width="16" height="16" alt="%s" /></a>'
                              % (static('admin/img/selector-search.gif'), _('Lookup')))
          output = [super(ForeignKeyRawIdWidget, self).render(name, value, attrs)] + extra
          if value:
@@ -71,106 +45,25 @@ Index: django/contrib/admin/widgets.py
 +           # FREPPLE DOES NOT SHOW THE CURRENT VALUE, BUT ADDS AN EDIT LINK
 +           #output.append(self.label_for_value(value))
 +           output.append('<a href="%s%s%s/"> <img src="%s" width="16" height="16" alt="%s" /></a>' % (prefix, related_url, urlquote(value), static('admin/img/icon_changelink.gif'), _('Edit')))
-         return mark_safe(u''.join(output))
++
+         return mark_safe(''.join(output))
  
      def base_url_parameters(self):
-Index: django/core/management/__init__.py
-===================================================================
---- django/core/management/__init__.py	(revision 17769)
-+++ django/core/management/__init__.py	(working copy)
+diff -ur Django-1.5.1-original/django/core/management/__init__.py Django-1.5.1/django/core/management/__init__.py
+--- Django-1.5.1-original/django/core/management/__init__.py	2013-03-28 21:07:20.000000000 +0100
++++ Django-1.5.1/django/core/management/__init__.py	2013-04-11 22:48:39.352489100 +0200
 @@ -4,6 +4,7 @@
  from optparse import OptionParser, NO_DEFAULT
  import imp
  import warnings
 +from pkgutil import iter_modules
  
+ from django.core.exceptions import ImproperlyConfigured
  from django.core.management.base import BaseCommand, CommandError, handle_default_options
- from django.core.management.color import color_style
-@@ -16,50 +17,20 @@
- # doesn't have to reload every time it's called.
- _commands = None
- 
--def find_commands(management_dir):
-+def find_commands(app_name):
-     """
--    Given a path to a management directory, returns a list of all the command
--    names that are available.
-+    Given an application name, returns a list of all the commands found.
- 
--    Returns an empty list if no commands are defined.
-+    Raises ImportError if no commands are defined.
-     """
--    command_dir = os.path.join(management_dir, 'commands')
--    try:
--        return [f[:-3] for f in os.listdir(command_dir)
--                if not f.startswith('_') and f.endswith('.py')]
--    except OSError:
--        return []
-+    packages = {}
-+    mgmt_package = "%s.management.commands" % app_name
-+    # The next line imports the *package*, not all modules in the package
-+    __import__(mgmt_package)
-+    path = getattr(sys.modules[mgmt_package], '__path__', None)
-+    return [i[1] for i in iter_modules(path)]
- 
--def find_management_module(app_name):
--    """
--    Determines the path to the management module for the given app_name,
--    without actually importing the application or the management module.
- 
--    Raises ImportError if the management module cannot be found for any reason.
--    """
--    parts = app_name.split('.')
--    parts.append('management')
--    parts.reverse()
--    part = parts.pop()
--    path = None
--
--    # When using manage.py, the project module is added to the path,
--    # loaded, then removed from the path. This means that
--    # testproject.testapp.models can be loaded in future, even if
--    # testproject isn't in the path. When looking for the management
--    # module, we need look for the case where the project name is part
--    # of the app_name but the project directory itself isn't on the path.
--    try:
--        f, path, descr = imp.find_module(part,path)
--    except ImportError,e:
--        if os.path.basename(os.getcwd()) != part:
--            raise e
--
--    while parts:
--        part = parts.pop()
--        f, path, descr = imp.find_module(part, path and [path] or None)
--    return path
--
- def load_command_class(app_name, name):
-     """
-     Given a command name and an application name, returns the Command
-@@ -93,7 +64,7 @@
-     """
-     global _commands
-     if _commands is None:
--        _commands = dict([(name, 'django.core') for name in find_commands(__path__[0])])
-+        _commands = dict([(name, 'django.core') for name in find_commands('django.core')])
- 
-         # Find the installed apps
-         try:
-@@ -105,9 +76,8 @@
-         # Find and load the management module for each installed app.
-         for app_name in apps:
-             try:
--                path = find_management_module(app_name)
-                 _commands.update(dict([(name, app_name)
--                                       for name in find_commands(path)]))
-+                                       for name in find_commands(app_name)]))
-             except ImportError:
-                 pass # No management module - ignore this app
- 
-Index: django/db/models/fields/related.py
-===================================================================
---- django/db/models/fields/related.py	(revision 17769)
-+++ django/db/models/fields/related.py	(working copy)
-@@ -934,7 +934,10 @@
+diff -ur Django-1.5.1-original/django/db/models/fields/related.py Django-1.5.1/django/db/models/fields/related.py
+--- Django-1.5.1-original/django/db/models/fields/related.py	2013-03-28 21:07:20.000000000 +0100
++++ Django-1.5.1/django/db/models/fields/related.py	2013-04-11 22:56:00.591726500 +0200
+@@ -1017,7 +1017,9 @@
          if value is None:
              return
  
@@ -178,71 +71,48 @@ Index: django/db/models/fields/related.py
 +        using = model_instance._state.db
 +        if using is None:
 +            using = router.db_for_read(model_instance.__class__, instance=model_instance)
-+        qs = self.rel.to._default_manager.using(using).filter(**{self.rel.field_name:value})
          qs = self.rel.to._default_manager.using(using).filter(
                  **{self.rel.field_name: value}
               )
-Index: django/db/models/sql/compiler.py
-===================================================================
---- django/db/models/sql/compiler.py	(revision 17769)
-+++ django/db/models/sql/compiler.py	(working copy)
-@@ -229,14 +229,17 @@
-             )
-             for alias, aggregate in self.query.aggregate_select.items()
-         ])
--
--        for table, col in self.query.related_select_cols:
--            r = '%s.%s' % (qn(table), qn(col))
+diff -ur Django-1.5.1-original/django/db/models/sql/compiler.py Django-1.5.1/django/db/models/sql/compiler.py
+--- Django-1.5.1-original/django/db/models/sql/compiler.py	2013-03-28 21:07:20.000000000 +0100
++++ Django-1.5.1/django/db/models/sql/compiler.py	2013-04-11 23:06:16.263941000 +0200
+@@ -226,11 +226,14 @@
+ 
+         for table, col in self.query.related_select_cols:
+             r = '%s.%s' % (qn(table), qn(col))
 -            if with_aliases and col in col_aliases:
 -                c_alias = 'Col%d' % len(col_aliases)
--                result.append('%s AS %s' % (r, c_alias))
--                aliases.add(c_alias)
--                col_aliases.add(c_alias)
-+
-+        for table, col in self.query.related_select_cols:
-+            r = '%s.%s' % (qn(table), qn(col))
 +            if with_aliases:
 +                if col in col_aliases:
 +                    c_alias = 'Col%d' % len(col_aliases)
 +                else:
 +                    c_alias = col
-+                result.append('%s AS %s' % (r, c_alias))
-+                aliases.add(c_alias)
-+                col_aliases.add(c_alias)
+                 result.append('%s AS %s' % (r, c_alias))
+                 aliases.add(c_alias)
+-                col_aliases.add(c_alias)
++                col_aliases.add(c_alias)            
              else:
                  result.append(r)
                  aliases.add(r)
-@@ -293,14 +296,17 @@
-             if table in only_load and field.column not in only_load[table]:
+@@ -289,8 +292,11 @@
+                 result.append((alias, field.column))
+                 aliases.add(alias)
                  continue
-             if as_pairs:
--                result.append((alias, field.column))
--                aliases.add(alias)
--                continue
 -            if with_aliases and field.column in col_aliases:
 -                c_alias = 'Col%d' % len(col_aliases)
--                result.append('%s.%s AS %s' % (qn(alias),
--                    qn2(field.column), c_alias))
--                col_aliases.add(c_alias)
-+                result.append((alias, field.column))
-+                aliases.add(alias)
-+                continue
 +            if with_aliases:
 +                if field.column in col_aliases:
 +                    c_alias = 'Col%d' % len(col_aliases)
 +                else:
 +                    c_alias = field.column
-+                result.append('%s.%s AS %s' % (qn(alias),
-+                    qn2(field.column), c_alias))
-+                col_aliases.add(c_alias)
-                 aliases.add(c_alias)
-             else:
-                 r = '%s.%s' % (qn(alias), qn2(field.column))
-Index: django/utils/autoreload.py
-===================================================================
---- django/utils/autoreload.py	(revision 17769)
-+++ django/utils/autoreload.py	(working copy)
-@@ -97,7 +97,22 @@
+                 result.append('%s.%s AS %s' % (qn(alias),
+                     qn2(field.column), c_alias))
+                 col_aliases.add(c_alias)
+diff -ur Django-1.5.1-original/django/utils/autoreload.py Django-1.5.1/django/utils/autoreload.py
+--- Django-1.5.1-original/django/utils/autoreload.py	2013-03-28 21:07:21.000000000 +0100
++++ Django-1.5.1/django/utils/autoreload.py	2013-04-11 23:08:31.679686300 +0200
+@@ -98,7 +98,22 @@
  
  def restart_with_reloader():
      while True:
@@ -266,11 +136,10 @@ Index: django/utils/autoreload.py
          if sys.platform == "win32":
              args = ['"%s"' % arg for arg in args]
          new_environ = os.environ.copy()
-Index: django/utils/translation/trans_real.py
-===================================================================
---- django/utils/translation/trans_real.py	(revision 17769)
-+++ django/utils/translation/trans_real.py	(working copy)
-@@ -143,7 +143,7 @@
+diff -ur Django-1.5.1-original/django/utils/translation/trans_real.py Django-1.5.1/django/utils/translation/trans_real.py
+--- Django-1.5.1-original/django/utils/translation/trans_real.py	2013-03-28 21:07:21.000000000 +0100
++++ Django-1.5.1/django/utils/translation/trans_real.py	2013-04-11 23:09:38.911531700 +0200
+@@ -137,7 +137,7 @@
          # doesn't affect en-gb), even though they will both use the core "en"
          # translation. So we have to subvert Python's internal gettext caching.
          base_lang = lambda x: x.split('-', 1)[0]

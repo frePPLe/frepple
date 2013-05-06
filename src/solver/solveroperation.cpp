@@ -612,9 +612,11 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     // Plan the next step
     data->state->q_qty = a_qty;
     data->state->q_date = data->state->curOwnerOpplan->getDates().getStart();
+    Buffer *tmpBuf = data->state->curBuffer;
     q_date = data->state->q_date;
     (*e)->solve(*this,v);  // @todo if the step itself has child operations, the curOwnerOpplan field is changed here!!!
     a_qty = data->state->a_qty;
+    data->state->curBuffer = tmpBuf;
 
     // Update the top operationplan
     data->state->curOwnerOpplan->setQuantity(a_qty,true);
@@ -622,8 +624,8 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     // Maximum for the next date
     if (data->state->a_date != Date::infiniteFuture)
     {
-      if (delay < data->state->a_date - q_date)
-	delay = data->state->a_date - q_date;
+      if (delay < data->state->a_date - q_date) 
+        delay = data->state->a_date - q_date;
       OperationPlanState at = data->state->curOwnerOpplan->getOperation()->setOperationPlanParameters(
         data->state->curOwnerOpplan, 0.01, //data->state->curOwnerOpplan->getQuantity(),
         data->state->a_date, Date::infinitePast, false, false

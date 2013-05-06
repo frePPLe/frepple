@@ -131,10 +131,10 @@ astyle:
 #  * The third argument can be empty. Or it can be a string starting with a '.'/dot.
 old1 = 2
 old2 = 0
-old3 = .rc1
+old3 = .rc2
 new1 = 2
 new2 = 0
-new3 = .rc2
+new3 = .rc3
 set_release:
 	for i in "configure.in" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "contrib/django/freppledb/__init__.py" "contrib/django/freppledb/locale/nl/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/nl/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/it/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/it/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/fr/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/fr/LC_MESSAGES/djangojs.po" "bin/frepple.xsd" "bin/frepple_core.xsd"; do \
 		sed 's/$(old1)\.$(old2)$(old3)/$(new1).$(new2)$(new3)/g' $$i >out.tmp; \

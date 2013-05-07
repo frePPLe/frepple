@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -25,6 +25,7 @@ from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext as _
 from django.db import transaction, DEFAULT_DB_ALIAS
+from django.utils.importlib import import_module
 from django.conf import settings
 
 from freppledb.common.models import Parameter
@@ -88,6 +89,15 @@ class Command(BaseCommand):
         message=_('Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d') % {'plantype': plantype, 'constraint': constraint}).save(using=database)
       transaction.commit(using=database)
 
+      # Locate commands.py
+      cmd = None
+      for app in settings.INSTALLED_APPS:
+        mod = import_module(app)
+        if os.path.exists(os.path.join(os.path.dirname(mod.__file__),'commands.py')):
+          cmd = os.path.join(os.path.dirname(mod.__file__),'commands.py')
+          break
+      if not cmd: raise Exception("Can't locate commands.py")
+              
       # Execute
       os.environ['PLANTYPE'] = str(plantype)
       os.environ['CONSTRAINT'] = str(constraint)
@@ -102,7 +112,7 @@ class Command(BaseCommand):
       else:
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(settings.FREPPLE_APP)
-      ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.py').replace('\\','\\\\'))
+      ret = os.system('frepple "%s"' % cmd.replace('\\','\\\\'))
       if ret == 2: 
         raise Exception('Run canceled by the user')
       elif ret: 

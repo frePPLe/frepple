@@ -76,7 +76,7 @@ class GridField(object):
     for key, value in kwargs.iteritems():
       setattr(self, key, value)
     if 'key' in kwargs: self.editable = False
-    if not 'title' in kwargs: 
+    if not 'title' in kwargs and not self.title: 
       self.title = self.name and _(self.name) or ''      
     if not self.name: 
       self.sortable = False

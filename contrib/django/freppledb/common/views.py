@@ -84,9 +84,11 @@ def preferences(request):
         pref.save()
         # Switch to the new theme and language immediately
         request.theme = newdata['theme']
+        if newdata['language'] == 'auto':
+          newdata['language'] = translation.get_language_from_request(request)        
         if translation.get_language() != newdata['language']:
           translation.activate(newdata['language'])
-          request.LANGUAGE_CODE = translation.get_language()
+          request.LANGUAGE_CODE = translation.get_language()        
         messages.add_message(request, messages.INFO, force_unicode(_('Successfully updated preferences')))
       except Exception as e:
         logger.error("Failure updating preferences: %s" % e)

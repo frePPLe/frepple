@@ -10,7 +10,7 @@ The basic steps to set up a development environment:
 
 - Install Django 1.5.1
   Different versions of Django may or may not work with frePPLe...
-  (The frePPLe user interface is a customized version of the Django admin.
+  (The frePPLe user interface customizes some parts of the Django admin.
   The MultiDBModelAdmin class and the template overrides in the admin folder
   need to be in sync with the version of Django.)
 
@@ -55,7 +55,12 @@ The basic steps to set up a development environment:
   to load a dataset, to generate a random test model and run frePPLe.
 
 
-For a production environment the following extra steps are required:
+For a production environment you should use an apache web server and
+the following extra steps are required:
+
+- Install the Apache web server
+  
+- Install the mod_wsgi module
 
 - Install the Django web application as a Python module
   Either you run the install command in the root directory of the project:
@@ -70,11 +75,13 @@ For a production environment the following extra steps are required:
   Your web server will need to be configured to serve these static files 
   directly, ie without using the frepple web application.
   
-- Deploy the web application on a web server
-  Django applications can be deployed in different ways, depending on the 
-  platform and technical constraints/preferences:
-  See http://docs.djangoproject.com/en/dev/howto/deployment/#howto-deployment-index
-  The preferred method is WSGI, using apache and mod_wsgi.
+- Edit the file httpd.conf you find in this folder.
+  Change the directory name appropriately.
+  
+- Deploy the web application on apache
+  Edit the httpd.conf of the apache server:
+     - Assure all modules mentioned in the frepple httpd.conf file are loaded.
+     - At the end add an include statement pointing to the frepple httpd.conf file.     
 
 For more detailed information please look at the Django documentation
 on http://www.djangoproject.com

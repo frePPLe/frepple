@@ -1,7 +1,12 @@
-Only in Django-1.5.1/django/conf/project_template: __init__.py
-diff -ur Django-1.5.1-original/django/contrib/admin/widgets.py Django-1.5.1/django/contrib/admin/widgets.py
---- Django-1.5.1-original/django/contrib/admin/widgets.py	2013-03-28 21:07:20.000000000 +0100
-+++ Django-1.5.1/django/contrib/admin/widgets.py	2013-04-11 22:47:03.981034100 +0200
+Index: django/conf/project_template/__init__.py
+===================================================================
+--- django/conf/project_template/__init__.py	(revision 0)
++++ django/conf/project_template/__init__.py	(working copy)
+@@ -0,0 +1 @@
++
+Index: django/contrib/admin/widgets.py
+--- django/contrib/admin/widgets.py	2013-03-28 21:07:20.000000000 +0100
++++ django/contrib/admin/widgets.py	2013-05-09 22:42:13.287418600 +0200
 @@ -6,6 +6,7 @@
  import copy
  
@@ -10,14 +15,14 @@ diff -ur Django-1.5.1-original/django/contrib/admin/widgets.py Django-1.5.1/djan
  from django.contrib.admin.templatetags.admin_static import static
  from django.core.urlresolvers import reverse
  from django.forms.widgets import RadioFieldRenderer
-@@ -15,6 +16,7 @@
- from django.utils.translation import ugettext as _
+@@ -16,6 +17,7 @@
  from django.utils.safestring import mark_safe
  from django.utils.encoding import force_text
-+from django.utils.http import urlquote
  from django.utils import six
++from django.utils.http import urlquote
  
  
+ class FilteredSelectMultiple(forms.SelectMultiple):
 @@ -143,6 +145,10 @@
          if attrs is None:
              attrs = {}
@@ -25,11 +30,11 @@ diff -ur Django-1.5.1-original/django/contrib/admin/widgets.py Django-1.5.1/djan
 +        if self.db == DEFAULT_DB_ALIAS:
 +          prefix = ''
 +        else:
-+          prefix = '/%s' % self.db        
++          prefix = '/%s' % self.db
          if rel_to in self.admin_site._registry:
              # The related object is registered with the same AdminSite
              related_url = reverse('admin:%s_%s_changelist' %
-@@ -159,13 +165,16 @@
+@@ -159,13 +165,15 @@
                  attrs['class'] = 'vForeignKeyRawIdAdminField' # The JavaScript code looks for this hook.
              # TODO: "lookup_id_" is hard-coded here. This should instead use
              # the correct API to determine the ID dynamically.
@@ -45,13 +50,12 @@ diff -ur Django-1.5.1-original/django/contrib/admin/widgets.py Django-1.5.1/djan
 +           # FREPPLE DOES NOT SHOW THE CURRENT VALUE, BUT ADDS AN EDIT LINK
 +           #output.append(self.label_for_value(value))
 +           output.append('<a href="%s%s%s/"> <img src="%s" width="16" height="16" alt="%s" /></a>' % (prefix, related_url, urlquote(value), static('admin/img/icon_changelink.gif'), _('Edit')))
-+
          return mark_safe(''.join(output))
  
      def base_url_parameters(self):
-diff -ur Django-1.5.1-original/django/core/management/__init__.py Django-1.5.1/django/core/management/__init__.py
---- Django-1.5.1-original/django/core/management/__init__.py	2013-03-28 21:07:20.000000000 +0100
-+++ Django-1.5.1/django/core/management/__init__.py	2013-04-11 22:48:39.352489100 +0200
+Index: django/core/management/__init__.py
+--- django/core/management/__init__.py	2013-03-28 21:07:20.000000000 +0100
++++ django/core/management/__init__.py	2013-05-09 18:48:15.385059100 +0200
 @@ -4,6 +4,7 @@
  from optparse import OptionParser, NO_DEFAULT
  import imp
@@ -60,9 +64,93 @@ diff -ur Django-1.5.1-original/django/core/management/__init__.py Django-1.5.1/d
  
  from django.core.exceptions import ImproperlyConfigured
  from django.core.management.base import BaseCommand, CommandError, handle_default_options
-diff -ur Django-1.5.1-original/django/db/models/fields/related.py Django-1.5.1/django/db/models/fields/related.py
---- Django-1.5.1-original/django/db/models/fields/related.py	2013-03-28 21:07:20.000000000 +0100
-+++ Django-1.5.1/django/db/models/fields/related.py	2013-04-11 22:56:00.591726500 +0200
+@@ -19,54 +20,18 @@
+ # doesn't have to reload every time it's called.
+ _commands = None
+ 
+-def find_commands(management_dir):
++def find_commands(app_name):
+     """
+-    Given a path to a management directory, returns a list of all the command
+-    names that are available.
++    Given an application name, returns a list of all the commands found.
+ 
+-    Returns an empty list if no commands are defined.
++    Raises ImportError if no commands are defined.
+     """
+-    command_dir = os.path.join(management_dir, 'commands')
+-    try:
+-        return [f[:-3] for f in os.listdir(command_dir)
+-                if not f.startswith('_') and f.endswith('.py')]
+-    except OSError:
+-        return []
+-
+-def find_management_module(app_name):
+-    """
+-    Determines the path to the management module for the given app_name,
+-    without actually importing the application or the management module.
+-
+-    Raises ImportError if the management module cannot be found for any reason.
+-    """
+-    parts = app_name.split('.')
+-    parts.append('management')
+-    parts.reverse()
+-    part = parts.pop()
+-    path = None
+-
+-    # When using manage.py, the project module is added to the path,
+-    # loaded, then removed from the path. This means that
+-    # testproject.testapp.models can be loaded in future, even if
+-    # testproject isn't in the path. When looking for the management
+-    # module, we need look for the case where the project name is part
+-    # of the app_name but the project directory itself isn't on the path.
+-    try:
+-        f, path, descr = imp.find_module(part, path)
+-    except ImportError as e:
+-        if os.path.basename(os.getcwd()) != part:
+-            raise e
+-    else:
+-        if f:
+-            f.close()
+-
+-    while parts:
+-        part = parts.pop()
+-        f, path, descr = imp.find_module(part, path and [path] or None)
+-        if f:
+-            f.close()
+-    return path
++    packages = {}
++    mgmt_package = "%s.management.commands" % app_name
++    # The next line imports the *package*, not all modules in the package
++    __import__(mgmt_package)
++    path = getattr(sys.modules[mgmt_package], '__path__', None)
++    return [i[1] for i in iter_modules(path)]
+ 
+ def load_command_class(app_name, name):
+     """
+@@ -101,7 +66,7 @@
+     """
+     global _commands
+     if _commands is None:
+-        _commands = dict([(name, 'django.core') for name in find_commands(__path__[0])])
++        _commands = dict([(name, 'django.core') for name in find_commands('django.core')])
+ 
+         # Find the installed apps
+         from django.conf import settings
+@@ -115,9 +80,8 @@
+         # Find and load the management module for each installed app.
+         for app_name in apps:
+             try:
+-                path = find_management_module(app_name)
+                 _commands.update(dict([(name, app_name)
+-                                       for name in find_commands(path)]))
++                                       for name in find_commands(app_name)]))
+             except ImportError:
+                 pass # No management module - ignore this app
+ 
+Index: django/db/models/fields/related.py
+--- django/db/models/fields/related.py	2013-03-28 21:07:20.000000000 +0100
++++ django/db/models/fields/related.py	2013-05-09 22:28:30.085334100 +0200
 @@ -1017,7 +1017,9 @@
          if value is None:
              return
@@ -74,10 +162,10 @@ diff -ur Django-1.5.1-original/django/db/models/fields/related.py Django-1.5.1/d
          qs = self.rel.to._default_manager.using(using).filter(
                  **{self.rel.field_name: value}
               )
-diff -ur Django-1.5.1-original/django/db/models/sql/compiler.py Django-1.5.1/django/db/models/sql/compiler.py
---- Django-1.5.1-original/django/db/models/sql/compiler.py	2013-03-28 21:07:20.000000000 +0100
-+++ Django-1.5.1/django/db/models/sql/compiler.py	2013-04-11 23:06:16.263941000 +0200
-@@ -226,11 +226,14 @@
+Index: django/db/models/sql/compiler.py
+--- django/db/models/sql/compiler.py	2013-03-28 21:07:20.000000000 +0100
++++ django/db/models/sql/compiler.py	2013-05-09 22:34:32.203046100 +0200
+@@ -226,8 +226,11 @@
  
          for table, col in self.query.related_select_cols:
              r = '%s.%s' % (qn(table), qn(col))
@@ -90,11 +178,7 @@ diff -ur Django-1.5.1-original/django/db/models/sql/compiler.py Django-1.5.1/dja
 +                    c_alias = col
                  result.append('%s AS %s' % (r, c_alias))
                  aliases.add(c_alias)
--                col_aliases.add(c_alias)
-+                col_aliases.add(c_alias)            
-             else:
-                 result.append(r)
-                 aliases.add(r)
+                 col_aliases.add(c_alias)
 @@ -289,8 +292,11 @@
                  result.append((alias, field.column))
                  aliases.add(alias)
@@ -109,9 +193,9 @@ diff -ur Django-1.5.1-original/django/db/models/sql/compiler.py Django-1.5.1/dja
                  result.append('%s.%s AS %s' % (qn(alias),
                      qn2(field.column), c_alias))
                  col_aliases.add(c_alias)
-diff -ur Django-1.5.1-original/django/utils/autoreload.py Django-1.5.1/django/utils/autoreload.py
---- Django-1.5.1-original/django/utils/autoreload.py	2013-03-28 21:07:21.000000000 +0100
-+++ Django-1.5.1/django/utils/autoreload.py	2013-04-11 23:08:31.679686300 +0200
+Index: django/utils/autoreload.py
+--- django/utils/autoreload.py	2013-03-28 21:07:21.000000000 +0100
++++ django/utils/autoreload.py	2013-05-09 19:01:15.164233200 +0200
 @@ -98,7 +98,22 @@
  
  def restart_with_reloader():
@@ -136,9 +220,9 @@ diff -ur Django-1.5.1-original/django/utils/autoreload.py Django-1.5.1/django/ut
          if sys.platform == "win32":
              args = ['"%s"' % arg for arg in args]
          new_environ = os.environ.copy()
-diff -ur Django-1.5.1-original/django/utils/translation/trans_real.py Django-1.5.1/django/utils/translation/trans_real.py
---- Django-1.5.1-original/django/utils/translation/trans_real.py	2013-03-28 21:07:21.000000000 +0100
-+++ Django-1.5.1/django/utils/translation/trans_real.py	2013-04-11 23:09:38.911531700 +0200
+Index: django/utils/translation/trans_real.py
+--- django/utils/translation/trans_real.py	2013-03-28 21:07:21.000000000 +0100
++++ django/utils/translation/trans_real.py	2013-05-09 18:59:42.334470000 +0200
 @@ -137,7 +137,7 @@
          # doesn't affect en-gb), even though they will both use the core "en"
          # translation. So we have to subvert Python's internal gettext caching.

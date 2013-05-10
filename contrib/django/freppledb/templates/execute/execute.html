@@ -1,6 +1,13 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 {% block extrahead %}{{block.super}}
+<style>
+td {
+  padding: 5px;
+  white-space: nowrap; 
+  vertical-align: middle;
+}
+</style>
 <script type="text/javascript">
   function calcUtil()
   {
@@ -29,9 +36,15 @@
   }
     
   $(function() {
-    $("input:submit,#logfile").button();
+    $("input:submit,#logfile").button();    
+    switch(location.hash) {
+      case "#scenarios": v = 1; break;
+      case "#database": v = 2; break;
+      case "#generator": v = 3; break;
+      default: v = 0;
+    };
     $( "#content-main" ).accordion({
-      collapsible: true, navigation: true
+      collapsible: true, active: v
       });
     v = parseInt("{{progress}}");
     $("#progress").progressbar({
@@ -89,10 +102,10 @@ and export results into the database<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The demand is always met completely and on time.<br/>{% endblocktrans %}
 <br/>
 <b>{% trans "Constraints" %}</b>:<br/>
-<input type="checkbox" name="constraint" {% if capacityconstrained %}checked="true"{% endif %} value="4"/>{% trans "Capacity: respect capacity limits" %}<br/>
-<input type="checkbox" name="constraint" {% if materialconstrained %}checked="true"{% endif %} value="2"/>{% trans "Material: respect procurement limits" %}<br/>
-<input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked="true"{% endif %} value="1"/>{% trans "Lead time: do not plan in the past" %}<br/>
-<input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8"/>{% trans "Release fence: do not plan within the release time window" %}<br/>
+<input type="checkbox" name="constraint" {% if capacityconstrained %}checked="true"{% endif %} value="4"/>&nbsp;&nbsp;{% trans "Capacity: respect capacity limits" %}<br/>
+<input type="checkbox" name="constraint" {% if materialconstrained %}checked="true"{% endif %} value="2"/>&nbsp;&nbsp;{% trans "Material: respect procurement limits" %}<br/>
+<input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked="true"{% endif %} value="1"/>&nbsp;&nbsp;{% trans "Lead time: do not plan in the past" %}<br/>
+<input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8"/>&nbsp;&nbsp;{% trans "Release fence: do not plan within the release time window" %}<br/>
 <br/>
 <a id="logfile" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a></td>
 </form>
@@ -109,22 +122,22 @@ and export results into the database<br/>
 <th>{% trans 'description'|capfirst %}</th>
 <th>{% trans 'last refresh'|capfirst %}</th></tr>
 {% for j in scenarios %}{% ifnotequal j.name 'default' %}
-<tr><td style="white-space: nowrap;"><input type=checkbox name="{{j.name}}">{{j.name}}</input></td>
+<tr><td><input type=checkbox name="{{j.name}}" id="sc{{j.name}}"/><label for="sc{{j.name}}">&nbsp;<strong>{{j.name|capfirst}}</strong></label></td>
 <td>{{j.status}}</td>
 <td>{{j.description}}</td>
 <td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td></tr>
 {% endifnotequal %}{% endfor %}
 {% if perms.execute.copy_scenario %}
-<tr><th scope="row" colspan="2">{% trans "Copy" %}</th>
+<tr><th scope="row" colspan="2" style="vertical-align:middle; padding: 15px">{% trans "Copy" %}</th>
 <td>{% trans "Copy" %} <select name="source">{% for j in scenarios %}{% ifequal j.status 'In use' %}<option value="{{j.name}}">{{j.name}}</option>{% endifequal %}{% endfor %}</select> {% trans "into selected scenarios" %}</td>
 <td><input name="copy" type="submit" value="{% trans "Copy" %}" /></td>
 </tr>{% endif %}
 {% if perms.execute.release_scenario %}
-<tr><th scope="row" colspan="2">{% trans "Release" %}</th>
+<tr><th scope="row" colspan="2" style="vertical-align:middle; padding: 15px">{% trans "Release" %}</th>
 <td>{% trans "Release selected scenarios" %}</td>
 <td><input name="release" type="submit" value="{% trans "Release" %}" /></td>
 </tr>
-<tr><th scope="row" colspan="2">{% trans "Update" %}</th>
+<tr><th scope="row" colspan="2" style="vertical-align:middle; padding: 15px">{% trans "Update" %}</th>
 <td>{% trans "Update description of selected scenarios" %}<br/>
 <input name="description" type="text" size="40" /></td>
 <td><input name="update" type="submit" value="{% trans "Update" %}"/></td>
@@ -140,13 +153,13 @@ and export results into the database<br/>
 <table>
 
 <form method="post" action="{{request.prefix}}/execute/erase/">{% csrf_token %}<tr>
-{% blocktrans %}<th scope="row"><a>Erase</a></th>
+{% blocktrans %}<th scope="row" style="vertical-align:middle; padding: 15px"><a>Erase</a></th>
 <td>Erase all data from the database.</td>
 <td><input id="erase" type="submit" value="Erase" /></td>{% endblocktrans %}
 </tr></form>
 
 <form method="post" action="{{request.prefix}}/execute/fixture/">{% csrf_token %}<tr>
-<th scope="row"><a>{% trans "Load a dataset" %}</a></th>
+<th scope="row" style="vertical-align:middle; padding: 15px"><a>{% trans "Load a dataset" %}</a></th>
 <td>{% trans "Load a dataset from a file in the database." %}<br/>
 {% trans "Available datasets:" %} <select name="datafile" id="entity">
 <option value="-" selected="selected">-</option>

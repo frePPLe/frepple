@@ -33,6 +33,8 @@ The common functionality handles:
   - middelware allowing users to set their preferred language
 '''
 
+import warnings
+
 from django import template
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
@@ -44,7 +46,7 @@ from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template.response import TemplateResponse
-from django.utils.encoding import force_unicode, iri_to_uri
+from django.utils.encoding import force_text, force_unicode, iri_to_uri
 from django.utils.html import escape, escapejs
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst, get_text_list
@@ -76,7 +78,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   '''
     
   def save_form(self, request, form, change): 
-    obj = super(MultiDBModelAdmin, self).save_form(request, form, change)       
+    # Execute the standard behavior
+    obj = super(MultiDBModelAdmin, self).save_form(request, form, change)
+    # FrePPLe specific addition       
     if change:      
       old_pk = unquote(request.path_info.rsplit("/",2)[1])
       if old_pk != (isinstance(obj.pk,basestring) and obj.pk or str(obj.pk)):
@@ -92,12 +96,15 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     obj.save(using=request.database)
 
   def queryset(self, request):
+    # Tell Django to get objects from the 'other' database.
     return super(MultiDBModelAdmin, self).queryset(request).using(request.database)
 
   def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
+    # Tell Django to get objects from the 'other' database.
     return super(MultiDBModelAdmin, self).formfield_for_foreignkey(db_field, request=request, using=request.database, **kwargs)
 
   def formfield_for_manytomany(self, db_field, request=None, **kwargs):
+    # Tell Django to get objects from the 'other' database.
     return super(MultiDBModelAdmin, self).formfield_for_manytomany(db_field, request=request, using=request.database, **kwargs)
 
   def log_addition(self, request, obj):
@@ -108,8 +115,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     LogEntry(
         user_id         = request.user.pk,
         content_type_id = ContentType.objects.get_for_model(obj).pk,
-        object_id       = force_unicode(obj.pk),
-        object_repr     = force_unicode(obj)[:200],
+        object_id       = force_text(obj.pk),
+        object_repr     = force_text(obj)[:200],
         action_flag     = ADDITION
     ).save(using=request.database)
 
@@ -141,8 +148,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     LogEntry(
         user_id         = request.user.pk,
         content_type_id = ContentType.objects.get_for_model(obj).pk,
-        object_id       = force_unicode(obj.pk),
-        object_repr     = force_unicode(obj)[:200],
+        object_id       = force_text(obj.pk),
+        object_repr     = force_text(obj)[:200],
         action_flag     = CHANGE,
         change_message  = message
     ).save(using=request.database)
@@ -156,26 +163,33 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     LogEntry(
         user_id         = request.user.id,
         content_type_id = ContentType.objects.get_for_model(self.model).pk,
-        object_id       = force_unicode(obj.pk),
-        object_repr     = object_repr[:200],
+        object_id       = force_text(obj.pk),
+        object_repr     = force_text(obj)[:200],
         action_flag     = DELETION
     ).save(using=request.database)
 
   def history_view(self, request, object_id, extra_context=None):
     "The 'history' admin view for this model."
+    # First check if the user can see this history.
     model = self.model
+    obj = get_object_or_404(model, pk=unquote(object_id))
+
+    if not self.has_change_permission(request, obj):
+        raise PermissionDenied
+    
+    # Then get the history for this object.
     opts = model._meta
     app_label = opts.app_label
     action_list = LogEntry.objects.using(request.database).filter(
-      object_id = object_id,
+      object_id = unquote(object_id),
       content_type__id__exact = ContentType.objects.get_for_model(model).id
     ).select_related().order_by('action_time')
     # If no history was found, see whether this object even exists.
     obj = get_object_or_404(model.objects.using(request.database), pk=unquote(object_id)) 
     context = {
-      'title': capfirst(force_unicode(opts.verbose_name) + " " + object_id),      
+      'title': capfirst(force_text(opts.verbose_name) + " " + object_id),      
       'action_list': action_list,
-      'module_name': capfirst(force_unicode(opts.verbose_name_plural)),
+      'module_name': capfirst(force_text(opts.verbose_name_plural)),
       'object': obj,
       'app_label': app_label,
       'opts': opts,
@@ -197,16 +211,27 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     opts = obj._meta
     pk_value = obj._get_pk_val()
 
-    msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj)}
+    msg_dict = {'name': force_text(opts.verbose_name), 'obj': force_text(obj)}
     # Here, we distinguish between different save types by checking for
     # the presence of keys in request.POST.
     if "_continue" in request.POST:
-      if post_url_continue == None:
+      msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % msg_dict
+      self.message_user(request, msg)
+      if post_url_continue is None:
         post_url_continue = request.prefix + reverse('admin:%s_%s_change' %
                                         (opts.app_label, opts.module_name),
                                         args=(pk_value,),
                                         current_app=self.admin_site.name)
-      self.message_user(request, msg + ' ' + force_unicode(_("You may edit it again below.")))
+      else:
+        try:
+          post_url_continue = post_url_continue % pk_value
+          warnings.warn(
+            "The use of string formats for post_url_continue "
+            "in ModelAdmin.response_add() is deprecated. Provide "
+            "a pre-formatted url instead.",
+            DeprecationWarning, stacklevel=2)
+        except TypeError:
+            pass
       if "_popup" in request.POST:
         post_url_continue += "?_popup=1"
       return HttpResponseRedirect(post_url_continue)
@@ -215,14 +240,15 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       return HttpResponse(
          '<!DOCTYPE html><html><head><title></title></head><body>'
          '<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script></body></html>' % \
-          # escape() calls force_unicode.
+          # escape() calls force_text.
           (escape(pk_value), escapejs(obj)))
     elif "_addanother" in request.POST:
-      self.message_user(request, msg + ' ' + force_unicode(_("You may add another %s below.") % force_unicode(opts.verbose_name)))
+      msg = _('The %(name)s "%(obj)s" was added successfully. You may add another %(name)s below.') % msg_dict
+      self.message_user(request, msg)
       return HttpResponseRedirect(request.prefix + request.path)
     else:
+      msg = _('The %(name)s "%(obj)s" was added successfully.') % msg_dict
       self.message_user(request, msg)
-
       # Redirect to previous crumb
       return HttpResponseRedirect(request.session['crumbs'][request.prefix][-2][2])
 
@@ -230,41 +256,35 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     """
     Determines the HttpResponse for the change_view stage.
     """
-    opts = obj._meta
-
-    # Handle proxy models automatically created by .only() or .defer()
-    # Refs #14529
-    verbose_name = opts.verbose_name
-    module_name = opts.module_name
-    if obj._deferred:
-        opts_ = opts.proxy_for_model._meta
-        verbose_name = opts_.verbose_name
-        module_name = opts_.module_name
+    opts = self.model._meta
 
     pk_value = obj._get_pk_val()
 
-    msg = _('The %(name)s "%(obj)s" was changed successfully.') % {'name': force_unicode(verbose_name), 'obj': force_unicode(obj)}
+    msg_dict = {'name': force_text(opts.verbose_name), 'obj': force_text(obj)}
     if "_continue" in request.POST:
-      self.message_user(request, msg + ' ' + force_unicode(_("You may edit it again below.")))
+      msg = _('The %(name)s "%(obj)s" was changed successfully. You may edit it again below.') % msg_dict
+      self.message_user(request, msg)
       if "_popup" in request.REQUEST:
           return HttpResponseRedirect(request.prefix + request.path + "?_popup=1")
       else:
           return HttpResponseRedirect(request.prefix + request.path)
     elif "_saveasnew" in request.POST:
-      msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % {'name': force_unicode(verbose_name), 'obj': obj}
+      msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % msg_dict
       self.message_user(request, msg)
       return HttpResponseRedirect(request.prefix 
         + reverse('admin:%s_%s_change' %
-                                        (opts.app_label, module_name),
+                                        (opts.app_label, opts.module_name),
                                         args=(pk_value,),
                                         current_app=self.admin_site.name))    
     elif "_addanother" in request.POST:
-      self.message_user(request, msg + ' ' + force_unicode(_("You may add another %s below.") % force_unicode(verbose_name)))
+      msg = _('The %(name)s "%(obj)s" was changed successfully. You may add another %(name)s below.') % msg_dict
+      self.message_user(request, msg)
       return HttpResponseRedirect(request.prefix 
         + reverse('admin:%s_%s_add' %
-                                        (opts.app_label, module_name),
+                                        (opts.app_label, opts.module_name),
                                         current_app=self.admin_site.name))
     else:
+      msg = _('The %(name)s "%(obj)s" was changed successfully.') % msg_dict
       self.message_user(request, msg)
       # Redirect to previous crumb
       return HttpResponseRedirect(request.session['crumbs'][request.prefix][-2][2])
@@ -291,8 +311,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       raise PermissionDenied
 
     if obj is None:
-      raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': force_unicode(opts.verbose_name), 'key': escape(object_id)})
+      raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': force_text(opts.verbose_name), 'key': escape(object_id)})
 
+    # frePPLe specific selection of the database
     using = request.database
 
     # Populate deleted_objects, a data structure of all related objects that
@@ -303,16 +324,16 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     if request.POST: # The user has already confirmed the deletion.
       if perms_needed:
         raise PermissionDenied
-      obj_display = force_unicode(obj)
+      obj_display = force_text(obj)
       self.log_deletion(request, obj, obj_display)
       self.delete_model(request, obj)
 
-      self.message_user(request, _('The %(name)s "%(obj)s" was deleted successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj_display)})
+      self.message_user(request, _('The %(name)s "%(obj)s" was deleted successfully.') % {'name': force_text(opts.verbose_name), 'obj': force_text(obj_display)})
 
       # Redirect to previous crumb
       return HttpResponseRedirect(request.session['crumbs'][request.prefix][-3][2])
 
-    object_name = force_unicode(opts.verbose_name)
+    object_name = force_text(opts.verbose_name)
 
     context = {
         "title": capfirst(object_name + ' ' + unquote(object_id)), 

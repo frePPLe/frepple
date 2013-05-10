@@ -102,10 +102,10 @@ and export results into the database<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The demand is always met completely and on time.<br/>{% endblocktrans %}
 <br/>
 <b>{% trans "Constraints" %}</b>:<br/>
-<input type="checkbox" name="constraint" {% if capacityconstrained %}checked="true"{% endif %} value="4"/>&nbsp;&nbsp;{% trans "Capacity: respect capacity limits" %}<br/>
-<input type="checkbox" name="constraint" {% if materialconstrained %}checked="true"{% endif %} value="2"/>&nbsp;&nbsp;{% trans "Material: respect procurement limits" %}<br/>
-<input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked="true"{% endif %} value="1"/>&nbsp;&nbsp;{% trans "Lead time: do not plan in the past" %}<br/>
-<input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8"/>&nbsp;&nbsp;{% trans "Release fence: do not plan within the release time window" %}<br/>
+<input type="checkbox" name="constraint" {% if capacityconstrained %}checked="true"{% endif %} value="4" id="cb4"/><label for="cb4">&nbsp;&nbsp;{% trans "Capacity: respect capacity limits" %}</label><br/>
+<input type="checkbox" name="constraint" {% if materialconstrained %}checked="true"{% endif %} value="2" id="cb2"/><label for="cb2">&nbsp;&nbsp;{% trans "Material: respect procurement limits" %}</label><br/>
+<input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked="true"{% endif %} value="1" id="cb1"/><label for="cb1">&nbsp;&nbsp;{% trans "Lead time: do not plan in the past" %}</label><br/>
+<input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8" id="cb8"/><label for="cb8">&nbsp;&nbsp;{% trans "Release fence: do not plan within the release time window" %}</label><br/>
 <br/>
 <a id="logfile" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a></td>
 </form>

@@ -34,7 +34,7 @@
 !endif
 
 ; Main definitions
-!define PRODUCT_NAME "frePPLe community edition"
+!define PRODUCT_NAME "frePPLe"
 !define PRODUCT_VERSION "2.0.rc2"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
@@ -98,10 +98,10 @@ FunctionEnd
 !include MUI2.nsh
 !include Library.nsh
 !include WinMessages.nsh
-!include "Sections.nsh"
+!include Sections.nsh
 !include InstallOptions.nsh
 !include LogicLib.nsh
-!include "FileFunc.nsh"
+!include FileFunc.nsh
 
 ; MUI Settings
 !define MUI_ABORTWARNING
@@ -117,10 +117,11 @@ FunctionEnd
 !insertmacro MUI_PAGE_LICENSE "../../COPYING"
 !insertmacro MULTIUSER_PAGE_INSTALLMODE
 !insertmacro MUI_PAGE_DIRECTORY
+Page custom LicenseFileOpen LicenseFileLeave
 !insertmacro MUI_PAGE_COMPONENTS
-Page custom database database_leave
+Page custom DatabaseOpen DatabaseLeave
 !insertmacro MUI_PAGE_INSTFILES
-Page custom finish finish_leave
+Page custom FinishOpen FinishLeave
 
 ; Uninstaller pages
 !insertmacro MUI_UNPAGE_WELCOME
@@ -151,13 +152,16 @@ CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
 Var InstalledDocumentation
+Var LicenseFile
 
+ReserveFile "licensefile.ini"
 ReserveFile "parameters.ini"
 ReserveFile "finish.ini"
 ReserveFile '${NSISDIR}\Plugins\InstallOptions.dll'
 
 Function .onInit
   ;Extract INI files
+  !insertmacro INSTALLOPTIONS_EXTRACT "licensefile.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "parameters.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "finish.ini"
 
@@ -204,6 +208,12 @@ Section "Application" SecAppl
    ; Copy configuration files
   File "..\bin\*.xsd"
   File "..\bin\init.xml"
+  
+  ; Copy the license file the user specified
+  File "..\bin\license.xml"
+  StrCmp $LicenseFile "" +3 0
+    Rename license.xml license_community_edition.xml
+    CopyFiles $LicenseFile "$INSTDIR\bin"
 
   ; Copy the django and python redistributables created by py2exe
   File /r "..\contrib\installer\dist\*.*"
@@ -335,13 +345,25 @@ Section "Application" SecAppl
 SectionEnd
 
 
-Function database
+Function LicenseFileOpen
+  !insertmacro MUI_HEADER_TEXT "License file" "Locate your license file."
+  !insertmacro INSTALLOPTIONS_DISPLAY "licensefile.ini"
+FunctionEnd
+
+
+Function LicenseFileLeave
+  !insertmacro INSTALLOPTIONS_READ $0 "licensefile.ini" "Field 3" "State"
+  StrCpy $LicenseFile $0
+FunctionEnd
+
+
+Function DatabaseOpen
   !insertmacro MUI_HEADER_TEXT "Language selection and database configuration" "Specify the installation parameters."
   !insertmacro INSTALLOPTIONS_DISPLAY "parameters.ini"
 FunctionEnd
 
 
-Function database_leave
+Function DatabaseLeave
   ReadINIStr $0 "$PLUGINSDIR\parameters.ini" "Settings" "State"
   IntCmp $0 7 0 done
     ; Disable user name, user password, host and port when the
@@ -378,7 +400,7 @@ Function database_leave
 FunctionEnd
 
 
-Function finish
+Function FinishOpen
   ; Display the page
   ${If} $MultiUser.InstallMode == "CurrentUser"
     WriteIniStr "$PLUGINSDIR\finish.ini" "Field 3" "Flags" "DISABLED"
@@ -389,7 +411,7 @@ Function finish
 FunctionEnd
 
 
-Function finish_leave
+Function FinishLeave
   ; Check how we left the screen: toggle "install service", toggle "run in console", or "next" button
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Settings" "State"
   ${If} $0 == 1

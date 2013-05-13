@@ -1,27 +1,25 @@
 
-FILES_COMMON = favicon.ico *.pdf 
-FILES_API = reference
-FILES_WEB = index.html Frepple UI Tutorial License Developer Installation Main uploads uploads/Frepple uploads/UI uploads/Tutorial uploads/Installation uploads/Developer js images css
-FILES_EXTRA = htmlindexer.py frepple.doxyfile frepple.1 apiheader.html apifooter.html api_styles.css search.html index.js
+FILES_COMMON = generate.py frepple.doxyfile frepple.1 apiheader.html apifooter.html apistyles.css search.html index.js
 
 if APIDOC
 if WEBDOC 
-EXTRA_DIST = ${FILES_WEB} ${FILES_API} ${FILES_COMMON} ${FILES_EXTRA} 
+EXTRA_DIST = html ${FILES_COMMON}
 else
-EXTRA_DIST =  ${FILES_API} ${FILES_COMMON} ${FILES_EXTRA}
+EXTRA_DIST =  html ${FILES_COMMON}
 endif
 else
 if WEBDOC 
-EXTRA_DIST = ${FILES_WEB} ${FILES_COMMON} ${FILES_EXTRA} 
+EXTRA_DIST = html ${FILES_COMMON} 
 else
-EXTRA_DIST = ${FILES_COMMON} ${FILES_EXTRA}
+EXTRA_DIST = ${FILES_COMMON}
 endif
 endif
 
 if APIDOC
-apidoc: reference
-reference: 
-	-rm -rf reference
+apidoc: html/api
+html/api: 
+	-mkdir -p html
+	-rm -rf html/api
 	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile
 else
 apidoc:
@@ -29,43 +27,27 @@ apidoc:
 endif
 
 if WEBDOC
-webdoc: index.html
-index.html: 
-	-rm -rf frepple.com ${FILES_WEB}
-	-@WGET@ -k -r -nv --html-extension http://frepple.com/pmwiki/pmwiki.php/Main/HomePage?setskin=doc
-	mv frepple.com/js .
-	mv frepple.com/css .
-	mv frepple.com/images .
-	mv frepple.com/pmwiki/pmwiki.php/* .
-	mv frepple.com/pmwiki/uploads uploads
-	-rm -rf frepple.com	
-	sed -i "s|action='\(\.\./\)*Main/HomePage.html'>|action='\1search.html'>|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
-	sed -i "s|href='\(\.\./\)*pmwiki.php/|href='\1|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
-	sed -i "s|href='\(\.\./\)*Frepple/Main.html'>C++|href='\1reference/index.html'>C++|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
-	sed -i "s|src='\(\.\./\)*../uploads/|src='\1uploads/|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
-	sed -i "s|href='\(\.\./\)*../../css/|href='\1css/|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
-	sed -i "s|src='\(\.\./\)*../../js/|src='\1js/|g" `find . -name '*\.html' -print | grep -v '^\./reference'` 
-	sed -i "s|href='HomePage.html'>C++|href='../reference/index.html'>C++|g" Main/HomePage.html Main/FAQ.html
-	sed -i "s|action='HomePage.html'>|action='../search.html'>|g" Main/HomePage.html Main/FAQ.html
-	cp Main/HomePage.html index.html
-	sed -i "s|\.\./||g" index.html 
-	sed -i "s|FAQ.html|Main/FAQ.html|g" index.html 
-	`pwd`/htmlindexer.py UI Frepple Main Tutorial License Installation Developer
+webdoc: html/index.html
+html/index.html: 
+	-rm -rf html
+	-@WGET@ --mirror --adjust-extension --no-parent --convert-links --exclude-directories='feed,*/feed,*/*/feed,*/*/*/feed,*/*/*/*/feed,*/*/*/*/*/feed' --no-verbose --page-requisites --no-host-directories --directory-prefix=html -e robots=off http://frepple.com/documentation/
+	-cp index.html html
+	export PACKAGE_VERSION=$(PACKAGE_VERSION); `pwd`/generate.py
 else
 webdoc:
 	-echo Skipping generation of WEB documentation...
 endif
 
 clean-local:
-	-rm -rf index.js index.html ${FILES_API} ${FILES_WEB} frepple.com
+	-rm -rf html frepple.com
 
-all-local: apidoc webdoc
+all-local: webdoc apidoc
 
 man_MANS = frepple.1
 
 install-data-local: apidoc webdoc
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \
-	for p in $(FILES_COMMON) $(FILES_API) $(FILES_WEB); do \
+	for p in html; do \
 	  if test -e $$p; \
 	  then if test -d $$p; \
 	  then $(mkinstalldirs) "$(DESTDIR)$(docdir)/$$p"; \

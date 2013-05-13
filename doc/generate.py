@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright (C) 2010-2012 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2010-2013 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -88,31 +88,150 @@ stoplist = frozenset(["able", "about", "above", "frepple", "according", "accordi
   "you're", "you've", "your", "yours", "yourself", "yourselves", "zero"
   ])
 
-# Define a parser which finds all keywords in a file
-class FindKeywords(HTMLParser.HTMLParser):
+
+# Define a parser which takes care of:
+#   - finds all keywords in a file
+#   - echo the input as output, with certain parts of the document replaced
+class WebSiteParser(HTMLParser.HTMLParser):
+
   def clear(self):
+    if getattr(self,'intitle',False) or getattr(self,'inreplace',False):
+      print "Warning: page '%s' not parsed as expected" % self.title
     self.fed = []
     self.title = ''
     self.intext = False
     self.intitle = False
+    self.inreplace = False
+    self.depth = 0
+    
   def handle_starttag(self, tag, attrs):
     if tag == 'title':
       self.intitle = True
-    if not self.intext and tag == 'div' and ('id','wikitext') in attrs:
+    if not self.intext and tag == 'div' and ('id','main-content') in attrs:
       self.intext = True
+    if not self.inreplace and tag == 'ul' and ('id','social-list') in attrs:
+      self.inreplace = True
+    if not self.inreplace and tag == 'section' and ('id','comments') in attrs:
+      self.inreplace = True
+    if not self.inreplace and tag == 'li' and ('id','recent-comments-5') in attrs:
+      self.inreplace = True
+    if not self.inreplace and tag == 'footer':    
+      self.file_out.write('''<footer class="rtf">				
+	<div id="footer-content" class="clearfix container">
+		<div id="copyright">Copyright &#xa9; 2010-2013 frePPLe bvba</div>	
+	</div>''')
+      self.inreplace = True
+    if not self.inreplace and tag == 'a' and ('id','site-title-text') in attrs:
+      self.file_out.write('''<a href="http://frepple.com/" title="frePPLe" rel="home" id="site-title-text">
+					<img src="%swp-content/uploads/frepplelogo.png" alt="frePPLe" />v%s</a>''' % (self.root, os.environ['PACKAGE_VERSION']))
+      self.inreplace = True
+    if not self.inreplace and tag == 'nav' and ('id','primary-menu-container') in attrs:
+      self.file_out.write('''<nav id="primary-menu-container">
+		<ul id="primary-menu"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="http://frepple.com/">Home</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="%sdocumentation/index.html">Documentation</a>
+<ul class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/getting-started/index.html">Getting started</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/modeling-guide/index.html">Modeling guide</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/user-guide/index.html">User guide</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/installation-guide/index.html">Installation guide</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/developer-guide/index.html">Developer guide</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/faq/index.html">FAQ</a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="%sapi/index.html">C++ API</a>
+</ul></nav>''' % (self.root, self.root, self.root, self.root, self.root, self.root, self.root, self.root))
+      self.inreplace = True
+    if not self.inreplace: 
+      self.file_out.write(self.get_starttag_text())
+    else:
+      self.depth += 1
+      
+  def handle_startendtag(self, tag, attrs):
+    if tag == 'link' and ('rel','profile') in attrs:
+      return
+    if tag == 'link' and ('rel','alternate') in attrs:
+      return
+    if tag == 'link' and ('rel','pingback') in attrs:
+      return
+    if tag == 'link' and ('rel','next') in attrs:
+      return
+    if tag == 'link' and ('rel','prev') in attrs:
+      return
+    if tag == 'link' and ('rel','canonical') in attrs:
+      return
+    if tag == 'link' and ('rel','EditURI') in attrs:
+      return
+    if not self.inreplace: self.file_out.write(self.get_starttag_text())
+    
   def handle_endtag(self, tag):
     if tag == 'title':
       self.intitle = False
+    if not self.inreplace:
+      self.file_out.write("</%s>" % tag)
+    else:
+      self.depth -= 1
+      if self.depth == 0: 
+        self.inreplace = False
+        
   def handle_data(self, d):
     if self.intitle:
       self.title += d
     if self.intext:
       self.fed.append(d)
+    if not self.inreplace: self.file_out.write(d)
+    
+  def handle_entityref(self, name):
+    if not self.inreplace: self.file_out.write("&%s;" % name)
+    
+  def handle_charref(self, name):
+    if not self.inreplace: self.file_out.write("&#%s;" % name)
+    
+  def handle_decl(self, decl):
+    self.file_out.write("<!%s>" % decl)
+    
   def get_keywords(self):
     for x in ' '.join(self.fed).split():
       k = x.strip(".-;/=,():\"'?").lower()
       if len(k) > 1 and not k in stoplist and k.isalnum() and not k[0].isdigit():
         yield k
+  
+  def parseFiles(self, infolder):    
+    global filecounter, outfile, keys
+    for root, dirs, files in os.walk(infolder):
+      for f in files:
+        if not f.endswith('.html'): continue 
+        if f.endswith('.html.html'): continue 
+        infile = os.path.join(root,f)
+        filecounter += 1
+        self.root = '../' * (infile.count(os.sep) - 1)
+        file_in = open(infile)
+        self.file_out = open("%s.tmp" % infile, 'wb')
+        try:
+          parser.clear()
+          while True:
+            data = file_in.read(8192)
+            if not data: break
+            parser.feed(data)
+          print >>outfile, "{name: '%s', title: '%s'}," % (infile, parser.get_title().strip())
+          for i in parser.get_keywords():
+            if not i in keys.keys():
+              keys[i] = {'count': 1, 'filecount': 1, 'refs':{filecounter:1}}
+            else:
+              keys[i]['count'] += 1
+              if filecounter in keys[i]['refs'].keys():
+                keys[i]['refs'][filecounter] += 1
+              else:
+                keys[i]['refs'][filecounter] = 1
+                keys[i]['filecount'] += 1
+        finally:
+          file_in.close()
+          self.file_out.close()
+          try:
+            os.unlink(infile)
+            os.rename("%s.tmp" % infile, infile)
+          except: 
+            pass
+            
   def get_title(self):
     return self.title
 
@@ -120,36 +239,11 @@ class FindKeywords(HTMLParser.HTMLParser):
 outfile = open("index.js","wt")
 print >>outfile, "var docs = ["
 
-# Loop through all HTML files under this subdirectory
-parser = FindKeywords()
+# Loop through all HTML files under the documentation subdirectory
+parser = WebSiteParser()
 keys = {}
 filecounter = 0
-for d in sys.argv[1:]:
-  for root, dirs, files in os.walk(d):
-    for f in files:
-      if f.endswith('.html'):
-        # Parse the current file
-        fd = open(os.path.join(root,f))
-        try:
-          parser.clear()
-          while True:
-            data = fd.read(8192)
-            if not data: break
-            parser.feed(data)
-        finally:
-          fd.close()
-        print >>outfile, "{name: '%s', title: '%s'}," % (os.path.join(root,f), parser.get_title().strip())
-        for i in parser.get_keywords():
-          if not i in keys.keys():
-            keys[i] = {'count': 1, 'filecount': 1, 'refs':{filecounter:1}}
-          else:
-            keys[i]['count'] += 1
-            if filecounter in keys[i]['refs'].keys():
-              keys[i]['refs'][filecounter] += 1
-            else:
-              keys[i]['refs'][filecounter] = 1
-              keys[i]['filecount'] += 1
-        filecounter += 1
+parser.parseFiles(os.path.join('html','documentation'))
 
 # Generate index file
 print >>outfile, "];"

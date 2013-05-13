@@ -158,7 +158,7 @@ IGNORE_PREFIX          =
 
 GENERATE_HTML          = YES
 
-HTML_OUTPUT            = reference
+HTML_OUTPUT            = html/api
 
 HTML_FILE_EXTENSION    = .html
 
@@ -166,7 +166,7 @@ HTML_HEADER            = apiheader.html
 
 HTML_FOOTER            = apifooter.html
 
-HTML_STYLESHEET        = api_styles.css
+HTML_STYLESHEET        = apistyles.css
 
 GENERATE_HTMLHELP      = NO
 

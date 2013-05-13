@@ -1,39 +1,107 @@
-<!doctype html>
-<html dir="ltr" lang="en">
+<!DOCTYPE html>
+<html lang="en-US" class="no-js">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=windows-1252" />
-<meta name="description" content="frePPLe" />
-<meta name="keywords" content="open source, production planning, toolkit" />
-<meta name="author" content="jdetaeye@frepple.com" />
-<title>frePPLe - C++ API</title>
-<link href='../css/styles.css' rel='stylesheet' type="text/css" />
+<meta charset="UTF-8" />
+<title>$title | $projectname</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <meta name="robots" content="noindex, nofollow"/>
+<link rel="shortcut icon" type="image/x-icon" href="../wp-content/uploads/favicon.ico" />
+<link rel='stylesheet' id='theme-reset-css'  href='../wp-content/themes/grizzly-theme/css/reset.css@ver=3.5.1.css' type='text/css' media='all' />
+<link rel='stylesheet' id='theme-main-style-css'  href='../wp-content/themes/grizzly-theme/css/screen.css@ver=3.5.1.css' type='text/css' media='all' />
+<link rel='stylesheet' id='theme-element-style-css'  href='../wp-content/themes/grizzly-theme/css/element.css@ver=3.5.1.css' type='text/css' media='all' />
+<link rel='stylesheet' id='theme-media-queries-css'  href='../wp-content/themes/grizzly-theme/css/media-queries.css@ver=3.5.1.css' type='text/css' media='all' />
+<link rel='stylesheet' id='theme-style-css'  href='../wp-content/themes/grizzly-theme/style.css@ver=3.5.1.css' type='text/css' media='all' />
+<link rel='stylesheet' id='page-list-style-css'  href='../wp-content/plugins/page-list/css/page-list.css@ver=4.2.css' type='text/css' media='all' />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type='text/javascript' src='jquery.js'></script>
+<script type='text/javascript' src='../wp-content/themes/grizzly-theme/libs/modernizr.custom.js@ver=3.5.1'></script>
+<script type='text/javascript' src='../wp-content/themes/grizzly-theme/libs/respond.min.js@ver=3.5.1'></script>
 <script type="text/javascript" src="dynsections.js"></script>
-<link href="api_styles.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<div id="content">
-<header>
-<div id="header-background">
-<div id="header-logo">
-<div id="header-search"><form action='../search.html'>
-  <input  type='text' name='search' size='30'/>
-  <input type='submit' value='search'/>
-</form></div>
-</div>  
-<div id="header-nav">
-<a href='../Tutorial/Main.html'>Tutorial</a>
-<a href='../Frepple/Main.html'>Modeling guide</a>
-<a href='../UI/Main.html'>User guide</a>
-<a href='../Installation/Main.html'>Installation guide</a>
-<a href='../Developer/Main.html'>Developer guide</a>
-<a href='../reference/index.html'>C++ API</a>
-<a href='../License/Main.html'>License</a>
-<a href='../Main/FAQ.html'>FAQ</a>
-</div></div>
-</header>
-<div id="body-background"><div id="body-content">
+<link href="$relpath$$stylesheet" rel="stylesheet" type="text/css" />
+<style type="text/css">
 
-<div id="nav"><h1>C++ API</h1>
+  /* Font */
+  body 
+  {
+    font-family: Arial,Helvetica,Garuda,sans-serif;
+  }
+  .rtf 
+  {
+    font-size: 13px;
+    line-height: 1.5em;
+    color: #555555;
+  }
+  a, .rtf a {
+    color: #e54b00;
+  }
+  a:hover,
+  .rtf a:hover {
+    color: #b73a00;
+  }
+      h1 { font-size: 32px; }
+        h2 { font-size: 28px; }
+        h3 { font-size: 26px; }
+        h4 { font-size: 24px; }
+        h5 { font-size: 20px; }
+        h6 { font-size: 16px; }
+    
+  #branding { margin-top: 0px; }
+  header,
+  #site-title img { background-color: #a5a5ff; }
+    
+  #primary-menu-container { 
+    font-size: 17px; 
+  }
+  
+  #header-wrap, #primary-menu-container ul, #primary-menu-container li
+  {
+    background-color: #a5a5ff;
+  }
+  
+  body, footer { background-color: #a5a5ff; } 
+</style>
+
+  <style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+
+</head>
+<body class="page page-child page-template header-light footer-light show-space-light"  >
+
+<header>
+<div id="header-content" class="clearfix container">
+
+  <div id="branding" role="banner">
+        <div id="site-title">
+        <a href="http://frepple.com/" title="frePPLe" rel="home" id="site-title-text">
+          <img src="../wp-content/uploads/frepplelogo.png" alt="frePPLe" />v$projectnumber</a>
+    </div>
+    <div id="site-description">open source Production PLanning</div>
+  </div>
+
+  <nav id="primary-menu-container">
+    <ul id="primary-menu"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="http://frepple.com/">Home</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="../documentation/index.html">Documentation</a>
+<ul class="sub-menu">
+  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/getting-started/index.html">Getting started</a></li>
+  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/modeling-guide/index.html">Modeling guide</a></li>
+  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/user-guide/index.html">User guide</a></li>
+  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/installation-guide/index.html">Installation guide</a></li>
+  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/developer-guide/index.html">Developer guide</a></li>
+  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/faq/index.html">FAQ</a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="index.html">C++ API</a>
+</ul></nav>
+</div>
+<div id="header-shadow"></div>
+</header>    
+
+<section id="inner-page-show-space">
+<div id="page-header" class="container">
+<h1 id="page-title">C++ API - $title</h1>
+</div>
+</section>
+
+<section id="body" class="full-width">
+<div id="body-wrap" class="container">
+<div id="body-content" class="clearfix rtf">
+<div id="main-content">

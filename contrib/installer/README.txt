@@ -45,5 +45,5 @@ To create the installer, the following steps are required:
 7) Before building the installer script you'll need to update the frepple.nsi
    script to point to the directory where the xerces-c dll is stored.
 
-CONSIDERING ALL THE ABOVE, BUILDING THE INSTALLER ISN'T FOR BEGINNERS. IT
-REQUIRES PROPER UNDERSTANDING OF ALL COMPONENTS AND THE FREPPLE BUILD PROCESS...
+CONSIDERING ALL THE ABOVE, BUILDING THE INSTALLER ISN'T FOR BEGINNERS. 
+IT REQUIRES PROPER UNDERSTANDING OF ALL COMPONENTS AND THE FREPPLE BUILD PROCESS...

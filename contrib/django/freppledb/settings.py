@@ -22,7 +22,7 @@
 r'''
 Main Django configuration file.
 '''
-import os, os.path, sys, locale
+import os, sys, locale
 import freppledb
 
 # FrePPLe directories  
@@ -101,6 +101,20 @@ else:
 
 LANGUAGE_CODE = 'en'
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
+
+# A list of strings representing the host/domain names the application can serve. 
+# This is a security measure to prevent an attacker from poisoning caches and 
+# password reset emails with links to malicious hosts by submitting requests 
+# with a fake HTTP Host header, which is possible even under many seemingly-safe 
+# webserver configurations.
+# Values in this list can be fully qualified names (e.g. 'www.example.com'), 
+# in which case they will be matched against the request's Host header exactly 
+# (case-insensitive, not including port). 
+# A value beginning with a period can be used as a subdomain wildcard: '.example.com' 
+# will match example.com, www.example.com, and any other subdomain of example.com. 
+# A value of '*' will match anything, effectively disabling this feature.
+# This option is only active when DEBUG = false. 
+ALLOWED_HOSTS = [ '*' ]
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -190,15 +204,12 @@ TEMPLATE_DIRS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'templates')),
 )
 
+STATICFILES_DIRS = ()
 if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'static'))):
-	STATICFILES_DIRS = (
-  ('doc',os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc'))),
-  os.path.normpath(os.path.join(FREPPLE_HOME,'static')),
-  )
-else:
-	STATICFILES_DIRS = (
-	  ('doc',os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc'))),
-	  )
+  STATICFILES_DIRS += (os.path.normpath(os.path.join(FREPPLE_HOME,'static')),)
+if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc','html'))):
+  STATICFILES_DIRS += (('doc', os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc','html')),),)
+print STATICFILES_DIRS
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',

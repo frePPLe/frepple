@@ -7,10 +7,10 @@ else
 EXTRA_DIST = ${FILES_COMMON}
 endif
 
-all-local: doc
+all-local: html
 
 if DOC
-doc:
+html:
 	-rm -rf html
 	-@WGET@ --mirror --adjust-extension --no-parent --convert-links \
     --exclude-directories='feed,*/feed,*/*/feed,*/*/*/feed,*/*/*/*/feed,*/*/*/*/*/feed' \
@@ -18,9 +18,9 @@ doc:
     -e robots=off http://frepple.com/documentation/
 	cp index.html html
 	export PACKAGE_VERSION=$(PACKAGE_VERSION); `pwd`/generate.py
-	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile  
+	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile    
 else
-doc:
+html:
 	echo Skipping generation of documentation...  
 endif
 
@@ -44,4 +44,4 @@ install-data-local: doc
 uninstall-local:
 	-rm -rf $(DESTDIR)$(docdir)
 
-.PHONY: doc clean-local uninstall-local install-data-local all-local
+.PHONY: clean-local uninstall-local install-data-local all-local

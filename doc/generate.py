@@ -236,7 +236,7 @@ class WebSiteParser(HTMLParser.HTMLParser):
     return self.title
 
 # Open the output index file
-outfile = open("index.js","wt")
+outfile = open(os.path.join("html","index.js"),"wt")
 print >>outfile, "var docs = ["
 
 # Loop through all HTML files under the documentation subdirectory

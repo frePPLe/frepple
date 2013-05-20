@@ -275,9 +275,9 @@ fi
 #
 # Verify installation of PYTHON
 #
-AM_PATH_PYTHON([2.4], [],
+AM_PATH_PYTHON([2.6], [],
 [AC_MSG_ERROR([
-  This package requires Python 2.4 or higher.
+  This package requires Python 2.6 or higher.
 ])])
 LIBS="-L/lib/python$PYTHON_VERSION/config $LIBS"
 CPPFLAGS="-I/usr/include/python$PYTHON_VERSION $CPPFLAGS"

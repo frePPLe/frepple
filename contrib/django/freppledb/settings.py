@@ -43,7 +43,7 @@ else:
   sys.exit(1)     
 os.environ['FREPPLE_HOME'] = FREPPLE_HOME
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

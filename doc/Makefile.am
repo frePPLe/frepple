@@ -1,5 +1,5 @@
 
-FILES_COMMON = generate.py frepple.doxyfile frepple.1 apiheader.html apifooter.html apistyles.css search.html index.js
+FILES_COMMON = generate.py frepple.doxyfile frepple.1 apiheader.html apifooter.html apistyles.css search.html
 
 if APIDOC
 if WEBDOC 

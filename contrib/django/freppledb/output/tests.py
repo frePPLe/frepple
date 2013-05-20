@@ -65,17 +65,6 @@ class OutputTest(TestCase):
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
 
-  # Forecast
-  def test_output_forecast(self):
-    response = self.client.get('/forecast/?format=json')
-    self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '"records":2,')
-
-  def test_output_forecast_csvlist(self):
-    response = self.client.get('/forecast/?format=csvlist')
-    self.assertEqual(response.status_code, 200)
-    self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
-
   # Operation
   def test_output_operation(self):
     response = self.client.get('/operation/?format=json')

@@ -64,23 +64,23 @@ prep:
 config:
 	@echo
 	@echo "PHASE: Running configure for optimized build..."
-	./configure --enable-apidoc --enable-webdoc
+	./configure --enable-doc
 #--prefix=`pwd`/install-test	
 
 configdebug:
 	@echo
 	@echo "PHASE: Running configure for debug build..."
-	./configure --disable-apidoc --disable-webdoc --enable-debug 
+	./configure --disable-doc --enable-debug 
 
 configcoverage:
 	@echo
 	@echo "PHASE: Running configure for test coverage build..."
-	./configure --disable-apidoc --disable-webdoc --enable-coverage 
+	./configure --disable-doc --enable-coverage 
 
 configprofile:
 	@echo
 	@echo "PHASE: Running configure for profiling build..."
-	./configure --disable-apidoc --disable-webdoc --enable-profile 
+	./configure --disable-doc --enable-profile 
 
 clean:
 	@echo

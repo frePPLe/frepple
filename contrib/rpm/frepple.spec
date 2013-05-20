@@ -69,10 +69,8 @@ Documentation subpackage for frePPLe - the Free Production Planning Library.
 %configure \
   --disable-static \
   --disable-dependency-tracking \
-  --disable-webdoc \
-  --disable-apidoc \
-  --disable-lp_solver \
-  --disable-webservice 
+  --disable-doc \
+  --disable-lp_solver
 # Remove rpath from libtool
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool

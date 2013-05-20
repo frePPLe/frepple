@@ -147,39 +147,28 @@ AM_CONDITIONAL(LP, test x$lp = xtrue)
 #
 # Define a configure argument to enable/disable building of the documentation
 #
-AC_ARG_ENABLE(apidoc,
-AC_HELP_STRING([--enable-apidoc],
-[Enable documentation generation with doxygen (default false)]),
+AC_ARG_ENABLE([doc],
+AC_HELP_STRING([--enable-doc],
+[Enable documentation generation(default false)]),
 [case "${enableval}" in
-  no)  buildapidoc=false;;
-  yes) buildapidoc=true
+  no)  generatedoc=false;;
+  yes) generatedoc=true
        AC_CHECK_PROGS(DOXYGEN, doxygen, notavailable)
        if test x$DOXYGEN = xnotavailable
        then
-          AC_MSG_ERROR([Could not find doxygen, no API documentation can be built])
-          buildapidoc=false
+          AC_MSG_ERROR([Could not find doxygen, no documentation can be built])
+          generatedoc=false
        fi
-       ;;
-  *) AC_MSG_ERROR([bad value ${enableval} for --enable-apidoc]) ;;
-esac],[buildapidoc=false])
-AC_ARG_ENABLE(webdoc,
-AC_HELP_STRING([--enable-webdoc],
-[Enable documentation generation from the website (default false)]),
-[case "${enableval}" in
-  no)  buildwebdoc=false;;
-  yes) buildwebdoc=true
        AC_CHECK_PROGS(WGET, wget, notavailable)
        if test x$WGET = xnotavailable
        then
-          AC_MSG_ERROR([Could not find wget, no web documentation can be built])
-          buildwebdoc=false
+          AC_MSG_ERROR([Could not find wget, no documentation can be built])
+          generatedoc=false
        fi
        ;;
-  *) AC_MSG_ERROR([bad value ${enableval} for --enable-webdoc]) ;;
-esac],[buildwebdoc=false])
-AM_CONDITIONAL(APIDOC, test x$buildapidoc = xtrue)
-AM_CONDITIONAL(WEBDOC, test x$buildwebdoc = xtrue)
-AM_CONDITIONAL(DOC, test x$buildwebdoc = xtrue || test x$buildapidoc = xtrue)
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-doc]) ;;
+esac],[generatedoc=false])
+AM_CONDITIONAL(DOC, test x$generatedoc = xtrue)
 
 # Check the availability of the external programs
 AC_CHECK_PROG(HAVE_DOT, dot, [YES], [NO])

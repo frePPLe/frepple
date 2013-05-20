@@ -209,7 +209,6 @@ if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'static'))):
   STATICFILES_DIRS += (os.path.normpath(os.path.join(FREPPLE_HOME,'static')),)
 if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc','html'))):
   STATICFILES_DIRS += (('doc', os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc','html')),),)
-print STATICFILES_DIRS
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',

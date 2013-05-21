@@ -25,7 +25,7 @@ from django.conf import settings
 
 from freppledb.common.db import sql_datediff
 from freppledb.common.models import Parameter
-from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber
+from freppledb.common.report import GridReport, GridFieldText, GridFieldInteger
 
 
 class Report(GridReport):
@@ -35,7 +35,7 @@ class Report(GridReport):
   rows = (
     GridFieldText('category', title=_('category'), sortable=False, editable=False, align='center'),
     GridFieldText('name', title=_('name'), sortable=False, editable=False, align='center'),
-    GridFieldNumber('value', title=_('value'), sortable=False, editable=False, align='center'),
+    GridFieldInteger('value', title=_('value'), sortable=False, editable=False, align='center'),
     )
   default_sort = (1,'asc')
   filterable = False

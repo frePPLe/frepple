@@ -250,7 +250,7 @@ class ReportByBuffer(GridReport):
     if not basesql: basesql = '1 = 1'
     
     query = '''
-        select operation, date, demand, quantity, ditem, fitem
+        select operation, date, demand, quantity, ditem
         from
         (
         select out_demandpegging.demand as demand, prod_date as date, operation, sum(quantity_buffer) as quantity, demand.item_id as ditem
@@ -288,8 +288,8 @@ class ReportByBuffer(GridReport):
           'date': row[1],
           'demand': row[2],
           'quantity': row[3],
-          'forecast': not row[4],
-          'item': row[4] or row[5],
+          'forecast': False,
+          'item': row[4],
           }
 
 

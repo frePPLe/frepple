@@ -50,42 +50,42 @@ class Report(GridReport):
       from out_problem
       group by name
       union
-      select 102, 'Problem weight', %s, cast(sum(weight) as int)
+      select 102, 'Problem weight', %s, round(sum(weight),0)
       from out_problem
       group by name
       union
-      select 201, 'Demand', 'Requested', coalesce(cast(sum(quantity) as int),0)
+      select 201, 'Demand', 'Requested', coalesce(round(sum(quantity),0),0)
       from out_demand
       union
-      select 202, 'Demand', 'Planned', coalesce(cast(sum(planquantity) as int),0)
+      select 202, 'Demand', 'Planned', coalesce(round(sum(planquantity),0),0)
       from out_demand
       union
-      select 203, 'Demand', 'Planned late', coalesce(cast(sum(planquantity) as int),0)
+      select 203, 'Demand', 'Planned late', coalesce(round(sum(planquantity),0),0)
       from out_demand
       where plandate > due and plandate is not null
       union
-      select 204, 'Demand', 'Unplanned', coalesce(cast(sum(quantity) as int),0)
+      select 204, 'Demand', 'Unplanned', coalesce(round(sum(quantity),0),0)
       from out_demand
       where planquantity is null
       union
-      select 205, 'Demand', 'Total lateness', coalesce(cast(sum(planquantity * %s) as int),0)
+      select 205, 'Demand', 'Total lateness', coalesce(round(sum(planquantity * %s),0),0)
       from out_demand
       where plandate > due and plandate is not null
       union
       select 301, 'Operation', 'Count', count(*)
       from out_operationplan
       union
-      select 301, 'Operation', 'Quantity', coalesce(cast(sum(quantity) as int),0)
+      select 301, 'Operation', 'Quantity', coalesce(round(sum(quantity),0),0)
       from out_operationplan
       union
-      select 302, 'Resource', 'Usage', coalesce(cast(sum(quantity * %s) as int),0)
+      select 302, 'Resource', 'Usage', coalesce(round(sum(quantity * %s),0),0)
       from out_loadplan
       union
-      select 401, 'Material', 'Produced', coalesce(cast(sum(quantity) as int),0)
+      select 401, 'Material', 'Produced', coalesce(round(sum(quantity),0),0)
       from out_flowplan
       where quantity>0
       union
-      select 402, 'Material', 'Consumed', coalesce(cast(sum(-quantity) as int),0)
+      select 402, 'Material', 'Consumed', coalesce(round(sum(-quantity),0),0)
       from out_flowplan
       where quantity<0
       order by 1

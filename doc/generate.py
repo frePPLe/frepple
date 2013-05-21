@@ -109,23 +109,27 @@ class WebSiteParser(HTMLParser.HTMLParser):
       self.intitle = True
     if not self.intext and tag == 'div' and ('id','main-content') in attrs:
       self.intext = True
-    if not self.inreplace and tag == 'ul' and ('id','social-list') in attrs:
+    if self.inreplace: 
+      self.depth += 1
+    elif tag == 'ul' and ('id','social-list') in attrs:
       self.inreplace = True
-    if not self.inreplace and tag == 'section' and ('id','comments') in attrs:
+    elif tag == 'section' and ('id','comments') in attrs:
       self.inreplace = True
-    if not self.inreplace and tag == 'li' and ('id','recent-comments-5') in attrs:
+    elif tag == 'li' and ('id','recent-comments-5') in attrs:
       self.inreplace = True
-    if not self.inreplace and tag == 'footer':    
+    elif tag == 'script' and ('id','javascript_footer') in attrs:
+      self.inreplace = True
+    elif tag == 'footer':    
       self.file_out.write('''<footer class="rtf">				
 	<div id="footer-content" class="clearfix container">
 		<div id="copyright">Copyright &#xa9; 2010-2013 frePPLe bvba</div>	
 	</div>''')
       self.inreplace = True
-    if not self.inreplace and tag == 'a' and ('id','site-title-text') in attrs:
+    elif tag == 'a' and ('id','site-title-text') in attrs:
       self.file_out.write('''<a href="http://frepple.com/" title="frePPLe" rel="home" id="site-title-text">
 					<img src="%swp-content/uploads/frepplelogo.png" alt="frePPLe" />v%s</a>''' % (self.root, os.environ['PACKAGE_VERSION']))
       self.inreplace = True
-    if not self.inreplace and tag == 'nav' and ('id','primary-menu-container') in attrs:
+    elif tag == 'nav' and ('id','primary-menu-container') in attrs:
       self.file_out.write('''<nav id="primary-menu-container">
 		<ul id="primary-menu"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="http://frepple.com/">Home</a></li>
 <li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="%sdocumentation/index.html">Documentation</a>
@@ -141,10 +145,9 @@ class WebSiteParser(HTMLParser.HTMLParser):
 <li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="%sapi/index.html">C++ API</a>
 </ul></nav>''' % (self.root, self.root, self.root, self.root, self.root, self.root, self.root, self.root))
       self.inreplace = True
-    if not self.inreplace: 
+    else: 
       self.file_out.write(self.get_starttag_text())
-    else:
-      self.depth += 1
+      
       
   def handle_startendtag(self, tag, attrs):
     if tag == 'link' and ('rel','profile') in attrs:

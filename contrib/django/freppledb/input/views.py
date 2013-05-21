@@ -138,6 +138,20 @@ class pathreport:
 
     todo: The current code doesn't handle suboperations correctly
     '''
+
+    def addOperation(G, oper, request):
+      countsubops = oper.suboperations.select_related(depth=1).using(request.database).count()
+      if countsubops > 0:
+        subG = G.add_subgraph(name="cluster_O%s" % oper.name, label=oper.name, tooltip=oper.name, rankdir='LR')
+        subG.edge_attr['color']='black'
+        subG.node_attr['fontsize'] = '8'            
+        for x in oper.suboperations.select_related(depth=1).using(request.database).order_by('priority'):
+          subG.add_node("O%s" % x.suboperation.name, label=x.suboperation.name, tooltip=x.suboperation.name, shape='rectangle', color='aquamarine')
+        return True
+      else:
+        G.add_node("O%s" % oper.name, label=oper.name, tooltip=oper.name, shape='rectangle', color='aquamarine')
+        return False
+
     from django.core.exceptions import ObjectDoesNotExist
     if objecttype == 'buffer':
       # Find the buffer
@@ -146,6 +160,10 @@ class pathreport:
     elif objecttype == 'item':
       # Find the item
       try:
+        it = Item.objects.using(request.database).get(name=entity)
+        if it.operation:
+          root = [ (0, None, None, it.operation, None, Decimal(1)) ]
+        else:
           root = [ (0, r, None, None, None, Decimal(1)) for r in Buffer.objects.filter(item=entity).using(request.database) ]
       except ObjectDoesNotExist: raise Http404("item %s doesn't exist" % entity)
     elif objecttype == 'operation':
@@ -196,19 +214,23 @@ class pathreport:
 
       if G != None:
         if curprodflow: 
-          G.add_node("B%s" % curprodflow.thebuffer.name, label=curprodflow.thebuffer.name, tooltip=curprodflow.thebuffer.name, shape='trapezium', color='red')
-          G.add_node("O%s" % curprodflow.operation.name, label=curprodflow.operation.name, tooltip=curprodflow.operation.name, shape='rectangle', color='green')
+          G.add_node("B%s" % curprodflow.thebuffer.name, label=curprodflow.thebuffer.name, tooltip=curprodflow.thebuffer.name, shape='trapezium', color='goldenrod')
+          clusterop = addOperation(G, curprodflow.operation, request)
           if curprodflow.quantity > 0:            
-            G.add_edge("O%s" % curprodflow.operation.name,"B%s" % curprodflow.thebuffer.name, label=str(curprodflow.quantity), tooltip=str(curprodflow.quantity), weight='100')
+            if clusterop: G.edge_attr['lhead'] = "cluster_O%s" % curprodflow.operation.name
+            G.add_edge("O%s" % curprodflow.operation.name, "B%s" % curprodflow.thebuffer.name, tooltip=str(curprodflow.quantity), weight='100', label=str(curprodflow.quantity))
           else:
-            G.add_edge("B%s" % curprodflow.thebuffer.name,"O%s" % curprodflow.operation.name, label=str(curprodflow.quantity), tooltip=str(curprodflow.quantity), weight='100')
+            if clusterop: G.edge_attr['ltail'] = "cluster_O%s" % curprodflow.operation.name
+            G.add_edge("B%s" % curprodflow.thebuffer.name, "O%s" % curprodflow.operation.name, tooltip=str(curprodflow.quantity), weight='100', ltail="cluster_O%s" % curprodflow.operation.name,  label=str(curprodflow.quantity))
         if curconsflow: 
-          G.add_node("B%s" % curconsflow.thebuffer.name, label=curconsflow.thebuffer.name, tooltip=curconsflow.thebuffer.name, shape='trapezium', color='red')
-          G.add_node("O%s" % curconsflow.operation.name, label=curconsflow.operation.name, tooltip=curconsflow.thebuffer.name, shape='rectangle', color='green')
+          G.add_node("B%s" % curconsflow.thebuffer.name, label=curconsflow.thebuffer.name, tooltip=curconsflow.thebuffer.name, shape='trapezium', color='goldenrod')
+          clusterop = addOperation(G, curconsflow.operation, request)
           if curconsflow.quantity > 0:
-            G.add_edge("O%s" % curconsflow.operation.name,"B%s" % curconsflow.thebuffer.name, label=str(curconsflow.quantity), tooltip=str(curconsflow.quantity), weight='100')
+            if clusterop: G.edge_attr['lhead'] = "cluster_O%s" % curconsflow.operation.name
+            G.add_edge("O%s" % curconsflow.operation.name, "B%s" % curconsflow.thebuffer.name, tooltip=str(curconsflow.quantity), weight='100', label=str(curconsflow.quantity))
           else:
-            G.add_edge("B%s" % curconsflow.thebuffer.name,"O%s" % curconsflow.operation.name, label=str(curconsflow.quantity), tooltip=str(curconsflow.quantity), weight='100')
+            if clusterop: G.edge_attr['ltail'] = "cluster_O%s" % curconsflow.operation.name
+            G.add_edge("B%s" % curconsflow.thebuffer.name, "O%s" % curconsflow.operation.name, tooltip=str(curconsflow.quantity), weight='100', label=str(curconsflow.quantity)) 
 
       # Avoid infinite loops when the supply chain contains cycles
       if curbuffer:
@@ -225,10 +247,10 @@ class pathreport:
       if curoperation: 
         ops.add(curoperation)        
         if G != None:
-          G.add_node("O%s" % curoperation.name, label=curoperation.name, tooltip=curoperation.name, shape='rectangle', color='green')
+          clusterop = addOperation(G, curoperation, request)
           for i in curoperation.loads.all():
-            G.add_node("R%s" % i.resource.name, tooltip=i.resource.name, label=i.resource.name, shape='hexagon', color='blue')
-            G.add_edge("O%s" % i.operation.name,"R%s" % i.resource.name, label=str(i.quantity), tooltip=str(i.quantity), style='dashed', dir='none', weight='100')
+            G.add_node("R%s" % i.resource.name, tooltip=i.resource.name, label=i.resource.name, shape='hexagon', color='lightblue')
+            G.add_edge("O%s" % curoperation.name, "R%s" % i.resource.name, label=str(i.quantity), tooltip=str(i.quantity), style='dashed', dir='none', weight='100')
 
       if downstream:
         # DOWNSTREAM: Find all operations consuming from this buffer...
@@ -273,6 +295,9 @@ class pathreport:
         if curbuffer:
           if curbuffer.producing:
             start = [ (i, i.operation) for i in curbuffer.producing.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database) ]
+            if not len(start):
+              # Not generic... 
+              start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database) ]
           else:
             start = []
         else:
@@ -290,12 +315,14 @@ class pathreport:
           # Push the next buffer on the stack, based on super-operations
           for x in curoperation.superoperations.select_related(depth=1).using(request.database):
             for cons_flow in x.operation.flows.filter(quantity__lt=0).using(request.database):
+              if cons_flow.operation in ops: continue
               ok = True
               root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
 
           # Push the next buffer on the stack, based on sub-operations
           for x in curoperation.suboperations.select_related(depth=1).using(request.database):
             for cons_flow in x.suboperation.flows.filter(quantity__lt=0).using(request.database):
+              if cons_flow.operation in ops: continue
               ok = True
               root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
 
@@ -306,11 +333,12 @@ class pathreport:
           if not ok:
             # An operation without any flows (on itself, any of its suboperations or any of its superoperations)
             for x in curoperation.suboperations.using(request.database):
-              root.append( (level-1, None, None, x.suboperation, None, curqty) )
+              if not x.suboperation in ops: root.append( (level-1, None, None, x.suboperation, None, curqty) )
             for x in curoperation.superoperations.using(request.database):
-              root.append( (level-1, None, None, x.operation, None, curqty) )
+              if not x.operation in ops: root.append( (level-1, None, None, x.operation, None, curqty) )
     
     # Layout the graph
+    #G.write("test.dot")
     if G != None: G.layout(prog='dot')
     
     # Final result
@@ -674,8 +702,8 @@ class OperationList(GridReport):
     GridFieldChoice('type', title=_('type'), choices=Operation.types),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
     GridFieldNumber('duration', title=_('duration')),
-    GridFieldNumber('duration_per', title=_('duration_per')),
-    GridFieldNumber('fence', title=_('fence')),
+    GridFieldNumber('duration_per', title=_('duration per unit')),
+    GridFieldNumber('fence', title=_('release fence')),
     GridFieldNumber('pretime', title=_('pre-op time')),
     GridFieldNumber('posttime', title=_('post-op time')),
     GridFieldNumber('sizeminimum', title=_('size minimum')),

@@ -39,14 +39,14 @@ bool sortLoad(const Load* lhs, const Load* rhs)
 
 DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconstrained plan!!!!
 {
-  if (!l->getSkill())           // @todo also move to the next loop in case of an aggregate resource
+  if (!l->getSkill() && !l->getResource()->isGroup())
   {
-    // CASE 1: No skill involved
+    // CASE 1: No skill involved, and no aggregate resource either
     l->getResource()->solve(*this, v);
     return;
   }
-  
-  // CASE 2: Skill involved
+
+  // CASE 2: Skill involved, or aggregate resource
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   unsigned int loglevel = data->getSolver()->getLogLevel();
 
@@ -58,7 +58,7 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
   bool originalLogConstraints = data->logConstraints;
   data->logConstraints = false;
   
-  // Loop over all candidate resources
+  // Initialize
   Date min_next_date(Date::infiniteFuture);
   LoadPlan *lplan = data->state->q_loadplan;
   Resource *bestAlternateSelection = NULL;
@@ -71,28 +71,51 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
   OperationPlanState originalOpplan(lplan->getOperationPlan());
   double originalLoadplanQuantity = lplan->getQuantity();
   data->getSolver()->setLogLevel(0);  // Silence during this loop
-  for (Skill::resourcelist::const_iterator i = l->getSkill()->getResources().begin();
-    i != l->getSkill()->getResources().end(); i++)
+
+  // Loop over all candidate resources
+  stack<Resource*> res_stack;
+  res_stack.push(l->getResource());
+  while (!res_stack.empty())
   {
-    // Check if the resource is appropriate
-    // The resource must have the right skill, and also be a subresource of the  
-    // resource specified on the load.    
-    const Resource* j = i->getResource();
-    while (j && j!=l->getResource()) 
-      j = j->getOwner();
-    if (!j) continue;
+    // Pick next resource
+    Resource* res = res_stack.top();
+    res_stack.pop();
+
+    // If it's an aggregate, push it's members on the stack
+    if (res->isGroup())
+    {
+      for (Resource::memberIterator x = res->beginMember(); x != Resource::end(); ++x)
+        res_stack.push(&*x);
+      continue; 
+    }
+    
+    // Check if the resource has the right skill
+    if (l->getSkill())
+    {
+      bool isqualified = false;
+      for (Resource::skilllist::const_iterator i = res->getSkills().begin();
+        i != res->getSkills().end() && !isqualified; ++i)
+      {
+        if (i->getSkill() == l->getSkill() 
+            && originalOpplan.start >= i->getEffective().getStart()
+            && originalOpplan.end <= i->getEffective().getEnd()) 
+          isqualified = true;
+      }
+      // Next resource in the loop if not qualified
+      if (!isqualified) continue;   // TODO if there is a date effective skill, we need to consider it in the reply
+    }
     qualified_resource_exists = true;
 
     // Switch to this resource
     data->state->q_loadplan = lplan; // because q_loadplan can change!
-    lplan->setResource(i->getResource());
+    lplan->setResource(res);
     lplan->getOperationPlan()->restore(originalOpplan);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
 
     // Plan the resource
     CommandManager::Bookmark* topcommand = data->setBookmark();
-    try { (i->getResource())->solve(*this,data); }
+    try { res->solve(*this,data); }
     catch (...)
     {
       data->getSolver()->setLogLevel(loglevel);
@@ -113,7 +136,7 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
       if (loglevel>1)
         logger << indent(l->getOperation()->getLevel()) << "   Operation '"
             << l->getOperation()->getName() << "' evaluates alternate '"
-            << i->getResource() << "': cost " << deltaCost
+            << res << "': cost " << deltaCost
             << ", penalty " << deltaPenalty << endl;
       data->state->a_cost = beforeCost;
       data->state->a_penalty = beforePenalty;
@@ -141,7 +164,7 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
       {
         // Found a better alternate
         bestAlternateValue = val;
-        bestAlternateSelection = i->getResource();
+        bestAlternateSelection = res;
         bestAlternateQuantity = lplan->getOperationPlan()->getQuantity();
       }
     }

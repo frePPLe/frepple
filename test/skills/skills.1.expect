@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Test model for resource skills</name>
+	<description>
+  In this test our resources represent a group of operators, with various skills
+  and organized in various levels of qualification.
+  </description>
+	<current>2013-01-01T00:00:00</current>
+	<operations>
+		<operation name="1. delivery end item" xsi:type="operation_fixed_time">
+		</operation>
+		<operation name="1. make end item" xsi:type="operation_time_per">
+			<duration>P0D</duration>
+			<duration_per>PT1H</duration_per>
+		</operation>
+	</operations>
+	<items>
+		<item name="1. end item">
+		</item>
+	</items>
+	<buffers>
+		<buffer name="1. end item">
+			<producing name="1. make end item" xsi:type="operation_time_per"/>
+		</buffer>
+	</buffers>
+	<demands>
+		<demand name="1. order">
+			<operation name="1. delivery end item" xsi:type="operation_fixed_time"/>
+			<quantity>20</quantity>
+			<item name="1. end item"/>
+			<due>2013-03-06T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand name="2. order">
+			<operation name="1. delivery end item" xsi:type="operation_fixed_time"/>
+			<quantity>100</quantity>
+			<item name="1. end item"/>
+			<due>2013-03-06T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand name="3. order">
+			<operation name="1. delivery end item" xsi:type="operation_fixed_time"/>
+			<quantity>40</quantity>
+			<item name="1. end item"/>
+			<due>2013-03-06T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+	</demands>
+	<skills>
+		<skill name="Qualification A">
+		</skill>
+		<skill name="Qualification B">
+		</skill>
+		<skill name="Qualification C">
+		</skill>
+	</skills>
+	<resources>
+		<resource name="Bob">
+			<owner name="Operators"/>
+			<cost>1</cost>
+		</resource>
+		<resource name="John">
+			<owner name="Operators"/>
+			<cost>1</cost>
+		</resource>
+		<resource name="Neil">
+			<owner name="Operators"/>
+			<cost>1</cost>
+		</resource>
+		<resource name="Operators">
+			<members>
+				<resource name="Neil"/>
+				<resource name="Bob"/>
+				<resource name="John"/>
+				<resource name="Paul"/>
+			</members>
+		</resource>
+		<resource name="Paul">
+			<owner name="Operators"/>
+			<cost>1</cost>
+		</resource>
+	</resources>
+	<resourceskills>
+		<resourceskill>
+			<resource name="Bob"/>
+			<skill name="Qualification B"/>
+		</resourceskill>
+		<resourceskill>
+			<resource name="Bob"/>
+			<skill name="Qualification C"/>
+		</resourceskill>
+		<resourceskill>
+			<resource name="John"/>
+			<skill name="Qualification C"/>
+		</resourceskill>
+		<resourceskill>
+			<resource name="Neil"/>
+				<skill name="Qualification A"/>
+		</resourceskill>
+		<resourceskill>
+			<resource name="Neil"/>
+				<skill name="Qualification B"/>
+		</resourceskill>
+		<resourceskill>
+			<resource name="Neil"/>
+				<skill name="Qualification C"/>
+		</resourceskill>
+		<resourceskill>
+			<resource name="Paul"/>
+			<skill name="Qualification A"/>
+		</resourceskill>
+		<resourceskill>
+			<resource name="Paul"/>
+			<skill name="Qualification B"/>
+		</resourceskill>
+		<resourceskill>
+			<resource name="Paul"/>
+			<skill name="Qualification C"/>
+		</resourceskill>
+	</resourceskills>
+	<loads>
+		<load>
+			<operation name="1. make end item" xsi:type="operation_time_per"/>
+			<resource name="Operators"/>
+			<search>MINCOSTPENALTY</search>
+			<skill name="Qualification B"/>
+		</load>
+	</loads>
+	<flows>
+		<flow xsi:type="flow_start">
+			<operation name="1. delivery end item" xsi:type="operation_fixed_time"/>
+			<buffer name="1. end item"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="1. make end item" xsi:type="operation_time_per"/>
+			<buffer name="1. end item"/>
+			<quantity>1</quantity>
+		</flow>
+	</flows>
+	<problems>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;1. order&apos; is not planned</description>
+			<start>2013-03-06T00:00:00</start>
+			<end>2013-03-06T00:00:00</end>
+			<weight>20</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;2. order&apos; is not planned</description>
+			<start>2013-03-06T00:00:00</start>
+			<end>2013-03-06T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;3. order&apos; is not planned</description>
+			<start>2013-03-06T00:00:00</start>
+			<end>2013-03-06T00:00:00</end>
+			<weight>40</weight>
+		</problem>
+	</problems>
+</plan>

@@ -5,7 +5,7 @@
   In this test our resources represent a group of operators, with various skills
   and organized in various levels of qualification.
   </description>
-  <current>2009-01-01T00:00:00</current>
+  <current>2013-01-01T00:00:00</current>
   <skills>
     <skill name="Qualification A">
 	  <resourceskills>
@@ -15,27 +15,27 @@
   </skills>
   <resources>
     <resource name="Operators"></resource>
-    <resource name="Neil" cost="11">
+    <resource name="Neil" cost="1">
 	  <owner name="Operators"/>
 	  <resourceskills>
 	    <resourceskill priority="1"><skill name="Qualification B" /></resourceskill>
 	    <resourceskill><skill name="Qualification C" /></resourceskill>
 	  </resourceskills>
 	</resource>
-    <resource name="Bob" cost="11">
+    <resource name="Bob" cost="1">
 	  <owner name="Operators"/>
 	  <resourceskills>
 	    <resourceskill><skill name="Qualification B" /></resourceskill>
 	    <resourceskill><skill name="Qualification C" /></resourceskill>
 	  </resourceskills>
 	</resource>
-    <resource name="John" cost="11">
+  <resource name="John" cost="1">
 	  <owner name="Operators"/>
 	  <resourceskills>
 	    <resourceskill><skill name="Qualification C" /></resourceskill>
 	  </resourceskills>
 	</resource>
-    <resource name="Paul" cost="11">
+    <resource name="Paul" cost="1">
 	  <owner name="Operators"/>
 	  <resourceskills>
 	    <resourceskill><skill name="Qualification A" /></resourceskill>
@@ -49,8 +49,8 @@
       <loads>
         <load>
           <resource name="Operators" />
-		  <skill name="Qualification B" />
-		  <search>MINCOSTPENALTY</search>
+		      <skill name="Qualification B" />
+		      <search>MINCOSTPENALTY</search>
         </load>
       </loads>
 	  <flows>
@@ -76,21 +76,21 @@
     <!-- Demand model 1: search for capacity backwards in time -->
     <demand name="1. order">
       <quantity>20</quantity>
-      <due>2009-03-06T00:00:00</due>
+      <due>2013-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
       <operation name="1. delivery end item"/>
     </demand>
     <demand name="2. order">
       <quantity>100</quantity>
-      <due>2009-03-06T00:00:00</due>
+      <due>2013-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
       <operation name="1. delivery end item"/>
     </demand>
     <demand name="3. order">
       <quantity>40</quantity>
-      <due>2009-03-06T00:00:00</due>
+      <due>2013-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
       <operation name="1. delivery end item"/>

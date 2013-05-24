@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 by Johan De Taeye, Guy Ollagnon, Gilles Manon
+# Copyright (C) 2013 by Johan De Taeye, Guy Ollagnon, Gilles Manon
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -22,23 +22,23 @@ msgstr ""
 "Project-Id-Version: 2.0.rc2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 07:14+0200\n"
-"PO-Revision-Date: 2012-11-24 16:38+0100\n"
-"Last-Translator: Johan\n"
+"PO-Revision-Date: 2013-05-23 10:41+0100\n"
+"Last-Translator: Guy Ollagnon <guy.ollagnon@demand2plan.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: common/static/js/frepple.js:50
 msgid "Error saving data"
-msgstr "Erreur enregistrant les données"
+msgstr "Erreur en enregistrant les données"
 
 #: common/static/js/frepple.js:75
 msgid "Select"
-msgstr "Selectionner"
+msgstr "Sélectionner"
 
 #: common/static/js/frepple.js:488
 #, c-format
@@ -55,7 +55,7 @@ msgstr "Confirmer"
 
 #: common/static/js/frepple.js:513
 msgid "Error deleting data"
-msgstr "Erreur effacant les données"
+msgstr "Erreur lors de l'effacement des données"
 
 #: common/static/js/frepple.js:524 common/static/js/frepple.js.c:578
 #: common/static/js/frepple.js:643 common/static/js/frepple.js.c:701
@@ -74,19 +74,19 @@ msgstr "Copier les données"
 
 #: common/static/js/frepple.js:567
 msgid "Error copying data"
-msgstr "Erreur copiant les données"
+msgstr "Erreur de copie des données"
 
 #: common/static/js/frepple.js:630
 msgid "Load a CSV-formatted text file."
-msgstr "Importer les données depuis un fichier CSV dans la base de données"
+msgstr "Importer les données depuis un fichier CSV dans la base de données."
 
 #: common/static/js/frepple.js:631
 msgid "The first row should contain the field names."
-msgstr "La première ligne devrait contenir les noms des champs"
+msgstr "La première ligne devrait contenir les noms des champs."
 
 #: common/static/js/frepple.js:632
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr "Effacer dábord les lignes existantes ET TOUTES LES TABLES RELATEES"
+msgstr "Effacer dábord les lignes existantes ET TOUTES LES TABLES ASSOCIEES"
 
 #: common/static/js/frepple.js:633
 msgid "Data file"

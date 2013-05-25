@@ -172,7 +172,6 @@ AM_CONDITIONAL(DOC, test x$generatedoc = xtrue)
 
 # Check the availability of the external programs
 AC_CHECK_PROG(HAVE_DOT, dot, [YES], [NO])
-AC_CHECK_PROGS(SWIG, swig, noswig)
 
 # Checks for header files.
 AC_HEADER_DIRENT

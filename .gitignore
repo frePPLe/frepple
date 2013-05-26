@@ -1,0 +1,65 @@
+# Autotools
+/autom4te.cache
+/aclocal.m4
+/compile
+/configure
+/depcomp
+/install-sh
+/missing
+/ltmain.sh
+/libtool
+/config.guess
+/config.h
+/config.h.in
+/config.status
+/config.sub
+/stamp-h1
+Makefile
+Makefile.in
+*.Po
+/INSTALL
+
+# GNU C++ & libtool
+*.o
+*.lo
+*.a
+*.la
+*.so
+.deps
+.libs
+
+# Visual studio C++
+/bin/*.pdb
+*.exp
+*.lib
+*.idb
+*.ncb
+*.pdb
+*.obj
+*.suo
+*.dep
+*.manifest
+
+# Executables
+*.exe
+*.dll
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+dist 
+build
+
+# Log files
+*.log
+*.out
+*.stackdump
+
+# Extra 
+*.sqlite
+/bin/mod_forecast.xsd
+/bin/mod_lpsolver.xsd
+/doc/html
+/test/*/output.*.xml
+

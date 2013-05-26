@@ -55,4 +55,9 @@ FrePPLe redistributes parts of the following third party software components:
     Copyright (c) 2012, Splunk Inc.
     Licensed under New BSD License
     See http://omnipotent.net/jquery.sparkline/#s-about
- 
+
+* contrib\django\freppledb\common\static\js\flotr2*.js    
+    Redistributed from flotr2
+    Copyright (c) 2012 Carl Sutherland
+    Licensed as public domain software
+    See https://github.com/HumbleSoftware/Flotr2/

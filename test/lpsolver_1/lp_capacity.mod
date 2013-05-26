@@ -15,10 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# file : $URL$
-# revision : $LastChangedRevision$  $LastChangedBy$
-# date : $LastChangedDate$
-
 
 #
 # Simple capacity allocation Linear Programming formulation for frePPLe.

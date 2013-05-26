@@ -16,10 +16,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# file : $URL$
-# revision : $LastChangedRevision$  $LastChangedBy$
-# date : $LastChangedDate$
-
 import frepple
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

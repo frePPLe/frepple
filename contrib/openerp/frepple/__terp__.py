@@ -16,10 +16,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# file : $URL$
-# revision : $LastChangedRevision$  $LastChangedBy$
-# date : $LastChangedDate$
-
 {
     "name" : "Advanced Planning and Scheduling Module",
     "version" : "1.0",

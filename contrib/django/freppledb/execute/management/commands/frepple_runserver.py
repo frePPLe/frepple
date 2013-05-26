@@ -15,10 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# file : $URL$
-# revision : $LastChangedRevision$  $LastChangedBy$
-# date : $LastChangedDate$
-
 import sys, os.path, socket
 from threading import Thread
 from stat import S_ISDIR, ST_MODE

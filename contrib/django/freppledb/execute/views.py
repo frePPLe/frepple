@@ -15,10 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# file : $URL$
-# revision : $LastChangedRevision$  $LastChangedBy$
-# date : $LastChangedDate$
-
 import os.path
 from datetime import datetime
 from threading import Thread

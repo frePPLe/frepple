@@ -15,10 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# file : $URL$
-# revision : $LastChangedRevision$  $LastChangedBy$
-# date : $LastChangedDate$
-
 #
 # This makefile is built as a convenience for developers.
 # It provides easy to use wrappers around common administration, configuration, build

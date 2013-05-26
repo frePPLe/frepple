@@ -16,10 +16,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# file : $URL$
-# revision : $LastChangedRevision$  $LastChangedBy$
-# date : $LastChangedDate$
-
 import HTMLParser, os, os.path, sys
 
 # List of stopwords, loosely based on: 

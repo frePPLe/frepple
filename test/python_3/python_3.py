@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#  file     : $URL$
-#  revision : $LastChangedRevision$  $LastChangedBy$
-#  date     : $LastChangedDate$
-
 '''
 This test shows how we can use Python to create a frePPLe model: we can
 create objects, access existing objects and change objects.

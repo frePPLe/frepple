@@ -63,3 +63,7 @@ build
 /doc/html
 /test/*/output.*.xml
 
+# Eclipse
+.cproject
+.project
+.pydevproject

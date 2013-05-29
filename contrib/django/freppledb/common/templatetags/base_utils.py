@@ -21,18 +21,14 @@
 
 from decimal import Decimal
 
-from django.template import Library, Node, NodeList, Variable, resolve_variable
-from django.template import VariableDoesNotExist, TemplateSyntaxError
-from django.template.defaultfilters import stringfilter
+from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.template.loader import get_template
 from django.conf import settings
-from django.contrib.admin.views.main import quote
 from django.contrib.admin.models import LogEntry
 from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_unicode
 from django.utils.html import escape
-from django.utils.safestring import mark_safe
 from django.contrib.admin import sites
 from django.db import DEFAULT_DB_ALIAS
 
@@ -69,10 +65,10 @@ class ModelsNode(Node):
         model_list = []
         if user.has_module_perms(self.appname):
           for m in models.get_models(models.get_app(self.appname)):
-             # Verify if the model is allowed to be displayed in the admin ui and
-             # check the user has appropriate permissions to access it
-             if m in self.adminsite._registry and user.has_perm("%s.%s" % (self.appname, m._meta.get_change_permission())):
-                 model_list.append({
+            # Verify if the model is allowed to be displayed in the admin ui and
+            # check the user has appropriate permissions to access it
+            if m in self.adminsite._registry and user.has_perm("%s.%s" % (self.appname, m._meta.get_change_permission())):
+              model_list.append({
                    'name': capfirst(m._meta.verbose_name_plural),
                    'verbose_name': capfirst(m._meta.verbose_name),
                    'admin_url': '/admin/%s/%s/' % (self.appname, m.__name__.lower()),
@@ -157,10 +153,10 @@ class CrumbsNode(Node):
     # Pop from the stack if the same title is already in the crumbs.
     cnt = 0
     for i in cur:       
-       if i[0] == node[0]:
-         cur = cur[0:cnt]   # Pop all remaining elements from the stack
-         break
-       cnt += 1
+      if i[0] == node[0]:
+        cur = cur[0:cnt]   # Pop all remaining elements from the stack
+        break
+      cnt += 1
 
     # Keep only a limited number of links in the history.
     # We delete the second element to keep "home" at the head of the list.
@@ -339,14 +335,14 @@ class DoGetMultiDBAdminLog:
   def __call__(self, parser, token):
     tokens = token.contents.split()
     if len(tokens) < 4:
-      raise template.TemplateSyntaxError("'%s' statements require two arguments" % self.tag_name)
+      raise TemplateSyntaxError("'%s' statements require two arguments" % self.tag_name)
     if not tokens[1].isdigit():
-      raise template.TemplateSyntaxError("First argument in '%s' must be an integer" % self.tag_name)
+      raise TemplateSyntaxError("First argument in '%s' must be an integer" % self.tag_name)
     if tokens[2] != 'as':
-      raise template.TemplateSyntaxError("Second argument in '%s' must be 'as'" % self.tag_name)
+      raise TemplateSyntaxError("Second argument in '%s' must be 'as'" % self.tag_name)
     if len(tokens) > 4:
       if tokens[4] != 'for_user':
-        raise template.TemplateSyntaxError("Fourth argument in '%s' must be 'for_user'" % self.tag_name)
+        raise TemplateSyntaxError("Fourth argument in '%s' must be 'for_user'" % self.tag_name)
     return MultiDBAdminLogNode(limit=tokens[1], varname=tokens[3], user=(len(tokens) > 5 and tokens[5] or None))
 
 register.tag('get_multidbadmin_log', DoGetMultiDBAdminLog('get_admin_log'))
@@ -379,7 +375,7 @@ def duration(value):
     if value % 3600 != 0 and value < 86400: return '%.2f s' % value
     if value % 86400 != 0 and value < 604800: return '%.2f h' % (value/Decimal('3600'))
     return '%.2f d' % (value/Decimal('86400'))
-  except Exception as e:
+  except Exception:
     return ''
 
 duration.is_safe = True

@@ -40,7 +40,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
   """
   def process_request(self, request):
     if isinstance(request.user, AnonymousUser):
-      # Anonymous users don't have prefences      
+      # Anonymous users don't have preferences
       language = 'auto'
       request.theme = settings.DEFAULT_THEME
       request.pagesize = settings.DEFAULT_PAGESIZE
@@ -57,7 +57,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     request.charset = settings.DEFAULT_CHARSET
  
 
-# Initialize the URL parsing middleware  
+# Initialize the URL parsing middleware
 for i in settings.DATABASES:
   settings.DATABASES[i]['regexp'] = re.compile("^/%s/" % i)
 
@@ -71,7 +71,7 @@ class DatabaseSelectionMiddleware(object):
   This prefix is then stripped from the path while processing the view.
   """
   def process_request(self, request):
-    for i in Scenario.objects.all():
+    for i in Scenario.objects.all().only('name','status'):
       try:
         if settings.DATABASES[i.name]['regexp'].match(request.path) and i.name != DEFAULT_DB_ALIAS:
           if i.status != u'In use':

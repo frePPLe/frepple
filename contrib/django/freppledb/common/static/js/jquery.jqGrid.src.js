@@ -13,6 +13,11 @@
 /*jshint evil:true, eqeqeq:false, eqnull:true, devel:true */
 /*global jQuery */
 
+/* Modifications by JDETAEYE:
+ *  - Allow frozen columns also when cellediting is enabled.
+ *  - Special handling for frozen columns with a included canvas element.
+ */
+
 (function ($) {
 "use strict";
 $.jgrid = $.jgrid || {};

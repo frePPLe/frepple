@@ -109,9 +109,7 @@ class WebSiteParser(HTMLParser.HTMLParser):
       self.intitle = True
     if not self.intext and tag == 'div' and ('id','main-content') in attrs:
       self.intext = True
-    if self.inreplace: 
-      self.depth += 1
-    elif tag == 'ul' and ('id','social-list') in attrs:
+    if tag == 'ul' and ('id','social-list') in attrs:
       self.inreplace = True
     elif tag == 'section' and ('id','comments') in attrs:
       self.inreplace = True
@@ -145,6 +143,8 @@ class WebSiteParser(HTMLParser.HTMLParser):
 <li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="%sapi/index.html">C++ API</a>
 </ul></nav>''' % (self.root, self.root, self.root, self.root, self.root, self.root, self.root, self.root))
       self.inreplace = True
+    if self.inreplace: 
+      self.depth += 1
     else: 
       self.file_out.write(self.get_starttag_text())
       

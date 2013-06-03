@@ -7,10 +7,10 @@ else
 EXTRA_DIST = ${FILES_COMMON}
 endif
 
-all-local: html
+all-local: htmlfolder
 
 if DOC
-html:
+htmlfolder:
 	-rm -rf html
 	-@WGET@ --mirror --adjust-extension --no-parent --convert-links \
     --exclude-directories='feed,*/feed,*/*/feed,*/*/*/feed,*/*/*/*/feed,*/*/*/*/*/feed' \
@@ -20,7 +20,7 @@ html:
 	export PACKAGE_VERSION=$(PACKAGE_VERSION); `pwd`/generate.py
 	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile    
 else
-html:
+htmlfolder:
 	echo Skipping generation of documentation...  
 endif
 
@@ -29,16 +29,11 @@ clean-local:
 
 man_MANS = frepple.1
 
-install-data-local: doc
+install-data-local: htmlfolder
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \
-	for p in html; do \
-	  if test -e $$p; \
-	  then if test -d $$p; \
-	  then $(mkinstalldirs) "$(DESTDIR)$(docdir)/$$p"; \
-	       $(INSTALL_DATA) $$p/* "$(DESTDIR)$(docdir)/$$p"; \
-	  else $(INSTALL_DATA) $$p "$(DESTDIR)$(docdir)/$$p"; \
-	  fi; \
-	  fi; \
+	find html -type d -exec $(mkinstalldirs) "$(DESTDIR)$(docdir)/{}" \;; \
+	for p in `find html -type f`; do \
+	  $(INSTALL_DATA) $$p "$(DESTDIR)$(docdir)/$$p"; \
 	done
 
 uninstall-local:

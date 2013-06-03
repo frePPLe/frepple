@@ -15,10 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# file : $URL$
-# revision : $LastChangedRevision$  $LastChangedBy$
-# date : $LastChangedDate$
-
 
 from django.db import models, transaction, DEFAULT_DB_ALIAS
 from django.utils.translation import ugettext_lazy as _

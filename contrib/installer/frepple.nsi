@@ -1,10 +1,6 @@
 ;
 ; Nullsoft script for creating a windows installer for frePPLe
 ;
-;  file     : $URL$
-;  revision : $LastChangedRevision$  $LastChangedBy$
-;  date     : $LastChangedDate$
-;
 ; Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba
 ;
 ; This library is free software; you can redistribute it and/or modify it

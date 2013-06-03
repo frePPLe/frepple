@@ -15,10 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# file : $URL$
-# revision : $LastChangedRevision$  $LastChangedBy$
-# date : $LastChangedDate$
-
 from django.contrib.auth.backends import ModelBackend
 from django.core.validators import email_re
 from django.contrib.auth.models import User

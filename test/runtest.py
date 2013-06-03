@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#  file     : $URL$
-#  revision : $LastChangedRevision$  $LastChangedBy$
-#  date     : $LastChangedDate$
-
 #
 # This python script uses the module unittest to run a series of tests.
 #

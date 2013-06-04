@@ -17,7 +17,7 @@
 
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-Summary: Free Production Planning Library
+Summary: Free Production PLanning
 Name: frepple
 Version: 2.0
 Release: 1%{?dist}
@@ -33,9 +33,9 @@ Requires: xerces-c, Django
 BuildRequires: python-devel, xerces-c-devel
 
 %description
-FrePPLe is an open source Production Planning solution. It is a toolkit/
-framework for modeling and solving production planning problems, targeted
-primarily at discrete manufacturing industries.
+FrePPLe stands for "Free Production PLanning". It is an application for
+modeling and solving production planning problems, targeted primarily
+at discrete manufacturing industries.
 
 %package devel
 Summary: The libraries and header files needed for frePPLe development
@@ -44,7 +44,7 @@ Requires: %{name} = %{version}-%{release}
 
 %description devel
 These are the libraries and header files need for developing plug-ins and
-extensions of frePPLe - the Free Production Planning Library.
+extensions of frePPLe - free Production PLanning.
 
 %package doc
 Summary: Documentation subpackage for frePPLe
@@ -55,7 +55,7 @@ BuildArch: noarch
 %endif
 
 %description doc
-Documentation subpackage for frePPLe - the Free Production Planning Library.
+Documentation subpackage for frePPLe - free Production PLanning.
 
 %prep
 %setup -q
@@ -77,7 +77,7 @@ make %{?_smp_mflags} all
 
 %check
 # Run test suite, skipping some long and less interesting tests
-TESTARGS="--regression -e setup_1 -e setup_2 -e setup_3 -e constraints_combined_1 -e operation_routing "
+TESTARGS="--regression -e setup_1 -e setup_2 -e setup_3 -e operation_routing -e constraints_combined_1"
 export TESTARGS
 make check
 
@@ -86,7 +86,7 @@ rm -rf %{buildroot}
 make install DESTDIR=%{buildroot} 
 # Do not package .la files created by libtool
 find %{buildroot} -name '*.la' -exec rm {} \;
-# Use explicit list of docs instead of install to create the documentation
+# Use percent-doc instead of install to create the documentation
 rm -rf %{buildroot}%{_docdir}/%{name}
 # Language files; not under /usr/share, need to be handled manually
 (cd $RPM_BUILD_ROOT && find . -name 'django*.mo') | %{__sed} -e 's|^.||' | %{__sed} -e \
@@ -103,15 +103,14 @@ rm -rf %{buildroot}
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %{_bindir}/frepple
+%{_bindir}/manage.py
 %dir %{_libdir}/frepple
 %{_libdir}/frepple/libfrepple.so.0
 %{_libdir}/frepple/libfrepple.so.0.0.0
 %dir %{_datadir}/frepple
 %{_datadir}/frepple/*.xsd
 %{_datadir}/frepple/*.xml
-%{_datadir}/frepple/*.py*
 %{_mandir}/man1/frepple.1.*
-%attr(0755,root,root) %{python_sitelib}/freppledb/manage.py
 %{python_sitelib}/freppledb*
 %doc COPYING 
 
@@ -125,7 +124,5 @@ rm -rf %{buildroot}
 
 %files doc
 %defattr(-,root,root,-)
-%doc doc/reference doc/Frepple doc/UI doc/Main doc/Tutorial 
-%doc doc/uploads doc/uploads/Frepple doc/uploads/UI doc/uploads/Tutorial 
-%doc doc/index.html doc/index.js doc/frepple.bmp doc/search.html doc/styles.css
+%doc doc/html
 

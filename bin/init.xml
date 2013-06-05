@@ -28,19 +28,7 @@
   <logfile>frepple.log</logfile>
   -->
 <?python
-## Forecasting module
-#frepple.loadmodule("mod_forecast.so",
-#  Net_CustomerThenItemHierarchy=True,
-#  Net_MatchUsingDeliveryOperation=False,
-#  Net_NetEarly="P4W",
-#  Net_NetLate="P4W",
-#  DueAtEndOfBucket=True)
-  
 ## Linear Programming solver module  
 #frepple.loadmodule("mod_lpsolver.so")
-
-## SOAP Webservice module
-#frepple.loadmodule("mod_webservice.so", port=6262, threads=5)
-
 ?>
 </plan>

@@ -515,7 +515,7 @@ class GridReport(View):
       # Response is not returned as an iterator to assure that the database 
       # connection is properly closed.
       return HttpResponse(
-         mimetype = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
+         content_type = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
          content = ''.join(reportclass._generate_json_data(request, *args, **kwargs))
          )
     elif fmt == 'csvlist' or fmt == 'csvtable':
@@ -523,7 +523,7 @@ class GridReport(View):
       # Response is not returned as an iterator to assure that the database 
       # connection is properly closed.
       response = HttpResponse(
-         mimetype= 'text/csv; charset=%s' % settings.CSV_CHARSET,
+         content_type = 'text/csv; charset=%s' % settings.CSV_CHARSET,
          content = ''.join(reportclass._generate_csv_data(request, *args, **kwargs))
          )
       response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())

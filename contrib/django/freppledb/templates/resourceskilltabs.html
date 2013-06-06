@@ -1,8 +1,8 @@
 {% load i18n %}
 <div class="ui-tabs" id="tabs">
 <ul class="ui-tabs-nav ui-helper-clearfix">
-{% if perms.input.change_resourceskill %}<li class="ui-state-default ui-corner-top {% ifequal active_tab 'edit' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/admin/input/resourceskill/{{object_id}}/">{% trans 'Edit' %}</a></li>{% endif %}
+{% if perms.input.change_resourceskill %}<li class="ui-state-default ui-corner-top {% ifequal active_tab 'edit' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/data/input/resourceskill/{{object_id}}/">{% trans 'Edit' %}</a></li>{% endif %}
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/comments/input/resourceskill/{{object_id}}/">{% trans 'Comments' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'history' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/admin/input/resourceskill/{{object_id}}/history/">{% trans 'History' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'history' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/data/input/resourceskill/{{object_id}}/history/">{% trans 'History' %}</a></li>
 </ul>
 </div>

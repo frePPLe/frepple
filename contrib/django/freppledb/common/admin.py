@@ -25,13 +25,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.models import Parameter, Comment, Bucket, BucketDetail
 from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
-from freppledb.admin import site
+from freppledb.admin import admin_site
 
 
 # Register the models from the Auth application.
 # The admin users can then create, change and delete users and user groups.
-site.register(Group, GroupAdmin)
-site.register(User, UserAdmin)
+admin_site.register(Group, GroupAdmin)
+admin_site.register(User, UserAdmin)
 
 
 class ParameterForm(forms.ModelForm):
@@ -55,13 +55,13 @@ class Parameter_admin(MultiDBModelAdmin):
   model = Parameter
   save_on_top = True
   form = ParameterForm
-site.register(Parameter, Parameter_admin)
+admin_site.register(Parameter, Parameter_admin)
 
 
 class Comment_admin(MultiDBModelAdmin):
   model = Comment
   save_on_top = True
-site.register(Comment, Comment_admin)
+admin_site.register(Comment, Comment_admin)
 
 
 class BucketDetail_inline(MultiDBTabularInline):
@@ -72,11 +72,11 @@ class BucketDetail_inline(MultiDBTabularInline):
 class BucketDetail_admin(MultiDBModelAdmin):
   model = BucketDetail
   save_on_top = True
-site.register(BucketDetail, BucketDetail_admin)
+admin_site.register(BucketDetail, BucketDetail_admin)
 
 
 class Bucket_admin(MultiDBModelAdmin):
   model = Bucket
   save_on_top = True
   inlines = [ BucketDetail_inline, ]
-site.register(Bucket, Bucket_admin)
+admin_site.register(Bucket, Bucket_admin)

@@ -39,7 +39,7 @@ else:
   sys.exit(1)     
 os.environ['FREPPLE_HOME'] = FREPPLE_HOME
 
-DEBUG = False
+DEBUG = 'runserver' in sys.argv
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

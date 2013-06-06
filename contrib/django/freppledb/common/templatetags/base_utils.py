@@ -45,32 +45,27 @@ variable_popup = Variable("is_popup")
 #
 
 class ModelsNode(Node):
-    def __init__(self, appname, adminsite, varname):
+    def __init__(self, adminsite, varname):
         self.varname = varname
-        self.appname = appname
-        try:
-          dot = adminsite.rindex('.')
-          self.adminsite = getattr(__import__(adminsite[:dot], {}, {}, ['']), adminsite[dot+1:])
-        except:
-          self.adminsite = sites.site
+        dot = adminsite.rindex('.')
+        self.adminsite = getattr(__import__(adminsite[:dot], {}, {}, ['']), adminsite[dot+1:])
 
     def render(self, context):
         from django.db import models
         from django.utils.text import capfirst
         user = context['user']
         model_list = []
-        if user.has_module_perms(self.appname):
-          for m in models.get_models(models.get_app(self.appname)):
-            # Verify if the model is allowed to be displayed in the admin ui and
-            # check the user has appropriate permissions to access it
-            if m in self.adminsite._registry and user.has_perm("%s.%s" % (self.appname, m._meta.get_change_permission())):
-              model_list.append({
-                   'name': capfirst(m._meta.verbose_name_plural),
-                   'verbose_name': capfirst(m._meta.verbose_name),
-                   'admin_url': '/admin/%s/%s/' % (self.appname, m.__name__.lower()),
-                   'can_add': user.has_perm("%s.%s" % (self.appname, m._meta.get_add_permission()))
-                   })
-          model_list.sort(key = lambda m : m['verbose_name'])
+        for m in self.adminsite._registry:
+          # Verify if the model is allowed to be displayed in the admin ui and
+          # check the user has appropriate permissions to access it
+          if user.has_perm("%s.%s" % (m._meta.app_label, m._meta.get_change_permission())):
+            model_list.append({
+                 'name': capfirst(m._meta.verbose_name_plural),
+                 'verbose_name': capfirst(m._meta.verbose_name),
+                 'admin_url': '/%s/%s/%s/' % (self.adminsite.name, m._meta.app_label, m.__name__.lower()),
+                 'can_add': user.has_perm("%s.%s" % (m._meta.app_label, m._meta.get_add_permission()))
+                 })
+        model_list.sort(key = lambda m : m['verbose_name'])
         context[self.varname] = model_list
         return ''
 
@@ -78,25 +73,17 @@ class ModelsNode(Node):
 def get_models(parser, token):
     """
     Returns a list of output models to which the user has permissions.
-
     Syntax::
-
-        {% get_models from [application_name] [admin_site] as [context_var_containing_app_list] %}
-        {% get_models from [application_name] default as [context_var_containing_app_list] %}
-
-    Example usage::
-
-        {% get_models from output output.admin.site as modelsOut %}
-        {% get_models from output default as modelsOut %}
+        {% get_models from [admin_site] as [context_var_containing_app_list] %}
     """
     tokens = token.contents.split()
-    if len(tokens) < 6:
-        raise TemplateSyntaxError, "'%s' tag requires 6 arguments" % tokens[0]
+    if len(tokens) < 5:
+        raise TemplateSyntaxError, "'%s' tag requires 5 arguments" % tokens[0]
     if tokens[1] != 'from':
         raise TemplateSyntaxError, "First argument to '%s' tag must be 'from'" % tokens[0]
-    if tokens[4] != 'as':
+    if tokens[3] != 'as':
         raise TemplateSyntaxError, "Third argument to '%s' tag must be 'as'" % tokens[0]
-    return ModelsNode(tokens[2],tokens[3],tokens[5])
+    return ModelsNode(tokens[2],tokens[4])
 
 register.tag('get_models', get_models)
 

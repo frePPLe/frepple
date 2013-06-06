@@ -20,9 +20,8 @@ from django.utils.translation import ugettext_lazy as _
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow, Skill, ResourceSkill
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
-from freppledb.admin import site
+from freppledb.admin import data_site
 from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
-
 
 
 class CalendarBucket_inline(MultiDBTabularInline):
@@ -40,35 +39,35 @@ class CalendarBucket_admin(MultiDBModelAdmin):
              'fields': (('starttime', 'endtime'),('monday','tuesday','wednesday','thursday','friday','saturday','sunday')),
              }),
       )
-site.register(CalendarBucket,CalendarBucket_admin)
+data_site.register(CalendarBucket,CalendarBucket_admin)
 
 
 class Calendar_admin(MultiDBModelAdmin):
   model = Calendar
   save_on_top = True
   inlines = [ CalendarBucket_inline, ]
-site.register(Calendar,Calendar_admin)
+data_site.register(Calendar,Calendar_admin)
 
 
 class Location_admin(MultiDBModelAdmin):
   model = Location
   raw_id_fields = ('available', 'owner',)
   save_on_top = True
-site.register(Location,Location_admin)
+data_site.register(Location,Location_admin)
 
 
 class Customer_admin(MultiDBModelAdmin):
   model = Customer
   raw_id_fields = ('owner',)
   save_on_top = True
-site.register(Customer,Customer_admin)
+data_site.register(Customer,Customer_admin)
 
 
 class Item_admin(MultiDBModelAdmin):
   model = Item
   save_on_top = True
   raw_id_fields = ('operation', 'owner',)
-site.register(Item,Item_admin)
+data_site.register(Item,Item_admin)
 
 
 class SubOperation_inline(MultiDBTabularInline):
@@ -109,14 +108,14 @@ class Operation_admin(MultiDBModelAdmin):
              'classes': ('collapse',)
              }),
       )
-site.register(Operation,Operation_admin)
+data_site.register(Operation,Operation_admin)
 
 
 class SubOperation_admin(MultiDBModelAdmin):
   model = SubOperation
   raw_id_fields = ('operation', 'suboperation',)
   save_on_top = True
-site.register(SubOperation,SubOperation_admin)
+data_site.register(SubOperation,SubOperation_admin)
 
 
 class Buffer_admin(MultiDBModelAdmin):
@@ -135,7 +134,7 @@ class Buffer_admin(MultiDBModelAdmin):
         )
   save_on_top = True
   inlines = [ Flow_inline, ]
-site.register(Buffer,Buffer_admin)
+data_site.register(Buffer,Buffer_admin)
 
 
 class SetupRule_inline(MultiDBTabularInline):
@@ -147,20 +146,20 @@ class SetupMatrix_admin(MultiDBModelAdmin):
   model = SetupMatrix
   save_on_top = True
   inlines = [ SetupRule_inline, ]
-site.register(SetupMatrix,SetupMatrix_admin)
+data_site.register(SetupMatrix,SetupMatrix_admin)
 
 
 class Skill_admin(MultiDBModelAdmin):
   model = Skill
   save_on_top = True
-site.register(Skill,Skill_admin)
+data_site.register(Skill,Skill_admin)
 
 
 class ResourceSkill_admin(MultiDBModelAdmin):
   model = ResourceSkill
   raw_id_fields = ('resource', 'skill')
   save_on_top = True
-site.register(ResourceSkill,ResourceSkill_admin)
+data_site.register(ResourceSkill,ResourceSkill_admin)
 
 
 class Resource_admin(MultiDBModelAdmin):
@@ -168,28 +167,28 @@ class Resource_admin(MultiDBModelAdmin):
   raw_id_fields = ('maximum_calendar', 'location', 'setupmatrix', 'owner')
   save_on_top = True
   inlines = [ Load_inline, ResourceSkill_inline, ]
-site.register(Resource,Resource_admin)
+data_site.register(Resource,Resource_admin)
 
 
 class Flow_admin(MultiDBModelAdmin):
   model = Flow
   raw_id_fields = ('operation', 'thebuffer',)
   save_on_top = True
-site.register(Flow,Flow_admin)
+data_site.register(Flow,Flow_admin)
 
 
 class Load_admin(MultiDBModelAdmin):
   model = Load
   raw_id_fields = ('operation', 'resource',)
   save_on_top = True
-site.register(Load,Load_admin)
+data_site.register(Load,Load_admin)
 
 
 class OperationPlan_admin(MultiDBModelAdmin):
   model = OperationPlan
   raw_id_fields = ('operation','owner',)
   save_on_top = True
-site.register(OperationPlan,OperationPlan_admin)
+data_site.register(OperationPlan,OperationPlan_admin)
 
 
 class Demand_admin(MultiDBModelAdmin):
@@ -200,4 +199,4 @@ class Demand_admin(MultiDBModelAdmin):
             (_('Planning parameters'), {'fields': ('operation', 'minshipment', 'maxlateness'), 'classes': ('collapse')}),
         )
   save_on_top = True
-site.register(Demand,Demand_admin)
+data_site.register(Demand,Demand_admin)

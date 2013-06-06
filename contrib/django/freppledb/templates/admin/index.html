@@ -24,13 +24,12 @@ th {
 {% block content %}
 
 <div id="content-main" style="max-width: 500px;">
-{% get_models from auth freppledb.admin.site as modelsAuth %}
-{% get_models from input freppledb.admin.site as modelsIn %}
-{% get_models from common freppledb.admin.site as modelsCommon %}
+{% get_models from freppledb.admin.data_site as modelsData %}
+{% get_models from freppledb.admin.admin_site as modelsAdmin %}
 
-{% if modelsIn %}<h3><a href="#input">{% trans "Input" %}</a></h3>
+{% if modelsData %}<h3><a href="#input">{% trans "Input" %}</a></h3>
 <div><table>
-{% for model in modelsIn %}<tr>
+{% for model in modelsData %}<tr>
 <th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
 {% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
 <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
@@ -101,15 +100,8 @@ th {
 </div>
 {% endif %}
 
-{% if modelsAuth or modelsCommon %}<h3><a href="#admin">{% trans "Admin" %}</a></h3>
-<div><table>{% for model in modelsAuth %}<tr>
-<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
-{% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
-<td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
-{% else %}<td>&nbsp;</td>
-{% endif %}<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-{% endfor %}{% for model in modelsCommon %}<tr>
+{% if modelsAdmin %}<h3><a href="#admin">{% trans "Admin" %}</a></h3>
+<div><table>{% for model in modelsAdmin %}<tr>
 <th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
 {% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
 <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>

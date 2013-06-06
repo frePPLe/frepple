@@ -1,13 +1,13 @@
 {% load i18n %}
 <div class="ui-tabs" id="tabs">
 <ul class="ui-tabs-nav ui-helper-clearfix">
-{% if perms.input.change_buffer %}<li class="ui-state-default ui-corner-top {% ifequal active_tab 'edit' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/admin/input/buffer/{{object_id}}/">{% trans 'Edit' %}</a></li>{% endif %}
+{% if perms.input.change_buffer %}<li class="ui-state-default ui-corner-top {% ifequal active_tab 'edit' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/data/input/buffer/{{object_id}}/">{% trans 'Edit' %}</a></li>{% endif %}
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'supplypath' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/supplypath/buffer/{{object_id}}/">{% trans 'Supply Path' %}</a></li>
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'whereused' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/whereused/buffer/{{object_id}}/">{% trans 'Where Used' %}</a></li>
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'plan' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/buffer/{{object_id}}/">{% trans 'Plan' %}</a></li>
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'plandetail' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/flowplan/{{object_id}}/">{% trans 'Plan detail' %}</a></li>
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'constraint' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/constraint/?entity=material&amp;owner={{object_id}}">{% trans 'Constrained demand' %}</a></li>
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/comments/input/buffer/{{object_id}}/">{% trans 'Comments' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'history' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/admin/input/buffer/{{object_id}}/history/">{% trans 'History' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'history' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/data/input/buffer/{{object_id}}/history/">{% trans 'History' %}</a></li>
 </ul>
 </div>

@@ -19,8 +19,9 @@ from django.conf import settings
 from django.contrib import admin
 from django.utils.importlib import import_module
 
-# Create an admin site where all our apps will register their models
-site = admin.sites.AdminSite()
+# Create two admin sites where all our apps will register their models
+data_site = admin.sites.AdminSite(name='data')
+admin_site = admin.sites.AdminSite(name='admin')
 
 # Adding the admin modules of each installed application.
 for app in settings.INSTALLED_APPS:

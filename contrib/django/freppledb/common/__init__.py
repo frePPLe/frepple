@@ -354,8 +354,12 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
 class MultiDBTabularInline(admin.TabularInline):
 
+  def __init__(self, parent_model, admin_site):
+    super(MultiDBTabularInline, self).__init__(parent_model, admin_site)
+    print self.max_num
+    
   def queryset(self, request):
-    return super(MultiDBTabularInline, self).queryset(request).using(request.database)
+    return super(MultiDBTabularInline, self).queryset(request).using(request.database)   
 
   def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
     return super(MultiDBTabularInline, self).formfield_for_foreignkey(db_field, request=request, using=request.database, **kwargs)

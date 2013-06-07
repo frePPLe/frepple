@@ -16,5 +16,4 @@ contrib:
 	tar -xzf frepple_$(VERSION).orig.tar.gz
 	mkdir frepple-$(VERSION)/debian
 	cp $(DEBIANFILES) frepple-$(VERSION)/debian
-	cd frepple-$(VERSION)/debian && debuild -S 
-	cd frepple-$(VERSION) && sudo pbuilder build --buildresult .. ../*.dsc
+	cd frepple-$(VERSION) && dpkg-buildpackage -us -uc -b -D

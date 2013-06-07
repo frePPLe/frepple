@@ -5,30 +5,30 @@ Maintainer: Johan De Taeye <jdetaeye@users.sourceforge.net>
 Build-Depends: debhelper (>= 7), cdbs, autotools-dev, python-dev (<< 3), libxerces-c-dev, python-django (>= 1.1) | python-django (<< 1.2)
 Build-Conflicts: autoconf2.13, automake1.4
 Standards-Version: 3.8.4
-Homepage: http://www.frepple.com
-Vcs-Browser: http://frepple.svn.sourceforge.net/viewvc/frepple/trunk
-Vcs-Svn: https://frepple.svn.sourceforge.net/svnroot/frepple/trunk
+Homepage: http://frepple.com
+Vcs-Browser: http://sourceforge.net/p/frepple/git/commit_browser
+Vcs-Svn: git://git.code.sf.net/p/frepple/git frepple-git
 
 Package: frepple
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python (<< 3), libxerces-c, python-django (>= 1.1) | python-django (<< 1.2)
-Description: Free Production Planning Library
- FrePPLe stands for "Free Production Planning Library". It is a toolkit/
- framework for modeling and solving production planning problems, targeted
- primarily at discrete manufacturing industries.
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (<< 3), graphviz, libtool, libxerces-c, python-django (>= 1.5.1) | python-django (<< 1.6)
+Description: Free Production PLanning
+ FrePPLe stands for "Free Production PLanning". It is an application for
+ modeling and solving production planning problems, targeted primarily 
+ at discrete manufacturing industries.
 
 Package: frepple-dev
 Section: libdevel
 Architecture: any
 Depends: frepple (= ${binary:Version}), ${misc:Depends}
 Suggests: frepple-doc
-Description: Free Production Planning Library - development headers 
+Description: Free Production PLanning - development headers 
  These are the libraries and header files need for developing plug-ins and
- extensions of frePPLe - the Free Production Planning Library.
+ extensions of frePPLe - Free Production PLanning.
 
 Package: frepple-doc
 Section: doc
 Depends: ${misc:Depends}
 Architecture: all
-Description: Free Production Planning Library - documentation
- Documentation for frePPLe - the Free Production Planning Library.
+Description: Free Production PLanning - documentation
+ Documentation for frePPLe - Free Production PLanning.

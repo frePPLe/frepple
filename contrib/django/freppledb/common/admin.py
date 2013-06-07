@@ -66,8 +66,8 @@ admin_site.register(Comment, Comment_admin)
 
 class BucketDetail_inline(MultiDBTabularInline):
   model = BucketDetail
+  max_num = 10
   extra = 3
-
 
 class BucketDetail_admin(MultiDBModelAdmin):
   model = BucketDetail

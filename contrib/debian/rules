@@ -6,7 +6,6 @@
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
 
-DEB_MAKE_CHECK_TARGET = check
-DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --disable-doc --disable-lp_solver
+DEB_BUILD_OPTIONS=nocheck
+DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --enable-doc --disable-lp_solver
 
-export TESTARGS = --regression

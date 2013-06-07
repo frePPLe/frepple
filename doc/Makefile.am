@@ -1,5 +1,5 @@
 
-FILES_COMMON = generate.py frepple.doxyfile frepple.1 apiheader.html apifooter.html apistyles.css search.html
+FILES_COMMON = generate.py frepple.doxyfile frepple.1 apiheader.html apifooter.html apistyles.css search.html index.html
 
 if DOC
 EXTRA_DIST = html ${FILES_COMMON}

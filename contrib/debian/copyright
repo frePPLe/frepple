@@ -9,7 +9,7 @@ Upstream Author(s):
 
 Copyright:
 
-    2007, 2009 by Johan De Taeye
+    2009-2013 by Johan De Taeye
 
 License:
 
@@ -35,5 +35,5 @@ is licensed under the AGPL, see `/usr/share/common-licenses/AGPL-3'.
 # Note on the license: frePPle is released with the AGPL license.
 # The optional plugin module mod_lpsolver depends on the GLPK package which is
 # licensed under GPL. 
-# That source code of that module is included here, but it not compiled in
+# The source code of that module is included here, but it not compiled in
 # the binary packages.

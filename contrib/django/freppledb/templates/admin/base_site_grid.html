@@ -64,7 +64,7 @@ $(window).bind('resize', function() {
 <a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
 <a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>
 {% endif %}
-{% if hasaddperm %}<a href="{{request.prefix}}/admin/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
+{% if hasaddperm %}<a href="{{request.prefix}}/{{adminsite}}/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
 {% if not is_popup %}<a id="copy_selected" href="javascript:copy_show();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-copy"></span>{% trans 'Copy' %}</a>
 {% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<a id="delete_selected" href="javascript:delete_show();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-minusthick"></span>{% trans 'Delete' %}</a>
 {% endif %}{% if reportclass.hasTimeBuckets %}<a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>

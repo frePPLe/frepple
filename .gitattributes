@@ -1,0 +1,13 @@
+# Default behaviour
+* text=auto
+
+# Files forced to remain in windows format
+*.bat           eol=crlf
+*.vcproj        eol=crlf
+*.sln           eol=crlf
+
+# Files forced to remain in Unix format
+*.sh            eol=lf
+*.am            eol=lf
+*.ac            eol=lf
+*.spec          eol=lf

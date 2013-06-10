@@ -174,14 +174,27 @@ class Flow_admin(MultiDBModelAdmin):
   model = Flow
   raw_id_fields = ('operation', 'thebuffer',)
   save_on_top = True
+  fieldsets = (
+    (None, {'fields': ('thebuffer', 'operation', 'type', 'quantity', ('effective_start', 'effective_end'))}),
+    (_('Alternates'), {
+       'fields': ('name','alternate','priority','search'),
+       }),
+    )
 data_site.register(Flow,Flow_admin)
 
 
 class Load_admin(MultiDBModelAdmin):
   model = Load
-  raw_id_fields = ('operation', 'resource',)
+  raw_id_fields = ('operation', 'resource', 'skill')
   save_on_top = True
+  fieldsets = (
+    (None, {'fields': ('resource', 'operation', 'quantity', 'skill', 'setup', ('effective_start', 'effective_end'))}),
+    (_('Alternates'), {
+       'fields': ('name','alternate','priority','search'),
+       }),
+    )
 data_site.register(Load,Load_admin)
+
 
 
 class OperationPlan_admin(MultiDBModelAdmin):
@@ -195,7 +208,7 @@ class Demand_admin(MultiDBModelAdmin):
   model = Demand
   raw_id_fields = ('customer', 'item', 'operation', 'owner',)
   fieldsets = (
-            (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority','owner')}),
+            (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority', 'status', 'owner')}),
             (_('Planning parameters'), {'fields': ('operation', 'minshipment', 'maxlateness'), 'classes': ('collapse')}),
         )
   save_on_top = True

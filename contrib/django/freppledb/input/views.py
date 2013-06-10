@@ -626,6 +626,7 @@ class DemandList(GridReport):
     GridFieldText('operation', title=_('delivery operation'), formatter='operation'),
     GridFieldInteger('priority', title=_('priority')),
     GridFieldText('owner', title=_('owner'), formatter='demand'),
+    GridFieldChoice('status', title=_('status'), choices=Demand.demandstatus),
     GridFieldNumber('maxlateness', title=_('maximum lateness')),
     GridFieldNumber('minshipment', title=_('minimum shipment')),
     GridFieldLastModified('lastmodified'),

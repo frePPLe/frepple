@@ -32,5 +32,5 @@ urlpatterns = patterns('',
     (r'^execute/erase/$', 'freppledb.execute.views.erase'),
     (r'^execute/create/$', 'freppledb.execute.views.create'),
     (r'^execute/fixture/$', 'freppledb.execute.views.fixture'),
-    (r'^execute/', 'freppledb.execute.views.main'),
+    (r'^execute/$', 'freppledb.execute.views.main'),
 )

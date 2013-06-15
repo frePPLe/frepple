@@ -110,7 +110,7 @@ class LoadPlan(models.Model):
   setup = models.CharField(_('setup'), max_length=settings.NAMESIZE, null=True)
 
   def __unicode__(self):
-      return self.resource.name + ' ' + str(self.startdate) + ' ' + str(self.enddate)
+      return self.theresource + ' ' + str(self.startdate) + ' ' + str(self.enddate)
 
   class Meta:
     db_table = 'out_loadplan'

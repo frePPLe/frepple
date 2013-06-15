@@ -18,10 +18,10 @@ htmlfolder:
     -e robots=off http://frepple.com/documentation/
 	cp index.html html
 	export PACKAGE_VERSION=$(PACKAGE_VERSION); `pwd`/generate.py
-	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile    
+	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile
 else
 htmlfolder:
-	echo Skipping generation of documentation...  
+	echo Skipping generation of documentation...
 endif
 
 clean-local:
@@ -39,4 +39,4 @@ install-data-local: htmlfolder
 uninstall-local:
 	-rm -rf $(DESTDIR)$(docdir)
 
-.PHONY: clean-local uninstall-local install-data-local all-local
+.PHONY: clean-local uninstall-local install-data-local all-local htmlfolder

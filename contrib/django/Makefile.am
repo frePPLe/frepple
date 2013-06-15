@@ -7,9 +7,9 @@ EXTRA_DIST = freppledb django.patch django.git_patch README.txt httpd.conf manag
 install-data-local:
 	echo "installing Django web application to $(DESTDIR)$(pythondir)"; \
 	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix)
-	
+
 uninstall-local:
-	-rm -rf $(DESTDIR)$(pythondir)/freppledb 
+	-rm -rf $(DESTDIR)$(pythondir)/freppledb
 	-rm -rf $(DESTDIR)$(pythondir)/freppledb-$(PACKAGE_VERSION)*.egg-info
 
 clean-local:
@@ -23,13 +23,13 @@ dist-hook:
 	-rm -rf `find $(distdir) -name '*.pyo'`
 
 create:
-	cd freppledb; ./manage.py syncdb
+	./manage.py syncdb
 
 contrib-check:
-	cd freppledb; ./manage.py test
+	./manage.py test
 
 runserver:
-	cd freppledb; ./manage.py frepple_runserver
+	./manage.py frepple_runserver
 
 international:
 	cd freppledb; django-admin.py makemessages -a -e html -e xml && django-admin.py compilemessages

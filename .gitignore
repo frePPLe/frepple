@@ -31,6 +31,7 @@ Makefile.in
 # Visual studio C++
 /bin/*.pdb
 *.exp
+*.ilk
 *.lib
 *.idb
 *.ncb
@@ -67,3 +68,7 @@ build
 .cproject
 .project
 .pydevproject
+
+# Packaging
+.deb
+.rpm

@@ -2,41 +2,42 @@
 FILES_COMMON = generate.py frepple.doxyfile frepple.1 apiheader.html apifooter.html apistyles.css search.html index.html
 
 if DOC
-EXTRA_DIST = html ${FILES_COMMON}
+EXTRA_DIST = output ${FILES_COMMON}
 else
 EXTRA_DIST = ${FILES_COMMON}
 endif
 
-all-local: htmlfolder
+all-local: output
 
 if DOC
-htmlfolder:
-	-rm -rf html
+output:
+	-rm -rf output
 	-@WGET@ --mirror --adjust-extension --no-parent --convert-links \
     --exclude-directories='feed,*/feed,*/*/feed,*/*/*/feed,*/*/*/*/feed,*/*/*/*/*/feed' \
-    --no-verbose --page-requisites --no-host-directories --directory-prefix=html \
+    --no-verbose --page-requisites --no-host-directories --directory-prefix=output \
     -e robots=off http://frepple.com/documentation/
-	cp index.html html
+	cp index.html output
 	export PACKAGE_VERSION=$(PACKAGE_VERSION); `pwd`/generate.py
 	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile
 else
-htmlfolder:
+output:
 	echo Skipping generation of documentation...
 endif
 
 clean-local:
-	-rm -rf html
+	-rm -rf output
 
 man_MANS = frepple.1
 
-install-data-local: htmlfolder
+install-data-local: output
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \
-	find html -type d -exec $(mkinstalldirs) "$(DESTDIR)$(docdir)/{}" \;; \
-	for p in `find html -type f`; do \
+	find output -type d -exec $(mkinstalldirs) "$(DESTDIR)$(docdir)/{}" \;; \
+	for p in `find output -type f`; do \
 	  $(INSTALL_DATA) $$p "$(DESTDIR)$(docdir)/$$p"; \
 	done
+	mv "$(DESTDIR)$(docdir)/output" "$(DESTDIR)$(docdir)/html"
 
 uninstall-local:
 	-rm -rf $(DESTDIR)$(docdir)
 
-.PHONY: clean-local uninstall-local install-data-local all-local htmlfolder
+.PHONY: clean-local uninstall-local install-data-local all-local

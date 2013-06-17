@@ -158,7 +158,7 @@ IGNORE_PREFIX          =
 
 GENERATE_HTML          = YES
 
-HTML_OUTPUT            = html/api
+HTML_OUTPUT            = output/api
 
 HTML_FILE_EXTENSION    = .html
 

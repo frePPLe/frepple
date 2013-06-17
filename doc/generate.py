@@ -235,14 +235,14 @@ class WebSiteParser(HTMLParser.HTMLParser):
     return self.title
 
 # Open the output index file
-outfile = open(os.path.join("html","index.js"),"wt")
+outfile = open(os.path.join("output","index.js"),"wt")
 print >>outfile, "var docs = ["
 
 # Loop through all HTML files under the documentation subdirectory
 parser = WebSiteParser()
 keys = {}
 filecounter = 0
-parser.parseFiles(os.path.join('html','documentation'))
+parser.parseFiles(os.path.join('output','documentation'))
 
 # Generate index file
 print >>outfile, "];"

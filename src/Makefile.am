@@ -12,7 +12,7 @@ all-local: frepple$(EXEEXT)
 	if test -f .libs/libfrepple.so; then cp .libs/libfrepple*.so* ../bin; fi
 
 # Shared library
-pkglib_LTLIBRARIES = libfrepple.la
+lib_LTLIBRARIES = libfrepple.la
 libfrepple_la_SOURCES = dllmain.cpp tags.cpp
 libfrepple_la_LDFLAGS = -version-info @LIBRARY_VERSION@ -no-undefined
 if CYGWIN

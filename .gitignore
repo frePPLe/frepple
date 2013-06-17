@@ -6,6 +6,7 @@
 /depcomp
 /install-sh
 /missing
+/install-test
 /ltmain.sh
 /libtool
 /config.guess

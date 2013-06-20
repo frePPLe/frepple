@@ -22,6 +22,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.db.models.fields import CharField
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -37,79 +38,33 @@ from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModi
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
 from freppledb.common.report import GridFieldChoice
+from freppledb.admin import data_site
 
 
 @staff_member_required
 def search(request):
   term = request.GET.get('term')
   result = []
-  
-  # Search demands
-  if term and request.user.has_perm('input.change_demand'):
-    query = Demand.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
-    count = len(query)
-    if count > 0:
-      result.append( {'value': None, 'label': (ungettext(
-         '%(name)s - %(count)d match', 
-         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('demand')), 'count': count}).capitalize()
-         })
-      result.extend([ {'label':'demand', 'value':i[0]} for i in query[:10] ])
-  
-  # Search customers
-  if term and request.user.has_perm('input.change_customer'):
-    query = Customer.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
-    count = len(query)
-    if count > 0:
-      result.append( {'value': None, 'label': (ungettext(
-         '%(name)s - %(count)d match', 
-         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('customer')), 'count': count}).capitalize()
-         })
-      result.extend([ {'label':'customer', 'value':i[0]} for i in query[:10] ])
-    
-  # Search items
-  if term and request.user.has_perm('input.change_item'):
-    query = Item.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
-    count = len(query)
-    if count > 0:
-      result.append( {'value': None, 'label': (ungettext(
-         '%(name)s - %(count)d match', 
-         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('item')), 'count': count}).capitalize()
-         })
-      result.extend([ {'label':'item', 'value':i[0]} for i in query[:10] ])
-  
-  # Search buffers
-  if term and request.user.has_perm('input.change_buffer'):
-    query = Buffer.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
-    count = len(query)
-    if count > 0:
-      result.append( {'value': None, 'label': (ungettext(
-         '%(name)s - %(count)d match', 
-         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('buffer')), 'count': count}).capitalize()
-         })
-      result.extend([ {'label':'buffer', 'value':i[0]} for i in query[:10] ])
-    
-  # Search resources
-  if term and request.user.has_perm('input.change_resource'):
-    query = Resource.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
-    count = len(query)
-    if count > 0:
-      result.append( {'value': None, 'label': (ungettext(
-         '%(name)s - %(count)d match', 
-         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('resource')), 'count': count}).capitalize()
-         })
-      result.extend([ {'label':'resource', 'value':i[0]} for i in query[:10] ])
-    
-  # Search operations
-  if term and request.user.has_perm('input.change_operation'):
-    query = Operation.objects.using(request.database).filter(name__icontains=term).order_by('name').values_list('name')
-    count = len(query)
-    if count > 0:
-      result.append( {'value': None, 'label': (ungettext(
-         '%(name)s - %(count)d match', 
-         '%(name)s - %(count)d matches', count) % {'name': force_unicode(_('operation')), 'count': count}).capitalize()
-         })
-      result.extend([ {'label':'operation', 'value':i[0]} for i in query[:10] ])
-    
+
+  # Loop over all models in the data_site
+  # We are interested in models satisfying these criteria:
+  #  - primary key is of type text
+  #  - user has change permissions
+  for cls, admn in data_site._registry.items():
+    if admn.has_change_permission(request) and isinstance(cls._meta.pk, CharField):
+      query = cls.objects.using(request.database).filter(pk__icontains=term).order_by('pk').values_list('pk')
+      count = len(query)
+      if count > 0:
+        result.append( {'value': None, 'label': (ungettext(
+           '%(name)s - %(count)d match',
+           '%(name)s - %(count)d matches', count) % {'name': force_unicode(cls._meta.verbose_name), 'count': count}).capitalize()
+           })
+        result.extend([ {
+          'label': cls._meta.object_name.lower(),
+          'value': i[0],
+          'app': cls._meta.app_label
+          } for i in query[:10] ])
+
   # Construct reply
   return HttpResponse(
      mimetype = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
@@ -140,7 +95,7 @@ class pathreport:
       if countsubops > 0:
         subG = G.add_subgraph(name="cluster_O%s" % oper.name, label=oper.name, tooltip=oper.name, rankdir='LR')
         subG.edge_attr['color']='black'
-        subG.node_attr['fontsize'] = '8'            
+        subG.node_attr['fontsize'] = '8'
         for x in oper.suboperations.select_related(depth=1).using(request.database).order_by('priority'):
           subG.add_node("O%s" % x.suboperation.name, label=x.suboperation.name, tooltip=x.suboperation.name, shape='rectangle', color='aquamarine')
         return True
@@ -180,16 +135,16 @@ class pathreport:
     path = []
 
     # Check the availability of pygraphviz
-    try: 
+    try:
       import pygraphviz
-      G = pygraphviz.AGraph(strict=True, directed=True, 
+      G = pygraphviz.AGraph(strict=True, directed=True,
             rankdir="LR", href="javascript:parent.info()", splines='true',
-            bgcolor='white', tooltip=" ")  
+            bgcolor='white', tooltip=" ")
       G._get_prog("dot")
-    except: 
+    except:
       # Silently fail
       G = None
-    
+
     # Initialize the graph
     if G != None:
       G.edge_attr['color']='black'
@@ -209,16 +164,16 @@ class pathreport:
         })
 
       if G != None:
-        if curprodflow: 
+        if curprodflow:
           G.add_node("B%s" % curprodflow.thebuffer.name, label=curprodflow.thebuffer.name, tooltip=curprodflow.thebuffer.name, shape='trapezium', color='goldenrod')
           clusterop = addOperation(G, curprodflow.operation, request)
-          if curprodflow.quantity > 0:            
+          if curprodflow.quantity > 0:
             if clusterop: G.edge_attr['lhead'] = "cluster_O%s" % curprodflow.operation.name
             G.add_edge("O%s" % curprodflow.operation.name, "B%s" % curprodflow.thebuffer.name, tooltip=str(curprodflow.quantity), weight='100', label=str(curprodflow.quantity))
           else:
             if clusterop: G.edge_attr['ltail'] = "cluster_O%s" % curprodflow.operation.name
             G.add_edge("B%s" % curprodflow.thebuffer.name, "O%s" % curprodflow.operation.name, tooltip=str(curprodflow.quantity), weight='100', ltail="cluster_O%s" % curprodflow.operation.name,  label=str(curprodflow.quantity))
-        if curconsflow: 
+        if curconsflow:
           G.add_node("B%s" % curconsflow.thebuffer.name, label=curconsflow.thebuffer.name, tooltip=curconsflow.thebuffer.name, shape='trapezium', color='goldenrod')
           clusterop = addOperation(G, curconsflow.operation, request)
           if curconsflow.quantity > 0:
@@ -226,7 +181,7 @@ class pathreport:
             G.add_edge("O%s" % curconsflow.operation.name, "B%s" % curconsflow.thebuffer.name, tooltip=str(curconsflow.quantity), weight='100', label=str(curconsflow.quantity))
           else:
             if clusterop: G.edge_attr['ltail'] = "cluster_O%s" % curconsflow.operation.name
-            G.add_edge("B%s" % curconsflow.thebuffer.name, "O%s" % curconsflow.operation.name, tooltip=str(curconsflow.quantity), weight='100', label=str(curconsflow.quantity)) 
+            G.add_edge("B%s" % curconsflow.thebuffer.name, "O%s" % curconsflow.operation.name, tooltip=str(curconsflow.quantity), weight='100', label=str(curconsflow.quantity))
 
       # Avoid infinite loops when the supply chain contains cycles
       if curbuffer:
@@ -234,14 +189,14 @@ class pathreport:
       else:
         if curoperation and curoperation in ops: continue
 
-      if curprodflow: 
-        ops.add(curprodflow.operation)          
-      if curconsflow: 
+      if curprodflow:
+        ops.add(curprodflow.operation)
+      if curconsflow:
         ops.add(curconsflow.operation)
-      if curbuffer: 
-        bufs.add(curbuffer)          
-      if curoperation: 
-        ops.add(curoperation)        
+      if curbuffer:
+        bufs.add(curbuffer)
+      if curoperation:
+        ops.add(curoperation)
         if G != None:
           clusterop = addOperation(G, curoperation, request)
           for i in curoperation.loads.all():
@@ -292,7 +247,7 @@ class pathreport:
           if curbuffer.producing:
             start = [ (i, i.operation) for i in curbuffer.producing.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database) ]
             if not len(start):
-              # Not generic... 
+              # Not generic...
               start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database) ]
           else:
             start = []
@@ -332,11 +287,11 @@ class pathreport:
               if not x.suboperation in ops: root.append( (level-1, None, None, x.suboperation, None, curqty) )
             for x in curoperation.superoperations.using(request.database):
               if not x.operation in ops: root.append( (level-1, None, None, x.operation, None, curqty) )
-    
+
     # Layout the graph
     #G.write("test.dot")
     if G != None: G.layout(prog='dot')
-    
+
     # Final result
     return render_to_response('input/path.html', RequestContext(request,{
        'title': capfirst(force_unicode(_(objecttype)) + " " + entity),
@@ -346,9 +301,9 @@ class pathreport:
        'downstream': downstream,
        'active_tab': downstream and 'whereused' or 'supplypath',
        'graphdata': G!=None and G.draw(format="svg") or ""
-       }))    
-          
-    
+       }))
+
+
   @staticmethod
   @staff_member_required
   def viewdownstream(request, model, object_id):
@@ -546,7 +501,7 @@ class ResourceSkillList(GridReport):
     GridFieldText('skill', title=_('skill'), formatter='skill'),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
-    GridFieldNumber('priority', title=_('priority')),	
+    GridFieldNumber('priority', title=_('priority')),
     GridFieldLastModified('lastmodified'),
     )
 

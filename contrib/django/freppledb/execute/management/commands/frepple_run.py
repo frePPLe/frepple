@@ -99,7 +99,7 @@ class Command(BaseCommand):
       os.environ['CONSTRAINT'] = str(constraint)
       os.environ['FREPPLE_DATABASE'] = database
       os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
-      if os.path.isfile(os.path.join(FREPPLE_HOME,'libfrepple.so'):
+      if os.path.isfile(os.path.join(settings.FREPPLE_HOME,'libfrepple.so')):
         os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
       if 'DJANGO_SETTINGS_MODULE' not in os.environ.keys():
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'

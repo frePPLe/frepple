@@ -85,8 +85,6 @@ DECLARE_EXPORT const Keyword Tags::tag_hidden("hidden");
 DECLARE_EXPORT const Keyword Tags::tag_id("id");
 DECLARE_EXPORT const Keyword Tags::tag_item("item");
 DECLARE_EXPORT const Keyword Tags::tag_items("items");
-DECLARE_EXPORT const Keyword Tags::tag_iterationaccuracy("iterationaccuracy");
-DECLARE_EXPORT const Keyword Tags::tag_iterationthreshold("iterationthreshold");
 DECLARE_EXPORT const Keyword Tags::tag_leadtime("leadtime");
 DECLARE_EXPORT const Keyword Tags::tag_level("level");
 DECLARE_EXPORT const Keyword Tags::tag_load("load");

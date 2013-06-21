@@ -137,6 +137,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
   Date a_date;
   double a_qty;
   Date orig_q_date = data.state->q_date;
+  Date orig_q_date_max = data.state->q_date_max;
   double orig_opplan_qty = data.state->q_qty;
   double q_qty_Flow;
   Date q_date_Flow;
@@ -155,7 +156,19 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
       // Verify the capacity. This can move the operationplan early or late.
       checkOperationCapacity(opplan,data);
       // Return false if no capacity is available
-      if (data.state->a_qty==0.0) return false;
+      if (data.state->a_qty==0.0) 
+      {
+        while (data.state->a_date <= orig_q_date_max)
+        {
+          opplan->getOperation()->setOperationPlanParameters
+            (opplan, orig_opplan_qty,
+             orig_q_date_max,
+             Date::infinitePast);
+          data.state->forceLate = true;
+          checkOperationCapacity(opplan,data);
+        }
+        return false;
+      }
     }
 
     // Check material
@@ -224,9 +237,9 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
       }
 
     isPlannedEarly = opplan->getDates().getEnd() < orig_dates.getEnd();
-
+    
     if (matnext.getEnd() != Date::infiniteFuture && a_qty <= ROUNDING_ERROR
-      && matnext.getEnd() <= data.state->q_date_max && matnext.getEnd() > orig_q_date)
+      && matnext.getEnd() <= orig_q_date_max && matnext.getEnd() > orig_q_date)
     {
       // The reply is 0, but the next-date is still less than the maximum
       // ask date. In this case we will violate the post-operation -soft-
@@ -248,7 +261,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
           << "   Retrying new date." << endl;
     }
     else if (matnext.getEnd() != Date::infiniteFuture && a_qty <= ROUNDING_ERROR
-      && matnext.getStart() < a_date)
+      && matnext.getStart() < a_date && orig_opplan_qty > opplan->getOperation()->getSizeMinimum())
     {
       // The reply is 0, but the next-date is not too far out.
       // If the operationplan would fit in a smaller timeframe we can potentially
@@ -263,7 +276,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
         && opplan->getQuantity() > ROUNDING_ERROR)
       {
         // It worked
-        orig_dates = opplan->getDates();
+        orig_dates = opplan->getDates(); 
         data.state->q_date = orig_dates.getEnd();
         data.state->q_qty = opplan->getQuantity();
         data.state->a_date = Date::infiniteFuture;
@@ -296,14 +309,14 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
       && matnext.getStart() != Date::infinitePast
       && (data.constrainedPlanning && isCapacityConstrained()))
     {
-	  // The operationplan was moved early (because of a resource constraint)
+	    // The operationplan was moved early (because of a resource constraint)
       // and we can't properly trust the reply date in such cases...
       // We want to enforce rechecking the next date.
-	  if (data.getSolver()->getLogLevel()>1)
+	    if (data.getSolver()->getLogLevel()>1)
         logger << indent(opplan->getOperation()->getLevel())
                << "   Recheck capacity" << endl;
 
-	  // Move the operationplan to the next date where the material is feasible
+      // Move the operationplan to the next date where the material is feasible
       opplan->getOperation()->setOperationPlanParameters
         (opplan, orig_opplan_qty,
          matnext.getStart()>orig_dates.getStart() ? matnext.getStart() : orig_dates.getStart(),
@@ -313,11 +326,22 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
       data.state->forceLate = true;
       checkOperationCapacity(opplan,data);
 
+      // Reply isn't late enough
+      if (opplan->getDates().getEnd() <= orig_q_date_max)
+      {
+        opplan->getOperation()->setOperationPlanParameters
+          (opplan, orig_opplan_qty,
+           Date::infinitePast,
+           orig_q_date_max);
+        data.state->forceLate = true;
+        checkOperationCapacity(opplan,data);
+      }
+
       // Reply of this function
       a_qty = 0.0;
       matnext.setEnd(opplan->getDates().getEnd());
     }
-
+  
   // Compute the final reply
   data.state->a_date = incomplete ? matnext.getEnd() : Date::infiniteFuture;
   data.state->a_qty = a_qty;
@@ -462,6 +486,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
 
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
+  Date orig_q_date = data->state->q_date;
   double flow_qty_per = 1.0;
   if (data->state->curBuffer)
   {
@@ -529,12 +554,18 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
   if (data->state->a_qty >= originalqty - ROUNDING_ERROR)
     data->planningDemand->getConstraints().pop(topConstraint);
 
-  // Check positive reply quantity
-  assert(data->state->a_qty >= 0);
-
   // Increment the cost
   if (data->state->a_qty > 0.0)
     data->state->a_cost += z->getQuantity() * oper->getCost();
+
+  // Verify the reply
+  if (data->state->a_qty == 0 && data->state->a_date <= orig_q_date)
+  {
+    if (data->getSolver()->getLogLevel()>1)
+      logger << indent(oper->getLevel()) << "   Applying lazy delay " << data->getSolver()->getLazyDelay() << endl;
+    data->state->a_date = orig_q_date + data->getSolver()->getLazyDelay();
+  }
+  assert(data->state->a_qty >= 0);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -593,6 +624,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;
   data->state->curOwnerOpplan = a->getOperationPlan();
 
+  // Reset the max date on the state.
+  data->state->q_date_max = data->state->q_date;
+
   // Loop through the steps
   Date max_Date;
   TimePeriod delay;
@@ -639,16 +673,20 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   {
     data->state->q_qty = a_qty;
     data->state->q_date = data->state->curOwnerOpplan->getDates().getEnd();
+    q_date = data->state->q_date;
     data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
     a_qty = data->state->a_qty;
-    // The reply date is the combination of the reply date of all steps and the
-    // reply date of the top operationplan.
-    if (data->state->a_date > max_Date && data->state->a_date != Date::infiniteFuture)
-      max_Date = data->state->a_date;
+    if (a_qty == 0.0 && data->state->a_date != Date::infiniteFuture)
+    {
+      // The reply date is the combination of the reply date of all steps and the
+      // reply date of the top operationplan.
+      if (data->state->a_date > q_date && delay < data->state->a_date - q_date) 
+        delay = data->state->a_date - q_date;
+      if (data->state->a_date > max_Date || max_Date == Date::infiniteFuture)
+        max_Date = data->state->a_date;
+    }
   }
   data->state->a_date = (max_Date ? max_Date : Date::infiniteFuture);
-  if (data->state->a_date < data->state->q_date)
-    data->state->a_date = data->state->q_date;
 
   // Multiply the operationplan quantity with the flow quantity to get the
   // final reply quantity
@@ -665,16 +703,20 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   // We restore the previous owner, which could be NULL.
   data->state->curOwnerOpplan = prev_owner_opplan;
 
-  // Check positive reply quantity
-  assert(data->state->a_qty >= 0);
-
-  if (data->state->a_date <= top_q_date && delay > TimePeriod(0L))
+  if (data->state->a_qty == 0 && data->state->a_date <= top_q_date)
+  {
     // At least one of the steps is late, but the reply date at the overall routing level is not late.
-    // This causes trouble, so we enforce a lateness of at least one hour. @todo not very cool/performant/generic...
-    data->state->a_date = top_q_date + delay; // TimePeriod(3600L);
+    // This situation is possible when capacity or material constraints of routing steps create 
+    // slack in the routing. The real constrained next date becomes very hard to estimate.
+    delay = data->getSolver()->getLazyDelay(); 
+    if (data->getSolver()->getLogLevel()>1)
+      logger << indent(oper->getLevel()) << "   Applying lazy delay " << delay << " in routing" << endl;
+    data->state->a_date = top_q_date + delay;
+  }
 
   // Check reply date is later than requested date
-  assert(data->state->a_date >= data->state->q_date);
+  assert(data->state->a_date >= top_q_date);
+  assert(data->state->a_qty >= 0);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -1078,8 +1120,14 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   // Set up the reply
   data->state->a_qty = origQqty - a_qty; // a_qty is the unplanned quantity
   data->state->a_date = a_date;
+  if (data->state->a_qty == 0 && data->state->a_date <= origQDate)
+  {
+    if (data->getSolver()->getLogLevel()>1)
+      logger << indent(oper->getLevel()) << "   Applying lazy delay " << 
+        data->getSolver()->getLazyDelay() << " in alternate" << endl;
+    data->state->a_date = origQDate + data->getSolver()->getLazyDelay();
+  }
   assert(data->state->a_qty >= 0);
-  assert(data->state->a_date >= data->state->q_date);
 
   // Restore the planning mode
   data->constrainedPlanning = originalPlanningMode;

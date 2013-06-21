@@ -319,8 +319,7 @@ class SolverMRP : public Solver
       * date isn't usable. */
     void setLazyDelay(TimePeriod l)
     {
-      if (l <= 0L)
-        throw DataException("Invalid lazy delay");
+      if (l <= 0L) throw DataException("Invalid lazy delay");
       lazydelay = l;
     }
 
@@ -610,6 +609,7 @@ class SolverMRP : public Solver
           ++prevstate;
           state->q_qty = q;
           state->q_date = d;
+          state->q_date_max = d;
           state->curOwnerOpplan = NULL;
           state->q_loadplan = NULL;
           state->q_flowplan = NULL;

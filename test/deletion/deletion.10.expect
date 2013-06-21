@@ -12,6 +12,10 @@
 	<solvers>
 		<solver name="MRP" xsi:type="solver_mrp">
 			<plantype>2</plantype>
+			<iterationthreshold>1</iterationthreshold>
+			<iterationaccuracy>0.01</iterationaccuracy>
+			<lazydelay>P1D</lazydelay>
+			<autocommit>true</autocommit>
 		</solver>
 	</solvers>
 	<locations>

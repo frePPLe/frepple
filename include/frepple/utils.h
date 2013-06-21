@@ -2326,6 +2326,9 @@ class XMLOutput
     /** Returns the number of objects that have been serialized. */
     unsigned long countObjects() const {return numObjects;}
 
+    /** Get a string suitable for correctly indenting the output. */
+    const char* getIndent() {return indentstring;}
+
   private:
     /** Output stream. */
     ostream* m_fp;

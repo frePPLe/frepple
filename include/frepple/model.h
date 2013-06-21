@@ -1238,7 +1238,7 @@ class Operation : public HasName<Operation>,
     /** Returns a pointer to the operationplan being instantiated. */
     OperationPlan* getFirstOpPlan() const {return first_opplan;}
 
-    /** Returns the delay before this operation.
+    /** Returns the delay before this operation.    TODO CURRENTLY NOT USED!
       * @see setPreTime
       */
     TimePeriod getPreTime() const {return pre_time;}

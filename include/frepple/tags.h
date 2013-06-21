@@ -86,8 +86,6 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_id;
     static DECLARE_EXPORT const Keyword tag_item;
     static DECLARE_EXPORT const Keyword tag_items;
-    static DECLARE_EXPORT const Keyword tag_iterationaccuracy;
-    static DECLARE_EXPORT const Keyword tag_iterationthreshold;
     static DECLARE_EXPORT const Keyword tag_leadtime;
     static DECLARE_EXPORT const Keyword tag_level;
     static DECLARE_EXPORT const Keyword tag_load;

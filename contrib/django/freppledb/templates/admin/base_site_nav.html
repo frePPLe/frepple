@@ -5,12 +5,12 @@
 {% get_models from freppledb.admin.admin_site as modelsAdmin %}
 <div class="menuBar ui-widget">
  
-{% if modelsData %}<a href="#" class="menuButton ui-widget-content ui-corner-all ui-state-default">{% trans 'Input' %}</a>
+{% if modelsData %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default">{% trans 'Input' %}</a>
 <div id="inputMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 {% for m in modelsData %}<li class="ui-menu-item"><a href="{{request.prefix}}{{m.admin_url}}">{{m.name}}</a></li>
 {% endfor %}</ul></div>{% endif %}
 
-<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'Reports' %}</a>
+<a class="menuButton ui-widget-content ui-corner-all ui-state-default">{% trans 'Reports' %}</a>
 <div id="outputMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default ">
 <li class="ui-menu-item"><a href="{{request.prefix}}/buffer/">{% trans "Inventory report" %}</a></li>
 <li class="ui-menu-item"><a href="{{request.prefix}}/resource/">{% trans "Resource report" %}</a></li>
@@ -25,18 +25,18 @@
 <li class="ui-menu-item"><a href="{{request.prefix}}/kpi/">{% trans "Performance Indicators" %}</a></li>
 </ul></div>
 
-{% if perms.execute %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'Tools' %}</a>
+{% if perms.execute %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default">{% trans 'Tools' %}</a>
 <div id="toolsMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 <li class="ui-menu-item"><a href="{{request.prefix}}/execute/">{% trans 'Execute' %}</a></li>
 <li class="ui-menu-item"><a href="{{request.prefix}}/execute/log/">{% trans 'Log' %}</a></li>
 </ul></div>{% endif %}
 
-{% if modelsAdmin %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'Admin' %}</a>
+{% if modelsAdmin %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default">{% trans 'Admin' %}</a>
 <div id="authMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 {% for m in modelsAdmin %}<li class="ui-menu-item"><a href="{{request.prefix}}{{m.admin_url}}">{{m.name}}</a></li>
 {% endfor %}</ul></div>{% endif %}
 
-<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">{% trans 'User' %}</a>
+<a class="menuButton ui-widget-content ui-corner-all ui-state-default">{% trans 'User' %}</a>
 <div id="userMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">{% if request.user.is_authenticated %}
 <li class="ui-menu-item"><a href="/admin/logout/">{% trans 'Log out' %}</a></li>
 <li class="ui-menu-item"><a href="{{request.prefix}}/preferences/">{% trans 'Preferences' %}</a></li>
@@ -45,7 +45,7 @@
 {% endif %}
 </ul></div>
 
-<a class="menuButton ui-widget-content ui-corner-all ui-state-default" href="#">?</a>
+<a class="menuButton ui-widget-content ui-corner-all ui-state-default">?</a>
 <div id="helpMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 <li class="ui-menu-item"><a target="_blank" href="{{STATIC_URL}}doc/index.html">{% trans 'Help' %}</a></li>
 <li class="ui-menu-item"><a target="_blank" href="http://frepple.com">{% trans 'frePPLe website' %}</a></li>

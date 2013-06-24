@@ -23,6 +23,7 @@ from django.conf import settings
 from django.core import management
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
+from django.db.models import get_apps
 from django.utils.translation import ugettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS, transaction
 from django.contrib.admin.views.decorators import staff_member_required
@@ -34,7 +35,6 @@ from django.utils.encoding import force_unicode
 from freppledb.execute.models import log, Scenario
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText, GridFieldInteger
 from freppledb.common.models import Parameter
-import freppledb.input
 
 @staff_member_required
 @csrf_protect
@@ -54,15 +54,22 @@ def main(request):
     progress = float(Parameter.objects.using(request.database).get(name="Plan executing").value)
   except:
     progress = 0
-  
-  # Load the list of fixtures in the "input" app
-  fixtures = []
-  try:
-    for root, dirs, files in os.walk(os.path.join(freppledb.input.__path__[0], 'fixtures')):
-      for i in files:
-        if i.endswith('.json'): fixtures.append(i[:-5])
-  except:
-    pass  # Silently ignore failures
+
+  # Loop over all fixtures of all apps and directories
+  fixtures = set()
+  folders = list(settings.TEMPLATE_DIRS)
+  for app in get_apps():
+    if app.__name__.startswith('django'): continue
+    folders.append(os.path.join(os.path.dirname(app.__file__), 'fixtures'))
+  for f in folders:
+    try:
+      for root, dirs, files in os.walk(f):
+        for i in files:
+          if i.endswith('.json'):
+            fixtures.add(i.split('.')[0])
+    except:
+      pass # Silently ignore failures
+  fixtures = sorted(fixtures)
 
   # Send to template
   return render(request, 'execute/execute.html', {
@@ -169,7 +176,7 @@ class runfrepple_async(Thread):
     self.plantype = plantype
     self.constraint = constraint
     Thread.__init__(self)
- 
+
   def run(self):
     try:
       management.call_command(
@@ -184,7 +191,7 @@ class runfrepple_async(Thread):
       messages.add_message(self.request, messages.ERROR,
         force_unicode(_('Failure creating a plan: %(msg)s') % {'msg':e}))
 
-        
+
 @staff_member_required
 @never_cache
 @csrf_protect
@@ -237,7 +244,7 @@ def cancelfrepple(request):
     p = Parameter.objects.using(request.database).get(name="Plan executing")
     p.value = p.value + ' Canceling'
     p.save(using=request.database)
-  except: 
+  except:
     pass
   return HttpResponseRedirect('%s/execute/#plan' % request.prefix)
 
@@ -251,7 +258,7 @@ def progressfrepple(request):
   '''
   try:
     percentage = Parameter.objects.using(request.database).get(name="Plan executing").value
-  except: 
+  except:
     percentage = 0
   return HttpResponse(
      mimetype = 'text/html; charset=%s' % settings.DEFAULT_CHARSET,
@@ -346,7 +353,7 @@ class LogReport(GridReport):
   frozenColumns = 0
   multiselect = False
   editable = False
-  
+
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),
     GridFieldLastModified('lastmodified'),

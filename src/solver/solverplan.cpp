@@ -24,6 +24,9 @@ namespace frepple
 {
 
 DECLARE_EXPORT const MetaClass* SolverMRP::metadata;
+const Keyword tag_iterationthreshold("iterationthreshold");
+const Keyword tag_iterationaccuracy("iterationaccuracy");
+const Keyword tag_lazydelay("lazydelay");
 
 
 void LibrarySolver::initialize()
@@ -229,12 +232,9 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
   if (plantype != 1) o->writeElement(Tags::tag_plantype, plantype);
 
   // Parameters
-  stringstream out;
-  out << "<iterationthreshold>" << iteration_threshold << "</iterationthreshold>" << endl
-    << o->getIndent() << "<iterationaccuracy>" << iteration_accuracy << "</iterationaccuracy>" << endl
-    << o->getIndent() << "<lazydelay>" << lazydelay << "</lazydelay>";
-  o->writeString(out.str());
-  out.clear();
+  o->writeElement(tag_iterationthreshold, iteration_threshold);
+  o->writeElement(tag_iterationaccuracy, iterationaccuracy);
+  o->writeElement(tag_lazydelay, lazydelay);
   o->writeElement(Tags::tag_autocommit, autocommit);
 
   // User exit
@@ -273,11 +273,11 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
   else if (pAttr.isA(Tags::tag_plantype))
     setPlanType(pElement.getInt());
   // Less common parameters
-  else if (!strcmp(pAttr.getName(),"iterationthreshold"))
+  else if (pAttr.isA(tag_iterationthreshold))
     setIterationThreshold(pElement.getDouble());
-  else if (!strcmp(pAttr.getName(),"iterationaccuracy"))
+  else if (pAttr.isA(tag_iterationaccuracy))
     setIterationAccuracy(pElement.getDouble());
-  else if (!strcmp(pAttr.getName(),"lazydelay"))
+  else if (pAttr.isA(tag_lazydelay))
     setLazyDelay(pElement.getTimeperiod());
   // Default parameters
   else
@@ -304,11 +304,11 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_plantype))
     return PythonObject(getPlanType());
   // Less common parameters
-  if (!strcmp(attr.getName(),"iterationthreshold"))
+  if (pAttr.isA(tag_iterationthreshold))
     return PythonObject(getIterationThreshold());
-  if (!strcmp(attr.getName(),"iterationaccuracy"))
+  if (pAttr.isA(tag_iterationaccuracy))
     return PythonObject(getIterationAccuracy());
-  if (!strcmp(attr.getName(),"lazydelay"))
+  if (pAttr.isA(tag_lazydelay))
     return PythonObject(getLazyDelay());
   // Default parameters
   return Solver::getattro(attr);
@@ -334,11 +334,11 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
   else if (attr.isA(Tags::tag_plantype))
     setPlanType(field.getInt());
   // Less common parameters
-  else if (!strcmp(attr.getName(),"iterationthreshold"))
+  else if (pAttr.isA(tag_iterationthreshold))
     setIterationThreshold(field.getDouble());
-  else if (!strcmp(attr.getName(),"iterationaccuracy"))
+  else if (pAttr.isA(tag_iterationaccuracy))
     setIterationAccuracy(field.getDouble());
-  else if (!strcmp(attr.getName(),"lazydelay"))
+  else if (pAttr.isA(tag_lazydelay))
     setLazyDelay(field.getTimeperiod());
   // Default parameters
   else

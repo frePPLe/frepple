@@ -825,8 +825,9 @@
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
           <xsd:element name="constraints" type="xsd:unsignedShort" />
           <xsd:element name="maxparallel" type="xsd:positiveInteger" />
-          <xsd:element name="iterationaccuracy" type="percentage" />
+          <xsd:element name="iterationaccuracy" type="xsd:double" />
           <xsd:element name="iterationthreshold" type="positiveDouble" />
+          <xsd:element name="lazydelay" type="xsd:duration" />
           <xsd:element name="autocommit" type="xsd:boolean" />
           <xsd:element name="loglevel" type="loglevel" />
           <xsd:element name="userexit_flow" type="non-empty-string" />
@@ -840,6 +841,7 @@
         <xsd:attribute name="maxparallel" type="xsd:positiveInteger" />
         <xsd:attribute name="iterationaccuracy" type="percentage" />
         <xsd:attribute name="iterationthreshold" type="positiveDouble" />
+        <xsd:attribute name="lazydelay" type="xsd:duration" />
         <xsd:attribute name="autocommit" type="xsd:boolean" />
         <xsd:attribute name="userexit_flow" type="non-empty-string" />
         <xsd:attribute name="userexit_demand" type="non-empty-string" />

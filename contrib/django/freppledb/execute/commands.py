@@ -69,7 +69,7 @@ solver = frepple.solver_mrp(name="MRP",
   plantype=plantype, 
   #userexit_resource=debugResource,
   #userexit_demand=debugDemand,
-  loglevel=0
+  loglevel = Parameter.getValue('plan.loglevel', db, 0)
   )
 print "Plan type: ", plantype
 print "Constraints: ", constraint

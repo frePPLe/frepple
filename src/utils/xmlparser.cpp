@@ -791,9 +791,9 @@ DECLARE_EXPORT hashtype Keyword::hash(const char* c)
 
   // Compute hash
   const char* curCh = c;
-  hashtype hashVal = *curCh++;
+  hashtype hashVal = *curCh;
   while (*curCh)
-    hashVal = (hashVal * 38) + (hashVal >> 24) + *curCh++;
+    hashVal = (hashVal * 37) + (hashVal >> 24) + *curCh++;
 
   // Divide by modulus
   return hashVal % 954991;
@@ -811,9 +811,9 @@ DECLARE_EXPORT hashtype Keyword::hash(const XMLCh* t)
 
   // Compute hash
   const char* curCh = c;
-  hashtype hashVal = *curCh++;
+  hashtype hashVal = *curCh;
   while (*curCh)
-    hashVal = (hashVal * 38) + (hashVal >> 24) + *curCh++;
+    hashVal = (hashVal * 37) + (hashVal >> 24) + *curCh++;
 
   // Divide by modulus
   xercesc::XMLString::release(&c);

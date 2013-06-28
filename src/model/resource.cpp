@@ -416,7 +416,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
     setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(PythonExtension<Resource>::getType()))
+    if (!field.check(Resource::metadata))
     {
       PyErr_SetString(PythonDataException, "resource owner must be of type resource");
       return -1;

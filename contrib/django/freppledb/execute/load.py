@@ -33,6 +33,8 @@ from datetime import datetime
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.conf import settings
 
+from freppledb.input.models import Resource
+
 import frepple
 
 database = DEFAULT_DB_ALIAS
@@ -289,11 +291,12 @@ def loadResources(cursor):
   print 'Importing resources...'
   cnt = 0
   starttime = time()
+  Resource.rebuildHierarchy(database=cursor.db.alias)
   cursor.execute('''SELECT
     name, description, maximum, maximum_calendar_id, location_id, type, cost,
-    maxearly, setup, setupmatrix_id, category, subcategory
-    FROM %s''' % connections[database].ops.quote_name('resource'))
-  for i,j,t,k,l,m,n,o,p,q,r,s in cursor.fetchall():
+    maxearly, setup, setupmatrix_id, category, subcategory, owner_id 
+    FROM %s order by lvl asc, name'''% connections[database].ops.quote_name('resource'))
+  for i,j,t,k,l,m,n,o,p,q,r,s,u in cursor.fetchall():
     cnt += 1
     try:
       if m == "infinite":
@@ -309,6 +312,7 @@ def loadResources(cursor):
       if n: x.cost = n
       if p: x.setup = p
       if q: x.setupmatrix = frepple.setupmatrix(name=q)
+      if u: x.owner = frepple.resource(name=u)
     except Exception as e: print "Error:", e
   print 'Loaded %d resources in %.2f seconds' % (cnt, time() - starttime)
 

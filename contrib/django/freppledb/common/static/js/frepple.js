@@ -2,6 +2,7 @@
 // Django sets this variable in the admin/base.html template.
 window.__admin_media_prefix__ = "/static/admin/";
 
+
 //----------------------------------------------------------------------------
 // A class to handle changes to a grid.
 //----------------------------------------------------------------------------
@@ -55,6 +56,38 @@ var upload = {
             $.jgrid.hideModal("#searchmodfbox_grid");
             }
         });        
+  },
+
+  validateSort: function(event)
+  {
+    if ($('#save').hasClass("ui-state-disabled"))
+      jQuery("#grid").jqGrid('resetSelection');
+    else
+    {
+      $('#popup').html("")
+        .dialog({
+          title: gettext("Save or undo your changes first"),
+          autoOpen: true,
+          resizable: false,
+          buttons: [
+            {
+              text: gettext("Save"),
+              click: function() {
+                upload.save();
+                $('#popup').dialog('close');
+                }
+            },
+            {
+              text: gettext("Undo"),
+              click: function() {
+                upload.undo();
+                $('#popup').dialog('close');
+                }
+            }
+            ]
+        });
+      event.stopPropagation();
+    }
   }
 }
 
@@ -864,3 +897,24 @@ function selectDatabase()
   else
     window.location.href = window.location.href.replace("/"+cur+"/", "/"+db+"/");
 }
+
+
+//----------------------------------------------------------------------------
+// Jquery utility function to bind an event such that it fires first.
+//----------------------------------------------------------------------------
+
+$.fn.bindFirst = function(name, fn) {
+    // bind as you normally would
+    // don't want to miss out on any jQuery magic
+    this.on(name, fn);
+
+    // Thanks to a comment by @Martin, adding support for
+    // namespaced events too.
+    this.each(function() {
+        var handlers = $._data(this, 'events')[name.split('.')[0]];
+        // take out the handler we just inserted from the end
+        var handler = handlers.pop();
+        // move it at the beginning
+        handlers.splice(0, 0, handler);
+    });
+};

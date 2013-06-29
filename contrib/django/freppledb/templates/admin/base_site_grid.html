@@ -1,6 +1,6 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
-{% block extrahead %}{{block.super}} 
+{% block extrahead %}{{block.super}}
 <script type="text/javascript">
 
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
@@ -8,32 +8,33 @@ var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 {% endif %}
 
 $(function(){
-  jQuery("#grid").jqGrid({        
-   	url: (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href) 
+
+  jQuery("#grid").jqGrid({
+   	url: (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href)
    	  + (location.search.length > 0 ? "&format=json" : "?format=json"),
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
    	colModel:[{% if is_popup %}
       {name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false},
       {% endif %}{% for f in reportclass.rows %}{% if not forloop.first %},
-   	  {% endif %}{ {{f|safe}}{% if forloop.counter <= reportclass.frozenColumns %},frozen:true{% endif %}{% if is_popup %},popup:true{% endif %} }{% endfor %}   	  
+   	  {% endif %}{ {{f|safe}}{% if forloop.counter <= reportclass.frozenColumns %},frozen:true{% endif %}{% if is_popup %},popup:true{% endif %} }{% endfor %}
    	  ],
    	rowNum: {{request.pagesize}},{% if is_popup %}
     onSelectRow: setSelectedRow,{% elif reportclass.editable and haschangeperm %}
     cellEdit: true,
     cellsubmit: 'clientArray',
-    editurl: location.pathname, 
+    editurl: location.pathname,
     afterEditCell: afterEditCell,
     beforeSaveCell: upload.select,{% endif %}
     pager: '#gridpager',
-    viewrecords: true,    
-    sortorder: "asc",	
+    viewrecords: true,
+    sortorder: "asc",
     hidegrid: false,
     scrollRows: true,
     //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
-    //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
-    //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns  
-    autowidth: true,{% if filters %}    
+    //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
+    //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns
+    autowidth: true,{% if filters %}
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
     shrinkToFit: false,
@@ -47,15 +48,16 @@ $(function(){
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
   $('#cb_grid.cbox').click(markAllRows);{% endif %}
+  $("th").bindFirst('click', upload.validateSort);
 });
 
 $(window).bind('resize', function() {
   $("#grid")
-   .setGridWidth($('#content-main').width()) 
+   .setGridWidth($('#content-main').width())
    .setGridHeight($(window).height() - $("#grid").offset().top - 70);
-}); 
+});
 
-</script> 
+</script>
 {% endblock %}
 {% block content %}
 {% block before_table %}{% endblock %}<div class="tools">{% block actions %}{% if reportclass.filterable %}

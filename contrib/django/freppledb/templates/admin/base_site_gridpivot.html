@@ -1,13 +1,13 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
-{% block extrahead %}{{block.super}} 
+{% block extrahead %}{{block.super}}
 <script type="text/javascript">
 
 function columns (cellvalue, options, rowdata) {
   return "{% for f in reportclass.crosses %}{% if not forloop.first %}{% if reportclass.editable and haschangeperm %}</span>{% endif %}<br/>{% elif reportclass.editable and haschangeperm %}<span style='line-height:20px'>{% endif %}{{f.1.title|title}}{% endfor %}";
 };
 
-{% block crosses %}function crosses (cellvalue, options, rowdata) {  
+{% block crosses %}function crosses (cellvalue, options, rowdata) {
   for (i in cellvalue)
     if (i == 0) res = cellvalue[i];
     else res += '<br/>' + cellvalue[i];
@@ -17,10 +17,10 @@ function columns (cellvalue, options, rowdata) {
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{bucketlist|length}};
 {% endif %}
-        
-$(function(){ 
-  jQuery("#grid").jqGrid({        
-   	url: (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href) 
+
+$(function(){
+  jQuery("#grid").jqGrid({
+   	url: (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href)
       + (location.search.length > 0 ? "&format=json" : "?format=json"),
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
@@ -33,37 +33,38 @@ $(function(){
    	  ],{% if reportclass.editable and haschangeperm %}
     cellEdit: true,
     cellsubmit: 'clientArray',
-    editurl: location.pathname,    
+    editurl: location.pathname,
     beforeSaveCell: upload.select,
     {% endif %}rowNum: {{request.pagesize}},
    	pager: '#gridpager',
-    viewrecords: true,     
-    sortorder: "asc",	
+    viewrecords: true,
+    sortorder: "asc",
     hidegrid: false,
     scrollRows: true,
     //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
-    //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns. 
-    autowidth: true,    
+    //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
+    autowidth: true,
 	  shrinkToFit: false,
 	  loadError: function(xhr,st,err) {
 	    $('#load_grid').show();
 	    $('#curfilter').html("{% trans 'Error retrieving report data' %}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
-    },{% if filters %}    
+    },{% if filters %}
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
     {% block extra_grid %}{% endblock %}
 	  height: $(window).height() - $("#grid").offset().top - 70
     });
-  jQuery("#grid").jqGrid('setFrozenColumns');  
+  jQuery("#grid").jqGrid('setFrozenColumns');
+  $("th").bindFirst('click', upload.validateSort);
   });
 
 $(window).bind('resize', function() {
   $("#grid")
-   .setGridWidth($('#content-main').width()) 
+   .setGridWidth($('#content-main').width())
    .setGridHeight($(window).height() - $("#grid").offset().top - 70);
-}); 
+});
 
-</script> 
+</script>
 {% endblock %}
 {% block content %}
 {% block before_table %}{% endblock %}<div class="tools">{% if reportclass.filterable and not args.0 %}

@@ -122,13 +122,6 @@
 	</flows>
 	<problems>
 		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 1&apos; is not planned</description>
-			<start>2009-03-01T00:00:00</start>
-			<end>2009-03-01T00:00:00</end>
-			<weight>1</weight>
-		</problem>
-		<problem>
 			<name>invalid data</name>
 			<description>Demand &apos;order 1&apos; has no delivery operation</description>
 			<start>2009-03-01T00:00:00</start>
@@ -137,9 +130,9 @@
 		</problem>
 		<problem>
 			<name>unplanned</name>
-			<description>Demand &apos;order 2&apos; is not planned</description>
-			<start>2009-02-01T00:00:00</start>
-			<end>2009-02-01T00:00:00</end>
+			<description>Demand &apos;order 1&apos; is not planned</description>
+			<start>2009-03-01T00:00:00</start>
+			<end>2009-03-01T00:00:00</end>
 			<weight>1</weight>
 		</problem>
 		<problem>
@@ -151,14 +144,21 @@
 		</problem>
 		<problem>
 			<name>unplanned</name>
-			<description>Demand &apos;order 3&apos; is not planned</description>
-			<start>2009-04-01T00:00:00</start>
-			<end>2009-04-01T00:00:00</end>
+			<description>Demand &apos;order 2&apos; is not planned</description>
+			<start>2009-02-01T00:00:00</start>
+			<end>2009-02-01T00:00:00</end>
 			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>invalid data</name>
 			<description>Demand &apos;order 3&apos; has no delivery operation</description>
+			<start>2009-04-01T00:00:00</start>
+			<end>2009-04-01T00:00:00</end>
+			<weight>1</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 3&apos; is not planned</description>
 			<start>2009-04-01T00:00:00</start>
 			<end>2009-04-01T00:00:00</end>
 			<weight>1</weight>

@@ -803,8 +803,8 @@ OPERATION	3. sourcing from location B	2009-03-04T00:00:00	2009-03-06T00:00:00	1
 OPERATION	3. sourcing from location B	2009-03-05T00:00:00	2009-03-07T00:00:00	1
 OPERATION	3. sourcing from location B	2009-03-06T00:00:00	2009-03-08T00:00:00	1
 PROBLEM	late	Demand '2. order 1' planned P53D after its due date	2009-01-14T00:00:00 / 2009-03-08T00:00:00
-PROBLEM	early	Demand '3. order 1' planned P13D before its due date	2009-02-01T00:00:00 / 2009-02-14T00:00:00
 PROBLEM	late	Demand '3. order 1' planned P22D after its due date	2009-02-14T00:00:00 / 2009-03-08T00:00:00
+PROBLEM	early	Demand '3. order 1' planned P13D before its due date	2009-02-01T00:00:00 / 2009-02-14T00:00:00
 DEMAND CONSTRAINT	2. order 1	Resource '2. capacity in A' has capacity shortage of 1	2009-01-01T00:00:00 / 2009-01-13T00:00:00	
 DEMAND CONSTRAINT	2. order 1	Resource '2. capacity in B' has capacity shortage of 1	2009-01-01T00:00:00 / 2009-01-30T00:00:00	
 DEMAND CONSTRAINT	3. order 1	Resource '3. capacity in B' has capacity shortage of 1	2009-01-01T00:00:00 / 2009-02-12T00:00:00	

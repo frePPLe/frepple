@@ -68,17 +68,17 @@ void OperationTransport::writeElement
     return;
   }
 
-  // Write the complete object
-  if (m != NOHEADER)
-    o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL)
+    o->BeginObject(tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the fields
+  OperationFixedTime::writeElement(o, tag, NOHEADTAIL);
   o->writeElement(tag_frombuffer, fromBuf, REFERENCE);
   o->writeElement(tag_tobuffer, toBuf, REFERENCE);
-
-  // Pass over to the parent class for the remaining fields
-  OperationFixedTime::writeElement(o, tag, NOHEADER);
+  
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

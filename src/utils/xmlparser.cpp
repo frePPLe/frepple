@@ -634,7 +634,7 @@ DECLARE_EXPORT void XMLOutput::writeElementWithHeader(const Keyword& tag, const 
   ++numObjects;
   ++numParents;
   BeginObject(tag, getHeaderAtts());
-  object->writeElement(this, tag, NOHEADER);
+  object->writeElement(this, tag, NOHEAD);
 
   // Adjust current and parent object pointer
   currentObject = NULL;

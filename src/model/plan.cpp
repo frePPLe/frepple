@@ -82,8 +82,8 @@ DECLARE_EXPORT void Plan::writeElement (XMLOutput *o, const Keyword& tag, mode m
   // No references
   assert(m != REFERENCE);
 
-  // Opening tag
-  if (m!=NOHEADER) o->BeginObject(tag);
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject(tag);
 
   // Write all own fields
   o->writeElement(Tags::tag_name, name);
@@ -94,7 +94,8 @@ DECLARE_EXPORT void Plan::writeElement (XMLOutput *o, const Keyword& tag, mode m
   // Persist all categories
   MetaCategory::persist(o);
 
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

@@ -126,8 +126,9 @@ void CalendarDouble::writeElement(XMLOutput *o, const Keyword& tag, mode m) cons
     return;
   }
 
-  // Write the complete object
-  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) 
+    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write the default value
   if (getDefault()) o->writeElement(Tags::tag_default, getDefault());
@@ -140,7 +141,8 @@ void CalendarDouble::writeElement(XMLOutput *o, const Keyword& tag, mode m) cons
     o->writeElement(Tags::tag_bucket, *i, FULL);
   o->EndObject(Tags::tag_buckets);
 
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 
@@ -365,8 +367,8 @@ DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const Keyword& tag, mod
     return;
   }
 
-  // Write the complete object
-  if (m != NOHEADER) o->BeginObject
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
     (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write all buckets
@@ -377,7 +379,8 @@ DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const Keyword& tag, mod
     o->writeElement(Tags::tag_bucket, *i, FULL);
   o->EndObject(Tags::tag_buckets);
 
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

@@ -107,7 +107,7 @@ DECLARE_EXPORT void ResourceSkill::writeElement(XMLOutput *o, const Keyword& tag
   // If the resourceskill has already been saved, no need to repeat it again
   // A 'reference' to a load is not useful to be saved.
   if (m == REFERENCE) return;
-  assert(m != NOHEADER);
+  assert(m != NOHEAD && m != NOHEADTAIL);
 
   o->BeginObject(tag);
 
@@ -128,7 +128,8 @@ DECLARE_EXPORT void ResourceSkill::writeElement(XMLOutput *o, const Keyword& tag
   if (getEffective().getEnd() != Date::infiniteFuture)
     o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
 
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

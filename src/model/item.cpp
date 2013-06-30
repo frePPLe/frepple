@@ -71,15 +71,18 @@ DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const Keyword& tag, mode m)
     return;
   }
 
-  // Write the complete item
-  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) 
+    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write the fields
   HasDescription::writeElement(o, tag);
   HasHierarchy<Item>::writeElement(o, tag);
   o->writeElement(Tags::tag_operation, deliveryOperation);
   if (getPrice() != 0.0) o->writeElement(Tags::tag_price, getPrice());
-  o->EndObject(tag);
+
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

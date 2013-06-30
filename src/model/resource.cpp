@@ -150,8 +150,9 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
     return;
   }
 
-  // Write the complete object
-  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) 
+    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write my fields
   HasDescription::writeElement(o, tag);
@@ -189,8 +190,8 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
     o->EndObject(Tags::tag_loadplans);
   }
 
-  // That was it
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 
@@ -352,11 +353,11 @@ DECLARE_EXPORT void ResourceInfinite::writeElement
   }
 
   // Write the complete object
-  if (m != NOHEADER) o->BeginObject
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
     (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the fields
-  Resource::writeElement(o, tag, NOHEADER);
+  Resource::writeElement(o, tag, NOHEAD);
 }
 
 

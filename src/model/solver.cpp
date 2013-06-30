@@ -43,13 +43,13 @@ DECLARE_EXPORT void Solver::writeElement
 (XMLOutput *o, const Keyword &tag, mode m) const
 {
   // The subclass should have written its own header
-  assert(m == NOHEADER);
+  assert(m == NOHEAD || m == NOHEADTAIL);
 
   // Fields
   if (loglevel) o->writeElement(Tags::tag_loglevel, loglevel);
 
-  // End object
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL) o->EndObject(tag);
 }
 
 

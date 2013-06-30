@@ -62,11 +62,12 @@ DECLARE_EXPORT void Skill::writeElement(XMLOutput *o, const Keyword& tag, mode m
     return;
   }
 
-  // Write the complete object
-  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) 
+    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
-  // That was it
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

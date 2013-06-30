@@ -59,14 +59,17 @@ DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const Keyword& tag, mod
     return;
   }
 
-  // Write the complete object
-  if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) 
+    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write the fields
   HasDescription::writeElement(o, tag);
   HasHierarchy<Location>::writeElement(o, tag);
   o->writeElement(Tags::tag_available, available);
-  o->EndObject(tag);
+
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

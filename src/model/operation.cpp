@@ -484,7 +484,7 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const Keyword& tag, mo
 {
   // Note that this class is abstract and never instantiated directly. There is
   // therefore no reason to ever write a header.
-  assert(m == NOHEADER);
+  assert(m == NOHEAD || m == NOHEADTAIL);
 
   // Write the fields
   HasDescription::writeElement(o, tag);
@@ -689,14 +689,16 @@ DECLARE_EXPORT void OperationFixedTime::writeElement
     return;
   }
 
-  // Write the complete object
-  if (m != NOHEADER) o->BeginObject
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
     (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the fields
-  Operation::writeElement(o, tag, NOHEADER);
+  Operation::writeElement(o, tag, NOHEAD);
   if (duration) o->writeElement (Tags::tag_duration, duration);
-  o->EndObject (tag);
+
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject (tag);
 }
 
 
@@ -856,15 +858,17 @@ DECLARE_EXPORT void OperationTimePer::writeElement
     return;
   }
 
-  // Write the complete object
-  if (m != NOHEADER) o->BeginObject
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
     (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
-  // Write the complete object
-  Operation::writeElement(o, tag, NOHEADER);
+  // Write the fields
+  Operation::writeElement(o, tag, NOHEADTAIL);
   o->writeElement(Tags::tag_duration, duration);
   o->writeElement(Tags::tag_duration_per, duration_per);
-  o->EndObject(tag);
+  
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 
@@ -890,12 +894,12 @@ DECLARE_EXPORT void OperationRouting::writeElement
     return;
   }
 
-  // Write the complete object
-  if (m != NOHEADER) o->BeginObject
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
     (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the fields
-  Operation::writeElement(o, tag, NOHEADER);
+  Operation::writeElement(o, tag, NOHEADTAIL);
   if (steps.size())
   {
     o->BeginObject(Tags::tag_steps);
@@ -903,7 +907,9 @@ DECLARE_EXPORT void OperationRouting::writeElement
       o->writeElement(Tags::tag_operation, *i, REFERENCE);
     o->EndObject(Tags::tag_steps);
   }
-  o->EndObject(tag);
+
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 
@@ -1127,11 +1133,11 @@ DECLARE_EXPORT void OperationAlternate::writeElement
   }
 
   // Write the complete object
-  if (m != NOHEADER) o->BeginObject
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
     (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write the standard fields
-  Operation::writeElement(o, tag, NOHEADER);
+  Operation::writeElement(o, tag, NOHEADTAIL);
   if (search != PRIORITY)
     o->writeElement(Tags::tag_search, search);
 
@@ -1153,8 +1159,8 @@ DECLARE_EXPORT void OperationAlternate::writeElement
   }
   o->EndObject(Tags::tag_alternates);
 
-  // Ending tag
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

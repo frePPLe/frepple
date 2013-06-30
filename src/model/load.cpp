@@ -250,7 +250,7 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   // If the load has already been saved, no need to repeat it again
   // A 'reference' to a load is not useful to be saved.
   if (m == REFERENCE) return;
-  assert(m != NOHEADER);
+  assert(m != NOHEAD && m != NOHEADTAIL);
 
   o->BeginObject(tag);
 
@@ -289,7 +289,8 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   // Write the required skill
   if (skill) o->writeElement(Tags::tag_skill, skill);
 
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

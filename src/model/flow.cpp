@@ -231,9 +231,9 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m
   // If the flow has already been saved, no need to repeat it again
   // A 'reference' to a flow is not useful to be saved.
   if (m == REFERENCE) return;
-  assert(m != NOHEADER);
+  assert(m != NOHEAD);
 
-  // Write the header
+  // Write the head
   o->BeginObject(tag, Tags::tag_type, getType().type);
 
   // If the flow is defined inside of an operation tag, we don't need to save
@@ -259,8 +259,8 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m
   if (getEffective().getEnd() != Date::infiniteFuture)
     o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
 
-  // End of flow object
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 
@@ -331,9 +331,9 @@ DECLARE_EXPORT void FlowEnd::writeElement
   // If the flow has already been saved, no need to repeat it again
   // A 'reference' to a flow is not useful to be saved.
   if (m == REFERENCE) return;
-  assert(m != NOHEADER);
+  assert(m != NOHEAD);
 
-  // Write the header
+  // Write the head
   o->BeginObject(tag, Tags::tag_type, getType().type);
 
   // If the flow is defined inside of an operation tag, we don't need to save
@@ -359,8 +359,8 @@ DECLARE_EXPORT void FlowEnd::writeElement
   if (getEffective().getEnd() != Date::infiniteFuture)
     o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
 
-  // End of flow object
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

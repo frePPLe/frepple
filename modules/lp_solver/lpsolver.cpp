@@ -210,7 +210,7 @@ void LPSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
   }
 
   // Write the complete object
-  if (m != NOHEADER) o->BeginObject
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
     (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Fields
@@ -224,7 +224,7 @@ void LPSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
   for (list<string>::const_iterator i = objectives.begin();
       i != objectives.end(); ++i)
     o->writeElement(tag_objective, *i);
-  Solver::writeElement(o, tag, NOHEADER);
+  Solver::writeElement(o, tag, NOHEAD);
 }
 
 

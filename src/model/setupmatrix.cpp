@@ -95,8 +95,8 @@ DECLARE_EXPORT void SetupMatrix::writeElement(XMLOutput *o, const Keyword& tag, 
     return;
   }
 
-  // Write the complete object
-  if (m != NOHEADER) o->BeginObject
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
     (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
 
   // Write all rules
@@ -107,7 +107,8 @@ DECLARE_EXPORT void SetupMatrix::writeElement(XMLOutput *o, const Keyword& tag, 
     o->writeElement(Tags::tag_rule, *i, FULL);
   o->EndObject(Tags::tag_rules);
 
-  o->EndObject(tag);
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
 
 

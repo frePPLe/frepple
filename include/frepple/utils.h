@@ -1940,11 +1940,23 @@ enum mode
     * class.<br>
     * Eg: \<FIELD\>value\</FIELD\>\</MODEL\>
     */
-  NOHEADER = 2,
+  NOHEAD = 2,
   /** Write the full object, with all its fields and a header line.<br>
     * Eg: \<MODEL NAME="POL" TYPE="a"\>\<FIELD\>value\</FIELD\>\</MODEL\>
     */
-  FULL = 3
+  FULL = 3,
+  /** Write the full object, but without a closing tag. This method is
+    * typically used when a subclass calls the write method of its parent
+    * class.<br>
+    * Eg: \<MODEL NAME="POL" TYPE="a"\>\<FIELD\>value\</FIELD\>
+    */
+  NOTAIL = 4,
+  /** Write the core fields, but without a starting and closing tag. This
+    * method is typically used when a subclass calls the write method of
+    * its parent class.<br>
+    * Eg: \<FIELD\>value\</FIELD\>
+    */
+  NOHEADTAIL = 5
 };
 
 

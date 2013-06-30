@@ -233,7 +233,7 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
 
   // Parameters
   o->writeElement(tag_iterationthreshold, iteration_threshold);
-  o->writeElement(tag_iterationaccuracy, iterationaccuracy);
+  o->writeElement(tag_iterationaccuracy, iteration_accuracy);
   o->writeElement(tag_lazydelay, lazydelay);
   o->writeElement(Tags::tag_autocommit, autocommit);
 
@@ -304,11 +304,11 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_plantype))
     return PythonObject(getPlanType());
   // Less common parameters
-  if (pAttr.isA(tag_iterationthreshold))
+  if (attr.isA(tag_iterationthreshold))
     return PythonObject(getIterationThreshold());
-  if (pAttr.isA(tag_iterationaccuracy))
+  if (attr.isA(tag_iterationaccuracy))
     return PythonObject(getIterationAccuracy());
-  if (pAttr.isA(tag_lazydelay))
+  if (attr.isA(tag_lazydelay))
     return PythonObject(getLazyDelay());
   // Default parameters
   return Solver::getattro(attr);
@@ -334,11 +334,11 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
   else if (attr.isA(Tags::tag_plantype))
     setPlanType(field.getInt());
   // Less common parameters
-  else if (pAttr.isA(tag_iterationthreshold))
+  else if (attr.isA(tag_iterationthreshold))
     setIterationThreshold(field.getDouble());
-  else if (pAttr.isA(tag_iterationaccuracy))
+  else if (attr.isA(tag_iterationaccuracy))
     setIterationAccuracy(field.getDouble());
-  else if (pAttr.isA(tag_lazydelay))
+  else if (attr.isA(tag_lazydelay))
     setLazyDelay(field.getTimeperiod());
   // Default parameters
   else

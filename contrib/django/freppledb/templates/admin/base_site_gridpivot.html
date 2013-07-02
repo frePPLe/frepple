@@ -54,9 +54,10 @@ $(function(){
     {% block extra_grid %}{% endblock %}
 	  height: $(window).height() - $("#grid").offset().top - 70
     });
-  jQuery("#grid").jqGrid('setFrozenColumns');
-  $("th").bindFirst('click', upload.validateSort);
+  jQuery("#grid").jqGrid('setFrozenColumns');{% if reportclass.editable and haschangeperm %}
+  $("th").bindFirst('click', upload.validateSort);{% endif %}
   });
+  
 
 $(window).bind('resize', function() {
   $("#grid")

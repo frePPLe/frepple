@@ -1011,7 +1011,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     if (bestAlternateQuantity > ROUNDING_ERROR && search != PRIORITY)
     {
       // Message
-      if (loglevel)
+      if (loglevel>1)
         logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
           << "' chooses alternate '" << bestAlternateSelection << "' " << search << endl;
 

@@ -182,7 +182,7 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
   if (bestAlternateSelection)
   {
     // Message
-    if (loglevel)
+    if (loglevel>1)
       logger << indent(l->getOperation()->getLevel()) << "   Operation '"
           << l->getOperation()->getName() << "' chooses alternate '"
           << bestAlternateSelection << "' " << l->getSearch() << endl;
@@ -349,7 +349,7 @@ void SolverMRP::solve(const Load* l, void* v)
         {
           // Zero cost and zero penalty on this alternate. It won't get any better
           // than this, so we accept this alternate.
-          if (loglevel)
+          if (loglevel>1)
             logger << indent(l->getOperation()->getLevel()) << "   Operation '"
                 << l->getOperation()->getName() << "' chooses alternate '"
                 << curload->getResource() << "' " << search << endl;
@@ -416,7 +416,7 @@ void SolverMRP::solve(const Load* l, void* v)
   if (!originalPlanningMode || (search != PRIORITY && bestAlternateSelection))
   {
     // Message
-    if (loglevel)
+    if (loglevel>1)
       logger << indent(l->getOperation()->getLevel()) << "   Operation '"
           << l->getOperation()->getName() << "' chooses alternate '"
           << bestAlternateSelection->getResource() << "' " << search << endl;

@@ -47,8 +47,8 @@ $(function(){
     height: $(window).height() - $("#grid").offset().top - 75
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
-  $('#cb_grid.cbox').click(markAllRows);{% endif %}
-  $("th").bindFirst('click', upload.validateSort);
+  $('#cb_grid.cbox').click(markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
+  $("th").bindFirst('click', upload.validateSort);{% endif %}
 });
 
 $(window).bind('resize', function() {

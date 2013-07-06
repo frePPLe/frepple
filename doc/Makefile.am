@@ -17,6 +17,7 @@ output:
     --no-verbose --page-requisites --no-host-directories --directory-prefix=output \
     -e robots=off http://frepple.com/documentation/
 	cp index.html output
+	sed 's/%VERSION%/$(PACKAGE_VERSION)/' search.html > output/search.html
 	export PACKAGE_VERSION=$(PACKAGE_VERSION); `pwd`/generate.py
 	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile
 else

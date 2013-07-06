@@ -18,7 +18,7 @@
 
 import HTMLParser, os, os.path, sys
 
-# List of stopwords, loosely based on: 
+# List of stopwords, loosely based on:
 #    http://en.wikipedia.org/wiki/Stop_words
 #    http://armandbrahaj.blog.al/2009/04/14/list-of-english-stop-words/
 stoplist = frozenset(["able", "about", "above", "frepple", "according", "accordingly",
@@ -84,27 +84,29 @@ stoplist = frozenset(["able", "about", "above", "frepple", "according", "accordi
   "you're", "you've", "your", "yours", "yourself", "yourselves", "zero"
   ])
 
-
 # Define a parser which takes care of:
 #   - finds all keywords in a file
 #   - echo the input as output, with certain parts of the document replaced
 class WebSiteParser(HTMLParser.HTMLParser):
 
   def clear(self):
-    if getattr(self,'intitle',False) or getattr(self,'inreplace',False):
+    if getattr(self,'intitle',False) or getattr(self,'inreplace',False) or getattr(self,'intext',False):
       print "Warning: page '%s' not parsed as expected" % self.title
     self.fed = []
     self.title = ''
-    self.intext = False
     self.intitle = False
+    self.intext = 0
     self.inreplace = False
     self.depth = 0
-    
+
   def handle_starttag(self, tag, attrs):
     if tag == 'title':
       self.intitle = True
-    if not self.intext and tag == 'div' and ('id','main-content') in attrs:
-      self.intext = True
+    if tag == 'div':
+      if not self.intext and ('id','main-content') in attrs:
+        self.intext = 1
+      elif self.intext:
+        self.intext += 1
     if tag == 'ul' and ('id','social-list') in attrs:
       self.inreplace = True
     elif tag == 'section' and ('id','comments') in attrs:
@@ -113,15 +115,21 @@ class WebSiteParser(HTMLParser.HTMLParser):
       self.inreplace = True
     elif tag == 'script' and ('id','javascript_footer') in attrs:
       self.inreplace = True
-    elif tag == 'footer':    
-      self.file_out.write('''<footer class="rtf">				
+    elif tag == 'footer':
+      self.file_out.write('''<footer class="rtf">
 	<div id="footer-content" class="clearfix container">
-		<div id="copyright">Copyright &#xa9; 2010-2013 frePPLe bvba</div>	
+		<div id="copyright">Copyright &#xa9; 2010-2013 frePPLe bvba</div>
 	</div>''')
+      self.inreplace = True
+    elif tag == 'form' and ('action','http://frepple.com') in attrs:
+      self.file_out.write('''<form id="search-form" action="%ssearch.html">
+	<input type="text" id="search-text" class="input-text waterfall" name="search" placeholder="Search &#8230;" default="" value="" size="30">
+	<button type="submit" id="search-button"><span>Search</span></button>
+  </form>''' % self.root)
       self.inreplace = True
     elif tag == 'a' and ('id','site-title-text') in attrs:
       self.file_out.write('''<a href="http://frepple.com/" title="frePPLe" rel="home" id="site-title-text">
-					<img src="%swp-content/uploads/frepplelogo.png" alt="frePPLe" />v%s</a>''' % (self.root, os.environ['PACKAGE_VERSION']))
+					<img src="%swp-content/uploads/frepplelogo.png" alt="frePPLe" />v%s</a>''' % (self.root, os.getenv('PACKAGE_VERSION', "NA")))
       self.inreplace = True
     elif tag == 'nav' and ('id','primary-menu-container') in attrs:
       self.file_out.write('''<nav id="primary-menu-container">
@@ -139,12 +147,12 @@ class WebSiteParser(HTMLParser.HTMLParser):
 <li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="%sapi/index.html">C++ API</a>
 </ul></nav>''' % (self.root, self.root, self.root, self.root, self.root, self.root, self.root, self.root))
       self.inreplace = True
-    if self.inreplace: 
+    if self.inreplace:
       self.depth += 1
-    else: 
+    else:
       self.file_out.write(self.get_starttag_text())
-      
-      
+
+
   def handle_startendtag(self, tag, attrs):
     if tag == 'link' and ('rel','profile') in attrs:
       return
@@ -161,45 +169,48 @@ class WebSiteParser(HTMLParser.HTMLParser):
     if tag == 'link' and ('rel','EditURI') in attrs:
       return
     if not self.inreplace: self.file_out.write(self.get_starttag_text())
-    
+
   def handle_endtag(self, tag):
     if tag == 'title':
       self.intitle = False
+    if self.intext > 0 and tag == 'div':
+      self.intext -= 1
     if not self.inreplace:
       self.file_out.write("</%s>" % tag)
     else:
       self.depth -= 1
-      if self.depth == 0: 
+      if self.depth == 0:
         self.inreplace = False
-        
+
   def handle_data(self, d):
-    if self.intitle:
-      self.title += d
-    if self.intext:
+    if self.inreplace: return
+    if self.intitle: self.title += d
+    if self.intext > 0:
+      print self.title, '---', d
       self.fed.append(d)
-    if not self.inreplace: self.file_out.write(d)
-    
+    self.file_out.write(d)
+
   def handle_entityref(self, name):
     if not self.inreplace: self.file_out.write("&%s;" % name)
-    
+
   def handle_charref(self, name):
     if not self.inreplace: self.file_out.write("&#%s;" % name)
-    
+
   def handle_decl(self, decl):
     self.file_out.write("<!%s>" % decl)
-    
+
   def get_keywords(self):
     for x in ' '.join(self.fed).split():
-      k = x.strip(".-;/=,():\"'?").lower()
+      k = x.translate(None, ".-;/=,():\"'?").lower()
       if len(k) > 1 and not k in stoplist and k.isalnum() and not k[0].isdigit():
         yield k
-  
-  def parseFiles(self, infolder):    
+
+  def parseFiles(self, infolder):
     global filecounter, outfile, keys
     for root, dirs, files in os.walk(infolder):
       for f in files:
-        if not f.endswith('.html'): continue 
-        if f.endswith('.html.html'): continue 
+        if not f.endswith('.html'): continue
+        if f.endswith('.html.html'): continue
         infile = os.path.join(root,f)
         filecounter += 1
         self.root = '../' * (infile.count(os.sep) - 1)
@@ -211,7 +222,7 @@ class WebSiteParser(HTMLParser.HTMLParser):
             data = file_in.read(8192)
             if not data: break
             parser.feed(data)
-          print >>outfile, "{name: '%s', title: '%s'}," % (infile, parser.get_title().strip())
+          print >>outfile, "{name: '%s', title: '%s'}," % (infile[7:], parser.get_title().strip())
           for i in parser.get_keywords():
             if not i in keys.keys():
               keys[i] = {'count': 1, 'filecount': 1, 'refs':{filecounter:1}}
@@ -228,9 +239,9 @@ class WebSiteParser(HTMLParser.HTMLParser):
           try:
             os.unlink(infile)
             os.rename("%s.tmp" % infile, infile)
-          except: 
+          except:
             pass
-            
+
   def get_title(self):
     return self.title
 
@@ -241,7 +252,7 @@ print >>outfile, "var docs = ["
 # Loop through all HTML files under the documentation subdirectory
 parser = WebSiteParser()
 keys = {}
-filecounter = 0
+filecounter = -1
 parser.parseFiles(os.path.join('output','documentation'))
 
 # Generate index file

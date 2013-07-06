@@ -928,6 +928,8 @@ DECLARE_EXPORT PyObject* BufferProcure::getattro(const Attribute& attr)
     return PythonObject(getSizeMultiple());
   if (attr.isA(Tags::tag_size_maximum))
     return PythonObject(getSizeMaximum());
+  if (attr.isA(Tags::tag_producing))
+    return PythonObject(getOperation());
   return Buffer::getattro(attr);
 }
 
@@ -952,6 +954,8 @@ DECLARE_EXPORT int BufferProcure::setattro(const Attribute& attr, const PythonOb
     setSizeMaximum(field.getDouble());
   else if (attr.isA(Tags::tag_fence))
     setFence(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_producing))
+    return 0;
   else
     return Buffer::setattro(attr, field);
   return 0;

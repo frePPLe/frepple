@@ -77,16 +77,20 @@ class HierarchyModel(models.Model):
           ),
         [me]
         )
-        
+
       # Remove from node list (to mark as processed)
       del nodes[me]
-      
+
       # Return the right value of this node + 1
       return right + 1
 
     # Load all nodes in memory
     for i in cls.objects.using(database).values('name','owner'):
-      nodes[i['name']] = i['owner']
+      if i['name'] == i['owner']:
+        print "Data error: '%s' points to itself as owner" % i['name']
+        nodes[i['name']] = None
+      else:
+        nodes[i['name']] = i['owner']
     keys = sorted(nodes.items())
 
     # Loop over nodes without parent
@@ -94,14 +98,36 @@ class HierarchyModel(models.Model):
     for i, j in keys:
       if j == None:
         cnt = tagChildren(i,cnt,0)
-    
-    # Loop over all nodes that were not processed in the previous loop.
-    # These are loops in your hierarchy, ie parent-chains not ending 
-    # at a top-level node without parent.
-    for i in nodes:
-      print "Data error: Hierachy loop at '%s'. Considering it as a top-level node now." % i 
-      cnt = tagChildren(i,cnt,0)
-        
+
+    if nodes:
+      # If the nodes dictionary isn't empty, it is an indication of an
+      # invalid hierarchy.
+      # There are loops in your hierarchy, ie parent-chains not ending
+      # at a top-level node without parent.
+      bad = nodes.copy()
+      updated = True
+      while updated:
+        updated = False
+        for i in bad.keys():
+          ok = True
+          for j, k in bad.items():
+            if k == i:
+              ok = False
+              break
+          if ok:
+            # If none of the bad keys points to me as a parent, I am unguilty
+            del bad[i]
+            updated = True
+      print "Data error: Hierarchy loops among %s" % sorted(bad.keys())
+      for i, j in sorted(bad.items()):
+        nodes[i] = None
+
+      # Continue loop over nodes without parent
+      keys = sorted(nodes.items())
+      for i, j in keys:
+        if j == None:
+          cnt = tagChildren(i,cnt,0)
+
     transaction.commit(using=database)
     settings.DEBUG = tmp_debug
     transaction.leave_transaction_management(using=database)
@@ -124,8 +150,8 @@ class AuditModel(models.Model):
 
   class Meta:
     abstract = True
-    
-    
+
+
 class Parameter(AuditModel):
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
@@ -141,7 +167,7 @@ class Parameter(AuditModel):
 
   @staticmethod
   def getValue(key, database = DEFAULT_DB_ALIAS, default = None):
-    try: 
+    try:
       return Parameter.objects.using(database).get(pk=key).value
     except:
       return default
@@ -196,7 +222,7 @@ class Comment(models.Model):
   comment = models.TextField(_('comment'), max_length=settings.COMMENT_MAX_LENGTH)
   user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
   lastmodified = models.DateTimeField(_('last modified'), default=datetime.now(), editable=False)
-  
+
   class Meta:
       db_table = "common_comment"
       ordering = ('id',)

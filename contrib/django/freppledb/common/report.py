@@ -1177,10 +1177,11 @@ class GridPivot(GridReport):
         else:
           # Write an entity
           for cross in reportclass.crosses:
+            if 'visible' in cross[1] and not cross[1]['visible']: continue
             # Clear the return string buffer
             sf.truncate(0)
             fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name ]
-            fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
+            fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0]))).encode(encoding,"ignore")] )
             fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
             # Return string
             writer.writerow(fields)
@@ -1189,10 +1190,11 @@ class GridPivot(GridReport):
           row_of_buckets = [row]
       # Write the last entity
       for cross in reportclass.crosses:
+        if 'visible' in cross[1] and not cross[1]['visible']: continue
         # Clear the return string buffer
         sf.truncate(0)
         fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name ]
-        fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))).encode(encoding,"ignore") or capfirst(_(cross[0])).encode(encoding,"ignore")] )
+        fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0]))).encode(encoding,"ignore")] )
         fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
         # Return string
         writer.writerow(fields)

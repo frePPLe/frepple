@@ -391,6 +391,9 @@ $(function() {
       xhr.setRequestHeader("X-CSRFToken", getToken());
     });
 
+  // Never cache ajax results
+  $.ajaxSetup({ cache: false });
+
   // Autocomplete search functionality
   var database = $('#database').val();
   database = (database===undefined || database==='default') ? '' : '/' + database;

@@ -17,13 +17,13 @@
 
 from datetime import datetime
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django import forms
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.common.models import Parameter, Comment, Bucket, BucketDetail
+from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
 from freppledb.admin import admin_site
 

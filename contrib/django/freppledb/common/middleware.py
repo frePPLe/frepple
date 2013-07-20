@@ -41,10 +41,9 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
       request.theme = settings.DEFAULT_THEME
       request.pagesize = settings.DEFAULT_PAGESIZE
     else:
-      prefs = request.user.get_profile()
-      language = prefs.language
-      request.theme = prefs.theme or settings.DEFAULT_THEME
-      request.pagesize = prefs.pagesize or settings.DEFAULT_PAGESIZE
+      language = request.user.language
+      request.theme = request.user.theme or settings.DEFAULT_THEME
+      request.pagesize = request.user.pagesize or settings.DEFAULT_PAGESIZE
     if language == 'auto':
       language = translation.get_language_from_request(request)
     if translation.get_language() != language:

@@ -72,7 +72,7 @@ $(window).bind('resize', function() {
 {% endif %}{% if reportclass.hasTimeBuckets %}<a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
 {% endif %}{% if hasaddperm %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
 {% endif %}<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
-{% endblock %}</div>
+<a href="javascript:customize_show();" class="icon"><span class="ui-icon ui-icon-wrench"></span>{% trans 'Customize' %}</a>{% endblock %}</div>
 <div id="content-main" style="margin-right: 15px;">
 <table id="grid"></table>
 <div id="gridpager"></div>

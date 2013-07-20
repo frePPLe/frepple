@@ -26,12 +26,12 @@ from django import forms
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.utils import translation
 from django.conf import settings
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 
-from freppledb.common.models import Preferences, Parameter, Comment, Bucket, BucketDetail
+from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
 from freppledb.common.report import GridFieldBool, GridFieldDateTime, GridFieldInteger
 
@@ -50,7 +50,7 @@ def handler404(request):
 class PreferencesForm(forms.Form):
   language = forms.ChoiceField(label = _("language"),
     initial="auto",
-    choices=Preferences.languageList,
+    choices=User.languageList,
     help_text=_("Language of the user interface"),
     )
   pagesize = forms.IntegerField(label = _('page size'),
@@ -72,12 +72,11 @@ def preferences(request):
     form = PreferencesForm(request.POST)
     if form.is_valid():
       try:
-        pref = Preferences.objects.get(user=request.user)
         newdata = form.cleaned_data
-        pref.language = newdata['language']
-        pref.theme = newdata['theme']
-        pref.pagesize = newdata['pagesize']
-        pref.save()
+        request.user.language = newdata['language']
+        request.user.theme = newdata['theme']
+        request.user.pagesize = newdata['pagesize']
+        request.user.save()
         # Switch to the new theme and language immediately
         request.theme = newdata['theme']
         if newdata['language'] == 'auto':
@@ -90,7 +89,7 @@ def preferences(request):
         logger.error("Failure updating preferences: %s" % e)
         messages.add_message(request, messages.ERROR, force_unicode(_('Failure updating preferences')))
   else:
-    pref = request.user.get_profile()
+    pref = request.user
     form = PreferencesForm({
       'language': pref.language,
       'theme': pref.theme,
@@ -121,25 +120,43 @@ def horizon(request):
   if not form.is_valid(): 
     raise Http404('Invalid form data')
   try:      
-    pref = Preferences.objects.get(user=request.user)
-    pref.horizonstart = form.cleaned_data['horizonstart'] 
-    pref.horizonbuckets = form.cleaned_data['horizonbuckets']
-    pref.horizonstart = form.cleaned_data['horizonstart'] 
-    pref.horizonend = form.cleaned_data['horizonend']
-    pref.horizontype = form.cleaned_data['horizontype'] == '1'
-    pref.horizonlength = form.cleaned_data['horizonlength']
-    pref.horizonunit = form.cleaned_data['horizonunit']
-    pref.save()
+    request.user.horizonstart = form.cleaned_data['horizonstart'] 
+    request.user.horizonbuckets = form.cleaned_data['horizonbuckets']
+    request.user.horizonstart = form.cleaned_data['horizonstart'] 
+    request.user.horizonend = form.cleaned_data['horizonend']
+    request.user.horizontype = form.cleaned_data['horizontype'] == '1'
+    request.user.horizonlength = form.cleaned_data['horizonlength']
+    request.user.horizonunit = form.cleaned_data['horizonunit']
+    request.user.save()
     return HttpResponse(content="OK")     
   except Exception:
     raise Http404('Error saving horizon settings') 
   
+  
+@login_required
+@csrf_protect
+def settings(request):
+  if request.method != 'POST' or not request.is_ajax():
+    raise Http404('Only ajax post requests allowed')  
+  data = json.loads(request.body)
+  for key, value in data.items():
+    request.user.setPreference(key, value);
+  return HttpResponse(content="OK")  
+  try:
+    data = json.loads(request.body)
+    for key, value in data.items():
+      request.user.setPreference(key, value);
+    return HttpResponse(content="OK")
+  except Exception as e:
+    logger.error("Error saving report settings: %s" % e)
+    return HttpResponseServerError('Error saving report settings') 
+
 
 class UserList(GridReport):
   '''
   A list report to show users.
   '''
-  template = 'auth/userlist.html'
+  template = 'common/userlist.html'
   title = _("User List")
   basequeryset = User.objects.all()
   model = User

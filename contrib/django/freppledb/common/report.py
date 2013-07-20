@@ -486,7 +486,7 @@ class GridReport(View):
       # Return HTML page
       # Pick up the list of time buckets      
       if reportclass.hasTimeBuckets:
-        pref = request.user.get_profile()
+        pref = request.user
         (bucket,start,end,bucketlist) = getBuckets(request, pref)
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
       else:
@@ -1042,8 +1042,7 @@ class GridPivot(GridReport):
   def _generate_json_data(reportclass, request, *args, **kwargs):
 
     # Pick up the list of time buckets      
-    pref = request.user.get_profile()
-    (bucket,start,end,bucketlist) = getBuckets(request, pref)
+    (bucket,start,end,bucketlist) = getBuckets(request)
 
     # Prepare the query   
     if args and args[0]:
@@ -1121,8 +1120,7 @@ class GridPivot(GridReport):
     listformat = (request.GET.get('format','csvlist') == 'csvlist')
       
     # Pick up the list of time buckets      
-    pref = request.user.get_profile()
-    (bucket,start,end,bucketlist) = getBuckets(request, pref)
+    (bucket,start,end,bucketlist) = getBuckets(request)
 
     # Prepare the query
     if args and args[0]:
@@ -1215,7 +1213,7 @@ def _localize(value, use_l10n=None):
     return value
 
 
-def getBuckets(request, pref=None, bucket=None, start=None, end=None):
+def getBuckets(request, bucket=None, start=None, end=None):
   '''
   This function gets passed a name of a bucketization.
   It returns a tuple with:
@@ -1224,7 +1222,7 @@ def getBuckets(request, pref=None, bucket=None, start=None, end=None):
     - a list of buckets.
   '''
   # Pick up the user preferences
-  if pref == None: pref = request.user.get_profile()
+  pref = request.user
 
   # Select the bucket size (unless it is passed as argument)
   if not bucket:

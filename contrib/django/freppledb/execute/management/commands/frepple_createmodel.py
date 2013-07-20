@@ -178,7 +178,7 @@ class Command(BaseCommand):
 
       # Update the user horizon
       try:
-        userprofile = User.objects.get(username=user).get_profile()
+        userprofile = User.objects.get(username=user)
         userprofile.startdate = startdate.date()
         userprofile.enddate = (startdate + timedelta(365)).date()
         userprofile.save(using=database)

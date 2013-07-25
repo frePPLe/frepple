@@ -93,7 +93,7 @@ class execute_with_commands(TransactionTestCase):
     self.assertNotEqual(input.models.Demand.objects.count(),0)
 
     # Run frePPLe on the test database
-    management.call_command('frepple_run', plantype=1, constraint=15, nonfatal=True)
+    management.call_command('frepple_run', plantype=1, constraint=15)
     self.assertEqual(output.models.Problem.objects.count(),387)
     self.assertEqual(output.models.FlowPlan.objects.count(),1847)
     self.assertEqual(output.models.LoadPlan.objects.count(),199)
@@ -139,14 +139,14 @@ class execute_multidb(TransactionTestCase):
     # We need to close the transactions, since they can block the copy
     transaction.commit(using=db1)
     transaction.commit(using=db2)
-    management.call_command('frepple_copy', db1, db2, nonfatal=True)
+    management.call_command('frepple_copy', db1, db2)
     count1 = output.models.Demand.objects.all().using(db1).count()
     count2 = output.models.Demand.objects.all().using(db2).count()
     self.assertEqual(count1,count2)
 
     # Run the plan on db1.
     # The count changes in db1 and not in db2.
-    management.call_command('frepple_run', plantype=1, constraint=15, nonfatal=True, database=db1)
+    management.call_command('frepple_run', plantype=1, constraint=15, database=db1)
     count1 = output.models.FlowPlan.objects.all().using(db1).count()
     count2 = output.models.FlowPlan.objects.all().using(db2).count()
     self.assertNotEqual(count1,0)
@@ -155,7 +155,7 @@ class execute_multidb(TransactionTestCase):
     # Run a plan on db2.
     # The count changes in db1 and not in db2.
     # The count in both databases is expected to be different since we run a different plan
-    management.call_command('frepple_run', plantype=1, constraint=0, nonfatal=True, database=db2)
+    management.call_command('frepple_run', plantype=1, constraint=0, database=db2)
     count1new = output.models.FlowPlan.objects.all().using(db1).count()
     count2 = output.models.FlowPlan.objects.all().using(db2).count()
     self.assertEqual(count1new,count1)

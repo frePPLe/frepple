@@ -16,14 +16,15 @@
 #
 
 import os
+from datetime import datetime
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.translation import ugettext as _
 from django.db import transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
 
-from freppledb.execute.models import log
+from freppledb.execute.models import Task
+from freppledb.common.models import User
 from freppledb import VERSION
 
 
@@ -34,11 +35,11 @@ class Command(BaseCommand):
       help='User running the command'),
     make_option('--database', action='store', dest='database',
       default=DEFAULT_DB_ALIAS, help='Nominates a specific database to load data from and export results into'),
-    make_option('--nonfatal', action="store_true", dest='nonfatal',
-      default=False, help='Dont abort the execution upon an error'),
+    make_option('--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'),
   )
   args = 'XMLfile(s)'
-  
+
   requires_model_validation = False
 
   def get_version(self):
@@ -46,24 +47,38 @@ class Command(BaseCommand):
 
   def handle(self, *args, **options):
     # Pick up the options
-    if 'nonfatal' in options: nonfatal = options['nonfatal']
-    else: nonfatal = False
-    if 'user' in options: user = options['user'] or ''
-    else: user = ''
     if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
     else: database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )
-    if not args: 
-      raise CommandError("No XML input file given")
+    if 'user' in options and options['user']:
+      try: user = User.objects.all().using(database).get(username=options['user'])
+      except: raise CommandError("User '%s' not found" % options['user'] )
+    else:
+      user = None
 
-    transaction.enter_transaction_management(managed=False, using=database)
-    transaction.managed(False, using=database)
+    now = datetime.now()
+    transaction.enter_transaction_management(using=database)
+    transaction.managed(True, using=database)
+    task = None
     try:
-      # Log message
-      log(category='LOAD XML', theuser=user,
-        message=_('Loading XML data file in the database')).save(using=database)
+      # Initialize the task
+      if 'task' in options and options['task']:
+        try: task = Task.objects.all().using(database).get(pk=options['task'])
+        except: raise CommandError("Task identifier not found")
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'load XML file':
+          if not task.started: task.started = now
+          raise CommandError("Invalid task identifier")
+        task.status = '0%'
+        task.started = now
+      else:
+        task = Task(name='load XML file', submitted=now, started=now, status='0%', user=user)
+      task.arguments = ' '.join(['"%s"' % i for i in args])
+      task.save(using=database)
       transaction.commit(using=database)
+
+      if not args:
+        raise CommandError("No XML input file given")
 
       # Execute
       # TODO: if frePPLe is available as a module, we don't really need to spawn another process.
@@ -82,19 +97,23 @@ class Command(BaseCommand):
         os.environ['PYTHONPATH'] = os.path.normpath(os.environ['FREPPLE_APP'])
       cmdline = [ '"%s"' % i for i in args ]
       cmdline.insert(0, 'frepple')
-      cmdline.append( '"%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','loadxml.py') ) 
+      cmdline.append( '"%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','loadxml.py') )
       ret = os.system(' '.join(cmdline))
       if ret: raise Exception('Exit code of the batch run is %d' % ret)
 
-      # Log message
-      log(category='LOAD XML', theuser=user,
-        message=_('Finished loading XML data file in the database')).save(using=database)
+      # Task update
+      task.status = 'Done'
+      task.finished = datetime.now()
+
     except Exception as e:
-      try: log(category='LOAD XML', theuser=user,
-        message=u'%s: %s' % (_('Failure loading XML data file in the database'),e)).save(using=database)
-      except: pass
-      if nonfatal: raise e
-      else: raise CommandError(e)
+      if task:
+        task.status = 'Failed'
+        task.message = '%s' % e
+        task.finished = datetime.now()
+      raise e
+
     finally:
-      transaction.commit(using=database)
+      if task: task.save(using=database)
+      try: transaction.commit(using=database)
+      except: pass
       transaction.leave_transaction_management(using=database)

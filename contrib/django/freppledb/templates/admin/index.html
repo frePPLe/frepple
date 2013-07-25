@@ -84,24 +84,12 @@ th {
 </table>
 </div>
 
-{% if perms.execute %}
-<h3><a href="#tools">{% trans "Tools" %}</a></h3>
-<div>
-<table>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/execute/execute.html">{% trans "Execute" %}</a></th>
-<td>&nbsp;</td><td>&nbsp;</td>
+{% if modelsAdmin or perms.execute %}<h3><a href="#admin">{% trans "Admin" %}</a></h3>
+<div><table><tr>
+{% if perms.execute %}<tr><th scope="row"><a href="{{request.prefix}}/execute/">{% trans "Execute" %}</a></th><td>&nbsp;</td>
+<td>&nbsp;</td><td><a href="{{request.prefix}}/execute/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 </tr>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/execute/log/">{% trans "Log" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/execute/log/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-</table>
-</div>
-{% endif %}
-
-{% if modelsAdmin %}<h3><a href="#admin">{% trans "Admin" %}</a></h3>
-<div><table>{% for model in modelsAdmin %}<tr>
+{% endif %}{% for model in modelsAdmin %}<tr>
 <th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
 {% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
 <td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>

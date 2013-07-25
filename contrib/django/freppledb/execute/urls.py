@@ -23,14 +23,7 @@ import freppledb.execute.views
 autodiscover = True
 
 urlpatterns = patterns('',
-    (r'^execute/scenarios/$', 'freppledb.execute.views.scenarios'),
-    (r'^execute/logfrepple/$', 'freppledb.execute.views.logfile'),
-    (r'^execute/log/$', freppledb.execute.views.LogReport.as_view()),
-    (r'^execute/runfrepple/$', 'freppledb.execute.views.runfrepple'),
-    (r'^execute/cancelfrepple/$', 'freppledb.execute.views.cancelfrepple'),
-    (r'^execute/progressfrepple/$', 'freppledb.execute.views.progressfrepple'),
-    (r'^execute/erase/$', 'freppledb.execute.views.erase'),
-    (r'^execute/create/$', 'freppledb.execute.views.create'),
-    (r'^execute/fixture/$', 'freppledb.execute.views.fixture'),
-    (r'^execute/$', 'freppledb.execute.views.main'),
+    (r'^execute/$', freppledb.execute.views.TaskReport.as_view()),
+    (r'^execute/logfrepple/$', freppledb.execute.views.logfile),
+    (r'^execute/launch/(.+)/$', freppledb.execute.views.LaunchTask),
 )

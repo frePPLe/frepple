@@ -23,6 +23,9 @@
 // Language
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
+// Icon
+IDI_ICON     ICON       "frepple.ico"
+
 // Version
 VS_VERSION_INFO VERSIONINFO
   FILEVERSION 2,1,0,0

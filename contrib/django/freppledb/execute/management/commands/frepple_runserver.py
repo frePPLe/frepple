@@ -15,9 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import sys, os.path, socket
+import sys, socket
 from threading import Thread
-from stat import S_ISDIR, ST_MODE
 from optparse import make_option
 from cherrypy.wsgiserver import CherryPyWSGIServer
 
@@ -25,7 +24,6 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.handlers.wsgi import WSGIHandler
 from django.contrib.staticfiles.handlers import StaticFilesHandler
-from django.db.utils import DEFAULT_DB_ALIAS
 
 from freppledb import VERSION
 
@@ -64,7 +62,7 @@ class Command(BaseCommand):
     # - either as command line argument
     # - either 0.0.0.0 by default, which means all active IPv4 interfaces
     address = 'address' in options and options['address'] or '0.0.0.0'
-    
+
     # Validate the address and port number
     try:
       s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

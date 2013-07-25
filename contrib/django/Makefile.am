@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = freppledb django.patch django.git_patch README.txt httpd.conf manage.py setup.py
+EXTRA_DIST = freppledb django.patch django.git_patch README.txt httpd.conf frepplectl.py setup.py
 
 install-data-local:
 	echo "installing Django web application to $(DESTDIR)$(pythondir)"; \
@@ -23,13 +23,13 @@ dist-hook:
 	-rm -rf `find $(distdir) -name '*.pyo'`
 
 create:
-	./manage.py syncdb
+	./frepplectl.py syncdb
 
 contrib-check:
-	./manage.py test
+	./frepplectl.py test
 
 runserver:
-	./manage.py frepple_runserver
+	./frepplectl.py frepple_runserver
 
 international:
 	cd freppledb; django-admin.py makemessages -a -e html -e xml && django-admin.py compilemessages

@@ -105,8 +105,8 @@ FunctionEnd
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "frepple.bmp"
 !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of frePPLe.$\r$\n$\r$\nIt is recommended to uninstall a previous version before this installing a new one.$\r$\n$\r$\nClick Next to continue"
 !define MUI_HEADERIMAGE_BITMAP "..\..\doc\frepple.bmp"
-!define MUI_ICON "frepple.ico"
-!define MUI_UNICON "frepple.ico"
+!define MUI_ICON "..\..\src\frepple.ico"
+!define MUI_UNICON "..\..\src\frepple.ico"
 
 ; Installer pages
 !insertmacro MUI_PAGE_WELCOME
@@ -221,7 +221,7 @@ Section "Application" SecAppl
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\bin\manage.exe" "frepple_runserver"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\bin\frepplectl.exe" "frepple_runserver"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open customization folder.lnk" "$INSTDIR\bin\custom"
 
   ; Pick up the installation parameters
@@ -435,7 +435,7 @@ Function FinishLeave
   ; Start the server in console window
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 1" "State"
   ${If} $0 == 1
-    Exec '"$INSTDIR\bin\manage.exe" "frepple_runserver"'
+    Exec '"$INSTDIR\bin\frepplectl.exe" "frepple_runserver"'
   ${EndIf}
 
   ; View the documentation
@@ -525,7 +525,7 @@ Section -Post
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "UninstallString" "$\"$INSTDIR\uninst.exe$\" /$MultiUser.InstallMode"
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "QuietUninstallString" "$\"$INSTDIR\uninst.exe$\" /$MultiUser.InstallMode /S"
-  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$\"$INSTDIR\bin\manage.exe$\""
+  WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$\"$INSTDIR\bin\frepplectl.exe$\""
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr SHCTX "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"

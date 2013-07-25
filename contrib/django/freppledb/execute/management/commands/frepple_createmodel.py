@@ -22,8 +22,6 @@ from datetime import timedelta, datetime, date
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.core import management
-from django.utils.translation import ugettext as _
-from django.contrib.auth.models import User
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.db.models import Min, Max
 
@@ -31,16 +29,15 @@ from freppledb.common.models import Parameter, Bucket, BucketDetail
 from freppledb.input.models import Operation, Buffer, Resource, Location, Calendar
 from freppledb.input.models import CalendarBucket, Customer, Demand, Flow
 from freppledb.input.models import Load, Item
-from freppledb.execute.models import log
+from freppledb.execute.models import Task
+from freppledb.common.models import User
 from freppledb import VERSION
 
 try:
-  from freppledb_extra.models import Forecast
+  from freppledb.forecast.models import Forecast
   has_forecast = True
 except:
   has_forecast = False
-
-database = DEFAULT_DB_ALIAS
 
 
 class Command(BaseCommand):
@@ -89,10 +86,10 @@ class Command(BaseCommand):
         help='Average procurement lead time', default=40),
       make_option('--currentdate', dest='currentdate', type="string",
         help='Current date of the plan in YYYY-MM-DD format'),
-      make_option('--nonfatal', action="store_true", dest='nonfatal',
-        default=False, help='Dont abort the execution upon an error'),
       make_option('--database', action='store', dest='database',
         default=DEFAULT_DB_ALIAS, help='Nominates a specific database to populate'),
+      make_option('--task', dest='task', type='int',
+        help='Task identifier (generated automatically if not provided)'),
   )
 
   requires_model_validation = False
@@ -112,8 +109,6 @@ class Command(BaseCommand):
     # Pick up the options
     if 'verbosity' in options: verbosity = int(options['verbosity'])
     else: verbosity = 1
-    if 'user' in options: user = options['user']
-    else: user = ''
     if 'cluster' in options: cluster = int(options['cluster'])
     else: cluster = 100
     if 'demand' in options: demand = int(options['demand'])
@@ -137,38 +132,53 @@ class Command(BaseCommand):
     else: procure_lt = 40
     if 'currentdate' in options: currentdate = options['currentdate'] or datetime.strftime(date.today(),'%Y-%m-%d')
     else: currentdate = datetime.strftime(date.today(),'%Y-%m-%d')
-    if 'nonfatal' in options: nonfatal = options['nonfatal']
-    else: nonfatal = False
-    if 'database' in options: 
-      global database
+    if 'database' in options:
       database = options['database'] or DEFAULT_DB_ALIAS
+    else:
+      database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )
+    if 'user' in options and options['user']:
+      try: user = User.objects.all().using(database).get(username=options['user'])
+      except: raise CommandError("User '%s' not found" % options['user'] )
+    else:
+      user = None
 
     random.seed(100) # Initialize random seed to get reproducible results
 
+    now = datetime.now()
     transaction.enter_transaction_management(using=database)
     transaction.managed(True, using=database)
+    task = None
     try:
+      # Initialize the task
+      if 'task' in options and options['task']:
+        try: task = Task.objects.all().using(database).get(pk=options['task'])
+        except: raise CommandError("Task identifier not found")
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'generate model':
+          if not task.started: task.started = now
+          raise CommandError("Invalid task identifier")
+        task.status = '0%'
+        task.started = now
+      else:
+        task = Task(name='generate model', submitted=now, started=now, status='0%', user=user)
+      task.arguments = "--cluster=%s --demand=%s --forecast_per_item=%s --level=%s --resource=%s " \
+        "--resource_size=%s --components=%s --components_per=%s --deliver_lt=%s --procure_lt=%s" % (
+        cluster, demand, forecast_per_item, level, resource,
+        resource_size, components, components_per, deliver_lt, procure_lt
+        )
+      task.save(using=database)
+      transaction.commit(using=database)
+
       # Pick up the startdate
       try:
         startdate = datetime.strptime(currentdate,'%Y-%m-%d')
-      except Exception as e:
+      except:
         raise CommandError("current date is not matching format YYYY-MM-DD")
 
       # Check whether the database is empty
       if Buffer.objects.using(database).count()>0 or Item.objects.using(database).count()>0:
         raise CommandError("Database must be empty before creating a model")
-
-      # Logging the action
-      log(
-        category='CREATE', theuser=user,
-        message = u'%s : %d %d %d %d %d %d %d %d %d %d'
-          % (_('Start creating sample model with parameters'),
-             cluster, demand, forecast_per_item, level, resource,
-             resource_size, components, components_per, deliver_lt,
-             procure_lt)
-        ).save(using=database)
 
       # Plan start date
       if verbosity>0: print "Updating current date..."
@@ -176,35 +186,33 @@ class Command(BaseCommand):
       param.value = datetime.strftime(startdate, "%Y-%m-%d %H:%M:%S")
       param.save(using=database)
 
-      # Update the user horizon
-      try:
-        userprofile = User.objects.get(username=user)
-        userprofile.startdate = startdate.date()
-        userprofile.enddate = (startdate + timedelta(365)).date()
-        userprofile.save(using=database)
-      except:
-        pass # It's not important if this fails
-
       # Planning horizon
       # minimum 10 daily buckets, weekly buckets till 40 days after current
       if verbosity>0: print "Updating buckets..."
-      management.call_command('frepple_createdates', user=user, nonfatal=True, database=database)
+      management.call_command('frepple_createdates', user=user, database=database)
       if verbosity>0: print "Updating horizon telescope..."
-      updateTelescope(10, 40, 730)
+      updateTelescope(10, 40, 730, database)
+      task.status = '2%'
+      task.save(using=database)
+      transaction.commit(using=database)
 
       # Weeks calendar
       if verbosity>0: print "Creating weeks calendar..."
       weeks = Calendar.objects.using(database).create(name="Weeks")
       for i in BucketDetail.objects.using(database).filter(bucket="week").all():
         CalendarBucket(startdate=i.startdate, enddate=i.enddate, value=1, calendar=weeks).save(using=database)
+      task.status = '4%'
+      task.save(using=database)
       transaction.commit(using=database)
 
       # Working days calendar
       if verbosity>0: print "Creating working days..."
       workingdays = Calendar.objects.using(database).create(name="Working Days", defaultvalue=0)
       minmax = BucketDetail.objects.using(database).filter(bucket="week").aggregate(Min('startdate'),Max('startdate'))
-      CalendarBucket(startdate=minmax['startdate__min'], enddate=minmax['startdate__max'], 
+      CalendarBucket(startdate=minmax['startdate__min'], enddate=minmax['startdate__max'],
           value=1, calendar=workingdays, priority=1, saturday=False, sunday=False).save(using=database)
+      task.status = '6%'
+      task.save(using=database)
       transaction.commit(using=database)
 
       # Create a random list of categories to choose from
@@ -216,6 +224,8 @@ class Command(BaseCommand):
       for i in range(100):
         c = Customer.objects.using(database).create(name = 'Cust %03d' % i)
         cust.append(c)
+      task.status = '8%'
+      task.save(using=database)
       transaction.commit(using=database)
 
       # Create resources and their calendars
@@ -230,8 +240,10 @@ class Command(BaseCommand):
         bkt.save(using=database)
         r = Resource.objects.using(database).create(name = 'Res %03d' % i, maximum_calendar=cal, location=loc)
         res.append(r)
-      transaction.commit(using=database)
+      task.status = '10%'
+      task.save(using=database)
       random.shuffle(res)
+      transaction.commit(using=database)
 
       # Create the components
       if verbosity>0: print "Creating raw materials..."
@@ -240,7 +252,7 @@ class Command(BaseCommand):
       for i in range(components):
         it = Item.objects.using(database).create(name = 'Component %04d' % i, category='Procured')
         ld = abs(round(random.normalvariate(procure_lt,procure_lt/3)))
-        c = Buffer.objects.using(database).using(database).create(name = 'Component %04d' % i,
+        c = Buffer.objects.using(database).create(name = 'Component %04d' % i,
              location = comploc,
              category = 'Procured',
              item = it,
@@ -252,10 +264,13 @@ class Command(BaseCommand):
              onhand = str(round(forecast_per_item * random.uniform(1,3) * ld / 30)),
              )
         comps.append(c)
+      task.status = '12%'
+      task.save(using=database)
       transaction.commit(using=database)
 
       # Loop over all clusters
       durations = [ 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
+      progress = 88.0 / cluster
       for i in range(cluster):
         if verbosity>0: print "Creating supply chain for end item %d..." % i
 
@@ -277,7 +292,7 @@ class Command(BaseCommand):
             maxlateness=60*86400, # Forecast can only be planned 2 months late
             priority=3, # Low priority: prefer planning orders over forecast
             )
-  
+
           # This method will take care of distributing a forecast quantity over the entire
           # horizon, respecting the bucket weights.
           fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item * 12)
@@ -358,28 +373,30 @@ class Command(BaseCommand):
             quantity = random.choice([-1,-1,-1,-2,-3]))
 
         # Commit the current cluster
+        task.status = '%d%%' % (12 + progress*(i+1))
+        task.save(using=database)
         transaction.commit(using=database)
 
-      # Log success
-      log(category='CREATE', theuser=user,
-        message=_('Finished creating sample model')).save(using=database)
+      # Task update
+      task.status = 'Done'
+      task.finished = datetime.now()
 
     except Exception as e:
-      # Log failure and rethrow exception
-      try: log(category='CREATE', theuser=user,
-        message=u'%s: %s' % (_('Failure creating sample model'),e)).save(using=database)
-      except: pass
-      if nonfatal: raise e
-      else: raise CommandError(e)
+      if task:
+        task.status = 'Failed'
+        task.message = '%s' % e
+        task.finished = datetime.now()
+      raise e
 
     finally:
-      # Commit it all, even in case of exceptions
-      transaction.commit(using=database)
+      if task: task.save(using=database)
+      try: transaction.commit(using=database)
+      except: pass
       settings.DEBUG = tmp_debug
       transaction.leave_transaction_management(using=database)
 
 
-def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=730):
+def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=730, database=DEFAULT_DB_ALIAS):
   '''
   Update for the telescopic horizon.
   The first argument specifies the minimum number of daily buckets. Additional

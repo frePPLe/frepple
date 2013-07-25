@@ -21,7 +21,7 @@ Main Django configuration file.
 import os, sys, locale
 import freppledb
 
-# FrePPLe directories  
+# FrePPLe directories
 if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
@@ -38,8 +38,8 @@ elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin','fr
   # Development layout
   FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin'))
 else:
-  print "Error: Can't locate frepple.xsd" 
-  sys.exit(1)     
+  print "Error: Can't locate frepple.xsd"
+  sys.exit(1)
 os.environ['FREPPLE_HOME'] = FREPPLE_HOME
 
 DEBUG = 'runserver' in sys.argv
@@ -96,23 +96,23 @@ DATABASES = {
 if 'FREPPLE_LOGDIR' in os.environ:
   FREPPLE_LOGDIR = os.environ['FREPPLE_LOGDIR']
 else:
-  FREPPLE_LOGDIR = FREPPLE_APP   
+  FREPPLE_LOGDIR = FREPPLE_APP
 
 LANGUAGE_CODE = 'en'
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
 
-# A list of strings representing the host/domain names the application can serve. 
-# This is a security measure to prevent an attacker from poisoning caches and 
-# password reset emails with links to malicious hosts by submitting requests 
-# with a fake HTTP Host header, which is possible even under many seemingly-safe 
+# A list of strings representing the host/domain names the application can serve.
+# This is a security measure to prevent an attacker from poisoning caches and
+# password reset emails with links to malicious hosts by submitting requests
+# with a fake HTTP Host header, which is possible even under many seemingly-safe
 # webserver configurations.
-# Values in this list can be fully qualified names (e.g. 'www.example.com'), 
-# in which case they will be matched against the request's Host header exactly 
-# (case-insensitive, not including port). 
-# A value beginning with a period can be used as a subdomain wildcard: '.example.com' 
-# will match example.com, www.example.com, and any other subdomain of example.com. 
+# Values in this list can be fully qualified names (e.g. 'www.example.com'),
+# in which case they will be matched against the request's Host header exactly
+# (case-insensitive, not including port).
+# A value beginning with a period can be used as a subdomain wildcard: '.example.com'
+# will match example.com, www.example.com, and any other subdomain of example.com.
 # A value of '*' will match anything, effectively disabling this feature.
-# This option is only active when DEBUG = false. 
+# This option is only active when DEBUG = false.
 ALLOWED_HOSTS = [ '*' ]
 
 # Local time zone for this installation. Choices can be found here:
@@ -147,7 +147,7 @@ TEMPLATE_LOADERS = (
      'django.template.loaders.app_directories.Loader',
    #))
    )
-  
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -249,12 +249,12 @@ LOGGING = {
         }
     },
     'loggers': {
-        # A handler to log all SQL queries. 
+        # A handler to log all SQL queries.
         # The setting "DEBUG" also needs to be set to True higher up in this file.
         #'django.db.backends': {
         #    'handlers': ['console'],
-        #    'level': 'DEBUG', 
-        #    'propagate': False, 
+        #    'level': 'DEBUG',
+        #    'propagate': False,
         #},
         'django': {
             'handlers': ['console'],
@@ -272,7 +272,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_NAME = 'sessionid'         # Cookie name. This can be whatever you want.
 SESSION_COOKIE_AGE = 60 * 60 * 24 *  2    # Age of cookie, in seconds: 2 days
 SESSION_COOKIE_DOMAIN = None              # A string, or None for standard domain cookie.
-SESSION_SAVE_EVERY_REQUEST = True         # Whether to save the session data on every request. 
+SESSION_SAVE_EVERY_REQUEST = True         # Whether to save the session data on every request.
                                           # Needs to be True to have the breadcrumbs working correctly!
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user closes his browser.
 
@@ -293,8 +293,8 @@ AUTHENTICATION_BACKENDS = (
     "freppledb.common.auth.EmailBackend",
 )
 
-# To add the user preferences to the standard admin
-AUTH_PROFILE_MODULE = 'common.Preferences'
+# Custom user model
+AUTH_USER_MODEL = 'common.User'
 
 # IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.
@@ -305,9 +305,9 @@ INTERNAL_IPS = ( '127.0.0.1', )
 DEFAULT_CHARSET = 'utf-8'
 
 # Default characterset for writing and reading CSV files.
-# We are assuming here that the default encoding of clients is the same as the server. 
+# We are assuming here that the default encoding of clients is the same as the server.
 # If the server is on Linux and the clients are using Windows, this guess will not be good.
-# For Windows clients you should set this to the encoding that is better suited for Excel or 
+# For Windows clients you should set this to the encoding that is better suited for Excel or
 # other office tools.
 #    Windows - western europe -> 'cp1252'
 CSV_CHARSET = locale.getdefaultlocale()[1]
@@ -320,7 +320,7 @@ THEMES = [ (i,i) for i in (
   'excite-bike', 'flick', 'hot-sneaks', 'humanity', 'le-frog', 'mint-choc',
   'overcast', 'pepper-grinder', 'redmond', 'smoothness', 'south-street', 'start',
   'sunny', 'swanky-purse', 'trontastic', 'ui-darkness', 'ui-lightness', 'vader'
-  )] 
+  )]
 
 # The default user interface theme
 DEFAULT_THEME = 'sunny'
@@ -370,6 +370,7 @@ for param in DATABASES.values():
     param['TEST_NAME'] = param['NAME']
     param['TEST_USER'] = 'test_%s' % param['USER']
     param['TEST_PASSWD'] = param['PASSWORD']
+    param['OPTIONS'] = {'threaded': True,}
   elif param['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
     param['TEST_NAME'] = 'test_%s' % param['NAME']
   else:

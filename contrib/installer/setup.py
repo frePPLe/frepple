@@ -148,7 +148,7 @@ setup(
        }],
     # Target to build a console application
     console = [{
-       "script": "manage.py",
+       "script": "frepplectl.py",
        "icon_resources": [(1, "frepple.ico")],
        }],
     # Name of the zip file with the bytecode of the Python library.

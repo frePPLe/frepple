@@ -204,9 +204,6 @@ def exportSubOperations(cursor):
       if isinstance(i, frepple.operation_routing):
         for j in i.steps:    
           yield i, j
-          
-  for x in subops():
-    print x
     
   cursor.executemany(
     "insert into suboperation \

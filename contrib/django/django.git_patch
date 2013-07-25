@@ -220,11 +220,11 @@ index 2daafed..6ee1875 100644
 +        # The autoreload thread then runs 'python.exe script arguments'.
 +        #
 +        # When running from py2exe things are different:
-+        # sys.executable is set to 'manage.exe' and sys.argv[0] is
-+        # also 'manage.exe'.
-+        # The autoreload thread should run "manage.exe arguments" and not
-+        # "manage.exe manage.exe arguments". Now the interpreter and the script are
-+        # basically one and the same.
++        # sys.executable is set to 'frepplectl.exe' and sys.argv[0] is
++        # also 'frepplectl.exe'.
++        # The autoreload thread should run "frepplectl.exe arguments" and not
++        # "frepplectl.exe frepplectl.exe arguments". Now the interpreter and the script
++        # are basically one and the same.
 +        #
 +        #Original code:
 +        # args = [sys.executable] + ['-W%s' % o for o in sys.warnoptions] + sys.argv

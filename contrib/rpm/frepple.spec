@@ -103,7 +103,7 @@ rm -rf %{buildroot}
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %{_bindir}/frepple
-%{_bindir}/manage.py
+%{_bindir}/frepplectl.py
 %dir %{_libdir}/frepple
 %{_libdir}/frepple/libfrepple.so.0
 %{_libdir}/frepple/libfrepple.so.0.0.0

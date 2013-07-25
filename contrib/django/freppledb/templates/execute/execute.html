@@ -1,10 +1,10 @@
-{% extends "admin/base_site_nav.html" %}
+{% extends "admin/base_site_grid.html" %}
 {% load i18n %}
 {% block extrahead %}{{block.super}}
 <style>
-td {
+#tasks td {
   padding: 5px;
-  white-space: nowrap; 
+  white-space: nowrap;
   vertical-align: middle;
 }
 </style>
@@ -26,35 +26,21 @@ td {
 	  $("#util").html( (util * 100).toFixed(1) );
   }
 
-  function launchfrepple() 
-  {
-    if ($("#run").val() == "{% trans "Cancel" %}")
-      $("#runform").attr("action","{{request.prefix}}/execute/cancelfrepple/")
-    else
-      $("#runform").attr("action","{{request.prefix}}/execute/runfrepple/")
-    return true; // Continue with default form submission
-  }
-    
   $(function() {
-    $("input:submit,#logfile").button();    
-    switch(location.hash) {
-      case "#scenarios": v = 1; break;
-      case "#database": v = 2; break;
-      case "#generator": v = 3; break;
-      default: v = 0;
-    };
-    $( "#content-main" ).accordion({
-      collapsible: true, active: v
+    $("input:submit,#logfile").button();
+    $("#tasks").accordion({
+      collapsible: true, active: false, heightStyle: "content"
       });
-    v = parseInt("{{progress}}");
-    $("#progress").progressbar({
-      value: v
-      });
-    if (v > 0 && v < 100)
+    $(".date").datepicker({
+        showOtherMonths: true, selectOtherMonths: true,
+        dateFormat: "yy-mm-dd", changeMonth:true,
+        changeYear:true, yearRange: "c-5:c+5"
+        });
+    /*TODO REPLACEif (v > 0 && v < 100)
     {
-      var interval = setInterval(function() {         
+      var interval = setInterval(function() {
          $.ajax({
-           url: "{{request.prefix}}/execute/progressfrepple/",  
+           url: "{{request.prefix}}/execute/progressfrepple/",
            success: function(prct) {
              v = parseInt(prct);
              $('#progress').progressbar("option", "value", v);
@@ -63,29 +49,29 @@ td {
                $("#run").val("{% trans "Run" %}");
                }
              }
-           });          
+           });
          },
          2000 // Repeat after 2 seconds
          );
-    }
+    } */
   });
- 
+
 </script>
 
 {% endblock %}
-{% block content %}
-<div id="content-main">
+{% block after_table %}
+<br/><h1>{% trans "Launch new tasks" %}</h1>
+<div id="tasks" style="max-width:700px">
 
 {% if perms.execute %}
 
 {% if perms.execute.run_frepple %}
 <h3><a href="#plan">{% trans 'Create a plan' %}</a></h3>
 <div>
-<form id="runform" method="post" action="{{request.prefix}}/execute/runfrepple/" onsubmit="launchfrepple()">{% csrf_token %}<tr>
-<div id="progress" style="width:200px; height:1.1em; float:left; margin:0.4em;"></div>
-&nbsp;&nbsp;&nbsp;<input id="run" type="submit" value="{% if progress > 0 and progress < 100 %}{% trans "Cancel" %}{% else %}{% trans "Run" %}{% endif %}" />
-<br/>
-{% blocktrans %}
+<table>
+<form method="post" action="{{request.prefix}}/execute/launch/generate plan/">{% csrf_token %}<tr>
+<td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
+<td>{% blocktrans %}
 Load frePPLe from the database...<br/>
 and create a plan in frePPLe...<br/>
 and export results into the database<br/>
@@ -108,7 +94,8 @@ and export results into the database<br/>
 <input type="checkbox" name="constraint" {% if fenceconstrained %}checked="true"{% endif %} value="8" id="cb8"/><label for="cb8">&nbsp;&nbsp;{% trans "Release fence: do not plan within the release time window" %}</label><br/>
 <br/>
 <a id="logfile" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a></td>
-</form>
+</tr></form>
+</table>
 </div>
 {% endif %}
 
@@ -116,7 +103,7 @@ and export results into the database<br/>
 <h3><a href="#scenarios">{% trans "Scenario management" %}</a></h3>
 <div>
 <table>
-<form method="post" action="{{request.prefix}}/execute/scenarios/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/launch/manage scenarios/">{% csrf_token %}<tr>
 <th>{% trans 'name'|capfirst %}</th>
 <th>{% trans 'status'|capfirst %}</th>
 <th>{% trans 'description'|capfirst %}</th>
@@ -128,19 +115,16 @@ and export results into the database<br/>
 <td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td></tr>
 {% endifnotequal %}{% endfor %}
 {% if perms.execute.copy_scenario %}
-<tr><th scope="row" colspan="2" style="vertical-align:middle; padding: 15px">{% trans "Copy" %}</th>
-<td>{% trans "Copy" %} <select name="source">{% for j in scenarios %}{% ifequal j.status 'In use' %}<option value="{{j.name}}">{{j.name}}</option>{% endifequal %}{% endfor %}</select> {% trans "into selected scenarios" %}</td>
-<td><input name="copy" type="submit" value="{% trans "Copy" %}" /></td>
+<tr><td><input name="copy" type="submit" value="{% trans "Copy" %}" style="width:100%"/></td>
+<td colspan="2">{% trans "Copy" %} <select name="source">{% for j in scenarios %}{% ifequal j.status 'In use' %}<option value="{{j.name}}">{{j.name}}</option>{% endifequal %}{% endfor %}</select> {% trans "into selected scenarios" %}</td>
 </tr>{% endif %}
 {% if perms.execute.release_scenario %}
-<tr><th scope="row" colspan="2" style="vertical-align:middle; padding: 15px">{% trans "Release" %}</th>
-<td>{% trans "Release selected scenarios" %}</td>
-<td><input name="release" type="submit" value="{% trans "Release" %}" /></td>
+<tr><td><input name="release" type="submit" value="{% trans "Release" %}" style="width:100%"/></td>
+<td colspan="2">{% trans "Release selected scenarios" %}</td>
 </tr>
-<tr><th scope="row" colspan="2" style="vertical-align:middle; padding: 15px">{% trans "Update" %}</th>
-<td>{% trans "Update description of selected scenarios" %}<br/>
+<tr><td><input name="update" type="submit" value="{% trans "Update" %}" style="width:100%"/></td>
+<td colspan="2">{% trans "Update description of selected scenarios" %}<br/>
 <input name="description" type="text" size="40" /></td>
-<td><input name="update" type="submit" value="{% trans "Update" %}"/></td>
 </tr>{% endif %}
 </form>
 </table>
@@ -148,18 +132,28 @@ and export results into the database<br/>
 {% endif %}
 
 {% if perms.execute.run_db %}
-<h3><a href="#database">{% trans "Database" %}</a></h3>
+
+<h3><a href="#empty database">{% trans "Empty database" %}</a></h3>
 <div>
 <table>
-
-<form method="post" action="{{request.prefix}}/execute/erase/">{% csrf_token %}<tr>
-{% blocktrans %}<th scope="row" style="vertical-align:middle; padding: 15px"><a>Erase</a></th>
-<td>Erase all data from the database.</td>
-<td><input id="erase" type="submit" value="Erase" /></td>{% endblocktrans %}
+<form method="post" action="{{request.prefix}}/execute/launch/empty database/">{% csrf_token %}<tr>
+<td><input id="erase" type="submit" value="{% trans "Launch" %}"/></td>
+<td>{% trans "Erase all data from the database." %}</td>
 </tr></form>
+</table></div>
 
-<form method="post" action="{{request.prefix}}/execute/fixture/">{% csrf_token %}<tr>
-<th scope="row" style="vertical-align:middle; padding: 15px"><a>{% trans "Load a dataset" %}</a></th>
+<h3><a href="#database">{% trans "Backup database" %}</a></h3>
+<div><table>
+<form method="post" action="{{request.prefix}}/execute/launch/backup database/">{% csrf_token %}<tr>
+<td><input id="backup" type="submit" value="{% trans "Launch" %}" /></td>
+<td>{% trans "Backup the database." %}</td>
+</tr></form>
+</table></div>
+
+<h3><a href="#database">{% trans "Load a dataset" %}</a></h3>
+<div><table>
+<form method="post" action="{{request.prefix}}/execute/launch/load dataset/">{% csrf_token %}<tr>
+<td><input id="load" type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% trans "Load a dataset from a file in the database." %}<br/>
 {% trans "Available datasets:" %} <select name="datafile" id="entity">
 <option value="-" selected="selected">-</option>
@@ -167,21 +161,34 @@ and export results into the database<br/>
 {% endfor %}
 </select>
 </td>
-<td><input id="load" type="submit" value="{% trans "Load" %}"/></td>
-</tr></form>
-
-</table>
-</div>
+</tr></form></table></div>
 {% endif %}
 
 {% if perms.execute.run_db %}
-<h3><a href="#generator">{% trans "Model generator" %}</a></h3>
-<div>
-<table>
+<h3><a href="#buckets">{% trans "Generate buckets" %}</a></h3>
+<div><table>
+<form method="post" action="{{request.prefix}}/execute/launch/generate buckets/">{% csrf_token %}<tr>
+<td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
+<td>{% blocktrans %}Create time buckets for reporting.<br/>
+Start date: <input class="date" name="start" type="text" maxlength="5" size="12"/><br/>
+End date: <input class="date" name="end" type="text" maxlength="5" size="12"/><br/>
+Week starts on: <select name="weekstart">
+<option value="0">Sunday</option>
+<option value="1" selected="selected">Monday</option>
+<option value="2">Tuesday</option>
+<option value="3">Wednesday</option>
+<option value="4">Thursday</option>
+<option value="5">Friday</option>
+<option value="6">Saturday</option>
+</select>
+{% endblocktrans %}</td>
+</tr></form></table></div>
 
-<form method="post" action="{{request.prefix}}/execute/create/">{% csrf_token %}<tr>
-{% blocktrans %}<th scope="row"><a>Create a model</a></th>
-<td>Create a sample model in the database.<br/>
+<h3><a href="#generator">{% trans "Generate model" %}</a></h3>
+<div><table>
+<form method="post" action="{{request.prefix}}/execute/launch/generate model/">{% csrf_token %}<tr>
+<td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
+<td>{% blocktrans %}Create a sample model in the database.<br/>
 The parameters control the size and complexity.<br/>
 Number of end items: <input id="create0" name="clusters" type="text" maxlength="5" size="5" value="100" onchange="calcUtil()"/><br/>
 <b>Demand:</b><br/>
@@ -197,12 +204,8 @@ Number of end items: <input id="create0" name="clusters" type="text" maxlength="
 &nbsp;&nbsp;Number of resources: <input id="create8" name="rsrc_number" type="text" maxlength="3" size="3" value="60" onchange="calcUtil()"/><br/>
 &nbsp;&nbsp;Size of each resource: <input id="create9" name="rsrc_size" type="text" maxlength="3" size="3" value="5" onchange="calcUtil()"/><br/>
 &nbsp;&nbsp;Expected average resource utilization: <span id="util">76.7</span>&#37;<br/>
-</td>
-<td><input id="create" type="submit" value="Create"/></td>{% endblocktrans %}
-</tr></form>
-
-</table>
-</div>
+{% endblocktrans %}</td>
+</tr></form></table></div>
 {% endif %}
 
 {% else %}

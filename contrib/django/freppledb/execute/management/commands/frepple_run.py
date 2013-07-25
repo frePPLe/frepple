@@ -16,16 +16,16 @@
 #
 
 import os
+from datetime import datetime
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.translation import ugettext as _
 from django.db import transaction, DEFAULT_DB_ALIAS
 from django.utils.importlib import import_module
 from django.conf import settings
 
-from freppledb.common.models import Parameter
-from freppledb.execute.models import log
+from freppledb.common.models import User
+from freppledb.execute.models import Task
 
 
 class Command(BaseCommand):
@@ -37,52 +37,61 @@ class Command(BaseCommand):
       help='Constraints: 1=lead time, 2=material, 4=capacity, 8=release fence'),
     make_option('--plantype', dest='plantype', type='choice', choices=['1','2'],
       default='1', help='Plan type: 1=constrained, 2=unconstrained'),
-    make_option('--nonfatal', action="store_true", dest='nonfatal',
-      default=False, help='Dont abort the execution upon an error'),
     make_option('--database', action='store', dest='database',
       default=DEFAULT_DB_ALIAS, help='Nominates a specific database to load data from and export results into'),
+    make_option('--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'),
   )
   help = "Runs frePPLe to generate a plan"
 
   requires_model_validation = False
 
   def handle(self, **options):
-    # Pick up the options    
-    if 'nonfatal' in options: nonfatal = options['nonfatal']
-    else: nonfatal = False
-    if 'user' in options: user = options['user'] or ''
-    else: user = ''
-    if 'constraint' in options:
-      constraint = int(options['constraint'])
-      if constraint < 0 or constraint > 15:
-        raise ValueError("Invalid constraint: %s" % options['constraint'])
-    else: constraint = 15
-    if 'plantype' in options:
-      plantype = int(options['plantype'])
-      if plantype < 1 or plantype > 2:
-        raise ValueError("Invalid plan type: %s" % options['plantype'])
-    else: plantype = 1
-    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
-    else: database = DEFAULT_DB_ALIAS
+    # Pick up the options
+    if 'database' in options:
+      database = options['database'] or DEFAULT_DB_ALIAS
+    else:
+      database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )
+    if 'user' in options and options['user']:
+      try: user = User.objects.all().using(database).get(username=options['user'])
+      except: raise CommandError("User '%s' not found" % options['user'] )
+    else:
+      user = None
 
+    now = datetime.now()
     transaction.enter_transaction_management(managed=False, using=database)
     transaction.managed(False, using=database)
-    started = False
+    task = None
     try:
-      # Check if already running
-      param = Parameter.objects.using(database).get_or_create(name="Plan executing")[0]
-      if param.value and param.value != "100" and param.value != "1": 
-        raise Exception('Plan is already running')
-      param.value = '2'
-      param.description = 'If this parameter exists, it indicates that the plan is currently being generated.'
-      param.save(using=database)
-      started = True
-      
-      # Log message
-      log(category='RUN', theuser=user,
-        message=_('Start creating frePPLe plan of type %(plantype)d and constraints %(constraint)d') % {'plantype': plantype, 'constraint': constraint}).save(using=database)
+      # Initialize the task
+      if 'task' in options and options['task']:
+        try: task = Task.objects.all().using(database).get(pk=options['task'])
+        except: raise CommandError("Task identifier not found")
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'generate plan':
+          if not task.started: task.started = now
+          raise CommandError("Invalid task identifier")
+        task.status = '0%'
+        task.started = now
+      else:
+        task = Task(name='generate plan', submitted=now, started=now, status='0%', user=user)
+
+      # Validate options
+      if 'constraint' in options:
+        constraint = int(options['constraint'])
+        if constraint < 0 or constraint > 15:
+          raise ValueError("Invalid constraint: %s" % options['constraint'])
+      else: constraint = 15
+      if 'plantype' in options:
+        plantype = int(options['plantype'])
+        if plantype < 1 or plantype > 2:
+          raise ValueError("Invalid plan type: %s" % options['plantype'])
+      else: plantype = 1
+
+      # Log task
+      task.arguments = "--constraints=%d --plantype=%d" % (constraint, plantype)
+      task.save(using=database)
       transaction.commit(using=database)
 
       # Locate commands.py
@@ -93,10 +102,11 @@ class Command(BaseCommand):
           cmd = os.path.join(os.path.dirname(mod.__file__),'commands.py')
           break
       if not cmd: raise Exception("Can't locate commands.py")
-              
+
       # Execute
-      os.environ['PLANTYPE'] = str(plantype)
-      os.environ['CONSTRAINT'] = str(constraint)
+      os.environ['FREPPLE_PLANTYPE'] = str(plantype)
+      os.environ['FREPPLE_CONSTRAINT'] = str(constraint)
+      os.environ['FREPPLE_TASKID'] = str(task.id)
       os.environ['FREPPLE_DATABASE'] = database
       os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
       if os.path.isfile(os.path.join(settings.FREPPLE_HOME,'libfrepple.so')):
@@ -110,24 +120,24 @@ class Command(BaseCommand):
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(settings.FREPPLE_APP)
       ret = os.system('frepple "%s"' % cmd.replace('\\','\\\\'))
-      if ret == 2: 
-        raise Exception('Run canceled by the user')
-      elif ret: 
-        raise Exception('Exit code of the batch run is %d' % ret)
+      if ret != 0 and ret != 2:
+        # Return code 0 is a successful run
+        # Return code is 2 is a run cancelled by a user. That's shown in the status field.
+        raise Exception('Failed with exit code %d' % ret)
 
-      # Log message
-      log(category='RUN', theuser=user,
-        message=_('Finished creating frePPLe plan')).save(using=database)
+      # Task update
+      task.status = 'Done'
+      task.finished = datetime.now()
 
     except Exception as e:
-      if started:
-        # Remove flag of running plan
-        Parameter.objects.using(database).filter(name="Plan executing").delete()
-      try: log(category='RUN', theuser=user,
-        message=u'%s: %s' % (_('Failure when creating frePPLe plan'),e)).save(using=database)
-      except: pass
-      if nonfatal: raise e
-      else: raise CommandError(e)
+      if task:
+        task.status = 'Failed'
+        task.message = '%s' % e
+        task.finished = datetime.now()
+      raise e
+
     finally:
-      transaction.commit(using=database)
+      if task: task.save(using=database)
+      try: transaction.commit(using=database)
+      except: pass
       transaction.leave_transaction_management(using=database)

@@ -5,41 +5,49 @@ from django.db import transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
 
 from freppledb.common.models import Parameter
+from freppledb.execute.models import Task
+
 
 
 # Auxilary functions for debugging
 def debugResource(res,mode):
-  # if res.name != 'my favorite resource': return 
+  # if res.name != 'my favorite resource': return
   print "=> Situation on resource", res.name
   for j in res.loadplans:
     print "=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup
-   
-    
+
+
 def debugDemand(dem,mode):
-  if dem.name == 'my favorite demand': 
+  if dem.name == 'my favorite demand':
     print "=> Starting to plan demand ", dem.name
     solver.loglevel = 2
   else:
     solver.loglevel = 0
- 
- 
-def logProgress(val):  
+
+
+task = None
+
+def logProgress(val):
+  global task
   transaction.enter_transaction_management(managed=False, using=db)
   transaction.managed(False, using=db)
   try:
-    p = Parameter.objects.using(db).get_or_create(name="Plan executing")[0]
-    if p.value and "Canceling" in p.value:
-      print "Run canceled by the user.\n" 
-      p.value = 0
-      p.save(using=db)
-      sys.exit(2)
-    p.value = val
-    p.save(using=db)
+    if not task and 'FREPPLE_TASKID' in os.environ:
+      try: task = Task.objects.all().using(db).get(pk=os.environ['FREPPLE_TASKID'])
+      except: raise Exception("Task identifier not found")
+    if task:
+      if task.status == 'Canceling':
+        task.status = 'Cancelled'
+        task.save(using=db)
+        sys.exit(2)
+      else:
+        task.status = '%d%%' % val
+        task.save(using=db)
   finally:
     transaction.commit(using=db)
     transaction.leave_transaction_management(using=db)
 
-      
+
 # Send the output to a logfile
 try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
 except: db = DEFAULT_DB_ALIAS
@@ -57,16 +65,16 @@ if 'FREPPLE_TEST' in os.environ:
     settings.DATABASES[db]['COLLATION'] = settings.DATABASES[db]['TEST_COLLATION']
   if 'TEST_USER' in os.environ:
     settings.DATABASES[db]['USER'] = settings.DATABASES[db]['TEST_USER']
-  
+
 # Create a solver where the plan type are defined by an environment variable
 logProgress(1)
-try: plantype = int(os.environ['PLANTYPE'])
+try: plantype = int(os.environ['FREPPLE_PLANTYPE'])
 except: plantype = 1  # Default is a constrained plan
-try: constraint = int(os.environ['CONSTRAINT'])
+try: constraint = int(os.environ['FREPPLE_CONSTRAINT'])
 except: constraint = 15  # Default is with all constraints enabled
-solver = frepple.solver_mrp(name="MRP", 
-  constraints=constraint, 
-  plantype=plantype, 
+solver = frepple.solver_mrp(name="MRP",
+  constraints=constraint,
+  plantype=plantype,
   #userexit_resource=debugResource,
   #userexit_demand=debugDemand,
   loglevel = Parameter.getValue('plan.loglevel', db, 0)
@@ -77,13 +85,13 @@ print "Constraints: ", constraint
 # Welcome message
 if settings.DATABASES[db]['ENGINE'] == 'django.db.backends.sqlite3':
   print "frePPLe on %s using sqlite3 database '%s'" % (
-    sys.platform, 
+    sys.platform,
     'NAME' in settings.DATABASES[db] and settings.DATABASES[db]['NAME'] or ''
     )
 else:
   print "frePPLe on %s using %s database '%s' as '%s' on '%s:%s'" % (
     sys.platform,
-    'ENGINE' in settings.DATABASES[db] and settings.DATABASES[db]['ENGINE'] or '', 
+    'ENGINE' in settings.DATABASES[db] and settings.DATABASES[db]['ENGINE'] or '',
     'NAME' in settings.DATABASES[db] and settings.DATABASES[db]['NAME'] or '',
     'USER' in settings.DATABASES[db] and settings.DATABASES[db]['USER'] or '',
     'HOST' in settings.DATABASES[db] and settings.DATABASES[db]['HOST'] or '',
@@ -96,7 +104,7 @@ from freppledb.execute.load import loadfrepple
 loadfrepple()
 frepple.printsize()
 logProgress(33)
-  
+
 if 'solver_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
   # The forecast module is available
   print "\nStart forecast netting at", datetime.now().strftime("%H:%M:%S")
@@ -106,7 +114,7 @@ print "\nStart plan generation at", datetime.now().strftime("%H:%M:%S")
 solver.solve()
 frepple.printsize()
 logProgress(66)
-                    
+
 #print "\nStart exporting static model to the database at", datetime.now().strftime("%H:%M:%S")
 #from freppledb.execute.export_database_static import exportfrepple as export_static_to_database
 #export_static_to_database()

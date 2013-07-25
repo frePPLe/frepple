@@ -22,9 +22,9 @@ from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import transaction
-from django.utils.translation import ugettext as _
 
-from freppledb.execute.models import log, Scenario
+from freppledb.execute.models import Task, Scenario
+from freppledb.common.models import User
 from freppledb import VERSION
 
 
@@ -43,27 +43,25 @@ class Command(BaseCommand):
        - none
     * Oracle:
        - impdp and expdp need to be in the path
-       - The DBA has to create a server side directory and grant rights to it:
-           CREATE OR REPLACE DIRECTORY dump_dir AS 'c:\\temp';
-           GRANT READ, WRITE ON DIRECTORY dump_dir TO usr1;
-           GRANT READ, WRITE ON DIRECTORY dump_dir TO usr2;
+       - The DBA has to create a server side directory, pointing to the directory configured as
+         FREPPLE_LOGDIR. The oracle user will need to be granted rights to it:
+           CREATE OR REPLACE DIRECTORY frepple_logdir AS 'c:\\temp';
+           GRANT READ, WRITE ON DIRECTORY frepple_logdir TO usr1;
        - If the schemas reside on different servers, the DB will need to
          create a database link.
          If the database are on the same server, you might still use the database
          link to avoid create a temporary dump file.
        - Can't run multiple copies in parallel!
-       - For oracle, this script probably requires a bit of changing to optimize
-         it for your particular usage.
   '''
   option_list = BaseCommand.option_list + (
     make_option('--user', dest='user', type='string',
       help='User running the command'),
-    make_option('--nonfatal', action="store_true", dest='nonfatal',
-      default=False, help='Dont abort the execution upon an error'),
     make_option('--force', action="store_true", dest='force',
       default=False, help='Overwrite scenarios already in use'),
     make_option('--description', dest='description', type='string',
       help='Description of the destination scenario'),
+    make_option('--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'),
     )
   args = 'source_database destination_database'
 
@@ -82,13 +80,30 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up options
-    if 'user' in options: user = options['user'] or ''
-    else: user = ''
-    if 'nonfatal' in options: nonfatal = options['nonfatal']
-    else: nonfatal = False
     if 'force' in options: force = options['force']
     else: force = False
     test = 'FREPPLE_TEST' in os.environ
+    if 'user' in options and options['user']:
+      try: user = User.objects.all().get(username=options['user'])
+      except: raise CommandError("User '%s' not found" % options['user'] )
+    else:
+      user = None
+
+    # Initialize the task
+    now = datetime.now()
+    task = None
+    if 'task' in options and options['task']:
+      try: task = Task.objects.all().get(pk=options['task'])
+      except: raise CommandError("Task identifier not found")
+      if task.started or task.finished or task.status != "Waiting" or task.name != 'scenario copy':
+        if not task.started: task.started = now
+        raise CommandError("Invalid task identifier")
+      task.status = '0%'
+      task.started = now
+    else:
+      task = Task(name='scenario copy', submitted=now, started=now, status='0%', user=user)
+    task.save()
+    transaction.commit()
 
     # Synchronize the scenario table with the settings
     Scenario.syncWithSettings()
@@ -98,6 +113,9 @@ class Command(BaseCommand):
     try:
       if len(args) != 2:
         raise CommandError("Command takes exactly 2 arguments.")
+      task.arguments = "%s %s" % (args[0], args[1])
+      task.save()
+      transaction.commit()
       source = args[0]
       try:
         sourcescenario = Scenario.objects.get(pk=source)
@@ -117,10 +135,7 @@ class Command(BaseCommand):
       if destinationscenario.status != u'Free' and not force:
         raise CommandError("Destination scenario is not free")
 
-      # Logging message (Always logging in the default database)
-      log(category='COPY', theuser=user,
-        message=_("Start copying database '%(source)s' to '%(destination)s'" %
-          {'source':source, 'destination':destination} )).save()
+      # Logging message - always logging in the default database
       destinationscenario.status = u'Busy'
       destinationscenario.save()
       transaction.commit()
@@ -160,18 +175,18 @@ class Command(BaseCommand):
         if ret: raise Exception('Exit code of the database copy command is %d' % ret)
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.oracle':
         try:
-          try: os.unlink('c:\\temp\\frepple.dmp')
+          try: os.unlink(os.path.join(settings.FREPPLE_LOGDIR,'frepple.dmp'))
           except: pass
-          ret = os.system("expdp %s/%s@//%s:%s/%s schemas=%s directory=dump_dir nologfile=Y dumpfile=frepple.dmp" % (
+          ret = os.system("expdp %s/%s@//%s:%s/%s schemas=%s directory=frepple_logdir nologfile=Y dumpfile=frepple.dmp" % (
             test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
             settings.DATABASES[source]['PASSWORD'],
-            settings.DATABASES[source]['HOST'],
-            settings.DATABASES[source]['PORT'],
+            settings.DATABASES[source]['HOST'] or 'localhost',
+            settings.DATABASES[source]['PORT'] or '1521',
             test and settings.DATABASES[source]['TEST_NAME'] or settings.DATABASES[source]['NAME'],
             test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
             ))
           if ret: raise Exception('Exit code of the database export command is %d' % ret)
-          ret = os.system("impdp %s/%s@//%s:%s/%s remap_schema=%s:%s table_exists_action=replace directory=dump_dir nologfile=Y dumpfile=frepple.dmp" % (
+          ret = os.system("impdp %s/%s@//%s:%s/%s remap_schema=%s:%s table_exists_action=replace directory=frepple_logdir nologfile=Y dumpfile=frepple.dmp" % (
             test and settings.DATABASES[destination]['TEST_USER'] or settings.DATABASES[destination]['USER'],
             settings.DATABASES[destination]['PASSWORD'],
             settings.DATABASES[destination]['HOST'],
@@ -182,15 +197,10 @@ class Command(BaseCommand):
             ))
           if ret: raise Exception('Exit code of the database import command is %d' % ret)
         finally:
-          try: os.unlink('c:\\temp\\frepple.dmp')
+          try: os.unlink(os.path.join(settings.FREPPLE_LOGDIR,'frepple.dmp'))
           except: pass
       else:
         raise Exception('Copy command not supported for database engine %s' % settings.DATABASES[source]['ENGINE'])
-
-      # Logging message
-      log(category='COPY', theuser=user,
-        message=_("Finished copying database '%(source)s' to '%(destination)s'" %
-          {'source':source, 'destination':destination} )).save()
 
       # Update the scenario table
       destinationscenario.status = 'In use'
@@ -201,17 +211,21 @@ class Command(BaseCommand):
         destinationscenario.description = "Copied from scenario '%s'" % source
       destinationscenario.save()
 
+      # Logging message
+      task.status = 'Done'
+      task.finished = datetime.now()
+
     except Exception as e:
-      try: log(category='COPY', theuser=user,
-        message=_("Failed copying database '%(source)s' to '%(destination)s'" %
-          {'source':source, 'destination':destination} )).save()
-      except: pass
+      if task:
+        task.status = 'Failed'
+        task.message = '%s' % e
+        task.finished = datetime.now()
       if destinationscenario and destinationscenario.status == u'Busy':
         destinationscenario.status = u'Free'
         destinationscenario.save()
-      if nonfatal: raise e
-      else: raise CommandError(e)
+      raise e
 
     finally:
+      if task: task.save()
       transaction.commit()
       settings.DEBUG = tmp_debug

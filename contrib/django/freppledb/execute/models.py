@@ -20,34 +20,43 @@ from django.db import models, transaction, DEFAULT_DB_ALIAS
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
+from freppledb.common.models import User
 
-class log(models.Model):
+
+class Task(models.Model):
   # Database fields
-  lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
-  category = models.CharField(_('category'), max_length=10, db_index=True)
-  message = models.TextField(_('message'), max_length=200, null=True)
-  theuser = models.CharField(_('user'), max_length=30, null=True)
+  id = models.AutoField(_('identifier'), primary_key=True, editable=False)
+  name = models.CharField(_('name'), max_length=20, db_index=True, editable=False)
+  submitted = models.DateTimeField(_('submitted'), editable=False)
+  started = models.DateTimeField(_('started'), blank=True, null=True, editable=False)
+  finished = models.DateTimeField(_('submitted'), blank=True, null=True, editable=False)
+  arguments = models.TextField(_('arguments'), max_length=200, null=True, editable=False)
+  status = models.CharField(_('status'), max_length=20, editable=False)
+  message = models.TextField(_('message'), max_length=200, null=True, editable=False)
+  user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
 
   def __unicode__(self):
-    return self.lastmodified + ' - ' + self.category + ' - ' + self.user
+    return self.id + ' - ' + self.name + ' - ' + self.status
 
   class Meta:
-      permissions = (
-          ("run_frepple", "Can run frepple"),
-          ("run_db","Can run database procedures"),
-         )
-      verbose_name_plural = _('log entries')
-      verbose_name = _('log entry')
+    db_table = "execute_log"
+    verbose_name_plural = _('tasks')
+    verbose_name = _('task')
 
-
-scenarioStatus = (
-  ('free',_('Free')),
-  ('in use',_('In use')),
-  ('busy',_('Busy')),
-)
+  @staticmethod
+  def submitTask():
+    # Add record to the database
+    # Check if a worker is present. If not launch one.
+    return 1
 
 
 class Scenario(models.Model):
+  scenarioStatus = (
+    ('free',_('Free')),
+    ('in use',_('In use')),
+    ('busy',_('Busy')),
+  )
+
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
@@ -82,6 +91,7 @@ class Scenario(models.Model):
       transaction.commit()
 
   class Meta:
+    db_table = "execute_scenario"
     permissions = (
         ("copy_scenario", "Can copy a scenario"),
         ("release_scenario", "Can release a scenario"),

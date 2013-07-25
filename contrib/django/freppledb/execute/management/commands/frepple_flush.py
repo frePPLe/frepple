@@ -16,14 +16,15 @@
 #
 
 from optparse import make_option
+from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
-from django.utils.translation import ugettext as _
 
-from freppledb.execute.models import log
+from freppledb.execute.models import Task
+from freppledb.common.models import User
 from freppledb import VERSION
 
 
@@ -39,10 +40,10 @@ class Command(BaseCommand):
   option_list = BaseCommand.option_list + (
     make_option('--user', dest='user', type='string',
       help='User running the command'),
-    make_option('--nonfatal', action="store_true", dest='nonfatal',
-      default=False, help='Dont abort the execution upon an error'),
     make_option('--database', action='store', dest='database',
       default=DEFAULT_DB_ALIAS, help='Nominates a specific database to delete data from'),
+    make_option('--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'),
     )
 
   requires_model_validation = False
@@ -59,34 +60,49 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up options
-    if 'user' in options: user = options['user'] or ''
-    else: user = ''
-    nonfatal = False
-    if 'nonfatal' in options: nonfatal = options['nonfatal']
-    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
-    else: database = DEFAULT_DB_ALIAS
+    if 'database' in options:
+      database = options['database'] or DEFAULT_DB_ALIAS
+    else:
+      database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )
+    if 'user' in options and options['user']:
+      try: user = User.objects.all().using(database).get(username=options['user'])
+      except: raise CommandError("User '%s' not found" % options['user'] )
+    else:
+      user = None
 
+    now = datetime.now()
     transaction.enter_transaction_management(using=database)
     transaction.managed(True, using=database)
+    task = None
     try:
-      # Logging message
-      log(category='ERASE', theuser=user,
-        message=_('Start erasing the database')).save(using=database)
+      # Initialize the task
+      if 'task' in options and options['task']:
+        try: task = Task.objects.all().using(database).get(pk=options['task'])
+        except: raise CommandError("Task identifier not found")
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'empty database':
+          if not task.started: task.started = now
+          raise CommandError("Invalid task identifier")
+        task.status = '0%'
+        task.started = now
+      else:
+        task = Task(name='empty database', submitted=now, started=now, status='0%', user=user)
+      task.save(using=database)
+      transaction.commit(using=database)
 
       # Create a database connection
       cursor = connections[database].cursor()
 
       # Delete all records from the tables.
       # We split the tables in groups to speed things up in postgreSQL.
-      cursor.execute('update common_preference set horizonbuckets = null')
+      cursor.execute('update common_user set horizonbuckets = null')
       transaction.commit(using=database)
-      tables = [ 
+      tables = [
         ['out_demandpegging'],
         ['out_problem','out_resourceplan','out_constraint'],
-        ['out_loadplan','out_flowplan','out_operationplan'], 
-        ['out_demand','out_forecast'],    # TODO Table may not exist!
+        ['out_loadplan','out_flowplan','out_operationplan'],
+        ['out_demand',],
         ['demand','customer','resourceskill','skill',
          'setuprule','setupmatrix','resourceload','resource',
          'flow','buffer','operationplan','item',
@@ -101,23 +117,24 @@ class Command(BaseCommand):
           cursor.execute(sql)
           transaction.commit(using=database)
 
-      # TODO how to clean also the extra tables 'forecastdemand','forecast',
       # SQLite specials
       if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
         cursor.execute('vacuum')   # Shrink the database file
 
-      # Logging message
-      log(category='ERASE', theuser=user,
-        message=_('Finished erasing the database')).save(using=database)
+      # Task update
+      task.status = 'Done'
+      task.finished = datetime.now()
 
     except Exception as e:
-      try: log(category='ERASE', theuser=user,
-        message=u'%s: %s' % (_('Failed erasing the database'),e)).save(using=database)
-      except: pass
-      if nonfatal: raise e
-      else: raise CommandError(e)
+      if task:
+        task.status = 'Failed'
+        task.message = '%s' % e
+        task.finished = datetime.now()
+      raise e
 
     finally:
-      transaction.commit(using=database)
+      if task: task.save(using=database)
+      try: transaction.commit(using=database)
+      except: pass
       settings.DEBUG = tmp_debug
       transaction.leave_transaction_management(using=database)

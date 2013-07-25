@@ -356,7 +356,6 @@ class MultiDBTabularInline(admin.TabularInline):
 
   def __init__(self, parent_model, admin_site):
     super(MultiDBTabularInline, self).__init__(parent_model, admin_site)
-    print self.max_num
     
   def queryset(self, request):
     return super(MultiDBTabularInline, self).queryset(request).using(request.database)   

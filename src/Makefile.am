@@ -28,6 +28,6 @@ frepple_LDADD = libfrepple.la
 
 SUBDIRS = utils model solver
 
-EXTRA_DIST = dll.rc exe.rc
+EXTRA_DIST = dll.rc exe.rc frepple.ico
 
 CLEANFILES = *.gcda *.gcov *.gcno

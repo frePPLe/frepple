@@ -35,7 +35,7 @@ The basic steps to set up a development environment:
 - Edit the file settings.py to point to your database schema.
 
 - Initialize the database schema:
-      manage.py syncdb
+      frepplectl.py syncdb
   When the command prompts you to create a django superuser you can choose
   'no', since the inital dataset that is installed will include the users
   "admin", "frepple" and "guest".
@@ -44,9 +44,9 @@ The basic steps to set up a development environment:
   When the command finishes, verify the database tables are created correctly.
 
 - Test your installation by starting the development web server:
-      manage.py runserver
+      frepplectl.py runserver
   or the PyCherry web server:
-      manage.py frepple_runserver
+      frepplectl.py frepple_runserver
   and then pointing your browser to http://127.0.0.1:8000/admin
   A login page should come up.
   Use frepple/frepple or admin/admin as the user name and password.
@@ -70,7 +70,7 @@ the following extra steps are required:
      python setup.py install
 
 - Collect the static files of the web application
-     manage.py collectstatic
+     frepplectl.py collectstatic
   The static files are copied in a folder contrib/django/freppledb/static.
   Your web server will need to be configured to serve these static files 
   directly, ie without using the frepple web application.

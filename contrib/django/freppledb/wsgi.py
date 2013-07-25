@@ -19,9 +19,8 @@
 Configuration for frePPLe django WSGI web application.
 This is used by the different WSGI deployment options:
   - mod_wsgi on apache web server
-  - django development server 'manage.py runserver'
-  - cherrypy server 'manage.py frepple_runserver
-  - fast cgi django server 'manage.py runfcgi'
+  - django development server 'frepplectl.py runserver'
+  - cherrypy server 'frepplectl.py frepple_runserver
 """
 
 import os, sys

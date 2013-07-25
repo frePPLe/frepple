@@ -285,6 +285,9 @@ class GridReport(View):
   # Show a select box in front to allow selection of records
   multiselect = True
   
+  # Control the height of the grid. By default the full browser window is used.
+  heigth = None
+   
   # Number of columns frozen in the report
   frozenColumns = 0
 

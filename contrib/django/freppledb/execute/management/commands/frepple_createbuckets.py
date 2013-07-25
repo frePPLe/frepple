@@ -21,10 +21,10 @@ from datetime import timedelta, datetime, date
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
-from django.utils.translation import ugettext as _
 
 from freppledb.common.models import Bucket, BucketDetail
-from freppledb.execute.models import log
+from freppledb.execute.models import Task
+from freppledb.common.models import User
 from freppledb import VERSION
 
 
@@ -39,12 +39,14 @@ class Command(BaseCommand):
           help='Start date in YYYY-MM-DD format'),
       make_option('--end', dest='end', type='string',
           help='End date in YYYY-MM-DD format'),
+      make_option('--weekstart', dest='weekstart', type='int', default=1,
+          help='First day of a week: 0=sunday, 1=monday (default), 2=tuesday, 3=wednesday, 4=thursday, 5=friday, 6=saturday'),
       make_option('--user', dest='user', type='string',
           help='User running the command'),
-      make_option('--nonfatal', action="store_true", dest='nonfatal',
-        default=False, help='Dont abort the execution upon an error'),
       make_option('--database', action='store', dest='database',
         default=DEFAULT_DB_ALIAS, help='Nominates a specific database to populate date information into'),
+      make_option('--task', dest='task', type='int',
+        help='Task identifier (generated automatically if not provided)'),
   )
 
   requires_model_validation = False
@@ -66,28 +68,46 @@ class Command(BaseCommand):
     else: start = '2008-1-1'
     if 'end' in options: end = options['end'] or '2016-1-1'
     else: end = '2016-1-1'
-    if 'user' in options: user = options['user'] or ''
-    else: user = ''
-    if 'nonfatal' in options: nonfatal = options['nonfatal']
-    else: nonfatal = False
+    if 'weekstart' in options:
+      weekstart = options['weekstart']
+      if weekstart < 0 or weekstart > 6:
+        raise CommandError("Invalid weekstart %s" % weekstart)
+    else: weekstart = 1
     if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
     else: database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % database )
+    if 'user' in options and options['user']:
+      try: user = User.objects.all().using(database).get(username=options['user'])
+      except: raise CommandError("User '%s' not found" % options['user'] )
+    else:
+      user = None
 
-    # Validate the date arguments
-    try:
-      curdate = datetime.strptime(start,'%Y-%m-%d')
-      enddate = datetime.strptime(end,'%Y-%m-%d')
-    except Exception as e:
-      raise CommandError("Date is not matching format YYYY-MM-DD")
-
+    now = datetime.now()
     transaction.enter_transaction_management(using=database)
     transaction.managed(True, using=database)
+    task = None
     try:
-      # Logging the action
-      log( category='CREATE', theuser=user,
-        message = _('Start initializing dates')).save(using=database)
+      # Initialize the task
+      if 'task' in options and options['task']:
+        try: task = Task.objects.all().using(database).get(pk=options['task'])
+        except: raise CommandError("Task identifier not found")
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'generate buckets':
+          if not task.started: task.started = now
+          raise CommandError("Invalid task identifier")
+        task.status = '0%'
+        task.started = now
+      else:
+        task = Task(name='generate buckets', submitted=now, started=now, status='0%', user=user, arguments="--start=%s --end=%s --weekstart=%s" % (start, end, weekstart))
+      task.save(using=database)
+      transaction.commit(using=database)
+
+      # Validate the date arguments
+      try:
+        curdate = datetime.strptime(start,'%Y-%m-%d')
+        enddate = datetime.strptime(end,'%Y-%m-%d')
+      except Exception as e:
+        raise CommandError("Date is not matching format YYYY-MM-DD")
 
       # Delete previous contents
       connections[database].cursor().execute(
@@ -119,12 +139,12 @@ class Command(BaseCommand):
         quarter = (month-1) / 3 + 1          # an integer in the range 1 - 4
         year = int(curdate.strftime("%Y"))
         dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
-        year_start = date(year,1,1)
-        year_end = date(year+1,1,1)
-        week_start = curdate - timedelta((dayofweek+6)%7)
-        week_end = curdate - timedelta((dayofweek+6)%7-7)
-        if week_start.date() < year_start: week_start = year_start
-        if week_end.date() > year_end: week_end = year_end
+        year_start = datetime(year,1,1)
+        year_end = datetime(year+1,1,1)
+        week_start = curdate - timedelta((dayofweek+6)%7 + 1 - weekstart)
+        week_end = curdate - timedelta((dayofweek+6)%7-7 + 1 - weekstart)
+        if week_start < year_start: week_start = year_start
+        if week_end > year_end: week_end = year_end
 
         # Create buckets
         if year != prev_year:
@@ -170,19 +190,18 @@ class Command(BaseCommand):
         curdate = curdate + timedelta(1)
 
       # Log success
-      log(category='CREATE', theuser=user,
-        message=_('Finished initializing dates')).save(using=database)
+      task.status = 'Done'
+      task.finished = datetime.now()
 
     except Exception as e:
-      # Log failure and rethrow exception
-      try: log(category='CREATE', theuser=user,
-        message=u'%s: %s' % (_('Failure initializing dates'),e)).save(using=database)
-      except: pass
-      if nonfatal: raise e
-      else: raise CommandError(e)
+      if task:
+        task.status = 'Failed'
+        task.message = '%s' % e
+        task.finished = datetime.now()
+      raise e
 
     finally:
-      # Commit it all, even in case of exceptions
+      if task: task.save(using=database)
       try: transaction.commit(using=database)
       except: pass
       settings.DEBUG = tmp_debug

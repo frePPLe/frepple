@@ -1,5 +1,6 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_list jqgrid %}
+{% block extrahead %}{{block.super}}
 <script type="text/javascript">
 
 function columns (cellvalue, options, rowdata) {
@@ -51,17 +52,17 @@ $(function(){
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
     {% block extra_grid %}{% endblock %}
-	  height: $(window).height() - $("#grid").offset().top - 70
+	  height: {% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %}
     });
   jQuery("#grid").jqGrid('setFrozenColumns');{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
   });
-  
+
 
 $(window).bind('resize', function() {
   $("#grid")
    .setGridWidth($('#content-main').width())
-   .setGridHeight($(window).height() - $("#grid").offset().top - 70);
+   .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %});
 });
 
 </script>

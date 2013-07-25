@@ -130,7 +130,7 @@ class JSONField(models.TextField):
 
   def to_python(self, value):
     """Convert a json string to a Python value."""
-    if isinstance(value, six.string_types):
+    if isinstance(value, six.string_types) and value:
       return json.loads(value)
     else:
       return value

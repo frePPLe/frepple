@@ -71,5 +71,7 @@ build
 .pydevproject
 
 # Packaging
-.deb
-.rpm
+*.deb
+*.rpm
+*.tar.gz
+*.tgz

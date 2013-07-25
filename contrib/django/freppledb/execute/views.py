@@ -43,7 +43,6 @@ class TaskReport(GridReport):
   template = 'execute/execute.html'
   title = _('Task status')
   basequeryset = Task.objects.all()
-  default_sort = (0,'desc')
   model = Task
   frozenColumns = 0
   multiselect = False

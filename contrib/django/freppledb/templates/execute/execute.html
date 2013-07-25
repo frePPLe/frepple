@@ -9,6 +9,7 @@
 }
 </style>
 <script type="text/javascript">
+
   function calcUtil()
   {
     var clusters = parseInt($("#create0").val());
@@ -27,33 +28,22 @@
   }
 
   $(function() {
+    // Buttons
     $("input:submit,#logfile").button();
+    // Accordions
     $("#tasks").accordion({
       collapsible: true, active: false, heightStyle: "content"
       });
+    // Date picker
     $(".date").datepicker({
         showOtherMonths: true, selectOtherMonths: true,
         dateFormat: "yy-mm-dd", changeMonth:true,
         changeYear:true, yearRange: "c-5:c+5"
         });
-    /*TODO REPLACEif (v > 0 && v < 100)
-    {
-      var interval = setInterval(function() {
-         $.ajax({
-           url: "{{request.prefix}}/execute/progressfrepple/",
-           success: function(prct) {
-             v = parseInt(prct);
-             $('#progress').progressbar("option", "value", v);
-             if (v <= 0 || v >= 100) {
-               clearInterval(interval);
-               $("#run").val("{% trans "Run" %}");
-               }
-             }
-           });
-         },
-         2000 // Repeat after 2 seconds
-         );
-    } */
+    // Refresh the grid every 5 seconds
+    setInterval(function() {
+      $("#grid").trigger("reloadGrid",[{current:true}]);
+      }, 5000);
   });
 
 </script>

@@ -1,8 +1,9 @@
 {% extends "admin/base_site_nav.html" %}
-{% load i18n %}
+{% load i18n jqgrid %}
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">
 
+var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{bucketlist|length}};
 {% endif %}
@@ -14,11 +15,7 @@ $(function(){
    	  + (location.search.length > 0 ? "&format=json" : "?format=json"),
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
-   	colModel:[{% if is_popup %}
-      {name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false},
-      {% endif %}{% for f in reportclass.rows %}{% if not forloop.first %},
-   	  {% endif %}{ {{f|safe}}{% if forloop.counter <= reportclass.frozenColumns %},frozen:true{% endif %}{% if is_popup %},popup:true{% endif %} }{% endfor %}
-   	  ],
+   	colModel:[{% colmodel False %}],
    	rowNum: {{request.pagesize}},{% if is_popup %}
     onSelectRow: setSelectedRow,{% elif reportclass.editable and haschangeperm %}
     cellEdit: true,
@@ -30,6 +27,7 @@ $(function(){
     viewrecords: true,
     sortorder: "asc",
     hidegrid: false,
+    resizeStop: saveColumnConfiguration,
     scrollRows: true,
     //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.

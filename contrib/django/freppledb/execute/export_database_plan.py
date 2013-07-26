@@ -30,7 +30,7 @@ to keep the code portable between different databases.
 from datetime import timedelta, datetime
 from time import time
 from threading import Thread
-import inspect, os
+import os
 
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
@@ -51,7 +51,7 @@ def truncate(cursor):
     ['out_demandpegging'],
     ['out_problem', 'out_resourceplan', 'out_constraint'],
     ['out_loadplan', 'out_flowplan', 'out_operationplan'],
-    ['out_demand', 'out_forecast'],
+    ['out_demand'],
     ]
   for group in tables:
     for sql in connections[database].ops.sql_flush(no_style(), group, []):
@@ -299,36 +299,6 @@ def exportPegging(cursor):
   print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
 
-def exportForecast(cursor):
-  # Detect whether the forecast module is available
-  if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
-    return
-
-  print "Exporting forecast plans..."
-  starttime = time()
-  cnt = 0
-  for i in frepple.demands():
-    if not isinstance(i, frepple.demand_forecastbucket) or i.total <= 0.0:
-      continue
-    cursor.executemany(   # TODO Not very efficient... Use a generator function instead
-      "insert into out_forecast \
-      (forecast,startdate,enddate,total,net,consumed) \
-      values (%s,%s,%s,%s,%s,%s)",
-      [(
-         i.owner.name, str(i.startdate), str(i.enddate),
-         round(i.total,settings.DECIMAL_PLACES),
-         round(i.quantity,settings.DECIMAL_PLACES),
-         round(i.consumed,settings.DECIMAL_PLACES)
-       )
-      ])
-    cnt += 1
-    if cnt % 1000 == 0: transaction.commit(using=database)
-
-  transaction.commit(using=database)
-  cursor.execute("select count(*) from out_forecast")
-  print 'Exported %d forecast plans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
-
-
 class DatabaseTask(Thread):
   '''
   An auxiliary class that allows us to run a function with its own
@@ -394,7 +364,6 @@ def exportfrepple():
     exportLoadplans(cursor)
     exportResourceplans(cursor)
     exportDemand(cursor)
-    exportForecast(cursor)
     exportPegging(cursor)
 
   else:
@@ -405,7 +374,7 @@ def exportfrepple():
       DatabaseTask(exportProblems, exportConstraints),
       DatabaseTask(exportOperationplans, exportFlowplans, exportLoadplans),
       DatabaseTask(exportResourceplans),
-      DatabaseTask(exportForecast, exportDemand),
+      DatabaseTask(exportDemand),
       DatabaseTask(exportPegging),
       )
     # Start all threads

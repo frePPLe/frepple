@@ -489,16 +489,17 @@ class GridReport(View):
       # Return HTML page
       # Pick up the list of time buckets
       if reportclass.hasTimeBuckets:
-        pref = request.user
-        (bucket,start,end,bucketlist) = getBuckets(request, pref)
+        (bucket,start,end,bucketlist) = getBuckets(request)
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
       else:
-        pref = bucketnames = bucketlist = start = end = bucket = None
+        bucketnames = bucketlist = start = end = bucket = None
+      reportkey = "%s.%s" % (reportclass.__module__, reportclass.__name__);
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
         'object_id': args and args[0] or None,
-        'preferences': pref,
+        'preferences': request.user.getPreference(reportkey),
+        'reportkey': reportkey,
         'is_popup': request.GET.has_key('pop'),
         'args': args,
         'filters': reportclass.getQueryString(request),

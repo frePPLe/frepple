@@ -103,7 +103,7 @@ var selected;
 
 function setSelectedRow(id) {  
   if (selected!=undefined)
-   	$(this).jqGrid('setCell', selected, 'select', null); 
+    $(this).jqGrid('setCell', selected, 'select', null); 
   selected = id;
   $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, selected);" class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text" style="font-size:66%">'+gettext('Select')+'</span></button>');
 }
@@ -115,9 +115,9 @@ function setSelectedRow(id) {
 //----------------------------------------------------------------------------
 
 function linkunformat (cellvalue, options, cell) {
-	  return cellvalue;
-	}
-	 
+  return cellvalue;
+}
+
 jQuery.extend($.fn.fmatter, {
   percentage : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return ''; 
@@ -129,34 +129,34 @@ jQuery.extend($.fn.fmatter, {
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='item'></span>";
   },
   customer : function(cellvalue, options, rowdata) {
-  	if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
-  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='customer'></span>";
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='customer'></span>";
   },
   buffer : function(cellvalue, options, rowdata) {
-  	if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
-  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>";
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>";
   },
   resource : function(cellvalue, options, rowdata) {
-  	if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
-  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
   },
   forecast : function(cellvalue, options, rowdata) {
-  	if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
-  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='forecast'></span>";
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='forecast'></span>";
   },
   demand : function(cellvalue, options, rowdata) {
-  	if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
-  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='demand'></span>";
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='demand'></span>";
   },
   operation : function(cellvalue, options, rowdata) {
-  	if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (cellvalue === undefined || cellvalue ==='') return ''; 
     if (options['colModel']['popup']) return cellvalue;     
-  	return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>";
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>";
   },
   calendar : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return ''; 
@@ -298,7 +298,7 @@ function afterEditCell(rowid, cellname, value, iRow, iCol)
   var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[iCol];
   if (colmodel.formatter == 'date')
   { 
-	if (colmodel.formatoptions['srcformat'] == "Y-m-d")
+  if (colmodel.formatoptions['srcformat'] == "Y-m-d")
       $(cell).datepicker({
         showOtherMonths: true, selectOtherMonths: true,
         dateFormat: "yy-mm-dd", changeMonth:true,
@@ -423,42 +423,42 @@ $(document).mousedown(function (event) {
   {        
     // Find the id of the menu to display   
     contextMenu = $('#' + $(event.target).attr('role') + "context");
-	
+ 
     // Get the entity name. Unescape all escaped characters and urlencode the result.
-	if ($(event.target).hasClass('cross'))
-	{
+    if ($(event.target).hasClass('cross'))
+    {
       var item = $(event.target).closest("tr.jqgrow")[0].id;
- 	  item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-		.replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));    
+      item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+        .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));    
       var params = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[jQuery.jgrid.getCellIndex($(event.target).closest("td,th"))];
       params['value'] = item;
-	}
+    }
     else
     {
       var item = $(event.target).parent().text();
- 	  item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-		.replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));    
+      item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+        .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));    
       var params = {value: item};
     }
 
-	// Build the URLs for the menu
-	contextMenu.find('a').each( function() {
-	  $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) { 
-		var key = match.substring(1,match.length-1);
-		return key in params ? params[key] : match;
-		}
-	  ))
-	});
+    // Build the URLs for the menu
+    contextMenu.find('a').each( function() {
+      $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) { 
+      var key = match.substring(1,match.length-1);
+      return key in params ? params[key] : match;
+      }
+      ))
+    });
 
     // Display the menu at the right location
-	$(contextMenu).css({
-	  left: event.pageX,
-	  top: event.pageY,
-	  display: 'block'
-	  });
-	event.preventDefault();
+    $(contextMenu).css({
+      left: event.pageX,
+      top: event.pageY,
+      display: 'block'
+      });
+    event.preventDefault();
     event.stopImmediatePropagation();
-	}
+  }
 
   // If there is no active button, exit.
   if (!activeButton || event.target == activeButton) return;
@@ -631,8 +631,8 @@ function markSelectedRow(id)
   }
   else
   {
-	$("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
-	$("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
+  $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
+  $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
   }
 }
 
@@ -661,7 +661,7 @@ function import_show(url)
 {
   $('#popup').html(
     '<form id="uploadform" enctype="multipart/form-data" method="post" action="' 
-	  + (typeof(url) != 'undefined' ? url : '') + '">' +
+    + (typeof(url) != 'undefined' ? url : '') + '">' +
     '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
     gettext('Load a CSV-formatted text file.') + '<br/>' +
     gettext('The first row should contain the field names.') + '<br/><br/>' +
@@ -784,40 +784,40 @@ function bucket_show()
       changeMonth:true, changeYear:true, yearRange: "c-1:c+5", dateFormat: 'yy-mm-dd'
     });
   $('#timebuckets').dialog({
-     autoOpen: true, resizable: false, width: 390, 	 
+     autoOpen: true, resizable: false, width: 390,
      buttons: [
        {
          text: gettext("OK"),
          click: function() { 
-        	// Compare old and new parameters
-        	var params = $('#horizonbuckets').val() + '|' + 
-        	  $('#horizonstart').val() + '|' +
-        	  $('#horizonend').val() + '|' +
-        	  ($('#horizontype').is(':checked') ? "True" : "False") + '|' +
-        	  $('#horizonlength').val() + '|' +
-        	  $('#horizonunit').val();
-        	if (params == $('#horizonoriginal').val())
-        	  // No changes to the settings. Close the popup.
-        	  $(this).dialog('close');
-        	else {
-        	  // Ajax request to update the horizon preferences
-              $.ajax({
+          // Compare old and new parameters
+          var params = $('#horizonbuckets').val() + '|' + 
+            $('#horizonstart').val() + '|' +
+            $('#horizonend').val() + '|' +
+            ($('#horizontype').is(':checked') ? "True" : "False") + '|' +
+            $('#horizonlength').val() + '|' +
+            $('#horizonunit').val();
+          if (params == $('#horizonoriginal').val())
+            // No changes to the settings. Close the popup.
+            $(this).dialog('close');
+          else {
+            // Ajax request to update the horizon preferences
+            $.ajax({
                 type: 'POST',
-        		url: '/horizon/',
-        		data: { 
-        		  horizonbuckets: $('#horizonbuckets').val(),
-        		  horizonstart: $('#horizonstart').val(), 
-        		  horizonend: $('#horizonend').val(),
-        		  horizontype: ($('#horizontype').is(':checked') ? '1' : '0'),
-            	  horizonlength: $('#horizonlength').val(),
-            	  horizonunit: $('#horizonunit').val()
-            	  },
-        		dataType: 'text/html',
-        		async: false  // Need to wait for the update to be processed!
-        		});
-        	  // Reload the report
-        	  window.location.href = window.location.href;
-        	}
+                url: '/horizon/',
+                data: { 
+                  horizonbuckets: $('#horizonbuckets').val(),
+                  horizonstart: $('#horizonstart').val(), 
+                  horizonend: $('#horizonend').val(),
+                  horizontype: ($('#horizontype').is(':checked') ? '1' : '0'),
+                  horizonlength: $('#horizonlength').val(),
+                  horizonunit: $('#horizonunit').val()
+                  },
+                dataType: 'text/html',
+                async: false  // Need to wait for the update to be processed!
+              });
+          // Reload the report
+          window.location.href = window.location.href;
+          }
          }
        },
        {
@@ -830,6 +830,57 @@ function bucket_show()
 
 
 //----------------------------------------------------------------------------
+// Display report customization screen
+//----------------------------------------------------------------------------
+
+function customize_show()
+{
+  $(".ui-dialog").dialog("close");
+  $.jgrid.hideModal("#searchmodfbox_grid");
+  $("#grid").jqGrid('columnChooser', {
+    done: function(perm) {
+       if (perm) {
+         $("#grid").jqGrid("remapColumns", perm, true);
+         saveColumnConfiguration();
+         }
+      }
+    });
+}
+
+
+//----------------------------------------------------------------------------
+// Save report settings as preferences
+//----------------------------------------------------------------------------
+
+function saveColumnConfiguration() 
+{
+  var colArray = new Array();
+  var colModel = $("#grid")[0].p.colModel;
+  for (var i = 0; i < colModel.length; i++) 
+  {
+    if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null)
+      colArray.push([colModel[i].counter, colModel[i].hidden, colModel[i].width]);
+  }
+  var result = {};
+  result[reportkey] = colArray;
+  $.ajax({
+      url: '/settings/',
+      type: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify(result),
+      error: function (result, stat, errorThrown) {
+        $('#popup').html(result.responseText)
+          .dialog({
+            title: gettext("Error saving report settings"),
+            autoOpen: true,
+            resizable: false
+          });
+        }
+  });
+}
+
+
+//----------------------------------------------------------------------------
 // This function returns all arguments in the current URL as a dictionary.
 //----------------------------------------------------------------------------
 
@@ -838,12 +889,12 @@ function getURLparameters()
   
   if (window.location.search.length == 0) return {};
   var params = {};
-	jQuery.each(window.location.search.match(/^\??(.*)$/)[1].split('&'), function(i,p){
-		p = p.split('=');
-		p[1] = unescape(p[1]).replace(/\+/g,' ');
-		params[p[0]] = params[p[0]]?((params[p[0]] instanceof Array)?(params[p[0]].push(p[1]),params[p[0]]):[params[p[0]],p[1]]):p[1];
-	});
-	return params;
+  jQuery.each(window.location.search.match(/^\??(.*)$/)[1].split('&'), function(i,p){
+    p = p.split('=');
+    p[1] = unescape(p[1]).replace(/\+/g,' ');
+    params[p[0]] = params[p[0]]?((params[p[0]] instanceof Array)?(params[p[0]].push(p[1]),params[p[0]]):[params[p[0]],p[1]]):p[1];
+  });
+  return params;
 }
 
 
@@ -856,9 +907,9 @@ var _currentunits = null;
 var _factors = {
   'seconds': 1,
   'minutes': 60,
-	'hours': 3600,
-	'days': 86400,
-	'weeks': 604800
+  'hours': 3600,
+  'days': 86400,
+  'weeks': 604800
 };
 
 function getUnits(unitselector)

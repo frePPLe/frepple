@@ -49,7 +49,7 @@ def truncate(process):
   process.stdin.write('truncate table out_demandpegging;\n')
   process.stdin.write('truncate table out_problem, out_resourceplan, out_constraint;\n')
   process.stdin.write('truncate table out_loadplan, out_flowplan, out_operationplan;\n')
-  process.stdin.write('truncate table out_demand, out_forecast;\n')
+  process.stdin.write('truncate table out_demand;\n')
   print "Emptied plan tables in %.2f seconds" % (time() - starttime)
 
 
@@ -233,27 +233,6 @@ def exportPegging(process):
   print 'Exported pegging in %.2f seconds' % (time() - starttime)
 
 
-def exportForecast(process):
-  # Detect whether the forecast module is available
-  if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
-    return
-
-  print "Exporting forecast plans..."
-  starttime = time()
-  process.stdin.write('COPY out_forecast (forecast,startdate,enddate,total,net,consumed) FROM STDIN;\n')
-  for i in frepple.demands():
-    if not isinstance(i, frepple.demand_forecastbucket) or i.total <= 0.0:
-      continue
-    process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\n" % (
-         i.owner.name, str(i.startdate), str(i.enddate),
-         round(i.total,settings.DECIMAL_PLACES),
-         round(i.quantity,settings.DECIMAL_PLACES),
-         round(i.consumed,settings.DECIMAL_PLACES)
-       ))
-  process.stdin.write('\\.\n')
-  print 'Exported forecast plans in %.2f seconds' % (time() - starttime)
-
-
 def exportfrepple():
   '''
   This function exports the data from the frePPLe memory into the database.
@@ -279,7 +258,6 @@ def exportfrepple():
     exportResourceplans(process)
     exportDemand(process)
     exportPegging(process)
-    exportForecast(process)
   finally:
     # Close the pipe and PSQL process
     process.stdin.write('\\q\n')
@@ -295,7 +273,6 @@ def exportfrepple():
     union select 'out_flowplan', count(*) from out_flowplan
     union select 'out_loadplan', count(*) from out_loadplan
     union select 'out_resourceplan', count(*) from out_resourceplan
-    union select 'out_forecast', count(*) from out_forecast
     union select 'out_demandpegging', count(*) from out_demandpegging
     union select 'out_demand', count(*) from out_demand
     order by 1

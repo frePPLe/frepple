@@ -27,7 +27,7 @@ API of frePPLe to bring the data into the frePPLe C++ core engine.
 
 from time import time
 from threading import Thread
-import inspect, os
+import os
 from datetime import datetime
 
 from django.db import connections, DEFAULT_DB_ALIAS
@@ -469,46 +469,6 @@ def loadOperationPlans(cursor):
   print 'Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime)
 
 
-def loadForecast(cursor):
-  # Detect whether the forecast module is available
-  if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
-    return
-
-  print 'Importing forecast...'
-  cnt = 0
-  starttime = time()
-  cursor.execute('''SELECT name, customer_id, item_id, priority,
-    operation_id, minshipment, calendar_id, discrete, maxlateness,
-    category,subcategory
-    FROM forecast''')
-  for i,j,k,l,m,n,o,p,q,r,s in cursor.fetchall():
-    cnt += 1
-    fcst = frepple.demand_forecast(name=i, priority=l, category=r, subcategory=s)
-    if j: fcst.customer = frepple.customer(name=j)
-    if k: fcst.item = frepple.item(name=k)
-    if m: fcst.operation = frepple.operation(name=m)
-    if n: fcst.minshipment = n
-    if o: fcst.calendar = frepple.calendar(name=o)
-    if not p: fcst.discrete = False
-    if q != None: fcst.maxlateness = q
-  print 'Loaded %d forecasts in %.2f seconds' % (cnt, time() - starttime)
-
-
-def loadForecastdemand(cursor):
-  # Detect whether the forecast module is available
-  if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
-    return
-
-  print 'Importing forecast demand...'
-  cnt = 0
-  starttime = time()
-  cursor.execute("SELECT forecast_id, quantity, startdate, enddate FROM forecastdemand")
-  for i, j, k, l in cursor.fetchall():
-    cnt += 1
-    frepple.demand_forecast(name=i).setQuantity(j,k,l)
-  print 'Loaded %d forecast demands in %.2f seconds' % (cnt, time() - starttime)
-
-
 def loadDemand(cursor):
   print 'Importing demands...'
   cnt = 0
@@ -589,8 +549,6 @@ def loadfrepple():
     loadFlows(cursor)
     loadLoads(cursor)
     loadOperationPlans(cursor)
-    loadForecast(cursor)
-    loadForecastdemand(cursor)
     loadDemand(cursor)
 
     # Close the database connection
@@ -614,7 +572,6 @@ def loadfrepple():
     for i in tasks: i.join()
     tasks = (
       DatabaseTask(loadOperations,loadSuboperations),
-      DatabaseTask(loadForecast),
       )
     for i in tasks: i.start()
     for i in tasks: i.join()
@@ -627,7 +584,7 @@ def loadfrepple():
     for i in tasks: i.join()
     tasks = (
       DatabaseTask(loadOperationPlans),
-      DatabaseTask(loadForecastdemand,loadDemand),
+      DatabaseTask(loadDemand),
       )
     for i in tasks: i.start()
     for i in tasks: i.join()

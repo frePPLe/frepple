@@ -9,7 +9,7 @@ clean-local:
 	-rm -rf frepple_* frepple-$(VERSION) *.deb
 	
 # This make target builds a Debian distribution file, suitable for Ubuntu.
-contrib: 
+contrib:
 	cd ../..; make dist
 	cp ../../frepple-$(VERSION).tar.gz frepple_$(VERSION).orig.tar.gz
 	-rm -rf frepple-$(VERSION)

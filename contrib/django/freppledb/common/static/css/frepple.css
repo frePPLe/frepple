@@ -130,11 +130,11 @@ div.breadcrumbs, div.breadcrumbs a {
 
 /* PAGE STRUCTURE */
 
-#container { 
+#container {
     position: relative;
     width: 100%;
     padding: 0;
-    min-width: 800px; 
+    min-width: 800px;
 }
 
 #content {
@@ -341,7 +341,7 @@ span.context {
 }
 
 .ui-autocomplete-category {
-  font-weight:bold; 
+  font-weight:bold;
   list-style-type: none;
 }
 
@@ -379,7 +379,7 @@ span.context {
   z-index: 10000;
 }
 
-#headerbar div.menu {  
+#headerbar div.menu {
   left: 0px;
   padding: 0px 1px 1px 0px;
   position: absolute;
@@ -447,7 +447,7 @@ table thead th.sorted {
   font-weight: bold;
 }
 
- 
+
 tr.level0 {font-weight: bold;}
 td.level0 {padding-left: 0px;}
 td.level1 {padding-left: 10px;}
@@ -468,21 +468,21 @@ div.calendarbox
   z-index: 10;
 }
 
-.ui-autocomplete-loading 
-{ 
-  background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat; 
+.ui-autocomplete-loading
+{
+  background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat;
 }
 
-.ui-autocomplete 
+.ui-autocomplete
 {
   max-height: 200px;
-  overflow-y: auto;  
+  overflow-y: auto;
   /* prevent horizontal scrollbar */
-  overflow-x: hidden; 
+  overflow-x: hidden;
   /* add padding to account for vertical scrollbar */
   padding-right: 20px;
 }
-    
+
 .highutil
 {
   color: red;
@@ -493,7 +493,7 @@ div.calendarbox
   float: right;
 }
 
-.ui-menu .ui-menu-item a 
+.ui-menu .ui-menu-item a
 {
   font-weight: bold;
 }

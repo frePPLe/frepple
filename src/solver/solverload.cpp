@@ -51,7 +51,7 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
   // Don't keep track of the constraints right now
   bool originalLogConstraints = data->logConstraints;
   data->logConstraints = false;
-  
+
   // Initialize
   Date min_next_date(Date::infiniteFuture);
   LoadPlan *lplan = data->state->q_loadplan;
@@ -80,9 +80,9 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
     {
       for (Resource::memberIterator x = res->beginMember(); x != Resource::end(); ++x)
         res_stack.push(&*x);
-      continue; 
+      continue;
     }
-    
+
     // Check if the resource has the right skill
     if (l->getSkill())
     {
@@ -90,9 +90,9 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
       for (Resource::skilllist::const_iterator i = res->getSkills().begin();
         i != res->getSkills().end() && !isqualified; ++i)
       {
-        if (i->getSkill() == l->getSkill() 
+        if (i->getSkill() == l->getSkill()
             && originalOpplan.start >= i->getEffective().getStart()
-            && originalOpplan.end <= i->getEffective().getEnd()) 
+            && originalOpplan.end <= i->getEffective().getEnd())
           isqualified = true;
       }
       // Next resource in the loop if not qualified
@@ -167,12 +167,12 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
           << l->getOperation()->getName() << "' evaluates alternate '"
           << lplan->getResource() << "': not available before "
           << data->state->a_date << endl;
-    
+
     // Keep track of best next date
     if (data->state->a_date < min_next_date)
       min_next_date = data->state->a_date;
   }
-  data->getSolver()->setLogLevel(loglevel); 
+  data->getSolver()->setLogLevel(loglevel);
 
   // Not a single resource has the appropriate skills. You're joking?
   if (!qualified_resource_exists)
@@ -251,7 +251,7 @@ void SolverMRP::solve(const Load* l, void* v)
     chooseResource(l, data);
     return;
   }
-    
+
   // CASE II: It is an alternate load.
   // We ask each alternate load in order of priority till we find a load
   // that has a non-zero reply.

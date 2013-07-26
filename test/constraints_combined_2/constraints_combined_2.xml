@@ -67,7 +67,7 @@
 		<calendar name="Working Days">
 			<default>1</default>
 			<buckets>
-				<!-- 65 = effective on saturday and sunday -->               
+				<!-- 65 = effective on saturday and sunday -->
 				<bucket start="2011-12-31T00:00:00" end="2012-04-30T00:00:00" days="65" value="0"/>
 			</buckets>
 		</calendar>
@@ -1142,7 +1142,7 @@
 		<resource name="Line 1 station 7">
 			<maximum_calendar name="Capacity line 1 station 7"/>
 			<location name="Line 1"/>
-		</resource>        
+		</resource>
 		<resource name="Operators line 1">
 			<maximum_calendar name="Operators line 1"/>
 			<location name="Line 1"/>
@@ -2421,5 +2421,5 @@ print "CREATING UNCONSTRAINED PLAN"
 frepple.solver_mrp(name="MRP", plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 ?>
-    
+
 </plan>

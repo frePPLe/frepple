@@ -48,7 +48,7 @@ def truncate(process):
   starttime = time()
   process.stdin.write('truncate table out_demandpegging;\n')
   process.stdin.write('truncate table out_problem, out_resourceplan, out_constraint;\n')
-  process.stdin.write('truncate table out_loadplan, out_flowplan, out_operationplan;\n') 
+  process.stdin.write('truncate table out_loadplan, out_flowplan, out_operationplan;\n')
   process.stdin.write('truncate table out_demand, out_forecast;\n')
   print "Emptied plan tables in %.2f seconds" % (time() - starttime)
 
@@ -57,7 +57,7 @@ def exportProblems(process):
   print "Exporting problems..."
   starttime = time()
   process.stdin.write('COPY out_problem (entity, name, owner, description, startdate, enddate, weight) FROM STDIN;\n')
-  for i in frepple.problems(): 
+  for i in frepple.problems():
     process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
        i.entity, i.name,
        isinstance(i.owner,frepple.operationplan) and str(i.owner.operation) or str(i.owner),
@@ -133,11 +133,11 @@ def exportLoadplans(process):
 def exportResourceplans(process):
   print "Exporting resourceplans..."
   starttime = time()
-  
+
   # Determine start and end date of the reporting horizon
-  # The start date is computed as 5 weeks before the start of the earliest loadplan in 
+  # The start date is computed as 5 weeks before the start of the earliest loadplan in
   # the entire plan.
-  # The end date is computed as 5 weeks after the end of the latest loadplan in 
+  # The end date is computed as 5 weeks after the end of the latest loadplan in
   # the entire plan.
   # If no loadplans exist at all we use the current date +- 1 month.
   startdate = datetime.max
@@ -146,17 +146,17 @@ def exportResourceplans(process):
     for j in i.loadplans:
       if j.startdate < startdate: startdate = j.startdate
       if j.enddate > enddate: enddate = j.enddate
-  if startdate == datetime.max: startdate = frepple.settings.current 
+  if startdate == datetime.max: startdate = frepple.settings.current
   if enddate == datetime.min: enddate = frepple.settings.current
   startdate = (startdate - timedelta(days=30)).date()
   enddate = (enddate + timedelta(days=30)).date()
-    
+
   # Build a list of horizon buckets
   buckets = []
   while startdate < enddate:
     buckets.append(startdate)
     startdate += timedelta(days=1)
-  
+
   # Loop over all reporting buckets of all resources
   process.stdin.write('COPY out_resourceplan (theresource,startdate,available,unavailable,setup,load,free) FROM STDIN;\n')
   for i in frepple.resources():
@@ -167,7 +167,7 @@ def exportResourceplans(process):
   		 round(j['unavailable'],settings.DECIMAL_PLACES),
   		 round(j['setup'],settings.DECIMAL_PLACES),
   		 round(j['load'],settings.DECIMAL_PLACES),
-  		 round(j['free'],settings.DECIMAL_PLACES)           
+  		 round(j['free'],settings.DECIMAL_PLACES)
   	   ))
   process.stdin.write('\\.\n')
   print 'Exported resourceplans in %.2f seconds' % (time() - starttime)
@@ -258,7 +258,7 @@ def exportfrepple():
   '''
   This function exports the data from the frePPLe memory into the database.
   '''
-  test = 'FREPPLE_TEST' in os.environ  
+  test = 'FREPPLE_TEST' in os.environ
 
   # Start a PSQL process
   process = Popen("psql -q -U%s %s%s%s" % (
@@ -266,8 +266,8 @@ def exportfrepple():
      settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
      settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
      test and settings.DATABASES[database]['TEST_NAME'] or settings.DATABASES[database]['NAME'],
-   ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, universal_newlines=True)  
-  
+   ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, universal_newlines=True)
+
   # Send all output to the PSQL process through a pipe
   try:
     truncate(process)
@@ -286,20 +286,20 @@ def exportfrepple():
     process.stdin.close()
     # Collect error messages  TODO Only works on Windows?
     # print process.communicate()[1]
-  
+
   cursor = connections[database].cursor()
   cursor.execute('''
-    select 'out_problem', count(*) from out_problem 
-    union select 'out_constraint', count(*) from out_constraint 
-    union select 'out_operationplan', count(*) from out_operationplan 
-    union select 'out_flowplan', count(*) from out_flowplan 
-    union select 'out_loadplan', count(*) from out_loadplan 
+    select 'out_problem', count(*) from out_problem
+    union select 'out_constraint', count(*) from out_constraint
+    union select 'out_operationplan', count(*) from out_operationplan
+    union select 'out_flowplan', count(*) from out_flowplan
+    union select 'out_loadplan', count(*) from out_loadplan
     union select 'out_resourceplan', count(*) from out_resourceplan
     union select 'out_forecast', count(*) from out_forecast
-    union select 'out_demandpegging', count(*) from out_demandpegging 
+    union select 'out_demandpegging', count(*) from out_demandpegging
     union select 'out_demand', count(*) from out_demand
     order by 1
-    ''')	 
+    ''')	
   for table, recs in cursor.fetchall():
     print "Table %s: %d records" % (table, recs)
 

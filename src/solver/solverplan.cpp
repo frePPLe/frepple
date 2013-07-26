@@ -137,7 +137,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
     demands->clear();
 
     // TODO Solve for safety stock in buffers that haven't been planned by any demand yet.
-    
+
   }
   catch (...)
   {

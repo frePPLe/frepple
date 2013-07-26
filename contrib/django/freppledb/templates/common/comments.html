@@ -4,7 +4,7 @@
 <script type="text/javascript">
   $(function() {
     $("input:submit").button();
-  }); 
+  });
 </script>
 {% endblock %}
 
@@ -24,7 +24,7 @@
 
 {% for c in comments %}
 <hr/><h3>{{c.user}} ({{c.user.get_full_name}})<span class="float_right">{{c.lastmodified}}</span></h3>
-<pre>{{c.comment}}</pre> 
+<pre>{{c.comment}}</pre>
 {% endfor %}
 
 </div>

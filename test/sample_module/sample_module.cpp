@@ -76,7 +76,7 @@ void OperationTransport::writeElement
   OperationFixedTime::writeElement(o, tag, NOHEADTAIL);
   o->writeElement(tag_frombuffer, fromBuf, REFERENCE);
   o->writeElement(tag_tobuffer, toBuf, REFERENCE);
-  
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }

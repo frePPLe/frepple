@@ -35,7 +35,7 @@ DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
   char *filename = NULL;
   int validate(1), validate_only(0);
   PyObject *userexit = NULL;
-  int ok = PyArg_ParseTuple(args, "|siiO:readXMLfile", 
+  int ok = PyArg_ParseTuple(args, "|siiO:readXMLfile",
     &filename, &validate, &validate_only, &userexit);
   if (!ok) return NULL;
 
@@ -55,7 +55,7 @@ DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
       else
         p.parse(in, &Plan::instance(), validate!=0);
     }
-    else 
+    else
     {
       XMLInputFile p(filename);
       if (userexit) p.setUserExit(userexit);
@@ -89,7 +89,7 @@ DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
   char *data;
   int validate(1), validate_only(0);
   PyObject *userexit = NULL;
-  int ok = PyArg_ParseTuple(args, "s|iiO:readXMLdata", 
+  int ok = PyArg_ParseTuple(args, "s|iiO:readXMLdata",
     &data, &validate, &validate_only, &userexit);
   if (!ok) return NULL;
 
@@ -590,7 +590,7 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     for (Demand::iterator dm = Demand::begin(); dm != Demand::end(); ++dm)
     {
       memsize += dm->getSize();
-      for (Problem::const_iterator cstrnt(dm->getConstraints().begin()); 
+      for (Problem::const_iterator cstrnt(dm->getConstraints().begin());
         cstrnt != dm->getConstraints().end(); ++cstrnt)
       {
         ++c_count;

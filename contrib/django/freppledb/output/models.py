@@ -90,7 +90,7 @@ class ResourceSummary(models.Model):
   setup = models.DecimalField(_('setup'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)
   load = models.DecimalField(_('load'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)
   free = models.DecimalField(_('free'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)
-  
+
   class Meta:
     db_table = 'out_resourceplan'
     permissions = (("view_loadplans", "Can view load plans"),)
@@ -98,8 +98,8 @@ class ResourceSummary(models.Model):
     unique_together = (('theresource', 'startdate'),)
     verbose_name = 'resource summary'  # No need to translate these since only used internally
     verbose_name_plural = 'resource summaries'
-    
-  
+
+
 class LoadPlan(models.Model):
   # Database fields
   theresource = models.CharField(_('resource'), max_length=settings.NAMESIZE, db_index=True)

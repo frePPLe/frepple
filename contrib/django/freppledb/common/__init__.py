@@ -72,21 +72,21 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   The level of customization is relatively high, and this code is a bit of a
   concern for future upgrades of Django...
   '''
-    
-  def save_form(self, request, form, change): 
+
+  def save_form(self, request, form, change):
     # Execute the standard behavior
     obj = super(MultiDBModelAdmin, self).save_form(request, form, change)
-    # FrePPLe specific addition       
-    if change:      
+    # FrePPLe specific addition
+    if change:
       old_pk = unquote(request.path_info.rsplit("/",2)[1])
       if old_pk != (isinstance(obj.pk,basestring) and obj.pk or str(obj.pk)):
         # The object was renamed. We continue handling the updates on the
         # old object. Only at the very end we will rename whatever needs to
         # be renamed.
-        obj.new_pk = obj.pk       
-        obj.pk = old_pk 
+        obj.new_pk = obj.pk
+        obj.pk = old_pk
     return obj
-  
+
   def save_model(self, request, obj, form, change):
     # Tell Django to save objects to the 'other' database.
     obj.save(using=request.database)
@@ -119,9 +119,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   def log_change(self, request, obj, message):
     """
     Log that an object has been successfully changed.
-    """    
+    """
     if hasattr(obj, 'new_pk'):
-      # We are renaming an existing object.        
+      # We are renaming an existing object.
       # a) Save the new record in the right database
       old_pk = obj.pk
       obj.pk = obj.new_pk
@@ -140,7 +140,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         filter(content_type__pk=model_type.id, object_id=old_pk). \
         update(object_id=obj.pk)
       # e) Delete the old record
-      self.queryset(request).get(pk=old_pk).delete()             
+      self.queryset(request).get(pk=old_pk).delete()
     LogEntry(
         user_id         = request.user.pk,
         content_type_id = ContentType.objects.get_for_model(obj).pk,
@@ -168,10 +168,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     "The 'history' admin view for this model."
     # First check if the object exists and the user can see its history.
     model = self.model
-    obj = get_object_or_404(model.objects.using(request.database), pk=unquote(object_id)) 
+    obj = get_object_or_404(model.objects.using(request.database), pk=unquote(object_id))
     if not self.has_change_permission(request, obj):
         raise PermissionDenied
-    
+
     # Then get the history for this object.
     opts = model._meta
     app_label = opts.app_label
@@ -180,7 +180,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       content_type__id__exact = ContentType.objects.get_for_model(model).id
     ).select_related().order_by('action_time')
     context = {
-      'title': capfirst(force_text(opts.verbose_name) + " " + object_id),      
+      'title': capfirst(force_text(opts.verbose_name) + " " + object_id),
       'action_list': action_list,
       'module_name': capfirst(force_text(opts.verbose_name_plural)),
       'object': obj,
@@ -264,15 +264,15 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     elif "_saveasnew" in request.POST:
       msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % msg_dict
       self.message_user(request, msg)
-      return HttpResponseRedirect(request.prefix 
+      return HttpResponseRedirect(request.prefix
         + reverse('admin:%s_%s_change' %
                                         (opts.app_label, opts.module_name),
                                         args=(pk_value,),
-                                        current_app=self.admin_site.name))    
+                                        current_app=self.admin_site.name))
     elif "_addanother" in request.POST:
       msg = _('The %(name)s "%(obj)s" was changed successfully. You may add another %(name)s below.') % msg_dict
       self.message_user(request, msg)
-      return HttpResponseRedirect(request.prefix 
+      return HttpResponseRedirect(request.prefix
         + reverse('admin:%s_%s_add' %
                                         (opts.app_label, opts.module_name),
                                         current_app=self.admin_site.name))
@@ -288,9 +288,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   def change_view(self, request, object_id, form_url='', extra_context=None):
     new_extra_context = extra_context or {}
     new_extra_context['title'] = capfirst(force_unicode(self.model._meta.verbose_name) + ' ' + unquote(object_id))
-    return super(MultiDBModelAdmin, self).change_view(request, object_id, form_url, new_extra_context) 
-  
-  
+    return super(MultiDBModelAdmin, self).change_view(request, object_id, form_url, new_extra_context)
+
+
   @csrf_protect_m
   @transaction.commit_on_success
   def delete_view(self, request, object_id, extra_context=None):
@@ -329,7 +329,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     object_name = force_text(opts.verbose_name)
 
     context = {
-        "title": capfirst(object_name + ' ' + unquote(object_id)), 
+        "title": capfirst(object_name + ' ' + unquote(object_id)),
         "object_name": object_name,
         "object": obj,
         "deleted_objects": deleted_objects,
@@ -356,9 +356,9 @@ class MultiDBTabularInline(admin.TabularInline):
 
   def __init__(self, parent_model, admin_site):
     super(MultiDBTabularInline, self).__init__(parent_model, admin_site)
-    
+
   def queryset(self, request):
-    return super(MultiDBTabularInline, self).queryset(request).using(request.database)   
+    return super(MultiDBTabularInline, self).queryset(request).using(request.database)
 
   def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
     return super(MultiDBTabularInline, self).formfield_for_foreignkey(db_field, request=request, using=request.database, **kwargs)

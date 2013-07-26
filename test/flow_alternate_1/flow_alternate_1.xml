@@ -5,13 +5,13 @@
   This test verifies the behavior of alternate flows.
   An assembly operation is modeled which has alternate components:
     * Component A or component B can be used in the assembly.
-      Component A is the preferred one, and Component B is only used 
-      when constraints are found on A. 
-    * Component C can be replaced by component D till a certain date, or by 
-      component E valid from a date. 
-      The validity periods of the components D and E can overlap. 
-    * Component F is used till a certain date, after which the component G is 
-      used. The validity periods of the components can overlap. 
+      Component A is the preferred one, and Component B is only used
+      when constraints are found on A.
+    * Component C can be replaced by component D till a certain date, or by
+      component E valid from a date.
+      The validity periods of the components D and E can overlap.
+    * Component F is used till a certain date, after which the component G is
+      used. The validity periods of the components can overlap.
   </description>
   <current>2009-01-01T00:00:00</current>
   <buffers>
@@ -20,49 +20,49 @@
 	    <onhand>1</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="component B" xsi:type="buffer_procure">
       <item name="component B" />
 	    <onhand>4</onhand>
 	    <leadtime>P5D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="component C" xsi:type="buffer_procure">
       <item name="component C" />
 	    <onhand>5</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="component D" xsi:type="buffer_procure">
       <item name="component D" />
 	    <onhand>0</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="component E" xsi:type="buffer_procure">
       <item name="component E" />
 	    <onhand>0</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="component F" xsi:type="buffer_procure">
       <item name="component F" />
 	    <onhand>5</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="component G" xsi:type="buffer_procure">
       <item name="component G" />
 	    <onhand>5</onhand>
 	    <leadtime>P5D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="product">
       <item name="product" />

@@ -9,6 +9,6 @@ clean-local:
 
 contrib:
 	"/c/Program Files/NSIS/makensis.exe" /DPYTHON='c:\develop\python27' frepple.nsi
-  
+
 py2exe:
 	setup.py

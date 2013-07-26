@@ -104,11 +104,11 @@ def exportResourceplans():
   starttime = time()
   writer = csv.writer(open("resources.csv", "wb"), quoting=csv.QUOTE_ALL)
   writer.writerow(('#resource','startdate','available','unavailable','setup','load','free'))
-  
+
   # Determine start and end date of the reporting horizon
-  # The start date is computed as 5 weeks before the start of the earliest loadplan in 
+  # The start date is computed as 5 weeks before the start of the earliest loadplan in
   # the entire plan.
-  # The end date is computed as 5 weeks after the end of the latest loadplan in 
+  # The end date is computed as 5 weeks after the end of the latest loadplan in
   # the entire plan.
   # If no loadplan exists at all we use the current date +- 1 month.
   startdate = datetime.max
@@ -117,29 +117,29 @@ def exportResourceplans():
     for j in i.loadplans:
       if j.startdate < startdate: startdate = j.startdate
       if j.enddate > enddate: enddate = j.enddate
-  if not startdate: startdate = frepple.settings.current 
+  if not startdate: startdate = frepple.settings.current
   if not enddate: enddate = frepple.settings.current
   startdate -= timedelta(weeks=5)
   enddate += timedelta(weeks=5)
   startdate = startdate.replace(hour=0, minute=0, second=0)
   enddate = enddate.replace(hour=0, minute=0, second=0)
-    
+
   # Build a list of horizon buckets
   buckets = []
   while startdate < enddate:
     buckets.append(startdate)
     startdate += timedelta(days=1)
-  
+
   # Loop over all reporting buckets of all resources
   for i in frepple.resources():
     for j in i.plan(buckets):
       writer.writerow(
-        (i.name, j['start'], j['available'], j['unavailable'], 
-         j['setup'], j['load'], j['free'])           
+        (i.name, j['start'], j['available'], j['unavailable'],
+         j['setup'], j['load'], j['free'])
         )
   print 'Exported resourceplans in %.2f seconds' % (time() - starttime)
 
-  
+
 def exportDemand():
 
   def deliveries(d):

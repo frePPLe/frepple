@@ -452,9 +452,9 @@
 <?python
 
 # The heuristic of the default solver is no match for this very complex
-# combinatorial problem. 
-# We need to solve many times with different due dates and priorities to 
-# search for good solutions. The loop searching for better solutions is a 
+# combinatorial problem.
+# We need to solve many times with different due dates and priorities to
+# search for good solutions. The loop searching for better solutions is a
 # simulated annealing algorithm.
 
 from datetime import timedelta
@@ -479,7 +479,7 @@ oldresult = None
 temperaturemin = 500.0
 temperaturemax = 1000.0
 temperature = temperaturemax
-    
+
 # Auxilary functions to sort the results
 sortpriority = lambda x: x[1]
 sortenddate = lambda x: x[3]
@@ -487,14 +487,14 @@ sortenddate = lambda x: x[3]
 # A function to plan 1 iteration
 def replan():
   global result, verybest, verybestSolution, iterations, noimprovement
-  
+
   # Create a new plan
   solver.solve()
-  
+
   # Increment iterations
   iterations += 1
   noimprovement += 1
-  
+
   # Summarize the results
   result = []
   anybodylate = False
@@ -505,7 +505,7 @@ def replan():
         max = j.end
       result.append( (i, i.priority, i.due, j.end) )
   timespan = max - frepple.settings.current
-  timespan = timespan.days * 24 + timespan.seconds / 3600  
+  timespan = timespan.days * 24 + timespan.seconds / 3600
 
   # Detect if it is better than what any other solution we had before
   if verybestSolution == None or timespan <= verybest:
@@ -517,29 +517,29 @@ def replan():
       for l in result:
         print "   '%s' %s %s %s" % (l[0].name, l[1], l[2], l[3])
     verybest = timespan
-    verybestSolution = result  
+    verybestSolution = result
 
   # return the latest date
   return timespan
 
 
-# Create an initial result 
+# Create an initial result
 # Rescale the priorities with it: latest end date gives highest priority
 replan()
 result.sort(None, sortenddate)
 prio = 1
-for i in result: 
+for i in result:
   i[0].priority = prio
   prio += 1
 curspan = replan()
-  
+
 # Main loop.
 # Increase the max iterations on the next line to get even better solutions.
 while noimprovement < 5000 and iterations < 10000:
 
   # Choose a mutation to the plan
   mutation = random.choice([0,0,1,1,1])
-  
+
   # Implement the mutation
   if mutation == 0:
     # Swap the priority of two arbitrary demands
@@ -548,12 +548,12 @@ while noimprovement < 5000 and iterations < 10000:
     d2 = random.choice(result)
     while d1[0] == d2[0]:
       d1 = random.choice(result)
-      d2 = random.choice(result)    
+      d2 = random.choice(result)
     temp = d1[0].priority
     d1[0].priority = d2[0].priority
     d2[0].priority = temp
   elif mutation == 1:
-    # Change the due date of an arbitrary demand 
+    # Change the due date of an arbitrary demand
     mmm = frepple.settings.current + timedelta(0,curspan*3600)
     d1 = random.choice(result)
     delta = int(random.uniform(-temperature,temperature)*30.0/temperaturemax)
@@ -563,7 +563,7 @@ while noimprovement < 5000 and iterations < 10000:
 
   # Replan
   newspan = replan()
-  
+
   # Evaluate whether we accept the solution or not
   if newspan > curspan and oldresult != None and math.exp((curspan - newspan)/temperature*65) < random.random():
      # Reject the change
@@ -573,14 +573,14 @@ while noimprovement < 5000 and iterations < 10000:
      # Accept the change
      oldresult = result
      curspan = newspan
-     
+
   if noimprovement > 2000:
     temperature += 1
   else:
     temperature *= 0.9999
   if temperature < temperaturemin: temperature = temperaturemin
   if temperature > temperaturemax: temperature = temperaturemax
-    
+
 print "\nTotal %d iterations" % iterations
 
 

@@ -28,7 +28,7 @@ from django.utils.translation import ugettext as _
 
 from freppledb.common.models import Parameter
 from freppledb.execute.models import log
-        
+
 
 class Command(BaseCommand):
   help = "Upload planning results from frePPle into an OpenERP instance"
@@ -50,11 +50,11 @@ class Command(BaseCommand):
 
   requires_model_validation = False
 
-  
+
   def openerp_search(self, a, b=[]):
     return self.sock.execute(self.openerp_db, self.uid, self.openerp_password, a, 'search', b)
-      
-      
+
+
   def openerp_data(self, a, b, c):
     return self.sock.execute(self.openerp_db, self.uid, self.openerp_password, a, 'read', b, c)
 
@@ -67,7 +67,7 @@ class Command(BaseCommand):
     if 'user' in options: user = options['user']
     else: user = ''
     self.openerp_user = options['openerp_user']
-    if not self.openerp_user: 
+    if not self.openerp_user:
       try:
         self.openerp_user = Parameter.objects.get(name="openerp_user").value
       except:
@@ -89,19 +89,19 @@ class Command(BaseCommand):
       try:
         self.openerp_url = Parameter.objects.get(name="openerp_url").value
       except:
-        self.openerp_url = 'http://localhost:8069/'    
+        self.openerp_url = 'http://localhost:8069/'
     if 'database' in options: self.database = options['database'] or DEFAULT_DB_ALIAS
-    else: self.database = DEFAULT_DB_ALIAS      
+    else: self.database = DEFAULT_DB_ALIAS
     if not self.database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % self.database )
-    
+
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all SQL
     # statements executed and their timings. This consumes plenty of memory
     # and cpu time.
     tmp_debug = settings.DEBUG
     settings.DEBUG = False
-    
+
     transaction.enter_transaction_management(using=self.database)
     transaction.managed(True, using=self.database)
     try:
@@ -113,43 +113,43 @@ class Command(BaseCommand):
       # Log in to the openerp server
       sock_common = xmlrpclib.ServerProxy(self.openerp_url + 'xmlrpc/common')
       self.uid = sock_common.login(self.openerp_db, self.openerp_user, self.openerp_password)
-      
+
       # Connect to openerp server
       self.sock = xmlrpclib.ServerProxy(self.openerp_url + 'xmlrpc/object')
 
       # Create a database connection to the frePPLe database
       self.cursor = connections[self.database].cursor()
-      
+
       # Upload all data
       self.export_procurement_order()
       self.export_sales_order()
-      
+
       # Logging message
       log(category='EXPORT', theuser=user,
         message=_('Finished exporting to OpenERP')).save(using=self.database)
-      
+
     except Exception as e:
       log(category='EXPORT', theuser=user,
         message=u'%s: %s' % (_('Failed exporting to OpenERP'),e)).save(using=self.database)
-      raise CommandError(e)    
+      raise CommandError(e)
     finally:
       transaction.commit(using=self.database)
       settings.DEBUG = tmp_debug
       transaction.leave_transaction_management(using=self.database)
-    
-      
+
+
   # Update the committed date of sales orders
   #   - uploading for each frePPLe demand whose subcategory = 'OpenERP'
   #   - mapped fields frePPLe -> OpenERP sale.order
   #        - max(out_demand.plandate) -> requested_date
-  # Note: Ideally we'ld like to update the committed date instead. (But it is read-only)  
+  # Note: Ideally we'ld like to update the committed date instead. (But it is read-only)
   def export_sales_order(self):
     transaction.enter_transaction_management(using=self.database)
     transaction.managed(True, using=self.database)
-    try:    
+    try:
       starttime = time()
       if self.verbosity > 0:
-        print "Exporting requested date of sales orders..."      
+        print "Exporting requested date of sales orders..."
       self.cursor.execute('''select substring(name from '^.*? '), max(plandate)
           from demand
           left outer join out_demand
@@ -157,9 +157,9 @@ class Command(BaseCommand):
             and demand.subcategory = 'OpenERP'
             group by substring(name from '^.*? ')
          ''')
-      cnt = 0    
+      cnt = 0
       for i, j in self.cursor.fetchall():
-        result = self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'sale.order', 'write', 
+        result = self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'sale.order', 'write',
           [int(i)], {'requested_date': j and j.strftime('%Y-%m-%d') or 0,})
         cnt += 1
       if self.verbosity > 0:
@@ -169,14 +169,14 @@ class Command(BaseCommand):
     finally:
       transaction.rollback(using=self.database)
       transaction.leave_transaction_management(using=self.database)
-      
-                    
+
+
   # Upload procurement order data
   #   - uploading frePPLe operationplans
-  #   - meeting the criterion: 
+  #   - meeting the criterion:
   #        - operation.subcategory = 'OpenERP'
-  #        - not a delivery operationplan (since procurement order is directly 
-  #          created by the OpenERP sales order) 
+  #        - not a delivery operationplan (since procurement order is directly
+  #          created by the OpenERP sales order)
   #   - mapped fields frePPLe -> OpenERP production order
   #        - %id %name -> name
   #        - operationplan.quantity -> product_qty
@@ -190,50 +190,50 @@ class Command(BaseCommand):
   #     is created in OpenERP it is not revised any more by frePPLe.
   #     For instance: if the need for the purchase disappears later on, the request still
   #     remains in OpenERP. We could delete/refresh the quotations suggested by frePPLe,
-  #     but this could confuse the buyer who has already contacted the supplier or any 
-  #     other work on the quotation.   
+  #     but this could confuse the buyer who has already contacted the supplier or any
+  #     other work on the quotation.
   #     FrePPLe would show an excess alert, but it's up to the planner to act on it
   #     and cancel the purchase orders or quotations.
-  def export_procurement_order(self):  
+  def export_procurement_order(self):
     transaction.enter_transaction_management(using=self.database)
     transaction.managed(True, using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:
         print "Canceling draft procurement orders"
-      ids = self.openerp_search('procurement.order',  
+      ids = self.openerp_search('procurement.order',
         ['|',('state','=', 'draft'),('state','=','cancel'),('origin','=', 'frePPLe'),])
       self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'unlink', ids)
       if self.verbosity > 0:
-        print "Cancelled %d draft procurement orders in %.2f seconds" % (len(ids), (time() - starttime))     
+        print "Cancelled %d draft procurement orders in %.2f seconds" % (len(ids), (time() - starttime))
       starttime = time()
       if self.verbosity > 0:
-        print "Exporting procurement orders..."      
-      self.cursor.execute('''SELECT 
-           out_operationplan.id, operation, out_operationplan.quantity, 
-           enddate, 
-           substring(buffer.location_id from '^.*? '), 
-           substring(buffer.item_id from '^.*? ')   
-         FROM out_operationplan         
+        print "Exporting procurement orders..."
+      self.cursor.execute('''SELECT
+           out_operationplan.id, operation, out_operationplan.quantity,
+           enddate,
+           substring(buffer.location_id from '^.*? '),
+           substring(buffer.item_id from '^.*? ')
+         FROM out_operationplan
          inner join out_flowplan
            ON operationplan_id = out_operationplan.id
-           AND out_flowplan.quantity > 0           
+           AND out_flowplan.quantity > 0
          inner JOIN buffer
-           ON buffer.name = out_flowplan.thebuffer  
+           ON buffer.name = out_flowplan.thebuffer
            AND buffer.subcategory = 'OpenERP'
          ''')
-      cnt = 0    
+      cnt = 0
       ids_buy = []
       ids_produce = []
       for i, j, k, l, m, n in self.cursor.fetchall():
         proc_order = {
-          'name': "%s %s" % (i,j), 
-          'product_qty': str(k), 
-          'date_planned': l.strftime('%Y-%m-%d'), 
-          'product_id': n, 
+          'name': "%s %s" % (i,j),
+          'product_qty': str(k),
+          'date_planned': l.strftime('%Y-%m-%d'),
+          'product_id': n,
           'company_id': 1,
-          'product_uom': 1, 
-          'location_id': m, 
+          'product_uom': 1,
+          'location_id': m,
           'procure_method': 'make_to_order',
           'origin': 'frePPLe'
           }
@@ -247,15 +247,15 @@ class Command(BaseCommand):
         print "Uploaded %d procurement orders in %.2f seconds" % (cnt, (time() - starttime))
       starttime = time()
       if self.verbosity > 0:
-        print "Confirming %d procurement orders into purchasing quotations" % (len(ids_buy))     
+        print "Confirming %d procurement orders into purchasing quotations" % (len(ids_buy))
       self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_confirm', ids_buy)
-      self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_po_assign', ids_buy)      
+      self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_po_assign', ids_buy)
       if self.verbosity > 0:
         print "Confirmed %d procurement orders in %.2f seconds" % (len(ids_buy), (time() - starttime))
       starttime = time()
       if self.verbosity > 0:
-        print "Confirming %d procurement orders into production orders" % (len(ids_produce))     
-      self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_produce_assign_product', ids_produce)      
+        print "Confirming %d procurement orders into production orders" % (len(ids_produce))
+      self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_produce_assign_product', ids_produce)
       self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_confirm', ids_produce)
       if self.verbosity > 0:
         print "Confirmed %d procurement orders in %.2f seconds" % (len(ids_produce), (time() - starttime))

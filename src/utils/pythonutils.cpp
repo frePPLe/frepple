@@ -43,7 +43,7 @@ DECLARE_EXPORT string PythonInterpreter::encoding;
 DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
 
 
-DECLARE_EXPORT const char* PythonInterpreter::getPythonEncoding() 
+DECLARE_EXPORT const char* PythonInterpreter::getPythonEncoding()
 {
   return encoding.c_str();
 }

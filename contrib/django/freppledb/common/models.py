@@ -21,7 +21,7 @@ from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
 from freppledb.common.fields import JSONField
@@ -173,7 +173,7 @@ class Parameter(AuditModel):
     except:
       return default
 
-    
+
 class User(AbstractUser):
   csvOutputType = (
     ('table',_('Table')),
@@ -182,7 +182,7 @@ class User(AbstractUser):
   languageList = tuple( [ ('auto',_('Detect automatically')), ] + list(settings.LANGUAGES) )
   language = models.CharField(_('language'), max_length=10, choices=languageList,
     default='auto')
-  theme = models.CharField(_('theme'), max_length=20, default=settings.DEFAULT_THEME, 
+  theme = models.CharField(_('theme'), max_length=20, default=settings.DEFAULT_THEME,
     choices=settings.THEMES)
   pagesize = models.PositiveIntegerField(_('page size'), default=settings.DEFAULT_PAGESIZE)
   horizonbuckets = models.CharField(max_length=settings.NAMESIZE, blank=True, null=True)
@@ -190,7 +190,7 @@ class User(AbstractUser):
   horizonend = models.DateTimeField(blank=True, null=True)
   horizontype = models.BooleanField(blank=True, default=True)
   horizonlength = models.IntegerField(blank=True, default=6, null=True)
-  horizonunit = models.CharField(blank=True, max_length=5, default='month', null=True, 
+  horizonunit = models.CharField(blank=True, max_length=5, default='month', null=True,
     choices=(("day","day"),("week","week"),("month","month")))
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, null=True, blank=True,
     editable=False, db_index=True)
@@ -199,25 +199,25 @@ class User(AbstractUser):
     db_table = "common_user"
     verbose_name = _('user')
     verbose_name_plural = _('users')
-  
+
   def getPreference(self, prop, default = None):
     try:
       return self.preferences.get(property=prop).value
     except:
       return default
-  
+
   def setPreference(self, prop, val):
     pref = self.preferences.get_or_create(property=prop)[0]
     pref.value = val
     pref.save(update_fields=['value'])
-    
-      
+
+
 class UserPreference(models.Model):
   id = models.AutoField(_('identifier'), primary_key=True)
   user = models.ForeignKey(User, verbose_name=_('user'), blank=False, null=False, editable=False, related_name='preferences')
   property = models.CharField(max_length=settings.CATEGORYSIZE, blank=False, null=False)
   value = JSONField(max_length=1000, blank=False, null=False)
-  
+
   class Meta:
     db_table = "common_preference"
     unique_together = (('user','property'),)

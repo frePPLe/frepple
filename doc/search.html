@@ -17,11 +17,11 @@
 <style type="text/css">
 
 	/* Font */
-	body 
+	body
   {
 		font-family: Arial,Helvetica,Garuda,sans-serif;
 	}
-	.rtf 
+	.rtf
   {
 		font-size: 13px;
 		line-height: 1.5em;
@@ -45,33 +45,33 @@
 	header,
 	#site-title img { background-color: #a5a5ff; }
 		
-	#primary-menu-container { 
-		font-size: 17px; 
+	#primary-menu-container {
+		font-size: 17px;
   }
-  
+
 	#header-wrap, #primary-menu-container ul, #primary-menu-container li
   {
 		background-color: #a5a5ff;
 	}
-  
+
 	body, footer { background-color: #a5a5ff; }	
 </style>
 <script type="text/javascript" src="./index.js"></script>
-<script type="text/javascript">  
+<script type="text/javascript">
 
 function searchText()
-{    
+{
    // Put the focus on the search box
    document.getElementById("search-text").focus();
 
    // Partial match accepted?
    var partialMatch = false;
    var regex = new RegExp("[\\?&]partial=([^&#]*)");
-   
+
    // Build an array with all keywords we're looking for
    var keywords = new Array();
    regex = new RegExp("[\\?&]search=([^&#]*)");
-   var search = regex.exec(window.location.href);  
+   var search = regex.exec(window.location.href);
    if( search == null) return;
    search = unescape(search[1]);
    regex = new RegExp("([0-9A-Za-z]+)","g");
@@ -80,11 +80,11 @@ function searchText()
    {
     keywords.push(keyword[1]);
     keyword = regex.exec(search);
-   }   
-   
+   }
+
    // Put the keywords in the search box
    document.getElementById("search-text").value = keywords.join(" ");
-   
+
    // Look up in the index
    var documentlist = new Array();
    var countlist = new Object();
@@ -101,14 +101,14 @@ function searchText()
            documentlist.push(j);
          }
        }
-   
+
    // Sort the results
    documentlist.sort(function (a,b) {return countlist[b] - countlist[a]});
-   
+
    // Create the output
    var output = new Array();
    for (j in documentlist)
-     output.push("<a href='" + docs[documentlist[j]].name + "'>" 
+     output.push("<a href='" + docs[documentlist[j]].name + "'>"
        + docs[documentlist[j]].title + "</a>");
    document.getElementById("results").innerHTML = output.join('<br/>');
 }
@@ -143,7 +143,7 @@ function searchText()
 </ul></nav>
 </div>
 <div id="header-shadow"></div>
-</header>    
+</header>
 
 <section id="inner-page-show-space">
 <div id="page-header" class="container">

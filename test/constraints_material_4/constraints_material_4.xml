@@ -2,19 +2,19 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<name>Material constraint test model</name>
 	<description>
-		This model tests the solver code in situations where excess 
+		This model tests the solver code in situations where excess
 		material could be created.
 	</description>
 	<current>2009-01-01T00:00:00</current>
 	<items>
 	  <item name="item 1">
-	    <operation name="delivery 1" xsi:type="operation_fixed_time" duration="P1D" />	      
+	    <operation name="delivery 1" xsi:type="operation_fixed_time" duration="P1D" />	
 	  </item>
 	</items>
 	<buffers>
 	  <buffer name="buffer 1">
 	    <item name="item 1" />
-	    <producing name="make 1" xsi:type="operation_fixed_time" duration="P5D" 
+	    <producing name="make 1" xsi:type="operation_fixed_time" duration="P5D"
 	       size_minimum="1000" size_maximum="1000"/>
 	  </buffer>
 	  <buffer name="raw material buffer 1" minimum="4">

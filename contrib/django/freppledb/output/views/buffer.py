@@ -47,31 +47,31 @@ class OverviewReport(GridPivot):
     ('endoh', {'title': _('end inventory'),}),
     )
 
-  @classmethod 
+  @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       return {
         'title': capfirst(force_unicode(Buffer._meta.verbose_name) + " " + args[0]),
         'post_title': ': ' + capfirst(force_unicode(_('plan'))),
-        }      
+        }
     else:
       return {}
-    
+
   @staticmethod
   def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
-        
+
     # Assure the item hierarchy is up to date
     Buffer.rebuildHierarchy(database=basequery.db)
-    
+
     # Execute a query  to get the onhand value at the start of our horizon
     startohdict = {}
     query = '''
       select buffers.name, sum(oh.onhand)
-      from (%s) buffers 
+      from (%s) buffers
       inner join buffer
-      on buffer.lft between buffers.lft and buffers.rght 
+      on buffer.lft between buffers.lft and buffers.rght
       inner join (
       select out_flowplan.thebuffer as thebuffer, out_flowplan.onhand as onhand
       from out_flowplan,
@@ -162,10 +162,10 @@ class DetailReport(GridReport):
     else:
       return FlowPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
 
-  @classmethod 
+  @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     return {'active_tab': 'plandetail'}
-  
+
   rows = (
     GridFieldText('thebuffer', title=_('buffer'), key=True, formatter='buffer', editable=False),
     GridFieldText('operationplan__operation', title=_('operation'), formatter='operation', editable=False),

@@ -62,7 +62,7 @@
   <problems>
     <!-- Input being ignored. It is still being validated. -->
   </problems>
-  
+
 <?python
 frepple.solver_mrp(name="MRP", constraints=0, loglevel=0).solve()
 frepple.saveplan("output.1.xml")

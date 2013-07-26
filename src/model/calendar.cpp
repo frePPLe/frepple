@@ -72,9 +72,9 @@ int CalendarDouble::initialize()
       Object::createString<CalendarDouble>, true);
 
   // Initialize the Python class
-  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("setValue", 
+  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("setValue",
     setPythonValue, METH_KEYWORDS, "update the value in a date range");
-  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("events", 
+  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("events",
     getEvents, METH_VARARGS, "return an event iterator");
   return FreppleClass<CalendarDouble,Calendar>::initialize();
 }
@@ -127,7 +127,7 @@ void CalendarDouble::writeElement(XMLOutput *o, const Keyword& tag, mode m) cons
   }
 
   // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL) 
+  if (m != NOHEAD && m != NOHEADTAIL)
     o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write the default value
@@ -230,7 +230,7 @@ DECLARE_EXPORT void Calendar::removeBucket(Calendar::Bucket* bkt)
 DECLARE_EXPORT void Calendar::Bucket::setEnd(const Date d)
 {
   // Check
-  if (d < startdate) 
+  if (d < startdate)
     throw DataException("Calendar bucket end must be later than its start");
 
   // Update
@@ -238,10 +238,10 @@ DECLARE_EXPORT void Calendar::Bucket::setEnd(const Date d)
 }
 
 
-DECLARE_EXPORT void Calendar::Bucket::setStart(const Date d) 
+DECLARE_EXPORT void Calendar::Bucket::setStart(const Date d)
 {
   // Check
-  if (d > enddate) 
+  if (d > enddate)
     throw DataException("Calendar bucket start must be earlier than its end");
 
   // Update the field
@@ -285,7 +285,7 @@ DECLARE_EXPORT void Calendar::Bucket::updateSort()
     {
       // Move a position earlier in the list
       if (prevBucket->prevBucket)
-        prevBucket->prevBucket->nextBucket = this;      
+        prevBucket->prevBucket->nextBucket = this;
       if (nextBucket)
         nextBucket->prevBucket = prevBucket;
       prevBucket->nextBucket = nextBucket;
@@ -304,7 +304,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
 {
   Calendar::Bucket *curBucket = NULL;
   double curPriority = DBL_MAX;
-  long timeInWeek = INT_MIN;  
+  long timeInWeek = INT_MIN;
   for (Bucket *b = firstBucket; b; b = b->nextBucket)
   {
     if (b->getStart() > d)
@@ -324,8 +324,8 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
       }
       else
       {
-        // There are ineffective periods during the week 
-        if (timeInWeek == INT_MIN) 
+        // There are ineffective periods during the week
+        if (timeInWeek == INT_MIN)
         {
           // Lazy initialization
           timeInWeek = d.getSecondsWeek();
@@ -505,7 +505,7 @@ DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, const Attribute
 DECLARE_EXPORT void Calendar::Bucket::setId(int ident)
 {
   // Check non-null calendar
-  if (!cal) 
+  if (!cal)
     throw LogicException("Generating calendar bucket without calendar");
 
   if (ident == INT_MIN)
@@ -518,7 +518,7 @@ DECLARE_EXPORT void Calendar::Bucket::setId(int ident)
   }
   else
   {
-    // Check & enforce uniqueness of the argument identifier  
+    // Check & enforce uniqueness of the argument identifier
     bool unique;
     do
     {
@@ -549,7 +549,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
   Date d = curDate;
   curDate = Date::infiniteFuture;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
-    b->nextEvent(this, d); 
+    b->nextEvent(this, d);
 
   // Remember the bucket that won the evaluation
   lastBucket = curBucket;
@@ -568,7 +568,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
   curDate = Date::infinitePast;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->prevEvent(this, d);
-  
+
   // Remember the bucket that won the evaluation
   lastBucket = curBucket;
   lastPriority = curPriority;
@@ -612,7 +612,7 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
   bool allowEqualAtStart = false;
   if (refDate < startdate && (
     startdate < iter->curDate ||
-    (startdate == iter->curDate && priority <= iter->curPriority) 
+    (startdate == iter->curDate && priority <= iter->curPriority)
     ))
   {
     refDate = startdate;
@@ -653,7 +653,7 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
       else
         nd = enddate;
     }
-    
+
     if ((refDate < st || (allowEqualAtStart && refDate == st)) && priority <= iter->lastPriority)
     {
       if (st > iter->curDate || (st == iter->curDate && priority > iter->curPriority))
@@ -679,7 +679,7 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
       // This bucket is currently effective.
       // The effective end on this weekday qualifies as the next event.
       iter->curDate = nd;
-      iter->curBucket = iter->theCalendar->findBucket(nd); 
+      iter->curBucket = iter->theCalendar->findBucket(nd);
       iter->curPriority = iter->curBucket ? iter->curBucket->priority : INT_MAX;
       if (canReturn) return;
     }
@@ -697,7 +697,7 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
        enddate > iter->curDate ||
        (enddate == iter->curDate && priority < iter->curPriority)
       ))
-    {      
+    {
       iter->curDate = enddate;
 	    iter->curBucket = this;
       iter->curPriority = priority;
@@ -724,7 +724,7 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
   if (refDate > enddate && (
     enddate > iter->curDate ||
     (enddate == iter->curDate && priority < iter->curPriority)
-    )) 
+    ))
   {
     refDate = enddate;
     allowEqualAtEnd = true;
@@ -764,7 +764,7 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
       else
         nd = enddate;
     }
-    
+
     if ((refDate > nd || (allowEqualAtEnd && refDate == nd))
       && priority <= iter->lastPriority)
     {
@@ -920,7 +920,7 @@ DECLARE_EXPORT PyObject* Calendar::Bucket::getattro(const Attribute& attr)
     return PythonObject(getEnd());
   if (attr.isA(Tags::tag_value))
   {
-    if (cal->getType() == *CalendarDouble::metadata)   
+    if (cal->getType() == *CalendarDouble::metadata)
       return PythonObject(dynamic_cast< CalendarDouble::BucketDouble* >(this)->getValue());
     PyErr_SetString(PythonLogicException, "calendar type not recognized");
     return NULL;
@@ -1030,9 +1030,9 @@ PyObject* CalendarEventIterator::iternext()
     else
       x = PythonObject(dynamic_cast<CalendarDouble*>(cal)->getDefault());
   }
-  else 
+  else
     // Unknown calendar type we can't iterate
-    return NULL; 
+    return NULL;
   PyObject* result = Py_BuildValue("(N,N)",
       static_cast<PyObject*>(PythonObject(eventiter.getDate())),
       static_cast<PyObject*>(x)
@@ -1069,19 +1069,19 @@ DECLARE_EXPORT void Calendar::Bucket::updateOffsets()
       else
       {
         // New offset pair
-        offsets[++offsetcounter] = 86400*i + starttime; 
-        offsets[++offsetcounter] = 86400*i + endtime; 
+        offsets[++offsetcounter] = 86400*i + starttime;
+        offsets[++offsetcounter] = 86400*i + endtime;
       }
     }
     tmp = tmp>>1; // Shift to the next bit
   }
 
-  // Special case: there is no gap between the end of the last event in the 
+  // Special case: there is no gap between the end of the last event in the
   // week and the next event in the following week.
   if (offsetcounter >= 1 && offsets[0]==0 && offsets[offsetcounter]==86400*7)
   {
     offsets[0] = offsets[offsetcounter-1] - 86400*7;
-    offsets[offsetcounter] = 86400*7 + offsets[1]; 
+    offsets[offsetcounter] = 86400*7 + offsets[1];
   }
 }
 

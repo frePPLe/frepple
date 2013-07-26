@@ -15,7 +15,7 @@
 		- 7: Procurement with fixed interval
 		- 8: Procurement in fixed quantity
 		- 9: Procurement in fixed quantity with fixed interval
-		- 10: Constrained procurement test  
+		- 10: Constrained procurement test
 	</description>
 	<current>2009-01-01T00:00:00</current>
 	<buffers>

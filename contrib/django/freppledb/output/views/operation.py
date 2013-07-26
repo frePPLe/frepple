@@ -46,13 +46,13 @@ class OverviewReport(GridPivot):
     ('total_end', {'title': _('total ends'),}),
     )
 
-  @classmethod 
+  @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       return {
         'title': capfirst(force_unicode(Operation._meta.verbose_name) + " " + args[0]),
         'post_title': ': ' + capfirst(force_unicode(_('plan'))),
-        }      
+        }
     else:
       return {}
 
@@ -130,10 +130,10 @@ class DetailReport(GridReport):
     else:
       return OperationPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
 
-  @classmethod 
+  @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     return {'active_tab': 'plandetail'}
-      
+
   rows = (
     GridFieldInteger('id', title=_('operationplan'), key=True, editable=False),
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),

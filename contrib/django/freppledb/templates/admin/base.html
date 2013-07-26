@@ -20,7 +20,7 @@
 <div id="headerbar" class="ui-widget-header" >
 <div id="branding">{% block branding %}{% endblock %}</div>
 {% if user.is_authenticated and user.is_staff %}<div id="user-tools">
-<a href="/admin/logout/">{% trans 'Log out' %} <strong>{% firstof user.first_name user.username %}</strong></a> 
+<a href="/admin/logout/">{% trans 'Log out' %} <strong>{% firstof user.first_name user.username %}</strong></a>
 <br/><br/>{% selectDatabase %}</div>{% endif %}
 {% block nav-global %}{% endblock %}
 </div>

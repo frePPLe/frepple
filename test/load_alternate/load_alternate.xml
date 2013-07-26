@@ -5,10 +5,10 @@
   This model verifies the behavior of alternate loads.
   An assembly operation needs 2 resources each of which have alternates:
     * Resource A or resource B are loaded.
-      Resource A is the preferred one, and resource B is only used when 
-      constraints are found on A. 
-    * Resource C can be replaced by resource D till a certain date, or by 
-      resource E valid from a date. 
+      Resource A is the preferred one, and resource B is only used when
+      constraints are found on A.
+    * Resource C can be replaced by resource D till a certain date, or by
+      resource E valid from a date.
   </description>
   <current>2009-01-01T00:00:00</current>
 
@@ -29,7 +29,7 @@
             <quantity>1.5</quantity>
             <name>group1</name>
             <priority>1</priority>
-          </load>          
+          </load>
           <load>
             <resource name="Resource B"/>
             <quantity>2</quantity>

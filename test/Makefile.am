@@ -6,7 +6,7 @@ SUBDIRS = cluster scalability_1 scalability_2 scalability_3 calendar datetime fl
 
 EXTRA_DIST = runtest.py
 
-if LP 
+if LP
 check:
 	`pwd`/runtest.py ${TESTARGS}
 else

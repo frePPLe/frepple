@@ -866,7 +866,7 @@ DECLARE_EXPORT void OperationTimePer::writeElement
   Operation::writeElement(o, tag, NOHEADTAIL);
   o->writeElement(Tags::tag_duration, duration);
   o->writeElement(Tags::tag_duration_per, duration_per);
-  
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }

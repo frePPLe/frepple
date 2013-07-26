@@ -28,5 +28,5 @@ for app in settings.INSTALLED_APPS:
   try:
     mod = import_module('%s.admin' % app)
   except ImportError, e:
-    # Silently ignore 
+    # Silently ignore
     pass

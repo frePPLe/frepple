@@ -211,7 +211,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
   }
 
   // Write the complete object
-  if (m != NOHEAD && m != NOHEADTAIL) 
+  if (m != NOHEAD && m != NOHEADTAIL)
     o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write own fields

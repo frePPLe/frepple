@@ -20,8 +20,8 @@ def printmodel():
     for i in frepple.items():
       print >>out, i.name, "has owner", i.owner
       for j in i.members:
-        print >>out, i.name, "has member", j.name      
-    
+        print >>out, i.name, "has member", j.name
+
     print "start exporting the problems"
     print >>out, "\nProblems:"
     for i in frepple.problems():

@@ -2,29 +2,29 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <description>
     In this test a number of threads are simultaneously operating in frePPLe.
-    Each thread repeats some model changes with a specific delay between the 
+    Each thread repeats some model changes with a specific delay between the
     changes.
-    The test reports the min, max and average time taken by each action, 
+    The test reports the min, max and average time taken by each action,
     and the number of executions (successful or failed).
     The test has a predefined time duration.
-    
+
     The test is disabled by default!
-    
+
     The conclusions in summary:
     - When creating frePPLe objects only 1 cpu is used.
-      if multiple such threads are active only one can be actively working while 
+      if multiple such threads are active only one can be actively working while
       the others are queueing. This is due to the Python threading architecture.
-      Creating multiple creator threads only makes sense if the threads also 
+      Creating multiple creator threads only makes sense if the threads also
       have to wait from time to time for eg file or database retrieval.
     - FrePPLe can use multiple cpus when non-Python operations are run.
       Eg during a save operation the Python interpreter is available to do
-      other work. multiple save operations can thus run in parallel on 
+      other work. multiple save operations can thus run in parallel on
       multiple cpus.
       Eg the solve operation doesn't keep Python locked either and internally
       creates its own threads to run on multiple cpus.
     - Not all actions in frePPLe are safe to be run in parallel.
       Eg delete a demand while the solver is solving it: can crash frePPLe
-      Eg save the plan while the solver is recreating the plan: can crash frePPLe      
+      Eg save the plan while the solver is recreating the plan: can crash frePPLe
   </description>
   <current>2009-01-01T00:00:00</current>
   <operations>
@@ -34,7 +34,7 @@
     <item name="end item">
       <operation name="delivery end item" xsi:type="operation_fixed_time" duration="P1D"/>
     </item>
-  </items> 
+  </items>
   <buffers>
     <buffer name="end item">
       <producing name="make end item"/> <item name="end item"/>
@@ -51,21 +51,21 @@
   <flows>
     <flow xsi:type="flow_start">
       <operation name="delivery end item"/>
-      <buffer name="end item"/> 
+      <buffer name="end item"/>
       <quantity>-1</quantity>
     </flow>
-    <flow xsi:type="flow_end"> 
+    <flow xsi:type="flow_end">
       <operation name="make end item"/>
       <buffer name="end item"/>
       <quantity>1</quantity>
     </flow>
   </flows>
   <demands>
-    <demand name="order 1" quantity="10" due="2009-01-04T09:00:00" priority="1"> 
+    <demand name="order 1" quantity="10" due="2009-01-04T09:00:00" priority="1">
        <item name="end item"/>
     </demand>
   </demands>
-  
+
 <?python
 
 # Skip this test by default!!!
@@ -109,10 +109,10 @@ def funcAddDemand(id,cnt):
   A thread command to create a demand.
   '''
   global theItem
-  frepple.demand(name="order_%d_%d" % (id,cnt), 
-     quantity=10, 
+  frepple.demand(name="order_%d_%d" % (id,cnt),
+     quantity=10,
      item=frepple.item(name="end item"),
-     due=datetime.datetime(2009, int(random.uniform(0,12))+1, int(random.uniform(0,28))+1), 
+     due=datetime.datetime(2009, int(random.uniform(0,12))+1, int(random.uniform(0,28))+1),
      priority=1)
 
 def funcDeleteDemand(id,cnt):
@@ -122,8 +122,8 @@ def funcDeleteDemand(id,cnt):
   a preceding threadid.
   '''
   frepple.demand(name="order_%d_%d" % (1,cnt), action="R")
-  
-  
+
+
 def funcAddItem(id,cnt):
   '''
   A thread command to create an item.
@@ -165,7 +165,7 @@ class Worker (threading.Thread):
       except Exception, e:
         print "Exception in thread", self.name, ":", e
         self.fail += 1
-      else: 
+      else:
         # Collect statistics
         timer = time.clock() - starttime
         self.sumtime += timer

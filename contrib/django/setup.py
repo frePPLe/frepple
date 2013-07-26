@@ -42,7 +42,7 @@ for scheme in INSTALL_SCHEMES.values():
 packages = []
 data_files = []
 root_dir = os.path.dirname(__file__)
-if root_dir != '': os.chdir(root_dir) 
+if root_dir != '': os.chdir(root_dir)
 for dirpath, dirnames, filenames in os.walk('freppledb'):
   # Ignore dirnames that start with '.'
   for i, dirname in enumerate(dirnames):
@@ -57,7 +57,7 @@ for dirpath, dirnames, filenames in os.walk('freppledb'):
 if len(sys.argv) > 1 and sys.argv[1] == 'bdist_wininst':
     for file_info in data_files:
         file_info[0] = '\\PURELIB\\%s' % file_info[0]
-    
+
 setup(name = 'freppledb',
       version = __import__('freppledb').VERSION,
       author = "www.frepple.com",
@@ -70,7 +70,7 @@ setup(name = 'freppledb',
       classifiers = [
         'License :: OSI Approved :: GNU Affero General Public License (AGPL)',
         'Intended Audience :: Manufacturing',
-        'Framework :: Django',        
+        'Framework :: Django',
         ],
       description = "Free Production Planning Library",
       long_description = '''FrePPLe stands for "Free Production Planning Library".

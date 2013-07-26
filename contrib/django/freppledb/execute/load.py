@@ -83,10 +83,10 @@ def loadCalendarBuckets(cursor):
   cnt = 0
   starttime = time()
   cursor.execute('''
-     SELECT 
-       calendar_id, startdate, enddate, id, priority, value, 
-       sunday, monday, tuesday, wednesday, thursday, friday, saturday, 
-       starttime, endtime 
+     SELECT
+       calendar_id, startdate, enddate, id, priority, value,
+       sunday, monday, tuesday, wednesday, thursday, friday, saturday,
+       starttime, endtime
     FROM calendarbucket
     ORDER BY calendar_id, startdate desc
     ''')
@@ -294,7 +294,7 @@ def loadResources(cursor):
   Resource.rebuildHierarchy(database=cursor.db.alias)
   cursor.execute('''SELECT
     name, description, maximum, maximum_calendar_id, location_id, type, cost,
-    maxearly, setup, setupmatrix_id, category, subcategory, owner_id 
+    maxearly, setup, setupmatrix_id, category, subcategory, owner_id
     FROM %s order by lvl asc, name'''% connections[database].ops.quote_name('resource'))
   for i,j,t,k,l,m,n,o,p,q,r,s,u in cursor.fetchall():
     cnt += 1
@@ -446,21 +446,21 @@ def loadLoads(cursor):
   print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
 
 
-def loadOperationPlans(cursor):  
+def loadOperationPlans(cursor):
   print 'Importing operationplans...'
   cnt = 0
   starttime = time()
-  cursor.execute('''SELECT operation_id, id, quantity, startdate, enddate, locked 
+  cursor.execute('''SELECT operation_id, id, quantity, startdate, enddate, locked
      FROM operationplan
-     where owner_id is null 
+     where owner_id is null
      order by id asc''')
   for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
     frepple.operationplan(operation=frepple.operation(name=i),
       id=j, quantity=k, start=l, end=m).locked = n
-  cursor.execute('''SELECT operation_id, id, quantity, startdate, enddate, locked, owner_id 
+  cursor.execute('''SELECT operation_id, id, quantity, startdate, enddate, locked, owner_id
      FROM operationplan
-     where owner_id is not null 
+     where owner_id is not null
      order by id asc''')
   for i, j, k, l, m, n, o in cursor.fetchall():
     cnt += 1

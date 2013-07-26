@@ -32,7 +32,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 import csv, cStringIO, operator, math
 import codecs, json
-          
+
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
@@ -72,18 +72,18 @@ class GridField(object):
     for key, value in kwargs.iteritems():
       setattr(self, key, value)
     if 'key' in kwargs: self.editable = False
-    if not 'title' in kwargs and not self.title: 
-      self.title = self.name and _(self.name) or ''      
-    if not self.name: 
+    if not 'title' in kwargs and not self.title:
+      self.title = self.name and _(self.name) or ''
+    if not self.name:
       self.sortable = False
       self.search = False
-    if not 'field_name' in kwargs: 
+    if not 'field_name' in kwargs:
       self.field_name = self.name
 
   def __unicode__(self):
-    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%s,align:'%s',title:false" % 
-          (self.name or '', self.name or '', self.editable and "true" or "false", 
-           force_unicode(self.title).title().replace("'","\\'"), 
+    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%s,align:'%s',title:false" %
+          (self.name or '', self.name or '', self.editable and "true" or "false",
+           force_unicode(self.title).title().replace("'","\\'"),
            self.width, self.align
            ), ]
     if self.key: o.append( ",key:true" )
@@ -115,7 +115,7 @@ class GridFieldDateTime(GridField):
   extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d H:i:s'}"
   width = 140
 
-  
+
 class GridFieldTime(GridField):
   formatter = 'time'
   extra = "formatoptions:{srcformat:'H:i:s',newformat:'H:i:s'}"
@@ -159,7 +159,7 @@ class GridFieldText(GridField):
 
 
 class GridFieldChoice(GridField):
-  width = 100  
+  width = 100
   align = 'center'
   def __init__(self, name, **kwargs):
     super(GridFieldChoice,self).__init__(name, **kwargs)
@@ -174,18 +174,18 @@ class GridFieldChoice(GridField):
       e.append(i[1])
     e.append("'}")
     self.extra = string_concat(*e)
-    
-    
-class GridFieldCurrency(GridField):   
+
+
+class GridFieldCurrency(GridField):
   formatter = 'currency'
   extra = "formatoptions:{prefix:'%s', suffix:'%s'}"  % settings.CURRENCY
   width = 80
 
-    
+
 def getBOM(encoding):
-  try: 
+  try:
     # Get the official name of the encoding (since encodings can have many alias names)
-    name = codecs.lookup(encoding).name  
+    name = codecs.lookup(encoding).name
   except:
     return ''  # Unknown encoding, without BOM header
   if name == 'utf-32-be': return codecs.BOM_UTF32_BE
@@ -194,33 +194,33 @@ def getBOM(encoding):
   elif name == 'utf-16-le': return codecs.BOM_UTF16_LE
   elif name == 'utf-8': return codecs.BOM_UTF8
   else: return ''
-  
-  
+
+
 class UTF8Recoder:
   """
   Iterator that reads an encoded data buffer and re-encodes the input to UTF-8.
   """
   def __init__(self, data):
-    # Detect the encoding of the data by scanning the BOM. 
+    # Detect the encoding of the data by scanning the BOM.
     # Skip the BOM header if it is found.
-    if data.startswith(codecs.BOM_UTF32_BE): 
+    if data.startswith(codecs.BOM_UTF32_BE):
       self.reader = codecs.getreader('utf_32_be')(cStringIO.StringIO(data))
-      self.reader.read(1)      
-    elif data.startswith(codecs.BOM_UTF32_LE): 
+      self.reader.read(1)
+    elif data.startswith(codecs.BOM_UTF32_LE):
       self.reader = codecs.getreader('utf_32_le')(cStringIO.StringIO(data))
-      self.reader.read(1)      
-    elif data.startswith(codecs.BOM_UTF16_BE): 
+      self.reader.read(1)
+    elif data.startswith(codecs.BOM_UTF16_BE):
       self.reader = codecs.getreader('utf_16_be')(cStringIO.StringIO(data))
-      self.reader.read(1)      
-    elif data.startswith(codecs.BOM_UTF16_LE): 
+      self.reader.read(1)
+    elif data.startswith(codecs.BOM_UTF16_LE):
       self.reader = codecs.getreader('utf_16_le')(cStringIO.StringIO(data))
-      self.reader.read(1)      
-    elif data.startswith(codecs.BOM_UTF8): 
+      self.reader.read(1)
+    elif data.startswith(codecs.BOM_UTF8):
       self.reader = codecs.getreader('utf-8')(cStringIO.StringIO(data))
-      self.reader.read(1)      
-    else:       
+      self.reader.read(1)
+    else:
       # No BOM header found. We assume the data is encoded in the default CSV character set.
-      self.reader = codecs.getreader(settings.CSV_CHARSET)(cStringIO.StringIO(data)) 
+      self.reader = codecs.getreader(settings.CSV_CHARSET)(cStringIO.StringIO(data))
 
   def __iter__(self):
     return self
@@ -232,7 +232,7 @@ class UTF8Recoder:
 class UnicodeReader:
   """
   A CSV reader which will iterate over lines in the CSV data buffer.
-  The reader will scan the BOM header in the data to detect the right encoding. 
+  The reader will scan the BOM header in the data to detect the right encoding.
   """
   def __init__(self, data, **kwds):
     self.reader = csv.reader(UTF8Recoder(data), **kwds)
@@ -244,7 +244,7 @@ class UnicodeReader:
   def __iter__(self):
     return self
 
-    
+
 class GridReport(View):
   '''
   The base class for all jqgrid views.
@@ -253,7 +253,7 @@ class GridReport(View):
   '''
   # Points to template to be used
   template = 'admin/base_site_grid.html'
-  
+
   # The title of the report. Used for the window title
   title = ''
 
@@ -266,47 +266,47 @@ class GridReport(View):
 
   # Specifies which column is used for an initial filter
   default_sort = (0, 'asc')
-  
+
   # A model class from which we can inherit information.
   model = None
 
   # Which admin site is used for the model: 'data' or 'admin'
   adminsite = 'data'
-  
+
   # Allow editing in this report or not
   editable = True
-  
+
   # Allow filtering of the results or not
   filterable = True
-  
+
   # Include time bucket support in the report
   hasTimeBuckets = False
-  
+
   # Show a select box in front to allow selection of records
   multiselect = True
-  
+
   # Control the height of the grid. By default the full browser window is used.
   heigth = None
-   
+
   # Number of columns frozen in the report
   frozenColumns = 0
 
   # A list with required user permissions to view the report
   permissions = []
-  
+
   # Extra variables added to the report template
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     return {}
-  
+
   @method_decorator(staff_member_required)
   @method_decorator(csrf_protect)
-  def dispatch(self, request, *args, **kwargs):    
+  def dispatch(self, request, *args, **kwargs):
     # Verify the user is authorized to view the report
     for perm in self.permissions:
       if not request.user.has_perm(perm):
         return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
-    
+
     # Dispatch to the correct method
     method = request.method.lower()
     if method == 'get':
@@ -319,7 +319,7 @@ class GridReport(View):
 
   @classmethod
   def _generate_csv_data(reportclass, request, *args, **kwargs):
-    sf = cStringIO.StringIO()    
+    sf = cStringIO.StringIO()
     if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
       writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
     else:
@@ -330,7 +330,7 @@ class GridReport(View):
     # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
     encoding = settings.CSV_CHARSET
     sf.write(getBOM(encoding))
-      
+
     # Write a header row
     fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.title ]
     writer.writerow(fields)
@@ -341,7 +341,7 @@ class GridReport(View):
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database))
     else:
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
-        
+
     fields = [ i.field_name for i in reportclass.rows if i.field_name ]
     for row in hasattr(reportclass,'query') and reportclass.query(request,query) or query.values(*fields):
       # Clear the return string buffer
@@ -359,40 +359,40 @@ class GridReport(View):
   @classmethod
   def _apply_sort(reportclass, request, query):
     '''
-    Applies a sort to the query. 
+    Applies a sort to the query.
     '''
     sort = None
     if 'sidx' in request.GET: sort = request.GET['sidx']
     if not sort:
-      if reportclass.default_sort:      
+      if reportclass.default_sort:
         sort = reportclass.rows[reportclass.default_sort[0]].name
       else:
-        return query # No sorting 
+        return query # No sorting
     if ('sord' in request.GET and request.GET['sord'] == 'desc') or reportclass.default_sort[1] == 'desc':
-      sort = "-%s" % sort  
+      sort = "-%s" % sort
     return query.order_by(sort)
 
 
   @classmethod
   def get_sort(reportclass, request):
-    try: 
+    try:
       if 'sidx' in request.GET:
         sort = 1
         ok = False
         for r in reportclass.rows:
           if r.name == request.GET['sidx']:
-            ok = True 
+            ok = True
             break
           sort += 1
-        if not ok: sort = reportclass.default_sort[0] 
-      else: 
-        sort = reportclass.default_sort[0]      
-    except: 
+        if not ok: sort = reportclass.default_sort[0]
+      else:
+        sort = reportclass.default_sort[0]
+    except:
       sort = reportclass.default_sort[0]
     if ('sord' in request.GET and request.GET['sord'] == 'desc') or reportclass.default_sort[1] == 'desc':
       return "%s asc" % sort
     else:
-      return "%s desc" % sort  
+      return "%s desc" % sort
 
 
   @classmethod
@@ -487,7 +487,7 @@ class GridReport(View):
     fmt = request.GET.get('format', None)
     if not fmt:
       # Return HTML page
-      # Pick up the list of time buckets      
+      # Pick up the list of time buckets
       if reportclass.hasTimeBuckets:
         pref = request.user
         (bucket,start,end,bucketlist) = getBuckets(request, pref)
@@ -513,13 +513,13 @@ class GridReport(View):
         'hasdeleteperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_delete_permission())),
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())),
         'active_tab': 'plan',
-        }  
+        }
       for k, v in reportclass.extra_context(request, *args, **kwargs).iteritems():
-        context[k] = v  
+        context[k] = v
       return render(request, reportclass.template, context)
     elif fmt == 'json':
       # Return JSON data to fill the grid.
-      # Response is not returned as an iterator to assure that the database 
+      # Response is not returned as an iterator to assure that the database
       # connection is properly closed.
       return HttpResponse(
          content_type = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
@@ -527,7 +527,7 @@ class GridReport(View):
          )
     elif fmt == 'csvlist' or fmt == 'csvtable':
       # Return CSV data to export the data
-      # Response is not returned as an iterator to assure that the database 
+      # Response is not returned as an iterator to assure that the database
       # connection is properly closed.
       response = HttpResponse(
          content_type = 'text/csv; charset=%s' % settings.CSV_CHARSET,
@@ -537,8 +537,8 @@ class GridReport(View):
       return response
     else:
       raise Http404('Unknown format type')
-  
-  
+
+
   @classmethod
   def parseJSONupload(reportclass, request):
     # Check permissions
@@ -546,19 +546,19 @@ class GridReport(View):
       return HttpResponseForbidden(_('Permission denied'))
     if not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())):
       return HttpResponseForbidden(_('Permission denied'))
-  
-    # Loop over the data records 
+
+    # Loop over the data records
     transaction.enter_transaction_management(using=request.database)
     transaction.managed(True, using=request.database)
     resp = HttpResponse()
     ok = True
-    try:          
-      content_type_id = ContentType.objects.get_for_model(reportclass.model).pk      
-      for rec in json.JSONDecoder().decode(request.read()):  
+    try:
+      content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
+      for rec in json.JSONDecoder().decode(request.read()):
         if 'delete' in rec:
           # Deleting records
           for key in rec['delete']:
-            try: 
+            try:
               obj = reportclass.model.objects.using(request.database).get(pk=key)
               obj.delete()
               LogEntry(
@@ -567,10 +567,10 @@ class GridReport(View):
                   object_id       = force_unicode(key),
                   object_repr     = force_unicode(key)[:200],
                   action_flag     = DELETION
-              ).save(using=request.database)       
+              ).save(using=request.database)
             except reportclass.model.DoesNotExist:
               ok = False
-              resp.write(escape(_("Can't find %s" % key))) 
+              resp.write(escape(_("Can't find %s" % key)))
               resp.write('<br/>')
               pass
             except Exception as e:
@@ -581,7 +581,7 @@ class GridReport(View):
         elif 'copy' in rec:
           # Copying records
           for key in rec['copy']:
-            try: 
+            try:
               obj = reportclass.model.objects.using(request.database).get(pk=key)
               if isinstance(reportclass.model._meta.pk, CharField):
                 # The primary key is a string
@@ -599,11 +599,11 @@ class GridReport(View):
                   object_repr     = force_unicode(obj),
                   action_flag     = ADDITION,
                   change_message  = _('Copied from %s.') % key
-              ).save(using=request.database)   
-              transaction.commit(using=request.database)            
+              ).save(using=request.database)
+              transaction.commit(using=request.database)
             except reportclass.model.DoesNotExist:
               ok = False
-              resp.write(escape(_("Can't find %s" % key))) 
+              resp.write(escape(_("Can't find %s" % key)))
               resp.write('<br/>')
               transaction.rollback(using=request.database)
               pass
@@ -612,8 +612,8 @@ class GridReport(View):
               resp.write(escape(e))
               resp.write('<br/>')
               transaction.rollback(using=request.database)
-              pass        
-        else:   
+              pass
+        else:
           # Editing records
           try:
             obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
@@ -635,25 +635,25 @@ class GridReport(View):
               ).save(using=request.database)
           except reportclass.model.DoesNotExist:
             ok = False
-            resp.write(escape(_("Can't find %s" % obj.pk))) 
-            resp.write('<br/>')                          
-          except Exception as e: 
+            resp.write(escape(_("Can't find %s" % obj.pk)))
+            resp.write('<br/>')
+          except Exception as e:
             ok = False
             for error in form.non_field_errors():
-              resp.write(escape('%s: %s' % (obj.pk, error)))            
-              resp.write('<br/>')                          
+              resp.write(escape('%s: %s' % (obj.pk, error)))
+              resp.write('<br/>')
             for field in form:
               for error in field.errors:
-                resp.write(escape('%s %s: %s: %s' % (obj.pk, field.name, rec[field.name], error)))                        
-                resp.write('<br/>')                          
+                resp.write(escape('%s %s: %s: %s' % (obj.pk, field.name, rec[field.name], error)))
+                resp.write('<br/>')
     finally:
       transaction.commit(using=request.database)
       transaction.leave_transaction_management(using=request.database)
     if ok: resp.write("OK")
     resp.status_code = ok and 200 or 403
     return resp
-  
-  
+
+
   @staticmethod
   def dependent_models(m, found):
     ''' An auxilary method that constructs a set of all dependent models'''
@@ -661,19 +661,19 @@ class GridReport(View):
       if f[0].model != m and not f[0].model in found:
         found.update([f[0].model])
         GridReport.dependent_models(f[0].model, found)
-                        
-        
+
+
   @classmethod
   def erase(reportclass, request):
     # Build a list of dependencies
     deps = set([reportclass.model])
     GridReport.dependent_models(reportclass.model, deps)
-    
+
     # Check the delete permissions for all related objects
     for m in deps:
       if not request.user.has_perm('%s.%s' % (m._meta.app_label, m._meta.get_delete_permission())):
         return string_concat(m._meta.verbose_name, ':', _('Permission denied'))
-        
+
     transaction.enter_transaction_management(using=request.database)
     transaction.managed(True, using=request.database)
     try:
@@ -694,11 +694,11 @@ class GridReport(View):
     finally:
       transaction.commit(using=request.database)
       transaction.leave_transaction_management(using=request.database)
-    
+
     # Finished successfully
     return None
-  
-        
+
+
   @classmethod
   def parseCSVupload(reportclass, request):
       '''
@@ -708,7 +708,7 @@ class GridReport(View):
         - the first row contains a header, listing all field names
         - a first character # marks a comment line
         - empty rows are skipped
-      '''      
+      '''
       # Check permissions
       if not reportclass.model:
         messages.add_message(request, messages.ERROR, _('Invalid upload request'))
@@ -718,12 +718,12 @@ class GridReport(View):
         return HttpResponseRedirect(request.prefix + request.get_full_path())
 
       # Erase all records and related tables
-      if 'erase' in request.POST: 
+      if 'erase' in request.POST:
         returnvalue = reportclass.erase(request)
         if returnvalue:
           messages.add_message(request, messages.ERROR, returnvalue)
           return HttpResponseRedirect(request.prefix + request.get_full_path())
-                
+
       # Choose the right delimiter and language
       delimiter= get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',' and ';' or ','
       if translation.get_language() != request.LANGUAGE_CODE:
@@ -737,7 +737,7 @@ class GridReport(View):
       warnings = []
       errors = []
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
-            
+
       transaction.enter_transaction_management(using=request.database)
       transaction.managed(True, using=request.database)
       try:
@@ -745,7 +745,7 @@ class GridReport(View):
         has_pk_field = False
         for row in UnicodeReader(request.FILES['csv_file'].read(), delimiter=delimiter):
           rownumber += 1
-  
+
           ### Case 1: The first line is read as a header line
           if rownumber == 1:
             for col in row:
@@ -770,18 +770,18 @@ class GridReport(View):
               # The primary key is not an auto-generated id and it is not mapped in the input...
               errors.append(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name})
             # Abort when there are errors
-            if len(errors) > 0: break   
+            if len(errors) > 0: break
 
             # Create a form class that will be used to validate the data
             UploadForm = modelform_factory(reportclass.model,
               fields = tuple([i.name for i in headers if isinstance(i,Field)]),
               formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
               )
-  
+
           ### Case 2: Skip empty rows and comments rows
           elif len(row) == 0 or row[0].startswith('#'):
             continue
-  
+
           ### Case 3: Process a data row
           else:
             try:
@@ -793,7 +793,7 @@ class GridReport(View):
                 if colnum >= len(headers): break
                 if isinstance(headers[colnum],Field): d[headers[colnum].name] = col.strip()
                 colnum += 1
-  
+
               # Step 2: Fill the form with data, either updating an existing
               # instance or creating a new one.
               if has_pk_field:
@@ -802,14 +802,14 @@ class GridReport(View):
                   # Try to find an existing record with the same primary key
                   it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
                   form = UploadForm(d, instance=it)
-                except reportclass.model.DoesNotExist:                  
+                except reportclass.model.DoesNotExist:
                   form = UploadForm(d)
                   it = None
               else:
-                # No primary key required for this model                
+                # No primary key required for this model
                 form = UploadForm(d)
                 it = None
-  
+
               # Step 3: Validate the data and save to the database
               if form.has_changed():
                 try:
@@ -840,7 +840,7 @@ class GridReport(View):
                           'rownum': rownumber, 'data': d[field.name],
                           'field': field.name, 'message': error
                         })
-  
+
               # Step 4: Commit the database changes from time to time
               if rownumber % 500 == 0: transaction.commit(using=request.database)
             except Exception as e:
@@ -848,7 +848,7 @@ class GridReport(View):
       finally:
         transaction.commit(using=request.database)
         transaction.leave_transaction_management(using=request.database)
-  
+
       # Report all failed records
       if len(errors) > 0:
         messages.add_message(request, messages.INFO,
@@ -864,7 +864,7 @@ class GridReport(View):
         messages.add_message(request, messages.INFO,
           _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
           )
-      return HttpResponseRedirect(request.prefix + request.get_full_path())   
+      return HttpResponseRedirect(request.prefix + request.get_full_path())
 
 
   @classmethod
@@ -877,7 +877,7 @@ class GridReport(View):
           reportclass._rowsByName[i.field_name] = i
     return reportclass._rowsByName[name]
 
-  
+
   _filter_map_jqgrid_django = {
       # jqgrid op: (django_lookup, use_exclude)
       'ne': ('%(field)s__exact', True),
@@ -895,7 +895,7 @@ class GridReport(View):
       'ew': ('%(field)s__endswith', False),
       'cn': ('%(field)s__contains', False)
   }
-  
+
 
   _filter_map_django_jqgrid = {
       # django lookup: jqgrid op
@@ -909,8 +909,8 @@ class GridReport(View):
       'endswith': 'ew',
       'contains': 'cn',
   }
-      
-      
+
+
   @classmethod
   def getQueryString(reportclass, request):
     # Django-style filtering (which uses URL parameters) are converted to a jqgrid filter expression
@@ -920,20 +920,20 @@ class GridReport(View):
       for r in reportclass.rows:
         if r.field_name and i.startswith(r.field_name):
           operator = (i==r.field_name) and 'exact' or i[i.rfind('_')+1:]
-          try: 
+          try:
             filters.append('{"field":"%s","op":"%s","data":"%s"},' % (r.field_name, reportclass._filter_map_django_jqgrid[operator], j.replace('"','\\"')))
             filtered = True
           except: pass # Ignore invalid operators
     if not filtered: return None
     filters.append(']}')
     return ''.join(filters)
-        
-                
+
+
   @classmethod
   def _get_q_filter(reportclass, filterdata):
     q_filters = []
     for rule in filterdata['rules']:
-        try: 
+        try:
           op, field, data = rule['op'], rule['field'], rule['data']
           filter_fmt, exclude = reportclass._filter_map_jqgrid_django[op]
           filter_str = smart_str(filter_fmt % {'field': reportclass._getRowByName(field).field_name})
@@ -946,7 +946,7 @@ class GridReport(View):
           else:
               q_filters.append(models.Q(**filter_kwargs))
         except:
-          pass # Silently ignore invalid filters    
+          pass # Silently ignore invalid filters
     if u'groups' in filterdata:
       for group in filterdata['groups']:
         try:
@@ -961,21 +961,21 @@ class GridReport(View):
     else:
       return reduce(operator.iand, q_filters)
 
-      
+
   @classmethod
   def filter_items(reportclass, request, items, plus_django_style=True):
 
     filters = None
 
     # Jqgrid-style filtering
-    if request.GET.get('_search') == 'true':     
+    if request.GET.get('_search') == 'true':
       # Validate complex search JSON data
       _filters = request.GET.get('filters')
       try:
         filters = _filters and json.loads(_filters)
       except ValueError:
         filters = None
-  
+
       # Single field searching, which is currently not used
       if filters is None:
         field = request.GET.get('searchField')
@@ -985,14 +985,14 @@ class GridReport(View):
           filters = {
               'groupOp': 'AND',
               'rules': [{ 'op': op, 'field': field, 'data': data }]
-          }    
+          }
     if filters:
       z = reportclass._get_q_filter(filters)
-      if z: 
+      if z:
         return items.filter(z)
-      else: 
+      else:
         return items
-    
+
     # Django-style filtering, using URL parameters
     if plus_django_style:
       for i,j in request.GET.iteritems():
@@ -1002,7 +1002,7 @@ class GridReport(View):
             except: pass # silently ignore invalid filters
     return items
 
-  
+
 class GridPivot(GridReport):
 
   # Cross definitions.
@@ -1016,38 +1016,38 @@ class GridPivot(GridReport):
   crosses = ()
 
   template = 'admin/base_site_gridpivot.html'
-  
-  hasTimeBuckets = True  
+
+  hasTimeBuckets = True
 
   editable = False
 
   multiselect = False
-  
+
   @classmethod
   def _apply_sort(reportclass, request):
     '''
-    Returns the index of the column to sort on. 
+    Returns the index of the column to sort on.
     '''
     sort = 'sidx' in request.GET and request.GET['sidx'] or reportclass.rows[0].name
     idx = 1
     for i in reportclass.rows:
-      if i.name == sort: 
+      if i.name == sort:
         if 'sord' in request.GET and request.GET['sord'] == 'desc':
           return idx > 1 and "%d desc, 1 asc" % idx or "1 desc"
         else:
           return idx > 1 and "%d asc, 1 asc" % idx or "1 asc"
       else:
-        idx += 1 
+        idx += 1
     return "1 asc"
 
-  
+
   @classmethod
   def _generate_json_data(reportclass, request, *args, **kwargs):
 
-    # Pick up the list of time buckets      
+    # Pick up the list of time buckets
     (bucket,start,end,bucketlist) = getBuckets(request)
 
-    # Prepare the query   
+    # Prepare the query
     if args and args[0]:
       page = 1
       recs = 1
@@ -1073,7 +1073,7 @@ class GridPivot(GridReport):
     yield '"page":%d,\n' % page
     yield '"records":%d,\n' % recs
     yield '"rows":[\n'
-    
+
     # Generate output
     currentkey = None
     r = []
@@ -1085,11 +1085,11 @@ class GridPivot(GridReport):
           yield ''.join(r)
           r = [ '},\n{' ]
         else:
-          r = [ '{' ] 
+          r = [ '{' ]
         currentkey = i[reportclass.rows[0].name]
         first2 = True
-        for f in reportclass.rows:   
-          try:       
+        for f in reportclass.rows:
+          try:
             s = isinstance(i[f.name], basestring) and escape(i[f.name].encode(settings.DEFAULT_CHARSET,"ignore")) or i[f.name]
             if first2:
               r.append('"%s":"%s"' % (f.name,s))
@@ -1113,7 +1113,7 @@ class GridPivot(GridReport):
 
   @classmethod
   def _generate_csv_data(reportclass, request, *args, **kwargs):
-    sf = cStringIO.StringIO()    
+    sf = cStringIO.StringIO()
     if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
       writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
     else:
@@ -1121,8 +1121,8 @@ class GridPivot(GridReport):
     if translation.get_language() != request.LANGUAGE_CODE:
       translation.activate(request.LANGUAGE_CODE)
     listformat = (request.GET.get('format','csvlist') == 'csvlist')
-      
-    # Pick up the list of time buckets      
+
+    # Pick up the list of time buckets
     (bucket,start,end,bucketlist) = getBuckets(request)
 
     # Prepare the query
@@ -1197,7 +1197,7 @@ class GridPivot(GridReport):
         # Return string
         writer.writerow(fields)
         yield sf.getvalue()
-            
+
 
 def _localize(value, use_l10n=None):
   '''
@@ -1234,22 +1234,22 @@ def getBuckets(request, bucket=None, start=None, end=None):
     except:
       try: bucket = Bucket.objects.using(request.database).order_by('name')[0].name
       except: bucket = None
-  
-  if pref.horizontype and not start and not end:  
+
+  if pref.horizontype and not start and not end:
     # First type: Start and end dates relative to current
-    try: 
+    try:
       start = datetime.strptime(
-        Parameter.objects.using(request.database).get(name="currentdate").value, 
+        Parameter.objects.using(request.database).get(name="currentdate").value,
         "%Y-%m-%d %H:%M:%S"
         )
-    except: 
+    except:
       start = datetime.now()
       start = start.replace(microsecond=0)
     if pref.horizonunit == 'day':
       end = start + timedelta(days=pref.horizonlength)
       end = end.replace(hour=0, minute=0, second=0)
     elif pref.horizonunit == 'week':
-      end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength, days=7-start.weekday()) 
+      end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength, days=7-start.weekday())
     else:
       y = start.year
       m = start.month + pref.horizonlength + (start.day > 1 and 1 or 0)
@@ -1259,15 +1259,15 @@ def getBuckets(request, bucket=None, start=None, end=None):
       end = datetime(y,m,1)
   else:
     # Second type: Absolute start and end dates given
-    if not start:      
+    if not start:
       start = pref.horizonstart
       if not start:
-        try: 
+        try:
           start = datetime.strptime(
-            Parameter.objects.using(request.database).get(name="currentdate").value, 
+            Parameter.objects.using(request.database).get(name="currentdate").value,
             "%Y-%m-%d %H:%M:%S"
             )
-        except: 
+        except:
           start = datetime.now()
           start = start.replace(microsecond=0)
     if not end:
@@ -1276,9 +1276,9 @@ def getBuckets(request, bucket=None, start=None, end=None):
         if pref.horizonunit == 'day':
           end = start + timedelta(days=pref.horizonlength)
         elif pref.horizonunit == 'week':
-          end = start + timedelta(weeks=pref.horizonlength)  
+          end = start + timedelta(weeks=pref.horizonlength)
         else:
-          end = start + timedelta(weeks=pref.horizonlength)  
+          end = start + timedelta(weeks=pref.horizonlength)
 
   # Filter based on the start and end date
   if not bucket:

@@ -4,8 +4,8 @@
   <description>
     This test verifies that alternates are searched and selected correctly.
     Depending on the selection criterion this can be the alternate with the
-    lowest priority number, the alternate with the lowest cost or the 
-    alternate with the lowest penalty value. 
+    lowest priority number, the alternate with the lowest cost or the
+    alternate with the lowest penalty value.
   </description>
   <current>2009-01-01T00:00:00</current>
 
@@ -62,7 +62,7 @@
             </load>
           </loads>
           <duration>P5D</duration>
-          <duration_per>P1D</duration_per> 
+          <duration_per>P1D</duration_per>
         </operation>
       </steps>
     </operation>
@@ -73,13 +73,13 @@
           <resource name="Resource 1 B" />
         </load>
       </loads>
-      <duration>P1D</duration> 
-      <duration_per>P2D</duration_per> 
+      <duration>P1D</duration>
+      <duration_per>P2D</duration_per>
     </operation>
     <operation name="buy from supplier C" xsi:type="operation_fixed_time">
       <cost>30</cost>
       <duration>P7D</duration>
-    </operation>    
+    </operation>
     <operation name="buy from supplier D" xsi:type="operation_fixed_time">
       <description>fast suplier, but expensive...</description>
       <cost>50</cost>
@@ -145,7 +145,7 @@
     Case 4: minimum cost+penalty choice.
     TODO
   -->
-    
+
 <?python
 print "CREATING CONSTRAINED PLAN"
 sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2)

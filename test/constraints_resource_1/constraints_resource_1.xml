@@ -73,7 +73,7 @@
       <item name="end item" />
     </demand>
     <demand name="order 5">
-      <description>This demand can't be planned in time since there is no 
+      <description>This demand can't be planned in time since there is no
         capacity in the acceptable time window before the ask date.
       </description>
       <quantity>10</quantity>

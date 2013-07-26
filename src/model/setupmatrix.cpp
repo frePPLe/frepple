@@ -36,7 +36,7 @@ int SetupMatrix::initialize()
   metadata = new MetaCategory("setupmatrix", "setupmatrices", reader, writer);
 
   // Initialize the Python class
-  FreppleCategory<SetupMatrix>::getType().addMethod("addRule", 
+  FreppleCategory<SetupMatrix>::getType().addMethod("addRule",
     addPythonRule, METH_KEYWORDS, "add a new setup rule");
   return FreppleCategory<SetupMatrix>::initialize()
       + Rule::initialize()

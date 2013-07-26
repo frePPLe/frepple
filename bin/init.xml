@@ -28,7 +28,7 @@
   <logfile>frepple.log</logfile>
   -->
 <?python
-## Linear Programming solver module  
+## Linear Programming solver module
 #frepple.loadmodule("mod_lpsolver.so")
 ?>
 </plan>

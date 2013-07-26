@@ -25,7 +25,7 @@ frepple.loadmodule("mod_sample.so")
         </bucket>
       </buckets>
     </calendar>
-  </calendars>   
+  </calendars>
   <operations>
     <operation name="supply distribution centre" xsi:type="operation_alternate">
       <alternates>
@@ -129,7 +129,7 @@ frepple.loadmodule("mod_sample.so")
       <operation name="delivery product from distribution centre"/>
     </demand>
   </demands>
-  
+
 <?python
 
 # Create a plan

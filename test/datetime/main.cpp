@@ -38,15 +38,15 @@ int main (int argc, char *argv[])
   d3.parse("2009-06-01T00:00:00", "%Y-%m-%dT%H:%M:%S");
 
   TimePeriod t1 = 10;
-  
-  logger << "d1 \"2009-02-01T01:02:03\" => " << d1 << " " << d1.getSecondsDay() 
-     << " " << d1.getSecondsWeek() << " " << d1.getSecondsMonth() 
+
+  logger << "d1 \"2009-02-01T01:02:03\" => " << d1 << " " << d1.getSecondsDay()
+     << " " << d1.getSecondsWeek() << " " << d1.getSecondsMonth()
      << " " << d1.getSecondsYear() << endl;
-  logger << "d2 \"2009-02-03T01:02:03\" => " << d2 << " " << d2.getSecondsDay() 
-     << " " << d2.getSecondsWeek() << " " << d2.getSecondsMonth() 
+  logger << "d2 \"2009-02-03T01:02:03\" => " << d2 << " " << d2.getSecondsDay()
+     << " " << d2.getSecondsWeek() << " " << d2.getSecondsMonth()
      << " " << d2.getSecondsYear() << endl;
-  logger << "d3 \"2009-06-01T00:00:00\" => " << d3 << " " << d3.getSecondsDay() 
-     << " " << d3.getSecondsWeek() << " " << d3.getSecondsMonth() 
+  logger << "d3 \"2009-06-01T00:00:00\" => " << d3 << " " << d3.getSecondsDay()
+     << " " << d3.getSecondsWeek() << " " << d3.getSecondsMonth()
      << " " << d3.getSecondsYear() << endl;
   logger << "t1: " << t1 << endl;
 

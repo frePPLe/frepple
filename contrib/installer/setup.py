@@ -33,7 +33,7 @@ freppledirectory = freppledb.__path__[0]
 
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment
-            'django', 'email', 'cherrypy.wsgiserver', 'csv', 
+            'django', 'email', 'cherrypy.wsgiserver', 'csv',
             'htmlentitydefs','HTMLParser','markupbase',
             # Added for MySQL
             'MySQLdb', 'MySQLdb.constants', 'MySQLdb.converters',
@@ -46,8 +46,8 @@ packages = [# Required for django standalone deployment
             # Required for graphing
             'pygraphviz',
             # Added to package a more complete python library with frePPLe
-            'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',  
-            'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer', 
+            'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',
+            'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer',
             # Added for unicode and internationalization
             'encodings',
            ]
@@ -142,8 +142,8 @@ setup(
     url = "http://www.frepple.com",
     # Target to build a Windows service
     service = [{
-       "modules":["freppleservice"], 
-       "icon_resources": [(1, "frepple.ico")], 
+       "modules":["freppleservice"],
+       "icon_resources": [(1, "frepple.ico")],
        "cmdline_style": 'pywin32',
        }],
     # Target to build a console application

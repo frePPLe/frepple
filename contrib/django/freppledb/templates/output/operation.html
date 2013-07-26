@@ -1,7 +1,7 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{block.super}} 
+{% block extrahead %}{{block.super}}
 <script type="text/javascript" src="{{STATIC_URL}}js/flotr2.min.js"></script>
 {% endblock %}
 
@@ -38,43 +38,43 @@
 {% block crosses %}
 {% if args.0 %}$(function(){
   // Resize top graph
-  var h = $(window).height(); 
+  var h = $(window).height();
   $("#graph").width($(window).width()-55).height(h>800 || h<480 ? 400 : h-380);
-});{% endif %} 
+});{% endif %}
 
-function drawGraphs(jsondata) 
-{  
-  var cols = jQuery("#grid").jqGrid('getGridParam', 'colModel'); 
+function drawGraphs(jsondata)
+{
+  var cols = jQuery("#grid").jqGrid('getGridParam', 'colModel');
   var x_major = [];
   var x_minor = [];
   var first = true;
   var ticks = Math.ceil((cols.length-4)/20.0);
-    
+
   // Loop over all graph cells
-  $("#grid_frozen").find(".graph").each(function(index) 
+  $("#grid_frozen").find(".graph").each(function(index)
   {
     // Collect the graph data
     var d1=[], d2=[];
     var j = 0;
-    for (var i in cols) 
+    for (var i in cols)
     {
-       if ('startdate' in cols[i]) 
+       if ('startdate' in cols[i])
        {
-          if (first) 
+          if (first)
           {
             x_minor.push([j,cols[i]['name']]);
             if (j % ticks == 0) x_major.push([j,cols[i]['name']]);
-          } 
+          }
           var data = jsondata['rows'][index][cols[i]['name']];
           {% if args.0 %}d1.push([j-0.25,data[1]]);
           d2.push([j+0.25,data[3]]);
           {% else %}d1.push([j,data[1]]);
           {% endif %}j = j + 1;
-       }       
-    }                   
+       }
+    }
     first = false;
-     
-    // Draw the graph    
+
+    // Draw the graph
     Flotr.draw({% if args.0 %}$("#graph").get(0){% else %}this{% endif %},[
       { data:d1, label:"{{_("total starts")|capfirst}}" }{% if args.0 %},
       { data:d2, label:"{{_("total ends")|capfirst}}" }{% endif %}
@@ -117,24 +117,24 @@ function drawGraphs(jsondata)
         },
       yaxis: {
         showLabels: false
-        },       
+        },
       {% endif %}
       mouse : {
         track : true,
         relative : true,
         trackFormatter: function(obj) {
-          return x_minor[Math.round(obj.x)][1] + "<br/>" + obj.y; // TODO not good JSON.stringify(obj); 
-          }       
+          return x_minor[Math.round(obj.x)][1] + "<br/>" + obj.y; // TODO not good JSON.stringify(obj);
+          }
         },
       colors: ['#2B95EC','#F6BD0F'],
       parseFloat: false
-      });     
+      });
     });
 }
 
 function graph(cellvalue, options, rowdata) {
   return '<div class="graph" style="width:' + (5*numbuckets < 200 ? 5*numbuckets : 200) +'px; height:60px;"></div>';
-};  
+};
 
 function crosses (cellvalue, options, rowdata) {
   if (cellvalue[0] != 0.0)
@@ -152,7 +152,7 @@ function crosses (cellvalue, options, rowdata) {
   if (cellvalue[3] != 0.0)
     result += cellvalue[3] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail3'></span>";
   else
-    result += cellvalue[3];  
+    result += cellvalue[3];
   return result;
 };
 {% endblock %}

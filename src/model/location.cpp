@@ -60,7 +60,7 @@ DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const Keyword& tag, mod
   }
 
   // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL) 
+  if (m != NOHEAD && m != NOHEADTAIL)
     o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write the fields

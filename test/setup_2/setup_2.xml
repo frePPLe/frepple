@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <description>
-    Verifies the resource setup functionality.    
+    Verifies the resource setup functionality.
     This model contains a number of painting lines, which take some
-    time to change between colors.     
+    time to change between colors.
   </description>
   <current>2009-01-01T00:00:00</current>
   <setupmatrices>
@@ -51,7 +51,7 @@
     </item>
     <item name="blue product">
       <operation name="delivery blue product" xsi:type="operation_fixed_time" duration="P1D" />
-    </item>    
+    </item>
     <item name="black product">
       <operation name="delivery black product" xsi:type="operation_fixed_time" duration="P1D" />
     </item>
@@ -83,7 +83,7 @@
             <setup>red</setup>
           </load>
         </loads>
-      </producing>      
+      </producing>
       <item name="red product" />
       <flows>
         <flow xsi:type="flow_start">
@@ -114,7 +114,7 @@
             <resource name="Painting line C"/>
             <alternate>paint</alternate>
             <setup>green</setup>
-          </load>        
+          </load>
         </loads>
       </producing>
       <item name="green product" />
@@ -149,7 +149,7 @@
             <setup>white</setup>
           </load>
         </loads>
-      </producing>      
+      </producing>
       <item name="white product" />
       <flows>
         <flow xsi:type="flow_start">
@@ -182,7 +182,7 @@
             <setup>blue</setup>
           </load>
         </loads>
-      </producing>      
+      </producing>
       <item name="blue product" />
       <flows>
         <flow xsi:type="flow_start">
@@ -215,7 +215,7 @@
             <setup>black</setup>
           </load>
         </loads>
-      </producing>      
+      </producing>
       <item name="black product" />
       <flows>
         <flow xsi:type="flow_start">
@@ -290,7 +290,7 @@
           <quantity>1</quantity>
         </flow>
       </flows>
-    </buffer>  
+    </buffer>
   </buffers>
   <demands>
     <demand name="order 1 red">
@@ -335,8 +335,8 @@ def printStatus(d = None, mode = 1):
     for j in i.loadplans:
       print "    %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name)
   print ""
-  
-        
+
+
 solver = frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2, userexit_demand=printStatus)
 
 print "CREATING CONSTRAINED PLAN"
@@ -345,7 +345,7 @@ for d in frepple.demands():
 solver.solve()
 frepple.saveplan("output.1.xml")
 printStatus()
-       
+
 print "\n\nCREATING UNCONSTRAINED PLAN"
 for d in frepple.demands():
   d.due = frepple.settings.current + timedelta(10)

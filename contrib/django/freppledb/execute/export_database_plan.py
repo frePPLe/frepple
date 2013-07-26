@@ -50,7 +50,7 @@ def truncate(cursor):
   tables = [
     ['out_demandpegging'],
     ['out_problem', 'out_resourceplan', 'out_constraint'],
-    ['out_loadplan', 'out_flowplan', 'out_operationplan'], 
+    ['out_loadplan', 'out_flowplan', 'out_operationplan'],
     ['out_demand', 'out_forecast'],
     ]
   for group in tables:
@@ -170,11 +170,11 @@ def exportLoadplans(cursor):
 def exportResourceplans(cursor):
   print "Exporting resourceplans..."
   starttime = time()
-  
+
   # Determine start and end date of the reporting horizon
-  # The start date is computed as 5 weeks before the start of the earliest loadplan in 
+  # The start date is computed as 5 weeks before the start of the earliest loadplan in
   # the entire plan.
-  # The end date is computed as 5 weeks after the end of the latest loadplan in 
+  # The end date is computed as 5 weeks after the end of the latest loadplan in
   # the entire plan.
   # If no loadplans exist at all we use the current date +- 1 month.
   startdate = datetime.max
@@ -183,19 +183,19 @@ def exportResourceplans(cursor):
     for j in i.loadplans:
       if j.startdate < startdate: startdate = j.startdate
       if j.enddate > enddate: enddate = j.enddate
-  if startdate == datetime.max: startdate = frepple.settings.current 
+  if startdate == datetime.max: startdate = frepple.settings.current
   if enddate == datetime.min: enddate = frepple.settings.current
   startdate = startdate - timedelta(days=30)
   startdate = datetime(startdate.year, startdate.month, startdate.day)
   enddate = enddate + timedelta(days=30)
   enddate = datetime(enddate.year, enddate.month, enddate.day)
-      
+
   # Build a list of horizon buckets
   buckets = []
   while startdate < enddate:
     buckets.append(startdate)
     startdate += timedelta(days=1)
-  
+
   # Loop over all reporting buckets of all resources
   cnt = 0
   try:
@@ -210,16 +210,16 @@ def exportResourceplans(cursor):
              round(j['unavailable'],settings.DECIMAL_PLACES),
              round(j['setup'],settings.DECIMAL_PLACES),
              round(j['load'],settings.DECIMAL_PLACES),
-             round(j['free'],settings.DECIMAL_PLACES)           
+             round(j['free'],settings.DECIMAL_PLACES)
            ) for j in i.plan(buckets)
           ])
         cnt += 1
         if cnt % 100 == 0: transaction.commit(using=database)
-  except Exception as e:    
+  except Exception as e:
     print e
-  finally: 
+  finally:
     transaction.commit(using=database)
-  
+
   # Finalize
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_resourceplan")
@@ -378,7 +378,7 @@ def exportfrepple():
     cursor.execute('PRAGMA cache_size = 8000')
   elif settings.DATABASES[database]['ENGINE'] == 'oracle':
     cursor.execute("ALTER SESSION SET COMMIT_WRITE='BATCH,NOWAIT'")
-  
+
   # Erase previous output
   truncate(cursor)
 

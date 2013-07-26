@@ -1,7 +1,7 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{block.super}} 
+{% block extrahead %}{{block.super}}
 <script type="text/javascript" src="{{STATIC_URL}}js/flotr2.min.js"></script>
 {% endblock %}
 
@@ -36,46 +36,46 @@
 {% block crosses %}
 {% if args.0 %}$(function(){
   // Resize top graph
-  var h = $(window).height(); 
+  var h = $(window).height();
   $("#graph").width($(window).width()-55).height(h>800 || h<480 ? 400 : h-380);
-});{% endif %} 
+});{% endif %}
 
-function drawGraphs(jsondata) 
-{  
-  var cols = jQuery("#grid").jqGrid('getGridParam', 'colModel'); 
+function drawGraphs(jsondata)
+{
+  var cols = jQuery("#grid").jqGrid('getGridParam', 'colModel');
   var x_major = [];
   var x_minor = [];
   var first = true;
   var ticks = Math.ceil((cols.length-5)/20.0);
-    
+
   // Loop over all graph cells
-  $("#grid_frozen").find(".graph").each(function(index) 
+  $("#grid_frozen").find(".graph").each(function(index)
   {
     // Collect the graph data
     var d1=[], d2=[], d3=[];
     var j = 0;
-    for (var i in cols) 
+    for (var i in cols)
     {
-       if ('startdate' in cols[i]) 
+       if ('startdate' in cols[i])
        {
-          if (first) 
+          if (first)
           {
             x_minor.push([j,cols[i]['name']]);
             if (j % ticks == 0) x_major.push([j,cols[i]['name']]);
-          } 
+          }
           var data = jsondata['rows'][index][cols[i]['name']];
           d1.push([j,data[0]]);{% if args.0 %}
           d2.push([j-0.25,data[1]]);
           d3.push([j+0.25,data[2]]);
           {% endif %}j = j + 1;
-       }       
-    }                   
+       }
+    }
     first = false;
-     
-    // Draw the graph    
+
+    // Draw the graph
     Flotr.draw({% if args.0 %}$("#graph").get(0){% else %}this{% endif %},[
       {% if args.0 %}// Bars
-      { data: d2, 
+      { data: d2,
         label: "{{_("produced")|capfirst}}",
         bars : {
           show : true,
@@ -83,31 +83,31 @@ function drawGraphs(jsondata)
           barWidth : 0.45,
           lineWidth : 1,
           shadowSize : 0,
-          }         
+          }
       },
-      { data: d3, 
-        label: "{{_("consumed")|capfirst}}", 
+      { data: d3,
+        label: "{{_("consumed")|capfirst}}",
         bars : {
           show : true,
           fillOpacity: 1,
           barWidth : 0.45,
           lineWidth : 1,
           shadowSize : 0
-          }    
+          }
       },{% endif %}
       // Lines
-      { data: d1, 
-        label: "{{_("start inventory")|capfirst}}", 
-        lines : {          
+      { data: d1,
+        label: "{{_("start inventory")|capfirst}}",
+        lines : {
           fillOpacity: 1,
           shadowSize : 0,{% if args.0 %}
           fill: false,{% else %}
           fill: true,
           fillColor: '#CCDDFF',{% endif %}
-          show : true          
-          }         
+          show : true
+          }
       }], {
-      HtmlText: false,      
+      HtmlText: false,
       {% if args.0 %}
       legend : {
         position: 'ne',
@@ -138,24 +138,24 @@ function drawGraphs(jsondata)
         },
       yaxis: {
         showLabels: false
-        },       
+        },
       {% endif %}
       mouse : {
         track : true,
         relative : true,
         trackFormatter: function(obj) {
-          return x_minor[Math.round(obj.x)][1] + "<br/>" + obj.y; // TODO not good JSON.stringify(obj); 
-          }       
+          return x_minor[Math.round(obj.x)][1] + "<br/>" + obj.y; // TODO not good JSON.stringify(obj);
+          }
         } ,
       colors: ['#2B95EC','#F6BD0F','#8BBA00'],
-      parseFloat: false    
-      });     
+      parseFloat: false
+      });
     });
 }
 
 function graph(cellvalue, options, rowdata) {
   return '<div class="graph" style="width:100px; height:60px;"></div>';
-};  
+};
 
 function crosses (cellvalue, options, rowdata) {
   var result = cellvalue[0] + '<br/>';
@@ -170,7 +170,7 @@ function crosses (cellvalue, options, rowdata) {
   if (cellvalue[2] != 0.0 || cellvalue[1] != 0.0)
     result += cellvalue[3] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail2'></span>";
   else
-    result += cellvalue[3];  
+    result += cellvalue[3];
   return result;
 };
 {% endblock %}

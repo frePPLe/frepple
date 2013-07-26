@@ -36,7 +36,7 @@ class ReportByDemand(GridReport):
   '''
   template = 'output/pegging.html'
   title = _("Demand plan")
-  filterable = False  
+  filterable = False
   frozenColumns = 0
   editable = False
   default_sort = None
@@ -56,7 +56,7 @@ class ReportByDemand(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     return Demand.objects.filter(name__exact=args[0]).values('name')
-  
+
   @classmethod
   def query(reportclass, request, basequery):
     # Execute the query
@@ -168,11 +168,11 @@ def GraphData(request, entity):
     if max == None or i['enddate'] > max: max = i['enddate']
     if min == None or i['due'] and i['due'] < min: min = i['due']
     if max == None or i['due'] and i['due'] > max: max = i['due']
-  
+
   # Assure min and max are always set
   if not min: min = current
-  if not max: max = current + timedelta(7) 
-  
+  if not max: max = current + timedelta(7)
+
   # Add a line to mark the current date
   if min <= current and max >= current:
     todayline = current
@@ -228,14 +228,14 @@ class ReportByBuffer(GridReport):
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
-    # The base query uses different fields than the main query. 
+    # The base query uses different fields than the main query.
     query = FlowPlan.objects.all()
     for i,j in request.GET.iteritems():
       if i.startswith('thebuffer') or i.startswith('flowdate'):
         try: query = query.filter(**{i:j})
         except: pass # silently ignore invalid filters
     return query
-  
+
   @classmethod
   def query(reportclass, request, basequery):
     # Execute the query
@@ -244,7 +244,7 @@ class ReportByBuffer(GridReport):
       connections[request.database].ops.quote_name,
       connections[request.database])
     if not basesql: basesql = '1 = 1'
-    
+
     query = '''
         select operation, date, demand, quantity, ditem
         from
@@ -309,7 +309,7 @@ class ReportByResource(GridReport):
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
-    # The base query uses different fields than the main query. 
+    # The base query uses different fields than the main query.
     query = LoadPlan.objects.all()
     for i,j in request.GET.iteritems():
       if i.startswith('theresource') or i.startswith('startdate') or i.startswith('enddate'):
@@ -373,7 +373,7 @@ class ReportByOperation(GridReport):
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
-    # The base query uses different fields than the main query. 
+    # The base query uses different fields than the main query.
     query = OperationPlan.objects.all()
     for i,j in request.GET.iteritems():
       if i.startswith('operation') or i.startswith('startdate') or i.startswith('enddate'):

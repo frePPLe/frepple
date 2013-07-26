@@ -9,13 +9,13 @@
       - Performance comparison of data loading in different ways.
   </description>
   <current>2009-01-01T00:00:00</current>
-  
-<?python 
+
+<?python
 import sys, os
 myvariable = 4
 print '1. defining my variable:', myvariable
 ?>
-    
+
 <?python
 print '2. retrieving a variable:', myvariable
 print '3. calling a function:',
@@ -26,7 +26,7 @@ try:
   frepple.readXMLfile("does_not_exist.xml")
 except Exception, e:
   print "    Caught exception: ", e
-  
+
 # In the next steps we are comparing the speed of 3 types of APIs each
 # achieving exactly the same final result:
 #  1) FrePPle C++ to read a XML-datafile.
@@ -42,7 +42,7 @@ except Exception, e:
 # to create. The test is running on a 3.2GHz Intel Pentium (R) dual core
 # Linux machine.
 # Conclusion: The overhead of parsing of the verbose XML data format
-# is considerable, even when coded in C++. Interpreted "slow" Python code 
+# is considerable, even when coded in C++. Interpreted "slow" Python code
 # can easily achieve better performance.
 # Obviously a different test configuration will give different results.
 # E.g. when running many small XML messages rather than a huge data file...
@@ -79,10 +79,10 @@ frepple.saveXMLfile("output.1.xml")
 #
 def UI():
   import Tkinter
-  
+
   def post_xml():
     t.insert(Tkinter.END,"<plan>\n</plan>")
-  
+
   root = Tkinter.Tk("Frepple","Frepple")
   Tkinter.Label(text="Edit your xml message", anchor=Tkinter.W).pack()
   s = Tkinter.Scrollbar(root)
@@ -98,7 +98,7 @@ def UI():
   t.config(yscrollcommand=s.set)
   #Tkinter.Entry(state=Tkinter.DISABLED).pack()
   Tkinter.mainloop()
-  
+
 # Uncomment this line to show...
 #UI()
 ?>
@@ -114,11 +114,11 @@ def UI():
 <?python
 #
 # A simple web server.
-# 
+#
 def webserver():
   import SimpleHTTPServer, SocketServer
   PORT = 8000
-  
+
   class FreppleServer(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
       # Body
@@ -127,15 +127,15 @@ def webserver():
         self.send_response(200)
         self.send_header("Content-type", "application/xml")
         #self.send_header("Cache-Control", "no-cache")
-        self.end_headers()        
+        self.end_headers()
         print >>self.wfile, '<?xml version="1.0" encoding="UTF-8" ?%s' % '>'
         print >>self.wfile, r'<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><locations>'
         for i in frepple.locations():
           print >>self.wfile, '<location name="%s" category="%s"/>' % (i.name, i.category)
-        print >>self.wfile, r'</locations></plan>'        
+        print >>self.wfile, r'</locations></plan>'
       except:
         self.send_error(500, "Exception generating demand list page")
-  
+
   print "started HTTP server on port ", PORT
   print "Point your browser to http://localhost:" + str(PORT) + " to see the pages."
   print "Use ctrl-c to exit..."
@@ -147,22 +147,22 @@ def webserver():
 
 <?python
 #
-# An interactive debugging prompt. 
+# An interactive debugging prompt.
 #
 def debug():
   import code
   code.interact("Interactive debugging prompt (use CTRL-Z to exit)")
   print "end debugging"
-  
+
 # Uncomment this line to show...
 #debug()
 ?>
 
-<?python 
+<?python
 #
 # The user interface, HTTP server and the debugger are now running
 # together in different threads.
-# 
+#
 from threading import Thread
 class task(Thread):
   def __init__(self, f):

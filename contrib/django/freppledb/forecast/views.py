@@ -1,10 +1,10 @@
 #
 # Copyright (C) 2012 by Johan De Taeye, frePPLe bvba
 #
-# All information contained herein is, and remains the property of frePPLe.  
+# All information contained herein is, and remains the property of frePPLe.
 # You are allowed to use and modify the source code, as long as the software is used
 # within your company.
-# You are not allowed to distribute the software, either in the form of source code 
+# You are not allowed to distribute the software, either in the form of source code
 # or in the form of compiled binaries.
 #
 
@@ -54,7 +54,7 @@ class ForecastList(GridReport):
     GridFieldBool('discrete', title=_('discrete')),
     GridFieldLastModified('lastmodified'),
     )
-    
+
 
 class OverviewReport(GridPivot):
   '''
@@ -78,19 +78,19 @@ class OverviewReport(GridPivot):
     ('planned',{'title': _('planned net forecast')}),
     )
 
-    
+
   @classmethod
-  def parseJSONupload(reportclass, request): 
+  def parseJSONupload(reportclass, request):
     # Check permissions
     if not request.user.has_perm('input.change_forecastdemand'):
       return HttpResponseForbidden(_('Permission denied'))
 
-    # Loop over the data records 
+    # Loop over the data records
     transaction.enter_transaction_management(using=request.database)
     transaction.managed(True, using=request.database)
     resp = HttpResponse()
     ok = True
-    try:          
+    try:
       for rec in json.JSONDecoder().decode(request.read()):
         try:
           # Find the forecast
@@ -98,28 +98,28 @@ class OverviewReport(GridPivot):
           end = datetime.strptime(rec['enddate'],'%Y-%m-%d')
           fcst = Forecast.objects.using(request.database).get(name = rec['id'])
           # Update the forecast
-          fcst.setTotal(start,end,rec['value'])      
+          fcst.setTotal(start,end,rec['value'])
         except Exception as e:
           ok = False
           resp.write(e)
-          resp.write('<br/>')                          
+          resp.write('<br/>')
     finally:
       transaction.commit(using=request.database)
       transaction.leave_transaction_management(using=request.database)
     if ok: resp.write("OK")
     resp.status_code = ok and 200 or 403
-    return resp            
-            
-  @classmethod 
+    return resp
+
+  @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       return {
         'title': capfirst(force_unicode(Forecast._meta.verbose_name) + " " + args[0]),
         'post_title': ': ' + capfirst(force_unicode(_('plan'))),
-        }      
+        }
     else:
       return {}
-                
+
   @staticmethod
   def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
@@ -203,8 +203,8 @@ class OverviewReport(GridPivot):
         'net': row[8],
         'planned': row[9],
         }
-        
-        
+
+
 @staff_member_required
 def GraphData(request, entity):
   basequery = Forecast.objects.filter(pk__exact=entity)
@@ -218,11 +218,11 @@ def GraphData(request, entity):
     net.append(x['net'])
     orders.append(x['orders'])
     planned.append(x['planned'])
-  context = { 
-    'buckets': bucketlist, 
-    'total': total, 
-    'net': net, 
-    'orders': orders, 
+  context = {
+    'buckets': bucketlist,
+    'total': total,
+    'net': net,
+    'orders': orders,
     'planned': planned,
     'axis_nth': len(bucketlist) / 20 + 1,
     }
@@ -230,4 +230,4 @@ def GraphData(request, entity):
     loader.render_to_string("output/forecast.xml", context, context_instance=RequestContext(request)),
     mimetype='application/xml; charset=%s' % settings.DEFAULT_CHARSET
     )
-    
+

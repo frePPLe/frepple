@@ -1,11 +1,11 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{block.super}}{% if graphdata %} 
+{% block extrahead %}{{block.super}}{% if graphdata %}
 <style type="text/css">
 #graph {
-  overflow:auto; 
-  border: 1px black solid; 
+  overflow:auto;
+  border: 1px black solid;
   margin: 10px;
   padding: 10px;
 }
@@ -13,26 +13,26 @@
 <script type="text/javascript">
 
 function clickedShaped(event) {
-    
+
   var tgt = event.currentTarget.firstChild.textContent;
 
   // Find which contextmenu to use
   if (/^B/.test(tgt)) contextMenu = $('#buffercontext');
   if (/^R/.test(tgt)) contextMenu = $('#resourcecontext');
   if (/^O/.test(tgt) || /^cluster_O/.test(tgt)) contextMenu = $('#operationcontext');
-  
+
   // Find the id of the menu to display
-  if (/^cluster_O/.test(tgt))   
+  if (/^cluster_O/.test(tgt))
     name_escaped = encodeURIComponent(tgt.substring(9).replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-      .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F")); 
+      .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
   else
     name_escaped = encodeURIComponent(tgt.substring(1).replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-      .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F")); 
-  
+      .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
+
   // Build the URLs for the menu
   var params = {value: name_escaped};
   contextMenu.find('a').each( function() {
-    $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) { 
+    $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) {
     var key = match.substring(1,match.length-1);
     return key in params ? params[key] : match;
     }
@@ -48,8 +48,8 @@ function clickedShaped(event) {
   event.preventDefault();
   event.stopImmediatePropagation();
 }
-  
-  
+
+
 $(function(){
   if ($("#graph").height() > $(window).height() - 350)
     $("#graph").height($(window).height() - 350);

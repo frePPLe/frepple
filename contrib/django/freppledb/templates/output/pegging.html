@@ -15,7 +15,7 @@
 
 function reslistfmt(cellvalue, options, row)
 {
-  if (cellvalue === undefined || cellvalue ==='') return ''; 
+  if (cellvalue === undefined || cellvalue ==='') return '';
   return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
 }
 
@@ -29,8 +29,8 @@ function reslistfmt(cellvalue, options, row)
 {% block before_table %}
 <div id="chart1div" style="z-index: 1000;">
 	  <p>&nbsp;</p>
-	  <p>{% blocktrans %}frePPLe needs Adobe Flash Player to display graphs. If you're unable to see 
-	  the chart here, it means that your browser does not seem to have the Flash Player 
+	  <p>{% blocktrans %}frePPLe needs Adobe Flash Player to display graphs. If you're unable to see
+	  the chart here, it means that your browser does not seem to have the Flash Player
 	  installed.<br/>
 	  You can downloaded it <a href="http://www.adobe.com/products/flashplayer/" target="_blank"><u>here</u></a> for free.{% endblocktrans %}</p>
 	</div>
@@ -42,7 +42,7 @@ function reslistfmt(cellvalue, options, row)
 	</script>
 {% endblock %}
 
-{% comment %} 
+{% comment %}
 TODO operation can be hidden and have no link
 TODO resouce field is a list of resources
 {% endcomment %}

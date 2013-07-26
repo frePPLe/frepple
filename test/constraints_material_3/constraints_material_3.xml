@@ -15,7 +15,7 @@
 	  <item name="item 1">
 	    <operation name="delivery 1" xsi:type="operation_fixed_time">
 	      <size_maximum>10</size_maximum>
-	      <duration>P1D</duration>	      
+	      <duration>P1D</duration>	
 	    </operation>
 	  </item>
 	  <item name="item 2">

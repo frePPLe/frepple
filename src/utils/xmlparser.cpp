@@ -100,8 +100,8 @@ DECLARE_EXPORT void  XMLInput::processingInstruction
 }
 
 
-DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri, 
-  const XMLCh* const n, const XMLCh* const qname, 
+DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
+  const XMLCh* const n, const XMLCh* const qname,
   const xercesc::Attributes& atts)
 {
   // Validate the state
@@ -257,7 +257,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
         // Call the ending handler of the Object, with a special
         // flag to specify that this object is now ended
         objectEnded = true;
-        try 
+        try
         {
           getCurrentObject()->endElement(*this, pElement->first, pElement->second);
           if (userexit) userexit.call(getCurrentObject());
@@ -336,8 +336,8 @@ DECLARE_EXPORT void XMLInput::warning(const xercesc::SAXParseException& e)
 }
 
 
-DECLARE_EXPORT void XMLInput::fatalError(const xercesc::SAXParseException& e) 
-{   
+DECLARE_EXPORT void XMLInput::fatalError(const xercesc::SAXParseException& e)
+{
   char* message = xercesc::XMLString::transcode(e.getMessage());
   ostringstream ch;
   ch << message;
@@ -347,8 +347,8 @@ DECLARE_EXPORT void XMLInput::fatalError(const xercesc::SAXParseException& e)
 }
 
 
-DECLARE_EXPORT void XMLInput::error(const xercesc::SAXParseException& e) 
-{   
+DECLARE_EXPORT void XMLInput::error(const xercesc::SAXParseException& e)
+{
   char* message = xercesc::XMLString::transcode(e.getMessage());
   ostringstream ch;
   ch << message;
@@ -409,7 +409,7 @@ void XMLInput::shutdown()
   m_EStack[numElements].second.reset();
   while (!m_EHStack.empty())
   {
-    try 
+    try
     {
       getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);
       if (userexit) userexit.call(getCurrentObject());
@@ -444,7 +444,7 @@ DECLARE_EXPORT void XMLInput::reset()
     m_EStack[++numElements].second.reset();
     while (!m_EHStack.empty())
     {
-      try 
+      try
       {
         getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);
         if (userexit) userexit.call(getCurrentObject());

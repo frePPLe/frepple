@@ -167,13 +167,13 @@ class FixtureTest(TestCase):
 
   def setUp(self):
     self.fixture_dir = os.path.join(settings.FREPPLE_APP, 'freppledb', 'input', 'fixtures')
-    
+
   def test_fixture_tutorial_1(self):
     try:
       full_path = os.path.join(self.fixture_dir, 'tutorial_1.json')
       objects = serializers.deserialize("json", open(full_path, 'r'))
       for obj in objects: True
-    except Exception as e: 
+    except Exception as e:
       self.fail("Invalid fixture: %s" % e)
 
   def test_fixture_small_demo(self):
@@ -181,7 +181,7 @@ class FixtureTest(TestCase):
       full_path = os.path.join(self.fixture_dir, 'small_demo.json')
       objects = serializers.deserialize("json", open(full_path, 'r'))
       for obj in objects: True
-    except Exception as e: 
+    except Exception as e:
       self.fail("Invalid fixture: %s" % e)
 
   def test_fixture_jobshop(self):
@@ -189,13 +189,13 @@ class FixtureTest(TestCase):
       full_path = os.path.join(self.fixture_dir, 'jobshop.json')
       objects = serializers.deserialize("json", open(full_path, 'r'))
       for obj in objects: True
-    except Exception as e: 
+    except Exception as e:
       self.fail("Invalid fixture: %s" % e)
-      
+
   def test_fixture_unicode_test(self):
     try:
       full_path = os.path.join(self.fixture_dir, 'unicode_test.json')
       objects = serializers.deserialize("json", open(full_path, 'r'))
       for obj in objects: True
-    except Exception as e: 
+    except Exception as e:
       self.fail("Invalid fixture: %s" % e)

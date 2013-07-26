@@ -108,11 +108,11 @@ class CrumbsNode(Node):
     except: return ''  # No request found in the context: no crumbs...
 
     # Pick up the current crumbs from the session cookie
-    try: 
+    try:
       cur = req.session['crumbs']
       try: cur = cur[req.prefix]
       except: cur = [(unicode(_('Home')), HOME_CRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
-    except: 
+    except:
       req.session['crumbs'] = {}
       cur = [(unicode(_('Home')), HOME_CRUMB % (req.prefix, _('Home')), '%s/admin/' % req.prefix)]
 
@@ -132,10 +132,10 @@ class CrumbsNode(Node):
         req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
         ),
       )
-    
+
     # Pop from the stack if the same title is already in the crumbs.
     cnt = 0
-    for i in cur:       
+    for i in cur:
       if i[0] == node[0]:
         cur = cur[0:cnt]   # Pop all remaining elements from the stack
         break
@@ -144,7 +144,7 @@ class CrumbsNode(Node):
     # Keep only a limited number of links in the history.
     # We delete the second element to keep "home" at the head of the list.
     while len(cur) > NUMBER_OF_CRUMBS: del cur[1]
-    
+
     # Push current URL on the stack
     cur.append( node )
 
@@ -208,7 +208,7 @@ register.tag('set', set_var)
 class ModelTabs(Node):
   def __init__(self, model):
     self.model = model
-    
+
   def render(self, context):
     try:
       model = Variable(self.model).resolve(context)
@@ -228,8 +228,8 @@ def get_modeltabs(parser, token):
   bits = split(r'\s+', token.contents, 1)
   if len(bits) != 2:
     raise TemplateSyntaxError, "'%s' tag requires 1 argument" % bits[0]
-  return ModelTabs(bits[1]) 
-   
+  return ModelTabs(bits[1])
+
 register.tag('tabs', get_modeltabs)
 
 

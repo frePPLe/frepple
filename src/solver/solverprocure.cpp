@@ -57,7 +57,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   vector<OperationPlan*> procurements(30); // Initial size of 30
   for (OperationPlan::iterator i(b->getOperation()); i!=OperationPlan::end(); ++i)
   {
-    if (i->getLocked()) 
+    if (i->getLocked())
       earliest_next = i->getDates().getEnd();
     else
       procurements[countProcurements++] = &*i;
@@ -162,10 +162,10 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 
     // When we are within the minimum interval, we may need to increase the
     // size of the previous procurements.
-    if (current_date == earliest_next      
+    if (current_date == earliest_next
         && current_inventory < b->getMinimumInventory() - ROUNDING_ERROR)
     {
-      for (int cnt=indexProcurements; 
+      for (int cnt=indexProcurements;
         cnt>=0 && current_inventory < b->getMinimumInventory() - ROUNDING_ERROR;
         cnt--)
       {
@@ -181,9 +181,9 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
           && earliest_next > data->state->q_date
           && data->getSolver()->isMaterialConstrained()
           && data->constrainedPlanning)
-        // Resizing didn't work, and we still have shortage (not only compared 
+        // Resizing didn't work, and we still have shortage (not only compared
         // to the minimum, but also to 0.
-        data->state->a_date = earliest_next;      
+        data->state->a_date = earliest_next;
     }
 
     // At this point, we know we need to reorder...
@@ -196,8 +196,8 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         if (latest_next == current_date && b->getSizeMinimum())
           // Forced to buy the minumum quantity
           order_qty = b->getSizeMinimum();
-        else 
-          break; 
+        else
+          break;
       }
       // Create a procurement or update an existing one
       indexProcurements++;
@@ -212,13 +212,13 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         produced += a->getOperationPlan()->getQuantity();
         order_qty -= a->getOperationPlan()->getQuantity();
         data->add(a);
-        procurements[countProcurements++] = a->getOperationPlan();       
+        procurements[countProcurements++] = a->getOperationPlan();
       }
       else if (procurements[indexProcurements]->getDates().getEnd() == current_date
         && procurements[indexProcurements]->getQuantity() == order_qty)
       {
         // Reuse existing procurement unchanged.
-        produced += order_qty; 
+        produced += order_qty;
         order_qty = 0;
       }
       else

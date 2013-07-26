@@ -115,12 +115,12 @@ class DurationField(models.DecimalField):
 # JSONField is a generic textfield that serializes/unserializes JSON objects.
 #
 # This code is very loosely inspired on the code found at:
-#    https://github.com/bradjasper/django-jsonfield 
+#    https://github.com/bradjasper/django-jsonfield
 
 class JSONField(models.TextField):
 
   __metaclass__ = models.SubfieldBase
-  
+
   def __init__(self, *args, **kwargs):
     self.dump_kwargs = kwargs.pop('dump_kwargs', {
         'separators': (',', ':')
@@ -134,7 +134,7 @@ class JSONField(models.TextField):
       return json.loads(value)
     else:
       return value
-    
+
   def get_db_prep_value(self, value, connection, prepared=False):
     """Convert JSON object to a string."""
     if self.null and value is None: return None

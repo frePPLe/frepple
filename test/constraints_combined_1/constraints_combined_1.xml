@@ -2,8 +2,8 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<name>consrtraints_combined_1</name>
 	<description>
-	  A model showing a complex interaction between material, lead time and capacity 
-	  constraints, combined with unavailable time during the weekends.	  
+	  A model showing a complex interaction between material, lead time and capacity
+	  constraints, combined with unavailable time during the weekends.	
 	</description>
 	<current>2009-01-01T00:00:00</current>
 	<locations>

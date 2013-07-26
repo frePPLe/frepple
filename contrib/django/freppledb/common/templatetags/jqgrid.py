@@ -20,26 +20,26 @@ register = Library()
 #  - reportclass
 #  - is_popup
 #  - preferences
-# 
+#
 
 class ColModelNode(Node):
   r'''
   A tag to return colmod.
-  '''    
+  '''
   def __init__(self, frozen = False):
     self.frozen = frozen
-     
+
   def render(self, context):
-    try: 
+    try:
       reportclass = context['reportclass']
-      is_popup = context['is_popup']  
+      is_popup = context['is_popup']
       prefs = context['preferences']
       if not prefs:
         prefs = [ (i,False,reportclass.rows[i].width) for i in range(len(reportclass.rows)) ]
       result = []
       if is_popup:
         result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false}")
-      count = -1   
+      count = -1
       for (index, hidden, width) in prefs:
         count += 1
         result.append(u"{%s,width:%s,counter:%d%s%s%s}" % (
@@ -48,9 +48,9 @@ class ColModelNode(Node):
            is_popup and ',popup:true' or '',
            hidden and ',hidden:true' or ''
            ))
-      return ',\n'.join(result) 
+      return ',\n'.join(result)
     except:
-      return ''  # Silently fail   
+      return ''  # Silently fail
 
   def __repr__(self):
     return "<colmodel Node>"
@@ -67,6 +67,6 @@ def colModel(parser, token):
   else:
     raise TemplateSyntaxError, "'%s' accepts only 'True' or 'False' as optional argument" % tokens[0]
   return ColModelNode()
-   
+
 colModel.is_safe = True
 register.tag('colmodel', colModel)

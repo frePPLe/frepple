@@ -44,13 +44,13 @@ class OverviewReport(GridPivot):
     ('backlog',{'title': _('backlog')}),
     )
 
-  @classmethod 
+  @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       return {
         'title': capfirst(force_unicode(Item._meta.verbose_name) + " " + args[0]),
         'post_title': ': ' + capfirst(force_unicode(_('plan'))),
-        }      
+        }
     else:
       return {}
 
@@ -110,7 +110,7 @@ class OverviewReport(GridPivot):
           and d.startdate <= out_demand.plandate
           and d.enddate > out_demand.plandate
           and out_demand.plandate >= '%s'
-          and out_demand.plandate < '%s'          
+          and out_demand.plandate < '%s'
           -- Grouping
           group by items.name, items.lft, items.rght, d.bucket, d.startdate, d.enddate
         ) x
@@ -122,7 +122,7 @@ class OverviewReport(GridPivot):
         and x.startdate <= demand.due
         and x.enddate > demand.due
         and demand.due >= '%s'
-        and demand.due < '%s'          
+        and demand.due < '%s'
         -- Grouping
         group by x.name, x.lft, x.rght, x.bucket, x.startdate, x.enddate
         ) y
@@ -160,8 +160,8 @@ class DetailReport(GridReport):
   model = Demand
   frozenColumns = 0
   editable = False
-  multiselect = False  
-      
+  multiselect = False
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
@@ -169,7 +169,7 @@ class DetailReport(GridReport):
     else:
       return Demand.objects.all()
 
-  @classmethod 
+  @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     return {'active_tab': 'plandetail'}
 

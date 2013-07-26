@@ -50,7 +50,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
       translation.activate(language)
     request.LANGUAGE_CODE = translation.get_language()
     request.charset = settings.DEFAULT_CHARSET
- 
+
 
 # Initialize the URL parsing middleware
 for i in settings.DATABASES:

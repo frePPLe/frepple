@@ -4,12 +4,12 @@
   <description>
   This test verifies the behavior of the user exit that controls alternate flows.
   The user exit gives the user control over the allowed combinations of alternate flows.
-  
+
   In this example, a product uses 3 components, each having some alternates.
      - component A1, with alternates A2 and A3
      - component B1, with alternates B2, B3 and B4
      - component C1, with alternates C2, C3 and C4
-  
+
   This gives a total of 3*4*4 = 48 possible combinations of the components.
   Using the user exit we restrict the allowed combinations to the following:
      - A1, B2, C1
@@ -18,8 +18,8 @@
      - A2, B1, C3
      - A3, B3, C4
      - A3, B4, C4
-  These restrictions can represent technical constraints in the bill of material 
-  (as provided by the engineers), different versions in the bill of material, 
+  These restrictions can represent technical constraints in the bill of material
+  (as provided by the engineers), different versions in the bill of material,
   configuration rules imposed by the customer, etc...
   </description>
   <current>2009-01-01T00:00:00</current>
@@ -29,77 +29,77 @@
 	    <onhand>0</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="A2" xsi:type="buffer_procure">
       <item name="A2" />
 	    <onhand>0</onhand>
 	    <leadtime>P5D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="A3" xsi:type="buffer_procure">
       <item name="A3" />
 	    <onhand>10</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="B1" xsi:type="buffer_procure">
       <item name="B1" />
 	    <onhand>0</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="B2" xsi:type="buffer_procure">
       <item name="B2" />
 	    <onhand>0</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="B3" xsi:type="buffer_procure">
       <item name="B3" />
 	    <onhand>5</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="B4" xsi:type="buffer_procure">
       <item name="B4" />
 	    <onhand>5</onhand>
 	    <leadtime>P5D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="C1" xsi:type="buffer_procure">
       <item name="C1" />
 	    <onhand>0</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="C2" xsi:type="buffer_procure">
       <item name="C2" />
 	    <onhand>10</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="C3" xsi:type="buffer_procure">
       <item name="C3" />
 	    <onhand>5</onhand>
 	    <leadtime>P7D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="C4" xsi:type="buffer_procure">
       <item name="C4" />
 	    <onhand>5</onhand>
 	    <leadtime>P10D</leadtime>
 	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>      
+	    <maxinventory>70</maxinventory>
     </buffer>
     <buffer name="product">
       <item name="product" />
@@ -144,7 +144,7 @@
             <quantity>-1</quantity>
             <priority>3</priority>
             <alternate>groupB</alternate>
-          </flow>          
+          </flow>
           <flow xsi:type="flow_start">
             <buffer name="B4" />
             <quantity>-1</quantity>
@@ -168,7 +168,7 @@
             <quantity>-1</quantity>
             <priority>3</priority>
             <alternate>groupC</alternate>
-          </flow>          
+          </flow>
           <flow xsi:type="flow_start">
             <buffer name="C4" />
             <quantity>-1</quantity>
@@ -217,14 +217,14 @@
 
 <?python
 
-allowed = [ 
+allowed = [
   ['A1', 'B2', 'C1'],
   ['A1', 'B2', 'C2'],
   ['A2', 'B1', 'C2'],
   ['A2', 'B1', 'C3'],
   ['A3', 'B3', 'C4'],
   ['A3', 'B4', 'C4'],
-  ] 
+  ]
 
 # This function is called by the solver to verify whether a certain alternate
 # flow is acceptable or not.
@@ -234,17 +234,17 @@ def checkAlternate(flowplan,mode):
   # Debugging print statements
   print "Validating combination",
   for fp in flowplan.operationplan.flowplans:
-    if fp.quantity > 0: continue 
-    print fp.buffer.item.name,          
+    if fp.quantity > 0: continue
+    print fp.buffer.item.name,
     if fp == flowplan: break
   print ":",
-  # Loop through all allowed combinations, and check whether they match the 
+  # Loop through all allowed combinations, and check whether they match the
   # currently selected part combination
   for combination in allowed:
     ok = True
     # Check whether all currently selected parts are part of this combination
     for fp in flowplan.operationplan.flowplans:
-      if fp.quantity > 0: continue           
+      if fp.quantity > 0: continue
       if fp.buffer.item.name not in combination:
         # Current parts don't match this combination
         ok = False
@@ -253,7 +253,7 @@ def checkAlternate(flowplan,mode):
     if ok:
       # All current parts match
       print "yes"
-      return True                         
+      return True
   print "no"
   return False
 

@@ -293,7 +293,7 @@
       <item name="item 6" />
     </demand>
   </demands>
-  
+
 <?python
 
 #
@@ -345,7 +345,7 @@ def verifyAll():
   for i in frepple.resources(): verifyOne(i)
   for i in frepple.buffers(): verifyOne(i)
   output.flush()
-  
+
 # Commands
 frepple.solver_mrp(name="MRP", constraints=0).solve()
 verifyAll()

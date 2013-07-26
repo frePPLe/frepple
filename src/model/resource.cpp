@@ -151,7 +151,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
   }
 
   // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL) 
+  if (m != NOHEAD && m != NOHEADTAIL)
     o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
   // Write my fields
@@ -295,7 +295,7 @@ DECLARE_EXPORT Resource::~Resource()
   // implemented method is way more drastic...
   deleteOperationPlans(true);
 
-  // The Load and ResourceSkill objects are automatically deleted by the 
+  // The Load and ResourceSkill objects are automatically deleted by the
   // destructor of the Association list class.
 }
 
@@ -483,7 +483,7 @@ extern "C" PyObject* Resource::plan(PyObject *self, PyObject *args)
 
   // Validate that the argument supports iteration.
   PyObject* iter = PyObject_GetIter(buckets);
-  if (!iter) 
+  if (!iter)
   {
     PyErr_Format(PyExc_AttributeError,"Argument to resource.plan() must support iteration");
     return NULL;
@@ -505,14 +505,14 @@ int Resource::PlanIterator::initialize()
 }
 
 
-Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) : 
+Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
   res(r), bucketiterator(o), ldplaniter(r ? r->getLoadPlans().begin() : NULL),
   cur_setup(0.0), cur_load(0.0), cur_size(0.0), start_date(NULL), end_date(NULL)
 {
   if (!r)
   {
     bucketiterator = NULL;
-    throw LogicException("Creating resource plan iterator for NULL resource");   
+    throw LogicException("Creating resource plan iterator for NULL resource");
   }
 
   // Start date of the first bucket
@@ -526,8 +526,8 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
   if (hasUnavailability)
   {
     unavailableIterator = Calendar::EventIterator(res->getLocation()->getAvailable(), cur_date);
-    prev_value = unavailableIterator.getBucket() ? 
-      unavailableIterator.getBucket()->getBool() : 
+    prev_value = unavailableIterator.getBucket() ?
+      unavailableIterator.getBucket()->getBool() :
       res->getLocation()->getAvailable()->getDefault()!=0;
   }
 
@@ -553,16 +553,16 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
 }
 
 
-Resource::PlanIterator::~PlanIterator() 
-{ 
-  if (bucketiterator) Py_DECREF(bucketiterator); 
-  if (start_date) Py_DECREF(start_date); 
-  if (end_date) Py_DECREF(end_date); 
+Resource::PlanIterator::~PlanIterator()
+{
+  if (bucketiterator) Py_DECREF(bucketiterator);
+  if (start_date) Py_DECREF(start_date);
+  if (end_date) Py_DECREF(end_date);
 }
 
 
 void Resource::PlanIterator::update(Date till)
-{    
+{
   long timedelta;
   if (hasUnavailability)
   {
@@ -578,8 +578,8 @@ void Resource::PlanIterator::update(Date till)
       }
       else
         bucket_unavailable += cur_size * timedelta;
-      prev_value = unavailableIterator.getBucket() ? 
-        unavailableIterator.getBucket()->getBool() : 
+      prev_value = unavailableIterator.getBucket() ?
+        unavailableIterator.getBucket()->getBool() :
         res->getLocation()->getAvailable()->getDefault()!=0;
       prev_date = unavailableIterator.getDate();
       ++unavailableIterator;
@@ -615,7 +615,7 @@ PyObject* Resource::PlanIterator::iternext()
   bucket_unavailable = 0.0;
   bucket_load = 0.0;
   bucket_setup = 0.0;
- 
+
   // Get the start and end date of the current bucket
   if (start_date) Py_DECREF(start_date);
   start_date = end_date;
@@ -625,7 +625,7 @@ PyObject* Resource::PlanIterator::iternext()
 
   // Measure from beginning of the bucket till the first event in this bucket
   if (ldplaniter != res->getLoadPlans().end() && ldplaniter->getDate() < cur_date)
-    update(ldplaniter->getDate()); 
+    update(ldplaniter->getDate());
 
   // Advance the loadplan iterator to the next event date
   while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getDate() <= cur_date)
@@ -633,7 +633,7 @@ PyObject* Resource::PlanIterator::iternext()
     // Measure from the previous event till the current one
     update(ldplaniter->getDate());
 
-    // Process the event    
+    // Process the event
     if (ldplaniter->getType() == 4)
       // New max size
       cur_size = ldplaniter->getMax();
@@ -663,12 +663,12 @@ PyObject* Resource::PlanIterator::iternext()
   bucket_setup /= 3600;
 
   // Return the result
-  return Py_BuildValue("{s:O,s:O,s:d,s:d,s:d,s:d,s:d}", 
-    "start", start_date, 
-    "end", end_date, 
-    "available", bucket_available, 
-    "load", bucket_load, 
-    "unavailable", bucket_unavailable, 
+  return Py_BuildValue("{s:O,s:O,s:d,s:d,s:d,s:d,s:d}",
+    "start", start_date,
+    "end", end_date,
+    "available", bucket_available,
+    "load", bucket_load,
+    "unavailable", bucket_unavailable,
     "setup", bucket_setup,
     "free", bucket_available - bucket_load - bucket_setup);
 }

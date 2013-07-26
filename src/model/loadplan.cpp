@@ -251,7 +251,7 @@ DECLARE_EXPORT void LoadPlan::setResource(Resource* newres, bool check)
       res->setChanged();
     }
 
-    // Insert in the new resource. 
+    // Insert in the new resource.
     // This code assumes the date and quantity of the loadplan don't change
     // when a new resource is assigned.
     ldplan->res = newres;

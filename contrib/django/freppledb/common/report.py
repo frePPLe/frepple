@@ -294,6 +294,10 @@ class GridReport(View):
   # A list with required user permissions to view the report
   permissions = []
 
+  @classmethod
+  def getKey(cls):
+    return "%s.%s" % (cls.__module__, cls.__name__)
+
   # Extra variables added to the report template
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -331,9 +335,18 @@ class GridReport(View):
     encoding = settings.CSV_CHARSET
     sf.write(getBOM(encoding))
 
+    # Choose fields to export
+    prefs = request.user.getPreference(reportclass.getKey())
+    if prefs:
+      # Customized settings
+      writer.writerow([ force_unicode(reportclass.rows[f[0]].title).title().encode(encoding,"ignore") for f in prefs if not f[1] ])
+      fields = [ reportclass.rows[f[0]].field_name for f in prefs if not f[1] ]
+    else:
+      # Default settings
+      writer.writerow([ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.title ])
+      fields = [ i.field_name for i in reportclass.rows if i.field_name ]
+
     # Write a header row
-    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.title ]
-    writer.writerow(fields)
     yield sf.getvalue()
 
     # Write the report content
@@ -341,18 +354,15 @@ class GridReport(View):
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database))
     else:
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
-
-    fields = [ i.field_name for i in reportclass.rows if i.field_name ]
     for row in hasattr(reportclass,'query') and reportclass.query(request,query) or query.values(*fields):
       # Clear the return string buffer
       sf.truncate(0)
       # Build the return value, encoding all output
       if hasattr(row, "__getitem__"):
-        fields = [ row[f.field_name]==None and ' ' or unicode(_localize(row[f.field_name])).encode(encoding,"ignore") for f in reportclass.rows if f.name ]
+        writer.writerow([ row[f]==None and ' ' or unicode(_localize(row[f])).encode(encoding,"ignore") for f in fields ])
       else:
-        fields = [ getattr(row,f.field_name)==None and ' ' or unicode(_localize(getattr(row,f.field_name))).encode(encoding,"ignore") for f in reportclass.rows if f.name ]
+        writer.writerow([ getattr(row,f)==None and ' ' or unicode(_localize(getattr(row,f))).encode(encoding,"ignore") for f in fields ])
       # Return string
-      writer.writerow(fields)
       yield sf.getvalue()
 
 
@@ -493,7 +503,7 @@ class GridReport(View):
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
       else:
         bucketnames = bucketlist = start = end = bucket = None
-      reportkey = "%s.%s" % (reportclass.__module__, reportclass.__name__);
+      reportkey = reportclass.getKey()
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,

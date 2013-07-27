@@ -36,6 +36,8 @@ class ColModelNode(Node):
       prefs = context['preferences']
       if not prefs:
         prefs = [ (i,False,reportclass.rows[i].width) for i in range(len(reportclass.rows)) ]
+      else:
+        prefs = prefs['rows']
       result = []
       if is_popup:
         result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false}")

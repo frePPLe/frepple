@@ -25,10 +25,18 @@ $(function(){
     beforeSaveCell: upload.select,{% endif %}
     pager: '#gridpager',
     viewrecords: true,
-    sortorder: "asc",
+    sortorder: "{{sord}}",
+    sortname: "{{sidx}}",
+    page: {{page}},
     hidegrid: false,
     resizeStop: saveColumnConfiguration,
     scrollRows: true,
+    onSortCol: function (index, columnIndex, sortOrder) {
+      $('#grid').setGridParam('sortname',columnIndex);
+      $('#grid').setGridParam('sortorder',sortOrder);
+      saveColumnConfiguration();
+    },
+    onPaging: saveColumnConfiguration,
     //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns

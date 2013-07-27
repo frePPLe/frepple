@@ -11,12 +11,12 @@ var upload = {
   undo : function ()
   {
     if ($('#undo').hasClass("ui-state-disabled")) return;
-    $("#grid").trigger("reloadGrid"); 
+    $("#grid").trigger("reloadGrid");
     $('#save').addClass("ui-state-disabled").removeClass("bold");
     $('#undo').addClass("ui-state-disabled").removeClass("bold");
     $('#filter').removeClass("ui-state-disabled");
   },
-  
+
   select : function ()
   {
     $('#filter').addClass("ui-state-disabled");
@@ -28,15 +28,15 @@ var upload = {
   save : function()
   {
     if ($('#save').hasClass("ui-state-disabled")) return;
-    
-    // Pick up all changed cells. If a function "getData" is defined on the 
+
+    // Pick up all changed cells. If a function "getData" is defined on the
     // page we use that, otherwise we use the standard functionality of jqgrid.
     if (typeof getDirtyData == 'function')
       rows = getDirtyData();
     else
-      rows = $("#grid").getChangedCells('dirty');    
-    if (rows != null && rows.length > 0) 
-      // Send the update to the server    
+      rows = $("#grid").getChangedCells('dirty');
+    if (rows != null && rows.length > 0)
+      // Send the update to the server
       $.ajax({
           url: location.pathname,
           data: JSON.stringify(rows),
@@ -52,14 +52,15 @@ var upload = {
                 autoOpen: true,
                 resizable: false
               });
-            $('#timebuckets').dialog('close');  
+            $('#timebuckets').dialog('close');
             $.jgrid.hideModal("#searchmodfbox_grid");
             }
-        });        
+        });
   },
 
   validateSort: function(event)
   {
+
     if ($('#save').hasClass("ui-state-disabled"))
       jQuery("#grid").jqGrid('resetSelection');
     else
@@ -94,16 +95,16 @@ var upload = {
 
 //----------------------------------------------------------------------------
 // Popup row selection.
-// The popup window present a list of objects. The user clicks on a row to 
-// select it and a "select" button appears. When this button is clicked the 
+// The popup window present a list of objects. The user clicks on a row to
+// select it and a "select" button appears. When this button is clicked the
 // popup is closed and the selected id is passed to the calling page.
 //----------------------------------------------------------------------------
 
 var selected;
 
-function setSelectedRow(id) {  
+function setSelectedRow(id) {
   if (selected!=undefined)
-    $(this).jqGrid('setCell', selected, 'select', null); 
+    $(this).jqGrid('setCell', selected, 'select', null);
   selected = id;
   $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, selected);" class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text" style="font-size:66%">'+gettext('Select')+'</span></button>');
 }
@@ -111,7 +112,7 @@ function setSelectedRow(id) {
 
 //----------------------------------------------------------------------------
 // Custom formatter functions for the grid cells. Most of the custom handlers
-// just add an appropriate context menu. 
+// just add an appropriate context menu.
 //----------------------------------------------------------------------------
 
 function linkunformat (cellvalue, options, cell) {
@@ -120,107 +121,107 @@ function linkunformat (cellvalue, options, cell) {
 
 jQuery.extend($.fn.fmatter, {
   percentage : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
+    if (cellvalue === undefined || cellvalue ==='') return '';
     return cellvalue + "%";
   },
   item : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='item'></span>";
   },
   customer : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='customer'></span>";
   },
   buffer : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>";
   },
   resource : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
   },
   forecast : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='forecast'></span>";
   },
   demand : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='demand'></span>";
   },
   operation : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>";
   },
   calendar : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='calendar'></span>";
   },
   location : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='location'></span>";
   },
   setupmatrix : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='setupmatrix'></span>";
   },
   user : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='user'></span>";
   },
   group : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='group'></span>";
   },
   flow : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='flow'></span>";
   },
   load : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='load'></span>";
   },
   bucket : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='bucket'></span>";
   },
   parameter : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='parameter'></span>";
   },
   skill : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='skill'></span>";
   },
   resourceskill : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resourceskill'></span>";
   },
   project : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='project'></span>";
   },
   projectdeel : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return ''; 
-    if (options['colModel']['popup']) return cellvalue;     
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='projectdeel'></span>";
   }
 });
@@ -287,17 +288,17 @@ jQuery.extend($.fn.fmatter.resourceskill, {
 
 //----------------------------------------------------------------------------
 // This function is called when a cell is just being selected in an editable
-// grid. It is used to either a) select the content of the cell (to make 
+// grid. It is used to either a) select the content of the cell (to make
 // editing it easier) or b) display a date picker it the field is of type
 // date.
 //----------------------------------------------------------------------------
 
-function afterEditCell(rowid, cellname, value, iRow, iCol) 
+function afterEditCell(rowid, cellname, value, iRow, iCol)
 {
   var cell = document.getElementById(iRow+'_'+cellname);
   var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[iCol];
   if (colmodel.formatter == 'date')
-  { 
+  {
   if (colmodel.formatoptions['srcformat'] == "Y-m-d")
       $(cell).datepicker({
         showOtherMonths: true, selectOtherMonths: true,
@@ -311,14 +312,14 @@ function afterEditCell(rowid, cellname, value, iRow, iCol)
         changeYear:true, yearRange: "c-1:c+5"
         });
   }
-  else 
-    $(cell).select();   
+  else
+    $(cell).select();
 }
 
 
 //----------------------------------------------------------------------------
 // Code for customized autocomplete widget.
-// The customization creates unselectable categories and selectable list 
+// The customization creates unselectable categories and selectable list
 // items.
 //----------------------------------------------------------------------------
 
@@ -343,7 +344,7 @@ var activeButton = null;
 var contextMenu = null;
 
 $(function() {
-  
+
   // Install code executed when you click on a menu button
   $(".menuButton").click( function(event) {
     // Get the target button element
@@ -369,7 +370,7 @@ $(function() {
       var pos = button.offset();
       menu.css({
         left: pos.left + "px",
-        top: (pos.top + button.outerHeight() + 1) + "px",        
+        top: (pos.top + button.outerHeight() + 1) + "px",
         visibility: "visible"
         });
       activeButton = button;
@@ -420,16 +421,16 @@ $(document).mousedown(function (event) {
 
   // We clicked on a context menu. Display that now.
   if ($(event.target).hasClass('context'))
-  {        
-    // Find the id of the menu to display   
+  {
+    // Find the id of the menu to display
     contextMenu = $('#' + $(event.target).attr('role') + "context");
- 
+
     // Get the entity name. Unescape all escaped characters and urlencode the result.
     if ($(event.target).hasClass('cross'))
     {
       var item = $(event.target).closest("tr.jqgrow")[0].id;
       item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-        .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));    
+        .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
       var params = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[jQuery.jgrid.getCellIndex($(event.target).closest("td,th"))];
       params['value'] = item;
     }
@@ -437,13 +438,13 @@ $(document).mousedown(function (event) {
     {
       var item = $(event.target).parent().text();
       item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-        .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));    
+        .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
       var params = {value: item};
     }
 
     // Build the URLs for the menu
     contextMenu.find('a').each( function() {
-      $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) { 
+      $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) {
       var key = match.substring(1,match.length-1);
       return key in params ? params[key] : match;
       }
@@ -520,7 +521,7 @@ function delete_show()
   }
   else if (sel.length > 0)
   {
-    $('#popup').html(     
+    $('#popup').html(
       interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false)
       ).dialog({
         title: gettext("Delete data"),
@@ -550,10 +551,10 @@ function delete_show()
                       autoOpen: true,
                       resizable: true
                     });
-                  $('#timebuckets').dialog('close');  
+                  $('#timebuckets').dialog('close');
                   $.jgrid.hideModal("#searchmodfbox_grid");
                   }
-              });    
+              });
             }
           },
           {
@@ -562,7 +563,7 @@ function delete_show()
           }
           ]
       });
-    $('#timebuckets').dialog().dialog('close');  
+    $('#timebuckets').dialog().dialog('close');
     $.jgrid.hideModal("#searchmodfbox_grid");
   }
 }
@@ -574,7 +575,7 @@ function copy_show()
   var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
   if (sel.length > 0)
   {
-    $('#popup').html(     
+    $('#popup').html(
       interpolate(gettext('You are about to duplicate %s objects'), [sel.length], false)
       ).dialog({
         title: gettext("Copy data"),
@@ -604,10 +605,10 @@ function copy_show()
                       autoOpen: true,
                       resizable: true
                     });
-                  $('#timebuckets').dialog().dialog('close');  
+                  $('#timebuckets').dialog().dialog('close');
                   $.jgrid.hideModal("#searchmodfbox_grid");
                   }
-              });    
+              });
             }
           },
           {
@@ -616,7 +617,7 @@ function copy_show()
           }
           ]
       });
-    $('#timebuckets').dialog().dialog('close');  
+    $('#timebuckets').dialog().dialog('close');
     $.jgrid.hideModal("#searchmodfbox_grid");
   }
 }
@@ -624,7 +625,7 @@ function copy_show()
 function markSelectedRow(id)
 {
   var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow').length;
-  if (sel > 0) 
+  if (sel > 0)
   {
     $("#copy_selected").removeClass("ui-state-disabled").addClass("bold");
     $("#delete_selected").removeClass("ui-state-disabled").addClass("bold");
@@ -660,7 +661,7 @@ function markAllRows()
 function import_show(url)
 {
   $('#popup').html(
-    '<form id="uploadform" enctype="multipart/form-data" method="post" action="' 
+    '<form id="uploadform" enctype="multipart/form-data" method="post" action="'
     + (typeof(url) != 'undefined' ? url : '') + '">' +
     '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
     gettext('Load a CSV-formatted text file.') + '<br/>' +
@@ -681,7 +682,7 @@ function import_show(url)
         }
         ]
     });
-  $('#timebuckets').dialog().dialog('close');  
+  $('#timebuckets').dialog().dialog('close');
   $.jgrid.hideModal("#searchmodfbox_grid");
 }
 
@@ -773,7 +774,7 @@ function export_close()
 function bucket_show()
 {
   // Show popup
-  $('#popup').dialog().dialog('close');  
+  $('#popup').dialog().dialog('close');
   $.jgrid.hideModal("#searchmodfbox_grid");
   $( "#horizonstart" ).datepicker({
       showOtherMonths: true, selectOtherMonths: true,
@@ -788,9 +789,9 @@ function bucket_show()
      buttons: [
        {
          text: gettext("OK"),
-         click: function() { 
+         click: function() {
           // Compare old and new parameters
-          var params = $('#horizonbuckets').val() + '|' + 
+          var params = $('#horizonbuckets').val() + '|' +
             $('#horizonstart').val() + '|' +
             $('#horizonend').val() + '|' +
             ($('#horizontype').is(':checked') ? "True" : "False") + '|' +
@@ -804,9 +805,9 @@ function bucket_show()
             $.ajax({
                 type: 'POST',
                 url: '/horizon/',
-                data: { 
+                data: {
                   horizonbuckets: $('#horizonbuckets').val(),
-                  horizonstart: $('#horizonstart').val(), 
+                  horizonstart: $('#horizonstart').val(),
                   horizonend: $('#horizonend').val(),
                   horizontype: ($('#horizontype').is(':checked') ? '1' : '0'),
                   horizonlength: $('#horizonlength').val(),
@@ -852,17 +853,23 @@ function customize_show()
 // Save report settings as preferences
 //----------------------------------------------------------------------------
 
-function saveColumnConfiguration() 
+function saveColumnConfiguration()
 {
   var colArray = new Array();
   var colModel = $("#grid")[0].p.colModel;
-  for (var i = 0; i < colModel.length; i++) 
+  for (var i = 0; i < colModel.length; i++)
   {
     if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null)
       colArray.push([colModel[i].counter, colModel[i].hidden, colModel[i].width]);
   }
   var result = {};
-  result[reportkey] = colArray;
+  result[reportkey] = {
+     "rows": colArray,
+     "page": $('#grid').getGridParam('page'),
+     "sidx": $('#grid').getGridParam('sortname'),
+     "sord": $('#grid').getGridParam('sortorder'),
+     "filter": $('#grid').getGridParam("postData").filters
+  }
   $.ajax({
       url: '/settings/',
       type: 'POST',
@@ -886,7 +893,7 @@ function saveColumnConfiguration()
 
 function getURLparameters()
 {
-  
+
   if (window.location.search.length == 0) return {};
   var params = {};
   jQuery.each(window.location.search.match(/^\??(.*)$/)[1].split('&'), function(i,p){

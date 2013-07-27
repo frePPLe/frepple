@@ -339,6 +339,7 @@ class GridReport(View):
     prefs = request.user.getPreference(reportclass.getKey())
     if prefs:
       # Customized settings
+      prefs = prefs['rows']
       writer.writerow([ force_unicode(reportclass.rows[f[0]].title).title().encode(encoding,"ignore") for f in prefs if not f[1] ])
       fields = [ reportclass.rows[f[0]].field_name for f in prefs if not f[1] ]
     else:
@@ -367,20 +368,25 @@ class GridReport(View):
 
 
   @classmethod
-  def _apply_sort(reportclass, request, query):
+  def _apply_sort(reportclass, request, query, prefs=None):
     '''
     Applies a sort to the query.
     '''
+    asc = True
     sort = None
-    if 'sidx' in request.GET: sort = request.GET['sidx']
+    if 'sidx' in request.GET:
+      sort = request.GET['sidx']
+      if 'sord' in request.GET and request.GET['sord'] == 'desc': asc = False
     if not sort:
-      if reportclass.default_sort:
+      if prefs and 'sidx' in prefs:
+        sort = prefs['sidx']
+        if 'sord' in prefs and prefs['sord'] == 'desc': asc = False
+      if not sort and reportclass.default_sort:
         sort = reportclass.rows[reportclass.default_sort[0]].name
+        if reportclass.default_sort[1] == 'desc': asc = False
       else:
         return query # No sorting
-    if ('sord' in request.GET and request.GET['sord'] == 'desc') or reportclass.default_sort[1] == 'desc':
-      sort = "-%s" % sort
-    return query.order_by(sort)
+    return query.order_by(asc and sort or ('-%s' % sort))
 
 
   @classmethod
@@ -504,11 +510,15 @@ class GridReport(View):
       else:
         bucketnames = bucketlist = start = end = bucket = None
       reportkey = reportclass.getKey()
+      prefs = request.user.getPreference(reportkey)
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
         'object_id': args and args[0] or None,
-        'preferences': request.user.getPreference(reportkey),
+        'preferences': prefs,
+        'page': prefs and prefs.get('page', 1) or 1,
+        'sord': prefs and prefs.get('sord', 'asc') or 'asc',
+        'sidx': prefs and prefs.get('sidx', '') or '',
         'reportkey': reportkey,
         'is_popup': request.GET.has_key('pop'),
         'args': args,

@@ -286,7 +286,7 @@ class GridReport(View):
   multiselect = True
 
   # Control the height of the grid. By default the full browser window is used.
-  heigth = None
+  height = None
 
   # Number of columns frozen in the report
   frozenColumns = 0
@@ -522,7 +522,7 @@ class GridReport(View):
         'reportkey': reportkey,
         'is_popup': request.GET.has_key('pop'),
         'args': args,
-        'filters': reportclass.getQueryString(request),
+        'filters': prefs and prefs.get('filter',None) or reportclass.getQueryString(request),
         'bucketnames': bucketnames,
         'bucketlist': bucketlist,
         'bucketstart': start,

@@ -722,6 +722,7 @@ function export_show(only_list)
 {
   // The argument is true when we show a "list" report.
   // It is false for "table" reports.
+  $(".ui-dialog").dialog().dialog("close");
   $('#popup').html(
     gettext("CSV style") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat"' + (only_list ? ' disabled="true"' : '')+ '>'+
     '<option value="csvtable"' + (only_list ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
@@ -774,6 +775,7 @@ function export_close()
 function bucket_show()
 {
   // Show popup
+  $(".ui-dialog").dialog().dialog("close");
   $('#popup').dialog().dialog('close');
   $.jgrid.hideModal("#searchmodfbox_grid");
   $( "#horizonstart" ).datepicker({
@@ -836,7 +838,7 @@ function bucket_show()
 
 function customize_show()
 {
-  $(".ui-dialog").dialog("close");
+  $(".ui-dialog").dialog().dialog("close");
   $.jgrid.hideModal("#searchmodfbox_grid");
   $("#grid").jqGrid('columnChooser', {
     done: function(perm) {
@@ -866,6 +868,55 @@ function saveColumnConfiguration()
   result[reportkey] = {
      "rows": colArray,
      "page": $('#grid').getGridParam('page'),
+     "sidx": $('#grid').getGridParam('sortname'),
+     "sord": $('#grid').getGridParam('sortorder'),
+     "filter": $('#grid').getGridParam("postData").filters
+  }
+  $.ajax({
+      url: '/settings/',
+      type: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify(result),
+      error: function (result, stat, errorThrown) {
+        $('#popup').html(result.responseText)
+          .dialog({
+            title: gettext("Error saving report settings"),
+            autoOpen: true,
+            resizable: false
+          });
+        }
+  });
+}
+
+
+function savePagingConfiguration(pgButton)
+{
+  // JQgrid paging gives only the current page
+  var newValue = 0;
+  var currentValue = $("#grid").getGridParam('page');
+  if (pgButton.indexOf("next") >= 0)
+    newValue = ++currentValue;
+  else if (pgButton.indexOf("prev") >= 0)
+    newValue = --currentValue;
+  else if (pgButton.indexOf("last") >= 0)
+    newValue = $("#grid").getGridParam('lastpage');
+  else if (pgButton.indexOf("first") >= 0)
+    newValue = 1;
+  else if (pgButton.indexOf("user") >= 0)
+    newValue = $('input.ui-pg-input').val();
+  alert(newValue);
+  // Save the settings
+  var colArray = new Array();
+  var colModel = $("#grid")[0].p.colModel;
+  for (var i = 0; i < colModel.length; i++)
+  {
+    if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null)
+      colArray.push([colModel[i].counter, colModel[i].hidden, colModel[i].width]);
+  }
+  var result = {};
+  result[reportkey] = {
+     "rows": colArray,
+     "page": newValue,
      "sidx": $('#grid').getGridParam('sortname'),
      "sord": $('#grid').getGridParam('sortorder'),
      "filter": $('#grid').getGridParam("postData").filters

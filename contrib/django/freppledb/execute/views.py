@@ -47,7 +47,7 @@ class TaskReport(GridReport):
   frozenColumns = 0
   multiselect = False
   editable = False
-  heigth = 150
+  height = 150
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),

@@ -36,7 +36,7 @@ $(function(){
       $('#grid').setGridParam('sortorder',sortOrder);
       saveColumnConfiguration();
     },
-    onPaging: saveColumnConfiguration,
+    onPaging: savePagingConfiguration,
     //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns
@@ -50,17 +50,19 @@ $(function(){
     multiselect: true,
     onSelectRow: markSelectedRow,{% endif %}
     {% block extra_grid %}{% endblock %}
-    height: {% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %}
+    height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %}
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
   $('#cb_grid.cbox').click(markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
+  {% if reportclass.height %}$("#grid").gridResize({handles: 's', minHeight: {{reportclass.height}} });
+  {% endif %}
 });
 
 $(window).bind('resize', function() {
   $("#grid")
-   .setGridWidth($('#content-main').width())
-   .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %});
+   .setGridWidth($('#content-main').width()){% if not reportclass.height %}
+   .setGridHeight($(window).height() - $("#grid").offset().top - 70){% endif %};
 });
 
 </script>

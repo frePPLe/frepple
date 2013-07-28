@@ -904,7 +904,6 @@ function savePagingConfiguration(pgButton)
     newValue = 1;
   else if (pgButton.indexOf("user") >= 0)
     newValue = $('input.ui-pg-input').val();
-  alert(newValue);
   // Save the settings
   var colArray = new Array();
   var colModel = $("#grid")[0].p.colModel;

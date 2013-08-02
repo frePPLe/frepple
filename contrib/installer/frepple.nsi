@@ -133,8 +133,8 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_LANGUAGE "TradChinese"
 
 ;Version Information
-VIProductVersion "2.1.beta.0.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "2.1.beta.0.0"
+VIProductVersion "2.1.0.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "2.1.0.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe community edition installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe community edition installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"

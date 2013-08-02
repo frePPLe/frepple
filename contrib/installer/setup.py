@@ -143,13 +143,13 @@ setup(
     # Target to build a Windows service
     service = [{
        "modules":["freppleservice"],
-       "icon_resources": [(1, "frepple.ico")],
+       "icon_resources": [(1, os.path.join("..","..","src","frepple.ico"))],
        "cmdline_style": 'pywin32',
        }],
     # Target to build a console application
     console = [{
        "script": "frepplectl.py",
-       "icon_resources": [(1, "frepple.ico")],
+       "icon_resources": [(1, os.path.join("..","..","src","frepple.ico"))],
        }],
     # Name of the zip file with the bytecode of the Python library.
     # This zip file with the name mentioned below is automatically included

@@ -186,7 +186,6 @@ class WebSiteParser(HTMLParser.HTMLParser):
     if self.inreplace: return
     if self.intitle: self.title += d
     if self.intext > 0:
-      print self.title, '---', d
       self.fed.append(d)
     self.file_out.write(d)
 

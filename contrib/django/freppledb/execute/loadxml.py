@@ -8,9 +8,9 @@ from django.conf import settings
 try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
 except: db = DEFAULT_DB_ALIAS
 if db == DEFAULT_DB_ALIAS:
-  frepple.settings.logfile = os.path.join(os.environ['FREPPLE_LOGDIR'],'frepple.log')
+  frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'frepple.log')
 else:
-  frepple.settings.logfile = os.path.join(os.environ['FREPPLE_LOGDIR'],'frepple_%s.log' % db)
+  frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'frepple_%s.log' % db)
 
 # Use the test database if we are running the test suite
 if 'FREPPLE_TEST' in os.environ:

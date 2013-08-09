@@ -1,5 +1,5 @@
 
-FILES_COMMON = generate.py frepple.doxyfile frepple.1 apiheader.html apifooter.html apistyles.css search.html index.html
+FILES_COMMON = generate.py frepple.doxyfile frepple.1 frepplectl.1 apiheader.html apifooter.html apistyles.css search.html index.html
 
 if DOC
 EXTRA_DIST = output ${FILES_COMMON}
@@ -28,7 +28,7 @@ endif
 clean-local:
 	-rm -rf output
 
-man_MANS = frepple.1
+man_MANS = frepple.1 frepplectl.1
 
 install-data-local: output
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \

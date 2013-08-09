@@ -1,0 +1,54 @@
+.\"
+.\" Copyright (C) 2009-2013 by Johan De Taeye, frePPLe bvba
+.\"
+.\" This library is free software; you can redistribute it and/or modify it
+.\" under the terms of the GNU Affero General Public License as published
+.\" by the Free Software Foundation; either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+.\" General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Affero General Public
+.\" License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+.\"
+.TH "FREPPLE" "1" "August 2013" "frePPLe" ""
+.SH "NAME"
+frepplectl \- open source production planning and scheduling
+.br
+.SH "SYNOPSIS"
+.B frepplectl subcommand [options] [arguments]
+
+.SH "DESCRIPTION"
+FrePPLe is an open source production planning and scheduling application.
+.P
+This program is a wrapper on a number of administrative actions of the
+application.
+
+.SH OPTIONS
+.TP
+.BI "subcommand"
+Name of the command to execute. Use 'frepplectl help' to get a list of
+available subcommands.
+.TP
+.BI "[options] [arguments]"
+Options and arguments applied to the chosen subcommand. Use
+'frepplectl help subcommand' to list of options and arguments
+applicable to a certain subcommand.
+
+.SH ENVIRONMENT
+.TP
+FREPPLE_HOME
+Optionally points to a directory where the initialization
+files will be searched.
+
+.SH RETURNS
+0 when successful, non-zero in case of errors
+
+.SH "AUTHORS"
+.B FrePPLe
+is developed as Open Source under the AGPL license, v3 or later.
+
+The authors and contributors are listed on http://frepple.com.

@@ -12,7 +12,7 @@ all-local: output
 if DOC
 output:
 	-rm -rf output
-	-@WGET@ --mirror --adjust-extension --no-parent --convert-links \
+	-@WGET@ --recursive --level 10 --adjust-extension --no-parent --convert-links \
     --exclude-directories='feed,*/feed,*/*/feed,*/*/*/feed,*/*/*/*/feed,*/*/*/*/*/feed' \
     --no-verbose --page-requisites --no-host-directories --directory-prefix=output \
     -e robots=off http://frepple.com/documentation/

@@ -18,7 +18,7 @@
 #
 
 r'''
-This is the standard Django project management command.
+This command is the wrapper for all administratrive actions on frePPLe.
 '''
 
 import os, sys

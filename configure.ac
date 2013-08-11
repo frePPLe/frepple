@@ -264,6 +264,21 @@ AC_CHECK_HEADER([Python.h], [],
 ])])
 
 #
+# Verify installation of django
+#
+AC_MSG_CHECKING([django Python module])
+$PYTHON -c "import django" 2>/dev/null
+if test $? -ne 0 ; then
+AC_MSG_RESULT([no])
+AC_MSG_ERROR([
+  This package requires the django web application framework.
+  Please install this package from https://www.djangoproject.com/
+  and also make sure to apply frePPLe's patches for it.
+])
+fi
+AC_MSG_RESULT([yes])
+
+#
 # Check whether we are running on a Windows operating system
 #
 AC_CHECK_HEADER(windows.h,

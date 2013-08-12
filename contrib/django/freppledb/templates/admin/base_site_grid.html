@@ -5,6 +5,7 @@
 
 var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
+var resizing;
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{bucketlist|length}};
 {% endif %}
 
@@ -50,12 +51,19 @@ $(function(){
     multiselect: true,
     onSelectRow: markSelectedRow,{% endif %}
     {% block extra_grid %}{% endblock %}
-    height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %}
+    height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %}
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
   $('#cb_grid.cbox').click(markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
-  {% if reportclass.height %}$("#grid").gridResize({handles: 's', minHeight: {{reportclass.height}} });
+  {% if reportclass.height %}$("#grid").gridResize({
+     handles: 's', minHeight: {{reportclass.height}},
+     resize: function() {
+       // Save the configuration if we don't get any more resizing events in 200ms.
+       clearTimeout(resizing);
+       resizing = setTimeout(saveColumnConfiguration, 200);
+       }
+     });
   {% endif %}
 });
 

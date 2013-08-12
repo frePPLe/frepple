@@ -16,6 +16,7 @@ function columns (cellvalue, options, rowdata) {
 
 var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
+var resizing;
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{bucketlist|length}};
 {% endif %}
 
@@ -27,7 +28,9 @@ $(function(){
 	  jsonReader : {repeatitems:false},
    	colModel:[
    	  {% colmodel True %},
-      { name:'columns',label:' ',sortable:false,width:150,align:'left',formatter:columns,search:false,frozen:true,title:false },
+      { name:'columns',label:' ',sortable:false,width:150,align:'left',formatter:columns,search:false,frozen:true,title:false,
+         crosses: [{% for f in reportclass.crosses %}{% if not forloop.first %},
+         {% endif %}{name:'{{f.1.title|title}}', hidden:false, editable:false}{% endfor %}] },
       {% for f in bucketlist %}{% if not forloop.first %},
       {% endif %}{ name:'{{f.name|safe}}',startdate:'{{f.startdate|date:"Y-m-d"}}',enddate:'{{f.enddate|date:"Y-m-d"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
    	  ],{% if reportclass.editable and haschangeperm %}
@@ -53,10 +56,19 @@ $(function(){
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
     {% block extra_grid %}{% endblock %}
-	  height: {% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %}
+	  height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %}
     });
   jQuery("#grid").jqGrid('setFrozenColumns');{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
+  {% if reportclass.height %}$("#grid").gridResize({
+     handles: 's', minHeight: {{reportclass.height}},
+     resize: function() {
+       // Save the configuration if we don't get any more resizing events in 200ms.
+       clearTimeout(resizing);
+       resizing = setTimeout(saveColumnConfiguration, 200);
+       }
+     });
+  {% endif %}
   });
 
 

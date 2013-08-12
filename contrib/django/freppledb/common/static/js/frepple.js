@@ -50,7 +50,9 @@ var upload = {
               .dialog({
                 title: gettext("Error saving data"),
                 autoOpen: true,
-                resizable: false
+                resizable: false,
+                width: 'auto',
+                height: 'auto'
               });
             $('#timebuckets').dialog('close');
             $.jgrid.hideModal("#searchmodfbox_grid");
@@ -70,6 +72,8 @@ var upload = {
           title: gettext("Save or undo your changes first"),
           autoOpen: true,
           resizable: false,
+          width: 'auto',
+          height: 'auto',
           buttons: [
             {
               text: gettext("Save"),
@@ -527,6 +531,8 @@ function delete_show()
         title: gettext("Delete data"),
         autoOpen: true,
         resizable: false,
+        width: 'auto',
+        height: 'auto',
         buttons: [
           {
             text: gettext("Confirm"),
@@ -549,7 +555,9 @@ function delete_show()
                     .dialog({
                       title: gettext("Error deleting data"),
                       autoOpen: true,
-                      resizable: true
+                      resizable: true,
+                      width: 'auto',
+                      height: 'auto'
                     });
                   $('#timebuckets').dialog('close');
                   $.jgrid.hideModal("#searchmodfbox_grid");
@@ -581,6 +589,8 @@ function copy_show()
         title: gettext("Copy data"),
         autoOpen: true,
         resizable: false,
+        width: 'auto',
+        height: 'auto',
         buttons: [
           {
             text: gettext("Confirm"),
@@ -603,7 +613,9 @@ function copy_show()
                     .dialog({
                       title: gettext("Error copying data"),
                       autoOpen: true,
-                      resizable: true
+                      resizable: true,
+                      width: 'auto',
+                      height: 'auto'
                     });
                   $('#timebuckets').dialog().dialog('close');
                   $.jgrid.hideModal("#searchmodfbox_grid");
@@ -670,7 +682,7 @@ function import_show(url)
     gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/></form>'
     ).dialog({
       title: gettext("Import data"),
-      autoOpen: true, resizable: false, width: 390,
+      autoOpen: true, resizable: false, width: 390, height: 'auto',
       buttons: [
         {
           text: gettext("Import"),
@@ -702,6 +714,7 @@ function filter_show()
     overlay: 0,
     sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
     onSearch : function() {
+      saveColumnConfiguration();
       var s = jQuery("#fbox_grid").jqFilter('toSQLString');
       if (s) $('#curfilter').html(gettext("Filtered where") + " " + s);
       else $('#curfilter').html("");
@@ -722,14 +735,13 @@ function export_show(only_list)
 {
   // The argument is true when we show a "list" report.
   // It is false for "table" reports.
-  $(".ui-dialog").dialog().dialog("close");
   $('#popup').html(
     gettext("CSV style") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat"' + (only_list ? ' disabled="true"' : '')+ '>'+
     '<option value="csvtable"' + (only_list ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
     '<option value="csvlist"' + (only_list ?  ' selected="selected"' : '') + '>' + gettext("List") +'</option></select>'
     ).dialog({
       title: gettext("Export data"),
-      autoOpen: true, resizable: false, width: 390,
+      autoOpen: true, resizable: false, width: 390, height: 'auto',
       buttons: [
         {
           text: gettext("Export"),
@@ -775,7 +787,6 @@ function export_close()
 function bucket_show()
 {
   // Show popup
-  $(".ui-dialog").dialog().dialog("close");
   $('#popup').dialog().dialog('close');
   $.jgrid.hideModal("#searchmodfbox_grid");
   $( "#horizonstart" ).datepicker({
@@ -838,16 +849,85 @@ function bucket_show()
 
 function customize_show()
 {
-  $(".ui-dialog").dialog().dialog("close");
   $.jgrid.hideModal("#searchmodfbox_grid");
-  $("#grid").jqGrid('columnChooser', {
+  val = "<select id='configure' multiple='multiple' class='multiselect' name='countries' style='width:360px; height:200px; margin:10px; padding:10px'>" +
+    "<optgroup label='Rows'>";
+  var colModel = $("#grid")[0].p.colModel;
+  for (var i = 0; i < colModel.length; i++)
+  {
+    if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null && colModel[i].label != '')
+    {
+      val += "<option value='" + (i) + "'";
+      if (!colModel[i].hidden) val += "selected='selected'";
+      if (colModel[i].key) val += "disabled='disabled'";
+      val += ">" + colModel[i].label + "</option>";
+    }
+    else if (colModel[i].name == 'columns')
+    {
+        console.log('ok');
+          val += "</optgroup><optgroup label='Crosses'>";
+          for (var j = 0; j < colModel[i].crosses.length; j++)
+          {
+            val += "<option value='" + (100+j) + "'";
+              if (!colModel[i].crosses[j].hidden) val += "selected='selected'";
+              val += ">" + colModel[i].crosses[j].name + "</option>";
+          }
+          break;
+    }
+  }
+  val += "</optgroup></select>";
+  $('#popup').html(val);
+  $("#configure").multiselect({collapsableGroups: false });
+  $('#popup').dialog({
+     title: gettext("Customize"),
+     width: 390,
+     height: 'auto',
+     autoOpen: true,
+     resizable: false,
+     buttons: [
+               {
+                 text: gettext("OK"),
+                 click: function()
+                 {
+                   var colModel = $("#grid")[0].p.colModel;
+                     $('#configure option').each(function() {
+                         if (this.selected) {
+                             $("#grid").jqGrid("showCol", colModel[parseInt(this.value,10)].name);
+                         } else {
+                             $("#grid").jqGrid("hideCol", colModel[parseInt(this.value,10)].name);
+                         }
+                     });
+
+                     var perm = [0];
+                     $('#configure option').each(function() { perm.push(parseInt(this.value,10)); });
+                     /*$.each(perm, function() { delete colMap[colModel[parseInt(this,10)].name]; });
+                     $.each(colMap, function() {
+                         var ti = parseInt(this,10);
+                         perm = insert(perm,ti,ti);
+                     });*/
+
+                   $("#grid").jqGrid("remapColumns", perm, true);
+                   saveColumnConfiguration();
+                   $(this).dialog("close");
+                 }
+               },
+               {
+                 text: gettext("Cancel"),
+                 click: function() { $(this).dialog("close"); }
+               }
+               ]
+     });
+
+  /*$("#grid").jqGrid('columnChooser', {
     done: function(perm) {
        if (perm) {
+           alert(perm);
          $("#grid").jqGrid("remapColumns", perm, true);
          saveColumnConfiguration();
          }
       }
-    });
+    });*/
+
 }
 
 
@@ -872,6 +952,11 @@ function saveColumnConfiguration()
      "sord": $('#grid').getGridParam('sortorder'),
      "filter": $('#grid').getGridParam("postData").filters
   }
+  if(typeof extraPreference == 'function')
+  {
+    var extra = extraPreference();
+    for (var idx in extra) {result[reportkey][idx] = extra[idx];}
+  }
   $.ajax({
       url: '/settings/',
       type: 'POST',
@@ -882,7 +967,9 @@ function saveColumnConfiguration()
           .dialog({
             title: gettext("Error saving report settings"),
             autoOpen: true,
-            resizable: false
+            resizable: false,
+            width: 'auto',
+            height: 'auto'
           });
         }
   });
@@ -930,7 +1017,9 @@ function savePagingConfiguration(pgButton)
           .dialog({
             title: gettext("Error saving report settings"),
             autoOpen: true,
-            resizable: false
+            resizable: false,
+            width: 'auto',
+            height: 'auto'
           });
         }
   });

@@ -10,6 +10,10 @@
 </style>
 <script type="text/javascript">
 
+  function extraPreference() {
+    return {"height": $("#gbox_grid").height() - 48};
+  }
+
   function calcUtil()
   {
     var clusters = parseInt($("#create0").val());

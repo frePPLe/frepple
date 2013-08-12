@@ -25,8 +25,8 @@ FrePPLe redistributes parts of the following third party software components:
      Copyright with InfoSoft Global
      See http://www.fusioncharts.com/free/
 
-* contrib\django\freppledb\common\static\js\jquery.js     
-     Redistributed from jQuery JavaScript Library 
+* contrib\django\freppledb\common\static\js\jquery.js
+     Redistributed from jQuery JavaScript Library
      See http://jquery.com/
      Copyright 2011, John Resig
      Dual licensed under the MIT or GPL Version 2 licenses.
@@ -34,30 +34,31 @@ FrePPLe redistributes parts of the following third party software components:
      See http://sizzlejs.com/
      Copyright 2011, The Dojo Foundation
      Released under the MIT, BSD, and GPL Licenses.
- 
+
 * contrib\django\freppledb\common\static\js\jquery-ui.js
   contrib\django\freppledb\common\static\css\*\images\*.png
   contrib\django\freppledb\common\static\css\*\jquery-ui.css
-     Redistributed from jQuery UI   
+     Redistributed from jQuery UI
      Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
-     Dual licensed under the MIT or GPL Version 2 licenses.     
-     
+     Dual licensed under the MIT or GPL Version 2 licenses.
+
 * contrib\django\freppledb\common\static\js\jquery.jqgid*.js
   contrib\django\freppledb\common\static\js\i18n\grid.locale-*.js
   contrib\django\freppledb\common\static\css\ui.jqgrid.css
     Redistributed from jqGrid - jQuery Grid
     Copyright (c) 2008, Tony Tomov, tony@trirand.com
-    Dual licensed under the MIT and GPL licenses 
-    See http://www.trirand.com/blog/    
-    
-* contrib\django\freppledb\common\static\js\jquery.sparkline*.js
-    Redistributed from jQuery Sparklines
-    Copyright (c) 2012, Splunk Inc.
-    Licensed under New BSD License
-    See http://omnipotent.net/jquery.sparkline/#s-about
+    Dual licensed under the MIT and GPL licenses
+    See http://www.trirand.com/blog/
 
-* contrib\django\freppledb\common\static\js\flotr2*.js    
+* contrib\django\freppledb\common\static\js\flotr2*.js
     Redistributed from flotr2
     Copyright (c) 2012 Carl Sutherland
     Licensed as public domain software
     See https://github.com/HumbleSoftware/Flotr2/
+
+* contrib\django\freppledb\common\static\js\jquery.uix.multiselect.*js
+  contrib\django\freppledb\common\static\css\uix.multiselect.css
+   Redistributed from jquery.uix.multiselect
+   Copyright Yanick Rochon
+   Licensed under the MIT (MIT-LICENSE.txt) license.
+   See http://mind2soft.com/labs/jquery/multiselect/

@@ -850,16 +850,17 @@ function bucket_show()
 function customize_show()
 {
   $.jgrid.hideModal("#searchmodfbox_grid");
-  val = "<select id='configure' multiple='multiple' class='multiselect' name='countries' style='width:360px; height:200px; margin:10px; padding:10px'>" +
-    "<optgroup label='Rows'>";
+  //val = "<select id='configure' multiple='multiple' class='multiselect' name='fields' style='width:360px; height:200px; margin:10px; padding:10px'>" +
+  //"<optgroup label='Rows'>";
+  val = "<select id='configure' multiple='multiple' class='multiselect' name='fields' style='width:360px; height:200px; margin:10px; padding:10px'>";
   var colModel = $("#grid")[0].p.colModel;
   for (var i = 0; i < colModel.length; i++)
   {
     if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null && colModel[i].label != '')
     {
       val += "<option value='" + (i) + "'";
-      if (!colModel[i].hidden) val += "selected='selected'";
-      if (colModel[i].key) val += "disabled='disabled'";
+      if (!colModel[i].hidden) val += " selected='selected'";
+      //if (colModel[i].key) val += " disabled='disabled'";
       val += ">" + colModel[i].label + "</option>";
     }
     else if (colModel[i].name == 'columns')
@@ -869,15 +870,24 @@ function customize_show()
           for (var j = 0; j < colModel[i].crosses.length; j++)
           {
             val += "<option value='" + (100+j) + "'";
-              if (!colModel[i].crosses[j].hidden) val += "selected='selected'";
+              if (!colModel[i].crosses[j].hidden) val += " selected='selected'";
               val += ">" + colModel[i].crosses[j].name + "</option>";
           }
           break;
     }
   }
-  val += "</optgroup></select>";
+  //val += "</optgroup></select>";
+  val += "</select>";
   $('#popup').html(val);
-  $("#configure").multiselect({collapsableGroups: false });
+  console.log(val);
+  $("#configure").multiselect({
+	  moveEffect: 'blind',
+      moveEffectOptions: {direction:'vertical'},
+      moveEffectSpeed: 'fast',
+      collapsableGroups: false,
+      sortable: true
+      // searchField: false   // Doesn't display well
+      });
   $('#popup').dialog({
      title: gettext("Customize"),
      width: 390,

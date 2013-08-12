@@ -10,8 +10,33 @@
 </style>
 <script type="text/javascript">
 
+  var refresh = null;
+
   function extraPreference() {
-    return {"height": $("#gbox_grid").height() - 48};
+    return {
+       "height": $("#gbox_grid").height() - 48,
+       "refresh": (refresh !== null)
+       };
+  }
+
+  function updateRefresh()
+  {
+    if (refresh !== null)
+    {
+       // Disable the refresh which is currently active
+       clearInterval(refresh);
+       $('#autorefresh').addClass("ui-state-disabled");
+       refresh = null;
+    }
+    else
+    {
+      // Enable the refresh which is currently inactive
+      refresh = setInterval(function() {
+        $("#grid").trigger("reloadGrid",[{current:true}]);
+        }, 5000);
+      $('#autorefresh').removeClass("ui-state-disabled");
+    }
+    saveColumnConfiguration();
   }
 
   function calcUtil()
@@ -44,15 +69,19 @@
         dateFormat: "yy-mm-dd", changeMonth:true,
         changeYear:true, yearRange: "c-5:c+5"
         });
+    {% if not "refresh" in preferences or preferences.refresh %}
     // Refresh the grid every 5 seconds
-    setInterval(function() {
+    refresh = setInterval(function() {
       $("#grid").trigger("reloadGrid",[{current:true}]);
-      }, 5000);
+      }, 5000);{% endif %}
   });
 
 </script>
 
 {% endblock %}
+{% block actions %}
+<a id="autorefresh" href="javascript:updateRefresh();" class="icon{% if "refresh" in preferences and not preferences.refresh %} ui-state-disabled{% endif %}"><span class="ui-icon ui-icon-arrowrefresh-1-s"></span>{% trans 'Autorefresh' %}</a>
+{{block.super}}{% endblock %}
 {% block after_table %}
 <br/><h1>{% trans "Launch new tasks" %}</h1>
 <div id="tasks" style="max-width:700px">

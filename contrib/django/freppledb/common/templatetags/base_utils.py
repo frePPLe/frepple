@@ -25,7 +25,6 @@ from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_unicode
 from django.utils.html import escape
-from django.contrib.admin import sites
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.execute.models import Scenario

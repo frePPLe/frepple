@@ -303,7 +303,7 @@ function afterEditCell(rowid, cellname, value, iRow, iCol)
   var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[iCol];
   if (colmodel.formatter == 'date')
   {
-  if (colmodel.formatoptions['srcformat'] == "Y-m-d")
+    if (colmodel.formatoptions['srcformat'] == "Y-m-d")
       $(cell).datepicker({
         showOtherMonths: true, selectOtherMonths: true,
         dateFormat: "yy-mm-dd", changeMonth:true,
@@ -850,9 +850,8 @@ function bucket_show()
 function customize_show()
 {
   $.jgrid.hideModal("#searchmodfbox_grid");
-  //val = "<select id='configure' multiple='multiple' class='multiselect' name='fields' style='width:360px; height:200px; margin:10px; padding:10px'>" +
-  //"<optgroup label='Rows'>";
-  val = "<select id='configure' multiple='multiple' class='multiselect' name='fields' style='width:360px; height:200px; margin:10px; padding:10px'>";
+  val = "<select id='configure' multiple='multiple' class='multiselect' name='fields' style='width:420px; height:200px; margin:10px; padding:10px'>" +
+  "<optgroup label='Rows'>";
   var colModel = $("#grid")[0].p.colModel;
   for (var i = 0; i < colModel.length; i++)
   {
@@ -860,12 +859,11 @@ function customize_show()
     {
       val += "<option value='" + (i) + "'";
       if (!colModel[i].hidden) val += " selected='selected'";
-      //if (colModel[i].key) val += " disabled='disabled'";
+      if (colModel[i].key) val += " disabled='disabled'";
       val += ">" + colModel[i].label + "</option>";
     }
     else if (colModel[i].name == 'columns')
     {
-        console.log('ok');
           val += "</optgroup><optgroup label='Crosses'>";
           for (var j = 0; j < colModel[i].crosses.length; j++)
           {
@@ -876,21 +874,18 @@ function customize_show()
           break;
     }
   }
-  //val += "</optgroup></select>";
-  val += "</select>";
+  val += "</optgroup></select>";
   $('#popup').html(val);
-  console.log(val);
   $("#configure").multiselect({
-	  moveEffect: 'blind',
-      moveEffectOptions: {direction:'vertical'},
-      moveEffectSpeed: 'fast',
       collapsableGroups: false,
-      sortable: true
-      // searchField: false   // Doesn't display well
+      sortable: true,
+      showEmptyGroups: true,
+      locale: $("html")[0].lang,
+      searchField: false
       });
   $('#popup').dialog({
      title: gettext("Customize"),
-     width: 390,
+     width: 440,
      height: 'auto',
      autoOpen: true,
      resizable: false,
@@ -917,6 +912,15 @@ function customize_show()
                      });*/
 
                    $("#grid").jqGrid("remapColumns", perm, true);
+
+                   /*
+                    jQuery("#grid")
+                   .jqGrid('destroyFrozenColumns');
+                   .jqGrid('setColProp','invdate', {frozen:true});
+                   .jqGrid('setFrozenColumns');
+                   .trigger('reloadGrid', [{current:true}]);
+                    */
+
                    saveColumnConfiguration();
                    $(this).dialog("close");
                  }

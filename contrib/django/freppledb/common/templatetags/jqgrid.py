@@ -44,7 +44,7 @@ class ColModelNode(Node):
       count = -1
       for (index, hidden, width) in prefs:
         count += 1
-        result.append(u"{%s,width:%s,counter:%d%s%s%s}" % (
+        result.append(u"{%s,width:%s,counter:%d%s%s%s,searchoptions:{searchhidden: true}}" % (
            reportclass.rows[index], width, index,
            (self.frozen or count < reportclass.frozenColumns) and ',frozen:true' or '',
            is_popup and ',popup:true' or '',

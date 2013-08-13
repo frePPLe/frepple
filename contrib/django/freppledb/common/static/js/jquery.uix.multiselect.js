@@ -1210,7 +1210,11 @@
         },
 
         setSelected: function(eData, selected, silent) {
-            if (eData.optionElement.attr('disabled') && selected) {
+		    /** JDETAEYE PATCH: Don't allow disabled items to change state
+		      Original code:
+		      if (eData.optionElement.attr('disabled')) && selected) {
+		    */
+            if (eData.optionElement.attr('disabled')) {
                 return;
             }
 

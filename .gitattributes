@@ -1,5 +1,6 @@
 # Default behaviour
 * text=auto
+*.py text
 
 # Files forced to remain in windows format
 *.bat           eol=crlf

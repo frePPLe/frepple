@@ -19,6 +19,6 @@ clean-local:
 uninstall-local:
 	-rm -rf $(DESTDIR)$(datadir)/frepple $(DESTDIR)$(libdir)/frepple
 
-# Avoid packaging any subversion subdirectories that may be left over
+# Avoid packaging any git directory that may be left over
 dist-hook:
-	-rm -rf `find $(top_distdir) -name '.svn' -type d`
+	-rm -rf `find $(top_distdir) -name '.git' -type d`

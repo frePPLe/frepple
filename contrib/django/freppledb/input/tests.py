@@ -29,59 +29,55 @@ class DataLoadTest(TestCase):
     self.client.login(username='frepple', password='frepple')
 
   def test_input_customer(self):
-    response = self.client.get('/admin/input/customer/?format=json')
+    response = self.client.get('/data/input/customer/?format=json')
     self.assertContains(response, '"records":2,')
 
   def test_input_flow(self):
-    response = self.client.get('/admin/input/flow/?format=json')
+    response = self.client.get('/data/input/flow/?format=json')
     self.assertContains(response, '"records":19,')
 
   def test_input_buffer(self):
-    response = self.client.get('/admin/input/buffer/?format=json')
+    response = self.client.get('/data/input/buffer/?format=json')
     self.assertContains(response, '"records":8,')
 
   def test_input_calendar(self):
-    response = self.client.get('/admin/input/calendar/?format=json')
+    response = self.client.get('/data/input/calendar/?format=json')
     self.assertContains(response, '"records":4,')
 
   def test_input_calendarbucket(self):
-    response = self.client.get('/admin/input/calendarbucket/?format=json')
+    response = self.client.get('/data/input/calendarbucket/?format=json')
     self.assertContains(response, '"records":5,')
 
   def test_input_demand(self):
-    response = self.client.get('/admin/input/demand/?format=json')
+    response = self.client.get('/data/input/demand/?format=json')
     self.assertContains(response, '"records":14,')
 
   def test_input_item(self):
-    response = self.client.get('/admin/input/item/?format=json')
+    response = self.client.get('/data/input/item/?format=json')
     self.assertContains(response, '"records":5,')
 
   def test_input_load(self):
-    response = self.client.get('/admin/input/load/?format=json')
+    response = self.client.get('/data/input/load/?format=json')
     self.assertContains(response, '"records":3,')
 
   def test_input_location(self):
-    response = self.client.get('/admin/input/location/?format=json')
+    response = self.client.get('/data/input/location/?format=json')
     self.assertContains(response, '"records":2,')
 
   def test_input_operation(self):
-    response = self.client.get('/admin/input/operation/?format=json')
+    response = self.client.get('/data/input/operation/?format=json')
     self.assertContains(response, '"records":14,')
 
   def test_input_operationplan(self):
-    response = self.client.get('/admin/input/operationplan/?format=json')
+    response = self.client.get('/data/input/operationplan/?format=json')
     self.assertContains(response, '"records":4,')
 
-  def test_input_parameter(self):
-    response = self.client.get('/admin/common/parameter/?format=json')
-    self.assertContains(response, '"records":2,')
-
   def test_input_resource(self):
-    response = self.client.get('/admin/input/resource/?format=json')
+    response = self.client.get('/data/input/resource/?format=json')
     self.assertContains(response, '"records":3,')
 
   def test_input_suboperation(self):
-    response = self.client.get('/admin/input/suboperation/?format=json')
+    response = self.client.get('/data/input/suboperation/?format=json')
     self.assertContains(response, '"records":4,')
 
   def test_csv_upload(self):
@@ -95,8 +91,8 @@ class DataLoadTest(TestCase):
       print >>data, 'factory 3, cat1'
       print >>data, 'factory 4,'
       data.seek(0)
-      response = self.client.post('/admin/input/location/', {'csv_file': data})
-      self.assertRedirects(response, '/admin/input/location/')
+      response = self.client.post('/data/input/location/', {'csv_file': data})
+      self.assertRedirects(response, '/data/input/location/')
     finally:
       data.close()
     self.assertEqual(

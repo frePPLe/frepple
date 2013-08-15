@@ -1,6 +1,5 @@
 # Default behaviour
 * text=auto
-*.py text
 
 # Files forced to remain in windows format
 *.bat           eol=crlf
@@ -12,3 +11,8 @@
 *.am            eol=lf
 *.ac            eol=lf
 *.spec          eol=lf
+*.py            eol=lf
+*.css           eol=lf
+*.html          eol=lf
+*.js            eol=lf
+*.1             eol=lf

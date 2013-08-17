@@ -14,7 +14,6 @@ function columns (cellvalue, options, rowdata) {
   return res;
 };{% endblock %}
 
-var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 var resizing;
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{bucketlist|length}};
@@ -43,7 +42,6 @@ $(function(){
     viewrecords: true,
     sortorder: "asc",
     hidegrid: false,
-    resizeStop: saveColumnConfiguration,
     scrollRows: true,
     //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
@@ -60,15 +58,6 @@ $(function(){
     });
   jQuery("#grid").jqGrid('setFrozenColumns');{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
-  {% if reportclass.height %}$("#grid").gridResize({
-     handles: 's', minHeight: {{reportclass.height}},
-     resize: function() {
-       // Save the configuration if we don't get any more resizing events in 200ms.
-       clearTimeout(resizing);
-       resizing = setTimeout(saveColumnConfiguration, 200);
-       }
-     });
-  {% endif %}
   });
 
 
@@ -89,7 +78,6 @@ $(window).bind('resize', function() {
 {% endif %}
 {% if reportclass.hasTimeBuckets %}<a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
 {% endif %}<a href="javascript:export_show(false);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
-<a href="javascript:customize_show();" class="icon"><span class="ui-icon ui-icon-wrench"></span>{% trans 'Customize' %}</a>
 </div>
 <div id="content-main" style="margin-right: 15px;">
 <table id="grid"></table>

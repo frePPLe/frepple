@@ -4,7 +4,6 @@
 {% block branding %}frePPLe&nbsp;{% version %}&nbsp;<span class="reduced">community&nbsp;edition</span>{% endblock %}
 {% block extrastyle %}{{block.super}}<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/{{request.theme}}/jquery-ui.min.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/ui.jqgrid.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/uix.multiselect.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/frepple.css" />
 {% endblock %}
 {% block extrahead %}{{block.super}}
@@ -14,8 +13,6 @@
 <script type="text/javascript" src="{{STATIC_URL}}js/i18n/jquery.ui.datepicker-{{LANGUAGE_CODE|default:"en"}}.js"></script>
 <script src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js" type="text/javascript"></script>
 <script src="{{STATIC_URL}}js/jquery.jqGrid.min.js" type="text/javascript"></script>
-<script src="{{STATIC_URL}}js/jquery.uix.multiselect.min.js" type="text/javascript"></script>
-<script src="{{STATIC_URL}}js/i18n/jquery.uix.multiselect_{{LANGUAGE_CODE|default:"en"}}.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/frepple.js"></script>
 {% endblock %}
 {% block breadcrumbs %}<div class="breadcrumbs">{% crumbs %}</div>{% endblock %}

@@ -135,44 +135,6 @@ def horizon(request):
     logger.error("Error saving horizon settings: %s" % e)
     raise Http404('Error saving horizon settings')
 
-@login_required
-@csrf_protect
-def settings(request):
-  if request.method != 'POST' or not request.is_ajax():
-    raise Http404('Only ajax post requests allowed')  
-  data = json.loads(request.body)
-  for key, value in data.items():
-    request.user.setPreference(key, value);
-  return HttpResponse(content="OK")  
-  try:
-    data = json.loads(request.body)
-    for key, value in data.items():
-      request.user.setPreference(key, value);
-    return HttpResponse(content="OK")
-  except Exception as e:
-    logger.error("Error saving report settings: %s" % e)
-    return HttpResponseServerError('Error saving report settings') 
- 
-
-
-@login_required
-@csrf_protect
-def settings(request):
-  if request.method != 'POST' or not request.is_ajax():
-    raise Http404('Only ajax post requests allowed')
-  data = json.loads(request.body)
-  for key, value in data.items():
-    request.user.setPreference(key, value);
-  return HttpResponse(content="OK")
-  try:
-    data = json.loads(request.body)
-    for key, value in data.items():
-      request.user.setPreference(key, value);
-    return HttpResponse(content="OK")
-  except Exception as e:
-    logger.error("Error saving report settings: %s" % e)
-    return HttpResponseServerError('Error saving report settings')
-
 
 class UserList(GridReport):
   '''

@@ -60,9 +60,9 @@ if len(sys.argv) > 1 and sys.argv[1] == 'bdist_wininst':
 
 setup(name = 'freppledb',
       version = __import__('freppledb').VERSION,
-      author = "www.frepple.com",
-      author_email = "info@www.frepple.com",
-      url = "http://www.frepple.com",
+      author = "frepple.com",
+      author_email = "info@frepple.com",
+      url = "http://frepple.com",
       scripts = ['frepplectl.py'],
       packages = packages,
       data_files = data_files,
@@ -72,7 +72,7 @@ setup(name = 'freppledb',
         'Intended Audience :: Manufacturing',
         'Framework :: Django',
         ],
-      description = "Free Production Planning Library",
+      description = "Open source Production PLanning",
       long_description = '''FrePPLe stands for "Free Production Planning Library".
 It is a framework for modeling and solving production planning problems,
 targeted primarily at discrete manufacturing industries.

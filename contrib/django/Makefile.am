@@ -2,13 +2,13 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = freppledb django.patch django.git_patch README.txt httpd.conf frepplectl.py setup.py
+EXTRA_DIST = freppledb django.patch django.git_patch README.txt frepplectl.py setup.py
 
 install-data-local:
 	echo "installing Django web application to $(DESTDIR)$(pythondir)"; \
-	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix)
+	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix) --install-purelib=$(DESTDIR)$(pythondir)
 	-mkdir static
-	./frepplectl.py collectstatic --noinput --clear
+	$(PYTHON) frepplectl.py collectstatic --noinput --clear
 	find static -type d -exec $(mkinstalldirs) "$(DESTDIR)$(datadir)/frepple/{}" \;; \
 	for p in `find static -type f`; do \
 	  $(INSTALL_DATA) $$p "$(DESTDIR)$(datadir)/frepple/$$p"; \

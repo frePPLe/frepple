@@ -3,9 +3,14 @@
 #
 
 nobasedir = $(datadir)/frepple
-nobase_DATA = frepple.xsd frepple_core.xsd init.xml license.xml
+nobase_DATA = frepple.xsd frepple_core.xsd init.xml
+pkgsysconfdir = $(sysconfdir)/frepple
+pkgsysconf_DATA = license.xml
 
-EXTRA_DIST = $(nobase_DATA)
+install-data-hook:
+	cd "$(DESTDIR)$(datadir)/frepple" && $(LN_S) "$(pkgsysconfdir)/license.xml" license.xml
+
+EXTRA_DIST = $(nobase_DATA) $(pkgsysconf_DATA)
 
 clean-local:
 	-rm -rf *.tds *.exe *.lib *.pdb *.dll *.so *.so.* *.exp *.tds *.BAK *.ilk mod_*.xsd *.out output*.* frepple *.log *.sqlite

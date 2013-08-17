@@ -1,11 +1,20 @@
 #!/usr/bin/make -f
 
 # Uncomment to see verbose output
-# export DH_VERBOSE=1
+#export DH_VERBOSE=1
+
+DEB_PYTHON_SYSTEM=pysupport
+DEB_PYTHON_SETUP_CMD=contrib/django/setup.py
+DEB_BUILD_OPTIONS = nocheck parallel=2
+DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --disable-doc --disable-lp_solver
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
+include /usr/share/cdbs/1/class/python-distutils.mk
 
-DEB_BUILD_OPTIONS=nocheck
-DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --enable-doc --disable-lp_solver
-
+install/frepple::
+	# Install apache configuration
+	mkdir -p $(CURDIR)/debian/tmp/etc/apache2/sites-available
+	install -m 644 contrib/debian/httpd.conf $(CURDIR)/debian/tmp/etc/apache2/sites-available/frepple
+	# Rename script file
+	mv $(CURDIR)/debian/tmp/usr/bin/frepplectl.py $(CURDIR)/debian/tmp/usr/bin/frepplectl

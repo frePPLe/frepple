@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = README.txt frepple.spec
+EXTRA_DIST = README.txt frepple.spec httpd.conf
 CLEANFILES = *.rpm
 
 # This make target builds the RPMs, suitable for Fedora.
@@ -15,3 +15,4 @@ contrib:
 	rpmbuild -ba ~/rpmbuild/SPECS/frepple.spec
 	cp ~/rpmbuild/RPMS/*/frepple-*$(VERSION)*rpm .
 	cp ~/rpmbuild/SRPMS/frepple-$(VERSION)* .
+

@@ -1,5 +1,5 @@
-frepple (0.8.1-1) unstable; urgency=low
+frepple (2.1.0-1) stable; urgency=low
 
-  * Initial release (Closes: #1234)
+  * frePPLe community edition 2.1
 
- -- Johan De Taeye <jdetaeye@users.sourceforge.net>  Sat, 18 Sep 2010 07:36:24 -0400
+ -- Johan De Taeye <jdetaeye@frepple.com>  Fri, 7 Jun 2013 07:36:24 -0400

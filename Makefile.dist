@@ -61,7 +61,7 @@ config:
 	@echo
 	@echo "PHASE: Running configure for optimized build..."
 	./configure --enable-doc
-#--prefix=`pwd`/install-test	
+#--prefix=`pwd`/install-test --sysconfdir=`pwd`/install-test/etc
 
 configdebug:
 	@echo

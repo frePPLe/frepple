@@ -7,16 +7,10 @@ The packaging is written with the Ubuntu distributions in mind, and
 follows its packaging guidelines:
   See https://wiki.ubuntu.com/PackagingGuide/Complete
 
-NOTE:
-The packages do not install or configure the Django user interface yet.
-
 Build instructions:
- - You need to install the packages "cdbs", "debhelper", "pbuilder" and "dh-make".  
- - Enable the Universe repository for your pbuild environment, by creating a
-   file ~/.pbuilderrc with this line in it:
-     COMPONENTS="main restricted universe multiverse"
+ - You need to install the packages "cdbs", "debhelper", "python-support", "pbuilder".
  - Initialize your build environment with the command:
-     sudo pbuild create
+     sudo pbuilder create
  - Build the packages
      make contrib
 

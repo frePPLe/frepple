@@ -39,6 +39,7 @@ AC_PROG_MAKE_SET
 AC_LANG(C++)
 AC_LANG_COMPILER_REQUIRE
 AC_PROG_LIBTOOL
+AC_PROG_LN_S
 
 # Note: the library version number and the package version number are
 # INDEPENDENT. The library version is the concatenation of LIBCURRENT,

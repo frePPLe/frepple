@@ -29,8 +29,9 @@ Group: Applications/Productivity
 URL: http://www.frepple.com
 Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
-Requires: xerces-c, Django
-BuildRequires: python-devel, xerces-c-devel
+# Note on dependencies: Django is also required, but we need a custom install.
+Requires: xerces-c, openssl, httpd, mod_wsgi, python
+BuildRequires: python-devel, automake, autoconf, libtool, xerces-c-devel, openssl-devel, graphviz, doxygen
 
 %description
 FrePPLe stands for "Free Production PLanning". It is an application for
@@ -83,7 +84,7 @@ make check
 
 %install
 rm -rf %{buildroot}
-make install DESTDIR=%{buildroot} 
+make install DESTDIR=%{buildroot}
 # Do not package .la files created by libtool
 find %{buildroot} -name '*.la' -exec rm {} \;
 # Use percent-doc instead of install to create the documentation
@@ -92,6 +93,11 @@ rm -rf %{buildroot}%{_docdir}/%{name}
 (cd $RPM_BUILD_ROOT && find . -name 'django*.mo') | %{__sed} -e 's|^.||' | %{__sed} -e \
   's:\(.*/locale/\)\([^/_]\+\)\(.*\.mo$\):%lang(\2) \1\2\3:' \
   >> %{name}.lang
+# Remove .py script extension
+mv $RPM_BUILD_ROOT/usr/bin/frepplectl.py $RPM_BUILD_ROOT/usr/bin/frepplectl
+# Install apache configuration
+mkdir -p $RPM_BUILD_ROOT/etc/httpd/conf.d
+install -m 644 -p contrib/rpm/httpd.conf $RPM_BUILD_ROOT/etc/httpd/conf.d/z_frepple.conf
 
 %clean
 rm -rf %{buildroot}
@@ -103,20 +109,23 @@ rm -rf %{buildroot}
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %{_bindir}/frepple
-%{_bindir}/frepplectl.py
-%dir %{_libdir}/frepple
-%{_libdir}/frepple/libfrepple.so.0
-%{_libdir}/frepple/libfrepple.so.0.0.0
-%dir %{_datadir}/frepple
-%{_datadir}/frepple/*.xsd
-%{_datadir}/frepple/*.xml
-%{_mandir}/man1/frepple.1.*
+%{_bindir}/frepplectl
+%{_libdir}/libfrepple.so.0
+%{_libdir}/libfrepple.so.0.0.0
+# Uncomment if there are extension modules to package
+#%dir %{_libdir}/frepple
+%{_datadir}/frepple
 %{python_sitelib}/freppledb*
-%doc COPYING 
+%{_mandir}/man1/frepple.1.*
+%{_mandir}/man1/frepplectl.1.*
+%doc COPYING
+%config(noreplace) /etc/frepple/license.xml
+%config(noreplace) %{python_sitelib}/freppledb/settings.py
+%config(noreplace) /etc/httpd/conf.d/z_frepple.conf
 
 %files devel
 %defattr(-,root,root,-)
-%{_libdir}/frepple/libfrepple.so
+%{_libdir}/libfrepple.so
 %dir %{_includedir}/frepple
 %{_includedir}/frepple/*
 %{_includedir}/frepple.h
@@ -124,5 +133,5 @@ rm -rf %{buildroot}
 
 %files doc
 %defattr(-,root,root,-)
-%doc doc/html
+%doc doc/output
 

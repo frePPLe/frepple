@@ -19,9 +19,6 @@ r'''
 Main Django configuration file.
 '''
 import os, sys, locale
-import freppledb
-
-print "SPECIFICS"
 
 DEBUG = 'runserver' in sys.argv
 

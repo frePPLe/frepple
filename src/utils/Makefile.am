@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-AM_CPPFLAGS=-DDATADIRECTORY='"@datadir@/frepple"' -DLIBDIRECTORY='"@libdir@"'
+AM_CPPFLAGS=-DDATADIRECTORY='"@pkgdatadir@"' -DLIBDIRECTORY='"@libdir@"' -DSYSCONFDIRECTORY='"@sysconfdir@/frepple"'
 
 CLEANFILES = *.gcda *.gcov *.gcno
 

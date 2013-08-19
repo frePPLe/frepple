@@ -148,7 +148,19 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
   fullname = LIBDIRECTORY;
   if (*fullname.rbegin() != pathseperator)
     fullname += pathseperator;
-  fullname += "frepple/";
+  fullname += "frepple";
+  fullname += pathseperator;
+  fullname += filename;
+  result = stat(fullname.c_str(), &stat_p);
+  if (!result && (stat_p.st_mode & S_IREAD))
+    return fullname;
+#endif
+
+#ifdef SYSCONFDIRECTORY
+  // Fifth: check the sysconf directory
+  fullname = SYSCONFDIRECTORY;
+  if (*fullname.rbegin() != pathseperator)
+    fullname += pathseperator;
   fullname += filename;
   result = stat(fullname.c_str(), &stat_p);
   if (!result && (stat_p.st_mode & S_IREAD))

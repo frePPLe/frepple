@@ -52,7 +52,7 @@ Function ${un}openLinkNewWindow
   Exch
   Push $0
   Exch
- 
+
   ReadRegStr $0 HKCR "http\shell\open\command" ""
   # Get browser path
   StrCpy $2 '"'
@@ -66,12 +66,12 @@ Function ${un}openLinkNewWindow
     StrCmp $1 "" found
     IntOp $3 $3 + 1
     Goto loop
- 
+
   found:
     StrCpy $1 $0 $3
     StrCmp $2 " " +2
       StrCpy $1 '$1"'
- 
+
   Pop $0
   DetailPrint "Opening URL $0 in browser"
   Exec '$1 $0'
@@ -204,7 +204,7 @@ Section "Application" SecAppl
    ; Copy configuration files
   File "..\bin\*.xsd"
   File "..\bin\init.xml"
-  
+
   ; Copy the license file the user specified
   File "..\bin\license.xml"
   StrCmp $LicenseFile "" +3 0
@@ -213,6 +213,10 @@ Section "Application" SecAppl
 
   ; Copy the django and python redistributables created by py2exe
   File /r "..\contrib\installer\dist\*.*"
+
+  ; Copy djangosettings
+  SetOutPath "$INSTDIR\bin\custom"
+  File "..\contrib\django\djangosettings.py"
 
   ; Copy sqlite database if it is available.
   ; This file shouldn't be put in the read-only "Program files" directory.
@@ -265,12 +269,12 @@ Section "Application" SecAppl
   ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
 
   ; Update the settings.py file
-  SetOutPath "$INSTDIR\bin\custom\freppledb"
-  FileOpen $R2 "settings.py" "r"
+  SetOutPath "$INSTDIR\bin\custom"
+  FileOpen $R2 "djangosettings.py" "r"
   GetTempFileName $R3
   FileOpen $R4 $R3 "w"
   ; Read the first section in settings.py and write unmodified to the output file
-  read1_loop:       
+  read1_loop:
     FileRead $R2 $R5
     IfErrors end_loop
     FileWrite $R4 "$R5"
@@ -278,7 +282,7 @@ Section "Application" SecAppl
     StrCmp "$R5" "# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
   Goto read1_loop
   ; Read the second section in settings.py and write a different text to the output file
-  read2_loop:       
+  read2_loop:
     FileRead $R2 $R5
     IfErrors end_loop
     StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\n" +3 0
@@ -335,8 +339,8 @@ Section "Application" SecAppl
   end_loop:
     FileClose $R2
     FileClose $R4
-    Rename "settings.py" "settings.py.old"
-    Rename "$R3" "settings.py"
+    Rename "djangosettings.py" "djangosettings.py.old"
+    Rename "$R3" "djangosettings.py"
     ClearErrors
 SectionEnd
 
@@ -582,11 +586,11 @@ Section Uninstall
   RMDir "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 
   ; Remove the log directory
-  ; Version subdirectory is always removed. 
+  ; Version subdirectory is always removed.
   ; FrePPLe subdirectory is removed if it is empty.
   RMDir /r "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
   RMDir "$APPDATA\${PRODUCT_NAME}"
-  
+
   ; Remove the installation directory
   RMDir /r "$INSTDIR"
   Sleep 500
@@ -604,5 +608,5 @@ Section Uninstall
   ; Open the post-installation page
   Push "http://www.frepple.com/post-uninstall/?version=${PRODUCT_VERSION}"
   Call un.openLinkNewWindow
-  
+
 SectionEnd

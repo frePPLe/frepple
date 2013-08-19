@@ -17,51 +17,11 @@
 
 r'''
 Main Django configuration file.
-
-It is recommended not to edit this file!
-Instead put all your settings in the file FREPPLE_CONFDIR/djangosettings.py.
-
 '''
 import os, sys, locale
 import freppledb
 
-# FREPPLE_APP directory
-if 'FREPPLE_APP' in os.environ:
-  FREPPLE_APP = os.environ['FREPPLE_APP']
-else:
-  FREPPLE_APP = os.path.abspath(os.path.join(os.path.dirname(freppledb.__file__),'..'))
-
-# FREPPLE_HOME directory
-if 'FREPPLE_HOME' in os.environ:
-  FREPPLE_HOME = os.environ['FREPPLE_HOME']
-elif os.path.isfile(os.path.abspath(os.path.join('usr','share','frepple','frepple.xsd'))):
-  # Linux installation layout
-  FREPPLE_HOME = os.path.abspath(os.path.join('usr','share','frepple'))
-elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','frepple.xsd'))):
-  # Py2exe layout
-  FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP,'..'))
-elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin','frepple.xsd'))):
-  # Development layout
-  FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin'))
-else:
-  print "Error: Can't locate frepple.xsd"
-  sys.exit(1)
-os.environ['FREPPLE_HOME'] = FREPPLE_HOME
-
-# FREPPLE_LOGDIR directory
-if 'FREPPLE_LOGDIR' in os.environ:
-  FREPPLE_LOGDIR = os.environ['FREPPLE_LOGDIR']
-else:
-  FREPPLE_LOGDIR = FREPPLE_APP
-
-# FREPPLE_CONFIGDIR directory
-if 'FREPPLE_CONFIGDIR' in os.environ:
-  FREPPLE_CONFIGDIR = os.environ['FREPPLE_CONFIGDIR']
-elif os.path.isfile(os.path.abspath(os.path.join('etc','frepple','djangosettings.py'))):
-  # Linux installation layout
-  FREPPLE_CONFIGDIR = os.path.abspath(os.path.join('etc','frepple'))
-else:
-  FREPPLE_CONFIGDIR = FREPPLE_APP
+print "SPECIFICS"
 
 DEBUG = 'runserver' in sys.argv
 
@@ -71,6 +31,7 @@ ADMINS = (
 
 # FrePPLe is tested with the following database backends:
 # 'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.
+# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.sqlite3',
@@ -110,8 +71,8 @@ DATABASES = {
     },
   }
 
-# Default language
 LANGUAGE_CODE = 'en'
+# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
 
 # A list of strings representing the host/domain names the application can serve.
 # This is a security measure to prevent an attacker from poisoning caches and
@@ -151,7 +112,7 @@ LANGUAGES = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
-
+	
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
    #('django.template.loaders.cached.Loader', (
@@ -172,17 +133,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
 )
 
-# The default redirects URLs not ending with a slash.
-# This causes trouble in combination with the DatabaseSelectionMiddleware.
-# We prefer not to redirect and report this as an incorrect URL.
-APPEND_SLASH = False
-
-WSGI_APPLICATION = 'freppledb.wsgi.application'
-ROOT_URLCONF = 'freppledb.urls'
-STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP,'static'))
-STATIC_URL = '/static/'
-USE_L10N=True        # Represent data in the local format
-USE_I18N=True        # Use translated strings
 CURRENCY=("","$")    # Prefix and suffix for currency strings
 
 INSTALLED_APPS = (
@@ -279,24 +229,6 @@ LOGGING = {
     }
 }
 
-# Sessions
-SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-SESSION_COOKIE_NAME = 'sessionid'         # Cookie name. This can be whatever you want.
-SESSION_COOKIE_AGE = 60 * 60 * 24 *  2    # Age of cookie, in seconds: 2 days
-SESSION_COOKIE_DOMAIN = None              # A string, or None for standard domain cookie.
-SESSION_SAVE_EVERY_REQUEST = True         # Whether to save the session data on every request.
-                                          # Needs to be True to have the breadcrumbs working correctly!
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user closes his browser.
-
-MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.SessionStorage'
-
-# Mail settings
-#DEFAULT_FROM_EMAIL #if not pass from_email to send_mail func.
-#EMAIL_HOST #required
-#EMAIL_PORT #required
-#EMAIL_HOST_USER #if required authentication to host
-#EMAIL_HOST_PASSWORD #if required auth.
-
 # To use a customized authentication backend.
 AUTHENTICATION_BACKENDS = (
     # Uncomment for external authentication.
@@ -304,9 +236,6 @@ AUTHENTICATION_BACKENDS = (
     #"django.contrib.auth.backends.RemoteUserBackend",
     "freppledb.common.auth.EmailBackend",
 )
-
-# Custom user model
-AUTH_USER_MODEL = 'common.User'
 
 # IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.
@@ -360,39 +289,3 @@ COMMENT_MAX_LENGTH = 3000
 
 # Port number for the CherryPy web server
 PORT = 8000
-
-# Override any of the above settings from a seperate file
-if os.access(os.path.join(FREPPLE_CONFIGDIR,'djangosettings.py'), os.R_OK):
-  exec open(os.path.join(FREPPLE_CONFIGDIR,'djangosettings.py')) in globals()
-
-# Some Django settings we don't like to be overriden
-TEMPLATE_DEBUG = DEBUG
-MANAGERS = ADMINS
-
-# Extra database parameters
-for param in DATABASES.values():
-  if param['ENGINE'] == 'django.db.backends.sqlite3':
-    # Path to the sqlite3 test database file
-    param['TEST_NAME'] = os.path.join(FREPPLE_LOGDIR,'test_%s.sqlite' % param['NAME'])
-    # Path to sqlite3 database file
-    param['NAME'] = os.path.join(FREPPLE_LOGDIR,'%s.sqlite' % param['NAME'])
-    # Extra default settings for SQLITE
-    if len(param['OPTIONS']) == 0:
-      param['OPTIONS'] = {"timeout": 10, "check_same_thread": False}
-  elif param['ENGINE'] == 'django.db.backends.mysql':
-    # Extra default settings for MYSQL
-    # InnoDB has the proper support for transactions that is required for
-    # frePPLe in a production environment.
-    if len(param['OPTIONS']) == 0:
-      param['OPTIONS'] = {"init_command": "SET storage_engine=INNODB, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"}
-    param['TEST_NAME'] = 'test_%s' % param['NAME']
-  elif param['ENGINE'] == 'django.db.backends.oracle':
-    param['TEST_NAME'] = param['NAME']
-    param['TEST_USER'] = 'test_%s' % param['USER']
-    param['TEST_PASSWD'] = param['PASSWORD']
-    param['OPTIONS'] = {'threaded': True,}
-  elif param['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-    param['TEST_NAME'] = 'test_%s' % param['NAME']
-  else:
-    print 'Error: Unsupported database engine %s' % param['ENGINE']
-    sys.exit(1)

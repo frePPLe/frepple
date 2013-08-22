@@ -188,6 +188,17 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
         o->EndObject(Tags::tag_loadplan);
       }
     o->EndObject(Tags::tag_loadplans);
+    bool first = true;
+    for (Problem::const_iterator j = Problem::begin(const_cast<Resource*>(this), false); j!=Problem::end(); ++j)
+    {
+      if (first)
+      {
+        first = false;
+        o->BeginObject(Tags::tag_problems);
+      }
+      o->writeElement(Tags::tag_problem, *j, FULL);
+    }
+    if (!first) o->EndObject(Tags::tag_problems);
   }
 
   // Write the tail

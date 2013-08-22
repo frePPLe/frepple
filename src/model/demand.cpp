@@ -270,6 +270,17 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
         o->writeElement(Tags::tag_operationplan, *i, FULL);
       o->EndObject(Tags::tag_operationplans);
     }
+    bool first = true;
+    for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(this), false); j!=Problem::end(); ++j)
+    {
+      if (first)
+      {
+        first = false;
+        o->BeginObject(Tags::tag_problems);
+      }
+      o->writeElement(Tags::tag_problem, *j, FULL);
+    }
+    if (!first) o->EndObject(Tags::tag_problems);
     if (!constraints.empty())
     {
       o->BeginObject(Tags::tag_constraints);

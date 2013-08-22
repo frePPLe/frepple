@@ -187,7 +187,7 @@ def LaunchTask(request, action):
           "frepple_runworker",
           "--database=%s" % request.database
           ])
-      elif sys.executable.find('frepplectl') >= 0:
+      elif sys.executable.find('frepplectl.exe') >= 0:
         # Py2exe executable
         Popen([
           sys.executable, # Python executable
@@ -197,7 +197,7 @@ def LaunchTask(request, action):
       else:
         # Linux standard installation
         Popen([
-          "frepplectl.py",
+          "frepplectl",
           "frepple_runworker",
           "--database=%s" % request.database
           ])

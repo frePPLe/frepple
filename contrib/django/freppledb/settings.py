@@ -65,54 +65,6 @@ else:
 
 DEBUG = 'runserver' in sys.argv
 
-ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
-)
-
-# FrePPLe is tested with the following database backends:
-# 'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.
-DATABASES = {
-  'default': {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': 'frepple',
-    'USER': 'frepple',
-    'PASSWORD': 'frepple',
-    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
-    'OPTIONS': {},  # Backend specific configuration parameters.
-    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
-    },
-  'scenario1': {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': 'scenario1',
-    'USER': 'frepple',
-    'PASSWORD': 'frepple',
-    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
-    'OPTIONS': {},  # Backend specific configuration parameters.
-    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
-    },
-  'scenario2': {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': 'scenario2',
-    'USER': 'frepple',
-    'PASSWORD': 'frepple',
-    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
-    'OPTIONS': {},  # Backend specific configuration parameters.
-    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
-    },
-  'scenario3': {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': 'scenario3',
-    'USER': 'frepple',
-    'PASSWORD': 'frepple',
-    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
-    'OPTIONS': {},  # Backend specific configuration parameters.
-    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
-    },
-  }
-
-# Default language
-LANGUAGE_CODE = 'en'
-
 # A list of strings representing the host/domain names the application can serve.
 # This is a security measure to prevent an attacker from poisoning caches and
 # password reset emails with links to malicious hosts by submitting requests
@@ -149,29 +101,6 @@ LANGUAGES = (
   ('zh-tw', ugettext('Traditional Chinese')),
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-   #('django.template.loaders.cached.Loader', (
-     'django.template.loaders.filesystem.Loader',
-     'django.template.loaders.app_directories.Loader',
-   #))
-   )
-
-MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # Uncomment for external authentication.
-    # The authentication backend RemoteUserBackend also needs to be activated.
-    #'django.contrib.auth.middleware.RemoteUserMiddleware',
-    'freppledb.common.middleware.LocaleMiddleware',
-    'freppledb.common.middleware.DatabaseSelectionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-)
-
 # The default redirects URLs not ending with a slash.
 # This causes trouble in combination with the DatabaseSelectionMiddleware.
 # We prefer not to redirect and report this as an incorrect URL.
@@ -183,42 +112,6 @@ STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP,'static'))
 STATIC_URL = '/static/'
 USE_L10N=True        # Represent data in the local format
 USE_I18N=True        # Use translated strings
-CURRENCY=("","$")    # Prefix and suffix for currency strings
-
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.admin',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'freppledb.input',
-    'freppledb.output',
-    'freppledb.execute',
-    'freppledb.common',
-    #'openerp',
-)
-
-LOCALE_PATHS = (
-    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','django')),
-    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','auth')),
-    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','contenttypes')),
-    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','sessions')),
-    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','admin')),
-    os.path.normpath(os.path.join(FREPPLE_HOME,'locale','messages')),
-    os.path.normpath(os.path.join(FREPPLE_APP,'freppledb','locale')),
-)
-
-TEMPLATE_DIRS = (
-    os.path.normpath(os.path.join(FREPPLE_APP,'freppledb','templates')),
-    os.path.normpath(os.path.join(FREPPLE_HOME,'templates')),
-)
-
-STATICFILES_DIRS = ()
-if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'static'))):
-  STATICFILES_DIRS += (os.path.normpath(os.path.join(FREPPLE_HOME,'static')),)
-if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc','output'))):
-  STATICFILES_DIRS += (('doc', os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc','output')),),)
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
@@ -227,57 +120,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.static',
 )
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse',
-        }
-    },
-    'formatters': {
-        'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-    },
-    'handlers': {
-        'null': {
-            'level':'DEBUG',
-            'class':'django.utils.log.NullHandler',
-        },
-        'console':{
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-        'mail_admins': {
-            'level': 'CRITICAL',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler',
-        }
-    },
-    'loggers': {
-        # A handler to log all SQL queries.
-        # The setting "DEBUG" also needs to be set to True higher up in this file.
-        #'django.db.backends': {
-        #    'handlers': ['console'],
-        #    'level': 'DEBUG',
-        #    'propagate': False,
-        #},
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        },
-        'freppledb': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        }
-    }
-}
 
 # Sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'

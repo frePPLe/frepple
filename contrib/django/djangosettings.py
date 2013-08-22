@@ -26,6 +26,9 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
+
 # FrePPLe is tested with the following database backends:
 # 'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.
 # ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================
@@ -167,14 +170,6 @@ if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'static'))):
 if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc','output'))):
   STATICFILES_DIRS += (('doc', os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc','output')),),)
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.request',
-    'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.static',
-)
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -249,16 +244,6 @@ DEFAULT_CHARSET = 'utf-8'
 # other office tools.
 #    Windows - western europe -> 'cp1252'
 CSV_CHARSET = locale.getdefaultlocale()[1]
-
-# A list of available user interface themes.
-# The current selection is nothing but the pack of standard themes of JQuery UI.
-# Check out http://jqueryui.com/themeroller/ to roll your own theme.
-THEMES = [ (i,i) for i in (
-  'black-tie', 'blitzer', 'cupertino', 'dark-hive', 'dot-luv', 'eggplant',
-  'excite-bike', 'flick', 'hot-sneaks', 'humanity', 'le-frog', 'mint-choc',
-  'overcast', 'pepper-grinder', 'redmond', 'smoothness', 'south-street', 'start',
-  'sunny', 'swanky-purse', 'trontastic', 'ui-darkness', 'ui-lightness', 'vader'
-  )]
 
 # The default user interface theme
 DEFAULT_THEME = 'sunny'

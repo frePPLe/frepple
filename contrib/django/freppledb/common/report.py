@@ -264,7 +264,7 @@ class GridReport(View):
   # "query" is provided on the class.
   basequeryset = None
 
-  # Specifies which column is used for an initial filter
+  # Specifies which column is used for an initial ordering
   default_sort = (0, 'asc')
 
   # A model class from which we can inherit information.

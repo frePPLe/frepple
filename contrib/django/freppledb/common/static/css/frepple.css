@@ -505,3 +505,9 @@ div.calendarbox
   margin-top: auto;
   margin-bottom: auto;
 }
+
+.taskfailed
+{
+  background-color: red;
+  display: block;
+}

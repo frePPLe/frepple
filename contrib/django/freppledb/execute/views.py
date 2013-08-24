@@ -27,13 +27,16 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_protect
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponseServerError, HttpResponse
 from django.contrib import messages
 from django.utils.encoding import force_unicode
 
 from freppledb.execute.models import Task, Scenario
 from freppledb.common.report import GridReport, GridFieldDateTime, GridFieldText, GridFieldInteger
 from freppledb.execute.management.commands.frepple_runworker import checkActive
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 class TaskReport(GridReport):
@@ -48,6 +51,7 @@ class TaskReport(GridReport):
   multiselect = False
   editable = False
   height = 150
+  default_sort = (0, 'desc')
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),
@@ -55,7 +59,7 @@ class TaskReport(GridReport):
     GridFieldDateTime('submitted', title=_('submitted'), editable=False, align='center'),
     GridFieldDateTime('started', title=_('started'), editable=False, align='center'),
     GridFieldDateTime('finished', title=_('finished'), editable=False, align='center'),
-    GridFieldText('status', title=_('status'), editable=False, align='center'),
+    GridFieldText('status', title=_('status'), editable=False, align='center', extra="formatter:status"),
     GridFieldText('message', title=_('message'), editable=False, width=500),
     GridFieldText('arguments', title=_('arguments'), editable=False),
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center'),
@@ -104,10 +108,12 @@ def LaunchTask(request, action):
     raise Http404('Only post requests allowed')
 
   # Parse the posted parameters as arguments for an asynchronous task to add to the queue.    TODO MAKE MODULAR WITH SEPERATE TASK CLASS
+  worker_database = request.database
   try:
     now = datetime.now()
     # A
     if action == 'generate plan':
+      print request.POST
       constraint = 0
       for value in request.POST.getlist('constraint'):
         try: constraint += int(value)
@@ -138,6 +144,7 @@ def LaunchTask(request, action):
       task.save(using=request.database)
     # E
     elif action == 'manage scenarios':
+      worker_database = DEFAULT_DB_ALIAS
       if 'copy' in request.POST:
         source = request.POST.get('source', DEFAULT_DB_ALIAS)
         for sc in Scenario.objects.all():
@@ -178,28 +185,28 @@ def LaunchTask(request, action):
       raise Http404('Invalid launching task')
 
     # Launch a worker process
-    if not checkActive(request.database):
+    if not checkActive(worker_database):
       if os.path.isfile(os.path.join(settings.FREPPLE_APP,"frepplectl.py")):
         # Development layout
         Popen([
           sys.executable, # Python executable
           os.path.join(settings.FREPPLE_APP,"frepplectl.py"),
           "frepple_runworker",
-          "--database=%s" % request.database
+          "--database=%s" % worker_database
           ])
       elif sys.executable.find('frepplectl.exe') >= 0:
         # Py2exe executable
         Popen([
           sys.executable, # Python executable
           "frepple_runworker",
-          "--database=%s" % request.database
+          "--database=%s" % worker_database
           ])
       else:
         # Linux standard installation
         Popen([
           "frepplectl",
           "frepple_runworker",
-          "--database=%s" % request.database
+          "--database=%s" % worker_database
           ])
 
     # Task created successfully
@@ -208,6 +215,25 @@ def LaunchTask(request, action):
     messages.add_message(request, messages.ERROR,
         force_unicode(_('Failure launching action: %(msg)s') % {'msg':e}))
     return HttpResponseRedirect('%s/execute/' % request.prefix)
+
+
+@staff_member_required
+@never_cache
+@csrf_protect
+def CancelTask(request, taskid):
+  # Allow only post
+  if request.method != 'POST'or not request.is_ajax():
+    raise Http404('Only ajax post requests allowed')
+  try:
+    task = Task.objects.all().using(request.database).get(pk=taskid)
+    if task.status != 'Waiting':
+      raise Exception('Task is not in waiting status')
+    task.status = 'Canceled';
+    task.save(using=request.database)
+    return HttpResponse(content="OK")
+  except Exception as e:
+    logger.error("Error saving report settings: %s" % e)
+    return HttpResponseServerError('Error canceling task')
 
 
 @staff_member_required

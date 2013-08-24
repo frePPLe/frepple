@@ -95,13 +95,12 @@ class Command(BaseCommand):
     if 'task' in options and options['task']:
       try: task = Task.objects.all().get(pk=options['task'])
       except: raise CommandError("Task identifier not found")
-      if task.started or task.finished or task.status != "Waiting" or task.name != 'scenario copy':
-        if not task.started: task.started = now
+      if task.started or task.finished or task.status != "Waiting" or task.name != 'copy scenario':
         raise CommandError("Invalid task identifier")
       task.status = '0%'
       task.started = now
     else:
-      task = Task(name='scenario copy', submitted=now, started=now, status='0%', user=user)
+      task = Task(name='copy scenario', submitted=now, started=now, status='0%', user=user)
     task.save()
     transaction.commit()
 

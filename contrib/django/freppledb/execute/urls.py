@@ -26,4 +26,5 @@ urlpatterns = patterns('',
     (r'^execute/$', freppledb.execute.views.TaskReport.as_view()),
     (r'^execute/logfrepple/$', freppledb.execute.views.logfile),
     (r'^execute/launch/(.+)/$', freppledb.execute.views.LaunchTask),
+    (r'^execute/cancel/(.+)/$', freppledb.execute.views.CancelTask),
 )

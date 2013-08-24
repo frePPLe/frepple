@@ -24,6 +24,15 @@ from freppledb.common.models import User
 
 
 class Task(models.Model):
+  '''
+  Expected status values are:
+    - 'Waiting'
+    - 'Done'
+    - 'Failed'
+    - 'Canceled'
+    - 'DD%', where DD represents the percentage completed
+  Other values are okay, but the above have translations.
+  '''
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True, editable=False)
   name = models.CharField(_('name'), max_length=20, db_index=True, editable=False)

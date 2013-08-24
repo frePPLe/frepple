@@ -34,9 +34,9 @@ else:
 # FREPPLE_HOME directory
 if 'FREPPLE_HOME' in os.environ:
   FREPPLE_HOME = os.environ['FREPPLE_HOME']
-elif os.path.isfile(os.path.abspath(os.path.join('usr','share','frepple','frepple.xsd'))):
+elif os.sep == '/' and os.path.isfile('/usr/share/frepple/frepple.xsd'):
   # Linux installation layout
-  FREPPLE_HOME = os.path.abspath(os.path.join('usr','share','frepple'))
+  FREPPLE_HOME = '/usr/share/frepple'
 elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','frepple.xsd'))):
   # Py2exe layout
   FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP,'..'))
@@ -57,9 +57,9 @@ else:
 # FREPPLE_CONFIGDIR directory
 if 'FREPPLE_CONFIGDIR' in os.environ:
   FREPPLE_CONFIGDIR = os.environ['FREPPLE_CONFIGDIR']
-elif os.path.isfile(os.path.abspath(os.path.join('etc','frepple','djangosettings.py'))):
+elif os.sep == '/' and os.path.isfile('/etc/frepple/djangosettings.py'):
   # Linux installation layout
-  FREPPLE_CONFIGDIR = os.path.abspath(os.path.join('etc','frepple'))
+  FREPPLE_CONFIGDIR = '/etc/frepple'
 else:
   FREPPLE_CONFIGDIR = FREPPLE_APP
 

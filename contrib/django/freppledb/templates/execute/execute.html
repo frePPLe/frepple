@@ -1,23 +1,9 @@
 {% extends "admin/base_site_grid.html" %}
 {% load i18n %}
 {% block extrahead %}{{block.super}}
-<style>
-#tasks td {
-  padding: 5px;
-  white-space: nowrap;
-  vertical-align: middle;
-}
-</style>
 <script type="text/javascript">
 
   var refresh = null;
-
-  function extraPreference() {
-    return {
-       "height": $("#gbox_grid").height() - 48,
-       "refresh": (refresh !== null)
-       };
-  }
 
   function updateRefresh()
   {
@@ -36,7 +22,61 @@
         }, 5000);
       $('#autorefresh').removeClass("ui-state-disabled");
     }
-    saveColumnConfiguration();
+  }
+
+  function status (cellvalue, options, rowdata) {
+    if (cellvalue == 'Failed')
+      return "<span class='taskfailed'>{% trans 'Failed' %}</span>";
+    else if (cellvalue == 'Waiting')
+      return "{% trans 'Waiting' %}&nbsp;&nbsp;<button class='ui-button ui-widget ui-state-default ui-corner-all' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% trans 'Cancel' %}</button>";
+    else if (cellvalue == 'Done')
+      return "{% trans 'Done' %}";
+    else if (cellvalue == 'Canceled')
+      return "{% trans 'Canceled' %}";
+    else
+      return cellvalue;
+  }
+
+  function cancelTask(id)
+  {
+    $('#popup').html(
+      interpolate(gettext('You are about to cancel task %s'), [id])
+      ).dialog({
+        title: gettext('Cancel task'),
+        autoOpen: true,
+        resizable: false,
+        width: 'auto',
+        height: 'auto',
+        buttons: [
+          {
+            text: gettext("Confirm"),
+            click: function() {
+              $.ajax({
+                url: "{{request.prefix}}/execute/cancel/" + id + "/",
+                type: "POST",
+                success: function () {
+                  $('#popup').dialog().dialog('close');
+                  },
+                error: function (result, stat, errorThrown) {
+                  $('#popup').html(result.responseText)
+                    .dialog({
+                      title: gettext("Error canceling data"),
+                      autoOpen: true,
+                      resizable: true,
+                      width: 'auto',
+                      height: 'auto'
+                    });
+                  }
+              });
+            }
+          },
+          {
+            text: gettext("Cancel"),
+            click: function() { $(this).dialog("close"); }
+          }
+          ]
+      });
+    $.jgrid.hideModal("#searchmodfbox_grid");
   }
 
   function calcUtil()
@@ -75,9 +115,26 @@
       $("#grid").trigger("reloadGrid",[{current:true}]);
       }, 5000);{% endif %}
   });
-
 </script>
 
+<style>
+#tasks td {
+  padding: 5px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.ui-jqgrid tr.jqgrow td
+{
+  padding: 0;
+}
+#grid tr td {
+  line-height: 22px;
+
+}
+#grid_frozen tr td {
+  line-height: 22px;
+}
+</style>
 {% endblock %}
 {% block actions %}
 <a id="autorefresh" href="javascript:updateRefresh();" class="icon{% if "refresh" in preferences and not preferences.refresh %} ui-state-disabled{% endif %}"><span class="ui-icon ui-icon-arrowrefresh-1-s"></span>{% trans 'Autorefresh' %}</a>

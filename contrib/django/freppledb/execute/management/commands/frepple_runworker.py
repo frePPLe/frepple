@@ -106,14 +106,15 @@ class Command(BaseCommand):
           args = {}
           for i in task.arguments.split():
             key, val = i.split('=')
-            args[key[3:]] = val
+            args[key[2:]] = val
+          print args
           management.call_command('frepple_run', database=database, task=task.id, **args)
         # B
         elif task.name == 'generate model':
           args = {}
           for i in task.arguments.split():
             key, val = i.split('=')
-            args[key[3:]] = val
+            args[key[2:]] = val
           management.call_command('frepple_flush', database=database)
           management.call_command('frepple_createmodel', database=database, task=task.id, verbosity=0, **args)
         # C
@@ -151,5 +152,9 @@ class Command(BaseCommand):
         task.message = str(e)
         task.save(using=database)
         logger.info("finished task %d at %s: failed" % (task.id, datetime.now()))
+    # Remove the parameter again
+    try: Parameter.objects.all().using(self.database).get(pk='Worker alive').delete()
+    except: pass  
+    # Exit
     logger.info("Worker finished all jobs in the queue and exits")
 

@@ -91,7 +91,6 @@ class Command(BaseCommand):
         try: task = Task.objects.all().using(database).get(pk=options['task'])
         except: raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name != 'restore database':
-          if not task.started: task.started = now
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now

@@ -1269,13 +1269,13 @@ def getBuckets(request, bucket=None, start=None, end=None):
       start = datetime.now()
       start = start.replace(microsecond=0)
     if pref.horizonunit == 'day':
-      end = start + timedelta(days=pref.horizonlength)
+      end = start + timedelta(days=pref.horizonlength or 60)
       end = end.replace(hour=0, minute=0, second=0)
     elif pref.horizonunit == 'week':
-      end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength, days=7-start.weekday())
+      end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength or 8, days=7-start.weekday())
     else:
       y = start.year
-      m = start.month + pref.horizonlength + (start.day > 1 and 1 or 0)
+      m = start.month + (pref.horizonlength or 2) + (start.day > 1 and 1 or 0)
       while m > 12:
         y += 1
         m -= 12
@@ -1297,11 +1297,11 @@ def getBuckets(request, bucket=None, start=None, end=None):
       end = pref.horizonend
       if not end:
         if pref.horizonunit == 'day':
-          end = start + timedelta(days=pref.horizonlength)
+          end = start + timedelta(days=pref.horizonlength or 60)
         elif pref.horizonunit == 'week':
-          end = start + timedelta(weeks=pref.horizonlength)
+          end = start + timedelta(weeks=pref.horizonlength or 8)
         else:
-          end = start + timedelta(weeks=pref.horizonlength)
+          end = start + timedelta(weeks=pref.horizonlength or 8)
 
   # Filter based on the start and end date
   if not bucket:

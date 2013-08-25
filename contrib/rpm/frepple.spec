@@ -30,7 +30,7 @@ URL: http://www.frepple.com
 Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
 # Note on dependencies: Django is also required, but we need a custom install.
-Requires: xerces-c, openssl, httpd, mod_wsgi, python
+Requires: xerces-c, openssl, httpd, mod_wsgi, python, python-cherrypy
 BuildRequires: python-devel, automake, autoconf, libtool, xerces-c-devel, openssl-devel, graphviz, doxygen
 
 %description

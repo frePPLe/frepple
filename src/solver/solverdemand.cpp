@@ -69,29 +69,31 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   double best_q_qty = 0.0, best_a_qty = 0.0;
   Date best_q_date;
 
-  // Which operation to use?
+  // Select delivery operation
   Operation* deliveryoper = l->getDeliveryOperation();
+
+  // Handle invalid or missing delivery operations
   string problemtext = string("Demand '") + l->getName() + "' has no delivery operation";
+  Problem::const_iterator j = Problem::begin(const_cast<Demand*>(l), false);
+  while (j!=Problem::end())
+  {
+    if (&(j->getType()) == ProblemInvalidData::metadata
+        && j->getDescription() == problemtext)
+      break;
+    ++j;
+  }
   if (!deliveryoper)
   {
     // Create a problem
+    if (j == Problem::end())
     new ProblemInvalidData(const_cast<Demand*>(l), problemtext, "demand",
         l->getDue(), l->getDue(), l->getQuantity());
     // Abort planning of this demand
     throw DataException("Demand '" + l->getName() + "' can't be planned");
   }
   else
-  {
     // Remove problem that may already exist
-    for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(l), false);
-        j!=Problem::end(); ++j)
-      if (&(j->getType()) == ProblemInvalidData::metadata
-          && j->getDescription() == problemtext)
-      {
         delete &*j;
-        break;
-      }
-  }
 
   // Planning loop
   do

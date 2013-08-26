@@ -15,11 +15,9 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import tempfile
-
 from django.test import TestCase
 
-from freppledb.input.models import Location
+from freppledb.common.models import User, UserPreference
 
 
 class DataLoadTest(TestCase):
@@ -31,3 +29,14 @@ class DataLoadTest(TestCase):
   def test_common_parameter(self):
     response = self.client.get('/admin/common/parameter/?format=json')
     self.assertContains(response, '"records":2,')
+
+
+class UserPreferenceTest(TestCase):
+
+  def test_get_set_preferences(self):
+    user = User.objects.all().get(username='admin')
+    before = user.getPreference('test')
+    self.assertIsNone(before)
+    user.setPreference('test',{'a':1,'b':'c'})
+    after = user.getPreference('test')
+    self.assertEqual(after, {'a':1,'b':'c'})

@@ -353,7 +353,10 @@ DECLARE_EXPORT PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
   PyObject *dem = NULL;
   if (args && !PyArg_ParseTuple(args, "|O:solve", &dem)) return NULL;
   if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass))
-    throw DataException("solver argument must be a demand");
+  {
+    PyErr_SetString(PythonDataException, "solve(d) argument must be a demand");
+    return NULL;
+  }
 
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try

@@ -51,6 +51,9 @@ os.environ['FREPPLE_HOME'] = FREPPLE_HOME
 # FREPPLE_LOGDIR directory
 if 'FREPPLE_LOGDIR' in os.environ:
   FREPPLE_LOGDIR = os.environ['FREPPLE_LOGDIR']
+elif os.sep == '/' and os.access('/var/log/frepple', os.W_OK):
+  # Linux installation layout
+  FREPPLE_HOME = '/var/log/frepple'
 else:
   FREPPLE_LOGDIR = FREPPLE_APP
 

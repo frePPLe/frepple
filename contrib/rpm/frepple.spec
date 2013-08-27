@@ -98,6 +98,8 @@ mv $RPM_BUILD_ROOT/usr/bin/frepplectl.py $RPM_BUILD_ROOT/usr/bin/frepplectl
 # Install apache configuration
 mkdir -p $RPM_BUILD_ROOT/etc/httpd/conf.d
 install -m 644 -p contrib/rpm/httpd.conf $RPM_BUILD_ROOT/etc/httpd/conf.d/z_frepple.conf
+# Create log directory
+mkdir -p $RPM_BUILD_ROOT/var/log/frepple
 
 %clean
 rm -rf %{buildroot}
@@ -115,6 +117,7 @@ rm -rf %{buildroot}
 # Uncomment if there are extension modules to package
 #%dir %{_libdir}/frepple
 %{_datadir}/frepple
+%attr(075,root,root) %dir /var/log/frepple
 %{python_sitelib}/freppledb*
 %{_mandir}/man1/frepple.1.*
 %{_mandir}/man1/frepplectl.1.*

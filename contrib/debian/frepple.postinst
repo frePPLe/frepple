@@ -5,7 +5,7 @@ if [ ! -d /var/log/frepple ]
 then
   mkdir -p /var/log/frepple
   . /etc/apache2/envvars
-  chown $(APACHE_RUN_USER):$(APACHE_RUN_GROUP) /var/log/frepple
+  chown ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /var/log/frepple
   chmod 0750 /var/log/frepple
 fi
 

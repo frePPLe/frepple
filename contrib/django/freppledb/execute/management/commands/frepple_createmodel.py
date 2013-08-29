@@ -188,7 +188,7 @@ class Command(BaseCommand):
       # Planning horizon
       # minimum 10 daily buckets, weekly buckets till 40 days after current
       if verbosity>0: print "Updating buckets..."
-      management.call_command('frepple_createdates', user=user, database=database)
+      management.call_command('frepple_createbuckets', user=user, database=database)
       if verbosity>0: print "Updating horizon telescope..."
       updateTelescope(10, 40, 730, database)
       task.status = '2%'

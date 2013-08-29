@@ -10,36 +10,78 @@
 {% endblock %}
 
 {% block extrahead %}{{block.super}}
-<script type="text/javascript" src="{{STATIC_URL}}FusionCharts.js"></script>
+<style type="text/css">
+#grid_location__name, #grid_operationplans, .ui-jqgrid .ui-jqgrid-resize, .ui-jqgrid .ui-jqgrid-htable th div {
+  height: 34px;
+}
+</style>
 <script type="text/javascript">
+
+function gantt(cellvalue, options, rowdata)
+{
+  var layer = [];
+  var result = [];
+  for (o in rowdata["operationplans"])
+  {
+     var data = rowdata["operationplans"][o];
+     var row = 0;
+     for (; row < layer.length; ++row)
+     {
+        if (data["startdate"] >= layer[row])
+        {
+           layer[row] = data["enddate"];
+           break;
+        }
+     };
+     if (row >= layer.length) layer.push(data["enddate"]);
+     if (data['locked'] == 1)
+       result.push( '<rect x="' + data["x"] + '" y="' + (-row*ganttrow) + '" width="' + Math.max(data["w"],1) + '" height="' + (ganttrow-3) + '" class="opplan_locked"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
+     else
+       result.push( '<rect x="' + data["x"] + '" y="' + (-row*ganttrow) + '" width="' + Math.max(data["w"],1) + '" height="' + (ganttrow-3) + '" class="opplan"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
+  }
+  return '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="' + (ganttrow*layer.length+3) + 'px">'
+    + '<title>' + escape(rowdata["name"]) + '</title>'
+    + '<g class="transformer" transform="scale(0.1,1) translate(0,' + ((layer.length-1)*ganttrow+3) +')" title="' + layer.length +'">'
+    + result.join('\n')
+    + '</g></svg>';
+}
+
+var horizonstart = new Date({{bucketstart|date:"Y"}},{{bucketstart|date:"m"}}-1,{{bucketstart|date:"d"}});
+var horizonend = new Date({{bucketend|date:"Y"}},{{bucketend|date:"m"}}-1,{{bucketend|date:"d"}});
+var viewstart = new Date({{bucketstart|date:"Y"}},{{bucketstart|date:"m"}}-1,{{bucketstart|date:"d"}});
+var viewend = new Date({{bucketend|date:"Y"}},{{bucketend|date:"m"}}-1,{{bucketend|date:"d"}});
+var delta = (viewend.getTime() - viewstart.getTime()) / 86400000.0;
+
+
+$(function() {
+  gantt_header();
+});
+
 
 function reslistfmt(cellvalue, options, row)
 {
   if (cellvalue === undefined || cellvalue ==='') return '';
-  return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
+  result = '';
+  for (var i in cellvalue)
+    result += "<span>" + cellvalue[i] + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span></span><br/>";
+  return result;
 }
 
 </script>
 {% endblock %}
 
-{% block tools %}
-{% include "demandtabs.html" %}
+{% block actions %}
+<a id="zoom_in" href="javascript:gantt_zoom(0.66666,0);" class="icon"><span class="ui-icon ui-icon-zoomin"></span>{% trans 'Zoom in' %}</a>
+<a id="zoom_out" href="javascript:gantt_zoom(1.33333,0);" class="icon"><span class="ui-icon ui-icon-zoomout"></span>{% trans 'Zoom out' %}</a>
+<a id="move_in" href="javascript:gantt_zoom(1,-86400000);" class="icon"><span class="ui-icon ui-icon-seek-prev"></span>{% trans 'Move in' %}</a>
+<a id="move_out" href="javascript:gantt_zoom(1,86400000);" class="icon"><span class="ui-icon ui-icon-seek-next"></span>{% trans 'Move out' %}</a>
+<a id="reset" href="javascript:gantt_reset();" class="icon"><span class="ui-icon ui-icon-stop"></span>{% trans 'Reset' %}</a>
+<a id="filter" href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
+<a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
 {% endblock %}
 
-{% block before_table %}
-<div id="chart1div" style="z-index: 1000;">
-	  <p>&nbsp;</p>
-	  <p>{% blocktrans %}frePPLe needs Adobe Flash Player to display graphs. If you're unable to see
-	  the chart here, it means that your browser does not seem to have the Flash Player
-	  installed.<br/>
-	  You can downloaded it <a href="http://www.adobe.com/products/flashplayer/" target="_blank"><u>here</u></a> for free.{% endblocktrans %}</p>
-	</div>
-	<script language="javascript" type="text/javascript">
-	   var chart1 = new FusionCharts("{{STATIC_URL}}FCF_Gantt.swf", "chart1", $(window).width()-35, 350);
-	   chart1.setTransparent();
-	   chart1.setDataURL(escape("{{request.prefix}}/pegginggraph/{{args.0|urlencode}}/"));
-	   chart1.render("chart1div");
-	</script>
+{% block tools %}
+{% include "demandtabs.html" %}
 {% endblock %}
 
 {% comment %}

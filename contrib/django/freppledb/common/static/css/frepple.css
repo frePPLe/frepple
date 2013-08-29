@@ -498,7 +498,7 @@ div.calendarbox
   font-weight: bold;
 }
 
-.graph 
+.graph
 {
   margin-left: auto;
   margin-right: auto;
@@ -506,8 +506,32 @@ div.calendarbox
   margin-bottom: auto;
 }
 
+/* TASK EXECUTION SCREEN */
+
 .taskfailed
 {
   background-color: red;
   display: block;
+}
+
+/* GANTT CHARTS */
+
+.opplan {
+   vector-effect: non-scaling-stroke;
+   fill:rgb(111,111,255);
+   stroke-width:1px;
+   stroke:rgb(0,0,0)
+}
+
+.opplan_locked {
+   vector-effect: non-scaling-stroke;
+   fill:rgb(0,0,255);
+   stroke-width:1px;
+   stroke:rgb(0,0,0)
+}
+
+.time {
+   vector-effect: non-scaling-stroke;
+   stroke-width:1px;
+   stroke:rgb(0,0,0)
 }

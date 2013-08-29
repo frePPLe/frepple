@@ -18,13 +18,6 @@ frePPLe that much better:
 
 FrePPLe redistributes parts of the following third party software components:
 
-* contrib\django\freppledb\static\FusionCharts.js
-  contrib\django\freppledb\static\FCF_*.swf
-     Redistributed components of FusionCharts Free
-     Licensed allows free use http://www.fusioncharts.com/free/TermsOfUse.asp
-     Copyright with InfoSoft Global
-     See http://www.fusioncharts.com/free/
-
 * contrib\django\freppledb\common\static\js\jquery.js
      Redistributed from jQuery JavaScript Library
      See http://jquery.com/

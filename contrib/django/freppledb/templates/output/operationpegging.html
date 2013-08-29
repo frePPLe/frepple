@@ -1,22 +1,9 @@
 {% extends "admin/base_site_grid.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{block.super}}
-<script type="text/javascript" src="{{STATIC_URL}}FusionCharts.js"></script>
-{% endblock %}
-
 {% block contextmenus %}
 {% include "operationcontext.html" %}
 {% include "itemcontext.html" %}
 {% include "demandcontext.html" %}
 {% endblock %}
 
-{% comment %} TODO
-{% for i in objectlist1 %}<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.operation operation %}</td>
-<td>{{i.date}}</td>
-<td>{% superlink i.demand demand %}</td>
-<td>{{i.quantity}}</td>
-<td>{% superlink i.item item %}</td>
-</tr>{% endfor %}
-{% endcomment %}

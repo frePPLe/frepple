@@ -41,16 +41,15 @@ class ReportByDemand(GridReport):
   editable = False
   default_sort = None
   hasTimeBuckets = True
+  multiselect = False
   rows = (
-    GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
+    GridFieldText('depth', title=_('depth'), width=100, editable=False, sortable=False),
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False, sortable=False),
     GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False, sortable=False),
     GridFieldText('item', title=_('item'), formatter='item', editable=False, sortable=False),
     GridFieldText('resource', title=_('resource'), editable=False, sortable=False, extra='formatter:reslistfmt'),
-    GridFieldDateTime('startdate', title=_('start date'), editable=False, sortable=False),
-    GridFieldDateTime('enddate', title=_('end date'), editable=False, sortable=False),
     GridFieldNumber('quantity', title=_('quantity'), editable=False, sortable=False),
-    GridFieldNumber('percent_used', title=_('percent_used'), editable=False, sortable=False),
+    GridFieldText('operationplans', width=1000, extra='formatter:gantt', editable=False, sortable=False),
     )
 
   @ classmethod
@@ -62,6 +61,10 @@ class ReportByDemand(GridReport):
     # Execute the query
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connections[request.database].cursor()
+
+    # Pick up the list of time buckets
+    (bucket,start,end,bucketlist) = getBuckets(request, request.user)
+    horizon = (end - start).total_seconds() / 10000
 
     # query 1: pick up all resources loaded
     resource = {}
@@ -90,9 +93,9 @@ class ReportByDemand(GridReport):
       select min(depth), min(opplans.id), operation, opplans.quantity,
         opplans.startdate, opplans.enddate, operation.name,
         max(buffer), max(opplans.item), opplan_id, out_demand.due,
-        sum(quantity_demand) * 100 / opplans.quantity
+        sum(quantity_demand) / opplans.quantity
       from (
-        select depth, peg.id+1 as id, operation, quantity, startdate, enddate,
+        select depth+1 as depth, peg.id+1 as id, operation, quantity, startdate, enddate,
           buffer, item, prod_operationplan as opplan_id, quantity_demand
         from out_demandpegging peg, out_operationplan prod
         where peg.demand in (select dms.name from (%s) dms)
@@ -110,102 +113,58 @@ class ReportByDemand(GridReport):
       on opplan_id = out_demand.operationplan
       group by operation, opplans.quantity, opplans.startdate, opplans.enddate,
         operation.name, opplan_id, out_demand.due
-      order by min(opplans.id)
+      order by min(depth), operation.name, min(opplans.id)
       ''' % (basesql, basesql)
     cursor.execute(query, baseparams + baseparams)
 
-    # Build the python result
+    # Build the Python result
+    prevoper = None
+    data = None
+    quantity = 0
     for row in cursor.fetchall():
-      yield {
+      if row[2] != prevoper:
+        if data:
+          data['quantity'] = quantity
+          yield data
+        prevoper = row[2]
+        quantity = float(row[3]) * (row[11] or 1.0)
+        data = {
           'depth': row[0],
           'peg_id': row[1],
           'operation': row[2],
           'quantity': row[3],
-          'startdate': row[4],
-          'enddate': row[5],
           'hidden': row[6] == None,
           'buffer': row[7],
           'item': row[8],
           'id': row[9],
           'due': row[10],
-          'percent_used': row[11] or 100.0,
           'resource': row[9] in resource and resource[row[9]] or None,
+          'operationplans': [{
+             'operation': row[2],
+             'description': row[11] or 100.0, # TODO percent used
+             'quantity': float(row[3]),
+             'x': int((row[4] - start).total_seconds() / horizon),
+             'w': int((row[5] - row[4]).total_seconds() / horizon),
+             'startdate': str(row[4]),
+             'enddate': str(row[5]),
+             'locked': 0, # TODO
+             } ]
           }
-
-
-@staff_member_required
-def GraphData(request, entity):
-  basequery = Demand.objects.filter(name__exact=entity).values('name')
-  try:
-    current = datetime.strptime(Parameter.objects.using(request.database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
-  except:
-    current = datetime.now()
-  (bucket,start,end,bucketlist) = getBuckets(request)
-  result = [ i for i in ReportByDemand.query(request,basequery) ]
-  min = None
-  max = None
-
-  # extra query: pick up the linked operation plans
-  cursor = connections[request.database].cursor()
-  query = '''
-    select cons_operationplan, prod_operationplan
-    from out_demandpegging
-    where demand = '%s'
-    group by cons_operationplan, prod_operationplan
-    ''' % entity
-  cursor.execute(query)
-  links = [ {'to':row[1], 'from':row[0]} for row in cursor.fetchall() ]
-
-  # Rebuild result list
-  for i in result:
-    if i['enddate'] < i['startdate'] + timedelta(1):
-      i['enddate'] = i['startdate']
-    else:
-      i['enddate'] = i['enddate'] - timedelta(1)
-    if i['startdate'] <= datetime(1971,1,1): i['startdate'] = current
-    if i['enddate'] <= datetime(1971,1,1): i['enddate'] = current
-    if min == None or i['startdate'] < min: min = i['startdate']
-    if max == None or i['enddate'] > max: max = i['enddate']
-    if min == None or i['due'] and i['due'] < min: min = i['due']
-    if max == None or i['due'] and i['due'] > max: max = i['due']
-
-  # Assure min and max are always set
-  if not min: min = current
-  if not max: max = current + timedelta(7)
-
-  # Add a line to mark the current date
-  if min <= current and max >= current:
-    todayline = current
-  else:
-    todayline = None
-
-  # Get the time buckets
-  (bucket,start,end,bucketlist) = getBuckets(request, start=min, end=max)
-  buckets = []
-  for i in bucketlist:
-    if i['enddate'] >= min and i['startdate'] <= max:
-      if i['enddate'] - timedelta(1) >= i['startdate']:
-        buckets.append( {'start': i['startdate'], 'end': i['enddate'] - timedelta(1), 'name': i['name']} )
       else:
-        buckets.append( {'start': i['startdate'], 'end': i['startdate'], 'name': i['name']} )
-
-  # Snap to dates
-  min = min.date()
-  max = max.date() + timedelta(1)
-
-  context = {
-    'buckets': buckets,
-    'reportbucket': bucket,
-    'reportstart': start,
-    'reportend': end,
-    'objectlist1': result,
-    'links': links,
-    'todayline': todayline,
-    }
-  return HttpResponse(
-    loader.render_to_string("output/pegging.xml", context, context_instance=RequestContext(request)),
-    mimetype='application/xml; charset=%s' % settings.DEFAULT_CHARSET
-    )
+        quantity += float(row[3]) * (row[11] or 1.0)
+        data['operationplans'].append({
+             'operation': row[2],
+             'description': row[11] or 100.0, # TODO percent used
+             'quantity': float(row[3]),
+             'x': int((row[4] - start).total_seconds() / horizon),
+             'w': int((row[5] - row[4]).total_seconds() / horizon),
+             'startdate': str(row[4]),
+             'enddate': str(row[5]),
+             'locked': 0, # TODO
+             })
+    if data:
+      data['quantity'] = quantity
+      yield data
 
 
 class ReportByBuffer(GridReport):

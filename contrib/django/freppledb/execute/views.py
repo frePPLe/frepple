@@ -113,7 +113,6 @@ def LaunchTask(request, action):
     now = datetime.now()
     # A
     if action == 'generate plan':
-      print request.POST
       constraint = 0
       for value in request.POST.getlist('constraint'):
         try: constraint += int(value)

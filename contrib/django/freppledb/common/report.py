@@ -509,20 +509,17 @@ class GridReport(View):
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
       else:
         bucketnames = bucketlist = start = end = bucket = None
-      reportkey = reportclass.getKey()
-      prefs = request.user.getPreference(reportkey)
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
+        'preferences': None,
         'object_id': args and args[0] or None,
-        'preferences': prefs,
-        'page': prefs and prefs.get('page', 1) or 1,
-        'sord': prefs and prefs.get('sord', 'asc') or 'asc',
-        'sidx': prefs and prefs.get('sidx', '') or '',
-        'reportkey': reportkey,
+        'page': 1,
+        'sord': 'asc',
+        'sidx': '',
         'is_popup': request.GET.has_key('pop'),
         'args': args,
-        'filters': prefs and prefs.get('filter',None) or reportclass.getQueryString(request),
+        'filters': reportclass.getQueryString(request),
         'bucketnames': bucketnames,
         'bucketlist': bucketlist,
         'bucketstart': start,

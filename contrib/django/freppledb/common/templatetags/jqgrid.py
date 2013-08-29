@@ -33,13 +33,8 @@ class ColModelNode(Node):
     try:
       reportclass = context['reportclass']
       is_popup = context['is_popup']
-      prefs = context['preferences']
-      if not prefs:
-        frozencolumns = (self.frozen and 10000) or reportclass.frozenColumns
-        prefs = [ (i,False,reportclass.rows[i].width) for i in range(len(reportclass.rows)) ]
-      else:
-        frozencolumns = (self.frozen and 10000) or prefs.get('frozen', reportclass.frozenColumns)
-        prefs = prefs['rows']
+      frozencolumns = (self.frozen and 10000) or reportclass.frozenColumns
+      prefs = [ (i,False,reportclass.rows[i].width) for i in range(len(reportclass.rows)) ]
       result = []
       if is_popup:
         result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false}")

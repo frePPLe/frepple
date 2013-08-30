@@ -116,13 +116,13 @@ elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.mysql
     return '1'
 
   def sql_datediff(d1,d2):
-    return 'timestampdiff(second,%s,%s)/86400' % (d2,d1)
+    return '(timestampdiff(second,%s,%s)/86400)' % (d2,d1)
 
   def sql_overlap(s1,e1,s2,e2):
-    return 'greatest(0,timestampdiff(second,greatest(%s,%s),least(%s,%s)))/86400' % (s1,s2,e1,e2)
+    return '(greatest(0,timestampdiff(second,greatest(%s,%s),least(%s,%s)))/86400)' % (s1,s2,e1,e2)
 
   def sql_overlap3(s1,e1,s2,e2,s3,e3):
-    return 'greatest(0,timestampdiff(second,greatest(%s,%s,%s),least(%s,%s,%s)))/86400' % (s1,s2,s3,e1,e2,e3)
+    return '(greatest(0,timestampdiff(second,greatest(%s,%s,%s),least(%s,%s,%s)))/86400)' % (s1,s2,s3,e1,e2,e3)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)

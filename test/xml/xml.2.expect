@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>plan</name>
+	<description>XML structure test model</description>
+	<current>2009-01-01T00:00:00</current>
+	<solvers>
+		<solver name="MRP" xsi:type="solver_mrp">
+			<constraints>0</constraints>
+			<iterationthreshold>1</iterationthreshold>
+			<iterationaccuracy>0.01</iterationaccuracy>
+			<lazydelay>P1D</lazydelay>
+			<autocommit>true</autocommit>
+		</solver>
+	</solvers>
+	<locations>
+		<location name="location 1">
+			<category>manufacturing</category>
+		</location>
+	</locations>
+	<calendars>
+		<calendar name="weeks">
+			<buckets>
+				<bucket id="1" start="2009-01-01T00:00:00">
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<operations>
+		<operation name="operation 1" xsi:type="operation_routing">
+			<size_multiple>3</size_multiple>
+			<steps>
+				<operation name="operation 1 step1" xsi:type="operation_fixed_time"/>
+				<operation name="operation 1 step2" xsi:type="operation_fixed_time"/>
+			</steps>
+		</operation>
+		<operation name="operation 1 step1" xsi:type="operation_fixed_time">
+			<duration>P7D</duration>
+		</operation>
+		<operation name="operation 1 step2" xsi:type="operation_fixed_time">
+			<duration>P7D</duration>
+		</operation>
+	</operations>
+	<items>
+		<item name="item 1">
+			<category>end item</category>
+			<description>А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь</description>
+			<operation name="operation 1" xsi:type="operation_routing"/>
+		</item>
+	</items>
+	<buffers>
+		<buffer name="STCK1">
+			<item name="item 1"/>
+			<location name="location 1"/>
+			<onhand>100</onhand>
+		</buffer>
+	</buffers>
+	<demands>
+		<demand name=" แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่">
+			<quantity>10</quantity>
+			<item name="item 1"/>
+			<due>2009-01-27T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+	</demands>
+	<resources>
+		<resource name="resource 1">
+			<maximum_calendar name="weeks"/>
+		</resource>
+	</resources>
+	<loads>
+		<load>
+			<operation name="operation 1 step1" xsi:type="operation_fixed_time"/>
+			<resource name="resource 1"/>
+		</load>
+	</loads>
+	<flows>
+		<flow xsi:type="flow_start">
+			<operation name="operation 1 step1" xsi:type="operation_fixed_time"/>
+			<buffer name="STCK1"/>
+			<quantity>-1</quantity>
+		</flow>
+	</flows>
+	<operationplans>
+		<operationplan id="3" operation="operation 1">
+			<demand name=" แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่"/>
+			<start>2009-01-13T00:00:00</start>
+			<end>2009-01-27T00:00:00</end>
+			<quantity>12</quantity>
+		</operationplan>
+		<operationplan id="1" operation="operation 1 step1">
+			<start>2009-01-13T00:00:00</start>
+			<end>2009-01-20T00:00:00</end>
+			<quantity>12</quantity>
+			<owner id="3" operation="operation 1"/>
+		</operationplan>
+		<operationplan id="2" operation="operation 1 step2">
+			<start>2009-01-20T00:00:00</start>
+			<end>2009-01-27T00:00:00</end>
+			<quantity>12</quantity>
+			<owner id="3" operation="operation 1"/>
+		</operationplan>
+	</operationplans>
+	<problems>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;STCK1&apos; has material excess of 100</description>
+			<start>1971-01-01T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>overload</name>
+			<description>Resource &apos;resource 1&apos; has capacity shortage of 1</description>
+			<start>2009-01-13T00:00:00</start>
+			<end>2009-01-20T00:00:00</end>
+			<weight>1</weight>
+		</problem>
+		<problem>
+			<name>excess</name>
+			<description>Demand &apos; แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่&apos; planned 2 units excess</description>
+			<start>2009-01-27T00:00:00</start>
+			<end>2009-01-27T00:00:00</end>
+			<weight>2</weight>
+		</problem>
+	</problems>
+</plan>

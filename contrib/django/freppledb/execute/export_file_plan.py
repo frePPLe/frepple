@@ -29,8 +29,11 @@ from time import time
 from datetime import datetime, timedelta
 import csv, inspect
 
+from django.conf import settings
+
 import frepple
 
+encoding = settings.CSV_CHARSET
 
 def exportProblems():
   print "Exporting problems..."
@@ -38,9 +41,10 @@ def exportProblems():
   writer = csv.writer(open("problems.csv", "wb"), quoting=csv.QUOTE_ALL)
   writer.writerow(('#entity','name','description','start date','end date','weight'))
   for i in frepple.problems():
-    writer.writerow(
-      (i.entity, i.name, i.owner, i.description, i.start, i.end, i.weight)
-      )
+    writer.writerow((
+      i.entity, i.name.encode(encoding,"ignore"), i.owner.name.encode(encoding,"ignore"),
+      i.description.encode(encoding,"ignore"), i.start, i.end, i.weight
+      ))
   print 'Exported problems in %.2f seconds' % (time() - starttime)
 
 
@@ -51,9 +55,11 @@ def exportConstraints():
   writer.writerow(('#demand','entity','name','owner','description','start date','end date','weight'))
   for d in frepple.demands():
     for i in d.constraints:
-      writer.writerow(
-        (d.name, i.entity, i.name, i.owner, i.description, i.start, i.end, i.weight)
-        )
+      writer.writerow((
+        d.name.encode(encoding,"ignore"), i.entity, i.name.encode(encoding,"ignore"),
+        i.owner.name.encode(encoding,"ignore"), i.description.encode(encoding,"ignore"),
+        i.start, i.end, i.weight
+        ))
   print 'Exported constraints in %.2f seconds' % (time() - starttime)
 
 
@@ -64,7 +70,7 @@ def exportOperationplans():
   writer.writerow(('#id','operation','quantity','start date','end date','locked'))
   for i in frepple.operationplans():
     writer.writerow((
-       i.id, i.operation.name, i.quantity, i.start, i.end,
+       i.id, i.operation.name.encode(encoding,"ignore"), i.quantity, i.start, i.end,
        i.locked, i.unavailable, i.owner and i.owner.id or None
      ))
   print 'Exported operationplans in %.2f seconds' % (time() - starttime)
@@ -77,10 +83,10 @@ def exportFlowplans():
   writer.writerow(('#operationplan id','buffer','quantity','date','on hand'))
   for i in frepple.buffers():
     for j in i.flowplans:
-      writer.writerow(
-       (j.operationplan.id, j.buffer.name, j.quantity,
-        j.date, j.onhand)
-       )
+      writer.writerow((
+       j.operationplan.id, j.buffer.name.encode(encoding,"ignore"),
+       j.quantity, j.date, j.onhand
+       ))
   print 'Exported flowplans in %.2f seconds' % (time() - starttime)
 
 
@@ -92,10 +98,10 @@ def exportLoadplans():
   for i in frepple.resources():
     for j in i.loadplans:
       if j.quantity > 0:
-        writer.writerow(
-         (j.operationplan.id, j.resource.name, j.quantity,
-          j.startdate, j.enddate, j.setup)
-         )
+        writer.writerow((
+          j.operationplan.id, j.resource.name.encode(encoding,"ignore"),
+          j.quantity, j.startdate, j.enddate, j.setup and j.setup.encode(encoding,"ignore") or None
+          ))
   print 'Exported loadplans in %.2f seconds' % (time() - starttime)
 
 
@@ -133,10 +139,10 @@ def exportResourceplans():
   # Loop over all reporting buckets of all resources
   for i in frepple.resources():
     for j in i.plan(buckets):
-      writer.writerow(
-        (i.name, j['start'], j['available'], j['unavailable'],
-         j['setup'], j['load'], j['free'])
-        )
+      writer.writerow((
+        i.name.encode(encoding,"ignore"), j['start'], j['available'],
+        j['unavailable'], j['setup'], j['load'], j['free']
+        ))
   print 'Exported resourceplans in %.2f seconds' % (time() - starttime)
 
 
@@ -154,10 +160,13 @@ def exportDemand():
       if cumplanned > d.quantity:
         cur -= cumplanned - d.quantity
         if cur < 0: cur = 0
-      yield (n, d.item.name, d.due, cur, i.end, i.quantity, i.id)
+      yield (n.encode(encoding,"ignore"), d.item.name.encode(encoding,"ignore"),
+        d.customer and d.customer.name.encode(encoding,"ignore") or None, d.due,
+        cur, i.end, i.quantity, i.id)
     # Extra record if planned short
     if cumplanned < d.quantity:
-      yield (n, d.item.name, d.customer and d.customer.name or None, d.due,
+      yield (n.encode(encoding,"ignore"), d.item.name.encode(encoding,"ignore"),
+        d.customer and d.customer.name.encode(encoding,"ignore") or None, d.due,
         d.quantity - cumplanned, None, None, None)
 
   print "Exporting demand plans..."
@@ -187,11 +196,11 @@ def exportPegging():
     # Export pegging
     for j in i.pegging:
       writer.writerow((
-       n, j.level, j.consuming and j.consuming.id or '',
+       n.encode(encoding,"ignore"), j.level, j.consuming and j.consuming.id or '',
        j.consuming_date,
        j.producing and j.producing.id or '', j.producing_date,
-       j.buffer and j.buffer.name or '',
-       (j.buffer and j.buffer.item and j.buffer.item.name) or '',
+       j.buffer and j.buffer.name.encode(encoding,"ignore") or '',
+       (j.buffer and j.buffer.item and j.buffer.item.name.encode(encoding,"ignore")) or '',
        j.quantity_demand, j.quantity_buffer
        ))
   print 'Exported pegging in %.2f seconds' % (time() - starttime)
@@ -211,7 +220,7 @@ def exportForecast():
     if not isinstance(i, frepple.demand_forecastbucket) or i.total <= 0.0:
       continue
     writer.writerow((
-      i.name, i.startdate, i.enddate, i.total, i.quantity, i.consumed
+      i.name.encode(encoding,"ignore"), i.startdate, i.enddate, i.total, i.quantity, i.consumed
       ))
   print 'Exported forecast plans in %.2f seconds' % (time() - starttime)
 

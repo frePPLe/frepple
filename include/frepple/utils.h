@@ -162,6 +162,7 @@ using namespace std;
 #ifndef DOXYGEN
 #define XERCES_STATIC_LIBRARY
 #include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/TransService.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/Attributes.hpp>
 #include <xercesc/sax2/DefaultHandler.hpp>
@@ -555,9 +556,6 @@ class PythonInterpreter
     /** Return a pointer to the main extension module. */
     static PyObject* getModule() {return module;}
 
-    /** Return the preferred encoding of the Python interpreter. */
-    static DECLARE_EXPORT const char* getPythonEncoding();
-
     /** Create a new Python thread state.<br>
       * Each OS-level thread needs to initialize a Python thread state as well.
       * When a new thread is created in the OS, this method should be called
@@ -582,11 +580,6 @@ class PythonInterpreter
       * as the application.
       */
     static DECLARE_EXPORT PyObject *python_log(PyObject*, PyObject*);
-
-    /** Python unicode strings are encoded to this locale when bringing them into
-      * frePPLe.<br>
-      */
-    static DECLARE_EXPORT string encoding;
 
     /** Main thread info. */
     static DECLARE_EXPORT PyThreadState* mainThreadState;
@@ -1974,6 +1967,7 @@ enum mode
   *
   * This class works fine with UTF-8 and single-byte encodings, but will
   * NOT work with other multibyte encodings (such as UTF-116 or UTF-32).
+  * FrePPLe consistently uses UTF-8 in its internal representation.
   */
 class XMLEscape
 {
@@ -2793,21 +2787,23 @@ class PythonObject : public DataElement
       else if (PyUnicode_Check(obj))
       {
         // It's a Python unicode string
-        PyObject* x = PyUnicode_AsEncodedString(obj,
-            PythonInterpreter::getPythonEncoding(), "ignore");
+        PyObject* x = PyUnicode_AsEncodedString(obj, "UTF-8", "ignore");
         string result = PyString_AsString(x);
         Py_DECREF(x);
         return result;
       }
       else if (PyString_Check(obj))
-        // It's a Python string
+        // It's a Python string. We'll assume UTF-8 encoding...
         return PyString_AsString(obj);
       else
       {
-        // It's not a Python string object, call the str() function on the object
-        PyObject* x = PyObject_Str(obj);
-        string result = PyString_AsString(x);
-        Py_DECREF(x);
+        // It's not a Python string object.
+        // Call the str() function on the object, and encode the result in UTF-8.
+        PyObject* x1 = PyObject_Str(obj);
+        PyObject* x2 = PyUnicode_AsEncodedString(x1, "UTF-8", "ignore");
+        string result = PyString_AsString(x2);
+        Py_DECREF(x1);
+        Py_DECREF(x2);
         return result;
       }
     }
@@ -2904,9 +2900,9 @@ class PythonObject : public DataElement
         {
           // Replace the unicode object with a string encoded in the correct locale
           const_cast<PyObject*&>(obj) =
-            PyUnicode_AsEncodedString(obj, PythonInterpreter::getPythonEncoding(), "ignore");
+            PyUnicode_AsEncodedString(obj, "UTF-8", "ignore");
         }
-        return TimePeriod(PyString_AsString(PyObject_Str(obj)));
+        return TimePeriod(PyString_AsString(PyObject_Str(obj)));   // TODO Is this implementation leaking python objects?
       }
       int result = PyInt_AsLong(obj);
       if (result == -1 && PyErr_Occurred())
@@ -2920,7 +2916,7 @@ class PythonObject : public DataElement
       */
     DECLARE_EXPORT PythonObject(Object* p);
 
-    /** Convert a C++ string into a (raw) Python string. */
+    /** Convert a C++ string into a Unicode Python string. */
     inline PythonObject(const string& val)
     {
       if (val.empty())
@@ -2929,7 +2925,8 @@ class PythonObject : public DataElement
         Py_INCREF(obj);
       }
       else
-        obj = PyString_FromString(val.c_str());
+        // Convert internal UTF-8 representation to unicode
+        obj = PyUnicode_FromString(val.c_str());
     }
 
     /** Convert a C++ double into a Python number. */
@@ -4229,6 +4226,9 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     typedef pair<Attribute,XMLElement> datapair;
 
   private:
+    /** A transcoder to encoding to UTF-8. */
+    static xercesc::XMLTranscoder* utf8_encoder;
+
     /** A pointer to an XML parser for processing the input. */
     xercesc::SAX2XMLReader* parser;
 
@@ -4315,6 +4315,9 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       */
     XMLAttributeList attributes;
 
+    /** A buffer used for transcoding XML data. */
+    static char encodingbuffer[];
+
     /** A Python callback function that is called once an object has been read
       * from the XML input. The return value is not used.
       */
@@ -4375,10 +4378,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * @param maxNestedElmnts Defines the maximum depth of elements an XML
       * document is allowed to have. The default is 20.
       */
-    XMLInput(unsigned short maxNestedElmnts = 20)
-      : parser(NULL), maxdepth(maxNestedElmnts), m_EStack(maxNestedElmnts+2),
-        numElements(-1), ignore(0), objectEnded(false),
-        abortOnDataException(true), attributes(NULL) {}
+    DECLARE_EXPORT XMLInput(unsigned short maxNestedElmnts = 20);
 
     /** Destructor. */
     virtual ~XMLInput() {reset();}
@@ -4484,6 +4484,12 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
 
     /** Return the Python callback function. */
     PythonFunction getUserExit() const {return userexit;}
+
+    /** Transcode the Xerces XML characters to our UTF8 encoded buffer.
+      * This method uses a statically allocated buffer, and subsequent 
+      * calls to this method will overwrite the previous results.
+      */
+    static char* transcodeUTF8(const XMLCh*);
 
   protected:
     /** The real parsing job is delegated to subclasses.

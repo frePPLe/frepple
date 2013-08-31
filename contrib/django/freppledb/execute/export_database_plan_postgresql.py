@@ -42,6 +42,7 @@ if 'FREPPLE_DATABASE' in os.environ:
 else:
   database = DEFAULT_DB_ALIAS
 
+encoding = 'UTF8'
 
 def truncate(process):
   print "Emptying database plan tables..."
@@ -59,9 +60,9 @@ def exportProblems(process):
   process.stdin.write('COPY out_problem (entity, name, owner, description, startdate, enddate, weight) FROM STDIN;\n')
   for i in frepple.problems():
     process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-       i.entity, i.name,
-       isinstance(i.owner,frepple.operationplan) and str(i.owner.operation) or str(i.owner),
-       i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
+       i.entity.encode(encoding), i.name.encode(encoding),
+       isinstance(i.owner,frepple.operationplan) and i.owner.operation.name.encode(encoding) or i.owner.name.encode(encoding),
+       i.description.encode(encoding)[0:settings.NAMESIZE+20], str(i.start), str(i.end),
        round(i.weight,settings.DECIMAL_PLACES)
     ))
   process.stdin.write('\\.\n')
@@ -75,9 +76,9 @@ def exportConstraints(process):
   for d in frepple.demands():
     for i in d.constraints:
       process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-         d.name,i.entity, i.name,
-         isinstance(i.owner,frepple.operationplan) and str(i.owner.operation) or str(i.owner),
-         i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
+         d.name.encode(encoding), i.entity.encode(encoding), i.name.encode(encoding),
+         isinstance(i.owner,frepple.operationplan) and i.owner.operation.name.encode(encoding) or i.owner.name.encode(encoding),
+         i.description.encode(encoding)[0:settings.NAMESIZE+20], str(i.start), str(i.end),
          round(i.weight,settings.DECIMAL_PLACES)
        ))
   process.stdin.write('\\.\n')
@@ -91,7 +92,7 @@ def exportOperationplans(process):
   for i in frepple.operations():
     for j in i.operationplans:
       process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-        j.id, i.name[0:settings.NAMESIZE],
+        j.id, i.name[0:settings.NAMESIZE].encode(encoding),
         round(j.quantity,settings.DECIMAL_PLACES), str(j.start), str(j.end),
         j.locked, j.unavailable, j.owner and j.owner.id or "\\N"
         ))
@@ -106,7 +107,7 @@ def exportFlowplans(process):
   for i in frepple.buffers():
     for j in i.flowplans:
       process.stdin.write("%s\t%s\t%s\t%s\t%s\n" % (
-         j.operationplan.id, j.buffer.name,
+         j.operationplan.id, j.buffer.name.encode(encoding),
          round(j.quantity,settings.DECIMAL_PLACES),
          str(j.date), round(j.onhand,settings.DECIMAL_PLACES)
          ))
@@ -122,9 +123,9 @@ def exportLoadplans(process):
     for j in i.loadplans:
       if j.quantity > 0:
         process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\n" % (
-         j.operationplan.id, j.resource.name,
+         j.operationplan.id, j.resource.name.encode(encoding),
          round(j.quantity,settings.DECIMAL_PLACES),
-         str(j.startdate), str(j.enddate), j.setup
+         str(j.startdate), str(j.enddate), j.setup and j.setup.encode(encoding) or "\\N"
        ))
   process.stdin.write('\\.\n')
   print 'Exported loadplans in %.2f seconds' % (time() - starttime)
@@ -162,13 +163,13 @@ def exportResourceplans(process):
   for i in frepple.resources():
     for j in i.plan(buckets):
       process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-  		 i.name, str(j['start']),
-  		 round(j['available'],settings.DECIMAL_PLACES),
-  		 round(j['unavailable'],settings.DECIMAL_PLACES),
-  		 round(j['setup'],settings.DECIMAL_PLACES),
-  		 round(j['load'],settings.DECIMAL_PLACES),
-  		 round(j['free'],settings.DECIMAL_PLACES)
-  	   ))
+       i.name.encode(encoding), str(j['start']),
+       round(j['available'],settings.DECIMAL_PLACES),
+       round(j['unavailable'],settings.DECIMAL_PLACES),
+       round(j['setup'],settings.DECIMAL_PLACES),
+       round(j['load'],settings.DECIMAL_PLACES),
+       round(j['free'],settings.DECIMAL_PLACES)
+       ))
   process.stdin.write('\\.\n')
   print 'Exported resourceplans in %.2f seconds' % (time() - starttime)
 
@@ -186,14 +187,14 @@ def exportDemand(process):
         cur -= cumplanned - d.quantity
         if cur < 0: cur = 0
       yield (
-        n, d.item.name, d.customer and d.customer.name or None, str(d.due),
+        n.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
         round(cur,settings.DECIMAL_PLACES), str(i.end),
         round(i.quantity,settings.DECIMAL_PLACES), i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
-        n, d.item.name, d.customer and d.customer.name or None, str(d.due),
+        n.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
         round(d.quantity - cumplanned,settings.DECIMAL_PLACES), "\\N",
         "\\N", "\\N"
         )
@@ -221,11 +222,11 @@ def exportPegging(process):
     # Export pegging
     for j in i.pegging:
       process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-        n, str(j.level),
+        n.encode(encoding), str(j.level),
         j.consuming and j.consuming.id or '0', str(j.consuming_date),
         j.producing and j.producing.id or '0', str(j.producing_date),
-        j.buffer and j.buffer.name or '',
-        (j.buffer and j.buffer.item and j.buffer.item.name) or '',
+        j.buffer and j.buffer.name.encode(encoding) or '',
+        (j.buffer and j.buffer.item and j.buffer.item.name.encode(encoding)) or '',
         round(j.quantity_demand,settings.DECIMAL_PLACES),
         round(j.quantity_buffer,settings.DECIMAL_PLACES)
        ))
@@ -246,6 +247,8 @@ def exportfrepple():
      settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
      test and settings.DATABASES[database]['TEST_NAME'] or settings.DATABASES[database]['NAME'],
    ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, universal_newlines=True)
+  process.stdin.write("SET statement_timeout = 0;\n")
+  process.stdin.write("SET client_encoding = 'UTF8';\n")
 
   # Send all output to the PSQL process through a pipe
   try:
@@ -276,7 +279,7 @@ def exportfrepple():
     union select 'out_demandpegging', count(*) from out_demandpegging
     union select 'out_demand', count(*) from out_demand
     order by 1
-    ''')	
+    ''')
   for table, recs in cursor.fetchall():
     print "Table %s: %d records" % (table, recs)
 

@@ -39,14 +39,7 @@ DECLARE_EXPORT PyObject* PythonDataException = NULL;
 DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 
 DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;
-DECLARE_EXPORT string PythonInterpreter::encoding;
 DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
-
-
-DECLARE_EXPORT const char* PythonInterpreter::getPythonEncoding()
-{
-  return encoding.c_str();
-}
 
 
 DECLARE_EXPORT void PythonInterpreter::initialize(int argc, char *argv[])
@@ -105,31 +98,6 @@ DECLARE_EXPORT void PythonInterpreter::initialize(int argc, char *argv[])
     "sys.stdout = redirect()\n"
     "sys.stderr = redirect()"
   );
-
-  // Get the preferred Python locale
-  PyObject* localemodule = PyImport_ImportModule("locale");
-  if (!localemodule)
-  {
-    PyGILState_Release(state);
-    throw RuntimeException("Can't import 'locale' Python module");
-  }
-  else
-  {
-    PyObject* moduledict = PyModule_GetDict(localemodule);
-    PyObject* func = PyDict_GetItemString(moduledict, "getpreferredencoding");
-    if (!func)
-    {
-      PyGILState_Release(state);
-      throw RuntimeException("Can't find 'getpreferredencoding' Python function");
-    }
-    PyObject* retval = PyEval_CallObject(func, NULL);
-    if (retval)
-    {
-      encoding =  PyString_AsString(retval);
-      Py_XDECREF(retval);
-    }
-    Py_XDECREF(localemodule);
-  }
 
   // Release the lock
   PyGILState_Release(state);
@@ -410,7 +378,7 @@ DECLARE_EXPORT Date PythonObject::getDate() const
     {
       // Replace the unicode object with a string encoded in the correct locale
       const_cast<PyObject*&>(obj) =
-        PyUnicode_AsEncodedString(obj, PythonInterpreter::getPythonEncoding(), "ignore");
+        PyUnicode_AsEncodedString(obj, "UTF-8", "ignore");
     }
     return Date(PyString_AsString(PyObject_Str(obj)));
   }

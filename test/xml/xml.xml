@@ -5,13 +5,13 @@
   <current>2009-01-01T00:00:00</current>
   <demands>
     <!-- Level 1: Lot -->
-    <demand name="order 1">
+    <demand name=" แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่">
       <quantity>10</quantity>
       <due>2009-01-27T00:00:00</due>
       <priority>1</priority>
       <item name="item 1">
         <!-- Level 2: item -->
-        <description>description item 1</description>
+        <description>А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь</description>
         <category>item category</category>
         <operation name="operation 1" xsi:type="operation_routing">
           <!-- Level 3: operation -->

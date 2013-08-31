@@ -59,6 +59,35 @@ namespace utils
 DECLARE_EXPORT const XMLOutput::content_type XMLOutput::STANDARD = 1;
 DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLAN = 2;
 DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
+xercesc::XMLTranscoder* XMLInput::utf8_encoder = NULL;
+char XMLInput::encodingbuffer[16*1024+4];
+
+
+char* XMLInput::transcodeUTF8(const XMLCh* xercesChars)
+{
+  XMLSize_t charsEaten;
+  XMLSize_t charsReturned = utf8_encoder->transcodeTo(xercesChars,
+    xercesc::XMLString::stringLen(xercesChars),
+    (XMLByte*) encodingbuffer, 16*1024, 
+    charsEaten, xercesc::XMLTranscoder::UnRep_RepChar );
+  encodingbuffer[charsReturned] = 0;
+  return encodingbuffer;
+}
+
+
+DECLARE_EXPORT XMLInput::XMLInput(unsigned short maxNestedElmnts)
+  : parser(NULL), maxdepth(maxNestedElmnts), m_EStack(maxNestedElmnts+2),
+    numElements(-1), ignore(0), objectEnded(false),
+    abortOnDataException(true), attributes(NULL) 
+{  
+  if (!utf8_encoder)
+  {
+    xercesc::XMLTransService::Codes resCode;
+    utf8_encoder = xercesc::XMLPlatformUtils::fgTransService->makeNewTranscoderFor("UTF-8", resCode, 16*1024);
+    if (!XMLInput::utf8_encoder)
+      logger << "Can't initialize UTF-8 transcoder: reason " << resCode << endl;
+  }
+}
 
 
 DECLARE_EXPORT void  XMLInput::processingInstruction
@@ -173,7 +202,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       if (states.top() != IGNOREINPUT)
         for (unsigned int i=0, cnt=atts.getLength(); i<cnt; i++)
         {
-          char* val = xercesc::XMLString::transcode(atts.getValue(i));
+          char* val = transcodeUTF8(atts.getValue(i));
           m_EStack[numElements+1].first.reset(atts.getLocalName(i));
           m_EStack[numElements+1].second.setData(val);
 #ifdef PARSE_DEBUG
@@ -188,7 +217,6 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
             if (abortOnDataException) throw;
             else logger << "Continuing after data error: " << e.what() << endl;
           }
-          xercesc::XMLString::release(&val);
           // Stop processing attributes if we are now in the ignore mode
           if (states.top() == IGNOREINPUT) break;
         }
@@ -320,9 +348,8 @@ DECLARE_EXPORT void XMLInput::characters(const XMLCh *const c, const XMLSize_t n
   if (states.top()==IGNOREINPUT) return;
 
   // Process the data
-  char* name = xercesc::XMLString::transcode(c);
+  char* name = transcodeUTF8(c);
   m_EStack[numElements].second.addData(name, strlen(name));
-  xercesc::XMLString::release(&name);
 }
 
 
@@ -659,9 +686,8 @@ DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& tag)
 
 DECLARE_EXPORT const XMLElement* XMLAttributeList::get(const Keyword& key) const
 {
-  char* s = xercesc::XMLString::transcode(atts->getValue(key.getXMLCharacters()));
+  char* s = XMLInput::transcodeUTF8(atts->getValue(key.getXMLCharacters()));
   const_cast<XMLAttributeList*>(this)->result.setData(s ? s : "");
-  xercesc::XMLString::release(&s);
   return &result;
 }
 

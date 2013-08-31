@@ -107,7 +107,6 @@ class Command(BaseCommand):
           for i in task.arguments.split():
             key, val = i.split('=')
             args[key[2:]] = val
-          print args
           management.call_command('frepple_run', database=database, task=task.id, **args)
         # B
         elif task.name == 'generate model':

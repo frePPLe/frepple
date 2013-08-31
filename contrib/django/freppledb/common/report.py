@@ -653,12 +653,12 @@ class GridReport(View):
               ).save(using=request.database)
           except reportclass.model.DoesNotExist:
             ok = False
-            resp.write(escape(_("Can't find %s" % obj.pk)))
+            resp.write(escape(_("Can't find %s" % rec['id'])))
             resp.write('<br/>')
           except Exception as e:
             ok = False
             for error in form.non_field_errors():
-              resp.write(escape('%s: %s' % (obj.pk, error)))
+              resp.write(escape('%s: %s' % (rec['id'], error)))
               resp.write('<br/>')
             for field in form:
               for error in field.errors:

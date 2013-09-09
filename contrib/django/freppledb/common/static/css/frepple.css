@@ -500,10 +500,10 @@ div.calendarbox
 
 .graph
 {
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: auto;
-  margin-bottom: auto;
+  margin: auto;
+  width: 100%;
+  min-height: 48px;
+  height: 100%;
 }
 
 /* TASK EXECUTION SCREEN */

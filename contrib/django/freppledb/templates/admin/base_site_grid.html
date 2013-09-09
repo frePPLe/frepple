@@ -1,5 +1,5 @@
 {% extends "admin/base_site_nav.html" %}
-{% load i18n jqgrid %}
+{% load i18n %}
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">
 
@@ -15,13 +15,13 @@ $(function(){
    	  + (location.search.length > 0 ? "&format=json" : "?format=json"),
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
-   	colModel:[{% colmodel False %}],
+    colModel:[{{colmodel|safe}}],
    	rowNum: {{request.pagesize}},{% if is_popup %}
-    onSelectRow: setSelectedRow,{% elif reportclass.editable and haschangeperm %}
+    onSelectRow: grid.setSelectedRow,{% elif reportclass.editable and haschangeperm %}
     cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname,
-    afterEditCell: afterEditCell,
+    afterEditCell: grid.afterEditCell,
     beforeSaveCell: upload.select,{% endif %}
     pager: '#gridpager',
     viewrecords: true,
@@ -41,12 +41,12 @@ $(function(){
       $('#curfilter').html("{% trans 'Error retrieving report data' %}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
     },{% if reportclass.multiselect and not is_popup %}
     multiselect: true,
-    onSelectRow: markSelectedRow,{% endif %}
+    onSelectRow: grid.markSelectedRow,{% endif %}
     {% block extra_grid %}{% endblock %}
     height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %}
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
-  $('#cb_grid.cbox').click(markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
+  $('#cb_grid.cbox').click(grid.markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
   {% if reportclass.height %}$("#grid").gridResize({
      handles: 's', minHeight: {{reportclass.height}}
@@ -64,17 +64,17 @@ $(window).bind('resize', function() {
 {% endblock %}
 {% block content %}
 {% block before_table %}{% endblock %}<div class="tools">{% block actions %}{% if reportclass.filterable %}
-<a id="filter" href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
+<a id="filter" href="javascript:grid.showFilter();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
 <a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
 <a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>
 {% endif %}
 {% if hasaddperm %}<a href="{{request.prefix}}/{{adminsite}}/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
-{% if not is_popup %}<a id="copy_selected" href="javascript:copy_show();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-copy"></span>{% trans 'Copy' %}</a>
-{% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<a id="delete_selected" href="javascript:delete_show();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-minusthick"></span>{% trans 'Delete' %}</a>
-{% endif %}{% if reportclass.hasTimeBuckets %}<a href="javascript:bucket_show();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
+{% if not is_popup %}<a id="copy_selected" href="javascript:grid.showCopy();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-copy"></span>{% trans 'Copy' %}</a>
+{% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<a id="delete_selected" href="javascript:grid.showDelete();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-minusthick"></span>{% trans 'Delete' %}</a>
+{% endif %}{% if reportclass.hasTimeBuckets %}<a href="javascript:grid.showBucket();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
 {% endif %}{% if hasaddperm %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
-{% endif %}<a href="javascript:export_show(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>{% endblock %}</div>
+{% endif %}<a href="javascript:grid.showExport(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>{% endblock %}</div>
 <div id="content-main" style="margin-right: 15px;">
 <table id="grid"></table>
 <div id="gridpager"></div>

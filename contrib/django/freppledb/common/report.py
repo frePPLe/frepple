@@ -52,6 +52,7 @@ from django.utils.translation import ugettext as _
 from django.utils.formats import get_format, number_format
 from django.utils.text import capfirst, get_text_list
 from django.utils.translation import string_concat
+from django.template.defaultfilters import title
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
@@ -180,6 +181,12 @@ class GridFieldCurrency(GridField):
   formatter = 'currency'
   extra = "formatoptions:{prefix:'%s', suffix:'%s'}"  % settings.CURRENCY
   width = 80
+
+
+class GridFieldGraph(GridField):
+  formatter = 'graph'
+  editable = False
+  sortable = False
 
 
 def getBOM(encoding):
@@ -320,6 +327,20 @@ class GridReport(View):
     else:
       return HttpResponseNotAllowed(['get','post'])
 
+  @classmethod
+  def _render_colmodel(cls, is_popup=False):
+    result = []
+    if is_popup:
+      result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false}")
+    count = -1
+    for i in cls.rows:
+      count += 1
+      result.append(u"{%s,width:%s,counter:%d%s%s,searchoptions:{searchhidden: true}}" % (
+         i, i.width, count,
+         count < cls.frozenColumns and ',frozen:true' or '',
+         is_popup and ',popup:true' or ''
+         ))
+    return ',\n'.join(result)
 
   @classmethod
   def _generate_csv_data(reportclass, request, *args, **kwargs):
@@ -336,16 +357,8 @@ class GridReport(View):
     sf.write(getBOM(encoding))
 
     # Choose fields to export
-    prefs = request.user.getPreference(reportclass.getKey())
-    if prefs:
-      # Customized settings
-      prefs = prefs['rows']
-      writer.writerow([ force_unicode(reportclass.rows[f[0]].title).title().encode(encoding,"ignore") for f in prefs if not f[1] ])
-      fields = [ reportclass.rows[f[0]].field_name for f in prefs if not f[1] ]
-    else:
-      # Default settings
-      writer.writerow([ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.title ])
-      fields = [ i.field_name for i in reportclass.rows if i.field_name ]
+    writer.writerow([ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.title ])
+    fields = [ i.field_name for i in reportclass.rows if i.field_name ]
 
     # Write a header row
     yield sf.getvalue()
@@ -509,17 +522,20 @@ class GridReport(View):
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
       else:
         bucketnames = bucketlist = start = end = bucket = None
+      is_popup = request.GET.has_key('pop')
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
         'preferences': None,
+        'colmodel': reportclass._render_colmodel(is_popup),
+        'cross_list': reportclass._render_cross() if hasattr(reportclass,'crosses') else None,
         'object_id': args and args[0] or None,
         'page': 1,
         'sord': 'asc',
         'sidx': '',
-        'is_popup': request.GET.has_key('pop'),
-        'args': args,
+        'is_popup': is_popup,
         'filters': reportclass.getQueryString(request),
+        'args': args,
         'bucketnames': bucketnames,
         'bucketlist': bucketlist,
         'bucketstart': start,
@@ -1041,8 +1057,40 @@ class GridPivot(GridReport):
 
   multiselect = False
 
+
   @classmethod
-  def _apply_sort(reportclass, request):
+  def _render_cross(cls):
+    result = []
+    for i in cls.crosses:
+      result.append(
+        "{name:'%s',editable:%s}"
+        % (title('title' in i[1] and i[1]['title'] or ''), getattr(i[1],'editable',False) and 'true' or 'false')
+        )
+    return ',\n'.join(result)
+
+
+  @classmethod
+  def _render_colmodel(cls, is_popup = False):
+
+    result = []
+    if is_popup:
+      result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false}")
+    count = -1
+    for i in cls.rows:
+      count += 1
+      result.append(u"{%s,width:%s,counter:%d,frozen:true%s,searchoptions:{searchhidden: true}}" % (
+         i, i.width, count,
+         is_popup and ',popup:true' or ''
+         ))
+    result.append(
+      "{ name:'columns',label:' ',sortable:false,width:150,align:'left',"
+      "formatter:grid.pivotcolumns,search:false,frozen:true,title:false }"
+      )
+    return ',\n'.join(result)
+
+
+  @classmethod
+  def _apply_sort(reportclass, request, prefs=None):
     '''
     Returns the index of the column to sort on.
     '''
@@ -1156,10 +1204,10 @@ class GridPivot(GridReport):
     sf.write(getBOM(encoding))
 
     # Write a header row
-    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.name ]
+    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) ]
     if listformat:
       fields.extend([ capfirst(force_unicode(_('bucket'))).encode(encoding,"ignore") ])
-      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title'])) or capfirst(_(s[0]))).encode(encoding,"ignore") for s in reportclass.crosses ])
+      fields.extend([ capfirst(_(f[1].get('title',_(f[0])))).encode(encoding,"ignore") for f in reportclass.crosses ])
     else:
       fields.extend( [capfirst(_('data field')).encode(encoding,"ignore")])
       fields.extend([ unicode(b['name']).encode(encoding,"ignore") for b in bucketlist])
@@ -1173,11 +1221,11 @@ class GridPivot(GridReport):
         sf.truncate(0)
         # Data for rows
         if hasattr(row, "__getitem__"):
-          fields = [ row[f.name]==None and ' ' or unicode(row[f.name]).encode(encoding,"ignore") for f in reportclass.rows if f.name ]
+          fields = [ row[f.name]==None and ' ' or unicode(row[f.name]).encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) ]
           fields.extend([ row['bucket'].encode(encoding,"ignore") ])
           fields.extend([ row[f[0]]==None and ' ' or unicode(_localize(row[f[0]])).encode(encoding,"ignore") for f in reportclass.crosses ])
         else:
-          fields = [ getattr(row,f.name)==None and ' ' or unicode(getattr(row,f.name)).encode(encoding,"ignore") for f in reportclass.rows if f.name ]
+          fields = [ getattr(row,f.name)==None and ' ' or unicode(getattr(row,f.name)).encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) ]
           fields.extend([ getattr(row,'bucket').encode(encoding,"ignore") ])
           fields.extend([ getattr(row,f[0])==None and ' ' or unicode(_localize(getattr(row,f[0]))).encode(encoding,"ignore") for f in reportclass.crosses ])
         # Return string
@@ -1198,7 +1246,7 @@ class GridPivot(GridReport):
             if 'visible' in cross[1] and not cross[1]['visible']: continue
             # Clear the return string buffer
             sf.truncate(0)
-            fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name ]
+            fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) ]
             fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0]))).encode(encoding,"ignore")] )
             fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
             # Return string
@@ -1211,7 +1259,7 @@ class GridPivot(GridReport):
         if 'visible' in cross[1] and not cross[1]['visible']: continue
         # Clear the return string buffer
         sf.truncate(0)
-        fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name ]
+        fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) ]
         fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0]))).encode(encoding,"ignore")] )
         fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
         # Return string

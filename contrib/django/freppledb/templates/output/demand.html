@@ -1,16 +1,13 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{block.super}}
-<script type="text/javascript" src="{{STATIC_URL}}js/flotr2.min.js"></script>
-{% endblock %}
 
 {% block contextmenus %}
 {% include "itemcontext.html" %}
 <div id="detail1context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 <li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/{value}/?o=5a&amp;due__gte={startdate}&amp;due__lt={enddate}">{% trans 'Detail' %}</a></li>
 </ul></div>
-<div id="detail2context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
+<div id="detail3context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 <li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/{value}/?o=5a&amp;plandate__gte={startdate}&amp;plandate__lt={enddate}">{% trans 'Detail' %}</a></li>
 </ul></div>
 {% endblock %}
@@ -144,10 +141,6 @@ function drawGraphs(jsondata)
     });
 }
 
-function graph(cellvalue, options, rowdata) {
-  return '<div class="graph" style="width:' + (5*numbuckets < 200 ? 5*numbuckets : 200) +'px; height:45px;"></div>';
-};
-
 function crosses (cellvalue, options, rowdata) {
   var result = cellvalue[0] + '<br/>';
   if (cellvalue[0] != 0.0)
@@ -155,7 +148,7 @@ function crosses (cellvalue, options, rowdata) {
   else
     var result = '0.0<br/>';
   if (cellvalue[1] != 0.0)
-    result += cellvalue[1] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail2'></span><br/>";
+    result += cellvalue[1] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail3'></span><br/>";
   else
     result += '0.0<br/>';
   result += cellvalue[2];

@@ -25,7 +25,7 @@ from freppledb.output.models import LoadPlan
 from freppledb.common.models import Parameter
 from freppledb.common.db import python_date, sql_max
 from freppledb.common.report import GridReport, GridPivot
-from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
+from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger, GridFieldGraph
 
 
 class OverviewReport(GridPivot):
@@ -41,7 +41,7 @@ class OverviewReport(GridPivot):
     GridFieldText('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='location', editable=False),
     GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center', search=False),
-    GridFieldText(None, width="(5*numbuckets<200 ? 5*numbuckets : 200)", extra='formatter:graph', editable=False),
+    GridFieldGraph('graph', title=_('graph'), width="(5*numbuckets<200 ? 5*numbuckets : 200)"),
     )
   crosses = (
     ('available',{'title': _('available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),

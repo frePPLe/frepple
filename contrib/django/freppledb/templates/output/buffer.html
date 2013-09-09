@@ -1,10 +1,6 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{block.super}}
-<script type="text/javascript" src="{{STATIC_URL}}js/flotr2.min.js"></script>
-{% endblock %}
-
 {% block contextmenus %}
 {% include "buffercontext.html" %}
 {% include "itemcontext.html" %}
@@ -152,10 +148,6 @@ function drawGraphs(jsondata)
       });
     });
 }
-
-function graph(cellvalue, options, rowdata) {
-  return '<div class="graph" style="width:100px; height:60px;"></div>';
-};
 
 function crosses (cellvalue, options, rowdata) {
   var result = cellvalue[0] + '<br/>';

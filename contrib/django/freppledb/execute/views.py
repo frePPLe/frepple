@@ -75,7 +75,7 @@ class TaskReport(GridReport):
 
     # Loop over all fixtures of all apps and directories
     fixtures = set()
-    folders = list(settings.TEMPLATE_DIRS)
+    folders = list(settings.FIXTURE_DIRS)
     for app in get_apps():
       if app.__name__.startswith('django'): continue
       folders.append(os.path.join(os.path.dirname(app.__file__), 'fixtures'))

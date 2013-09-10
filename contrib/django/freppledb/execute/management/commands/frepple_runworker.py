@@ -75,7 +75,7 @@ class Command(BaseCommand):
     # Pick up the options
     if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
     else: database = DEFAULT_DB_ALIAS
-    if not database in settings.DATABASES.keys():
+    if not database in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'continuous' in options: continuous = options['continuous']
     else: continuous = False

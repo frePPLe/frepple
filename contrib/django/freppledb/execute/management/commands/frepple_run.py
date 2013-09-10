@@ -52,7 +52,7 @@ class Command(BaseCommand):
       database = options['database'] or DEFAULT_DB_ALIAS
     else:
       database = DEFAULT_DB_ALIAS
-    if not database in settings.DATABASES.keys():
+    if not database in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'user' in options and options['user']:
       try: user = User.objects.all().using(database).get(username=options['user'])
@@ -110,7 +110,7 @@ class Command(BaseCommand):
       os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
       if os.path.isfile(os.path.join(settings.FREPPLE_HOME,'libfrepple.so')):
         os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
-      if 'DJANGO_SETTINGS_MODULE' not in os.environ.keys():
+      if 'DJANGO_SETTINGS_MODULE' not in os.environ:
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
       if os.path.exists(os.path.join(settings.FREPPLE_HOME,'python27.zip')):
         # For the py2exe executable

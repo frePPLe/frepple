@@ -76,11 +76,11 @@ def get_models(parser, token):
     """
     tokens = token.contents.split()
     if len(tokens) < 5:
-        raise TemplateSyntaxError, "'%s' tag requires 5 arguments" % tokens[0]
+        raise TemplateSyntaxError("'%s' tag requires 5 arguments" % tokens[0])
     if tokens[1] != 'from':
-        raise TemplateSyntaxError, "First argument to '%s' tag must be 'from'" % tokens[0]
+        raise TemplateSyntaxError("First argument to '%s' tag must be 'from'" % tokens[0])
     if tokens[3] != 'as':
-        raise TemplateSyntaxError, "Third argument to '%s' tag must be 'as'" % tokens[0]
+        raise TemplateSyntaxError("Third argument to '%s' tag must be 'as'" % tokens[0])
     return ModelsNode(tokens[2],tokens[4])
 
 register.tag('get_models', get_models)
@@ -193,7 +193,7 @@ def set_var(parser, token):
   from re import split
   bits = split(r'\s+', token.contents, 2)
   if len(bits) < 2:
-      raise TemplateSyntaxError, "'%s' tag requires two arguments" % bits[0]
+      raise TemplateSyntaxError("'%s' tag requires two arguments" % bits[0])
   return SetVariable(bits[1],bits[2])
 
 register.tag('set', set_var)
@@ -226,7 +226,7 @@ def get_modeltabs(parser, token):
   from re import split
   bits = split(r'\s+', token.contents, 1)
   if len(bits) != 2:
-    raise TemplateSyntaxError, "'%s' tag requires 1 argument" % bits[0]
+    raise TemplateSyntaxError("'%s' tag requires 1 argument" % bits[0])
   return ModelTabs(bits[1])
 
 register.tag('tabs', get_modeltabs)

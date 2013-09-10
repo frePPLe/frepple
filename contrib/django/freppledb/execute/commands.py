@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os, sys, inspect
 from datetime import datetime
 
@@ -12,14 +13,14 @@ from freppledb.execute.models import Task
 # Auxilary functions for debugging
 def debugResource(res,mode):
   # if res.name != 'my favorite resource': return
-  print "=> Situation on resource", res.name
+  print("=> Situation on resource", res.name)
   for j in res.loadplans:
-    print "=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup
+    print("=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup)
 
 
 def debugDemand(dem,mode):
   if dem.name == 'my favorite demand':
-    print "=> Starting to plan demand ", dem.name
+    print("=> Starting to plan demand ", dem.name)
     solver.loglevel = 2
   else:
     solver.loglevel = 0
@@ -79,26 +80,26 @@ solver = frepple.solver_mrp(name="MRP",
   #userexit_demand=debugDemand,
   loglevel = int(Parameter.getValue('plan.loglevel', db, '0'))
   )
-print "Plan type: ", plantype
-print "Constraints: ", constraint
+print("Plan type: ", plantype)
+print("Constraints: ", constraint)
 
 # Welcome message
 if settings.DATABASES[db]['ENGINE'] == 'django.db.backends.sqlite3':
-  print "frePPLe on %s using sqlite3 database '%s'" % (
+  print("frePPLe on %s using sqlite3 database '%s'" % (
     sys.platform,
     'NAME' in settings.DATABASES[db] and settings.DATABASES[db]['NAME'] or ''
-    )
+    ))
 else:
-  print "frePPLe on %s using %s database '%s' as '%s' on '%s:%s'" % (
+  print("frePPLe on %s using %s database '%s' as '%s' on '%s:%s'" % (
     sys.platform,
     'ENGINE' in settings.DATABASES[db] and settings.DATABASES[db]['ENGINE'] or '',
     'NAME' in settings.DATABASES[db] and settings.DATABASES[db]['NAME'] or '',
     'USER' in settings.DATABASES[db] and settings.DATABASES[db]['USER'] or '',
     'HOST' in settings.DATABASES[db] and settings.DATABASES[db]['HOST'] or '',
     'PORT' in settings.DATABASES[db] and settings.DATABASES[db]['PORT'] or ''
-    )
+    ))
 
-print "\nStart loading data from the database at", datetime.now().strftime("%H:%M:%S")
+print("\nStart loading data from the database at", datetime.now().strftime("%H:%M:%S"))
 frepple.printsize()
 from freppledb.execute.load import loadfrepple
 loadfrepple()
@@ -107,10 +108,10 @@ logProgress(33)
 
 if 'solver_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
   # The forecast module is available
-  print "\nStart forecast netting at", datetime.now().strftime("%H:%M:%S")
+  print("\nStart forecast netting at", datetime.now().strftime("%H:%M:%S"))
   frepple.solver_forecast(name="Netting orders from forecast",loglevel=0).solve()
 
-print "\nStart plan generation at", datetime.now().strftime("%H:%M:%S")
+print("\nStart plan generation at", datetime.now().strftime("%H:%M:%S"))
 solver.solve()
 frepple.printsize()
 logProgress(66)
@@ -119,7 +120,7 @@ logProgress(66)
 #from freppledb.execute.export_database_static import exportfrepple as export_static_to_database
 #export_static_to_database()
 
-print "\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S")
+print("\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S"))
 if settings.DATABASES[db]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
   from freppledb.execute.export_database_plan_postgresql import exportfrepple as export_plan_to_database
 else:
@@ -139,5 +140,5 @@ export_plan_to_database()
 #frepple.erase(True)
 #frepple.printsize()
 
-print "\nFinished planning at", datetime.now().strftime("%H:%M:%S")
+print("\nFinished planning at", datetime.now().strftime("%H:%M:%S"))
 logProgress(100)

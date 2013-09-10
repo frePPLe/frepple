@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import print_function
 import csv
 
 def read_csv_file():
@@ -50,8 +51,8 @@ def create_files(cnt):
   return
 
 def my_function(a):
-  print 'in my function with argument %s' % a,
+  print('in my function with argument %s' % a, end="")
   return 'OK'
 
-print '0. Initialization frePPLe version:', frepple.version
+print('0. Initialization frePPLe version:', frepple.version)
 

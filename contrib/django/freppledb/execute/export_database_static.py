@@ -25,8 +25,7 @@ The code iterates over all objects in the C++ core engine, and creates
 database records with the information. The Django database wrappers are used
 to keep the code portable between different databases.
 '''
-
-
+from __future__ import print_function
 from datetime import datetime
 from time import time
 from threading import Thread
@@ -46,7 +45,7 @@ timestamp = str(datetime.now())
 
 
 def exportLocations(cursor):
-  print "Exporting locations..."
+  print("Exporting locations...")
   starttime = time()
   cursor.execute("SELECT name FROM location")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -73,11 +72,11 @@ def exportLocations(cursor):
      ) for i in frepple.locations() if i.owner
     ])
   transaction.commit(using=database)
-  print 'Exported locations in %.2f seconds' % (time() - starttime)
+  print('Exported locations in %.2f seconds' % (time() - starttime))
 
 
 def exportCalendars(cursor):
-  print "Exporting calendars..."
+  print("Exporting calendars...")
   starttime = time()
   cursor.execute("SELECT name FROM calendar")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -98,11 +97,11 @@ def exportCalendars(cursor):
      ) for i in frepple.calendars() if i.name in primary_keys
     ])
   transaction.commit(using=database)
-  print 'Exported calendars in %.2f seconds' % (time() - starttime)
+  print('Exported calendars in %.2f seconds' % (time() - starttime))
 
 
 def exportCalendarBuckets(cursor):
-  print "Exporting calendar buckets..."
+  print("Exporting calendar buckets...")
   starttime = time()
   cursor.execute("SELECT calendar_id, id FROM calendarbucket")
   primary_keys = set([ i for i in cursor.fetchall() ])
@@ -142,11 +141,11 @@ def exportCalendarBuckets(cursor):
      ) for i in buckets() if (i.calendar.name, i.id) in primary_keys
     ])
   transaction.commit(using=database)
-  print 'Exported calendar buckets in %.2f seconds' % (time() - starttime)
+  print('Exported calendar buckets in %.2f seconds' % (time() - starttime))
 
 
 def exportOperations(cursor):
-  print "Exporting operations..."
+  print("Exporting operations...")
   starttime = time()
   cursor.execute("SELECT name FROM operation")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -186,12 +185,12 @@ def exportOperations(cursor):
      ) for i in frepple.operations() if i.name in primary_keys and not i.hidden and i.name != 'setup operation'
     ])
   transaction.commit(using=database)
-  print 'Exported operations in %.2f seconds' % (time() - starttime)
+  print('Exported operations in %.2f seconds' % (time() - starttime))
 
 
 def exportSubOperations(cursor):
   return # TODO
-  print "Exporting suboperations..."
+  print("Exporting suboperations...")
   starttime = time()
   cursor.execute("SELECT operation_id, suboperation_id FROM suboperation")
   primary_keys = set([ i for i in cursor.fetchall() ])
@@ -222,11 +221,11 @@ def exportSubOperations(cursor):
      ) for i in subops() if i in primary_keys
     ])
   transaction.commit(using=database)
-  print 'Exported suboperations in %.2f seconds' % (time() - starttime)
+  print('Exported suboperations in %.2f seconds' % (time() - starttime))
 
 
 def exportFlows(cursor):
-  print "Exporting flows..."
+  print("Exporting flows...")
   starttime = time()
   cursor.execute("SELECT operation_id, thebuffer_id FROM flow")  # todo oper&buffer are not necesarily unique
   primary_keys = set([ i for i in cursor.fetchall() ])
@@ -260,11 +259,11 @@ def exportFlows(cursor):
      ) for i in flows() if (i.operation.name, i.buffer.name) in primary_keys and not i.hidden
     ])
   transaction.commit(using=database)
-  print 'Exported flows in %.2f seconds' % (time() - starttime)
+  print('Exported flows in %.2f seconds' % (time() - starttime))
 
 
 def exportLoads(cursor):
-  print "Exporting loads..."
+  print("Exporting loads...")
   starttime = time()
   cursor.execute("SELECT operation_id, resource_id FROM resourceload")  # todo oper&resource are not necesarily unique
   primary_keys = set([ i for i in cursor.fetchall() ])
@@ -298,11 +297,11 @@ def exportLoads(cursor):
      ) for i in loads() if (i.operation.name, i.resource.name) in primary_keys and not i.hidden
     ])
   transaction.commit(using=database)
-  print 'Exported loads in %.2f seconds' % (time() - starttime)
+  print('Exported loads in %.2f seconds' % (time() - starttime))
 
 
 def exportBuffers(cursor):
-  print "Exporting buffers..."
+  print("Exporting buffers...")
   starttime = time()
   cursor.execute("SELECT name FROM buffer")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -363,10 +362,10 @@ def exportBuffers(cursor):
      ) for i in frepple.buffers() if i.owner and not i.hidden
     ])
   transaction.commit(using=database)
-  print 'Exported buffers in %.2f seconds' % (time() - starttime)
+  print('Exported buffers in %.2f seconds' % (time() - starttime))
 
 def exportCustomers(cursor):
-  print "Exporting customers..."
+  print("Exporting customers...")
   starttime = time()
   cursor.execute("SELECT name FROM customer")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -393,11 +392,11 @@ def exportCustomers(cursor):
      ) for i in frepple.customers() if i.owner
     ])
   transaction.commit(using=database)
-  print 'Exported customers in %.2f seconds' % (time() - starttime)
+  print('Exported customers in %.2f seconds' % (time() - starttime))
 
 
 def exportDemands(cursor):
-  print "Exporting demands..."
+  print("Exporting demands...")
   starttime = time()
   cursor.execute("SELECT name FROM demand")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -434,14 +433,14 @@ def exportDemands(cursor):
      ) for i in frepple.demands() if i.owner and isinstance(i,frepple.demand_default)
     ])
   transaction.commit(using=database)
-  print 'Exported demands in %.2f seconds' % (time() - starttime)
+  print('Exported demands in %.2f seconds' % (time() - starttime))
 
 
 def exportForecasts(cursor):
   # Detect whether the forecast module is available
   if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
     return
-  print "Exporting forecast..."
+  print("Exporting forecast...")
   starttime = time()
   cursor.execute("SELECT name FROM forecast")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -470,14 +469,14 @@ def exportForecasts(cursor):
      ) for i in frepple.demands() if i.name in primary_keys and isinstance(i,frepple.demand_forecast)
     ])
   transaction.commit(using=database)
-  print 'Exported forecasts in %.2f seconds' % (time() - starttime)
+  print('Exported forecasts in %.2f seconds' % (time() - starttime))
 
 
 def exportForecastDemands(cursor):
   # Detect whether the forecast module is available
   if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
     return
-  print "Exporting forecast demands..."
+  print("Exporting forecast demands...")
   starttime = time()
   cursor.execute("SELECT forecast_id, startdate, enddate FROM forecastdemand")
   primary_keys = set([ i for i in cursor.fetchall() ])
@@ -500,7 +499,7 @@ def exportForecastDemands(cursor):
      ) for i in frepple.demands() if isinstance(i,frepple.demand_forecastbucket) and (i.owner.name,i.startdate.date(),i.enddate.date()) in primary_keys
     ])
   transaction.commit(using=database)
-  print 'Exported forecast demands in %.2f seconds' % (time() - starttime)
+  print('Exported forecast demands in %.2f seconds' % (time() - starttime))
 
 
 def exportOperationPlans(cursor):
@@ -508,7 +507,7 @@ def exportOperationPlans(cursor):
   Only locked operationplans are exported. That because we assume that
   all of those were given as input.
   '''
-  print "Exporting operationplans..."
+  print("Exporting operationplans...")
   starttime = time()
   cursor.execute("SELECT id FROM operationplan")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -539,11 +538,11 @@ def exportOperationPlans(cursor):
      ) for i in frepple.operationplans() if i.owner and not i.operation.hidden and i.locked
     ])
   transaction.commit(using=database)
-  print 'Exported operationplans in %.2f seconds' % (time() - starttime)
+  print('Exported operationplans in %.2f seconds' % (time() - starttime))
 
 
 def exportResources(cursor):
-  print "Exporting resources..."
+  print("Exporting resources...")
   starttime = time()
   cursor.execute("SELECT name FROM %s" % connections[database].ops.quote_name('resource'))
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -583,11 +582,11 @@ def exportResources(cursor):
      ) for i in frepple.resources() if i.owner and not i.hidden
     ])
   transaction.commit(using=database)
-  print 'Exported resources in %.2f seconds' % (time() - starttime)
+  print('Exported resources in %.2f seconds' % (time() - starttime))
 
 
 def exportSkills(cursor):
-  print "Exporting skills..."
+  print("Exporting skills...")
   starttime = time()
   cursor.execute("SELECT name FROM skill")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -597,11 +596,11 @@ def exportSkills(cursor):
      if i.name not in primary_keys
     ])
   transaction.commit(using=database)
-  print 'Exported skills in %.2f seconds' % (time() - starttime)
+  print('Exported skills in %.2f seconds' % (time() - starttime))
 
 
 def exportResourceSkills(cursor):
-  print "Exporting resource skills..."
+  print("Exporting resource skills...")
   starttime = time()
   cursor.execute("SELECT resource_id, skill_id FROM resourceskill")  # todo resource&skill are not necesarily unique
   primary_keys = set([ i for i in cursor.fetchall() ])
@@ -618,11 +617,11 @@ def exportResourceSkills(cursor):
     [i for i in res_skills() if i not in primary_keys
     ])
   transaction.commit(using=database)
-  print 'Exported resource skills in %.2f seconds' % (time() - starttime)
+  print('Exported resource skills in %.2f seconds' % (time() - starttime))
 
 
 def exportSetupMatrices(cursor):
-  print "Exporting setup matrices..."
+  print("Exporting setup matrices...")
   starttime = time()
   cursor.execute("SELECT name FROM setupmatrix")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -643,11 +642,11 @@ def exportSetupMatrices(cursor):
      ) for i in frepple.setupmatrices() if i.name in primary_keys
     ])
   transaction.commit(using=database)
-  print 'Exported setupmatrices in %.2f seconds' % (time() - starttime)
+  print('Exported setupmatrices in %.2f seconds' % (time() - starttime))
 
 
 def exportSetupMatricesRules(cursor):
-  print "Exporting setup matrix rules..."
+  print("Exporting setup matrix rules...")
   starttime = time()
   cursor.execute("SELECT setupmatrix_id, priority FROM setuprule")
   primary_keys = set([ i for i in cursor.fetchall() ])
@@ -676,11 +675,11 @@ def exportSetupMatricesRules(cursor):
      ) for i[1] in matrixrules() if (i[0].name,i[1].priority) in primary_keys
     ])
   transaction.commit(using=database)
-  print 'Exported setup matrix rules in %.2f seconds' % (time() - starttime)
+  print('Exported setup matrix rules in %.2f seconds' % (time() - starttime))
 
 
 def exportItems(cursor):
-  print "Exporting items..."
+  print("Exporting items...")
   starttime = time()
   cursor.execute("SELECT name FROM item")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -709,11 +708,11 @@ def exportItems(cursor):
      ) for i in frepple.items() if i.owner
     ])
   transaction.commit(using=database)
-  print 'Exported items in %.2f seconds' % (time() - starttime)
+  print('Exported items in %.2f seconds' % (time() - starttime))
 
 
 def exportParameters(cursor):
-  print "Exporting parameters..."
+  print("Exporting parameters...")
   starttime = time()
   cursor.execute("SELECT name FROM common_parameter")
   primary_keys = set([ i[0] for i in cursor.fetchall() ])
@@ -729,7 +728,7 @@ def exportParameters(cursor):
     [ (i[1],timestamp,i[0]) for i in data if i[0] in primary_keys ]
     )
   transaction.commit(using=database)
-  print 'Exported parameters in %.2f seconds' % (time() - starttime)
+  print('Exported parameters in %.2f seconds' % (time() - starttime))
 
 
 class DatabaseTask(Thread):
@@ -755,7 +754,7 @@ class DatabaseTask(Thread):
     # Run the functions sequentially
     for f in self.functions:
       try: f(cursor)
-      except Exception as e: print e
+      except Exception as e: print(e)
 
     # Close the connection
     cursor.close()
@@ -811,7 +810,7 @@ def exportfrepple():
       exportForecasts(cursor)
       exportForecastDemands(cursor)
     except Exception as e:
-      print e
+      print(e)
 
   else:
     # OPTION 2: Parallel export of entities in groups.
@@ -833,11 +832,11 @@ def exportfrepple():
       # Wait for all threads to finish
       for i in tasks: i.join()
     except Exception as e:
-      print e
+      print(e)
 
   # Analyze
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
-    print "Analyzing database tables..."
+    print("Analyzing database tables...")
     cursor.execute("analyze")
 
   # Close the database connection

@@ -58,7 +58,7 @@
 #    Visual Studio C++ compiler.
 #    Tests of type 1 are skipped in this case.
 #
-
+from __future__ import print_function
 import unittest, os, os.path, getopt, sys, glob
 from subprocess import Popen, STDOUT, PIPE
 
@@ -71,21 +71,25 @@ testdir = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 def usage():
   # Print help information and exit
-  print '\nUsage to run all tests:'
-  print '  ./runtest.py [options]\n'
-  print 'Usage with list of tests to run:'
-  print '  ./runtest.py [options] {test1} {test2} ...\n'
-  print 'With the following options:'
-  print '  -v  --vcc:'
-  print '     Test executables created by Microsoft Visual Studio C++ compiler.'
-  print '  -d  --debug:'
-  print '     Verbose output of the test.'
-  print '  -r  --regression:'
-  print '     Run only the tests that are relevant for a regression test.'
-  print '     The full test suite also includes some extra tests for testing other aspects.'
-  print '  -e  --exclude:'
-  print '     Skip a specific test from the suite.'
-  print '     This option can be specified multiple times.'
+  print('''
+    Usage to run all tests:
+      ./runtest.py [options]
+
+    Usage with list of tests to run:
+      ./runtest.py [options] {test1} {test2} ...
+
+    With the following options:
+      -v  --vcc:
+         Test executables created by Microsoft Visual Studio C++ compiler.
+      -d  --debug:
+         Verbose output of the test.
+      -r  --regression:
+         Run only the tests that are relevant for a regression test.
+         The full test suite also includes some extra tests for testing other aspects.
+      -e  --exclude:'
+         Skip a specific test from the suite.
+         This option can be specified multiple times.
+    ''')
 
 
 def runTestSuite():
@@ -170,7 +174,7 @@ def runTestSuite():
         # A list of tests has been specified, and we now validate it
         for i in tests:
             if not os.path.isdir(os.path.join(testdir, i)):
-                print "Warning: Test directory " + i + " doesn't exist"
+                print("Warning: Test directory " + i + " doesn't exist")
                 tests.remove(i)
 
     # Now define the test suite
@@ -200,16 +204,16 @@ def runTestSuite():
             AllTests.addTest(freppleTest(i, 'runXML'))
         else:
             # Undetermined - not a test directory
-            print "Warning: Unrecognized test in directory " + i
+            print("Warning: Unrecognized test in directory " + i)
 
     # Finally, run the test suite now
     if 'FREPPLE_HOME' in os.environ:
-      print "Running", AllTests.countTestCases(), \
-         "tests from directory", testdir, \
-         "with FREPPLE_HOME", os.environ['FREPPLE_HOME']
+      print("Running", AllTests.countTestCases(), 
+         "tests from directory", testdir, 
+         "with FREPPLE_HOME", os.environ['FREPPLE_HOME'])
     else:
-      print "Running", AllTests.countTestCases(), \
-         "tests from directory", testdir
+      print("Running", AllTests.countTestCases(), 
+         "tests from directory", testdir)
     result = unittest.TextTestRunner(verbosity=2,descriptions=False).run(AllTests)
     if not result.wasSuccessful(): sys.exit(1)
 
@@ -233,7 +237,7 @@ class freppleTest (unittest.TestCase):
         try:
             if debug:
               o = None
-              print "\nOutput:"
+              print("\nOutput:")
             else:
               o = PIPE
             proc = Popen(cmd,
@@ -288,7 +292,7 @@ class freppleTest (unittest.TestCase):
         nr = 1;
         while os.path.isfile(self.subdirectory + "." + str(nr) + ".expect"):
             if os.path.isfile("output."+str(nr)+".xml"):
-                if debug: print "Comparing expected and actual output", nr
+                if debug: print("Comparing expected and actual output", nr)
                 if diff(self.subdirectory + "." + str(nr) + ".expect", \
                         "output."+str(nr)+".xml"):
                     self.assertFalse("Difference in output " + str(nr), "Difference in output " + str(nr))

@@ -24,7 +24,7 @@ interpreter from the frePPLe engine.
 It extracts the information fields from the database, and then uses the Python
 API of frePPLe to bring the data into the frePPLe C++ core engine.
 '''
-
+from __future__ import print_function
 from time import time
 from threading import Thread
 import os
@@ -41,18 +41,18 @@ database = DEFAULT_DB_ALIAS
 
 
 def loadParameter(cursor):
-  print 'Importing parameters...'
+  print('Importing parameters...')
   try:
     cursor.execute("SELECT value FROM common_parameter where name='currentdate'")
     d = cursor.fetchone()
     frepple.settings.current = datetime.strptime(d[0], "%Y-%m-%d %H:%M:%S")
   except:
-    print 'Invalid or missing currentdate parameter: using system clock instead'
+    print('Invalid or missing currentdate parameter: using system clock instead')
     frepple.settings.current = datetime.now()
 
 
 def loadLocations(cursor):
-  print 'Importing locations...'
+  print('Importing locations...')
   cnt = 0
   starttime = time()
   cursor.execute("SELECT name, description, owner_id, available_id, category, subcategory FROM location")
@@ -62,24 +62,24 @@ def loadLocations(cursor):
       x = frepple.location(name=i, description=j, category=m, subcategory=n)
       if k: x.owner = frepple.location(name=k)
       if l: x.available = frepple.calendar(name=l)
-    except Exception as e: print "Error:", e
-  print 'Loaded %d locations in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d locations in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadCalendars(cursor):
-  print 'Importing calendars...'
+  print('Importing calendars...')
   cnt = 0
   starttime = time()
   cursor.execute("SELECT name, defaultvalue FROM calendar")
   for i, j in cursor.fetchall():
     cnt += 1
     try: frepple.calendar(name=i, default=j)
-    except Exception as e: print "Error:", e
-  print 'Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadCalendarBuckets(cursor):
-  print 'Importing calendar buckets...'
+  print('Importing calendar buckets...')
   cnt = 0
   starttime = time()
   cursor.execute('''
@@ -109,12 +109,12 @@ def loadCalendarBuckets(cursor):
       if m: b.priority = m
       if j: b.start = j
       if k: b.end = k
-    except Exception as e: print "Error:", e
-  print 'Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadCustomers(cursor):
-  print 'Importing customers...'
+  print('Importing customers...')
   cnt = 0
   starttime = time()
   cursor.execute("SELECT name, description, owner_id, category, subcategory FROM customer")
@@ -123,12 +123,12 @@ def loadCustomers(cursor):
     try:
       x = frepple.customer(name=i, description=j, category=l, subcategory=m)
       if k: x.owner = frepple.customer(name=k)
-    except Exception as e: print "Error:", e
-  print 'Loaded %d customers in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d customers in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadOperations(cursor):
-  print 'Importing operations...'
+  print('Importing operations...')
   cnt = 0
   starttime = time()
   cursor.execute('''
@@ -163,12 +163,12 @@ def loadOperations(cursor):
       if s: x.location = frepple.location(name=s)
       if t: x.cost = t
       if u: x.search = u
-    except Exception as e: print "Error:", e
-  print 'Loaded %d operations in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d operations in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadSuboperations(cursor):
-  print 'Importing suboperations...'
+  print('Importing suboperations...')
   cnt = 0
   starttime = time()
   cursor.execute('''
@@ -200,12 +200,12 @@ def loadSuboperations(cursor):
             curoper.addAlternate(operation=frepple.operation(name=j),priority=k,effective_end=m)
         else:
           curoper.addAlternate(operation=frepple.operation(name=j),priority=k)
-    except Exception as e: print "Error:", e
-  print 'Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadItems(cursor):
-  print 'Importing items...'
+  print('Importing items...')
   cnt = 0
   starttime = time()
   cursor.execute('''SELECT
@@ -219,12 +219,12 @@ def loadItems(cursor):
       if k: x.operation = frepple.operation(name=k)
       if l: x.owner = frepple.item(name=l)
       if m: x.price = m
-    except Exception as e: print "Error:", e
-  print 'Loaded %d items in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d items in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadBuffers(cursor):
-  print 'Importing buffers...'
+  print('Importing buffers...')
   cnt = 0
   starttime = time()
   cursor.execute('''SELECT name, description, location_id, item_id, onhand,
@@ -265,11 +265,11 @@ def loadBuffers(cursor):
     if n: b.minimum_calendar = frepple.calendar(name=n)
     if o: b.producing = frepple.operation(name=o)
     if p: b.carrying_cost = p
-  print 'Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime)
+  print('Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadSetupMatrices(cursor):
-  print 'Importing setup matrix rules...'
+  print('Importing setup matrix rules...')
   cnt = 0
   starttime = time()
   cursor.execute('''SELECT setupmatrix_id, priority, fromsetup, tosetup, duration, cost
@@ -283,12 +283,12 @@ def loadSetupMatrices(cursor):
       if l: r.tosetup = l
       if m: r.duration = m
       if n: r.cost = n
-    except Exception as e: print "Error:", e
-  print 'Loaded %d setup matrix rules in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d setup matrix rules in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadResources(cursor):
-  print 'Importing resources...'
+  print('Importing resources...')
   cnt = 0
   starttime = time()
   Resource.rebuildHierarchy(database=cursor.db.alias)
@@ -313,12 +313,12 @@ def loadResources(cursor):
       if p: x.setup = p
       if q: x.setupmatrix = frepple.setupmatrix(name=q)
       if u: x.owner = frepple.resource(name=u)
-    except Exception as e: print "Error:", e
-  print 'Loaded %d resources in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d resources in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadResourceSkills(cursor):
-  print 'Importing resource skills...'
+  print('Importing resource skills...')
   cnt = 0
   starttime = time()
   cursor.execute('''SELECT
@@ -331,12 +331,12 @@ def loadResourceSkills(cursor):
       cur = frepple.resourceskill(resource=frepple.resource(name=i), skill=frepple.skill(name=j), priority=m or 1)
       if k: cur.effective_start = k
       if l: cur.effective_end = l
-    except Exception as e: print "Error:", e
-  print 'Loaded %d resource skills in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d resource skills in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadFlows(cursor):
-  print 'Importing flows...'
+  print('Importing flows...')
   cnt = 0
   starttime = time()
   # Note: The sorting of the flows is not really necessary, but helps to make
@@ -361,7 +361,7 @@ def loadFlows(cursor):
       if o: curflow.name = o
       if p: curflow.priority = p
       if q: curflow.search = q
-    except Exception as e: print "Error:", e
+    except Exception as e: print("Error:", e)
   cursor.execute('''
     SELECT
       operation_id, thebuffer_id, quantity, type, effective_start,
@@ -384,12 +384,12 @@ def loadFlows(cursor):
       if p: curflow.alternate = p
       if q: curflow.priority = q
       if r: curflow.search = r
-    except Exception as e: print "Error:", e
-  print 'Loaded %d flows in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d flows in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadLoads(cursor):
-  print 'Importing loads...'
+  print('Importing loads...')
   cnt = 0
   starttime = time()
   # Note: The sorting of the loads is not really necessary, but helps to make
@@ -417,7 +417,7 @@ def loadLoads(cursor):
       if p: curload.setup = p
       if q: curload.search = q
       if r: curload.skill = frepple.skill(name=r)
-    except Exception as e: print "Error:", e
+    except Exception as e: print("Error:", e)
   cursor.execute('''
     SELECT
       operation_id, resource_id, quantity, effective_start, effective_end,
@@ -442,12 +442,12 @@ def loadLoads(cursor):
       if q: curload.setup = q
       if r: curload.search = r
       if s: curload.skill = frepple.skill(name=s)
-    except Exception as e: print "Error:", e
-  print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d loads in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadOperationPlans(cursor):
-  print 'Importing operationplans...'
+  print('Importing operationplans...')
   cnt = 0
   starttime = time()
   cursor.execute('''SELECT operation_id, id, quantity, startdate, enddate, locked
@@ -466,11 +466,11 @@ def loadOperationPlans(cursor):
     cnt += 1
     frepple.operationplan(operation=frepple.operation(name=i),
       id=j, quantity=k, start=l, end=m, owner=frepple.operationplan(id=o)).locked = n
-  print 'Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime)
+  print('Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime))
 
 
 def loadDemand(cursor):
-  print 'Importing demands...'
+  print('Importing demands...')
   cnt = 0
   starttime = time()
   cursor.execute('''SELECT name, due, quantity, priority, item_id,
@@ -487,8 +487,8 @@ def loadDemand(cursor):
       if p: x.owner = frepple.demand(name=p)
       if q: x.minshipment = q
       if r != None: x.maxlateness = r
-    except Exception as e: print "Error:", e
-  print 'Loaded %d demands in %.2f seconds' % (cnt, time() - starttime)
+    except Exception as e: print("Error:", e)
+  print('Loaded %d demands in %.2f seconds' % (cnt, time() - starttime))
 
 
 class DatabaseTask(Thread):
@@ -507,7 +507,7 @@ class DatabaseTask(Thread):
     # Run the functions sequentially
     for f in self.functions:
       try: f(cursor)
-      except Exception as e: print e
+      except Exception as e: print(e)
 
     # Close the connection
     cursor.close()
@@ -590,4 +590,4 @@ def loadfrepple():
     for i in tasks: i.join()
 
   # Finalize
-  print 'Done'
+  print('Done')

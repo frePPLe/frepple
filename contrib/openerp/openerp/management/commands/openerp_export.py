@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+from __future__ import print_function
 from optparse import make_option
 import xmlrpclib
 from datetime import datetime, timedelta
@@ -149,7 +149,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Exporting requested date of sales orders..."
+        print("Exporting requested date of sales orders...")
       self.cursor.execute('''select substring(name from '^.*? '), max(plandate)
           from demand
           left outer join out_demand
@@ -163,9 +163,9 @@ class Command(BaseCommand):
           [int(i)], {'requested_date': j and j.strftime('%Y-%m-%d') or 0,})
         cnt += 1
       if self.verbosity > 0:
-        print "Updated %d sales orders in %.2f seconds" % (cnt, (time() - starttime))
+        print("Updated %d sales orders in %.2f seconds" % (cnt, (time() - starttime)))
     except Exception as e:
-      print "Error updating sales orders: %s" % e
+      print("Error updating sales orders: %s" % e)
     finally:
       transaction.rollback(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -200,15 +200,15 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Canceling draft procurement orders"
+        print("Canceling draft procurement orders")
       ids = self.openerp_search('procurement.order',
         ['|',('state','=', 'draft'),('state','=','cancel'),('origin','=', 'frePPLe'),])
       self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'unlink', ids)
       if self.verbosity > 0:
-        print "Cancelled %d draft procurement orders in %.2f seconds" % (len(ids), (time() - starttime))
+        print("Cancelled %d draft procurement orders in %.2f seconds" % (len(ids), (time() - starttime)))
       starttime = time()
       if self.verbosity > 0:
-        print "Exporting procurement orders..."
+        print("Exporting procurement orders...")
       self.cursor.execute('''SELECT
            out_operationplan.id, operation, out_operationplan.quantity,
            enddate,
@@ -244,23 +244,23 @@ class Command(BaseCommand):
           ids_produce.append(proc_order_id)
         cnt += 1
       if self.verbosity > 0:
-        print "Uploaded %d procurement orders in %.2f seconds" % (cnt, (time() - starttime))
+        print("Uploaded %d procurement orders in %.2f seconds" % (cnt, (time() - starttime)))
       starttime = time()
       if self.verbosity > 0:
-        print "Confirming %d procurement orders into purchasing quotations" % (len(ids_buy))
+        print("Confirming %d procurement orders into purchasing quotations" % (len(ids_buy)))
       self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_confirm', ids_buy)
       self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_po_assign', ids_buy)
       if self.verbosity > 0:
-        print "Confirmed %d procurement orders in %.2f seconds" % (len(ids_buy), (time() - starttime))
+        print("Confirmed %d procurement orders in %.2f seconds" % (len(ids_buy), (time() - starttime)))
       starttime = time()
       if self.verbosity > 0:
-        print "Confirming %d procurement orders into production orders" % (len(ids_produce))
+        print("Confirming %d procurement orders into production orders" % (len(ids_produce)))
       self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_produce_assign_product', ids_produce)
       self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_confirm', ids_produce)
       if self.verbosity > 0:
-        print "Confirmed %d procurement orders in %.2f seconds" % (len(ids_produce), (time() - starttime))
+        print("Confirmed %d procurement orders in %.2f seconds" % (len(ids_produce), (time() - starttime)))
     except Exception as e:
-      print "Error exporting procurement orders: %s" % e
+      print("Error exporting procurement orders: %s" % e)
     finally:
       transaction.rollback(using=self.database)
       transaction.leave_transaction_management(using=self.database)

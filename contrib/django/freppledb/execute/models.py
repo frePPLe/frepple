@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+from __future__ import print_function
 
 from django.db import models, transaction, DEFAULT_DB_ALIAS
 from django.utils.translation import ugettext_lazy as _
@@ -94,7 +94,7 @@ class Scenario(models.Model):
           else:
             Scenario(name=db, status=u"Free").save()
     except Exception as e:
-      print "Error synchronizing the scenario table with the settings:", e
+      print("Error synchronizing the scenario table with the settings:", e)
       transaction.rollback()
     finally:
       transaction.commit()

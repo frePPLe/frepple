@@ -36,7 +36,7 @@
 # path parameter.
 # In each cluster a single item is defined, and a parametrizable number of
 # demands is placed on the cluster.
-
+from __future__ import print_function
 import os, os.path, sys, random
 
 
@@ -53,35 +53,35 @@ def create (cluster, demand, level):
   # Initialize
   size = 0
   out = open("input.xml","wt")
-  print >>out, "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+  print("<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">", file=out)
 
   # Items
-  print >>out, "<items>"
+  print("<items>", file=out)
   for i in range(cluster):
     ++size
-    print >>out, ("<item name=\"Item C%d\">" +
+    print(("<item name=\"Item C%d\">" +
       "<operation name=\"Del C%d\"> <flows>" +
         "<flow xsi:type=\"flow_start\" quantity=\"-1\">" +
         "<buffer name=\"Buffer C%dL1\"/></flow>" +
-      "</flows></operation></item>") % (i,i,i)
-  print >>out, "</items>"
+      "</flows></operation></item>") % (i,i,i), file=out)
+  print("</items>", file=out)
 
   # Demands
-  print >>out, "<demands>"
+  print("<demands>", file=out)
   for i in range(cluster):
     for j in range(demand):
       size += 2 # since a demand will result in multiple operationplans
-      print >>out, ("<demand name=\"Demand C%dD%d\" " +
+      print(("<demand name=\"Demand C%dD%d\" " +
         "quantity=\"1\" due=\"%s\">" +
-        "<item name=\"Item C%d\"/></demand>") % (i,j,getDate(),i)
-  print >>out, "</demands>"
+        "<item name=\"Item C%d\"/></demand>") % (i,j,getDate(),i), file=out)
+  print("</demands>", file=out)
 
   # Operations
-  print >>out, "<operations>"
+  print("<operations>", file=out)
   for i in range(cluster):
     for j in range(level):
       size += 2
-      print >>out, ("<operation name=\"Oper C%dO%d\" " +
+      print(("<operation name=\"Oper C%dO%d\" " +
         "xsi:type=\"operation_fixed_time\" " +
         "duration=\"PT%dH\"> <flows>" +
         "<flow xsi:type=\"flow_end\" quantity=\"1\">" +
@@ -89,23 +89,23 @@ def create (cluster, demand, level):
         "<producing name=\"Oper C%dO%d\"/></buffer></flow>" +
         "<flow xsi:type=\"flow_start\" quantity=\"-1\">" +
         "<buffer name=\"Buffer C%dL%d\"/></flow>" +
-        "</flows></operation>") % (i, j, 24*int(random.uniform(0,10)+1), i, j, i, j, i, j+1)
+        "</flows></operation>") % (i, j, 24*int(random.uniform(0,10)+1), i, j, i, j, i, j+1), file=out)
 
   # Create material supply
   for i in range(cluster):
-    print >>out, ("<operation name=\"Supply C%d\"> " +
+    print(("<operation name=\"Supply C%d\"> " +
         "<flows><flow xsi:type=\"flow_end\" quantity=\"1\">" +
         "<buffer name=\"Buffer C%dL%d\"/>" +
-        "</flow></flows></operation>") % (i, i, level+1)
-  print >>out, "</operations>\n<operationplans>"
+        "</flow></flows></operation>") % (i, i, level+1), file=out)
+  print("</operations>\n<operationplans>", file=out)
   for i in range(cluster):
-    print >>out, ("<operationplan id=\"%d\" operation=\"Supply C%d\" " +
+    print(("<operationplan id=\"%d\" operation=\"Supply C%d\" " +
         "start=\"2007-05-01T00:00:00\" quantity=\"%d\" " +
-        "locked=\"true\" />") % (i+1, i, demand)
-  print >>out, "</operationplans>"
+        "locked=\"true\" />") % (i+1, i, demand), file=out)
+  print("</operationplans>", file=out)
 
   # Tail of the output file
-  print >>out, "</plan>"
+  print("</plan>", file=out)
   out.close()
 
   # Return size indication
@@ -117,7 +117,7 @@ random.seed(100)
 
 # Loop over all cluster values
 runtimes = {}
-print "Clusters\tDemands\tLevels\tRuntime"
+print("Clusters\tDemands\tLevels\tRuntime")
 for cluster in [100,200,300]:
 
   # Loop over all demand values
@@ -135,15 +135,15 @@ for cluster in [100,200,300]:
       while True:
         i = out.readline()
         if not i: break
-        print i.strip()
+        print(i.strip())
       if out.close() != None:
-        print "Planner exited abnormally"
+        print("Planner exited abnormally")
         sys.exit(1)
 
       # Measure the time
       endtime = os.times()
       runtimes[size] = endtime[4]-starttime[4]
-      print "%d\t%d\t%d\t%.3f" % (cluster,demand,level,runtimes[size])
+      print("%d\t%d\t%d\t%.3f" % (cluster,demand,level,runtimes[size]))
 
       # Clean up the files
       os.remove("input.xml")
@@ -161,4 +161,4 @@ for cluster in [100,200,300]:
 # Since the data import and bottleneck are the most timeconsuming operations
 # a timing that scales close to linear with the model size is expected.
 
-print "\nTest passed"
+print("\nTest passed")

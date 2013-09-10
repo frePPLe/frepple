@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+from __future__ import print_function
 import sys, socket
 from threading import Thread
 from optparse import make_option
@@ -73,16 +73,16 @@ class Command(BaseCommand):
 
     # Print a header message
     hostname = socket.getfqdn()
-    print 'Starting frePPLe %s web server\n' % VERSION
-    print 'To access the server, point your browser to either of the following URLS:'
+    print('Starting frePPLe %s web server\n' % VERSION)
+    print('To access the server, point your browser to either of the following URLS:')
     if address == '0.0.0.0':
-      print '    http://%s:%s/' % (hostname, port)
+      print('    http://%s:%s/' % (hostname, port))
       for ip in socket.gethostbyname_ex(socket.gethostname())[2]:
-        print '    http://%s:%s/' % (ip, port)
+        print('    http://%s:%s/' % (ip, port))
     else:
-      print '    http://%s:%s/' % (address, port)
-    print '\nThree users are created by default: "admin", "frepple" and "guest" (the default password is equal to the user name)\n'
-    print 'Quit the server with CTRL-C.\n'
+      print('    http://%s:%s/' % (address, port))
+    print('\nThree users are created by default: "admin", "frepple" and "guest" (the default password is equal to the user name)\n')
+    print('Quit the server with CTRL-C.\n')
 
     # Start a separate thread that will check for updates
     # We don't wait for it to finish
@@ -117,7 +117,7 @@ class CheckUpdates(Thread):
       match = re.search("<release>(.*)</release>", response)
       release = match.group(1)
       if release > VERSION:
-        print "A new frePPLe release %s is available. Your current release is %s." % (release, VERSION)
+        print("A new frePPLe release %s is available. Your current release is %s." % (release, VERSION))
     except:
       # Don't worry if something went wrong.
       pass

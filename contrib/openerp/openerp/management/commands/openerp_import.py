@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+from __future__ import print_function
 from optparse import make_option
 import xmlrpclib
 from datetime import datetime, timedelta
@@ -169,7 +169,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Importing customers..."
+        print("Importing customers...")
       cursor.execute("SELECT name FROM customer")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = self.openerp_search( 'res.partner',
@@ -213,13 +213,13 @@ class Command(BaseCommand):
           cursor.execute("update customer set subcategory=null, lastmodified='%s' where name=%%s" % self.date,i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print "Inserted %d new customers" % len(insert)
-        print "Updated %d existing customers" % len(update)
-        print "Deleted %d customers" % len(delete)
-        print "Imported customers in %.2f seconds" % (time() - starttime)
+        print("Inserted %d new customers" % len(insert))
+        print("Updated %d existing customers" % len(update))
+        print("Deleted %d customers" % len(delete))
+        print("Imported customers in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print "Error importing customers: %s" % e
+      print("Error importing customers: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -250,7 +250,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Importing products..."
+        print("Importing products...")
       cursor.execute("SELECT name FROM item")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = self.openerp_search('product.product', [
@@ -296,13 +296,13 @@ class Command(BaseCommand):
           cursor.execute("update item set subcategory=null, lastmodified='%s' where name=%%s" % self.date, i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print "Inserted %d new products" % len(insert)
-        print "Updated %d existing products" % len(update)
-        print "Deleted %d products" % len(delete)
-        print "Imported products in %.2f seconds" % (time() - starttime)
+        print("Inserted %d new products" % len(insert))
+        print("Updated %d existing products" % len(update))
+        print("Deleted %d products" % len(delete))
+        print("Imported products in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print "Error importing products: %s" % e
+      print("Error importing products: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -324,7 +324,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Importing locations..."
+        print("Importing locations...")
       cursor.execute("SELECT name FROM location")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = self.openerp_search('stock.location', ['|',('active', '=', 1),('active', '=', 0)])
@@ -365,13 +365,13 @@ class Command(BaseCommand):
           cursor.execute("update location set subcategory=null, lastmodified='%s' where name=%%s" % self.date, i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print "Inserted %d new locations" % len(insert)
-        print "Updated %d existing locations" % len(update)
-        print "Deleted %d locations" % len(delete)
-        print "Imported locations in %.2f seconds" % (time() - starttime)
+        print("Inserted %d new locations" % len(insert))
+        print("Updated %d existing locations" % len(update))
+        print("Deleted %d locations" % len(delete))
+        print("Imported locations in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print "Error importing locations: %s" % e
+      print("Error importing locations: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -420,7 +420,7 @@ class Command(BaseCommand):
 
       # Get the stocking location of each warehouse (where we deliver from)
       if self.verbosity > 0:
-        print "Extracting warehouse list..."
+        print("Extracting warehouse list...")
       ids = self.openerp_search('stock.warehouse')
       fields = ['name', 'lot_stock_id']
       for i in self.openerp_data('stock.warehouse', ids, fields):
@@ -428,7 +428,7 @@ class Command(BaseCommand):
 
       # Get the stocking location of each warehouse (where we deliver from)
       if self.verbosity > 0:
-        print "Extracting shop list..."
+        print("Extracting shop list...")
       ids = self.openerp_search('sale.shop')
       fields = ['name', 'warehouse_id']
       for i in self.openerp_data('sale.shop', ids, fields):
@@ -437,7 +437,7 @@ class Command(BaseCommand):
       # Now the list of sales orders
       deliveries = set()
       if self.verbosity > 0:
-        print "Importing sales orders..."
+        print("Importing sales orders...")
       cursor.execute("SELECT name FROM demand")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = self.openerp_search('sale.order.line',
@@ -536,14 +536,14 @@ class Command(BaseCommand):
           cursor.execute("update demand set quantity=0, subcategory=null, lastmodified='%s' where name=%%s" % self.date,i)
 
       if self.verbosity > 0:
-        print "Created or updated %d delivery operations" % len(deliveries)
-        print "Inserted %d new sales orders" % len(insert)
-        print "Updated %d existing sales orders" % len(update)
-        print "Deleted %d sales orders" % len(delete)
-        print "Imported sales orders in %.2f seconds" % (time() - starttime)
+        print("Created or updated %d delivery operations" % len(deliveries))
+        print("Inserted %d new sales orders" % len(insert))
+        print("Updated %d existing sales orders" % len(update))
+        print("Deleted %d sales orders" % len(delete))
+        print("Imported sales orders in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print "Error importing sales orders: %s" % e
+      print("Error importing sales orders: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -569,7 +569,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Importing workcenters..."
+        print("Importing workcenters...")
       cursor.execute("SELECT name FROM resource")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = self.openerp_search('mrp.workcenter',
@@ -615,13 +615,13 @@ class Command(BaseCommand):
           cursor.execute("update resource set subcategory=null, lastmodified='%s' where name=%%s" % self.date,i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print "Inserted %d new workcenters" % len(insert)
-        print "Updated %d existing workcenters" % len(update)
-        print "Deleted %d workcenters" % len(delete)
-        print "Imported workcenters in %.2f seconds" % (time() - starttime)
+        print("Inserted %d new workcenters" % len(insert))
+        print("Updated %d existing workcenters" % len(update))
+        print("Deleted %d workcenters" % len(delete))
+        print("Imported workcenters in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print "Error importing workcenters: %s" % e
+      print("Error importing workcenters: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -646,7 +646,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Importing onhand..."
+        print("Importing onhand...")
       cursor.execute("SELECT name FROM item")
       frepple_items = set([ i[0] for i in cursor.fetchall()])
       cursor.execute("SELECT name FROM location")
@@ -689,12 +689,12 @@ class Command(BaseCommand):
         ])
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print "Inserted onhand for %d new buffers" % len(insert)
-        print "Updated onhand for %d existing buffers" % len(update)
-        print "Imported onhand in %.2f seconds" % (time() - starttime)
+        print("Inserted onhand for %d new buffers" % len(insert))
+        print("Updated onhand for %d existing buffers" % len(update))
+        print("Imported onhand in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print "Error importing onhand: %s" % e
+      print("Error importing onhand: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -755,7 +755,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Importing purchase orders..."
+        print("Importing purchase orders...")
       cursor.execute("SELECT name FROM item")
       frepple_items = set([ i[0] for i in cursor.fetchall()])
       cursor.execute("SELECT name FROM location")
@@ -819,13 +819,13 @@ class Command(BaseCommand):
         delete)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print "Inserted %d purchase orders" % len(insert)
-        print "Updated %d purchase orders" % len(update)
-        print "Deleted %d purchase orders" % len(delete)
-        print "Imported purchase orders in %.2f seconds" % (time() - starttime)
+        print("Inserted %d purchase orders" % len(insert))
+        print("Updated %d purchase orders" % len(update))
+        print("Deleted %d purchase orders" % len(delete))
+        print("Imported purchase orders in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print "Error importing purchase orders: %s" % e
+      print("Error importing purchase orders: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -867,7 +867,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Importing bills of material..."
+        print("Importing bills of material...")
 
       # Pick up existing flows in frePPLe
       cursor.execute("SELECT thebuffer_id, operation_id FROM flow")
@@ -938,7 +938,7 @@ class Command(BaseCommand):
           if not default_location:
             default_location = warehouses.itervalues().next()
             if len(warehouses) > 1:
-              print "Warning: Only single warehouse configurations are supported. Creating only boms for '%s'" % default_location
+              print("Warning: Only single warehouse configurations are supported. Creating only boms for '%s'" % default_location)
           location = default_location
 
         # Determine operation name and item
@@ -1093,21 +1093,21 @@ class Command(BaseCommand):
 
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print "Inserted %d new bills of material operations" % len(operation_insert)
-        print "Updated %d existing bills of material operations" % len(operation_update)
-        print "Deleted %d bills of material operations" % len(operation_delete)
-        print "Inserted %d new bills of material buffers" % len(buffer_insert)
-        print "Inserted %d new bills of material flows" % len(flow_insert)
-        print "Updated %d existing bills of material flows" % len(flow_update)
-        print "Inserted %d new bills of material loads" % len(load_insert)
-        print "Updated %d existing bills of material loads" % len(load_update)
-        print "Deleted %d bills of material flows" % len(flow_delete)
-        print "Imported bills of material in %.2f seconds" % (time() - starttime)
+        print("Inserted %d new bills of material operations" % len(operation_insert))
+        print("Updated %d existing bills of material operations" % len(operation_update))
+        print("Deleted %d bills of material operations" % len(operation_delete))
+        print("Inserted %d new bills of material buffers" % len(buffer_insert))
+        print("Inserted %d new bills of material flows" % len(flow_insert))
+        print("Updated %d existing bills of material flows" % len(flow_update))
+        print("Inserted %d new bills of material loads" % len(load_insert))
+        print("Updated %d existing bills of material loads" % len(load_update))
+        print("Deleted %d bills of material flows" % len(flow_delete))
+        print("Imported bills of material in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
       import sys, traceback
       traceback.print_exc(file=sys.stdout)
-      print "Error importing bills of material: %s" % e
+      print("Error importing bills of material: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -1127,7 +1127,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Importing setup matrices..."
+        print("Importing setup matrices...")
       cursor.execute("delete FROM setuprule")
       cursor.execute("delete FROM setupmatrix")
 
@@ -1144,7 +1144,7 @@ class Command(BaseCommand):
         datalist
         )
       if self.verbosity > 0:
-        print "Inserted %d new setup matrices" % len(datalist)
+        print("Inserted %d new setup matrices" % len(datalist))
 
       # Get all setup rules
       ids = self.openerp_search('frepple.setuprule')
@@ -1161,19 +1161,19 @@ class Command(BaseCommand):
         datalist
         )
       if self.verbosity > 0:
-        print "Inserted %d new setup rules" % len(datalist)
+        print("Inserted %d new setup rules" % len(datalist))
 
       transaction.commit(using=self.database)
     except Exception as e:
       try:
         if e.faultString.find("Object frepple.setupmatrix doesn't exist") >= 0:
-          print "Warning importing setup matrices:"
-          print "  The frePPLe module is not installed on your OpenERP server."
-          print "  No setup matrices will be downloaded."
+          print("Warning importing setup matrices:")
+          print("  The frePPLe module is not installed on your OpenERP server.")
+          print("  No setup matrices will be downloaded.")
         else:
-          print "Error importing setup matrices: %s" % e
+          print("Error importing setup matrices: %s" % e)
       except:
-        print "Error importing setup matrices: %s" % e
+        print("Error importing setup matrices: %s" % e)
       transaction.rollback(using=self.database)
     finally:
       transaction.commit(using=self.database)
@@ -1195,7 +1195,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print "Importing policies..."
+        print("Importing policies...")
 
       # Get the list of item ids and the template info
       cursor.execute("SELECT name FROM item where subcategory='OpenERP'")
@@ -1230,11 +1230,11 @@ class Command(BaseCommand):
 
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print "Updated buffers for %d procured items" % len(buy)
-        print "Updated buffers for %d produced items" % len(produce)
+        print("Updated buffers for %d procured items" % len(buy))
+        print("Updated buffers for %d produced items" % len(produce))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print "Error importing policies: %s" % e
+      print("Error importing policies: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)

@@ -27,6 +27,6 @@ admin_site = admin.sites.AdminSite(name='admin')
 for app in settings.INSTALLED_APPS:
   try:
     mod = import_module('%s.admin' % app)
-  except ImportError, e:
+  except ImportError:
     # Silently ignore
     pass

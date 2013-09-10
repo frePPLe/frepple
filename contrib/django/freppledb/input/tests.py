@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+from __future__ import print_function
 import tempfile
 
 from django.test import TestCase
@@ -87,9 +87,9 @@ class DataLoadTest(TestCase):
       )
     try:
       data = tempfile.TemporaryFile(mode='w+b')
-      print >>data, 'name, category'
-      print >>data, 'factory 3, cat1'
-      print >>data, 'factory 4,'
+      print('name, category', file=data)
+      print('factory 3, cat1', file=data)
+      print('factory 4,', file=data)      
       data.seek(0)
       response = self.client.post('/data/input/location/', {'csv_file': data})
       self.assertRedirects(response, '/data/input/location/')

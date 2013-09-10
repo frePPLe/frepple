@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+from __future__ import print_function
 import HTMLParser, os, os.path, sys
 
 # List of stopwords, loosely based on:
@@ -91,7 +91,7 @@ class WebSiteParser(HTMLParser.HTMLParser):
 
   def clear(self):
     if getattr(self,'intitle',False) or getattr(self,'inreplace',False) or getattr(self,'intext',False):
-      print "Warning: page '%s' not parsed as expected" % self.title
+      print("Warning: page '%s' not parsed as expected" % self.title)
     self.fed = []
     self.title = ''
     self.intitle = False
@@ -221,7 +221,7 @@ class WebSiteParser(HTMLParser.HTMLParser):
             data = file_in.read(8192)
             if not data: break
             parser.feed(data)
-          print >>outfile, "{name: '%s', title: '%s'}," % (infile[7:], parser.get_title().strip())
+          print("{name: '%s', title: '%s'}," % (infile[7:], parser.get_title().strip()), file=outfile) 
           for i in parser.get_keywords():
             if not i in keys.keys():
               keys[i] = {'count': 1, 'filecount': 1, 'refs':{filecounter:1}}
@@ -246,7 +246,7 @@ class WebSiteParser(HTMLParser.HTMLParser):
 
 # Open the output index file
 outfile = open(os.path.join("output","index.js"),"wt")
-print >>outfile, "var docs = ["
+print ("var docs = [", file=outfile)
 
 # Loop through all HTML files under the documentation subdirectory
 parser = WebSiteParser()
@@ -255,23 +255,23 @@ filecounter = -1
 parser.parseFiles(os.path.join('output','documentation'))
 
 # Generate index file
-print >>outfile, "];"
+print("];", file=outfile)
 sk = sorted(keys.items())
-print >>outfile, "var index = {"
+print("var index = {", file=outfile)
 first = True
 for k, v in sk:
   outfile.write("%s'%s': {count:%d, filecount:%d, refs:%s}" % (first and '  ' or ',\n  ', k, v['count'], v['filecount'], v['refs']))
   first = False
-print >>outfile, "\n};"
+print("\n};", file=outfile)
 
 # Print some interesting statistics
-print "Statistics:"
-print "\n%d keywords found in %d files" % (len(keys), filecounter)
-print "\nTop 10 of most common words:"
+print("Statistics:")
+print("\n%d keywords found in %d files" % (len(keys), filecounter))
+print("\nTop 10 of most common words:")
 sk = sorted(keys.items(), key=lambda(k,v):(-v['count'],k))
 for k, v in sk[0:10]:
-  print "   '%s' used %d times in %d files" % (k, v['count'], v['filecount'])
-print "\nTop 10 of words appearing in most files:"
+  print("   '%s' used %d times in %d files" % (k, v['count'], v['filecount']))
+print("\nTop 10 of words appearing in most files:")
 sk = sorted(keys.items(), key=lambda(k,v):(-v['filecount'],k))
 for k, v in sk[0:10]:
-  print "   '%s' used %d times in %d files" % (k, v['count'], v['filecount'])
+  print("   '%s' used %d times in %d files" % (k, v['count'], v['filecount']))

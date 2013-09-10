@@ -23,6 +23,7 @@ This file is only an example. A different LP formulation will obviously
 require a different data file. Given the easy structure of this
 Python code this will remain a clean and simple piece of code.
 '''
+from __future__ import print_function
 
 import frepple
 import csv
@@ -32,48 +33,48 @@ def exportData(filename):
 
   output = open(filename,"wt")
 
-  print >>output, "param timerate := 0.97;\n"
+  print("param timerate := 0.97;\n", file=output)
 
-  print >>output, "param : demands : reqqty  prio  due :="
+  print("param : demands : reqqty  prio  due :=", file=output)
   for b in frepple.demands():
     if b.quantity > 0:
       # @todo Export of due date works for monthly buckets and a maximum horizon of 1 year only
-      print >>output, b.name.replace(' ','').replace(':',''), b.quantity, b.priority, b.due.month
-  print >>output, ";\n"
+      print(b.name.replace(' ','').replace(':',''), b.quantity, b.priority, b.due.month, file=output)
+  print(";\n", file=output)
 
-  print >>output, "param numbuckets := 12;"
-  print >>output, "set buckets := 1 2 3 4 5 6 7 8 9 10 11 12;"
+  print("param numbuckets := 12;", file=output)
+  print("set buckets := 1 2 3 4 5 6 7 8 9 10 11 12;", file=output)
 
-  print >>output, "set resources := "
+  print("set resources := ", file=output)
   for b in frepple.resources():
-    print >>output, b.name.replace(' ','').replace(':','')
-  print >>output, ";\n"
+    print(b.name.replace(' ','').replace(':',''), file=output)
+  print(";\n", file=output)
 
-  print >>output, "param availablecapacity"
-  print >>output, ": 1 2 3 4 5 6 7 8 9 10 11 12 := "
+  print("param availablecapacity", file=output)
+  print(": 1 2 3 4 5 6 7 8 9 10 11 12 := ", file=output)
   res = []
   for b in frepple.resources():
     # @todo need a more correct way to extract the capacity per bucket.
     res.append(b.name.replace(' ','').replace(':',''))
-    print >>output, b.name.replace(' ','').replace(':',''), "120 120 120 120 120 120 120 120 120 120 120 120"
-  print >>output, ";\n"
+    print(b.name.replace(' ','').replace(':',''), "120 120 120 120 120 120 120 120 120 120 120 120", file=output)
+  print(";\n", file=output)
 
-  print >>output, "param : loads : loadfactor :="
+  print("param : loads : loadfactor :=", file=output)
   for b in frepple.demands():
     if b.quantity > 0:
       oper = b.operation or b.item.operation
       if oper:
         for fl in oper.flows:
           if fl.quantity < 0: findResources(output, b, fl)
-  print >>output, ";\n"
-  print >>output, "end;\n"
+  print(";\n", file=output)
+  print("end;\n", file=output)
 
 
 def findResources(output, dem, flow):
   try:
     for load in flow.buffer.producing.loads:
       # @todo The load factor doesn't accumulate correctly across different steps: quantity_per of the flows...
-      print >>output, dem.name.replace(' ','').replace(':',''), load.resource.name.replace(' ','').replace(':',''), load.quantity
+      print(dem.name.replace(' ','').replace(':',''), load.resource.name.replace(' ','').replace(':',''), load.quantity, file=output)
     for newflow in flow.buffer.producing.flows:
       if newflow.quantity < 0:
         findResources(output, dem, newflow)
@@ -94,11 +95,11 @@ def importSolution(filename):
   #         NU            5             0            10         < eps
   # This indicates that "order1" has 5 units planned
   #    @todo need to also recognize lated demand
-  print "Planned quantity per demand:"
+  print("Planned quantity per demand:")
   demandname = None
   for line in reader:
     if demandname:
-      print "    ", demandname, line[1]
+      print("    ", demandname, line[1])
       demandname = None
     elif len(line)==2 and line[1].startswith("plannedqty["):
       demandname = line[1][11:-1]

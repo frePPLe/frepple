@@ -522,7 +522,7 @@ class GridReport(View):
         bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
       else:
         bucketnames = bucketlist = start = end = bucket = None
-      is_popup = request.GET.has_key('pop')
+      is_popup = 'pop' in request.GET
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
@@ -1145,7 +1145,7 @@ class GridPivot(GridReport):
     r = []
     for i in query:
       # We use the first field in the output to recognize new rows.
-      if currentkey <> i[reportclass.rows[0].name]:
+      if currentkey != i[reportclass.rows[0].name]:
         # New line
         if currentkey:
           yield ''.join(r)

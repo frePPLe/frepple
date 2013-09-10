@@ -23,6 +23,7 @@ All other tests are running the Python interpreter embedded in the frePPLe
 executable.
 This test however runs frePPLe as Python extension module.
 '''
+from __future__ import print_function
 
 # Add the frePPLe directory to the Python module search path
 import os
@@ -45,89 +46,89 @@ def printModel(filename):
   output = open(filename,"wt")
 
   # Global settings
-  print >>output, "Echoing global settings"
-  print >>output, "Plan name:", frepple.settings.name
-  print >>output, "Plan description:", frepple.settings.description
-  print >>output, "Plan current:", frepple.settings.current
+  print("Echoing global settings", file=output)
+  print("Plan name:", frepple.settings.name, file=output)
+  print("Plan description:", frepple.settings.description, file=output)
+  print("Plan current:", frepple.settings.current, file=output)
 
   # Solvers
-  print >>output, "\nEchoing solvers:"
+  print("\nEchoing solvers:", file=output)
   for b in frepple.solvers():
-    print >>output, "  Solver:", b.name, b.loglevel, getattr(b,'constraints',None)
+    print("  Solver:", b.name, b.loglevel, getattr(b,'constraints',None), file=output)
 
   # Calendars
-  print >>output, "\nEchoing calendars:"
+  print("\nEchoing calendars:", file=output)
   for b in frepple.calendars():
-    print >>output, "  Calendar:", b.name, getattr(b,'default',None)
+    print("  Calendar:", b.name, getattr(b,'default',None), file=output)
     for j in b.buckets:
-      print >>output, "    Bucket:", getattr(j,'value',None), j.start, j.end, j.priority
+      print("    Bucket:", getattr(j,'value',None), j.start, j.end, j.priority, file=output)
 
   # Customers
-  print >>output, "\nEchoing customers:"
+  print("\nEchoing customers:", file=output)
   for b in frepple.customers():
-    print >>output, "  Customer:", b.name, b.description, b.category, b.subcategory, b.owner
+    print("  Customer:", b.name, b.description, b.category, b.subcategory, b.owner, file=output)
 
   # Locations
-  print >>output, "\nEchoing locations:"
+  print("\nEchoing locations:", file=output)
   for b in frepple.locations():
-    print >>output, "  Location:", b.name, b.description, b.category, b.subcategory, b.owner
+    print("  Location:", b.name, b.description, b.category, b.subcategory, b.owner, file=output)
 
   # Items
-  print >>output, "\nEchoing items:"
+  print("\nEchoing items:", file=output)
   for b in frepple.items():
-    print >>output, "  Item:", b.name, b.description, b.category, b.subcategory, b.owner, b.operation
+    print("  Item:", b.name, b.description, b.category, b.subcategory, b.owner, b.operation, file=output)
 
   # Resources
-  print >>output, "\nEchoing resources:"
+  print("\nEchoing resources:", file=output)
   for b in frepple.resources():
-    print >>output, "  Resource:", b.name, b.description, b.category, b.subcategory, b.owner
+    print("  Resource:", b.name, b.description, b.category, b.subcategory, b.owner, file=output)
     for l in b.loads:
-      print >>output, "    Load:", l.operation.name, l.quantity, l.effective_start, l.effective_end
+      print("    Load:", l.operation.name, l.quantity, l.effective_start, l.effective_end, file=output)
     for l in b.loadplans:
-      print >>output, "    Loadplan:", l.operationplan.id, l.operationplan.operation.name, l.quantity, l.startdate, l.enddate
+      print("    Loadplan:", l.operationplan.id, l.operationplan.operation.name, l.quantity, l.startdate, l.enddate, file=output)
 
   # Buffers
-  print >>output, "\nEchoing buffers:"
+  print("\nEchoing buffers:", file=output)
   for b in frepple.buffers():
-    print >>output, "  Buffer:", b.name, b.description, b.category, b.subcategory, b.owner
+    print("  Buffer:", b.name, b.description, b.category, b.subcategory, b.owner, file=output)
     for l in b.flows:
-      print >>output, "    Flow:", l.operation.name, l.quantity, l.effective_start, l.effective_end
+      print("    Flow:", l.operation.name, l.quantity, l.effective_start, l.effective_end, file=output)
     for l in b.flowplans:
-      print >>output, "    Flowplan:", l.operationplan.id, l.operationplan.operation.name, l.quantity, l.date
+      print("    Flowplan:", l.operationplan.id, l.operationplan.operation.name, l.quantity, l.date, file=output)
 
   # Operations
-  print >>output, "\nEchoing operations:"
+  print("\nEchoing operations:", file=output)
   for b in frepple.operations():
-    print >>output, "  Operation:", b.name, b.description, b.category, b.subcategory
+    print("  Operation:", b.name, b.description, b.category, b.subcategory, file=output)
     for l in b.loads:
-      print >>output, "    Load:", l.resource.name, l.quantity, l.effective_start, l.effective_end
+      print("    Load:", l.resource.name, l.quantity, l.effective_start, l.effective_end, file=output)
     for l in b.flows:
-      print >>output, "    Flow:", l.buffer.name, l.quantity, l.effective_start, l.effective_end
+      print("    Flow:", l.buffer.name, l.quantity, l.effective_start, l.effective_end, file=output)
     if isinstance(b, frepple.operation_alternate):
       for l in b.alternates:
-        print >>output, "    Alternate:", l.name
+        print("    Alternate:", l.name, file=output)
     if isinstance(b, frepple.operation_routing):
       for l in b.steps:
-        print >>output, "    Step:", l.name
+        print("    Step:", l.name, file=output)
 
   # Demands
-  print >>output, "\nEchoing demands:"
+  print("\nEchoing demands:", file=output)
   for b in frepple.demands():
-    print >>output, "  Demand:", b.name, b.due, b.item.name, b.quantity
+    print("  Demand:", b.name, b.due, b.item.name, b.quantity, file=output)
     for i in b.operationplans:
-      print >>output, "    Operationplan:", i.id, i.operation.name, i.quantity, i.end
+      print("    Operationplan:", i.id, i.operation.name, i.quantity, i.end, file=output)
 
   # Operationplans
-  print >>output, "\nEchoing operationplans:"
+  print("\nEchoing operationplans:", file=output)
   for b in frepple.operationplans():
-    print >>output, "  Operationplan:", b.operation.name, b.quantity, b.start, b.end
+    print("  Operationplan:", b.operation.name, b.quantity, b.start, b.end, file=output)
     for s in b.operationplans:
-      print >>output, "       ", s.operation.name, s.quantity, s.start, s.end
+      print("       ", s.operation.name, s.quantity, s.start, s.end, file=output)
 
   # Problems
-  print >>output, "\nPrinting problems"
+  print("\nPrinting problems", file=output)
   for i in frepple.problems():
-    print >>output, "  Problem:", i.entity, i.name, i.description, i.start, i.end, i.weight
+    print("  Problem:", i.entity, i.name, i.description, i.start, i.end, i.weight, file=output)
 
 
 def printExtensions():
@@ -135,40 +136,40 @@ def printExtensions():
   Echoes all entities in our extension module.
   Useful to create documentation.
   '''
-  print "  Types:"
+  print("  Types:")
   for name, o in inspect.getmembers(frepple):
     if not inspect.isclass(o) or issubclass(o,Exception) or hasattr(o,"__iter__"): continue
-    print "    %s: %s" % (o.__name__, inspect.getdoc(o))
-  print "  Methods:"
+    print("    %s: %s" % (o.__name__, inspect.getdoc(o)))
+  print("  Methods:")
   for name, o in inspect.getmembers(frepple):
     if not inspect.isroutine(o): continue
-    print "    %s: %s" % (o.__name__, inspect.getdoc(o))
-  print "  Exceptions:"
+    print("    %s: %s" % (o.__name__, inspect.getdoc(o)))
+  print("  Exceptions:")
   for name, o in inspect.getmembers(frepple):
     if not inspect.isclass(o) or not issubclass(o,Exception): continue
-    print "    %s" % (o.__name__)
-  print "  Iterators:"
+    print("    %s" % (o.__name__))
+  print("  Iterators:")
   for name, o in inspect.getmembers(frepple):
     if not inspect.isclass(o) or not hasattr(o,"__iter__"): continue
-    print "    %s: %s" % (o.__name__, inspect.getdoc(o))
-  print "  Other:"
+    print("    %s: %s" % (o.__name__, inspect.getdoc(o)))
+  print("  Other:")
   for name, o in inspect.getmembers(frepple):
     # Negating the exact same filters as in the previous blocks
     if not(not inspect.isclass(o) or issubclass(o,Exception) or hasattr(o,"__iter__")): continue
     if inspect.isroutine(o): continue
     if not(not inspect.isclass(o) or not issubclass(o,Exception)): continue
     if not(not inspect.isclass(o) or not hasattr(o,"__iter__")): continue
-    print "    %s: %s" % (name, o)
+    print("    %s: %s" % (name, o))
 
 
 ###
-print "\nUpdating global settings"
+print("\nUpdating global settings")
 frepple.settings.name = "demo model"
 frepple.settings.description = unicode("demo description in unicode object")
 frepple.settings.current = datetime.datetime(2009,1,1)
 
 ###
-print "\nCreating operations"
+print("\nCreating operations")
 shipoper = frepple.operation_fixed_time(name="delivery end item", duration=86400)
 choice = frepple.operation_alternate(name="make or buy item")
 makeoper = frepple.operation_routing(name="make item")
@@ -179,7 +180,7 @@ choice.addAlternate(operation=makeoper, priority=1)
 choice.addAlternate(operation=buyoper, priority=2)
 
 ###
-print "\nCreating calendars"
+print("\nCreating calendars")
 c = frepple.calendar(name="Cal1", default=4.56)
 c.setValue(datetime.datetime(2009,1,1), datetime.datetime(2009,3,1), 1)
 c.setValue(datetime.datetime(2009,2,1), datetime.datetime(2009,5,1), 2)
@@ -188,13 +189,13 @@ frepple.calendar(name="Cal2", default=1.23)
 frepple.calendar(name="Cal3", default=1.23)
 
 ###
-print "\nTesting the calendar iterator"
-print"calendar events:"
+print("\nTesting the calendar iterator")
+print"calendar events:")
 for date, value in c.events():
-  print "  ", date, value
+  print("  ", date, value)
 
 ###
-print "\nDeleting a calendar"
+print("\nDeleting a calendar")
 frepple.calendar(name="Cal3", action="R")
 
 # Load some data - These things can't be done yet from Python
@@ -235,42 +236,42 @@ frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
 ''')
 
 ###
-print "\nCreating operationplans"
+print("\nCreating operationplans")
 opplan = frepple.operationplan(operation="make item", quantity=9, end=datetime.datetime(2011,1,1))
 opplan.locked = True
 
 ###
-print "\nCreating items"
+print("\nCreating items")
 item = frepple.item(name="end item", operation=shipoper)
 itemlist = [ frepple.item(name="item %d" % i) for i in range(10) ]
 
 ###
-print "\nTesting the comparison operator"
-print "makoper < shipoper", makeoper < shipoper
-print "shipoper < makeoper", shipoper < makeoper
-print "shipoper != makeoper", shipoper != makeoper
-print "shipoper == makeoper", shipoper == makeoper
-print "shipoper == shipoper", shipoper == shipoper
+print("\nTesting the comparison operator")
+print("makoper < shipoper", makeoper < shipoper)
+print("shipoper < makeoper", shipoper < makeoper)
+print("shipoper != makeoper", shipoper != makeoper)
+print("shipoper == makeoper", shipoper == makeoper)
+print("shipoper == shipoper", shipoper == shipoper)
 try:
-  print "makeoper == item", makeoper == item
+  print("makeoper == item", makeoper == item)
 except Exception as e:
-  print "Catching exception %s: %s" % (e.__class__.__name__, e)
+  print("Catching exception %s: %s" % (e.__class__.__name__, e))
 
 ###
-print "\nCreating a resource"
+print("\nCreating a resource")
 frepple.resource(name="machine", maximum_calendar=frepple.calendar(name="Cal2"))
 
 ###
-print "\nCreating customers"
+print("\nCreating customers")
 mycustomer = frepple.customer(name="client")
 
 ###
-print "\nCreating locations"
+print("\nCreating locations")
 locA = frepple.location(name="locA")
 locB = frepple.location(name="locB")
 
 ###
-print "\nCreating some buffers"
+print("\nCreating some buffers")
 
 buf = frepple.buffer(name="end item", producing=choice, item=item)
 
@@ -279,36 +280,36 @@ buf1 = frepple.buffer_procure(name="buffer1",
   category="My category",
   location=locA,
   item=itemlist[1])
-print buf1, buf1.__class__, buf1.location, isinstance(buf1, frepple.buffer), \
+print(buf1, buf1.__class__, buf1.location, isinstance(buf1, frepple.buffer), \
   isinstance(buf1, frepple.buffer_default), \
   isinstance(buf1, frepple.buffer_procure), \
-  isinstance(buf1, frepple.buffer_infinite)
+  isinstance(buf1, frepple.buffer_infinite))
 
 buf2 = frepple.buffer(name="buffer2", owner=buf1)
-print buf2, buf2.__class__, buf2.location, isinstance(buf2, frepple.buffer), \
+print(buf2, buf2.__class__, buf2.location, isinstance(buf2, frepple.buffer), \
   isinstance(buf2, frepple.buffer_default), \
   isinstance(buf2, frepple.buffer_procure), \
-  isinstance(buf2, frepple.buffer_infinite)
+  isinstance(buf2, frepple.buffer_infinite))
 
 ###
-print "\nCatching some exceptions"
+print("\nCatching some exceptions")
 try:
-  print buf1.crazyfield
+  print(buf1.crazyfield)
 except Exception as e:
-  print "Catching exception %s: %s" % (e.__class__.__name__, e)
+  print("Catching exception %s: %s" % (e.__class__.__name__, e))
 
 try:
   buf1.crazyfield = "doesn't exist"
 except Exception as e:
-  print "Catching exception %s: %s" % (e.__class__.__name__, e)
+  print("Catching exception %s: %s" % (e.__class__.__name__, e))
 
 try:
   buf1.owner = buf2
 except Exception as e:
-  print "Catching exception %s: %s" % (e.__class__.__name__, e)
+  print("Catching exception %s: %s" % (e.__class__.__name__, e))
 
 ###
-print "\nCreating demands"
+print("\nCreating demands")
 order1 = frepple.demand(name="order 1", item=item, quantity=10, priority=1, \
   due=datetime.datetime(2009,3,2,9), customer=mycustomer, maxlateness=0)
 order2 = frepple.demand(name="order 2", item=item, quantity=10, priority=2, \
@@ -317,31 +318,31 @@ order3 = frepple.demand(name="order 3", item=item, quantity=10, priority=3, \
   due=datetime.datetime(2009,3,2,20,0,0), customer=mycustomer, maxlateness=0)
 
 ###
-print "\nCreating a solver and running it"
+print("\nCreating a solver and running it")
 frepple.solver_mrp(name="MRP", constraints=7, loglevel=0).solve()
 
 ###
-print "\nEchoing the model to a file"
+print("\nEchoing the model to a file")
 printModel("output.1.xml")
 
 ###
-print "\nSaving the model to an XML-file"
+print("\nSaving the model to an XML-file")
 frepple.saveXMLfile("output.2.xml")
 
 ###
-print "\nPrinting some models in XML format"
-print mycustomer.toXML()
-print locA.toXML()
-print opplan.toXML()
-print item.toXML()
-print order1.toXML()
-print buf1.toXML()
-print makeoper.toXML()
+print("\nPrinting some models in XML format")
+print(mycustomer.toXML())
+print(locA.toXML())
+print(opplan.toXML())
+print(item.toXML())
+print(order1.toXML())
+print(buf1.toXML())
+print(makeoper.toXML())
 for i in frepple.problems():
-  print i.toXML()
+  print(i.toXML())
 
 ###
-print "\nPrinting some models in XML format to a file"
+print("\nPrinting some models in XML format to a file")
 output = open("output.3.xml","wt")
 mycustomer.toXML('P',output)
 locA.toXML('P',output)
@@ -354,9 +355,9 @@ for i in frepple.problems():
   i.toXML('P',output)
 
 ###
-print "\nDocumenting all available Python entities defined by frePPLe:"
+print("\nDocumenting all available Python entities defined by frePPLe:")
 printExtensions()
 
 ###
-print "\nPrinting memory consumption estimate:"
+print("\nPrinting memory consumption estimate:")
 frepple.printsize()

@@ -22,6 +22,7 @@ It is recommended not to edit this file!
 Instead put all your settings in the file FREPPLE_CONFDIR/djangosettings.py.
 
 '''
+from __future__ import print_function
 import os, sys, locale
 import freppledb
 
@@ -44,7 +45,7 @@ elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin','fr
   # Development layout
   FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin'))
 else:
-  print "Error: Can't locate frepple.xsd"
+  print("Error: Can't locate frepple.xsd")
   sys.exit(1)
 os.environ['FREPPLE_HOME'] = FREPPLE_HOME
 
@@ -239,5 +240,5 @@ for param in DATABASES.values():
   elif param['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
     param['TEST_NAME'] = 'test_%s' % param['NAME']
   else:
-    print 'Error: Unsupported database engine %s' % param['ENGINE']
+    print('Error: Unsupported database engine %s' % param['ENGINE'])
     sys.exit(1)

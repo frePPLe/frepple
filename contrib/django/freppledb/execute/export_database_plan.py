@@ -25,8 +25,7 @@ The code iterates over all objects in the C++ core engine, and creates
 database records with the information. The Django database wrappers are used
 to keep the code portable between different databases.
 '''
-
-
+from __future__ import print_function
 from datetime import timedelta, datetime
 from time import time
 from threading import Thread
@@ -45,7 +44,7 @@ else:
 
 
 def truncate(cursor):
-  print "Emptying database plan tables..."
+  print("Emptying database plan tables...")
   starttime = time()
   tables = [
     ['out_demandpegging'],
@@ -57,11 +56,11 @@ def truncate(cursor):
     for sql in connections[database].ops.sql_flush(no_style(), group, []):
       cursor.execute(sql)
       transaction.commit(using=database)
-  print "Emptied plan tables in %.2f seconds" % (time() - starttime)
+  print("Emptied plan tables in %.2f seconds" % (time() - starttime))
 
 
 def exportProblems(cursor):
-  print "Exporting problems..."
+  print("Exporting problems...")
   starttime = time()
   cursor.executemany(
     "insert into out_problem \
@@ -76,11 +75,11 @@ def exportProblems(cursor):
     ])
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_problem")
-  print 'Exported %d problems in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+  print('Exported %d problems in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
 
 def exportConstraints(cursor):
-  print "Exporting constraints..."
+  print("Exporting constraints...")
   starttime = time()
   cnt = 0
   for d in frepple.demands():
@@ -99,11 +98,11 @@ def exportConstraints(cursor):
     if cnt % 300 == 0: transaction.commit(using=database)
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_constraint")
-  print 'Exported %d constraints in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+  print('Exported %d constraints in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
 
 def exportOperationplans(cursor):
-  print "Exporting operationplans..."
+  print("Exporting operationplans...")
   starttime = time()
   cnt = 0
   for i in frepple.operations():
@@ -120,11 +119,11 @@ def exportOperationplans(cursor):
     if cnt % 300 == 0: transaction.commit(using=database)
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_operationplan")
-  print 'Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+  print('Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
 
 def exportFlowplans(cursor):
-  print "Exporting flowplans..."
+  print("Exporting flowplans...")
   starttime = time()
   cnt = 0
   for i in frepple.buffers():
@@ -142,11 +141,11 @@ def exportFlowplans(cursor):
     if cnt % 300 == 0: transaction.commit(using=database)
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_flowplan")
-  print 'Exported %d flowplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+  print('Exported %d flowplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
 
 def exportLoadplans(cursor):
-  print "Exporting loadplans..."
+  print("Exporting loadplans...")
   starttime = time()
   cnt = 0
   for i in frepple.resources():
@@ -164,11 +163,11 @@ def exportLoadplans(cursor):
     if cnt % 100 == 0: transaction.commit(using=database)
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_loadplan")
-  print 'Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+  print('Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
 
 def exportResourceplans(cursor):
-  print "Exporting resourceplans..."
+  print("Exporting resourceplans...")
   starttime = time()
 
   # Determine start and end date of the reporting horizon
@@ -216,14 +215,14 @@ def exportResourceplans(cursor):
         cnt += 1
         if cnt % 100 == 0: transaction.commit(using=database)
   except Exception as e:
-    print e
+    print(e)
   finally:
     transaction.commit(using=database)
 
   # Finalize
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_resourceplan")
-  print 'Exported %d resourceplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+  print('Exported %d resourceplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
 
 def exportDemand(cursor):
@@ -251,7 +250,7 @@ def exportDemand(cursor):
         None, None
         )
 
-  print "Exporting demand plans..."
+  print("Exporting demand plans...")
   starttime = time()
   cnt = 0
   for i in frepple.demands():
@@ -265,11 +264,11 @@ def exportDemand(cursor):
     if cnt % 500 == 0: transaction.commit(using=database)
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_demand")
-  print 'Exported %d demand plans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+  print('Exported %d demand plans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
 
 def exportPegging(cursor):
-  print "Exporting pegging..."
+  print("Exporting pegging...")
   starttime = time()
   cnt = 0
   for i in frepple.demands():
@@ -296,7 +295,7 @@ def exportPegging(cursor):
     if cnt % 500 == 0: transaction.commit(using=database)
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_demandpegging")
-  print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+  print('Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
 
 class DatabaseTask(Thread):
@@ -322,7 +321,7 @@ class DatabaseTask(Thread):
     # Run the functions sequentially
     for f in self.functions:
       try: f(cursor)
-      except Exception as e: print e
+      except Exception as e: print(e)
 
     # Close the connection
     cursor.close()
@@ -384,7 +383,7 @@ def exportfrepple():
 
   # Analyze
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
-    print "Analyzing database tables..."
+    print("Analyzing database tables...")
     cursor.execute("analyze")
 
   # Close the database connection

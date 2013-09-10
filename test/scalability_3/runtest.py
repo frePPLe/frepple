@@ -15,16 +15,17 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import print_function
 import os, sys, random
 
 runtimes = {}
 
 for counter in [500,1000,1500,2000]:
-  print "\ncounter", counter
+  print("\ncounter", counter)
   out = open("input.xml","wt")
 
   # Print a header
-  print >>out, ('<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
+  print('<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
     '<description>Single buffer plan with $counter demands</description>\n' +
     '<current>2009-01-01T00:00:00</current>\n' +
     '<items>\n' +
@@ -48,26 +49,26 @@ for counter in [500,1000,1500,2000]:
       '<buffer name="BUFFER"/>' +
       '<quantity>1</quantity></flow>\n' +
     '</flows>\n' +
-    '<demands>')
+    '<demands>', file=out)
 
   # A loop to print all demand
   for cnt in range(counter):
     month = "%02d" % (int(random.uniform(0,12))+1)
     day = "%02d" % (int(random.uniform(0,28))+1)
-    print >>out, ("<demand name=\"DEMAND %d\" quantity=\"10\" " +
+    print(("<demand name=\"DEMAND %d\" quantity=\"10\" " +
       "due=\"2009-%s-%sT00:00:00\" " +
       "priority=\"1\">" +
       "<item name=\"ITEM\"/>" +
-      "</demand>") % (cnt,month,day)
+      "</demand>") % (cnt,month,day), file=out)
 
   # Finalize the input
-  print >>out, ('</demands>\n' +
+  print('</demands>\n' +
     '<?python\n' +
     'import frepple\n' +
     'frepple.solver_mrp(name="MRP",constraints=0).solve()\n' +
     'frepple.saveXMLfile("output.xml")\n' +
     '?>\n' +
-    '</plan>')
+    '</plan>', file=out)
   out.close()
 
   # Run the executable
@@ -76,19 +77,19 @@ for counter in [500,1000,1500,2000]:
   while True:
     i = out.readline()
     if not i: break
-    print i.strip()
+    print(i.strip())
   if out.close() != None:
-    print "Planner exited abnormally"
+    print("Planner exited abnormally")
     sys.exit(1)
 
   # Measure the time
   endtime = os.times()
   runtimes[counter] = endtime[4]-starttime[4]
-  print "time: %.3f" % runtimes[counter]
+  print("time: %.3f" % runtimes[counter])
 
 # Define failure criterium
 if runtimes[2000] > runtimes[500]*4*1.2:
-  print "\nTest failed. Run time is not linear with model size."
+  print("\nTest failed. Run time is not linear with model size.")
   sys.exit(1)
 
-print "\nTest passed"
+print("\nTest passed")

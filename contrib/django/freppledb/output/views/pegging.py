@@ -44,8 +44,8 @@ class ReportByDemand(GridReport):
     GridFieldText('resource', title=_('resource'), editable=False, sortable=False, extra='formatter:reslistfmt'),
     GridFieldNumber('quantity', title=_('quantity'), editable=False, sortable=False),
     GridFieldText('operationplans', width=1000, extra='formatter:ganttcell', editable=False, sortable=False),
-    GridFieldText('parent', editable=False, sortable=False, hidden=False),
-    GridFieldText('leaf', editable=False, sortable=False, hidden=False),
+    GridFieldText('parent', editable=False, sortable=False, hidden=True),
+    GridFieldText('leaf', editable=False, sortable=False, hidden=True),
     GridFieldText('expanded', editable=False, sortable=False, hidden=True),
     )
 

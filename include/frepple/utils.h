@@ -2800,11 +2800,20 @@ class PythonObject : public DataElement
         // It's not a Python string object.
         // Call the str() function on the object, and encode the result in UTF-8.
         PyObject* x1 = PyObject_Str(obj);
-        PyObject* x2 = PyUnicode_AsEncodedString(x1, "UTF-8", "ignore");
-        string result = PyString_AsString(x2);
-        Py_DECREF(x1);
-        Py_DECREF(x2);
-        return result;
+        if (PyUnicode_Check(x1))
+        {
+          PyObject* x2 = PyUnicode_AsEncodedString(x1, "UTF-8", "ignore");
+          string result = PyString_AsString(x2);
+          Py_DECREF(x1);
+          Py_DECREF(x2);
+          return result;
+        }
+        else
+        {
+          string result = PyString_AsString(x1);
+          Py_DECREF(x1);
+          return result;
+        }
       }
     }
 

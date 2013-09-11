@@ -62,7 +62,7 @@ var upload = {
 
   validateSort: function(event)
   {
-
+    if ($(this).attr('id') == 'grid_cb') return;
     if ($('#save').hasClass("ui-state-disabled"))
       jQuery("#grid").jqGrid('resetSelection');
     else
@@ -941,159 +941,214 @@ $.fn.bindFirst = function(name, fn) {
 // Gantt chart functions
 //
 
-var startmousemove = null;
-var ganttrow = 25;
+var gantt = {
 
-function gantt_header()
-{
-  // "scaling" stores the number of pixels available to show a day.
-  var scaling = 86400000 / (viewend.getTime() - viewstart.getTime()) * 1000;
-  var result = [
-    '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="34px">',
-    '<line class="time" x1="0" y1="17" x2="1000" y2="17"/>'
-    ];
-  var x = 0;
-  var bucketstart = new Date(viewstart.getTime());
-  if (scaling < 20)
+  // Used to follow the mous when dragging the timeline
+  startmousemove: null,
+  resizing: null,
+
+  // Height of the blocks
+  rowsize: 25,
+
+  header : function ()
   {
-	// Monthly + weekly buckets
-	step = 86400000 * 7;
-	scaling *= 7;
-	formatup = "yy-mm-dd";
-	formatdown = "d";
-	while (bucketstart < viewend)
-	{
-	  if (bucketstart.getDay() == 0)
-	  {
-	    result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
-	    result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling*7/2) + '" y="13" fill="black">' + $.datepicker.formatDate(formatup, bucketstart) + '</text>');
-	  }
-	  else
-	  {
-	    result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
-	  }
-	  result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate(formatdown, bucketstart) + '</text>');
-	  x = x + scaling;
-	  bucketstart.setTime(bucketstart.getTime()+step);
-	}
-  }
-  else if (scaling <= 40)
-  {
-	// Weekly + daily buckets, short
-	while (bucketstart < viewend)
-	{
-	  if (bucketstart.getDay() == 0)
-	  {
-	    result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
-	    result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling*7/2) + '" y="13" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
-	  }
-	  else
-	  {
-	    result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
-	  }
-	  result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate("d", bucketstart) + '</text>');
-	  x = x + scaling;
-	  bucketstart.setDate(bucketstart.getDate()+1);
-	}
-  }
-  else if (scaling <= 75)
-  {
-	// Weekly + daily buckets, long
-	while (bucketstart < viewend)
-	{
-	  if (bucketstart.getDay() == 0)
-	  {
-	    result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
-	    result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling*7/2) + '" y="13" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
-	  }
-	  else
-	  {
-	    result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
-	  }
-	  result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate("dd M", bucketstart) + '</text>');
-	  x = x + scaling;
-	  bucketstart.setDate(bucketstart.getDate()+1);
-	}
-  }
-  else if (scaling < 200)
-  {
-	// Weekly + daily buckets, very long
-	while (bucketstart < viewend)
-	{
-	  if (bucketstart.getDay() == 0)
-	  {
-	    result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
-	    result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling*7/2) + '" y="13" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
-	  }
-	  else
-	    result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
-	  result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate("D dd M", bucketstart) + '</text>');
-	  x = x + scaling;
-	  bucketstart.setDate(bucketstart.getDate()+1);
-	}
-  }
-  else
-  {
-	// Daily + hourly buckets
-	step = 3600000;
-	scaling /= 24;
-	formatup = "D yy-mm-dd ";
-	formatdown = "d";
-	while (bucketstart < viewend)
-	{
-	  if (bucketstart.getDay() == 0)
-	  {
-	    result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
-	    result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling*7/2) + '" y="13" fill="black">' + $.datepicker.formatDate(formatup, bucketstart) + '</text>');
-	  }
-	  else
-	  {
-	    result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
-	  }
-	  result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate(formatdown, bucketstart) + '</text>');
-	  x = x + scaling;
-	  bucketstart.setTime(bucketstart.getTime()+step);
-	}
-  }
-  result.push( '</svg>' );
-  $("#jqgh_grid_operationplans").html(result.join(''))
-    .mousemove( function(event) {
-      if ( event.which !== 1 )
+    // "scaling" stores the number of pixels available to show a day.
+    var scaling = 86400000 / (viewend.getTime() - viewstart.getTime()) * 1000;
+    var result = [
+      '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="34px">',
+      '<line class="time" x1="0" y1="17" x2="1000" y2="17"/>'
+      ];
+    var x = 0;
+    var bucketstart = new Date(viewstart.getTime());
+    if (scaling < 5)
+    {
+      // Quarterly + monthly buckets
+      bucketstart = new Date(viewstart.getFullYear(), viewstart.getMonth(), 1);
+      while (bucketstart < viewend)
       {
-    	startmousemove = event.pageX;
-    	return;
+        x1 = (bucketstart.getTime() - viewstart.getTime()) / 86400000 * scaling;
+        bucketend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+1, 1);
+        x2 = (bucketend.getTime() - viewstart.getTime()) / 86400000 * scaling;
+        result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor((x1+x2)/2) + '" y="31" fill="black">' + $.datepicker.formatDate("M", bucketstart) + '</text>');
+            if (bucketstart.getMonth() % 3 == 0)
+            {
+            quarterend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+3, 1);
+            x2 = (quarterend.getTime() - viewstart.getTime()) / 86400000 * scaling;
+            quarter = Math.floor((bucketstart.getMonth()+3)/3);
+          result.push('<line class="time" x1="' + Math.floor(x1) + '" y1="0" x2="' + Math.floor(x1) + '" y2="34"/>');
+          result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor((x1+x2)/2) + '" y="13" fill="black">' + bucketstart.getFullYear() + " Q" + quarter + '</text>');
+            }
+            else
+          result.push('<line class="time" x1="' + Math.floor(x1) + '" y1="17" x2="' + Math.floor(x1) + '" y2="34"/>');
+        bucketstart = bucketend;
       }
-      delta = startmousemove - event.pageX;
-      if (delta === 0) return;
-      gantt_zoom(1,(delta>0) ? 86400000 : -86400000);
-      startmousemove = event.pageX;
-    });
+    }
+    else if (scaling < 10)
+    {
+      // Monthly + weekly buckets, short style
+      while (bucketstart < viewend)
+      {
+        result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
+        result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor(x + scaling*3.5) + '" y="31" fill="black">' + $.datepicker.formatDate("mm-dd", bucketstart) + '</text>');
+        x = x + scaling*7;
+        bucketstart.setTime(bucketstart.getTime() + 86400000 * 7);
+      }
+      bucketstart = new Date(viewstart.getFullYear(), viewstart.getMonth(), 1);
+      while (bucketstart < viewend)
+      {
+        x1 = (bucketstart.getTime() - viewstart.getTime()) / 86400000 * scaling;
+        bucketend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+1, 1);
+        x2 = (bucketend.getTime() - viewstart.getTime()) / 86400000 * scaling;
+        result.push('<line class="time" x1="' + Math.floor(x1) + '" y1="0" x2="' + Math.floor(x1) + '" y2="17"/>');
+        result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor((x1+x2)/2) + '" y="13" fill="black">' + $.datepicker.formatDate("M yy", bucketstart) + '</text>');
+        bucketstart = bucketend;
+      }
+    }
+    else if (scaling < 20)
+    {
+      // Monthly + weekly buckets, long style
+      while (bucketstart < viewend)
+      {
+        result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
+        result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + (x + scaling*7.0/2.0) + '" y="31" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
+        x = x + scaling*7.0;
+        bucketstart.setTime(bucketstart.getTime() + 86400000 * 7);
+      }
+      bucketstart = new Date(viewstart.getFullYear(), viewstart.getMonth(), 1);
+      while (bucketstart < viewend)
+      {
+        x1 = (bucketstart.getTime() - viewstart.getTime()) / 86400000 * scaling;
+        bucketend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+1, 1);
+        x2 = (bucketend.getTime() - viewstart.getTime()) / 86400000 * scaling;
+        result.push('<line class="time" x1="' + Math.floor(x1) + '" y1="0" x2="' + Math.floor(x1) + '" y2="17"/>');
+        result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor((x1+x2)/2) + '" y="13" fill="black">' + $.datepicker.formatDate("M yy", bucketstart) + '</text>');
+        bucketstart = bucketend;
+      }
+    }
+    else if (scaling <= 40)
+    {
+      // Weekly + daily buckets, short style
+      while (bucketstart < viewend)
+      {
+        if (bucketstart.getDay() == 0)
+        {
+          result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
+          result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor(x + scaling*7/2) + '" y="13" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
+        }
+        else
+        {
+          result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
+        }
+        result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor(x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate("d", bucketstart) + '</text>');
+        x = x + scaling;
+        bucketstart.setDate(bucketstart.getDate()+1);
+      }
+    }
+    else if (scaling <= 75)
+    {
+      // Weekly + daily buckets, long style
+      while (bucketstart < viewend)
+      {
+        if (bucketstart.getDay() == 0)
+        {
+          result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
+          result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor(x + scaling*7/2) + '" y="13" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
+        }
+        else
+        {
+          result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
+        }
+        result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor(x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate("dd M", bucketstart) + '</text>');
+        x = x + scaling;
+        bucketstart.setDate(bucketstart.getDate()+1);
+      }
+    }
+    else if (scaling < 250)
+    {
+      // Weekly + daily buckets, very long style
+      while (bucketstart < viewend)
+      {
+        if (bucketstart.getDay() == 0)
+        {
+          result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
+          result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor(x + scaling*3.5) + '" y="13" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
+        }
+        else
+          result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
+        result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor(x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate("D dd M", bucketstart) + '</text>');
+        x = x + scaling;
+        bucketstart.setDate(bucketstart.getDate()+1);
+      }
+    }
+    else
+    {
+      // Daily + hourly buckets
+      while (bucketstart < viewend)
+      {
+        if (bucketstart.getHours() == 0)
+        {
+          result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
+          result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor(x + scaling/2) + '" y="13" fill="black">' + $.datepicker.formatDate("D yy-mm-dd", bucketstart) + '</text>');
+        }
+        else
+          result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
+        result.push('<text style="text-anchor:middle; font-family:Verdana; font-size:9" x="' + Math.floor(x + scaling/48) + '" y="31" fill="black">' + bucketstart.getHours() + '</text>');
+        x = x + scaling/24;
+        bucketstart.setTime(bucketstart.getTime() + 3600000);
+      }
+    }
+    result.push( '</svg>' );
+    $("#jqgh_grid_operationplans")
+       .html(result.join(''))
+       .bind('mousedown', function(event) {
+          gantt.startmousemove = event.pageX;
+          console.log("mousedown");
+          $(this).bind('mousemove', function(event) {
+            clearTimeout(gantt.resizing);
+            gantt.resizing = setTimeout( function() {
+              console.log("mousemove");
+              var delta = event.pageX - gantt.startmousemove;
+              if (Math.abs(delta < 3)) return;
+              gantt.zoom(1, 0, delta);
+              gantt.startmousemove = event.pageX;
+              }, 200);
+          });
+         })
+       .bind('mouseup', function() { $(this).unbind('mousemove'); console.log("mouseup");});
+  },
+
+  reset: function()
+  {
+    viewstart = new Date(horizonstart.getTime());
+    viewend = new Date(horizonend.getTime());
+    $('.transformer').each(function() {
+      var layers = $(this).attr("title");
+      $(this).attr("transform", "scale(1,1) translate(0," + ((layers-1)*gantt.rowsize+3) + ")");
+      });
+    gantt.header();
+  },
+
+  zoom: function(zoom_in_or_out, move_in_or_out, move_in_or_out_pixels)
+  {
+    // Determine the window to be shown. Min = 1 day. Max = 3 years.
+    var delta = Math.min(1095,Math.max(1,Math.ceil((viewend.getTime() - viewstart.getTime()) / 86400000.0 * zoom_in_or_out)));
+    // Determine the start and end date global variables.
+    viewstart.setTime(viewstart.getTime() + move_in_or_out);
+    viewend.setTime(viewstart.getTime() + delta * 86400000);
+    // Determine the conversion between svg units and the screen
+    var scale = (horizonend.getTime() - horizonstart.getTime()) / (delta * 864000000);
+    if (typeof(move_in_or_out_pixels) != 'undefined')
+    {
+      viewstart.setTime(viewstart.getTime() + move_in_or_out_pixels / scale * 1000);
+      console.log("exra offset" + (move_in_or_out_pixels / scale));
+    }
+    var offset = (horizonstart.getTime() - viewstart.getTime()) / (horizonend.getTime() - horizonstart.getTime()) * 10000;
+    // Transform all svg elements
+    $('.transformer').each(function() {
+      var layers = $(this).attr("title");
+      $(this).attr("transform", "scale(" + scale + ",1) translate(" + offset + "," + ((layers-1)*gantt.rowsize+3) + ")");
+      });
+    // Redraw the header
+    gantt.header();
+  }
 }
-
-
-function gantt_reset()
-{
-  viewstart = new Date(horizonstart.getTime());
-  viewend = new Date(horizonend.getTime());
-  $('.transformer').each(function() {
-    var layers = $(this).attr("title");
-    $(this).attr("transform", "scale(1,1) translate(0," + ((layers-1)*ganttrow+3) + ")");
-    });
-  gantt_header();
-}
-
-
-function gantt_zoom(zoom_in_or_out, move_in_or_out)
-{
-  delta = Math.ceil((viewend.getTime() - viewstart.getTime()) / 86400000.0 * zoom_in_or_out);
-  viewstart.setTime(viewstart.getTime() + move_in_or_out);
-  viewend.setTime(viewstart.getTime() + delta * 86400000);
-  var scale = (horizonend.getTime() - horizonstart.getTime()) / (delta * 864000000);
-  var offset = (horizonstart.getTime() - viewstart.getTime()) / (horizonend.getTime() - horizonstart.getTime()) * 10000;
-  $('.transformer').each(function() {
-    var layers = $(this).attr("title");
-    $(this).attr("transform", "scale(" + scale + ",1) translate(" + offset + "," + ((layers-1)*ganttrow+3) + ")");
-    });
-  gantt_header();
-}
-

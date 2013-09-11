@@ -17,7 +17,7 @@
 </style>
 <script type="text/javascript">
 
-function gantt(cellvalue, options, rowdata)
+function ganttcell(cellvalue, options, rowdata)
 {
   var layer = [];
   var result = [];
@@ -35,26 +35,26 @@ function gantt(cellvalue, options, rowdata)
      };
      if (row >= layer.length) layer.push(data["enddate"]);
      if (data['locked'] == 1)
-       result.push( '<rect x="' + data["x"] + '" y="' + (-row*ganttrow) + '" width="' + Math.max(data["w"],1) + '" height="' + (ganttrow-3) + '" class="opplan_locked"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
+       result.push( '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) + '" width="' + Math.max(data["w"],1) + '" height="' + (gantt.rowsize-3) + '" class="opplan_locked"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
      else
-       result.push( '<rect x="' + data["x"] + '" y="' + (-row*ganttrow) + '" width="' + Math.max(data["w"],1) + '" height="' + (ganttrow-3) + '" class="opplan"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
+       result.push( '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) + '" width="' + Math.max(data["w"],1) + '" height="' + (gantt.rowsize-3) + '" class="opplan"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
   }
-  return '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="' + (ganttrow*layer.length+3) + 'px">'
+  return '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="' + (gantt.rowsize*layer.length+3) + 'px">'
     + '<title>' + escape(rowdata["name"]) + '</title>'
-    + '<g class="transformer" transform="scale(0.1,1) translate(0,' + ((layer.length-1)*ganttrow+3) +')" title="' + layer.length +'">'
+    + '<g class="transformer" transform="scale(0.1,1) translate(0,' + ((layer.length-1)*gantt.rowsize+3) +')" title="' + layer.length +'">'
     + result.join('\n')
     + '</g></svg>';
 }
 
-var horizonstart = new Date({{bucketstart|date:"Y"}},{{bucketstart|date:"m"}}-1,{{bucketstart|date:"d"}});
-var horizonend = new Date({{bucketend|date:"Y"}},{{bucketend|date:"m"}}-1,{{bucketend|date:"d"}});
-var viewstart = new Date({{bucketstart|date:"Y"}},{{bucketstart|date:"m"}}-1,{{bucketstart|date:"d"}});
-var viewend = new Date({{bucketend|date:"Y"}},{{bucketend|date:"m"}}-1,{{bucketend|date:"d"}});
+var horizonstart = new Date({{bucketstart|date:"Y"}},{{bucketstart|date:"n"}}-1,{{bucketstart|date:"j"}});
+var horizonend = new Date({{bucketend|date:"Y"}},{{bucketend|date:"n"}}-1,{{bucketend|date:"j"}});
+var viewstart = new Date({{bucketstart|date:"Y"}},{{bucketstart|date:"n"}}-1,{{bucketstart|date:"j"}});
+var viewend = new Date({{bucketend|date:"Y"}},{{bucketend|date:"n"}}-1,{{bucketend|date:"j"}});
 var delta = (viewend.getTime() - viewstart.getTime()) / 86400000.0;
 
 
 $(function() {
-  gantt_header();
+  gantt.header();
 });
 
 
@@ -69,13 +69,30 @@ function reslistfmt(cellvalue, options, row)
 
 </script>
 {% endblock %}
+{% block extra_grid %}treeGrid: true,
+treeGridModel: 'adjacency',
+ExpandColumn: 'depth',
+treeIcons: {
+  plus:'ui-icon-circle-triangle-e',
+  minus:'ui-icon-circle-triangle-s',
+  leaf:'ui-icon-radio-off'
+  },
+tree_root_level: 0,
+treeReader: {
+  level_field: 'depth',
+  parent_id_field: 'parent',
+  leaf_field: 'leaf',
+  expanded_field: 'expanded'
+  },
+ExpandColClick: true,
+{% endblock %}
 
 {% block actions %}
-<a id="zoom_in" href="javascript:gantt_zoom(0.66666,0);" class="icon"><span class="ui-icon ui-icon-zoomin"></span>{% trans 'Zoom in' %}</a>
-<a id="zoom_out" href="javascript:gantt_zoom(1.33333,0);" class="icon"><span class="ui-icon ui-icon-zoomout"></span>{% trans 'Zoom out' %}</a>
-<a id="move_in" href="javascript:gantt_zoom(1,-86400000);" class="icon"><span class="ui-icon ui-icon-seek-prev"></span>{% trans 'Move in' %}</a>
-<a id="move_out" href="javascript:gantt_zoom(1,86400000);" class="icon"><span class="ui-icon ui-icon-seek-next"></span>{% trans 'Move out' %}</a>
-<a id="reset" href="javascript:gantt_reset();" class="icon"><span class="ui-icon ui-icon-stop"></span>{% trans 'Reset' %}</a>
+<a id="zoom_in" href="javascript:gantt.zoom(0.5,0);" class="icon"><span class="ui-icon ui-icon-zoomin"></span>{% trans 'Zoom in' %}</a>
+<a id="zoom_out" href="javascript:gantt.zoom(1.5,0);" class="icon"><span class="ui-icon ui-icon-zoomout"></span>{% trans 'Zoom out' %}</a>
+<a id="move_in" href="javascript:gantt.zoom(1,-86400000);" class="icon"><span class="ui-icon ui-icon-seek-prev"></span>{% trans 'Move in' %}</a>
+<a id="move_out" href="javascript:gantt.zoom(1,86400000);" class="icon"><span class="ui-icon ui-icon-seek-next"></span>{% trans 'Move out' %}</a>
+<a id="reset" href="javascript:gantt.reset();" class="icon"><span class="ui-icon ui-icon-stop"></span>{% trans 'Reset' %}</a>
 <a id="filter" href="javascript:filter_show();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
 <a href="javascript:grid.showBucket();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
 {% endblock %}
@@ -86,5 +103,4 @@ function reslistfmt(cellvalue, options, row)
 
 {% comment %}
 TODO operation can be hidden and have no link
-TODO resouce field is a list of resources
 {% endcomment %}

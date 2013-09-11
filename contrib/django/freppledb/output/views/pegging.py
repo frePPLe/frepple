@@ -15,18 +15,11 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from datetime import timedelta, datetime
-
-from django.conf import settings
-from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections
-from django.http import HttpResponse
-from django.template import RequestContext, loader
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Demand
 from freppledb.output.models import FlowPlan, LoadPlan, OperationPlan
-from freppledb.common.models import Parameter
 from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime, getBuckets
 
 
@@ -42,14 +35,18 @@ class ReportByDemand(GridReport):
   default_sort = None
   hasTimeBuckets = True
   multiselect = False
+  heightmargin = 82
   rows = (
-    GridFieldText('depth', title=_('depth'), width=100, editable=False, sortable=False),
-    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False, sortable=False),
+    GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
+    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False, sortable=False, key=True),
     GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False, sortable=False),
     GridFieldText('item', title=_('item'), formatter='item', editable=False, sortable=False),
     GridFieldText('resource', title=_('resource'), editable=False, sortable=False, extra='formatter:reslistfmt'),
     GridFieldNumber('quantity', title=_('quantity'), editable=False, sortable=False),
-    GridFieldText('operationplans', width=1000, extra='formatter:gantt', editable=False, sortable=False),
+    GridFieldText('operationplans', width=1000, extra='formatter:ganttcell', editable=False, sortable=False),
+    GridFieldText('parent', editable=False, sortable=False, hidden=False),
+    GridFieldText('leaf', editable=False, sortable=False, hidden=False),
+    GridFieldText('expanded', editable=False, sortable=False, hidden=True),
     )
 
   @ classmethod
@@ -126,7 +123,6 @@ class ReportByDemand(GridReport):
         if data:
           data['quantity'] = quantity
           yield data
-        prevoper = row[2]
         quantity = float(row[3]) * (row[11] or 1.0)
         data = {
           'depth': row[0],
@@ -138,26 +134,30 @@ class ReportByDemand(GridReport):
           'item': row[8],
           'id': row[9],
           'due': row[10],
+          'parent': prevoper or 'null',
+          'leaf': str(row[0]) == "7" and 'true' or 'false',
+          'expanded': 'true',
           'resource': row[9] in resource and resource[row[9]] or None,
           'operationplans': [{
              'operation': row[2],
              'description': row[11] or 100.0, # TODO percent used
              'quantity': float(row[3]),
-             'x': int((row[4] - start).total_seconds() / horizon),
-             'w': int((row[5] - row[4]).total_seconds() / horizon),
+             'x': round((row[4] - start).total_seconds() / horizon, 3),
+             'w': round((row[5] - row[4]).total_seconds() / horizon, 3),
              'startdate': str(row[4]),
              'enddate': str(row[5]),
              'locked': 0, # TODO
              } ]
           }
+        prevoper = row[2]
       else:
         quantity += float(row[3]) * (row[11] or 1.0)
         data['operationplans'].append({
              'operation': row[2],
              'description': row[11] or 100.0, # TODO percent used
              'quantity': float(row[3]),
-             'x': int((row[4] - start).total_seconds() / horizon),
-             'w': int((row[5] - row[4]).total_seconds() / horizon),
+             'x': round((row[4] - start).total_seconds() / horizon, 3),
+             'w': round((row[5] - row[4]).total_seconds() / horizon, 3),
              'startdate': str(row[4]),
              'enddate': str(row[5]),
              'locked': 0, # TODO

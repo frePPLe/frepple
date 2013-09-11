@@ -43,7 +43,7 @@ $(function(){
     multiselect: true,
     onSelectRow: grid.markSelectedRow,{% endif %}
     {% block extra_grid %}{% endblock %}
-    height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}$(window).height() - $("#grid").offset().top - 70{% endif %}
+    height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
   $('#cb_grid.cbox').click(grid.markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
@@ -57,7 +57,7 @@ $(function(){
 $(window).bind('resize', function() {
   $("#grid")
    .setGridWidth($('#content-main').width()){% if not reportclass.height %}
-   .setGridHeight($(window).height() - $("#grid").offset().top - 70){% endif %};
+   .setGridHeight($(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}){% endif %};
 });
 
 </script>

@@ -93,6 +93,7 @@ class GridField(object):
     if self.formatter: o.append(",formatter:'%s'" % self.formatter)
     if self.unformat: o.append(",unformat:'%s'" % self.unformat)
     if self.searchrules: o.append(",searchrules:{%s}" % self.searchrules)
+    if self.hidden: o.append(",hidden:true")
     if self.extra: o.append(",%s" % force_unicode(self.extra))
     return ''.join(o)
 
@@ -109,6 +110,7 @@ class GridField(object):
   extra = None
   align = 'center'
   searchrules = None
+  hidden = False
 
 
 class GridFieldDateTime(GridField):
@@ -301,6 +303,9 @@ class GridReport(View):
   # A list with required user permissions to view the report
   permissions = []
 
+  # Defines the difference between height of the grid and its boundaries
+  heightmargin = 70
+
   @classmethod
   def getKey(cls):
     return "%s.%s" % (cls.__module__, cls.__name__)
@@ -357,8 +362,8 @@ class GridReport(View):
     sf.write(getBOM(encoding))
 
     # Choose fields to export
-    writer.writerow([ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.title ])
-    fields = [ i.field_name for i in reportclass.rows if i.field_name ]
+    writer.writerow([ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.title and not f.hidden ])
+    fields = [ i.field_name for i in reportclass.rows if i.field_name and not i.hidden ]
 
     # Write a header row
     yield sf.getvalue()
@@ -444,37 +449,8 @@ class GridReport(View):
     cnt = (page-1)*request.pagesize+1
     first = True
 
-    # # TREEGRID
-    #from django.db import connections, DEFAULT_DB_ALIAS
-    #cursor = connections[DEFAULT_DB_ALIAS].cursor()
-    #cursor.execute('''
-    #  select node.name,node.description,node.category,node.subcategory,node.operation_id,node.owner_id,node.price,node.lastmodified,node.level,node.lft,node.rght,node.rght=node.lft+1
-    #  from item as node
-    #  left outer join item as parent0
-    #    on node.lft between parent0.lft and parent0.rght and parent0.level = 0 and node.level >= 0
-    #  left outer join item as parent1
-    #    on node.lft between parent1.lft and parent1.rght and parent1.level = 1 and node.level >= 1
-    #  left outer join item as parent2
-    #    on node.lft between parent2.lft and parent2.rght and parent2.level = 2 and node.level >= 2
-    #  where node.level = 0
-    #  order by parent0.description asc, parent1.description asc, parent2.description asc, node.level, node.description, node.name
-    #  ''')
-    #for row in cursor.fetchall():
-    #  if first:
-    #    first = False
-    #    yield '{"%s","%s","%s","%s","%s","%s","%s","%s",%d,%d,%d,%s,false]}\n' %(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11] and 'true' or 'false')
-    #  else:
-    #    yield ',{"%s","%s","%s","%s","%s","%s","%s","%s",%d,%d,%d,%s,false]}\n' %(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11] and 'true' or 'false')
-    #yield ']}\n'
-
     # GridReport
     fields = [ i.field_name for i in reportclass.rows if i.field_name ]
-    #if False: # TREEGRID
-    #  fields.append('level')
-    #  fields.append('lft')
-    #  fields.append('rght')
-    #  fields.append('isLeaf')
-    #  fields.append('expanded')
     for i in hasattr(reportclass,'query') and reportclass.query(request,query) or query[cnt-1:cnt+request.pagesize].values(*fields):
       if first:
         r = [ '{' ]
@@ -494,8 +470,6 @@ class GridReport(View):
           first2 = False
         elif i[f.field_name] != None:
           r.append(', "%s":%s' % (f.name,s))
-      #if False:    # TREEGRID
-      #  r.append(', %d, %d, %d, %s, %s' % (i['level'],i['lft'],i['rght'], i['isLeaf'] and 'true' or 'false', i['expanded'] and 'true' or 'false' ))
       r.append('}')
       yield ''.join(r)
     yield '\n]}\n'
@@ -1071,7 +1045,6 @@ class GridPivot(GridReport):
 
   @classmethod
   def _render_colmodel(cls, is_popup = False):
-
     result = []
     if is_popup:
       result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false}")
@@ -1204,7 +1177,7 @@ class GridPivot(GridReport):
     sf.write(getBOM(encoding))
 
     # Write a header row
-    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) ]
+    fields = [ force_unicode(f.title).title().encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
     if listformat:
       fields.extend([ capfirst(force_unicode(_('bucket'))).encode(encoding,"ignore") ])
       fields.extend([ capfirst(_(f[1].get('title',_(f[0])))).encode(encoding,"ignore") for f in reportclass.crosses ])
@@ -1221,11 +1194,11 @@ class GridPivot(GridReport):
         sf.truncate(0)
         # Data for rows
         if hasattr(row, "__getitem__"):
-          fields = [ row[f.name]==None and ' ' or unicode(row[f.name]).encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) ]
+          fields = [ row[f.name]==None and ' ' or unicode(row[f.name]).encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
           fields.extend([ row['bucket'].encode(encoding,"ignore") ])
           fields.extend([ row[f[0]]==None and ' ' or unicode(_localize(row[f[0]])).encode(encoding,"ignore") for f in reportclass.crosses ])
         else:
-          fields = [ getattr(row,f.name)==None and ' ' or unicode(getattr(row,f.name)).encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) ]
+          fields = [ getattr(row,f.name)==None and ' ' or unicode(getattr(row,f.name)).encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
           fields.extend([ getattr(row,'bucket').encode(encoding,"ignore") ])
           fields.extend([ getattr(row,f[0])==None and ' ' or unicode(_localize(getattr(row,f[0]))).encode(encoding,"ignore") for f in reportclass.crosses ])
         # Return string
@@ -1246,7 +1219,7 @@ class GridPivot(GridReport):
             if 'visible' in cross[1] and not cross[1]['visible']: continue
             # Clear the return string buffer
             sf.truncate(0)
-            fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) ]
+            fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) and not s.hidden ]
             fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0]))).encode(encoding,"ignore")] )
             fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
             # Return string
@@ -1259,7 +1232,7 @@ class GridPivot(GridReport):
         if 'visible' in cross[1] and not cross[1]['visible']: continue
         # Clear the return string buffer
         sf.truncate(0)
-        fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) ]
+        fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) and not s.hidden ]
         fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0]))).encode(encoding,"ignore")] )
         fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
         # Return string

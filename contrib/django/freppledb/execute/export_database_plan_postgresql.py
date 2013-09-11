@@ -177,7 +177,6 @@ def exportDemand(process):
 
   def deliveries(d):
     cumplanned = 0
-    n = d and d.name or 'unspecified'
     # Loop over all delivery operationplans
     for i in d.operationplans:
       cumplanned += i.quantity
@@ -186,14 +185,14 @@ def exportDemand(process):
         cur -= cumplanned - d.quantity
         if cur < 0: cur = 0
       yield (
-        n.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
+        d.name.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
         round(cur,settings.DECIMAL_PLACES), str(i.end),
         round(i.quantity,settings.DECIMAL_PLACES), i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
-        n.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
+        d.name.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
         round(d.quantity - cumplanned,settings.DECIMAL_PLACES), "\\N",
         "\\N", "\\N"
         )

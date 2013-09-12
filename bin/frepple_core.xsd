@@ -567,6 +567,18 @@
     </xsd:complexContent>
   </xsd:complexType>
 
+  <xsd:complexType name="flow_fixed_end">
+    <xsd:complexContent>
+      <xsd:extension base="flow" />
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="flow_fixed_start">
+    <xsd:complexContent>
+      <xsd:extension base="flow" />
+    </xsd:complexContent>
+  </xsd:complexType>
+
   <xsd:complexType name="flowplan">
     <xsd:sequence>
       <xsd:element name="date" type="xsd:dateTime" />

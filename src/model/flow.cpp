@@ -24,8 +24,10 @@ namespace frepple
 {
 
 DECLARE_EXPORT const MetaCategory* Flow::metadata;
-DECLARE_EXPORT const MetaClass* FlowStart::metadata,
-               *FlowEnd::metadata;
+DECLARE_EXPORT const MetaClass* FlowStart::metadata;
+DECLARE_EXPORT const MetaClass* FlowEnd::metadata;
+DECLARE_EXPORT const MetaClass* FlowFixedStart::metadata;
+DECLARE_EXPORT const MetaClass* FlowFixedEnd::metadata;
 
 
 int Flow::initialize()
@@ -37,6 +39,10 @@ int Flow::initialize()
       Object::createDefault<FlowStart>, true);
   FlowEnd::metadata = new MetaClass("flow", "flow_end",
       Object::createDefault<FlowEnd>);
+  FlowFixedStart::metadata = new MetaClass("flow", "flow_fixed_start",
+      Object::createDefault<FlowFixedStart>);
+  FlowFixedEnd::metadata = new MetaClass("flow", "flow_fixed_end",
+      Object::createDefault<FlowFixedEnd>);
 
   // Initialize the type
   PythonType& x = FreppleCategory<Flow>::getType();
@@ -89,11 +95,13 @@ DECLARE_EXPORT void Flow::validate(Action action)
   }
 
   // Check if a flow with 1) identical buffer, 2) identical operation and
-  // 3) overlapping effectivity dates already exists
+  // 3) overlapping effectivity dates already exists, and 4) same
+  // flow type.
   Operation::flowlist::const_iterator i = oper->getFlows().begin();
   for (; i != oper->getFlows().end(); ++i)
     if (i->getBuffer() == buf
         && i->getEffective().overlap(getEffective())
+        && i->getType() == getType()
         && &*i != this)
       break;
 
@@ -486,6 +494,18 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
       PythonObject d(t);
       if (d.getString() == "flow_end")
         l = new FlowEnd(
+          static_cast<Operation*>(oper),
+          static_cast<Buffer*>(buf),
+          q2, eff
+        );
+      else if (d.getString() == "flow_fixed_end")
+        l = new FlowFixedEnd(
+          static_cast<Operation*>(oper),
+          static_cast<Buffer*>(buf),
+          q2, eff
+        );
+      else if (d.getString() == "flow_fixed_start")
+        l = new FlowFixedStart(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
           q2, eff

@@ -50,15 +50,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   // Store the last command in the list, in order to undo the following
   // commands if required.
   CommandManager::Bookmark* topcommand = data->setBookmark();
-
-  // Make sure the new operationplans don't inherit an owner.
-  // When an operation calls the solve method of suboperations, this field is
-  // used to pass the information about the owner operationplan down. When
-  // solving for buffers we must make sure NOT to pass owner information.
-  // At the end of solving for a buffer we need to restore the original
-  // settings...
   OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;
-  data->state->curOwnerOpplan = NULL;
 
   // Evaluate the buffer profile and solve shortages by asking more material.
   // The loop goes from the requested date till the very end. Whenever the
@@ -112,6 +104,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // Check whether this date doesn't match with the requested date.
           // See a bit further why this is required.
           if (data->state->q_date == requested_date) tried_requested_date = true;
+
+          // Make sure the new operationplans don't inherit an owner.
+          // When an operation calls the solve method of suboperations, this field is
+          // used to pass the information about the owner operationplan down. When
+          // solving for buffers we must make sure NOT to pass owner information.
+          // At the end of solving for a buffer we need to restore the original
+          // settings...
+          data->state->curOwnerOpplan = NULL;
 
           // Note that the supply created with the next line changes the
           // onhand value at all later dates!
@@ -204,6 +204,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     data->state->curBuffer = const_cast<Buffer*>(b);
     data->state->q_qty = shortage;
     data->state->q_date = requested_date;
+    // Make sure the new operationplans don't inherit an owner.
+    // When an operation calls the solve method of suboperations, this field is
+    // used to pass the information about the owner operationplan down. When
+    // solving for buffers we must make sure NOT to pass owner information.
+    // At the end of solving for a buffer we need to restore the original
+    // settings...
+    data->state->curOwnerOpplan = NULL;
     // Note that the supply created with the next line changes the onhand value
     // at all later dates!
     // Note that asking at the requested date doesn't keep the material on

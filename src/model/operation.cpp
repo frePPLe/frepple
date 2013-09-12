@@ -639,13 +639,17 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
         && y->getDemand() == o->getDemand() && !y->getLocked() && y->getIdentifier()
         && y->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
-      // Check that the flowplans are on identical alternates
+      // Check that the flowplans are on identical alternates and not of type fixed
       OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();
       OperationPlan::FlowPlanIterator fp2 = y->beginFlowPlans();
       while (fp1 != o->endFlowPlans())
       {
-        if (fp1->getBuffer() != fp2->getBuffer())
-          // Different alternates - no merge possible
+        if (fp1->getBuffer() != fp2->getBuffer()
+          || fp1->getFlow()->getType() == *FlowFixedEnd::metadata
+          || fp1->getFlow()->getType() == *FlowFixedStart::metadata
+          || fp2->getFlow()->getType() == *FlowFixedEnd::metadata
+          || fp2->getFlow()->getType() == *FlowFixedStart::metadata)
+          // No merge possible
           return true;
         ++fp1;
         ++fp2;

@@ -98,31 +98,32 @@
   </demands>
 
 <?python
+from __future__ import print_function
 
-print "SAVING MODEL IN XML FORMAT"
+print("SAVING MODEL IN XML FORMAT")
 frepple.saveXMLfile("output.1.xml")
 	
-print "CREATING CONSTRAINED PLAN"
+print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 
-print "CREATING UNCONSTRAINED PLAN"
+print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(name="MRP", plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.3.xml")
 
-print "TESTING PYTHON API"
+print("TESTING PYTHON API")
 s = frepple.skill(name="turbo")
 r = frepple.resource(name='Bob')
 frepple.resourceskill(resource=r, skill=s)
-output = open("output.4.xml","wt")
-for i in frepple.skills():
-  print >>output, "Skill", i.name, ":"
-  for j in i.resourceskills:
-    print >>output, "     ", j.resource.name
-for i in frepple.resources():
-  print >>output, "Resource", i.name, ":"
-  for j in i.resourceskills:
-    print >>output, "     ", j.skill.name
+with open("output.4.xml","wt") as output:
+  for i in frepple.skills():
+    print("Skill", i.name, ":", file=output)
+    for j in i.resourceskills:
+      print("     ", j.resource.name, file=output)
+  for i in frepple.resources():
+    print("Resource", i.name, ":", file=output)
+    for j in i.resourceskills:
+      print("     ", j.skill.name, file=output)
 ?>
 
 </plan>

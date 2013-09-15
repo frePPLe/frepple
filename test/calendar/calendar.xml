@@ -85,24 +85,21 @@
 	</calendars>
 
 <?python
-
+from __future__ import print_function
 from datetime import datetime
 
-output = open("output.1.xml","wt")
-
-print >>output, "FORWARD ITERATION"
-for cal in frepple.calendars():
-  print >>output, " ", cal.name, ":"
-  for ev_date, ev_value in cal.events():
-    print >>output, "   ", ev_date, "-", ev_value
-
-print >>output, "BACKWARD ITERATION"
-enddate = datetime(2012,12,31)
-for cal in frepple.calendars():
-  print >>output, " ", cal.name, ":"
-  for ev_date, ev_value in cal.events(enddate, False):
-    print >>output, "   ", ev_date, "-", ev_value
-
+with open("output.1.xml","wt") as output:
+  print("FORWARD ITERATION", file=output)
+  for cal in frepple.calendars():
+    print(" ", cal.name, ":", file=output)
+    for ev_date, ev_value in cal.events():
+      print("   ", ev_date, "-", ev_value, file=output)
+  print("BACKWARD ITERATION", file=output)
+  enddate = datetime(2012,12,31)
+  for cal in frepple.calendars():
+    print(" ", cal.name, ":", file=output)
+    for ev_date, ev_value in cal.events(enddate, False):
+      print("   ", ev_date, "-", ev_value, file=output)
 ?>
 
 </plan>

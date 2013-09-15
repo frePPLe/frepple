@@ -37,7 +37,10 @@ int Calendar::initialize()
   metadata = new MetaCategory("calendar", "calendars", reader, writer);
 
   // Initialize the Python class
-  FreppleCategory<Calendar>::getType().addMethod("addBucket", addPythonBucket, METH_KEYWORDS, "find a bucket or create a new one");
+  FreppleCategory<Calendar>::getType().addMethod(
+    "addBucket", addPythonBucket, METH_VARARGS | METH_KEYWORDS,
+    "find a bucket or create a new one"
+    );
   int ok = Calendar::Bucket::initialize();
   ok +=  FreppleCategory<Calendar>::initialize();
   ok += CalendarBucketIterator::initialize();
@@ -72,8 +75,10 @@ int CalendarDouble::initialize()
       Object::createString<CalendarDouble>, true);
 
   // Initialize the Python class
-  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("setValue",
-    setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarDouble,Calendar>::getType().addMethod(
+    "setValue", setPythonValue, METH_VARARGS | METH_KEYWORDS,
+    "update the value in a date range"
+    );
   FreppleClass<CalendarDouble,Calendar>::getType().addMethod("events",
     getEvents, METH_VARARGS, "return an event iterator");
   return FreppleClass<CalendarDouble,Calendar>::initialize();

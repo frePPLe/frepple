@@ -74,7 +74,10 @@ int OperationAlternate::initialize()
       Object::createString<OperationAlternate>);
 
   // Initialize the Python class
-  FreppleClass<OperationAlternate,Operation>::getType().addMethod("addAlternate", OperationAlternate::addAlternate, METH_KEYWORDS, "add an alternate");
+  FreppleClass<OperationAlternate,Operation>::getType().addMethod(
+    "addAlternate", OperationAlternate::addAlternate,
+    METH_VARARGS | METH_KEYWORDS, "add an alternate"
+    );
   return FreppleClass<OperationAlternate,Operation>::initialize();
 }
 

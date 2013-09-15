@@ -3,9 +3,12 @@
   <current>2009-01-01T00:00:00</current>
 
 <?python
-import urllib2
-f = urllib2.urlopen("http://www.frepple.com/test/xml_remote.xml")
-frepple.readXMLdata(f.read(1000), False, False)
+try:
+  from urllib2 import urlopen
+except:
+  from urllib.request import urlopen
+f = urlopen("http://www.frepple.com/test/xml_remote.xml")
+frepple.readXMLdata(f.read(1000).decode(encoding='UTF-8'), False, False)
 frepple.saveXMLfile("output.1.xml")
 ?>
 

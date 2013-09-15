@@ -66,7 +66,7 @@ DECLARE_EXPORT const hashtype MetaCategory::defaultHash(Keyword::hash("default")
 vector<PythonType*> PythonExtensionBase::table;
 
 
-void LibraryUtils::initialize(int argc, char *argv[])
+void LibraryUtils::initialize()
 {
   // Initialize only once
   static bool init = false;
@@ -95,7 +95,7 @@ void LibraryUtils::initialize(int argc, char *argv[])
   xercesc::XMLPlatformUtils::Initialize();
 
   // Initialize the Python interpreter
-  PythonInterpreter::initialize(argc, argv);
+  PythonInterpreter::initialize();
 
   // Register new methods in Python
   PythonInterpreter::registerGlobalMethod(

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -21,7 +21,7 @@ def read_csv_file():
   # This function reads a CSV-formatted file, creates an XML string and
   # then passes the string to Frepple for processing
   x = [ '<?xml version="1.0" encoding="UTF-8" ?><plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<items>' ]
-  for row in csv.reader(open("items.csv", "rb")):
+  for row in csv.reader(open("items.csv", "rt")):
     x.append('<item name="%s"><operation name="%s"/></item>' % (row[0],row[1]))
   x.append('</items>\n</plan>')
   frepple.readXMLdata('\n'.join(x),False,False)
@@ -30,7 +30,7 @@ def read_csv_file():
 def read_csv_file_direct():
   # This function reads a CSV file and calls a function that accesses the
   # Frepple C++ API directly, without an intermediate XML format.
-  for row in csv.reader(open("items.csv", "rb")):
+  for row in csv.reader(open("items.csv", "rt")):
     frepple.item(name=row[0], operation=frepple.operation(name=row[1]))
   return
 

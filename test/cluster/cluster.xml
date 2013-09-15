@@ -295,6 +295,7 @@
   </demands>
 
 <?python
+from __future__ import print_function
 
 #
 actual_to_expected = {}
@@ -314,7 +315,7 @@ def verifyOne(i):
 
   # Check the level
   if expectedlevel != i.level:
-    print >>output, "%s: incorrect level. Expected %d, got %d" % (name, expectedlevel, i.level)
+    print("%s: incorrect level. Expected %d, got %d" % (name, expectedlevel, i.level), file=output)
     ok = False
 
   # Check the cluster.
@@ -324,7 +325,7 @@ def verifyOne(i):
   if i.cluster in actual_to_expected:
     if expectedcluster != actual_to_expected[i.cluster]:
       # Exists and is different!
-      print >>output, "%s: incorrect cluster. Expected %d, got %d" % (name, expected_to_actual[expectedcluster], i.cluster)
+      print("%s: incorrect cluster. Expected %d, got %d" % (name, expected_to_actual[expectedcluster], i.cluster), file=output)
       ok = False
   else:
     if expectedcluster in expected_to_actual:
@@ -337,7 +338,7 @@ def verifyOne(i):
       expected_to_actual[expectedcluster] = i.cluster
 
   # Result
-  print >>output, "%s: %s" % (name, ok and "OK" or "NOK")
+  print("%s: %s" % (name, ok and "OK" or "NOK"), file=output)
 
 
 def verifyAll():

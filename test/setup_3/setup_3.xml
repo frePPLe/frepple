@@ -358,32 +358,32 @@
   </demands>
 
 <?python
+from __future__ import print_function
 from datetime import timedelta
 
 def printStatus(d = None, mode = 1):
-  print "\nCurrent status:"
+  print("\nCurrent status:")
   for i in frepple.resources():
-    print "  Loading of resource '%s' (initial setup %s)" % (i.name, i.setup)
+    print("  Loading of resource '%s' (initial setup %s)" % (i.name, i.setup))
     for j in i.loadplans:
-      print "    %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name)
-  print ""
+      print("    %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name))
+  print("")
 
 solver = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2, userexit_demand=printStatus)
 
-print "Creating plan 1"
+print("Creating plan 1")
 for d in frepple.demands():
   d.due = frepple.settings.current
 solver.solve()
 frepple.saveplan("output.1.xml")
 printStatus()
 
-print "\n\nCreating plan 2"
+print("\n\nCreating plan 2")
 for d in frepple.demands():
   d.due = frepple.settings.current + timedelta(10)
 solver.solve()
 frepple.saveplan("output.2.xml")
 printStatus()
-
 ?>
 
 </plan>

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
 #
@@ -23,7 +24,7 @@ All other tests are running the Python interpreter embedded in the frePPLe
 executable.
 This test however runs frePPLe as Python extension module.
 '''
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 # Add the frePPLe directory to the Python module search path
 import os
@@ -48,7 +49,7 @@ def printModel(filename):
   # Global settings
   print("Echoing global settings", file=output)
   print("Plan name:", frepple.settings.name, file=output)
-  print("Plan description:", frepple.settings.description, file=output)
+  print("Plan description:", frepple.settings.description.encode('utf-8'), file=output)
   print("Plan current:", frepple.settings.current, file=output)
 
   # Solvers
@@ -165,7 +166,7 @@ def printExtensions():
 ###
 print("\nUpdating global settings")
 frepple.settings.name = "demo model"
-frepple.settings.description = unicode("demo description in unicode object")
+frepple.settings.description = "unicode А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь"
 frepple.settings.current = datetime.datetime(2009,1,1)
 
 ###
@@ -190,7 +191,7 @@ frepple.calendar(name="Cal3", default=1.23)
 
 ###
 print("\nTesting the calendar iterator")
-print"calendar events:")
+print("calendar events:")
 for date, value in c.events():
   print("  ", date, value)
 
@@ -343,16 +344,16 @@ for i in frepple.problems():
 
 ###
 print("\nPrinting some models in XML format to a file")
-output = open("output.3.xml","wt")
-mycustomer.toXML('P',output)
-locA.toXML('P',output)
-opplan.toXML('P',output)
-item.toXML('P',output)
-order1.toXML('P',output)
-buf1.toXML('P',output)
-makeoper.toXML('P',output)
-for i in frepple.problems():
-  i.toXML('P',output)
+with open("output.3.xml","wt") as output:
+  mycustomer.toXML('P',output)
+  locA.toXML('P',output)
+  opplan.toXML('P',output)
+  item.toXML('P',output)
+  order1.toXML('P',output)
+  buf1.toXML('P',output)
+  makeoper.toXML('P',output)
+  for i in frepple.problems():
+    i.toXML('P',output)
 
 ###
 print("\nDocumenting all available Python entities defined by frePPLe:")

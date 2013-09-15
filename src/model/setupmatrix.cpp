@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2009 by Johan De Taeye, frePPLe bvba                                    *
+ * Copyright (C) 2009-2013 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -37,7 +37,7 @@ int SetupMatrix::initialize()
 
   // Initialize the Python class
   FreppleCategory<SetupMatrix>::getType().addMethod("addRule",
-    addPythonRule, METH_KEYWORDS, "add a new setup rule");
+    addPythonRule, METH_VARARGS | METH_KEYWORDS, "add a new setup rule");
   return FreppleCategory<SetupMatrix>::initialize()
       + Rule::initialize()
       + SetupMatrixRuleIterator::initialize();

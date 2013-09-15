@@ -31,7 +31,7 @@ DECLARE_EXPORT(const char*) FreppleVersion()
 }
 
 
-DECLARE_EXPORT(void) FreppleInitialize(int argc, char *argv[])
+DECLARE_EXPORT(void) FreppleInitialize()
 {
   // Initialize only once
   static bool initialized = false;
@@ -39,7 +39,7 @@ DECLARE_EXPORT(void) FreppleInitialize(int argc, char *argv[])
   initialized = true;
 
   // Initialize the libraries
-  LibraryUtils::initialize(argc, argv);
+  LibraryUtils::initialize();
   LibraryModel::initialize();
   LibrarySolver::initialize();
 
@@ -144,9 +144,9 @@ extern "C" DECLARE_EXPORT(void) FreppleLog(const char* msg)
 }
 
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize(int argc, char* argv[])
+extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize()
 {
-  try {FreppleInitialize(argc, argv);}
+  try {FreppleInitialize();}
   catch (...) {return EXIT_FAILURE;}
   return EXIT_SUCCESS;
 }
@@ -193,15 +193,31 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperExit()
 
 
 /** Used to initialize frePPLe as a Python extension module. */
+#if PY_MAJOR_VERSION >= 3
+PyMODINIT_FUNC PyInit_frepple(void)
+#else
 PyMODINIT_FUNC initfrepple(void)
+#endif
 {
-  try {FreppleInitialize(0, NULL);}
+  try
+  {
+    FreppleInitialize();
+#if PY_MAJOR_VERSION >= 3
+    return PythonInterpreter::getModule();
+#endif
+  }
   catch(const exception& e)
   {
     logger << "Initialization failed: " << e.what() << endl;
+#if PY_MAJOR_VERSION >= 3
+    return NULL;
+#endif
   }
   catch (...)
   {
     logger << "Initialization failed: reason unknown" << endl;
+#if PY_MAJOR_VERSION >= 3
+    return NULL;
+#endif
   }
 }

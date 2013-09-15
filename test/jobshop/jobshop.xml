@@ -450,6 +450,7 @@
 
 <!-- Solve and save the plan -->
 <?python
+from __future__ import print_function
 
 # The heuristic of the default solver is no match for this very complex
 # combinatorial problem.
@@ -510,12 +511,12 @@ def replan():
   # Detect if it is better than what any other solution we had before
   if verybestSolution == None or timespan <= verybest:
     if verybestSolution == None or timespan < verybest:
-      print "\nBest solution: %d, %d%% over the optimal solution, %d iterations, %f" % \
-        ( timespan, (timespan - 930) / 9.30, iterations, temperature)
+      print("\nBest solution: %d, %d%% over the optimal solution, %d iterations, %f" % \
+        ( timespan, (timespan - 930) / 9.30, iterations, temperature))
       result.sort(None, sortpriority)
       noimprovement = 0
       for l in result:
-        print "   '%s' %s %s %s" % (l[0].name, l[1], l[2], l[3])
+        print("   '%s' %s %s %s" % (l[0].name, l[1], l[2], l[3]))
     verybest = timespan
     verybestSolution = result
 
@@ -581,7 +582,7 @@ while noimprovement < 5000 and iterations < 10000:
   if temperature < temperaturemin: temperature = temperaturemin
   if temperature > temperaturemax: temperature = temperaturemax
 
-print "\nTotal %d iterations" % iterations
+print("\nTotal %d iterations" % iterations)
 
 
 # Restore the input used to generate the best solution

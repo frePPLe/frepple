@@ -213,6 +213,7 @@
   </demands>
 
 <?python
+from __future__ import print_function
 
 # Load the module
 frepple.loadmodule("mod_lpsolver.so")
@@ -238,9 +239,8 @@ lp = frepple.solver_lp(name="LP",
              "goalearly[1]",
              "goalearly[2]",
              "goalearly[3]"])
-print "objective: ", lp.objective
+print("objective: ", lp.objective)
 lp.solve()
-
 
 # Load the LP solution
 importSolution('output.sol')

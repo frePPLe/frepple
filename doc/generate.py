@@ -16,7 +16,11 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 from __future__ import print_function
-import HTMLParser, os, os.path, sys
+import os, os.path, sys, re
+try:
+  from HTMLParser import HTMLParser
+except:
+  from html.parser import HTMLParser
 
 # List of stopwords, loosely based on:
 #    http://en.wikipedia.org/wiki/Stop_words
@@ -84,10 +88,12 @@ stoplist = frozenset(["able", "about", "above", "frepple", "according", "accordi
   "you're", "you've", "your", "yours", "yourself", "yourselves", "zero"
   ])
 
+pattern = re.compile('[\.-;/=,():\*"\'\?]+')
+
 # Define a parser which takes care of:
 #   - finds all keywords in a file
 #   - echo the input as output, with certain parts of the document replaced
-class WebSiteParser(HTMLParser.HTMLParser):
+class WebSiteParser(HTMLParser):
 
   def clear(self):
     if getattr(self,'intitle',False) or getattr(self,'inreplace',False) or getattr(self,'intext',False):
@@ -199,10 +205,13 @@ class WebSiteParser(HTMLParser.HTMLParser):
     self.file_out.write("<!%s>" % decl)
 
   def get_keywords(self):
+   try:
     for x in ' '.join(self.fed).split():
-      k = x.translate(None, ".-;/=,():\"'?").lower()
+      k = pattern.sub("",x).lower()
       if len(k) > 1 and not k in stoplist and k.isalnum() and not k[0].isdigit():
         yield k
+   except Exception as e:
+    print(e)
 
   def parseFiles(self, infolder):
     global filecounter, outfile, keys
@@ -214,7 +223,7 @@ class WebSiteParser(HTMLParser.HTMLParser):
         filecounter += 1
         self.root = '../' * (infile.count(os.sep) - 1)
         file_in = open(infile)
-        self.file_out = open("%s.tmp" % infile, 'wb')
+        self.file_out = open("%s.tmp" % infile, 'wt')
         try:
           parser.clear()
           while True:
@@ -256,7 +265,7 @@ parser.parseFiles(os.path.join('output','documentation'))
 
 # Generate index file
 print("];", file=outfile)
-sk = sorted(keys.items())
+sk = sorted(list(keys.items()))
 print("var index = {", file=outfile)
 first = True
 for k, v in sk:
@@ -268,10 +277,10 @@ print("\n};", file=outfile)
 print("Statistics:")
 print("\n%d keywords found in %d files" % (len(keys), filecounter))
 print("\nTop 10 of most common words:")
-sk = sorted(keys.items(), key=lambda(k,v):(-v['count'],k))
+sk = sorted(list(keys.items()), key=lambda k:(-k[1]['count'],k[0]))
 for k, v in sk[0:10]:
   print("   '%s' used %d times in %d files" % (k, v['count'], v['filecount']))
 print("\nTop 10 of words appearing in most files:")
-sk = sorted(keys.items(), key=lambda(k,v):(-v['filecount'],k))
+sk = sorted(list(keys.items()), key=lambda k:(-k[1]['filecount'],k[0]))
 for k, v in sk[0:10]:
   print("   '%s' used %d times in %d files" % (k, v['count'], v['filecount']))

@@ -5,6 +5,7 @@
   </description>
   <current>2009-01-01T00:00:00</current>
 <?python
+from __future__ import print_function
 
 def printmodel():
   '''This function prints out information about the model to the output file'''
@@ -15,57 +16,57 @@ def printmodel():
   # Print information
   try:
 
-    print "start exporting the items"
-    print >>out, "Items:"
+    print("start exporting the items")
+    print("Items:", file=out)
     for i in frepple.items():
-      print >>out, i.name, "has owner", i.owner
+      print(i.name, "has owner", i.owner, file=out)
       for j in i.members:
-        print >>out, i.name, "has member", j.name
+        print(i.name, "has member", j.name, file=out)
 
-    print "start exporting the problems"
-    print >>out, "\nProblems:"
+    print("start exporting the problems")
+    print("\nProblems:", file=out)
     for i in frepple.problems():
-      print >>out, i.entity, i.name, i.start, i.end, i.description, i.weight
+      print(i.entity, i.name, i.start, i.end, i.description, i.weight, file=out)
 
-    print "start exporting the operation plans"
-    print >>out, "\nOperationplans:"
+    print("start exporting the operation plans")
+    print("\nOperationplans:", file=out)
     for i in frepple.operationplans():
-      print >>out, i.id, i.operation.name, i.quantity, \
-        i.start, i.end, i.demand and i.demand.name or None
+      print(i.id, i.operation.name, i.quantity,
+        i.start, i.end, i.demand and i.demand.name or None, file=out)
 
-    print "start exporting the buffer plans"
-    print >>out, "\nBuffers:"
+    print("start exporting the buffer plans")
+    print("\nBuffers:", file=out)
     for i in frepple.buffers():
-      print >>out, i.name, i.category, i.subcategory, \
-        i.description, i.onhand, i.location and i.location.name or None, \
-        i.item and i.item.name or None, \
-        i.maximum_calendar and i.maximum_calendar.name or i.maximum, \
-        i.minimum_calendar and i.minimum_calendar.name or i.minimum, \
-        i.producing and i.producing.name or None
+      print(i.name, i.category, i.subcategory,
+        i.description, i.onhand, i.location and i.location.name or None,
+        i.item and i.item.name or None,
+        i.maximum_calendar and i.maximum_calendar.name or i.maximum,
+        i.minimum_calendar and i.minimum_calendar.name or i.minimum,
+        i.producing and i.producing.name or None, file=out)
       for j in i.flowplans:
-        print >>out, "     ", j.operationplan.id, \
-          j.quantity, j.date, j.onhand
+        print("     ", j.operationplan.id,
+          j.quantity, j.date, j.onhand, file=out)
 
-    print "start exporting the resource plans"
-    print >>out, "\nResources:"
+    print("start exporting the resource plans")
+    print("\nResources:", file=out)
     for i in frepple.resources():
-      print >>out, i.name, i.category, i.subcategory, i.description, \
-        i.location and i.location.name or None, \
-        i.maximum_calendar and i.maximum_calendar.name or i.maximum, \
-        i.owner and i.owner.name or None
+      print(i.name, i.category, i.subcategory, i.description,
+        i.location and i.location.name or None,
+        i.maximum_calendar and i.maximum_calendar.name or i.maximum,
+        i.owner and i.owner.name or None, file=out)
       for j in i.loadplans:
-        print >>out, "     ", j.operationplan.id, \
-          j.quantity, j.startdate, j.enddate
+        print("     ", j.operationplan.id, j.quantity, j.startdate,
+          j.enddate, file=out)
 
-    print "start exporting the demand plans"
-    print >>out, "\nDemands:"
+    print("start exporting the demand plans")
+    print("\nDemands:", file=out)
     for i in frepple.demands():
-      print >>out, i.name, i.quantity, i.due, i.priority, \
-        i.item.name, i.operation or None, \
-        i.owner and i.owner.name or None, \
-        i.customer and i.customer.name or None
+      print(i.name, i.quantity, i.due, i.priority,
+        i.item.name, i.operation or None,
+        i.owner and i.owner.name or None,
+        i.customer and i.customer.name or None, file=out)
 
-    print "Done"
+    print("Done")
 
   # Close the file
   finally:
@@ -77,6 +78,5 @@ frepple.solver_mrp(name="MRP",constraints=15).solve()
 printmodel()
 frepple.printsize()
 frepple.saveXMLfile('output.2.xml')
-
 ?>
 </plan>

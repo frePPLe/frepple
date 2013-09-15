@@ -50,8 +50,8 @@ int Plan::initialize()
   thePlan = new Plan();
 
   // Add access to the information with a global attribute.
-  return PyModule_AddObject(PythonInterpreter::getModule(),
-      "settings", &Plan::instance()) + tmp;
+  PythonInterpreter::registerGlobalObject("settings", &Plan::instance());
+  return tmp;
 }
 
 

@@ -70,7 +70,7 @@ DECLARE_EXPORT(const char*) FreppleVersion();
   * processing is finished. The method can throw exceptions, and the client
   * is responsible for defining the correct handlers for these.
   */
-DECLARE_EXPORT(void) FreppleInitialize(int, char*[]);
+DECLARE_EXPORT(void) FreppleInitialize();
 
 /** The character buffer pointed to by the first parameter contains data in
   * XML format that is passed on to frePPLe for processing.<br>
@@ -152,7 +152,7 @@ extern "C"
     * Use this function when calling the library from C or VB applications.
     * @see FreppleInitialize
     */
-  DECLARE_EXPORT(int) FreppleWrapperInitialize(int argc, char* argv[]);
+  DECLARE_EXPORT(int) FreppleWrapperInitialize();
 
   /** Same as FreppleReadXMLData, but catches all exceptions and returns a
     * status instead.

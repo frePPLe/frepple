@@ -526,7 +526,7 @@ class PythonInterpreter
 {
   public:
     /** Initializes the interpreter. */
-    static DECLARE_EXPORT void initialize(int argc, char** argv);
+    static DECLARE_EXPORT void initialize();
 
     /** Finalizes the interpreter. */
     static DECLARE_EXPORT void finalize();
@@ -537,7 +537,7 @@ class PythonInterpreter
     /** Execute a file with Python code. */
     static DECLARE_EXPORT void executeFile(string);
 
-    /** Register a new method to Python.<br>
+    /** Register a new method in the main extension module.<br>
       * Arguments:
       * - The name of the built-in function/method
       * - The function that implements it.
@@ -549,9 +549,12 @@ class PythonInterpreter
       const char*, PyCFunction, int, const char*, bool = true
     );
 
-    /** Register a new method to Python. */
+    /** Register a new method in the main extension module. */
     static DECLARE_EXPORT void registerGlobalMethod
     (const char*, PyCFunctionWithKeywords, int, const char*, bool = true);
+
+    /** Add a new object in the main extension module. */
+    static DECLARE_EXPORT void registerGlobalObject(const char*, PyObject*, bool = true);
 
     /** Return a pointer to the main extension module. */
     static PyObject* getModule() {return module;}
@@ -573,6 +576,11 @@ class PythonInterpreter
     static DECLARE_EXPORT void deleteThread();
 
   private:
+#if PY_MAJOR_VERSION >= 3
+    /** Callback function to create the extension module. */
+    static PyObject* createModule();
+#endif
+
     /** A pointer to the frePPLe extension module. */
     static DECLARE_EXPORT PyObject *module;
 
@@ -840,7 +848,10 @@ class PythonType : public NonCopyable
       *   int compare(const PyObject* other) const
       */
     void supportcompare()
-    {table->tp_compare = compare_handler;}
+    {
+    /* TODO PYTHON3: comparison not portable?
+    table->tp_compare = compare_handler; */
+    }
 
     /** Updates tp_iter and tp_iternext.<br>
       * The extension class will need to define a member function with this
@@ -2784,6 +2795,27 @@ class PythonObject : public DataElement
     {
       if (obj == Py_None)
         return string();
+#if PY_MAJOR_VERSION >= 3
+      else if (PyUnicode_Check(obj))
+      {
+        // It's a Python unicode string
+        PyObject* x = PyUnicode_AsEncodedString(obj, "UTF-8", "ignore");
+        string result = PyBytes_AS_STRING(x);
+        Py_DECREF(x);
+        return result;
+      }
+      else
+      {
+        // It's not a Python string object.
+        // Call the repr() function on the object, and encode the result in UTF-8.
+        PyObject* x1 = PyObject_Repr(obj);
+        PyObject* x2 = PyUnicode_AsEncodedString(x1, "UTF-8", "ignore");
+        string result = PyBytes_AS_STRING(x2);
+        Py_DECREF(x1);
+        Py_DECREF(x2);
+        return result;
+      }
+#else
       else if (PyUnicode_Check(obj))
       {
         // It's a Python unicode string
@@ -2815,15 +2847,22 @@ class PythonObject : public DataElement
           return result;
         }
       }
+#endif
     }
 
     /** Extract an unsigned long from the Python object. */
     unsigned long getUnsignedLong() const
     {
       if (obj == Py_None) return 0;
+#if PY_MAJOR_VERSION >= 3
+      if (PyUnicode_Check(obj))
+      {
+        PyObject* t = PyFloat_FromString(obj);
+#else
       if (PyString_Check(obj))
       {
         PyObject* t = PyFloat_FromString(obj, NULL);
+#endif
         if (!t) throw DataException("Invalid number");
         double x = PyFloat_AS_DOUBLE(t);
         Py_DECREF(t);
@@ -2842,9 +2881,15 @@ class PythonObject : public DataElement
     inline double getDouble() const
     {
       if (obj == Py_None) return 0;
+#if PY_MAJOR_VERSION >= 3
+      if (PyUnicode_Check(obj))
+      {
+        PyObject* t = PyFloat_FromString(obj);
+#else
       if (PyString_Check(obj))
       {
         PyObject* t = PyFloat_FromString(obj, NULL);
+#endif
         if (!t) throw DataException("Invalid number");
         double x = PyFloat_AS_DOUBLE(t);
         Py_DECREF(t);
@@ -2856,9 +2901,16 @@ class PythonObject : public DataElement
     /** Convert a Python number or string into a C++ integer. */
     inline int getInt() const
     {
+      if (obj == Py_None) return 0;
+#if PY_MAJOR_VERSION >= 3
+      if (PyUnicode_Check(obj))
+      {
+        PyObject* t = PyFloat_FromString(obj);
+#else
       if (PyString_Check(obj))
       {
         PyObject* t = PyFloat_FromString(obj, NULL);
+#endif
         if (!t) throw DataException("Invalid number");
         double x = PyFloat_AS_DOUBLE(t);
         Py_DECREF(t);
@@ -2866,7 +2918,11 @@ class PythonObject : public DataElement
           throw DataException("Invalid number");
         return static_cast<int>(x);
       }
+#if PY_MAJOR_VERSION >= 3
+      int result = PyLong_AsLong(obj);
+#else
       int result = PyInt_AsLong(obj);
+#endif
       if (result == -1 && PyErr_Occurred())
         throw DataException("Invalid number");
       return result;
@@ -2875,9 +2931,16 @@ class PythonObject : public DataElement
     /** Convert a Python number into a C++ long. */
     inline long getLong() const
     {
+      if (obj == Py_None) return 0;
+#if PY_MAJOR_VERSION >= 3
+      if (PyUnicode_Check(obj))
+      {
+        PyObject* t = PyFloat_FromString(obj);
+#else
       if (PyString_Check(obj))
       {
         PyObject* t = PyFloat_FromString(obj, NULL);
+#endif
         if (!t) throw DataException("Invalid number");
         double x = PyFloat_AS_DOUBLE(t);
         Py_DECREF(t);
@@ -2885,7 +2948,11 @@ class PythonObject : public DataElement
           throw DataException("Invalid number");
         return static_cast<long>(x);
       }
-      int result = PyInt_AsLong(obj);
+#if PY_MAJOR_VERSION >= 3
+      long result = PyLong_AsLong(obj);
+#else
+      long result = PyInt_AsLong(obj);
+#endif
       if (result == -1 && PyErr_Occurred())
         throw DataException("Invalid number");
       return result;
@@ -2903,6 +2970,17 @@ class PythonObject : public DataElement
       */
     TimePeriod getTimeperiod() const
     {
+#if PY_MAJOR_VERSION >= 3
+      if (PyUnicode_Check(obj))
+      {
+        // Replace the unicode object with a string encoded in the correct locale
+        PyObject * utf8_string = PyUnicode_AsUTF8String(obj);
+        TimePeriod t(PyBytes_AsString(utf8_string));
+        Py_DECREF(utf8_string);
+        return t;
+      }
+      long result = PyLong_AsLong(obj);
+#else
       if (PyString_Check(obj))
       {
         if (PyUnicode_Check(obj))
@@ -2911,9 +2989,10 @@ class PythonObject : public DataElement
           const_cast<PyObject*&>(obj) =
             PyUnicode_AsEncodedString(obj, "UTF-8", "ignore");
         }
-        return TimePeriod(PyString_AsString(PyObject_Str(obj)));   // TODO Is this implementation leaking python objects?
+        return TimePeriod(PyString_AsString(PyObject_Str(obj)));   // TODO This implementation is leaking python objects?!?!
       }
       int result = PyInt_AsLong(obj);
+#endif
       if (result == -1 && PyErr_Occurred())
         throw DataException("Invalid number");
       return result;
@@ -2947,7 +3026,11 @@ class PythonObject : public DataElement
     /** Convert a C++ integer into a Python integer. */
     inline PythonObject(const int val)
     {
+#if PY_MAJOR_VERSION >= 3
+      obj = PyLong_FromLong(val);
+#else
       obj = PyInt_FromLong(val);
+#endif
     }
 
     /** Convert a C++ long into a Python long. */
@@ -3351,7 +3434,6 @@ class Object : public PythonExtensionBase
         // Find or create the C++ object
         PythonAttributeList atts(kwds);
         Object* x = T::reader(T::metadata, atts);
-
         // Object was deleted
         if (!x)
         {
@@ -3365,14 +3447,20 @@ class Object : public PythonExtensionBase
         while (PyDict_Next(kwds, &pos, &key, &value))
         {
           PythonObject field(value);
+#if PY_MAJOR_VERSION >= 3
+          PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+		      Attribute attr(PyBytes_AsString(key_utf8));
+          Py_DECREF(key_utf8);
+#else
           Attribute attr(PyString_AsString(key));
+#endif
           if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type) && !attr.isA(Tags::tag_action))
           {
             int result = x->setattro(attr, field);
             if (result && !PyErr_Occurred())
               PyErr_Format(PyExc_AttributeError,
-                  "attribute '%s' on '%s' can't be updated",
-                  PyString_AsString(key), x->ob_type->tp_name);
+                  "attribute '%S' on '%s' can't be updated",
+                  key, Py_TYPE(x)->tp_name);
           }
         };
         Py_INCREF(x);
@@ -5507,7 +5595,7 @@ template <class A, class B, class C> class Association
 class LibraryUtils
 {
   public:
-    static void initialize(int argc, char* argv[]);
+    static void initialize();
 };
 
 /** @brief A template class to expose iterators to Python. */

@@ -216,6 +216,7 @@
   </demands>
 
 <?python
+from __future__ import print_function
 
 allowed = [
   ['A1', 'B2', 'C1'],
@@ -232,12 +233,12 @@ def checkAlternate(flowplan,mode):
   # The value of global variables is shared across calls to this function.
   global allowed
   # Debugging print statements
-  print "Validating combination",
+  print("Validating combination", end="")
   for fp in flowplan.operationplan.flowplans:
     if fp.quantity > 0: continue
-    print fp.buffer.item.name,
+    print(fp.buffer.item.name, end="")
     if fp == flowplan: break
-  print ":",
+  print(":", end="")
   # Loop through all allowed combinations, and check whether they match the
   # currently selected part combination
   for combination in allowed:
@@ -252,16 +253,16 @@ def checkAlternate(flowplan,mode):
       if fp == flowplan: break
     if ok:
       # All current parts match
-      print "yes"
+      print("yes")
       return True
-  print "no"
+  print("no")
   return False
 
-print "CREATING CONSTRAINED PLAN"
+print("CREATING CONSTRAINED PLAN")
 sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2, userexit_flow=checkAlternate)
 sol.solve()
 frepple.saveplan("output.1.xml")
-print "CREATING UNCONSTRAINED PLAN"
+print("CREATING UNCONSTRAINED PLAN")
 sol.plantype = 2
 sol.solve()
 frepple.saveplan("output.2.xml")

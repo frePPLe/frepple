@@ -228,39 +228,41 @@
   </demands>
 
 <?python
+from __future__ import print_function
+
 # Testing the Python API of the setup matrix
-print ""
+print("")
 for m in frepple.setupmatrices():
-  print "Matrix '%s' has the following rules:" % m.name
+  print("Matrix '%s' has the following rules:" % m.name)
   for i in m.rules:
-    print "   ", i.priority, i.fromsetup, i.tosetup, i.duration, i.cost
-print ""
+    print("   ", i.priority, i.fromsetup, i.tosetup, i.duration, i.cost)
+print("")
 for r in frepple.resources():
-  print "Resource '%s' uses matrix '%s'" % (r, r.setupmatrix)
-print ""
+  print("Resource '%s' uses matrix '%s'" % (r, r.setupmatrix))
+print("")
 
 # Create an unconstrained plan
-print "CREATING UNCONSTRAINED PLAN"
+print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(name="MRP unconstrained", constraints=0, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
 
 # Report resource conversions in the unconstrained plan
 for i in frepple.resources():
-  print "Loading of resource '%s'" % i.name
+  print("Loading of resource '%s'" % i.name)
   for j in i.loadplans:
-    print "  %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name)
+    print("  %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name))
 j = None  # Removes the Python reference to the last loadplan
 
 # Create a constrained plan
-print "\n\nCREATING CONSTRAINED PLAN"
+print("\n\nCREATING CONSTRAINED PLAN")
 frepple.solver_mrp(name="MRP constrained", constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 
 # Report resource conversions in the constrained plan
 for i in frepple.resources():
-  print "Loading of resource '%s'" % i.name
+  print("Loading of resource '%s'" % i.name)
   for j in i.loadplans:
-    print "  %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name)
+    print("  %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name))
 ?>
 
 </plan>

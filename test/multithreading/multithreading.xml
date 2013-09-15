@@ -67,6 +67,7 @@
   </demands>
 
 <?python
+from __future__ import print_function
 
 # Skip this test by default!!!
 sys.exit(0)
@@ -162,8 +163,8 @@ class Worker (threading.Thread):
 
       # Execute the command
       try: self.method(self.id,self.count)
-      except Exception, e:
-        print "Exception in thread", self.name, ":", e
+      except Exception as e:
+        print("Exception in thread", self.name, ":", e)
         self.fail += 1
       else:
         # Collect statistics
@@ -204,22 +205,22 @@ try:
   #for t in threads: t.join()
 except KeyboardInterrupt:
   # The test has been interupted, which counts as a failure
-  print "Interrupted test"
+  print("Interrupted test")
 
 totaltime = time.clock() - starttime
 
 # The final results
-print "\n  Thread    #execs(failures)  TotTime  Avg Time  Min Time  Max Time"
+print("\n  Thread    #execs(failures)  TotTime  Avg Time  Min Time  Max Time")
 for t in threads:
   if t.count > 0:
-    print "%10s %6u(%u) %8.3f %9.3f %9.3f %9.3f" % (t.name, t.count, t.fail, t.sumtime, t.sumtime/t.count, t.mintime, t.maxtime)
+    print("%10s %6u(%u) %8.3f %9.3f %9.3f %9.3f" % (t.name, t.count, t.fail, t.sumtime, t.sumtime/t.count, t.mintime, t.maxtime))
   else:
-    print "%10s %6u(%u) %8.3f %9.3f %9.3f %9.3f" % (t.name, 0, 0, 0, 0, 0, 0)
-print "total time %.3f" % totaltime
+    print("%10s %6u(%u) %8.3f %9.3f %9.3f %9.3f" % (t.name, 0, 0, 0, 0, 0, 0))
+print("total time %.3f" % totaltime)
 
 frepple.printsize()
 
-print "\nTest passed"
+print("\nTest passed")
 sys.exit(0)
 ?>
 </plan>

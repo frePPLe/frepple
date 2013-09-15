@@ -1039,14 +1039,20 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
       while (PyDict_Next(kwds, &pos, &key, &value))
       {
         PythonObject field(value);
+#if PY_MAJOR_VERSION >= 3
+        PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+        Attribute attr(PyBytes_AsString(key_utf8));
+        Py_DECREF(key_utf8);
+#else
         Attribute attr(PyString_AsString(key));
+#endif
         if (!attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_id) && !attr.isA(Tags::tag_action))
         {
           int result = x->setattro(attr, field);
           if (result && !PyErr_Occurred())
             PyErr_Format(PyExc_AttributeError,
-                "attribute '%s' on '%s' can't be updated",
-                PyString_AsString(key), x->ob_type->tp_name);
+                "attribute '%S' on '%s' can't be updated",
+                key, Py_TYPE(x)->tp_name);
         }
       };
     }

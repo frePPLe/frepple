@@ -11,21 +11,23 @@
   <current>2009-01-01T00:00:00</current>
 
 <?python
+from __future__ import print_function
 import sys, os
 myvariable = 4
-print '1. defining my variable:', myvariable
+print('1. defining my variable:', myvariable)
 ?>
 
 <?python
-print '2. retrieving a variable:', myvariable
-print '3. calling a function:',
+from __future__ import print_function
+print('2. retrieving a variable:', myvariable)
+print('3. calling a function:', end="")
 result = my_function(myvariable)
-print result
-print '4. python catches exceptions thrown from the frepple C++ code'
+print(result)
+print('4. python catches exceptions thrown from the frepple C++ code')
 try:
   frepple.readXMLfile("does_not_exist.xml")
-except Exception, e:
-  print "    Caught exception: ", e
+except Exception as e:
+  print("    Caught exception: ", e)
 
 # In the next steps we are comparing the speed of 3 types of APIs each
 # achieving exactly the same final result:
@@ -35,11 +37,11 @@ except Exception, e:
 #  3) Python to read a CSV-datafile, which then the calls the C++ API
 #     directly.
 # The relative performance is pretty interesting:
-#  1) 2.56 sec
-#  2) 3.17 sec
-#  3) 1.61 sec
+#  1) 1.20 sec
+#  2) 1.45 sec
+#  3) 0.84 sec
 # These numbers are based on a file with 200000 items and 100 operations
-# to create. The test is running on a 3.2GHz Intel Pentium (R) dual core
+# to create. The test is running on a 1.6GHz Intel i7 (R) quad core
 # Linux machine.
 # Conclusion: The overhead of parsing of the verbose XML data format
 # is considerable, even when coded in C++. Interpreted "slow" Python code
@@ -50,7 +52,7 @@ create_files(200000)
 start = os.times()
 frepple.readXMLfile("items.xml",False)
 end = os.times()
-print "5. Read XML file: user time %f, system time %f, elapsed time %f" % (end[0]-start[0], end[1]-start[1], end[4]-start[4])
+print("5. Read XML file: user time %f, system time %f, elapsed time %f" % (end[0]-start[0], end[1]-start[1], end[4]-start[4]))
 frepple.saveXMLfile("afterXMLread.xml")
 frepple.erase(True)
 frepple.saveXMLfile("aftererase1.xml")
@@ -58,7 +60,7 @@ frepple.saveXMLfile("aftererase1.xml")
 start = os.times()
 read_csv_file()
 end = os.times()
-print "6. Read CSV file & generate XML data: user time %f, system time %f, elapsed time %f" % (end[0]-start[0], end[1]-start[1], end[4]-start[4])
+print("6. Read CSV file & generate XML data: user time %f, system time %f, elapsed time %f" % (end[0]-start[0], end[1]-start[1], end[4]-start[4]))
 frepple.saveXMLfile("afterCSVread.xml")
 frepple.erase(True)
 frepple.saveXMLfile("aftererase2.xml")
@@ -66,7 +68,7 @@ frepple.saveXMLfile("aftererase2.xml")
 start = os.times()
 read_csv_file_direct()
 end = os.times()
-print "7. Read CSV file: user time %f, system time %f, elapsed time %f" % (end[0]-start[0], end[1]-start[1], end[4]-start[4])
+print("7. Read CSV file: user time %f, system time %f, elapsed time %f" % (end[0]-start[0], end[1]-start[1], end[4]-start[4]))
 frepple.saveXMLfile("afterCSVDirectread.xml")
 frepple.erase(True)
 frepple.saveXMLfile("aftererase3.xml")
@@ -77,6 +79,7 @@ frepple.saveXMLfile("output.1.xml")
 #
 # A simple user interface.
 #
+from __future__ import print_function
 def UI():
   import Tkinter
 
@@ -115,6 +118,7 @@ def UI():
 #
 # A simple web server.
 #
+from __future__ import print_function
 def webserver():
   import SimpleHTTPServer, SocketServer
   PORT = 8000
@@ -128,17 +132,17 @@ def webserver():
         self.send_header("Content-type", "application/xml")
         #self.send_header("Cache-Control", "no-cache")
         self.end_headers()
-        print >>self.wfile, '<?xml version="1.0" encoding="UTF-8" ?%s' % '>'
-        print >>self.wfile, r'<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><locations>'
+        print('<?xml version="1.0" encoding="UTF-8" ?%s' % '>', file=self.wfile)
+        print(r'<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><locations>', file=self.wfile)
         for i in frepple.locations():
-          print >>self.wfile, '<location name="%s" category="%s"/>' % (i.name, i.category)
-        print >>self.wfile, r'</locations></plan>'
+          print('<location name="%s" category="%s"/>' % (i.name, i.category), file=self.wfile)
+        print(r'</locations></plan>', file=self.wfile)
       except:
         self.send_error(500, "Exception generating demand list page")
 
-  print "started HTTP server on port ", PORT
-  print "Point your browser to http://localhost:" + str(PORT) + " to see the pages."
-  print "Use ctrl-c to exit..."
+  print("started HTTP server on port ", PORT)
+  print("Point your browser to http://localhost:" + str(PORT) + " to see the pages.")
+  print("Use ctrl-c to exit...")
   SocketServer.TCPServer(("", PORT), FreppleServer).serve_forever()
 
 # Uncomment this line to show...
@@ -149,10 +153,11 @@ def webserver():
 #
 # An interactive debugging prompt.
 #
+from __future__ import print_function
 def debug():
   import code
   code.interact("Interactive debugging prompt (use CTRL-Z to exit)")
-  print "end debugging"
+  print("end debugging")
 
 # Uncomment this line to show...
 #debug()
@@ -163,6 +168,7 @@ def debug():
 # The user interface, HTTP server and the debugger are now running
 # together in different threads.
 #
+from __future__ import print_function
 from threading import Thread
 class task(Thread):
   def __init__(self, f):

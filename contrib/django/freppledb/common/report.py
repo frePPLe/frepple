@@ -45,7 +45,7 @@ from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.http import  HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
 from django.forms.models import modelform_factory
 from django.shortcuts import render
-from django.utils import translation
+from django.utils import translation, six
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str, iri_to_uri, force_unicode
 from django.utils.html import escape
@@ -351,7 +351,8 @@ class GridReport(View):
   @classmethod
   def _generate_csv_data(reportclass, request, *args, **kwargs):
     sf = cStringIO.StringIO()
-    if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
+    decimal_separator = get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True)
+    if decimal_separator == ",":
       writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
     else:
       writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
@@ -379,9 +380,9 @@ class GridReport(View):
       sf.truncate(0)
       # Build the return value, encoding all output
       if hasattr(row, "__getitem__"):
-        writer.writerow([ row[f]==None and ' ' or unicode(_localize(row[f])).encode(encoding,"ignore") for f in fields ])
+        writer.writerow([ row[f]==None and ' ' or unicode(_localize(row[f],decimal_separator)).encode(encoding,"ignore") for f in fields ])
       else:
-        writer.writerow([ getattr(row,f)==None and ' ' or unicode(_localize(getattr(row,f))).encode(encoding,"ignore") for f in fields ])
+        writer.writerow([ getattr(row,f)==None and ' ' or unicode(_localize(getattr(row,f),decimal_separator)).encode(encoding,"ignore") for f in fields ])
       # Return string
       yield sf.getvalue()
 
@@ -1154,7 +1155,8 @@ class GridPivot(GridReport):
   @classmethod
   def _generate_csv_data(reportclass, request, *args, **kwargs):
     sf = cStringIO.StringIO()
-    if get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',':
+    decimal_separator = get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True)
+    if decimal_separator == ',':
       writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=';')
     else:
       writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
@@ -1197,11 +1199,11 @@ class GridPivot(GridReport):
         if hasattr(row, "__getitem__"):
           fields = [ row[f.name]==None and ' ' or unicode(row[f.name]).encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
           fields.extend([ row['bucket'].encode(encoding,"ignore") ])
-          fields.extend([ row[f[0]]==None and ' ' or unicode(_localize(row[f[0]])).encode(encoding,"ignore") for f in reportclass.crosses ])
+          fields.extend([ row[f[0]]==None and ' ' or unicode(_localize(row[f[0]],decimal_separator)).encode(encoding,"ignore") for f in reportclass.crosses ])
         else:
           fields = [ getattr(row,f.name)==None and ' ' or unicode(getattr(row,f.name)).encode(encoding,"ignore") for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
           fields.extend([ getattr(row,'bucket').encode(encoding,"ignore") ])
-          fields.extend([ getattr(row,f[0])==None and ' ' or unicode(_localize(getattr(row,f[0]))).encode(encoding,"ignore") for f in reportclass.crosses ])
+          fields.extend([ getattr(row,f[0])==None and ' ' or unicode(_localize(getattr(row,f[0]),decimal_separator)).encode(encoding,"ignore") for f in reportclass.crosses ])
         # Return string
         writer.writerow(fields)
         yield sf.getvalue()
@@ -1222,7 +1224,7 @@ class GridPivot(GridReport):
             sf.truncate(0)
             fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) and not s.hidden ]
             fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0]))).encode(encoding,"ignore")] )
-            fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
+            fields.extend([ unicode(_localize(bucket[cross[0]],decimal_separator)).encode(encoding,"ignore") for bucket in row_of_buckets ])
             # Return string
             writer.writerow(fields)
             yield sf.getvalue()
@@ -1235,13 +1237,15 @@ class GridPivot(GridReport):
         sf.truncate(0)
         fields = [ unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore") for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) and not s.hidden ]
         fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0]))).encode(encoding,"ignore")] )
-        fields.extend([ unicode(_localize(bucket[cross[0]])).encode(encoding,"ignore") for bucket in row_of_buckets ])
+        fields.extend([ unicode(_localize(bucket[cross[0]],decimal_separator)).encode(encoding,"ignore") for bucket in row_of_buckets ])
         # Return string
         writer.writerow(fields)
         yield sf.getvalue()
 
 
-def _localize(value, use_l10n=None):
+numericTypes = (Decimal, float) + six.integer_types
+
+def _localize(value, decimal_separator):
   '''
   Localize numbers.
   Dates are always represented as YYYY-MM-DD hh:mm:ss since this is
@@ -1250,10 +1254,10 @@ def _localize(value, use_l10n=None):
   '''
   if callable(value):
     value = value()
-  if isinstance(value, (Decimal, float, int, long)):
-    return number_format(value, use_l10n=use_l10n)
+  if isinstance(value, numericTypes):
+    return decimal_separator=="," and six.text_type(value).replace(".",",") or six.text_type(value)
   elif isinstance(value, (list,tuple) ):
-    return "|".join([ unicode(_localize(i)) for i in value ])
+    return "|".join([ unicode(_localize(i,decimal_separator)) for i in value ])
   else:
     return value
 

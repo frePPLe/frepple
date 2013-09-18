@@ -26,47 +26,6 @@ import freppledb.output as output
 import freppledb.input as input
 
 
-class execute_from_user_interface(TransactionTestCase):
-
-  def setUp(self):
-    # Login
-    self.client.login(username='frepple', password='frepple')
-
-  def test_execute_page(self):
-    response = self.client.get('/execute/')
-    self.assertEqual(response.status_code, 200)
-
-  def test_run_ui(self):
-    # Empty the database tables
-    response = self.client.post('/execute/erase/', {'action':'erase'})
-    # The answer is a redirect to a new page, which also contains the success message
-    self.assertRedirects(response, '/execute/execute.html#database')
-    self.assertEqual(input.models.Calendar.objects.count(),0)
-    self.assertEqual(input.models.Demand.objects.count(),0)
-    self.assertEqual(output.models.Problem.objects.count(),0)
-    self.assertEqual(output.models.FlowPlan.objects.count(),0)
-    self.assertEqual(output.models.LoadPlan.objects.count(),0)
-    self.assertEqual(output.models.OperationPlan.objects.count(),0)
-
-    # Load a dataset
-    response = self.client.post('/execute/fixture/', {'action':'load', 'datafile':'small_demo'})
-    self.assertRedirects(response, '/execute/execute.html#database')
-    self.assertNotEqual(input.models.Calendar.objects.count(),0)
-    self.assertNotEqual(input.models.Demand.objects.count(),0)
-
-    # Run frePPLe,  and make sure the test database is used
-    os.environ['FREPPLE_TEST'] = "YES"
-    response = self.client.post('/execute/runfrepple/', {'action':'run', 'constraint':'15', 'plantype':'1'})
-    del os.environ['FREPPLE_TEST']
-    self.assertRedirects(response, '/execute/execute.html#plan')
-
-    # Count the output records
-    self.assertEqual(output.models.Problem.objects.count(),22)
-    self.assertEqual(output.models.FlowPlan.objects.count(),207)
-    self.assertEqual(output.models.LoadPlan.objects.count(),50)
-    self.assertEqual(output.models.OperationPlan.objects.count(),126)
-
-
 class execute_with_commands(TransactionTestCase):
 
   def setUp(self):

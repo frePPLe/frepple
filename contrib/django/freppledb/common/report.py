@@ -41,7 +41,8 @@ from django.core.management.color import no_style
 from django.db import connections, transaction, models
 from django.db.models.fields import Field, CharField, AutoField
 from django.db.models.fields.related import RelatedField
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import Http404, HttpResponse, StreamingHttpResponse
+from django.http import  HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
 from django.forms.models import modelform_factory
 from django.shortcuts import render
 from django.utils import translation
@@ -529,17 +530,17 @@ class GridReport(View):
       # Return JSON data to fill the grid.
       # Response is not returned as an iterator to assure that the database
       # connection is properly closed.
-      return HttpResponse(
+      return StreamingHttpResponse(
          content_type = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
-         content = ''.join(reportclass._generate_json_data(request, *args, **kwargs))
+         streaming_content = reportclass._generate_json_data(request, *args, **kwargs)
          )
     elif fmt == 'csvlist' or fmt == 'csvtable':
       # Return CSV data to export the data
       # Response is not returned as an iterator to assure that the database
       # connection is properly closed.
-      response = HttpResponse(
+      response = StreamingHttpResponse(
          content_type = 'text/csv; charset=%s' % settings.CSV_CHARSET,
-         content = ''.join(reportclass._generate_csv_data(request, *args, **kwargs))
+         streaming_content = reportclass._generate_csv_data(request, *args, **kwargs)
          )
       response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
       return response

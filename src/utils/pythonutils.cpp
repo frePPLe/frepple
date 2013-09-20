@@ -344,7 +344,7 @@ const PyTypeObject PythonType::PyTypeObjectTemplate =
   0,  /* tp_print */
   0,  /* tp_getattr */
   0,  /* tp_setattr */
-  0,  /* CAN BE UPDATED tp_compare */
+  0,  /* tp_compare */
   0,  /* tp_repr */
   0,  /* tp_as_number */
   0,  /* tp_as_sequence */
@@ -359,7 +359,7 @@ const PyTypeObject PythonType::PyTypeObjectTemplate =
   "std doc", /* CAN BE UPDATED  tp_doc */
   0,  /* tp_traverse */
   0,  /* tp_clear */
-  0,  /* tp_richcompare */
+  0,  /* CAN BE UPDATED tp_richcompare */
   0,  /* tp_weaklistoffset */
   0,  /* CAN BE UPDATED tp_iter */
   0,  /* CAN BE UPDATED tp_iternext */
@@ -489,19 +489,19 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
   {
     // Parse the argument
     PyObject *filearg = NULL;
-    char mode = 'S';
-    if (!PyArg_ParseTuple(args, "|cO:toXML", &mode, &filearg))
+    char *mode = NULL;
+    if (!PyArg_ParseTuple(args, "|sO:toXML", &mode, &filearg))
       return NULL;
 
     // Create the XML string.
     ostringstream ch;
     XMLOutput x(ch);
     x.setReferencesOnly(true);
-    if (mode == 'S')
+    if (!mode || mode[0] == 'S')
       x.setContentType(XMLOutput::STANDARD);
-    else if (mode == 'P')
+    else if (mode[0] == 'P')
       x.setContentType(XMLOutput::PLAN);
-    else if (mode == 'D')
+    else if (mode[0] == 'D')
       x.setContentType(XMLOutput::PLANDETAIL);
     else
       throw DataException("Invalid output mode");
@@ -823,16 +823,33 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
 }
 
 
-extern "C" DECLARE_EXPORT int compare_handler(PyObject *self, PyObject *other)
+extern "C" DECLARE_EXPORT PyObject* compare_handler(PyObject *self, PyObject *other, int op)
 {
   try
   {
-    return static_cast<PythonExtensionBase*>(self)->compare(other);
+    if (Py_TYPE(self) != Py_TYPE(other)
+        && Py_TYPE(self)->tp_base != Py_TYPE(other)->tp_base)
+    {
+      // Can't compare these objects.
+      Py_INCREF(Py_NotImplemented);
+      return Py_NotImplemented;
+    }
+    int result = static_cast<PythonExtensionBase*>(self)->compare(other);
+    switch(op)
+    {
+      case Py_LT: return PythonObject(result > 0);
+      case Py_LE: return PythonObject(result >= 0);
+      case Py_EQ: return PythonObject(result == 0);
+      case Py_NE: return PythonObject(result != 0);
+      case Py_GT: return PythonObject(result < 0);
+      case Py_GE: return PythonObject(result <= 0);
+      default: throw LogicException("Unknown operator in comparison");
+    }
   }
   catch (...)
   {
     PythonType::evalException();
-    return -1;
+    return NULL;
   }
 }
 

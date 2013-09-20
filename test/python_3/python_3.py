@@ -248,7 +248,7 @@ itemlist = [ frepple.item(name="item %d" % i) for i in range(10) ]
 
 ###
 print("\nTesting the comparison operator")
-print("makoper < shipoper", makeoper < shipoper)
+print("makeoper < shipoper", makeoper < shipoper)
 print("shipoper < makeoper", shipoper < makeoper)
 print("shipoper != makeoper", shipoper != makeoper)
 print("shipoper == makeoper", shipoper == makeoper)

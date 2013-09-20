@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<name>demo model</name>
-	<description>demo description in unicode object</description>
+	<description>unicode А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь</description>
 	<current>2009-01-01T00:00:00</current>
 	<solvers>
 		<solver name="MRP" xsi:type="solver_mrp">

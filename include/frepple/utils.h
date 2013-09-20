@@ -748,7 +748,7 @@ extern "C"
   /** Handler function called from Python. Internal use only. */
   DECLARE_EXPORT int setattro_handler (PyObject*, PyObject*, PyObject*);
   /** Handler function called from Python. Internal use only. */
-  DECLARE_EXPORT int compare_handler (PyObject*, PyObject*);
+  DECLARE_EXPORT PyObject* compare_handler (PyObject*, PyObject*, int);
   /** Handler function called from Python. Internal use only. */
   DECLARE_EXPORT PyObject* iternext_handler (PyObject*);
   /** Handler function called from Python. Internal use only. */
@@ -842,15 +842,14 @@ class PythonType : public NonCopyable
     void supportsetattro()
     {table->tp_setattro = setattro_handler;}
 
-    /** Updates tp_compare.<br>
+    /** Updates tp_richcompare.<br>
       * The extension class will need to define a member function with this
       * prototype:<br>
       *   int compare(const PyObject* other) const
       */
     void supportcompare()
     {
-    /* TODO PYTHON3: comparison not portable?
-    table->tp_compare = compare_handler; */
+      table->tp_richcompare = compare_handler;
     }
 
     /** Updates tp_iter and tp_iternext.<br>
@@ -3257,8 +3256,7 @@ class PythonExtensionBase : public PyObject
       */
     virtual int compare(const PyObject* other) const
     {
-      PyErr_SetString(PythonLogicException, "Missing method 'compare'");
-      return -1;
+      throw LogicException("Missing method 'compare'");
     }
 
     /** Default iternext method. <br>
@@ -4793,15 +4791,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     /** Comparison operator for Python. */
     int compare(const PyObject* other) const
     {
-      if (this->ob_type == other->ob_type
-          || this->ob_type->tp_base == other->ob_type->tp_base)
-        return getName().compare(static_cast<const T*>(other)->getName());
-      else
-      {
-        // Different types
-        PyErr_SetString(PythonDataException, "Wrong type in comparison");
-        return -1;
-      }
+      return getName().compare(static_cast<const T*>(other)->getName());
     }
 
     /** Find an entity given its name. In case it can't be found, a NULL

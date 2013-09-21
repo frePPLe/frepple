@@ -17,6 +17,8 @@
 from __future__ import print_function
 
 from django.db import models, transaction, DEFAULT_DB_ALIAS
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
@@ -108,3 +110,14 @@ class Scenario(models.Model):
     verbose_name_plural = _('scenarios')
     verbose_name = _('scenario')
     ordering = ['name']
+
+
+@receiver(post_save, sender=User)
+def sync_handler(sender, **kwargs):
+  if not kwargs.get('created',False) or kwargs.get('using',DEFAULT_DB_ALIAS) != DEFAULT_DB_ALIAS:
+    return
+  # A new user is created in the default database.
+  # We create the same user in all scenarios that are in use. Otherwise the user can't create
+  # comments or edit objects in these what-if scenarios.
+  for sc in Scenario.objects.all().filter(status=u'In use'):
+    kwargs['instance'].save(using=sc.name)

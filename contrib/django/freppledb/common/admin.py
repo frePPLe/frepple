@@ -19,6 +19,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
+from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
@@ -28,10 +29,25 @@ from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
 from freppledb.admin import admin_site
 
 
-# Register the models from the Auth application.
-# The admin users can then create, change and delete users and user groups.
+# Registering the User admin for our custom model.
+# See http://stackoverflow.com/questions/16953302/django-custom-user-model-in-admin-relation-auth-user-does-not-exists
+# to understand the need for this extra customization.
+class MyUserCreationForm(UserCreationForm):
+  def clean_username(self):
+    username = self.cleaned_data["username"]
+    try: User.objects.get(username=username)
+    except User.DoesNotExist: return username
+    raise forms.ValidationError(self.error_messages['duplicate_username'])
+
+  class Meta(UserCreationForm.Meta):
+    model = User
+
+class MyUserAdmin(UserAdmin):
+    save_on_top = True
+    add_form = MyUserCreationForm
+
 admin_site.register(Group, GroupAdmin)
-admin_site.register(User, UserAdmin)
+admin_site.register(User, MyUserAdmin)
 
 
 class ParameterForm(forms.ModelForm):

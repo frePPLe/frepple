@@ -20,7 +20,10 @@ Main Django configuration file.
 '''
 import os, sys, locale
 
-DEBUG = 'runserver' in sys.argv
+try:
+  DEBUG = 'runserver' in sys.argv
+except:
+  DEBUG = False
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -112,7 +115,7 @@ LANGUAGES = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
-	
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
    #('django.template.loaders.cached.Loader', (

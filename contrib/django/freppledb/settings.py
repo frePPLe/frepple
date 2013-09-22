@@ -67,7 +67,10 @@ elif os.sep == '/' and os.path.isfile('/etc/frepple/djangosettings.py'):
 else:
   FREPPLE_CONFIGDIR = FREPPLE_APP
 
-DEBUG = 'runserver' in sys.argv
+try:
+  DEBUG = 'runserver' in sys.argv
+except:
+  DEBUG = False
 
 # A list of strings representing the host/domain names the application can serve.
 # This is a security measure to prevent an attacker from poisoning caches and

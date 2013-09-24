@@ -34,7 +34,7 @@ class Command(BaseCommand):
       help='User running the command'),
     make_option('--constraint', dest='constraint', type='choice',
       choices=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'], default='15',
-      help='Constraints: 1=lead time, 2=material, 4=capacity, 8=release fence'),
+      help='Constraints to be considered: 1=lead time, 2=material, 4=capacity, 8=release fence'),
     make_option('--plantype', dest='plantype', type='choice', choices=['1','2'],
       default='1', help='Plan type: 1=constrained, 2=unconstrained'),
     make_option('--database', action='store', dest='database',
@@ -89,7 +89,7 @@ class Command(BaseCommand):
       else: plantype = 1
 
       # Log task
-      task.arguments = "--constraints=%d --plantype=%d" % (constraint, plantype)
+      task.arguments = "--constraint=%d --plantype=%d" % (constraint, plantype)
       task.save(using=database)
       transaction.commit(using=database)
 

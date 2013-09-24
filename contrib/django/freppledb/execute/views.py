@@ -118,7 +118,7 @@ def LaunchTask(request, action):
         try: constraint += int(value)
         except: pass
       task = Task(name='generate plan', submitted=now, status='Waiting', user=request.user)
-      task.arguments = "--constraints=%s --plantype=%s" % (constraint, request.POST.get('plantype'))
+      task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype'))
       task.save(using=request.database)
       # Update the session object   TODO REPLACE WITH PREFERENCE INFO
       request.session['plantype'] = request.POST.get('plantype')

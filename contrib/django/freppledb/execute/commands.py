@@ -92,12 +92,10 @@ def createPlan():
   except: plantype = 1  # Default is a constrained plan
   try: constraint = int(os.environ['FREPPLE_CONSTRAINT'])
   except: constraint = 15  # Default is with all constraints enabled
-  solver = frepple.solver_mrp(name="MRP",
-    constraints=constraint,
-    plantype=plantype,
+  solver = frepple.solver_mrp(name = "MRP", constraints = constraint,
+    plantype = plantype, loglevel=int(Parameter.getValue('plan.loglevel', db, 0))
     #userexit_resource=debugResource,
-    #userexit_demand=debugDemand,
-    loglevel=2
+    #userexit_demand=debugDemand
     )
   print("Plan type: ", plantype)
   print("Constraints: ", constraint)

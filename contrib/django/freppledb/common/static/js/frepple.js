@@ -969,14 +969,14 @@ var gantt = {
         x1 = (bucketstart.getTime() - viewstart.getTime()) / 86400000 * scaling;
         bucketend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+1, 1);
         x2 = (bucketend.getTime() - viewstart.getTime()) / 86400000 * scaling;
-        result.push('<text style="text-anchor:middle" x="' + Math.floor((x1+x2)/2) + '" y="31" fill="black">' + $.datepicker.formatDate("M", bucketstart) + '</text>');
+        result.push('<text style="text-anchor:middle" x="' + Math.floor((x1+x2)/2) + '" y="31">' + $.datepicker.formatDate("M", bucketstart) + '</text>');
             if (bucketstart.getMonth() % 3 == 0)
             {
             quarterend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+3, 1);
             x2 = (quarterend.getTime() - viewstart.getTime()) / 86400000 * scaling;
             quarter = Math.floor((bucketstart.getMonth()+3)/3);
           result.push('<line class="time" x1="' + Math.floor(x1) + '" y1="0" x2="' + Math.floor(x1) + '" y2="34"/>');
-          result.push('<text style="text-anchor:middle" x="' + Math.floor((x1+x2)/2) + '" y="13" fill="black">' + bucketstart.getFullYear() + " Q" + quarter + '</text>');
+          result.push('<text style="text-anchor:middle" x="' + Math.floor((x1+x2)/2) + '" y="13">' + bucketstart.getFullYear() + " Q" + quarter + '</text>');
             }
             else
           result.push('<line class="time" x1="' + Math.floor(x1) + '" y1="17" x2="' + Math.floor(x1) + '" y2="34"/>');
@@ -989,7 +989,7 @@ var gantt = {
       while (bucketstart < viewend)
       {
         result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
-        result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling*3.5) + '" y="31" fill="black">' + $.datepicker.formatDate("mm-dd", bucketstart) + '</text>');
+        result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling*3.5) + '" y="31">' + $.datepicker.formatDate("mm-dd", bucketstart) + '</text>');
         x = x + scaling*7;
         bucketstart.setTime(bucketstart.getTime() + 86400000 * 7);
       }
@@ -1000,7 +1000,7 @@ var gantt = {
         bucketend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+1, 1);
         x2 = (bucketend.getTime() - viewstart.getTime()) / 86400000 * scaling;
         result.push('<line class="time" x1="' + Math.floor(x1) + '" y1="0" x2="' + Math.floor(x1) + '" y2="17"/>');
-        result.push('<text style="text-anchor:middle" x="' + Math.floor((x1+x2)/2) + '" y="13" fill="black">' + $.datepicker.formatDate("M yy", bucketstart) + '</text>');
+        result.push('<text style="text-anchor:middle" x="' + Math.floor((x1+x2)/2) + '" y="13">' + $.datepicker.formatDate("M yy", bucketstart) + '</text>');
         bucketstart = bucketend;
       }
     }
@@ -1010,7 +1010,7 @@ var gantt = {
       while (bucketstart < viewend)
       {
         result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
-        result.push('<text style="text-anchor:middle" x="' + (x + scaling*7.0/2.0) + '" y="31" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
+        result.push('<text style="text-anchor:middle" x="' + (x + scaling*7.0/2.0) + '" y="31">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
         x = x + scaling*7.0;
         bucketstart.setTime(bucketstart.getTime() + 86400000 * 7);
       }
@@ -1021,7 +1021,7 @@ var gantt = {
         bucketend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+1, 1);
         x2 = (bucketend.getTime() - viewstart.getTime()) / 86400000 * scaling;
         result.push('<line class="time" x1="' + Math.floor(x1) + '" y1="0" x2="' + Math.floor(x1) + '" y2="17"/>');
-        result.push('<text style="text-anchor:middle" x="' + Math.floor((x1+x2)/2) + '" y="13" fill="black">' + $.datepicker.formatDate("M yy", bucketstart) + '</text>');
+        result.push('<text style="text-anchor:middle" x="' + Math.floor((x1+x2)/2) + '" y="13">' + $.datepicker.formatDate("M yy", bucketstart) + '</text>');
         bucketstart = bucketend;
       }
     }
@@ -1033,13 +1033,13 @@ var gantt = {
         if (bucketstart.getDay() == 0)
         {
           result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
-          result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling*7/2) + '" y="13" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
+          result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling*7/2) + '" y="13">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
         }
         else
         {
           result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
         }
-        result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate("d", bucketstart) + '</text>');
+        result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling/2) + '" y="31">' + $.datepicker.formatDate("d", bucketstart) + '</text>');
         x = x + scaling;
         bucketstart.setDate(bucketstart.getDate()+1);
       }
@@ -1052,13 +1052,13 @@ var gantt = {
         if (bucketstart.getDay() == 0)
         {
           result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
-          result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling*7/2) + '" y="13" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
+          result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling*7/2) + '" y="13">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
         }
         else
         {
           result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
         }
-        result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate("dd M", bucketstart) + '</text>');
+        result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling/2) + '" y="31">' + $.datepicker.formatDate("dd M", bucketstart) + '</text>');
         x = x + scaling;
         bucketstart.setDate(bucketstart.getDate()+1);
       }
@@ -1071,11 +1071,11 @@ var gantt = {
         if (bucketstart.getDay() == 0)
         {
           result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
-          result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling*3.5) + '" y="13" fill="black">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
+          result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling*3.5) + '" y="13">' + $.datepicker.formatDate("yy-mm-dd", bucketstart) + '</text>');
         }
         else
           result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
-        result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling/2) + '" y="31" fill="black">' + $.datepicker.formatDate("D dd M", bucketstart) + '</text>');
+        result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling/2) + '" y="31">' + $.datepicker.formatDate("D dd M", bucketstart) + '</text>');
         x = x + scaling;
         bucketstart.setDate(bucketstart.getDate()+1);
       }
@@ -1088,11 +1088,11 @@ var gantt = {
         if (bucketstart.getHours() == 0)
         {
           result.push('<line class="time" x1="' + Math.floor(x) + '" y1="0" x2="' + Math.floor(x) + '" y2="34"/>');
-          result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling/2) + '" y="13" fill="black">' + $.datepicker.formatDate("D yy-mm-dd", bucketstart) + '</text>');
+          result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling/2) + '" y="13">' + $.datepicker.formatDate("D yy-mm-dd", bucketstart) + '</text>');
         }
         else
           result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
-        result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling/48) + '" y="31" fill="black">' + bucketstart.getHours() + '</text>');
+        result.push('<text style="text-anchor:middle" x="' + Math.floor(x + scaling/48) + '" y="31">' + bucketstart.getHours() + '</text>');
         x = x + scaling/24;
         bucketstart.setTime(bucketstart.getTime() + 3600000);
       }

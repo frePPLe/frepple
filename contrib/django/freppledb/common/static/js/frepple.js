@@ -1063,7 +1063,7 @@ var gantt = {
         bucketstart.setDate(bucketstart.getDate()+1);
       }
     }
-    else if (scaling < 250)
+    else if (scaling < 350)
     {
       // Weekly + daily buckets, very long style
       while (bucketstart < viewend)

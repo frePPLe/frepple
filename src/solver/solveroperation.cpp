@@ -663,6 +663,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
   data->state->curBuffer = NULL;
   double a_qty;
+  if (fixed_flow == -1) fixed_flow = 0;
   if (fixed_flow)
     a_qty = (oper->getSizeMinimum()<=0) ? 0.001 : oper->getSizeMinimum();
   else

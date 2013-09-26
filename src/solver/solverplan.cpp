@@ -98,25 +98,10 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
     for (deque<Demand*>::const_iterator i = demands->begin();
         i != demands->end(); ++i)
     {
-      CommandManager::Bookmark* topcommand = setBookmark();
       try
       {
-        // Delete previous constraints
-        (*i)->getConstraints().clear();
-
-        // Create a state stack
-        State* mystate = state;
-        push();
-
         // Plan the demand
-        logConstraints = (Solver->getPlanType() == 1);
-        try {(*i)->solve(*Solver,this);}
-        catch (...)
-        {
-          while (state > mystate) pop();
-          throw;
-        }
-        while (state > mystate) pop();
+        (*i)->solve(*Solver,this);
       }
       catch (...)
       {
@@ -127,9 +112,6 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
         catch (const bad_exception&) {logger << "  bad exception" << endl;}
         catch (const exception& e) {logger << "  " << e.what() << endl;}
         catch (...) {logger << "  Unknown type" << endl;}
-
-        // Cleaning up
-        rollback(topcommand);
       }
     }
 

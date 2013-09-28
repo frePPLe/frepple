@@ -67,7 +67,7 @@ DECLARE_EXPORT void Demand::setQuantity(double f)
 DECLARE_EXPORT void Demand::deleteOperationPlans
 (bool deleteLocked, CommandManager* cmds)
 {
-  // Delete all opplans
+  // Delete all delivery operationplans.
   // Note that an extra loop is used to assure that our iterator doesn't get
   // invalidated during the deletion.
   while (true)
@@ -88,6 +88,12 @@ DECLARE_EXPORT void Demand::deleteOperationPlans
       // Delete immediately
       delete candidate;
   }
+
+  // Reset the motive on all operationplans marked with this demand.
+  // This loop is linear with the model size. It doesn't scale well, but
+  // deleting a demand is not too common.
+  for (OperationPlan::iterator i; i != OperationPlan::end(); i++)
+    if (i->getMotive() == this) i->setMotive(NULL);
 
   // Mark the demand as being changed, so the problems can be redetected
   setChanged();

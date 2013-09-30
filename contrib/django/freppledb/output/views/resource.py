@@ -76,7 +76,7 @@ class OverviewReport(GridPivot):
       return (1.0 / 24.0, _('days'))
 
   @staticmethod
-  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
 
     # Get the time units
@@ -128,11 +128,12 @@ class OverviewReport(GridPivot):
       group by res.name, res.location_id, d.bucket, d.startdate
       order by %s, d.startdate
       ''' % ( units[0], units[0], units[0], units[0],
-        basesql, bucket, startdate, enddate,
+        basesql, request.report_bucket, request.report_startdate,
+        request.report_enddate,
         connections[basequery.db].ops.quote_name('resource'),
-        startdate, enddate,
+        request.report_startdate, request.report_enddate,
         sql_max('sum(out_resourceplan.available)','0.0001'),
-        startdate, enddate, sortsql
+        request.report_startdate, request.report_enddate, sortsql
        )
     cursor.execute(query, baseparams)
 

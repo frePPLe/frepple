@@ -58,7 +58,7 @@ class OverviewReport(GridPivot):
       return {}
 
   @staticmethod
-  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, sortsql='1 asc'):
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
 
@@ -85,7 +85,7 @@ class OverviewReport(GridPivot):
       ) oh
       on oh.thebuffer = buffer.name
       group by buffers.name
-      ''' % (basesql, startdate)
+      ''' % (basesql, request.report_startdate)
     cursor.execute(query, baseparams)
     for row in cursor.fetchall(): startohdict[row[0]] = float(row[1])
 
@@ -116,7 +116,8 @@ class OverviewReport(GridPivot):
         group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
         order by %s, d.startdate
       ''' % (sql_max('out_flowplan.quantity','0.0'), sql_min('out_flowplan.quantity','0.0'),
-        basesql, bucket, startdate, enddate, startdate, enddate, sortsql)
+        basesql, request.report_bucket, request.report_startdate, request.report_enddate,
+        request.report_startdate, request.report_enddate, sortsql)
     cursor.execute(query, baseparams)
 
     # Build the python result

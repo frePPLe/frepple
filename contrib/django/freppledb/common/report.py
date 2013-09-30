@@ -1163,7 +1163,7 @@ class GridPivot(GridReport):
       page = 1
       recs = 1
       total_pages = 1
-      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), request.report_bucket, request.report_startdate, request.report_enddate, sortsql="1 asc")
+      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), sortsql="1 asc")
     else:
       page = 'page' in request.GET and int(request.GET['page']) or 1
       if callable(reportclass.basequeryset):
@@ -1175,9 +1175,9 @@ class GridPivot(GridReport):
       if page < 1: page = 1
       cnt = (page-1)*request.pagesize+1
       if callable(reportclass.basequeryset):
-        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)[cnt-1:cnt+request.pagesize], request.report_bucket, request.report_startdate, request.report_enddate, sortsql=reportclass._apply_sort(request))
+        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)[cnt-1:cnt+request.pagesize], sortsql=reportclass._apply_sort(request))
       else:
-        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt-1:cnt+request.pagesize], request.report_bucket, request.report_startdate, request.report_enddate, sortsql=reportclass._apply_sort(request))
+        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt-1:cnt+request.pagesize], sortsql=reportclass._apply_sort(request))
 
     # Generate header of the output
     yield '{"total":%d,\n' % total_pages
@@ -1236,11 +1236,11 @@ class GridPivot(GridReport):
 
     # Prepare the query
     if args and args[0]:
-      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), request.report_bucket, request.report_startdate, request.report_enddate, sortsql="1 asc")
+      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), sortsql="1 asc")
     elif callable(reportclass.basequeryset):
-      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database), request.report_bucket, request.report_startdate, request.report_enddate, sortsql=reportclass._apply_sort(request))
+      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database), sortsql=reportclass._apply_sort(request))
     else:
-      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database), request.report_bucket, request.report_startdate, request.report_enddate, sortsql=reportclass._apply_sort(request))
+      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database), sortsql=reportclass._apply_sort(request))
 
     # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
     encoding = settings.CSV_CHARSET

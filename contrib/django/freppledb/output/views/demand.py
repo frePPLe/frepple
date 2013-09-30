@@ -55,7 +55,7 @@ class OverviewReport(GridPivot):
       return {}
 
   @staticmethod
-  def query(request, basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def query(request, basequery, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connections[request.database].cursor()
 
@@ -74,7 +74,7 @@ class OverviewReport(GridPivot):
         and (plandate is null or plandate >= '%s')
         and due < '%s'
       group by items.name
-      ''' % (basesql, startdate, startdate)
+      ''' % (basesql, request.report_startdate, request.report_startdate)
     cursor.execute(query, baseparams)
     for row in cursor.fetchall():
       if row[0]: startbacklogdict[row[0]] = float(row[1])
@@ -129,7 +129,10 @@ class OverviewReport(GridPivot):
         -- Ordering and grouping
         group by y.name, y.lft, y.rght, y.bucket, y.startdate, y.enddate
         order by %s, y.startdate
-       ''' % (basesql,bucket,startdate,enddate,startdate,enddate,startdate,enddate,sortsql)
+       ''' % (basesql, request.report_bucket, request.report_startdate,
+              request.report_enddate, request.report_startdate,
+              request.report_enddate, request.report_startdate,
+              request.report_enddate, sortsql)
     cursor.execute(query,baseparams)
 
     # Build the python result

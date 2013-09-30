@@ -316,6 +316,82 @@ class GridReport(View):
   def extra_context(reportclass, request, *args, **kwargs):
     return {}
 
+
+  @classmethod
+  def getBuckets(reportclass, request, *args, **kwargs):
+    '''
+    This function gets passed a name of a bucketization.
+    It returns a tuple with:
+      - the start date of the report horizon
+      - the end date of the reporting horizon
+      - a list of buckets.
+    '''
+    # Pick up the user preferences
+    pref = request.user
+
+    # Select the bucket size (unless it is passed as argument)
+    try:
+      bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets)
+    except:
+      try: bucket = Bucket.objects.using(request.database).order_by('name')[0].name
+      except: bucket = None
+
+    if pref.horizontype:
+      # First type: Start and end dates relative to current
+      try:
+        start = datetime.strptime(
+          Parameter.objects.using(request.database).get(name="currentdate").value,
+          "%Y-%m-%d %H:%M:%S"
+          )
+      except:
+        start = datetime.now()
+        start = start.replace(microsecond=0)
+      if pref.horizonunit == 'day':
+        end = start + timedelta(days=pref.horizonlength or 60)
+        end = end.replace(hour=0, minute=0, second=0)
+      elif pref.horizonunit == 'week':
+        end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength or 8, days=7-start.weekday())
+      else:
+        y = start.year
+        m = start.month + (pref.horizonlength or 2) + (start.day > 1 and 1 or 0)
+        while m > 12:
+          y += 1
+          m -= 12
+        end = datetime(y,m,1)
+    else:
+      # Second type: Absolute start and end dates given
+      start = pref.horizonstart
+      if not start:
+        try:
+          start = datetime.strptime(
+            Parameter.objects.using(request.database).get(name="currentdate").value,
+            "%Y-%m-%d %H:%M:%S"
+            )
+        except:
+          start = datetime.now()
+          start = start.replace(microsecond=0)
+      end = pref.horizonend
+      if not end:
+        if pref.horizonunit == 'day':
+          end = start + timedelta(days=pref.horizonlength or 60)
+        elif pref.horizonunit == 'week':
+          end = start + timedelta(weeks=pref.horizonlength or 8)
+        else:
+          end = start + timedelta(weeks=pref.horizonlength or 8)
+
+    # Filter based on the start and end date
+    request.report_startdate = start
+    request.report_enddate = end
+    request.report_bucket = unicode(bucket)
+    if bucket:
+      res = BucketDetail.objects.using(request.database).filter(bucket=bucket)
+      if start: res = res.filter(enddate__gt=start)
+      if end: res = res.filter(startdate__lt=end)
+      request.report_bucketlist = res.values('name','startdate','enddate')
+    else:
+      request.report_bucketlist = None
+
+
   @method_decorator(staff_member_required)
   @method_decorator(csrf_protect)
   def dispatch(self, request, *args, **kwargs):
@@ -333,6 +409,7 @@ class GridReport(View):
     else:
       return HttpResponseNotAllowed(['get','post'])
 
+
   @classmethod
   def _render_colmodel(cls, is_popup=False):
     result = []
@@ -347,6 +424,7 @@ class GridReport(View):
          is_popup and ',popup:true' or ''
          ))
     return ',\n'.join(result)
+
 
   @classmethod
   def _generate_csv_data(reportclass, request, *args, **kwargs):
@@ -489,15 +567,15 @@ class GridReport(View):
 
   @classmethod
   def get(reportclass, request, *args, **kwargs):
+    # Pick up the list of time buckets
+    if reportclass.hasTimeBuckets:
+      reportclass.getBuckets(request, args, kwargs)
+      bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
+    else:
+      bucketnames =  None
     fmt = request.GET.get('format', None)
     if not fmt:
       # Return HTML page
-      # Pick up the list of time buckets
-      if reportclass.hasTimeBuckets:
-        (bucket,start,end,bucketlist) = getBuckets(request)
-        bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
-      else:
-        bucketnames = bucketlist = start = end = bucket = None
       is_popup = 'pop' in request.GET
       context = {
         'reportclass': reportclass,
@@ -513,10 +591,6 @@ class GridReport(View):
         'filters': reportclass.getQueryString(request),
         'args': args,
         'bucketnames': bucketnames,
-        'bucketlist': bucketlist,
-        'bucketstart': start,
-        'bucketend': end,
-        'bucket': bucket,
         'model': reportclass.model,
         'adminsite': reportclass.adminsite,
         'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())),
@@ -1084,16 +1158,12 @@ class GridPivot(GridReport):
 
   @classmethod
   def _generate_json_data(reportclass, request, *args, **kwargs):
-
-    # Pick up the list of time buckets
-    (bucket,start,end,bucketlist) = getBuckets(request)
-
     # Prepare the query
     if args and args[0]:
       page = 1
       recs = 1
       total_pages = 1
-      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), bucket, start, end, sortsql="1 asc")
+      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), request.report_bucket, request.report_startdate, request.report_enddate, sortsql="1 asc")
     else:
       page = 'page' in request.GET and int(request.GET['page']) or 1
       if callable(reportclass.basequeryset):
@@ -1105,9 +1175,9 @@ class GridPivot(GridReport):
       if page < 1: page = 1
       cnt = (page-1)*request.pagesize+1
       if callable(reportclass.basequeryset):
-        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)[cnt-1:cnt+request.pagesize], bucket, start, end, sortsql=reportclass._apply_sort(request))
+        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)[cnt-1:cnt+request.pagesize], request.report_bucket, request.report_startdate, request.report_enddate, sortsql=reportclass._apply_sort(request))
       else:
-        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt-1:cnt+request.pagesize], bucket, start, end, sortsql=reportclass._apply_sort(request))
+        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt-1:cnt+request.pagesize], request.report_bucket, request.report_startdate, request.report_enddate, sortsql=reportclass._apply_sort(request))
 
     # Generate header of the output
     yield '{"total":%d,\n' % total_pages
@@ -1164,16 +1234,13 @@ class GridPivot(GridReport):
       translation.activate(request.LANGUAGE_CODE)
     listformat = (request.GET.get('format','csvlist') == 'csvlist')
 
-    # Pick up the list of time buckets
-    (bucket,start,end,bucketlist) = getBuckets(request)
-
     # Prepare the query
     if args and args[0]:
-      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), bucket, start, end, sortsql="1 asc")
+      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), request.report_bucket, request.report_startdate, request.report_enddate, sortsql="1 asc")
     elif callable(reportclass.basequeryset):
-      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database), bucket, start, end, sortsql=reportclass._apply_sort(request))
+      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database), request.report_bucket, request.report_startdate, request.report_enddate, sortsql=reportclass._apply_sort(request))
     else:
-      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database), bucket, start, end, sortsql=reportclass._apply_sort(request))
+      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database), request.report_bucket, request.report_startdate, request.report_enddate, sortsql=reportclass._apply_sort(request))
 
     # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
     encoding = settings.CSV_CHARSET
@@ -1186,7 +1253,7 @@ class GridPivot(GridReport):
       fields.extend([ capfirst(_(f[1].get('title',_(f[0])))).encode(encoding,"ignore") for f in reportclass.crosses ])
     else:
       fields.extend( [capfirst(_('data field')).encode(encoding,"ignore")])
-      fields.extend([ unicode(b['name']).encode(encoding,"ignore") for b in bucketlist])
+      fields.extend([ unicode(b['name']).encode(encoding,"ignore") for b in request.report_bucketlist])
     writer.writerow(fields)
     yield sf.getvalue()
 
@@ -1260,77 +1327,3 @@ def _localize(value, decimal_separator):
     return "|".join([ unicode(_localize(i,decimal_separator)) for i in value ])
   else:
     return value
-
-
-def getBuckets(request, bucket=None, start=None, end=None):
-  '''
-  This function gets passed a name of a bucketization.
-  It returns a tuple with:
-    - the start date of the report horizon
-    - the end date of the reporting horizon
-    - a list of buckets.
-  '''
-  # Pick up the user preferences
-  pref = request.user
-
-  # Select the bucket size (unless it is passed as argument)
-  if not bucket:
-    try:
-      bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets)
-    except:
-      try: bucket = Bucket.objects.using(request.database).order_by('name')[0].name
-      except: bucket = None
-
-  if pref.horizontype and not start and not end:
-    # First type: Start and end dates relative to current
-    try:
-      start = datetime.strptime(
-        Parameter.objects.using(request.database).get(name="currentdate").value,
-        "%Y-%m-%d %H:%M:%S"
-        )
-    except:
-      start = datetime.now()
-      start = start.replace(microsecond=0)
-    if pref.horizonunit == 'day':
-      end = start + timedelta(days=pref.horizonlength or 60)
-      end = end.replace(hour=0, minute=0, second=0)
-    elif pref.horizonunit == 'week':
-      end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength or 8, days=7-start.weekday())
-    else:
-      y = start.year
-      m = start.month + (pref.horizonlength or 2) + (start.day > 1 and 1 or 0)
-      while m > 12:
-        y += 1
-        m -= 12
-      end = datetime(y,m,1)
-  else:
-    # Second type: Absolute start and end dates given
-    if not start:
-      start = pref.horizonstart
-      if not start:
-        try:
-          start = datetime.strptime(
-            Parameter.objects.using(request.database).get(name="currentdate").value,
-            "%Y-%m-%d %H:%M:%S"
-            )
-        except:
-          start = datetime.now()
-          start = start.replace(microsecond=0)
-    if not end:
-      end = pref.horizonend
-      if not end:
-        if pref.horizonunit == 'day':
-          end = start + timedelta(days=pref.horizonlength or 60)
-        elif pref.horizonunit == 'week':
-          end = start + timedelta(weeks=pref.horizonlength or 8)
-        else:
-          end = start + timedelta(weeks=pref.horizonlength or 8)
-
-  # Filter based on the start and end date
-  if not bucket:
-    return (None, start, end, None)
-  else:
-    res = BucketDetail.objects.using(request.database).filter(bucket=bucket)
-    if start: res = res.filter(enddate__gt=start)
-    if end: res = res.filter(startdate__lt=end)
-    return (unicode(bucket), start, end, res.values('name','startdate','enddate'))

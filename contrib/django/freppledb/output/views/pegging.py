@@ -15,13 +15,15 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from datetime import datetime, timedelta
+
 from django.db import connections
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Demand
 from freppledb.output.models import FlowPlan, LoadPlan, OperationPlan
-from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime, getBuckets
-
+from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime
+from freppledb.common.models import Parameter
 
 class ReportByDemand(GridReport):
   '''
@@ -47,11 +49,43 @@ class ReportByDemand(GridReport):
     GridFieldText('parent', editable=False, sortable=False, hidden=True),
     GridFieldText('leaf', editable=False, sortable=False, hidden=True),
     GridFieldText('expanded', editable=False, sortable=False, hidden=True),
+    GridFieldText('current', editable=False, sortable=False, hidden=True),
+    GridFieldText('due', editable=False, sortable=False, hidden=True),
     )
+
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     return Demand.objects.filter(name__exact=args[0]).values('name')
+
+
+  @classmethod
+  def getBuckets(reportclass, request, *args, **kwargs):
+    # Get the earliest and latest operationplan, and the demand due date
+    cursor = connections[request.database].cursor()
+    cursor.execute('''
+       select demand.due, min(startdate), max(enddate)
+       from demand
+       inner join out_demandpegging
+         on out_demandpegging.demand = demand.name
+       inner join out_operationplan
+         on out_demandpegging.prod_operationplan = out_operationplan.id
+         or out_demandpegging.cons_operationplan = out_operationplan.id
+      where demand.name = %s and out_operationplan.operation not like 'Inventory of %%'
+      group by due
+       ''', (args[0]))
+    (due, start, end) = cursor.fetchone()
+    # Adjust the horizon
+    if due > end: end = due
+    if due < start: start =due
+    end += timedelta(days=1)
+    start -= timedelta(days=1)
+    print args[0], start, end
+    request.report_startdate = start
+    request.report_enddate = end
+    request.report_bucket = None
+    request.report_bucketlist = []
+
 
   @classmethod
   def query(reportclass, request, basequery):
@@ -59,25 +93,35 @@ class ReportByDemand(GridReport):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
     cursor = connections[request.database].cursor()
 
-    # Pick up the list of time buckets
-    (bucket,start,end,bucketlist) = getBuckets(request, request.user)
-    horizon = (end - start).total_seconds() / 10000
+    # Get current date and horizon
+    horizon = (request.report_enddate - request.report_startdate).total_seconds() / 10000
+    try:
+      current = datetime.strptime(
+        Parameter.objects.using(request.database).get(name="currentdate").value,
+        "%Y-%m-%d %H:%M:%S"
+        )
+    except:
+      current = datetime.now()
+      current = current.replace(microsecond=0)
 
     # query 1: pick up all resources loaded
     resource = {}
     query = '''
-      select operationplan_id, theresource
+      select operation, theresource
       from out_loadplan
+      inner join out_operationplan
+        on out_operationplan.id = out_loadplan.operationplan_id
       where operationplan_id in (
         select prod_operationplan as opplan_id
           from out_demandpegging
-          where demand in (select dms.name from (%s) dms)
+          where demand = %s
         union
         select cons_operationplan as opplan_id
           from out_demandpegging
-          where demand in (select dms.name from (%s) dms)
+          where demand = %s
       )
-      ''' % (basesql, basesql)
+      group by operation, theresource
+      '''
     cursor.execute(query, baseparams + baseparams)
     for row in cursor.fetchall():
       if row[0] in resource:
@@ -85,86 +129,73 @@ class ReportByDemand(GridReport):
       else:
         resource[row[0]] = ( row[1], )
 
-    # query 2: pick up all operationplans
+    # query 2: collect all operationplans
     query = '''
-      select min(depth), min(opplans.id), operation, opplans.quantity,
-        opplans.startdate, opplans.enddate, operation.name,
-        max(buffer), max(opplans.item), opplan_id, out_demand.due,
-        sum(quantity_demand) / opplans.quantity
-      from (
-        select depth+1 as depth, peg.id+1 as id, operation, quantity, startdate, enddate,
-          buffer, item, prod_operationplan as opplan_id, quantity_demand
-        from out_demandpegging peg, out_operationplan prod
-        where peg.demand in (select dms.name from (%s) dms)
-        and peg.prod_operationplan = prod.id
-        union
-        select depth, peg.id, operation, quantity, startdate, enddate,
-          null, null, cons_operationplan, 0
-        from out_demandpegging peg, out_operationplan cons
-        where peg.demand in (select dms.name from (%s) dms)
-        and peg.cons_operationplan = cons.id
-      ) opplans
-      left join operation
-      on operation = operation.name
-      left join out_demand
-      on opplan_id = out_demand.operationplan
-      group by operation, opplans.quantity, opplans.startdate, opplans.enddate,
-        operation.name, opplan_id, out_demand.due
-      order by min(depth), operation.name, min(opplans.id)
-      ''' % (basesql, basesql)
-    cursor.execute(query, baseparams + baseparams)
+      select depth, buffer, item, quantity_demand, quantity_buffer, due,
+        cons_opplan.id, cons_opplan.operation, cons_opplan.startdate, cons_opplan.enddate, cons_opplan.quantity,
+        prod_opplan.id, prod_opplan.operation, prod_opplan.startdate, prod_opplan.enddate, prod_opplan.quantity
+      from out_demandpegging peg
+      inner join demand
+        on peg.demand = demand.name
+      left outer join out_operationplan cons_opplan
+        on peg.cons_operationplan = cons_opplan.id
+      left outer join out_operationplan prod_opplan
+        on peg.prod_operationplan = prod_opplan.id
+      where peg.demand = %s
+      order by peg.id
+      '''
+    cursor.execute(query, baseparams)
+
+    # Group the results by operations
+    opplans = {}
+    ops = {}
+    indx = 0
+    due = None
+    for (depth, buf, it, qty_d, qty_b, due, c_id, c_name, c_start, c_end, c_qty, p_id, p_name, p_start, p_end, p_qty) in cursor.fetchall():
+      if not c_id in opplans:
+        opplans[c_id] = (c_start,c_end,float(c_qty))
+        if c_name in ops:
+          ops[c_name][6].append(c_id)
+        else:
+          ops[c_name] = [indx, depth, None, True, buf, it, [c_id,] ]
+      if not p_id in opplans:
+        opplans[p_id] = (p_start,p_end,float(p_qty))
+        if p_name in ops:
+          ops[p_name][6].append(p_id)
+        else:
+          ops[p_name] = [indx+1, depth+1, None, True, buf, it, [p_id,] ]
+      if c_name and p_name:
+        ops[p_name][2] = c_name # set parent
+        ops[c_name][3] = False # c_name is no longer a leaf
+      indx += 1
 
     # Build the Python result
-    prevoper = None
-    data = None
-    quantity = 0
-    for row in cursor.fetchall():
-      if row[2] != prevoper:
-        if data:
-          data['quantity'] = quantity
-          yield data
-        quantity = float(row[3]) * (row[11] or 1.0)
-        data = {
-          'depth': row[0],
-          'peg_id': row[1],
-          'operation': row[2],
-          'quantity': row[3],
-          'hidden': row[6] == None,
-          'buffer': row[7],
-          'item': row[8],
-          'id': row[9],
-          'due': row[10],
-          'parent': prevoper or 'null',
-          'leaf': str(row[0]) == "7" and 'true' or 'false',
+    for i in sorted(ops.iteritems(), key=lambda(k,v): (v[0],k)):
+      yield {
+          'current': str(current),
+          'due': str(due),
+          'depth': i[1][1],
+          'operation': i[0],
+          'quantity': sum([opplans[j][2] for j in i[1][6]]),
+          'buffer': i[1][4],
+          'item': i[1][5],
+          'due': round((due - request.report_startdate).total_seconds() / horizon, 3),
+          'current': round((current - request.report_startdate).total_seconds() / horizon, 3),
+          'parent': i[1][2],
+          'leaf': i[1][3] and 'true' or 'false',
           'expanded': 'true',
-          'resource': row[9] in resource and resource[row[9]] or None,
+          'resource': i[0] in resource and resource[i[0]] or None,
           'operationplans': [{
-             'operation': row[2],
-             'description': row[11] or 100.0, # TODO percent used
-             'quantity': float(row[3]),
-             'x': round((row[4] - start).total_seconds() / horizon, 3),
-             'w': round((row[5] - row[4]).total_seconds() / horizon, 3),
-             'startdate': str(row[4]),
-             'enddate': str(row[5]),
+             'operation': i[0],
+             #'description': float(row[11]) or 100.0, # TODO percent used
+             'quantity': opplans[j][2],
+             'x': round((opplans[j][0] - request.report_startdate).total_seconds() / horizon, 3),
+             'w': round((opplans[j][1] - opplans[j][0]).total_seconds() / horizon, 3),
+             'startdate': str(opplans[j][0]),
+             'enddate': str(opplans[j][1]),
              'locked': 0, # TODO
-             } ]
+             } for j in i[1][6] ]
           }
-        prevoper = row[2]
-      else:
-        quantity += float(row[3]) * (row[11] or 1.0)
-        data['operationplans'].append({
-             'operation': row[2],
-             'description': row[11] or 100.0, # TODO percent used
-             'quantity': float(row[3]),
-             'x': round((row[4] - start).total_seconds() / horizon, 3),
-             'w': round((row[5] - row[4]).total_seconds() / horizon, 3),
-             'startdate': str(row[4]),
-             'enddate': str(row[5]),
-             'locked': 0, # TODO
-             })
-    if data:
-      data['quantity'] = quantity
-      yield data
 
 
 class ReportByBuffer(GridReport):

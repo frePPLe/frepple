@@ -39,6 +39,8 @@ function ganttcell(cellvalue, options, rowdata)
      else
        result.push( '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) + '" width="' + Math.max(data["w"],1) + '" height="' + (gantt.rowsize-3) + '" class="opplan"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
   }
+  result.push( '<line x1="' + rowdata["due"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["due"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="red" stroke-width="1" />');
+  result.push( '<line x1="' + rowdata["current"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["current"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="black" stroke-width="1" />');
   return '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="' + (gantt.rowsize*layer.length+3) + 'px">'
     + '<title>' + escape(rowdata["name"]) + '</title>'
     + '<g class="transformer" transform="scale(0.1,1) translate(0,' + ((layer.length-1)*gantt.rowsize+3) +')" title="' + layer.length +'">'
@@ -46,10 +48,10 @@ function ganttcell(cellvalue, options, rowdata)
     + '</g></svg>';
 }
 
-var horizonstart = new Date({{bucketstart|date:"Y"}},{{bucketstart|date:"n"}}-1,{{bucketstart|date:"j"}});
-var horizonend = new Date({{bucketend|date:"Y"}},{{bucketend|date:"n"}}-1,{{bucketend|date:"j"}});
-var viewstart = new Date({{bucketstart|date:"Y"}},{{bucketstart|date:"n"}}-1,{{bucketstart|date:"j"}});
-var viewend = new Date({{bucketend|date:"Y"}},{{bucketend|date:"n"}}-1,{{bucketend|date:"j"}});
+var horizonstart = new Date({{request.report_startdate|date:"Y"}},{{request.report_startdate|date:"n"}}-1,{{request.report_startdate|date:"j"}});
+var horizonend = new Date({{request.report_enddate|date:"Y"}},{{request.report_enddate|date:"n"}}-1,{{request.report_enddate|date:"j"}});
+var viewstart = new Date({{request.report_startdate|date:"Y"}},{{request.report_startdate|date:"n"}}-1,{{request.report_startdate|date:"j"}});
+var viewend = new Date({{request.report_enddate|date:"Y"}},{{request.report_enddate|date:"n"}}-1,{{request.report_enddate|date:"j"}});
 var delta = (viewend.getTime() - viewstart.getTime()) / 86400000.0;
 
 

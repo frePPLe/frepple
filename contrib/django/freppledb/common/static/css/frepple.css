@@ -283,6 +283,7 @@ div.system-message p.system-message-title {
 div.tools {
   float: right;
   padding: 5px 5px 5px 5px;
+  clear: both;
 }
 
 /* Style for the context menu. */

@@ -13,7 +13,7 @@
 
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 var resizing;
-{% if reportclass.hasTimeBuckets %}var numbuckets = {{bucketlist|length}};
+{% if reportclass.hasTimeBuckets %}var numbuckets = {{request.report_bucketlist|length}};
 {% endif %}var cross = [
 {{cross_list|safe}}
 ];
@@ -25,7 +25,7 @@ $(function(){
 	  jsonReader : {repeatitems:false},
    	colModel:[
       {{colmodel|safe}},
-      {% for f in bucketlist %}{% if not forloop.first %},
+      {% for f in request.report_bucketlist %}{% if not forloop.first %},
       {% endif %}{ name:'{{f.name|safe}}',startdate:'{{f.startdate|date:"Y-m-d"}}',enddate:'{{f.enddate|date:"Y-m-d"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
    	  ],{% if reportclass.editable and haschangeperm %}
     cellEdit: true,

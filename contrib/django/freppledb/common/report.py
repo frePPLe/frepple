@@ -50,7 +50,7 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str, iri_to_uri, force_unicode
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
-from django.utils.formats import get_format, number_format
+from django.utils.formats import get_format
 from django.utils.text import capfirst, get_text_list
 from django.utils.translation import string_concat
 from django.template.defaultfilters import title

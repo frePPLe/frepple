@@ -75,12 +75,18 @@ class ReportByDemand(GridReport):
       group by due
        ''', (args[0]))
     (due, start, end) = cursor.fetchone()
+    if not isinstance(start, datetime):
+      # SQLite max(datetime) function doesn't return a datetime. Sigh.
+      start = datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
+    if not isinstance(end, datetime):
+      # SQLite max(datetime) function doesn't return a datetime. Sigh.
+      end = datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
+
     # Adjust the horizon
     if due > end: end = due
     if due < start: start =due
     end += timedelta(days=1)
     start -= timedelta(days=1)
-    print args[0], start, end
     request.report_startdate = start
     request.report_enddate = end
     request.report_bucket = None
@@ -152,13 +158,13 @@ class ReportByDemand(GridReport):
     indx = 0
     due = None
     for (depth, buf, it, qty_d, qty_b, due, c_id, c_name, c_start, c_end, c_qty, p_id, p_name, p_start, p_end, p_qty) in cursor.fetchall():
-      if not c_id in opplans:
+      if c_id and not c_id in opplans:
         opplans[c_id] = (c_start,c_end,float(c_qty))
         if c_name in ops:
           ops[c_name][6].append(c_id)
         else:
           ops[c_name] = [indx, depth, None, True, buf, it, [c_id,] ]
-      if not p_id in opplans:
+      if p_id and not p_id in opplans:
         opplans[p_id] = (p_start,p_end,float(p_qty))
         if p_name in ops:
           ops[p_name][6].append(p_id)

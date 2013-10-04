@@ -519,20 +519,31 @@ div.calendarbox
 
 .opplan {
    vector-effect: non-scaling-stroke;
-   fill:rgb(111,111,255);
-   stroke-width:1px;
-   stroke:rgb(0,0,0)
+   fill: rgb(111,111,255);
+   stroke-width: 1px;
+   stroke: rgb(0,0,0)
 }
 
 .opplan_locked {
    vector-effect: non-scaling-stroke;
-   fill:rgb(0,0,255);
-   stroke-width:1px;
-   stroke:rgb(0,0,0)
+   fill: rgb(0,0,255);
+   stroke-width: 1px;
+   stroke: rgb(0,0,0)
 }
 
 .time {
    vector-effect: non-scaling-stroke;
-   stroke-width:1px;
-   stroke:rgb(0,0,0)
+   stroke-width: 1px;
+   stroke: rgb(0,0,0);
+}
+
+/* TODO: This fill color actually depends on the theme.
+   The value #4c3000 comes from the "sunny" theme. In other themes the header
+   of the Gantt charts will match the other columns.
+*/
+.svgheadertext {
+  fill: #4c3000;
+  stroke: none;
+  font-size: 12px;
+  text-anchor:middle;
 }

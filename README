@@ -1,2 +1,12 @@
 
-Point your browser to the document doc/index.html or visit http://www.frepple.com
+FrePPLe is an easy-to-use and easy-to-implement open source production planning tool.
+When spreadsheets doesn't suffice any longer to adequately plan your production, frePPLe allows in a easy and cost-efficient way to generate a more optimized plan.
+FrePPLe implements planning algoritmes, based on best practices such as "theory of constraints" (ie plan around the bottleneck), "pull-based planning" (ie start production as late as possible and directly triggered by demand) and "lean manufacturing" (ie avoid intermeditate delays and stock).
+
+FrePPLe has a dual license:
+You can use the software free of charge under the GNU Affero General
+Public License v3 or later (http://www.gnu.org/licenses/).
+You can also purchase a commercial license from frePPLe bvba if you do
+not wish to be bound by the terms of the AGPL.
+
+Visit http://frepple.com for more detail.

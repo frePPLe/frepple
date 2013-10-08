@@ -18,12 +18,31 @@
 import operator
 
 from django.utils.encoding import force_unicode
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django.utils.text import capfirst
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+class MenuItem:
+
+  def __init__(self, name, model=None, report=None, url=None, label=None, index=None, prefix=True, window=False):
+    self.name = name
+    self.url = url
+    self.report = report
+    self.model = model
+    self.label = None
+    if report: self.label = report.title
+    elif model: self.label = model._meta.verbose_name_plural
+    if label: self.label = label
+    self.index = index
+    self.prefix = prefix
+    self.window = window
+
+  def __unicode__(self):
+    return self.name
 
 
 class Menu:
@@ -31,8 +50,8 @@ class Menu:
   def __init__(self):
     # Structure of the _groups field:
     #   [
-    #     (name, label, id, [ (name, id, reportclass), (name, id, reportclass), ]),
-    #     (name, label, id, [ (name, id, reportclass), (name, id, reportclass), ]),
+    #     (name, label, id, [ Menuitem1, Menuitem2, ]),
+    #     (name, label, id, [ Menuitem3, (name, id, reportclass), ]),
     #   ]
     self._groups = []
     # Structure of the _cached_menu field:
@@ -70,18 +89,34 @@ class Menu:
     # No action required when the group isn't found
 
 
-  def addItem(self, group, name, reportclass, index=None):
+  def addItem(self, group, name, admin=None, report=None, url=None, label=None, index=None, prefix=True, window=False):
     for i in range(len(self._groups)):
       if self._groups[i][0] == group:
         # Found the group
         for j in range(len(self._groups[i][3])):
-          if self._groups[i][3][j][0] == name:
+          if self._groups[i][3][j].name == name:
             # Update existing item
-            if index: self._groups[i][3][j][1] = index
-            self._groups[i][3][j][2] = reportclass
+            it = self._groups[i][3][j]
+            if index: it['index'] = index
+            if url: it['url'] = url
+            if report: it['report'] = report
+            if label: it['label'] = label
+            it['prefix'] = prefix
+            it['window'] = window
             return
         # Create a new item
-        self._groups[i][3].append( (name, index, reportclass) )
+        if admin:
+          # Add all models from an admin site
+          for m in admin._registry:
+            self._groups[i][3].append( MenuItem(
+                m.__name__.lower(),
+                model = m,
+                url='/%s/%s/%s/' % (admin.name, m._meta.app_label, m.__name__.lower()),
+                index=index
+                ) )
+        else:
+          # Add a single item
+          self._groups[i][3].append( MenuItem(name, report=report, url=url, label=label, index=index, prefix=prefix, window=window) )
         return
     # Couldn't locate the group
     raise Exception("Menu group %s not found" % group)
@@ -112,10 +147,10 @@ class Menu:
     for i in self._groups:
       items = []
       for j in i[3]:
-        items.append( (j[1], force_unicode(j[2].title), reverse(j[2].as_view()), j[2].permissions) )
+        items.append( (j.index, capfirst(force_unicode(j.label)), j) )
       # Sort by 1) id and 2) label. Note that the order can be different for each language!
       items.sort(key=operator.itemgetter(0,1))
-      m.append( ( force_unicode(i[1]), items ) )
+      m.append( ( force_unicode(i[1]), items ))
     # Put the new result in the cache and return
     self._cached_menu[language] = m
     return m

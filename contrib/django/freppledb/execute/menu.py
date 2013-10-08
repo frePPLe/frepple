@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2013 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -15,18 +14,9 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf import settings
-from django.contrib import admin
-from django.utils.importlib import import_module
+from django.utils.translation import ugettext as _
 
-# Create two admin sites where all our apps will register their models
-data_site = admin.sites.AdminSite(name='data')
-admin_site = admin.sites.AdminSite(name='admin')
+from freppledb.menu import menu
 
-# Adding the admin modules of each installed application.
-for app in settings.INSTALLED_APPS:
-  try:
-    mod = import_module('%s.admin' % app)
-  except ImportError as e:
-    # Silently ignore if it's the menu module which isn't found
-    if e.message != 'No module named admin': raise e
+# Add an item to the Admin menu
+menu.addItem("admin", "execute", url="/execute/", label=_('Execute'), index=100)

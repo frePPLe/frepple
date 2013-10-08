@@ -21,19 +21,21 @@ from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.menus import Menu
 
-# Create the navigation menu
+# Create the navigation menu.
+# This is the one and only menu object in the application.
 menu = Menu()
 
 # Add our default topics.
 menu.addGroup("input", label=_("Input"), index=100)
 menu.addGroup("reports", label=_("Reports"), index=200)
-menu.addGroup("admin", label=_("Input"), index=300)
+menu.addGroup("admin", label=_("Admin"), index=300)
 menu.addGroup("user", label=_("User"), index=400)
+menu.addGroup("help", label="?", index=500)
 
 # Adding the menu modules of each installed application.
 for app in settings.INSTALLED_APPS:
   try:
     mod = import_module('%s.menu' % app)
-  except ImportError:
-    # Silently ignore
-    pass
+  except ImportError as e:
+    # Silently ignore if it's the menu module which isn't found
+    if e.message != 'No module named menu': raise e

@@ -28,6 +28,7 @@ class Report(GridReport):
   title = _("Performance Indicators")
   frozenColumns = 0
   basequeryset = Parameter.objects.all()
+  permissions = (("view_kpi_report", "Can view kpi report"),)
   rows = (
     GridFieldText('category', title=_('category'), sortable=False, editable=False, align='center'),
     GridFieldText('name', title=_('name'), sortable=False, editable=False, align='center'),

@@ -302,14 +302,32 @@ class GridReport(View):
   frozenColumns = 0
 
   # A list with required user permissions to view the report
-  permissions = []
+  permissions = ()
 
   # Defines the difference between height of the grid and its boundaries
   heightmargin = 70
 
+
   @classmethod
   def getKey(cls):
     return "%s.%s" % (cls.__module__, cls.__name__)
+
+
+  @classmethod
+  def getAppLabel(cls):
+    '''
+    Return the name of the Django application which defines this report.
+    '''
+    if hasattr(cls,'app_label'):
+      return cls.app_label
+    s = cls.__module__.split('.')
+    for i in range(len(s),0,-1):
+      x = '.'.join(s[0:i])
+      if x in settings.INSTALLED_APPS:
+        cls.app_label = s[i-1]
+        return cls.app_label
+    raise Exception("Can't identify app of reportclass %s" % cls)
+
 
   # Extra variables added to the report template
   @classmethod
@@ -397,7 +415,7 @@ class GridReport(View):
   def dispatch(self, request, *args, **kwargs):
     # Verify the user is authorized to view the report
     for perm in self.permissions:
-      if not request.user.has_perm(perm):
+      if not request.user.has_perm(u"%s.%s" % (self.getAppLabel(), perm[0])):
         return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
 
     # Dispatch to the correct method

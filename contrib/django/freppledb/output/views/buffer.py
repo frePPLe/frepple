@@ -34,6 +34,7 @@ class OverviewReport(GridPivot):
   title = _('Inventory report')
   basequeryset = Buffer.objects.only('name','item__name','location__name','lft','rght','onhand')
   model = Buffer
+  permissions = (('view_inventory_report','Can view inventory report'),)
   rows = (
     GridFieldText('buffer', title=_('buffer'), key=True, field_name='name', formatter='buffer', editable=False),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='item', editable=False),
@@ -152,6 +153,7 @@ class DetailReport(GridReport):
   template = 'output/flowplan.html'
   title = _("Inventory detail report")
   model = FlowPlan
+  permissions = (('view_inventory_report','Can view inventory report'),)
   frozenColumns = 0
   editable = False
   multiselect = False

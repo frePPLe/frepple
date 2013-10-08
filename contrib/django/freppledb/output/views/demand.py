@@ -34,6 +34,7 @@ class OverviewReport(GridPivot):
   title = _('Demand report')
   basequeryset = Item.objects.all()
   model = Item
+  permissions = (("view_demand_report", "Can view demand report"),)
   rows = (
     GridFieldText('item', title=_('item'), key=True, field_name='name', formatter='item', editable=False),
     GridFieldGraph('graph', title=_('graph'), width="(5*numbuckets<200 ? 5*numbuckets : 200)"),
@@ -161,6 +162,7 @@ class DetailReport(GridReport):
   template = 'output/demandplan.html'
   title = _("Demand plan detail")
   model = Demand
+  permissions = (("view_demand_report", "Can view demand report"),)
   frozenColumns = 0
   editable = False
   multiselect = False

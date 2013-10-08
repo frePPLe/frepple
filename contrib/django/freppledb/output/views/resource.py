@@ -36,6 +36,7 @@ class OverviewReport(GridPivot):
   title = _('Resource report')
   basequeryset = Resource.objects.all()
   model = Resource
+  permissions = (("view_resource_report", "Can view resource report"),)
   editable = False
   rows = (
     GridFieldText('resource', title=_('resource'), key=True, field_name='name', formatter='resource', editable=False),
@@ -162,6 +163,7 @@ class DetailReport(GridReport):
   template = 'output/loadplan.html'
   title = _("Resource detail report")
   model = LoadPlan
+  permissions = (("view_resource_report", "Can view resource report"),)
   frozenColumns = 0
   editable = False
   multiselect = False

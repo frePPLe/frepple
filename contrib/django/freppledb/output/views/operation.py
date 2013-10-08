@@ -34,6 +34,7 @@ class OverviewReport(GridPivot):
   title = _('Operation report')
   basequeryset = Operation.objects.all()
   model = Operation
+  permissions = (("view_operation_report", "Can view operation report"),)
   rows = (
     GridFieldText('operation', title=_('operation'), key=True, field_name='name', formatter='operation', editable=False),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='location', editable=False),
@@ -120,6 +121,7 @@ class DetailReport(GridReport):
   template = 'output/operationplan.html'
   title = _("Operation detail report")
   model = OperationPlan
+  permissions = (("view_operation_report", "Can view operation report"),)
   frozenColumns = 0
   editable = False
   multiselect = False

@@ -36,7 +36,6 @@ class OperationPlan(models.Model):
 
   class Meta:
     db_table = 'out_operationplan'
-    permissions = (("view_operationplan", "Can view operation plans"),)
     verbose_name = _('operationplan')
     verbose_name_plural = _('operationplans')
 
@@ -55,7 +54,6 @@ class Problem(models.Model):
 
   class Meta:
     db_table = 'out_problem'
-    permissions = (("view_problem", "Can view problems"),)
     ordering = ['startdate']
     verbose_name = _('problem')
     verbose_name_plural = _('problems')
@@ -76,7 +74,6 @@ class Constraint(models.Model):
 
   class Meta:
     db_table = 'out_constraint'
-    permissions = (("view_constraint", "Can view constraints"),)
     ordering = ['demand','startdate']
     verbose_name = _('constraint')
     verbose_name_plural = _('constraints')
@@ -93,7 +90,6 @@ class ResourceSummary(models.Model):
 
   class Meta:
     db_table = 'out_resourceplan'
-    permissions = (("view_loadplans", "Can view load plans"),)
     ordering = ['theresource','startdate']
     unique_together = (('theresource', 'startdate'),)
     verbose_name = 'resource summary'  # No need to translate these since only used internally
@@ -114,7 +110,6 @@ class LoadPlan(models.Model):
 
   class Meta:
     db_table = 'out_loadplan'
-    permissions = (("view_loadplans", "Can view load plans"),)
     ordering = ['theresource','startdate']
     verbose_name = _('loadplan')
     verbose_name_plural = _('loadplans')
@@ -133,7 +128,6 @@ class FlowPlan(models.Model):
 
   class Meta:
     db_table = 'out_flowplan'
-    permissions = (("view_flowplans", "Can view flow plans"),)
     ordering = ['thebuffer','flowdate']
     verbose_name = _('flowplan')
     verbose_name_plural = _('flowplans')
@@ -183,23 +177,3 @@ class DemandPegging(models.Model):
     ordering = ['id']
     verbose_name = _('demand pegging')
     verbose_name_plural = _('demand peggings')
-
-
-class Forecast(models.Model):    # TODO this model should be moved to the enterprise version
-  # Database fields
-  forecast = models.CharField(_('forecast'), max_length=settings.NAMESIZE, db_index=True)
-  startdate = models.DateTimeField(_('start date'), null=False, db_index=True)
-  enddate = models.DateTimeField(_('end date'), null=False)
-  total = models.DecimalField(_('total quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
-  net = models.DecimalField(_('net quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
-  consumed = models.DecimalField(_('consumed quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
-
-  def __unicode__(self):
-    return self.forecast.name \
-      + ' - ' + str(self.startdate) + ' - ' + str(self.enddate)
-
-  class Meta:
-    db_table = 'out_forecast'
-    ordering = ['id']
-    verbose_name = _('forecast plan')
-    verbose_name_plural = _('forecast plans')

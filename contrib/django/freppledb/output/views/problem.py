@@ -45,6 +45,7 @@ class Report(GridReport):
   title = _("Problem Report")
   basequeryset = Problem.objects # TODO .extra(select={'forecast': "select name from forecast where out_problem.owner like forecast.name || ' - %%'",})
   model = Problem
+  permissions = (("view_problem_report", "Can view problem report"),)
   frozenColumns = 0
   editable = False
   multiselect = False

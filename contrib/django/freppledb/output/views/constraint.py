@@ -68,6 +68,7 @@ class Report(GridReport):
   title = _("Constraint Report")
   basequeryset = Constraint.objects.all()
   model = Constraint
+  permissions = (("view_constraint_report", "Can view constraint report"),)
   frozenColumns = 0
   editable = False
   multiselect = False

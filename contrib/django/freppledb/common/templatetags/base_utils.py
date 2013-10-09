@@ -39,52 +39,6 @@ variable_title = Variable("title")
 variable_request = Variable("request")
 variable_popup = Variable("is_popup")
 
-#
-# A tag to find all models a user is allowed to see
-#
-
-class ModelsNode(Node):
-    def __init__(self, adminsite, varname):
-        self.varname = varname
-        dot = adminsite.rindex('.')
-        self.adminsite = getattr(__import__(adminsite[:dot], {}, {}, ['']), adminsite[dot+1:])
-
-    def render(self, context):
-        from django.utils.text import capfirst
-        user = context['user']
-        model_list = []
-        for m in self.adminsite._registry:
-          # Verify if the model is allowed to be displayed in the admin ui and
-          # check the user has appropriate permissions to access it
-          if user.has_perm("%s.%s" % (m._meta.app_label, m._meta.get_change_permission())):
-            model_list.append({
-                 'name': capfirst(m._meta.verbose_name_plural),
-                 'verbose_name': capfirst(m._meta.verbose_name),
-                 'admin_url': '/%s/%s/%s/' % (self.adminsite.name, m._meta.app_label, m.__name__.lower()),
-                 'can_add': user.has_perm("%s.%s" % (m._meta.app_label, m._meta.get_add_permission()))
-                 })
-        model_list.sort(key = lambda m : m['verbose_name'])
-        context[self.varname] = model_list
-        return ''
-
-
-def get_models(parser, token):
-    """
-    Returns a list of output models to which the user has permissions.
-    Syntax::
-        {% get_models from [admin_site] as [context_var_containing_app_list] %}
-    """
-    tokens = token.contents.split()
-    if len(tokens) < 5:
-        raise TemplateSyntaxError("'%s' tag requires 5 arguments" % tokens[0])
-    if tokens[1] != 'from':
-        raise TemplateSyntaxError("First argument to '%s' tag must be 'from'" % tokens[0])
-    if tokens[3] != 'as':
-        raise TemplateSyntaxError("Third argument to '%s' tag must be 'as'" % tokens[0])
-    return ModelsNode(tokens[2],tokens[4])
-
-register.tag('get_models', get_models)
-
 
 #
 # A tag to create breadcrumbs on your site
@@ -365,7 +319,7 @@ register.filter('duration', duration)
 
 
 #
-# Filters to get the verbose name of a model
+# Filters to get metadata of a model
 #
 
 def verbose_name(obj):
@@ -383,3 +337,47 @@ register.filter(app_label)
 def object_name(obj):
   return obj._meta.object_name
 register.filter(object_name)
+
+
+#
+# Tag to display a menu
+#
+
+class MenuNode(Node):
+  r'''
+  A tag to return HTML code for the menu.
+  '''
+  def __init__(self, varname):
+      self.varname = varname
+
+  def render(self, context):
+    from freppledb.menu import menu
+    try: req = context['request']
+    except: return ''  # No request found in the context
+    o = []
+    for i in menu.getMenu(req.LANGUAGE_CODE):
+      group = [i[0], [] ]
+      empty = True
+      for j in i[1]:
+        if j[2].has_permission(req.user):
+          empty = False
+          group[1].append( (j[1], j[2], j[2].can_add(req.user) ) )
+      if not empty:
+        # At least one item of the group is visible
+        o.append(group)
+    context[self.varname] = o
+    return ''
+
+  def __repr__(self):
+    return "<getMenu Node>"
+
+
+def getMenu(parser, token):
+  tokens = token.contents.split()
+  if len(tokens) < 3:
+      raise TemplateSyntaxError("'%s' tag requires 3 arguments" % tokens[0])
+  if tokens[1] != 'as':
+      raise TemplateSyntaxError("First argument to '%s' tag must be 'as'" % tokens[0])
+  return MenuNode(tokens[2])
+
+register.tag('getMenu', getMenu)

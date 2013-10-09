@@ -24,80 +24,18 @@ th {
 {% block content %}
 
 <div id="content-main" style="max-width: 500px;">
-{% get_models from freppledb.admin.data_site as modelsData %}
-{% get_models from freppledb.admin.admin_site as modelsAdmin %}
-
-{% if modelsData %}<h3><a href="#input">{% trans "Input" %}</a></h3>
+{% getMenu as menu %}
+{% for group in menu %}<h3><a>{{ group.0 }}</a></h3>
 <div><table>
-{% for model in modelsData %}<tr>
-<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
-{% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
-<td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
+{% for item in group.1 %}<th scope="row"><a {% if item.1.window %}target="_blank" {% endif %} href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}">{{ item.0 }}</a></th>
+{% if item.2 %}<td><a href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
+<td><a href="javascript:void(0);" onclick="import_show('{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
 {% else %}<td>&nbsp;</td>
-{% endif %}<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-{% endfor %}</table></div>{% endif %}
-
-<h3><a href="#reports">{% trans "Reports" %}</a></h3>
-<div>
-<table>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/problem/">{% trans "Problem report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/problem/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/buffer/">{% trans "Inventory report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/buffer/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/resource/">{% trans "Resource report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/resource/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/demand/">{% trans "Demand report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/demand/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/operation/">{% trans "Operation report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/operation/?format=csvtable" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/operationplan/">{% trans "Operation detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/operationplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/loadplan/">{% trans "Resource detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/loadplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/flowplan/">{% trans "Inventory detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/flowplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/demandplan/">{% trans "Demand detail report" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/demandplan/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-<tr>
-<th scope="row"><a href="{{request.prefix}}/kpi/">{% trans "Performance Indicators" %}</a></th>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/kpi/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-</table>
-</div>
-
-{% if modelsAdmin or perms.execute %}<h3><a href="#admin">{% trans "Admin" %}</a></h3>
-<div><table><tr>
-{% if perms.execute %}<tr><th scope="row"><a href="{{request.prefix}}/execute/">{% trans "Execute" %}</a></th><td>&nbsp;</td>
-<td>&nbsp;</td><td><a href="{{request.prefix}}/execute/?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-{% endif %}{% for model in modelsAdmin %}<tr>
-<th scope="row"><a href="{{request.prefix}}{{model.admin_url}}">{{model.name}}</a></th>
-{% if model.can_add %}<td><a href="{{request.prefix}}{{model.admin_url}}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
-<td><a href="javascript:void(0);" onclick="import_show('{{request.prefix}}{{model.admin_url}}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
+{% endif %}{% if item.1.report %}<td><a href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}?format=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
 {% else %}<td>&nbsp;</td>
-{% endif %}<td><a href="{{request.prefix}}{{model.admin_url}}?format=csvlist" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-</tr>
-{% endfor %}</table></div>{% endif %}
-
+{% endif %}</tr>
+{% endfor %}</table></div>
+{% endfor %}
 </div>
 
 <div id="recent-actions" class="ui-widget-content ui-corner-all">

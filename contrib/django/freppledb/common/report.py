@@ -627,7 +627,7 @@ class GridReport(View):
          content_type = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
          streaming_content = reportclass._generate_json_data(request, *args, **kwargs)
          )
-    elif fmt == 'csvlist' or fmt == 'csvtable':
+    elif fmt in ('csvlist','csvtable','csv'):
       # Return CSV data to export the data
       # Response is not returned as an iterator to assure that the database
       # connection is properly closed.

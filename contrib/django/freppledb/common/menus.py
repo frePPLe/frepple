@@ -44,6 +44,23 @@ class MenuItem:
   def __unicode__(self):
     return self.name
 
+  def has_permission(self, user):
+    if self.report:
+      # The menu item is a report class
+      for perm in self.report.permissions:
+        if not user.has_perm(u"%s.%s" % (self.report.getAppLabel(), perm[0])):
+          return False
+      return True
+    elif self.model:
+      # The menu item is a model, belonging to an admin site
+      return user.has_perm("%s.%s" % (self.model._meta.app_label, self.model._meta.get_change_permission()))
+    else:
+      # Other item is always available
+      return True
+
+  def can_add(self, user):
+    return self.model and user.has_perm("%s.%s" % (self.model._meta.app_label, self.model._meta.get_add_permission()))
+
 
 class Menu:
 
@@ -51,13 +68,13 @@ class Menu:
     # Structure of the _groups field:
     #   [
     #     (name, label, id, [ Menuitem1, Menuitem2, ]),
-    #     (name, label, id, [ Menuitem3, (name, id, reportclass), ]),
+    #     (name, label, id, [ Menuitem3, Menuitem3, ]),
     #   ]
     self._groups = []
-    # Structure of the _cached_menu field:
+    # Structure of the _cached_menu field for a certain language:
     #   [
-    #     (label as unicode, [ (id, label, url, [permissions,]), (id, label, url, [permissions,]), ]),
-    #     (label as unicode, [ (id, label, url, [permissions,]), (id, label, url, [permissions,]), ]),
+    #     (label as unicode, [ (index, unicode label, Menuitem1), (index, unicode label, Menuitem2), ]),
+    #     (label as unicode, [ (index, unicode label, Menuitem3), (index, unicode label, Menuitem4), ]),
     #   ]
     self._cached_menu = {}
 

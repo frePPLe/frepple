@@ -188,7 +188,6 @@ class Menu:
             # Create the permission object
             # TODO: cover the case where the permission refers to a permission of a model in the same app.
             # TODO: cover the case where app X wants to refer to a permission defined in app Y.
-            print app, content_type, k
             p = Permission.objects.get_or_create(codename=k[0], content_type=content_type)[0]
             p.name = k[1]
             p.save()

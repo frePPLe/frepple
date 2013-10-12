@@ -24,8 +24,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
-from freppledb.common.fields import JSONField
-
 
 class HierarchyModel(models.Model):
   lft = models.PositiveIntegerField(db_index = True, editable=False, null=True, blank=True)

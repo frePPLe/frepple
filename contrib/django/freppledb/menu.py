@@ -41,4 +41,4 @@ for app in reversed(settings.INSTALLED_APPS):
     mod = import_module('%s.menu' % app)
   except ImportError as e:
     # Silently ignore if it's the menu module which isn't found
-    if e.message != 'No module named menu': raise e
+    if str(e) != 'No module named menu': raise e

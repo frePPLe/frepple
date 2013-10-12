@@ -47,7 +47,7 @@ for app in settings.INSTALLED_APPS:
         urlpatterns += mod.urlpatterns
   except ImportError as e:
     # Silently ignore if the missing module is called urls
-    if not 'urls' in e.message: raise e
+    if not 'urls' in str(e): raise e
 
 # Admin pages, and the Javascript i18n library.
 # It needs to be added as the last item since the applications can

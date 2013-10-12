@@ -407,7 +407,7 @@ class GridReport(View):
       if end: res = res.filter(startdate__lt=end)
       request.report_bucketlist = res.values('name','startdate','enddate')
     else:
-      request.report_bucketlist = None
+      request.report_bucketlist = []
 
 
   @method_decorator(staff_member_required)

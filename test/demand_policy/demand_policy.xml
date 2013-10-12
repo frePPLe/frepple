@@ -27,6 +27,8 @@
           delivery date.
           In this case the onhand on jan 5 is increased to 15.
           -> A delivery of 20 units on 10 Jan
+       G) The minimum shipment quantity is higher than the order quantity.
+          We are forced to ship an excess quantity.
   </description>
   <current>2009-01-01T00:00:00</current>
   <operations>
@@ -36,6 +38,7 @@
     <operation name="supply item D" xsi:type="operation_fixed_time"/>
     <operation name="supply item E" xsi:type="operation_fixed_time"/>
     <operation name="supply item F" xsi:type="operation_fixed_time"/>
+    <operation name="supply item G" xsi:type="operation_fixed_time"/>
   </operations>
   <items>
     <item name="item A">
@@ -55,6 +58,9 @@
     </item>
     <item name="item F">
       <operation name="delivery item F" xsi:type="operation_fixed_time"/>
+    </item>
+    <item name="item G">
+      <operation name="delivery item G" xsi:type="operation_fixed_time"/>
     </item>
   </items>
   <buffers>
@@ -80,6 +86,10 @@
     </buffer>
     <buffer name="buffer F">
       <item name="item F" />
+      <onhand>15</onhand>
+    </buffer>
+    <buffer name="buffer G">
+      <item name="item G" />
       <onhand>15</onhand>
     </buffer>
   </buffers>
@@ -144,6 +154,16 @@
       <buffer name="buffer F" />
       <quantity>1</quantity>
     </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery item G" />
+      <buffer name="buffer G" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="supply item G" />
+      <buffer name="buffer G" />
+      <quantity>1</quantity>
+    </flow>
   </flows>
 	<operationplans>
 	  <operationplan id="1001" operation="supply item A">
@@ -176,12 +196,18 @@
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
-	  <operationplan id="1006" operation="supply item F">
-	    <start>2009-01-10T00:00:00</start>
-	    <end>2009-01-10T00:00:00</end>
-	    <quantity>10</quantity>
-	    <locked>true</locked>
-	  </operationplan>
+    <operationplan id="1006" operation="supply item F">
+      <start>2009-01-10T00:00:00</start>
+      <end>2009-01-10T00:00:00</end>
+      <quantity>10</quantity>
+      <locked>true</locked>
+    </operationplan>
+    <operationplan id="1007" operation="supply item G">
+      <start>2009-01-10T00:00:00</start>
+      <end>2009-01-10T00:00:00</end>
+      <quantity>50</quantity>
+      <locked>true</locked>
+    </operationplan>
 	</operationplans>
   <demands>
     <demand name="order A">
@@ -225,6 +251,13 @@
       <priority>1</priority>
       <item name="item F" />
       <minshipment>11</minshipment>
+    </demand>
+    <demand name="order G">
+      <quantity>20</quantity>
+      <due>2009-01-05T00:00:00</due>
+      <priority>1</priority>
+      <item name="item G" />
+      <minshipment>30</minshipment>
     </demand>
   </demands>
 

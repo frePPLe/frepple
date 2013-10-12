@@ -68,6 +68,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 
     // Determine the quantity to be planned and the date for the planning loop
     double plan_qty = l->getQuantity() - l->getPlannedQuantity();
+    if (plan_qty < l->getMinShipment()) plan_qty = l->getMinShipment();
     Date plan_date = l->getDue();
 
     // Nothing to be planned any more (e.g. all deliveries are locked...)
@@ -105,7 +106,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     }
     else
       // Remove problem that may already exist
-          delete &*j;
+      delete &*j;
 
     // Planning loop
     do

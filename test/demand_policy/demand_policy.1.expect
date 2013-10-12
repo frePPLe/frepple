@@ -16,24 +16,30 @@ BUFFER	buffer E	2009-01-10T00:00:00	10	10
 BUFFER	buffer F	1971-01-01T00:00:00	15	15
 BUFFER	buffer F	2009-01-10T00:00:00	10	25
 BUFFER	buffer F	2009-01-10T00:00:00	-20	5
+BUFFER	buffer G	1971-01-01T00:00:00	15	15
+BUFFER	buffer G	2009-01-10T00:00:00	50	65
+BUFFER	buffer G	2009-01-10T00:00:00	-30	35
 DEMAND	order A	2009-01-10T00:00:00	10
 DEMAND	order A	2009-01-05T00:00:00	10
 DEMAND	order B	2009-01-05T00:00:00	10
 DEMAND	order C	2009-01-10T00:00:00	20
 DEMAND	order E	2009-01-05T00:00:00	10
 DEMAND	order F	2009-01-10T00:00:00	20
+DEMAND	order G	2009-01-10T00:00:00	30
 OPERATION	delivery item A	2009-01-05T00:00:00	2009-01-05T00:00:00	10
 OPERATION	delivery item A	2009-01-10T00:00:00	2009-01-10T00:00:00	10
 OPERATION	delivery item B	2009-01-05T00:00:00	2009-01-05T00:00:00	10
 OPERATION	delivery item C	2009-01-10T00:00:00	2009-01-10T00:00:00	20
 OPERATION	delivery item E	2009-01-05T00:00:00	2009-01-05T00:00:00	10
 OPERATION	delivery item F	2009-01-10T00:00:00	2009-01-10T00:00:00	20
+OPERATION	delivery item G	2009-01-10T00:00:00	2009-01-10T00:00:00	30
 OPERATION	supply item A	2009-01-10T00:00:00	2009-01-10T00:00:00	10
 OPERATION	supply item B	2009-01-10T00:00:00	2009-01-10T00:00:00	10
 OPERATION	supply item C	2009-01-10T00:00:00	2009-01-10T00:00:00	10
 OPERATION	supply item D	2009-01-10T00:00:00	2009-01-10T00:00:00	10
 OPERATION	supply item E	2009-01-10T00:00:00	2009-01-10T00:00:00	10
 OPERATION	supply item F	2009-01-10T00:00:00	2009-01-10T00:00:00	10
+OPERATION	supply item G	2009-01-10T00:00:00	2009-01-10T00:00:00	50
 PROBLEM	material excess	Buffer 'buffer A' has material excess of 10	1971-01-01T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	material excess	Buffer 'buffer B' has material excess of 10	1971-01-01T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	material excess	Buffer 'buffer B' has material excess of 10	2009-01-10T00:00:00 / 2030-12-31T00:00:00
@@ -42,15 +48,19 @@ PROBLEM	material excess	Buffer 'buffer D' has material excess of 20	1971-01-01T0
 PROBLEM	material excess	Buffer 'buffer E' has material excess of 10	1971-01-01T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	material excess	Buffer 'buffer E' has material excess of 10	2009-01-10T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'buffer F' has material excess of 15	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'buffer G' has material excess of 35	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	late	Demand 'order A' planned P5D after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	short	Demand 'order B' planned 10 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	late	Demand 'order C' planned P5D after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	unplanned	Demand 'order D' is not planned	2009-01-05T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	short	Demand 'order E' planned 10 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	late	Demand 'order F' planned P5D after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	excess	Demand 'order G' planned 10 units excess	2009-01-05T00:00:00 / 2009-01-05T00:00:00
+PROBLEM	late	Demand 'order G' planned P5D after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
 DEMAND CONSTRAINT	order A	Buffer 'buffer A' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order B	Buffer 'buffer B' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order C	Buffer 'buffer C' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order D	Buffer 'buffer D' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order E	Buffer 'buffer E' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order F	Buffer 'buffer F' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order G	Buffer 'buffer G' has material shortage of 15	2009-01-05T00:00:00 / 2030-12-31T00:00:00	

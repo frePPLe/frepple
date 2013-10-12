@@ -16,7 +16,8 @@
 #
 
 from django.contrib.auth.backends import ModelBackend
-from django.core.validators import email_re
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 from freppledb.common.models import User
 
@@ -27,15 +28,15 @@ class EmailBackend(ModelBackend):
   the user name or the user email address.
   '''
   def authenticate(self, username=None, password=None):
-    if email_re.search(username):
-      # The username looks like an email address
-      try:
-        user = User.objects.get(email=username)
-        if user.check_password(password):
-          return user
-      except User.DoesNotExist:
-        return None
-    else:
+    try:
+      validate_email(username)
+      # The user name looks like an email address
+      user = User.objects.get(email=username)
+      if user.check_password(password):
+        return user
+    except User.DoesNotExist:
+      return None
+    except ValidationError:
       # The user name isn't an email address
       try:
         user = User.objects.get(username=username)

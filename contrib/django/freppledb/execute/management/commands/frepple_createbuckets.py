@@ -84,8 +84,8 @@ class Command(BaseCommand):
       user = None
 
     now = datetime.now()
-    transaction.enter_transaction_management(using=database)
-    transaction.managed(True, using=database)
+    ac = transaction.get_autocommit(using=database)
+    transaction.set_autocommit(False, using=database)
     task = None
     try:
       # Initialize the task
@@ -204,4 +204,4 @@ class Command(BaseCommand):
       try: transaction.commit(using=database)
       except: pass
       settings.DEBUG = tmp_debug
-      transaction.leave_transaction_management(using=database)
+      transaction.set_autocommit(ac, using=database)

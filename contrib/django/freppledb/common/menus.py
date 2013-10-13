@@ -19,6 +19,7 @@ import operator
 
 from django.utils.encoding import force_unicode
 from django.contrib.auth.models import Permission
+from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import capfirst
 
@@ -53,13 +54,13 @@ class MenuItem:
       return True
     elif self.model:
       # The menu item is a model, belonging to an admin site
-      return user.has_perm("%s.%s" % (self.model._meta.app_label, self.model._meta.get_change_permission()))
+      return user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('change',self.model._meta)))
     else:
       # Other item is always available
       return True
 
   def can_add(self, user):
-    return self.model and user.has_perm("%s.%s" % (self.model._meta.app_label, self.model._meta.get_add_permission()))
+    return self.model and user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('add',self.model._meta)))
 
 
 class Menu:

@@ -53,6 +53,7 @@ admin_site.register(User, MyUserAdmin)
 class ParameterForm(forms.ModelForm):
   class Meta:
     model = Parameter
+    fields = ('name', 'value', 'description')
 
   def clean(self):
     cleaned_data = self.cleaned_data

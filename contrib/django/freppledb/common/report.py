@@ -37,6 +37,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import get_permission_codename
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
 from django.db.models.fields import Field, CharField, AutoField
@@ -611,9 +612,9 @@ class GridReport(View):
         'bucketnames': bucketnames,
         'model': reportclass.model,
         'adminsite': reportclass.adminsite,
-        'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())),
-        'hasdeleteperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_delete_permission())),
-        'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())),
+        'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('add',reportclass.model._meta))),
+        'hasdeleteperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('delete',reportclass.model._meta))),
+        'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('change',reportclass.model._meta))),
         'active_tab': 'plan',
         }
       for k, v in reportclass.extra_context(request, *args, **kwargs).iteritems():
@@ -651,7 +652,6 @@ class GridReport(View):
 
     # Loop over the data records
     transaction.enter_transaction_management(using=request.database)
-    transaction.managed(True, using=request.database)
     resp = HttpResponse()
     ok = True
     try:
@@ -777,7 +777,6 @@ class GridReport(View):
         return string_concat(m._meta.verbose_name, ':', _('Permission denied'))
 
     transaction.enter_transaction_management(using=request.database)
-    transaction.managed(True, using=request.database)
     try:
       # Delete the data records
       cursor = connections[request.database].cursor()
@@ -841,7 +840,6 @@ class GridReport(View):
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
 
       transaction.enter_transaction_management(using=request.database)
-      transaction.managed(True, using=request.database)
       try:
         # Loop through the data records
         has_pk_field = False

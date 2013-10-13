@@ -63,8 +63,7 @@ class Command(BaseCommand):
       user = None
 
     now = datetime.now()
-    transaction.enter_transaction_management(managed=False, using=database)
-    transaction.managed(False, using=database)
+    transaction.enter_transaction_management(using=database)
     task = None
     try:
       # Initialize the task

@@ -58,7 +58,6 @@ class HierarchyModel(models.Model):
     settings.DEBUG = False
     nodes = {}
     transaction.enter_transaction_management(using=database)
-    transaction.managed(True, using=database)
     cursor = connections[database].cursor()
 
     def tagChildren(me, left, level):

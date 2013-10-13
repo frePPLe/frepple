@@ -24,6 +24,9 @@ from django.conf import settings
 
 from freppledb.common.models import User
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class Task(models.Model):
   '''
@@ -80,8 +83,9 @@ class Scenario(models.Model):
     return self.name
 
   @staticmethod
-  @transaction.commit_manually
   def syncWithSettings():
+    ac = transaction.get_autocommit()
+    transaction.set_autocommit(False)
     try:
       # Bring the scenario table in sync with settings.databases
       dbs = [ i for i,j in settings.DATABASES.items() if j['NAME'] ]
@@ -95,11 +99,12 @@ class Scenario(models.Model):
             Scenario(name=db, status=u"In use", description='Production database').save()
           else:
             Scenario(name=db, status=u"Free").save()
+      transaction.commit()
     except Exception as e:
-      print("Error synchronizing the scenario table with the settings:", e)
+      logger.error("Error synchronizing the scenario table with the settings: %s" % e)
       transaction.rollback()
     finally:
-      transaction.commit()
+      transaction.set_autocommit(ac)
 
   class Meta:
     db_table = "execute_scenario"

@@ -103,7 +103,6 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     transaction.enter_transaction_management(using=self.database)
-    transaction.managed(True, using=self.database)
     try:
       # Logging message
       log(category='EXPORT', theuser=user,
@@ -145,7 +144,6 @@ class Command(BaseCommand):
   # Note: Ideally we'ld like to update the committed date instead. (But it is read-only)
   def export_sales_order(self):
     transaction.enter_transaction_management(using=self.database)
-    transaction.managed(True, using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:
@@ -196,7 +194,6 @@ class Command(BaseCommand):
   #     and cancel the purchase orders or quotations.
   def export_procurement_order(self):
     transaction.enter_transaction_management(using=self.database)
-    transaction.managed(True, using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:

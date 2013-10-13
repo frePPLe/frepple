@@ -40,8 +40,7 @@ task = None
 
 def logProgress(val, database = DEFAULT_DB_ALIAS):
   global task
-  transaction.enter_transaction_management(managed=False, using=database)
-  transaction.managed(False, using=database)
+  transaction.enter_transaction_management(using=database)
   try:
     if not task and 'FREPPLE_TASKID' in os.environ:
       try: task = Task.objects.all().using(database).get(pk=os.environ['FREPPLE_TASKID'])

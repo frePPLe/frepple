@@ -91,9 +91,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     # Tell Django to save objects to the 'other' database.
     obj.save(using=request.database)
 
-  def queryset(self, request):
+  def get_queryset(self, request):
     # Tell Django to get objects from the 'other' database.
-    return super(MultiDBModelAdmin, self).queryset(request).using(request.database)
+    return super(MultiDBModelAdmin, self).get_queryset(request).using(request.database)
 
   def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
     # Tell Django to get objects from the 'other' database.
@@ -284,7 +284,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
 
   @csrf_protect_m
-  @transaction.commit_on_success
+  @transaction.atomic
   def change_view(self, request, object_id, form_url='', extra_context=None):
     new_extra_context = extra_context or {}
     new_extra_context['title'] = capfirst(force_unicode(self.model._meta.verbose_name) + ' ' + unquote(object_id))
@@ -292,7 +292,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
 
   @csrf_protect_m
-  @transaction.commit_on_success
+  @transaction.atomic
   def delete_view(self, request, object_id, extra_context=None):
     "The 'delete' admin view for this model."
     opts = self.model._meta
@@ -357,8 +357,8 @@ class MultiDBTabularInline(admin.TabularInline):
   def __init__(self, parent_model, admin_site):
     super(MultiDBTabularInline, self).__init__(parent_model, admin_site)
 
-  def queryset(self, request):
-    return super(MultiDBTabularInline, self).queryset(request).using(request.database)
+  def get_queryset(self, request):
+    return super(MultiDBTabularInline, self).get_queryset(request).using(request.database)
 
   def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
     return super(MultiDBTabularInline, self).formfield_for_foreignkey(db_field, request=request, using=request.database, **kwargs)

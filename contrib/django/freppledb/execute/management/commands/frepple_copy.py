@@ -21,7 +21,6 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db import transaction
 
 from freppledb.execute.models import Task, Scenario
 from freppledb.common.models import User
@@ -70,7 +69,7 @@ class Command(BaseCommand):
   def get_version(self):
     return VERSION
 
-  @transaction.commit_manually
+
   def handle(self, *args, **options):
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all sql
@@ -102,7 +101,6 @@ class Command(BaseCommand):
     else:
       task = Task(name='copy scenario', submitted=now, started=now, status='0%', user=user)
     task.save()
-    transaction.commit()
 
     # Synchronize the scenario table with the settings
     Scenario.syncWithSettings()
@@ -114,7 +112,6 @@ class Command(BaseCommand):
         raise CommandError("Command takes exactly 2 arguments.")
       task.arguments = "%s %s" % (args[0], args[1])
       task.save()
-      transaction.commit()
       source = args[0]
       try:
         sourcescenario = Scenario.objects.get(pk=source)
@@ -137,7 +134,6 @@ class Command(BaseCommand):
       # Logging message - always logging in the default database
       destinationscenario.status = u'Busy'
       destinationscenario.save()
-      transaction.commit()
 
       # Copying the data
       if settings.DATABASES[source]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
@@ -226,5 +222,4 @@ class Command(BaseCommand):
 
     finally:
       if task: task.save()
-      transaction.commit()
       settings.DEBUG = tmp_debug

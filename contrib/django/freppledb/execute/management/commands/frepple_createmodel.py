@@ -147,9 +147,9 @@ class Command(BaseCommand):
     random.seed(100) # Initialize random seed to get reproducible results
 
     now = datetime.now()
-    transaction.enter_transaction_management(using=database)
-    transaction.managed(True, using=database)
     task = None
+    ac = transaction.get_autocommit(using=database)
+    transaction.set_autocommit(False, using=database)
     try:
       # Initialize the task
       if 'task' in options and options['task']:
@@ -181,7 +181,7 @@ class Command(BaseCommand):
 
       # Plan start date
       if verbosity>0: print("Updating current date...")
-      param = Parameter.objects.using(database).get_or_create(name="currentdate")[0]
+      param = Parameter.objects.using(database).create(name="currentdate")
       param.value = datetime.strftime(startdate, "%Y-%m-%d %H:%M:%S")
       param.save(using=database)
 
@@ -392,7 +392,7 @@ class Command(BaseCommand):
       try: transaction.commit(using=database)
       except: pass
       settings.DEBUG = tmp_debug
-      transaction.leave_transaction_management(using=database)
+      transaction.set_autocommit(ac, using=database)
 
 
 def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=730, database=DEFAULT_DB_ALIAS):
@@ -414,7 +414,6 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
   settings.DEBUG = False
 
   transaction.enter_transaction_management(using=database)
-  transaction.managed(True, using=database)
   try:
 
     # Delete previous contents

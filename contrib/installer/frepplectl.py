@@ -46,7 +46,7 @@ elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] not in ['django.db.backends.
 else:
   # PostgreSQL, Oracle or MySQL database:
   # Try connecting and check for a table called 'parameter'.
-  from django.db import connection, transaction
+  from django.db import connection
   try: cursor = connection.cursor()
   except Exception as e:
     print("Aborting: Can't connect to the database")
@@ -55,7 +55,6 @@ else:
     sys.exit(1)
   try: cursor.execute("SELECT 1 FROM common_parameter")
   except: noDatabaseSchema = True
-  transaction.commit_unless_managed()
 
 if noDatabaseSchema and len(sys.argv)>1 and sys.argv[1]!='syncdb':
   print("\nDatabase schema has not been initialized yet.")

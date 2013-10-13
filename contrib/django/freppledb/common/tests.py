@@ -28,5 +28,5 @@ class DataLoadTest(TestCase):
 
   def test_common_parameter(self):
     response = self.client.get('/admin/common/parameter/?format=json')
-    self.assertContains(response, '"records":2,')
+    self.assertContains(response, '"records":3,')
 

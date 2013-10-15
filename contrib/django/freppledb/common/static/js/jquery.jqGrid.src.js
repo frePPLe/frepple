@@ -13,6 +13,11 @@
 /*jshint evil:true, eqeqeq:false, eqnull:true, devel:true */
 /*global jQuery */
 
+/* Modifications by JDETAEYE:
+ *  - Allow frozen columns also when cellediting is enabled.
+ *  - Special handling for frozen columns with a included canvas element.
+ */
+
 (function ($) {
 "use strict";
 $.jgrid = $.jgrid || {};
@@ -4617,7 +4622,11 @@ $.jgrid.extend({
 			if ( !this.grid ) {return;}
 			var $t = this, cm = $t.p.colModel,i=0, len = cm.length, maxfrozen = -1, frozen= false;
 			// TODO treeGrid and grouping  Support
-			if($t.p.subGrid === true || $t.p.treeGrid === true || $t.p.cellEdit === true || $t.p.sortable || $t.p.scroll || $t.p.grouping )
+			/* JDETAEYE: OK to use celledit with frozen columns
+			   Original code: 
+			   if($t.p.subGrid === true || $t.p.treeGrid === true || $t.p.cellEdit === true || $t.p.sortable || $t.p.scroll || $t.p.grouping )
+			*/
+			if($t.p.subGrid === true || $t.p.treeGrid === true || $t.p.sortable || $t.p.scroll || $t.p.grouping )
 			{
 				return;
 			}

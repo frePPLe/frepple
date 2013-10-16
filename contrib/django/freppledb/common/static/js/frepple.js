@@ -1130,7 +1130,7 @@ var gantt = {
     viewend = new Date(horizonend.getTime());
     $('.transformer').each(function() {
       var layers = $(this).attr("title");
-      $(this).attr("transform", "scale(1,1) translate(0," + ((layers-1)*gantt.rowsize+3) + ")");
+      $(this).attr("transform", "scale(0.1,1) translate(0," + ((layers-1)*gantt.rowsize+3) + ")");
       });
     gantt.header();
   },

@@ -80,7 +80,7 @@ $(window).bind('resize', function() {
 <div id="gridpager"></div>
 {% block after_table %}{% endblock %}
 </div>
-{% if reportclass.hasTimeBuckets %}<div id="timebuckets" class="ui-helper-hidden" title="{% trans 'Time buckets' %}">
+{% if reportclass.hasTimeBuckets %}<div id="timebuckets" style="display:none" title="{% trans 'Time buckets' %}">
 <form method="get" action="">
 {% trans 'Bucket size' %}&nbsp;&nbsp;<select name="horizonbuckets" id="horizonbuckets">
 {% for i in bucketnames %}<option value="{{i}}"{% ifequal i request.user.horizonbuckets %} selected="selected"{% endifequal %}>{% trans i %}</option>

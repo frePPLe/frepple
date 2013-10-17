@@ -93,28 +93,27 @@ class Command(BaseCommand):
       # Create a database connection
       cursor = connections[database].cursor()
 
-      # Delete all records from the tables.
-      # We split the tables in groups to speed things up in postgreSQL.
+      # Get a list of all django tables in the database
+      tables = set(connections[database].introspection.django_table_names(only_existing=True))
+
+      # Some tables need to be handled a bit special
       cursor.execute('update common_user set horizonbuckets = null')
+      tables.discard('auth_group_permissions')
+      tables.discard('auth_permission')
+      tables.discard('auth_group')
+      tables.discard('django_session')
+      tables.discard('common_user')
+      tables.discard('common_user_groups')
+      tables.discard('common_user_user_permissions')
+      tables.discard('django_content_type')
+      tables.discard('execute_log')
+      tables.discard('execute_scenario')
       transaction.commit(using=database)
-      tables = [
-        ['out_demandpegging'],
-        ['out_problem','out_resourceplan','out_constraint'],
-        ['out_loadplan','out_flowplan','out_operationplan'],
-        ['out_demand',],
-        ['demand','customer','resourceskill','skill',
-         'setuprule','setupmatrix','resourceload','resource',
-         'flow','buffer','operationplan','item',
-         'suboperation','operation', # TODO Required to add for enterprise version on postgresql :'forecast','forecastdemand',
-         'location','calendarbucket','calendar',],
-        ['common_parameter','common_bucketdetail','common_bucket'],
-        ['common_comment','django_admin_log'],
-        ]
-      for group in tables:
-        sql_list = connections[database].ops.sql_flush(no_style(), group, [] )
-        for sql in sql_list:
-          cursor.execute(sql)
-          transaction.commit(using=database)
+
+      # Delete all records from the tables.
+      for stmt in connections[database].ops.sql_flush(no_style(), tables, []):
+        cursor.execute(stmt)
+      transaction.commit(using=database)
 
       # SQLite specials
       if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':

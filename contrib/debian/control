@@ -11,7 +11,7 @@ X-Python-Version: >= 2.6
 
 Package: frepple
 Architecture: any
-Depends: ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}, graphviz, libxerces-c3.1, apache2, libapache2-mod-wsgi, python-cherrypy
+Depends: ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}, graphviz, libxerces-c3.1, apache2, libapache2-mod-wsgi, python-cherrypy3
 Description: Free Production PLanning
  FrePPLe is an open source production planning and scheduling application.
 

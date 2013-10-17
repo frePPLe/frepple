@@ -3457,8 +3457,13 @@ class Object : public PythonExtensionBase
             int result = x->setattro(attr, field);
             if (result && !PyErr_Occurred())
               PyErr_Format(PyExc_AttributeError,
+#if PY_MAJOR_VERSION >= 3
                   "attribute '%S' on '%s' can't be updated",
                   key, Py_TYPE(x)->tp_name);
+#else
+                  "attribute '%s' on '%s' can't be updated",
+                  PyString_AsString(key), Py_TYPE(x)->tp_name);
+#endif
           }
         };
         Py_INCREF(x);

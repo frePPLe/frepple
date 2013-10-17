@@ -749,8 +749,13 @@ extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *n
 #endif
     {
       PyErr_Format(PyExc_TypeError,
-          "attribute name must be string, not '%s'",
+#if PY_MAJOR_VERSION >= 3
+          "attribute name must be string, not '%S'",
           Py_TYPE(name)->tp_name);
+#else
+          "attribute name must be string, not '%s'",
+          PyString_AsString(name));
+#endif
       return NULL;
     }
 #if PY_MAJOR_VERSION >= 3
@@ -791,8 +796,13 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
 #endif
     {
       PyErr_Format(PyExc_TypeError,
-          "attribute name must be string, not '%s'",
+#if PY_MAJOR_VERSION >= 3
+          "attribute name must be string, not '%S'",
           Py_TYPE(name)->tp_name);
+#else
+          "attribute name must be string, not '%s'",
+          PyString_AsString(name));
+#endif
       return -1;
     }
     PythonObject field(value);
@@ -811,8 +821,13 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
     // Process 'not OK' result - set python error string if it isn't set yet
     if (!PyErr_Occurred())
       PyErr_Format(PyExc_AttributeError,
+#if PY_MAJOR_VERSION >= 3
           "attribute '%S' on '%s' can't be updated",
           name, Py_TYPE(self)->tp_name);
+#else
+          "attribute '%s' on '%s' can't be updated",
+          PyString_AsString(name), Py_TYPE(self)->tp_name);
+#endif
     return -1;
   }
   catch (...)

@@ -13,12 +13,12 @@ Create the model with callbacks:
   Demand 'order 1' receives signal ADD
 Plan the model:
 Erase the model:
-  Demand 'order 1' receives signal REMOVE
   OperationFixedTime 'delivery end item' receives signal REMOVE
   Operation 'delivery end item' receives signal REMOVE
   OperationFixedTime 'make end item' receives signal REMOVE
   Operation 'make end item' receives signal REMOVE
   Operation 'setup operation' receives signal REMOVE
+  Demand 'order 1' receives signal REMOVE
   BufferDefault 'end item' receives signal REMOVE
   Buffer 'end item' receives signal REMOVE
   Calendar 'Capacity' receives signal REMOVE

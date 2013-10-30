@@ -1,7 +1,16 @@
-{% extends "admin/base_site_nav.html" %}
+{% extends "admin/base_site_grid.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{block.super}}{% if graphdata %}
+{% block contextmenus %}
+{% include "operationcontext.html" %}
+{% include "itemcontext.html" %}
+{% include "buffercontext.html" %}
+{% include "demandcontext.html" %}
+{% include "resourcecontext.html" %}
+{% include "locationcontext.html" %}
+{% endblock %}
+
+{% block extrahead %}{{block.super}}
 <style type="text/css">
 #graph {
   overflow:auto;
@@ -10,7 +19,18 @@
   padding: 10px;
 }
 </style>
+<script src="{{STATIC_URL}}js/d3.min.js"></script>
 <script type="text/javascript">
+
+function reslistfmt(cellvalue, options, row)
+{
+  if (cellvalue === undefined || cellvalue ==='') return '';
+  result = '';
+  console.log(cellvalue);
+  for (var i in cellvalue)
+    result += "<span>" + cellvalue[i][0] + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span></span><br/>";
+  return result;
+}
 
 function clickedShaped(event) {
 
@@ -49,7 +69,6 @@ function clickedShaped(event) {
   event.stopImmediatePropagation();
 }
 
-
 $(function(){
   if ($("#graph").height() > $(window).height() - 350)
     $("#graph").height($(window).height() - 350);
@@ -61,51 +80,27 @@ $(function(){
     });
 });
 
-</script>{% endif %}{% endblock %}
+</script>
+{% endblock %}
+{% block extra_grid %}treeGrid: true,
+treeGridModel: 'adjacency',
+ExpandColumn: 'depth',
+treeIcons: {
+  plus:'ui-icon-circle-triangle-e',
+  minus:'ui-icon-circle-triangle-s',
+  leaf:'ui-icon-radio-off'
+  },
+tree_root_level: 0,
+treeReader: {
+  level_field: 'depth',
+  parent_id_field: 'parent',
+  leaf_field: 'leaf',
+  expanded_field: 'expanded'
+  },
+ExpandColClick: true,
+{% endblock %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}<h1 style="float:left">{{title|escape}}: {% if downstream %}{% trans "Where Used"|capfirst|escape %}{% else %}{% trans "Supply Path"|capfirst|escape %}{% endif %}</h1>
+
+{% block tools %}
 {% tabs model %}
-</div>{% endblock %}
-
-{% block content %}
-<div id="content-main">
-
-{% include "operationcontext.html" %}
-{% include "resourcecontext.html" %}
-{% include "buffercontext.html" %}
-{% include "locationcontext.html" %}
-{% include "itemcontext.html" %}
-
-{% if graphdata %}<div id="graph">
-{{graphdata|safe}}
-</div>{% endif %}
-
-<div>
-<table><thead><tr>
-<th rowspan="2">Operation</th>
-<th rowspan="2">Resource</th>
-<th rowspan="2">Buffer</th>
-<th rowspan="2">Location</th>
-<th rowspan="2">Item</th>
-<th colspan="2">Consumed Qty</th>
-</tr>
-<tr>
-<th>This</th>
-<th>Cumulative</th>
-</tr></thead>
-
-<tbody>{% for i in supplypath %}
-<tr class="level{{i.level}}">
-<td class="level{{i.level}}">{% ifchanged i.level i.operation %}{% if i.operation %}{{i.operation}}<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>{% endif %}{% endifchanged %}</td>
-<td>{% ifchanged i.level i.operation %}{% if i.operation %}{% for j in i.operation.loads.all %}{{j.resource}}<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span><br/>{% endfor %}{% endif %}{% endifchanged %}</td>
-{% if i.buffer %}<td>{% if i.buffer %}{{i.buffer}}<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>{% endif %}</td>
-<td>{% if i.buffer.location %}{{i.buffer.location}}<span class='context ui-icon ui-icon-triangle-1-e' role='location'></span>{% endif %}</td>
-<td>{% if i.buffer.item %}{{i.buffer.item}}<span class='context ui-icon ui-icon-triangle-1-e' role='item'></span>{% endif %}</td>
-{% else %}<td/><td/><td/>{% endif %}
-<td>{% if i.consumingflow %}<center>{{i.consumingflow.quantity|floatformat:2}}</center>{% endif %}</td>
-<td><center>{{i.cumquantity|floatformat:2}}</center></td>
-</tr>{% endfor %}
-</tbody></table></div>
-
-</div>
 {% endblock %}

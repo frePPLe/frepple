@@ -15,7 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from decimal import Decimal
 import json
 
 from django.conf import settings
@@ -23,8 +22,6 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.db.models.fields import CharField
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
 from django.utils.encoding import iri_to_uri, force_unicode
@@ -72,7 +69,7 @@ def search(request):
      )
 
 
-class pathreport:
+class PathReport(GridReport):
   '''
   A report showing the upstream supply path or following downstream a
   where-used path.
@@ -81,238 +78,183 @@ class pathreport:
   The where-used report shows all the materials and operations that use
   a specific item.
   '''
+  template = 'input/path.html'
+  title = _("Demand plan")  # TODO function....
+  filterable = False
+  frozenColumns = 0
+  editable = False
+  default_sort = None
+  multiselect = False
+  rows = (
+    GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
+    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False, sortable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False, sortable=False),
+    GridFieldText('location', title=_('location'), editable=False, sortable=False),
+    GridFieldText('type', title=_('type'), editable=False, sortable=False),
+    GridFieldNumber('duration', title=_('duration'), editable=False, sortable=False),
+    GridFieldNumber('duration_per', title=_('duration per unit'), editable=False, sortable=False),
+    GridFieldText('resources', editable=False, sortable=False, extra='formatter:reslistfmt'),
+    GridFieldText('buffers', editable=False, sortable=False, hidden=True),
+    GridFieldText('suboperation', editable=False, sortable=False, hidden=True),
+    GridFieldText('id', editable=False, sortable=False, hidden=True),
+    GridFieldText('parent', editable=False, sortable=False, hidden=True),
+    GridFieldText('leaf', editable=False, sortable=False, hidden=True),
+    GridFieldText('expanded', editable=False, sortable=False, hidden=True),
+    )
 
-  @staticmethod
-  def getPath(request, objecttype, entity, downstream):
+  # Attributes to be specified by the subclasses
+  objecttype = None
+  downstream = None
+
+
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    return reportclass.objecttype.objects.filter(name__exact=args[0]).values('name')
+
+
+  @classmethod
+  def extra_context(reportclass, request, *args, **kwargs):
+    return {
+      'title': capfirst(force_unicode(reportclass.objecttype._meta.verbose_name) + " " + args[0]
+           + ": " + force_unicode(reportclass.downstream and _("Where Used") or _("Supply Path"))),
+      'downstream': reportclass.downstream,
+      'active_tab': reportclass.downstream and 'whereused' or 'supplypath',
+      'model': reportclass.objecttype.__name__.lower
+      }
+
+
+  @classmethod
+  def query(reportclass, request, basequery):
     '''
     A function that recurses upstream or downstream in the supply chain.
-
-    todo: The current code doesn't handle suboperations correctly
     '''
-
-    def addOperation(G, oper, request):
-      countsubops = oper.suboperations.select_related(depth=1).using(request.database).count()
-      if countsubops > 0:
-        subG = G.add_subgraph(name="cluster_O%s" % oper.name, label=oper.name, tooltip=oper.name, rankdir='LR')
-        subG.edge_attr['color']='black'
-        subG.node_attr['fontsize'] = '8'
-        for x in oper.suboperations.select_related(depth=1).using(request.database).order_by('priority'):
-          subG.add_node("O%s" % x.suboperation.name, label=x.suboperation.name, tooltip=x.suboperation.name, shape='rectangle', color='aquamarine')
-        return True
-      else:
-        G.add_node("O%s" % oper.name, label=oper.name, tooltip=oper.name, shape='rectangle', color='aquamarine')
-        return False
-
     from django.core.exceptions import ObjectDoesNotExist
-    if objecttype == 'buffer':
+    entity = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)[1]
+    entity = entity[0]
+    if reportclass.objecttype == Buffer:
       # Find the buffer
-      try: root = [ (0, Buffer.objects.using(request.database).get(name=entity), None, None, None, Decimal(1)) ]
+      try:
+        buf = Buffer.objects.using(request.database).get(name=entity)
+        if buf.producing:
+          root = [ (0, None, buf.producing, 1) ]
+        else:
+          root = []
       except ObjectDoesNotExist: raise Http404("buffer %s doesn't exist" % entity)
-    elif objecttype == 'item':
+    elif reportclass.objecttype == Item:
       # Find the item
       try:
         it = Item.objects.using(request.database).get(name=entity)
         if it.operation:
-          root = [ (0, None, None, it.operation, None, Decimal(1)) ]
+          root = [ (0, None, it.operation, 1, False) ]
         else:
-          root = [ (0, r, None, None, None, Decimal(1)) for r in Buffer.objects.filter(item=entity).using(request.database) ]
+          root = [ (0, None, r.producing, 1, False)
+            for r in Buffer.objects.filter(item=entity).using(request.database)
+            if r.producing
+            ]
       except ObjectDoesNotExist: raise Http404("item %s doesn't exist" % entity)
-    elif objecttype == 'operation':
+    elif reportclass.objecttype == Operation:
       # Find the operation
-      try: root = [ (0, None, None, Operation.objects.using(request.database).get(name=entity), None, Decimal(1)) ]
+      try: root = [ (0, None, Operation.objects.using(request.database).get(name=entity), 1, False) ]
       except ObjectDoesNotExist: raise Http404("operation %s doesn't exist" % entity)
-    elif objecttype == 'resource':
+    elif reportclass.objecttype == Resource:
       # Find the resource
       try: root = Resource.objects.using(request.database).get(name=entity)
       except ObjectDoesNotExist: raise Http404("resource %s doesn't exist" % entity)
-      root = [ (0, None, None, i.operation, None, Decimal(1)) for i in root.loads.using(request.database).all() ]
+      root = [ (0, None, i.operation, 1, False) for i in root.loads.using(request.database).all() ]
     else:
-      raise Http404("invalid entity type %s" % objecttype)
+      raise Http404("invalid entity type")
 
-    # Result data structures
-    bufs = set()
-    ops = set()
-    path = []
-
-    # Check the availability of pygraphviz
-    try:
-      import pygraphviz
-      G = pygraphviz.AGraph(strict=True, directed=True,
-            rankdir="LR", href="javascript:parent.info()", splines='true',
-            bgcolor='white', tooltip=" ")
-      G._get_prog("dot")
-    except:
-      # Silently fail
-      G = None
-
-    # Initialize the graph
-    if G != None:
-      G.edge_attr['color']='black'
-      G.node_attr['style'] = 'filled'
-      G.node_attr['fontsize'] = '8'
-
-    # Note that the root to start with can be either buffer or operation.
+    # Recurse over all operations
+    counter = 1
     while len(root) > 0:
-      level, curbuffer, curprodflow, curoperation, curconsflow, curqty = root.pop()
-      path.append({
-        'buffer': curbuffer,
-        'producingflow': curprodflow,
-        'operation': curoperation,
-        'level': abs(level),
-        'consumingflow': curconsflow,
-        'cumquantity': curqty,
-        })
+      # Pop the current node from the stack
+      level, parent, curoperation, curqty, issuboperation = root.pop()
+      curnode = counter
+      counter += 1
 
-      if G != None:
-        if curprodflow:
-          G.add_node("B%s" % curprodflow.thebuffer.name, label=curprodflow.thebuffer.name, tooltip=curprodflow.thebuffer.name, shape='trapezium', color='goldenrod')
-          clusterop = addOperation(G, curprodflow.operation, request)
-          if curprodflow.quantity > 0:
-            if clusterop: G.edge_attr['lhead'] = "cluster_O%s" % curprodflow.operation.name
-            G.add_edge("O%s" % curprodflow.operation.name, "B%s" % curprodflow.thebuffer.name, tooltip=str(curprodflow.quantity), weight='100', label=str(curprodflow.quantity))
-          else:
-            if clusterop: G.edge_attr['ltail'] = "cluster_O%s" % curprodflow.operation.name
-            G.add_edge("B%s" % curprodflow.thebuffer.name, "O%s" % curprodflow.operation.name, tooltip=str(curprodflow.quantity), weight='100', ltail="cluster_O%s" % curprodflow.operation.name,  label=str(curprodflow.quantity))
-        if curconsflow:
-          G.add_node("B%s" % curconsflow.thebuffer.name, label=curconsflow.thebuffer.name, tooltip=curconsflow.thebuffer.name, shape='trapezium', color='goldenrod')
-          clusterop = addOperation(G, curconsflow.operation, request)
-          if curconsflow.quantity > 0:
-            if clusterop: G.edge_attr['lhead'] = "cluster_O%s" % curconsflow.operation.name
-            G.add_edge("O%s" % curconsflow.operation.name, "B%s" % curconsflow.thebuffer.name, tooltip=str(curconsflow.quantity), weight='100', label=str(curconsflow.quantity))
-          else:
-            if clusterop: G.edge_attr['ltail'] = "cluster_O%s" % curconsflow.operation.name
-            G.add_edge("B%s" % curconsflow.thebuffer.name, "O%s" % curconsflow.operation.name, tooltip=str(curconsflow.quantity), weight='100', label=str(curconsflow.quantity))
-
-      # Avoid infinite loops when the supply chain contains cycles
-      if curbuffer:
-        if curbuffer in bufs: continue
+      # Find the next level
+      hasChildren = False
+      if reportclass.downstream:
+        # Downstream recursion
+        for x in curoperation.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database):
+          curflows = x.thebuffer.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
+          for y in curflows:
+            hasChildren = True
+            root.append( (level-1, curnode, y.operation, - curqty * y.quantity, False) )
+        for x in curoperation.superoperations.using(request.database):
+          root.append( (level-1, curnode, x.operation, curqty, True) )
+          hasChildren = True
       else:
-        if curoperation and curoperation in ops: continue
+        # Upstream recursion
+        curprodflow = None
+        for x in curoperation.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database):
+          curprodflow = x
+        curflows = curoperation.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
+        for y in curflows:
+          if y.thebuffer.producing:
+            hasChildren = True
+            root.append( (level+1, curnode, y.thebuffer.producing, curprodflow and (-curqty * y.quantity)/curprodflow.quantity or (-curqty * y.quantity), False) )
+        for x in curoperation.suboperations.using(request.database):
+          root.append( (level+1, curnode, x.suboperation, curqty, True) )
+          hasChildren = True
 
-      if curprodflow:
-        ops.add(curprodflow.operation)
-      if curconsflow:
-        ops.add(curconsflow.operation)
-      if curbuffer:
-        bufs.add(curbuffer)
-      if curoperation:
-        ops.add(curoperation)
-        if G != None:
-          clusterop = addOperation(G, curoperation, request)
-          for i in curoperation.loads.all():
-            G.add_node("R%s" % i.resource.name, tooltip=i.resource.name, label=i.resource.name, shape='hexagon', color='lightblue')
-            G.add_edge("O%s" % curoperation.name, "R%s" % i.resource.name, label=str(i.quantity), tooltip=str(i.quantity), style='dashed', dir='none', weight='100')
-
-      if downstream:
-        # DOWNSTREAM: Find all operations consuming from this buffer...
-        if curbuffer:
-          start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database) ]
-        else:
-          start = [ (None, curoperation) ]
-        for cons_flow, curoperation in start:
-          if not cons_flow and not curoperation: continue
-          # ... and pick up the buffer they produce into
-          ok = False
-
-          # Push the next buffer on the stack, based on current operation
-          for prod_flow in curoperation.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database):
-            ok = True
-            root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
-
-          # Push the next buffer on the stack, based on super-operations
-          for x in curoperation.superoperations.select_related(depth=1).using(request.database):
-            for prod_flow in x.operation.flows.filter(quantity__gt=0).using(request.database):
-              ok = True
-              root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
-
-          # Push the next buffer on the stack, based on sub-operations
-          for x in curoperation.suboperations.select_related(depth=1).using(request.database):
-            for prod_flow in x.suboperation.flows.filter(quantity__gt=0).using(request.database):
-              ok = True
-              root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
-
-          if not ok and cons_flow:
-            # No producing flow found: there are no more buffers downstream
-            root.append( (level+1, None, None, curoperation, cons_flow, curqty * cons_flow.quantity * -1) )
-          if not ok:
-            # An operation without any flows (on itself, any of its suboperations or any of its superoperations)
-            for x in curoperation.suboperations.using(request.database):
-              root.append( (level+1, None, None, x.suboperation, None, curqty) )
-            for x in curoperation.superoperations.using(request.database):
-              root.append( (level+1, None, None, x.operation, None, curqty) )
-
-      else:
-        # UPSTREAM: Find all operations producing into this buffer...
-        if curbuffer:
-          if curbuffer.producing:
-            start = [ (i, i.operation) for i in curbuffer.producing.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database) ]
-            if not len(start):
-              # Not generic...
-              start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database) ]
-          else:
-            start = []
-        else:
-          start = [ (None, curoperation) ]
-        for prod_flow, curoperation in start:
-          if not prod_flow and not curoperation: continue
-          # ... and pick up the buffer they produce into
-          ok = False
-
-          # Push the next buffer on the stack, based on current operation
-          for cons_flow in curoperation.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database):
-            ok = True
-            root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
-
-          # Push the next buffer on the stack, based on super-operations
-          for x in curoperation.superoperations.select_related(depth=1).using(request.database):
-            for cons_flow in x.operation.flows.filter(quantity__lt=0).using(request.database):
-              if cons_flow.operation in ops: continue
-              ok = True
-              root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
-
-          # Push the next buffer on the stack, based on sub-operations
-          for x in curoperation.suboperations.select_related(depth=1).using(request.database):
-            for cons_flow in x.suboperation.flows.filter(quantity__lt=0).using(request.database):
-              if cons_flow.operation in ops: continue
-              ok = True
-              root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
-
-          if not ok and prod_flow:
-            # No consuming flow found: there are no more buffers upstream
-            ok = True
-            root.append( (level-1, None, prod_flow, prod_flow.operation, None, curqty / prod_flow.quantity) )
-          if not ok:
-            # An operation without any flows (on itself, any of its suboperations or any of its superoperations)
-            for x in curoperation.suboperations.using(request.database):
-              if not x.suboperation in ops: root.append( (level-1, None, None, x.suboperation, None, curqty) )
-            for x in curoperation.superoperations.using(request.database):
-              if not x.operation in ops: root.append( (level-1, None, None, x.operation, None, curqty) )
-
-    # Layout the graph
-    #G.write("test.dot")
-    if G != None: G.layout(prog='dot')
-
-    # Final result
-    return render_to_response('input/path.html', RequestContext(request,{
-       'title': capfirst(force_unicode(_(objecttype)) + " " + entity),
-       'supplypath': path,
-       'model': objecttype,
-       'object_id': entity,
-       'downstream': downstream,
-       'active_tab': downstream and 'whereused' or 'supplypath',
-       'graphdata': G!=None and G.draw(format="svg") or ""
-       }))
+      # Process the current node
+      yield {
+        'depth': abs(level),
+        'id': curnode,
+        'operation': curoperation.name,
+        'type': curoperation.type,
+        'location': curoperation.location and curoperation.location.name or '',
+        'duration': curoperation.duration,
+        'duration_per': curoperation.duration_per,
+        'quantity': curqty,
+        'suboperation': issuboperation and 'true' or 'false',
+        'buffers': [ (x.thebuffer.name, float(x.quantity)) for x in curoperation.flows.using(request.database) ],
+        'resources': [ (x.resource.name, float(x.quantity)) for x in curoperation.loads.using(request.database) ],
+        'parent': parent,
+        'leaf': hasChildren and 'false' or 'true',
+        'expanded': 'true',
+        }
 
 
-  @staticmethod
-  @staff_member_required
-  def viewdownstream(request, model, object_id):
-    return pathreport.getPath(request, model, object_id, True)
+class UpstreamItemPath(PathReport):
+  downstream = False
+  objecttype = Item
 
-  @staticmethod
-  @staff_member_required
-  def viewupstream(request, model, object_id):
-    return pathreport.getPath(request, model, object_id, False)
+
+class UpstreamBufferPath(PathReport):
+  downstream = False
+  objecttype = Buffer
+
+
+class UpstreamResourcePath(PathReport):
+  downstream = False
+  objecttype = Resource
+
+
+class UpstreamOperationPath(PathReport):
+  downstream = False
+  objecttype = Operation
+
+
+class DownstreamItemPath(PathReport):
+  downstream = True
+  objecttype = Item
+
+
+class DownstreamBufferPath(PathReport):
+  downstream = True
+  objecttype = Buffer
+
+
+class DownstreamResourcePath(PathReport):
+  downstream = True
+  objecttype = Resource
+
+
+class DownstreamOperationPath(PathReport):
+  downstream = True
+  objecttype = Operation
 
 
 @staff_member_required

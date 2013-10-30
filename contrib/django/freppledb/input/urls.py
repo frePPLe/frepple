@@ -44,7 +44,13 @@ urlpatterns = patterns('',
 
   # Special reports
   (r'^data/input/calendar/location/(.+)/$', freppledb.input.views.location_calendar),
-  (r'^supplypath/([^/]+)/(.+)/$', freppledb.input.views.pathreport.viewupstream),
-  (r'^whereused/([^/]+)/(.+)/$', freppledb.input.views.pathreport.viewdownstream),
+  (r'^supplypath/item/(.+)/$', freppledb.input.views.UpstreamItemPath.as_view()),
+  (r'^whereused/item/(.+)/$', freppledb.input.views.DownstreamItemPath.as_view()),
+  (r'^supplypath/buffer/(.+)/$', freppledb.input.views.UpstreamBufferPath.as_view()),
+  (r'^whereused/buffer/(.+)/$', freppledb.input.views.DownstreamBufferPath.as_view()),
+  (r'^supplypath/resource/(.+)/$', freppledb.input.views.UpstreamResourcePath.as_view()),
+  (r'^whereused/resource/(.+)/$', freppledb.input.views.DownstreamResourcePath.as_view()),
+  (r'^supplypath/operation/(.+)/$', freppledb.input.views.UpstreamOperationPath.as_view()),
+  (r'^whereused/operation/(.+)/$', freppledb.input.views.DownstreamOperationPath.as_view()),
   (r'^search/$', freppledb.input.views.search),
 )

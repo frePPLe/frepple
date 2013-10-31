@@ -136,7 +136,7 @@ class PathReport(GridReport):
       try:
         buf = Buffer.objects.using(request.database).get(name=entity)
         if buf.producing:
-          root = [ (0, None, buf.producing, 1) ]
+          root = [ (0, None, buf.producing, 1, 0) ]
         else:
           root = []
       except ObjectDoesNotExist: raise Http404("buffer %s doesn't exist" % entity)
@@ -145,44 +145,55 @@ class PathReport(GridReport):
       try:
         it = Item.objects.using(request.database).get(name=entity)
         if it.operation:
-          root = [ (0, None, it.operation, 1, False) ]
+          root = [ (0, None, it.operation, 1, 0) ]
         else:
-          root = [ (0, None, r.producing, 1, False)
+          root = [ (0, None, r.producing, 1, 0)
             for r in Buffer.objects.filter(item=entity).using(request.database)
             if r.producing
             ]
       except ObjectDoesNotExist: raise Http404("item %s doesn't exist" % entity)
     elif reportclass.objecttype == Operation:
       # Find the operation
-      try: root = [ (0, None, Operation.objects.using(request.database).get(name=entity), 1, False) ]
+      try: root = [ (0, None, Operation.objects.using(request.database).get(name=entity), 1, 0) ]
       except ObjectDoesNotExist: raise Http404("operation %s doesn't exist" % entity)
     elif reportclass.objecttype == Resource:
       # Find the resource
       try: root = Resource.objects.using(request.database).get(name=entity)
       except ObjectDoesNotExist: raise Http404("resource %s doesn't exist" % entity)
-      root = [ (0, None, i.operation, 1, False) for i in root.loads.using(request.database).all() ]
+      root = [ (0, None, i.operation, 1, 0) for i in root.loads.using(request.database).all() ]
     else:
       raise Http404("invalid entity type")
 
     # Recurse over all operations
     counter = 1
+    operations = set()
     while len(root) > 0:
       # Pop the current node from the stack
       level, parent, curoperation, curqty, issuboperation = root.pop()
       curnode = counter
       counter += 1
 
+      # Avoid showing the same operation twice.
+      # This feature is disabled by default a) because it is not intuitive to understand
+      # where operations are skipped, and b) because the quantity of each occurrence might
+      # be different.
+      # In some models the duplication is confusing and you can enable this feature.
+      #if curoperation in operations: continue
+      #operations.add(curoperation)
+
       # Find the next level
       hasChildren = False
+      subcount = 0
       if reportclass.downstream:
         # Downstream recursion
         for x in curoperation.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database):
           curflows = x.thebuffer.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
           for y in curflows:
             hasChildren = True
-            root.append( (level-1, curnode, y.operation, - curqty * y.quantity, False) )
-        for x in curoperation.superoperations.using(request.database):
-          root.append( (level-1, curnode, x.operation, curqty, True) )
+            root.append( (level-1, curnode, y.operation, - curqty * y.quantity, subcount) )
+        for x in curoperation.superoperations.using(request.database).order_by("-priority"):
+          subcount += curoperation.type == "routing" and 1 or -1
+          root.append( (level-1, curnode, x.operation, curqty, subcount) )
           hasChildren = True
       else:
         # Upstream recursion
@@ -193,9 +204,10 @@ class PathReport(GridReport):
         for y in curflows:
           if y.thebuffer.producing:
             hasChildren = True
-            root.append( (level+1, curnode, y.thebuffer.producing, curprodflow and (-curqty * y.quantity)/curprodflow.quantity or (-curqty * y.quantity), False) )
-        for x in curoperation.suboperations.using(request.database):
-          root.append( (level+1, curnode, x.suboperation, curqty, True) )
+            root.append( (level+1, curnode, y.thebuffer.producing, curprodflow and (-curqty * y.quantity)/curprodflow.quantity or (-curqty * y.quantity), subcount) )
+        for x in curoperation.suboperations.using(request.database).order_by("-priority"):
+          subcount += curoperation.type == "routing" and 1 or -1
+          root.append( (level+1, curnode, x.suboperation, curqty, subcount) )
           hasChildren = True
 
       # Process the current node
@@ -208,7 +220,7 @@ class PathReport(GridReport):
         'duration': curoperation.duration,
         'duration_per': curoperation.duration_per,
         'quantity': curqty,
-        'suboperation': issuboperation and 'true' or 'false',
+        'suboperation': issuboperation,
         'buffers': [ (x.thebuffer.name, float(x.quantity)) for x in curoperation.flows.using(request.database) ],
         'resources': [ (x.resource.name, float(x.quantity)) for x in curoperation.loads.using(request.database) ],
         'parent': parent,

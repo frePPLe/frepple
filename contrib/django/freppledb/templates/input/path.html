@@ -18,23 +18,64 @@
   margin: 10px;
   padding: 10px;
 }
+
+svg {
+  background-color: #FFF;
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+path.flow {
+  fill: none;
+  stroke: #000;
+  cursor: default;
+  marker-mid: url(#arrow);
+}
+
+path.load {
+  fill: none;
+  stroke: #000;
+  cursor: default;
+  stroke-dasharray: 5,5;
+}
+
+text {
+  font: 12px sans-serif;
+  pointer-events: none;
+}
+
+text.id {
+  text-anchor: middle;
+  font-weight: bold;
+}
 </style>
-<script src="{{STATIC_URL}}js/d3.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js"></script>
 <script type="text/javascript">
 
 function reslistfmt(cellvalue, options, row)
 {
   if (cellvalue === undefined || cellvalue ==='') return '';
   result = '';
-  console.log(cellvalue);
   for (var i in cellvalue)
     result += "<span>" + cellvalue[i][0] + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span></span><br/>";
   return result;
 }
 
-function clickedShaped(event) {
+var nodes = [];
+var links = [];
+var operations = {};
+var buffers = {};
+var resources = {};
+
+function clickedShaped(event)
+{
 
   var tgt = event.currentTarget.firstChild.textContent;
+console.log(event.currentTarget);
 
   // Find which contextmenu to use
   if (/^B/.test(tgt)) contextMenu = $('#buffercontext');
@@ -69,20 +110,210 @@ function clickedShaped(event) {
   event.stopImmediatePropagation();
 }
 
+
+// Update force layout (called automatically each iteration)
+function tick(e)
+{
+
+  /*
+    path.attr("d", function(d) {
+       return 'M' + d.source.x + ',' + d.source.y
+       + 'L' + ((d.source.x+d.target.x)/2) + ',' + ((d.source.y+d.target.y)/2)
+       + 'L' + d.target.x + ',' + d.target.y;
+       });
+
+    shapes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+    return;
+   */
+
+  // Tick function a) adjusts the Y-coordinates by trying to shorten the links
+  // and b) adjusts the X-coordinates based on the level info
+  var k = .1 * e.alpha;
+  path.attr('d', function(d) {
+    var deltaX = 0, //d.target.x - d.source.x,
+        deltaY = d.target.y - d.source.y,
+        dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    if (dist == 0) dist=1;
+    var normX = deltaX / dist * k,
+        normY = deltaY / dist * k,
+        sourcePadding = 0,
+        targetPadding = 0,
+        sourceX = d.source.x + (sourcePadding * normX),
+        sourceY = d.source.y + (sourcePadding * normY),
+        targetX = d.target.x - (targetPadding * normX) ,
+        targetY = d.target.y - (targetPadding * normY);
+    return 'M' + sourceX + ',' + sourceY + 'L' + ((sourceX+targetX)/2) + ',' + ((sourceY+targetY)/2) + 'L' + targetX + ',' + targetY;
+  });
+
+  shapes.attr('transform', function(d) {
+    /*if (d.id == 10)
+    {
+    d.x = nodes[0].x;
+    d.y = nodes[0].y + 25;
+    return 'translate(' + d.x + ',' + d.y + ')';
+    }
+   else if (d.id == 11)
+    {
+    d.x = nodes[2].x + 55;
+    d.y = nodes[2].y;
+    return 'translate(' + d.x + ',' + d.y + ')';
+    }
+   else if (d.id == 12)
+    {
+    d.x = nodes[2].x + 55 * 2;
+    d.y = nodes[2].y;
+    return 'translate(' + d.x + ',' + d.y + ')';
+    }
+    else
+    {
+    */
+    d.x += (100 + d.level * 700/4 - d.x) * k * 10;
+    //d.x = 100 + d.level * 700/4;
+    //d.y += (250 - d.y) * k / 10;
+    return 'translate(' + d.x + ',' + d.y + ')';
+    //}
+  });
+}
+
+
+function drawGraph(jsondata)
+{
+  var count = -1;
+  for (var oper in jsondata['rows'])
+  {
+    // Don't add the same operation twice
+    if ( jsondata['rows'][oper]['operation'] in operations) continue;
+
+    // Add the operation node
+    var level = parseInt(jsondata['rows'][oper]['depth']);
+    count ++;
+    var operindex = nodes.push({
+       id: count,
+       level: level,
+       name: jsondata['rows'][oper]['operation'],
+       weight:1,
+       x: 100 + level * 700/4,
+       type: 'operation'
+       }) - 1;
+    operations[jsondata['rows'][oper]['operation']] = count;
+
+    // Add nodes for the resources and load links
+    for (var res in jsondata['rows'][oper]['resources'])
+    {
+      if (jsondata['rows'][oper]['resources'][res][0] in resources)
+        links.push({source: nodes[operindex], target: nodes[resources[jsondata['rows'][oper]['resources'][res][0]]], type: 'load'});
+      else
+      {
+        count ++;
+        var resindx = nodes.push({
+          id: count,
+          level: level,
+          x: 100 + level * 700/4,
+          name: jsondata['rows'][oper]['resources'][res][0],
+          weight:1,
+          type: 'resource'
+          }) - 1;
+        resources[jsondata['rows'][oper]['resources'][res][0]] = resindx;
+        links.push({source: nodes[operindex], target: nodes[resindx], type: 'load'});
+      }
+    }
+
+    // Add nodes for the buffers and flow links
+    for (var buf in jsondata['rows'][oper]['buffers'])
+    {
+      if (jsondata['rows'][oper]['buffers'][buf][0] in buffers)
+      {
+        if (jsondata['rows'][oper]['buffers'][buf][1] > 0)
+          links.push({source: nodes[operindex], target: nodes[buffers[jsondata['rows'][oper]['buffers'][buf][0]]], type: 'flow'});
+        else
+          links.push({source: nodes[buffers[jsondata['rows'][oper]['buffers'][buf][0]]], target: nodes[operindex], type: 'flow'});
+      }
+      else
+      {
+        count ++;
+        var bufindx = nodes.push({
+          id: count,
+          level: level,
+          x: 100 + level * 700/4,
+          name: jsondata['rows'][oper]['buffers'][buf][0],
+          weight:1,
+          type: 'buffer'
+          }) - 1;
+        buffers[jsondata['rows'][oper]['buffers'][buf][0]] = bufindx;
+        if (jsondata['rows'][oper]['buffers'][buf][1] > 0)
+          links.push({source: nodes[operindex], target: nodes[bufindx], type: 'flow'});
+        else
+          links.push({source: nodes[bufindx], target: nodes[operindex], type: 'flow'});
+      }
+    }
+}
+
+
+
+// Initialize D3 force layout
+ svg = d3.select('#svggraph')
+  .attr('width', $("#svggraph").width())
+  .attr('height', $("#svggraph").height());
+ force = d3.layout.force()
+    .nodes(nodes)
+    .links(links)
+    .size([$("#svggraph").width(), $("#svggraph").height()])
+    .charge(-5000)
+    .gravity(0.3)
+    .on('tick', tick);
+
+// handles to link and node element groups
+path = svg.append('svg:g').selectAll('path');
+shapes = svg.append('svg:g').selectAll('g');
+
+  // path (link) group
+  path = path.data(links);
+
+  // add new links
+  path.enter().append('svg:path')
+    .attr('class', function(d) { return d.type; });
+
+  // remove old links
+  path.exit().remove();
+
+
+  // shapes (node) group
+  // NB: the function arg is crucial here! nodes are known by id, not by index!
+  shapes = shapes.data(nodes, function(d) { return d.id; });
+
+  // add new nodes
+  var g = shapes.enter().append('svg:g');
+  g.append("svg:use")
+    .attr("xlink:href", function(d) { return "#" + d.type; })
+    .call(force.drag);
+
+  // show node IDs
+  g.append('svg:text')
+      .attr('x', 0)
+      .attr('y', 4)
+      .attr('class', 'id')
+      .text(function(d) { return d.name; });
+
+  // remove old nodes
+  shapes.exit().remove();
+
+  // set the graph in motion
+  force.start();
+}
+
+
 $(function(){
   if ($("#graph").height() > $(window).height() - 350)
     $("#graph").height($(window).height() - 350);
-  $("#graph").resizable({handles: "s,se"});
-  $("g.node").click(clickedShaped);
-  $("g.cluster").click(clickedShaped);
-  $("svg").click(function() {
-    $(".ContextMenu").css('display', 'none');
-    });
+  $("#graph").resizable({handles: "s"});
+  $("#svggraph").click(clickedShaped);
 });
 
 </script>
 {% endblock %}
-{% block extra_grid %}treeGrid: true,
+
+{% block extra_grid %}loadComplete: drawGraph,
+treeGrid: true,
 treeGridModel: 'adjacency',
 ExpandColumn: 'depth',
 treeIcons: {
@@ -100,7 +331,29 @@ treeReader: {
 ExpandColClick: true,
 {% endblock %}
 
-
 {% block tools %}
 {% tabs model %}
 {% endblock %}
+
+{% block before_table %}
+<div id="graph" style="clear: both; height: 400px; padding: 10px; ">
+<svg id="svggraph" overflow="scroll" width="100%">
+<defs>
+  <marker id="arrow" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M0,-5L10,0L0,5" fill="#000">
+    </path>
+  </marker>
+  <rect id="operation" class="operation" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
+    style="cursor: pointer; fill: #1f77b4;">
+  </rect>
+  <polygon id="buffer" class="buffer" points="0,-40 35,20 -35,20"
+    style="cursor: pointer; fill: #2ca02c;">
+  </polygon>
+  <circle id="resource" class="resource" cx="0" cy="0" r="30"
+    style="cursor: pointer; fill: #ff7f0e;">
+  </circle>
+</defs>
+</svg>
+</div>
+{% endblock %}
+

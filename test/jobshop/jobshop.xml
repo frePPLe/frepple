@@ -513,7 +513,7 @@ def replan():
     if verybestSolution == None or timespan < verybest:
       print("\nBest solution: %d, %d%% over the optimal solution, %d iterations, %f" % \
         ( timespan, (timespan - 930) / 9.30, iterations, temperature))
-      result.sort(None, sortpriority)
+      result.sort(key=sortpriority)
       noimprovement = 0
       for l in result:
         print("   '%s' %s %s %s" % (l[0].name, l[1], l[2], l[3]))
@@ -527,7 +527,7 @@ def replan():
 # Create an initial result
 # Rescale the priorities with it: latest end date gives highest priority
 replan()
-result.sort(None, sortenddate)
+result.sort(key=sortenddate)
 prio = 1
 for i in result:
   i[0].priority = prio
@@ -544,7 +544,7 @@ while noimprovement < 5000 and iterations < 10000:
   # Implement the mutation
   if mutation == 0:
     # Swap the priority of two arbitrary demands
-    result.sort(None, sortenddate)
+    result.sort(key=sortenddate)
     d1 = random.choice(result)
     d2 = random.choice(result)
     while d1[0] == d2[0]:

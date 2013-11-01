@@ -66,15 +66,19 @@ class ReportByDemand(GridReport):
     cursor.execute('''
        select demand.due, min(startdate), max(enddate)
        from demand
-       inner join out_demandpegging
+       left outer join out_demandpegging
          on out_demandpegging.demand = demand.name
-       inner join out_operationplan
-         on out_demandpegging.prod_operationplan = out_operationplan.id
-         or out_demandpegging.cons_operationplan = out_operationplan.id
-      where demand.name = %s and out_operationplan.operation not like 'Inventory of %%'
+       left outer join out_operationplan
+         on (out_demandpegging.prod_operationplan = out_operationplan.id
+             or out_demandpegging.cons_operationplan = out_operationplan.id)
+         and out_operationplan.operation not like 'Inventory of %%'
+      where demand.name = %s
       group by due
        ''', (args[0]))
     (due, start, end) = cursor.fetchone()
+    if not start: start = due
+    if not end: end = due
+
     if not isinstance(start, datetime):
       # SQLite max(datetime) function doesn't return a datetime. Sigh.
       start = datetime.strptime(start, '%Y-%m-%d %H:%M:%S')

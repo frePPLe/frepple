@@ -135,10 +135,15 @@ class PathReport(GridReport):
       # Find the buffer
       try:
         buf = Buffer.objects.using(request.database).get(name=entity)
-        if buf.producing:
-          root = [ (0, None, buf.producing, 1, 0) ]
+        if reportclass.downstream:
+          root = [ (0, None, i.operation, 1, 0)
+            for i in buf.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
+            ]
         else:
-          root = []
+          if buf.producing:
+            root = [ (0, None, buf.producing, 1, 0) ]
+          else:
+            root = []
       except ObjectDoesNotExist: raise Http404("buffer %s doesn't exist" % entity)
     elif reportclass.objecttype == Item:
       # Find the item
@@ -311,6 +316,7 @@ class BufferList(GridReport):
     GridFieldText('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='calendar'),
     GridFieldText('producing', title=_('producing'), field_name='producing__name', formatter='operation'),
     GridFieldNumber('carrying_cost', title=_('carrying cost')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -327,6 +333,7 @@ class SetupMatrixList(GridReport):
 
   rows = (
     GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -355,6 +362,7 @@ class ResourceList(GridReport):
     GridFieldNumber('maxearly', title=_('maxearly')),
     GridFieldText('setupmatrix', title=_('setup matrix'), formatter='setupmatrix'),
     GridFieldText('setup', title=_('setup')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -376,6 +384,7 @@ class LocationList(GridReport):
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldText('available', title=_('available'), field_name='available__name', formatter='calendar'),
     GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='location'),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -396,6 +405,7 @@ class CustomerList(GridReport):
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='customer'),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -419,6 +429,7 @@ class ItemList(GridReport):
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
     GridFieldText('owner', title=_('owner'), field_name='owner__name'),
     GridFieldCurrency('price', title=_('price')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -435,6 +446,7 @@ class SkillList(GridReport):
 
   rows = (
     GridFieldText('name', title=_('name'), key=True, formatter='skill'),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -456,6 +468,7 @@ class ResourceSkillList(GridReport):
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
     GridFieldNumber('priority', title=_('priority')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -483,6 +496,7 @@ class LoadList(GridReport):
     GridFieldNumber('priority', title=_('priority')),
     GridFieldText('setup', title=_('setup')),
     GridFieldText('search', title=_('search mode')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -509,6 +523,7 @@ class FlowList(GridReport):
     GridFieldText('alternate', title=_('alternate')),
     GridFieldNumber('priority', title=_('priority')),
     GridFieldText('search', title=_('search mode')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -538,6 +553,7 @@ class DemandList(GridReport):
     GridFieldChoice('status', title=_('status'), choices=Demand.demandstatus),
     GridFieldNumber('maxlateness', title=_('maximum lateness')),
     GridFieldNumber('minshipment', title=_('minimum shipment')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -557,6 +573,7 @@ class CalendarList(GridReport):
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldNumber('defaultvalue', title=_('default value')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -586,6 +603,7 @@ class CalendarBucketList(GridReport):
     GridFieldBool('sunday', title=_('Sunday')),
     GridFieldTime('starttime', title=_('start time')),
     GridFieldTime('endtime', title=_('end time')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -617,6 +635,7 @@ class OperationList(GridReport):
     GridFieldNumber('sizemaximum', title=_('size maximum')),
     GridFieldCurrency('cost', title=_('cost')),
     GridFieldText('search', title=_('search mode')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -638,6 +657,7 @@ class SubOperationList(GridReport):
     GridFieldInteger('priority', title=_('priority')),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -660,5 +680,6 @@ class OperationPlanList(GridReport):
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldBool('locked', title=_('locked')),
     GridFieldInteger('owner', title=_('owner'), extra="formatoptions:{defaultValue:''}"),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )

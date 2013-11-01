@@ -15,8 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import json
-
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
@@ -31,7 +29,7 @@ from django.utils.text import capfirst
 from django.contrib.auth.models import Group
 from django.utils import translation
 from django.conf import settings
-from django.http import Http404, HttpResponseServerError, HttpResponseRedirect, HttpResponse
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 
 from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
@@ -190,6 +188,7 @@ class ParameterList(GridReport):
     GridFieldText('name', title=_('name'), key=True, formatter='parameter'),
     GridFieldText('value', title=_('value')),
     GridFieldText('description', title=_('description')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -263,6 +262,7 @@ class BucketList(GridReport):
   rows = (
     GridFieldText('name', title=_('name'), key=True, formatter="bucket"),
     GridFieldText('description', title=_('description')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 
@@ -282,5 +282,6 @@ class BucketDetailList(GridReport):
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldText('name', title=_('name')),
+    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )

@@ -135,9 +135,12 @@ class HierarchyModel(models.Model):
 class AuditModel(models.Model):
   '''
   This is an abstract base model.
-  It implements the capability to maintain the date of the last modification of the record.
+  It implements the capability to maintain:
+    - the date of the last modification of the record.
+    - a string intended to describe the source system that supplied the record
   '''
   # Database fields
+  source = models.CharField(_('source'), db_index=True, max_length=settings.CATEGORYSIZE, null=True, blank=True)
   lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now())
 
   def save(self, *args, **kwargs):

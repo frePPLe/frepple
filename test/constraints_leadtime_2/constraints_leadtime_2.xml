@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>actual plan</name>
+  <description>
+    Lead time constraint test model with a sequence of timeper operations.
+  </description>
+  <current>2014-01-01T00:00:00</current>
+  <operations>
+    <operation name="level 1" xsi:type="operation_time_per">
+      <duration_per>P1D</duration_per>
+    </operation>
+    <operation name="level 2" xsi:type="operation_time_per">
+      <duration>P1D</duration>
+      <duration_per>PT12H</duration_per>
+    </operation>
+    <operation name="level 3A" xsi:type="operation_time_per">
+      <duration>P1D</duration>
+      <duration_per>PT6H</duration_per>
+    </operation>
+    <operation name="level 3B" xsi:type="operation_time_per">
+      <duration_per>PT12H</duration_per>
+    </operation>
+    <operation name="level 4A" xsi:type="operation_time_per">
+      <duration>P2D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="level 4B" xsi:type="operation_time_per">
+      <duration_per>PT1H</duration_per>
+    </operation>
+  </operations>
+  <items>
+    <item name="end item">
+      <operation name="level 1"/>
+    </item>
+  </items>
+  <buffers>
+    <buffer name="between 1 and 2">
+      <producing name="level 2" />
+      <item name="end item" />
+    </buffer>
+    <buffer name="between 2 and 3A">
+      <producing name="level 3A" />
+      <item name="end item" />
+    </buffer>
+    <buffer name="between 2 and 3B">
+      <producing name="level 3B" />
+      <item name="end item" />
+    </buffer>
+    <buffer name="between 3A and 4A">
+      <producing name="level 4A" />
+      <item name="end item" />
+    </buffer>
+    <buffer name="between 3B and 4B">
+      <producing name="level 4B" />
+      <item name="end item" />
+    </buffer>
+  </buffers>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="level 1" />
+      <buffer name="between 1 and 2" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="level 2" />
+      <buffer name="between 1 and 2" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="level 2" />
+      <buffer name="between 2 and 3A" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="level 2" />
+      <buffer name="between 2 and 3B" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="level 3A" />
+      <buffer name="between 2 and 3A" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="level 3A" />
+      <buffer name="between 3A and 4A" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="level 4A" />
+      <buffer name="between 3A and 4A" />
+      <quantity>1</quantity>
+    </flow> 
+    <flow xsi:type="flow_end">
+      <operation name="level 3B" />
+      <buffer name="between 2 and 3B" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="level 3B" />
+      <buffer name="between 3B and 4B" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="level 4B" />
+      <buffer name="between 3B and 4B" />
+      <quantity>1</quantity>
+    </flow>        
+  </flows>
+  <demands>
+    <demand name="order 1">
+      <quantity>3</quantity>
+      <due>2014-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="end item" />
+    </demand>
+  </demands>
+
+<?python
+from __future__ import print_function
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(name="MRP", plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+?>
+
+</plan>

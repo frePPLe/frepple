@@ -7,6 +7,11 @@ window.__admin_media_prefix__ = "/static/admin/";
 // A class to handle changes to a grid.
 //----------------------------------------------------------------------------
 var upload = {
+  warnUnsavedChanges: function()
+  {
+    $(window).off('beforeunload', upload.warnUnsavedChanges);
+    return gettext("There are unsaved changes on this page.");
+  },
 
   undo : function ()
   {
@@ -15,6 +20,7 @@ var upload = {
     $('#save').addClass("ui-state-disabled").removeClass("bold");
     $('#undo').addClass("ui-state-disabled").removeClass("bold");
     $('#filter').removeClass("ui-state-disabled");
+    $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
 
   select : function ()
@@ -23,6 +29,8 @@ var upload = {
     $.jgrid.hideModal("#searchmodfbox_grid");
     $('#save').removeClass("ui-state-disabled").addClass("bold");
     $('#undo').removeClass("ui-state-disabled").addClass("bold");
+    $(window).off('beforeunload', upload.warnUnsavedChanges);
+    $(window).on('beforeunload', upload.warnUnsavedChanges);
   },
 
   save : function()

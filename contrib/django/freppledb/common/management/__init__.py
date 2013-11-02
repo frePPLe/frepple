@@ -18,11 +18,11 @@
 from django.db.models import signals
 from django.db import DEFAULT_DB_ALIAS
 
-from freppledb.menu import menu
 
 def createReportPermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kwargs):
   # Create the report permissions for the single menu instance we know about.
   if db == DEFAULT_DB_ALIAS:
+    from freppledb.menu import menu
     menu.createReportPermissions(app.__name__.replace(".models",""))
 
 signals.post_syncdb.connect(createReportPermissions)

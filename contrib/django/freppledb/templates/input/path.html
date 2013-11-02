@@ -12,13 +12,6 @@
 
 {% block extrahead %}{{block.super}}
 <style type="text/css">
-#graph {
-  overflow:auto;
-  border: 1px black solid;
-  margin: 10px;
-  padding: 10px;
-}
-
 svg {
   background-color: #FFF;
   cursor: default;
@@ -33,7 +26,7 @@ path.flow {
   fill: none;
   stroke: #000;
   cursor: default;
-  marker-mid: url(#arrow);
+  marker-mid: url(#arrow); // IE can't display links if this line is active...
 }
 
 path.load {
@@ -70,24 +63,33 @@ var links = [];
 var operations = {};
 var buffers = {};
 var resources = {};
+var width = 800;
+var minlevel = 0;
+var maxlevel = 0;
+
+function hideContext()
+{
+  $('#operationcontext').css('display','none');
+  $('#buffercontext').css('display','none');
+  $('#resourcecontext').css('display','none');
+}
 
 function clickedShaped(event)
 {
+  // Hide previous context menu
+  $('#operationcontext').css('display','none');
+  $('#buffercontext').css('display','none');
+  $('#resourcecontext').css('display','none');
 
-  var tgt = event.currentTarget.firstChild.textContent;
-console.log(event.currentTarget);
+  // Analyze where we have clicked
+  var type = $(this).children("use").prop("href").baseVal;
+  var tgt = $(this).children("text").prop('textContent');
 
   // Find which contextmenu to use
-  if (/^B/.test(tgt)) contextMenu = $('#buffercontext');
-  if (/^R/.test(tgt)) contextMenu = $('#resourcecontext');
-  if (/^O/.test(tgt) || /^cluster_O/.test(tgt)) contextMenu = $('#operationcontext');
+  var contextMenu = $(type + 'context');
 
   // Find the id of the menu to display
-  if (/^cluster_O/.test(tgt))
-    name_escaped = encodeURIComponent(tgt.substring(9).replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-      .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
-  else
-    name_escaped = encodeURIComponent(tgt.substring(1).replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+  name_escaped = encodeURIComponent(tgt.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
       .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
 
   // Build the URLs for the menu
@@ -101,77 +103,42 @@ console.log(event.currentTarget);
   });
 
   // Display the menu at the right location
+  var mouse = d3.mouse(this);
   $(contextMenu).css({
-    left: event.pageX,
-    top: event.pageY,
+    left: d3.event.pageX, //mouse[0],
+    top: d3.event.pageY, //mouse[1],
     display: 'block'
     });
-  event.preventDefault();
-  event.stopImmediatePropagation();
+  d3.event.preventDefault();
+  d3.event.stopImmediatePropagation();
 }
 
 
 // Update force layout (called automatically each iteration)
 function tick(e)
 {
+  var k = 2* e.alpha;
+  // Bring operations vertically closer to the center and
+  // horizontally close to the position linked to their level.
+  shapes.attr('transform', function(d) {
+    if (d.type == 'operation')
+    {
+{% if downstream %}
+       d.x += (width / (maxlevel - minlevel + 1) * (0.5 - minlevel + d.level) - d.x) * k;
+{% else %}
+       d.x += (width / (maxlevel - minlevel + 1) * (0.5 + maxlevel - d.level) - d.x) * k;
+{% endif %}
+    //if (d.type == 'operation')
+       d.y += (200 - d.y) * k / 2;
+    }
+    return 'translate(' + d.x + ',' + d.y + ')';
+    });
 
-  /*
-    path.attr("d", function(d) {
-       return 'M' + d.source.x + ',' + d.source.y
+  // Draw paths
+  path.attr('d', function(d) {
+    return 'M' + d.source.x + ',' + d.source.y
        + 'L' + ((d.source.x+d.target.x)/2) + ',' + ((d.source.y+d.target.y)/2)
        + 'L' + d.target.x + ',' + d.target.y;
-       });
-
-    shapes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-    return;
-   */
-
-  // Tick function a) adjusts the Y-coordinates by trying to shorten the links
-  // and b) adjusts the X-coordinates based on the level info
-  var k = .1 * e.alpha;
-  path.attr('d', function(d) {
-    var deltaX = 0, //d.target.x - d.source.x,
-        deltaY = d.target.y - d.source.y,
-        dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    if (dist == 0) dist=1;
-    var normX = deltaX / dist * k,
-        normY = deltaY / dist * k,
-        sourcePadding = 0,
-        targetPadding = 0,
-        sourceX = d.source.x + (sourcePadding * normX),
-        sourceY = d.source.y + (sourcePadding * normY),
-        targetX = d.target.x - (targetPadding * normX) ,
-        targetY = d.target.y - (targetPadding * normY);
-    return 'M' + sourceX + ',' + sourceY + 'L' + ((sourceX+targetX)/2) + ',' + ((sourceY+targetY)/2) + 'L' + targetX + ',' + targetY;
-  });
-
-  shapes.attr('transform', function(d) {
-    /*if (d.id == 10)
-    {
-    d.x = nodes[0].x;
-    d.y = nodes[0].y + 25;
-    return 'translate(' + d.x + ',' + d.y + ')';
-    }
-   else if (d.id == 11)
-    {
-    d.x = nodes[2].x + 55;
-    d.y = nodes[2].y;
-    return 'translate(' + d.x + ',' + d.y + ')';
-    }
-   else if (d.id == 12)
-    {
-    d.x = nodes[2].x + 55 * 2;
-    d.y = nodes[2].y;
-    return 'translate(' + d.x + ',' + d.y + ')';
-    }
-    else
-    {
-    */
-    d.x += (100 + d.level * 700/4 - d.x) * k * 10;
-    //d.x = 100 + d.level * 700/4;
-    //d.y += (250 - d.y) * k / 10;
-    return 'translate(' + d.x + ',' + d.y + ')';
-    //}
   });
 }
 
@@ -184,15 +151,18 @@ function drawGraph(jsondata)
     // Don't add the same operation twice
     if ( jsondata['rows'][oper]['operation'] in operations) continue;
 
-    // Add the operation node
+    // Keep track of the levels
     var level = parseInt(jsondata['rows'][oper]['depth']);
+    if (level < minlevel) minlevel = level;
+    if (level > maxlevel) maxlevel = level;
+
+    // Add the operation node
     count ++;
     var operindex = nodes.push({
        id: count,
        level: level,
        name: jsondata['rows'][oper]['operation'],
        weight:1,
-       x: 100 + level * 700/4,
        type: 'operation'
        }) - 1;
     operations[jsondata['rows'][oper]['operation']] = count;
@@ -208,7 +178,6 @@ function drawGraph(jsondata)
         var resindx = nodes.push({
           id: count,
           level: level,
-          x: 100 + level * 700/4,
           name: jsondata['rows'][oper]['resources'][res][0],
           weight:1,
           type: 'resource'
@@ -221,9 +190,10 @@ function drawGraph(jsondata)
     // Add nodes for the buffers and flow links
     for (var buf in jsondata['rows'][oper]['buffers'])
     {
+      var producer = jsondata['rows'][oper]['buffers'][buf][1] > 0;
       if (jsondata['rows'][oper]['buffers'][buf][0] in buffers)
       {
-        if (jsondata['rows'][oper]['buffers'][buf][1] > 0)
+        if (producer)
           links.push({source: nodes[operindex], target: nodes[buffers[jsondata['rows'][oper]['buffers'][buf][0]]], type: 'flow'});
         else
           links.push({source: nodes[buffers[jsondata['rows'][oper]['buffers'][buf][0]]], target: nodes[operindex], type: 'flow'});
@@ -233,56 +203,58 @@ function drawGraph(jsondata)
         count ++;
         var bufindx = nodes.push({
           id: count,
-          level: level,
-          x: 100 + level * 700/4,
+{% if downstream %}
+          level: producer ? level - 0.5 : level + 0.5,
+{% else %}
+          level: producer ? level - 0.5 : level + 0.5,
+{% endif %}
           name: jsondata['rows'][oper]['buffers'][buf][0],
           weight:1,
           type: 'buffer'
           }) - 1;
         buffers[jsondata['rows'][oper]['buffers'][buf][0]] = bufindx;
-        if (jsondata['rows'][oper]['buffers'][buf][1] > 0)
+        if (producer)
           links.push({source: nodes[operindex], target: nodes[bufindx], type: 'flow'});
         else
           links.push({source: nodes[bufindx], target: nodes[operindex], type: 'flow'});
       }
     }
-}
+  }
 
 
-
-// Initialize D3 force layout
- svg = d3.select('#svggraph')
-  .attr('width', $("#svggraph").width())
-  .attr('height', $("#svggraph").height());
- force = d3.layout.force()
+  // Initialize D3 force layout
+  width = $("#graph").width();
+  svg = d3.select('#svggraph')
+    .attr('width', width)
+    .attr('height', $("#graph").height());
+  force = d3.layout.force()
     .nodes(nodes)
     .links(links)
-    .size([$("#svggraph").width(), $("#svggraph").height()])
-    .charge(-5000)
-    .gravity(0.3)
+    .size([width, $("#svggraph").height()])
+    .charge( function(d,i) {
+      if (d.type == 'operation') return -3000;
+      else if (d.type == 'resource') return -2000;
+      else return -2000;
+      })
+    .gravity(0)   // Gravity would pull objects towards the center
     .on('tick', tick);
 
-// handles to link and node element groups
-path = svg.append('svg:g').selectAll('path');
-shapes = svg.append('svg:g').selectAll('g');
+  // handles to link and node element groups
+  path = svg.append('svg:g').selectAll('path');
+  shapes = svg.append('svg:g').selectAll('g');
 
   // path (link) group
   path = path.data(links);
-
-  // add new links
   path.enter().append('svg:path')
     .attr('class', function(d) { return d.type; });
-
-  // remove old links
   path.exit().remove();
-
 
   // shapes (node) group
   // NB: the function arg is crucial here! nodes are known by id, not by index!
   shapes = shapes.data(nodes, function(d) { return d.id; });
 
   // add new nodes
-  var g = shapes.enter().append('svg:g');
+  var g = shapes.enter().append('svg:g').on('click', clickedShaped);
   g.append("svg:use")
     .attr("xlink:href", function(d) { return "#" + d.type; })
     .call(force.drag);
@@ -306,7 +278,7 @@ $(function(){
   if ($("#graph").height() > $(window).height() - 350)
     $("#graph").height($(window).height() - 350);
   $("#graph").resizable({handles: "s"});
-  $("#svggraph").click(clickedShaped);
+  $("body").click(hideContext);
 });
 
 </script>
@@ -336,8 +308,8 @@ ExpandColClick: true,
 {% endblock %}
 
 {% block before_table %}
-<div id="graph" style="clear: both; height: 400px; padding: 10px; ">
-<svg id="svggraph" overflow="scroll" width="100%">
+<div id="graph" style="clear: both; height: 400px; overflow:auto; border: 1px black solid;">
+<svg id="svggraph" width="100%" overflow="scroll">
 <defs>
   <marker id="arrow" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">
     <path d="M0,-5L10,0L0,5" fill="#000">

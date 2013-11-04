@@ -11,12 +11,12 @@ from freppledb.execute.models import Task
 import frepple
 
 
-def printWelcome(database = DEFAULT_DB_ALIAS):
+def printWelcome(prefix = 'frepple', database = DEFAULT_DB_ALIAS):
   # Send the output to a logfile
   if database == DEFAULT_DB_ALIAS:
-    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'frepple.log')
+    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'%s.log' % prefix)
   else:
-    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'frepple_%s.log' % database)
+    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'%_%s.log' % (prefix,database))
 
   # Welcome message
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
@@ -34,7 +34,9 @@ def printWelcome(database = DEFAULT_DB_ALIAS):
       'PORT' in settings.DATABASES[database] and settings.DATABASES[database]['PORT'] or ''
       ))
 
+
 task = None
+
 
 def logProgress(val, database = DEFAULT_DB_ALIAS):
   global task
@@ -56,23 +58,21 @@ def logProgress(val, database = DEFAULT_DB_ALIAS):
     transaction.commit(using=database)
     transaction.leave_transaction_management(using=database)
 
-# Select database
-try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
-except: db = DEFAULT_DB_ALIAS
 
-# Use the test database if we are running the test suite
-if 'FREPPLE_TEST' in os.environ:
-  settings.DATABASES[db]['NAME'] = settings.DATABASES[db]['TEST_NAME']
-  if 'TEST_CHARSET' in os.environ:
-    settings.DATABASES[db]['CHARSET'] = settings.DATABASES[db]['TEST_CHARSET']
-  if 'TEST_COLLATION' in os.environ:
-    settings.DATABASES[db]['COLLATION'] = settings.DATABASES[db]['TEST_COLLATION']
-  if 'TEST_USER' in os.environ:
-    settings.DATABASES[db]['USER'] = settings.DATABASES[db]['TEST_USER']
+def logMessage(msg, database = DEFAULT_DB_ALIAS):
+  global task
+  transaction.enter_transaction_management(managed=False, using=database)
+  transaction.managed(False, using=database)
+  try:
+    task.message = msg
+    task.save(using=database)
+  finally:
+    transaction.commit(using=database)
+    transaction.leave_transaction_management(using=database)
 
 
-def createPlan():
-  # Auxilary functions for debugging
+def createPlan(database = DEFAULT_DB_ALIAS):
+  # Auxiliary functions for debugging
   def debugResource(res,mode):
     # if res.name != 'my favorite resource': return
     print("=> Situation on resource", res.name)
@@ -93,7 +93,7 @@ def createPlan():
   try: constraint = int(os.environ['FREPPLE_CONSTRAINT'])
   except: constraint = 15  # Default is with all constraints enabled
   solver = frepple.solver_mrp(name = "MRP", constraints = constraint,
-    plantype = plantype, loglevel=int(Parameter.getValue('plan.loglevel', db, 0))
+    plantype = plantype, loglevel=int(Parameter.getValue('plan.loglevel', database, 0))
     #userexit_resource=debugResource,
     #userexit_demand=debugDemand
     )
@@ -111,16 +111,30 @@ def exportPlan(database = DEFAULT_DB_ALIAS):
 
 
 if __name__ == "__main__":
-  printWelcome(db)
+  # Select database
+  try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
+  except: db = DEFAULT_DB_ALIAS
+
+  # Use the test database if we are running the test suite
+  if 'FREPPLE_TEST' in os.environ:
+    settings.DATABASES[db]['NAME'] = settings.DATABASES[db]['TEST_NAME']
+    if 'TEST_CHARSET' in os.environ:
+      settings.DATABASES[db]['CHARSET'] = settings.DATABASES[db]['TEST_CHARSET']
+    if 'TEST_COLLATION' in os.environ:
+      settings.DATABASES[db]['COLLATION'] = settings.DATABASES[db]['TEST_COLLATION']
+    if 'TEST_USER' in os.environ:
+      settings.DATABASES[db]['USER'] = settings.DATABASES[db]['TEST_USER']
+
+  printWelcome(database=db)
   logProgress(1, db)
   print("\nStart loading data from the database at", datetime.now().strftime("%H:%M:%S"))
   frepple.printsize()
   from freppledb.execute.load import loadfrepple
-  loadfrepple()
+  loadfrepple(db)
   frepple.printsize()
   logProgress(33, db)
   print("\nStart plan generation at", datetime.now().strftime("%H:%M:%S"))
-  createPlan()
+  createPlan(db)
   frepple.printsize()
   logProgress(66, db)
 

@@ -236,6 +236,9 @@ def exportfrepple():
   test = 'FREPPLE_TEST' in os.environ
 
   # Start a PSQL process
+  # Commenting out the next line is a little more secure, but requires you to create a .pgpass file.
+  # In the Enterprise Edition we want the secure version as default...
+  # In the Community Edition we want the convenient version as default...
   os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
   process = Popen("psql -q -w -U%s %s%s%s" % (
       settings.DATABASES[database]['USER'],

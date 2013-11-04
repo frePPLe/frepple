@@ -41,6 +41,8 @@ class Command(BaseCommand):
       default=DEFAULT_DB_ALIAS, help='Nominates a specific database to load data from and export results into'),
     make_option('--task', dest='task', type='int',
       help='Task identifier (generated automatically if not provided)'),
+    make_option('--env', dest='environment', type='string', action='append',
+      help='Extra settings passed as environment variables to the engine'),
   )
   help = "Runs frePPLe to generate a plan"
 
@@ -87,6 +89,13 @@ class Command(BaseCommand):
         if plantype < 1 or plantype > 2:
           raise ValueError("Invalid plan type: %s" % options['plantype'])
       else: plantype = 1
+      if options['environment']:
+        for i in options['environment']:
+          j = i.split('=')
+          if len(j) == 1:
+            os.environ[j[0]] = '1'
+          else:
+            os.environ[j[0]] = j[1]
 
       # Log task
       task.arguments = "--constraint=%d --plantype=%d" % (constraint, plantype)

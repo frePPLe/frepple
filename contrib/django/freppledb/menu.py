@@ -33,7 +33,10 @@ menu.addGroup("user", label=_("User"), index=400)
 menu.addGroup("help", label="?", index=500)
 
 # Adding the menu modules of each installed application.
-for app in settings.INSTALLED_APPS:
+# Note that the menus of the apps are processed in reverse order.
+# This is required to allow the first apps to override the entries
+# of the later ones.
+for app in reversed(settings.INSTALLED_APPS):
   try:
     mod = import_module('%s.menu' % app)
   except ImportError as e:

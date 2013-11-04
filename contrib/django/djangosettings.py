@@ -138,6 +138,9 @@ MIDDLEWARE_CLASSES = (
 
 CURRENCY=("","$")    # Prefix and suffix for currency strings
 
+# Installed applications.
+# The order is important: urls, templates and menus of the earlier entries
+# take precedence over and override later entries.
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',

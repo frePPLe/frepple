@@ -16,19 +16,16 @@
 #
 
 r'''
-Exports frePPLe information into a database.
+Exports the plan information from the frePPLe C++ core engine into a
+PostgreSQL database.
 
-The code in this file is executed NOT by Django, but by the embedded Python
-interpreter from the frePPLe engine.
-
-The code iterates over all objects in the C++ core engine, and creates
-database records with the information. The Django database wrappers are used
-to keep the code portable between different databases.
+The code in this file is executed NOT by the Django web application, but by the
+embedded Python interpreter from the frePPLe engine.
 '''
 from __future__ import print_function
-from datetime import timedelta, datetime, date
+from datetime import timedelta, datetime
 from time import time
-import inspect, os
+import os
 from subprocess import Popen, PIPE
 
 from django.db import connections, DEFAULT_DB_ALIAS
@@ -239,14 +236,17 @@ def exportfrepple():
   test = 'FREPPLE_TEST' in os.environ
 
   # Start a PSQL process
-  process = Popen("psql -q -U%s %s%s%s" % (
+  os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
+  process = Popen("psql -q -w -U%s %s%s%s" % (
       settings.DATABASES[database]['USER'],
      settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
      settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
      test and settings.DATABASES[database]['TEST_NAME'] or settings.DATABASES[database]['NAME'],
    ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, universal_newlines=True)
-  process.stdin.write("SET statement_timeout = 0;\n")
-  process.stdin.write("SET client_encoding = 'UTF8';\n")
+  if process.returncode is None:
+    # PSQL session is still running
+    process.stdin.write("SET statement_timeout = 0;\n")
+    process.stdin.write("SET client_encoding = 'UTF8';\n")
 
   # Send all output to the PSQL process through a pipe
   try:
@@ -260,11 +260,13 @@ def exportfrepple():
     exportDemand(process)
     exportPegging(process)
   finally:
+    # Print any error messages
+    print(process.communicate()[1])
     # Close the pipe and PSQL process
-    process.stdin.write('\\q\n')
+    if process.returncode is None:
+      # PSQL session is still running.
+      process.stdin.write('\\q\n')
     process.stdin.close()
-    # Collect error messages  TODO Only works on Windows?
-    # print process.communicate()[1]
 
   cursor = connections[database].cursor()
   cursor.execute('''

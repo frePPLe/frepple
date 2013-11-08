@@ -53,5 +53,12 @@ FrePPLe redistributes parts of the following third party software components:
   contrib\django\freppledb\common\static\css\uix.multiselect.css
    Redistributed from jquery.uix.multiselect
    Copyright Yanick Rochon
-   Licensed under the MIT (MIT-LICENSE.txt) license.
+   Licensed under the MIT license.
    See http://mind2soft.com/labs/jquery/multiselect/
+
+* contrib\django\freppledb\common\static\js\d3.js
+  contrib\django\freppledb\common\static\js\d3.min.js
+    Redistributed from d3 Data-Driven Documents
+    Copyright Michael Bostock
+    Licensed under BSD license
+    See http://d3js.org/

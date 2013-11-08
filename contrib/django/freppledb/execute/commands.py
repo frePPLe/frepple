@@ -16,7 +16,7 @@ def printWelcome(prefix = 'frepple', database = DEFAULT_DB_ALIAS):
   if database == DEFAULT_DB_ALIAS:
     frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'%s.log' % prefix)
   else:
-    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'%_%s.log' % (prefix,database))
+    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'%s_%s.log' % (prefix,database))
 
   # Welcome message
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':

@@ -1,8 +1,8 @@
-commit 07c651804b6e559e52fecf69652ac3467a5cd926
+commit 904491004c7de3ca0ddec60dc3c74ebf061b8534
 Author: Johan De Taeye <jdetaeye@frepple.com>
 Date:   Sat May 18 13:32:15 2013 +0200
 
-    frePPLe's patch for django 1.5.1
+    frePPLe's patch for django 1.6.x
 
 diff --git a/django/conf/project_template/__init__.py b/django/conf/project_template/__init__.py
 new file mode 100644
@@ -12,7 +12,7 @@ index 0000000..8b13789
 @@ -0,0 +1 @@
 +
 diff --git a/django/contrib/admin/widgets.py b/django/contrib/admin/widgets.py
-index 1e6277f..a2f7540 100644
+index 5773db6..236080e 100644
 --- a/django/contrib/admin/widgets.py
 +++ b/django/contrib/admin/widgets.py
 @@ -6,6 +6,7 @@ from __future__ import unicode_literals
@@ -31,7 +31,7 @@ index 1e6277f..a2f7540 100644
  
  
  class FilteredSelectMultiple(forms.SelectMultiple):
-@@ -143,6 +145,10 @@ class ForeignKeyRawIdWidget(forms.TextInput):
+@@ -145,6 +147,10 @@ class ForeignKeyRawIdWidget(forms.TextInput):
          if attrs is None:
              attrs = {}
          extra = []
@@ -42,7 +42,7 @@ index 1e6277f..a2f7540 100644
          if rel_to in self.admin_site._registry:
              # The related object is registered with the same AdminSite
              related_url = reverse('admin:%s_%s_changelist' %
-@@ -159,13 +165,15 @@ class ForeignKeyRawIdWidget(forms.TextInput):
+@@ -161,13 +167,15 @@ class ForeignKeyRawIdWidget(forms.TextInput):
                  attrs['class'] = 'vForeignKeyRawIdAdminField' # The JavaScript code looks for this hook.
              # TODO: "lookup_id_" is hard-coded here. This should instead use
              # the correct API to determine the ID dynamically.
@@ -62,18 +62,25 @@ index 1e6277f..a2f7540 100644
  
      def base_url_parameters(self):
 diff --git a/django/core/management/__init__.py b/django/core/management/__init__.py
-index fab5059..fe73eef 100644
+index 5b0ad6c..62f0796 100644
 --- a/django/core/management/__init__.py
 +++ b/django/core/management/__init__.py
-@@ -4,6 +4,7 @@ import sys
+@@ -3,11 +3,14 @@ import os
+ import sys
  from optparse import OptionParser, NO_DEFAULT
  import imp
- import warnings
++import warnings
 +from pkgutil import iter_modules
  
  from django.core.exceptions import ImproperlyConfigured
  from django.core.management.base import BaseCommand, CommandError, handle_default_options
-@@ -19,54 +20,18 @@ from django import get_version
+ from django.core.management.color import color_style
+ from django.utils.importlib import import_module
++from django.utils._os import upath
+ from django.utils import six
+ 
+ # For backwards compatibility: get_version() used to be in this module.
+@@ -17,54 +20,18 @@ from django import get_version
  # doesn't have to reload every time it's called.
  _commands = None
  
@@ -124,7 +131,7 @@ index fab5059..fe73eef 100644
 -
 -    while parts:
 -        part = parts.pop()
--        f, path, descr = imp.find_module(part, path and [path] or None)
+-        f, path, descr = imp.find_module(part, [path] if path else None)
 -        if f:
 -            f.close()
 -    return path
@@ -137,7 +144,7 @@ index fab5059..fe73eef 100644
  
  def load_command_class(app_name, name):
      """
-@@ -101,7 +66,7 @@ def get_commands():
+@@ -99,7 +66,7 @@ def get_commands():
      """
      global _commands
      if _commands is None:
@@ -146,7 +153,7 @@ index fab5059..fe73eef 100644
  
          # Find the installed apps
          from django.conf import settings
-@@ -115,9 +80,8 @@ def get_commands():
+@@ -113,9 +80,8 @@ def get_commands():
          # Find and load the management module for each installed app.
          for app_name in apps:
              try:
@@ -158,10 +165,10 @@ index fab5059..fe73eef 100644
                  pass # No management module - ignore this app
  
 diff --git a/django/db/models/fields/related.py b/django/db/models/fields/related.py
-index 95c865d..70abd1c 100644
+index 2813a39..6e301b3 100644
 --- a/django/db/models/fields/related.py
 +++ b/django/db/models/fields/related.py
-@@ -1017,7 +1017,9 @@ class ForeignKey(RelatedField, Field):
+@@ -1186,7 +1186,9 @@ class ForeignKey(ForeignObject):
          if value is None:
              return
  
@@ -173,12 +180,12 @@ index 95c865d..70abd1c 100644
                  **{self.rel.field_name: value}
               )
 diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
-index 7ea4cd7..223640e 100644
+index ca42280..dfbae0f 100644
 --- a/django/db/models/sql/compiler.py
 +++ b/django/db/models/sql/compiler.py
-@@ -226,8 +226,11 @@ class SQLCompiler(object):
+@@ -239,8 +239,11 @@ class SQLCompiler(object):
  
-         for table, col in self.query.related_select_cols:
+         for (table, col), _ in self.query.related_select_cols:
              r = '%s.%s' % (qn(table), qn(col))
 -            if with_aliases and col in col_aliases:
 -                c_alias = 'Col%d' % len(col_aliases)
@@ -190,7 +197,7 @@ index 7ea4cd7..223640e 100644
                  result.append('%s AS %s' % (r, c_alias))
                  aliases.add(c_alias)
                  col_aliases.add(c_alias)
-@@ -289,8 +292,11 @@ class SQLCompiler(object):
+@@ -292,8 +295,11 @@ class SQLCompiler(object):
                  result.append((alias, field.column))
                  aliases.add(alias)
                  continue
@@ -205,10 +212,10 @@ index 7ea4cd7..223640e 100644
                      qn2(field.column), c_alias))
                  col_aliases.add(c_alias)
 diff --git a/django/utils/autoreload.py b/django/utils/autoreload.py
-index 2daafed..6ee1875 100644
+index 6de15a2..1130feb 100644
 --- a/django/utils/autoreload.py
 +++ b/django/utils/autoreload.py
-@@ -98,7 +98,22 @@ def reloader_thread():
+@@ -132,7 +132,22 @@ def reloader_thread():
  
  def restart_with_reloader():
      while True:
@@ -220,11 +227,11 @@ index 2daafed..6ee1875 100644
 +        # The autoreload thread then runs 'python.exe script arguments'.
 +        #
 +        # When running from py2exe things are different:
-+        # sys.executable is set to 'frepplectl.exe' and sys.argv[0] is
-+        # also 'frepplectl.exe'.
-+        # The autoreload thread should run "frepplectl.exe arguments" and not
-+        # "frepplectl.exe frepplectl.exe arguments". Now the interpreter and the script
-+        # are basically one and the same.
++        # sys.executable is set to 'manage.exe' and sys.argv[0] is
++        # also 'manage.exe'.
++        # The autoreload thread should run "manage.exe arguments" and not
++        # "manage.exe manage.exe arguments". Now the interpreter and the script are
++        # basically one and the same.
 +        #
 +        #Original code:
 +        # args = [sys.executable] + ['-W%s' % o for o in sys.warnoptions] + sys.argv
@@ -233,15 +240,15 @@ index 2daafed..6ee1875 100644
              args = ['"%s"' % arg for arg in args]
          new_environ = os.environ.copy()
 diff --git a/django/utils/translation/trans_real.py b/django/utils/translation/trans_real.py
-index cf6270c..2c261a5 100644
+index 195badf..6628118 100644
 --- a/django/utils/translation/trans_real.py
 +++ b/django/utils/translation/trans_real.py
-@@ -137,7 +137,7 @@ def translation(language):
+@@ -142,7 +142,7 @@ def translation(language):
          # doesn't affect en-gb), even though they will both use the core "en"
          # translation. So we have to subvert Python's internal gettext caching.
          base_lang = lambda x: x.split('-', 1)[0]
--        if base_lang(lang) in [base_lang(trans) for trans in _translations]:
-+        if res and base_lang(lang) in [base_lang(trans) for trans in _translations]:
+-        if base_lang(lang) in [base_lang(trans) for trans in list(_translations)]:
++        if res and base_lang(lang) in [base_lang(trans) for trans in list(_translations)]:
              res._info = res._info.copy()
              res._catalog = res._catalog.copy()
  

@@ -5,7 +5,7 @@
 pkgsysconfdir = $(sysconfdir)/frepple
 pkgsysconf_DATA = djangosettings.py
 
-EXTRA_DIST = freppledb django.patch django.git_patch README.txt frepplectl.py setup.py djangosettings.py
+EXTRA_DIST = freppledb django.patch README.txt frepplectl.py setup.py djangosettings.py
 
 install-data-local:
 	echo "installing Django web application to $(DESTDIR)$(pythondir)"; \

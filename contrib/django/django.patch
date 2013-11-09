@@ -1,13 +1,15 @@
-Index: django/conf/project_template/__init__.py
-===================================================================
---- django/conf/project_template/__init__.py	(revision 0)
-+++ django/conf/project_template/__init__.py	(working copy)
+diff --git django/conf/project_template/__init__.py django/conf/project_template/__init__.py
+new file mode 100644
+index 0000000..8b13789
+--- /dev/null
++++ django/conf/project_template/__init__.py
 @@ -0,0 +1 @@
 +
-Index: django/contrib/admin/widgets.py
---- django/contrib/admin/widgets.py	2013-03-28 21:07:20.000000000 +0100
-+++ django/contrib/admin/widgets.py	2013-05-09 22:42:13.287418600 +0200
-@@ -6,6 +6,7 @@
+diff --git django/contrib/admin/widgets.py django/contrib/admin/widgets.py
+index 5773db6..236080e 100644
+--- django/contrib/admin/widgets.py
++++ django/contrib/admin/widgets.py
+@@ -6,6 +6,7 @@ from __future__ import unicode_literals
  import copy
  
  from django import forms
@@ -15,7 +17,7 @@ Index: django/contrib/admin/widgets.py
  from django.contrib.admin.templatetags.admin_static import static
  from django.core.urlresolvers import reverse
  from django.forms.widgets import RadioFieldRenderer
-@@ -16,6 +17,7 @@
+@@ -16,6 +17,7 @@ from django.utils.translation import ugettext as _
  from django.utils.safestring import mark_safe
  from django.utils.encoding import force_text
  from django.utils import six
@@ -23,7 +25,7 @@ Index: django/contrib/admin/widgets.py
  
  
  class FilteredSelectMultiple(forms.SelectMultiple):
-@@ -143,6 +145,10 @@
+@@ -145,6 +147,10 @@ class ForeignKeyRawIdWidget(forms.TextInput):
          if attrs is None:
              attrs = {}
          extra = []
@@ -34,7 +36,7 @@ Index: django/contrib/admin/widgets.py
          if rel_to in self.admin_site._registry:
              # The related object is registered with the same AdminSite
              related_url = reverse('admin:%s_%s_changelist' %
-@@ -159,13 +165,15 @@
+@@ -161,13 +167,15 @@ class ForeignKeyRawIdWidget(forms.TextInput):
                  attrs['class'] = 'vForeignKeyRawIdAdminField' # The JavaScript code looks for this hook.
              # TODO: "lookup_id_" is hard-coded here. This should instead use
              # the correct API to determine the ID dynamically.
@@ -53,18 +55,26 @@ Index: django/contrib/admin/widgets.py
          return mark_safe(''.join(output))
  
      def base_url_parameters(self):
-Index: django/core/management/__init__.py
---- django/core/management/__init__.py	2013-03-28 21:07:20.000000000 +0100
-+++ django/core/management/__init__.py	2013-05-09 18:48:15.385059100 +0200
-@@ -4,6 +4,7 @@
+diff --git django/core/management/__init__.py django/core/management/__init__.py
+index 5b0ad6c..62f0796 100644
+--- django/core/management/__init__.py
++++ django/core/management/__init__.py
+@@ -3,11 +3,14 @@ import os
+ import sys
  from optparse import OptionParser, NO_DEFAULT
  import imp
- import warnings
++import warnings
 +from pkgutil import iter_modules
  
  from django.core.exceptions import ImproperlyConfigured
  from django.core.management.base import BaseCommand, CommandError, handle_default_options
-@@ -19,54 +20,18 @@
+ from django.core.management.color import color_style
+ from django.utils.importlib import import_module
++from django.utils._os import upath
+ from django.utils import six
+ 
+ # For backwards compatibility: get_version() used to be in this module.
+@@ -17,54 +20,18 @@ from django import get_version
  # doesn't have to reload every time it's called.
  _commands = None
  
@@ -115,7 +125,7 @@ Index: django/core/management/__init__.py
 -
 -    while parts:
 -        part = parts.pop()
--        f, path, descr = imp.find_module(part, path and [path] or None)
+-        f, path, descr = imp.find_module(part, [path] if path else None)
 -        if f:
 -            f.close()
 -    return path
@@ -128,7 +138,7 @@ Index: django/core/management/__init__.py
  
  def load_command_class(app_name, name):
      """
-@@ -101,7 +66,7 @@
+@@ -99,7 +66,7 @@ def get_commands():
      """
      global _commands
      if _commands is None:
@@ -137,7 +147,7 @@ Index: django/core/management/__init__.py
  
          # Find the installed apps
          from django.conf import settings
-@@ -115,9 +80,8 @@
+@@ -113,9 +80,8 @@ def get_commands():
          # Find and load the management module for each installed app.
          for app_name in apps:
              try:
@@ -148,10 +158,11 @@ Index: django/core/management/__init__.py
              except ImportError:
                  pass # No management module - ignore this app
  
-Index: django/db/models/fields/related.py
---- django/db/models/fields/related.py	2013-03-28 21:07:20.000000000 +0100
-+++ django/db/models/fields/related.py	2013-05-09 22:28:30.085334100 +0200
-@@ -1017,7 +1017,9 @@
+diff --git django/db/models/fields/related.py django/db/models/fields/related.py
+index 2813a39..6e301b3 100644
+--- django/db/models/fields/related.py
++++ django/db/models/fields/related.py
+@@ -1186,7 +1186,9 @@ class ForeignKey(ForeignObject):
          if value is None:
              return
  
@@ -162,12 +173,13 @@ Index: django/db/models/fields/related.py
          qs = self.rel.to._default_manager.using(using).filter(
                  **{self.rel.field_name: value}
               )
-Index: django/db/models/sql/compiler.py
---- django/db/models/sql/compiler.py	2013-03-28 21:07:20.000000000 +0100
-+++ django/db/models/sql/compiler.py	2013-05-09 22:34:32.203046100 +0200
-@@ -226,8 +226,11 @@
+diff --git django/db/models/sql/compiler.py django/db/models/sql/compiler.py
+index ca42280..dfbae0f 100644
+--- django/db/models/sql/compiler.py
++++ django/db/models/sql/compiler.py
+@@ -239,8 +239,11 @@ class SQLCompiler(object):
  
-         for table, col in self.query.related_select_cols:
+         for (table, col), _ in self.query.related_select_cols:
              r = '%s.%s' % (qn(table), qn(col))
 -            if with_aliases and col in col_aliases:
 -                c_alias = 'Col%d' % len(col_aliases)
@@ -179,7 +191,7 @@ Index: django/db/models/sql/compiler.py
                  result.append('%s AS %s' % (r, c_alias))
                  aliases.add(c_alias)
                  col_aliases.add(c_alias)
-@@ -289,8 +292,11 @@
+@@ -292,8 +295,11 @@ class SQLCompiler(object):
                  result.append((alias, field.column))
                  aliases.add(alias)
                  continue
@@ -193,10 +205,11 @@ Index: django/db/models/sql/compiler.py
                  result.append('%s.%s AS %s' % (qn(alias),
                      qn2(field.column), c_alias))
                  col_aliases.add(c_alias)
-Index: django/utils/autoreload.py
---- django/utils/autoreload.py	2013-03-28 21:07:21.000000000 +0100
-+++ django/utils/autoreload.py	2013-05-09 19:01:15.164233200 +0200
-@@ -98,7 +98,22 @@
+diff --git django/utils/autoreload.py django/utils/autoreload.py
+index 6de15a2..1130feb 100644
+--- django/utils/autoreload.py
++++ django/utils/autoreload.py
+@@ -132,7 +132,22 @@ def reloader_thread():
  
  def restart_with_reloader():
      while True:
@@ -220,15 +233,16 @@ Index: django/utils/autoreload.py
          if sys.platform == "win32":
              args = ['"%s"' % arg for arg in args]
          new_environ = os.environ.copy()
-Index: django/utils/translation/trans_real.py
---- django/utils/translation/trans_real.py	2013-03-28 21:07:21.000000000 +0100
-+++ django/utils/translation/trans_real.py	2013-05-09 18:59:42.334470000 +0200
-@@ -137,7 +137,7 @@
+diff --git django/utils/translation/trans_real.py django/utils/translation/trans_real.py
+index 195badf..6628118 100644
+--- django/utils/translation/trans_real.py
++++ django/utils/translation/trans_real.py
+@@ -142,7 +142,7 @@ def translation(language):
          # doesn't affect en-gb), even though they will both use the core "en"
          # translation. So we have to subvert Python's internal gettext caching.
          base_lang = lambda x: x.split('-', 1)[0]
--        if base_lang(lang) in [base_lang(trans) for trans in _translations]:
-+        if res and base_lang(lang) in [base_lang(trans) for trans in _translations]:
+-        if base_lang(lang) in [base_lang(trans) for trans in list(_translations)]:
++        if res and base_lang(lang) in [base_lang(trans) for trans in list(_translations)]:
              res._info = res._info.copy()
              res._catalog = res._catalog.copy()
  

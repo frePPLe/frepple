@@ -16,11 +16,15 @@
 #
 
 from django.test import TestCase
+from django.conf import settings
+
 
 class OutputTest(TestCase):
 
   def setUp(self):
     # Login
+    if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
+      settings.INSTALLED_APPS += ('django.contrib.sessions',)
     self.client.login(username='frepple', password='frepple')
 
   # Buffer

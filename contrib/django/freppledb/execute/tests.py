@@ -30,6 +30,8 @@ class execute_with_commands(TransactionTestCase):
 
   def setUp(self):
     # Make sure the test database is used
+    if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
+      settings.INSTALLED_APPS += ('django.contrib.sessions',)
     os.environ['FREPPLE_TEST'] = "YES"
 
   def tearDown(self):

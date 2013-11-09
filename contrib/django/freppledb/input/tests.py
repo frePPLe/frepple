@@ -17,6 +17,7 @@
 from __future__ import print_function
 import tempfile
 
+from django.conf import settings
 from django.test import TestCase
 
 from freppledb.input.models import Location
@@ -26,6 +27,8 @@ class DataLoadTest(TestCase):
 
   def setUp(self):
     # Login
+    if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
+      settings.INSTALLED_APPS += ('django.contrib.sessions',)
     self.client.login(username='frepple', password='frepple')
 
   def test_input_customer(self):
@@ -89,7 +92,7 @@ class DataLoadTest(TestCase):
       data = tempfile.TemporaryFile(mode='w+b')
       print('name, category', file=data)
       print('factory 3, cat1', file=data)
-      print('factory 4,', file=data)      
+      print('factory 4,', file=data)
       data.seek(0)
       response = self.client.post('/data/input/location/', {'csv_file': data})
       self.assertRedirects(response, '/data/input/location/')

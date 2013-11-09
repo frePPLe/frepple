@@ -17,13 +17,15 @@
 
 from django.test import TestCase
 
-from freppledb.common.models import User
+from django.conf import settings
 
 
 class DataLoadTest(TestCase):
 
   def setUp(self):
     # Login
+    if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
+      settings.INSTALLED_APPS += ('django.contrib.sessions',)
     self.client.login(username='admin', password='admin')
 
   def test_common_parameter(self):

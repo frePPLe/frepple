@@ -961,10 +961,10 @@ var gantt = {
   header : function ()
   {
     // "scaling" stores the number of pixels available to show a day.
-    var scaling = 86400000 / (viewend.getTime() - viewstart.getTime()) * 1000;
+    var scaling = 86400000 / (viewend.getTime() - viewstart.getTime()) * $("#jqgh_grid_operationplans").width();
     var result = [
       '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="34px">',
-      '<line class="time" x1="0" y1="17" x2="1000" y2="17"/>'
+      '<line class="time" x1="0" y1="17" x2="' + $("#jqgh_grid_operationplans").width() + '" y2="17"/>'
       ];
     var x = 0;
     if (scaling < 5)
@@ -1134,11 +1134,25 @@ var gantt = {
 
   reset: function()
   {
+    var scale = $("#jqgh_grid_operationplans").width() / 10000;
     viewstart = new Date(horizonstart.getTime());
     viewend = new Date(horizonend.getTime());
     $('.transformer').each(function() {
       var layers = $(this).attr("title");
-      $(this).attr("transform", "scale(0.1,1) translate(0," + ((layers-1)*gantt.rowsize+3) + ")");
+      $(this).attr("transform", "scale(" + scale + ",1) translate(0," + ((layers-1)*gantt.rowsize+3) + ")");
+      });
+    gantt.header();
+  },
+
+  redraw: function()
+  {
+    // Determine the conversion between svg units and the screen
+    var scale = (horizonend.getTime() - horizonstart.getTime())
+       / (viewend.getTime() - viewstart.getTime())
+       * $("#jqgh_grid_operationplans").width() / 10000;
+    $('.transformer').each(function() {
+      var layers = $(this).attr("title");
+      $(this).attr("transform", "scale(" + scale + ",1) translate(0," + ((layers-1)*gantt.rowsize+3) + ")");
       });
     gantt.header();
   },
@@ -1151,7 +1165,7 @@ var gantt = {
     viewstart.setTime(viewstart.getTime() + move_in_or_out);
     viewend.setTime(viewstart.getTime() + delta * 86400000);
     // Determine the conversion between svg units and the screen
-    var scale = (horizonend.getTime() - horizonstart.getTime()) / (delta * 864000000);
+    var scale = (horizonend.getTime() - horizonstart.getTime()) / (delta * 864000000) * $("#jqgh_grid_operationplans").width() / 1000;
     if (typeof(move_in_or_out_pixels) != 'undefined')
     {
       viewstart.setTime(viewstart.getTime() + move_in_or_out_pixels / scale * 1000);

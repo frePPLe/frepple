@@ -22,7 +22,7 @@ def printWelcome(prefix = 'frepple', database = DEFAULT_DB_ALIAS):
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
     print("frePPLe on %s using sqlite3 database '%s'" % (
       sys.platform,
-      'NAME' in settings.DATABASES[database] and settings.DATABASES[db]['NAME'] or ''
+      'NAME' in settings.DATABASES[database] and settings.DATABASES[database]['NAME'] or ''
       ))
   else:
     print("frePPLe on %s using %s database '%s' as '%s' on '%s:%s'" % (
@@ -60,14 +60,15 @@ def logProgress(val, database = DEFAULT_DB_ALIAS):
 
 def logMessage(msg, database = DEFAULT_DB_ALIAS):
   global task
-  transaction.enter_transaction_management(managed=False, using=database)
-  transaction.managed(False, using=database)
-  try:
-    task.message = msg
-    task.save(using=database)
-  finally:
-    transaction.commit(using=database)
-    transaction.leave_transaction_management(using=database)
+  if task:
+    transaction.enter_transaction_management(managed=False, using=database)
+    transaction.managed(False, using=database)
+    try:
+      task.message = msg
+      task.save(using=database)
+    finally:
+      transaction.commit(using=database)
+      transaction.leave_transaction_management(using=database)
 
 
 def createPlan(database = DEFAULT_DB_ALIAS):

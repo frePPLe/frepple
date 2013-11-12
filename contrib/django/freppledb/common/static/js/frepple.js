@@ -159,6 +159,11 @@ jQuery.extend($.fn.fmatter, {
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='calendar'></span>";
   },
+  calendarbucket : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
+    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='calendarbucket'></span>";
+  },
   location : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;

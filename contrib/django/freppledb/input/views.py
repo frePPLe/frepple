@@ -594,7 +594,7 @@ class CalendarBucketList(GridReport):
   model = CalendarBucket
   frozenColumns = 3
   rows = (
-    GridFieldInteger('id', title=_('identifier')),
+    GridFieldInteger('id', title=_('identifier'), formatter='calendarbucket'),
     GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date'),editable=False),

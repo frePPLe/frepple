@@ -22,16 +22,16 @@ def printWelcome(prefix = 'frepple', database = DEFAULT_DB_ALIAS):
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
     print("frePPLe on %s using sqlite3 database '%s'" % (
       sys.platform,
-      'NAME' in settings.DATABASES[database] and settings.DATABASES[database]['NAME'] or ''
+      settings.DATABASES[database].get('NAME','')
       ))
   else:
     print("frePPLe on %s using %s database '%s' as '%s' on '%s:%s'" % (
       sys.platform,
-      'ENGINE' in settings.DATABASES[database] and settings.DATABASES[database]['ENGINE'] or '',
-      'NAME' in settings.DATABASES[database] and settings.DATABASES[database]['NAME'] or '',
-      'USER' in settings.DATABASES[database] and settings.DATABASES[database]['USER'] or '',
-      'HOST' in settings.DATABASES[database] and settings.DATABASES[database]['HOST'] or '',
-      'PORT' in settings.DATABASES[database] and settings.DATABASES[database]['PORT'] or ''
+      settings.DATABASES[database].get('ENGINE',''),
+      settings.DATABASES[database].get('NAME',''),
+      settings.DATABASES[database].get('USER',''),
+      settings.DATABASES[database].get('HOST',''),
+      settings.DATABASES[database].get('PORT','')
       ))
 
 
@@ -78,7 +78,6 @@ def createPlan(database = DEFAULT_DB_ALIAS):
     print("=> Situation on resource", res.name)
     for j in res.loadplans:
       print("=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup)
-
 
   def debugDemand(dem,mode):
     if dem.name == 'my favorite demand':

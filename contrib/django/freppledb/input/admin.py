@@ -27,6 +27,7 @@ from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
 class CalendarBucket_inline(MultiDBTabularInline):
   model = CalendarBucket
   extra = 3
+  exclude = ('source',)
 
 
 class CalendarBucket_admin(MultiDBModelAdmin):
@@ -46,6 +47,7 @@ class Calendar_admin(MultiDBModelAdmin):
   model = Calendar
   save_on_top = True
   inlines = [ CalendarBucket_inline, ]
+  exclude = ('source',)
 data_site.register(Calendar,Calendar_admin)
 
 
@@ -53,6 +55,7 @@ class Location_admin(MultiDBModelAdmin):
   model = Location
   raw_id_fields = ('available', 'owner',)
   save_on_top = True
+  exclude = ('source',)
 data_site.register(Location,Location_admin)
 
 
@@ -60,6 +63,7 @@ class Customer_admin(MultiDBModelAdmin):
   model = Customer
   raw_id_fields = ('owner',)
   save_on_top = True
+  exclude = ('source',)
 data_site.register(Customer,Customer_admin)
 
 
@@ -67,6 +71,7 @@ class Item_admin(MultiDBModelAdmin):
   model = Item
   save_on_top = True
   raw_id_fields = ('operation', 'owner',)
+  exclude = ('source',)
 data_site.register(Item,Item_admin)
 
 
@@ -75,18 +80,21 @@ class SubOperation_inline(MultiDBTabularInline):
   fk_name = 'operation'
   extra = 1
   raw_id_fields = ('suboperation',)
+  exclude = ('source',)
 
 
 class Flow_inline(MultiDBTabularInline):
   model = Flow
   raw_id_fields = ('operation', 'thebuffer',)
   extra = 1
+  exclude = ('source',)
 
 
 class Load_inline(MultiDBTabularInline):
   model = Load
   raw_id_fields = ('operation', 'resource',)
   extra = 1
+  exclude = ('source',)
 
 
 class ResourceSkill_inline(MultiDBTabularInline):
@@ -94,6 +102,7 @@ class ResourceSkill_inline(MultiDBTabularInline):
   fk_name = 'resource'
   raw_id_fields = ('skill',)
   extra = 1
+  exclude = ('source',)
 
 
 class Operation_admin(MultiDBModelAdmin):
@@ -115,6 +124,7 @@ class SubOperation_admin(MultiDBModelAdmin):
   model = SubOperation
   raw_id_fields = ('operation', 'suboperation',)
   save_on_top = True
+  exclude = ('source',)
 data_site.register(SubOperation,SubOperation_admin)
 
 
@@ -140,18 +150,21 @@ data_site.register(Buffer,Buffer_admin)
 class SetupRule_inline(MultiDBTabularInline):
   model = SetupRule
   extra = 3
+  exclude = ('source',)
 
 
 class SetupMatrix_admin(MultiDBModelAdmin):
   model = SetupMatrix
   save_on_top = True
   inlines = [ SetupRule_inline, ]
+  exclude = ('source',)
 data_site.register(SetupMatrix,SetupMatrix_admin)
 
 
 class Skill_admin(MultiDBModelAdmin):
   model = Skill
   save_on_top = True
+  exclude = ('source',)
 data_site.register(Skill,Skill_admin)
 
 
@@ -159,6 +172,7 @@ class ResourceSkill_admin(MultiDBModelAdmin):
   model = ResourceSkill
   raw_id_fields = ('resource', 'skill')
   save_on_top = True
+  exclude = ('source',)
 data_site.register(ResourceSkill,ResourceSkill_admin)
 
 
@@ -167,6 +181,7 @@ class Resource_admin(MultiDBModelAdmin):
   raw_id_fields = ('maximum_calendar', 'location', 'setupmatrix', 'owner')
   save_on_top = True
   inlines = [ Load_inline, ResourceSkill_inline, ]
+  exclude = ('source',)
 data_site.register(Resource,Resource_admin)
 
 
@@ -201,6 +216,7 @@ class OperationPlan_admin(MultiDBModelAdmin):
   model = OperationPlan
   raw_id_fields = ('operation','owner',)
   save_on_top = True
+  exclude = ('source',)
 data_site.register(OperationPlan,OperationPlan_admin)
 
 

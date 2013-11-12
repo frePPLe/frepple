@@ -16,33 +16,37 @@
 {% if object_id %}{% tabs opts.object_name.lower %}{% endif %}{% endblock %}
 
 {% block content %}<div id="content-main">
-<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{form_url}}" method="post" id="{{opts.module_name}}_form">{% csrf_token %}{% block form_top %}{% endblock %}
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{form_url}}" method="post" id="{{opts.model_name}}_form">{% csrf_token %}{% block form_top %}{% endblock %}
 <div>
 {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
-{% if save_on_top %}{% submit_row %}{% endif %}
+{% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
 {% if errors %}
     <p class="errornote">
-    {% blocktrans count errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    {% if errors|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
     </p>
-    {{adminform.form.non_field_errors}}
+    {{ adminform.form.non_field_errors }}
 {% endif %}
 
+{% block field_sets %}
 {% for fieldset in adminform %}
   {% include "admin/includes/fieldset.html" %}
 {% endfor %}
+{% endblock %}
 
 {% block after_field_sets %}{% endblock %}
 
+{% block inline_field_sets %}
 {% for inline_admin_formset in inline_admin_formsets %}
     {% include inline_admin_formset.opts.template %}
 {% endfor %}
+{% endblock %}
 
 {% block after_related_objects %}{% endblock %}
 
-{% submit_row %}
+{% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
 
-{% if adminform and add %}
-   <script type="text/javascript">document.getElementById("{{adminform.first_field.auto_id}}").focus();</script>
+{% if adminform.first_field and add %}
+   <script type="text/javascript">document.getElementById("{{ adminform.first_field.id_for_label }}").focus();</script>
 {% endif %}
 
 {# JavaScript for prepopulated fields #}

@@ -86,14 +86,14 @@ class SubOperation_inline(MultiDBTabularInline):
 class Flow_inline(MultiDBTabularInline):
   model = Flow
   raw_id_fields = ('operation', 'thebuffer',)
-  extra = 1
+  extra = 0
   exclude = ('source',)
 
 
 class Load_inline(MultiDBTabularInline):
   model = Load
   raw_id_fields = ('operation', 'resource',)
-  extra = 1
+  extra = 0
   exclude = ('source',)
 
 

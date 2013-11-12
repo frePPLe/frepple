@@ -2,6 +2,7 @@
 {% comment %}
 This template overrides one of the standard admin ones.
 The changes are:
+   - take care of url prefix
    - give the login button a jquery-ui look and feel
 {% endcomment %}
 {% load i18n %}
@@ -36,14 +37,14 @@ $(function() {
 {% block content %}
 {% if form.errors and not form.non_field_errors and not form.this_is_the_login_form.errors %}
 <p class="errornote">
-{% blocktrans count form.errors.items|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+{% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
 </p>
 {% endif %}
 
 {% if form.non_field_errors or form.this_is_the_login_form.errors %}
 {% for error in form.non_field_errors|add:form.this_is_the_login_form.errors %}
 <p class="errornote">
-    {{error}}
+    {{ error }}
 </p>
 {% endfor %}
 {% endif %}
@@ -51,14 +52,14 @@ $(function() {
 <div id="content-main">
 <form action="{{request.prefix}}{{app_path}}" method="post" id="login-form">{% csrf_token %}
   <div class="form-row">
-    {% if not form.this_is_the_login_form.errors %}{{form.username.errors}}{% endif %}
-    <label for="id_username" class="required">{% trans 'Username:' %}</label> {{form.username}}
+    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %}
+    <label for="id_username" class="required">{{ form.username.label }}:</label> {{ form.username }}
   </div>
   <div class="form-row">
-    {% if not form.this_is_the_login_form.errors %}{{form.password.errors}}{% endif %}
-    <label for="id_password" class="required">{% trans 'Password:' %}</label> {{form.password}}
+    {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %}
+    <label for="id_password" class="required">{% trans 'Password:' %}</label> {{ form.password }}
     <input type="hidden" name="this_is_the_login_form" value="1" />
-    <input type="hidden" name="next" value="{{request.prefix}}{{next}}" />
+    <input type="hidden" name="next" value="{{ request.prefix }}{{ next }}" />
   </div>
   <div class="submit-row">
     <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}"/>
@@ -68,6 +69,10 @@ $(function() {
 <!--[if lte IE 8]><br/><span style="font-weight: bold">FrePPLe does NOT support Internet Explorer 8!</span><br/><br/>
 Upgrade to Internet Explorer 9 or, even better, use a better browser: Chrome, Firefox, Safari or Opera.
 <![endif]-->
+
+<script type="text/javascript">
+document.getElementById('id_username').focus()
+</script>
 
 </div>
 {% endblock %}

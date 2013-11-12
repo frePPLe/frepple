@@ -595,7 +595,7 @@ class GridReport(View):
     fmt = request.GET.get('format', None)
     if not fmt:
       # Return HTML page
-      is_popup = 'pop' in request.GET
+      is_popup = '_popup' in request.GET
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,

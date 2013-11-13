@@ -21,7 +21,7 @@ from freppledb.input.models import Resource, Operation, Location, SetupMatrix, S
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow, Skill, ResourceSkill
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.admin import data_site
-from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
+from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 
 
 class CalendarBucket_inline(MultiDBTabularInline):

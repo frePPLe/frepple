@@ -25,7 +25,7 @@ from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
-from freppledb.common import MultiDBModelAdmin, MultiDBTabularInline
+from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 from freppledb.admin import admin_site
 
 

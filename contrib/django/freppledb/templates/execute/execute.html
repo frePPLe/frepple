@@ -212,15 +212,15 @@ and export results into the database<br/>
 {% endif %}
 
 {% if perms.execute.run_db %}
-<h3><a href="#database">{% trans "Backup database" %}</a></h3>
+<h3><a href="#backup">{% trans "Back up the database" %}</a></h3>
 <div><table>
 <form method="post" action="{{request.prefix}}/execute/launch/backup database/">{% csrf_token %}<tr>
 <td><input id="backup" type="submit" value="{% trans "Launch" %}" /></td>
-<td>{% trans "Backup the database." %}</td>
+<td>{% trans "Dump the database contents to a file." %}</td>
 </tr></form>
 </table></div>
 
-<h3><a href="#empty database">{% trans "Empty database" %}</a></h3>
+<h3><a href="#empty">{% trans "Empty the database" %}</a></h3>
 <div>
 <table>
 <form method="post" action="{{request.prefix}}/execute/launch/empty database/">{% csrf_token %}<tr>
@@ -229,7 +229,7 @@ and export results into the database<br/>
 </tr></form>
 </table></div>
 
-<h3><a href="#database">{% trans "Load a dataset" %}</a></h3>
+<h3><a href="#load">{% trans "Load a dataset" %}</a></h3>
 <div><table>
 <form method="post" action="{{request.prefix}}/execute/launch/load dataset/">{% csrf_token %}<tr>
 <td><input id="load" type="submit" value="{% trans "Launch" %}"/></td>

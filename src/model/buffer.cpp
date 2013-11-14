@@ -255,7 +255,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
         dynamic_cast<const FlowPlan*>(&*i)->writeElement(o, Tags::tag_flowplan);
     o->EndObject(Tags::tag_flowplans);
     bool first = true;
-    for (Problem::const_iterator j = Problem::begin(const_cast<Buffer*>(this), false); j!=Problem::end(); ++j)
+    for (Problem::const_iterator j = Problem::begin(const_cast<Buffer*>(this), true); j!=Problem::end(); ++j)
     {
       if (first)
       {

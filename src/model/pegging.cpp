@@ -57,6 +57,15 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
 }
 
 
+DECLARE_EXPORT PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b)
+  : downstream(b), firstIteration(true)
+{
+  first = false;  // ... because the stack is still empty
+  followPegging(opplan, 0, opplan->getQuantity(), 1.0);
+  initType(metadata);
+}
+
+
 DECLARE_EXPORT void PeggingIterator::updateStack
 (short l, double q, double f, const FlowPlan* fc, const FlowPlan* fp, bool p)
 {

@@ -269,10 +269,6 @@ DECLARE_EXPORT bool OperationPlan::activate(bool useMinCounter)
   // created yet. We do it now...
   createFlowLoads();
 
-  // Extra registration step if this is a delivery operation
-  if (getDemand() && getDemand()->getDeliveryOperation() == oper)
-    dmd->addDelivery(this);
-
   // Mark the operation to detect its problems
   // Note that a single operationplan thus retriggers the problem computation
   // for all operationplans of this operation. For models with 1) a large
@@ -294,7 +290,7 @@ DECLARE_EXPORT void OperationPlan::deactivate()
   id = 0;
 
   // Delete from the list of deliveries
-  if (id && dmd) dmd->removeDelivery(this);
+  if (dmd) dmd->removeDelivery(this);
 
   // Delete from the operationplan list
   removeFromOperationplanList();
@@ -514,7 +510,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   }
 
   // Delete from the list of deliveries
-  if (id && dmd) dmd->removeDelivery(this);
+  if (dmd) dmd->removeDelivery(this);
 
   // Delete from the operationplan list
   removeFromOperationplanList();
@@ -1016,9 +1012,13 @@ DECLARE_EXPORT void OperationPlan::setDemand(Demand* l)
   // Unregister from previous demand
   if (dmd) dmd->removeDelivery(this);
 
-  // Register the new demand and mark it changed
+  // Register at the new demand and mark it changed
   dmd = l;
-  if (l) l->setChanged();
+  if (l)
+  {
+    l->addDelivery(this);
+    l->setChanged();
+  }
 }
 
 

@@ -64,6 +64,17 @@ DECLARE_EXPORT void Demand::setQuantity(double f)
 }
 
 
+DECLARE_EXPORT Demand::~Demand()
+{
+  // Reset the motive on all operationplans marked with this demand.
+  // This loop is linear with the model size. It doesn't scale well, but
+  // deleting a demand is not too common.
+  for (OperationPlan::iterator i; i != OperationPlan::end(); i++)
+    if (i->getMotive() == this) i->setMotive(NULL);
+
+  // Remove the delivery operationplans
+  deleteOperationPlans(true);
+}
 DECLARE_EXPORT void Demand::deleteOperationPlans
 (bool deleteLocked, CommandManager* cmds)
 {
@@ -89,11 +100,6 @@ DECLARE_EXPORT void Demand::deleteOperationPlans
       delete candidate;
   }
 
-  // Reset the motive on all operationplans marked with this demand.
-  // This loop is linear with the model size. It doesn't scale well, but
-  // deleting a demand is not too common.
-  for (OperationPlan::iterator i; i != OperationPlan::end(); i++)
-    if (i->getMotive() == this) i->setMotive(NULL);
 
   // Mark the demand as being changed, so the problems can be redetected
   setChanged();
@@ -277,7 +283,7 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
       o->EndObject(Tags::tag_operationplans);
     }
     bool first = true;
-    for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(this), false); j!=Problem::end(); ++j)
+    for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(this), true); j!=Problem::end(); ++j)
     {
       if (first)
       {

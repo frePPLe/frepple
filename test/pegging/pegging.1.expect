@@ -1277,6 +1277,29 @@
 					</pegging>
 				</flowplan>
 			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 1&apos; has material excess of 10</description>
+					<start>1971-01-01T00:00:00</start>
+					<end>2009-01-09T00:00:00</end>
+					<weight>10</weight>
+				</problem>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 1&apos; has material excess of 4</description>
+					<start>2009-01-17T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>4</weight>
+				</problem>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;buffer 1&apos; has material shortage of 4</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2009-01-17T00:00:00</end>
+					<weight>4</weight>
+				</problem>
+			</problems>
 		</buffer>
 		<buffer name="buffer 2">
 			<producing name="make 2" xsi:type="operation_fixed_time"/>
@@ -1412,6 +1435,22 @@
 					</pegging>
 				</flowplan>
 			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 2&apos; has material excess of 10</description>
+					<start>1971-01-01T00:00:00</start>
+					<end>2009-01-09T00:00:00</end>
+					<weight>10</weight>
+				</problem>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;buffer 2&apos; has material shortage of 4</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>4</weight>
+				</problem>
+			</problems>
 		</buffer>
 		<buffer name="buffer 3">
 			<producing name="make 3" xsi:type="operation_fixed_time"/>
@@ -1507,6 +1546,29 @@
 					</pegging>
 				</flowplan>
 			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 3&apos; has material excess of 10</description>
+					<start>1971-01-01T00:00:00</start>
+					<end>2009-01-09T00:00:00</end>
+					<weight>10</weight>
+				</problem>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 3&apos; has material excess of 2</description>
+					<start>2009-01-15T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>2</weight>
+				</problem>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;buffer 3&apos; has material shortage of 4</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<weight>4</weight>
+				</problem>
+			</problems>
 		</buffer>
 		<buffer name="buffer 4">
 			<producing name="make 4" xsi:type="operation_fixed_time"/>
@@ -1674,6 +1736,29 @@
 					</pegging>
 				</flowplan>
 			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 4&apos; has material excess of 10</description>
+					<start>1971-01-01T00:00:00</start>
+					<end>2009-01-09T00:00:00</end>
+					<weight>10</weight>
+				</problem>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 4&apos; has material excess of 6</description>
+					<start>2009-01-15T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>6</weight>
+				</problem>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;buffer 4&apos; has material shortage of 6</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<weight>6</weight>
+				</problem>
+			</problems>
 		</buffer>
 		<buffer name="constraint buffer 1">
 			<item name="item 1"/>
@@ -1799,6 +1884,15 @@
 					</pegging>
 				</flowplan>
 			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;constraint buffer 1&apos; has material excess of 106</description>
+					<start>2009-01-17T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>106</weight>
+				</problem>
+			</problems>
 		</buffer>
 		<buffer name="constraint buffer 2">
 			<item name="item 2"/>
@@ -1977,6 +2071,15 @@
 					</pegging>
 				</flowplan>
 			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;constraint buffer 3&apos; has material excess of 816</description>
+					<start>2009-01-15T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>816</weight>
+				</problem>
+			</problems>
 		</buffer>
 		<buffer name="constraint buffer 4">
 			<item name="item 4"/>
@@ -2110,6 +2213,15 @@
 					</pegging>
 				</flowplan>
 			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;constraint buffer 4&apos; has material excess of 804</description>
+					<start>2009-01-15T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>804</weight>
+				</problem>
+			</problems>
 		</buffer>
 	</buffers>
 	<demands>
@@ -2254,6 +2366,15 @@
 					</flowplans>
 				</operationplan>
 			</operationplans>
+			<problems>
+				<problem>
+					<name>late</name>
+					<description>Demand &apos;order for item 1&apos; planned P8D after its due date</description>
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-18T00:00:00</end>
+					<weight>8</weight>
+				</problem>
+			</problems>
 			<constraints>
 				<problem>
 					<name>material shortage</name>
@@ -2352,6 +2473,22 @@
 					</flowplans>
 				</operationplan>
 			</operationplans>
+			<problems>
+				<problem>
+					<name>short</name>
+					<description>Demand &apos;order for item 2&apos; planned 20 units short</description>
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-10T00:00:00</end>
+					<weight>20</weight>
+				</problem>
+				<problem>
+					<name>late</name>
+					<description>Demand &apos;order for item 2&apos; planned P8D after its due date</description>
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-18T00:00:00</end>
+					<weight>8</weight>
+				</problem>
+			</problems>
 			<constraints>
 				<problem>
 					<name>material shortage</name>
@@ -2420,6 +2557,15 @@
 					</flowplans>
 				</operationplan>
 			</operationplans>
+			<problems>
+				<problem>
+					<name>late</name>
+					<description>Demand &apos;order for item 3&apos; planned P6D after its due date</description>
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-16T00:00:00</end>
+					<weight>6</weight>
+				</problem>
+			</problems>
 			<constraints>
 				<problem>
 					<name>material shortage</name>
@@ -2488,6 +2634,15 @@
 					</flowplans>
 				</operationplan>
 			</operationplans>
+			<problems>
+				<problem>
+					<name>late</name>
+					<description>Demand &apos;order for item 4&apos; planned P6D after its due date</description>
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-16T00:00:00</end>
+					<weight>6</weight>
+				</problem>
+			</problems>
 			<constraints>
 				<problem>
 					<name>material shortage</name>

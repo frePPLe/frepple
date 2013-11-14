@@ -3500,26 +3500,29 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public PythonExte
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.<br>
       * The boolean parameter is used to control whether to round up (false)
-      * or down (true) in case the operation quantity must be a multiple.
+      * or down (true) in case the operation quantity must be a multiple.<br>
+      * The second parameter is to flag whether we want to actually perform
+      * the resizing, or only to simulate it.
       */
-    void setQuantity(double qty, bool b=false, bool u = true)
+    double setQuantity(double qty, bool b=false, bool u = true)
     {
-      if (!getFlow()->getEffective().within(getDate())) return;
+      if (!getFlow()->getEffective().within(getDate())) return 0.0;
       if (getFlow()->getType() == *FlowFixedEnd::metadata
         || getFlow()->getType() == *FlowFixedStart::metadata)
       {
         // Fixed quantity flows only allow resizing to 0
         if (qty == 0.0 && oper->getQuantity()!= 0.0)
-          oper->setQuantity(0.0, b, u);
+          return oper->setQuantity(0.0, b, u) ? getFlow()->getQuantity() : 0.0;
         else if (qty != 0.0 && oper->getQuantity()== 0.0)
-          oper->setQuantity(
+          return oper->setQuantity(
             (oper->getOperation()->getSizeMinimum()<=0) ? 0.001
               : oper->getOperation()->getSizeMinimum(),
-            b, u);
+            b, u) ? getFlow()->getQuantity() : 0.0;
       }
       else
         // Normal, proportional flows
-        oper->setQuantity(qty / getFlow()->getQuantity(), b, u);
+        return oper->setQuantity(qty / getFlow()->getQuantity(), b, u) * getFlow()->getQuantity();
+      throw LogicException("Unreachable code reached");
     }
 
     /** This function needs to be called whenever the flowplan date or
@@ -4432,12 +4435,11 @@ class Demand
       it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0),
       maxLateness(TimePeriod::MAX), minShipment(1), hidden(false) {}
 
-    /** Destructor. Deleting the demand will also delete all delivery operation
-      * plans (including locked ones). */
-    virtual ~Demand()
-    {
-      deleteOperationPlans(true);
-    }
+    /** Destructor.
+      * Deleting the demand will also delete all delivery operation
+      * plans (including locked ones) and reset the motive on any
+      * operationplans. */
+    virtual DECLARE_EXPORT ~Demand();
 
     /** Returns the quantity of the demand. */
     double getQuantity() const {return qty;}
@@ -5626,7 +5628,10 @@ class PeggingIterator : public Object
 {
   public:
     /** Constructor. */
-    DECLARE_EXPORT PeggingIterator(const Demand* e);
+    DECLARE_EXPORT PeggingIterator(const Demand*);
+
+    /** Constructor. */
+    DECLARE_EXPORT PeggingIterator(const OperationPlan*, bool = true);
 
     /** Constructor. */
     PeggingIterator(const FlowPlan* e, bool b = true)

@@ -219,7 +219,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
     else:
       msg = _('The %(name)s "%(obj)s" was added successfully.') % msg_dict
-      self.message_user(request, msg, msg, messages.SUCCESS)
+      self.message_user(request, msg, messages.SUCCESS)
       # Redirect to previous crumb
       return HttpResponseRedirect(request.session['crumbs'][request.prefix][-2][2])
 

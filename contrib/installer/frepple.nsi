@@ -221,7 +221,9 @@ Section "Application" SecAppl
   ; Copy sqlite database if it is available.
   ; This file shouldn't be put in the read-only "Program files" directory.
   SetOutPath "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
-  File /nonfatal "..\contrib\django\frepple.sqlite"
+  File "..\contrib\django\frepple.sqlite"
+  AccessControl::GrantOnFile "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}" "(S-1-5-32-545)" "FullAccess"
+  AccessControl::GrantOnFile "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\frepple.sqlite" "(S-1-5-32-545)" "FullAccess"
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"

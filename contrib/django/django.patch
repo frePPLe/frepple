@@ -1,10 +1,18 @@
+diff --git django/bin/__init__.py django/bin/__init__.py
+new file mode 100644
+index 0000000..675001b
+--- /dev/null
++++ django/bin/__init__.py
+@@ -0,0 +1 @@
++# Extra file is required to keep py2exe happy
+\ No newline at end of file
 diff --git django/conf/project_template/__init__.py django/conf/project_template/__init__.py
 new file mode 100644
-index 0000000..8b13789
+index 0000000..05cb70d
 --- /dev/null
 +++ django/conf/project_template/__init__.py
 @@ -0,0 +1 @@
-+
++# Extra file is required to keep py2exe happy
 diff --git django/contrib/admin/widgets.py django/contrib/admin/widgets.py
 index 5773db6..236080e 100644
 --- django/contrib/admin/widgets.py
@@ -205,6 +213,22 @@ index ca42280..dfbae0f 100644
                  result.append('%s.%s AS %s' % (qn(alias),
                      qn2(field.column), c_alias))
                  col_aliases.add(c_alias)
+diff --git django/template/base.py django/template/base.py
+index 26f8111..506ae14 100644
+--- django/template/base.py
++++ django/template/base.py
+@@ -1217,6 +1217,11 @@ class Library(object):
+                     csrf_token = context.get('csrf_token', None)
+                     if csrf_token is not None:
+                         new_context['csrf_token'] = csrf_token
++                    # Copy across the request, because inclusion tags often need
++                    # access to the request
++                    request = context.get('request', None)
++                    if request is not None:
++                        new_context['request'] = request
+                     return self.nodelist.render(new_context)
+ 
+             function_name = (name or
 diff --git django/utils/autoreload.py django/utils/autoreload.py
 index 6de15a2..1130feb 100644
 --- django/utils/autoreload.py

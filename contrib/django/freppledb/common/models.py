@@ -195,6 +195,19 @@ class User(AbstractUser):
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, null=True, blank=True,
     editable=False, db_index=True)
 
+
+  def joined_age(self):
+    '''
+    Returns the number days since the user joined
+    '''
+    if self.date_joined.year == 2000:
+      # This is the user join date from the demo database.
+      # We'll consider that a new user.
+      self.date_joined = self.last_login
+      self.save()
+    return (datetime.now() - self.date_joined).total_seconds() / 86400
+
+
   class Meta:
     db_table = "common_user"
     verbose_name = _('user')

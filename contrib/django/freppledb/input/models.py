@@ -557,6 +557,7 @@ class Demand(AuditModel,HierarchyModel):
 
   # Status
   demandstatus = (
+    ('inquiry',_('inquiry')),
     ('quote',_('quote')),
     ('open',_('open')),
     ('closed',_('closed')),

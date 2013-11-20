@@ -69,11 +69,11 @@ $(window).bind('resize', function() {
 <a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
 <a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>
 {% endif %}
-{% if hasaddperm %}<a href="{{request.prefix}}/{{adminsite}}/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
+{% if hasaddperm %}<a id="add" href="{{request.prefix}}/{{adminsite}}/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
 {% if not is_popup %}<a id="copy_selected" href="javascript:grid.showCopy();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-copy"></span>{% trans 'Copy' %}</a>
 {% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<a id="delete_selected" href="javascript:grid.showDelete();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-minusthick"></span>{% trans 'Delete' %}</a>
 {% endif %}{% if reportclass.hasTimeBuckets %}<a href="javascript:grid.showBucket();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
-{% endif %}{% if hasaddperm %}<a href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
+{% endif %}{% if hasaddperm %}<a id="csvimport" href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
 {% endif %}<a href="javascript:grid.showExport(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>{% endblock %}</div>
 <div id="content-main" style="margin-right: 15px;">
 <table id="grid"></table>

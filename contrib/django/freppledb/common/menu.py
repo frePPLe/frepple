@@ -29,6 +29,7 @@ menu.addItem("user", "preferences", url="/preferences/", label=_('Preferences'),
 menu.addItem("user", "change password", url="/admin/password_change/", label=_('Change password'), index=300)
 
 # Help menu
-menu.addItem("help", "help", url="%sdoc/index.html" % settings.STATIC_URL, label=_('Help'), window=True, prefix=False, index=100)
+menu.addItem("help", "tour", javascript="tour.start('0,0,0')", label=_('Application tour'), index=100)
+menu.addItem("help", "documentation", url="%sdoc/index.html" % settings.STATIC_URL, label=_('Documentation'), window=True, prefix=False, index=100)
 menu.addItem("help", "website", url="http://frepple.com", window=True, label=_('frePPLe website'), prefix=False, index=200)
 

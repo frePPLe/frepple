@@ -198,7 +198,7 @@ class User(AbstractUser):
 
   def joined_age(self):
     '''
-    Returns the number days since the user joined
+    Returns the number of days since the user joined
     '''
     if self.date_joined.year == 2000:
       # This is the user join date from the demo database.

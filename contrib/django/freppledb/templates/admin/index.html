@@ -9,7 +9,8 @@
   $(function() {
     $( "#content-main" ).accordion({
       collapsible: true, active: 0
-      });
+      });{% if request.user.joined_age < 5 and not request.GET.tour %}
+    tour.start("0,0,0");{% endif %}
   });
 </script>
 <style type="text/css">
@@ -27,7 +28,7 @@ th {
 {% getMenu as menu %}
 {% for group in menu %}<h3><a>{{ group.0 }}</a></h3>
 <div><table>
-{% for item in group.1 %}<th scope="row"><a {% if item.1.window %}target="_blank" {% endif %} href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}">{{ item.0 }}</a></th>
+{% for item in group.1 %}<th scope="row"><a {% if item.1.window %}target="_blank" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}"{% else %}href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %}>{{ item.0 }}</a></th>
 {% if item.2 %}<td><a href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
 <td><a href="javascript:void(0);" onclick="import_show('{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
 {% else %}<td>&nbsp;</td>

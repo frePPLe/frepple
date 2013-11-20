@@ -515,6 +515,32 @@ div.calendarbox
   display: block;
 }
 
+/* APPLICATION TOUR */
+
+.ui-widget-overlay
+{
+  background: none;
+}
+
+.tourguide {
+  border-width: thick;
+  border-color: red;
+}
+
+.tourtooltip {
+  border-width: thick;
+  border-color: red;
+  padding: 10px 20px;
+  position: absolute;
+  box-sizing: border-box;
+  font-weight: bold;
+}
+
+.underline
+{
+  text-decoration: underline;
+}
+
 /* GANTT CHARTS */
 
 .opplan {
@@ -547,3 +573,5 @@ div.calendarbox
   font-size: 12px;
   text-anchor:middle;
 }
+
+

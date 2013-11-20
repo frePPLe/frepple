@@ -1186,3 +1186,284 @@ var gantt = {
     gantt.header();
   }
 }
+
+
+var tour = {
+
+  autoplay: 0,
+  tooltip: null,
+  chapter: 0,
+  step: 0,
+  timeout: null,
+
+
+  start: function (args)
+  {
+    // Parse the arguments
+    var splitargs = args.split(",");
+    tour.chapter = parseInt(splitargs[0]);
+    tour.step = parseInt(splitargs[1]);
+    tour.autoplay = parseInt(splitargs[2]);
+    // Load and execute the tutorial
+    jQuery.ajax( {
+        url: "/static/js/i18n/tour.en.js",
+        dataType: "script",
+        cache: true
+      })
+      .success( tour.init )
+      .fail( function() {
+        console.log('Error loading the tutorial: ' + arguments[2].toString());
+      });
+  },
+
+  init: function()
+  {
+     // Display the main dialog of the tour
+     $("body").append( '<div id="tour" style="padding-bottom:20px; display:none">' + tourdata[0]['description']  + '<br/><br/><br/></div>')
+     $("#tour").dialog({
+      title: gettext("Application tour"),
+      autoOpen: true,
+      resizable: false,
+      width: 390,
+      height: 'auto',
+      position: "right bottom",
+      modal: false,
+      dialogClass: "tourguide",
+      close: function() {
+          $('#tour').remove();
+          $('#tourtooltip').remove();
+          tour.tooltip.css({ 'display' : 'none' }).html('');
+          tour.chapter = 0;
+          tour.step = 0;
+          tour.autoplay = false;
+          if (tour.timeout)
+          {
+            clearTimeout(tour.timeout);
+            tour.timeout = null;
+          }
+        },
+      buttons: [
+        {
+          id: "tourprevious",
+          text: gettext("Previous"),
+          icons: { primary: "ui-icon-seek-prev" },
+          click: tour.prev
+        },
+        {
+          text: (tour.autoplay != 0) ? gettext("Stop") : gettext("Play"),
+          icons: { primary: (tour.autoplay != 0) ? "ui-icon-pause" : "ui-icon-play" },
+          click: tour.toggleAutoplay
+        },
+        {
+          id: "tournext",
+          text: gettext("Next"),
+          icons: { primary: "ui-icon-seek-next" },
+          click: tour.next
+        }
+        ]
+      });
+
+     // Create the tooltip
+     tour.tooltip = $('<div>',{id:'tourtooltip', class:'tourtooltip ui-dialog ui-widget ui-widget-content ui-corner-all ui-front', html:''}).css({
+       'display'     : 'none'
+     });
+     $("body").append(tour.tooltip);
+
+     // Show the first step
+     tour.showStep();
+  },
+
+  next: function()
+  {
+    tour.step++;
+    if (tour.step >= tourdata[tour.chapter]['steps'].length)
+    {
+      tour.chapter++;
+      if (tour.chapter < tourdata.length)
+        tour.step = 0;
+      else if (tour.autoplay == 2)
+      {
+        // Restart from the beginning
+        tour.step = 0;
+        tour.chapter = 0;
+      }
+      else
+      {
+        // Stop at the last step
+        if (tour.autoplay == 1) tour.toggleAutoplay();
+        tour.chapter--;
+        tour.step--;
+        return;
+      }
+    }
+    tour.showStep();
+  },
+
+  prev: function()
+  {
+    tour.step--;
+    if (tour.step < 0)
+    {
+      tour.chapter--;
+      if (tour.chapter < 0)
+      {
+        // Stay at the very first step
+        tour.step = 0;
+        tour.chapter = 0;
+        return;
+      }
+      else
+        tour.step = tourdata[tour.chapter]['steps'].length - 1;
+    }
+    tour.showStep();
+  },
+
+  showStep: function()
+  {
+    var stepData = tourdata[tour.chapter]['steps'][tour.step];
+    console.log(location.pathname + "   " + stepData['url'] + "  " + tour.chapter + "   " + tour.step + "   " + JSON.stringify(stepData));
+    // Switch url if required
+    if (location.pathname != stepData['url'])
+    {
+      window.location.href = stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+      return;
+    }
+    // Display the tooltip
+    var element = $(stepData['element']);
+    tour.tooltip.html(stepData['description']);
+    var tooltipPos = (typeof stepData.position == 'undefined') ? 'BL' : stepData['position'];
+    var pos = tour.getTooltipPosition(tooltipPos, element);
+    tour.tooltip.css({ 'top': pos.top+'px', 'left': pos.left+'px' });
+    tour.tooltip.show('fast');
+    // Update tour dialog
+    $('#tour').html(tourdata[tour.chapter]['description'] + '<br/><br/>' + (tour.step+1) + " " + gettext("out of") + " " + tourdata[tour.chapter]['steps'].length);
+    // Previous button
+    if (tour.chapter == 0 && tour.step == 0)
+      $("#tourprevious").button("disable");
+    else
+      $("#tourprevious").button("enable");
+    // Next button
+    if ((tour.chapter >= tourdata.length-1) && (tour.step >= tourdata[tour.chapter]['steps'].length-1))
+      $("#tournext").button("disable");
+    else
+      $("#tournext").button("enable");
+    // Autoplay
+    if (tour.autoplay)
+      tour.timeout = setTimeout(tour.next, tourdata[tour.chapter]['delay'] * 1000);
+    // Callback
+    if ('callback' in stepData)
+      eval(stepData['callback']);
+  },
+
+  toggleAutoplay: function()
+  {
+    if (tour.autoplay > 0)
+    {
+      var icn = $(".ui-icon-pause");
+      icn.toggleClass("ui-icon-pause ui-icon-play");
+      icn.next().html(gettext("Play"));
+      tour.autoplay = 0;
+      clearTimeout(tour.timeout);
+      tour.timeout = null;
+    }
+    else
+    {
+      var icn = $(".ui-icon-play");
+      icn.toggleClass("ui-icon-play ui-icon-pause");
+      icn.next().html(gettext("Stop"));
+      tour.autoplay = 1;
+      tour.next();
+    }
+  },
+
+  getTooltipPosition: function(pos, element)
+  {
+    var position;
+    var ew = element.outerWidth();
+    var eh = element.outerHeight();
+    var el = element.offset().left;
+    var et = element.offset().top;
+    var tw = tour.tooltip.width() + parseInt(tour.tooltip.css('padding-left')) + parseInt(tour.tooltip.css('padding-right'));
+    var th = tour.tooltip.height() + parseInt(tour.tooltip.css('padding-top')) +  + parseInt(tour.tooltip.css('padding-bottom'));
+
+    $('.tourArrow').remove();
+    var upArrow = $('<div class="tourArrow"></div>').css({ 'position' : 'absolute', 'display' : 'block', 'width' : '0', 'height' : '0', 'border-left' : '9px solid transparent', 'border-right' : '9px solid transparent', 'border-bottom' : '9px solid red'});
+    var downArrow = $('<div class="tourArrow"></div>').css({ 'position' : 'absolute', 'display' : 'block', 'width' : '0', 'height' : '0', 'border-left' : '9px solid transparent', 'border-right' : '9px solid transparent', 'border-top' : '9px solid red'});
+    var rightArrow = $('<div class="tourArrow"></div>').css({ 'position' : 'absolute', 'display' : 'block', 'width' : '0', 'height' : '0', 'border-top' : '9px solid transparent', 'border-bottom' : '9px solid transparent', 'border-left' : '9px solid red'});
+    var leftArrow = $('<div class="tourArrow"></div>').css({ 'position' : 'absolute', 'display' : 'block', 'width' : '0', 'height' : '0', 'border-top' : '9px solid transparent', 'border-bottom' : '9px solid transparent', 'border-right' : '9px solid red'});
+    switch (pos) {
+      case 'BL' :
+        position = { 'left'  : el, 'top' : et + eh + 10 };
+        upArrow.css({ top: '-9px', left: '48%' });
+        tour.tooltip.prepend(upArrow);
+        break;
+
+      case 'BR' :
+        position = { 'left'  : el + ew - tw, 'top' : et + eh + 10 };
+        upArrow.css({ top: '-9px', left: '48%' });
+        tour.tooltip.prepend(upArrow);
+        break;
+
+      case 'TL' :
+        position = { 'left'  : el, 'top' : (et - th) -10 };
+        downArrow.css({ top: th, left: '48%' });
+        tour.tooltip.append(downArrow);
+        break;
+
+      case 'TR' :
+        position = { 'left'  : (el + ew) - tw, 'top' : et - th -10 };
+        downArrow.css({ top: th, left: '48%' });
+        tour.tooltip.append(downArrow);
+        break;
+
+      case 'RT' :
+        position = { 'left'  : el + ew + 10, 'top' : et };
+        leftArrow.css({ left: '-9px' });
+        tour.tooltip.prepend(leftArrow);
+        break;
+
+      case 'RB' :
+        position = { 'left'  : el + ew + 10, 'top' : et + eh - th };
+        leftArrow.css({ left: '-9px' });
+        tour.tooltip.prepend(leftArrow);
+        break;
+
+      case 'LT' :
+        position = { 'left'  : (el - tw) - 10, 'top' : et };
+        rightArrow.css({ right: '-9px' });
+        tour.tooltip.prepend(rightArrow);
+        break;
+
+      case 'LB' :
+        position = { 'left'  : (el - tw) - 10, 'top' : et + eh - th};
+        rightArrow.css({ right: '-9px' });
+        tour.tooltip.prepend(rightArrow);
+        break;
+
+      case 'B'  :
+        position = { 'left'  : el + ew/2 - tw/2, 'top' : (et + eh) + 10 };
+        upArrow.css({ top: '-9px', left: '48%' });
+        tour.tooltip.prepend(upArrow);
+        break;
+
+      case 'L'  :
+        position = { 'left'  : (el - tw) - 10, 'top' : et + eh/2 - th/2 };
+        rightArrow.css({ right: '-9px' });
+        tour.tooltip.prepend(rightArrow);
+        break;
+
+      case 'T'  :
+        position = { 'left'  : el + ew/2 - tw/2, 'top' : (et - th) - 10 };
+        downArrow.css({ top: th, left: '48%' });
+        tour.tooltip.append(downArrow);
+        break;
+
+      case 'R'  :
+        position = { 'left'  : (el + ew) + 10, 'top' : et + eh/2 - th/2 };
+        leftArrow.css({ left: '-9px' });
+        tour.tooltip.prepend(leftArrow);
+    }
+    return position;
+  }
+
+}

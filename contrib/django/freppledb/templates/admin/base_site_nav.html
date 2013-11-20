@@ -5,7 +5,7 @@
 {% getMenu as menu %}<nav>
 {% for group in menu %}<a class="menuButton ui-widget-content ui-corner-all ui-state-default">{{ group.0 }}</a>
 <div><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default ">
-{% for item in group.1 %}<li class="ui-menu-item"><a {% if item.1.window %}target="_blank" {% endif %}href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}">{{ item.0 }}</a></li>
+{% for item in group.1 %}<li class="ui-menu-item"><a {% if item.1.window %}target="_blank" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}; return false;"{% else %} href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %}>{{ item.0 }}</a></li>
 {% endfor %}</ul></div>
 {% endfor %}<input id="search" class="ui-corner-all" size="35"/>
 </nav></div>

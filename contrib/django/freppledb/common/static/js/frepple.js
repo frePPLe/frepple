@@ -1219,7 +1219,7 @@ var tour = {
   init: function()
   {
      // Display the main dialog of the tour
-     $("body").append( '<div id="tour" style="padding-bottom:20px; display:none">' + tourdata[0]['description']  + '<br/><br/><br/></div>')
+     $("body").append( '<div id="tour" style="padding-bottom:20px; display:none">' + tourdata[tour.chapter]['description']  + '<br/><br/><br/></div>')
      $("#tour").dialog({
       title: gettext("Application tour"),
       autoOpen: true,
@@ -1321,13 +1321,15 @@ var tour = {
   showStep: function()
   {
     var stepData = tourdata[tour.chapter]['steps'][tour.step];
-    console.log(location.pathname + "   " + stepData['url'] + "  " + tour.chapter + "   " + tour.step + "   " + JSON.stringify(stepData));
     // Switch url if required
     if (location.pathname != stepData['url'])
     {
       window.location.href = stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
       return;
     }
+    // Callback
+    if ('beforestep' in stepData)
+      eval(stepData['beforestep']);
     // Display the tooltip
     var element = $(stepData['element']);
     tour.tooltip.html(stepData['description']);
@@ -1351,8 +1353,8 @@ var tour = {
     if (tour.autoplay)
       tour.timeout = setTimeout(tour.next, tourdata[tour.chapter]['delay'] * 1000);
     // Callback
-    if ('callback' in stepData)
-      eval(stepData['callback']);
+    if ('afterstep' in stepData)
+      eval(stepData['afterstep']);
   },
 
   toggleAutoplay: function()

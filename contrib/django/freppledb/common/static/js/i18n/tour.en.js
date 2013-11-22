@@ -4,8 +4,8 @@ var tourdata = [
      description: '<h2>Main</h2>' +
         'Jump to <span class="underline"><a href="/admin/?tour=1,0,0">Navigation</a></span> (5 steps)<br/>' +
         'Jump to <span class="underline"><a href="/admin/?tour=2,0,0">Data entry</a></span> (10 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=3,0,0">Plan generation</a></span><br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Plan analysis</a></span><br/>',
+        'Jump to <span class="underline"><a href="/admin/?tour=3,0,0">Generating the plan</a></span> (8 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Plan analysis</a></span> ( steps)<br/>',
      delay: 1,
      steps: [
              {
@@ -13,9 +13,9 @@ var tourdata = [
                element : '.tourguide',
                description : "Welcome to frePPLe.<br/>" +
                  "This tutorial will show you around.<br/><br/>" +
-                 "During the first 5 days after joining this home page " +
+                 "During the first 5 days of use this page<br/>" +
                  "will suggest you to take the tour.<br/>" +
-                 "Later you can start it from the menu.",
+                 "Later you can always start the tour from the menu.",
                position : 'TL'
              },
              ]
@@ -150,7 +150,183 @@ var tourdata = [
              "&nbsp;- Adjust the column width<br/>" +
              "These settings are saved for each individual user.",
            position : 'B'
-         },
+         }
         ]
-    }
+    },
+
+    // Planning tasks
+    {
+     description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Generating the plan</h2>' +
+        "Generating plans and performing other tasks.",
+     delay: 1,
+     steps:
+        [
+         {
+           url: "/execute/",
+           element : '#content h1',
+           beforestep: '$("#tasks").accordion({active:false,animate:false})',
+           description : "The top section show the log and status<br/>" +
+             "of all tasks.",
+           position : 'R'
+         },
+         {
+           url: "/execute/",
+           element : '#content-main h1',
+           description : "The bottom section allows you to interactively launch new tasks.<br/><br/>" +
+             "To automate tasks they can also be launched from the command line.",
+           position : 'TL'
+         },
+         {
+           url: "/execute/",
+           element : 'a[href="#plan"]',
+           beforestep: '$("a[href=\\"#plan\\"]").parent().click()',
+           description : "You can generate constrained or unconstrained plans<br/>" +
+             "and select which constraints to consider.<br/><br/>" +
+             "A constrained plan will respect all constraints<br/>" +
+             "but some demands can be planned late or incomplete.<br/><br/>" +
+             "In an unconstrained plan all demand will be met at its due date<br/>" +
+             "but some constraints can be violated.",
+           position : 'TL'
+         },
+         {
+           url: "/execute/",
+           element : 'a[href="#scenarios"]',
+           beforestep: '$("a[href=\\"#scenarios\\"]").parent().click()',
+           description : "Here you can copy your dataset into a whatif scenario.<br/><br/>" +
+             "A scenario is a complete copy of all data in a separate database.<br/>" +
+             "All data and plans can thus be vary independently.<br/><br/>" +
+             "Once a scenario has been copied, a dropdown list shows up<br/>" +
+             "in the upper right corner of the screen. Here you select the scenario you want to work with.",
+           position : 'TL'
+         },
+         {
+           url: "/execute/",
+           element : 'a[href="#backup"]',
+           beforestep: '$("a[href=\\"#backup\\"]").parent().click()',
+           description : "You can create a backup of the database.",
+           position : 'TL'
+         },
+         {
+           url: "/execute/",
+           element : 'a[href="#empty"]',
+           beforestep: '$("a[href=\\"#empty\\"]").parent().click()',
+           description : "This task erases all data content from the selected database.<br/><br/>" +
+             "Users, permissions, task logs, etc are obviously not erased.",
+           position : 'TL'
+         },
+         {
+           url: "/execute/",
+           element : 'a[href="#load"]',
+           beforestep: '$("a[href=\\"#load\\"]").parent().click()',
+           description : "We provide some sample datasets.<br/>" +
+             "With this action you can load them into your database.<br/><br/>" +
+             "A dataset is loaded incrementally, without erasing the existing data.<br/>" +
+             "In most cases you'll want to erase the database contents before loading a new dataset.",
+           position : 'TL'
+         },
+         {
+           url: "/execute/",
+           element : '#content-main h1',
+           beforestep: '$("#tasks").accordion({active:false})',
+           description : "There are some additional tasks which are less commonly used.<br/>" +
+              "See the documentation for more info.<br/><br/>" +
+              "Custom tasks can also be added in an extension app.",
+           position : 'TL'
+         }
+        ],
+      },
+
+      // Planning analysis
+      {
+       description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Plan analysis</h2>' +
+          'Reviewing and analyzing the plan:<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/resource/?tour=4,1,0">Resource utilization</a></span> (6 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/buffer/?tour=4,7,0">Inventory profile</a></span> ( steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/operation/?tour=4,1,0">Planned operations</a></span> ( steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/resource/?tour=4,1,0">Order plans</a></span> ( steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/problem/?tour=4,1,0">Exceptions and problems</a></span> ( steps)',
+       delay: 1,
+       steps:
+          [
+           {
+             url: "/admin/",
+             element : '.ui-accordion-content',
+             beforestep: '$("#content-main").accordion({active:1,animate:false})',
+             description : "Once you have loaded all data and generated<br/>" +
+               "the plan, you are now ready to review and<br/>" +
+               "analyze the planning results.",
+             position : 'R'
+           },
+           {
+             url: "/resource/",
+             element : 'h1',
+             description : "This report shows the utilization of all<br/>" +
+               "resources, aggregated in time buckets.<br/><br/>" +
+               "Users of the Enterprise Edition also have a second report<br/>" +
+               "to visualize the resource plan in a Gantt chart.<br/>" +
+               "The Gantt chart shows all invidual operations on the resource<br/>" +
+               "as blocks on a timeline.",
+             position : 'R'
+           },
+           {
+             url: "/resource/",
+             element : '#bucketconfig',
+             description : "The result in this report (and the ones we'll see next) are<br/>" +
+                "aggregated by time buckets.<br/>" +
+                "You can adjust the bucket size and the report horizon here.<br/><br/>" +
+                "Note that the planning algorithm itself doesn't use buckets.<br/>" +
+                "Time buckets are only used for reporting purposes.",
+             position : 'T'
+           },
+           {
+             url: "/resource/",
+             element : '.flotr-canvas',
+             description : "The sparkline graphics give a quick and intuitive<br/>" +
+               "overview of the resource utilization",
+             position : 'T'
+           },
+           {
+             url: "/resource/",
+             element : 'td[aria-describedby="grid_columns"]',
+             description : "For each resource and time bucket the report shows:<br/>" +
+               "&nbsp;&nbsp;- Available resource-hours<br/>" +
+               "&nbsp;&nbsp;- Unvailable resource-hours, suchs off-shift time, weekends and holidays<br/>" +
+               "&nbsp;&nbsp;- Setup resource-hours, ie time involved in changeovers<br/>" +
+               "&nbsp;&nbsp;- Load resource-hours<br/>" +
+               "&nbsp;&nbsp;- Utilization percentage, defined as load / available time<br/>",
+             position : 'T'
+           },
+           {
+             url: "/resource/",
+             element : 'span[role="detail"]',
+             description : "When there is a load in a bucket, clicking on the triangle<br/>" +
+                "gives more detail:<br/>" +
+                "&nbsp;&nbsp;- detailed list of operations planned<br/>" +
+                "&nbsp;&nbsp;- pegging of the load to the customer demand<br/><br/>" +
+                "We'll find the same drill-down capabilities in the reports we'll see next.",
+             position : 'T'
+           },
+           {
+             url: "/resource/",
+             element : 'span[role="resource"]',
+             description : "The drilldown menu of a resource allows you to look<br/>" +
+               "at the plan of that particular resource<br/>" +
+               "The graphics will then shown much bigger.",
+             position : 'T'
+           },
+           {
+             url: "/buffer/",
+             element : 'h1',
+             description : "This report shows the inventory profile of all SKUs.<br/>",
+             position : 'R'
+           },
+           {
+             url: "/buffer/",
+             element : 'td[aria-describedby="grid_columns"]',
+             description : "For each buffer and time bucket the report shows:<br/>" +
+               "&nbsp;&nbsp;- xxxx<br/>",
+             position : 'T'
+           },
+           ]
+      }
 ];

@@ -1464,6 +1464,10 @@ var tour = {
         position = { 'left'  : (el + ew) + 10, 'top' : et + eh/2 - th/2 };
         leftArrow.css({ left: '-9px' });
         tour.tooltip.prepend(leftArrow);
+        break;
+
+      case 'C'  :
+        position = { 'left'  : el + ew/2 - tw/2, 'top' : et + eh/2 - th/2 };
     }
     return position;
   }

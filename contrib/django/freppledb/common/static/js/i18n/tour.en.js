@@ -4,9 +4,10 @@ var tourdata = [
      description: '<h2>Main</h2>' +
         'Jump to <span class="underline"><a href="/admin/?tour=1,0,0">Navigation</a></span> (5 steps)<br/>' +
         'Jump to <span class="underline"><a href="/admin/?tour=2,0,0">Data entry</a></span> (10 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=3,0,0">Generating the plan</a></span> (8 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Plan analysis</a></span> ( steps)<br/>',
-     delay: 1,
+        'Jump to <span class="underline"><a href="/admin/?tour=3,0,0">Modeling</a></span> ( steps)<br/>' +
+        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Generating the plan</a></span> (8 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/admin/?tour=5,0,0">Plan analysis</a></span> (25 steps)<br/>',
+     delay: 5,
      steps: [
              {
                url: "/admin/",
@@ -17,7 +18,7 @@ var tourdata = [
                  "will suggest you to take the tour.<br/>" +
                  "Later you can always start the tour from the menu.",
                position : 'TL'
-             },
+             }
              ]
    },
 
@@ -25,7 +26,7 @@ var tourdata = [
    {
      description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Navigation</h2>' +
         'The menu bar, the index page, breadcrumbs and a search allow easy and intuitive navigation',
-     delay: 1,
+     delay: 5,
      steps:
         [
          {
@@ -70,7 +71,7 @@ var tourdata = [
      description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Data entry</h2>' +
         'Data can be entered directly in a data grid or edit forms.<br/>' +
         'You can also import and export CSV-files.',
-     delay: 1,
+     delay: 5,
      steps:
         [
          {
@@ -154,11 +155,21 @@ var tourdata = [
         ]
     },
 
+    // Modeling
+    {
+     description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Modeling</h2>' +
+        "Modeling your manufacturing environment.",
+     delay: 5,
+     steps:
+        [
+        ]
+    },
+
     // Planning tasks
     {
      description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Generating the plan</h2>' +
         "Generating plans and performing other tasks.",
-     delay: 1,
+     delay: 5,
      steps:
         [
          {
@@ -233,19 +244,20 @@ var tourdata = [
               "Custom tasks can also be added in an extension app.",
            position : 'TL'
          }
-        ],
+        ]
       },
 
-      // Planning analysis
+      // Plan review analysis
       {
        description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Plan analysis</h2>' +
-          'Reviewing and analyzing the plan:<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/resource/?tour=4,1,0">Resource utilization</a></span> (6 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/buffer/?tour=4,7,0">Inventory profile</a></span> ( steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/operation/?tour=4,1,0">Planned operations</a></span> ( steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/resource/?tour=4,1,0">Order plans</a></span> ( steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/problem/?tour=4,1,0">Exceptions and problems</a></span> ( steps)',
-       delay: 1,
+          'Review and analyze the plan from different angles:<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/resource/?tour=5,1,0">Resource utilization</a></span> (8 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/buffer/?tour=5,8,0">Inventory profile</a></span> (3 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/operation/?tour=5,11,0">Planned operations</a></span> (3 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,14,0">Demand plans</a></span> (4 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/problem/?tour=5,18,0">Exceptions and problems</a></span> (2 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,20,0">Order plan</a></span> (5 steps)',
+       delay: 5,
        steps:
           [
            {
@@ -266,17 +278,17 @@ var tourdata = [
                "to visualize the resource plan in a Gantt chart.<br/>" +
                "The Gantt chart shows all invidual operations on the resource<br/>" +
                "as blocks on a timeline.",
-             position : 'R'
+             position : 'BL'
            },
            {
              url: "/resource/",
              element : '#bucketconfig',
-             description : "The result in this report (and the ones we'll see next) are<br/>" +
+             description : "The result in this report (and the ones we'll see next) are " +
                 "aggregated by time buckets.<br/>" +
                 "You can adjust the bucket size and the report horizon here.<br/><br/>" +
                 "Note that the planning algorithm itself doesn't use buckets.<br/>" +
                 "Time buckets are only used for reporting purposes.",
-             position : 'T'
+             position : 'B'
            },
            {
              url: "/resource/",
@@ -309,24 +321,189 @@ var tourdata = [
            {
              url: "/resource/",
              element : 'span[role="resource"]',
-             description : "The drilldown menu of a resource allows you to look<br/>" +
+             description : "The drilldown menu allows you to look<br/>" +
                "at the plan of that particular resource<br/>" +
                "The graphics will then shown much bigger.",
-             position : 'T'
+             position : 'R'
+           },
+           {
+             url: "/loadplan/",
+             element : 'h1',
+             description : "This report shows the details of all operations<br/>" +
+               "planned on a resource: start date, end date, operation, quantity.<br/><br/>" +
+               "This list can be used to communicate the plan to operators<br/>" +
+               "on the shop floor, or integrate it to ERP and other systems.",
+             position : 'BL'
            },
            {
              url: "/buffer/",
              element : 'h1',
-             description : "This report shows the inventory profile of all SKUs.<br/>",
-             position : 'R'
+             description : "This report shows the inventory profile of all SKUs.<br/>" +
+               "It displays how much inventory we plan to have for each raw<br/>" +
+               "material, end product or intermediate product.",
+             position : 'BL'
            },
            {
              url: "/buffer/",
              element : 'td[aria-describedby="grid_columns"]',
              description : "For each buffer and time bucket the report shows:<br/>" +
-               "&nbsp;&nbsp;- xxxx<br/>",
+               "&nbsp;&nbsp;- Start Inventory: on hand at the start of the bucket<br/>" +
+               "&nbsp;&nbsp;- Produced: quantity added during the bucket<br/>" +
+               "&nbsp;&nbsp;- Consumed: quantity consumed during the bucket<br/>" +
+               "&nbsp;&nbsp;- End Inventory: on hand at the start of the bucket<br/>",
              position : 'T'
            },
+           {
+             url: "/flowplan/",
+             element : 'h1',
+             description : "This report shows the detailed list of all material<br/>" +
+               "consumed and produced.<br/><br/>" +
+               "This list can be used to communicate the plan to operators<br/>" +
+               "on the shop floor, or integrate it to ERP and other systems.",
+             position : 'BL'
+           },
+           {
+             url: "/operation/",
+             element : 'h1',
+             description : "This report summarizes the planned operations.<br/>" +
+               "It displays what operations we are planned to start and finish.",
+             position : 'BL'
+           },
+           {
+             url: "/operation/",
+             element : 'td[aria-describedby="grid_columns"]',
+             description : "For each operation and time bucket the report shows:<br/>" +
+               "&nbsp;&nbsp;- Locked starts: work-in-progress or frozen quantity started in the bucket<br/>" +
+               "&nbsp;&nbsp;- Total starts: total quantity of operations starting in the bucket<br/>" +
+               "&nbsp;&nbsp;- Locked ends: work-in-progress or frozen quantity ending in the bucket<br/>" +
+               "&nbsp;&nbsp;- Total ends: total quantity of operations ending in the bucket<br/>",
+             position : 'T'
+           },
+           {
+             url: "/operationplan/",
+             element : 'h1',
+             description : "This report shows the detailed list of all planned operations.<br/><br/>" +
+               "This list would be typically be used to communicate the plan to operators<br/>" +
+               "on the shop floor, or integrate it to ERP and other systems.",
+             position : 'BL'
+           },
+           {
+             url: "/demand/",
+             element : 'h1',
+             description : "This report summarizes the demand for each item.<br/>" +
+               "It displays the customer demand for the item and the planned supply.",
+             position : 'BL'
+           },
+           {
+             url: "/demand/",
+             element : 'td[aria-describedby="grid_columns"]',
+             description : "For each item and time bucket the report shows:<br/>" +
+               "&nbsp;&nbsp;- Demand: customer demand due in the bucket<br/>" +
+               "&nbsp;&nbsp;- Supply: supply of the item in the bucket<br/>" +
+               "&nbsp;&nbsp;- Backlog: Difference between the demand and supply<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;of the item, cumulated over time<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;A positive value indicates that some<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;orders are satisfied late",
+             position : 'T'
+           },
+           {
+             url: "/demand/",
+             element : 'span[role="detail1"]',
+             description : "Clicking on the triangles allows you to drill<br/>" +
+               "down to the individual orders due in the bucket",
+             position : 'T'
+           },
+           {
+             url: "/demandplan/",
+             element : 'h1',
+             description : "This report shows the detailed list of all<br/>" +
+               "planned deliveries of each order.<br/><br/>" +
+               "It can be used for more detailed analysis of<br/>" +
+               "delays or shortages.",
+             position : 'BL'
+           },
+           {
+             url: "/problem/",
+             element : '#gbox_grid',
+             description : "This report shows problem areas in the plan.<br/>" +
+               "Rather than browsing through all orders, resources and materials, this report allows you to focus<br/>" +
+               "directly on the exceptions.<br/><br/>" +
+               "The main exception types are:<br/>" +
+               "&nbsp;&nbsp;- Demand:<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- unplanned: No plan exists yet to satisfy this demand.<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- excess: A demand is planned for more than the requested quantity.<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- short: A demand is planned for less than the requested quantity.<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- late: A demand is satisfied later after its due date.<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- early: A demand is satisfied earlier than the due date.<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- invalid data: Some data problem prevents this object from being planned.<br/>" +
+               "&nbsp;&nbsp;- Resource:<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- overload: A resource is being overloaded during a certain period of time.<br/>" +
+               "&nbsp;&nbsp;- Buffer:<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- material excess: A buffer is carrying too much material during a certain period of time.<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- material shortage: A buffer is having a material shortage during a certain period of time.<br/>" +
+               "&nbsp;&nbsp;- Operation:<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- before current: Flagged when an operationplan is being planned in the past.<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;- before fence: Flagged when an operationplan is being planned within a frozen time window.",
+             position : 'C'
+           },
+           {
+             url: "/problem/",
+             element : '#grid_owner',
+             description : "Let's analyze a late order...<br/><br/>" +
+               "Search a demand problem of type 'late',<br/>" +
+               "click on the order to display the popup menu,<br/>" +
+               "and select 'plan' from the menu.",
+             position : 'T'
+           },
+           {
+             url: "/demandpegging/Order%201/",
+             element : 'h1',
+             description : "This report visualizes the plan of a particular order.",
+             position: "BL"
+           },
+           {
+             url: "/demandpegging/Order%201/",
+             element : '#jqgh_grid_depth',
+             description : "All levels in the supply path / bill of material<br/>" +
+               "are displayed as a hierarchical tree.<br/>" +
+               "You can collapse and expand branches<br/>" +
+               "by clicking on the icons.",
+             position: "TL"
+           },
+           {
+             url: "/demandpegging/Order%201/",
+             element : '#jqgh_grid_operationplans',
+             description : "The Gantt chart visualizes the timing of the steps.<br/><br/>" +
+               "The icons above the chart allow you to scroll and zoom in the time<br/><br/>" +
+               "The red line in the graph marks the due date.<br/>" +
+               "The black line in the graph marks the current date",
+             position: "L"
+           },
+           {
+             url: "/demandpegging/Order%201/",
+             element : '#tabs ul li:nth-child(1)',
+             description : "This tab allows us to see the constraints which<br/>" +
+               "prevented this order to be planned on time.",
+             position: "TL"
+           },
+           {
+             url: "/constraint/Order%201/",
+             element : '#gbox_grid',
+             description : "This report quickly learns us why a particular order is late or short.<br/>" +
+               "This information assists the planner in resolving the bottlenecks.<br/><br/>" +
+               "The reasons can be:<br/>"  +
+               "&nbsp;&nbsp;- Capacity overload<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;A resource shows up as a bottleneck. Can you do some overtime here?<br/>" +
+               "&nbsp;&nbsp;- Before current<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;There isn't enough time. Can you expedite some operations?<br/>" +
+               "&nbsp;&nbsp;- Material shortage<br/>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;You're short of material. Please get some more.<br/><br/>" +
+               "Some care is when interpreting these results: if a certain resource is identified<br/>" +
+               "as the cause, it doesn't mean the resource is completely unavailable. It only<br/>" +
+               "indicates that other demands with higher priority already used up all available<br/>" +
+               "capacity.",
+             position: "C"
+           }
            ]
       }
 ];

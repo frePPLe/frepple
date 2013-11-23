@@ -1,0 +1,126 @@
+#
+# Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 2.1.beta\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-05-19 07:14+0200\n"
+"PO-Revision-Date: 2013-11-23 23:12+0900\n"
+"Last-Translator: Yamamoto Keiichiro [Family, Given] <k.yanmar@gmail.com>\n"
+"Language-Team: Japanese <kde-i18n-doc@kde.org>\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 1.5.7\n"
+
+#: common/static/js/frepple.js:50
+msgid "Error saving data"
+msgstr "データの保存に失敗しました"
+
+#: common/static/js/frepple.js:75
+msgid "Select"
+msgstr "選択"
+
+#: common/static/js/frepple.js:488
+#, c-format
+msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
+msgstr "%s のオブジェクトと関連データが削除されます！"
+
+#: common/static/js/frepple.js:490
+msgid "Delete data"
+msgstr "データを削除"
+
+#: common/static/js/frepple.js:495 common/static/js/frepple.js.c:549
+msgid "Confirm"
+msgstr "確認"
+
+#: common/static/js/frepple.js:513
+msgid "Error deleting data"
+msgstr "データの削除エラー"
+
+#: common/static/js/frepple.js:524 common/static/js/frepple.js.c:578
+#: common/static/js/frepple.js:643 common/static/js/frepple.js.c:701
+#: common/static/js/frepple.js:788
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: common/static/js/frepple.js:542
+#, c-format
+msgid "You are about to duplicate %s objects"
+msgstr "%s 個のオブジェクトが重複します"
+
+#: common/static/js/frepple.js:544
+msgid "Copy data"
+msgstr "データをコピー"
+
+#: common/static/js/frepple.js:567
+msgid "Error copying data"
+msgstr "データのコピーに失敗しました"
+
+#: common/static/js/frepple.js:630
+msgid "Load a CSV-formatted text file."
+msgstr "CSV形式のテキストファイルをロードします"
+
+#: common/static/js/frepple.js:631
+msgid "The first row should contain the field names."
+msgstr "最初の行はフィールド名でなければなりません"
+
+#: common/static/js/frepple.js:632
+msgid "First delete all existing records AND ALL RELATED TABLES"
+msgstr "最初にすべての既存レコードと関連テーブル全部を削除します"
+
+#: common/static/js/frepple.js:633
+msgid "Data file"
+msgstr "データファイル"
+
+#: common/static/js/frepple.js:635
+msgid "Import data"
+msgstr "データをインポート"
+
+#: common/static/js/frepple.js:639
+msgid "Import"
+msgstr "インポート"
+
+#: common/static/js/frepple.js:669 common/static/js/frepple.js.c:673
+msgid "Filtered where"
+msgstr "場所でフィルタ"
+
+#: common/static/js/frepple.js:689
+msgid "CSV style"
+msgstr "CSV形式"
+
+#: common/static/js/frepple.js:690
+msgid "Table"
+msgstr "テーブル"
+
+#: common/static/js/frepple.js:691
+msgid "List"
+msgstr "リスト"
+
+#: common/static/js/frepple.js:693
+msgid "Export data"
+msgstr "データをエクスポート"
+
+#: common/static/js/frepple.js:697
+msgid "Export"
+msgstr "エクスポート"
+
+#: common/static/js/frepple.js:754
+msgid "OK"
+msgstr "OK"

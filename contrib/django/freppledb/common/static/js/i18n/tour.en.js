@@ -4,8 +4,8 @@ var tourdata = [
      description: '<h2>Main</h2>' +
         'Jump to <span class="underline"><a href="/admin/?tour=1,0,0">Navigation</a></span> (5 steps)<br/>' +
         'Jump to <span class="underline"><a href="/admin/?tour=2,0,0">Data entry</a></span> (10 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=3,0,0">Modeling</a></span> ( steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Generating the plan</a></span> (8 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/admin/?tour=3,0,0">Modeling</a></span> (3 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Generating the plan</a></span> (9 steps)<br/>' +
         'Jump to <span class="underline"><a href="/admin/?tour=5,0,0">Plan analysis</a></span> (25 steps)<br/>',
      delay: 5,
      steps: [
@@ -162,6 +162,43 @@ var tourdata = [
      delay: 5,
      steps:
         [
+         {
+           url: "/admin/",
+           element : '.ui-accordion-content',
+           description : "All entities have a data table in the input section.<br/>" +
+             "A complete description of all entities and their relationships<br/>" +
+             "is beyond the scope of this tour.<br/>" +
+             "Check out the documentation.<br/><br/>" +
+             "In this tour we'll only show the concepts at a very high level.",
+           position : 'R'
+         },
+         {
+           url: "/supplypath/item/product/",
+           element : "#graph",
+           description : "This report shows the bill of material of a particular item.<br/>" +
+             "The top section visualizes the data as a network graph.<br/>" +
+             "The bottom section displays the data as hierarchical tree.<br/><br/>" +
+             "The network graph is very important in modeling in frePPLe.<br/>" +
+             "Every single graphical object in this graph is stored as a single<br/>" +
+             "record in the frePPLe model. The graph allows you to verify that<br/>" +
+             "you have correctly filled in all data." +
+             "&nbsp;- <i>Operations</i> are shown as rectangles.<br/>" +
+             "&nbsp;- <i>Resources</i> are shown as circles.<br/>" +
+             "&nbsp;- <i>Buffers</i>/SKUs are shown as triangles.<br/>" +
+             "&nbsp;- The lines between operations and buffers are <i>flows</i>.<br/>" +
+             "&nbsp;- The dotted lines between operations and resources are <i>loads</i>.<br/>",
+           position : 'BL'
+         },
+         {
+           url: "/supplypath/item/product/",
+           element : "#tabs ul li:nth-child(2)",
+           description : "The supply path report displays the structure upstream,<br/>" +
+             "ie walking from end item towards the raw materials.<br/><br/>" +
+             "The where-used report displays the structure downstream,<br/>" +
+             "ie walking from the raw material towards the end items.<br/>" +
+             "It thus displays which end items the selected entity is used for.",
+           position : 'BL'
+         },
         ]
     },
 
@@ -172,6 +209,14 @@ var tourdata = [
      delay: 5,
      steps:
         [
+         {
+           url: "/admin/",
+           element : '.ui-accordion-content',
+           beforestep: '$("#content-main").accordion({active:2,animate:false})',
+           description : "Once you have loaded all data, you are now<br/>" +
+             "ready to generate the plan.",
+           position : 'R'
+         },
          {
            url: "/execute/",
            element : '#content h1',
@@ -294,7 +339,7 @@ var tourdata = [
              url: "/resource/",
              element : '.flotr-canvas',
              description : "The sparkline graphics give a quick and intuitive<br/>" +
-               "overview of the resource utilization",
+               "overview of the resource utilization.",
              position : 'T'
            },
            {
@@ -449,20 +494,20 @@ var tourdata = [
            {
              url: "/problem/",
              element : '#grid_owner',
-             description : "Let's analyze a late order...<br/><br/>" +
+             description : "Let's analyze a late demand...<br/><br/>" +
                "Search a demand problem of type 'late',<br/>" +
-               "click on the order to display the popup menu,<br/>" +
+               "click on the demand to display the popup menu,<br/>" +
                "and select 'plan' from the menu.",
              position : 'T'
            },
            {
-             url: "/demandpegging/Order%201/",
+             url: "/demandpegging/Demand%201/",
              element : 'h1',
-             description : "This report visualizes the plan of a particular order.",
+             description : "This report visualizes the plan of a particular demand.",
              position: "BL"
            },
            {
-             url: "/demandpegging/Order%201/",
+             url: "/demandpegging/Demand%201/",
              element : '#jqgh_grid_depth',
              description : "All levels in the supply path / bill of material<br/>" +
                "are displayed as a hierarchical tree.<br/>" +
@@ -471,25 +516,25 @@ var tourdata = [
              position: "TL"
            },
            {
-             url: "/demandpegging/Order%201/",
+             url: "/demandpegging/Demand%201/",
              element : '#jqgh_grid_operationplans',
              description : "The Gantt chart visualizes the timing of the steps.<br/><br/>" +
-               "The icons above the chart allow you to scroll and zoom in the time<br/><br/>" +
+               "The icons above the chart allow you to scroll and zoom.<br/>" +
                "The red line in the graph marks the due date.<br/>" +
                "The black line in the graph marks the current date",
              position: "L"
            },
            {
-             url: "/demandpegging/Order%201/",
+             url: "/demandpegging/Demand%201/",
              element : '#tabs ul li:nth-child(1)',
              description : "This tab allows us to see the constraints which<br/>" +
-               "prevented this order to be planned on time.",
+               "prevented this demand to be planned on time.",
              position: "TL"
            },
            {
-             url: "/constraint/Order%201/",
+             url: "/constraint/Demand%201/",
              element : '#gbox_grid',
-             description : "This report quickly learns us why a particular order is late or short.<br/>" +
+             description : "This report quickly learns us why a particular demand is late or short.<br/>" +
                "This information assists the planner in resolving the bottlenecks.<br/><br/>" +
                "The reasons can be:<br/>"  +
                "&nbsp;&nbsp;- Capacity overload<br/>" +

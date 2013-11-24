@@ -147,11 +147,12 @@ class UserList(GridReport):
   multiselect = False
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='user'),
+    GridFieldInteger('id', title=_('id'), key=True, formatter='user'),
     GridFieldText('username', title=_('username')),
-    GridFieldText('email', title=_('E-mail'), formatter='email', width=200),
-    GridFieldText('first_name', title=_('first_name')),
+    GridFieldText('email', title=_('email address'), formatter='email', width=200),
+    GridFieldText('first_name', title=_('first name')),
     GridFieldText('last_name', title=_('last name')),
+    GridFieldDateTime('date_joined', title=_('date joined')),
     GridFieldBool('is_staff', title=_('staff status')),
     )
 

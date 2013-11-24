@@ -60,7 +60,7 @@ def getNames(request):
     ])
 
 
-class Report(GridReport):
+class BaseReport(GridReport):
   '''
   A list report to show constraints.
   '''
@@ -74,7 +74,7 @@ class Report(GridReport):
   multiselect = False
   rows = (
     GridFieldText('demand', title=_('demand'), editable=False, formatter='demand'),
-    GridFieldText('entity', title=_('entity'), editable=False, width=80, align='center'), # choices=getEntities),  TODO
+    GridFieldText('entity', title=_('entity'), editable=False, width=80, align='center'),
     GridFieldText('name', title=_('name'), editable=False, width=100, align='center'),
     GridFieldText('owner', title=_('owner'), editable=False, extra='formatter:probfmt'),
     GridFieldText('description', title=_('description'), editable=False, width=350),
@@ -82,3 +82,43 @@ class Report(GridReport):
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldNumber('weight', title=_('weight'), editable=False),
     )
+
+  @classmethod
+  def extra_context(reportclass, request, *args, **kwargs):
+    return {'active_tab': 'constraint'}
+
+
+class ReportByDemand(BaseReport):
+
+  template = 'output/constraint_demand.html'
+
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    if args and args[0]:
+      return Constraint.objects.all().filter(demand__exact=args[0])
+    else:
+      return Constraint.objects.all()
+
+
+class ReportByBuffer(BaseReport):
+
+  template = 'output/constraint_buffer.html'
+
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    if args and args[0]:
+      return Constraint.objects.all().filter(owner__exact=args[0], entity__exact='material')
+    else:
+      return Constraint.objects.all()
+
+
+class ReportByResource(BaseReport):
+
+  template = 'output/constraint_resource.html'
+
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    if args and args[0]:
+      return Constraint.objects.all().filter(owner__exact=args[0], entity__exact='capacity')
+    else:
+      return Constraint.objects.all()

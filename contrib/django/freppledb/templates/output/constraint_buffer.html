@@ -7,6 +7,10 @@
 {% include "operationcontext.html" %}
 {% endblock %}
 
+{% block before_table %}{% include "buffertabs.html" %}<div style="clear:both"></div>
+{{block.super}}
+{% endblock %}
+
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">
 

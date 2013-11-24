@@ -33,5 +33,5 @@ menu.addItem("reports", "resource detail report", url="/loadplan/", report=frepp
 menu.addItem("reports", "inventory detail report", url="/flowplan/", report=freppledb.output.views.buffer.DetailReport, index=700)
 menu.addItem("reports", "demand detail report", url="/demandplan/", report=freppledb.output.views.demand.DetailReport, index=800)
 menu.addItem("reports", "problem report", url="/problem/", report=freppledb.output.views.problem.Report, index=900)
-menu.addItem("reports", "constraint report", url="/constraint/", report=freppledb.output.views.constraint.Report, index=1000)
+menu.addItem("reports", "constraint report", url="/constraint/", report=freppledb.output.views.constraint.BaseReport, index=1000)
 menu.addItem("reports", "kpi report", url="/kpi/", report=freppledb.output.views.kpi.Report, index=1100)

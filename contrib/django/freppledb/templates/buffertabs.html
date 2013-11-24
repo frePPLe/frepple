@@ -6,7 +6,7 @@
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'whereused' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/whereused/buffer/{{object_id}}/">{% trans 'Where Used' %}</a></li>
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'plan' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/buffer/{{object_id}}/">{% trans 'Plan' %}</a></li>
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'plandetail' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/flowplan/{{object_id}}/">{% trans 'Plan detail' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'constraint' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/constraint/?entity=material&amp;owner={{object_id}}">{% trans 'Constrained demand' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'constraint' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/constraintbuffer/{{object_id}}/">{% trans 'Constrained demand' %}</a></li>
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/comments/input/buffer/{{object_id}}/">{% trans 'Comments' %}</a></li>
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'history' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/data/input/buffer/{{object_id}}/history/">{% trans 'History' %}</a></li>
 </ul>

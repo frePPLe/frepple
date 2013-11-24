@@ -6,7 +6,7 @@
 <li class="ui-state-default ui-corner-top{% ifequal active_tab 'whereused' %} ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/whereused/resource/{{object_id}}/">{% trans 'Where Used' %}</a></li>
 <li class="ui-state-default ui-corner-top{% ifequal active_tab 'plan' %} ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/resource/{{object_id}}/">{% trans 'Plan' %}</a></li>
 <li class="ui-state-default ui-corner-top{% ifequal active_tab 'plandetail' %} ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/loadplan/{{object_id}}/">{% trans 'Plan detail' %}</a></li>
-<li class="ui-state-default ui-corner-top{% ifequal active_tab 'constraint' %} ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/constraint/?entity=capacity&amp;owner={{object_id}}">{% trans 'Constrained demand' %}</a></li>
+<li class="ui-state-default ui-corner-top{% ifequal active_tab 'constraint' %} ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/constraintresource/{{object_id}}/">{% trans 'Constrained demand' %}</a></li>
 <li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/comments/input/resource/{{object_id}}/">{% trans 'Comments' %}</a></li>
 <li class="ui-state-default ui-corner-top{% ifequal active_tab 'history' %} ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/data/input/resource/{{object_id}}/history/">{% trans 'History' %}</a></li>
 </ul>

@@ -190,7 +190,7 @@ var tourdata = [
            position : 'BL'
          },
          {
-           url: "/supplypath/item/product/",
+           url: "/whereused/buffer/thread%20%40%20factory%201/",
            element : "#tabs ul li:nth-child(2)",
            description : "The supply path report displays the structure upstream,<br/>" +
              "ie walking from end item towards the raw materials.<br/><br/>" +
@@ -532,7 +532,7 @@ var tourdata = [
              position: "TL"
            },
            {
-             url: "/constraint/Demand%201/",
+             url: "/constraintdemand/Demand%201/",
              element : '#gbox_grid',
              description : "This report quickly learns us why a particular demand is late or short.<br/>" +
                "This information assists the planner in resolving the bottlenecks.<br/><br/>" +

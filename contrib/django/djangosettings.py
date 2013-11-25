@@ -103,16 +103,18 @@ ALLOWED_HOSTS = [ '*' ]
 # system time zone.
 TIME_ZONE = 'Europe/Brussels'
 
-# Internationalization is switched on by default.
-# Language code for this installation. All choices can be found here:
-# http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
-# http://blogs.law.harvard.edu/tech/stories/storyReader$15
+# Supported language codes, sorted by language code.
+# Language names and codes should match the ones in Django.
+# You can see the list supported by Django at:
+#    https://github.com/django/django/blob/master/django/conf/global_settings.py
 ugettext = lambda s: s
 LANGUAGES = (
   ('en', ugettext('English')),
   ('fr', ugettext('French')),
   ('it', ugettext('Italian')),
+  ('ja', ugettext('Japanese')),
   ('nl', ugettext('Dutch')),
+  ('zh-cn', ugettext('Simplified Chinese')),
   ('zh-tw', ugettext('Traditional Chinese')),
 )
 

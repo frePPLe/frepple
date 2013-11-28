@@ -246,6 +246,12 @@ Section "Application" SecAppl
   StrCmp $6 "Italian" 0 +3
     StrCpy $6 "it"
     Goto ok2
+  StrCmp $6 "Japanese" 0 +3
+    StrCpy $6 "ja"
+    Goto ok2
+  StrCmp $6 "Simplified Chinese" 0 +3
+    StrCpy $6 "zh_cn"
+    Goto ok2
   StrCmp $6 "Traditional Chinese" 0 +3
     StrCpy $6 "zh_tw"
     Goto ok2

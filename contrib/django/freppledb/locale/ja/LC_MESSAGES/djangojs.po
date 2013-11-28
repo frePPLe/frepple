@@ -18,9 +18,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-19 07:14+0200\n"
-"PO-Revision-Date: 2013-11-23 23:12+0900\n"
-"Last-Translator: Yamamoto Keiichiro [Family, Given] <k.yanmar@gmail.com>\n"
+"POT-Creation-Date: 2013-11-28 11:58+0100\n"
+"PO-Revision-Date: 2013-11-28 13:24+0100\n"
+"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
 "Language-Team: Japanese <kde-i18n-doc@kde.org>\n"
 "Language: ja_JP\n"
 "MIME-Version: 1.0\n"
@@ -29,98 +29,152 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 1.5.7\n"
 
-#: common/static/js/frepple.js:50
+#: common/static/js/frepple.js:13
+msgid "There are unsaved changes on this page."
+msgstr ""
+
+#: common/static/js/frepple.js:59
 msgid "Error saving data"
 msgstr "データの保存に失敗しました"
 
-#: common/static/js/frepple.js:75
+#: common/static/js/frepple.js:80
+msgid "Save or cancel your changes first"
+msgstr ""
+
+#: common/static/js/frepple.js:87
+msgid "Save"
+msgstr ""
+
+#: common/static/js/frepple.js:94
+#: common/static/js/frepple.js.c:437
+#: common/static/js/frepple.js:596
+#: common/static/js/frepple.js.c:657
+#: common/static/js/frepple.js:717
+#: common/static/js/frepple.js.c:774
+#: common/static/js/frepple.js:1060
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: common/static/js/frepple.js:309
 msgid "Select"
 msgstr "選択"
 
-#: common/static/js/frepple.js:488
+#: common/static/js/frepple.js:376
+msgid "Customize"
+msgstr ""
+
+#: common/static/js/frepple.js:382
+#: common/static/js/frepple.js.c:623
+msgid "OK"
+msgstr "OK"
+
+#: common/static/js/frepple.js:523
+msgid "Error saving report settings"
+msgstr ""
+
+#: common/static/js/frepple.js:566
+msgid "CSV style"
+msgstr "CSV形式"
+
+#: common/static/js/frepple.js:567
+msgid "Table"
+msgstr "テーブル"
+
+#: common/static/js/frepple.js:568
+msgid "List"
+msgstr "リスト"
+
+#: common/static/js/frepple.js:570
+msgid "Export data"
+msgstr "データをエクスポート"
+
+#: common/static/js/frepple.js:574
+msgid "Export"
+msgstr "エクスポート"
+
+#: common/static/js/frepple.js:677
 #, c-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr "%s のオブジェクトと関連データが削除されます！"
 
-#: common/static/js/frepple.js:490
+#: common/static/js/frepple.js:679
 msgid "Delete data"
 msgstr "データを削除"
 
-#: common/static/js/frepple.js:495 common/static/js/frepple.js.c:549
+#: common/static/js/frepple.js:686
+#: common/static/js/frepple.js.c:743
 msgid "Confirm"
 msgstr "確認"
 
-#: common/static/js/frepple.js:513
+#: common/static/js/frepple.js:704
 msgid "Error deleting data"
 msgstr "データの削除エラー"
 
-#: common/static/js/frepple.js:524 common/static/js/frepple.js.c:578
-#: common/static/js/frepple.js:643 common/static/js/frepple.js.c:701
-#: common/static/js/frepple.js:788
-msgid "Cancel"
-msgstr "キャンセル"
-
-#: common/static/js/frepple.js:542
+#: common/static/js/frepple.js:734
 #, c-format
 msgid "You are about to duplicate %s objects"
 msgstr "%s 個のオブジェクトが重複します"
 
-#: common/static/js/frepple.js:544
+#: common/static/js/frepple.js:736
 msgid "Copy data"
 msgstr "データをコピー"
 
-#: common/static/js/frepple.js:567
+#: common/static/js/frepple.js:761
 msgid "Error copying data"
 msgstr "データのコピーに失敗しました"
 
-#: common/static/js/frepple.js:630
-msgid "Load a CSV-formatted text file."
-msgstr "CSV形式のテキストファイルをロードします"
-
-#: common/static/js/frepple.js:631
-msgid "The first row should contain the field names."
-msgstr "最初の行はフィールド名でなければなりません"
-
-#: common/static/js/frepple.js:632
-msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr "最初にすべての既存レコードと関連テーブル全部を削除します"
-
-#: common/static/js/frepple.js:633
-msgid "Data file"
-msgstr "データファイル"
-
-#: common/static/js/frepple.js:635
-msgid "Import data"
-msgstr "データをインポート"
-
-#: common/static/js/frepple.js:639
-msgid "Import"
-msgstr "インポート"
-
-#: common/static/js/frepple.js:669 common/static/js/frepple.js.c:673
+#: common/static/js/frepple.js:798
+#: common/static/js/frepple.js.c:802
 msgid "Filtered where"
 msgstr "場所でフィルタ"
 
-#: common/static/js/frepple.js:689
-msgid "CSV style"
-msgstr "CSV形式"
+#: common/static/js/frepple.js:1047
+msgid "Load a CSV-formatted text file."
+msgstr "CSV形式のテキストファイルをロードします"
 
-#: common/static/js/frepple.js:690
-msgid "Table"
-msgstr "テーブル"
+#: common/static/js/frepple.js:1048
+msgid "The first row should contain the field names."
+msgstr "最初の行はフィールド名でなければなりません"
 
-#: common/static/js/frepple.js:691
-msgid "List"
-msgstr "リスト"
+#: common/static/js/frepple.js:1049
+msgid "First delete all existing records AND ALL RELATED TABLES"
+msgstr "最初にすべての既存レコードと関連テーブル全部を削除します"
 
-#: common/static/js/frepple.js:693
-msgid "Export data"
-msgstr "データをエクスポート"
+#: common/static/js/frepple.js:1050
+msgid "Data file"
+msgstr "データファイル"
 
-#: common/static/js/frepple.js:697
-msgid "Export"
-msgstr "エクスポート"
+#: common/static/js/frepple.js:1052
+msgid "Import data"
+msgstr "データをインポート"
 
-#: common/static/js/frepple.js:754
-msgid "OK"
-msgstr "OK"
+#: common/static/js/frepple.js:1056
+msgid "Import"
+msgstr "インポート"
+
+#: common/static/js/frepple.js:1434
+msgid "Application tour"
+msgstr ""
+
+#: common/static/js/frepple.js:1458
+msgid "Previous"
+msgstr ""
+
+#: common/static/js/frepple.js:1463
+#: common/static/js/frepple.js.c:1585
+msgid "Stop"
+msgstr ""
+
+#: common/static/js/frepple.js:1463
+#: common/static/js/frepple.js.c:1576
+msgid "Play"
+msgstr ""
+
+#: common/static/js/frepple.js:1469
+msgid "Next"
+msgstr ""
+
+#: common/static/js/frepple.js:1551
+msgid "out of"
+msgstr ""
+

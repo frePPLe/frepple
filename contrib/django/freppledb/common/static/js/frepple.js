@@ -77,7 +77,7 @@ var upload = {
     {
       $('#popup').html("")
         .dialog({
-          title: gettext("Save or undo your changes first"),
+          title: gettext("Save or cancel your changes first"),
           autoOpen: true,
           resizable: false,
           width: 'auto',
@@ -91,7 +91,7 @@ var upload = {
                 }
             },
             {
-              text: gettext("Undo"),
+              text: gettext("Cancel"),
               click: function() {
                 upload.undo();
                 $('#popup').dialog('close');

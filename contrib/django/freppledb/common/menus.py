@@ -35,10 +35,10 @@ class MenuItem:
     self.javascript = javascript
     self.report = report
     self.model = model
-    self.label = None
-    if report: self.label = report.title
-    elif model: self.label = model._meta.verbose_name_plural
     if label: self.label = label
+    elif report: self.label = report.title
+    elif model: self.label = model._meta.verbose_name_plural
+    else: self.label = None
     self.index = index
     self.prefix = prefix
     self.window = window

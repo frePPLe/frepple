@@ -33,12 +33,6 @@ from freppledb.execute.models import Task
 from freppledb.common.models import User
 from freppledb import VERSION
 
-try:
-  from freppledb.forecast.models import Forecast
-  has_forecast = True
-except:
-  has_forecast = False
-
 
 class Command(BaseCommand):
 
@@ -148,8 +142,6 @@ class Command(BaseCommand):
 
     now = datetime.now()
     task = None
-    ac = transaction.get_autocommit(using=database)
-    transaction.set_autocommit(False, using=database)
     try:
       # Initialize the task
       if 'task' in options and options['task']:
@@ -193,188 +185,177 @@ class Command(BaseCommand):
       updateTelescope(10, 40, 730, database)
       task.status = '2%'
       task.save(using=database)
-      transaction.commit(using=database)
 
       # Weeks calendar
       if verbosity>0: print("Creating weeks calendar...")
-      weeks = Calendar.objects.using(database).create(name="Weeks")
-      for i in BucketDetail.objects.using(database).filter(bucket="week").all():
-        CalendarBucket(startdate=i.startdate, enddate=i.enddate, value=1, calendar=weeks).save(using=database)
-      task.status = '4%'
-      task.save(using=database)
-      transaction.commit(using=database)
+      with transaction.atomic(using=database):
+        weeks = Calendar.objects.using(database).create(name="Weeks")
+        for i in BucketDetail.objects.using(database).filter(bucket="week").all():
+          CalendarBucket(startdate=i.startdate, enddate=i.enddate, value=1, calendar=weeks).save(using=database)
+        task.status = '4%'
+        task.save(using=database)
 
       # Working days calendar
       if verbosity>0: print("Creating working days...")
-      workingdays = Calendar.objects.using(database).create(name="Working Days", defaultvalue=0)
-      minmax = BucketDetail.objects.using(database).filter(bucket="week").aggregate(Min('startdate'),Max('startdate'))
-      CalendarBucket(startdate=minmax['startdate__min'], enddate=minmax['startdate__max'],
-          value=1, calendar=workingdays, priority=1, saturday=False, sunday=False).save(using=database)
-      task.status = '6%'
-      task.save(using=database)
-      transaction.commit(using=database)
+      with transaction.atomic(using=database):
+        workingdays = Calendar.objects.using(database).create(name="Working Days", defaultvalue=0)
+        minmax = BucketDetail.objects.using(database).filter(bucket="week").aggregate(Min('startdate'),Max('startdate'))
+        CalendarBucket(startdate=minmax['startdate__min'], enddate=minmax['startdate__max'],
+            value=1, calendar=workingdays, priority=1, saturday=False, sunday=False).save(using=database)
+        task.status = '6%'
+        task.save(using=database)
 
       # Create a random list of categories to choose from
       categories = [ 'cat A','cat B','cat C','cat D','cat E','cat F','cat G' ]
 
       # Create customers
       if verbosity>0: print("Creating customers...")
-      cust = []
-      for i in range(100):
-        c = Customer.objects.using(database).create(name = 'Cust %03d' % i)
-        cust.append(c)
-      task.status = '8%'
-      task.save(using=database)
-      transaction.commit(using=database)
+      with transaction.atomic(using=database):
+        cust = []
+        for i in range(100):
+          c = Customer.objects.using(database).create(name = 'Cust %03d' % i)
+          cust.append(c)
+        task.status = '8%'
+        task.save(using=database)
 
       # Create resources and their calendars
       if verbosity>0: print("Creating resources and calendars...")
-      res = []
-      for i in range(resource):
-        loc = Location(name='Loc %05d' % int(random.uniform(1,cluster)))
-        loc.save(using=database)
-        cal = Calendar(name='capacity for res %03d' %i, category='capacity')
-        bkt = CalendarBucket(startdate=startdate, value=resource_size, calendar=cal)
-        cal.save(using=database)
-        bkt.save(using=database)
-        r = Resource.objects.using(database).create(name = 'Res %03d' % i, maximum_calendar=cal, location=loc)
-        res.append(r)
-      task.status = '10%'
-      task.save(using=database)
-      random.shuffle(res)
-      transaction.commit(using=database)
+      with transaction.atomic(using=database):
+        res = []
+        for i in range(resource):
+          loc = Location(name='Loc %05d' % int(random.uniform(1,cluster)))
+          loc.save(using=database)
+          cal = Calendar(name='capacity for res %03d' %i, category='capacity')
+          bkt = CalendarBucket(startdate=startdate, value=resource_size, calendar=cal)
+          cal.save(using=database)
+          bkt.save(using=database)
+          r = Resource.objects.using(database).create(name = 'Res %03d' % i, maximum_calendar=cal, location=loc)
+          res.append(r)
+        task.status = '10%'
+        task.save(using=database)
+        random.shuffle(res)
 
       # Create the components
       if verbosity>0: print("Creating raw materials...")
-      comps = []
-      comploc = Location.objects.using(database).create(name='Procured materials')
-      for i in range(components):
-        it = Item.objects.using(database).create(name = 'Component %04d' % i, category='Procured')
-        ld = abs(round(random.normalvariate(procure_lt,procure_lt/3)))
-        c = Buffer.objects.using(database).create(name = 'Component %04d' % i,
-             location = comploc,
-             category = 'Procured',
-             item = it,
-             type = 'procure',
-             min_inventory = 20,
-             max_inventory = 100,
-             size_multiple = 10,
-             leadtime = str(ld * 86400),
-             onhand = str(round(forecast_per_item * random.uniform(1,3) * ld / 30)),
-             )
-        comps.append(c)
-      task.status = '12%'
-      task.save(using=database)
-      transaction.commit(using=database)
+      with transaction.atomic(using=database):
+        comps = []
+        comploc = Location.objects.using(database).create(name='Procured materials')
+        for i in range(components):
+          it = Item.objects.using(database).create(name = 'Component %04d' % i, category='Procured')
+          ld = abs(round(random.normalvariate(procure_lt,procure_lt/3)))
+          c = Buffer.objects.using(database).create(name = 'Component %04d' % i,
+               location = comploc,
+               category = 'Procured',
+               item = it,
+               type = 'procure',
+               min_inventory = 20,
+               max_inventory = 100,
+               size_multiple = 10,
+               leadtime = str(ld * 86400),
+               onhand = str(round(forecast_per_item * random.uniform(1,3) * ld / 30)),
+               )
+          comps.append(c)
+        task.status = '12%'
+        task.save(using=database)
 
       # Loop over all clusters
       durations = [ 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
       progress = 88.0 / cluster
       for i in range(cluster):
-        if verbosity>0: print("Creating supply chain for end item %d..." % i)
+        with transaction.atomic(using=database):
+          if verbosity>0: print("Creating supply chain for end item %d..." % i)
 
-        # location
-        loc = Location.objects.using(database).get_or_create(name='Loc %05d' % i)[0]
-        loc.available = workingdays
-        loc.save(using=database)
+          # location
+          loc = Location.objects.using(database).get_or_create(name='Loc %05d' % i)[0]
+          loc.available = workingdays
+          loc.save(using=database)
 
-        # Item and delivery operation
-        oper = Operation.objects.using(database).create(name='Del %05d' % i, sizemultiple=1, location=loc)
-        it = Item.objects.using(database).create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
+          # Item and delivery operation
+          oper = Operation.objects.using(database).create(name='Del %05d' % i, sizemultiple=1, location=loc)
+          it = Item.objects.using(database).create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
 
-        if has_forecast:
-          # Forecast
-          fcst = Forecast.objects.using(database).create( \
-            name='Forecast item %05d' % i,
-            calendar=workingdays,
+            # This method will take care of distributing a forecast quantity over the entire
+            # horizon, respecting the bucket weights.
+            fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item * 12)
+
+          # Level 0 buffer
+          buf = Buffer.objects.using(database).create(name='Buf %05d L00' % i,
             item=it,
-            maxlateness=60*86400, # Forecast can only be planned 2 months late
-            priority=3, # Low priority: prefer planning orders over forecast
+            location=loc,
+            category='00'
             )
+          Flow.objects.using(database).create(operation=oper, thebuffer=buf, quantity=-1)
 
-          # This method will take care of distributing a forecast quantity over the entire
-          # horizon, respecting the bucket weights.
-          fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item * 12)
-
-        # Level 0 buffer
-        buf = Buffer.objects.using(database).create(name='Buf %05d L00' % i,
-          item=it,
-          location=loc,
-          category='00'
-          )
-        Flow.objects.using(database).create(operation=oper, thebuffer=buf, quantity=-1)
-
-        # Demand
-        for j in range(demand):
-          Demand.objects.using(database).create(name='Dmd %05d %05d' % (i,j),
-            item=it,
-            quantity=int(random.uniform(1,6)),
-            # Exponential distribution of due dates, with an average of deliver_lt days.
-            due = startdate + timedelta(days=round(random.expovariate(float(1)/deliver_lt/24))/24),
-            # Orders have higher priority than forecast
-            priority=random.choice([1,2]),
-            customer=random.choice(cust),
-            category=random.choice(categories)
-            )
-
-        # Create upstream operations and buffers
-        ops = []
-        for k in range(level):
-          if k == 1 and res:
-            # Create a resource load for operations on level 1
-            oper = Operation.objects.using(database).create(name='Oper %05d L%02d' % (i,k),
-              type='time_per',
-              location=loc,
-              duration_per=86400,
-              sizemultiple=1,
-              )
-            if resource < cluster and i < resource:
-              # When there are more cluster than resources, we try to assure
-              # that each resource is loaded by at least 1 operation.
-              Load.objects.using(database).create(resource=res[i], operation=oper)
-            else:
-              Load.objects.using(database).create(resource=random.choice(res), operation=oper)
-          else:
-            oper = Operation.objects.using(database).create(
-              name='Oper %05d L%02d' % (i,k),
-              duration=random.choice(durations),
-              sizemultiple=1,
-              location=loc,
-              )
-          ops.append(oper)
-          buf.producing = oper
-          # Some inventory in random buffers
-          if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
-          buf.save(using=database)
-          Flow(operation=oper, thebuffer=buf, quantity=1, type="flow_end").save(using=database)
-          if k != level-1:
-            # Consume from the next level in the bill of material
-            buf = Buffer.objects.using(database).create(
-              name='Buf %05d L%02d' % (i,k+1),
+          # Demand
+          for j in range(demand):
+            Demand.objects.using(database).create(name='Dmd %05d %05d' % (i,j),
               item=it,
-              location=loc,
-              category='%02d' % (k+1)
+              quantity=int(random.uniform(1,6)),
+              # Exponential distribution of due dates, with an average of deliver_lt days.
+              due = startdate + timedelta(days=round(random.expovariate(float(1)/deliver_lt/24))/24),
+              # Orders have higher priority than forecast
+              priority=random.choice([1,2]),
+              customer=random.choice(cust),
+              category=random.choice(categories)
               )
-            Flow.objects.using(database).create(operation=oper, thebuffer=buf, quantity=-1)
 
-        # Consume raw materials / components
-        c = []
-        for j in range(components_per):
-          o = random.choice(ops)
-          b = random.choice(comps)
-          while (o,b) in c:
-            # A flow with the same operation and buffer already exists
+          # Create upstream operations and buffers
+          ops = []
+          for k in range(level):
+            if k == 1 and res:
+              # Create a resource load for operations on level 1
+              oper = Operation.objects.using(database).create(name='Oper %05d L%02d' % (i,k),
+                type='time_per',
+                location=loc,
+                duration_per=86400,
+                sizemultiple=1,
+                )
+              if resource < cluster and i < resource:
+                # When there are more cluster than resources, we try to assure
+                # that each resource is loaded by at least 1 operation.
+                Load.objects.using(database).create(resource=res[i], operation=oper)
+              else:
+                Load.objects.using(database).create(resource=random.choice(res), operation=oper)
+            else:
+              oper = Operation.objects.using(database).create(
+                name='Oper %05d L%02d' % (i,k),
+                duration=random.choice(durations),
+                sizemultiple=1,
+                location=loc,
+                )
+            ops.append(oper)
+            buf.producing = oper
+            # Some inventory in random buffers
+            if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
+            buf.save(using=database)
+            Flow(operation=oper, thebuffer=buf, quantity=1, type="flow_end").save(using=database)
+            if k != level-1:
+              # Consume from the next level in the bill of material
+              buf = Buffer.objects.using(database).create(
+                name='Buf %05d L%02d' % (i,k+1),
+                item=it,
+                location=loc,
+                category='%02d' % (k+1)
+                )
+              Flow.objects.using(database).create(operation=oper, thebuffer=buf, quantity=-1)
+
+          # Consume raw materials / components
+          c = []
+          for j in range(components_per):
             o = random.choice(ops)
             b = random.choice(comps)
-          c.append( (o,b) )
-          Flow.objects.using(database).create(
-            operation = o, thebuffer = b,
-            quantity = random.choice([-1,-1,-1,-2,-3]))
+            while (o,b) in c:
+              # A flow with the same operation and buffer already exists
+              o = random.choice(ops)
+              b = random.choice(comps)
+            c.append( (o,b) )
+            Flow.objects.using(database).create(
+              operation = o, thebuffer = b,
+              quantity = random.choice([-1,-1,-1,-2,-3]))
 
-        # Commit the current cluster
-        task.status = '%d%%' % (12 + progress*(i+1))
-        task.save(using=database)
-        transaction.commit(using=database)
+          # Commit the current cluster
+          task.status = '%d%%' % (12 + progress*(i+1))
+          task.save(using=database)
 
       # Task update
       task.status = 'Done'
@@ -385,14 +366,12 @@ class Command(BaseCommand):
         task.status = 'Failed'
         task.message = '%s' % e
         task.finished = datetime.now()
+        task.save(using=database)
       raise e
 
     finally:
       if task: task.save(using=database)
-      try: transaction.commit(using=database)
-      except: pass
       settings.DEBUG = tmp_debug
-      transaction.set_autocommit(ac, using=database)
 
 
 def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=730, database=DEFAULT_DB_ALIAS):

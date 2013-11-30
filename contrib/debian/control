@@ -5,13 +5,13 @@ Maintainer: Johan De Taeye <jdetaeye@users.sourceforge.net>
 Build-Depends: debhelper (>= 7), cdbs (>= 0.4.90), autotools-dev, python-dev (<< 3), libxerces-c-dev, graphviz, libtool
 Standards-Version: 3.8.4
 Homepage: http://frepple.com
-Vcs-Browser: http://sourceforge.net/p/frepple/git/commit_browser
-Vcs-Git: git://git.code.sf.net/p/frepple/git frepple-git
+Vcs-Browser: https://github.com/jdetaeye/frePPLe/commits/
+Vcs-Git: git://github.com/jdetaeye/frePPLe.git
 X-Python-Version: >= 2.6
 
 Package: frepple
 Architecture: any
-Depends: ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}, graphviz, libxerces-c3.1, apache2, libapache2-mod-wsgi, python-cherrypy3
+Depends: ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}, libxerces-c3.1, apache2, libapache2-mod-wsgi, python-cherrypy3
 Description: Free Production PLanning
  FrePPLe is an open source production planning and scheduling application.
 

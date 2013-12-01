@@ -274,10 +274,6 @@ class Command(BaseCommand):
           oper = Operation.objects.using(database).create(name='Del %05d' % i, sizemultiple=1, location=loc)
           it = Item.objects.using(database).create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
 
-            # This method will take care of distributing a forecast quantity over the entire
-            # horizon, respecting the bucket weights.
-            fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item * 12)
-
           # Level 0 buffer
           buf = Buffer.objects.using(database).create(name='Buf %05d L00' % i,
             item=it,

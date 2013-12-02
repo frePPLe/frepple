@@ -5,7 +5,7 @@ var tourdata = [
         'Jump to <span class="underline"><a href="/admin/?tour=1,0,0">Navigation</a></span> (5 steps)<br/>' +
         'Jump to <span class="underline"><a href="/admin/?tour=2,0,0">Data entry</a></span> (10 steps)<br/>' +
         'Jump to <span class="underline"><a href="/admin/?tour=3,0,0">Modeling</a></span> (3 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Generating the plan</a></span> (9 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Generating the plan</a></span> (10 steps)<br/>' +
         'Jump to <span class="underline"><a href="/admin/?tour=5,0,0">Plan analysis</a></span> (25 steps)<br/>',
      delay: 5,
      steps: [
@@ -242,6 +242,14 @@ var tourdata = [
              "but some demands can be planned late or incomplete.<br/><br/>" +
              "In an unconstrained plan all demand will be met at its due date<br/>" +
              "but some constraints can be violated.",
+           position : 'TL'
+         },
+         {
+           url: "/execute/",
+           element : 'a[href="#exportworkbook"]',
+           beforestep: '$("a[href=\\"#exportworkbook\\"]").parent().click()',
+           description : "You can export all input data in single spreadsheet<br/>" +
+             "Each entity gets a seperate tab.",
            position : 'TL'
          },
          {

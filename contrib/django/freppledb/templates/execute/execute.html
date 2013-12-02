@@ -191,7 +191,7 @@ and export results into the database<br/>
 </div>
 {% endif %}
 
-<h3><a href="#export2excel">{% trans "Export spreadsheet workbook" %}</a></h3>
+<h3><a href="#exportworkbook">{% trans "Export spreadsheet workbook" %}</a></h3>
 <div><table>
 <form method="post" action="{{request.prefix}}/execute/launch/exportworkbook/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input id="export" type="submit" value="{% trans "Export" %}" /></td>

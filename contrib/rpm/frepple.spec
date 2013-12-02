@@ -123,6 +123,7 @@ rm -rf %{buildroot}
 %{_mandir}/man1/frepplectl.1.*
 %doc COPYING
 %config(noreplace) /etc/frepple/license.xml
+%config(noreplace) /etc/frepple/init.xml
 %config(noreplace) /etc/frepple/djangosettings.py
 %config(noreplace) /etc/httpd/conf.d/z_frepple.conf
 

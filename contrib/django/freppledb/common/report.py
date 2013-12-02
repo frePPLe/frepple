@@ -32,6 +32,8 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 import csv, cStringIO, operator, math
 import codecs, json
+from openpyxl import Workbook
+from StringIO import StringIO
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
@@ -58,6 +60,8 @@ from django.template.defaultfilters import title
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
+from django.db.models.loading import get_model
+
 
 from freppledb.common.models import Parameter, BucketDetail, Bucket, Comment
 
@@ -1343,3 +1347,62 @@ def _localize(value, decimal_separator):
     return "|".join([ unicode(_localize(i,decimal_separator)) for i in value ])
   else:
     return value
+
+
+def exportWorkbook(request):
+  # Create a workbook
+  wb = Workbook(optimized_write = True)
+
+  # Loop over all selected entity types
+  ok = False
+  cursor = connections[request.database].cursor()
+  for entity_name in request.POST.getlist('entities'):
+    # Initialize
+    (app_label, model_label) = entity_name.split('.')
+    model = get_model(app_label, model_label)
+    # Verify access rights
+    if not request.user.has_perm("%s.%s" % (app_label, get_permission_codename('change',model._meta))):
+      continue
+    # Build a list of fields
+    fields = []
+    header = []
+    source = False
+    lastmodified = False
+    for i in model._meta.fields:
+      if i.name in ['lft','rght','lvl']:
+        continue  # Skip some fields of HierarchyModel
+      elif i.name == 'source':
+        source = True  # Put the source field at the end
+      elif i.name == 'lastmodified':
+        lastmodified = True  # Put the last-modified field at the very end
+      else:
+        fields.append(connections[request.database].ops.quote_name(i.column))
+        header.append(force_unicode(i.verbose_name))
+    if source:
+      fields.append("source")
+      header.append(force_unicode(_("source")))
+    if lastmodified:
+      fields.append("lastmodified")
+      header.append(force_unicode(_("last modified")))
+    # Create sheet
+    ok = True
+    ws = wb.create_sheet(title=force_unicode(model._meta.verbose_name))
+    # Write a header row
+    ws.append(header)
+    # Loop over all records
+    cursor.execute("SELECT %s FROM %s ORDER BY 1" % (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table)))
+    for rec in cursor.fetchall():
+      ws.append(  [f and (isinstance(f, numericTypes) and f or str(f)) or None for f in rec] )
+
+  # Not a single entity to export
+  if not ok: raise Exception(_("Nothing to export"))
+
+  # Write the excel from memory to a string and then to a HTTP response
+  output = StringIO()
+  wb.save(output)
+  response = HttpResponse(
+     mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+     content = output.getvalue()
+     )
+  response['Content-Disposition'] = 'attachment; filename=frepple.xlsx'
+  return response

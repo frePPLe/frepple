@@ -32,7 +32,7 @@ from django.contrib import messages
 from django.utils.encoding import force_unicode
 
 from freppledb.execute.models import Task, Scenario
-from freppledb.common.report import GridReport, GridFieldDateTime, GridFieldText, GridFieldInteger
+from freppledb.common.report import exportWorkbook, GridReport, GridFieldDateTime, GridFieldText, GridFieldInteger
 from freppledb.execute.management.commands.frepple_runworker import checkActive
 
 import logging
@@ -179,6 +179,9 @@ def LaunchTask(request, action):
         request.POST['start'], request.POST['end'], request.POST['weekstart']
         )
       task.save(using=request.database)
+    # H
+    elif action == 'exportworkbook':
+      return exportWorkbook(request)
     else:
       # Task not recognized
       raise Http404('Invalid launching task')

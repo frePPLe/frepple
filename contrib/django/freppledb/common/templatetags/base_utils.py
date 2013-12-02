@@ -338,6 +338,10 @@ def object_name(obj):
   return obj._meta.object_name
 register.filter(object_name)
 
+def model_name(obj):
+  return "%s.%s" % (obj._meta.app_label, obj._meta.model_name)
+register.filter(model_name)
+
 
 #
 # Tag to display a menu

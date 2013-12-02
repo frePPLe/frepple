@@ -114,6 +114,15 @@
     refresh = setInterval(function() {
       $("#grid").trigger("reloadGrid",[{current:true}]);
       }, 5000);{% endif %}
+    // Checkbox for workbook export
+    $(".chck_all").click( function() {
+      console.log($(this).prop("checked"));
+      $(".chck_entity").prop("checked", $(this).prop("checked"));
+      });
+    $(".chck_entity").click( function() {
+      if (!$(this).prop("checked"))
+        $(".chck_all").prop("checked",false);
+      });
   });
 </script>
 
@@ -129,10 +138,13 @@
 }
 #grid tr td {
   line-height: 22px;
-
 }
 #grid_frozen tr td {
   line-height: 22px;
+}
+.chck_all, .chck_entity {
+  margin-left: 20px;
+  margin-right: 20px;
 }
 </style>
 {% endblock %}
@@ -178,6 +190,18 @@ and export results into the database<br/>
 </table>
 </div>
 {% endif %}
+
+<h3><a href="#export2excel">{% trans "Export spreadsheet workbook" %}</a></h3>
+<div><table>
+<form method="post" action="{{request.prefix}}/execute/launch/exportworkbook/">{% csrf_token %}<tr>
+<td style="vertical-align:top; padding: 15px"><input id="export" type="submit" value="{% trans "Export" %}" /></td>
+<td>{% trans "Download all input data in a single spreadsheet." %}<br/><br/>
+{% getMenu as menu %}
+<input class="chck_all" type="checkbox" name="all" value="1" checked><br/>
+{% for group in menu %}{% for item in group.1 %}{% if item.1.model %}
+<label for="chbx_{{ item.1.model | model_name }}"><input class="chck_entity" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" checked id="chbx_{{ item.1.model | model_name }}">{{ item.0 }}</label><br/>{% endif %}{% endfor %}{% endfor %}
+</td></tr></form>
+</table></div>
 
 {% if scenarios.count > 1 %}
 <h3><a href="#scenarios">{% trans "Scenario management" %}</a></h3>

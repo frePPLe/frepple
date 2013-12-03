@@ -18,8 +18,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-28 11:58+0100\n"
-"PO-Revision-Date: 2013-11-28 11:59+0100\n"
+"POT-Creation-Date: 2013-12-03 14:12+0100\n"
+"PO-Revision-Date: 2013-12-03 14:21+0100\n"
 "Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
@@ -207,7 +207,7 @@ msgstr "frePPLe website"
 #: common/views.py:294
 #: execute/models.py:36
 #: execute/models.py:68
-#: execute/views.py:51
+#: execute/views.py:52
 #: forecast/models.py:33
 #: forecast/views.py:39
 #: input/models.py:32
@@ -234,7 +234,7 @@ msgstr "frePPLe website"
 #: output/views/kpi.py:27
 #: output/views/problem.py:47
 #: quoting/views.py:57
-#: templates/execute/execute.html:209
+#: templates/execute/execute.html:240
 msgid "name"
 msgstr "naam"
 
@@ -268,6 +268,7 @@ msgid "Hierarchical parent"
 msgstr "Hierarchische ouder"
 
 #: common/models.py:140
+#: common/report.py:1427
 #: common/views.py:201
 #: common/views.py:275
 #: common/views.py:295
@@ -295,7 +296,8 @@ msgstr "bron"
 #: common/models.py:141
 #: common/models.py:193
 #: common/models.py:252
-#: common/report.py:149
+#: common/report.py:153
+#: common/report.py:1430
 msgid "last modified"
 msgstr "laatste wijziging"
 
@@ -335,7 +337,7 @@ msgstr "waarde"
 #: output/views/constraint.py:73
 #: output/views/problem.py:49
 #: quoting/views.py:60
-#: templates/execute/execute.html:211
+#: templates/execute/execute.html:242
 msgid "description"
 msgstr "omschrijving"
 
@@ -379,7 +381,7 @@ msgstr "pagina grootte"
 #: common/models.py:251
 #: common/views.py:255
 #: execute/models.py:43
-#: execute/views.py:58
+#: execute/views.py:59
 msgid "user"
 msgstr "gebruiker"
 
@@ -394,7 +396,7 @@ msgstr ""
 #: common/views.py:181
 #: common/views.py:253
 #: execute/models.py:35
-#: execute/views.py:50
+#: execute/views.py:51
 #: forecast/models.py:191
 #: forecast/models.py:208
 #: forecast/views.py:68
@@ -462,7 +464,7 @@ msgstr "telescoop"
 
 #: common/models.py:275
 #: common/models.py:283
-#: common/report.py:1313
+#: common/report.py:1317
 #: common/views.py:291
 msgid "bucket"
 msgstr "bucket"
@@ -514,96 +516,121 @@ msgstr "datum"
 msgid "bucket dates"
 msgstr "data"
 
-#: common/report.py:413
-#: common/report.py:671
-#: common/report.py:673
-#: common/report.py:799
-#: common/report.py:840
+#: common/report.py:417
+#: common/report.py:675
+#: common/report.py:677
+#: common/report.py:803
+#: common/report.py:844
 #: forecast/views.py:191
 msgid "Permission denied"
 msgstr "Toegang geweigerd"
 
-#: common/report.py:620
+#: common/report.py:624
 #, python-format
 msgid "%(title)s for %(entity)s"
 msgstr "%(title)s voor %(entity)s"
 
-#: common/report.py:697
-#: common/report.py:730
-#: common/report.py:762
+#: common/report.py:701
+#: common/report.py:734
+#: common/report.py:766
 #, python-format
 msgid "Can't find %s"
 msgstr "%s niet gevonden"
 
-#: common/report.py:717
+#: common/report.py:721
 #, python-format
 msgid "Can't copy %s"
 msgstr "Kan %s niet kopieren"
 
-#: common/report.py:725
+#: common/report.py:729
 #, python-format
 msgid "Copied from %s."
 msgstr "Gekopieerd van  %s."
 
 # Translation included with django
-#: common/report.py:758
-#: common/report.py:945
+#: common/report.py:762
+#: common/report.py:949
+#: common/report.py:1601
 #, python-format
 msgid "Changed %s."
 msgstr ""
 
-#: common/report.py:758
-#: common/report.py:945
+#: common/report.py:762
+#: common/report.py:949
+#: common/report.py:1601
 msgid "and"
 msgstr "en"
 
-#: common/report.py:837
+#: common/report.py:841
 msgid "Invalid upload request"
 msgstr "Ongeldige oplaadopdracht"
 
-#: common/report.py:887
+#: common/report.py:891
+#: common/report.py:1540
 #, python-format
 msgid "Incorrect field %(column)s"
 msgstr "Foute veldnaam %(column)s"
 
-#: common/report.py:893
+#: common/report.py:897
+#: common/report.py:1550
 #, python-format
 msgid "Missing primary key field %(key)s"
 msgstr "Primary key %(key)s ontbreekt"
 
-#: common/report.py:955
+#: common/report.py:959
+#: common/report.py:1611
 #, python-format
 msgid "Row %(rownum)s: %(message)s"
 msgstr "Rij %(rownum)s: %(message)s"
 
-#: common/report.py:961
+#: common/report.py:965
+#: common/report.py:1618
 #, python-format
 msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
 msgstr "Rij %(rownum)s veld %(field)s: %(data)s: %(message)s"
 
-#: common/report.py:969
+#: common/report.py:973
 #, python-format
 msgid "Exception during upload: %(message)s"
 msgstr "Fout tijdens laden: %(message)s"
 
-#: common/report.py:977
+#: common/report.py:981
 #, python-format
 msgid "File upload aborted with errors: changed %(changed)d and added %(added)d records"
 msgstr "Upload afgebroken met foutmelding: %(changed)d records gewijzigd en %(added)d toegevoegd"
 
-#: common/report.py:982
+#: common/report.py:986
 #, python-format
 msgid "Uploaded file processed with warnings: changed %(changed)d and added %(added)d records"
 msgstr "File opgeladen met verwittigingen: %(changed)d records gewijzigd en %(added)d toegevoegd"
 
-#: common/report.py:987
+#: common/report.py:991
 #, python-format
 msgid "Uploaded data successfully: changed %(changed)d and added %(added)d records"
 msgstr "Upload succesvol: %(changed)d records gewijzigd en %(added)d toegevoegd"
 
-#: common/report.py:1316
+#: common/report.py:1320
 msgid "data field"
 msgstr "dataveld"
+
+#: common/report.py:1446
+msgid "Nothing to export"
+msgstr "Niets te exporteren"
+
+#: common/report.py:1484
+#, python-format
+msgid "Ignoring data in worksheet: %s"
+msgstr "Blad %s wordt genegeerd"
+
+#: common/report.py:1487
+#, python-format
+msgid "You don't permissions to add: %s"
+msgstr "U heeft geen toelating om bij te voegen: %s"
+
+#: common/report.py:1629
+#, python-format
+msgid "%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors"
+msgstr "%(rows)d data rijen, veranderd %(changed)d en voegde %(added)d records toe, %(errors)d fouten"
 
 # Translation included with django
 #: common/views.py:40
@@ -768,31 +795,31 @@ msgstr "Uitvoeren"
 
 #: execute/models.py:37
 #: execute/models.py:39
-#: execute/views.py:52
+#: execute/views.py:53
 msgid "submitted"
 msgstr "ingediend"
 
 #: execute/models.py:38
-#: execute/views.py:53
+#: execute/views.py:54
 msgid "started"
 msgstr "gestart"
 
 #: execute/models.py:40
-#: execute/views.py:57
+#: execute/views.py:58
 msgid "arguments"
 msgstr "argumenten"
 
 #: execute/models.py:41
 #: execute/models.py:70
-#: execute/views.py:55
+#: execute/views.py:56
 #: input/models.py:567
 #: input/views.py:552
-#: templates/execute/execute.html:210
+#: templates/execute/execute.html:241
 msgid "status"
 msgstr "status"
 
 #: execute/models.py:42
-#: execute/views.py:56
+#: execute/views.py:57
 msgid "message"
 msgstr "bericht"
 
@@ -828,24 +855,24 @@ msgstr "scenarios"
 msgid "scenario"
 msgstr "scenario"
 
-#: execute/views.py:40
+#: execute/views.py:41
 msgid "Task status"
 msgstr "Taak status"
 
-#: execute/views.py:54
+#: execute/views.py:55
 msgid "finished"
 msgstr "geëindigd"
 
-#: execute/views.py:223
+#: execute/views.py:230
 #, python-format
 msgid "Failure launching action: %(msg)s"
 msgstr "Probleem tijdens starten van taak: %(msg)s"
 
-#: execute/views.py:265
+#: execute/views.py:272
 msgid "Displaying only the last 50K from the log file"
 msgstr "Enkel de laatste 50K uit het bestand worden getoond"
 
-#: execute/views.py:274
+#: execute/views.py:281
 #: templates/execute/logfrepple.html:6
 msgid "Log file"
 msgstr "Log bestand"
@@ -1491,7 +1518,7 @@ msgstr "Zoekmethode"
 #: input/models.py:172
 #: input/models.py:467
 #: input/models.py:507
-msgid "Method to select prefered alternate"
+msgid "Method to select preferred alternate"
 msgstr "Algoritme om de beste alternate te selecteren"
 
 #: input/models.py:195
@@ -1829,9 +1856,8 @@ msgid "skills"
 msgstr "skills"
 
 #: input/models.py:423
-#: input/models.py:464
-msgid "Priority of this flow in a group of alternates"
-msgstr "Prioriteit van deze flow in een groep alternatieven"
+msgid "Priority of this skill in a group of alternates"
+msgstr "Prioriteit van deze skill in een groep alternatieven"
 
 #: input/models.py:428
 msgid "resource skill"
@@ -1864,6 +1890,10 @@ msgstr "Optionele naam van de flow"
 #: input/models.py:462
 msgid "Puts the flow in a group of alternate flows"
 msgstr "Associeer de flow in een groep van alternatieven"
+
+#: input/models.py:464
+msgid "Priority of this flow in a group of alternates"
+msgstr "Prioriteit van deze flow in een groep alternatieven"
 
 #: input/models.py:476
 msgid "flow"
@@ -2622,8 +2652,8 @@ msgid "Add"
 msgstr ""
 
 #: templates/admin/base_site_grid.html:86
-#: templates/execute/execute.html:220
-#: templates/execute/execute.html.py:221
+#: templates/execute/execute.html:251
+#: templates/execute/execute.html.py:252
 msgid "Copy"
 msgstr "Kopieer"
 
@@ -2643,12 +2673,14 @@ msgstr "Tijd"
 
 #: templates/admin/base_site_grid.html:89
 #: templates/admin/index.html:33
+#: templates/execute/execute.html:218
 msgid "Import"
 msgstr "Importeer"
 
 #: templates/admin/base_site_grid.html:90
 #: templates/admin/base_site_gridpivot.html:93
 #: templates/admin/index.html:35
+#: templates/execute/execute.html:206
 msgid "Export"
 msgstr "Exporteer"
 
@@ -2799,29 +2831,29 @@ msgstr "Annuleer"
 msgid "Done"
 msgstr "Klaar"
 
-#: templates/execute/execute.html:148
+#: templates/execute/execute.html:158
 msgid "Autorefresh"
 msgstr "Vernieuw automatisch"
 
-#: templates/execute/execute.html:151
+#: templates/execute/execute.html:161
 msgid "Launch new tasks"
 msgstr "Lanceer nieuwe taken"
 
-#: templates/execute/execute.html:157
+#: templates/execute/execute.html:167
 msgid "Create a plan"
 msgstr "Creëer een plan"
 
-#: templates/execute/execute.html:161
-#: templates/execute/execute.html.py:197
-#: templates/execute/execute.html:240
-#: templates/execute/execute.html.py:249
-#: templates/execute/execute.html:257
-#: templates/execute/execute.html.py:272
-#: templates/execute/execute.html:291
+#: templates/execute/execute.html:171
+#: templates/execute/execute.html.py:228
+#: templates/execute/execute.html:271
+#: templates/execute/execute.html.py:280
+#: templates/execute/execute.html:288
+#: templates/execute/execute.html.py:303
+#: templates/execute/execute.html:322
 msgid "Launch"
 msgstr "Lanceer"
 
-#: templates/execute/execute.html:162
+#: templates/execute/execute.html:172
 msgid ""
 "\n"
 "Load frePPLe from the database...<br/>\n"
@@ -2837,7 +2869,7 @@ msgstr ""
 "<br/>\n"
 "<b>Plan type</b>:<br/>"
 
-#: templates/execute/execute.html:169
+#: templates/execute/execute.html:179
 msgid ""
 "<b>Constrained plan</b><br/>\n"
 "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan respects the constraints enabled below.<br/>\n"
@@ -2847,7 +2879,7 @@ msgstr ""
 "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dit plan respecteert de geactiveerde constraints.<br/>\n"
 "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In geval van tekorten worden orders laat of onvolledig ingepland.<br/>"
 
-#: templates/execute/execute.html:173
+#: templates/execute/execute.html:183
 msgid ""
 "<b>Unconstrained plan</b><br/>\n"
 "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan shows material, capacity and operation problems<br/>\n"
@@ -2860,104 +2892,124 @@ msgstr ""
 "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zoals gevraagd.<br/>\n"
 "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;De orders worden steeds volledig en op tijd ingepland.<br/>"
 
-#: templates/execute/execute.html:178
+#: templates/execute/execute.html:188
 msgid "Constraints"
 msgstr "Constraints"
 
-#: templates/execute/execute.html:179
+#: templates/execute/execute.html:189
 msgid "Capacity: respect capacity limits"
 msgstr "Capaciteit: respecteer beschikbare capaciteit"
 
-#: templates/execute/execute.html:180
+#: templates/execute/execute.html:190
 msgid "Material: respect procurement limits"
 msgstr " Materiaal: respecteer aankoopbeperkingen"
 
-#: templates/execute/execute.html:181
+#: templates/execute/execute.html:191
 msgid "Lead time: do not plan in the past"
 msgstr "Lead time: creëer geen plannen in het verleden"
 
-#: templates/execute/execute.html:182
+#: templates/execute/execute.html:192
 msgid "Release fence: do not plan within the release time window"
 msgstr "Vrijgave window: creëer geen plannen in het vrijgave window"
 
-#: templates/execute/execute.html:184
-#: templates/execute/execute.html.py:194
+#: templates/execute/execute.html:194
+#: templates/execute/execute.html.py:225
 msgid "Web service"
 msgstr "Webservice"
 
-#: templates/execute/execute.html:185
+#: templates/execute/execute.html:195
 msgid "Keep active in memory"
 msgstr "Houd actief in het geheugen"
 
-#: templates/execute/execute.html:187
+#: templates/execute/execute.html:197
 msgid "View log file"
 msgstr "Bekijk log bestand"
 
-#: templates/execute/execute.html:198
+#: templates/execute/execute.html:203
+msgid "Export a spreadsheet"
+msgstr "Exporteer een spreadsheet"
+
+#: templates/execute/execute.html:207
+msgid "Download all input data in a single spreadsheet."
+msgstr "Laad alle input data in een enkele spreadsheet."
+
+#: templates/execute/execute.html:215
+msgid "Import a spreadsheet"
+msgstr "Importeer een spreadsheet"
+
+#: templates/execute/execute.html:219
+msgid "Import input data from a spreadsheet.<br/>The spreadsheet must match the structure exported with the task above."
+msgstr "Importeer input data van een spreadsheet<br/>De spreadsheet moet hetzelfde formaat hebben als geëxporteerd met bovenstaande taak."
+
+#: templates/execute/execute.html:220
+msgid "Data file"
+msgstr "Databestand"
+
+#: templates/execute/execute.html:229
 msgid "Stop the web service."
 msgstr "Stop de webservice."
 
-#: templates/execute/execute.html:205
+#: templates/execute/execute.html:236
 msgid "Scenario management"
 msgstr "Scenariobeheer"
 
-#: templates/execute/execute.html:212
+#: templates/execute/execute.html:243
 msgid "last refresh"
 msgstr "laatste update"
 
-#: templates/execute/execute.html:221
+#: templates/execute/execute.html:252
 msgid "into selected scenarios"
 msgstr "in de geselecteerde scenarios"
 
-#: templates/execute/execute.html:224
+#: templates/execute/execute.html:255
 msgid "Release"
 msgstr "Geef vrij"
 
-#: templates/execute/execute.html:225
+#: templates/execute/execute.html:256
 msgid "Release selected scenarios"
 msgstr "Vrijgave geselecteerde scenarios"
 
-#: templates/execute/execute.html:227
+#: templates/execute/execute.html:258
 msgid "Update"
 msgstr "Update"
 
-#: templates/execute/execute.html:228
+#: templates/execute/execute.html:259
 msgid "Update description of selected scenarios"
 msgstr "Update omschrijving van geselecteerde scenarios"
 
-#: templates/execute/execute.html:237
+#: templates/execute/execute.html:268
 msgid "Back up the database"
 msgstr "Databank backup aanmake"
 
-#: templates/execute/execute.html:241
+#: templates/execute/execute.html:272
 msgid "Dump the database contents to a file."
 msgstr "Dump the databank gegevens naar een bestand."
 
-#: templates/execute/execute.html:245
+#: templates/execute/execute.html:276
 msgid "Empty the database"
 msgstr "Databank leegmaken"
 
-#: templates/execute/execute.html:250
+#: templates/execute/execute.html:281
 msgid "Erase all data from the database."
 msgstr "Verwijder alle gegevens uit de databank"
 
-#: templates/execute/execute.html:254
+#: templates/execute/execute.html:285
 msgid "Load a dataset"
 msgstr "Laad een dataset"
 
-#: templates/execute/execute.html:258
+#: templates/execute/execute.html:289
 msgid "Load a dataset from a file in the database."
 msgstr "Laad een dataset uit een bestand in de database"
 
-#: templates/execute/execute.html:259
+#: templates/execute/execute.html:290
 msgid "Available datasets:"
 msgstr "Beschikbare datasets:"
 
-#: templates/execute/execute.html:269
+#: templates/execute/execute.html:300
 msgid "Generate buckets"
 msgstr "Genereer tijdshorizon"
 
-#: templates/execute/execute.html:273
+#: templates/execute/execute.html:304
 msgid ""
 "Create time buckets for reporting.<br/>\n"
 "Start date: <input class=\"date\" name=\"start\" type=\"text\" maxlength=\"5\" size=\"12\"/><br/>\n"
@@ -2985,11 +3037,11 @@ msgstr ""
 "<option value=\"6\">Zaterdag</option>\n"
 "</select>\n"
 
-#: templates/execute/execute.html:288
+#: templates/execute/execute.html:319
 msgid "Generate model"
 msgstr "Genereer model"
 
-#: templates/execute/execute.html:292
+#: templates/execute/execute.html:323
 msgid ""
 "Create a sample model in the database.<br/>\n"
 "The parameters control the size and complexity.<br/>\n"
@@ -3025,7 +3077,7 @@ msgstr ""
 "&nbsp;&nbsp;Capaciteit van elke machine: <input id=\"create9\" name=\"rsrc_size\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"5\" onchange=\"calcUtil()\"/><br/>\n"
 "&nbsp;&nbsp;Verwachte gemiddelde bezettingsgraad: <span id=\"util\">76.7</span>&#37;<br/>\n"
 
-#: templates/execute/execute.html:313
+#: templates/execute/execute.html:344
 msgid "Sorry, You don't have any execute permissions..."
 msgstr "Sorry, U heeft geen gebruikersrechten om opdrachten uit te voeren..."
 

@@ -14,12 +14,11 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-28 11:58+0100\n"
+"POT-Creation-Date: 2013-12-03 14:12+0100\n"
 "PO-Revision-Date: 2013-11-28 13:45+0100\n"
 "Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,12 +44,9 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: common/static/js/frepple.js:94
-#: common/static/js/frepple.js.c:437
-#: common/static/js/frepple.js:596
-#: common/static/js/frepple.js.c:657
-#: common/static/js/frepple.js:717
-#: common/static/js/frepple.js.c:774
+#: common/static/js/frepple.js:94 common/static/js/frepple.js.c:437
+#: common/static/js/frepple.js:596 common/static/js/frepple.js.c:657
+#: common/static/js/frepple.js:717 common/static/js/frepple.js.c:774
 #: common/static/js/frepple.js:1060
 msgid "Cancel"
 msgstr ""
@@ -63,8 +59,7 @@ msgstr ""
 msgid "Customize"
 msgstr ""
 
-#: common/static/js/frepple.js:382
-#: common/static/js/frepple.js.c:623
+#: common/static/js/frepple.js:382 common/static/js/frepple.js.c:623
 msgid "OK"
 msgstr ""
 
@@ -101,8 +96,7 @@ msgstr ""
 msgid "Delete data"
 msgstr ""
 
-#: common/static/js/frepple.js:686
-#: common/static/js/frepple.js.c:743
+#: common/static/js/frepple.js:686 common/static/js/frepple.js.c:743
 msgid "Confirm"
 msgstr ""
 
@@ -123,8 +117,7 @@ msgstr ""
 msgid "Error copying data"
 msgstr ""
 
-#: common/static/js/frepple.js:798
-#: common/static/js/frepple.js.c:802
+#: common/static/js/frepple.js:798 common/static/js/frepple.js.c:802
 msgid "Filtered where"
 msgstr ""
 
@@ -160,13 +153,11 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: common/static/js/frepple.js:1463
-#: common/static/js/frepple.js.c:1585
+#: common/static/js/frepple.js:1463 common/static/js/frepple.js.c:1585
 msgid "Stop"
 msgstr ""
 
-#: common/static/js/frepple.js:1463
-#: common/static/js/frepple.js.c:1576
+#: common/static/js/frepple.js:1463 common/static/js/frepple.js.c:1576
 msgid "Play"
 msgstr ""
 
@@ -177,4 +168,3 @@ msgstr ""
 #: common/static/js/frepple.js:1551
 msgid "out of"
 msgstr ""
-

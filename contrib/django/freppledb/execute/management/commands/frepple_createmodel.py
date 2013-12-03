@@ -189,7 +189,7 @@ class Command(BaseCommand):
       # Weeks calendar
       if verbosity>0: print("Creating weeks calendar...")
       with transaction.atomic(using=database):
-        weeks = Calendar.objects.using(database).create(name="Weeks")
+        weeks = Calendar.objects.using(database).create(name="Weeks", defaultvalue=0)
         for i in BucketDetail.objects.using(database).filter(bucket="week").all():
           CalendarBucket(startdate=i.startdate, enddate=i.enddate, value=1, calendar=weeks).save(using=database)
         task.status = '4%'
@@ -225,7 +225,7 @@ class Command(BaseCommand):
         for i in range(resource):
           loc = Location(name='Loc %05d' % int(random.uniform(1,cluster)))
           loc.save(using=database)
-          cal = Calendar(name='capacity for res %03d' %i, category='capacity')
+          cal = Calendar(name='capacity for res %03d' %i, category='capacity', defaultvalue=0)
           bkt = CalendarBucket(startdate=startdate, value=resource_size, calendar=cal)
           cal.save(using=database)
           bkt.save(using=database)
@@ -324,7 +324,7 @@ class Command(BaseCommand):
             # Some inventory in random buffers
             if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
             buf.save(using=database)
-            Flow(operation=oper, thebuffer=buf, quantity=1, type="flow_end").save(using=database)
+            Flow(operation=oper, thebuffer=buf, quantity=1, type="end").save(using=database)
             if k != level-1:
               # Consume from the next level in the bill of material
               buf = Buffer.objects.using(database).create(

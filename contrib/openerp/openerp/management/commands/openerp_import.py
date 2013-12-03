@@ -792,7 +792,7 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into flow \
           (operation_id,thebuffer_id,type,quantity,lastmodified) \
-          values(%%s,%%s,'flow_end',1,'%s')" % self.date,
+          values(%%s,%%s,'end',1,'%s')" % self.date,
         [ i for i in newFlows(insert) ]
         )
       cursor.executemany(

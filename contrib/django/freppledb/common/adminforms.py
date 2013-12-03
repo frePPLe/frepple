@@ -26,14 +26,14 @@ from django.contrib.admin.util import unquote, get_deleted_objects
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import get_object_or_404, render_to_response
+from django.http import HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404
 from django.template.response import SimpleTemplateResponse, TemplateResponse
-from django.utils.encoding import force_text, force_unicode, iri_to_uri
+from django.utils.encoding import force_text, force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.html import escape, escapejs
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import capfirst, get_text_list
+from django.utils.text import capfirst
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.utils.encoding import smart_text

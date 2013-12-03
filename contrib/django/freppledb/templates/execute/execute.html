@@ -116,12 +116,10 @@
       }, 5000);{% endif %}
     // Checkbox for workbook export
     $(".chck_all").click( function() {
-      console.log($(this).prop("checked"));
       $(".chck_entity").prop("checked", $(this).prop("checked"));
       });
     $(".chck_entity").click( function() {
-      if (!$(this).prop("checked"))
-        $(".chck_all").prop("checked",false);
+      $(".chck_all").prop("checked",$(".chck_entity:not(:checked)").length == 0);
       });
   });
 </script>
@@ -191,7 +189,7 @@ and export results into the database<br/>
 </div>
 {% endif %}
 
-<h3><a href="#exportworkbook">{% trans "Export spreadsheet workbook" %}</a></h3>
+<h3><a href="#exportworkbook">{% trans "Export a spreadsheet" %}</a></h3>
 <div><table>
 <form method="post" action="{{request.prefix}}/execute/launch/exportworkbook/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input id="export" type="submit" value="{% trans "Export" %}" /></td>
@@ -200,6 +198,15 @@ and export results into the database<br/>
 <input class="chck_all" type="checkbox" name="all" value="1" checked><br/>
 {% for group in menu %}{% for item in group.1 %}{% if item.1.model %}
 <label for="chbx_{{ item.1.model | model_name }}"><input class="chck_entity" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" checked id="chbx_{{ item.1.model | model_name }}">{{ item.0 }}</label><br/>{% endif %}{% endfor %}{% endfor %}
+</td></tr></form>
+</table></div>
+
+<h3><a href="#importworkbook">{% trans "Import a spreadsheet" %}</a></h3>
+<div><table>
+<form method="post" enctype="multipart/form-data" action="{{request.prefix}}/execute/launch/importworkbook/">{% csrf_token %}<tr>
+<td style="vertical-align:top; padding: 15px"><input id="import" type="submit" value="{% trans "Import" %}" /></td>
+<td>{% trans "Import input data from a spreadsheet.<br/>The spreadsheet must match the structure exported with the task above." %}<br/>
+{% trans "Data file" %}:<input type="file" id="spreadsheet" name="spreadsheet" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
 </td></tr></form>
 </table></div>
 

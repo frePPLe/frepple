@@ -32,7 +32,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 import csv, cStringIO, operator, math
 import codecs, json
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 from StringIO import StringIO
 
 from django.conf import settings
@@ -42,7 +42,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_permission_codename
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
-from django.db.models.fields import Field, CharField, AutoField
+from django.db.models.fields import Field, CharField, IntegerField, AutoField
 from django.db.models.fields.related import RelatedField
 from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.http import  HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
@@ -1357,42 +1357,47 @@ def exportWorkbook(request):
   ok = False
   cursor = connections[request.database].cursor()
   for entity_name in request.POST.getlist('entities'):
-    # Initialize
-    (app_label, model_label) = entity_name.split('.')
-    model = get_model(app_label, model_label)
-    # Verify access rights
-    if not request.user.has_perm("%s.%s" % (app_label, get_permission_codename('change',model._meta))):
-      continue
-    # Build a list of fields
-    fields = []
-    header = []
-    source = False
-    lastmodified = False
-    for i in model._meta.fields:
-      if i.name in ['lft','rght','lvl']:
-        continue  # Skip some fields of HierarchyModel
-      elif i.name == 'source':
-        source = True  # Put the source field at the end
-      elif i.name == 'lastmodified':
-        lastmodified = True  # Put the last-modified field at the very end
-      else:
-        fields.append(connections[request.database].ops.quote_name(i.column))
-        header.append(force_unicode(i.verbose_name))
-    if source:
-      fields.append("source")
-      header.append(force_unicode(_("source")))
-    if lastmodified:
-      fields.append("lastmodified")
-      header.append(force_unicode(_("last modified")))
-    # Create sheet
-    ok = True
-    ws = wb.create_sheet(title=force_unicode(model._meta.verbose_name))
-    # Write a header row
-    ws.append(header)
-    # Loop over all records
-    cursor.execute("SELECT %s FROM %s ORDER BY 1" % (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table)))
-    for rec in cursor.fetchall():
-      ws.append(  [f and (isinstance(f, numericTypes) and f or str(f)) or None for f in rec] )
+    try:
+      # Initialize
+      (app_label, model_label) = entity_name.split('.')
+      model = get_model(app_label, model_label)
+      # Verify access rights
+      if not request.user.has_perm("%s.%s" % (app_label, get_permission_codename('change',model._meta))):
+        continue
+      # Build a list of fields
+      fields = []
+      header = []
+      source = False
+      lastmodified = False
+      for i in model._meta.fields:
+        if i.name in ['lft','rght','lvl']:
+          continue  # Skip some fields of HierarchyModel
+        elif i.name == 'source':
+          source = True  # Put the source field at the end
+        elif i.name == 'lastmodified':
+          lastmodified = True  # Put the last-modified field at the very end
+        else:
+          fields.append(connections[request.database].ops.quote_name(i.column))
+          header.append(force_unicode(i.verbose_name))
+      if source:
+        fields.append("source")
+        header.append(force_unicode(_("source")))
+      if lastmodified:
+        fields.append("lastmodified")
+        header.append(force_unicode(_("last modified")))
+      # Create sheet
+      ok = True
+      ws = wb.create_sheet(title=force_unicode(model._meta.verbose_name))
+      # Write a header row
+      ws.append(header)
+      # Loop over all records
+      cursor.execute("SELECT %s FROM %s ORDER BY 1" %
+        (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table))
+        )
+      for rec in cursor.fetchall():
+        ws.append(  [f and (isinstance(f, numericTypes) and f or str(f)) or None for f in rec] )
+    except:
+      pass  # Silently ignore the error and move on to the next entity.
 
   # Not a single entity to export
   if not ok: raise Exception(_("Nothing to export"))
@@ -1406,3 +1411,178 @@ def exportWorkbook(request):
      )
   response['Content-Disposition'] = 'attachment; filename=frepple.xlsx'
   return response
+
+
+def importWorkbook(request):
+  '''
+  This method reads a spreadsheet in Office Open XML format (typically with
+  the extension .xlsx or .ods).
+  Each entity has a tab in the spreadsheet, and the first row contains
+  the fields names.
+  '''
+  transaction.enter_transaction_management(using=request.database)
+  errors = []
+  # Build a list of all contenttypes
+  all_models = [ (ct.model_class(),ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
+  try:
+    # Find all models in the workbook
+    wb = load_workbook(filename = request.FILES['spreadsheet'], use_iterators = True)
+    models = []
+    for ws_name in wb.get_sheet_names():
+      # Find the model
+      model = None
+      contenttype_id = None
+      for m, ct in all_models:
+        if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+          model = m
+          contenttype_id = ct
+          break
+      if not model:
+        errors.append(force_unicode(_("Ignoring data in worksheet: %s") % ws_name))
+      elif not request.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add',model._meta))):
+        # Check permissions
+        errors.append(force_unicode(_("You don't permissions to add: %s") % ws_name))
+      else:
+        models.append( (ws_name, model, contenttype_id) )
+    # Sort the list of models, based on dependencies between models
+    # TODO SORT THE LIST
+    # Process all rows in each worksheet
+    for ws_name, model, contenttype_id in models:
+      ws = wb.get_sheet_by_name(name=ws_name)
+      rownum = 0
+      has_pk_field = False
+      headers = []
+      uploadform = None
+      changed = 0
+      added = 0
+      numerrors = 0
+      for row in ws.iter_rows():
+        rownum += 1
+        if rownum == 1:
+          # Process the header row with the field names
+          header_ok = True
+          for cell in row:
+            ok = False
+            value = cell.internal_value
+            if not value:
+              headers.append(False)
+              continue
+            else:
+              value = value.lower()
+            for i in model._meta.fields:
+              if value == i.name.lower() or value == i.verbose_name.lower():
+                if i.editable == True:
+                  headers.append(i)
+                else:
+                  headers.append(False)
+                ok = True
+                break
+            if not ok:
+              header_ok = False
+              errors.append(force_unicode(string_concat(
+                model._meta.verbose_name, ': ', _('Incorrect field %(column)s') % {'column': value}
+                )))
+              numerrors += 1
+            if value == model._meta.pk.name.lower() \
+              or value == model._meta.pk.verbose_name.lower():
+                has_pk_field = True
+          if not has_pk_field and not isinstance(model._meta.pk, AutoField):
+            # The primary key is not an auto-generated id and it is not mapped in the input...
+            header_ok = False
+            errors.append(force_unicode(string_concat(
+              model._meta.verbose_name, ': ', _('Missing primary key field %(key)s') % {'key': model._meta.pk.name}
+              )))
+            numerrors += 1
+          if not header_ok:
+            # Can't process this worksheet
+            break
+          uploadform = modelform_factory(model,
+            fields = tuple([i.name for i in headers if isinstance(i,Field)]),
+            formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
+            )
+        else:
+          # Process a data row
+          # Step 1: Build a dictionary with all data fields
+          d = {}
+          colnum = 0
+          for cell in row:
+            # More fields in data row than headers. Move on to the next row.
+            if colnum >= len(headers): break
+            if isinstance(headers[colnum],Field):
+              data = cell.internal_value
+              if isinstance(headers[colnum],CharField):
+                if data: data = data.strip()
+              elif isinstance(headers[colnum], (IntegerField, AutoField)):
+                if isinstance(data, numericTypes): data = int(data)
+              d[headers[colnum].name] = data
+            colnum += 1
+          # Step 2: Fill the form with data, either updating an existing
+          # instance or creating a new one.
+          if has_pk_field:
+            # A primary key is part of the input fields
+            try:
+              # Try to find an existing record with the same primary key
+              it = model.objects.using(request.database).get(pk=d[model._meta.pk.name])
+              form = uploadform(d, instance=it)
+            except model.DoesNotExist:
+              form = uploadform(d)
+              it = None
+          else:
+            # No primary key required for this model
+            form = uploadform(d)
+            it = None
+          # Step 3: Validate the data and save to the database
+          if form.has_changed():
+            try:
+              obj = form.save()
+              LogEntry(
+                  user_id         = request.user.pk,
+                  content_type_id = contenttype_id,
+                  object_id       = obj.pk,
+                  object_repr     = force_unicode(obj),
+                  action_flag     = it and CHANGE or ADDITION,
+                  change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
+              ).save(using=request.database)
+              if it:
+                changed += 1
+              else:
+                added += 1
+            except Exception:
+              # Validation fails
+              for error in form.non_field_errors():
+                errors.append(force_unicode(string_concat(
+                  model._meta.verbose_name, ': ', _('Row %(rownum)s: %(message)s') % {
+                    'rownum': rownum, 'message': error
+                  })))
+                numerrors += 1
+              for field in form:
+                for error in field.errors:
+                  errors.append(force_unicode(string_concat(
+                    model._meta.verbose_name, ': ', _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                      'rownum': rownum, 'data': d[field.name],
+                      'field': field.name, 'message': error
+                    })))
+                  numerrors += 1
+
+          # Step 4: Commit the database changes from time to time
+          if rownum % 500 == 0: transaction.commit(using=request.database)
+      # Report status of the import
+      messages.add_message(request, numerrors and messages.ERROR or messages.INFO, string_concat(
+        model._meta.verbose_name, ": ",
+        _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') %
+          {'rows': rownum-1, 'changed': changed, 'added': added, 'errors': numerrors}
+      ))
+
+  finally:
+    transaction.commit(using=request.database)
+    transaction.leave_transaction_management(using=request.database)
+  if errors:
+    response = HttpResponse(
+       mimetype = 'text/plain',
+       content = '\n'.join(errors)
+       )
+    response['Content-Disposition'] = 'attachment; filename=errors.txt'
+    return response
+  else:
+    return HttpResponseRedirect(request.prefix + '/execute/')
+

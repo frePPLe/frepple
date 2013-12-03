@@ -5,7 +5,7 @@ var tourdata = [
         'Jump to <span class="underline"><a href="/admin/?tour=1,0,0">Navigation</a></span> (5 steps)<br/>' +
         'Jump to <span class="underline"><a href="/admin/?tour=2,0,0">Data entry</a></span> (10 steps)<br/>' +
         'Jump to <span class="underline"><a href="/admin/?tour=3,0,0">Modeling</a></span> (3 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Generating the plan</a></span> (10 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Generating the plan</a></span> (11 steps)<br/>' +
         'Jump to <span class="underline"><a href="/admin/?tour=5,0,0">Plan analysis</a></span> (25 steps)<br/>',
      delay: 5,
      steps: [
@@ -252,6 +252,15 @@ var tourdata = [
              "Each entity gets a seperate tab.",
            position : 'TL'
          },
+         {
+           url: "/execute/",
+           element : 'a[href="#importworkbook"]',
+           beforestep: '$("a[href=\\"#importworkbook\\"]").parent().click()',
+           description : "With this option you can import a spreadsheet.<br/>" +
+             "The spreadsheet must match the structure exported with the task above.<br/><br/>" +
+             "You can thus export all data, edit in Excel and then reload the updated spreasheet.",
+           position : 'TL'
+         },         
          {
            url: "/execute/",
            element : 'a[href="#scenarios"]',

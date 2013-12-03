@@ -1443,11 +1443,25 @@ def importWorkbook(request):
         # Check permissions
         errors.append(force_unicode(_("You don't permissions to add: %s") % ws_name))
       else:
-        models.append( (ws_name, model, contenttype_id) )
+        deps = set([model])
+        GridReport.dependent_models(model, deps)
+        models.append( (ws_name, model, contenttype_id, deps) )
+
     # Sort the list of models, based on dependencies between models
-    # TODO SORT THE LIST
+    cnt = len(models)
+    ok = False
+    while not ok:
+      ok = True
+      for i in range(cnt):
+        for j in range(i+1, cnt):
+          if models[i][1] in models[j][3]:
+            # A subsequent model i depends on model i. The list ordering is
+            # thus not ok yet. We move this element to the end of the list.
+            models.append(models.pop(i))
+            ok = False
+
     # Process all rows in each worksheet
-    for ws_name, model, contenttype_id in models:
+    for ws_name, model, contenttype_id, dependencies in models:
       ws = wb.get_sheet_by_name(name=ws_name)
       rownum = 0
       has_pk_field = False

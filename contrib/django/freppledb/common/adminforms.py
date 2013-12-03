@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import warnings, types
+import types
 
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse

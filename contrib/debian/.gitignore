@@ -1,2 +1,4 @@
 *.deb
 DEBIAN
+*.dsc
+*.changes

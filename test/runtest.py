@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright (C) 2009-2012 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2009-2013 by Johan De Taeye, frePPLe bvba
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published

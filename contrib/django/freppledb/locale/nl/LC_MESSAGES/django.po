@@ -18,8 +18,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-03 14:12+0100\n"
-"PO-Revision-Date: 2013-12-03 14:21+0100\n"
+"POT-Creation-Date: 2013-12-04 12:10+0100\n"
+"PO-Revision-Date: 2013-12-04 12:11+0100\n"
 "Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
@@ -190,10 +190,14 @@ msgid "Application tour"
 msgstr "Applicatie demonstratie"
 
 #: common/menu.py:27
+msgid "Give us feedback!"
+msgstr "Geef ons feedback!"
+
+#: common/menu.py:28
 msgid "Documentation"
 msgstr "Documentatie"
 
-#: common/menu.py:28
+#: common/menu.py:29
 msgid "frePPLe website"
 msgstr "frePPLe website"
 

@@ -99,7 +99,8 @@ mv $RPM_BUILD_ROOT/usr/bin/frepplectl.py $RPM_BUILD_ROOT/usr/bin/frepplectl
 mkdir -p $RPM_BUILD_ROOT/etc/httpd/conf.d
 install -m 644 -p contrib/rpm/httpd.conf $RPM_BUILD_ROOT/etc/httpd/conf.d/z_frepple.conf
 # Create log directory
-mkdir -p $RPM_BUILD_ROOT/var/log/frepple
+mkdir -m 770 -p $RPM_BUILD_ROOT/var/log/frepple
+chgrp adm $RPM_BUILD_ROOT/var/log/frepple
 
 %clean
 rm -rf %{buildroot}

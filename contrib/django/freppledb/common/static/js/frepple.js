@@ -1473,3 +1473,26 @@ var tour = {
   }
 
 }
+
+
+function feedbackform()
+{
+  if (typeof UserVoice === 'undefined')
+  {
+    var uv=document.createElement('script');
+    uv.type='text/javascript';
+    uv.async=false;
+    uv.src='//widget.uservoice.com/LktnQ41DM3h2147DNO6aDQ.js';
+    var s=document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(uv,s);
+  }
+
+  UserVoice = window.UserVoice || [];
+  UserVoice.push(['show', {
+    mode: 'contact',
+    primary_color: '#cc6d00',
+    link_color: '#007dbf',
+    forum_id: 207501,
+    contact_title: 'Send us a message'
+  }]);
+}

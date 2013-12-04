@@ -19,8 +19,8 @@ msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-04 12:10+0100\n"
-"PO-Revision-Date: 2013-11-28 13:24+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
+"PO-Revision-Date: 2013-12-05 00:57+0900\n"
+"Last-Translator: Yamamoto Keiichiro [Family, Given] <k.yanmar@gmail.com>\n"
 "Language-Team: Japanese <kde-i18n-doc@kde.org>\n"
 "Language: ja_JP\n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,7 @@ msgstr ""
 
 #: common/static/js/frepple.js:13
 msgid "There are unsaved changes on this page."
-msgstr ""
+msgstr "ページに未保存の変更があります"
 
 #: common/static/js/frepple.js:59
 msgid "Error saving data"
@@ -39,11 +39,11 @@ msgstr "データの保存に失敗しました"
 
 #: common/static/js/frepple.js:80
 msgid "Save or cancel your changes first"
-msgstr ""
+msgstr "変更を保存またはキャンセルしてください"
 
 #: common/static/js/frepple.js:87
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #: common/static/js/frepple.js:94 common/static/js/frepple.js.c:437
 #: common/static/js/frepple.js:596 common/static/js/frepple.js.c:657
@@ -58,7 +58,7 @@ msgstr "選択"
 
 #: common/static/js/frepple.js:376
 msgid "Customize"
-msgstr ""
+msgstr "カスタマイズ"
 
 #: common/static/js/frepple.js:382 common/static/js/frepple.js.c:623
 msgid "OK"
@@ -66,7 +66,7 @@ msgstr "OK"
 
 #: common/static/js/frepple.js:523
 msgid "Error saving report settings"
-msgstr ""
+msgstr "レポート設定の保存でエラー"
 
 #: common/static/js/frepple.js:566
 msgid "CSV style"
@@ -148,24 +148,24 @@ msgstr "インポート"
 
 #: common/static/js/frepple.js:1434
 msgid "Application tour"
-msgstr ""
+msgstr "アプリケーションツアー"
 
 #: common/static/js/frepple.js:1458
 msgid "Previous"
-msgstr ""
+msgstr "前へ"
 
 #: common/static/js/frepple.js:1463 common/static/js/frepple.js.c:1585
 msgid "Stop"
-msgstr ""
+msgstr "停止"
 
 #: common/static/js/frepple.js:1463 common/static/js/frepple.js.c:1576
 msgid "Play"
-msgstr ""
+msgstr "再生"
 
 #: common/static/js/frepple.js:1469
 msgid "Next"
-msgstr ""
+msgstr "次へ"
 
 #: common/static/js/frepple.js:1551
 msgid "out of"
-msgstr ""
+msgstr "の外へ"

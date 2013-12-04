@@ -19,8 +19,8 @@ msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-04 12:10+0100\n"
-"PO-Revision-Date: 2013-12-03 14:24+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
+"PO-Revision-Date: 2013-12-05 00:54+0900\n"
+"Last-Translator: Yamamoto Keiichiro [Family, Given] <k.yanmar@gmail.com>\n"
 "Language-Team: Japanese <kde-i18n-doc@kde.org>\n"
 "Language: ja_JP\n"
 "MIME-Version: 1.0\n"
@@ -65,7 +65,7 @@ msgstr "イタリア語"
 # Translation included with django
 #: settings.py:100
 msgid "Japanese"
-msgstr ""
+msgstr "日本語"
 
 # Translation included with django
 #: settings.py:101
@@ -75,7 +75,7 @@ msgstr "オランダ語"
 # Translation included with django
 #: settings.py:102
 msgid "Simplified Chinese"
-msgstr ""
+msgstr "中国語(簡体字)"
 
 # Translation included with django
 #: settings.py:103
@@ -181,15 +181,15 @@ msgstr "パスワード変更"
 
 #: common/menu.py:26
 msgid "Application tour"
-msgstr ""
+msgstr "アプリケーションツアー"
 
 #: common/menu.py:27
 msgid "Give us feedback!"
-msgstr ""
+msgstr "フィードバックください！"
 
 #: common/menu.py:28
 msgid "Documentation"
-msgstr ""
+msgstr "ドキュメント"
 
 #: common/menu.py:29
 msgid "frePPLe website"
@@ -236,7 +236,7 @@ msgstr "階層上の親"
 #: input/views.py:555 input/views.py:575 input/views.py:605 input/views.py:637
 #: input/views.py:659 input/views.py:682
 msgid "source"
-msgstr ""
+msgstr "ソース"
 
 #: common/models.py:141 common/models.py:193 common/models.py:252
 #: common/report.py:153 common/report.py:1430
@@ -301,7 +301,7 @@ msgstr "ユーザー"
 # Translation included with django
 #: common/models.py:212
 msgid "users"
-msgstr ""
+msgstr "ユーザー"
 
 #: common/models.py:231 common/models.py:244 common/models.py:282
 #: common/views.py:181 common/views.py:253 execute/models.py:35
@@ -487,17 +487,17 @@ msgstr "データフィールド"
 
 #: common/report.py:1446
 msgid "Nothing to export"
-msgstr ""
+msgstr "エクスポートはありません"
 
 #: common/report.py:1484
 #, python-format
 msgid "Ignoring data in worksheet: %s"
-msgstr ""
+msgstr "ワークシート中のデータを無視: %s"
 
 #: common/report.py:1487
 #, python-format
 msgid "You don't permissions to add: %s"
-msgstr ""
+msgstr "追加する権限がありません: %s"
 
 #: common/report.py:1629
 #, python-format
@@ -505,6 +505,8 @@ msgid ""
 "%(rows)d data rows, changed %(changed)d and added %(added)d records, "
 "%(errors)d errors"
 msgstr ""
+"データ行 %(rows)d, 変更 %(changed)d, 追加 %(added)d レコード, エラー "
+"%(errors)d "
 
 # Translation included with django
 #: common/views.py:40 templates/404.html:4 templates/404.html.py:8
@@ -541,7 +543,7 @@ msgstr "ユーザーリスト"
 
 #: common/views.py:159
 msgid "id"
-msgstr ""
+msgstr "id"
 
 #: common/views.py:160
 msgid "username"
@@ -550,12 +552,12 @@ msgstr "ユーザー名"
 # Translation included with django
 #: common/views.py:161
 msgid "email address"
-msgstr ""
+msgstr "Eメール"
 
 # Translation included with django
 #: common/views.py:162
 msgid "first name"
-msgstr ""
+msgstr "名"
 
 #: common/views.py:163
 msgid "last name"
@@ -564,7 +566,7 @@ msgstr "姓"
 # Translation included with django
 #: common/views.py:164
 msgid "date joined"
-msgstr ""
+msgstr "連結されたデータ"
 
 # Translation included with django
 #: common/views.py:165
@@ -639,15 +641,15 @@ msgstr "実行"
 
 #: execute/models.py:37 execute/models.py:39 execute/views.py:53
 msgid "submitted"
-msgstr ""
+msgstr "送信済み"
 
 #: execute/models.py:38 execute/views.py:54
 msgid "started"
-msgstr ""
+msgstr "開始済み"
 
 #: execute/models.py:40 execute/views.py:58
 msgid "arguments"
-msgstr ""
+msgstr "引数"
 
 #: execute/models.py:41 execute/models.py:70 execute/views.py:56
 #: input/models.py:567 input/views.py:552 templates/execute/execute.html:241
@@ -660,11 +662,11 @@ msgstr "メッセージ"
 
 #: execute/models.py:50
 msgid "tasks"
-msgstr ""
+msgstr "タスク"
 
 #: execute/models.py:51
 msgid "task"
-msgstr ""
+msgstr "タスク"
 
 #: execute/models.py:62
 msgid "Free"
@@ -692,16 +694,16 @@ msgstr "シナリオ"
 
 #: execute/views.py:41
 msgid "Task status"
-msgstr ""
+msgstr "タスクの状態"
 
 #: execute/views.py:55
 msgid "finished"
-msgstr ""
+msgstr "完了"
 
 #: execute/views.py:230
 #, python-format
 msgid "Failure launching action: %(msg)s"
-msgstr ""
+msgstr "アクション起動に失敗: %(msg)s"
 
 #: execute/views.py:272
 msgid "Displaying only the last 50K from the log file"
@@ -718,27 +720,27 @@ msgstr "計画パラメーター"
 
 #: forecast/models.py:24
 msgid "Automatic"
-msgstr ""
+msgstr "自動"
 
 #: forecast/models.py:25
 msgid "Constant"
-msgstr ""
+msgstr "一定"
 
 #: forecast/models.py:26
 msgid "Trend"
-msgstr ""
+msgstr "傾向"
 
 #: forecast/models.py:27
 msgid "Seasonal"
-msgstr ""
+msgstr "季節の"
 
 #: forecast/models.py:28
 msgid "Intermittent"
-msgstr ""
+msgstr "断続する"
 
 #: forecast/models.py:29
 msgid "Manual"
-msgstr ""
+msgstr "主導"
 
 #: forecast/models.py:35 forecast/views.py:44 input/models.py:35
 #: input/models.py:85 input/models.py:103 input/models.py:118
@@ -775,11 +777,11 @@ msgstr "商品"
 
 #: forecast/models.py:39
 msgid "Forecast method"
-msgstr ""
+msgstr "予測方式"
 
 #: forecast/models.py:40
 msgid "Method used to generate a base forecast"
-msgstr ""
+msgstr "基本予測を生成した基本方式"
 
 #: forecast/models.py:42 forecast/views.py:42 input/models.py:48
 #: input/models.py:57 input/views.py:591
@@ -828,11 +830,11 @@ msgstr "需要を計画する際に許容される最大遅延"
 
 #: forecast/models.py:51 forecast/views.py:51
 msgid "discrete"
-msgstr "discreet"
+msgstr "分離"
 
 #: forecast/models.py:51
 msgid "Round forecast numbers to integers"
-msgstr "Afronden van forecast waarden"
+msgstr "予測数値を整数に丸める"
 
 #: forecast/models.py:184 forecast/models.py:192 forecast/models.py:209
 #: forecast/views.py:69 forecast/views.py:89
@@ -841,7 +843,7 @@ msgstr "予測"
 
 #: forecast/models.py:185
 msgid "forecasts"
-msgstr "forecasts"
+msgstr "予測"
 
 #: forecast/models.py:195 forecast/views.py:72 input/models.py:446
 #: input/models.py:486 input/models.py:526 input/models.py:574
@@ -856,59 +858,59 @@ msgstr "数量"
 
 #: forecast/models.py:202
 msgid "forecast demand"
-msgstr "forecast vraag"
+msgstr "予測需要"
 
 #: forecast/models.py:203
 msgid "forecast demands"
-msgstr "forecast vraag"
+msgstr "予測需要"
 
 #: forecast/models.py:213 forecast/views.py:95
 #: templates/forecast/forecast.html:71
 msgid "total orders"
-msgstr ""
+msgstr "注文の合計"
 
 #: forecast/models.py:214 forecast/views.py:97
 msgid "orders adjustment"
-msgstr ""
+msgstr "注文の修正"
 
 #: forecast/models.py:215 forecast/views.py:96
 #: templates/forecast/forecast.html:80
 msgid "open orders"
-msgstr ""
+msgstr "注文を開く"
 
 #: forecast/models.py:216 forecast/views.py:103
 #: templates/forecast/forecast.html:156
 msgid "planned orders"
-msgstr ""
+msgstr "計画された注文"
 
 #: forecast/models.py:217 forecast/views.py:98
 #: templates/forecast/forecast.html:98
 msgid "forecast baseline"
-msgstr ""
+msgstr "ベースライン予測"
 
 #: forecast/models.py:218 forecast/views.py:99
 #: templates/forecast/forecast.html:110
 msgid "forecast adjustment"
-msgstr ""
+msgstr "修正予測"
 
 #: forecast/models.py:219 forecast/views.py:100
 #: templates/forecast/forecast.html:120
 msgid "forecast total"
-msgstr ""
+msgstr "合計予測"
 
 #: forecast/models.py:220 forecast/views.py:101
 #: templates/forecast/forecast.html:132
 msgid "forecast net"
-msgstr ""
+msgstr "合計予測"
 
 #: forecast/models.py:221 forecast/views.py:102
 #: templates/forecast/forecast.html:144
 msgid "forecast consumed"
-msgstr ""
+msgstr "消費された予測"
 
 #: forecast/models.py:222
 msgid "planned forecast"
-msgstr ""
+msgstr "計画された予測"
 
 #: forecast/models.py:231
 msgid "forecast plan"
@@ -920,11 +922,11 @@ msgstr "予測計画"
 
 #: forecast/views.py:33
 msgid "Forecast List"
-msgstr "Forecast Lijst"
+msgstr "予測リスト"
 
 #: forecast/views.py:46
 msgid "method"
-msgstr ""
+msgstr "メソッド"
 
 #: forecast/views.py:47 input/models.py:194 input/models.py:202
 #: input/models.py:442 input/models.py:483 input/models.py:524
@@ -940,20 +942,20 @@ msgstr "作業"
 
 #: forecast/views.py:62
 msgid "Forecasted Demand List"
-msgstr ""
+msgstr "需要予測リスト"
 
 #: forecast/views.py:83
 msgid "Forecast Report"
-msgstr "Forecast Rapport"
+msgstr "予測レポート"
 
 #: forecast/views.py:92 output/views/buffer.py:35 output/views/demand.py:33
 #: output/views/operation.py:34 output/views/resource.py:38
 msgid "graph"
-msgstr ""
+msgstr "グラフ"
 
 #: forecast/views.py:104 templates/forecast/forecast.html:168
 msgid "planned net forecast"
-msgstr "ingeplande netto forecast"
+msgstr "計画済みのトータル予測"
 
 #: forecast/views.py:114 output/views/buffer.py:49 output/views/demand.py:48
 #: output/views/operation.py:48 output/views/resource.py:54
@@ -966,7 +968,7 @@ msgstr "繰り返しパターン"
 
 #: input/admin.py:92 input/admin.py:194 input/admin.py:207
 msgid "Alternates"
-msgstr ""
+msgstr "代替"
 
 #: input/admin.py:136
 msgid "Inventory"
@@ -1487,7 +1489,7 @@ msgstr "スキル"
 
 #: input/models.py:423
 msgid "Priority of this skill in a group of alternates"
-msgstr ""
+msgstr "代替グループ中でこのスキルの優先順位"
 
 #: input/models.py:428
 msgid "resource skill"
@@ -1585,24 +1587,24 @@ msgstr "作業計画"
 
 #: input/models.py:553 templates/quoting/quote.html:314
 msgid "Inquiry"
-msgstr ""
+msgstr "照会"
 
 #: input/models.py:554 templates/quoting/quote.html:306
 #: templates/quoting/quote.html.py:315
 msgid "Quote"
-msgstr ""
+msgstr "引用"
 
 #: input/models.py:555
 msgid "Open"
-msgstr ""
+msgstr "オープン"
 
 #: input/models.py:556
 msgid "Closed"
-msgstr ""
+msgstr "終了"
 
 #: input/models.py:557 templates/execute/execute.html:43
 msgid "Canceled"
-msgstr ""
+msgstr "キャンセル"
 
 #: input/models.py:566 input/views.py:547 output/models.py:134
 #: quoting/views.py:63
@@ -1615,7 +1617,7 @@ msgstr "需要の納期"
 
 #: input/models.py:568
 msgid "Status of the demand. Only \"open\" demands are planned"
-msgstr ""
+msgstr "需要の状態。\"オープン\" 需要のみが計画されています。"
 
 #: input/models.py:587 output/models.py:57 output/models.py:131
 #: output/models.py:146 output/models.py:152 output/views/constraint.py:20
@@ -1932,19 +1934,19 @@ msgstr "需要レポート"
 
 #: output/views/demand.py:36
 msgid "net forecast"
-msgstr "net forecast"
+msgstr "全体予測"
 
 #: output/views/demand.py:37
 msgid "orders"
-msgstr "orders"
+msgstr "受注"
 
 #: output/views/demand.py:38
 msgid "total demand"
-msgstr "totale vraag"
+msgstr "総需要"
 
 #: output/views/demand.py:39
 msgid "total supply"
-msgstr "totale aanvoer"
+msgstr "総供給"
 
 #: output/views/demand.py:40 templates/output/demand.html:93
 msgid "backlog"
@@ -2023,11 +2025,11 @@ msgstr "生産計画の数量"
 
 #: output/views/resource.py:196
 msgid "Resource Gantt report"
-msgstr ""
+msgstr "リソースガントレポート"
 
 #: quoting/views.py:47
 msgid "Quotes"
-msgstr ""
+msgstr "引用"
 
 # Translation included with django
 #: templates/404.html:10
@@ -2133,7 +2135,7 @@ msgstr "能力を編集"
 
 #: templates/resourcecontext.html:7 templates/resourcetabs.html:8
 msgid "Gantt chart"
-msgstr ""
+msgstr "ガントチャート"
 
 #: templates/admin/base_site_grid.html:49
 #: templates/admin/base_site_gridpivot.html:56
@@ -2198,7 +2200,7 @@ msgstr "エクスポート"
 #: templates/admin/base_site_gridpivot.html:94
 #: templates/output/pegging.html:102 templates/output/resourcegantt.html:98
 msgid "Customize"
-msgstr ""
+msgstr "カスタマイズ"
 
 #: templates/admin/base_site_grid.html:97
 #: templates/admin/base_site_gridpivot.html:101
@@ -2233,12 +2235,12 @@ msgstr "現在日時より後の計画"
 # Translation included with django
 #: templates/admin/change_form.html:25 templates/admin/login.html:40
 msgid "Please correct the error below."
-msgstr ""
+msgstr "下記のエラーを修正してください"
 
 # Translation included with django
 #: templates/admin/change_form.html:25 templates/admin/login.html:40
 msgid "Please correct the errors below."
-msgstr ""
+msgstr "下記のエラーを修正してください"
 
 # Translation included with django
 #: templates/admin/delete_confirmation.html:20
@@ -2258,6 +2260,8 @@ msgid ""
 "Deleting the %(object_name)s '%(escaped_object)s' would require deleting the "
 "following protected related objects:"
 msgstr ""
+"%(object_name)s '%(escaped_object)s' の削除は以下の保護された関連オブジェクト"
+"の削除が必要になります。"
 
 # Translation included with django
 #: templates/admin/delete_confirmation.html:36
@@ -2324,25 +2328,25 @@ msgstr ""
 # Translation included with django
 #: templates/admin/submit_line.html:8
 msgid "Save as new"
-msgstr ""
+msgstr "新規保存"
 
 # Translation included with django
 #: templates/admin/submit_line.html:9
 msgid "Save and add another"
-msgstr ""
+msgstr "保存して新しく追加"
 
 # Translation included with django
 #: templates/admin/submit_line.html:10
 msgid "Save and continue editing"
-msgstr ""
+msgstr "保存して編集を続ける"
 
 #: templates/execute/execute.html:37
 msgid "Failed"
-msgstr ""
+msgstr "失敗"
 
 #: templates/execute/execute.html:39
 msgid "Waiting"
-msgstr ""
+msgstr "待機"
 
 #: templates/execute/execute.html:39 templates/quoting/quote.html:316
 msgid "Cancel"
@@ -2350,15 +2354,15 @@ msgstr "キャンセル"
 
 #: templates/execute/execute.html:41
 msgid "Done"
-msgstr ""
+msgstr "完了"
 
 #: templates/execute/execute.html:158
 msgid "Autorefresh"
-msgstr ""
+msgstr "自動更新"
 
 #: templates/execute/execute.html:161
 msgid "Launch new tasks"
-msgstr ""
+msgstr "新しいタスクを起動"
 
 #: templates/execute/execute.html:167
 msgid "Create a plan"
@@ -2369,7 +2373,7 @@ msgstr "計画を作成"
 #: templates/execute/execute.html:288 templates/execute/execute.html.py:303
 #: templates/execute/execute.html:322
 msgid "Launch"
-msgstr ""
+msgstr "起動"
 
 #: templates/execute/execute.html:172
 msgid ""
@@ -2441,11 +2445,11 @@ msgstr "フェンスを解放: 解放された時間ウインドウの中で計�
 
 #: templates/execute/execute.html:194 templates/execute/execute.html.py:225
 msgid "Web service"
-msgstr ""
+msgstr "Webサービス"
 
 #: templates/execute/execute.html:195
 msgid "Keep active in memory"
-msgstr ""
+msgstr "メモリ内でアクティブ"
 
 #: templates/execute/execute.html:197
 msgid "View log file"
@@ -2453,29 +2457,31 @@ msgstr "ログファイルを見る"
 
 #: templates/execute/execute.html:203
 msgid "Export a spreadsheet"
-msgstr ""
+msgstr "表をエクスポート"
 
 #: templates/execute/execute.html:207
 msgid "Download all input data in a single spreadsheet."
-msgstr ""
+msgstr "すべての入力データを単一の表にしてダウンロード"
 
 #: templates/execute/execute.html:215
 msgid "Import a spreadsheet"
-msgstr ""
+msgstr "表をインポート"
 
 #: templates/execute/execute.html:219
 msgid ""
 "Import input data from a spreadsheet.<br/>The spreadsheet must match the "
 "structure exported with the task above."
 msgstr ""
+"表からデータをインポートします。<br/>表はエクスポートされた上記のタスクと構造"
+"を一致させなければなりません。"
 
 #: templates/execute/execute.html:220
 msgid "Data file"
-msgstr ""
+msgstr "データファイル"
 
 #: templates/execute/execute.html:229
 msgid "Stop the web service."
-msgstr ""
+msgstr "Webサービスを停止"
 
 #: templates/execute/execute.html:236
 msgid "Scenario management"
@@ -2507,19 +2513,19 @@ msgstr "選択したシナリオの記述をアップデート"
 
 #: templates/execute/execute.html:268
 msgid "Back up the database"
-msgstr ""
+msgstr "データベースをバックアップする"
 
 #: templates/execute/execute.html:272
 msgid "Dump the database contents to a file."
-msgstr ""
+msgstr "データベースの内容をファイルにダンプする"
 
 #: templates/execute/execute.html:276
 msgid "Empty the database"
-msgstr ""
+msgstr "データベースを空にする"
 
 #: templates/execute/execute.html:281
 msgid "Erase all data from the database."
-msgstr ""
+msgstr "データベースからすべてのデータを消去します"
 
 #: templates/execute/execute.html:285
 msgid "Load a dataset"
@@ -2554,10 +2560,24 @@ msgid ""
 "<option value=\"6\">Saturday</option>\n"
 "</select>\n"
 msgstr ""
+"レポートする時間バケットを作成します。<br/>\n"
+"開始日時: <input class=\"date\" name=\"start\" type=\"text\" maxlength=\"5\" "
+"size=\"12\"/><br/>\n"
+"終了日時: <input class=\"date\" name=\"end\" type=\"text\" maxlength=\"5\" "
+"size=\"12\"/><br/>\n"
+"週の開始曜日: <select name=\"weekstart\">\n"
+"<option value=\"0\">日曜日</option>\n"
+"<option value=\"1\" selected=\"selected\">月曜日</option>\n"
+"<option value=\"2\">火曜日</option>\n"
+"<option value=\"3\">水曜日</option>\n"
+"<option value=\"4\">木曜日</option>\n"
+"<option value=\"5\">金曜日</option>\n"
+"<option value=\"6\">土曜日</option>\n"
+"</select>\n"
 
 #: templates/execute/execute.html:319
 msgid "Generate model"
-msgstr ""
+msgstr "汎用モデル"
 
 #: templates/execute/execute.html:323
 msgid ""
@@ -2668,7 +2688,7 @@ msgstr "供給"
 
 #: templates/output/pegging.html:95 templates/output/resourcegantt.html:91
 msgid "Zoom in"
-msgstr ""
+msgstr "ズームイン"
 
 #: templates/output/pegging.html:96 templates/output/resourcegantt.html:92
 msgid "Zoom out"
@@ -2676,7 +2696,7 @@ msgstr "ログアウト"
 
 #: templates/output/pegging.html:97 templates/output/resourcegantt.html:93
 msgid "Move in"
-msgstr ""
+msgstr "移入"
 
 #: templates/output/pegging.html:98 templates/output/resourcegantt.html:94
 msgid "Move out"
@@ -2684,16 +2704,16 @@ msgstr "ログアウト"
 
 #: templates/output/pegging.html:99 templates/output/resourcegantt.html:95
 msgid "Reset"
-msgstr ""
+msgstr "リセット"
 
 #: templates/quoting/quote.html:69 templates/quoting/quote.html.py:134
 #: templates/quoting/quote.html:249 templates/quoting/quote.html.py:320
 msgid "Deliveries"
-msgstr ""
+msgstr "出荷"
 
 #: templates/quoting/quote.html:317
 msgid "Confirm"
-msgstr ""
+msgstr "確認"
 
 # Translation included with django
 #: templates/registration/password_change_done.html:8

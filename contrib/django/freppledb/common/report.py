@@ -32,7 +32,6 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 import csv, cStringIO, operator, math
 import codecs, json
-from openpyxl import Workbook, load_workbook
 from StringIO import StringIO
 
 from django.conf import settings
@@ -1351,6 +1350,7 @@ def _localize(value, decimal_separator):
 
 def exportWorkbook(request):
   # Create a workbook
+  from openpyxl import Workbook
   wb = Workbook(optimized_write = True)
 
   # Loop over all selected entity types
@@ -1420,6 +1420,7 @@ def importWorkbook(request):
   Each entity has a tab in the spreadsheet, and the first row contains
   the fields names.
   '''
+  from openpyxl import load_workbook
   transaction.enter_transaction_management(using=request.database)
   errors = []
   # Build a list of all contenttypes

@@ -6,20 +6,13 @@ Linux distribution.
 The spec-file is written with the Fedora and Red Hat distributions in mind, 
 and follows their packaging guidelines:
   See http://fedoraproject.org/wiki/PackageMaintainers/CreatingPackageHowTo
-With a little effort it should work fine for Mandrake, SUSE... etc
-Debian and derived distributions (such as Ubuntu) use a different packaging
-mechanism, but can still install a RPM-file as an 'alien' package.
-
-The RPM installs the Django-based web application as a Python package,
-but no web server is configured automatically.
-The Django documentation describes different deployment options for the 
-web application:
-  See http://docs.djangoproject.com/en/dev/howto/deployment/#howto-deployment-index
+With a little effort it should work fine for Mandrake, SUSE, CentOS, etc...
 
 Build instructions:
- - You need to have the "rpmdevtools" package installed.
- - Useful other packages are "rpmlint" and "mock". They are not
-   required for the build and we won't discuss their use here.
+ - You need to have the "rpmdevtools" package installed:
+     yum install rpmdevtools
+ - Useful other packages are "rpmlint" and "mock". They are not required
+   for the build and we won't discuss their use here.
  - Initialize your build environment with the command:
      rpmdev-setuptree
  - Build the packages:

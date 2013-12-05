@@ -34,7 +34,7 @@ freppledirectory = freppledb.__path__[0]
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment
             'django', 'email', 'cherrypy.wsgiserver', 'csv',
-            'htmlentitydefs','HTMLParser','markupbase',
+            'htmlentitydefs', 'HTMLParser', 'markupbase',
             # Added for MySQL
             'MySQLdb', 'MySQLdb.constants', 'MySQLdb.converters',
             # Added for PostgreSQL
@@ -43,8 +43,8 @@ packages = [# Required for django standalone deployment
             'cx_Oracle',
             # Required for the python initialization
             'site',
-            # Required for graphing
-            'pygraphviz',
+            # Required for reading and writing spreadsheets
+            'openpyxl',
             # Added to package a more complete python library with frePPLe
             'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',
             'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer',

@@ -19,152 +19,152 @@ msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-04 12:10+0100\n"
-"PO-Revision-Date: 2013-11-28 13:45+0100\n"
+"PO-Revision-Date: 2013-12-06 14:09+0800\n"
 "Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 1.5.7\n"
 
 #: common/static/js/frepple.js:13
 msgid "There are unsaved changes on this page."
-msgstr ""
+msgstr "此页面有没有保存的变动。"
 
 #: common/static/js/frepple.js:59
 msgid "Error saving data"
-msgstr ""
+msgstr "保存数据出错。"
 
 #: common/static/js/frepple.js:80
 msgid "Save or cancel your changes first"
-msgstr ""
+msgstr "先保存或取消你的变动。"
 
 #: common/static/js/frepple.js:87
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #: common/static/js/frepple.js:94 common/static/js/frepple.js.c:437
 #: common/static/js/frepple.js:596 common/static/js/frepple.js.c:657
 #: common/static/js/frepple.js:717 common/static/js/frepple.js.c:774
 #: common/static/js/frepple.js:1060
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: common/static/js/frepple.js:309
 msgid "Select"
-msgstr ""
+msgstr "选择"
 
 #: common/static/js/frepple.js:376
 msgid "Customize"
-msgstr ""
+msgstr "定制"
 
 #: common/static/js/frepple.js:382 common/static/js/frepple.js.c:623
 msgid "OK"
-msgstr ""
+msgstr "确定"
 
 #: common/static/js/frepple.js:523
 msgid "Error saving report settings"
-msgstr ""
+msgstr "保存报表设置出错"
 
 #: common/static/js/frepple.js:566
 msgid "CSV style"
-msgstr ""
+msgstr "CSV类型"
 
 #: common/static/js/frepple.js:567
 msgid "Table"
-msgstr ""
+msgstr "表"
 
 #: common/static/js/frepple.js:568
 msgid "List"
-msgstr ""
+msgstr "列表"
 
 #: common/static/js/frepple.js:570
 msgid "Export data"
-msgstr ""
+msgstr "导出数据"
 
 #: common/static/js/frepple.js:574
 msgid "Export"
-msgstr ""
+msgstr "导出"
 
 #: common/static/js/frepple.js:677
 #, c-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr ""
+msgstr "你将会删除 %s 项目和所有相关的记录！"
 
 #: common/static/js/frepple.js:679
 msgid "Delete data"
-msgstr ""
+msgstr "删除资料"
 
 #: common/static/js/frepple.js:686 common/static/js/frepple.js.c:743
 msgid "Confirm"
-msgstr ""
+msgstr "确定"
 
 #: common/static/js/frepple.js:704
 msgid "Error deleting data"
-msgstr ""
+msgstr "删除数据出错"
 
 #: common/static/js/frepple.js:734
 #, c-format
 msgid "You are about to duplicate %s objects"
-msgstr ""
+msgstr "你将要复制%s项目。"
 
 #: common/static/js/frepple.js:736
 msgid "Copy data"
-msgstr ""
+msgstr "复制数据"
 
 #: common/static/js/frepple.js:761
 msgid "Error copying data"
-msgstr ""
+msgstr "复制数据出错"
 
 #: common/static/js/frepple.js:798 common/static/js/frepple.js.c:802
 msgid "Filtered where"
-msgstr ""
+msgstr "过滤"
 
 #: common/static/js/frepple.js:1047
 msgid "Load a CSV-formatted text file."
-msgstr ""
+msgstr "载入一个格式化CSV文件。"
 
 #: common/static/js/frepple.js:1048
 msgid "The first row should contain the field names."
-msgstr ""
+msgstr "第一行包含了字段名。"
 
 #: common/static/js/frepple.js:1049
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr ""
+msgstr "首先删除所有存在的记录和所有相关的表。"
 
 #: common/static/js/frepple.js:1050
 msgid "Data file"
-msgstr ""
+msgstr "数据文件"
 
 #: common/static/js/frepple.js:1052
 msgid "Import data"
-msgstr ""
+msgstr "导入数据"
 
 #: common/static/js/frepple.js:1056
 msgid "Import"
-msgstr ""
+msgstr "导入"
 
 #: common/static/js/frepple.js:1434
 msgid "Application tour"
-msgstr ""
+msgstr "应用程序之旅"
 
 #: common/static/js/frepple.js:1458
 msgid "Previous"
-msgstr ""
+msgstr "前一个"
 
 #: common/static/js/frepple.js:1463 common/static/js/frepple.js.c:1585
 msgid "Stop"
-msgstr ""
+msgstr "停止"
 
 #: common/static/js/frepple.js:1463 common/static/js/frepple.js.c:1576
 msgid "Play"
-msgstr ""
+msgstr "播放"
 
 #: common/static/js/frepple.js:1469
 msgid "Next"
-msgstr ""
+msgstr "下一个"
 
 #: common/static/js/frepple.js:1551
 msgid "out of"
-msgstr ""
+msgstr "缺少"

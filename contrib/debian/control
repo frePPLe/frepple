@@ -2,7 +2,7 @@ Source: frepple
 Section: science
 Priority: optional
 Maintainer: Johan De Taeye <jdetaeye@users.sourceforge.net>
-Build-Depends: debhelper (>= 7), cdbs (>= 0.4.90), autotools-dev, python-dev (<< 3), libxerces-c-dev, graphviz, libtool
+Build-Depends: debhelper (>= 7), cdbs (>= 0.4.90), autotools-dev, python-dev (<< 3), python-support, libxerces-c-dev, graphviz, libtool
 Standards-Version: 3.8.4
 Homepage: http://frepple.com
 Vcs-Browser: https://github.com/jdetaeye/frePPLe/commits/

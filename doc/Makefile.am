@@ -10,6 +10,7 @@ endif
 all-local: output
 
 if DOC
+
 output:
 	-rm -rf output
 	-@WGET@ --recursive --level 10 --adjust-extension --no-parent --convert-links \
@@ -20,13 +21,17 @@ output:
 	sed 's/%VERSION%/$(PACKAGE_VERSION)/' search.html > output/search.html
 	export PACKAGE_VERSION=$(PACKAGE_VERSION); $(PYTHON) generate.py
 	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile
-else
-output:
-	echo Skipping generation of documentation...
-endif
 
 clean-local:
 	-rm -rf output
+
+else
+
+output:
+	echo Skipping generation of documentation...
+
+endif
+
 
 man_MANS = frepple.1 frepplectl.1
 

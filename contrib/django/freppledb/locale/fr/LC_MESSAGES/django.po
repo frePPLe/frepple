@@ -22,15 +22,15 @@ msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-04 12:10+0100\n"
-"PO-Revision-Date: 2013-12-03 14:23+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
+"PO-Revision-Date: 2013-12-10 09:58+0100\n"
+"Last-Translator: Guy Ollagnon <guy.ollagnon@demand2plan.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.6.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: \n"
 
@@ -185,11 +185,11 @@ msgstr ""
 
 #: common/menu.py:26
 msgid "Application tour"
-msgstr ""
+msgstr "Présentation de l'application"
 
 #: common/menu.py:27
 msgid "Give us feedback!"
-msgstr ""
+msgstr "Envoyez-nous vos retours !"
 
 #: common/menu.py:28
 msgid "Documentation"
@@ -283,7 +283,7 @@ msgstr "Liste"
 
 #: common/models.py:180
 msgid "Detect automatically"
-msgstr "Detecter automatiquement"
+msgstr "Détecter automatiquement"
 
 #: common/models.py:181 common/views.py:46
 msgid "language"
@@ -489,17 +489,17 @@ msgstr "champ de données"
 
 #: common/report.py:1446
 msgid "Nothing to export"
-msgstr ""
+msgstr "Il n'y a rien à exporter"
 
 #: common/report.py:1484
 #, python-format
 msgid "Ignoring data in worksheet: %s"
-msgstr ""
+msgstr "Données ignorées dans la feuille : %s"
 
 #: common/report.py:1487
 #, python-format
 msgid "You don't permissions to add: %s"
-msgstr ""
+msgstr "Vous n'avez pas l'autorisation d'ajouter : %s"
 
 #: common/report.py:1629
 #, python-format
@@ -507,6 +507,8 @@ msgid ""
 "%(rows)d data rows, changed %(changed)d and added %(added)d records, "
 "%(errors)d errors"
 msgstr ""
+"%(rows)d lignes de données, modifié %(changed)d et ajouté %(added)d "
+"enregistrements, %(errors)d erreurs"
 
 # Translation included with django
 #: common/views.py:40 templates/404.html:4 templates/404.html.py:8
@@ -637,19 +639,19 @@ msgstr "Modèle :"
 
 #: execute/menu.py:16
 msgid "Execute"
-msgstr "Planifier"
+msgstr "Exécuter"
 
 #: execute/models.py:37 execute/models.py:39 execute/views.py:53
 msgid "submitted"
-msgstr ""
+msgstr "envoyé"
 
 #: execute/models.py:38 execute/views.py:54
 msgid "started"
-msgstr ""
+msgstr "commencé"
 
 #: execute/models.py:40 execute/views.py:58
 msgid "arguments"
-msgstr ""
+msgstr "arguments"
 
 #: execute/models.py:41 execute/models.py:70 execute/views.py:56
 #: input/models.py:567 input/views.py:552 templates/execute/execute.html:241
@@ -662,11 +664,11 @@ msgstr "message"
 
 #: execute/models.py:50
 msgid "tasks"
-msgstr ""
+msgstr "tâches"
 
 #: execute/models.py:51
 msgid "task"
-msgstr ""
+msgstr "tâche"
 
 #: execute/models.py:62
 msgid "Free"
@@ -694,16 +696,16 @@ msgstr "scénario"
 
 #: execute/views.py:41
 msgid "Task status"
-msgstr ""
+msgstr "Statut de la tâche"
 
 #: execute/views.py:55
 msgid "finished"
-msgstr ""
+msgstr "terminé"
 
 #: execute/views.py:230
 #, python-format
 msgid "Failure launching action: %(msg)s"
-msgstr ""
+msgstr "Echec au lancement de l'action: %(msg)s"
 
 #: execute/views.py:272
 msgid "Displaying only the last 50K from the log file"
@@ -720,27 +722,27 @@ msgstr "Paramèters de planification"
 
 #: forecast/models.py:24
 msgid "Automatic"
-msgstr ""
+msgstr "Automatique"
 
 #: forecast/models.py:25
 msgid "Constant"
-msgstr ""
+msgstr "Constant"
 
 #: forecast/models.py:26
 msgid "Trend"
-msgstr ""
+msgstr "Tendance"
 
 #: forecast/models.py:27
 msgid "Seasonal"
-msgstr ""
+msgstr "Saisonnal"
 
 #: forecast/models.py:28
 msgid "Intermittent"
-msgstr ""
+msgstr "Intermittent"
 
 #: forecast/models.py:29
 msgid "Manual"
-msgstr ""
+msgstr "Manuel"
 
 #: forecast/models.py:35 forecast/views.py:44 input/models.py:35
 #: input/models.py:85 input/models.py:103 input/models.py:118
@@ -777,11 +779,11 @@ msgstr "article"
 
 #: forecast/models.py:39
 msgid "Forecast method"
-msgstr ""
+msgstr "Methode de prévision"
 
 #: forecast/models.py:40
 msgid "Method used to generate a base forecast"
-msgstr ""
+msgstr "Methode utilisée pour générée une prévision de base"
 
 #: forecast/models.py:42 forecast/views.py:42 input/models.py:48
 #: input/models.py:57 input/views.py:591
@@ -869,50 +871,50 @@ msgstr "prévisions de demande"
 #: forecast/models.py:213 forecast/views.py:95
 #: templates/forecast/forecast.html:71
 msgid "total orders"
-msgstr ""
+msgstr "Commandes totales"
 
 #: forecast/models.py:214 forecast/views.py:97
 msgid "orders adjustment"
-msgstr ""
+msgstr "Ajustement des commandes"
 
 #: forecast/models.py:215 forecast/views.py:96
 #: templates/forecast/forecast.html:80
 msgid "open orders"
-msgstr ""
+msgstr "commandes ouvertes"
 
 #: forecast/models.py:216 forecast/views.py:103
 #: templates/forecast/forecast.html:156
 msgid "planned orders"
-msgstr ""
+msgstr "commandes planifiées"
 
 #: forecast/models.py:217 forecast/views.py:98
 #: templates/forecast/forecast.html:98
 msgid "forecast baseline"
-msgstr ""
+msgstr "prévision de base"
 
 #: forecast/models.py:218 forecast/views.py:99
 #: templates/forecast/forecast.html:110
 msgid "forecast adjustment"
-msgstr ""
+msgstr "ajustement de prévision"
 
 #: forecast/models.py:219 forecast/views.py:100
 #: templates/forecast/forecast.html:120
 msgid "forecast total"
-msgstr ""
+msgstr "prévision totale"
 
 #: forecast/models.py:220 forecast/views.py:101
 #: templates/forecast/forecast.html:132
 msgid "forecast net"
-msgstr ""
+msgstr "prévision nette"
 
 #: forecast/models.py:221 forecast/views.py:102
 #: templates/forecast/forecast.html:144
 msgid "forecast consumed"
-msgstr ""
+msgstr "prévision consommée"
 
 #: forecast/models.py:222
 msgid "planned forecast"
-msgstr ""
+msgstr "prévision planifiée"
 
 #: forecast/models.py:231
 msgid "forecast plan"
@@ -928,7 +930,7 @@ msgstr "Liste des prévisions"
 
 #: forecast/views.py:46
 msgid "method"
-msgstr ""
+msgstr "méthode"
 
 #: forecast/views.py:47 input/models.py:194 input/models.py:202
 #: input/models.py:442 input/models.py:483 input/models.py:524
@@ -944,7 +946,7 @@ msgstr "opération"
 
 #: forecast/views.py:62
 msgid "Forecasted Demand List"
-msgstr ""
+msgstr "Liste des prévisions de demande"
 
 #: forecast/views.py:83
 msgid "Forecast Report"
@@ -953,7 +955,7 @@ msgstr "Rapport de prévisions"
 #: forecast/views.py:92 output/views/buffer.py:35 output/views/demand.py:33
 #: output/views/operation.py:34 output/views/resource.py:38
 msgid "graph"
-msgstr ""
+msgstr "graphique"
 
 #: forecast/views.py:104 templates/forecast/forecast.html:168
 msgid "planned net forecast"
@@ -970,7 +972,7 @@ msgstr "Motif répété"
 
 #: input/admin.py:92 input/admin.py:194 input/admin.py:207
 msgid "Alternates"
-msgstr ""
+msgstr "Alternatives"
 
 #: input/admin.py:136
 msgid "Inventory"
@@ -1081,7 +1083,7 @@ msgstr "clients"
 
 #: input/models.py:121
 msgid "Default operation used to ship a demand for this item"
-msgstr "Operation par défaut pour expédier une demande"
+msgstr "Opération par défaut pour expédier une demande"
 
 #: input/models.py:122 input/views.py:430
 msgid "price"
@@ -1133,7 +1135,7 @@ msgid ""
 "A delay time to be respected as a soft constraint before starting the "
 "operation"
 msgstr ""
-"A délai à respecter comme contrainte légère avant de lancer les opérations"
+"Délai à respecter comme contrainte légère avant de lancer les opérations"
 
 #: input/models.py:155 input/views.py:631
 msgid "post-op time"
@@ -1142,8 +1144,7 @@ msgstr "temps de post-opération"
 #: input/models.py:156
 msgid ""
 "A delay time to be respected as a soft constraint after ending the operation"
-msgstr ""
-"A délai à respecter comme contrainte légère après la fin des opérations"
+msgstr "Délai à respecter comme contrainte légère après la fin des opérations"
 
 #: input/models.py:157 input/views.py:632
 msgid "size minimum"
@@ -1297,7 +1298,7 @@ msgstr "en production"
 
 #: input/models.py:252
 msgid "Operation to replenish the buffer"
-msgstr "Operation de réapprovisionnement du buffer"
+msgstr "Opération de réapprovisionnement du buffer"
 
 #: input/models.py:253 input/views.py:317
 msgid "carrying cost"
@@ -1496,11 +1497,11 @@ msgstr "compétence"
 
 #: input/models.py:407
 msgid "skills"
-msgstr "compétence"
+msgstr "compétences"
 
 #: input/models.py:423
 msgid "Priority of this skill in a group of alternates"
-msgstr ""
+msgstr "Priorité de cette compétences parmi les alternatives"
 
 #: input/models.py:428
 msgid "resource skill"
@@ -1598,24 +1599,24 @@ msgstr "opérations planifiées"
 
 #: input/models.py:553 templates/quoting/quote.html:314
 msgid "Inquiry"
-msgstr ""
+msgstr "Renseignement"
 
 #: input/models.py:554 templates/quoting/quote.html:306
 #: templates/quoting/quote.html.py:315
 msgid "Quote"
-msgstr ""
+msgstr "Citation"
 
 #: input/models.py:555
 msgid "Open"
-msgstr ""
+msgstr "Ouvert"
 
 #: input/models.py:556
 msgid "Closed"
-msgstr ""
+msgstr "Fermé"
 
 #: input/models.py:557 templates/execute/execute.html:43
 msgid "Canceled"
-msgstr ""
+msgstr "Annulé"
 
 #: input/models.py:566 input/views.py:547 output/models.py:134
 #: quoting/views.py:63
@@ -1628,7 +1629,7 @@ msgstr "Date d'échéance de la demande"
 
 #: input/models.py:568
 msgid "Status of the demand. Only \"open\" demands are planned"
-msgstr ""
+msgstr "Statut de la demande. Seules les demandes \"ouvertes\" sont planifiées"
 
 #: input/models.py:587 output/models.py:57 output/models.py:131
 #: output/models.py:146 output/models.py:152 output/views/constraint.py:20
@@ -2037,11 +2038,11 @@ msgstr "quantité de l'opération"
 
 #: output/views/resource.py:196
 msgid "Resource Gantt report"
-msgstr ""
+msgstr "Gantt des ressources"
 
 #: quoting/views.py:47
 msgid "Quotes"
-msgstr ""
+msgstr "Citations"
 
 # Translation included with django
 #: templates/404.html:10
@@ -2144,7 +2145,7 @@ msgstr "Modifier la disponibilité"
 
 #: templates/resourcecontext.html:7 templates/resourcetabs.html:8
 msgid "Gantt chart"
-msgstr ""
+msgstr "Gantt"
 
 #: templates/admin/base_site_grid.html:49
 #: templates/admin/base_site_gridpivot.html:56
@@ -2208,7 +2209,7 @@ msgstr "Exporter"
 #: templates/admin/base_site_gridpivot.html:94
 #: templates/output/pegging.html:102 templates/output/resourcegantt.html:98
 msgid "Customize"
-msgstr "Personaliser"
+msgstr "Personnaliser"
 
 #: templates/admin/base_site_grid.html:97
 #: templates/admin/base_site_gridpivot.html:101
@@ -2342,11 +2343,11 @@ msgstr ""
 
 #: templates/execute/execute.html:37
 msgid "Failed"
-msgstr ""
+msgstr "Manqué"
 
 #: templates/execute/execute.html:39
 msgid "Waiting"
-msgstr ""
+msgstr "En attente"
 
 #: templates/execute/execute.html:39 templates/quoting/quote.html:316
 msgid "Cancel"
@@ -2354,15 +2355,15 @@ msgstr "Annuler"
 
 #: templates/execute/execute.html:41
 msgid "Done"
-msgstr ""
+msgstr "Fait"
 
 #: templates/execute/execute.html:158
 msgid "Autorefresh"
-msgstr ""
+msgstr "Rafraîchissement automatique"
 
 #: templates/execute/execute.html:161
 msgid "Launch new tasks"
-msgstr ""
+msgstr "Lancer les nouvelles tâches"
 
 #: templates/execute/execute.html:167
 msgid "Create a plan"
@@ -2373,7 +2374,7 @@ msgstr "Créer un plan"
 #: templates/execute/execute.html:288 templates/execute/execute.html.py:303
 #: templates/execute/execute.html:322
 msgid "Launch"
-msgstr ""
+msgstr "Lancer"
 
 #: templates/execute/execute.html:172
 msgid ""
@@ -2445,11 +2446,11 @@ msgstr " Période gelée : pas de planification dans une période gelée"
 
 #: templates/execute/execute.html:194 templates/execute/execute.html.py:225
 msgid "Web service"
-msgstr ""
+msgstr "Service web"
 
 #: templates/execute/execute.html:195
 msgid "Keep active in memory"
-msgstr ""
+msgstr "Garder actif en mémoire"
 
 #: templates/execute/execute.html:197
 msgid "View log file"
@@ -2457,29 +2458,31 @@ msgstr "Voir le fichier log"
 
 #: templates/execute/execute.html:203
 msgid "Export a spreadsheet"
-msgstr ""
+msgstr "Exporter une feuille de calcul"
 
 #: templates/execute/execute.html:207
 msgid "Download all input data in a single spreadsheet."
-msgstr ""
+msgstr "Charger toutes les données d'entrées dans un seul tableau"
 
 #: templates/execute/execute.html:215
 msgid "Import a spreadsheet"
-msgstr ""
+msgstr "Importer une feuille de calcul"
 
 #: templates/execute/execute.html:219
 msgid ""
 "Import input data from a spreadsheet.<br/>The spreadsheet must match the "
 "structure exported with the task above."
 msgstr ""
+"Importer les données d'entrée depuis une feuille de calcul.<br/>La feuille "
+"de calcul doit respecter la structure exportée lors de la tâche ci-dessus."
 
 #: templates/execute/execute.html:220
 msgid "Data file"
-msgstr ""
+msgstr "Fichier de données"
 
 #: templates/execute/execute.html:229
 msgid "Stop the web service."
-msgstr ""
+msgstr "Arrêter le service web."
 
 #: templates/execute/execute.html:236
 msgid "Scenario management"
@@ -2511,19 +2514,19 @@ msgstr "Mettre à jour la description des scénarios sélectionnés"
 
 #: templates/execute/execute.html:268
 msgid "Back up the database"
-msgstr ""
+msgstr "Sauvegarder la base de données"
 
 #: templates/execute/execute.html:272
 msgid "Dump the database contents to a file."
-msgstr ""
+msgstr "Exporter la base de données dans un fichier."
 
 #: templates/execute/execute.html:276
 msgid "Empty the database"
-msgstr ""
+msgstr "Vider la base de données"
 
 #: templates/execute/execute.html:281
 msgid "Erase all data from the database."
-msgstr ""
+msgstr "Effacer toutes les données de la base de données."
 
 #: templates/execute/execute.html:285
 msgid "Load a dataset"
@@ -2558,10 +2561,24 @@ msgid ""
 "<option value=\"6\">Saturday</option>\n"
 "</select>\n"
 msgstr ""
+"Créer les périodes temporelles pour le reporting.<br/>\n"
+"Date de début: <input class=\"date\" name=\"start\" type=\"text\" maxlength="
+"\"5\" size=\"12\"/><br/>\n"
+"Date de fin: <input class=\"date\" name=\"end\" type=\"text\" maxlength="
+"\"5\" size=\"12\"/><br/>\n"
+"Semaine de début: <select name=\"weekstart\">\n"
+"<option value=\"0\">Dimanche</option>\n"
+"<option value=\"1\" selected=\"selected\">Lundi</option>\n"
+"<option value=\"2\">Mardi</option>\n"
+"<option value=\"3\">Mercredi</option>\n"
+"<option value=\"4\">Jeudi</option>\n"
+"<option value=\"5\">Vendredi</option>\n"
+"<option value=\"6\">Samedi</option>\n"
+"</select>\n"
 
 #: templates/execute/execute.html:319
 msgid "Generate model"
-msgstr ""
+msgstr "Générer le modèle"
 
 #: templates/execute/execute.html:323
 msgid ""
@@ -2571,11 +2588,11 @@ msgid ""
 "maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
 "<b>Demand:</b><br/>\n"
 "&nbsp;&nbsp;Monthly forecast per end item: <input id=\"create1\" name=\"fcst"
-"\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil"
-"()\"/><br/>\n"
+"\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange="
+"\"calcUtil()\"/><br/>\n"
 "&nbsp;&nbsp;Demands per end item: <input id=\"create2\" name=\"demands\" "
-"type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil"
-"()\"/><br/>\n"
+"type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange="
+"\"calcUtil()\"/><br/>\n"
 "&nbsp;&nbsp;Average delivery lead time: <input id=\"create3\" name="
 "\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" "
 "onchange=\"calcUtil()\"/> days<br/>\n"
@@ -2594,8 +2611,8 @@ msgid ""
 "onchange=\"calcUtil()\"/> days<br/>\n"
 "<b>Capacity:</b><br/>\n"
 "&nbsp;&nbsp;Number of resources: <input id=\"create8\" name=\"rsrc_number\" "
-"type=\"text\" maxlength=\"3\" size=\"3\" value=\"60\" onchange=\"calcUtil"
-"()\"/><br/>\n"
+"type=\"text\" maxlength=\"3\" size=\"3\" value=\"60\" onchange="
+"\"calcUtil()\"/><br/>\n"
 "&nbsp;&nbsp;Size of each resource: <input id=\"create9\" name=\"rsrc_size\" "
 "type=\"text\" maxlength=\"3\" size=\"3\" value=\"5\" onchange=\"calcUtil()\"/"
 "><br/>\n"
@@ -2611,11 +2628,11 @@ msgstr ""
 "\"fcst\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange="
 "\"calcUtil()\"/><br/>\n"
 "&nbsp;&nbsp;Demand par produit fini: <input id=\"create2\" name=\"demands\" "
-"type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil"
-"()\"/><br/>\n"
+"type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange="
+"\"calcUtil()\"/><br/>\n"
 "&nbsp;&nbsp;Délai de livraison moyen: <input id=\"create3\" name=\"deliver_lt"
-"\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil"
-"()\"/> days<br/>\n"
+"\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange="
+"\"calcUtil()\"/> jours<br/>\n"
 "<b>Matières premières:</b><br/>\n"
 "&nbsp;&nbsp;Nombre de niveaux des nomenclatures: <input id=\"create4\" name="
 "\"levels\" type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange="
@@ -2628,11 +2645,11 @@ msgstr ""
 "onchange=\"calcUtil()\"/><br/>\n"
 "&nbsp;&nbsp;Délai d'approvisionnement moyen: <input id=\"create7\" name="
 "\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" "
-"onchange=\"calcUtil()\"/> days<br/>\n"
+"onchange=\"calcUtil()\"/> jours<br/>\n"
 "<b>Capacité:</b><br/>\n"
 "&nbsp;&nbsp;Nombre de ressources: <input id=\"create8\" name=\"rsrc_number\" "
-"type=\"text\" maxlength=\"3\" size=\"3\" value=\"60\" onchange=\"calcUtil"
-"()\"/><br/>\n"
+"type=\"text\" maxlength=\"3\" size=\"3\" value=\"60\" onchange="
+"\"calcUtil()\"/><br/>\n"
 "&nbsp;&nbsp;Capacité de chaque ressource: <input id=\"create9\" name="
 "\"rsrc_size\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"5\" onchange="
 "\"calcUtil()\"/><br/>\n"
@@ -2672,32 +2689,32 @@ msgstr "approvisionnement"
 
 #: templates/output/pegging.html:95 templates/output/resourcegantt.html:91
 msgid "Zoom in"
-msgstr ""
+msgstr "Zoom avant"
 
 #: templates/output/pegging.html:96 templates/output/resourcegantt.html:92
 msgid "Zoom out"
-msgstr ""
+msgstr "Zoom arrière"
 
 #: templates/output/pegging.html:97 templates/output/resourcegantt.html:93
 msgid "Move in"
-msgstr ""
+msgstr "Période précédente"
 
 #: templates/output/pegging.html:98 templates/output/resourcegantt.html:94
 msgid "Move out"
-msgstr ""
+msgstr "Période suivante"
 
 #: templates/output/pegging.html:99 templates/output/resourcegantt.html:95
 msgid "Reset"
-msgstr ""
+msgstr "Réinitialiser"
 
 #: templates/quoting/quote.html:69 templates/quoting/quote.html.py:134
 #: templates/quoting/quote.html:249 templates/quoting/quote.html.py:320
 msgid "Deliveries"
-msgstr ""
+msgstr "Livraisons"
 
 #: templates/quoting/quote.html:317
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmer"
 
 # Translation included with django
 #: templates/registration/password_change_done.html:8

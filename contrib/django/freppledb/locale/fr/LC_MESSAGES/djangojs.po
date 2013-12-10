@@ -22,19 +22,19 @@ msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-04 12:10+0100\n"
-"PO-Revision-Date: 2013-11-28 12:24+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
+"PO-Revision-Date: 2013-12-06 16:32+0100\n"
+"Last-Translator: Guy Ollagnon <guy.ollagnon@demand2plan.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.6.1\n"
 
 #: common/static/js/frepple.js:13
 msgid "There are unsaved changes on this page."
-msgstr ""
+msgstr "Il y a des changements non enregistrés sur cette page."
 
 #: common/static/js/frepple.js:59
 msgid "Error saving data"
@@ -42,11 +42,11 @@ msgstr "Erreur en enregistrant les données"
 
 #: common/static/js/frepple.js:80
 msgid "Save or cancel your changes first"
-msgstr ""
+msgstr "Enregistrer ou annuler vos modifications"
 
 #: common/static/js/frepple.js:87
 msgid "Save"
-msgstr ""
+msgstr "Enregistrer"
 
 #: common/static/js/frepple.js:94 common/static/js/frepple.js.c:437
 #: common/static/js/frepple.js:596 common/static/js/frepple.js.c:657
@@ -151,23 +151,23 @@ msgstr "Importer"
 
 #: common/static/js/frepple.js:1434
 msgid "Application tour"
-msgstr ""
+msgstr "Présentation de l'application"
 
 #: common/static/js/frepple.js:1458
 msgid "Previous"
-msgstr ""
+msgstr "Précédent"
 
 #: common/static/js/frepple.js:1463 common/static/js/frepple.js.c:1585
 msgid "Stop"
-msgstr ""
+msgstr "Arrêter"
 
 #: common/static/js/frepple.js:1463 common/static/js/frepple.js.c:1576
 msgid "Play"
-msgstr ""
+msgstr "Play"
 
 #: common/static/js/frepple.js:1469
 msgid "Next"
-msgstr ""
+msgstr "Suivant"
 
 #: common/static/js/frepple.js:1551
 msgid "out of"

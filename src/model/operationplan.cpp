@@ -614,6 +614,12 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
       quantity = 0.0;
       // Update the flow and loadplans, and mark for problem detection
       if (upd) update();
+      // Update the parent of an alternate operationplan
+      if (owner && owner->getOperation()->getType() == *OperationAlternate::metadata)
+      {
+        owner->quantity = 0.0;
+        if (upd) owner->resizeFlowLoadPlans();
+      }
       return 0.0;
     }
     f = getOperation()->getSizeMinimum();

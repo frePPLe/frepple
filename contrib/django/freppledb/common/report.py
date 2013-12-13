@@ -62,7 +62,7 @@ from django.views.generic.base import View
 from django.db.models.loading import get_model
 
 
-from freppledb.common.models import Parameter, BucketDetail, Bucket, Comment
+from freppledb.common.models import Parameter, BucketDetail, Bucket, Comment, HierarchyModel
 
 import logging
 logger = logging.getLogger(__name__)
@@ -1391,9 +1391,16 @@ def exportWorkbook(request):
       # Write a header row
       ws.append(header)
       # Loop over all records
-      cursor.execute("SELECT %s FROM %s ORDER BY 1" %
-        (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table))
-        )
+      print (model, issubclass (model,HierarchyModel))
+      if issubclass(model, HierarchyModel):
+        model.rebuildHierarchy(database=request.database)
+        cursor.execute("SELECT %s FROM %s ORDER BY lvl, 1" %
+          (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table))
+          )
+      else:
+        cursor.execute("SELECT %s FROM %s ORDER BY 1" %
+          (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table))
+          )
       for rec in cursor.fetchall():
         ws.append(  [f and (isinstance(f, numericTypes) and f or str(f)) or None for f in rec] )
     except:

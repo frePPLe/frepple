@@ -684,10 +684,10 @@ $(function() {
       button.addClass("menuButtonActive");
 
       // Position the associated drop down menu under the button and show it.
-      var pos = button.offset();
+      var pos = button.position();
       menu.css({
         left: pos.left + "px",
-        top: (pos.top + button.outerHeight() + 1) + "px",
+        top: (pos.top + button.outerHeight() + 3) + "px",
         visibility: "visible"
         });
       activeButton = button;

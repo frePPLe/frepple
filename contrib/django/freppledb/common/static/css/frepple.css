@@ -158,10 +158,8 @@ div.breadcrumbs, div.breadcrumbs a {
 /* HEADER */
 
 #user-tools {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 1.2em 10px;
+    float: right;
+    padding: 5px 5px;
     font-size: 11px;
     text-align: right;
 }
@@ -348,14 +346,16 @@ span.context {
 
 /* Style for main navigation menu */
 
-#headerbar div.menuBar {
-  padding: 4px 2px 4px 2px;
-  margin: 5px 5px 5px 5px;
+#headerbar span.menuBar {
+  padding-right: 10px; //
+  padding-left: 10px; //4px 2px 4px 2px;
+  //margin: 5px 5px 5px 5px;
   text-align: left;
   font-size: 1em;
+  position: absolute; bottom: 0;
 }
 
-#headerbar div.menuBar a.menuButton {
+#headerbar span.menuBar a.menuButton {
   background-color: transparent;
   cursor: default;
   left: 0px;
@@ -366,15 +366,18 @@ span.context {
   top: 0px;
 }
 
+#headerbar nav {
+  display: inline;
+}
+
 #headerbar {
   position: relative;
   z-index: 3;
   overflow: visible;
-  padding-top: 3px;
-  padding-bottom: 3px;
+  margin: 10px 10px 3px 15px;
 }
 
-#headerbar div.menuBar div {
+#headerbar span.menuBar div {
   position: absolute;
   visibility: hidden;
   z-index: 10000;
@@ -427,13 +430,6 @@ table thead th {
 
 table thead th.sorted {
   background: #c0c0c0;
-}
-
-#branding {
-    padding: 0 10px;
-    font-size: 18px;
-    margin: 8px 0;
-    font-weight: normal;
 }
 
 .ui-jqgrid tr.jqgrow td.dirty-cell, input.dirty-cell {

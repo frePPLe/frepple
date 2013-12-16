@@ -1391,7 +1391,6 @@ def exportWorkbook(request):
       # Write a header row
       ws.append(header)
       # Loop over all records
-      print (model, issubclass (model,HierarchyModel))
       if issubclass(model, HierarchyModel):
         model.rebuildHierarchy(database=request.database)
         cursor.execute("SELECT %s FROM %s ORDER BY lvl, 1" %

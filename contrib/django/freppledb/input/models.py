@@ -44,7 +44,7 @@ class Calendar(AuditModel):
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE,
     null=True, blank=True, db_index=True)
   defaultvalue = models.DecimalField(_('default value'), max_digits=settings.MAX_DIGITS,
-    decimal_places=settings.DECIMAL_PLACES, default='0.00',
+    decimal_places=settings.DECIMAL_PLACES, default='0.00', null=True, blank=True,
     help_text= _('Value to be used when no entry is effective')
     )
 

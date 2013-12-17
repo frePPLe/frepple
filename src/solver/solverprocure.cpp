@@ -54,13 +54,16 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   int indexProcurements = -1;
   Date earliest_next;
   Date latest_next = Date::infiniteFuture;
-  vector<OperationPlan*> procurements(30); // Initial size of 30
+  vector<OperationPlan*> procurements;
   for (OperationPlan::iterator i(b->getOperation()); i!=OperationPlan::end(); ++i)
   {
     if (i->getLocked())
       earliest_next = i->getDates().getEnd();
     else
-      procurements[countProcurements++] = &*i;
+    {
+      procurements.push_back(&*i);
+      ++countProcurements;
+    }
   }
 
   // Find constraints on earliest and latest date for the next procurement
@@ -212,7 +215,8 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         produced += a->getOperationPlan()->getQuantity();
         order_qty -= a->getOperationPlan()->getQuantity();
         data->add(a);
-        procurements[countProcurements++] = a->getOperationPlan();
+        procurements.push_back(a->getOperationPlan());
+        ++countProcurements;
       }
       else if (procurements[indexProcurements]->getDates().getEnd() == current_date
         && procurements[indexProcurements]->getQuantity() == order_qty)

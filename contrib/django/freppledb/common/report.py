@@ -1401,7 +1401,7 @@ def exportWorkbook(request):
           (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table))
           )
       for rec in cursor.fetchall():
-        ws.append(  [f and (isinstance(f, numericTypes) and f or str(f)) or None for f in rec] )
+        ws.append(  [f and (isinstance(f, numericTypes) and f or unicode(f)) or None for f in rec] )
     except:
       pass  # Silently ignore the error and move on to the next entity.
 
@@ -1427,11 +1427,10 @@ def importWorkbook(request):
   the fields names.
   '''
   from openpyxl import load_workbook
-  transaction.enter_transaction_management(using=request.database)
   errors = []
   # Build a list of all contenttypes
   all_models = [ (ct.model_class(),ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
-  try:
+  with transaction.atomic(using=request.database):
     # Find all models in the workbook
     wb = load_workbook(filename = request.FILES['spreadsheet'], use_iterators = True)
     models = []
@@ -1478,115 +1477,115 @@ def importWorkbook(request):
       added = 0
       numerrors = 0
       for row in ws.iter_rows():
-        rownum += 1
-        if rownum == 1:
-          # Process the header row with the field names
-          header_ok = True
-          for cell in row:
-            ok = False
-            value = cell.internal_value
-            if not value:
-              headers.append(False)
-              continue
-            else:
-              value = value.lower()
-            for i in model._meta.fields:
-              if value == i.name.lower() or value == i.verbose_name.lower():
-                if i.editable == True:
-                  headers.append(i)
-                else:
-                  headers.append(False)
-                ok = True
-                break
-            if not ok:
+        with transaction.atomic(using=request.database):
+          rownum += 1
+          if rownum == 1:
+            # Process the header row with the field names
+            header_ok = True
+            for cell in row:
+              ok = False
+              value = cell.internal_value
+              if not value:
+                headers.append(False)
+                continue
+              else:
+                value = value.lower()
+              for i in model._meta.fields:
+                if value == i.name.lower() or value == i.verbose_name.lower():
+                  if i.editable == True:
+                    headers.append(i)
+                  else:
+                    headers.append(False)
+                  ok = True
+                  break
+              if not ok:
+                header_ok = False
+                errors.append(force_unicode(string_concat(
+                  model._meta.verbose_name, ': ', _('Incorrect field %(column)s') % {'column': value}
+                  )))
+                numerrors += 1
+              if value == model._meta.pk.name.lower() \
+                or value == model._meta.pk.verbose_name.lower():
+                  has_pk_field = True
+            if not has_pk_field and not isinstance(model._meta.pk, AutoField):
+              # The primary key is not an auto-generated id and it is not mapped in the input...
               header_ok = False
               errors.append(force_unicode(string_concat(
-                model._meta.verbose_name, ': ', _('Incorrect field %(column)s') % {'column': value}
+                model._meta.verbose_name, ': ', _('Missing primary key field %(key)s') % {'key': model._meta.pk.name}
                 )))
               numerrors += 1
-            if value == model._meta.pk.name.lower() \
-              or value == model._meta.pk.verbose_name.lower():
-                has_pk_field = True
-          if not has_pk_field and not isinstance(model._meta.pk, AutoField):
-            # The primary key is not an auto-generated id and it is not mapped in the input...
-            header_ok = False
-            errors.append(force_unicode(string_concat(
-              model._meta.verbose_name, ': ', _('Missing primary key field %(key)s') % {'key': model._meta.pk.name}
-              )))
-            numerrors += 1
-          if not header_ok:
-            # Can't process this worksheet
-            break
-          uploadform = modelform_factory(model,
-            fields = tuple([i.name for i in headers if isinstance(i,Field)]),
-            formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
-            )
-        else:
-          # Process a data row
-          # Step 1: Build a dictionary with all data fields
-          d = {}
-          colnum = 0
-          for cell in row:
-            # More fields in data row than headers. Move on to the next row.
-            if colnum >= len(headers): break
-            if isinstance(headers[colnum],Field):
-              data = cell.internal_value
-              if isinstance(headers[colnum],CharField):
-                if data: data = data.strip()
-              elif isinstance(headers[colnum], (IntegerField, AutoField)):
-                if isinstance(data, numericTypes): data = int(data)
-              d[headers[colnum].name] = data
-            colnum += 1
-          # Step 2: Fill the form with data, either updating an existing
-          # instance or creating a new one.
-          if has_pk_field:
-            # A primary key is part of the input fields
-            try:
-              # Try to find an existing record with the same primary key
-              it = model.objects.using(request.database).get(pk=d[model._meta.pk.name])
-              form = uploadform(d, instance=it)
-            except model.DoesNotExist:
+            if not header_ok:
+              # Can't process this worksheet
+              break
+            uploadform = modelform_factory(model,
+              fields = tuple([i.name for i in headers if isinstance(i,Field)]),
+              formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
+              )
+          else:
+            # Process a data row
+            # Step 1: Build a dictionary with all data fields
+            d = {}
+            colnum = 0
+            for cell in row:
+              # More fields in data row than headers. Move on to the next row.
+              if colnum >= len(headers): break
+              if isinstance(headers[colnum],Field):
+                data = cell.internal_value
+                if isinstance(headers[colnum],CharField):
+                  if data: data = data.strip()
+                elif isinstance(headers[colnum], (IntegerField, AutoField)):
+                  if isinstance(data, numericTypes): data = int(data)
+                d[headers[colnum].name] = data
+              colnum += 1
+            # Step 2: Fill the form with data, either updating an existing
+            # instance or creating a new one.
+            if has_pk_field:
+              # A primary key is part of the input fields
+              try:
+                with transaction.atomic(using=request.database):
+                  # Try to find an existing record with the same primary key
+                  it = model.objects.using(request.database).get(pk=d[model._meta.pk.name])
+                  form = uploadform(d, instance=it)
+              except model.DoesNotExist:
+                form = uploadform(d)
+                it = None
+            else:
+              # No primary key required for this model
               form = uploadform(d)
               it = None
-          else:
-            # No primary key required for this model
-            form = uploadform(d)
-            it = None
-          # Step 3: Validate the data and save to the database
-          if form.has_changed():
-            try:
-              obj = form.save()
-              LogEntry(
-                  user_id         = request.user.pk,
-                  content_type_id = contenttype_id,
-                  object_id       = obj.pk,
-                  object_repr     = force_unicode(obj),
-                  action_flag     = it and CHANGE or ADDITION,
-                  change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
-              ).save(using=request.database)
-              if it:
-                changed += 1
-              else:
-                added += 1
-            except Exception:
-              # Validation fails
-              for error in form.non_field_errors():
-                errors.append(force_unicode(string_concat(
-                  model._meta.verbose_name, ': ', _('Row %(rownum)s: %(message)s') % {
-                    'rownum': rownum, 'message': error
-                  })))
-                numerrors += 1
-              for field in form:
-                for error in field.errors:
+            # Step 3: Validate the data and save to the database
+            if form.has_changed():
+              try:
+                with transaction.atomic(using=request.database):
+                  obj = form.save()
+                  LogEntry(
+                      user_id         = request.user.pk,
+                      content_type_id = contenttype_id,
+                      object_id       = obj.pk,
+                      object_repr     = force_unicode(obj),
+                      action_flag     = it and CHANGE or ADDITION,
+                      change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                  ).save(using=request.database)
+                  if it:
+                    changed += 1
+                  else:
+                    added += 1
+              except Exception:
+                # Validation fails
+                for error in form.non_field_errors():
                   errors.append(force_unicode(string_concat(
-                    model._meta.verbose_name, ': ', _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
-                      'rownum': rownum, 'data': d[field.name],
-                      'field': field.name, 'message': error
+                    model._meta.verbose_name, ': ', _('Row %(rownum)s: %(message)s') % {
+                      'rownum': rownum, 'message': error
                     })))
                   numerrors += 1
-
-          # Step 4: Commit the database changes from time to time
-          if rownum % 500 == 0: transaction.commit(using=request.database)
+                for field in form:
+                  for error in field.errors:
+                    errors.append(force_unicode(string_concat(
+                      model._meta.verbose_name, ': ', _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                        'rownum': rownum, 'data': d[field.name],
+                        'field': field.name, 'message': error
+                      })))
+                    numerrors += 1
       # Report status of the import
       messages.add_message(request, numerrors and messages.ERROR or messages.INFO, string_concat(
         model._meta.verbose_name, ": ",
@@ -1594,9 +1593,6 @@ def importWorkbook(request):
           {'rows': rownum-1, 'changed': changed, 'added': added, 'errors': numerrors}
       ))
 
-  finally:
-    transaction.commit(using=request.database)
-    transaction.leave_transaction_management(using=request.database)
   if errors:
     response = HttpResponse(
        mimetype = 'text/plain',

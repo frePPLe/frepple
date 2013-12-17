@@ -164,6 +164,10 @@ div.breadcrumbs, div.breadcrumbs a {
     text-align: right;
 }
 
+#user-tools a {
+    color: #333333;
+}
+
 /* TABLES */
 
 td, th {

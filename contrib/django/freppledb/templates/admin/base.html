@@ -18,8 +18,7 @@
 
 {% if not is_popup %}
 <!-- Header -->
-<div id="headerbar" class="ui-widget-header" >
-<div id="branding">{% block branding %}{% endblock %}</div>
+<div id="headerbar" >
 {% if user.is_authenticated and user.is_staff %}<div id="user-tools">
 <a href="/admin/logout/">{% trans 'Log out' %} <strong>{% firstof user.first_name user.username %}</strong></a>
 <br/><br/>{% selectDatabase %}</div>{% endif %}

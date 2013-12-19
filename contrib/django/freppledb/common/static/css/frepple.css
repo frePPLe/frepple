@@ -350,16 +350,16 @@ span.context {
 
 /* Style for main navigation menu */
 
-#headerbar span.menuBar {
+#headerbar div.menuBar {
   padding-right: 10px; //
   padding-left: 10px; //4px 2px 4px 2px;
-  //margin: 5px 5px 5px 5px;
   text-align: left;
   font-size: 1em;
   position: absolute; bottom: 0;
+  display: inline;
 }
 
-#headerbar span.menuBar a.menuButton {
+#headerbar div.menuBar a.menuButton {
   background-color: transparent;
   cursor: default;
   left: 0px;
@@ -381,7 +381,7 @@ span.context {
   margin: 10px 10px 3px 15px;
 }
 
-#headerbar span.menuBar div {
+#headerbar div.menuBar div {
   position: absolute;
   visibility: hidden;
   z-index: 10000;

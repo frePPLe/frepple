@@ -7,7 +7,13 @@ The changes are:
 {% endcomment %}
 {% load i18n %}
 
-{% block extrastyle %}{{block.super}}<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/login.css" />{% endblock %}
+{% block extrastyle %}{{block.super}}<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/login.css" />
+<style>
+  #login-form, #content {
+    margin-top: 0px;
+  }
+</style>
+{% endblock %}
 
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">

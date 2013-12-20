@@ -135,23 +135,15 @@ class WebSiteParser(HTMLParser):
       self.inreplace = True
     elif tag == 'a' and ('id','site-title-text') in attrs:
       self.file_out.write('''<a href="http://frepple.com/" title="frePPLe" rel="home" id="site-title-text">
-					<img src="%swp-content/uploads/frepplelogo.png" alt="frePPLe" />v%s</a>''' % (self.root, os.getenv('PACKAGE_VERSION', "NA")))
+          <img src="%swp-content/uploads/frepple.svg" onerror="this.src='%swp-content/uploads/frepple.png';" height="75px" alt="frePPLe">v%s</a>''' % (self.root, self.root, os.getenv('PACKAGE_VERSION', "NA")))
       self.inreplace = True
     elif tag == 'nav' and ('id','primary-menu-container') in attrs:
       self.file_out.write('''<nav id="primary-menu-container">
-		<ul id="primary-menu"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="http://frepple.com/">Home</a></li>
-<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="%sdocumentation/index.html">Documentation</a>
-<ul class="sub-menu">
-	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/getting-started/index.html">Getting started</a></li>
-	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/modeling-guide/index.html">Modeling guide</a></li>
-	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/user-guide/index.html">User guide</a></li>
-	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/installation-guide/index.html">Installation guide</a></li>
-	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/developer-guide/index.html">Developer guide</a></li>
-	<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="%sdocumentation/faq/index.html">FAQ</a></li>
-</ul>
-</li>
-<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="%sapi/index.html">C++ API</a>
-</ul></nav>''' % (self.root, self.root, self.root, self.root, self.root, self.root, self.root, self.root))
+		<ul id="primary-menu">
+	  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="http://frepple.com/">Home</a></li>
+    <li class="menu-item menu-item-type-post_type menu-item-object-page page_item"><a href="%sdocumentation/index.html">Documentation</a></li>
+    <li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="%sapi/index.html">C++ API</a>
+    </ul></nav>''' % (self.root, self.root))
       self.inreplace = True
     if self.inreplace:
       self.depth += 1
@@ -230,7 +222,7 @@ class WebSiteParser(HTMLParser):
             data = file_in.read(8192)
             if not data: break
             parser.feed(data)
-          print("{name: '%s', title: '%s'}," % (infile[7:], parser.get_title().strip()), file=outfile) 
+          print("{name: '%s', title: '%s'}," % (infile[7:], parser.get_title().strip()), file=outfile)
           for i in parser.get_keywords():
             if not i in keys.keys():
               keys[i] = {'count': 1, 'filecount': 1, 'refs':{filecounter:1}}

@@ -5,6 +5,7 @@
 <title>$title | $projectname</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <meta name="robots" content="noindex, nofollow"/>
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700" />
 <link rel="shortcut icon" type="image/x-icon" href="../wp-content/uploads/favicon.ico" />
 <link rel='stylesheet' id='theme-reset-css'  href='../wp-content/themes/grizzly-theme/css/reset.css' type='text/css' media='all' />
 <link rel='stylesheet' id='theme-main-style-css'  href='../wp-content/themes/grizzly-theme/css/screen.css' type='text/css' media='all' />
@@ -23,7 +24,7 @@
   /* Font */
   body
   {
-    font-family: Arial,Helvetica,Garuda,sans-serif;
+    font-family: "Open Sans",Arial,Helvetica,Garuda,sans-serif;
   }
   .rtf
   {
@@ -33,10 +34,11 @@
   }
   a, .rtf a {
     color: #e54b00;
+    text-decoration: none;
   }
-  a:hover,
-  .rtf a:hover {
+  a:hover, .rtf a:hover {
     color: #b73a00;
+    text-decoration: none;
   }
       h1 { font-size: 32px; }
         h2 { font-size: 28px; }
@@ -47,7 +49,7 @@
 
   #branding { margin-top: 0px; }
   header,
-  #site-title img { background-color: #a5a5ff; }
+  #site-title img { background-color: #ffffff; }
 
   #primary-menu-container {
     font-size: 17px;
@@ -55,10 +57,10 @@
 
   #header-wrap, #primary-menu-container ul, #primary-menu-container li
   {
-    background-color: #a5a5ff;
+    background-color: #ffffff;
   }
 
-  body, footer { background-color: #a5a5ff; }
+  body, footer { background-color: #ffffff; }
 </style>
 
   <style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
@@ -72,23 +74,14 @@
   <div id="branding" role="banner">
         <div id="site-title">
         <a href="http://frepple.com/" title="frePPLe" rel="home" id="site-title-text">
-          <img src="../wp-content/uploads/frepplelogo.png" alt="frePPLe" />v$projectnumber</a>
+          <img src="../wp-content/uploads/frepple.svg" onerror="this.src='../wp-content/uploads/frepple.png';" height="75px" alt="frePPLe">v$projectnumber</a>
     </div>
     <div id="site-description">open source Production PLanning</div>
   </div>
 
   <nav id="primary-menu-container">
     <ul id="primary-menu"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="http://frepple.com/">Home</a></li>
-<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="../documentation/index.html">Documentation</a>
-<ul class="sub-menu">
-  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/getting-started/index.html">Getting started</a></li>
-  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/modeling-guide/index.html">Modeling guide</a></li>
-  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/user-guide/index.html">User guide</a></li>
-  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/installation-guide/index.html">Installation guide</a></li>
-  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/developer-guide/index.html">Developer guide</a></li>
-  <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="../documentation/faq/index.html">FAQ</a></li>
-</ul>
-</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item"><a href="../documentation/index.html">Documentation</a></li>
 <li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item current_page_item"><a href="index.html">C++ API</a>
 </ul></nav>
 </div>

@@ -1322,10 +1322,23 @@ var tour = {
   {
     var stepData = tourdata[tour.chapter]['steps'][tour.step];
     // Switch url if required
-    if (location.pathname != stepData['url'])
+    var prefix = $('#database').attr('name');
+    console.log(prefix);
+    if (prefix && prefix != "default")
     {
-      window.location.href = stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
-      return;
+      if (location.pathname != "/" + prefix + stepData['url'])
+      {
+        window.location.href = "/" + prefix + stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+        return;
+      }
+    }
+    else
+    {
+      if (location.pathname != stepData['url'])
+      {
+        window.location.href = stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+        return;
+      }
     }
     // Callback
     if ('beforestep' in stepData)

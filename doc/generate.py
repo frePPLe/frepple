@@ -135,7 +135,7 @@ class WebSiteParser(HTMLParser):
       self.inreplace = True
     elif tag == 'a' and ('id','site-title-text') in attrs:
       self.file_out.write('''<a href="http://frepple.com/" title="frePPLe" rel="home" id="site-title-text">
-          <img src="%swp-content/uploads/frepple.svg" onerror="this.src='%swp-content/uploads/frepple.png';" height="75px" alt="frePPLe">v%s</a>''' % (self.root, self.root, os.getenv('PACKAGE_VERSION', "NA")))
+          <img src="%swp-content/uploads/frepple.svg" onerror="this.src='%swp-content/uploads/frepple.png';" height="65px" alt="frePPLe">Open source Production Planning v%s</a>''' % (self.root, self.root, os.getenv('PACKAGE_VERSION', "NA")))
       self.inreplace = True
     elif tag == 'nav' and ('id','primary-menu-container') in attrs:
       self.file_out.write('''<nav id="primary-menu-container">

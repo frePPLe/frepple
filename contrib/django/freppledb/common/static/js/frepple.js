@@ -1120,21 +1120,25 @@ var gantt = {
     result.push( '</svg>' );
     $("#jqgh_grid_operationplans")
        .html(result.join(''))
+       .unbind('mousedown')
        .bind('mousedown', function(event) {
           gantt.startmousemove = event.pageX;
-          console.log("mousedown");
-          $(this).bind('mousemove', function(event) {
-            clearTimeout(gantt.resizing);
-            gantt.resizing = setTimeout( function() {
-              console.log("mousemove");
-              var delta = event.pageX - gantt.startmousemove;
-              if (Math.abs(delta < 3)) return;
-              gantt.zoom(1, 0, delta);
+          $(window).bind('mouseup', function(event) {
+            $(window).unbind('mousemove');
+            $(window).unbind('mouseup');
+            event.stopPropagation();
+            })
+          $(window).bind('mousemove', function(event) {
+            var delta = event.pageX - gantt.startmousemove;
+            if (Math.abs(delta) > 3)
+            {
+              gantt.zoom(1, delta > 0 ? -86400000 : 86400000);
               gantt.startmousemove = event.pageX;
-              }, 200);
+            }
+            event.stopPropagation();
           });
-         })
-       .bind('mouseup', function() { $(this).unbind('mousemove'); console.log("mouseup");});
+          event.stopPropagation();
+         });
   },
 
   reset: function()
@@ -1162,7 +1166,7 @@ var gantt = {
     gantt.header();
   },
 
-  zoom: function(zoom_in_or_out, move_in_or_out, move_in_or_out_pixels)
+  zoom: function(zoom_in_or_out, move_in_or_out)
   {
     // Determine the window to be shown. Min = 1 day. Max = 3 years.
     var delta = Math.min(1095,Math.max(1,Math.ceil((viewend.getTime() - viewstart.getTime()) / 86400000.0 * zoom_in_or_out)));
@@ -1171,11 +1175,6 @@ var gantt = {
     viewend.setTime(viewstart.getTime() + delta * 86400000);
     // Determine the conversion between svg units and the screen
     var scale = (horizonend.getTime() - horizonstart.getTime()) / (delta * 864000000) * $("#jqgh_grid_operationplans").width() / 1000;
-    if (typeof(move_in_or_out_pixels) != 'undefined')
-    {
-      viewstart.setTime(viewstart.getTime() + move_in_or_out_pixels / scale * 1000);
-      console.log("exra offset" + (move_in_or_out_pixels / scale));
-    }
     var offset = (horizonstart.getTime() - viewstart.getTime()) / (horizonend.getTime() - horizonstart.getTime()) * 10000;
     // Transform all svg elements
     $('.transformer').each(function() {

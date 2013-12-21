@@ -20,7 +20,7 @@
 <!-- Header -->
 <div id="headerbar" >
 {% if user.is_authenticated and user.is_staff %}<div id="user-tools">
-<a href="/admin/logout/">{% trans 'Log out' %} <strong>{% firstof user.first_name user.username %}</strong></a>
+<a href="/admin/logout/?next=/">{% trans 'Log out' %} <strong>{% firstof user.first_name user.username %}</strong></a>
 <br/><br/>{% selectDatabase %}</div>{% endif %}
 <div>{% block branding %}{% endblock %}{% block nav-global %}{% endblock %}</div>
 </div>

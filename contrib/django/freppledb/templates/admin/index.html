@@ -46,7 +46,7 @@ th {
 {% if not admin_log %}<p>{% trans 'None available' %}</p>
 {% else %}{% for entry in admin_log %}<span style="display: inline-block;" class="ui-icon ui-icon-{% if entry.is_addition %}plusthick{% endif %}{% if entry.is_change %}pencil{% endif %}{% if entry.is_deletion %}minusthick{% endif %}"></span>
 {% if entry.is_deletion %}{{entry.object_repr}}
-{% else %}<a href="{{request.prefix}}/admin/{{entry.get_admin_url}}">{{entry.object_repr}}</a>
+{% else %}<a href="{{request.prefix}}{{entry.get_admin_url}}">{{entry.object_repr}}</a>
 {% endif %}<span class="mini">{% if entry.content_type %}{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}{% else %}{% trans 'Unknown content' %}{% endif %}</span><br/>{% endfor %}
 {% endif %}</div>
 {% endblock %}

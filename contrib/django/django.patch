@@ -167,10 +167,10 @@ index 5b0ad6c..62f0796 100644
                  pass # No management module - ignore this app
  
 diff --git django/db/models/fields/related.py django/db/models/fields/related.py
-index 2813a39..6e301b3 100644
+index d50c72d..121aea9 100644
 --- django/db/models/fields/related.py
 +++ django/db/models/fields/related.py
-@@ -1186,7 +1186,9 @@ class ForeignKey(ForeignObject):
+@@ -1196,7 +1196,9 @@ class ForeignKey(ForeignObject):
          if value is None:
              return
  

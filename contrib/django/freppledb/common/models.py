@@ -131,6 +131,12 @@ class HierarchyModel(models.Model):
     transaction.leave_transaction_management(using=database)
 
 
+class MultiDBManager(models.Manager):
+  def get_query_set(self):
+    from freppledb.common.middleware import current_request
+    return super(MultiDBManager, self).get_query_set().using(getattr(current_request, 'database', DEFAULT_DB_ALIAS))
+
+
 class AuditModel(models.Model):
   '''
   This is an abstract base model.
@@ -141,6 +147,8 @@ class AuditModel(models.Model):
   # Database fields
   source = models.CharField(_('source'), db_index=True, max_length=settings.CATEGORYSIZE, null=True, blank=True)
   lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now())
+
+  objects = MultiDBManager() # The default manager.
 
   def save(self, *args, **kwargs):
     # Update the field with every change

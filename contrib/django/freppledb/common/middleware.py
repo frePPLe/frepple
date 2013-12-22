@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import re
+import re, threading
 
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
@@ -27,6 +27,10 @@ from django.conf import settings
 from freppledb.execute.models import Scenario
 
 
+# A local thread variable to make the current request visible everywhere
+current_request = threading.local()
+
+
 class LocaleMiddleware(DjangoLocaleMiddleware):
   """
   This middleware extends the Django default locale middleware with the user
@@ -35,6 +39,8 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     - user interface theme to be used
   """
   def process_request(self, request):
+    global current_request
+    current_request = request
     if isinstance(request.user, AnonymousUser):
       # Anonymous users don't have preferences
       language = 'auto'
@@ -50,6 +56,17 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
       translation.activate(language)
     request.LANGUAGE_CODE = translation.get_language()
     request.charset = settings.DEFAULT_CHARSET
+
+  def process_exception(self, request, exception):
+    global current_request
+    current_request = None
+    return None
+
+  def process_response(self, request, response):
+    if not response.streaming:
+      global current_request
+      current_request = None
+    return response
 
 
 # Initialize the URL parsing middleware

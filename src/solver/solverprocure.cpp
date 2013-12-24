@@ -257,7 +257,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   // Get rid of extra procurements that have become redundant
   indexProcurements++;
   while (indexProcurements < countProcurements)
-    data->add(new CommandDeleteOperationPlan(procurements[++indexProcurements]));
+    data->add(new CommandDeleteOperationPlan(procurements[indexProcurements++]));
 
   // Create the answer
   if (data->constrainedPlanning && (data->getSolver()->isFenceConstrained()

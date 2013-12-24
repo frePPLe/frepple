@@ -65,7 +65,7 @@ class CalendarBucket(AuditModel):
   startdate = models.DateTimeField(_('start date'), null=True, blank=True)
   enddate = models.DateTimeField(_('end date'), null=True, blank=True, default=datetime(2030,12,31))
   value = models.DecimalField(_('value'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00', blank=True)
-  priority = models.IntegerField(_('priority'), default=0, blank=True)
+  priority = models.IntegerField(_('priority'), default=0, blank=True, null=True)
   monday = models.BooleanField(_('Monday'), blank=True, default=True)
   tuesday = models.BooleanField(_('Tuesday'), blank=True, default=True)
   wednesday = models.BooleanField(_('Wednesday'), blank=True, default=True)

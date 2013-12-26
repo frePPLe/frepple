@@ -26,7 +26,7 @@ from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 
 class CalendarBucket_inline(MultiDBTabularInline):
   model = CalendarBucket
-  extra = 3
+  extra = 0
   exclude = ('source',)
 
 

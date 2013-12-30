@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = frepple.nsi README.txt frepple.bmp frepplectl.py setup.py freppleservice.py parameters.ini finish.ini licensefile.ini
+EXTRA_DIST = frepple.nsi README.txt frepple.bmp frepplectl.py setup.py freppleservice.py parameters.ini finish.ini
 
 clean-local:
 	-rm -rf dist build *.pyc

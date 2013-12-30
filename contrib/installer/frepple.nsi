@@ -113,7 +113,6 @@ FunctionEnd
 !insertmacro MUI_PAGE_LICENSE "../../COPYING"
 !insertmacro MULTIUSER_PAGE_INSTALLMODE
 !insertmacro MUI_PAGE_DIRECTORY
-Page custom LicenseFileOpen LicenseFileLeave
 !insertmacro MUI_PAGE_COMPONENTS
 Page custom DatabaseOpen DatabaseLeave
 !insertmacro MUI_PAGE_INSTFILES
@@ -150,16 +149,13 @@ CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
 Var InstalledDocumentation
-Var LicenseFile
 
-ReserveFile "licensefile.ini"
 ReserveFile "parameters.ini"
 ReserveFile "finish.ini"
 ReserveFile '${NSISDIR}\Plugins\InstallOptions.dll'
 
 Function .onInit
   ;Extract INI files
-  !insertmacro INSTALLOPTIONS_EXTRACT "licensefile.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "parameters.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "finish.ini"
 
@@ -209,9 +205,6 @@ Section "Application" SecAppl
 
   ; Copy the license file the user specified
   File "..\bin\license.xml"
-  StrCmp $LicenseFile "" +3 0
-    Rename license.xml license_community_edition.xml
-    CopyFiles $LicenseFile "$INSTDIR\bin"
 
   ; Copy the django and python redistributables created by py2exe
   File /r "..\contrib\installer\dist\*.*"
@@ -353,18 +346,6 @@ Section "Application" SecAppl
     Rename "$R3" "djangosettings.py"
     ClearErrors
 SectionEnd
-
-
-Function LicenseFileOpen
-  !insertmacro MUI_HEADER_TEXT "License file" "Locate your license file."
-  !insertmacro INSTALLOPTIONS_DISPLAY "licensefile.ini"
-FunctionEnd
-
-
-Function LicenseFileLeave
-  !insertmacro INSTALLOPTIONS_READ $0 "licensefile.ini" "Field 3" "State"
-  StrCpy $LicenseFile $0
-FunctionEnd
 
 
 Function DatabaseOpen

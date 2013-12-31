@@ -246,6 +246,13 @@ function drawGraph(jsondata)
     }
   }
 
+  // Oh dear, that's too much to visualize sensibly
+  if (links.length > 40 || nodes.length > 40)
+  {
+    $('#graph').html("<br/>&nbsp;{% trans 'Too many objects to display' %}");
+    return;
+  }
+
   width = $("#graph").width();
   for (var i in nodes)
     nodes[i].x = width / (maxlevel - minlevel + 1) * (0.5 + maxlevel - nodes[i].level);
@@ -362,7 +369,7 @@ ExpandColClick: true,
     style="cursor: pointer; fill: #ffffff; stroke: black;">
   </rect>
   <rect id="alternate" class="alternate" width="110" height="25" x="-55" y="-5" rx="2" ry="2"
-    style="cursor: pointer; fill: #ffffff; fill-opacity: 0; stroke: black;" vector-effect="non-scaling-stroke">
+    style="cursor: pointer; fill: #ffffff; fill-opacity: 0; stroke: black; vector-effect: non-scaling-stroke;">
   </rect>
   <polygon id="buffer" class="buffer" points="0,-40 35,20 -35,20"
     style="cursor: pointer; fill: #2ca02c;">

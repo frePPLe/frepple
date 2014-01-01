@@ -58,6 +58,7 @@ function reslistfmt(cellvalue, options, row)
   return result;
 }
 
+var force;
 var nodes = [];
 var links = [];
 var operations = {};
@@ -105,10 +106,9 @@ function clickedShaped(event)
   });
 
   // Display the menu at the right location
-  var mouse = d3.mouse(this);
   $(contextMenu).css({
-    left: d3.event.pageX, //mouse[0],
-    top: d3.event.pageY, //mouse[1],
+    left: d3.event.pageX,
+    top: d3.event.pageY,
     display: 'block'
     });
   d3.event.preventDefault();
@@ -139,6 +139,10 @@ function tick(e)
     }
     return 'translate(' + d.x + ',' + d.y + ')';
     });
+
+  // Gradually increase the repulsive charges between objects to -2000
+  for (var i in e.charges)
+    if (e.charges[i]) e.charges[i] -= (2000 + e.charges[i]) * 0.3;
 
   // Draw paths
   path.attr('d', function(d) {
@@ -183,7 +187,8 @@ function drawGraph(jsondata)
        parent: parentoper,
        suboperindex: parseInt(jsondata['rows'][oper]['suboperation']),
        numsuboperations: numsuboperations,
-       y: 1000
+       y: 1000 + count,
+       charge: parentoper>-1 ? 0 : -200
        }) - 1;
     operations[jsondata['rows'][oper]['operation']] = count;
 
@@ -202,7 +207,8 @@ function drawGraph(jsondata)
           weight:1,
           type: 'resource',
           numsuboperations: 0,
-          y: 1000
+          y: 950 + count,
+          charge: -200
           }) - 1;
         resources[jsondata['rows'][oper]['resources'][res][0]] = resindx;
         links.push({source: nodes[operindex], target: nodes[resindx], type: 'load'});
@@ -235,7 +241,8 @@ function drawGraph(jsondata)
           weight:1,
           type: 'buffer',
           numsuboperations: 0,
-          y: 1000
+          y: 1050,
+          charge: -200
           }) - 1;
         buffers[jsondata['rows'][oper]['buffers'][buf][0]] = bufindx;
         if (producer)
@@ -273,15 +280,10 @@ function drawGraph(jsondata)
     .nodes(nodes)
     .links(links)
     .size([width, $("#svggraph").height()])
-    .charge( function(d,i) {
-      if (d.type == 'operation' || d.type == 'routing' || d.type == 'alternate')
-        return (d.suboperindex == "0") ? (-3000*d.numsuboperations) : 0;
-      else if (d.type == 'resource') return -8000;
-      else return -5000;
-      })
     .gravity(0)   // Gravity would pull objects towards the center
+    .charge( function(d,i) { return d.charge; } )
     .linkStrength( function(d,i) {
-      return (d.type == 'load') ? 0.75 : 1;
+      return (d.type == 'load') ? 0.5 : 1;
       })
     .on('tick', tick);
 

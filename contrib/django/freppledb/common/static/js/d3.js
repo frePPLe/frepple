@@ -5714,7 +5714,8 @@ d3 = function() {
       }
       event.tick({
         type: "tick",
-        alpha: alpha
+        alpha: alpha,
+        charges: charges // frePPLe update: pass also the charges as argument to the tick() function
       });
     };
     force.nodes = function(x) {

@@ -303,7 +303,7 @@ DECLARE_EXPORT void ThreadGroup::execute()
   // Create a thread for every command list. The main thread will then
   // wait for all of them to finish.
   HANDLE* threads = new HANDLE[numthreads];
-  unsigned int * m_id = new unsigned int[numthreads];
+  unsigned int* m_id = new unsigned int[numthreads];
 
   // Create the threads
   for (; worker<numthreads; ++worker)
@@ -320,8 +320,8 @@ DECLARE_EXPORT void ThreadGroup::execute()
       if (!worker)
       {
         // No threads could be created at all.
-        delete threads;
-        delete m_id;
+        delete[] threads;
+        delete[] m_id;
         throw RuntimeException("Can't create any threads, error " + errno);
       }
       // Some threads could be created.
@@ -345,16 +345,16 @@ DECLARE_EXPORT void ThreadGroup::execute()
       error,
       256,
       NULL );
-    delete threads;
-    delete m_id;
+    delete[] threads;
+    delete[] m_id;
     throw RuntimeException(string("Can't join threads: ") + error);
   }
 
   // Cleanup
   for (--worker; worker>=0; --worker)
     CloseHandle(threads[worker]);
-  delete threads;
-  delete m_id;
+  delete[] threads;
+  delete[] m_id;
 #endif    // End of #ifdef ifHAVE_PTHREAD_H
 #endif    // End of #ifndef MT
 }

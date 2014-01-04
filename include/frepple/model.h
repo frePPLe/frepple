@@ -2438,7 +2438,7 @@ class OperationRouting : public Operation
 inline void OperationPlan::restore(const OperationPlanState& x)
 {
   getOperation()->setOperationPlanParameters(this, x.quantity, x.start, x.end, true);
-  assert(quantity == x.quantity);
+  if (quantity != x.quantity) quantity = x.quantity;
   assert(dates.getStart() == x.start || x.start!=x.end);
   assert(dates.getEnd() == x.end || x.start!=x.end);
 }
@@ -5350,32 +5350,26 @@ class CommandDeleteOperationPlan : public Command
     {
       if (!opplan) return;
       opplan->createFlowLoads();
-      if (opplan->getIdentifier())
-      {
-        opplan->insertInOperationplanList();
-        if (opplan->getDemand())
-          opplan->getDemand()->addDelivery(opplan);
-      }
+      opplan->insertInOperationplanList();
+      if (opplan->getDemand())
+        opplan->getDemand()->addDelivery(opplan);
       for (OperationPlan::iterator x(opplan); x != OperationPlan::end(); x++)
       {
         x->createFlowLoads();
-        if (x->getIdentifier()) x->insertInOperationplanList();
+        x->insertInOperationplanList();
       }
     }
     virtual void redo()
     {
       if (!opplan) return;
       opplan->deleteFlowLoads();
-      if (opplan->getIdentifier())
-      {
-        opplan->removeFromOperationplanList();
-        if (opplan->getDemand())
-          opplan->getDemand()->removeDelivery(opplan);
-      }
+      opplan->removeFromOperationplanList();
+      if (opplan->getDemand())
+        opplan->getDemand()->removeDelivery(opplan);
       for (OperationPlan::iterator x(opplan); x != OperationPlan::end(); x++)
       {
         x->deleteFlowLoads();
-        if (x->getIdentifier()) x->removeFromOperationplanList();
+        x->removeFromOperationplanList();
       }
     }
     virtual void rollback()

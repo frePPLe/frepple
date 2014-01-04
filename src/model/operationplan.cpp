@@ -847,9 +847,11 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
     if (!subopplan->isExcess()) return false;
 
   // Loop over all producing flowplans
+  bool hasFlowplans = false;
   for (OperationPlan::FlowPlanIterator i = beginFlowPlans();
       i != endFlowPlans(); ++i)
   {
+    hasFlowplans = true;
     // Skip consuming flowplans
     if (i->getQuantity() <= 0) continue;
 
@@ -883,6 +885,10 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
       if (&*j == &*i) break;
     }
   }
+
+  // Handle operationplan already being deleted by a deleteOperation command
+  if (!hasFlowplans && getOperation()->getFlows().begin() != getOperation()->getFlows().end())
+    return false;
 
   // If we remove this operationplan the onhand in all buffers remains positive.
   return true;

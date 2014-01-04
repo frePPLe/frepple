@@ -119,7 +119,7 @@ function clickedShaped(event)
 // Update force layout (called automatically each iteration)
 function tick(e)
 {
-  var k = 3*e.alpha;
+  var k = 2*e.alpha;
   // Bring operations vertically closer to the center and
   // horizontally close to the position linked to their level.
   shapes.attr('transform', function(d, i) {
@@ -140,9 +140,9 @@ function tick(e)
     return 'translate(' + d.x + ',' + d.y + ')';
     });
 
-  // Gradually increase the repulsive charges between objects to -2000
+  // Gradually increase the repulsive charges between objects to "-2000 * object size"
   for (var i in e.charges)
-    if (e.charges[i]) e.charges[i] -= (2000 + e.charges[i]) * 0.3;
+    if (e.charges[i]) e.charges[i] -= (2000 * (nodes[i].numsuboperations+1) + e.charges[i]) * 0.3;
 
   // Draw paths
   path.attr('d', function(d) {
@@ -254,12 +254,13 @@ function drawGraph(jsondata)
   }
 
   // Oh dear, that's too much to visualize sensibly
-  if (links.length > 40 || nodes.length > 40)
+  if (links.length > 200 || nodes.length > 200)
   {
     $('#graph').html("<br/>&nbsp;{% trans 'Too many objects to display' %}");
     return;
   }
 
+  // Compute the initial horizontal position
   width = $("#graph").width();
   for (var i in nodes)
     nodes[i].x = width / (maxlevel - minlevel + 1) * (0.5 + maxlevel - nodes[i].level);
@@ -275,7 +276,6 @@ function drawGraph(jsondata)
       }));
 
   $("#graph").scrollTop(800);
-
   force = d3.layout.force()
     .nodes(nodes)
     .links(links)
@@ -287,38 +287,38 @@ function drawGraph(jsondata)
       })
     .on('tick', tick);
 
-  // handles to link and node element groups
+  // Handles to link and node element groups
   path = svg.append('svg:g').selectAll('path');
   shapes = svg.append('svg:g').selectAll('g');
 
-  // path (link) group
+  // Path (link) group
   path = path.data(links);
   path.enter().append('svg:path')
     .attr('class', function(d) { return d.type; });
   path.exit().remove();
 
-  // shapes (node) group
+  // Shapes (node) group
   // NB: the function arg is crucial here! nodes are known by id, not by index!
   shapes = shapes.data(nodes, function(d) { return d.id; });
 
-  // add new nodes
+  // Add new nodes
   var g = shapes.enter().append('svg:g').on('click', clickedShaped);
   g.append("svg:use")
     .attr("xlink:href", function(d) { return "#" + d.type; })
     .attr("transform", function(d) { return d.numsuboperations ? "scale(1,"+ (2+d.numsuboperations) +")" : ''; })
     .call(force.drag);
 
-  // show node IDs
+  // Show node IDs
   g.append('svg:text')
       .attr('x', 0)
       .attr('y', 4)
       .attr('class', 'id')
       .text(function(d) { return d.name; });
 
-  // remove old nodes
+  // Remove old nodes
   shapes.exit().remove();
 
-  // set the graph in motion
+  // Set the graph in motion
   force.start();
 }
 

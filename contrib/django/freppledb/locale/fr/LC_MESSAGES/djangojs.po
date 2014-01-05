@@ -19,7 +19,7 @@
 # date : $LastChangedDate: 2010-09-17 22:28:46 +0200 (Fri, 17 Sep 2010, 2012) $.
 msgid ""
 msgstr ""
-"Project-Id-Version: 2.1.beta\n"
+"Project-Id-Version: 2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-04 12:10+0100\n"
 "PO-Revision-Date: 2013-12-06 16:32+0100\n"

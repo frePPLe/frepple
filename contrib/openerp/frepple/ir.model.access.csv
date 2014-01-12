@@ -1,5 +1,0 @@
-"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
-"access_frepple_setupmatrix","frepple.setupmatrix","model_frepple_setupmatrix","mrp.group_mrp_user",1,0,0,0
-"access_frepple_setupmatrix_manager","frepple.setupmatrix.manager","model_frepple_setupmatrix","mrp.group_mrp_manager",1,1,1,1
-"access_frepple_setuprule","frepple.setuprule","model_frepple_setuprule","mrp.group_mrp_user",1,0,0,0
-"access_frepple_setuprule_manager","frepple.setuprule.manager","model_frepple_setuprule","mrp.group_mrp_manager",1,1,1,1

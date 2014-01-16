@@ -569,7 +569,7 @@ class Demand(AuditModel,HierarchyModel):
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, blank=True, db_index=True)
-  item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True)
+  item = models.ForeignKey(Item, verbose_name=_('item'), null=True, blank=True, db_index=True)
   due = models.DateTimeField(_('due'),help_text=_('Due date of the demand'))
   status = models.CharField(_('status'), max_length=10, null=True, blank=True, choices=demandstatus, default='open',
     help_text=_('Status of the demand. Only "open" demands are planned'),

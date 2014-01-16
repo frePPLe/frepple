@@ -38,6 +38,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.admin.util import unquote
 from django.contrib.auth import get_permission_codename
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
@@ -422,12 +423,14 @@ class GridReport(View):
       if not request.user.has_perm(u"%s.%s" % (self.getAppLabel(), perm[0])):
         return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
 
+    # Unescape special characters in the arguments
+    args_unquoted = [ unquote(i) for i in args ]
+
     # Dispatch to the correct method
-    method = request.method.lower()
-    if method == 'get':
-      return self.get(request, *args, **kwargs)
-    elif method == 'post':
-      return self.post(request, *args, **kwargs)
+    if request.method == 'GET':
+      return self.get(request, *args_unquoted, **kwargs)
+    elif request.method == 'POST':
+      return self.post(request, *args_unquoted, **kwargs)
     else:
       return HttpResponseNotAllowed(['get','post'])
 

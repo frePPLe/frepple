@@ -274,6 +274,36 @@ and export results into the database<br/>
 </tr></form></table></div>
 {% endif %}
 
+{% if openbravo %}
+<h3><a href="#openbravo_import">{% blocktrans with erp="Openbravo" %}Import data from {{ erp }}{% endblocktrans %}</a></h3>
+<div><table>
+<form method="post" action="{{request.prefix}}/execute/launch/openbravo_import/">{% csrf_token %}<tr>
+<td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
+<td>{% blocktrans with delta="<input name='delta' type='text' maxlength='4' size='5' value='7' />" %}Import data changes in the last {{ delta }} days from the ERP into frePPLe.{% endblocktrans %}
+</td></tr></form></table></div>
+
+<h3><a href="#openbravo_import">{% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}</a></h3>
+<div><table>
+<form method="post" action="{{request.prefix}}/execute/launch/openbravo_export/">{% csrf_token %}<tr>
+<td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
+<td>{% trans "Export frePPLe plan to the ERP." %}</td></tr></form></table></div>
+{% endif %}
+
+{% if openerp %}
+<h3><a href="#openerp_import">{% blocktrans with erp="OpenERP" %}Import data from {{ erp }}{% endblocktrans %}</a></h3>
+<div><table>
+<form method="post" action="{{request.prefix}}/execute/launch/openerp_import/">{% csrf_token %}<tr>
+<td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
+<td>{% blocktrans with delta="<input name='delta' type='text' maxlength='4' size='5' value='7' />" %}Import data changes in the last {{ delta }} days from the ERP into frePPLe.{% endblocktrans %}
+</td></tr></form></table></div>
+
+<h3><a href="#openerp_import">{% blocktrans with erp="OpenERP" %}Export data to {{ erp }}{% endblocktrans %}</a></h3>
+<div><table>
+<form method="post" action="{{request.prefix}}/execute/launch/openerp_export/">{% csrf_token %}<tr>
+<td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
+<td>{% trans "Export frePPLe plan to the ERP." %}</td></tr></form></table></div>
+{% endif %}
+
 {% if perms.execute.run_db %}
 <h3><a href="#buckets">{% trans "Generate buckets" %}</a></h3>
 <div><table>

@@ -63,8 +63,6 @@ class Command(BaseCommand):
       raise CommandError("No database settings known for '%s'" % self.database )
     if 'delta' in options: self.delta = float(options['delta'] or '3650')
     else: self.delta = 3650
-    self.date = datetime.now()
-    self.delta = str(date.today() - timedelta(days=self.delta))
 
     # Pick up configuration parameters
     self.openbravo_user = Parameter.getValue("openbravo.user", self.database)
@@ -92,7 +90,6 @@ class Command(BaseCommand):
         task.status = '0%'
         task.started = now
       else:
-
         task = Task(name='Openbravo import', submitted=now, started=now, status='0%', user=user,
           arguments="--delta=%s" % self.delta)
       task.save(using=self.database)
@@ -106,6 +103,8 @@ class Command(BaseCommand):
       self.items = {}
       self.locations = {}
       self.resources = {}
+      self.date = datetime.now()
+      self.delta = str(date.today() - timedelta(days=self.delta))
 
       # Sequentially load all data
       self.import_customers(cursor)
@@ -667,7 +666,7 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Inserted %d new machines" % len(insert))
         print("Updated %d existing machines" % len(update))
-        print("Renamed %d existing machines" % len(update))
+        print("Renamed %d existing machines" % len(rename))
         print("Deleted %d machines" % len(delete))
         print("Imported machines in %.2f seconds" % (time() - starttime))
     except Exception as e:

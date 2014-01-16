@@ -134,8 +134,28 @@ class Command(BaseCommand):
         # G
         elif task.name == 'generate buckets':
           management.call_command('frepple_createbuckets', database=database, task=task.id)
+        # J
+        elif task.name == 'Openbravo import' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
+          args = {}
+          for i in task.arguments.split():
+            key, val = i.split('=')
+            args[key[2:]] = val
+          management.call_command('openbravo_import', database=database, task=task.id, verbosity=0, **args)
+        # K
+        elif task.name == 'Openbravo export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
+          management.call_command('openbravo_export', database=database, task=task.id, verbosity=0)
+        # L
+        elif task.name == 'OpenERP import' and 'freppledb.openerp' in settings.INSTALLED_APPS:
+          args = {}
+          for i in task.arguments.split():
+            key, val = i.split('=')
+            args[key[2:]] = val
+          management.call_command('openerp_import', database=database, task=task.id, verbosity=0, **args)
+        # M
+        elif task.name == 'OpenERP export' and 'freppledb.openerp' in settings.INSTALLED_APPS:
+          management.call_command('openerp_export', database=database, task=task.id, verbosity=0)
         else:
-          logger.error('Task %s not recognized')
+          logger.error('Task %s not recognized' % task.name)
         # Read the task again from the database and update.
         task = Task.objects.all().using(database).get(pk=task.id)
         if task.status != 'Done' or not task.finished or not task.started:
@@ -153,7 +173,7 @@ class Command(BaseCommand):
         logger.info("finished task %d at %s: failed" % (task.id, datetime.now()))
     # Remove the parameter again
     try: Parameter.objects.all().using(self.database).get(pk='Worker alive').delete()
-    except: pass  
+    except: pass
     # Exit
     logger.info("Worker finished all jobs in the queue and exits")
 

@@ -96,7 +96,9 @@ class TaskReport(GridReport):
             'leadtimeconstrained': constraint & 1,
             'fenceconstrained': constraint & 8,
             'scenarios': Scenario.objects.all(),
-            'fixtures': fixtures
+            'fixtures': fixtures,
+            'openbravo': 'freppledb.openbravo' in settings.INSTALLED_APPS,
+            'openerp': 'freppledb.openerp' in settings.INSTALLED_APPS,
             }
 
 
@@ -186,6 +188,24 @@ def LaunchTask(request, action):
     # I
     elif action == 'importworkbook':
       return importWorkbook(request)
+    # J
+    elif action == 'openbravo_import' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
+      task = Task(name='Openbravo import', submitted=now, status='Waiting', user=request.user)
+      task.arguments = "--delta=%s" % request.POST['delta']
+      task.save(using=request.database)
+    # K
+    elif action == 'openbravo_export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
+      task = Task(name='Openbravo export', submitted=now, status='Waiting', user=request.user)
+      task.save(using=request.database)
+    # L
+    elif action == 'openerp_import' and 'freppledb.openerp' in settings.INSTALLED_APPS:
+      task = Task(name='OpenERP import', submitted=now, status='Waiting', user=request.user)
+      task.arguments = "--delta=%s" % request.POST['delta']
+      task.save(using=request.database)
+    # M
+    elif action == 'openerp_export' and 'freppledb.openerp' in settings.INSTALLED_APPS:
+      task = Task(name='OpenERP export', submitted=now, status='Waiting', user=request.user)
+      task.save(using=request.database)
     else:
       # Task not recognized
       raise Http404('Invalid launching task')

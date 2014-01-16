@@ -24,6 +24,7 @@ from datetime import datetime, timedelta, date
 from time import time
 from xml.etree.cElementTree import iterparse
 import httplib, urllib
+from StringIO import StringIO  # Note cStringIO doesn't handle unicode
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, connections, DEFAULT_DB_ALIAS
@@ -179,7 +180,7 @@ class Command(BaseCommand):
       print('Request: ', url)
       print('Response status: ', statuscode, statusmessage, header)
       print('Response content: ', res)
-      conn = iter(iterparse(res, events=('start','end')))
+      conn = iter(iterparse(StringIO(res), events=('start','end')))
     else:
       conn = iter(iterparse(webservice.getfile(), events=('start','end')))
     root = conn.next()[1]
@@ -213,6 +214,7 @@ class Command(BaseCommand):
       delete = []
       query = urllib.quote("updated>'%s' and customer=true" % self.delta)
       conn, root = self.get_data("/openbravo/ws/dal/BusinessPartner?where=%s&orderBy=name&includeChildren=false" % query)
+      count = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'BusinessPartner': continue
         searchkey = elem.find("searchKey").text
@@ -237,6 +239,11 @@ class Command(BaseCommand):
           delete.append( (unique_name,) )
         # Clean the XML hierarchy
         root.clear()
+        count -= 1
+        if self.verbosity > 0 and count < 0:
+          count = 500
+          print('.', end="")
+      if self.verbosity > 0: print ('')
 
       cursor.executemany(
         "insert into customer \
@@ -302,6 +309,7 @@ class Command(BaseCommand):
       rename = []
       delete = []
       conn, root = self.get_data("/openbravo/ws/dal/Product?where=%s&orderBy=name&includeChildren=false" % query)
+      count = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'Product': continue
         searchkey = elem.find("searchKey").text
@@ -325,6 +333,11 @@ class Command(BaseCommand):
           delete.append( (unique_name,) )
         # Clean the XML hierarchy
         root.clear()
+        count -= 1
+        if self.verbosity > 0 and count < 0:
+          count = 500
+          print('.', end="")
+      if self.verbosity > 0: print ('')
 
       cursor.executemany(
         "insert into item \
@@ -389,6 +402,7 @@ class Command(BaseCommand):
       delete = []
       query = urllib.quote("updated>'%s'" % self.delta)
       conn, root = self.get_data("/openbravo/ws/dal/Warehouse?where=%s&orderBy=name&includeChildren=false" % query)
+      count = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'Warehouse': continue
         searchkey = elem.find("searchKey").text
@@ -409,6 +423,11 @@ class Command(BaseCommand):
           delete.append( (unique_name,) )
         # Clean the XML hierarchy
         root.clear()
+        count -= 1
+        if self.verbosity > 0 and count < 0:
+          count = 500
+          print('.', end="")
+      if self.verbosity > 0: print ('')
 
       cursor.executemany(
         "insert into location \
@@ -488,6 +507,7 @@ class Command(BaseCommand):
       deliveries = set()
       query = urllib.quote("updated>'%s' and salesOrder.salesTransaction=true" % self.delta)
       conn, root = self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query)
+      count = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'OrderLine': continue
         product = self.items.get(elem.find("product").get('id'), None)
@@ -505,7 +525,7 @@ class Command(BaseCommand):
         orderedQuantity = float(elem.find("orderedQuantity").text)
         deliveredQuantity = float(elem.find("deliveredQuantity").text)
         closed = deliveredQuantity >= orderedQuantity   # TODO Not the right criterion
-        operation = u'ship %s from %s' % (product, warehouse)
+        operation = u'Ship %s @ %s' % (product, warehouse)
         deliveries.update([(product,warehouse,operation,u'%s @ %s' % (product, warehouse)),])
         if unique_name in frepple_keys:
           update.append( (objectid, closed and orderedQuantity or orderedQuantity-deliveredQuantity,
@@ -518,14 +538,19 @@ class Command(BaseCommand):
           frepple_keys.add(unique_name)
         # Clean the XML hierarchy
         root.clear()
+        count -= 1
+        if self.verbosity > 0 and count < 0:
+          count = 500
+          print('.', end="")
+      if self.verbosity > 0: print ('')
 
       # Create or update delivery operations
-      cursor.execute("SELECT name FROM operation where name like 'ship %'")
+      cursor.execute("SELECT name FROM operation where name like 'Ship %'")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       cursor.executemany(
         "insert into operation \
           (name,location_id,subcategory,type,lastmodified) \
-          values (%%s,%%s,'openbravo','fixed_time',%s')" % self.date,
+          values (%%s,%%s,'openbravo','fixed_time','%s')" % self.date,
         [ (i[2],i[1]) for i in deliveries if i[2] not in frepple_keys ])
       cursor.executemany(
         "update operation \
@@ -617,6 +642,7 @@ class Command(BaseCommand):
       delete = []
       query = urllib.quote("updated>'%s'" % self.delta)
       conn, root = self.get_data("/openbravo/ws/dal/ManufacturingMachine?where=%s&orderBy=name&includeChildren=false" % query)
+      count = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'ManufacturingMachine': continue
         unique_name = elem.get('identifier')
@@ -638,6 +664,11 @@ class Command(BaseCommand):
           delete.append( (unique_name,) )
         # Clean the XML hierarchy
         root.clear()
+        count -= 1
+        if self.verbosity > 0 and count < 0:
+          count = 500
+          print('.', end="")
+      if self.verbosity > 0: print ('')
 
       cursor.executemany(
         "insert into resource \
@@ -722,6 +753,7 @@ class Command(BaseCommand):
       update = []
       query = urllib.quote("quantityOnHand>0")
       conn, root = self.get_data("/openbravo/ws/dal/MaterialMgmtStorageDetail?where=%s" % query)
+      count = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'MaterialMgmtStorageDetail': continue
         onhand = elem.find("quantityOnHand").text
@@ -744,6 +776,11 @@ class Command(BaseCommand):
           frepple_buffers[buffer_name] = 'openbravo'
         # Clean the XML hierarchy
         root.clear()
+        count -= 1
+        if self.verbosity > 0 and count < 0:
+          count = 500
+          print('.', end="")
+      if self.verbosity > 0: print ('')
 
       cursor.executemany(
         "insert into buffer \
@@ -795,117 +832,120 @@ class Command(BaseCommand):
   #        - %documentNo -> identifier
   #        - 'openbravo' -> subcategory
   def import_purchaseorders(self, cursor):
-    return
-
-    def newBuffers(insert):
-      cursor.execute("SELECT name FROM buffer")
-      frepple_buffers = set([ i[0] for i in cursor.fetchall()])
-      for i in insert:
-        if i[4] not in frepple_buffers:
-          frepple_buffers.add(i[4])
-          yield (i[4], i[5], i[6],)
-
-    def newOperations(insert):
-      cursor.execute("SELECT name FROM operation")
-      frepple_operations = set([ i[0] for i in cursor.fetchall()])
-      for i in insert:
-        if i[0] not in frepple_operations:
-          frepple_operations.add(i[0])
-          yield (i[0], i[6],)
-
-    def newFlows(insert):
-      cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
-      frepple_flows = set([ u'%sx%s' % (i[0],i[1]) for i in cursor.fetchall()])
-      for i in insert:
-        k = u'%sx%s' %(i[0], i[4])
-        if k not in frepple_flows:
-          frepple_flows.add(k)
-          yield (i[0], i[4],)
-
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:
         print("Importing purchase orders...")
-      cursor.execute("SELECT name FROM item")
-      frepple_items = set([ i[0] for i in cursor.fetchall()])
-      cursor.execute("SELECT name FROM location")
-      frepple_locations = set([ i[0] for i in cursor.fetchall()])
-      cursor.execute("SELECT id FROM operationplan")
+
+      # Find all known operationplans in frePPLe
+      cursor.execute("SELECT source FROM operationplan where source is not null and operation_id like 'Purchase %'")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      cursor.execute("SELECT name, subcategory FROM buffer")
-      frepple_buffers = {}
-      for i in cursor.fetchall():
-        frepple_buffers[i[0]] = i[1]
-      query = urllib.quote("salesTransaction=false and delivered=false")
-      conn = self.get_data("/openbravo/ws/dal/Order?where=%s" % query)
-      for i in conn.getElementsByTagName('Order'):
-        onhand = elem.find("quantityOnHand").text
-      return
-#        locator = elem.find("storageBin")[0].attributes['id'].value
-#        product = elem.find("product")[0].attributes['id'].value
-#        item = self.items.get(product,None)
-#        location = self.locations.get(locators[locator], None)
-#        buffer_name = "%s @ %s" % (item, location)
+      cursor.execute("SELECT max(id) FROM operationplan")
+      idcounter = cursor.fetchone()[0] or 1
 
-
-
+      # Get the list of all opern purchase orders
       insert = []
-      delete = []
       update = []
-      for i in self.openerp_data('purchase.order.line'):
-        item = u'%d %s' % (i['product_id'][0], i['product_id'][1])
-        j = self.openerp_data('purchase.order', [i['order_id'][0],], fields2)[0]
-        location = u'%d %s' % (j['location_id'][0], j['location_id'][1])
-        if location in frepple_locations and item in frepple_items and j['state'] in ('approved','draft'):
-          if i['id'] in frepple_keys:
-            update.append( (
-               u'procure for %s @ %s' %(item,location), i['date_planned'], i['date_planned'], i['product_qty'], i['id']
-              ) )
+      delete = []
+      deliveries = set()
+      query = urllib.quote("updated>'%s' and salesOrder.salesTransaction=false" % self.delta)
+      conn, root = self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query)
+      count = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'OrderLine': continue
+        product = self.items.get(elem.find("product").get('id'), None)
+        warehouse = self.locations.get(elem.find("warehouse").get('id'), None)
+        if not warehouse or not product:
+          # Product or location are not known in frePPLe.
+          # We assume that in that case you don't need to the purchase order either.
+          continue
+        objectid = elem.get('id')
+        scheduledDeliveryDate = datetime.strptime(elem.find("scheduledDeliveryDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
+        creationDate = datetime.strptime(elem.find("creationDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
+        orderedQuantity = float(elem.find("orderedQuantity").text)
+        deliveredQuantity = float(elem.find("deliveredQuantity").text)
+        operation = u'Purchase %s @ %s' % (product, warehouse)
+        deliveries.update([(product,warehouse,operation,u'%s @ %s' % (product, warehouse)),])
+        if objectid in frepple_keys:
+          if deliveredQuantity >= orderedQuantity:   # TODO Not the right criterion
+            delete.append( (objectid,) )
           else:
-            insert.append( (
-               u'procure for %s @ %s' %(item,location), i['date_planned'], i['product_qty'], i['id'],
-               u'%s @ %s' %(item,location), item, location
-              ) )
-        elif id in frepple_keys:
-          delete.append( (i['id'],) )
-      cursor.executemany(
-        "insert into buffer \
-          (name,item_id,location_id,source,lastmodified) \
-          values(%%s,%%s,%%s,'OpenERP','%s')" % self.date,
-        [ i for i in newBuffers(insert) ]
-        )
+            update.append( (operation, orderedQuantity-deliveredQuantity,
+              creationDate, scheduledDeliveryDate, objectid) )
+        else:
+          idcounter += 1
+          insert.append( (idcounter, operation, orderedQuantity-deliveredQuantity,
+            creationDate, scheduledDeliveryDate, objectid) )
+          frepple_keys.add(objectid)
+        # Clean the XML hierarchy
+        root.clear()
+        count -= 1
+        if self.verbosity > 0 and count < 0:
+          count = 500
+          print('.', end="")
+      if self.verbosity > 0: print ('')
+
+      # Create or update delivery operations
+      cursor.execute("SELECT name FROM operation where name like 'Purchase %'")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
       cursor.executemany(
         "insert into operation \
-          (name,location_id,source,lastmodified) \
-          values(%%s,%%s,'OpenERP','%s')" % self.date,
-        [ i for i in newOperations(insert) ]
-        )
+          (name,location_id,subcategory,type,lastmodified) \
+          values (%%s,%%s,'openbravo','fixed_time','%s')" % self.date,
+        [ (i[2],i[1]) for i in deliveries if i[2] not in frepple_keys ])
+      cursor.executemany(
+        "update operation \
+          set location_id=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
+        [ (i[1],i[2]) for i in deliveries if i[2] in frepple_keys ])
+
+      # Create or update purchasing buffers
+      cursor.execute("SELECT name FROM buffer")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      cursor.executemany(
+        "insert into buffer \
+          (name,item_id,location_id,subcategory,lastmodified) \
+          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+        [ (i[3],i[0],i[1]) for i in deliveries if i[3] not in frepple_keys ])
+      cursor.executemany(
+        "update buffer \
+          set item_id=%%s, location_id=%%s, subcategory='openbravo', lastmodified='%s' where name=%%s" % self.date,
+        [ (i[0],i[1],i[3]) for i in deliveries if i[3] in frepple_keys ])
+
+      # Create or update flow on purchasing operation
+      cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
+      frepple_keys = set([ i for i in cursor.fetchall()])
       cursor.executemany(
         "insert into flow \
-          (operation_id,thebuffer_id,type,quantity,source,lastmodified) \
-          values(%%s,%%s,'end',1,'OpenERP','%s')" % self.date,
-        [ i for i in newFlows(insert) ]
-        )
+          (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
+          values(%%s,%%s,1,'end','openbravo','%s')" % self.date,
+        [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) not in frepple_keys ])
+      cursor.executemany(
+        "update flow \
+          set quantity=1, type='end', source='openbravo', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
+        [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) in frepple_keys ])
+
+      # Create operationplans
       cursor.executemany(
         "insert into operationplan \
-          (id,operation_id,startdate,enddate,quantity,locked,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,%%s,'1','OpenERP',%s')" % self.date,
-        [ (i[3], i[0], i[1], i[1], i[2], ) for i in insert ]
+          (id,operation_id,quantity,startdate,enddate,locked,source,lastmodified) \
+          values(%%s,%%s,%%s,%%s,%%s,'1',%%s,'%s')" % self.date,
+        insert
         )
       cursor.executemany(
         "update operationplan \
-          set operation_id=%%s, enddate=%%s, startdate=%%s, quantity=%%s, locked='1', source='OpenERP', lastmodified='%s' \
-          where id=%%s" % self.date,
+          set operation_id=%%s, quantity=%%s, startdate=%%s, enddate=%%s, locked='1', lastmodified='%s' \
+          where source=%%s" % self.date,
         update)
       cursor.executemany(
-        "delete from operationplan where id=%s",
+        "delete from operationplan where source=%s",
         delete)
+
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print("Inserted %d purchase orders" % len(insert))
-        print("Updated %d purchase orders" % len(update))
-        print("Deleted %d purchase orders" % len(delete))
+        print("Inserted %d purchase order lines" % len(insert))
+        print("Updated %d purchase order lines" % len(update))
+        print("Deleted %d purchase order lines" % len(delete))
         print("Imported purchase orders in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)

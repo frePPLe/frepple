@@ -104,8 +104,17 @@ class Command(BaseCommand):
       self.items = {}
       self.locations = {}
       self.resources = {}
+      self.locators = {}
       self.date = datetime.now()
       self.delta = str(date.today() - timedelta(days=self.delta))
+
+      # Pick up the current date
+      try:
+        cursor.execute("SELECT value FROM common_parameter where name='currentdate'")
+        d = cursor.fetchone()
+        self.current = datetime.strptime(d[0], "%Y-%m-%d %H:%M:%S")
+      except:
+        self.current = datetime.now()
 
       # Sequentially load all data
       self.import_customers(cursor)
@@ -135,7 +144,7 @@ class Command(BaseCommand):
       self.import_purchaseorders(cursor)
       task.status = '70%'
       task.save(using=self.database)
-      #self.import_processplan(cursor)
+      self.import_processplan(cursor)
       transaction.commit(using=self.database)
       task.status = '80%'
       task.save(using=self.database)
@@ -391,11 +400,15 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Importing locations...")
+
+      # Get existing locations
       cursor.execute("SELECT name, subcategory, source FROM location")
       frepple_keys = set()
       for i in cursor.fetchall():
         if i[1] == 'openbravo': self.locations[i[2]] = i[0]
         frepple_keys.add(i[0])
+
+      # Get changes
       insert = []
       update = []
       rename = []
@@ -429,6 +442,7 @@ class Command(BaseCommand):
           print('.', end="")
       if self.verbosity > 0: print ('')
 
+      # Process changes
       cursor.executemany(
         "insert into location \
           (description, source, subcategory, name, lastmodified) \
@@ -452,6 +466,16 @@ class Command(BaseCommand):
         except:
           # Delete fails when there are dependent records in the database.
           cursor.execute("update location set source=null, lastmodified='%s' where name=%%s" % self.date, i)
+
+      # Get a mapping of all locators to their warehouse
+      conn, root = self.get_data("/openbravo/ws/dal/Locator")
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'Locator': continue
+        warehouse = elem.find("warehouse").get('id')
+        objectid = elem.get('id')
+        self.locators[objectid] = warehouse
+        root.clear()
+
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print("Inserted %d new locations" % len(insert))
@@ -728,16 +752,6 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Importing onhand...")
 
-      # Get a mapping of all locators to their warehouse
-      locators = {}
-      conn, root = self.get_data("/openbravo/ws/dal/Locator")
-      for event, elem in conn:
-        if event != 'end' or elem.tag != 'Locator': continue
-        warehouse = elem.find("warehouse").get('id')
-        objectid = elem.get('id')
-        locators[objectid] = warehouse
-        root.clear()
-
       # Get the list of all current frepple records
       cursor.execute("SELECT name, subcategory FROM buffer")
       frepple_buffers = {}
@@ -760,7 +774,7 @@ class Command(BaseCommand):
         locator = elem.find("storageBin").get('id')
         product = elem.find("product").get('id')
         item = self.items.get(product,None)
-        location = self.locations.get(locators[locator], None)
+        location = self.locations.get(self.locators[locator], None)
         buffer_name = "%s @ %s" % (item, location)
         if buffer_name in frepple_buffers:
           if frepple_buffers[buffer_name] == 'openbravo':
@@ -772,7 +786,7 @@ class Command(BaseCommand):
             frepple_buffers[buffer_name] = 'openbravo'
         elif item != None and location != None:
           # New buffer
-          insert.append( (buffer_name, self.items[product], self.locations[locators[locator]], onhand) )
+          insert.append( (buffer_name, self.items[product], self.locations[self.locators[locator]], onhand) )
           frepple_buffers[buffer_name] = 'openbravo'
         # Clean the XML hierarchy
         root.clear()
@@ -992,246 +1006,155 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Importing bills of material...")
 
-      query = urllib.quote("updated>'%s'" % self.delta)
-      conn = self.get_data("/openbravo/ws/dal/ManufacturingProcessPlan?where=%s&orderBy=name&includeChildren=true" % query)
-      for i in conn.getElementsByTagName('ManufacturingProcessPlan'):
-        print(i)
-      return
-
-      # Pick up existing flows in frePPLe
-      cursor.execute("SELECT thebuffer_id, operation_id FROM flow")
-      frepple_flows = set(cursor.fetchall())
-
-      # Pick up existing loads in frePPLe
-      cursor.execute("SELECT resource_id, operation_id FROM resourceload")
-      frepple_loads = set(cursor.fetchall())
-
-      # Pick up existing buffers in frePPLe
-      cursor.execute("SELECT name FROM buffer")
-      frepple_buffers = set([i[0] for i in cursor.fetchall()])
+      # Reset the current buffers
+      cursor.execute("DELETE FROM suboperation where operation_id like 'Processplan %'")
+      cursor.execute("DELETE FROM resourceload where operation_id like 'Processplan %'")
+      cursor.execute("DELETE FROM flow where operation_id like 'Processplan %'")
+      cursor.execute("UPDATE buffer SET producing_id=NULL where subcategory='openbravo'")
+      cursor.execute("DELETE FROM operation where name like 'Processplan %'")
 
       # Pick up existing operations in frePPLe
       cursor.execute("SELECT name FROM operation")
       frepple_operations = set([i[0] for i in cursor.fetchall()])
 
-      # Pick up all existing locations in frePPLe
-      cursor.execute("SELECT name FROM location")
-      frepple_locations = set([i[0] for i in cursor.fetchall()])
-
-      # Pick up all active manufacturing routings
-      openerp_mfg_routings = {}
-      ids = self.openerp_search('mrp.routing')
-      for i in self.openerp_data('mrp.routing', ids, ['location_id',]):
-        if i['location_id']:
-          openerp_mfg_routings[i['id']] = u'%s %s' % (i['location_id'][0], i['location_id'][1])
+      # Get the list of all frePPLe buffers
+      cursor.execute("SELECT name, item_id, location_id FROM buffer")
+      frepple_buffers = {}
+      for i in cursor.fetchall():
+        if i[1] in frepple_buffers:
+          frepple_buffers[i[1]].append( (i[0],i[2]) )
         else:
-          openerp_mfg_routings[i['id']] = None
+          frepple_buffers[i[1]] = [ (i[0],i[2]) ]
 
-      # Pick up all workcenters in the routing
-      routing_workcenters = {}
-      ids = self.openerp_search('mrp.routing.workcenter')
-      fields = ['routing_id','workcenter_id','sequence','cycle_nbr','hour_nbr',]
-      for i in self.openerp_data('mrp.routing.workcenter', ids, fields):
-        if i['routing_id'][0] in routing_workcenters:
-          routing_workcenters[i['routing_id'][0]].append( (u'%s %s' % (i['workcenter_id'][0], i['workcenter_id'][1]), i['cycle_nbr'],) )
-        else:
-          routing_workcenters[i['routing_id'][0]] = [ (u'%s %s' % (i['workcenter_id'][0], i['workcenter_id'][1]), i['cycle_nbr'],), ]
+      # Loop over all produced products
+      query = urllib.quote("production=true and processPlan is not null")
+      conn, root = self.get_data("/openbravo/ws/dal/Product?where=%s&orderBy=name&includeChildren=false" % query)
+      count = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'Product': continue
+        product = self.items.get(elem.get('id'), None)
+        if not product:
+          continue   # Not interested if item isn't mapped to frePPLe
 
-      # Create operations
-      operation_insert = []
-      operation_update = []
-      operation_delete = []
-      buffer_insert = []
-      buffer_update = []
-      flow_insert = []
-      flow_update = []
-      flow_delete = []
-      load_insert = []
-      load_update = []
-      default_location = None
+        # Pick up the processplan of the product
+        processplan = elem.find("processPlan").get('id')
+        root2 = self.get_data("/openbravo/ws/dal/ManufacturingProcessPlan/%s?includeChildren=true" % processplan)[1]
 
-      # Loop over all "producing" bom records
-      boms = {}
-      ids = self.openerp_search('mrp.bom', [
-        ('bom_id','=',False), #'|',('create_date','>', self.delta),('write_date','>', self.delta),
-        '|',('active', '=', 1),('active', '=', 0)])
-      fields = ['name', 'active', 'product_qty','date_start','date_stop','product_efficiency',
-        'product_id','routing_id','bom_id','type','sub_products','product_rounding',]
-      for i in self.openerp_data('mrp.bom', ids, fields):
-        # Determine the location
-        if i['routing_id']:
-          location = openerp_mfg_routings[i['routing_id'][0]]
-        else:
-          location = None
-        if not location:
-          if not default_location:
-            default_location = self.warehouses.itervalues().next()
-            if len(self.warehouses) > 1:
-              print("Warning: Only single warehouse configurations are supported. Creating only boms for '%s'" % default_location)
-          location = default_location
+        # Create routing operation for all frePPLe buffers of this product
+        # We create a routing operation in the right location
+        if not product in frepple_buffers:
+          # TODO A produced item which appears in a BOM but has no sales orders, purchase orders or onhand will not show up
+          continue
+        operations = []
+        suboperations = []
+        buffers_create = []
+        buffers_update = []
+        flows = []
+        loads = []
+        for name, loc in frepple_buffers[product]:
+          for pp_version in root2.find('ManufacturingProcessPlan').find('manufacturingVersionList').findall('ManufacturingVersion'):
+            endingDate = datetime.strptime(pp_version.find("endingDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
+            if endingDate < self.current:
+              continue # We have passed the validity date of this version
+            documentNo = pp_version.find('documentNo').text
+            routing_name = "Processplan %s - %s" % (name, documentNo)
+            if routing_name in frepple_operations:
+              continue  # We apparantly already added it
+            frepple_operations.add(routing_name)
+            operations.append( (routing_name, loc, 'routing', None) )
+            flows.append( (routing_name, name, 1, 'end') )
+            buffers_update.append( (routing_name,name) )
+            tmp = pp_version.find('manufacturingOperationList')
+            if tmp:
+              for pp_operation in tmp.findall('ManufacturingOperation'):
+                sequenceNumber = int(pp_operation.find('sequenceNumber').text)
+                costCenterUseTime = float(pp_operation.find('costCenterUseTime').text) * 3600
+                step_name = "%s - %s" % (routing_name, sequenceNumber)
+                operations.append( (step_name, loc, 'fixed_time', costCenterUseTime) )
+                suboperations.append( (routing_name, step_name, sequenceNumber) )
+                tmp = pp_operation.find('manufacturingOperationProductList')
+                if tmp:
+                  for ff_operationproduct in tmp.findall('ManufacturingOperationProduct'):
+                    opproduct = self.items.get(ff_operationproduct.find('product').get('id'), None)
+                    if not opproduct:
+                      continue # Unknown product
+                    # Find the buffer
+                    opbuffer = None
+                    if opproduct in frepple_buffers:
+                      for bname, bloc in frepple_buffers[opproduct]:
+                        if bloc == loc:
+                          opbuffer = bname
+                          break
+                    if not opbuffer:
+                      opbuffer = "%s @ %s" % (opproduct,loc)
+                      buffers_create.append( (opbuffer, opproduct, loc) )
+                    quantity = float(ff_operationproduct.find('quantity').text)
+                    productionType = ff_operationproduct.find('productionType').text
+                    if productionType == '-':
+                      flows.append( (step_name, opbuffer, -quantity, 'start') )
+                    else:
+                      flows.append( (step_name, opbuffer, quantity, 'end') )
+                tmp = pp_operation.find('manufacturingOperationMachineList')
+                if tmp:
+                  for ff_operationmachine in tmp.findall('ManufacturingOperationMachine'):
+                    machine = self.resources.get(ff_operationmachine.find('machine').get('id'), None)
+                    if not machine:
+                      continue # Unknown machine
+                    usageCoefficient = float(ff_operationmachine.find('usageCoefficient').text)
+                    loads.append( (step_name, machine, usageCoefficient) )
+        count -= 1
+        if self.verbosity > 0 and count < 0:
+          count = 500
+          print('.', end="")
+      if self.verbosity > 0: print ('')
 
-        # Determine operation name and item
-        operation = u'%d %s @ %s' % (i['id'], i['name'], location)
-        product = u'%d %s' % (i['product_id'][0], i['product_id'][1][i['product_id'][1].find(']')+2:])
-        boms[i['id']] = (operation, location)
-        buffer = u'%d %s @ %s' % (i['product_id'][0], i['product_id'][1], location)  # TODO if policy is produce, then this should be the producting operation
+      # TODO use "decrease" and "rejected" fields on steps to compute the yield
+      # TODO multiple processplans for the same item -> alternate operation
 
-        if i['active']:
-          # Creation or update operations
-          if operation in frepple_operations:
-            operation_update.append( (
-              location, i['product_rounding'] or 1, operation,
-              ) )
-          else:
-            frepple_operations.add(operation)
-            operation_insert.append( (
-              operation, location, i['product_rounding'] or 1
-              ) )
-          # Creation buffer
-          if not buffer in frepple_buffers:
-            frepple_buffers.add(buffer)
-            buffer_insert.append( (
-              buffer, product, location, operation
-              ))
-          else:
-            buffer_update.append( (
-              product, location, operation, buffer
-              ))
-          # Producing flow on a bom
-          if (buffer,operation) in frepple_flows:
-            flow_update.append( (
-              i['product_qty']*i['product_efficiency'], 'end', i['date_start'] or None, i['date_stop'] or None, operation, buffer,
-              ) )
-          else:
-            flow_insert.append( (
-              operation, buffer, i['product_qty']*i['product_efficiency'], 'end', i['date_start'] or None, i['date_stop'] or None
-              ) )
-          # Create workcentre loads
-          if i['routing_id']:
-            for j in routing_workcenters[i['routing_id'][0]]:
-              if (j[0],operation) in frepple_loads:
-                load_update.append((
-                  j[1], operation, j[0]
-                  ))
-              else:
-                frepple_loads.add( (j[0],operation) )
-                load_insert.append((
-                  operation, j[0], j[1]
-                  ))
-        else:
-          # Not active any more
-          if operation in frepple_operations:
-            operation_delete.append( (operation,) )
-          if (buffer,operation) in frepple_flows:   # TODO filter only based on operation???
-            flow_delete.append( (buffer,operation) )
-
-      # Loop over all "consuming" bom records
-      ids = self.openerp_search('mrp.bom', [
-        ('bom_id','!=',False), #'|',('create_date','>', self.delta),('write_date','>', self.delta),
-        '|',('active', '=', 1),('active', '=', 0)])
-      fields = ['name', 'active', 'product_qty','date_start','date_stop','product_efficiency',
-        'product_id','routing_id','bom_id','type','sub_products','product_rounding',]
-      for i in self.openerp_data('mrp.bom', ids, fields):
-        # Determine operation and buffer
-        (operation, location) = boms[i['bom_id'][0]]
-        product = u'%d %s' % (i['product_id'][0], i['product_id'][1][i['product_id'][1].find(']')+2:])
-        buffer = u'%d %s @ %s' % (i['product_id'][0], i['product_id'][1][i['product_id'][1].find(']')+2:], location)
-
-        if i['active']:
-          # Creation buffer
-          if not buffer in frepple_buffers:
-            frepple_buffers.add(buffer)
-            buffer_insert.append( (
-              buffer, product, location, None
-              ))
-          # Creation of flow
-          if (buffer,operation) in frepple_flows:
-            flow_update.append( (
-              -i['product_qty']*i['product_efficiency'], 'start', i['date_start'] or None, i['date_stop'] or None, operation, buffer,
-              ) )
-          else:
-            flow_insert.append( (
-              operation, buffer, -i['product_qty']*i['product_efficiency'], 'start', i['date_start'] or None, i['date_stop'] or None
-              ) )
-        else:
-          # Not active any more
-          if (buffer,operation) in frepple_flows:
-            flow_delete.append( (buffer,operation) )
-
-      # Process in the frePPLe database
+      # Execute now on the database
       cursor.executemany(
         "insert into operation \
-          (name,location_id,source,sizemultiple,lastmodified) \
-          values(%%s,%%s,'OpenERP',%%s,'%s')" % self.date,
-        operation_insert
+          (name,location_id,subcategory,type,duration,lastmodified) \
+          values(%%s,%%s,'openbravo',%%s,%%s,'%s')" % self.date,
+        operations
         )
       cursor.executemany(
-        "update operation \
-          set location_id=%%s, sizemultiple=%%s, source='OpenERP', lastmodified='%s' \
-          where name=%%s" % self.date,
-        operation_update
+        "insert into suboperation \
+          (operation_id,suboperation_id,priority,source,lastmodified) \
+          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+        suboperations
         )
       cursor.executemany(
-        "update operation \
-          set source=null, lastmodified='%s' \
-          where name=%%s" % self.date,
-        operation_delete
+        "update buffer set producing_id=%%s, lastmodified='%s' where name=%%s" % self.date,
+        buffers_update
         )
       cursor.executemany(
         "insert into buffer \
-          (name,item_id,location_id,producing_id,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,'OpenERP','%s')" % self.date,
-        buffer_insert
-        )
-      cursor.executemany(
-        "update buffer \
-          set item_id=%%s, location_id=%%s, producing_id=%%s, source='OpenERP', lastmodified='%s' \
-          where name = %%s" % self.date,
-        buffer_update
+          (name,item_id,location_id,subcategory,lastmodified) \
+          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+        buffers_create
         )
       cursor.executemany(
         "insert into flow \
-          (operation_id,thebuffer_id,quantity,type,effective_start,effective_end,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,%%s,%%s,'OpenERP','%s')" % self.date,
-        flow_insert
-        )
-      cursor.executemany(
-        "update flow \
-          set quantity=%%s, type=%%s, effective_start=%%s ,effective_end=%%s, source='OpenERP', lastmodified='%s' \
-          where operation_id=%%s and thebuffer_id=%%s" % self.date,
-        flow_update
+          (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
+          values(%%s,%%s,%%s,%%s,'openbravo','%s')" % self.date,
+        flows
         )
       cursor.executemany(
         "insert into resourceload \
           (operation_id,resource_id,quantity,source,lastmodified) \
-          values(%%s,%%s,%%s,'OpenERP','%s')" % self.date,
-        load_insert
+          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+        loads
         )
-      cursor.executemany(
-        "update resourceload \
-          set quantity=%%s, lastmodified='%s', source='OpenERP' \
-          where operation_id=%%s and resource_id=%%s" % self.date,
-        load_update
-        )
-      cursor.executemany(
-        "delete flow \
-          where operation_id=%%s and thebuffer_id=%%s",
-        flow_delete
-        )
-
-      # TODO multiple boms for the same item -> alternate operation
 
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print("Inserted %d new bills of material operations" % len(operation_insert))
-        print("Updated %d existing bills of material operations" % len(operation_update))
-        print("Deleted %d bills of material operations" % len(operation_delete))
-        print("Inserted %d new bills of material buffers" % len(buffer_insert))
-        print("Inserted %d new bills of material flows" % len(flow_insert))
-        print("Updated %d existing bills of material flows" % len(flow_update))
-        print("Inserted %d new bills of material loads" % len(load_insert))
-        print("Updated %d existing bills of material loads" % len(load_update))
-        print("Deleted %d bills of material flows" % len(flow_delete))
+        print("Inserted %d operations" % len(operations))
+        print("Inserted %d suboperations" % len(suboperations))
+        print("Updated %d buffers" % len(buffers_update))
+        print("Created %d buffers" % len(buffers_create))
+        print("Inserted %d flows" % len(flows))
+        print("Inserted %d loads" % len(loads))
         print("Imported bills of material in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)

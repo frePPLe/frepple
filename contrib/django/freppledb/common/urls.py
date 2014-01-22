@@ -18,6 +18,8 @@
 from django.conf.urls import patterns
 
 import freppledb.common.views
+import freppledb.common.widgets
+
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
@@ -28,6 +30,9 @@ urlpatterns = patterns('',
 
   # Horizon updates
   (r'^horizon/$', freppledb.common.views.horizon),
+
+  # Dashboard widgets
+  (r'^widget/(.+)/', freppledb.common.widgets.WidgetRegistry.dispatch),
 
   # Model list reports, which override standard admin screens
   (r'^admin/auth/group/$', freppledb.common.views.GroupList.as_view()),

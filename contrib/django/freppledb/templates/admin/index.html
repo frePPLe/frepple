@@ -2,15 +2,63 @@
 {% load i18n %}
 
 {% block title %}frePPLe{% endblock %}
-{% block content_title %}<h1>{% trans "Home" %}</h1>{% endblock %}
+{% block content_title %}<h1>{% trans "Planning dashboard" %}</h1>{% endblock %}
 
 {% block extrahead %}{{block.super}}
-<script type="text/javascript">
+
+  <style>
+  .column {
+    float: left;
+    padding-bottom: 100px;
+  }
+  .portlet {
+    margin: 0 1em 1em 0;
+    padding: 0.3em;
+  }
+  .portlet-header {
+    padding: 0.2em 0.3em;
+    margin-bottom: 0.5em;
+    position: relative;
+  }
+  .portlet-toggle {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    margin-top: -8px;
+  }
+  .portlet-close {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin-top: -8px;
+  }
+  .portlet-content {
+    padding: 0.4em;
+  }
+  .portlet-placeholder {
+    border: 1px dotted black;
+    margin: 0 1em 1em 0;
+    height: 50px;
+  }
+  </style>
+  <script>
   $(function() {
-    $( "#content-main" ).accordion({
-      collapsible: true, active: 0
-      });{% if request.user.joined_age < 5 and not request.GET.tour %}
-    tour.start("0,0,0");{% endif %}
+    $(".column").sortable({
+      connectWith: ".column",
+      handle: ".portlet-header",
+      cancel: ".portlet-toggle",
+      placeholder: "portlet-placeholder ui-corner-all"
+    });
+
+    $(".portlet-toggle").click(function() {
+      var icon = $(this);
+      icon.toggleClass("ui-icon-minus ui-icon-plus");
+      icon.closest(".portlet").find(".portlet-content").toggle();
+    });
+
+    $(".portlet-close").click(function() {
+      $(this).closest(".portlet").remove();
+    });
   });
 </script>
 <style type="text/css">
@@ -23,30 +71,27 @@ th {
 {% endblock %}
 
 {% block content %}
-
-<div id="content-main" style="max-width: 500px;">
-{% getMenu as menu %}
-{% for group in menu %}<h3><a>{{ group.0 }}</a></h3>
-<div><table>
-{% for item in group.1 %}<tr><th scope="row"><a {% if item.1.window %}target="_blank" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}"{% else %}href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %}>{{ item.0 }}</a></th>
-{% if item.2 %}<td><a href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}add/" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a></td>
-<td><a href="javascript:void(0);" onclick="import_show('{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}')" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a></td>
-{% else %}<td>&nbsp;</td><td>&nbsp;</td>
-{% endif %}{% if item.1.report or item.1.model %}<td><a href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}?format=csv" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a></td>
-{% else %}<td>&nbsp;</td>
-{% endif %}</tr>
-{% endfor %}</table></div>
+{% getDashboard as dashboard %}
+{% for col in dashboard %}
+<div class="column" style="width:{{col.width}}">
+{% for widget in col.widgets %}
+  <div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">
+    <div class="portlet-header ui-widget-header ui-corner-all"><span class='ui-icon ui-icon-close portlet-close'></span><span class='ui-icon ui-icon-minus portlet-toggle'></span>{{widget.title}}</div>
+    <div class="portlet-content">{% if widget.async %}<div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading"></div>{% else %}{{widget.render|safe}}{% endif %}</div>
+  </div>
 {% endfor %}
 </div>
-
-<div id="recent-actions" class="ui-widget-content ui-corner-all">
-<h2>{% trans 'My Actions' %}</h2>
-{% load log %}
-{% get_multidbadmin_log 10 as admin_log for_user user %}
-{% if not admin_log %}<p>{% trans 'None available' %}</p>
-{% else %}{% for entry in admin_log %}<span style="display: inline-block;" class="ui-icon ui-icon-{% if entry.is_addition %}plusthick{% endif %}{% if entry.is_change %}pencil{% endif %}{% if entry.is_deletion %}minusthick{% endif %}"></span>
-{% if entry.is_deletion %}{{entry.object_repr}}
-{% else %}<a href="{{request.prefix}}{{entry.get_admin_url}}">{{entry.object_repr}}</a>
-{% endif %}<span class="mini">{% if entry.content_type %}{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}{% else %}{% trans 'Unknown content' %}{% endif %}</span><br/>{% endfor %}
-{% endif %}</div>
+{% endfor %}
+{% for col in dashboard %}{% if forloop.first %}<script>{% endif %}
+{% for widget in col.widgets %}{% if widget.async %}$.ajax({
+      url: "{{request.prefix}}/widget/{{widget.name}}/",
+      type: "GET",
+      success: function (data) {
+        $("#widget_{{widget.name}}").html(data);
+        },
+      error: function (result, stat, errorThrown) {
+        $("#widget_{{widget.name}}").html("{% trans "Failed" %}");
+        }
+    });
+{% endif %}{% endfor %}{% if forloop.last %}</script>{% endif %}{% endfor %}
 {% endblock %}

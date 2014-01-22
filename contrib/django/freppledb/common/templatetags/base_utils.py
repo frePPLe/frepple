@@ -20,12 +20,10 @@ from decimal import Decimal
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.template.loader import get_template
 from django.conf import settings
-from django.contrib.admin.models import LogEntry
 from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_unicode
 from django.utils.html import escape
-from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.execute.models import Scenario
 from freppledb import VERSION
@@ -220,71 +218,6 @@ register.tag('selectDatabase', selectDatabase)
 
 
 #
-# A tag to return the most recent actions of a user
-#
-# This code is a slightly modified version of a standard Django tag.
-# The only change is to look for the logentry records in the right database.
-# See the file django\contrib\admin\templatetags\log.py
-#
-
-class MultiDBAdminLogNode(Node):
-  def __init__(self, limit, varname, user):
-    self.limit, self.varname, self.user = limit, varname, user
-
-  def render(self, context):
-    try: db = context['request'].database or DEFAULT_DB_ALIAS
-    except: db = DEFAULT_DB_ALIAS
-    if self.user is None:
-      context[self.varname] = LogEntry.objects.using(db).select_related('content_type', 'user')[:self.limit]
-    else:
-      user_id = self.user
-      if not user_id.isdigit():
-          user_id = context[self.user].id
-      context[self.varname] = LogEntry.objects.using(db).filter(user__id__exact=user_id).select_related('content_type', 'user')[:self.limit]
-    return ''
-
-
-class DoGetMultiDBAdminLog:
-  """
-  Populates a template variable with the admin log for the given criteria.
-
-  Usage::
-
-      {% get_admin_log [limit] as [varname] for_user [context_var_containing_user_obj] %}
-
-  Examples::
-
-      {% get_admin_log 10 as admin_log for_user 23 %}
-      {% get_admin_log 10 as admin_log for_user user %}
-      {% get_admin_log 10 as admin_log %}
-
-  Note that ``context_var_containing_user_obj`` can be a hard-coded integer
-  (user ID) or the name of a template context variable containing the user
-  object whose ID you want.
-  """
-  def __init__(self, tag_name):
-    self.tag_name = tag_name
-
-  def __repr__(self):
-    return "<GetMultiDBAdminLog Node>"
-
-  def __call__(self, parser, token):
-    tokens = token.contents.split()
-    if len(tokens) < 4:
-      raise TemplateSyntaxError("'%s' statements require two arguments" % self.tag_name)
-    if not tokens[1].isdigit():
-      raise TemplateSyntaxError("First argument in '%s' must be an integer" % self.tag_name)
-    if tokens[2] != 'as':
-      raise TemplateSyntaxError("Second argument in '%s' must be 'as'" % self.tag_name)
-    if len(tokens) > 4:
-      if tokens[4] != 'for_user':
-        raise TemplateSyntaxError("Fourth argument in '%s' must be 'for_user'" % self.tag_name)
-    return MultiDBAdminLogNode(limit=tokens[1], varname=tokens[3], user=(len(tokens) > 5 and tokens[5] or None))
-
-register.tag('get_multidbadmin_log', DoGetMultiDBAdminLog('get_admin_log'))
-
-
-#
 # A simple tag returning the frePPLe version
 #
 
@@ -385,3 +318,38 @@ def getMenu(parser, token):
   return MenuNode(tokens[2])
 
 register.tag('getMenu', getMenu)
+
+
+#
+# Tag to display a dashboard
+#
+class DashboardNode(Node):
+  r'''
+  A tag to return HTML code for the dashboard.
+  '''
+  def __init__(self, varname):
+      self.varname = varname
+
+  def render(self, context):
+    from freppledb.common.widgets import WidgetRegistry
+    reg = WidgetRegistry.buildList()
+    context[self.varname] = [
+      {'width':'50%', 'widgets':[ reg[i] for i in ["welcome",]]},
+      {'width':'25%', 'widgets':[ reg[i] for i in ["recent_actions",]]},
+      {'width':'25%', 'widgets':[ reg[i] for i in ["news",]]},
+      ]
+    return ''
+
+    def __repr__(self):
+      return "<getDashboard Node>"
+
+
+def getDashboard(parser, token):
+  tokens = token.contents.split()
+  if len(tokens) < 3:
+      raise TemplateSyntaxError("'%s' tag requires 3 arguments" % tokens[0])
+  if tokens[1] != 'as':
+      raise TemplateSyntaxError("First argument to '%s' tag must be 'as'" % tokens[0])
+  return DashboardNode(tokens[2])
+
+register.tag('getDashboard', getDashboard)

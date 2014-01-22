@@ -1220,7 +1220,7 @@ var tour = {
      // Display the main dialog of the tour
      $("body").append( '<div id="tour" style="padding-bottom:20px; display:none">' + tourdata[tour.chapter]['description']  + '<br/><br/><br/></div>')
      $("#tour").dialog({
-      title: gettext("Application tour"),
+      title: gettext("Guided tour"),
       autoOpen: true,
       resizable: false,
       width: 390,

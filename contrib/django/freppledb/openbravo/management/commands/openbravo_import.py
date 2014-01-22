@@ -100,6 +100,7 @@ class Command(BaseCommand):
       cursor = connections[self.database].cursor()
 
       # Dictionaries for the mapping between openbravo ids and frepple names
+      self.organizations = {}
       self.customers = {}
       self.items = {}
       self.locations = {}
@@ -117,6 +118,7 @@ class Command(BaseCommand):
         self.current = datetime.now()
 
       # Sequentially load all data
+      self.import_organizations(cursor)
       self.import_customers(cursor)
       task.status = '10%'
       task.save(using=self.database)
@@ -173,7 +175,7 @@ class Command(BaseCommand):
     webservice = httplib.HTTP(self.openbravo_host)
     webservice.putrequest("GET", url)
     webservice.putheader("Host", self.openbravo_host)
-    webservice.putheader("User-Agent", "frePPLe-openbravo connector")
+    webservice.putheader("User-Agent", "frePPLe-Openbravo connector")
     webservice.putheader("Content-type", "text/html; charset=\"UTF-8\"")
     webservice.putheader("Content-length", "0")
     webservice.putheader("Authorization", "Basic %s" % base64.encodestring('%s:%s' % (self.openbravo_user, self.openbravo_password)).replace('\n', ''))
@@ -194,6 +196,38 @@ class Command(BaseCommand):
       conn = iter(iterparse(webservice.getfile(), events=('start','end')))
     root = conn.next()[1]
     return conn, root
+
+
+  # Load a mapping of Openbravo organizations to their search key.
+  # The result is used as a lookup in other interface where the
+  # organization needs to be translated into a human readable form.
+  #
+  # If an organization is not present in the mapping dictionary, its
+  # sales orders and purchase orders aren't mapped into frePPLe. This
+  # can be used as a simple filter for some data.
+  def import_organizations(self, cursor):
+    transaction.enter_transaction_management(using=self.database)
+    try:
+      starttime = time()
+      if self.verbosity > 0:
+        print("Importing organizations...")
+      conn = self.get_data("/openbravo/ws/dal/Organization?includeChildren=false")[0]
+      count = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'Organization': continue
+        searchkey = elem.find("searchKey").text
+        objectid = elem.get('id')
+        self.organizations[objectid] = searchkey
+        count += 1
+
+      if self.verbosity > 0:
+        print("Loaded %d organizations in %.2f seconds" % (count, time() - starttime))
+    except Exception as e:
+      transaction.rollback(using=self.database)
+      print("Error importing organizations: %s" % e)
+    finally:
+      transaction.commit(using=self.database)
+      transaction.leave_transaction_management(using=self.database)
 
 
   # Importing customers
@@ -492,26 +526,28 @@ class Command(BaseCommand):
 
 
   # Importing sales orders
-  #   - Extracting recently changed order and orderline objects
+  #   - Extracting recently changed orderline objects
   #   - meeting the criterion:
-  #        - %sol_state = 'confirmed'
+  #        - %salesOrder.salesTransaction = true
   #   - mapped fields openbravo -> frePPLe delivery operation
-  #        - 'delivery %sol_product_id %sol_product_name from %loc' -> name
+  #        - 'Ship %product_searchkey %product_name @ %warehouse' -> name
   #   - mapped fields openbravo -> frePPLe buffer
-  #        - '%sol_product_id %sol_product_name @ %loc' -> name
+  #        - '%product_searchkey %product_name @ %warehouse' -> name
   #   - mapped fields openbravo -> frePPLe delivery flow
-  #        - 'delivery %sol_product_id %sol_product_name from %loc' -> operation
-  #        - '%sol_product_id %sol_product_name @ %loc' -> buffer
+  #        - 'Ship %product_searchkey %product_name @ %warehouse' -> operation
+  #        - '%product_searchkey %product_name @ %warehouse' -> buffer
   #        - quantity -> -1
   #        -  'start' -> type
   #   - mapped fields openbravo -> frePPLe demand
-  #        - %sol_id %so_name %sol_sequence -> name
-  #        - %sol_product_uom_qty -> quantity
+  #        - %organization_searchkey %salesorder.documentno %lineNo -> name
+  #        - if (%orderedQuantity > %deliveredQuantity, %orderedQuantity - %deliveredQuantity, %orderedQuantity) -> quantity
+  #        - if (%orderedQuantity > %deliveredQuantity, 'open', 'closed') -> status
   #        - %sol_product_id -> item
-  #        - %so_partner_id -> customer
-  #        - %so_requested_date or %so_date_order -> due
+  #        - %businessParnter.searchKey %businessParnter.name -> customer
+  #        - %scheduledDeliveryDate -> due
   #        - 'openbravo' -> source
   #        - 1 -> priority
+  # We assume that a lineNo is unique within an order. However, this is not enforced by Openbravo!
   def import_salesorders(self, cursor):
 
     transaction.enter_transaction_management(using=self.database)
@@ -529,22 +565,23 @@ class Command(BaseCommand):
       insert = []
       update = []
       deliveries = set()
-      query = urllib.quote("updated>'%s' and salesOrder.salesTransaction=true" % self.delta)
+      query = urllib.quote("(updated>'%s' or salesOrder.updated>'%s') and salesOrder.salesTransaction=true" % (self.delta,self.delta))
       conn, root = self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query)
       count = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'OrderLine': continue
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
         product = self.items.get(elem.find("product").get('id'), None)
         warehouse = self.locations.get(elem.find("warehouse").get('id'), None)
         businessPartner = self.customers.get(elem.find("businessPartner").get('id'), None)
-        if not warehouse or not product or not businessPartner:
-          # Product, customer or location are not known in frePPLe.
+        if not warehouse or not product or not businessPartner or not organization:
+          # Product, customer, location or organization are not known in frePPLe.
           # We assume that in that case you don't need to the demand either.
           continue
         objectid = elem.get('id')
         documentno = elem.find("salesOrder").get('identifier').split()[0]
         lineNo = elem.find("lineNo").text
-        unique_name = "%s %s" % (documentno, lineNo)
+        unique_name = "%s %s %s" % (organization, documentno, lineNo)
         scheduledDeliveryDate = datetime.strptime(elem.find("scheduledDeliveryDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
         orderedQuantity = float(elem.find("orderedQuantity").text)
         deliveredQuantity = float(elem.find("deliveredQuantity").text)
@@ -870,8 +907,9 @@ class Command(BaseCommand):
         if event != 'end' or elem.tag != 'OrderLine': continue
         product = self.items.get(elem.find("product").get('id'), None)
         warehouse = self.locations.get(elem.find("warehouse").get('id'), None)
-        if not warehouse or not product:
-          # Product or location are not known in frePPLe.
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
+        if not warehouse or not product or not organization:
+          # Product, location or organization are not known in frePPLe.
           # We assume that in that case you don't need to the purchase order either.
           continue
         objectid = elem.get('id')

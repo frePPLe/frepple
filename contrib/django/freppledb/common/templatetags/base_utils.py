@@ -333,11 +333,7 @@ class DashboardNode(Node):
   def render(self, context):
     from freppledb.common.widgets import WidgetRegistry
     reg = WidgetRegistry.buildList()
-    context[self.varname] = [
-      {'width':'50%', 'widgets':[ reg[i] for i in ["welcome",]]},
-      {'width':'25%', 'widgets':[ reg[i] for i in ["recent_actions",]]},
-      {'width':'25%', 'widgets':[ reg[i] for i in ["news",]]},
-      ]
+    context[self.varname] = [ {'width': i['width'], 'widgets': [ reg[j] for j in i['widgets'] ]} for i in settings.DEFAULT_DASHBOARD ]
     return ''
 
     def __repr__(self):

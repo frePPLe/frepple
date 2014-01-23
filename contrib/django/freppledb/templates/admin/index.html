@@ -76,21 +76,22 @@ th {
 <div class="column" style="width:{{col.width}}">
 {% for widget in col.widgets %}
   <div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">
-    <div class="portlet-header ui-widget-header ui-corner-all"><span class='ui-icon ui-icon-close portlet-close'></span><span class='ui-icon ui-icon-minus portlet-toggle'></span>{{widget.title}}</div>
+    <div class="portlet-header ui-widget-header ui-corner-all"><span class='ui-icon ui-icon-close portlet-close'></span><span class='ui-icon ui-icon-minus portlet-toggle'></span>{% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title}}</a>{% else %}{{widget.title}}{% endif %}</div>
     <div class="portlet-content">{% if widget.async %}<div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading"></div>{% else %}{{widget.render|safe}}{% endif %}</div>
   </div>
 {% endfor %}
 </div>
 {% endfor %}
+
 {% for col in dashboard %}{% if forloop.first %}<script>{% endif %}
 {% for widget in col.widgets %}{% if widget.async %}$.ajax({
       url: "{{request.prefix}}/widget/{{widget.name}}/",
       type: "GET",
       success: function (data) {
-        $("#widget_{{widget.name}}").html(data);
+        $("#widget_{{widget.name}}").parent().html(data);
         },
       error: function (result, stat, errorThrown) {
-        $("#widget_{{widget.name}}").html("{% trans "Failed" %}");
+        $("#widget_{{widget.name}}").parent().html("{% trans "Failed" %}");
         }
     });
 {% endif %}{% endfor %}{% if forloop.last %}</script>{% endif %}{% endfor %}

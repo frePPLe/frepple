@@ -75,4 +75,5 @@ class WidgetRegistry:
       return HttpResponseNotAllowed(['get'])
     w = cls.__registry__.get(name, None)
     if not w: raise Http404("Unknown widget")
+    if not w.async: raise Http404("This widget is synchronous")
     return w.render(request)

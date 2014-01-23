@@ -34,20 +34,25 @@ class Widget:
     - In the file widget.py each widget needs to register itself by calling
       the method Widget.register().
     - We don't expect widgets to be instantiated.
-    - Class method "getName()" needs to be defined.
-      It returns a unique identifier string of the widget.
-      This string is also used for the URL to access the widget.
-    - Class method "getTitle()" needs to be defined.
-      It returns a translatable title string for the widget.
-    - Class method "aja()" needs to be defined.
-      It returns a translatable title string for the widget.
+    - Class attribute 'name' defines a unique identifier for the widget.
+      This string is also used for the URL to access the widget, so keep it
+      short and avoid special characters.
+    - Class attribute 'title' defines a translatable title string for the widget.
+    - Class attribute 'async' needs to be set to true for asynchronous widgets.
+      Such widgets are rendered in 2 steps: initially the dashboard displays a
+      loading icon, and next an ajax request is launched to populate the widget
+      content.
     - Class method render(request) is called to render the widget to the
       client browser.
-      I
+      It returns a string for synchronous widgets.
+      It returns a HTTPResponse object for asynchronous widgets.
+    - Class attribute 'url' optionally defines a url to a report with a more
+      complete content than can be displayed in the dashboard widget.
   '''
   name = "Undefined"
   title = "Undefined"
   async = False
+  url = None
 
   @classmethod
   def render(cls, request=None):

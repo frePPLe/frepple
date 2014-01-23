@@ -156,7 +156,8 @@ INSTALLED_APPS = (
     'freppledb.output',
     'freppledb.execute',
     'freppledb.common',
-    #'openerp',
+    'freppledb.openerp',
+    'freppledb.openbravo',
 )
 
 LOCALE_PATHS = (
@@ -260,6 +261,13 @@ DEFAULT_THEME = 'sunny'
 
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100
+
+# Configuration of the default dashboard
+DEFAULT_DASHBOARD = [
+  {'width':'50%', 'widgets':["welcome","purchasing_queue"]},
+  {'width':'25%', 'widgets':["recent_actions",]},
+  {'width':'25%', 'widgets':["news","late_orders","short_orders"]},
+  ]
 
 # The size of the "name" key field of the database models
 NAMESIZE = 60

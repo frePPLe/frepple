@@ -408,6 +408,9 @@ class Skill(AuditModel):
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True,
      help_text=_('Unique identifier'))
 
+  # Methods
+  def __unicode__(self): return self.name
+
   class Meta(AuditModel.Meta):
     db_table = 'skill'
     verbose_name = _('skill')

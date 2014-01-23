@@ -92,7 +92,7 @@ class Flow_inline(MultiDBTabularInline):
 
 class Load_inline(MultiDBTabularInline):
   model = Load
-  raw_id_fields = ('operation', 'resource',)
+  raw_id_fields = ('operation', 'resource', 'skill')
   extra = 0
   exclude = ('source',)
 

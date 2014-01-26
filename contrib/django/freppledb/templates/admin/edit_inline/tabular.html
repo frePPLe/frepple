@@ -74,6 +74,15 @@
 <script type="text/javascript">
 
 (function($) {
+  var initial = $("#id_{{ inline_admin_formset.formset.prefix }}-INITIAL_FORMS");
+  var count = parseInt(initial.attr('value'));
+  if (count > 20)
+  {
+     initial.attr('value','20');
+     var total = $("#id_{{ inline_admin_formset.formset.prefix }}-TOTAL_FORMS");
+     var totalcount = parseInt(total.attr('value'));
+     total.attr('value', totalcount - count + 20);
+  }
   $("#{{ inline_admin_formset.formset.prefix }}-group .tabular.inline-related tbody tr").tabularFormset({
     prefix: "{{ inline_admin_formset.formset.prefix }}",
     adminStaticPrefix: '{% static "admin/" %}',

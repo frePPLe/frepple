@@ -8,7 +8,7 @@ var resizing;
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{request.report_bucketlist|length}};
 {% endif %}
 
-$(function(){{{% if reportclass.hasTimeBuckets and not request.report_bucketlist %}
+$(function(){ {% if reportclass.hasTimeBuckets and not bucketnames %}
   $('#curfilter').html("{% trans 'Error: Missing time buckets or bucket dates' %}");
 {% else %}
   jQuery("#grid").jqGrid({

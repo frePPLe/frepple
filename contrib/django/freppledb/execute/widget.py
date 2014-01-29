@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.middleware.csrf import get_token
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 
@@ -30,11 +31,13 @@ class ExecuteWidget(Widget):
 
   def render(self, request=None):
     from freppledb.common.middleware import current_request
-
     return '''<div style="text-align:center">
       <form method="post" action="%s/execute/launch/generate plan/">
+      <input type="hidden" name="csrfmiddlewaretoken" value="%s">
+      <input type="hidden" name="plantype" value="1"/>
+      <input type="hidden" name="constraint" value="15"/>
       <input class="button" type="submit" value="%s"/>
       </form></div>
-      ''' % (current_request.prefix, force_unicode(_("Create a plan")))
+      ''' % (current_request.prefix, get_token(current_request), force_unicode(_("Create a plan")))
 
 WidgetRegistry.register(ExecuteWidget)

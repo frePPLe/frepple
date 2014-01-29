@@ -127,8 +127,16 @@ function tick(e)
     {
       if (d.parent >= 0)
       {
-        d.x = nodes[d.parent].x;
-        d.y = nodes[d.parent].y - d.suboperindex * 30 - 5;
+        if (d.suboperindex < 0)
+        {
+          d.x = nodes[d.parent].x;
+          d.y = nodes[d.parent].y - d.suboperindex * 30 - 5;
+        }
+        else
+        {
+          d.y = nodes[d.parent].y;
+          d.x = nodes[d.parent].x - d.suboperindex * 105 + 210;
+        }
       }
       else
       {
@@ -305,7 +313,17 @@ function drawGraph(jsondata)
   var g = shapes.enter().append('svg:g').on('click', clickedShaped);
   g.append("svg:use")
     .attr("xlink:href", function(d) { return "#" + d.type; })
-    .attr("transform", function(d) { return d.numsuboperations ? "scale(1,"+ (2+d.numsuboperations) +")" : ''; })
+    .attr("transform", function(d) {
+       if (d.numsuboperations)
+       {
+         if (d.type == 'alternate')
+           return "scale(1,"+ (2+d.numsuboperations) +")";
+         else
+           return "scale("+ d.numsuboperations +",1.4)";
+       }
+       else
+          return '';
+       })
     .call(force.drag);
 
   // Show node IDs
@@ -368,7 +386,7 @@ ExpandColClick: true,
     style="cursor: pointer; fill: #1f77b4;">
   </rect>
   <rect id="routing" class="routing" width="110" height="25" x="-55" y="-9" rx="2" ry="2"
-    style="cursor: pointer; fill: #ffffff; stroke: black;">
+    style="cursor: pointer; fill: #ffffff; stroke: black; vector-effect: non-scaling-stroke;">
   </rect>
   <rect id="alternate" class="alternate" width="110" height="25" x="-55" y="-5" rx="2" ry="2"
     style="cursor: pointer; fill: #ffffff; fill-opacity: 0; stroke: black; vector-effect: non-scaling-stroke;">

@@ -16,11 +16,8 @@
 #
 
 from django.conf import settings
-from django.utils.encoding import force_unicode
 from django.utils.importlib import import_module
-from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseNotAllowed, Http404
-from django.utils.text import capfirst
 
 
 class WidgetRegistry:
@@ -62,7 +59,7 @@ class WidgetRegistry:
       # of the later ones.
       for app in reversed(settings.INSTALLED_APPS):
         try:
-          mod = import_module('%s.widget' % app)
+          import_module('%s.widget' % app)
         except ImportError as e:
           # Silently ignore if it's the widget module which isn't found
           if str(e) != 'No module named widget': raise e

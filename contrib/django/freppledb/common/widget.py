@@ -18,7 +18,6 @@
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.admin.models import LogEntry
 from django.db import DEFAULT_DB_ALIAS
-from django.http import HttpResponseRedirect, HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_unicode
@@ -53,9 +52,14 @@ class Widget:
   title = "Undefined"
   async = False
   url = None
+  args = ''
 
-  @classmethod
-  def render(cls, request=None):
+  def __init__(self, **options):
+    # Store all options as attributes on the instance
+    for k, v in options.items():
+      setattr(self, k, v)
+
+  def render(self, request=None):
     return "Not implemented"
 
 
@@ -64,8 +68,7 @@ class WelcomeWidget(Widget):
   title = _("Welcome")
   async = False
 
-  @classmethod
-  def render(cls, request=None):
+  def render(self, request=None):
     return _('''Welcome to frePPLe, the world's leading open source production planning tool!<br/><br/>
 How to get started?
 <ol><li>Start the <span class="underline"><a href="javascript:void(0);" onclick="tour.start('0,0,0'); return false;">guided tour</a></span></li>
@@ -83,8 +86,7 @@ class NewsWidget(Widget):
   title = _("News")
   async = False
 
-  @classmethod
-  def render(cls, request=None):
+  def render(self, request=None):
     return '<iframe style="width:100%" frameborder="0" src="http://frepple.com/news-summary/"></iframe>'
 
 WidgetRegistry.register(NewsWidget)
@@ -94,10 +96,8 @@ class RecentActionsWidget(Widget):
   name = "recent_actions"
   title = _("My actions")
   async = False
-  numberOfActions = 10
 
-  @classmethod
-  def render(cls, request=None):
+  def render(self, request=None):
     # This code is a slightly modified version of a standard Django tag.
     # The only change is to look for the logentry records in the right database.
     # See the file django\contrib\admin\templatetags\log.py
@@ -105,9 +105,9 @@ class RecentActionsWidget(Widget):
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     if isinstance(current_request.user, AnonymousUser):
-      q = LogEntry.objects.using(db).select_related('content_type', 'user')[:cls.numberOfActions]
+      q = LogEntry.objects.using(db).select_related('content_type', 'user')[:self.limit]
     else:
-      q = LogEntry.objects.using(db).filter(user__id__exact=current_request.user.pk).select_related('content_type', 'user')[:cls.numberOfActions]
+      q = LogEntry.objects.using(db).filter(user__id__exact=current_request.user.pk).select_related('content_type', 'user')[:self.limit]
     result = []
     for entry in q:
       if entry.is_change():

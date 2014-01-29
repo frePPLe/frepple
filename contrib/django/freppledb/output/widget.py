@@ -15,11 +15,11 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from urllib import urlencode
+
 from django.db import DEFAULT_DB_ALIAS
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import capfirst
-from django.utils.encoding import force_unicode
 
 from freppledb.common.middleware import current_request
 from freppledb.common.widgets import WidgetRegistry
@@ -33,12 +33,16 @@ class LateOrdersWidget(Widget):
   async = True
   url = '/problem/?entity=demand&name=late&sord=asc&sidx=startdate'
 
+  def args(self):
+    return "?%s" % urlencode({'limit': self.limit})
+
   @classmethod
   def render(cls, request=None):
+    limit = request.GET.get('limit',20)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = []
-    for prob in Problem.objects.using(db).filter(name='late',entity='demand').order_by('startdate','-weight')[:20]:
+    for prob in Problem.objects.using(db).filter(name='late',entity='demand').order_by('startdate','-weight')[:limit]:
       result.append('%s %s %s %s<br/>' % (prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight))) #capfirst(force_unicode(_(entry.content_type.name))) )
     return HttpResponse('\n'.join(result))
 
@@ -51,12 +55,16 @@ class ShortOrdersWidget(Widget):
   async = True
   url = '/problem/?entity=demand&name=short&sord=asc&sidx=startdate'
 
+  def args(self):
+    return "?%s" % urlencode({'limit': self.limit})
+
   @classmethod
   def render(cls, request=None):
+    limit = request.GET.get('limit',20)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = []
-    for prob in Problem.objects.using(db).filter(name='short',entity='demand').order_by('-startdate')[:20]:
+    for prob in Problem.objects.using(db).filter(name='short',entity='demand').order_by('-startdate')[:limit]:
       result.append('%s %s %s %s<br/>' % (prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight))) #capfirst(force_unicode(_(entry.content_type.name))) )
     return HttpResponse('\n'.join(result))
 
@@ -69,12 +77,16 @@ class PurchasingQueueWidget(Widget):
   async = True
   url = '/operationplan/?locked=0&sidx=startdate&sord=asc&operation__startswith=Purchase'
 
+  def args(self):
+    return "?%s" % urlencode({'limit': self.limit})
+
   @classmethod
   def render(cls, request=None):
+    limit = request.GET.get('limit',20)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = []
-    for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=False).order_by('startdate')[:20]:
+    for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=False).order_by('startdate')[:limit]:
       result.append('%s %s %s %s<br/>' % (opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity))) #capfirst(force_unicode(_(entry.content_type.name))) )
     return HttpResponse('\n'.join(result))
 

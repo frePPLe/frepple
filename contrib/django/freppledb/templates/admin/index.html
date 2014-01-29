@@ -20,6 +20,12 @@
     margin-bottom: 0.5em;
     position: relative;
   }
+  .portlet-export {
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    margin-top: -8px;
+  }
   .portlet-toggle {
     position: absolute;
     top: 50%;
@@ -59,6 +65,7 @@
     $(".portlet-close").click(function() {
       $(this).closest(".portlet").remove();
     });
+    $(".button").button();
   });
 </script>
 <style type="text/css">
@@ -76,7 +83,7 @@ th {
 <div class="column" style="width:{{col.width}}">
 {% for widget in col.widgets %}
   <div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">
-    <div class="portlet-header ui-widget-header ui-corner-all"><span class='ui-icon ui-icon-close portlet-close'></span><span class='ui-icon ui-icon-minus portlet-toggle'></span>{% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title}}</a>{% else %}{{widget.title}}{% endif %}</div>
+    <div class="portlet-header ui-widget-header ui-corner-all">{% if widget.url %}<a href="{{request.prefix}}{{widget.url}}&format=csvlist"><span class='ui-icon ui-icon-arrowreturn-1-n portlet-export'></span></a>{% endif %}<span class='ui-icon ui-icon-close portlet-close'></span><span class='ui-icon ui-icon-minus portlet-toggle'></span>{% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title}}</a>{% else %}{{widget.title}}{% endif %}</div>
     <div class="portlet-content">{% if widget.async %}<div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading"></div>{% else %}{{widget.render|safe}}{% endif %}</div>
   </div>
 {% endfor %}
@@ -85,7 +92,7 @@ th {
 
 {% for col in dashboard %}{% if forloop.first %}<script>{% endif %}
 {% for widget in col.widgets %}{% if widget.async %}$.ajax({
-      url: "{{request.prefix}}/widget/{{widget.name}}/",
+      url: "{{request.prefix}}/widget/{{widget.name}}/{{widget.args}}",
       type: "GET",
       success: function (data) {
         $("#widget_{{widget.name}}").parent().html(data);

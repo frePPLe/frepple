@@ -23,7 +23,8 @@ import base64
 from datetime import datetime, timedelta, date
 from time import time
 from xml.etree.cElementTree import iterparse
-import httplib, urllib
+import httplib
+import urllib
 from StringIO import StringIO  # Note cStringIO doesn't handle unicode
 
 from django.core.management.base import BaseCommand, CommandError

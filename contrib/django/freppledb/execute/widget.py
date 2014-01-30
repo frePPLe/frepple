@@ -19,13 +19,13 @@ from django.middleware.csrf import get_token
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 
-from freppledb.common.widgets import WidgetRegistry
-from freppledb.common.widget import Widget
+from freppledb.common.dashboard import Dashboard, Widget
 
 
 class ExecuteWidget(Widget):
   name = "execute"
   title = _("Execute")
+  permissions = (("generate_plan", "Can generate plans"),)
   async = False
   url = '/execute/'
 
@@ -40,4 +40,4 @@ class ExecuteWidget(Widget):
       </form></div>
       ''' % (current_request.prefix, get_token(current_request), force_unicode(_("Create a plan")))
 
-WidgetRegistry.register(ExecuteWidget)
+Dashboard.register(ExecuteWidget)

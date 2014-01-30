@@ -22,14 +22,14 @@ from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.middleware import current_request
-from freppledb.common.widgets import WidgetRegistry
-from freppledb.common.widget import Widget
+from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.output.models import Problem, OperationPlan
 
 
 class LateOrdersWidget(Widget):
   name = "late_orders"
   title = _("Late orders")
+  permissions = (("view_problem_report", "Can view problem report"),)
   async = True
   url = '/problem/?entity=demand&name=late&sord=asc&sidx=startdate'
 
@@ -46,12 +46,13 @@ class LateOrdersWidget(Widget):
       result.append('%s %s %s %s<br/>' % (prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight))) #capfirst(force_unicode(_(entry.content_type.name))) )
     return HttpResponse('\n'.join(result))
 
-WidgetRegistry.register(LateOrdersWidget)
+Dashboard.register(LateOrdersWidget)
 
 
 class ShortOrdersWidget(Widget):
   name = "short_orders"
   title = _("Short orders")
+  permissions = (("view_problem_report", "Can view problem report"),)
   async = True
   url = '/problem/?entity=demand&name=short&sord=asc&sidx=startdate'
 
@@ -68,12 +69,13 @@ class ShortOrdersWidget(Widget):
       result.append('%s %s %s %s<br/>' % (prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight))) #capfirst(force_unicode(_(entry.content_type.name))) )
     return HttpResponse('\n'.join(result))
 
-WidgetRegistry.register(ShortOrdersWidget)
+Dashboard.register(ShortOrdersWidget)
 
 
 class PurchasingQueueWidget(Widget):
   name = "purchasing_queue"
   title = _("Purchasing queue")
+  permissions = (("view_operation_report", "Can view operation report"),)
   async = True
   url = '/operationplan/?locked=0&sidx=startdate&sord=asc&operation__startswith=Purchase'
 
@@ -90,4 +92,4 @@ class PurchasingQueueWidget(Widget):
       result.append('%s %s %s %s<br/>' % (opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity))) #capfirst(force_unicode(_(entry.content_type.name))) )
     return HttpResponse('\n'.join(result))
 
-WidgetRegistry.register(PurchasingQueueWidget)
+Dashboard.register(PurchasingQueueWidget)

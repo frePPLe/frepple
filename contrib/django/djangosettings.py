@@ -264,9 +264,9 @@ DEFAULT_PAGESIZE = 100
 
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
-  {'width':'50%', 'widgets':["welcome","purchasing_queue"]},
-  {'width':'25%', 'widgets':["recent_actions",]},
-  {'width':'25%', 'widgets':["news","late_orders","short_orders"]},
+  {'width':'50%', 'widgets':[("welcome",{}), ("purchasing_queue",{"limit":20})]},
+  {'width':'25%', 'widgets':[("recent_actions",{"limit":10}),("execute",{})]},
+  {'width':'25%', 'widgets':[("news",{}), ("late_orders",{"limit":20}), ("short_orders",{"limit":20})]},
   ]
 
 # The size of the "name" key field of the database models
@@ -275,7 +275,7 @@ NAMESIZE = 60
 # The size of the "description" field of the database models
 DESCRIPTIONSIZE = 200
 
-# The size of the "category" and "subcategory" fields of the database models
+# The size of the "category", "subcategory" and "source" fields of the database models
 CATEGORYSIZE = 20
 
 # The number of digits for a number in the database models

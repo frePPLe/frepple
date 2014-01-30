@@ -536,6 +536,18 @@ div.calendarbox
   font-weight: bold;
 }
 
+/* CONVENIENCE SHORTCUTS */
+
+.alignleft
+{
+  text-align: left;
+}
+
+.aligncenter
+{
+  text-align: center;
+}
+
 .underline
 {
   text-decoration: underline;

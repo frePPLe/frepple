@@ -125,6 +125,7 @@ class Widget:
   permissions = ()
   async = False
   url = None
+  exporturl = False
   args = ''
 
   def __init__(self, **options):

@@ -15,11 +15,13 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from urllib import urlencode
+from urllib import urlencode, quote
 
 from django.db import DEFAULT_DB_ALIAS
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_unicode
+from django.utils.text import capfirst
 
 from freppledb.common.middleware import current_request
 from freppledb.common.dashboard import Dashboard, Widget
@@ -32,6 +34,7 @@ class LateOrdersWidget(Widget):
   permissions = (("view_problem_report", "Can view problem report"),)
   async = True
   url = '/problem/?entity=demand&name=late&sord=asc&sidx=startdate'
+  exporturl = True
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
@@ -41,9 +44,18 @@ class LateOrdersWidget(Widget):
     limit = request.GET.get('limit',20)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
-    result = []
+    result = [
+      '<table style="width:100%">',
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
+        capfirst(force_unicode(_("name"))), capfirst(force_unicode(_("due"))),
+        capfirst(force_unicode(_("planned date"))), capfirst(force_unicode(_("delay")))
+        )
+      ]
     for prob in Problem.objects.using(db).filter(name='late',entity='demand').order_by('startdate','-weight')[:limit]:
-      result.append('%s %s %s %s<br/>' % (prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight))) #capfirst(force_unicode(_(entry.content_type.name))) )
+      result.append('<tr onclick="window.location.href=\'%s/demandpegging/%s/\';"><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+          request.prefix, quote(prob.owner), prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight)
+          ))
+    result.append('</table>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(LateOrdersWidget)
@@ -54,7 +66,10 @@ class ShortOrdersWidget(Widget):
   title = _("Short orders")
   permissions = (("view_problem_report", "Can view problem report"),)
   async = True
-  url = '/problem/?entity=demand&name=short&sord=asc&sidx=startdate'
+  # Note the gte filter lets pass "short" and "unplanned", and filters out
+  # "late" and "early".
+  url = '/problem/?entity=demand&name__gte=short&sord=asc&sidx=startdate'
+  exporturl = True
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
@@ -64,9 +79,17 @@ class ShortOrdersWidget(Widget):
     limit = request.GET.get('limit',20)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
-    result = []
-    for prob in Problem.objects.using(db).filter(name='short',entity='demand').order_by('-startdate')[:limit]:
-      result.append('%s %s %s %s<br/>' % (prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight))) #capfirst(force_unicode(_(entry.content_type.name))) )
+    result = [
+      '<table style="width:100%">',
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th></tr>' % (
+        capfirst(force_unicode(_("name"))), capfirst(force_unicode(_("due"))), capfirst(force_unicode(_("short")))
+        )
+      ]
+    for prob in Problem.objects.using(db).filter(name__gte='short',entity='demand').order_by('startdate')[:limit]:
+      result.append('<tr onclick="window.location.href=\'%s/demandpegging/%s/\';"><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+          request.prefix, quote(prob.owner), prob.owner, prob.startdate.date(), int(prob.weight)
+          ))
+    result.append('</table>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(ShortOrdersWidget)
@@ -78,6 +101,7 @@ class PurchasingQueueWidget(Widget):
   permissions = (("view_operation_report", "Can view operation report"),)
   async = True
   url = '/operationplan/?locked=0&sidx=startdate&sord=asc&operation__startswith=Purchase'
+  exporturl = True
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
@@ -87,9 +111,18 @@ class PurchasingQueueWidget(Widget):
     limit = request.GET.get('limit',20)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
-    result = []
+    result = [
+      '<table style="width:100%">',
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
+        capfirst(force_unicode(_("operation"))), capfirst(force_unicode(_("startdate"))),
+        capfirst(force_unicode(_("enddate"))), capfirst(force_unicode(_("quantity")))
+        )
+      ]
     for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=False).order_by('startdate')[:limit]:
-      result.append('%s %s %s %s<br/>' % (opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity))) #capfirst(force_unicode(_(entry.content_type.name))) )
+      result.append('<tr><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+          opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity)
+          ))
+    result.append('</table>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(PurchasingQueueWidget)

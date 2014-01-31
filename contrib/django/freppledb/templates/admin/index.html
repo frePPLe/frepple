@@ -89,10 +89,12 @@
       type: "GET",
       success: function (data) {
         $("#widget_{{widget.name}}").parent().html(data);
+        {{widget.javascript|safe}}
         },
       error: function (result, stat, errorThrown) {
         $("#widget_{{widget.name}}").parent().html("{% trans "Failed" %}");
         }
     });
+{% else %}{{widget.javascript|safe}}
 {% endif %}{% endfor %}{% if forloop.last %}</script>{% endif %}{% endfor %}
 {% endblock %}

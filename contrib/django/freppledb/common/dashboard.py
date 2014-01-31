@@ -123,10 +123,11 @@ class Widget:
   name = "Undefined"
   title = "Undefined"
   permissions = ()
-  async = False
-  url = None
-  exporturl = False
-  args = ''
+  async = False       # Asynchroneous widget
+  url = None          # URL opened when the header is clicked
+  exporturl = False   # Enable or disable a download icon
+  args = ''           # Arguments passed in the url for asynchronous widgets
+  javascript = ''     # Javascript called for rendering the widget
 
   def __init__(self, **options):
     # Store all options as attributes on the instance

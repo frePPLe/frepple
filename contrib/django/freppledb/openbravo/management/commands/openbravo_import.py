@@ -225,7 +225,7 @@ class Command(BaseCommand):
         print("Loaded %d organizations in %.2f seconds" % (count, time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing organizations: %s" % e)
+      raise CommandError("Error importing organizations: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -321,7 +321,7 @@ class Command(BaseCommand):
         print("Imported customers in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing customers: %s" % e)
+      raise CommandError("Error importing customers: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -415,7 +415,7 @@ class Command(BaseCommand):
         print("Imported products in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing products: %s" % e)
+      raise CommandError("Error importing products: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -520,7 +520,7 @@ class Command(BaseCommand):
         print("Imported locations in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing locations: %s" % e)
+      raise CommandError("Error importing locations: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -667,7 +667,7 @@ class Command(BaseCommand):
         print("Imported sales orders in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing sales orders: %s" % e)
+      raise CommandError("Error importing sales orders: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -764,7 +764,7 @@ class Command(BaseCommand):
         print("Imported machines in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing machines: %s" % e)
+      raise CommandError("Error importing machines: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -859,7 +859,7 @@ class Command(BaseCommand):
         print("Imported onhand in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing onhand: %s" % e)
+      raise CommandError("Error importing onhand: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -1002,7 +1002,7 @@ class Command(BaseCommand):
         print("Imported purchase orders in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing purchase orders: %s" % e)
+      raise CommandError("Error importing purchase orders: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -1199,7 +1199,7 @@ class Command(BaseCommand):
       transaction.rollback(using=self.database)
       import sys, traceback
       traceback.print_exc(file=sys.stdout)
-      print("Error importing bills of material: %s" % e)
+      raise CommandError("Error importing bills of material: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)

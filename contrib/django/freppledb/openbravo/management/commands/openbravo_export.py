@@ -211,7 +211,7 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Updated %d sales orders in %.2f seconds" % (count, (time() - starttime)))
     except Exception as e:
-      print("Error updating sales orders: %s" % e)
+      raise CommandError("Error updating sales orders: %s" % e)
     finally:
       transaction.rollback(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -321,7 +321,7 @@ class Command(BaseCommand):
       #self.post_data('/openbravo/ws/dal/ProcurementRequisition/', '\n'.join(body))
 
     except Exception as e:
-      print("Error generation purchase requisitions: %s" % e)
+      raise CommandError("Error generation purchase requisitions: %s" % e)
     finally:
       transaction.rollback(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -374,7 +374,7 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Updated %d work orders in %.2f seconds" % (count, (time() - starttime)))
     except Exception as e:
-      print("Error updating work orders: %s" % e)
+      raise CommandError("Error updating work orders: %s" % e)
     finally:
       transaction.rollback(using=self.database)
       transaction.leave_transaction_management(using=self.database)

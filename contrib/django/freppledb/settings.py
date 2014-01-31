@@ -23,7 +23,10 @@ Instead put all your settings in the file FREPPLE_CONFDIR/djangosettings.py.
 
 '''
 from __future__ import print_function
-import os, sys, locale
+import locale
+import os
+import sys
+import types
 import freppledb
 
 # FREPPLE_APP directory
@@ -212,9 +215,15 @@ COMMENT_MAX_LENGTH = 3000
 # Port number for the CherryPy web server
 PORT = 8000
 
-# Override any of the above settings from a seperate file
+# Override any of the above settings from a separate file
 if os.access(os.path.join(FREPPLE_CONFIGDIR,'djangosettings.py'), os.R_OK):
   exec open(os.path.join(FREPPLE_CONFIGDIR,'djangosettings.py')) in globals()
+  if DEBUG:
+    # Add a dummy module to sys.modules to make the development server
+    # autoreload when the configuration file changes.
+    module = types.ModuleType('djangosettings')
+    module.__file__ = os.path.join(FREPPLE_CONFIGDIR,'djangosettings.py')
+    sys.modules['djangosettings'] = module
 
 # Some Django settings we don't like to be overriden
 TEMPLATE_DEBUG = DEBUG

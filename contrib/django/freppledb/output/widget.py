@@ -17,7 +17,7 @@
 
 from urllib import urlencode, quote
 
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, connections
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
@@ -126,3 +126,49 @@ class PurchasingQueueWidget(Widget):
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(PurchasingQueueWidget)
+
+
+class ResourceLoadWidget(Widget):
+  name = "resource_load"
+  title = _("Resource load")
+  permissions = (("view_resource_report", "Can view resource report"),)
+  async = True
+  url = '/resource/'
+  exporturl = True
+
+  def args(self):
+    return "?%s" % urlencode({'limit': self.limit})
+
+  @classmethod
+  def render(cls, request=None):
+    limit = int(request.GET.get('limit',20))
+    try: db = current_request.database or DEFAULT_DB_ALIAS
+    except: db = DEFAULT_DB_ALIAS
+    result = [
+      '<table style="width:100%">',
+      '<tr><th class="alignleft">%s</th><th>%s</th></tr>' % (
+        capfirst(force_unicode(_("resource"))), capfirst(force_unicode(_("utilization")))
+        )
+      ]
+    #            where out_resourceplan.startdate >= '%s'
+    #            and out_resourceplan.startdate < '%s'
+    cursor = connections[request.database].cursor()
+    query = '''select
+                  theresource,
+                  ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) )
+                   * 100.0 / coalesce(sum(out_resourceplan.available)+0.000001,1) as avg_util
+                from out_resourceplan
+                group by theresource
+                order by 2 desc
+              '''
+    cursor.execute(query)
+    for res in cursor.fetchall():
+      limit -= 1
+      if limit < 0: break
+      result.append('<tr onclick="window.location.href=\'%s/resource/%s/\';"><td>%s</td><td class="aligncenter">%.2f</td></tr>' % (
+          request.prefix, quote(res[0]), res[0], res[1]
+          ))
+    result.append('</table>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(ResourceLoadWidget)

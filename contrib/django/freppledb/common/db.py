@@ -109,55 +109,5 @@ elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postg
     return d.date()
 
 
-# Functions for MYSQL
-elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.mysql':
-
-  def sql_true():
-    return '1'
-
-  def sql_datediff(d1,d2):
-    return '(timestampdiff(second,%s,%s)/86400)' % (d2,d1)
-
-  def sql_overlap(s1,e1,s2,e2):
-    return '(greatest(0,timestampdiff(second,greatest(%s,%s),least(%s,%s)))/86400)' % (s1,s2,e1,e2)
-
-  def sql_overlap3(s1,e1,s2,e2,s3,e3):
-    return '(greatest(0,timestampdiff(second,greatest(%s,%s,%s),least(%s,%s,%s)))/86400)' % (s1,s2,s3,e1,e2,e3)
-
-  def sql_max(d1, d2):
-    return "greatest(%s,%s)" % (d1,d2)
-
-  def sql_min(d1, d2):
-    return "least(%s,%s)" % (d1,d2)
-
-  def python_date(d):
-    return d.date()
-
-
-# Functions for ORACLE
-elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.oracle':
-
-  def sql_true():
-    return '1'
-
-  def sql_datediff(d1,d2):
-    return "(cast(%s as date) - cast(%s as date))" % (d1,d2)
-
-  def sql_overlap(s1,e1,s2,e2):
-    return "greatest(0,cast(least(%s,%s) as date) - cast(greatest(%s,%s) as date))" % (e1,e2,s1,s2)
-
-  def sql_overlap3(s1,e1,s2,e2,s3,e3):
-    return "greatest(0,cast(least(%s,%s,%s) as date) - cast(greatest(%s,%s,%s) as date))" % (e1,e2,e3,s1,s2,s3)
-
-  def sql_max(d1, d2):
-    return "greatest(%s,%s)" % (d1,d2)
-
-  def sql_min(d1, d2):
-    return "least(%s,%s)" % (d1,d2)
-
-  def python_date(d):
-    return d.date()
-
-
 else:
   raise NameError('The %s database is not support by frePPLe' % settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'])

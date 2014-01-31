@@ -35,12 +35,8 @@ freppledirectory = freppledb.__path__[0]
 packages = [# Required for django standalone deployment
             'django', 'email', 'cherrypy.wsgiserver', 'csv',
             'htmlentitydefs', 'HTMLParser', 'markupbase',
-            # Added for MySQL
-            'MySQLdb', 'MySQLdb.constants', 'MySQLdb.converters',
             # Added for PostgreSQL
             'psycopg2', 'psycopg2.extensions',
-            # Added for oracle
-            'cx_Oracle',
             # Required for the python initialization
             'site',
             # Required for reading and writing spreadsheets

@@ -257,12 +257,6 @@ Section "Application" SecAppl
   StrCmp $0 "PostgreSQL 9" 0 +3
     StrCpy $0 "postgresql_psycopg2"
     Goto ok
-  StrCmp $0 "MySQL" 0 +3
-    StrCpy $0 "mysql"
-    Goto ok
-  StrCmp $0 "Oracle 11g" 0 +3
-    StrCpy $0 "oracle"
-    Goto ok
   MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid database type $0!"
   ok:
   ReadINIStr $1 "$PLUGINSDIR\parameters.ini" "Field 10" "State"  # DB name

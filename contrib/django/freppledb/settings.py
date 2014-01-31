@@ -239,18 +239,6 @@ for param in DATABASES.values():
     # Extra default settings for SQLITE
     if len(param['OPTIONS']) == 0:
       param['OPTIONS'] = {"timeout": 10, "check_same_thread": False}
-  elif param['ENGINE'] == 'django.db.backends.mysql':
-    # Extra default settings for MYSQL
-    # InnoDB has the proper support for transactions that is required for
-    # frePPLe in a production environment.
-    if len(param['OPTIONS']) == 0:
-      param['OPTIONS'] = {"init_command": "SET storage_engine=INNODB, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"}
-    param['TEST_NAME'] = 'test_%s' % param['NAME']
-  elif param['ENGINE'] == 'django.db.backends.oracle':
-    param['TEST_NAME'] = param['NAME']
-    param['TEST_USER'] = 'test_%s' % param['USER']
-    param['TEST_PASSWD'] = param['PASSWORD']
-    param['OPTIONS'] = {'threaded': True,}
   elif param['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
     param['TEST_NAME'] = 'test_%s' % param['NAME']
   else:

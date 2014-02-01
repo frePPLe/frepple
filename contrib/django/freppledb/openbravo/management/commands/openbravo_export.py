@@ -351,7 +351,7 @@ class Command(BaseCommand):
         '<ob:Openbravo xmlns:ob="http://www.openbravo.com">'
         ]
       for i in cursor.fetchall():
-     #      <documentNo>10000000</documentNo>
+        # TODO generate documentno? <documentNo>10000000</documentNo>
         body.append('''<ManufacturingWorkRequirement>
            <organization id="%s" entity-name="Organization"/>
            <active>true</active>

@@ -868,21 +868,29 @@ class Command(BaseCommand):
   # Load open purchase orders
   #   - extracting recently changed orderline objects
   #   - meeting the criterion:
-  #        - %product_id already exists in frePPLe
-  #        - %location_id already exists in frePPLe
-  #        - %state = 'approved' or 'draft'
+  #        - %product already exists in frePPLe
+  #        - %warehouse already exists in frePPLe
   #   - mapped fields openbravo -> frePPLe buffer
-  #        - %id %name -> name
+  #        - %product @ %warehouse -> name
+  #        - %warehouse -> location
+  #        - %product -> item
   #        - 'openbravo' -> subcategory
   #   - mapped fields openbravo -> frePPLe operation
-  #        - %id %name -> name
+  #        - 'Purchase ' %product ' @ ' %warehouse -> name
+  #        - 'fixed_time' -> type
   #        - 'openbravo' -> subcategory
   #   - mapped fields openbravo -> frePPLe flow
-  #        - %id %name -> name
+  #        - 'Purchase ' %product ' @ ' %warehouse -> operation
+  #        - %product ' @ ' %warehouse -> buffer
   #        - 1 -> quantity
+  #        - 'end' -> type
   #   - mapped fields openbravo -> frePPLe operationplan
   #        - %documentNo -> identifier
-  #        - 'openbravo' -> subcategory
+  #        - 'Purchase ' %product ' @ ' %warehouse -> operation
+  #        - %orderedQuantity - %deliveredQuantity -> quantity
+  #        - %creationDate -> startdate
+  #        - %scheduledDeliveryDate -> enddate
+  #        - 'openbravo' -> source
   def import_purchaseorders(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
@@ -896,7 +904,7 @@ class Command(BaseCommand):
       cursor.execute("SELECT max(id) FROM operationplan")
       idcounter = cursor.fetchone()[0] or 1
 
-      # Get the list of all opern purchase orders
+      # Get the list of all open purchase orders
       insert = []
       update = []
       delete = []
@@ -939,7 +947,7 @@ class Command(BaseCommand):
           print('.', end="")
       if self.verbosity > 0: print ('')
 
-      # Create or update delivery operations
+      # Create or update procurement operations
       cursor.execute("SELECT name FROM operation where name like 'Purchase %'")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       cursor.executemany(
@@ -978,7 +986,7 @@ class Command(BaseCommand):
           set quantity=1, type='end', source='openbravo', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
         [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) in frepple_keys ])
 
-      # Create operationplans
+      # Create purchasing operationplans
       cursor.executemany(
         "insert into operationplan \
           (id,operation_id,quantity,startdate,enddate,locked,source,lastmodified) \

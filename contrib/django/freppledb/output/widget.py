@@ -25,7 +25,7 @@ from django.utils.text import capfirst
 
 from freppledb.common.middleware import current_request
 from freppledb.common.dashboard import Dashboard, Widget
-from freppledb.output.models import Problem, OperationPlan
+from freppledb.output.models import LoadPlan, Problem, OperationPlan
 
 
 class LateOrdersWidget(Widget):
@@ -95,9 +95,9 @@ class ShortOrdersWidget(Widget):
 Dashboard.register(ShortOrdersWidget)
 
 
-class ProcurementQueueWidget(Widget):
-  name = "procurement_queue"
-  title = _("Procurement queue")
+class PurchaseQueueWidget(Widget):
+  name = "purchase_queue"
+  title = _("Purchase queue")
   permissions = (("view_operation_report", "Can view operation report"),)
   async = True
   url = '/operationplan/?locked=0&sidx=startdate&sord=asc&operation__startswith=Purchase'
@@ -118,14 +118,48 @@ class ProcurementQueueWidget(Widget):
         capfirst(force_unicode(_("enddate"))), capfirst(force_unicode(_("quantity")))
         )
       ]
-    for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Procure ', locked=False).order_by('startdate')[:limit]:
+    for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=False).order_by('startdate')[:limit]:
       result.append('<tr><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
           opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity)
           ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
 
-Dashboard.register(ProcurementQueueWidget)
+Dashboard.register(PurchaseQueueWidget)
+
+
+class ResourceQueueWidget(Widget):
+  name = "resource_queue"
+  title = _("Resource queue")
+  permissions = (("view_resource_report", "Can view resource report"),)
+  async = True
+  url = '/loadplan/?sidx=startdate&sord=asc'
+  exporturl = True
+
+  def args(self):
+    return "?%s" % urlencode({'limit': self.limit})
+
+  @classmethod
+  def render(cls, request=None):
+    limit = request.GET.get('limit',20)
+    try: db = current_request.database or DEFAULT_DB_ALIAS
+    except: db = DEFAULT_DB_ALIAS
+    result = [
+      '<table style="width:100%">',
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
+        capfirst(force_unicode(_("resource"))), capfirst(force_unicode(_("operation"))),
+        capfirst(force_unicode(_("startdate"))), capfirst(force_unicode(_("enddate"))),
+        capfirst(force_unicode(_("quantity")))
+        )
+      ]
+    for ldplan in LoadPlan.objects.using(db).select_related().order_by('startdate')[:limit]:
+      result.append('<tr><td class="underline"><a href="%s/loadplan/?%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+          request.prefix, urlencode({'theresource': ldplan.theresource}  or ''), ldplan.theresource, ldplan.operationplan.operation, ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity)
+          ))
+    result.append('</table>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(ResourceQueueWidget)
 
 
 class AlertsWidget(Widget):

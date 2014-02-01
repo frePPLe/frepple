@@ -266,7 +266,8 @@ DEFAULT_PAGESIZE = 100
 DEFAULT_DASHBOARD = [
   {'width':'50%', 'widgets':[
     ("welcome",{}),
-    ("procurement_queue",{"limit":50}),
+    ("resource_queue",{"limit":30}),
+    ("purchase_queue",{"limit":30}),
   ]},
   {'width':'25%', 'widgets':[
     ("recent_actions",{"limit":10}),

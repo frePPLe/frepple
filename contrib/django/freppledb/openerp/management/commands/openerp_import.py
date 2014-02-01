@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010-2013 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2010-2014 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -28,7 +28,6 @@ from time import time
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, connections, DEFAULT_DB_ALIAS
 from django.conf import settings
-from django.utils.translation import ugettext as _
 
 from freppledb.common.models import Parameter
 from freppledb.execute.models import Task
@@ -65,7 +64,6 @@ class Command(BaseCommand):
     if 'delta' in options: self.delta = float(options['delta'] or '3650')
     else: self.delta = 3650
     self.date = datetime.now()
-    self.delta = str(self.date - timedelta(days=self.delta))
 
     # Pick up configuration parameters
     self.openerp_user = Parameter.getValue("openerp.user", self.database)
@@ -94,22 +92,25 @@ class Command(BaseCommand):
         task.status = '0%'
         task.started = now
       else:
-
         task = Task(name='OpenERP import', submitted=now, started=now, status='0%', user=user,
           arguments="--delta=%s" % self.delta)
       task.save(using=self.database)
       transaction.commit(using=self.database)
 
       # Initialize some global variables
-      self.locations = {}
+      self.customers = {}
+      self.items = {}
+      self.locations = {} # A mapping between OpenERP stock.location ids and the name of the location in frePPLe
       self.warehouses = {}
+      self.resources = {}
       self.shops = {}
+      self.delta = str(self.date - timedelta(days=self.delta))
 
-      # Log in to the openerp server
+      # Log in to the OpenERP server
       sock_common = xmlrpclib.ServerProxy(self.openerp_url + 'xmlrpc/common')
       self.uid = sock_common.login(self.openerp_db, self.openerp_user, self.openerp_password)
 
-      # Connect to openerp server
+      # Connect to OpenERP server
       self.sock = xmlrpclib.ServerProxy(self.openerp_url + 'xmlrpc/object')
 
       # Create a database connection to the frePPLe database
@@ -143,7 +144,7 @@ class Command(BaseCommand):
       self.import_purchaseorders(cursor)
       task.status = '70%'
       task.save(using=self.database)
-      self.import_boms(cursor)
+#      self.import_boms(cursor)
       transaction.commit(using=self.database)
       task.status = '80%'
       task.save(using=self.database)
@@ -173,11 +174,17 @@ class Command(BaseCommand):
 
 
   def openerp_search(self, a, b=[]):
-    return self.sock.execute(self.openerp_db, self.uid, self.openerp_password, a, 'search', b)
+    try:
+      return self.sock.execute(self.openerp_db, self.uid, self.openerp_password, a, 'search', b)
+    except xmlrpclib.Fault as e:
+      raise CommandError(e.faultString)
 
 
   def openerp_data(self, a, b, c):
-    return self.sock.execute(self.openerp_db, self.uid, self.openerp_password, a, 'read', b, c)
+    try:
+      return self.sock.execute(self.openerp_db, self.uid, self.openerp_password, a, 'read', b, c)
+    except xmlrpclib.Fault as e:
+      raise CommandError(e.faultString)
 
 
   # Importing customers
@@ -188,63 +195,71 @@ class Command(BaseCommand):
   #   - mapped fields OpenERP -> frePPLe customer
   #        - %id %name -> name
   #        - %ref     -> description
-  #        - 'OpenERP' -> source
+  #        - %id -> source
+  #        - 'OpenERP' -> subcategory
   def import_customers(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:
         print("Importing customers...")
-      cursor.execute("SELECT name FROM customer")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      cursor.execute("SELECT name, subcategory, source FROM customer")
+      frepple_keys = set()
+      for i in cursor.fetchall():
+        if i[1] == 'OpenERP': self.customers[i[2]] = i[0]
+        frepple_keys.add(i[0])
       ids = self.openerp_search( 'res.partner',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
          '|',('active', '=', 1),('active', '=', 0)])
       fields = ['name', 'active', 'customer', 'ref']
       insert = []
       update = []
+      rename = []
       delete = []
       for i in self.openerp_data('res.partner', ids, fields):
         name = u'%d %s' % (i['id'],i['name'])
         if i['active'] and i['customer']:
           if name in frepple_keys:
-            update.append(i)
+            update.append( (i['id'],name) )
+          elif i['id'] in self.customers:
+            # Object previously exported from OpenERP already, now renamed
+            rename.append( (name,i['id']) )
           else:
-            insert.append(i)
+            insert.append( (i['id'],name) )
+          self.customers[i['id']] = name
         elif name in frepple_keys:
           delete.append( (name,) )
       cursor.executemany(
         "insert into customer \
-          (name,description,source,lastmodified) \
+          (source,name,subcategory,lastmodified) \
           values (%%s,%%s,'OpenERP','%s')" % self.date,
-        [(
-           u'%d %s' % (i['id'],i['name']),
-           i['ref'] or '',
-         ) for i in insert
-        ])
+        insert)
       cursor.executemany(
         "update customer \
-          set description=%%s, source='OpenERP',lastmodified='%s' \
+          set source=%%s, subcategory='OpenERP',lastmodified='%s' \
           where name=%%s" % self.date,
-        [(
-           i['ref'] or '',
-           u'%d %s' % (i['id'],i['name'])
-         ) for i in update
-        ])
+        update)
+      cursor.executemany(
+        "update customer \
+          set name=%%s, lastmodified='%s' \
+          where source=%%s and subcategory='OpenERP'" % self.date,
+        rename
+        )
       for i in delete:
-        try: cursor.execute("delete from customer where name=%s",i)
+        try: cursor.execute("delete from customer where source=%s",i)
         except:
           # Delete fails when there are dependent records in the database.
-          cursor.execute("update customer set source=null, lastmodified='%s' where name=%%s" % self.date,i)
+          cursor.execute("update customer set source=null, subcategory=null, lastmodified='%s' where name=%%s" % self.date,i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print("Inserted %d new customers" % len(insert))
         print("Updated %d existing customers" % len(update))
+        print("Renamed %d existing customers" % len(rename))
         print("Deleted %d customers" % len(delete))
         print("Imported customers in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing customers: %s" % e)
+      raise CommandError("Error importing customers: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -255,145 +270,152 @@ class Command(BaseCommand):
   #   - meeting the criterion:
   #        - %active = True
   #   - mapped fields OpenERP -> frePPLe item
-  #        - %id %name -> name
-  #        - %code     -> description & name
-  #        - %variants -> name
-  #        - 'OpenERP' -> source
-  #   - The modeling in frePPLe is independent of the procurement method in
-  #     OpenERP. For both "on order" and "on stock" we bring the order to
-  #     frePPLe and propagate upstream.
-  #   - The name of the item in frePPLe is different whether or not the   TODO verify
-  #     CODE and VARIANTS fields are filled in in OpenERP.
-  #     This rule matches the convention used internal in OpenERP for a text
-  #     description of an item, and MUST be followed.
-
+  #        - %code %name -> name
+  #        - 'OpenERP' -> subcategory
+  #        - %id -> source
+  #   - We assume the code+name combination is unique, but this is not
+  #     enforced at all in OpenERP. The only other option is to include
+  #     the id in the name - not nice for humans...
   # TODO also get template.produce_delay, property_stock_production, property_stock_inventory, and property_stock_procurement?
-
   def import_products(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:
         print("Importing products...")
-      cursor.execute("SELECT name FROM item")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      cursor.execute("SELECT name, subcategory, source FROM item")
+      frepple_keys = set()
+      for i in cursor.fetchall():
+        if i[1] == 'OpenERP': self.items[i[2]] = i[0]
+        frepple_keys.add(i[0])
       ids = self.openerp_search('product.product', [
         '|',('create_date','>', self.delta),('write_date','>', self.delta),
         '|',('active', '=', 1),('active', '=', 0)
         ])
-      fields = ['name', 'code', 'active', 'product_tmpl_id', 'variants']
+      fields = ['name', 'code', 'active', 'product_tmpl_id']
       insert = []
       update = []
+      rename = []
       delete = []
       for i in self.openerp_data('product.product', ids, fields):
-        #if i['code'] and i['variants']:
-        #  name = u'%d [%s] %s - %s' % (i['id'], i['code'], i['name'], i['variants'])
-        #elif i['code']:
-        #  name = u'%d [%s] %s' % (i['id'], i['code'], i['name'])
-        #elif i['variants']:
-        #  name = u'%d %s - %s' % (i['id'], i['code'], i['name'], i['variants'])
-        #else:
-        name = u'%d %s' % (i['id'], i['name'])
+        if i['code']:
+          name = u'[%s] %s' % (i['code'], i['name'])
+        else:
+          name = i['name']
         if i['active']:
           if name in frepple_keys:
-            update.append( (i['code'] or '',name) )
+            update.append( (i['id'],name) )
+          elif i['id'] in self.items:
+            # Object previously exported from OpenERP already, now renamed
+            rename.append( (name,i['id']) )
           else:
-            insert.append( (name, i['code'] or '') )
+            insert.append( (name,i['id']) )
+          self.items[i['id']] = name
         elif name in frepple_keys:
           delete.append( (name,) )
       cursor.executemany(
         "insert into item \
-          (name,description,source,lastmodified) \
+          (name,source,subcategory,lastmodified) \
           values (%%s,%%s,'OpenERP','%s')" % self.date,
         insert
         )
       cursor.executemany(
         "update item \
-          set description=%%s, source='OpenERP', lastmodified='%s' \
+          set source=%%s, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
         update
+        )
+      cursor.executemany(
+        "update item \
+          set name=%%s, lastmodified='%s' \
+          where source=%%s and subcategory='OpenERP'" % self.date,
+        rename
         )
       for i in delete:
         try: cursor.execute("delete from item where name=%s", i)
         except:
           # Delete fails when there are dependent records in the database.
-          cursor.execute("update item set source=null, lastmodified='%s' where name=%%s" % self.date, i)
+          cursor.execute("update item set source=null, subcategory=null, lastmodified='%s' where name=%%s" % self.date, i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print("Inserted %d new products" % len(insert))
         print("Updated %d existing products" % len(update))
+        print("Renamed %d existing products" % len(rename))
         print("Deleted %d products" % len(delete))
         print("Imported products in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing products: %s" % e)
+      raise CommandError("Error importing products: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
 
 
   # Importing locations
-  #   - extracting stock.location objects
-  #   - NO filter on recently changed locations
+  #   - extracting stock.warehouses objects
+  #   - NO filter on recently changed records
   #   - meeting the criterion:
   #        - %active = True
-  #        - %usage = 'internal'
   #   - mapped fields OpenERP -> frePPLe location
-  #        - %id %name -> name
+  #        - %name -> name
   #        - 'OpenERP' -> subcategory
+  #        - %id -> source
   def import_locations(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:
-        print("Importing locations...")
-      cursor.execute("SELECT name FROM location")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      ids = self.openerp_search('stock.location', ['|',('active', '=', 1),('active', '=', 0)])
-      fields = ['name', 'usage', 'active']
+        print("Importing warehouses...")
+      cursor.execute("SELECT name, subcategory, source FROM location")
+      frepple_keys = set()
+      for i in cursor.fetchall():
+        if i[1] == 'OpenERP': self.locations[i[2]] = i[0]
+        frepple_keys.add(i[0])
+      ids = self.openerp_search('stock.warehouse')
+      fields = ['name', 'lot_stock_id', 'lot_input_id', 'lot_output_id']
       insert = []
       update = []
-      delete = []
-      for i in self.openerp_data('stock.location', ids, fields):
-        name = u'%d %s' % (i['id'],i['name'])
-        self.locations[i['id']] = name
-        if i['active'] and i['usage'] == 'internal':
-          if name in frepple_keys:
-            update.append(i)
-          else:
-            insert.append(i)
-        elif name in frepple_keys:
-          delete.append( (name,) )
+      rename = []
+      for i in self.openerp_data('stock.warehouse', ids, fields):
+        if i['name'] in frepple_keys:
+          update.append( (i['id'],i['name']) )
+        elif i['id'] in self.locations:
+          # Object previously exported from OpenERP already, now renamed
+          rename.append( (i['name'],i['id']) )
+        else:
+          insert.append( (i['name'],i['id']) )
+        # Find all child locations of the warehouse.
+        # We populate a mapping location-to-warehouse name for later lookups.
+        ids2 = [ i['lot_stock_id'][0], i['lot_input_id'][0], i['lot_output_id'][0] ]
+        fields2 = ['child_ids']
+        for j in self.openerp_data('stock.location', ids2, fields2):
+          self.locations[j['id']] = i['name']
+          for k in j['child_ids']:
+            self.locations[k] = i['name']
       cursor.executemany(
         "insert into location \
-          (name,source,lastmodified) \
-          values (%%s,'OpenERP','%s')" % self.date,
-        [(
-           u'%d %s' % (i['id'],i['name']),
-         ) for i in insert
-        ])
+          (name,source,subcategory,lastmodified) \
+          values (%%s,%%s,'OpenERP','%s')" % self.date,
+        insert)
       cursor.executemany(
         "update location \
-          set source='OpenERP', lastmodified='%s' \
+          set source=%%s, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
-        [(
-           u'%d %s' % (i['id'],i['name']),
-         ) for i in update
-        ])
-      for i in delete:
-        try: cursor.execute("delete from location where name=%s",i)
-        except:
-          # Delete fails when there are dependent records in the database.
-          cursor.execute("update location set source=null, lastmodified='%s' where name=%%s" % self.date, i)
+        update)
+      cursor.executemany(
+        "update location \
+          set name= %%s, subcategory='OpenERP', lastmodified='%s' \
+          where source=%%s" % self.date,
+        rename)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print("Inserted %d new locations" % len(insert))
-        print("Updated %d existing locations" % len(update))
-        print("Deleted %d locations" % len(delete))
-        print("Imported locations in %.2f seconds" % (time() - starttime))
+        print("Inserted %d new warehouses" % len(insert))
+        print("Updated %d existing warehouses" % len(update))
+        print("Renamed %d existing warehouses" % len(rename))
+        print("Imported warehouses in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing locations: %s" % e)
+      raise CommandError("Error importing warehouses: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -438,19 +460,11 @@ class Command(BaseCommand):
 
       # Get the stocking location of each warehouse (where we deliver from)
       if self.verbosity > 0:
-        print("Extracting warehouse list...")
-      ids = self.openerp_search('stock.warehouse')
-      fields = ['name', 'lot_stock_id']
-      for i in self.openerp_data('stock.warehouse', ids, fields):
-        self.warehouses[i['id']] = self.locations[i['lot_stock_id'][0]]
-
-      # Get the stocking location of each warehouse (where we deliver from)
-      if self.verbosity > 0:
         print("Extracting shop list...")
       ids = self.openerp_search('sale.shop')
       fields = ['name', 'warehouse_id']
       for i in self.openerp_data('sale.shop', ids, fields):
-        self.shops[i['id']] = self.warehouses[i['warehouse_id'][0]]
+        self.shops[i['id']] = i['warehouse_id'][1]
 
       # Now the list of sales orders
       deliveries = set()
@@ -466,12 +480,13 @@ class Command(BaseCommand):
       update = []
       delete = []
       for i in self.openerp_data('sale.order.line', ids, fields):
-        name = u'%d %d %s %d' % (i['order_id'][0], i['id'], i['order_id'][1], i['sequence'])
+        name = u'%s %d - %d' % (i['order_id'][1], i['sequence'], i['id'])
+        source = i['id']
         if i['state'] == 'confirmed':
-          product = u'%s %s' % (i['product_id'][0], i['product_id'][1][i['product_id'][1].find(']')+2:])
+          product = i['product_id'][1]
           j = self.openerp_data('sale.order', [i['order_id'][0],], fields2)[0]
           location = self.shops[j['shop_id'][0]]
-          operation = u'delivery %s from %s' % (product, location)
+          operation = u'Ship %s @ %s' % (product, location)
           buffer = u'%s @ %s' % (product, location)
           deliveries.update([(product,location,operation,buffer),])
           if name in frepple_keys:
@@ -482,32 +497,34 @@ class Command(BaseCommand):
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               j['requested_date'] or j['date_order'],
               operation,
+              source,
               name,
               ) )
           else:
             insert.append( (
-              name,
               product,
               u'%d %s' % (j['partner_id'][0], j['partner_id'][1]),
               i['product_uom_qty'],
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               j['requested_date'] or j['date_order'],
               operation,
+              source,
+              name,
               ) )
         elif name in frepple_keys:
           delete.append( (name,) )
 
       # Create or update delivery operations
-      cursor.execute("SELECT name FROM operation where name like 'delivery%'")
+      cursor.execute("SELECT name FROM operation where name like 'Ship %'")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       cursor.executemany(
         "insert into operation \
-          (name,location_id,source,lastmodified) \
+          (name,location_id,subcategory,lastmodified) \
           values (%%s,%%s,'OpenERP','%s')" % self.date,
         [ (i[2],i[1]) for i in deliveries if i[2] not in frepple_keys ])
       cursor.executemany(
         "update operation \
-          set location_id=%%s, source='OpenERP' ,lastmodified='%s' where name=%%s" % self.date,
+          set location_id=%%s, subcategory='OpenERP', lastmodified='%s' where name=%%s" % self.date,
         [ (i[1],i[2]) for i in deliveries if i[2] in frepple_keys ])
 
       # Create or update delivery buffers
@@ -515,12 +532,12 @@ class Command(BaseCommand):
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       cursor.executemany(
         "insert into buffer \
-          (name,item_id,location_id,source,lastmodified) \
+          (name,item_id,location_id,subcategory,lastmodified) \
           values(%%s,%%s,%%s,'OpenERP','%s')" % self.date,
         [ (i[3],i[0],i[1]) for i in deliveries if i[3] not in frepple_keys ])
       cursor.executemany(
         "update buffer \
-          set item_id=%%s, location_id=%%s, source='OpenERP', lastmodified='%s' where name=%%s" % self.date,
+          set item_id=%%s, location_id=%%s, subcategory='OpenERP', lastmodified='%s' where name=%%s" % self.date,
         [ (i[0],i[1],i[3]) for i in deliveries if i[3] in frepple_keys ])
 
       # Create or update flow on delivery operation
@@ -539,12 +556,12 @@ class Command(BaseCommand):
       # Create or update demands
       cursor.executemany(
         "insert into demand \
-          (name,item_id,customer_id,quantity,minshipment,due,operation_id,priority,source,lastmodified) \
-          values (%%s,%%s,%%s,%%s,%%s,%%s,%%s,1,'OpenERP','%s')" % self.date,
+          (item_id,customer_id,quantity,minshipment,due,operation_id,priority,subcategory,lastmodified,source,name) \
+          values (%%s,%%s,%%s,%%s,%%s,%%s,1,'OpenERP','%s',%%s,%%s)" % self.date,
         insert)
       cursor.executemany(
         "update demand \
-          set item_id=%%s, customer_id=%%s, quantity=%%s, minshipment=%%s, due=%%s, operation_id=%%s, priority=1, source='OpenERP', lastmodified='%s' \
+          set item_id=%%s, customer_id=%%s, quantity=%%s, minshipment=%%s, due=%%s, operation_id=%%s, source=%%s, priority=1, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
         update)
       for i in delete:
@@ -561,13 +578,13 @@ class Command(BaseCommand):
         print("Imported sales orders in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing sales orders: %s" % e)
+      raise CommandError("Error importing sales orders: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
 
 
-  # Importing workcenters
+  # Importing work centers
   #   - extracting recently changed mrp.workcenter objects
   #   - meeting the criterion:
   #        - %active = True
@@ -576,69 +593,71 @@ class Command(BaseCommand):
   #        - %cost_hour -> cost
   #        - capacity_per_cycle -> maximum
   #        - 'OpenERP' -> source
-  #   - A bit surprising, but OpenERP doesn't assign a location or company to
-  #     a workcenter.
-  #     You should assign a location in frePPLe to assure that the user interface
-  #     working .
-  #
+  #   - In OpenERP a work center links to a resource, and a resource has
+  #     a calendar with working hours.
+  #     We don't map the calendar to frePPLe, assuming that this is easy
+  #     to maintain in frePPLe.
   def import_workcenters(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:
         print("Importing workcenters...")
-      cursor.execute("SELECT name FROM resource")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      cursor.execute("SELECT name, subcategory, source FROM resource")
+      frepple_keys = set()
+      for i in cursor.fetchall():
+        if i[1] == 'OpenERP': self.resources[i[2]] = i[0]
+        frepple_keys.add(i[0])
       ids = self.openerp_search('mrp.workcenter',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
          '|',('active', '=', 1),('active', '=', 0)])
-      fields = ['name', 'active', 'costs_hour', 'capacity_per_cycle']
+      fields = ['name', 'active', 'costs_hour', 'capacity_per_cycle', 'time_cycle']
       insert = []
       update = []
+      rename = []
       delete = []
       for i in self.openerp_data('mrp.workcenter', ids, fields):
-        name = u'%d %s' % (i['id'],i['name'])
         if i['active']:
-          if name in frepple_keys:
-            update.append(i)
+          if i['name'] in frepple_keys:
+            update.append( (i['id'],i['costs_hour'],i['capacity_per_cycle'] / (i['time_cycle'] or 1),i['name']) )
+          elif i['id'] in self.resources:
+            # Object previously exported from OpenERP already, now renamed
+            rename.append( (i['name'],i['costs_hour'],i['capacity_per_cycle'] / (i['time_cycle'] or 1),i['id']) )
           else:
-            insert.append(i)
-        elif name in frepple_keys:
-          delete.append( (name,) )
+            insert.append( (i['id'],i['name'],i['costs_hour'],i['capacity_per_cycle'] / (i['time_cycle'] or 1)) )
+          self.resources[i['id']] = i['name']
+        elif i['name'] in frepple_keys:
+          delete.append( (i['name'],) ),
       cursor.executemany(
         "insert into resource \
-          (name,cost,maximum,source,lastmodified) \
-          values (%%s,%%s,%%s,'OpenERP','%s')" % self.date,
-        [(
-           u'%d %s' % (i['id'],i['name']),
-           i['costs_hour'] or 0,
-           i['capacity_per_cycle'] or 1,
-         ) for i in insert
-        ])
+          (source,name,cost,maximum,subcategory,lastmodified) \
+          values (%%s,%%s,%%s,%%s,'OpenERP','%s')" % self.date,
+        insert)
       cursor.executemany(
         "update resource \
-          set cost=%%s, maximum=%%s, source='OpenERP', lastmodified='%s' \
+          set source=%%s, cost=%%s, maximum=%%s, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
-        [(
-           i['costs_hour'] or 0,
-           i['capacity_per_cycle'] or 1,
-           u'%d %s' % (i['id'],i['name']),
-         ) for i in update
-        ])
+        update)
+      cursor.executemany(
+        "update resource \
+          set name=%%s, cost=%%s, maximum=%%s, subcategory='OpenERP', lastmodified='%s' \
+          where source=%%s" % self.date,
+        rename)
       for i in delete:
         try: cursor.execute("delete from resource where name=%s",i)
         except:
           # Delete fails when there are dependent records in the database.
-          cursor.execute("update resource set source=null, lastmodified='%s' where name=%%s" % self.date,i)
+          cursor.execute("update resource set source=null, subcategory=null, lastmodified='%s' where name=%%s" % self.date,i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print("Inserted %d new workcenters" % len(insert))
         print("Updated %d existing workcenters" % len(update))
+        print("Renamed %d existing workcenters" % len(rename))
         print("Deleted %d workcenters" % len(delete))
         print("Imported workcenters in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing workcenters: %s" % e)
+      raise CommandError("Error importing workcenters: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -669,40 +688,35 @@ class Command(BaseCommand):
       frepple_locations = set([ i[0] for i in cursor.fetchall()])
       cursor.execute("SELECT name FROM buffer")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      cursor.execute("update buffer set onhand = 0 where source = 'OpenERP'")
+      cursor.execute("update buffer set onhand = 0 where subcategory = 'OpenERP'")
       ids = self.openerp_search('stock.report.prodlots', [('qty','>', 0),])
       fields = ['prodlot_id', 'location_id', 'qty', 'product_id']
       insert = []
       update = []
       for i in self.openerp_data('stock.report.prodlots', ids, fields):
-        name = u'%d %s @ %d %s' % (i['product_id'][0], i['product_id'][1], i['location_id'][0], i['location_id'][1])
-        item = u'%d %s' % (i['product_id'][0], i['product_id'][1])
-        location = u'%d %s' % (i['location_id'][0], i['location_id'][1])
+        location = i['location_id'][0]
+        if not location in self.locations: continue
+        location = self.locations[location]  # Look up the warehouse of the location
+        item = i['product_id'][1]
+        name = u'%s @ %s' % (item, location)
         if item in frepple_items and location in frepple_locations:
           if name in frepple_keys:
-            update.append(i)
+            update.append( (i['qty'], name) )
           else:
-            insert.append(i)
+            insert.append( (name, item, location, i['qty']) )
+            frepple_keys.add(name)
       cursor.executemany(
         "insert into buffer \
-          (name,item_id,location_id,onhand,source,lastmodified) \
+          (name,item_id,location_id,onhand,subcategory,lastmodified) \
           values(%%s,%%s,%%s,%%s,'OpenERP','%s')" % self.date,
-        [(
-           u'%d %s @ %d %s' % (i['product_id'][0], i['product_id'][1], i['location_id'][0], i['location_id'][1]),
-           u'%d %s' % (i['product_id'][0], i['product_id'][1]),
-           u'%d %s' % (i['location_id'][0], i['location_id'][1]),
-           i['qty'],
-         ) for i in insert
-        ])
+        insert
+        )
       cursor.executemany(
         "update buffer \
-          set onhand=%%s, source='OpenERP', lastmodified='%s' \
+          set onhand=onhand+%%s, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
-        [(
-           i['qty'],
-           u'%d %s @ %d %s' % (i['product_id'][0], i['product_id'][1], i['location_id'][0], i['location_id'][1]),
-         ) for i in update
-        ])
+        update
+        )
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print("Inserted onhand for %d new buffers" % len(insert))
@@ -710,27 +724,33 @@ class Command(BaseCommand):
         print("Imported onhand in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing onhand: %s" % e)
+      raise CommandError("Error importing onhand: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
 
 
   # Load open purchase orders and quotations
-  #   - extracting recently changed purchase.order.line objects
+  #   - extracting all records every time. No net change capability.
   #   - meeting the criterion:
-  #        - %product_id already exists in frePPLe
-  #        - %location_id already exists in frePPLe
+  #        - %product already exists in frePPLe
+  #        - %location already exists in frePPLe
   #        - %state = 'approved' or 'draft'
   #   - mapped fields OpenERP -> frePPLe buffer
-  #        - %id %name -> name
-  #        - 'OpenERP' -> source
-  #   - mapped fields OpenERP -> frePPLe operation
-  #        - %id %name -> name
-  #        - 'OpenERP' -> source
-  #   - mapped fields OpenERP -> frePPLe flow
-  #        - %id %name -> name
+  #        - %product ' @ ' %name -> name
+  #        - %location, mapped to warehouse -> location
+  #        - %product -> product
   #        - 'OpenERP' -> subcategory
+  #   - mapped fields OpenERP -> frePPLe operation
+  #        - 'Purchase ' %product ' @ ' %location -> name
+  #        - 'OpenERP' -> subcategory
+  #        - 'fixed_time' -> type
+  #   - mapped fields OpenERP -> frePPLe flow
+  #        - 'Purchase ' %product ' @ ' %location -> operation
+  #        - %product ' @ ' %name -> buffer
+  #        - 1 -> quantity
+  #        - 'end' -> type
+  #        - 'OpenERP' -> source
   #   - mapped fields OpenERP -> frePPLe operationplan
   #        - %id %name -> name
   #        - 'OpenERP' -> source
@@ -740,32 +760,6 @@ class Command(BaseCommand):
   # TODO Possible to update PO without touching the date on the PO-lines? Rework code?
   # TODO Operationplan id is not the most robust way to find a match
   def import_purchaseorders(self, cursor):
-
-    def newBuffers(insert):
-      cursor.execute("SELECT name FROM buffer")
-      frepple_buffers = set([ i[0] for i in cursor.fetchall()])
-      for i in insert:
-        if i[4] not in frepple_buffers:
-          frepple_buffers.add(i[4])
-          yield (i[4], i[5], i[6],)
-
-    def newOperations(insert):
-      cursor.execute("SELECT name FROM operation")
-      frepple_operations = set([ i[0] for i in cursor.fetchall()])
-      for i in insert:
-        if i[0] not in frepple_operations:
-          frepple_operations.add(i[0])
-          yield (i[0], i[6],)
-
-    def newFlows(insert):
-      cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
-      frepple_flows = set([ u'%sx%s' % (i[0],i[1]) for i in cursor.fetchall()])
-      for i in insert:
-        k = u'%sx%s' %(i[0], i[4])
-        if k not in frepple_flows:
-          frepple_flows.add(k)
-          yield (i[0], i[4],)
-
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
@@ -773,55 +767,78 @@ class Command(BaseCommand):
         print("Importing purchase orders...")
       cursor.execute("SELECT name FROM item")
       frepple_items = set([ i[0] for i in cursor.fetchall()])
-      cursor.execute("SELECT name FROM location")
-      frepple_locations = set([ i[0] for i in cursor.fetchall()])
       cursor.execute("SELECT id FROM operationplan")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      ids = self.openerp_search('purchase.order.line',
-        ['|',('create_date','>', self.delta),('write_date','>', self.delta)])
+      deliveries = set()
+      ids = self.openerp_search('purchase.order.line')
       fields = ['name', 'date_planned', 'product_id', 'product_qty', 'order_id']
       fields2 = ['name', 'location_id', 'partner_id', 'state', 'received']
       insert = []
       delete = []
       update = []
       for i in self.openerp_data('purchase.order.line', ids, fields):
-        item = u'%d %s' % (i['product_id'][0], i['product_id'][1])
+        item = i['product_id'][1]
         j = self.openerp_data('purchase.order', [i['order_id'][0],], fields2)[0]
-        location = u'%d %s' % (j['location_id'][0], j['location_id'][1])
-        if location in frepple_locations and item in frepple_items and j['state'] in ('approved','draft'):
+        if j['location_id'][0] in self.locations and item in frepple_items and j['state'] in ('approved','draft'):
+          location = self.locations[j['location_id'][0]]
+          operation = u'Purchase %s @ %s' %(item,location)
           if i['id'] in frepple_keys:
             update.append( (
-               u'procure for %s @ %s' %(item,location), i['date_planned'], i['date_planned'], i['product_qty'], i['id']
+               operation, i['date_planned'], i['date_planned'], i['product_qty'], i['id']
               ) )
           else:
             insert.append( (
-               u'procure for %s @ %s' %(item,location), i['date_planned'], i['product_qty'], i['id'],
-               u'%s @ %s' %(item,location), item, location
+               operation, i['date_planned'], i['product_qty'], i['id'],
+               operation, item, location
               ) )
+          deliveries.update([(item,location,operation,u'%s @ %s' % (item, location)),])
         elif id in frepple_keys:
           delete.append( (i['id'],) )
-      cursor.executemany(
-        "insert into buffer \
-          (name,item_id,location_id,source,lastmodified) \
-          values(%%s,%%s,%%s,'OpenERP','%s')" % self.date,
-        [ i for i in newBuffers(insert) ]
-        )
+
+      # Create or update procurement operations
+      cursor.execute("SELECT name FROM operation where name like 'Purchase %'")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
       cursor.executemany(
         "insert into operation \
-          (name,location_id,source,lastmodified) \
-          values(%%s,%%s,'OpenERP','%s')" % self.date,
-        [ i for i in newOperations(insert) ]
-        )
+          (name,location_id,subcategory,type,lastmodified) \
+          values (%%s,%%s,'openbravo','fixed_time','%s')" % self.date,
+        [ (i[2],i[1]) for i in deliveries if i[2] not in frepple_keys ])
+      cursor.executemany(
+        "update operation \
+          set location_id=%%s, subcategory='OpenERP', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
+        [ (i[1],i[2]) for i in deliveries if i[2] in frepple_keys ])
+
+      # Create or update purchasing buffers
+      cursor.execute("SELECT name FROM buffer")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      cursor.executemany(
+        "insert into buffer \
+          (name,item_id,location_id,subcategory,lastmodified) \
+          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+        [ (i[3],i[0],i[1]) for i in deliveries if i[3] not in frepple_keys ])
+      cursor.executemany(
+        "update buffer \
+          set item_id=%%s, location_id=%%s, subcategory='OpenERP', lastmodified='%s' where name=%%s" % self.date,
+        [ (i[0],i[1],i[3]) for i in deliveries if i[3] in frepple_keys ])
+
+      # Create or update flow on purchasing operation
+      cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
+      frepple_keys = set([ i for i in cursor.fetchall()])
       cursor.executemany(
         "insert into flow \
-          (operation_id,thebuffer_id,type,quantity,source,lastmodified) \
-          values(%%s,%%s,'end',1,'OpenERP','%s')" % self.date,
-        [ i for i in newFlows(insert) ]
-        )
+          (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
+          values(%%s,%%s,1,'end','OpenERP','%s')" % self.date,
+        [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) not in frepple_keys ])
+      cursor.executemany(
+        "update flow \
+          set quantity=1, type='end', source='OpenERP', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
+        [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) in frepple_keys ])
+
+      # Create purchasing operationplans
       cursor.executemany(
         "insert into operationplan \
           (id,operation_id,startdate,enddate,quantity,locked,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,%%s,'1','OpenERP',%s')" % self.date,
+          values(%%s,%%s,%%s,%%s,%%s,'1','OpenERP','%s')" % self.date,
         [ (i[3], i[0], i[1], i[1], i[2], ) for i in insert ]
         )
       cursor.executemany(
@@ -830,17 +847,17 @@ class Command(BaseCommand):
           where id=%%s" % self.date,
         update)
       cursor.executemany(
-        "delete from operationplan where id=%s",
+        "delete from operationplan where id=%s and source='OpenERP'",
         delete)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
-        print("Inserted %d purchase orders" % len(insert))
-        print("Updated %d purchase orders" % len(update))
-        print("Deleted %d purchase orders" % len(delete))
+        print("Inserted %d purchase order lines" % len(insert))
+        print("Updated %d purchase order lines" % len(update))
+        print("Deleted %d purchase order lines" % len(delete))
         print("Imported purchase orders in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing purchase orders: %s" % e)
+      raise CommandError("Error importing purchase orders: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -1122,7 +1139,7 @@ class Command(BaseCommand):
       transaction.rollback(using=self.database)
       import sys, traceback
       traceback.print_exc(file=sys.stdout)
-      print("Error importing bills of material: %s" % e)
+      raise CommandError("Error importing bills of material: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
@@ -1180,7 +1197,7 @@ class Command(BaseCommand):
         print("Updated buffers for %d produced items" % len(produce))
     except Exception as e:
       transaction.rollback(using=self.database)
-      print("Error importing policies: %s" % e)
+      raise CommandError("Error importing policies: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)

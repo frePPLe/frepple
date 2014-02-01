@@ -2,14 +2,14 @@
 {% load i18n %}
 
 {% block title %}frePPLe{% endblock %}
-{% block content_title %}<h1>{% trans "Planning dashboard" %}</h1>{% endblock %}
+{% block content_title %}<h1>{% trans "Cockpit" %}</h1>{% endblock %}
 
 {% block extrahead %}{{block.super}}
-
-  <style>
+<script type="text/javascript" src="/static/js/flotr2.min.js"></script>
+<style>
   .column {
     float: left;
-    padding-bottom: 100px;
+    padding-bottom: 200px;
   }
   .portlet {
     margin: 0 1em 1em 0;
@@ -46,8 +46,8 @@
     margin: 0 1em 1em 0;
     height: 50px;
   }
-  </style>
-  <script>
+</style>
+<script>
   $(function() {
     $(".column").sortable({
       connectWith: ".column",
@@ -75,7 +75,7 @@
 {% for col in dashboard %}
 <div class="column" style="width:{{col.width}}">
 {% for widget in col.widgets %}
-  <div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">
+  <div class="ui-widget ui-widget-content ui-helper-clearfix ui-corner-all portlet">
     <div class="portlet-header ui-widget-header ui-corner-all">{% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&format=csvlist"><span class='ui-icon ui-icon-arrowreturn-1-n portlet-export'></span></a>{% endif %}<span class='ui-icon ui-icon-close portlet-close'></span><span class='ui-icon ui-icon-minus portlet-toggle'></span>{% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title}}</a>{% else %}{{widget.title}}{% endif %}</div>
     <div class="portlet-content">{% if widget.async %}<div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading"></div>{% else %}{{widget.render|safe}}{% endif %}</div>
   </div>

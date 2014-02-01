@@ -52,7 +52,7 @@ class LateOrdersWidget(Widget):
         )
       ]
     for prob in Problem.objects.using(db).filter(name='late',entity='demand').order_by('startdate','-weight')[:limit]:
-      result.append('<tr onclick="window.location.href=\'%s/demandpegging/%s/\';"><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+      result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
           request.prefix, quote(prob.owner), prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight)
           ))
     result.append('</table>')
@@ -86,7 +86,7 @@ class ShortOrdersWidget(Widget):
         )
       ]
     for prob in Problem.objects.using(db).filter(name__gte='short',entity='demand').order_by('startdate')[:limit]:
-      result.append('<tr onclick="window.location.href=\'%s/demandpegging/%s/\';"><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+      result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
           request.prefix, quote(prob.owner), prob.owner, prob.startdate.date(), int(prob.weight)
           ))
     result.append('</table>')
@@ -95,9 +95,9 @@ class ShortOrdersWidget(Widget):
 Dashboard.register(ShortOrdersWidget)
 
 
-class PurchasingQueueWidget(Widget):
-  name = "purchasing_queue"
-  title = _("Purchasing queue")
+class ProcurementQueueWidget(Widget):
+  name = "procurement_queue"
+  title = _("Procurement queue")
   permissions = (("view_operation_report", "Can view operation report"),)
   async = True
   url = '/operationplan/?locked=0&sidx=startdate&sord=asc&operation__startswith=Purchase'
@@ -118,19 +118,53 @@ class PurchasingQueueWidget(Widget):
         capfirst(force_unicode(_("enddate"))), capfirst(force_unicode(_("quantity")))
         )
       ]
-    for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=False).order_by('startdate')[:limit]:
+    for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Procure ', locked=False).order_by('startdate')[:limit]:
       result.append('<tr><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
           opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity)
           ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
 
-Dashboard.register(PurchasingQueueWidget)
+Dashboard.register(ProcurementQueueWidget)
+
+
+class AlertsWidget(Widget):
+  name = "alerts"
+  title = _("Alerts")
+  permissions = (("view_problem_report", "Can view problem report"),)
+  async = True
+  url = '/problem/'
+  exporturl = True
+
+  @classmethod
+  def render(cls, request=None):
+    result = [
+      '<table style="width:100%">',
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th></tr>' % (
+        capfirst(force_unicode(_("resource"))), capfirst(force_unicode(_("count"))),
+        capfirst(force_unicode(_("weight")))
+        )
+      ]
+    cursor = connections[request.database].cursor()
+    query = '''select name, count(*), sum(weight)
+      from out_problem
+      group by name
+      order by name
+      '''
+    cursor.execute(query)
+    for res in cursor.fetchall():
+      result.append('<tr><td class="underline"><a href="%s/problem/?name=%s">%s</a></td><td class="aligncenter">%d</td><td class="aligncenter">%d</td></tr>' % (
+          request.prefix, quote(res[0]), res[0], res[1], res[2]
+          ))
+    result.append('</table>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(AlertsWidget)
 
 
 class ResourceLoadWidget(Widget):
-  name = "resource_load"
-  title = _("Resource load")
+  name = "resource_utilization"
+  title = _("Resource utilization")
   permissions = (("view_resource_report", "Can view resource report"),)
   async = True
   url = '/resource/'
@@ -139,16 +173,42 @@ class ResourceLoadWidget(Widget):
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
 
+  javascript = '''
+    var res = [];
+    var data = [];
+    var cnt = 100;
+    $("#resLoad").next().find("td.name").each(function() {res.push([cnt,$(this).html()]); cnt-=1;});
+    console.log(res);
+    cnt = 100;
+    $("#resLoad").next().find("td.util").each(function() {data.push([$(this).html(),cnt]); cnt-=1;});
+    Flotr.draw($("#resLoad").get(0), [ data ], {
+        HtmlText: true,
+        bars: {
+          show: true, horizontal: true, barWidth: 0.9,
+          lineWidth: 0, shadowSize: 0, fillOpacity: 1
+        },
+        grid: {
+          verticalLines: false, horizontalLines: false
+          },
+        yaxis: {
+          ticks: res
+          },
+        mouse: {
+          track: true, relative: true
+        },
+        xaxis: {
+          min: 0, autoscaleMargin: 1, title: '%'
+        },
+        colors: ['#D31A00',]
+    });
+    '''
+
   @classmethod
   def render(cls, request=None):
     limit = int(request.GET.get('limit',20))
-    try: db = current_request.database or DEFAULT_DB_ALIAS
-    except: db = DEFAULT_DB_ALIAS
     result = [
-      '<table style="width:100%">',
-      '<tr><th class="alignleft">%s</th><th>%s</th></tr>' % (
-        capfirst(force_unicode(_("resource"))), capfirst(force_unicode(_("utilization")))
-        )
+      '<div id="resLoad" style="width:100%%; height: %spx;"></div>' % (limit*25+30),
+      '<table style="display:none">'
       ]
     #            where out_resourceplan.startdate >= '%s'
     #            and out_resourceplan.startdate < '%s'
@@ -156,7 +216,9 @@ class ResourceLoadWidget(Widget):
     query = '''select
                   theresource,
                   ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) )
-                   * 100.0 / coalesce(sum(out_resourceplan.available)+0.000001,1) as avg_util
+                   * 100.0 / coalesce(sum(out_resourceplan.available)+0.000001,1) as avg_util,
+                  coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0),
+                  coalesce(sum(out_resourceplan.free),0)
                 from out_resourceplan
                 group by theresource
                 order by 2 desc
@@ -165,10 +227,138 @@ class ResourceLoadWidget(Widget):
     for res in cursor.fetchall():
       limit -= 1
       if limit < 0: break
-      result.append('<tr onclick="window.location.href=\'%s/resource/%s/\';"><td>%s</td><td class="aligncenter">%.2f</td></tr>' % (
-          request.prefix, quote(res[0]), res[0], res[1]
-          ))
+      result.append('<tr><td class="name"><span class="underline"><a href="%s/resource/%s/">%s</a></span></td><td class="util">%.2f</td></tr>' % (
+        request.prefix, quote(res[0]), res[0], res[1]
+        ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(ResourceLoadWidget)
+
+
+class InventoryByLocationWidget(Widget):
+  name = "inventory_by_location"
+  title = _("Inventory by location")
+  async = True
+
+  def args(self):
+    return "?%s" % urlencode({'limit': self.limit})
+
+  javascript = '''
+    var locs = [];
+    var data = [];
+    var cnt = 0;
+    $("#invByLoc").next().find("td.name").each(function() {locs.push([cnt,$(this).html()]); cnt+=1;});
+    cnt = 0;
+    $("#invByLoc").next().find("td.data").each(function() {data.push([cnt,$(this).html()]); cnt+=1;});
+    Flotr.draw($("#invByLoc").get(0), [ data ], {
+        HtmlText: false,
+        bars: {
+          show: true, horizontal: false, barWidth: 0.9,
+          lineWidth: 0, shadowSize: 0, fillOpacity: 1
+        },
+        grid: {
+          verticalLines: false, horizontalLines: false,
+          },
+        xaxis: {
+          ticks: locs, labelsAngle: 45
+          },
+        mouse: {
+          track: true, relative: true
+        },
+        yaxis: {
+          min: 0, autoscaleMargin: 1
+        },
+        colors: ['#828915']
+    });
+    '''
+
+  @classmethod
+  def render(cls, request=None):
+    limit = int(request.GET.get('limit',20))
+    result = [
+      '<div id="invByLoc" style="width:100%; height: 250px;"></div>',
+      '<table style="display:none">'
+      ]
+    cursor = connections[request.database].cursor()
+    query = '''select location_id, coalesce(sum(buffer.onhand * item.price),0)
+               from buffer
+               inner join item on buffer.item_id = item.name
+               group by location_id
+               order by 2 desc
+              '''
+    cursor.execute(query)
+    for res in cursor.fetchall():
+      limit -= 1
+      if limit < 0: break
+      result.append('<tr><td class="name">%s</td><td class="data">%.2f</td></tr>' % (
+        res[0], res[1]
+        ))
+    result.append('</table>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(InventoryByLocationWidget)
+
+
+class InventoryByItemWidget(Widget):
+  name = "inventory_by_item"
+  title = _("Inventory by item")
+  async = True
+
+  def args(self):
+    return "?%s" % urlencode({'limit': self.limit})
+
+  javascript = '''
+    var locs = [];
+    var data = [];
+    var cnt = 0;
+    $("#invByItem").next().find("td.name").each(function() {locs.push([cnt,$(this).html()]); cnt+=1;});
+    cnt = 0;
+    $("#invByItem").next().find("td.data").each(function() {data.push([cnt,$(this).html()]); cnt+=1;});
+    Flotr.draw($("#invByItem").get(0), [ data ], {
+        HtmlText: false,
+        bars: {
+          show: true, horizontal: false, barWidth: 0.9,
+          lineWidth: 0, shadowSize: 0, fillOpacity: 1
+        },
+        grid : {
+          verticalLines: false, horizontalLines: false,
+          },
+        xaxis: {
+          ticks: locs, labelsAngle: -45
+          },
+        mouse : {
+          track: true, relative: true
+        },
+        yaxis : {
+          min: 0, autoscaleMargin: 1
+        },
+        colors: ['#d31a00']
+    });
+    '''
+
+  @classmethod
+  def render(cls, request=None):
+    limit = int(request.GET.get('limit',20))
+    result = [
+      '<div id="invByItem" style="width:100%; height: 250px;"></div>',
+      '<table style="display:none">'
+      ]
+    cursor = connections[request.database].cursor()
+    query = '''select item.name, coalesce(sum(buffer.onhand * item.price),0)
+               from buffer
+               inner join item on buffer.item_id = item.name
+               group by item.name
+               order by 2 desc
+              '''
+    cursor.execute(query)
+    for res in cursor.fetchall():
+      limit -= 1
+      if limit < 0: break
+      result.append('<tr><td class="name">%s</td><td class="data">%.2f</td></tr>' % (
+        res[0], res[1]
+        ))
+    result.append('</table>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(InventoryByItemWidget)

@@ -23,8 +23,8 @@ BUFFER	product	2009-01-04T00:00:00	2	9
 BUFFER	product	2009-01-04T00:00:00	1	10
 BUFFER	product	2009-01-04T00:00:00	-10	0
 DEMAND	order 1	2009-01-04T00:00:00	10
-OPERATION	Procure for buffer 'component A'	2008-12-17T00:00:00	2008-12-24T00:00:00	70
-OPERATION	Procure for buffer 'component C'	2008-12-17T00:00:00	2008-12-24T00:00:00	66
+OPERATION	Purchase component A	2008-12-17T00:00:00	2008-12-24T00:00:00	70
+OPERATION	Purchase component C	2008-12-17T00:00:00	2008-12-24T00:00:00	66
 OPERATION	assembly	2008-12-24T00:00:00	2009-01-04T00:00:00	1
 OPERATION	assembly	2008-12-25T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2008-12-27T00:00:00	2009-01-04T00:00:00	2
@@ -37,8 +37,8 @@ PROBLEM	material shortage	Buffer 'component D' has material shortage of 20	1971-
 PROBLEM	material shortage	Buffer 'component E' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'component F' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'component G' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Operation 'Procure for buffer 'component A'' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
-PROBLEM	before current	Operation 'Procure for buffer 'component C'' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
+PROBLEM	before current	Operation 'Purchase component A' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
+PROBLEM	before current	Operation 'Purchase component C' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
 PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-24T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00

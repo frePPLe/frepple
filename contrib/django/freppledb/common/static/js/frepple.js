@@ -353,11 +353,21 @@ var grid = {
   {
     // The argument is true when we show a "list" report.
     // It is false for "table" reports.
-    $('#popup').html(
-      gettext("CSV style") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat"' + (only_list ? ' disabled="true"' : '')+ '>'+
-      '<option value="csvtable"' + (only_list ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
-      '<option value="csvlist"' + (only_list ?  ' selected="selected"' : '') + '>' + gettext("List") +'</option></select>'
-      ).dialog({
+    if (only_list)
+      $('#popup').html(
+        gettext("Export format") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat">' +
+        '<option value="spreadsheetlist" selected="selected">' + gettext("Spreadsheet list") + '</option>' +
+        '<option value="csvlist">' + gettext("CSV list") +'</option></select>'
+        );
+    else
+        $('#popup').html(
+        gettext("Export format") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat">' +
+        '<option value="spreadsheettable" selected="selected">' + gettext("Spreadsheet table") + '</option>' +
+        '<option value="spreadsheetlist">' + gettext("Spreadsheet list") + '</option>' +
+        '<option value="csvtable">' + gettext("CSV table") +'</option>'+
+        '<option value="csvlist">' + gettext("CSV list") +'</option></select>'
+        );
+    $('#popup').dialog({
         title: gettext("Export data"),
         autoOpen: true, resizable: false, width: 390, height: 'auto',
         buttons: [

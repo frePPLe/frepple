@@ -452,6 +452,39 @@ class GridReport(View):
 
 
   @classmethod
+  def _generate_spreadsheet_data(reportclass, request, *args, **kwargs):
+    # Create a workbook
+    from openpyxl import Workbook
+    wb = Workbook(optimized_write = True)
+    ws = wb.create_sheet(title=force_unicode(reportclass.model._meta.verbose_name))
+
+    # Write a header row
+    ws.append([ force_unicode(f.title).title() for f in reportclass.rows if f.title and not f.hidden ])
+
+    # Loop over all records
+    fields = [ i.field_name for i in reportclass.rows if i.field_name and not i.hidden ]
+    if callable(reportclass.basequeryset):
+      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database))
+    else:
+      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
+    for row in hasattr(reportclass,'query') and reportclass.query(request,query) or query.values(*fields):
+      if hasattr(row, "__getitem__"):
+        ws.append([ _getCellValue(row[f]) for f in fields ])
+      else:
+        ws.append([ _getCellValue(getattr(row,f)) for f in fields ])
+
+    # Write the spreadsheet from memory to a string and then to a HTTP response
+    output = StringIO()
+    wb.save(output)
+    response = HttpResponse(
+       mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+       content = output.getvalue()
+       )
+    response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % reportclass.model._meta.model_name
+    return response
+
+
+  @classmethod
   def _generate_csv_data(reportclass, request, *args, **kwargs):
     sf = cStringIO.StringIO()
     decimal_separator = get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True)
@@ -628,16 +661,15 @@ class GridReport(View):
       return render(request, reportclass.template, context)
     elif fmt == 'json':
       # Return JSON data to fill the grid.
-      # Response is not returned as an iterator to assure that the database
-      # connection is properly closed.
       return StreamingHttpResponse(
          content_type = 'application/json; charset=%s' % settings.DEFAULT_CHARSET,
          streaming_content = reportclass._generate_json_data(request, *args, **kwargs)
          )
+    elif fmt in ('spreadsheetlist','spreadsheettable','spreadsheet'):
+      # Return an excel spreadsheet
+      return reportclass._generate_spreadsheet_data(request, *args, **kwargs)
     elif fmt in ('csvlist','csvtable','csv'):
       # Return CSV data to export the data
-      # Response is not returned as an iterator to assure that the database
-      # connection is properly closed.
       response = StreamingHttpResponse(
          content_type = 'text/csv; charset=%s' % settings.CSV_CHARSET,
          streaming_content = reportclass._generate_csv_data(request, *args, **kwargs)
@@ -1332,6 +1364,83 @@ class GridPivot(GridReport):
         yield sf.getvalue()
 
 
+  @classmethod
+  def _generate_spreadsheet_data(reportclass, request, *args, **kwargs):
+    # Create a workbook
+    from openpyxl import Workbook
+    wb = Workbook(optimized_write = True)
+    ws = wb.create_sheet(title=force_unicode(reportclass.model._meta.verbose_name))
+
+    # Prepare the query
+    listformat = (request.GET.get('format','spreadsheetlist') == 'spreadsheetlist')
+    if args and args[0]:
+      query = reportclass.query(request, reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database), sortsql="1 asc")
+    elif callable(reportclass.basequeryset):
+      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database), sortsql=reportclass._apply_sort(request))
+    else:
+      query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database), sortsql=reportclass._apply_sort(request))
+
+    # Write a header row
+    fields = [ force_unicode(f.title).title() for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
+    if listformat:
+      fields.extend([ capfirst(force_unicode(_('bucket'))) ])
+      fields.extend([ capfirst(_(f[1].get('title',_(f[0])))) for f in reportclass.crosses ])
+    else:
+      fields.extend( [capfirst(_('data field'))])
+      fields.extend([ unicode(b['name']) for b in request.report_bucketlist])
+    ws.append(fields)
+
+    # Write the report content
+    if listformat:
+      for row in query:
+        # Append a row
+        if hasattr(row, "__getitem__"):
+          fields = [ _getCellValue(row[f.name]) for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
+          fields.extend([ _getCellValue(row['bucket']) ])
+          fields.extend([ _getCellValue(row[f[0]]) for f in reportclass.crosses ])
+        else:
+          fields = [ _getCellValue(getattr(row,f.name)) for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
+          fields.extend([ _getCellValue(getattr(row,'bucket')) ])
+          fields.extend([ _getCellValue(getattr(row,f[0])) for f in reportclass.crosses ])
+        ws.append(fields)
+    else:
+      currentkey = None
+      for row in query:
+        # We use the first field in the output to recognize new rows.
+        if not currentkey:
+          currentkey = row[reportclass.rows[0].name]
+          row_of_buckets = [ row ]
+        elif currentkey == row[reportclass.rows[0].name]:
+          row_of_buckets.append(row)
+        else:
+          # Write a row
+          for cross in reportclass.crosses:
+            if 'visible' in cross[1] and not cross[1]['visible']: continue
+            fields = [ _getCellValue(row_of_buckets[0][s.name]) for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) and not s.hidden ]
+            fields.extend([ _getCellValue(('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])))) ])
+            fields.extend([ _getCellValue(bucket[cross[0]]) for bucket in row_of_buckets ])
+            ws.append(fields)
+          currentkey = row[reportclass.rows[0].name]
+          row_of_buckets = [row]
+      # Write the last row
+      for cross in reportclass.crosses:
+        if 'visible' in cross[1] and not cross[1]['visible']: continue
+        fields = [ _getCellValue(row_of_buckets[0][s.name]) for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) and not s.hidden ]
+        fields.extend([ _getCellValue(('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])))) ])
+        fields.extend([ _getCellValue(bucket[cross[0]]) for bucket in row_of_buckets ])
+        ws.append(fields)
+
+    # Write the spreadsheet from memory to a string and then to a HTTP response
+    output = StringIO()
+    wb.save(output)
+    response = HttpResponse(
+       mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+       content = output.getvalue()
+       )
+    response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % reportclass.model._meta.model_name
+    return response
+
+
 numericTypes = (Decimal, float) + six.integer_types
 
 def _localize(value, decimal_separator):
@@ -1349,6 +1458,12 @@ def _localize(value, decimal_separator):
     return "|".join([ unicode(_localize(i,decimal_separator)) for i in value ])
   else:
     return value
+
+
+def _getCellValue(data):
+  if data==None: return ''
+  if isinstance(data, numericTypes): return data
+  return unicode(data)
 
 
 def exportWorkbook(request):
@@ -1404,7 +1519,7 @@ def exportWorkbook(request):
           (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table))
           )
       for rec in cursor.fetchall():
-        ws.append(  [f and (isinstance(f, numericTypes) and f or unicode(f)) or None for f in rec] )
+        ws.append([ _getCellValue(f) for f in rec ])
     except:
       pass  # Silently ignore the error and move on to the next entity.
 

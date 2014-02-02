@@ -246,7 +246,6 @@ class ResourceLoadWidget(Widget):
     var data = [];
     var cnt = 100;
     $("#resLoad").next().find("td.name").each(function() {res.push([cnt,$(this).html()]); cnt-=1;});
-    console.log(res);
     cnt = 100;
     $("#resLoad").next().find("td.util").each(function() {data.push([$(this).html(),cnt]); cnt-=1;});
     Flotr.draw($("#resLoad").get(0), [ data ], {
@@ -430,3 +429,50 @@ class InventoryByItemWidget(Widget):
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(InventoryByItemWidget)
+
+
+class DeliveryPerformanceWidget(Widget):
+  name = "delivery_performance"
+  title = _("Delivery performance")
+  async = True
+
+  def args(self):
+    return "?%s" % urlencode({'green': self.green, 'yellow': self.yellow})
+
+  javascript = '''
+    var val = parseFloat($('#otd_value').html());
+    var green = parseInt($('#otd_green').html());
+    var yellow = parseInt($('#otd_yellow').html());
+    new Gauge("otd", {
+      size: 120, label: $('#otd_label').html(), min: 0, max: 100, minorTicks: 5,
+      greenZones: [{from: green, to: 100}], yellowZones: [{from: yellow, to: green}],
+      value: val
+      }).render();
+    '''
+
+  @classmethod
+  def render(cls, request=None):
+    green = int(request.GET.get('green',90))
+    yellow = int(request.GET.get('yellow',80))
+    cursor = connections[request.database].cursor()
+    query = '''
+      select sum(late) * 100.0 /count(*)
+      from (
+        select
+          demand, max(case when plandate > due then 1 else 0 end) late
+        from out_demand
+        group by demand
+      ) demands
+      '''
+    cursor.execute(query)
+    val = cursor.fetchone()[0]
+    result = [
+      '<div style="text-align: center"><span id="otd"></span></div>',
+      '<span id="otd_label" style="display:none">%s</span>' % force_unicode(_("On time delivery")),
+      '<span id="otd_value" style="display:none">%s</span>' % val,
+      '<span id="otd_green" style="display:none">%s</span>' % green,
+      '<span id="otd_yellow" style="display:none">%s</span>' % yellow
+      ]
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(DeliveryPerformanceWidget)

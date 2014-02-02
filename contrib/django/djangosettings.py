@@ -290,6 +290,7 @@ DEFAULT_DASHBOARD = [
   {'width':'25%', 'widgets':[
     ("news",{}),
     ('resource_utilization',{"limit":5}),
+    ("delivery_performance",{"green": 90, "yellow": 80}),
     ("inventory_by_location",{"limit":5}),
     ("inventory_by_item",{"limit":10}),
   ]},

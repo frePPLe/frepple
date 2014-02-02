@@ -183,10 +183,6 @@ class Parameter(AuditModel):
 
 
 class User(AbstractUser):
-  csvOutputType = (
-    ('table',_('Table')),
-    ('list',_('List')),
-  )
   languageList = tuple( [ ('auto',_('Detect automatically')), ] + list(settings.LANGUAGES) )
   language = models.CharField(_('language'), max_length=10, choices=languageList,
     default='auto')

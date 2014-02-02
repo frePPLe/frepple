@@ -154,7 +154,7 @@ class ShippingQueueWidget(Widget):
       ]
     for dmdplan in Demand.objects.using(db).order_by('plandate')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td>%s</td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          request.prefix, quote(dmdplan.demand), dmdplan.demand, dmdplan.customer, dmdplan.item, dmdplan.plandate.date(), int(dmdplan.planquantity)
+          request.prefix, quote(dmdplan.demand), dmdplan.demand, dmdplan.customer, dmdplan.item, int(dmdplan.planquantity), dmdplan.plandate.date()
           ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))

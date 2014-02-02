@@ -25,7 +25,7 @@ from django.utils.text import capfirst
 
 from freppledb.common.middleware import current_request
 from freppledb.common.dashboard import Dashboard, Widget
-from freppledb.output.models import LoadPlan, Problem, OperationPlan
+from freppledb.output.models import LoadPlan, Problem, OperationPlan, Demand
 
 
 class LateOrdersWidget(Widget):
@@ -128,6 +128,40 @@ class PurchaseQueueWidget(Widget):
 Dashboard.register(PurchaseQueueWidget)
 
 
+class ShippingQueueWidget(Widget):
+  name = "shipping_queue"
+  title = _("Shipping queue")
+  permissions = (("view_operation_report", "Can view operation report"),)
+  async = True
+  url = '/demandplan/?sidx=plandate&sord=asc'
+  exporturl = True
+
+  def args(self):
+    return "?%s" % urlencode({'limit': self.limit})
+
+  @classmethod
+  def render(cls, request=None):
+    limit = request.GET.get('limit',20)
+    try: db = current_request.database or DEFAULT_DB_ALIAS
+    except: db = DEFAULT_DB_ALIAS
+    result = [
+      '<table style="width:100%">',
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
+        capfirst(force_unicode(_("demand"))), capfirst(force_unicode(_("customer"))),
+        capfirst(force_unicode(_("item"))), capfirst(force_unicode(_("quantity"))),
+        capfirst(force_unicode(_("plan date")))
+        )
+      ]
+    for dmdplan in Demand.objects.using(db).order_by('plandate')[:limit]:
+      result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td>%s</td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+          request.prefix, quote(dmdplan.demand), dmdplan.demand, dmdplan.customer, dmdplan.item, dmdplan.plandate.date(), int(dmdplan.planquantity)
+          ))
+    result.append('</table>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(ShippingQueueWidget)
+
+
 class ResourceQueueWidget(Widget):
   name = "resource_queue"
   title = _("Resource queue")
@@ -228,7 +262,7 @@ class ResourceLoadWidget(Widget):
           ticks: res
           },
         mouse: {
-          track: true, relative: true
+          track: true, relative: true, lineColor: '#D31A00'
         },
         xaxis: {
           min: 0, autoscaleMargin: 1, title: '%'
@@ -298,7 +332,7 @@ class InventoryByLocationWidget(Widget):
           ticks: locs, labelsAngle: 45
           },
         mouse: {
-          track: true, relative: true
+          track: true, relative: true, lineColor: '#828915'
         },
         yaxis: {
           min: 0, autoscaleMargin: 1
@@ -362,12 +396,12 @@ class InventoryByItemWidget(Widget):
           ticks: locs, labelsAngle: -45
           },
         mouse : {
-          track: true, relative: true
+          track: true, relative: true, lineColor: '#D31A00'
         },
         yaxis : {
           min: 0, autoscaleMargin: 1
         },
-        colors: ['#d31a00']
+        colors: ['#D31A00']
     });
     '''
 

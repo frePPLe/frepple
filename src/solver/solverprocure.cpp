@@ -36,6 +36,8 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   // except a) when the request is inside max(current + the lead time, latest procurement + min time
   // after locked procurement), or b) when the min time > 0 and max qty > 0
 
+  // TODO Procurement solver doesn't consider working days of the supplier.
+
   // Call the user exit
   if (userexit_buffer) userexit_buffer.call(b, PythonObject(data->constrainedPlanning));
 
@@ -65,6 +67,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       ++countProcurements;
     }
   }
+  Date latestlocked = earliest_next;
 
   // Find constraints on earliest and latest date for the next procurement
   if (earliest_next && b->getMaximumInterval())
@@ -73,10 +76,13 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     earliest_next += b->getMinimumInterval();
   if (data->constrainedPlanning)
   {
-    if (data->getSolver()->isLeadtimeConstrained()
+    if (data->getSolver()->isLeadtimeConstrained() && data->getSolver()->isFenceConstrained()
+        && earliest_next < Plan::instance().getCurrent() + b->getLeadtime() + b->getFence())
+      earliest_next = Plan::instance().getCurrent() + b->getLeadtime() + b->getFence();
+    else if (data->getSolver()->isLeadtimeConstrained()
         && earliest_next < Plan::instance().getCurrent() + b->getLeadtime())
       earliest_next = Plan::instance().getCurrent() + b->getLeadtime();
-    if (data->getSolver()->isFenceConstrained()
+    else if (data->getSolver()->isFenceConstrained()
         && earliest_next < Plan::instance().getCurrent() + b->getFence())
       earliest_next = Plan::instance().getCurrent() + b->getFence();
   }
@@ -298,7 +304,12 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         if (data->getSolver()->isLeadtimeConstrained()
             && data->state->q_date < Plan::instance().getCurrent() + b->getLeadtime()
             && data->state->a_date > Plan::instance().getCurrent() + b->getLeadtime())
-          data->state->a_date = Plan::instance().getCurrent() + b->getLeadtime();
+          data->state->a_date = Plan::instance().getCurrent() + b->getLeadtime();   // TODO Doesn't consider calendar of the procurement operation...
+        if (latestlocked
+            && data->state->q_date < latestlocked
+            && data->state->a_date > latestlocked)
+          data->state->a_date = latestlocked;
+        logger << "   " << b->getName() << "  " << latestlocked << "  " << data->state->a_date << endl;
       }
     }
     else

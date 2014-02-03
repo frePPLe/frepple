@@ -17,17 +17,15 @@
 from __future__ import print_function
 from optparse import make_option
 import xmlrpclib
-from datetime import datetime, timedelta
+from datetime import datetime
 from time import time
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, connections, DEFAULT_DB_ALIAS
-from django.template.loader import render_to_string
 from django.conf import settings
-from django.utils.translation import ugettext as _
 
 from freppledb.common.models import Parameter
-from freppledb.execute.models import log
+from freppledb.execute.models import Task
 
 
 class Command(BaseCommand):
@@ -36,16 +34,10 @@ class Command(BaseCommand):
   option_list = BaseCommand.option_list + (
       make_option('--user', dest='user', type='string',
         help='User running the command'),
-      make_option('--openerp_user', action='store', dest='openerp_user',
-        help='OpenErp user name to connect'),
-      make_option('--openerp_pwd', action='store', dest='openerp_password',
-        help='OpenErp password to connect'),
-      make_option('--openerp_db', action='store', dest='openerp_db',
-        help='OpenErp database instance to import from'),
-      make_option('--openerp_url', action='store', dest='openerp_url',
-        help='OpenERP XMLRPC connection URL'),
       make_option('--database', action='store', dest='database',
         default=DEFAULT_DB_ALIAS, help='Nominates the frePPLe database to export from'),
+      make_option('--task', dest='task', type='int',
+        help='Task identifier (generated automatically if not provided)'),
   )
 
   requires_model_validation = False
@@ -66,34 +58,16 @@ class Command(BaseCommand):
     else: self.verbosity = 1
     if 'user' in options: user = options['user']
     else: user = ''
-    self.openerp_user = options['openerp_user']
-    if not self.openerp_user:
-      try:
-        self.openerp_user = Parameter.objects.get(name="openerp_user").value
-      except:
-        self.openerp_user = 'admin'
-    self.openerp_password = options['openerp_password']
-    if not self.openerp_password:
-      try:
-        self.openerp_password = Parameter.objects.get(name="openerp_password").value
-      except:
-        self.openerp_password = 'admin'
-    self.openerp_db = options['openerp_db']
-    if not self.openerp_db:
-      try:
-        self.openerp_db = Parameter.objects.get(name="openerp_db").value
-      except Exception as e:
-        self.openerp_db = 'openerp'
-    self.openerp_url = options['openerp_url']
-    if not self.openerp_url:
-      try:
-        self.openerp_url = Parameter.objects.get(name="openerp_url").value
-      except:
-        self.openerp_url = 'http://localhost:8069/'
     if 'database' in options: self.database = options['database'] or DEFAULT_DB_ALIAS
     else: self.database = DEFAULT_DB_ALIAS
     if not self.database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % self.database )
+
+    # Pick up configuration parameters
+    self.openerp_user = Parameter.getValue("openerp.user", self.database)
+    self.openerp_password = Parameter.getValue("openerp.password", self.database)
+    self.openerp_db = Parameter.getValue("openerp.db", self.database)
+    self.openerp_url = Parameter.getValue("openerp.url", self.database)
 
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all SQL
@@ -102,11 +76,22 @@ class Command(BaseCommand):
     tmp_debug = settings.DEBUG
     settings.DEBUG = False
 
-    transaction.enter_transaction_management(using=self.database)
+    now = datetime.now()
+    ac = transaction.get_autocommit(using=self.database)
+    transaction.set_autocommit(False, using=self.database)
+    task = None
     try:
-      # Logging message
-      log(category='EXPORT', theuser=user,
-        message=_('Start exporting to OpenERP')).save(using=self.database)
+      # Initialize the task
+      if 'task' in options and options['task']:
+        try: task = Task.objects.all().using(self.database).get(pk=options['task'])
+        except: raise CommandError("Task identifier not found")
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'OpenERP export':
+          raise CommandError("Invalid task identifier")
+        task.status = '0%'
+        task.started = now
+      else:
+        task = Task(name='OpenERP edport', submitted=now, started=now, status='0%', user=user)
+      task.save(using=self.database)
       transaction.commit(using=self.database)
 
       # Log in to the openerp server
@@ -121,24 +106,35 @@ class Command(BaseCommand):
 
       # Upload all data
       self.export_procurement_order()
+      task.status = '50%'
+      task.save(using=self.database)
+      transaction.commit(using=self.database)
       self.export_sales_order()
+      task.status = '100%'
+      task.save(using=self.database)
+      transaction.commit(using=self.database)
 
-      # Logging message
-      log(category='EXPORT', theuser=user,
-        message=_('Finished exporting to OpenERP')).save(using=self.database)
+      # Log success
+      task.status = 'Done'
+      task.finished = datetime.now()
 
     except Exception as e:
-      log(category='EXPORT', theuser=user,
-        message=u'%s: %s' % (_('Failed exporting to OpenERP'),e)).save(using=self.database)
-      raise CommandError(e)
+      if task:
+        task.status = 'Failed'
+        task.message = '%s' % e
+        task.finished = datetime.now()
+      raise e
+
     finally:
-      transaction.commit(using=self.database)
+      if task: task.save(using=self.database)
+      try: transaction.commit(using=self.database)
+      except: pass
       settings.DEBUG = tmp_debug
-      transaction.leave_transaction_management(using=self.database)
+      transaction.set_autocommit(ac, using=self.database)
 
 
   # Update the committed date of sales orders
-  #   - uploading for each frePPLe demand whose subcategory = 'OpenERP'
+  #   - uploading for each frePPLe demand where subcategory = 'OpenERP'
   #   - mapped fields frePPLe -> OpenERP sale.order
   #        - max(out_demand.plandate) -> requested_date
   # Note: Ideally we'ld like to update the committed date instead. (But it is read-only)
@@ -148,28 +144,29 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Exporting requested date of sales orders...")
-      self.cursor.execute('''select substring(name from '^.*? '), max(plandate)
+      self.cursor.execute('''select source, max(plandate)
           from demand
           left outer join out_demand
             on demand.name = out_demand.demand
-            and demand.subcategory = 'OpenERP'
-            group by substring(name from '^.*? ')
+          where demand.subcategory = 'OpenERP'
+          group by source
          ''')
       cnt = 0
       for i, j in self.cursor.fetchall():
-        result = self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'sale.order', 'write',
+        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'sale.order', 'write',
           [int(i)], {'requested_date': j and j.strftime('%Y-%m-%d') or 0,})
         cnt += 1
       if self.verbosity > 0:
         print("Updated %d sales orders in %.2f seconds" % (cnt, (time() - starttime)))
     except Exception as e:
-      print("Error updating sales orders: %s" % e)
+      raise CommandError("Error updating sales orders: %s" % e)
     finally:
       transaction.rollback(using=self.database)
       transaction.leave_transaction_management(using=self.database)
 
 
-  # Upload procurement order data
+  # Upload procurement order data. They are translated in OpenERP into purchase orders
+  # or manufacturing orders.
   #   - uploading frePPLe operationplans
   #   - meeting the criterion:
   #        - operation.subcategory = 'OpenERP'
@@ -181,7 +178,7 @@ class Command(BaseCommand):
   #        - operationplan.startdate -> date_planned
   #        - operation.location_id -> location_id
   #        - 1 (id for PCE) -> product_uom
-  #        - 1 (hardcoded...) ->company_id
+  #        - 1 (hardcoded...) -> company_id
   #        - 'make_to_order' -> procure_method
   #        - 'frePPLe' -> origin
   #   - Note that purchase order are uploaded as quotations. Once the quotation
@@ -206,23 +203,29 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Exporting procurement orders...")
-      self.cursor.execute('''SELECT
+      self.cursor.execute('''select
            out_operationplan.id, operation, out_operationplan.quantity,
-           enddate,
-           substring(buffer.location_id from '^.*? '),
-           substring(buffer.item_id from '^.*? ')
-         FROM out_operationplan
+           enddate, location.source as location,
+           item.source as item, buffer.type
+         from out_operationplan
          inner join out_flowplan
-           ON operationplan_id = out_operationplan.id
-           AND out_flowplan.quantity > 0
-         inner JOIN buffer
-           ON buffer.name = out_flowplan.thebuffer
-           AND buffer.subcategory = 'OpenERP'
+           on operationplan_id = out_operationplan.id
+           and out_flowplan.quantity > 0
+         inner join buffer
+           on buffer.name = out_flowplan.thebuffer
+           and buffer.subcategory = 'OpenERP'
+         inner join location
+           on location.name = buffer.location_id
+           and location.subcategory = 'OpenERP'
+         inner join item
+           on item.name = buffer.item_id
+           and item.subcategory = 'OpenERP'
+         where out_operationplan.locked = 'f'
          ''')
       cnt = 0
       ids_buy = []
       ids_produce = []
-      for i, j, k, l, m, n in self.cursor.fetchall():
+      for i, j, k, l, m, n, o in self.cursor.fetchall():
         proc_order = {
           'name': "%s %s" % (i,j),
           'product_qty': str(k),
@@ -235,7 +238,7 @@ class Command(BaseCommand):
           'origin': 'frePPLe'
           }
         proc_order_id = self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'create', proc_order)
-        if j.find('rocure') >= 0:
+        if o == 'procure':
           ids_buy.append(proc_order_id)
         else:
           ids_produce.append(proc_order_id)
@@ -257,7 +260,7 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Confirmed %d procurement orders in %.2f seconds" % (len(ids_produce), (time() - starttime)))
     except Exception as e:
-      print("Error exporting procurement orders: %s" % e)
+      raise CommandError("Error exporting procurement orders: %s" % e)
     finally:
       transaction.rollback(using=self.database)
       transaction.leave_transaction_management(using=self.database)

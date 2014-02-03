@@ -16,7 +16,7 @@
 #
 
 # TODO  SALES ORDER DATES modules computes the commitment date in a pretty naive way
-#     and may not be appropriate for frePPLe integration. TODO...
+#     and may not be appropriate for frePPLe integration.
 
 
 from __future__ import print_function
@@ -101,7 +101,6 @@ class Command(BaseCommand):
       self.customers = {}
       self.items = {}
       self.locations = {} # A mapping between OpenERP stock.location ids and the name of the location in frePPLe
-      self.warehouses = {}
       self.resources = {}
       self.shops = {}
       self.delta = str(self.date - timedelta(days=self.delta))
@@ -144,7 +143,7 @@ class Command(BaseCommand):
       self.import_purchaseorders(cursor)
       task.status = '70%'
       task.save(using=self.database)
-#      self.import_boms(cursor)
+      self.import_boms(cursor)
       transaction.commit(using=self.database)
       task.status = '80%'
       task.save(using=self.database)
@@ -474,14 +473,14 @@ class Command(BaseCommand):
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       ids = self.openerp_search('sale.order.line',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),])
-      fields = ['sequence', 'state', 'type', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
+      fields = ['state', 'type', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
       fields2 = ['partner_id', 'requested_date', 'date_order', 'picking_policy', 'shop_id']
       insert = []
       update = []
       delete = []
       for i in self.openerp_data('sale.order.line', ids, fields):
-        name = u'%s %d - %d' % (i['order_id'][1], i['sequence'], i['id'])
-        source = i['id']
+        name = u'%s %d' % (i['order_id'][1], i['id'])
+        source = i['order_id'][0]
         if i['state'] == 'confirmed':
           product = i['product_id'][1]
           j = self.openerp_data('sale.order', [i['order_id'][0],], fields2)[0]
@@ -925,7 +924,7 @@ class Command(BaseCommand):
       ids = self.openerp_search('mrp.routing')
       for i in self.openerp_data('mrp.routing', ids, ['location_id',]):
         if i['location_id']:
-          openerp_mfg_routings[i['id']] = u'%s %s' % (i['location_id'][0], i['location_id'][1])
+          openerp_mfg_routings[i['id']] = self.locations[i['location_id'][0]]
         else:
           openerp_mfg_routings[i['id']] = None
 
@@ -935,9 +934,9 @@ class Command(BaseCommand):
       fields = ['routing_id','workcenter_id','sequence','cycle_nbr','hour_nbr',]
       for i in self.openerp_data('mrp.routing.workcenter', ids, fields):
         if i['routing_id'][0] in routing_workcenters:
-          routing_workcenters[i['routing_id'][0]].append( (u'%s %s' % (i['workcenter_id'][0], i['workcenter_id'][1]), i['cycle_nbr'],) )
+          routing_workcenters[i['routing_id'][0]].append( (i['workcenter_id'][1], i['cycle_nbr'],) )
         else:
-          routing_workcenters[i['routing_id'][0]] = [ (u'%s %s' % (i['workcenter_id'][0], i['workcenter_id'][1]), i['cycle_nbr'],), ]
+          routing_workcenters[i['routing_id'][0]] = [ (i['workcenter_id'][1], i['cycle_nbr'],), ]
 
       # Create operations
       operation_insert = []
@@ -967,16 +966,14 @@ class Command(BaseCommand):
           location = None
         if not location:
           if not default_location:
-            default_location = self.warehouses.itervalues().next()
-            if len(self.warehouses) > 1:
-              print("Warning: Only single warehouse configurations are supported. Creating only boms for '%s'" % default_location)
+            default_location = 'Your Company'
           location = default_location
 
         # Determine operation name and item
         operation = u'%d %s @ %s' % (i['id'], i['name'], location)
-        product = u'%d %s' % (i['product_id'][0], i['product_id'][1][i['product_id'][1].find(']')+2:])
+        product = i['product_id'][1]
         boms[i['id']] = (operation, location)
-        buffer = u'%d %s @ %s' % (i['product_id'][0], i['product_id'][1], location)  # TODO if policy is produce, then this should be the producting operation
+        buffer = u'%s @ %s' % (i['product_id'][1], location)  # TODO if policy is produce, then this should be the producting operation
 
         if i['active']:
           # Creation or update operations
@@ -1036,8 +1033,8 @@ class Command(BaseCommand):
       for i in self.openerp_data('mrp.bom', ids, fields):
         # Determine operation and buffer
         (operation, location) = boms[i['bom_id'][0]]
-        product = u'%d %s' % (i['product_id'][0], i['product_id'][1][i['product_id'][1].find(']')+2:])
-        buffer = u'%d %s @ %s' % (i['product_id'][0], i['product_id'][1][i['product_id'][1].find(']')+2:], location)
+        product = i['product_id'][1]
+        buffer = u'%s @ %s' % (i['product_id'][1], location)
 
         if i['active']:
           # Creation buffer
@@ -1147,11 +1144,18 @@ class Command(BaseCommand):
 
   # Importing policies
   #   - Extracting product.template objects for all items mapped from OpenERP
-  #   - No net change functionality
-  #   - mapped fields OpenERP -> frePPLe buffers
-  #        - %id %name -> name
-  #        - %ref     -> description
-  #        - 'OpenERP' -> subcategory
+  #     No net change functionality for this part.
+  #   - Extracting recently changed stock.warehouse.orderpoint objects
+  #   - mapped fields product.template OpenERP -> frePPLe buffers
+  #        - %product -> filter where buffer.item_id = %product and subcategory='OpenERP'
+  #        - %type -> 'procure' when %purchase_ok=true and %supply_method='buy'
+  #                   'default' for all other cases
+  #        - %produce_delay -> leadtime
+  #   - mapped fields stock.warehouse.orderpoint OpenERP -> frePPLe buffers
+  #        - %product %warehouse -> filter where buffer.item_id = %product and buffer.location_id = %warehouse
+  #        - %product_min_qty -> min_inventory
+  #        - %product_max_qty -> max_inventory
+  #        - %qty_multiple -> size_multiple
   def import_policies(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
@@ -1203,7 +1207,7 @@ class Command(BaseCommand):
       cursor.executemany(
         "update buffer \
           set min_inventory=%s, max_inventory=%s, size_multiple=%s \
-          where item_id=%s and location_id=%s and subcategory='OpenERP' and type='procure'",
+          where item_id=%s and location_id=%s and subcategory='OpenERP'",
         orderpoints
         )
       transaction.commit(using=self.database)
@@ -1218,9 +1222,7 @@ class Command(BaseCommand):
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
 
-
 # TODO:
-#  - Load reorder points
 #  - Load loads
 #  - Load WIP
 

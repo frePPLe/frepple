@@ -152,7 +152,7 @@ class ShippingQueueWidget(Widget):
         capfirst(force_unicode(_("plan date")))
         )
       ]
-    for dmdplan in Demand.objects.using(db).order_by('plandate')[:limit]:
+    for dmdplan in Demand.objects.using(db).filter(planquantity__gt=0).order_by('plandate')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td>%s</td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
           request.prefix, quote(dmdplan.demand), dmdplan.demand, dmdplan.customer, dmdplan.item, int(dmdplan.planquantity), dmdplan.plandate.date()
           ))

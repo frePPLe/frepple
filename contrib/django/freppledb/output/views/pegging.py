@@ -71,7 +71,7 @@ class ReportByDemand(GridReport):
        left outer join out_operationplan
          on (out_demandpegging.prod_operationplan = out_operationplan.id
              or out_demandpegging.cons_operationplan = out_operationplan.id)
-         and out_operationplan.operation not like 'Inventory of %%'
+         and out_operationplan.operation not like 'Inventory %%'
       where demand.name = %s
       group by due
        ''', (args[0]))

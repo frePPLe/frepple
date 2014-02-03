@@ -240,7 +240,7 @@ class Command(BaseCommand):
   #        - %searchKey %name -> name
   #        - %description -> description
   #        - %id -> source
-  #        - 'OpenERP' -> subcategory
+  #        - 'openbravo' -> subcategory
   def import_customers(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
@@ -331,7 +331,7 @@ class Command(BaseCommand):
   #   - extracting recently changed Product objects
   #   - meeting the criterion:
   #        - %active = True
-  #   - mapped fields OpenERP -> frePPLe item
+  #   - mapped fields openbravo -> frePPLe item
   #        - %searchKey %name -> name
   #        - %description -> description
   #        - %searchKey -> source
@@ -425,7 +425,7 @@ class Command(BaseCommand):
   #   - extracting warehouse objects
   #   - meeting the criterion:
   #        - %active = True
-  #   - mapped fields OpenERP -> frePPLe location
+  #   - mapped fields Openbravo -> frePPLe location
   #        - %searchKey %name -> name
   #        - %searchKey -> category
   #        - 'openbravo' -> source
@@ -682,10 +682,9 @@ class Command(BaseCommand):
   #        - %cost_hour -> cost
   #        - capacity_per_cycle -> maximum
   #        - 'openbravo' -> subcategory
-  #   - A bit surprising, but OpenERP doesn't assign a location or company to
-  #     a workcenter.
+  #   - Manufacturing machines are associated with any location in Openbravo.
   #     You should assign a location in frePPLe to assure that the user interface
-  #     working .
+  #     working.
   #
   def import_machines(self, cursor):
     transaction.enter_transaction_management(using=self.database)
@@ -1017,34 +1016,13 @@ class Command(BaseCommand):
 
 
   # Importing boms
-  #   - extracting recently changed mrp.bom objects
-  #   - not supported yet:
+  #   - extracting ManufacturingProcessPlan objects for all
+  #     Products with production=true and processplan <> null
+  #   - Not supported yet:
   #        - date effectivity
   #        - phantom boms
   #        - subproducts
   #        - routings
-  #   - meeting the criterion:
-  #        - %active = True
-  #        - %bom_id = False (otherwise it's a bom component
-  #        - %routing_id is not empty    TODO update doc here
-  #          and %routing_id.location_id is not null
-  #          and the location already exists in frePPLe
-  #   - mapped fields OpenERP -> frePPLe operation
-  #        - make %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> name
-  #        - %routing_id.location_id %routing_id.location_id.name -> location_id
-  #        - %product_rounding -> size_multiple
-  #        - 'OpenERP' -> source
-  #   - mapped fields OpenERP -> frePPLe buffer
-  #        - %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> name
-  #        - %product_id.id %product_id.name -> item_id
-  #        - %routing_id.location_id %routing_id.location_id.name -> location_id
-  #        - %bom_id %bom_name @ %routing_id.location_id %routing_id.location_id.name -> producing_id
-  #        - 'OpenERP' -> source
-  #   - mapped fields OpenERP -> frePPLe flow
-  #        - %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> thebuffer_id
-  #        - make %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> operation_id
-  #        - %product_qty * %product_efficiency -> quantity
-  #        - 'flow_end' -> type
   #
   def import_processplan(self, cursor):
     transaction.enter_transaction_management(using=self.database)
@@ -1053,7 +1031,8 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Importing bills of material...")
 
-      # Reset the current buffers
+      # Reset the current operations
+      cursor.execute("DELETE FROM operationplan where operation_id like 'Processplan %'")
       cursor.execute("DELETE FROM suboperation where operation_id like 'Processplan %'")
       cursor.execute("DELETE FROM resourceload where operation_id like 'Processplan %'")
       cursor.execute("DELETE FROM flow where operation_id like 'Processplan %'")

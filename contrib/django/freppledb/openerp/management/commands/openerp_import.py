@@ -286,7 +286,7 @@ class Command(BaseCommand):
       cursor.execute("SELECT name, subcategory, source FROM item")
       frepple_keys = set()
       for i in cursor.fetchall():
-        if i[1] == 'OpenERP': self.items[i[2]] = i[0]
+        if i[1] == 'OpenERP': self.items[int(i[2])] = i[0]
         frepple_keys.add(i[0])
       ids = self.openerp_search('product.product', [
         '|',('create_date','>', self.delta),('write_date','>', self.delta),
@@ -1146,11 +1146,9 @@ class Command(BaseCommand):
 
 
   # Importing policies
-  #   - extracting recently changed res.partner objects
-  #   - meeting the criterion:
-  #        - %active = True
-  #        - %customer = True
-  #   - mapped fields OpenERP -> frePPLe customer
+  #   - Extracting product.template objects for all items mapped from OpenERP
+  #   - No net change functionality
+  #   - mapped fields OpenERP -> frePPLe buffers
   #        - %id %name -> name
   #        - %ref     -> description
   #        - 'OpenERP' -> subcategory
@@ -1161,40 +1159,58 @@ class Command(BaseCommand):
         print("Importing policies...")
 
       # Get the list of item ids and the template info
-      cursor.execute("SELECT name FROM item where subcategory='OpenERP'")
-      ids = [ int(i[0].partition(' ')[0]) for i in cursor.fetchall()]
+      cursor.execute("SELECT source FROM item where subcategory='OpenERP'")
+      ids = [ int(i[0]) for i in cursor.fetchall()]
       templates = {}
-      fields = ['product_tmpl_id','name']
+      fields = ['product_tmpl_id']
       fields2 = ['purchase_ok','procure_method','supply_method','produce_delay']
       buy = []
       produce = []
       for i in self.openerp_data('product.product', ids, fields):
-        item = u'%d %s' % (i['id'],i['name'])
+        item = self.items[i['id']]
         if not i['product_tmpl_id'][0] in templates:
           templates[i['product_tmpl_id'][0]] = self.openerp_data('product.template', [i['id']], fields2)[0]
         tmpl = templates[i['product_tmpl_id'][0]]
         if tmpl['purchase_ok'] and tmpl['supply_method'] == 'buy':
-          buy.append( (item,))
+          buy.append( (tmpl['produce_delay'] * 86400, item) )
         else:
-          produce.append((item,))
+          produce.append( (item,) )
+
+      # Get recently changed reorderpoints
+      ids = self.openerp_search('stock.warehouse.orderpoint',
+        ['|',('create_date','>', self.delta),('write_date','>', self.delta),
+         '|',('active', '=', 1),('active', '=', 0)])
+      fields = ['active', 'warehouse_id', 'product_id', 'product_min_qty', 'product_max_qty', 'qty_multiple']
+      orderpoints = []
+      for i in self.openerp_data('stock.warehouse.orderpoint', ids, fields):
+        if i['active']:
+          orderpoints.append( (i['product_min_qty'], i['product_max_qty'], i['qty_multiple'], i['product_id'][1], i['warehouse_id'][1]) )
+        else:
+          orderpoints.append( (None, None, None, i['product_id'][1], i['warehouse_id'][1]) )
 
       # Update the frePPLe buffers
       cursor.execute("update buffer set type=null where subcategory = 'OpenERP'")
       cursor.executemany(
         "update buffer \
-          set type= 'procure', lastmodified='%s' \
-          where item_id = %%s and source = 'OpenERP'" % self.date,
+          set type= 'procure', leadtime=%%s, lastmodified='%s' \
+          where item_id=%%s and subcategory='OpenERP'" % self.date,
         buy)
       cursor.executemany(
         "update buffer \
-          set lastmodified='%s' \
-          where item_id = %%s and source = 'OpenERP'" % self.date,
+          set type='default', lastmodified='%s' \
+          where item_id=%%s and subcategory='OpenERP'" % self.date,
         produce)
-
+      cursor.executemany(
+        "update buffer \
+          set min_inventory=%s, max_inventory=%s, size_multiple=%s \
+          where item_id=%s and location_id=%s and subcategory='OpenERP' and type='procure'",
+        orderpoints
+        )
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print("Updated buffers for %d procured items" % len(buy))
         print("Updated buffers for %d produced items" % len(produce))
+        print("Updated reorderpoints for %d procured buffers" % len(orderpoints))
     except Exception as e:
       transaction.rollback(using=self.database)
       raise CommandError("Error importing policies: %s" % e)
@@ -1204,9 +1220,7 @@ class Command(BaseCommand):
 
 
 # TODO:
-#  - renaming an entity in OpenERP is not handled right: id remains the same in OpenERP, but the object name in frePPLe is different.
 #  - Load reorder points
 #  - Load loads
 #  - Load WIP
-#  - Unit of measures are not used
 

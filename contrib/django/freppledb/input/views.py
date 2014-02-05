@@ -34,7 +34,7 @@ from freppledb.input.models import ResourceSkill
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
-from freppledb.common.report import GridFieldChoice
+from freppledb.common.report import GridFieldChoice, GridFieldDuration
 from freppledb.admin import data_site
 
 
@@ -640,11 +640,11 @@ class OperationList(GridReport):
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldChoice('type', title=_('type'), choices=Operation.types),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
-    GridFieldNumber('duration', title=_('duration')),
-    GridFieldNumber('duration_per', title=_('duration per unit')),
-    GridFieldNumber('fence', title=_('release fence')),
-    GridFieldNumber('pretime', title=_('pre-op time')),
-    GridFieldNumber('posttime', title=_('post-op time')),
+    GridFieldDuration('duration', title=_('duration')),
+    GridFieldDuration('duration_per', title=_('duration per unit')),
+    GridFieldDuration('fence', title=_('release fence')),
+    GridFieldDuration('pretime', title=_('pre-op time')),
+    GridFieldDuration('posttime', title=_('post-op time')),
     GridFieldNumber('sizeminimum', title=_('size minimum')),
     GridFieldNumber('sizemultiple', title=_('size multiple')),
     GridFieldNumber('sizemaximum', title=_('size maximum')),

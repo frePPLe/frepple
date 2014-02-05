@@ -192,6 +192,11 @@ class GridFieldCurrency(GridField):
   width = 80
 
 
+class GridFieldDuration(GridField):
+  formatter = 'duration'
+  width = 80
+
+
 class GridFieldGraph(GridField):
   formatter = 'graph'
   editable = False

@@ -119,6 +119,46 @@ jQuery.extend($.fn.fmatter, {
     if (cellvalue === undefined || cellvalue ==='') return '';
     return cellvalue + "%";
   },
+  duration : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    var d = cellvalue.split(" ");
+    if (d.length == 1)
+    {
+      var t = cellvalue.split(":");
+      var days = 0;
+    }
+    else
+    {
+      var t = d[1].split(":");
+      var days = (d[0]!='' ? parseFloat(d[0]) : 0);
+    }
+    switch (t.length)
+    {
+      case 0: // Days only
+        var seconds = days * 86400;
+        break;
+      case 1: // Days, seconds
+        var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0);
+        break;
+      case 2: // Days, hours and seconds
+        var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0) * 60 + (t[1]!='' ? parseFloat(t[1]) : 0);
+        break;
+      default:
+        // Days, hours, minutes, seconds
+        var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0) * 3600 + (t[1]!='' ? parseFloat(t[1]) : 0) * 60 + (t[2]!='' ? parseFloat(t[2]) : 0);
+    }
+    var days   = Math.floor(seconds / 86400);
+    var hours   = Math.floor((seconds - (days * 86400)) / 3600);
+    var minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
+    var seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
+    if (days > 0)
+      return days + ((hours < 10) ? " 0" : " ") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + seconds;
+    if (hours > 0)
+      return hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + seconds;
+    if (minutes > 0)
+      return minutes + ((seconds < 10) ? ":0" : ":") + seconds;
+    return seconds;
+  },
   item : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
@@ -881,39 +921,6 @@ function getURLparameters()
     params[p[0]] = params[p[0]]?((params[p[0]] instanceof Array)?(params[p[0]].push(p[1]),params[p[0]]):[params[p[0]],p[1]]):p[1];
   });
   return params;
-}
-
-
-//----------------------------------------------------------------------------
-// Functions to convert units for the duration fields
-//----------------------------------------------------------------------------
-
-var _currentunits = null;
-
-var _factors = {
-  'seconds': 1,
-  'minutes': 60,
-  'hours': 3600,
-  'days': 86400,
-  'weeks': 604800
-};
-
-function getUnits(unitselector)
-{
-  _currentunits = unitselector.value;
-}
-
-function setUnits(unitselector)
-{
-  var field = $(unitselector).previous();
-  if (field.value && _currentunits!="" && unitselector.value!="")
-  {
-    var val = parseFloat(field.value);
-    val *= _factors[_currentunits];
-    val /= _factors[unitselector.value];
-    field.value = val;
-  }
-  _currentunits = unitselector.value;
 }
 
 

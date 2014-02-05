@@ -33,6 +33,7 @@ from decimal import Decimal
 import csv, cStringIO, operator, math
 import codecs, json
 from StringIO import StringIO
+from openpyxl import load_workbook, Workbook
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
@@ -454,7 +455,6 @@ class GridReport(View):
   @classmethod
   def _generate_spreadsheet_data(reportclass, request, *args, **kwargs):
     # Create a workbook
-    from openpyxl import Workbook
     wb = Workbook(optimized_write = True)
     ws = wb.create_sheet(title=force_unicode(reportclass.model._meta.verbose_name))
 
@@ -616,8 +616,14 @@ class GridReport(View):
   @classmethod
   def post(reportclass, request, *args, **kwargs):
     if "csv_file" in request.FILES:
-      # Uploading a CSV file
-      return reportclass.parseCSVupload(request)
+      # Note: the detection of the type of uploaded file depends on the
+      # browser setting the right mime type of the file.
+      if (request.FILES['csv_file'].content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
+        # Uploading a spreadsheet file
+        return reportclass.parseSpreadsheetUpload(request)
+      else:
+        # Uploading a CSV file
+        return reportclass.parseCSVupload(request)
     else:
       # Saving after inline edits
       return reportclass.parseJSONupload(request)
@@ -1006,6 +1012,176 @@ class GridReport(View):
 
 
   @classmethod
+  def parseSpreadsheetUpload(reportclass, request):
+      '''
+      This method reads a spreadsheet file (in memory) and creates or updates
+      the database records.
+      The data must follow the following format:
+        - only the first tab in the spreadsheet is read
+        - the first row contains a header, listing all field names
+        - a first character # marks a comment line
+        - empty rows are skipped
+      '''
+      # Check permissions
+      if not reportclass.model:
+        messages.add_message(request, messages.ERROR, _('Invalid upload request'))
+        return HttpResponseRedirect(request.prefix + request.get_full_path())
+      if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())):
+        messages.add_message(request, messages.ERROR, _('Permission denied'))
+        return HttpResponseRedirect(request.prefix + request.get_full_path())
+
+      # Erase all records and related tables
+      if 'erase' in request.POST:
+        returnvalue = reportclass.erase(request)
+        if returnvalue:
+          messages.add_message(request, messages.ERROR, returnvalue)
+          return HttpResponseRedirect(request.prefix + request.get_full_path())
+
+      # Choose the right language
+      if translation.get_language() != request.LANGUAGE_CODE:
+        translation.activate(request.LANGUAGE_CODE)
+
+      # Init
+      headers = []
+      rownumber = 0
+      changed = 0
+      added = 0
+      warnings = []
+      errors = []
+      content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
+
+      transaction.enter_transaction_management(using=request.database)
+      try:
+        # Loop through the data records
+        wb = load_workbook(filename = request.FILES['csv_file'], use_iterators = True)
+        ws = wb.worksheets[0]
+        has_pk_field = False
+        for row in ws.iter_rows():
+          with transaction.atomic(using=request.database):
+            rownumber += 1
+
+            ### Case 1: The first line is read as a header line
+            if rownumber == 1:
+              for col in row:
+                col = col.internal_value.strip().strip('#').lower()
+                if col == "":
+                  headers.append(False)
+                  continue
+                ok = False
+                for i in reportclass.model._meta.fields:
+                  if col == i.name.lower() or col == i.verbose_name.lower():
+                    if i.editable == True:
+                      headers.append(i)
+                    else:
+                      headers.append(False)
+                    ok = True
+                    break
+                if not ok: errors.append(_('Incorrect field %(column)s') % {'column': col})
+                if col == reportclass.model._meta.pk.name.lower() \
+                  or col == reportclass.model._meta.pk.verbose_name.lower():
+                    has_pk_field = True
+              if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
+                # The primary key is not an auto-generated id and it is not mapped in the input...
+                errors.append(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name})
+              # Abort when there are errors
+              if len(errors) > 0: break
+
+              # Create a form class that will be used to validate the data
+              UploadForm = modelform_factory(reportclass.model,
+                fields = tuple([i.name for i in headers if isinstance(i,Field)]),
+                formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
+                )
+
+            ### Case 2: Skip empty rows and comments rows
+            elif len(row) == 0 or row[0].internal_value.startswith('#'):
+              continue
+
+            ### Case 3: Process a data row
+            else:
+              try:
+                # Step 1: Build a dictionary with all data fields
+                d = {}
+                colnum = 0
+                for col in row:
+                  # More fields in data row than headers. Move on to the next row.
+                  if colnum >= len(headers): break
+                  if isinstance(headers[colnum],Field): d[headers[colnum].name] = col.internal_value.strip()
+                  colnum += 1
+
+                # Step 2: Fill the form with data, either updating an existing
+                # instance or creating a new one.
+                if has_pk_field:
+                  # A primary key is part of the input fields
+                  try:
+                    # Try to find an existing record with the same primary key
+                    it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
+                    form = UploadForm(d, instance=it)
+                  except reportclass.model.DoesNotExist:
+                    form = UploadForm(d)
+                    it = None
+                else:
+                  # No primary key required for this model
+                  form = UploadForm(d)
+                  it = None
+
+                # Step 3: Validate the data and save to the database
+                if form.has_changed():
+                  try:
+                    obj = form.save()
+                    LogEntry(
+                        user_id         = request.user.pk,
+                        content_type_id = content_type_id,
+                        object_id       = obj.pk,
+                        object_repr     = force_unicode(obj),
+                        action_flag     = it and CHANGE or ADDITION,
+                        change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                    ).save(using=request.database)
+                    if it:
+                      changed += 1
+                    else:
+                      added += 1
+                  except Exception as e:
+                    # Validation fails
+                    for error in form.non_field_errors():
+                      warnings.append(
+                        _('Row %(rownum)s: %(message)s') % {
+                          'rownum': rownumber, 'message': error
+                        })
+                    for field in form:
+                      for error in field.errors:
+                        warnings.append(
+                          _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                            'rownum': rownumber, 'data': d[field.name],
+                            'field': field.name, 'message': error
+                          })
+
+                # Step 4: Commit the database changes from time to time
+                if rownumber % 500 == 0: transaction.commit(using=request.database)
+              except Exception as e:
+                errors.append(_("Exception during upload: %(message)s") % {'message': e,})
+      finally:
+        transaction.commit(using=request.database)
+        transaction.leave_transaction_management(using=request.database)
+
+      # Report all failed records
+      if len(errors) > 0:
+        messages.add_message(request, messages.INFO,
+         _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+         )
+        for i in errors: messages.add_message(request, messages.INFO, i)
+      elif len(warnings) > 0:
+        messages.add_message(request, messages.INFO,
+          _('Uploaded file processed with warnings: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+          )
+        for i in warnings: messages.add_message(request, messages.INFO, i)
+      else:
+        messages.add_message(request, messages.INFO,
+          _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+          )
+      return HttpResponseRedirect(request.prefix + request.get_full_path())
+
+
+  @classmethod
   def _getRowByName(reportclass, name):
     if not hasattr(reportclass,'_rowsByName'):
       reportclass._rowsByName = {}
@@ -1367,7 +1543,6 @@ class GridPivot(GridReport):
   @classmethod
   def _generate_spreadsheet_data(reportclass, request, *args, **kwargs):
     # Create a workbook
-    from openpyxl import Workbook
     wb = Workbook(optimized_write = True)
     ws = wb.create_sheet(title=force_unicode(reportclass.model._meta.verbose_name))
 
@@ -1468,7 +1643,6 @@ def _getCellValue(data):
 
 def exportWorkbook(request):
   # Create a workbook
-  from openpyxl import Workbook
   wb = Workbook(optimized_write = True)
 
   # Loop over all selected entity types
@@ -1544,7 +1718,6 @@ def importWorkbook(request):
   Each entity has a tab in the spreadsheet, and the first row contains
   the fields names.
   '''
-  from openpyxl import load_workbook
   errors = []
   # Build a list of all contenttypes
   all_models = [ (ct.model_class(),ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]

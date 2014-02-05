@@ -202,7 +202,6 @@ class AlertsWidget(Widget):
   permissions = (("view_problem_report", "Can view problem report"),)
   async = True
   url = '/problem/'
-  exporturl = True
 
   @classmethod
   def render(cls, request=None):

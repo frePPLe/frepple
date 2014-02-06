@@ -1113,7 +1113,7 @@ class Command(BaseCommand):
         load_update
         )
       cursor.executemany(
-        "delete flow \
+        "delete from flow \
           where operation_id=%%s and thebuffer_id=%%s",
         flow_delete
         )

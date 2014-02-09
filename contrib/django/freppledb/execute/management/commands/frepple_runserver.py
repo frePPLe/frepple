@@ -32,11 +32,6 @@ class Command(BaseCommand):
 
   help = '''
     Runs a multithreaded web server for frePPLe.
-
-    Because of the multithreading it is is more performant than the default
-    development web server bundled with django.
-    However, it should still only be used for configurations with a single user,
-    and is not a full alternative to using Apache + mod_wsgi.
   '''
 
   option_list = BaseCommand.option_list + (

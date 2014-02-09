@@ -48,7 +48,7 @@ packages = [# Required for django standalone deployment
             'encodings',
            ]
 includes = []
-excludes = ['pydoc', 'Tkinter', 'tcl', 'Tkconstants', 'freppledb']
+excludes = ['pydoc', 'Tkinter', 'tcl', 'Tkconstants', 'freppledb', 'cx_Oracle', 'MySQLdb']
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
            # Not using Microsoft ADO
@@ -141,6 +141,11 @@ setup(
        "modules":["freppleservice"],
        "icon_resources": [(1, os.path.join("..","..","src","frepple.ico"))],
        "cmdline_style": 'pywin32',
+       }],
+    # Target to build the system tray application
+    windows = [{
+       "script": "freppleserver.py",
+       "icon_resources": [(1, os.path.join("..","..","src","frepple.ico"))],
        }],
     # Target to build a console application
     console = [{

@@ -84,7 +84,7 @@ class frePPLeService(win32serviceutil.ServiceFramework):
 
         # Redirect all output and log a start event
         try:
-          log = os.path.join(settings.FREPPLE_APP,'server.log')
+          log = os.path.join(settings.FREPPLE_LOGDIR,'service.log')
           sys.stdout = open(log, 'a', 0)
           msg = "frePPLe web server listening on http://%s:%d and logging to %s" % (address, port, log)
           servicemanager.LogInfoMsg(msg)

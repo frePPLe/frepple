@@ -27,7 +27,7 @@ def printWelcome(prefix = 'frepple', database = DEFAULT_DB_ALIAS):
   else:
     print("frePPLe on %s using %s database '%s' as '%s' on '%s:%s'" % (
       sys.platform,
-      settings.DATABASES[database].get('ENGINE',''),
+      settings.DATABASES[database].get('ENGINE','').split('.')[-1],
       settings.DATABASES[database].get('NAME',''),
       settings.DATABASES[database].get('USER',''),
       settings.DATABASES[database].get('HOST',''),

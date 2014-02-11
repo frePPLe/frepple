@@ -58,6 +58,7 @@ class RecentActionsWidget(Widget):
   name = "recent_actions"
   title = _("My actions")
   async = False
+  limit = 10
 
   def render(self, request=None):
     # This code is a slightly modified version of a standard Django tag.

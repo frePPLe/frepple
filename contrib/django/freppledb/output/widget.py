@@ -35,13 +35,14 @@ class LateOrdersWidget(Widget):
   async = True
   url = '/problem/?entity=demand&name=late&sord=asc&sidx=startdate'
   exporturl = True
+  limit = 20
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
 
   @classmethod
   def render(cls, request=None):
-    limit = request.GET.get('limit',20)
+    limit = request.GET.get('limit', cls.limit)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
@@ -70,13 +71,14 @@ class ShortOrdersWidget(Widget):
   # "late" and "early".
   url = '/problem/?entity=demand&name__gte=short&sord=asc&sidx=startdate'
   exporturl = True
+  limit = 20
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
 
   @classmethod
   def render(cls, request=None):
-    limit = request.GET.get('limit',20)
+    limit = request.GET.get('limit', cls.limit)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
@@ -102,13 +104,14 @@ class PurchaseQueueWidget(Widget):
   async = True
   url = '/operationplan/?locked=0&sidx=startdate&sord=asc&operation__startswith=Purchase'
   exporturl = True
+  limit = 20
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
 
   @classmethod
   def render(cls, request=None):
-    limit = request.GET.get('limit',20)
+    limit = request.GET.get('limit', cls.limit)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
@@ -135,13 +138,14 @@ class ShippingQueueWidget(Widget):
   async = True
   url = '/demandplan/?sidx=plandate&sord=asc'
   exporturl = True
+  limit = 20
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
 
   @classmethod
   def render(cls, request=None):
-    limit = request.GET.get('limit',20)
+    limit = request.GET.get('limit', cls.limit)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
@@ -169,13 +173,14 @@ class ResourceQueueWidget(Widget):
   async = True
   url = '/loadplan/?sidx=startdate&sord=asc'
   exporturl = True
+  limit = 20
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
 
   @classmethod
   def render(cls, request=None):
-    limit = request.GET.get('limit',20)
+    limit = request.GET.get('limit', cls.limit)
     try: db = current_request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
@@ -236,6 +241,7 @@ class ResourceLoadWidget(Widget):
   async = True
   url = '/resource/'
   exporturl = True
+  limit = 5
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
@@ -271,7 +277,7 @@ class ResourceLoadWidget(Widget):
 
   @classmethod
   def render(cls, request=None):
-    limit = int(request.GET.get('limit',20))
+    limit = int(request.GET.get('limit', cls.limit))
     result = [
       '<div id="resLoad" style="width:100%%; height: %spx;"></div>' % (limit*25+30),
       '<table style="display:none">'
@@ -306,6 +312,7 @@ class InventoryByLocationWidget(Widget):
   name = "inventory_by_location"
   title = _("Inventory by location")
   async = True
+  limit = 20
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
@@ -341,7 +348,7 @@ class InventoryByLocationWidget(Widget):
 
   @classmethod
   def render(cls, request=None):
-    limit = int(request.GET.get('limit',20))
+    limit = int(request.GET.get('limit', cls.limit))
     result = [
       '<div id="invByLoc" style="width:100%; height: 250px;"></div>',
       '<table style="display:none">'
@@ -370,6 +377,7 @@ class InventoryByItemWidget(Widget):
   name = "inventory_by_item"
   title = _("Inventory by item")
   async = True
+  limit = 20
 
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
@@ -405,7 +413,7 @@ class InventoryByItemWidget(Widget):
 
   @classmethod
   def render(cls, request=None):
-    limit = int(request.GET.get('limit',20))
+    limit = int(request.GET.get('limit', cls.limit))
     result = [
       '<div id="invByItem" style="width:100%; height: 250px;"></div>',
       '<table style="display:none">'
@@ -434,6 +442,8 @@ class DeliveryPerformanceWidget(Widget):
   name = "delivery_performance"
   title = _("Delivery performance")
   async = True
+  green = 90
+  yellow = 80
 
   def args(self):
     return "?%s" % urlencode({'green': self.green, 'yellow': self.yellow})
@@ -451,8 +461,8 @@ class DeliveryPerformanceWidget(Widget):
 
   @classmethod
   def render(cls, request=None):
-    green = int(request.GET.get('green',90))
-    yellow = int(request.GET.get('yellow',80))
+    green = int(request.GET.get('green', cls.green))
+    yellow = int(request.GET.get('yellow', cls.yellow))
     cursor = connections[request.database].cursor()
     query = '''
       select sum(late) * 100.0 /count(*)

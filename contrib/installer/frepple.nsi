@@ -217,16 +217,16 @@ Section "Application" SecAppl
 
   ; Copy sqlite database if it is available.
   ; This file shouldn't be put in the read-only "Program files" directory.
-  SetOutPath "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
+  SetOutPath "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
   File "..\contrib\django\frepple.sqlite"
-  AccessControl::GrantOnFile "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}" "(S-1-5-32-545)" "FullAccess"
-  AccessControl::GrantOnFile "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\frepple.sqlite" "(S-1-5-32-545)" "FullAccess"
+  AccessControl::GrantOnFile "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}" "(S-1-5-32-545)" "FullAccess"
+  AccessControl::GrantOnFile "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\frepple.sqlite" "(S-1-5-32-545)" "FullAccess"
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start frePPLe server.lnk" "$INSTDIR\bin\freppleserver.exe"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open customization folder.lnk" "$INSTDIR\bin\custom"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open log folder.lnk" "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open configuration folder.lnk" "$INSTDIR\bin\custom"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open log folder.lnk" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
 
   ; Pick up the installation parameters
   ReadINIStr $6 "$PLUGINSDIR\parameters.ini" "Field 8" "State"  # Language
@@ -329,7 +329,7 @@ Section "Application" SecAppl
     FileWrite $R4 "    },$\r$\n"
   NoScenarios:
   FileWrite $R4 "  }$\r$\n$\r$\n"
-  FileWrite $R4 "FREPPLE_LOGDIR = r'$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
+  FileWrite $R4 "FREPPLE_LOGDIR = r'$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
   FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
   ; Read the third section in settings.py and write unmodified to the output file
   read3_loop:
@@ -598,7 +598,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\frePPLe web site.lnk"
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk"
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk"
-  Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open customization folder.lnk"
+  Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open configuration folder.lnk"
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open log folder.lnk"
 
   ; Remove the folder in start menu
@@ -607,8 +607,8 @@ Section Uninstall
   ; Remove the log directory
   ; Version subdirectory is always removed.
   ; FrePPLe subdirectory is removed if it is empty.
-  RMDir /r "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
-  RMDir "$APPDATA\${PRODUCT_NAME}"
+  RMDir /r "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
+  RMDir "$LOCALAPPDATA\${PRODUCT_NAME}"
 
   ; Remove the installation directory
   RMDir /r "$INSTDIR"

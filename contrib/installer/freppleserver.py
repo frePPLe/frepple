@@ -44,10 +44,13 @@ class RunWSGIServer(Thread):
     super(RunWSGIServer,self).__init__()
 
   def run(self):
-    self.server = CherryPyWSGIServer((address, port),
-      StaticFilesHandler(WSGIHandler())
-      )
-    self.server.start()
+    try:
+      self.server = CherryPyWSGIServer((address, port),
+        StaticFilesHandler(WSGIHandler())
+        )
+      self.server.start()
+    except Exception as e:
+      log("Server error: %s" % e)
 
 
 def on_quit(sysTrayIcon):
@@ -58,6 +61,11 @@ def on_quit(sysTrayIcon):
 def ShowLogDirectory(sysTrayIcon):
   import subprocess
   subprocess.Popen('explorer "%s"' % settings.FREPPLE_LOGDIR)
+
+
+def ShowConfigDirectory(sysTrayIcon):
+  import subprocess
+  subprocess.Popen('explorer "%s"' % settings.FREPPLE_CONFIGDIR)
 
 
 def OpenBrowser(sysTrayIcon):
@@ -269,7 +277,7 @@ if __name__=='__main__':
   # - either 0.0.0.0 by default, which means all active IPv4 interfaces
   address = options.address or '0.0.0.0'
 
-  # Redirect all output and log a start event
+  # Redirect all output
   logfile = os.path.join(settings.FREPPLE_LOGDIR,'server.log')
   try:
     sys.stdout = open(logfile, 'a', 0)
@@ -323,6 +331,7 @@ if __name__=='__main__':
     (    # Menu_options
       ('Open browser', None, OpenBrowser),
       ('Show log directory', None, ShowLogDirectory),
+      ('Show configuration directory', None, ShowConfigDirectory),
     ),
     on_quit = on_quit,      # Method called when quitting the application
     default_menu_index = 0, # Double clicking on icon opens this menu option

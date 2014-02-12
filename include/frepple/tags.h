@@ -46,6 +46,8 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_command;
     static DECLARE_EXPORT const Keyword tag_commands;
     static DECLARE_EXPORT const Keyword tag_constraints;
+    static DECLARE_EXPORT const Keyword tag_consume_material;
+    static DECLARE_EXPORT const Keyword tag_consume_capacity;
     static DECLARE_EXPORT const Keyword tag_consuming;
     static DECLARE_EXPORT const Keyword tag_consuming_date;
     static DECLARE_EXPORT const Keyword tag_content;
@@ -128,6 +130,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_priority;
     static DECLARE_EXPORT const Keyword tag_problem;
     static DECLARE_EXPORT const Keyword tag_problems;
+    static DECLARE_EXPORT const Keyword tag_produce_material;
     static DECLARE_EXPORT const Keyword tag_producing;
     static DECLARE_EXPORT const Keyword tag_producing_date;
     static DECLARE_EXPORT const Keyword tag_quantity;

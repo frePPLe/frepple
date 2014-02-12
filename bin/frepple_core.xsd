@@ -764,6 +764,9 @@
       <xsd:element name="quantity" type="positiveDouble" minOccurs="0" />
       <xsd:element name="locked" type="xsd:boolean" minOccurs="0" />
       <xsd:element name="owner" type="operationplan" minOccurs="0" />
+      <xsd:element name="consume_material" type="xsd:boolean" minOccurs="0" />
+      <xsd:element name="consume_capacity" type="xsd:boolean" minOccurs="0" />
+      <xsd:element name="produce_material" type="xsd:boolean" minOccurs="0" />
     </xsd:sequence>
     <xsd:attribute name="id" type="xsd:unsignedLong" />
     <xsd:attribute name="operation" type="non-empty-string" />
@@ -771,6 +774,9 @@
     <xsd:attribute name="end" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="positiveDouble" />
     <xsd:attribute name="locked" type="xsd:boolean" />
+    <xsd:attribute name="consume_material" type="xsd:boolean" />
+    <xsd:attribute name="consume_capacity" type="xsd:boolean" />
+    <xsd:attribute name="produce_material" type="xsd:boolean" />
     <xsd:attribute name="action" type="action" />
   </xsd:complexType>
 

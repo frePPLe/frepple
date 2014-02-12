@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Test model for handling work in progress</name>
+	<current>2014-01-01T00:00:00</current>
+	<solvers>
+		<solver name="MRP" xsi:type="solver_mrp">
+			<plantype>2</plantype>
+			<iterationthreshold>1</iterationthreshold>
+			<iterationaccuracy>0.01</iterationaccuracy>
+			<lazydelay>P1D</lazydelay>
+			<autocommit>true</autocommit>
+			<loglevel>2</loglevel>
+		</solver>
+	</solvers>
+	<locations>
+		<location name="Loc">
+		</location>
+	</locations>
+	<operations>
+		<operation name="Oper1" xsi:type="operation_fixed_time">
+			<duration>P10D</duration>
+		</operation>
+	</operations>
+	<items>
+		<item name="In1">
+		</item>
+		<item name="In2">
+		</item>
+		<item name="Out1">
+		</item>
+		<item name="Out2">
+		</item>
+	</items>
+	<buffers>
+		<buffer name="In1" xsi:type="buffer_procure">
+			<item name="In1"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="In2" xsi:type="buffer_procure">
+			<item name="In2"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="Out1">
+			<item name="Out1"/>
+		</buffer>
+		<buffer name="Out2">
+			<producing name="Oper1" xsi:type="operation_fixed_time"/>
+			<item name="Out2"/>
+			<location name="Loc"/>
+		</buffer>
+	</buffers>
+	<resources>
+		<resource name="Res1">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res2">
+		</resource>
+	</resources>
+	<loads>
+		<load>
+			<operation name="Oper1" xsi:type="operation_fixed_time"/>
+			<resource name="Res1"/>
+		</load>
+		<load>
+			<operation name="Oper1" xsi:type="operation_fixed_time"/>
+			<resource name="Res2"/>
+		</load>
+	</loads>
+	<flows>
+		<flow xsi:type="flow_end">
+			<operation name="Oper1" xsi:type="operation_fixed_time"/>
+			<buffer name="Out1"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="Oper1" xsi:type="operation_fixed_time"/>
+			<buffer name="Out2"/>
+			<quantity>2</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="Oper1" xsi:type="operation_fixed_time"/>
+			<buffer name="In1" xsi:type="buffer_procure"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="Oper1" xsi:type="operation_fixed_time"/>
+			<buffer name="In2" xsi:type="buffer_procure"/>
+			<quantity>-2</quantity>
+		</flow>
+	</flows>
+	<operationplans>
+		<operationplan id="2002" operation="Oper1">
+			<start>2013-02-01T00:00:00</start>
+			<end>2014-02-05T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+			<produce_material>false</produce_material>
+		</operationplan>
+		<operationplan id="2003" operation="Oper1">
+			<start>2013-03-01T00:00:00</start>
+			<end>2014-03-05T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+			<consume_capacity>false</consume_capacity>
+		</operationplan>
+		<operationplan id="2004" operation="Oper1">
+			<start>2013-04-01T00:00:00</start>
+			<end>2014-04-05T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+			<consume_material>false</consume_material>
+			<produce_material>false</produce_material>
+			<consume_capacity>false</consume_capacity>
+		</operationplan>
+		<operationplan id="2001" operation="Oper1">
+			<start>2013-12-31T00:00:00</start>
+			<end>2014-01-05T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+			<consume_material>false</consume_material>
+		</operationplan>
+	</operationplans>
+	<problems>
+		<problem>
+			<name>material shortage</name>
+			<description>Buffer &apos;In1&apos; has material shortage of 20</description>
+			<start>2013-02-01T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>20</weight>
+		</problem>
+		<problem>
+			<name>material shortage</name>
+			<description>Buffer &apos;In2&apos; has material shortage of 40</description>
+			<start>2013-02-01T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>40</weight>
+		</problem>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;Out1&apos; has material excess of 20</description>
+			<start>2014-01-05T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>20</weight>
+		</problem>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;Out2&apos; has material excess of 40</description>
+			<start>2014-01-05T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>40</weight>
+		</problem>
+		<problem>
+			<name>overload</name>
+			<description>Resource &apos;Res1&apos; has capacity shortage of 1</description>
+			<start>2013-12-31T00:00:00</start>
+			<end>2014-01-05T00:00:00</end>
+			<weight>1</weight>
+		</problem>
+		<problem>
+			<name>overload</name>
+			<description>Resource &apos;Res2&apos; has capacity shortage of 1</description>
+			<start>2013-12-31T00:00:00</start>
+			<end>2014-01-05T00:00:00</end>
+			<weight>1</weight>
+		</problem>
+	</problems>
+</plan>

@@ -1799,6 +1799,21 @@ class OperationPlan
       */
     bool getLocked() const {return flags & IS_LOCKED;}
 
+    /** Returns true is this operationplan is allowed to consume material.
+      * This field only has an impact for locked operationplans.
+      */
+    bool getConsumeMaterial() const {return !(flags & CONSUME_MATERIAL);}
+
+    /** Returns true is this operationplan is allowed to produce material.
+      * This field only has an impact for locked operationplans.
+      */
+    bool getProduceMaterial() const {return !(flags & PRODUCE_MATERIAL);}
+
+    /** Returns true is this operationplan is allowed to consume capacity.
+      * This field only has an impact for locked operationplans.
+      */
+    bool getConsumeCapacity() const {return !(flags & CONSUME_CAPACITY);}
+
     /** Deletes all operationplans of a certain operation. A boolean flag
       * allows to specify whether locked operationplans are to be deleted too.
       */
@@ -1808,6 +1823,27 @@ class OperationPlan
       * changed.
       */
     virtual DECLARE_EXPORT void setLocked(bool b = true);
+
+    /** Update flag which allow/disallows material consumption. */
+    void setConsumeMaterial(bool b)
+    {
+      if (b) flags &= ~CONSUME_MATERIAL;
+      else flags |= CONSUME_MATERIAL;
+    }
+
+    /** Update flag which allow/disallows material production. */
+    void setProduceMaterial(bool b)
+    {
+      if (b) flags &= ~PRODUCE_MATERIAL;
+      else flags |= PRODUCE_MATERIAL;
+    }
+
+    /** Update flag which allow/disallows capacity consumption. */
+    void setConsumeCapacity(bool b)
+    {
+      if (b) flags &= ~CONSUME_CAPACITY;
+      else flags |= CONSUME_CAPACITY;
+    }
 
     /** Returns a pointer to the operation being instantiated. */
     Operation* getOperation() const {return oper;}
@@ -2072,9 +2108,12 @@ class OperationPlan
     {initType(metadata);}
 
   private:
-    static const short IS_LOCKED = 1;
-    static const short IS_SETUP = 2;
-    static const short HAS_SETUP = 4;
+    static const short IS_LOCKED = 1;    // 0: no, 1: yes
+    static const short IS_SETUP = 2;     // 0: no, 1: yes
+    static const short HAS_SETUP = 4;    // 0: no, 1: yes
+    static const short CONSUME_MATERIAL = 8;  // 0: yes, 1: no
+    static const short PRODUCE_MATERIAL = 16; // 0: yes, 1: no
+    static const short CONSUME_CAPACITY = 32; // 0: yes, 1: no
 
     /** Pointer to a higher level OperationPlan. */
     OperationPlan *owner;

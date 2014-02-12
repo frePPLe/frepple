@@ -447,20 +447,28 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
   if (firstflowplan || firstloadplan) return;
 
   // Create setup suboperationplans and loadplans
-  for (Operation::loadlist::const_iterator g=oper->getLoads().begin();
-      g!=oper->getLoads().end(); ++g)
-    if (!g->getAlternate())
-    {
-      new LoadPlan(this, &*g);
-      if (!g->getSetup().empty() && g->getResource()->getSetupMatrix())
-        OperationSetup::setupoperation->createOperationPlan(
-          1, getDates().getStart(), getDates().getStart(), NULL, this);
-    }
+  if (getConsumeCapacity() || !getLocked())
+    for (Operation::loadlist::const_iterator g=oper->getLoads().begin();
+        g!=oper->getLoads().end(); ++g)
+      if (!g->getAlternate())
+      {
+        new LoadPlan(this, &*g);
+        if (!g->getSetup().empty() && g->getResource()->getSetupMatrix())
+          OperationSetup::setupoperation->createOperationPlan(
+            1, getDates().getStart(), getDates().getStart(), NULL, this);
+      }
 
-  // Create flowplans for flows that are not alternates of another one
-  for (Operation::flowlist::const_iterator h=oper->getFlows().begin();
-      h!=oper->getFlows().end(); ++h)
-    if (!h->getAlternate()) new FlowPlan(this, &*h);
+  // Create flowplans for flows
+  bool cons = getLocked() ? getConsumeMaterial() : true;
+  bool prod = getLocked() ? getProduceMaterial() : true;
+  if (cons || prod)
+    for (Operation::flowlist::const_iterator h=oper->getFlows().begin();
+        h!=oper->getFlows().end(); ++h)
+    {
+      if (h->getAlternate()) continue; // Only the primary flow is instantiated
+      if (h->getQuantity() > 0 ? prod : cons)
+        new FlowPlan(this, &*h);
+    }
 }
 
 
@@ -941,7 +949,10 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
   o->writeElement(Tags::tag_start, dates.getStart());
   o->writeElement(Tags::tag_end, dates.getEnd());
   o->writeElement(Tags::tag_quantity, quantity);
-  if (getLocked()) o->writeElement (Tags::tag_locked, getLocked());
+  if (getLocked()) o->writeElement (Tags::tag_locked, true);
+  if (!getConsumeMaterial()) o->writeElement(Tags::tag_consume_material, false);
+  if (!getProduceMaterial()) o->writeElement(Tags::tag_produce_material, false);
+  if (!getConsumeCapacity()) o->writeElement(Tags::tag_consume_capacity, false);
   o->writeElement(Tags::tag_owner, owner);
 
   // Write out the flowplans and their pegging
@@ -1001,6 +1012,12 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, const Attribute& p
   }
   else if (pAttr.isA(Tags::tag_locked))
     setLocked(pElement.getBool());
+  else if (pAttr.isA(Tags::tag_consume_material))
+    setConsumeMaterial(pElement.getBool());
+  else if (pAttr.isA(Tags::tag_consume_capacity))
+    setConsumeCapacity(pElement.getBool());
+  else if (pAttr.isA(Tags::tag_produce_material))
+    setProduceMaterial(pElement.getBool());
 }
 
 
@@ -1117,6 +1134,12 @@ DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_unavailable))
     return PythonObject(getUnavailable());
+  if (attr.isA(Tags::tag_consume_material))
+    return PythonObject(getConsumeMaterial());
+  if (attr.isA(Tags::tag_consume_capacity))
+    return PythonObject(getConsumeCapacity());
+  if (attr.isA(Tags::tag_produce_material))
+    return PythonObject(getProduceMaterial());
   if (attr.isA(Tags::tag_motive))
   {
     // Null
@@ -1194,6 +1217,12 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
     }
     setMotive(y);
   }
+  else if (attr.isA(Tags::tag_consume_material))
+    setConsumeMaterial(field.getBool());
+  else if (attr.isA(Tags::tag_consume_capacity))
+    setConsumeCapacity(field.getBool());
+  else if (attr.isA(Tags::tag_produce_material))
+    setProduceMaterial(field.getBool());
   else
     return -1;
   return 0;

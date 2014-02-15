@@ -124,8 +124,7 @@ DECLARE_EXPORT void Buffer::setOnHand(double f)
     OperationPlan *opplan = o->createOperationPlan(
         fabs(f), Date::infinitePast, Date::infinitePast);
     opplan->setLocked(true);
-    // Note that we use the max counter for the onhand operationplans.
-    opplan->activate(false);
+    opplan->activate();
   }
   else
   {

@@ -101,7 +101,7 @@ def create (cluster, demand, level):
   for i in range(cluster):
     print(("<operationplan id=\"%d\" operation=\"Supply C%d\" " +
         "start=\"2007-05-01T00:00:00\" quantity=\"%d\" " +
-        "locked=\"true\" />") % (i+1, i, demand), file=out)
+        "locked=\"true\" />") % (i+2, i, demand), file=out)
   print("</operationplans>", file=out)
 
   # Tail of the output file

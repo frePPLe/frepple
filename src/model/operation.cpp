@@ -631,7 +631,7 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
   //   - demand of both operationplans are the same
   //   - maximum operation size is not exceeded
   //   - alternate flowplans need to be on the same alternate
-  if (!o->getIdentifier() && !o->getLocked() && !o->getOwner() && getLoads().empty())
+  if (!o->getRawIdentifier() && !o->getLocked() && !o->getOwner() && getLoads().empty())
   {
     // Loop through candidates
     OperationPlan::iterator x(this);
@@ -639,7 +639,7 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
     for (; x != OperationPlan::end() && *x < *o; ++x)
       y = &*x;
     if (y && y->getDates() == o->getDates() && !y->getOwner()
-        && y->getDemand() == o->getDemand() && !y->getLocked() && y->getIdentifier()
+        && y->getDemand() == o->getDemand() && !y->getLocked() && y->getRawIdentifier()
         && y->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
       // Check that the flowplans are on identical alternates and not of type fixed
@@ -662,7 +662,7 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       return false;
     }
     if (x!= OperationPlan::end() && x->getDates() == o->getDates() && !x->getOwner()
-        && x->getDemand() == o->getDemand() && !x->getLocked() && x->getIdentifier()
+        && x->getDemand() == o->getDemand() && !x->getLocked() && x->getRawIdentifier()
         && x->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
       // Check that the flowplans are on identical alternates

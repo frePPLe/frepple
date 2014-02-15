@@ -19,12 +19,89 @@
       <location name="Loc"/>
       <producing name="Oper1" xsi:type="operation_fixed_time" />
     </buffer>
+    <buffer name="In3" xsi:type="buffer_procure">
+      <item name="In3" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="In3A" xsi:type="buffer_procure">
+      <item name="In3A" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="In3B" xsi:type="buffer_procure">
+      <item name="In3B" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="In3C" xsi:type="buffer_procure">
+      <item name="In3C" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="Out3">
+      <item name="Out3" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="Out3A">
+      <item name="Out3A" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="Out3B">
+      <item name="Out3B" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="Out3C">
+      <item name="Out3C" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="In4" xsi:type="buffer_procure">
+      <item name="In4" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="In4A" xsi:type="buffer_procure">
+      <item name="In4A" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="In4B" xsi:type="buffer_procure">
+      <item name="In4B" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="Out4">
+      <item name="Out4" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="Out4A">
+      <item name="Out3A" />
+      <location name="Loc"/>
+    </buffer>
+    <buffer name="Out4B">
+      <item name="Out4B" />
+      <location name="Loc"/>
+    </buffer>
   </buffers>
   <resources>
     <resource name="Res1">
        <location name="Loc"/>
     </resource>
-    <resource name="Res1">
+    <resource name="Res2">
+       <location name="Loc"/>
+    </resource>
+    <resource name="Res3">
+       <location name="Loc"/>
+    </resource>
+    <resource name="Res3A">
+       <location name="Loc"/>
+    </resource>
+    <resource name="Res3B">
+       <location name="Loc"/>
+    </resource>
+    <resource name="Res3C">
+       <location name="Loc"/>
+    </resource>
+    <resource name="Res4">
+       <location name="Loc"/>
+    </resource>
+    <resource name="Res4A">
+       <location name="Loc"/>
+    </resource>
+    <resource name="Res4B">
        <location name="Loc"/>
     </resource>
   </resources>
@@ -58,14 +135,152 @@
       </flows>
       <duration>P10D</duration>
     </operation>
+    <operation name="Oper3" xsi:type="operation_routing">
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="Out3" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <buffer name="In3" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="Res3" />
+        </load>
+      </loads>
+      <steps>
+        <operation name="Oper3A" xsi:type="operation_fixed_time" duration="P1D">
+          <flows>
+            <flow xsi:type="flow_end">
+              <buffer name="Out3A" />
+              <quantity>1</quantity>
+            </flow>
+            <flow xsi:type="flow_start">
+              <buffer name="In3A" />
+              <quantity>-1</quantity>
+            </flow>
+          </flows>
+          <loads>
+            <load>
+              <resource name="Res3A" />
+            </load>
+          </loads>
+        </operation>
+        <operation name="Oper3B" xsi:type="operation_fixed_time" duration="P1D">
+          <flows>
+            <flow xsi:type="flow_end">
+              <buffer name="Out3B" />
+              <quantity>1</quantity>
+            </flow>
+            <flow xsi:type="flow_start">
+              <buffer name="In3B" />
+              <quantity>-1</quantity>
+            </flow>
+          </flows>
+          <loads>
+            <load>
+              <resource name="Res3B" />
+            </load>
+          </loads>
+        </operation>
+        <operation name="Oper3C" xsi:type="operation_fixed_time" duration="P1D">
+          <flows>
+            <flow xsi:type="flow_end">
+              <buffer name="Out3C" />
+              <quantity>1</quantity>
+            </flow>
+            <flow xsi:type="flow_start">
+              <buffer name="In3C" />
+              <quantity>-1</quantity>
+            </flow>
+          </flows>
+          <loads>
+            <load>
+              <resource name="Res3C" />
+            </load>
+          </loads>
+        </operation>
+      </steps>
+    </operation>
+    <operation name="Oper4" xsi:type="operation_alternate">
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="Out4" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <buffer name="In4" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="Res4" />
+        </load>
+      </loads>
+      <alternates>
+        <alternate>
+          <operation name="Oper4A" xsi:type="operation_fixed_time" duration="P1D">
+            <flows>
+              <flow xsi:type="flow_end">
+                <buffer name="Out4A" />
+                <quantity>1</quantity>
+              </flow>
+              <flow xsi:type="flow_start">
+                <buffer name="In4A" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <resource name="Res4A" />
+              </load>
+            </loads>
+          </operation>
+          <priority>1</priority>
+        </alternate>
+        <alternate>
+          <operation name="Oper4B" xsi:type="operation_fixed_time" duration="P1D">
+            <flows>
+              <flow xsi:type="flow_end">
+                <buffer name="Out4B" />
+                <quantity>1</quantity>
+              </flow>
+              <flow xsi:type="flow_start">
+                <buffer name="In4B" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <resource name="Res4B" />
+              </load>
+            </loads>
+          </operation>
+          <priority>2</priority>
+        </alternate>
+      </alternates>
+    </operation>
   </operations>
   <operationplans>
-    <operationplan id="2001" operation="Oper1" quantity="10" start="2013-12-31T00:00:00" end="2014-01-05T00:00:00" locked="true" consume_material="false" />
-    <operationplan id="2002" operation="Oper1" quantity="10" start="2013-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true" produce_material="false" />
-    <operationplan id="2003" operation="Oper1" quantity="10" start="2013-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true" consume_capacity="false" />
-    <operationplan id="2004" operation="Oper1" quantity="10" start="2013-04-01T00:00:00" end="2014-04-05T00:00:00" locked="true" consume_material="false" consume_capacity="false" produce_material="false" />
+    <!-- WIP on fixed_time operation -->
+    <operationplan id="1001" operation="Oper1" quantity="10" start="2013-12-31T00:00:00" end="2014-01-05T00:00:00" locked="true" consume_material="false" />
+    <operationplan id="1002" operation="Oper1" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true" produce_material="false" />
+    <operationplan id="1003" operation="Oper1" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true" consume_capacity="false" />
+    <operationplan id="1004" operation="Oper1" quantity="10" start="2014-04-01T00:00:00" end="2014-04-05T00:00:00" locked="true" consume_material="false" consume_capacity="false" produce_material="false" />
+    <!-- WIP on routing operation -->
+    <operationplan id="3005" operation="Oper3" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true" produce_material="false" consume_material="false" consume_capacity="false"/>
+    <!-- WIP on alternate operation -->
+    <operationplan id="4005" operation="Oper4" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" locked="true" produce_material="false" consume_material="false" consume_capacity="false"/>
+    <operationplan id="4006" operation="Oper4" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true"/>
+    <operationplan id="4007" operation="Oper4B" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
+      <owner id="4006"/>
+    </operationplan>
   </operationplans>
-  
+
 <?python
 from __future__ import print_function
 print("CREATING CONSTRAINED PLAN")

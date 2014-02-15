@@ -87,13 +87,13 @@
 			<end>2009-01-27T00:00:00</end>
 			<quantity>12</quantity>
 		</operationplan>
-		<operationplan id="1" operation="operation 1 step1">
+		<operationplan id="4" operation="operation 1 step1">
 			<start>2009-01-13T00:00:00</start>
 			<end>2009-01-20T00:00:00</end>
 			<quantity>12</quantity>
 			<owner id="3" operation="operation 1"/>
 		</operationplan>
-		<operationplan id="2" operation="operation 1 step2">
+		<operationplan id="5" operation="operation 1 step2">
 			<start>2009-01-20T00:00:00</start>
 			<end>2009-01-27T00:00:00</end>
 			<quantity>12</quantity>

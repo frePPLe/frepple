@@ -190,71 +190,71 @@
 		</flow>
 	</flows>
 	<operationplans>
-		<operationplan id="25" operation="delivery 1">
+		<operationplan id="15" operation="delivery 1">
 			<demand name="order 2"/>
 			<start>2009-01-31T00:00:00</start>
 			<end>2009-02-01T00:00:00</end>
 			<quantity>1</quantity>
 		</operationplan>
-		<operationplan id="29" operation="delivery 1">
+		<operationplan id="18" operation="delivery 1">
 			<demand name="order 1"/>
 			<start>2009-02-28T00:00:00</start>
 			<end>2009-03-01T00:00:00</end>
 			<quantity>1</quantity>
 		</operationplan>
-		<operationplan id="33" operation="delivery 1">
+		<operationplan id="20" operation="delivery 1">
 			<demand name="order 3"/>
 			<start>2009-03-31T00:00:00</start>
 			<end>2009-04-01T00:00:00</end>
 			<quantity>1</quantity>
 		</operationplan>
-		<operationplan id="26" operation="make item 1">
+		<operationplan id="14" operation="make item 1">
 			<start>2009-01-30T00:00:00</start>
 			<end>2009-01-31T00:00:00</end>
 			<quantity>1</quantity>
 		</operationplan>
-		<operationplan id="30" operation="make item 1">
+		<operationplan id="17" operation="make item 1">
 			<start>2009-02-27T00:00:00</start>
 			<end>2009-02-28T00:00:00</end>
 			<quantity>1</quantity>
 		</operationplan>
-		<operationplan id="34" operation="make item 1">
+		<operationplan id="21" operation="make item 1">
 			<start>2009-03-30T00:00:00</start>
 			<end>2009-03-31T00:00:00</end>
 			<quantity>1</quantity>
 		</operationplan>
-		<operationplan id="28" operation="supply component A">
+		<operationplan id="22" operation="supply component A">
 			<start>2009-01-29T00:00:00</start>
 			<end>2009-01-30T00:00:00</end>
 			<quantity>1</quantity>
 		</operationplan>
-		<operationplan id="32" operation="supply component A">
+		<operationplan id="23" operation="supply component A">
 			<start>2009-02-26T00:00:00</start>
 			<end>2009-02-27T00:00:00</end>
 			<quantity>1</quantity>
 		</operationplan>
-		<operationplan id="36" operation="supply component A">
+		<operationplan id="24" operation="supply component A">
 			<start>2009-03-29T00:00:00</start>
 			<end>2009-03-30T00:00:00</end>
 			<quantity>1</quantity>
 		</operationplan>
-		<operationplan id="27" operation="supply component A from supplier 1">
+		<operationplan id="16" operation="supply component A from supplier 1">
 			<start>2009-01-29T00:00:00</start>
 			<end>2009-01-30T00:00:00</end>
 			<quantity>1</quantity>
-			<owner id="28" operation="supply component A"/>
+			<owner id="22" operation="supply component A"/>
 		</operationplan>
-		<operationplan id="31" operation="supply component A from supplier 1">
+		<operationplan id="19" operation="supply component A from supplier 1">
 			<start>2009-02-26T00:00:00</start>
 			<end>2009-02-27T00:00:00</end>
 			<quantity>1</quantity>
-			<owner id="32" operation="supply component A"/>
+			<owner id="23" operation="supply component A"/>
 		</operationplan>
-		<operationplan id="35" operation="supply component A from supplier 1">
+		<operationplan id="25" operation="supply component A from supplier 1">
 			<start>2009-03-29T00:00:00</start>
 			<end>2009-03-30T00:00:00</end>
 			<quantity>1</quantity>
-			<owner id="36" operation="supply component A"/>
+			<owner id="24" operation="supply component A"/>
 		</operationplan>
 	</operationplans>
 </plan>

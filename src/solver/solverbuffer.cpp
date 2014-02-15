@@ -67,7 +67,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
       ; ++cur)
   {
     const FlowPlan* fplan = dynamic_cast<const FlowPlan*>(&*cur);
-    if (fplan && !fplan->getOperationPlan()->getIdentifier()
+    if (fplan && !fplan->getOperationPlan()->getRawIdentifier()
         && fplan->getQuantity()>0
         && fplan->getOperationPlan()->getOperation() != b->getProducingOperation())
       unconfirmed_supply += fplan->getQuantity();

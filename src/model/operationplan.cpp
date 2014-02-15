@@ -26,12 +26,7 @@ namespace frepple
 
 DECLARE_EXPORT const MetaClass* OperationPlan::metadata;
 DECLARE_EXPORT const MetaCategory* OperationPlan::metacategory;
-DECLARE_EXPORT unsigned long OperationPlan::counterMin = 1;
-// The value of the max counter is hard-coded to 2^31 - 1. This value is the
-// highest positive integer number that can safely be used on 32-bit platforms.
-// An alternative approach is to use the value ULONG_MAX, but this has the
-// disadvantage of not being portable across platforms and tools.
-DECLARE_EXPORT unsigned long OperationPlan::counterMax = 2147483647;
+DECLARE_EXPORT unsigned long OperationPlan::counterMin = 2;
 
 
 int OperationPlan::initialize()
@@ -92,9 +87,11 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   OperationPlan* opplan = NULL;
   if (id)
   {
+    if (id == 1)
+      throw DataException("Operationplan id must be greater than 1");
     opplan = OperationPlan::findId(id);
     if (opplan && !opname.empty()
-        && opplan->getOperation()->getName()==opname)
+        && opplan->getOperation()->getName()!=opname)
     {
       // Previous and current operations don't match.
       ostringstream ch;
@@ -182,7 +179,7 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
   // We are garantueed that there are no operationplans that have an id equal
   // or higher than the current counter. This is garantueed by the
   // instantiate() method.
-  if (l >= counterMin && l <= counterMax) return NULL;
+  if (l >= counterMin) return NULL;
 
   // Loop through all operationplans.
   for (OperationPlan::iterator i = begin(); i != end(); ++i)
@@ -193,7 +190,40 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 }
 
 
-DECLARE_EXPORT bool OperationPlan::activate(bool useMinCounter)
+DECLARE_EXPORT bool OperationPlan::assignIdentifier()
+{
+  static Mutex onlyOne;
+  ScopeMutexLock l(onlyOne);  // Need to assure that ids are unique!
+  if (id > 1)
+  {
+    // An identifier was read in from input
+    if (id < counterMin)
+    {
+      // The assigned id potentially clashes with an existing operationplan.
+      // Check whether it clashes with existing operationplans
+      OperationPlan* opplan = findId(id);
+      if (opplan && opplan->getOperation()!=oper)
+        return false;
+    }
+    // The new operationplan definitely doesn't clash with existing id's.
+    // The counter need updating to garantuee that counter is always
+    // a safe starting point for tagging new operationplans.
+    else
+      counterMin = id+1;
+  }
+  else
+    // Fresh operationplan with blank id
+    id = counterMin++;
+
+  // Check whether the counter is still okay
+  if (counterMin >= ULONG_MAX)
+    throw RuntimeException("Exhausted the range of available operationplan identifiers");
+
+  return true;
+}
+
+
+DECLARE_EXPORT bool OperationPlan::activate()
 {
   // At least a valid operation pointer must exist
   if (!oper) throw LogicException("Initializing an invalid operationplan");
@@ -216,51 +246,24 @@ DECLARE_EXPORT bool OperationPlan::activate(bool useMinCounter)
   for (OperationPlan::iterator x(this); x != end(); ++x)
     x->activate();
 
-  // Create unique identifier
-  // Having an identifier assigned is an important flag.
-  // Only operation plans with an id :
-  //   - can be linked in the global operation plan list.
-  //   - can have problems (this results from the previous point).
-  //   - can be linked with a demand.
-  // These properties allow us to delete operation plans without an id faster.
-  static Mutex onlyOne;
+  // Mark as activated by assigning a unique identifier.
+  if (id > 1)
   {
-    ScopeMutexLock l(onlyOne);  // Need to assure that ids are unique!
-    if (id)
+    // Validate the user provided id.
+    if (!assignIdentifier())
     {
-      // An identifier was read in from input
-      if (id < counterMin || id > counterMax)
-      {
-        // The assigned id potentially clashes with an existing operationplan.
-        // Check whether it clashes with existing operationplans
-        OperationPlan* opplan = findId(id);
-        if (opplan && opplan->getOperation()!=oper)
-        {
-          ostringstream ch;
-          ch << "Operationplan id " << id
-              << " defined multiple times with different operations: '"
-              << opplan->getOperation() << "' & '" << oper << "'";
-          delete this;
-          throw DataException(ch.str());
-        }
-      }
-      // The new operationplan definately doesn't clash with existing id's.
-      // The counter need updating to garantuee that counter is always
-      // a safe starting point for tagging new operationplans.
-      else if (useMinCounter)
-        counterMin = id+1;
-      else
-        counterMax = id-1;
+      ostringstream ch;
+      ch << "Operationplan id " << id << " assigned multiple times";
+      delete this;
+      throw DataException(ch.str());
     }
-    // Fresh operationplan with blank id
-    else if (useMinCounter)
-      id = counterMin++;
-    else
-      id = counterMax--;
-    // Check whether the counters are still okay
-    if (counterMin >= counterMax)
-      throw RuntimeException("Exhausted the range of available operationplan identifiers");
   }
+  else
+    // The id given at this point is only a temporary one. The final id is
+    // created lazily when the getIdentifier method is called.
+    // In this way, 1) we avoid clashes between auto-generated and
+    // user-provided in the input and 2) we keep performance high.
+    id = 1;
 
   // Insert into the doubly linked list of operationplans.
   insertInOperationplanList();
@@ -796,14 +799,6 @@ DECLARE_EXPORT void OperationPlan::update()
       tmp->getDates().getStart(),
       lastsubopplan->getDates().getEnd()
     );
-    // If at least 1 sub-operationplan is locked, the parent must be locked
-    flags &= ~IS_LOCKED; // Clear is_locked flag
-    for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
-      if (i->flags & IS_LOCKED)
-      {
-        flags |= IS_LOCKED;  // Set is_locked flag
-        break;
-      }
   }
 
   // Update the flow and loadplans
@@ -931,14 +926,19 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
   // Writing a reference
   if (m == REFERENCE)
   {
-    o->writeElement
-    (tag, Tags::tag_id, id, Tags::tag_operation, oper->getName());
+    o->writeElement(
+      tag, Tags::tag_id, const_cast<OperationPlan*>(this)->getIdentifier(),
+      Tags::tag_operation, oper->getName()
+      );
     return;
   }
 
   // Write the head
   if (m != NOHEAD && m != NOHEADTAIL)
-    o->BeginObject(tag, Tags::tag_id, id, Tags::tag_operation, XMLEscape(oper->getName()));
+    o->BeginObject(
+      tag, Tags::tag_id, const_cast<OperationPlan*>(this)->getIdentifier(),
+      Tags::tag_operation, XMLEscape(oper->getName())
+      );
 
   // The demand reference is only valid for delivery operationplans,
   // and it should only be written if this tag is not being written

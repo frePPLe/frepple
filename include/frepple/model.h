@@ -1582,8 +1582,6 @@ class Operation : public HasName<Operation>,
   *    if this hasn't been done yet.<br>
   *  - Operationplans can be organized in hierarchical structure, matching
   *    the operation hierarchies they belong to.
-  *
-  * @todo reading suboperationplans can be improved
   */
 class OperationPlan
   : public Object, public HasProblems, public NonCopyable
@@ -1919,7 +1917,14 @@ class OperationPlan
       * highest identifier read in from the input and is then incremented
       * for every operationplan that is registered.
       */
-    unsigned long getIdentifier() const {return id;}
+    DECLARE_EXPORT unsigned long getIdentifier()
+    {
+      if (id==1) assignIdentifier(); // Lazy generation
+      return id;
+    }
+
+    /** Return the identifier. This method can return the lazy identifier 1. */
+    unsigned long getRawIdentifier() const {return id;}
 
     /** Updates the end date of the operationplan and compute the start
       * date.<br>
@@ -1974,7 +1979,7 @@ class OperationPlan
       * If the operationplan is invalid, it will be DELETED and the return value
       * is 'false'.
       */
-    DECLARE_EXPORT bool activate(bool useMinCounter = true);
+    DECLARE_EXPORT bool activate();
 
     /** Remove an operationplan from the list of officially registered ones.<br>
       * The operationplan will keep its loadplans and flowplans after unregistration.
@@ -2086,6 +2091,9 @@ class OperationPlan
       */
     virtual DECLARE_EXPORT void update();
 
+    /** Generates a unique identifier for the operationplan. */
+    DECLARE_EXPORT bool assignIdentifier();
+
     /** Update the loadplans and flowplans of the operationplan based on the
       * latest information of quantity, date and locked flag.<br>
       * This method will NOT update parent or child operationplans.
@@ -2130,19 +2138,9 @@ class OperationPlan
       * The value of the counter is the first available identifier value that
       * can be used for a new operationplan.<br>
       * The first value is 1, and each operationplan increases it by 1.
-      * @see counterMax
-      * @see getIdentifier()
+      * @see assignIdentifier()
       */
     static DECLARE_EXPORT unsigned long counterMin;
-
-    /** Counter of OperationPlans, which is used to automatically assign a
-      * unique identifier for each operationplan.<br>
-      * The first value is a very high number, and each operationplan
-      * decreases it by 1.
-      * @see counterMin
-      * @see getIdentifier()
-      */
-    static DECLARE_EXPORT unsigned long counterMax;
 
     /** Pointer to the demand.<br>
       * Only delivery operationplans have this field set. The field is NULL
@@ -2152,6 +2150,10 @@ class OperationPlan
 
     /** Unique identifier.<br>
       * The field is 0 while the operationplan is not fully registered yet.
+      * The field is 1 when the operationplan is fully registered but only a
+      * temporary id is generated.
+      * A unique value for each operationplan is created lazily when the
+      * method getIdentifier() is called.
       */
     unsigned long id;
 

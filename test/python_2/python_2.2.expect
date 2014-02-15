@@ -131,13 +131,13 @@
 		</flow>
 	</flows>
 	<operationplans>
-		<operationplan id="3" operation="delivery end item">
+		<operationplan id="5" operation="delivery end item">
 			<demand name="order 2"/>
 			<start>2009-01-03T08:00:00</start>
 			<end>2009-01-04T08:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="1" operation="delivery end item">
+		<operationplan id="3" operation="delivery end item">
 			<demand name="order 1"/>
 			<start>2009-01-03T09:00:00</start>
 			<end>2009-01-04T09:00:00</end>

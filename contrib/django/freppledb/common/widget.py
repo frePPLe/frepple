@@ -64,19 +64,19 @@ class RecentActionsWidget(Widget):
     # This code is a slightly modified version of a standard Django tag.
     # The only change is to look for the logentry records in the right database.
     # See the file django\contrib\admin\templatetags\log.py
-    from freppledb.common.middleware import current_request
-    try: db = current_request.database or DEFAULT_DB_ALIAS
+    from freppledb.common.middleware import _thread_locals
+    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
-    if isinstance(current_request.user, AnonymousUser):
+    if isinstance(_thread_locals.request.user, AnonymousUser):
       q = LogEntry.objects.using(db).select_related('content_type', 'user')[:self.limit]
     else:
-      q = LogEntry.objects.using(db).filter(user__id__exact=current_request.user.pk).select_related('content_type', 'user')[:self.limit]
+      q = LogEntry.objects.using(db).filter(user__id__exact=_thread_locals.request.user.pk).select_related('content_type', 'user')[:self.limit]
     result = []
     for entry in q:
       if entry.is_change():
-        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-pencil"></span><a href="%s%s">%s</a>' % (current_request.prefix, entry.get_admin_url(), entry.object_repr))
+        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-pencil"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), entry.object_repr))
       elif entry.is_addition():
-        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-plusthick"></span><a href="%s%s">%s</a>' % (current_request.prefix, entry.get_admin_url(), entry.object_repr))
+        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-plusthick"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), entry.object_repr))
       elif entry.is_deletion():
         result.append('<span style="display: inline-block;" class="ui-icon ui-icon-minusthick"></span>%s' % entry.object_repr)
       else:

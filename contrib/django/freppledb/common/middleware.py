@@ -28,7 +28,7 @@ from freppledb.execute.models import Scenario
 
 
 # A local thread variable to make the current request visible everywhere
-current_request = threading.local()
+_thread_locals = threading.local()
 
 
 class LocaleMiddleware(DjangoLocaleMiddleware):
@@ -39,8 +39,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     - user interface theme to be used
   """
   def process_request(self, request):
-    global current_request
-    current_request = request
+    setattr(_thread_locals, 'request', request)
     if isinstance(request.user, AnonymousUser):
       # Anonymous users don't have preferences
       language = 'auto'
@@ -58,14 +57,11 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     request.charset = settings.DEFAULT_CHARSET
 
   def process_exception(self, request, exception):
-    global current_request
-    current_request = None
+    setattr(_thread_locals, 'request', None)
     return None
 
   def process_response(self, request, response):
-    if not response.streaming:
-      global current_request
-      current_request = None
+    setattr(_thread_locals, 'request', None)
     return response
 
 

@@ -133,8 +133,12 @@ class HierarchyModel(models.Model):
 
 class MultiDBManager(models.Manager):
   def get_query_set(self):
-    from freppledb.common.middleware import current_request
-    return super(MultiDBManager, self).get_query_set().using(getattr(current_request, 'database', DEFAULT_DB_ALIAS))
+    from freppledb.common.middleware import _thread_locals
+    req = getattr(_thread_locals, 'request', None)
+    if req:
+      return super(MultiDBManager, self).get_query_set().using(getattr(req, 'database', DEFAULT_DB_ALIAS))
+    else:
+      return super(MultiDBManager, self).get_query_set().using(DEFAULT_DB_ALIAS)
 
 
 class AuditModel(models.Model):

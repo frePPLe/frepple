@@ -30,7 +30,7 @@ class ExecuteWidget(Widget):
   url = '/execute/'
 
   def render(self, request=None):
-    from freppledb.common.middleware import current_request
+    from freppledb.common.middleware import _thread_locals
     return '''<div style="text-align:center">
       <form method="post" action="%s/execute/launch/generate%%20plan/">
       <input type="hidden" name="csrfmiddlewaretoken" value="%s">
@@ -38,6 +38,6 @@ class ExecuteWidget(Widget):
       <input type="hidden" name="constraint" value="15"/>
       <input class="button" type="submit" value="%s"/>
       </form></div>
-      ''' % (current_request.prefix, get_token(current_request), force_unicode(_("Create a plan")))
+      ''' % (_thread_locals.request.prefix, get_token(_thread_locals.request), force_unicode(_("Create a plan")))
 
 Dashboard.register(ExecuteWidget)

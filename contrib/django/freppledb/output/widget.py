@@ -23,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.utils.text import capfirst
 
-from freppledb.common.middleware import current_request
+from freppledb.common.middleware import _thread_locals
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.output.models import LoadPlan, Problem, OperationPlan, Demand
 
@@ -43,7 +43,7 @@ class LateOrdersWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = request.GET.get('limit', cls.limit)
-    try: db = current_request.database or DEFAULT_DB_ALIAS
+    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
@@ -79,7 +79,7 @@ class ShortOrdersWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = request.GET.get('limit', cls.limit)
-    try: db = current_request.database or DEFAULT_DB_ALIAS
+    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
@@ -112,7 +112,7 @@ class PurchaseQueueWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = request.GET.get('limit', cls.limit)
-    try: db = current_request.database or DEFAULT_DB_ALIAS
+    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
@@ -146,7 +146,7 @@ class ShippingQueueWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = request.GET.get('limit', cls.limit)
-    try: db = current_request.database or DEFAULT_DB_ALIAS
+    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
@@ -181,7 +181,7 @@ class ResourceQueueWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = request.GET.get('limit', cls.limit)
-    try: db = current_request.database or DEFAULT_DB_ALIAS
+    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',

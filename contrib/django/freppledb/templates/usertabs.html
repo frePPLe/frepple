@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="ui-tabs" id="tabs">
 <ul class="ui-tabs-nav ui-helper-clearfix">
-{% if perms.common.change_user %}<li class="ui-state-default ui-corner-top {% ifequal active_tab 'edit' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/admin/common/user/{{object_id}}/">{% trans 'Edit' %}</a></li>{% endif %}
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/comments/common/user/{{object_id}}/">{% trans 'Comments' %}</a></li>
+{% if perms.common.change_user %}<li class="ui-state-default ui-corner-top {% ifequal active_tab 'edit' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/admin/common/user/{{object_id|urlencode}}/">{% trans 'Edit' %}</a></li>{% endif %}
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/comments/common/user/{{object_id|urlencode}}/">{% trans 'Comments' %}</a></li>
 </ul>
 </div>

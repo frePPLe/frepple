@@ -19,7 +19,7 @@
 	<priority>1</priority>
 	<maxlateness>P0D</maxlateness>
 	<operationplans>
-		<operationplan id="3" operation="delivery end item">
+		<operationplan id="14" operation="delivery end item">
 			<demand name="order 1"/>
 			<start>2009-03-01T09:00:00</start>
 			<end>2009-03-02T09:00:00</end>
@@ -42,19 +42,19 @@
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
-			<owner id="14" operation="make or buy item"/>
+			<owner id="10" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="17" operation="make item">
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
-			<owner id="4" operation="make or buy item"/>
+			<owner id="11" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="18" operation="make item">
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
-			<owner id="2" operation="make or buy item"/>
+			<owner id="13" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="19" operation="make item">
 			<start>2010-12-25T00:00:00</start>

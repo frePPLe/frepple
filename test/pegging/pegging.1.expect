@@ -51,7 +51,7 @@
 	<operations>
 		<operation name="delivery 1" xsi:type="operation_fixed_time">
 			<operationplans>
-				<operationplan id="4015" operation="delivery 1">
+				<operationplan id="4002" operation="delivery 1">
 					<demand name="order for item 1"/>
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
@@ -67,14 +67,14 @@
 								<quantity>10</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4015" operation="delivery 1"/>
-								<producing id="4014" operation="Inventory buffer 1"/>
+								<consuming id="4002" operation="delivery 1"/>
+								<producing id="4003" operation="Inventory buffer 1"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4017" operation="delivery 1">
+				<operationplan id="4004" operation="delivery 1">
 					<demand name="order for item 1"/>
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-11T00:00:00</end>
@@ -90,22 +90,22 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4017" operation="delivery 1"/>
-								<producing id="4016" operation="make 1"/>
+								<consuming id="4004" operation="delivery 1"/>
+								<producing id="4005" operation="make 1"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 1"/>
-								<consuming id="4016" operation="make 1"/>
+								<consuming id="4005" operation="make 1"/>
 								<producing id="1001" operation="supply 1"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4018" operation="delivery 1">
+				<operationplan id="4006" operation="delivery 1">
 					<demand name="order for item 1"/>
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-18T00:00:00</end>
@@ -121,15 +121,15 @@
 								<quantity>90</quantity>
 								<factor>0.957447</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4018" operation="delivery 1"/>
-								<producing id="4019" operation="make 1"/>
+								<consuming id="4006" operation="delivery 1"/>
+								<producing id="4007" operation="make 1"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>90</quantity>
 								<factor>0.45</factor>
 								<buffer name="constraint buffer 1"/>
-								<consuming id="4019" operation="make 1"/>
+								<consuming id="4007" operation="make 1"/>
 								<producing id="1002" operation="supply 1"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
@@ -141,7 +141,7 @@
 		</operation>
 		<operation name="delivery 2" xsi:type="operation_fixed_time">
 			<operationplans>
-				<operationplan id="4009" operation="delivery 2">
+				<operationplan id="4008" operation="delivery 2">
 					<demand name="order for item 2"/>
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
@@ -157,14 +157,14 @@
 								<quantity>10</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4009" operation="delivery 2"/>
-								<producing id="4008" operation="Inventory buffer 2"/>
+								<consuming id="4008" operation="delivery 2"/>
+								<producing id="4009" operation="Inventory buffer 2"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4011" operation="delivery 2">
+				<operationplan id="4010" operation="delivery 2">
 					<demand name="order for item 2"/>
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-11T00:00:00</end>
@@ -180,22 +180,22 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4011" operation="delivery 2"/>
-								<producing id="4010" operation="make 2"/>
+								<consuming id="4010" operation="delivery 2"/>
+								<producing id="4011" operation="make 2"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 2"/>
-								<consuming id="4010" operation="make 2"/>
+								<consuming id="4011" operation="make 2"/>
 								<producing id="2001" operation="supply 2"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4013" operation="delivery 2">
+				<operationplan id="4012" operation="delivery 2">
 					<demand name="order for item 2"/>
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-18T00:00:00</end>
@@ -211,15 +211,15 @@
 								<quantity>50</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4013" operation="delivery 2"/>
-								<producing id="4012" operation="make 2"/>
+								<consuming id="4012" operation="delivery 2"/>
+								<producing id="4013" operation="make 2"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>50</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 2"/>
-								<consuming id="4012" operation="make 2"/>
+								<consuming id="4013" operation="make 2"/>
 								<producing id="2002" operation="supply 2"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
@@ -231,7 +231,7 @@
 		</operation>
 		<operation name="delivery 3" xsi:type="operation_fixed_time">
 			<operationplans>
-				<operationplan id="4007" operation="delivery 3">
+				<operationplan id="4014" operation="delivery 3">
 					<demand name="order for item 3"/>
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
@@ -247,14 +247,14 @@
 								<quantity>10</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 3"/>
-								<consuming id="4007" operation="delivery 3"/>
-								<producing id="4006" operation="Inventory buffer 3"/>
+								<consuming id="4014" operation="delivery 3"/>
+								<producing id="4015" operation="Inventory buffer 3"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4020" operation="delivery 3">
+				<operationplan id="4016" operation="delivery 3">
 					<demand name="order for item 3"/>
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-16T00:00:00</end>
@@ -270,15 +270,15 @@
 								<quantity>90</quantity>
 								<factor>0.978261</factor>
 								<buffer name="buffer 3"/>
-								<consuming id="4020" operation="delivery 3"/>
-								<producing id="4021" operation="make 3"/>
+								<consuming id="4016" operation="delivery 3"/>
+								<producing id="4017" operation="make 3"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>90</quantity>
 								<factor>0.18</factor>
 								<buffer name="constraint buffer 3"/>
-								<consuming id="4021" operation="make 3"/>
+								<consuming id="4017" operation="make 3"/>
 								<producing id="3001" operation="supply 3"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
@@ -290,7 +290,7 @@
 		</operation>
 		<operation name="delivery 4" xsi:type="operation_fixed_time">
 			<operationplans>
-				<operationplan id="4003" operation="delivery 4">
+				<operationplan id="4018" operation="delivery 4">
 					<demand name="order for item 4"/>
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
@@ -306,14 +306,14 @@
 								<quantity>10</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 4"/>
-								<consuming id="4003" operation="delivery 4"/>
-								<producing id="4002" operation="Inventory buffer 4"/>
+								<consuming id="4018" operation="delivery 4"/>
+								<producing id="4019" operation="Inventory buffer 4"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4005" operation="delivery 4">
+				<operationplan id="4020" operation="delivery 4">
 					<demand name="order for item 4"/>
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-16T00:00:00</end>
@@ -329,15 +329,15 @@
 								<quantity>190</quantity>
 								<factor>0.969388</factor>
 								<buffer name="buffer 4"/>
-								<consuming id="4005" operation="delivery 4"/>
-								<producing id="4004" operation="make 4"/>
+								<consuming id="4020" operation="delivery 4"/>
+								<producing id="4021" operation="make 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>190</quantity>
 								<factor>0.19</factor>
 								<buffer name="constraint buffer 4"/>
-								<consuming id="4004" operation="make 4"/>
+								<consuming id="4021" operation="make 4"/>
 								<producing id="4001" operation="supply 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
@@ -361,14 +361,14 @@
 								<factor>0.0306122</factor>
 								<buffer name="buffer 4"/>
 								<consuming id="4022" operation="delivery 4"/>
-								<producing id="4004" operation="make 4"/>
+								<producing id="4021" operation="make 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>6</quantity>
 								<factor>0.006</factor>
 								<buffer name="constraint buffer 4"/>
-								<consuming id="4004" operation="make 4"/>
+								<consuming id="4021" operation="make 4"/>
 								<producing id="4001" operation="supply 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
@@ -396,7 +396,7 @@
 		</operation>
 		<operation name="make 1" xsi:type="operation_fixed_time">
 			<operationplans>
-				<operationplan id="4016" operation="make 1">
+				<operationplan id="4005" operation="make 1">
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>50</quantity>
@@ -411,7 +411,7 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 1"/>
-								<consuming id="4016" operation="make 1"/>
+								<consuming id="4005" operation="make 1"/>
 								<producing id="1001" operation="supply 1"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
@@ -419,8 +419,8 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4017" operation="delivery 1"/>
-								<producing id="4016" operation="make 1"/>
+								<consuming id="4004" operation="delivery 1"/>
+								<producing id="4005" operation="make 1"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -434,7 +434,7 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 1"/>
-								<consuming id="4016" operation="make 1"/>
+								<consuming id="4005" operation="make 1"/>
 								<producing id="1001" operation="supply 1"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
@@ -442,14 +442,14 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4017" operation="delivery 1"/>
-								<producing id="4016" operation="make 1"/>
+								<consuming id="4004" operation="delivery 1"/>
+								<producing id="4005" operation="make 1"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4019" operation="make 1">
+				<operationplan id="4007" operation="make 1">
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-17T00:00:00</end>
 					<quantity>47</quantity>
@@ -464,7 +464,7 @@
 								<quantity>94</quantity>
 								<factor>0.47</factor>
 								<buffer name="constraint buffer 1"/>
-								<consuming id="4019" operation="make 1"/>
+								<consuming id="4007" operation="make 1"/>
 								<producing id="1002" operation="supply 1"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
@@ -473,15 +473,15 @@
 								<factor>1</factor>
 								<id>unpegged</id>
 								<buffer name="buffer 1"/>
-								<producing id="4019" operation="make 1"/>
+								<producing id="4007" operation="make 1"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 							<pegging level="-1">
 								<quantity>90</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4018" operation="delivery 1"/>
-								<producing id="4019" operation="make 1"/>
+								<consuming id="4006" operation="delivery 1"/>
+								<producing id="4007" operation="make 1"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -495,7 +495,7 @@
 								<quantity>94</quantity>
 								<factor>0.47</factor>
 								<buffer name="constraint buffer 1"/>
-								<consuming id="4019" operation="make 1"/>
+								<consuming id="4007" operation="make 1"/>
 								<producing id="1002" operation="supply 1"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
@@ -504,15 +504,15 @@
 								<factor>1</factor>
 								<id>unpegged</id>
 								<buffer name="buffer 1"/>
-								<producing id="4019" operation="make 1"/>
+								<producing id="4007" operation="make 1"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 							<pegging level="-1">
 								<quantity>90</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4018" operation="delivery 1"/>
-								<producing id="4019" operation="make 1"/>
+								<consuming id="4006" operation="delivery 1"/>
+								<producing id="4007" operation="make 1"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -522,7 +522,7 @@
 		</operation>
 		<operation name="make 2" xsi:type="operation_fixed_time">
 			<operationplans>
-				<operationplan id="4010" operation="make 2">
+				<operationplan id="4011" operation="make 2">
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>50</quantity>
@@ -537,7 +537,7 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 2"/>
-								<consuming id="4010" operation="make 2"/>
+								<consuming id="4011" operation="make 2"/>
 								<producing id="2001" operation="supply 2"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
@@ -545,8 +545,8 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4011" operation="delivery 2"/>
-								<producing id="4010" operation="make 2"/>
+								<consuming id="4010" operation="delivery 2"/>
+								<producing id="4011" operation="make 2"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -560,7 +560,7 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 2"/>
-								<consuming id="4010" operation="make 2"/>
+								<consuming id="4011" operation="make 2"/>
 								<producing id="2001" operation="supply 2"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
@@ -568,14 +568,14 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4011" operation="delivery 2"/>
-								<producing id="4010" operation="make 2"/>
+								<consuming id="4010" operation="delivery 2"/>
+								<producing id="4011" operation="make 2"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4012" operation="make 2">
+				<operationplan id="4013" operation="make 2">
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-17T00:00:00</end>
 					<quantity>25</quantity>
@@ -590,7 +590,7 @@
 								<quantity>50</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 2"/>
-								<consuming id="4012" operation="make 2"/>
+								<consuming id="4013" operation="make 2"/>
 								<producing id="2002" operation="supply 2"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
@@ -598,8 +598,8 @@
 								<quantity>50</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4013" operation="delivery 2"/>
-								<producing id="4012" operation="make 2"/>
+								<consuming id="4012" operation="delivery 2"/>
+								<producing id="4013" operation="make 2"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -613,7 +613,7 @@
 								<quantity>50</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 2"/>
-								<consuming id="4012" operation="make 2"/>
+								<consuming id="4013" operation="make 2"/>
 								<producing id="2002" operation="supply 2"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
@@ -621,8 +621,8 @@
 								<quantity>50</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4013" operation="delivery 2"/>
-								<producing id="4012" operation="make 2"/>
+								<consuming id="4012" operation="delivery 2"/>
+								<producing id="4013" operation="make 2"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -632,7 +632,7 @@
 		</operation>
 		<operation name="make 3" xsi:type="operation_fixed_time">
 			<operationplans>
-				<operationplan id="4021" operation="make 3">
+				<operationplan id="4017" operation="make 3">
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-15T00:00:00</end>
 					<quantity>92</quantity>
@@ -647,7 +647,7 @@
 								<quantity>92</quantity>
 								<factor>0.184</factor>
 								<buffer name="constraint buffer 3"/>
-								<consuming id="4021" operation="make 3"/>
+								<consuming id="4017" operation="make 3"/>
 								<producing id="3001" operation="supply 3"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
@@ -656,15 +656,15 @@
 								<factor>1</factor>
 								<id>unpegged</id>
 								<buffer name="buffer 3"/>
-								<producing id="4021" operation="make 3"/>
+								<producing id="4017" operation="make 3"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 							<pegging level="-1">
 								<quantity>90</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 3"/>
-								<consuming id="4020" operation="delivery 3"/>
-								<producing id="4021" operation="make 3"/>
+								<consuming id="4016" operation="delivery 3"/>
+								<producing id="4017" operation="make 3"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -678,7 +678,7 @@
 								<quantity>184</quantity>
 								<factor>0.184</factor>
 								<buffer name="constraint buffer 3"/>
-								<consuming id="4021" operation="make 3"/>
+								<consuming id="4017" operation="make 3"/>
 								<producing id="3001" operation="supply 3"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
@@ -687,15 +687,15 @@
 								<factor>1</factor>
 								<id>unpegged</id>
 								<buffer name="buffer 3"/>
-								<producing id="4021" operation="make 3"/>
+								<producing id="4017" operation="make 3"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 							<pegging level="-1">
 								<quantity>180</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 3"/>
-								<consuming id="4020" operation="delivery 3"/>
-								<producing id="4021" operation="make 3"/>
+								<consuming id="4016" operation="delivery 3"/>
+								<producing id="4017" operation="make 3"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -705,7 +705,7 @@
 		</operation>
 		<operation name="make 4" xsi:type="operation_fixed_time">
 			<operationplans>
-				<operationplan id="4004" operation="make 4">
+				<operationplan id="4021" operation="make 4">
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-15T00:00:00</end>
 					<quantity>98</quantity>
@@ -720,7 +720,7 @@
 								<quantity>196</quantity>
 								<factor>0.196</factor>
 								<buffer name="constraint buffer 4"/>
-								<consuming id="4004" operation="make 4"/>
+								<consuming id="4021" operation="make 4"/>
 								<producing id="4001" operation="supply 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
@@ -729,15 +729,15 @@
 								<factor>0.03</factor>
 								<buffer name="buffer 4"/>
 								<consuming id="4022" operation="delivery 4"/>
-								<producing id="4004" operation="make 4"/>
+								<producing id="4021" operation="make 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 							</pegging>
 							<pegging level="-1">
 								<quantity>190</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 4"/>
-								<consuming id="4005" operation="delivery 4"/>
-								<producing id="4004" operation="make 4"/>
+								<consuming id="4020" operation="delivery 4"/>
+								<producing id="4021" operation="make 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -751,7 +751,7 @@
 								<quantity>196</quantity>
 								<factor>0.196</factor>
 								<buffer name="constraint buffer 4"/>
-								<consuming id="4004" operation="make 4"/>
+								<consuming id="4021" operation="make 4"/>
 								<producing id="4001" operation="supply 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
@@ -760,15 +760,15 @@
 								<factor>0.03</factor>
 								<buffer name="buffer 4"/>
 								<consuming id="4022" operation="delivery 4"/>
-								<producing id="4004" operation="make 4"/>
+								<producing id="4021" operation="make 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 							</pegging>
 							<pegging level="-1">
 								<quantity>190</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 4"/>
-								<consuming id="4005" operation="delivery 4"/>
-								<producing id="4004" operation="make 4"/>
+								<consuming id="4020" operation="delivery 4"/>
+								<producing id="4021" operation="make 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -863,7 +863,7 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 1"/>
-								<consuming id="4016" operation="make 1"/>
+								<consuming id="4005" operation="make 1"/>
 								<producing id="1001" operation="supply 1"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
@@ -871,8 +871,8 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4017" operation="delivery 1"/>
-								<producing id="4016" operation="make 1"/>
+								<consuming id="4004" operation="delivery 1"/>
+								<producing id="4005" operation="make 1"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -902,7 +902,7 @@
 								<quantity>94</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 1"/>
-								<consuming id="4019" operation="make 1"/>
+								<consuming id="4007" operation="make 1"/>
 								<producing id="1002" operation="supply 1"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
@@ -911,15 +911,15 @@
 								<factor>1</factor>
 								<id>unpegged</id>
 								<buffer name="buffer 1"/>
-								<producing id="4019" operation="make 1"/>
+								<producing id="4007" operation="make 1"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 							<pegging level="-2">
 								<quantity>90</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4018" operation="delivery 1"/>
-								<producing id="4019" operation="make 1"/>
+								<consuming id="4006" operation="delivery 1"/>
+								<producing id="4007" operation="make 1"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -945,7 +945,7 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 2"/>
-								<consuming id="4010" operation="make 2"/>
+								<consuming id="4011" operation="make 2"/>
 								<producing id="2001" operation="supply 2"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
@@ -953,8 +953,8 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4011" operation="delivery 2"/>
-								<producing id="4010" operation="make 2"/>
+								<consuming id="4010" operation="delivery 2"/>
+								<producing id="4011" operation="make 2"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -976,7 +976,7 @@
 								<quantity>50</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 2"/>
-								<consuming id="4012" operation="make 2"/>
+								<consuming id="4013" operation="make 2"/>
 								<producing id="2002" operation="supply 2"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
@@ -984,8 +984,8 @@
 								<quantity>50</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4013" operation="delivery 2"/>
-								<producing id="4012" operation="make 2"/>
+								<consuming id="4012" operation="delivery 2"/>
+								<producing id="4013" operation="make 2"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -1019,7 +1019,7 @@
 								<quantity>184</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 3"/>
-								<consuming id="4021" operation="make 3"/>
+								<consuming id="4017" operation="make 3"/>
 								<producing id="3001" operation="supply 3"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
@@ -1028,15 +1028,15 @@
 								<factor>1</factor>
 								<id>unpegged</id>
 								<buffer name="buffer 3"/>
-								<producing id="4021" operation="make 3"/>
+								<producing id="4017" operation="make 3"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 							<pegging level="-2">
 								<quantity>180</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 3"/>
-								<consuming id="4020" operation="delivery 3"/>
-								<producing id="4021" operation="make 3"/>
+								<consuming id="4016" operation="delivery 3"/>
+								<producing id="4017" operation="make 3"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -1094,7 +1094,7 @@
 								<quantity>196</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 4"/>
-								<consuming id="4004" operation="make 4"/>
+								<consuming id="4021" operation="make 4"/>
 								<producing id="4001" operation="supply 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
@@ -1103,15 +1103,15 @@
 								<factor>0.03</factor>
 								<buffer name="buffer 4"/>
 								<consuming id="4022" operation="delivery 4"/>
-								<producing id="4004" operation="make 4"/>
+								<producing id="4021" operation="make 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 							</pegging>
 							<pegging level="-2">
 								<quantity>190</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 4"/>
-								<consuming id="4005" operation="delivery 4"/>
-								<producing id="4004" operation="make 4"/>
+								<consuming id="4020" operation="delivery 4"/>
+								<producing id="4021" operation="make 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -1151,8 +1151,8 @@
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4015" operation="delivery 1"/>
-						<producing id="4014" operation="Inventory buffer 1"/>
+						<consuming id="4002" operation="delivery 1"/>
+						<producing id="4003" operation="Inventory buffer 1"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1162,13 +1162,13 @@
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4015" operation="delivery 1"/>
+					<operationplan id="4002" operation="delivery 1"/>
 					<pegging level="1">
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4015" operation="delivery 1"/>
-						<producing id="4014" operation="Inventory buffer 1"/>
+						<consuming id="4002" operation="delivery 1"/>
+						<producing id="4003" operation="Inventory buffer 1"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1178,12 +1178,12 @@
 					<onhand>100</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4016" operation="make 1"/>
+					<operationplan id="4005" operation="make 1"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4016" operation="make 1"/>
+						<consuming id="4005" operation="make 1"/>
 						<producing id="1001" operation="supply 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -1191,8 +1191,8 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4017" operation="delivery 1"/>
-						<producing id="4016" operation="make 1"/>
+						<consuming id="4004" operation="delivery 1"/>
+						<producing id="4005" operation="make 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1202,20 +1202,20 @@
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4017" operation="delivery 1"/>
+					<operationplan id="4004" operation="delivery 1"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4017" operation="delivery 1"/>
-						<producing id="4016" operation="make 1"/>
+						<consuming id="4004" operation="delivery 1"/>
+						<producing id="4005" operation="make 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4016" operation="make 1"/>
+						<consuming id="4005" operation="make 1"/>
 						<producing id="1001" operation="supply 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -1226,12 +1226,12 @@
 					<onhand>94</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4019" operation="make 1"/>
+					<operationplan id="4007" operation="make 1"/>
 					<pegging level="1">
 						<quantity>94</quantity>
 						<factor>0.47</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4019" operation="make 1"/>
+						<consuming id="4007" operation="make 1"/>
 						<producing id="1002" operation="supply 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -1240,15 +1240,15 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 1"/>
-						<producing id="4019" operation="make 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>90</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4018" operation="delivery 1"/>
-						<producing id="4019" operation="make 1"/>
+						<consuming id="4006" operation="delivery 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1258,20 +1258,20 @@
 					<onhand>4</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4018" operation="delivery 1"/>
+					<operationplan id="4006" operation="delivery 1"/>
 					<pegging level="1">
 						<quantity>90</quantity>
 						<factor>0.957447</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4018" operation="delivery 1"/>
-						<producing id="4019" operation="make 1"/>
+						<consuming id="4006" operation="delivery 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>90</quantity>
 						<factor>0.45</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4019" operation="make 1"/>
+						<consuming id="4007" operation="make 1"/>
 						<producing id="1002" operation="supply 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -1317,8 +1317,8 @@
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4009" operation="delivery 2"/>
-						<producing id="4008" operation="Inventory buffer 2"/>
+						<consuming id="4008" operation="delivery 2"/>
+						<producing id="4009" operation="Inventory buffer 2"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1328,13 +1328,13 @@
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4009" operation="delivery 2"/>
+					<operationplan id="4008" operation="delivery 2"/>
 					<pegging level="1">
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4009" operation="delivery 2"/>
-						<producing id="4008" operation="Inventory buffer 2"/>
+						<consuming id="4008" operation="delivery 2"/>
+						<producing id="4009" operation="Inventory buffer 2"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1344,12 +1344,12 @@
 					<onhand>100</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4010" operation="make 2"/>
+					<operationplan id="4011" operation="make 2"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4010" operation="make 2"/>
+						<consuming id="4011" operation="make 2"/>
 						<producing id="2001" operation="supply 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -1357,8 +1357,8 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4011" operation="delivery 2"/>
-						<producing id="4010" operation="make 2"/>
+						<consuming id="4010" operation="delivery 2"/>
+						<producing id="4011" operation="make 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1368,20 +1368,20 @@
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4011" operation="delivery 2"/>
+					<operationplan id="4010" operation="delivery 2"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4011" operation="delivery 2"/>
-						<producing id="4010" operation="make 2"/>
+						<consuming id="4010" operation="delivery 2"/>
+						<producing id="4011" operation="make 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4010" operation="make 2"/>
+						<consuming id="4011" operation="make 2"/>
 						<producing id="2001" operation="supply 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -1392,12 +1392,12 @@
 					<onhand>50</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4012" operation="make 2"/>
+					<operationplan id="4013" operation="make 2"/>
 					<pegging level="1">
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4012" operation="make 2"/>
+						<consuming id="4013" operation="make 2"/>
 						<producing id="2002" operation="supply 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -1405,8 +1405,8 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4013" operation="delivery 2"/>
-						<producing id="4012" operation="make 2"/>
+						<consuming id="4012" operation="delivery 2"/>
+						<producing id="4013" operation="make 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1416,20 +1416,20 @@
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4013" operation="delivery 2"/>
+					<operationplan id="4012" operation="delivery 2"/>
 					<pegging level="1">
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4013" operation="delivery 2"/>
-						<producing id="4012" operation="make 2"/>
+						<consuming id="4012" operation="delivery 2"/>
+						<producing id="4013" operation="make 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4012" operation="make 2"/>
+						<consuming id="4013" operation="make 2"/>
 						<producing id="2002" operation="supply 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -1468,8 +1468,8 @@
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4007" operation="delivery 3"/>
-						<producing id="4006" operation="Inventory buffer 3"/>
+						<consuming id="4014" operation="delivery 3"/>
+						<producing id="4015" operation="Inventory buffer 3"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1479,13 +1479,13 @@
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4007" operation="delivery 3"/>
+					<operationplan id="4014" operation="delivery 3"/>
 					<pegging level="1">
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4007" operation="delivery 3"/>
-						<producing id="4006" operation="Inventory buffer 3"/>
+						<consuming id="4014" operation="delivery 3"/>
+						<producing id="4015" operation="Inventory buffer 3"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1495,12 +1495,12 @@
 					<onhand>92</onhand>
 					<minimum>2</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4021" operation="make 3"/>
+					<operationplan id="4017" operation="make 3"/>
 					<pegging level="1">
 						<quantity>92</quantity>
 						<factor>0.184</factor>
 						<buffer name="constraint buffer 3"/>
-						<consuming id="4021" operation="make 3"/>
+						<consuming id="4017" operation="make 3"/>
 						<producing id="3001" operation="supply 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -1509,15 +1509,15 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 3"/>
-						<producing id="4021" operation="make 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>90</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4020" operation="delivery 3"/>
-						<producing id="4021" operation="make 3"/>
+						<consuming id="4016" operation="delivery 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1527,20 +1527,20 @@
 					<onhand>2</onhand>
 					<minimum>2</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4020" operation="delivery 3"/>
+					<operationplan id="4016" operation="delivery 3"/>
 					<pegging level="1">
 						<quantity>90</quantity>
 						<factor>0.978261</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4020" operation="delivery 3"/>
-						<producing id="4021" operation="make 3"/>
+						<consuming id="4016" operation="delivery 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>90</quantity>
 						<factor>0.18</factor>
 						<buffer name="constraint buffer 3"/>
-						<consuming id="4021" operation="make 3"/>
+						<consuming id="4017" operation="make 3"/>
 						<producing id="3001" operation="supply 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -1586,8 +1586,8 @@
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4003" operation="delivery 4"/>
-						<producing id="4002" operation="Inventory buffer 4"/>
+						<consuming id="4018" operation="delivery 4"/>
+						<producing id="4019" operation="Inventory buffer 4"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1597,13 +1597,13 @@
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4003" operation="delivery 4"/>
+					<operationplan id="4018" operation="delivery 4"/>
 					<pegging level="1">
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4003" operation="delivery 4"/>
-						<producing id="4002" operation="Inventory buffer 4"/>
+						<consuming id="4018" operation="delivery 4"/>
+						<producing id="4019" operation="Inventory buffer 4"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1613,12 +1613,12 @@
 					<onhand>196</onhand>
 					<minimum>6</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4004" operation="make 4"/>
+					<operationplan id="4021" operation="make 4"/>
 					<pegging level="1">
 						<quantity>196</quantity>
 						<factor>0.196</factor>
 						<buffer name="constraint buffer 4"/>
-						<consuming id="4004" operation="make 4"/>
+						<consuming id="4021" operation="make 4"/>
 						<producing id="4001" operation="supply 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -1627,15 +1627,15 @@
 						<factor>0.03</factor>
 						<buffer name="buffer 4"/>
 						<consuming id="4022" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>190</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4005" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<consuming id="4020" operation="delivery 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1645,20 +1645,20 @@
 					<onhand>6</onhand>
 					<minimum>6</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4005" operation="delivery 4"/>
+					<operationplan id="4020" operation="delivery 4"/>
 					<pegging level="1">
 						<quantity>190</quantity>
 						<factor>0.969388</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4005" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<consuming id="4020" operation="delivery 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>190</quantity>
 						<factor>0.19</factor>
 						<buffer name="constraint buffer 4"/>
-						<consuming id="4004" operation="make 4"/>
+						<consuming id="4021" operation="make 4"/>
 						<producing id="4001" operation="supply 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -1707,14 +1707,14 @@
 						<factor>0.0306122</factor>
 						<buffer name="buffer 4"/>
 						<consuming id="4022" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>6</quantity>
 						<factor>0.006</factor>
 						<buffer name="constraint buffer 4"/>
-						<consuming id="4004" operation="make 4"/>
+						<consuming id="4021" operation="make 4"/>
 						<producing id="4001" operation="supply 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -1774,7 +1774,7 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4016" operation="make 1"/>
+						<consuming id="4005" operation="make 1"/>
 						<producing id="1001" operation="supply 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -1782,8 +1782,8 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4017" operation="delivery 1"/>
-						<producing id="4016" operation="make 1"/>
+						<consuming id="4004" operation="delivery 1"/>
+						<producing id="4005" operation="make 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1793,12 +1793,12 @@
 					<onhand>0</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4016" operation="make 1"/>
+					<operationplan id="4005" operation="make 1"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4016" operation="make 1"/>
+						<consuming id="4005" operation="make 1"/>
 						<producing id="1001" operation="supply 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -1806,8 +1806,8 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4017" operation="delivery 1"/>
-						<producing id="4016" operation="make 1"/>
+						<consuming id="4004" operation="delivery 1"/>
+						<producing id="4005" operation="make 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1830,7 +1830,7 @@
 						<quantity>94</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4019" operation="make 1"/>
+						<consuming id="4007" operation="make 1"/>
 						<producing id="1002" operation="supply 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -1839,15 +1839,15 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 1"/>
-						<producing id="4019" operation="make 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 					<pegging level="-2">
 						<quantity>90</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4018" operation="delivery 1"/>
-						<producing id="4019" operation="make 1"/>
+						<consuming id="4006" operation="delivery 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1857,12 +1857,12 @@
 					<onhand>106</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4019" operation="make 1"/>
+					<operationplan id="4007" operation="make 1"/>
 					<pegging level="1">
 						<quantity>94</quantity>
 						<factor>0.47</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4019" operation="make 1"/>
+						<consuming id="4007" operation="make 1"/>
 						<producing id="1002" operation="supply 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -1871,15 +1871,15 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 1"/>
-						<producing id="4019" operation="make 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>90</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4018" operation="delivery 1"/>
-						<producing id="4019" operation="make 1"/>
+						<consuming id="4006" operation="delivery 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1908,7 +1908,7 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4010" operation="make 2"/>
+						<consuming id="4011" operation="make 2"/>
 						<producing id="2001" operation="supply 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -1916,8 +1916,8 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4011" operation="delivery 2"/>
-						<producing id="4010" operation="make 2"/>
+						<consuming id="4010" operation="delivery 2"/>
+						<producing id="4011" operation="make 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1927,12 +1927,12 @@
 					<onhand>0</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4010" operation="make 2"/>
+					<operationplan id="4011" operation="make 2"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4010" operation="make 2"/>
+						<consuming id="4011" operation="make 2"/>
 						<producing id="2001" operation="supply 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -1940,8 +1940,8 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4011" operation="delivery 2"/>
-						<producing id="4010" operation="make 2"/>
+						<consuming id="4010" operation="delivery 2"/>
+						<producing id="4011" operation="make 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1956,7 +1956,7 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4012" operation="make 2"/>
+						<consuming id="4013" operation="make 2"/>
 						<producing id="2002" operation="supply 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -1964,8 +1964,8 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4013" operation="delivery 2"/>
-						<producing id="4012" operation="make 2"/>
+						<consuming id="4012" operation="delivery 2"/>
+						<producing id="4013" operation="make 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -1975,12 +1975,12 @@
 					<onhand>0</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4012" operation="make 2"/>
+					<operationplan id="4013" operation="make 2"/>
 					<pegging level="1">
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4012" operation="make 2"/>
+						<consuming id="4013" operation="make 2"/>
 						<producing id="2002" operation="supply 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -1988,8 +1988,8 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4013" operation="delivery 2"/>
-						<producing id="4012" operation="make 2"/>
+						<consuming id="4012" operation="delivery 2"/>
+						<producing id="4013" operation="make 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -2017,7 +2017,7 @@
 						<quantity>184</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 3"/>
-						<consuming id="4021" operation="make 3"/>
+						<consuming id="4017" operation="make 3"/>
 						<producing id="3001" operation="supply 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -2026,15 +2026,15 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 3"/>
-						<producing id="4021" operation="make 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 					<pegging level="-2">
 						<quantity>180</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4020" operation="delivery 3"/>
-						<producing id="4021" operation="make 3"/>
+						<consuming id="4016" operation="delivery 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -2044,12 +2044,12 @@
 					<onhand>816</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4021" operation="make 3"/>
+					<operationplan id="4017" operation="make 3"/>
 					<pegging level="1">
 						<quantity>184</quantity>
 						<factor>0.184</factor>
 						<buffer name="constraint buffer 3"/>
-						<consuming id="4021" operation="make 3"/>
+						<consuming id="4017" operation="make 3"/>
 						<producing id="3001" operation="supply 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -2058,15 +2058,15 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 3"/>
-						<producing id="4021" operation="make 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>180</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4020" operation="delivery 3"/>
-						<producing id="4021" operation="make 3"/>
+						<consuming id="4016" operation="delivery 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -2127,7 +2127,7 @@
 						<quantity>196</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 4"/>
-						<consuming id="4004" operation="make 4"/>
+						<consuming id="4021" operation="make 4"/>
 						<producing id="4001" operation="supply 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -2136,15 +2136,15 @@
 						<factor>0.03</factor>
 						<buffer name="buffer 4"/>
 						<consuming id="4022" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 					</pegging>
 					<pegging level="-2">
 						<quantity>190</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4005" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<consuming id="4020" operation="delivery 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -2154,12 +2154,12 @@
 					<onhand>804</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operationplan id="4004" operation="make 4"/>
+					<operationplan id="4021" operation="make 4"/>
 					<pegging level="1">
 						<quantity>196</quantity>
 						<factor>0.196</factor>
 						<buffer name="constraint buffer 4"/>
-						<consuming id="4004" operation="make 4"/>
+						<consuming id="4021" operation="make 4"/>
 						<producing id="4001" operation="supply 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -2168,15 +2168,15 @@
 						<factor>0.03</factor>
 						<buffer name="buffer 4"/>
 						<consuming id="4022" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>190</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4005" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<consuming id="4020" operation="delivery 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -2246,14 +2246,14 @@
 								<factor>0.0306122</factor>
 								<buffer name="buffer 4"/>
 								<consuming id="4022" operation="delivery 4"/>
-								<producing id="4004" operation="make 4"/>
+								<producing id="4021" operation="make 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>6</quantity>
 								<factor>0.006</factor>
 								<buffer name="constraint buffer 4"/>
-								<consuming id="4004" operation="make 4"/>
+								<consuming id="4021" operation="make 4"/>
 								<producing id="4001" operation="supply 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
@@ -2283,7 +2283,7 @@
 			<item name="item 1"/>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
-				<operationplan id="4018" operation="delivery 1">
+				<operationplan id="4006" operation="delivery 1">
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-18T00:00:00</end>
 					<quantity>45</quantity>
@@ -2298,22 +2298,22 @@
 								<quantity>90</quantity>
 								<factor>0.957447</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4018" operation="delivery 1"/>
-								<producing id="4019" operation="make 1"/>
+								<consuming id="4006" operation="delivery 1"/>
+								<producing id="4007" operation="make 1"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>90</quantity>
 								<factor>0.45</factor>
 								<buffer name="constraint buffer 1"/>
-								<consuming id="4019" operation="make 1"/>
+								<consuming id="4007" operation="make 1"/>
 								<producing id="1002" operation="supply 1"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4017" operation="delivery 1">
+				<operationplan id="4004" operation="delivery 1">
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-11T00:00:00</end>
 					<quantity>50</quantity>
@@ -2328,22 +2328,22 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4017" operation="delivery 1"/>
-								<producing id="4016" operation="make 1"/>
+								<consuming id="4004" operation="delivery 1"/>
+								<producing id="4005" operation="make 1"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 1"/>
-								<consuming id="4016" operation="make 1"/>
+								<consuming id="4005" operation="make 1"/>
 								<producing id="1001" operation="supply 1"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4015" operation="delivery 1">
+				<operationplan id="4002" operation="delivery 1">
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>5</quantity>
@@ -2358,8 +2358,8 @@
 								<quantity>10</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 1"/>
-								<consuming id="4015" operation="delivery 1"/>
-								<producing id="4014" operation="Inventory buffer 1"/>
+								<consuming id="4002" operation="delivery 1"/>
+								<producing id="4003" operation="Inventory buffer 1"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -2390,7 +2390,7 @@
 			<item name="item 2"/>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
-				<operationplan id="4013" operation="delivery 2">
+				<operationplan id="4012" operation="delivery 2">
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-18T00:00:00</end>
 					<quantity>25</quantity>
@@ -2405,22 +2405,22 @@
 								<quantity>50</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4013" operation="delivery 2"/>
-								<producing id="4012" operation="make 2"/>
+								<consuming id="4012" operation="delivery 2"/>
+								<producing id="4013" operation="make 2"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>50</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 2"/>
-								<consuming id="4012" operation="make 2"/>
+								<consuming id="4013" operation="make 2"/>
 								<producing id="2002" operation="supply 2"/>
 								<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4011" operation="delivery 2">
+				<operationplan id="4010" operation="delivery 2">
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-11T00:00:00</end>
 					<quantity>50</quantity>
@@ -2435,22 +2435,22 @@
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4011" operation="delivery 2"/>
-								<producing id="4010" operation="make 2"/>
+								<consuming id="4010" operation="delivery 2"/>
+								<producing id="4011" operation="make 2"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>100</quantity>
 								<factor>1</factor>
 								<buffer name="constraint buffer 2"/>
-								<consuming id="4010" operation="make 2"/>
+								<consuming id="4011" operation="make 2"/>
 								<producing id="2001" operation="supply 2"/>
 								<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4009" operation="delivery 2">
+				<operationplan id="4008" operation="delivery 2">
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>5</quantity>
@@ -2465,8 +2465,8 @@
 								<quantity>10</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 2"/>
-								<consuming id="4009" operation="delivery 2"/>
-								<producing id="4008" operation="Inventory buffer 2"/>
+								<consuming id="4008" operation="delivery 2"/>
+								<producing id="4009" operation="Inventory buffer 2"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -2504,7 +2504,7 @@
 			<item name="item 3"/>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
-				<operationplan id="4020" operation="delivery 3">
+				<operationplan id="4016" operation="delivery 3">
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-16T00:00:00</end>
 					<quantity>90</quantity>
@@ -2519,22 +2519,22 @@
 								<quantity>90</quantity>
 								<factor>0.978261</factor>
 								<buffer name="buffer 3"/>
-								<consuming id="4020" operation="delivery 3"/>
-								<producing id="4021" operation="make 3"/>
+								<consuming id="4016" operation="delivery 3"/>
+								<producing id="4017" operation="make 3"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>90</quantity>
 								<factor>0.18</factor>
 								<buffer name="constraint buffer 3"/>
-								<consuming id="4021" operation="make 3"/>
+								<consuming id="4017" operation="make 3"/>
 								<producing id="3001" operation="supply 3"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4007" operation="delivery 3">
+				<operationplan id="4014" operation="delivery 3">
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>10</quantity>
@@ -2549,8 +2549,8 @@
 								<quantity>10</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 3"/>
-								<consuming id="4007" operation="delivery 3"/>
-								<producing id="4006" operation="Inventory buffer 3"/>
+								<consuming id="4014" operation="delivery 3"/>
+								<producing id="4015" operation="Inventory buffer 3"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -2581,7 +2581,7 @@
 			<item name="item 4"/>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
-				<operationplan id="4005" operation="delivery 4">
+				<operationplan id="4020" operation="delivery 4">
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-16T00:00:00</end>
 					<quantity>95</quantity>
@@ -2596,22 +2596,22 @@
 								<quantity>190</quantity>
 								<factor>0.969388</factor>
 								<buffer name="buffer 4"/>
-								<consuming id="4005" operation="delivery 4"/>
-								<producing id="4004" operation="make 4"/>
+								<consuming id="4020" operation="delivery 4"/>
+								<producing id="4021" operation="make 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 							<pegging level="2">
 								<quantity>190</quantity>
 								<factor>0.19</factor>
 								<buffer name="constraint buffer 4"/>
-								<consuming id="4004" operation="make 4"/>
+								<consuming id="4021" operation="make 4"/>
 								<producing id="4001" operation="supply 4"/>
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 						</flowplan>
 					</flowplans>
 				</operationplan>
-				<operationplan id="4003" operation="delivery 4">
+				<operationplan id="4018" operation="delivery 4">
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>5</quantity>
@@ -2626,8 +2626,8 @@
 								<quantity>10</quantity>
 								<factor>1</factor>
 								<buffer name="buffer 4"/>
-								<consuming id="4003" operation="delivery 4"/>
-								<producing id="4002" operation="Inventory buffer 4"/>
+								<consuming id="4018" operation="delivery 4"/>
+								<producing id="4019" operation="Inventory buffer 4"/>
 								<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 							</pegging>
 						</flowplan>
@@ -2737,7 +2737,7 @@
 		</flow>
 	</flows>
 	<operationplans>
-		<operationplan id="4015" operation="delivery 1">
+		<operationplan id="4002" operation="delivery 1">
 			<demand name="order for item 1"/>
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
@@ -2753,14 +2753,14 @@
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4015" operation="delivery 1"/>
-						<producing id="4014" operation="Inventory buffer 1"/>
+						<consuming id="4002" operation="delivery 1"/>
+						<producing id="4003" operation="Inventory buffer 1"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4017" operation="delivery 1">
+		<operationplan id="4004" operation="delivery 1">
 			<demand name="order for item 1"/>
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-11T00:00:00</end>
@@ -2776,22 +2776,22 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4017" operation="delivery 1"/>
-						<producing id="4016" operation="make 1"/>
+						<consuming id="4004" operation="delivery 1"/>
+						<producing id="4005" operation="make 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4016" operation="make 1"/>
+						<consuming id="4005" operation="make 1"/>
 						<producing id="1001" operation="supply 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4018" operation="delivery 1">
+		<operationplan id="4006" operation="delivery 1">
 			<demand name="order for item 1"/>
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-18T00:00:00</end>
@@ -2807,22 +2807,22 @@
 						<quantity>90</quantity>
 						<factor>0.957447</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4018" operation="delivery 1"/>
-						<producing id="4019" operation="make 1"/>
+						<consuming id="4006" operation="delivery 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>90</quantity>
 						<factor>0.45</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4019" operation="make 1"/>
+						<consuming id="4007" operation="make 1"/>
 						<producing id="1002" operation="supply 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4009" operation="delivery 2">
+		<operationplan id="4008" operation="delivery 2">
 			<demand name="order for item 2"/>
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
@@ -2838,14 +2838,14 @@
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4009" operation="delivery 2"/>
-						<producing id="4008" operation="Inventory buffer 2"/>
+						<consuming id="4008" operation="delivery 2"/>
+						<producing id="4009" operation="Inventory buffer 2"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4011" operation="delivery 2">
+		<operationplan id="4010" operation="delivery 2">
 			<demand name="order for item 2"/>
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-11T00:00:00</end>
@@ -2861,22 +2861,22 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4011" operation="delivery 2"/>
-						<producing id="4010" operation="make 2"/>
+						<consuming id="4010" operation="delivery 2"/>
+						<producing id="4011" operation="make 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4010" operation="make 2"/>
+						<consuming id="4011" operation="make 2"/>
 						<producing id="2001" operation="supply 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4013" operation="delivery 2">
+		<operationplan id="4012" operation="delivery 2">
 			<demand name="order for item 2"/>
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-18T00:00:00</end>
@@ -2892,22 +2892,22 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4013" operation="delivery 2"/>
-						<producing id="4012" operation="make 2"/>
+						<consuming id="4012" operation="delivery 2"/>
+						<producing id="4013" operation="make 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4012" operation="make 2"/>
+						<consuming id="4013" operation="make 2"/>
 						<producing id="2002" operation="supply 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4007" operation="delivery 3">
+		<operationplan id="4014" operation="delivery 3">
 			<demand name="order for item 3"/>
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
@@ -2923,14 +2923,14 @@
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4007" operation="delivery 3"/>
-						<producing id="4006" operation="Inventory buffer 3"/>
+						<consuming id="4014" operation="delivery 3"/>
+						<producing id="4015" operation="Inventory buffer 3"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4020" operation="delivery 3">
+		<operationplan id="4016" operation="delivery 3">
 			<demand name="order for item 3"/>
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-16T00:00:00</end>
@@ -2946,22 +2946,22 @@
 						<quantity>90</quantity>
 						<factor>0.978261</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4020" operation="delivery 3"/>
-						<producing id="4021" operation="make 3"/>
+						<consuming id="4016" operation="delivery 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>90</quantity>
 						<factor>0.18</factor>
 						<buffer name="constraint buffer 3"/>
-						<consuming id="4021" operation="make 3"/>
+						<consuming id="4017" operation="make 3"/>
 						<producing id="3001" operation="supply 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4003" operation="delivery 4">
+		<operationplan id="4018" operation="delivery 4">
 			<demand name="order for item 4"/>
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
@@ -2977,14 +2977,14 @@
 						<quantity>10</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4003" operation="delivery 4"/>
-						<producing id="4002" operation="Inventory buffer 4"/>
+						<consuming id="4018" operation="delivery 4"/>
+						<producing id="4019" operation="Inventory buffer 4"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-09T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4005" operation="delivery 4">
+		<operationplan id="4020" operation="delivery 4">
 			<demand name="order for item 4"/>
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-16T00:00:00</end>
@@ -3000,15 +3000,15 @@
 						<quantity>190</quantity>
 						<factor>0.969388</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4005" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<consuming id="4020" operation="delivery 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>190</quantity>
 						<factor>0.19</factor>
 						<buffer name="constraint buffer 4"/>
-						<consuming id="4004" operation="make 4"/>
+						<consuming id="4021" operation="make 4"/>
 						<producing id="4001" operation="supply 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -3032,14 +3032,14 @@
 						<factor>0.0306122</factor>
 						<buffer name="buffer 4"/>
 						<consuming id="4022" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 					</pegging>
 					<pegging level="2">
 						<quantity>6</quantity>
 						<factor>0.006</factor>
 						<buffer name="constraint buffer 4"/>
-						<consuming id="4004" operation="make 4"/>
+						<consuming id="4021" operation="make 4"/>
 						<producing id="4001" operation="supply 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -3062,7 +3062,7 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4016" operation="make 1">
+		<operationplan id="4005" operation="make 1">
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>50</quantity>
@@ -3077,7 +3077,7 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4016" operation="make 1"/>
+						<consuming id="4005" operation="make 1"/>
 						<producing id="1001" operation="supply 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -3085,8 +3085,8 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4017" operation="delivery 1"/>
-						<producing id="4016" operation="make 1"/>
+						<consuming id="4004" operation="delivery 1"/>
+						<producing id="4005" operation="make 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3100,7 +3100,7 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4016" operation="make 1"/>
+						<consuming id="4005" operation="make 1"/>
 						<producing id="1001" operation="supply 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -3108,14 +3108,14 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4017" operation="delivery 1"/>
-						<producing id="4016" operation="make 1"/>
+						<consuming id="4004" operation="delivery 1"/>
+						<producing id="4005" operation="make 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4019" operation="make 1">
+		<operationplan id="4007" operation="make 1">
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-17T00:00:00</end>
 			<quantity>47</quantity>
@@ -3130,7 +3130,7 @@
 						<quantity>94</quantity>
 						<factor>0.47</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4019" operation="make 1"/>
+						<consuming id="4007" operation="make 1"/>
 						<producing id="1002" operation="supply 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -3139,15 +3139,15 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 1"/>
-						<producing id="4019" operation="make 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>90</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4018" operation="delivery 1"/>
-						<producing id="4019" operation="make 1"/>
+						<consuming id="4006" operation="delivery 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3161,7 +3161,7 @@
 						<quantity>94</quantity>
 						<factor>0.47</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4019" operation="make 1"/>
+						<consuming id="4007" operation="make 1"/>
 						<producing id="1002" operation="supply 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -3170,21 +3170,21 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 1"/>
-						<producing id="4019" operation="make 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>90</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4018" operation="delivery 1"/>
-						<producing id="4019" operation="make 1"/>
+						<consuming id="4006" operation="delivery 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4010" operation="make 2">
+		<operationplan id="4011" operation="make 2">
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>50</quantity>
@@ -3199,7 +3199,7 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4010" operation="make 2"/>
+						<consuming id="4011" operation="make 2"/>
 						<producing id="2001" operation="supply 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -3207,8 +3207,8 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4011" operation="delivery 2"/>
-						<producing id="4010" operation="make 2"/>
+						<consuming id="4010" operation="delivery 2"/>
+						<producing id="4011" operation="make 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3222,7 +3222,7 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4010" operation="make 2"/>
+						<consuming id="4011" operation="make 2"/>
 						<producing id="2001" operation="supply 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -3230,14 +3230,14 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4011" operation="delivery 2"/>
-						<producing id="4010" operation="make 2"/>
+						<consuming id="4010" operation="delivery 2"/>
+						<producing id="4011" operation="make 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4012" operation="make 2">
+		<operationplan id="4013" operation="make 2">
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-17T00:00:00</end>
 			<quantity>25</quantity>
@@ -3252,7 +3252,7 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4012" operation="make 2"/>
+						<consuming id="4013" operation="make 2"/>
 						<producing id="2002" operation="supply 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -3260,8 +3260,8 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4013" operation="delivery 2"/>
-						<producing id="4012" operation="make 2"/>
+						<consuming id="4012" operation="delivery 2"/>
+						<producing id="4013" operation="make 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3275,7 +3275,7 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4012" operation="make 2"/>
+						<consuming id="4013" operation="make 2"/>
 						<producing id="2002" operation="supply 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -3283,14 +3283,14 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4013" operation="delivery 2"/>
-						<producing id="4012" operation="make 2"/>
+						<consuming id="4012" operation="delivery 2"/>
+						<producing id="4013" operation="make 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4021" operation="make 3">
+		<operationplan id="4017" operation="make 3">
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-15T00:00:00</end>
 			<quantity>92</quantity>
@@ -3305,7 +3305,7 @@
 						<quantity>92</quantity>
 						<factor>0.184</factor>
 						<buffer name="constraint buffer 3"/>
-						<consuming id="4021" operation="make 3"/>
+						<consuming id="4017" operation="make 3"/>
 						<producing id="3001" operation="supply 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -3314,15 +3314,15 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 3"/>
-						<producing id="4021" operation="make 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>90</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4020" operation="delivery 3"/>
-						<producing id="4021" operation="make 3"/>
+						<consuming id="4016" operation="delivery 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3336,7 +3336,7 @@
 						<quantity>184</quantity>
 						<factor>0.184</factor>
 						<buffer name="constraint buffer 3"/>
-						<consuming id="4021" operation="make 3"/>
+						<consuming id="4017" operation="make 3"/>
 						<producing id="3001" operation="supply 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -3345,21 +3345,21 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 3"/>
-						<producing id="4021" operation="make 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>180</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4020" operation="delivery 3"/>
-						<producing id="4021" operation="make 3"/>
+						<consuming id="4016" operation="delivery 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4004" operation="make 4">
+		<operationplan id="4021" operation="make 4">
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-15T00:00:00</end>
 			<quantity>98</quantity>
@@ -3374,7 +3374,7 @@
 						<quantity>196</quantity>
 						<factor>0.196</factor>
 						<buffer name="constraint buffer 4"/>
-						<consuming id="4004" operation="make 4"/>
+						<consuming id="4021" operation="make 4"/>
 						<producing id="4001" operation="supply 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -3383,15 +3383,15 @@
 						<factor>0.03</factor>
 						<buffer name="buffer 4"/>
 						<consuming id="4022" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>190</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4005" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<consuming id="4020" operation="delivery 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3405,7 +3405,7 @@
 						<quantity>196</quantity>
 						<factor>0.196</factor>
 						<buffer name="constraint buffer 4"/>
-						<consuming id="4004" operation="make 4"/>
+						<consuming id="4021" operation="make 4"/>
 						<producing id="4001" operation="supply 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -3414,15 +3414,15 @@
 						<factor>0.03</factor>
 						<buffer name="buffer 4"/>
 						<consuming id="4022" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 					</pegging>
 					<pegging level="-1">
 						<quantity>190</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4005" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<consuming id="4020" operation="delivery 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3513,7 +3513,7 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4016" operation="make 1"/>
+						<consuming id="4005" operation="make 1"/>
 						<producing id="1001" operation="supply 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -3521,8 +3521,8 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4017" operation="delivery 1"/>
-						<producing id="4016" operation="make 1"/>
+						<consuming id="4004" operation="delivery 1"/>
+						<producing id="4005" operation="make 1"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3552,7 +3552,7 @@
 						<quantity>94</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 1"/>
-						<consuming id="4019" operation="make 1"/>
+						<consuming id="4007" operation="make 1"/>
 						<producing id="1002" operation="supply 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -3561,15 +3561,15 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 1"/>
-						<producing id="4019" operation="make 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 					<pegging level="-2">
 						<quantity>90</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 1"/>
-						<consuming id="4018" operation="delivery 1"/>
-						<producing id="4019" operation="make 1"/>
+						<consuming id="4006" operation="delivery 1"/>
+						<producing id="4007" operation="make 1"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3591,7 +3591,7 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4010" operation="make 2"/>
+						<consuming id="4011" operation="make 2"/>
 						<producing id="2001" operation="supply 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
@@ -3599,8 +3599,8 @@
 						<quantity>100</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4011" operation="delivery 2"/>
-						<producing id="4010" operation="make 2"/>
+						<consuming id="4010" operation="delivery 2"/>
+						<producing id="4011" operation="make 2"/>
 						<dates>2009-01-10T00:00:00 / 2009-01-10T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3622,7 +3622,7 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 2"/>
-						<consuming id="4012" operation="make 2"/>
+						<consuming id="4013" operation="make 2"/>
 						<producing id="2002" operation="supply 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
@@ -3630,8 +3630,8 @@
 						<quantity>50</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 2"/>
-						<consuming id="4013" operation="delivery 2"/>
-						<producing id="4012" operation="make 2"/>
+						<consuming id="4012" operation="delivery 2"/>
+						<producing id="4013" operation="make 2"/>
 						<dates>2009-01-17T00:00:00 / 2009-01-17T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3661,7 +3661,7 @@
 						<quantity>184</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 3"/>
-						<consuming id="4021" operation="make 3"/>
+						<consuming id="4017" operation="make 3"/>
 						<producing id="3001" operation="supply 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -3670,15 +3670,15 @@
 						<factor>1</factor>
 						<id>unpegged</id>
 						<buffer name="buffer 3"/>
-						<producing id="4021" operation="make 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 					<pegging level="-2">
 						<quantity>180</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 3"/>
-						<consuming id="4020" operation="delivery 3"/>
-						<producing id="4021" operation="make 3"/>
+						<consuming id="4016" operation="delivery 3"/>
+						<producing id="4017" operation="make 3"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
@@ -3732,7 +3732,7 @@
 						<quantity>196</quantity>
 						<factor>1</factor>
 						<buffer name="constraint buffer 4"/>
-						<consuming id="4004" operation="make 4"/>
+						<consuming id="4021" operation="make 4"/>
 						<producing id="4001" operation="supply 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
@@ -3741,15 +3741,15 @@
 						<factor>0.03</factor>
 						<buffer name="buffer 4"/>
 						<consuming id="4022" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-06-18T00:00:00</dates>
 					</pegging>
 					<pegging level="-2">
 						<quantity>190</quantity>
 						<factor>1</factor>
 						<buffer name="buffer 4"/>
-						<consuming id="4005" operation="delivery 4"/>
-						<producing id="4004" operation="make 4"/>
+						<consuming id="4020" operation="delivery 4"/>
+						<producing id="4021" operation="make 4"/>
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>

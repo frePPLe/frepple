@@ -39,22 +39,22 @@ Echoing resources:
   Resource: Resource None None None None
     Load: make item - step 1 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
     Load: make item - step 2 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
-    Loadplan: 6 make item - step 1 1.0 2009-02-08 09:00:00 2009-02-12 09:00:00
-    Loadplan: 7 make item - step 2 1.0 2009-02-12 09:00:00 2009-02-15 09:00:00
-    Loadplan: 6 make item - step 1 -1.0 2009-02-12 09:00:00 2009-02-08 09:00:00
-    Loadplan: 8 make item - step 1 1.0 2009-02-15 09:00:00 2009-02-19 09:00:00
-    Loadplan: 7 make item - step 2 -1.0 2009-02-15 09:00:00 2009-02-12 09:00:00
-    Loadplan: 9 make item - step 2 1.0 2009-02-19 09:00:00 2009-02-22 09:00:00
-    Loadplan: 8 make item - step 1 -1.0 2009-02-19 09:00:00 2009-02-15 09:00:00
-    Loadplan: 10 make item - step 1 1.0 2009-02-22 09:00:00 2009-02-26 09:00:00
-    Loadplan: 9 make item - step 2 -1.0 2009-02-22 09:00:00 2009-02-19 09:00:00
-    Loadplan: 11 make item - step 2 1.0 2009-02-26 09:00:00 2009-03-01 09:00:00
-    Loadplan: 10 make item - step 1 -1.0 2009-02-26 09:00:00 2009-02-22 09:00:00
-    Loadplan: 11 make item - step 2 -1.0 2009-03-01 09:00:00 2009-02-26 09:00:00
-    Loadplan: 12 make item - step 1 1.0 2010-12-25 00:00:00 2010-12-29 00:00:00
-    Loadplan: 13 make item - step 2 1.0 2010-12-29 00:00:00 2011-01-01 00:00:00
-    Loadplan: 12 make item - step 1 -1.0 2010-12-29 00:00:00 2010-12-25 00:00:00
-    Loadplan: 13 make item - step 2 -1.0 2011-01-01 00:00:00 2010-12-29 00:00:00
+    Loadplan: 2 make item - step 1 1.0 2009-02-08 09:00:00 2009-02-12 09:00:00
+    Loadplan: 3 make item - step 2 1.0 2009-02-12 09:00:00 2009-02-15 09:00:00
+    Loadplan: 2 make item - step 1 -1.0 2009-02-12 09:00:00 2009-02-08 09:00:00
+    Loadplan: 4 make item - step 1 1.0 2009-02-15 09:00:00 2009-02-19 09:00:00
+    Loadplan: 3 make item - step 2 -1.0 2009-02-15 09:00:00 2009-02-12 09:00:00
+    Loadplan: 5 make item - step 2 1.0 2009-02-19 09:00:00 2009-02-22 09:00:00
+    Loadplan: 4 make item - step 1 -1.0 2009-02-19 09:00:00 2009-02-15 09:00:00
+    Loadplan: 6 make item - step 1 1.0 2009-02-22 09:00:00 2009-02-26 09:00:00
+    Loadplan: 5 make item - step 2 -1.0 2009-02-22 09:00:00 2009-02-19 09:00:00
+    Loadplan: 7 make item - step 2 1.0 2009-02-26 09:00:00 2009-03-01 09:00:00
+    Loadplan: 6 make item - step 1 -1.0 2009-02-26 09:00:00 2009-02-22 09:00:00
+    Loadplan: 7 make item - step 2 -1.0 2009-03-01 09:00:00 2009-02-26 09:00:00
+    Loadplan: 8 make item - step 1 1.0 2010-12-25 00:00:00 2010-12-29 00:00:00
+    Loadplan: 9 make item - step 2 1.0 2010-12-29 00:00:00 2011-01-01 00:00:00
+    Loadplan: 8 make item - step 1 -1.0 2010-12-29 00:00:00 2010-12-25 00:00:00
+    Loadplan: 9 make item - step 2 -1.0 2011-01-01 00:00:00 2010-12-29 00:00:00
   Resource: machine None None None None
 
 Echoing buffers:
@@ -63,11 +63,11 @@ Echoing buffers:
   Buffer: end item None None None None
     Flow: delivery end item -1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
     Flow: make or buy item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
-    Flowplan: 14 make or buy item 10.0 2009-02-15 09:00:00
-    Flowplan: 4 make or buy item 10.0 2009-02-22 09:00:00
-    Flowplan: 5 delivery end item -10.0 2009-03-01 08:30:00
-    Flowplan: 2 make or buy item 10.0 2009-03-01 09:00:00
-    Flowplan: 3 delivery end item -10.0 2009-03-01 09:00:00
+    Flowplan: 10 make or buy item 10.0 2009-02-15 09:00:00
+    Flowplan: 11 make or buy item 10.0 2009-02-22 09:00:00
+    Flowplan: 12 delivery end item -10.0 2009-03-01 08:30:00
+    Flowplan: 13 make or buy item 10.0 2009-03-01 09:00:00
+    Flowplan: 14 delivery end item -10.0 2009-03-01 09:00:00
     Flowplan: 15 delivery end item -10.0 2009-03-01 20:00:00
 
 Echoing operations:
@@ -89,9 +89,9 @@ Echoing operations:
 
 Echoing demands:
   Demand: order 1 2009-03-02 09:00:00 end item 10.0
-    Operationplan: 3 delivery end item 10.0 2009-03-02 09:00:00
+    Operationplan: 14 delivery end item 10.0 2009-03-02 09:00:00
   Demand: order 2 2009-03-02 08:30:00 end item 10.0
-    Operationplan: 5 delivery end item 10.0 2009-03-02 08:30:00
+    Operationplan: 12 delivery end item 10.0 2009-03-02 08:30:00
   Demand: order 3 2009-03-02 20:00:00 end item 10.0
     Operationplan: 15 delivery end item 10.0 2009-03-02 20:00:00
 

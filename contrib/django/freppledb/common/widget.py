@@ -49,7 +49,7 @@ class NewsWidget(Widget):
   async = False
 
   def render(self, request=None):
-    return '<iframe style="width:100%" frameborder="0" src="http://frepple.com/news-summary/"></iframe>'
+    return '<iframe style="width:100%; border:none;" src="http://frepple.com/news-summary/"></iframe>'
 
 Dashboard.register(NewsWidget)
 

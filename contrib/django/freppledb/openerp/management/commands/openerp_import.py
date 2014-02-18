@@ -205,7 +205,9 @@ class Command(BaseCommand):
       cursor.execute("SELECT name, subcategory, source FROM customer")
       frepple_keys = set()
       for i in cursor.fetchall():
-        if i[1] == 'OpenERP': self.customers[i[2]] = i[0]
+        if i[1] == 'OpenERP':
+          try: self.customers[int(i[2])] = i[0]
+          except: pass
         frepple_keys.add(i[0])
       ids = self.openerp_search( 'res.partner',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
@@ -222,12 +224,13 @@ class Command(BaseCommand):
             update.append( (i['id'],name) )
           elif i['id'] in self.customers:
             # Object previously exported from OpenERP already, now renamed
-            rename.append( (name,i['id']) )
+            rename.append( (name,str(i['id'])) )
           else:
             insert.append( (i['id'],name) )
           self.customers[i['id']] = name
         elif name in frepple_keys:
           delete.append( (name,) )
+          self.customers.pop(i['id'], None)
       cursor.executemany(
         "insert into customer \
           (source,name,subcategory,lastmodified) \
@@ -285,7 +288,9 @@ class Command(BaseCommand):
       cursor.execute("SELECT name, subcategory, source FROM item")
       frepple_keys = set()
       for i in cursor.fetchall():
-        if i[1] == 'OpenERP': self.items[int(i[2])] = i[0]
+        if i[1] == 'OpenERP':
+          try: self.items[int(i[2])] = i[0]
+          except: pass
         frepple_keys.add(i[0])
       ids = self.openerp_search('product.product', [
         '|',('create_date','>', self.delta),('write_date','>', self.delta),
@@ -306,12 +311,14 @@ class Command(BaseCommand):
             update.append( (i['id'],name) )
           elif i['id'] in self.items:
             # Object previously exported from OpenERP already, now renamed
-            rename.append( (name,i['id']) )
+            rename.append( (name,str(i['id'])) )
           else:
             insert.append( (name,i['id']) )
           self.items[i['id']] = name
+          frepple_keys.add(name)
         elif name in frepple_keys:
           delete.append( (name,) )
+          self.items.pop(i['id'], None)
       cursor.executemany(
         "insert into item \
           (name,source,subcategory,lastmodified) \
@@ -368,29 +375,39 @@ class Command(BaseCommand):
       cursor.execute("SELECT name, subcategory, source FROM location")
       frepple_keys = set()
       for i in cursor.fetchall():
-        if i[1] == 'OpenERP': self.locations[i[2]] = i[0]
+        if i[1] == 'OpenERP':
+          try: self.locations[int(i[2])] = i[0]
+          except: pass
         frepple_keys.add(i[0])
       ids = self.openerp_search('stock.warehouse')
       fields = ['name', 'lot_stock_id', 'lot_input_id', 'lot_output_id']
       insert = []
       update = []
       rename = []
+      childlocs = {}
+      # Loop over the warehouses
       for i in self.openerp_data('stock.warehouse', ids, fields):
         if i['name'] in frepple_keys:
           update.append( (i['id'],i['name']) )
         elif i['id'] in self.locations:
           # Object previously exported from OpenERP already, now renamed
-          rename.append( (i['name'],i['id']) )
+          rename.append( (i['name'],str(i['id'])) )
         else:
           insert.append( (i['name'],i['id']) )
         # Find all child locations of the warehouse.
-        # We populate a mapping location-to-warehouse name for later lookups.
-        ids2 = [ i['lot_stock_id'][0], i['lot_input_id'][0], i['lot_output_id'][0] ]
-        fields2 = ['child_ids']
-        for j in self.openerp_data('stock.location', ids2, fields2):
-          self.locations[j['id']] = i['name']
-          for k in j['child_ids']:
-            self.locations[k] = i['name']
+        childlocs[i['lot_stock_id'][0]] = i['name']
+        childlocs[i['lot_input_id'][0]] = i['name']
+        childlocs[i['lot_output_id'][0]] = i['name']
+
+      # Find all locations in the warehouse
+      # We populate a mapping location-to-warehouse name for later lookups.
+      fields2 = ['child_ids']
+      for j in self.openerp_data('stock.location', childlocs.keys(), fields2):
+        self.locations[j['id']] = childlocs[j['id']]
+        for k in j['child_ids']:
+          self.locations[k] = childlocs[j['id']]
+
+      # Create records for the warehouses
       cursor.executemany(
         "insert into location \
           (name,source,subcategory,lastmodified) \
@@ -403,7 +420,7 @@ class Command(BaseCommand):
         update)
       cursor.executemany(
         "update location \
-          set name= %%s, subcategory='OpenERP', lastmodified='%s' \
+          set name=%%s, subcategory='OpenERP', lastmodified='%s' \
           where source=%%s" % self.date,
         rename)
       transaction.commit(using=self.database)
@@ -478,20 +495,25 @@ class Command(BaseCommand):
       insert = []
       update = []
       delete = []
-      for i in self.openerp_data('sale.order.line', ids, fields):
+      so_line = [ i for i in self.openerp_data('sale.order.line', ids, fields)]
+      so = { j['id']: j for j in self.openerp_data('sale.order', [i['order_id'][0] for i in so_line], fields2) }
+      for i in so_line:
         name = u'%s %d' % (i['order_id'][1], i['id'])
         source = i['order_id'][0]
         if i['state'] == 'confirmed':
           product = i['product_id'][1]
-          j = self.openerp_data('sale.order', [i['order_id'][0],], fields2)[0]
-          location = self.shops[j['shop_id'][0]]
+          j = so[i['order_id'][0]]
+          location = self.shops.get(j['shop_id'][0], None)
+          customer = self.customers.get(j['partner_id'][0], None)
+          if not(location and customer and i['product_id'][0] in self.items):
+            continue
           operation = u'Ship %s @ %s' % (product, location)
           buffer = u'%s @ %s' % (product, location)
           deliveries.update([(product,location,operation,buffer),])
           if name in frepple_keys:
             update.append( (
               product,
-              u'%s %s' % (j['partner_id'][0], j['partner_id'][1]),
+              customer,
               i['product_uom_qty'],
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               j['requested_date'] or j['date_order'],
@@ -502,7 +524,7 @@ class Command(BaseCommand):
           else:
             insert.append( (
               product,
-              u'%d %s' % (j['partner_id'][0], j['partner_id'][1]),
+              customer,
               i['product_uom_qty'],
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               j['requested_date'] or j['date_order'],
@@ -511,6 +533,7 @@ class Command(BaseCommand):
               name,
               ) )
         elif name in frepple_keys:
+          # Only confirmed sales orders are shown in frePPLe
           delete.append( (name,) )
 
       # Create or update delivery operations
@@ -605,7 +628,9 @@ class Command(BaseCommand):
       cursor.execute("SELECT name, subcategory, source FROM resource")
       frepple_keys = set()
       for i in cursor.fetchall():
-        if i[1] == 'OpenERP': self.resources[i[2]] = i[0]
+        if i[1] == 'OpenERP':
+          try: self.resources[int(i[2])] = i[0]
+          except: pass
         frepple_keys.add(i[0])
       ids = self.openerp_search('mrp.workcenter',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
@@ -621,7 +646,7 @@ class Command(BaseCommand):
             update.append( (i['id'],i['costs_hour'],i['capacity_per_cycle'] / (i['time_cycle'] or 1),i['name']) )
           elif i['id'] in self.resources:
             # Object previously exported from OpenERP already, now renamed
-            rename.append( (i['name'],i['costs_hour'],i['capacity_per_cycle'] / (i['time_cycle'] or 1),i['id']) )
+            rename.append( (i['name'],i['costs_hour'],i['capacity_per_cycle'] / (i['time_cycle'] or 1),str(i['id'])) )
           else:
             insert.append( (i['id'],i['name'],i['costs_hour'],i['capacity_per_cycle'] / (i['time_cycle'] or 1)) )
           self.resources[i['id']] = i['name']
@@ -769,18 +794,21 @@ class Command(BaseCommand):
       cursor.execute("SELECT id FROM operationplan")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       deliveries = set()
-      ids = self.openerp_search('purchase.order.line')
+      ids = self.openerp_search('purchase.order.line',['|',('create_date','>', self.delta),('write_date','>', self.delta)])
       fields = ['name', 'date_planned', 'product_id', 'product_qty', 'order_id']
       fields2 = ['name', 'location_id', 'partner_id', 'state', 'received']
       insert = []
       delete = []
       update = []
-      for i in self.openerp_data('purchase.order.line', ids, fields):
+      po_line = [ i for i in self.openerp_data('purchase.order.line', ids, fields) ]
+      po = { j['id']: j for j in self.openerp_data('purchase.order', [i['order_id'][0] for i in po_line], fields2) }
+      for i in po_line:
+        if not i['product_id']: continue
         item = i['product_id'][1]
-        j = self.openerp_data('purchase.order', [i['order_id'][0],], fields2)[0]
-        if j['location_id'][0] in self.locations and item in frepple_items and j['state'] in ('approved','draft'):
-          location = self.locations[j['location_id'][0]]
-          operation = u'Purchase %s @ %s' %(item,location)
+        j = po[i['order_id'][0]]
+        location = j['location_id'] and self.locations.get(j['location_id'][0], None) or None
+        if location and item in frepple_items and j['state'] in ('approved','draft'):
+          operation = u'Purchase %s @ %s' % (item, location)
           if i['id'] in frepple_keys:
             update.append( (
                operation, i['date_planned'], i['date_planned'], i['product_qty'], i['id']
@@ -800,7 +828,7 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into operation \
           (name,location_id,subcategory,type,lastmodified) \
-          values (%%s,%%s,'openbravo','fixed_time','%s')" % self.date,
+          values (%%s,%%s,'OpenERP','fixed_time','%s')" % self.date,
         [ (i[2],i[1]) for i in deliveries if i[2] not in frepple_keys ])
       cursor.executemany(
         "update operation \
@@ -813,7 +841,7 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into buffer \
           (name,item_id,location_id,subcategory,lastmodified) \
-          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+          values(%%s,%%s,%%s,'OpenERP','%s')" % self.date,
         [ (i[3],i[0],i[1]) for i in deliveries if i[3] not in frepple_keys ])
       cursor.executemany(
         "update buffer \
@@ -849,6 +877,7 @@ class Command(BaseCommand):
         "delete from operationplan where id=%s and source='OpenERP'",
         delete)
       transaction.commit(using=self.database)
+
       if self.verbosity > 0:
         print("Inserted %d purchase order lines" % len(insert))
         print("Updated %d purchase order lines" % len(update))
@@ -924,7 +953,7 @@ class Command(BaseCommand):
       ids = self.openerp_search('mrp.routing')
       for i in self.openerp_data('mrp.routing', ids, ['location_id',]):
         if i['location_id']:
-          openerp_mfg_routings[i['id']] = self.locations[i['location_id'][0]]
+          openerp_mfg_routings[i['id']] = self.locations.get(i['location_id'][0], None)
         else:
           openerp_mfg_routings[i['id']] = None
 

@@ -374,7 +374,7 @@ class GridReport(View):
           )
       except:
         start = datetime.now()
-        start = start.replace(microsecond=0)
+      start = start.replace(hour=0, minute=0, second=0, microsecond=0)
       if pref.horizonunit == 'day':
         end = start + timedelta(days=pref.horizonlength or 60)
         end = end.replace(hour=0, minute=0, second=0)

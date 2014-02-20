@@ -1339,7 +1339,6 @@ var tour = {
     var stepData = tourdata[tour.chapter]['steps'][tour.step];
     // Switch url if required
     var prefix = $('#database').attr('name');
-    console.log(prefix);
     if (prefix && prefix != "default")
     {
       if (location.pathname != "/" + prefix + stepData['url'])

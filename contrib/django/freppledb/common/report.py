@@ -1068,7 +1068,7 @@ class GridReport(View):
             ### Case 1: The first line is read as a header line
             if rownumber == 1:
               for col in row:
-                col = col.internal_value.strip().strip('#').lower()
+                col = unicode(col.internal_value).strip().strip('#').lower()
                 if col == "":
                   headers.append(False)
                   continue
@@ -1098,7 +1098,7 @@ class GridReport(View):
                 )
 
             ### Case 2: Skip empty rows and comments rows
-            elif len(row) == 0 or row[0].internal_value.startswith('#'):
+            elif len(row) == 0 or (isinstance(row[0].internal_value, six.string_types) and row[0].internal_value.startswith('#')):
               continue
 
             ### Case 3: Process a data row
@@ -1110,7 +1110,13 @@ class GridReport(View):
                 for col in row:
                   # More fields in data row than headers. Move on to the next row.
                   if colnum >= len(headers): break
-                  if isinstance(headers[colnum],Field): d[headers[colnum].name] = col.internal_value.strip()
+                  if isinstance(headers[colnum],Field):
+                    data = col.internal_value
+                    if isinstance(headers[colnum],CharField):
+                      if data: data = data.strip()
+                    elif isinstance(headers[colnum], (IntegerField, AutoField)):
+                      if isinstance(data, numericTypes): data = int(data)
+                    d[headers[colnum].name] = data
                   colnum += 1
 
                 # Step 2: Fill the form with data, either updating an existing

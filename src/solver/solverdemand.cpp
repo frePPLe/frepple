@@ -266,7 +266,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
           if (loglevel>=2)
             logger << "Demand '" << l << "' plans coordination." << endl;
           data->getSolver()->setLogLevel(0);
-          double tmpresult = data->state->a_qty;
+          double tmpresult = 0;
           try
           {
             for(double remainder = data->state->a_qty;
@@ -282,6 +282,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
                 logger << "Warning: Demand '" << l << "': Failing coordination" << endl;
                 break;
               }
+              tmpresult += data->state->a_qty;
             }
           }
           catch (...)

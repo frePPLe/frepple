@@ -344,7 +344,7 @@ var grid = {
    setSelectedRow: function(id)
    {
      if (grid.selected != undefined)
-       $(this).jqGrid('setCell', selected, 'select', null);
+       $(this).jqGrid('setCell', grid.selected, 'select', null);
      grid.selected = id;
      $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, grid.selected);" class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text" style="font-size:66%">'+gettext('Select')+'</span></button>');
    },

@@ -87,8 +87,12 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   OperationPlan* opplan = NULL;
   if (id)
   {
-    if (id == 1)
-      throw DataException("Operationplan id must be greater than 1");
+    if (id == ULONG_MAX)
+    {
+      ostringstream ch;
+      ch << "Operationplan id can't be equal to " << ULONG_MAX;
+      throw DataException(ch.str());
+    }
     opplan = OperationPlan::findId(id);
     if (opplan && !opname.empty()
         && opplan->getOperation()->getName()!=opname)
@@ -194,7 +198,7 @@ DECLARE_EXPORT bool OperationPlan::assignIdentifier()
 {
   static Mutex onlyOne;
   ScopeMutexLock l(onlyOne);  // Need to assure that ids are unique!
-  if (id > 1)
+  if (id && id!=ULONG_MAX)
   {
     // An identifier was read in from input
     if (id < counterMin)
@@ -247,7 +251,7 @@ DECLARE_EXPORT bool OperationPlan::activate()
     x->activate();
 
   // Mark as activated by assigning a unique identifier.
-  if (id > 1)
+  if (id && id!=ULONG_MAX)
   {
     // Validate the user provided id.
     if (!assignIdentifier())
@@ -263,7 +267,7 @@ DECLARE_EXPORT bool OperationPlan::activate()
     // created lazily when the getIdentifier method is called.
     // In this way, 1) we avoid clashes between auto-generated and
     // user-provided in the input and 2) we keep performance high.
-    id = 1;
+    id = ULONG_MAX;
 
   // Insert into the doubly linked list of operationplans.
   insertInOperationplanList();

@@ -1919,7 +1919,7 @@ class OperationPlan
       */
     DECLARE_EXPORT unsigned long getIdentifier()
     {
-      if (id==1) assignIdentifier(); // Lazy generation
+      if (id==ULONG_MAX) assignIdentifier(); // Lazy generation
       return id;
     }
 

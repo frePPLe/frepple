@@ -1638,4 +1638,139 @@ PyObject *OperationRouting::addStep(PyObject *self, PyObject *args)
   return Py_BuildValue("");
 }
 
+
+DECLARE_EXPORT void Operation::addSubOperationPlan(OperationPlan* parent, OperationPlan* child)
+{
+  // Check
+  if (!parent)
+    throw LogicException("Invalid parent for suboperationplan");
+  if (!child)
+    throw LogicException("Adding null suboperationplan");
+  if (child->getOperation() != OperationSetup::setupoperation)
+    throw LogicException("Only setup suboperationplans are allowed");
+
+  // Adding a suboperationplan that was already added
+  if (child->owner == parent)  return;
+
+  // Clear the previous owner, if there is one
+  if (child->owner) child->owner->eraseSubOperationPlan(child);
+
+  // Set as only child operationplan
+  if (parent->firstsubopplan)
+    throw LogicException("Expected suboperationplan list to be empty");
+  parent->firstsubopplan = child;
+  parent->lastsubopplan = child;
+  child->owner = parent;
+
+  // Update the flow and loadplans
+  parent->update();
+}
+
+
+DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(OperationPlan* parent, OperationPlan* child)
+{
+  // Check
+  if (!parent)
+    throw LogicException("Invalid parent for suboperationplan");
+  if (!child)
+    throw LogicException("Adding null suboperationplan");
+
+  // Adding a suboperationplan that was already added
+  if (child->owner == parent)  return;
+
+  // Clear the previous owner, if there is one
+  if (child->owner) child->owner->eraseSubOperationPlan(child);
+
+  // TODO We don't check whether the new alternate is a valid suboperation for this alternate. Fast, but less robust...
+
+  // Link in the list, keeping the right ordering
+  if (!parent->firstsubopplan)
+  {
+    // First element
+    parent->firstsubopplan = child;
+    parent->lastsubopplan = child;
+  }
+  else if (parent->firstsubopplan->getOperation() != OperationSetup::setupoperation)
+  {
+    // Remove previous head alternate suboperationplan
+    if (parent->firstsubopplan->getLocked())
+      throw LogicException("Can't replace locked alternate suboperationplan");
+    OperationPlan *tmp = parent->firstsubopplan;
+    parent->eraseSubOperationPlan(tmp);
+    delete tmp;
+    // New head
+    parent->firstsubopplan = child;
+    parent->lastsubopplan = child;
+  }
+  else
+  {
+    // Insert right after the setup operationplan
+    OperationPlan *s = parent->firstsubopplan->nextsubopplan;
+
+    // Remove previous alternate suboperationplan
+    if (s)
+    {
+      if (s->getLocked())
+        throw LogicException("Can't replace locked alternate suboperationplan");
+      parent->eraseSubOperationPlan(s);
+      delete s;
+    }
+    else
+    {
+      parent->firstsubopplan->nextsubopplan = child;
+      parent->lastsubopplan = child;
+    }
+  }
+  child->owner = parent;
+
+  // Update the flow and loadplans
+  parent->update();
+}
+
+
+DECLARE_EXPORT void OperationRouting::addSubOperationPlan(OperationPlan* parent, OperationPlan* child)
+{
+  // Check
+  if (!parent)
+    throw LogicException("Invalid parent for suboperationplan");
+  if (!child)
+    throw LogicException("Adding null suboperationplan");
+
+  // Adding a suboperationplan that was already added
+  if (child->owner == parent)  return;
+
+  // Clear the previous owner, if there is one
+  if (child->owner) child->owner->eraseSubOperationPlan(child);
+
+  // TODO We don't check whether the suboperation is a valid step for this routing. Fast, but less robust...
+
+  // Link in the list, keeping the right ordering
+  if (!parent->firstsubopplan)
+  {
+    // First element
+    parent->firstsubopplan = child;
+    parent->lastsubopplan = child;
+  }
+  else if (parent->firstsubopplan->getOperation() != OperationSetup::setupoperation)
+  {
+    // New head
+    child->nextsubopplan = parent->firstsubopplan;
+    parent->firstsubopplan->prevsubopplan = child;
+    parent->firstsubopplan = child;
+  }
+  else
+  {
+    // Insert right after the setup operationplan
+    OperationPlan *s = parent->firstsubopplan->nextsubopplan;
+    child->nextsubopplan = s;
+    if (s) s->nextsubopplan = child;
+    else parent->lastsubopplan = child;
+  }
+
+  child->owner = parent;
+
+  // Update the flow and loadplans
+  parent->update();
+}
+
 } // end namespace

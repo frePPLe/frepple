@@ -277,7 +277,14 @@
     <operationplan id="4005" operation="Oper4" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" locked="true" produce_material="false" consume_material="false" consume_capacity="false"/>
     <operationplan id="4006" operation="Oper4" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true"/>
     <operationplan id="4007" operation="Oper4B" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
-      <owner id="4006"/>
+      <owner id="4006" operation="Oper4" />
+    </operationplan>
+    <operationplan id="4008" operation="Oper4" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true"/>
+    <operationplan id="4009" operation="Oper4B" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="false">
+      <owner id="4008" operation="Oper4" />
+    </operationplan>
+    <operationplan id="4010" operation="Oper4A" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true">
+      <owner id="4008" operation="Oper4" />
     </operationplan>
   </operationplans>
 

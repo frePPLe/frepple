@@ -368,47 +368,6 @@ DECLARE_EXPORT void OperationPlan::removeFromOperationplanList()
 }
 
 
-DECLARE_EXPORT void OperationPlan::addSubOperationPlan(OperationPlan* o)
-{
-  // Check
-  if (!o) throw LogicException("Adding null suboperationplan");
-
-  // Adding a suboperationplan that was already added
-  if (o->owner == this)  return;
-
-  // Clear the previous owner, if there is one
-  if (o->owner) o->owner->eraseSubOperationPlan(o);
-
-  // Link in the list, keeping the right ordering
-  if (!firstsubopplan)
-  {
-    // First element
-    firstsubopplan = o;
-    lastsubopplan = o;
-  }
-  else if (firstsubopplan->getOperation() != OperationSetup::setupoperation)
-  {
-    // New head
-    o->nextsubopplan = firstsubopplan;
-    firstsubopplan->prevsubopplan = o;
-    firstsubopplan = o;
-  }
-  else
-  {
-    // Insert right after the setup operationplan
-    OperationPlan *s = firstsubopplan->nextsubopplan;
-    o->nextsubopplan = s;
-    if (s) s->nextsubopplan = o;
-    else lastsubopplan = o;
-  }
-
-  o->owner = this;
-
-  // Update the flow and loadplans
-  update();
-}
-
-
 DECLARE_EXPORT void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
 {
   // Check
@@ -539,7 +498,7 @@ void DECLARE_EXPORT OperationPlan::setOwner(OperationPlan* o)
   // Erase the previous owner if there is one
   if (owner) owner->eraseSubOperationPlan(this);
   // Register with the new owner
-  if (o) o->addSubOperationPlan(this);
+  if (o) o->getOperation()->addSubOperationPlan(o, this);
 }
 
 

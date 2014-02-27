@@ -1447,6 +1447,16 @@ class Operation : public HasName<Operation>,
     /** Returns the maximum size for operationplans. */
     double getSizeMaximum() const {return size_maximum;}
 
+    /** Add a new child operationplan.
+      * By default an operationplan can have only a single suboperation,
+      * representing a changeover.
+      * Operation subclasses can implement their own restrictions on the
+      * number and structure of the suboperationplans.
+      * @see OperationAlternate::addSubOperationPlan
+      * @see OperationRouting::addSubOperationPlan
+      */
+    virtual DECLARE_EXPORT void addSubOperationPlan(OperationPlan*, OperationPlan*);
+
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
@@ -2002,9 +2012,6 @@ class OperationPlan
       */
     DECLARE_EXPORT void removeFromOperationplanList();
 
-    /** Add a sub-operationplan to the list. */
-    virtual DECLARE_EXPORT void addSubOperationPlan(OperationPlan*);
-
     /** Remove a sub-operation_plan from the list. */
     virtual DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan*);
 
@@ -2447,6 +2454,9 @@ class OperationRouting : public Operation
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
     (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
+    /** Add a new child operationplan. */
+    virtual DECLARE_EXPORT void addSubOperationPlan(OperationPlan*, OperationPlan*);
+
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
@@ -2576,6 +2586,9 @@ class OperationAlternate : public Operation
       */
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
     (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+
+    /** Add a new child operationplan. */
+    virtual DECLARE_EXPORT void addSubOperationPlan(OperationPlan*, OperationPlan*);
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;

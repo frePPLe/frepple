@@ -161,7 +161,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
             while (delta > data->getSolver()->getIterationAccuracy() * l->getQuantity()
                 && delta > data->getSolver()->getIterationThreshold())
             {
-              double new_qty = floor((min_qty + max_qty) / 2); // @TODO not generic to round down to an integer here
+              // Note: we're kind of assuming that the demand is an integer value here.
+              double new_qty = floor((min_qty + max_qty) / 2);
+              if (new_qty == l->getMinShipment())
+              {
+                // Required to avoid an infinite loop on the same value...
+                new_qty += 1;
+                if (new_qty > max_qty) break;
+              }
               if (loglevel>0)
                 logger << "Demand '" << l << "' tries planning a different quantity " << new_qty << endl;
               data->rollback(topcommand);
@@ -292,6 +299,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
           }
           data->getSolver()->setLogLevel(loglevel);
           data->state->a_qty = tmpresult;
+          if (tmpresult == 0) break;
         }
 
         // Register the new operationplans. We need to make sure that the

@@ -160,13 +160,13 @@
 		</flow>
 	</flows>
 	<operationplans>
-		<operationplan id="5" operation="delivery product from distribution centre">
+		<operationplan id="2" operation="delivery product from distribution centre">
 			<demand name="order 2"/>
 			<start>2009-01-03T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="1" operation="delivery product from distribution centre">
+		<operationplan id="3" operation="delivery product from distribution centre">
 			<demand name="order 1"/>
 			<start>2009-01-03T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
@@ -177,32 +177,32 @@
 			<end>2009-01-02T12:00:00</end>
 			<quantity>5</quantity>
 		</operationplan>
-		<operationplan id="8" operation="make product in factory 2">
+		<operationplan id="5" operation="make product in factory 2">
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+		<operationplan id="6" operation="supply distribution centre">
+			<start>2009-01-02T12:00:00</start>
+			<end>2009-01-03T12:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan id="7" operation="supply distribution centre">
 			<start>2009-01-02T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
-			<quantity>10</quantity>
+			<quantity>5</quantity>
 		</operationplan>
-		<operationplan id="3" operation="supply distribution centre">
+		<operationplan id="8" operation="transport supply from factory 1">
 			<start>2009-01-02T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
 			<quantity>5</quantity>
-		</operationplan>
-		<operationplan id="2" operation="transport supply from factory 1">
-			<start>2009-01-02T12:00:00</start>
-			<end>2009-01-03T12:00:00</end>
-			<quantity>5</quantity>
-			<owner id="3" operation="supply distribution centre"/>
-		</operationplan>
-		<operationplan id="6" operation="transport supply from factory 2">
-			<start>2009-01-02T12:00:00</start>
-			<end>2009-01-03T12:00:00</end>
-			<quantity>10</quantity>
 			<owner id="7" operation="supply distribution centre"/>
+		</operationplan>
+		<operationplan id="9" operation="transport supply from factory 2">
+			<start>2009-01-02T12:00:00</start>
+			<end>2009-01-03T12:00:00</end>
+			<quantity>10</quantity>
+			<owner id="6" operation="supply distribution centre"/>
 		</operationplan>
 	</operationplans>
 	<problems>

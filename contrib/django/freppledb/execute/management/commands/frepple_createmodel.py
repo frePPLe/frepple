@@ -241,7 +241,10 @@ class Command(BaseCommand):
         comps = []
         comploc = Location.objects.using(database).create(name='Procured materials')
         for i in range(components):
-          it = Item.objects.using(database).create(name = 'Component %04d' % i, category='Procured')
+          it = Item.objects.using(database).create(name = 'Component %04d' % i,
+                 category='Procured',
+                 price=str(round(random.uniform(0,100)))
+                 )
           ld = abs(round(random.normalvariate(procure_lt,procure_lt/3)))
           c = Buffer.objects.using(database).create(name = 'Component %04d' % i,
                location = comploc,
@@ -272,7 +275,11 @@ class Command(BaseCommand):
 
           # Item and delivery operation
           oper = Operation.objects.using(database).create(name='Del %05d' % i, sizemultiple=1, location=loc)
-          it = Item.objects.using(database).create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
+          it = Item.objects.using(database).create(name='Itm %05d' % i,
+                 operation=oper,
+                 category=random.choice(categories),
+                 price=str(round(random.uniform(100,200)))
+                 )
 
           # Level 0 buffer
           buf = Buffer.objects.using(database).create(name='Buf %05d L00' % i,

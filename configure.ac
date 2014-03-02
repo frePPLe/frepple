@@ -294,7 +294,7 @@ AC_CHECK_HEADER(windows.h,
 CPPFLAGS="-I\$(top_builddir)/include $CPPFLAGS"
 if test x$debug = xtrue ; then
   # The settings on the next line are the normal debugging parameters
-  CXXFLAGS="-ggdb -Wall $CXXFLAGS"
+  CXXFLAGS="-ggdb -Wall $CXXFLAGS -O0"
   AC_DEFINE([DEBUG], [], [Used for debugging builds])
 else if test x$coverage = xtrue ; then
   # The settings on the next line are suitable for creating an executable to

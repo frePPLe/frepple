@@ -25,6 +25,7 @@ from django.utils.text import capfirst
 
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.dashboard import Dashboard, Widget
+from freppledb.common.report import GridReport
 from freppledb.output.models import LoadPlan, Problem, OperationPlan, Demand
 
 
@@ -282,9 +283,8 @@ class ResourceLoadWidget(Widget):
       '<div id="resLoad" style="width:100%%; height: %spx;"></div>' % (limit*25+30),
       '<table style="display:none">'
       ]
-    #            where out_resourceplan.startdate >= '%s'
-    #            and out_resourceplan.startdate < '%s'
     cursor = connections[request.database].cursor()
+    GridReport.getBuckets(request)
     query = '''select
                   theresource,
                   ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) )
@@ -292,9 +292,11 @@ class ResourceLoadWidget(Widget):
                   coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0),
                   coalesce(sum(out_resourceplan.free),0)
                 from out_resourceplan
+                where out_resourceplan.startdate >= '%s'
+                  and out_resourceplan.startdate < '%s'
                 group by theresource
                 order by 2 desc
-              '''
+              ''' % (request.report_startdate, request.report_enddate)
     cursor.execute(query)
     for res in cursor.fetchall():
       limit -= 1
@@ -464,15 +466,17 @@ class DeliveryPerformanceWidget(Widget):
     green = int(request.GET.get('green', cls.green))
     yellow = int(request.GET.get('yellow', cls.yellow))
     cursor = connections[request.database].cursor()
+    GridReport.getBuckets(request)
     query = '''
       select sum(late) * 100.0 /count(*)
       from (
         select
           demand, max(case when plandate > due then 1 else 0 end) late
         from out_demand
+        where due < '%s'
         group by demand
       ) demands
-      '''
+      ''' % request.report_enddate
     cursor.execute(query)
     val = cursor.fetchone()[0]
     result = [

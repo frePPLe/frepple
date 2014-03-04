@@ -291,9 +291,7 @@ DECLARE_EXPORT bool OperationPlan::activate()
 
 DECLARE_EXPORT void OperationPlan::deactivate()
 {
-  // Wasn't activated anyway
-  if (!id) return;
-
+  // Mark as not activated
   id = 0;
 
   // Delete from the list of deliveries
@@ -365,6 +363,9 @@ DECLARE_EXPORT void OperationPlan::removeFromOperationplanList()
   else if (oper->last_opplan == this)
     // Last opplan in the list of this operation
     oper->last_opplan = prev;
+  // Clear existing pointers to become an orphan
+  prev = NULL;
+  next = NULL;
 }
 
 
@@ -373,9 +374,9 @@ DECLARE_EXPORT void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
   // Check
   if (!o) return;
 
-  // Adding a suboperationplan that was already added
+  // Check valid ownership
   if (o->owner != this)
-    throw LogicException("Operationplan isn't a suboperationplan");
+    throw LogicException("Suboperationplan has a different owner");
 
   // Clear owner field
   o->owner = NULL;

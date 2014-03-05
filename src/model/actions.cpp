@@ -242,7 +242,9 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
       textoutput << "OPERATION\t" << rr->getOperation() << '\t'
           << rr->getDates().getStart() << '\t'
           << rr->getDates().getEnd() << '\t'
-          << rr->getQuantity() << endl;
+          << rr->getQuantity()
+          << (rr->getLocked() ? "\tlocked" : "")
+          << endl;
     }
 
     // Write the problem summary.

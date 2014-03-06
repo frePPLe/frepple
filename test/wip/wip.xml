@@ -272,7 +272,14 @@
     <operationplan id="1003" operation="Oper1" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true" consume_capacity="false" />
     <operationplan id="1004" operation="Oper1" quantity="10" start="2014-04-01T00:00:00" end="2014-04-05T00:00:00" locked="true" consume_material="false" consume_capacity="false" produce_material="false" />
     <!-- WIP on routing operation -->
+    <operationplan id="3004" operation="Oper3" quantity="10" start="2014-01-01T00:00:00" end="2014-01-02T00:00:00" locked="true" />    
     <operationplan id="3005" operation="Oper3" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true" produce_material="false" consume_material="false" consume_capacity="false"/>
+    <operationplan id="3006" operation="Oper3B" quantity="2" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true" produce_material="false" consume_material="false" consume_capacity="false">
+      <owner id="3005" operation="Oper3" />
+    </operationplan>
+    <operationplan id="3007" operation="Oper3A" quantity="7" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true" produce_material="false" consume_material="false" consume_capacity="false">
+      <owner id="3005" operation="Oper3" />
+    </operationplan>
     <!-- WIP on alternate operation -->
     <operationplan id="4005" operation="Oper4" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" locked="true" produce_material="false" consume_material="false" consume_capacity="false"/>
     <operationplan id="4006" operation="Oper4" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true"/>

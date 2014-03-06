@@ -20,15 +20,75 @@
 		<operation name="Oper1" xsi:type="operation_fixed_time">
 			<duration>P10D</duration>
 		</operation>
+		<operation name="Oper3" xsi:type="operation_routing">
+			<steps>
+				<operation name="Oper3A" xsi:type="operation_fixed_time"/>
+				<operation name="Oper3B" xsi:type="operation_fixed_time"/>
+				<operation name="Oper3C" xsi:type="operation_fixed_time"/>
+			</steps>
+		</operation>
+		<operation name="Oper3A" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+		<operation name="Oper3B" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+		<operation name="Oper3C" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+		<operation name="Oper4" xsi:type="operation_alternate">
+			<alternates>
+				<alternate>
+					<operation name="Oper4A" xsi:type="operation_fixed_time"/>
+					<priority>1</priority>
+				</alternate>
+				<alternate>
+					<operation name="Oper4B" xsi:type="operation_fixed_time"/>
+					<priority>2</priority>
+				</alternate>
+			</alternates>
+		</operation>
+		<operation name="Oper4A" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+		<operation name="Oper4B" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
 	</operations>
 	<items>
 		<item name="In1">
 		</item>
 		<item name="In2">
 		</item>
+		<item name="In3">
+		</item>
+		<item name="In3A">
+		</item>
+		<item name="In3B">
+		</item>
+		<item name="In3C">
+		</item>
+		<item name="In4">
+		</item>
+		<item name="In4A">
+		</item>
+		<item name="In4B">
+		</item>
 		<item name="Out1">
 		</item>
 		<item name="Out2">
+		</item>
+		<item name="Out3">
+		</item>
+		<item name="Out3A">
+		</item>
+		<item name="Out3B">
+		</item>
+		<item name="Out3C">
+		</item>
+		<item name="Out4">
+		</item>
+		<item name="Out4B">
 		</item>
 	</items>
 	<buffers>
@@ -40,6 +100,34 @@
 			<item name="In2"/>
 			<location name="Loc"/>
 		</buffer>
+		<buffer name="In3" xsi:type="buffer_procure">
+			<item name="In3"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="In3A" xsi:type="buffer_procure">
+			<item name="In3A"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="In3B" xsi:type="buffer_procure">
+			<item name="In3B"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="In3C" xsi:type="buffer_procure">
+			<item name="In3C"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="In4" xsi:type="buffer_procure">
+			<item name="In4"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="In4A" xsi:type="buffer_procure">
+			<item name="In4A"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="In4B" xsi:type="buffer_procure">
+			<item name="In4B"/>
+			<location name="Loc"/>
+		</buffer>
 		<buffer name="Out1">
 			<item name="Out1"/>
 		</buffer>
@@ -48,12 +136,62 @@
 			<item name="Out2"/>
 			<location name="Loc"/>
 		</buffer>
+		<buffer name="Out3">
+			<item name="Out3"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="Out3A">
+			<item name="Out3A"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="Out3B">
+			<item name="Out3B"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="Out3C">
+			<item name="Out3C"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="Out4">
+			<item name="Out4"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="Out4A">
+			<item name="Out3A"/>
+			<location name="Loc"/>
+		</buffer>
+		<buffer name="Out4B">
+			<item name="Out4B"/>
+			<location name="Loc"/>
+		</buffer>
 	</buffers>
 	<resources>
 		<resource name="Res1">
 			<location name="Loc"/>
 		</resource>
 		<resource name="Res2">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res3">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res3A">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res3B">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res3C">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res4">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res4A">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res4B">
+			<location name="Loc"/>
 		</resource>
 	</resources>
 	<loads>
@@ -64,6 +202,34 @@
 		<load>
 			<operation name="Oper1" xsi:type="operation_fixed_time"/>
 			<resource name="Res2"/>
+		</load>
+		<load>
+			<operation name="Oper3" xsi:type="operation_routing"/>
+			<resource name="Res3"/>
+		</load>
+		<load>
+			<operation name="Oper3A" xsi:type="operation_fixed_time"/>
+			<resource name="Res3A"/>
+		</load>
+		<load>
+			<operation name="Oper3B" xsi:type="operation_fixed_time"/>
+			<resource name="Res3B"/>
+		</load>
+		<load>
+			<operation name="Oper3C" xsi:type="operation_fixed_time"/>
+			<resource name="Res3C"/>
+		</load>
+		<load>
+			<operation name="Oper4" xsi:type="operation_alternate"/>
+			<resource name="Res4"/>
+		</load>
+		<load>
+			<operation name="Oper4A" xsi:type="operation_fixed_time"/>
+			<resource name="Res4A"/>
+		</load>
+		<load>
+			<operation name="Oper4B" xsi:type="operation_fixed_time"/>
+			<resource name="Res4B"/>
 		</load>
 	</loads>
 	<flows>
@@ -87,24 +253,101 @@
 			<buffer name="In2" xsi:type="buffer_procure"/>
 			<quantity>-2</quantity>
 		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="Oper3" xsi:type="operation_routing"/>
+			<buffer name="Out3"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="Oper3" xsi:type="operation_routing"/>
+			<buffer name="In3" xsi:type="buffer_procure"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="Oper3A" xsi:type="operation_fixed_time"/>
+			<buffer name="Out3A"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="Oper3A" xsi:type="operation_fixed_time"/>
+			<buffer name="In3A" xsi:type="buffer_procure"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="Oper3B" xsi:type="operation_fixed_time"/>
+			<buffer name="Out3B"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="Oper3B" xsi:type="operation_fixed_time"/>
+			<buffer name="In3B" xsi:type="buffer_procure"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="Oper3C" xsi:type="operation_fixed_time"/>
+			<buffer name="Out3C"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="Oper3C" xsi:type="operation_fixed_time"/>
+			<buffer name="In3C" xsi:type="buffer_procure"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="Oper4" xsi:type="operation_alternate"/>
+			<buffer name="Out4"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="Oper4" xsi:type="operation_alternate"/>
+			<buffer name="In4" xsi:type="buffer_procure"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="Oper4A" xsi:type="operation_fixed_time"/>
+			<buffer name="Out4A"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="Oper4A" xsi:type="operation_fixed_time"/>
+			<buffer name="In4A" xsi:type="buffer_procure"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="Oper4B" xsi:type="operation_fixed_time"/>
+			<buffer name="Out4B"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="Oper4B" xsi:type="operation_fixed_time"/>
+			<buffer name="In4B" xsi:type="buffer_procure"/>
+			<quantity>-1</quantity>
+		</flow>
 	</flows>
 	<operationplans>
-		<operationplan id="2002" operation="Oper1">
-			<start>2013-02-01T00:00:00</start>
+		<operationplan id="1001" operation="Oper1">
+			<start>2013-12-31T00:00:00</start>
+			<end>2014-01-05T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+			<consume_material>false</consume_material>
+		</operationplan>
+		<operationplan id="1002" operation="Oper1">
+			<start>2014-02-01T00:00:00</start>
 			<end>2014-02-05T00:00:00</end>
 			<quantity>10</quantity>
 			<locked>true</locked>
 			<produce_material>false</produce_material>
 		</operationplan>
-		<operationplan id="2003" operation="Oper1">
-			<start>2013-03-01T00:00:00</start>
+		<operationplan id="1003" operation="Oper1">
+			<start>2014-03-01T00:00:00</start>
 			<end>2014-03-05T00:00:00</end>
 			<quantity>10</quantity>
 			<locked>true</locked>
 			<consume_capacity>false</consume_capacity>
 		</operationplan>
-		<operationplan id="2004" operation="Oper1">
-			<start>2013-04-01T00:00:00</start>
+		<operationplan id="1004" operation="Oper1">
+			<start>2014-04-01T00:00:00</start>
 			<end>2014-04-05T00:00:00</end>
 			<quantity>10</quantity>
 			<locked>true</locked>
@@ -112,28 +355,182 @@
 			<produce_material>false</produce_material>
 			<consume_capacity>false</consume_capacity>
 		</operationplan>
-		<operationplan id="2001" operation="Oper1">
+		<operationplan id="3004" operation="Oper3">
+			<start>2013-12-30T00:00:00</start>
+			<end>2014-01-02T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+		</operationplan>
+		<operationplan id="3005" operation="Oper3">
+			<start>2014-02-02T00:00:00</start>
+			<end>2014-02-05T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+			<consume_material>false</consume_material>
+			<produce_material>false</produce_material>
+			<consume_capacity>false</consume_capacity>
+		</operationplan>
+		<operationplan id="4011" operation="Oper3A">
+			<start>2013-12-30T00:00:00</start>
+			<end>2013-12-31T00:00:00</end>
+			<quantity>10</quantity>
+			<owner id="3004" operation="Oper3"/>
+		</operationplan>
+		<operationplan id="3007" operation="Oper3A">
+			<start>2014-02-01T00:00:00</start>
+			<end>2014-02-05T00:00:00</end>
+			<quantity>7</quantity>
+			<locked>true</locked>
+			<consume_material>false</consume_material>
+			<produce_material>false</produce_material>
+			<consume_capacity>false</consume_capacity>
+			<owner id="3005" operation="Oper3"/>
+		</operationplan>
+		<operationplan id="4012" operation="Oper3A">
+			<start>2014-02-02T00:00:00</start>
+			<end>2014-02-03T00:00:00</end>
+			<quantity>3</quantity>
+			<owner id="3005" operation="Oper3"/>
+		</operationplan>
+		<operationplan id="4013" operation="Oper3B">
 			<start>2013-12-31T00:00:00</start>
+			<end>2014-01-01T00:00:00</end>
+			<quantity>10</quantity>
+			<owner id="3004" operation="Oper3"/>
+		</operationplan>
+		<operationplan id="3006" operation="Oper3B">
+			<start>2014-02-01T00:00:00</start>
+			<end>2014-02-05T00:00:00</end>
+			<quantity>2</quantity>
+			<locked>true</locked>
+			<consume_material>false</consume_material>
+			<produce_material>false</produce_material>
+			<consume_capacity>false</consume_capacity>
+			<owner id="3005" operation="Oper3"/>
+		</operationplan>
+		<operationplan id="4014" operation="Oper3B">
+			<start>2014-02-03T00:00:00</start>
+			<end>2014-02-04T00:00:00</end>
+			<quantity>8</quantity>
+			<owner id="3005" operation="Oper3"/>
+		</operationplan>
+		<operationplan id="4015" operation="Oper3C">
+			<start>2014-01-01T00:00:00</start>
+			<end>2014-01-02T00:00:00</end>
+			<quantity>10</quantity>
+			<owner id="3004" operation="Oper3"/>
+		</operationplan>
+		<operationplan id="4016" operation="Oper3C">
+			<start>2014-02-04T00:00:00</start>
+			<end>2014-02-05T00:00:00</end>
+			<quantity>10</quantity>
+			<owner id="3005" operation="Oper3"/>
+		</operationplan>
+		<operationplan id="4005" operation="Oper4">
+			<start>2014-01-04T00:00:00</start>
 			<end>2014-01-05T00:00:00</end>
 			<quantity>10</quantity>
 			<locked>true</locked>
 			<consume_material>false</consume_material>
+			<produce_material>false</produce_material>
+			<consume_capacity>false</consume_capacity>
+		</operationplan>
+		<operationplan id="4006" operation="Oper4">
+			<start>2014-02-01T00:00:00</start>
+			<end>2014-02-05T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+		</operationplan>
+		<operationplan id="4008" operation="Oper4">
+			<start>2014-03-01T00:00:00</start>
+			<end>2014-03-05T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+		</operationplan>
+		<operationplan id="4017" operation="Oper4A">
+			<start>2014-01-04T00:00:00</start>
+			<end>2014-01-05T00:00:00</end>
+			<quantity>10</quantity>
+			<owner id="4005" operation="Oper4"/>
+		</operationplan>
+		<operationplan id="4010" operation="Oper4A">
+			<start>2014-03-01T00:00:00</start>
+			<end>2014-03-05T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+			<owner id="4008" operation="Oper4"/>
+		</operationplan>
+		<operationplan id="4007" operation="Oper4B">
+			<start>2014-02-01T00:00:00</start>
+			<end>2014-02-05T00:00:00</end>
+			<quantity>10</quantity>
+			<locked>true</locked>
+			<owner id="4006" operation="Oper4"/>
 		</operationplan>
 	</operationplans>
 	<problems>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;In1&apos; has material shortage of 20</description>
-			<start>2013-02-01T00:00:00</start>
+			<start>2014-02-01T00:00:00</start>
 			<end>2030-12-31T00:00:00</end>
 			<weight>20</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;In2&apos; has material shortage of 40</description>
-			<start>2013-02-01T00:00:00</start>
+			<start>2014-02-01T00:00:00</start>
 			<end>2030-12-31T00:00:00</end>
 			<weight>40</weight>
+		</problem>
+		<problem>
+			<name>material shortage</name>
+			<description>Buffer &apos;In3&apos; has material shortage of 10</description>
+			<start>2013-12-30T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>10</weight>
+		</problem>
+		<problem>
+			<name>material shortage</name>
+			<description>Buffer &apos;In3A&apos; has material shortage of 13</description>
+			<start>2013-12-30T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>13</weight>
+		</problem>
+		<problem>
+			<name>material shortage</name>
+			<description>Buffer &apos;In3B&apos; has material shortage of 18</description>
+			<start>2013-12-31T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>18</weight>
+		</problem>
+		<problem>
+			<name>material shortage</name>
+			<description>Buffer &apos;In3C&apos; has material shortage of 20</description>
+			<start>2014-01-01T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>20</weight>
+		</problem>
+		<problem>
+			<name>material shortage</name>
+			<description>Buffer &apos;In4&apos; has material shortage of 20</description>
+			<start>2014-02-01T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>20</weight>
+		</problem>
+		<problem>
+			<name>material shortage</name>
+			<description>Buffer &apos;In4A&apos; has material shortage of 20</description>
+			<start>2014-01-04T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>20</weight>
+		</problem>
+		<problem>
+			<name>material shortage</name>
+			<description>Buffer &apos;In4B&apos; has material shortage of 10</description>
+			<start>2014-02-01T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
@@ -150,18 +547,53 @@
 			<weight>40</weight>
 		</problem>
 		<problem>
-			<name>overload</name>
-			<description>Resource &apos;Res1&apos; has capacity shortage of 1</description>
-			<start>2013-12-31T00:00:00</start>
-			<end>2014-01-05T00:00:00</end>
-			<weight>1</weight>
+			<name>material excess</name>
+			<description>Buffer &apos;Out3&apos; has material excess of 10</description>
+			<start>2014-01-02T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>10</weight>
 		</problem>
 		<problem>
-			<name>overload</name>
-			<description>Resource &apos;Res2&apos; has capacity shortage of 1</description>
+			<name>material excess</name>
+			<description>Buffer &apos;Out3A&apos; has material excess of 13</description>
 			<start>2013-12-31T00:00:00</start>
-			<end>2014-01-05T00:00:00</end>
-			<weight>1</weight>
+			<end>2030-12-31T00:00:00</end>
+			<weight>13</weight>
+		</problem>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;Out3B&apos; has material excess of 18</description>
+			<start>2014-01-01T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>18</weight>
+		</problem>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;Out3C&apos; has material excess of 20</description>
+			<start>2014-01-02T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>20</weight>
+		</problem>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;Out4&apos; has material excess of 20</description>
+			<start>2014-02-05T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>20</weight>
+		</problem>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;Out4A&apos; has material excess of 20</description>
+			<start>2014-01-05T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>20</weight>
+		</problem>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;Out4B&apos; has material excess of 10</description>
+			<start>2014-02-05T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>10</weight>
 		</problem>
 	</problems>
 </plan>

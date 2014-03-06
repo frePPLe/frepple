@@ -1764,6 +1764,7 @@ DECLARE_EXPORT void OperationRouting::addSubOperationPlan
     // suboperationplan.
     // No validation of the input data is performed.
     // We assume the child operationplan to be unlocked.
+    // No netting with locked suboperationplans.
     if (!parent->firstsubopplan)
     {
       // First element
@@ -1837,6 +1838,7 @@ DECLARE_EXPORT void OperationRouting::addSubOperationPlan
       // Adjust the unlocked part of the operationplan
       matchingUnlocked->quantity = parent->quantity - child->quantity;
       if (matchingUnlocked->quantity < 0.0) matchingUnlocked->quantity = 0.0;
+      matchingUnlocked->resizeFlowLoadPlans();
     }
     if (prevsub)
     {
@@ -1891,8 +1893,7 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
     return oplan->owner->setQuantity(f,roundDown,upd,execute);
 
   // Compute the correct size for the operationplan
-  if (f!=0.0 && getSizeMinimum()>0.0
-      && f < getSizeMinimum())
+  if (f!=0.0 && getSizeMinimum()>0.0 && f < getSizeMinimum())
   {
     if (roundDown)
     {
@@ -1940,7 +1941,7 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
     if (upd) oplan->owner->resizeFlowLoadPlans();
   }
 
-  // Apply the same size also to its unlocked children  TODO NEED BETTER LOGIC FOR RTG OPS
+  // Apply the same size also to its unlocked children
   if (execute && oplan->firstsubopplan)
     for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)
       if (i->getOperation() != OperationSetup::setupoperation && !i->getLocked())
@@ -1959,22 +1960,41 @@ DECLARE_EXPORT double OperationRouting::setOperationPlanQuantity
   (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const
 {
   assert(oplan);
+  // Call the default logic, implemented on the Operation class
   double origqty = oplan->quantity;
   double newqty = Operation::setOperationPlanQuantity(oplan, f, roundDown, false, execute);
+  if (!execute) return newqty;
 
-  // Apply the same size also to its unlocked children  TODO NEED BETTER LOGIC FOR RTG OPS
-  logger << "bingo" << endl;
-  if (execute && oplan->firstsubopplan)
-    for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)
-      if (i->getOperation() != OperationSetup::setupoperation && !i->getLocked())
+  // Update all routing sub operationplans
+  double delta = newqty - origqty;
+  for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)
+  {
+    if (i->getOperation() == OperationSetup::setupoperation)
+      continue;
+    if (i->getLocked())
+    {
+      // Find the unlocked operationplan on the same operation
+      OperationPlan* match = i->prevsubopplan;
+      while (match && match->getOperation() != i->getOperation())
+        match = match->prevsubopplan;
+      if (match)
       {
-        i->quantity = oplan->quantity;
-        if (upd) i->resizeFlowLoadPlans();
+        match->quantity = newqty - i->quantity;
+        if (match->quantity < 0.0) match->quantity = 0.0;
+        if (upd) match->resizeFlowLoadPlans();
       }
+    }
+    else
+    {
+      i->quantity = newqty;
+      if (upd) i->resizeFlowLoadPlans();
+    }
+  }
 
   // Update the flow and loadplans, and mark for problem detection
   if (upd) oplan->update();
-  return oplan->quantity;
+
+  return newqty;
 }
 
 

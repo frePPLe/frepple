@@ -591,16 +591,6 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
   // It is not valid though when the purpose of the operationplan was to push
   // some material downstream.
 
-  // Resize children
-  /*  TODO BAD!!!!
-  for (OperationPlan *j = firstsubopplan; j; j = j->nextsubopplan)
-    if (j->getOperation() != OperationSetup::setupoperation && !j->getLocked())
-    {
-      j->quantity = quantity;
-      j->resizeFlowLoadPlans();
-    }
-  */
-
   // Notify the demand of the changed delivery
   if (dmd) dmd->setChanged();
 }

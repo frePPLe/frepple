@@ -63,7 +63,9 @@ void OperationPlan::updateProblems()
       (dates.getStart() < Plan::instance().getCurrent() + oper->getFence())
         needsBeforeFence = true;
     }
-    if (nextsubopplan && getDates().getEnd() > nextsubopplan->getDates().getStart())
+    if (nextsubopplan
+      && getDates().getEnd() > nextsubopplan->getDates().getStart()
+      && !nextsubopplan->getLocked())
       needsPrecedence = true;
   }
 

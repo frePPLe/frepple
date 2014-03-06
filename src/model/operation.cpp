@@ -1639,7 +1639,9 @@ PyObject *OperationRouting::addStep(PyObject *self, PyObject *args)
 }
 
 
-DECLARE_EXPORT void Operation::addSubOperationPlan(OperationPlan* parent, OperationPlan* child)
+DECLARE_EXPORT void Operation::addSubOperationPlan(
+  OperationPlan* parent, OperationPlan* child, bool fast
+  )
 {
   // Check
   if (!parent)
@@ -1648,6 +1650,8 @@ DECLARE_EXPORT void Operation::addSubOperationPlan(OperationPlan* parent, Operat
     throw LogicException("Adding null suboperationplan");
   if (child->getOperation() != OperationSetup::setupoperation)
     throw LogicException("Only setup suboperationplans are allowed");
+  if (parent->firstsubopplan)
+    throw LogicException("Expected suboperationplan list to be empty");
 
   // Adding a suboperationplan that was already added
   if (child->owner == parent)  return;
@@ -1656,8 +1660,6 @@ DECLARE_EXPORT void Operation::addSubOperationPlan(OperationPlan* parent, Operat
   if (child->owner) child->owner->eraseSubOperationPlan(child);
 
   // Set as only child operationplan
-  if (parent->firstsubopplan)
-    throw LogicException("Expected suboperationplan list to be empty");
   parent->firstsubopplan = child;
   parent->lastsubopplan = child;
   child->owner = parent;
@@ -1667,21 +1669,32 @@ DECLARE_EXPORT void Operation::addSubOperationPlan(OperationPlan* parent, Operat
 }
 
 
-DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(OperationPlan* parent, OperationPlan* child)
+DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(
+  OperationPlan* parent, OperationPlan* child, bool fast
+  )
 {
   // Check
   if (!parent)
     throw LogicException("Invalid parent for suboperationplan");
   if (!child)
-    throw LogicException("Adding null suboperationplan");
+    throw DataException("Adding null suboperationplan");
 
   // Adding a suboperationplan that was already added
   if (child->owner == parent)  return;
 
-  // Clear the previous owner, if there is one
-  if (child->owner) child->owner->eraseSubOperationPlan(child);
-
-  // TODO We don't check whether the new alternate is a valid suboperation for this alternate. Fast, but less robust...
+  if (!fast)
+  {
+    // Check whether the new alternate is a valid suboperation
+    bool ok = false;
+    const Operationlist& alts = parent->getOperation()->getSubOperations();
+    for (Operationlist::const_iterator i = alts.begin(); i != alts.end(); i++)
+      if (*i == child->getOperation())
+      {
+        ok = true;
+        break;
+      }
+    if (!ok) throw DataException("Invalid alternate suboperationplan");
+  }
 
   // Link in the list, keeping the right ordering
   if (!parent->firstsubopplan)
@@ -1694,7 +1707,7 @@ DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(OperationPlan* paren
   {
     // Remove previous head alternate suboperationplan
     if (parent->firstsubopplan->getLocked())
-      throw LogicException("Can't replace locked alternate suboperationplan");
+      throw DataException("Can't replace locked alternate suboperationplan");
     OperationPlan *tmp = parent->firstsubopplan;
     parent->eraseSubOperationPlan(tmp);
     delete tmp;
@@ -1721,6 +1734,9 @@ DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(OperationPlan* paren
       parent->lastsubopplan = child;
     }
   }
+
+  // Update the owner
+  if (child->owner) child->owner->eraseSubOperationPlan(child);
   child->owner = parent;
 
   // Update the flow and loadplans
@@ -1728,7 +1744,8 @@ DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(OperationPlan* paren
 }
 
 
-DECLARE_EXPORT void OperationRouting::addSubOperationPlan(OperationPlan* parent, OperationPlan* child)
+DECLARE_EXPORT void OperationRouting::addSubOperationPlan
+  (OperationPlan* parent, OperationPlan* child, bool fast)
 {
   // Check
   if (!parent)
@@ -1739,38 +1756,226 @@ DECLARE_EXPORT void OperationRouting::addSubOperationPlan(OperationPlan* parent,
   // Adding a suboperationplan that was already added
   if (child->owner == parent)  return;
 
-  // Clear the previous owner, if there is one
-  if (child->owner) child->owner->eraseSubOperationPlan(child);
-
-  // TODO We don't check whether the suboperation is a valid step for this routing. Fast, but less robust...
-
-  // Link in the list, keeping the right ordering
-  if (!parent->firstsubopplan)
+  // Link in the suoperationplan list
+  if (fast)
   {
-    // First element
-    parent->firstsubopplan = child;
-    parent->lastsubopplan = child;
-  }
-  else if (parent->firstsubopplan->getOperation() != OperationSetup::setupoperation)
-  {
-    // New head
-    child->nextsubopplan = parent->firstsubopplan;
-    parent->firstsubopplan->prevsubopplan = child;
-    parent->firstsubopplan = child;
+    // Method 1: Fast insertion
+    // The new child operationplan is inserted as the first unlocked
+    // suboperationplan.
+    // No validation of the input data is performed.
+    // We assume the child operationplan to be unlocked.
+    if (!parent->firstsubopplan)
+    {
+      // First element
+      parent->firstsubopplan = child;
+      parent->lastsubopplan = child;
+    }
+    else if (parent->firstsubopplan->getOperation() != OperationSetup::setupoperation)
+    {
+      // New head
+      child->nextsubopplan = parent->firstsubopplan;
+      parent->firstsubopplan->prevsubopplan = child;
+      parent->firstsubopplan = child;
+    }
+    else
+    {
+      // Insert right after the setup operationplan
+      OperationPlan *s = parent->firstsubopplan->nextsubopplan;
+      child->nextsubopplan = s;
+      if (s) s->nextsubopplan = child;
+      else parent->lastsubopplan = child;
+    }
   }
   else
   {
-    // Insert right after the setup operationplan
-    OperationPlan *s = parent->firstsubopplan->nextsubopplan;
-    child->nextsubopplan = s;
-    if (s) s->nextsubopplan = child;
-    else parent->lastsubopplan = child;
+    // Method 2: full validation
+    // Child operationplan can be locked or unlocked.
+    // We verify that the new operationplan is a valid step in the routing.
+    // The child element is inserted at the right place in the list, which
+    // considers its status locked/unlocked and its order in the routing.
+    OperationPlan* matchingUnlocked = NULL;
+    OperationPlan* prevsub = parent->firstsubopplan;
+    if (prevsub && prevsub->getOperation() == OperationSetup::setupoperation)
+      prevsub = prevsub->nextsubopplan;
+    if (child->getLocked())
+    {
+      // Advance till first already registered locked suboperationplan
+      while (prevsub && !prevsub->getLocked())
+      {
+        if (prevsub->getOperation() == child->getOperation())
+          matchingUnlocked = prevsub;
+        prevsub = prevsub->nextsubopplan;
+      }
+    }
+    bool ok = false;
+    for (Operationlist::const_iterator i = steps.begin(); i != steps.end(); i++)
+    {
+      if (*i == child->getOperation())
+      {
+        ok = true;
+        break;
+      }
+      if (prevsub && *i == prevsub->getOperation())
+        prevsub = prevsub->nextsubopplan;
+    }
+    if (!ok)
+      throw DataException("Invalid routing suboperationplan");
+    // At this point, we know the operation is a valid step. And the variable
+    // prevsub points to the suboperationplan before which we need to insert
+    // the new suboperationplan.
+    if (prevsub && prevsub->getOperation() == child->getOperation())
+    {
+      if (prevsub->getLocked())
+        throw DataException("Can't replace locked routing suboperationplan");
+      parent->eraseSubOperationPlan(prevsub);
+      OperationPlan* tmp = prevsub->nextsubopplan;
+      delete prevsub;
+      prevsub = tmp;
+    }
+    if (child->getLocked() && matchingUnlocked)
+    {
+      // Adjust the unlocked part of the operationplan
+      matchingUnlocked->quantity = parent->quantity - child->quantity;
+      if (matchingUnlocked->quantity < 0.0) matchingUnlocked->quantity = 0.0;
+    }
+    if (prevsub)
+    {
+      // Append in middle
+      child->nextsubopplan = prevsub;
+      child->prevsubopplan = prevsub->prevsubopplan;
+      if (prevsub->prevsubopplan)
+        prevsub->prevsubopplan->nextsubopplan = child;
+      else
+        parent->firstsubopplan = child;
+      prevsub->prevsubopplan = child;
+    }
+    else if (parent->lastsubopplan)
+    {
+      // Append at end
+      child->prevsubopplan = parent->lastsubopplan;
+      parent->lastsubopplan->nextsubopplan = child;
+      parent->lastsubopplan = child;
+    }
+    else
+    {
+      // First suboperationplan
+      parent->lastsubopplan = child;
+      parent->firstsubopplan = child;
+    }
   }
 
+  // Update the owner
+  if (child->owner) child->owner->eraseSubOperationPlan(child);
   child->owner = parent;
 
   // Update the flow and loadplans
   parent->update();
 }
+
+
+DECLARE_EXPORT double Operation::setOperationPlanQuantity
+  (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const
+{
+  assert(oplan);
+  // No impact on locked operationplans
+  if (oplan->getLocked()) return oplan->quantity;
+
+  // Invalid operationplan: the quantity must be >= 0.
+  if (f < 0)
+    throw DataException("Operationplans can't have negative quantities");
+
+  // Setting a quantity is only allowed on a top operationplan.
+  // One exception: on alternate operations the sizing on the sub-operations is
+  // respected.
+  if (oplan->owner && oplan->owner->getOperation()->getType() != *OperationAlternate::metadata)
+    return oplan->owner->setQuantity(f,roundDown,upd,execute);
+
+  // Compute the correct size for the operationplan
+  if (f!=0.0 && getSizeMinimum()>0.0
+      && f < getSizeMinimum())
+  {
+    if (roundDown)
+    {
+      // Smaller than the minimum quantity, rounding down means... nothing
+      if (!execute) return 0.0;
+      oplan->quantity = 0.0;
+      // Update the flow and loadplans, and mark for problem detection
+      if (upd) oplan->update();
+      // Update the parent of an alternate operationplan
+      if (oplan->owner && oplan->owner->getOperation()->getType() == *OperationAlternate::metadata)
+      {
+        oplan->owner->quantity = 0.0;
+        if (upd) oplan->owner->resizeFlowLoadPlans();
+      }
+      return 0.0;
+    }
+    f = getSizeMinimum();
+  }
+  if (f != 0.0 && f >= getSizeMaximum())
+  {
+    roundDown = true; // force rounddown to stay below the limit
+    f = getSizeMaximum();
+  }
+  if (f!=0.0 && getSizeMultiple()>0.0)
+  {
+    int mult = static_cast<int> (f / getSizeMultiple()
+        + (roundDown ? 0.0 : 0.99999999));
+    double q = mult * getSizeMultiple();
+    if (mult && (q < getSizeMinimum() || q > getSizeMaximum()))
+      throw DataException("Invalid sizing parameters for operation " + getName());
+    if (!execute) return q;
+    oplan->quantity = q;
+  }
+  else
+  {
+    if (!execute) return f;
+    oplan->quantity = f;
+  }
+
+  // Update the parent of an alternate operationplan
+  if (execute && oplan->owner
+      && oplan->owner->getOperation()->getType() == *OperationAlternate::metadata)
+  {
+    oplan->owner->quantity = oplan->quantity;
+    if (upd) oplan->owner->resizeFlowLoadPlans();
+  }
+
+  // Apply the same size also to its unlocked children  TODO NEED BETTER LOGIC FOR RTG OPS
+  if (execute && oplan->firstsubopplan)
+    for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)
+      if (i->getOperation() != OperationSetup::setupoperation && !i->getLocked())
+      {
+        i->quantity = oplan->quantity;
+        if (upd) i->resizeFlowLoadPlans();
+      }
+
+  // Update the flow and loadplans, and mark for problem detection
+  if (upd) oplan->update();
+  return oplan->quantity;
+}
+
+
+DECLARE_EXPORT double OperationRouting::setOperationPlanQuantity
+  (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const
+{
+  assert(oplan);
+  double origqty = oplan->quantity;
+  double newqty = Operation::setOperationPlanQuantity(oplan, f, roundDown, false, execute);
+
+  // Apply the same size also to its unlocked children  TODO NEED BETTER LOGIC FOR RTG OPS
+  logger << "bingo" << endl;
+  if (execute && oplan->firstsubopplan)
+    for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)
+      if (i->getOperation() != OperationSetup::setupoperation && !i->getLocked())
+      {
+        i->quantity = oplan->quantity;
+        if (upd) i->resizeFlowLoadPlans();
+      }
+
+  // Update the flow and loadplans, and mark for problem detection
+  if (upd) oplan->update();
+  return oplan->quantity;
+}
+
 
 } // end namespace

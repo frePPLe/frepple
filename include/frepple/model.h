@@ -1378,6 +1378,13 @@ class Operation : public HasName<Operation>,
     virtual OperationPlanState setOperationPlanParameters
     (OperationPlan*, double, Date, Date, bool=true, bool=true) const = 0;
 
+    /** Updates the quantity of an operationplan.<br>
+      * This method considers the lot size constraints and also propagates
+      * the new quantity to child operationplans.
+      */
+    virtual DECLARE_EXPORT double setOperationPlanQuantity
+      (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const;
+
     /** Returns the location of the operation, which is used to model the
       * working hours and holidays. */
     Location* getLocation() const {return loc;}
@@ -1455,7 +1462,9 @@ class Operation : public HasName<Operation>,
       * @see OperationAlternate::addSubOperationPlan
       * @see OperationRouting::addSubOperationPlan
       */
-    virtual DECLARE_EXPORT void addSubOperationPlan(OperationPlan*, OperationPlan*);
+    virtual DECLARE_EXPORT void addSubOperationPlan(
+      OperationPlan*, OperationPlan*, bool=true
+      );
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -1782,8 +1791,11 @@ class OperationPlan
       * This method can only be called on top operationplans. Sub operation
       * plans should pass on a call to the parent operationplan.
       */
-    virtual DECLARE_EXPORT double setQuantity(double f,
-        bool roundDown = false, bool update = true, bool execute = true);
+    DECLARE_EXPORT double setQuantity(double f,
+        bool roundDown = false, bool update = true, bool execute = true)
+    {
+      return oper->setOperationPlanQuantity(this, f, roundDown, update, execute);
+    }
 
     /** Returns a pointer to the demand for which this operationplan is a delivery.
       * If the operationplan isn't a delivery, this is a NULL pointer.
@@ -1874,10 +1886,17 @@ class OperationPlan
       */
     void restore(const OperationPlanState& x);
 
-    /** Updates the operationplan owning this operationplan. In case of
-      * a OperationRouting steps this will be the operationplan representing the
-      * complete routing. */
-    void DECLARE_EXPORT setOwner(OperationPlan* o);
+    /** Updates the operationplan owning this operationplan.<br>
+      * The optional extra argument specifies whether we need to complete
+      * validation of the parent-child operation or not. Validation is
+      * necessary to validate input from the user. But when the owner field
+      * is set in the solver internally, we can skip validation to keep
+      * performance high.
+      * @see Operation::addSubOperationPlan
+      * @see OperationAlternate::addSubOperationPlan
+      * @see OperationRouting::addSubOperationPlan
+      */
+    void DECLARE_EXPORT setOwner(OperationPlan* o, bool=true);
 
     /** Returns a pointer to the operationplan for which this operationplan
       * a sub-operationplan.<br>
@@ -2454,8 +2473,24 @@ class OperationRouting : public Operation
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
     (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
-    /** Add a new child operationplan. */
-    virtual DECLARE_EXPORT void addSubOperationPlan(OperationPlan*, OperationPlan*);
+    DECLARE_EXPORT double setOperationPlanQuantity
+      (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const;
+
+    /** Add a new child operationplan.
+      * A routing operationplan has a series of suboperationplans:
+      *   - A setup operationplan if the routing operation loads a resource
+      *     which requires a specific setup.
+      *   - A number of unlocked operationplans (one for each step in the
+      *     routing) representing production not yet started.
+      *   - A number of locked operationplan (one for each step in the routing)
+      *     representing production which is already started or finished.
+      * The sum of the quantity of the locked and unlocked operationplans of
+      * each step should be equal to the quantity of top routing operationplan.<br>
+      * The fast insert does insertion at the front of the unlocked operationplans.
+      */
+    virtual DECLARE_EXPORT void addSubOperationPlan(
+      OperationPlan*, OperationPlan*, bool = true
+      );
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -2465,7 +2500,7 @@ class OperationRouting : public Operation
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
-    /** Return a list of all sub-operationplans. */
+    /** Return a list of all sub-operations. */
     virtual const Operationlist& getSubOperations() const {return steps;}
 
     virtual const MetaClass& getType() const {return *metadata;}
@@ -2587,8 +2622,16 @@ class OperationAlternate : public Operation
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
     (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
-    /** Add a new child operationplan. */
-    virtual DECLARE_EXPORT void addSubOperationPlan(OperationPlan*, OperationPlan*);
+    /** Add a new child operationplan.
+      * An alternate operationplan plan can have a maximum of 2
+      * suboperationplans:
+      *  - A setup operationplan if the alternate top-operation loads a
+      *    resource requiring a specific setup.
+      *  - An operationplan of any of the allowed suboperations.
+      */
+    virtual DECLARE_EXPORT void addSubOperationPlan(
+      OperationPlan*, OperationPlan*, bool=true
+      );
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;

@@ -533,43 +533,52 @@ class GridReport(View):
     '''
     Applies a sort to the query.
     '''
-    asc = True
-    sort = None
-    if 'sidx' in request.GET:
-      sort = request.GET['sidx']
-      if 'sord' in request.GET and request.GET['sord'] == 'desc': asc = False
-    if not sort:
-      if prefs and 'sidx' in prefs:
-        sort = prefs['sidx']
-        if 'sord' in prefs and prefs['sord'] == 'desc': asc = False
-      if not sort and reportclass.default_sort:
-        sort = reportclass.rows[reportclass.default_sort[0]].name
-        if reportclass.default_sort[1] == 'desc': asc = False
+    sidx = request.GET.get('sidx',None)
+    if sidx:
+      # Sorting arguments found in the URL
+      sortstring = "%s%s" % (sidx, request.GET.get('sord','asc'))
+      sortargs = [ i.endswith(" desc") and ("-%s" % i[:-5]) or i[:-4] for i in sortstring.split(', ') ]
+      return query.order_by(*sortargs)
+    if prefs:
+      sidx = prefs.get('sidx',None)
+      if sidx:
+        # Sort arguments from preferences
+        sortstring = "%s%s" % (prefs.get, prefs.get('sord','asc'))
+        sortargs = [ i.endswith(" desc") and ("-%s" % i[:-5]) or i[:-4] for i in sortstring.split(', ') ]
+        return query.order_by(*sortargs)
+    if reportclass.default_sort:
+      # Default sort of the report
+      if reportclass.default_sort[1] == "desc":
+        return query.order_by("-%s" % reportclass.rows[reportclass.default_sort[0]].name)
       else:
-        return query # No sorting
-    return query.order_by(asc and sort or ('-%s' % sort))
+        return query.order_by(reportclass.rows[reportclass.default_sort[0]].name)
+    # No sorting at all
+    return query
 
+  @classmethod
+  def getColumnIndex(reportclass, name):
+    sort = 1
+    for r in reportclass.rows:
+      if r.name == name: return sort
+      sort += 1
+    return 1
 
   @classmethod
   def get_sort(reportclass, request):
-    try:
-      if 'sidx' in request.GET:
-        sort = 1
-        ok = False
-        for r in reportclass.rows:
-          if r.name == request.GET['sidx']:
-            ok = True
-            break
-          sort += 1
-        if not ok: sort = reportclass.default_sort[0]
+    sidx = request.GET.get('sidx',None)
+    if sidx:
+      # Sorting arguments found in the URL
+      sortstring = "%s%s" % (sidx, request.GET.get('sord','asc'))
+      sortargs = [ i.endswith(" desc") and ("%s desc" % reportclass.getColumnIndex(i[:-5])) or ("%s asc" % reportclass.getColumnIndex(i[:-4])) for i in sortstring.split(', ') ]
+      return ', '.join(sortargs)
+    if reportclass.default_sort:
+      # Default sort of the report
+      if reportclass.default_sort[1] == "desc":
+        return "%s desc" % reportclass.getColumnIndex(reportclass.rows[reportclass.default_sort[0]])
       else:
-        sort = reportclass.default_sort[0]
-    except:
-      sort = reportclass.default_sort[0]
-    if ('sord' in request.GET and request.GET['sord'] == 'desc') or reportclass.default_sort[1] == 'desc':
-      return "%s asc" % sort
-    else:
-      return "%s desc" % sort
+        return reportclass.getColumnIndex(reportclass.rows[reportclass.default_sort[0]])
+    # No sorting at all
+    return "1 asc"
 
 
   @classmethod

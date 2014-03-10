@@ -515,13 +515,14 @@ class Command(BaseCommand):
           operation = u'Ship %s @ %s' % (product, location)
           buffer = u'%s @ %s' % (product, location)
           deliveries.update([(product,location,operation,buffer),])
+          due = datetime.strptime(j['requested_date'] or j['date_order'], '%Y-%m-%d')
           if name in frepple_keys:
             update.append( (
               product,
               customer,
               i['product_uom_qty'],
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
-              j['requested_date'] or j['date_order'],
+              due,
               operation,
               source,
               name,
@@ -532,7 +533,7 @@ class Command(BaseCommand):
               customer,
               i['product_uom_qty'],
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
-              j['requested_date'] or j['date_order'],
+              due,
               operation,
               source,
               name,
@@ -816,14 +817,14 @@ class Command(BaseCommand):
         location = j['location_id'] and self.locations.get(j['location_id'][0], None) or None
         if location and item in frepple_items and j['state'] in ('approved','draft') and not j['shipped']:
           operation = u'Purchase %s @ %s' % (item, location)
+          due = datetime.strptime(i['date_planned'], '%Y-%m-%d')
           if i['id'] in frepple_keys:
             update.append( (
-               operation, i['date_planned'], i['date_planned'], i['product_qty'], i['id']
+               operation, due, due, i['product_qty'], i['id']
               ) )
           else:
             insert.append( (
-               operation, i['date_planned'], i['product_qty'], i['id'],
-               operation, item, location
+               i['id'], operation, due, due, i['product_qty']
               ) )
           deliveries.update([(item,location,operation,u'%s @ %s' % (item, location)),])
         elif id in frepple_keys:
@@ -873,7 +874,7 @@ class Command(BaseCommand):
         "insert into operationplan \
           (id,operation_id,startdate,enddate,quantity,locked,source,lastmodified) \
           values(%%s,%%s,%%s,%%s,%%s,'1','OpenERP','%s')" % self.date,
-        [ (i[3], i[0], i[1], i[1], i[2], ) for i in insert ]
+        insert
         )
       cursor.executemany(
         "update operationplan \
@@ -996,7 +997,7 @@ class Command(BaseCommand):
       for i in self.openerp_data('mrp.bom', ids, fields):
         # Determine the location
         if i['routing_id']:
-          location = openerp_mfg_routings.get(i['routing_id'][0], self.openerp_production_location)
+          location = openerp_mfg_routings.get(i['routing_id'][0], None) or self.openerp_production_location
         else:
           location = self.openerp_production_location
 

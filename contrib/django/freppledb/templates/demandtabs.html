@@ -1,10 +1,10 @@
 {% load i18n %}
 <div class="ui-tabs" id="tabs">
-<ul class="ui-tabs-nav ui-helper-clearfix">
-{% if perms.input.change_demand %}<li class="ui-state-default ui-corner-top {% ifequal active_tab 'edit' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/data/input/demand/{{object_id|urlencode}}/">{% trans 'Edit' %}</a></li>{% endif %}
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'constraint' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/constraintdemand/{{object_id|urlencode}}/">{% trans 'Why short or late?' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'plan' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/demandpegging/{{object_id|urlencode}}/">{% trans 'Plan' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/comments/input/demand/{{object_id|urlencode}}/">{% trans 'Comments' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'history' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/data/input/demand/{{object_id|urlencode}}/history/">{% trans 'History' %}</a></li>
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix" role="tablist">
+{% if perms.input.change_demand %}<li class="ui-state-default ui-corner-top {% if not active_tab %}ui-tabs-active ui-state-active {% endif %}" role="tab" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/demand/{{object_id|urlencode}}/">{% trans 'Edit' %}</a></li>{% endif %}
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'constraint' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/constraintdemand/{{object_id|urlencode}}/">{% trans 'Why short or late?' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'plan' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/demandpegging/{{object_id|urlencode}}/">{% trans 'Plan' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/comments/input/demand/{{object_id|urlencode}}/">{% trans 'Comments' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'history' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/demand/{{object_id|urlencode}}/history/">{% trans 'History' %}</a></li>
 </ul>
 </div>

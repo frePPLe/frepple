@@ -1,13 +1,13 @@
 {% load i18n %}
 <div class="ui-tabs" id="tabs">
-<ul class="ui-tabs-nav ui-helper-clearfix">
-{% if perms.input.change_operation %}<li class="ui-state-default ui-corner-top {% ifequal active_tab 'edit' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/data/input/operation/{{object_id|urlencode}}/">{% trans 'Edit' %}</a></li>{% endif %}
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'supplypath' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/supplypath/operation/{{object_id|urlencode}}/">{% trans 'Supply Path' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'whereused' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/whereused/operation/{{object_id|urlencode}}/">{% trans 'Where Used' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'plan' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/operation/{{object_id|urlencode}}/">{% trans 'Plan' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'plandetail' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/operationplan/{{object_id|urlencode}}/">{% trans 'Plan detail' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'constraint' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/constraint/?entity=operation&amp;owner={{object_id|urlencode}}">{% trans 'Constrained demand' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/comments/input/operation/{{object_id|urlencode}}/">{% trans 'Comments' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'history' %}ui-tabs-selected ui-state-active {% endifequal %}"><a href="{{request.prefix}}/data/input/operation/{{object_id|urlencode}}/history/">{% trans 'History' %}</a></li>
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix" role="tablist">
+{% if perms.input.change_operation %}<li class="ui-state-default ui-corner-top {% if not active_tab %}ui-tabs-active ui-state-active {% endif %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/operation/{{object_id|urlencode}}/">{% trans 'Edit' %}</a></li>{% endif %}
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'supplypath' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/supplypath/operation/{{object_id|urlencode}}/">{% trans 'Supply Path' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'whereused' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/whereused/operation/{{object_id|urlencode}}/">{% trans 'Where Used' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'plan' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/operation/{{object_id|urlencode}}/">{% trans 'Plan' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'plandetail' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/operationplan/{{object_id|urlencode}}/">{% trans 'Plan detail' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'constraint' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/constraint/?entity=operation&amp;owner={{object_id|urlencode}}">{% trans 'Constrained demand' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/comments/input/operation/{{object_id|urlencode}}/">{% trans 'Comments' %}</a></li>
+<li class="ui-state-default ui-corner-top {% ifequal active_tab 'history' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/operation/{{object_id|urlencode}}/history/">{% trans 'History' %}</a></li>
 </ul>
 </div>

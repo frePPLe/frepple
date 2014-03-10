@@ -1062,114 +1062,113 @@ class GridReport(View):
         ws = wb.worksheets[0]
         has_pk_field = False
         for row in ws.iter_rows():
-          with transaction.atomic(using=request.database):
-            rownumber += 1
+          rownumber += 1
 
-            ### Case 1: The first line is read as a header line
-            if rownumber == 1:
+          ### Case 1: The first line is read as a header line
+          if rownumber == 1:
+            for col in row:
+              col = unicode(col.internal_value).strip().strip('#').lower()
+              if col == "":
+                headers.append(False)
+                continue
+              ok = False
+              for i in reportclass.model._meta.fields:
+                if col == i.name.lower() or col == i.verbose_name.lower():
+                  if i.editable == True:
+                    headers.append(i)
+                  else:
+                    headers.append(False)
+                  ok = True
+                  break
+              if not ok: errors.append(_('Incorrect field %(column)s') % {'column': col})
+              if col == reportclass.model._meta.pk.name.lower() \
+                or col == reportclass.model._meta.pk.verbose_name.lower():
+                  has_pk_field = True
+            if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
+              # The primary key is not an auto-generated id and it is not mapped in the input...
+              errors.append(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name})
+            # Abort when there are errors
+            if len(errors) > 0: break
+
+            # Create a form class that will be used to validate the data
+            UploadForm = modelform_factory(reportclass.model,
+              fields = tuple([i.name for i in headers if isinstance(i,Field)]),
+              formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
+              )
+
+          ### Case 2: Skip empty rows and comments rows
+          elif len(row) == 0 or (isinstance(row[0].internal_value, six.string_types) and row[0].internal_value.startswith('#')):
+            continue
+
+          ### Case 3: Process a data row
+          else:
+            try:
+              # Step 1: Build a dictionary with all data fields
+              d = {}
+              colnum = 0
               for col in row:
-                col = unicode(col.internal_value).strip().strip('#').lower()
-                if col == "":
-                  headers.append(False)
-                  continue
-                ok = False
-                for i in reportclass.model._meta.fields:
-                  if col == i.name.lower() or col == i.verbose_name.lower():
-                    if i.editable == True:
-                      headers.append(i)
-                    else:
-                      headers.append(False)
-                    ok = True
-                    break
-                if not ok: errors.append(_('Incorrect field %(column)s') % {'column': col})
-                if col == reportclass.model._meta.pk.name.lower() \
-                  or col == reportclass.model._meta.pk.verbose_name.lower():
-                    has_pk_field = True
-              if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
-                # The primary key is not an auto-generated id and it is not mapped in the input...
-                errors.append(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name})
-              # Abort when there are errors
-              if len(errors) > 0: break
+                # More fields in data row than headers. Move on to the next row.
+                if colnum >= len(headers): break
+                if isinstance(headers[colnum],Field):
+                  data = col.internal_value
+                  if isinstance(headers[colnum],CharField):
+                    if data: data = data.strip()
+                  elif isinstance(headers[colnum], (IntegerField, AutoField)):
+                    if isinstance(data, numericTypes): data = int(data)
+                  d[headers[colnum].name] = data
+                colnum += 1
 
-              # Create a form class that will be used to validate the data
-              UploadForm = modelform_factory(reportclass.model,
-                fields = tuple([i.name for i in headers if isinstance(i,Field)]),
-                formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
-                )
-
-            ### Case 2: Skip empty rows and comments rows
-            elif len(row) == 0 or (isinstance(row[0].internal_value, six.string_types) and row[0].internal_value.startswith('#')):
-              continue
-
-            ### Case 3: Process a data row
-            else:
-              try:
-                # Step 1: Build a dictionary with all data fields
-                d = {}
-                colnum = 0
-                for col in row:
-                  # More fields in data row than headers. Move on to the next row.
-                  if colnum >= len(headers): break
-                  if isinstance(headers[colnum],Field):
-                    data = col.internal_value
-                    if isinstance(headers[colnum],CharField):
-                      if data: data = data.strip()
-                    elif isinstance(headers[colnum], (IntegerField, AutoField)):
-                      if isinstance(data, numericTypes): data = int(data)
-                    d[headers[colnum].name] = data
-                  colnum += 1
-
-                # Step 2: Fill the form with data, either updating an existing
-                # instance or creating a new one.
-                if has_pk_field:
-                  # A primary key is part of the input fields
-                  try:
-                    # Try to find an existing record with the same primary key
-                    it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
-                    form = UploadForm(d, instance=it)
-                  except reportclass.model.DoesNotExist:
-                    form = UploadForm(d)
-                    it = None
-                else:
-                  # No primary key required for this model
+              # Step 2: Fill the form with data, either updating an existing
+              # instance or creating a new one.
+              if has_pk_field:
+                # A primary key is part of the input fields
+                try:
+                  # Try to find an existing record with the same primary key
+                  it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
+                  form = UploadForm(d, instance=it)
+                except reportclass.model.DoesNotExist:
                   form = UploadForm(d)
                   it = None
+              else:
+                # No primary key required for this model
+                form = UploadForm(d)
+                it = None
 
-                # Step 3: Validate the data and save to the database
-                if form.has_changed():
-                  try:
-                    obj = form.save()
-                    LogEntry(
-                        user_id         = request.user.pk,
-                        content_type_id = content_type_id,
-                        object_id       = obj.pk,
-                        object_repr     = force_unicode(obj),
-                        action_flag     = it and CHANGE or ADDITION,
-                        change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                    ).save(using=request.database)
-                    if it:
-                      changed += 1
-                    else:
-                      added += 1
-                  except Exception as e:
-                    # Validation fails
-                    for error in form.non_field_errors():
+              # Step 3: Validate the data and save to the database
+              if form.has_changed():
+                try:
+                  obj = form.save()
+                  LogEntry(
+                      user_id         = request.user.pk,
+                      content_type_id = content_type_id,
+                      object_id       = obj.pk,
+                      object_repr     = force_unicode(obj),
+                      action_flag     = it and CHANGE or ADDITION,
+                      change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                  ).save(using=request.database)
+                  if it:
+                    changed += 1
+                  else:
+                    added += 1
+                except Exception as e:
+                  # Validation fails
+                  for error in form.non_field_errors():
+                    warnings.append(
+                      _('Row %(rownum)s: %(message)s') % {
+                        'rownum': rownumber, 'message': error
+                      })
+                  for field in form:
+                    for error in field.errors:
                       warnings.append(
-                        _('Row %(rownum)s: %(message)s') % {
-                          'rownum': rownumber, 'message': error
+                        _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                          'rownum': rownumber, 'data': d[field.name],
+                          'field': field.name, 'message': error
                         })
-                    for field in form:
-                      for error in field.errors:
-                        warnings.append(
-                          _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
-                            'rownum': rownumber, 'data': d[field.name],
-                            'field': field.name, 'message': error
-                          })
 
-                # Step 4: Commit the database changes from time to time
-                if rownumber % 500 == 0: transaction.commit(using=request.database)
-              except Exception as e:
-                errors.append(_("Exception during upload: %(message)s") % {'message': e,})
+              # Step 4: Commit the database changes from time to time
+              if rownumber % 500 == 0: transaction.commit(using=request.database)
+            except Exception as e:
+              errors.append(_("Exception during upload: %(message)s") % {'message': e,})
       finally:
         transaction.commit(using=request.database)
         transaction.leave_transaction_management(using=request.database)

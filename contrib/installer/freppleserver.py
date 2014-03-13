@@ -234,7 +234,6 @@ class SysTrayIcon:
         menu_action(self)
 
 def non_string_iterable(obj):
-    print ('itere', obj)
     try:
         iter(obj)
     except TypeError:

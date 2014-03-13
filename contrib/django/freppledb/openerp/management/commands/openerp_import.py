@@ -900,7 +900,7 @@ class Command(BaseCommand):
 
 
   # Importing boms
-  #   - extracting recently changed mrp.bom objects
+  #   - extracting mrp.bom, mrp.routing.workcenter and mrp.routing.workcenter objects
   #   - not supported yet:
   #        - date effectivity
   #        - phantom boms
@@ -995,6 +995,7 @@ class Command(BaseCommand):
       fields = ['name', 'active', 'product_qty','date_start','date_stop','product_efficiency',
         'product_id','routing_id','bom_id','type','sub_products','product_rounding',]
       for i in self.openerp_data('mrp.bom', ids, fields):
+        # TODO Handle routing steps
         # Determine the location
         if i['routing_id']:
           location = openerp_mfg_routings.get(i['routing_id'][0], None) or self.openerp_production_location
@@ -1040,7 +1041,7 @@ class Command(BaseCommand):
               ) )
           # Create workcentre loads
           if i['routing_id']:
-            for j in routing_workcenters[i['routing_id'][0]]:
+            for j in routing_workcenters.get(i['routing_id'][0],[]):
               if (j[0],operation) in frepple_loads:
                 load_update.append((
                   j[1], operation, j[0]

@@ -69,6 +69,14 @@ class Command(BaseCommand):
     self.openerp_password = Parameter.getValue("openerp.password", self.database)
     self.openerp_db = Parameter.getValue("openerp.db", self.database)
     self.openerp_url = Parameter.getValue("openerp.url", self.database)
+    if not self.openerp_user:
+      raise CommandError("Missing or invalid parameter openerp_user")
+    if not self.openerp_password:
+      raise CommandError("Missing or invalid parameter openerp_password")
+    if not self.openerp_db:
+      raise CommandError("Missing or invalid parameter openerp_db")
+    if not self.openerp_url:
+      raise CommandError("Missing or invalid parameter openerp_url")
 
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all SQL

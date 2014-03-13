@@ -211,10 +211,6 @@ def LaunchTask(request, action):
       raise Http404('Invalid launching task')
 
     # Launch a worker process
-    if sys.platform in ['windows','win32','win64']:
-      extra_args = {"creationflags": 0x08000000} # Don't create a console window
-    else:
-      extra_args = {}
     if not checkActive(worker_database):
       if os.path.isfile(os.path.join(settings.FREPPLE_APP,"frepplectl.py")):
         # Development layout
@@ -223,21 +219,21 @@ def LaunchTask(request, action):
           os.path.join(settings.FREPPLE_APP,"frepplectl.py"),
           "frepple_runworker",
           "--database=%s" % worker_database
-          ], **extra_args)
-      elif sys.executable.find('frepplectl.exe') >= 0:
+          ])
+      elif sys.executable.find('freppleserver.exe') >= 0:
         # Py2exe executable
         Popen([
-          sys.executable, # Python executable
+          sys.executable.replace('freppleserver.exe','frepplectl.exe'), # frepplectl executable
           "frepple_runworker",
           "--database=%s" % worker_database
-          ], **extra_args)
+          ], creationflags=0x08000000) # Do not create a console window
       else:
         # Linux standard installation
         Popen([
           "frepplectl",
           "frepple_runworker",
           "--database=%s" % worker_database
-          ], **extra_args)
+          ])
 
     # Task created successfully
     return HttpResponseRedirect('%s/execute/' % request.prefix)

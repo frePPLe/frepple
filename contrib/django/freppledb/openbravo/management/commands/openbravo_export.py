@@ -63,6 +63,14 @@ class Command(BaseCommand):
     self.openbravo_password = Parameter.getValue("openbravo.password", self.database)
     self.openbravo_host = Parameter.getValue("openbravo.host", self.database)
     self.openbravo_organization = Parameter.getValue("openbravo.organization", self.database)
+    if not self.openbravo_user:
+      raise CommandError("Missing or invalid parameter openbravo_user")
+    if not self.openbravo_password:
+      raise CommandError("Missing or invalid parameter openbravo_password")
+    if not self.openbravo_host:
+      raise CommandError("Missing or invalid parameter openbravo_host")
+    if not self.openbravo_organization:
+      raise CommandError("Missing or invalid parameter openbravo_organization")
 
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all SQL

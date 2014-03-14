@@ -199,7 +199,7 @@ def exportOperations(cursor):
 
 
 def exportSubOperations(cursor):
-  return # TODO
+  #return # TODO
   print("Exporting suboperations...")
   starttime = time()
   cursor.execute("SELECT operation_id, suboperation_id FROM suboperation")
@@ -214,12 +214,16 @@ def exportSubOperations(cursor):
         for j in i.steps:
           yield i, j
 
+  # TODO: the 'alternates' property of an operation_alternate returns directly
+  # the related operations. This means that information such as prioerity,
+  # effective_start and effective_end are not available
   cursor.executemany(
     "insert into suboperation \
     (operation_id,suboperation_id,priority,effective_start,effective_end,lastmodified) \
     values(%s,%s,%s,%s,%s,%s)",
     [(
-       i[0].name, i[1].name, i[1].priority, i[1].effective_start, i[1].effective_end, timestamp
+       #i[0].name, i[1].name, i[1].priority, i[1].effective_start, i[1].effective_end, timestamp
+       i[0].name, i[1].name, 1, None, None, timestamp
      ) for i in subops() if i not in primary_keys
     ])
   cursor.executemany(
@@ -227,7 +231,8 @@ def exportSubOperations(cursor):
      set priority=%s, effective_start=%s, effective_end=%s, lastmodified=%s \
      where operation_id=%s and suboperation_id=%s",
     [(
-       i[1].priority, i[1].effective_start, i[1].effective_end, timestamp, i[0].name, i[1].name
+       #i[1].priority, i[1].effective_start, i[1].effective_end, timestamp, i[0].name, i[1].name
+       1, None, None, timestamp, i[0].name, i[1].name
      ) for i in subops() if i in primary_keys
     ])
   transaction.commit(using=database)

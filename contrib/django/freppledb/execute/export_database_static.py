@@ -26,7 +26,7 @@ database records with the information. The Django database wrappers are used
 to keep the code portable between different databases.
 '''
 from __future__ import print_function
-from datetime import datetime
+import datetime
 from time import time
 from threading import Thread
 import inspect, os
@@ -41,7 +41,17 @@ if 'FREPPLE_DATABASE' in os.environ:
 else:
   database = DEFAULT_DB_ALIAS
 
-timestamp = str(datetime.now())
+timestamp = str(datetime.datetime.now())
+
+def int_to_time(i):
+  hour = i // 3600
+  i -= (hour * 3600)
+  minute = i // 60
+  i -= (minute * 60)
+  second = i
+  if hour >= 24:
+    hour -= 24
+  return datetime.time(hour, minute, second)
 
 
 def exportLocations(cursor):
@@ -122,7 +132,7 @@ def exportCalendarBuckets(cursor):
        round(i.value,settings.DECIMAL_PLACES),
        (i.days & 1) and True or False, (i.days & 2) and True or False, (i.days & 4) and True or False,
        (i.days & 8) and True or False, (i.days & 16) and True or False, (i.days & 32) and True or False,
-       (i.days & 64) and True or False, i.starttime, i.endtime, timestamp
+       (i.days & 64) and True or False, int_to_time(i.starttime), int_to_time(i.endtime), timestamp
       ) for i in buckets() if (i.calendar.name, i.id) not in primary_keys
     ])
   cursor.executemany(
@@ -136,7 +146,7 @@ def exportCalendarBuckets(cursor):
        round(i.value,settings.DECIMAL_PLACES), timestamp,
        (i.days & 1) and True or False, (i.days & 2) and True or False, (i.days & 4) and True or False,
        (i.days & 8) and True or False, (i.days & 16) and True or False, (i.days & 32) and True or False,
-       (i.days & 64) and True or False, i.starttime, i.endtime,
+       (i.days & 64) and True or False, int_to_time(i.starttime), int_to_time(i.endtime),
        i.calendar.name, i.id
      ) for i in buckets() if (i.calendar.name, i.id) in primary_keys
     ])
@@ -772,7 +782,7 @@ def exportfrepple():
   # and cpu time.
   settings.DEBUG = False
   global timestamp
-  timestamp = str(datetime.now())
+  timestamp = str(datetime.datetime.now())
 
   # Create a database connection
   cursor = connections[database].cursor()

@@ -1528,9 +1528,16 @@ DECLARE_EXPORT PyObject* OperationAlternate::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_alternates))
   {
     PyObject* result = PyTuple_New(getSubOperations().size());
+    alternatePropertyList::const_iterator j = alternateProperties.begin();
     int count = 0;
-    for (Operation::Operationlist::const_iterator i = getSubOperations().begin(); i != getSubOperations().end(); ++i)
-      PyTuple_SetItem(result, count++, PythonObject(*i));
+    for (Operation::Operationlist::const_iterator i = getSubOperations().begin();
+      i != getSubOperations().end(); i++, j++)
+      PyTuple_SetItem(result, count++, Py_BuildValue("(OiNN)",
+        static_cast<PyObject*>(*i),
+        j->first,
+        static_cast<PyObject*>(PythonObject(j->second.getStart())),
+        static_cast<PyObject*>(PythonObject(j->second.getEnd()))
+        ));
     return result;
   }
   if (attr.isA(Tags::tag_search))

@@ -83,8 +83,8 @@ Echoing operations:
     Load: Resource 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: make or buy item None None None
     Flow: end item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
-    Alternate: make item
-    Alternate: buy item
+    Alternate: make item 1 1971-01-01 00:00:00 2030-12-31 00:00:00
+    Alternate: buy item 2 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: setup operation None None None
 
 Echoing demands:

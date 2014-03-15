@@ -107,7 +107,7 @@ def printModel(filename):
       print("    Flow:", l.buffer.name, l.quantity, l.effective_start, l.effective_end, file=output)
     if isinstance(b, frepple.operation_alternate):
       for l in b.alternates:
-        print("    Alternate:", l.name, file=output)
+        print("    Alternate:", l[0].name, l[1], l[2], l[3], file=output)
     if isinstance(b, frepple.operation_routing):
       for l in b.steps:
         print("    Step:", l.name, file=output)

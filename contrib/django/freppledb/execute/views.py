@@ -139,6 +139,8 @@ def LaunchTask(request, action):
     # C
     elif action == 'empty database':
       task = Task(name='empty database', submitted=now, status='Waiting', user=request.user)
+      if not request.POST.get('all'):
+        task.arguments = "--models=%s" % ','.join(request.POST.getlist('entities'))
       task.save(using=request.database)
     # D
     elif action == 'load dataset':

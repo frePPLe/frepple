@@ -16,7 +16,9 @@
 #
 
 from decimal import Decimal
+import json
 
+from django.db import models
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.template.loader import get_template
 from django.conf import settings
@@ -321,6 +323,33 @@ register.tag('getMenu', getMenu)
 
 
 #
+# Tag to get a JSON string with all models and their child models
+#
+class ModelDependenciesNode(Node):
+  r'''
+  A tag to return JSON string with all models and their dependencies
+  '''
+  def render(self, context):
+    return json.dumps({
+      "%s.%s" % (i._meta.app_label, i._meta.model_name): [
+        "%s.%s" % (j[0].model._meta.app_label, j[0].model._meta.model_name)
+        for j in i._meta.get_all_related_objects_with_model()
+        if j[0].model != i
+        ]
+      for i in models.get_models(include_auto_created=True)
+      })
+
+  def __repr__(self):
+    return "<getModelDependencies Node>"
+
+
+def getModelDependencies(parser, token):
+  return ModelDependenciesNode()
+
+register.tag('getModelDependencies', getModelDependencies)
+
+
+#
 # Tag to display a dashboard
 #
 class DashboardNode(Node):
@@ -338,8 +367,8 @@ class DashboardNode(Node):
     context[self.varname] = [ {'width': i['width'], 'widgets': [ reg[j[0]](**j[1]) for j in i['widgets'] if reg[j[0]].has_permission(req.user)]} for i in settings.DEFAULT_DASHBOARD ]
     return ''
 
-    def __repr__(self):
-      return "<getDashboard Node>"
+  def __repr__(self):
+    return "<getDashboard Node>"
 
 
 def getDashboard(parser, token):

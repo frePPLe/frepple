@@ -18,10 +18,12 @@
 import operator
 
 from django.utils.encoding import force_unicode
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import capfirst
+
+from freppledb.common.models import User
 
 import logging
 logger = logging.getLogger(__name__)
@@ -29,7 +31,8 @@ logger = logging.getLogger(__name__)
 
 class MenuItem:
 
-  def __init__(self, name, model=None, report=None, url=None, javascript=None, label=None, index=None, prefix=True, window=False):
+  def __init__(self, name, model=None, report=None, url=None, javascript=None,
+        label=None, index=None, prefix=True, window=False):
     self.name = name
     self.url = url
     self.javascript = javascript
@@ -42,6 +45,7 @@ class MenuItem:
     self.index = index
     self.prefix = prefix
     self.window = window
+    self.excludeFromBulkOperations = model in (Group, User) # A bit of a hack to put this here
 
   def __unicode__(self):
     return self.name
@@ -162,9 +166,11 @@ class Menu:
     # Lookup in the cache
     m = self._cached_menu.get(language, None)
     if m: return m
+
     # Build new menu for this language
     # Sort the groups by 1) id and 2) order of append.
     self._groups.sort(key=operator.itemgetter(2))
+
     # Build the list of items in each group
     m = []
     for i in self._groups:
@@ -174,6 +180,7 @@ class Menu:
       # Sort by 1) id and 2) label. Note that the order can be different for each language!
       items.sort(key=operator.itemgetter(0,1))
       m.append( ( force_unicode(i[1]), items ))
+
     # Put the new result in the cache and return
     self._cached_menu[language] = m
     return m

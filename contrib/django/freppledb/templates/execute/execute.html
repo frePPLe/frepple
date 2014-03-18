@@ -96,6 +96,14 @@
 	  $("#util").html( (util * 100).toFixed(1) );
   }
 
+  function checkChildren(id)
+  {
+    var m = id.substring(6,100);
+    $("#" + id.replace(".","\\.")).prop("checked",true);  // Jquery has issues with dots in identifiers
+    for (var child in models[m])
+      checkChildren("empty_" + models[m][child]);
+  }
+
   $(function() {
     // Buttons
     $("input:submit,#logfile").button();
@@ -114,14 +122,24 @@
     refresh = setInterval(function() {
       $("#grid").trigger("reloadGrid",[{current:true}]);
       }, 5000);{% endif %}
-    // Checkbox for workbook export
+    // Checkboxes for workbook export
     $(".chck_all").click( function() {
       $(".chck_entity").prop("checked", $(this).prop("checked"));
       });
     $(".chck_entity").click( function() {
       $(".chck_all").prop("checked",$(".chck_entity:not(:checked)").length == 0);
       });
+    // Checkboxes for emptying the database
+    $(".empty_all").click( function() {
+      $(".empty_entity").prop("checked", $(this).prop("checked"));
+      });
+    $(".empty_entity").click( function() {
+      $(".empty_all").prop("checked",$(".empty_entity:not(:checked)").length == 0);
+      if ($(this).prop("checked")) checkChildren($(this).attr('id'));
+      });
   });
+
+  var models = {% getModelDependencies %};
 </script>
 
 <style>
@@ -140,7 +158,7 @@
 #grid_frozen tr td {
   line-height: 22px;
 }
-.chck_all, .chck_entity {
+.chck_all, .chck_entity, .empty_all, .empty_entity {
   margin-left: 20px;
   margin-right: 20px;
 }
@@ -196,7 +214,7 @@ and export results into the database<br/>
 <td>{% trans "Download all input data in a single spreadsheet." %}<br/><br/>
 {% getMenu as menu %}
 <input class="chck_all" type="checkbox" name="all" value="1" checked><br/>
-{% for group in menu %}{% for item in group.1 %}{% if item.1.model %}
+{% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations %}
 <label for="chbx_{{ item.1.model | model_name }}"><input class="chck_entity" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" checked id="chbx_{{ item.1.model | model_name }}">{{ item.0 }}</label><br/>{% endif %}{% endfor %}{% endfor %}
 </td></tr></form>
 </table></div>
@@ -256,8 +274,11 @@ and export results into the database<br/>
 <table>
 <form method="post" action="{{request.prefix}}/execute/launch/empty database/">{% csrf_token %}<tr>
 <td><input id="erase" type="submit" value="{% trans "Launch" %}"/></td>
-<td>{% trans "Erase all data from the database." %}</td>
-</tr></form>
+<td>{% trans "Erase selected tables in the database." %}<br/><br/>
+<input class="empty_all" type="checkbox" name="all" value="1" checked><br/>
+{% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations %}
+<label for="empty_{{ item.1.model | model_name }}"><input class="empty_entity" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" checked id="empty_{{ item.1.model | model_name }}">{{ item.0 }}</label><br/>{% endif %}{% endfor %}{% endfor %}
+</td></tr></form>
 </table></div>
 
 <h3><a href="#load">{% trans "Load a dataset" %}</a></h3>

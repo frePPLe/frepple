@@ -22,6 +22,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.conf import settings
+from django.db.models.loading import get_model
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
@@ -44,6 +45,8 @@ class Command(BaseCommand):
       default=DEFAULT_DB_ALIAS, help='Nominates a specific database to delete data from'),
     make_option('--task', dest='task', type='int',
       help='Task identifier (generated automatically if not provided)'),
+    make_option('--models', dest='models', type='string',
+      help='Comma-separated list of models to erase')
     )
 
   requires_model_validation = False
@@ -52,13 +55,6 @@ class Command(BaseCommand):
     return VERSION
 
   def handle(self, **options):
-    # Make sure the debug flag is not set!
-    # When it is set, the django database wrapper collects a list of all sql
-    # statements executed and their timings. This consumes plenty of memory
-    # and cpu time.
-    tmp_debug = settings.DEBUG
-    settings.DEBUG = False
-
     # Pick up options
     if 'database' in options:
       database = options['database'] or DEFAULT_DB_ALIAS
@@ -71,6 +67,10 @@ class Command(BaseCommand):
       except: raise CommandError("User '%s' not found" % options['user'] )
     else:
       user = None
+    if 'models' in options and options['models']:
+      models = options['models'].split(',')
+    else:
+      models = None
 
     now = datetime.now()
     transaction.enter_transaction_management(using=database)
@@ -95,8 +95,22 @@ class Command(BaseCommand):
       # Get a list of all django tables in the database
       tables = set(connections[database].introspection.django_table_names(only_existing=True))
 
+      # Validate the user list of tables
+      if models:
+        models2tables = set()
+        for m in models:
+          try:
+            x = m.split('.',1)
+            x = get_model(x[0], x[1])._meta.db_table
+            if not x in tables: raise
+            models2tables.add(x)
+          except Exception as e:
+            raise CommandError("Invalid model to erase: %s" % m)
+        tables = models2tables
+
       # Some tables need to be handled a bit special
-      cursor.execute('update common_user set horizonbuckets = null')
+      if "common_bucket" in tables:
+        cursor.execute('update common_user set horizonbuckets = null')
       tables.discard('auth_group_permissions')
       tables.discard('auth_permission')
       tables.discard('auth_group')
@@ -121,17 +135,18 @@ class Command(BaseCommand):
       # Task update
       task.status = 'Done'
       task.finished = datetime.now()
+      task.save(using=database)
+      transaction.commit(using=database)
 
     except Exception as e:
+      transaction.rollback()
       if task:
         task.status = 'Failed'
         task.message = '%s' % e
         task.finished = datetime.now()
-      raise e
+        task.save(using=database)
+        transaction.commit(using=database)
+      raise CommandError('%s' % e)
 
     finally:
-      if task: task.save(using=database)
-      try: transaction.commit(using=database)
-      except: pass
-      settings.DEBUG = tmp_debug
       transaction.leave_transaction_management(using=database)

@@ -119,7 +119,11 @@ class Command(BaseCommand):
         # C
         elif task.name == 'empty database':
           # Erase the database contents
-          management.call_command('frepple_flush', database=database, task=task.id)
+          args = {}
+          for i in task.arguments.split():
+            key, val = i.split('=')
+            args[key[2:]] = val
+          management.call_command('frepple_flush', database=database, task=task.id, **args)
         # D
         elif task.name == 'load dataset':
           args = task.arguments.split()

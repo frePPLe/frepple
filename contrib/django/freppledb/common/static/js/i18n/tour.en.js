@@ -13,7 +13,7 @@ var tourdata = [
                url: "/admin/",
                element : '.tourguide',
                description : "Welcome to frePPLe.<br/>" +
-                 "This tutorial will show you around.<br/><br/>" +
+                 "This guided tour will show you around.<br/><br/>" +
                  "During the first 5 days of use this page<br/>" +
                  "will suggest you to take the tour.<br/>" +
                  "Later you can always start the tour from the menu.",
@@ -25,43 +25,45 @@ var tourdata = [
    // Navigation
    {
      description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Navigation</h2>' +
-        'The menu bar, the index page, breadcrumbs and a search allow easy and intuitive navigation',
+        'The main dashboard, the menu bar, breadcrumbs and a quick search option allow easy and intuitive navigation',
      delay: 5,
      steps:
         [
          {
            url: "/admin/",
+           element : 'h1',
+           description : 'The main screen is organized as a dashboard with widgets<br/>' +
+                'for the most common activities, such as:<br/>' +
+                '&nbsp;&nbsp;- A list of planned operations on each resource<br/>' +
+                '&nbsp;&nbsp;- A list of materials to be purchased<br/>' +
+                '&nbsp;&nbsp;- A list of customers orders planned to be shipped<br/>' +
+                '&nbsp;&nbsp;- Alerts on problem situations<br/>' +
+                '&nbsp;&nbsp;- Key performance indicators<br/><br/>' +
+                'The widgets and layout of the dashboard are fully configurable.<br/>' +
+                'In the Enterprise Edition every user can customize his own cockpit.',
+           position : 'B'
+         },
+         {
+           url: "/admin/",
            element : '.menuBar',
-           description : "The menu bar gives access to all screens.<br/>" +
-                   "Screens that are not accessible with your profile won't be shown in the list.",
+           description : "The menu bar gives access to all screens.<br/><br/>" +
+               "Screens that are not accessible with your profile<br/>won't be shown in the list.",
            position : 'BL'
-         },
-         {
-           url: "/admin/",
-           element : '#content-main',
-           description : 'The home page also shows you the same screens as the menu, organized in folders.',
-           position : 'TL'
-         },
-         {
-           url: "/admin/",
-           element : '.breadcrumbs',
-           description : 'A breadcrumb trail shows the history of screens you have accessed.<br/>' +
-                   'You can easily step back.',
-           position : 'BL'
-         },
-         {
-           url: "/admin/",
-           element : '#recent-actions',
-           description : 'This section of the screen shows your recent edit activities.',
-           position : 'TL'
          },
          {
            url: "/admin/",
            element : '#search',
-           description : 'You can type in a search string here.<br/>' +
-                   'Automatically a list of matching entities is displayed.<br/>' +
-                   'This allows you to jump immediately to the relevant screen of that entity.',
+           description : 'You can enter a search string here.<br/>' +
+                   'A list of matching entities will be displayed.<br/>' +
+                   'This allows you to jump immediately to the screen of that entity.',
            position : 'B'
+         },
+         {
+           url: "/admin/",
+           element : '.breadcrumbs a',
+           description : 'A breadcrumb trail shows the history of screens you have accessed.<br/>' +
+                   'You can easily step back and forth.',
+           position : 'R'
          }
        ]
     },
@@ -69,14 +71,18 @@ var tourdata = [
     // Data entry
     {
      description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Data entry</h2>' +
-        'Data can be entered directly in a data grid or edit forms.<br/>' +
-        'You can also import and export CSV-files.',
+        'Data can be entered in different ways:<br/>' +
+        '&nbsp;&nbsp;- Directly in a data grid<br/>' +
+        '&nbsp;&nbsp;- Using an edit form<br/>' +
+        '&nbsp;&nbsp;- By importing an Excel spreadsheet<br/>' +
+        '&nbsp;&nbsp;- By importing a CSV-formatted flat file.',
      delay: 5,
      steps:
         [
          {
            url: "/admin/",
-           element : '.ui-accordion-content',
+           element : '.ui-menu',
+           beforestep: '$(".menuButton").first().click()',
            description : "All entities have a data table in the input section.",
            position : 'R'
          },
@@ -130,13 +136,13 @@ var tourdata = [
            url: "/data/input/demand/",
            element : "#csvexport",
            description : "Click 'export' to export all data from the grid<br/>" +
-              "to a CSV-file that can be edited in Excel.",
+              "to a CSV-file or an Excel spreadsheet.",
            position : 'L'
          },
          {
            url: "/data/input/demand/",
            element : "#csvimport",
-           description : "The same CSV-files can also be imported.<br/>" +
+           description : "Spreadsheets and CSV-files can also be imported again.<br/>" +
              "The data are validated and any errors are reported.",
            position : 'L'
          },
@@ -157,19 +163,20 @@ var tourdata = [
 
     // Modeling
     {
-     description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Modeling</h2>' +
-        "Modeling your manufacturing environment.",
+     description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Modelling</h2>' +
+        "Modelling your manufacturing environment.",
      delay: 5,
      steps:
         [
          {
            url: "/admin/",
-           element : '.ui-accordion-content',
+           element : '.ui-menu',
+           beforestep: '$(".menuButton").first().click()',
            description : "All entities have a data table in the input section.<br/>" +
              "A complete description of all entities and their relationships<br/>" +
              "is beyond the scope of this tour.<br/>" +
-             "Check out the documentation.<br/><br/>" +
-             "In this tour we'll only show the concepts at a very high level.",
+             "In this tour we'll only show the concepts at a very high level.<br/>" +
+             "Check out the documentation for more detail.<br/>",
            position : 'R'
          },
          {
@@ -178,7 +185,7 @@ var tourdata = [
            description : "This report shows the bill of material of a particular item.<br/>" +
              "The top section visualizes the data as a network graph.<br/>" +
              "The bottom section displays the data as hierarchical tree.<br/><br/>" +
-             "The network graph is very important in modeling in frePPLe.<br/>" +
+             "The network graph is very important in modelling in frePPLe.<br/>" +
              "Every single graphical object in this graph is stored as a single<br/>" +
              "record in the frePPLe model. The graph allows you to verify that<br/>" +
              "you have correctly filled in all data." +
@@ -211,8 +218,8 @@ var tourdata = [
         [
          {
            url: "/admin/",
-           element : '.ui-accordion-content',
-           beforestep: '$("#content-main").accordion({active:2,animate:false})',
+           element : '.ui-menu:eq(2) .ui-menu-item',
+           beforestep: '$(".menuButton:eq(2)").click()',
            description : "Once you have loaded all data, you are now<br/>" +
              "ready to generate the plan.",
            position : 'R'
@@ -221,8 +228,7 @@ var tourdata = [
            url: "/execute/",
            element : '#content h1',
            beforestep: '$("#tasks").accordion({active:false,animate:false})',
-           description : "The top section show the log and status<br/>" +
-             "of all tasks.",
+           description : "The top section show the log and status of all tasks.",
            position : 'R'
          },
          {
@@ -260,7 +266,7 @@ var tourdata = [
              "The spreadsheet must match the structure exported with the task above.<br/><br/>" +
              "You can thus export all data, edit in Excel and then reload the updated spreasheet.",
            position : 'TL'
-         },         
+         },
          {
            url: "/execute/",
            element : 'a[href="#scenarios"]',
@@ -268,8 +274,8 @@ var tourdata = [
            description : "Here you can copy your dataset into a whatif scenario.<br/><br/>" +
              "A scenario is a complete copy of all data in a separate database.<br/>" +
              "All data and plans can thus be vary independently.<br/><br/>" +
-             "Once a scenario has been copied, a dropdown list shows up<br/>" +
-             "in the upper right corner of the screen. Here you select the scenario you want to work with.",
+             "Once a scenario has been copied, a dropdown list shows up in the upper right corner<br/>" +
+             "of the screen. Here you select the scenario you want to work with.",
            position : 'TL'
          },
          {
@@ -283,8 +289,9 @@ var tourdata = [
            url: "/execute/",
            element : 'a[href="#empty"]',
            beforestep: '$("a[href=\\"#empty\\"]").parent().click()',
-           description : "This task erases all data content from the selected database.<br/><br/>" +
-             "Users, permissions, task logs, etc are obviously not erased.",
+           description : "This task erases the content from the selected tables.<br/><br/>" +
+             "When you mark a certain entities for erasing, all entities which<br/>" +
+             "depend on it will automatically also be selected.",
            position : 'TL'
          },
          {
@@ -313,23 +320,40 @@ var tourdata = [
       {
        description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Plan analysis</h2>' +
           'Review and analyze the plan from different angles:<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/resource/?tour=5,1,0">Resource utilization</a></span> (8 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/buffer/?tour=5,8,0">Inventory profile</a></span> (3 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/operation/?tour=5,11,0">Planned operations</a></span> (3 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,14,0">Demand plans</a></span> (4 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/problem/?tour=5,18,0">Exceptions and problems</a></span> (2 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,20,0">Order plan</a></span> (5 steps)',
+          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,1,0">Cockpit</a></span> (1 step)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/resource/?tour=5,2,0">Resource utilization</a></span> (8 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/buffer/?tour=5,9,0">Inventory profile</a></span> (3 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/operation/?tour=5,12,0">Planned operations</a></span> (3 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,15,0">Demand plans</a></span> (4 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/problem/?tour=5,19,0">Exceptions and problems</a></span> (2 steps)<br/>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,21,0">Order plan</a></span> (5 steps)',
        delay: 5,
        steps:
           [
            {
              url: "/admin/",
-             element : '.ui-accordion-content',
-             beforestep: '$("#content-main").accordion({active:1,animate:false})',
+             element : '.ui-menu:eq(1)',
+             beforestep: '$(".menuButton:eq(1)").click()',
              description : "Once you have loaded all data and generated<br/>" +
                "the plan, you are now ready to review and<br/>" +
-               "analyze the planning results.",
+               "analyze the results.",
              position : 'R'
+           },
+           {
+             url: "/admin/",
+             element : 'h1',
+             description : 'In their day to day usage planners will be using the main<br/>' +
+                  'cockpit screen for the common analysis tasks.<br/><br/>' +
+                  'The main screen is organized as a dashboard with widgets<br/>' +
+                  'for the most common activities, such as:<br/>' +
+                  '&nbsp;&nbsp;- A list of planned operations on each resource<br/>' +
+                  '&nbsp;&nbsp;- A list of materials to be purchased<br/>' +
+                  '&nbsp;&nbsp;- A list of customers orders planned to be shipped<br/>' +
+                  '&nbsp;&nbsp;- Alerts on problem situations<br/>' +
+                  '&nbsp;&nbsp;- Key performance indicators<br/><br/>' +
+                  'The widgets and layout of the dashboard are fully configurable.<br/>' +
+                  'In the Enterprise Edition every user can customize his own cockpit.',
+             position : 'B'
            },
            {
              url: "/resource/",
@@ -350,7 +374,7 @@ var tourdata = [
                 "You can adjust the bucket size and the report horizon here.<br/><br/>" +
                 "Note that the planning algorithm itself doesn't use buckets.<br/>" +
                 "Time buckets are only used for reporting purposes.",
-             position : 'B'
+             position : 'LT'
            },
            {
              url: "/resource/",

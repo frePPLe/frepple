@@ -1235,7 +1235,8 @@ var tour = {
   init: function()
   {
      // Display the main dialog of the tour
-     $("body").append( '<div id="tour" style="padding-bottom:20px; display:none">' + tourdata[tour.chapter]['description']  + '<br/><br/><br/></div>')
+     $("body").append( '<div id="tour" style="padding-bottom:20px; display:none">' +
+         tourdata[tour.chapter]['description']  + '<br/><br/><br/></div>');
      $("#tour").dialog({
       title: gettext("Guided tour"),
       autoOpen: true,
@@ -1281,7 +1282,7 @@ var tour = {
 
      // Create the tooltip
      tour.tooltip = $('<div>',{id:'tourtooltip', class:'tourtooltip ui-dialog ui-widget ui-widget-content ui-corner-all ui-front', html:''}).css({
-       'display'     : 'none'
+       'display': 'none', 'overflow': 'visible'
      });
      $("body").append(tour.tooltip);
 
@@ -1359,10 +1360,9 @@ var tour = {
     if ('beforestep' in stepData)
       eval(stepData['beforestep']);
     // Display the tooltip
-    var element = $(stepData['element']);
     tour.tooltip.html(stepData['description']);
     var tooltipPos = (typeof stepData.position == 'undefined') ? 'BL' : stepData['position'];
-    var pos = tour.getTooltipPosition(tooltipPos, element);
+    var pos = tour.getTooltipPosition(tooltipPos, stepData['element']);
     tour.tooltip.css({ 'top': pos.top+'px', 'left': pos.left+'px' });
     tour.tooltip.show('fast');
     // Update tour dialog
@@ -1406,13 +1406,20 @@ var tour = {
     }
   },
 
-  getTooltipPosition: function(pos, element)
+  getTooltipPosition: function(pos, elementselector)
   {
+    var element = $(elementselector);
+    if (element.length == 0)
+    {
+      console.log("Warning: Tour refers to nonexisting element '" + elementselector + "'");
+      return { 'left'  : 100, 'top' : 100 };
+    }
     var position;
     var ew = element.outerWidth();
     var eh = element.outerHeight();
-    var el = element.offset().left;
-    var et = element.offset().top;
+    var offset = element.offset();
+    var el = offset.left;
+    var et = offset.top;
     var tw = tour.tooltip.width() + parseInt(tour.tooltip.css('padding-left')) + parseInt(tour.tooltip.css('padding-right'));
     var th = tour.tooltip.height() + parseInt(tour.tooltip.css('padding-top')) +  + parseInt(tour.tooltip.css('padding-bottom'));
 

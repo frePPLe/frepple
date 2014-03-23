@@ -39,10 +39,13 @@ namespace frepple
 
 class Flow;
 class FlowEnd;
+class FlowFixedStart;
+class FlowFixedEnd;
 class FlowPlan;
 class LoadPlan;
 class Resource;
 class ResourceInfinite;
+class ResourceBuckets;
 class Problem;
 class Demand;
 class OperationPlan;
@@ -865,6 +868,8 @@ class Solver : public HasName<Solver>
     {throw LogicException("Called undefined solve(Resource*) method");}
     virtual void solve(const ResourceInfinite* r, void* v = NULL)
     {solve(reinterpret_cast<const Resource*>(r),v);}
+    virtual void solve(const ResourceBuckets* r, void* v = NULL)
+    {solve(reinterpret_cast<const Resource*>(r),v);}
     virtual void solve(const Buffer*,void* = NULL)
     {throw LogicException("Called undefined solve(Buffer*) method");}
     virtual void solve(const BufferInfinite* b, void* v = NULL)
@@ -876,6 +881,10 @@ class Solver : public HasName<Solver>
     virtual void solve(const Flow* b, void* v = NULL)
     {throw LogicException("Called undefined solve(Flow*) method");}
     virtual void solve(const FlowEnd* b, void* v = NULL)
+    {solve(reinterpret_cast<const Flow*>(b),v);}
+    virtual void solve(const FlowFixedStart* b, void* v = NULL)
+    {solve(reinterpret_cast<const Flow*>(b),v);}
+    virtual void solve(const FlowFixedEnd* b, void* v = NULL)
     {solve(reinterpret_cast<const Flow*>(b),v);}
     virtual void solve(const Solvable*,void* = NULL)
     {throw LogicException("Called undefined solve(Solvable*) method");}
@@ -3974,7 +3983,7 @@ class Resource : public HasHierarchy<Resource>,
     virtual DECLARE_EXPORT ~Resource();
 
     /** Updates the size of a resource, when it is time-dependent. */
-    DECLARE_EXPORT void setMaximumCalendar(CalendarDouble*);
+    virtual DECLARE_EXPORT void setMaximumCalendar(CalendarDouble*);
 
     /** Updates the size of a resource. */
     DECLARE_EXPORT void setMaximum(double);
@@ -4209,6 +4218,27 @@ class ResourceInfinite : public Resource
     virtual size_t getSize() const
     {return sizeof(ResourceInfinite) + Resource::extrasize();}
     static int initialize();
+};
+
+
+/** @brief This class represents a resource whose capacity is defined per
+    time bucket. */
+class ResourceBuckets : public Resource
+{
+  public:
+    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    virtual const MetaClass& getType() const {return *metadata;}
+    explicit ResourceBuckets(const string& c) : Resource(c)
+    {initType(metadata);}
+    static DECLARE_EXPORT const MetaClass* metadata;
+    virtual size_t getSize() const
+    {return sizeof(ResourceBuckets) + Resource::extrasize();}
+    static int initialize();
+
+    /** Updates the time buckets and the quantity per time bucket. */
+    virtual DECLARE_EXPORT void setMaximumCalendar(CalendarDouble*);
+
 };
 
 

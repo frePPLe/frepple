@@ -485,4 +485,32 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
 }
 
 
+DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
+{
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+
+  // Call the user exit
+  if (userexit_resource) userexit_resource.call(res, PythonObject(data->constrainedPlanning));
+
+  // Message
+  if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
+    logger << indent(res->getLevel()) << "  Bucketized resource '" << res << "' is asked: "
+    << (-data->state->q_qty) << "  " << data->state->q_operationplan->getDates() << endl;
+
+  logger << "bonanzo" << endl;
+
+  // Reply whatever is requested, regardless of date and quantity.
+  data->state->a_qty = data->state->q_qty;
+  data->state->a_date = data->state->q_date;
+  data->state->a_cost += data->state->a_qty * res->getCost()
+    * (data->state->q_operationplan->getDates().getDuration() - data->state->q_operationplan->getUnavailable())
+    / 3600.0;
+
+  // Message
+  if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
+    logger << indent(res->getLevel()) << "  Bucketized resource '" << res << "' answers: "
+    << (-data->state->a_qty) << "  " << data->state->a_date << endl;
+}
+
+
 }

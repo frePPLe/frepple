@@ -415,6 +415,12 @@
     </xsd:complexContent>
   </xsd:complexType>
 
+  <xsd:complexType name="resource_buckets">
+    <xsd:complexContent>
+      <xsd:extension base="resource" />
+    </xsd:complexContent>
+  </xsd:complexType>
+
   <!-- RESOURCESKILL -->
   <xsd:complexType name="resourceskill">
     <xsd:annotation>

@@ -162,6 +162,11 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(const ResourceInfinite*,void* = NULL);
 
     /** Behavior of this solver method:
+      *  - TODO XXX DESCRIBE.
+      */
+    DECLARE_EXPORT void solve(const ResourceBuckets*,void* = NULL);
+
+    /** Behavior of this solver method:
       *  - This method simply passes on the request to the referenced resource.
       *    With the current model structure it could easily be avoided (and
       *    thus gain a bit in performance), but we wanted to include it anyway

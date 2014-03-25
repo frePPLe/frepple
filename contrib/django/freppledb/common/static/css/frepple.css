@@ -586,4 +586,12 @@ div.calendarbox
   text-anchor:middle;
 }
 
+/* STYLES FOR PRINTING */
 
+@media print {
+  .ui-tabs-nav, .ui-paging-info, #user-tools, div.menuBar, menuButton,
+  .breadcrumbs, div#gridpager, div.tools
+    { display: none !important; }
+  .ui-tabs .ui-tabs-hide
+    { display: block !important; }
+}

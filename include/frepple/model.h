@@ -4236,6 +4236,8 @@ class ResourceBuckets : public Resource
     {return sizeof(ResourceBuckets) + Resource::extrasize();}
     static int initialize();
 
+    virtual DECLARE_EXPORT void updateProblems();
+
     /** Updates the time buckets and the quantity per time bucket. */
     virtual DECLARE_EXPORT void setMaximumCalendar(CalendarDouble*);
 
@@ -4914,7 +4916,12 @@ inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
     // The extra check is required to make sure that zero duration operationplans
     // operationplans don't get resized to 0
     return 0.0;
-  return lp->isStart() ? getQuantity() : -getQuantity();
+  if (getResource()->getType() == *ResourceBuckets::metadata)
+    // Bucketized resource
+    return - getQuantity() * lp->getOperationPlan()->getQuantity();
+  else
+    // Continuous resource
+    return lp->isStart() ? getQuantity() : -getQuantity();
 }
 
 

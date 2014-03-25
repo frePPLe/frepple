@@ -123,6 +123,18 @@ DECLARE_EXPORT void Resource::updateProblems()
 }
 
 
+DECLARE_EXPORT void ResourceBuckets::updateProblems()
+{
+  // Delete existing problems for this resource
+  Problem::clearProblems(*this);
+
+  // Problem detection disabled on this resource
+  if (!getDetectProblems()) return;
+
+  logger << "bucketized problem scanner " << endl;  // TODO
+}
+
+
 DECLARE_EXPORT string ProblemCapacityUnderload::getDescription() const
 {
   ostringstream ch;

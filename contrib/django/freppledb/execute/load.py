@@ -301,6 +301,7 @@ def loadResources(cursor):
       elif m == "buckets":
         x = frepple.resource_buckets(name=i,description=j,category=r,subcategory=s)
         if k: x.maximum_calendar = frepple.calendar(name=k)
+        if o: x.maxearly = o
       elif not m or m == "default":
         x = frepple.resource_default(name=i,description=j,category=r,subcategory=s)
         if k: x.maximum_calendar = frepple.calendar(name=k)

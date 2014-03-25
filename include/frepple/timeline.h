@@ -143,6 +143,20 @@ template <class type> class TimeLine
         virtual unsigned short getType() const {return 1;}
     };
 
+    /** @brief A timeline event representing a change of the current value. */
+    class EventSetOnhand : public Event
+    {
+        friend class TimeLine<type>;
+      private:
+        double quantity;
+      protected:
+        EventSetOnhand *prevSet;
+      public:
+        EventSetOnhand(Date d, double q=0.0) : quantity(q), prevSet(NULL)
+        {this->dt = d;}
+        virtual unsigned short getType() const {return 2;}
+    };
+
     /** @brief A timeline event representing a change of the minimum target. */
     class EventMinQuantity : public Event
     {
@@ -222,7 +236,7 @@ template <class type> class TimeLine
         bool operator!=(const iterator& x) const {return this->cur != x.cur;}
     };
 
-    TimeLine() : first(NULL), last(NULL), lastMax(NULL), lastMin(NULL) {}
+    TimeLine() : first(NULL), last(NULL), lastMax(NULL), lastMin(NULL), lastSet(NULL) {}
     int size() const
     {
       int cnt(0);
@@ -344,6 +358,9 @@ template <class type> class TimeLine
 
     /** A pointer to the last minimum change. */
     EventMinQuantity *lastMin;
+
+    /** A pointer to the last fixed onhand. */
+    EventSetOnhand *lastSet;
 };
 
 

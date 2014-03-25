@@ -586,7 +586,7 @@ class Demand(AuditModel,HierarchyModel):
     help_text=_('Priority of the demand (lower numbers indicate more important demands)'))
   minshipment = models.DecimalField(_('minimum shipment'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     help_text=_('Minimum shipment quantity when planning this demand'))
-  maxlateness = models.DecimalField(_('maximum lateness'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+  maxlateness = DurationField(_('maximum lateness'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     help_text=_("Maximum lateness allowed when planning this demand"))
 
   # Convenience methods

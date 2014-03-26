@@ -260,17 +260,17 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Confirming %d procurement orders into purchasing quotations" % (len(ids_buy)))
-      if ids_buy:
-        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_confirm', ids_buy)
-        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_po_assign', ids_buy)
+      for i in ids_buy:
+        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_confirm', [i])
+        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_po_assign', [i])
       if self.verbosity > 0:
         print("Confirmed %d procurement orders in %.2f seconds" % (len(ids_buy), (time() - starttime)))
       starttime = time()
       if self.verbosity > 0:
         print("Confirming %d procurement orders into production orders" % (len(ids_produce)))
-      if ids_produce:
-        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_produce_assign_product', ids_produce)
-        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_confirm', ids_produce)
+      for i in ids_produce:
+        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_produce_assign_product', [i])
+        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_confirm', [i])
       if self.verbosity > 0:
         print("Confirmed %d procurement orders in %.2f seconds" % (len(ids_produce), (time() - starttime)))
     except Exception as e:

@@ -1105,31 +1105,31 @@ class Command(BaseCommand):
       # Process in the frePPLe database
       cursor.executemany(
         "insert into operation \
-          (name,location_id,source,sizemultiple,lastmodified) \
+          (name,location_id,subcategory,sizemultiple,lastmodified) \
           values(%%s,%%s,'OpenERP',%%s,'%s')" % self.date,
         operation_insert
         )
       cursor.executemany(
         "update operation \
-          set location_id=%%s, sizemultiple=%%s, source='OpenERP', lastmodified='%s' \
+          set location_id=%%s, sizemultiple=%%s, subcategory='OpenERP', lastmodified='%s' \
           where name=%%s" % self.date,
         operation_update
         )
       cursor.executemany(
         "update operation \
-          set source=null, lastmodified='%s' \
+          set subcategory=null, lastmodified='%s' \
           where name=%%s" % self.date,
         operation_delete
         )
       cursor.executemany(
         "insert into buffer \
-          (name,item_id,location_id,producing_id,source,lastmodified) \
+          (name,item_id,location_id,producing_id,subcategory,lastmodified) \
           values(%%s,%%s,%%s,%%s,'OpenERP','%s')" % self.date,
         buffer_insert
         )
       cursor.executemany(
         "update buffer \
-          set item_id=%%s, location_id=%%s, producing_id=%%s, source='OpenERP', lastmodified='%s' \
+          set item_id=%%s, location_id=%%s, producing_id=%%s, subcategory='OpenERP', lastmodified='%s' \
           where name = %%s" % self.date,
         buffer_update
         )
@@ -1163,7 +1163,7 @@ class Command(BaseCommand):
         flow_delete
         )
 
-      # TODO multiple boms for the same item -> alternate operation
+      # TODO multiple produce/procure boms for the same item -> alternate operation
 
       transaction.commit(using=self.database)
       if self.verbosity > 0:
@@ -1227,7 +1227,6 @@ class Command(BaseCommand):
           buy.append( (tmpl['produce_delay'] * 86400, item) )
         else:
           produce.append( (item,) )
-
       # Get recently changed reorderpoints
       ids = self.openerp_search('stock.warehouse.orderpoint',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),

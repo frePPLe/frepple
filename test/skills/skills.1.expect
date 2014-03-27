@@ -11,7 +11,7 @@
 		</operation>
 		<operation name="1. make end item" xsi:type="operation_time_per">
 			<duration>P0D</duration>
-			<duration_per>PT1H</duration_per>
+			<duration_per>PT1H6.600S</duration_per>
 		</operation>
 	</operations>
 	<items>

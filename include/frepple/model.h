@@ -2357,7 +2357,7 @@ class OperationTimePer : public Operation
 {
   public:
     /** Constructor. */
-    explicit OperationTimePer(const string& s) : Operation(s) {initType(metadata);}
+    explicit OperationTimePer(const string& s) : Operation(s), duration_per(0.0) {initType(metadata);}
 
     /** Returns the constant part of the operation time. */
     TimePeriod getDuration() const {return duration;}
@@ -2371,12 +2371,12 @@ class OperationTimePer : public Operation
     }
 
     /** Returns the time per unit of the operation time. */
-    TimePeriod getDurationPer() const {return duration_per;}
+    double getDurationPer() const {return duration_per;}
 
     /** Sets the time per unit of the operation time. */
-    void setDurationPer(TimePeriod t)
+    void setDurationPer(double t)
     {
-      if(t<0L)
+      if(t<0.0)
         throw DataException("TimePer operation can't have a negative duration-per");
       duration_per = t;
     }
@@ -2415,8 +2415,12 @@ class OperationTimePer : public Operation
     /** Constant part of the operation time. */
     TimePeriod duration;
 
-    /** Variable part of the operation time. */
-    TimePeriod duration_per;
+    /** Variable part of the operation time.
+      * We store the value as a double value rather than a TimePeriod to
+      * be able to store fractional duration_per value. TimePeriod can only
+      * represent seconds.
+      */
+    double duration_per;
 };
 
 

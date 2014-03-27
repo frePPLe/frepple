@@ -98,6 +98,57 @@ DECLARE_EXPORT void TimePeriod::toCharBuffer(char* t) const
 }
 
 
+DECLARE_EXPORT void TimePeriod::double2CharBuffer(double val, char* t)
+{
+  if (!val)
+  {
+    sprintf(t,"P0D");
+    return;
+  }
+  double fractpart, intpart;
+  fractpart = modf(val, &intpart);
+  if (fractpart < 0) fractpart = - fractpart;
+  long tmp = static_cast<long>(intpart>0 ? intpart : -intpart);
+  if (val<0) *(t++) = '-';
+  *(t++) = 'P';
+  if (tmp >= 31536000L)
+  {
+    long y = tmp / 31536000L;
+    t += sprintf(t,"%liY", y);
+    tmp %= 31536000L;
+  }
+  if (tmp >= 86400L)
+  {
+    long d = tmp / 86400L;
+    t += sprintf(t,"%liD", d);
+    tmp %= 86400L;
+  }
+  if (tmp > 0L)
+  {
+    *(t++) = 'T';
+    if (tmp >= 3600L)
+    {
+      long h = tmp / 3600L;
+      t += sprintf(t,"%liH", h);
+      tmp %= 3600L;
+    }
+    if (tmp >= 60L)
+    {
+      long h = tmp / 60L;
+      t += sprintf(t,"%liM", h);
+      tmp %= 60L;
+    }
+    if (tmp > 0L || fractpart)
+    {
+      if (fractpart)
+        sprintf(t,"%.3fS", fractpart + tmp);
+      else
+        sprintf(t,"%liS", tmp);
+    }
+  }
+}
+
+
 DECLARE_EXPORT DateRange::operator string() const
 {
   // Start date
@@ -196,8 +247,111 @@ DECLARE_EXPORT void TimePeriod::parse (const char* s)
   // Missing a time unit
   if (value) throw DataException("Invalid time string '" + string(s) + "'");
 
-  // If no exceptions where thrown we can now store the value
+  // If no exceptions were thrown we can now store the value
   lval = negative ? -totalvalue : totalvalue;
+}
+
+
+DECLARE_EXPORT double TimePeriod::parse2double (const char* s)
+{
+  double totalvalue = 0.0;
+  long value = 0;
+  double milliseconds = 0.0;
+  bool negative = false;
+  bool subseconds = false;
+  const char *c = s;
+
+  // Optional minus sign
+  if (*c == '-')
+  {
+    negative = true;
+    ++c;
+  }
+
+  // Compulsary 'P'
+  if (*c != 'P')
+    throw DataException("Invalid time string '" + string(s) + "'");
+  ++c;
+
+  // Parse the date part
+  for ( ; *c && *c != 'T'; ++c)
+  {
+    switch (*c)
+    {
+      case '0': case '1': case '2': case '3': case '4':
+      case '5': case '6': case '7': case '8': case '9':
+        value = value * 10 + (*c - '0');
+        break;
+      case 'Y':
+        totalvalue += value * 31536000L;
+        value = 0;
+        break;
+      case 'M':
+        // 1 Month = 1 Year / 12 = 365 days / 12
+        totalvalue += value * 2628000L;
+        value = 0;
+        break;
+      case 'W':
+        totalvalue += value * 604800L;
+        value = 0;
+        break;
+      case 'D':
+        totalvalue += value * 86400L;
+        value = 0;
+        break;
+      default:
+        throw DataException("Invalid time string '" + string(s) + "'");
+    }
+  }
+
+  // Parse the time part
+  if (*c == 'T')
+  {
+    for (++c ; *c; ++c)
+    {
+      switch (*c)
+      {
+        case '0': case '1': case '2': case '3': case '4':
+        case '5': case '6': case '7': case '8': case '9':
+          if (subseconds)
+          {
+            milliseconds = milliseconds + static_cast<double>(*c - '0') / value;
+            value *= 10;
+          }
+          else
+            value = value * 10 + (*c - '0');
+          break;
+        case 'H':
+          totalvalue += value * 3600L;
+          value = 0;
+          break;
+        case 'M':
+          totalvalue += value * 60L;
+          value = 0;
+          break;
+        case '.':
+          totalvalue += value;
+          value = 10;
+          subseconds = true;
+          break;
+        case 'S':
+          if (subseconds)
+            totalvalue += milliseconds;
+          else
+            totalvalue += value;
+          value = 0;
+          break;
+        default:
+          throw DataException("Invalid time string '" + string(s) + "'");
+      }
+    }
+  }
+
+  // Missing a time unit
+  if (value) throw DataException("Invalid time string '" + string(s) + "'");
+
+  // If no exceptions were thrown we can now store the value
+  return negative ? -totalvalue : totalvalue;
 }
 
 

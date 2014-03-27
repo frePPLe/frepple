@@ -872,7 +872,12 @@ DECLARE_EXPORT void OperationTimePer::writeElement
   // Write the fields
   Operation::writeElement(o, tag, NOHEADTAIL);
   o->writeElement(Tags::tag_duration, duration);
-  o->writeElement(Tags::tag_duration_per, duration_per);
+  if (duration_per)
+  {
+    char t[65];
+    TimePeriod::double2CharBuffer(duration_per, t);
+    o->writeElement(Tags::tag_duration_per, t);
+  }
 
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
@@ -881,10 +886,10 @@ DECLARE_EXPORT void OperationTimePer::writeElement
 
 DECLARE_EXPORT void OperationTimePer::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
-  if (pAttr.isA (Tags::tag_duration))
-    setDuration (pElement.getTimeperiod());
-  else if (pAttr.isA (Tags::tag_duration_per))
-    setDurationPer (pElement.getTimeperiod());
+  if (pAttr.isA(Tags::tag_duration))
+    setDuration(pElement.getTimeperiod());
+  else if (pAttr.isA(Tags::tag_duration_per))
+    setDurationPer( TimePeriod::parse2double(pElement.getString().c_str()) );
   else
     Operation::endElement (pIn, pAttr, pElement);
 }
@@ -1516,7 +1521,7 @@ DECLARE_EXPORT int OperationTimePer::setattro(const Attribute& attr, const Pytho
   if (attr.isA(Tags::tag_duration))
     setDuration(field.getTimeperiod());
   else if (attr.isA(Tags::tag_duration_per))
-    setDurationPer(field.getTimeperiod());
+    setDurationPer(field.getDouble());
   else
     return Operation::setattro(attr, field);
   return 0;

@@ -15,13 +15,14 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from urllib import urlencode, quote
+from urllib import urlencode
 
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.utils.text import capfirst
+from django.utils.http import urlquote
 
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.dashboard import Dashboard, Widget
@@ -55,7 +56,7 @@ class LateOrdersWidget(Widget):
       ]
     for prob in Problem.objects.using(db).filter(name='late',entity='demand').order_by('startdate','-weight')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          request.prefix, quote(prob.owner), prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight)
+          request.prefix, urlquote(prob.owner), prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight)
           ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
@@ -90,7 +91,7 @@ class ShortOrdersWidget(Widget):
       ]
     for prob in Problem.objects.using(db).filter(name__gte='short',entity='demand').order_by('startdate')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          request.prefix, quote(prob.owner), prob.owner, prob.startdate.date(), int(prob.weight)
+          request.prefix, urlquote(prob.owner), prob.owner, prob.startdate.date(), int(prob.weight)
           ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
@@ -159,7 +160,7 @@ class ShippingQueueWidget(Widget):
       ]
     for dmdplan in Demand.objects.using(db).filter(planquantity__gt=0).order_by('plandate')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td>%s</td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          request.prefix, quote(dmdplan.demand), dmdplan.demand, dmdplan.customer, dmdplan.item, int(dmdplan.planquantity), dmdplan.plandate.date()
+          request.prefix, urlquote(dmdplan.demand), dmdplan.demand, dmdplan.customer, dmdplan.item, int(dmdplan.planquantity), dmdplan.plandate.date()
           ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
@@ -193,8 +194,8 @@ class ResourceQueueWidget(Widget):
         )
       ]
     for ldplan in LoadPlan.objects.using(db).select_related().order_by('startdate')[:limit]:
-      result.append('<tr><td class="underline"><a href="%s/loadplan/?%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          request.prefix, urlencode({'theresource': ldplan.theresource}  or ''), ldplan.theresource, ldplan.operationplan.operation, ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity)
+      result.append('<tr><td class="underline"><a href="%s/loadplan/?theresource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+          request.prefix, urlquote(ldplan.theresource), ldplan.theresource, ldplan.operationplan.operation, ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity)
           ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
@@ -227,7 +228,7 @@ class AlertsWidget(Widget):
     cursor.execute(query)
     for res in cursor.fetchall():
       result.append('<tr><td class="underline"><a href="%s/problem/?name=%s">%s</a></td><td class="aligncenter">%d</td><td class="aligncenter">%d</td></tr>' % (
-          request.prefix, quote(res[0]), res[0], res[1], res[2]
+          request.prefix, urlquote(res[0]), res[0], res[1], res[2]
           ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
@@ -302,7 +303,7 @@ class ResourceLoadWidget(Widget):
       limit -= 1
       if limit < 0: break
       result.append('<tr><td class="name"><span class="underline"><a href="%s/resource/%s/">%s</a></span></td><td class="util">%.2f</td></tr>' % (
-        request.prefix, quote(res[0]), res[0], res[1]
+        request.prefix, urlquote(res[0]), res[0], res[1]
         ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))

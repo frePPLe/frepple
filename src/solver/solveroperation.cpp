@@ -261,7 +261,8 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
           << "   Retrying new date." << endl;
     }
     else if (matnext.getEnd() != Date::infiniteFuture && a_qty <= ROUNDING_ERROR
-      && matnext.getStart() < a_date && orig_opplan_qty > opplan->getOperation()->getSizeMinimum())
+      && matnext.getStart() < a_date && orig_opplan_qty > opplan->getOperation()->getSizeMinimum()
+      && (!opplan->getDemand() || orig_opplan_qty > opplan->getDemand()->getMinShipment()) )
     {
       // The reply is 0, but the next-date is not too far out.
       // If the operationplan would fit in a smaller timeframe we can potentially
@@ -273,7 +274,9 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
         );
       if (opplan->getDates().getStart() >= matnext.getStart()
         && opplan->getDates().getEnd() <= a_date
-        && opplan->getQuantity() > ROUNDING_ERROR)
+        && opplan->getQuantity() > ROUNDING_ERROR
+        && (!opplan->getDemand() || opplan->getQuantity() > opplan->getDemand()->getMinShipment())
+        )
       {
         // It worked
         orig_dates = opplan->getDates();

@@ -127,7 +127,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // If we got some extra supply, we retry to get some more supply.
           // Only when no extra material is obtained, we give up.
           if (data->state->a_qty > ROUNDING_ERROR
-              && data->state->a_qty < -theDelta - ROUNDING_ERROR)
+              && data->state->a_qty < -theDelta - ROUNDING_ERROR
+              && data->getSolver()->getAllowSplits())
             theDelta += data->state->a_qty;
           else
             loop = false;

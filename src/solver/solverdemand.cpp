@@ -246,7 +246,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
         data->rollback(topcommand);
 
         // Set the ask date for the next pass through the loop
-        if (next_date <= copy_plan_date)
+        if (next_date <= copy_plan_date
+          || (!data->getSolver()->getAllowSplits() && data->state->a_qty > ROUNDING_ERROR))
         {
           // Oops, we didn't get a proper answer we can use for the next loop.
           // Print a warning and simply try one day later.

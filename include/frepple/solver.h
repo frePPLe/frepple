@@ -52,6 +52,8 @@ class SolverMRP : public Solver
       * By default no constraints are enabled. */
     short constrts;
 
+    bool allowSplits;
+
     /** Behavior of this solver method is:
       *  - It will ask the consuming flows for the required quantity.
       *  - The quantity asked for takes into account the quantity_per of the
@@ -179,7 +181,7 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(const Demand*, void* = NULL);
 
     /** Choose a resource.<br>
-      * Normally the chosen resource is simply the resource specified on the 
+      * Normally the chosen resource is simply the resource specified on the
       * load.<br>
       * When the load specifies a certain skill and an aggregate resource, then
       * we search for appropriate child resources.
@@ -196,9 +198,9 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    SolverMRP(const string& n) : Solver(n), constrts(15), plantype(1),
-      lazydelay(86400L), iteration_threshold(1), iteration_accuracy(0.01),
-      autocommit(true)
+    SolverMRP(const string& n) : Solver(n), constrts(15), allowSplits(true),
+      plantype(1), lazydelay(86400L), iteration_threshold(1),
+      iteration_accuracy(0.01), autocommit(true)
     { initType(metadata); }
 
     /** Destructor. */
@@ -417,6 +419,9 @@ class SolverMRP : public Solver
     /** Python method for undoing the plan changes. */
     static DECLARE_EXPORT PyObject* rollback(PyObject*, PyObject*);
 
+    bool getAllowSplits() const {return allowSplits;}
+    void setAllowSplits(bool b) {allowSplits = b;}
+
   private:
     typedef map < int, deque<Demand*>, less<int> > classified_demand;
     typedef classified_demand::iterator cluster_iterator;
@@ -569,7 +574,7 @@ class SolverMRP : public Solver
         SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
           : sol(s), cluster(c), demands(d), constrainedPlanning(true),
             state(statestack), prevstate(statestack-1) {}
-            
+
         /** Destructor. */
         virtual ~SolverMRPdata() {};
 

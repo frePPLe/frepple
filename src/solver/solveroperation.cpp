@@ -262,7 +262,8 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
     }
     else if (matnext.getEnd() != Date::infiniteFuture && a_qty <= ROUNDING_ERROR
       && matnext.getStart() < a_date && orig_opplan_qty > opplan->getOperation()->getSizeMinimum()
-      && (!opplan->getDemand() || orig_opplan_qty > opplan->getDemand()->getMinShipment()) )
+      && (!opplan->getDemand() || orig_opplan_qty > opplan->getDemand()->getMinShipment())
+      && data.getSolver()->getAllowSplits())
     {
       // The reply is 0, but the next-date is not too far out.
       // If the operationplan would fit in a smaller timeframe we can potentially

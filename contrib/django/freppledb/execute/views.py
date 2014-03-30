@@ -215,14 +215,23 @@ def LaunchTask(request, action):
     # Launch a worker process
     if not checkActive(worker_database):
       if os.path.isfile(os.path.join(settings.FREPPLE_APP,"frepplectl.py")):
-        # Development layout
-        Popen([
-          sys.executable, # Python executable
-          os.path.join(settings.FREPPLE_APP,"frepplectl.py"),
-          "frepple_runworker",
-          "--database=%s" % worker_database
-          ])
-      elif sys.executable.find('freppleserver.exe') >= 0:
+        if "python" in sys.executable:
+          # Development layout
+          Popen([
+            sys.executable, # Python executable
+            os.path.join(settings.FREPPLE_APP,"frepplectl.py"),
+            "frepple_runworker",
+            "--database=%s" % worker_database
+            ])
+        else:
+          # Deployment on Apache web server
+          Popen([
+            "python",
+            os.path.join(settings.FREPPLE_APP,"frepplectl.py"),
+            "frepple_runworker",
+            "--database=%s" % worker_database
+            ], creationflags=0x08000000)
+      elif sys.executable.find('frepplectl.exe') >= 0:
         # Py2exe executable
         Popen([
           sys.executable.replace('freppleserver.exe','frepplectl.exe'), # frepplectl executable

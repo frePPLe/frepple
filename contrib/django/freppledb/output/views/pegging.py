@@ -91,8 +91,8 @@ class ReportByDemand(GridReport):
     if due < start: start =due
     end += timedelta(days=1)
     start -= timedelta(days=1)
-    request.report_startdate = start
-    request.report_enddate = end
+    request.report_startdate = start.replace(hour=0, minute=0, second=0, microsecond=0)
+    request.report_enddate = end.replace(hour=0, minute=0, second=0, microsecond=0)
     request.report_bucket = None
     request.report_bucketlist = []
 

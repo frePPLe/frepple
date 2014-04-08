@@ -14,9 +14,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# TODO rename, which is rename of location, item, etc in openbravo will fail: The child objects are not renamed.
-
-
 from __future__ import print_function
 from optparse import make_option
 import base64
@@ -157,9 +154,12 @@ class Command(BaseCommand):
       self.import_purchaseorders(cursor)
       task.status = '80%'
       task.save(using=self.database)
-      self.import_processplan(cursor)
       transaction.commit(using=self.database)
+      self.import_productbom(cursor)
       task.status = '90%'
+      task.save(using=self.database)
+      self.import_processplan(cursor)
+      task.status = '95%'
       task.save(using=self.database)
       self.import_workInProgress(cursor)
 
@@ -317,6 +317,9 @@ class Command(BaseCommand):
 
       # Delete records
       delete = [ (i,) for i,j in unused_keys.iteritems() if j ]
+      cursor.executemany('update customer set owner_id=null where owner_id=%s',
+        delete
+        )
       cursor.executemany('update demand set customer_id=null where customer_id=%s',
         delete
         )
@@ -376,8 +379,12 @@ class Command(BaseCommand):
         if not organization: continue
         searchkey = elem.find("searchKey").text
         name = elem.find("name").text
-        unique_name = u'%s %s' % (searchkey, name)
-        description = elem.find("description").text
+        # A product name which consists of the searchkey field is the default.
+        # If you want a longer more descriptive item name, use the following lines instead
+        # unique_name = u'%s %s' % (searchkey, name)
+        # description = elem.find("description").text
+        unique_name = searchkey
+        description = name
         objectid = elem.get('id')
         self.items[objectid] = unique_name
         unused_keys.pop(unique_name,None)
@@ -475,8 +482,12 @@ class Command(BaseCommand):
         if not organization: continue
         searchkey = elem.find("searchKey").text
         name = elem.find("name").text
-        unique_name = u'%s %s' % (searchkey, name)
-        description = elem.find("description").text
+        # A product name which consists of the searchkey field is the default.
+        # If you want a longer more descriptive item name, use the following lines instead
+        # unique_name = u'%s %s' % (searchkey, name)
+        # description = elem.find("description").text
+        unique_name = searchkey
+        description = name
         objectid = elem.get('id')
         self.locations[objectid] = unique_name
         locations.append( (description,objectid,unique_name) )
@@ -511,7 +522,7 @@ class Command(BaseCommand):
         )
       cursor.executemany("update location \
         set owner_id=null \
-        where owner=%s",
+        where owner_id=%s",
         delete
         )
 
@@ -725,12 +736,10 @@ class Command(BaseCommand):
       for i in cursor.fetchall():
         if i[1] == 'openbravo': self.resources[i[2]] = i[0]
         frepple_keys.add(i[0])
+      unused_keys = frepple_keys.copy()
       insert = []
       update = []
-      rename = []
-      delete = []
-      query = urllib.quote("updated>'%s'" % self.delta)
-      conn, root = self.get_data("/openbravo/ws/dal/ManufacturingMachine?where=%s&orderBy=name&includeChildren=false" % query)
+      conn, root = self.get_data("/openbravo/ws/dal/ManufacturingMachine?orderBy=name&includeChildren=false")
       count = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'ManufacturingMachine': continue
@@ -738,21 +747,12 @@ class Command(BaseCommand):
         if not organization: continue
         unique_name = elem.get('identifier')
         objectid = elem.get('id')
-        active = elem.find("active").text
-        if active:
-          if unique_name in frepple_keys:
-            # Already exists in frepple
-            update.append( (objectid,unique_name) )
-          elif objectid in self.customers:
-            # Object previously exported from openbravo already, now renamed
-            rename.append( (unique_name,objectid) )
-          else:
-            # Brand new object
-            insert.append( (unique_name,objectid) )
-          self.resources[objectid] = unique_name
-        elif unique_name in frepple_keys:
-          # Oject no longer active in openbravo
-          delete.append( (unique_name,) )
+        if unique_name in frepple_keys:
+          update.append( (objectid,unique_name) )
+        else:
+          insert.append( (unique_name,objectid) )
+        unused_keys.discard(unique_name)
+        self.resources[objectid] = unique_name
         # Clean the XML hierarchy
         root.clear()
         count -= 1
@@ -773,22 +773,20 @@ class Command(BaseCommand):
           where name=%%s" % self.date,
         update
         )
-      cursor.executemany(
-        "update resource \
-          set name=%%s,lastmodified='%s' \
-          where source=%%s and subcategory='openbravo'" % self.date,
-        rename
+      delete = [ (i,) for i in unused_keys ]
+      cursor.executemany('delete from resourceload where resource_id=%s',
+        delete
         )
-      for i in delete:
-        try: cursor.execute("delete from resource where name=%s",i)
-        except:
-          # Delete fails when there are dependent records in the database.
-          cursor.execute("update resource set source=null, subcategory=null, lastmodified='%s' where name=%%s" % self.date,i)
+      cursor.executemany('update resource set owner_id where owner_id=%s',
+        delete
+        )
+      cursor.executemany('delete from resource where name=%s',
+        delete
+        )
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print("Inserted %d new machines" % len(insert))
         print("Updated %d existing machines" % len(update))
-        print("Renamed %d existing machines" % len(rename))
         print("Deleted %d machines" % len(delete))
         print("Imported machines in %.2f seconds" % (time() - starttime))
     except Exception as e:
@@ -1304,7 +1302,113 @@ class Command(BaseCommand):
       transaction.leave_transaction_management(using=self.database)
 
 
-  # Importing boms
+  # Importing productboms
+  #   - extracting productBOM object for all Products with
+  #
+  def import_productbom(self, cursor):
+    transaction.enter_transaction_management(using=self.database)
+    try:
+      starttime = time()
+      if self.verbosity > 0:
+        print("Importing product boms...")
+
+      # Reset the current operations
+      cursor.execute("DELETE FROM operationplan where operation_id like 'Product BOM %'")  # TODO allow incremental load!
+      cursor.execute("DELETE FROM suboperation where operation_id like 'Product BOM %'")
+      cursor.execute("DELETE FROM resourceload where operation_id like 'Product BOM %'")
+      cursor.execute("DELETE FROM flow where operation_id like 'Product BOM %'")
+      cursor.execute("UPDATE buffer SET producing_id=NULL where subcategory='openbravo' and producing_id like 'Product BOM %'")
+      cursor.execute("DELETE FROM operation where name like 'Product BOM %'")
+
+      # Get the list of all frePPLe buffers
+      cursor.execute("SELECT name, item_id, location_id FROM buffer")
+      frepple_buffers = {}
+      frepple_keys = set()
+      for i in cursor.fetchall():
+        if i[1] in frepple_buffers:
+          frepple_buffers[i[1]].append( (i[0],i[2]) )
+        else:
+          frepple_buffers[i[1]] = [ (i[0],i[2]) ]
+        frepple_keys.add(i[0])
+
+      # Loop over all productboms
+      query = urllib.quote("product.billOfMaterials=true")
+      conn, root = self.get_data("/openbravo/ws/dal/ProductBOM?where=%s&includeChildren=false" % query)
+      count = 0
+      operations = set()
+      buffers = set()
+      flows = {}
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'ProductBOM': continue
+        bomquantity = float(elem.find("bOMQuantity").text)
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
+        product = self.items.get(elem.find("product").get("id"), None)
+        bomproduct = self.items.get(elem.find("bOMProduct").get("id"), None)
+        if not product or not organization or not bomproduct or not product in frepple_buffers:
+          # Rejecting uninteresting records
+          root.clear()
+          continue
+        for name, loc in frepple_buffers[product]:
+          operation = "Product BOM %s @ %s" % (product, loc)
+          buf = "%s @ %s" % (bomproduct, loc)
+          operations.add( (operation, loc, name) )
+          if not buf in frepple_keys:
+            buffers.add( (buf, bomproduct, loc) )
+          flows[ (operation, name, 'end') ] = 1
+          t = (operation, buf, 'start')
+          if t in flows:
+            flows[t] -= bomquantity
+          else:
+            flows[t] = -bomquantity
+        # Clean the XML hierarchy
+        root.clear()
+        count -= 1
+        if self.verbosity > 0 and count < 0:
+          count = 500
+          print('.', end="")
+      if self.verbosity > 0: print ('')
+
+      # Execute now on the database
+      cursor.executemany(
+        "insert into operation \
+          (name,location_id,subcategory,type,duration,lastmodified) \
+          values(%%s,%%s,'openbravo','fixed_time',0,'%s')" % self.date,
+        [ (i[0],i[1]) for i in operations ]
+        )
+      cursor.executemany(
+        "update buffer set producing_id=%%s, lastmodified='%s' where name=%%s" % self.date,
+        [ (i[0],i[2]) for i in operations ]
+        )
+      cursor.executemany(
+        "insert into buffer \
+          (name,item_id,location_id,subcategory,lastmodified) \
+          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+        buffers
+        )
+      cursor.executemany(
+        "insert into flow \
+          (operation_id,thebuffer_id,type,quantity,source,lastmodified) \
+          values(%%s,%%s,%%s,%%s,'openbravo','%s')" % self.date,
+        [ (i[0], i[1], i[2], j) for i, j in flows.iteritems() ]
+        )
+
+      transaction.commit(using=self.database)
+      if self.verbosity > 0:
+        print("Inserted %d operations" % len(operations))
+        print("Created %d buffers" % len(buffers))
+        print("Inserted %d flows" % len(flows))
+        print("Imported product boms in %.2f seconds" % (time() - starttime))
+    except Exception as e:
+      transaction.rollback(using=self.database)
+      import sys, traceback
+      traceback.print_exc(file=sys.stdout)
+      raise CommandError("Error importing product boms: %s" % e)
+    finally:
+      transaction.commit(using=self.database)
+      transaction.leave_transaction_management(using=self.database)
+
+
+  # Importing processplans
   #   - extracting ManufacturingProcessPlan objects for all
   #     Products with production=true and processplan <> null
   #   - Not supported yet:
@@ -1319,7 +1423,7 @@ class Command(BaseCommand):
     try:
       starttime = time()
       if self.verbosity > 0:
-        print("Importing bills of material...")
+        print("Importing processplans...")
 
       # Reset the current operations
       cursor.execute("DELETE FROM operationplan where operation_id like 'Processplan %'")  # TODO allow incremental load!
@@ -1446,6 +1550,8 @@ class Command(BaseCommand):
                     if not machine:
                       continue # Unknown machine
                     loads.append( (step_name, machine, 1) )
+        # Clean the XML hierarchy
+        root.clear()
         count -= 1
         if self.verbosity > 0 and count < 0:
           count = 500
@@ -1499,12 +1605,12 @@ class Command(BaseCommand):
         print("Created %d buffers" % len(buffers_create))
         print("Inserted %d flows" % len(flows))
         print("Inserted %d loads" % len(loads))
-        print("Imported bills of material in %.2f seconds" % (time() - starttime))
+        print("Imported processplans in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
       import sys, traceback
       traceback.print_exc(file=sys.stdout)
-      raise CommandError("Error importing bills of material: %s" % e)
+      raise CommandError("Error importing processplans: %s" % e)
     finally:
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)

@@ -135,7 +135,7 @@ function tick(e)
         else
         {
           d.y = nodes[d.parent].y;
-          d.x = nodes[d.parent].x - d.suboperindex * 105 + 210;
+          d.x = nodes[d.parent].x + d.suboperindex * 105 - 105;
         }
       }
       else
@@ -319,7 +319,7 @@ function drawGraph(jsondata)
          if (d.type == 'alternate')
            return "scale(1,"+ (2+d.numsuboperations) +")";
          else
-           return "scale("+ d.numsuboperations +",1.4)";
+           return "translate(" + (d.numsuboperations*52.5 - 52.5) + ") scale("+ d.numsuboperations +",1.4)";
        }
        else
           return '';

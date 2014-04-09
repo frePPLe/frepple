@@ -35,6 +35,7 @@ import codecs, json
 from StringIO import StringIO
 from openpyxl import load_workbook, Workbook
 
+from django.contrib.auth.models import Group
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
@@ -64,10 +65,16 @@ from django.views.generic.base import View
 from django.db.models.loading import get_model
 
 
-from freppledb.common.models import Parameter, BucketDetail, Bucket, Comment, HierarchyModel
+from freppledb.common.models import User, Comment, Parameter, BucketDetail, Bucket, HierarchyModel
+
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+# A list of models with some special, administrative purpose.
+# They should be excluded from bulk import, export and erasing actions.
+EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment)
 
 
 class GridField(object):
@@ -1668,6 +1675,9 @@ def exportWorkbook(request):
       # Verify access rights
       if not request.user.has_perm("%s.%s" % (app_label, get_permission_codename('change',model._meta))):
         continue
+      # Never export some special administrative models
+      if model in EXCLUDE_FROM_BULK_OPERATIONS:
+        continue
       # Build a list of fields
       fields = []
       header = []
@@ -1746,7 +1756,7 @@ def importWorkbook(request):
           model = m
           contenttype_id = ct
           break
-      if not model:
+      if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
         errors.append(force_unicode(_("Ignoring data in worksheet: %s") % ws_name))
       elif not request.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add',model._meta))):
         # Check permissions

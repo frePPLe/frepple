@@ -18,12 +18,12 @@
 import operator
 
 from django.utils.encoding import force_unicode
-from django.contrib.auth.models import Permission, Group
+from django.contrib.auth.models import Permission
 from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import capfirst
 
-from freppledb.common.models import User
+from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
 
 import logging
 logger = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ class MenuItem:
     self.index = index
     self.prefix = prefix
     self.window = window
-    self.excludeFromBulkOperations = model in (Group, User) # A bit of a hack to put this here
+    self.excludeFromBulkOperations = model in EXCLUDE_FROM_BULK_OPERATIONS
 
   def __unicode__(self):
     return self.name

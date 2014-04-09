@@ -26,6 +26,7 @@ from django.db.models.loading import get_model
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
+from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
 from freppledb import VERSION
 
 
@@ -101,7 +102,10 @@ class Command(BaseCommand):
         for m in models:
           try:
             x = m.split('.',1)
-            x = get_model(x[0], x[1])._meta.db_table
+            x = get_model(x[0], x[1])
+            if x in EXCLUDE_FROM_BULK_OPERATIONS:
+              continue
+            x = x._meta.db_table
             if not x in tables: raise
             models2tables.add(x)
           except Exception as e:

@@ -962,7 +962,8 @@ class GridReport(View):
               # Step 3: Validate the data and save to the database
               if form.has_changed():
                 try:
-                  obj = form.save()
+                  obj = form.save(commit=False)
+                  obj.save(using=request.database)
                   LogEntry(
                       user_id         = request.user.pk,
                       content_type_id = content_type_id,
@@ -1137,7 +1138,8 @@ class GridReport(View):
               # Step 3: Validate the data and save to the database
               if form.has_changed():
                 try:
-                  obj = form.save()
+                  obj = form.save(commit=False)
+                  obj.save(using=request.database)
                   LogEntry(
                       user_id         = request.user.pk,
                       content_type_id = content_type_id,

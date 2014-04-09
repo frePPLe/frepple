@@ -379,12 +379,13 @@ class Command(BaseCommand):
         if not organization: continue
         searchkey = elem.find("searchKey").text
         name = elem.find("name").text
-        # A product name which consists of the searchkey field is the default.
-        # If you want a longer more descriptive item name, use the following lines instead
-        # unique_name = u'%s %s' % (searchkey, name)
-        # description = elem.find("description").text
-        unique_name = searchkey
-        description = name
+        # A product name which consists of the searchkey and the name fields
+        # is the default.
+        # If you want a shorter item name, use the following lines instead:
+        # unique_name = searchkey
+        # description = name
+        unique_name = u'%s %s' % (searchkey, name)
+        description = elem.find("description").text
         objectid = elem.get('id')
         self.items[objectid] = unique_name
         unused_keys.pop(unique_name,None)

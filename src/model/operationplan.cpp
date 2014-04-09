@@ -232,15 +232,8 @@ DECLARE_EXPORT bool OperationPlan::activate()
   // At least a valid operation pointer must exist
   if (!oper) throw LogicException("Initializing an invalid operationplan");
 
-  // Avoid zero quantity on top-operationplans
-  if (getQuantity() <= 0.0 && !owner)
-  {
-    delete this;
-    return false;
-  }
-
-  // Call any operation specific initialisation logic
-  if (!oper->extraInstantiate(this))
+  // Avoid negative quantities, and call operation specific activation code
+  if (getQuantity() < 0.0 || !oper->extraInstantiate(this))
   {
     delete this;
     return false;

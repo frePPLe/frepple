@@ -447,72 +447,6 @@ def exportDemands(cursor):
   print('Exported demands in %.2f seconds' % (time() - starttime))
 
 
-def exportForecasts(cursor):
-  # Detect whether the forecast module is available
-  if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
-    return
-  print("Exporting forecast...")
-  starttime = time()
-  cursor.execute("SELECT name FROM forecast")
-  primary_keys = set([ i[0] for i in cursor.fetchall() ])
-  cursor.executemany(
-    '''insert into forecast
-    (name,customer_id,item_id,priority,operation_id,minshipment,
-     calendar_id,discrete,maxlateness,category,subcategory,lastmodified)
-    values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
-    [(
-       i.name, i.customer and i.customer.name or None, i.item.name, i.priority,
-       i.operation and i.operation.name or None, round(i.minshipment,settings.DECIMAL_PLACES),
-       i.calendar.name, i.discrete, round(i.maxlateness,settings.DECIMAL_PLACES),
-       i.category, i.subcategory, timestamp
-     ) for i in frepple.demands() if i.name not in primary_keys and isinstance(i,frepple.demand_forecast)
-    ])
-  cursor.executemany(
-    '''update forecast
-     set customer_id=%s, item_id=%s, priority=%s, operation_id=%s, minshipment=%s,
-     calendar_id=%s, discrete=%s,maxlateness=%s, category=%s, subcategory=%s, lastmodified=%s
-     where name=%s''',
-    [(
-       i.customer and i.customer.name or None, i.item.name, i.priority,
-       i.operation and i.operation.name or None, round(i.minshipment,settings.DECIMAL_PLACES),
-       i.calendar.name, i.discrete, round(i.maxlateness,settings.DECIMAL_PLACES),
-       i.category, i.subcategory, timestamp, i.name,
-     ) for i in frepple.demands() if i.name in primary_keys and isinstance(i,frepple.demand_forecast)
-    ])
-  transaction.commit(using=database)
-  print('Exported forecasts in %.2f seconds' % (time() - starttime))
-
-
-def exportForecastDemands(cursor):
-  # Detect whether the forecast module is available
-  if not 'demand_forecast' in [ a[0] for a in inspect.getmembers(frepple) ]:
-    return
-  print("Exporting forecast demands...")
-  starttime = time()
-  cursor.execute("SELECT forecast_id, startdate, enddate FROM forecastdemand")
-  primary_keys = set([ i for i in cursor.fetchall() ])
-  cursor.executemany(
-    '''insert into forecastdemand
-    (forecast_id,startdate,enddate,quantity,lastmodified)
-    values(%s,%s,%s,%s,%s)''',
-    [(
-       i.owner.name, str(i.startdate.date()), str(i.enddate.date()),
-       round(i.total,settings.DECIMAL_PLACES), timestamp
-     ) for i in frepple.demands() if isinstance(i,frepple.demand_forecastbucket) and (i.owner.name,i.startdate.date(),i.enddate.date()) not in primary_keys
-    ])
-  cursor.executemany(
-    '''update forecastdemand
-     set quantity=%s, lastmodified=%s
-     where forecast_id=%s and startdate=%s and enddate=%s''',
-    [(
-       round(i.total,settings.DECIMAL_PLACES), timestamp,
-       i.owner.name, str(i.startdate.date()), str(i.enddate.date()),
-     ) for i in frepple.demands() if isinstance(i,frepple.demand_forecastbucket) and (i.owner.name,i.startdate.date(),i.enddate.date()) in primary_keys
-    ])
-  transaction.commit(using=database)
-  print('Exported forecast demands in %.2f seconds' % (time() - starttime))
-
-
 def exportOperationPlans(cursor):
   '''
   Only locked operationplans are exported. That because we assume that
@@ -818,8 +752,6 @@ def exportfrepple():
       exportLoads(cursor)
       exportCustomers(cursor)
       exportDemands(cursor)
-      exportForecasts(cursor)
-      exportForecastDemands(cursor)
     except Exception as e:
       print(e)
 
@@ -836,7 +768,7 @@ def exportfrepple():
         DatabaseTask(exportCalendarBuckets, exportSubOperations, exportOperationPlans, exportParameters),
         DatabaseTask(exportBuffers, exportFlows),
         DatabaseTask(exportSetupMatrices, exportSetupMatricesRules, exportResources, exportSkills, exportResourceSkills, exportLoads),
-        DatabaseTask(exportCustomers, exportDemands, exportForecasts, exportForecastDemands),
+        DatabaseTask(exportCustomers, exportDemands),
         )
       # Start all threads
       for i in tasks: i.start()

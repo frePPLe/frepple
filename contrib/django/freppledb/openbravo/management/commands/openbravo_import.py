@@ -419,12 +419,13 @@ class Command(BaseCommand):
 
       # Delete inactive items
       delete = [ (i,) for i,j in unused_keys.iteritems() if j ]
-      cursor.executemany("delete from demand where item_id=%%s", delete)
+      cursor.executemany("delete from demand where item_id=%s", delete)
       cursor.executemany("delete from flow \
-         where thebuffer_id in (select name from buffer where item_id=%%s)",
+         where thebuffer_id in (select name from buffer where item_id=%s)",
          delete
          )
-      cursor.executemany("delete from item where name=%%s", delete)
+      cursor.executemany("delete from buffer where item_id=%s", delete)
+      cursor.executemany("delete from item where name=%s", delete)
 
       transaction.commit(using=self.database)
       if self.verbosity > 0:

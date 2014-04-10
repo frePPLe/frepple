@@ -65,6 +65,7 @@ var operations = {};
 var buffers = {};
 var resources = {};
 var width = 800;
+var width_level = 100;
 var minlevel = 0;
 var maxlevel = 0;
 
@@ -85,6 +86,7 @@ function clickedShaped(event)
   // Analyze where we have clicked
   var type = $(this).children("use").prop("href").baseVal;
   var tgt = $(this).children("text").prop('textContent');
+  if (tgt === undefined) return;
 
   // Find which contextmenu to use
   if (type == '#alternate' || type == '#routing')
@@ -129,23 +131,29 @@ function tick(e)
       {
         if (d.suboperindex < 0)
         {
+          // Suboperation of an alternate
           d.x = nodes[d.parent].x;
           d.y = nodes[d.parent].y - d.suboperindex * 30 - 5;
         }
         else
         {
+          // Suboperation of a routing
           d.y = nodes[d.parent].y;
-          d.x = nodes[d.parent].x + d.suboperindex * 105 - 105;
+          d.x = nodes[d.parent].x - 52.5 + (d.suboperindex-0.5) * 105 / nodes[d.parent].numsuboperations;
         }
       }
       else
       {
-        d.x += (width / (maxlevel - minlevel + 1) * (0.5 + maxlevel - d.level) - d.x) * k;
+        d.x += (width_level * (0.5 + maxlevel - d.level) - d.x) * k;
         if (d.type != 'buffer')
            d.y += (1000 - d.y) * k / 3;
       }
     }
-    return 'translate(' + d.x + ',' + d.y + ')';
+    if (d.parent >= 0 && d.suboperindex >= 0)
+      // Suboperation of a routing
+      return 'translate(' + d.x + ' ' + d.y + ') scale(' + (1.0/nodes[d.parent].numsuboperations) + ' 1)';
+    else
+      return 'translate(' + d.x + ' ' + d.y + ')';
     });
 
   // Gradually increase the repulsive charges between objects to "-2000 * object size"
@@ -270,12 +278,14 @@ function drawGraph(jsondata)
 
   // Compute the initial horizontal position
   width = $("#graph").width();
+  width_level = width / (maxlevel - minlevel + 1);
+  if (width_level < 400) width_level = 400;
   for (var i in nodes)
-    nodes[i].x = width / (maxlevel - minlevel + 1) * (0.5 + maxlevel - nodes[i].level);
+    nodes[i].x = width_level * (0.5 + maxlevel - nodes[i].level);
 
   // Initialize D3 force layout
   svg = d3.select('#svggraph')
-    .attr('width', width-23)
+    .attr('width', width)
     .attr('height', 2000)
     .attr('viewBox','0 0 ' + width + ' 400')
     .call(d3.behavior.zoom().on("zoom", function() {
@@ -317,21 +327,27 @@ function drawGraph(jsondata)
        if (d.numsuboperations)
        {
          if (d.type == 'alternate')
+           // Top alternate operation
            return "scale(1,"+ (2+d.numsuboperations) +")";
          else
-           return "translate(" + (d.numsuboperations*52.5 - 52.5) + ") scale("+ d.numsuboperations +",1.4)";
+           // Top routing operation
+           //return "translate(" + (d.numsuboperations*52.5 - 52.5) + ") scale("+ d.numsuboperations +",1.4)";
+           return "scale(1,1.4)";
        }
+       else if (d.parent > 0 && nodes[d.parent].numsuboperations > 0)
+         return "scale(" + (1.0/nodes[d.parent].numsuboperations) + ",1)";
        else
           return '';
        })
     .call(force.drag);
 
   // Show node IDs
-  g.append('svg:text')
-      .attr('x', 0)
-      .attr('y', 4)
-      .attr('class', 'id')
-      .text(function(d) { return d.name; });
+  g.filter( function(d, i) {return d.type != 'operation' || d.suboperindex <= 0;} )
+   .append('svg:text')
+   .attr('x', 0)
+   .attr('y', 4)
+   .attr('class', 'id')
+   .text(function(d) { return d.name; });
 
   // Remove old nodes
   shapes.exit().remove();
@@ -375,7 +391,7 @@ ExpandColClick: true,
 {% endblock %}
 
 {% block before_table %}
-<div id="graph" style="clear: both; height: 400px; overflow-y:scroll; border: 1px black solid;">
+<div id="graph" style="clear: both; height: 400px; overflow: hidden; border: 1px black solid;">
 <svg id="svggraph" width="100%" preserveAspectRatio="xMinYMin meet">
 <defs>
   <marker id="arrow" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">

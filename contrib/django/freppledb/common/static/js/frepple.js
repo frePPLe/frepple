@@ -769,7 +769,8 @@ $(function() {
     source: database + "/search/",
     minLength: 2,
     select: function( event, ui ) {
-      window.location.href = database + "/data/" + ui.item.app + '/' + ui.item.label + "/" + ui.item.value + "/";
+      window.location.href = database + "/data/" + encodeURIComponent(ui.item.app)
+         + '/' + encodeURIComponent(ui.item.label) + "/" + encodeURIComponent(ui.item.value) + "/";
     }
   });
 

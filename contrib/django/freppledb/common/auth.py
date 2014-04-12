@@ -44,3 +44,14 @@ class EmailBackend(ModelBackend):
           return user
       except User.DoesNotExist:
         return None
+
+
+    def get_user(self, user_id):
+      '''
+      This is identical to django.contrib.auth.backends.ModelBackend.get_user
+      with a small performance optimization.
+      '''
+      try:
+        return User.objects.get(pk=user_id)
+      except User.DoesNotExist:
+        return None

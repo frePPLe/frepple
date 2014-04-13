@@ -44,7 +44,7 @@ class LateOrdersWidget(Widget):
 
   @classmethod
   def render(cls, request=None):
-    limit = request.GET.get('limit', cls.limit)
+    limit = int(request.GET.get('limit', cls.limit))
     try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
@@ -80,7 +80,7 @@ class ShortOrdersWidget(Widget):
 
   @classmethod
   def render(cls, request=None):
-    limit = request.GET.get('limit', cls.limit)
+    limit = int(request.GET.get('limit', cls.limit))
     try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
@@ -113,7 +113,7 @@ class PurchaseQueueWidget(Widget):
 
   @classmethod
   def render(cls, request=None):
-    limit = request.GET.get('limit', cls.limit)
+    limit = int(request.GET.get('limit', cls.limit))
     try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
@@ -147,7 +147,7 @@ class ShippingQueueWidget(Widget):
 
   @classmethod
   def render(cls, request=None):
-    limit = request.GET.get('limit', cls.limit)
+    limit = int(request.GET.get('limit', cls.limit))
     try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [
@@ -182,7 +182,7 @@ class ResourceQueueWidget(Widget):
 
   @classmethod
   def render(cls, request=None):
-    limit = request.GET.get('limit', cls.limit)
+    limit = int(request.GET.get('limit', cls.limit))
     try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except: db = DEFAULT_DB_ALIAS
     result = [

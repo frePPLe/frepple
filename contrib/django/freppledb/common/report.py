@@ -1066,7 +1066,7 @@ class GridReport(View):
       transaction.enter_transaction_management(using=request.database)
       try:
         # Loop through the data records
-        wb = load_workbook(filename = request.FILES['csv_file'], use_iterators = True)
+        wb = load_workbook(filename = request.FILES['csv_file'], use_iterators = True, data_only=True)
         ws = wb.worksheets[0]
         has_pk_field = False
         for row in ws.iter_rows():
@@ -1120,7 +1120,8 @@ class GridReport(View):
                 if isinstance(headers[colnum],Field):
                   data = col.internal_value
                   if isinstance(headers[colnum],CharField):
-                    if data: data = data.strip()
+                    if data and isinstance(data, six.string_types):
+                      data = data.strip()
                   elif isinstance(headers[colnum], (IntegerField, AutoField)):
                     if isinstance(data, numericTypes): data = int(data)
                   d[headers[colnum].name] = data
@@ -1745,7 +1746,7 @@ def importWorkbook(request):
   all_models = [ (ct.model_class(),ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
   with transaction.atomic(using=request.database):
     # Find all models in the workbook
-    wb = load_workbook(filename = request.FILES['spreadsheet'], use_iterators = True)
+    wb = load_workbook(filename = request.FILES['spreadsheet'], use_iterators = True, data_only=True)
     models = []
     for ws_name in wb.get_sheet_names():
       # Find the model
@@ -1845,7 +1846,8 @@ def importWorkbook(request):
               if isinstance(headers[colnum],Field):
                 data = cell.internal_value
                 if isinstance(headers[colnum],CharField):
-                  if data: data = data.strip()
+                  if data and isinstance(data, six.string_types):
+                    data = data.strip()
                 elif isinstance(headers[colnum], (IntegerField, AutoField)):
                   if isinstance(data, numericTypes): data = int(data)
                 d[headers[colnum].name] = data

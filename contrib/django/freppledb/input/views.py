@@ -79,7 +79,7 @@ class PathReport(GridReport):
   a specific item.
   '''
   template = 'input/path.html'
-  title = _("Demand plan")  # TODO function....
+  title = _("Supply path")
   filterable = False
   frozenColumns = 0
   editable = False
@@ -207,7 +207,7 @@ class PathReport(GridReport):
           curflows = x.thebuffer.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
           for y in curflows:
             hasChildren = True
-            root.append( (level-1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth-1, True) )
+            root.append( (level-1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth-1, pushsuper) )
         for x in curoperation.suboperations.using(request.database).order_by("-priority"):
           subcount += curoperation.type == "routing" and 1 or -1
           root.append( (level-1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )

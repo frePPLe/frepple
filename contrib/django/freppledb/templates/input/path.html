@@ -37,7 +37,7 @@ path.load {
 }
 
 text {
-  font: 12px sans-serif;
+  font: 10px sans-serif;
   pointer-events: none;
 }
 
@@ -279,7 +279,7 @@ function drawGraph(jsondata)
   // Compute the initial horizontal position
   width = $("#graph").width();
   width_level = width / (maxlevel - minlevel + 1);
-  if (width_level < 400) width_level = 400;
+  if (width_level < 500) width_level = 500;
   for (var i in nodes)
     nodes[i].x = width_level * (0.5 + maxlevel - nodes[i].level);
 
@@ -331,13 +331,10 @@ function drawGraph(jsondata)
            return "scale(1,"+ (2+d.numsuboperations) +")";
          else
            // Top routing operation
-           //return "translate(" + (d.numsuboperations*52.5 - 52.5) + ") scale("+ d.numsuboperations +",1.4)";
            return "scale(1,1.4)";
        }
-       else if (d.parent > 0 && nodes[d.parent].numsuboperations > 0)
-         return "scale(" + (1.0/nodes[d.parent].numsuboperations) + ",1)";
        else
-          return '';
+         return '';
        })
     .call(force.drag);
 

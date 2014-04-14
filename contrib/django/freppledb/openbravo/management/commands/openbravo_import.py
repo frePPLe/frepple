@@ -1494,7 +1494,7 @@ class Command(BaseCommand):
               continue  # We apparantly already added it
             frepple_operations.add(routing_name)
             operations.append( (routing_name, loc, 'routing', None, processplan) )
-            flows[ (routing_name, name, 'end') ] = 1
+            #flows[ (routing_name, name, 'end') ] = 1
             buffers_update.append( (routing_name,name) )
             tmp1 = pp_version.find('manufacturingOperationList')
             if tmp1:

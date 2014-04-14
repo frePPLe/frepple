@@ -468,7 +468,8 @@ class GridReport(View):
   def _generate_spreadsheet_data(reportclass, request, *args, **kwargs):
     # Create a workbook
     wb = Workbook(optimized_write = True)
-    ws = wb.create_sheet(title=force_unicode(reportclass.model._meta.verbose_name))
+    title = force_unicode(reportclass.model and reportclass.model._meta.verbose_name or reportclass.title)
+    ws = wb.create_sheet(title=title)
 
     # Write a header row
     ws.append([ force_unicode(f.title).title() for f in reportclass.rows if f.title and not f.hidden ])
@@ -492,7 +493,7 @@ class GridReport(View):
        mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
        content = output.getvalue()
        )
-    response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % reportclass.model._meta.model_name
+    response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % title
     return response
 
 
@@ -782,7 +783,8 @@ class GridReport(View):
               )
             form = UploadForm(rec, instance=obj)
             if form.has_changed():
-              obj = form.save()
+              obj = form.save(commit=False)
+              obj.save(using=request.database)
               LogEntry(
                   user_id         = request.user.pk,
                   content_type_id = content_type_id,
@@ -1872,7 +1874,8 @@ def importWorkbook(request):
             if form.has_changed():
               try:
                 with transaction.atomic(using=request.database):
-                  obj = form.save()
+                  obj = form.save(commit=False)
+                  obj.save(using=request.database)
                   LogEntry(
                       user_id         = request.user.pk,
                       content_type_id = contenttype_id,

@@ -111,6 +111,9 @@ class Command(BaseCommand):
           except Exception as e:
             raise CommandError("Invalid model to erase: %s" % m)
         tables = models2tables
+      else:
+        for i in EXCLUDE_FROM_BULK_OPERATIONS:
+          tables.discard(i._meta.db_table)
 
       # Some tables need to be handled a bit special
       if "common_bucket" in tables:
@@ -124,6 +127,7 @@ class Command(BaseCommand):
       tables.discard('common_user')
       tables.discard('common_user_groups')
       tables.discard('common_user_user_permissions')
+      tables.discard('django_admin_log')
       tables.discard('django_content_type')
       tables.discard('execute_log')
       tables.discard('execute_scenario')

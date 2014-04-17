@@ -247,7 +247,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 
         // Set the ask date for the next pass through the loop
         if (next_date <= copy_plan_date
-          || (!data->getSolver()->getAllowSplits() && data->state->a_qty > ROUNDING_ERROR))
+          || (!data->getSolver()->getAllowSplits() && data->state->a_qty > ROUNDING_ERROR)
+          || (data->state->a_qty > ROUNDING_ERROR && q_qty - data->state->a_qty < l->getMinShipment()
+              && q_qty - data->state->a_qty > ROUNDING_ERROR))
         {
           // Oops, we didn't get a proper answer we can use for the next loop.
           // Print a warning and simply try one day later.
@@ -333,8 +335,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       data->getSolver()->setLogLevel(0);
       try
       {
-        for(double remainder = best_q_qty;
-            remainder > ROUNDING_ERROR; remainder -= data->state->a_qty)
+        for (double remainder = best_q_qty;
+          remainder > ROUNDING_ERROR && remainder > l->getMinShipment();
+          remainder -= data->state->a_qty)
         {
           data->state->q_qty = remainder;
           data->state->q_date = best_q_date;

@@ -5734,9 +5734,9 @@ class PeggingIterator : public Object
     {
       if (!e) return;
       if (downstream)
-        states.push(state(0,abs(e->getQuantity()),1.0,e,NULL));
+        states.push(state(0,abs(e->getQuantity()),1.0,e,NULL,NULL));
       else
-        states.push(state(0,abs(e->getQuantity()),1.0,NULL,e));
+        states.push(state(0,abs(e->getQuantity()),1.0,NULL,e,NULL));
       initType(metadata);
     }
 
@@ -5759,7 +5759,8 @@ class PeggingIterator : public Object
     OperationPlan* getProducingOperationplan() const
     {
       const FlowPlan* x = states.top().prod_flowplan;
-      return x ? x->getOperationPlan() : NULL;
+      if (x) return x->getOperationPlan();
+      return const_cast<OperationPlan*>(states.top().opplan);
     }
 
     /** Return the date when the material is consumed. */
@@ -5773,7 +5774,9 @@ class PeggingIterator : public Object
     Date getProducingDate() const
     {
       const FlowPlan* x = states.top().prod_flowplan;
-      return x ? x->getDate() : Date::infinitePast;
+      if (x) return x->getDate();
+      const OperationPlan* y = states.top().opplan;
+      return y ? y->getDates().getEnd() : Date::infinitePast;
     }
 
     /** Returns the recursion depth of the iterator.<br>
@@ -5841,6 +5844,7 @@ class PeggingIterator : public Object
 
     /** Update the stack. */
     DECLARE_EXPORT void updateStack(short, double, double, const FlowPlan*, const FlowPlan*, bool = true);
+    DECLARE_EXPORT void updateStack(short, double, double, const OperationPlan*, bool = true);
 
     /** Returns true if this is a downstream iterator. */
     bool isDownstream() {return downstream;}
@@ -5883,18 +5887,26 @@ class PeggingIterator : public Object
       /** Set to false when unpegged quantities are involved. */
       bool pegged;
 
+      /** A pointer to an operationplan.
+        * Used only when no flowplan at all is found to represent the
+        * pegging. */
+      const OperationPlan* opplan;
+
       /** Constructor. */
       state(unsigned int l, double d, double f,
-          const FlowPlan* fc, const FlowPlan* fp, bool p = true)
+          const FlowPlan* fc, const FlowPlan* fp, 
+          const OperationPlan* op, bool p = true)
         : qty(d), factor(f), level(l),
-          cons_flowplan(fc), prod_flowplan(fp), pegged(p) {};
+          cons_flowplan(fc), prod_flowplan(fp), pegged(p), 
+          opplan(op) {};
 
       /** Inequality operator. */
       bool operator != (const state& s) const
       {
         return cons_flowplan != s.cons_flowplan
             || prod_flowplan != s.prod_flowplan
-            || level != s.level;
+            || level != s.level
+            || opplan != s.opplan;
       }
 
       /** Equality operator. */
@@ -5902,7 +5914,8 @@ class PeggingIterator : public Object
       {
         return cons_flowplan == s.cons_flowplan
             && prod_flowplan == s.prod_flowplan
-            && level == s.level;
+            && level == s.level
+            && opplan == s.opplan;
       }
     };
 

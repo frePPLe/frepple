@@ -82,11 +82,37 @@ DECLARE_EXPORT void PeggingIterator::updateStack
     t.factor = f;
     t.level = l;
     t.pegged = p;
+    t.opplan = NULL;
     first = false;
   }
   else
     // We need to create a new element on the stack
-    states.push(state(l, q, f, fc, fp, p));
+    states.push(state(l, q, f, fc, fp, NULL, p));
+}
+
+
+DECLARE_EXPORT void PeggingIterator::updateStack
+(short l, double q, double f, const OperationPlan* op, bool p)
+{
+  // Avoid very small pegging quantities
+  if (q < 0.1) return;
+
+  if (first)
+  {
+    // We can update the current top element of the stack
+    state& t = states.top();
+    t.cons_flowplan = NULL;
+    t.prod_flowplan = NULL;
+    t.qty = q;
+    t.factor = f;
+    t.level = l;
+    t.pegged = p;
+    t.opplan = op;
+    first = false;
+  }
+  else
+    // We need to create a new element on the stack
+    states.push(state(l, q, f, NULL, NULL, op, p));
 }
 
 
@@ -184,7 +210,11 @@ DECLARE_EXPORT void PeggingIterator::followPegging
     }
 
   // Special case: the operationplan doesn't have flowplans
-  // @todo if (noFlowPlans) updateStack(nextlevel, qty, factor, NULL, NULL);
+  if (noFlowPlans)
+  {
+    updateStack(nextlevel, qty, factor, op);
+    first = false;
+  }
 
   // Recursively call this function for all sub-operationplans.
   for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j)

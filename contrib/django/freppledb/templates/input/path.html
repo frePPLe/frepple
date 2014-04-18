@@ -133,7 +133,7 @@ function tick(e)
         {
           // Suboperation of an alternate
           d.x = nodes[d.parent].x;
-          d.y = nodes[d.parent].y - d.suboperindex * 30 - 5;
+          d.y = nodes[d.parent].y + (d.suboperindex + nodes[d.parent].numsuboperations + 1) * 30 - 5;
         }
         else
         {

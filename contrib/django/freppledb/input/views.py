@@ -374,7 +374,7 @@ class ResourceList(GridReport):
     GridFieldNumber('maximum', title=_('maximum')),
     GridFieldText('maximum_calendar', title=_('maximum calendar'), field_name='maximum_calendar__name', formatter='calendar'),
     GridFieldCurrency('cost', title=_('cost')),
-    GridFieldNumber('maxearly', title=_('maxearly')),
+    GridFieldDuration('maxearly', title=_('maxearly')),
     GridFieldText('setupmatrix', title=_('setup matrix'), formatter='setupmatrix'),
     GridFieldText('setup', title=_('setup')),
     GridFieldText('source', title=_('source')),

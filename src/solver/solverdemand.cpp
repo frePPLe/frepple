@@ -68,15 +68,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 
     // Determine the quantity to be planned and the date for the planning loop
     double plan_qty = l->getQuantity() - l->getPlannedQuantity();
-    if (plan_qty < l->getMinShipment()) plan_qty = l->getMinShipment();
     Date plan_date = l->getDue();
-
-    // Nothing to be planned any more (e.g. all deliveries are locked...)
-    if (plan_qty < ROUNDING_ERROR)
+    if (plan_qty < ROUNDING_ERROR || plan_date == Date::infiniteFuture)
     {
       if (loglevel>0) logger << "  Nothing to be planned." << endl;
+      data->pop();
       return;
     }
+    if (plan_qty < l->getMinShipment()) plan_qty = l->getMinShipment();
 
     // Temporary values to store the 'best-reply' so far
     double best_q_qty = 0.0, best_a_qty = 0.0;

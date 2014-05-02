@@ -100,18 +100,6 @@ AC_HELP_STRING([--enable-profile],
 esac],[profile=false])
 AM_CONDITIONAL(PROFILE, test x$profile = xtrue)
 
-#
-# Define an extra configure argument to enable multi-threading
-#
-AC_ARG_ENABLE(multithread,
-AC_HELP_STRING([--enable-multithread],
-[Enable support for multi-threading (default: true)]),
-[case "${enableval}" in
-  yes) multithread=true ;;
-  no)  multithread=false ;;
-  *) AC_MSG_ERROR([bad value ${enableval} for --enable-multithread]) ;;
-esac],[multithread=true])
-AM_CONDITIONAL(MT, test x$multithread = xtrue)
 
 #
 # Define an extra configure argument to enable the lp solver

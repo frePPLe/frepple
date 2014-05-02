@@ -8,8 +8,8 @@ pkgsysconf_DATA = djangosettings.py
 EXTRA_DIST = freppledb django.patch README.txt frepplectl.py setup.py djangosettings.py
 
 install-data-local:
-	echo "installing Django web application to $(DESTDIR)$(pythondir)"; \
-	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix) --install-purelib=$(DESTDIR)$(pythondir)
+	echo "Installing Django web application"; \
+	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix) $(PYFLAGS)
 	-mkdir static
 	$(PYTHON) frepplectl.py collectstatic --noinput --clear
 	find static -type d -exec $(mkinstalldirs) "$(DESTDIR)$(datadir)/frepple/{}" \;; \

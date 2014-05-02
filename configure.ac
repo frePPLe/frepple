@@ -140,6 +140,12 @@ AC_HELP_STRING([--enable-doc],
 esac],[generatedoc=false])
 AM_CONDITIONAL(DOC, test x$generatedoc = xtrue)
 
+#
+# Define a configure argument to pass python installation parameters
+#
+AC_ARG_VAR([PYFLAGS],
+[Argument passed to setup.py when installing frePPLe's Python application.])
+
 # Check the availability of the external programs
 AC_CHECK_PROG(HAVE_DOT, dot, [YES], [NO])
 

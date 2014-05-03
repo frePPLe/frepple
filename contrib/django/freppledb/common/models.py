@@ -54,27 +54,19 @@ class HierarchyModel(models.Model):
     if len(cls.objects.using(database).filter(lft__isnull=True)[:1]) == 0:
       return
 
-    tmp_debug = settings.DEBUG
-    settings.DEBUG = False
     nodes = {}
-    transaction.enter_transaction_management(using=database)
-    cursor = connections[database].cursor()
+    children = {}
+    updates = []
 
     def tagChildren(me, left, level):
       right = left + 1
-      # get all children of this node
-      for i, j in keys:
-        if j == me:
-          # Recursive execution of this function for each child of this node
-          right = tagChildren(i, right, level + 1)
+      # Get all children of this node
+      for i in children.get(me,[]):
+        # Recursive execution of this function for each child of this node
+        right = tagChildren(i, right, level + 1)
 
       # After processing the children of this node now know its left and right values
-      cursor.execute(
-        'update %s set lft=%d, rght=%d, lvl=%d where name = %%s' % (
-          connections[database].ops.quote_name(cls._meta.db_table), left, right, level
-          ),
-        [me]
-        )
+      updates.append( (left, right, level, me) )
 
       # Remove from node list (to mark as processed)
       del nodes[me]
@@ -89,6 +81,10 @@ class HierarchyModel(models.Model):
         nodes[i['name']] = None
       else:
         nodes[i['name']] = i['owner']
+        if i['owner']:
+          if not i['owner'] in children:
+            children[i['owner']] = set()
+          children[i['owner']].add(i['name'])
     keys = sorted(nodes.items())
 
     # Loop over nodes without parent
@@ -126,9 +122,12 @@ class HierarchyModel(models.Model):
         if j == None:
           cnt = tagChildren(i,cnt,0)
 
-    transaction.commit(using=database)
-    settings.DEBUG = tmp_debug
-    transaction.leave_transaction_management(using=database)
+    # Write all results to the database
+    with transaction.atomic(using=database):
+      connections[database].cursor().executemany(
+        'update %s set lft=%%s, rght=%%s, lvl=%%s where name = %%s' %  connections[database].ops.quote_name(cls._meta.db_table),
+        updates
+        )
 
 
 class MultiDBManager(models.Manager):

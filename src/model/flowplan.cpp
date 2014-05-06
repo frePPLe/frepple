@@ -138,6 +138,8 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mod
   // Write pegging info
   if (o->getContentType() == XMLOutput::PLANDETAIL)
   {
+    OperationPlan* m;
+    Buffer* b;
     // Write the upstream pegging
     PeggingIterator k(this, false);
     if (k) --k;
@@ -147,15 +149,18 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mod
       o->writeElement(Tags::tag_quantity, k.getQuantityDemand());
       o->writeElement(Tags::tag_factor, k.getFactor());
       if (!k.getPegged()) o->writeElement(Tags::tag_id, "unpegged");
-      o->writeElement(Tags::tag_buffer, Tags::tag_name, k.getBuffer()->getName());
-      if (k.getConsumingOperationplan())
+      b = k.getBuffer();
+      if (b) o->writeElement(Tags::tag_buffer, Tags::tag_name, b->getName());
+      m = k.getConsumingOperationplan();
+      if (m)
         o->writeElement(Tags::tag_consuming,
-            Tags::tag_id, k.getConsumingOperationplan()->getIdentifier(),
-            Tags::tag_operation, k.getConsumingOperationplan()->getOperation()->getName());
-      if (k.getProducingOperationplan())
+            Tags::tag_id, m->getIdentifier(),
+            Tags::tag_operation, m->getOperation()->getName());
+      m = k.getProducingOperationplan();
+      if (m)
         o->writeElement(Tags::tag_producing,
-            Tags::tag_id, k.getProducingOperationplan()->getIdentifier(),
-            Tags::tag_operation, k.getProducingOperationplan()->getOperation()->getName());
+            Tags::tag_id, m->getIdentifier(),
+            Tags::tag_operation, m->getOperation()->getName());
       o->writeElement(Tags::tag_dates, DateRange(k.getProducingDate(),k.getConsumingDate()));
       o->EndObject(Tags::tag_pegging);
     }
@@ -169,15 +174,18 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mod
       o->writeElement(Tags::tag_quantity, l.getQuantityDemand());
       o->writeElement(Tags::tag_factor, l.getFactor());
       if (!l.getPegged()) o->writeElement(Tags::tag_id, "unpegged");
-      o->writeElement(Tags::tag_buffer, Tags::tag_name, l.getBuffer()->getName());
-      if (l.getConsumingOperationplan())
+      b = l.getBuffer();
+      if (b) o->writeElement(Tags::tag_buffer, Tags::tag_name, b->getName());
+      m = l.getConsumingOperationplan();
+      if (m)
         o->writeElement(Tags::tag_consuming,
-            Tags::tag_id, l.getConsumingOperationplan()->getIdentifier(),
-            Tags::tag_operation, l.getConsumingOperationplan()->getOperation()->getName());
-      if (l.getProducingOperationplan())
+            Tags::tag_id, m->getIdentifier(),
+            Tags::tag_operation, m->getOperation()->getName());
+      m = l.getProducingOperationplan();
+      if (m)
         o->writeElement(Tags::tag_producing,
-            Tags::tag_id, l.getProducingOperationplan()->getIdentifier(),
-            Tags::tag_operation, l.getProducingOperationplan()->getOperation()->getName());
+            Tags::tag_id, m->getIdentifier(),
+            Tags::tag_operation, m->getOperation()->getName());
       o->writeElement(Tags::tag_dates, DateRange(l.getProducingDate(),l.getConsumingDate()));
       o->EndObject(Tags::tag_pegging);
     }

@@ -209,8 +209,9 @@ DECLARE_EXPORT void PeggingIterator::followPegging
       }
     }
 
-  // Special case: the operationplan doesn't have flowplans
-  if (noFlowPlans)
+  // Special case: upstream pegging for a delivery operationplan which
+  // doesn't have any flowplans
+  if (noFlowPlans && op->getDemand() && !downstream)
   {
     updateStack(nextlevel, qty, factor, op);
     first = false;

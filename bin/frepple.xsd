@@ -53,6 +53,7 @@
         <xsd:element name="skills" type="skilllist" />
         <xsd:element name="operationplans" type="operationplanlist" />
         <xsd:element name="problems" type="problemlist" />
+        <xsd:element name="resourceskills" type="resourceskilllist" />
       </xsd:choice>
     </xsd:complexType>
   </xsd:element>

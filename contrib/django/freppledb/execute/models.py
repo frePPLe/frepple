@@ -50,7 +50,7 @@ class Task(models.Model):
   user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
 
   def __unicode__(self):
-    return self.id + ' - ' + self.name + ' - ' + self.status
+    return "%s - %s - %s" % (self.id, self.name, self.status)
 
   class Meta:
     db_table = "execute_log"

@@ -4093,17 +4093,18 @@ class Resource : public HasHierarchy<Resource>,
     /** Update the current setup. */
     void setSetup(const string s) {setup = s;}
 
-  private:
+  protected:
     /** This calendar is used to updates to the resource size. */
     CalendarDouble* size_max_cal;
 
+    /** Stores the collection of all loadplans of this resource. */
+    loadplanlist loadplans;
+
+  private:
     /** The maximum resource size.<br>
       * If a calendar is specified, this field is ignored.
       */
     double size_max;
-
-    /** Stores the collection of all loadplans of this resource. */
-    loadplanlist loadplans;
 
     /** This is a list of all load models that are linking this resource with
       * operations. */

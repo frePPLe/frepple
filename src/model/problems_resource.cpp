@@ -131,7 +131,31 @@ DECLARE_EXPORT void ResourceBuckets::updateProblems()
   // Problem detection disabled on this resource
   if (!getDetectProblems()) return;
 
-  logger << "bucketized problem scanner " << endl;  // TODO
+  // Loop over all events
+  Date startdate = Date::infinitePast;
+  double capa = 0.0;
+  double load = 0.0;
+  for (loadplanlist::const_iterator iter = loadplans.begin();
+      iter != loadplans.end(); iter++)
+  {
+    if (iter->getType() != 2)
+      load = iter->getOnhand();
+    else
+    {
+      // Evaluate previous bucket
+      if (load < 0.0)
+        new ProblemCapacityOverload(this, startdate,
+          iter->getDate(), -load);
+      // Reset evaluation for the new bucket
+      capa = iter->getOnhand();
+      startdate = iter->getDate();
+      load = 0.0;
+    }
+  }
+  // Evaluate the final bucket
+  if (load < 0.0)
+    new ProblemCapacityOverload(this, startdate,
+      Date::infiniteFuture, -load);
 }
 
 

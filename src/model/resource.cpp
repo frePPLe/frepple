@@ -155,6 +155,37 @@ DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDouble* c)
 }
 
 
+DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(CalendarDouble* c)
+{
+  // Resetting the same calendar
+  if (size_max_cal == c) return;
+
+  // Mark as changed
+  setChanged();
+
+  // Remove the current set-onhand events.
+  for (loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); )
+    if (oo->getType() == 2)
+    {
+      loadplans.erase(&(*oo));
+      delete &(*(oo++));
+    }
+    else ++oo;
+
+  // Create timeline structures for every bucket.
+  size_max_cal = c;
+  double v = 0.0;
+  for (CalendarDouble::EventIterator x(size_max_cal); x.getDate()<Date::infiniteFuture; ++x)
+    if (v != x.getValue())
+    {
+      v = x.getValue();
+      loadplanlist::EventSetOnhand *newBucket =
+        new loadplanlist::EventSetOnhand(x.getDate(), v);
+      loadplans.insert(newBucket);
+    }
+}
+
+
 DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Write a reference
@@ -717,13 +748,6 @@ PyObject* Resource::PlanIterator::iternext()
     "unavailable", bucket_unavailable,
     "setup", bucket_setup,
     "free", bucket_available - bucket_load - bucket_setup);
-}
-
-
-DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(CalendarDouble* c)
-{
-  // TODO FILL IN!
-  logger << "  maxi " << this << "   " << c << endl;
 }
 
 }

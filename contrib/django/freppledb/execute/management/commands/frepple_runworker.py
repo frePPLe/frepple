@@ -163,11 +163,11 @@ class Command(BaseCommand):
           logger.error('Task %s not recognized' % task.name)
         # Read the task again from the database and update.
         task = Task.objects.all().using(database).get(pk=task.id)
-        if task.status != 'Done' or not task.finished or not task.started:
+        if task.status not in ('Done','Failed') or not task.finished or not task.started:
           now = datetime.now()
           if not task.started: task.started = now
           if not task.finished: task.finished = now
-          task.status = 'Done'
+          if task.status not in ('Done','Failed'): task.status = 'Done'
           task.save(using=database)
         logger.info("finished task %d at %s: success" % (task.id, datetime.now()))
       except Exception as e:

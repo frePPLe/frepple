@@ -662,10 +662,10 @@ class Command(BaseCommand):
       for i in self.openerp_data('mrp.workcenter', ids, fields):
         if i['active']:
           if i['name'] in frepple_keys:
-            update.append( (i['id'],i['name']) )
+            update.append( (i['id'],i['costs_hour'],i['name']) )
           elif i['id'] in self.resources:
             # Object previously exported from OpenERP already, now renamed
-            rename.append( (i['name'],str(i['id'])) )
+            rename.append( (i['name'],i['costs_hour'],str(i['id'])) )
           else:
             insert.append( (i['id'],i['name'],i['costs_hour'],i['capacity_per_cycle'] / (i['time_cycle'] or 1)) )
           self.resources[i['id']] = i['name']
@@ -1052,6 +1052,7 @@ class Command(BaseCommand):
             flow_insert.append( (
               operation, buffer, i['product_qty']*i['product_efficiency'], 'end', i['date_start'] or None, i['date_stop'] or None
               ) )
+            frepple_flows.add( (buffer,operation) )
           # Create workcentre loads
           if i['routing_id']:
             for j in routing_workcenters.get(i['routing_id'][0],[]):
@@ -1100,6 +1101,7 @@ class Command(BaseCommand):
             flow_insert.append( (
               operation, buffer, -i['product_qty']*i['product_efficiency'], 'start', i['date_start'] or None, i['date_stop'] or None
               ) )
+            frepple_flows.add( (buffer,operation) )
         else:
           # Not active any more
           if (buffer,operation) in frepple_flows:

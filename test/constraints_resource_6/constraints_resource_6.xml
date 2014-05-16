@@ -34,9 +34,9 @@
   </items>
   <buffers>
     <buffer name="1. end item">
-      <producing name="1. make end item" xsi:type="operation_time_per">
+      <producing name="1. make end item" xsi:type="operation_fixed_time">
         <size_multiple>1</size_multiple>
-        <duration_per>P1D</duration_per>
+        <duration>P7D</duration>
       </producing>
       <item name="1. end item" />
     </buffer>
@@ -44,6 +44,7 @@
   <resources>
     <resource name="1. Resource" xsi:type="resource_buckets">
       <maximum_calendar name="Capacity"/>
+      <maxearly>P28D</maxearly>
       <loads>
         <load>
           <operation name="1. make end item" />
@@ -67,7 +68,7 @@
   <demands>
     <!-- Demand model 1: search for capacity backwards in time -->
     <demand name="1. order">
-      <quantity>201</quantity>
+      <quantity>120</quantity>
       <due>2014-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
@@ -76,12 +77,13 @@
 
 <?python
 from __future__ import print_function
+frepple.saveXMLfile("output.1.xml")
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2).solve()
-frepple.saveplan("output.1.xml")
+frepple.saveplan("output.2.xml")
 print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(name="MRP", plantype=2, constraints=15, loglevel=2).solve()
-frepple.saveplan("output.2.xml")
+frepple.saveplan("output.3.xml")
 ?>
 
 </plan>

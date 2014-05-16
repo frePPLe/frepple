@@ -648,7 +648,7 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
   }
   while ( e->prev && !(*e->prev<*e) )
   {
-    // Move to an earlier date   TODO OH in next bucket affected and not updated
+    // Move to an earlier date
     Event *thePrev = e->prev;
     Event *thePrevPrev = thePrev->prev;
     if (e->next) e->next->prev = thePrev;
@@ -669,6 +669,9 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
         e->oh = thePrevPrev->oh + newqty;
       else
         e->oh = newqty;
+      // Update the onhand values in the bucket we are moving out
+      for (Event *f = thePrev->next; f && f->getType()!=2; f = f->next)
+        f->oh -= oldqty;
     }
     else
     {

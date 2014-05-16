@@ -477,6 +477,11 @@ class CalendarDouble : public Calendar
           writeHeader(o, tag);
           if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
           if (val) o->writeElement(Tags::tag_value, val);
+          if (getDays() != 127) o->writeElement(Tags::tag_days, getDays());
+          if (getStartTime())
+            o->writeElement(Tags::tag_starttime, getStartTime());
+          if (getEndTime() != TimePeriod(86400L))
+            o->writeElement(Tags::tag_endtime, getEndTime());
           o->EndObject(tag);
         }
 

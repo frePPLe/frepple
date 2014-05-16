@@ -103,6 +103,7 @@ void LibraryModel::initialize()
   nok += ResourceInfinite::initialize();
   nok += ResourceIterator::initialize();
   nok += Resource::PlanIterator::initialize();
+  nok += ResourceBuckets::initialize();
 
   // Initialize the resourceskill metadata
   nok += ResourceSkill::initialize();

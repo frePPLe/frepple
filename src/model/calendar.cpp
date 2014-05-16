@@ -176,6 +176,22 @@ DECLARE_EXPORT Calendar::~Calendar()
     if (l->getAvailable() == this)
       l->setAvailable(NULL);
   }
+
+  // Remove reference from buffers
+  for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
+  {
+    if (b->getMaximumCalendar() == this)
+      b->setMaximumCalendar(NULL);
+    if (b->getMinimumCalendar() == this)
+      b->setMinimumCalendar(NULL);
+  }
+
+  // Remove references from resources
+  for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
+  {
+    if (r->getMaximumCalendar() == this)
+      r->setMaximumCalendar(NULL);
+  }
 }
 
 

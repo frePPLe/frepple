@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for effective operations</name>
+  <description>
+  In this test the resource capacity varies heavily over time.
+  The test case verifies the resource solver is capable of using every
+  single bit of capacity available on the resource.
+  The capacity search is done for two situations: once with a search
+  backward in time, and another one forward in time.
+
+  This test also verifies the logic used by calendars to select the bucket
+  that is in effect on a certain day.
+  </description>
+  <current>2014-01-01T00:00:00</current>
+
+  <calendars>
+    <calendar name="Capacity">
+      <default>0</default>
+      <buckets>
+				<!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday -->
+				<bucket start="2013-12-01T00:00:00" end="2014-06-30T00:00:00"
+				  days="62" value="20" />
+      </buckets>
+    </calendar>
+  </calendars>
+
+  <!-- Model 1 -->
+  <items>
+    <item name="1. end item">
+      <operation name="1. delivery end item" xsi:type="operation_fixed_time">
+        <duration>P0D</duration>
+      </operation>
+    </item>
+  </items>
+  <buffers>
+    <buffer name="1. end item">
+      <producing name="1. make end item" xsi:type="operation_fixed_time">
+        <size_multiple>1</size_multiple>
+        <duration>P7D</duration>
+      </producing>
+      <item name="1. end item" />
+    </buffer>
+  </buffers>
+  <resources>
+    <resource name="1. Resource" xsi:type="resource_buckets">
+      <maximum_calendar name="Capacity"/>
+      <maxearly>P28D</maxearly>
+      <loads>
+        <load>
+          <operation name="1. make end item" />
+        </load>
+      </loads>
+    </resource>
+  </resources>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="1. delivery end item" />
+      <buffer name="1. end item" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="1. make end item" />
+      <buffer name="1. end item" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+
+  <demands>
+    <!-- Demand model 1: search for capacity backwards in time -->
+    <demand name="1. order">
+      <quantity>120</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>1</priority>
+      <item name="1. end item" />
+    </demand>
+  </demands>
+
+<?python
+from __future__ import print_function
+frepple.saveXMLfile("output.1.xml")
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(name="MRP", plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+?>
+
+</plan>

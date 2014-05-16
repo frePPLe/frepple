@@ -28,6 +28,7 @@ template<class Resource> DECLARE_EXPORT Tree utils::HasName<Resource>::st;
 DECLARE_EXPORT const MetaCategory* Resource::metadata;
 DECLARE_EXPORT const MetaClass* ResourceDefault::metadata;
 DECLARE_EXPORT const MetaClass* ResourceInfinite::metadata;
+DECLARE_EXPORT const MetaClass* ResourceBuckets::metadata;
 
 
 int Resource::initialize()
@@ -66,6 +67,19 @@ int ResourceInfinite::initialize()
 
   // Initialize the Python class
   return FreppleClass<ResourceInfinite,Resource>::initialize();
+}
+
+
+int ResourceBuckets::initialize()
+{
+  // Initialize the metadata
+  ResourceBuckets::metadata = new MetaClass(
+    "resource",
+    "resource_buckets",
+    Object::createString<ResourceBuckets>);
+
+  // Initialize the Python class
+  return FreppleClass<ResourceBuckets,Resource>::initialize();
 }
 
 
@@ -136,6 +150,37 @@ DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDouble* c)
       curMax = x.getValue();
       loadplanlist::EventMaxQuantity *newBucket =
         new loadplanlist::EventMaxQuantity(x.getDate(), curMax);
+      loadplans.insert(newBucket);
+    }
+}
+
+
+DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(CalendarDouble* c)
+{
+  // Resetting the same calendar
+  if (size_max_cal == c) return;
+
+  // Mark as changed
+  setChanged();
+
+  // Remove the current set-onhand events.
+  for (loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); )
+    if (oo->getType() == 2)
+    {
+      loadplans.erase(&(*oo));
+      delete &(*(oo++));
+    }
+    else ++oo;
+
+  // Create timeline structures for every bucket.
+  size_max_cal = c;
+  double v = 0.0;
+  for (CalendarDouble::EventIterator x(size_max_cal); x.getDate()<Date::infiniteFuture; ++x)
+    if (v != x.getValue())
+    {
+      v = x.getValue();
+      loadplanlist::EventSetOnhand *newBucket =
+        new loadplanlist::EventSetOnhand(x.getDate(), v);
       loadplans.insert(newBucket);
     }
 }
@@ -370,6 +415,27 @@ DECLARE_EXPORT void ResourceInfinite::writeElement
   // Write the fields
   Resource::writeElement(o, tag, NOHEAD);
 }
+
+
+DECLARE_EXPORT void ResourceBuckets::writeElement
+(XMLOutput *o, const Keyword &tag, mode m) const
+{
+  // Writing a reference
+  if (m == REFERENCE)
+  {
+    o->writeElement
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    return;
+  }
+
+  // Write the complete object
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
+
+  // Write the fields
+  Resource::writeElement(o, tag, NOHEAD);
+}
+
 
 
 DECLARE_EXPORT PyObject* Resource::getattro(const Attribute& attr)
@@ -683,6 +749,5 @@ PyObject* Resource::PlanIterator::iternext()
     "setup", bucket_setup,
     "free", bucket_available - bucket_load - bucket_setup);
 }
-
 
 }

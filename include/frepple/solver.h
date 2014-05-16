@@ -162,6 +162,20 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(const ResourceInfinite*,void* = NULL);
 
     /** Behavior of this solver method:
+      *  - The operationplan is checked for a capacity in the time bucket
+      *    where its start date falls.
+      *  - If no capacity is found in that bucket, we check in the previous
+      *    buckets (until we hit the limit defined by the maxearly field).
+      *    We move the operationplan such that it starts one second before
+      *    the end of the earlier bucket.
+      *  - If no available time bucket is found in the allowed time fence,
+      *    we scan for the first later bucket which still has capacity left.
+      *    And we return the start date of that bucket as the answer-date to
+      *    the solver.
+      */
+    DECLARE_EXPORT void solve(const ResourceBuckets*,void* = NULL);
+
+    /** Behavior of this solver method:
       *  - This method simply passes on the request to the referenced resource.
       *    With the current model structure it could easily be avoided (and
       *    thus gain a bit in performance), but we wanted to include it anyway

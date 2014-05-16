@@ -76,8 +76,10 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
   // Initialize the Python type
   initType(metadata);
 
-  // Create a loadplan to mark the end of the operationplan.
-  new LoadPlan(o, r, this);
+  // For continuous resources, create a loadplan to mark
+  // the end of the operationplan.
+  if (getResource()->getType() != *ResourceBuckets::metadata)
+    new LoadPlan(o, r, this);
 
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems

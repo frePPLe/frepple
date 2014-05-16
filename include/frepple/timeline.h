@@ -83,7 +83,7 @@ template <class type> class TimeLine
         /** Return a pointer to the owning timeline. */
         virtual TimeLine<type>* getTimeLine() const {return NULL;}
 
-        /** This functions returns the mimimum boundary valid at the time of
+        /** This functions returns the minimum boundary valid at the time of
           * this event. */
         virtual double getMin(bool inclusive = true) const
         {
@@ -141,6 +141,20 @@ template <class type> class TimeLine
         double getQuantity() const {return quantity;}
         EventChangeOnhand(double qty = 0.0) : quantity(qty) {}
         virtual unsigned short getType() const {return 1;}
+    };
+
+    /** @brief A timeline event representing a change of the current value. */
+    class EventSetOnhand : public Event
+    {
+        friend class TimeLine<type>;
+      private:
+        double quantity;
+      protected:
+        EventSetOnhand *prevSet;
+      public:
+        EventSetOnhand(Date d, double q=0.0) : quantity(q), prevSet(NULL)
+        {this->dt = d;}
+        virtual unsigned short getType() const {return 2;}
     };
 
     /** @brief A timeline event representing a change of the minimum target. */
@@ -222,7 +236,7 @@ template <class type> class TimeLine
         bool operator!=(const iterator& x) const {return this->cur != x.cur;}
     };
 
-    TimeLine() : first(NULL), last(NULL), lastMax(NULL), lastMin(NULL) {}
+    TimeLine() : first(NULL), last(NULL), lastMax(NULL), lastMin(NULL), lastSet(NULL) {}
     int size() const
     {
       int cnt(0);
@@ -239,13 +253,22 @@ template <class type> class TimeLine
     const_iterator end() const {return const_iterator(NULL);}
     bool empty() const {return first==NULL;}
     void insert(Event*);
+
+    /** Insert an onhandchange event in the timeline. */
     void insert(EventChangeOnhand* e, double qty, const Date& d)
     {
       e->quantity = qty;
       e->dt = d;
       insert(static_cast<Event*>(e));
     };
+
+    /** Remove an event from the timeline. */
     void erase(Event*);
+
+    /** Update the timeline to move an event to a new date and quantity.<br>
+      * Only onhand change events can be updated in this way. Other event
+      * types need to be erased and re-inserted.
+      */
     void update(EventChangeOnhand*, double, const Date&);
 
     /** This function is used for debugging purposes.<br>
@@ -258,7 +281,7 @@ template <class type> class TimeLine
       for (const_iterator oo=begin(); oo!=end(); ++oo)
         logger << "  " << oo->getDate() << "   "
             << oo->getQuantity() << "    " << oo->getOnhand()
-            << "    " << oo->getCumulativeProduced() <<  &*oo << endl;
+            << "    " << oo->getCumulativeProduced() <<  "    " << &*oo << endl;
     }
 
     /** This functions returns the mimimum valid at a certain date. */
@@ -272,7 +295,7 @@ template <class type> class TimeLine
       return m ? m->getMin() : 0.0;
     }
 
-    /** This functions returns the mimimum valid at a certain event. */
+    /** This functions returns the minimum valid at a certain event. */
     virtual double getMin(const Event *e, bool inclusive = true) const
     {
       if (!e) return 0.0;
@@ -295,7 +318,7 @@ template <class type> class TimeLine
       return m ? m->getMax() : 0.0;
     }
 
-    /** This functions returns the mimimum valid at a certain eveny. */
+    /** This functions returns the minimum valid at a certain event. */
     virtual double getMax(const Event *e, bool inclusive = true) const
     {
       if (!e) return 0.0;
@@ -307,7 +330,7 @@ template <class type> class TimeLine
       return m ? m->getMax() : 0.0;
     }
 
-    /** This functions returns the mimimum event valid at a certain date. */
+    /** This functions returns the minimum event valid at a certain date. */
     virtual EventMinQuantity* getMinEvent(Date d, bool inclusive = true) const
     {
       EventMinQuantity *m = this->lastMin;
@@ -344,6 +367,9 @@ template <class type> class TimeLine
 
     /** A pointer to the last minimum change. */
     EventMinQuantity *lastMin;
+
+    /** A pointer to the last fixed onhand. */
+    EventSetOnhand *lastSet;
 };
 
 
@@ -353,16 +379,23 @@ template <class type> void TimeLine<type>::insert (Event* e)
   // While searching from the end, update the onhand and cumulative produced
   // quantity of all nodes passed
   iterator i = rbegin();
+  if (lastSet)
+  {
+    EventSetOnhand *m = lastSet;
+    while (m->prevSet && *e<*(m->prevSet))
+      m = m->prevSet;
+    i = begin(m);
+  }
   double qty = e->getQuantity();
   if (qty > 0)
     for (; i!=end() && *e<*i; --i)
     {
-      i->oh += qty;
+      if (i->getType()!=2) i->oh += qty;
       i->cum_prod += qty;
     }
   else
     for (; i!=end() && *e<*i; --i)
-      i->oh += qty;
+      if (i->getType()!=2) i->oh += qty;
 
   // Insert
   if (i == end())
@@ -396,43 +429,74 @@ template <class type> void TimeLine<type>::insert (Event* e)
     else e->cum_prod = i->cum_prod;
   }
 
-  if (e->getType() == 3)
+  switch (e->getType())
   {
-    // Insert in the list of minima
-    EventMinQuantity *m = static_cast<EventMinQuantity*>(e);
-    if (!lastMin || m->getDate() >= lastMin->getDate())
-    {
-      // New last minimum
-      m->prevMin = lastMin;
-      lastMin = m;
-    }
-    else
-    {
-      EventMinQuantity * o = lastMin;
-      while (o->prevMin && m->getDate() >= o->prevMin->getDate())
-        o = o->prevMin;
-      m->prevMin = o->prevMin;
-      o->prevMin = m;
-    }
-  }
-  else if (e->getType() == 4)
-  {
-    // Insert in the list of maxima
-    EventMaxQuantity* m = static_cast<EventMaxQuantity*>(e);
-    if (!lastMax || m->getDate() >= lastMax->getDate())
-    {
-      // New last maximum
-      m->prevMax = lastMax;
-      lastMax = m;
-    }
-    else
-    {
-      EventMaxQuantity *o = lastMax;
-      while (o->prevMax && m->getDate() >= o->prevMax->getDate())
-        o = o->prevMax;
-      m->prevMax = o->prevMax;
-      o->prevMax = m;
-    }
+    case 2:
+      // Insert in the list of setOnhand
+      {
+        EventSetOnhand *m = static_cast<EventSetOnhand*>(e);
+        if (!lastSet || m->getDate() >= lastSet->getDate())
+        {
+          // New last setOnhand
+          m->prevSet = lastSet;
+          lastSet = m;
+        }
+        else
+        {
+          EventSetOnhand * o = lastSet;
+          while (o->prevSet && m->getDate() >= o->prevSet->getDate())
+            o = o->prevSet;
+          m->prevSet = o->prevSet;
+          o->prevSet = m;
+        }
+        // Update onhand after this setonhand till the next setonhand
+        double delta = m->quantity - m->oh;
+        iterator i = begin(m);
+        m->oh = m->quantity;
+        ++i;
+        for (; i!=end() && i->getType()!=2; ++i)
+          m->oh += delta;
+      }
+      break;
+    case 3:
+      // Insert in the list of minima
+      {
+        EventMinQuantity *m = static_cast<EventMinQuantity*>(e);
+        if (!lastMin || m->getDate() >= lastMin->getDate())
+        {
+          // New last minimum
+          m->prevMin = lastMin;
+          lastMin = m;
+        }
+        else
+        {
+          EventMinQuantity * o = lastMin;
+          while (o->prevMin && m->getDate() >= o->prevMin->getDate())
+            o = o->prevMin;
+          m->prevMin = o->prevMin;
+          o->prevMin = m;
+        }
+      }
+      break;
+    case 4:
+      // Insert in the list of maxima
+      {
+        EventMaxQuantity* m = static_cast<EventMaxQuantity*>(e);
+        if (!lastMax || m->getDate() >= lastMax->getDate())
+        {
+          // New last maximum
+          m->prevMax = lastMax;
+          lastMax = m;
+        }
+        else
+        {
+          EventMaxQuantity *o = lastMax;
+          while (o->prevMax && m->getDate() >= o->prevMax->getDate())
+            o = o->prevMax;
+          m->prevMax = o->prevMax;
+          o->prevMax = m;
+        }
+      }
   }
 
   // Final debugging check
@@ -445,13 +509,22 @@ template <class type> void TimeLine<type>::erase(Event* e)
   // Update later entries
   double qty = e->getQuantity();
   if (qty>0)
+  {
+    bool update_oh = true;
     for (iterator i = begin(e); i!=end(); ++i)
     {
-      i->oh -= qty;
+      if (update_oh)
+      {
+        if (i->getType() == 2)
+          update_oh = false;
+        else
+          i->oh -= qty;
+      }
       i->cum_prod -= qty;
     }
+  }
   else
-    for (iterator i = begin(e); i!=end(); ++i)
+    for (iterator i = begin(e); i!=end() && i->getType()!=2; ++i)
       i->oh -= qty;
 
   if (e->prev)
@@ -470,34 +543,52 @@ template <class type> void TimeLine<type>::erase(Event* e)
   e->prev = NULL;
   e->next = NULL;
 
-  // Remove the list of minima
-  if (e->getType() == 3)
+  switch (e->getType())
   {
-    EventMinQuantity *m = static_cast<EventMinQuantity*>(e);
-    if (lastMin == e)
-      // New last minimum
-      lastMin = m->prevMin;
-    else
-    {
-      EventMinQuantity *o = lastMin;
-      while (o->prevMin != e && o) o = o->prevMin;
-      if (o) o->prevMin = m->prevMin;
-    }
-  }
-
-  // Remove the list of maxima
-  else if (e->getType() == 4)
-  {
-    EventMaxQuantity *m = static_cast<EventMaxQuantity*>(e);
-    if (lastMax == e)
-      // New last maximum
-      lastMax = m->prevMax;
-    else
-    {
-      EventMaxQuantity * o = lastMax;
-      while (o->prevMax != e && o) o = o->prevMax;
-      if (o) o->prevMax = m->prevMax;
-    }
+    case 2:
+      // Remove from the list of setonhand
+      {
+        EventSetOnhand *m = static_cast<EventSetOnhand*>(e);
+        if (lastSet == e)
+          // New last set
+          lastSet = m->prevSet;
+        else
+        {
+          EventSetOnhand *o = lastSet;
+          while (o->prevSet != e && o) o = o->prevSet;
+          if (o) o->prevSet = m->prevSet;
+        };
+      }
+      break;
+    case 3:
+      // Remove from the list of minima
+      {
+        EventMinQuantity *m = static_cast<EventMinQuantity*>(e);
+        if (lastMin == e)
+          // New last minimum
+          lastMin = m->prevMin;
+        else
+        {
+          EventMinQuantity *o = lastMin;
+          while (o->prevMin != e && o) o = o->prevMin;
+          if (o) o->prevMin = m->prevMin;
+        };
+      }
+      break;
+    case 4:
+      // Remove from the list of maxima
+      {
+        EventMaxQuantity *m = static_cast<EventMaxQuantity*>(e);
+        if (lastMax == e)
+          // New last maximum
+          lastMax = m->prevMax;
+        else
+        {
+          EventMaxQuantity * o = lastMax;
+          while (o->prevMax != e && o) o = o->prevMax;
+          if (o) o->prevMax = m->prevMax;
+        }
+      }
   }
 
   // Final debugging check
@@ -507,9 +598,14 @@ template <class type> void TimeLine<type>::erase(Event* e)
 
 template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double newqty, const Date& d)
 {
+    // XXX DEBUGGING PRINT
+  // Resource *RES = Resource::find("1. Resource");
+  // if (static_cast<void*>(this) == static_cast<void*>(&(RES->getLoadPlans()))) logger << "UPDATE  " << e << endl;
+
   // Compute the delta quantity
   double delta = e->quantity - newqty;
   double oldqty = e->quantity;
+  bool in_bucket = false;
 
   // Set the new date and quantity. The algorithm below swaps the element with
   // its predecessor or successor till the timeline is properly sorted again.
@@ -534,9 +630,20 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
     else
       last = e;
     if (first == e) first = theNext;
-    e->oh = theNext->oh;
+    if (theNext->getType() == 2)
+    {
+      delta = -newqty;
+      e->oh = theNext->oh;
+      in_bucket = true;
+    }
+    else if (in_bucket)
+      e->oh += theNext->getQuantity();
+    else
+    {
+      e->oh = theNext->oh;
+      theNext->oh -= oldqty;
+    }
     e->cum_prod = theNext->cum_prod;
-    theNext->oh -= oldqty;
     if (oldqty > 0) theNext->cum_prod -= oldqty;
   }
   while ( e->prev && !(*e->prev<*e) )
@@ -554,9 +661,23 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
     else
       first = e;
     if (last == e) last = thePrev;
-    thePrev->oh = e->oh;
     thePrev->cum_prod = e->cum_prod;
-    e->oh -= thePrev->getQuantity();
+    if (thePrev->getType() == 2)
+    {
+      delta = 0.0;
+      if (thePrevPrev)
+        e->oh = thePrevPrev->oh + newqty;
+      else
+        e->oh = newqty;
+      // Update the onhand values in the bucket we are moving out
+      for (Event *f = thePrev->next; f && f->getType()!=2; f = f->next)
+        f->oh -= oldqty;
+    }
+    else
+    {
+      thePrev->oh = e->oh;
+      e->oh -= thePrev->getQuantity();
+    }
     if (thePrev->getQuantity() > 0) e->cum_prod -= thePrev->getQuantity();
   }
 
@@ -565,13 +686,22 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
   {
     double cumdelta = (oldqty>0? oldqty : 0) - (newqty>0 ? newqty : 0);
     if (fabs(cumdelta) > 0)
+    {
+      bool update_oh = true;
       for (iterator i=begin(e); i!=end(); ++i)
       {
-        i->oh -= delta;
+        if (update_oh)
+        {
+          if (i->getType()==2)
+            update_oh = false;
+          else
+            i->oh -= delta;
+        }
         i->cum_prod -= cumdelta;
       }
+    }
     else
-      for (iterator i=begin(e); i!=end(); ++i)
+      for (iterator i=begin(e); i!=end() && i->getType()!=2; ++i)
         i->oh -= delta;
   }
 
@@ -590,7 +720,10 @@ template <class type> bool TimeLine<type>::check() const
   for (const_iterator i = begin(); i!=end(); ++i)
   {
     // Problem 1: The onhands don't add up properly
-    expectedOH += i->getQuantity();
+    if (i->getType() == 2)
+      expectedOH = i->oh;
+    else
+      expectedOH += i->getQuantity();
     if (i->getQuantity() > 0) expectedCumProd += i->getQuantity();
     if (fabs(expectedOH - i->oh) > ROUNDING_ERROR)
     {

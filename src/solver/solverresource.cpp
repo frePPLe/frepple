@@ -77,7 +77,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   bool HasOverload;
   bool HasSetupOverload;
   bool noRestore = data->state->forceLate;
-  bool forced_late = data->state->forceLate;
 
   // Initialize the default reply
   data->state->a_date = data->state->q_date;
@@ -503,7 +502,6 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
   Resource::loadplanlist::const_iterator cur = res->getLoadPlans().end();
   Date curdate;
   bool noRestore = data->state->forceLate;
-  bool forced_late = data->state->forceLate;
   double overloadQty = 0.0;
 
   // Initialize the default reply

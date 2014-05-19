@@ -133,7 +133,6 @@ DECLARE_EXPORT void ResourceBuckets::updateProblems()
 
   // Loop over all events
   Date startdate = Date::infinitePast;
-  double capa = 0.0;
   double load = 0.0;
   for (loadplanlist::const_iterator iter = loadplans.begin();
       iter != loadplans.end(); iter++)
@@ -147,7 +146,6 @@ DECLARE_EXPORT void ResourceBuckets::updateProblems()
         new ProblemCapacityOverload(this, startdate,
           iter->getDate(), -load);
       // Reset evaluation for the new bucket
-      capa = iter->getOnhand();
       startdate = iter->getDate();
       load = 0.0;
     }

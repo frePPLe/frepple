@@ -1984,7 +1984,6 @@ DECLARE_EXPORT double OperationRouting::setOperationPlanQuantity
   if (!execute) return newqty;
 
   // Update all routing sub operationplans
-  double delta = newqty - origqty;
   for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)
   {
     if (i->getOperation() == OperationSetup::setupoperation)

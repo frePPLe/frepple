@@ -56,7 +56,6 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
   Date min_next_date(Date::infiniteFuture);
   LoadPlan *lplan = data->state->q_loadplan;
   Resource *bestAlternateSelection = NULL;
-  double bestCost = DBL_MAX;
   bool qualified_resource_exists = false;
   double bestAlternateValue = DBL_MAX;
   double bestAlternateQuantity = DBL_MIN;

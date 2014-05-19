@@ -37,7 +37,6 @@
 #     - astyle:      Runs the astyle code beautifier.
 #  CODE MAINTENANCE
 #     - set_release: Updates all references to the release number from an old to a new number.
-#     - svn:         Updates the source code with the latest version in the SourceForge SVN repository.
 #
 
 default: prep config clean build dist check
@@ -143,6 +142,3 @@ set_release:
 		sed 's/$(old1), $(old2),/$(new1), $(new2),/g' out.tmp >$$i; \
 		rm out.tmp; \
 	done
-
-svn:
-	svn update

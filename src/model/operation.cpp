@@ -624,15 +624,21 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
   //   - id of the new opplan is not set
   //   - id of the old opplan is set
   //   - it is a fixedtime operation
-  //   - it doesn't load any resources
+  //   - it doesn't load any resources of type default
   //   - both operationplans aren't locked
   //   - both operationplans have no owner
   //   - start and end date of both operationplans are the same
   //   - demand of both operationplans are the same
   //   - maximum operation size is not exceeded
   //   - alternate flowplans need to be on the same alternate
-  if (!o->getRawIdentifier() && !o->getLocked() && !o->getOwner() && getLoads().empty())
+  if (!o->getRawIdentifier() && !o->getLocked() && !o->getOwner())
   {
+    // Verify we load no resources of type "default".
+    // It's ok to merge operationplans which load "infinite" or "buckets" resources.
+    for (Operation::loadlist::const_iterator i = getLoads().begin(); i != getLoads().end(); ++i)
+      if (i->getResource()->getType() == *ResourceDefault::metadata)
+        return true;
+
     // Loop through candidates
     OperationPlan::iterator x(this);
     OperationPlan *y = NULL;

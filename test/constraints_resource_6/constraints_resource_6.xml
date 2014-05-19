@@ -24,7 +24,9 @@
     </calendar>
   </calendars>
 
-  <!-- Model 1 -->
+  <!--
+    TEST 1: Planning a single demand early and late.
+  -->
   <items>
     <item name="1. end item">
       <operation name="1. delivery end item" xsi:type="operation_fixed_time">
@@ -64,9 +66,7 @@
       <quantity>1</quantity>
     </flow>
   </flows>
-
   <demands>
-    <!-- Demand model 1: search for capacity backwards in time -->
     <demand name="1. order">
       <quantity>120</quantity>
       <due>2014-03-06T00:00:00</due>
@@ -75,6 +75,496 @@
     </demand>
   </demands>
 
+  <!--
+    TEST 2: Planning multiple demands early and late.
+    The operationplans can be merged.
+  -->
+  <items>
+    <item name="2. end item">
+      <operation name="2. delivery end item" xsi:type="operation_fixed_time">
+        <duration>P0D</duration>
+      </operation>
+    </item>
+  </items>
+  <buffers>
+    <buffer name="2. end item">
+      <producing name="2. make end item" xsi:type="operation_fixed_time">
+        <size_multiple>1</size_multiple>
+        <duration>P7D</duration>
+      </producing>
+      <item name="2. end item" />
+    </buffer>
+  </buffers>
+  <resources>
+    <resource name="2. Resource" xsi:type="resource_buckets">
+      <maximum_calendar name="Capacity"/>
+      <maxearly>P28D</maxearly>
+      <loads>
+        <load>
+          <operation name="2. make end item" />
+        </load>
+      </loads>
+    </resource>
+  </resources>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="2. delivery end item" />
+      <buffer name="2. end item" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="2. make end item" />
+      <buffer name="2. end item" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+  <demands>
+    <demand name="2. order 01">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 02">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 03">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 04">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 05">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 06">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 07">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 08">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 09">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 10">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 11">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 12">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 13">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 14">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 15">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 16">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+    <demand name="2. order 17">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>2</priority>
+      <item name="2. end item" />
+    </demand>
+  </demands>
+
+  <!--
+    TEST 3: Planning multiple demands on a bucketized resource where the 
+    working hours don't align with the capacity buckets.
+  -->
+  <calendars>
+      <calendar name="3. Working hours">
+      <default>0</default>
+      <buckets>
+				<!-- 4 + 8 + 16 = 28 = effective tuesday through thursday -->
+				<bucket start="2000-12-01T00:00:00" end="2020-06-30T00:00:00"
+				  days="28" value="1" />
+      </buckets>
+    </calendar>
+  </calendars>
+  <locations>
+    <location name="3. factory">
+      <available name="3. Working hours"/>
+    </location>
+  </locations>
+  <items>
+    <item name="3. end item">
+      <operation name="3. delivery end item" xsi:type="operation_fixed_time">
+        <location name="3. factory"/>
+        <duration>P0D</duration>
+      </operation>
+    </item>
+  </items>
+  <buffers>
+    <buffer name="3. end item">
+      <producing name="3. make end item" xsi:type="operation_fixed_time">
+        <size_multiple>1</size_multiple>
+        <location name="3. factory"/>
+        <!-- We use only 3 days here, rather than 7 in previous tests. -->
+        <duration>P3D</duration>   
+      </producing>
+      <item name="3. end item" />
+    </buffer>
+  </buffers>
+  <resources>
+    <resource name="3. Resource" xsi:type="resource_buckets">
+      <maximum_calendar name="Capacity"/>
+      <location name="3. factory"/>
+      <maxearly>P28D</maxearly>
+      <loads>
+        <load>
+          <operation name="3. make end item" />
+        </load>
+      </loads>
+    </resource>
+  </resources>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="3. delivery end item" />
+      <buffer name="3. end item" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="3. make end item" />
+      <buffer name="3. end item" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+  <demands>
+    <demand name="3. order 01">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 02">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 03">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 04">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 05">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 06">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 07">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 08">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 09">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 10">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 11">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 12">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 13">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 14">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 15">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 16">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 17">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>3</priority>
+      <item name="3. end item" />
+    </demand>
+  </demands>
+
+  <!--
+    TEST 4: Planning multiple demands on a bucketized resource where the 
+    working hours don't align with the capacity buckets.
+    In addition there is 2 complete buckets unavailable because of a 
+    holiday period. One before the demand due date, and another after the 
+    due date.
+  -->
+  <calendars>
+      <calendar name="4. Working hours">
+      <default>0</default>
+      <buckets>
+        <!-- Holiday period. -->
+				<bucket start="2014-02-16T00:00:00" end="2014-02-22T00:00:00"
+				  value="0" priority="1" />
+				<bucket start="2014-03-09T00:00:00" end="2014-03-15T00:00:00"
+				  value="0" priority="1" />
+				<!-- 4 + 8 + 16 = 28 = effective tuesday through thursday -->
+				<bucket start="2000-12-01T00:00:00" end="2020-06-30T00:00:00"
+				  days="28" value="1" priority="2" />
+      </buckets>
+    </calendar>
+  </calendars>
+  <locations>
+    <location name="4. factory">
+      <available name="4. Working hours"/>
+    </location>
+  </locations>
+  <items>
+    <item name="4. end item">
+      <operation name="4. delivery end item" xsi:type="operation_fixed_time">
+        <location name="4. factory"/>
+        <duration>P0D</duration>
+      </operation>
+    </item>
+  </items>
+  <buffers>
+    <buffer name="4. end item">
+      <producing name="4. make end item" xsi:type="operation_fixed_time">
+        <size_multiple>1</size_multiple>
+        <location name="4. factory"/>
+        <!-- We use only 3 days here, rather than 7 in previous tests. -->
+        <duration>P3D</duration>   
+      </producing>
+      <item name="4. end item" />
+    </buffer>
+  </buffers>
+  <resources>
+    <resource name="4. Resource" xsi:type="resource_buckets">
+      <maximum_calendar name="Capacity"/>
+      <location name="4. factory"/>
+      <maxearly>P28D</maxearly>
+      <loads>
+        <load>
+          <operation name="4. make end item" />
+        </load>
+      </loads>
+    </resource>
+  </resources>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="4. delivery end item" />
+      <buffer name="4. end item" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="4. make end item" />
+      <buffer name="4. end item" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+  <demands>
+    <demand name="4. order 01">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 02">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 03">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 04">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 05">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 06">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 07">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 08">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 09">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 10">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 11">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 12">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 13">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 14">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 15">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 16">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 17">
+      <quantity>7</quantity>
+      <due>2014-03-06T00:00:00</due>
+      <priority>4</priority>
+      <item name="4. end item" />
+    </demand>
+  </demands>
+  
 <?python
 from __future__ import print_function
 frepple.saveXMLfile("output.1.xml")

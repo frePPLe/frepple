@@ -584,6 +584,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
       {
         // Search backward in time for a bucket that still has capacity left
         Date bucketEnd;
+        DateRange newStart;
         for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
           cur!=res->getLoadPlans().end() && cur->getDate() > currentOpplan.end - res->getMaxEarly();)
         {
@@ -593,26 +594,35 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
             continue;
           }
           bucketEnd = cur->getDate();
-          --cur;  // Move to last
+          --cur;  // Move to last loadplan in the previous bucket
           if (cur != res->getLoadPlans().end() && cur->getOnhand() > ROUNDING_ERROR)
-            // Capacity left in this bucket!
-            break;
+          {
+            // Find a suitable start date in this bucket
+            TimePeriod tmp;
+            newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
+              bucketEnd, TimePeriod(1L), false, &tmp
+              );
+            // Move to the start of the bucket
+            while (cur!=res->getLoadPlans().end() && cur->getType() != 2) --cur;
+            // If the new start date is within this bucket we have found a
+            // bucket with available capacity left
+            if (cur==res->getLoadPlans().end() || cur->getDate() <= newStart.getStart())
+              break;
+          }
         }
 
         // We found a date where the load goes below the maximum
-        // At this point:
-        //  - curdate is a latest date where we are above the maximum
-        //  - cur is the first loadplan where we are below the max
-        if (bucketEnd && bucketEnd > currentOpplan.end - res->getMaxEarly())
+        // At this point newStart.getStart() is a date in a bucket where
+        // capacity is still available.
+        if (bucketEnd && newStart.getStart() >= currentOpplan.end - res->getMaxEarly())
         {
           // Move the operationplan to start 1 second in the bucket with available capacity
-          // TODO move to start, middle or end of bucket?
-          data->state->q_operationplan->setStart(bucketEnd - TimePeriod(1L));
+          data->state->q_operationplan->setStart(newStart.getStart());
 
           // Verify the move is successfull
-          if (data->state->q_operationplan->getDates().getStart() < bucketEnd - TimePeriod(1L))
-            // If there isn't available time in the location calendar, the move
-            // can fail.
+          if (data->state->q_operationplan->getDates().getStart() != newStart.getStart())
+            // Not sure if there are cases where this will fail, but just
+            // in case...
             data->state->a_qty = 0.0;
           else if (data->constrainedPlanning && (isLeadtimeConstrained() || isFenceConstrained()))
             // Check the leadtime constraints after the move
@@ -649,9 +659,25 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
         overloadQty = cur->getOnhand();
       else if (overloadQty > ROUNDING_ERROR)
       {
-        // Capacity left in the bucket we just checked!
-        newDate = prevStart;
-        break;
+        // Find a suitable start date in this bucket
+        TimePeriod tmp;
+        DateRange newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
+          prevStart, TimePeriod(1L), true, &tmp
+          );
+        logger << "zzzz" << prevStart << "  " << newStart.getStart() << "  " <<  cur->getDate() << endl;
+        if (newStart.getStart() < cur->getDate())
+        {
+          // If the new start date is within this bucket we just left, then
+          // we have found a bucket with available capacity left
+          newDate = newStart.getStart();
+          break;
+        }
+        else
+        {
+          // New bucket starts
+          prevStart = cur->getDate();
+          overloadQty = cur->getOnhand();
+        }
       }
       else
       {

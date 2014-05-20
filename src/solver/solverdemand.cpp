@@ -85,6 +85,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     Operation* deliveryoper = l->getDeliveryOperation();
 
     // Handle invalid or missing delivery operations
+    {
     string problemtext = string("Demand '") + l->getName() + "' has no delivery operation";
     Problem::const_iterator j = Problem::begin(const_cast<Demand*>(l), false);
     while (j!=Problem::end())
@@ -106,6 +107,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     else
       // Remove problem that may already exist
       delete &*j;
+    }
 
     // Planning loop
     do

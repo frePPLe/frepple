@@ -104,9 +104,15 @@ stats:
 		`find contrib -name '*.cpp'` \
 		`find src -name '*.h'` \
 		`find include -name '*.h'` \
-		`find contrib -name '*.h'` \
+		`find . -name '*.xsd'` \
+		`find . -name '*.nsi'` \
+		`find . -name '*.am'` \
+		`find . -name '*.ac'` \
 		`find modules -name '*.h'` | grep -v config.h | sort -n
 	wc -l `find . -name '*.py'` | sort -n
+	wc -l `find contrib -name '*.html'` \
+		contrib/django/freppledb/common/static/js/frepple.js \
+		contrib/django/freppledb/common/static/css/frepple.css | sort -n
 
 # A simple way to list the todo items
 todo:

@@ -662,7 +662,6 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
         DateRange newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
           prevStart, TimePeriod(1L), true, &tmp
           );
-        logger << "zzzz" << prevStart << "  " << newStart.getStart() << "  " <<  cur->getDate() << endl;
         if (newStart.getStart() < cur->getDate())
         {
           // If the new start date is within this bucket we just left, then

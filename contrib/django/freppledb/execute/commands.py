@@ -93,7 +93,8 @@ def createPlan(database = DEFAULT_DB_ALIAS):
   except: constraint = 15  # Default is with all constraints enabled
   solver = frepple.solver_mrp(name = "MRP", constraints = constraint,
     plantype = plantype, loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),
-    allowsplits = (Parameter.getValue('allowsplits', database, 'true') == "true")
+    allowsplits = (Parameter.getValue('allowsplits', database, 'true') == "true"),
+    plansafetystockfirst = False
     #userexit_resource=debugResource,
     #userexit_demand=debugDemand
     )

@@ -1010,7 +1010,9 @@ class Plannable : public HasProblems, public Solvable
   * that are linked together using loads and/or flows. Each cluster can be seen
   * as a completely independent part of the model and the planning problem.
   * There is no interaction possible between clusters.
-  * Clusters are helpful is multi-threading the planning problem, partial
+  * Cluster 0 is a special case: it contains all entities not connected to any other
+  * entity at all.
+  * Clusters are helpful in multi-threading the planning problem, partial
   * replanning of the model, etc...
   */
 class HasLevel
@@ -1031,8 +1033,8 @@ class HasLevel
     /** Stores the total number of clusters in the model. */
     static DECLARE_EXPORT unsigned short numberOfClusters;
 
-    /** Stores the total number of hanging clusters in the model. */
-    static DECLARE_EXPORT unsigned short numberOfHangingClusters;
+    /** Stores the maximum level number in the model. */
+    static DECLARE_EXPORT unsigned short numberOfLevels;
 
     /** Stores the level of this entity. Higher numbers indicate more
       * upstream entities.
@@ -1081,6 +1083,15 @@ class HasLevel
     static DECLARE_EXPORT void computeLevels();
 
   public:
+    /** Returns the total number of levels.<br>
+      * If not up to date the recomputation will be triggered.
+      */
+    static unsigned short getNumberOfLevels()
+    {
+      if (recomputeLevels || computationBusy) computeLevels();
+      return numberOfLevels;
+    }
+
     /** Returns the total number of clusters.<br>
       * If not up to date the recomputation will be triggered.
       */
@@ -1088,17 +1099,6 @@ class HasLevel
     {
       if (recomputeLevels || computationBusy) computeLevels();
       return numberOfClusters;
-    }
-
-    /** Returns the total number of hanging clusters. A hanging cluster
-      * is a cluster that consists of a single entity that isn't connected
-      * to any other entity.<br>
-      * If not up to date the recomputation will be triggered.
-      */
-    static unsigned short getNumberOfHangingClusters()
-    {
-      if (recomputeLevels || computationBusy) computeLevels();
-      return numberOfHangingClusters;
     }
 
     /** Return the level (and recompute first if required). */
@@ -5937,10 +5937,10 @@ class PeggingIterator : public Object
 
       /** Constructor. */
       state(unsigned int l, double d, double f,
-          const FlowPlan* fc, const FlowPlan* fp, 
+          const FlowPlan* fc, const FlowPlan* fp,
           const OperationPlan* op, bool p = true)
         : qty(d), factor(f), level(l),
-          cons_flowplan(fc), prod_flowplan(fp), pegged(p), 
+          cons_flowplan(fc), prod_flowplan(fp), pegged(p),
           opplan(op) {};
 
       /** Inequality operator. */

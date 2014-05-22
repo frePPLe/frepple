@@ -35,7 +35,7 @@ namespace frepple
 DECLARE_EXPORT bool HasLevel::recomputeLevels = false;
 DECLARE_EXPORT bool HasLevel::computationBusy = false;
 DECLARE_EXPORT short unsigned HasLevel::numberOfClusters = 0;
-DECLARE_EXPORT short unsigned HasLevel::numberOfHangingClusters = 0;
+DECLARE_EXPORT short unsigned HasLevel::numberOfLevels = 0;
 
 
 DECLARE_EXPORT void HasLevel::computeLevels()
@@ -82,38 +82,37 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     const Flow* cur_Flow;
     bool search_level;
     int cur_cluster;
+    numberOfLevels = 0;
     numberOfClusters = 0;
-    numberOfHangingClusters = 0;
     map<Operation*,short> visited;
     for (Operation::iterator g = Operation::begin();
         g != Operation::end(); ++g)
     {
-
-#ifdef CLUSTERDEBUG
-      logger << "Investigating operation '" << &*g
-          << "' - current cluster " << g->cluster << endl;
-#endif
-
       // Select a new cluster number
       if (g->cluster)
         cur_cluster = g->cluster;
       else
       {
-        cur_cluster = ++numberOfClusters;
-        if (numberOfClusters >= USHRT_MAX)
-          throw LogicException("Too many clusters");
-
         // Detect hanging operations
         if (g->getFlows().empty() && g->getLoads().empty()
             && g->getSuperOperations().empty()
             && g->getSubOperations().empty()
            )
         {
-          ++numberOfHangingClusters;
+          // Cluster 0 keeps all dangling operations
           g->lvl = 0;
           continue;
         }
+        cur_cluster = ++numberOfClusters;
+        if (numberOfClusters >= USHRT_MAX)
+          throw LogicException("Too many clusters");
       }
+
+#ifdef CLUSTERDEBUG
+      logger << "Investigating operation '" << &*g
+          << "' - current cluster " << g->cluster << endl;
+#endif
+
 
       // Do we need to activate the level search?
       // Criterion are:
@@ -160,6 +159,10 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         cur_oper = stack.top().first;
         cur_level = stack.top().second;
         stack.pop();
+
+        // Keep track of the maximum number of levels
+        if (cur_level > numberOfLevels)
+          numberOfLevels = cur_level;
 
 #ifdef CLUSTERDEBUG
         logger << "    Recursing in Operation '" << *(cur_oper)
@@ -303,22 +306,10 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     // loads at all. We catch those poor lonely fellows now...
     for (Buffer::iterator gbuf2 = Buffer::begin();
         gbuf2 != Buffer::end(); ++gbuf2)
-      if (gbuf2->getFlows().empty())
-      {
-        gbuf2->cluster = ++numberOfClusters;
-        if (numberOfClusters >= USHRT_MAX)
-          throw LogicException("Too many clusters");
-        ++numberOfHangingClusters;
-      }
+      if (gbuf2->getFlows().empty()) gbuf2->cluster = 0;
     for (Resource::iterator gres2 = Resource::begin();
         gres2 != Resource::end(); ++gres2)
-      if (gres2->getLoads().empty())
-      {
-        gres2->cluster = ++numberOfClusters;
-        if (numberOfClusters >= USHRT_MAX)
-          throw LogicException("Too many clusters");
-        ++numberOfHangingClusters;
-      }
+      if (gres2->getLoads().empty()) gres2->cluster = 0;
 
   } // End of while recomputeLevels. The loop will be repeated as long as model
   // changes are done during the recomputation.

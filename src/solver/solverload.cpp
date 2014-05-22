@@ -211,13 +211,11 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
   data->constrainedPlanning = originalPlanningMode;
 
   // Maintain the constraint list
-  if (originalLogConstraints)
-  {
+  if (originalLogConstraints && data->planningDemand)
     data->planningDemand->getConstraints().push(
       ProblemCapacityOverload::metadata,
       l->getResource(), originalOpplan.start, originalOpplan.end,
       -originalLoadplanQuantity);
-  }
   data->logConstraints = originalLogConstraints;
 
   if (loglevel>1)
@@ -446,7 +444,7 @@ void SolverMRP::solve(const Load* l, void* v)
   data->constrainedPlanning = originalPlanningMode;
 
   // Maintain the constraint list
-  if (originalLogConstraints)
+  if (originalLogConstraints && data->planningDemand)
   {
     const Load *primary = *(thealternates.begin());
     data->planningDemand->getConstraints().push(

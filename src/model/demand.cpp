@@ -75,6 +75,8 @@ DECLARE_EXPORT Demand::~Demand()
   // Remove the delivery operationplans
   deleteOperationPlans(true);
 }
+
+
 DECLARE_EXPORT void Demand::deleteOperationPlans
 (bool deleteLocked, CommandManager* cmds)
 {

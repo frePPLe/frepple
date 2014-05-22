@@ -462,7 +462,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
     opplan->setQuantity(0.0);
 
     // Log the constraint
-    if (data.logConstraints)
+    if (data.logConstraints && data.planningDemand)
       data.planningDemand->getConstraints().push(
         (threshold == Plan::instance().getCurrent()) ?
           ProblemBeforeCurrent::metadata :
@@ -519,7 +519,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Find the current list of constraints
-  Problem* topConstraint = data->planningDemand->getConstraints().top();
+  Problem* topConstraint = data->planningDemand ?
+    data->planningDemand->getConstraints().top() :
+    NULL;
 
   // Subtract the post-operation time
   Date prev_q_date_max = data->state->q_date_max;
@@ -573,7 +575,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
   // Ignore any constraints if we get a complete reply.
   // Sometimes constraints are flagged due to a pre- or post-operation time.
   // Such constraints ultimately don't result in lateness and can be ignored.
-  if (data->state->a_qty >= orig_q_qty - ROUNDING_ERROR)
+  if (data->state->a_qty >= orig_q_qty - ROUNDING_ERROR && data->planningDemand)
     data->planningDemand->getConstraints().pop(topConstraint);
 
   // Increment the cost
@@ -840,7 +842,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
   // Remember the top constraint
   bool originalLogConstraints = data->logConstraints;
-  Problem* topConstraint = data->planningDemand->getConstraints().top();
+  Problem* topConstraint = data->planningDemand ?
+    data->planningDemand->getConstraints().top() :
+    NULL;
 
   // Try all alternates:
   // - First, all alternates that are fully effective in the order of priority.
@@ -939,7 +943,8 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       {
         // Forget previous constraints if we are replanning the first alternate
         // multiple times
-        data->planningDemand->getConstraints().pop(topConstraint);
+        if (data->planningDemand)
+          data->planningDemand->getConstraints().pop(topConstraint);
         // Potentially keep track of constraints
         data->logConstraints = originalLogConstraints;
       }
@@ -1160,7 +1165,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   } // End while loop until the a_qty > 0
 
   // Forget any constraints if we are not short or are planning unconstrained
-  if (a_qty < ROUNDING_ERROR || !originalLogConstraints)
+  if (data->planningDemand && (a_qty < ROUNDING_ERROR || !originalLogConstraints))
     data->planningDemand->getConstraints().pop(topConstraint);
 
   // Unconstrained plan: If some unplanned quantity remains, switch to

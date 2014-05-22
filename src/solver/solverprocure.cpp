@@ -288,7 +288,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       // Answer a shorted quantity
       data->state->a_qty = data->state->q_qty + shortage;
       // Log a constraint
-      if (data->logConstraints)
+      if (data->logConstraints && data->planningDemand)
         data->planningDemand->getConstraints().push(
           ProblemMaterialShortage::metadata, b, startdate, Date::infiniteFuture, // @todo calculate a better end date
           -shortage);

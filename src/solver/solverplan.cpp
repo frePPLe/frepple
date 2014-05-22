@@ -28,6 +28,7 @@ const Keyword tag_iterationthreshold("iterationthreshold");
 const Keyword tag_iterationaccuracy("iterationaccuracy");
 const Keyword tag_lazydelay("lazydelay");
 const Keyword tag_allowsplits("allowsplits");
+const Keyword tag_planSafetyStockFirst("plansafetystockfirst");
 
 void LibrarySolver::initialize()
 {
@@ -75,18 +76,21 @@ DECLARE_EXPORT bool SolverMRP::demand_comparison(const Demand* l1, const Demand*
 DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
 {
   // Check
-  if (!demands || !getSolver())
+  SolverMRP* solver = getSolver();
+  if (!demands || !solver)
     throw LogicException("Missing demands or solver.");
 
   // Message
-  SolverMRP* Solver = getSolver();
-  if (Solver->getLogLevel()>0)
+  if (solver->getLogLevel()>0)
     logger << "Start solving cluster " << cluster << " at " << Date::now() << endl;
 
   // Solve the planning problem
   try
   {
-    // TODO Propagate & solve initial shortages in buffers
+    // TODO Propagate & solve initial shortages and overloads
+
+    // Solve for safety stock in buffers.
+    //if (solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
 
     // Sort the demands of this problem.
     // We use a stable sort to get reproducible results between platforms
@@ -94,14 +98,14 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
     stable_sort(demands->begin(), demands->end(), demand_comparison);
 
     // Loop through the list of all demands in this planning problem
-    constrainedPlanning = (Solver->getPlanType() == 1);
+    constrainedPlanning = (solver->getPlanType() == 1);
     for (deque<Demand*>::const_iterator i = demands->begin();
         i != demands->end(); ++i)
     {
       try
       {
         // Plan the demand
-        (*i)->solve(*Solver,this);
+        (*i)->solve(*solver, this);
       }
       catch (...)
       {
@@ -118,8 +122,8 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
     // Clean the list of demands of this cluster
     demands->clear();
 
-    // TODO Solve for safety stock in buffers that haven't been planned by any demand yet.
-
+    // Solve for safety stock in buffers.
+    //if (!solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
   }
   catch (...)
   {
@@ -146,14 +150,52 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
   }
 
   // Message
-  if (Solver->getLogLevel()>0)
+  if (solver->getLogLevel()>0)
     logger << "End solving cluster " << cluster << " at " << Date::now() << endl;
+}
+
+
+void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
+{
+  if (getLogLevel()>0) logger << "Start safety stock replenishment pass" << endl;
+  vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
+  for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
+    if (buf->getCluster() == cluster
+      && (buf->getMinimum() || buf->getMinimumCalendar())
+      )
+      bufs[(buf->getLevel()>=0) ? buf->getLevel() : 0].push_back(&*buf);
+  for (vector< list<Buffer*> >::iterator b_list = bufs.begin(); b_list != bufs.end(); ++b_list)
+    for (list<Buffer*>::iterator b = b_list->begin(); b != b_list->end(); ++b)
+    {
+      state->curBuffer = NULL;
+      state->q_qty = 1.0;
+      state->q_date = Date::infinitePast; //Plan::instance().getCurrent();
+      state->a_cost = 0.0;
+      state->a_penalty = 0.0;
+      planningDemand = NULL;
+      state->curDemand = NULL;
+      state->motive = *b;
+      state->curOwnerOpplan = NULL;
+      // Call the buffer solver
+      // TODO Doesn't handle yet the possible delayed reply
+      (*b)->solve(*solver, this);
+      if (state->a_qty == 0.0)
+        CommandManager::rollback();
+      else
+        CommandManager::commit();
+    }
+  if (getLogLevel()>0) logger << "Finished safety stock replenishment pass" << endl;
 }
 
 
 DECLARE_EXPORT void SolverMRP::solve(void *v)
 {
+  // Count how many clusters we have to plan
+  int cl = HasLevel::getNumberOfClusters() + 1;
+  if (cl <= 1) return;
+
   // Categorize all demands in their cluster
+  demands_per_cluster.resize(cl);
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
     demands_per_cluster[i->getCluster()].push_back(&*i);
 
@@ -165,13 +207,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   // then delete in each thread.
   if (getLogLevel()>0) logger << "Deleting previous plan" << endl;
   for (Operation::iterator e=Operation::begin(); e!=Operation::end(); ++e)
-    // The next if-condition is actually redundant if we plan everything
-    if (demands_per_cluster.find(e->getCluster())!=demands_per_cluster.end())
-      e->deleteOperationPlans();
-
-  // Count how many clusters we have to plan
-  int cl = demands_per_cluster.size();
-  if (cl<1) return;
+    e->deleteOperationPlans();
 
   // Solve in parallel threads.
   // When not solving in silent and autocommit mode, we only use a single
@@ -182,9 +218,11 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
     threads.setMaxParallel(1);
 
   // Register all clusters to be solved
-  for (classified_demand::iterator j = demands_per_cluster.begin();
-      j != demands_per_cluster.end(); ++j)
-    threads.add(SolverMRPdata::runme, new SolverMRPdata(this, j->first, &(j->second)));
+  for (int j = 0; j < cl; ++j)
+    threads.add(
+      SolverMRPdata::runme,
+      new SolverMRPdata(this, j, &(demands_per_cluster[j]))
+      );
 
   // Run the planning command threads and wait for them to exit
   threads.execute();
@@ -292,6 +330,8 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
     return PythonObject(getIterationAccuracy());
   if (attr.isA(tag_lazydelay))
     return PythonObject(getLazyDelay());
+  if (attr.isA(tag_planSafetyStockFirst))
+    return PythonObject(getPlanSafetyStockFirst());
   // Default parameters
   return Solver::getattro(attr);
 }
@@ -324,6 +364,8 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
     setLazyDelay(field.getTimeperiod());
   else if (attr.isA(tag_allowsplits))
     setAllowSplits(field.getBool());
+  else if (attr.isA(tag_planSafetyStockFirst))
+    setPlanSafetyStockFirst(field.getBool());
   // Default parameters
   else
     return Solver::setattro(attr, field);

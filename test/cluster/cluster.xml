@@ -3,7 +3,7 @@
   <description>Test model for cluster and level computation</description>
   <current>2009-01-01T00:00:00</current>
   <operations>
-    <operation name="Dangling operation : 0 : 4"
+    <operation name="Dangling operation : 0 : 0"
       xsi:type="operation_fixed_time">
       <duration>PT10S</duration>
     </operation>
@@ -103,7 +103,7 @@
     <buffer name="buffer item 6 : 1 : 3">
       <item name="item 6" />
     </buffer>
-    <buffer name="Dangling buffer : -1 : 5" />
+    <buffer name="Dangling buffer : -1 : 0" />
     <buffer name="buffer item 3&amp;4 : 2 : 1">
       <item name="item 1" />
     </buffer>
@@ -253,7 +253,7 @@
         </load>
       </loads>
     </resource>
-    <resource name="Dangling resource : -1 : 6" />
+    <resource name="Dangling resource : -1 : 0" />
   </resources>
   <demands>
     <demand name="order for item 1">

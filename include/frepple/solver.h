@@ -214,7 +214,7 @@ class SolverMRP : public Solver
     /** Constructor. */
     SolverMRP(const string& n) : Solver(n), constrts(15), allowSplits(true),
       plantype(1), lazydelay(86400L), iteration_threshold(1),
-      iteration_accuracy(0.01), autocommit(true)
+      iteration_accuracy(0.01), autocommit(true), planSafetyStockFirst(false)
     { initType(metadata); }
 
     /** Destructor. */
@@ -436,8 +436,12 @@ class SolverMRP : public Solver
     bool getAllowSplits() const {return allowSplits;}
     void setAllowSplits(bool b) {allowSplits = b;}
 
+    bool getPlanSafetyStockFirst() const {return planSafetyStockFirst;}
+
+    void setPlanSafetyStockFirst(bool b) {planSafetyStockFirst = b;}
+
   private:
-    typedef map < int, deque<Demand*>, less<int> > classified_demand;
+    typedef vector< deque<Demand*> > classified_demand;
     typedef classified_demand::iterator cluster_iterator;
     classified_demand demands_per_cluster;
 
@@ -496,6 +500,26 @@ class SolverMRP : public Solver
       * value is not used.
       */
     PythonFunction userexit_operation;
+
+    /** A flag that determines how we plan safety stock.<br/>
+      *
+      * By default the flag is FALSE and we get the following behavior:
+      *  - When planning demands, we already try to replenish towards the
+      *    safety stock level.
+      *  - After planning all demands, we do another loop over all buffers
+      *    to replenish to the safety stock level. This will replenish eg
+      *    buffers without any (direct or indirect) demand on them.
+      *
+      * If the flag is set to TRUE, replenishing to the safety stock level
+      * is more important than planning the demand on time. We get the
+      * following behavior:
+      *  - Before planning any demand, we try to replenish any buffer to its
+      *    safety stock level.
+      *    Buffers closer to the end item demand are replenished first.
+      *  - When planning demands, we try to replenish towards the safety
+      *    stock level.
+      */
+    bool planSafetyStockFirst;
 
   protected:
     /** @brief This class is used to store the solver status during the
@@ -648,6 +672,14 @@ class SolverMRP : public Solver
 
       private:
         static const int MAXSTATES = 256;
+
+        /** Auxilary method to replenish safety stock in all buffers of a
+          * cluster. This method is only intended to be called from the
+          * commit() method.
+          * @see SolverMRP::planSafetyStockFirst
+          * @see SolverMRP::SolverMRPdata::commit
+          */
+        void solveSafetyStock(SolverMRP*);
 
         /** Points to the solver. */
         SolverMRP* sol;

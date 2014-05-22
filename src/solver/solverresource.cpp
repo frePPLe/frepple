@@ -435,7 +435,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   }
 
   // Maintain the constraint list
-  if (data->state->a_qty == 0.0 && data->logConstraints)
+  if (data->state->a_qty == 0.0 && data->logConstraints && data->planningDemand)
     data->planningDemand->getConstraints().push(
       ProblemCapacityOverload::metadata,
       res, currentOpplan.start, currentOpplan.end, orig_q_qty);
@@ -724,7 +724,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
   }
 
   // Maintain the constraint list
-  if (data->state->a_qty == 0.0 && data->logConstraints)
+  if (data->state->a_qty == 0.0 && data->logConstraints && data->planningDemand)
     data->planningDemand->getConstraints().push(
       ProblemCapacityOverload::metadata,
       res, currentOpplan.start, currentOpplan.end, orig_q_qty);

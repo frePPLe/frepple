@@ -483,9 +483,7 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     Environment::printModules();
 
     // Print the number of clusters
-    logger << "Clusters: " << HasLevel::getNumberOfClusters()
-        << " (hanging: " << HasLevel::getNumberOfHangingClusters() << ")"
-        << endl << endl;
+    logger << "Clusters: " << HasLevel::getNumberOfClusters() << endl << endl;
 
     // Header for memory size
     logger << "Memory usage:" << endl;

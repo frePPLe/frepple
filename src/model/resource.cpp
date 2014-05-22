@@ -222,7 +222,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
     for (; i!=loadplans.end(); ++i)
       if (i->getType()==1)
       {
-        const LoadPlan *lp = dynamic_cast<const LoadPlan*>(&*i);
+        const LoadPlan *lp = static_cast<const LoadPlan*>(&*i);
         o->BeginObject(Tags::tag_loadplan);
         o->writeElement(Tags::tag_date, lp->getDate());
         o->writeElement(Tags::tag_quantity, lp->getQuantity());

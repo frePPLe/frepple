@@ -4839,7 +4839,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       if (*(cls.category) != T::metadata)
         throw LogicException("Invalid type " + cls.type +
             " for creating an object of category " + T::metadata.type);
-      T *t = dynamic_cast<T*>(cls.factoryMethodString(k));
+      T *t = static_cast<T*>(cls.factoryMethodString(k));
       st.insert(t);
       return t;
     }
@@ -4947,7 +4947,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       }
 
       // Create a new instance
-      T* x = dynamic_cast<T*>(j->factoryMethodString(name));
+      T* x = static_cast<T*>(j->factoryMethodString(name));
 
       // Run creation callbacks
       // During the callback there is no write lock set yet, since we can

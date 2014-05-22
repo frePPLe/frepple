@@ -228,7 +228,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
   if (i!=flowplans.end() && i->getType()==1)
   {
     // A flowplan has been found
-    const FlowPlan *fp = dynamic_cast<const FlowPlan*>(&*i);
+    const FlowPlan *fp = static_cast<const FlowPlan*>(&*i);
     if (fp
         && fp->getFlow()->getOperation()->getName() == string(INVENTORY_OPERATION)
         && fabs(fp->getQuantity()) > ROUNDING_ERROR)
@@ -251,7 +251,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
     o->BeginObject(Tags::tag_flowplans);
     for (; i!=flowplans.end(); ++i)
       if (i->getType()==1)
-        dynamic_cast<const FlowPlan*>(&*i)->writeElement(o, Tags::tag_flowplan);
+        static_cast<const FlowPlan*>(&*i)->writeElement(o, Tags::tag_flowplan);
     o->EndObject(Tags::tag_flowplans);
     bool first = true;
     for (Problem::const_iterator j = Problem::begin(const_cast<Buffer*>(this), true); j!=Problem::end(); ++j)

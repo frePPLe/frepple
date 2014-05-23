@@ -244,11 +244,7 @@ DECLARE_EXPORT void CommandManager::rollback()
 
 DECLARE_EXPORT void ThreadGroup::execute()
 {
-#ifndef MT
-  // CASE 1: Sequential execution when compiled without multithreading
-  wrapper(this);
-#else
-  // CASE 2: No need to create worker threads when either a) only a single
+  // CASE 1: No need to create worker threads when either a) only a single
   // worker is allowed or b) only a single function needs to be called.
   if (maxParallel<=1 || countCallables<=1)
   {
@@ -256,7 +252,7 @@ DECLARE_EXPORT void ThreadGroup::execute()
     return;
   }
 
-  // CASE 3: Parallel execution in worker threads
+  // CASE 2: Parallel execution in worker threads
   int numthreads = countCallables;
   // Limit the number of threads to the maximum allowed
   if (numthreads > maxParallel) numthreads = maxParallel;
@@ -356,7 +352,6 @@ DECLARE_EXPORT void ThreadGroup::execute()
   delete[] threads;
   delete[] m_id;
 #endif    // End of #ifdef ifHAVE_PTHREAD_H
-#endif    // End of #ifndef MT
 }
 
 
@@ -376,7 +371,7 @@ DECLARE_EXPORT ThreadGroup::callableWithArgument ThreadGroup::selectNextCallable
 }
 
 
-#if defined(HAVE_PTHREAD_H) || !defined(MT)
+#if defined(HAVE_PTHREAD_H)
 void* ThreadGroup::wrapper(void *arg)
 #else
 unsigned __stdcall ThreadGroup::wrapper(void *arg)
@@ -391,9 +386,9 @@ unsigned __stdcall ThreadGroup::wrapper(void *arg)
       nextfunc.first;
       nextfunc = l->selectNextCallable())
   {
-#if defined(HAVE_PTHREAD_H) && defined(MT)
+#if defined(HAVE_PTHREAD_H)
     // Verify whether there has been a cancellation request in the meantime
-    pthread_testcancel();
+    if (threaded) pthread_testcancel();
 #endif
     try {nextfunc.first(nextfunc.second);}
     catch (...)

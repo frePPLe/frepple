@@ -124,7 +124,6 @@ using namespace std;
 #endif
 
 // Header for multithreading
-#if defined(MT)
 #if defined(HAVE_PTHREAD_H)
 #include <pthread.h>
 #elif defined(WIN32)
@@ -133,7 +132,6 @@ using namespace std;
 #include <process.h>
 #else
 #error Multithreading not supported on your platform
-#endif
 #endif
 
 // For the disabled and ansi-challenged people...
@@ -3507,13 +3505,7 @@ class Object : public PythonExtensionBase
 class Mutex: public NonCopyable
 {
   public:
-#ifndef MT
-    // No threading support, empty class
-    Mutex() {}
-    ~Mutex()  {}
-    void lock() {}
-    void unlock() {}
-#elif defined(HAVE_PTHREAD_H)
+#if defined(HAVE_PTHREAD_H)
     // Pthreads
     Mutex()         {pthread_mutex_init(&mtx, 0);}
     ~Mutex()        {pthread_mutex_destroy(&mtx);}
@@ -3592,11 +3584,7 @@ class ThreadGroup : public NonCopyable
     {
       if (b<1)
         throw DataException("Invalid number of parallel execution threads");
-#ifndef MT
-      maxParallel = (b>1 ? 1 : b);
-#else
       maxParallel = b;
-#endif
     }
 
   private:
@@ -3626,7 +3614,7 @@ class ThreadGroup : public NonCopyable
     /** This functions runs a single command execution thread. It is used as
       * a holder for the main routines of a trheaded routine.
       */
-#if defined(HAVE_PTHREAD_H) || !defined(MT)
+#if defined(HAVE_PTHREAD_H)
     static void* wrapper(void *arg);
 #else
     static unsigned __stdcall wrapper(void *);

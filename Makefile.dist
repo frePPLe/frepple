@@ -29,6 +29,7 @@
 #     - build:       Compiles a configured project.
 #     - clean:       Cleans up all intermediate files.
 #     - check:       Runs the test suite.
+#     - gdb:         Run the gdb debugger
 #  DISTRIBUTION TASKS
 #     - dist:        Creates a source code tarball.
 #  CODE ANALYSIS
@@ -96,6 +97,17 @@ dist:
 	@echo
 	@echo "PHASE: Making a distribution..."
 	make dist
+
+gdb:
+	export FREPPLE_HOME=$(CURDIR)/bin; \
+	export PYTHONPATH=$(CURDIR)/contrib/django/; \
+	export DJANGO_SETTINGS_MODULE=freppledb.settings; \
+	export LD_LIBRARY_PATH=$ROOT/src/.libs; \
+	export webservice=1; \
+	libtool --mode=execute gdb --args $(CURDIR)/src/frepple $(CURDIR)/contrib/django/freppledb/execute/commands.py
+#	valgrind --leak-check=yes $ROOT/src/.libs/frepple $ROOT/contrib/django/freppledb/execute/commands.py
+#	valgrind --tool=callgrind --dsymutil=yes $ROOT/src/.libs/frepple $ROOT/contrib/django/freppledb/execute/commands.py
+
 
 # A simple way to get some code metrics
 stats:

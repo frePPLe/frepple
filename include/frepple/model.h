@@ -4570,9 +4570,10 @@ class Demand
     typedef slist<OperationPlan*> OperationPlan_list;
 
     /** Constructor. */
-    explicit Demand(const string& str) : HasHierarchy<Demand>(str),
-      it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0),
-      maxLateness(TimePeriod::MAX), minShipment(1), hidden(false) {}
+    explicit DECLARE_EXPORT Demand(const string& str)
+      : HasHierarchy<Demand>(str), it(NULL), oper(NULL), cust(NULL), qty(0.0),
+      prio(0), maxLateness(TimePeriod::MAX), minShipment(1), hidden(false)
+      {}
 
     /** Destructor.
       * Deleting the demand will also delete all delivery operation

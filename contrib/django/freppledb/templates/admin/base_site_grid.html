@@ -40,7 +40,7 @@ $(function(){ {% if reportclass.hasTimeBuckets and not bucketnames %}
     shrinkToFit: false,
     loadError: function(xhr,st,err) {
       $('#curfilter').html("{% trans 'Error retrieving report data' %}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
-    },{% if reportclass.editable and reportclass.multiselect and not is_popup %}
+    },{% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
     multiselect: true,
     onSelectRow: grid.markSelectedRow,{% endif %}
     {% block extra_grid %}{% endblock %}

@@ -59,7 +59,7 @@ class MenuItem:
       return True
     elif self.model:
       # The menu item is a model, belonging to an admin site
-      return user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('change',self.model._meta)))
+      return user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('view',self.model._meta)))
     else:
       # Other item is always available
       return True

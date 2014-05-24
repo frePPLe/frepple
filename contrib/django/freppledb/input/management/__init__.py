@@ -16,8 +16,8 @@
 
 from django.db.models import signals
 
-from freppledb.common.management import removeDefaultPermissions
-from freppledb.execute import models as execute_models
+from freppledb.common.management import createViewPermissions
+from freppledb.input import models as input_models
 
 
-signals.post_syncdb.connect(removeDefaultPermissions, execute_models)
+signals.post_syncdb.connect(createViewPermissions, input_models)

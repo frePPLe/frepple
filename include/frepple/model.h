@@ -298,7 +298,8 @@ class Calendar : public HasName<Calendar>
     };
 
     /** Default constructor. */
-    Calendar(const string& n) : HasName<Calendar>(n), firstBucket(NULL) {}
+    explicit DECLARE_EXPORT Calendar(const string& n) :
+      HasName<Calendar>(n), firstBucket(NULL) {}
 
     /** Destructor, which cleans up the buckets too and all references to the
       * calendar from the core model.
@@ -845,7 +846,11 @@ class Problem::List
 class Solver : public HasName<Solver>
 {
   public:
-    explicit Solver(const string& n) : HasName<Solver>(n), loglevel(0) {}
+    /** Constrcutor. */
+    explicit DECLARE_EXPORT Solver(const string& n) :
+      HasName<Solver>(n), loglevel(0) {}
+
+    /** Destructor. */
     virtual ~Solver() {}
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -1134,7 +1139,8 @@ class Location : public HasHierarchy<Location>, public HasDescription
 {
   public:
     /** Constructor. */
-    explicit Location(const string& n) : HasHierarchy<Location>(n), available(NULL) {}
+    explicit DECLARE_EXPORT Location(const string& n) :
+      HasHierarchy<Location>(n), available(NULL) {}
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Location();
@@ -1195,8 +1201,13 @@ class Customer : public HasHierarchy<Customer>, public HasDescription
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     size_t extrasize() const
     {return getName().size() + HasDescription::extrasize();}
-    Customer(const string& n) : HasHierarchy<Customer>(n) {}
+
+    /** Constructor. */
+    explicit DECLARE_EXPORT Customer(const string& n) : HasHierarchy<Customer>(n) {}
+
+    /** Destructor. */
     virtual DECLARE_EXPORT ~Customer();
+
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
     static int initialize();
@@ -1235,9 +1246,10 @@ class Operation : public HasName<Operation>,
 
   protected:
     /** Constructor. Don't use it directly. */
-    explicit Operation(const string& str) : HasName<Operation>(str),
-      loc(NULL), size_minimum(1.0), size_multiple(0.0), size_maximum(DBL_MAX),
-      cost(0.0), hidden(false), first_opplan(NULL), last_opplan(NULL) {}
+    explicit DECLARE_EXPORT Operation(const string& str) :
+      HasName<Operation>(str), loc(NULL), size_minimum(1.0), size_multiple(0.0),
+      size_maximum(DBL_MAX), cost(0.0), hidden(false), first_opplan(NULL),
+      last_opplan(NULL) {}
 
     /** Extra logic called when instantiating an operationplan.<br>
       * When the function returns false the creation of the operationplan
@@ -2707,8 +2719,8 @@ class Item : public HasHierarchy<Item>, public HasDescription
 {
   public:
     /** Constructor. Don't use this directly! */
-    explicit Item(const string& str) : HasHierarchy<Item>(str),
-      deliveryOperation(NULL), price(0.0) {}
+    explicit DECLARE_EXPORT Item(const string& str) :
+      HasHierarchy<Item>(str), deliveryOperation(NULL), price(0.0) {}
 
     /** Returns the delivery operation.<br>
       * This field is inherited from a parent item, if it hasn't been
@@ -2800,10 +2812,10 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     typedef Association<Operation,Buffer,Flow>::ListB flowlist;
 
     /** Constructor. Implicit creation of instances is disallowed. */
-    explicit Buffer(const string& str) : HasHierarchy<Buffer>(str),
-      hidden(false), producing_operation(NULL), loc(NULL), it(NULL),
-      min_val(0), max_val(default_max), min_cal(NULL), max_cal(NULL),
-      carrying_cost(0.0) {}
+    explicit DECLARE_EXPORT Buffer(const string& str) :
+      HasHierarchy<Buffer>(str), hidden(false), producing_operation(NULL),
+      loc(NULL), it(NULL), min_val(0), max_val(default_max), min_cal(NULL),
+      max_cal(NULL), carrying_cost(0.0) {}
 
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
@@ -3422,7 +3434,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   protected:
     /** Default constructor. */
-    explicit Flow() : quantity(0.0), hasAlts(false),
+    explicit DECLARE_EXPORT Flow() : quantity(0.0), hasAlts(false),
       altFlow(NULL), search(PRIORITY) {initType(metadata);}
 
   private:
@@ -3814,7 +3826,8 @@ class SetupMatrix : public HasName<SetupMatrix>
 
   public:
     /** Default constructor. */
-    SetupMatrix(const string& n) : HasName<SetupMatrix>(n), firstRule(NULL) {}
+    explicit DECLARE_EXPORT SetupMatrix(const string& n) :
+      HasName<SetupMatrix>(n), firstRule(NULL) {}
 
     /** Destructor. */
     DECLARE_EXPORT ~SetupMatrix();
@@ -3907,7 +3920,7 @@ class Skill : public HasName<Skill>
 
   public:
     /** Default constructor. */
-    Skill(const string& n) : HasName<Skill>(n) {}
+    explicit DECLARE_EXPORT Skill(const string& n) : HasName<Skill>(n) {}
 
     /** Destructor. */
     DECLARE_EXPORT ~Skill();
@@ -4570,10 +4583,9 @@ class Demand
     typedef slist<OperationPlan*> OperationPlan_list;
 
     /** Constructor. */
-    explicit DECLARE_EXPORT Demand(const string& str)
-      : HasHierarchy<Demand>(str), it(NULL), oper(NULL), cust(NULL), qty(0.0),
-      prio(0), maxLateness(TimePeriod::MAX), minShipment(1), hidden(false)
-      {}
+    explicit DECLARE_EXPORT Demand(const string& str) :
+      HasHierarchy<Demand>(str), it(NULL), oper(NULL), cust(NULL), qty(0.0),
+      prio(0), maxLateness(TimePeriod::MAX), minShipment(1), hidden(false) {}
 
     /** Destructor.
       * Deleting the demand will also delete all delivery operation

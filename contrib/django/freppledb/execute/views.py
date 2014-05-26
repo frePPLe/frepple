@@ -231,7 +231,7 @@ def LaunchTask(request, action):
             "frepple_runworker",
             "--database=%s" % worker_database
             ], creationflags=0x08000000)
-      elif sys.executable.find('frepplectl.exe') >= 0:
+      elif sys.executable.find('freppleserver.exe') >= 0:
         # Py2exe executable
         Popen([
           sys.executable.replace('freppleserver.exe','frepplectl.exe'), # frepplectl executable

@@ -1,0 +1,7 @@
+[
+{"pk": "odoo.user", "model": "common.parameter", "fields": {"value": "admin", "description": "Odoo connector: User for the connection"}},
+{"pk": "odoo.password", "model": "common.parameter", "fields": {"value": "admin", "description": "Odoo connector: Password for the connection"}},
+{"pk": "odoo.db", "model": "common.parameter", "fields": {"value": "odoo", "description": "Odoo connector: Database to connect to"}},
+{"pk": "odoo.url", "model": "common.parameter", "fields": {"value": "http://localhost:8069/", "description": "Odoo connector: URL for the XML-RPC server"}},
+{"pk": "odoo.production_location", "model": "common.parameter", "fields": {"value": "Your Company", "description": "Odoo connector: Default location for production boms whose location isn't specified in Odoo"}}
+]

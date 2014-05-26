@@ -303,24 +303,24 @@ and export results into the database<br/>
 <td>{% blocktrans with delta="<input name='delta' type='text' maxlength='4' size='5' value='7' />" %}Import data changes in the last {{ delta }} days from the ERP into frePPLe.{% endblocktrans %}
 </td></tr></form></table></div>
 
-<h3><a href="#openbravo_import">{% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}</a></h3>
+<h3><a href="#openbravo_export">{% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}</a></h3>
 <div><table>
 <form method="post" action="{{request.prefix}}/execute/launch/openbravo_export/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% trans "Export frePPLe plan to the ERP." %}</td></tr></form></table></div>
 {% endif %}
 
-{% if openerp %}
-<h3><a href="#openerp_import">{% blocktrans with erp="OpenERP" %}Import data from {{ erp }}{% endblocktrans %}</a></h3>
+{% if odoo %}
+<h3><a href="#odoo_import">{% blocktrans with erp="Odoo" %}Import data from {{ erp }}{% endblocktrans %}</a></h3>
 <div><table>
-<form method="post" action="{{request.prefix}}/execute/launch/openerp_import/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/launch/odoo_import/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% blocktrans with delta="<input name='delta' type='text' maxlength='4' size='5' value='7' />" %}Import data changes in the last {{ delta }} days from the ERP into frePPLe.{% endblocktrans %}
 </td></tr></form></table></div>
 
-<h3><a href="#openerp_import">{% blocktrans with erp="OpenERP" %}Export data to {{ erp }}{% endblocktrans %}</a></h3>
+<h3><a href="#odoo_export">{% blocktrans with erp="Odoo" %}Export data to {{ erp }}{% endblocktrans %}</a></h3>
 <div><table>
-<form method="post" action="{{request.prefix}}/execute/launch/openerp_export/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/launch/odoo_export/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% trans "Export frePPLe plan to the ERP." %}</td></tr></form></table></div>
 {% endif %}

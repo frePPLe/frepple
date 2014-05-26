@@ -30,7 +30,7 @@ from freppledb.execute.models import Task
 
 
 class Command(BaseCommand):
-  help = "Upload planning results from frePPle into an OpenERP instance"
+  help = "Upload planning results from frePPle into an odoo instance"
 
   option_list = BaseCommand.option_list + (
       make_option('--user', dest='user', type='string',
@@ -44,12 +44,12 @@ class Command(BaseCommand):
   requires_model_validation = False
 
 
-  def openerp_search(self, a, b=[]):
-    return self.sock.execute(self.openerp_db, self.uid, self.openerp_password, a, 'search', b)
+  def odoo_search(self, a, b=[]):
+    return self.sock.execute(self.odoo_db, self.uid, self.odoo_password, a, 'search', b)
 
 
-  def openerp_data(self, a, b, c):
-    return self.sock.execute(self.openerp_db, self.uid, self.openerp_password, a, 'read', b, c)
+  def odoo_data(self, a, b, c):
+    return self.sock.execute(self.odoo_db, self.uid, self.odoo_password, a, 'read', b, c)
 
 
   def handle(self, **options):
@@ -65,18 +65,18 @@ class Command(BaseCommand):
       raise CommandError("No database settings known for '%s'" % self.database )
 
     # Pick up configuration parameters
-    self.openerp_user = Parameter.getValue("openerp.user", self.database)
-    self.openerp_password = Parameter.getValue("openerp.password", self.database)
-    self.openerp_db = Parameter.getValue("openerp.db", self.database)
-    self.openerp_url = Parameter.getValue("openerp.url", self.database)
-    if not self.openerp_user:
-      raise CommandError("Missing or invalid parameter openerp_user")
-    if not self.openerp_password:
-      raise CommandError("Missing or invalid parameter openerp_password")
-    if not self.openerp_db:
-      raise CommandError("Missing or invalid parameter openerp_db")
-    if not self.openerp_url:
-      raise CommandError("Missing or invalid parameter openerp_url")
+    self.odoo_user = Parameter.getValue("odoo.user", self.database)
+    self.odoo_password = Parameter.getValue("odoo.password", self.database)
+    self.odoo_db = Parameter.getValue("odoo.db", self.database)
+    self.odoo_url = Parameter.getValue("odoo.url", self.database)
+    if not self.odoo_user:
+      raise CommandError("Missing or invalid parameter odoo_user")
+    if not self.odoo_password:
+      raise CommandError("Missing or invalid parameter odoo_password")
+    if not self.odoo_db:
+      raise CommandError("Missing or invalid parameter odoo_db")
+    if not self.odoo_url:
+      raise CommandError("Missing or invalid parameter odoo_url")
 
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all SQL
@@ -94,21 +94,21 @@ class Command(BaseCommand):
       if 'task' in options and options['task']:
         try: task = Task.objects.all().using(self.database).get(pk=options['task'])
         except: raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'OpenERP export':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'odoo export':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='OpenERP edport', submitted=now, started=now, status='0%', user=user)
+        task = Task(name='odoo edport', submitted=now, started=now, status='0%', user=user)
       task.save(using=self.database)
       transaction.commit(using=self.database)
 
-      # Log in to the openerp server
-      sock_common = xmlrpclib.ServerProxy(self.openerp_url + 'xmlrpc/common')
-      self.uid = sock_common.login(self.openerp_db, self.openerp_user, self.openerp_password)
+      # Log in to the odoo server
+      sock_common = xmlrpclib.ServerProxy(self.odoo_url + 'xmlrpc/common')
+      self.uid = sock_common.login(self.odoo_db, self.odoo_user, self.odoo_password)
 
-      # Connect to openerp server
-      self.sock = xmlrpclib.ServerProxy(self.openerp_url + 'xmlrpc/object')
+      # Connect to odoo server
+      self.sock = xmlrpclib.ServerProxy(self.odoo_url + 'xmlrpc/object')
 
       # Create a database connection to the frePPLe database
       self.cursor = connections[self.database].cursor()
@@ -143,8 +143,8 @@ class Command(BaseCommand):
 
 
   # Update the committed date of sales orders
-  #   - uploading for each frePPLe demand where subcategory = 'OpenERP'
-  #   - mapped fields frePPLe -> OpenERP sale.order
+  #   - uploading for each frePPLe demand where subcategory = 'odoo'
+  #   - mapped fields frePPLe -> odoo sale.order
   #        - max(out_demand.plandate) -> requested_date
   # Note: Ideally we'ld like to update the committed date instead. (But it is read-only)
   def export_sales_order(self):
@@ -157,7 +157,7 @@ class Command(BaseCommand):
           from demand
           left outer join out_demand
             on demand.name = out_demand.demand
-          where demand.subcategory = 'OpenERP'
+          where demand.subcategory = 'odoo'
           group by source
          ''')
       cnt = 0
@@ -165,7 +165,7 @@ class Command(BaseCommand):
         if isinstance(j, six.string_types):
           # SQLite exports the date as a string
           j = datetime.strptime(j, "%Y-%m-%d %H:%M:%S")
-        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'sale.order', 'write',
+        self.sock.execute(self.odoo_db, self.uid, self.odoo_password, 'sale.order', 'write',
           [int(i)], {'requested_date': j and j.strftime('%Y-%m-%d') or '1971-01-01',})
         cnt += 1
       if self.verbosity > 0:
@@ -177,14 +177,14 @@ class Command(BaseCommand):
       transaction.leave_transaction_management(using=self.database)
 
 
-  # Upload procurement order data. They are translated in OpenERP into purchase orders
+  # Upload procurement order data. They are translated in odoo into purchase orders
   # or manufacturing orders.
   #   - uploading frePPLe operationplans
   #   - meeting the criterion:
-  #        - operation.subcategory = 'OpenERP'
+  #        - operation.subcategory = 'odoo'
   #        - not a delivery operationplan (since procurement order is directly
-  #          created by the OpenERP sales order)
-  #   - mapped fields frePPLe -> OpenERP production order
+  #          created by the odoo sales order)
+  #   - mapped fields frePPLe -> odoo production order
   #        - %id %name -> name
   #        - operationplan.quantity -> product_qty
   #        - operationplan.startdate -> date_planned
@@ -194,9 +194,9 @@ class Command(BaseCommand):
   #        - 'make_to_order' -> procure_method
   #        - 'frePPLe' -> origin
   #   - Note that purchase order are uploaded as quotations. Once the quotation
-  #     is created in OpenERP it is not revised any more by frePPLe.
+  #     is created in odoo it is not revised any more by frePPLe.
   #     For instance: if the need for the purchase disappears later on, the request still
-  #     remains in OpenERP. We could delete/refresh the quotations suggested by frePPLe,
+  #     remains in odoo. We could delete/refresh the quotations suggested by frePPLe,
   #     but this could confuse the buyer who has already contacted the supplier or any
   #     other work on the quotation.
   #     FrePPLe would show an excess alert, but it's up to the planner to act on it
@@ -207,9 +207,9 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Canceling draft procurement orders")
-      ids = self.openerp_search('procurement.order',
+      ids = self.odoo_search('procurement.order',
         ['|',('state','=', 'draft'),('state','=','cancel'),('origin','=', 'frePPLe'),])
-      self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'unlink', ids)
+      self.sock.execute(self.odoo_db, self.uid, self.odoo_password, 'procurement.order', 'unlink', ids)
       if self.verbosity > 0:
         print("Cancelled %d draft procurement orders in %.2f seconds" % (len(ids), (time() - starttime)))
       starttime = time()
@@ -225,13 +225,13 @@ class Command(BaseCommand):
            and out_flowplan.quantity > 0
          inner join buffer
            on buffer.name = out_flowplan.thebuffer
-           and buffer.subcategory = 'OpenERP'
+           and buffer.subcategory = 'odoo'
          inner join location
            on location.name = buffer.location_id
-           and location.subcategory = 'OpenERP'
+           and location.subcategory = 'odoo'
          inner join item
            on item.name = buffer.item_id
-           and item.subcategory = 'OpenERP'
+           and item.subcategory = 'odoo'
          where out_operationplan.locked = 'f'
          ''')
       cnt = 0
@@ -249,7 +249,7 @@ class Command(BaseCommand):
           'procure_method': 'make_to_order',
           'origin': 'frePPLe'
           }
-        proc_order_id = self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'create', proc_order)
+        proc_order_id = self.sock.execute(self.odoo_db, self.uid, self.odoo_password, 'procurement.order', 'create', proc_order)
         if o == 'procure':
           ids_buy.append(proc_order_id)
         else:
@@ -261,16 +261,16 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Confirming %d procurement orders into purchasing quotations" % (len(ids_buy)))
       for i in ids_buy:
-        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_confirm', [i])
-        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_po_assign', [i])
+        self.sock.execute(self.odoo_db, self.uid, self.odoo_password, 'procurement.order', 'action_confirm', [i])
+        self.sock.execute(self.odoo_db, self.uid, self.odoo_password, 'procurement.order', 'action_po_assign', [i])
       if self.verbosity > 0:
         print("Confirmed %d procurement orders in %.2f seconds" % (len(ids_buy), (time() - starttime)))
       starttime = time()
       if self.verbosity > 0:
         print("Confirming %d procurement orders into production orders" % (len(ids_produce)))
       for i in ids_produce:
-        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_produce_assign_product', [i])
-        self.sock.execute(self.openerp_db, self.uid, self.openerp_password, 'procurement.order', 'action_confirm', [i])
+        self.sock.execute(self.odoo_db, self.uid, self.odoo_password, 'procurement.order', 'action_produce_assign_product', [i])
+        self.sock.execute(self.odoo_db, self.uid, self.odoo_password, 'procurement.order', 'action_confirm', [i])
       if self.verbosity > 0:
         print("Confirmed %d procurement orders in %.2f seconds" % (len(ids_produce), (time() - starttime)))
     except Exception as e:

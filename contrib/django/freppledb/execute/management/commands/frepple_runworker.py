@@ -150,15 +150,15 @@ class Command(BaseCommand):
         elif task.name == 'Openbravo export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
           management.call_command('openbravo_export', database=database, task=task.id, verbosity=0)
         # L
-        elif task.name == 'OpenERP import' and 'freppledb.openerp' in settings.INSTALLED_APPS:
+        elif task.name == 'Odoo import' and 'freppledb.odoo' in settings.INSTALLED_APPS:
           args = {}
           for i in task.arguments.split():
             key, val = i.split('=')
             args[key[2:]] = val
-          management.call_command('openerp_import', database=database, task=task.id, verbosity=0, **args)
+          management.call_command('odoo_import', database=database, task=task.id, verbosity=0, **args)
         # M
-        elif task.name == 'OpenERP export' and 'freppledb.openerp' in settings.INSTALLED_APPS:
-          management.call_command('openerp_export', database=database, task=task.id, verbosity=0)
+        elif task.name == 'Odoo export' and 'freppledb.odoo' in settings.INSTALLED_APPS:
+          management.call_command('odoo_export', database=database, task=task.id, verbosity=0)
         else:
           logger.error('Task %s not recognized' % task.name)
         # Read the task again from the database and update.

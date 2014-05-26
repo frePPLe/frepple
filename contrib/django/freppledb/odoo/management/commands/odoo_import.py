@@ -35,13 +35,13 @@ from freppledb.execute.models import Task
 
 class Command(BaseCommand):
 
-  help = "Loads data from an OpenERP instance into the frePPLe database"
+  help = "Loads data from an odoo instance into the frePPLe database"
 
   option_list = BaseCommand.option_list + (
       make_option('--user', dest='user', type='string',
         help='User running the command'),
       make_option('--delta', action='store', dest='delta', type="float",
-        default='3650', help='Number of days for which we extract changed OpenERP data'),
+        default='3650', help='Number of days for which we extract changed odoo data'),
       make_option('--database', action='store', dest='database',
         default=DEFAULT_DB_ALIAS, help='Nominates the frePPLe database to load'),
       make_option('--task', dest='task', type='int',
@@ -66,21 +66,21 @@ class Command(BaseCommand):
     self.date = datetime.now()
 
     # Pick up configuration parameters
-    self.openerp_user = Parameter.getValue("openerp.user", self.database)
-    self.openerp_password = Parameter.getValue("openerp.password", self.database)
-    self.openerp_db = Parameter.getValue("openerp.db", self.database)
-    self.openerp_url = Parameter.getValue("openerp.url", self.database)
-    self.openerp_production_location = Parameter.getValue("openerp.production_location", self.database)
-    if not self.openerp_user:
-      raise CommandError("Missing or invalid parameter openerp_user")
-    if not self.openerp_password:
-      raise CommandError("Missing or invalid parameter openerp_password")
-    if not self.openerp_db:
-      raise CommandError("Missing or invalid parameter openerp_db")
-    if not self.openerp_url:
-      raise CommandError("Missing or invalid parameter openerp_url")
-    if not self.openerp_production_location:
-      raise CommandError("Missing or invalid parameter openerp_production_location")
+    self.odoo_user = Parameter.getValue("odoo.user", self.database)
+    self.odoo_password = Parameter.getValue("odoo.password", self.database)
+    self.odoo_db = Parameter.getValue("odoo.db", self.database)
+    self.odoo_url = Parameter.getValue("odoo.url", self.database)
+    self.odoo_production_location = Parameter.getValue("odoo.production_location", self.database)
+    if not self.odoo_user:
+      raise CommandError("Missing or invalid parameter odoo_user")
+    if not self.odoo_password:
+      raise CommandError("Missing or invalid parameter odoo_password")
+    if not self.odoo_db:
+      raise CommandError("Missing or invalid parameter odoo_db")
+    if not self.odoo_url:
+      raise CommandError("Missing or invalid parameter odoo_url")
+    if not self.odoo_production_location:
+      raise CommandError("Missing or invalid parameter odoo_production_location")
 
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all sql
@@ -98,12 +98,12 @@ class Command(BaseCommand):
       if 'task' in options and options['task']:
         try: task = Task.objects.all().using(self.database).get(pk=options['task'])
         except: raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'OpenERP import':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'Odoo import':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='OpenERP import', submitted=now, started=now, status='0%', user=user,
+        task = Task(name='odoo import', submitted=now, started=now, status='0%', user=user,
           arguments="--delta=%s" % self.delta)
       task.save(using=self.database)
       transaction.commit(using=self.database)
@@ -111,17 +111,17 @@ class Command(BaseCommand):
       # Initialize some global variables
       self.customers = {}
       self.items = {}
-      self.locations = {} # A mapping between OpenERP stock.location ids and the name of the location in frePPLe
+      self.locations = {} # A mapping between odoo stock.location ids and the name of the location in frePPLe
       self.resources = {}
       self.shops = {}
       self.delta = str(self.date - timedelta(days=self.delta))
 
-      # Log in to the OpenERP server
-      sock_common = xmlrpclib.ServerProxy(self.openerp_url + 'xmlrpc/common')
-      self.uid = sock_common.login(self.openerp_db, self.openerp_user, self.openerp_password)
+      # Log in to the odoo server
+      sock_common = xmlrpclib.ServerProxy(self.odoo_url + 'xmlrpc/common')
+      self.uid = sock_common.login(self.odoo_db, self.odoo_user, self.odoo_password)
 
-      # Connect to OpenERP server
-      self.sock = xmlrpclib.ServerProxy(self.openerp_url + 'xmlrpc/object')
+      # Connect to odoo server
+      self.sock = xmlrpclib.ServerProxy(self.odoo_url + 'xmlrpc/object')
 
       # Create a database connection to the frePPLe database
       cursor = connections[self.database].cursor()
@@ -183,16 +183,16 @@ class Command(BaseCommand):
       transaction.set_autocommit(ac, using=self.database)
 
 
-  def openerp_search(self, a, b=[]):
+  def odoo_search(self, a, b=[]):
     try:
-      return self.sock.execute(self.openerp_db, self.uid, self.openerp_password, a, 'search', b)
+      return self.sock.execute(self.odoo_db, self.uid, self.odoo_password, a, 'search', b)
     except xmlrpclib.Fault as e:
       raise CommandError(e.faultString)
 
 
-  def openerp_data(self, a, b, c):
+  def odoo_data(self, a, b, c):
     try:
-      return self.sock.execute(self.openerp_db, self.uid, self.openerp_password, a, 'read', b, c)
+      return self.sock.execute(self.odoo_db, self.uid, self.odoo_password, a, 'read', b, c)
     except xmlrpclib.Fault as e:
       raise CommandError(e.faultString)
 
@@ -202,11 +202,11 @@ class Command(BaseCommand):
   #   - meeting the criterion:
   #        - %active = True
   #        - %customer = True
-  #   - mapped fields OpenERP -> frePPLe customer
+  #   - mapped fields odoo -> frePPLe customer
   #        - %id %name -> name
   #        - %ref     -> description
   #        - %id -> source
-  #        - 'OpenERP' -> subcategory
+  #        - 'odoo' -> subcategory
   def import_customers(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
@@ -216,11 +216,11 @@ class Command(BaseCommand):
       cursor.execute("SELECT name, subcategory, source FROM customer")
       frepple_keys = set()
       for i in cursor.fetchall():
-        if i[1] == 'OpenERP':
+        if i[1] == 'odoo':
           try: self.customers[int(i[2])] = i[0]
           except: pass
         frepple_keys.add(i[0])
-      ids = self.openerp_search( 'res.partner',
+      ids = self.odoo_search( 'res.partner',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
          '|',('active', '=', 1),('active', '=', 0)])
       fields = ['name', 'active', 'customer', 'ref']
@@ -228,13 +228,13 @@ class Command(BaseCommand):
       update = []
       rename = []
       delete = []
-      for i in self.openerp_data('res.partner', ids, fields):
+      for i in self.odoo_data('res.partner', ids, fields):
         name = u'%d %s' % (i['id'],i['name'])
         if i['active'] and i['customer']:
           if name in frepple_keys:
             update.append( (i['id'],name) )
           elif i['id'] in self.customers:
-            # Object previously exported from OpenERP already, now renamed
+            # Object previously exported from odoo already, now renamed
             rename.append( (name,str(i['id'])) )
           else:
             insert.append( (i['id'],name) )
@@ -245,26 +245,26 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into customer \
           (source,name,subcategory,lastmodified) \
-          values (%%s,%%s,'OpenERP','%s')" % self.date,
+          values (%%s,%%s,'odoo','%s')" % self.date,
         insert)
       cursor.executemany(
         "update customer \
-          set source=%%s, subcategory='OpenERP',lastmodified='%s' \
+          set source=%%s, subcategory='odoo',lastmodified='%s' \
           where name=%%s" % self.date,
         update)
       cursor.executemany(
         "update customer \
           set name=%%s, lastmodified='%s' \
-          where source=%%s and subcategory='OpenERP'" % self.date,
+          where source=%%s and subcategory='odoo'" % self.date,
         rename
         )
       for i in delete:
-        try: cursor.execute("delete from customer where source=%s and subcategory='OpenERP'",i)
+        try: cursor.execute("delete from customer where source=%s and subcategory='odoo'",i)
         except:
           # Delete fails when there are dependent records in the database.
           cursor.execute("update customer \
              set source=null, subcategory=null, lastmodified='%s' \
-             where source=%%s and subcategory='OpenERP'" % self.date, i)
+             where source=%%s and subcategory='odoo'" % self.date, i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print("Inserted %d new customers" % len(insert))
@@ -284,12 +284,12 @@ class Command(BaseCommand):
   #   - extracting recently changed product.product objects
   #   - meeting the criterion:
   #        - %active = True
-  #   - mapped fields OpenERP -> frePPLe item
+  #   - mapped fields odoo -> frePPLe item
   #        - %code %name -> name
-  #        - 'OpenERP' -> subcategory
+  #        - 'odoo' -> subcategory
   #        - %id -> source
   #   - We assume the code+name combination is unique, but this is not
-  #     enforced at all in OpenERP. The only other option is to include
+  #     enforced at all in odoo. The only other option is to include
   #     the id in the name - not nice for humans...
   # TODO also get template.produce_delay, property_stock_production, property_stock_inventory, and property_stock_procurement?
   def import_products(self, cursor):
@@ -301,11 +301,11 @@ class Command(BaseCommand):
       cursor.execute("SELECT name, subcategory, source FROM item")
       frepple_keys = set()
       for i in cursor.fetchall():
-        if i[1] == 'OpenERP':
+        if i[1] == 'odoo':
           try: self.items[int(i[2])] = i[0]
           except: pass
         frepple_keys.add(i[0])
-      ids = self.openerp_search('product.product', [
+      ids = self.odoo_search('product.product', [
         '|',('create_date','>', self.delta),('write_date','>', self.delta),
         '|',('active', '=', 1),('active', '=', 0)
         ])
@@ -314,7 +314,7 @@ class Command(BaseCommand):
       update = []
       rename = []
       delete = []
-      for i in self.openerp_data('product.product', ids, fields):
+      for i in self.odoo_data('product.product', ids, fields):
         if i['code']:
           name = u'[%s] %s' % (i['code'], i['name'])
         else:
@@ -323,7 +323,7 @@ class Command(BaseCommand):
           if name in frepple_keys:
             update.append( (i['id'],name) )
           elif i['id'] in self.items:
-            # Object previously exported from OpenERP already, now renamed
+            # Object previously exported from odoo already, now renamed
             rename.append( (name,str(i['id'])) )
           else:
             insert.append( (name,i['id']) )
@@ -335,28 +335,28 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into item \
           (name,source,subcategory,lastmodified) \
-          values (%%s,%%s,'OpenERP','%s')" % self.date,
+          values (%%s,%%s,'odoo','%s')" % self.date,
         insert
         )
       cursor.executemany(
         "update item \
-          set source=%%s, subcategory='OpenERP', lastmodified='%s' \
+          set source=%%s, subcategory='odoo', lastmodified='%s' \
           where name=%%s" % self.date,
         update
         )
       cursor.executemany(
         "update item \
           set name=%%s, lastmodified='%s' \
-          where source=%%s and subcategory='OpenERP'" % self.date,
+          where source=%%s and subcategory='odoo'" % self.date,
         rename
         )
       for i in delete:
-        try: cursor.execute("delete from item where source=%s and subcategory='OpenERP'", i)
+        try: cursor.execute("delete from item where source=%s and subcategory='odoo'", i)
         except:
           # Delete fails when there are dependent records in the database.
           cursor.execute("update item \
             set source=null, subcategory=null, lastmodified='%s' \
-            where source=%%s and subcategory='OpenERP'" % self.date, i)
+            where source=%%s and subcategory='odoo'" % self.date, i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print("Inserted %d new products" % len(insert))
@@ -377,9 +377,9 @@ class Command(BaseCommand):
   #   - NO filter on recently changed records
   #   - meeting the criterion:
   #        - %active = True
-  #   - mapped fields OpenERP -> frePPLe location
+  #   - mapped fields odoo -> frePPLe location
   #        - %name -> name
-  #        - 'OpenERP' -> subcategory
+  #        - 'odoo' -> subcategory
   #        - %id -> source
   def import_locations(self, cursor):
     transaction.enter_transaction_management(using=self.database)
@@ -390,22 +390,22 @@ class Command(BaseCommand):
       cursor.execute("SELECT name, subcategory, source FROM location")
       frepple_keys = set()
       for i in cursor.fetchall():
-        if i[1] == 'OpenERP':
+        if i[1] == 'odoo':
           try: self.locations[int(i[2])] = i[0]
           except: pass
         frepple_keys.add(i[0])
-      ids = self.openerp_search('stock.warehouse')
+      ids = self.odoo_search('stock.warehouse')
       fields = ['name', 'lot_stock_id', 'lot_input_id', 'lot_output_id']
       insert = []
       update = []
       rename = []
       childlocs = {}
       # Loop over the warehouses
-      for i in self.openerp_data('stock.warehouse', ids, fields):
+      for i in self.odoo_data('stock.warehouse', ids, fields):
         if i['name'] in frepple_keys:
           update.append( (i['id'],i['name']) )
         elif i['id'] in self.locations:
-          # Object previously exported from OpenERP already, now renamed
+          # Object previously exported from odoo already, now renamed
           rename.append( (i['name'],str(i['id'])) )
         else:
           insert.append( (i['name'],i['id']) )
@@ -417,7 +417,7 @@ class Command(BaseCommand):
       # Find all locations in the warehouse
       # We populate a mapping location-to-warehouse name for later lookups.
       fields2 = ['child_ids']
-      for j in self.openerp_data('stock.location', childlocs.keys(), fields2):
+      for j in self.odoo_data('stock.location', childlocs.keys(), fields2):
         self.locations[j['id']] = childlocs[j['id']]
         for k in j['child_ids']:
           self.locations[k] = childlocs[j['id']]
@@ -426,16 +426,16 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into location \
           (name,source,subcategory,lastmodified) \
-          values (%%s,%%s,'OpenERP','%s')" % self.date,
+          values (%%s,%%s,'odoo','%s')" % self.date,
         insert)
       cursor.executemany(
         "update location \
-          set source=%%s, subcategory='OpenERP', lastmodified='%s' \
+          set source=%%s, subcategory='odoo', lastmodified='%s' \
           where name=%%s" % self.date,
         update)
       cursor.executemany(
         "update location \
-          set name=%%s, subcategory='OpenERP', lastmodified='%s' \
+          set name=%%s, subcategory='odoo', lastmodified='%s' \
           where source=%%s" % self.date,
         rename)
       transaction.commit(using=self.database)
@@ -461,22 +461,22 @@ class Command(BaseCommand):
   #       - the order will be delivered from this location
   #   - meeting the criterion:
   #        - %sol_state = 'confirmed'
-  #   - mapped fields OpenERP -> frePPLe delivery operation
+  #   - mapped fields odoo -> frePPLe delivery operation
   #        - 'delivery %sol_product_id %sol_product_name from %loc' -> name
-  #   - mapped fields OpenERP -> frePPLe buffer
+  #   - mapped fields odoo -> frePPLe buffer
   #        - '%sol_product_id %sol_product_name @ %loc' -> name
-  #   - mapped fields OpenERP -> frePPLe delivery flow
+  #   - mapped fields odoo -> frePPLe delivery flow
   #        - 'delivery %sol_product_id %sol_product_name from %loc' -> operation
   #        - '%sol_product_id %sol_product_name @ %loc' -> buffer
   #        - quantity -> -1
   #        -  'start' -> type
-  #   - mapped fields OpenERP -> frePPLe demand
+  #   - mapped fields odoo -> frePPLe demand
   #        - %sol_id %so_name %sol_sequence -> name
   #        - %sol_product_uom_qty -> quantity
   #        - %sol_product_id -> item
   #        - %so_partner_id -> customer
   #        - %so_requested_date or %so_date_order -> due
-  #        - 'OpenERP' -> source
+  #        - 'odoo' -> source
   #        - 1 -> priority
   #   - The picking policy 'complete' is supported at the sales order line
   #     level only in frePPLe. FrePPLe doesn't allow yet to coordinate the
@@ -492,9 +492,9 @@ class Command(BaseCommand):
       # Get the stocking location of each warehouse (where we deliver from)
       if self.verbosity > 0:
         print("Extracting shop list...")
-      ids = self.openerp_search('sale.shop')
+      ids = self.odoo_search('sale.shop')
       fields = ['name', 'warehouse_id']
-      for i in self.openerp_data('sale.shop', ids, fields):
+      for i in self.odoo_data('sale.shop', ids, fields):
         self.shops[i['id']] = i['warehouse_id'][1]
 
       # Now the list of sales orders
@@ -503,15 +503,15 @@ class Command(BaseCommand):
         print("Importing sales orders...")
       cursor.execute("SELECT name FROM demand")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      ids = self.openerp_search('sale.order.line',
+      ids = self.odoo_search('sale.order.line',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),])
       fields = ['state', 'type', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
       fields2 = ['partner_id', 'requested_date', 'date_order', 'picking_policy', 'shop_id']
       insert = []
       update = []
       delete = []
-      so_line = [ i for i in self.openerp_data('sale.order.line', ids, fields)]
-      so = { j['id']: j for j in self.openerp_data('sale.order', [i['order_id'][0] for i in so_line], fields2) }
+      so_line = [ i for i in self.odoo_data('sale.order.line', ids, fields)]
+      so = { j['id']: j for j in self.odoo_data('sale.order', [i['order_id'][0] for i in so_line], fields2) }
       for i in so_line:
         name = u'%s %d' % (i['order_id'][1], i['id'])
         source = i['order_id'][0]
@@ -558,11 +558,11 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into operation \
           (name,location_id,subcategory,lastmodified) \
-          values (%%s,%%s,'OpenERP','%s')" % self.date,
+          values (%%s,%%s,'odoo','%s')" % self.date,
         [ (i[2],i[1]) for i in deliveries if i[2] not in frepple_keys ])
       cursor.executemany(
         "update operation \
-          set location_id=%%s, subcategory='OpenERP', lastmodified='%s' where name=%%s" % self.date,
+          set location_id=%%s, subcategory='odoo', lastmodified='%s' where name=%%s" % self.date,
         [ (i[1],i[2]) for i in deliveries if i[2] in frepple_keys ])
 
       # Create or update delivery buffers
@@ -571,11 +571,11 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into buffer \
           (name,item_id,location_id,subcategory,lastmodified) \
-          values(%%s,%%s,%%s,'OpenERP','%s')" % self.date,
+          values(%%s,%%s,%%s,'odoo','%s')" % self.date,
         [ (i[3],i[0],i[1]) for i in deliveries if i[3] not in frepple_keys ])
       cursor.executemany(
         "update buffer \
-          set item_id=%%s, location_id=%%s, subcategory='OpenERP', lastmodified='%s' where name=%%s" % self.date,
+          set item_id=%%s, location_id=%%s, subcategory='odoo', lastmodified='%s' where name=%%s" % self.date,
         [ (i[0],i[1],i[3]) for i in deliveries if i[3] in frepple_keys ])
 
       # Create or update flow on delivery operation
@@ -584,22 +584,22 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into flow \
           (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
-          values(%%s,%%s,-1,'start','OpenERP','%s')" % self.date,
+          values(%%s,%%s,-1,'start','odoo','%s')" % self.date,
         [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) not in frepple_keys ])
       cursor.executemany(
         "update flow \
-          set quantity=-1, type='start', source='OpenERP', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
+          set quantity=-1, type='start', source='odoo', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
         [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) in frepple_keys ])
 
       # Create or update demands
       cursor.executemany(
         "insert into demand \
           (item_id,customer_id,quantity,minshipment,due,operation_id,priority,subcategory,lastmodified,source,name) \
-          values (%%s,%%s,%%s,%%s,%%s,%%s,1,'OpenERP','%s',%%s,%%s)" % self.date,
+          values (%%s,%%s,%%s,%%s,%%s,%%s,1,'odoo','%s',%%s,%%s)" % self.date,
         insert)
       cursor.executemany(
         "update demand \
-          set item_id=%%s, customer_id=%%s, quantity=%%s, minshipment=%%s, due=%%s, operation_id=%%s, source=%%s, priority=1, subcategory='OpenERP', lastmodified='%s' \
+          set item_id=%%s, customer_id=%%s, quantity=%%s, minshipment=%%s, due=%%s, operation_id=%%s, source=%%s, priority=1, subcategory='odoo', lastmodified='%s' \
           where name=%%s" % self.date,
         update)
       for i in delete:
@@ -626,15 +626,15 @@ class Command(BaseCommand):
   #   - extracting recently changed mrp.workcenter objects
   #   - meeting the criterion:
   #        - %active = True
-  #   - mapped fields OpenERP -> frePPLe resource
+  #   - mapped fields odoo -> frePPLe resource
   #        - %id %name -> name
   #        - %cost_hour -> cost
   #        - capacity_per_cycle -> maximum
   #          This field is only transfered when inserting a new workcenter.
   #          Later runs of the connector will not update the value any more,
   #          since this field is typically maintained in frePPLe.
-  #        - 'OpenERP' -> source
-  #   - In OpenERP a work center links to a resource, and a resource has
+  #        - 'odoo' -> source
+  #   - In odoo a work center links to a resource, and a resource has
   #     a calendar with working hours.
   #     We don't map the calendar to frePPLe, assuming that this is easy
   #     to maintain in frePPLe.
@@ -647,11 +647,11 @@ class Command(BaseCommand):
       cursor.execute("SELECT name, subcategory, source FROM resource")
       frepple_keys = set()
       for i in cursor.fetchall():
-        if i[1] == 'OpenERP':
+        if i[1] == 'odoo':
           try: self.resources[int(i[2])] = i[0]
           except: pass
         frepple_keys.add(i[0])
-      ids = self.openerp_search('mrp.workcenter',
+      ids = self.odoo_search('mrp.workcenter',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
          '|',('active', '=', 1),('active', '=', 0)])
       fields = ['name', 'active', 'costs_hour', 'capacity_per_cycle', 'time_cycle']
@@ -659,12 +659,12 @@ class Command(BaseCommand):
       update = []
       rename = []
       delete = []
-      for i in self.openerp_data('mrp.workcenter', ids, fields):
+      for i in self.odoo_data('mrp.workcenter', ids, fields):
         if i['active']:
           if i['name'] in frepple_keys:
             update.append( (i['id'],i['costs_hour'],i['name']) )
           elif i['id'] in self.resources:
-            # Object previously exported from OpenERP already, now renamed
+            # Object previously exported from odoo already, now renamed
             rename.append( (i['name'],i['costs_hour'],str(i['id'])) )
           else:
             insert.append( (i['id'],i['name'],i['costs_hour'],i['capacity_per_cycle'] / (i['time_cycle'] or 1)) )
@@ -674,25 +674,25 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into resource \
           (source,name,cost,maximum,subcategory,lastmodified) \
-          values (%%s,%%s,%%s,%%s,'OpenERP','%s')" % self.date,
+          values (%%s,%%s,%%s,%%s,'odoo','%s')" % self.date,
         insert)
       cursor.executemany(
         "update resource \
-          set source=%%s, cost=%%s, subcategory='OpenERP', lastmodified='%s' \
+          set source=%%s, cost=%%s, subcategory='odoo', lastmodified='%s' \
           where name=%%s" % self.date,
         update)
       cursor.executemany(
         "update resource \
-          set name=%%s, cost=%%s, subcategory='OpenERP', lastmodified='%s' \
+          set name=%%s, cost=%%s, subcategory='odoo', lastmodified='%s' \
           where source=%%s" % self.date,
         rename)
       for i in delete:
-        try: cursor.execute("delete from resource where source=%s and subcategory='OpenERP'",i)
+        try: cursor.execute("delete from resource where source=%s and subcategory='odoo'",i)
         except:
           # Delete fails when there are dependent records in the database.
           cursor.execute("update resource \
             set source=null, subcategory=null, lastmodified='%s' \
-            where source=%%s and subcategory='OpenERP'" % self.date,i)
+            where source=%%s and subcategory='odoo'" % self.date,i)
       transaction.commit(using=self.database)
       if self.verbosity > 0:
         print("Inserted %d new workcenters" % len(insert))
@@ -715,12 +715,12 @@ class Command(BaseCommand):
   #        - %qty > 0
   #        - Location already mapped in frePPLe
   #        - Product already mapped in frePPLe
-  #   - mapped fields OpenERP -> frePPLe buffer
+  #   - mapped fields odoo -> frePPLe buffer
   #        - %product_id %product_name @ %name -> name
   #        - %product_id %product_name -> item_id
   #        - %location_id %location_name -> location_id
   #        - %qty -> onhand
-  #        - 'OpenERP' -> source
+  #        - 'odoo' -> source
   def import_onhand(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
@@ -733,12 +733,12 @@ class Command(BaseCommand):
       frepple_locations = set([ i[0] for i in cursor.fetchall()])
       cursor.execute("SELECT name FROM buffer")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      cursor.execute("update buffer set onhand = 0 where subcategory = 'OpenERP'")
-      ids = self.openerp_search('stock.report.prodlots', [('qty','>', 0),])
+      cursor.execute("update buffer set onhand = 0 where subcategory = 'odoo'")
+      ids = self.odoo_search('stock.report.prodlots', [('qty','>', 0),])
       fields = ['prodlot_id', 'location_id', 'qty', 'product_id']
       insert = []
       update = []
-      for i in self.openerp_data('stock.report.prodlots', ids, fields):
+      for i in self.odoo_data('stock.report.prodlots', ids, fields):
         location = i['location_id'][0]
         if not location in self.locations: continue
         location = self.locations[location]  # Look up the warehouse of the location
@@ -753,12 +753,12 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into buffer \
           (name,item_id,location_id,onhand,subcategory,lastmodified) \
-          values(%%s,%%s,%%s,%%s,'OpenERP','%s')" % self.date,
+          values(%%s,%%s,%%s,%%s,'odoo','%s')" % self.date,
         insert
         )
       cursor.executemany(
         "update buffer \
-          set onhand=onhand+%%s, subcategory='OpenERP', lastmodified='%s' \
+          set onhand=onhand+%%s, subcategory='odoo', lastmodified='%s' \
           where name=%%s" % self.date,
         update
         )
@@ -781,24 +781,24 @@ class Command(BaseCommand):
   #        - %product already exists in frePPLe
   #        - %location already exists in frePPLe
   #        - %state = 'approved' or 'draft'
-  #   - mapped fields OpenERP -> frePPLe buffer
+  #   - mapped fields odoo -> frePPLe buffer
   #        - %product ' @ ' %name -> name
   #        - %location, mapped to warehouse -> location
   #        - %product -> product
-  #        - 'OpenERP' -> subcategory
-  #   - mapped fields OpenERP -> frePPLe operation
+  #        - 'odoo' -> subcategory
+  #   - mapped fields odoo -> frePPLe operation
   #        - 'Purchase ' %product ' @ ' %location -> name
-  #        - 'OpenERP' -> subcategory
+  #        - 'odoo' -> subcategory
   #        - 'fixed_time' -> type
-  #   - mapped fields OpenERP -> frePPLe flow
+  #   - mapped fields odoo -> frePPLe flow
   #        - 'Purchase ' %product ' @ ' %location -> operation
   #        - %product ' @ ' %name -> buffer
   #        - 1 -> quantity
   #        - 'end' -> type
-  #        - 'OpenERP' -> source
-  #   - mapped fields OpenERP -> frePPLe operationplan
+  #        - 'odoo' -> source
+  #   - mapped fields odoo -> frePPLe operationplan
   #        - %id %name -> name
-  #        - 'OpenERP' -> source
+  #        - 'odoo' -> source
   #   - Note that the current logic also treats the (draft) purchase quotations in the
   #     very same way as the (confirmed) purchase orders.
   #
@@ -815,14 +815,14 @@ class Command(BaseCommand):
       cursor.execute("SELECT id FROM operationplan")
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       deliveries = set()
-      ids = self.openerp_search('purchase.order.line',['|',('create_date','>', self.delta),('write_date','>', self.delta)])
+      ids = self.odoo_search('purchase.order.line',['|',('create_date','>', self.delta),('write_date','>', self.delta)])
       fields = ['name', 'date_planned', 'product_id', 'product_qty', 'order_id']
       fields2 = ['name', 'location_id', 'partner_id', 'state', 'shipped']
       insert = []
       delete = []
       update = []
-      po_line = [ i for i in self.openerp_data('purchase.order.line', ids, fields) ]
-      po = { j['id']: j for j in self.openerp_data('purchase.order', [i['order_id'][0] for i in po_line], fields2) }
+      po_line = [ i for i in self.odoo_data('purchase.order.line', ids, fields) ]
+      po = { j['id']: j for j in self.odoo_data('purchase.order', [i['order_id'][0] for i in po_line], fields2) }
       for i in po_line:
         if not i['product_id']: continue
         item = i['product_id'][1]
@@ -849,11 +849,11 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into operation \
           (name,location_id,subcategory,type,lastmodified) \
-          values (%%s,%%s,'OpenERP','fixed_time','%s')" % self.date,
+          values (%%s,%%s,'odoo','fixed_time','%s')" % self.date,
         [ (i[2],i[1]) for i in deliveries if i[2] not in frepple_keys ])
       cursor.executemany(
         "update operation \
-          set location_id=%%s, subcategory='OpenERP', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
+          set location_id=%%s, subcategory='odoo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
         [ (i[1],i[2]) for i in deliveries if i[2] in frepple_keys ])
 
       # Create or update purchasing buffers
@@ -862,11 +862,11 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into buffer \
           (name,item_id,location_id,subcategory,lastmodified) \
-          values(%%s,%%s,%%s,'OpenERP','%s')" % self.date,
+          values(%%s,%%s,%%s,'odoo','%s')" % self.date,
         [ (i[3],i[0],i[1]) for i in deliveries if i[3] not in frepple_keys ])
       cursor.executemany(
         "update buffer \
-          set item_id=%%s, location_id=%%s, subcategory='OpenERP', lastmodified='%s' where name=%%s" % self.date,
+          set item_id=%%s, location_id=%%s, subcategory='odoo', lastmodified='%s' where name=%%s" % self.date,
         [ (i[0],i[1],i[3]) for i in deliveries if i[3] in frepple_keys ])
 
       # Create or update flow on purchasing operation
@@ -875,27 +875,27 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into flow \
           (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
-          values(%%s,%%s,1,'end','OpenERP','%s')" % self.date,
+          values(%%s,%%s,1,'end','odoo','%s')" % self.date,
         [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) not in frepple_keys ])
       cursor.executemany(
         "update flow \
-          set quantity=1, type='end', source='OpenERP', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
+          set quantity=1, type='end', source='odoo', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
         [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) in frepple_keys ])
 
       # Create purchasing operationplans
       cursor.executemany(
         "insert into operationplan \
           (id,operation_id,startdate,enddate,quantity,locked,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,%%s,'1','OpenERP','%s')" % self.date,
+          values(%%s,%%s,%%s,%%s,%%s,'1','odoo','%s')" % self.date,
         insert
         )
       cursor.executemany(
         "update operationplan \
-          set operation_id=%%s, enddate=%%s, startdate=%%s, quantity=%%s, locked='1', source='OpenERP', lastmodified='%s' \
+          set operation_id=%%s, enddate=%%s, startdate=%%s, quantity=%%s, locked='1', source='odoo', lastmodified='%s' \
           where id=%%s" % self.date,
         update)
       cursor.executemany(
-        "delete from operationplan where id=%s and source='OpenERP'",
+        "delete from operationplan where id=%s and source='odoo'",
         delete)
       transaction.commit(using=self.database)
 
@@ -925,18 +925,18 @@ class Command(BaseCommand):
   #        - %routing_id is not empty    TODO update doc here
   #          and %routing_id.location_id is not null
   #          and the location already exists in frePPLe
-  #   - mapped fields OpenERP -> frePPLe operation
+  #   - mapped fields odoo -> frePPLe operation
   #        - make %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> name
   #        - %routing_id.location_id %routing_id.location_id.name -> location_id
   #        - %product_rounding -> size_multiple
-  #        - 'OpenERP' -> source
-  #   - mapped fields OpenERP -> frePPLe buffer
+  #        - 'odoo' -> source
+  #   - mapped fields odoo -> frePPLe buffer
   #        - %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> name
   #        - %product_id.id %product_id.name -> item_id
   #        - %routing_id.location_id %routing_id.location_id.name -> location_id
   #        - %bom_id %bom_name @ %routing_id.location_id %routing_id.location_id.name -> producing_id
-  #        - 'OpenERP' -> source
-  #   - mapped fields OpenERP -> frePPLe flow
+  #        - 'odoo' -> source
+  #   - mapped fields odoo -> frePPLe flow
   #        - %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> thebuffer_id
   #        - make %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> operation_id
   #        - %product_qty * %product_efficiency -> quantity
@@ -970,19 +970,19 @@ class Command(BaseCommand):
       frepple_locations = set([i[0] for i in cursor.fetchall()])
 
       # Pick up all active manufacturing routings
-      openerp_mfg_routings = {}
-      ids = self.openerp_search('mrp.routing')
-      for i in self.openerp_data('mrp.routing', ids, ['location_id',]):
+      odoo_mfg_routings = {}
+      ids = self.odoo_search('mrp.routing')
+      for i in self.odoo_data('mrp.routing', ids, ['location_id',]):
         if i['location_id']:
-          openerp_mfg_routings[i['id']] = self.locations.get(i['location_id'][0], None)
+          odoo_mfg_routings[i['id']] = self.locations.get(i['location_id'][0], None)
         else:
-          openerp_mfg_routings[i['id']] = None
+          odoo_mfg_routings[i['id']] = None
 
       # Pick up all workcenters in the routing
       routing_workcenters = {}
-      ids = self.openerp_search('mrp.routing.workcenter')
+      ids = self.odoo_search('mrp.routing.workcenter')
       fields = ['routing_id','workcenter_id','sequence','cycle_nbr','hour_nbr',]
-      for i in self.openerp_data('mrp.routing.workcenter', ids, fields):
+      for i in self.odoo_data('mrp.routing.workcenter', ids, fields):
         if i['routing_id'][0] in routing_workcenters:
           routing_workcenters[i['routing_id'][0]].append( (i['workcenter_id'][1], i['cycle_nbr'],) )
         else:
@@ -1002,18 +1002,18 @@ class Command(BaseCommand):
 
       # Loop over all "producing" bom records
       boms = {}
-      ids = self.openerp_search('mrp.bom', [
+      ids = self.odoo_search('mrp.bom', [
         ('bom_id','=',False), #'|',('create_date','>', self.delta),('write_date','>', self.delta),
         '|',('active', '=', 1),('active', '=', 0)])
       fields = ['name', 'active', 'product_qty','date_start','date_stop','product_efficiency',
         'product_id','routing_id','bom_id','type','sub_products','product_rounding',]
-      for i in self.openerp_data('mrp.bom', ids, fields):
+      for i in self.odoo_data('mrp.bom', ids, fields):
         # TODO Handle routing steps
         # Determine the location
         if i['routing_id']:
-          location = openerp_mfg_routings.get(i['routing_id'][0], None) or self.openerp_production_location
+          location = odoo_mfg_routings.get(i['routing_id'][0], None) or self.odoo_production_location
         else:
-          location = self.openerp_production_location
+          location = self.odoo_production_location
 
         # Determine operation name and item
         operation = u'%d %s @ %s' % (i['id'], i['name'], location)
@@ -1073,12 +1073,12 @@ class Command(BaseCommand):
             flow_delete.append( (buffer,operation) )
 
       # Loop over all "consuming" bom records
-      ids = self.openerp_search('mrp.bom', [
+      ids = self.odoo_search('mrp.bom', [
         ('bom_id','!=',False), #'|',('create_date','>', self.delta),('write_date','>', self.delta),
         '|',('active', '=', 1),('active', '=', 0)])
       fields = ['name', 'active', 'product_qty','date_start','date_stop','product_efficiency',
         'product_id','routing_id','bom_id','type','sub_products','product_rounding',]
-      for i in self.openerp_data('mrp.bom', ids, fields):
+      for i in self.odoo_data('mrp.bom', ids, fields):
         # Determine operation and buffer
         (operation, location) = boms.get(i['bom_id'][0], (None, None))
         product = self.items.get(i['product_id'][0], None)
@@ -1111,12 +1111,12 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into operation \
           (name,location_id,subcategory,sizemultiple,lastmodified) \
-          values(%%s,%%s,'OpenERP',%%s,'%s')" % self.date,
+          values(%%s,%%s,'odoo',%%s,'%s')" % self.date,
         operation_insert
         )
       cursor.executemany(
         "update operation \
-          set location_id=%%s, sizemultiple=%%s, subcategory='OpenERP', lastmodified='%s' \
+          set location_id=%%s, sizemultiple=%%s, subcategory='odoo', lastmodified='%s' \
           where name=%%s" % self.date,
         operation_update
         )
@@ -1129,36 +1129,36 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into buffer \
           (name,item_id,location_id,producing_id,subcategory,lastmodified) \
-          values(%%s,%%s,%%s,%%s,'OpenERP','%s')" % self.date,
+          values(%%s,%%s,%%s,%%s,'odoo','%s')" % self.date,
         buffer_insert
         )
       cursor.executemany(
         "update buffer \
-          set item_id=%%s, location_id=%%s, producing_id=%%s, subcategory='OpenERP', lastmodified='%s' \
+          set item_id=%%s, location_id=%%s, producing_id=%%s, subcategory='odoo', lastmodified='%s' \
           where name = %%s" % self.date,
         buffer_update
         )
       cursor.executemany(
         "insert into flow \
           (operation_id,thebuffer_id,quantity,type,effective_start,effective_end,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,%%s,%%s,'OpenERP','%s')" % self.date,
+          values(%%s,%%s,%%s,%%s,%%s,%%s,'odoo','%s')" % self.date,
         flow_insert
         )
       cursor.executemany(
         "update flow \
-          set quantity=%%s, type=%%s, effective_start=%%s ,effective_end=%%s, source='OpenERP', lastmodified='%s' \
+          set quantity=%%s, type=%%s, effective_start=%%s ,effective_end=%%s, source='odoo', lastmodified='%s' \
           where operation_id=%%s and thebuffer_id=%%s" % self.date,
         flow_update
         )
       cursor.executemany(
         "insert into resourceload \
           (operation_id,resource_id,quantity,source,lastmodified) \
-          values(%%s,%%s,%%s,'OpenERP','%s')" % self.date,
+          values(%%s,%%s,%%s,'odoo','%s')" % self.date,
         load_insert
         )
       cursor.executemany(
         "update resourceload \
-          set quantity=%%s, lastmodified='%s', source='OpenERP' \
+          set quantity=%%s, lastmodified='%s', source='odoo' \
           where operation_id=%%s and resource_id=%%s" % self.date,
         load_update
         )
@@ -1193,15 +1193,15 @@ class Command(BaseCommand):
 
 
   # Importing policies
-  #   - Extracting product.template objects for all items mapped from OpenERP
+  #   - Extracting product.template objects for all items mapped from odoo
   #     No net change functionality for this part.
   #   - Extracting recently changed stock.warehouse.orderpoint objects
-  #   - mapped fields product.template OpenERP -> frePPLe buffers
-  #        - %product -> filter where buffer.item_id = %product and subcategory='OpenERP'
+  #   - mapped fields product.template odoo -> frePPLe buffers
+  #        - %product -> filter where buffer.item_id = %product and subcategory='odoo'
   #        - %type -> 'procure' when %purchase_ok=true and %supply_method='buy'
   #                   'default' for all other cases
   #        - %produce_delay -> leadtime
-  #   - mapped fields stock.warehouse.orderpoint OpenERP -> frePPLe buffers
+  #   - mapped fields stock.warehouse.orderpoint odoo -> frePPLe buffers
   #        - %product %warehouse -> filter where buffer.item_id = %product and buffer.location_id = %warehouse
   #        - %product_min_qty -> min_inventory
   #        - %product_max_qty -> max_inventory
@@ -1214,7 +1214,7 @@ class Command(BaseCommand):
         print("Importing policies and reorderpoints...")
 
       # Get the list of item ids and the template info
-      cursor.execute("SELECT name, source FROM item where subcategory='OpenERP'")
+      cursor.execute("SELECT name, source FROM item where subcategory='odoo'")
       items = {}
       for i in cursor.fetchall():
         try: items[int(i[1])] = i[0]
@@ -1223,8 +1223,8 @@ class Command(BaseCommand):
       fields2 = ['purchase_ok','procure_method','supply_method','produce_delay']
       buy = []
       produce = []
-      prod = [ i for i in self.openerp_data('product.product', items.keys(), fields) ]
-      templates = { j['id']: j for j in self.openerp_data('product.template', [i['product_tmpl_id'][0] for i in prod], fields2) }
+      prod = [ i for i in self.odoo_data('product.product', items.keys(), fields) ]
+      templates = { j['id']: j for j in self.odoo_data('product.template', [i['product_tmpl_id'][0] for i in prod], fields2) }
       for i in prod:
         item = items.get(i['id'],None)
         if not item: continue
@@ -1234,33 +1234,33 @@ class Command(BaseCommand):
         else:
           produce.append( (item,) )
       # Get recently changed reorderpoints
-      ids = self.openerp_search('stock.warehouse.orderpoint',
+      ids = self.odoo_search('stock.warehouse.orderpoint',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
          '|',('active', '=', 1),('active', '=', 0)])
       fields = ['active', 'warehouse_id', 'product_id', 'product_min_qty', 'product_max_qty', 'qty_multiple']
       orderpoints = []
-      for i in self.openerp_data('stock.warehouse.orderpoint', ids, fields):
+      for i in self.odoo_data('stock.warehouse.orderpoint', ids, fields):
         if i['active']:
           orderpoints.append( (i['product_min_qty'], i['product_max_qty'], i['qty_multiple'], i['product_id'][1], i['warehouse_id'][1]) )
         else:
           orderpoints.append( (None, None, None, i['product_id'][1], i['warehouse_id'][1]) )
 
       # Update the frePPLe buffers
-      cursor.execute("update buffer set type=null where subcategory = 'OpenERP'")
+      cursor.execute("update buffer set type=null where subcategory = 'odoo'")
       cursor.executemany(
         "update buffer \
           set type= 'procure', leadtime=%%s, lastmodified='%s' \
-          where item_id=%%s and subcategory='OpenERP'" % self.date,
+          where item_id=%%s and subcategory='odoo'" % self.date,
         buy)
       cursor.executemany(
         "update buffer \
           set type='default', lastmodified='%s' \
-          where item_id=%%s and subcategory='OpenERP'" % self.date,
+          where item_id=%%s and subcategory='odoo'" % self.date,
         produce)
       cursor.executemany(
         "update buffer \
           set min_inventory=%s, max_inventory=%s, size_multiple=%s \
-          where item_id=%s and location_id=%s and subcategory='OpenERP'",
+          where item_id=%s and location_id=%s and subcategory='odoo'",
         orderpoints
         )
       transaction.commit(using=self.database)

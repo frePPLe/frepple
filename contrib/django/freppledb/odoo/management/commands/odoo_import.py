@@ -128,7 +128,7 @@ class Command(BaseCommand):
       cursor = connections[self.database].cursor()
 
       # Sequentially load all data
-      self.import_uom(cursor)
+      self.load_uom(cursor)
       task.status = '5%'
       task.save(using=self.database)
       transaction.commit(using=self.database)
@@ -207,13 +207,13 @@ class Command(BaseCommand):
   #   - Extracting all active product.uom records
   #   - The data is not stored in the frePPLe database but extracted every
   #     time and kept in a Python dictionary variable.
-  def import_uom(self, cursor):
+  def load_uom(self, cursor):
     try:
       starttime = time()
       if self.verbosity > 0:
         print("Loading units of measure...")
       ids = self.odoo_search('product.uom', [])
-      fields = ['factor','factor_inv','uom_type']
+      fields = ['factor','uom_type']
       count = 0
       for i in self.odoo_data('product.uom', ids, fields):
         if i['uom_type'] == 'reference':
@@ -221,7 +221,10 @@ class Command(BaseCommand):
         elif i['uom_type'] == 'bigger':
           self.uom[i['id']] = i['factor']
         else:
-          self.uom[i['id']] = i['factor_inv']
+          if i['factor'] > 0:
+            self.uom[i['id']] = 1 / i['factor']
+          else:
+            self.uom[i['id']] = 1.0
         count += 1
       if self.verbosity > 0:
         print("Loaded %d units of measure in %.2f seconds" % (count, time() - starttime))
@@ -1252,7 +1255,7 @@ class Command(BaseCommand):
 
   # Importing policies
   #   - Extracting product.template objects for all items mapped from odoo
-  #     No net change functionality for this part.
+  #   - TODO No net change functionality yet.
   #   - Extracting recently changed stock.warehouse.orderpoint objects
   #   - mapped fields product.template odoo -> frePPLe buffers
   #        - %product -> filter where buffer.item_id = %product and subcategory='odoo'
@@ -1278,10 +1281,11 @@ class Command(BaseCommand):
         try: items[int(i[1])] = i[0]
         except: pass
       fields = ['product_tmpl_id']
-      fields2 = ['purchase_ok','procure_method','supply_method','produce_delay']
+      fields2 = ['purchase_ok','procure_method','supply_method','produce_delay','list_price','uom_id']
       buy = []
       produce = []
       prod = [ i for i in self.odoo_data('product.product', items.keys(), fields) ]
+      item_update = []
       templates = { j['id']: j for j in self.odoo_data('product.template', [i['product_tmpl_id'][0] for i in prod], fields2) }
       for i in prod:
         item = items.get(i['id'],None)
@@ -1291,6 +1295,9 @@ class Command(BaseCommand):
           buy.append( (tmpl['produce_delay'] * 86400, item) )
         else:
           produce.append( (item,) )
+        if tmpl:
+          item_update.append( (tmpl['list_price'] * self.uom[tmpl['uom_id'][0]],item,) )
+
       # Get recently changed reorderpoints
       ids = self.odoo_search('stock.warehouse.orderpoint',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
@@ -1320,6 +1327,10 @@ class Command(BaseCommand):
           set min_inventory=%s, max_inventory=%s, size_multiple=%s \
           where item_id=%s and location_id=%s and subcategory='odoo'",
         orderpoints
+        )
+      cursor.executemany(
+        "update item set price=%s where name=%s",
+        item_update
         )
       transaction.commit(using=self.database)
       if self.verbosity > 0:
@@ -1362,14 +1373,13 @@ class Command(BaseCommand):
         '|',('create_date','>', self.delta),('write_date','>', self.delta),
         ('state','!=','draft')
         ])
-      fields = ['bom_id','date_start','date_planned','name','state','routing_id',
-                'product_id','product_qty', 'location_dest_id']
+      fields = ['bom_id','date_start','date_planned','name','state','product_qty', 'location_dest_id']
       update = []
       insert = []
       delete = []
       for i in self.odoo_data('mrp.production', ids, fields):
         identifier = i['id'] + 1000000   # Adding a million to distinguish POs and MOs
-        if i['state'] in ('in_production','confirmed','ready','in_production'):
+        if i['state'] in ('in_production','confirmed','ready'):
           # Open orders
           location = self.locations.get(i['location_dest_id'][0],None)
           operation = u'%d %s @ %s' % (i['bom_id'][0], i['bom_id'][1], location)
@@ -1379,11 +1389,11 @@ class Command(BaseCommand):
             continue
           if identifier in frepple_keys:
             update.append((
-              operation,startdate,startdate,i['product_qty'],identifier
+              operation,startdate,startdate,i['product_qty'],i['name'],identifier
               ))
           else:
             insert.append((
-              identifier,operation,startdate,startdate,i['product_qty']
+              identifier,operation,startdate,startdate,i['product_qty'],i['name']
               ))
         elif i['state'] in ('cancel','done'):
           # Closed orders
@@ -1396,16 +1406,16 @@ class Command(BaseCommand):
       cursor.executemany(
         "insert into operationplan \
           (id,operation_id,startdate,enddate,quantity,locked,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,%%s,'1','odoo','%s')" % self.date,
+          values(%%s,%%s,%%s,%%s,%%s,'1',%%s,'%s')" % self.date,
         insert
         )
       cursor.executemany(
         "update operationplan \
-          set operation_id=%%s, startdate=%%s, enddate=%%s, quantity=%%s, locked='1', source='odoo', lastmodified='%s' \
+          set operation_id=%%s, startdate=%%s, enddate=%%s, quantity=%%s, locked='1', source=%%s, lastmodified='%s' \
           where id=%%s" % self.date,
         update)
       cursor.executemany(
-        "delete from operationplan where id=%s and source='odoo'",
+        "delete from operationplan where id=%s",
         delete)
       transaction.commit(using=self.database)
 

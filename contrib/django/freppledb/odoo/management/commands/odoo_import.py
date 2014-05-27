@@ -115,6 +115,7 @@ class Command(BaseCommand):
       self.resources = {}
       self.shops = {}
       self.delta = str(self.date - timedelta(days=self.delta))
+      self.uom = {}
 
       # Log in to the odoo server
       sock_common = xmlrpclib.ServerProxy(self.odoo_url + 'xmlrpc/common')
@@ -127,24 +128,28 @@ class Command(BaseCommand):
       cursor = connections[self.database].cursor()
 
       # Sequentially load all data
-      self.import_customers(cursor)
-      task.status = '10%'
-      task.save(using=self.database)
-      transaction.commit(using=self.database)
-      self.import_products(cursor)
-      task.status = '20%'
+      self.import_uom(cursor)
+      task.status = '5%'
       task.save(using=self.database)
       transaction.commit(using=self.database)
       self.import_locations(cursor)
-      task.status = '30%'
+      task.status = '10%'
+      task.save(using=self.database)
+      transaction.commit(using=self.database)
+      self.import_customers(cursor)
+      task.status = '15%'
+      task.save(using=self.database)
+      transaction.commit(using=self.database)
+      self.import_products(cursor)
+      task.status = '25%'
       task.save(using=self.database)
       transaction.commit(using=self.database)
       self.import_salesorders(cursor)
-      task.status = '40%'
+      task.status = '35%'
       task.save(using=self.database)
       transaction.commit(using=self.database)
       self.import_workcenters(cursor)
-      task.status = '50%'
+      task.status = '40%'
       task.save(using=self.database)
       transaction.commit(using=self.database)
       self.import_onhand(cursor)
@@ -163,6 +168,7 @@ class Command(BaseCommand):
       task.status = '90%'
       task.save(using=self.database)
       transaction.commit(using=self.database)
+      self.import_manufacturingorders(cursor)
 
       # Log success
       task.status = 'Done'
@@ -195,6 +201,32 @@ class Command(BaseCommand):
       return self.sock.execute(self.odoo_db, self.uid, self.odoo_password, a, 'read', b, c)
     except xmlrpclib.Fault as e:
       raise CommandError(e.faultString)
+
+
+  # Loading units of measures
+  #   - Extracting all active product.uom records
+  #   - The data is not stored in the frePPLe database but extracted every
+  #     time and kept in a Python dictionary variable.
+  def import_uom(self, cursor):
+    try:
+      starttime = time()
+      if self.verbosity > 0:
+        print("Loading units of measure...")
+      ids = self.odoo_search('product.uom', [])
+      fields = ['factor','factor_inv','uom_type']
+      count = 0
+      for i in self.odoo_data('product.uom', ids, fields):
+        if i['uom_type'] == 'reference':
+          self.uom[i['id']] = 1.0
+        elif i['uom_type'] == 'bigger':
+          self.uom[i['id']] = i['factor']
+        else:
+          self.uom[i['id']] = i['factor_inv']
+        count += 1
+      if self.verbosity > 0:
+        print("Loaded %d units of measure in %.2f seconds" % (count, time() - starttime))
+    except Exception as e:
+      raise CommandError("Error loading units of measure: %s" % e)
 
 
   # Importing customers
@@ -891,7 +923,7 @@ class Command(BaseCommand):
         )
       cursor.executemany(
         "update operationplan \
-          set operation_id=%%s, enddate=%%s, startdate=%%s, quantity=%%s, locked='1', source='odoo', lastmodified='%s' \
+          set operation_id=%%s, startdate=%%s, enddate=%%s, quantity=%%s, locked='1', source='odoo', lastmodified='%s' \
           where id=%%s" % self.date,
         update)
       cursor.executemany(
@@ -1276,6 +1308,90 @@ class Command(BaseCommand):
       transaction.commit(using=self.database)
       transaction.leave_transaction_management(using=self.database)
 
-# TODO:
-#  - Load WIP
+
+  # Importing manufacturing orders
+  #   - Extracting all mrp.production objects from odoo, except the ones in
+  #     "draft" status.
+  #   - mapped fields mrp.production odoo -> frePPLe operationplan
+  #        - %state -> filter where state != 'draft'
+  #        - %id + 1000000 -> identifier
+  #        - %bom.id %bom.name @ %location_dest_id -> operation_id, which must already exist
+  #        - %date_start if filled else %date_planned -> startdate and enddate
+  #        - %product_qty -> quantity
+  #        - "1" -> locked
+  def import_manufacturingorders(self, cursor):
+    transaction.enter_transaction_management(using=self.database)
+    try:
+      starttime = time()
+      if self.verbosity > 0:
+        print("Importing manufacturing orders...")
+
+      # Get the list of existing operations and operationplans
+      cursor.execute("SELECT id FROM operationplan")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      cursor.execute("SELECT name FROM operation where subcategory='odoo'")
+      operations = set([ i[0] for i in cursor.fetchall()])
+
+      ids = self.odoo_search('mrp.production', [
+        '|',('create_date','>', self.delta),('write_date','>', self.delta),
+        ('state','!=','draft')
+        ])
+      fields = ['bom_id','date_start','date_planned','name','state','routing_id',
+                'product_id','product_qty', 'location_dest_id']
+      update = []
+      insert = []
+      delete = []
+      for i in self.odoo_data('mrp.production', ids, fields):
+        identifier = i['id'] + 1000000   # Adding a million to distinguish POs and MOs
+        if i['state'] in ('in_production','confirmed','ready','in_production'):
+          # Open orders
+          location = self.locations.get(i['location_dest_id'][0],None)
+          operation = u'%d %s @ %s' % (i['bom_id'][0], i['bom_id'][1], location)
+          try: startdate = datetime.strptime(i['date_start'] or i['date_planned'], '%Y-%m-%d %H:%M:%S')
+          except Exception as e: startdate = None
+          if not startdate or not location or not operation in operations:
+            continue
+          if identifier in frepple_keys:
+            update.append((
+              operation,startdate,startdate,i['product_qty'],identifier
+              ))
+          else:
+            insert.append((
+              identifier,operation,startdate,startdate,i['product_qty']
+              ))
+        elif i['state'] in ('cancel','done'):
+          # Closed orders
+          if id in frepple_keys:
+            delete.append( (identifier,) )
+        else:
+          print("Warning: ignoring unrecognized manufacturing order status %s" % i['state'])
+
+      # Update the frePPLe operationplans
+      cursor.executemany(
+        "insert into operationplan \
+          (id,operation_id,startdate,enddate,quantity,locked,source,lastmodified) \
+          values(%%s,%%s,%%s,%%s,%%s,'1','odoo','%s')" % self.date,
+        insert
+        )
+      cursor.executemany(
+        "update operationplan \
+          set operation_id=%%s, startdate=%%s, enddate=%%s, quantity=%%s, locked='1', source='odoo', lastmodified='%s' \
+          where id=%%s" % self.date,
+        update)
+      cursor.executemany(
+        "delete from operationplan where id=%s and source='odoo'",
+        delete)
+      transaction.commit(using=self.database)
+
+      if self.verbosity > 0:
+        print("Updated %d manufacturing orders" % len(update))
+        print("Inserted %d new manufacturing orders" % len(insert))
+        print("Deleted %d manufacturing orders" % len(delete))
+        print("Imported manufacturing orders in %.2f seconds" % (time() - starttime))
+    except Exception as e:
+      transaction.rollback(using=self.database)
+      raise CommandError("Error importing manufacturing orders: %s" % e)
+    finally:
+      transaction.commit(using=self.database)
+      transaction.leave_transaction_management(using=self.database)
 

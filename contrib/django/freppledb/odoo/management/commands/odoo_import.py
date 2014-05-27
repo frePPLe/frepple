@@ -245,6 +245,8 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Importing customers...")
+
+      # Collect existing frePPLe customers
       cursor.execute("SELECT name, subcategory, source FROM customer")
       frepple_keys = set()
       for i in cursor.fetchall():
@@ -252,6 +254,8 @@ class Command(BaseCommand):
           try: self.customers[int(i[2])] = i[0]
           except: pass
         frepple_keys.add(i[0])
+
+      # Load all new Odoo customers
       ids = self.odoo_search( 'res.partner',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
          '|',('active', '=', 1),('active', '=', 0)])
@@ -272,8 +276,10 @@ class Command(BaseCommand):
             insert.append( (i['id'],name) )
           self.customers[i['id']] = name
         elif i['id'] in self.customers:
-          delete.append( (str(i['id']),) )
+          delete.append( (name,) )
           self.customers.pop(i['id'], None)
+
+      # Apply the changes to the frePPLe database
       cursor.executemany(
         "insert into customer \
           (source,name,subcategory,lastmodified) \
@@ -290,14 +296,17 @@ class Command(BaseCommand):
           where source=%%s and subcategory='odoo'" % self.date,
         rename
         )
-      for i in delete:
-        try: cursor.execute("delete from customer where source=%s and subcategory='odoo'",i)
-        except:
-          # Delete fails when there are dependent records in the database.
-          cursor.execute("update customer \
-             set source=null, subcategory=null, lastmodified='%s' \
-             where source=%%s and subcategory='odoo'" % self.date, i)
+      cursor.executemany('update customer set owner_id=null where owner_id=%s',
+        delete
+        )
+      cursor.executemany('update demand set customer_id=null where customer_id=%s',
+        delete
+        )
+      cursor.executemany('delete from customer where name=%s',
+        delete
+        )
       transaction.commit(using=self.database)
+
       if self.verbosity > 0:
         print("Inserted %d new customers" % len(insert))
         print("Updated %d existing customers" % len(update))
@@ -330,6 +339,8 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Importing products...")
+
+      # Get existing frePPLe items
       cursor.execute("SELECT name, subcategory, source FROM item")
       frepple_keys = set()
       for i in cursor.fetchall():
@@ -337,6 +348,8 @@ class Command(BaseCommand):
           try: self.items[int(i[2])] = i[0]
           except: pass
         frepple_keys.add(i[0])
+
+      # Get all new Odoo products
       ids = self.odoo_search('product.product', [
         '|',('create_date','>', self.delta),('write_date','>', self.delta),
         '|',('active', '=', 1),('active', '=', 0)
@@ -362,8 +375,10 @@ class Command(BaseCommand):
           self.items[i['id']] = name
           frepple_keys.add(name)
         elif i['id'] in self.items:
-          delete.append( (str(i['id']),) )
+          delete.append( (name,) )
           self.items.pop(i['id'], None)
+
+      # Apply the changes to the frePPLe database
       cursor.executemany(
         "insert into item \
           (name,source,subcategory,lastmodified) \
@@ -382,14 +397,15 @@ class Command(BaseCommand):
           where source=%%s and subcategory='odoo'" % self.date,
         rename
         )
-      for i in delete:
-        try: cursor.execute("delete from item where source=%s and subcategory='odoo'", i)
-        except:
-          # Delete fails when there are dependent records in the database.
-          cursor.execute("update item \
-            set source=null, subcategory=null, lastmodified='%s' \
-            where source=%%s and subcategory='odoo'" % self.date, i)
+      cursor.executemany("delete from demand where item_id=%s", delete)
+      cursor.executemany("delete from flow \
+         where thebuffer_id in (select name from buffer where item_id=%s)",
+         delete
+         )
+      cursor.executemany("delete from buffer where item_id=%s", delete)
+      cursor.executemany("delete from item where name=%s", delete)
       transaction.commit(using=self.database)
+
       if self.verbosity > 0:
         print("Inserted %d new products" % len(insert))
         print("Updated %d existing products" % len(update))
@@ -407,6 +423,7 @@ class Command(BaseCommand):
   # Importing locations
   #   - extracting stock.warehouses objects
   #   - NO filter on recently changed records
+  #   - NO deletion of locations which become inactive
   #   - meeting the criterion:
   #        - %active = True
   #   - mapped fields odoo -> frePPLe location
@@ -419,6 +436,8 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Importing warehouses...")
+
+      # Get existing locations
       cursor.execute("SELECT name, subcategory, source FROM location")
       frepple_keys = set()
       for i in cursor.fetchall():
@@ -426,6 +445,8 @@ class Command(BaseCommand):
           try: self.locations[int(i[2])] = i[0]
           except: pass
         frepple_keys.add(i[0])
+
+      # Pick up all warehouses
       ids = self.odoo_search('stock.warehouse')
       fields = ['name', 'lot_stock_id', 'lot_input_id', 'lot_output_id']
       insert = []
@@ -471,6 +492,7 @@ class Command(BaseCommand):
           where source=%%s" % self.date,
         rename)
       transaction.commit(using=self.database)
+
       if self.verbosity > 0:
         print("Inserted %d new warehouses" % len(insert))
         print("Updated %d existing warehouses" % len(update))
@@ -676,6 +698,8 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Importing workcenters...")
+
+      # Get existing frePPLe resources
       cursor.execute("SELECT name, subcategory, source FROM resource")
       frepple_keys = set()
       for i in cursor.fetchall():
@@ -683,6 +707,8 @@ class Command(BaseCommand):
           try: self.resources[int(i[2])] = i[0]
           except: pass
         frepple_keys.add(i[0])
+
+      # Pick up the list of new Odoo workcenters
       ids = self.odoo_search('mrp.workcenter',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
          '|',('active', '=', 1),('active', '=', 0)])
@@ -703,6 +729,8 @@ class Command(BaseCommand):
           self.resources[i['id']] = i['name']
         elif i['id'] in self.resources:
           delete.append( (str(i['id']),) ),
+
+      # Apply the changes to the frePPLe database
       cursor.executemany(
         "insert into resource \
           (source,name,cost,maximum,subcategory,lastmodified) \
@@ -718,14 +746,12 @@ class Command(BaseCommand):
           set name=%%s, cost=%%s, subcategory='odoo', lastmodified='%s' \
           where source=%%s" % self.date,
         rename)
-      for i in delete:
-        try: cursor.execute("delete from resource where source=%s and subcategory='odoo'",i)
-        except:
-          # Delete fails when there are dependent records in the database.
-          cursor.execute("update resource \
-            set source=null, subcategory=null, lastmodified='%s' \
-            where source=%%s and subcategory='odoo'" % self.date,i)
+      cursor.executemany('delete from resourceload where resource_id=%s', delete)
+      cursor.executemany('delete from resourceskill where resource_id=%s', delete)
+      cursor.executemany('update resource set owner_id where owner_id=%s', delete)
+      cursor.executemany('delete from resource where name=%s', delete)
       transaction.commit(using=self.database)
+
       if self.verbosity > 0:
         print("Inserted %d new workcenters" % len(insert))
         print("Updated %d existing workcenters" % len(update))

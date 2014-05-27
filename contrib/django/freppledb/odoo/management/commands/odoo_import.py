@@ -35,7 +35,7 @@ from freppledb.execute.models import Task
 
 class Command(BaseCommand):
 
-  help = "Loads data from an odoo instance into the frePPLe database"
+  help = "Loads data from an Odoo instance into the frePPLe database"
 
   option_list = BaseCommand.option_list + (
       make_option('--user', dest='user', type='string',
@@ -1134,8 +1134,8 @@ class Command(BaseCommand):
       ids = self.odoo_search('mrp.bom', [
         ('bom_id','!=',False), #'|',('create_date','>', self.delta),('write_date','>', self.delta),
         '|',('active', '=', 1),('active', '=', 0)])
-      fields = ['name', 'active', 'product_qty','date_start','date_stop','product_efficiency',
-        'product_id','routing_id','bom_id','type','sub_products','product_rounding',]
+      fields = ['name', 'active', 'product_qty','date_start','date_stop','product_id',
+        'routing_id','bom_id','type','sub_products','product_rounding',]
       for i in self.odoo_data('mrp.bom', ids, fields):
         # Determine operation and buffer
         (operation, location) = boms.get(i['bom_id'][0], (None, None))
@@ -1153,11 +1153,11 @@ class Command(BaseCommand):
           # Creation of flow
           if (buffer,operation) in frepple_flows:
             flow_update.append( (
-              -i['product_qty']*i['product_efficiency'], 'start', i['date_start'] or None, i['date_stop'] or None, operation, buffer,
+              -i['product_qty'], 'start', i['date_start'] or None, i['date_stop'] or None, operation, buffer,
               ) )
           else:
             flow_insert.append( (
-              operation, buffer, -i['product_qty']*i['product_efficiency'], 'start', i['date_start'] or None, i['date_stop'] or None
+              operation, buffer, -i['product_qty'], 'start', i['date_start'] or None, i['date_stop'] or None
               ) )
             frepple_flows.add( (buffer,operation) )
         else:

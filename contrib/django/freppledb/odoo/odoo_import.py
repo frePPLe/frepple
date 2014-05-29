@@ -465,7 +465,7 @@ class Connector:
   #        -  'start' -> type
   #   - mapped fields odoo -> frePPLe demand
   #        - %sol_id %so_name %sol_sequence -> name
-  #        - %sol_product_uom_qty -> quantity
+  #        - %sol_product_uom_qty * uom conversion -> quantity
   #        - %sol_product_id -> item
   #        - %so_partner_id -> customer
   #        - %so_requested_date or %so_date_order -> due
@@ -519,11 +519,12 @@ class Connector:
           buffer = u'%s @ %s' % (product, location)
           deliveries.update([(product,location,operation,buffer),])
           due = datetime.strptime(j['requested_date'] or j['date_order'], '%Y-%m-%d')
+          uom_factor = self.uom.get(i['product_uom'][0],1.0)
           if name in frepple_keys:
             update.append( (
               product,
               customer,
-              i['product_uom_qty'],
+              i['product_uom_qty'] * uom_factor,
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               due,
               operation,
@@ -534,7 +535,7 @@ class Connector:
             insert.append( (
               product,
               customer,
-              i['product_uom_qty'],
+              i['product_uom_qty'] * uom_factor,
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               due,
               operation,
@@ -813,7 +814,7 @@ class Connector:
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       deliveries = set()
       ids = self.odoo_search('purchase.order.line',['|',('create_date','>', self.delta),('write_date','>', self.delta)])
-      fields = ['name', 'date_planned', 'product_id', 'product_qty', 'order_id']
+      fields = ['name', 'date_planned', 'product_id', 'product_qty', 'product_uom', 'order_id']
       fields2 = ['name', 'location_id', 'partner_id', 'state', 'shipped']
       insert = []
       delete = []
@@ -828,13 +829,14 @@ class Connector:
         if location and item in frepple_items and j['state'] in ('approved','draft') and not j['shipped']:
           operation = u'Purchase %s @ %s' % (item, location)
           due = datetime.strptime(i['date_planned'], '%Y-%m-%d')
+          uom_factor = self.uom.get(i['product_uom'][0],1.0)
           if i['id'] in frepple_keys:
             update.append( (
-               operation, due, due, i['product_qty'], i['id']
+               operation, due, due, i['product_qty']*uom_factor, i['id']
               ) )
           else:
             insert.append( (
-               i['id'], operation, due, due, i['product_qty']
+               i['id'], operation, due, due, i['product_qty']*uom_factor
               ) )
           deliveries.update([(item,location,operation,u'%s @ %s' % (item, location)),])
         elif id in frepple_keys:
@@ -925,7 +927,7 @@ class Connector:
   #   - mapped fields odoo -> frePPLe operation
   #        - make %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> name
   #        - %routing_id.location_id %routing_id.location_id.name -> location_id
-  #        - %product_rounding -> size_multiple
+  #        - %product_rounding * uom conversion -> size_multiple
   #        - 'odoo' -> source
   #   - mapped fields odoo -> frePPLe buffer
   #        - %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> name
@@ -936,7 +938,7 @@ class Connector:
   #   - mapped fields odoo -> frePPLe flow
   #        - %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> thebuffer_id
   #        - make %product_id.id %product_id.name @ %routing_id.location_id %routing_id.location_id.name -> operation_id
-  #        - %product_qty * %product_efficiency -> quantity
+  #        - %product_qty * %product_efficiency * uom conversion -> quantity
   #        - 'flow_end' -> type
   #
   def import_boms(self, cursor):
@@ -1002,8 +1004,9 @@ class Connector:
       ids = self.odoo_search('mrp.bom', [
         ('bom_id','=',False), #'|',('create_date','>', self.delta),('write_date','>', self.delta),
         '|',('active', '=', 1),('active', '=', 0)])
-      fields = ['name', 'active', 'product_qty','date_start','date_stop','product_efficiency',
-        'product_id','routing_id','bom_id','type','sub_products','product_rounding',]
+      fields = ['name', 'active', 'product_qty', 'product_uom', 'date_start', 'date_stop',
+        'product_efficiency', 'product_id', 'routing_id', 'bom_id', 'type', 'sub_products',
+        'product_rounding',]
       for i in self.odoo_data('mrp.bom', ids, fields):
         # TODO Handle routing steps
         # Determine the location
@@ -1017,18 +1020,19 @@ class Connector:
         product = self.items.get(i['product_id'][0], None)
         if not product: continue
         buffer = u'%s @ %s' % (product, location)  # TODO if policy is produce, then this should be the producting operation
+        uom_factor = self.uom.get(i['product_uom'][0],1.0)
 
         if i['active']:
           boms[i['id']] = (operation, location)
           # Creation or update operations
           if operation in frepple_operations:
             operation_update.append( (
-              location, i['product_rounding'] or 1, operation,
+              location, i['product_rounding']*uom_factor or 1, operation,
               ) )
           else:
             frepple_operations.add(operation)
             operation_insert.append( (
-              operation, location, i['product_rounding'] or 1
+              operation, location, (i['product_rounding'] * uom_factor) or 1
               ) )
           # Creation buffer
           if not buffer in frepple_buffers:
@@ -1043,11 +1047,13 @@ class Connector:
           # Producing flow on a bom
           if (buffer,operation) in frepple_flows:
             flow_update.append( (
-              i['product_qty']*i['product_efficiency'], 'end', i['date_start'] or None, i['date_stop'] or None, operation, buffer,
+              i['product_qty'] * i['product_efficiency'] * uom_factor, 'end',
+              i['date_start'] or None, i['date_stop'] or None, operation, buffer,
               ) )
           else:
             flow_insert.append( (
-              operation, buffer, i['product_qty']*i['product_efficiency'], 'end', i['date_start'] or None, i['date_stop'] or None
+              operation, buffer, i['product_qty'] * i['product_efficiency'] * uom_factor,
+              'end', i['date_start'] or None, i['date_stop'] or None
               ) )
             frepple_flows.add( (buffer,operation) )
           # Create workcentre loads
@@ -1073,14 +1079,15 @@ class Connector:
       ids = self.odoo_search('mrp.bom', [
         ('bom_id','!=',False), #'|',('create_date','>', self.delta),('write_date','>', self.delta),
         '|',('active', '=', 1),('active', '=', 0)])
-      fields = ['name', 'active', 'product_qty','date_start','date_stop','product_id',
-        'routing_id','bom_id','type','sub_products','product_rounding',]
+      fields = ['name', 'active', 'product_qty', 'product_uom', 'date_start', 'date_stop',
+        'product_id', 'routing_id', 'bom_id', 'type', 'sub_products', 'product_rounding',]
       for i in self.odoo_data('mrp.bom', ids, fields):
         # Determine operation and buffer
         (operation, location) = boms.get(i['bom_id'][0], (None, None))
         product = self.items.get(i['product_id'][0], None)
         if not location and not operation or not product: continue
         buffer = u'%s @ %s' % (product, location)
+        uom_factor = self.uom.get(i['product_uom'][0],1.0)
 
         if i['active']:
           # Creation buffer
@@ -1092,11 +1099,11 @@ class Connector:
           # Creation of flow
           if (buffer,operation) in frepple_flows:
             flow_update.append( (
-              -i['product_qty'], 'start', i['date_start'] or None, i['date_stop'] or None, operation, buffer,
+              -i['product_qty'] * uom_factor, 'start', i['date_start'] or None, i['date_stop'] or None, operation, buffer,
               ) )
           else:
             flow_insert.append( (
-              operation, buffer, -i['product_qty'], 'start', i['date_start'] or None, i['date_stop'] or None
+              operation, buffer, -i['product_qty'] * uom_factor, 'start', i['date_start'] or None, i['date_stop'] or None
               ) )
             frepple_flows.add( (buffer,operation) )
         else:
@@ -1181,8 +1188,6 @@ class Connector:
         print("Imported bills of material in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
-      import sys, traceback
-      traceback.print_exc(file=sys.stdout)
       raise CommandError("Error importing bills of material: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -1200,9 +1205,9 @@ class Connector:
   #        - %produce_delay -> leadtime
   #   - mapped fields stock.warehouse.orderpoint odoo -> frePPLe buffers
   #        - %product %warehouse -> filter where buffer.item_id = %product and buffer.location_id = %warehouse
-  #        - %product_min_qty -> min_inventory
-  #        - %product_max_qty -> max_inventory
-  #        - %qty_multiple -> size_multiple
+  #        - %product_min_qty * uom conversion -> min_inventory
+  #        - %product_max_qty * uom conversion -> max_inventory
+  #        - %qty_multiple * uom conversion -> size_multiple
   def import_policies(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
@@ -1238,11 +1243,13 @@ class Connector:
       ids = self.odoo_search('stock.warehouse.orderpoint',
         ['|',('create_date','>', self.delta),('write_date','>', self.delta),
          '|',('active', '=', 1),('active', '=', 0)])
-      fields = ['active', 'warehouse_id', 'product_id', 'product_min_qty', 'product_max_qty', 'qty_multiple']
+      fields = ['active', 'warehouse_id', 'product_id', 'product_min_qty', 'product_max_qty', 'product_uom', 'qty_multiple']
       orderpoints = []
       for i in self.odoo_data('stock.warehouse.orderpoint', ids, fields):
         if i['active']:
-          orderpoints.append( (i['product_min_qty'], i['product_max_qty'], i['qty_multiple'], i['product_id'][1], i['warehouse_id'][1]) )
+          uom_factor = self.uom.get(i['product_uom'][0],1.0)
+          orderpoints.append( (i['product_min_qty']*uom_factor, i['product_max_qty']*uom_factor,
+            i['qty_multiple']*uom_factor, i['product_id'][1], i['warehouse_id'][1]) )
         else:
           orderpoints.append( (None, None, None, i['product_id'][1], i['warehouse_id'][1]) )
 
@@ -1290,7 +1297,7 @@ class Connector:
   #        - %id + 1000000 -> identifier
   #        - %bom.id %bom.name @ %location_dest_id -> operation_id, which must already exist
   #        - %date_start if filled else %date_planned -> startdate and enddate
-  #        - %product_qty -> quantity
+  #        - %product_qty * uom conversion -> quantity
   #        - "1" -> locked
   def import_manufacturingorders(self, cursor):
     transaction.enter_transaction_management(using=self.database)
@@ -1309,7 +1316,7 @@ class Connector:
         '|',('create_date','>', self.delta),('write_date','>', self.delta),
         ('state','!=','draft')
         ])
-      fields = ['bom_id','date_start','date_planned','name','state','product_qty', 'location_dest_id']
+      fields = ['bom_id','date_start','date_planned','name','state','product_qty','product_uom','location_dest_id']
       update = []
       insert = []
       delete = []
@@ -1323,13 +1330,14 @@ class Connector:
           except Exception as e: startdate = None
           if not startdate or not location or not operation in operations:
             continue
+          uom_factor = self.uom.get(i['product_uom'][0],1.0)
           if identifier in frepple_keys:
             update.append((
-              operation,startdate,startdate,i['product_qty'],i['name'],identifier
+              operation,startdate,startdate,i['product_qty']*uom_factor,i['name'],identifier
               ))
           else:
             insert.append((
-              identifier,operation,startdate,startdate,i['product_qty'],i['name']
+              identifier,operation,startdate,startdate,i['product_qty']*uom_factor,i['name']
               ))
         elif i['state'] in ('cancel','done'):
           # Closed orders

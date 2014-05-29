@@ -148,23 +148,26 @@ BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
-Var InstalledDocumentation
 Var DatabaseEngine
-Var StartedNow
 
+; Declare everything that needs to be extracted on startup.
+; Only useful for BZIP2 compression
 ReserveFile "parameters.ini"
 ReserveFile "finish.ini"
 ReserveFile '${NSISDIR}\Plugins\InstallOptions.dll'
+ReserveFile "finish.bmp"
+
 
 Function .onInit
-  ;Extract INI files
+  ;Extract some files used by the installer
   !insertmacro INSTALLOPTIONS_EXTRACT "parameters.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "finish.ini"
+  !insertmacro INSTALLOPTIONS_EXTRACT "finish.bmp"
+
+  ;Write image paths to the INI file
+  WriteINIStr "$PLUGINSDIR\finish.ini" "Field 7" "Text" "$PLUGINSDIR\finish.bmp"
 
   !insertmacro MULTIUSER_INIT
-
-  ; Set to "yes" when the documentation is chosen to be installed
-  strcpy $InstalledDocumentation "no"
 FunctionEnd
 
 
@@ -392,8 +395,7 @@ FunctionEnd
 Function FinishOpen
   ; Display the page
   ${If} $MultiUser.InstallMode == "CurrentUser"
-    WriteIniStr "$PLUGINSDIR\finish.ini" "Field 3" "Flags" "DISABLED"
-    WriteIniStr "$PLUGINSDIR\finish.ini" "Field 4" "Flags" "DISABLED"
+    WriteIniStr "$PLUGINSDIR\finish.ini" "Field 6" "Flags" "DISABLED"
   ${EndIf}
   !insertmacro MUI_HEADER_TEXT "Completing the installation" "frePPLe has been installed on your computer"
   !insertmacro INSTALLOPTIONS_DISPLAY "finish.ini"
@@ -402,63 +404,43 @@ FunctionEnd
 
 Function FinishLeave
   ; Check how we left the screen: toggle "install service", toggle "run in console", or "next" button
-  strcpy $StartedNow "no"
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Settings" "State"
-  ${If} $0 == 1
-     strcpy $StartedNow "yes"
+  ${If} $0 == 5
      ; Toggling the "run in system tray" checkbox
-     ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 1" "State"
+     ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 5" "State"
      ${If} $0 == 1
        ; Deactivate the "install service" checkbox
-       WriteIniStr "$PLUGINSDIR\finish.ini" "Field 3" "State" "0"
-       readinistr $2 "$PLUGINSDIR\finish.ini" "Field 3" "HWND"
+       WriteIniStr "$PLUGINSDIR\finish.ini" "Field 6" "State" "0"
+       readinistr $2 "$PLUGINSDIR\finish.ini" "Field 6" "HWND"
        SendMessage $2 ${BM_SETCHECK} 0 0
      ${EndIf}
      Abort  ; Return to the page
-  ${ElseIf} $0 == 3
-     strcpy $StartedNow "yes"
+  ${ElseIf} $0 == 6
      ; Toggling the "install service" checkbox
-     ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 3" "State"
+     ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 6" "State"
      ${If} $0 == 1
        ; Deactivate the "run in system tray" checkbox
-       WriteIniStr "$PLUGINSDIR\finish.ini" "Field 1" "State" "0"
-       readinistr $2 "$PLUGINSDIR\finish.ini" "Field 1" "HWND"
+       WriteIniStr "$PLUGINSDIR\finish.ini" "Field 5" "State" "0"
+       readinistr $2 "$PLUGINSDIR\finish.ini" "Field 5" "HWND"
        SendMessage $2 ${BM_SETCHECK} 0 0
      ${EndIf}
      Abort  ; Return to the page
   ${EndIf}
 
   ; Start the server in system tray
-  ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 1" "State"
+  ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 5" "State"
   ${If} $0 == 1
     Exec '"$INSTDIR\bin\freppleserver.exe"'
   ${EndIf}
 
-  ; View the documentation
-  ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 2" "State"
-  ${If} $0 == 1
-    ${If} $InstalledDocumentation == "yes"
-      Push '"$INSTDIR\doc\output\index.html"'
-    ${Else}
-      Push '"http://frepple.com/documentation/"'
-    ${EndIf}
-    Call openLinkNewWindow
-  ${EndIf}
-
   ; Install the service
-  ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 3" "State"
+  ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 6" "State"
   ${If} $0 == 1
     nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --startup auto install'
     sleep 2
     nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" start'
     CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk" "$INSTDIR\bin\freppleservice.exe" "start"
     CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk" "$INSTDIR\bin\freppleservice.exe" "stop"
-  ${EndIf}
-
-  ; Open the application page
-  ${If} $StartedNow == "yes"
-    Push "http://localhost:8000/"
-    Call openLinkNewWindow
   ${EndIf}
 FunctionEnd
 
@@ -469,7 +451,6 @@ Section "Documentation" SecDoc
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\doc\output\index.html"
   File /r "doc"
-  StrCpy $InstalledDocumentation "yes"
 SectionEnd
 
 Section "Examples" SecEx

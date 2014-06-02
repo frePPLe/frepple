@@ -1322,7 +1322,7 @@ class Connector:
       delete = []
       for i in self.odoo_data('mrp.production', ids, fields):
         identifier = i['id'] + 1000000   # Adding a million to distinguish POs and MOs
-        if i['state'] in ('in_production','confirmed','ready'):
+        if i['state'] in ('in_production','confirmed','ready') and i['bom_id']:
           # Open orders
           location = self.locations.get(i['location_dest_id'][0],None)
           operation = u'%d %s @ %s' % (i['bom_id'][0], i['bom_id'][1], location)
@@ -1343,7 +1343,7 @@ class Connector:
           # Closed orders
           if id in frepple_keys:
             delete.append( (identifier,) )
-        else:
+        elif i['bom_id']:
           print("Warning: ignoring unrecognized manufacturing order status %s" % i['state'])
 
       # Update the frePPLe operationplans

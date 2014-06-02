@@ -1237,7 +1237,7 @@ class Connector:
         else:
           produce.append( (item,) )
         if tmpl:
-          item_update.append( (tmpl['list_price'] * self.uom[tmpl['uom_id'][0]],item,) )
+          item_update.append( (tmpl['list_price'] * self.uom.get(tmpl['uom_id'][0],1),item,) )
 
       # Get recently changed reorderpoints
       ids = self.odoo_search('stock.warehouse.orderpoint',

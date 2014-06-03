@@ -174,13 +174,13 @@ class Connector:
       ids_produce = []
       for i, j, k, l, m, n, o in self.cursor.fetchall():
         proc_order = {
-          'name': "%s %s" % (i,j),
+          'name': ("%s %s" % (i,j)).encode('ascii','ignore'),  # TODO better handle unicode chars!
           'product_qty': str(k),
           'date_planned': l.strftime('%Y-%m-%d'),
-          'product_id': n,
+          'product_id': int(n),
           'company_id': 1,
-          'product_uom': 1,
-          'location_id': m,
+          'product_uom': 1, # TODO set uom correctly?
+          'location_id': int(m),
           'procure_method': 'make_to_order',
           'origin': 'frePPLe'
           }

@@ -758,18 +758,29 @@ extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *n
 #endif
       return NULL;
     }
+    PythonExtensionBase* cpp_self = static_cast<PythonExtensionBase*>(self);
 #if PY_MAJOR_VERSION >= 3
     PyObject* name_utf8 = PyUnicode_AsUTF8String(name);
-    PyObject* result = static_cast<PythonExtensionBase*>(self)->getattro(Attribute(PyBytes_AsString(name_utf8)));
+    PyObject* result = cpp_self->getattro(Attribute(PyBytes_AsString(name_utf8)));
     Py_DECREF(name_utf8);
 #else
-    PyObject* result = static_cast<PythonExtensionBase*>(self)->getattro(Attribute(PyString_AsString(name)));
+    PyObject* result = cpp_self->getattro(Attribute(PyString_AsString(name)));
 #endif
     // Exit 1: Normal
     if (result) return result;
     // Exit 2: Exception occurred
     if (PyErr_Occurred()) return NULL;
-    // Exit 3: No error occurred but the attribute was not found.
+    // Exit 3: Look up in our custom dictionary
+    if (cpp_self->dict)
+    {
+      PyObject* item = PyDict_GetItem(cpp_self->dict, name);
+      if (item)
+      {
+        Py_INCREF(item);
+        return item;
+      }
+    }
+    // Exit 4: No error occurred but the attribute was not found.
     // Use the standard generic function to pick up  standard attributes
     // (such as __class__, __doc__, ...)
     // Note that this function also picks up attributes from base classes, but
@@ -808,15 +819,28 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
     PythonObject field(value);
 
     // Call the object to update the attribute
+    PythonExtensionBase* cpp_self = static_cast<PythonExtensionBase*>(self);
 #if PY_MAJOR_VERSION >= 3
     PyObject* name_utf8 = PyUnicode_AsUTF8String(name);
-    int result = static_cast<PythonExtensionBase*>(self)->setattro(Attribute(PyBytes_AsString(name_utf8)), field);
+    int result = cpp_self->setattro(Attribute(PyBytes_AsString(name_utf8)), field);
     Py_DECREF(name_utf8);
 #else
-    int result = static_cast<PythonExtensionBase*>(self)->setattro(Attribute(PyBytes_AsString(name)), field);
+    int result = cpp_self->setattro(Attribute(PyBytes_AsString(name)), field);
 #endif
     // Process 'OK' result
     if (!result) return 0;
+
+    // Add to our custom extension dictionary
+    if (value)
+    {
+      if (!cpp_self->dict)
+      {
+        cpp_self->dict = PyDict_New();
+        Py_INCREF(cpp_self->dict);
+      }
+      result = PyDict_SetItem(cpp_self->dict, name, value);
+      if (!result) return 0;
+    }
 
     // Process 'not OK' result - set python error string if it isn't set yet
     if (!PyErr_Occurred())

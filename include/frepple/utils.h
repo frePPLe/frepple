@@ -3206,9 +3206,14 @@ class PythonAttributeList : public AttributeList
   */
 class PythonExtensionBase : public PyObject
 {
+  friend PyObject* getattro_handler(PyObject*, PyObject*);
+  friend int setattro_handler(PyObject*, PyObject*, PyObject*);
+  private:
+    PyObject* dict;
+
   public:
     /** Default constructor */
-    PythonExtensionBase() {}
+    PythonExtensionBase() : dict(NULL) {}
 
     /** Destructor. */
     virtual ~PythonExtensionBase()
@@ -3218,6 +3223,7 @@ class PythonExtensionBase : public PyObject
           << (PyObject::ob_type->tp_name && PyObject::ob_type ? PyObject::ob_type->tp_name : "NULL")
             << " object that is still referenced "
             << (PyObject::ob_refcnt-1) << " times" << endl;
+      if (dict) Py_DECREF(dict);
     }
 
     /** A function to force an object to be destroyed by the Python garbage

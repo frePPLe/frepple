@@ -38,13 +38,13 @@ class Connector:
     self.odoo_db = Parameter.getValue("odoo.db", self.database)
     self.odoo_url = Parameter.getValue("odoo.url", self.database)
     if not self.odoo_user:
-      raise CommandError("Missing or invalid parameter odoo_user")
+      raise CommandError("Missing or invalid parameter odoo.user")
     if not self.odoo_password:
-      raise CommandError("Missing or invalid parameter odoo_password")
+      raise CommandError("Missing or invalid parameter odoo.password")
     if not self.odoo_db:
-      raise CommandError("Missing or invalid parameter odoo_db")
+      raise CommandError("Missing or invalid parameter odoo.db")
     if not self.odoo_url:
-      raise CommandError("Missing or invalid parameter odoo_url")
+      raise CommandError("Missing or invalid parameter odoo.url")
 
 
   def odoo_search(self, a, b=[]):

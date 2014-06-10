@@ -51,15 +51,15 @@ class Connector:
     self.odoo_url = Parameter.getValue("odoo.url", self.database)
     self.odoo_production_location = Parameter.getValue("odoo.production_location", self.database)
     if not self.odoo_user:
-      raise CommandError("Missing or invalid parameter odoo_user")
+      raise CommandError("Missing or invalid parameter odoo.user")
     if not self.odoo_password:
-      raise CommandError("Missing or invalid parameter odoo_password")
+      raise CommandError("Missing or invalid parameter odoo.password")
     if not self.odoo_db:
-      raise CommandError("Missing or invalid parameter odoo_db")
+      raise CommandError("Missing or invalid parameter odoo.db")
     if not self.odoo_url:
-      raise CommandError("Missing or invalid parameter odoo_url")
+      raise CommandError("Missing or invalid parameter odoo.url")
     if not self.odoo_production_location:
-      raise CommandError("Missing or invalid parameter odoo_production_location")
+      raise CommandError("Missing or invalid parameter odoo.production_location")
 
     # Initialize some global variables
     self.customers = {}

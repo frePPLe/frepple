@@ -33,7 +33,7 @@ from freppledb.common.models import Parameter
 from freppledb.execute.models import Task
 
 
-class Connector:
+class Connector(object):
 
   def __init__(self, task, delta=3650, database=DEFAULT_DB_ALIAS, verbosity=0):
     self.task = task

@@ -469,7 +469,7 @@ class DeliveryPerformanceWidget(Widget):
     cursor = connections[request.database].cursor()
     GridReport.getBuckets(request)
     query = '''
-      select sum(late) * 100.0 /count(*)
+      select case when count(*) = 0 then 0 else 100 - sum(late) * 100.0 / count(*) end
       from (
         select
           demand, max(case when plandate > due then 1 else 0 end) late

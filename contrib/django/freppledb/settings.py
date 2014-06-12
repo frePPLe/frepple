@@ -120,7 +120,12 @@ APPEND_SLASH = False
 
 WSGI_APPLICATION = 'freppledb.wsgi.application'
 ROOT_URLCONF = 'freppledb.urls'
-STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP,'static'))
+if os.sep == '/' and os.path.isdir('/usr/share/frepple/frepple.xsd')
+  # Standard Linux installation
+  STATIC_ROOT = '/usr/share/frepple/static'
+else:
+  # All other layout types
+  STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP,'static'))
 STATIC_URL = '/static/'
 USE_L10N=True        # Represent data in the local format
 USE_I18N=True        # Use translated strings

@@ -4,7 +4,7 @@
 
 SUBDIRS = src modules include test contrib bin doc
 
-EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README NEWS Makefile.am Makefile.dist
+EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README README.md NEWS Makefile.am Makefile.dist
 AUTOMAKE_OPTIONS = gnu
 
 .PHONY: $(.PHONY) contrib

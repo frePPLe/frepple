@@ -1,5 +1,7 @@
 # frePPLe
 
+## Open source production planning
+
 FrePPLe is an easy-to-use and easy-to-implement open source **advanced planning and scheduling** tool.
 
 When spreadsheets doesn't suffice any longer to adequately plan and schedule your production, frePPLe allows in an easy and cost-efficient way to generate a more optimized plan.

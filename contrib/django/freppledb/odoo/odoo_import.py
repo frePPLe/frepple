@@ -20,17 +20,15 @@
 
 
 from __future__ import print_function
-from optparse import make_option
 import xmlrpclib
 from datetime import datetime, timedelta
 from time import time
+from operator import itemgetter
 
 from django.core.management.base import CommandError
 from django.db import transaction, connections, DEFAULT_DB_ALIAS
-from django.conf import settings
 
 from freppledb.common.models import Parameter
-from freppledb.execute.models import Task
 
 
 class Connector(object):
@@ -69,6 +67,8 @@ class Connector(object):
     self.shops = {}
     self.delta = str(self.date - timedelta(days=self.delta))
     self.uom = {}
+    self.calendar = None
+
 
   def run(self):
     # Log in to the odoo server
@@ -83,6 +83,10 @@ class Connector(object):
 
     # Sequentially load all data
     self.load_uom(cursor)
+    self.task.status = '2%'
+    self.task.save(using=self.database)
+    transaction.commit(using=self.database)
+    self.import_calendar(cursor)
     self.task.status = '5%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
@@ -359,6 +363,96 @@ class Connector(object):
       transaction.leave_transaction_management(using=self.database)
 
 
+  # Importing location calendar
+  #  - Extract the resource calendar specified by the parameter odoo.calendar.
+  #    If the parameter is empty, no calendar is assigned.
+  #  - Extracting also the child objects resource.calendar.attendance to calendarbuckets.
+  #  - NO filter on recently changed records
+  #  - mapped fields odoo resource.calendar -> frePPLe calendar
+  #       - parameter 'odoo.calendar' -> name
+  #       - 'odoo' -> subcategory
+  #  - mapped fields odoo resource.calendar.attendance -> frePPLe calendarbucket
+  #       - parameter odoo.calendar -> calendar_id
+  #       - dayofweek -> monday / tuesday / wednesday / thursday / friday /saturday /sunday
+  #       - hour_from -> starttime
+  #       - hour_to -> endtime
+  #       - date_from -> startdate
+  #       - 'odoo' -> source
+  def import_calendar(self, cursor):
+    transaction.enter_transaction_management(using=self.database)
+    try:
+      starttime = time()
+      if self.verbosity > 0:
+        print("Importing calendar...")
+
+      # Pick up the calendar
+      self.calendar = Parameter.getValue("odoo.calendar", self.database)
+      if self.calendar:
+
+        # Update calendar
+        cnt = cursor.execute("update calendar \
+          set defaultvalue=0, subcategory='odoo', lastmodified='%s' \
+          where name=%%s" % self.date,
+          [self.calendar,])
+        if cnt == 0:
+          # Create the calendar
+          cursor.execute("insert into calendar \
+           (name, subcategory, lastmodified) values (%s,'odoo','%s')"
+           % self.date)
+        else:
+          # Delete existing calendar buckets
+          cursor.execute("delete from calendarbucket where calendar_id=%s", [self.calendar,])
+
+        # Create calendar buckets for the attendance records
+        buckets = []
+        ids = self.odoo_search('resource.calendar', [('name','=', self.calendar)])
+        fields = ['name', 'attendance_ids']
+        fields2 = ['dayofweek', 'date_from', 'hour_from', 'hour_to']
+        for i in self.odoo_data('resource.calendar', ids, fields):
+          for j in self.odoo_data('resource.calendar.attendance', i['attendance_ids'], fields2):
+            buckets.append( [
+              self.calendar, datetime.strptime(j['date_from'] or "2000-01-01", '%Y-%m-%d'),
+              j['dayofweek'] == '0' and '1' or '0', j['dayofweek'] == '1' and '1' or '0',
+              j['dayofweek'] == '2' and '1' or '0', j['dayofweek'] == '3' and '1' or '0',
+              j['dayofweek'] == '4' and '1' or '0', j['dayofweek'] == '5' and '1' or '0',
+              j['dayofweek'] == '6' and '1' or '0',
+              '%s:%s:00' % (int(j['hour_from']), round( (j['hour_from'] - int(j['hour_from'])) * 60)),
+              '%s:%s:00' % (int(j['hour_to']), round( (j['hour_to'] - int(j['hour_to'])) * 60)),
+              1000
+              ] )
+
+        # Sort by start date.
+        # Required to assure that records with a later start date get a
+        # lower priority in frePPLe.
+        buckets.sort(key=itemgetter(2))
+
+        # Assign priorities
+        priority = 1000
+        for i in buckets:
+          i[11] = priority
+          priority -= 1
+
+        # Create frePPLe records
+        cursor.executemany(
+          "insert into calendarbucket \
+           (calendar_id, startdate, monday, tuesday, wednesday, thursday, friday, \
+            saturday, sunday, starttime, endtime, priority, value, source, lastmodified) \
+           values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,1.0,'odoo','%s')" % self.date,
+           buckets
+          )
+
+      transaction.commit(using=self.database)
+
+      if self.verbosity > 0:
+        print("Created calendar in %.2f seconds" % (time() - starttime))
+    except Exception as e:
+      transaction.rollback(using=self.database)
+      raise CommandError("Error importing calendar: %s" % e)
+    finally:
+      transaction.commit(using=self.database)
+      transaction.leave_transaction_management(using=self.database)
+
+
   # Importing locations
   #   - extracting stock.warehouses objects
   #   - NO filter on recently changed records
@@ -430,6 +524,13 @@ class Connector(object):
           set name=%%s, subcategory='odoo', lastmodified='%s' \
           where source=%%s" % self.date,
         rename)
+
+      # Update calendars
+      if self.calendar:
+        cursor.execute(
+          "update location set available_id=%s where subcategory='odoo'",
+          [self.calendar,]
+          )
       transaction.commit(using=self.database)
 
       if self.verbosity > 0:
@@ -688,7 +789,7 @@ class Connector(object):
         rename)
       cursor.executemany('delete from resourceload where resource_id=%s', delete)
       cursor.executemany('delete from resourceskill where resource_id=%s', delete)
-      cursor.executemany('update resource set owner_id where owner_id=%s', delete)
+      cursor.executemany('update resource set owner_id=NULL where owner_id=%s', delete)
       cursor.executemany('delete from resource where name=%s', delete)
       transaction.commit(using=self.database)
 
@@ -941,6 +1042,9 @@ class Connector(object):
   #        - %product_qty * %product_efficiency * uom conversion -> quantity
   #        - 'flow_end' -> type
   #
+  # TODO: Choice between detailed and simplified model
+  #   -> Detailed mapping uses a routing operation, with sequence of workcenters
+  #   -> Simplified model uses a single operation
   def import_boms(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
@@ -1299,6 +1403,16 @@ class Connector(object):
   #        - %date_start if filled else %date_planned -> startdate and enddate
   #        - %product_qty * uom conversion -> quantity
   #        - "1" -> locked
+  #
+  # TODO More detailed WIP representation:
+  #    - mrp_production
+  #        |-> mrp_production_move_id
+  #        |      |-> If stock moves has been executed, then set flowplan qty to 0 in frePPLe
+  #        |-> mrp_production_workcenter_line
+  #               |-> simplified model:
+  #               |     if status is done, then set loadplan qty to 0 in frePPLe
+  #               |-> detailed model:
+  #                     if status is done, then skip that sequence step in the routing
   def import_manufacturingorders(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:

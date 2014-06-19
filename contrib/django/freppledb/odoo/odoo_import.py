@@ -30,6 +30,9 @@ from django.db import transaction, connections, DEFAULT_DB_ALIAS
 
 from freppledb.common.models import Parameter
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class Connector(object):
 
@@ -169,6 +172,7 @@ class Connector(object):
       if self.verbosity > 0:
         print("Loaded %d units of measure in %.2f seconds" % (count, time() - starttime))
     except Exception as e:
+      logger.error("Error loading units of measure", exc_info=1)
       raise CommandError("Error loading units of measure: %s" % e)
 
 
@@ -258,6 +262,7 @@ class Connector(object):
         print("Imported customers in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing customers", exc_info=1)
       raise CommandError("Error importing customers: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -297,7 +302,7 @@ class Connector(object):
         '|',('create_date','>', self.delta),('write_date','>', self.delta),
         '|',('active', '=', 1),('active', '=', 0)
         ])
-      fields = ['name', 'code', 'active', 'product_tmpl_id']
+      fields = ['name', 'code', 'active']
       insert = []
       update = []
       rename = []
@@ -357,6 +362,7 @@ class Connector(object):
         print("Imported products in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing products", exc_info=1)
       raise CommandError("Error importing products: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -447,6 +453,7 @@ class Connector(object):
         print("Created calendar in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing calendar", exc_info=1)
       raise CommandError("Error importing calendar: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -540,6 +547,7 @@ class Connector(object):
         print("Imported warehouses in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing warehouses", exc_info=1)
       raise CommandError("Error importing warehouses: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -711,6 +719,7 @@ class Connector(object):
         print("Imported sales orders in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing sales orders", exc_info=1)
       raise CommandError("Error importing sales orders: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -801,6 +810,7 @@ class Connector(object):
         print("Imported workcenters in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing workcenters", exc_info=1)
       raise CommandError("Error importing workcenters: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -868,6 +878,7 @@ class Connector(object):
         print("Imported onhand in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing onhand", exc_info=1)
       raise CommandError("Error importing onhand: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -1006,6 +1017,7 @@ class Connector(object):
         print("Imported purchase orders in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing purchase orders", exc_info=1)
       raise CommandError("Error importing purchase orders: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -1292,6 +1304,7 @@ class Connector(object):
         print("Imported bills of material in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing bills of material", exc_info=1)
       raise CommandError("Error importing bills of material: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -1387,6 +1400,7 @@ class Connector(object):
         print("Imported policies and reorderpoints in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing policies and reorderpoints", exc_info=1)
       raise CommandError("Error importing policies and reorderpoints: %s" % e)
     finally:
       transaction.commit(using=self.database)
@@ -1484,6 +1498,7 @@ class Connector(object):
         print("Imported manufacturing orders in %.2f seconds" % (time() - starttime))
     except Exception as e:
       transaction.rollback(using=self.database)
+      logger.error("Error importing manufacturing orders", exc_info=1)
       raise CommandError("Error importing manufacturing orders: %s" % e)
     finally:
       transaction.commit(using=self.database)

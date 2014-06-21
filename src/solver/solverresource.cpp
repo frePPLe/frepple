@@ -465,7 +465,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
-    logger << indent(res->getLevel()) << "  Infinite resource '" << res << "' is asked: "
+    logger << indent(res->getLevel()) << "   Infinite resource '" << res << "' is asked: "
     << (-data->state->q_qty) << "  " << data->state->q_operationplan->getDates() << endl;
 
   // @todo Need to make the setups feasible - move to earlier dates till max_early fence is reached
@@ -479,7 +479,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
-    logger << indent(res->getLevel()) << "  Infinite resource '" << res << "' answers: "
+    logger << indent(res->getLevel()) << "   Infinite resource '" << res << "' answers: "
     << (-data->state->a_qty) << "  " << data->state->a_date << endl;
 }
 
@@ -493,7 +493,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
-    logger << indent(res->getLevel()) << "  Bucketized resource '" << res << "' is asked: "
+    logger << indent(res->getLevel()) << "   Bucketized resource '" << res << "' is asked: "
     << (-data->state->q_qty) << "  " << data->state->q_operationplan->getDates() << endl;
 
   // Initialize some variables
@@ -551,15 +551,21 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
           oldEnd
           );
         if (data->state->q_operationplan->getQuantity() > 0
+          && data->state->q_operationplan->getQuantity() <= newQty + ROUNDING_ERROR
           && data->state->q_operationplan->getDates().getEnd() <= oldEnd)
         {
           // The squeezing did work!
           // The operationplan quantity is now reduced. The buffer solver will
           // ask again for the remaining short quantity, so we don't need to
           // bother about that here.
-          // With operations of type time_per, it is also possible that the
-          // operation now consumes capacity in a different bucket!   TODO NASTY
           overloadQty = 0.0;
+          data->state->a_qty = -data->state->q_loadplan->getQuantity();
+          // With operations of type time_per, it is also possible that the
+          // operation now consumes capacity in a different bucket.
+          // If that's the case, we move it to start right at the end of the bucket.
+          if (cur!=res->getLoadPlans().end() &&
+            data->state->q_operationplan->getDates().getStart() > cur->getDate())
+              data->state->q_operationplan->setStart(cur->getDate() - TimePeriod(1L));
         }
         else
         {
@@ -647,7 +653,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
 
     // Search for a bucket with available capacity.
     Date newDate;
-    Date prevStart;
+    Date prevStart = data->state->q_loadplan->getDate();
     overloadQty = 0.0;
     for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
       cur!=res->getLoadPlans().end(); ++cur)
@@ -731,8 +737,8 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
-    logger << indent(res->getLevel()) << "  Bucketized resource '" << res << "' answers: "
-    << (-data->state->a_qty) << "  " << data->state->a_date << endl;
+    logger << indent(res->getLevel()) << "   Bucketized resource '" << res << "' answers: "
+    << data->state->a_qty << "  " << data->state->a_date << endl;
 }
 
 

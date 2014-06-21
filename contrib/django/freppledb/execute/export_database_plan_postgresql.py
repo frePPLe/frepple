@@ -117,10 +117,10 @@ def exportLoadplans(process):
   process.stdin.write('COPY out_loadplan (operationplan_id, theresource, quantity, startdate, enddate, setup) FROM STDIN;\n')
   for i in frepple.resources():
     for j in i.loadplans:
-      if j.quantity > 0:
+      if j.quantity < 0:
         process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\n" % (
          j.operationplan.id, j.resource.name.encode(encoding),
-         round(j.quantity,settings.DECIMAL_PLACES),
+         round(-j.quantity,settings.DECIMAL_PLACES),
          str(j.startdate), str(j.enddate), j.setup and j.setup.encode(encoding) or "\\N"
        ))
   process.stdin.write('\\.\n')

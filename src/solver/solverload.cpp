@@ -230,7 +230,6 @@ void SolverMRP::solve(const Load* l, void* v)
   // Note: This method is only called for decrease loadplans and for the leading
   // load of an alternate group. See SolverMRP::checkOperation
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
-  unsigned int loglevel = data->getSolver()->getLogLevel();
 
   if (data->state->q_qty >= 0.0)
   {
@@ -252,6 +251,7 @@ void SolverMRP::solve(const Load* l, void* v)
   // CASE II: It is an alternate load.
   // We ask each alternate load in order of priority till we find a load
   // that has a non-zero reply.
+  unsigned int loglevel = data->getSolver()->getLogLevel();
 
   // 1) collect a list of alternates
   list<const Load*> thealternates;

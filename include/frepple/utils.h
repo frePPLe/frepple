@@ -3206,8 +3206,8 @@ class PythonAttributeList : public AttributeList
   */
 class PythonExtensionBase : public PyObject
 {
-  friend PyObject* getattro_handler(PyObject*, PyObject*);
-  friend int setattro_handler(PyObject*, PyObject*, PyObject*);
+  friend DECLARE_EXPORT PyObject* getattro_handler(PyObject*, PyObject*);
+  friend DECLARE_EXPORT int setattro_handler(PyObject*, PyObject*, PyObject*);
   private:
     PyObject* dict;
 

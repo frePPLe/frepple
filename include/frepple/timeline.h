@@ -598,10 +598,6 @@ template <class type> void TimeLine<type>::erase(Event* e)
 
 template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double newqty, const Date& d)
 {
-    // XXX DEBUGGING PRINT
-  // Resource *RES = Resource::find("1. Resource");
-  // if (static_cast<void*>(this) == static_cast<void*>(&(RES->getLoadPlans()))) logger << "UPDATE  " << e << endl;
-
   // Compute the delta quantity
   double delta = e->quantity - newqty;
   double oldqty = e->quantity;
@@ -664,14 +660,22 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
     thePrev->cum_prod = e->cum_prod;
     if (thePrev->getType() == 2)
     {
-      delta = 0.0;
       if (thePrevPrev)
         e->oh = thePrevPrev->oh + newqty;
       else
         e->oh = newqty;
       // Update the onhand values in the bucket we are moving out
-      for (Event *f = thePrev->next; f && f->getType()!=2; f = f->next)
-        f->oh -= oldqty;
+      if (delta)
+      {
+        // First time this happens
+        for (Event *f = thePrev->next; f && f->getType()!=2; f = f->next)
+          f->oh -= oldqty;
+        delta = 0.0;
+      }
+      else
+        // Additional occurrences
+        for (Event *f = thePrev->next; f && f->getType()!=2; f = f->next)
+          f->oh -= newqty;
     }
     else
     {

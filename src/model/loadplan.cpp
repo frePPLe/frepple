@@ -391,9 +391,9 @@ PyObject* LoadPlan::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_quantity))
     return PythonObject(getQuantity());
   if (attr.isA(Tags::tag_startdate))
-    return PythonObject(getDate());
+    return PythonObject(getOperationPlan()->getDates().getStart());
   if (attr.isA(Tags::tag_enddate))
-    return PythonObject(getOtherLoadPlan()->getDate());
+    return PythonObject(getOperationPlan()->getDates().getEnd());
   if (attr.isA(Tags::tag_resource))
     return PythonObject(getResource());
   if (attr.isA(Tags::tag_operation)) // Convenient shortcut

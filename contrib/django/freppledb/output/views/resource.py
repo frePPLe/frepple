@@ -92,10 +92,10 @@ class OverviewReport(GridPivot):
       select res.name as row1, res.location_id as row2,
              coalesce(max(plan_summary.avg_util),0) as avgutil,
              d.bucket as col1, d.startdate as col2,
-             coalesce(sum(out_resourceplan.available),0) * %f as available,
-             coalesce(sum(out_resourceplan.unavailable),0) * %f as unavailable,
-             coalesce(sum(out_resourceplan.load),0) * %f as loading,
-             coalesce(sum(out_resourceplan.setup),0) * %f as setup
+             coalesce(sum(out_resourceplan.available),0) * (case when res.type = 'buckets' then 1 else %f end) as available,
+             coalesce(sum(out_resourceplan.unavailable),0) * (case when res.type = 'buckets' then 1 else %f end) as unavailable,
+             coalesce(sum(out_resourceplan.load),0) * (case when res.type = 'buckets' then 1 else %f end) as loading,
+             coalesce(sum(out_resourceplan.setup),0) * (case when res.type = 'buckets' then 1 else %f end) as setup
       from (%s) res
       -- Multiply with buckets
       cross join (

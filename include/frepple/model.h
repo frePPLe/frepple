@@ -4155,7 +4155,11 @@ class Resource : public HasHierarchy<Resource>,
 
 
 /** @brief This class provides an efficient way to iterate over
-  * the plan of a resource aggregated in time buckets.
+  * the plan of a resource aggregated in time buckets.<br>
+  * For resources of type default, a list of dates needs to be passed as
+  * argument to define the time buckets.<br>
+  * For resources of type buckets, the time buckets are defined on the
+  * resource and the argument is ignored.
   */
 class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator>
 {
@@ -4188,6 +4192,7 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator>
     double cur_setup;
     double cur_load;
     double cur_size;
+    bool bucketized;
     Date cur_date;
     Date prev_date;
     bool prev_value;
@@ -4928,6 +4933,9 @@ inline Date Load::getLoadplanDate(const LoadPlan* lp) const
 
 inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
 {
+  if (!lp->getOperationPlan()->getQuantity())
+    // Operationplan has zero size, and so should the capacity it needs
+    return 0.0;
   if (!lp->getOperationPlan()->getDates().overlap(getEffective())
       && (lp->getOperationPlan()->getDates().getDuration()
           || !getEffective().within(lp->getOperationPlan()->getDates().getStart())))

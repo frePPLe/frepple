@@ -155,9 +155,9 @@ def exportLoadplans(cursor):
       values (%s,%s,%s,%s,%s,%s)",
       [(
          j.operationplan.id, j.resource.name,
-         round(j.quantity,settings.DECIMAL_PLACES),
+         round(-j.quantity,settings.DECIMAL_PLACES),
          str(j.startdate), str(j.enddate), j.setup
-       ) for j in i.loadplans if j.quantity > 0
+       ) for j in i.loadplans if j.quantity < 0
       ])
     cnt += 1
     if cnt % 100 == 0: transaction.commit(using=database)
@@ -198,22 +198,22 @@ def exportResourceplans(cursor):
   # Loop over all reporting buckets of all resources
   cnt = 0
   try:
-      for i in frepple.resources():
-        cursor.executemany(
-          "insert into out_resourceplan \
-          (theresource,startdate,available,unavailable,setup,%s,free) \
-          values (%%s,%%s,%%s,%%s,%%s,%%s,%%s)" % connections[database].ops.quote_name('load'),
-          [(
-             i.name, str(j['start']),
-             round(j['available'],settings.DECIMAL_PLACES),
-             round(j['unavailable'],settings.DECIMAL_PLACES),
-             round(j['setup'],settings.DECIMAL_PLACES),
-             round(j['load'],settings.DECIMAL_PLACES),
-             round(j['free'],settings.DECIMAL_PLACES)
-           ) for j in i.plan(buckets)
-          ])
-        cnt += 1
-        if cnt % 100 == 0: transaction.commit(using=database)
+    for i in frepple.resources():
+      cursor.executemany(
+        "insert into out_resourceplan \
+        (theresource,startdate,available,unavailable,setup,%s,free) \
+        values (%%s,%%s,%%s,%%s,%%s,%%s,%%s)" % connections[database].ops.quote_name('load'),
+        [(
+           i.name, str(j['start']),
+           round(j['available'],settings.DECIMAL_PLACES),
+           round(j['unavailable'],settings.DECIMAL_PLACES),
+           round(j['setup'],settings.DECIMAL_PLACES),
+           round(j['load'],settings.DECIMAL_PLACES),
+           round(j['free'],settings.DECIMAL_PLACES)
+         ) for j in i.plan(buckets)
+        ])
+      cnt += 1
+      if cnt % 100 == 0: transaction.commit(using=database)
   except Exception as e:
     print(e)
   finally:

@@ -41,20 +41,20 @@ Echoing resources:
     Load: make item - step 2 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
     Loadplan: 2 make item - step 1 1.0 2009-02-08 09:00:00 2009-02-12 09:00:00
     Loadplan: 3 make item - step 2 1.0 2009-02-12 09:00:00 2009-02-15 09:00:00
-    Loadplan: 2 make item - step 1 -1.0 2009-02-12 09:00:00 2009-02-08 09:00:00
+    Loadplan: 2 make item - step 1 -1.0 2009-02-08 09:00:00 2009-02-12 09:00:00
     Loadplan: 4 make item - step 1 1.0 2009-02-15 09:00:00 2009-02-19 09:00:00
-    Loadplan: 3 make item - step 2 -1.0 2009-02-15 09:00:00 2009-02-12 09:00:00
+    Loadplan: 3 make item - step 2 -1.0 2009-02-12 09:00:00 2009-02-15 09:00:00
     Loadplan: 5 make item - step 2 1.0 2009-02-19 09:00:00 2009-02-22 09:00:00
-    Loadplan: 4 make item - step 1 -1.0 2009-02-19 09:00:00 2009-02-15 09:00:00
+    Loadplan: 4 make item - step 1 -1.0 2009-02-15 09:00:00 2009-02-19 09:00:00
     Loadplan: 6 make item - step 1 1.0 2009-02-22 09:00:00 2009-02-26 09:00:00
-    Loadplan: 5 make item - step 2 -1.0 2009-02-22 09:00:00 2009-02-19 09:00:00
+    Loadplan: 5 make item - step 2 -1.0 2009-02-19 09:00:00 2009-02-22 09:00:00
     Loadplan: 7 make item - step 2 1.0 2009-02-26 09:00:00 2009-03-01 09:00:00
-    Loadplan: 6 make item - step 1 -1.0 2009-02-26 09:00:00 2009-02-22 09:00:00
-    Loadplan: 7 make item - step 2 -1.0 2009-03-01 09:00:00 2009-02-26 09:00:00
+    Loadplan: 6 make item - step 1 -1.0 2009-02-22 09:00:00 2009-02-26 09:00:00
+    Loadplan: 7 make item - step 2 -1.0 2009-02-26 09:00:00 2009-03-01 09:00:00
     Loadplan: 8 make item - step 1 1.0 2010-12-25 00:00:00 2010-12-29 00:00:00
     Loadplan: 9 make item - step 2 1.0 2010-12-29 00:00:00 2011-01-01 00:00:00
-    Loadplan: 8 make item - step 1 -1.0 2010-12-29 00:00:00 2010-12-25 00:00:00
-    Loadplan: 9 make item - step 2 -1.0 2011-01-01 00:00:00 2010-12-29 00:00:00
+    Loadplan: 8 make item - step 1 -1.0 2010-12-25 00:00:00 2010-12-29 00:00:00
+    Loadplan: 9 make item - step 2 -1.0 2010-12-29 00:00:00 2011-01-01 00:00:00
   Resource: machine None None None None
 
 Echoing buffers:

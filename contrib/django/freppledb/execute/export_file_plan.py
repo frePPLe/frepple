@@ -97,10 +97,10 @@ def exportLoadplans():
   writer.writerow(('#operationplan id','resource','quantity','start date','end date','setup'))
   for i in frepple.resources():
     for j in i.loadplans:
-      if j.quantity > 0:
+      if j.quantity < 0:
         writer.writerow((
           j.operationplan.id, j.resource.name.encode(encoding,"ignore"),
-          j.quantity, j.startdate, j.enddate, j.setup and j.setup.encode(encoding,"ignore") or None
+          -j.quantity, j.startdate, j.enddate, j.setup and j.setup.encode(encoding,"ignore") or None
           ))
   print('Exported loadplans in %.2f seconds' % (time() - starttime))
 

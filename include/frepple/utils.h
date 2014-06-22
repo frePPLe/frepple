@@ -3675,7 +3675,8 @@ class Tree : public NonCopyable
         bool operator < (const TreeNode& o) {return nm < o.nm;}
 
         /** Constructor. */
-        TreeNode(const string& n) : nm(n), color(none)
+        TreeNode(const string& n)
+          : nm(n), color(none), parent(NULL), left(NULL), right(NULL)
         {
           if (n.empty())
             throw DataException("Can't create entity without name");
@@ -3730,7 +3731,7 @@ class Tree : public NonCopyable
 
       private:
         /** Constructor. */
-        TreeNode() {}
+        TreeNode() : color(none), parent(NULL), left(NULL), right(NULL) {}
 
         /** Name. */
         string nm;
@@ -5623,6 +5624,8 @@ class FreppleIterator : public PythonExtension<ME>
 
     template <class OTHER> FreppleIterator(const OTHER &o) : i(o)
     {this->initType(PythonExtension<ME>::getType().type_object());}
+
+    virtual ~FreppleIterator() {}
 
     static PyObject* create(PyObject* self, PyObject* args)
     {return new ME();}

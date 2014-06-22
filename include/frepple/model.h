@@ -5794,7 +5794,7 @@ class PeggingIterator : public Object
 
     /** Constructor. */
     PeggingIterator(const FlowPlan* e, bool b = true)
-      : downstream(b), firstIteration(true)
+      : first(true), downstream(b), firstIteration(true)
     {
       if (!e) return;
       if (downstream)

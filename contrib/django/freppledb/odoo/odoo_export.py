@@ -25,6 +25,9 @@ from django.utils import six
 
 from freppledb.common.models import Parameter
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class Connector:
 
@@ -106,6 +109,7 @@ class Connector:
       if self.verbosity > 0:
         print("Updated %d sales orders in %.2f seconds" % (cnt, (time() - starttime)))
     except Exception as e:
+      logger.error("Error updating sales orders", exc_info=1)
       raise CommandError("Error updating sales orders: %s" % e)
     finally:
       transaction.rollback(using=self.database)
@@ -209,6 +213,7 @@ class Connector:
       if self.verbosity > 0:
         print("Confirmed %d procurement orders in %.2f seconds" % (len(ids_produce), (time() - starttime)))
     except Exception as e:
+      logger.error("Error exporting procurement orders", exc_info=1)
       raise CommandError("Error exporting procurement orders: %s" % e)
     finally:
       transaction.rollback(using=self.database)

@@ -40,6 +40,7 @@ class Connector:
     self.odoo_password = Parameter.getValue("odoo.password", self.database)
     self.odoo_db = Parameter.getValue("odoo.db", self.database)
     self.odoo_url = Parameter.getValue("odoo.url", self.database)
+    self.odoo_company = Parameter.getValue("odoo.company", self.database)
     if not self.odoo_user:
       raise CommandError("Missing or invalid parameter odoo.user")
     if not self.odoo_password:
@@ -48,6 +49,8 @@ class Connector:
       raise CommandError("Missing or invalid parameter odoo.db")
     if not self.odoo_url:
       raise CommandError("Missing or invalid parameter odoo.url")
+    if not self.odoo_company:
+      raise CommandError("Missing or invalid parameter odoo.company")
     self.odoo_language = Parameter.getValue("odoo.language", self.database, 'en_US')
     self.context = {'lang': self.odoo_language}
 
@@ -133,7 +136,7 @@ class Connector:
   #        - operationplan.startdate -> date_planned
   #        - operation.location_id -> location_id
   #        - 1 (id for PCE) -> product_uom
-  #        - 1 (hardcoded...) -> company_id
+  #        - configurable with parameter odoo.company -> company_id
   #        - 'make_to_order' -> procure_method
   #        - 'frePPLe' -> origin
   #   - Note that purchase order are uploaded as quotations. Once the quotation
@@ -148,6 +151,14 @@ class Connector:
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
+
+      # Look up the company id
+      company_id = None
+      for i in self.odoo_search('res.company', [('name','=',self.odoo_company)]):
+        company_id = i
+      if not company_id:
+        raise Exception("Company configured in parameter odoo.company doesn't exist")
+
       if self.verbosity > 0:
         print("Canceling draft procurement orders")
       ids = self.odoo_search('procurement.order',
@@ -186,7 +197,7 @@ class Connector:
           'product_qty': str(k),
           'date_planned': l.strftime('%Y-%m-%d'),
           'product_id': int(n),
-          'company_id': 1,
+          'company_id': company_id,
           'product_uom': 1, # TODO set uom correctly?
           'location_id': int(m),
           'procure_method': 'make_to_order',

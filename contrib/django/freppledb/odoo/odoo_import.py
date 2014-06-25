@@ -51,6 +51,7 @@ class Connector(object):
     self.odoo_db = Parameter.getValue("odoo.db", self.database)
     self.odoo_url = Parameter.getValue("odoo.url", self.database)
     self.odoo_production_location = Parameter.getValue("odoo.production_location", self.database)
+    self.odoo_company = Parameter.getValue("odoo.company", self.database)
     if not self.odoo_user:
       raise CommandError("Missing or invalid parameter odoo.user")
     if not self.odoo_password:
@@ -61,6 +62,8 @@ class Connector(object):
       raise CommandError("Missing or invalid parameter odoo.url")
     if not self.odoo_production_location:
       raise CommandError("Missing or invalid parameter odoo.production_location")
+    if not self.odoo_company:
+      raise CommandError("Missing or invalid parameter odoo.company")
     self.odoo_language = Parameter.getValue("odoo.language", self.database, 'en_US')
     self.context = {'lang': self.odoo_language}
 

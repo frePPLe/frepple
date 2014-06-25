@@ -61,6 +61,8 @@ class Connector(object):
       raise CommandError("Missing or invalid parameter odoo.url")
     if not self.odoo_production_location:
       raise CommandError("Missing or invalid parameter odoo.production_location")
+    self.odoo_language = Parameter.getValue("odoo.language", self.database, 'en_US')
+    self.context = {'lang': self.odoo_language}
 
     # Initialize some global variables
     self.customers = {}
@@ -134,14 +136,16 @@ class Connector(object):
 
   def odoo_search(self, a, b=[]):
     try:
-      return self.sock.execute(self.odoo_db, self.uid, self.odoo_password, a, 'search', b)
+      return self.sock.execute(self.odoo_db, self.uid, self.odoo_password,
+                               a, 'search', b, 0, 0, 0, self.context)
     except xmlrpclib.Fault as e:
       raise CommandError(e.faultString)
 
 
   def odoo_data(self, a, b, c):
     try:
-      return self.sock.execute(self.odoo_db, self.uid, self.odoo_password, a, 'read', b, c)
+      return self.sock.execute(self.odoo_db, self.uid, self.odoo_password,
+                               a, 'read', b, c, self.context)
     except xmlrpclib.Fault as e:
       raise CommandError(e.faultString)
 

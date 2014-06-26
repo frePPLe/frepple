@@ -86,6 +86,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         && earliest_next < Plan::instance().getCurrent() + b->getFence())
       earliest_next = Plan::instance().getCurrent() + b->getFence();
   }
+  if (latest_next < earliest_next) latest_next = earliest_next;
 
   // Loop through all flowplans
   Date current_date;

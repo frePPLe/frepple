@@ -30,11 +30,8 @@ from django.utils.html import escape
 from freppledb.execute.models import Scenario
 from freppledb import VERSION
 
-# We make sure the text of all crumbs doesn't exceed this amount of characters.
-# 150 characters matches *roughly* a screen width of 1024 pixels.
-MAX_CRUMBS_CHARACTERS = 150
+MAX_CRUMBS = 10
 
-HOME_CRUMB = '<a href="%s/admin/">%s</a>'
 lazy_site_administration = _('Site administration')
 
 register = Library()
@@ -67,66 +64,50 @@ class CrumbsNode(Node):
     try:
       cur = req.session['crumbs']
       try: cur = cur[req.prefix]
-      except:
-        title = unicode(_('Cockpit'))
-        cur = [(title, HOME_CRUMB % (req.prefix, title), '%s/admin/' % req.prefix, len(title) + 3)]
+      except: cur = []
     except:
       req.session['crumbs'] = {}
-      title = unicode(_('Cockpit'))
-      cur = [(title, HOME_CRUMB % (req.prefix, title), '%s/admin/' % req.prefix, len(title) + 3)]
+      cur = []
 
     # Compute the new crumb node
+    count = 0
     try: title = variable_title.resolve(context)
     except: title = req.get_full_path()
-    if title == lazy_site_administration:
-      # A special case to work around the hardcoded title of the main admin page
-      title = unicode(_('Cockpit'))
-    else:
-      title = unicode(title)
+    if title != lazy_site_administration:
+      # Don't handle the cockpit screen in the crumbs
+      try:
+        # Pop from the stack if the same title is already in the crumbs.
+        title = unicode(title)
+        exists = False
 
-    try:
-      # Pop from the stack if the same title is already in the crumbs.
-      exists = False
-      chars = 0
-      count = 0
-      for i in cur:
-        if i[0] == title: exists = True
-        chars += i[3]
-        count += 1
+        for i in cur:
+          if i[0] == title: exists = True
+          count += 1
 
-      # Add current URL to the stack
-      if not exists:
-        node = (title,
-          '<a href="%s%s%s">%s</a>' % (
-            req.prefix, urlquote(req.path),
-            req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
-            unicode(escape(title))
-            ),
-          '%s%s%s' % (
-            req.prefix, urlquote(req.path),
-            req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
-            ),
-          len(title) + 3
-          )
-        cur.append(node)
-        chars += node[3]
-        count += 1
+        # Add current URL to the stack
+        if not exists:
+          cur.append( (title,
+            '<span> &gt; <a href="%s%s%s">%s</a></span>' % (
+              req.prefix, urlquote(req.path),
+              req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
+              unicode(escape(title))
+              )
+            ))
+          count += 1
 
-      # Keep the total number of characters in the crumb list limited
-      # We delete the second element to keep "home" at the head of the list.
-      while chars > MAX_CRUMBS_CHARACTERS and count >= 2:
-        chars -= cur[1][3]
-        count -= 1
-        del cur[1]
-    except:
-      # Ignore errors to fail in a clean and graceful way
-      pass
+        # Limit the number of crumbs.
+        while count > MAX_CRUMBS:
+          count -= 1
+          del cur[0]
+      except:
+        # Ignore errors to fail in a clean and graceful way
+        pass
 
     # Update the current session
     req.session['crumbs'][req.prefix] = cur
 
     # Now create HTML code to return
-    return '  >  '.join([i[1] for i in cur])
+    return ''.join([i[1] for i in cur])
 
   def __repr__(self):
     return "<Crumbs Node>"

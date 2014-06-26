@@ -15,11 +15,13 @@
 <script src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js" type="text/javascript"></script>
 <script src="{{STATIC_URL}}js/jquery.jqGrid.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/frepple.js"></script>
-{% if request.GET.tour %}<script type="text/javascript">
+<script type="text/javascript">
   $(function() {
-    tour.start("{{request.GET.tour}}");
+    breadcrumbs_reflow();
+    $(window).resize(breadcrumbs_reflow);{% if request.GET.tour %}
+    tour.start("{{request.GET.tour}}");{%endif%}
   });
-</script>{%endif%}
+</script>
 {% endblock %}
-{% block breadcrumbs %}<div class="breadcrumbs">{% crumbs %}</div>{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a id="cockpitcrumb" href="{{request.prefix}}/admin/">{% trans 'Cockpit' %}</a><span id="breadcrumbs">{% crumbs %}</span></div>{% endblock %}
 {% block nav-global %}{% endblock %}

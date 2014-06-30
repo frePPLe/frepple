@@ -77,8 +77,6 @@ class Connector(object):
     self.uom = {}
     self.calendar = None
 
-
-  def run(self):
     # Log in to the odoo server
     sock_common = xmlrpclib.ServerProxy(self.odoo_url + 'xmlrpc/common')
     self.uid = sock_common.login(self.odoo_db, self.odoo_user, self.odoo_password)
@@ -87,54 +85,56 @@ class Connector(object):
     self.sock = xmlrpclib.ServerProxy(self.odoo_url + 'xmlrpc/object')
 
     # Create a database connection to the frePPLe database
-    cursor = connections[self.database].cursor()
+    self.cursor = connections[self.database].cursor()
 
+
+  def run(self):
     # Sequentially load all data
-    self.load_uom(cursor)
+    self.load_uom(self.cursor)
     self.task.status = '2%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
-    self.import_calendar(cursor)
+    self.import_calendar(self.cursor)
     self.task.status = '5%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
-    self.import_locations(cursor)
+    self.import_locations(self.cursor)
     self.task.status = '10%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
-    self.import_customers(cursor)
+    self.import_customers(self.cursor)
     self.task.status = '15%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
-    self.import_products(cursor)
+    self.import_products(self.cursor)
     self.task.status = '25%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
-    self.import_salesorders(cursor)
+    self.import_salesorders(self.cursor)
     self.task.status = '35%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
-    self.import_workcenters(cursor)
+    self.import_workcenters(self.cursor)
     self.task.status = '40%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
-    self.import_onhand(cursor)
+    self.import_onhand(self.cursor)
     self.task.status = '60%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
-    self.import_purchaseorders(cursor)
+    self.import_purchaseorders(self.cursor)
     self.task.status = '70%'
     self.task.save(using=self.database)
-    self.import_boms(cursor)
+    self.import_boms(self.cursor)
     transaction.commit(using=self.database)
     self.task.status = '80%'
     self.task.save(using=self.database)
-    self.import_policies(cursor)
+    self.import_policies(self.cursor)
     transaction.commit(using=self.database)
     self.task.status = '90%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
-    self.import_manufacturingorders(cursor)
+    self.import_manufacturingorders(self.cursor)
 
 
   def odoo_search(self, a, b=[]):
@@ -163,18 +163,19 @@ class Connector(object):
       if self.verbosity > 0:
         print("Loading units of measure...")
       ids = self.odoo_search('product.uom', [])
-      fields = ['factor','uom_type']
+      fields = ['factor','uom_type','category_id','name']
       count = 0
       for i in self.odoo_data('product.uom', ids, fields):
         if i['uom_type'] == 'reference':
-          self.uom[i['id']] = 1.0
+          f = 1.0
         elif i['uom_type'] == 'bigger':
-          self.uom[i['id']] = i['factor']
+          f = i['factor']
         else:
           if i['factor'] > 0:
-            self.uom[i['id']] = 1 / i['factor']
+            f = 1 / i['factor']
           else:
-            self.uom[i['id']] = 1.0
+            f = 1.0
+        self.uom[i['id']] = {'factor': f, 'category': i['category_id'][0], 'name': i['name']}
         count += 1
       if self.verbosity > 0:
         print("Loaded %d units of measure in %.2f seconds" % (count, time() - starttime))
@@ -182,6 +183,13 @@ class Connector(object):
       logger.error("Error loading units of measure", exc_info=1)
       raise CommandError("Error loading units of measure: %s" % e)
 
+
+  # Convert a quantity to the reference uom of the product.
+  # The default implementation doesn't consider the product at all, and just
+  # converts to the reference unit of the uom category.
+  def convert_qty_uom(self, qty, uom_id, product_id=None):
+    if not uom_id: return qty
+    return qty * self.uom[uom_id]['factor']
 
   # Importing customers
   #   - extracting recently changed res.partner objects
@@ -636,12 +644,12 @@ class Connector(object):
           deliveries.update([(product,location,operation,buffer),])
           due = datetime.strptime(j['requested_date'] or j['date_order'], '%Y-%m-%d')
           priority = 1
-          uom_factor = self.uom.get(i['product_uom'][0],1.0)
+          qty = self.convert_qty_uom(i['product_uom_qty'], i['product_uom'][0], i['product_id'][0]
           if name in frepple_keys:
             update.append( (
               product,
               customer,
-              i['product_uom_qty'] * uom_factor,
+              qty,
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               due,
               priority,
@@ -653,7 +661,7 @@ class Connector(object):
             insert.append( (
               product,
               customer,
-              i['product_uom_qty'] * uom_factor,
+              qty,
               j['picking_policy'] == 'one' and i['product_uom_qty'] or 1.0,
               due,
               priority,
@@ -952,14 +960,14 @@ class Connector(object):
         if location and item in frepple_items and j['state'] in ('approved','draft') and not j['shipped']:
           operation = u'Purchase %s @ %s' % (item, location)
           due = datetime.strptime(i['date_planned'], '%Y-%m-%d')
-          uom_factor = self.uom.get(i['product_uom'][0],1.0)
+          qty = self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
           if i['id'] in frepple_keys:
             update.append( (
-               operation, due, due, i['product_qty']*uom_factor, i['id']
+               operation, due, due, qty, i['id']
               ) )
           else:
             insert.append( (
-               i['id'], operation, due, due, i['product_qty']*uom_factor
+               i['id'], operation, due, due, qty
               ) )
           deliveries.update([(item,location,operation,u'%s @ %s' % (item, location)),])
         elif id in frepple_keys:
@@ -1147,7 +1155,7 @@ class Connector(object):
         product = self.items.get(i['product_id'][0], None)
         if not product: continue
         buffer = u'%s @ %s' % (product, location)  # TODO if policy is produce, then this should be the producting operation
-        uom_factor = self.uom.get(i['product_uom'][0],1.0)
+        uom_factor = self.convert_qty_uom(1.0, i['product_uom'][0], i['product_id'][0])
 
         if i['active']:
           boms[i['id']] = (operation, location)
@@ -1214,7 +1222,7 @@ class Connector(object):
         product = self.items.get(i['product_id'][0], None)
         if not location and not operation or not product: continue
         buffer = u'%s @ %s' % (product, location)
-        uom_factor = self.uom.get(i['product_uom'][0],1.0)
+        qty = self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
 
         if i['active']:
           # Creation buffer
@@ -1226,11 +1234,11 @@ class Connector(object):
           # Creation of flow
           if (buffer,operation) in frepple_flows:
             flow_update.append( (
-              -i['product_qty'] * uom_factor, 'start', i['date_start'] or None, i['date_stop'] or None, operation, buffer,
+              -qty, 'start', i['date_start'] or None, i['date_stop'] or None, operation, buffer,
               ) )
           else:
             flow_insert.append( (
-              operation, buffer, -i['product_qty'] * uom_factor, 'start', i['date_start'] or None, i['date_stop'] or None
+              operation, buffer, -qty, 'start', i['date_start'] or None, i['date_stop'] or None
               ) )
             frepple_flows.add( (buffer,operation) )
         else:
@@ -1365,7 +1373,7 @@ class Connector(object):
         else:
           produce.append( (item,) )
         if tmpl:
-          item_update.append( (tmpl['list_price'] * self.uom.get(tmpl['uom_id'][0],1),item,) )
+          item_update.append( (tmpl['list_price'] / self.convert_qty_uom(1.0, tmpl['uom_id'][0], i['id']),item,) )
 
       # Get recently changed reorderpoints
       ids = self.odoo_search('stock.warehouse.orderpoint',
@@ -1375,7 +1383,7 @@ class Connector(object):
       orderpoints = []
       for i in self.odoo_data('stock.warehouse.orderpoint', ids, fields):
         if i['active']:
-          uom_factor = self.uom.get(i['product_uom'][0],1.0)
+          uom_factor = self.convert_qty_uom(1.0, i['product_uom'][0], i['product_id'][0])
           orderpoints.append( (i['product_min_qty']*uom_factor, i['product_max_qty']*uom_factor,
             i['qty_multiple']*uom_factor, i['product_id'][1], i['warehouse_id'][1]) )
         else:
@@ -1455,7 +1463,7 @@ class Connector(object):
         '|',('create_date','>', self.delta),('write_date','>', self.delta),
         ('state','!=','draft')
         ])
-      fields = ['bom_id','date_start','date_planned','name','state','product_qty','product_uom','location_dest_id']
+      fields = ['bom_id','date_start','date_planned','name','state','product_qty','product_uom','location_dest_id', 'product_id']
       update = []
       insert = []
       delete = []
@@ -1469,14 +1477,14 @@ class Connector(object):
           except Exception as e: startdate = None
           if not startdate or not location or not operation in operations:
             continue
-          uom_factor = self.uom.get(i['product_uom'][0],1.0)
+          qty = self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
           if identifier in frepple_keys:
             update.append((
-              operation,startdate,startdate,i['product_qty']*uom_factor,i['name'],identifier
+              operation,startdate,startdate,qty,i['name'],identifier
               ))
           else:
             insert.append((
-              identifier,operation,startdate,startdate,i['product_qty']*uom_factor,i['name']
+              identifier,operation,startdate,startdate,qty,i['name']
               ))
         elif i['state'] in ('cancel','done'):
           # Closed orders

@@ -126,7 +126,7 @@ class OverviewReport(GridPivot):
                 ) plan_summary
       on res2.name = plan_summary.theresource
       -- Grouping and sorting
-      group by res.name, res.location_id, d.bucket, d.startdate
+      group by res.name, res.location_id, res.type, d.bucket, d.startdate
       order by %s, d.startdate
       ''' % ( units[0], units[0], units[0], units[0],
         basesql, request.report_bucket, request.report_startdate,

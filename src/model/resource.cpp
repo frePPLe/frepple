@@ -713,7 +713,10 @@ PyObject* Resource::PlanIterator::iternext()
     {
       // At this point ldplaniter points to a bucket start event.
       if (start_date) Py_DECREF(start_date);
-      start_date = end_date ? end_date : PythonObject(ldplaniter->getDate());
+      if (end_date)
+        start_date = end_date;
+      else
+        start_date = PythonObject(ldplaniter->getDate());
       bucket_available = ldplaniter->getOnhand();
     }
     // Advance the loadplan iterator to the start of the next bucket

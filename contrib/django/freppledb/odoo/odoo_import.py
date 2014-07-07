@@ -91,6 +91,7 @@ class Connector(object):
   def run(self):
     # Sequentially load all data
     self.load_uom(self.cursor)
+    self.load_company(self.cursor)
     self.task.status = '2%'
     self.task.save(using=self.database)
     transaction.commit(using=self.database)
@@ -151,6 +152,28 @@ class Connector(object):
                                a, 'read', b, c, self.context)
     except xmlrpclib.Fault as e:
       raise CommandError(e.faultString)
+
+  # Load the company
+  def load_company(self, cursor):
+    try:
+      starttime = time()
+      if self.verbosity > 0:
+        print("Loading company parameters...")
+      ids = self.odoo_search('res.company', [('name','=',self.odoo_company),])
+      fields = ['security_lead','po_lead','manufacturing_lead']
+      self.company_id = 0
+      for i in self.odoo_data('res.company', ids, fields):
+        self.company_id = i['id']
+        self.security_lead = i['security_lead'] * 86400
+        self.po_lead = i['po_lead'] * 86400
+        self.manufacturing_lead = i['manufacturing_lead'] * 86400
+      if not self.company_id:
+        raise Exception("Can't find company '%s'" % self.company)
+      if self.verbosity > 0:
+        print("Loaded company parameters in %.2f seconds" % (time() - starttime))
+    except Exception as e:
+      logger.error("Error loading company parameters", exc_info=1)
+      raise CommandError("Error loading company parameters: %s" % e)
 
 
   # Loading units of measures
@@ -295,7 +318,7 @@ class Connector(object):
   #   - We assume the code+name combination is unique, but this is not
   #     enforced at all in odoo. The only other option is to include
   #     the id in the name - not nice for humans...
-  # TODO also get template.produce_delay, property_stock_production, property_stock_inventory, and property_stock_procurement?
+  # TODO also get property_stock_production, property_stock_inventory, and property_stock_procurement?
   def import_products(self, cursor):
     transaction.enter_transaction_management(using=self.database)
     try:
@@ -678,12 +701,12 @@ class Connector(object):
       frepple_keys = set([ i[0] for i in cursor.fetchall()])
       cursor.executemany(
         "insert into operation \
-          (name,location_id,subcategory,lastmodified) \
-          values (%%s,%%s,'odoo','%s')" % self.date,
+          (name,location_id,posttime,subcategory,lastmodified) \
+          values (%%s,%%s,%s,'odoo','%s')" % (self.security_lead, self.date),
         [ (i[2],i[1]) for i in deliveries if i[2] not in frepple_keys ])
       cursor.executemany(
         "update operation \
-          set location_id=%%s, subcategory='odoo', lastmodified='%s' where name=%%s" % self.date,
+          set location_id=%%s, posttime=%s, subcategory='odoo', lastmodified='%s' where name=%%s" % (self.security_lead, self.date),
         [ (i[1],i[2]) for i in deliveries if i[2] in frepple_keys ])
 
       # Create or update delivery buffers
@@ -1047,6 +1070,7 @@ class Connector(object):
   #   - extracting mrp.bom, mrp.routing.workcenter and mrp.routing.workcenter objects
   #   - not supported yet:
   #        - date effectivity
+  #        - parent boms
   #        - phantom boms
   #        - subproducts
   #        - routings
@@ -1142,7 +1166,10 @@ class Connector(object):
       fields = ['name', 'active', 'product_qty', 'product_uom', 'date_start', 'date_stop',
         'product_efficiency', 'product_id', 'routing_id', 'bom_id', 'type', 'sub_products',
         'product_rounding',]
-      for i in self.odoo_data('mrp.bom', ids, fields):
+      bom_data = [ i for i in self.odoo_data('mrp.bom', ids, fields) ]
+      products = { j['id']: j['product_tmpl_id'][0] for j in self.odoo_data('product.product', [ i['product_id'][0] for i in bom_data ], ['product_tmpl_id',]) }
+      templates = { k['id']: k['produce_delay'] for k in self.odoo_data('product.template', [ j for i,j in products.iteritems() ], ['produce_delay',]) }
+      for i in bom_data:
         # TODO Handle routing steps
         # Determine the location
         if i['routing_id']:
@@ -1162,12 +1189,12 @@ class Connector(object):
           # Creation or update operations
           if operation in frepple_operations:
             operation_update.append( (
-              location, i['product_rounding']*uom_factor or 1, operation,
+              location, i['product_rounding']*uom_factor or 1, templates[products[i['product_id'][0]]] * 86400 + self.manufacturing_lead, operation
               ) )
           else:
             frepple_operations.add(operation)
             operation_insert.append( (
-              operation, location, (i['product_rounding'] * uom_factor) or 1
+              operation, location, (i['product_rounding'] * uom_factor) or 1, templates[products[i['product_id'][0]]] * 86400 + self.manufacturing_lead
               ) )
           # Creation buffer
           if not buffer in frepple_buffers:
@@ -1249,13 +1276,13 @@ class Connector(object):
       # Process in the frePPLe database
       cursor.executemany(
         "insert into operation \
-          (name,location_id,subcategory,sizemultiple,lastmodified) \
-          values(%%s,%%s,'odoo',%%s,'%s')" % self.date,
+          (name,location_id,subcategory,sizemultiple,duration,lastmodified) \
+          values(%%s,%%s,'odoo',%%s,%%s,'%s')" % self.date,
         operation_insert
         )
       cursor.executemany(
         "update operation \
-          set location_id=%%s, sizemultiple=%%s, subcategory='odoo', lastmodified='%s' \
+          set location_id=%%s, sizemultiple=%%s, duration=%%s, subcategory='odoo', lastmodified='%s' \
           where name=%%s" % self.date,
         operation_update
         )
@@ -1369,7 +1396,7 @@ class Connector(object):
         if not item: continue
         tmpl = templates.get(i['product_tmpl_id'][0],None)
         if tmpl and tmpl['purchase_ok'] and tmpl['supply_method'] == 'buy':
-          buy.append( (tmpl['produce_delay'] * 86400, item) )
+          buy.append( (tmpl['produce_delay'] * 86400 + self.po_lead, item,) )
         else:
           produce.append( (item,) )
         if tmpl:

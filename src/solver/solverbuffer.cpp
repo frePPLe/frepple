@@ -34,18 +34,24 @@ namespace frepple
   */
 DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
-  Date requested_date(data->state->q_date);
-  double requested_qty(data->state->q_qty);
-  bool tried_requested_date(false);
-
   // Call the user exit
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   if (userexit_buffer) userexit_buffer.call(b, PythonObject(data->constrainedPlanning));
+
+  // Safety stock planning is refactored to a separate method
+  double requested_qty(data->state->q_qty);
+  if (requested_qty == -1.0)
+  {
+    solveSafetyStock(b,v);
+    return;
+  }
+  Date requested_date(data->state->q_date);
+  bool tried_requested_date(false);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
-        << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+      << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Store the last command in the list, in order to undo the following
   // commands if required.
@@ -60,7 +66,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   double shortage(0.0);
   Date extraSupplyDate(Date::infiniteFuture);
   Date extraInventoryDate(Date::infiniteFuture);
-  double cumproduced = b->getFlowPlans().rbegin()->getCumulativeProduced();
+  double cumproduced = (b->getFlowPlans().rbegin() == b->getFlowPlans().end())
+    ? 0
+    : b->getFlowPlans().rbegin()->getCumulativeProduced();
   double current_minimum(0.0);
   double unconfirmed_supply(0.0);
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
@@ -270,7 +278,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   // computed seperately and not considered here.
   if (b->getItem() && data->state->a_qty > 0)
   {
-    cumproduced = b->getFlowPlans().rbegin()->getCumulativeProduced() - cumproduced;
+    if (b->getFlowPlans().empty())
+      cumproduced = 0.0;
+    else
+      cumproduced = b->getFlowPlans().rbegin()->getCumulativeProduced() - cumproduced;
     if (data->state->a_qty > cumproduced)
       data->state->a_cost += (data->state->a_qty - cumproduced) * b->getItem()->getPrice();
   }
@@ -280,6 +291,94 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
         << "' answers: " << data->state->a_qty << "  " << data->state->a_date << "  "
         << data->state->a_cost << "  " << data->state->a_penalty << endl;
+}
+
+
+DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
+{
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+
+  // Message
+  if (data->getSolver()->getLogLevel()>1)
+    logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
+        << "' replenishes for safety stock" << endl;
+
+  // Scan the complete horizon
+  Date currentDate;
+  const TimeLine<FlowPlan>::Event *prev = NULL;
+  double shortage(0.0);
+  double current_minimum(0.0);
+  for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
+      ; ++cur)
+  {
+    const FlowPlan* fplan = dynamic_cast<const FlowPlan*>(&*cur);
+
+    // Iterator has now changed to a new date or we have arrived at the end.
+    // If multiple flows are at the same moment in time, we are not interested
+    // in the inventory changes. It gets interesting only when a certain
+    // inventory level remains unchanged for a certain time.
+    if ((cur == b->getFlowPlans().end() || cur->getDate()>currentDate) && prev)
+    {
+      // Some variables
+      Date theDate = prev->getDate();
+      double theOnHand = prev->getOnhand();
+      double theDelta = theOnHand - current_minimum + shortage;
+      bool loop = true;
+
+      // Evaluate the situation at the last flowplan before the date change.
+      // Is there a shortage at that date?       
+      while (theDelta < -ROUNDING_ERROR && b->getProducingOperation() && loop)
+      {
+        // Create supply
+        data->state->curBuffer = const_cast<Buffer*>(b);
+        data->state->q_qty = -theDelta;
+        data->state->q_date = prev->getDate();
+
+        // Make sure the new operationplans don't inherit an owner.
+        // When an operation calls the solve method of suboperations, this field is
+        // used to pass the information about the owner operationplan down. When
+        // solving for buffers we must make sure NOT to pass owner information.
+        // At the end of solving for a buffer we need to restore the original
+        // settings...
+        data->state->curOwnerOpplan = NULL;
+
+        // Note that the supply created with the next line changes the
+        // onhand value at all later dates!
+        CommandManager::Bookmark* topcommand = data->setBookmark();
+        b->getProducingOperation()->solve(*this,v);
+        theOnHand = prev->getOnhand();
+        theDelta = theOnHand - current_minimum + shortage;
+        if (!data->state->a_qty)
+          data->rollback(topcommand);
+
+        // If we got some extra supply, we retry to get some more supply.
+        // Only when no extra material is obtained, we give up.
+        /* xxxif (data->state->a_qty < ROUNDING_ERROR
+            && data->state->a_date < )
+          loop = false;*/
+      }
+    }
+
+    // We have reached the end of the flowplans. Breaking out of the loop
+    // needs to be done here because in the next statements we are accessing
+    // *cur, which isn't valid at the end of the list
+    if (cur == b->getFlowPlans().end()) break;
+
+    // The minimum or the maximum have changed
+    // Note that these limits can be updated only after the processing of the
+    // date change in the statement above. Otherwise the code above would
+    // already use the new value before the intended date.
+    if (cur->getType() == 3) current_minimum = cur->getMin();
+
+    // Update the pointer to the previous flowplan.
+    prev = &*cur;
+    currentDate = cur->getDate();
+  }
+
+  // Message
+  if (data->getSolver()->getLogLevel()>1)
+    logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
+        << "' solved for safety stock" << endl;
 }
 
 

@@ -1942,13 +1942,13 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
     double q = mult * getSizeMultiple();
     if (q < getSizeMinimum())
     {
-      q = (mult + 1) * getSizeMultiple();
+      q += getSizeMultiple();
       if (q > getSizeMaximum())
         throw DataException("Invalid sizing parameters for operation " + getName());
     }
     else if (q > getSizeMaximum())
     {
-      q = (mult - 1) * getSizeMultiple();
+      q -= getSizeMultiple();
       if (q < getSizeMinimum())
         throw DataException("Invalid sizing parameters for operation " + getName());
     }

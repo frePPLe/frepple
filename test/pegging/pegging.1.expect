@@ -1286,13 +1286,6 @@
 					<weight>10</weight>
 				</problem>
 				<problem>
-					<name>material excess</name>
-					<description>Buffer &apos;buffer 1&apos; has material excess of 4</description>
-					<start>2009-01-17T00:00:00</start>
-					<end>2030-12-31T00:00:00</end>
-					<weight>4</weight>
-				</problem>
-				<problem>
 					<name>material shortage</name>
 					<description>Buffer &apos;buffer 1&apos; has material shortage of 4</description>
 					<start>2009-01-09T00:00:00</start>
@@ -1555,13 +1548,6 @@
 					<weight>10</weight>
 				</problem>
 				<problem>
-					<name>material excess</name>
-					<description>Buffer &apos;buffer 3&apos; has material excess of 2</description>
-					<start>2009-01-15T00:00:00</start>
-					<end>2030-12-31T00:00:00</end>
-					<weight>2</weight>
-				</problem>
-				<problem>
 					<name>material shortage</name>
 					<description>Buffer &apos;buffer 3&apos; has material shortage of 4</description>
 					<start>2009-01-09T00:00:00</start>
@@ -1743,13 +1729,6 @@
 					<start>1971-01-01T00:00:00</start>
 					<end>2009-01-09T00:00:00</end>
 					<weight>10</weight>
-				</problem>
-				<problem>
-					<name>material excess</name>
-					<description>Buffer &apos;buffer 4&apos; has material excess of 6</description>
-					<start>2009-01-15T00:00:00</start>
-					<end>2030-12-31T00:00:00</end>
-					<weight>6</weight>
 				</problem>
 				<problem>
 					<name>material shortage</name>
@@ -3765,13 +3744,6 @@
 			<weight>10</weight>
 		</problem>
 		<problem>
-			<name>material excess</name>
-			<description>Buffer &apos;buffer 1&apos; has material excess of 4</description>
-			<start>2009-01-17T00:00:00</start>
-			<end>2030-12-31T00:00:00</end>
-			<weight>4</weight>
-		</problem>
-		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer 1&apos; has material shortage of 4</description>
 			<start>2009-01-09T00:00:00</start>
@@ -3800,13 +3772,6 @@
 			<weight>10</weight>
 		</problem>
 		<problem>
-			<name>material excess</name>
-			<description>Buffer &apos;buffer 3&apos; has material excess of 2</description>
-			<start>2009-01-15T00:00:00</start>
-			<end>2030-12-31T00:00:00</end>
-			<weight>2</weight>
-		</problem>
-		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer 3&apos; has material shortage of 4</description>
 			<start>2009-01-09T00:00:00</start>
@@ -3819,13 +3784,6 @@
 			<start>1971-01-01T00:00:00</start>
 			<end>2009-01-09T00:00:00</end>
 			<weight>10</weight>
-		</problem>
-		<problem>
-			<name>material excess</name>
-			<description>Buffer &apos;buffer 4&apos; has material excess of 6</description>
-			<start>2009-01-15T00:00:00</start>
-			<end>2030-12-31T00:00:00</end>
-			<weight>6</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>

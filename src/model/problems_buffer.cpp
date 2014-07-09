@@ -82,11 +82,8 @@ DECLARE_EXPORT void Buffer::updateProblems()
       }
     }
 
-    // Note that theoretically we can have a minimum and a maximum problem for
-    // the same moment in time.
-
     // Check against maximum target
-    delta = f->getOnhand() - curMax;
+    delta = f->getOnhand() - (curMin<curMax ? curMax : curMin);
     if (delta > ROUNDING_ERROR)
     {
       if (!excessProblem)

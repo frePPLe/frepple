@@ -1940,8 +1940,18 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
     int mult = static_cast<int> (f / getSizeMultiple()
         + (roundDown ? 0.0 : 0.99999999));
     double q = mult * getSizeMultiple();
-    if (mult && (q < getSizeMinimum() || q > getSizeMaximum()))
-      throw DataException("Invalid sizing parameters for operation " + getName());
+    if (q < getSizeMinimum())
+    {
+      q = (mult + 1) * getSizeMultiple();
+      if (q > getSizeMaximum())
+        throw DataException("Invalid sizing parameters for operation " + getName());
+    }
+    else if (q > getSizeMaximum())
+    {
+      q = (mult - 1) * getSizeMultiple();
+      if (q < getSizeMinimum())
+        throw DataException("Invalid sizing parameters for operation " + getName());
+    }
     if (!execute) return q;
     oplan->quantity = q;
   }

@@ -28,6 +28,7 @@ namespace frepple
 DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  bool safetystock = (data->state->q_qty == -1.0);
 
   // TODO create a more performant procurement solver. Instead of creating a list of operationplans
   // moves and creations, we can create a custom command "updateProcurements". The commit of
@@ -43,7 +44,14 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(b->getLevel()) << "  Procurement buffer '" << b->getName()
+    if (safetystock)
+    {
+      logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
+          << "' replenishes for safety stock" << endl;
+      int i = 1;
+    }
+    else
+      logger << indent(b->getLevel()) << "  Procurement buffer '" << b->getName()
         << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Standard reply date
@@ -95,9 +103,14 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   double current_inventory = 0.0;
   const FlowPlan* current_flowplan = NULL;
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
-      latest_next != Date::infiniteFuture || cur != b->getFlowPlans().end(); )
+      latest_next != Date::infiniteFuture || earliest_next || cur != b->getFlowPlans().end(); )
   {
-    if (cur==b->getFlowPlans().end() || latest_next < cur->getDate())
+    if (cur==b->getFlowPlans().end())
+    {
+      current_date = earliest_next ? earliest_next : latest_next;
+      current_flowplan = NULL;
+    }
+    else if (latest_next != Date::infiniteFuture && latest_next < cur->getDate())
     {
       // Latest procument time is reached
       current_date = latest_next;
@@ -120,7 +133,6 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         continue;
       }
       current_date = cur->getDate();
-      bool noConsumers = true;
       do
       {
         if (cur->getType() != 1)
@@ -130,17 +142,12 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         }
         current_flowplan = static_cast<const FlowPlan*>(&*(cur++));
         if (current_flowplan->getQuantity() < 0)
-        {
           consumed -= current_flowplan->getQuantity();
-          noConsumers = false;
-        }
         else if (current_flowplan->getOperationPlan()->getLocked())
           produced += current_flowplan->getQuantity();
       }
       // Loop to pick up the last consuming flowplan on the given date
       while (cur != b->getFlowPlans().end() && cur->getDate() == current_date);
-      // No further interest in dates with only producing flowplans.
-      if (noConsumers) continue;
     }
 
     // Compute current inventory. The actual onhand in the buffer may be
@@ -172,6 +179,10 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 
     // When we are within the minimum interval, we may need to increase the
     // size of the previous procurements.
+    //
+    // TODO We should not only resize the existing procurements, but also
+    // consider inserting additional ones. See "buffer 10" in "buffer_procure_1" testcase,
+    // where some possible purchasing intervals are not used.
     if (current_date == earliest_next
         && current_inventory < b->getMinimumInventory() - ROUNDING_ERROR)
     {
@@ -267,7 +278,9 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     data->add(new CommandDeleteOperationPlan(procurements[indexProcurements++]));
 
   // Create the answer
-  if (data->constrainedPlanning && (data->getSolver()->isFenceConstrained()
+  if (safetystock)
+    data->state->a_qty = 1.0;
+  else if (data->constrainedPlanning && (data->getSolver()->isFenceConstrained()
       || data->getSolver()->isLeadtimeConstrained()
       || data->getSolver()->isMaterialConstrained()))
   {
@@ -326,9 +339,15 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(b->getLevel()) << "  Procurement buffer '" << b
+  {
+    if (safetystock)
+      logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
+          << "' solved for safety stock" << endl;
+    else
+      logger << indent(b->getLevel()) << "  Procurement buffer '" << b
         << "' answers: " << data->state->a_qty << "  " << data->state->a_date
         << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
+  }
 }
 
 

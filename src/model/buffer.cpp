@@ -221,18 +221,19 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
   o->writeElement(Tags::tag_location, loc);
   Plannable::writeElement(o, tag);
 
-  // Onhand
+  // Onhand: loop through the flowplans at the start of the horizon
   flowplanlist::const_iterator i = flowplans.begin();
-  // Loop through the flowplans at the start of the horizon
-  for (; i!=flowplans.end() && i->getType()!=1 && !i->getDate(); ++i) ;
-  if (i!=flowplans.end() && i->getType()==1)
+  for (; i!=flowplans.end(); ++i)
   {
-    // A flowplan has been found
+    if(i->getDate()) break; // Inventory event is always at start of horizon
+    if(i->getType()!=1) continue;
     const FlowPlan *fp = static_cast<const FlowPlan*>(&*i);
-    if (fp
-        && fp->getFlow()->getOperation()->getName() == string(INVENTORY_OPERATION)
-        && fabs(fp->getQuantity()) > ROUNDING_ERROR)
+    if (fp->getFlow()->getOperation()->getName() == string(INVENTORY_OPERATION)
+      && fabs(fp->getQuantity()) > ROUNDING_ERROR)
+    {
       o->writeElement(Tags::tag_onhand, fp->getQuantity());
+      break;  // There can only be 1 inventory event
+    }
   }
 
   // Minimum and maximum inventory targets, carrying cost

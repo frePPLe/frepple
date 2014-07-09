@@ -347,7 +347,7 @@ solver.solve()
 frepple.saveplan("output.1.xml")
 printStatus()
 
-print "\n\nCREATING UNCONSTRAINED PLAN"
+print("\n\nCREATING UNCONSTRAINED PLAN")
 for d in frepple.demands():
   d.due = frepple.settings.current + timedelta(10)
 solver.solve()

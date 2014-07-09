@@ -52,11 +52,20 @@
     <buffer name="end item 3 A">
       <producing name="buy end item 3" xsi:type="operation_fixed_time" duration="P4D"/>
       <minimum>10</minimum>
+      <item name="end item 3" />
     </buffer>
     <buffer name="end item 3 B">
       <producing name="end item 3 from A to B" xsi:type="operation_fixed_time" duration="P4D"/>
       <minimum>20</minimum>
+      <item name="end item 3" />
     </buffer>
+    <buffer name="end item 3 C" xsi:type="buffer_procure">
+      <item name="end item 3" />
+	    <leadtime>P4D</leadtime>
+	    <mininventory>20</mininventory>
+	    <maxinventory>70</maxinventory>
+	    <size_multiple>3</size_multiple>
+	  </buffer>
   </buffers>
   <flows>
     <flow xsi:type="flow_start">

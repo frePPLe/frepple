@@ -3205,8 +3205,9 @@ class BufferProcure : public Buffer
       if (p<0L)
         throw DataException("Procurement buffer can't have a negative minimum interval");
       min_interval = p;
-      // minimum is increased over the maximum: auto-increase the maximum
-      if (max_interval < min_interval) max_interval = min_interval;
+      // Minimum is increased over the maximum: auto-increase the maximum
+      if (max_interval && max_interval < min_interval)
+        max_interval = min_interval;
     }
 
     /** Return the maximum time interval between sytem-generated replenishment
@@ -3220,8 +3221,9 @@ class BufferProcure : public Buffer
       if (p<0L)
         throw DataException("Procurement buffer can't have a negative maximum interval");
       max_interval = p;
-      // maximum is lowered below the minimum: auto-decrease the minimum
-      if (max_interval < min_interval) min_interval = max_interval;
+      // Maximum is lowered below the minimum: auto-decrease the minimum
+      if (min_interval && max_interval < min_interval)
+        min_interval = max_interval;
     }
 
     /** Return the minimum quantity of a purchasing operation. */

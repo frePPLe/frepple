@@ -54,6 +54,10 @@
 		</calendar>
 	</calendars>
 	<operations>
+		<operation name="Purchase buffer1" xsi:type="operation_fixed_time">
+			<size_minimum>0</size_minimum>
+			<location name="locA"/>
+		</operation>
 		<operation name="buy item" xsi:type="operation_fixed_time">
 			<duration>P1D</duration>
 		</operation>
@@ -173,6 +177,11 @@
 				</load>
 			</loads>
 	<flows>
+		<flow xsi:type="flow_end">
+			<operation name="Purchase buffer1" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer1" xsi:type="buffer_procure"/>
+			<quantity>1</quantity>
+		</flow>
 		<flow xsi:type="flow_start">
 			<operation name="delivery end item" xsi:type="operation_fixed_time"/>
 			<buffer name="end item"/>

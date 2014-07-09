@@ -284,6 +284,8 @@ DECLARE_EXPORT void HasLevel::computeLevels()
                   stack.push(make_pair(buffl->getOperation(),-1));
                   buffl->getOperation()->cluster = cur_cluster;
                 }
+                if (cur_level+1 > numberOfLevels)
+                  numberOfLevels = cur_level+1;
                 cur_buf->lvl = cur_level+1;
               }
               // Check cluster recursion

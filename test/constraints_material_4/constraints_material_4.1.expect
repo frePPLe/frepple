@@ -30,4 +30,4 @@ OPERATION	make 1	2009-01-19T00:00:00	2009-01-24T00:00:00	1000
 OPERATION	make 1	2009-01-24T00:00:00	2009-01-29T00:00:00	1000
 OPERATION	supply 1	2009-01-04T00:00:00	2009-01-09T00:00:00	1000
 PROBLEM	material excess	Buffer 'buffer 1' has material excess of 4000	2009-01-09T00:00:00 / 2009-01-29T00:00:00
-PROBLEM	material excess	Buffer 'raw material buffer 1' has material excess of 950	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'raw material buffer 1' has material excess of 946	1971-01-01T00:00:00 / 2030-12-31T00:00:00

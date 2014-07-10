@@ -1,44 +1,52 @@
-BUFFER	component A	1971-01-01T00:00:00	1	1
-BUFFER	component A	2008-12-24T00:00:00	70	71
-BUFFER	component A	2008-12-24T00:00:00	-1	70
-BUFFER	component A	2008-12-27T00:00:00	-2	68
-BUFFER	component A	2008-12-29T00:00:00	-5	63
-BUFFER	component B	1971-01-01T00:00:00	4	4
-BUFFER	component B	2008-12-25T00:00:00	-4	0
-BUFFER	component C	1971-01-01T00:00:00	5	5
-BUFFER	component C	2008-12-24T00:00:00	66	71
-BUFFER	component C	2008-12-24T00:00:00	-1	70
-BUFFER	component C	2008-12-25T00:00:00	-2	68
-BUFFER	component C	2008-12-27T00:00:00	-2	66
-BUFFER	component C	2008-12-29T00:00:00	-5	61
-BUFFER	component F	1971-01-01T00:00:00	5	5
-BUFFER	component F	2008-12-24T00:00:00	-1	4
-BUFFER	component F	2008-12-25T00:00:00	-2	2
-BUFFER	component F	2008-12-27T00:00:00	-2	0
-BUFFER	component G	1971-01-01T00:00:00	5	5
-BUFFER	component G	2008-12-29T00:00:00	-5	0
+BUFFER	component A	1971-01-01T00:00:00	69	69
+BUFFER	component A	1971-01-01T00:00:00	1	70
+BUFFER	component A	2008-12-24T00:00:00	-1	69
+BUFFER	component A	2008-12-27T00:00:00	-2	67
+BUFFER	component A	2008-12-29T00:00:00	-5	62
+BUFFER	component B	1971-01-01T00:00:00	66	66
+BUFFER	component B	1971-01-01T00:00:00	4	70
+BUFFER	component B	2008-12-25T00:00:00	-4	66
+BUFFER	component C	1971-01-01T00:00:00	65	65
+BUFFER	component C	1971-01-01T00:00:00	5	70
+BUFFER	component C	2008-12-24T00:00:00	-1	69
+BUFFER	component C	2008-12-25T00:00:00	-2	67
+BUFFER	component C	2008-12-27T00:00:00	-2	65
+BUFFER	component C	2008-12-29T00:00:00	-5	60
+BUFFER	component D	1971-01-01T00:00:00	70	70
+BUFFER	component E	1971-01-01T00:00:00	70	70
+BUFFER	component F	1971-01-01T00:00:00	65	65
+BUFFER	component F	1971-01-01T00:00:00	5	70
+BUFFER	component F	2008-12-24T00:00:00	-1	69
+BUFFER	component F	2008-12-25T00:00:00	-2	67
+BUFFER	component F	2008-12-27T00:00:00	-2	65
+BUFFER	component G	1971-01-01T00:00:00	65	65
+BUFFER	component G	1971-01-01T00:00:00	5	70
+BUFFER	component G	2008-12-29T00:00:00	-5	65
 BUFFER	product	2009-01-04T00:00:00	5	5
 BUFFER	product	2009-01-04T00:00:00	2	7
 BUFFER	product	2009-01-04T00:00:00	2	9
 BUFFER	product	2009-01-04T00:00:00	1	10
 BUFFER	product	2009-01-04T00:00:00	-10	0
 DEMAND	order 1	2009-01-04T00:00:00	10
-OPERATION	Purchase component A	2008-12-17T00:00:00	2008-12-24T00:00:00	70
-OPERATION	Purchase component C	2008-12-17T00:00:00	2008-12-24T00:00:00	66
+OPERATION	Purchase component A	1971-01-01T00:00:00	1971-01-01T00:00:00	69
+OPERATION	Purchase component B	1971-01-01T00:00:00	1971-01-01T00:00:00	66
+OPERATION	Purchase component C	1971-01-01T00:00:00	1971-01-01T00:00:00	65
+OPERATION	Purchase component D	1971-01-01T00:00:00	1971-01-01T00:00:00	70
+OPERATION	Purchase component E	1971-01-01T00:00:00	1971-01-01T00:00:00	70
+OPERATION	Purchase component F	1971-01-01T00:00:00	1971-01-01T00:00:00	65
+OPERATION	Purchase component G	1971-01-01T00:00:00	1971-01-01T00:00:00	65
 OPERATION	assembly	2008-12-24T00:00:00	2009-01-04T00:00:00	1
 OPERATION	assembly	2008-12-25T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2008-12-27T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2008-12-29T00:00:00	2009-01-04T00:00:00	5
 OPERATION	deliver product	2009-01-04T00:00:00	2009-01-04T00:00:00	10
-PROBLEM	material shortage	Buffer 'component A' has material shortage of 19	1971-01-01T00:00:00 / 2008-12-24T00:00:00
-PROBLEM	material shortage	Buffer 'component B' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'component C' has material shortage of 15	1971-01-01T00:00:00 / 2008-12-24T00:00:00
-PROBLEM	material shortage	Buffer 'component D' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'component E' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'component F' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'component G' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Operation 'Purchase component A' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
-PROBLEM	before current	Operation 'Purchase component C' planned in the past	2008-12-17T00:00:00 / 2008-12-24T00:00:00
+PROBLEM	before current	Operation 'Purchase component A' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component B' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component C' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component D' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component E' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component F' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component G' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-24T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00

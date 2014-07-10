@@ -59,6 +59,7 @@ Echoing resources:
 
 Echoing buffers:
   Buffer: buffer1 My description My category None None
+    Flow: Purchase buffer1 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
   Buffer: buffer2 None None None buffer1
   Buffer: end item None None None None
     Flow: delivery end item -1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
@@ -71,6 +72,8 @@ Echoing buffers:
     Flowplan: 15 delivery end item -10.0 2009-03-01 20:00:00
 
 Echoing operations:
+  Operation: Purchase buffer1 None None None
+    Flow: buffer1 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: buy item None None None
   Operation: delivery end item None None None
     Flow: end item -1.0 1971-01-01 00:00:00 2030-12-31 00:00:00

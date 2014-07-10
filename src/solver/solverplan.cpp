@@ -90,7 +90,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
     // TODO Propagate & solve initial shortages and overloads
 
     // Solve for safety stock in buffers.
-    //if (solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
+    if (solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
 
     // Sort the demands of this problem.
     // We use a stable sort to get reproducible results between platforms
@@ -123,7 +123,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
     demands->clear();
 
     // Solve for safety stock in buffers.
-    //if (!solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
+    if (!solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
   }
   catch (...)
   {
@@ -161,15 +161,17 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
   vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if (buf->getCluster() == cluster
-      && (buf->getMinimum() || buf->getMinimumCalendar())
+      && ( buf->getMinimum() || buf->getMinimumCalendar()
+        || buf->getMaximum() || buf->getMaximumCalendar() )
       )
       bufs[(buf->getLevel()>=0) ? buf->getLevel() : 0].push_back(&*buf);
   for (vector< list<Buffer*> >::iterator b_list = bufs.begin(); b_list != bufs.end(); ++b_list)
     for (list<Buffer*>::iterator b = b_list->begin(); b != b_list->end(); ++b)
     {
       state->curBuffer = NULL;
-      state->q_qty = 1.0;
-      state->q_date = Date::infinitePast; //Plan::instance().getCurrent();
+      // A quantity of -1 is a flag for the buffer solver to solve safety stock.
+      state->q_qty = -1.0;
+      state->q_date = Date::infinitePast;
       state->a_cost = 0.0;
       state->a_penalty = 0.0;
       planningDemand = NULL;
@@ -177,12 +179,8 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
       state->motive = *b;
       state->curOwnerOpplan = NULL;
       // Call the buffer solver
-      // TODO Doesn't handle yet the possible delayed reply
       (*b)->solve(*solver, this);
-      if (state->a_qty == 0.0)
-        CommandManager::rollback();
-      else
-        CommandManager::commit();
+      CommandManager::commit();
     }
   if (getLogLevel()>0) logger << "Finished safety stock replenishment pass" << endl;
 }

@@ -9,13 +9,10 @@
        5 in march
     * item 2 has time-based target, set as a post-operation time of 1 week
       on the make operation.
+    * item 3 has 2 buffers with quantity based safety stock and without
+      any demand
   </description>
   <current>2009-01-01T00:00:00</current>
-  <operations>
-    <operation name="make end item" xsi:type="operation_fixed_time">
-      <duration>P1D</duration>
-    </operation>
-  </operations>
   <items>
     <item name="end item 1">
       <operation name="delivery end item 1" xsi:type="operation_fixed_time">
@@ -52,6 +49,23 @@
       <producing name="make end item 2" posttime="P7D"/>
       <item name="end item 2" />
     </buffer>
+    <buffer name="end item 3 A">
+      <producing name="buy end item 3" xsi:type="operation_fixed_time" duration="P4D"/>
+      <minimum>10</minimum>
+      <item name="end item 3" />
+    </buffer>
+    <buffer name="end item 3 B">
+      <producing name="end item 3 from A to B" xsi:type="operation_fixed_time" duration="P4D"/>
+      <minimum>20</minimum>
+      <item name="end item 3" />
+    </buffer>
+    <buffer name="end item 3 C" xsi:type="buffer_procure">
+      <item name="end item 3" />
+	    <leadtime>P4D</leadtime>
+	    <mininventory>20</mininventory>
+	    <maxinventory>70</maxinventory>
+	    <size_multiple>3</size_multiple>
+	  </buffer>
   </buffers>
   <flows>
     <flow xsi:type="flow_start">
@@ -72,6 +86,21 @@
     <flow xsi:type="flow_end">
       <operation name="make end item 2" />
       <buffer name="end item 2" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="end item 3 from A to B" />
+      <buffer name="end item 3 A" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="end item 3 from A to B" />
+      <buffer name="end item 3 B" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="buy end item 3" />
+      <buffer name="end item 3 A" />
       <quantity>1</quantity>
     </flow>
   </flows>

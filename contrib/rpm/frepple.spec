@@ -78,7 +78,7 @@ make %{?_smp_mflags} all
 
 %check
 # Run test suite, skipping some long and less interesting tests
-TESTARGS="--regression -e setup_1 -e setup_2 -e setup_3 -e operation_routing -e constraints_combined_1"
+TESTARGS="--regression -e setup_1 -e setup_2 -e setup_3 -e operation_routing -e constraints_combined_1 -e wip"
 export TESTARGS
 make check
 

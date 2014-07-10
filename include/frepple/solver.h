@@ -110,6 +110,9 @@ class SolverMRP : public Solver
       */
     DECLARE_EXPORT void solve(const Buffer*, void* = NULL);
 
+    /** Called by the previous method to solve for safety stock only. */
+    DECLARE_EXPORT void solveSafetyStock(const Buffer*, void* = NULL);
+
     /** Behavior of this solver method:
       *  - When the inventory drops below the minimum inventory level, a new
       *    replenishment is triggered.

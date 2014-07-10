@@ -161,9 +161,8 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
   vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if (buf->getCluster() == cluster
-      //&& ( buf->getMinimum() || buf->getMinimumCalendar()
-      // || buf->getMaximum() || buf->getMaximumCalendar() )
-      && buf->getType() == *BufferProcure::metadata
+      && ( buf->getMinimum() || buf->getMinimumCalendar()
+        || buf->getMaximum() || buf->getMaximumCalendar() )
       )
       bufs[(buf->getLevel()>=0) ? buf->getLevel() : 0].push_back(&*buf);
   for (vector< list<Buffer*> >::iterator b_list = bufs.begin(); b_list != bufs.end(); ++b_list)

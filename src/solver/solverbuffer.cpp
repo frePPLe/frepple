@@ -308,8 +308,8 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
   const TimeLine<FlowPlan>::Event *prev = NULL;
   double shortage(0.0);
   double current_minimum(0.0);
-  for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
-      ; ++cur)
+  Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
+  while (true)
   {
     const FlowPlan* fplan = dynamic_cast<const FlowPlan*>(&*cur);
 
@@ -326,13 +326,14 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
       bool loop = true;
 
       // Evaluate the situation at the last flowplan before the date change.
-      // Is there a shortage at that date?       
+      // Is there a shortage at that date?
+      Date nextAskDate;
       while (theDelta < -ROUNDING_ERROR && b->getProducingOperation() && loop)
       {
         // Create supply
         data->state->curBuffer = const_cast<Buffer*>(b);
         data->state->q_qty = -theDelta;
-        data->state->q_date = prev->getDate();
+        data->state->q_date = nextAskDate ? nextAskDate : prev->getDate();
 
         // Make sure the new operationplans don't inherit an owner.
         // When an operation calls the solve method of suboperations, this field is
@@ -346,16 +347,20 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
         // onhand value at all later dates!
         CommandManager::Bookmark* topcommand = data->setBookmark();
         b->getProducingOperation()->solve(*this,v);
-        theOnHand = prev->getOnhand();
-        theDelta = theOnHand - current_minimum + shortage;
-        if (!data->state->a_qty)
-          data->rollback(topcommand);
 
-        // If we got some extra supply, we retry to get some more supply.
-        // Only when no extra material is obtained, we give up.
-        /* xxxif (data->state->a_qty < ROUNDING_ERROR
-            && data->state->a_date < )
-          loop = false;*/
+        if (data->state->a_qty > ROUNDING_ERROR)
+          // If we got some extra supply, we retry to get some more supply.
+          // Only when no extra material is obtained, we give up.
+          theDelta += data->state->a_qty;
+        else
+        {
+          data->rollback(topcommand);
+          if ( (cur != b->getFlowPlans().end() && data->state->a_date < cur->getDate())
+            || (cur == b->getFlowPlans().end() && data->state->a_date < Date::infiniteFuture) )
+              nextAskDate = data->state->a_date;
+          else
+              loop = false;
+        }
       }
     }
 
@@ -373,6 +378,7 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
     // Update the pointer to the previous flowplan.
     prev = &*cur;
     currentDate = cur->getDate();
+    ++cur;
   }
 
   // Message

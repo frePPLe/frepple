@@ -801,6 +801,8 @@ DECLARE_EXPORT PyObject* Buffer::getattro(const Attribute& attr)
     return PythonObject(getCategory());
   if (attr.isA(Tags::tag_subcategory))
     return PythonObject(getSubCategory());
+  if (attr.isA(Tags::tag_source))
+    return PythonObject(getSource());
   if (attr.isA(Tags::tag_owner))
     return PythonObject(getOwner());
   if (attr.isA(Tags::tag_location))
@@ -847,6 +849,8 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
     setCategory(field.getString());
   else if (attr.isA(Tags::tag_subcategory))
     setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_source))
+    setSource(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
     if (!field.check(Buffer::metadata))

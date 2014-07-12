@@ -152,6 +152,7 @@ DECLARE_EXPORT const Keyword Tags::tag_skill("skill");
 DECLARE_EXPORT const Keyword Tags::tag_skills("skills");
 DECLARE_EXPORT const Keyword Tags::tag_solver("solver");
 DECLARE_EXPORT const Keyword Tags::tag_solvers("solvers");
+DECLARE_EXPORT const Keyword Tags::tag_source("source");
 DECLARE_EXPORT const Keyword Tags::tag_start("start");
 DECLARE_EXPORT const Keyword Tags::tag_startorend("startorend");
 DECLARE_EXPORT const Keyword Tags::tag_startdate("startdate");

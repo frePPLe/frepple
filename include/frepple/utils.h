@@ -4973,11 +4973,25 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
 };
 
 
+/** @brief This is a decorator class for all objects having a source field. */
+class HasSource
+{
+  private:
+    string source;
+  public:
+    /** Returns the source field. */
+    string getSource() const {return source;}
+
+    /** Sets the source field. */
+    void setSource(string c) {source = c;}
+};
+
+
 /** @brief This is a decorator class for the main objects.
   *
   * Instances of this class have a description, category and sub_category.
   */
-class HasDescription
+class HasDescription : public HasSource
 {
   public:
     /** Returns the category. */
@@ -5003,7 +5017,7 @@ class HasDescription
 
   protected:
     /** Returns the memory size in bytes. */
-    size_t extrasize() const {return cat.size() + subcat.size() + descr.size();}
+    size_t extrasize() const {return cat.size() + subcat.size() + descr.size() + getSource().size();}
 
   private:
     string cat;

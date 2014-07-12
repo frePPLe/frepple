@@ -89,7 +89,7 @@ class LibraryModel
   *  - The minimum inventory desired in a buffer week by week.
   *  - The working hours and holidays at a certain location.
   */
-class Calendar : public HasName<Calendar>
+class Calendar : public HasName<Calendar>, public HasSource
 {
   public:
     class BucketIterator; // Forward declaration
@@ -404,7 +404,7 @@ class Calendar : public HasName<Calendar>
     BucketIterator endBuckets() const {return BucketIterator(NULL);}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement) {}
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
@@ -1629,7 +1629,7 @@ class Operation : public HasName<Operation>,
   *    the operation hierarchies they belong to.
   */
 class OperationPlan
-  : public Object, public HasProblems, public NonCopyable
+  : public Object, public HasProblems, public NonCopyable, public HasSource
 {
     friend class FlowPlan;
     friend class LoadPlan;
@@ -2099,7 +2099,7 @@ class OperationPlan
     static DECLARE_EXPORT const MetaCategory* metacategory;
 
     virtual size_t getSize() const
-    {return sizeof(OperationPlan);}
+    {return sizeof(OperationPlan) + getSource().size();}
 
     /** Handles the persistence of operationplan objects. */
     static DECLARE_EXPORT void writer(const MetaCategory*, XMLOutput*);
@@ -3709,7 +3709,7 @@ inline Date FlowEnd::getFlowplanDate(const FlowPlan* fl) const
 /** @brief This class is used to represent a matrix defining the changeover
   * times between setups.
   */
-class SetupMatrix : public HasName<SetupMatrix>
+class SetupMatrix : public HasName<SetupMatrix>, public HasSource
 {
   public:
     class RuleIterator; // Forward declaration
@@ -3916,7 +3916,7 @@ class SetupMatrixDefault : public SetupMatrix
 
 
 /** @brief This class models skills that can be assigned to resources. */
-class Skill : public HasName<Skill>
+class Skill : public HasName<Skill>, public HasSource
 {
   friend class ResourceSkill;
 

@@ -1420,6 +1420,8 @@ DECLARE_EXPORT PyObject* Operation::getattro(const Attribute& attr)
     return PythonObject(getCategory());
   if (attr.isA(Tags::tag_subcategory))
     return PythonObject(getSubCategory());
+  if (attr.isA(Tags::tag_source))
+    return PythonObject(getSource());
   if (attr.isA(Tags::tag_location))
     return PythonObject(getLocation());
   if (attr.isA(Tags::tag_fence))
@@ -1462,6 +1464,8 @@ DECLARE_EXPORT int Operation::setattro(const Attribute& attr, const PythonObject
     setCategory(field.getString());
   else if (attr.isA(Tags::tag_subcategory))
     setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_source))
+    setSource(field.getString());
   else if (attr.isA(Tags::tag_location))
   {
     if (!field.check(Location::metadata))

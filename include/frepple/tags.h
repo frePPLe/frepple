@@ -153,6 +153,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_skills;
     static DECLARE_EXPORT const Keyword tag_solver;
     static DECLARE_EXPORT const Keyword tag_solvers;
+    static DECLARE_EXPORT const Keyword tag_source;
     static DECLARE_EXPORT const Keyword tag_start;
     static DECLARE_EXPORT const Keyword tag_startorend;
     static DECLARE_EXPORT const Keyword tag_startdate;

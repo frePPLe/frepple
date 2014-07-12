@@ -63,7 +63,7 @@
       <xsd:enumeration value="R" />
     </xsd:restriction>
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="search">
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="PRIORITY" />
@@ -72,13 +72,13 @@
       <xsd:enumeration value="MINCOSTPENALTY" />
     </xsd:restriction>
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="positiveDouble">
     <xsd:restriction base="xsd:double">
       <xsd:minInclusive value="0" />
     </xsd:restriction>
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="percentage">
     <xsd:restriction base="xsd:double">
       <xsd:minInclusive value="0" />
@@ -97,6 +97,7 @@
       <xsd:element name="category" type="xsd:normalizedString" />
       <xsd:element name="subcategory" type="xsd:normalizedString" />
       <xsd:element name="description" type="xsd:string" />
+      <xsd:element name="source" type="xsd:normalizedString" />
     </xsd:choice>
   </xsd:group>
 
@@ -105,6 +106,7 @@
     <xsd:attribute name="category" type="xsd:normalizedString" />
     <xsd:attribute name="subcategory" type="xsd:normalizedString" />
     <xsd:attribute name="description" type="xsd:string" />
+    <xsd:attribute name="source" type="xsd:normalizedString" />
     <xsd:attribute name="action" type="action" />
   </xsd:attributeGroup>
 
@@ -314,6 +316,7 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="source" type="xsd:normalizedString" />
       <xsd:element name="rules">
         <xsd:complexType>
           <xsd:sequence minOccurs="0" maxOccurs="unbounded">
@@ -336,16 +339,17 @@
         </xsd:complexType>
       </xsd:element>
     </xsd:choice>
-    <xsd:attribute name="name" type="non-empty-string" use="required" />    
+    <xsd:attribute name="name" type="non-empty-string" use="required" />
+    <xsd:attribute name="source" type="xsd:normalizedString" />
   </xsd:complexType>
-  
+
   <xsd:complexType name="setupmatrixlist">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="setupmatrix" type="setupmatrix" />
     </xsd:sequence>
   </xsd:complexType>
 
-  <!-- SKILL -->  
+  <!-- SKILL -->
   <xsd:complexType name="skill">
     <xsd:annotation>
       <xsd:documentation>
@@ -353,17 +357,17 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="resourceskills" type="resourceskilllist" minOccurs="0" />  
+      <xsd:element name="resourceskills" type="resourceskilllist" minOccurs="0" />
     </xsd:choice>
-    <xsd:attribute name="name" type="non-empty-string" use="required" />     
+    <xsd:attribute name="name" type="non-empty-string" use="required" />
   </xsd:complexType>
-  
+
   <xsd:complexType name="skilllist">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="skill" type="skill" />
     </xsd:sequence>
   </xsd:complexType>
-  
+
   <!-- RESOURCE -->
   <xsd:complexType name="resource">
     <xsd:annotation>
@@ -392,7 +396,7 @@
       <xsd:element name="loadplans" type="loadplanlist"/>
       <xsd:element name="setup" type="non-empty-string" minOccurs="0" />
       <xsd:element name="setupmatrix" type="setupmatrix" minOccurs="0" />
-      <xsd:element name="resourceskills" type="resourceskilllist" minOccurs="0" />  
+      <xsd:element name="resourceskills" type="resourceskilllist" minOccurs="0" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="maxearly" type="xsd:duration" />
@@ -446,7 +450,7 @@
       <xsd:element name="resourceskill" type="resourceskill" />
     </xsd:choice>
   </xsd:complexType>
-  
+
   <!-- BUFFER -->
   <xsd:complexType name="buffer">
     <xsd:annotation>
@@ -701,13 +705,13 @@
     </xsd:choice>
   </xsd:complexType>
 
-  <!-- CALENDAR -->  
+  <!-- CALENDAR -->
   <xsd:simpleType name="bucketdays">
     <xsd:restriction base="xsd:integer">
       <xsd:minInclusive value="0"/>
       <xsd:maxInclusive value="127"/>
     </xsd:restriction>
-  </xsd:simpleType>   
+  </xsd:simpleType>
 
   <xsd:complexType name="calendar">
     <xsd:annotation>
@@ -716,7 +720,8 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="default" type="xsd:double" minOccurs="0"/>
+      <xsd:element name="default" type="xsd:double" />
+      <xsd:element name="source" type="xsd:normalizedString" />
       <xsd:element name="buckets">
         <xsd:complexType>
           <xsd:sequence>
@@ -746,6 +751,7 @@
     </xsd:choice>
     <xsd:attribute name="default" type="xsd:double" />
     <xsd:attribute name="name" type="non-empty-string" use="required" />
+    <xsd:attribute name="source" type="xsd:normalizedString" />
     <xsd:attribute name="action" type="action" />
   </xsd:complexType>
 
@@ -773,6 +779,7 @@
       <xsd:element name="consume_material" type="xsd:boolean" minOccurs="0" />
       <xsd:element name="consume_capacity" type="xsd:boolean" minOccurs="0" />
       <xsd:element name="produce_material" type="xsd:boolean" minOccurs="0" />
+      <xsd:element name="source" type="xsd:normalizedString" minOccurs="0" />
     </xsd:sequence>
     <xsd:attribute name="id" type="xsd:unsignedLong" />
     <xsd:attribute name="operation" type="non-empty-string" />
@@ -783,6 +790,7 @@
     <xsd:attribute name="consume_material" type="xsd:boolean" />
     <xsd:attribute name="consume_capacity" type="xsd:boolean" />
     <xsd:attribute name="produce_material" type="xsd:boolean" />
+    <xsd:attribute name="source" type="xsd:normalizedString" />
     <xsd:attribute name="action" type="action" />
   </xsd:complexType>
 

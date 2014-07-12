@@ -826,6 +826,7 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
   if (!getConsumeMaterial()) o->writeElement(Tags::tag_consume_material, false);
   if (!getProduceMaterial()) o->writeElement(Tags::tag_produce_material, false);
   if (!getConsumeCapacity()) o->writeElement(Tags::tag_consume_capacity, false);
+  o->writeElement(Tags::tag_source, getSource());
   o->writeElement(Tags::tag_owner, owner);
 
   // Write out the flowplans and their pegging
@@ -879,10 +880,12 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, const Attribute& p
   }
   else if (pAttr.isA (Tags::tag_demand))
   {
-    Demand * d = dynamic_cast<Demand*>(pIn.getPreviousObject());
+    Demand *d = dynamic_cast<Demand*>(pIn.getPreviousObject());
     if (d) d->addDelivery(this);
     else throw LogicException("Incorrect object type during read operation");
   }
+  else if (pAttr.isA(Tags::tag_source))
+    setSource(pElement.getString());
   else if (pAttr.isA(Tags::tag_locked))
     setLocked(pElement.getBool());
   else if (pAttr.isA(Tags::tag_consume_material))
@@ -1013,6 +1016,8 @@ DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
     return PythonObject(getConsumeCapacity());
   if (attr.isA(Tags::tag_produce_material))
     return PythonObject(getProduceMaterial());
+  if (attr.isA(Tags::tag_source))
+    return PythonObject(getSource());
   if (attr.isA(Tags::tag_motive))
   {
     // Null
@@ -1096,6 +1101,8 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
     setConsumeCapacity(field.getBool());
   else if (attr.isA(Tags::tag_produce_material))
     setProduceMaterial(field.getBool());
+  else if (attr.isA(Tags::tag_source))
+    setSource(field.getString());
   else
     return -1;
   return 0;

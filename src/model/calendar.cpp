@@ -68,6 +68,13 @@ int Calendar::Bucket::initialize()
 }
 
 
+void Calendar::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+{
+  if (pAttr.isA(Tags::tag_source))
+    setSource(pElement.getString());
+}
+
+
 int CalendarDouble::initialize()
 {
   // Initialize the metadata
@@ -391,6 +398,9 @@ DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const Keyword& tag, mod
   // Write the head
   if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
     (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
+
+  // Write source field
+  o->writeElement(Tags::tag_source, getSource());
 
   // Write all buckets
   o->BeginObject (Tags::tag_buckets);
@@ -825,6 +835,8 @@ DECLARE_EXPORT PyObject* Calendar::getattro(const Attribute& attr)
     return PythonObject(getName());
   if (attr.isA(Tags::tag_buckets))
     return new CalendarBucketIterator(this);
+  if (attr.isA(Tags::tag_source))
+    return PythonObject(getSource());
   return NULL;
 }
 
@@ -833,6 +845,8 @@ DECLARE_EXPORT int Calendar::setattro(const Attribute& attr, const PythonObject&
 {
   if (attr.isA(Tags::tag_name))
     setName(field.getString());
+  else if (attr.isA(Tags::tag_source))
+    setSource(field.getString());
   else
     return -1;  // Error
   return 0;  // OK

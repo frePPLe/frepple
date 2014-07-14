@@ -842,7 +842,7 @@
       <xsd:element name="stringproperty" type="stringproperty" />
       <xsd:element name="doubleproperty" type="doubleproperty" />
       <xsd:element name="dateproperty" type="dateproperty" />
-    </xsd:sequence>
+    </xsd:choice>
     <xsd:attribute name="id" type="xsd:unsignedLong" />
     <xsd:attribute name="operation" type="non-empty-string" />
     <xsd:attribute name="start" type="xsd:dateTime" />

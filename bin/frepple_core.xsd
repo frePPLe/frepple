@@ -92,12 +92,36 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:complexType name="booleanproperty">
+    <xsd:attribute name="name" type="non-empty-string" use="required" />
+    <xsd:attribute name="value" type="xsd:boolean" />
+  </xsd:complexType>
+
+  <xsd:complexType name="stringproperty">
+    <xsd:attribute name="name" type="non-empty-string" use="required" />
+    <xsd:attribute name="value" type="xsd:string" />
+  </xsd:complexType>
+
+  <xsd:complexType name="doubleproperty">
+    <xsd:attribute name="name" type="non-empty-string" use="required" />
+    <xsd:attribute name="value" type="xsd:double" />
+  </xsd:complexType>
+
+  <xsd:complexType name="dateproperty">
+    <xsd:attribute name="name" type="non-empty-string" use="required" />
+    <xsd:attribute name="value" type="xsd:dateTime" />
+  </xsd:complexType>
+
   <xsd:group name="common_fields">
     <xsd:choice>
       <xsd:element name="category" type="xsd:normalizedString" />
       <xsd:element name="subcategory" type="xsd:normalizedString" />
       <xsd:element name="description" type="xsd:string" />
       <xsd:element name="source" type="xsd:normalizedString" />
+      <xsd:element name="booleanproperty" type="booleanproperty" />
+      <xsd:element name="stringproperty" type="stringproperty" />
+      <xsd:element name="doubleproperty" type="doubleproperty" />
+      <xsd:element name="dateproperty" type="dateproperty" />
     </xsd:choice>
   </xsd:group>
 
@@ -357,9 +381,11 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="resourceskills" type="resourceskilllist" minOccurs="0" />
+      <xsd:element name="resourceskills" type="resourceskilllist" />
+      <xsd:element name="source" type="xsd:normalizedString" />
     </xsd:choice>
     <xsd:attribute name="name" type="non-empty-string" use="required" />
+    <xsd:attribute name="source" type="xsd:normalizedString" />
   </xsd:complexType>
 
   <xsd:complexType name="skilllist">

@@ -3306,6 +3306,10 @@ class PythonExtensionBase : public PyObject
       return NULL;
     }
 
+    /** Return the Python dictionary. */
+    PyObject* const* getDict() const {return &dict;}
+    PyObject** getDict() {return &dict;}
+
   protected:
     static vector<PythonType*> table;
 
@@ -3400,7 +3404,7 @@ class Object : public PythonExtensionBase
       * for which the "this" element is immediate parent.<br>
       * It is called when the open element tag is encountered.
       */
-    virtual void beginElement(XMLInput&, const Attribute&) {}
+    virtual DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
 
     /** Called while restoring the model from an XML-file.<br>
       * This is called when the corresponding close element tag
@@ -3499,6 +3503,58 @@ class Object : public PythonExtensionBase
       * If no argument is given the representation is returned as a string.
       */
     static DECLARE_EXPORT PyObject* toXML(PyObject*, PyObject*);
+};
+
+
+/** @brief A wrapper class for a Python dictionary, thats allows serialization
+  * to and from XML.
+  *
+  * Note that the dictionary isn't owned by this class. It remains fully owned
+  * by code constructing an instance of the PythonDictionary class, following
+  * the flyweight design pattern.
+  */
+class PythonDictionary : public Object
+{
+  private:
+    /** Python dictionary being wrapped. */
+    PyObject** dict;
+
+    /** Temporary storage while reading. */
+    string name;
+
+    /** Temporary storage while reading. */
+    string value_string;
+    bool value_bool;
+    Date value_date;
+    double value_double;
+
+    /** Temporary storage of the data type. */
+    short type;
+
+  public:
+    /** Constructor.<br>
+      * We *assume* the Python object passed is a dictionary.
+      */
+    explicit PythonDictionary(PyObject** d, short i) : dict(d), type(i) {}
+
+    /** This static method is used to read XML data into a dictionary.<br>
+      * It is normally called from the beginElement() method of an object.
+      */
+    static DECLARE_EXPORT void read(XMLInput&, const Attribute&, PyObject**);
+
+    /** This static method is used to write a dictionary as XML.
+      * It is normally called from the writeElement() method of an object.
+      */
+    static DECLARE_EXPORT void write(XMLOutput*, PyObject* const*);
+
+    void endElement(XMLInput&, const Attribute&, const DataElement&);
+
+    static const MetaClass *metadata;
+    const MetaClass& getType() const {return *metadata;}
+    size_t getSize(void) const
+    {
+      return sizeof(PythonDictionary) + name.size() + value_string.size();
+    }
 };
 
 

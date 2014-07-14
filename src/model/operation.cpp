@@ -509,6 +509,9 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const Keyword& tag, mo
   if (loc)
     o->writeElement(Tags::tag_location, loc);
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write extra plan information
   if ((o->getContentType() == XMLOutput::PLAN
       || o->getContentType() == XMLOutput::PLANDETAIL) && first_opplan)
@@ -542,6 +545,8 @@ DECLARE_EXPORT void Operation::beginElement(XMLInput& pIn, const Attribute& pAtt
     pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn.getAttributes()));
   else if (pAttr.isA (Tags::tag_location))
     pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
+  else
+    PythonDictionary::read(pIn, pAttr, getDict());
 }
 
 

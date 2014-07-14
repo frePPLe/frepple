@@ -304,6 +304,9 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
     }
   }
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
@@ -320,7 +323,10 @@ DECLARE_EXPORT void Demand::beginElement(XMLInput& pIn, const Attribute& pAttr)
   else if (pAttr.isA(Tags::tag_operationplan))
     pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata,pIn.getAttributes()));
   else
+  {
+    PythonDictionary::read(pIn, pAttr, getDict());
     HasHierarchy<Demand>::beginElement(pIn, pAttr);
+  }
 }
 
 

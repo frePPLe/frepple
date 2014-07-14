@@ -244,6 +244,9 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
   if (getCarryingCost()!= 0.0)
     o->writeElement(Tags::tag_carrying_cost, getCarryingCost());
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write extra plan information
   i = flowplans.begin();
   if ((o->getContentType() == XMLOutput::PLAN
@@ -280,7 +283,7 @@ DECLARE_EXPORT void Buffer::beginElement(XMLInput& pIn, const Attribute& pAttr)
     Flow *f =
       dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn.getAttributes()));
     if (f) f->setBuffer(this);
-    pIn.readto (f);
+    pIn.readto(f);
   }
   else if (pAttr.isA(Tags::tag_producing))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
@@ -294,7 +297,10 @@ DECLARE_EXPORT void Buffer::beginElement(XMLInput& pIn, const Attribute& pAttr)
   else if (pAttr.isA(Tags::tag_flowplans))
     pIn.IgnoreElement();
   else
+  {
+    PythonDictionary::read(pIn, pAttr, getDict());
     HasHierarchy<Buffer>::beginElement(pIn, pAttr);
+  }
 }
 
 

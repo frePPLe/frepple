@@ -45,6 +45,14 @@ DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;
 DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
 
+const MetaClass* PythonDictionary::metadata = NULL;
+
+
+DECLARE_EXPORT void Object::beginElement(XMLInput& pIn, const Attribute& pAttr)
+{
+  PythonDictionary::read(pIn, pAttr, getDict());
+}
+
 
 #if PY_MAJOR_VERSION >= 3
 PyObject* PythonInterpreter::createModule()
@@ -480,6 +488,119 @@ DECLARE_EXPORT PythonType* PythonExtensionBase::registerPythonType(int size, con
   PythonType *cachedTypePtr = new PythonType(size, t);
   table.push_back(cachedTypePtr);
   return cachedTypePtr;
+}
+
+
+DECLARE_EXPORT void PythonDictionary::write(XMLOutput* o, PyObject* const* pydict)
+{
+  if (!*pydict) return; // No custom fields here
+
+  // Iterate over all properties
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject *py_key, *py_value;
+  Py_ssize_t py_pos = 0;
+  while (PyDict_Next(*pydict, &py_pos, &py_key, &py_value))
+  {
+    PythonObject key(py_key);
+    PythonObject value(py_value);
+    if (PyBool_Check(py_value))
+      o->writeElement(Tags::tag_booleanproperty,
+        Tags::tag_name, key.getString(),
+        Tags::tag_value, value.getBool() ? "1" : "0"
+        );
+    else if (PyFloat_Check(py_value))
+      o->writeElement(Tags::tag_doubleproperty,
+        Tags::tag_name, key.getString(),
+        Tags::tag_value, value.getString()
+        );
+    else if (PyDateTime_Check(py_value) || PyDate_Check(py_value))
+      o->writeElement(Tags::tag_dateproperty,
+        Tags::tag_name, key.getString(),
+        Tags::tag_value, string(value.getDate())
+        );
+    else
+      o->writeElement(Tags::tag_stringproperty,
+        Tags::tag_name, key.getString(),
+        Tags::tag_value, value.getString()
+        );
+  }
+  PyGILState_Release(pythonstate);
+}
+
+
+void PythonDictionary::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+{
+  if (pAttr.isA(Tags::tag_name))
+    name = pElement.getString();
+  else if (pAttr.isA(Tags::tag_value))
+  {
+    switch (type)
+    {
+      case 1: // Boolean
+        value_bool = pElement.getBool();
+        break;
+      case 2: // Date
+        value_date = pElement.getDate();
+        break;
+      case 3: // Double
+        value_double = pElement.getDouble();
+        break;
+      default: // String
+        value_string = pElement.getString();
+    }
+  }
+  else if (pIn.isObjectEnd())
+  {
+    // Adding the new key-value pair to the dictionary.
+    PyGILState_STATE pythonstate = PyGILState_Ensure();
+    PythonObject key(name);
+    if (!*dict)
+    {
+      *dict = PyDict_New();
+      Py_INCREF(*dict);
+    }
+    switch (type)
+    {
+      case 1: // Boolean
+        {
+        PythonObject val(value_bool);
+        PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
+        break;
+        }
+      case 2: // Date
+        {
+        PythonObject val(value_date);
+        PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
+        break;
+        }
+      case 3: // Double
+        {
+        PythonObject val(value_double);
+        PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
+        break;
+        }
+      default: // String
+        {
+        PythonObject val(value_string);
+        PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
+        }
+    }
+    PyGILState_Release(pythonstate);
+    delete this;  // This was only a temporary object during the read!
+  }
+}
+
+
+DECLARE_EXPORT void PythonDictionary::read(XMLInput& pIn, const Attribute& pAttr, PyObject** pDict)
+{
+  if (pAttr.isA(Tags::tag_booleanproperty))
+    pIn.readto(new PythonDictionary(pDict, 1));
+  else if (pAttr.isA(Tags::tag_dateproperty))
+    pIn.readto(new PythonDictionary(pDict, 2));
+  else if (pAttr.isA(Tags::tag_doubleproperty))
+    pIn.readto(new PythonDictionary(pDict, 3));
+  else if (pAttr.isA(Tags::tag_stringproperty))
+    pIn.readto(new PythonDictionary(pDict, 4));
 }
 
 

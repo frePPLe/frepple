@@ -102,6 +102,9 @@ DECLARE_EXPORT void SetupMatrix::writeElement(XMLOutput *o, const Keyword& tag, 
   // Write source field
   o->writeElement(Tags::tag_source, getSource());
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write all rules
   o->BeginObject (Tags::tag_rules);
   for (RuleIterator i = beginRules(); i != endRules(); ++i)
@@ -121,6 +124,8 @@ DECLARE_EXPORT void SetupMatrix::beginElement(XMLInput& pIn, const Attribute& pA
       && pIn.getParentElement().first.isA(Tags::tag_rules))
     // A new rule
     pIn.readto(createRule(pIn.getAttributes()));
+  else
+    PythonDictionary::read(pIn, pAttr, getDict());
 }
 
 

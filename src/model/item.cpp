@@ -81,6 +81,9 @@ DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   o->writeElement(Tags::tag_operation, deliveryOperation);
   if (getPrice() != 0.0) o->writeElement(Tags::tag_price, getPrice());
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
@@ -91,7 +94,10 @@ DECLARE_EXPORT void Item::beginElement(XMLInput& pIn, const Attribute& pAttr)
   if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else
+  {
+    PythonDictionary::read(pIn, pAttr, getDict());
     HasHierarchy<Item>::beginElement(pIn, pAttr);
+  }
 }
 
 

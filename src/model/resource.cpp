@@ -214,6 +214,9 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
     o->writeElement(Tags::tag_setupmatrix, getSetupMatrix());
   Plannable::writeElement(o, tag);
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write extra plan information
   loadplanlist::const_iterator i = loadplans.begin();
   if (o->getContentType() == XMLOutput::PLAN  && i!=loadplans.end())
@@ -280,7 +283,10 @@ DECLARE_EXPORT void Resource::beginElement(XMLInput& pIn, const Attribute& pAttr
       && pIn.getParentElement().first.isA(Tags::tag_skills))
     pIn.readto( Skill::reader(Skill::metadata,pIn.getAttributes()) );
   else
+  {
+    PythonDictionary::read(pIn, pAttr, getDict());
     HasHierarchy<Resource>::beginElement(pIn, pAttr);
+  }
 }
 
 

@@ -35,6 +35,7 @@
 	</members>
 	<item name="item 1"/>
 	<location name="locA"/>
+	<stringproperty name="myfield" value="my custom field"/>
 </buffer>
 <operation name="make item" xsi:type="operation_routing">
 	<operationplans>

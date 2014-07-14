@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Test model for custom fields</name>
+	<description>
+  In this test we verify that custom fields can be added to the planning engine.
+  The fields can be set and updated through the XML and the Python interface.
+  The values are also saved in the XML output file.
+  </description>
+	<current>2010-01-01T00:00:00</current>
+	<operations>
+	</operations>
+	<items>
+		<item name="test">
+			<source>ERP</source>
+			<stringproperty name="new_string_field" value="zorro"/>
+			<booleanproperty name="boolean_field" value="1"/>
+			<stringproperty name="new_object_field" value="test"/>
+			<doubleproperty name="new_double_field" value="12.3"/>
+			<dateproperty name="new_date_field" value="2014-01-01T00:00:00"/>
+			<dateproperty name="date_field" value="2014-01-01T01:01:01"/>
+			<doubleproperty name="double_field" value="1.0"/>
+			<booleanproperty name="new_boolean_field" value="1"/>
+			<stringproperty name="string_field" value="1"/>
+		</item>
+	</items>
+</plan>

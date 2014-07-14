@@ -69,6 +69,9 @@ DECLARE_EXPORT void Customer::writeElement(XMLOutput* o, const Keyword& tag, mod
   HasDescription::writeElement(o, tag);
   HasHierarchy<Customer>::writeElement(o, tag);
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOTAIL && m != NOHEADTAIL) o->EndObject(tag);
 }
@@ -76,6 +79,7 @@ DECLARE_EXPORT void Customer::writeElement(XMLOutput* o, const Keyword& tag, mod
 
 DECLARE_EXPORT void Customer::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
+  PythonDictionary::read(pIn, pAttr, getDict());
   HasHierarchy<Customer>::beginElement(pIn, pAttr);
 }
 

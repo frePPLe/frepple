@@ -289,6 +289,9 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   // Write the required skill
   if (skill) o->writeElement(Tags::tag_skill, skill);
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
@@ -302,6 +305,8 @@ DECLARE_EXPORT void Load::beginElement(XMLInput& pIn, const Attribute& pAttr)
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else if (pAttr.isA (Tags::tag_skill))
     pIn.readto( Skill::reader(Skill::metadata,pIn.getAttributes()) );
+  else
+    PythonDictionary::read(pIn, pAttr, getDict());
 }
 
 

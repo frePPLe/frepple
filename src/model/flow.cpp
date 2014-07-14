@@ -267,6 +267,9 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m
   if (getEffective().getEnd() != Date::infiniteFuture)
     o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
@@ -278,6 +281,8 @@ DECLARE_EXPORT void Flow::beginElement(XMLInput& pIn, const Attribute& pAttr)
     pIn.readto( Buffer::reader(Buffer::metadata,pIn.getAttributes()) );
   else if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
+  else
+    PythonDictionary::read(pIn, pAttr, getDict());
 }
 
 
@@ -366,6 +371,9 @@ DECLARE_EXPORT void FlowEnd::writeElement
     o->writeElement(Tags::tag_effective_start, getEffective().getStart());
   if (getEffective().getEnd() != Date::infiniteFuture)
     o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
+
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
 
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);

@@ -838,6 +838,9 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
     o->EndObject(Tags::tag_flowplans);
   }
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
@@ -851,6 +854,8 @@ DECLARE_EXPORT void OperationPlan::beginElement(XMLInput& pIn, const Attribute& 
     pIn.readto(createOperationPlan(metadata,pIn.getAttributes()));
   else if (pAttr.isA(Tags::tag_flowplans))
     pIn.IgnoreElement();
+  else
+    PythonDictionary::read(pIn, pAttr, getDict());
 }
 
 

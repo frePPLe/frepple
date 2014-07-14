@@ -128,6 +128,9 @@ DECLARE_EXPORT void ResourceSkill::writeElement(XMLOutput *o, const Keyword& tag
   if (getEffective().getEnd() != Date::infiniteFuture)
     o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
@@ -139,6 +142,8 @@ DECLARE_EXPORT void ResourceSkill::beginElement(XMLInput& pIn, const Attribute& 
     pIn.readto( Resource::reader(Resource::metadata,pIn.getAttributes()) );
   else if (pAttr.isA (Tags::tag_skill))
     pIn.readto( Skill::reader(Skill::metadata,pIn.getAttributes()) );
+  else
+    PythonDictionary::read(pIn, pAttr, getDict());
 }
 
 

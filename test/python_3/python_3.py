@@ -295,12 +295,12 @@ print(buf2, buf2.__class__, buf2.location, isinstance(buf2, frepple.buffer), \
 ###
 print("\nCatching some exceptions")
 try:
-  print(buf1.crazyfield)
+  print(buf1.myfield)
 except Exception as e:
   print("Catching exception %s: %s" % (e.__class__.__name__, e))
 
 try:
-  buf1.crazyfield = "doesn't exist"
+  buf1.myfield = "my custom field"
 except Exception as e:
   print("Catching exception %s: %s" % (e.__class__.__name__, e))
 

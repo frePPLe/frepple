@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for custom fields</name>
+  <description>
+  In this test we verify that custom fields can be added to the planning engine.
+  The fields can be set and updated through the XML and the Python interface.
+  The values are also saved in the XML output file.
+  </description>
+  <current>2010-01-01T00:00:00</current>
+  <items>
+    <item name="test" source="ERP">
+      <booleanproperty name="boolean_field" value="1"/>
+      <stringproperty name="string_field" value="1"/>
+      <doubleproperty name="double_field" value="1"/>
+      <dateproperty name="date_field" value="2014-01-01T01:01:01"/>
+    </item>
+  </items>
+  
+<?python
+from __future__ import print_function
+from datetime import date
+it = frepple.item(name="test")
+it.new_boolean_field = True
+it.new_string_field = "zorro"
+it.new_double_field = 12.3
+it.new_object_field = it
+it.new_date_field = date(2014,1,1)
+
+with open("output.1.xml","wt") as output:
+  print("boolean_field", it.boolean_field, file=output)
+  print("string_field", it.string_field, file=output)
+  print("double_field", it.double_field, file=output)
+  print("date_field", it.date_field, file=output)
+  print("new_boolean_field", it.new_boolean_field, file=output)
+  print("new_string_field", it.new_string_field, file=output)
+  print("new_double_field", it.new_double_field, file=output)
+  print("new_object_field", it.new_object_field.source, file=output)
+  print("new_object_field", it.new_object_field, file=output)
+  print("new_date_field", it.new_date_field, file=output)
+ 
+frepple.saveXMLfile("output.2.xml")
+?>
+
+</plan>

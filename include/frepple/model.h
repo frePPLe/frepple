@@ -486,6 +486,7 @@ class CalendarDouble : public Calendar
             o->writeElement(Tags::tag_starttime, getStartTime());
           if (getEndTime() != TimePeriod(86400L))
             o->writeElement(Tags::tag_endtime, getEndTime());
+          PythonDictionary::write(o, getDict());
           o->EndObject(tag);
         }
 

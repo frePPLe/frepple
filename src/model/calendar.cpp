@@ -153,6 +153,9 @@ void CalendarDouble::writeElement(XMLOutput *o, const Keyword& tag, mode m) cons
     o->writeElement(Tags::tag_bucket, *i, FULL);
   o->EndObject(Tags::tag_buckets);
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
@@ -410,6 +413,9 @@ DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const Keyword& tag, mod
     o->writeElement(Tags::tag_bucket, *i, FULL);
   o->EndObject(Tags::tag_buckets);
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
@@ -482,6 +488,8 @@ DECLARE_EXPORT void Calendar::beginElement(XMLInput& pIn, const Attribute& pAttr
       && pIn.getParentElement().first.isA(Tags::tag_buckets))
     // A new bucket
     pIn.readto(createBucket(pIn.getAttributes()));
+  else
+    PythonDictionary::read(pIn, pAttr, getDict());
 }
 
 
@@ -516,6 +524,7 @@ DECLARE_EXPORT void Calendar::Bucket::writeElement
     o->writeElement(Tags::tag_starttime, starttime);
   if (endtime != TimePeriod(86400L))
     o->writeElement(Tags::tag_endtime, endtime);
+  PythonDictionary::write(o, getDict());
   o->EndObject(tag);
 }
 

@@ -69,6 +69,9 @@ DECLARE_EXPORT void Skill::writeElement(XMLOutput *o, const Keyword& tag, mode m
   // Write source field
   o->writeElement(Tags::tag_source, getSource());
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
@@ -84,6 +87,8 @@ DECLARE_EXPORT void Skill::beginElement(XMLInput& pIn, const Attribute& pAttr)
     if (s) s->setSkill(this);
     pIn.readto(s);
   }
+  else
+    PythonDictionary::read(pIn, pAttr, getDict());
 }
 
 

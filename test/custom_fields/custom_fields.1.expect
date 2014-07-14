@@ -1,0 +1,10 @@
+boolean_field True
+string_field 1
+double_field 1.0
+date_field 2014-01-01 01:01:01
+new_boolean_field True
+new_string_field zorro
+new_double_field 12.3
+new_object_field ERP
+new_object_field test
+new_date_field 2014-01-01

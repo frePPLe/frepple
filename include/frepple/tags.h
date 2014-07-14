@@ -33,6 +33,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_alternates;
     static DECLARE_EXPORT const Keyword tag_autocommit;
     static DECLARE_EXPORT const Keyword tag_available;
+    static DECLARE_EXPORT const Keyword tag_booleanproperty;
     static DECLARE_EXPORT const Keyword tag_bucket;
     static DECLARE_EXPORT const Keyword tag_buckets;
     static DECLARE_EXPORT const Keyword tag_buffer;
@@ -57,6 +58,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_customers;
     static DECLARE_EXPORT const Keyword tag_data;
     static DECLARE_EXPORT const Keyword tag_date;
+    static DECLARE_EXPORT const Keyword tag_dateproperty;
     static DECLARE_EXPORT const Keyword tag_dates;
     static DECLARE_EXPORT const Keyword tag_days;
     static DECLARE_EXPORT const Keyword tag_default;
@@ -65,6 +67,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_description;
     static DECLARE_EXPORT const Keyword tag_detectproblems;
     static DECLARE_EXPORT const Keyword tag_discrete;
+    static DECLARE_EXPORT const Keyword tag_doubleproperty;
     static DECLARE_EXPORT const Keyword tag_due;
     static DECLARE_EXPORT const Keyword tag_duration;
     static DECLARE_EXPORT const Keyword tag_duration_per;
@@ -133,6 +136,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_produce_material;
     static DECLARE_EXPORT const Keyword tag_producing;
     static DECLARE_EXPORT const Keyword tag_producing_date;
+    static DECLARE_EXPORT const Keyword tag_property;
     static DECLARE_EXPORT const Keyword tag_quantity;
     static DECLARE_EXPORT const Keyword tag_quantity_buffer;
     static DECLARE_EXPORT const Keyword tag_quantity_demand;
@@ -159,6 +163,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_startdate;
     static DECLARE_EXPORT const Keyword tag_starttime;
     static DECLARE_EXPORT const Keyword tag_steps;
+    static DECLARE_EXPORT const Keyword tag_stringproperty;
     static DECLARE_EXPORT const Keyword tag_subcategory;
     static DECLARE_EXPORT const Keyword tag_supply;
     static DECLARE_EXPORT const Keyword tag_tosetup;

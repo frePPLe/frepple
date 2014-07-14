@@ -68,6 +68,9 @@ DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const Keyword& tag, mod
   HasHierarchy<Location>::writeElement(o, tag);
   o->writeElement(Tags::tag_available, available);
 
+  // Write the custom fields
+  PythonDictionary::write(o, getDict());
+
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
 }
@@ -78,7 +81,10 @@ DECLARE_EXPORT void Location::beginElement(XMLInput& pIn, const Attribute& pAttr
   if (pAttr.isA(Tags::tag_available) || pAttr.isA(Tags::tag_maximum))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else
+  {
+    PythonDictionary::read(pIn, pAttr, getDict());
     HasHierarchy<Location>::beginElement(pIn, pAttr);
+  }
 }
 
 

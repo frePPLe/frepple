@@ -123,6 +123,7 @@
 			</members>
 			<item name="item 1"/>
 			<location name="locA"/>
+			<stringproperty name="myfield" value="my custom field"/>
 		</buffer>
 		<buffer name="buffer2">
 			<owner name="buffer1" xsi:type="buffer_procure"/>

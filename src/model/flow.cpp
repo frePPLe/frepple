@@ -267,6 +267,9 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m
   if (getEffective().getEnd() != Date::infiniteFuture)
     o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
 
+  // Write source field
+  o->writeElement(Tags::tag_source, getSource());
+
   // Write the custom fields
   PythonDictionary::write(o, getDict());
 
@@ -321,6 +324,8 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, con
     setEffectiveEnd(pElement.getDate());
   else if (pAttr.isA(Tags::tag_effective_start))
     setEffectiveStart(pElement.getDate());
+  else if (pAttr.isA(Tags::tag_source))
+    setSource(pElement.getString());
   else if (pIn.isObjectEnd())
   {
     // The flow data are now all read in. See if it makes sense now...
@@ -372,6 +377,9 @@ DECLARE_EXPORT void FlowEnd::writeElement
   if (getEffective().getEnd() != Date::infiniteFuture)
     o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
 
+  // Write source field
+  o->writeElement(Tags::tag_source, getSource());
+
   // Write the custom fields
   PythonDictionary::write(o, getDict());
 
@@ -406,6 +414,8 @@ DECLARE_EXPORT PyObject* Flow::getattro(const Attribute& attr)
     ch << getSearch();
     return PythonObject(ch.str());
   }
+  if (attr.isA(Tags::tag_source))
+    return PythonObject(getSource());
   return NULL;
 }
 
@@ -454,6 +464,8 @@ DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& fie
   }
   else if (attr.isA(Tags::tag_search))
     setSearch(field.getString());
+  else if (attr.isA(Tags::tag_source))
+    setSource(field.getString());
   else
     return -1;
   return 0;

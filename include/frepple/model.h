@@ -3314,7 +3314,7 @@ class BufferProcure : public Buffer
   * start of the operation.
   */
 class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
-  public Solvable
+  public Solvable, public HasSource
 {
   public:
     /** Destructor. */
@@ -4323,7 +4323,7 @@ class ResourceSkill : public Object, public Association<Resource,Skill,ResourceS
 /** @brief This class links a resource to a certain operation. */
 class Load
   : public Object, public Association<Operation,Resource,Load>::Node,
-  public Solvable
+  public Solvable, public HasSource
 {
     friend class Resource;
     friend class Operation;

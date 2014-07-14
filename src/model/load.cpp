@@ -289,6 +289,9 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   // Write the required skill
   if (skill) o->writeElement(Tags::tag_skill, skill);
 
+  // Write source field
+  o->writeElement(Tags::tag_source, getSource());
+
   // Write the custom fields
   PythonDictionary::write(o, getDict());
 
@@ -353,6 +356,8 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
     if (s) setSkill(s);
     else throw LogicException("Incorrect object type during read operation");
   }
+  else if (pAttr.isA(Tags::tag_source))
+    setSource(pElement.getString());
   else if (pIn.isObjectEnd())
   {
     // The load data is now all read in. See if it makes sense now...
@@ -400,6 +405,8 @@ DECLARE_EXPORT PyObject* Load::getattro(const Attribute& attr)
     return PythonObject(getSetup());
   if (attr.isA(Tags::tag_skill))
     return PythonObject(getSkill());
+  if (attr.isA(Tags::tag_source))
+    return PythonObject(getSource());
   return NULL;
 }
 
@@ -460,6 +467,8 @@ DECLARE_EXPORT int Load::setattro(const Attribute& attr, const PythonObject& fie
     Skill* y = static_cast<Skill*>(static_cast<PyObject*>(field));
     setSkill(y);
   }
+  else if (attr.isA(Tags::tag_source))
+    setSource(field.getString());
   else
     return -1;
   return 0;

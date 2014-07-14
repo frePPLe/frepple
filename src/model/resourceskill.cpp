@@ -128,6 +128,9 @@ DECLARE_EXPORT void ResourceSkill::writeElement(XMLOutput *o, const Keyword& tag
   if (getEffective().getEnd() != Date::infiniteFuture)
     o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
 
+  // Write source field
+  o->writeElement(Tags::tag_source, getSource());
+
   // Write the custom fields
   PythonDictionary::write(o, getDict());
 
@@ -167,6 +170,8 @@ DECLARE_EXPORT void ResourceSkill::endElement (XMLInput& pIn, const Attribute& p
     setEffectiveEnd(pElement.getDate());
   else if (pAttr.isA(Tags::tag_effective_start))
     setEffectiveStart(pElement.getDate());
+  else if (pAttr.isA(Tags::tag_source))
+    setSource(pElement.getString());
   else if (pAttr.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());
@@ -203,6 +208,8 @@ DECLARE_EXPORT PyObject* ResourceSkill::getattro(const Attribute& attr)
     return PythonObject(getEffective().getEnd());
   if (attr.isA(Tags::tag_effective_start))
     return PythonObject(getEffective().getStart());
+  if (attr.isA(Tags::tag_source))
+    return PythonObject(getSource());
   return NULL;
 }
 
@@ -235,6 +242,8 @@ DECLARE_EXPORT int ResourceSkill::setattro(const Attribute& attr, const PythonOb
     setEffectiveEnd(field.getDate());
   else if (attr.isA(Tags::tag_effective_start))
     setEffectiveStart(field.getDate());
+  else if (attr.isA(Tags::tag_source))
+    setSource(field.getString());
   else
     return -1;
   return 0;

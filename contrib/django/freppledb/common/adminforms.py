@@ -220,8 +220,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     else:
       msg = _('The %(name)s "%(obj)s" was added successfully.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
-      # Redirect to previous crumb
-      return HttpResponseRedirect(request.session['crumbs'][request.prefix][-2][2])
+      # Redirect to previous url
+      return HttpResponseRedirect("%s%s" % (request.prefix, request.session['prev'][request.prefix][0]))
+
 
   def response_change(self, request, obj):
     """
@@ -261,8 +262,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     else:
       msg = _('The %(name)s "%(obj)s" was changed successfully.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
-      # Redirect to previous crumb
-      return HttpResponseRedirect(request.session['crumbs'][request.prefix][-2][2])
+      # Redirect to previous url
+      return HttpResponseRedirect("%s%s" % (request.prefix, request.session['prev'][request.prefix][0]))
 
 
   @csrf_protect_m
@@ -315,8 +316,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
       self.message_user(request, _('The %(name)s "%(obj)s" was deleted successfully.') % {'name': force_text(opts.verbose_name), 'obj': force_text(obj_display)})
 
-      # Redirect to previous crumb
-      return HttpResponseRedirect(request.session['crumbs'][request.prefix][-3][2])
+      # Redirect to previous url
+      return HttpResponseRedirect("%s%s" % (request.prefix, request.session['prev'][request.prefix][0]))
 
     object_name = force_text(opts.verbose_name)
 

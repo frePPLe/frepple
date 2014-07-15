@@ -69,6 +69,17 @@ class CrumbsNode(Node):
       req.session['crumbs'] = {}
       cur = []
 
+    # Store the current and previous URLs in the session
+    try: u = req.session['prev']
+    except: u = req.session['prev'] = {}
+    if req.prefix in u:
+      if u[req.prefix][-1] != req.path:
+        while len(u[req.prefix]) > 1:
+          u[req.prefix].pop(0)
+        u[req.prefix].append( req.path )
+    else:
+      u[req.prefix] = [ req.path, ]
+
     # Compute the new crumb node
     count = 0
     try: title = variable_title.resolve(context)

@@ -305,7 +305,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
           return mark_safe(a.replace('href="','href="%s' % request.prefix))
       deleted_objects = [ replace_url(i) for i in deleted_objects ]
       protected = [ replace_url(i) for i in protected ]
-    print deleted_objects
 
     if request.POST: # The user has already confirmed the deletion.
       if perms_needed:

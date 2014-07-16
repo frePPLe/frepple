@@ -1606,14 +1606,15 @@ class Date
       // The standard library function localtime() is not re-entrant: the same
       // static structure is used for all calls. In a multi-threaded environment
       // the function is not to be used.
-      // The POSIX standard defines a re-entrant version of the function:
-      // localtime_r.
-      // Visual C++ 6.0 and Borland 5.5 are missing it, but provide a thread-safe
-      // variant without changing the function semantics.
       #ifdef HAVE_LOCALTIME_R
+        // The POSIX standard defines a re-entrant version of the function.
         localtime_r(&lval, tm_struct);
+      #elif defined(WIN32)
+        // Microsoft uses another function name with, of course, a different
+        // name and a different order of arguments.
+        localtime_s(tm_struct, &lval);
       #else
-        *tm_struct = *localtime(&lval);
+        #error A multi-threading safe localtime function is required
       #endif
     }
 

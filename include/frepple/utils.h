@@ -4852,7 +4852,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     void setName(const string& newname) {st.rename(this, newname);}
 
     /** Destructor. */
-    ~HasName() {st.erase(this);}
+    DECLARE_EXPORT ~HasName() {st.erase(this);}
 
     /** Return the name as the string representation in Python. */
     virtual PyObject* str() const {return PythonObject(getName());}

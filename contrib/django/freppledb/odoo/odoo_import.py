@@ -433,19 +433,22 @@ class Connector(object):
       self.calendar = Parameter.getValue("odoo.calendar", self.database)
       if self.calendar:
 
+        # Delete existing calendar buckets
+        cursor.execute("delete from calendarbucket where source='odoo'")
+
         # Update calendar
         cnt = cursor.execute("update calendar \
           set defaultvalue=0, subcategory='odoo', lastmodified='%s' \
           where name=%%s" % self.date,
           [self.calendar,])
-        if cnt == 0:
-          # Create the calendar
+        if not cnt:
+          # Delete previous calendar if it exists
+          cursor.execute("delete from calendar where subcategory='odoo'")
+          # Create the new calendar
           cursor.execute("insert into calendar \
-           (name, subcategory, lastmodified) values (%s,'odoo','%s')"
-           % self.date)
-        else:
-          # Delete existing calendar buckets
-          cursor.execute("delete from calendarbucket where calendar_id=%s", [self.calendar,])
+            (name, subcategory, lastmodified) \
+            values (%%s,'odoo','%s')" % self.date,
+          [self.calendar,])
 
         # Create calendar buckets for the attendance records
         buckets = []
@@ -455,33 +458,54 @@ class Connector(object):
         for i in self.odoo_data('resource.calendar', ids, fields):
           for j in self.odoo_data('resource.calendar.attendance', i['attendance_ids'], fields2):
             buckets.append( [
-              self.calendar, datetime.strptime(j['date_from'] or "2000-01-01", '%Y-%m-%d'),
+              1000, self.calendar, datetime.strptime(j['date_from'] or "2000-01-01", '%Y-%m-%d'), None,
               j['dayofweek'] == '0' and '1' or '0', j['dayofweek'] == '1' and '1' or '0',
               j['dayofweek'] == '2' and '1' or '0', j['dayofweek'] == '3' and '1' or '0',
               j['dayofweek'] == '4' and '1' or '0', j['dayofweek'] == '5' and '1' or '0',
               j['dayofweek'] == '6' and '1' or '0',
               '%s:%s:00' % (int(j['hour_from']), round( (j['hour_from'] - int(j['hour_from'])) * 60)),
               '%s:%s:00' % (int(j['hour_to']), round( (j['hour_to'] - int(j['hour_to'])) * 60)),
-              1000
+              1
               ] )
 
         # Sort by start date.
         # Required to assure that records with a later start date get a
         # lower priority in frePPLe.
-        buckets.sort(key=itemgetter(2))
+        buckets.sort(key=itemgetter(3))
 
         # Assign priorities
         priority = 1000
         for i in buckets:
-          i[11] = priority
+          i[0] = priority
           priority -= 1
 
         # Create frePPLe records
         cursor.executemany(
           "insert into calendarbucket \
-           (calendar_id, startdate, monday, tuesday, wednesday, thursday, friday, \
-            saturday, sunday, starttime, endtime, priority, value, source, lastmodified) \
-           values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,1.0,'odoo','%s')" % self.date,
+           (priority, calendar_id, startdate, enddate, monday, tuesday, wednesday, thursday, friday, \
+            saturday, sunday, starttime, endtime, value, source, lastmodified) \
+           values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'odoo','%s')" % self.date,
+           buckets
+          )
+
+        # Create calendar buckets for the public holidays
+        buckets = []
+        ids = self.odoo_search('hr.holidays.public.line', [])
+        fields = ['date']
+        for i in self.odoo_data('hr.holidays.public.line', ids, fields):
+          strt = datetime.strptime(i['date'], '%Y-%m-%d')
+          nd = strt + timedelta(days=1)
+          buckets.append( [
+            1, self.calendar, strt, nd, '1', '1', '1', '1', '1', '1', '1',
+            '00:00:00', '23:59:59', 0
+            ] )
+
+        # Create frePPLe records
+        cursor.executemany(
+          "insert into calendarbucket \
+           (priority, calendar_id, startdate, enddate, monday, tuesday, wednesday, thursday, friday, \
+            saturday, sunday, starttime, endtime, value, source, lastmodified) \
+           values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'odoo','%s')" % self.date,
            buckets
           )
 

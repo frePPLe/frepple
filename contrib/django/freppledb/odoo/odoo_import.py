@@ -468,25 +468,31 @@ class Connector(object):
               1
               ] )
 
-        # Sort by start date.
-        # Required to assure that records with a later start date get a
-        # lower priority in frePPLe.
-        buckets.sort(key=itemgetter(3))
+        if len(buckets) > 0:
+          # Sort by start date.
+          # Required to assure that records with a later start date get a
+          # lower priority in frePPLe.
+          buckets.sort(key=itemgetter(3))
 
-        # Assign priorities
-        priority = 1000
-        for i in buckets:
-          i[0] = priority
-          priority -= 1
+          # Assign priorities
+          priority = 1000
+          for i in buckets:
+            i[0] = priority
+            priority -= 1
 
-        # Create frePPLe records
-        cursor.executemany(
-          "insert into calendarbucket \
-           (priority, calendar_id, startdate, enddate, monday, tuesday, wednesday, thursday, friday, \
-            saturday, sunday, starttime, endtime, value, source, lastmodified) \
-           values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'odoo','%s')" % self.date,
-           buckets
-          )
+          # Create frePPLe records
+          cursor.executemany(
+            "insert into calendarbucket \
+             (priority, calendar_id, startdate, enddate, monday, tuesday, wednesday, thursday, friday, \
+              saturday, sunday, starttime, endtime, value, source, lastmodified) \
+             values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'odoo','%s')" % self.date,
+             buckets
+            )
+        else:
+          cursor.execute(
+            "update calendar set defaultvalue=1 where name=%s",
+            [self.calendar,]
+            )
 
         # Create calendar buckets for the public holidays
         buckets = []

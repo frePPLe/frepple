@@ -45,7 +45,7 @@ DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;
 DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
 
-const MetaClass* PythonDictionary::metadata = NULL;
+const MetaCategory* PythonDictionary::metadata = NULL;
 
 
 DECLARE_EXPORT void Object::beginElement(XMLInput& pIn, const Attribute& pAttr)
@@ -132,6 +132,14 @@ DECLARE_EXPORT void PythonInterpreter::initialize()
 
   // Add a string constant for the version
   nok += PyModule_AddStringConstant(module, "version", PACKAGE_VERSION);
+
+  // Create new python type for the dictionary wrapper
+  PythonDictionary::metadata = new MetaCategory("dictionary","");
+  PythonType& x = PythonExtension<PythonDictionary>::getType();
+  x.setName("dictionary");
+  x.setDoc("frePPLe wrapper for a Python dictionary");
+  int tmp = x.typeReady();
+  const_cast<MetaCategory*>(PythonDictionary::metadata)->pythonClass = x.type_object();
 
   // Redirect the stderr and stdout streams of Python
   registerGlobalMethod("log", python_log, METH_VARARGS,

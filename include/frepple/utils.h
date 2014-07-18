@@ -3536,7 +3536,8 @@ class PythonDictionary : public Object
     /** Constructor.<br>
       * We *assume* the Python object passed is a dictionary.
       */
-    explicit PythonDictionary(PyObject** d, short i) : dict(d), type(i) {}
+    explicit PythonDictionary(PyObject** d, short i) : dict(d), type(i)
+      {initType(metadata);}
 
     /** This static method is used to read XML data into a dictionary.<br>
       * It is normally called from the beginElement() method of an object.
@@ -3550,7 +3551,7 @@ class PythonDictionary : public Object
 
     void endElement(XMLInput&, const Attribute&, const DataElement&);
 
-    static const MetaClass *metadata;
+    static const MetaCategory *metadata;
     const MetaClass& getType() const {return *metadata;}
     size_t getSize(void) const
     {

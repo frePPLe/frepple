@@ -89,15 +89,20 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
   {
     // TODO Propagate & solve initial shortages and overloads
 
-    // Solve for safety stock in buffers.
-    if (solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
-
     // Sort the demands of this problem.
     // We use a stable sort to get reproducible results between platforms
     // and STL implementations.
     stable_sort(demands->begin(), demands->end(), demand_comparison);
 
+    // Solve for safety stock in buffers.
+    if (solver->getPlanSafetyStockFirst())
+    {
+      constrainedPlanning = (solver->getPlanType() == 1);
+      solveSafetyStock(solver);
+    }
+
     // Loop through the list of all demands in this planning problem
+    safety_stock_planning = false;
     constrainedPlanning = (solver->getPlanType() == 1);
     for (deque<Demand*>::const_iterator i = demands->begin();
         i != demands->end(); ++i)
@@ -157,12 +162,13 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
 
 void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
 {
-  if (getLogLevel()>0) logger << "Start safety stock replenishment pass" << endl;
+  safety_stock_planning = true;
+  if (getLogLevel()>0) logger << "Start safety stock replenishment pass   " << solver->getConstraints() << endl;
   vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if (buf->getCluster() == cluster
       && ( buf->getMinimum() || buf->getMinimumCalendar()
-        || buf->getMaximum() || buf->getMaximumCalendar() )
+        || buf->getType() == *BufferProcure::metadata )
       )
       bufs[(buf->getLevel()>=0) ? buf->getLevel() : 0].push_back(&*buf);
   for (vector< list<Buffer*> >::iterator b_list = bufs.begin(); b_list != bufs.end(); ++b_list)
@@ -183,6 +189,7 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
       CommandManager::commit();
     }
   if (getLogLevel()>0) logger << "Finished safety stock replenishment pass" << endl;
+  safety_stock_planning = false;
 }
 
 

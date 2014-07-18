@@ -3,13 +3,22 @@
   <name>actual plan</name>
   <description>
     Demonstration of safety stock planning functionalities.
-    * item 1 has a time-phased quantity-based target:
+    * Item 1 has a time-phased quantity-based target:
        10 in january
        20 in february
        5 in march
-    * item 2 has time-based target, set as a post-operation time of 1 week
+      If we plan for safety stock AFTER the demand (ie default behavior), then
+      the decrease of the safety stock doesn't get utilized and ends up as
+      excess material.
+      If we plan for safety stock BEFORE the demand, then the material freed
+      up from the decrease is correctly consumed up by the demand.
+      Solving for safety stock before the demand is however not a suitable
+      setting for every business. It can cause some customer orders to be
+      planned late when we need all available material and capacity to reach
+      the safety stock level on some other products.
+    * Item 2 has time-based target, set as a post-operation time of 1 week
       on the make operation.
-    * item 3 has 2 buffers with quantity based safety stock and without
+    * Item 3 has 2 buffers with quantity based safety stock and without
       any demand
   </description>
   <current>2009-01-01T00:00:00</current>
@@ -145,12 +154,24 @@
 
 <?python
 from __future__ import print_function
-print("CREATING CONSTRAINED PLAN")
-frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2).solve()
+print("CREATING CONSTRAINED PLAN - safety stock last")
+solver = frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2)
+solver.plansafetystockfirst = False
+solver.solve()
 frepple.saveplan("output.1.xml")
-print("CREATING UNCONSTRAINED PLAN")
-frepple.solver_mrp(name="MRP", plantype=2, constraints=15, loglevel=2).solve()
+print("CREATING UNCONSTRAINED PLAN - safety stock last")
+solver.plantype = 2
+solver.solve()
 frepple.saveplan("output.2.xml")
+print("CREATING CONSTRAINED PLAN - safety stock first")
+solver.plantype = 1
+solver.plansafetystockfirst = True
+solver.solve()
+frepple.saveplan("output.3.xml")
+print("CREATING UNCONSTRAINED PLAN - safety stock first")
+solver.plantype = 2
+solver.solve()
+frepple.saveplan("output.4.xml")
 ?>
 
 </plan>

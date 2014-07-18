@@ -707,6 +707,9 @@ class SolverMRP : public Solver
         /** Points to the demand being planned. */
         Demand* planningDemand;
 
+        /** Internal flag that is set to true when solving for safety stock. */
+        bool safety_stock_planning;
+
       public:
         /** Pointer to the current solver status. */
         State* state;

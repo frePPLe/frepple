@@ -2357,10 +2357,10 @@
 			<constraints>
 				<problem>
 					<name>material shortage</name>
-					<description>Buffer &apos;constraint buffer 1&apos; has material shortage of 194</description>
+					<description>Buffer &apos;constraint buffer 1&apos; has material shortage of 190</description>
 					<start>2009-01-09T00:00:00</start>
 					<end>2030-12-31T00:00:00</end>
-					<weight>194</weight>
+					<weight>190</weight>
 				</problem>
 			</constraints>
 		</demand>
@@ -2471,10 +2471,10 @@
 			<constraints>
 				<problem>
 					<name>material shortage</name>
-					<description>Buffer &apos;constraint buffer 2&apos; has material shortage of 194</description>
+					<description>Buffer &apos;constraint buffer 2&apos; has material shortage of 190</description>
 					<start>2009-01-09T00:00:00</start>
 					<end>2030-12-31T00:00:00</end>
-					<weight>194</weight>
+					<weight>190</weight>
 				</problem>
 			</constraints>
 		</demand>
@@ -2548,10 +2548,10 @@
 			<constraints>
 				<problem>
 					<name>material shortage</name>
-					<description>Buffer &apos;constraint buffer 3&apos; has material shortage of 188</description>
+					<description>Buffer &apos;constraint buffer 3&apos; has material shortage of 180</description>
 					<start>2009-01-09T00:00:00</start>
 					<end>2030-12-31T00:00:00</end>
-					<weight>188</weight>
+					<weight>180</weight>
 				</problem>
 			</constraints>
 		</demand>
@@ -2625,10 +2625,10 @@
 			<constraints>
 				<problem>
 					<name>material shortage</name>
-					<description>Buffer &apos;constraint buffer 4&apos; has material shortage of 194</description>
+					<description>Buffer &apos;constraint buffer 4&apos; has material shortage of 190</description>
 					<start>2009-01-09T00:00:00</start>
 					<end>2030-12-31T00:00:00</end>
-					<weight>194</weight>
+					<weight>190</weight>
 				</problem>
 			</constraints>
 		</demand>

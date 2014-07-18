@@ -134,9 +134,12 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 
           // If we got some extra supply, we retry to get some more supply.
           // Only when no extra material is obtained, we give up.
+          // When solving for safety stock or when the parameter allowsplit is
+          // set to false we need to get a single replenishing operationplan.
           if (data->state->a_qty > ROUNDING_ERROR
               && data->state->a_qty < -theDelta - ROUNDING_ERROR
-              && data->getSolver()->getAllowSplits())
+              && data->getSolver()->getAllowSplits() && !data->safety_stock_planning
+             )
             theDelta += data->state->a_qty;
           else
             loop = false;
@@ -173,11 +176,15 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     // *cur, which isn't valid at the end of the list
     if (cur == b->getFlowPlans().end()) break;
 
-    // The minimum or the maximum have changed
+    // The minimum has changed.
     // Note that these limits can be updated only after the processing of the
     // date change in the statement above. Otherwise the code above would
     // already use the new value before the intended date.
-    if (cur->getType() == 3) current_minimum = cur->getMin();
+    // If the flag getPlanSafetyStockFirst is set, then we need to replenish
+    // up to the minimum quantity. If it is not set (which is the default) then
+    // we only replenish up to 0.
+    if (cur->getType() == 3 && (getPlanSafetyStockFirst() || data->safety_stock_planning))
+      current_minimum = cur->getMin();
 
     // Update the pointer to the previous flowplan.
     prev = &*cur;
@@ -324,6 +331,7 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
       double theOnHand = prev->getOnhand();
       double theDelta = theOnHand - current_minimum + shortage;
       bool loop = true;
+logger << " eval " << currentDate << "  " << shortage << "   " << current_minimum << endl;
 
       // Evaluate the situation at the last flowplan before the date change.
       // Is there a shortage at that date?

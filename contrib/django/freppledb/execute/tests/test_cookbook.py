@@ -16,10 +16,12 @@
 #
 
 import os.path
+from StringIO import StringIO
 try:
-  from urllib2 import urlopen
+  from urllib2 import urlopen, URLError
 except:
   from urllib.request import urlopen
+  from urllib.error import URLError
 
 from django.conf import settings
 from django.core import management
@@ -35,14 +37,19 @@ class cookbooktest(TransactionTestCase):
     if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
       settings.INSTALLED_APPS += ('django.contrib.sessions',)
     os.environ['FREPPLE_TEST'] = "YES"
+    # Remove the demo data
+    management.call_command('frepple_flush')
 
   def tearDown(self):
     del os.environ['FREPPLE_TEST']
 
   def loadExcel(self, url):
     # Read the excel file from the website in memory
-    data = urlopen(url).read()
-    self.assertTrue(len(data)>0, "Can't load excel file")
+    try:
+      data = StringIO(urlopen(url).read())
+      data.name = "spreadsheet.xlsx"  # A nasty trick to get the file type guessing right
+    except URLError as e:
+      self.fail("Can't load excel file: %s" % e.reason)
     # Upload the excel data as a form
     self.client.login(username='admin', password='admin')
     response = self.client.post('/execute/launch/importworkbook/', {'spreadsheet': data})
@@ -53,35 +60,30 @@ class cookbooktest(TransactionTestCase):
     resultfilename = os.path.join(os.path.dirname(os.path.realpath(__file__)), resultfile)
     opplans = [ "%s,%s,%s,%s" % (i.operation, i.startdate, i.enddate, i.quantity) for i in output.models.OperationPlan.objects.order_by('operation','startdate','quantity').only('operation','startdate','enddate','quantity') ]
     row = 0
-    print ("zzzz",'\n'.join(opplans))
     with open(resultfilename, 'r') as f:
       for line in f:
-        if opplans[row] != line:
-          self.fail("Difference in expected results")
+        if opplans[row].strip() != line.strip():
+          self.fail("Difference in expected results on line %s" % (row+1))
         row += 1
     if row != len(opplans):
-      self.fail("Difference in expected results1")
+      self.fail("More output rows than expected")
 
   def test_calendar_working_hours(self):
-    management.call_command('frepple_flush')
     self.loadExcel("http://frepple.com/wp-content/uploads/calendar_working_hours.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15)
     self.assertOperationplans("calendar_working_hours.expect")
 
   def test_resource_types(self):
-    management.call_command('frepple_flush')
     self.loadExcel("http://frepple.com/wp-content/uploads/resource_types.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15)
     self.assertOperationplans("resource_types.expect")
 
   def test_demand_priorities(self):
-    management.call_command('frepple_flush')
     self.loadExcel("http://frepple.com/wp-content/uploads/demand_priorities.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15)
     self.assertOperationplans("demand_priorities.expect")
 
   def test_demand_policies(self):
-    management.call_command('frepple_flush')
     self.loadExcel("http://frepple.com/wp-content/uploads/demand_policies.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15)
     self.assertOperationplans("demand_policies.expect")

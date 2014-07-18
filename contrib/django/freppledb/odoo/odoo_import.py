@@ -667,7 +667,7 @@ class Connector(object):
           deliveries.update([(product,location,operation,buffer),])
           due = datetime.strptime(j['requested_date'] or j['date_order'], '%Y-%m-%d')
           priority = 1
-          qty = self.convert_qty_uom(i['product_uom_qty'], i['product_uom'][0], i['product_id'][0]
+          qty = self.convert_qty_uom(i['product_uom_qty'], i['product_uom'][0], i['product_id'][0])
           if name in frepple_keys:
             update.append( (
               product,
@@ -1411,8 +1411,9 @@ class Connector(object):
       for i in self.odoo_data('stock.warehouse.orderpoint', ids, fields):
         if i['active']:
           uom_factor = self.convert_qty_uom(1.0, i['product_uom'][0], i['product_id'][0])
-          orderpoints.append( (i['product_min_qty']*uom_factor, i['product_max_qty']*uom_factor,
-            i['qty_multiple']*uom_factor, i['product_id'][1], i['warehouse_id'][1]) )
+          orderpoints.append( (i['product_min_qty']*uom_factor, i['product_min_qty']*uom_factor,
+            i['product_max_qty']*uom_factor, i['qty_multiple']*uom_factor,
+            i['product_id'][1], i['warehouse_id'][1]) )
         else:
           orderpoints.append( (None, None, None, i['product_id'][1], i['warehouse_id'][1]) )
 
@@ -1430,7 +1431,7 @@ class Connector(object):
         produce)
       cursor.executemany(
         "update buffer \
-          set min_inventory=%s, max_inventory=%s, size_multiple=%s \
+          set minimum=%s, min_inventory=%s, max_inventory=%s, size_multiple=%s \
           where item_id=%s and location_id=%s and subcategory='odoo'",
         orderpoints
         )

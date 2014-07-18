@@ -29,7 +29,7 @@ class DataLoadTest(TestCase):
     # Login
     if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
       settings.INSTALLED_APPS += ('django.contrib.sessions',)
-    self.client.login(username='frepple', password='frepple')
+    self.client.login(username='admin', password='admin')
 
   def test_input_customer(self):
     response = self.client.get('/data/input/customer/?format=json')

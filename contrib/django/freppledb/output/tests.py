@@ -25,7 +25,7 @@ class OutputTest(TestCase):
     # Login
     if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
       settings.INSTALLED_APPS += ('django.contrib.sessions',)
-    self.client.login(username='frepple', password='frepple')
+    self.client.login(username='admin', password='admin')
 
   # Buffer
   def test_output_buffer(self):

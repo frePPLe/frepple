@@ -331,7 +331,6 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
       double theOnHand = prev->getOnhand();
       double theDelta = theOnHand - current_minimum + shortage;
       bool loop = true;
-logger << " eval " << currentDate << "  " << shortage << "   " << current_minimum << endl;
 
       // Evaluate the situation at the last flowplan before the date change.
       // Is there a shortage at that date?

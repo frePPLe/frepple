@@ -138,7 +138,7 @@ DECLARE_EXPORT void PythonInterpreter::initialize()
   PythonType& x = PythonExtension<PythonDictionary>::getType();
   x.setName("dictionary");
   x.setDoc("frePPLe wrapper for a Python dictionary");
-  int tmp = x.typeReady();
+  x.typeReady();
   const_cast<MetaCategory*>(PythonDictionary::metadata)->pythonClass = x.type_object();
 
   // Redirect the stderr and stdout streams of Python

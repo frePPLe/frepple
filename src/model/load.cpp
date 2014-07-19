@@ -205,6 +205,10 @@ DECLARE_EXPORT Load::~Load()
 
 DECLARE_EXPORT void Load::setAlternate(Load *f)
 {
+  // Can't be an alternate to oneself.
+  // No need to flag as an exception.
+  if (f == this) return;
+
   // Validate the argument
   if (!f)
     throw DataException("Setting NULL alternate load");

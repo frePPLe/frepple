@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+# Remove log directory
+rm -rf /var/log/frepple
+
+# Remove group
+chgrp -R root /etc/frepple
+groupdel frepple || true
+
+#DEBHELPER#
+
+exit 0

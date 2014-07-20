@@ -2,13 +2,28 @@
 
 set -e
 
-# Create log directory and make it accessible for the user running apache
+# Create new group for frepple
+getent group frepple > /dev/null 2>&1 || addgroup --quiet frepple
+
+# Remove execute permissions for non-members
+chgrp frepple /usr/bin/frepple /usr/bin/frepplectl
+chmod o= /usr/bin/frepple /usr/bin/frepplectl
+
+# Add apache user to the frepple user group
+. /etc/apache2/envvars
+adduser ${APACHE_RUN_USER} frepple
+
+# Set permissions on configuration files
+chgrp frepple /etc/frepple /etc/frepple/*
+chmod 770 /etc/frepple
+chmod 750 /etc/frepple/*
+
+# Create log directory and set its permissions
 if [ ! -d /var/log/frepple ]
 then
   mkdir -p /var/log/frepple
-  . /etc/apache2/envvars
-  chown ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /var/log/frepple
-  chmod 0750 /var/log/frepple
+  chgrp frepple /var/log/frepple
+  chmod g=rwx,o= /var/log/frepple
 fi
 
 #DEBHELPER#

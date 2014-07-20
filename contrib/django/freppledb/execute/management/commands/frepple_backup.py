@@ -150,6 +150,8 @@ class Command(BaseCommand):
         if ret: raise Exception("Run of expdp failed")
       elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
         # POSTGRESQL
+        # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
+        os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
         args = [ "pg_dump",
             "-b", "-w",
             '--username=%s' % settings.DATABASES[database]['USER'],

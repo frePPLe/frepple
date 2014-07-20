@@ -152,6 +152,8 @@ class Command(BaseCommand):
         if ret: raise Exception("Run of impdp failed")
       elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
         # POSTGRESQL
+        # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
+        os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
         cmd = [ "psql", '--username=%s' % settings.DATABASES[database]['USER'] ]
         if settings.DATABASES[database]['HOST']:
           cmd.append("--host=%s" % settings.DATABASES[database]['HOST'])

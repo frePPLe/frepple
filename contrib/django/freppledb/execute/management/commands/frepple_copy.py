@@ -137,6 +137,8 @@ class Command(BaseCommand):
 
       # Copying the data
       if settings.DATABASES[source]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+        # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
+        os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
         ret = os.system("pg_dump -c -U%s -Fp %s%s%s | psql -U%s %s%s%s" % (
           settings.DATABASES[source]['USER'],
           settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',

@@ -131,8 +131,8 @@ if __name__ == "__main__":
   logProgress(1, db)
   print("\nStart loading data from the database at", datetime.now().strftime("%H:%M:%S"))
   frepple.printsize()
-  from freppledb.execute.load import loadfrepple
-  loadfrepple(db)
+  from freppledb.execute.load import loadData
+  loadData(database=db, filter=None).run()
   frepple.printsize()
   logProgress(33, db)
   print("\nStart plan generation at", datetime.now().strftime("%H:%M:%S"))

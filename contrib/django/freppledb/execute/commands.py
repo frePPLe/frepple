@@ -141,8 +141,8 @@ if __name__ == "__main__":
   logProgress(66, db)
 
   #print("\nStart exporting static model to the database at", datetime.now().strftime("%H:%M:%S"))
-  #from freppledb.execute.export_database_static import exportfrepple as export_static_to_database
-  #export_static_to_database()
+  #from freppledb.execute.export_database_static import exportStaticModel
+  #exportStaticModel(database=db, source=None).run()
 
   print("\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S"))
   exportPlan(db)

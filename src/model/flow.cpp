@@ -402,6 +402,10 @@ DECLARE_EXPORT PyObject* Flow::getattro(const Attribute& attr)
     return PythonObject(getQuantity());
   if (attr.isA(Tags::tag_priority))
     return PythonObject(getPriority());
+  if (attr.isA(Tags::tag_type))
+	// Not very nice: all flow subclasses appear to Python as instance of a
+	// single Python class. We use this method to distinguish them.
+    return PythonObject(getType().type);
   if (attr.isA(Tags::tag_effective_end))
     return PythonObject(getEffective().getEnd());
   if (attr.isA(Tags::tag_effective_start))

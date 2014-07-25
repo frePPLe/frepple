@@ -33,6 +33,7 @@
         <!-- FIELDS -->
         <xsd:element name="name" type="xsd:normalizedString" />
         <xsd:element name="description" type="xsd:string" />
+        <xsd:element name="source" type="xsd:normalizedString" />
         <xsd:element name="current" type="xsd:dateTime" />
         <xsd:element name="logfile" type="xsd:normalizedString" />
         <xsd:element name="plannable" type="xsd:boolean" />
@@ -55,6 +56,12 @@
         <xsd:element name="problems" type="problemlist" />
         <xsd:element name="resourceskills" type="resourceskilllist" />
       </xsd:choice>
+      <xsd:attribute name="name" type="xsd:normalizedString" />
+      <xsd:attribute name="source" type="xsd:normalizedString" />
+      <xsd:attribute name="current" type="xsd:dateTime" />
+      <xsd:attribute name="logfile" type="xsd:normalizedString" />
+      <xsd:attribute name="plannable" type="xsd:boolean" />
+      <xsd:attribute name="detectproblems" type="xsd:boolean" />
     </xsd:complexType>
   </xsd:element>
 

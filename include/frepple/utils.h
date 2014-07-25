@@ -4495,6 +4495,11 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     DECLARE_EXPORT void startElement (const XMLCh* const, const XMLCh* const,
         const XMLCh* const, const xercesc::Attributes&);
 
+    /** A value to populate on the source field of all entities being created
+      * or updated from the XML input data.
+      */
+    string source;
+
     /** Handler called when closing element tag is encountered.
       * If this is the closing tag for the current event handler, pop it
       * off the handler stack. If this empties the stack, shut down parser.
@@ -4656,6 +4661,16 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * calls to this method will overwrite the previous results.
       */
     static char* transcodeUTF8(const XMLCh*);
+
+    /** Return the source field that will be populated on each object created
+      * or updated from the XML data.
+      */
+    string getSource() const {return source;}
+
+    /** Update the source field that will be populated on each object created
+      * or updated from the XML data.
+      */
+    void setSource(string s) {source = s;}
 
   protected:
     /** The real parsing job is delegated to subclasses.

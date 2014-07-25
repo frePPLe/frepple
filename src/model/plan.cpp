@@ -103,6 +103,8 @@ DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, const Attribute& pAttr, con
 {
   if (pAttr.isA(Tags::tag_current))
     setCurrent(pElement.getDate());
+  else if (pAttr.isA(Tags::tag_source))
+    pIn.setSource(pElement.getString());
   else if (pAttr.isA(Tags::tag_description))
     pElement >> descr;
   else if (pAttr.isA(Tags::tag_name))

@@ -400,6 +400,13 @@ DECLARE_EXPORT void XMLInput::readto(Object * pPI)
     prev = getCurrentObject();
     m_EHStack.push_back(make_pair(pPI,static_cast<void*>(NULL)));
     states.push(READOBJECT);
+
+    // Update the source field of the new object
+    if (!source.empty())
+    {
+      HasSource *x = dynamic_cast<HasSource*>(pPI);
+      if (x) x->setSource(source);
+    }
   }
   else
   {

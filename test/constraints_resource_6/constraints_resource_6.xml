@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" source="The Matrix">
   <name>Test model for effective operations</name>
   <description>
   In this test the resource capacity varies heavily over time.
@@ -10,6 +10,10 @@
 
   This test also verifies the logic used by calendars to select the bucket
   that is in effect on a certain day.
+
+  This unit test also demonstrates that, when the "source" field on
+  header line of an XML file is populated, then the source field on all
+  objects created or updated from the file is set to this value.
   </description>
   <current>2014-01-01T00:00:00</current>
 
@@ -224,7 +228,7 @@
   </demands>
 
   <!--
-    TEST 3: Planning multiple demands on a bucketized resource where the 
+    TEST 3: Planning multiple demands on a bucketized resource where the
     working hours don't align with the capacity buckets.
   -->
   <calendars>
@@ -256,7 +260,7 @@
         <size_multiple>1</size_multiple>
         <location name="3. factory"/>
         <!-- We use only 3 days here, rather than 7 in previous tests. -->
-        <duration>P3D</duration>   
+        <duration>P3D</duration>
       </producing>
       <item name="3. end item" />
     </buffer>
@@ -391,10 +395,10 @@
   </demands>
 
   <!--
-    TEST 4: Planning multiple demands on a bucketized resource where the 
+    TEST 4: Planning multiple demands on a bucketized resource where the
     working hours don't align with the capacity buckets.
-    In addition there is 2 complete buckets unavailable because of a 
-    holiday period. One before the demand due date, and another after the 
+    In addition there is 2 complete buckets unavailable because of a
+    holiday period. One before the demand due date, and another after the
     due date.
   -->
   <calendars>
@@ -431,7 +435,7 @@
         <size_multiple>1</size_multiple>
         <location name="4. factory"/>
         <!-- We use only 3 days here, rather than 7 in previous tests. -->
-        <duration>P3D</duration>   
+        <duration>P3D</duration>
       </producing>
       <item name="4. end item" />
     </buffer>
@@ -564,7 +568,7 @@
       <item name="4. end item" />
     </demand>
   </demands>
-  
+
 <?python
 from __future__ import print_function
 frepple.saveXMLfile("output.1.xml")

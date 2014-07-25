@@ -142,6 +142,9 @@ void CalendarDouble::writeElement(XMLOutput *o, const Keyword& tag, mode m) cons
   if (m != NOHEAD && m != NOHEADTAIL)
     o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
 
+  // Write the source field
+  o->writeElement(Tags::tag_source, getSource());
+
   // Write the default value
   if (getDefault()) o->writeElement(Tags::tag_default, getDefault());
 

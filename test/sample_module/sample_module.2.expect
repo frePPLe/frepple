@@ -2,14 +2,6 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<name>Sample Module</name>
 	<current>2009-01-01T00:00:00</current>
-	<solvers>
-		<solver name="MRP" xsi:type="solver_mrp">
-			<iterationthreshold>1</iterationthreshold>
-			<iterationaccuracy>0.01</iterationaccuracy>
-			<lazydelay>P1D</lazydelay>
-			<autocommit>true</autocommit>
-		</solver>
-	</solvers>
 	<locations>
 		<location name="distribution centre">
 		</location>

@@ -14,16 +14,6 @@
       used. The validity periods of the components can overlap.
   </description>
 	<current>2009-01-01T00:00:00</current>
-	<solvers>
-		<solver name="MRP" xsi:type="solver_mrp">
-			<plantype>2</plantype>
-			<iterationthreshold>1</iterationthreshold>
-			<iterationaccuracy>0.01</iterationaccuracy>
-			<lazydelay>P1D</lazydelay>
-			<autocommit>true</autocommit>
-			<loglevel>2</loglevel>
-		</solver>
-	</solvers>
 	<operations>
 		<operation name="Purchase component A" xsi:type="operation_fixed_time">
 			<size_minimum>0</size_minimum>

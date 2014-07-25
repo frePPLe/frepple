@@ -31,7 +31,7 @@ DECLARE_EXPORT const MetaCategory* Solver::metadata;
 int Solver::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("solver", "solvers", reader, writer);
+  metadata = new MetaCategory("solver", "solvers", reader);
 
   // Initialize the Python class
   FreppleCategory<Solver>::getType().addMethod("solve", solve, METH_NOARGS, "run the solver");

@@ -2,16 +2,6 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<name>Test model for handling work in progress</name>
 	<current>2014-01-01T00:00:00</current>
-	<solvers>
-		<solver name="MRP" xsi:type="solver_mrp">
-			<plantype>2</plantype>
-			<iterationthreshold>1</iterationthreshold>
-			<iterationaccuracy>0.01</iterationaccuracy>
-			<lazydelay>P1D</lazydelay>
-			<autocommit>true</autocommit>
-			<loglevel>2</loglevel>
-		</solver>
-	</solvers>
 	<locations>
 		<location name="Loc">
 		</location>

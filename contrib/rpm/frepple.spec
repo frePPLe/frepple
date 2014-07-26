@@ -31,6 +31,7 @@ Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
 # Note on dependencies: Django is also required, but we need a custom install.
 Requires: xerces-c, openssl, httpd, mod_wsgi, python, python-cherrypy
+Requires(pre): shadow-utils
 BuildRequires: python-devel, automake, autoconf, libtool, xerces-c-devel, openssl-devel, graphviz, doxygen
 
 %description
@@ -57,6 +58,12 @@ BuildArch: noarch
 
 %description doc
 Documentation subpackage for frePPLe - free Production PLanning.
+
+%pre
+# Add frepple group.
+getent group frepple >/dev/null || groupadd -r frepple
+# Add the apache user to the new group
+usermod -a -g frepple apache
 
 %prep
 %setup -q
@@ -88,44 +95,53 @@ make install DESTDIR=%{buildroot}
 # Do not package .la files created by libtool
 find %{buildroot} -name '*.la' -exec rm {} \;
 # Use percent-doc instead of install to create the documentation
-rm -rf %{buildroot}%{_docdir}/%{name}
+rm -rf $RPM_BUILD_ROOT%{_docdir}/%{name}
 # Language files; not under /usr/share, need to be handled manually
 (cd $RPM_BUILD_ROOT && find . -name 'django*.mo') | %{__sed} -e 's|^.||' | %{__sed} -e \
   's:\(.*/locale/\)\([^/_]\+\)\(.*\.mo$\):%lang(\2) \1\2\3:' \
   >> %{name}.lang
 # Remove .py script extension
-mv $RPM_BUILD_ROOT/usr/bin/frepplectl.py $RPM_BUILD_ROOT/usr/bin/frepplectl
+mv $RPM_BUILD_ROOT%{_bindir}/frepplectl.py $RPM_BUILD_ROOT%{_bindir}/frepplectl
 # Install apache configuration
-mkdir -p $RPM_BUILD_ROOT/etc/httpd/conf.d
-install -m 644 -p contrib/rpm/httpd.conf $RPM_BUILD_ROOT/etc/httpd/conf.d/z_frepple.conf
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
+install -m 644 -p contrib/rpm/httpd.conf $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/z_frepple.conf
 # Create log directory
-mkdir -p $RPM_BUILD_ROOT/var/log/frepple
+mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/frepple
 
 %clean
 rm -rf %{buildroot}
 
 %post -p /sbin/ldconfig
 
-%postun -p /sbin/ldconfig
+%postun
+sbin/ldconfig
+# Remove log directory
+rm -rf /var/log/frepple
+# Note that we don't remove the frepple group when uninstalling.
+# There's no sane way to check if files owned by it are left behind.
+# And even if there would, what would we do with them?
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
-%{_bindir}/frepple
-%{_bindir}/frepplectl
+%attr(0550,-,frepple) %{_bindir}/frepple
+%attr(0550,-,frepple) %{_bindir}/frepplectl
 %{_libdir}/libfrepple.so.0
-%{_libdir}/libfrepple.so.0.0.0
+%attr(0550,-,frepple) %{_libdir}/libfrepple.so.0.0.0
 # Uncomment if there are extension modules to package
 #%dir %{_libdir}/frepple
 %{_datadir}/frepple
-%attr(0770,root,adm) %dir /var/log/frepple
+%attr(0770,-,frepple) %dir %{_localstatedir}/log/frepple
 %{python_sitelib}/freppledb*
 %{_mandir}/man1/frepple.1.*
 %{_mandir}/man1/frepplectl.1.*
 %doc COPYING
-%config(noreplace) /etc/frepple/license.xml
-%config(noreplace) /etc/frepple/init.xml
-%config(noreplace) /etc/frepple/djangosettings.py
-%config(noreplace) /etc/httpd/conf.d/z_frepple.conf
+%attr(0660,-,frepple) %config(noreplace) %{_sysconfdir}/frepple/license.xml
+%attr(0660,-,frepple) %config(noreplace) %{_sysconfdir}/frepple/init.xml
+%attr(0660,-,frepple) %config(noreplace) %{_sysconfdir}/frepple/djangosettings.py
+%config(noreplace) %{_sysconfdir}/httpd/conf.d/z_frepple.conf
+
+%ghost %{_sysconfdir}/frepple/djangosettings.pyc
+%ghost %{_sysconfdir}/frepple/djangosettings.pyo
 
 %files devel
 %defattr(-,root,root,-)

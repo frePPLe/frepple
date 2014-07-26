@@ -63,7 +63,7 @@ Documentation subpackage for frePPLe - free Production PLanning.
 # Add frepple group.
 getent group frepple >/dev/null || groupadd -r frepple
 # Add the apache user to the new group
-usermod -a -g frepple apache
+usermod -a -G frepple apache
 
 %prep
 %setup -q

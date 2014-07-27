@@ -63,3 +63,10 @@ FrePPLe redistributes parts of the following third party software components:
     Copyright Michael Bostock
     Licensed under BSD license
     See http://d3js.org/
+
+* contrib\django\freppledb\common\static\fonts\FontAwesome*
+  contrib\django\freppledb\common\static\css\font-awesome*
+    Redistributed Font Awesome
+    Copyright Dave Gandy
+    Licensed under SIL Open Font License 1.1 (http://scripts.sil.org/OFL) and MIT License
+    See http://fontawesome.io

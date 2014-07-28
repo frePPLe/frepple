@@ -137,13 +137,20 @@
       $(".empty_all").prop("checked",$(".empty_entity:not(:checked)").length == 0);
       if ($(this).prop("checked")) checkChildren($(this).attr('id'));
       });
+    // Tooltips
+    $(document).tooltip({
+      show: {effect: "fade", delay: 500},
+      content: function() {
+        return $(this).attr("title");
+        }
+      });
   });
 
   var models = {% getModelDependencies %};
 </script>
 
 <style>
-#tasks td {
+#scenarios td {
   padding: 5px;
   white-space: nowrap;
   vertical-align: middle;
@@ -165,7 +172,7 @@
 </style>
 {% endblock %}
 {% block actions %}
-<a id="autorefresh" href="javascript:updateRefresh();" class="icon{% if "refresh" in preferences and not preferences.refresh %} ui-state-disabled{% endif %}"><span class="ui-icon ui-icon-arrowrefresh-1-s"></span>{% trans 'Autorefresh' %}</a>
+<a id="autorefresh" href="javascript:updateRefresh();" style="color:#4c3000" class="fa fa-refresh{% if "refresh" in preferences and not preferences.refresh %} ui-state-disabled{% endif %}" title="{% trans 'Autorefresh'|escape %}"/>
 {{block.super}}{% endblock %}
 {% block after_table %}
 <br/><h1>{% trans "Launch new tasks" %}</h1>
@@ -180,27 +187,36 @@
 <form method="post" action="{{request.prefix}}/execute/launch/generate plan/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% blocktrans %}
-Load frePPLe from the database...<br/>
+Load frePPLe from the database and live data sources...<br/>
 and create a plan in frePPLe...<br/>
-and export results into the database<br/>
+and export results.<br/>
 <br/>
-<b>Plan type</b>:<br/>{% endblocktrans %}
+<b>Plan type</b><br/>{% endblocktrans %}
 <input type="radio" name="plantype" {% ifnotequal request.session.plantype '2' %}checked {% endifnotequal %}value="1"/>
-{% blocktrans %}<b>Constrained plan</b><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan respects the constraints enabled below.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In case of shortages the demand is planned late or short.<br/>{% endblocktrans %}
+{% blocktrans %}<span title="This plan respects the constraints enabled below.<br/>In case of shortages the demand is planned late or short.">Constrained plan</span>{% endblocktrans %}
+<span class="fa fa-question-circle" style="display:inline-block;"></span><br/>
 <input type="radio" name="plantype" {% ifequal  request.session.plantype '2' %}checked {% endifequal %}value="2"/>
-{% blocktrans %}<b>Unconstrained plan</b><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This plan shows material, capacity and operation problems<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that prevent the demand from being planned in time.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The demand is always met completely and on time.<br/>{% endblocktrans %}
+{% blocktrans %}<span title="This plan shows material, capacity and operation problems that prevent the demand from being planned in time.<br/>The demand is always met completely and on time.">Unconstrained plan</span>{% endblocktrans %}
+<span class="fa fa-question-circle" style="display:inline-block;"></span><br/>
 <br/>
-<b>{% trans "Constraints" %}</b>:<br/>
+<b>{% trans "Constraints" %}</b><br/>
 <input type="checkbox" name="constraint" {% if capacityconstrained %}checked {% endif %}value="4" id="cb4"/><label for="cb4">&nbsp;&nbsp;{% trans "Capacity: respect capacity limits" %}</label><br/>
 <input type="checkbox" name="constraint" {% if materialconstrained %}checked {% endif %}value="2" id="cb2"/><label for="cb2">&nbsp;&nbsp;{% trans "Material: respect procurement limits" %}</label><br/>
 <input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked {% endif %}value="1" id="cb1"/><label for="cb1">&nbsp;&nbsp;{% trans "Lead time: do not plan in the past" %}</label><br/>
 <input type="checkbox" name="constraint" {% if fenceconstrained %}checked {% endif %}value="8" id="cb8"/><label for="cb8">&nbsp;&nbsp;{% trans "Release fence: do not plan within the release time window" %}</label><br/>
 <br/>
+{% if odoo %}
+{% blocktrans %}<b title="A live data source allows your frePPLe plan to be 100% in sync with data in an external system.<br/><br/>FrePPLe will read data from them before planning.<br/>And after the plan is generated frePPLe directly exports the results to them.<br/>FrePPLe also saves a copy of the data in its own database for reporting.">Live data sources</b>{% endblocktrans %}
+<span class="fa fa-question-circle" style="display:inline-block;"></span><br/>
+<table>
+<tr><td></td>
+<td style="padding: 0px 5px">{% trans "Read" %}</td>
+<td style="padding: 0px 5px">{% trans "Write" %}</td></tr>
+<tr><td style="padding-right: 10px">Odoo</td>
+<td style="text-align:center"><input type="checkbox" name="odoo_read" value="1"/></td>
+<td style="text-align:center"><input type="checkbox" name="odoo_write" value="1"/></td></tr>
+</table>
+{% endif %}
 <a id="logfile" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a></td>
 </tr></form>
 </table>
@@ -231,7 +247,7 @@ and export results into the database<br/>
 {% if scenarios.count > 1 %}
 <h3><a href="#scenarios">{% trans "Scenario management" %}</a></h3>
 <div>
-<table>
+<table id="scenarios">
 <form method="post" action="{{request.prefix}}/execute/launch/manage scenarios/">{% csrf_token %}<tr>
 <th>{% trans 'name'|capfirst %}</th>
 <th>{% trans 'status'|capfirst %}</th>
@@ -306,21 +322,6 @@ and export results into the database<br/>
 <h3><a href="#openbravo_export">{% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}</a></h3>
 <div><table>
 <form method="post" action="{{request.prefix}}/execute/launch/openbravo_export/">{% csrf_token %}<tr>
-<td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
-<td>{% trans "Export frePPLe plan to the ERP." %}</td></tr></form></table></div>
-{% endif %}
-
-{% if odoo %}
-<h3><a href="#odoo_import">{% blocktrans with erp="Odoo" %}Import data from {{ erp }}{% endblocktrans %}</a></h3>
-<div><table>
-<form method="post" action="{{request.prefix}}/execute/launch/odoo_import/">{% csrf_token %}<tr>
-<td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
-<td>{% blocktrans with delta="<input name='delta' type='text' maxlength='4' size='5' value='7' />" %}Import data changes in the last {{ delta }} days from the ERP into frePPLe.{% endblocktrans %}
-</td></tr></form></table></div>
-
-<h3><a href="#odoo_export">{% blocktrans with erp="Odoo" %}Export data to {{ erp }}{% endblocktrans %}</a></h3>
-<div><table>
-<form method="post" action="{{request.prefix}}/execute/launch/odoo_export/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% trans "Export frePPLe plan to the ERP." %}</td></tr></form></table></div>
 {% endif %}

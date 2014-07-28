@@ -121,7 +121,14 @@ def LaunchTask(request, action):
         try: constraint += int(value)
         except: pass
       task = Task(name='generate plan', submitted=now, status='Waiting', user=request.user)
-      task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype'))
+      task.arguments =  "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype'))
+      env = []
+      if request.POST.get('odoo_read',None) == u'1':
+        env.append("odoo_read")
+      if request.POST.get('odoo_write',None) == u'1':
+        env.append("odoo_write")
+      if env:
+        task.arguments = "%s --env=%s" % (task.arguments, ','.join(env))
       task.save(using=request.database)
       # Update the session object   TODO REPLACE WITH PREFERENCE INFO
       request.session['plantype'] = request.POST.get('plantype')
@@ -198,15 +205,6 @@ def LaunchTask(request, action):
     # K
     elif action == 'openbravo_export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
       task = Task(name='Openbravo export', submitted=now, status='Waiting', user=request.user)
-      task.save(using=request.database)
-    # L
-    elif action == 'odoo_import' and 'freppledb.odoo' in settings.INSTALLED_APPS:
-      task = Task(name='Odoo import', submitted=now, status='Waiting', user=request.user)
-      task.arguments = "--delta=%s" % request.POST['delta']
-      task.save(using=request.database)
-    # M
-    elif action == 'odoo_export' and 'freppledb.odoo' in settings.INSTALLED_APPS:
-      task = Task(name='Odoo export', submitted=now, status='Waiting', user=request.user)
       task.save(using=request.database)
     else:
       # Task not recognized

@@ -26,7 +26,6 @@ API of frePPLe to bring the data into the frePPLe C++ core engine.
 '''
 from __future__ import print_function
 from time import time
-from threading import Thread
 from datetime import datetime
 
 from django.db import connections, DEFAULT_DB_ALIAS

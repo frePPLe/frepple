@@ -569,7 +569,7 @@ DECLARE_EXPORT void Calendar::Bucket::setId(int ident)
       for (BucketIterator i = cal->beginBuckets(); i != cal->endBuckets(); ++i)
         if (i->id == ident && &(*i) != this)
         {
-          // Update the indentifier to avoid violating the uniqueness
+          // Update the identifier to avoid violating the uniqueness
           unique = false;
           ++ident;
           break;

@@ -297,7 +297,7 @@ def location_calendar(request, location):
     cal = loc.available
   if cal:
     # Go to the calendar
-    return HttpResponseRedirect('%s/admin/input/calendar/%s/' % (request.prefix, iri_to_uri(cal.name)) )
+    return HttpResponseRedirect('%s/data/input/calendar/%s/' % (request.prefix, iri_to_uri(cal.name)) )
   # Generate a message
   try:
     url = request.META.get('HTTP_REFERER')
@@ -618,7 +618,6 @@ class CalendarBucketList(GridReport):
     GridFieldBool('sunday', title=_('Sunday')),
     GridFieldTime('starttime', title=_('start time')),
     GridFieldTime('endtime', title=_('end time')),
-    GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
 

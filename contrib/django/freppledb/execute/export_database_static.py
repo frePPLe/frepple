@@ -109,13 +109,16 @@ class exportStaticModel(object):
   def exportCalendarBuckets(self, cursor):
     print("Exporting calendar buckets...")
     starttime = time()
-    cursor.execute("SELECT calendar_id, id FROM calendarbucket")
-    primary_keys = set([ i for i in cursor.fetchall() ])
+    cursor.execute("delete from calendarbucket where source = %s", [self.source,])
 
     def buckets():
+      cursor.execute("SELECT max(id) FROM calendarbucket")
+      cnt = cursor.fetchone()[0] or 1
       for c in frepple.calendars():
+        if self.source and self.source != c.source: continue
         for i in c.buckets:
-          yield i
+          cnt += 1
+          yield i, cnt
 
     def int_to_time(i):
       hour = i // 3600
@@ -134,30 +137,14 @@ class exportStaticModel(object):
        starttime,endtime,source,lastmodified)
       values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
       [(
-         i.calendar.name, str(i.start), str(i.end), i.id, i.priority,
-         round(i.value,settings.DECIMAL_PLACES),
-         (i.days & 1) and True or False, (i.days & 2) and True or False, (i.days & 4) and True or False,
-         (i.days & 8) and True or False, (i.days & 16) and True or False, (i.days & 32) and True or False,
-         (i.days & 64) and True or False, int_to_time(i.starttime), int_to_time(i.endtime-1),
-         i.calendar.source, self.timestamp
+         i[0].calendar.name, str(i[0].start), str(i[0].end), i[1], i[0].priority,
+         round(i[0].value,settings.DECIMAL_PLACES),
+         (i[0].days & 1) and True or False, (i[0].days & 2) and True or False, (i[0].days & 4) and True or False,
+         (i[0].days & 8) and True or False, (i[0].days & 16) and True or False, (i[0].days & 32) and True or False,
+         (i[0].days & 64) and True or False, int_to_time(i[0].starttime), int_to_time(i[0].endtime-1),
+         i[0].calendar.source, self.timestamp
         )
        for i in buckets()
-       if (i.calendar.name, i.id) not in primary_keys and (not self.source or self.source == i.source)
-      ])
-    cursor.executemany(
-      '''update calendarbucket
-       set enddate=%s, startdate=%s, priority=%s, value=%s, lastmodified=%s,
-       sunday=%s, monday=%s, tuesday=%s, wednesday=%s, thursday=%s, friday=%s, saturday=%s,
-       starttime=%s, endtime=%s, source=%s
-       where calendar_id=%s and id=%s''',
-      [(
-         str(i.end), str(i.start), i.priority,
-         round(i.value,settings.DECIMAL_PLACES), self.timestamp,
-         (i.days & 1) and True or False, (i.days & 2) and True or False, (i.days & 4) and True or False,
-         (i.days & 8) and True or False, (i.days & 16) and True or False, (i.days & 32) and True or False,
-         (i.days & 64) and True or False, int_to_time(i.starttime), int_to_time(i.endtime-1),
-         i.calendar.source, i.calendar.name, i.id
-       ) for i in buckets() if (i.calendar.name, i.id) in primary_keys and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported calendar buckets in %.2f seconds' % (time() - starttime))
@@ -232,7 +219,7 @@ class exportStaticModel(object):
          i[0].name, i[1].name, i[2], i[3], i[4], i[5], self.timestamp
        )
        for i in subops()
-       if (i[0].name, i[1].name) not in primary_keys and (not self.source or self.source == i.source)
+       if (i[0].name, i[1].name) not in primary_keys and (not self.source or self.source == i[5])
       ])
     cursor.executemany(
       "update suboperation \
@@ -242,7 +229,7 @@ class exportStaticModel(object):
          i[2], i[3], i[4], i[5], self.timestamp, i[0].name, i[1].name
        )
        for i in subops()
-       if (i[0].name, i[1].name) in primary_keys and (not self.source or self.source == i.source)
+       if (i[0].name, i[1].name) in primary_keys and (not self.source or self.source == i[5])
       ])
     transaction.commit(using=self.database)
     print('Exported suboperations in %.2f seconds' % (time() - starttime))
@@ -804,13 +791,12 @@ class exportStaticModel(object):
         cursor.execute("delete from item where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from operationplan where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from suboperation where source = %s and lastmodified <> %s", (self.source, self.timestamp))
-        cursor.execute("delete from load where source = %s and lastmodified <> %s", (self.source, self.timestamp))
+        cursor.execute("delete from resourceload where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from resourceskill where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from operation where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from suboperation where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from resource where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from location where source = %s and lastmodified <> %s", (self.source, self.timestamp))
-        cursor.execute("delete from calendarbucket where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from calendar where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from skill where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from setuprule where source = %s and lastmodified <> %s", (self.source, self.timestamp))

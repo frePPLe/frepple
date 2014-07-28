@@ -135,13 +135,12 @@ rm -rf /var/log/frepple
 %{_mandir}/man1/frepple.1.*
 %{_mandir}/man1/frepplectl.1.*
 %doc COPYING
+%config(noreplace) %{_sysconfdir}/httpd/conf.d/z_frepple.conf
 %attr(0660,-,frepple) %config(noreplace) %{_sysconfdir}/frepple/license.xml
 %attr(0660,-,frepple) %config(noreplace) %{_sysconfdir}/frepple/init.xml
 %attr(0660,-,frepple) %config(noreplace) %{_sysconfdir}/frepple/djangosettings.py
-%config(noreplace) %{_sysconfdir}/httpd/conf.d/z_frepple.conf
-
-%ghost %{_sysconfdir}/frepple/djangosettings.pyc
-%ghost %{_sysconfdir}/frepple/djangosettings.pyo
+%ghost %attr(0660,-,frepple) %{_sysconfdir}/frepple/djangosettings.pyc
+%ghost %attr(0660,-,frepple) %{_sysconfdir}/frepple/djangosettings.pyo
 
 %files devel
 %defattr(-,root,root,-)

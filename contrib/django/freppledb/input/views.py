@@ -618,6 +618,7 @@ class CalendarBucketList(GridReport):
     GridFieldBool('sunday', title=_('Sunday')),
     GridFieldTime('starttime', title=_('start time')),
     GridFieldTime('endtime', title=_('end time')),
+    GridFieldText('source', title=_('source')),  # Not really right, since the engine doesn't read or store it
     GridFieldLastModified('lastmodified'),
     )
 

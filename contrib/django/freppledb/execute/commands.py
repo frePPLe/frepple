@@ -129,8 +129,8 @@ if __name__ == "__main__":
 
   printWelcome(database=db)
   logProgress(1, db)
-  print("\nStart loading data from the database at", datetime.now().strftime("%H:%M:%S"))
   frepple.printsize()
+  print("\nStart loading data from the database at", datetime.now().strftime("%H:%M:%S"))
   from freppledb.execute.load import loadData
   loadData(database=db, filter=None).run()
   frepple.printsize()

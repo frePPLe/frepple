@@ -16,6 +16,7 @@
 #
 
 from __future__ import print_function
+import base64
 import mimetools
 import os
 from datetime import datetime
@@ -65,10 +66,12 @@ def odoo_read(db = DEFAULT_DB_ALIAS):
 
   # Connect to the odoo URL to GET data
   try:
-    f = urlopen("%s/frepple/xml/?%s" % (odoo_url, urlencode({
-          'database': odoo_db, 'user': odoo_user, 'password': odoo_password,
-          'language': odoo_language, 'company': odoo_company
-          })))
+    request = Request("%s/frepple/xml/?%s" % (odoo_url, urlencode({
+      'database': odoo_db, 'language': odoo_language, 'company': odoo_company
+      })))
+    encoded = base64.encodestring('%s:%s' % (odoo_user, odoo_password)).replace('\n', '')
+    request.add_header("Authorization", "Basic %s" % encoded)
+    f = urlopen(request)
   except HTTPError as e:
     print("Error connecting to odoo", e.read())
     raise e
@@ -110,47 +113,48 @@ def odoo_write(db = DEFAULT_DB_ALIAS):
   # We send the connection parameters as well as a file with the planning
   # results in XML-format.
   def publishPlan():
-    yield '--%s\r\n' % boundary
-    yield 'Content-Disposition: form-data; name="database"\r\n'
-    yield '\r\n'
-    yield '%s\r\n' % odoo_db
-    yield '--%s\r\n' % boundary
-    yield 'Content-Disposition: form-data; name="user"\r\n'
-    yield '\r\n'
-    yield '%s\r\n' % odoo_user
-    yield '--%s\r\n' % boundary
-    yield 'Content-Disposition: form-data; name="password"\r\n'
-    yield '\r\n'
-    yield '%sxx\r\n' % odoo_password
-    yield '--%s\r\n' % boundary
-    yield 'Content-Disposition: form-data; name="language"\r\n'
-    yield '\r\n'
-    yield '%s\r\n' % odoo_language
-    yield '--%s\r\n' % boundary
-    yield 'Content-Disposition: form-data; name="company"\r\n'
-    yield '\r\n'
-    yield '%s\r\n' % odoo_company
-    yield '--%s\r\n' % boundary
-    yield 'Content-Disposition: file; name="frePPLe plan"; filename="frepple_plan.xml"\r\n'
-    yield 'Content-Type: application/xml\r\n'
-    yield '\r\n'
-    yield '<?xml version="1.0" encoding="UTF-8" ?>\n'
-    yield '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'
+    yield '--%s\r' % boundary
+    yield 'Content-Disposition: form-data; name="database"\r'
+    yield '\r'
+    yield '%s\r' % odoo_db
+    yield '--%s\r' % boundary
+    yield 'Content-Disposition: form-data; name="language"\r'
+    yield '\r'
+    yield '%s\r' % odoo_language
+    yield '--%s\r' % boundary
+    yield 'Content-Disposition: form-data; name="company"\r'
+    yield '\r'
+    yield '%s\r' % odoo_company
+    yield '--%s\r' % boundary
+    yield 'Content-Disposition: file; name="frePPLe plan"; filename="frepple_plan.xml"\r'
+    yield 'Content-Type: application/xml\r'
+    yield '\r'
+    yield '<?xml version="1.0" encoding="UTF-8" ?>'
+    yield '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
     # Export relevant operationplans
-    yield '<operationplans>\n'
+    yield '<operationplans>'
     for i in frepple.operationplans():
-      if i.operation.source == 'odoo' and not i.locked:
-        yield i.toXML()
-    yield '</operationplans>\n'
-    yield '</plan>\n'
-    yield '--%s--\r\n' % boundary
-    yield '\r\n'
+      b = None
+      for j in i.flowplans:
+        if j.quantity > 0: b = j.flow.buffer
+      if not b or b.source != 'odoo' or i.locked: continue
+      yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s/>' % (
+          i.id, quoteattr(i.operation.name),
+          i.start, i.end, i.quantity,
+          quoteattr(b.location.subcategory), quoteattr(b.item.subcategory),
+          )
+    yield '</operationplans>'
+    yield '</plan>'
+    yield '--%s--\r' % boundary
+    yield '\r'
 
   # Connect to the odoo URL to POST data
   try:
     req = Request("%s/frepple/xml/" % odoo_url)
-    body = ''.join(publishPlan())
+    body = '\n'.join(publishPlan())
     size = len(body)
+    encoded = base64.encodestring('%s:%s' % (odoo_user, odoo_password)).replace('\n', '')
+    req.add_header("Authorization", "Basic %s" % encoded)
     req.add_header("Content-Type", 'multipart/form-data; boundary=%s' % boundary)
     req.add_header('Content-length', size)
     req.add_data(body)
@@ -161,7 +165,7 @@ def odoo_write(db = DEFAULT_DB_ALIAS):
 
     # Display the server response, which can contain error messages
     print("Odoo response:")
-    for i in urlopen(req): print(i)
+    for i in urlopen(req): print(i, end="")
 
   except HTTPError as e:
     print("Error connecting to odoo", e.read())

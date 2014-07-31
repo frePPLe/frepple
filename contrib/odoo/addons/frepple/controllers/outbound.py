@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+#
+# Copyright (C) 2014 by Johan De Taeye, frePPLe bvba
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 import logging
 from xml.sax.saxutils import quoteattr
 from datetime import datetime, timedelta
@@ -13,15 +29,18 @@ class exporter(object):
   def __init__(self, req, **kwargs):
     self.req = req
     self.database = kwargs.get('database', None)
-    self.user = kwargs.get('user', None)
-    password = kwargs.get('password', None)
+    authmeth, auth = req.httprequest.headers['authorization'].split(' ', 1)
+    if authmeth.lower() != 'basic':
+      raise Exception("No authentication header")
+    auth = auth.strip().decode('base64')
+    self.user, password = auth.split(':', 1)
     if not self.database or not self.user or not password:
       raise Exception("Authentication error")
+    if not self.req.session.authenticate(self.database, self.user, password):
+      raise Exception("Odoo authentication failed")
+    # TODO set the language on the context
     self.language = kwargs.get('language', 'en_US')
     self.company = kwargs.get('company', None)
-    # TODO Not very correct and secure to submit password in the URL
-    # TODO set the language on the context
-    self.req.session.authenticate(self.database, self.user, password)
 
 
   def run(self):
@@ -44,7 +63,7 @@ class exporter(object):
     for i in self.export_purchaseorders(): yield i
     for i in self.export_manufacturingorders(): yield i
     for i in self.export_orderpoints(): yield i
-    #for i in self.export_onhand(): yield i
+    for i in self.export_onhand(): yield i
 
     # Footer
     yield '</plan>\n'
@@ -194,6 +213,7 @@ class exporter(object):
 
     # Read the product templates
     self.product_product = {}
+    self.procured_buffers = set()
     m = self.req.session.model('product.template')
     fields = ['purchase_ok','procure_method','supply_method','produce_delay','list_price','uom_id']
     ids = m.search([], context=self.req.session.context)
@@ -208,19 +228,39 @@ class exporter(object):
       yield '<!-- products -->\n'
       yield '<items>\n'
       fields = ['name', 'code', 'product_tmpl_id']
-      for i in m.read(ids, fields, self.req.session.context):
+      data = [ i for i in m.read(ids, fields, self.req.session.context) ]
+      for i in data:
         if i['code']:
           name = u'[%s] %s' % (i['code'], i['name'])
         else:
           name = i['name']
         self.product_product[i['id']] = {'name': name, 'template': i['product_tmpl_id'][0]}
-        yield '<item name=%s price="%s"/>\n' % (quoteattr(name), self.product_templates[i['product_tmpl_id'][0]]['list_price'] or 0)
+        yield '<item name=%s price="%s" subcategory="%s,%s"/>\n' % (
+            quoteattr(name),
+            (self.product_templates[i['product_tmpl_id'][0]]['list_price'] or 0) / self.convert_qty_uom(1.0, self.product_templates[i['product_tmpl_id'][0]]['uom_id'][0], i['id']),
+            self.product_templates[i['product_tmpl_id'][0]]['uom_id'][0], i['id']
+            )
       yield '</items>\n'
+
+      # Create procurement buffers for procured items
+      yield '<buffers>\n'
+      for i in data:
+        tmpl = self.product_templates[i['product_tmpl_id'][0]]
+        if tmpl['purchase_ok'] and tmpl['supply_method'] == 'buy':
+          for j in self.warehouses:
+            buf = u'%s @ %s' % (self.product_product[i['id']]['name'], j)
+            self.procured_buffers.add(buf)
+            yield '<buffer name=%s leadtime="P%sD" xsi:type="buffer_procure"><item name=%s/><location name=%s/></buffer>\n' % (
+              quoteattr(buf), int(tmpl['produce_delay'] + self.po_lead),
+              quoteattr(self.product_product[i['id']]['name']), quoteattr(j)
+              )
+      yield '</buffers>\n'
 
 
   def export_locations(self):
     # Extract locations
     self.map_locations = {}
+    self.warehouses = set()
     childlocs = {}
     m = self.req.session.model('stock.warehouse')
     ids = m.search([], context=self.req.session.context)
@@ -229,10 +269,13 @@ class exporter(object):
       yield '<locations>\n'
       fields = ['name', 'lot_stock_id', 'lot_input_id', 'lot_output_id']
       for i in m.read(ids, fields, self.req.session.context):
-        yield '<location name=%s><available name=%s/></location>\n' % (quoteattr(i['name']), quoteattr(self.calendar_name))
+        yield '<location name=%s subcategory="%s"><available name=%s/></location>\n' % (
+          quoteattr(i['name']), i['id'], quoteattr(self.calendar_name)
+          )
         childlocs[i['lot_stock_id'][0]] = i['name']
         childlocs[i['lot_input_id'][0]] = i['name']
         childlocs[i['lot_output_id'][0]] = i['name']
+        self.warehouses.add(i['name'])
       yield '</locations>\n'
 
       # Populate a mapping location-to-warehouse name for later lookups
@@ -274,11 +317,13 @@ class exporter(object):
       location = j['location_id'] and self.map_locations.get(j['location_id'][0], None) or None
       if location and item and j['state'] in ('approved','draft') and not j['shipped']:
         operation = u'Purchase %s @ %s' % (item['name'], location)
-        buf = operation = u'%s @ %s' % (item['name'], location)
+        buf = u'%s @ %s' % (item['name'], location)
         due = i['date_planned']
-        qty = i['product_qty'] #self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
-        if not buf in deliveries:
-          yield '<operation name=%s><flows><flow xsi:type="flow_end" quantity="1"><buffer name=%s><item name=%s/><location name=%s/></buffer></flow></flows></operation>\n' % (quoteattr(operation), quoteattr(buf), quoteattr(item['name']), quoteattr(location))
+        qty = self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
+        if not buf in deliveries and not buf in self.procured_buffers:
+          yield '<operation name=%s><flows><flow xsi:type="flow_end" quantity="1"><buffer name=%s><item name=%s/><location name=%s/></buffer></flow></flows></operation>\n' % (
+            quoteattr(operation), quoteattr(buf), quoteattr(item['name']), quoteattr(location)
+            )
           deliveries.update([buf,])
         dd.append( (quoteattr(operation), i['id'], due, due, qty) )
     yield '</operations>\n'
@@ -382,7 +427,7 @@ class exporter(object):
     yield '<!-- manufacturing orders in progress -->\n'
     yield '<operationplans>\n'
     m = self.req.session.model('mrp.production')
-    ids = m.search(['|',('state','=','in_production'),('state','=','ready')], context=self.req.session.context)
+    ids = m.search(['|',('state','=','in_production'),('state','=','confirmed')], context=self.req.session.context)
     fields = ['bom_id','date_start','date_planned','name','state','product_qty','product_uom','location_dest_id', 'product_id']
     for i in m.read(ids, fields, self.req.session.context):
       identifier = i['id'] + 1000000   # Adding a million to distinguish POs and MOs
@@ -394,47 +439,8 @@ class exporter(object):
         except: continue
         if not location or not operation in self.operations: continue
         qty = self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
-        yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" locked="true"/>\n' % (identifier, quoteattr(operation), startdate, startdate, qty, i['name'])
+        yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" locked="true"/>\n' % (identifier, quoteattr(operation), startdate, startdate, qty)
     yield '</operationplans>\n'
-
-
-  def export_policies(self):
-    yield '<!-- policies -->\n'
-
-    # Get the list of item ids and the template info
-    m = self.req.session.model('product.template')
-    fields = ['purchase_ok','procure_method','supply_method','produce_delay','list_price','uom_id']
-    ids = self.product_template.values()
-    #templates = { i['id']: i for i in m.read(ids, fields, self.req.session.context) }
-
-# TODO
-#     for i in prod:
-#       item = items.get(i['id'],None)
-#       if not item: continue
-#       tmpl = templates.get(i['product_tmpl_id'][0],None)
-#       if tmpl and tmpl['purchase_ok'] and tmpl['supply_method'] == 'buy':
-#         buy.append( (tmpl['produce_delay'] * 86400 + self.po_lead, item,) )
-#       else:
-#         produce.append( (item,) )
-#       if tmpl:
-#         item_update.append( (tmpl['list_price'] / self.convert_qty_uom(1.0, tmpl['uom_id'][0], i['id']),item,) )
-#
-#     # Update the frePPLe bufs
-#     cursor.execute("update buf set type=null where subcategory = 'odoo'")
-#     cursor.executemany(
-#       "update buf \
-#         set type= 'procure', leadtime=%%s, lastmodified='%s' \
-#         where item_id=%%s and subcategory='odoo'" % self.date,
-#       buy)
-#     cursor.executemany(
-#       "update buf \
-#         set type='default', lastmodified='%s' \
-#         where item_id=%%s and subcategory='odoo'" % self.date,
-#       produce)
-#     cursor.executemany(
-#       "update item set price=%s where name=%s",
-#       item_update
-#       )
 
 
   def export_orderpoints(self):
@@ -449,10 +455,12 @@ class exporter(object):
         if not item: continue
         uom_factor = self.convert_qty_uom(1.0, i['product_uom'][0], i['product_id'][0])
         name = u'%s @ %s' % (item['name'], i['warehouse_id'][1])
+        if name in self.procured_buffers:
+          # Procured material
+          yield '<buffer name=%s><item name=%s/><location name=%s/></buffer>' % (quoteattr(name), quoteattr(item['name']), quoteattr(i['warehouse_id'][1]))
+
       yield '</buffers>\n'
-#         if True:
-#           # Procured material
-#           yield '<buffer name=%s><item name=%s/><location name=%s/></buffer>' % (quoteattr(name), quoteattr(item['name']), quoteattr(i['warehouse_id'][1]))
+#        TODO if True:
 #         else:
 #           # Manufactured material
 #           yield '<buffer><item name=%s/><location name=%s/></buffer>'

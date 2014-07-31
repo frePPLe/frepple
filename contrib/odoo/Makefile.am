@@ -4,7 +4,8 @@
 
 EXTRA_DIST = README.txt addons setup.py
 
-# This make target builds the RPMs, suitable for Fedora.
 contrib:
-	$(PYTHON) setup.py build
+	$(PYTHON) setup.py sdist
 
+clean-local:
+	-rm -rf build dist

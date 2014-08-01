@@ -50,7 +50,7 @@ class WorkerAlive(Thread):
 def checkActive(database=DEFAULT_DB_ALIAS):
     try:
       p = Parameter.objects.all().using(database).get(pk='Worker alive')
-      return datetime.now() - datetime.strptime(p, "%Y-%m-%d %H:%M:%S") <= timedelta(0,5)
+      return datetime.now() - datetime.strptime(p.value, "%Y-%m-%d %H:%M:%S") <= timedelta(0,5)
     except:
       return False
 

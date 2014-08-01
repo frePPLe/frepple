@@ -184,7 +184,7 @@
 <h3><a href="#plan">{% trans 'Create a plan' %}</a></h3>
 <div>
 <table>
-<form method="post" action="{{request.prefix}}/execute/launch/generate plan/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/launch/frepple_run/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% blocktrans %}
 Load frePPLe from the database and live data sources...<br/>
@@ -248,7 +248,7 @@ and export results.<br/>
 <h3><a href="#scenarios">{% trans "Scenario management" %}</a></h3>
 <div>
 <table id="scenarios">
-<form method="post" action="{{request.prefix}}/execute/launch/manage scenarios/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/launch/frepple_copy/">{% csrf_token %}<tr>
 <th>{% trans 'name'|capfirst %}</th>
 <th>{% trans 'status'|capfirst %}</th>
 <th>{% trans 'description'|capfirst %}</th>
@@ -279,7 +279,7 @@ and export results.<br/>
 {% if perms.execute.run_db %}
 <h3><a href="#backup">{% trans "Back up the database" %}</a></h3>
 <div><table>
-<form method="post" action="{{request.prefix}}/execute/launch/backup database/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/launch/frepple_backup/">{% csrf_token %}<tr>
 <td><input id="backup" type="submit" value="{% trans "Launch" %}" /></td>
 <td>{% trans "Dump the database contents to a file." %}</td>
 </tr></form>
@@ -288,7 +288,7 @@ and export results.<br/>
 <h3><a href="#empty">{% trans "Empty the database" %}</a></h3>
 <div>
 <table>
-<form method="post" action="{{request.prefix}}/execute/launch/empty database/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/launch/frepple_flush/">{% csrf_token %}<tr>
 <td><input id="erase" type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% trans "Erase selected tables in the database." %}<br/><br/>
 <input class="empty_all" type="checkbox" name="all" value="1" checked><br/>
@@ -299,7 +299,7 @@ and export results.<br/>
 
 <h3><a href="#load">{% trans "Load a dataset" %}</a></h3>
 <div><table>
-<form method="post" action="{{request.prefix}}/execute/launch/load dataset/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/launch/loaddata/">{% csrf_token %}<tr>
 <td><input id="load" type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% trans "Load a dataset from a file in the database." %}<br/>
 {% trans "Available datasets:" %} <select name="datafile" id="entity">
@@ -329,7 +329,7 @@ and export results.<br/>
 {% if perms.execute.run_db %}
 <h3><a href="#buckets">{% trans "Generate buckets" %}</a></h3>
 <div><table>
-<form method="post" action="{{request.prefix}}/execute/launch/generate buckets/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/launch/frepple_createbuckets/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% blocktrans %}Create time buckets for reporting.<br/>
 Start date: <input class="date" name="start" type="text" maxlength="5" size="12"/><br/>
@@ -348,7 +348,7 @@ Week starts on: <select name="weekstart">
 
 <h3><a href="#generator">{% trans "Generate model" %}</a></h3>
 <div><table>
-<form method="post" action="{{request.prefix}}/execute/launch/generate model/">{% csrf_token %}<tr>
+<form method="post" action="{{request.prefix}}/execute/launch/frepple_createmodel/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% blocktrans %}Create a sample model in the database.<br/>
 The parameters control the size and complexity.<br/>

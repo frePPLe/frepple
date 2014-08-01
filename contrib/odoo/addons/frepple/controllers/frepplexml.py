@@ -36,7 +36,7 @@ class XMLController(openerp.addons.web.http.Controller):
       except:
         return Response(
            'Login with Odoo user name and password', 401,
-           headers=[('WWW-Authenticate', 'Basic realm="Log in with odoo user name and password"')]
+           headers=[('WWW-Authenticate', 'Basic realm="odoo"')]
            )
       return req.make_response(
         xp.run(),

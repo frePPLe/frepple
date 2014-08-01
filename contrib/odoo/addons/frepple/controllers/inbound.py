@@ -31,7 +31,6 @@ class importer(object):
     authmeth, auth = req.httprequest.headers['authorization'].split(' ', 1)
     if authmeth.lower() != 'basic':
       raise Exception("No authentication header")
-    print auth
     auth = auth.strip().decode('base64')
     self.user, password = auth.split(':', 1)
     if not self.database or not self.user or not password:

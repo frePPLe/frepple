@@ -286,6 +286,7 @@ DEFAULT_DASHBOARD = [
     ("alerts",{}),
     ("late_orders",{"limit":20}),
     ("short_orders",{"limit":20}),
+    ("purchase_order_analysis",{"limit":20}),
   ]},
   {'width':'25%', 'widgets':[
     ("news",{}),

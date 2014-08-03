@@ -204,6 +204,35 @@ class ResourceQueueWidget(Widget):
 Dashboard.register(ResourceQueueWidget)
 
 
+class PurchaseAnalysisWidget(Widget):
+  name = "purchase_order_analysis"
+  title = _("Purchase order analysis")
+  async = True
+  url = '/operationplan/?locked=1&operation__startswith=Purchase&sidx=criticality&sord=asc'
+  limit = 20
+
+  @classmethod
+  def render(cls, request=None):
+    limit = int(request.GET.get('limit', cls.limit))
+    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except: db = DEFAULT_DB_ALIAS
+    result = [
+      '<table style="width:100%">',
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
+        capfirst(force_unicode(_("operation"))), capfirst(force_unicode(_("end date"))),
+        capfirst(force_unicode(_("quantity"))), capfirst(force_unicode(_("criticality")))
+        )
+      ]
+    for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=True).order_by('criticality')[:limit]:
+      result.append('<tr><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+          opplan.operation, opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
+          ))
+    result.append('</table>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(PurchaseAnalysisWidget)
+
+
 class AlertsWidget(Widget):
   name = "alerts"
   title = _("Alerts")

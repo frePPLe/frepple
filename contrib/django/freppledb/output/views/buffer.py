@@ -179,4 +179,3 @@ class DetailReport(GridReport):
     GridFieldBool('operationplan__locked', title=_('locked'), editable=False),
     GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
     )
-

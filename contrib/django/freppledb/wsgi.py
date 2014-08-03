@@ -24,7 +24,8 @@ This is used by the different WSGI deployment options:
   - cherrypy server 'frepplectl.py frepple_runserver
 """
 
-import os, sys
+import os
+import sys
 
 # Assure frePPLe is found in the Python path.
 sys.path.append(os.path.join(os.path.dirname(__file__),'..'))

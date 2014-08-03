@@ -15,7 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 from __future__ import print_function
-import sys, socket
+import socket
+import sys
 from threading import Thread
 from optparse import make_option
 from cherrypy.wsgiserver import CherryPyWSGIServer
@@ -36,11 +37,11 @@ class Command(BaseCommand):
 
   option_list = BaseCommand.option_list + (
     make_option("--port", dest="port", type="int",
-                  help="Port number of the server."),
+      help="Port number of the server."),
     make_option("--address", dest="address", type="string",
-                  help="IP address for the server to listen."),
+      help="IP address for the server to listen."),
     make_option("--threads", dest="threads", type="int",
-                  help="Number of server threads (default: 25)."),
+      help="Number of server threads (default: 25)."),
     )
 
   requires_model_validation = False
@@ -113,9 +114,9 @@ class CheckUpdates(Thread):
       import urllib2
       import re
       values = {
-        'platform' : sys.platform,
-        'executable' : sys.executable,
-        'version' : VERSION,
+        'platform': sys.platform,
+        'executable': sys.executable,
+        'version': VERSION,
         }
       request = urllib2.Request('http://www.frepple.com/usage.php?' + urllib.urlencode(values))
       response = urllib2.urlopen(request).read()

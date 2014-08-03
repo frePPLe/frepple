@@ -86,7 +86,7 @@ class Dashboard:
       if widget.__module__.startswith(app):
         # Loop over all permissions of the widget class
         for k in widget.permissions:
-          if content_type == None:
+          if content_type is None:
             # Create a dummy contenttype in the app
             content_type = ContentType.objects.get_or_create(name="reports", model="", app_label=app.split('.')[-1])[0]
           # Create the permission object

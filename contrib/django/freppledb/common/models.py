@@ -90,7 +90,7 @@ class HierarchyModel(models.Model):
     # Loop over nodes without parent
     cnt = 1
     for i, j in keys:
-      if j == None:
+      if j is None:
         cnt = tagChildren(i,cnt,0)
 
     if nodes:
@@ -119,13 +119,13 @@ class HierarchyModel(models.Model):
       # Continue loop over nodes without parent
       keys = sorted(nodes.items())
       for i, j in keys:
-        if j == None:
+        if j is None:
           cnt = tagChildren(i,cnt,0)
 
     # Write all results to the database
     with transaction.atomic(using=database):
       connections[database].cursor().executemany(
-        'update %s set lft=%%s, rght=%%s, lvl=%%s where name = %%s' %  connections[database].ops.quote_name(cls._meta.db_table),
+        'update %s set lft=%%s, rght=%%s, lvl=%%s where name = %%s' % connections[database].ops.quote_name(cls._meta.db_table),
         updates
         )
 
@@ -151,7 +151,7 @@ class AuditModel(models.Model):
   source = models.CharField(_('source'), db_index=True, max_length=settings.CATEGORYSIZE, null=True, blank=True)
   lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now())
 
-  objects = MultiDBManager() # The default manager.
+  objects = MultiDBManager()  # The default manager.
 
   def save(self, *args, **kwargs):
     # Update the field with every change
@@ -224,8 +224,8 @@ class User(AbstractUser):
 class Comment(models.Model):
   id = models.AutoField(_('identifier'), primary_key=True)
   content_type = models.ForeignKey(ContentType,
-          verbose_name=_('content type'),
-          related_name="content_type_set_for_%(class)s")
+    verbose_name=_('content type'),
+    related_name="content_type_set_for_%(class)s")
   object_pk = models.TextField(_('object ID'))
   content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
   comment = models.TextField(_('comment'), max_length=settings.COMMENT_MAX_LENGTH)
@@ -274,4 +274,3 @@ class BucketDetail(AuditModel):
     db_table = 'common_bucketdetail'
     unique_together = (('bucket', 'startdate'),)
     ordering = ['bucket','startdate']
-

@@ -138,7 +138,7 @@ class Command(BaseCommand):
     else:
       user = None
 
-    random.seed(100) # Initialize random seed to get reproducible results
+    random.seed(100)  # Initialize random seed to get reproducible results
 
     now = datetime.now()
     task = None
@@ -168,26 +168,26 @@ class Command(BaseCommand):
         raise CommandError("current date is not matching format YYYY-MM-DD")
 
       # Check whether the database is empty
-      if Buffer.objects.using(database).count()>0 or Item.objects.using(database).count()>0:
+      if Buffer.objects.using(database).count() > 0 or Item.objects.using(database).count() > 0:
         raise CommandError("Database must be empty before creating a model")
 
       # Plan start date
-      if verbosity>0: print("Updating current date...")
+      if verbosity > 0: print("Updating current date...")
       param = Parameter.objects.using(database).create(name="currentdate")
       param.value = datetime.strftime(startdate, "%Y-%m-%d %H:%M:%S")
       param.save(using=database)
 
       # Planning horizon
       # minimum 10 daily buckets, weekly buckets till 40 days after current
-      if verbosity>0: print("Updating buckets...")
+      if verbosity > 0: print("Updating buckets...")
       management.call_command('frepple_createbuckets', user=user, database=database)
-      if verbosity>0: print("Updating horizon telescope...")
+      if verbosity > 0: print("Updating horizon telescope...")
       updateTelescope(10, 40, 730, database)
       task.status = '2%'
       task.save(using=database)
 
       # Weeks calendar
-      if verbosity>0: print("Creating weeks calendar...")
+      if verbosity > 0: print("Creating weeks calendar...")
       with transaction.atomic(using=database):
         weeks = Calendar.objects.using(database).create(name="Weeks", defaultvalue=0)
         for i in BucketDetail.objects.using(database).filter(bucket="week").all():
@@ -196,7 +196,7 @@ class Command(BaseCommand):
         task.save(using=database)
 
       # Working days calendar
-      if verbosity>0: print("Creating working days...")
+      if verbosity > 0: print("Creating working days...")
       with transaction.atomic(using=database):
         workingdays = Calendar.objects.using(database).create(name="Working Days", defaultvalue=0)
         minmax = BucketDetail.objects.using(database).filter(bucket="week").aggregate(Min('startdate'),Max('startdate'))
@@ -209,53 +209,53 @@ class Command(BaseCommand):
       categories = [ 'cat A','cat B','cat C','cat D','cat E','cat F','cat G' ]
 
       # Create customers
-      if verbosity>0: print("Creating customers...")
+      if verbosity > 0: print("Creating customers...")
       with transaction.atomic(using=database):
         cust = []
         for i in range(100):
-          c = Customer.objects.using(database).create(name = 'Cust %03d' % i)
+          c = Customer.objects.using(database).create(name='Cust %03d' % i)
           cust.append(c)
         task.status = '8%'
         task.save(using=database)
 
       # Create resources and their calendars
-      if verbosity>0: print("Creating resources and calendars...")
+      if verbosity > 0: print("Creating resources and calendars...")
       with transaction.atomic(using=database):
         res = []
         for i in range(resource):
           loc = Location(name='Loc %05d' % int(random.uniform(1,cluster)))
           loc.save(using=database)
-          cal = Calendar(name='capacity for res %03d' %i, category='capacity', defaultvalue=0)
+          cal = Calendar(name='capacity for res %03d' % i, category='capacity', defaultvalue=0)
           bkt = CalendarBucket(startdate=startdate, value=resource_size, calendar=cal)
           cal.save(using=database)
           bkt.save(using=database)
-          r = Resource.objects.using(database).create(name = 'Res %03d' % i, maximum_calendar=cal, location=loc)
+          r = Resource.objects.using(database).create(name='Res %03d' % i, maximum_calendar=cal, location=loc)
           res.append(r)
         task.status = '10%'
         task.save(using=database)
         random.shuffle(res)
 
       # Create the components
-      if verbosity>0: print("Creating raw materials...")
+      if verbosity > 0: print("Creating raw materials...")
       with transaction.atomic(using=database):
         comps = []
         comploc = Location.objects.using(database).create(name='Procured materials')
         for i in range(components):
-          it = Item.objects.using(database).create(name = 'Component %04d' % i,
+          it = Item.objects.using(database).create(name='Component %04d' % i,
                  category='Procured',
                  price=str(round(random.uniform(0,100)))
                  )
           ld = abs(round(random.normalvariate(procure_lt,procure_lt/3)))
-          c = Buffer.objects.using(database).create(name = 'Component %04d' % i,
-               location = comploc,
-               category = 'Procured',
-               item = it,
-               type = 'procure',
-               min_inventory = 20,
-               max_inventory = 100,
-               size_multiple = 10,
-               leadtime = str(ld * 86400),
-               onhand = str(round(forecast_per_item * random.uniform(1,3) * ld / 30)),
+          c = Buffer.objects.using(database).create(name='Component %04d' % i,
+               location=comploc,
+               category='Procured',
+               item=it,
+               type='procure',
+               min_inventory=20,
+               max_inventory=100,
+               size_multiple=10,
+               leadtime=str(ld * 86400),
+               onhand=str(round(forecast_per_item * random.uniform(1,3) * ld / 30)),
                )
           comps.append(c)
         task.status = '12%'
@@ -266,7 +266,7 @@ class Command(BaseCommand):
       progress = 88.0 / cluster
       for i in range(cluster):
         with transaction.atomic(using=database):
-          if verbosity>0: print("Creating supply chain for end item %d..." % i)
+          if verbosity > 0: print("Creating supply chain for end item %d..." % i)
 
           # location
           loc = Location.objects.using(database).get_or_create(name='Loc %05d' % i)[0]
@@ -295,7 +295,7 @@ class Command(BaseCommand):
               item=it,
               quantity=int(random.uniform(1,6)),
               # Exponential distribution of due dates, with an average of deliver_lt days.
-              due = startdate + timedelta(days=round(random.expovariate(float(1)/deliver_lt/24))/24),
+              due=startdate + timedelta(days=round(random.expovariate(float(1)/deliver_lt/24))/24),
               # Orders have higher priority than forecast
               priority=random.choice([1,2]),
               customer=random.choice(cust),
@@ -329,7 +329,7 @@ class Command(BaseCommand):
             ops.append(oper)
             buf.producing = oper
             # Some inventory in random buffers
-            if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
+            if random.uniform(0,1) > 0.8: buf.onhand = int(random.uniform(5,20))
             buf.save(using=database)
             Flow(operation=oper, thebuffer=buf, quantity=1, type="end").save(using=database)
             if k != level-1:
@@ -353,8 +353,8 @@ class Command(BaseCommand):
               b = random.choice(comps)
             c.append( (o,b) )
             Flow.objects.using(database).create(
-              operation = o, thebuffer = b,
-              quantity = random.choice([-1,-1,-1,-2,-3]))
+              operation=o, thebuffer=b,
+              quantity=random.choice([-1,-1,-1,-2,-3]))
 
           # Commit the current cluster
           task.status = '%d%%' % (12 + progress*(i+1))
@@ -414,20 +414,20 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
     startdate = datetime.strptime(Parameter.objects.using(database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
     curdate = startdate
     BucketDetail(
-      bucket = b,
-      name = 'past',
-      startdate = datetime(2000,1,1),
-      enddate = curdate,
+      bucket=b,
+      name='past',
+      startdate=datetime(2000,1,1),
+      enddate=curdate,
       ).save(using=database)
 
     # Create daily buckets
     limit = curdate + timedelta(min_day_horizon)
     while curdate < limit or curdate.strftime("%w") != '0':
       BucketDetail(
-        bucket = b,
-        name = str(curdate.date()),
-        startdate = curdate,
-        enddate = curdate + timedelta(1)
+        bucket=b,
+        name=str(curdate.date()),
+        startdate=curdate,
+        enddate=curdate + timedelta(1)
         ).save(using=database)
       curdate = curdate + timedelta(1)
 
@@ -440,10 +440,10 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
         stop = True
         enddate = datetime(enddate.year, enddate.month, 1)
       BucketDetail(
-        bucket = b,
-        name = curdate.strftime("%y W%W"),
-        startdate = curdate,
-        enddate = enddate
+        bucket=b,
+        name=curdate.strftime("%y W%W"),
+        startdate=curdate,
+        enddate=enddate
         ).save(using=database)
       curdate = enddate
 
@@ -453,10 +453,10 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
       enddate = curdate + timedelta(32)
       enddate = datetime(enddate.year, enddate.month, 1)
       BucketDetail(
-        bucket = b,
-        name = curdate.strftime("%b %y"),
-        startdate = curdate,
-        enddate = enddate
+        bucket=b,
+        name=curdate.strftime("%b %y"),
+        startdate=curdate,
+        enddate=enddate
         ).save(using=database)
       curdate = enddate
 

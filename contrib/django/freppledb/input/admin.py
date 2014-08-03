@@ -35,11 +35,11 @@ class CalendarBucket_admin(MultiDBModelAdmin):
   raw_id_fields = ('calendar',)
   save_on_top = True
   fieldsets = (
-          (None, {'fields': ('calendar', ('startdate', 'enddate'), 'value', 'priority')}),
-          (_('Repeating pattern'), {
-             'fields': (('starttime', 'endtime'),('monday','tuesday','wednesday','thursday','friday','saturday','sunday')),
-             }),
-      )
+    (None, {'fields': ('calendar', ('startdate', 'enddate'), 'value', 'priority')}),
+    (_('Repeating pattern'), {
+      'fields': (('starttime', 'endtime'),('monday','tuesday','wednesday','thursday','friday','saturday','sunday')),
+      }),
+    )
 data_site.register(CalendarBucket,CalendarBucket_admin)
 
 
@@ -111,12 +111,12 @@ class Operation_admin(MultiDBModelAdmin):
   save_on_top = True
   inlines = [ SubOperation_inline, Flow_inline, Load_inline, ]
   fieldsets = (
-          (None, {'fields': ('name', 'type', 'location', 'description', ('category', 'subcategory'))}),
-          (_('Planning parameters'), {
-             'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per','search'),
-             'classes': ('collapse',)
-             }),
-      )
+    (None, {'fields': ('name', 'type', 'location', 'description', ('category', 'subcategory'))}),
+    (_('Planning parameters'), {
+      'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per','search'),
+        'classes': ('collapse',)
+       }),
+    )
 data_site.register(Operation,Operation_admin)
 
 

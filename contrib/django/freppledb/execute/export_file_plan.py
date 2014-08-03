@@ -27,13 +27,15 @@ information to a set of text files.
 from __future__ import print_function
 from time import time
 from datetime import datetime, timedelta
-import csv, inspect
+import csv
+import inspect
 
 from django.conf import settings
 
 import frepple
 
 encoding = settings.CSV_CHARSET
+
 
 def exportProblems():
   print("Exporting problems...")

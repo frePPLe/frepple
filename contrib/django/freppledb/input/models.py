@@ -45,7 +45,7 @@ class Calendar(AuditModel):
     null=True, blank=True, db_index=True)
   defaultvalue = models.DecimalField(_('default value'), max_digits=settings.MAX_DIGITS,
     decimal_places=settings.DECIMAL_PLACES, default='0.00', null=True, blank=True,
-    help_text= _('Value to be used when no entry is effective')
+    help_text=_('Value to be used when no entry is effective')
     )
 
   def __unicode__(self): return self.name
@@ -284,7 +284,7 @@ class Buffer(AuditModel,HierarchyModel):
   size_multiple = models.DecimalField(_('size_multiple'),
     max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     help_text=_('Replenishments of a procure buffer are a multiple of this quantity'))
-  size_maximum =  models.DecimalField(_('size_maximum'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+  size_maximum = models.DecimalField(_('size_maximum'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     help_text=_('Maximum size of replenishments of a procure buffer'))
 
   def __unicode__(self): return self.name
@@ -483,7 +483,7 @@ class Flow(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'flow'
-    unique_together = (('operation','thebuffer'),) # TODO also include effectivity in this
+    unique_together = (('operation','thebuffer'),)  # TODO also include effectivity in this
     verbose_name = _('flow')
     verbose_name_plural = _('flows')
 
@@ -523,7 +523,7 @@ class Load(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'resourceload'
-    unique_together = (('operation','resource'),) # TODO also include effectivity in this
+    unique_together = (('operation','resource'),)  # TODO also include effectivity in this
     verbose_name = _('load')
     verbose_name_plural = _('loads')
 

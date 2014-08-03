@@ -43,14 +43,14 @@ class Report(GridReport):
   '''
   template = 'output/problem.html'
   title = _("Problem Report")
-  basequeryset = Problem.objects # TODO .extra(select={'forecast': "select name from forecast where out_problem.owner like forecast.name || ' - %%'",})
+  basequeryset = Problem.objects  # TODO .extra(select={'forecast': "select name from forecast where out_problem.owner like forecast.name || ' - %%'",})
   model = Problem
   permissions = (("view_problem_report", "Can view problem report"),)
   frozenColumns = 0
   editable = False
   multiselect = False
   rows = (
-    GridFieldText('entity', title=_('entity'), editable=False, align='center'), # TODO choices=getEntities
+    GridFieldText('entity', title=_('entity'), editable=False, align='center'),  # TODO choices=getEntities
     GridFieldText('name', title=_('name'), editable=False, align='center'),  # TODO choices=getNames
     GridFieldText('owner', title=_('owner'), editable=False, extra='formatter:probfmt'),
     GridFieldText('description', title=_('description'), editable=False, width=350),

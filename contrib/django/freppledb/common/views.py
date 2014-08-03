@@ -65,6 +65,7 @@ class PreferencesForm(forms.Form):
     help_text=_('Theme for the user interface'),
     )
 
+
 @login_required
 @csrf_protect
 def preferences(request):

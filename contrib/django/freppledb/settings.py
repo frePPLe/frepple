@@ -127,8 +127,8 @@ else:
   # All other layout types
   STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP,'static'))
 STATIC_URL = '/static/'
-USE_L10N=True        # Represent data in the local format
-USE_I18N=True        # Use translated strings
+USE_L10N = True        # Represent data in the local format
+USE_I18N = True        # Use translated strings
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
@@ -141,7 +141,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 # Sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_NAME = 'sessionid'         # Cookie name. This can be whatever you want.
-SESSION_COOKIE_AGE = 60 * 60 * 24 *  2    # Age of cookie, in seconds: 2 days
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 2     # Age of cookie, in seconds: 2 days
 SESSION_COOKIE_DOMAIN = None              # A string, or None for standard domain cookie.
 SESSION_SAVE_EVERY_REQUEST = True         # Whether to save the session data on every request.
                                           # Needs to be True to have the breadcrumbs working correctly!

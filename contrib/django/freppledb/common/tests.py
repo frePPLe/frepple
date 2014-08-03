@@ -15,7 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os, os.path
+import os
+import os.path
 
 from django.test import TestCase, TransactionTestCase
 from django.conf import settings

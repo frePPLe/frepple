@@ -42,7 +42,7 @@ class DurationWidget(TextInput):
       try:
         value = float(value)
         days = math.floor(value / 86400)
-        hours   = math.floor((value - (days * 86400)) / 3600)
+        hours = math.floor((value - (days * 86400)) / 3600)
         minutes = math.floor((value - (days * 86400) - (hours * 3600)) / 60)
         seconds = value - (days * 86400) - (hours * 3600) - (minutes * 60)
         if days > 0:
@@ -60,6 +60,7 @@ class DurationWidget(TextInput):
 
 numericTypes = (Decimal, float) + six.integer_types
 
+
 class DurationFormField(fields.RegexField):
 
   widget = DurationWidget
@@ -76,7 +77,7 @@ class DurationFormField(fields.RegexField):
     super(DurationFormField, self).__init__(**kwargs)
 
   def to_python(self, value):
-    if isinstance(value, numericTypes) or value == None:
+    if isinstance(value, numericTypes) or value is None:
       # Empty fields and numeric values pass directly
       return value
     if value == u'': return None
@@ -159,4 +160,3 @@ class JSONField(models.TextField):
       return 'json'
     else:
       return super(JSONField, self).db_type(connection)
-

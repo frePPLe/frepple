@@ -148,4 +148,3 @@ class DetailReport(GridReport):
     GridFieldNumber('unavailable', title=_('unavailable'), editable=False),
     GridFieldInteger('owner', title=_('owner'), editable=False),
     )
-

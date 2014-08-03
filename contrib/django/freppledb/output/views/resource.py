@@ -194,4 +194,3 @@ class DetailReport(GridReport):
     GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
     GridFieldText('setup', title=_('setup'), editable=False),
     )
-

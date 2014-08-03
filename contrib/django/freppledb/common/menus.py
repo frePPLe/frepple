@@ -195,7 +195,7 @@ class Menu:
         if j.report.__module__.startswith(app):
           # Loop over all permissions of the class
           for k in j.report.permissions:
-            if content_type == None:
+            if content_type is None:
               # Create a dummy contenttype in the app
               content_type = ContentType.objects.get_or_create(name="reports", model="", app_label=app.split('.')[-1])[0]
             # Create the permission object
@@ -204,4 +204,3 @@ class Menu:
             p = Permission.objects.get_or_create(codename=k[0], content_type=content_type)[0]
             p.name = k[1]
             p.save()
-

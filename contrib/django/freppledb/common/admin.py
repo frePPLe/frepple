@@ -42,6 +42,7 @@ class MyUserCreationForm(UserCreationForm):
   class Meta(UserCreationForm.Meta):
     model = User
 
+
 class MyUserAdmin(UserAdmin):
     save_on_top = True
     add_form = MyUserCreationForm
@@ -87,6 +88,7 @@ class BucketDetail_inline(MultiDBTabularInline):
   max_num = 10
   extra = 3
   exclude = ('source',)
+
 
 class BucketDetail_admin(MultiDBModelAdmin):
   model = BucketDetail

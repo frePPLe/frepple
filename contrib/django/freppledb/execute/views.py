@@ -88,7 +88,7 @@ class TaskReport(GridReport):
             if i.endswith('.json'):
               fixtures.add(i.split('.')[0])
       except:
-        pass # Silently ignore failures
+        pass  # Silently ignore failures
     fixtures = sorted(fixtures)
 
     # Send to template
@@ -237,7 +237,7 @@ def wrapTask(request, action):
       if "python" in sys.executable:
         # Development layout
         Popen([
-          sys.executable, # Python executable
+          sys.executable,  # Python executable
           os.path.join(settings.FREPPLE_APP,"frepplectl.py"),
           "frepple_runworker",
           "--database=%s" % worker_database
@@ -253,10 +253,10 @@ def wrapTask(request, action):
     elif sys.executable.find('freppleserver.exe') >= 0:
       # Py2exe executable
       Popen([
-        sys.executable.replace('freppleserver.exe','frepplectl.exe'), # frepplectl executable
+        sys.executable.replace('freppleserver.exe','frepplectl.exe'),  # frepplectl executable
         "frepple_runworker",
         "--database=%s" % worker_database
-        ], creationflags=0x08000000) # Do not create a console window
+        ], creationflags=0x08000000)  # Do not create a console window
     else:
       # Linux standard installation
       Popen([
@@ -278,7 +278,7 @@ def CancelTask(request, taskid):
     task = Task.objects.all().using(request.database).get(pk=taskid)
     if task.status != 'Waiting':
       raise Exception('Task is not in waiting status')
-    task.status = 'Canceled';
+    task.status = 'Canceled'
     task.save(using=request.database)
     return HttpResponse(content="OK")
   except Exception as e:

@@ -40,6 +40,7 @@ else:
 
 encoding = 'UTF8'
 
+
 def truncate(process):
   print("Emptying database plan tables...")
   starttime = time()
@@ -284,4 +285,3 @@ def exportfrepple():
     ''')
   for table, recs in cursor.fetchall():
     print("Table %s: %d records" % (table, recs))
-

@@ -174,7 +174,7 @@ class PathReport(GridReport):
 
     # Recurse over all operations
     counter = 1
-    operations = set()
+    #operations = set()
     while len(root) > 0:
       # Pop the current node from the stack
       level, parent, curoperation, curqty, issuboperation, parentoper, realdepth, pushsuper = root.pop()

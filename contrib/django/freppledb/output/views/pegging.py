@@ -25,6 +25,7 @@ from freppledb.output.models import FlowPlan, LoadPlan, OperationPlan
 from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime
 from freppledb.common.models import Parameter
 
+
 class ReportByDemand(GridReport):
   '''
   A list report to show peggings.
@@ -88,7 +89,7 @@ class ReportByDemand(GridReport):
 
     # Adjust the horizon
     if due > end: end = due
-    if due < start: start =due
+    if due < start: start = due
     end += timedelta(days=1)
     start -= timedelta(days=1)
     request.report_startdate = start.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -175,8 +176,8 @@ class ReportByDemand(GridReport):
         else:
           ops[p_name] = [indx+1, depth+1, None, True, buf, it, [p_id,] ]
       if c_name and p_name:
-        ops[p_name][2] = c_name # set parent
-        ops[c_name][3] = False # c_name is no longer a leaf
+        ops[p_name][2] = c_name  # set parent
+        ops[c_name][3] = False  # c_name is no longer a leaf
       indx += 1
 
     # Build the Python result
@@ -197,13 +198,13 @@ class ReportByDemand(GridReport):
           'resource': i[0] in resource and resource[i[0]] or None,
           'operationplans': [{
              'operation': i[0],
-             #'description': float(row[11]) or 100.0, # TODO percent used
+             #'description': float(row[11]) or 100.0,  # TODO percent used
              'quantity': opplans[j][2],
              'x': round((opplans[j][0] - request.report_startdate).total_seconds() / horizon, 3),
              'w': round((opplans[j][1] - opplans[j][0]).total_seconds() / horizon, 3),
              'startdate': str(opplans[j][0]),
              'enddate': str(opplans[j][1]),
-             'locked': 0, # TODO
+             'locked': 0,  # TODO
              } for j in i[1][6] ]
           }
 
@@ -233,7 +234,7 @@ class ReportByBuffer(GridReport):
     for i,j in request.GET.iteritems():
       if i.startswith('thebuffer') or i.startswith('flowdate'):
         try: query = query.filter(**{i:j})
-        except: pass # silently ignore invalid filters
+        except: pass  # silently ignore invalid filters
     return query
 
   @classmethod
@@ -314,7 +315,7 @@ class ReportByResource(GridReport):
     for i,j in request.GET.iteritems():
       if i.startswith('theresource') or i.startswith('startdate') or i.startswith('enddate'):
         try: query = query.filter(**{i:j})
-        except: pass # silently ignore invalid filters
+        except: pass  # silently ignore invalid filters
     return query
 
   @classmethod
@@ -378,7 +379,7 @@ class ReportByOperation(GridReport):
     for i,j in request.GET.iteritems():
       if i.startswith('operation') or i.startswith('startdate') or i.startswith('enddate'):
         try: query = query.filter(**{i:j})
-        except: pass # silently ignore invalid filters
+        except: pass  # silently ignore invalid filters
     return query
 
   @classmethod

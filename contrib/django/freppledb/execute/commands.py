@@ -1,5 +1,6 @@
 from __future__ import print_function
-import os, sys
+import os
+import sys
 from datetime import datetime
 
 from django.db import transaction, DEFAULT_DB_ALIAS

@@ -15,7 +15,9 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os.path, subprocess, shutil
+import os.path
+import subprocess
+import shutil
 from datetime import datetime
 from optparse import make_option
 
@@ -161,7 +163,7 @@ class Command(BaseCommand):
           cmd.append("--port=%s " % settings.DATABASES[database]['PORT'])
         cmd.append(settings.DATABASES[database]['NAME'])
         cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR,args[0])))
-        ret = subprocess.call(cmd, shell=True) # Shell needs to be True in order to interpret the < character
+        ret = subprocess.call(cmd, shell=True)  # Shell needs to be True in order to interpret the < character
         if ret: raise Exception("Run of run psql failed")
       else:
         raise Exception('Database backup command not supported for engine %s' % settings.DATABASES[database]['ENGINE'])

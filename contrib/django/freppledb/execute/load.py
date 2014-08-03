@@ -38,7 +38,7 @@ import frepple
 
 class loadData(object):
 
-  def __init__(self, database = None, filter = None):
+  def __init__(self, database=None, filter=None):
     if database:
       self.database = database
     elif 'FREPPLE_DATABASE' in os.environ:
@@ -546,7 +546,7 @@ class loadData(object):
         if o: x.customer = frepple.customer(name=o)
         if p: x.owner = frepple.demand(name=p)
         if q: x.minshipment = q
-        if r != None: x.maxlateness = r
+        if r is not None: x.maxlateness = r
       except Exception as e: print("Error:", e)
     print('Loaded %d demands in %.2f seconds' % (cnt, time() - starttime))
 

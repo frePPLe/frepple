@@ -15,7 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import re, threading
+import re
+import threading
 
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware

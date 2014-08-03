@@ -15,7 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os, shutil
+import os
+import shutil
 from optparse import make_option
 from datetime import datetime
 

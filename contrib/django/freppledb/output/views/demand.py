@@ -140,7 +140,7 @@ class OverviewReport(GridPivot):
     previtem = None
     for row in cursor.fetchall():
       if row[0] != previtem:
-        try: backlog =  startbacklogdict[row[0]]
+        try: backlog = startbacklogdict[row[0]]
         except: backlog = 0
         previtem = row[0]
       backlog += float(row[4]) - float(row[5])

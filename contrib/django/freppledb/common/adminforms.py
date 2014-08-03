@@ -42,6 +42,7 @@ from freppledb.common.models import Comment
 
 csrf_protect_m = method_decorator(csrf_protect)
 
+
 class MultiDBModelAdmin(admin.ModelAdmin):
   r'''
   This class is an enhanced version of the django regular admin model.
@@ -94,11 +95,11 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     """
     from django.contrib.admin.models import ADDITION
     LogEntry(
-        user_id         = request.user.pk,
+        user_id = request.user.pk,
         content_type_id = ContentType.objects.get_for_model(obj).pk,
-        object_id       = smart_text(obj.pk),
-        object_repr     = force_text(obj)[:200],
-        action_flag     = ADDITION
+        object_id = smart_text(obj.pk),
+        object_repr = force_text(obj)[:200],
+        action_flag = ADDITION
     ).save(using=request.database)
 
   def log_change(self, request, obj, message):
@@ -127,12 +128,12 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       # e) Delete the old record
       self.queryset(request).get(pk=old_pk).delete()
     LogEntry(
-        user_id         = request.user.pk,
+        user_id = request.user.pk,
         content_type_id = ContentType.objects.get_for_model(obj).pk,
-        object_id       = smart_text(obj.pk),
-        object_repr     = force_text(obj)[:200],
-        action_flag     = CHANGE,
-        change_message  = message
+        object_id = smart_text(obj.pk),
+        object_repr = force_text(obj)[:200],
+        action_flag = CHANGE,
+        change_message = message
     ).save(using=request.database)
 
   def log_deletion(self, request, obj, object_repr):
@@ -142,11 +143,11 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     """
     from django.contrib.admin.models import DELETION
     LogEntry(
-        user_id         = request.user.id,
+        user_id = request.user.id,
         content_type_id = ContentType.objects.get_for_model(self.model).pk,
-        object_id       = smart_text(obj.pk),
-        object_repr     = force_text(object_repr)[:200],
-        action_flag     = DELETION
+        object_id = smart_text(obj.pk),
+        object_repr = force_text(object_repr)[:200],
+        action_flag = DELETION
     ).save(using=request.database)
 
   def history_view(self, request, object_id, extra_context=None):
@@ -177,10 +178,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     }
     context.update(extra_context or {})
     return TemplateResponse(request, self.object_history_template or [
-            "admin/%s/%s/object_history.html" % (app_label, opts.model_name),
-            "admin/%s/object_history.html" % app_label,
-            "admin/object_history.html"
-        ], context, current_app=self.admin_site.name)
+      "admin/%s/%s/object_history.html" % (app_label, opts.model_name),
+      "admin/%s/object_history.html" % app_label,
+      "admin/object_history.html"
+      ], context, current_app=self.admin_site.name)
 
   def response_add(self, request, obj, post_url_continue=None):
     """
@@ -307,7 +308,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       deleted_objects = [ replace_url(i) for i in deleted_objects ]
       protected = [ replace_url(i) for i in protected ]
 
-    if request.POST: # The user has already confirmed the deletion.
+    if request.POST:  # The user has already confirmed the deletion.
       if perms_needed:
         raise PermissionDenied
       obj_display = force_text(obj)
@@ -334,10 +335,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     context.update(extra_context or {})
 
     return TemplateResponse(request, self.delete_confirmation_template or [
-            "admin/%s/%s/delete_confirmation.html" % (app_label, opts.model_name),
-            "admin/%s/delete_confirmation.html" % app_label,
-            "admin/delete_confirmation.html"
-        ], context, current_app=self.admin_site.name)
+      "admin/%s/%s/delete_confirmation.html" % (app_label, opts.model_name),
+      "admin/%s/delete_confirmation.html" % app_label,
+      "admin/delete_confirmation.html"
+      ], context, current_app=self.admin_site.name)
 
   # TODO: allow permissions per schema
   # def has_add_permission(self, request):
@@ -358,4 +359,3 @@ class MultiDBTabularInline(admin.TabularInline):
 
   def formfield_for_manytomany(self, db_field, request=None, **kwargs):
     return super(MultiDBTabularInline, self).formfield_for_manytomany(db_field, request=request, using=request.database, **kwargs)
-

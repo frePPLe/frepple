@@ -15,7 +15,10 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os, re, subprocess, shutil
+import os
+import re
+import subprocess
+import shutil
 from datetime import datetime
 from optparse import make_option
 
@@ -178,7 +181,7 @@ class Command(BaseCommand):
         if os.path.isfile(os.path.join(settings.FREPPLE_LOGDIR,f)):
           # Note this is NOT 100% correct on UNIX. st_ctime is not alawys the creation date...
           created = datetime.fromtimestamp(os.stat(os.path.join(settings.FREPPLE_LOGDIR,f)).st_ctime)
-          if pattern.match(f) and  (now - created).days > 31:
+          if pattern.match(f) and (now - created).days > 31:
             try: os.remove(os.path.join(settings.FREPPLE_LOGDIR,f))
             except: pass
 
@@ -198,4 +201,3 @@ class Command(BaseCommand):
       try: transaction.commit(using=database)
       except: pass
       transaction.leave_transaction_management(using=database)
-

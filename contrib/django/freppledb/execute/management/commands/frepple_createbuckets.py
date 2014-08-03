@@ -137,11 +137,11 @@ class Command(BaseCommand):
         month = int(curdate.strftime("%m"))  # an integer in the range 1 - 12
         quarter = (month-1) / 3 + 1          # an integer in the range 1 - 4
         year = int(curdate.strftime("%Y"))
-        dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
+        dayofweek = int(curdate.strftime("%w"))  # day of the week, 0 = sunday, 1 = monday, ...
         year_start = datetime(year,1,1)
         year_end = datetime(year+1,1,1)
-        week_start = curdate - timedelta((dayofweek+6)%7 + 1 - weekstart)
-        week_end = curdate - timedelta((dayofweek+6)%7-7 + 1 - weekstart)
+        week_start = curdate - timedelta((dayofweek+6) % 7 + 1 - weekstart)
+        week_end = curdate - timedelta((dayofweek+6) % 7 - 6 - weekstart)
         if week_start < year_start: week_start = year_start
         if week_end > year_end: week_end = year_end
 
@@ -149,40 +149,40 @@ class Command(BaseCommand):
         if year != prev_year:
           prev_year = year
           BucketDetail(
-            bucket = y,
-            name = str(year),
-            startdate = year_start,
-            enddate = year_end
+            bucket=y,
+            name=str(year),
+            startdate=year_start,
+            enddate=year_end
             ).save(using=database)
         if quarter != prev_quarter:
           prev_quarter = quarter
           BucketDetail(
-            bucket = q,
-            name = "%02d Q%s" % (year-2000,quarter),
-            startdate = date(year, quarter*3-2, 1),
-            enddate = date(year+quarter/4, quarter*3+1-12*(quarter/4), 1)
+            bucket=q,
+            name="%02d Q%s" % (year-2000,quarter),
+            startdate=date(year, quarter*3-2, 1),
+            enddate=date(year+quarter/4, quarter*3+1-12*(quarter/4), 1)
             ).save(using=database)
         if month != prev_month:
           prev_month = month
           BucketDetail(
-            bucket = m,
-            name = curdate.strftime("%b %y"),
-            startdate = date(year, month, 1),
-            enddate = date(year+month/12, month+1-12*(month/12), 1),
+            bucket=m,
+            name=curdate.strftime("%b %y"),
+            startdate=date(year, month, 1),
+            enddate=date(year+month/12, month+1-12*(month/12), 1),
             ).save(using=database)
         if week_start != prev_week:
           prev_week = week_start
           BucketDetail(
-            bucket = w,
-            name = curdate.strftime("%y W%W"),
-            startdate = week_start,
-            enddate = week_end,
+            bucket=w,
+            name=curdate.strftime("%y W%W"),
+            startdate=week_start,
+            enddate=week_end,
             ).save(using=database)
         BucketDetail(
-          bucket = d,
-          name = str(curdate.date()),
-          startdate = curdate,
-          enddate = curdate + timedelta(1),
+          bucket=d,
+          name=str(curdate.date()),
+          startdate=curdate,
+          enddate=curdate + timedelta(1),
           ).save(using=database)
 
         # Next date

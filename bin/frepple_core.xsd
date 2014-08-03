@@ -834,6 +834,7 @@
       <xsd:element name="quantity" type="positiveDouble" />
       <xsd:element name="locked" type="xsd:boolean" />
       <xsd:element name="owner" type="operationplan" />
+      <xsd:element name="criticality" type="xsd:double" />
       <xsd:element name="consume_material" type="xsd:boolean" />
       <xsd:element name="consume_capacity" type="xsd:boolean" />
       <xsd:element name="produce_material" type="xsd:boolean" />
@@ -848,6 +849,7 @@
     <xsd:attribute name="start" type="xsd:dateTime" />
     <xsd:attribute name="end" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="positiveDouble" />
+    <xsd:attribute name="criticality" type="xsd:double" />
     <xsd:attribute name="locked" type="xsd:boolean" />
     <xsd:attribute name="consume_material" type="xsd:boolean" />
     <xsd:attribute name="consume_capacity" type="xsd:boolean" />

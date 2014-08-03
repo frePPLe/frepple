@@ -6,6 +6,7 @@
 	<start>2010-12-25T00:00:00</start>
 	<end>2011-01-01T00:00:00</end>
 	<quantity>9</quantity>
+	<criticality>999</criticality>
 	<locked>true</locked>
 </operationplan>
 <item name="end item">
@@ -24,6 +25,7 @@
 			<start>2009-03-01T09:00:00</start>
 			<end>2009-03-02T09:00:00</end>
 			<quantity>10</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 	</operationplans>
 </demand>
@@ -43,24 +45,28 @@
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
+			<criticality>999</criticality>
 			<owner id="10" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="17" operation="make item">
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
+			<criticality>999</criticality>
 			<owner id="11" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="18" operation="make item">
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
+			<criticality>999</criticality>
 			<owner id="13" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="19" operation="make item">
 			<start>2010-12-25T00:00:00</start>
 			<end>2011-01-01T00:00:00</end>
 			<quantity>9</quantity>
+			<criticality>999</criticality>
 			<locked>true</locked>
 		</operationplan>
 	</operationplans>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>operationplan criticality</name>
+  <description>
+    Test to validate the criticality compuation.
+  </description>
+  <current>2014-01-01T00:00:00</current>
+  <operations>
+    <operation name="item 1 - level 0" duration="P2D" xsi:type="operation_fixed_time"/>
+    <operation name="item 2 - level 0" duration="P2D" xsi:type="operation_fixed_time"/>
+    <operation name="item 3 - level 0" duration="P2D" xsi:type="operation_fixed_time"/>
+    <operation name="item 1 - level 1" duration="P2D" xsi:type="operation_fixed_time"/>
+    <operation name="item 2 - level 1" duration="P2D" xsi:type="operation_fixed_time"/>
+    <operation name="item 3 - level 1" duration="P2D" xsi:type="operation_fixed_time"/>
+    <operation name="item 2+3 - level 2" duration="P2D" xsi:type="operation_fixed_time"/>
+    <operation name="item 1+2+3 - level 3" duration="P2D" xsi:type="operation_fixed_time"/>
+  </operations>
+  <items>
+    <item name="item 1"> 
+      <operation name="item 1 - level 0"/>
+    </item>
+    <item name="item 2"> 
+      <operation name="item 2 - level 0"/>
+    </item>
+    <item name="item 3"> 
+      <operation name="item 3 - level 0"/>
+    </item>
+    <item name="item 2+3"/>
+    <item name="item 1+2+3"/>
+  </items>
+  <buffers>
+    <buffer name="item 1">
+      <producing name="item 1 - level 1" />
+      <item name="item 1" />
+    </buffer>
+    <buffer name="item 2">
+      <producing name="item 2 - level 1" />
+      <item name="item 2" />
+    </buffer>
+    <buffer name="item 3">
+      <producing name="item 3 - level 1" />
+      <item name="item 3" />
+    </buffer>
+    <buffer name="item 2+3">
+      <producing name="item 2+3 - level 2" />
+      <item name="item 2+3" />
+    </buffer>
+    <buffer name="item 1+2+3">
+      <producing name="item 1+2+3 - level 3" />
+      <item name="item 1+2+3" />
+    </buffer>    
+  </buffers>  
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="item 1 - level 0" />
+      <buffer name="item 1" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="item 2 - level 0" />
+      <buffer name="item 2" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="item 3 - level 0" />
+      <buffer name="item 3" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="item 1 - level 1" />
+      <buffer name="item 1+2+3" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="item 1 - level 1" />
+      <buffer name="item 1" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="item 2 - level 1" />
+      <buffer name="item 2+3" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="item 2 - level 1" />
+      <buffer name="item 2" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="item 3 - level 1" />
+      <buffer name="item 2+3" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="item 3 - level 1" />
+      <buffer name="item 3" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="item 2+3 - level 2" />
+      <buffer name="item 1+2+3" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="item 2+3 - level 2" />
+      <buffer name="item 2+3" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="item 1+2+3 - level 3" />
+      <buffer name="item 1+2+3" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+  <demands>
+    <demand name="order 1">
+      <quantity>1</quantity>
+      <due>2014-04-30T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 1" />
+    </demand>
+    <demand name="order 2">
+      <quantity>1</quantity>
+      <due>2014-04-30T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 2" />
+    </demand>
+    <demand name="order 3">
+      <quantity>1</quantity>
+      <due>2014-04-30T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 3" />
+    </demand>
+  </demands>
+
+<?python
+from __future__ import print_function
+from datetime import timedelta
+
+def showCriticality():
+  for i in frepple.operationplans():
+    print("  %s : %s %s %s => %s" % (
+      i.operation.name, i.quantity, i.start, i.end, i.criticality
+      ), file=out)
+
+out = open("output.1.xml", "wt", 1)
+try:
+  print("CREATING JUST-IN-TIME PLAN", file=out)
+  print("Every operationplan is critical", file=out)
+  solver = frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=0)
+  solver.solve()
+  showCriticality()
+
+  print("\nADJUSTING THE DUE DATE OF AN ORDER", file=out)
+  print("Criticality of the delivery and one of the upstream operation is changing.", file=out)
+  d = frepple.demand(name="order 3")
+  d.due = d.due + timedelta(1)
+  showCriticality()
+
+  print("\nADDING POST OPERATION TIME TO AN OPERATION", file=out)
+  print("Upstream operationplans recognize the slack in the path.", file=out)
+  o = frepple.operation(name="item 2 - level 1")
+  o.posttime = 86400
+  solver.solve()
+  showCriticality()
+
+  print("\nADDING SAFETY STOCK TO A BUFFER", file=out)
+  print("Some operationplans now get a lot of slack.", file=out)
+  b = frepple.buffer(name="item 1")
+  b.minimum = 5
+  solver.solve()
+  showCriticality()
+finally:
+  out.close()
+
+?>
+
+</plan>

@@ -108,12 +108,13 @@ def exportOperationplans(cursor):
   for i in frepple.operations():
     cursor.executemany(
       "insert into out_operationplan \
-       (id,operation,quantity,startdate,enddate,locked,unavailable,owner) \
-       values (%s,%s,%s,%s,%s,%s,%s,%s)",
+       (id,operation,quantity,startdate,enddate,criticality,locked,unavailable,owner) \
+       values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
         j.id, i.name.replace("'","''"),
         round(j.quantity,settings.DECIMAL_PLACES), str(j.start), str(j.end),
-        j.locked, j.unavailable, j.owner and j.owner.id or None
+        round(j.criticality,settings.DECIMAL_PLACES), j.locked, j.unavailable,
+        j.owner and j.owner.id or None
        ) for j in i.operationplans ])
     cnt += 1
     if cnt % 300 == 0: transaction.commit(using=database)

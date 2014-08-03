@@ -1663,6 +1663,21 @@ class OperationPlan
     /** Returns how many loadplans are created on an operationplan. */
     int sizeLoadPlans() const;
 
+    /** Returns the criticality index of the operationplan, which reflects
+      * its urgency.<br>
+      * If the operationplan is on the critical path of one or more orders
+      * the criticality is high. If the operationplan is only used to satisfy
+      * safety stock requirements it will have a low criticality.<br>
+      * Computing the criticality is complex, CPU-expensive and the result
+      * will change when the plan changes. Caching the value may be in
+      * order.<br>
+      * Criticality is currently implemented as the slack in the downstream
+      * path. If the criticality is 2, it means the operationplan can be
+      * delayed by 2 days without impacting the delivery of any demand.
+      * TODO should criticality also include priority of demand and critical quantity?
+      */
+    DECLARE_EXPORT double getCriticality() const;
+
     /** @brief This class models an STL-like iterator that allows us to iterate over
       * the operationplans in a simple and safe way.
       *

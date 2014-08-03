@@ -47,6 +47,7 @@
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>5</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-09T00:00:00</date>
@@ -70,6 +71,7 @@
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-11T00:00:00</end>
 					<quantity>50</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-10T00:00:00</date>
@@ -101,6 +103,7 @@
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-18T00:00:00</end>
 					<quantity>45</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-17T00:00:00</date>
@@ -137,6 +140,7 @@
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>5</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-09T00:00:00</date>
@@ -160,6 +164,7 @@
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-11T00:00:00</end>
 					<quantity>50</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-10T00:00:00</date>
@@ -191,6 +196,7 @@
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-18T00:00:00</end>
 					<quantity>25</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-17T00:00:00</date>
@@ -227,6 +233,7 @@
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>10</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-09T00:00:00</date>
@@ -250,6 +257,7 @@
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-16T00:00:00</end>
 					<quantity>90</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-15T00:00:00</date>
@@ -286,6 +294,7 @@
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>5</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-09T00:00:00</date>
@@ -309,6 +318,7 @@
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-16T00:00:00</end>
 					<quantity>95</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-15T00:00:00</date>
@@ -340,6 +350,7 @@
 					<start>2009-06-18T00:00:00</start>
 					<end>2009-06-19T00:00:00</end>
 					<quantity>100</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-06-18T00:00:00</date>
@@ -391,6 +402,7 @@
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>50</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-10T00:00:00</date>
@@ -444,6 +456,7 @@
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-17T00:00:00</end>
 					<quantity>47</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-17T00:00:00</date>
@@ -517,6 +530,7 @@
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>50</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-10T00:00:00</date>
@@ -570,6 +584,7 @@
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-17T00:00:00</end>
 					<quantity>25</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-17T00:00:00</date>
@@ -627,6 +642,7 @@
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-15T00:00:00</end>
 					<quantity>92</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-15T00:00:00</date>
@@ -700,6 +716,7 @@
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-15T00:00:00</end>
 					<quantity>98</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-15T00:00:00</date>
@@ -769,6 +786,7 @@
 					<start>2009-06-18T00:00:00</start>
 					<end>2009-06-18T00:00:00</end>
 					<quantity>100</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-06-18T00:00:00</date>
@@ -842,6 +860,7 @@
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>100</quantity>
+					<criticality>0</criticality>
 					<locked>true</locked>
 					<flowplans>
 						<flowplan>
@@ -873,6 +892,7 @@
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-17T00:00:00</end>
 					<quantity>200</quantity>
+					<criticality>0</criticality>
 					<locked>true</locked>
 					<flowplans>
 						<flowplan>
@@ -924,6 +944,7 @@
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>100</quantity>
+					<criticality>0</criticality>
 					<locked>true</locked>
 					<flowplans>
 						<flowplan>
@@ -955,6 +976,7 @@
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-17T00:00:00</end>
 					<quantity>50</quantity>
+					<criticality>0</criticality>
 					<locked>true</locked>
 					<flowplans>
 						<flowplan>
@@ -990,6 +1012,7 @@
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-15T00:00:00</end>
 					<quantity>1000</quantity>
+					<criticality>0</criticality>
 					<locked>true</locked>
 					<flowplans>
 						<flowplan>
@@ -1041,6 +1064,7 @@
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-15T00:00:00</end>
 					<quantity>1000</quantity>
+					<criticality>0</criticality>
 					<locked>true</locked>
 					<flowplans>
 						<flowplan>
@@ -2204,6 +2228,7 @@
 					<start>2009-06-18T00:00:00</start>
 					<end>2009-06-19T00:00:00</end>
 					<quantity>100</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-06-18T00:00:00</date>
@@ -2257,6 +2282,7 @@
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-18T00:00:00</end>
 					<quantity>45</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-17T00:00:00</date>
@@ -2287,6 +2313,7 @@
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-11T00:00:00</end>
 					<quantity>50</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-10T00:00:00</date>
@@ -2317,6 +2344,7 @@
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>5</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-09T00:00:00</date>
@@ -2364,6 +2392,7 @@
 					<start>2009-01-17T00:00:00</start>
 					<end>2009-01-18T00:00:00</end>
 					<quantity>25</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-17T00:00:00</date>
@@ -2394,6 +2423,7 @@
 					<start>2009-01-10T00:00:00</start>
 					<end>2009-01-11T00:00:00</end>
 					<quantity>50</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-10T00:00:00</date>
@@ -2424,6 +2454,7 @@
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>5</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-09T00:00:00</date>
@@ -2478,6 +2509,7 @@
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-16T00:00:00</end>
 					<quantity>90</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-15T00:00:00</date>
@@ -2508,6 +2540,7 @@
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>10</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-09T00:00:00</date>
@@ -2555,6 +2588,7 @@
 					<start>2009-01-15T00:00:00</start>
 					<end>2009-01-16T00:00:00</end>
 					<quantity>95</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-15T00:00:00</date>
@@ -2585,6 +2619,7 @@
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
 					<quantity>5</quantity>
+					<criticality>0</criticality>
 					<flowplans>
 						<flowplan>
 							<date>2009-01-09T00:00:00</date>
@@ -2712,6 +2747,7 @@
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>5</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-09T00:00:00</date>
@@ -2735,6 +2771,7 @@
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-11T00:00:00</end>
 			<quantity>50</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
@@ -2766,6 +2803,7 @@
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-18T00:00:00</end>
 			<quantity>45</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-17T00:00:00</date>
@@ -2797,6 +2835,7 @@
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>5</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-09T00:00:00</date>
@@ -2820,6 +2859,7 @@
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-11T00:00:00</end>
 			<quantity>50</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
@@ -2851,6 +2891,7 @@
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-18T00:00:00</end>
 			<quantity>25</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-17T00:00:00</date>
@@ -2882,6 +2923,7 @@
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>10</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-09T00:00:00</date>
@@ -2905,6 +2947,7 @@
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-16T00:00:00</end>
 			<quantity>90</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
@@ -2936,6 +2979,7 @@
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>5</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-09T00:00:00</date>
@@ -2959,6 +3003,7 @@
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-16T00:00:00</end>
 			<quantity>95</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
@@ -2990,6 +3035,7 @@
 			<start>2009-06-18T00:00:00</start>
 			<end>2009-06-19T00:00:00</end>
 			<quantity>100</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-06-18T00:00:00</date>
@@ -3036,6 +3082,7 @@
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>50</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
@@ -3089,6 +3136,7 @@
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-17T00:00:00</end>
 			<quantity>47</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-17T00:00:00</date>
@@ -3158,6 +3206,7 @@
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>50</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
@@ -3211,6 +3260,7 @@
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-17T00:00:00</end>
 			<quantity>25</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-17T00:00:00</date>
@@ -3264,6 +3314,7 @@
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-15T00:00:00</end>
 			<quantity>92</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
@@ -3333,6 +3384,7 @@
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-15T00:00:00</end>
 			<quantity>98</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
@@ -3402,6 +3454,7 @@
 			<start>2009-06-18T00:00:00</start>
 			<end>2009-06-18T00:00:00</end>
 			<quantity>100</quantity>
+			<criticality>0</criticality>
 			<flowplans>
 				<flowplan>
 					<date>2009-06-18T00:00:00</date>
@@ -3471,6 +3524,7 @@
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>100</quantity>
+			<criticality>0</criticality>
 			<locked>true</locked>
 			<flowplans>
 				<flowplan>
@@ -3502,6 +3556,7 @@
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-17T00:00:00</end>
 			<quantity>200</quantity>
+			<criticality>0</criticality>
 			<locked>true</locked>
 			<flowplans>
 				<flowplan>
@@ -3549,6 +3604,7 @@
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>100</quantity>
+			<criticality>0</criticality>
 			<locked>true</locked>
 			<flowplans>
 				<flowplan>
@@ -3580,6 +3636,7 @@
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-17T00:00:00</end>
 			<quantity>50</quantity>
+			<criticality>0</criticality>
 			<locked>true</locked>
 			<flowplans>
 				<flowplan>
@@ -3611,6 +3668,7 @@
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-15T00:00:00</end>
 			<quantity>1000</quantity>
+			<criticality>0</criticality>
 			<locked>true</locked>
 			<flowplans>
 				<flowplan>
@@ -3658,6 +3716,7 @@
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-15T00:00:00</end>
 			<quantity>1000</quantity>
+			<criticality>0</criticality>
 			<locked>true</locked>
 			<flowplans>
 				<flowplan>

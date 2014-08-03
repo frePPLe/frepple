@@ -228,62 +228,74 @@
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>69</quantity>
+			<criticality>999</criticality>
 		</operationplan>
 		<operationplan id="3" operation="Purchase component B">
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>66</quantity>
+			<criticality>999</criticality>
 		</operationplan>
 		<operationplan id="4" operation="Purchase component C">
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>65</quantity>
+			<criticality>999</criticality>
 		</operationplan>
 		<operationplan id="5" operation="Purchase component D">
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>70</quantity>
+			<criticality>999</criticality>
 		</operationplan>
 		<operationplan id="6" operation="Purchase component E">
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>70</quantity>
+			<criticality>999</criticality>
 		</operationplan>
 		<operationplan id="7" operation="Purchase component F">
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>65</quantity>
+			<criticality>999</criticality>
 		</operationplan>
 		<operationplan id="8" operation="Purchase component G">
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>65</quantity>
+			<criticality>999</criticality>
 		</operationplan>
 		<operationplan id="9" operation="assembly">
 			<start>2008-12-24T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>1</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="10" operation="assembly">
 			<start>2008-12-25T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>2</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="11" operation="assembly">
 			<start>2008-12-27T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>2</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="12" operation="assembly">
 			<start>2008-12-29T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>5</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="13" operation="deliver product">
 			<demand name="order 1"/>
 			<start>2009-01-04T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>10</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 	</operationplans>
 	<problems>

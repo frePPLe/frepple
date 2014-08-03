@@ -84,13 +84,14 @@ def exportConstraints(process):
 def exportOperationplans(process):
   print("Exporting operationplans...")
   starttime = time()
-  process.stdin.write('COPY out_operationplan (id,operation,quantity,startdate,enddate,locked,unavailable,owner) FROM STDIN;\n')
+  process.stdin.write('COPY out_operationplan (id,operation,quantity,startdate,enddate,criticality,locked,unavailable,owner) FROM STDIN;\n')
   for i in frepple.operations():
     for j in i.operationplans:
-      process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+      process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
         j.id, i.name[0:settings.NAMESIZE].encode(encoding),
         round(j.quantity,settings.DECIMAL_PLACES), str(j.start), str(j.end),
-        j.locked, j.unavailable, j.owner and j.owner.id or "\\N"
+        round(j.criticality,settings.DECIMAL_PLACES), j.locked, j.unavailable,
+        j.owner and j.owner.id or "\\N"
         ))
   process.stdin.write('\\.\n')
   print('Exported operationplans in %.2f seconds' % (time() - starttime))

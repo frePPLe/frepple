@@ -188,9 +188,10 @@ class DetailReport(GridReport):
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
     GridFieldNumber('quantity', title=_('load quantity'), editable=False),
-    GridFieldText('setup', title=_('setup'), editable=False),
+    GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False),
     GridFieldBool('operationplan__locked', title=_('locked'), editable=False),
     GridFieldNumber('operationplan__unavailable', title=_('unavailable'), editable=False),
     GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
+    GridFieldText('setup', title=_('setup'), editable=False),
     )
 

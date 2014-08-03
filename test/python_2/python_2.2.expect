@@ -128,22 +128,26 @@
 			<start>2009-01-03T08:00:00</start>
 			<end>2009-01-04T08:00:00</end>
 			<quantity>10</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="3" operation="delivery end item">
 			<demand name="order 1"/>
 			<start>2009-01-03T09:00:00</start>
 			<end>2009-01-04T09:00:00</end>
 			<quantity>10</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="4" operation="make end item">
 			<start>2009-01-01T09:00:00</start>
 			<end>2009-01-02T09:00:00</end>
 			<quantity>10</quantity>
+			<criticality>0.958333</criticality>
 		</operationplan>
 		<operationplan id="5" operation="make end item">
 			<start>2009-01-02T09:00:00</start>
 			<end>2009-01-03T09:00:00</end>
 			<quantity>10</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 	</operationplans>
 	<problems>

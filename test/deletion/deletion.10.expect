@@ -136,18 +136,21 @@
 			<start>2009-01-31T00:00:00</start>
 			<end>2009-02-01T00:00:00</end>
 			<quantity>1</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="15" operation="delivery 1">
 			<demand name="order 1"/>
 			<start>2009-02-28T00:00:00</start>
 			<end>2009-03-01T00:00:00</end>
 			<quantity>1</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="16" operation="delivery 1">
 			<demand name="order 3"/>
 			<start>2009-03-31T00:00:00</start>
 			<end>2009-04-01T00:00:00</end>
 			<quantity>1</quantity>
+			<criticality>0</criticality>
 		</operationplan>
 	</operationplans>
 	<problems>

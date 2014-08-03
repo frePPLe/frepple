@@ -43,9 +43,6 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_carrying_cost;
     static DECLARE_EXPORT const Keyword tag_category;
     static DECLARE_EXPORT const Keyword tag_cluster;
-    static DECLARE_EXPORT const Keyword tag_cmdline;
-    static DECLARE_EXPORT const Keyword tag_command;
-    static DECLARE_EXPORT const Keyword tag_commands;
     static DECLARE_EXPORT const Keyword tag_constraints;
     static DECLARE_EXPORT const Keyword tag_consume_material;
     static DECLARE_EXPORT const Keyword tag_consume_capacity;
@@ -53,6 +50,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_consuming_date;
     static DECLARE_EXPORT const Keyword tag_content;
     static DECLARE_EXPORT const Keyword tag_cost;
+    static DECLARE_EXPORT const Keyword tag_criticality;
     static DECLARE_EXPORT const Keyword tag_current;
     static DECLARE_EXPORT const Keyword tag_customer;
     static DECLARE_EXPORT const Keyword tag_customers;

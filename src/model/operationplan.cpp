@@ -822,6 +822,7 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
   o->writeElement(Tags::tag_start, dates.getStart());
   o->writeElement(Tags::tag_end, dates.getEnd());
   o->writeElement(Tags::tag_quantity, quantity);
+  o->writeElement(Tags::tag_criticality, getCriticality());
   if (getLocked()) o->writeElement (Tags::tag_locked, true);
   if (!getConsumeMaterial()) o->writeElement(Tags::tag_consume_material, false);
   if (!getProduceMaterial()) o->writeElement(Tags::tag_produce_material, false);
@@ -1015,6 +1016,8 @@ DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_unavailable))
     return PythonObject(getUnavailable());
+  if (attr.isA(Tags::tag_criticality))
+    return PythonObject(getCriticality());
   if (attr.isA(Tags::tag_consume_material))
     return PythonObject(getConsumeMaterial());
   if (attr.isA(Tags::tag_consume_capacity))
@@ -1111,6 +1114,39 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
   else
     return -1;
   return 0;
+}
+
+
+DECLARE_EXPORT double OperationPlan::getCriticality() const
+{
+  if (getTopOwner()->getDemand())
+  {
+    // Demand delivery operationplan
+    long early = getTopOwner()->getDemand()->getDue() - getDates().getEnd();
+    return ((early<=0L) ? 0.0 : early) / 86400.0; // Convert to days
+  }
+
+  // Upstream operationplan
+  TimePeriod minslack = 86313600L; // 999 days in seconds
+  vector<TimePeriod> slack(HasLevel::getNumberOfLevels() + 2);
+  for (PeggingIterator p(this); p; p++)
+  {
+    Date d = p.getProducingDate();
+    if (!d) d = Plan::instance().getCurrent();
+    slack[-p.getLevel()] = p.getConsumingDate() - d;
+    OperationPlan* m = p.getConsumingOperationplan();
+    if (m && m->getTopOwner()->getDemand())
+    {
+      // Reached a demand. Get the total slack now.
+      TimePeriod myslack = m->getTopOwner()->getDemand()->getDue() - m->getDates().getEnd();
+      if (myslack < 0L) myslack = 0L;
+      for (int i=-p.getLevel(); i>=0; i--)
+        myslack += slack[i];
+      if (myslack < minslack)
+        minslack = myslack;
+    }
+  }
+  return minslack / 86400.0; // Convert to days
 }
 
 } // end namespace

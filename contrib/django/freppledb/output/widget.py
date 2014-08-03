@@ -118,14 +118,15 @@ class PurchaseQueueWidget(Widget):
     except: db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
-      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
         capfirst(force_unicode(_("operation"))), capfirst(force_unicode(_("startdate"))),
-        capfirst(force_unicode(_("enddate"))), capfirst(force_unicode(_("quantity")))
+        capfirst(force_unicode(_("enddate"))), capfirst(force_unicode(_("quantity"))),
+        capfirst(force_unicode(_("criticality")))
         )
       ]
     for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=False).order_by('startdate')[:limit]:
-      result.append('<tr><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity)
+      result.append('<tr><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+          opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
           ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
@@ -187,15 +188,15 @@ class ResourceQueueWidget(Widget):
     except: db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
-      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
         capfirst(force_unicode(_("resource"))), capfirst(force_unicode(_("operation"))),
         capfirst(force_unicode(_("startdate"))), capfirst(force_unicode(_("enddate"))),
-        capfirst(force_unicode(_("quantity")))
+        capfirst(force_unicode(_("quantity"))), capfirst(force_unicode(_("criticality")))
         )
       ]
     for ldplan in LoadPlan.objects.using(db).select_related().order_by('startdate')[:limit]:
-      result.append('<tr><td class="underline"><a href="%s/loadplan/?theresource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          request.prefix, urlquote(ldplan.theresource), ldplan.theresource, ldplan.operationplan.operation, ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity)
+      result.append('<tr><td class="underline"><a href="%s/loadplan/?theresource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+          request.prefix, urlquote(ldplan.theresource), ldplan.theresource, ldplan.operationplan.operation, ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity), int(ldplan.operationplan.criticality)
           ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))

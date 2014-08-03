@@ -143,6 +143,7 @@ class DetailReport(GridReport):
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
+    GridFieldNumber('criticality', title=_('criticality'), editable=False),
     GridFieldBool('locked', title=_('locked'), editable=False),
     GridFieldNumber('unavailable', title=_('unavailable'), editable=False),
     GridFieldInteger('owner', title=_('owner'), editable=False),

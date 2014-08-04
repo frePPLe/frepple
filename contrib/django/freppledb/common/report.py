@@ -46,6 +46,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.admin.util import unquote
 from django.contrib.auth import get_permission_codename
+from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
 from django.db.models.fields import Field, CharField, IntegerField, AutoField
@@ -813,7 +814,7 @@ class GridReport(View):
             ok = False
             resp.write(escape(_("Can't find %s" % rec['id'])))
             resp.write('<br/>')
-          except Exception as e:
+          except (ValidationError, ValueError):
             ok = False
             for error in form.non_field_errors():
               resp.write(escape('%s: %s' % (rec['id'], error)))
@@ -822,6 +823,10 @@ class GridReport(View):
               for error in field.errors:
                 resp.write(escape('%s %s: %s: %s' % (obj.pk, field.name, rec[field.name], error)))
                 resp.write('<br/>')
+          except Exception as e:
+            ok = False
+            resp.write(escape(e))
+            resp.write('<br/>')
     finally:
       transaction.commit(using=request.database)
       transaction.leave_transaction_management(using=request.database)

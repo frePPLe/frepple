@@ -125,8 +125,8 @@ class loadData(object):
         b = frepple.calendar(name=i).addBucket(l)
         b.value = n
         b.days = days
-        if t1: b.starttime = t1.hour*3600 + t1.minute*60 + t1.second
-        if t2: b.endtime = t2.hour*3600 + t2.minute*60 + t2.second + 1
+        if t1: b.starttime = t1.hour * 3600 + t1.minute * 60 + t1.second
+        if t2: b.endtime = t2.hour * 3600 + t2.minute * 60 + t2.second + 1
         if m: b.priority = m
         if j: b.start = j
         if k: b.end = k

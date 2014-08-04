@@ -91,15 +91,15 @@ class DurationFormField(fields.RegexField):
         return float(t[0])
       elif tl == 2:
         # Minutes and seconds
-        return int(t[0])*60 + float(t[1])
+        return int(t[0]) * 60 + float(t[1])
       elif tl == 3:
         v = t[0].split(' ')
         if len(v) > 1:
           # Days, hours, minutes, seconds
-          return int(v[0])*86400 + int(v[1])*3600 + int(t[1])*60 + float(t[2])
+          return int(v[0]) * 86400 + int(v[1]) * 3600 + int(t[1]) * 60 + float(t[2])
         else:
           # Hours, minutes, seconds
-          return int(t[0])*3600 + int(t[1])*60 + float(t[2])
+          return int(t[0]) * 3600 + int(t[1]) * 60 + float(t[2])
     except:
       raise ValidationError(_('Expected format "DD HH:MM:SS", "HH:MM:SS", "MM:SS" or "SS"'), code='invalid')
 

@@ -45,6 +45,9 @@ international:
 	cd freppledb; django-admin.py makemessages -a -e html -e xml && django-admin.py compilemessages
 	cd freppledb; django-admin.py makemessages -a -d djangojs && django-admin.py compilemessages
 
+pep8:
+	flake8 freppledb --ignore=E121,E111,E501,E303
+
 doc:
 	-rm -rf doc
 	export PYTHONPATH=freppledb:.; export DJANGO_SETTINGS_MODULE=freppledb.settings; epydoc --name frePPLe --output doc --html --url "http://www.frepple.com/" --no-imports --show-sourcecode freppledb

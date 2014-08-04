@@ -347,7 +347,7 @@ class GridReport(View):
     for i in range(len(s),0,-1):
       x = '.'.join(s[0:i])
       if x in settings.INSTALLED_APPS:
-        cls.app_label = s[i-1]
+        cls.app_label = s[i - 1]
         return cls.app_label
     raise Exception("Can't identify app of reportclass %s" % cls)
 
@@ -391,7 +391,7 @@ class GridReport(View):
         end = start + timedelta(days=pref.horizonlength or 60)
         end = end.replace(hour=0, minute=0, second=0)
       elif pref.horizonunit == 'week':
-        end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength or 8, days=7-start.weekday())
+        end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength or 8, days=7 - start.weekday())
       else:
         y = start.year
         m = start.month + (pref.horizonlength or 2) + (start.day > 1 and 1 or 0)
@@ -609,12 +609,12 @@ class GridReport(View):
     yield '"page":%d,\n' % page
     yield '"records":%d,\n' % recs
     yield '"rows":[\n'
-    cnt = (page-1)*request.pagesize+1
+    cnt = (page - 1) * request.pagesize + 1
     first = True
 
     # GridReport
     fields = [ i.field_name for i in reportclass.rows if i.field_name ]
-    for i in hasattr(reportclass,'query') and reportclass.query(request,query) or query[cnt-1:cnt+request.pagesize].values(*fields):
+    for i in hasattr(reportclass,'query') and reportclass.query(request,query) or query[cnt - 1 : cnt + request.pagesize].values(*fields):
       if first:
         r = [ '{' ]
         first = False
@@ -792,7 +792,8 @@ class GridReport(View):
           try:
             obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
             del rec['id']
-            UploadForm = modelform_factory(reportclass.model,
+            UploadForm = modelform_factory(
+              reportclass.model,
               fields = tuple(rec.keys()),
               formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
               )
@@ -805,7 +806,7 @@ class GridReport(View):
                   content_type_id = content_type_id,
                   object_id = obj.pk,
                   object_repr = force_unicode(obj),
-                  action_fla = CHANGE,
+                  action_flag = CHANGE,
                   change_message = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
               ).save(using=request.database)
           except reportclass.model.DoesNotExist:
@@ -825,7 +826,7 @@ class GridReport(View):
       transaction.commit(using=request.database)
       transaction.leave_transaction_management(using=request.database)
     if ok: resp.write("OK")
-    resp.status_code = ok and 200 or 403
+    resp.status_code = ok and 200 or 500
     return resp
 
 
@@ -946,7 +947,8 @@ class GridReport(View):
             if len(errors) > 0: break
 
             # Create a form class that will be used to validate the data
-            UploadForm = modelform_factory(reportclass.model,
+            UploadForm = modelform_factory(
+              reportclass.model,
               fields = tuple([i.name for i in headers if isinstance(i,Field)]),
               formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
               )
@@ -1025,17 +1027,20 @@ class GridReport(View):
 
       # Report all failed records
       if len(errors) > 0:
-        messages.add_message(request, messages.INFO,
-         _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-         )
+        messages.add_message(
+          request, messages.INFO,
+          _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+          )
         for i in errors: messages.add_message(request, messages.INFO, i)
       elif len(warnings) > 0:
-        messages.add_message(request, messages.INFO,
+        messages.add_message(
+          request, messages.INFO,
           _('Uploaded file processed with warnings: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
           )
         for i in warnings: messages.add_message(request, messages.INFO, i)
       else:
-        messages.add_message(request, messages.INFO,
+        messages.add_message(
+          request, messages.INFO,
           _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
           )
       return HttpResponseRedirect(request.prefix + request.get_full_path())
@@ -1116,7 +1121,8 @@ class GridReport(View):
             if len(errors) > 0: break
 
             # Create a form class that will be used to validate the data
-            UploadForm = modelform_factory(reportclass.model,
+            UploadForm = modelform_factory(
+              reportclass.model,
               fields = tuple([i.name for i in headers if isinstance(i,Field)]),
               formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
               )
@@ -1202,17 +1208,20 @@ class GridReport(View):
 
       # Report all failed records
       if len(errors) > 0:
-        messages.add_message(request, messages.INFO,
-         _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-         )
+        messages.add_message(
+          request, messages.INFO,
+          _('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+          )
         for i in errors: messages.add_message(request, messages.INFO, i)
       elif len(warnings) > 0:
-        messages.add_message(request, messages.INFO,
+        messages.add_message(
+          request, messages.INFO,
           _('Uploaded file processed with warnings: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
           )
         for i in warnings: messages.add_message(request, messages.INFO, i)
       else:
-        messages.add_message(request, messages.INFO,
+        messages.add_message(
+          request, messages.INFO,
           _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
           )
       return HttpResponseRedirect(request.prefix + request.get_full_path())
@@ -1440,11 +1449,19 @@ class GridPivot(GridReport):
       total_pages = math.ceil(float(recs) / request.pagesize)
       if page > total_pages: page = total_pages
       if page < 1: page = 1
-      cnt = (page-1)*request.pagesize+1
+      cnt = (page - 1) * request.pagesize + 1
       if callable(reportclass.basequeryset):
-        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)[cnt-1:cnt+request.pagesize], sortsql=reportclass._apply_sort(request))
+        query = reportclass.query(
+          request,
+          reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)[cnt - 1 : cnt + request.pagesize],
+          sortsql=reportclass._apply_sort(request)
+          )
       else:
-        query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt-1:cnt+request.pagesize], sortsql=reportclass._apply_sort(request))
+        query = reportclass.query(
+          request,
+          reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt - 1 : cnt + request.pagesize],
+          sortsql=reportclass._apply_sort(request)
+          )
 
     # Generate header of the output
     yield '{"total":%d,\n' % total_pages
@@ -1756,11 +1773,13 @@ def exportWorkbook(request):
       # Loop over all records
       if issubclass(model, HierarchyModel):
         model.rebuildHierarchy(database=request.database)
-        cursor.execute("SELECT %s FROM %s ORDER BY lvl, 1" %
+        cursor.execute(
+          "SELECT %s FROM %s ORDER BY lvl, 1" %
           (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table))
           )
       else:
-        cursor.execute("SELECT %s FROM %s ORDER BY 1" %
+        cursor.execute(
+          "SELECT %s FROM %s ORDER BY 1" %
           (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table))
           )
       for rec in cursor.fetchall():
@@ -1822,7 +1841,7 @@ def importWorkbook(request):
     while not ok:
       ok = True
       for i in range(cnt):
-        for j in range(i+1, cnt):
+        for j in range(i + 1, cnt):
           if models[i][1] in models[j][3]:
             # A subsequent model i depends on model i. The list ordering is
             # thus not ok yet. We move this element to the end of the list.
@@ -1880,7 +1899,8 @@ def importWorkbook(request):
             if not header_ok:
               # Can't process this worksheet
               break
-            uploadform = modelform_factory(model,
+            uploadform = modelform_factory(
+              model,
               fields = tuple([i.name for i in headers if isinstance(i,Field)]),
               formfield_callback = lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
               )
@@ -1955,7 +1975,7 @@ def importWorkbook(request):
       messages.add_message(request, numerrors and messages.ERROR or messages.INFO, string_concat(
         model._meta.verbose_name, ": ",
         _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') %
-          {'rows': rownum-1, 'changed': changed, 'added': added, 'errors': numerrors}
+          {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors}
       ))
 
   if errors:

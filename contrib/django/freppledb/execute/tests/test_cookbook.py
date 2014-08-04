@@ -63,7 +63,7 @@ class cookbooktest(TransactionTestCase):
     with open(resultfilename, 'r') as f:
       for line in f:
         if opplans[row].strip() != line.strip():
-          self.fail("Difference in expected results on line %s" % (row+1))
+          self.fail("Difference in expected results on line %s" % (row + 1))
         row += 1
     if row != len(opplans):
       self.fail("More output rows than expected")

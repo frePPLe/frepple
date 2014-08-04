@@ -311,7 +311,7 @@ class ResourceLoadWidget(Widget):
   def render(cls, request=None):
     limit = int(request.GET.get('limit', cls.limit))
     result = [
-      '<div id="resLoad" style="width:100%%; height: %spx;"></div>' % (limit*25+30),
+      '<div id="resLoad" style="width:100%%; height: %spx;"></div>' % (limit * 25 + 30),
       '<table style="display:none">'
       ]
     cursor = connections[request.database].cursor()

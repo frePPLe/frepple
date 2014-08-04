@@ -204,10 +204,11 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
       if post_url_continue is None:
-        post_url_continue = request.prefix + reverse('admin:%s_%s_change' %
-            (opts.app_label, opts.model_name),
-            args=(pk_value,),
-            current_app=self.admin_site.name)
+        post_url_continue = request.prefix + reverse(
+          'admin:%s_%s_change' % (opts.app_label, opts.model_name),
+          args=(pk_value,),
+          current_app=self.admin_site.name
+          )
       post_url_continue = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, post_url_continue)
       return HttpResponseRedirect(post_url_continue)
 
@@ -244,19 +245,21 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     elif "_saveasnew" in request.POST:
       msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
-      redirect_url = request.prefix + reverse('admin:%s_%s_change' %
-                             (opts.app_label, opts.model_name),
-                             args=(pk_value,),
-                             current_app=self.admin_site.name)
+      redirect_url = request.prefix + reverse(
+        'admin:%s_%s_change' % (opts.app_label, opts.model_name),
+        args=(pk_value,),
+        current_app=self.admin_site.name
+        )
       redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
       return HttpResponseRedirect(redirect_url)
 
     elif "_addanother" in request.POST:
       msg = _('The %(name)s "%(obj)s" was changed successfully. You may add another %(name)s below.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
-      redirect_url = request.prefix + reverse('admin:%s_%s_add' %
-                             (opts.app_label, opts.model_name),
-                             current_app=self.admin_site.name)
+      redirect_url = request.prefix + reverse(
+        'admin:%s_%s_add' % (opts.app_label, opts.model_name),
+        current_app=self.admin_site.name
+        )
       redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
       return HttpResponseRedirect(redirect_url)
 

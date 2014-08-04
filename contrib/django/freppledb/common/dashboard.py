@@ -156,6 +156,6 @@ class Widget:
     for i in range(len(s),0,-1):
       x = '.'.join(s[0:i])
       if x in settings.INSTALLED_APPS:
-        cls.app_label = s[i-1]
+        cls.app_label = s[i - 1]
         return cls.app_label
     raise Exception("Can't identify app of widget %s" % cls)

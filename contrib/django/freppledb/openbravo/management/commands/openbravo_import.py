@@ -631,11 +631,11 @@ class Command(BaseCommand):
         operation = u'Ship %s @ %s' % (product, warehouse)
         deliveries.update([(product,warehouse,operation,u'%s @ %s' % (product, warehouse)),])
         if unique_name in frepple_keys:
-          update.append( (objectid, closed and orderedQuantity or orderedQuantity-deliveredQuantity,
+          update.append( (objectid, closed and orderedQuantity or orderedQuantity - deliveredQuantity,
               product, closed and 'closed' or 'open', scheduledDeliveryDate,
               businessPartner, operation, unique_name) )
         else:
-          insert.append( (objectid, closed and orderedQuantity or orderedQuantity-deliveredQuantity,
+          insert.append( (objectid, closed and orderedQuantity or orderedQuantity - deliveredQuantity,
               product, closed and 'closed' or 'open', scheduledDeliveryDate,
               businessPartner, operation, unique_name) )
           frepple_keys.add(unique_name)
@@ -851,7 +851,7 @@ class Command(BaseCommand):
             # Existing buffer marked as a non-openbravo buffer
             update.append( (onhand, buffer_name) )
             frepple_buffers[buffer_name] = 'openbravo'
-        elif item != None and location != None:
+        elif item and location:
           # New buffer
           insert.append( (buffer_name, self.items[product], self.locations[self.locators[locator]], onhand) )
           frepple_buffers[buffer_name] = 'openbravo'
@@ -1119,11 +1119,11 @@ class Command(BaseCommand):
           if deliveredQuantity >= orderedQuantity:   # TODO Not the right criterion
             delete.append( (objectid,) )
           else:
-            update.append( (operation, orderedQuantity-deliveredQuantity,
+            update.append( (operation, orderedQuantity - deliveredQuantity,
               creationDate, scheduledDeliveryDate, objectid) )
         else:
           idcounter += 1
-          insert.append( (idcounter, operation, orderedQuantity-deliveredQuantity,
+          insert.append( (idcounter, operation, orderedQuantity - deliveredQuantity,
             creationDate, scheduledDeliveryDate, objectid) )
           frepple_keys.add(objectid)
         # Clean the XML hierarchy

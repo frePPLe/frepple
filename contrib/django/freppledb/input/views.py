@@ -207,10 +207,10 @@ class PathReport(GridReport):
           curflows = x.thebuffer.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
           for y in curflows:
             hasChildren = True
-            root.append( (level-1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth-1, pushsuper) )
+            root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper) )
         for x in curoperation.suboperations.using(request.database).order_by("-priority"):
           subcount += curoperation.type == "routing" and 1 or -1
-          root.append( (level-1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )
+          root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )
           hasChildren = True
       else:
         # Upstream recursion
@@ -221,10 +221,14 @@ class PathReport(GridReport):
         for y in curflows:
           if y.thebuffer.producing:
             hasChildren = True
-            root.append( (level+1, curnode, y.thebuffer.producing, curprodflow and (-curqty * y.quantity)/curprodflow.quantity or (-curqty * y.quantity), subcount, None, realdepth+1, True) )
+            root.append( (
+              level + 1, curnode, y.thebuffer.producing,
+              curprodflow and (-curqty * y.quantity) / curprodflow.quantity or (-curqty * y.quantity),
+              subcount, None, realdepth + 1, True
+              ) )
         for x in curoperation.suboperations.using(request.database).order_by("-priority"):
           subcount += curoperation.type == "routing" and 1 or -1
-          root.append( (level+1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )
+          root.append( (level + 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )
           hasChildren = True
 
       # Process the current node

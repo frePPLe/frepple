@@ -24,7 +24,10 @@ import freppledb.common.dashboard
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+  # Prefix
+  '',
+
   # User preferences
   (r'^preferences/$', freppledb.common.views.preferences),
 

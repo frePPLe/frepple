@@ -69,7 +69,7 @@ def exportProblems(cursor):
     [(
        i.entity, i.name,
        isinstance(i.owner,frepple.operationplan) and unicode(i.owner.operation) or unicode(i.owner),
-       i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
+       i.description[0 : settings.NAMESIZE + 20], str(i.start), str(i.end),
        round(i.weight,settings.DECIMAL_PLACES)
      ) for i in frepple.problems()
     ])
@@ -90,7 +90,7 @@ def exportConstraints(cursor):
       [(
          d.name,i.entity, i.name,
          isinstance(i.owner,frepple.operationplan) and unicode(i.owner.operation) or unicode(i.owner),
-         i.description[0:settings.NAMESIZE+20], str(i.start), str(i.end),
+         i.description[0 : settings.NAMESIZE + 20], str(i.start), str(i.end),
          round(i.weight,settings.DECIMAL_PLACES)
        ) for i in d.constraints
       ])

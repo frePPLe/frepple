@@ -174,7 +174,7 @@ class ReportByDemand(GridReport):
         if p_name in ops:
           ops[p_name][6].append(p_id)
         else:
-          ops[p_name] = [indx+1, depth+1, None, True, buf, it, [p_id,] ]
+          ops[p_name] = [indx + 1, depth + 1, None, True, buf, it, [p_id,] ]
       if c_name and p_name:
         ops[p_name][2] = c_name  # set parent
         ops[c_name][3] = False  # c_name is no longer a leaf

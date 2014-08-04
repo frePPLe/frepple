@@ -141,7 +141,7 @@ class exportStaticModel(object):
          round(i[0].value,settings.DECIMAL_PLACES),
          (i[0].days & 1) and True or False, (i[0].days & 2) and True or False, (i[0].days & 4) and True or False,
          (i[0].days & 8) and True or False, (i[0].days & 16) and True or False, (i[0].days & 32) and True or False,
-         (i[0].days & 64) and True or False, int_to_time(i[0].starttime), int_to_time(i[0].endtime-1),
+         (i[0].days & 64) and True or False, int_to_time(i[0].starttime), int_to_time(i[0].endtime - 1),
          i[0].calendar.source, self.timestamp
         )
        for i in buckets()

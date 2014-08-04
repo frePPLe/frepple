@@ -257,10 +257,10 @@ def duration(value):
     if value is None: return ''
     value = Decimal(force_unicode(value))
     if value == 0: return '0 s'
-    if value % 604800 == 0: return '%.2f w' % (value/Decimal('604800.0'))
+    if value % 604800 == 0: return '%.2f w' % (value / Decimal('604800.0'))
     if value % 3600 != 0 and value < 86400: return '%.2f s' % value
-    if value % 86400 != 0 and value < 604800: return '%.2f h' % (value/Decimal('3600'))
-    return '%.2f d' % (value/Decimal('86400'))
+    if value % 86400 != 0 and value < 604800: return '%.2f h' % (value / Decimal('3600'))
+    return '%.2f d' % (value / Decimal('86400'))
   except Exception:
     return ''
 

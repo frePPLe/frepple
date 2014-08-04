@@ -116,9 +116,11 @@ class OverviewReport(GridPivot):
         -- Grouping and sorting
         group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
         order by %s, d.startdate
-      ''' % (sql_max('out_flowplan.quantity','0.0'), sql_min('out_flowplan.quantity','0.0'),
+      ''' % (
+        sql_max('out_flowplan.quantity', '0.0'), sql_min('out_flowplan.quantity', '0.0'),
         basesql, request.report_bucket, request.report_startdate, request.report_enddate,
-        request.report_startdate, request.report_enddate, sortsql)
+        request.report_startdate, request.report_enddate, sortsql
+        )
     cursor.execute(query, baseparams)
 
     # Build the python result

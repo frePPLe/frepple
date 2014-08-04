@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 class MenuItem:
 
   def __init__(self, name, model=None, report=None, url=None, javascript=None,
-        label=None, index=None, prefix=True, window=False):
+               label=None, index=None, prefix=True, window=False):
     self.name = name
     self.url = url
     self.javascript = javascript

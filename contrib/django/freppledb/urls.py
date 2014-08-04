@@ -26,13 +26,16 @@ from django.utils.importlib import import_module
 
 import freppledb.admin
 
-urlpatterns = patterns('',
-    # Root url redirects to the admin index page
-    (r'^$', RedirectView.as_view(url='/admin/')),
+urlpatterns = patterns(
+  # Prefix
+  '',
 
-    # Handle browser icon and robots.txt
-    (r'favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico')),
-    (r'robots\.txt$', RedirectView.as_view(url='/static/robots.txt')),
+  # Root url redirects to the admin index page
+  (r'^$', RedirectView.as_view(url='/admin/')),
+
+  # Handle browser icon and robots.txt
+  (r'favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico')),
+  (r'robots\.txt$', RedirectView.as_view(url='/static/robots.txt')),
 )
 
 # Custom handler for page-not-found errors. It does a redirect to the main page.
@@ -52,9 +55,10 @@ for app in settings.INSTALLED_APPS:
 # Admin pages, and the Javascript i18n library.
 # It needs to be added as the last item since the applications can
 # hide/override some admin urls.
-urlpatterns += patterns('',
-    (r'^data/', include(freppledb.admin.data_site.urls)),
-    (r'^admin/', include(freppledb.admin.admin_site.urls)),
-    (r'^data/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf','freppledb'),}),
-    (r'^admin/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf','freppledb'),}),
+urlpatterns += patterns(
+  '',  # Prefix
+  (r'^data/', include(freppledb.admin.data_site.urls)),
+  (r'^admin/', include(freppledb.admin.admin_site.urls)),
+  (r'^data/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf','freppledb'),}),
+  (r'^admin/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf','freppledb'),}),
 )

@@ -245,7 +245,7 @@ class Command(BaseCommand):
                  category='Procured',
                  price=str(round(random.uniform(0,100)))
                  )
-          ld = abs(round(random.normalvariate(procure_lt,procure_lt/3)))
+          ld = abs(round(random.normalvariate(procure_lt, procure_lt / 3)))
           c = Buffer.objects.using(database).create(name='Component %04d' % i,
                location=comploc,
                category='Procured',
@@ -255,14 +255,14 @@ class Command(BaseCommand):
                max_inventory=100,
                size_multiple=10,
                leadtime=str(ld * 86400),
-               onhand=str(round(forecast_per_item * random.uniform(1,3) * ld / 30)),
+               onhand=str(round(forecast_per_item * random.uniform(1, 3) * ld / 30)),
                )
           comps.append(c)
         task.status = '12%'
         task.save(using=database)
 
       # Loop over all clusters
-      durations = [ 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
+      durations = [ 86400, 86400 * 2, 86400 * 3, 86400 * 5, 86400 * 6 ]
       progress = 88.0 / cluster
       for i in range(cluster):
         with transaction.atomic(using=database):
@@ -295,7 +295,7 @@ class Command(BaseCommand):
               item=it,
               quantity=int(random.uniform(1,6)),
               # Exponential distribution of due dates, with an average of deliver_lt days.
-              due=startdate + timedelta(days=round(random.expovariate(float(1)/deliver_lt/24))/24),
+              due=startdate + timedelta(days=round(random.expovariate(float(1) / deliver_lt / 24)) / 24),
               # Orders have higher priority than forecast
               priority=random.choice([1,2]),
               customer=random.choice(cust),
@@ -329,16 +329,16 @@ class Command(BaseCommand):
             ops.append(oper)
             buf.producing = oper
             # Some inventory in random buffers
-            if random.uniform(0,1) > 0.8: buf.onhand = int(random.uniform(5,20))
+            if random.uniform(0,1) > 0.8: buf.onhand = int(random.uniform(5, 20))
             buf.save(using=database)
             Flow(operation=oper, thebuffer=buf, quantity=1, type="end").save(using=database)
-            if k != level-1:
+            if k != level - 1:
               # Consume from the next level in the bill of material
               buf = Buffer.objects.using(database).create(
-                name='Buf %05d L%02d' % (i,k+1),
+                name='Buf %05d L%02d' % (i, k + 1),
                 item=it,
                 location=loc,
-                category='%02d' % (k+1)
+                category='%02d' % (k + 1)
                 )
               Flow.objects.using(database).create(operation=oper, thebuffer=buf, quantity=-1)
 
@@ -357,7 +357,7 @@ class Command(BaseCommand):
               quantity=random.choice([-1,-1,-1,-2,-3]))
 
           # Commit the current cluster
-          task.status = '%d%%' % (12 + progress*(i+1))
+          task.status = '%d%%' % (12 + progress * (i + 1))
           task.save(using=database)
 
       # Task update

@@ -274,44 +274,71 @@ class ResourceLoadWidget(Widget):
   url = '/resource/'
   exporturl = True
   limit = 5
+  high = 90
+  medium = 80
 
   def args(self):
-    return "?%s" % urlencode({'limit': self.limit})
+    return "?%s" % urlencode({'limit': self.limit, 'medium': self.medium, 'high': self.high})
 
   javascript = '''
-    var res = [];
+    // Collect the data
     var data = [];
-    var cnt = 100;
-    $("#resLoad").next().find("td.name").each(function() {res.push([cnt,$(this).html()]); cnt-=1;});
-    cnt = 100;
-    $("#resLoad").next().find("td.util").each(function() {data.push([$(this).html(),cnt]); cnt-=1;});
-    Flotr.draw($("#resLoad").get(0), [ data ], {
-        HtmlText: true,
-        bars: {
-          show: true, horizontal: true, barWidth: 0.9,
-          lineWidth: 0, shadowSize: 0, fillOpacity: 1
-        },
-        grid: {
-          verticalLines: false, horizontalLines: false
-          },
-        yaxis: {
-          ticks: res
-          },
-        mouse: {
-          track: true, relative: true, lineColor: '#D31A00'
-        },
-        xaxis: {
-          min: 0, autoscaleMargin: 1, title: '%'
-        },
-        colors: ['#D31A00',]
-    });
+    $("#resLoad").next().find("tr").each(function() {
+      var l = $(this).find("a");
+      data.push( [
+         l.attr("href"),
+         l.text(),
+         parseFloat($(this).find("td.util").html())
+         ] );
+      });
+    var barHeight = $("#resLoad").height() / data.length;
+    var x = d3.scale.linear().domain([0, 100]).range([0, $("#resLoad").width()]);
+    var resload_high = parseFloat($("#resload_high").html());
+    var resload_medium = parseFloat($("#resload_medium").html());
+
+    // Draw the chart
+    var bar = d3.select("#resLoad")
+     .selectAll("g")
+     .data(data)
+     .enter()
+     .append("g")
+     .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; })
+     .append("svg:a")
+     .attr("xlink:href", function(d) {return d[0];});
+
+    bar.append("rect")
+      .attr("width", function(d) {return x(d[2]);})
+      .attr("rx","3")
+      .attr("height", barHeight - 1)
+      .style("fill", function(d) {
+        if (d[2] > resload_high) return "#DC3912";
+        if (d[2] > resload_medium) return "#FF9900";
+        return "#109618";
+        });
+
+    bar.append("text")
+      .attr("x", "2")
+      .attr("y", barHeight / 2)
+      .attr("dy", ".35em")
+      .text(function(d,i) { return d[1]; })
+      .style('text-decoration', 'underline');
+
+    bar.append("text")
+      .attr("y", barHeight / 2)
+      .attr("dy", ".35em")
+      .attr("x", function(d) {return x(d[2]) - 3;})
+      .style("text-anchor", "end")
+      .attr("class","bold")
+      .text(function(d,i) { return d[2] + "%"; });
     '''
 
   @classmethod
   def render(cls, request=None):
     limit = int(request.GET.get('limit', cls.limit))
+    medium = int(request.GET.get('medium', cls.medium))
+    high = int(request.GET.get('high', cls.high))
     result = [
-      '<div id="resLoad" style="width:100%%; height: %spx;"></div>' % (limit * 25 + 30),
+      '<svg class="chart" id="resLoad" style="width:100%%; height: %spx;"></svg>' % (limit * 25 + 30),
       '<table style="display:none">'
       ]
     cursor = connections[request.database].cursor()
@@ -332,10 +359,12 @@ class ResourceLoadWidget(Widget):
     for res in cursor.fetchall():
       limit -= 1
       if limit < 0: break
-      result.append('<tr><td class="name"><span class="underline"><a href="%s/resource/%s/">%s</a></span></td><td class="util">%.2f</td></tr>' % (
+      result.append('<tr><td><a href="%s/resource/%s/">%s</a></td><td class="util">%.2f</td></tr>' % (
         request.prefix, urlquote(res[0]), res[0], res[1]
         ))
     result.append('</table>')
+    result.append('<span id="resload_medium" style="display:none">%s</span>' % medium)
+    result.append('<span id="resload_high" style="display:none">%s</span>' % high)
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(ResourceLoadWidget)

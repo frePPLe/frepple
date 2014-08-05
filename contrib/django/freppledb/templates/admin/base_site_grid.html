@@ -8,7 +8,8 @@ var resizing;
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{request.report_bucketlist|length}};
 {% endif %}
 
-$(function(){ {% if reportclass.hasTimeBuckets and not bucketnames %}
+$(function() {
+  $("#toolicons").tooltip({show: {effect: "fade", delay: 500}});{% if reportclass.hasTimeBuckets and not bucketnames %}
   $('#curfilter').html("{% trans 'Error: Missing time buckets or bucket dates' %}");
 {% else %}
   jQuery("#grid").jqGrid({
@@ -64,18 +65,18 @@ $(window).bind('resize', function() {
 </script>
 {% endblock %}
 {% block content %}
-{% block before_table %}{% endblock %}<div class="tools">{% block actions %}{% if reportclass.filterable %}
-<a id="filter" href="javascript:grid.showFilter();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
-{% if not is_popup and reportclass.editable and haschangeperm %}
-<a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
-<a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>
+{% block before_table %}{% endblock %}<div id="toolicons">{% block actions %}{% if reportclass.filterable %}
+<span id="filter" onclick="grid.showFilter()" title="{% trans 'Filter report data'|escape%}" class="fa fa-search fa-lg"></span>{% endif %}
+{% if not is_popup and reportclass.editable and haschangeperm %}&nbsp;&nbsp;
+<span id="save" onclick="upload.save()" title="{% trans 'Save changes'|escape %}" class="ui-state-disabled fa fa-check fa-lg"></span>
+<span id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}" class="ui-state-disabled fa fa-undo fa-lg"></span>&nbsp;&nbsp;
 {% endif %}
-{% if hasaddperm %}<a id="add" href="{{request.prefix}}/{{adminsite}}/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}" class="icon"><span class="ui-icon ui-icon-plusthick"></span>{% trans 'Add' %}</a>
-{% if not is_popup %}<a id="copy_selected" href="javascript:grid.showCopy();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-copy"></span>{% trans 'Copy' %}</a>
-{% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<a id="delete_selected" href="javascript:grid.showDelete();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-minusthick"></span>{% trans 'Delete' %}</a>
-{% endif %}{% if reportclass.hasTimeBuckets %}<a href="javascript:grid.showBucket();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
-{% endif %}{% if hasaddperm %}<a id="csvimport" href="javascript:import_show();" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-s"></span>{% trans 'Import' %}</a>
-{% endif %}<a href="javascript:grid.showExport(true);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>{% endblock %}</div>
+{% if hasaddperm %}<span onclick="location.href='{{request.prefix}}/{{adminsite}}/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" title="{% trans "Create new object"|escape %}" class="fa fa-plus fa-lg"></span>
+{% if not is_popup %}<span id="copy_selected" onclick="grid.showCopy()" title="{% trans 'Copy selected objects'|escape %}" class="ui-state-disabled fa fa-copy fa-lg"></span>
+{% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<span id="delete_selected" title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete()" class="ui-state-disabled fa fa-minus fa-lg"></span>
+{% endif %}{% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'Configure report time buckets'|escape %}" id="bucketconfig" class="fa fa-clock-o fa-lg"></span>
+{% endif %}&nbsp;&nbsp;{% if hasaddperm %}<span id="csvimport" title="{% trans 'Import CSV or Excel file'|escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
+{% endif %}<span onclick="grid.showExport(true)" title="{% trans 'Export as CSV or Excel file'|escape %}" class="fa fa-arrow-down fa-lg"></span>{% endblock %}</div>
 <div id="content-main" style="margin-right: 15px;">
 <table id="grid"></table>
 <div id="gridpager"></div>

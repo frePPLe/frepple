@@ -101,10 +101,9 @@ class GridField(object):
       self.field_name = self.name
 
   def __unicode__(self):
-    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',width:%s,align:'%s',title:false" %
+    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',align:'%s',title:false" %
           (self.name or '', self.name or '', self.editable and "true" or "false",
-           force_unicode(self.title).title().replace("'","\\'"),
-           self.width, self.align
+           force_unicode(self.title).title().replace("'","\\'"), self.align
            ), ]
     if self.key: o.append( ",key:true" )
     if not self.sortable: o.append(",sortable:false")
@@ -208,12 +207,6 @@ class GridFieldCurrency(GridField):
 class GridFieldDuration(GridField):
   formatter = 'duration'
   width = 80
-
-
-class GridFieldGraph(GridField):
-  formatter = 'graph'
-  editable = False
-  sortable = False
 
 
 def getBOM(encoding):
@@ -455,7 +448,7 @@ class GridReport(View):
 
 
   @classmethod
-  def _render_colmodel(cls, is_popup=False):
+  def _render_colmodel(cls, is_popup=False, mode="graph"):
     result = []
     if is_popup:
       result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false}")
@@ -666,12 +659,19 @@ class GridReport(View):
     fmt = request.GET.get('format', None)
     if not fmt:
       # Return HTML page
+      mode = request.GET.get('mode', None)
+      if mode:
+        # Store the mode passed in the URL on the session to remember for the next report
+        request.session['mode'] = mode
+      else:
+        # Pick up the mode from the session
+        mode = request.session.get('mode','graph')
       is_popup = '_popup' in request.GET
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity':force_unicode(args[0])}) or reportclass.title,
         'preferences': None,
-        'colmodel': reportclass._render_colmodel(is_popup),
+        'colmodel': reportclass._render_colmodel(is_popup, mode),
         'cross_list': reportclass._render_cross() if hasattr(reportclass,'crosses') else None,
         'object_id': args and args[0] or None,
         'page': 1,
@@ -687,6 +687,7 @@ class GridReport(View):
         'hasdeleteperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('delete',reportclass.model._meta))),
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('change',reportclass.model._meta))),
         'active_tab': 'plan',
+        'mode': mode
         }
       for k, v in reportclass.extra_context(request, *args, **kwargs).iteritems():
         context[k] = v
@@ -1401,21 +1402,27 @@ class GridPivot(GridReport):
 
 
   @classmethod
-  def _render_colmodel(cls, is_popup = False):
+  def _render_colmodel(cls, is_popup = False, mode = "graph"):
     result = []
     if is_popup:
-      result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false}")
+      result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false,fixed:true}")
     count = -1
     for i in cls.rows:
       count += 1
-      result.append(u"{%s,width:%s,counter:%d,frozen:true%s,searchoptions:{searchhidden: true}}" % (
+      result.append(u"{%s,width:%s,counter:%d,frozen:true%s,searchoptions:{searchhidden: true},fixed:true}" % (
          i, i.width, count,
          is_popup and ',popup:true' or ''
          ))
-    result.append(
-      "{ name:'columns',label:' ',sortable:false,width:150,align:'left',"
-      "formatter:grid.pivotcolumns,search:false,frozen:true,title:false }"
-      )
+    if mode == "graph":
+      result.append(
+        "{name:'graph',index:'graph',editable:false,label:' ',title:false,"
+        "sortable:false,formatter:'graph',searchoptions:{searchhidden: true},fixed:false}"
+        )
+    else:
+      result.append(
+        "{name:'columns',label:' ',sortable:false,width:150,align:'left',"
+        "formatter:grid.pivotcolumns,search:false,frozen:true,title:false }"
+        )
     return ',\n'.join(result)
 
 
@@ -1539,7 +1546,7 @@ class GridPivot(GridReport):
     fields = [
       force_unicode(f.title).title().encode(encoding,"ignore")
       for f in reportclass.rows
-      if f.name and not isinstance(f,GridFieldGraph) and not f.hidden
+      if f.name and not f.hidden
       ]
     if listformat:
       fields.extend([ capfirst(force_unicode(_('bucket'))).encode(encoding,"ignore") ])
@@ -1560,7 +1567,7 @@ class GridPivot(GridReport):
           fields = [
             row[f.name] is None and ' ' or unicode(row[f.name]).encode(encoding,"ignore")
             for f in reportclass.rows
-            if f.name and not isinstance(f,GridFieldGraph) and not f.hidden
+            if f.name and not f.hidden
             ]
           fields.extend([ row['bucket'].encode(encoding,"ignore") ])
           fields.extend([
@@ -1571,7 +1578,7 @@ class GridPivot(GridReport):
           fields = [
             getattr(row,f.name) is None and ' ' or unicode(getattr(row,f.name)).encode(encoding,"ignore")
             for f in reportclass.rows
-            if f.name and not isinstance(f,GridFieldGraph) and not f.hidden
+            if f.name and not f.hidden
             ]
           fields.extend([ getattr(row,'bucket').encode(encoding,"ignore") ])
           fields.extend([
@@ -1599,7 +1606,7 @@ class GridPivot(GridReport):
             fields = [
               unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore")
               for s in reportclass.rows
-              if s.name and not isinstance(s,GridFieldGraph) and not s.hidden
+              if s.name and not s.hidden
               ]
             fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0]))).encode(encoding,"ignore")] )
             fields.extend([ unicode(_localize(bucket[cross[0]],decimal_separator)).encode(encoding,"ignore") for bucket in row_of_buckets ])
@@ -1616,7 +1623,7 @@ class GridPivot(GridReport):
         fields = [
           unicode(row_of_buckets[0][s.name]).encode(encoding,"ignore")
           for s in reportclass.rows
-          if s.name and not isinstance(s,GridFieldGraph) and not s.hidden
+          if s.name and not s.hidden
           ]
         fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0]))).encode(encoding,"ignore")] )
         fields.extend([
@@ -1644,7 +1651,11 @@ class GridPivot(GridReport):
       query = reportclass.query(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database), sortsql=reportclass._apply_sort(request))
 
     # Write a header row
-    fields = [ force_unicode(f.title).title() for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
+    fields = [
+      force_unicode(f.title).title()
+      for f in reportclass.rows
+      if f.name and not f.hidden
+      ]
     if listformat:
       fields.extend([ capfirst(force_unicode(_('bucket'))) ])
       fields.extend([ capfirst(_(f[1].get('title',_(f[0])))) for f in reportclass.crosses ])
@@ -1658,11 +1669,19 @@ class GridPivot(GridReport):
       for row in query:
         # Append a row
         if hasattr(row, "__getitem__"):
-          fields = [ _getCellValue(row[f.name]) for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
+          fields = [
+            _getCellValue(row[f.name])
+            for f in reportclass.rows
+            if f.name and not f.hidden
+            ]
           fields.extend([ _getCellValue(row['bucket']) ])
           fields.extend([ _getCellValue(row[f[0]]) for f in reportclass.crosses ])
         else:
-          fields = [ _getCellValue(getattr(row,f.name)) for f in reportclass.rows if f.name and not isinstance(f,GridFieldGraph) and not f.hidden ]
+          fields = [
+            _getCellValue(getattr(row,f.name))
+            for f in reportclass.rows
+            if f.name and not f.hidden
+            ]
           fields.extend([ _getCellValue(getattr(row,'bucket')) ])
           fields.extend([ _getCellValue(getattr(row,f[0])) for f in reportclass.crosses ])
         ws.append(fields)
@@ -1679,7 +1698,11 @@ class GridPivot(GridReport):
           # Write a row
           for cross in reportclass.crosses:
             if 'visible' in cross[1] and not cross[1]['visible']: continue
-            fields = [ _getCellValue(row_of_buckets[0][s.name]) for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) and not s.hidden ]
+            fields = [
+              _getCellValue(row_of_buckets[0][s.name])
+              for s in reportclass.rows
+              if s.name and not s.hidden
+              ]
             fields.extend([ _getCellValue(('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])))) ])
             fields.extend([ _getCellValue(bucket[cross[0]]) for bucket in row_of_buckets ])
             ws.append(fields)
@@ -1688,7 +1711,11 @@ class GridPivot(GridReport):
       # Write the last row
       for cross in reportclass.crosses:
         if 'visible' in cross[1] and not cross[1]['visible']: continue
-        fields = [ _getCellValue(row_of_buckets[0][s.name]) for s in reportclass.rows if s.name and not isinstance(s,GridFieldGraph) and not s.hidden ]
+        fields = [
+          _getCellValue(row_of_buckets[0][s.name])
+          for s in reportclass.rows
+          if s.name and not s.hidden
+          ]
         fields.extend([ _getCellValue(('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])))) ])
         fields.extend([ _getCellValue(bucket[cross[0]]) for bucket in row_of_buckets ])
         ws.append(fields)

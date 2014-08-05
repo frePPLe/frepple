@@ -1,8 +1,8 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 {% block extrahead %}{{block.super}}
-<script type="text/javascript" src="{{STATIC_URL}}js/flotr2.min.js"></script>
-<script type="text/javascript">
+{% if mode == 'graph' %}<script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js"></script>
+{% endif %}<script type="text/javascript">
 
 {% block crosses %}function crosses (cellvalue, options, rowdata) {
   for (i in cellvalue)
@@ -14,22 +14,26 @@
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 var resizing;
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{request.report_bucketlist|length}};
+var timebuckets = [ {% for f in request.report_bucketlist %}{% if not forloop.first %},{% endif %}{'name':'{{f.name}}','startdate':'{{f.startdate|date:"Y-m-d"}}','enddate':'{{f.enddate|date:"Y-m-d"}}'}{% endfor %} ];
 {% endif %}var cross = [
 {{cross_list|safe}}
 ];
-$(function(){ {% if reportclass.hasTimeBuckets and not bucketnames %}
+
+$(function() {
+  $("#toolicons").tooltip({show: {effect: "fade", delay: 500} });{% if reportclass.hasTimeBuckets and not bucketnames %}
   $('#curfilter').html("{% trans 'Error: Missing time buckets or bucket dates' %}");
-{% else %}
+{% else %}{% if reportclass.hasTimeBuckets %}$("#displaymode").buttonset();
+{% endif %}
   jQuery("#grid").jqGrid({
    	url: (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href)
       + (location.search.length > 0 ? "&format=json" : "?format=json"),
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
    	colModel:[
-      {{colmodel|safe}},
+      {{colmodel|safe}}{% if mode == "table" %},
       {% for f in request.report_bucketlist %}{% if not forloop.first %},
       {% endif %}{ name:'{{f.name|safe}}',startdate:'{{f.startdate|date:"Y-m-d"}}',enddate:'{{f.enddate|date:"Y-m-d"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
-   	  ],{% if reportclass.editable and haschangeperm %}
+      {% endif %}],{% if reportclass.editable and haschangeperm %}
     cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname,
@@ -43,7 +47,7 @@ $(function(){ {% if reportclass.hasTimeBuckets and not bucketnames %}
     //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     autowidth: true,
-	  shrinkToFit: false,
+	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},
 	  loadError: function(xhr,st,err) {
 	    $('#load_grid').show();
 	    $('#curfilter').html("{% trans 'Error retrieving report data' %}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
@@ -53,7 +57,9 @@ $(function(){ {% if reportclass.hasTimeBuckets and not bucketnames %}
     {% block extra_grid %}{% endblock %}
 	  height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
     });
-  jQuery("#grid").jqGrid('setFrozenColumns');{% if reportclass.editable and haschangeperm %}
+  {% if mode == "table" %}jQuery("#grid").jqGrid('setFrozenColumns');
+  {% endif %}jQuery("#radio1").click(function() {grid.displayMode("table");});
+  jQuery("#radio2").click(function() {grid.displayMode("graph");});{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
   {% endif %}});
 
@@ -67,14 +73,17 @@ $(window).bind('resize', function() {
 </script>
 {% endblock %}
 {% block content %}
-{% block before_table %}{% endblock %}<div class="tools">{% if reportclass.filterable and not args.0 %}
-<a href="javascript:grid.showFilter();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>{% endif %}
+{% block before_table %}{% endblock %}<div id="toolicons">{% if reportclass.hasTimeBuckets and not args.0 %}<form style="display: inline"><span id="displaymode">
+<input type="radio" id="radio1" name="radio" value="grid" {% if mode == 'table' %}checked{% endif %}><label for="radio1"><span title="{% trans "Display table"|escape %}" class="fa fa-table fa-lg" style="color:#4c3000"></span></label>
+<input type="radio" id="radio2" name="radio" value="graph" {% if mode == 'graph' %}checked{% endif %}><label for="radio2"><span title="{% trans "Display graph"|escape %}" class="fa fa-image fa-lg" style="color:#4c3000"></span></label>
+</span></form>&nbsp;&nbsp;
+{% endif %}{% if reportclass.filterable and not args.0 %}<span onclick="grid.showFilter()" title="{% trans 'Filter report data'|escape%}" class="fa fa-search fa-lg"></span>&nbsp;&nbsp;{% endif %}
 {% if reportclass.editable and haschangeperm %}
-<a id="save" href="javascript:upload.save();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-check"></span>{% trans 'Save' %}</a>
-<a id="undo" href="javascript:upload.undo();" class="icon ui-state-disabled"><span class="ui-icon ui-icon-cancel"></span>{% trans 'Undo' %}</a>
+<span id="save" onclick="upload.save()" title="{% trans 'Save changes'|escape %}" class="ui-state-disabled fa fa-check fa-lg"></span>
+<span id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}" class="ui-state-disabled fa fa-undo fa-lg"></span>&nbsp;&nbsp;
 {% endif %}
-{% if reportclass.hasTimeBuckets %}<a href="javascript:grid.showBucket();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
-{% endif %}<a href="javascript:grid.showExport(false);" id="csvexport" class="icon"><span class="ui-icon ui-icon-arrowreturnthick-1-n"></span>{% trans 'Export' %}</a>
+{% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'Configure report time buckets'|escape %}" class="fa fa-clock-o fa-lg"></span>&nbsp;&nbsp;
+{% endif %}<span onclick="grid.showExport(false)" title="{% trans 'Export as CSV or Excel file'|escape %}" class="fa fa-arrow-down fa-lg"></span>
 </div>
 <div id="content-main" style="margin-right: 15px;">
 <table id="grid"></table>

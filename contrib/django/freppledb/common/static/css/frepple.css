@@ -281,11 +281,16 @@ div.system-message p.system-message-title {
 @import url('../admin/css/widgets.css');
 
 
-/* Style for the actions items at the top of a report */
-div.tools {
+/* Styles for the actions icons at the top of a report */
+#toolicons {
   float: right;
   padding: 5px 5px 5px 5px;
-  clear: both;
+  clear: both;  TODO REQUIRED?
+}
+
+#toolicons span {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 /* Style for the context menu. */
@@ -436,6 +441,10 @@ table thead th.sorted {
   background: #c0c0c0;
 }
 
+#displaymode span.ui-button-text {
+  padding: 0.2em;
+}
+
 .ui-jqgrid tr.jqgrow td.dirty-cell, input.dirty-cell {
   font-weight: bold;
 }
@@ -553,26 +562,52 @@ div.calendarbox
   text-decoration: underline;
 }
 
+/* GRAPHS */
+
+.graphcell {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  display: block;  // To avoid 4px margin at the bottom
+}
+
+.graphheader  {
+  fill: #4c3000;
+  stroke: none;
+  font-size: 12px;
+  text-anchor:middle;
+}
+
 /* GANTT CHARTS */
 
 .opplan {
-   vector-effect: non-scaling-stroke;
-   fill: rgb(111,111,255);
-   stroke-width: 1px;
-   stroke: rgb(0,0,0)
+  vector-effect: non-scaling-stroke;
+  fill: rgb(111,111,255);
+  stroke-width: 1px;
+  stroke: rgb(0,0,0)
 }
 
 .opplan_locked {
-   vector-effect: non-scaling-stroke;
-   fill: rgb(0,0,255);
-   stroke-width: 1px;
-   stroke: rgb(0,0,0)
+  vector-effect: non-scaling-stroke;
+  fill: rgb(0,0,255);
+  stroke-width: 1px;
+  stroke: rgb(0,0,0)
 }
 
 .time {
-   vector-effect: non-scaling-stroke;
-   stroke-width: 1px;
-   stroke: rgb(0,0,0);
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1px;
+  stroke: rgb(0,0,0);
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.graphline {
+  stroke-width: 2;
+  fill: none;
 }
 
 /* TODO: This fill color actually depends on the theme.
@@ -590,7 +625,7 @@ div.calendarbox
 
 @media print {
   .ui-tabs-nav, .ui-paging-info, #user-tools, div.menuBar, menuButton,
-  .breadcrumbs, div#gridpager, div.tools
+  .breadcrumbs, div#gridpager, div.toolicons, #displaymode
     { display: none !important; }
   .ui-tabs .ui-tabs-hide
     { display: block !important; }

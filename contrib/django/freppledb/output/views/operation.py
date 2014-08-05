@@ -23,7 +23,7 @@ from django.utils.encoding import force_unicode
 from freppledb.input.models import Operation
 from freppledb.output.models import OperationPlan
 from freppledb.common.db import sql_true, python_date
-from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger, GridFieldGraph
+from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
 
 class OverviewReport(GridPivot):
@@ -38,7 +38,6 @@ class OverviewReport(GridPivot):
   rows = (
     GridFieldText('operation', title=_('operation'), key=True, field_name='name', formatter='operation', editable=False),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='location', editable=False),
-    GridFieldGraph('graph', title=_('graph'), width="(5*numbuckets<200 ? 5*numbuckets : 200)"),
     )
   crosses = (
     ('locked_start', {'title': _('locked starts'),}),

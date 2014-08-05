@@ -437,7 +437,7 @@ var grid = {
               else if (url.charAt(url.length - 1) == '?')
                 // This is the first argument for the URL, but we already have a question mark at the end
                 url += "format=" + $('#csvformat').val();
-    else
+              else
                 // This is the first argument for the URL
                 url += "?format=" + $('#csvformat').val();
               // Append current filter and sort settings to the URL
@@ -689,6 +689,21 @@ var grid = {
       $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
       $('.cbox').prop("checked", false);
     }
+  },
+
+  displayMode: function(m)
+  {
+    var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
+    if (location.search.length > 0)
+      // URL already has arguments
+      url = url.replace("&mode=table","").replace("&mode=graph","").replace("mode=table","").replace("mode=graph","") + "&mode=" + m;
+    else if (url.charAt(url.length - 1) == '?')
+      // This is the first argument for the URL, but we already have a question mark at the end
+      url += "mode=" + m;
+    else
+      // This is the first argument for the URL
+      url += "?mode=" + m;
+    window.location.href = url;
   }
 }
 
@@ -796,7 +811,7 @@ $(function() {
 $(document).mousedown(function (event) {
 
   if (contextMenu && $(event.target).parent('.ui-menu-item').length < 1)
-          {
+  {
     // Hide any context menu
     contextMenu.css('display', 'none');
     contextMenu = null;
@@ -816,22 +831,21 @@ $(document).mousedown(function (event) {
         .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
       var params = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[jQuery.jgrid.getCellIndex($(event.target).closest("td,th"))];
       params['value'] = item;
-  }
-  else
-  {
+    }
+    else
+    {
       var item = $(event.target).parent().text();
       item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
         .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
       var params = {value: item};
-  }
+    }
 
     // Build the URLs for the menu
     contextMenu.find('a').each( function() {
       $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) {
-      var key = match.substring(1,match.length-1);
-      return key in params ? params[key] : match;
-  }
-      ))
+        var key = match.substring(1,match.length-1);
+        return key in params ? params[key] : match;
+        }))
     });
 
     // Display the menu at the right location
@@ -982,6 +996,38 @@ $.fn.bindFirst = function(name, fn) {
     });
 };
 
+
+//
+// Graph functions
+//
+
+var graph = {
+  header : function()
+  {
+    var el = $("#grid_graph");
+    el.html("");
+    var bucketwidth = el.width() / numbuckets;
+    var svg = d3.select(el.get(0)).append("svg");
+    svg.attr('height','15px');
+    svg.attr('width', el.width());
+    var w = bucketwidth / 2;
+    var wt = w;
+    for (var i in timebuckets)
+    {
+      if (wt <= w)
+      {
+        var t = svg.append('text')
+          .attr('class','svgheadertext')
+          .attr('x', w)
+          .attr('y', '12')
+          .attr('class','graphheader')
+          .text(timebuckets[i]['name']);
+        wt = w + t.node().getComputedTextLength() + 12;
+      }
+      w += bucketwidth;
+    }
+  }
+};
 
 //
 // Gantt chart functions

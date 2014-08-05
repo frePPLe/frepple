@@ -104,47 +104,47 @@ var tourdata = [
          },
          {
            url: "/data/input/demand/",
-           element : "#filter",
+           element : ".fa-search",
            description : "You can define filters to see a subset of the data.<br/>" +
-             "The filter expression can use all attributes from the table<br/>" +
-             "and combine them using AND and OR criteria",
-           position : 'T'
+             "The filter expression can use all attributes from<br/>" +
+             "the table and combine them using AND and OR criteria.",
+           position : 'B'
          },
          {
            url: "/data/input/demand/",
-           element : "#save",
+           element : ".fa-check",
            description : "You can directly edit data cells in the grid.<br/>" +
              "Click 'save' to store the changes in the database.<br/>" +
              "Clicking 'undo' will restore the original data.",
-           position : 'T'
+           position : 'B'
          },
          {
            url: "/data/input/demand/",
-           element : "#add",
+           element : ".fa-undo",
            description : "Clicking 'add' opens a form in which you can enter data for a new record.",
-           position : 'T'
+           position : 'B'
          },
          {
            url: "/data/input/demand/",
-           element : "#copy_selected",
+           element : ".fa-copy",
            description : "You can select some rows with the checkbox at the start of the row.<br/>" +
              "Click 'copy' to duplicate the records.<br/>" +
              "Click 'delete' to remove the selected records.",
-           position : 'T'
+           position : 'B'
          },
          {
            url: "/data/input/demand/",
-           element : "#csvexport",
+           element : ".fa-arrow-down",
            description : "Click 'export' to export all data from the grid<br/>" +
               "to a CSV-file or an Excel spreadsheet.",
-           position : 'L'
+           position : 'B'
          },
          {
            url: "/data/input/demand/",
-           element : "#csvimport",
+           element : ".fa-arrow-up",
            description : "Spreadsheets and CSV-files can also be imported again.<br/>" +
              "The data are validated and any errors are reported.",
-           position : 'L'
+           position : 'B'
          },
          {
            url: "/data/input/demand/",

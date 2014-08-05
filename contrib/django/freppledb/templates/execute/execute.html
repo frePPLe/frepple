@@ -172,7 +172,7 @@
 </style>
 {% endblock %}
 {% block actions %}
-<a id="autorefresh" href="javascript:updateRefresh();" style="color:#4c3000" class="fa fa-refresh{% if "refresh" in preferences and not preferences.refresh %} ui-state-disabled{% endif %}" title="{% trans 'Autorefresh'|escape %}"/>
+<span id="autorefresh" onclick="updateRefresh()" class="fa fa-refresh{% if "refresh" in preferences and not preferences.refresh %} ui-state-disabled{% endif %}" title="{% trans 'Autorefresh'|escape %}"></span>&nbsp;&nbsp;
 {{block.super}}{% endblock %}
 {% block after_table %}
 <br/><h1>{% trans "Launch new tasks" %}</h1>

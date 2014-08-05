@@ -23,7 +23,7 @@ from django.utils.encoding import force_unicode
 from freppledb.input.models import Item
 from freppledb.output.models import Demand
 from freppledb.common.db import python_date
-from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger, GridFieldGraph
+from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
 
 class OverviewReport(GridPivot):
@@ -37,7 +37,6 @@ class OverviewReport(GridPivot):
   permissions = (("view_demand_report", "Can view demand report"),)
   rows = (
     GridFieldText('item', title=_('item'), key=True, field_name='name', formatter='item', editable=False),
-    GridFieldGraph('graph', title=_('graph'), width="(5*numbuckets<200 ? 5*numbuckets : 200)"),
     )
   crosses = (
     ('demand',{'title': _('demand')}),

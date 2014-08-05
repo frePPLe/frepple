@@ -44,12 +44,6 @@ FrePPLe redistributes parts of the following third party software components:
     Dual licensed under the MIT and GPL licenses
     See http://www.trirand.com/blog/
 
-* contrib\django\freppledb\common\static\js\flotr2*.js
-    Redistributed from flotr2
-    Copyright (c) 2012 Carl Sutherland
-    Licensed as public domain software
-    See https://github.com/HumbleSoftware/Flotr2/
-
 * contrib\django\freppledb\common\static\js\jquery.uix.multiselect.*js
   contrib\django\freppledb\common\static\css\uix.multiselect.css
    Redistributed from jquery.uix.multiselect

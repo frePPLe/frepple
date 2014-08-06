@@ -2963,6 +2963,39 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     virtual DECLARE_EXPORT void followPegging
     (PeggingIterator&, FlowPlan*, short, double, double);
 
+    /** Return the minimum interval between purchasing operations.<br>
+      * This parameter doesn't control the timing of the first purchasing
+      * operation, but only to the subsequent ones.
+      */
+    TimePeriod getMinimumInterval() const {return min_interval;}
+
+    /** Update the minimum time between replenishments. */
+    void setMinimumInterval(TimePeriod p)
+    {
+      if (p<0L)
+        throw DataException("Buffer can't have a negative minimum interval");
+      min_interval = p;
+      // Minimum is increased over the maximum: auto-increase the maximum
+      if (max_interval && max_interval < min_interval)
+        max_interval = min_interval;
+    }
+
+    /** Return the maximum time interval between sytem-generated replenishment
+      * operations.
+      */
+    TimePeriod getMaximumInterval() const {return max_interval;}
+
+    /** Update the minimum time between replenishments. */
+    void setMaximumInterval(TimePeriod p)
+    {
+      if (p<0L)
+        throw DataException("Buffer can't have a negative maximum interval");
+      max_interval = p;
+      // Maximum is lowered below the minimum: auto-decrease the minimum
+      if (min_interval && max_interval < min_interval)
+        min_interval = max_interval;
+    }
+
   private:
     /** A constant defining the default max inventory target.\\
       * Theoretically we should set this to DBL_MAX, but then the results
@@ -3017,6 +3050,12 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * inventory problems.
       */
     CalendarDouble *max_cal;
+
+    /** Minimum time interval between purchasing operations. */
+    TimePeriod min_interval;
+
+    /** Maximum time interval between purchasing operations. */
+    TimePeriod max_interval;
 
     /** Carrying cost.<br>
       * The cost of carrying inventory in this buffer. The value is a
@@ -3209,39 +3248,6 @@ class BufferProcure : public Buffer
         setMinimumInventory(f);
     }
 
-    /** Return the minimum interval between purchasing operations.<br>
-      * This parameter doesn't control the timing of the first purchasing
-      * operation, but only to the subsequent ones.
-      */
-    TimePeriod getMinimumInterval() const {return min_interval;}
-
-    /** Update the minimum time between replenishments. */
-    void setMinimumInterval(TimePeriod p)
-    {
-      if (p<0L)
-        throw DataException("Procurement buffer can't have a negative minimum interval");
-      min_interval = p;
-      // Minimum is increased over the maximum: auto-increase the maximum
-      if (max_interval && max_interval < min_interval)
-        max_interval = min_interval;
-    }
-
-    /** Return the maximum time interval between sytem-generated replenishment
-      * operations.
-      */
-    TimePeriod getMaximumInterval() const {return max_interval;}
-
-    /** Update the minimum time between replenishments. */
-    void setMaximumInterval(TimePeriod p)
-    {
-      if (p<0L)
-        throw DataException("Procurement buffer can't have a negative maximum interval");
-      max_interval = p;
-      // Maximum is lowered below the minimum: auto-decrease the minimum
-      if (min_interval && max_interval < min_interval)
-        min_interval = max_interval;
-    }
-
     /** Return the minimum quantity of a purchasing operation. */
     double getSizeMinimum() const {return size_minimum;}
 
@@ -3297,12 +3303,6 @@ class BufferProcure : public Buffer
       * to be released.
       */
     TimePeriod fence;
-
-    /** Minimum time interval between purchasing operations. */
-    TimePeriod min_interval;
-
-    /** Maximum time interval between purchasing operations. */
-    TimePeriod max_interval;
 
     /** Minimum purchasing quantity.<br>
       * The default value is 0, meaning no minimum.

@@ -83,14 +83,14 @@
 			<start>2009-01-13T00:00:00</start>
 			<end>2009-01-20T00:00:00</end>
 			<quantity>12</quantity>
-			<criticality>999</criticality>
+			<criticality>7</criticality>
 			<owner id="2" operation="operation 1"/>
 		</operationplan>
 		<operationplan id="4" operation="operation 1 step2">
 			<start>2009-01-20T00:00:00</start>
 			<end>2009-01-27T00:00:00</end>
 			<quantity>12</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="2" operation="operation 1"/>
 		</operationplan>
 	</operationplans>

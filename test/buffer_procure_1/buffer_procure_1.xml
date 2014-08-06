@@ -64,20 +64,20 @@
 	    <description>5: Procurement with minimum and maximum interval</description>
 	    <item name="item 5" />
 	    <onhand>25</onhand>
+	    <mininterval>P10D</mininterval>
+	    <maxinterval>P12D</maxinterval>
 	    <leadtime>P3DT12H</leadtime>
 	    <mininventory>20</mininventory>
 	    <maxinventory>70</maxinventory>
-	    <mininterval>P10D</mininterval>
-	    <maxinterval>P12D</maxinterval>
 	  </buffer>
 	  <buffer name="buffer 6" xsi:type="buffer_procure">
 	    <description>6: The full monty. Procurement with minimum interval,
 	    maximum interval, miniumum size, maximum size and in multiples</description>
 	    <item name="item 6" />
 	    <onhand>25</onhand>
-	    <leadtime>P3DT12H</leadtime>
 	    <mininterval>P10D</mininterval>
 	    <maxinterval>P12D</maxinterval>
+	    <leadtime>P3DT12H</leadtime>
 	    <mininventory>20</mininventory>
 	    <maxinventory>70</maxinventory>
 	    <size_minimum>30</size_minimum>
@@ -88,11 +88,11 @@
 	    <description>7: Procurement with fixed interval</description>
 	    <item name="item 7" />
 	    <onhand>25</onhand>
+	    <mininterval>P7D</mininterval>
+	    <maxinterval>P7D</maxinterval>
 	    <leadtime>P3DT12H</leadtime>
 	    <mininventory>20</mininventory>
 	    <maxinventory>70</maxinventory>
-	    <mininterval>P7D</mininterval>
-	    <maxinterval>P7D</maxinterval>
 	  </buffer>
 	  <buffer name="buffer 8" xsi:type="buffer_procure">
 	    <description>8: Procurement in fixed quantity</description>
@@ -108,9 +108,9 @@
 	    <description>9: Procurement in fixed quantity with fixed interval</description>
 	    <item name="item 9" />
 	    <onhand>25</onhand>
-	    <leadtime>P3DT12H</leadtime>
 	    <mininterval>P7D</mininterval>
 	    <maxinterval>P7D</maxinterval>
+	    <leadtime>P3DT12H</leadtime>
 	    <mininventory>20</mininventory>
 	    <maxinventory>70</maxinventory>
 	    <size_maximum>40</size_maximum>
@@ -120,8 +120,8 @@
 	    <description>10: Constrained procurement</description>
 	    <item name="item 10" />
 	    <onhand>0</onhand>
-	    <leadtime>P10D</leadtime>		
 	    <mininterval>P10D</mininterval>
+	    <leadtime>P10D</leadtime>		
 	    <size_multiple>1</size_multiple>
 	    <size_minimum>1</size_minimum>
 	    <size_maximum>20</size_maximum>

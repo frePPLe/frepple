@@ -122,11 +122,13 @@
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>5</quantity>
+			<criticality>999</criticality>
 		</operationplan>
 		<operationplan id="5" operation="make product in factory 2">
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>10</quantity>
+			<criticality>999</criticality>
 		</operationplan>
 	</operationplans>
 	<problems>

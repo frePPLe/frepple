@@ -236,13 +236,19 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
     }
   }
 
-  // Minimum and maximum inventory targets, carrying cost
+  // Write minimum and maximum inventory targets
   if (min_val != 0) o->writeElement(Tags::tag_minimum, min_val);
   o->writeElement(Tags::tag_minimum_calendar, min_cal);
   if (max_val != default_max) o->writeElement(Tags::tag_maximum, max_val);
   o->writeElement(Tags::tag_maximum_calendar, max_cal);
+
+  // Write carrying cost
   if (getCarryingCost()!= 0.0)
     o->writeElement(Tags::tag_carrying_cost, getCarryingCost());
+
+  // Write min and max interval
+  if (min_interval) o->writeElement(Tags::tag_mininterval, min_interval);
+  if (max_interval) o->writeElement(Tags::tag_maxinterval, max_interval);
 
   // Write the custom fields
   PythonDictionary::write(o, getDict());
@@ -318,6 +324,12 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, const Attribute& pAttr, co
     if (a) setItem(a);
     else throw LogicException("Incorrect object type during read operation");
   }
+  else if (pAttr.isA(Tags::tag_location))
+  {
+    Location * d = dynamic_cast<Location*>(pIn.getPreviousObject());
+    if (d) setLocation(d);
+    else throw LogicException("Incorrect object type during read operation");
+  }
   else if (pAttr.isA(Tags::tag_onhand))
     setOnHand(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_minimum))
@@ -354,12 +366,10 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, const Attribute& pAttr, co
           "' has invalid type for use as buffer max calendar");
     }
   }
-  else if (pAttr.isA(Tags::tag_location))
-  {
-    Location * d = dynamic_cast<Location*>(pIn.getPreviousObject());
-    if (d) setLocation(d);
-    else throw LogicException("Incorrect object type during read operation");
-  }
+  else if (pAttr.isA(Tags::tag_mininterval))
+    setMinimumInterval(pElement.getTimeperiod());
+  else if (pAttr.isA(Tags::tag_maxinterval))
+    setMaximumInterval(pElement.getTimeperiod());
   else if (pAttr.isA(Tags::tag_carrying_cost))
     setCarryingCost(pElement.getDouble());
   else
@@ -724,10 +734,6 @@ DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, const Attribute& pA
     setSizeMinimum(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_size_multiple))
     setSizeMultiple(pElement.getDouble());
-  else if (pAttr.isA(Tags::tag_mininterval))
-    setMinimumInterval(pElement.getTimeperiod());
-  else if (pAttr.isA(Tags::tag_maxinterval))
-    setMaximumInterval(pElement.getTimeperiod());
   else if (pAttr.isA(Tags::tag_mininventory))
     setMinimumInventory(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_maxinventory))
@@ -760,8 +766,6 @@ DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const Keyword &tag
   if (size_maximum != DBL_MAX) o->writeElement(Tags::tag_size_maximum, size_maximum);
   if (size_minimum) o->writeElement(Tags::tag_size_minimum, size_minimum);
   if (size_multiple) o->writeElement(Tags::tag_size_multiple, size_multiple);
-  if (min_interval) o->writeElement(Tags::tag_mininterval, min_interval);
-  if (max_interval) o->writeElement(Tags::tag_maxinterval, max_interval);
   if (getMinimumInventory()) o->writeElement(Tags::tag_mininventory, getMinimumInventory());
   if (getMaximumInventory()) o->writeElement(Tags::tag_maxinventory, getMaximumInventory());
 
@@ -829,6 +833,10 @@ DECLARE_EXPORT PyObject* Buffer::getattro(const Attribute& attr)
     return PythonObject(getMaximumCalendar());
   if (attr.isA(Tags::tag_minimum_calendar))
     return PythonObject(getMinimumCalendar());
+  if (attr.isA(Tags::tag_mininterval))
+    return PythonObject(getMinimumInterval());
+  if (attr.isA(Tags::tag_maxinterval))
+    return PythonObject(getMaximumInterval());
   if (attr.isA(Tags::tag_carrying_cost))
     return PythonObject(getCarryingCost());
   if (attr.isA(Tags::tag_hidden))
@@ -887,6 +895,8 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
     Item* y = static_cast<Item*>(static_cast<PyObject*>(field));
     setItem(y);
   }
+  else if (attr.isA(Tags::tag_onhand))
+    setOnHand(field.getDouble());
   else if (attr.isA(Tags::tag_minimum))
     setMinimum(field.getDouble());
   else if (attr.isA(Tags::tag_maximum))
@@ -911,8 +921,10 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
     CalendarDouble* y = static_cast<CalendarDouble*>(static_cast<PyObject*>(field));
     setMinimumCalendar(y);
   }
-  else if (attr.isA(Tags::tag_onhand))
-    setOnHand(field.getDouble());
+  else if (attr.isA(Tags::tag_mininterval))
+    setMinimumInterval(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_maxinterval))
+    setMaximumInterval(field.getTimeperiod());
   else if (attr.isA(Tags::tag_carrying_cost))
     setCarryingCost(field.getDouble());
   else if (attr.isA(Tags::tag_producing))
@@ -941,10 +953,6 @@ DECLARE_EXPORT PyObject* BufferProcure::getattro(const Attribute& attr)
     return PythonObject(getMinimumInventory());
   if (attr.isA(Tags::tag_maxinventory))
     return PythonObject(getMaximumInventory());
-  if (attr.isA(Tags::tag_mininterval))
-    return PythonObject(getMinimumInterval());
-  if (attr.isA(Tags::tag_maxinterval))
-    return PythonObject(getMaximumInterval());
   if (attr.isA(Tags::tag_fence))
     return PythonObject(getFence());
   if (attr.isA(Tags::tag_size_minimum))
@@ -967,10 +975,6 @@ DECLARE_EXPORT int BufferProcure::setattro(const Attribute& attr, const PythonOb
     setMinimumInventory(field.getDouble());
   else if (attr.isA(Tags::tag_maxinventory))
     setMaximumInventory(field.getDouble());
-  else if (attr.isA(Tags::tag_mininterval))
-    setMinimumInterval(field.getTimeperiod());
-  else if (attr.isA(Tags::tag_maxinterval))
-    setMaximumInterval(field.getTimeperiod());
   else if (attr.isA(Tags::tag_size_minimum))
     setSizeMinimum(field.getDouble());
   else if (attr.isA(Tags::tag_size_multiple))

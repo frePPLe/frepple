@@ -516,6 +516,8 @@
       <xsd:element name="maximum" type="xsd:double" />
       <xsd:element name="minimum_calendar" type="calendar" />
       <xsd:element name="maximum_calendar" type="calendar" />
+      <xsd:element name="mininterval" type="xsd:duration" />
+      <xsd:element name="maxinterval" type="xsd:duration" />
       <xsd:element name="producing" type="operation" />
       <xsd:element name="detectproblems" type="xsd:boolean" />
       <xsd:element name="flows" type="flowlist" />
@@ -526,6 +528,8 @@
     <xsd:attribute name="carrying_cost" type="positiveDouble" />
     <xsd:attribute name="minimum" type="xsd:double" />
     <xsd:attribute name="maximum" type="xsd:double" />
+    <xsd:attribute name="mininterval" type="xsd:duration" />
+    <xsd:attribute name="maxinterval" type="xsd:duration" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
   </xsd:complexType>
 
@@ -550,8 +554,6 @@
           <xsd:element name="size_multiple" type="positiveDouble" />
           <xsd:element name="mininventory" type="positiveDouble" />
           <xsd:element name="maxinventory" type="positiveDouble" />
-          <xsd:element name="mininterval" type="xsd:duration" />
-          <xsd:element name="maxinterval" type="xsd:duration" />
           <xsd:element name="leadtime" type="xsd:duration" />
           <xsd:element name="fence" type="xsd:duration" />
         </xsd:choice>
@@ -560,8 +562,6 @@
         <xsd:attribute name="size_multiple" type="positiveDouble" />
         <xsd:attribute name="mininventory" type="positiveDouble" />
         <xsd:attribute name="maxinventory" type="positiveDouble" />
-        <xsd:attribute name="mininterval" type="xsd:duration" />
-        <xsd:attribute name="maxinterval" type="xsd:duration" />
         <xsd:attribute name="leadtime" type="xsd:duration" />
         <xsd:attribute name="fence" type="xsd:duration" />
       </xsd:extension>

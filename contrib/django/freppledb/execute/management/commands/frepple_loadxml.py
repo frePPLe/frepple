@@ -47,13 +47,17 @@ class Command(BaseCommand):
 
   def handle(self, *args, **options):
     # Pick up the options
-    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
-    else: database = DEFAULT_DB_ALIAS
+    if 'database' in options:
+      database = options['database'] or DEFAULT_DB_ALIAS
+    else:
+      database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'user' in options and options['user']:
-      try: user = User.objects.all().using(database).get(username=options['user'])
-      except: raise CommandError("User '%s' not found" % options['user'] )
+      try:
+        user = User.objects.all().using(database).get(username=options['user'])
+      except:
+        raise CommandError("User '%s' not found" % options['user'] )
     else:
       user = None
 
@@ -63,8 +67,10 @@ class Command(BaseCommand):
     try:
       # Initialize the task
       if 'task' in options and options['task']:
-        try: task = Task.objects.all().using(database).get(pk=options['task'])
-        except: raise CommandError("Task identifier not found")
+        try:
+          task = Task.objects.all().using(database).get(pk=options['task'])
+        except:
+          raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name != 'load XML file':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
@@ -97,7 +103,8 @@ class Command(BaseCommand):
       cmdline.insert(0, 'frepple')
       cmdline.append( '"%s"' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','loadxml.py') )
       ret = os.system(' '.join(cmdline))
-      if ret: raise Exception('Exit code of the batch run is %d' % ret)
+      if ret:
+        raise Exception('Exit code of the batch run is %d' % ret)
 
       # Task update
       task.status = 'Done'
@@ -111,7 +118,10 @@ class Command(BaseCommand):
       raise e
 
     finally:
-      if task: task.save(using=database)
-      try: transaction.commit(using=database)
-      except: pass
+      if task:
+        task.save(using=database)
+      try:
+        transaction.commit(using=database)
+      except:
+        pass
       transaction.leave_transaction_management(using=database)

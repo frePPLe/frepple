@@ -147,7 +147,8 @@ class PathReport(GridReport):
             root = [ (0, None, buf.producing, 1, 0, None, 0, False) ]
           else:
             root = []
-      except ObjectDoesNotExist: raise Http404("buffer %s doesn't exist" % entity)
+      except ObjectDoesNotExist:
+        raise Http404("buffer %s doesn't exist" % entity)
     elif reportclass.objecttype == Item:
       # Find the item
       try:
@@ -159,15 +160,20 @@ class PathReport(GridReport):
             for r in Buffer.objects.filter(item=entity).using(request.database)
             if r.producing
             ]
-      except ObjectDoesNotExist: raise Http404("item %s doesn't exist" % entity)
+      except ObjectDoesNotExist:
+        raise Http404("item %s doesn't exist" % entity)
     elif reportclass.objecttype == Operation:
       # Find the operation
-      try: root = [ (0, None, Operation.objects.using(request.database).get(name=entity), 1, 0, None, 0, True) ]
-      except ObjectDoesNotExist: raise Http404("operation %s doesn't exist" % entity)
+      try:
+        root = [ (0, None, Operation.objects.using(request.database).get(name=entity), 1, 0, None, 0, True) ]
+      except ObjectDoesNotExist:
+        raise Http404("operation %s doesn't exist" % entity)
     elif reportclass.objecttype == Resource:
       # Find the resource
-      try: root = Resource.objects.using(request.database).get(name=entity)
-      except ObjectDoesNotExist: raise Http404("resource %s doesn't exist" % entity)
+      try:
+        root = Resource.objects.using(request.database).get(name=entity)
+      except ObjectDoesNotExist:
+        raise Http404("resource %s doesn't exist" % entity)
       root = [ (0, None, i.operation, 1, 0, None, 0, True) for i in root.loads.using(request.database).all() ]
     else:
       raise Http404("invalid entity type")
@@ -188,7 +194,8 @@ class PathReport(GridReport):
         for x in curoperation.superoperations.using(request.database).order_by("-priority"):
           root.append( (level, parent, x.operation, curqty, issuboperation, parentoper, realdepth, False) )
           hasParents = True
-        if hasParents: continue
+        if hasParents:
+          continue
 
       # Avoid showing the same operation twice.
       # This feature is disabled by default a) because it is not intuitive to understand
@@ -308,7 +315,8 @@ def location_calendar(request, location):
     messages.add_message(request, messages.ERROR,
       force_unicode(_('No availability calendar found')))
     return HttpResponseRedirect(url)
-  except: raise Http404
+  except:
+    raise Http404
 
 
 class BufferList(GridReport):

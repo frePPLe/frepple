@@ -608,7 +608,7 @@ class GridReport(View):
 
     # GridReport
     fields = [ i.field_name for i in reportclass.rows if i.field_name ]
-    for i in hasattr(reportclass,'query') and reportclass.query(request,query) or query[cnt - 1 : cnt + request.pagesize].values(*fields):
+    for i in hasattr(reportclass,'query') and reportclass.query(request,query) or query[cnt - 1:cnt + request.pagesize].values(*fields):
       if first:
         r = [ '{' ]
         first = False
@@ -1248,7 +1248,7 @@ class GridReport(View):
       # jqgrid op: (django_lookup, use_exclude)
       'ne': ('%(field)s__exact', True),
       'bn': ('%(field)s__startswith', True),
-      'en': ('%(field)s__endswith',  True),
+      'en': ('%(field)s__endswith', True),
       'nc': ('%(field)s__contains', True),
       'ni': ('%(field)s__in', True),
       'in': ('%(field)s__in', False),
@@ -1465,13 +1465,13 @@ class GridPivot(GridReport):
       if callable(reportclass.basequeryset):
         query = reportclass.query(
           request,
-          reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)[cnt - 1 : cnt + request.pagesize],
+          reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)[cnt - 1:cnt + request.pagesize],
           sortsql=reportclass._apply_sort(request)
           )
       else:
         query = reportclass.query(
           request,
-          reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt - 1 : cnt + request.pagesize],
+          reportclass.filter_items(request, reportclass.basequeryset).using(request.database)[cnt - 1:cnt + request.pagesize],
           sortsql=reportclass._apply_sort(request)
           )
 

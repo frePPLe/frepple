@@ -49,12 +49,18 @@ class Command(BaseCommand):
   def handle(self, **options):
 
     # Pick up the options
-    if 'verbosity' in options: self.verbosity = int(options['verbosity'] or '1')
-    else: self.verbosity = 1
-    if 'user' in options: user = options['user']
-    else: user = ''
-    if 'database' in options: self.database = options['database'] or DEFAULT_DB_ALIAS
-    else: self.database = DEFAULT_DB_ALIAS
+    if 'verbosity' in options:
+      self.verbosity = int(options['verbosity'] or '1')
+    else:
+      self.verbosity = 1
+    if 'user' in options:
+      user = options['user']
+    else:
+      user = ''
+    if 'database' in options:
+      self.database = options['database'] or DEFAULT_DB_ALIAS
+    else:
+      self.database = DEFAULT_DB_ALIAS
     if not self.database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % self.database )
 
@@ -86,8 +92,10 @@ class Command(BaseCommand):
     try:
       # Initialize the task
       if 'task' in options and options['task']:
-        try: task = Task.objects.all().using(self.database).get(pk=options['task'])
-        except: raise CommandError("Task identifier not found")
+        try:
+          task = Task.objects.all().using(self.database).get(pk=options['task'])
+        except:
+          raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name != 'Openbravo export':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
@@ -105,18 +113,22 @@ class Command(BaseCommand):
       conn = self.get_data("/openbravo/ws/dal/ADUser?where=%s&includeChildren=false" % query)[0]
       self.user_id = None
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'ADUser': continue
+        if event != 'end' or elem.tag != 'ADUser':
+          continue
         self.user_id = elem.get('id')
-      if not self.user_id: raise CommandError("Can't find user id in Openbravo")
+      if not self.user_id:
+        raise CommandError("Can't find user id in Openbravo")
 
       # Look up the id of the Openbravo organization id
       query = urllib.quote("name='%s'" % self.openbravo_organization.encode('utf8'))
       conn = self.get_data("/openbravo/ws/dal/Organization?where=%s&includeChildren=false" % query)[0]
       self.organization_id = None
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'Organization': continue
+        if event != 'end' or elem.tag != 'Organization':
+          continue
         self.organization_id = elem.get('id')
-      if not self.organization_id: raise CommandError("Can't find organization id in Openbravo")
+      if not self.organization_id:
+        raise CommandError("Can't find organization id in Openbravo")
 
       # Upload all data
       self.export_procurement_order(cursor)
@@ -135,9 +147,12 @@ class Command(BaseCommand):
       raise e
 
     finally:
-      if task: task.save(using=self.database)
-      try: transaction.commit(using=self.database)
-      except: pass
+      if task:
+        task.save(using=self.database)
+      try:
+        transaction.commit(using=self.database)
+      except:
+        pass
       settings.DEBUG = tmp_debug
       transaction.set_autocommit(ac, using=self.database)
 
@@ -156,7 +171,8 @@ class Command(BaseCommand):
 
     # Get the response
     statuscode, statusmessage, header = webservice.getreply()
-    if statuscode != httplib.OK: raise Exception(statusmessage)
+    if statuscode != httplib.OK:
+      raise Exception(statusmessage)
     conn = iter(iterparse(webservice.getfile(), events=('start','end')))
     root = conn.next()[1]
     return conn, root
@@ -213,7 +229,8 @@ class Command(BaseCommand):
         count += 1
         if self.verbosity > 0 and count % 500 == 1:
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
       body.append('</ob:Openbravo>')
       self.post_data('/openbravo/ws/dal/OrderLine', '\n'.join(body))
       if self.verbosity > 0:
@@ -272,7 +289,8 @@ class Command(BaseCommand):
       query = urllib.quote("documentStatus='DR' and documentNo like 'frePPLe %'")
       conn = self.get_data("/openbravo/ws/dal/ProcurementRequisition?where=%s&includeChildren=false" % query)[0]
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'ProcurementRequisition': continue
+        if event != 'end' or elem.tag != 'ProcurementRequisition':
+          continue
         body.append('<ProcurementRequisition id="%s">' % elem.get('id'))
         body.append('<documentStatus>CL</documentStatus>')
         body.append('</ProcurementRequisition>')
@@ -376,7 +394,8 @@ class Command(BaseCommand):
         count += 1
         if self.verbosity > 0 and count % 500 == 1:
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
       body.append('</ob:Openbravo>')
       self.post_data('/openbravo/ws/dal/ManufacturingWorkRequirement', '\n'.join(body))
       if self.verbosity > 0:

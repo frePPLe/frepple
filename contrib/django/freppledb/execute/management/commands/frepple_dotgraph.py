@@ -38,8 +38,10 @@ class Command(BaseCommand):
     try:
 
       # Pick up the options
-      if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
-      else: database = DEFAULT_DB_ALIAS
+      if 'database' in options:
+        database = options['database'] or DEFAULT_DB_ALIAS
+      else:
+        database = DEFAULT_DB_ALIAS
       if not database in settings.DATABASES:
         raise CommandError("No database settings known for '%s'" % database )
 

@@ -46,7 +46,7 @@ international:
 	cd freppledb; django-admin.py makemessages -a -d djangojs && django-admin.py compilemessages
 
 pep8:
-	flake8 freppledb --ignore=E121,E111,E501,E303
+	flake8 freppledb --ignore=E121,E111,E501,E303,201
 
 doc:
 	-rm -rf doc

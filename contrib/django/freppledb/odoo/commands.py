@@ -136,8 +136,10 @@ def odoo_write(db = DEFAULT_DB_ALIAS):
     for i in frepple.operationplans():
       b = None
       for j in i.flowplans:
-        if j.quantity > 0: b = j.flow.buffer
-      if not b or b.source != 'odoo' or i.locked: continue
+        if j.quantity > 0:
+          b = j.flow.buffer
+      if not b or b.source != 'odoo' or i.locked:
+        continue
       yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s/>' % (
           i.id, quoteattr(i.operation.name),
           i.start, i.end, i.quantity,
@@ -165,7 +167,8 @@ def odoo_write(db = DEFAULT_DB_ALIAS):
 
     # Display the server response, which can contain error messages
     print("Odoo response:")
-    for i in urlopen(req): print(i, end="")
+    for i in urlopen(req):
+      print(i, end="")
 
   except HTTPError as e:
     print("Error connecting to odoo", e.read())
@@ -174,8 +177,10 @@ def odoo_write(db = DEFAULT_DB_ALIAS):
 
 if __name__ == "__main__":
   # Select database
-  try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
-  except: db = DEFAULT_DB_ALIAS
+  try:
+    db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
+  except:
+    db = DEFAULT_DB_ALIAS
 
   # Use the test database if we are running the test suite
   if 'FREPPLE_TEST' in os.environ:

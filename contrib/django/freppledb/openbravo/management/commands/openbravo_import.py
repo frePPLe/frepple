@@ -52,16 +52,24 @@ class Command(BaseCommand):
   def handle(self, **options):
 
     # Pick up the options
-    if 'verbosity' in options: self.verbosity = int(options['verbosity'] or '1')
-    else: self.verbosity = 1
-    if 'user' in options: user = options['user']
-    else: user = ''
-    if 'database' in options: self.database = options['database'] or DEFAULT_DB_ALIAS
-    else: self.database = DEFAULT_DB_ALIAS
+    if 'verbosity' in options:
+      self.verbosity = int(options['verbosity'] or '1')
+    else:
+      self.verbosity = 1
+    if 'user' in options:
+      user = options['user']
+    else:
+      user = ''
+    if 'database' in options:
+      self.database = options['database'] or DEFAULT_DB_ALIAS
+    else:
+      self.database = DEFAULT_DB_ALIAS
     if not self.database in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % self.database )
-    if 'delta' in options: self.delta = float(options['delta'] or '3650')
-    else: self.delta = 3650
+    if 'delta' in options:
+      self.delta = float(options['delta'] or '3650')
+    else:
+      self.delta = 3650
 
     # Pick up configuration parameters
     self.openbravo_user = Parameter.getValue("openbravo.user", self.database)
@@ -88,8 +96,10 @@ class Command(BaseCommand):
     try:
       # Initialize the task
       if 'task' in options and options['task']:
-        try: task = Task.objects.all().using(self.database).get(pk=options['task'])
-        except: raise CommandError("Task identifier not found")
+        try:
+          task = Task.objects.all().using(self.database).get(pk=options['task'])
+        except:
+          raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name != 'Openbravo import':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
@@ -175,9 +185,12 @@ class Command(BaseCommand):
       raise e
 
     finally:
-      if task: task.save(using=self.database)
-      try: transaction.commit(using=self.database)
-      except: pass
+      if task:
+        task.save(using=self.database)
+      try:
+        transaction.commit(using=self.database)
+      except:
+        pass
       settings.DEBUG = tmp_debug
       transaction.set_autocommit(ac, using=self.database)
 
@@ -226,7 +239,8 @@ class Command(BaseCommand):
       conn, root = self.get_data("/openbravo/ws/dal/Organization?includeChildren=false")
       count = 0
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'Organization': continue
+        if event != 'end' or elem.tag != 'Organization':
+          continue
         searchkey = elem.find("searchKey").text
         objectid = elem.get('id')
         self.organizations[objectid] = searchkey
@@ -277,9 +291,11 @@ class Command(BaseCommand):
       conn, root = self.get_data("/openbravo/ws/dal/BusinessPartner?where=%s&orderBy=name&includeChildren=false" % query)
       count = 0
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'BusinessPartner': continue
+        if event != 'end' or elem.tag != 'BusinessPartner':
+          continue
         organization = self.organizations.get(elem.find("organization").get("id"), None)
-        if not organization: continue
+        if not organization:
+          continue
         searchkey = elem.find("searchKey").text
         name = elem.find("name").text
         unique_name = u'%s %s' % (searchkey, name)
@@ -297,7 +313,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       # Create records
       cursor.executemany(
@@ -374,9 +391,11 @@ class Command(BaseCommand):
       conn, root = self.get_data("/openbravo/ws/dal/Product?orderBy=name&includeChildren=false")
       count = 0
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'Product': continue
+        if event != 'end' or elem.tag != 'Product':
+          continue
         organization = self.organizations.get(elem.find("organization").get("id"), None)
-        if not organization: continue
+        if not organization:
+          continue
         searchkey = elem.find("searchKey").text
         name = elem.find("name").text
         # A product name which consists of the searchkey and the name fields
@@ -399,7 +418,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       # Create new items
       cursor.executemany(
@@ -479,9 +499,11 @@ class Command(BaseCommand):
       conn, root = self.get_data("/openbravo/ws/dal/Warehouse?where=%s&orderBy=name&includeChildren=false" % query)
       count = 0
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'Warehouse': continue
+        if event != 'end' or elem.tag != 'Warehouse':
+          continue
         organization = self.organizations.get(elem.find("organization").get("id"), None)
-        if not organization: continue
+        if not organization:
+          continue
         searchkey = elem.find("searchKey").text
         name = elem.find("name").text
         # A product name which consists of the searchkey field is the default.
@@ -508,7 +530,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       # Remove deleted or inactive locations
       delete = [ (i,) for i,j in unused_keys.iteritems() if j ]
@@ -545,7 +568,8 @@ class Command(BaseCommand):
       # Get a mapping of all locators to their warehouse
       conn, root = self.get_data("/openbravo/ws/dal/Locator")
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'Locator': continue
+        if event != 'end' or elem.tag != 'Locator':
+          continue
         warehouse = elem.find("warehouse").get('id')
         objectid = elem.get('id')
         self.locators[objectid] = warehouse
@@ -610,7 +634,8 @@ class Command(BaseCommand):
       conn, root = self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query)
       count = 0
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'OrderLine': continue
+        if event != 'end' or elem.tag != 'OrderLine':
+          continue
         organization = self.organizations.get(elem.find("organization").get("id"), None)
         product = self.items.get(elem.find("product").get('id'), None)
         warehouse = self.locations.get(elem.find("warehouse").get('id'), None)
@@ -645,7 +670,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       # Create or update delivery operations
       cursor.execute("SELECT name FROM operation where name like 'Ship %'")
@@ -736,7 +762,8 @@ class Command(BaseCommand):
       cursor.execute("SELECT name, subcategory, source FROM resource")
       frepple_keys = set()
       for i in cursor.fetchall():
-        if i[1] == 'openbravo': self.resources[i[2]] = i[0]
+        if i[1] == 'openbravo':
+          self.resources[i[2]] = i[0]
         frepple_keys.add(i[0])
       unused_keys = frepple_keys.copy()
       insert = []
@@ -744,9 +771,11 @@ class Command(BaseCommand):
       conn, root = self.get_data("/openbravo/ws/dal/ManufacturingMachine?orderBy=name&includeChildren=false")
       count = 0
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'ManufacturingMachine': continue
+        if event != 'end' or elem.tag != 'ManufacturingMachine':
+          continue
         organization = self.organizations.get(elem.find("organization").get("id"), None)
-        if not organization: continue
+        if not organization:
+          continue
         unique_name = elem.get('identifier')
         objectid = elem.get('id')
         if unique_name in frepple_keys:
@@ -761,7 +790,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       cursor.executemany(
         "insert into resource \
@@ -831,9 +861,11 @@ class Command(BaseCommand):
       conn, root = self.get_data("/openbravo/ws/dal/MaterialMgmtStorageDetail?where=%s" % query)
       count = 0
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'MaterialMgmtStorageDetail': continue
+        if event != 'end' or elem.tag != 'MaterialMgmtStorageDetail':
+          continue
         organization = self.organizations.get(elem.find("organization").get("id"), None)
-        if not organization: continue
+        if not organization:
+          continue
         onhand = elem.find("quantityOnHand").text
         locator = elem.find("storageBin").get('id')
         product = elem.find("product").get('id')
@@ -861,7 +893,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       cursor.executemany(
         "insert into buffer \
@@ -942,7 +975,8 @@ class Command(BaseCommand):
       count = 0
       prevproduct = None
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'ApprovedVendor': continue
+        if event != 'end' or elem.tag != 'ApprovedVendor':
+          continue
         objectid = elem.get('id')
         product = self.items.get(elem.find('product').get('id'), None)
         if not product:
@@ -968,7 +1002,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       # Remove deleted operations
       cursor.executemany("update buffer \
@@ -1097,7 +1132,8 @@ class Command(BaseCommand):
       conn, root = self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query)
       count = 0
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'OrderLine': continue
+        if event != 'end' or elem.tag != 'OrderLine':
+          continue
         product = self.items.get(elem.find("product").get('id'), None)
         warehouse = self.locations.get(elem.find("warehouse").get('id'), None)
         organization = self.organizations.get(elem.find("organization").get("id"), None)
@@ -1132,7 +1168,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       # Create or update procurement operations
       cursor.execute("SELECT name FROM operation where name like 'Purchase %'")
@@ -1243,14 +1280,17 @@ class Command(BaseCommand):
       conn, root = self.get_data("/openbravo/ws/dal/ManufacturingWorkRequirement?where=%s" % query)
       count = 0
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'ManufacturingWorkRequirement': continue
+        if event != 'end' or elem.tag != 'ManufacturingWorkRequirement':
+          continue
         objectid = elem.get('id')
         quantity = float(elem.find("quantity").text)
         organization = self.organizations.get(elem.find("organization").get("id"), None)
         location = self.organization_location.get(organization, None)
-        if not location: continue
+        if not location:
+          continue
         processPlan = frepple_operations.get( (elem.find("processPlan").get('id'),location), None)
-        if not processPlan: continue
+        if not processPlan:
+          continue
         startingDate = datetime.strptime(elem.find("startingDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
         endingDate = datetime.strptime(elem.find("endingDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
         if objectid in frepple_keys:
@@ -1265,7 +1305,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       # Delete closed/canceled/deleted work requirements
       deleted = [ (i,) for i in unused_keys ]
@@ -1336,7 +1377,8 @@ class Command(BaseCommand):
       buffers = set()
       flows = {}
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'ProductBOM': continue
+        if event != 'end' or elem.tag != 'ProductBOM':
+          continue
         bomquantity = float(elem.find("bOMQuantity").text)
         organization = self.organizations.get(elem.find("organization").get("id"), None)
         product = self.items.get(elem.find("product").get("id"), None)
@@ -1363,7 +1405,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       # Execute now on the database
       cursor.executemany(
@@ -1448,7 +1491,8 @@ class Command(BaseCommand):
       processplans = {}
       conn, root = self.get_data("/openbravo/ws/dal/ManufacturingProcessPlan?includeChildren=true")
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'ManufacturingProcessPlan': continue
+        if event != 'end' or elem.tag != 'ManufacturingProcessPlan':
+          continue
         processplans[elem.get('id')] = elem
 
       # Loop over all produced products
@@ -1462,7 +1506,8 @@ class Command(BaseCommand):
       flows = {}
       loads = []
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'Product': continue
+        if event != 'end' or elem.tag != 'Product':
+          continue
         product = self.items.get(elem.get('id'), None)
         if not product or not product in frepple_buffers:
           # TODO A produced item which appears in a BOM but has no sales orders, purchase orders or onhand will not show up.
@@ -1479,7 +1524,8 @@ class Command(BaseCommand):
         # We create a routing operation in the right location
         for name, loc in frepple_buffers[product]:
           tmp0 = root2.find('manufacturingVersionList')
-          if not tmp0: continue
+          if not tmp0:
+            continue
           for pp_version in tmp0.findall('ManufacturingVersion'):
             endingDate = datetime.strptime(pp_version.find("endingDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
             if endingDate < self.current:
@@ -1554,7 +1600,8 @@ class Command(BaseCommand):
         if self.verbosity > 0 and count < 0:
           count = 500
           print('.', end="")
-      if self.verbosity > 0: print ('')
+      if self.verbosity > 0:
+        print ('')
 
       # TODO use "decrease" and "rejected" fields on steps to compute the yield
       # TODO multiple processplans for the same item -> alternate operation

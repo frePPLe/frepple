@@ -45,8 +45,10 @@ class LateOrdersWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = int(request.GET.get('limit', cls.limit))
-    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-    except: db = DEFAULT_DB_ALIAS
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
@@ -81,8 +83,10 @@ class ShortOrdersWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = int(request.GET.get('limit', cls.limit))
-    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-    except: db = DEFAULT_DB_ALIAS
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th></tr>' % (
@@ -114,8 +118,10 @@ class PurchaseQueueWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = int(request.GET.get('limit', cls.limit))
-    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-    except: db = DEFAULT_DB_ALIAS
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
@@ -149,8 +155,10 @@ class ShippingQueueWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = int(request.GET.get('limit', cls.limit))
-    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-    except: db = DEFAULT_DB_ALIAS
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
@@ -184,8 +192,10 @@ class ResourceQueueWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = int(request.GET.get('limit', cls.limit))
-    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-    except: db = DEFAULT_DB_ALIAS
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
@@ -214,8 +224,10 @@ class PurchaseAnalysisWidget(Widget):
   @classmethod
   def render(cls, request=None):
     limit = int(request.GET.get('limit', cls.limit))
-    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-    except: db = DEFAULT_DB_ALIAS
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
@@ -358,7 +370,8 @@ class ResourceLoadWidget(Widget):
     cursor.execute(query)
     for res in cursor.fetchall():
       limit -= 1
-      if limit < 0: break
+      if limit < 0:
+        break
       result.append('<tr><td><a href="%s/resource/%s/">%s</a></td><td class="util">%.2f</td></tr>' % (
         request.prefix, urlquote(res[0]), res[0], res[1]
         ))
@@ -447,7 +460,8 @@ class InventoryByLocationWidget(Widget):
     cursor.execute(query)
     for res in cursor.fetchall():
       limit -= 1
-      if limit < 0: break
+      if limit < 0:
+        break
       result.append('<tr><td>%s</td><td>%.2f</td></tr>' % (
         res[0], res[1]
         ))
@@ -534,7 +548,8 @@ class InventoryByItemWidget(Widget):
     cursor.execute(query)
     for res in cursor.fetchall():
       limit -= 1
-      if limit < 0: break
+      if limit < 0:
+        break
       result.append('<tr><td>%s</td><td>%.2f</td></tr>' % (
         res[0], res[1]
         ))

@@ -191,8 +191,7 @@ class Menu:
     content_type = None
     for i in self._groups:
       for j in i[3]:
-        if not j.report: continue
-        if j.report.__module__.startswith(app):
+        if j.report and j.report.__module__.startswith(app):
           # Loop over all permissions of the class
           for k in j.report.permissions:
             if content_type is None:

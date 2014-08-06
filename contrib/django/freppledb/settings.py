@@ -87,7 +87,7 @@ except:
 # will match example.com, www.example.com, and any other subdomain of example.com.
 # A value of '*' will match anything, effectively disabling this feature.
 # This option is only active when DEBUG = false.
-ALLOWED_HOSTS = [ '*' ]
+ALLOWED_HOSTS = ['*']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -169,7 +169,7 @@ AUTH_USER_MODEL = 'common.User'
 
 # IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.
-INTERNAL_IPS = ( '127.0.0.1', )
+INTERNAL_IPS = ('127.0.0.1',)
 
 # Default charset to use for all ``HttpResponse`` objects, if a MIME type isn't
 # manually specified.

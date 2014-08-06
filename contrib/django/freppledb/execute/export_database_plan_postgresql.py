@@ -59,7 +59,7 @@ def exportProblems(process):
     process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
        i.entity.encode(encoding), i.name.encode(encoding),
        isinstance(i.owner,frepple.operationplan) and i.owner.operation.name.encode(encoding) or i.owner.name.encode(encoding),
-       i.description.encode(encoding)[0 : settings.NAMESIZE + 20], str(i.start), str(i.end),
+       i.description.encode(encoding)[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
        round(i.weight,settings.DECIMAL_PLACES)
     ))
   process.stdin.write('\\.\n')
@@ -75,7 +75,7 @@ def exportConstraints(process):
       process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
          d.name.encode(encoding), i.entity.encode(encoding), i.name.encode(encoding),
          isinstance(i.owner,frepple.operationplan) and i.owner.operation.name.encode(encoding) or i.owner.name.encode(encoding),
-         i.description.encode(encoding)[0 : settings.NAMESIZE + 20], str(i.start), str(i.end),
+         i.description.encode(encoding)[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
          round(i.weight,settings.DECIMAL_PLACES)
        ))
   process.stdin.write('\\.\n')

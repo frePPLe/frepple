@@ -139,8 +139,10 @@ class OverviewReport(GridPivot):
 
     # Build the python result
     for row in cursor.fetchall():
-      if row[5] != 0: util = row[7] * 100 / row[5]
-      else: util = 0
+      if row[5] != 0:
+        util = row[7] * 100 / row[5]
+      else:
+        util = 0
       yield {
         'resource': row[0],
         'location': row[1],

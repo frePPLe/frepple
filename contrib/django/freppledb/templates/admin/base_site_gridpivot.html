@@ -77,12 +77,12 @@ $(window).bind('resize', function() {
 <input type="radio" id="radio1" name="radio" value="grid" {% if mode == 'table' %}checked{% endif %}><label for="radio1"><span title="{% trans "Display table"|escape %}" class="fa fa-table fa-lg" style="color:#4c3000"></span></label>
 <input type="radio" id="radio2" name="radio" value="graph" {% if mode == 'graph' %}checked{% endif %}><label for="radio2"><span title="{% trans "Display graph"|escape %}" class="fa fa-image fa-lg" style="color:#4c3000"></span></label>
 </span></form>&nbsp;&nbsp;
-{% endif %}{% if reportclass.filterable and not args.0 %}<span onclick="grid.showFilter()" title="{% trans 'Filter report data'|escape%}" class="fa fa-search fa-lg"></span>&nbsp;&nbsp;{% endif %}
+{% endif %}{% if reportclass.filterable and not args.0 %}<span onclick="grid.showFilter()" title="{% trans 'Filter data'|escape%}" class="fa fa-search fa-lg"></span>&nbsp;&nbsp;{% endif %}
 {% if reportclass.editable and haschangeperm %}
 <span id="save" onclick="upload.save()" title="{% trans 'Save changes'|escape %}" class="ui-state-disabled fa fa-check fa-lg"></span>
 <span id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}" class="ui-state-disabled fa fa-undo fa-lg"></span>&nbsp;&nbsp;
 {% endif %}
-{% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'Configure report time buckets'|escape %}" class="fa fa-clock-o fa-lg"></span>&nbsp;&nbsp;
+{% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'Configure time buckets'|escape %}" class="fa fa-clock-o fa-lg"></span>&nbsp;&nbsp;
 {% endif %}<span onclick="grid.showExport(false)" title="{% trans 'Export as CSV or Excel file'|escape %}" class="fa fa-arrow-down fa-lg"></span>
 </div>
 <div id="content-main" style="margin-right: 15px;">

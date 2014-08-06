@@ -51,7 +51,8 @@ class Problem(models.Model):
   enddate = models.DateTimeField(_('end date'), db_index=True)
   weight = models.DecimalField(_('weight'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
 
-  def __unicode__(self): return str(self.description)
+  def __unicode__(self):
+    return str(self.description)
 
   class Meta:
     db_table = 'out_problem'
@@ -71,7 +72,8 @@ class Constraint(models.Model):
   enddate = models.DateTimeField(_('end date'), db_index=True)
   weight = models.DecimalField(_('weight'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
 
-  def __unicode__(self): return str(self.demand) + ' ' + str(self.description)
+  def __unicode__(self):
+    return str(self.demand) + ' ' + str(self.description)
 
   class Meta:
     db_table = 'out_constraint'

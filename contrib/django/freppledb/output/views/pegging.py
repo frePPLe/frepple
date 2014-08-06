@@ -77,8 +77,10 @@ class ReportByDemand(GridReport):
       group by due
        ''', (args[0]))
     (due, start, end) = cursor.fetchone()
-    if not start: start = due
-    if not end: end = due
+    if not start:
+      start = due
+    if not end:
+      end = due
 
     if not isinstance(start, datetime):
       # SQLite max(datetime) function doesn't return a datetime. Sigh.
@@ -88,8 +90,10 @@ class ReportByDemand(GridReport):
       end = datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
 
     # Adjust the horizon
-    if due > end: end = due
-    if due < start: start = due
+    if due > end:
+      end = due
+    if due < start:
+      start = due
     end += timedelta(days=1)
     start -= timedelta(days=1)
     request.report_startdate = start.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -136,9 +140,9 @@ class ReportByDemand(GridReport):
     cursor.execute(query, baseparams + baseparams)
     for row in cursor.fetchall():
       if row[0] in resource:
-        resource[row[0]] += (row[1], )
+        resource[row[0]] += (row[1],)
       else:
-        resource[row[0]] = ( row[1], )
+        resource[row[0]] = (row[1],)
 
     # query 2: collect all operationplans
     query = '''
@@ -233,8 +237,10 @@ class ReportByBuffer(GridReport):
     query = FlowPlan.objects.all()
     for i,j in request.GET.iteritems():
       if i.startswith('thebuffer') or i.startswith('flowdate'):
-        try: query = query.filter(**{i:j})
-        except: pass  # silently ignore invalid filters
+        try:
+          query = query.filter(**{i:j})
+        except:
+          pass  # silently ignore invalid filters
     return query
 
   @classmethod
@@ -244,7 +250,8 @@ class ReportByBuffer(GridReport):
     basesql, baseparams = basequery.query.where.as_sql(
       connections[request.database].ops.quote_name,
       connections[request.database])
-    if not basesql: basesql = '1 = 1'
+    if not basesql:
+      basesql = '1 = 1'
 
     query = '''
         select operation, date, demand, quantity, ditem
@@ -314,8 +321,10 @@ class ReportByResource(GridReport):
     query = LoadPlan.objects.all()
     for i,j in request.GET.iteritems():
       if i.startswith('theresource') or i.startswith('startdate') or i.startswith('enddate'):
-        try: query = query.filter(**{i:j})
-        except: pass  # silently ignore invalid filters
+        try:
+          query = query.filter(**{i:j})
+        except:
+          pass  # silently ignore invalid filters
     return query
 
   @classmethod
@@ -325,7 +334,8 @@ class ReportByResource(GridReport):
     basesql, baseparams = basequery.query.where.as_sql(
       connections[request.database].ops.quote_name,
       connections[request.database])
-    if not basesql: basesql = '1 = 1'
+    if not basesql:
+      basesql = '1 = 1'
 
     query = '''
         select operation, out_loadplan.startdate as date, out_demandpegging.demand, sum(quantity_buffer), demand.item_id, null
@@ -378,8 +388,10 @@ class ReportByOperation(GridReport):
     query = OperationPlan.objects.all()
     for i,j in request.GET.iteritems():
       if i.startswith('operation') or i.startswith('startdate') or i.startswith('enddate'):
-        try: query = query.filter(**{i:j})
-        except: pass  # silently ignore invalid filters
+        try:
+          query = query.filter(**{i:j})
+        except:
+          pass  # silently ignore invalid filters
     return query
 
   @classmethod
@@ -389,7 +401,8 @@ class ReportByOperation(GridReport):
     basesql, baseparams = basequery.query.where.as_sql(
       connections[request.database].ops.quote_name,
       connections[request.database])
-    if not basesql: basesql = '1 = 1'
+    if not basesql:
+      basesql = '1 = 1'
 
     query = '''
         select operation, date, demand, quantity, ditem

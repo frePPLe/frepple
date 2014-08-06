@@ -133,7 +133,8 @@ class FixtureTest(TestCase):
     try:
       full_path = os.path.join(self.fixture_dir, 'tutorial_1.json')
       objects = serializers.deserialize("json", open(full_path, 'r'))
-      for obj in objects: True
+      for obj in objects:
+        True
     except Exception as e:
       self.fail("Invalid fixture: %s" % e)
 
@@ -141,7 +142,8 @@ class FixtureTest(TestCase):
     try:
       full_path = os.path.join(self.fixture_dir, 'small_demo.json')
       objects = serializers.deserialize("json", open(full_path, 'r'))
-      for obj in objects: True
+      for obj in objects:
+        True
     except Exception as e:
       self.fail("Invalid fixture: %s" % e)
 
@@ -149,7 +151,8 @@ class FixtureTest(TestCase):
     try:
       full_path = os.path.join(self.fixture_dir, 'jobshop.json')
       objects = serializers.deserialize("json", open(full_path, 'r'))
-      for obj in objects: True
+      for obj in objects:
+        True
     except Exception as e:
       self.fail("Invalid fixture: %s" % e)
 
@@ -157,6 +160,7 @@ class FixtureTest(TestCase):
     try:
       full_path = os.path.join(self.fixture_dir, 'unicode_test.json')
       objects = serializers.deserialize("json", open(full_path, 'r'))
-      for obj in objects: True
+      for obj in objects:
+        True
     except Exception as e:
       self.fail("Invalid fixture: %s" % e)

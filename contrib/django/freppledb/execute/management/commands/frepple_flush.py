@@ -64,8 +64,10 @@ class Command(BaseCommand):
     if not database in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'user' in options and options['user']:
-      try: user = User.objects.all().using(database).get(username=options['user'])
-      except: raise CommandError("User '%s' not found" % options['user'] )
+      try:
+        user = User.objects.all().using(database).get(username=options['user'])
+      except:
+        raise CommandError("User '%s' not found" % options['user'] )
     else:
       user = None
     if 'models' in options and options['models']:
@@ -79,8 +81,10 @@ class Command(BaseCommand):
     try:
       # Initialize the task
       if 'task' in options and options['task']:
-        try: task = Task.objects.all().using(database).get(pk=options['task'])
-        except: raise CommandError("Task identifier not found")
+        try:
+          task = Task.objects.all().using(database).get(pk=options['task'])
+        except:
+          raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name != 'empty database':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
@@ -106,7 +110,8 @@ class Command(BaseCommand):
             if x in EXCLUDE_FROM_BULK_OPERATIONS:
               continue
             x = x._meta.db_table
-            if not x in tables: raise
+            if not x in tables:
+              raise
             models2tables.add(x)
           except Exception as e:
             raise CommandError("Invalid model to erase: %s" % m)

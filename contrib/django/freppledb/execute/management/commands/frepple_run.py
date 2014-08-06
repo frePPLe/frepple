@@ -57,8 +57,10 @@ class Command(BaseCommand):
     if not database in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'user' in options and options['user']:
-      try: user = User.objects.all().using(database).get(username=options['user'])
-      except: raise CommandError("User '%s' not found" % options['user'] )
+      try:
+        user = User.objects.all().using(database).get(username=options['user'])
+      except:
+        raise CommandError("User '%s' not found" % options['user'] )
     else:
       user = None
 
@@ -68,8 +70,10 @@ class Command(BaseCommand):
     try:
       # Initialize the task
       if 'task' in options and options['task']:
-        try: task = Task.objects.all().using(database).get(pk=options['task'])
-        except: raise CommandError("Task identifier not found")
+        try:
+          task = Task.objects.all().using(database).get(pk=options['task'])
+        except:
+          raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name != 'generate plan':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
@@ -82,12 +86,14 @@ class Command(BaseCommand):
         constraint = int(options['constraint'])
         if constraint < 0 or constraint > 15:
           raise ValueError("Invalid constraint: %s" % options['constraint'])
-      else: constraint = 15
+      else:
+        constraint = 15
       if 'plantype' in options:
         plantype = int(options['plantype'])
         if plantype < 1 or plantype > 2:
           raise ValueError("Invalid plan type: %s" % options['plantype'])
-      else: plantype = 1
+      else:
+        plantype = 1
       if options['env']:
         task.arguments = "--constraint=%d --plantype=%d --env=%s" % (constraint, plantype, options['env'])
         for i in options['env'].split(','):
@@ -110,7 +116,8 @@ class Command(BaseCommand):
         if os.path.exists(os.path.join(os.path.dirname(mod.__file__),'commands.py')):
           cmd = os.path.join(os.path.dirname(mod.__file__),'commands.py')
           break
-      if not cmd: raise Exception("Can't locate commands.py")
+      if not cmd:
+        raise Exception("Can't locate commands.py")
 
       # Execute
       os.environ['FREPPLE_PLANTYPE'] = str(plantype)
@@ -146,7 +153,10 @@ class Command(BaseCommand):
       raise e
 
     finally:
-      if task: task.save(using=database)
-      try: transaction.commit(using=database)
-      except: pass
+      if task:
+        task.save(using=database)
+      try:
+        transaction.commit(using=database)
+      except:
+        pass
       transaction.leave_transaction_management(using=database)

@@ -29,4 +29,5 @@ for app in settings.INSTALLED_APPS:
     mod = import_module('%s.admin' % app)
   except ImportError as e:
     # Silently ignore if it's the menu module which isn't found
-    if str(e) != 'No module named admin': raise e
+    if str(e) != 'No module named admin':
+      raise e

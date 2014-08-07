@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 class HierarchyModel(models.Model):
-  lft = models.PositiveIntegerField(db_index = True, editable=False, null=True, blank=True)
+  lft = models.PositiveIntegerField(db_index=True, editable=False, null=True, blank=True)
   rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
   lvl = models.PositiveIntegerField(null=True, editable=False, blank=True)
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True,
@@ -50,7 +50,7 @@ class HierarchyModel(models.Model):
     abstract = True
 
   @classmethod
-  def rebuildHierarchy(cls, database = DEFAULT_DB_ALIAS):
+  def rebuildHierarchy(cls, database=DEFAULT_DB_ALIAS):
 
     # Verify whether we need to rebuild or not.
     # We search for the first record whose lft field is null.
@@ -173,7 +173,8 @@ class Parameter(AuditModel):
   value = models.CharField(_('value'), max_length=settings.NAMESIZE, null=True, blank=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
 
-  def __unicode__(self): return self.name
+  def __unicode__(self):
+    return self.name
 
   class Meta(AuditModel.Meta):
     db_table = 'common_parameter'
@@ -181,7 +182,7 @@ class Parameter(AuditModel):
     verbose_name_plural = _('parameters')
 
   @staticmethod
-  def getValue(key, database = DEFAULT_DB_ALIAS, default = None):
+  def getValue(key, database=DEFAULT_DB_ALIAS, default=None):
     try:
       return Parameter.objects.using(database).get(pk=key).value
     except:
@@ -258,7 +259,8 @@ class Bucket(AuditModel):
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
 
-  def __unicode__(self): return str(self.name)
+  def __unicode__(self):
+    return str(self.name)
 
   class Meta:
     verbose_name = _('bucket')
@@ -274,7 +276,8 @@ class BucketDetail(AuditModel):
   startdate = models.DateTimeField(_('start date'))
   enddate = models.DateTimeField(_('end date'))
 
-  def __unicode__(self): return u"%s %s" % (self.bucket.name or "", self.startdate)
+  def __unicode__(self):
+    return u"%s %s" % (self.bucket.name or "", self.startdate)
 
   class Meta:
     verbose_name = _('bucket date')

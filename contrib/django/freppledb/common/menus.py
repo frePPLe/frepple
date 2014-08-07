@@ -38,10 +38,14 @@ class MenuItem:
     self.javascript = javascript
     self.report = report
     self.model = model
-    if label: self.label = label
-    elif report: self.label = report.title
-    elif model: self.label = model._meta.verbose_name_plural
-    else: self.label = None
+    if label:
+      self.label = label
+    elif report:
+      self.label = report.title
+    elif model:
+      self.label = model._meta.verbose_name_plural
+    else:
+      self.label = None
     self.index = index
     self.prefix = prefix
     self.window = window
@@ -96,8 +100,10 @@ class Menu:
       if self._groups[i][0] == name:
         # Update existing group
         gr = self._groups[i]
-        if label: gr[1] = label
-        if index: gr[2] = index
+        if label:
+          gr[1] = label
+        if index:
+          gr[2] = index
         return
     # Create new group, if it wasn't found already
     self._groups.append( (name, label or name, index, []) )
@@ -120,11 +126,16 @@ class Menu:
           if self._groups[i][3][j].name == name:
             # Update existing item
             it = self._groups[i][3][j]
-            if index: it['index'] = index
-            if url: it['url'] = url
-            if javascript: it['javascript'] = javascript
-            if report: it['report'] = report
-            if label: it['label'] = label
+            if index:
+              it['index'] = index
+            if url:
+              it['url'] = url
+            if javascript:
+              it['javascript'] = javascript
+            if report:
+              it['report'] = report
+            if label:
+              it['label'] = label
             it['prefix'] = prefix
             it['window'] = window
             return
@@ -133,17 +144,17 @@ class Menu:
           # Add all models from an admin site
           for m in admin._registry:
             self._groups[i][3].append( MenuItem(
-                m.__name__.lower(),
-                model = m,
-                url='/%s/%s/%s/' % (admin.name, m._meta.app_label, m.__name__.lower()),
-                index=index
-                ) )
+              m.__name__.lower(),
+              model=m,
+              url='/%s/%s/%s/' % (admin.name, m._meta.app_label, m.__name__.lower()),
+              index=index
+              ) )
         else:
           # Add a single item
           self._groups[i][3].append( MenuItem(
-               name, report=report, url=url, javascript=javascript,
-               label=label, index=index, prefix=prefix, window=window
-               ) )
+            name, report=report, url=url, javascript=javascript,
+            label=label, index=index, prefix=prefix, window=window
+            ) )
         return
     # Couldn't locate the group
     raise Exception("Menu group %s not found" % group)
@@ -165,7 +176,8 @@ class Menu:
   def getMenu(self, language):
     # Lookup in the cache
     m = self._cached_menu.get(language, None)
-    if m: return m
+    if m:
+      return m
 
     # Build new menu for this language
     # Sort the groups by 1) id and 2) order of append.

@@ -123,10 +123,14 @@ def exportResourceplans():
   enddate = datetime.min
   for i in frepple.resources():
     for j in i.loadplans:
-      if j.startdate < startdate: startdate = j.startdate
-      if j.enddate > enddate: enddate = j.enddate
-  if not startdate: startdate = frepple.settings.current
-  if not enddate: enddate = frepple.settings.current
+      if j.startdate < startdate:
+        startdate = j.startdate
+      if j.enddate > enddate:
+        enddate = j.enddate
+  if not startdate:
+    startdate = frepple.settings.current
+  if not enddate:
+    enddate = frepple.settings.current
   startdate -= timedelta(weeks=5)
   enddate += timedelta(weeks=5)
   startdate = startdate.replace(hour=0, minute=0, second=0)
@@ -153,7 +157,8 @@ def exportDemand():
   def deliveries(d):
     cumplanned = 0
     n = d
-    while n.hidden and n.owner: n = n.owner
+    while n.hidden and n.owner:
+      n = n.owner
     n = n and n.name or 'unspecified'
     # Loop over all delivery operationplans
     for i in d.operationplans:
@@ -161,7 +166,8 @@ def exportDemand():
       cur = i.quantity
       if cumplanned > d.quantity:
         cur -= cumplanned - d.quantity
-        if cur < 0: cur = 0
+        if cur < 0:
+          cur = 0
       yield (n.encode(encoding,"ignore"), d.item.name.encode(encoding,"ignore"),
         d.customer and d.customer.name.encode(encoding,"ignore") or None, d.due,
         cur, i.end, i.quantity, i.id)
@@ -177,7 +183,8 @@ def exportDemand():
   writer.writerow(('#demand','item','customer','due date','requested quantity',
     'plan date','plan quantity','operationplan id'))
   for i in frepple.demands():
-    if i.quantity == 0: continue
+    if i.quantity == 0:
+      continue
     for j in deliveries(i):
       writer.writerow(j)
   print('Exported demand plans in %.2f seconds' % (time() - starttime))
@@ -193,7 +200,8 @@ def exportPegging():
   for i in frepple.demands():
     # Find non-hidden demand owner
     n = i
-    while n.hidden and n.owner: n = n.owner
+    while n.hidden and n.owner:
+      n = n.owner
     n = n and n.name or 'unspecified'
     # Export pegging
     for j in i.pegging:

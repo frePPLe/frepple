@@ -64,17 +64,22 @@ class Dashboard:
           import_module('%s.widget' % app)
         except ImportError as e:
           # Silently ignore if it's the widget module which isn't found
-          if str(e) != 'No module named widget': raise e
+          if str(e) != 'No module named widget':
+            raise e
     return cls.__registry__
 
 
   @classmethod
   def dispatch(cls, request, name):
-    if request.method != 'GET': return HttpResponseNotAllowed(['get'])
+    if request.method != 'GET':
+      return HttpResponseNotAllowed(['get'])
     w = cls.__registry__.get(name, None)
-    if not w: raise Http404("Unknown widget")
-    if not w.async: raise Http404("This widget is synchronous")
-    if not w.has_permission(request.user): return HttpResponseForbidden()
+    if not w:
+      raise Http404("Unknown widget")
+    if not w.async:
+      raise Http404("This widget is synchronous")
+    if not w.has_permission(request.user):
+      return HttpResponseForbidden()
     return w.render(request)
 
 

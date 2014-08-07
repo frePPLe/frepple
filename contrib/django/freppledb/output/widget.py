@@ -58,8 +58,8 @@ class LateOrdersWidget(Widget):
       ]
     for prob in Problem.objects.using(db).filter(name='late',entity='demand').order_by('startdate','-weight')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          request.prefix, urlquote(prob.owner), prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight)
-          ))
+        request.prefix, urlquote(prob.owner), prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight)
+        ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
 
@@ -95,8 +95,8 @@ class ShortOrdersWidget(Widget):
       ]
     for prob in Problem.objects.using(db).filter(name__gte='short',entity='demand').order_by('startdate')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          request.prefix, urlquote(prob.owner), prob.owner, prob.startdate.date(), int(prob.weight)
-          ))
+        request.prefix, urlquote(prob.owner), prob.owner, prob.startdate.date(), int(prob.weight)
+        ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
 
@@ -132,8 +132,8 @@ class PurchaseQueueWidget(Widget):
       ]
     for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=False).order_by('startdate')[:limit]:
       result.append('<tr><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
-          ))
+        opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
+        ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
 
@@ -169,8 +169,8 @@ class ShippingQueueWidget(Widget):
       ]
     for dmdplan in Demand.objects.using(db).filter(planquantity__gt=0).order_by('plandate')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td>%s</td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          request.prefix, urlquote(dmdplan.demand), dmdplan.demand, dmdplan.customer, dmdplan.item, int(dmdplan.planquantity), dmdplan.plandate.date()
-          ))
+        request.prefix, urlquote(dmdplan.demand), dmdplan.demand, dmdplan.customer, dmdplan.item, int(dmdplan.planquantity), dmdplan.plandate.date()
+        ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
 
@@ -206,8 +206,8 @@ class ResourceQueueWidget(Widget):
       ]
     for ldplan in LoadPlan.objects.using(db).select_related().order_by('startdate')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/loadplan/?theresource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          request.prefix, urlquote(ldplan.theresource), ldplan.theresource, ldplan.operationplan.operation, ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity), int(ldplan.operationplan.criticality)
-          ))
+        request.prefix, urlquote(ldplan.theresource), ldplan.theresource, ldplan.operationplan.operation, ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity), int(ldplan.operationplan.criticality)
+        ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
 
@@ -237,8 +237,8 @@ class PurchaseAnalysisWidget(Widget):
       ]
     for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=True).order_by('criticality')[:limit]:
       result.append('<tr><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          opplan.operation, opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
-          ))
+        opplan.operation, opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
+        ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
 
@@ -270,8 +270,8 @@ class AlertsWidget(Widget):
     cursor.execute(query)
     for res in cursor.fetchall():
       result.append('<tr><td class="underline"><a href="%s/problem/?name=%s">%s</a></td><td class="aligncenter">%d</td><td class="aligncenter">%d</td></tr>' % (
-          request.prefix, urlquote(res[0]), res[0], res[1], res[2]
-          ))
+        request.prefix, urlquote(res[0]), res[0], res[1], res[2]
+        ))
     result.append('</table>')
     return HttpResponse('\n'.join(result))
 

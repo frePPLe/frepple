@@ -48,18 +48,21 @@ def handler404(request):
 
 
 class PreferencesForm(forms.Form):
-  language = forms.ChoiceField(label = _("language"),
+  language = forms.ChoiceField(
+    label=_("language"),
     initial="auto",
     choices=User.languageList,
     help_text=_("Language of the user interface"),
     )
-  pagesize = forms.IntegerField(label = _('page size'),
+  pagesize = forms.IntegerField(
+    label=_('page size'),
     required=False,
     initial=100,
     min_value=25,
-    help_text = _('Number of records to fetch in a single page from the server'),
+    help_text=_('Number of records to fetch in a single page from the server'),
     )
-  theme = forms.ChoiceField(label = _('theme'),
+  theme = forms.ChoiceField(
+    label=_('theme'),
     required=False,
     choices=settings.THEMES,
     help_text=_('Theme for the user interface'),
@@ -203,7 +206,7 @@ def Comments(request, app, model, object_id):
     modeltype._state.db = request.database
     modelinstance = modeltype.get_object_for_this_type(pk=object_id)
     comments = Comment.objects.using(request.database). \
-      filter(content_type__pk = modeltype.id, object_pk = object_id). \
+      filter(content_type__pk=modeltype.id, object_pk=object_id). \
       order_by('-id')
   except:
     raise Http404('Object not found')
@@ -212,9 +215,9 @@ def Comments(request, app, model, object_id):
     if comment:
       request.user._state.db = request.database  # Need to lie a bit
       Comment(
-           content_object = modelinstance,
-           user = request.user,
-           comment = comment
+           content_object=modelinstance,
+           user=request.user,
+           comment=comment
            ).save(using=request.database)
     return HttpResponseRedirect('%s/comments/%s/%s/%s/' % (request.prefix,app, model, object_id))
   else:

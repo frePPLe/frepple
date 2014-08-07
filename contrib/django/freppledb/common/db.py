@@ -76,7 +76,8 @@ if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3
     return "min(%s,%s)" % (d1,d2)
 
   def python_date(d):
-    if isinstance(d,datetime): return d.date()
+    if isinstance(d,datetime):
+      return d.date()
     return datetime.strptime(d,'%Y-%m-%d %H:%M:%S').date()
 
 

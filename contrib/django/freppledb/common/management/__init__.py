@@ -24,7 +24,8 @@ from freppledb.common import models as common_models
 
 
 def removeDefaultPermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kwargs):
-  if db != DEFAULT_DB_ALIAS: return
+  if db != DEFAULT_DB_ALIAS:
+    return
   appname = app.__name__.replace(".models","")
   # Delete the default permissions that were created for the models
   Permission.objects.all().filter(content_type__app_label=appname, codename__startswith="change").delete()
@@ -33,19 +34,21 @@ def removeDefaultPermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS
 
 
 def createViewPermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kwargs):
-  if db != DEFAULT_DB_ALIAS: return
+  if db != DEFAULT_DB_ALIAS:
+    return
   # Create model read permissions
   for m in get_models(app):
     p = Permission.objects.get_or_create(
-          codename = 'view_%s' % m._meta.model_name,
-          content_type = ContentType.objects.db_manager(db).get_for_model(m)
+          codename='view_%s' % m._meta.model_name,
+          content_type=ContentType.objects.db_manager(db).get_for_model(m)
           )[0]
     p.name = 'Can view %s' % m._meta.verbose_name_raw
     p.save()
 
 
 def createExtraPermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kwargs):
-  if db != DEFAULT_DB_ALIAS: return
+  if db != DEFAULT_DB_ALIAS:
+    return
   # Create the report permissions for the single menu instance we know about.
   appname = app.__name__.replace(".models","")
   from freppledb.menu import menu

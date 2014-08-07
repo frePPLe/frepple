@@ -12,7 +12,7 @@ from freppledb.execute.models import Task
 import frepple
 
 
-def printWelcome(prefix = 'frepple', database = DEFAULT_DB_ALIAS):
+def printWelcome(prefix='frepple', database=DEFAULT_DB_ALIAS):
   # Send the output to a logfile
   if database == DEFAULT_DB_ALIAS:
     frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'%s.log' % prefix)
@@ -39,13 +39,15 @@ def printWelcome(prefix = 'frepple', database = DEFAULT_DB_ALIAS):
 task = None
 
 
-def logProgress(val, database = DEFAULT_DB_ALIAS):
+def logProgress(val, database=DEFAULT_DB_ALIAS):
   global task
   transaction.enter_transaction_management(using=database)
   try:
     if not task and 'FREPPLE_TASKID' in os.environ:
-      try: task = Task.objects.all().using(database).get(pk=os.environ['FREPPLE_TASKID'])
-      except: raise Exception("Task identifier not found")
+      try:
+        task = Task.objects.all().using(database).get(pk=os.environ['FREPPLE_TASKID'])
+      except:
+        raise Exception("Task identifier not found")
     if task:
       if task.status == 'Canceling':
         task.status = 'Cancelled'
@@ -59,7 +61,7 @@ def logProgress(val, database = DEFAULT_DB_ALIAS):
     transaction.leave_transaction_management(using=database)
 
 
-def logMessage(msg, database = DEFAULT_DB_ALIAS):
+def logMessage(msg, database=DEFAULT_DB_ALIAS):
   global task
   if task:
     transaction.enter_transaction_management(managed=False, using=database)
@@ -72,7 +74,7 @@ def logMessage(msg, database = DEFAULT_DB_ALIAS):
       transaction.leave_transaction_management(using=database)
 
 
-def createPlan(database = DEFAULT_DB_ALIAS):
+def createPlan(database=DEFAULT_DB_ALIAS):
   # Auxiliary functions for debugging
   def debugResource(res,mode):
     # if res.name != 'my favorite resource': return
@@ -88,15 +90,19 @@ def createPlan(database = DEFAULT_DB_ALIAS):
       solver.loglevel = 0
 
   # Create a solver where the plan type are defined by an environment variable
-  try: plantype = int(os.environ['FREPPLE_PLANTYPE'])
-  except: plantype = 1  # Default is a constrained plan
-  try: constraint = int(os.environ['FREPPLE_CONSTRAINT'])
-  except: constraint = 15  # Default is with all constraints enabled
-  solver = frepple.solver_mrp(name = "MRP", constraints = constraint,
-    plantype = plantype, loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),
-    lazydelay = int(Parameter.getValue('lazydelay', database, '86400')),
-    allowsplits = (Parameter.getValue('allowsplits', database, 'true') == "true"),
-    plansafetystockfirst = False
+  try:
+    plantype = int(os.environ['FREPPLE_PLANTYPE'])
+  except:
+    plantype = 1  # Default is a constrained plan
+  try:
+    constraint = int(os.environ['FREPPLE_CONSTRAINT'])
+  except:
+    constraint = 15  # Default is with all constraints enabled
+  solver = frepple.solver_mrp(name="MRP", constraints=constraint,
+    plantype=plantype, loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),
+    lazydelay=int(Parameter.getValue('lazydelay', database, '86400')),
+    allowsplits=(Parameter.getValue('allowsplits', database, 'true') == "true"),
+    plansafetystockfirst=False
     #userexit_resource=debugResource,
     #userexit_demand=debugDemand
     )
@@ -105,7 +111,7 @@ def createPlan(database = DEFAULT_DB_ALIAS):
   solver.solve()
 
 
-def exportPlan(database = DEFAULT_DB_ALIAS):
+def exportPlan(database=DEFAULT_DB_ALIAS):
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
     from freppledb.execute.export_database_plan_postgresql import exportfrepple as export_plan_to_database
   else:
@@ -115,8 +121,10 @@ def exportPlan(database = DEFAULT_DB_ALIAS):
 
 if __name__ == "__main__":
   # Select database
-  try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
-  except: db = DEFAULT_DB_ALIAS
+  try:
+    db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
+  except:
+    db = DEFAULT_DB_ALIAS
 
   # Use the test database if we are running the test suite
   if 'FREPPLE_TEST' in os.environ:

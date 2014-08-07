@@ -143,10 +143,14 @@ def exportResourceplans(process):
   enddate = datetime.min
   for i in frepple.resources():
     for j in i.loadplans:
-      if j.startdate < startdate: startdate = j.startdate
-      if j.enddate > enddate: enddate = j.enddate
-  if startdate == datetime.max: startdate = frepple.settings.current
-  if enddate == datetime.min: enddate = frepple.settings.current
+      if j.startdate < startdate:
+        startdate = j.startdate
+      if j.enddate > enddate:
+        enddate = j.enddate
+  if startdate == datetime.max:
+    startdate = frepple.settings.current
+  if enddate == datetime.min:
+    enddate = frepple.settings.current
   startdate = (startdate - timedelta(days=30)).date()
   enddate = (enddate + timedelta(days=30)).date()
 
@@ -182,7 +186,8 @@ def exportDemand(process):
       cur = i.quantity
       if cumplanned > d.quantity:
         cur -= cumplanned - d.quantity
-        if cur < 0: cur = 0
+        if cur < 0:
+          cur = 0
       yield (
         d.name.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
         round(cur,settings.DECIMAL_PLACES), str(i.end),
@@ -200,7 +205,8 @@ def exportDemand(process):
   starttime = time()
   process.stdin.write('COPY out_demand (demand,item,customer,due,quantity,plandate,planquantity,operationplan) FROM STDIN;\n')
   for i in frepple.demands():
-    if i.quantity == 0: continue
+    if i.quantity == 0:
+      continue
     for j in deliveries(i):
       process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % j)
   process.stdin.write('\\.\n')
@@ -214,7 +220,8 @@ def exportPegging(process):
   for i in frepple.demands():
     # Find non-hidden demand owner
     n = i
-    while n.hidden and n.owner: n = n.owner
+    while n.hidden and n.owner:
+      n = n.owner
     n = n and n.name or 'unspecified'
     # Export pegging
     for j in i.pegging:

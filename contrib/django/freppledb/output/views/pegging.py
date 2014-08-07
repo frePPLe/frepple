@@ -187,30 +187,30 @@ class ReportByDemand(GridReport):
     # Build the Python result
     for i in sorted(ops.iteritems(), key=lambda(k,v): (v[0],k)):
       yield {
-          'current': str(current),
-          'due': str(due),
-          'depth': i[1][1],
-          'operation': i[0],
-          'quantity': sum([opplans[j][2] for j in i[1][6]]),
-          'buffer': i[1][4],
-          'item': i[1][5],
-          'due': round((due - request.report_startdate).total_seconds() / horizon, 3),
-          'current': round((current - request.report_startdate).total_seconds() / horizon, 3),
-          'parent': i[1][2],
-          'leaf': i[1][3] and 'true' or 'false',
-          'expanded': 'true',
-          'resource': i[0] in resource and resource[i[0]] or None,
-          'operationplans': [{
-             'operation': i[0],
-             #'description': float(row[11]) or 100.0,  # TODO percent used
-             'quantity': opplans[j][2],
-             'x': round((opplans[j][0] - request.report_startdate).total_seconds() / horizon, 3),
-             'w': round((opplans[j][1] - opplans[j][0]).total_seconds() / horizon, 3),
-             'startdate': str(opplans[j][0]),
-             'enddate': str(opplans[j][1]),
-             'locked': 0,  # TODO
-             } for j in i[1][6] ]
-          }
+        'current': str(current),
+        'due': str(due),
+        'depth': i[1][1],
+        'operation': i[0],
+        'quantity': sum([opplans[j][2] for j in i[1][6]]),
+        'buffer': i[1][4],
+        'item': i[1][5],
+        'due': round((due - request.report_startdate).total_seconds() / horizon, 3),
+        'current': round((current - request.report_startdate).total_seconds() / horizon, 3),
+        'parent': i[1][2],
+        'leaf': i[1][3] and 'true' or 'false',
+        'expanded': 'true',
+        'resource': i[0] in resource and resource[i[0]] or None,
+        'operationplans': [{
+           'operation': i[0],
+           #'description': float(row[11]) or 100.0,  # TODO percent used
+           'quantity': opplans[j][2],
+           'x': round((opplans[j][0] - request.report_startdate).total_seconds() / horizon, 3),
+           'w': round((opplans[j][1] - opplans[j][0]).total_seconds() / horizon, 3),
+           'startdate': str(opplans[j][0]),
+           'enddate': str(opplans[j][1]),
+           'locked': 0,  # TODO
+           } for j in i[1][6] ]
+        }
 
 
 class ReportByBuffer(GridReport):
@@ -288,13 +288,13 @@ class ReportByBuffer(GridReport):
     # Build the python result
     for row in cursor.fetchall():
       yield {
-          'operation': row[0],
-          'date': row[1],
-          'demand': row[2],
-          'quantity': row[3],
-          'forecast': False,
-          'item': row[4],
-          }
+        'operation': row[0],
+        'date': row[1],
+        'demand': row[2],
+        'quantity': row[3],
+        'forecast': False,
+        'item': row[4],
+        }
 
 
 class ReportByResource(GridReport):
@@ -355,13 +355,13 @@ class ReportByResource(GridReport):
     # Build the python result
     for row in cursor.fetchall():
       yield {
-          'operation': row[0],
-          'date': row[1],
-          'demand': row[2],
-          'quantity': row[3],
-          'forecast': not row[4],
-          'item': row[4] or row[5]
-          }
+        'operation': row[0],
+        'date': row[1],
+        'demand': row[2],
+        'quantity': row[3],
+        'forecast': not row[4],
+        'item': row[4] or row[5]
+        }
 
 
 class ReportByOperation(GridReport):
@@ -433,9 +433,9 @@ class ReportByOperation(GridReport):
     # Build the python result
     for row in cursor.fetchall():
       yield {
-          'operation': row[0],
-          'date': row[1],
-          'demand': row[2],
-          'quantity': row[3],
-          'item': row[4]
-          }
+        'operation': row[0],
+        'date': row[1],
+        'demand': row[2],
+        'quantity': row[3],
+        'item': row[4]
+        }

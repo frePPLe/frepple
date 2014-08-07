@@ -56,13 +56,13 @@ class Command(BaseCommand):
        - Can't run multiple copies in parallel!
   '''
   option_list = BaseCommand.option_list + (
-      make_option('--user', dest='user', type='string',
-        help='User running the command'),
-      make_option('--database', action='store', dest='database',
-        default=DEFAULT_DB_ALIAS, help='Nominates a specific database to backup'),
-      make_option('--task', dest='task', type='int',
-        help='Task identifier (generated automatically if not provided)'),
-      )
+    make_option('--user', dest='user', type='string',
+      help='User running the command'),
+    make_option('--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to backup'),
+    make_option('--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'),
+    )
 
   requires_model_validation = False
 
@@ -79,8 +79,10 @@ class Command(BaseCommand):
     if not database in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'user' in options and options['user']:
-      try: user = User.objects.all().using(database).get(username=options['user'])
-      except: raise CommandError("User '%s' not found" % options['user'] )
+      try:
+        user = User.objects.all().using(database).get(username=options['user'])
+      except:
+        raise CommandError("User '%s' not found" % options['user'] )
     else:
       user = None
 
@@ -90,8 +92,10 @@ class Command(BaseCommand):
     try:
       # Initialize the task
       if 'task' in options and options['task']:
-        try: task = Task.objects.all().using(database).get(pk=options['task'])
-        except: raise CommandError("Task identifier not found")
+        try:
+          task = Task.objects.all().using(database).get(pk=options['task'])
+        except:
+          raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name != 'backup database':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
@@ -123,7 +127,8 @@ class Command(BaseCommand):
           args.append("--port=%s " % settings.DATABASES[database]['PORT'])
         args.append(settings.DATABASES[database]['NAME'])
         ret = subprocess.call(args)
-        if ret: raise Exception("Run of mysqldump failed")
+        if ret:
+          raise Exception("Run of mysqldump failed")
       elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.oracle':
         # ORACLE
         if settings.DATABASES[database]['HOST'] and settings.DATABASES[database]['PORT']:
@@ -150,7 +155,8 @@ class Command(BaseCommand):
             "dumpfile=%s" % backupfile
             ]
         ret = subprocess.call(args)
-        if ret: raise Exception("Run of expdp failed")
+        if ret:
+          raise Exception("Run of expdp failed")
       elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
         # POSTGRESQL
         # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
@@ -166,7 +172,8 @@ class Command(BaseCommand):
           args.append("--port=%s " % settings.DATABASES[database]['PORT'])
         args.append(settings.DATABASES[database]['NAME'])
         ret = subprocess.call(args)
-        if ret: raise Exception("Run of run pg_dump failed")
+        if ret:
+          raise Exception("Run of run pg_dump failed")
       else:
         raise Exception('Databasebackup command not supported for database engine %s' % settings.DATABASES[database]['ENGINE'])
 
@@ -182,8 +189,10 @@ class Command(BaseCommand):
           # Note this is NOT 100% correct on UNIX. st_ctime is not alawys the creation date...
           created = datetime.fromtimestamp(os.stat(os.path.join(settings.FREPPLE_LOGDIR,f)).st_ctime)
           if pattern.match(f) and (now - created).days > 31:
-            try: os.remove(os.path.join(settings.FREPPLE_LOGDIR,f))
-            except: pass
+            try:
+              os.remove(os.path.join(settings.FREPPLE_LOGDIR,f))
+            except:
+              pass
 
       # Task update
       task.status = 'Done'
@@ -197,7 +206,10 @@ class Command(BaseCommand):
       raise e
 
     finally:
-      if task: task.save(using=database)
-      try: transaction.commit(using=database)
-      except: pass
+      if task:
+        task.save(using=database)
+      try:
+        transaction.commit(using=database)
+      except:
+        pass
       transaction.leave_transaction_management(using=database)

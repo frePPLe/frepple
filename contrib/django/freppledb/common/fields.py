@@ -71,16 +71,17 @@ class DurationFormField(fields.RegexField):
     self.max_digits = kwargs.pop('decimal_places', settings.DECIMAL_PLACES)
     self.decimal_places = kwargs.pop('max_digits', settings.MAX_DIGITS)
     kwargs.update({
-        'regex': self.regex,
-        'error_message': _('Expected format "DD HH:MM:SS", "HH:MM:SS", "MM:SS" or "SS"')
-        })
+      'regex': self.regex,
+      'error_message': _('Expected format "DD HH:MM:SS", "HH:MM:SS", "MM:SS" or "SS"')
+      })
     super(DurationFormField, self).__init__(**kwargs)
 
   def to_python(self, value):
     if isinstance(value, numericTypes) or value is None:
       # Empty fields and numeric values pass directly
       return value
-    if value == u'': return None
+    if value == u'':
+      return None
 
     # Parse the input string to a decimal number, representing the number of seconds
     try:
@@ -140,7 +141,8 @@ class JSONField(models.TextField):
 
   def get_db_prep_value(self, value, connection, prepared=False):
     """Convert JSON object to a string."""
-    if self.null and value is None: return None
+    if self.null and value is None:
+      return None
     return json.dumps(value, **self.dump_kwargs)
 
   def value_to_string(self, obj):
@@ -149,7 +151,8 @@ class JSONField(models.TextField):
 
   def value_from_object(self, obj):
     value = super(JSONField, self).value_from_object(obj)
-    if self.null and value is None: return None
+    if self.null and value is None:
+      return None
     return self.dumps_for_display(value)
 
   def dumps_for_display(self, value):

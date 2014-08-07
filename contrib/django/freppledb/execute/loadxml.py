@@ -7,8 +7,10 @@ from django.db import DEFAULT_DB_ALIAS
 from django.conf import settings
 
 # Send the output to a logfile
-try: db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
-except: db = DEFAULT_DB_ALIAS
+try:
+  db = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
+except:
+  db = DEFAULT_DB_ALIAS
 if db == DEFAULT_DB_ALIAS:
   frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'frepple.log')
 else:

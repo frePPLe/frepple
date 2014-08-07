@@ -35,8 +35,10 @@ from freppledb.admin import admin_site
 class MyUserCreationForm(UserCreationForm):
   def clean_username(self):
     username = self.cleaned_data["username"]
-    try: User.objects.get(username=username)
-    except User.DoesNotExist: return username
+    try:
+      User.objects.get(username=username)
+    except User.DoesNotExist:
+      return username
     raise forms.ValidationError(self.error_messages['duplicate_username'])
 
   class Meta(UserCreationForm.Meta):
@@ -62,7 +64,8 @@ class ParameterForm(forms.ModelForm):
     value = cleaned_data.get("value")
     # Currentdate parameter must be a date+time value
     if name == "currentdate":
-      try: datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+      try:
+        datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
       except:
         self._errors["value"] = ErrorList([_("Invalid date: expecting YYYY-MM-DD HH:MM:SS")])
         del cleaned_data["value"]

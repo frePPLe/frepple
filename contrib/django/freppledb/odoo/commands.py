@@ -37,7 +37,7 @@ from freppledb.execute.commands import printWelcome, logProgress, createPlan, ex
 import frepple
 
 
-def odoo_read(db = DEFAULT_DB_ALIAS):
+def odoo_read(db=DEFAULT_DB_ALIAS):
   odoo_user = Parameter.getValue("odoo.user", db)
   odoo_password = Parameter.getValue("odoo.password", db)
   odoo_db = Parameter.getValue("odoo.db", db)
@@ -80,7 +80,7 @@ def odoo_read(db = DEFAULT_DB_ALIAS):
   frepple.readXMLdata(f.read().decode('ascii','ignore'), False, False)
 
 
-def odoo_write(db = DEFAULT_DB_ALIAS):
+def odoo_write(db=DEFAULT_DB_ALIAS):
   odoo_user = Parameter.getValue("odoo.user", db)
   odoo_password = Parameter.getValue("odoo.password", db)
   odoo_db = Parameter.getValue("odoo.db", db)
@@ -141,10 +141,10 @@ def odoo_write(db = DEFAULT_DB_ALIAS):
       if not b or b.source != 'odoo' or i.locked:
         continue
       yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s/>' % (
-          i.id, quoteattr(i.operation.name),
-          i.start, i.end, i.quantity,
-          quoteattr(b.location.subcategory), quoteattr(b.item.subcategory),
-          )
+        i.id, quoteattr(i.operation.name),
+        i.start, i.end, i.quantity,
+        quoteattr(b.location.subcategory), quoteattr(b.item.subcategory),
+        )
     yield '</operationplans>'
     yield '</plan>'
     yield '--%s--\r' % boundary

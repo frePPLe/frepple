@@ -64,22 +64,31 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up the options
-    if 'start' in options: start = options['start'] or '2008-1-1'
-    else: start = '2008-1-1'
-    if 'end' in options: end = options['end'] or '2016-1-1'
-    else: end = '2016-1-1'
+    if 'start' in options:
+      start = options['start'] or '2008-1-1'
+    else:
+      start = '2008-1-1'
+    if 'end' in options:
+      end = options['end'] or '2016-1-1'
+    else:
+      end = '2016-1-1'
     if 'weekstart' in options:
       weekstart = options['weekstart']
       if weekstart < 0 or weekstart > 6:
         raise CommandError("Invalid weekstart %s" % weekstart)
-    else: weekstart = 1
-    if 'database' in options: database = options['database'] or DEFAULT_DB_ALIAS
-    else: database = DEFAULT_DB_ALIAS
+    else:
+      weekstart = 1
+    if 'database' in options:
+      database = options['database'] or DEFAULT_DB_ALIAS
+    else:
+      database = DEFAULT_DB_ALIAS
     if not database in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'user' in options and options['user']:
-      try: user = User.objects.all().using(database).get(username=options['user'])
-      except: raise CommandError("User '%s' not found" % options['user'] )
+      try:
+        user = User.objects.all().using(database).get(username=options['user'])
+      except:
+        raise CommandError("User '%s' not found" % options['user'] )
     else:
       user = None
 
@@ -90,8 +99,10 @@ class Command(BaseCommand):
     try:
       # Initialize the task
       if 'task' in options and options['task']:
-        try: task = Task.objects.all().using(database).get(pk=options['task'])
-        except: raise CommandError("Task identifier not found")
+        try:
+          task = Task.objects.all().using(database).get(pk=options['task'])
+        except:
+          raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name != 'generate buckets':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
@@ -142,8 +153,10 @@ class Command(BaseCommand):
         year_end = datetime(year + 1, 1, 1)
         week_start = curdate - timedelta((dayofweek + 6) % 7 + 1 - weekstart)
         week_end = curdate - timedelta((dayofweek + 6) % 7 - 6 - weekstart)
-        if week_start < year_start: week_start = year_start
-        if week_end > year_end: week_end = year_end
+        if week_start < year_start:
+          week_start = year_start
+        if week_end > year_end:
+          week_end = year_end
 
         # Create buckets
         if year != prev_year:
@@ -200,8 +213,11 @@ class Command(BaseCommand):
       raise e
 
     finally:
-      if task: task.save(using=database)
-      try: transaction.commit(using=database)
-      except: pass
+      if task:
+        task.save(using=database)
+      try:
+        transaction.commit(using=database)
+      except:
+        pass
       settings.DEBUG = tmp_debug
       transaction.set_autocommit(ac, using=database)

@@ -80,12 +80,16 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up options
-    if 'force' in options: force = options['force']
-    else: force = False
+    if 'force' in options:
+      force = options['force']
+    else:
+      force = False
     test = 'FREPPLE_TEST' in os.environ
     if 'user' in options and options['user']:
-      try: user = User.objects.all().get(username=options['user'])
-      except: raise CommandError("User '%s' not found" % options['user'] )
+      try:
+        user = User.objects.all().get(username=options['user'])
+      except:
+        raise CommandError("User '%s' not found" % options['user'] )
     else:
       user = None
 
@@ -93,8 +97,10 @@ class Command(BaseCommand):
     now = datetime.now()
     task = None
     if 'task' in options and options['task']:
-      try: task = Task.objects.all().get(pk=options['task'])
-      except: raise CommandError("Task identifier not found")
+      try:
+        task = Task.objects.all().get(pk=options['task'])
+      except:
+        raise CommandError("Task identifier not found")
       if task.started or task.finished or task.status != "Waiting" or task.name != 'copy scenario':
         raise CommandError("Invalid task identifier")
       task.status = '0%'
@@ -150,7 +156,8 @@ class Command(BaseCommand):
           settings.DATABASES[destination]['PORT'] and ("-p %s " % settings.DATABASES[destination]['PORT']) or '',
           test and settings.DATABASES[destination]['TEST_NAME'] or settings.DATABASES[destination]['NAME'],
           ))
-        if ret: raise Exception('Exit code of the database copy command is %d' % ret)
+        if ret:
+          raise Exception('Exit code of the database copy command is %d' % ret)
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.sqlite3':
         # A plain copy of the database file
         if test:
@@ -170,11 +177,14 @@ class Command(BaseCommand):
           settings.DATABASES[destination]['HOST'] and ("--host=%s " % settings.DATABASES[destination]['HOST']) or '',
           settings.DATABASES[destination]['PORT'] and ("--port=%s " % settings.DATABASES[destination]['PORT']) or '',
           ))
-        if ret: raise Exception('Exit code of the database copy command is %d' % ret)
+        if ret:
+          raise Exception('Exit code of the database copy command is %d' % ret)
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.oracle':
         try:
-          try: os.unlink(os.path.join(settings.FREPPLE_LOGDIR,'frepple.dmp'))
-          except: pass
+          try:
+            os.unlink(os.path.join(settings.FREPPLE_LOGDIR,'frepple.dmp'))
+          except:
+            pass
           ret = os.system("expdp %s/%s@//%s:%s/%s schemas=%s directory=frepple_logdir nologfile=Y dumpfile=frepple.dmp" % (
             test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
             settings.DATABASES[source]['PASSWORD'],
@@ -183,7 +193,8 @@ class Command(BaseCommand):
             test and settings.DATABASES[source]['TEST_NAME'] or settings.DATABASES[source]['NAME'],
             test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
             ))
-          if ret: raise Exception('Exit code of the database export command is %d' % ret)
+          if ret:
+            raise Exception('Exit code of the database export command is %d' % ret)
           ret = os.system("impdp %s/%s@//%s:%s/%s remap_schema=%s:%s table_exists_action=replace directory=frepple_logdir nologfile=Y dumpfile=frepple.dmp" % (
             test and settings.DATABASES[destination]['TEST_USER'] or settings.DATABASES[destination]['USER'],
             settings.DATABASES[destination]['PASSWORD'],
@@ -193,10 +204,13 @@ class Command(BaseCommand):
             test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
             test and settings.DATABASES[destination]['TEST_USER'] or settings.DATABASES[destination]['USER'],
             ))
-          if ret: raise Exception('Exit code of the database import command is %d' % ret)
+          if ret:
+            raise Exception('Exit code of the database import command is %d' % ret)
         finally:
-          try: os.unlink(os.path.join(settings.FREPPLE_LOGDIR,'frepple.dmp'))
-          except: pass
+          try:
+            os.unlink(os.path.join(settings.FREPPLE_LOGDIR,'frepple.dmp'))
+          except:
+            pass
       else:
         raise Exception('Copy command not supported for database engine %s' % settings.DATABASES[source]['ENGINE'])
 
@@ -224,5 +238,6 @@ class Command(BaseCommand):
       raise e
 
     finally:
-      if task: task.save()
+      if task:
+        task.save()
       settings.DEBUG = tmp_debug

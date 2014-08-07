@@ -55,13 +55,13 @@ class Command(BaseCommand):
        - Can't run multiple copies in parallel!
   '''
   option_list = BaseCommand.option_list + (
-      make_option('--user', dest='user', type='string',
-        help='User running the command'),
-      make_option('--database', action='store', dest='database',
-        default=DEFAULT_DB_ALIAS, help='Nominates a specific database to backup'),
-      make_option('--task', dest='task', type='int',
-        help='Task identifier (generated automatically if not provided)'),
-      )
+    make_option('--user', dest='user', type='string',
+      help='User running the command'),
+    make_option('--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to backup'),
+    make_option('--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'),
+    )
 
   requires_model_validation = False
 

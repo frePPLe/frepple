@@ -95,11 +95,11 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     """
     from django.contrib.admin.models import ADDITION
     LogEntry(
-        user_id = request.user.pk,
-        content_type_id = ContentType.objects.get_for_model(obj).pk,
-        object_id = smart_text(obj.pk),
-        object_repr = force_text(obj)[:200],
-        action_flag = ADDITION
+      user_id=request.user.pk,
+      content_type_id=ContentType.objects.get_for_model(obj).pk,
+      object_id=smart_text(obj.pk),
+      object_repr=force_text(obj)[:200],
+      action_flag=ADDITION
     ).save(using=request.database)
 
   def log_change(self, request, obj, message):
@@ -128,12 +128,12 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       # e) Delete the old record
       self.queryset(request).get(pk=old_pk).delete()
     LogEntry(
-        user_id = request.user.pk,
-        content_type_id = ContentType.objects.get_for_model(obj).pk,
-        object_id = smart_text(obj.pk),
-        object_repr = force_text(obj)[:200],
-        action_flag = CHANGE,
-        change_message = message
+      user_id=request.user.pk,
+      content_type_id=ContentType.objects.get_for_model(obj).pk,
+      object_id=smart_text(obj.pk),
+      object_repr=force_text(obj)[:200],
+      action_flag=CHANGE,
+      change_message=message
     ).save(using=request.database)
 
   def log_deletion(self, request, obj, object_repr):
@@ -143,11 +143,11 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     """
     from django.contrib.admin.models import DELETION
     LogEntry(
-        user_id = request.user.id,
-        content_type_id = ContentType.objects.get_for_model(self.model).pk,
-        object_id = smart_text(obj.pk),
-        object_repr = force_text(object_repr)[:200],
-        action_flag = DELETION
+      user_id=request.user.id,
+      content_type_id=ContentType.objects.get_for_model(self.model).pk,
+      object_id=smart_text(obj.pk),
+      object_repr=force_text(object_repr)[:200],
+      action_flag=DELETION
     ).save(using=request.database)
 
   def history_view(self, request, object_id, extra_context=None):
@@ -162,8 +162,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     opts = model._meta
     app_label = opts.app_label
     action_list = LogEntry.objects.using(request.database).filter(
-      object_id = unquote(object_id),
-      content_type__id__exact = ContentType.objects.get_for_model(model).id
+      object_id=unquote(object_id),
+      content_type__id__exact=ContentType.objects.get_for_model(model).id
     ).select_related().order_by('action_time')
     context = {
       'title': capfirst(force_text(opts.verbose_name) + " " + object_id),

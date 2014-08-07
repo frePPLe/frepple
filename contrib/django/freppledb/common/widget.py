@@ -65,8 +65,10 @@ class RecentActionsWidget(Widget):
     # The only change is to look for the logentry records in the right database.
     # See the file django\contrib\admin\templatetags\log.py
     from freppledb.common.middleware import _thread_locals
-    try: db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-    except: db = DEFAULT_DB_ALIAS
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
     if isinstance(_thread_locals.request.user, AnonymousUser):
       q = LogEntry.objects.using(db).select_related('content_type', 'user')[:self.limit]
     else:

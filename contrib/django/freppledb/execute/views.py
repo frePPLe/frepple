@@ -69,8 +69,10 @@ class TaskReport(GridReport):
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
-    try: constraint = int(request.session['constraint'])
-    except: constraint = 15
+    try:
+      constraint = int(request.session['constraint'])
+    except:
+      constraint = 15
 
     # Synchronize the scenario table with the settings
     Scenario.syncWithSettings()
@@ -79,7 +81,8 @@ class TaskReport(GridReport):
     fixtures = set()
     folders = list(settings.FIXTURE_DIRS)
     for app in get_apps():
-      if app.__name__.startswith('django'): continue
+      if app.__name__.startswith('django'):
+        continue
       folders.append(os.path.join(os.path.dirname(app.__file__), 'fixtures'))
     for f in folders:
       try:
@@ -141,8 +144,10 @@ def wrapTask(request, action):
       raise Exception('Missing execution privileges')
     constraint = 0
     for value in request.POST.getlist('constraint'):
-      try: constraint += int(value)
-      except: pass
+      try:
+        constraint += int(value)
+      except:
+        pass
     task = Task(name='generate plan', submitted=now, status='Waiting', user=request.user)
     task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype'))
     env = []
@@ -314,6 +319,6 @@ def logfile(request):
       f.close()
 
   return render(request, 'execute/logfrepple.html', {
-      'title': _('Log file'),
-      'logdata': logdata,
-      } )
+    'title': _('Log file'),
+    'logdata': logdata,
+    } )

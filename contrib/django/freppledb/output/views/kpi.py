@@ -87,13 +87,13 @@ class Report(GridReport):
       where quantity<0
       order by 1
       ''' % (
-        # Oracle needs conversion from the field out_problem.name
-        # (in 'national character set') to the database 'character set'.
-        settings.DATABASES[request.database]['ENGINE'] == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
-        settings.DATABASES[request.database]['ENGINE'] == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
-        sql_datediff('plandate','due'),
-        sql_datediff('enddate','startdate')
-        )
+            # Oracle needs conversion from the field out_problem.name
+            # (in 'national character set') to the database 'character set'.
+            settings.DATABASES[request.database]['ENGINE'] == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
+            settings.DATABASES[request.database]['ENGINE'] == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
+            sql_datediff('plandate','due'),
+            sql_datediff('enddate','startdate')
+            )
     cursor.execute(query)
 
     # Build the python result

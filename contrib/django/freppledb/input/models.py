@@ -305,8 +305,6 @@ class Buffer(AuditModel,HierarchyModel):
       self.fence = None
       self.min_inventory = None
       self.max_inventory = None
-      self.min_interval = None
-      self.max_interval = None
       self.size_minimum = None
       self.size_multiple = None
       self.size_maximum = None

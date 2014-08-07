@@ -320,10 +320,6 @@ class loadData(object):
           b.mininventory = f2
         if f3:
           b.maxinventory = f3
-        if f4:
-          b.mininterval = f4
-        if f5:
-          b.maxinterval = f5
         if f6:
           b.size_minimum = f6
         if f7:
@@ -354,6 +350,10 @@ class loadData(object):
         b.producing = frepple.operation(name=o)
       if p:
         b.carrying_cost = p
+      if f4:
+        b.mininterval = f4
+      if f5:
+        b.maxinterval = f5
     print('Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime))
 
 

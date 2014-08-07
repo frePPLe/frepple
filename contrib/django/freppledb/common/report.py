@@ -883,25 +883,22 @@ class GridReport(View):
       if not request.user.has_perm('%s.%s' % (m._meta.app_label, m._meta.get_delete_permission())):
         return string_concat(m._meta.verbose_name, ':', _('Permission denied'))
 
-    transaction.enter_transaction_management(using=request.database)
-    try:
-      # Delete the data records
-      cursor = connections[request.database].cursor()
+    # Delete the data records
+    cursor = connections[request.database].cursor()
+    with transaction.atomic(using=request.database):
       sql_list = connections[request.database].ops.sql_flush(no_style(), [m._meta.db_table for m in deps], [] )
       for sql in sql_list:
         cursor.execute(sql)
-        transaction.commit(using=request.database)
       # Erase comments and history
       content_ids = [ContentType.objects.get_for_model(m) for m in deps]
       LogEntry.objects.filter(content_type__in=content_ids).delete()
-      transaction.commit(using=request.database)
       Comment.objects.filter(content_type__in=content_ids).delete()
-      transaction.commit(using=request.database)
-    except Exception as e:
-      return str(e)
-    finally:
-      transaction.commit(using=request.database)
-      transaction.leave_transaction_management(using=request.database)
+      # Prepare message
+      for m in deps:
+        messages.add_message(
+          request, messages.INFO,
+          _('Erasing data from %(model)s') % {'model': force_unicode(m._meta.verbose_name)}
+          )
 
     # Finished successfully
     return None
@@ -925,13 +922,6 @@ class GridReport(View):
         messages.add_message(request, messages.ERROR, _('Permission denied'))
         return HttpResponseRedirect(request.prefix + request.get_full_path())
 
-      # Erase all records and related tables
-      if 'erase' in request.POST:
-        returnvalue = reportclass.erase(request)
-        if returnvalue:
-          messages.add_message(request, messages.ERROR, returnvalue)
-          return HttpResponseRedirect(request.prefix + request.get_full_path())
-
       # Choose the right delimiter and language
       delimiter = get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',' and ';' or ','
       if translation.get_language() != request.LANGUAGE_CODE:
@@ -946,8 +936,16 @@ class GridReport(View):
       errors = []
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
 
-      transaction.enter_transaction_management(using=request.database)
-      try:
+      # Handle the complete upload as a single database transaction
+      with transaction.atomic(using=request.database):
+
+        # Erase all records and related tables
+        if 'erase' in request.POST:
+          returnvalue = reportclass.erase(request)
+          if returnvalue:
+            messages.add_message(request, messages.ERROR, returnvalue)
+            return HttpResponseRedirect(request.prefix + request.get_full_path())
+
         # Loop through the data records
         has_pk_field = False
         for row in UnicodeReader(request.FILES['csv_file'].read(), delimiter=delimiter):
@@ -1025,20 +1023,21 @@ class GridReport(View):
               # Step 3: Validate the data and save to the database
               if form.has_changed():
                 try:
-                  obj = form.save(commit=False)
-                  obj.save(using=request.database)
-                  LogEntry(
-                    user_id=request.user.pk,
-                    content_type_id=content_type_id,
-                    object_id=obj.pk,
-                    object_repr=force_unicode(obj),
-                    action_flag=it and CHANGE or ADDITION,
-                    change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                  ).save(using=request.database)
-                  if it:
-                    changed += 1
-                  else:
-                    added += 1
+                  with transaction.atomic(using=request.database):
+                    obj = form.save(commit=False)
+                    obj.save(using=request.database)
+                    LogEntry(
+                      user_id=request.user.pk,
+                      content_type_id=content_type_id,
+                      object_id=obj.pk,
+                      object_repr=force_unicode(obj),
+                      action_flag=it and CHANGE or ADDITION,
+                      change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                    ).save(using=request.database)
+                    if it:
+                      changed += 1
+                    else:
+                      added += 1
                 except Exception as e:
                   # Validation fails
                   for error in form.non_field_errors():
@@ -1053,15 +1052,8 @@ class GridReport(View):
                           'rownum': rownumber, 'data': d[field.name],
                           'field': field.name, 'message': error
                         })
-
-              # Step 4: Commit the database changes from time to time
-              if rownumber % 500 == 0:
-                transaction.commit(using=request.database)
             except Exception as e:
               errors.append(_("Exception during upload: %(message)s") % {'message': e,})
-      finally:
-        transaction.commit(using=request.database)
-        transaction.leave_transaction_management(using=request.database)
 
       # Report all failed records
       if len(errors) > 0:
@@ -1105,13 +1097,6 @@ class GridReport(View):
         messages.add_message(request, messages.ERROR, _('Permission denied'))
         return HttpResponseRedirect(request.prefix + request.get_full_path())
 
-      # Erase all records and related tables
-      if 'erase' in request.POST:
-        returnvalue = reportclass.erase(request)
-        if returnvalue:
-          messages.add_message(request, messages.ERROR, returnvalue)
-          return HttpResponseRedirect(request.prefix + request.get_full_path())
-
       # Choose the right language
       if translation.get_language() != request.LANGUAGE_CODE:
         translation.activate(request.LANGUAGE_CODE)
@@ -1125,8 +1110,16 @@ class GridReport(View):
       errors = []
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
 
-      transaction.enter_transaction_management(using=request.database)
-      try:
+      # Handle the complete upload as a single database transaction
+      with transaction.atomic(using=request.database):
+
+        # Erase all records and related tables
+        if 'erase' in request.POST:
+          returnvalue = reportclass.erase(request)
+          if returnvalue:
+            messages.add_message(request, messages.ERROR, returnvalue)
+            return HttpResponseRedirect(request.prefix + request.get_full_path())
+
         # Loop through the data records
         wb = load_workbook(filename=request.FILES['csv_file'], use_iterators=True, data_only=True)
         ws = wb.worksheets[0]
@@ -1213,20 +1206,21 @@ class GridReport(View):
               # Step 3: Validate the data and save to the database
               if form.has_changed():
                 try:
-                  obj = form.save(commit=False)
-                  obj.save(using=request.database)
-                  LogEntry(
-                    user_id=request.user.pk,
-                    content_type_id=content_type_id,
-                    object_id=obj.pk,
-                    object_repr=force_unicode(obj),
-                    action_flag=it and CHANGE or ADDITION,
-                    change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                  ).save(using=request.database)
-                  if it:
-                    changed += 1
-                  else:
-                    added += 1
+                  with transaction.atomic(using=request.database):
+                    obj = form.save(commit=False)
+                    obj.save(using=request.database)
+                    LogEntry(
+                      user_id=request.user.pk,
+                      content_type_id=content_type_id,
+                      object_id=obj.pk,
+                      object_repr=force_unicode(obj),
+                      action_flag=it and CHANGE or ADDITION,
+                      change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                    ).save(using=request.database)
+                    if it:
+                      changed += 1
+                    else:
+                      added += 1
                 except Exception as e:
                   # Validation fails
                   for error in form.non_field_errors():
@@ -1241,15 +1235,8 @@ class GridReport(View):
                           'rownum': rownumber, 'data': d[field.name],
                           'field': field.name, 'message': error
                         })
-
-              # Step 4: Commit the database changes from time to time
-              if rownumber % 500 == 0:
-                transaction.commit(using=request.database)
             except Exception as e:
               errors.append(_("Exception during upload: %(message)s") % {'message': e,})
-      finally:
-        transaction.commit(using=request.database)
-        transaction.leave_transaction_management(using=request.database)
 
       # Report all failed records
       if len(errors) > 0:

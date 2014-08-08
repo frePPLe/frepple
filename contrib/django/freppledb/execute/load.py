@@ -610,8 +610,10 @@ class loadData(object):
       ''' % self.filter_and)
     for i,j,k,l,m,n,o in self.cursor.fetchall():
       cnt += 1
-      frepple.operationplan(operation=frepple.operation(name=i),
-        id=j, quantity=k, start=l, end=m, source=o).locked = n
+      frepple.operationplan(
+        operation=frepple.operation(name=i),
+        id=j, quantity=k, start=l, end=m, source=o
+        ).locked = n
     self.cursor.execute('''
       SELECT
         operation_id, id, quantity, startdate, enddate, locked, owner_id, source
@@ -621,8 +623,10 @@ class loadData(object):
       ''' % self.filter_and)
     for i,j,k,l,m,n,o,p in self.cursor.fetchall():
       cnt += 1
-      frepple.operationplan(operation=frepple.operation(name=i),
-        id=j, quantity=k, start=l, end=m, owner=frepple.operationplan(id=o), source=p).locked = n
+      frepple.operationplan(
+        operation=frepple.operation(name=i),
+        id=j, quantity=k, start=l, end=m, owner=frepple.operationplan(id=o), source=p
+        ).locked = n
     print('Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime))
 
 
@@ -641,8 +645,10 @@ class loadData(object):
     for i,j,k,l,m,n,o,p,q,r,s,t,u in self.cursor.fetchall():
       cnt += 1
       try:
-        x = frepple.demand( name=i, due=j, quantity=k, priority=l,
-              item=frepple.item(name=m), category=s, subcategory=t, source=u)
+        x = frepple.demand(
+          name=i, due=j, quantity=k, priority=l,
+          item=frepple.item(name=m), category=s, subcategory=t, source=u
+          )
         if n:
           x.operation = frepple.operation(name=n)
         if o:

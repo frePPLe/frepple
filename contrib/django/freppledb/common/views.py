@@ -41,9 +41,10 @@ logger = logging.getLogger(__name__)
 
 
 def handler404(request):
-  messages.add_message(request, messages.ERROR,
-     force_unicode(_('Page not found') + ": " + request.prefix + request.get_full_path())
-     )
+  messages.add_message(
+    request, messages.ERROR,
+    force_unicode(_('Page not found') + ": " + request.prefix + request.get_full_path())
+    )
   return HttpResponseRedirect(request.prefix + "/admin/")
 
 

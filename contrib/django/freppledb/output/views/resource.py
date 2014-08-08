@@ -127,14 +127,15 @@ class OverviewReport(GridPivot):
       -- Grouping and sorting
       group by res.name, res.location_id, res.type, d.bucket, d.startdate
       order by %s, d.startdate
-      ''' % ( units[0], units[0], units[0], units[0],
+      ''' % (
+        units[0], units[0], units[0], units[0],
         basesql, request.report_bucket, request.report_startdate,
         request.report_enddate,
         connections[basequery.db].ops.quote_name('resource'),
         request.report_startdate, request.report_enddate,
         sql_max('sum(out_resourceplan.available)','0.0001'),
         request.report_startdate, request.report_enddate, sortsql
-       )
+        )
     cursor.execute(query, baseparams)
 
     # Build the python result

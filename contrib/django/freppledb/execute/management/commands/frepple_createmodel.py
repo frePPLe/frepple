@@ -56,34 +56,62 @@ class Command(BaseCommand):
     '''
 
   option_list = BaseCommand.option_list + (
-      make_option('--user', dest='user', type='string',
-        help='User running the command'),
-      make_option('--cluster', dest='cluster', type="int",
-        help='Number of end items', default=100),
-      make_option('--demand', dest='demand', type="int",
-        help='Demands per end item', default=30),
-      make_option('--forecast_per_item', dest='forecast_per_item', type="int",
-        help='Monthly forecast per end item', default=30),
-      make_option('--level', dest='level', type="int",
-        help='Depth of bill-of-material', default=5),
-      make_option('--resource', dest='resource', type="int",
-        help='Number of resources', default=60),
-      make_option('--resource_size', dest='resource_size', type="int",
-        help='Size of each resource', default=5),
-      make_option('--components', dest='components', type="int",
-        help='Total number of components', default=200),
-      make_option('--components_per', dest='components_per', type="int",
-        help='Number of components per end item', default=4),
-      make_option('--deliver_lt', dest='deliver_lt', type="int",
-        help='Average delivery lead time of orders', default=30),
-      make_option('--procure_lt', dest='procure_lt', type="int",
-        help='Average procurement lead time', default=40),
-      make_option('--currentdate', dest='currentdate', type="string",
-        help='Current date of the plan in YYYY-MM-DD format'),
-      make_option('--database', action='store', dest='database',
-        default=DEFAULT_DB_ALIAS, help='Nominates a specific database to populate'),
-      make_option('--task', dest='task', type='int',
-        help='Task identifier (generated automatically if not provided)'),
+    make_option(
+      '--user', dest='user', type='string',
+      help='User running the command'
+      ),
+    make_option(
+      '--cluster', dest='cluster', type="int",
+      help='Number of end items', default=100
+      ),
+    make_option(
+      '--demand', dest='demand', type="int",
+      help='Demands per end item', default=30),
+    make_option(
+      '--forecast_per_item', dest='forecast_per_item', type="int",
+      help='Monthly forecast per end item', default=30
+      ),
+    make_option(
+      '--level', dest='level', type="int",
+      help='Depth of bill-of-material', default=5
+      ),
+    make_option(
+      '--resource', dest='resource', type="int",
+      help='Number of resources', default=60
+      ),
+    make_option(
+      '--resource_size', dest='resource_size', type="int",
+      help='Size of each resource', default=5
+      ),
+    make_option(
+      '--components', dest='components', type="int",
+      help='Total number of components', default=200
+      ),
+    make_option(
+      '--components_per', dest='components_per', type="int",
+      help='Number of components per end item', default=4
+      ),
+    make_option(
+      '--deliver_lt', dest='deliver_lt', type="int",
+      help='Average delivery lead time of orders', default=30
+      ),
+    make_option(
+      '--procure_lt', dest='procure_lt', type="int",
+      help='Average procurement lead time', default=40
+      ),
+    make_option(
+      '--currentdate', dest='currentdate', type="string",
+      help='Current date of the plan in YYYY-MM-DD format'
+      ),
+    make_option(
+      '--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to populate'
+      ),
+    make_option(
+      '--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'
+      ),
   )
 
   requires_model_validation = False
@@ -224,7 +252,9 @@ class Command(BaseCommand):
       with transaction.atomic(using=database):
         weeks = Calendar.objects.using(database).create(name="Weeks", defaultvalue=0)
         for i in BucketDetail.objects.using(database).filter(bucket="week").all():
-          CalendarBucket(startdate=i.startdate, enddate=i.enddate, value=1, calendar=weeks).save(using=database)
+          CalendarBucket(
+            startdate=i.startdate, enddate=i.enddate, value=1, calendar=weeks
+            ).save(using=database)
         task.status = '4%'
         task.save(using=database)
 
@@ -234,8 +264,10 @@ class Command(BaseCommand):
       with transaction.atomic(using=database):
         workingdays = Calendar.objects.using(database).create(name="Working Days", defaultvalue=0)
         minmax = BucketDetail.objects.using(database).filter(bucket="week").aggregate(Min('startdate'),Max('startdate'))
-        CalendarBucket(startdate=minmax['startdate__min'], enddate=minmax['startdate__max'],
-            value=1, calendar=workingdays, priority=1, saturday=False, sunday=False).save(using=database)
+        CalendarBucket(
+          startdate=minmax['startdate__min'], enddate=minmax['startdate__max'],
+          value=1, calendar=workingdays, priority=1, saturday=False, sunday=False
+          ).save(using=database)
         task.status = '6%'
         task.save(using=database)
 
@@ -265,7 +297,9 @@ class Command(BaseCommand):
           bkt = CalendarBucket(startdate=startdate, value=resource_size, calendar=cal)
           cal.save(using=database)
           bkt.save(using=database)
-          r = Resource.objects.using(database).create(name='Res %03d' % i, maximum_calendar=cal, location=loc)
+          r = Resource.objects.using(database).create(
+            name='Res %03d' % i, maximum_calendar=cal, location=loc
+            )
           res.append(r)
         task.status = '10%'
         task.save(using=database)
@@ -278,22 +312,24 @@ class Command(BaseCommand):
         comps = []
         comploc = Location.objects.using(database).create(name='Procured materials')
         for i in range(components):
-          it = Item.objects.using(database).create(name='Component %04d' % i,
-                 category='Procured',
-                 price=str(round(random.uniform(0,100)))
-                 )
+          it = Item.objects.using(database).create(
+            name='Component %04d' % i,
+            category='Procured',
+            price=str(round(random.uniform(0,100)))
+            )
           ld = abs(round(random.normalvariate(procure_lt, procure_lt / 3)))
-          c = Buffer.objects.using(database).create(name='Component %04d' % i,
-               location=comploc,
-               category='Procured',
-               item=it,
-               type='procure',
-               min_inventory=20,
-               max_inventory=100,
-               size_multiple=10,
-               leadtime=str(ld * 86400),
-               onhand=str(round(forecast_per_item * random.uniform(1, 3) * ld / 30)),
-               )
+          c = Buffer.objects.using(database).create(
+            name='Component %04d' % i,
+            location=comploc,
+            category='Procured',
+            item=it,
+            type='procure',
+            min_inventory=20,
+            max_inventory=100,
+            size_multiple=10,
+            leadtime=str(ld * 86400),
+            onhand=str(round(forecast_per_item * random.uniform(1, 3) * ld / 30)),
+            )
           comps.append(c)
         task.status = '12%'
         task.save(using=database)
@@ -313,14 +349,16 @@ class Command(BaseCommand):
 
           # Item and delivery operation
           oper = Operation.objects.using(database).create(name='Del %05d' % i, sizemultiple=1, location=loc)
-          it = Item.objects.using(database).create(name='Itm %05d' % i,
-                 operation=oper,
-                 category=random.choice(categories),
-                 price=str(round(random.uniform(100,200)))
-                 )
+          it = Item.objects.using(database).create(
+            name='Itm %05d' % i,
+            operation=oper,
+            category=random.choice(categories),
+            price=str(round(random.uniform(100,200)))
+            )
 
           # Level 0 buffer
-          buf = Buffer.objects.using(database).create(name='Buf %05d L00' % i,
+          buf = Buffer.objects.using(database).create(
+            name='Buf %05d L00' % i,
             item=it,
             location=loc,
             category='00'
@@ -329,7 +367,8 @@ class Command(BaseCommand):
 
           # Demand
           for j in range(demand):
-            Demand.objects.using(database).create(name='Dmd %05d %05d' % (i,j),
+            Demand.objects.using(database).create(
+              name='Dmd %05d %05d' % (i,j),
               item=it,
               quantity=int(random.uniform(1,6)),
               # Exponential distribution of due dates, with an average of deliver_lt days.
@@ -345,7 +384,8 @@ class Command(BaseCommand):
           for k in range(level):
             if k == 1 and res:
               # Create a resource load for operations on level 1
-              oper = Operation.objects.using(database).create(name='Oper %05d L%02d' % (i,k),
+              oper = Operation.objects.using(database).create(
+                name='Oper %05d L%02d' % (i,k),
                 type='time_per',
                 location=loc,
                 duration_per=86400,

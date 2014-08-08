@@ -119,8 +119,10 @@ def LaunchTask(request, action):
       wrapTask(request, action)
       return HttpResponseRedirect('%s/execute/' % request.prefix)
   except Exception as e:
-    messages.add_message(request, messages.ERROR,
-        force_unicode(_('Failure launching action: %(msg)s') % {'msg':e}))
+    messages.add_message(
+      request, messages.ERROR,
+      force_unicode(_('Failure launching action: %(msg)s') % {'msg':e})
+      )
     return HttpResponseRedirect('%s/execute/' % request.prefix)
 
 

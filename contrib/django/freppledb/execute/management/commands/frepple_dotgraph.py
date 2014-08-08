@@ -28,9 +28,11 @@ class Command(BaseCommand):
   help = "Generates output in the DOT language to visualize the network"
 
   option_list = BaseCommand.option_list + (
-      make_option('--database', action='store', dest='database',
-        default=DEFAULT_DB_ALIAS, help='Nominates a specific database to graph'),
-  )
+    make_option(
+      '--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to graph'
+      ),
+    )
 
   requires_model_validation = False
 

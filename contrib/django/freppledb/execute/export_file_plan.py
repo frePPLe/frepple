@@ -168,20 +168,26 @@ def exportDemand():
         cur -= cumplanned - d.quantity
         if cur < 0:
           cur = 0
-      yield (n.encode(encoding,"ignore"), d.item.name.encode(encoding,"ignore"),
+      yield (
+        n.encode(encoding,"ignore"), d.item.name.encode(encoding,"ignore"),
         d.customer and d.customer.name.encode(encoding,"ignore") or None, d.due,
-        cur, i.end, i.quantity, i.id)
+        cur, i.end, i.quantity, i.id
+        )
     # Extra record if planned short
     if cumplanned < d.quantity:
-      yield (n.encode(encoding,"ignore"), d.item.name.encode(encoding,"ignore"),
+      yield (
+        n.encode(encoding,"ignore"), d.item.name.encode(encoding,"ignore"),
         d.customer and d.customer.name.encode(encoding,"ignore") or None, d.due,
-        d.quantity - cumplanned, None, None, None)
+        d.quantity - cumplanned, None, None, None
+        )
 
   print("Exporting demand plans...")
   starttime = time()
   writer = csv.writer(open("demands.csv", "wb"), quoting=csv.QUOTE_ALL)
-  writer.writerow(('#demand','item','customer','due date','requested quantity',
-    'plan date','plan quantity','operationplan id'))
+  writer.writerow((
+    '#demand','item','customer','due date','requested quantity',
+    'plan date','plan quantity','operationplan id'
+    ))
   for i in frepple.demands():
     if i.quantity == 0:
       continue
@@ -194,9 +200,11 @@ def exportPegging():
   print("Exporting pegging...")
   starttime = time()
   writer = csv.writer(open("demand_pegging.csv", "wb"), quoting=csv.QUOTE_ALL)
-  writer.writerow(('#demand','level','consuming operationplan id','consuming date',
+  writer.writerow((
+    '#demand','level','consuming operationplan id','consuming date',
     'producing operationplan id','producing date','buffer','item','quantity demand',
-    'quantity buffer'))
+    'quantity buffer'
+    ))
   for i in frepple.demands():
     # Find non-hidden demand owner
     n = i
@@ -224,8 +232,10 @@ def exportForecast():
   print("Exporting forecast plans...")
   starttime = time()
   writer = csv.writer(open("forecast.csv", "wb"), quoting=csv.QUOTE_ALL)
-  writer.writerow(('#forecast','start date','end date','total quantity',
-    'net quantity','consumed quantity'))
+  writer.writerow((
+    '#forecast','start date','end date','total quantity',
+    'net quantity','consumed quantity'
+    ))
   for i in frepple.demands():
     if not isinstance(i, frepple.demand_forecastbucket) or i.total <= 0.0:
       continue

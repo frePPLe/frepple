@@ -35,18 +35,31 @@ class Command(BaseCommand):
   '''
 
   option_list = BaseCommand.option_list + (
-      make_option('--start', dest='start', type='string',
-          help='Start date in YYYY-MM-DD format'),
-      make_option('--end', dest='end', type='string',
-          help='End date in YYYY-MM-DD format'),
-      make_option('--weekstart', dest='weekstart', type='int', default=1,
-          help='First day of a week: 0=sunday, 1=monday (default), 2=tuesday, 3=wednesday, 4=thursday, 5=friday, 6=saturday'),
-      make_option('--user', dest='user', type='string',
-          help='User running the command'),
-      make_option('--database', action='store', dest='database',
-        default=DEFAULT_DB_ALIAS, help='Nominates a specific database to populate date information into'),
-      make_option('--task', dest='task', type='int',
-        help='Task identifier (generated automatically if not provided)'),
+    make_option(
+      '--start', dest='start', type='string',
+      help='Start date in YYYY-MM-DD format'
+      ),
+    make_option(
+      '--end', dest='end', type='string',
+      help='End date in YYYY-MM-DD format'
+      ),
+    make_option(
+      '--weekstart', dest='weekstart', type='int', default=1,
+      help='First day of a week: 0=sunday, 1=monday (default), 2=tuesday, 3=wednesday, 4=thursday, 5=friday, 6=saturday'
+      ),
+    make_option(
+      '--user', dest='user', type='string',
+      help='User running the command'
+      ),
+    make_option(
+      '--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to populate date information into'
+      ),
+    make_option(
+      '--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'
+      ),
   )
 
   requires_model_validation = False

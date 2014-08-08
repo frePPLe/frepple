@@ -74,7 +74,8 @@ class Scenario(models.Model):
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  status = models.CharField(_('status'), max_length=10,
+  status = models.CharField(
+    _('status'), max_length=10,
     null=False, blank=False, choices=scenarioStatus
     )
   lastrefresh = models.DateTimeField(_('last refreshed'), null=True, editable=False)

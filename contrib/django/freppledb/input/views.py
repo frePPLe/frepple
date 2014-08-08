@@ -118,8 +118,10 @@ class PathReport(GridReport):
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     return {
-      'title': capfirst(force_unicode(reportclass.objecttype._meta.verbose_name) + " " + args[0]
-           + ": " + force_unicode(reportclass.downstream and _("Where Used") or _("Supply Path"))),
+      'title': capfirst(
+        force_unicode(reportclass.objecttype._meta.verbose_name) + " " + args[0] +
+        ": " + force_unicode(reportclass.downstream and _("Where Used") or _("Supply Path"))
+        ),
       'downstream': reportclass.downstream,
       'active_tab': reportclass.downstream and 'whereused' or 'supplypath',
       'model': reportclass.objecttype.__name__.lower
@@ -139,7 +141,8 @@ class PathReport(GridReport):
       try:
         buf = Buffer.objects.using(request.database).get(name=entity)
         if reportclass.downstream:
-          root = [ (0, None, i.operation, 1, 0, None, 0, True)
+          root = [
+            (0, None, i.operation, 1, 0, None, 0, True)
             for i in buf.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
             ]
         else:
@@ -156,7 +159,8 @@ class PathReport(GridReport):
         if it.operation:
           root = [ (0, None, it.operation, 1, 0, None, 0, False) ]
         else:
-          root = [ (0, None, r.producing, 1, 0, None, 0, False)
+          root = [
+            (0, None, r.producing, 1, 0, None, 0, False)
             for r in Buffer.objects.filter(item=entity).using(request.database)
             if r.producing
             ]
@@ -312,8 +316,10 @@ def location_calendar(request, location):
   # Generate a message
   try:
     url = request.META.get('HTTP_REFERER')
-    messages.add_message(request, messages.ERROR,
-      force_unicode(_('No availability calendar found')))
+    messages.add_message(
+      request, messages.ERROR,
+      force_unicode(_('No availability calendar found'))
+      )
     return HttpResponseRedirect(url)
   except:
     raise Http404

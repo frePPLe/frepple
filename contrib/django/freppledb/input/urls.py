@@ -22,7 +22,8 @@ import freppledb.input.views
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+  '',  # Prefix
 
   # Model list reports, which override standard admin screens
   (r'^data/input/buffer/$', freppledb.input.views.BufferList.as_view()),
@@ -53,4 +54,4 @@ urlpatterns = patterns('',
   (r'^supplypath/operation/(.+)/$', freppledb.input.views.UpstreamOperationPath.as_view()),
   (r'^whereused/operation/(.+)/$', freppledb.input.views.DownstreamOperationPath.as_view()),
   (r'^search/$', freppledb.input.views.search),
-)
+  )

@@ -37,13 +37,20 @@ searchmode = (
 class Calendar(AuditModel):
   # Database fields
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True,
-    blank=True)
-  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True,
-    blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE,
-    null=True, blank=True, db_index=True)
-  defaultvalue = models.DecimalField(_('default value'), max_digits=settings.MAX_DIGITS,
+  description = models.CharField(
+    _('description'), max_length=settings.DESCRIPTIONSIZE, null=True,
+    blank=True
+    )
+  category = models.CharField(
+    _('category'), max_length=settings.CATEGORYSIZE, null=True,
+    blank=True, db_index=True
+    )
+  subcategory = models.CharField(
+    _('subcategory'), max_length=settings.CATEGORYSIZE,
+    null=True, blank=True, db_index=True
+    )
+  defaultvalue = models.DecimalField(
+    _('default value'), max_digits=settings.MAX_DIGITS,
     decimal_places=settings.DECIMAL_PLACES, default='0.00', null=True, blank=True,
     help_text=_('Value to be used when no entry is effective')
     )
@@ -92,9 +99,11 @@ class Location(AuditModel, HierarchyModel):
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  available = models.ForeignKey(Calendar, verbose_name=_('available'),
+  available = models.ForeignKey(
+    Calendar, verbose_name=_('available'),
     null=True, blank=True,
-    help_text=_('Calendar defining the working hours and holidays of this location'))
+    help_text=_('Calendar defining the working hours and holidays of this location')
+    )
 
   def __unicode__(self):
     return self.name
@@ -127,10 +136,15 @@ class Item(AuditModel,HierarchyModel):
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  operation = models.ForeignKey('Operation', verbose_name=_('delivery operation'), null=True, blank=True,
-    help_text=_("Default operation used to ship a demand for this item"))
-  price = models.DecimalField(_('price'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("Selling price of the item"))
+  operation = models.ForeignKey(
+    'Operation', verbose_name=_('delivery operation'), null=True, blank=True,
+    help_text=_("Default operation used to ship a demand for this item")
+    )
+  price = models.DecimalField(
+    _('price'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("Selling price of the item")
+    )
 
   def __unicode__(self):
     return self.name
@@ -157,28 +171,54 @@ class Operation(AuditModel):
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
-    blank=True, db_index=True)
-  fence = DurationField(_('release fence'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP"))
-  pretime = DurationField(_('pre-op time'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("A delay time to be respected as a soft constraint before starting the operation"))
-  posttime = DurationField(_('post-op time'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("A delay time to be respected as a soft constraint after ending the operation"))
-  sizeminimum = models.DecimalField(_('size minimum'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+  location = models.ForeignKey(
+    Location, verbose_name=_('location'),
+    null=True, blank=True, db_index=True
+    )
+  fence = DurationField(
+    _('release fence'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP")
+    )
+  pretime = DurationField(
+    _('pre-op time'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    help_text=_("A delay time to be respected as a soft constraint before starting the operation")
+    )
+  posttime = DurationField(
+    _('post-op time'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    help_text=_("A delay time to be respected as a soft constraint after ending the operation")
+    )
+  sizeminimum = models.DecimalField(
+    _('size minimum'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
     null=True, blank=True, default='1.0',
-    help_text=_("A minimum quantity for operationplans"))
-  sizemultiple = models.DecimalField(_('size multiple'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("A multiple quantity for operationplans"))
-  sizemaximum = models.DecimalField(_('size maximum'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("A maximum quantity for operationplans"))
-  cost = models.DecimalField(_('cost'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("Cost per operationplan unit"))
-  duration = DurationField(_('duration'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("A fixed duration for the operation"))
-  duration_per = DurationField(_('duration per unit'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("A variable duration for the operation"))
-  search = models.CharField(_('search mode'), max_length=20,
+    help_text=_("A minimum quantity for operationplans")
+    )
+  sizemultiple = models.DecimalField(
+    _('size multiple'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("A multiple quantity for operationplans")
+    )
+  sizemaximum = models.DecimalField(
+    _('size maximum'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("A maximum quantity for operationplans")
+    )
+  cost = models.DecimalField(
+    _('cost'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("Cost per operationplan unit")
+    )
+  duration = DurationField(
+    _('duration'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("A fixed duration for the operation")
+    )
+  duration_per = DurationField(
+    _('duration per unit'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("A variable duration for the operation")
+    )
+  search = models.CharField(
+    _('search mode'), max_length=20,
     null=True, blank=True, choices=searchmode,
     help_text=_('Method to select preferred alternate')
     )
@@ -211,16 +251,26 @@ class Operation(AuditModel):
 class SubOperation(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
-  operation = models.ForeignKey(Operation, verbose_name=_('operation'),
-    related_name='suboperations', help_text=_("Parent operation"))
-  priority = models.IntegerField(_('priority'), default=1,
-    help_text=_("Sequence of this operation among the suboperations. Negative values are ignored."))
-  suboperation = models.ForeignKey(Operation, verbose_name=_('suboperation'),
-    related_name='superoperations', help_text=_("Child operation"))
-  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True,
-    help_text=_("Validity start date"))
-  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True,
-    help_text=_("Validity end date"))
+  operation = models.ForeignKey(
+    Operation, verbose_name=_('operation'),
+    related_name='suboperations', help_text=_("Parent operation")
+    )
+  priority = models.IntegerField(
+    _('priority'), default=1,
+    help_text=_("Sequence of this operation among the suboperations. Negative values are ignored.")
+    )
+  suboperation = models.ForeignKey(
+    Operation, verbose_name=_('suboperation'),
+    related_name='superoperations', help_text=_("Child operation")
+    )
+  effective_start = models.DateTimeField(
+    _('effective start'), null=True, blank=True,
+    help_text=_("Validity start date")
+    )
+  effective_end = models.DateTimeField(
+    _('effective end'), null=True, blank=True,
+    help_text=_("Validity end date")
+    )
 
   def __unicode__(self):
     return self.operation.name \
@@ -247,50 +297,81 @@ class Buffer(AuditModel,HierarchyModel):
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
   type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='default')
-  location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
-    blank=True, db_index=True)
+  location = models.ForeignKey(
+    Location, verbose_name=_('location'), null=True,
+    blank=True, db_index=True
+    )
   item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, null=True)
-  onhand = models.DecimalField(_('onhand'),
+  onhand = models.DecimalField(
+    _('onhand'), null=True, blank=True,
     max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
-    default="0.00", null=True, blank=True, help_text=_('current inventory'))
-  minimum = models.DecimalField(_('minimum'),
+    default="0.00", help_text=_('current inventory')
+    )
+  minimum = models.DecimalField(
+    _('minimum'), null=True, blank=True,
     max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
-    default="0.00", null=True, blank=True, help_text=_('Safety stock'))
-  minimum_calendar = models.ForeignKey(Calendar, verbose_name=_('minimum calendar'),
+    default="0.00", help_text=_('Safety stock')
+    )
+  minimum_calendar = models.ForeignKey(
+    Calendar, verbose_name=_('minimum calendar'),
     null=True, blank=True,
-    help_text=_('Calendar storing a time-dependent safety stock profile'))
-  producing = models.ForeignKey(Operation, verbose_name=_('producing'),
+    help_text=_('Calendar storing a time-dependent safety stock profile')
+    )
+  producing = models.ForeignKey(
+    Operation, verbose_name=_('producing'),
     null=True, blank=True, related_name='used_producing',
-    help_text=_('Operation to replenish the buffer'))
-  carrying_cost = models.DecimalField(_('carrying cost'),
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("Cost of holding inventory in this buffer, expressed as an annual percentage of the item price."))
+    help_text=_('Operation to replenish the buffer')
+    )
+  carrying_cost = models.DecimalField(
+    _('carrying cost'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("Cost of holding inventory in this buffer, expressed as an annual percentage of the item price.")
+    )
   # Extra fields for procurement buffers
-  leadtime = DurationField(_('leadtime'),
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_('Leadtime for supplier of a procure buffer'))
-  fence = DurationField(_('fence'),
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_('Frozen fence for creating new procurements'))
-  min_inventory = models.DecimalField(_('min_inventory'),
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_('Inventory level that triggers replenishment of a procure buffer'))
-  max_inventory = models.DecimalField(_('max_inventory'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_('Inventory level to which a procure buffer is replenished'))
-  min_interval = DurationField(_('min_interval'),
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_('Minimum time interval between replenishments of a procure buffer'))
-  max_interval = DurationField(_('max_interval'),
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_('Maximum time interval between replenishments of a procure buffer'))
-  size_minimum = models.DecimalField(_('size_minimum'),
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_('Minimum size of replenishments of a procure buffer'))
-  size_multiple = models.DecimalField(_('size_multiple'),
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_('Replenishments of a procure buffer are a multiple of this quantity'))
-  size_maximum = models.DecimalField(_('size_maximum'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_('Maximum size of replenishments of a procure buffer'))
+  leadtime = DurationField(
+    _('leadtime'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Leadtime for supplier of a procure buffer')
+    )
+  fence = DurationField(
+    _('fence'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Frozen fence for creating new procurements')
+    )
+  min_inventory = models.DecimalField(
+    _('min_inventory'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Inventory level that triggers replenishment of a procure buffer')
+    )
+  max_inventory = models.DecimalField(
+    _('max_inventory'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Inventory level to which a procure buffer is replenished')
+    )
+  min_interval = DurationField(
+    _('min_interval'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Minimum time interval between replenishments of a procure buffer')
+    )
+  max_interval = DurationField(
+    _('max_interval'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Maximum time interval between replenishments of a procure buffer')
+    )
+  size_minimum = models.DecimalField(
+    _('size_minimum'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Minimum size of replenishments of a procure buffer')
+    )
+  size_multiple = models.DecimalField(
+    _('size_multiple'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Replenishments of a procure buffer are a multiple of this quantity')
+    )
+  size_maximum = models.DecimalField(
+    _('size_maximum'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    help_text=_('Maximum size of replenishments of a procure buffer')
+    )
 
   def __unicode__(self):
     return self.name
@@ -337,16 +418,26 @@ class SetupRule(AuditModel):
   A rule that is part of a setup matrix.
   '''
   # Database fields
-  setupmatrix = models.ForeignKey(SetupMatrix, verbose_name=_('setup matrix'), related_name='rules')
+  setupmatrix = models.ForeignKey(
+    SetupMatrix, verbose_name=_('setup matrix'), related_name='rules'
+    )
   priority = models.IntegerField(_('priority'))
-  fromsetup = models.CharField(_('from setup'), max_length=settings.NAMESIZE, blank=True, null=True,
-    help_text=_("Name of the old setup (wildcard characters are supported)"))
-  tosetup = models.CharField(_('to setup'), max_length=settings.NAMESIZE, blank=True, null=True,
-    help_text=_("Name of the new setup (wildcard characters are supported)"))
-  duration = DurationField(_('duration'), max_digits=settings.MAX_DIGITS, decimal_places=0, null=True, blank=True,
-    help_text=_("Duration of the changeover"))
-  cost = models.DecimalField(_('cost'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("Cost of the conversion"))
+  fromsetup = models.CharField(
+    _('from setup'), max_length=settings.NAMESIZE, blank=True, null=True,
+    help_text=_("Name of the old setup (wildcard characters are supported)")
+    )
+  tosetup = models.CharField(
+    _('to setup'), max_length=settings.NAMESIZE, blank=True, null=True,
+    help_text=_("Name of the new setup (wildcard characters are supported)")
+    )
+  duration = DurationField(
+    _('duration'), max_digits=settings.MAX_DIGITS, decimal_places=0, null=True, blank=True,
+    help_text=_("Duration of the changeover")
+    )
+  cost = models.DecimalField(
+    _('cost'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    help_text=_("Cost of the conversion")
+    )
 
   def __unicode__(self):
     return u"%s - %s" % (self.setupmatrix.name, self.priority)
@@ -368,27 +459,49 @@ class Resource(AuditModel,HierarchyModel):
   )
 
   # Database fields
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='default')
-  maximum = models.DecimalField(_('maximum'),
+  description = models.CharField(
+    _('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True
+    )
+  category = models.CharField(
+    _('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True
+    )
+  subcategory = models.CharField(
+    _('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True
+    )
+  type = models.CharField(
+    _('type'), max_length=20, null=True, blank=True, choices=types, default='default'
+    )
+  maximum = models.DecimalField(
+    _('maximum'), default="1.00", null=True, blank=True,
     max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
-    default="1.00", null=True, blank=True, help_text=_('Size of the resource'))
-  maximum_calendar = models.ForeignKey(Calendar, verbose_name=_('maximum calendar'),
+    help_text=_('Size of the resource')
+    )
+  maximum_calendar = models.ForeignKey(
+    Calendar, verbose_name=_('maximum calendar'),
     null=True, blank=True,
-    help_text=_('Calendar defining the resource size varying over time'))
-  location = models.ForeignKey(Location, verbose_name=_('location'),
-    null=True, blank=True, db_index=True)
-  cost = models.DecimalField(_('cost'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    help_text=_('Calendar defining the resource size varying over time')
+    )
+  location = models.ForeignKey(
+    Location, verbose_name=_('location'),
+    null=True, blank=True, db_index=True
+    )
+  cost = models.DecimalField(
+    _('cost'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
     help_text=_("Cost for using 1 unit of the resource for 1 hour"))
-  maxearly = DurationField(_('max early'),max_digits=settings.MAX_DIGITS, decimal_places=0, null=True, blank=True,
-    help_text=_('Time window before the ask date where we look for available capacity'))
-  setupmatrix = models.ForeignKey(SetupMatrix, verbose_name=_('setup matrix'),
+  maxearly = DurationField(
+    _('max early'),max_digits=settings.MAX_DIGITS, decimal_places=0, null=True, blank=True,
+    help_text=_('Time window before the ask date where we look for available capacity')
+    )
+  setupmatrix = models.ForeignKey(
+    SetupMatrix, verbose_name=_('setup matrix'),
     null=True, blank=True, db_index=True,
-    help_text=_('Setup matrix defining the conversion time and cost'))
-  setup = models.CharField(_('setup'), max_length=settings.NAMESIZE, null=True, blank=True,
-    help_text=_('Setup of the resource at the start of the plan'))
+    help_text=_('Setup matrix defining the conversion time and cost')
+    )
+  setup = models.CharField(
+    _('setup'), max_length=settings.NAMESIZE, null=True, blank=True,
+    help_text=_('Setup of the resource at the start of the plan')
+    )
 
   # Methods
   def __unicode__(self):
@@ -412,8 +525,10 @@ class Resource(AuditModel,HierarchyModel):
 
 class Skill(AuditModel):
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True,
-     help_text=_('Unique identifier'))
+  name = models.CharField(
+    _('name'), max_length=settings.NAMESIZE, primary_key=True,
+    help_text=_('Unique identifier')
+    )
 
   # Methods
   def __unicode__(self):
@@ -429,16 +544,24 @@ class Skill(AuditModel):
 class ResourceSkill(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
-  resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, related_name='skills')
-  skill = models.ForeignKey(Skill, verbose_name=_('skill'), db_index=True, related_name='resources')
-  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True,
+  resource = models.ForeignKey(
+    Resource, verbose_name=_('resource'), db_index=True, related_name='skills'
+    )
+  skill = models.ForeignKey(
+    Skill, verbose_name=_('skill'), db_index=True, related_name='resources'
+    )
+  effective_start = models.DateTimeField(
+    _('effective start'), null=True, blank=True,
     help_text=_('Validity start date')
     )
-  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True,
+  effective_end = models.DateTimeField(
+    _('effective end'), null=True, blank=True,
     help_text=_('Validity end date')
     )
-  priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
-    help_text=_('Priority of this skill in a group of alternates'))
+  priority = models.IntegerField(
+    _('priority'), default=1, null=True, blank=True,
+    help_text=_('Priority of this skill in a group of alternates')
+    )
 
   class Meta(AuditModel.Meta):
     db_table = 'resourceskill'
@@ -457,30 +580,45 @@ class Flow(AuditModel):
 
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
-  operation = models.ForeignKey(Operation, verbose_name=_('operation'),
-    db_index=True, related_name='flows')
-  thebuffer = models.ForeignKey(Buffer, verbose_name=_('buffer'),
-    db_index=True, related_name='flows')
-  quantity = models.DecimalField(_('quantity'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+  operation = models.ForeignKey(
+    Operation, verbose_name=_('operation'),
+    db_index=True, related_name='flows'
+    )
+  thebuffer = models.ForeignKey(
+    Buffer, verbose_name=_('buffer'),
+    db_index=True, related_name='flows'
+    )
+  quantity = models.DecimalField(
+    _('quantity'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
     default='1.00',
     help_text=_('Quantity to consume or produce per operationplan unit')
     )
-  type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='start',
+  type = models.CharField(
+    _('type'), max_length=20, null=True, blank=True, choices=types, default='start',
     help_text=_('Consume/produce material at the start or the end of the operationplan'),
     )
-  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True,
+  effective_start = models.DateTimeField(
+    _('effective start'), null=True, blank=True,
     help_text=_('Validity start date')
     )
-  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True,
+  effective_end = models.DateTimeField(
+    _('effective end'), null=True, blank=True,
     help_text=_('Validity end date')
     )
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, null=True, blank=True,
-    help_text=_('Optional name of this flow'))
-  alternate = models.CharField(_('alternate'), max_length=settings.NAMESIZE, null=True, blank=True,
-    help_text=_('Puts the flow in a group of alternate flows'))
-  priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
-    help_text=_('Priority of this flow in a group of alternates'))
-  search = models.CharField(_('search mode'), max_length=20,
+  name = models.CharField(
+    _('name'), max_length=settings.NAMESIZE, null=True, blank=True,
+    help_text=_('Optional name of this flow')
+    )
+  alternate = models.CharField(
+    _('alternate'), max_length=settings.NAMESIZE, null=True, blank=True,
+    help_text=_('Puts the flow in a group of alternate flows')
+    )
+  priority = models.IntegerField(
+    _('priority'), default=1, null=True, blank=True,
+    help_text=_('Priority of this flow in a group of alternates')
+    )
+  search = models.CharField(
+    _('search mode'), max_length=20,
     null=True, blank=True, choices=searchmode,
     help_text=_('Method to select preferred alternate')
     )
@@ -501,26 +639,36 @@ class Load(AuditModel):
   operation = models.ForeignKey(Operation, verbose_name=_('operation'), db_index=True, related_name='loads')
   resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, related_name='loads')
   skill = models.ForeignKey(Skill, verbose_name=_('skill'), null=True, blank=True, db_index=True, related_name='loads')
-  quantity = models.DecimalField(_('quantity'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='1.00')
-  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True,
+  quantity = models.DecimalField(
+    _('quantity'), default='1.00',
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES
+    )
+  effective_start = models.DateTimeField(
+    _('effective start'), null=True, blank=True,
     help_text=_('Validity start date')
     )
-  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True,
+  effective_end = models.DateTimeField(
+    _('effective end'), null=True, blank=True,
     help_text=_('Validity end date')
     )
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, null=True, blank=True,
+  name = models.CharField(
+    _('name'), max_length=settings.NAMESIZE, null=True, blank=True,
     help_text=_('Optional name of this load')
     )
-  alternate = models.CharField(_('alternate'), max_length=settings.NAMESIZE, null=True, blank=True,
+  alternate = models.CharField(
+    _('alternate'), max_length=settings.NAMESIZE, null=True, blank=True,
     help_text=_('Puts the load in a group of alternate loads')
     )
-  priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
+  priority = models.IntegerField(
+    _('priority'), default=1, null=True, blank=True,
     help_text=_('Priority of this load in a group of alternates')
     )
-  setup = models.CharField(_('setup'), max_length=settings.NAMESIZE, null=True, blank=True,
+  setup = models.CharField(
+    _('setup'), max_length=settings.NAMESIZE, null=True, blank=True,
     help_text=_('Setup required on the resource for this operation')
     )
-  search = models.CharField(_('search mode'), max_length=20,
+  search = models.CharField(
+    _('search mode'), max_length=20,
     null=True, blank=True, choices=searchmode,
     help_text=_('Method to select preferred alternate')
     )
@@ -537,18 +685,28 @@ class Load(AuditModel):
 
 class OperationPlan(AuditModel):
   # Database fields
-  id = models.IntegerField(_('identifier'),primary_key=True,
-    help_text=_('Unique identifier of an operationplan'))
-  operation = models.ForeignKey(Operation, verbose_name=_('operation'),
-    db_index=True)
-  quantity = models.DecimalField(_('quantity'),max_digits=settings.MAX_DIGITS,
-    decimal_places=settings.DECIMAL_PLACES, default='1.00')
+  id = models.IntegerField(
+    _('identifier'),primary_key=True,
+    help_text=_('Unique identifier of an operationplan')
+    )
+  operation = models.ForeignKey(
+    Operation, verbose_name=_('operation'),
+    db_index=True
+    )
+  quantity = models.DecimalField(
+    _('quantity'),max_digits=settings.MAX_DIGITS,
+    decimal_places=settings.DECIMAL_PLACES, default='1.00'
+    )
   startdate = models.DateTimeField(_('start date'),help_text=_('start date'))
   enddate = models.DateTimeField(_('end date'),help_text=_('end date'))
-  locked = models.BooleanField(_('locked'),default=True,
-    help_text=_('Prevent or allow changes'))
-  owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True,
-    related_name='xchildren', help_text=_('Hierarchical parent'))
+  locked = models.BooleanField(
+    _('locked'),default=True,
+    help_text=_('Prevent or allow changes')
+    )
+  owner = models.ForeignKey(
+    'self', verbose_name=_('owner'), null=True, blank=True,
+    related_name='xchildren', help_text=_('Hierarchical parent')
+    )
 
   def __unicode__(self):
     return str(self.id)
@@ -577,26 +735,50 @@ class Demand(AuditModel,HierarchyModel):
     )
 
   # Database fields
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, blank=True, db_index=True)
-  item = models.ForeignKey(Item, verbose_name=_('item'), null=True, blank=True, db_index=True)
+  description = models.CharField(
+    _('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True
+    )
+  category = models.CharField(
+    _('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True
+    )
+  subcategory = models.CharField(
+    _('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True
+    )
+  customer = models.ForeignKey(
+    Customer, verbose_name=_('customer'), null=True, blank=True, db_index=True
+    )
+  item = models.ForeignKey(
+    Item, verbose_name=_('item'), null=True, blank=True, db_index=True
+    )
   due = models.DateTimeField(_('due'),help_text=_('Due date of the demand'))
-  status = models.CharField(_('status'), max_length=10, null=True, blank=True, choices=demandstatus, default='open',
+  status = models.CharField(
+    _('status'), max_length=10, null=True, blank=True,
+    choices=demandstatus, default='open',
     help_text=_('Status of the demand. Only "open" demands are planned'),
     )
-  operation = models.ForeignKey(Operation,
+  operation = models.ForeignKey(
+    Operation,
     verbose_name=_('delivery operation'), null=True, blank=True,
     related_name='used_demand',
-    help_text=_('Operation used to satisfy this demand'))
-  quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
-  priority = models.PositiveIntegerField(_('priority'), default=10, choices=demandpriorities,
-    help_text=_('Priority of the demand (lower numbers indicate more important demands)'))
-  minshipment = models.DecimalField(_('minimum shipment'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_('Minimum shipment quantity when planning this demand'))
-  maxlateness = DurationField(_('maximum lateness'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("Maximum lateness allowed when planning this demand"))
+    help_text=_('Operation used to satisfy this demand')
+    )
+  quantity = models.DecimalField(
+    _('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES
+    )
+  priority = models.PositiveIntegerField(
+    _('priority'), default=10, choices=demandpriorities,
+    help_text=_('Priority of the demand (lower numbers indicate more important demands)')
+    )
+  minshipment = models.DecimalField(
+    _('minimum shipment'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Minimum shipment quantity when planning this demand')
+    )
+  maxlateness = DurationField(
+    _('maximum lateness'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("Maximum lateness allowed when planning this demand")
+    )
 
   # Convenience methods
   def __unicode__(self):

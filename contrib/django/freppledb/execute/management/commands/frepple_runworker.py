@@ -61,10 +61,14 @@ class Command(BaseCommand):
     The command is intended only to be used internally by frePPLe, not by an API or user.
     '''
   option_list = BaseCommand.option_list + (
-    make_option('--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to load data from and export results into'),
-    make_option('--continuous', action="store_true", dest='continuous',
-      default=False, help='Keep the worker alive after the queue is empty'),
+    make_option(
+      '--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to load data from and export results into'
+      ),
+    make_option(
+      '--continuous', action="store_true", dest='continuous',
+      default=False, help='Keep the worker alive after the queue is empty'
+      ),
   )
   requires_model_validation = False
 

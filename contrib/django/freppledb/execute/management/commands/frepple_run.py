@@ -30,19 +30,32 @@ from freppledb.execute.models import Task
 
 class Command(BaseCommand):
   option_list = BaseCommand.option_list + (
-    make_option('--user', dest='user', type='string',
-      help='User running the command'),
-    make_option('--constraint', dest='constraint', type='choice',
-      choices=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'], default='15',
-      help='Constraints to be considered: 1=lead time, 2=material, 4=capacity, 8=release fence'),
-    make_option('--plantype', dest='plantype', type='choice', choices=['1','2'],
-      default='1', help='Plan type: 1=constrained, 2=unconstrained'),
-    make_option('--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to load data from and export results into'),
-    make_option('--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'),
-    make_option('--env', dest='env', type='string',
-      help='A comma separated list of extra settings passed as environment variables to the engine'),
+    make_option(
+      '--user', dest='user', type='string',
+      help='User running the command'
+      ),
+    make_option(
+      '--constraint', dest='constraint', type='choice', default='15',
+      choices=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'],
+      help='Constraints to be considered: 1=lead time, 2=material, 4=capacity, 8=release fence'
+      ),
+    make_option(
+      '--plantype', dest='plantype', type='choice', choices=['1','2'],
+      default='1', help='Plan type: 1=constrained, 2=unconstrained'
+      ),
+    make_option(
+      '--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to load data from and export results into'
+      ),
+    make_option(
+      '--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'
+      ),
+    make_option(
+      '--env', dest='env', type='string',
+      help='A comma separated list of extra settings passed as environment variables to the engine'
+      ),
   )
   help = "Runs frePPLe to generate a plan"
 

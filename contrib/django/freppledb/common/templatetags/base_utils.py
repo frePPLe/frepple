@@ -107,7 +107,8 @@ class CrumbsNode(Node):
 
         # Add current URL to the stack
         if not exists:
-          cur.append( (title,
+          cur.append( (
+            title,
             '<span> &gt; <a href="%s%s%s">%s</a></span>' % (
               req.prefix, urlquote(req.path),
               req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',

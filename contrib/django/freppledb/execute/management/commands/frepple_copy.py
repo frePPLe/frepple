@@ -54,14 +54,22 @@ class Command(BaseCommand):
        - Can't run multiple copies in parallel!
   '''
   option_list = BaseCommand.option_list + (
-    make_option('--user', dest='user', type='string',
-      help='User running the command'),
-    make_option('--force', action="store_true", dest='force',
-      default=False, help='Overwrite scenarios already in use'),
-    make_option('--description', dest='description', type='string',
-      help='Description of the destination scenario'),
-    make_option('--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'),
+    make_option(
+      '--user', dest='user', type='string',
+      help='User running the command'
+      ),
+    make_option(
+      '--force', action="store_true", dest='force',
+      default=False, help='Overwrite scenarios already in use'
+      ),
+    make_option(
+      '--description', dest='description', type='string',
+      help='Description of the destination scenario'
+      ),
+    make_option(
+      '--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'
+      ),
     )
   args = 'source_database destination_database'
 

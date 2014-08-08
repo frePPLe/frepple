@@ -37,15 +37,23 @@ class Command(BaseCommand):
   help = "Loads data from an Openbravo instance into the frePPLe database"
 
   option_list = BaseCommand.option_list + (
-      make_option('--user', dest='user', type='string',
-        help='User running the command'),
-      make_option('--delta', action='store', dest='delta', type="float",
-        default='3650', help='Number of days for which we extract changed openbravo data'),
-      make_option('--database', action='store', dest='database',
-        default=DEFAULT_DB_ALIAS, help='Nominates the frePPLe database to load'),
-      make_option('--task', dest='task', type='int',
-        help='Task identifier (generated automatically if not provided)'),
-  )
+    make_option(
+      '--user', dest='user', type='string',
+      help='User running the command'
+      ),
+    make_option(
+      '--delta', action='store', dest='delta', type="float", default='3650',
+      help='Number of days for which we extract changed openbravo data'
+      ),
+    make_option(
+      '--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS, help='Nominates the frePPLe database to load'
+      ),
+    make_option(
+      '--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'
+      ),
+    )
 
   requires_model_validation = False
 
@@ -105,8 +113,10 @@ class Command(BaseCommand):
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='Openbravo import', submitted=now, started=now, status='0%', user=user,
-          arguments="--delta=%s" % self.delta)
+        task = Task(
+          name='Openbravo import', submitted=now, started=now, status='0%',
+          user=user, arguments="--delta=%s" % self.delta
+          )
       task.save(using=self.database)
       transaction.commit(using=self.database)
 
@@ -334,13 +344,16 @@ class Command(BaseCommand):
 
       # Delete records
       delete = [ (i,) for i,j in unused_keys.iteritems() if j ]
-      cursor.executemany('update customer set owner_id=null where owner_id=%s',
+      cursor.executemany(
+        'update customer set owner_id=null where owner_id=%s',
         delete
         )
-      cursor.executemany('update demand set customer_id=null where customer_id=%s',
+      cursor.executemany(
+        'update demand set customer_id=null where customer_id=%s',
         delete
         )
-      cursor.executemany('delete from customer where name=%s',
+      cursor.executemany(
+        'delete from customer where name=%s',
         delete
         )
 
@@ -440,10 +453,11 @@ class Command(BaseCommand):
       # Delete inactive items
       delete = [ (i,) for i,j in unused_keys.iteritems() if j ]
       cursor.executemany("delete from demand where item_id=%s", delete)
-      cursor.executemany("delete from flow \
-         where thebuffer_id in (select name from buffer where item_id=%s)",
-         delete
-         )
+      cursor.executemany(
+        "delete from flow \
+        where thebuffer_id in (select name from buffer where item_id=%s)",
+        delete
+        )
       cursor.executemany("delete from buffer where item_id=%s", delete)
       cursor.executemany("delete from item where name=%s", delete)
 
@@ -518,7 +532,8 @@ class Command(BaseCommand):
         self.locations[objectid] = unique_name
         unused_keys.pop(unique_name, None)
         if organization in self.organization_location:
-          print ("Warning: Organization '%s' is already associated with '%s'. Ignoring association with '%s'"
+          print (
+            "Warning: Organization '%s' is already associated with '%s'. Ignoring association with '%s'"
             % (organization, self.organization_location[organization], unique_name)
             )
         else:
@@ -535,17 +550,20 @@ class Command(BaseCommand):
 
       # Remove deleted or inactive locations
       delete = [ (i,) for i,j in unused_keys.iteritems() if j ]
-      cursor.executemany("update buffer \
+      cursor.executemany(
+        "update buffer \
         set location_id=null \
         where location_id=%s",
         delete
         )
-      cursor.executemany("update resource \
+      cursor.executemany(
+        "update resource \
         set location_id=null \
         where location_id=%s",
         delete
         )
-      cursor.executemany("update location \
+      cursor.executemany(
+        "update location \
         set owner_id=null \
         where owner_id=%s",
         delete
@@ -656,13 +674,17 @@ class Command(BaseCommand):
         operation = u'Ship %s @ %s' % (product, warehouse)
         deliveries.update([(product,warehouse,operation,u'%s @ %s' % (product, warehouse)),])
         if unique_name in frepple_keys:
-          update.append( (objectid, closed and orderedQuantity or orderedQuantity - deliveredQuantity,
-              product, closed and 'closed' or 'open', scheduledDeliveryDate,
-              businessPartner, operation, unique_name) )
+          update.append((
+            objectid, closed and orderedQuantity or orderedQuantity - deliveredQuantity,
+            product, closed and 'closed' or 'open', scheduledDeliveryDate,
+            businessPartner, operation, unique_name
+            ))
         else:
-          insert.append( (objectid, closed and orderedQuantity or orderedQuantity - deliveredQuantity,
-              product, closed and 'closed' or 'open', scheduledDeliveryDate,
-              businessPartner, operation, unique_name) )
+          insert.append((
+            objectid, closed and orderedQuantity or orderedQuantity - deliveredQuantity,
+            product, closed and 'closed' or 'open', scheduledDeliveryDate,
+            businessPartner, operation, unique_name
+            ))
           frepple_keys.add(unique_name)
         # Clean the XML hierarchy
         root.clear()
@@ -994,8 +1016,10 @@ class Command(BaseCommand):
         for wh in warehouses:
           operation = "Purchase %s @ %s" % (product, wh)
           unused_keys.pop(operation, None)
-          purchasing.append( (operation, "%s @ %s" % (product, wh), product, wh, businessPartner,
-              purchasingLeadTime, minimumOrderQty, quantityPerPackage, objectid) )
+          purchasing.append((
+            operation, "%s @ %s" % (product, wh), product, wh, businessPartner,
+            purchasingLeadTime, minimumOrderQty, quantityPerPackage, objectid
+            ))
         # Clean the XML hierarchy
         root.clear()
         count -= 1
@@ -1006,17 +1030,20 @@ class Command(BaseCommand):
         print ('')
 
       # Remove deleted operations
-      cursor.executemany("update buffer \
+      cursor.executemany(
+        "update buffer \
         set producing_id=null \
         where producing_id=%s",
         [ (i,) for i,j in unused_keys.iteritems() if j ]
         )
-      cursor.executemany("delete from flow \
+      cursor.executemany(
+        "delete from flow \
         where operation_id=%s \
         and not exists (select 1 from operationplan where operation_id=flow.operation_id)",
         [ (i,) for i,j in unused_keys.iteritems() if j ]
         )
-      cursor.executemany("delete from operation \
+      cursor.executemany(
+        "delete from operation \
         where name=%s \
         and not exists (select 1 from operationplan where operation_id=operation.name)",
         [ (i,) for i,j in unused_keys.iteritems() if j ]
@@ -1155,12 +1182,16 @@ class Command(BaseCommand):
           if deliveredQuantity >= orderedQuantity:   # TODO Not the right criterion
             delete.append( (objectid,) )
           else:
-            update.append( (operation, orderedQuantity - deliveredQuantity,
-              creationDate, scheduledDeliveryDate, objectid) )
+            update.append((
+              operation, orderedQuantity - deliveredQuantity,
+              creationDate, scheduledDeliveryDate, objectid
+              ))
         else:
           idcounter += 1
-          insert.append( (idcounter, operation, orderedQuantity - deliveredQuantity,
-            creationDate, scheduledDeliveryDate, objectid) )
+          insert.append((
+            idcounter, operation, orderedQuantity - deliveredQuantity,
+            creationDate, scheduledDeliveryDate, objectid
+            ))
           frepple_keys.add(objectid)
         # Clean the XML hierarchy
         root.clear()

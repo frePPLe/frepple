@@ -56,12 +56,19 @@ class Command(BaseCommand):
        - Can't run multiple copies in parallel!
   '''
   option_list = BaseCommand.option_list + (
-    make_option('--user', dest='user', type='string',
-      help='User running the command'),
-    make_option('--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to backup'),
-    make_option('--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'),
+    make_option(
+      '--user', dest='user', type='string',
+      help='User running the command'
+      ),
+    make_option(
+      '--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to backup'
+      ),
+    make_option(
+      '--task', dest='task', type='int',
+      help='Task identifier (generated automatically if not provided)'
+      ),
     )
 
   requires_model_validation = False
@@ -115,7 +122,8 @@ class Command(BaseCommand):
         shutil.copy2(settings.DATABASES[database]['NAME'], os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR,backupfile)))
       elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.mysql':
         # MYSQL
-        args = [ "mysqldump",
+        args = [
+            "mysqldump",
             "--password=%s" % settings.DATABASES[database]['PASSWORD'],
             "--user=%s" % settings.DATABASES[database]['USER'],
             "--quick", "--compress", "--extended-insert", "--add-drop-table",
@@ -134,26 +142,27 @@ class Command(BaseCommand):
         if settings.DATABASES[database]['HOST'] and settings.DATABASES[database]['PORT']:
           # The setting 'NAME' contains the SID name
           dsn = "%s/%s@//%s:%s/%s" % (
-                settings.DATABASES[database]['USER'],
-                settings.DATABASES[database]['PASSWORD'],
-                settings.DATABASES[database]['HOST'],
-                settings.DATABASES[database]['PORT'],
-                settings.DATABASES[database]['NAME']
-                )
+            settings.DATABASES[database]['USER'],
+            settings.DATABASES[database]['PASSWORD'],
+            settings.DATABASES[database]['HOST'],
+            settings.DATABASES[database]['PORT'],
+            settings.DATABASES[database]['NAME']
+            )
         else:
           # The setting 'NAME' contains the TNS name
           dsn = "%s/%s@%s" % (
-                settings.DATABASES[database]['USER'],
-                settings.DATABASES[database]['PASSWORD'],
-                settings.DATABASES[database]['NAME']
-                )
-        args = [ "expdp",
-            dsn,
-            "schemas=%s" % settings.DATABASES[database]['USER'],
-            "directory=frepple_logdir",
-            "nologfile=Y",
-            "dumpfile=%s" % backupfile
-            ]
+            settings.DATABASES[database]['USER'],
+            settings.DATABASES[database]['PASSWORD'],
+            settings.DATABASES[database]['NAME']
+            )
+        args = [
+          "expdp",
+          dsn,
+          "schemas=%s" % settings.DATABASES[database]['USER'],
+          "directory=frepple_logdir",
+          "nologfile=Y",
+          "dumpfile=%s" % backupfile
+          ]
         ret = subprocess.call(args)
         if ret:
           raise Exception("Run of expdp failed")
@@ -161,11 +170,12 @@ class Command(BaseCommand):
         # POSTGRESQL
         # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
         os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
-        args = [ "pg_dump",
-            "-b", "-w",
-            '--username=%s' % settings.DATABASES[database]['USER'],
-            '--file=%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR,backupfile))
-            ]
+        args = [
+          "pg_dump",
+          "-b", "-w",
+          '--username=%s' % settings.DATABASES[database]['USER'],
+          '--file=%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR,backupfile))
+          ]
         if settings.DATABASES[database]['HOST']:
           args.append("--host=%s" % settings.DATABASES[database]['HOST'])
         if settings.DATABASES[database]['PORT']:

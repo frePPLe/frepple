@@ -36,12 +36,18 @@ class Command(BaseCommand):
   '''
 
   option_list = BaseCommand.option_list + (
-    make_option("--port", dest="port", type="int",
-      help="Port number of the server."),
-    make_option("--address", dest="address", type="string",
-      help="IP address for the server to listen."),
-    make_option("--threads", dest="threads", type="int",
-      help="Number of server threads (default: 25)."),
+    make_option(
+      "--port", dest="port", type="int",
+      help="Port number of the server."
+      ),
+    make_option(
+      "--address", dest="address", type="string",
+      help="IP address for the server to listen."
+      ),
+    make_option(
+      "--threads", dest="threads", type="int",
+      help="Number of server threads (default: 25)."
+      ),
     )
 
   requires_model_validation = False
@@ -95,8 +101,10 @@ class Command(BaseCommand):
     CheckUpdates().start()
 
     # Run the WSGI server
-    server = CherryPyWSGIServer((address, port),
-      StaticFilesHandler(WSGIHandler()), numthreads=threads
+    server = CherryPyWSGIServer(
+      (address, port),
+      StaticFilesHandler(WSGIHandler()),
+      numthreads=threads
       )
     # Want SSL support? Just set these attributes apparently, but I haven't tested or verified this
     #  server.ssl_certificate = <filename>

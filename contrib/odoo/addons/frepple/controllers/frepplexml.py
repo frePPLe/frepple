@@ -57,4 +57,3 @@ class XMLController(openerp.addons.web.http.Controller):
           ])
     else:
       raise MethodNotAllowed()
-

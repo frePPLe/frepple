@@ -111,9 +111,9 @@ class HorizonForm(forms.Form):
   horizonbuckets = forms.ModelChoiceField(queryset=Bucket.objects.all().values_list('name', flat=True))
   horizonstart = forms.DateField(required=False)
   horizonend = forms.DateField(required=False)
-  horizontype = forms.ChoiceField(choices=(("1","1"),("0","0")))
+  horizontype = forms.ChoiceField(choices=(("1", "1"), ("0", "0")))
   horizonlength = forms.IntegerField(required=False, min_value=1)
-  horizonunit = forms.ChoiceField(choices=(("day","day"),("week","week"),("month","month")))
+  horizonunit = forms.ChoiceField(choices=(("day", "day"), ("week", "week"), ("month", "month")))
 
 
 @login_required
@@ -206,9 +206,9 @@ def Comments(request, app, model, object_id):
     modeltype = ContentType.objects.using(request.database).get(app_label=app, model=model)
     modeltype._state.db = request.database
     modelinstance = modeltype.get_object_for_this_type(pk=object_id)
-    comments = Comment.objects.using(request.database). \
-      filter(content_type__pk=modeltype.id, object_pk=object_id). \
-      order_by('-id')
+    comments = Comment.objects.using(request.database) \
+      .filter(content_type__pk=modeltype.id, object_pk=object_id) \
+      .order_by('-id')
   except:
     raise Http404('Object not found')
   if request.method == 'POST':
@@ -220,7 +220,7 @@ def Comments(request, app, model, object_id):
            user=request.user,
            comment=comment
            ).save(using=request.database)
-    return HttpResponseRedirect('%s/comments/%s/%s/%s/' % (request.prefix,app, model, object_id))
+    return HttpResponseRedirect('%s/comments/%s/%s/%s/' % (request.prefix, app, model, object_id))
   else:
     return render_to_response('common/comments.html', {
       'title': capfirst(force_unicode(modelinstance._meta.verbose_name) + " " + object_id),

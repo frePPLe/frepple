@@ -179,7 +179,7 @@ class Command(BaseCommand):
     statuscode, statusmessage, header = webservice.getreply()
     if statuscode != httplib.OK:
       raise Exception(statusmessage)
-    conn = iter(iterparse(webservice.getfile(), events=('start','end')))
+    conn = iter(iterparse(webservice.getfile(), events=('start', 'end')))
     root = conn.next()[1]
     return conn, root
 

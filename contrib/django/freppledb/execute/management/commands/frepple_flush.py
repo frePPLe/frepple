@@ -113,7 +113,7 @@ class Command(BaseCommand):
         models2tables = set()
         for m in models:
           try:
-            x = m.split('.',1)
+            x = m.split('.', 1)
             x = get_model(x[0], x[1])
             if x in EXCLUDE_FROM_BULK_OPERATIONS:
               continue

@@ -15,24 +15,24 @@ import frepple
 def printWelcome(prefix='frepple', database=DEFAULT_DB_ALIAS):
   # Send the output to a logfile
   if database == DEFAULT_DB_ALIAS:
-    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'%s.log' % prefix)
+    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, '%s.log' % prefix)
   else:
-    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR,'%s_%s.log' % (prefix,database))
+    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, '%s_%s.log' % (prefix, database))
 
   # Welcome message
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
     print("frePPLe on %s using sqlite3 database '%s'" % (
       sys.platform,
-      settings.DATABASES[database].get('NAME','')
+      settings.DATABASES[database].get('NAME', '')
       ))
   else:
     print("frePPLe on %s using %s database '%s' as '%s' on '%s:%s'" % (
       sys.platform,
-      settings.DATABASES[database].get('ENGINE','').split('.')[-1],
-      settings.DATABASES[database].get('NAME',''),
-      settings.DATABASES[database].get('USER',''),
-      settings.DATABASES[database].get('HOST',''),
-      settings.DATABASES[database].get('PORT','')
+      settings.DATABASES[database].get('ENGINE', '').split('.')[-1],
+      settings.DATABASES[database].get('NAME', ''),
+      settings.DATABASES[database].get('USER', ''),
+      settings.DATABASES[database].get('HOST', ''),
+      settings.DATABASES[database].get('PORT', '')
       ))
 
 
@@ -76,13 +76,13 @@ def logMessage(msg, database=DEFAULT_DB_ALIAS):
 
 def createPlan(database=DEFAULT_DB_ALIAS):
   # Auxiliary functions for debugging
-  def debugResource(res,mode):
+  def debugResource(res, mode):
     # if res.name != 'my favorite resource': return
     print("=> Situation on resource", res.name)
     for j in res.loadplans:
       print("=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup)
 
-  def debugDemand(dem,mode):
+  def debugDemand(dem, mode):
     if dem.name == 'my favorite demand':
       print("=> Starting to plan demand ", dem.name)
       solver.loglevel = 2

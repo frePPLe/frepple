@@ -63,13 +63,13 @@ class MenuItem:
       return True
     elif self.model:
       # The menu item is a model, belonging to an admin site
-      return user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('view',self.model._meta)))
+      return user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('view', self.model._meta)))
     else:
       # Other item is always available
       return True
 
   def can_add(self, user):
-    return self.model and user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('add',self.model._meta)))
+    return self.model and user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('add', self.model._meta)))
 
 
 class Menu:
@@ -190,7 +190,7 @@ class Menu:
       for j in i[3]:
         items.append( (j.index, capfirst(force_unicode(j.label)), j) )
       # Sort by 1) id and 2) label. Note that the order can be different for each language!
-      items.sort(key=operator.itemgetter(0,1))
+      items.sort(key=operator.itemgetter(0, 1))
       m.append( ( force_unicode(i[1]), items ))
 
     # Put the new result in the cache and return

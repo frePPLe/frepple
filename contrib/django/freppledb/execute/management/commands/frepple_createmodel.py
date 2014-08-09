@@ -176,9 +176,9 @@ class Command(BaseCommand):
     else:
       procure_lt = 40
     if 'currentdate' in options:
-      currentdate = options['currentdate'] or datetime.strftime(date.today(),'%Y-%m-%d')
+      currentdate = options['currentdate'] or datetime.strftime(date.today(), '%Y-%m-%d')
     else:
-      currentdate = datetime.strftime(date.today(),'%Y-%m-%d')
+      currentdate = datetime.strftime(date.today(), '%Y-%m-%d')
     if 'database' in options:
       database = options['database'] or DEFAULT_DB_ALIAS
     else:
@@ -212,15 +212,15 @@ class Command(BaseCommand):
         task = Task(name='generate model', submitted=now, started=now, status='0%', user=user)
       task.arguments = "--cluster=%s --demand=%s --forecast_per_item=%s --level=%s --resource=%s " \
         "--resource_size=%s --components=%s --components_per=%s --deliver_lt=%s --procure_lt=%s" % (
-        cluster, demand, forecast_per_item, level, resource,
-        resource_size, components, components_per, deliver_lt, procure_lt
+          cluster, demand, forecast_per_item, level, resource,
+          resource_size, components, components_per, deliver_lt, procure_lt
         )
       task.save(using=database)
       transaction.commit(using=database)
 
       # Pick up the startdate
       try:
-        startdate = datetime.strptime(currentdate,'%Y-%m-%d')
+        startdate = datetime.strptime(currentdate, '%Y-%m-%d')
       except:
         raise CommandError("current date is not matching format YYYY-MM-DD")
 
@@ -263,7 +263,7 @@ class Command(BaseCommand):
         print("Creating working days...")
       with transaction.atomic(using=database):
         workingdays = Calendar.objects.using(database).create(name="Working Days", defaultvalue=0)
-        minmax = BucketDetail.objects.using(database).filter(bucket="week").aggregate(Min('startdate'),Max('startdate'))
+        minmax = BucketDetail.objects.using(database).filter(bucket="week").aggregate(Min('startdate'), Max('startdate'))
         CalendarBucket(
           startdate=minmax['startdate__min'], enddate=minmax['startdate__max'],
           value=1, calendar=workingdays, priority=1, saturday=False, sunday=False
@@ -272,7 +272,9 @@ class Command(BaseCommand):
         task.save(using=database)
 
       # Create a random list of categories to choose from
-      categories = [ 'cat A','cat B','cat C','cat D','cat E','cat F','cat G' ]
+      categories = [
+        'cat A', 'cat B', 'cat C', 'cat D', 'cat E', 'cat F', 'cat G'
+        ]
 
       # Create customers
       if verbosity > 0:
@@ -291,7 +293,7 @@ class Command(BaseCommand):
       with transaction.atomic(using=database):
         res = []
         for i in range(resource):
-          loc = Location(name='Loc %05d' % int(random.uniform(1,cluster)))
+          loc = Location(name='Loc %05d' % int(random.uniform(1, cluster)))
           loc.save(using=database)
           cal = Calendar(name='capacity for res %03d' % i, category='capacity', defaultvalue=0)
           bkt = CalendarBucket(startdate=startdate, value=resource_size, calendar=cal)
@@ -315,7 +317,7 @@ class Command(BaseCommand):
           it = Item.objects.using(database).create(
             name='Component %04d' % i,
             category='Procured',
-            price=str(round(random.uniform(0,100)))
+            price=str(round(random.uniform(0, 100)))
             )
           ld = abs(round(random.normalvariate(procure_lt, procure_lt / 3)))
           c = Buffer.objects.using(database).create(
@@ -353,7 +355,7 @@ class Command(BaseCommand):
             name='Itm %05d' % i,
             operation=oper,
             category=random.choice(categories),
-            price=str(round(random.uniform(100,200)))
+            price=str(round(random.uniform(100, 200)))
             )
 
           # Level 0 buffer
@@ -368,13 +370,13 @@ class Command(BaseCommand):
           # Demand
           for j in range(demand):
             Demand.objects.using(database).create(
-              name='Dmd %05d %05d' % (i,j),
+              name='Dmd %05d %05d' % (i, j),
               item=it,
-              quantity=int(random.uniform(1,6)),
+              quantity=int(random.uniform(1, 6)),
               # Exponential distribution of due dates, with an average of deliver_lt days.
               due=startdate + timedelta(days=round(random.expovariate(float(1) / deliver_lt / 24)) / 24),
               # Orders have higher priority than forecast
-              priority=random.choice([1,2]),
+              priority=random.choice([1, 2]),
               customer=random.choice(cust),
               category=random.choice(categories)
               )
@@ -385,7 +387,7 @@ class Command(BaseCommand):
             if k == 1 and res:
               # Create a resource load for operations on level 1
               oper = Operation.objects.using(database).create(
-                name='Oper %05d L%02d' % (i,k),
+                name='Oper %05d L%02d' % (i, k),
                 type='time_per',
                 location=loc,
                 duration_per=86400,
@@ -399,7 +401,7 @@ class Command(BaseCommand):
                 Load.objects.using(database).create(resource=random.choice(res), operation=oper)
             else:
               oper = Operation.objects.using(database).create(
-                name='Oper %05d L%02d' % (i,k),
+                name='Oper %05d L%02d' % (i, k),
                 duration=random.choice(durations),
                 sizemultiple=1,
                 location=loc,
@@ -407,7 +409,7 @@ class Command(BaseCommand):
             ops.append(oper)
             buf.producing = oper
             # Some inventory in random buffers
-            if random.uniform(0,1) > 0.8:
+            if random.uniform(0, 1) > 0.8:
               buf.onhand = int(random.uniform(5, 20))
             buf.save(using=database)
             Flow(operation=oper, thebuffer=buf, quantity=1, type="end").save(using=database)
@@ -426,14 +428,15 @@ class Command(BaseCommand):
           for j in range(components_per):
             o = random.choice(ops)
             b = random.choice(comps)
-            while (o,b) in c:
+            while (o, b) in c:
               # A flow with the same operation and buffer already exists
               o = random.choice(ops)
               b = random.choice(comps)
-            c.append( (o,b) )
+            c.append( (o, b) )
             Flow.objects.using(database).create(
               operation=o, thebuffer=b,
-              quantity=random.choice([-1,-1,-1,-2,-3]))
+              quantity=random.choice([-1, -1, -1, -2, -3])
+              )
 
           # Commit the current cluster
           task.status = '%d%%' % (12 + progress * (i + 1))
@@ -496,7 +499,7 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
     BucketDetail(
       bucket=b,
       name='past',
-      startdate=datetime(2000,1,1),
+      startdate=datetime(2000, 1, 1),
       enddate=curdate,
       ).save(using=database)
 

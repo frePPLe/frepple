@@ -32,19 +32,19 @@ class OverviewReport(GridPivot):
   '''
   template = 'output/buffer.html'
   title = _('Inventory report')
-  basequeryset = Buffer.objects.only('name','item__name','location__name','lft','rght','onhand')
+  basequeryset = Buffer.objects.only('name', 'item__name', 'location__name', 'lft', 'rght', 'onhand')
   model = Buffer
-  permissions = (('view_inventory_report','Can view inventory report'),)
+  permissions = (('view_inventory_report', 'Can view inventory report'),)
   rows = (
     GridFieldText('buffer', title=_('buffer'), key=True, field_name='name', formatter='buffer', editable=False),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='item', editable=False),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='location', editable=False),
     )
   crosses = (
-    ('startoh', {'title': _('start inventory'),}),
-    ('produced', {'title': _('produced'),}),
-    ('consumed', {'title': _('consumed'),}),
-    ('endoh', {'title': _('end inventory'),}),
+    ('startoh', {'title': _('start inventory')}),
+    ('produced', {'title': _('produced')}),
+    ('consumed', {'title': _('consumed')}),
+    ('endoh', {'title': _('end inventory')}),
     )
 
   @classmethod
@@ -117,10 +117,10 @@ class OverviewReport(GridPivot):
         group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
         order by %s, d.startdate
       ''' % (
-            sql_max('out_flowplan.quantity', '0.0'), sql_min('out_flowplan.quantity', '0.0'),
-            basesql, request.report_bucket, request.report_startdate, request.report_enddate,
-            request.report_startdate, request.report_enddate, sortsql
-            )
+        sql_max('out_flowplan.quantity', '0.0'), sql_min('out_flowplan.quantity', '0.0'),
+        basesql, request.report_bucket, request.report_startdate, request.report_enddate,
+        request.report_startdate, request.report_enddate, sortsql
+      )
     cursor.execute(query, baseparams)
 
     # Build the python result
@@ -140,10 +140,10 @@ class OverviewReport(GridPivot):
         'bucket': row[3],
         'startdate': python_date(row[4]),
         'enddate': python_date(row[5]),
-        'startoh': round(startoh,1),
-        'produced': round(row[6],1),
-        'consumed': round(row[7],1),
-        'endoh': round(endoh,1),
+        'startoh': round(startoh, 1),
+        'produced': round(row[6], 1),
+        'consumed': round(row[7], 1),
+        'endoh': round(endoh, 1),
         }
 
 
@@ -154,7 +154,7 @@ class DetailReport(GridReport):
   template = 'output/flowplan.html'
   title = _("Inventory detail report")
   model = FlowPlan
-  permissions = (('view_inventory_report','Can view inventory report'),)
+  permissions = (('view_inventory_report', 'Can view inventory report'),)
   frozenColumns = 0
   editable = False
   multiselect = False
@@ -162,9 +162,9 @@ class DetailReport(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
-      return FlowPlan.objects.filter(thebuffer__exact=args[0]).extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+      return FlowPlan.objects.filter(thebuffer__exact=args[0]).extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name"})
     else:
-      return FlowPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+      return FlowPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name"})
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):

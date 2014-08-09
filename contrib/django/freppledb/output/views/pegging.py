@@ -168,24 +168,24 @@ class ReportByDemand(GridReport):
     due = None
     for (depth, buf, it, qty_d, qty_b, due, c_id, c_name, c_start, c_end, c_qty, p_id, p_name, p_start, p_end, p_qty) in cursor.fetchall():
       if c_id and not c_id in opplans:
-        opplans[c_id] = (c_start,c_end,float(c_qty))
+        opplans[c_id] = (c_start, c_end, float(c_qty))
         if c_name in ops:
           ops[c_name][6].append(c_id)
         else:
-          ops[c_name] = [indx, depth, None, True, buf, it, [c_id,] ]
+          ops[c_name] = [indx, depth, None, True, buf, it, [c_id] ]
       if p_id and not p_id in opplans:
-        opplans[p_id] = (p_start,p_end,float(p_qty))
+        opplans[p_id] = (p_start, p_end, float(p_qty))
         if p_name in ops:
           ops[p_name][6].append(p_id)
         else:
-          ops[p_name] = [indx + 1, depth + 1, None, True, buf, it, [p_id,] ]
+          ops[p_name] = [indx + 1, depth + 1, None, True, buf, it, [p_id] ]
       if c_name and p_name:
         ops[p_name][2] = c_name  # set parent
         ops[c_name][3] = False  # c_name is no longer a leaf
       indx += 1
 
     # Build the Python result
-    for i in sorted(ops.iteritems(), key=lambda(k,v): (v[0],k)):
+    for i in sorted(ops.iteritems(), key=lambda(k, v): (v[0], k)):
       yield {
         'current': str(current),
         'due': str(due),
@@ -222,7 +222,7 @@ class ReportByBuffer(GridReport):
   filterable = False
   frozenColumns = 0
   editable = False
-  default_sort = (2,'asc')
+  default_sort = (2, 'asc')
   rows = (
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
     GridFieldDateTime('date', title=_('date'), editable=False),
@@ -235,10 +235,10 @@ class ReportByBuffer(GridReport):
   def basequeryset(reportclass, request, args, kwargs):
     # The base query uses different fields than the main query.
     query = FlowPlan.objects.all()
-    for i,j in request.GET.iteritems():
+    for i, j in request.GET.iteritems():
       if i.startswith('thebuffer') or i.startswith('flowdate'):
         try:
-          query = query.filter(**{i:j})
+          query = query.filter(**{i: j})
         except:
           pass  # silently ignore invalid filters
     return query
@@ -306,7 +306,7 @@ class ReportByResource(GridReport):
   filterable = False
   frozenColumns = 0
   editable = False
-  default_sort = (2,'asc')
+  default_sort = (2, 'asc')
   rows = (
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
     GridFieldDateTime('date', title=_('date'), editable=False),
@@ -319,10 +319,10 @@ class ReportByResource(GridReport):
   def basequeryset(reportclass, request, args, kwargs):
     # The base query uses different fields than the main query.
     query = LoadPlan.objects.all()
-    for i,j in request.GET.iteritems():
+    for i, j in request.GET.iteritems():
       if i.startswith('theresource') or i.startswith('startdate') or i.startswith('enddate'):
         try:
-          query = query.filter(**{i:j})
+          query = query.filter(**{i: j})
         except:
           pass  # silently ignore invalid filters
     return query
@@ -373,7 +373,7 @@ class ReportByOperation(GridReport):
   filterable = False
   frozenColumns = 0
   editable = False
-  default_sort = (2,'asc')
+  default_sort = (2, 'asc')
   rows = (
     GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
     GridFieldDateTime('date', title=_('date'), editable=False),
@@ -386,10 +386,10 @@ class ReportByOperation(GridReport):
   def basequeryset(reportclass, request, args, kwargs):
     # The base query uses different fields than the main query.
     query = OperationPlan.objects.all()
-    for i,j in request.GET.iteritems():
+    for i, j in request.GET.iteritems():
       if i.startswith('operation') or i.startswith('startdate') or i.startswith('enddate'):
         try:
-          query = query.filter(**{i:j})
+          query = query.filter(**{i: j})
         except:
           pass  # silently ignore invalid filters
     return query

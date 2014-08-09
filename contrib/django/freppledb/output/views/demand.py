@@ -39,9 +39,9 @@ class OverviewReport(GridPivot):
     GridFieldText('item', title=_('item'), key=True, field_name='name', formatter='item', editable=False),
     )
   crosses = (
-    ('demand',{'title': _('demand')}),
-    ('supply',{'title': _('supply')}),
-    ('backlog',{'title': _('backlog')}),
+    ('demand', {'title': _('demand')}),
+    ('supply', {'title': _('supply')}),
+    ('backlog', {'title': _('backlog')}),
     )
 
   @classmethod
@@ -134,7 +134,7 @@ class OverviewReport(GridPivot):
               request.report_enddate, request.report_startdate,
               request.report_enddate, request.report_startdate,
               request.report_enddate, sortsql)
-    cursor.execute(query,baseparams)
+    cursor.execute(query, baseparams)
 
     # Build the python result
     previtem = None
@@ -148,9 +148,9 @@ class OverviewReport(GridPivot):
         'bucket': row[1],
         'startdate': python_date(row[2]),
         'enddate': python_date(row[3]),
-        'demand': round(row[4],1),
-        'supply': round(row[5],1),
-        'backlog': round(backlog,1),
+        'demand': round(row[4], 1),
+        'supply': round(row[5], 1),
+        'backlog': round(backlog, 1)
         }
 
 

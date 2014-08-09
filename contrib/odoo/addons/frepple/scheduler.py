@@ -10,7 +10,7 @@ class frepple_plan(osv.osv_memory):
     _description = 'Create a material and capacity constrained plan'
 
     _columns = {
-        'constrained': fields.boolean('Constrained',help='Run a constrained plan.'),
+        'constrained': fields.boolean('Constrained', help='Run a constrained plan.'),
     }
 
     _defaults = {
@@ -25,9 +25,10 @@ class frepple_plan(osv.osv_memory):
         @param ids: List of IDs selected
         @param context: A standard dictionary
         """
-        status = subprocess.call([
-              "frepple", os.path.join(os.path.dirname(os.path.realpath(__file__)), "frepple_commands.py")
-              ], shell=False)
+        status = subprocess.call(
+          ["frepple", os.path.join(os.path.dirname(os.path.realpath(__file__)), "frepple_commands.py")],
+          shell=False
+          )
         return {}
 
     def generate_plan(self, cr, uid, ids, context=None):

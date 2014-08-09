@@ -226,9 +226,9 @@ class Command(BaseCommand):
       print('Request: ', url)
       print('Response status: ', statuscode, statusmessage, header)
       print('Response content: ', res)
-      conn = iter(iterparse(StringIO(res), events=('start','end')))
+      conn = iter(iterparse(StringIO(res), events=('start', 'end')))
     else:
-      conn = iter(iterparse(webservice.getfile(), events=('start','end')))
+      conn = iter(iterparse(webservice.getfile(), events=('start', 'end')))
     root = conn.next()[1]
     return conn, root
 
@@ -313,10 +313,10 @@ class Command(BaseCommand):
         description = elem.find("description").text
         self.customers[objectid] = unique_name
         if unique_name in frepple_keys:
-          update.append( (description,objectid,unique_name) )
+          update.append( (description, objectid, unique_name) )
         else:
-          insert.append( (description,unique_name,objectid) )
-        unused_keys.pop(unique_name,None)
+          insert.append( (description, unique_name, objectid) )
+        unused_keys.pop(unique_name, None)
         # Clean the XML hierarchy
         root.clear()
         count -= 1
@@ -343,7 +343,7 @@ class Command(BaseCommand):
         )
 
       # Delete records
-      delete = [ (i,) for i,j in unused_keys.iteritems() if j ]
+      delete = [ (i,) for i, j in unused_keys.iteritems() if j ]
       cursor.executemany(
         'update customer set owner_id=null where owner_id=%s',
         delete
@@ -420,11 +420,11 @@ class Command(BaseCommand):
         description = elem.find("description").text
         objectid = elem.get('id')
         self.items[objectid] = unique_name
-        unused_keys.pop(unique_name,None)
+        unused_keys.pop(unique_name, None)
         if unique_name in frepple_keys:
-          update.append( (description,objectid,unique_name) )
+          update.append( (description, objectid, unique_name) )
         else:
-          insert.append( (unique_name,description,objectid) )
+          insert.append( (unique_name, description, objectid) )
         # Clean the XML hierarchy
         root.clear()
         count -= 1
@@ -451,7 +451,7 @@ class Command(BaseCommand):
         )
 
       # Delete inactive items
-      delete = [ (i,) for i,j in unused_keys.iteritems() if j ]
+      delete = [ (i,) for i, j in unused_keys.iteritems() if j ]
       cursor.executemany("delete from demand where item_id=%s", delete)
       cursor.executemany(
         "delete from flow \
@@ -528,7 +528,7 @@ class Command(BaseCommand):
         description = name
         objectid = elem.get('id')
         self.locations[objectid] = unique_name
-        locations.append( (description,objectid,unique_name) )
+        locations.append( (description, objectid, unique_name) )
         self.locations[objectid] = unique_name
         unused_keys.pop(unique_name, None)
         if organization in self.organization_location:
@@ -549,7 +549,7 @@ class Command(BaseCommand):
         print ('')
 
       # Remove deleted or inactive locations
-      delete = [ (i,) for i,j in unused_keys.iteritems() if j ]
+      delete = [ (i,) for i, j in unused_keys.iteritems() if j ]
       cursor.executemany(
         "update buffer \
         set location_id=null \
@@ -648,7 +648,7 @@ class Command(BaseCommand):
       insert = []
       update = []
       deliveries = set()
-      query = urllib.quote("(updated>'%s' or salesOrder.updated>'%s') and salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')" % (self.delta,self.delta))
+      query = urllib.quote("(updated>'%s' or salesOrder.updated>'%s') and salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')" % (self.delta, self.delta))
       conn, root = self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query)
       count = 0
       for event, elem in conn:
@@ -672,7 +672,9 @@ class Command(BaseCommand):
         deliveredQuantity = float(elem.find("deliveredQuantity").text)
         closed = deliveredQuantity >= orderedQuantity   # TODO Not the right criterion
         operation = u'Ship %s @ %s' % (product, warehouse)
-        deliveries.update([(product,warehouse,operation,u'%s @ %s' % (product, warehouse)),])
+        deliveries.update([
+          (product, warehouse, operation, u'%s @ %s' % (product, warehouse))
+          ])
         if unique_name in frepple_keys:
           update.append((
             objectid, closed and orderedQuantity or orderedQuantity - deliveredQuantity,
@@ -702,11 +704,11 @@ class Command(BaseCommand):
         "insert into operation \
           (name,location_id,subcategory,type,lastmodified) \
           values (%%s,%%s,'openbravo','fixed_time','%s')" % self.date,
-        [ (i[2],i[1]) for i in deliveries if i[2] not in frepple_keys ])
+        [ (i[2], i[1]) for i in deliveries if i[2] not in frepple_keys ])
       cursor.executemany(
         "update operation \
           set location_id=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
-        [ (i[1],i[2]) for i in deliveries if i[2] in frepple_keys ])
+        [ (i[1], i[2]) for i in deliveries if i[2] in frepple_keys ])
 
       # Create or update delivery buffers
       cursor.execute("SELECT name FROM buffer")
@@ -715,11 +717,11 @@ class Command(BaseCommand):
         "insert into buffer \
           (name,item_id,location_id,subcategory,lastmodified) \
           values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        [ (i[3],i[0],i[1]) for i in deliveries if i[3] not in frepple_keys ])
+        [ (i[3], i[0], i[1]) for i in deliveries if i[3] not in frepple_keys ])
       cursor.executemany(
         "update buffer \
           set item_id=%%s, location_id=%%s, subcategory='openbravo', lastmodified='%s' where name=%%s" % self.date,
-        [ (i[0],i[1],i[3]) for i in deliveries if i[3] in frepple_keys ])
+        [ (i[0], i[1], i[3]) for i in deliveries if i[3] in frepple_keys ])
 
       # Create or update flow on delivery operation
       cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
@@ -728,11 +730,11 @@ class Command(BaseCommand):
         "insert into flow \
           (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
           values(%%s,%%s,-1,'start','openbravo','%s')" % self.date,
-        [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) not in frepple_keys ])
+        [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) not in frepple_keys ])
       cursor.executemany(
         "update flow \
           set quantity=-1, type='start', source='openbravo', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
-        [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) in frepple_keys ])
+        [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) in frepple_keys ])
 
       # Create or update demands
       cursor.executemany(
@@ -801,9 +803,9 @@ class Command(BaseCommand):
         unique_name = elem.get('identifier')
         objectid = elem.get('id')
         if unique_name in frepple_keys:
-          update.append( (objectid,unique_name) )
+          update.append( (objectid, unique_name) )
         else:
-          insert.append( (unique_name,objectid) )
+          insert.append( (unique_name, objectid) )
         unused_keys.discard(unique_name)
         self.resources[objectid] = unique_name
         # Clean the XML hierarchy
@@ -891,7 +893,7 @@ class Command(BaseCommand):
         onhand = elem.find("quantityOnHand").text
         locator = elem.find("storageBin").get('id')
         product = elem.find("product").get('id')
-        item = self.items.get(product,None)
+        item = self.items.get(product, None)
         location = self.locations.get(self.locators[locator], None)
         if not item or not location:
           root.clear()
@@ -1034,19 +1036,19 @@ class Command(BaseCommand):
         "update buffer \
         set producing_id=null \
         where producing_id=%s",
-        [ (i,) for i,j in unused_keys.iteritems() if j ]
+        [ (i,) for i, j in unused_keys.iteritems() if j ]
         )
       cursor.executemany(
         "delete from flow \
         where operation_id=%s \
         and not exists (select 1 from operationplan where operation_id=flow.operation_id)",
-        [ (i,) for i,j in unused_keys.iteritems() if j ]
+        [ (i,) for i, j in unused_keys.iteritems() if j ]
         )
       cursor.executemany(
         "delete from operation \
         where name=%s \
         and not exists (select 1 from operationplan where operation_id=operation.name)",
-        [ (i,) for i,j in unused_keys.iteritems() if j ]
+        [ (i,) for i, j in unused_keys.iteritems() if j ]
         )
 
       # Create or update purchasing operations
@@ -1054,14 +1056,20 @@ class Command(BaseCommand):
         "insert into operation \
           (name,location_id,category,duration,sizeminimum,sizemultiple,subcategory,type,lastmodified,source) \
           values (%%s,%%s,%%s,%%s,%%s,%%s,'openbravo','fixed_time','%s',%%s)" % self.date,
-        [ (i[0],i[3],i[4],i[5],i[6],i[7],i[8]) for i in purchasing if i[0] not in frepple_keys ]
-        )
+        [
+          (i[0], i[3], i[4], i[5], i[6], i[7], i[8])
+          for i in purchasing
+          if i[0] not in frepple_keys
+        ])
       cursor.executemany(
         "update operation \
           set source=%%s, location_id=%%s, category=%%s, duration=%%s, sizeminimum=%%s, \
           sizemultiple=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
-        [ (i[8],i[3],i[4],i[5],i[6],i[7],i[0]) for i in purchasing if i[0] in frepple_keys ]
-        )
+        [
+          (i[8], i[3], i[4], i[5], i[6], i[7], i[0])
+          for i in purchasing
+          if i[0] in frepple_keys
+        ])
 
       # Create or update buffers
       cursor.execute("SELECT name FROM buffer")
@@ -1070,14 +1078,14 @@ class Command(BaseCommand):
         "insert into buffer \
           (producing_id,name,item_id,location_id,subcategory,lastmodified,source) \
           values (%%s,%%s,%%s,%%s,'openbravo','%s',%%s)" % self.date,
-        [ (i[0],i[1],i[2],i[3],i[8]) for i in purchasing if i[1] not in frepple_keys ]
+        [ (i[0], i[1], i[2], i[3], i[8]) for i in purchasing if i[1] not in frepple_keys ]
         )
       cursor.executemany(
         "update buffer \
           set producing_id=%%s, source=%%s, item_id=%%s, location_id=%%s, \
           subcategory='openbravo', lastmodified='%s' \
           where name=%%s" % self.date,
-        [ (i[0],i[8],i[2],i[3],i[1]) for i in purchasing if i[1] in frepple_keys ]
+        [ (i[0], i[8], i[2], i[3], i[1]) for i in purchasing if i[1] in frepple_keys ]
         )
 
       # Create or update flows
@@ -1087,13 +1095,13 @@ class Command(BaseCommand):
         "insert into flow \
           (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
           values(%%s,%%s,1,'end','openbravo','%s')" % self.date,
-        [ (i[0],i[1]) for i in purchasing if (i[0],i[1]) not in frepple_keys ]
+        [ (i[0], i[1]) for i in purchasing if (i[0], i[1]) not in frepple_keys ]
         )
       cursor.executemany(
         "update flow \
           set quantity=1, type='end', source='openbravo', lastmodified='%s' \
           where operation_id=%%s and thebuffer_id=%%s" % self.date,
-        [ (i[0],i[1]) for i in purchasing if (i[0],i[1]) in frepple_keys ]
+        [ (i[0], i[1]) for i in purchasing if (i[0], i[1]) in frepple_keys ]
         )
 
       transaction.commit(using=self.database)
@@ -1177,7 +1185,9 @@ class Command(BaseCommand):
         orderedQuantity = float(elem.find("orderedQuantity").text or 0)
         deliveredQuantity = float(elem.find("deliveredQuantity").text or 0)
         operation = u'Purchase %s @ %s' % (product, warehouse)
-        deliveries.update([(product,warehouse,operation,u'%s @ %s' % (product, warehouse)),])
+        deliveries.update([
+          (product, warehouse, operation, u'%s @ %s' % (product, warehouse))
+          ])
         if objectid in frepple_keys:
           if deliveredQuantity >= orderedQuantity:   # TODO Not the right criterion
             delete.append( (objectid,) )
@@ -1209,11 +1219,11 @@ class Command(BaseCommand):
         "insert into operation \
           (name,location_id,subcategory,type,lastmodified) \
           values (%%s,%%s,'openbravo','fixed_time','%s')" % self.date,
-        [ (i[2],i[1]) for i in deliveries if i[2] not in frepple_keys ])
+        [ (i[2], i[1]) for i in deliveries if i[2] not in frepple_keys ])
       cursor.executemany(
         "update operation \
           set location_id=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
-        [ (i[1],i[2]) for i in deliveries if i[2] in frepple_keys ])
+        [ (i[1], i[2]) for i in deliveries if i[2] in frepple_keys ])
 
       # Create or update purchasing buffers
       cursor.execute("SELECT name FROM buffer")
@@ -1222,11 +1232,11 @@ class Command(BaseCommand):
         "insert into buffer \
           (name,item_id,location_id,subcategory,lastmodified) \
           values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        [ (i[3],i[0],i[1]) for i in deliveries if i[3] not in frepple_keys ])
+        [ (i[3], i[0], i[1]) for i in deliveries if i[3] not in frepple_keys ])
       cursor.executemany(
         "update buffer \
           set item_id=%%s, location_id=%%s, subcategory='openbravo', lastmodified='%s' where name=%%s" % self.date,
-        [ (i[0],i[1],i[3]) for i in deliveries if i[3] in frepple_keys ])
+        [ (i[0], i[1], i[3]) for i in deliveries if i[3] in frepple_keys ])
 
       # Create or update flow on purchasing operation
       cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
@@ -1235,11 +1245,11 @@ class Command(BaseCommand):
         "insert into flow \
           (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
           values(%%s,%%s,1,'end','openbravo','%s')" % self.date,
-        [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) not in frepple_keys ])
+        [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) not in frepple_keys ])
       cursor.executemany(
         "update flow \
           set quantity=1, type='end', source='openbravo', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
-        [ (i[2],i[3]) for i in deliveries if (i[2],i[3]) in frepple_keys ])
+        [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) in frepple_keys ])
 
       # Create purchasing operationplans
       cursor.executemany(
@@ -1302,7 +1312,7 @@ class Command(BaseCommand):
         FROM operation \
         WHERE subcategory='openbravo' \
           and source is not null")
-      frepple_operations = { (i[1],i[2]): i[0] for i in cursor.fetchall() }
+      frepple_operations = { (i[1], i[2]): i[0] for i in cursor.fetchall() }
 
       # Get the list of all open work requirements
       insert = []
@@ -1319,16 +1329,16 @@ class Command(BaseCommand):
         location = self.organization_location.get(organization, None)
         if not location:
           continue
-        processPlan = frepple_operations.get( (elem.find("processPlan").get('id'),location), None)
+        processPlan = frepple_operations.get( (elem.find("processPlan").get('id'), location), None)
         if not processPlan:
           continue
         startingDate = datetime.strptime(elem.find("startingDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
         endingDate = datetime.strptime(elem.find("endingDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
         if objectid in frepple_keys:
-          update.append( (processPlan,quantity,startingDate,endingDate,objectid) )
+          update.append( (processPlan, quantity, startingDate, endingDate, objectid) )
         else:
           idcounter += 1
-          insert.append( (idcounter,processPlan,quantity,startingDate,endingDate,objectid) )
+          insert.append( (idcounter, processPlan, quantity, startingDate, endingDate, objectid) )
         unused_keys.discard(objectid)
         # Clean the XML hierarchy
         root.clear()
@@ -1395,9 +1405,9 @@ class Command(BaseCommand):
       frepple_keys = set()
       for i in cursor.fetchall():
         if i[1] in frepple_buffers:
-          frepple_buffers[i[1]].append( (i[0],i[2]) )
+          frepple_buffers[i[1]].append( (i[0], i[2]) )
         else:
-          frepple_buffers[i[1]] = [ (i[0],i[2]) ]
+          frepple_buffers[i[1]] = [ (i[0], i[2]) ]
         frepple_keys.add(i[0])
 
       # Loop over all productboms
@@ -1444,11 +1454,11 @@ class Command(BaseCommand):
         "insert into operation \
           (name,location_id,subcategory,type,duration,lastmodified) \
           values(%%s,%%s,'openbravo','fixed_time',0,'%s')" % self.date,
-        [ (i[0],i[1]) for i in operations ]
+        [ (i[0], i[1]) for i in operations ]
         )
       cursor.executemany(
         "update buffer set producing_id=%%s, lastmodified='%s' where name=%%s" % self.date,
-        [ (i[0],i[2]) for i in operations ]
+        [ (i[0], i[2]) for i in operations ]
         )
       cursor.executemany(
         "insert into buffer \
@@ -1514,9 +1524,9 @@ class Command(BaseCommand):
       frepple_buffers = {}
       for i in cursor.fetchall():
         if i[1] in frepple_buffers:
-          frepple_buffers[i[1]].append( (i[0],i[2]) )
+          frepple_buffers[i[1]].append( (i[0], i[2]) )
         else:
-          frepple_buffers[i[1]] = [ (i[0],i[2]) ]
+          frepple_buffers[i[1]] = [ (i[0], i[2]) ]
 
       # Get a dictionary with all process plans
       processplans = {}
@@ -1568,7 +1578,7 @@ class Command(BaseCommand):
             frepple_operations.add(routing_name)
             operations.append( (routing_name, loc, 'routing', None, processplan) )
             #flows[ (routing_name, name, 'end') ] = 1
-            buffers_update.append( (routing_name,name) )
+            buffers_update.append( (routing_name, name) )
             tmp1 = pp_version.find('manufacturingOperationList')
             if tmp1:
               steps = set()
@@ -1600,12 +1610,12 @@ class Command(BaseCommand):
                           opbuffer = bname
                           break
                     if not opbuffer:
-                      opbuffer = "%s @ %s" % (opproduct,loc)
+                      opbuffer = "%s @ %s" % (opproduct, loc)
                       buffers_create.append( (opbuffer, opproduct, loc) )
                       if not opproduct in frepple_buffers:
-                        frepple_buffers[opproduct] = [ (opbuffer,loc) ]
+                        frepple_buffers[opproduct] = [ (opbuffer, loc) ]
                       else:
-                        frepple_buffers[opproduct].append( (opbuffer,loc) )
+                        frepple_buffers[opproduct].append( (opbuffer, loc) )
                     if productionType == '-':
                       flow_key = (step_name, opbuffer, 'start')
                       if flow_key in flows:

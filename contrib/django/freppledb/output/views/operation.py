@@ -40,10 +40,10 @@ class OverviewReport(GridPivot):
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='location', editable=False),
     )
   crosses = (
-    ('locked_start', {'title': _('locked starts'),}),
-    ('total_start', {'title': _('total starts'),}),
-    ('locked_end', {'title': _('locked ends'),}),
-    ('total_end', {'title': _('total ends'),}),
+    ('locked_start', {'title': _('locked starts')}),
+    ('total_start', {'title': _('total starts')}),
+    ('locked_end', {'title': _('locked ends')}),
+    ('total_end', {'title': _('total ends')}),
     )
 
   @classmethod
@@ -128,9 +128,9 @@ class DetailReport(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
-      return OperationPlan.objects.filter(operation__exact=args[0]).extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+      return OperationPlan.objects.filter(operation__exact=args[0]).extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name"})
     else:
-      return OperationPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+      return OperationPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name"})
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):

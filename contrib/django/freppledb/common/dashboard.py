@@ -155,10 +155,10 @@ class Widget:
     '''
     Return the name of the Django application which defines this widget.
     '''
-    if hasattr(cls,'app_label'):
+    if hasattr(cls, 'app_label'):
       return cls.app_label
     s = cls.__module__.split('.')
-    for i in range(len(s),0,-1):
+    for i in range(len(s), 0, -1):
       x = '.'.join(s[0:i])
       if x in settings.INSTALLED_APPS:
         cls.app_label = s[i - 1]

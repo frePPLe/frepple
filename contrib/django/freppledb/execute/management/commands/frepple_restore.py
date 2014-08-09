@@ -114,13 +114,13 @@ class Command(BaseCommand):
       # Validate options
       if not args:
         raise CommandError("No dump file specified")
-      if not os.path.isfile(os.path.join(settings.FREPPLE_LOGDIR,args[0])):
+      if not os.path.isfile(os.path.join(settings.FREPPLE_LOGDIR, args[0])):
         raise CommandError("Dump file not found")
 
       # Run the restore command
       if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
         # SQLITE
-        shutil.copy2(os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR,args[0])), settings.DATABASES[database]['NAME'])
+        shutil.copy2(os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, args[0])), settings.DATABASES[database]['NAME'])
       elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.mysql':
         # MYSQL
         cmd = [
@@ -133,7 +133,7 @@ class Command(BaseCommand):
         if settings.DATABASES[database]['PORT']:
           cmd.append("--port=%s " % settings.DATABASES[database]['PORT'])
         cmd.append(settings.DATABASES[database]['NAME'])
-        cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR,args[0])))
+        cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, args[0])))
         ret = subprocess.call(cmd, shell=True)  # Shell needs to be True in order to interpret the < character
         if ret:
           raise Exception("Run of mysql failed")
@@ -176,7 +176,7 @@ class Command(BaseCommand):
         if settings.DATABASES[database]['PORT']:
           cmd.append("--port=%s " % settings.DATABASES[database]['PORT'])
         cmd.append(settings.DATABASES[database]['NAME'])
-        cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR,args[0])))
+        cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, args[0])))
         ret = subprocess.call(cmd, shell=True)  # Shell needs to be True in order to interpret the < character
         if ret:
           raise Exception("Run of run psql failed")

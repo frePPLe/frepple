@@ -37,10 +37,10 @@ class CalendarBucket_admin(MultiDBModelAdmin):
   fieldsets = (
     (None, {'fields': ('calendar', ('startdate', 'enddate'), 'value', 'priority')}),
     (_('Repeating pattern'), {
-      'fields': (('starttime', 'endtime'),('monday','tuesday','wednesday','thursday','friday','saturday','sunday')),
+      'fields': (('starttime', 'endtime'), ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')),
       }),
     )
-data_site.register(CalendarBucket,CalendarBucket_admin)
+data_site.register(CalendarBucket, CalendarBucket_admin)
 
 
 class Calendar_admin(MultiDBModelAdmin):
@@ -48,7 +48,7 @@ class Calendar_admin(MultiDBModelAdmin):
   save_on_top = True
   inlines = [ CalendarBucket_inline, ]
   exclude = ('source',)
-data_site.register(Calendar,Calendar_admin)
+data_site.register(Calendar, Calendar_admin)
 
 
 class Location_admin(MultiDBModelAdmin):
@@ -56,7 +56,7 @@ class Location_admin(MultiDBModelAdmin):
   raw_id_fields = ('available', 'owner',)
   save_on_top = True
   exclude = ('source',)
-data_site.register(Location,Location_admin)
+data_site.register(Location, Location_admin)
 
 
 class Customer_admin(MultiDBModelAdmin):
@@ -64,7 +64,7 @@ class Customer_admin(MultiDBModelAdmin):
   raw_id_fields = ('owner',)
   save_on_top = True
   exclude = ('source',)
-data_site.register(Customer,Customer_admin)
+data_site.register(Customer, Customer_admin)
 
 
 class Item_admin(MultiDBModelAdmin):
@@ -72,7 +72,7 @@ class Item_admin(MultiDBModelAdmin):
   save_on_top = True
   raw_id_fields = ('operation', 'owner',)
   exclude = ('source',)
-data_site.register(Item,Item_admin)
+data_site.register(Item, Item_admin)
 
 
 class SubOperation_inline(MultiDBTabularInline):
@@ -113,11 +113,11 @@ class Operation_admin(MultiDBModelAdmin):
   fieldsets = (
     (None, {'fields': ('name', 'type', 'location', 'description', ('category', 'subcategory'))}),
     (_('Planning parameters'), {
-      'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per','search'),
+      'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per', 'search'),
         'classes': ('collapse',)
        }),
     )
-data_site.register(Operation,Operation_admin)
+data_site.register(Operation, Operation_admin)
 
 
 class SubOperation_admin(MultiDBModelAdmin):
@@ -125,26 +125,26 @@ class SubOperation_admin(MultiDBModelAdmin):
   raw_id_fields = ('operation', 'suboperation',)
   save_on_top = True
   exclude = ('source',)
-data_site.register(SubOperation,SubOperation_admin)
+data_site.register(SubOperation, SubOperation_admin)
 
 
 class Buffer_admin(MultiDBModelAdmin):
   raw_id_fields = ('location', 'item', 'minimum_calendar', 'producing', 'owner', )
   fieldsets = (
-            (None,{
-              'fields': (('name'), ('item', 'location'), 'description', 'owner', ('category', 'subcategory'))}),
-            (_('Inventory'), {
-              'fields': ('onhand',)}),
-            (_('Planning parameters'), {
-              'fields': ('type','minimum','minimum_calendar','producing','carrying_cost'),
-              'classes': ('collapse',)},),
-            (_('Planning parameters for procurement buffers'), {
-              'fields': ('leadtime','fence','min_inventory','max_inventory','min_interval','max_interval','size_minimum','size_multiple','size_maximum'),
-              'classes': ('collapse',)},),
-        )
+    (None, {
+      'fields': (('name'), ('item', 'location'), 'description', 'owner', ('category', 'subcategory'))}),
+    (_('Inventory'), {
+      'fields': ('onhand',)}),
+    (_('Planning parameters'), {
+      'fields': ('type', 'minimum', 'minimum_calendar', 'producing', 'carrying_cost'),
+      'classes': ('collapse',)},),
+    (_('Planning parameters for procurement buffers'), {
+      'fields': ('leadtime', 'fence', 'min_inventory', 'max_inventory', 'min_interval', 'max_interval', 'size_minimum', 'size_multiple', 'size_maximum'),
+      'classes': ('collapse',)},),
+    )
   save_on_top = True
   inlines = [ Flow_inline, ]
-data_site.register(Buffer,Buffer_admin)
+data_site.register(Buffer, Buffer_admin)
 
 
 class SetupRule_inline(MultiDBTabularInline):
@@ -158,14 +158,14 @@ class SetupMatrix_admin(MultiDBModelAdmin):
   save_on_top = True
   inlines = [ SetupRule_inline, ]
   exclude = ('source',)
-data_site.register(SetupMatrix,SetupMatrix_admin)
+data_site.register(SetupMatrix, SetupMatrix_admin)
 
 
 class Skill_admin(MultiDBModelAdmin):
   model = Skill
   save_on_top = True
   exclude = ('source',)
-data_site.register(Skill,Skill_admin)
+data_site.register(Skill, Skill_admin)
 
 
 class ResourceSkill_admin(MultiDBModelAdmin):
@@ -173,7 +173,7 @@ class ResourceSkill_admin(MultiDBModelAdmin):
   raw_id_fields = ('resource', 'skill')
   save_on_top = True
   exclude = ('source',)
-data_site.register(ResourceSkill,ResourceSkill_admin)
+data_site.register(ResourceSkill, ResourceSkill_admin)
 
 
 class Resource_admin(MultiDBModelAdmin):
@@ -182,7 +182,7 @@ class Resource_admin(MultiDBModelAdmin):
   save_on_top = True
   inlines = [ Load_inline, ResourceSkill_inline, ]
   exclude = ('source',)
-data_site.register(Resource,Resource_admin)
+data_site.register(Resource, Resource_admin)
 
 
 class Flow_admin(MultiDBModelAdmin):
@@ -192,10 +192,10 @@ class Flow_admin(MultiDBModelAdmin):
   fieldsets = (
     (None, {'fields': ('thebuffer', 'operation', 'type', 'quantity', ('effective_start', 'effective_end'))}),
     (_('Alternates'), {
-       'fields': ('name','alternate','priority','search'),
+       'fields': ('name', 'alternate', 'priority', 'search'),
        }),
     )
-data_site.register(Flow,Flow_admin)
+data_site.register(Flow, Flow_admin)
 
 
 class Load_admin(MultiDBModelAdmin):
@@ -205,27 +205,27 @@ class Load_admin(MultiDBModelAdmin):
   fieldsets = (
     (None, {'fields': ('resource', 'operation', 'quantity', 'skill', 'setup', ('effective_start', 'effective_end'))}),
     (_('Alternates'), {
-       'fields': ('name','alternate','priority','search'),
+       'fields': ('name', 'alternate', 'priority', 'search'),
        }),
     )
-data_site.register(Load,Load_admin)
+data_site.register(Load, Load_admin)
 
 
 
 class OperationPlan_admin(MultiDBModelAdmin):
   model = OperationPlan
-  raw_id_fields = ('operation','owner',)
+  raw_id_fields = ('operation', 'owner',)
   save_on_top = True
   exclude = ('source',)
-data_site.register(OperationPlan,OperationPlan_admin)
+data_site.register(OperationPlan, OperationPlan_admin)
 
 
 class Demand_admin(MultiDBModelAdmin):
   model = Demand
   raw_id_fields = ('customer', 'item', 'operation', 'owner',)
   fieldsets = (
-            (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority', 'status', 'owner')}),
-            (_('Planning parameters'), {'fields': ('operation', 'minshipment', 'maxlateness'), 'classes': ('collapse')}),
-        )
+    (None, {'fields': ('name', 'item', 'customer', 'description', 'category', 'subcategory', 'due', 'quantity', 'priority', 'status', 'owner')}),
+    (_('Planning parameters'), {'fields': ('operation', 'minshipment', 'maxlateness'), 'classes': ('collapse')}),
+    )
   save_on_top = True
-data_site.register(Demand,Demand_admin)
+data_site.register(Demand, Demand_admin)

@@ -55,30 +55,30 @@ if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3
     return '1'
 
   def sql_datediff(d1, d2):
-    return "((strftime('%%%%s',%s) - strftime('%%%%s',%s)) / 86400.0)" % (d1,d2)
+    return "((strftime('%%%%s',%s) - strftime('%%%%s',%s)) / 86400.0)" % (d1, d2)
 
   def sql_overlap(s1, e1, s2, e2):
     return "max(0,((" \
       "min(strftime('%%%%s',%s),strftime('%%%%s',%s)) - " \
       "max(strftime('%%%%s',%s),strftime('%%%%s',%s)) " \
-      ")) / 86400.0)" % (e1,e2,s1,s2)
+      ")) / 86400.0)" % (e1, e2, s1, s2)
 
   def sql_overlap3(s1, e1, s2, e2, s3, e3):
     return "max(0,((" \
       "min(strftime('%%%%s',%s),strftime('%%%%s',%s),strftime('%%%%s',%s)) - " \
       "max(strftime('%%%%s',%s),strftime('%%%%s',%s),strftime('%%%%s',%s)) " \
-      ")) / 86400.0)" % (e1,e2,e3,s1,s2,s3)
+      ")) / 86400.0)" % (e1, e2, e3, s1, s2, s3)
 
   def sql_max(d1, d2):
-    return "max(%s,%s)" % (d1,d2)
+    return "max(%s,%s)" % (d1, d2)
 
   def sql_min(d1, d2):
-    return "min(%s,%s)" % (d1,d2)
+    return "min(%s,%s)" % (d1, d2)
 
   def python_date(d):
-    if isinstance(d,datetime):
+    if isinstance(d, datetime):
       return d.date()
-    return datetime.strptime(d,'%Y-%m-%d %H:%M:%S').date()
+    return datetime.strptime(d, '%Y-%m-%d %H:%M:%S').date()
 
 
 # Functions for POSTGRESQL
@@ -88,23 +88,23 @@ elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postg
     return 'true'
 
   def sql_datediff(d1, d2):
-    return '(extract(epoch from (cast(%s as timestamp) - cast(%s as timestamp))) / 86400)' % (d1,d2)
+    return '(extract(epoch from (cast(%s as timestamp) - cast(%s as timestamp))) / 86400)' % (d1, d2)
 
   def sql_overlap(s1, e1, s2, e2):
     return 'greatest(0,extract(epoch from ' \
       '(least(cast(%s as timestamp),cast(%s as timestamp)) ' \
-      ' - greatest(cast(%s as timestamp),cast(%s as timestamp)))) / 86400)' % (e1,e2,s1,s2)
+      ' - greatest(cast(%s as timestamp),cast(%s as timestamp)))) / 86400)' % (e1, e2, s1, s2)
 
   def sql_overlap3(s1, e1, s2, e2, s3, e3):
     return 'greatest(0,extract(epoch from ' \
       '(least(cast(%s as timestamp),cast(%s as timestamp),cast(%s as timestamp)) ' \
-      ' - greatest(cast(%s as timestamp),cast(%s as timestamp),cast(%s as timestamp)))) / 86400)' % (e1,e2,e3,s1,s2,s3)
+      ' - greatest(cast(%s as timestamp),cast(%s as timestamp),cast(%s as timestamp)))) / 86400)' % (e1, e2, e3, s1, s2, s3)
 
   def sql_max(d1, d2):
-    return "greatest(%s,%s)" % (d1,d2)
+    return "greatest(%s,%s)" % (d1, d2)
 
   def sql_min(d1, d2):
-    return "least(%s,%s)" % (d1,d2)
+    return "least(%s,%s)" % (d1, d2)
 
   def python_date(d):
     return d.date()

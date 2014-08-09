@@ -58,7 +58,10 @@ class cookbooktest(TransactionTestCase):
 
   def assertOperationplans(self, resultfile):
     resultfilename = os.path.join(os.path.dirname(os.path.realpath(__file__)), resultfile)
-    opplans = [ "%s,%s,%s,%s" % (i.operation, i.startdate, i.enddate, i.quantity) for i in output.models.OperationPlan.objects.order_by('operation','startdate','quantity').only('operation','startdate','enddate','quantity') ]
+    opplans = [
+      "%s,%s,%s,%s" % (i.operation, i.startdate, i.enddate, i.quantity)
+      for i in output.models.OperationPlan.objects.order_by('operation', 'startdate', 'quantity').only('operation', 'startdate', 'enddate', 'quantity')
+      ]
     row = 0
     with open(resultfilename, 'r') as f:
       for line in f:

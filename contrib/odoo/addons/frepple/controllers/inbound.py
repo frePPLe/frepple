@@ -48,7 +48,7 @@ class importer(object):
     # Look up the company id
     company_id = None
     m = self.req.session.model('res.company')
-    for i in m.search([('name','=',self.company)],context=self.req.session.context):
+    for i in m.search([('name', '=', self.company)], context=self.req.session.context):
       company_id = i
     if not company_id:
       raise Exception("Company configured in parameter odoo.company doesn't exist")
@@ -56,7 +56,7 @@ class importer(object):
     # Cancel previous draft purchase quotations
     m = self.req.session.model('purchase.order')
     ids = m.search(
-      [('state','=','draft'),('origin','=','frePPLe')],
+      [('state', '=', 'draft'), ('origin', '=', 'frePPLe')],
       context=self.req.session.context
       )
     m.unlink(ids, self.req.session.context)
@@ -65,7 +65,7 @@ class importer(object):
     # Cancel previous draft procurement orders
     proc_order = self.req.session.model('procurement.order')
     ids = proc_order.search(
-      ['|',('state','=','draft'),('state','=','cancel'),('origin','=','frePPLe')],
+      ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')],
       context=self.req.session.context
       )
     proc_order.unlink(ids, self.req.session.context)
@@ -74,16 +74,16 @@ class importer(object):
     # Cancel previous draft manufacturing orders
     mfg_order = self.req.session.model('mrp.production')
     ids = mfg_order.search(
-        ['|',('state','=','draft'),('state','=','cancel'),('origin','=','frePPLe'),],
-        context=self.req.session.context
-        )
+      ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')],
+      context=self.req.session.context
+      )
     mfg_order.unlink(ids, self.req.session.context)
     msg.append("Removed %s old draft manufacturing orders" % len(ids))
 
     # Parsing the XML data file
     countproc = 0
     countmfg = 0
-    for event, elem in iterparse(self.datafile, events=('start','end')):
+    for event, elem in iterparse(self.datafile, events=('start', 'end')):
       if event == 'end' and elem.tag == 'operationplan':
         uom_id, item_id = elem.get('item').split(',')
         n = elem.get('operation')
@@ -132,4 +132,3 @@ class importer(object):
     msg.append("Processed %s uploaded procurement orders" % countproc)
     msg.append("Processed %s uploaded manufacturing orders" % countmfg)
     return '\n'.join(msg)
-

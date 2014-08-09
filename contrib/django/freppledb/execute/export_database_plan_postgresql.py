@@ -58,9 +58,9 @@ def exportProblems(process):
   for i in frepple.problems():
     process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
        i.entity.encode(encoding), i.name.encode(encoding),
-       isinstance(i.owner,frepple.operationplan) and i.owner.operation.name.encode(encoding) or i.owner.name.encode(encoding),
+       isinstance(i.owner, frepple.operationplan) and i.owner.operation.name.encode(encoding) or i.owner.name.encode(encoding),
        i.description.encode(encoding)[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
-       round(i.weight,settings.DECIMAL_PLACES)
+       round(i.weight, settings.DECIMAL_PLACES)
     ))
   process.stdin.write('\\.\n')
   print('Exported problems in %.2f seconds' % (time() - starttime))
@@ -74,9 +74,9 @@ def exportConstraints(process):
     for i in d.constraints:
       process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
          d.name.encode(encoding), i.entity.encode(encoding), i.name.encode(encoding),
-         isinstance(i.owner,frepple.operationplan) and i.owner.operation.name.encode(encoding) or i.owner.name.encode(encoding),
+         isinstance(i.owner, frepple.operationplan) and i.owner.operation.name.encode(encoding) or i.owner.name.encode(encoding),
          i.description.encode(encoding)[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
-         round(i.weight,settings.DECIMAL_PLACES)
+         round(i.weight, settings.DECIMAL_PLACES)
        ))
   process.stdin.write('\\.\n')
   print('Exported constraints in %.2f seconds' % (time() - starttime))
@@ -90,8 +90,8 @@ def exportOperationplans(process):
     for j in i.operationplans:
       process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
         j.id, i.name[0:settings.NAMESIZE].encode(encoding),
-        round(j.quantity,settings.DECIMAL_PLACES), str(j.start), str(j.end),
-        round(j.criticality,settings.DECIMAL_PLACES), j.locked, j.unavailable,
+        round(j.quantity, settings.DECIMAL_PLACES), str(j.start), str(j.end),
+        round(j.criticality, settings.DECIMAL_PLACES), j.locked, j.unavailable,
         j.owner and j.owner.id or "\\N"
         ))
   process.stdin.write('\\.\n')
@@ -106,8 +106,8 @@ def exportFlowplans(process):
     for j in i.flowplans:
       process.stdin.write("%s\t%s\t%s\t%s\t%s\n" % (
          j.operationplan.id, j.buffer.name.encode(encoding),
-         round(j.quantity,settings.DECIMAL_PLACES),
-         str(j.date), round(j.onhand,settings.DECIMAL_PLACES)
+         round(j.quantity, settings.DECIMAL_PLACES),
+         str(j.date), round(j.onhand, settings.DECIMAL_PLACES)
          ))
   process.stdin.write('\\.\n')
   print('Exported flowplans in %.2f seconds' % (time() - starttime))
@@ -121,10 +121,11 @@ def exportLoadplans(process):
     for j in i.loadplans:
       if j.quantity < 0:
         process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\n" % (
-         j.operationplan.id, j.resource.name.encode(encoding),
-         round(-j.quantity,settings.DECIMAL_PLACES),
-         str(j.startdate), str(j.enddate), j.setup and j.setup.encode(encoding) or "\\N"
-       ))
+          j.operationplan.id, j.resource.name.encode(encoding),
+          round(-j.quantity, settings.DECIMAL_PLACES),
+          str(j.startdate), str(j.enddate),
+          j.setup and j.setup.encode(encoding) or "\\N"
+          ))
   process.stdin.write('\\.\n')
   print('Exported loadplans in %.2f seconds' % (time() - starttime))
 
@@ -166,11 +167,11 @@ def exportResourceplans(process):
     for j in i.plan(buckets):
       process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
        i.name.encode(encoding), str(j['start']),
-       round(j['available'],settings.DECIMAL_PLACES),
-       round(j['unavailable'],settings.DECIMAL_PLACES),
-       round(j['setup'],settings.DECIMAL_PLACES),
-       round(j['load'],settings.DECIMAL_PLACES),
-       round(j['free'],settings.DECIMAL_PLACES)
+       round(j['available'], settings.DECIMAL_PLACES),
+       round(j['unavailable'], settings.DECIMAL_PLACES),
+       round(j['setup'], settings.DECIMAL_PLACES),
+       round(j['load'], settings.DECIMAL_PLACES),
+       round(j['free'], settings.DECIMAL_PLACES)
        ))
   process.stdin.write('\\.\n')
   print('Exported resourceplans in %.2f seconds' % (time() - starttime))
@@ -190,14 +191,14 @@ def exportDemand(process):
           cur = 0
       yield (
         d.name.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
-        round(cur,settings.DECIMAL_PLACES), str(i.end),
-        round(i.quantity,settings.DECIMAL_PLACES), i.id
+        round(cur, settings.DECIMAL_PLACES), str(i.end),
+        round(i.quantity, settings.DECIMAL_PLACES), i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
         d.name.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
-        round(d.quantity - cumplanned,settings.DECIMAL_PLACES), "\\N",
+        round(d.quantity - cumplanned, settings.DECIMAL_PLACES), "\\N",
         "\\N", "\\N"
         )
 
@@ -231,8 +232,8 @@ def exportPegging(process):
         j.producing and j.producing.id or '0', str(j.producing_date),
         j.buffer and j.buffer.name.encode(encoding) or '',
         (j.buffer and j.buffer.item and j.buffer.item.name.encode(encoding)) or '',
-        round(j.quantity_demand,settings.DECIMAL_PLACES),
-        round(j.quantity_buffer,settings.DECIMAL_PLACES)
+        round(j.quantity_demand, settings.DECIMAL_PLACES),
+        round(j.quantity_buffer, settings.DECIMAL_PLACES)
        ))
   process.stdin.write('\\.\n')
   print('Exported pegging in %.2f seconds' % (time() - starttime))

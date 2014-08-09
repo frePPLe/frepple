@@ -8,10 +8,15 @@
     'summary': '',
     'author': 'frePPLe bvba',
     'website': 'http://frepple.com',
-    'depends': ['procurement','product','purchase','sale'],
+    'depends': [
+      'procurement',
+      'product',
+      'purchase',
+      'sale'
+      ],
     'data': [
-       'frepple_data.xml',
-    ],
+      'frepple_data.xml',
+      ],
     'demo': [],
     'test': [],
     'installable': True,

@@ -60,7 +60,7 @@ class CrumbsNode(Node):
       req = context['request']
     except:
       return ''  # No request found in the context: no crumbs...
-    if not hasattr(req,'session'):
+    if not hasattr(req, 'session'):
       return  # No session found in the context: no crumbs...
 
     # Pick up the current crumbs from the session cookie
@@ -172,8 +172,8 @@ def set_var(parser, token):
   from re import split
   bits = split(r'\s+', token.contents, 2)
   if len(bits) < 2:
-      raise TemplateSyntaxError("'%s' tag requires two arguments" % bits[0])
-  return SetVariable(bits[1],bits[2])
+    raise TemplateSyntaxError("'%s' tag requires two arguments" % bits[0])
+  return SetVariable(bits[1], bits[2])
 
 register.tag('set', set_var)
 
@@ -233,9 +233,9 @@ class SelectDatabaseNode(Node):
     for i in scenarios:
       i = i['name']
       if i == req.database:
-        s.append(u'<option value="%s" selected="selected">%s</option>' % (i,i))
+        s.append(u'<option value="%s" selected="selected">%s</option>' % (i, i))
       else:
-        s.append(u'<option value="%s">%s</option>' % (i,i))
+        s.append(u'<option value="%s">%s</option>' % (i, i))
     s.append(u'</select></form>')
     return ''.join(s)
 
@@ -372,13 +372,17 @@ class ModelDependenciesNode(Node):
   '''
   def render(self, context):
     return json.dumps( dict([
-      ("%s.%s" % (i._meta.app_label, i._meta.model_name),
-       [ "%s.%s" % (j[0].model._meta.app_label, j[0].model._meta.model_name)
-         for j in i._meta.get_all_related_objects_with_model()
-         if j[0].model != i
-       ])
-      for i in models.get_models(include_auto_created=True)
-      ]) )
+        (
+         "%s.%s" % (i._meta.app_label, i._meta.model_name),
+         [
+           "%s.%s" % (j[0].model._meta.app_label, j[0].model._meta.model_name)
+           for j in i._meta.get_all_related_objects_with_model()
+           if j[0].model != i
+         ]
+        )
+        for i in models.get_models(include_auto_created=True)
+      ])
+      )
 
   def __repr__(self):
     return "<getModelDependencies Node>"

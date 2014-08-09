@@ -39,26 +39,26 @@ class execute_with_commands(TransactionTestCase):
 
   def test_run_cmd(self):
     # Empty the database tables
-    self.assertNotEqual(input.models.Calendar.objects.count(),0)
+    self.assertNotEqual(input.models.Calendar.objects.count(), 0)
     management.call_command('frepple_flush')
-    self.assertEqual(input.models.Calendar.objects.count(),0)
-    self.assertEqual(input.models.Demand.objects.count(),0)
-    self.assertEqual(output.models.Problem.objects.count(),0)
-    self.assertEqual(output.models.FlowPlan.objects.count(),0)
-    self.assertEqual(output.models.LoadPlan.objects.count(),0)
-    self.assertEqual(output.models.OperationPlan.objects.count(),0)
+    self.assertEqual(input.models.Calendar.objects.count(), 0)
+    self.assertEqual(input.models.Demand.objects.count(), 0)
+    self.assertEqual(output.models.Problem.objects.count(), 0)
+    self.assertEqual(output.models.FlowPlan.objects.count(), 0)
+    self.assertEqual(output.models.LoadPlan.objects.count(), 0)
+    self.assertEqual(output.models.OperationPlan.objects.count(), 0)
 
     # Create a new model
     management.call_command('frepple_createmodel', cluster='1', verbosity='0')
-    self.assertNotEqual(input.models.Calendar.objects.count(),0)
-    self.assertNotEqual(input.models.Demand.objects.count(),0)
+    self.assertNotEqual(input.models.Calendar.objects.count(), 0)
+    self.assertNotEqual(input.models.Demand.objects.count(), 0)
 
     # Run frePPLe on the test database
     management.call_command('frepple_run', plantype=1, constraint=15)
-    self.assertEqual(output.models.Problem.objects.count(),387)
-    self.assertEqual(output.models.FlowPlan.objects.count(),1847)
-    self.assertEqual(output.models.LoadPlan.objects.count(),199)
-    self.assertEqual(output.models.OperationPlan.objects.count(),840)
+    self.assertEqual(output.models.Problem.objects.count(), 387)
+    self.assertEqual(output.models.FlowPlan.objects.count(), 1847)
+    self.assertEqual(output.models.LoadPlan.objects.count(), 199)
+    self.assertEqual(output.models.OperationPlan.objects.count(), 840)
 
 
 class execute_multidb(TransactionTestCase):
@@ -85,16 +85,16 @@ class execute_multidb(TransactionTestCase):
     # Check count in both databases
     count1 = output.models.FlowPlan.objects.all().using(db1).count()
     count2 = output.models.FlowPlan.objects.all().using(db2).count()
-    self.assertEqual(count1,0)
-    self.assertEqual(count2,0)
+    self.assertEqual(count1, 0)
+    self.assertEqual(count2, 0)
 
     # Erase second database
     count1 = input.models.Demand.objects.all().using(db1).count()
     management.call_command('frepple_flush', database=db2)
     count1new = input.models.Demand.objects.all().using(db1).count()
     count2 = input.models.Demand.objects.all().using(db2).count()
-    self.assertEqual(count1new,count1)
-    self.assertEqual(count2,0)
+    self.assertEqual(count1new, count1)
+    self.assertEqual(count2, 0)
 
     # Copy the db1 into db2.
     # We need to close the transactions, since they can block the copy
@@ -103,15 +103,15 @@ class execute_multidb(TransactionTestCase):
     management.call_command('frepple_copy', db1, db2)
     count1 = output.models.Demand.objects.all().using(db1).count()
     count2 = output.models.Demand.objects.all().using(db2).count()
-    self.assertEqual(count1,count2)
+    self.assertEqual(count1, count2)
 
     # Run the plan on db1.
     # The count changes in db1 and not in db2.
     management.call_command('frepple_run', plantype=1, constraint=15, database=db1)
     count1 = output.models.FlowPlan.objects.all().using(db1).count()
     count2 = output.models.FlowPlan.objects.all().using(db2).count()
-    self.assertNotEqual(count1,0)
-    self.assertEqual(count2,0)
+    self.assertNotEqual(count1, 0)
+    self.assertEqual(count2, 0)
 
     # Run a plan on db2.
     # The count changes in db1 and not in db2.
@@ -119,9 +119,9 @@ class execute_multidb(TransactionTestCase):
     management.call_command('frepple_run', plantype=1, constraint=0, database=db2)
     count1new = output.models.FlowPlan.objects.all().using(db1).count()
     count2 = output.models.FlowPlan.objects.all().using(db2).count()
-    self.assertEqual(count1new,count1)
-    self.assertNotEqual(count2,0)
-    self.assertNotEqual(count2,count1new)
+    self.assertEqual(count1new, count1)
+    self.assertNotEqual(count2, 0)
+    self.assertNotEqual(count2, count1new)
 
 
 class FixtureTest(TestCase):

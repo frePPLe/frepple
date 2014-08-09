@@ -64,8 +64,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     obj = super(MultiDBModelAdmin, self).save_form(request, form, change)
     # FrePPLe specific addition
     if change:
-      old_pk = unquote(request.path_info.rsplit("/",2)[1])
-      if old_pk != (isinstance(obj.pk,basestring) and obj.pk or str(obj.pk)):
+      old_pk = unquote(request.path_info.rsplit("/", 2)[1])
+      if old_pk != (isinstance(obj.pk, basestring) and obj.pk or str(obj.pk)):
         # The object was renamed. We continue handling the updates on the
         # old object. Only at the very end we will rename whatever needs to
         # be renamed.
@@ -119,12 +119,12 @@ class MultiDBModelAdmin(admin.ModelAdmin):
           .update(**{related.field.name: obj})
       # c) Move the comments and audit trail to the new key
       model_type = ContentType.objects.get_for_model(obj)
-      Comment.objects.using(request.database). \
-        filter(content_type__pk=model_type.id, object_pk=old_pk). \
-        update(object_pk=obj.pk)
-      LogEntry.objects.using(request.database). \
-        filter(content_type__pk=model_type.id, object_id=old_pk). \
-        update(object_id=obj.pk)
+      Comment.objects.using(request.database) \
+        .filter(content_type__pk=model_type.id, object_pk=old_pk) \
+        .update(object_pk=obj.pk)
+      LogEntry.objects.using(request.database) \
+        .filter(content_type__pk=model_type.id, object_id=old_pk) \
+        .update(object_id=obj.pk)
       # e) Delete the old record
       self.queryset(request).get(pk=old_pk).delete()
     LogEntry(
@@ -307,7 +307,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         if isinstance(a, types.ListType):
           return [ replace_url(i) for i in a ]
         else:
-          return mark_safe(a.replace('href="','href="%s' % request.prefix))
+          return mark_safe(a.replace('href="', 'href="%s' % request.prefix))
       deleted_objects = [ replace_url(i) for i in deleted_objects ]
       protected = [ replace_url(i) for i in protected ]
 

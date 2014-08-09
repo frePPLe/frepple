@@ -56,7 +56,7 @@ class LateOrdersWidget(Widget):
         capfirst(force_unicode(_("planned date"))), capfirst(force_unicode(_("delay")))
         )
       ]
-    for prob in Problem.objects.using(db).filter(name='late',entity='demand').order_by('startdate','-weight')[:limit]:
+    for prob in Problem.objects.using(db).filter(name='late', entity='demand').order_by('startdate', '-weight')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
         request.prefix, urlquote(prob.owner), prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight)
         ))
@@ -93,7 +93,7 @@ class ShortOrdersWidget(Widget):
         capfirst(force_unicode(_("name"))), capfirst(force_unicode(_("due"))), capfirst(force_unicode(_("short")))
         )
       ]
-    for prob in Problem.objects.using(db).filter(name__gte='short',entity='demand').order_by('startdate')[:limit]:
+    for prob in Problem.objects.using(db).filter(name__gte='short', entity='demand').order_by('startdate')[:limit]:
       result.append('<tr><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
         request.prefix, urlquote(prob.owner), prob.owner, prob.startdate.date(), int(prob.weight)
         ))

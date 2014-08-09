@@ -26,11 +26,11 @@ from freppledb.common.models import HierarchyModel, AuditModel
 
 
 searchmode = (
-  ('',_('priority')),
-  ('PRIORITY',_('priority')),
-  ('MINCOST',_('minimum cost')),
-  ('MINPENALTY',_('minimum penalty')),
-  ('MINCOSTPENALTY',_('minimum cost plus penalty'))
+  ('', _('priority')),
+  ('PRIORITY', _('priority')),
+  ('MINCOST', _('minimum cost')),
+  ('MINPENALTY', _('minimum penalty')),
+  ('MINCOSTPENALTY', _('minimum cost plus penalty'))
 )
 
 
@@ -71,8 +71,11 @@ class CalendarBucket(AuditModel):
   id = models.AutoField(_('identifier'), primary_key=True)
   calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), related_name='buckets')
   startdate = models.DateTimeField(_('start date'), null=True, blank=True)
-  enddate = models.DateTimeField(_('end date'), null=True, blank=True, default=datetime(2030,12,31))
-  value = models.DecimalField(_('value'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00', blank=True)
+  enddate = models.DateTimeField(_('end date'), null=True, blank=True, default=datetime(2030, 12, 31))
+  value = models.DecimalField(
+    _('value'), default='0.00', blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES
+    )
   priority = models.IntegerField(_('priority'), default=0, blank=True, null=True)
   monday = models.BooleanField(_('Monday'), blank=True, default=True)
   tuesday = models.BooleanField(_('Tuesday'), blank=True, default=True)
@@ -81,14 +84,14 @@ class CalendarBucket(AuditModel):
   friday = models.BooleanField(_('Friday'), blank=True, default=True)
   saturday = models.BooleanField(_('Saturday'), blank=True, default=True)
   sunday = models.BooleanField(_('Sunday'), blank=True, default=True)
-  starttime = models.TimeField(_('start time'), blank=True, null=True, default=time(0,0,0))
-  endtime = models.TimeField(_('end time'), blank=True, null=True, default=time(23,59,59))
+  starttime = models.TimeField(_('start time'), blank=True, null=True, default=time(0, 0, 0))
+  endtime = models.TimeField(_('end time'), blank=True, null=True, default=time(23, 59, 59))
 
   def __unicode__(self):
     return u"%s" % self.id
 
   class Meta(AuditModel.Meta):
-    ordering = ['calendar','id',]
+    ordering = ['calendar', 'id']
     db_table = 'calendarbucket'
     verbose_name = _('calendar bucket')
     verbose_name_plural = _('calendar buckets')
@@ -115,7 +118,7 @@ class Location(AuditModel, HierarchyModel):
     ordering = ['name']
 
 
-class Customer(AuditModel,HierarchyModel):
+class Customer(AuditModel, HierarchyModel):
   # Database fields
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
@@ -131,7 +134,7 @@ class Customer(AuditModel,HierarchyModel):
     ordering = ['name']
 
 
-class Item(AuditModel,HierarchyModel):
+class Item(AuditModel, HierarchyModel):
   # Database fields
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
   category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
@@ -159,10 +162,10 @@ class Item(AuditModel,HierarchyModel):
 class Operation(AuditModel):
   # Types of operations
   types = (
-    ('fixed_time',_('fixed_time')),
-    ('time_per',_('time_per')),
-    ('routing',_('routing')),
-    ('alternate',_('alternate')),
+    ('fixed_time', _('fixed_time')),
+    ('time_per', _('time_per')),
+    ('routing', _('routing')),
+    ('alternate', _('alternate')),
   )
 
   # Database fields
@@ -279,17 +282,17 @@ class SubOperation(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'suboperation'
-    ordering = ['operation','priority','suboperation']
+    ordering = ['operation', 'priority', 'suboperation']
     verbose_name = _('suboperation')
     verbose_name_plural = _('suboperations')
 
 
-class Buffer(AuditModel,HierarchyModel):
+class Buffer(AuditModel, HierarchyModel):
   # Types of buffers
   types = (
-    ('default',_('Default')),
-    ('infinite',_('Infinite')),
-    ('procure',_('Procure')),
+    ('default', _('Default')),
+    ('infinite', _('Infinite')),
+    ('procure', _('Procure')),
   )
 
   # Fields common to all buffer types
@@ -369,7 +372,8 @@ class Buffer(AuditModel,HierarchyModel):
     help_text=_('Replenishments of a procure buffer are a multiple of this quantity')
     )
   size_maximum = models.DecimalField(
-    _('size_maximum'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    _('size_maximum'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
     help_text=_('Maximum size of replenishments of a procure buffer')
     )
 
@@ -443,19 +447,19 @@ class SetupRule(AuditModel):
     return u"%s - %s" % (self.setupmatrix.name, self.priority)
 
   class Meta(AuditModel.Meta):
-    ordering = ['priority',]
+    ordering = ['priority']
     db_table = 'setuprule'
     unique_together = (('setupmatrix', 'priority'),)
     verbose_name = _('setup matrix rule')
     verbose_name_plural = _('setup matrix rules')
 
 
-class Resource(AuditModel,HierarchyModel):
+class Resource(AuditModel, HierarchyModel):
   # Types of resources
   types = (
-    ('default',_('Default')),
-    ('buckets',_('Buckets')),
-    ('infinite',_('Infinite')),
+    ('default', _('Default')),
+    ('buckets', _('Buckets')),
+    ('infinite', _('Infinite')),
   )
 
   # Database fields
@@ -490,7 +494,8 @@ class Resource(AuditModel,HierarchyModel):
     max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
     help_text=_("Cost for using 1 unit of the resource for 1 hour"))
   maxearly = DurationField(
-    _('max early'),max_digits=settings.MAX_DIGITS, decimal_places=0, null=True, blank=True,
+    _('max early'), max_digits=settings.MAX_DIGITS, decimal_places=0,
+    null=True, blank=True,
     help_text=_('Time window before the ask date where we look for available capacity')
     )
   setupmatrix = models.ForeignKey(
@@ -565,17 +570,17 @@ class ResourceSkill(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'resourceskill'
-    unique_together = (('resource','skill'),)
+    unique_together = (('resource', 'skill'),)
     verbose_name = _('resource skill')
     verbose_name_plural = _('resource skills')
-    ordering = ['resource','skill']
+    ordering = ['resource', 'skill']
 
 
 class Flow(AuditModel):
   # Types of flow
   types = (
-    ('start',_('Start')),
-    ('end',_('End')),
+    ('start', _('Start')),
+    ('end', _('End')),
   )
 
   # Database fields
@@ -589,8 +594,8 @@ class Flow(AuditModel):
     db_index=True, related_name='flows'
     )
   quantity = models.DecimalField(
-    _('quantity'),max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
-    default='1.00',
+    _('quantity'), default='1.00',
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
     help_text=_('Quantity to consume or produce per operationplan unit')
     )
   type = models.CharField(
@@ -628,7 +633,7 @@ class Flow(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'flow'
-    unique_together = (('operation','thebuffer'),)  # TODO also include effectivity in this
+    unique_together = (('operation', 'thebuffer'),)  # TODO also include effectivity in this
     verbose_name = _('flow')
     verbose_name_plural = _('flows')
 
@@ -678,7 +683,7 @@ class Load(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'resourceload'
-    unique_together = (('operation','resource'),)  # TODO also include effectivity in this
+    unique_together = (('operation', 'resource'),)  # TODO also include effectivity in this
     verbose_name = _('load')
     verbose_name_plural = _('loads')
 
@@ -686,7 +691,7 @@ class Load(AuditModel):
 class OperationPlan(AuditModel):
   # Database fields
   id = models.IntegerField(
-    _('identifier'),primary_key=True,
+    _('identifier'), primary_key=True,
     help_text=_('Unique identifier of an operationplan')
     )
   operation = models.ForeignKey(
@@ -694,13 +699,13 @@ class OperationPlan(AuditModel):
     db_index=True
     )
   quantity = models.DecimalField(
-    _('quantity'),max_digits=settings.MAX_DIGITS,
+    _('quantity'), max_digits=settings.MAX_DIGITS,
     decimal_places=settings.DECIMAL_PLACES, default='1.00'
     )
-  startdate = models.DateTimeField(_('start date'),help_text=_('start date'))
-  enddate = models.DateTimeField(_('end date'),help_text=_('end date'))
+  startdate = models.DateTimeField(_('start date'), help_text=_('start date'))
+  enddate = models.DateTimeField(_('end date'), help_text=_('end date'))
   locked = models.BooleanField(
-    _('locked'),default=True,
+    _('locked'), default=True,
     help_text=_('Prevent or allow changes')
     )
   owner = models.ForeignKey(
@@ -718,20 +723,22 @@ class OperationPlan(AuditModel):
     ordering = ['id']
 
 
-class Demand(AuditModel,HierarchyModel):
+class Demand(AuditModel, HierarchyModel):
   # The priorities defined here are for convenience only. FrePPLe accepts any number as priority.
   demandpriorities = (
-    (1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5'),(6,'6'),(7,'7'),(8,'8'),(9,'9'),(10,'10'),
-    (11,'11'),(12,'12'),(13,'13'),(14,'14'),(15,'15'),(16,'16'),(17,'17'),(18,'18'),(19,'19'),(20,'20')
+    (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), (6, '6'), (7, '7'),
+    (8, '8'), (9, '9'), (10, '10'), (11, '11'), (12, '12'), (13, '13'),
+    (14, '14'), (15, '15'), (16, '16'), (17, '17'), (18, '18'),
+    (19, '19'), (20, '20')
   )
 
   # Status
   demandstatus = (
-    ('inquiry',_('Inquiry')),
-    ('quote',_('Quote')),
-    ('open',_('Open')),
-    ('closed',_('Closed')),
-    ('canceled',_('Canceled')),
+    ('inquiry', _('Inquiry')),
+    ('quote', _('Quote')),
+    ('open', _('Open')),
+    ('closed', _('Closed')),
+    ('canceled', _('Canceled')),
     )
 
   # Database fields
@@ -750,7 +757,7 @@ class Demand(AuditModel,HierarchyModel):
   item = models.ForeignKey(
     Item, verbose_name=_('item'), null=True, blank=True, db_index=True
     )
-  due = models.DateTimeField(_('due'),help_text=_('Due date of the demand'))
+  due = models.DateTimeField(_('due'), help_text=_('Due date of the demand'))
   status = models.CharField(
     _('status'), max_length=10, null=True, blank=True,
     choices=demandstatus, default='open',

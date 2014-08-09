@@ -80,7 +80,7 @@ class DatabaseSelectionMiddleware(object):
   This prefix is then stripped from the path while processing the view.
   """
   def process_request(self, request):
-    for i in Scenario.objects.all().only('name','status'):
+    for i in Scenario.objects.all().only('name', 'status'):
       try:
         if settings.DATABASES[i.name]['regexp'].match(request.path) and i.name != DEFAULT_DB_ALIAS:
           if i.status != u'In use':

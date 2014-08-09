@@ -60,6 +60,6 @@ urlpatterns += patterns(
   '',  # Prefix
   (r'^data/', include(freppledb.admin.data_site.urls)),
   (r'^admin/', include(freppledb.admin.admin_site.urls)),
-  (r'^data/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf','freppledb'),}),
-  (r'^admin/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf','freppledb'),}),
+  (r'^data/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf', 'freppledb')}),
+  (r'^admin/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf', 'freppledb')}),
 )

@@ -33,7 +33,7 @@ import freppledb
 if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
-  FREPPLE_APP = os.path.abspath(os.path.join(os.path.dirname(freppledb.__file__),'..'))
+  FREPPLE_APP = os.path.abspath(os.path.join(os.path.dirname(freppledb.__file__), '..'))
 
 # FREPPLE_HOME directory
 if 'FREPPLE_HOME' in os.environ:
@@ -41,12 +41,12 @@ if 'FREPPLE_HOME' in os.environ:
 elif os.sep == '/' and os.path.isfile('/usr/share/frepple/frepple.xsd'):
   # Linux installation layout
   FREPPLE_HOME = '/usr/share/frepple'
-elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','frepple.xsd'))):
+elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP, '..', 'frepple.xsd'))):
   # Py2exe layout
-  FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP,'..'))
-elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin','frepple.xsd'))):
+  FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP, '..'))
+elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP, '..', '..', 'bin', 'frepple.xsd'))):
   # Development layout
-  FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP,'..','..','bin'))
+  FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP, '..', '..', 'bin'))
 else:
   print("Error: Can't locate frepple.xsd")
   sys.exit(1)
@@ -125,7 +125,7 @@ if os.sep == '/' and os.path.isdir('/usr/share/frepple/frepple.xsd'):
   STATIC_ROOT = '/usr/share/frepple/static'
 else:
   # All other layout types
-  STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP,'static'))
+  STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP, 'static'))
 STATIC_URL = '/static/'
 USE_L10N = True        # Represent data in the local format
 USE_I18N = True        # Use translated strings
@@ -186,7 +186,7 @@ CSV_CHARSET = locale.getdefaultlocale()[1]
 # A list of available user interface themes.
 # The current selection is nothing but the pack of standard themes of JQuery UI.
 # Check out http://jqueryui.com/themeroller/ to roll your own theme.
-THEMES = [ (i,i) for i in (
+THEMES = [ (i, i) for i in (
   'black-tie', 'blitzer', 'cupertino', 'dark-hive', 'dot-luv', 'eggplant',
   'excite-bike', 'flick', 'hot-sneaks', 'humanity', 'le-frog', 'mint-choc',
   'overcast', 'pepper-grinder', 'redmond', 'smoothness', 'south-street', 'start',
@@ -221,13 +221,13 @@ COMMENT_MAX_LENGTH = 3000
 PORT = 8000
 
 # Override any of the above settings from a separate file
-if os.access(os.path.join(FREPPLE_CONFIGDIR,'djangosettings.py'), os.R_OK):
-  exec open(os.path.join(FREPPLE_CONFIGDIR,'djangosettings.py')) in globals()
+if os.access(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py'), os.R_OK):
+  exec open(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py')) in globals()
   if DEBUG:
     # Add a dummy module to sys.modules to make the development server
     # autoreload when the configuration file changes.
     module = types.ModuleType('djangosettings')
-    module.__file__ = os.path.join(FREPPLE_CONFIGDIR,'djangosettings.py')
+    module.__file__ = os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py')
     sys.modules['djangosettings'] = module
 
 # Some Django settings we don't like to be overriden
@@ -238,9 +238,9 @@ MANAGERS = ADMINS
 for param in DATABASES.values():
   if param['ENGINE'] == 'django.db.backends.sqlite3':
     # Path to the sqlite3 test database file
-    param['TEST_NAME'] = os.path.join(FREPPLE_LOGDIR,'test_%s.sqlite' % param['NAME'])
+    param['TEST_NAME'] = os.path.join(FREPPLE_LOGDIR, 'test_%s.sqlite' % param['NAME'])
     # Path to sqlite3 database file
-    param['NAME'] = os.path.join(FREPPLE_LOGDIR,'%s.sqlite' % param['NAME'])
+    param['NAME'] = os.path.join(FREPPLE_LOGDIR, '%s.sqlite' % param['NAME'])
     # Extra default settings for SQLITE
     if len(param['OPTIONS']) == 0:
       param['OPTIONS'] = {"timeout": 10, "check_same_thread": False}

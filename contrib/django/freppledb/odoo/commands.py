@@ -77,7 +77,7 @@ def odoo_read(db=DEFAULT_DB_ALIAS):
     raise e
 
   # Download and parse XML data
-  frepple.readXMLdata(f.read().decode('ascii','ignore'), False, False)
+  frepple.readXMLdata(f.read().decode('ascii', 'ignore'), False, False)  # TODO HANDLE UNICODE!
 
 
 def odoo_write(db=DEFAULT_DB_ALIAS):

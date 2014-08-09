@@ -59,23 +59,32 @@ class exportStaticModel(object):
       "insert into location \
       (name,description,available_id,category,subcategory,source,lastmodified) \
       values(%s,%s,%s,%s,%s,%s,%s)",
-      [(
-         i.name, i.description, i.available and i.available.name or None, i.category, i.subcategory, i.source, self.timestamp
-       ) for i in frepple.locations() if i.name not in primary_keys and (not self.source or self.source == i.source)
+      [
+        (
+          i.name, i.description, i.available and i.available.name or None,
+          i.category, i.subcategory, i.source, self.timestamp
+        )
+        for i in frepple.locations()
+        if i.name not in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update location \
        set description=%s, available_id=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s \
        where name=%s",
-      [(
-         i.description, i.available and i.available.name or None, i.category, i.subcategory, i.source, self.timestamp, i.name
-       ) for i in frepple.locations() if i.name in primary_keys and (not self.source or self.source == i.source)
+      [
+        (
+          i.description, i.available and i.available.name or None,
+          i.category, i.subcategory, i.source, self.timestamp, i.name
+        )
+        for i in frepple.locations()
+        if i.name in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update location set owner_id=%s where name=%s",
-      [(
-         i.owner.name, i.name
-       ) for i in frepple.locations() if i.owner and (not self.source or self.source == i.source)
+      [
+        (i.owner.name, i.name)
+        for i in frepple.locations()
+        if i.owner and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported locations in %.2f seconds' % (time() - starttime))
@@ -90,17 +99,25 @@ class exportStaticModel(object):
       "insert into calendar \
       (name,defaultvalue,source,lastmodified) \
       values(%s,%s,%s,%s)",
-      [(
-         i.name, round(i.default,settings.DECIMAL_PLACES), i.source, self.timestamp
-       ) for i in frepple.calendars() if i.name not in primary_keys and (not self.source or self.source == i.source)
+      [
+        (
+          i.name, round(i.default, settings.DECIMAL_PLACES), i.source,
+          self.timestamp
+        )
+        for i in frepple.calendars()
+        if i.name not in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update calendar \
        set defaultvalue=%s, source=%s, lastmodified=%s \
        where name=%s",
-      [(
-         round(i.default,settings.DECIMAL_PLACES), i.source, self.timestamp, i.name
-       ) for i in frepple.calendars() if i.name in primary_keys and (not self.source or self.source == i.source)
+      [
+        (
+          round(i.default, settings.DECIMAL_PLACES), i.source, self.timestamp,
+          i.name
+        )
+        for i in frepple.calendars()
+        if i.name in primary_keys and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported calendars in %.2f seconds' % (time() - starttime))
@@ -109,7 +126,7 @@ class exportStaticModel(object):
   def exportCalendarBuckets(self, cursor):
     print("Exporting calendar buckets...")
     starttime = time()
-    cursor.execute("delete from calendarbucket where source = %s", [self.source,])
+    cursor.execute("delete from calendarbucket where source = %s", [self.source])
 
     def buckets():
       cursor.execute("SELECT max(id) FROM calendarbucket")
@@ -137,15 +154,18 @@ class exportStaticModel(object):
        monday,tuesday,wednesday,thursday,friday,saturday,sunday,
        starttime,endtime,source,lastmodified)
       values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
-      [(
-         i[0].calendar.name, str(i[0].start), str(i[0].end), i[1], i[0].priority,
-         round(i[0].value,settings.DECIMAL_PLACES),
-         (i[0].days & 1) and True or False, (i[0].days & 2) and True or False, (i[0].days & 4) and True or False,
-         (i[0].days & 8) and True or False, (i[0].days & 16) and True or False, (i[0].days & 32) and True or False,
-         (i[0].days & 64) and True or False, int_to_time(i[0].starttime), int_to_time(i[0].endtime - 1),
-         i[0].calendar.source, self.timestamp
+      [
+        (
+          i[0].calendar.name, str(i[0].start), str(i[0].end), i[1], i[0].priority,
+          round(i[0].value, settings.DECIMAL_PLACES),
+          (i[0].days & 1) and True or False, (i[0].days & 2) and True or False,
+          (i[0].days & 4) and True or False, (i[0].days & 8) and True or False,
+          (i[0].days & 16) and True or False, (i[0].days & 32) and True or False,
+          (i[0].days & 64) and True or False,
+          int_to_time(i[0].starttime), int_to_time(i[0].endtime - 1),
+          i[0].calendar.source, self.timestamp
         )
-       for i in buckets()
+        for i in buckets()
       ])
     transaction.commit(using=self.database)
     print('Exported calendar buckets in %.2f seconds' % (time() - starttime))
@@ -161,17 +181,20 @@ class exportStaticModel(object):
       (name,fence,pretime,posttime,sizeminimum,sizemultiple,sizemaximum,type,duration,
        duration_per,location_id,cost,search,description,category,subcategory,source,lastmodified)
       values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
-      [(
-         i.name, i.fence, i.pretime, i.posttime, round(i.size_minimum,settings.DECIMAL_PLACES),
-         round(i.size_multiple,settings.DECIMAL_PLACES),
-         i.size_maximum < 9999999999999 and round(i.size_maximum,settings.DECIMAL_PLACES) or None,
-         i.__class__.__name__[10:],
-         isinstance(i,(frepple.operation_fixed_time,frepple.operation_time_per)) and i.duration or None,
-         isinstance(i,frepple.operation_time_per) and i.duration_per or None,
-         i.location and i.location.name or None, round(i.cost,settings.DECIMAL_PLACES),
-         isinstance(i,frepple.operation_alternate) and i.search or None,
-         i.description, i.category, i.subcategory, i.source, self.timestamp
-        ) for i in frepple.operations() if i.name not in primary_keys and not i.hidden and i.name != 'setup operation' and (not self.source or self.source == i.source)
+      [
+        (
+          i.name, i.fence, i.pretime, i.posttime, round(i.size_minimum, settings.DECIMAL_PLACES),
+          round(i.size_multiple, settings.DECIMAL_PLACES),
+          i.size_maximum < 9999999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
+          i.__class__.__name__[10:],
+          isinstance(i, (frepple.operation_fixed_time, frepple.operation_time_per)) and i.duration or None,
+          isinstance(i, frepple.operation_time_per) and i.duration_per or None,
+          i.location and i.location.name or None, round(i.cost, settings.DECIMAL_PLACES),
+          isinstance(i, frepple.operation_alternate) and i.search or None,
+          i.description, i.category, i.subcategory, i.source, self.timestamp
+        )
+        for i in frepple.operations()
+        if i.name not in primary_keys and not i.hidden and i.name != 'setup operation' and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       '''update operation
@@ -179,17 +202,20 @@ class exportStaticModel(object):
        sizemaximum=%s, type=%s, duration=%s, duration_per=%s, location_id=%s, cost=%s, search=%s,
        description=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s
        where name=%s''',
-      [(
-         i.fence, i.pretime, i.posttime, round(i.size_minimum,settings.DECIMAL_PLACES),
-         round(i.size_multiple,settings.DECIMAL_PLACES),
-         i.size_maximum < 9999999999999 and round(i.size_maximum,settings.DECIMAL_PLACES) or None,
-         i.__class__.__name__[10:],
-         isinstance(i,(frepple.operation_fixed_time,frepple.operation_time_per)) and i.duration or None,
-         isinstance(i,frepple.operation_time_per) and i.duration_per or None,
-         i.location and i.location.name or None, round(i.cost,settings.DECIMAL_PLACES),
-         isinstance(i,frepple.operation_alternate) and i.search or None,
-         i.description, i.category, i.subcategory, i.source, self.timestamp, i.name
-       ) for i in frepple.operations() if i.name in primary_keys and not i.hidden and i.name != 'setup operation' and (not self.source or self.source == i.source)
+      [
+        (
+          i.fence, i.pretime, i.posttime, round(i.size_minimum, settings.DECIMAL_PLACES),
+          round(i.size_multiple, settings.DECIMAL_PLACES),
+          i.size_maximum < 9999999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
+          i.__class__.__name__[10:],
+          isinstance(i, (frepple.operation_fixed_time, frepple.operation_time_per)) and i.duration or None,
+          isinstance(i, frepple.operation_time_per) and i.duration_per or None,
+          i.location and i.location.name or None, round(i.cost, settings.DECIMAL_PLACES),
+          isinstance(i, frepple.operation_alternate) and i.search or None,
+          i.description, i.category, i.subcategory, i.source, self.timestamp, i.name
+        )
+        for i in frepple.operations()
+        if i.name in primary_keys and not i.hidden and i.name != 'setup operation' and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported operations in %.2f seconds' % (time() - starttime))
@@ -203,7 +229,7 @@ class exportStaticModel(object):
 
     def subops():
       for i in frepple.operations():
-        if isinstance(i,frepple.operation_alternate):
+        if isinstance(i, frepple.operation_alternate):
           for j in i.alternates:
             yield i, j[0], j[1], j[2], j[3], i.source
         if isinstance(i, frepple.operation_routing):
@@ -216,21 +242,19 @@ class exportStaticModel(object):
       "insert into suboperation \
       (operation_id,suboperation_id,priority,effective_start,effective_end,source,lastmodified) \
       values(%s,%s,%s,%s,%s,%s,%s)",
-      [(
-         i[0].name, i[1].name, i[2], i[3], i[4], i[5], self.timestamp
-       )
-       for i in subops()
-       if (i[0].name, i[1].name) not in primary_keys and (not self.source or self.source == i[5])
+      [
+        (i[0].name, i[1].name, i[2], i[3], i[4], i[5], self.timestamp)
+        for i in subops()
+        if (i[0].name, i[1].name) not in primary_keys and (not self.source or self.source == i[5])
       ])
     cursor.executemany(
       "update suboperation \
        set priority=%s, effective_start=%s, effective_end=%s, source=%s, lastmodified=%s \
        where operation_id=%s and suboperation_id=%s",
-      [(
-         i[2], i[3], i[4], i[5], self.timestamp, i[0].name, i[1].name
-       )
-       for i in subops()
-       if (i[0].name, i[1].name) in primary_keys and (not self.source or self.source == i[5])
+      [
+        (i[2], i[3], i[4], i[5], self.timestamp, i[0].name, i[1].name)
+        for i in subops()
+        if (i[0].name, i[1].name) in primary_keys and (not self.source or self.source == i[5])
       ])
     transaction.commit(using=self.database)
     print('Exported suboperations in %.2f seconds' % (time() - starttime))
@@ -252,27 +276,29 @@ class exportStaticModel(object):
       (operation_id,thebuffer_id,quantity,type,effective_start,effective_end,name,priority,
       search,source,lastmodified)
       values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
-      [(
-         i.operation.name, i.buffer.name, round(i.quantity,settings.DECIMAL_PLACES),
-         i.type[5:], str(i.effective_start), str(i.effective_end),
-         i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source, self.timestamp
+      [
+        (
+          i.operation.name, i.buffer.name, round(i.quantity, settings.DECIMAL_PLACES),
+          i.type[5:], str(i.effective_start), str(i.effective_end),
+          i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source, self.timestamp
         )
-       for i in flows()
-       if (i.operation.name, i.buffer.name) not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+        for i in flows()
+        if (i.operation.name, i.buffer.name) not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       '''update flow
        set quantity=%s, type=%s, effective_start=%s, effective_end=%s, name=%s,
        priority=%s, search=%s, source=%s, lastmodified=%s
        where operation_id=%s and thebuffer_id=%s''',
-      [(
-         round(i.quantity,settings.DECIMAL_PLACES),
-         i.type[5:], str(i.effective_start), str(i.effective_end),
-         i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source,
-         self.timestamp, i.operation.name, i.buffer.name,
-       )
-       for i in flows()
-       if (i.operation.name, i.buffer.name) in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+      [
+        (
+          round(i.quantity, settings.DECIMAL_PLACES),
+          i.type[5:], str(i.effective_start), str(i.effective_end),
+          i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source,
+          self.timestamp, i.operation.name, i.buffer.name,
+        )
+        for i in flows()
+        if (i.operation.name, i.buffer.name) in primary_keys and not i.hidden and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported flows in %.2f seconds' % (time() - starttime))
@@ -294,28 +320,30 @@ class exportStaticModel(object):
       (operation_id,resource_id,quantity,setup,effective_start,effective_end,name,priority,
       search,source,lastmodified)
       values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
-      [(
-         i.operation.name, i.resource.name, round(i.quantity,settings.DECIMAL_PLACES),
-         i.setup, str(i.effective_start), str(i.effective_end),
-         i.name, i.priority, i.search != 'PRIORITY' and i.search or None,
-         i.source, self.timestamp
+      [
+        (
+          i.operation.name, i.resource.name, round(i.quantity, settings.DECIMAL_PLACES),
+          i.setup, str(i.effective_start), str(i.effective_end),
+          i.name, i.priority, i.search != 'PRIORITY' and i.search or None,
+          i.source, self.timestamp
         )
-       for i in loads()
-       if (i.operation.name, i.resource.name) not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+        for i in loads()
+        if (i.operation.name, i.resource.name) not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       '''update resourceload
        set quantity=%s, setup=%s, effective_start=%s, effective_end=%s, name=%s,
        priority=%s, search=%s, source=%s, lastmodified=%s
        where operation_id=%s and resource_id=%s''',
-      [(
-         round(i.quantity,settings.DECIMAL_PLACES),
-         i.setup, str(i.effective_start), str(i.effective_end),
-         i.name, i.priority, i.search != 'PRIORITY' and i.search or None,
-         i.source, self.timestamp, i.operation.name, i.resource.name,
-       )
-       for i in loads()
-       if (i.operation.name, i.resource.name) in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+      [
+        (
+          round(i.quantity, settings.DECIMAL_PLACES),
+          i.setup, str(i.effective_start), str(i.effective_end),
+          i.name, i.priority, i.search != 'PRIORITY' and i.search or None,
+          i.source, self.timestamp, i.operation.name, i.resource.name,
+        )
+        for i in loads()
+        if (i.operation.name, i.resource.name) in primary_keys and not i.hidden and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported loads in %.2f seconds' % (time() - starttime))
@@ -334,27 +362,27 @@ class exportStaticModel(object):
        size_multiple,size_maximum,fence,
        carrying_cost,category,subcategory,source,lastmodified)
       values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
-      [(
-         i.name, i.description, i.location and i.location.name or None,
-         i.item and i.item.name or None,
-         round(i.onhand,settings.DECIMAL_PLACES), round(i.minimum,settings.DECIMAL_PLACES),
-         i.minimum_calendar and i.minimum_calendar.name or None,
-         (not isinstance(i,frepple.buffer_procure) and i.producing) and i.producing.name or None,
-         i.__class__.__name__[7:],
-         isinstance(i,frepple.buffer_procure) and i.leadtime or None,
-         isinstance(i,frepple.buffer_procure) and round(i.mininventory,settings.DECIMAL_PLACES) or None,
-         isinstance(i,frepple.buffer_procure) and round(i.maxinventory,settings.DECIMAL_PLACES) or None,
-         i.mininterval,
-         i.maxinterval,
-         isinstance(i,frepple.buffer_procure) and round(i.size_minimum,settings.DECIMAL_PLACES) or None,
-         isinstance(i,frepple.buffer_procure) and round(i.size_multiple,settings.DECIMAL_PLACES) or None,
-         isinstance(i,frepple.buffer_procure) and i.size_maximum < 9999999999999 and round(i.size_maximum,settings.DECIMAL_PLACES) or None,
-         isinstance(i,frepple.buffer_procure) and i.fence or None,
-         round(i.carrying_cost,settings.DECIMAL_PLACES), i.category, i.subcategory,
-         i.source, self.timestamp
+      [
+        (
+          i.name, i.description, i.location and i.location.name or None,
+          i.item and i.item.name or None,
+          round(i.onhand, settings.DECIMAL_PLACES), round(i.minimum, settings.DECIMAL_PLACES),
+          i.minimum_calendar and i.minimum_calendar.name or None,
+          (not isinstance(i, frepple.buffer_procure) and i.producing) and i.producing.name or None,
+          i.__class__.__name__[7:],
+          isinstance(i, frepple.buffer_procure) and i.leadtime or None,
+          isinstance(i, frepple.buffer_procure) and round(i.mininventory, settings.DECIMAL_PLACES) or None,
+          isinstance(i, frepple.buffer_procure) and round(i.maxinventory, settings.DECIMAL_PLACES) or None,
+          i.mininterval, i.maxinterval,
+          isinstance(i, frepple.buffer_procure) and round(i.size_minimum, settings.DECIMAL_PLACES) or None,
+          isinstance(i, frepple.buffer_procure) and round(i.size_multiple, settings.DECIMAL_PLACES) or None,
+          isinstance(i, frepple.buffer_procure) and i.size_maximum < 9999999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
+          isinstance(i, frepple.buffer_procure) and i.fence or None,
+          round(i.carrying_cost, settings.DECIMAL_PLACES), i.category, i.subcategory,
+          i.source, self.timestamp
         )
-       for i in frepple.buffers()
-       if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+        for i in frepple.buffers()
+        if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       '''update buffer
@@ -363,31 +391,32 @@ class exportStaticModel(object):
        max_interval=%s, size_minimum=%s, size_multiple=%s, size_maximum=%s, fence=%s,
        carrying_cost=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s
        where name=%s''',
-      [(
-         i.description, i.location and i.location.name or None, i.item and i.item.name or None,
-         round(i.onhand,settings.DECIMAL_PLACES), round(i.minimum,settings.DECIMAL_PLACES),
-         i.minimum_calendar and i.minimum_calendar.name or None,
-         i.producing and i.producing.name or None, i.__class__.__name__[7:],
-         isinstance(i,frepple.buffer_procure) and i.leadtime or None,
-         isinstance(i,frepple.buffer_procure) and round(i.mininventory,settings.DECIMAL_PLACES) or None,
-         isinstance(i,frepple.buffer_procure) and round(i.maxinventory,settings.DECIMAL_PLACES) or None,
-         isinstance(i,frepple.buffer_procure) and i.mininterval or None,
-         isinstance(i,frepple.buffer_procure) and i.maxinterval or None,
-         isinstance(i,frepple.buffer_procure) and round(i.size_minimum,settings.DECIMAL_PLACES) or None,
-         isinstance(i,frepple.buffer_procure) and round(i.size_multiple,settings.DECIMAL_PLACES) or None,
-         isinstance(i,frepple.buffer_procure) and round(i.size_maximum,settings.DECIMAL_PLACES) or None,
-         isinstance(i,frepple.buffer_procure) and i.fence or None,
-         round(i.carrying_cost,settings.DECIMAL_PLACES), i.category, i.subcategory,
-         i.source, self.timestamp, i.name
-       )
-       for i in frepple.buffers()
-       if i.name in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+      [
+        (
+          i.description, i.location and i.location.name or None, i.item and i.item.name or None,
+          round(i.onhand, settings.DECIMAL_PLACES), round(i.minimum, settings.DECIMAL_PLACES),
+          i.minimum_calendar and i.minimum_calendar.name or None,
+          i.producing and i.producing.name or None, i.__class__.__name__[7:],
+          isinstance(i, frepple.buffer_procure) and i.leadtime or None,
+          isinstance(i, frepple.buffer_procure) and round(i.mininventory, settings.DECIMAL_PLACES) or None,
+          isinstance(i, frepple.buffer_procure) and round(i.maxinventory, settings.DECIMAL_PLACES) or None,
+          i.mininterval or None, i.maxinterval or None,
+          isinstance(i, frepple.buffer_procure) and round(i.size_minimum, settings.DECIMAL_PLACES) or None,
+          isinstance(i, frepple.buffer_procure) and round(i.size_multiple, settings.DECIMAL_PLACES) or None,
+          isinstance(i, frepple.buffer_procure) and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
+          isinstance(i, frepple.buffer_procure) and i.fence or None,
+          round(i.carrying_cost, settings.DECIMAL_PLACES), i.category, i.subcategory,
+          i.source, self.timestamp, i.name
+        )
+        for i in frepple.buffers()
+        if i.name in primary_keys and not i.hidden and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update buffer set owner_id=%s where name=%s",
-      [(
-         i.owner.name, i.name
-       ) for i in frepple.buffers() if i.owner and not i.hidden
+      [
+        (i.owner.name, i.name)
+        for i in frepple.buffers()
+        if i.owner and not i.hidden
       ])
     transaction.commit(using=self.database)
     print('Exported buffers in %.2f seconds' % (time() - starttime))
@@ -402,23 +431,26 @@ class exportStaticModel(object):
       "insert into customer \
       (name,description,category,subcategory,source,lastmodified) \
       values(%s,%s,%s,%s,%s,%s)",
-      [(
-         i.name, i.description, i.category, i.subcategory, i.source, self.timestamp
-       ) for i in frepple.customers() if i.name not in primary_keys and (not self.source or self.source == i.source)
+      [
+        (i.name, i.description, i.category, i.subcategory, i.source, self.timestamp)
+        for i in frepple.customers()
+        if i.name not in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update customer \
        set description=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s \
        where name=%s",
-      [(
-         i.description, i.category, i.subcategory, i.source, self.timestamp, i.name
-       ) for i in frepple.customers() if i.name in primary_keys and (not self.source or self.source == i.source)
+      [
+        (i.description, i.category, i.subcategory, i.source, self.timestamp, i.name)
+        for i in frepple.customers()
+        if i.name in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update customer set owner_id=%s where name=%s",
-      [(
-         i.owner.name, i.name
-       ) for i in frepple.customers() if i.owner and (not self.source or self.source == i.source)
+      [
+        (i.owner.name, i.name)
+        for i in frepple.customers()
+        if i.owner and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported customers in %.2f seconds' % (time() - starttime))
@@ -434,34 +466,39 @@ class exportStaticModel(object):
       (name,due,quantity,priority,item_id,operation_id,customer_id,
        minshipment,maxlateness,category,subcategory,source,lastmodified)
       values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
-      [(
-         i.name, str(i.due), round(i.quantity,settings.DECIMAL_PLACES), i.priority, i.item.name,
-         i.operation and i.operation.name or None, i.customer and i.customer.name or None,
-         round(i.minshipment,settings.DECIMAL_PLACES), round(i.maxlateness,settings.DECIMAL_PLACES),
-         i.category, i.subcategory, i.source, self.timestamp
-       ) for i in frepple.demands()
-       if i.name not in primary_keys and isinstance(i,frepple.demand_default) and not i.hidden and (not self.source or self.source == i.source)
+      [
+        (
+          i.name, str(i.due), round(i.quantity, settings.DECIMAL_PLACES), i.priority, i.item.name,
+          i.operation and i.operation.name or None, i.customer and i.customer.name or None,
+          round(i.minshipment, settings.DECIMAL_PLACES), round(i.maxlateness, settings.DECIMAL_PLACES),
+          i.category, i.subcategory, i.source, self.timestamp
+        )
+        for i in frepple.demands()
+        if i.name not in primary_keys and isinstance(i, frepple.demand_default) and not i.hidden and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       '''update demand
        set due=%s, quantity=%s, priority=%s, item_id=%s, operation_id=%s, customer_id=%s,
        minshipment=%s, maxlateness=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s
        where name=%s''',
-      [(
-         str(i.due), round(i.quantity,settings.DECIMAL_PLACES), i.priority, i.item.name,
-         i.operation and i.operation.name or None, i.customer and i.customer.name or None,
-         round(i.minshipment,settings.DECIMAL_PLACES), round(i.maxlateness,settings.DECIMAL_PLACES),
-         i.category, i.subcategory, i.source, self.timestamp, i.name
-       ) for i in frepple.demands()
-       if i.name in primary_keys and isinstance(i,frepple.demand_default) and not i.hidden and (not self.source or self.source == i.source)
+      [
+        (
+          str(i.due), round(i.quantity, settings.DECIMAL_PLACES), i.priority,
+          i.item.name, i.operation and i.operation.name or None,
+          i.customer and i.customer.name or None,
+          round(i.minshipment, settings.DECIMAL_PLACES),
+          round(i.maxlateness, settings.DECIMAL_PLACES),
+          i.category, i.subcategory, i.source, self.timestamp, i.name
+        )
+        for i in frepple.demands()
+        if i.name in primary_keys and isinstance(i, frepple.demand_default) and not i.hidden and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update demand set owner_id=%s where name=%s",
-      [(
-         i.owner.name, i.name
-       )
-       for i in frepple.demands()
-       if i.owner and isinstance(i,frepple.demand_default) and (not self.source or self.source == i.source)
+      [
+        (i.owner.name, i.name)
+        for i in frepple.demands()
+        if i.owner and isinstance(i, frepple.demand_default) and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported demands in %.2f seconds' % (time() - starttime))
@@ -480,8 +517,9 @@ class exportStaticModel(object):
       '''insert into operationplan
       (id,operation_id,quantity,startdate,enddate,locked,source,lastmodified)
       values(%s,%s,%s,%s,%s,%s,%s,%s)''',
-      [(
-         i.id, i.operation.name, round(i.quantity,settings.DECIMAL_PLACES),
+      [
+       (
+         i.id, i.operation.name, round(i.quantity, settings.DECIMAL_PLACES),
          str(i.start), str(i.end), i.locked, i.source, self.timestamp
        )
        for i in frepple.operationplans()
@@ -491,8 +529,9 @@ class exportStaticModel(object):
       '''update operationplan
        set operation_id=%s, quantity=%s, startdate=%s, enddate=%s, locked=%s, source=%s, lastmodified=%s
        where id=%s''',
-      [(
-         i.operation.name, round(i.quantity,settings.DECIMAL_PLACES),
+      [
+       (
+         i.operation.name, round(i.quantity, settings.DECIMAL_PLACES),
          str(i.start), str(i.end), i.locked, i.source, self.timestamp, i.id
        )
        for i in frepple.operationplans()
@@ -500,9 +539,10 @@ class exportStaticModel(object):
       ])
     cursor.executemany(
       "update operationplan set owner_id=%s where id=%s",
-      [(
-         i.owner.id, i.id
-       ) for i in frepple.operationplans() if i.owner and not i.operation.hidden and i.locked and (not self.source or self.source == i.source)
+      [
+        (i.owner.id, i.id)
+        for i in frepple.operationplans()
+        if i.owner and not i.operation.hidden and i.locked and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported operationplans in %.2f seconds' % (time() - starttime))
@@ -518,14 +558,16 @@ class exportStaticModel(object):
       (name,description,maximum,maximum_calendar_id,location_id,type,cost,
        maxearly,setup,setupmatrix_id,category,subcategory,source,lastmodified)
       values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s)''' % connections[self.database].ops.quote_name('resource'),
-      [(
-         i.name, i.description, i.maximum, i.maximum_calendar and i.maximum_calendar.name or None,
-         i.location and i.location.name or None, i.__class__.__name__[9:],
-         round(i.cost,settings.DECIMAL_PLACES), round(i.maxearly,settings.DECIMAL_PLACES),
-         i.setup, i.setupmatrix and i.setupmatrix.name or None,
-         i.category, i.subcategory, i.source, self.timestamp
-       ) for i in frepple.resources()
-       if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+      [
+        (
+          i.name, i.description, i.maximum, i.maximum_calendar and i.maximum_calendar.name or None,
+          i.location and i.location.name or None, i.__class__.__name__[9:],
+          round(i.cost, settings.DECIMAL_PLACES), round(i.maxearly, settings.DECIMAL_PLACES),
+          i.setup, i.setupmatrix and i.setupmatrix.name or None,
+          i.category, i.subcategory, i.source, self.timestamp
+        )
+        for i in frepple.resources()
+        if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       '''update %s
@@ -533,20 +575,25 @@ class exportStaticModel(object):
        type=%%s, cost=%%s, maxearly=%%s, setup=%%s, setupmatrix_id=%%s, category=%%s,
        subcategory=%%s, source=%%s, lastmodified=%%s
        where name=%%s''' % connections[self.database].ops.quote_name('resource'),
-      [(
-         i.description, i.maximum, i.maximum_calendar and i.maximum_calendar.name or None,
-         i.location and i.location.name or None, i.__class__.__name__[9:],
-         round(i.cost,settings.DECIMAL_PLACES), round(i.maxearly,settings.DECIMAL_PLACES),
-         i.setup, i.setupmatrix and i.setupmatrix.name or None,
-         i.category, i.subcategory, i.source, self.timestamp, i.name
-       ) for i in frepple.resources()
-       if i.name in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+      [
+        (
+          i.description, i.maximum,
+          i.maximum_calendar and i.maximum_calendar.name or None,
+          i.location and i.location.name or None, i.__class__.__name__[9:],
+          round(i.cost, settings.DECIMAL_PLACES),
+          round(i.maxearly, settings.DECIMAL_PLACES),
+          i.setup, i.setupmatrix and i.setupmatrix.name or None,
+          i.category, i.subcategory, i.source, self.timestamp, i.name
+        )
+        for i in frepple.resources()
+        if i.name in primary_keys and not i.hidden and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update %s set owner_id=%%s where name=%%s" % connections[self.database].ops.quote_name('resource'),
-      [(
-         i.owner.name, i.name
-       ) for i in frepple.resources() if i.owner and not i.hidden and (not self.source or self.source == i.source)
+      [
+        (i.owner.name, i.name)
+        for i in frepple.resources()
+        if i.owner and not i.hidden and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported resources in %.2f seconds' % (time() - starttime))
@@ -559,15 +606,17 @@ class exportStaticModel(object):
     primary_keys = set([ i[0] for i in cursor.fetchall() ])
     cursor.executemany(
       '''insert into skill (name,source,lastmodified) values(%s,%s,%s)''',
-      [( i.name, i.source, self.timestamp )
-       for i in frepple.skills()
-       if i.name not in primary_keys and (not self.source or self.source == i.source)
+      [
+        ( i.name, i.source, self.timestamp )
+        for i in frepple.skills()
+        if i.name not in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       '''update skill set source=%s, lastmodified=%s where name=%s''',
-      [( i.source, self.timestamp, i.name )
-       for i in frepple.skills()
-       if i.name not in primary_keys and (not self.source or self.source == i.source)
+      [
+        (i.source, self.timestamp, i.name)
+        for i in frepple.skills()
+        if i.name not in primary_keys and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported skills in %.2f seconds' % (time() - starttime))
@@ -588,13 +637,17 @@ class exportStaticModel(object):
       '''insert into resourceskill
       (effective_start,effective_end,priority,source,lastmodified,resource_id,skill_id)
       values(%s,%s,%s,%s,%s,%s,%s)''',
-      [i for i in res_skills() if i not in primary_keys and (not self.source or self.source == i.source)
+      [
+        i for i in res_skills()
+        if i not in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       '''update resourceskill
       set effective_start=%s, effective_end=%s, priority=%s, source=%s, lastmodified=%s
       where resource_id=%s and skill_id=%s''',
-      [i for i in res_skills() if i not in primary_keys and (not self.source or self.source == i.source)
+      [
+        i for i in res_skills()
+        if i not in primary_keys and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported resource skills in %.2f seconds' % (time() - starttime))
@@ -609,17 +662,19 @@ class exportStaticModel(object):
       "insert into setupmatrix \
       (name,source,lastmodified) \
       values(%s,%s,%s)",
-      [(
-         i.name, i.source, self.timestamp
-       ) for i in frepple.setupmatrices() if i.name not in primary_keys and (not self.source or self.source == i.source)
+      [
+        (i.name, i.source, self.timestamp)
+        for i in frepple.setupmatrices()
+        if i.name not in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update setupmatrix \
        set source=%s, lastmodified=%s \
        where name=%s",
-      [(
-         i.source, self.timestamp, i.name
-       ) for i in frepple.setupmatrices() if i.name in primary_keys and (not self.source or self.source == i.source)
+      [
+        (i.source, self.timestamp, i.name)
+        for i in frepple.setupmatrices()
+        if i.name in primary_keys and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported setupmatrices in %.2f seconds' % (time() - starttime))
@@ -640,22 +695,26 @@ class exportStaticModel(object):
       "insert into setuprule \
       (setupmatrix_id,priority,fromsetup,tosetup,duration,cost,source,lastmodified) \
       values(%s,%s,%s,%s,%s,%s,%s,%s)",
-      [(
+      [
+       (
          i[0].name, i[1].priority, i[1].fromsetup, i[1].tosetup, i[1].duration,
-         round(i[1].cost,settings.DECIMAL_PLACES),
+         round(i[1].cost, settings.DECIMAL_PLACES),
          i.source, self.timestamp
-       ) for i in matrixrules()
-       if (i[0].name,i[1].priority) not in primary_keys and (not self.source or self.source == i.source)
+       )
+       for i in matrixrules()
+       if (i[0].name, i[1].priority) not in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update setuprule \
        set fromsetup=%s, tosetup=%s, duration=%s, cost=%s, source=%s, lastmodified=%s \
        where setupmatrix_id=%s and priority=%s",
-      [(
-         i[1].fromsetup, i[1].tosetup, i[1].duration, round(i[1].cost,settings.DECIMAL_PLACES),
-         i.source, self.timestamp, i[0].name, i[1].priority
-       ) for i[1] in matrixrules()
-       if (i[0].name,i[1].priority) in primary_keys and (not self.source or self.source == i.source)
+      [
+        (
+          i[1].fromsetup, i[1].tosetup, i[1].duration, round(i[1].cost, settings.DECIMAL_PLACES),
+          i.source, self.timestamp, i[0].name, i[1].priority
+        )
+        for i[1] in matrixrules()
+        if (i[0].name, i[1].priority) in primary_keys and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported setup matrix rules in %.2f seconds' % (time() - starttime))
@@ -670,29 +729,34 @@ class exportStaticModel(object):
       "insert into item \
       (name,description,operation_id,price,category,subcategory,source,lastmodified) \
       values(%s,%s,%s,%s,%s,%s,%s,%s)",
-      [(
-         i.name, i.description, i.operation and i.operation.name or None,
-         round(i.price,settings.DECIMAL_PLACES), i.category, i.subcategory,
-         i.source, self.timestamp
-       ) for i in frepple.items()
-       if i.name not in primary_keys and (not self.source or self.source == i.source)
+      [
+        (
+          i.name, i.description, i.operation and i.operation.name or None,
+          round(i.price, settings.DECIMAL_PLACES), i.category, i.subcategory,
+          i.source, self.timestamp
+        )
+        for i in frepple.items()
+        if i.name not in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update item \
        set description=%s, operation_id=%s, price=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s \
        where name=%s",
-      [(
-         i.description, i.operation and i.operation.name or None,
-         round(i.price,settings.DECIMAL_PLACES), i.category, i.subcategory,
-         i.source, self.timestamp, i.name
-       ) for i in frepple.items()
-       if i.name in primary_keys and (not self.source or self.source == i.source)
+      [
+        (
+          i.description, i.operation and i.operation.name or None,
+          round(i.price, settings.DECIMAL_PLACES), i.category, i.subcategory,
+          i.source, self.timestamp, i.name
+        )
+        for i in frepple.items()
+        if i.name in primary_keys and (not self.source or self.source == i.source)
       ])
     cursor.executemany(
       "update item set owner_id=%s where name=%s",
-      [(
-         i.owner.name, i.name
-       ) for i in frepple.items() if i.owner and (not self.source or self.source == i.source)
+      [
+        (i.owner.name, i.name)
+        for i in frepple.items()
+        if i.owner and (not self.source or self.source == i.source)
       ])
     transaction.commit(using=self.database)
     print('Exported items in %.2f seconds' % (time() - starttime))

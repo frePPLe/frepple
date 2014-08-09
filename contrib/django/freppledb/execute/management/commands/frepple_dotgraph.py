@@ -101,7 +101,7 @@ class Command(BaseCommand):
             print('    fontsize=8;')
             previous = o
             needs_closure += 1
-          print('    "O%s" [label="%s",tooltip="%s"];' % (s,s,s))
+          print('    "O%s" [label="%s",tooltip="%s"];' % (s, s, s))
       print('}')
 
       # Flows
@@ -110,9 +110,9 @@ class Command(BaseCommand):
       cursor.execute('select operation_id, thebuffer_id, quantity from flow')
       for o, b, q in cursor.fetchall():
         if q > 0:
-          print('  "O%s"->"B%s";' % (o,b))
+          print('  "O%s"->"B%s";' % (o, b))
         else:
-          print('  "B%s"->"O%s";' % (b,o))
+          print('  "B%s"->"O%s";' % (b, o))
       print('}')
 
       # Loads
@@ -120,7 +120,7 @@ class Command(BaseCommand):
       print('  edge[style=dashed,dir=none,weight=100];')
       cursor.execute('select operation_id, resource_id from resourceload')
       for o, r in cursor.fetchall():
-        print('  "O%s"->"R%s";' % (o,r))
+        print('  "O%s"->"R%s";' % (o, r))
       print('}')
 
       # Footer

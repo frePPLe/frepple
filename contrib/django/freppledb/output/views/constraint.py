@@ -24,38 +24,38 @@ from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, 
 
 
 entities = (
- ('demand',_('demand')),
- ('material',_('material')),
- ('capacity',_('capacity')),
- ('operation',_('operation'))
+ ('demand', _('demand')),
+ ('material', _('material')),
+ ('capacity', _('capacity')),
+ ('operation', _('operation'))
  )
 
 names = (
-  ('overload',_('overload')),
-  ('underload',_('underload')),
-  ('material excess',_('material excess')),
-  ('material shortage',_('material shortage')),
-  ('excess',_('excess')),
-  ('short',_('short')),
-  ('early',_('early')),
-  ('late',_('late')),
-  ('unplanned',_('unplanned')),
-  ('precedence',_('precedence')),
-  ('before fence',_('before fence')),
-  ('before current',_('before current'))
+  ('overload', _('overload')),
+  ('underload', _('underload')),
+  ('material excess', _('material excess')),
+  ('material shortage', _('material shortage')),
+  ('excess', _('excess')),
+  ('short', _('short')),
+  ('early', _('early')),
+  ('late', _('late')),
+  ('unplanned', _('unplanned')),
+  ('precedence', _('precedence')),
+  ('before fence', _('before fence')),
+  ('before current', _('before current'))
   )
 
 
 def getEntities(request):
   return tuple([
-    (i['entity'], string_concat(_(i['entity']),":",i['id__count']))
+    (i['entity'], string_concat(_(i['entity']), ":", i['id__count']))
     for i in Constraint.objects.using(request.database).values('entity').annotate(Count('id')).order_by('entity')
     ])
 
 
 def getNames(request):
   return tuple([
-    (i['name'], string_concat(_(i['name']),":",i['id__count']))
+    (i['name'], string_concat(_(i['name']), ":", i['id__count']))
     for i in Constraint.objects.using(request.database).values('name').annotate(Count('id')).order_by('name')
     ])
 

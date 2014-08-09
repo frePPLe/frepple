@@ -127,8 +127,8 @@ class Command(BaseCommand):
 
       # Validate the date arguments
       try:
-        curdate = datetime.strptime(start,'%Y-%m-%d')
-        enddate = datetime.strptime(end,'%Y-%m-%d')
+        curdate = datetime.strptime(start, '%Y-%m-%d')
+        enddate = datetime.strptime(end, '%Y-%m-%d')
       except Exception as e:
         raise CommandError("Date is not matching format YYYY-MM-DD")
 
@@ -141,11 +141,11 @@ class Command(BaseCommand):
         )
 
       # Create buckets
-      y = Bucket(name='year',description='Yearly time buckets')
-      q = Bucket(name='quarter',description='Quarterly time buckets')
-      m = Bucket(name='month',description='Monthly time buckets')
-      w = Bucket(name='week',description='Weeky time buckets')
-      d = Bucket(name='day',description='Daily time buckets')
+      y = Bucket(name='year', description='Yearly time buckets')
+      q = Bucket(name='quarter', description='Quarterly time buckets')
+      m = Bucket(name='month', description='Monthly time buckets')
+      w = Bucket(name='week', description='Weeky time buckets')
+      d = Bucket(name='day', description='Daily time buckets')
       y.save(using=database)
       q.save(using=database)
       m.save(using=database)
@@ -184,7 +184,7 @@ class Command(BaseCommand):
           prev_quarter = quarter
           BucketDetail(
             bucket=q,
-            name="%02d Q%s" % (year - 2000,quarter),
+            name="%02d Q%s" % (year - 2000, quarter),
             startdate=date(year, quarter * 3 - 2, 1),
             enddate=date(year + quarter / 4, quarter * 3 + 1 - 12 * (quarter / 4), 1)
             ).save(using=database)

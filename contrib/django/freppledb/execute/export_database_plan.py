@@ -68,11 +68,11 @@ def exportProblems(cursor):
     values(%s,%s,%s,%s,%s,%s,%s)",
     [(
        i.entity, i.name,
-       isinstance(i.owner,frepple.operationplan) and unicode(i.owner.operation) or unicode(i.owner),
+       isinstance(i.owner, frepple.operationplan) and unicode(i.owner.operation) or unicode(i.owner),
        i.description[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
-       round(i.weight,settings.DECIMAL_PLACES)
-     ) for i in frepple.problems()
-    ])
+       round(i.weight, settings.DECIMAL_PLACES)
+     ) for i in frepple.problems()]
+    )
   transaction.commit(using=database)
   cursor.execute("select count(*) from out_problem")
   print('Exported %d problems in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
@@ -88,12 +88,12 @@ def exportConstraints(cursor):
       (demand,entity,name,owner,description,startdate,enddate,weight) \
       values(%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
-         d.name,i.entity, i.name,
-         isinstance(i.owner,frepple.operationplan) and unicode(i.owner.operation) or unicode(i.owner),
+         d.name, i.entity, i.name,
+         isinstance(i.owner, frepple.operationplan) and unicode(i.owner.operation) or unicode(i.owner),
          i.description[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
-         round(i.weight,settings.DECIMAL_PLACES)
-       ) for i in d.constraints
-      ])
+         round(i.weight, settings.DECIMAL_PLACES)
+       ) for i in d.constraints]
+      )
     cnt += 1
     if cnt % 300 == 0:
       transaction.commit(using=database)
@@ -112,9 +112,9 @@ def exportOperationplans(cursor):
        (id,operation,quantity,startdate,enddate,criticality,locked,unavailable,owner) \
        values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
-        j.id, i.name.replace("'","''"),
-        round(j.quantity,settings.DECIMAL_PLACES), str(j.start), str(j.end),
-        round(j.criticality,settings.DECIMAL_PLACES), j.locked, j.unavailable,
+        j.id, i.name.replace("'", "''"),
+        round(j.quantity, settings.DECIMAL_PLACES), str(j.start), str(j.end),
+        round(j.criticality, settings.DECIMAL_PLACES), j.locked, j.unavailable,
         j.owner and j.owner.id or None
        ) for j in i.operationplans ])
     cnt += 1
@@ -136,10 +136,10 @@ def exportFlowplans(cursor):
       values (%s,%s,%s,%s,%s)",
       [(
          j.operationplan.id, j.buffer.name,
-         round(j.quantity,settings.DECIMAL_PLACES),
-         str(j.date), round(j.onhand,settings.DECIMAL_PLACES)
-       ) for j in i.flowplans
-      ])
+         round(j.quantity, settings.DECIMAL_PLACES),
+         str(j.date), round(j.onhand, settings.DECIMAL_PLACES)
+       ) for j in i.flowplans]
+      )
     cnt += 1
     if cnt % 300 == 0:
       transaction.commit(using=database)
@@ -159,10 +159,10 @@ def exportLoadplans(cursor):
       values (%s,%s,%s,%s,%s,%s)",
       [(
          j.operationplan.id, j.resource.name,
-         round(-j.quantity,settings.DECIMAL_PLACES),
+         round(-j.quantity, settings.DECIMAL_PLACES),
          str(j.startdate), str(j.enddate), j.setup
-       ) for j in i.loadplans if j.quantity < 0
-      ])
+       ) for j in i.loadplans if j.quantity < 0]
+      )
     cnt += 1
     if cnt % 100 == 0:
       transaction.commit(using=database)
@@ -214,13 +214,13 @@ def exportResourceplans(cursor):
         values (%%s,%%s,%%s,%%s,%%s,%%s,%%s)" % connections[database].ops.quote_name('load'),
         [(
            i.name, str(j['start']),
-           round(j['available'],settings.DECIMAL_PLACES),
-           round(j['unavailable'],settings.DECIMAL_PLACES),
-           round(j['setup'],settings.DECIMAL_PLACES),
-           round(j['load'],settings.DECIMAL_PLACES),
-           round(j['free'],settings.DECIMAL_PLACES)
-         ) for j in i.plan(buckets)
-        ])
+           round(j['available'], settings.DECIMAL_PLACES),
+           round(j['unavailable'], settings.DECIMAL_PLACES),
+           round(j['setup'], settings.DECIMAL_PLACES),
+           round(j['load'], settings.DECIMAL_PLACES),
+           round(j['free'], settings.DECIMAL_PLACES)
+         ) for j in i.plan(buckets)]
+        )
       cnt += 1
       if cnt % 100 == 0:
         transaction.commit(using=database)
@@ -249,14 +249,14 @@ def exportDemand(cursor):
           cur = 0
       yield (
         d.name, d.item.name, d.customer and d.customer.name or None, str(d.due),
-        round(cur,settings.DECIMAL_PLACES), str(i.end),
-        round(i.quantity,settings.DECIMAL_PLACES), i.id
+        round(cur, settings.DECIMAL_PLACES), str(i.end),
+        round(i.quantity, settings.DECIMAL_PLACES), i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
         d.name, d.item.name, d.customer and d.customer.name or None, str(d.due),
-        round(d.quantity - cumplanned,settings.DECIMAL_PLACES), None,
+        round(d.quantity - cumplanned, settings.DECIMAL_PLACES), None,
         None, None
         )
 
@@ -300,10 +300,10 @@ def exportPegging(cursor):
          j.producing and j.producing.id or '0', str(j.producing_date),
          j.buffer and j.buffer.name or '',
          (j.buffer and j.buffer.item and j.buffer.item.name) or '',
-         round(j.quantity_demand,settings.DECIMAL_PLACES),
-         round(j.quantity_buffer,settings.DECIMAL_PLACES)
-       ) for j in i.pegging
-      ])
+         round(j.quantity_demand, settings.DECIMAL_PLACES),
+         round(j.quantity_buffer, settings.DECIMAL_PLACES)
+       ) for j in i.pegging]
+      )
     cnt += 1
     if cnt % 500 == 0:
       transaction.commit(using=database)

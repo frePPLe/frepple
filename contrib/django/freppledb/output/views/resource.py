@@ -44,11 +44,14 @@ class OverviewReport(GridPivot):
     GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center', search=False),
     )
   crosses = (
-    ('available',{'title': _('available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
-    ('unavailable',{'title': _('unavailable')}),
-    ('setup',{'title': _('setup')}),
-    ('load',{'title': _('load')}),
-    ('utilization',{'title': _('utilization %'),}),
+    ('available', {
+       'title': _('available'),
+       'editable': lambda req: req.user.has_perm('input.change_resource')
+       }),
+    ('unavailable', {'title': _('unavailable')}),
+    ('setup', {'title': _('setup')}),
+    ('load', {'title': _('load')}),
+    ('utilization', {'title': _('utilization %')}),
     )
 
   @classmethod
@@ -133,9 +136,9 @@ class OverviewReport(GridPivot):
         request.report_enddate,
         connections[basequery.db].ops.quote_name('resource'),
         request.report_startdate, request.report_enddate,
-        sql_max('sum(out_resourceplan.available)','0.0001'),
+        sql_max('sum(out_resourceplan.available)', '0.0001'),
         request.report_startdate, request.report_enddate, sortsql
-        )
+      )
     cursor.execute(query, baseparams)
 
     # Build the python result
@@ -147,14 +150,14 @@ class OverviewReport(GridPivot):
       yield {
         'resource': row[0],
         'location': row[1],
-        'avgutil': round(row[2],2),
+        'avgutil': round(row[2], 2),
         'bucket': row[3],
         'startdate': python_date(row[4]),
-        'available': round(row[5],1),
-        'unavailable': round(row[6],1),
-        'load': round(row[7],1),
-        'setup': round(row[8],1),
-        'utilization': round(util,2),
+        'available': round(row[5], 1),
+        'unavailable': round(row[6], 1),
+        'load': round(row[7], 1),
+        'setup': round(row[8], 1),
+        'utilization': round(util, 2)
         }
 
 
@@ -174,10 +177,10 @@ class DetailReport(GridReport):
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
       return LoadPlan.objects.filter(theresource__exact=args[0]).select_related() \
-        .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+        .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name"})
     else:
       return LoadPlan.objects.select_related() \
-        .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name",})
+        .extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name"})
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):

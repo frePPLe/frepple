@@ -25,14 +25,14 @@ from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, 
 
 def getEntities(request):
   return tuple([
-    (i['entity'], string_concat(_(i['entity']),":",i['id__count']))
+    (i['entity'], string_concat(_(i['entity']), ":", i['id__count']))
     for i in Problem.objects.using(request.database).values('entity').annotate(Count('id')).order_by('entity')
     ])
 
 
 def getNames(request):
   return tuple([
-    (i['name'], string_concat(_(i['name']),":",i['id__count']))
+    (i['name'], string_concat(_(i['name']), ":", i['id__count']))
     for i in Problem.objects.using(request.database).values('name').annotate(Count('id')).order_by('name')
     ])
 

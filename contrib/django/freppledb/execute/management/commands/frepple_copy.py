@@ -190,7 +190,7 @@ class Command(BaseCommand):
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.oracle':
         try:
           try:
-            os.unlink(os.path.join(settings.FREPPLE_LOGDIR,'frepple.dmp'))
+            os.unlink(os.path.join(settings.FREPPLE_LOGDIR, 'frepple.dmp'))
           except:
             pass
           ret = os.system("expdp %s/%s@//%s:%s/%s schemas=%s directory=frepple_logdir nologfile=Y dumpfile=frepple.dmp" % (
@@ -216,7 +216,7 @@ class Command(BaseCommand):
             raise Exception('Exit code of the database import command is %d' % ret)
         finally:
           try:
-            os.unlink(os.path.join(settings.FREPPLE_LOGDIR,'frepple.dmp'))
+            os.unlink(os.path.join(settings.FREPPLE_LOGDIR, 'frepple.dmp'))
           except:
             pass
       else:

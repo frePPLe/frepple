@@ -59,13 +59,16 @@ class cookbooktest(TransactionTestCase):
   def assertOperationplans(self, resultfile):
     resultfilename = os.path.join(os.path.dirname(os.path.realpath(__file__)), resultfile)
     opplans = [
-      "%s,%s,%s,%s" % (i.operation, i.startdate, i.enddate, i.quantity)
+      "%s,%s,%s,%s" % (i.operation, i.startdate, i.enddate, round(i.quantity, 1))
       for i in output.models.OperationPlan.objects.order_by('operation', 'startdate', 'quantity').only('operation', 'startdate', 'enddate', 'quantity')
       ]
     row = 0
     with open(resultfilename, 'r') as f:
       for line in f:
         if opplans[row].strip() != line.strip():
+          print "Got:"
+          for i in opplans:
+            print "  ", i.strip()
           self.fail("Difference in expected results on line %s" % (row + 1))
         row += 1
     if row != len(opplans):
@@ -90,3 +93,8 @@ class cookbooktest(TransactionTestCase):
     self.loadExcel("http://frepple.com/wp-content/uploads/demand_policies.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15)
     self.assertOperationplans("demand_policies.expect")
+
+  def test_operation_type(self):
+    self.loadExcel("http://frepple.com/wp-content/uploads/operation_type.xlsx")
+    management.call_command('frepple_run', plantype=1, constraint=15)
+    self.assertOperationplans("operation_type.expect")

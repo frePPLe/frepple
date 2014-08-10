@@ -36,7 +36,10 @@ class DataLoadTest(TestCase):
 
   def test_common_parameter(self):
     response = self.client.get('/admin/common/parameter/?format=json')
-    self.assertContains(response, '"records":3,')
+    for i in response.streaming_content:
+      if '"records":15,' in i:
+        return
+    self.fail("Didn't find expected number of parameters")
 
 
 class ExcelTest(TransactionTestCase):

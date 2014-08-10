@@ -700,7 +700,7 @@ class GridReport(View):
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_unicode(reportclass.title), 'entity': force_unicode(args[0])}) or reportclass.title,
         'preferences': None,
-        'colmodel': reportclass._render_colmodel(is_popup, args and "table" or mode),
+        'colmodel': reportclass._render_colmodel(is_popup, mode),
         'cross_list': reportclass._render_cross() if hasattr(reportclass, 'crosses') else None,
         'object_id': args and args[0] or None,
         'page': 1,

@@ -8,11 +8,12 @@ window.__admin_media_prefix__ = "/static/admin/";
 function breadcrumbs_reflow()
 {
   var crumbs = $("#breadcrumbs");
-  var height_one_line = $("#cockpitcrumb").height();
+  var height_one_line = Math.ceil($("#cockpitcrumb").height());
   // Show all elements previously hidden
   crumbs.children("span:hidden").show();
   // Hide the first crumbs till it all fits on a single line.
   crumbs.children("span").each(function() {
+    console.log(crumbs.height() + " ----- "+  height_one_line);
     if (crumbs.height() > height_one_line) $(this).hide();
   });
 }
@@ -280,7 +281,7 @@ jQuery.extend($.fn.fmatter, {
     return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='projectdeel'></span>";
   },
   graph : function (cellvalue, options, rowdata) {
-    return '<div class="graph"></div>';
+    return '<div class="graph" style="height:80px"></div>';
   }
 });
 jQuery.extend($.fn.fmatter.percentage, {

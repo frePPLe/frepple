@@ -1002,7 +1002,8 @@ $.fn.bindFirst = function(name, fn) {
 //
 
 var graph = {
-  header : function()
+
+  header: function()
   {
     var el = $("#grid_graph");
     el.html("");
@@ -1026,6 +1027,39 @@ var graph = {
       }
       w += bucketwidth;
     }
+  },
+
+  showTooltip: function(txt)
+  {
+    // Find or create the tooltip div
+    var tt = d3.select("#tooltip");
+    if (tt.empty())
+      tt = d3.select("body")
+        .append("div")
+        .attr("id", "tooltip")
+        .attr("role", "tooltip")
+        .attr("class", "ui-tooltip ui-widget ui-corner-all ui-widget-content")
+        .style("position", "absolute");
+    // Update content and display
+    tt.html('<div class="ui-tooltip-content">' + txt + '</div>')
+      .style('left', (d3.event.pageX + 5) + "px")
+      .style('top', (d3.event.pageY - 28) + "px")
+      .style('display', 'block');
+    d3.event.stopPropagation();
+  },
+
+  hideTooltip: function()
+  {
+    d3.select("#tooltip").style('display', 'none');
+    d3.event.stopPropagation();
+  },
+
+  moveTooltip: function()
+  {
+    d3.select("#tooltip")
+      .style('left', (d3.event.pageX + 5) + "px")
+      .style('top', (d3.event.pageY - 28) + "px");
+    d3.event.stopPropagation();
   }
 };
 

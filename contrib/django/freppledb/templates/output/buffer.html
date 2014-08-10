@@ -22,9 +22,7 @@ $(function(){ graph.header(); })
 <div id="detail2context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 <li class="ui-menu-item"><a id="{{request.prefix}}/flowplan/{value}/?flowdate__gte={startdate}&amp;flowdate__lt={enddate}">{% trans 'Detail' %}</a></li>
 <li class="ui-menu-item"><a id="{{request.prefix}}/bufferpegging/?thebuffer={value}&amp;flowdate__gte={startdate}&amp;flowdate__lt={enddate}">{% trans 'Pegging' %}</a></li>
-</ul></div>
-{% if mode == "graph" %}<div id="tooltip" role="tooltip" class="ui-tooltip ui-widget ui-corner-all ui-widget-content" style="display: none; position: absolute;"/>
-{% endif %}{% endblock %}
+</ul></div>{% endblock %}
 
 {% block tools %}{% if args.0 %}
 {% include "buffertabs.html" %}
@@ -130,35 +128,22 @@ function drawGraphs(jsondata)
           d3.event.stopPropagation();
         })
       .on("mouseenter", function(d) {
-         d3.select("#tooltip")
-           .html('<div class="ui-tooltip-content">'
-              + '<div style="text-align:center; font-weight:bold">'
-              + timebuckets[d['bucket']]['name'] + '</div>'
-              + '<table><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
-              + (Math.round(d['startinv']*10)/10)
-              + '</td></tr><tr><td>{{_('produced')|capfirst}}</td><td style="text-align:right">+ '
-              + (Math.round(d['produced']*10)/10)
-              + '</td></tr><tr><td>{{_('consumed')|capfirst}}</td><td style="text-align:right">- '
-              + (Math.round(d['consumed']*10)/10)
-              + '</td></tr><tr><td>{{_('end inventory')|capfirst}}</td><td style="text-align:right">= '
-              + (Math.round((d['startinv']+d['produced']-d['consumed'])*10)/10)
-              + '</td></tr></table>'
-              )
-           .style('left', (d3.event.pageX + 5) + "px")
-           .style('top', (d3.event.pageY - 28) + "px")
-           .style('display', 'block');
-         d3.event.stopPropagation();
+        graph.showTooltip(
+          '<div style="text-align:center; font-weight:bold">'
+          + timebuckets[d['bucket']]['name'] + '</div>'
+          + '<table><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
+          + (Math.round(d['startinv']*10)/10)
+          + '</td></tr><tr><td>{{_('produced')|capfirst}}</td><td style="text-align:right">+ '
+          + (Math.round(d['produced']*10)/10)
+          + '</td></tr><tr><td>{{_('consumed')|capfirst}}</td><td style="text-align:right">- '
+          + (Math.round(d['consumed']*10)/10)
+          + '</td></tr><tr><td>{{_('end inventory')|capfirst}}</td><td style="text-align:right">= '
+          + (Math.round((d['startinv']+d['produced']-d['consumed'])*10)/10)
+          + '</td></tr></table>'
+          )
         })
-      .on("mouseleave", function(d) {
-        d3.select("#tooltip").style('display', 'none');
-        d3.event.stopPropagation();
-        })
-      .on("mousemove", function(d) {
-        d3.select("#tooltip")
-          .style('left', (d3.event.pageX + 5) + "px")
-          .style('top', (d3.event.pageY - 28) + "px");
-        d3.event.stopPropagation();
-        })
+      .on("mouseleave", graph.hideTooltip)
+      .on("mousemove", graph.moveTooltip)
       .each(function(d) {
         var bucket = d3.select(this);
         if (d['produced'] > 0)

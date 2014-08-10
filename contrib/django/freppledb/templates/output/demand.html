@@ -14,9 +14,7 @@ $(function(){ graph.header(); })
 </ul></div>
 <div id="detail3context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 <li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/{value}/?o=5a&amp;plandate__gte={startdate}&amp;plandate__lt={enddate}">{% trans 'Detail' %}</a></li>
-</ul></div>
-{% if mode == "graph" %}<div id="tooltip" role="tooltip" class="ui-tooltip ui-widget ui-corner-all ui-widget-content" style="display: none; position: absolute;"/>
-{% endif %}{% endblock %}
+</ul></div>{% endblock %}
 
 {% block tools %}{% if args.0 %}
 {% include "itemtabs.html" %}
@@ -123,33 +121,20 @@ function drawGraphs(jsondata)
           d3.event.stopPropagation();
         })
       .on("mouseenter", function(d) {
-         d3.select("#tooltip")
-           .html('<div class="ui-tooltip-content">'
-              + '<div style="text-align:center; font-weight:bold">'
-              + timebuckets[d['bucket']]['name'] + '</div>'
-              + '<table><tr><td>{{_('demand')|capfirst}}</td><td style="text-align:center">'
-              + (Math.round(d['demand']*10)/10)
-              + '</td></tr><tr><td>{{_('supply')|capfirst}}</td><td style="text-align:center">'
-              + (Math.round(d['supply']*10)/10)
-              + '</td></tr><tr><td>{{_('backlog')|capfirst}}</td><td style="text-align:center">'
-              + (Math.round((d['backlog'])*10)/10)
-              + '</td></tr></table>'
-              )
-           .style('left', (d3.event.pageX + 5) + "px")
-           .style('top', (d3.event.pageY - 28) + "px")
-           .style('display', 'block');
-         d3.event.stopPropagation();
+        graph.showTooltip(
+          '<div style="text-align:center; font-weight:bold">'
+          + timebuckets[d['bucket']]['name'] + '</div>'
+          + '<table><tr><td>{{_('demand')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round(d['demand']*10)/10)
+          + '</td></tr><tr><td>{{_('supply')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round(d['supply']*10)/10)
+          + '</td></tr><tr><td>{{_('backlog')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round((d['backlog'])*10)/10)
+          + '</td></tr></table>'
+          );
         })
-      .on("mouseleave", function(d) {
-        d3.select("#tooltip").style('display', 'none');
-        d3.event.stopPropagation();
-        })
-      .on("mousemove", function(d) {
-        d3.select("#tooltip")
-          .style('left', (d3.event.pageX + 5) + "px")
-          .style('top', (d3.event.pageY - 28) + "px");
-        d3.event.stopPropagation();
-        })
+      .on("mouseleave", graph.hideTooltip)
+      .on("mousemove", graph.moveTooltip)
       .each(function(d) {
         var bucket = d3.select(this);
         if (d['demand'] > 0)

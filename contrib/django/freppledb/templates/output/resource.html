@@ -13,9 +13,7 @@ $(function(){ graph.header(); })
 <div id="detailcontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 <li class="ui-menu-item"><a id="{{request.prefix}}/loadplan/{value}/?startdate__lt={enddate}&amp;enddate__gt={startdate}">{% trans 'Detail' %}</a></li>
 <li class="ui-menu-item"><a id="{{request.prefix}}/resourcepegging/?theresource={value}&amp;startdate__lt={enddate}&amp;enddate__gt={startdate}">{% trans 'Pegging' %}</a></li>
-</ul></div>
-{% if mode == "graph" %}<div id="tooltip" role="tooltip" class="ui-tooltip ui-widget ui-corner-all ui-widget-content" style="display: none; position: absolute;"/>
-{% endif %}{% endblock %}
+</ul></div>{% endblock %}
 
 {% block tools %}{% if args.0 %}
 {% include "resourcetabs.html" %}
@@ -117,36 +115,23 @@ function drawGraphs(jsondata)
           d3.event.stopPropagation();
         })
       .on("mouseenter", function(d) {
-         d3.select("#tooltip")
-           .html('<div class="ui-tooltip-content">'
-              + '<div style="text-align:center; font-weight:bold">'
-              + timebuckets[d['bucket']]['name'] + "&nbsp;"
-              + (Math.round(d['perc']*10)/10) + '%</div>'
-              + '<table><tr><td>{{_('available')|capfirst}}</td><td style="text-align:center">'
-              + (Math.round(d['available']*10)/10)
-              + '</td></tr><tr><td>{{_('unavailable')|capfirst}}</td><td style="text-align:center">'
-              + (Math.round(d['unavailable']*10)/10)
-              + '</td></tr><tr><td>{{_('setup')|capfirst}}</td><td style="text-align:center">'
-              + (Math.round(d['setup']*10)/10)
-              + '</td></tr><tr><td>{{_('load')|capfirst}}</td><td style="text-align:center">'
-              + (Math.round(d['load']*10)/10)
-              + '</td></tr></table>'
-              )
-           .style('left', (d3.event.pageX + 5) + "px")
-           .style('top', (d3.event.pageY - 28) + "px")
-           .style('display', 'block');
-         d3.event.stopPropagation();
+         graph.showTooltip(
+           '<div style="text-align:center; font-weight:bold">'
+           + timebuckets[d['bucket']]['name'] + "&nbsp;"
+           + (Math.round(d['perc']*10)/10) + '%</div>'
+           + '<table><tr><td>{{_('available')|capfirst}}</td><td style="text-align:center">'
+           + (Math.round(d['available']*10)/10)
+           + '</td></tr><tr><td>{{_('unavailable')|capfirst}}</td><td style="text-align:center">'
+           + (Math.round(d['unavailable']*10)/10)
+           + '</td></tr><tr><td>{{_('setup')|capfirst}}</td><td style="text-align:center">'
+           + (Math.round(d['setup']*10)/10)
+           + '</td></tr><tr><td>{{_('load')|capfirst}}</td><td style="text-align:center">'
+           + (Math.round(d['load']*10)/10)
+           + '</td></tr></table>'
+           );
         })
-      .on("mouseleave", function(d) {
-        d3.select("#tooltip").style('display', 'none');
-        d3.event.stopPropagation();
-        })
-      .on("mousemove", function(d) {
-        d3.select("#tooltip")
-          .style('left', (d3.event.pageX + 5) + "px")
-          .style('top', (d3.event.pageY - 28) + "px");
-        d3.event.stopPropagation();
-        })
+      .on("mouseleave", graph.hideTooltip)
+      .on("mousemove", graph.moveTooltip)
       .each(function(d) {
         var bucket = d3.select(this);
         var newtop = 0;

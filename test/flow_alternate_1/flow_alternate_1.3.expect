@@ -228,19 +228,19 @@
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>69</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="3" operation="Purchase component B">
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>66</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="4" operation="Purchase component C">
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>65</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="5" operation="Purchase component D">
 			<start>1971-01-01T00:00:00</start>
@@ -258,13 +258,13 @@
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>65</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="8" operation="Purchase component G">
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>65</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="9" operation="assembly">
 			<start>2008-12-24T00:00:00</start>

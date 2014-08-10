@@ -1134,6 +1134,8 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
     Date d = p.getProducingDate();
     if (!d) d = Plan::instance().getCurrent();
     slack[-p.getLevel()] = p.getConsumingDate() - d;
+    if (slack[-p.getLevel()] < 0L)
+      slack[-p.getLevel()] = 0L;
     OperationPlan* m = p.getConsumingOperationplan();
     if (m && m->getTopOwner()->getDemand())
     {

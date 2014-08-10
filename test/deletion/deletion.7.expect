@@ -205,26 +205,26 @@
 			<start>2009-02-26T00:00:00</start>
 			<end>2009-02-27T00:00:00</end>
 			<quantity>1</quantity>
-			<criticality>-28</criticality>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="10" operation="supply component A">
 			<start>2009-03-29T00:00:00</start>
 			<end>2009-03-30T00:00:00</end>
 			<quantity>1</quantity>
-			<criticality>-31</criticality>
+			<criticality>0</criticality>
 		</operationplan>
 		<operationplan id="12" operation="supply component A from supplier 1">
 			<start>2009-02-26T00:00:00</start>
 			<end>2009-02-27T00:00:00</end>
 			<quantity>1</quantity>
-			<criticality>-28</criticality>
+			<criticality>0</criticality>
 			<owner id="9" operation="supply component A"/>
 		</operationplan>
 		<operationplan id="13" operation="supply component A from supplier 1">
 			<start>2009-03-29T00:00:00</start>
 			<end>2009-03-30T00:00:00</end>
 			<quantity>1</quantity>
-			<criticality>-31</criticality>
+			<criticality>0</criticality>
 			<owner id="10" operation="supply component A"/>
 		</operationplan>
 	</operationplans>

@@ -266,9 +266,9 @@ class loadData(object):
             else:
               curoper.addAlternate(operation=frepple.operation(name=i[1]), priority=i[2], effective_start=i[3])
           elif i[4]:
-            curoper.addAlternate(operation=frepple.operation(name=i[1]), priority=i[1], effective_end=i[4])
+            curoper.addAlternate(operation=frepple.operation(name=i[1]), priority=i[2], effective_end=i[4])
           else:
-            curoper.addAlternate(operation=frepple.operation(name=i[1]), priority=i[1])
+            curoper.addAlternate(operation=frepple.operation(name=i[1]), priority=i[2])
       except Exception as e:
         print("Error:", e)
     print('Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime))

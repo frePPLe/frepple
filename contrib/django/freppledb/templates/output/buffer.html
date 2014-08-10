@@ -40,7 +40,7 @@ $(function(){ graph.header(); })
   $("#graph").width($(window).width()-55).height(h>800 || h<480 ? 400 : h-380);
 });{% endif %}
 
-{% if mode == "graph" %}
+{% if args.0 or mode == "graph" %}
 function drawGraphs(jsondata)
 {
   {% if args.0 %}var margin = {top: 0, right: 100, bottom: 30, left: 50};
@@ -61,7 +61,7 @@ function drawGraphs(jsondata)
   var y = d3.scale.linear().rangeRound([height, 0]);
 
   // Draw all graphs
-  $("#grid").find(".graph").each(function(index)
+  $("#grid"){% if not args.0 %}.find(".graph"){% endif %}.each(function(index)
   {
     // Create a new SVG element
     $({% if args.0 %}$("#graph").get(0){% else %}this{% endif %}).html("");
@@ -240,6 +240,6 @@ function crosses (cellvalue, options, rowdata) {
 };
 {% endif %}{% endblock %}
 
-{% block extra_grid %}{% if mode == "graph" %}loadComplete: drawGraphs,
+{% block extra_grid %}{% if args.0 or mode == "graph" %}loadComplete: drawGraphs,
 {% endif %}{% endblock %}
 

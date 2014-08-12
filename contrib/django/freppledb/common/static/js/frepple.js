@@ -13,7 +13,6 @@ function breadcrumbs_reflow()
   crumbs.children("span:hidden").show();
   // Hide the first crumbs till it all fits on a single line.
   crumbs.children("span").each(function() {
-    console.log(crumbs.height() + " ----- "+  height_one_line);
     if (crumbs.height() > height_one_line) $(this).hide();
   });
 }

@@ -151,7 +151,7 @@ class exportStaticModel(object):
     cursor.executemany(
       '''insert into calendarbucket
       (calendar_id,startdate,enddate,id,priority,value,
-       monday,tuesday,wednesday,thursday,friday,saturday,sunday,
+       sunday,monday,tuesday,wednesday,thursday,friday,saturday,
        starttime,endtime,source,lastmodified)
       values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
       [
@@ -373,10 +373,11 @@ class exportStaticModel(object):
           isinstance(i, frepple.buffer_procure) and i.leadtime or None,
           isinstance(i, frepple.buffer_procure) and round(i.mininventory, settings.DECIMAL_PLACES) or None,
           isinstance(i, frepple.buffer_procure) and round(i.maxinventory, settings.DECIMAL_PLACES) or None,
-          i.mininterval, i.maxinterval,
+          i.mininterval,
+          i.maxinterval < 99999999999 and i.maxinterval or None,
           isinstance(i, frepple.buffer_procure) and round(i.size_minimum, settings.DECIMAL_PLACES) or None,
           isinstance(i, frepple.buffer_procure) and round(i.size_multiple, settings.DECIMAL_PLACES) or None,
-          isinstance(i, frepple.buffer_procure) and i.size_maximum < 9999999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
+          isinstance(i, frepple.buffer_procure) and i.size_maximum < 99999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
           isinstance(i, frepple.buffer_procure) and i.fence or None,
           round(i.carrying_cost, settings.DECIMAL_PLACES), i.category, i.subcategory,
           i.source, self.timestamp
@@ -400,10 +401,11 @@ class exportStaticModel(object):
           isinstance(i, frepple.buffer_procure) and i.leadtime or None,
           isinstance(i, frepple.buffer_procure) and round(i.mininventory, settings.DECIMAL_PLACES) or None,
           isinstance(i, frepple.buffer_procure) and round(i.maxinventory, settings.DECIMAL_PLACES) or None,
-          i.mininterval or None, i.maxinterval or None,
+          i.mininterval,
+          i.maxinterval < 99999999999 and i.maxinterval or None,
           isinstance(i, frepple.buffer_procure) and round(i.size_minimum, settings.DECIMAL_PLACES) or None,
           isinstance(i, frepple.buffer_procure) and round(i.size_multiple, settings.DECIMAL_PLACES) or None,
-          isinstance(i, frepple.buffer_procure) and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
+          isinstance(i, frepple.buffer_procure) and i.size_maximum < 99999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
           isinstance(i, frepple.buffer_procure) and i.fence or None,
           round(i.carrying_cost, settings.DECIMAL_PLACES), i.category, i.subcategory,
           i.source, self.timestamp, i.name

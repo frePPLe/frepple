@@ -26,7 +26,7 @@ database records with the information. The Django database wrappers are used
 to keep the code portable between different databases.
 '''
 from __future__ import print_function
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from time import time
 from threading import Thread
 import os
@@ -197,6 +197,8 @@ def exportResourceplans(cursor):
   startdate = datetime(startdate.year, startdate.month, startdate.day)
   enddate = enddate + timedelta(days=30)
   enddate = datetime(enddate.year, enddate.month, enddate.day)
+  if enddate > date(2030, 12, 30):  # This is the max frePPLe can represent.
+    enddate = date(2030, 12, 30)
 
   # Build a list of horizon buckets
   buckets = []

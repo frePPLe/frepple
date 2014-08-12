@@ -23,7 +23,7 @@ The code in this file is executed NOT by the Django web application, but by the
 embedded Python interpreter from the frePPLe engine.
 '''
 from __future__ import print_function
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from time import time
 import os
 from subprocess import Popen, PIPE
@@ -154,6 +154,8 @@ def exportResourceplans(process):
     enddate = frepple.settings.current
   startdate = (startdate - timedelta(days=30)).date()
   enddate = (enddate + timedelta(days=30)).date()
+  if enddate > date(2030, 12, 30):  # This is the max frePPLe can represent.
+    enddate = date(2030, 12, 30)
 
   # Build a list of horizon buckets
   buckets = []

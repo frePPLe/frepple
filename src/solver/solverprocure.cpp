@@ -258,7 +258,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         break;  // Only 1 procurement allowed at this time...
       }
     }
-    while (order_qty > 0 && order_qty >= b->getSizeMinimum());
+    while (order_qty > ROUNDING_ERROR && order_qty >= b->getSizeMinimum());
     if (b->getMaximumInterval())
     {
       current_inventory = produced - consumed;

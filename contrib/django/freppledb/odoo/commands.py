@@ -38,6 +38,12 @@ import frepple
 
 
 def odoo_read(db=DEFAULT_DB_ALIAS):
+  '''
+  This function connects to a URL, authenticates itself using HTTP basic
+  authentication, and then reads data from the URL.
+  The data from the source must adhere to frePPLe's official XML schema,
+  as defined in the schema files bin/frepple.xsd and bin/frepple_core.xsd.
+  '''
   odoo_user = Parameter.getValue("odoo.user", db)
   odoo_password = Parameter.getValue("odoo.password", db)
   odoo_db = Parameter.getValue("odoo.db", db)
@@ -81,6 +87,33 @@ def odoo_read(db=DEFAULT_DB_ALIAS):
 
 
 def odoo_write(db=DEFAULT_DB_ALIAS):
+  '''
+  Uploads operationplans to odoo.
+    - Sends all operationplans, meeting the criteria:
+      a) locked = False
+         The operationplans with locked equal to true are input to the plan,
+         and not output.
+      b) operationplan produces into a buffer whose source field is 'odoo'.
+         Only those results are of interest to odoo.
+    - We upload the following info in XML form:
+       - id: frePPLe generated unique identifier
+       - operation
+       - start
+       - end
+       - quantity
+       - location: This is the odoo id of the location, as stored in
+         buffer.location.subcategory.
+       - item: This is the odoo id of the produced item and its uom_id, as
+         stored in buffer.item.subcategory.
+       - criticality: 0 indicates a critical operationplan, 999 indicates a
+         redundant operationplan.
+    - The XML file uploaded is not exactly the standard XML of frePPLe, but a
+      slight variation that fits odoo better.
+    - This code doesn't interprete any of the results. An odoo addon module
+      will need to read the content, and take appropriate actions in odoo:
+      such as creating purchase orders, manufacturing orders, work orders,
+      project tasks, etc...
+  '''
   odoo_user = Parameter.getValue("odoo.user", db)
   odoo_password = Parameter.getValue("odoo.password", db)
   odoo_db = Parameter.getValue("odoo.db", db)
@@ -140,10 +173,11 @@ def odoo_write(db=DEFAULT_DB_ALIAS):
           b = j.flow.buffer
       if not b or b.source != 'odoo' or i.locked:
         continue
-      yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s/>' % (
+      yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%s"/>' % (
         i.id, quoteattr(i.operation.name),
         i.start, i.end, i.quantity,
         quoteattr(b.location.subcategory), quoteattr(b.item.subcategory),
+        i.criticality
         )
     yield '</operationplans>'
     yield '</plan>'
@@ -212,22 +246,22 @@ if __name__ == "__main__":
     frepple.printsize()
   logProgress(33, db)
 
-  print("\nStart plan generation at", datetime.now().strftime("%H:%M:%S"))
-  createPlan(db)
-  frepple.printsize()
-  logProgress(66, db)
-
   if 'odoo_read' in os.environ:
     print("\nStart exporting static model to the database with filter \"source = 'odoo'\" at", datetime.now().strftime("%H:%M:%S"))
     from freppledb.execute.export_database_static import exportStaticModel
     exportStaticModel(database=db, source='odoo').run()
 
-  print("\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S"))
-  exportPlan(db)
+  print("\nStart plan generation at", datetime.now().strftime("%H:%M:%S"))
+  createPlan(db)
+  frepple.printsize()
+  logProgress(66, db)
 
   if 'odoo_write' in os.environ:
     print("\nStart exporting plan to odoo at", datetime.now().strftime("%H:%M:%S"))
     odoo_write(db)
+
+  print("\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S"))
+  exportPlan(db)
 
   #print("\nStart saving the plan to flat files at", datetime.now().strftime("%H:%M:%S"))
   #from freppledb.execute.export_file_plan import exportfrepple as export_plan_to_file

@@ -15,6 +15,15 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import controllers
-import scheduler
-import res_company
+from openerp.osv import osv
+from openerp.osv import fields
+
+class res_company(osv.osv):
+  _name = 'res.company'
+  _inherit = 'res.company'
+  _columns = {
+    'manufacturing warehouse': fields.many2one('stock.warehouse', 'Manufacturing warehouse', ondelete='set null'),
+    'calendar': fields.many2one('resource.calendar', 'Calendar', ondelete='set null')
+  }
+
+res_company()

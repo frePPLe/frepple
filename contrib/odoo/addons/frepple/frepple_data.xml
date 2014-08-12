@@ -2,6 +2,22 @@
 <openerp>
   <data noupdate="1">
 
+    <!-- Extra configuration fields on the company form -->
+    <record id="company_form_frepple" model="ir.ui.view">
+      <field name="name">res.company.form.frepple.inherit</field>
+      <field name="model">res.company</field>
+      <field name="inherit_id" ref="base.view_company_form"/>
+      <field name="priority">55</field>
+      <field name="arch" type="xml">
+        <xpath expr="//group[@name='logistics_grp']" position="after">
+          <group name="frepple_grp" string="FrePPLe">
+            <field name="calendar"/>
+            <field name="manufacturing warehouse"/>
+          </group>
+        </xpath>
+      </field>
+    </record>
+
     <!-- Cron task -->
     <record forcecreate="True" id="ir_cron_scheduler_action" model="ir.cron">
       <field name="name">Generate frePPLe plan</field>

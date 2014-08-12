@@ -32,10 +32,10 @@ class importer(object):
     if authmeth.lower() != 'basic':
       raise Exception("No authentication header")
     auth = auth.strip().decode('base64')
-    self.user, password = auth.split(':', 1)
-    if not self.database or not self.user or not password:
+    user, password = auth.split(':', 1)
+    if not self.database or not user or not password:
       raise Exception("Authentication error")
-    if not self.req.session.authenticate(self.database, self.user, password):
+    if not self.req.session.authenticate(self.database, user, password):
       raise Exception("Odoo authentication failed")
     # TODO set the language on the context
     self.language = kwargs.get('language', 'en_US')
@@ -99,6 +99,7 @@ class importer(object):
               'product_uom': int(uom_id),
               'location_id': int(elem.get('location')),
               'procure_method': 'make_to_order',
+              # : elem.get('criticality'),
               'origin': 'frePPLe'
               })
             proc_order.action_confirm([x], context=self.req.session.context)
@@ -116,6 +117,7 @@ class importer(object):
               'product_uos_qty': False,
               'product_uos': False,
               'bom_id': False,
+              # : elem.get('criticality'),
               'origin': 'frePPLe'
               })
             mfg_order.action_compute([x], context=self.req.session.context)

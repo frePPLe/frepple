@@ -117,37 +117,37 @@ class loadData(object):
       FROM calendarbucket %s
       ORDER BY calendar_id, startdate desc
       ''' % self.filter_where)
-    for i, j, k, l, m, n, o1, o2, o3, o4, o5, o6, o7, t1, t2 in self.cursor.fetchall():
+    for i in self.cursor.fetchall():
       cnt += 1
       try:
         days = 0
-        if o1:
+        if i[6]:
           days += 1
-        if o2:
+        if i[7]:
           days += 2
-        if o3:
+        if i[8]:
           days += 4
-        if o4:
+        if i[9]:
           days += 8
-        if o5:
+        if i[10]:
           days += 16
-        if o6:
+        if i[11]:
           days += 32
-        if o7:
+        if i[12]:
           days += 64
-        b = frepple.calendar(name=i).addBucket(l)
-        b.value = n
+        b = frepple.calendar(name=i[0]).addBucket(i[3])
+        b.value = i[5]
         b.days = days
-        if t1:
-          b.starttime = t1.hour * 3600 + t1.minute * 60 + t1.second
-        if t2:
-          b.endtime = t2.hour * 3600 + t2.minute * 60 + t2.second + 1
-        if m:
-          b.priority = m
-        if j:
-          b.start = j
-        if k:
-          b.end = k
+        if i[13]:
+          b.starttime = i[13].hour * 3600 + i[13].minute * 60 + i[13].second
+        if i[14]:
+          b.endtime = i[14].hour * 3600 + i[14].minute * 60 + i[14].second + 1
+        if i[4]:
+          b.priority = i[4]
+        if i[1]:
+          b.start = i[1]
+        if i[2]:
+          b.end = i[2]
       except Exception as e:
         print("Error:", e)
     print('Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime))

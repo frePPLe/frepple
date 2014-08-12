@@ -796,6 +796,7 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
     o->setSizeMinimum(getSizeMinimum());
     o->setSizeMultiple(getSizeMultiple());
     if (!o->getLocation()) o->setLocation(getLocation());
+    o->setSource(getSource());
   }
   return oper;
 }

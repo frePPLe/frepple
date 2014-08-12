@@ -957,7 +957,8 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
 #else
         Attribute attr(PyString_AsString(key));
 #endif
-        if (!attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_id) && !attr.isA(Tags::tag_action))
+        if (!attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_id)
+          && !attr.isA(Tags::tag_action) && !attr.isA(Tags::tag_type))
         {
           int result = x->setattro(attr, field);
           if (result && !PyErr_Occurred())

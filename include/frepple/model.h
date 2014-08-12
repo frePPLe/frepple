@@ -3473,7 +3473,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     /** Mode to select the preferred alternates. */
     SearchMode search;
 
-    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
+    static PyObject* create(PyTypeObject* pytype, PyObject*, PyObject*);
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };

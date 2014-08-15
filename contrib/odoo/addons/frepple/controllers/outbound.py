@@ -207,7 +207,7 @@ class exporter(object):
         yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
     except:
       # Exception happens if the resource module isn't installed.
-      yield '<!-- Working hours are assume to be 24*7. -->\n'
+      yield '<!-- Working hours are assumed to be 24*7. -->\n'
       yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
     try:
       m = self.req.session.model('hr.holidays.public.line')
@@ -447,8 +447,11 @@ class exporter(object):
       yield '<buffer name=%s><item name=%s/><location name=%s/>\n' % (
         quoteattr(buf), quoteattr(product['name']), quoteattr(location)
         )
-      yield '<producing name=%s size_multiple="%s" xsi:type="operation_fixed_time"><location name=%s/>\n' % (
-        quoteattr(operation), (i['product_rounding'] * uom_factor) or 1, quoteattr(location)
+      yield '<producing name=%s size_multiple="%s" duration="P%dD" posttime="P%dD" xsi:type="operation_fixed_time"><location name=%s/>\n' % (
+        quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
+        int(self.product_templates[self.product_product[i['product_id'][0]]['template']]['produce_delay']),
+        self.manufacturing_lead,
+        quoteattr(location)
         )
       yield '<flows><flow xsi:type="flow_end" quantity="%s"%s%s><buffer name=%s/></flow>\n' % (
         i['product_qty'] * i['product_efficiency'] * uom_factor,
@@ -477,7 +480,6 @@ class exporter(object):
         for j in mrp_routing_workcenters.get(i['routing_id'][0], []):
           yield '<load quantity="%s"><resource name=%s/></load>\n' % (j[1], quoteattr(j[0]))
         yield '</loads>\n'
-      yield '<duration>P%sD</duration>\n' % int(self.product_templates[self.product_product[i['product_id'][0]]['template']]['produce_delay'] + self.manufacturing_lead)
 
       # Footer
       yield '</producing></buffer>\n'

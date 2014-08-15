@@ -155,6 +155,7 @@ class exporter(object):
 
     The working hours are extracted from a resource.calendar model.
     The calendar to use is configured with the company parameter "calendar".
+    If left unspecified we assume 24*7 working hours.
 
     The odoo model is not ideal and nice for frePPLe, and the current mapping
     is an as-good-as-it-gets workaround.
@@ -205,7 +206,8 @@ class exporter(object):
         # No entries. We'll assume 24*7 availability.
         yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
     except:
-      # Trouble with the working hour calendar, and will assume 24*7 availability.
+      # Exception happens if the resource module isn't installed.
+      yield '<!-- Working hours are assume to be 24*7. -->\n'
       yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
     try:
       m = self.req.session.model('hr.holidays.public.line')
@@ -215,8 +217,8 @@ class exporter(object):
         nd = datetime.strptime(i['date'], '%Y-%m-%d') + timedelta(days=1)
         yield '<bucket start="%sT00:00:00" end="%sT00:00:00" value="0" priority="1"/>\n' % (i['date'], nd.strftime("%Y-%m-%d"))
     except:
-      # Exception happens if there hr module is not installed
-      yield '<!-- No buckets are exported since the HR module is not installed -->\n'
+      # Exception happens if the hr module is not installed
+      yield '<!-- No holidays since the HR module is not installed -->\n'
     yield '</buckets></calendar></calendars>\n'
 
 
@@ -385,12 +387,8 @@ class exporter(object):
     Exports mrp.routings, mrp.routing.workcenter and mrp.bom records into
     frePPLe operations, flows, buffers and loads.
 
-    Not supported yet:
-      - parent boms TODO
-      - phantom boms TODO
-      - subproducts TODO
-      - multiple boms for the same product TODO
-      - routing steps TODO
+    Not supported yet: a) parent boms, b) phantom boms, c) subproducts,
+    d) multiple boms for the same product, e) routing steps.
 
     Mapping:
     '''
@@ -421,7 +419,7 @@ class exporter(object):
     m = self.req.session.model('mrp.bom')
     ids = m.search([('bom_id', '=', False)], context=self.req.session.context)
     fields = [
-      'name', 'active', 'product_qty', 'product_uom', 'date_start', 'date_stop',
+      'name', 'product_qty', 'product_uom', 'date_start', 'date_stop',
       'product_efficiency', 'product_id', 'routing_id', 'bom_id', 'type',
       'sub_products', 'product_rounding', 'bom_lines'
       ]
@@ -555,7 +553,7 @@ class exporter(object):
       operation = u'Ship %s @ %s' % (product['name'], location)
       buf = u'%s @ %s' % (product['name'], location)
       due = j['requested_date'] or j['date_order']
-      qty = i['product_uom_qty']  # self.convert_qty_uom(i['product_uom_qty'], i['product_uom'][0], i['product_id'][0])
+      qty = self.convert_qty_uom(i['product_uom_qty'], i['product_uom'][0], i['product_id'][0])
       minship = j['picking_policy'] == 'one' and qty or 1.0
       priority = 1
       deliveries.update([(operation, buf, product['name'], location,)])
@@ -679,8 +677,6 @@ class exporter(object):
     Defining order points for frePPLe, based on the stock.warehouse.orderpoint
     model.
 
-    TODO Currently only orderpoints for procured materials are mapped.
-
     Mapping:
     stock.warehouse.orderpoint.product.name ' @ ' stock.warehouse.orderpoint.location_id.name -> buffer.name
     stock.warehouse.orderpoint.location_id.name -> buffer.location
@@ -708,6 +704,13 @@ class exporter(object):
             i['product_max_qty'] * uom_factor, i['qty_multiple'] * uom_factor,
             quoteattr(item['name']), quoteattr(i['warehouse_id'][1])
             )
+        else:
+          # Manufactured material
+          # We only respect the minimum
+          yield '<buffer name=%s minimum="%s"><item name=%s/><location name=%s/></buffer>' % (
+            quoteattr(name), i['product_min_qty'] * uom_factor,
+            quoteattr(item['name']), quoteattr(i['warehouse_id'][1])
+            )
       yield '</buffers>\n'
 
 
@@ -715,8 +718,7 @@ class exporter(object):
     '''
     Extracting all on hand inventories to frePPLe.
 
-    We are using the report stock.report.prodlots, which is very, very, very
-    slow in odoo 7.
+    We are using the report stock.report.prodlots, which is very slow in odoo 7.
 
     Mapping:
     stock.report.prodlots.product_id.name @ stock.report.prodlots.location_id.name -> buffer.name

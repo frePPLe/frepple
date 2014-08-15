@@ -37,10 +37,12 @@ class importer(object):
       raise Exception("Authentication error")
     if not self.req.session.authenticate(self.database, user, password):
       raise Exception("Odoo authentication failed")
-    # TODO set the language on the context
-    self.language = kwargs.get('language', 'en_US')
+    if 'language' in kwargs:
+      # If not set we use the default language of the user
+      self.req.session.context['lang'] = kwargs['language']
     self.company = kwargs.get('company', None)
     self.datafile = kwargs.get('frePPLe plan')
+
 
   def run(self):
     msg = []
@@ -51,7 +53,7 @@ class importer(object):
     for i in m.search([('name', '=', self.company)], context=self.req.session.context):
       company_id = i
     if not company_id:
-      raise Exception("Company configured in parameter odoo.company doesn't exist")
+      raise Exception("Invalid company name argument")
 
     # Cancel previous draft purchase quotations
     m = self.req.session.model('purchase.order')

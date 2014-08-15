@@ -21,9 +21,15 @@ from openerp.osv import fields
 class res_company(osv.osv):
   _name = 'res.company'
   _inherit = 'res.company'
+
   _columns = {
     'manufacturing warehouse': fields.many2one('stock.warehouse', 'Manufacturing warehouse', ondelete='set null'),
-    'calendar': fields.many2one('resource.calendar', 'Calendar', ondelete='set null')
-  }
+    'calendar': fields.many2one('resource.calendar', 'Calendar', ondelete='set null'),
+    'cmdline': fields.char('Command line', size=128)
+    }
+
+  _defaults = {
+    'cmdline': lambda *a: 'frepplectl --env=odoo_read,odoo_write'
+    }
 
 res_company()

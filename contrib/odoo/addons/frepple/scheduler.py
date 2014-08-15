@@ -6,41 +6,33 @@ from openerp.osv import fields, osv
 
 
 class frepple_plan(osv.osv_memory):
-    _name = 'frepple.plan'
-    _description = 'Create a material and capacity constrained plan'
+  _name = 'frepple.plan'
+  _description = 'Create a material and capacity constrained plan'
 
-    _columns = {
-        'constrained': fields.boolean('Constrained', help='Run a constrained plan.'),
+  _columns = {
+    'company': fields.many2one('res.company', 'Company')
     }
 
-    _defaults = {
-         'constrained': lambda *a: True,
-    }
 
-    def _generate_plan(self, cr, uid, ids, context=None):
-        """
-        @param self: The object pointer.
-        @param cr: A database cursor
-        @param uid: ID of the user currently logged in
-        @param ids: List of IDs selected
-        @param context: A standard dictionary
-        """
-        status = subprocess.call(
-          ["frepple", os.path.join(os.path.dirname(os.path.realpath(__file__)), "frepple_commands.py")],
-          shell=False
-          )
-        return {}
+  def run_frepple(self, cr, uid, cmdline, context=None):
+    '''
+    Action triggered from the scheduler, or launched in a seperate thread
+    when planning is triggered manually.
+    '''
+    status = subprocess.call(
+      cmdline,
+      shell=False
+      )
 
-    def generate_plan(self, cr, uid, ids, context=None):
-        """
-        @param self: The object pointer.
-        @param cr: A database cursor
-        @param uid: ID of the user currently logged in
-        @param ids: List of IDs selected
-        @param context: A standard dictionary
-        """
-        threaded_calculation = threading.Thread(target=self._generate_plan, args=(cr, uid, context))
-        threaded_calculation.start()
-        return {'type': 'ir.actions.act_window_close'}
+
+  def generate_plan(self, cr, uid, ids, context=None):
+    for proc in self.browse(cr, uid, ids, context=context):
+      threaded_calculation = threading.Thread(
+        target=self.run_frepple,
+        args=(cr, uid, proc.company.cmdline)
+        )
+      threaded_calculation.start()
+    return {'type': 'ir.actions.act_window_close'}
+
 
 frepple_plan()

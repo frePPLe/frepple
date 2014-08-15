@@ -13,6 +13,7 @@
           <group name="frepple_grp" string="FrePPLe">
             <field name="calendar"/>
             <field name="manufacturing warehouse"/>
+            <field name="cmdline"/>
           </group>
         </xpath>
       </field>
@@ -28,8 +29,8 @@
       <field name="numbercall">-1</field>
       <field eval="False" name="doall"/>
       <field eval="'frepple.plan'" name="model"/>
-      <field eval="'generate_plan'" name="function"/>
-      <field eval="'(False,True)'" name="args"/>
+      <field eval="'run_frepple'" name="function"/>
+      <field eval="'(&quot;frepplectl --env=odoo_read,odoo_write&quot;,)'" name="args"/>
     </record>
 
     <!-- Generate plan window -->
@@ -39,7 +40,7 @@
       <field name="arch" type="xml">
         <form string="Scheduler Parameters" version="7.0">
           <group>
-            <field name="constrained"/>
+            <field name="company"/>
           </group>
           <footer>
             <button name="generate_plan" string="Generate Plan" type="object"  class="oe_highlight"  />

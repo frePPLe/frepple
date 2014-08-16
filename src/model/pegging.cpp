@@ -48,8 +48,9 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
 {
   // Loop through all delivery operationplans
   first = false;  // ... because the stack is still empty
-  for (Demand::OperationPlan_list::const_iterator opplaniter = d->getDelivery().begin();
-      opplaniter != d->getDelivery().end(); ++opplaniter)
+  const Demand::OperationPlan_list &deli = d->getDelivery();
+  for (Demand::OperationPlan_list::const_iterator opplaniter = deli.begin();
+      opplaniter != deli.end(); ++opplaniter)
     followPegging(*opplaniter, 0, (*opplaniter)->getQuantity(), 1.0);
 
   // Initialize Python type information

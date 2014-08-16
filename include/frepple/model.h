@@ -847,7 +847,7 @@ class Problem::List
 class Solver : public HasName<Solver>
 {
   public:
-    /** Constrcutor. */
+    /** Constructor. */
     explicit DECLARE_EXPORT Solver(const string& n) :
       HasName<Solver>(n), loglevel(0) {}
 

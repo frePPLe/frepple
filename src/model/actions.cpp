@@ -206,10 +206,9 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
     {
       if (!gdem->getHidden())
       {
-        for (Demand::OperationPlan_list::const_iterator
-            pp = gdem->getDelivery().begin();
-            pp != gdem->getDelivery().end();
-            ++pp)
+        const Demand::OperationPlan_list &deli = gdem->getDelivery();
+        for (Demand::OperationPlan_list::const_iterator pp = deli.begin();
+            pp != deli.end(); ++pp)
           textoutput << "DEMAND\t" << (*gdem) << '\t'
               << (*pp)->getDates().getEnd() << '\t'
               << (*pp)->getQuantity() << endl;

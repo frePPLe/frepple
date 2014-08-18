@@ -142,7 +142,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
         {
           // The full asked quantity is not possible.
           // Try with the minimum shipment quantity.
-          if (loglevel>0)
+          if (loglevel>1)
             logger << "Demand '" << l << "' tries planning minimum quantity " << l->getMinShipment() << endl;
           data->rollback(topcommand);
           data->state->curBuffer = NULL;

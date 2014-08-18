@@ -976,7 +976,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       if (search == PRIORITY)
       {
         // Message
-        if (loglevel)
+        if (loglevel>1)
           logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
             << "' tries alternate '" << *altIter << "' " << endl;
         (*altIter)->solve(*this,v);

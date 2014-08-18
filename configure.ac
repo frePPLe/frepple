@@ -56,7 +56,7 @@ AC_SUBST(LIBRARY_VERSION)
 # Define an extra configure argument to enable debugging
 #
 AC_ARG_ENABLE(debug,
-AC_HELP_STRING([--enable-debug],[Turn on debugging]),
+AS_HELP_STRING([--enable-debug],[Turn on debugging]),
 [case "${enableval}" in
   yes) debug=true ;;
   no)  debug=false ;;
@@ -69,7 +69,7 @@ AM_CONDITIONAL(DEBUG, test x$debug = xtrue)
 # This works only with the gcov tool and the gcc compiler
 #
 AC_ARG_ENABLE(coverage,
-AC_HELP_STRING([--enable-coverage],
+AS_HELP_STRING([--enable-coverage],
 [Compile for test coverage measurement (GCC only, using gcov)]),
 [case "${enableval}" in
   yes) coverage=true
@@ -91,7 +91,7 @@ AM_CONDITIONAL(COVERAGE, test x$coverage = xtrue)
 # trick because frePPLe uses shared libraries)
 #
 AC_ARG_ENABLE(profile,
-AC_HELP_STRING([--enable-profile],
+AS_HELP_STRING([--enable-profile],
 [Compile for profiling (GCC only)]),
 [case "${enableval}" in
   yes) profile=true ;;
@@ -105,7 +105,7 @@ AM_CONDITIONAL(PROFILE, test x$profile = xtrue)
 # Define an extra configure argument to enable the lp solver
 #
 AC_ARG_ENABLE(lp_solver,
-AC_HELP_STRING([--enable-lp_solver],
+AS_HELP_STRING([--enable-lp_solver],
 [Build the linear programming solver module (default: true if the GLPK package is installed)]),
 [case "${enableval}" in
   yes) lp=true ;;
@@ -118,7 +118,7 @@ AM_CONDITIONAL(LP, test x$lp = xtrue)
 # Define a configure argument to enable/disable building of the documentation
 #
 AC_ARG_ENABLE([doc],
-AC_HELP_STRING([--enable-doc],
+AS_HELP_STRING([--enable-doc],
 [Enable documentation generation(default false)]),
 [case "${enableval}" in
   no)  generatedoc=false;;

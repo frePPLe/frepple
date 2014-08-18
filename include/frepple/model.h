@@ -3649,7 +3649,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public PythonExte
       * The second parameter is to flag whether we want to actually perform
       * the resizing, or only to simulate it.
       */
-    double setQuantity(double qty, bool b=false, bool u = true)
+    double setQuantity(double qty, bool b=false, bool u=true, bool e=true)
     {
       if (!getFlow()->getEffective().within(getDate())) return 0.0;
       if (getFlow()->getType() == *FlowFixedEnd::metadata
@@ -3662,11 +3662,11 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public PythonExte
           return oper->setQuantity(
             (oper->getOperation()->getSizeMinimum()<=0) ? 0.001
               : oper->getOperation()->getSizeMinimum(),
-            b, u) ? getFlow()->getQuantity() : 0.0;
+            b, u, e) ? getFlow()->getQuantity() : 0.0;
       }
       else
         // Normal, proportional flows
-        return oper->setQuantity(qty / getFlow()->getQuantity(), b, u) * getFlow()->getQuantity();
+        return oper->setQuantity(qty / getFlow()->getQuantity(), b, u, e) * getFlow()->getQuantity();
       throw LogicException("Unreachable code reached");
     }
 

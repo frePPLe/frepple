@@ -164,7 +164,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
             {
               // Note: we're kind of assuming that the demand is an integer value here.
               double new_qty = floor((min_qty + max_qty) / 2);
-              if (new_qty == l->getMinShipment())
+              if (new_qty == min_qty)
               {
                 // Required to avoid an infinite loop on the same value...
                 new_qty += 1;

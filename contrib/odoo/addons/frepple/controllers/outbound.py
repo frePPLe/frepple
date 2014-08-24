@@ -313,7 +313,7 @@ class exporter(object):
       for i in m.read(ids, fields, self.req.session.context):
         name = i['name']
         self.map_workcenters[i['id']] = name
-        yield '<resource name=%s maximum="%s" cost="%s"><location name=%s/></resource>\n' % (
+        yield '<resource name=%s maximum="%s" cost="%f"><location name=%s/></resource>\n' % (
           quoteattr(name), i['capacity_per_cycle'] / (i['time_cycle'] or 1),
           i['costs_hour'], quoteattr(self.mfg_location)
           )
@@ -360,7 +360,7 @@ class exporter(object):
         else:
           name = i['name']
         self.product_product[i['id']] = {'name': name, 'template': i['product_tmpl_id'][0]}
-        yield '<item name=%s price="%s" subcategory="%s,%s"/>\n' % (
+        yield '<item name=%s price="%f" subcategory="%s,%s"/>\n' % (
           quoteattr(name),
           (self.product_templates[i['product_tmpl_id'][0]]['list_price'] or 0) / self.convert_qty_uom(1.0, self.product_templates[i['product_tmpl_id'][0]]['uom_id'][0], i['id']),
           self.product_templates[i['product_tmpl_id'][0]]['uom_id'][0], i['id']
@@ -453,7 +453,7 @@ class exporter(object):
         self.manufacturing_lead,
         quoteattr(location)
         )
-      yield '<flows><flow xsi:type="flow_end" quantity="%s"%s%s><buffer name=%s/></flow>\n' % (
+      yield '<flows><flow xsi:type="flow_end" quantity="%f"%s%s><buffer name=%s/></flow>\n' % (
         i['product_qty'] * i['product_efficiency'] * uom_factor,
         i['date_start'] and (' effective_start="%s"' % i['date_start']) or "",
         i['date_stop'] and (' effective_end="%s"' % i['date_stop']) or "",
@@ -467,7 +467,7 @@ class exporter(object):
           continue
         buf = u'%s @ %s' % (product['name'], location)
         qty = self.convert_qty_uom(j['product_qty'], j['product_uom'][0], j['product_id'][0])
-        yield '<flow xsi:type="flow_start" quantity="-%s"%s%s><buffer name=%s/></flow>\n' % (
+        yield '<flow xsi:type="flow_start" quantity="-%f"%s%s><buffer name=%s/></flow>\n' % (
           qty, j['date_start'] and (' effective_start="%s"' % j['date_start']) or "",
           j['date_stop'] and (' effective_end="%s"' % j['date_stop']) or "",
           quoteattr(buf)
@@ -478,7 +478,7 @@ class exporter(object):
       if i['routing_id']:
         yield '<loads>\n'
         for j in mrp_routing_workcenters.get(i['routing_id'][0], []):
-          yield '<load quantity="%s"><resource name=%s/></load>\n' % (j[1], quoteattr(j[0]))
+          yield '<load quantity="%f"><resource name=%s/></load>\n' % (j[1], quoteattr(j[0]))
         yield '</loads>\n'
 
       # Footer
@@ -559,7 +559,7 @@ class exporter(object):
       minship = j['picking_policy'] == 'one' and qty or 1.0
       priority = 1
       deliveries.update([(operation, buf, product['name'], location,)])
-      yield '<demand name=%s quantity="%s" due="%sT00:00:00" priority="%s" minshipment="%s"><item name=%s/><customer name=%s/><operation name=%s/></demand>\n' % (
+      yield '<demand name=%s quantity="%f" due="%sT00:00:00" priority="%s" minshipment="%s"><item name=%s/><customer name=%s/><operation name=%s/></demand>\n' % (
         quoteattr(name), qty, due, priority, minship,
         quoteattr(product['name']), quoteattr(customer),
         quoteattr(operation)
@@ -633,7 +633,7 @@ class exporter(object):
     yield '<!-- open purchase order lines -->\n'
     yield '<operationplans>\n'
     for i in dd:
-      yield '<operationplan operation=%s start="%sT00:00:00" end="%sT00:00:00" quantity="%s" locked="true"/>\n' % i
+      yield '<operationplan operation=%s start="%sT00:00:00" end="%sT00:00:00" quantity="%f" locked="true"/>\n' % i
     yield '</operationplans>\n'
 
 
@@ -701,7 +701,7 @@ class exporter(object):
         name = u'%s @ %s' % (item['name'], i['warehouse_id'][1])
         if name in self.procured_buffers:
           # Procured material
-          yield '<buffer name=%s xsi:type="buffer_procure" mininventory="%s" maxinventory="%s" size_multiple="%s"><item name=%s/><location name=%s/></buffer>' % (
+          yield '<buffer name=%s xsi:type="buffer_procure" mininventory="%f" maxinventory="%f" size_multiple="%f"><item name=%s/><location name=%s/></buffer>' % (
             quoteattr(name), i['product_min_qty'] * uom_factor,
             i['product_max_qty'] * uom_factor, i['qty_multiple'] * uom_factor,
             quoteattr(item['name']), quoteattr(i['warehouse_id'][1])
@@ -709,7 +709,7 @@ class exporter(object):
         else:
           # Manufactured material
           # We only respect the minimum
-          yield '<buffer name=%s minimum="%s"><item name=%s/><location name=%s/></buffer>' % (
+          yield '<buffer name=%s minimum="%f"><item name=%s/><location name=%s/></buffer>' % (
             quoteattr(name), i['product_min_qty'] * uom_factor,
             quoteattr(item['name']), quoteattr(i['warehouse_id'][1])
             )
@@ -746,7 +746,7 @@ class exporter(object):
     yield '<!-- inventory -->\n'
     yield '<buffers>\n'
     for i, j in data.iteritems():
-      yield '<buffer name=%s onhand="%s"><item name=%s/><location name=%s/></buffer>\n' % (
+      yield '<buffer name=%s onhand="%f"><item name=%s/><location name=%s/></buffer>\n' % (
         quoteattr(i), j[0], quoteattr(j[1]), quoteattr(j[2])
         )
     yield '</buffers>\n'

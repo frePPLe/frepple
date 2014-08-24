@@ -1129,21 +1129,24 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
 
   // Upstream operationplan
   TimePeriod minslack = 86313600L; // 999 days in seconds
-  vector<TimePeriod> slack(HasLevel::getNumberOfLevels() + 2);
+  vector<TimePeriod> slack(HasLevel::getNumberOfLevels() + 5);
   for (PeggingIterator p(this); p; p++)
   {
     Date d = p.getProducingDate();
     if (!d) d = Plan::instance().getCurrent();
-    slack[-p.getLevel()] = p.getConsumingDate() - d;
-    if (slack[-p.getLevel()] < 0L)
-      slack[-p.getLevel()] = 0L;
+    unsigned int lvl = -p.getLevel();
+    if (lvl >= slack.size())
+      slack.resize(lvl + 5);
+    slack[lvl] = p.getConsumingDate() - d;
+    if (slack[lvl] < 0L)
+      slack[lvl] = 0L;
     OperationPlan* m = p.getConsumingOperationplan();
     if (m && m->getTopOwner()->getDemand())
     {
       // Reached a demand. Get the total slack now.
       TimePeriod myslack = m->getTopOwner()->getDemand()->getDue() - m->getDates().getEnd();
       if (myslack < 0L) myslack = 0L;
-      for (int i=-p.getLevel(); i>=0; i--)
+      for (int i=lvl; i>=0; i--)
         myslack += slack[i];
       if (myslack < minslack)
         minslack = myslack;

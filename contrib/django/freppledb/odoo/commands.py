@@ -173,11 +173,11 @@ def odoo_write(db=DEFAULT_DB_ALIAS):
           b = j.flow.buffer
       if not b or b.source != 'odoo' or i.locked:
         continue
-      yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%s"/>' % (
+      yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
         i.id, quoteattr(i.operation.name),
         i.start, i.end, i.quantity,
         quoteattr(b.location.subcategory), quoteattr(b.item.subcategory),
-        i.criticality
+        int(i.criticality)
         )
     yield '</operationplans>'
     yield '</plan>'

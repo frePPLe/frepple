@@ -1818,7 +1818,13 @@ class DateRange
       * If the start date is later than the end date parameter, the
       * parameters will be swapped. */
     DateRange(const Date& st, const Date& nd) : start(st), end(nd)
-    {if(st>nd) {start=nd; end=st;}}
+    {
+      if(st>nd)
+      {
+        start=nd;
+        end=st;
+      }
+    }
 
     /** Default constructor.<br>
       * This will create a daterange covering the complete horizon.
@@ -1835,7 +1841,11 @@ class DateRange
       * If the new start date is later than the end date, the end date will
       * be set equal to the new start date.
       */
-    void setStart(const Date& d) {start=d; if(start>end) end=start;}
+    void setStart(const Date& d)
+    {
+      start=d;
+      if(start>end) end=start;
+    }
 
     /** Returns the end date. */
     const Date & getEnd() const {return end;}
@@ -1844,34 +1854,75 @@ class DateRange
       * If the new end date is earlier than the start date, the start date will
       * be set equal to the new end date.
       */
-    void setEnd(const Date& d) {end=d; if(start>end) start=end;}
+    void setEnd(const Date& d)
+    {
+      end=d;
+      if (start>end) start=end;
+    }
 
     /** Updates the start and end dates simultaneously. */
     void setStartAndEnd(const Date& st, const Date& nd)
-    {if (st<nd) {start=st; end=nd;} else {start=nd; end=st;}}
+    {
+      if (st<nd)
+      {
+        start=st;
+        end=nd;
+      }
+      else
+      {
+        start=nd;
+        end=st;
+      }
+    }
 
     /** Returns the duration of the interval. Note that this number will always
       * be greater than or equal to 0, since the end date is always later than
       * the start date.
       */
-    TimePeriod getDuration() const {return end - start;}
+    TimePeriod getDuration() const
+    {
+      return end - start;
+    }
+
+    /** Bool conversion operator.<br>
+      * Returns true if the daterange is different from the default. */
+    operator bool() const
+    {
+      return start != Date::infinitePast || end != Date::infiniteFuture;
+    }
 
     /** Equality of date ranges. */
     bool operator == (const DateRange& b) const
-    {return start==b.start && end==b.end;}
+    {
+      return start==b.start && end==b.end;
+    }
 
     /** Inequality of date ranges. */
     bool operator != (const DateRange& b) const
-    {return start!=b.start || end!=b.end;}
+    {
+      return start!=b.start || end!=b.end;
+    }
 
     /** Move the daterange later in time. */
-    void operator += (const TimePeriod& l) {start += l; end += l;}
+    void operator += (const TimePeriod& l)
+    {
+      start += l;
+      end += l;
+    }
 
     /** Move the daterange earlier in time. */
-    void operator -= (const TimePeriod& l) {start -= l; end -= l;}
+    void operator -= (const TimePeriod& l)
+    {
+      start -= l;
+      end -= l;
+    }
 
     /** Assignment operator. */
-    void operator = (const DateRange& dr) {start = dr.start; end = dr.end;}
+    void operator = (const DateRange& dr)
+    {
+      start = dr.start;
+      end = dr.end;
+    }
 
     /** Return true if two date ranges are overlapping.<br>
       * The start point of the first interval is included in the comparison,
@@ -1880,7 +1931,9 @@ class DateRange
       * not nessarily true.
       */
     bool intersect(const DateRange& dr) const
-    {return dr.start<=end && dr.end>start;}
+    {
+      return dr.start<=end && dr.end>start;
+    }
 
     /** Returns the number of seconds the two dateranges overlap. */
     TimePeriod overlap(const DateRange& dr) const
@@ -1892,7 +1945,10 @@ class DateRange
 
     /** Returns true if the date passed as argument does fall within the
       * daterange. */
-    bool within(const Date& d) const {return d>=start && d<end;}
+    bool within(const Date& d) const
+    {
+      return d>=start && d<end;
+    }
 
     /** Convert the daterange to a string. */
     DECLARE_EXPORT operator string() const;

@@ -81,7 +81,7 @@ function drawGraphs(jsondata)
         'perc': tmp[4]
         });
       if (tmp[0] + tmp[1] > max_y) max_y = tmp[0] + tmp[1] ;
-      if (tmp[2] + tmp[3] > max_y) max_y = tmp[2] + tmp[3] ;
+      if (tmp[1] + tmp[2] + tmp[3] > max_y) max_y = tmp[1] + tmp[2] + tmp[3] ;
     }
 
     // Update the scale of the Y-axis by looking for the max value

@@ -509,6 +509,16 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
   data->state->a_qty = orig_q_qty;
   Date prevdate;
 
+  // Compute the minimum free capacity we need in a bucket
+  double min_free_quantity =
+    data->state->q_loadplan->getLoad()->getEffective() ?
+      // Conservative threshold when the load is date effective
+      ROUNDING_ERROR :
+      // Minimum operation size multiplied with load size
+      (data->state->q_operationplan->getOperation()->setOperationPlanQuantity(
+        data->state->q_operationplan, 0.01, false, false, false
+        ) * data->state->q_loadplan->getLoad()->getQuantity());
+
   // Loop for a valid location by using EARLIER capacity
   if (!data->state->forceLate)
     do
@@ -599,7 +609,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
           }
           bucketEnd = cur->getDate();
           --cur;  // Move to last loadplan in the previous bucket
-          if (cur != res->getLoadPlans().end() && cur->getOnhand() > ROUNDING_ERROR)
+          if (cur != res->getLoadPlans().end() && cur->getOnhand() > min_free_quantity)
           {
             // Find a suitable start date in this bucket
             TimePeriod tmp;
@@ -661,7 +671,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
       if (cur->getType() != 2)
         // Not a new bucket
         overloadQty = cur->getOnhand();
-      else if (overloadQty > ROUNDING_ERROR)
+      else if (overloadQty > min_free_quantity)
       {
         // Find a suitable start date in this bucket
         TimePeriod tmp;

@@ -148,7 +148,9 @@ class Calendar : public HasName<Calendar>, public HasSource
         Calendar *cal;
 
         /** An internally managed data structure to keep the offsets
-          * inside the week where the entry changes effectivity. */
+          * inside the week where the entry changes effectivity.
+          * TODO This type of data structure is not good when the DST changes during the week. Need to reimplement without this offset data structure!
+          */
         long offsets[14];
 
         /** An internal counter for the number of indices used in the

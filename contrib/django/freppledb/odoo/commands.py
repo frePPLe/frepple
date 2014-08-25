@@ -51,7 +51,7 @@ def odoo_read(db=DEFAULT_DB_ALIAS):
   odoo_company = Parameter.getValue("odoo.company", db)
   ok = True
   if not odoo_user:
-    print("Missing or invalid odoo.user parameter")
+    print("Missing or invalid parameter odoo.user")
     ok = False
   if not odoo_password:
     print("Missing or invalid parameter odoo.password")
@@ -67,8 +67,7 @@ def odoo_read(db=DEFAULT_DB_ALIAS):
     ok = False
   odoo_language = Parameter.getValue("odoo.language", db, 'en_US')
   if not ok:
-    print("Skipping data import from odoo")
-    return
+    raise Exception("Odoo connector not configured correctly")
 
   # Connect to the odoo URL to GET data
   try:
@@ -121,7 +120,7 @@ def odoo_write(db=DEFAULT_DB_ALIAS):
   odoo_company = Parameter.getValue("odoo.company", db)
   ok = True
   if not odoo_user:
-    print("Missing or invalid odoo.user parameter")
+    print("Missing or invalid parameter odoo.user")
     ok = False
   if not odoo_password:
     print("Missing or invalid parameter odoo.password")
@@ -137,8 +136,7 @@ def odoo_write(db=DEFAULT_DB_ALIAS):
     ok = False
   odoo_language = Parameter.getValue("odoo.language", db, 'en_US')
   if not ok:
-    print("Skipping data export from odoo")
-    return
+    raise Exception("Odoo connector not configured correctly")
   boundary = mimetools.choose_boundary()
 
   # Generator function

@@ -74,11 +74,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       ; ++cur)
   {
-    const FlowPlan* fplan = dynamic_cast<const FlowPlan*>(&*cur);
-    if (fplan && !fplan->getOperationPlan()->getRawIdentifier()
+    if(&*cur && cur->getType() == 1)
+    {
+      const FlowPlan* fplan = static_cast<const FlowPlan*>(&*cur);
+      if (!fplan->getOperationPlan()->getRawIdentifier()
         && fplan->getQuantity()>0
         && fplan->getOperationPlan()->getOperation() != b->getProducingOperation())
-      unconfirmed_supply += fplan->getQuantity();
+          unconfirmed_supply += fplan->getQuantity();
+    }
 
     // Iterator has now changed to a new date or we have arrived at the end.
     // If multiple flows are at the same moment in time, we are not interested
@@ -318,8 +321,6 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
   Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
   while (true)
   {
-    const FlowPlan* fplan = dynamic_cast<const FlowPlan*>(&*cur);
-
     // Iterator has now changed to a new date or we have arrived at the end.
     // If multiple flows are at the same moment in time, we are not interested
     // in the inventory changes. It gets interesting only when a certain

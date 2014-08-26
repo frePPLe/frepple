@@ -58,27 +58,35 @@ template <class type> class TimeLine
         friend class iterator;
       protected:
         Date dt;
+        unsigned short tp;
+        double qty;
         double oh;
         double cum_prod;
         Event* next;
         Event* prev;
-        Event() : oh(0), cum_prod(0), next(NULL), prev(NULL) {};
+        Event(unsigned short t, double q = 0.0)
+          : tp(t), qty(q), oh(0), cum_prod(0), next(NULL), prev(NULL) {};
 
       public:
         virtual ~Event() {};
-        virtual double getQuantity() const {return 0.0;}
+
+        /** Return the even type. */
+        inline unsigned short getType() const {return tp;}
+
+        /** Return the quantity. */
+        inline double getQuantity() const {return qty;}
 
         /** Return the current onhand value. */
-        double getOnhand() const {return oh;}
+        inline double getOnhand() const {return oh;}
 
         /** Return the total produced quantity till the current date. */
-        double getCumulativeProduced() const {return cum_prod;}
+        inline double getCumulativeProduced() const {return cum_prod;}
 
         /** Return the total consumed quantity till the current date. */
-        double getCumulativeConsumed() const {return cum_prod - oh;}
+        inline double getCumulativeConsumed() const {return cum_prod - oh;}
 
         /** Return the date of the event. */
-        const Date& getDate() const {return dt;}
+        inline const Date& getDate() const {return dt;}
 
         /** Return a pointer to the owning timeline. */
         virtual TimeLine<type>* getTimeLine() const {return NULL;}
@@ -87,7 +95,6 @@ template <class type> class TimeLine
           * this event. */
         virtual double getMin(bool inclusive = true) const
         {
-          assert(this->getTimeLine());
           EventMinQuantity *m = this->getTimeLine()->lastMin;
           if (inclusive)
             while(m && getDate() < m->getDate()) m = m->prevMin;
@@ -100,7 +107,6 @@ template <class type> class TimeLine
           * this event. */
         virtual double getMax(bool inclusive = true) const
         {
-          assert(this->getTimeLine());
           EventMaxQuantity *m = this->getTimeLine()->lastMax;
           if (inclusive)
             while(m && getDate() < m->getDate()) m = m->prevMax;
@@ -108,8 +114,6 @@ template <class type> class TimeLine
             while(m && getDate() <= m->getDate()) m = m->prevMax;
           return m ? m->newMax : 0.0;
         }
-
-        virtual unsigned short getType() const = 0;
 
         /** First criterion is date: earlier dates come first.<br>
           * Second criterion is the size: big events come first.<br>
@@ -135,12 +139,8 @@ template <class type> class TimeLine
     class EventChangeOnhand : public Event
     {
         friend class TimeLine<type>;
-      private:
-        double quantity;
       public:
-        double getQuantity() const {return quantity;}
-        EventChangeOnhand(double qty = 0.0) : quantity(qty) {}
-        virtual unsigned short getType() const {return 1;}
+        EventChangeOnhand(double qty = 0.0) : Event(1, qty) {}
     };
 
     /** @brief A timeline event representing a change of the current value. */
@@ -148,13 +148,12 @@ template <class type> class TimeLine
     {
         friend class TimeLine<type>;
       private:
-        double quantity;
+        double new_oh;
       protected:
         EventSetOnhand *prevSet;
       public:
-        EventSetOnhand(Date d, double q=0.0) : quantity(q), prevSet(NULL)
+        EventSetOnhand(Date d, double q=0.0) : Event(2), new_oh(q), prevSet(NULL)
         {this->dt = d;}
-        virtual unsigned short getType() const {return 2;}
     };
 
     /** @brief A timeline event representing a change of the minimum target. */
@@ -167,7 +166,7 @@ template <class type> class TimeLine
       protected:
         EventMinQuantity *prevMin;
       public:
-        EventMinQuantity(Date d, double f=0.0) : newMin(f), prevMin(NULL)
+        EventMinQuantity(Date d, double f=0.0) : Event(3), newMin(f), prevMin(NULL)
         {this->dt = d;}
         void setMin(double f) {newMin = f;}
         virtual double getMin(bool inclusive = true) const
@@ -175,7 +174,6 @@ template <class type> class TimeLine
           if (inclusive) return newMin;
           else return prevMin ? prevMin->newMin : 0.0;
         }
-        virtual unsigned short getType() const {return 3;}
     };
 
     /** @brief A timeline event representing a change of the maximum target. */
@@ -188,7 +186,7 @@ template <class type> class TimeLine
       protected:
         EventMaxQuantity *prevMax;
       public:
-        EventMaxQuantity(Date d, double f=0.0) : newMax(f), prevMax(NULL)
+        EventMaxQuantity(Date d, double f=0.0) : Event(4), newMax(f), prevMax(NULL)
         {this->dt = d;}
         void setMax(double f) {newMax = f;}
         virtual double getMax(bool inclusive = true) const
@@ -196,7 +194,6 @@ template <class type> class TimeLine
           if (inclusive) return newMax;
           else return prevMax ? prevMax->newMax : 0.0;
         }
-        virtual unsigned short getType() const {return 4;}
     };
 
     /** @brief This is bi-directional iterator through the timeline. */
@@ -257,7 +254,7 @@ template <class type> class TimeLine
     /** Insert an onhandchange event in the timeline. */
     void insert(EventChangeOnhand* e, double qty, const Date& d)
     {
-      e->quantity = qty;
+      e->qty = qty;
       e->dt = d;
       insert(static_cast<Event*>(e));
     };
@@ -507,9 +504,9 @@ template <class type> void TimeLine<type>::insert (Event* e)
           o->prevSet = m;
         }
         // Update onhand after this setonhand till the next setonhand
-        double delta = m->quantity - m->oh;
+        double delta = m->new_oh - m->oh;
         iterator i = begin(m);
-        m->oh = m->quantity;
+        m->oh = m->new_oh;
         ++i;
         for (; i!=end() && i->getType()!=2; ++i)
           m->oh += delta;
@@ -656,14 +653,14 @@ template <class type> void TimeLine<type>::erase(Event* e)
 template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double newqty, const Date& d)
 {
   // Compute the delta quantity
-  double delta = e->quantity - newqty;
-  double oldqty = e->quantity;
+  double delta = e->qty - newqty;
+  double oldqty = e->qty;
   bool in_bucket = false;
 
   // Set the new date and quantity. The algorithm below swaps the element with
   // its predecessor or successor till the timeline is properly sorted again.
   e->dt = d;
-  e->quantity = newqty;
+  e->qty = newqty;
 
   // Update the position in the timeline.
   // Remember that the quantity is also used by the '<' operator! Changing the

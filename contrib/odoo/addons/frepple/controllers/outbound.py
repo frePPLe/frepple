@@ -20,6 +20,8 @@ from xml.sax.saxutils import quoteattr
 from datetime import datetime, timedelta
 from operator import itemgetter
 
+from openerp.modules.registry import RegistryManager
+
 logger = logging.getLogger(__name__)
 
 
@@ -720,33 +722,30 @@ class exporter(object):
     '''
     Extracting all on hand inventories to frePPLe.
 
-    We are using the report stock.report.prodlots, which is very slow in odoo 7.
+    We're bypassing the ORM for performance reasons.
 
     Mapping:
     stock.report.prodlots.product_id.name @ stock.report.prodlots.location_id.name -> buffer.name
     stock.report.prodlots.product_id.name -> buffer.item
     stock.report.prodlots.location_id.name -> buffer.location
-    stock.report.prodlots.qty -> buffer.onhand
+    sum(stock.report.prodlots.qty) -> buffer.onhand
     '''
-    data = {}
-    m = self.req.session.model('stock.report.prodlots')
-    ids = m.search([('qty', '>', 0)], context=self.req.session.context)
-    fields = ['prodlot_id', 'location_id', 'qty', 'product_id']
-    for i in m.read(ids, fields, self.req.session.context):
-      location = self.map_locations.get(i['location_id'] and i['location_id'][0] or 0, None)
-      item = self.product_product.get(i['product_id'] and i['product_id'][0] or 0, None)
-      if location and item:
-        name = u'%s @ %s' % (item['name'], location)
-        if name in data:
-          data[name] = (data[name][0] + i['qty'], item['name'], location)
-        else:
-          data[name] = (i['qty'], item['name'], location)
-
-    # Output buf inventories
     yield '<!-- inventory -->\n'
     yield '<buffers>\n'
-    for i, j in data.iteritems():
-      yield '<buffer name=%s onhand="%f"><item name=%s/><location name=%s/></buffer>\n' % (
-        quoteattr(i), j[0], quoteattr(j[1]), quoteattr(j[2])
-        )
+    cr = RegistryManager.get(self.database).db.cursor()
+    try:
+      cr.execute('SELECT product_id, location_id, sum(qty) '
+        'FROM stock_report_prodlots '
+        'WHERE qty > 0 '
+        'GROUP BY product_id, location_id')
+      for i in cr.fetchall():
+        item = self.product_product.get(i[0], None)
+        location = self.map_locations.get(i[1], None)
+        if location and item:
+          yield '<buffer name=%s onhand="%f"><item name=%s/><location name=%s/></buffer>\n' % (
+            quoteattr(u'%s @ %s' % (item['name'], location)),
+            i[2], quoteattr(item['name']), quoteattr(location)
+            )
+    finally:
+      cr.close()
     yield '</buffers>\n'

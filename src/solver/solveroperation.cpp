@@ -40,7 +40,6 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
   bool backuplogconstraints = data.logConstraints;
   bool backupForceLate = data.state->forceLate;
   bool recheck, first;
-  double loadqty = 1.0;
 
   // Loop through all loadplans, and solve for the resource.
   // This may move an operationplan early or late.

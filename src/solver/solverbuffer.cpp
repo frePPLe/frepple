@@ -328,7 +328,6 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
     if ((cur == b->getFlowPlans().end() || cur->getDate()>currentDate) && prev)
     {
       // Some variables
-      Date theDate = prev->getDate();
       double theOnHand = prev->getOnhand();
       double theDelta = theOnHand - current_minimum + shortage;
       bool loop = true;

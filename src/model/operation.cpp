@@ -1998,7 +1998,6 @@ DECLARE_EXPORT double OperationRouting::setOperationPlanQuantity
 {
   assert(oplan);
   // Call the default logic, implemented on the Operation class
-  double origqty = oplan->quantity;
   double newqty = Operation::setOperationPlanQuantity(oplan, f, roundDown, false, execute);
   if (!execute) return newqty;
 

@@ -374,7 +374,6 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
       getLoadPlans().begin(ldplan) :
       getLoadPlans().begin();
   string prevsetup = ldplan ? ldplan->getSetup() : getSetup();
-  Date latestCheckDate = ldplan ? ldplan->getDate() : Date::infiniteFuture;
   for (; i != getLoadPlans().end(); ++i)
   {
     const LoadPlan* l = dynamic_cast<const LoadPlan*>(&*i);

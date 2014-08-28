@@ -44,15 +44,14 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
+  {
     if (safetystock)
-    {
       logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
           << "' replenishes for safety stock" << endl;
-      int i = 1;
-    }
     else
       logger << indent(b->getLevel()) << "  Procurement buffer '" << b->getName()
         << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+  }
 
   // Standard reply date
   data->state->a_date = Date::infiniteFuture;

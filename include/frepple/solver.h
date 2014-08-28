@@ -690,7 +690,7 @@ class SolverMRP : public Solver
         /** An identifier of the cluster being replanned. Note that it isn't
           * always the complete cluster that is being planned.
           */
-        int cluster;
+        unsigned int cluster;
 
         /** A deque containing all demands to be (re-)planned. */
         deque<Demand*>* demands;

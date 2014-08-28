@@ -3100,6 +3100,16 @@ class PythonObject : public DataElement
 #endif
     }
 
+    /** Convert a C++ unsigned integer into a Python integer. */
+    inline PythonObject(const unsigned int val)
+    {
+#if PY_MAJOR_VERSION >= 3
+      obj = PyLong_FromLong(val);
+#else
+      obj = PyInt_FromLong(val);
+#endif
+    }
+
     /** Convert a C++ long into a Python long. */
     inline PythonObject(const long val)
     {

@@ -34,8 +34,8 @@ namespace frepple
 
 DECLARE_EXPORT bool HasLevel::recomputeLevels = false;
 DECLARE_EXPORT bool HasLevel::computationBusy = false;
-DECLARE_EXPORT short unsigned HasLevel::numberOfClusters = 0;
-DECLARE_EXPORT short unsigned HasLevel::numberOfLevels = 0;
+DECLARE_EXPORT unsigned int HasLevel::numberOfClusters = 0;
+DECLARE_EXPORT unsigned short HasLevel::numberOfLevels = 0;
 
 
 DECLARE_EXPORT void HasLevel::computeLevels()
@@ -104,7 +104,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
           continue;
         }
         cur_cluster = ++numberOfClusters;
-        if (numberOfClusters >= USHRT_MAX)
+        if (numberOfClusters >= UINT_MAX)
           throw LogicException("Too many clusters");
       }
 

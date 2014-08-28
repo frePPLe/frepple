@@ -1039,7 +1039,7 @@ class HasLevel
     static DECLARE_EXPORT bool computationBusy;
 
     /** Stores the total number of clusters in the model. */
-    static DECLARE_EXPORT unsigned short numberOfClusters;
+    static DECLARE_EXPORT unsigned int numberOfClusters;
 
     /** Stores the maximum level number in the model. */
     static DECLARE_EXPORT unsigned short numberOfLevels;
@@ -1051,7 +1051,7 @@ class HasLevel
     short lvl;
 
     /** Stores the cluster number of the current entity. */
-    unsigned short cluster;
+    unsigned int cluster;
 
   protected:
     /** Default constructor. The initial level is -1 and basically indicates
@@ -1103,7 +1103,7 @@ class HasLevel
     /** Returns the total number of clusters.<br>
       * If not up to date the recomputation will be triggered.
       */
-    static unsigned short getNumberOfClusters()
+    static unsigned int getNumberOfClusters()
     {
       if (recomputeLevels || computationBusy) computeLevels();
       return numberOfClusters;
@@ -1117,7 +1117,7 @@ class HasLevel
     }
 
     /** Return the cluster number (and recompute first if required). */
-    unsigned short getCluster() const
+    unsigned int getCluster() const
     {
       if (recomputeLevels || computationBusy) computeLevels();
       return cluster;
@@ -4658,7 +4658,7 @@ class Demand
     DECLARE_EXPORT Operation* getDeliveryOperation() const;
 
     /** Returns the cluster which this demand belongs to. */
-    int getCluster() const
+    unsigned int getCluster() const
     {
       Operation* o = getDeliveryOperation();
       return o ? o->getCluster() : 0;

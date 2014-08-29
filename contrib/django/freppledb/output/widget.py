@@ -295,16 +295,15 @@ class ResourceLoadWidget(Widget):
   javascript = '''
     // Collect the data
     var data = [];
+    var max_util = 100.0;
     $("#resLoad").next().find("tr").each(function() {
       var l = $(this).find("a");
-      data.push( [
-         l.attr("href"),
-         l.text(),
-         parseFloat($(this).find("td.util").html())
-         ] );
+      var v = parseFloat($(this).find("td.util").html());
+      data.push( [l.attr("href"), l.text(), v] );
+      if (v > max_util) max_util = v;
       });
     var barHeight = $("#resLoad").height() / data.length;
-    var x = d3.scale.linear().domain([0, 100]).range([0, $("#resLoad").width()]);
+    var x = d3.scale.linear().domain([0, max_util]).range([0, $("#resLoad").width()]);
     var resload_high = parseFloat($("#resload_high").html());
     var resload_medium = parseFloat($("#resload_medium").html());
 
@@ -333,15 +332,11 @@ class ResourceLoadWidget(Widget):
       .attr("y", barHeight / 2)
       .attr("dy", ".35em")
       .text(function(d,i) { return d[1]; })
-      .style('text-decoration', 'underline');
-
-    bar.append("text")
-      .attr("y", barHeight / 2)
-      .attr("dy", ".35em")
-      .attr("x", function(d) {return x(d[2]) - 3;})
-      .style("text-anchor", "end")
-      .attr("class","bold")
-      .text(function(d,i) { return d[2] + "%"; });
+      .style('text-decoration', 'underline')
+      .append("tspan")
+      .attr("dx", ".35em")
+      .text(function(d,i) { return d[2] + "%"; })
+      .attr("class","bold");
     '''
 
   @classmethod

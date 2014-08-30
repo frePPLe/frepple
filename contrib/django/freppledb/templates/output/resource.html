@@ -246,7 +246,7 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata) {
   var result = cellvalue[0] + '<br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
   if (cellvalue[3] != 0.0)
-    result += cellvalue[3] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail'></span><br/>";
+    result += cellvalue[3] + "<span class='context cross fa fa-caret-right' role='detail'></span><br/>";
   else
     result += '0.0<br/>';
   if (cellvalue[4] > 95)

@@ -215,11 +215,11 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata) {
   var result = cellvalue[0] + '<br/>';
   if (cellvalue[0] != 0.0)
-    var result = cellvalue[0] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail1'></span><br/>";
+    var result = cellvalue[0] + "<span class='context cross fa fa-caret-right' role='detail1'></span><br/>";
   else
     var result = '0.0<br/>';
   if (cellvalue[1] != 0.0)
-    result += cellvalue[1] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail3'></span><br/>";
+    result += cellvalue[1] + "<span class='context cross fa fa-caret-right' role='detail3'></span><br/>";
   else
     result += '0.0<br/>';
   result += cellvalue[2];

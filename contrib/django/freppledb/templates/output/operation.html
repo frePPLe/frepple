@@ -235,19 +235,19 @@ function drawGraphs(jsondata)
 {% if args.0 or mode == "table" %}
 function crosses (cellvalue, options, rowdata) {
   if (cellvalue[0] != 0.0)
-    var result = cellvalue[0] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail0'></span><br/>";
+    var result = cellvalue[0] + "<span class='context cross fa fa-caret-right' role='detail0'></span><br/>";
   else
     result = '0.0<br/>';
   if (cellvalue[1] != 0.0)
-    result += cellvalue[1] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail1'></span><br/>";
+    result += cellvalue[1] + "<span class='context cross fa fa-caret-right' role='detail1'></span><br/>";
   else
     result += '0.0<br/>';
   if (cellvalue[2] != 0.0)
-    result += cellvalue[2] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail2'></span><br/>";
+    result += cellvalue[2] + "<span class='context cross fa fa-caret-right' role='detail2'></span><br/>";
   else
     result += '0.0<br/>';
   if (cellvalue[3] != 0.0)
-    result += cellvalue[3] + "<span class='context cross ui-icon ui-icon-triangle-1-e' role='detail3'></span>";
+    result += cellvalue[3] + "<span class='context cross fa fa-caret-right' role='detail3'></span>";
   else
     result += cellvalue[3];
   return result;

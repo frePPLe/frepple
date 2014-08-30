@@ -54,7 +54,7 @@ function reslistfmt(cellvalue, options, row)
   if (cellvalue === undefined || cellvalue ==='') return '';
   result = '';
   for (var i in cellvalue)
-    result += "<span>" + cellvalue[i][0] + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span></span><br/>";
+    result += "<span>" + cellvalue[i][0] + "<span class='context fa fa-caret-right' role='resource'></span></span><br/>";
   return result;
 }
 

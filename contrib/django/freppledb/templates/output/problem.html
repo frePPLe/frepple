@@ -13,13 +13,13 @@
 function probfmt(cellvalue, options, row)
 {
   if (row['entity'] == 'material')
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='buffer'></span>";
   if (row['entity'] == 'capacity')
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='resource'></span>";
   if (row['entity'] == 'demand')
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='demand'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='demand'></span>";
   else
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='operation'></span>";
 }
 
 </script>

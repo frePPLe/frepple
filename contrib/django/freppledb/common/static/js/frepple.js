@@ -177,107 +177,107 @@ jQuery.extend($.fn.fmatter, {
   item : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='item'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='item'></span>";
   },
   customer : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='customer'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='customer'></span>";
   },
   buffer : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='buffer'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='buffer'></span>";
   },
   resource : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='resource'></span>";
   },
   forecast : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='forecast'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='forecast'></span>";
   },
   demand : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='demand'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='demand'></span>";
   },
   operation : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='operation'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='operation'></span>";
   },
   calendar : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='calendar'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='calendar'></span>";
   },
   calendarbucket : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='calendarbucket'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='calendarbucket'></span>";
   },
   location : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='location'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='location'></span>";
   },
   setupmatrix : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='setupmatrix'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='setupmatrix'></span>";
   },
   user : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='user'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='user'></span>";
   },
   group : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='group'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='group'></span>";
   },
   flow : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='flow'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='flow'></span>";
   },
   load : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='load'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='load'></span>";
   },
   bucket : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='bucket'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='bucket'></span>";
   },
   parameter : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='parameter'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='parameter'></span>";
   },
   skill : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='skill'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='skill'></span>";
   },
   resourceskill : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='resourceskill'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='resourceskill'></span>";
   },
   project : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='project'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='project'></span>";
   },
   projectdeel : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context ui-icon ui-icon-triangle-1-e' role='projectdeel'></span>";
+    return cellvalue + "<span class='context fa fa-caret-right' role='projectdeel'></span>";
   },
   graph : function (cellvalue, options, rowdata) {
     return '<div class="graph" style="height:80px"></div>';
@@ -1045,6 +1045,17 @@ var graph = {
       .style('left', (d3.event.pageX + 5) + "px")
       .style('top', (d3.event.pageY - 28) + "px")
       .style('display', 'block');
+    /*
+    // Compute position
+    var limit = $(window).width() - $("#tooltip").width() - 15;
+    var x = d3.event.pageX + 5;
+    if (x > limit) x = limit;
+    var y = d3.event.pageY - 28;
+    limit = $(window).height() - $("#tooltip").height() - 15;
+    if (y > limit) y = limit;
+    tt.style('left', x + "px")
+      .style('top', y + "px");
+    */
     d3.event.stopPropagation();
   },
 
@@ -1056,6 +1067,14 @@ var graph = {
 
   moveTooltip: function()
   {
+    /*
+    var limit = $(window).width() - $("#tooltip").width() - 15;
+    var x = d3.event.pageX + 5;
+    if (x > limit) x = limit;
+    var y = d3.event.pageY - 28;
+    limit = $(window).height() - $("#tooltip").height() - 15;
+    if (y > limit) y = limit;
+    */
     d3.select("#tooltip")
       .style('left', (d3.event.pageX + 5) + "px")
       .style('top', (d3.event.pageY - 28) + "px");

@@ -346,6 +346,7 @@ a.icon span.ui-icon {
 span.context {
   display: inline-block;
   vertical-align: bottom;
+  padding-left: 3px;
 }
 
 .ui-autocomplete-category {

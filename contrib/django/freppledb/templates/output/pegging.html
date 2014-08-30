@@ -66,7 +66,7 @@ function reslistfmt(cellvalue, options, row)
   if (cellvalue === undefined || cellvalue ==='') return '';
   result = '';
   for (var i in cellvalue)
-    result += "<span>" + cellvalue[i] + "<span class='context ui-icon ui-icon-triangle-1-e' role='resource'></span></span><br/>";
+    result += "<span>" + cellvalue[i] + "<span class='context fa fa-caret-right' role='resource'></span></span><br/>";
   return result;
 }
 
@@ -92,13 +92,11 @@ resizeStop: gantt.redraw,
 {% endblock %}
 
 {% block actions %}
-<a id="zoom_in" href="javascript:gantt.zoom(0.5,0);" class="icon"><span class="ui-icon ui-icon-zoomin"></span>{% trans 'Zoom in' %}</a>
-<a id="zoom_out" href="javascript:gantt.zoom(1.5,0);" class="icon"><span class="ui-icon ui-icon-zoomout"></span>{% trans 'Zoom out' %}</a>
-<a id="move_in" href="javascript:gantt.zoom(1,-86400000);" class="icon"><span class="ui-icon ui-icon-seek-prev"></span>{% trans 'Move in' %}</a>
-<a id="move_out" href="javascript:gantt.zoom(1,86400000);" class="icon"><span class="ui-icon ui-icon-seek-next"></span>{% trans 'Move out' %}</a>
-<a id="reset" href="javascript:gantt.reset();" class="icon"><span class="ui-icon ui-icon-stop"></span>{% trans 'Reset' %}</a>
-<a id="filter" href="javascript:showFilter();" class="icon"><span class="ui-icon ui-icon-search"></span>{% trans 'Filter' %}</a>
-<a href="javascript:grid.showBucket();" id="bucketconfig" class="icon"><span class="ui-icon ui-icon-clock"></span>{% trans 'Time' %}</a>
+<span id="zoom_in" onclick="gantt.zoom(0.5,0)" title="{% trans 'Zoom in'|escape%}" class="fa fa-search-plus fa-lg"></span>&nbsp;&nbsp;
+<span id="zoom_out" onclick="gantt.zoom(1.5,0)" title="{% trans 'Zoom out'|escape%}" class="fa fa-search-minus fa-lg"></span>&nbsp;&nbsp;
+<span id="move_in" onclick="gantt.zoom(1,-86400000)" title="{% trans 'Move in'|escape%}" class="fa fa-backward fa-lg"></span>&nbsp;&nbsp;
+<span id="move_out" onclick="gantt.zoom(1,86400000)" title="{% trans 'Move out'|escape%}" class="fa fa-forward fa-lg"></span>&nbsp;&nbsp;
+<span id="reset" onclick="gantt.reset()" title="{% trans 'Reset'|escape%}" class="fa fa-stop fa-lg"></span>
 {% endblock %}
 
 {% block tools %}

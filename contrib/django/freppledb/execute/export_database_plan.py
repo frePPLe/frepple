@@ -193,10 +193,8 @@ def exportResourceplans(cursor):
     startdate = frepple.settings.current
   if enddate == datetime.min:
     enddate = frepple.settings.current
-  startdate = startdate - timedelta(days=30)
-  startdate = datetime(startdate.year, startdate.month, startdate.day)
-  enddate = enddate + timedelta(days=30)
-  enddate = datetime(enddate.year, enddate.month, enddate.day)
+  startdate = (startdate - timedelta(days=30)).date()
+  enddate = (enddate + timedelta(days=30)).date()
   if enddate > date(2030, 12, 30):  # This is the max frePPLe can represent.
     enddate = date(2030, 12, 30)
 

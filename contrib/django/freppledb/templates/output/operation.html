@@ -149,10 +149,10 @@ function drawGraphs(jsondata)
         {
           top = y(d['locked_start']);
           bucket.append("rect")
-            .attr("width", x_width)
+            .attr("width", x_width/2)
             .attr("x", x_width/2)
             .attr("y", top)
-            .attr("height", top)
+            .attr("height", y(0) - top)
             .style("fill","#113C5E");
         }
         if (d['total_start'] > d['locked_start'])
@@ -170,9 +170,9 @@ function drawGraphs(jsondata)
         {
           top = y(d['locked_end']);
           bucket.append("rect")
-            .attr("width", x_width)
+            .attr("width", x_width/2)
             .attr("y", top)
-            .attr("height", top)
+            .attr("height", y(0) - top)
             .style("fill","#7B5E08");
         }
         if (d['total_end'] > d['locked_end'])

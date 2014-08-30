@@ -33,6 +33,7 @@ from freppledb.output.models import LoadPlan, Problem, OperationPlan, Demand
 class LateOrdersWidget(Widget):
   name = "late_orders"
   title = _("Late orders")
+  tooltip = _("Shows orders that will be delivered after their due date")
   permissions = (("view_problem_report", "Can view problem report"),)
   async = True
   url = '/problem/?entity=demand&name=late&sord=asc&sidx=startdate'
@@ -69,6 +70,7 @@ Dashboard.register(LateOrdersWidget)
 class ShortOrdersWidget(Widget):
   name = "short_orders"
   title = _("Short orders")
+  tooltip = _("Shows orders that are not planned completely")
   permissions = (("view_problem_report", "Can view problem report"),)
   async = True
   # Note the gte filter lets pass "short" and "unplanned", and filters out
@@ -106,6 +108,7 @@ Dashboard.register(ShortOrdersWidget)
 class PurchaseQueueWidget(Widget):
   name = "purchase_queue"
   title = _("Purchase queue")
+  tooltip = _("Display a list of new purchase orders")
   permissions = (("view_operation_report", "Can view operation report"),)
   async = True
   url = '/operationplan/?locked=0&sidx=startdate&sord=asc&operation__startswith=Purchase'
@@ -143,6 +146,7 @@ Dashboard.register(PurchaseQueueWidget)
 class ShippingQueueWidget(Widget):
   name = "shipping_queue"
   title = _("Shipping queue")
+  tooltip = _("Display a list of customer orders and their shipping date")
   permissions = (("view_operation_report", "Can view operation report"),)
   async = True
   url = '/demandplan/?sidx=plandate&sord=asc'
@@ -180,6 +184,7 @@ Dashboard.register(ShippingQueueWidget)
 class ResourceQueueWidget(Widget):
   name = "resource_queue"
   title = _("Resource queue")
+  tooltip = _("Display planned activities for the resources")
   permissions = (("view_resource_report", "Can view resource report"),)
   async = True
   url = '/loadplan/?sidx=startdate&sord=asc'
@@ -217,6 +222,7 @@ Dashboard.register(ResourceQueueWidget)
 class PurchaseAnalysisWidget(Widget):
   name = "purchase_order_analysis"
   title = _("Purchase order analysis")
+  tooltip = _("Analyse the urgency of existing purchase orders")
   async = True
   url = '/operationplan/?locked=1&operation__startswith=Purchase&sidx=criticality&sord=asc'
   limit = 20
@@ -248,6 +254,7 @@ Dashboard.register(PurchaseAnalysisWidget)
 class AlertsWidget(Widget):
   name = "alerts"
   title = _("Alerts")
+  tooltip = _("Summary of all exceptions in the plan")
   permissions = (("view_problem_report", "Can view problem report"),)
   async = True
   url = '/problem/'
@@ -281,6 +288,7 @@ Dashboard.register(AlertsWidget)
 class ResourceLoadWidget(Widget):
   name = "resource_utilization"
   title = _("Resource utilization")
+  tooltip = _("Shows the resources with the highest utilization")
   permissions = (("view_resource_report", "Can view resource report"),)
   async = True
   url = '/resource/'
@@ -381,6 +389,7 @@ Dashboard.register(ResourceLoadWidget)
 class InventoryByLocationWidget(Widget):
   name = "inventory_by_location"
   title = _("Inventory by location")
+  tooltip = _("Display the locations with the highest inventory value")
   async = True
   limit = 5
 
@@ -469,6 +478,7 @@ Dashboard.register(InventoryByLocationWidget)
 class InventoryByItemWidget(Widget):
   name = "inventory_by_item"
   title = _("Inventory by item")
+  tooltip = _("Display the items with the highest inventory value")
   async = True
   limit = 20
 
@@ -557,6 +567,7 @@ Dashboard.register(InventoryByItemWidget)
 class DeliveryPerformanceWidget(Widget):
   name = "delivery_performance"
   title = _("Delivery performance")
+  tooltip = _("Shows the percentage of demands that are planned to be shipped completely on time")
   async = True
   green = 90
   yellow = 80

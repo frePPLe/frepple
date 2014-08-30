@@ -26,6 +26,7 @@ class ExecuteWidget(Widget):
   name = "execute"
   title = _("Execute")
   permissions = (("generate_plan", "Can generate plans"),)
+  tooltip = _("Generate a constrained plan")
   async = False
   url = '/execute/'
 

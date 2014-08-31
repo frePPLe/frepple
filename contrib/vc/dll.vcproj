@@ -115,7 +115,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy the output as a Python module"
-				CommandLine="copy $(TargetDir)\..\bin\frepple_debug.dll  $(TargetDir)\..\bin\frepple_d.pyd"
+				CommandLine="copy &quot;$(TargetDir)\..\bin\frepple_debug.dll&quot;  &quot;$(TargetDir)\..\bin\frepple_d.pyd&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -222,7 +222,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy the output as a Python module"
-				CommandLine="copy $(TargetDir)\..\bin\frepple.dll  $(TargetDir)\..\bin\frepple.pyd"
+				CommandLine="copy &quot;$(TargetDir)\..\bin\frepple.dll&quot;  &quot;$(TargetDir)\..\bin\frepple.pyd&quot;"
 			/>
 		</Configuration>
 	</Configurations>

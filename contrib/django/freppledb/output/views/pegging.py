@@ -18,6 +18,7 @@
 from datetime import datetime, timedelta
 
 from django.db import connections
+from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Demand
@@ -76,7 +77,10 @@ class ReportByDemand(GridReport):
       where demand.name = %s
       group by due
        ''', (args[0]))
-    (due, start, end) = cursor.fetchone()
+    x = cursor.fetchone()
+    if not x:
+      raise Http404("Demand not found")
+    (due, start, end) = x
     if not start:
       start = due
     if not end:

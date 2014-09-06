@@ -38,8 +38,9 @@ urlpatterns = patterns(
   (r'robots\.txt$', RedirectView.as_view(url='/static/robots.txt')),
 )
 
-# Custom handler for page-not-found errors. It does a redirect to the main page.
+# Custom handlers for error pages.
 handler404 = 'freppledb.common.views.handler404'
+handler500 = 'freppledb.common.views.handler500'
 
 # Adding urls for each installed application.
 for app in settings.INSTALLED_APPS:

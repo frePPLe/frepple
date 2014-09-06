@@ -21,7 +21,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
-from django.template import RequestContext
+from django.template import RequestContext, loader, TemplateDoesNotExist
 from django import forms
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
@@ -29,7 +29,7 @@ from django.utils.text import capfirst
 from django.contrib.auth.models import Group
 from django.utils import translation
 from django.conf import settings
-from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError
 
 from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
@@ -41,11 +41,27 @@ logger = logging.getLogger(__name__)
 
 
 def handler404(request):
+  '''
+  Custom error handler which redirects to the main page rather than displaying the 404 page.
+  '''
   messages.add_message(
     request, messages.ERROR,
     force_unicode(_('Page not found') + ": " + request.prefix + request.get_full_path())
     )
   return HttpResponseRedirect(request.prefix + "/admin/")
+
+
+def handler500(request):
+  '''
+  Custom error handler.
+  The only difference with the default Django handler is that we passes more context
+  to the error template.
+  '''
+  try:
+    template = loader.get_template("500.html")
+  except TemplateDoesNotExist:
+    return HttpResponseServerError('<h1>Server Error (500)</h1>', content_type='text/html')
+  return HttpResponseServerError(template.render(RequestContext(request)))
 
 
 class PreferencesForm(forms.Form):

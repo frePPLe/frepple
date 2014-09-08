@@ -37,6 +37,8 @@ packages = [# Required for django standalone deployment
             'htmlentitydefs', 'HTMLParser', 'markupbase',
             # Added for PostgreSQL
             'psycopg2', 'psycopg2.extensions',
+            # Added to be able to connect to SQL Server
+            'adodbapi',
             # Required for the python initialization
             'site',
             # Required for reading and writing spreadsheets
@@ -51,8 +53,6 @@ includes = []
 excludes = ['pydoc', 'Tkinter', 'tcl', 'Tkconstants', 'freppledb', 'cx_Oracle', 'MySQLdb']
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
-           # Not using Microsoft ADO
-           'adodbapi',
            # Not using psycopg (using psycopg2 instead)
            'psycopg',
            # Not using pysqlite2 (using pysqlite3 instead)

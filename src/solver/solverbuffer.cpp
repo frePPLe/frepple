@@ -96,6 +96,185 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 
       // Evaluate the situation at the last flowplan before the date change.
       // Is there a shortage at that date?
+      // We have 3 ways to resolve it:
+      //  - Scan backward for a producer we can combine with to make a
+      //    single batch.
+      //  - Scan forward for producer we can replace in a single batch.
+      //  - Create new supply for the shortage at that date.
+
+      // Solution one: we scan backward in time for producers we can merge with.
+      if (theDelta < -ROUNDING_ERROR
+        && b->getMinimumInterval() >= 0L
+        && prev
+        && prev->getDate() >= theDate - b->getMinimumInterval())
+      {
+       Buffer::flowplanlist::const_iterator prevbatchiter = b->getFlowPlans().end();
+        for (Buffer::flowplanlist::const_iterator batchiter = prev;
+          batchiter != b->getFlowPlans().end() && batchiter->getDate() >= theDate - b->getMinimumInterval();
+          prevbatchiter = batchiter--)
+        {
+          // Check if it is an unlocked producing operationplan
+          if (batchiter->getQuantity() <= 0) continue;
+          const FlowPlan* batchcandidate = dynamic_cast<const FlowPlan*>(&*batchiter);
+          if (!batchcandidate || batchcandidate->getOperationPlan()->getLocked())
+            continue;
+
+          // Store date and quantity of the candidate
+          Date batchdate = batchcandidate->getDate();
+          double batchqty = batchcandidate->getQuantity()- theDelta;
+          double consumed_in_window = b->getFlowPlans().getFlow(batchcandidate, b->getMinimumInterval(), true);
+          if (batchqty > consumed_in_window)
+            batchqty = consumed_in_window;
+          Operation* candidate_operation = batchcandidate->getOperationPlan()->getOperation();
+          DateRange candidate_dates = batchcandidate->getOperationPlan()->getDates();
+          double candidate_qty = batchcandidate->getOperationPlan()->getQuantity();
+
+          // Delete existing producer, and propagate the deletion upstream
+          CommandManager::Bookmark* batchbookmark = data->setBookmark();
+          data->operator_delete->solve(batchcandidate->getOperationPlan());
+
+          // Create new producer
+          unsigned short loglevel = data->getSolver()->getLogLevel();
+          try
+          {
+            data->getSolver()->setLogLevel(0);
+            data->state->curBuffer = const_cast<Buffer*>(b);
+            data->state->q_qty = batchqty;
+            data->state->q_date = batchdate;
+            data->state->curOwnerOpplan = NULL;
+            b->getProducingOperation()->solve(*this, v);
+          }
+          catch (...)
+          {
+            data->getSolver()->setLogLevel(loglevel);
+            throw;
+          }
+          data->getSolver()->setLogLevel(loglevel);
+
+          // Check results
+          if (data->state->a_qty < batchqty - ROUNDING_ERROR)
+          {
+            // It didn't work.
+            if (loglevel > 1)
+              logger << indent(b->getLevel())
+                << "  Rejected resized batch '" << candidate_operation
+                << "' " << candidate_dates << " " << candidate_qty << endl;
+            data->rollback(batchbookmark);
+            // Assure batchiter remains valid
+            batchiter = prevbatchiter;
+            if (batchiter != b->getFlowPlans().end())
+              --batchiter;
+          }
+          else
+          {
+            // It worked.
+            if (loglevel > 1)
+              logger << indent(b->getLevel())
+                << "  Accepting resized batch '" << candidate_operation
+                << "' " << candidate_dates << " " << candidate_qty << endl;
+            theDelta = 0.0;
+            break;
+          }
+          // Assure the prev pointer remains valid after this loop
+          Buffer::flowplanlist::const_iterator c = cur;
+          --c;
+          if (c == b->getFlowPlans().end())
+          {
+            c = b->getFlowPlans().rbegin();
+            if (c == b->getFlowPlans().end())
+              prev = NULL;
+            else
+              prev = &*c;
+          }
+          else
+            prev = &*c;
+        }
+      }
+
+      // Solution two: we scan forward in time for producers we can replace.
+      if (theDelta < -ROUNDING_ERROR
+        && b->getMinimumInterval() >= 0L
+        && cur != b->getFlowPlans().end()
+        && cur->getDate() <= theDate + b->getMinimumInterval())
+      {
+        Buffer::flowplanlist::const_iterator prevbatchiter = b->getFlowPlans().end();
+        for (Buffer::flowplanlist::const_iterator batchiter = cur;
+          batchiter != b->getFlowPlans().end() && batchiter->getDate() <= theDate + b->getMinimumInterval();
+          prevbatchiter = batchiter++)
+        {
+          // Check if it is an unlocked producing operationplan
+          if (batchiter->getQuantity() <= 0) continue;
+          const FlowPlan* batchcandidate = dynamic_cast<const FlowPlan*>(&*batchiter);
+          if (!batchcandidate || batchcandidate->getOperationPlan()->getLocked())
+            continue;
+
+          // Store date and quantity of the candidate
+          double batchqty = batchcandidate->getQuantity()- theDelta;
+          double consumed_in_window = b->getFlowPlans().getFlow(prev, b->getMinimumInterval(), true);
+          if (batchqty > consumed_in_window)
+            batchqty = consumed_in_window;
+          Operation* candidate_operation = batchcandidate->getOperationPlan()->getOperation();
+          DateRange candidate_dates = batchcandidate->getOperationPlan()->getDates();
+          double candidate_qty = batchcandidate->getOperationPlan()->getQuantity();
+
+          // Delete existing producer, and propagate the deletion upstream
+          CommandManager::Bookmark* batchbookmark = data->setBookmark();
+          data->operator_delete->solve(batchcandidate->getOperationPlan());
+
+          // Create new producer
+          unsigned short loglevel = data->getSolver()->getLogLevel();
+          try
+          {
+            data->getSolver()->setLogLevel(0);
+            data->state->curBuffer = const_cast<Buffer*>(b);
+            data->state->q_qty = batchqty;
+            data->state->q_date = theDate;
+            data->state->curOwnerOpplan = NULL;
+            b->getProducingOperation()->solve(*this, v);
+          }
+          catch (...)
+          {
+            data->getSolver()->setLogLevel(loglevel);
+            throw;
+          }
+          data->getSolver()->setLogLevel(loglevel);
+
+          // Check results
+          if (data->state->a_qty < batchqty - ROUNDING_ERROR)
+          {
+            // It didn't work.
+            if (loglevel > 1)
+              logger << indent(b->getLevel())
+                << "  Rejected joining batch with '" << candidate_operation
+                << "' " << candidate_dates << " " << candidate_qty << endl;
+            data->rollback(batchbookmark);
+            // Assure batchiter remains valid
+            batchiter = prevbatchiter;
+            if (batchiter != b->getFlowPlans().end())
+              ++batchiter;
+          }
+          else
+          {
+            // It worked.
+            if (loglevel > 1)
+              logger << indent(b->getLevel())
+                << "  Accepted joining batch with '" << candidate_operation
+                << "' " << candidate_dates << " " << candidate_qty << endl;
+            theDelta = 0.0;
+            // Assure the cur iterator remains valid after this loop
+            cur = prev;
+            if (cur != b->getFlowPlans().end())
+              ++cur;
+            break;
+          }
+          // Assure the cur iterator remains valid after this loop
+          cur = prev;
+          if (cur != b->getFlowPlans().end())
+            ++cur;
+        }
+      }
+
+      // Solution three: create supply at the shortage date itself
       if (theDelta < -ROUNDING_ERROR)
       {
         // Can we get extra supply to solve the problem, or part of it?
@@ -110,7 +289,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // Create supply
           data->state->curBuffer = const_cast<Buffer*>(b);
           data->state->q_qty = -theDelta;
-          data->state->q_date = prev->getDate();
+          data->state->q_date = theDate;
 
           // Check whether this date doesn't match with the requested date.
           // See a bit further why this is required.
@@ -149,7 +328,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
         }
 
         // Not enough supply was received to repair the complete problem
-        if (prev->getOnhand() + shortage < -ROUNDING_ERROR)
+        if (prev && prev->getOnhand() + shortage < -ROUNDING_ERROR)
         {
           // Keep track of the shorted quantity.
           // Only consider shortages later than the requested date.

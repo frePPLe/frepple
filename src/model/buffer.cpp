@@ -247,7 +247,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
     o->writeElement(Tags::tag_carrying_cost, getCarryingCost());
 
   // Write min and max interval
-  if (min_interval) o->writeElement(Tags::tag_mininterval, min_interval);
+  if (min_interval != TimePeriod(-1L)) o->writeElement(Tags::tag_mininterval, min_interval);
   if (max_interval) o->writeElement(Tags::tag_maxinterval, max_interval);
 
   // Write the custom fields

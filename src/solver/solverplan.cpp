@@ -30,6 +30,7 @@ const Keyword tag_lazydelay("lazydelay");
 const Keyword tag_allowsplits("allowsplits");
 const Keyword tag_planSafetyStockFirst("plansafetystockfirst");
 
+
 void LibrarySolver::initialize()
 {
   // Initialize only once
@@ -43,8 +44,10 @@ void LibrarySolver::initialize()
   init = true;
 
   // Register all classes.
-  if (SolverMRP::initialize())
-    throw RuntimeException("Error registering solver_mrp Python type");
+  int nok = 0;
+  nok += SolverMRP::initialize();
+  nok += OperatorDelete::initialize();
+  if (nok) throw RuntimeException("Error registering new Python types");
 }
 
 

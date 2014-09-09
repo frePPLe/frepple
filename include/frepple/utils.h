@@ -5796,6 +5796,7 @@ class FreppleIterator : public PythonExtension<ME>
     }
 };
 
+
 /** @brief This Python function loads a frepple extension module in memory. */
 DECLARE_EXPORT PyObject* loadModule(PyObject*, PyObject*, PyObject*);
 

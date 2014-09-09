@@ -1957,7 +1957,17 @@ class OperationPlan
       * If no owner exists the method returns the current operationplan.
       * @see getOwner
       */
-    const OperationPlan* getTopOwner() const
+    inline const OperationPlan* getTopOwner() const
+    {
+      return const_cast<OperationPlan*>(this);
+    }
+
+    /** Returns a pointer to the operationplan owning a set of
+      * sub-operationplans. There can be multiple levels of suboperations.<br>
+      * If no owner exists the method returns the current operationplan.
+      * @see getOwner
+      */
+    OperationPlan* getTopOwner()
     {
       if (owner)
       {
@@ -2833,7 +2843,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     explicit DECLARE_EXPORT Buffer(const string& str) :
       HasHierarchy<Buffer>(str), hidden(false), producing_operation(NULL),
       loc(NULL), it(NULL), min_val(0), max_val(default_max), min_cal(NULL),
-      max_cal(NULL), carrying_cost(0.0) {}
+      max_cal(NULL), min_interval(-1), carrying_cost(0.0) {}
 
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
@@ -2974,8 +2984,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Update the minimum time between replenishments. */
     void setMinimumInterval(TimePeriod p)
     {
-      if (p<0L)
-        throw DataException("Buffer can't have a negative minimum interval");
       min_interval = p;
       // Minimum is increased over the maximum: auto-increase the maximum
       if (max_interval && max_interval < min_interval)
@@ -2990,8 +2998,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Update the minimum time between replenishments. */
     void setMaximumInterval(TimePeriod p)
     {
-      if (p<0L)
-        throw DataException("Buffer can't have a negative maximum interval");
       max_interval = p;
       // Maximum is lowered below the minimum: auto-decrease the minimum
       if (min_interval && max_interval < min_interval)
@@ -5521,7 +5527,10 @@ class CommandCreateOperationPlan : public Command
 };
 
 
-/** @brief This command is used to delete an operationplan. */
+/** @brief This command is used to delete an operationplan.<br>
+  * The implementation assumes there is only a single level of child
+  * sub operationplans.
+  */
 class CommandDeleteOperationPlan : public Command
 {
   public:

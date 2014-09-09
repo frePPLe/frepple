@@ -402,7 +402,7 @@ class exportStaticModel(object):
           isinstance(i, frepple.buffer_procure) and i.leadtime or None,
           isinstance(i, frepple.buffer_procure) and round(i.mininventory, settings.DECIMAL_PLACES) or None,
           isinstance(i, frepple.buffer_procure) and round(i.maxinventory, settings.DECIMAL_PLACES) or None,
-          i.mininterval,
+          (i.mininterval!=-1) and i.mininterval or None,
           i.maxinterval < 99999999999 and i.maxinterval or None,
           isinstance(i, frepple.buffer_procure) and round(i.size_minimum, settings.DECIMAL_PLACES) or None,
           isinstance(i, frepple.buffer_procure) and round(i.size_multiple, settings.DECIMAL_PLACES) or None,

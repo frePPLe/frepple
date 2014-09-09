@@ -391,6 +391,9 @@ DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
     throw DataException("Can't delete a locked operationplan");
   }
 
+  // Deletion always should apply to a top level operationplan
+  opplan = opplan->getTopOwner();
+
   // Delete all flowplans and loadplans, and unregister from operationplan list
   redo();
 }

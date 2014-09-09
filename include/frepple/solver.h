@@ -30,6 +30,61 @@
 namespace frepple
 {
 
+
+/** @brief A lightweight solver class to remove excess material.
+  *
+  * The class works in a single thread only.
+  */
+class OperatorDelete : public Solver
+{
+  public:
+	  /** Constructor. */
+    OperatorDelete(const string& n, CommandManager* c = NULL) :
+        Solver(n), cmds(c) { initType(metadata); }
+
+    /** Python method for running the solver. */
+    static PyObject* solve(PyObject*, PyObject*);
+
+    /** Remove all entities for excess material that can be removed. */
+    void solve(void *v = NULL);
+
+    /** Remove an operationplan and all its upstream supply.<br>
+      * The argument operationplan is invalid when this function returns!
+      */
+    void solve(OperationPlan*, void* = NULL);
+
+    /** Remove excess from a buffer and all its upstream colleagues. */
+    void solve(const Buffer*, void* = NULL);
+
+    /** Remove excess starting from a single demand. */
+    void solve(const Demand*, void* = NULL);
+
+    /** Remove excess operations on a resource. */
+    void solve(const Resource*, void* = NULL);
+
+    static int initialize();
+    virtual const MetaClass& getType() const {return *metadata;}
+    static const MetaClass* metadata;
+    virtual size_t getSize() const {return sizeof(OperatorDelete);}
+
+  private:
+    /** Auxilary function to push consuming or producing buffers of an
+      * operationplan to the stack.<br>
+      * When the argument is true, we push the consumers.
+      * When the argument is false, we push the producers.
+      */
+	  void pushBuffers(OperationPlan*, bool);
+
+	  /** A list of buffers still to scan for excess. */
+	  vector<Buffer*> buffersToScan;   // TODO Use a different data structure to allow faster lookups and sorting?
+
+	  /** A pointer to a command manager that takes care of the commit and
+	    * rollback of all actions.
+	    */
+	  CommandManager* cmds;
+};
+
+
 /** @brief This solver implements a heuristic algorithm for planning demands.
   *
   * One by one the demands are processed. The demand will consume step by step
@@ -613,11 +668,20 @@ class SolverMRP : public Solver
 
         /** Constructor. */
         SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
-          : sol(s), cluster(c), demands(d), constrainedPlanning(true),
-            state(statestack), prevstate(statestack-1) {}
+          : sol(s), cluster(c), demands(d),
+            constrainedPlanning(true), state(statestack),
+            prevstate(statestack-1)
+        {
+          ostringstream n;
+          n << "delete operator for " << this;
+          operator_delete = new OperatorDelete(n.str(), this);
+        }
 
         /** Destructor. */
-        virtual ~SolverMRPdata() {};
+        virtual ~SolverMRPdata()
+        {
+          delete operator_delete;
+        };
 
         /** Verbose mode is inherited from the solver. */
         unsigned short getLogLevel() const {return sol ? sol->getLogLevel() : 0;}
@@ -691,6 +755,9 @@ class SolverMRP : public Solver
           * always the complete cluster that is being planned.
           */
         unsigned int cluster;
+
+        /** Internal solver to remove material. */
+        OperatorDelete *operator_delete;
 
         /** A deque containing all demands to be (re-)planned. */
         deque<Demand*>* demands;

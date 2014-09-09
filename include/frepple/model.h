@@ -1959,7 +1959,7 @@ class OperationPlan
       */
     inline const OperationPlan* getTopOwner() const
     {
-      return const_cast<OperationPlan*>(this);
+      return const_cast<OperationPlan*>(this)->getTopOwner();
     }
 
     /** Returns a pointer to the operationplan owning a set of

@@ -200,7 +200,6 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
 {
   // Count how many clusters we have to plan
   int cl = HasLevel::getNumberOfClusters() + 1;
-  if (cl <= 1) return;
 
   // Categorize all demands in their cluster
   demands_per_cluster.resize(cl);

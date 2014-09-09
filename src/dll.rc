@@ -42,13 +42,13 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "frePPLe"
       VALUE "FileDescription",
-            "frePPLe Dynamic Link Library - Free Production Planning Library"
+            "frePPLe - open source Production PLanning"
       VALUE "FileVersion", "2, 2, 0, 0"
       VALUE "InternalName", "frepple.dll"
       VALUE "LegalCopyright",
             "Licensed under AGPL - Affero General Public License"
       VALUE "OriginalFilename", "frepple.dll"
-      VALUE "ProductName", " frePPLe Dynamic Link Library"
+      VALUE "ProductName", " frePPLe"
       VALUE "ProductVersion", "2, 2, 0, 0"
     END
   END

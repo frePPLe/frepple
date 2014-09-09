@@ -46,7 +46,7 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "frePPLe"
       VALUE "FileDescription",
-            "frePPLe - an open source Production Planning solution"
+            "frePPLe - open source Production PLanning"
       VALUE "FileVersion", "2, 2, 0, 0"
       VALUE "InternalName", "frepple.exe"
       VALUE "LegalCopyright",

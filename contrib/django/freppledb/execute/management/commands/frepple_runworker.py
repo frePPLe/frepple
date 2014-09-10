@@ -113,11 +113,14 @@ class Command(BaseCommand):
         logger.info("starting task %d at %s" % (task.id, datetime.now()))
         # A
         if task.name == 'generate plan':
-          args = {}
+          kwargs = {}
           for i in task.arguments.split():
-            key, val = i.split('=')
-            args[key[2:]] = val
-          management.call_command('frepple_run', database=database, task=task.id, **args)
+            j = i.split('=')
+            if len(j) > 1:
+              kwargs[j[0][2:]] = j[1]
+            else:
+              kwargs[j[0][2:]] = True
+          management.call_command('frepple_run', database=database, task=task.id, **kwargs)
         # B
         elif task.name == 'generate model':
           args = {}
@@ -177,15 +180,18 @@ class Command(BaseCommand):
           now = datetime.now()
           if not task.started:
             task.started = now
-          if not task.finished:
-            task.finished = now
-          if task.status not in ('Done', 'Failed'):
-            task.status = 'Done'
+          #if not task.finished:
+          #  task.finished = now
+          #if task.status not in ('Done', 'Failed'):
+          #  task.status = 'Done'
           task.save(using=database)
         logger.info("finished task %d at %s: success" % (task.id, datetime.now()))
       except Exception as e:
         task.status = 'Failed'
-        task.finished = datetime.now()
+        now = datetime.now()
+        if not task.started:
+          task.started = now
+        task.finished = now
         task.message = str(e)
         task.save(using=database)
         logger.info("finished task %d at %s: failed" % (task.id, datetime.now()))

@@ -18,6 +18,7 @@
 import os
 from datetime import datetime
 from optparse import make_option
+import subprocess
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, DEFAULT_DB_ALIAS
@@ -132,7 +133,7 @@ class Command(BaseCommand):
       if not cmd:
         raise Exception("Can't locate commands.py")
 
-      # Execute
+      # Prepare environment
       os.environ['FREPPLE_PLANTYPE'] = str(plantype)
       os.environ['FREPPLE_CONSTRAINT'] = str(constraint)
       os.environ['FREPPLE_TASKID'] = str(task.id)
@@ -148,7 +149,9 @@ class Command(BaseCommand):
       else:
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(settings.FREPPLE_APP)
-      ret = os.system('frepple "%s"' % cmd.replace('\\', '\\\\'))
+
+      # Execute in foreground
+      ret = subprocess.call(['frepple', cmd])
       if ret != 0 and ret != 2:
         # Return code 0 is a successful run
         # Return code is 2 is a run cancelled by a user. That's shown in the status field.

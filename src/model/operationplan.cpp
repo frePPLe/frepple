@@ -452,6 +452,24 @@ DECLARE_EXPORT void OperationPlan::deleteFlowLoads()
 }
 
 
+DECLARE_EXPORT double OperationPlan::getTotalFlowAux(const Buffer* b) const
+{
+  double q = 0.0;
+
+  // Add my own quantity
+  for (FlowPlanIterator f = beginFlowPlans(); f != endFlowPlans(); ++f)
+    if (f->getBuffer() == b)
+      q += f->getQuantity();
+
+  // Add the quantity of all children
+  for (OperationPlan* c = firstsubopplan; c; c = c->nextsubopplan)
+    q += c->getTotalFlowAux(b);
+
+  // Return result
+  return q;
+}
+
+
 DECLARE_EXPORT OperationPlan::~OperationPlan()
 {
   // Delete the flowplans and loadplan

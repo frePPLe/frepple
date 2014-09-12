@@ -2157,6 +2157,14 @@ class OperationPlan
     /** Update the plannable object that created this operationplan. */
     DECLARE_EXPORT void setMotive(Plannable* v) {motive = v;}
 
+    /** Return the total quantity which this operationplan, its children
+      * and its parents produce or consume from a given buffer.
+      */
+    double getTotalFlow(const Buffer* b) const
+    {
+      return getTopOwner()->getTotalFlowAux(b);
+    }
+
   private:
     /** Private copy constructor.<br>
       * It is used in the public copy constructor to make a deep clone of suboperationplans.
@@ -2173,6 +2181,11 @@ class OperationPlan
 
     /** Generates a unique identifier for the operationplan. */
     DECLARE_EXPORT bool assignIdentifier();
+
+    /** Recursive auxilary function for getTotalFlow.
+      * @ see getTotalFlow
+      */
+    DECLARE_EXPORT double getTotalFlowAux(const Buffer*) const;
 
     /** Update the loadplans and flowplans of the operationplan based on the
       * latest information of quantity, date and locked flag.<br>

@@ -121,7 +121,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 
           // Store date and quantity of the candidate
           Date batchdate = batchcandidate->getDate();
-          double batchqty = batchcandidate->getQuantity()- theDelta;
+          double batchqty = batchcandidate->getOperationPlan()->getTotalFlow(b) - theDelta;
           double consumed_in_window = b->getFlowPlans().getFlow(batchcandidate, b->getMinimumInterval(), true);
           if (batchqty > consumed_in_window)
             batchqty = consumed_in_window;
@@ -172,6 +172,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
               logger << indent(b->getLevel())
                 << "  Accepting resized batch '" << candidate_operation
                 << "' " << candidate_dates << " " << candidate_qty << endl;
+
             theDelta = 0.0;
             break;
           }

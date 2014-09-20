@@ -200,7 +200,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       // endElement() member and skip the beginElement() method.
       numElements += 1;
       if (states.top() != IGNOREINPUT)
-        for (unsigned int i=0, cnt=atts.getLength(); i<cnt; i++)
+        for (XMLSize_t i=0, cnt=atts.getLength(); i<cnt; i++)
         {
           char* val = transcodeUTF8(atts.getValue(i));
           m_EStack[numElements+1].first.reset(atts.getLocalName(i));

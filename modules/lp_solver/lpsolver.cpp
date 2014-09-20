@@ -295,9 +295,9 @@ int LPSolver::setattro(const Attribute& attr, const PythonObject& field)
       PyErr_SetString(PythonDataException, "expected a list");
       return -1; // Error
     }
-    int len = PySequence_Size(static_cast<PyObject*>(field));
+    Py_ssize_t len = PySequence_Size(static_cast<PyObject*>(field));
     PythonObject item;
-    for (int i = 0; i < len; i++)
+    for (Py_ssize_t i = 0; i < len; i++)
     {
       item = PyList_GET_ITEM(seq, i);
       addObjective(item.getString());

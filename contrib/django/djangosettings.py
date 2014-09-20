@@ -29,12 +29,11 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
-
-# FrePPLe is tested with the following database backends:
-# 'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.
 # ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
+
+# FrePPLe is tested with 'postgresql_psycopg2' and 'sqlite3' database engines.
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.sqlite3',
@@ -117,9 +116,6 @@ LANGUAGES = (
   ('zh-cn', ugettext('Simplified Chinese')),
   ('zh-tw', ugettext('Traditional Chinese')),
 )
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '%@mzit!i8b*$zc&6oe$t-q^3wev96=kqj7mq(z&-$)#o^k##+_'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

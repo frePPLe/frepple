@@ -149,6 +149,13 @@ CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
 Var DatabaseEngine
+Var day
+Var month
+Var year
+Var day_name
+Var hours
+Var minutes
+Var seconds
 
 ; Declare everything that needs to be extracted on startup.
 ; Only useful for BZIP2 compression
@@ -292,6 +299,11 @@ Section "Application" SecAppl
     StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\n" +3 0
     StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
   Goto read2_loop
+  ${GetTime} "" "L" $day $month $year $day_name $hours $minutes $seconds
+  FileWrite $R4 "# Make this unique, and don't share it with anybody.$\r$\n"
+  FileWrite $R4 "SECRET_KEY = '%@mzit!i8b*$zc&6oev96=$year$month$day$hours$minutes$seconds'$\r$\n"
+  FileWrite $R4 "$\r$\n"
+  FileWrite $R4 "# FrePPLe is tested with 'postgresql_psycopg2' and 'sqlite3' database engines.$\r$\n"
   FileWrite $R4 "DATABASES = {$\r$\n"
   FileWrite $R4 "  'default': {$\r$\n"
   FileWrite $R4 "    'ENGINE': 'django.db.backends.$0',$\r$\n"

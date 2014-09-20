@@ -107,6 +107,8 @@ mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 install -m 644 -p contrib/rpm/httpd.conf $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/z_frepple.conf
 # Create log directory
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/frepple
+# Update secret key in the configuration file
+sed -i "s/RANDOMSTRING/`date`/" $RPM_BUILD_ROOT%{_sysconfdir}/frepple/django_settings.py
 
 %clean
 rm -rf %{buildroot}

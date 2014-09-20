@@ -37,7 +37,7 @@ urlpatterns = patterns(
   (r'^demand/$', freppledb.output.views.demand.OverviewReport.as_view()),
   (r'^resource/(.+)/$', freppledb.output.views.resource.OverviewReport.as_view()),
   (r'^resource/$', freppledb.output.views.resource.OverviewReport.as_view()),
-  (r'^operation/([^.]+)/$', freppledb.output.views.operation.OverviewReport.as_view()),
+  (r'^operation/(.+)/$', freppledb.output.views.operation.OverviewReport.as_view()),
   (r'^operation/$', freppledb.output.views.operation.OverviewReport.as_view()),
   (r'^demandpegging/(.+)/$', freppledb.output.views.pegging.ReportByDemand.as_view()),
   (r'^bufferpegging/$', freppledb.output.views.pegging.ReportByBuffer.as_view()),

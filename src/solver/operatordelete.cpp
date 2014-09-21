@@ -89,10 +89,9 @@ void OperatorDelete::solve(const Resource* r, void* v)
   for (Resource::loadplanlist::const_iterator i = r->getLoadPlans().begin();
     i != r->getLoadPlans().end(); ++i)
   {
-    const LoadPlan* lp = dynamic_cast<const LoadPlan*>(&*i);
-    if (lp)
+    if (i->getType() == 1)
       // Add all buffers into which material is produced to the stack
-      pushBuffers(lp->getOperationPlan(), false);
+      pushBuffers(static_cast<const LoadPlan*>(&*i)->getOperationPlan(), false);
   }
 
   // Process all buffers found, and their upstream colleagues
@@ -195,7 +194,9 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       ++fiter;
       continue;
     }
-    FlowPlan* fp = const_cast<FlowPlan*>(dynamic_cast<const FlowPlan*>(&*fiter));
+    FlowPlan* fp = NULL;
+    if (fiter->getType() == 1)
+      fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter));
     double cur_excess = b->getFlowPlans().getExcess(&*fiter);
     if (!fp || fp->getOperationPlan()->getLocked() || cur_excess < ROUNDING_ERROR)
     {

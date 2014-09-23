@@ -112,7 +112,7 @@ DECLARE_EXPORT void Resource::setMaximum(double m)
     }
   // Create new event
   loadplanlist::EventMaxQuantity *newEvent =
-    new loadplanlist::EventMaxQuantity(Date::infinitePast, size_max);
+    new loadplanlist::EventMaxQuantity(Date::infinitePast, &loadplans, size_max);
   loadplans.insert(newEvent);
 }
 
@@ -149,7 +149,7 @@ DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDouble* c)
     {
       curMax = x.getValue();
       loadplanlist::EventMaxQuantity *newBucket =
-        new loadplanlist::EventMaxQuantity(x.getDate(), curMax);
+        new loadplanlist::EventMaxQuantity(x.getDate(), &loadplans, curMax);
       loadplans.insert(newBucket);
     }
 }

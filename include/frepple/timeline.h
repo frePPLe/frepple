@@ -163,11 +163,14 @@ template <class type> class TimeLine
         friend class Event;
       private:
         double newMin;
+        TimeLine<type>* tmline;
       protected:
         EventMinQuantity *prevMin;
       public:
-        EventMinQuantity(Date d, double f=0.0) : Event(3), newMin(f), prevMin(NULL)
-        {this->dt = d;}
+        virtual TimeLine<type>* getTimeLine() const {return tmline;}
+        EventMinQuantity(Date d, TimeLine<type>* t, double f=0.0)
+          : Event(3), newMin(f), tmline(t), prevMin(NULL)
+          {this->dt = d;}
         void setMin(double f) {newMin = f;}
         virtual double getMin(bool inclusive = true) const
         {
@@ -183,11 +186,14 @@ template <class type> class TimeLine
         friend class TimeLine<type>;
       private:
         double newMax;
+        TimeLine<type>* tmline;
       protected:
         EventMaxQuantity *prevMax;
       public:
-        EventMaxQuantity(Date d, double f=0.0) : Event(4), newMax(f), prevMax(NULL)
-        {this->dt = d;}
+        virtual TimeLine<type>* getTimeLine() const {return tmline;}
+        EventMaxQuantity(Date d, TimeLine<type>* t, double f=0.0)
+          : Event(4), newMax(f), tmline(t), prevMax(NULL)
+          {this->dt = d;}
         void setMax(double f) {newMax = f;}
         virtual double getMax(bool inclusive = true) const
         {

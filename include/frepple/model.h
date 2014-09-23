@@ -3235,7 +3235,7 @@ class BufferProcure : public Buffer
       else
       {
         // Create and insert a new minimum event
-        min = new flowplanlist::EventMinQuantity(Date::infinitePast, f);
+        min = new flowplanlist::EventMinQuantity(Date::infinitePast, &getFlowPlans(), f);
         getFlowPlans().insert(min);
       }
       // The minimum is increased over the maximum: auto-increase the maximum.
@@ -3261,7 +3261,7 @@ class BufferProcure : public Buffer
       else
       {
         // Create and insert a new maximum event
-        max = new flowplanlist::EventMaxQuantity(Date::infinitePast, f);
+        max = new flowplanlist::EventMaxQuantity(Date::infinitePast, &getFlowPlans(), f);
         getFlowPlans().insert(max);
       }
       // The maximum is lowered below the minimum: auto-decrease the minimum

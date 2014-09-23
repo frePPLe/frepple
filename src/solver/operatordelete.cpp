@@ -157,11 +157,9 @@ void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming)
 
     // Check if the buffer is already found on the stack
     bool found = false;
-	  size_t j = buffersToScan.size();
-	  if (j > 0)
-	    for (j-=1; j>=0 && !found; --j)
-	      if (buffersToScan[j] == i->getBuffer())
-			    found = true;
+    for (int j = buffersToScan.size()-1; j>=0 && !found; --j)
+      if (buffersToScan[j] == i->getBuffer())
+        found = true;
 
     // Add the buffer to the stack
     if (!found) buffersToScan.push_back(const_cast<Buffer*>(i->getBuffer()));

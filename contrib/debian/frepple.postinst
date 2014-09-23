@@ -27,7 +27,7 @@ then
 fi
 
 # Update secret key in the configuration file
-sed -i "s/RANDOMSTRING/`date`/" /etc/frepple/django_settings.py
+sed -i "s/RANDOMSTRING/`date`/" /etc/frepple/djangosettings.py
 
 #DEBHELPER#
 

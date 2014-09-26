@@ -462,16 +462,27 @@ class exporter(object):
         quoteattr(buf)
         )
 
-      # Build consuming flows
+      # Build consuming flows. If the same component is consumed multiple times in the same
+      # BOM we sum up all quantities in a single flow.
+      fl = {}
       for j in m.read(i['bom_lines'], fields2, self.req.session.context):
         product = self.product_product.get(j['product_id'][0], None)
         if not product:
           continue
+        if j['product_id'][0] in fl:
+          fl[j['product_id'][0]].append(j)
+        else:
+          fl[j['product_id'][0]] = [j]
+      for j in fl:
+        product = self.product_product[j]
         buf = u'%s @ %s' % (product['name'], location)
-        qty = self.convert_qty_uom(j['product_qty'], j['product_uom'][0], j['product_id'][0])
+        qty = sum(
+          self.convert_qty_uom(k['product_qty'], k['product_uom'][0], k['product_id'][0])
+          for k in fl[j]
+          )
         yield '<flow xsi:type="flow_start" quantity="-%f"%s%s><buffer name=%s/></flow>\n' % (
-          qty, j['date_start'] and (' effective_start="%s"' % j['date_start']) or "",
-          j['date_stop'] and (' effective_end="%s"' % j['date_stop']) or "",
+          qty, fl[j][0]['date_start'] and (' effective_start="%s"' % fl[j][0]['date_start']) or "",
+          fl[j][0]['date_stop'] and (' effective_end="%s"' % fl[j][0]['date_stop']) or "",
           quoteattr(buf)
           )
       yield '</flows>\n'

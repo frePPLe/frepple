@@ -19,8 +19,8 @@ msgstr ""
 "Project-Id-Version: 2.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-04 12:10+0100\n"
-"PO-Revision-Date: 2013-12-04 12:11+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
+"PO-Revision-Date: 2014-09-27 20:42+0100\n"
+"Last-Translator: Johan De Taeye <jdetaeye@users.sourceforge.net>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
@@ -475,7 +475,7 @@ msgstr "bucket"
 
 #: common/models.py:276
 msgid "buckets"
-msgstr "Tijdsindeling"
+msgstr "Tijdsperiodes"
 
 #: common/models.py:285
 #: common/views.py:292
@@ -518,7 +518,7 @@ msgstr "datum"
 
 #: common/models.py:292
 msgid "bucket dates"
-msgstr "data"
+msgstr "Tijdsperiode details"
 
 #: common/report.py:417
 #: common/report.py:675

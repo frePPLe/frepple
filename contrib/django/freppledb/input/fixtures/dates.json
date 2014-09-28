@@ -1,5 +1,4 @@
 [
-{"pk": "telescope", "model": "common.bucket", "fields": {"description": "Time buckets with decreasing granularity"}},
 {"pk": "year", "model": "common.bucket", "fields": {"description": "Yearly time buckets"}},
 {"pk": "quarter", "model": "common.bucket", "fields": {"description": "Quarterly time buckets"}},
 {"pk": "month", "model": "common.bucket", "fields": {"description": "Monthly time buckets"}},

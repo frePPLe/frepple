@@ -111,6 +111,7 @@ class Command(BaseCommand):
           break
       try:
         logger.info("starting task %d at %s" % (task.id, datetime.now()))
+        background = False
         # A
         if task.name == 'generate plan':
           kwargs = {}
@@ -162,16 +163,6 @@ class Command(BaseCommand):
         # K
         elif task.name == 'Openbravo export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
           management.call_command('openbravo_export', database=database, task=task.id, verbosity=0)
-        # L
-        elif task.name == 'Odoo import' and 'freppledb.odoo' in settings.INSTALLED_APPS:
-          args = {}
-          for i in task.arguments.split():
-            key, val = i.split('=')
-            args[key[2:]] = val
-          management.call_command('odoo_import', database=database, task=task.id, verbosity=0, **args)
-        # M
-        elif task.name == 'Odoo export' and 'freppledb.odoo' in settings.INSTALLED_APPS:
-          management.call_command('odoo_export', database=database, task=task.id, verbosity=0)
         else:
           logger.error('Task %s not recognized' % task.name)
         # Read the task again from the database and update.
@@ -180,10 +171,11 @@ class Command(BaseCommand):
           now = datetime.now()
           if not task.started:
             task.started = now
-          #if not task.finished:
-          #  task.finished = now
-          #if task.status not in ('Done', 'Failed'):
-          #  task.status = 'Done'
+          if not background:
+            if not task.finished:
+              task.finished = now
+            if task.status not in ('Done', 'Failed'):
+              task.status = 'Done'
           task.save(using=database)
         logger.info("finished task %d at %s: success" % (task.id, datetime.now()))
       except Exception as e:

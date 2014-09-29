@@ -684,6 +684,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   data->state->curDemand = NULL;
   a->getOperationPlan()->setMotive(data->state->motive);
 
+  // Quantity can be changed because of size constraints on the top operation
+  a_qty = a->getOperationPlan()->getQuantity();
+
   // Make sure the subopplans know their owner & store the previous value
   OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;
   data->state->curOwnerOpplan = a->getOperationPlan();

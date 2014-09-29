@@ -165,6 +165,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
 
 void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
 {
+  OperatorDelete cleanup("sweeper", this);
   safety_stock_planning = true;
   if (getLogLevel()>0) logger << "Start safety stock replenishment pass   " << solver->getConstraints() << endl;
   vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
@@ -189,6 +190,9 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
       state->curOwnerOpplan = NULL;
       // Call the buffer solver
       (*b)->solve(*solver, this);
+      // Check for excess
+      if ((*b)->getType() != *BufferProcure::metadata)
+        (*b)->solve(cleanup, this);
       CommandManager::commit();
     }
   if (getLogLevel()>0) logger << "Finished safety stock replenishment pass" << endl;

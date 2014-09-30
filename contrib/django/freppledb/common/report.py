@@ -1332,20 +1332,24 @@ class GridReport(View):
   def _get_q_filter(reportclass, filterdata):
     q_filters = []
     for rule in filterdata['rules']:
-        try:
-          op, field, data = rule['op'], rule['field'], rule['data']
-          filter_fmt, exclude = reportclass._filter_map_jqgrid_django[op]
-          filter_str = smart_str(filter_fmt % {'field': reportclass._getRowByName(field).field_name})
-          if filter_fmt.endswith('__in'):
-              filter_kwargs = {filter_str: data.split(',')}
-          else:
-              filter_kwargs = {filter_str: smart_str(data)}
-          if exclude:
-              q_filters.append(~models.Q(**filter_kwargs))
-          else:
-              q_filters.append(models.Q(**filter_kwargs))
-        except:
-          pass  # Silently ignore invalid filters
+      try:
+        op, field, data = rule['op'], rule['field'], rule['data']
+        filter_fmt, exclude = reportclass._filter_map_jqgrid_django[op]
+        reportrow = reportclass._getRowByName(field)
+        if data == u'' and not isinstance(reportrow, (GridFieldText, GridFieldChoice)):
+          # Filter value specified, which makes the filter invalid
+          continue
+        filter_str = smart_str(filter_fmt % {'field': reportrow.field_name})
+        if filter_fmt.endswith('__in'):
+          filter_kwargs = {filter_str: data.split(',')}
+        else:
+          filter_kwargs = {filter_str: smart_str(data)}
+        if exclude:
+          q_filters.append(~models.Q(**filter_kwargs))
+        else:
+          q_filters.append(models.Q(**filter_kwargs))
+      except:
+        pass  # Silently ignore invalid filters
     if u'groups' in filterdata:
       for group in filterdata['groups']:
         try:

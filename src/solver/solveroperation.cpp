@@ -1250,4 +1250,181 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 }
 
 
+DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
+{
+  SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
+  Date origQDate = data->state->q_date;
+  double origQqty = data->state->q_qty;
+  Buffer *buf = data->state->curBuffer;
+  Demand *dmd = data->state->curDemand;
+
+  // Call the user exit
+  if (userexit_operation) userexit_operation.call(oper, PythonObject(data->constrainedPlanning));
+
+  unsigned int loglevel = data->getSolver()->getLogLevel();
+
+  // Message
+  if (loglevel>1)
+    logger << indent(oper->getLevel()) << "   Split operation '" << oper->getName()
+      << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+
+  // Make sure sub-operationplans know their owner & store the previous value
+  OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;
+
+  // Find the flow into the requesting buffer for the quantity-per
+  double top_flow_qty_per = 0.0;
+  if (buf)
+  {
+    Flow* f = oper->findFlow(buf, data->state->q_date);
+    if (f && f->getQuantity() > 0.0)
+    {
+      if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
+        throw DataException("Fixed flows on a split operation are not supported");
+      top_flow_qty_per = f->getQuantity();
+    }
+  }
+
+  // Compute the sum of all effective percentages.
+  int sum_percent = 0;
+  OperationSplit::alternatePropertyList::const_iterator propIter = oper->getProperties().begin();
+  for (Operation::Operationlist::const_iterator altIter = oper->getSubOperations().begin();
+    altIter != oper->getSubOperations().end();
+    ++altIter, ++propIter)
+  {
+    if (propIter->second.within(data->state->q_date))
+      sum_percent += propIter->first;
+  }
+  if (!sum_percent)
+    // Oops, no effective suboperations found.
+    // TODO Alternative: Look for an earlier date where at least one operation is effective
+    throw DataException("No operation is effective for split operation '" + oper->getName() + "' at " + string(data->state->q_date));
+
+  // Loop until we find quantity that can be planned on each alternate.
+  bool recheck = true;
+  double loop_qty = data->state->q_qty;
+  CommandCreateOperationPlan *top_cmd = NULL;
+  while (recheck)
+  {
+    // Set a bookmark in the command list.
+    CommandManager::Bookmark* topcommand = data->setBookmark();
+
+    // Create the top operationplan.
+    top_cmd = new CommandCreateOperationPlan(
+      oper, top_flow_qty_per ? origQqty / top_flow_qty_per : origQqty,
+      Date::infinitePast, origQDate, dmd, prev_owner_opplan, false
+      );
+    top_cmd->getOperationPlan()->setMotive(data->state->motive);
+    if (!prev_owner_opplan) data->add(top_cmd);
+
+    recheck = false;
+    int planned_percentages = 0;
+    double planned_quantity = 0.0;
+    OperationSplit::alternatePropertyList::const_reverse_iterator propIter = oper->getProperties().rbegin();
+    for (Operation::Operationlist::const_reverse_iterator altIter = oper->getSubOperations().rbegin();
+      altIter != oper->getSubOperations().rend();
+      ++altIter, ++propIter)
+    {
+      // Verify effectivity date and percentage > 0
+      if (!propIter->first || !propIter->second.within(origQDate))
+        continue;
+
+      // Message
+      if (loglevel>1)
+        logger << indent(oper->getLevel()) << "   Split operation '" << oper->getName()
+          << "' asks alternate '" << *altIter << "' " << endl;
+
+      // Find the flow
+      Flow* f = (*altIter)->findFlow(buf, data->state->q_date);
+      double flow_qty_per = 0.0;
+      if (f && f->getQuantity()>0.0)
+      {
+        if (top_flow_qty_per)
+          throw DataException("Split operation must have producing flow on the parent opration OR the child operations");
+        if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
+          throw DataException("Fixed flows on a split operation are not supported");
+        flow_qty_per = f->getQuantity();
+      }
+      else if (!top_flow_qty_per)
+        // The producing operation doesn't have a valid flow into the current
+        // buffer. Either it is missing or it is producing a negative quantity.
+        throw DataException("Invalid producing operation '" + oper->getName()
+            + "' for buffer '" + data->state->curBuffer->getName() + "'");
+
+      // Plan along this alternate
+      double asked = (loop_qty - planned_quantity)
+        * propIter->first / (sum_percent - planned_percentages)
+        / (flow_qty_per + top_flow_qty_per);
+      if (asked > 0)
+      {
+        // Due to minimum, maximum and multiple size constraints alternates can
+        // plan a different quantity than requested. Asked quantity can thus go
+        // negative and we skip some alternate.
+        data->state->q_qty = asked;
+        data->state->q_date = origQDate;
+        data->state->curDemand = NULL;
+        data->state->curOwnerOpplan = top_cmd->getOperationPlan();
+        data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
+        (*altIter)->solve(*this,v);
+      }
+
+      // Evaluate the reply
+      if (asked <= 0.0)
+        // No intention to plan along this alternate
+        continue;
+      else if (data->state->a_qty == 0)
+      {
+        // Nothing can be planned here: break out of the loop and don't recheck.
+        // The a_date is used below as reply from the top operation.
+        loop_qty = 0.0;
+        // Undo all plans done on any of the previous alternates
+        data->rollback(topcommand);
+        top_cmd = NULL;
+        break;
+      }
+      else if (data->state->a_qty <= asked - ROUNDING_ERROR)
+      {
+        // Planned short along this alternate. Replan all alternates
+        // for a smaller quantity.
+        recheck = true;
+        loop_qty *= data->state->a_qty / asked;
+        // Undo all plans done on any of the previous alternates
+        data->rollback(topcommand);
+        top_cmd = NULL;
+        break;
+      }
+      else
+      {
+        // Successfully planned along this alternate.
+        planned_quantity += data->state->a_qty * (flow_qty_per + top_flow_qty_per);
+        planned_percentages += propIter->first;
+      }
+    }
+  }
+
+  if (loop_qty && top_cmd)
+  {
+    // Expand flows of the top operationplan.
+    data->state->q_qty = top_cmd->getOperationPlan()->getQuantity();
+    data->state->q_date = origQDate;
+    data->state->curOwnerOpplan->createFlowLoads();
+    data->getSolver()->checkOperation(top_cmd->getOperationPlan(), *data);
+  }
+
+  // Make sure other operationplans don't take this one as owner any more.
+  // We restore the previous owner, which could be NULL.
+  data->state->curOwnerOpplan = prev_owner_opplan;
+
+  // Final reply
+  data->state->a_qty = loop_qty;
+  if (loop_qty)
+    data->state->a_date = Date::infiniteFuture;
+
+  // Message
+  if (loglevel>1)
+    logger << indent(oper->getLevel()) << "   Split operation '" << oper->getName()
+      << "' answers: " << data->state->a_qty << "  " << data->state->a_date
+      << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
+}
+
+
 }

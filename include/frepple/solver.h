@@ -127,6 +127,33 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(const OperationRouting*, void* = NULL);
 
     /** Behavior of this solver method is:
+      *  - The solver asks each alternate for the percentage of the requested
+      *    quantity. We ask the operation with the highest percentage first,
+      *    and only ask suboperations that are effective on the requested date.
+      *  - The percentages don't need to add up to 100. We scale the proportiona
+      *  - If an alternate replies more than requested (due to multiple and
+      *    minimum size) this is considered when dividing the remaining
+      *    quantity over the others.
+      *  - If an alternate can't deliver the requested percentage of the
+      *    quantity, we undo all previous alternates and retry planning
+      *    for a rescaled total quantity.
+      *    The split percentage is thus a hard constraint that must be
+      *    respected - a constraint on a single alternate also constrains the
+      *    planned quantity on all others.
+      *    Obviously if an alternate replies 0 the total rescaled quantity
+      *    remains 0.
+      *  - A case not handled with this logic is when the split operations
+      *    merge again upstream. If a shared upstream constraint is limiting
+      *    the total quantity, the solver doesn't see this and can't react
+      *    nicely to it. The solution would be that we a) detect this kind
+      *    of situation and b) iteratively try to split an increasing total
+      *    quantity. TODO...
+      *  - For each effective alternate suboperation we create 1
+      *    suboperationplan of the top operationplan.
+      */
+    DECLARE_EXPORT void solve(const OperationSplit*,void* = NULL);
+
+    /** Behavior of this solver method is:
       *  - The solver loops through each alternate operation in order of
       *    priority. On each alternate operation, the solver will try to plan
       *    the quantity that hasn't been planned on higher priority alternates.

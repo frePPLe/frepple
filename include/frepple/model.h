@@ -56,6 +56,7 @@ class OperationFixedTime;
 class OperationTimePer;
 class OperationRouting;
 class OperationAlternate;
+class OperationSplit;
 class Buffer;
 class BufferInfinite;
 class BufferProcure;
@@ -877,6 +878,8 @@ class Solver : public HasName<Solver>
     {solve(reinterpret_cast<const Operation*>(o),v);}
     virtual void solve(const OperationAlternate* o, void* v = NULL)
     {solve(reinterpret_cast<const Operation*>(o),v);}
+    virtual void solve(const OperationSplit* o, void* v = NULL)
+    {solve(reinterpret_cast<const Operation*>(o),v);}
     virtual void solve(const Resource*,void* = NULL)
     {throw LogicException("Called undefined solve(Resource*) method");}
     virtual void solve(const ResourceInfinite* r, void* v = NULL)
@@ -1246,6 +1249,7 @@ class Operation : public HasName<Operation>,
     friend class OperationPlan;
     friend class OperationRouting;
     friend class OperationAlternate;
+    friend class OperationSplit;
 
   protected:
     /** Constructor. Don't use it directly. */
@@ -1490,6 +1494,7 @@ class Operation : public HasName<Operation>,
       * number and structure of the suboperationplans.
       * @see OperationAlternate::addSubOperationPlan
       * @see OperationRouting::addSubOperationPlan
+      * @see OperationSplit::addSubOperationPlan
       */
     virtual DECLARE_EXPORT void addSubOperationPlan(
       OperationPlan*, OperationPlan*, bool=true
@@ -1638,6 +1643,7 @@ class OperationPlan
     friend class LoadPlan;
     friend class Demand;
     friend class Operation;
+    friend class OperationSplit;
     friend class OperationAlternate;
     friend class OperationRouting;
     friend class ProblemPrecedence;
@@ -2636,6 +2642,107 @@ inline ostream & operator << (ostream & os, const SearchMode & d)
 DECLARE_EXPORT SearchMode decodeSearchMode(const string& c);
 
 
+/** @brief This class represents a split between multiple operations. */
+class OperationSplit : public Operation
+{
+  public:
+    typedef pair<int,DateRange> alternateProperty;
+    typedef list<alternateProperty> alternatePropertyList;
+
+    /** Constructor. */
+    explicit OperationSplit(const string& c)
+      : Operation(c) {initType(metadata);}
+
+    /** Destructor. */
+    DECLARE_EXPORT ~OperationSplit();
+
+    /** Add a new alternate operation. */
+    DECLARE_EXPORT void addAlternate(
+      Operation*, int = 1, DateRange = DateRange()
+      );
+
+    /** Removes an alternate from the list. */
+    DECLARE_EXPORT void removeSubOperation(Operation *);
+
+    /** Returns the property list. */
+    DECLARE_EXPORT const alternatePropertyList& getProperties() const
+    {
+      return alternateProperties;
+    }
+
+    /** Updates the percentage of a certain suboperation.
+      * @exception DataException Generated when the argument operation is
+      *     not null and not a sub-operation of this alternate.
+      */
+    DECLARE_EXPORT void setPercent(Operation*, int);
+
+    /** Updates the effective daterange of a certain suboperation.
+      * @exception DataException Generated when the argument operation is
+      *     not null and not a sub-operation of this alternate.
+      */
+    DECLARE_EXPORT void setEffective(Operation*, DateRange);
+
+    /** A operation of this type enforces the following rules on its
+      * operationplans:
+      *  - Very simple, accept any value. Ignore any lot size constraints
+      *    since we use the ones on the sub operationplans.
+      * @see Operation::setOperationPlanParameters
+      */
+    DECLARE_EXPORT OperationPlanState setOperationPlanParameters
+    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+
+    /** Add a new child operationplan.
+      * An alternate operationplan plan can have a maximum of 2
+      * suboperationplans:
+      *  - A setup operationplan if the alternate top-operation loads a
+      *    resource requiring a specific setup.
+      *  - An operationplan of any of the allowed suboperations.
+      */
+    virtual DECLARE_EXPORT void addSubOperationPlan(
+      OperationPlan*, OperationPlan*, bool=true
+      );
+
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual const Operationlist& getSubOperations() const {return alternates;}
+    static int initialize();
+
+    /** Add an alternate to the operation.<br>
+      * The keyword arguments are "operation", "percent", "effective_start"
+      * and "effective_end"
+      */
+    static DECLARE_EXPORT PyObject* addAlternate(PyObject*, PyObject*, PyObject*);
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
+    virtual size_t getSize() const
+    {
+      return sizeof(OperationSplit) + Operation::extrasize()
+          + alternates.size() * (5*sizeof(Operation*)+sizeof(alternateProperty));
+    }
+
+  protected:
+    /** Extra logic to be used when instantiating an operationplan. */
+    virtual DECLARE_EXPORT bool extraInstantiate(OperationPlan* o);
+
+  private:
+    /** List of the percentages of the different alternate operations. The list
+      * is maintained such that it is sorted in ascending order of priority. */
+    alternatePropertyList alternateProperties;
+
+    /** List of all alternate operations. The list is sorted with the operation
+      * with the highest percentage at the start of the list.<br>
+      * Note that the list of operations and the list of percentages go hand in
+      * hand: they have an equal number of elements and the order of the
+      * elements is matching in both lists.
+      */
+    Operationlist alternates;
+};
+
+
 /** @brief This class represents a choice between multiple operations. The
   * alternates are sorted in order of priority.
   */
@@ -2663,6 +2770,9 @@ class OperationAlternate : public Operation
     /** Returns the properties of a certain suboperation.
       * @exception LogicException Generated when the argument operation is
       *     null or when it is not a sub-operation of this alternate.
+      * TODO This method doesn't work correctly when the same operation is used
+      *      multiple times as alternate. Eg priorities between operations
+      *      changes over time.
       */
     DECLARE_EXPORT const alternateProperty& getProperties(Operation* o) const;
 

@@ -300,6 +300,31 @@
     </xsd:complexContent>
   </xsd:complexType>
 
+  <xsd:complexType name="operation_split">
+    <xsd:complexContent>
+      <xsd:extension base="operation">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="alternates">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="alternate" minOccurs="0" maxOccurs="unbounded">
+                  <xsd:complexType>
+                    <xsd:sequence>
+                      <xsd:element name="operation" type="operation" />
+                      <xsd:element name="percent" type="xsd:integer" minOccurs="0" />
+                      <xsd:element name="effective_start" type="xsd:dateTime" minOccurs="0" />
+                      <xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
+                    </xsd:sequence>
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
   <!-- ITEM -->
   <xsd:complexType name="item">
     <xsd:annotation>

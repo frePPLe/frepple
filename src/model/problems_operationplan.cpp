@@ -65,7 +65,9 @@ void OperationPlan::updateProblems()
     }
     if (nextsubopplan
       && getDates().getEnd() > nextsubopplan->getDates().getStart()
-      && !nextsubopplan->getLocked())
+      && !nextsubopplan->getLocked()
+      && owner && owner->getOperation()->getType() != *OperationSplit::metadata
+      )
       needsPrecedence = true;
   }
 

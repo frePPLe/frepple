@@ -682,14 +682,20 @@ DECLARE_EXPORT void OperationPlan::update()
 {
   if (lastsubopplan && lastsubopplan->getOperation() != OperationSetup::setupoperation)
   {
-    // Inherit the start and end date of the child operationplans
-    OperationPlan *tmp = firstsubopplan;
-    if (tmp->getOperation() == OperationSetup::setupoperation)
-      tmp = tmp->nextsubopplan;
-    dates.setStartAndEnd(
-      tmp->getDates().getStart(),
-      lastsubopplan->getDates().getEnd()
-    );
+    // Set the start and end date of the parent.
+    Date st = Date::infiniteFuture;
+    Date nd = Date::infinitePast;
+    for (OperationPlan *f=firstsubopplan; f; f=f->nextsubopplan)
+    {
+      if (f->getOperation() == OperationSetup::setupoperation)
+        continue;
+      if (f->getDates().getStart() < st)
+        st = f->getDates().getStart();
+      if (f->getDates().getEnd() > nd)
+        nd = f->getDates().getEnd();
+    }
+    if (nd)
+      dates.setStartAndEnd(st, nd);
   }
 
   // Update the flow and loadplans

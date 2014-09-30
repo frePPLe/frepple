@@ -63,6 +63,7 @@ void LibraryModel::initialize()
   // Initialize the operation metadata.
   nok += Operation::initialize();
   nok += OperationAlternate::initialize();
+  nok += OperationSplit::initialize();
   nok += OperationFixedTime::initialize();
   nok += OperationTimePer::initialize();
   nok += OperationRouting::initialize();

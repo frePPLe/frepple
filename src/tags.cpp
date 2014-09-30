@@ -122,6 +122,7 @@ DECLARE_EXPORT const Keyword Tags::tag_owner("owner");
 DECLARE_EXPORT const Keyword Tags::tag_parameter("parameter");
 DECLARE_EXPORT const Keyword Tags::tag_pegged("pegged");
 DECLARE_EXPORT const Keyword Tags::tag_pegging("pegging");
+DECLARE_EXPORT const Keyword Tags::tag_percent("percent");
 DECLARE_EXPORT const Keyword Tags::tag_plan("plan");
 DECLARE_EXPORT const Keyword Tags::tag_plantype("plantype");
 DECLARE_EXPORT const Keyword Tags::tag_posttime("posttime");

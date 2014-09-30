@@ -29,6 +29,7 @@ DECLARE_EXPORT const MetaCategory* Operation::metadata;
 DECLARE_EXPORT const MetaClass* OperationFixedTime::metadata,
                *OperationTimePer::metadata,
                *OperationRouting::metadata,
+               *OperationSplit::metadata,
                *OperationAlternate::metadata,
                *OperationSetup::metadata;
 DECLARE_EXPORT Operation::Operationlist Operation::nosubOperations;
@@ -64,6 +65,21 @@ int OperationTimePer::initialize()
 
   // Initialize the Python class
   return FreppleClass<OperationTimePer,Operation>::initialize();
+}
+
+
+int OperationSplit::initialize()
+{
+  // Initialize the metadata
+  metadata = new MetaClass("operation", "operation_split",
+      Object::createString<OperationSplit>);
+
+  // Initialize the Python class
+  FreppleClass<OperationSplit,Operation>::getType().addMethod(
+    "addAlternate", OperationSplit::addAlternate,
+    METH_VARARGS | METH_KEYWORDS, "add an alternate"
+    );
+  return FreppleClass<OperationSplit,Operation>::initialize();
 }
 
 
@@ -141,6 +157,16 @@ DECLARE_EXPORT Operation::~Operation()
 
 
 DECLARE_EXPORT OperationRouting::~OperationRouting()
+{
+  // Note that we are not using a for-loop since our function is actually
+  // updating the list of super-operations at the same time as we move
+  // through it.
+  while (!getSubOperations().empty())
+    removeSubOperation(*getSubOperations().begin());
+}
+
+
+DECLARE_EXPORT OperationSplit::~OperationSplit()
 {
   // Note that we are not using a for-loop since our function is actually
   // updating the list of super-operations at the same time as we move
@@ -1071,7 +1097,6 @@ DECLARE_EXPORT SearchMode decodeSearchMode(const string& c)
   throw DataException("Invalid search mode " + c);
 }
 
-
 DECLARE_EXPORT void OperationAlternate::addAlternate
 (Operation* o, int prio, DateRange eff)
 {
@@ -1317,6 +1342,247 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
 }
 
 
+DECLARE_EXPORT void OperationSplit::addAlternate
+(Operation* o, int prio, DateRange eff)
+{
+  if (!o) return;
+  Operationlist::iterator altIter = alternates.begin();
+  alternatePropertyList::iterator propIter = alternateProperties.begin();
+  while (altIter!=alternates.end() && prio >= propIter->first)
+  {
+    ++propIter;
+    ++altIter;
+  }
+  alternateProperties.insert(propIter,alternateProperty(prio,eff));
+  alternates.insert(altIter,o);
+  o->addSuperOperation(this);
+}
+
+
+DECLARE_EXPORT void OperationSplit::setPercent(Operation* o, int f)
+{
+  if (!o) return;
+  Operationlist::const_iterator altIter = alternates.begin();
+  alternatePropertyList::iterator propIter = alternateProperties.begin();
+  while (altIter!=alternates.end() && *altIter != o)
+  {
+    ++propIter;
+    ++altIter;
+  }
+  if (*altIter == o)
+    propIter->first = f;
+  else
+    throw DataException("Operation '" + o->getName() +
+        "' isn't a suboperation of split operation '" + getName() + "'");
+}
+
+
+DECLARE_EXPORT void OperationSplit::setEffective(Operation* o, DateRange dr)
+{
+  if (!o) return;
+  Operationlist::const_iterator altIter = alternates.begin();
+  alternatePropertyList::iterator propIter = alternateProperties.begin();
+  while (altIter!=alternates.end() && *altIter != o)
+  {
+    ++propIter;
+    ++altIter;
+  }
+  if (*altIter == o)
+    propIter->second = dr;
+  else
+    throw DataException("Operation '" + o->getName() +
+        "' isn't a suboperation of split operation '" + getName() + "'");
+}
+
+
+DECLARE_EXPORT void OperationSplit::writeElement
+(XMLOutput *o, const Keyword& tag, mode m) const
+{
+  // Writing a reference
+  if (m == REFERENCE)
+  {
+    o->writeElement
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    return;
+  }
+
+  // Write the complete object
+  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
+    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
+
+  // Write the standard fields
+  Operation::writeElement(o, tag, NOHEADTAIL);
+
+  // Write the extra fields
+  o->BeginObject(Tags::tag_alternates);
+  alternatePropertyList::const_iterator propIter = alternateProperties.begin();
+  for (Operationlist::const_iterator i = alternates.begin();
+      i != alternates.end(); ++i)
+  {
+    o->BeginObject(Tags::tag_alternate);
+    o->writeElement(Tags::tag_operation, *i, REFERENCE);
+    o->writeElement(Tags::tag_percent, propIter->first);
+    if (propIter->second.getStart() != Date::infinitePast)
+      o->writeElement(Tags::tag_effective_start, propIter->second.getStart());
+    if (propIter->second.getEnd() != Date::infiniteFuture)
+      o->writeElement(Tags::tag_effective_end, propIter->second.getEnd());
+    o->EndObject (Tags::tag_alternate);
+    ++propIter;
+  }
+  o->EndObject(Tags::tag_alternates);
+
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
+}
+
+
+DECLARE_EXPORT void OperationSplit::beginElement(XMLInput& pIn, const Attribute& pAttr)
+{
+  if (pAttr.isA(Tags::tag_operation))
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
+  else
+    Operation::beginElement(pIn, pAttr);
+}
+
+
+DECLARE_EXPORT void OperationSplit::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+{
+  // Saving some typing...
+  typedef pair<Operation*,alternateProperty> tempData;
+
+  // Create a temporary object
+  if (!pIn.getUserArea())
+    pIn.setUserArea(new tempData(static_cast<Operation*>(NULL),alternateProperty(1,DateRange())));
+  tempData* tmp = static_cast<tempData*>(pIn.getUserArea());
+
+  if (pAttr.isA(Tags::tag_alternate))
+  {
+    addAlternate(tmp->first, tmp->second.first, tmp->second.second);
+    // Reset the defaults
+    tmp->first = NULL;
+    tmp->second.first = 1;
+    tmp->second.second = DateRange();
+  }
+  else if (pAttr.isA(Tags::tag_percent))
+    tmp->second.first = pElement.getInt();
+  else if (pAttr.isA(Tags::tag_effective_start))
+    tmp->second.second.setStart(pElement.getDate());
+  else if (pAttr.isA(Tags::tag_effective_end))
+    tmp->second.second.setEnd(pElement.getDate());
+  else if (pAttr.isA(Tags::tag_operation)
+      && pIn.getParentElement().first.isA(Tags::tag_alternate))
+  {
+    Operation * b = dynamic_cast<Operation*>(pIn.getPreviousObject());
+    if (b) tmp->first = b;
+    else throw LogicException("Incorrect object type during read operation");
+  }
+  Operation::endElement (pIn, pAttr, pElement);
+
+  // Delete the temporary object
+  if (pIn.isObjectEnd()) delete static_cast<tempData*>(pIn.getUserArea());
+}
+
+
+DECLARE_EXPORT OperationPlanState
+OperationSplit::setOperationPlanParameters
+(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
+ bool execute) const
+{
+  // Invalid calls to this function
+  if (!opplan || q<0)
+    throw LogicException("Incorrect parameters for split operationplan");
+  if (opplan->getLocked())
+    return OperationPlanState(opplan);
+
+  // Blindly accept the parameters: only sizing constraints from the child
+  // operations are respected.
+  if (execute)
+  {
+    opplan->setQuantity(q, false, false);
+    opplan->setStartAndEnd(s, e);
+    return OperationPlanState(opplan);
+  }
+  else
+    return OperationPlanState(s, e, q);
+}
+
+
+DECLARE_EXPORT bool OperationSplit::extraInstantiate(OperationPlan* o)
+{
+  if (o->lastsubopplan && o->lastsubopplan->getOperation() != OperationSetup::setupoperation)
+    // Suboperationplans already exist. Nothing to do here.
+    return true;
+
+  // Compute the sum of all effective percentages.
+  int sum_percent = 0;
+  Date enddate = o->getDates().getEnd();
+  OperationSplit::alternatePropertyList::const_iterator propIter = getProperties().begin();
+  for (Operation::Operationlist::const_iterator altIter = getSubOperations().begin();
+    altIter != getSubOperations().end();
+    ++altIter, ++propIter)
+  {
+    if (propIter->second.within(enddate))
+      sum_percent += propIter->first;
+  }
+  if (!sum_percent)
+    // Oops, no effective suboperations found.
+    // Let's not create any suboperationplans then.
+    return true;
+
+  // Create all child operationplans
+  propIter = getProperties().begin();
+  for (Operation::Operationlist::const_iterator altIter = getSubOperations().begin();
+    altIter != getSubOperations().end();
+    ++altIter, ++propIter)
+  {
+    // Verify effectivity date and percentage > 0
+    if (!propIter->first || !propIter->second.within(enddate))
+      continue;
+
+    // Find the first producing flow.
+    // In case the split suboperation produces multiple materials this code
+    // is not foolproof...
+    const Flow* f = NULL;
+    for (Operation::flowlist::const_iterator fiter = (*altIter)->getFlows().begin();
+      fiter != (*altIter)->getFlows().end() && !f; ++fiter)
+    {
+      if (fiter->getQuantity() > 0.0 && fiter->getEffective().within(enddate))
+        f = &*fiter;
+    }
+
+    // Create an operationplan instance
+    (*altIter)->createOperationPlan(
+      o->getQuantity() * propIter->first / sum_percent / (f ? f->getQuantity() : 1.0),
+      o->getDates().getStart(), enddate, NULL, o, 0, true
+      );
+  }
+  return true;
+}
+
+
+DECLARE_EXPORT void OperationSplit::removeSubOperation(Operation *o)
+{
+  Operationlist::iterator altIter = alternates.begin();
+  alternatePropertyList::iterator propIter = alternateProperties.begin();
+  while (altIter!=alternates.end() && *altIter != o)
+  {
+    ++propIter;
+    ++altIter;
+  }
+  if (*altIter == o)
+  {
+    alternates.erase(altIter);
+    alternateProperties.erase(propIter);
+    o->superoplist.remove(this);
+    setChanged();
+  }
+  else
+    logger << "Warning: operation '" << *o
+        << "' isn't a suboperation of split operation '" << *this
+        << "'" << endl;
+}
+
+
 DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
@@ -1542,6 +1808,70 @@ DECLARE_EXPORT int OperationTimePer::setattro(const Attribute& attr, const Pytho
   return 0;
 }
 
+DECLARE_EXPORT PyObject* OperationSplit::getattro(const Attribute& attr)
+{
+  if (attr.isA(Tags::tag_alternates))
+  {
+    PyObject* result = PyTuple_New(getSubOperations().size());
+    alternatePropertyList::const_iterator j = alternateProperties.begin();
+    int count = 0;
+    for (Operation::Operationlist::const_iterator i = getSubOperations().begin();
+      i != getSubOperations().end(); i++, j++)
+      PyTuple_SetItem(result, count++, Py_BuildValue("(OiNN)",
+        static_cast<PyObject*>(*i),
+        j->first,
+        static_cast<PyObject*>(PythonObject(j->second.getStart())),
+        static_cast<PyObject*>(PythonObject(j->second.getEnd()))
+        ));
+    return result;
+  }
+  return Operation::getattro(attr);
+}
+
+
+DECLARE_EXPORT PyObject* OperationSplit::addAlternate(PyObject* self, PyObject* args, PyObject* kwdict)
+{
+  try
+  {
+    // Pick up the alternate operation
+    OperationSplit *altoper = static_cast<OperationSplit*>(self);
+    if (!altoper) throw LogicException("Can't add alternates to NULL split");
+
+    // Parse the arguments
+    PyObject *oper = NULL;
+    int percent = 1;
+    PyObject *eff_start = NULL;
+    PyObject *eff_end = NULL;
+    static const char *kwlist[] = {"operation", "percent", "effective_start", "effective_end", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, kwdict,
+        "O|iOO:addAlternate",
+        const_cast<char**>(kwlist), &oper, &percent, &eff_start, &eff_end))
+      return NULL;
+    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
+      throw DataException("alternate operation must be of type operation");
+    DateRange eff;
+    if (eff_start)
+    {
+      PythonObject d(eff_start);
+      eff.setStart(d.getDate());
+    }
+    if (eff_end)
+    {
+      PythonObject d(eff_end);
+      eff.setEnd(d.getDate());
+    }
+
+    // Add the alternate
+    altoper->addAlternate(static_cast<Operation*>(oper), percent, eff);
+  }
+  catch(...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+  return Py_BuildValue("");
+}
+
 
 DECLARE_EXPORT PyObject* OperationAlternate::getattro(const Attribute& attr)
 {
@@ -1689,6 +2019,66 @@ DECLARE_EXPORT void Operation::addSubOperationPlan(
   // Set as only child operationplan
   parent->firstsubopplan = child;
   parent->lastsubopplan = child;
+  child->owner = parent;
+
+  // Update the flow and loadplans
+  parent->update();
+}
+
+
+DECLARE_EXPORT void OperationSplit::addSubOperationPlan(
+  OperationPlan* parent, OperationPlan* child, bool fast
+  )
+{
+  // Check
+  if (!parent)
+    throw LogicException("Invalid parent for suboperationplan");
+  if (!child)
+    throw DataException("Adding null suboperationplan");
+
+  // Adding a suboperationplan that was already added
+  if (child->owner == parent)  return;
+
+  if (!fast)
+  {
+    // Check whether the new alternate is a valid suboperation
+    bool ok = false;
+    const Operationlist& alts = parent->getOperation()->getSubOperations();
+    for (Operationlist::const_iterator i = alts.begin(); i != alts.end(); i++)
+      if (*i == child->getOperation())
+      {
+        ok = true;
+        break;
+      }
+    if (!ok) throw DataException("Invalid split suboperationplan");
+  }
+
+  // The new child operationplan is inserted as the first unlocked
+  // suboperationplan.
+  if (!parent->firstsubopplan)
+  {
+    // First element
+    parent->firstsubopplan = child;
+    parent->lastsubopplan = child;
+  }
+  else if (parent->firstsubopplan->getOperation() != OperationSetup::setupoperation)
+  {
+    // New head
+    child->nextsubopplan = parent->firstsubopplan;
+    parent->firstsubopplan->prevsubopplan = child;
+    parent->firstsubopplan = child;
+  }
+  else
+  {
+    // Insert right after the setup operationplan
+    OperationPlan *s = parent->firstsubopplan->nextsubopplan;
+    child->nextsubopplan = s;
+    if (s) s->nextsubopplan = child;
+    else parent->lastsubopplan = child;
+  }
+
+  // Update the owner
+  if (child->owner) child->owner->eraseSubOperationPlan(child);
   child->owner = parent;
 
   // Update the flow and loadplans
@@ -1914,60 +2304,75 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
     throw DataException("Operationplans can't have negative quantities");
 
   // Setting a quantity is only allowed on a top operationplan.
-  // One exception: on alternate operations the sizing on the sub-operations is
-  // respected.
-  if (oplan->owner && oplan->owner->getOperation()->getType() != *OperationAlternate::metadata)
+  // Two exceptions: on alternate and split operations the sizing on the
+  // sub-operations is respected.
+  if (oplan->owner && oplan->owner->getOperation()->getType() != *OperationAlternate::metadata
+    && oplan->owner->getOperation()->getType() != *OperationSplit::metadata)
     return oplan->owner->setQuantity(f,roundDown,upd,execute);
 
   // Compute the correct size for the operationplan
-  if (f!=0.0 && getSizeMinimum()>0.0 && f < getSizeMinimum())
+  if (oplan->getOperation()->getType() == *OperationSplit::metadata)
   {
-    if (roundDown)
+    // A split operation doesn't respect any size constraints at the parent level
+    if (execute)
     {
-      // Smaller than the minimum quantity, rounding down means... nothing
-      if (!execute) return 0.0;
-      oplan->quantity = 0.0;
-      // Update the flow and loadplans, and mark for problem detection
+      oplan->quantity = f;
       if (upd) oplan->update();
-      // Update the parent of an alternate operationplan
-      if (oplan->owner && oplan->owner->getOperation()->getType() == *OperationAlternate::metadata)
-      {
-        oplan->owner->quantity = 0.0;
-        if (upd) oplan->owner->resizeFlowLoadPlans();
-      }
-      return 0.0;
     }
-    f = getSizeMinimum();
-  }
-  if (f != 0.0 && f >= getSizeMaximum())
-  {
-    roundDown = true; // force rounddown to stay below the limit
-    f = getSizeMaximum();
-  }
-  if (f!=0.0 && getSizeMultiple()>0.0)
-  {
-    int mult = static_cast<int> (f / getSizeMultiple()
-        + (roundDown ? 0.0 : 0.99999999));
-    double q = mult * getSizeMultiple();
-    if (q < getSizeMinimum())
-    {
-      q += getSizeMultiple();
-      if (q > getSizeMaximum())
-        throw DataException("Invalid sizing parameters for operation " + getName());
-    }
-    else if (q > getSizeMaximum())
-    {
-      q -= getSizeMultiple();
-      if (q < getSizeMinimum())
-        throw DataException("Invalid sizing parameters for operation " + getName());
-    }
-    if (!execute) return q;
-    oplan->quantity = q;
+    return f;
   }
   else
   {
-    if (!execute) return f;
-    oplan->quantity = f;
+    // All others respect constraints
+    if (f!=0.0 && getSizeMinimum()>0.0 && f < getSizeMinimum())
+    {
+      if (roundDown)
+      {
+        // Smaller than the minimum quantity, rounding down means... nothing
+        if (!execute) return 0.0;
+        oplan->quantity = 0.0;
+        // Update the flow and loadplans, and mark for problem detection
+        if (upd) oplan->update();
+        // Update the parent of an alternate operationplan
+        if (oplan->owner && oplan->owner->getOperation()->getType() == *OperationAlternate::metadata)
+        {
+          oplan->owner->quantity = 0.0;
+          if (upd) oplan->owner->resizeFlowLoadPlans();
+        }
+        return 0.0;
+      }
+      f = getSizeMinimum();
+    }
+    if (f != 0.0 && f >= getSizeMaximum())
+    {
+      roundDown = true; // force rounddown to stay below the limit
+      f = getSizeMaximum();
+    }
+    if (f!=0.0 && getSizeMultiple()>0.0)
+    {
+      int mult = static_cast<int> (f / getSizeMultiple()
+          + (roundDown ? 0.0 : 0.99999999));
+      double q = mult * getSizeMultiple();
+      if (q < getSizeMinimum())
+      {
+        q += getSizeMultiple();
+        if (q > getSizeMaximum())
+          throw DataException("Invalid sizing parameters for operation " + getName());
+      }
+      else if (q > getSizeMaximum())
+      {
+        q -= getSizeMultiple();
+        if (q < getSizeMinimum())
+          throw DataException("Invalid sizing parameters for operation " + getName());
+      }
+      if (!execute) return q;
+      oplan->quantity = q;
+    }
+    else
+    {
+      if (!execute) return f;
+      oplan->quantity = f;
+    }
   }
 
   // Update the parent of an alternate operationplan

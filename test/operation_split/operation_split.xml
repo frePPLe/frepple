@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for operation_split</name>
+  <description>
+    This test verifies how an operation of type operation_split divides
+    the demand over different operations.
+    There are a number of test situations being investigated, both in the
+    constrained and unconstrained plan.
+      1) Simple case of split across 3 operations.
+         Producing flows exist at the child operations.
+      2) Simple case of split across 3 operations.
+         Producing flow exists at the top operation.
+      3) Case with date effective split across 3 operations.
+         In some periods some alternates are not available.
+         And at different times a different percentage split is applied
+         across the alternates.
+      4) Case with lot size constraints on the child operations.
+         The desired split is impossible to achieve exactly.
+  </description>
+  <current>2014-01-01T00:00:00</current>
+
+  <!--
+    Case 1:
+    Simple case of split across 3 operations.
+    Producing flows exist at the child operations.
+  -->
+	<items>
+	  <item name="item 1">
+	    <operation name="delivery 1" duration="P1D" xsi:type="operation_fixed_time">
+	      <flows>
+	        <flow xsi:type="flow_start">
+	          <buffer name="item 1" />
+	          <quantity>-1</quantity>
+	        </flow>
+	      </flows>
+	    </operation>
+	  </item>
+  </items>
+  <resources>
+    <resource name="Resource 1 A+B" maximum="1"/>
+    <resource name="Resource 1 C" maximum="1"/>
+  </resources>
+	<operations>
+    <operation name="make item 1" xsi:type="operation_split">
+      <alternates>
+        <alternate>
+          <operation name="make item 1 option A" xsi:type="operation_fixed_time">
+            <loads>
+              <load>
+                <resource name="Resource 1 A+B"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <flows>
+              <flow xsi:type="flow_end">
+                <buffer name="item 1" />
+                <quantity>2</quantity>
+              </flow>
+              <flow xsi:type="flow_start">
+                <buffer name="component 1 for option A" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <size_minimum>0</size_minimum>
+            <duration>P3D</duration>
+          </operation>
+          <percent>30</percent>
+        </alternate>
+        <alternate>
+          <operation name="make item 1 option B" xsi:type="operation_fixed_time">
+            <flows>
+              <flow xsi:type="flow_end">
+                <buffer name="item 1" />
+                <quantity>1</quantity>
+              </flow>
+              <flow xsi:type="flow_start">
+                <buffer name="component 1 for option B" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <resource name="Resource 1 A+B"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <size_minimum>0</size_minimum>
+            <duration>P5D</duration>
+          </operation>
+          <percent>35</percent>
+        </alternate>
+        <alternate>
+          <operation name="make item 1 option C" xsi:type="operation_fixed_time">
+            <flows>
+              <flow xsi:type="flow_end">
+                <buffer name="item 1" />
+                <quantity>5</quantity>
+              </flow>
+              <flow xsi:type="flow_start">
+                <buffer name="component 1 for option C" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <resource name="Resource 1 C"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <size_minimum>0</size_minimum>
+            <duration>P10D</duration>
+          </operation>
+          <percent>35</percent>
+        </alternate>
+      </alternates>
+    </operation>
+  </operations>
+	<buffers>
+    <buffer name="item 1">
+      <producing name="make item 1"/>
+    </buffer>
+	  <buffer name="component 1 for option A">
+	    <item name="item 1" />
+      <producing name="buy component 1 for option A" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 1 for option A" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P7D</duration>
+      </producing>
+	  </buffer>
+	  <buffer name="component 1 for option B">
+	    <item name="item 1" />
+      <producing name="buy component 1 for option B" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 1 for option B" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P2D</duration>
+      </producing>
+	  </buffer>
+	  <buffer name="component 1 for option C">
+	    <item name="item 1" />
+      <producing name="buy component 1 for option C" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 1 for option C" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P1D</duration>
+      </producing>
+	  </buffer>
+  </buffers>
+	<demands>
+	  <demand name="order 1 for item 1">
+	    <quantity>100</quantity>
+	    <due>2014-01-01T00:00:00</due>
+	    <priority>1</priority>
+	    <item name="item 1" />
+	  </demand>
+	</demands>
+
+  <!--
+    Case 2:
+    Simple case of split across 3 operations.
+    Producing flow exists at the top operation.
+  -->
+	<items>
+	  <item name="item 2">
+	    <operation name="delivery 2" duration="P1D" xsi:type="operation_fixed_time">
+	      <flows>
+	        <flow xsi:type="flow_start">
+	          <buffer name="item 2" />
+	          <quantity>-1</quantity>
+	        </flow>
+	      </flows>
+	    </operation>
+	  </item>
+  </items>
+  <resources>
+    <resource name="Resource 2 A+B" maximum="1"/>
+    <resource name="Resource 2 C" maximum="1"/>
+  </resources>
+	<operations>
+    <operation name="make item 2" xsi:type="operation_split">
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="item 2" />
+          <quantity>2</quantity>
+        </flow>
+      </flows>
+      <alternates>
+        <alternate>
+          <operation name="make item 2 option A" xsi:type="operation_fixed_time">
+            <loads>
+              <load>
+                <resource name="Resource 2 A+B"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <flows>
+              <flow xsi:type="flow_start">
+                <buffer name="component 2 for option A" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <size_minimum>0</size_minimum>
+            <duration>P3D</duration>
+          </operation>
+          <percent>30</percent>
+        </alternate>
+        <alternate>
+          <operation name="make item 2 option B" xsi:type="operation_fixed_time">
+            <flows>
+              <flow xsi:type="flow_start">
+                <buffer name="component 2 for option B" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <resource name="Resource 2 A+B"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <size_minimum>0</size_minimum>
+            <duration>P5D</duration>
+          </operation>
+          <percent>35</percent>
+        </alternate>
+        <alternate>
+          <operation name="make item 2 option C" xsi:type="operation_fixed_time">
+            <flows>
+              <flow xsi:type="flow_start">
+                <buffer name="component 2 for option C" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <resource name="Resource 2 C"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <size_minimum>0</size_minimum>
+            <duration>P10D</duration>
+          </operation>
+          <percent>35</percent>
+        </alternate>
+      </alternates>
+    </operation>
+  </operations>
+	<buffers>
+    <buffer name="item 2">
+      <producing name="make item 2"/>
+    </buffer>
+	  <buffer name="component 2 for option A">
+	    <item name="item 2" />
+      <producing name="buy component 2 for option A" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 2 for option A" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P7D</duration>
+      </producing>
+	  </buffer>
+	  <buffer name="component 2 for option B">
+	    <item name="item 1" />
+      <producing name="buy component 2 for option B" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 2 for option B" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P2D</duration>
+      </producing>
+	  </buffer>
+	  <buffer name="component 2 for option C">
+	    <item name="item 1" />
+      <producing name="buy component 2 for option C" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 2 for option C" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P1D</duration>
+      </producing>
+	  </buffer>
+  </buffers>
+	<demands>
+	  <demand name="order 1 for item 2">
+	    <quantity>200</quantity>
+	    <due>2014-01-01T00:00:00</due>
+	    <priority>1</priority>
+	    <item name="item 2" />
+	  </demand>
+	</demands>
+
+  <!--
+    Case 3:
+    Case with date effective split across 3 operations.
+    In some periods some alternates are not available.
+    And at different times a different percentage split is applied across
+    the alternates.
+  -->
+	<items>
+	  <item name="item 3">
+	    <operation name="delivery 3" duration="P1D" xsi:type="operation_fixed_time">
+	      <flows>
+	        <flow xsi:type="flow_start">
+	          <buffer name="item 3" />
+	          <quantity>-1</quantity>
+	        </flow>
+	      </flows>
+	    </operation>
+	  </item>
+  </items>
+  <resources>
+    <resource name="Resource 3 A+B" maximum="1"/>
+    <resource name="Resource 3 C" maximum="1"/>
+  </resources>
+	<operations>
+    <operation name="make item 3" xsi:type="operation_split">
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="item 3" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <alternates>
+        <alternate>
+          <operation name="make item 3 option A" xsi:type="operation_fixed_time">
+            <loads>
+              <load>
+                <resource name="Resource 3 A+B"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <flows>
+              <flow xsi:type="flow_start">
+                <buffer name="component 3 for option A" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <size_minimum>0</size_minimum>
+            <duration>P3D</duration>
+          </operation>
+          <percent>30</percent>
+          <effective_end>2014-08-01T00:00:00</effective_end>
+        </alternate>
+        <alternate>
+          <operation name="make item 3 option B" xsi:type="operation_fixed_time">
+            <flows>
+              <flow xsi:type="flow_start">
+                <buffer name="component 3 for option B" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <resource name="Resource 3 A+B"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <size_minimum>0</size_minimum>
+            <duration>P5D</duration>
+          </operation>
+          <percent>35</percent>
+          <effective_end>2014-09-01T00:00:00</effective_end>
+        </alternate>
+        <alternate>
+          <operation name="make item 3 option C" xsi:type="operation_fixed_time">
+            <flows>
+              <flow xsi:type="flow_start">
+                <buffer name="component 3 for option C" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <resource name="Resource 3 C"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <size_minimum>0</size_minimum>
+            <duration>P10D</duration>
+          </operation>
+          <percent>35</percent>
+          <effective_end>2014-09-01T00:00:00</effective_end>
+        </alternate>
+        <alternate>
+          <operation name="make item 3 option B"/>
+          <percent>25</percent>
+          <effective_start>2014-09-01T00:00:00</effective_start>
+          <effective_end>2014-10-01T00:00:00</effective_end>
+        </alternate>
+        <alternate>
+          <operation name="make item 3 option C"/>
+          <percent>75</percent>
+          <effective_start>2014-09-01T00:00:00</effective_start>
+          <effective_end>2014-10-01T00:00:00</effective_end>
+        </alternate>
+        <alternate>
+          <operation name="make item 3 option B"/>
+          <percent>20</percent>
+          <effective_start>2014-10-01T00:00:00</effective_start>
+        </alternate>
+        <alternate>
+          <operation name="make item 3 option C"/>
+          <percent>80</percent>
+          <effective_start>2014-10-01T00:00:00</effective_start>
+        </alternate>
+      </alternates>
+    </operation>
+  </operations>
+	<buffers>
+    <buffer name="item 3">
+      <producing name="make item 3"/>
+    </buffer>
+	  <buffer name="component 3 for option A">
+	    <item name="item 3" />
+      <producing name="buy component 3 for option A" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 3 for option A" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P7D</duration>
+      </producing>
+	  </buffer>
+	  <buffer name="component 3 for option B">
+	    <item name="item 1" />
+      <producing name="buy component 3 for option B" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 3 for option B" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P2D</duration>
+      </producing>
+	  </buffer>
+	  <buffer name="component 3 for option C">
+	    <item name="item 1" />
+      <producing name="buy component 3 for option C" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 3 for option C" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P1D</duration>
+      </producing>
+	  </buffer>
+  </buffers>
+	<demands>
+	  <demand name="order 1 for item 3">
+	    <quantity>100</quantity>
+	    <due>2014-07-01T00:00:00</due>
+	    <priority>1</priority>
+	    <item name="item 3" />
+	  </demand>
+	  <demand name="order 2 for item 3">
+	    <quantity>100</quantity>
+	    <due>2014-08-01T00:00:00</due>
+	    <priority>1</priority>
+	    <item name="item 3" />
+	  </demand>
+	  <demand name="order 3 for item 3">
+	    <quantity>100</quantity>
+	    <due>2014-09-01T00:00:00</due>
+	    <priority>1</priority>
+	    <item name="item 3" />
+	  </demand>
+	  <demand name="order 4 for item 3">
+	    <quantity>100</quantity>
+	    <due>2014-10-01T00:00:00</due>
+	    <priority>1</priority>
+	    <item name="item 3" />
+	  </demand>
+	  <demand name="order 5 for item 3">
+	    <quantity>100</quantity>
+	    <due>2014-11-01T00:00:00</due>
+	    <priority>1</priority>
+	    <item name="item 3" />
+	  </demand>
+	</demands>
+
+  <!--
+    Case 4:
+    Case with lot size constraints on the child operations.
+    The desired split is impossible to achieve exactly.
+
+    The results are a bit weird and show some potential instability in the
+    results:
+    We start planning along the highest percentage alternates, and due to
+    rounding to the multiple size we overshoot our intended planned quantity
+    for these alternates. When we run into the most constraining alternate
+    there may be nothing left to plan, and we confirm this plan.
+    As the planned quantity varies we find different overshoot values. We may
+    find a quantity still left to plan on the constraining alternate or not.
+  -->
+	<items>
+	  <item name="item 4">
+	    <operation name="delivery 4" duration="P1D" xsi:type="operation_fixed_time">
+	      <flows>
+	        <flow xsi:type="flow_start">
+	          <buffer name="item 4" />
+	          <quantity>-1</quantity>
+	        </flow>
+	      </flows>
+	    </operation>
+	  </item>
+  </items>
+  <resources>
+    <resource name="Resource 4 A+B" maximum="1"/>
+    <resource name="Resource 4 C" maximum="1"/>
+  </resources>
+	<operations>
+    <operation name="make item 4" xsi:type="operation_split">
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="item 4" />
+          <quantity>2</quantity>
+        </flow>
+      </flows>
+      <alternates>
+        <alternate>
+          <operation name="make item 4 option A" xsi:type="operation_fixed_time">
+            <loads>
+              <load>
+                <resource name="Resource 4 A+B"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <flows>
+              <flow xsi:type="flow_start">
+                <buffer name="component 4 for option A" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <size_minimum>1</size_minimum>
+            <size_multiple>10</size_multiple>
+            <duration>P3D</duration>
+          </operation>
+          <percent>30</percent>
+        </alternate>
+        <alternate>
+          <operation name="make item 4 option B" xsi:type="operation_fixed_time">
+            <flows>
+              <flow xsi:type="flow_start">
+                <buffer name="component 4 for option B" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <resource name="Resource 4 A+B"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <size_minimum>1</size_minimum>
+            <size_multiple>10</size_multiple>
+            <duration>P5D</duration>
+          </operation>
+          <percent>35</percent>
+        </alternate>
+        <alternate>
+          <operation name="make item 4 option C" xsi:type="operation_fixed_time">
+            <flows>
+              <flow xsi:type="flow_start">
+                <buffer name="component 4 for option C" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <resource name="Resource 4 C"/>
+                <quantity>1</quantity>
+              </load>
+            </loads>
+            <size_minimum>1</size_minimum>
+            <size_multiple>10</size_multiple>
+            <duration>P10D</duration>
+          </operation>
+          <percent>35</percent>
+        </alternate>
+      </alternates>
+    </operation>
+  </operations>
+	<buffers>
+    <buffer name="item 4">
+      <producing name="make item 4"/>
+    </buffer>
+	  <buffer name="component 4 for option A">
+	    <item name="item 4" />
+      <producing name="buy component 4 for option A" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 4 for option A" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P7D</duration>
+      </producing>
+	  </buffer>
+	  <buffer name="component 4 for option B">
+	    <item name="item 1" />
+      <producing name="buy component 4 for option B" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 4 for option B" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P2D</duration>
+      </producing>
+	  </buffer>
+	  <buffer name="component 4 for option C">
+	    <item name="item 1" />
+      <producing name="buy component 4 for option C" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="component 4 for option C" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <duration>P1D</duration>
+      </producing>
+	  </buffer>
+  </buffers>
+	<demands>
+	  <demand name="order 1 for item 4">
+	    <quantity>200</quantity>
+	    <due>2014-01-01T00:00:00</due>
+	    <priority>1</priority>
+	    <item name="item 4" />
+	  </demand>
+	</demands>
+
+<?python
+from __future__ import print_function
+print("CREATING CONSTRAINED PLAN")
+sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2)
+sol.solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+sol.plantype = 2
+sol.solve()
+frepple.saveplan("output.2.xml")
+frepple.saveXMLfile("output.3.xml")
+?>
+
+</plan>

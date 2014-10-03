@@ -43,7 +43,7 @@ else:
     ))
 
 print("\nStart exporting static model to the database at", datetime.now().strftime("%H:%M:%S"))
-from freppledb.execute.export_database_static import exportfrepple as export_static_to_database
-export_static_to_database()
+from freppledb.execute.export_database_static import exportStaticModel
+exportStaticModel(database=db).run()
 
 print("\nFinished loading XML data at", datetime.now().strftime("%H:%M:%S"))

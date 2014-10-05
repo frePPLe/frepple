@@ -205,6 +205,10 @@ class loadData(object):
           x = frepple.operation_alternate(
             name=i[0], description=i[13], category=i[14], subcategory=i[15], source=i[16]
             )
+        elif i[7] == "split":
+          x = frepple.operation_split(
+            name=i[0], description=i[13], category=i[14], subcategory=i[15], source=i[16]
+            )
         elif i[7] == "routing":
           x = frepple.operation_routing(
             name=i[0], description=i[13], category=i[14], subcategory=i[15], source=i[16]
@@ -253,13 +257,10 @@ class loadData(object):
       try:
         if i[0] != curopername:
           curopername = i[0]
-          if i[5] == 'alternate':
-            curoper = frepple.operation_alternate(name=curopername)
-          else:
-            curoper = frepple.operation_routing(name=curopername)
+          curoper = frepple.operation(name=curopername)
         if isinstance(curoper, frepple.operation_routing):
           curoper.addStep(frepple.operation(name=i[1]))
-        else:
+        elif isinstance(curoper, frepple.operation_alternate):
           if i[3]:
             if i[4]:
               curoper.addAlternate(operation=frepple.operation(name=i[1]), priority=i[2], effective_start=i[3], effective_end=i[4])
@@ -269,6 +270,18 @@ class loadData(object):
             curoper.addAlternate(operation=frepple.operation(name=i[1]), priority=i[2], effective_end=i[4])
           else:
             curoper.addAlternate(operation=frepple.operation(name=i[1]), priority=i[2])
+        elif isinstance(curoper, frepple.operation_split):
+          if i[3]:
+            if i[4]:
+              curoper.addAlternate(operation=frepple.operation(name=i[1]), percent=i[2], effective_start=i[3], effective_end=i[4])
+            else:
+              curoper.addAlternate(operation=frepple.operation(name=i[1]), percent=i[2], effective_start=i[3])
+          elif i[4]:
+            curoper.addAlternate(operation=frepple.operation(name=i[1]), percent=i[2], effective_end=i[4])
+          else:
+            curoper.addAlternate(operation=frepple.operation(name=i[1]), percent=i[2])
+        else:
+          print("Error: Operation '%s' can't have suboperations" % curopername)
       except Exception as e:
         print("Error:", e)
     print('Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime))

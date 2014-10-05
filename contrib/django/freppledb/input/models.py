@@ -26,7 +26,6 @@ from freppledb.common.models import HierarchyModel, AuditModel
 
 
 searchmode = (
-  ('', _('priority')),
   ('PRIORITY', _('priority')),
   ('MINCOST', _('minimum cost')),
   ('MINPENALTY', _('minimum penalty')),
@@ -166,6 +165,7 @@ class Operation(AuditModel):
     ('time_per', _('time_per')),
     ('routing', _('routing')),
     ('alternate', _('alternate')),
+    ('split', _('split')),
   )
 
   # Database fields
@@ -230,16 +230,13 @@ class Operation(AuditModel):
     return self.name
 
   def save(self, *args, **kwargs):
-    if self.type is None or self.type == '' or self.type == 'fixed_time':
+    # Reset fields that are not used for specific operation types
+    if self.type != 'time_per':
       self.duration_per = None
+    if self.type != 'alternate':
       self.search = None
-    elif self.type == 'alternate':
+    if self.type is not None and self.type not in ['time_per', 'fixed_time', '']:
       self.duration = None
-      self.duration_per = None
-    elif self.type != 'time_per':
-      self.duration = None
-      self.duration_per = None
-      self.search = None
 
     # Call the real save() method
     super(Operation, self).save(*args, **kwargs)

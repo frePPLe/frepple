@@ -89,7 +89,7 @@ function clickedShaped(event)
   if (tgt === undefined) return;
 
   // Find which contextmenu to use
-  if (type == '#alternate' || type == '#routing')
+  if (type == '#alternate' || type == '#split' || type == '#routing')
     type = '#operation';
   var contextMenu = $(type + 'context');
 
@@ -125,13 +125,13 @@ function tick(e)
   // Bring operations vertically closer to the center and
   // horizontally close to the position linked to their level.
   shapes.attr('transform', function(d, i) {
-    if (d.type == 'operation' || d.type == 'routing' || d.type == 'alternate' || d.type == 'buffer')
+    if (d.type == 'operation' || d.type == 'routing' || d.type == 'split' || d.type == 'alternate' || d.type == 'buffer')
     {
       if (d.parent >= 0)
       {
         if (d.suboperindex < 0)
         {
-          // Suboperation of an alternate
+          // Suboperation of an alternate or split operation
           d.x = nodes[d.parent].x;
           d.y = nodes[d.parent].y + (d.suboperindex + nodes[d.parent].numsuboperations + 1) * 30 - 5;
         }
@@ -188,7 +188,8 @@ function drawGraph(jsondata)
       parentoper = operations[jsondata['rows'][oper]['parentoper']];
     var nodetype = 'operation';
     if (jsondata['rows'][oper]['type'] == 'alternate'
-      || jsondata['rows'][oper]['type'] == 'routing')
+      || jsondata['rows'][oper]['type'] == 'routing'
+      || jsondata['rows'][oper]['type'] == 'split')
       nodetype = jsondata['rows'][oper]['type'];
     var numsuboperations = 0;
     if ('numsuboperations' in jsondata['rows'][oper])
@@ -326,7 +327,7 @@ function drawGraph(jsondata)
     .attr("transform", function(d) {
        if (d.numsuboperations)
        {
-         if (d.type == 'alternate')
+         if (d.type == 'alternate' || d.type == 'split')
            // Top alternate operation
            return "scale(1,"+ (2+d.numsuboperations) +")";
          else
@@ -402,6 +403,9 @@ ExpandColClick: true,
     style="cursor: pointer; fill: #ffffff; stroke: black; vector-effect: non-scaling-stroke;">
   </rect>
   <rect id="alternate" class="alternate" width="110" height="25" x="-55" y="-5" rx="2" ry="2"
+    style="cursor: pointer; fill: #ffffff; fill-opacity: 0; stroke: black; vector-effect: non-scaling-stroke;">
+  </rect>
+  <rect id="split" class="split" width="110" height="25" x="-55" y="-5" rx="2" ry="2"
     style="cursor: pointer; fill: #ffffff; fill-opacity: 0; stroke: black; vector-effect: non-scaling-stroke;">
   </rect>
   <polygon id="buffer" class="buffer" points="0,-40 35,20 -35,20"

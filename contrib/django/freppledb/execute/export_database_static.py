@@ -232,7 +232,10 @@ class exportStaticModel(object):
         if isinstance(i, frepple.operation_alternate):
           for j in i.alternates:
             yield i, j[0], j[1], j[2], j[3], i.source
-        if isinstance(i, frepple.operation_routing):
+        elif isinstance(i, frepple.operation_split):
+          for j in i.alternates:
+            yield i, j[0], j[1], j[2], j[3], i.source
+        elif isinstance(i, frepple.operation_routing):
           cnt = 1
           for j in i.steps:
             yield i, j, cnt, None, None, i.source

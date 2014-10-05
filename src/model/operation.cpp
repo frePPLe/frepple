@@ -1839,7 +1839,7 @@ DECLARE_EXPORT PyObject* OperationSplit::addAlternate(PyObject* self, PyObject* 
 
     // Parse the arguments
     PyObject *oper = NULL;
-    int percent = 1;
+    int percent = 0;
     PyObject *eff_start = NULL;
     PyObject *eff_end = NULL;
     static const char *kwlist[] = {"operation", "percent", "effective_start", "effective_end", NULL};

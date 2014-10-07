@@ -563,7 +563,7 @@ DECLARE_EXPORT void Buffer::followPegging
     // finding the flowplans producing this consumed material.
     double endQty = f->getCumulativeConsumed();
     double startQty = endQty + f->getQuantity();
-    if (f->getCumulativeProduced() <= startQty)
+    if (f->getCumulativeProduced() <= startQty + ROUNDING_ERROR)
     {
       // CASE 1A: Not produced enough yet: move forward
       while (f!=getFlowPlans().end()
@@ -636,7 +636,7 @@ DECLARE_EXPORT void Buffer::followPegging
     // finding the flowplans consuming this produced material.
     double endQty = f->getCumulativeProduced();
     double startQty = endQty - f->getQuantity();
-    if (f->getCumulativeConsumed() <= startQty)
+    if (f->getCumulativeConsumed() <= startQty + ROUNDING_ERROR)
     {
       // CASE 2A: Not consumed enough yet: move forward
       while (f!=getFlowPlans().end()

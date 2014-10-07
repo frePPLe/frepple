@@ -71,7 +71,7 @@ DECLARE_EXPORT void PeggingIterator::updateStack
 (short l, double q, double f, const FlowPlan* fc, const FlowPlan* fp, bool p)
 {
   // Avoid very small pegging quantities
-  if (q < 0.1) return;
+  if (q < ROUNDING_ERROR) return;
 
   if (first)
   {
@@ -96,7 +96,7 @@ DECLARE_EXPORT void PeggingIterator::updateStack
 (short l, double q, double f, const OperationPlan* op, bool p)
 {
   // Avoid very small pegging quantities
-  if (q < 0.1) return;
+  if (q < ROUNDING_ERROR) return;
 
   if (first)
   {

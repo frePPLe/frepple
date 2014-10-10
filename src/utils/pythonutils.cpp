@@ -452,7 +452,7 @@ DECLARE_EXPORT Date PythonObject::getDate() const
   {
     if (PyUnicode_Check(obj))
     {
-      // Replace the unicode object with a string encoded in the correct locale
+      // Replace the unicode object with a string encoded in UTF-8.
       const_cast<PyObject*&>(obj) =
         PyUnicode_AsEncodedString(obj, "UTF-8", "ignore");
     }

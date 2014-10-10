@@ -78,19 +78,6 @@ void LibraryUtils::initialize()
   }
   init = true;
 
-  // Set the locale to the default setting.
-  // When not executed, the locale is the "C-locale", which restricts us to
-  // ascii data in the input.
-  // For Posix platforms the environment variable LC_ALL controls the locale.
-  // Most Linux distributions these days have a default locale that supports
-  // UTF-8 encoding, meaning that every unicode character can be
-  // represented.
-  // On Windows, the default is the system-default ANSI code page. The number
-  // of characters that frePPLe supports on Windows is constrained by this...
-#if defined(HAVE_SETLOCALE) || defined(_MSC_VER)
-  setlocale(LC_ALL, "" );
-#endif
-
   // Initialize Xerces parser
   xercesc::XMLPlatformUtils::Initialize();
 

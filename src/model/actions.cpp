@@ -474,13 +474,6 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     logger << endl << "Size information of frePPLe " << PACKAGE_VERSION
         << " (" << __DATE__ << ")" << endl << endl;
 
-    // Print current locale
-#if defined(HAVE_SETLOCALE) || defined(_MSC_VER)
-    logger << "Locale: " << setlocale(LC_ALL,NULL) << endl << endl;
-#else
-    logger << endl;
-#endif
-
     // Print loaded modules
     Environment::printModules();
 

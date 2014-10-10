@@ -2692,7 +2692,14 @@ class XMLElement : public DataElement
 
     virtual int getInt() const {return atoi(getData());}
 
-    virtual double getDouble() const {return atof(getData());}
+    // Return the value as a double.
+    // This conversion should be done with the C-locale, where a dot is used
+    // as a decimal separator. Otherwise values in XML data files will be
+    // read incorrectly!
+    virtual double getDouble() const
+    {
+      return atof(getData());
+    }
 
     virtual Date getDate() const {return Date(getData());}
 

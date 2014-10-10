@@ -159,7 +159,7 @@ AC_FUNC_MALLOC
 AC_FUNC_MKTIME
 AC_FUNC_STAT
 AC_FUNC_STRFTIME
-AC_CHECK_FUNCS([dup2 memset strncasecmp strnicmp strptime putenv _putenv setlocale localtime_r])
+AC_CHECK_FUNCS([dup2 memset strncasecmp strnicmp strptime putenv _putenv localtime_r])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADERS([ext/slist slist vector map set stack])

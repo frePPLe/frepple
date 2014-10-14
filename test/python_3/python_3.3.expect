@@ -45,21 +45,21 @@
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>13.9792</criticality>
 			<owner id="10" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="17" operation="make item">
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>7</criticality>
 			<owner id="11" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="18" operation="make item">
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>0.458333</criticality>
 			<owner id="13" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="19" operation="make item">

@@ -158,16 +158,16 @@
 			<maximum_calendar name="Cal2"/>
 		</resource>
 	</resources>
-			<loads>
-				<load>
-					<operation name="make item - step 1" xsi:type="operation_fixed_time"/>
+	<loads>
+		<load>
+			<operation name="make item - step 1" xsi:type="operation_fixed_time"/>
 			<resource name="Resource"/>
-				</load>
-				<load>
-					<operation name="make item - step 2" xsi:type="operation_fixed_time"/>
+		</load>
+		<load>
+			<operation name="make item - step 2" xsi:type="operation_fixed_time"/>
 			<resource name="Resource"/>
-				</load>
-			</loads>
+		</load>
+	</loads>
 	<flows>
 		<flow xsi:type="flow_end">
 			<operation name="Purchase buffer1" xsi:type="operation_fixed_time"/>
@@ -211,21 +211,21 @@
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>13.9792</criticality>
 			<owner id="10" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="17" operation="make item">
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>7</criticality>
 			<owner id="11" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="18" operation="make item">
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>0.458333</criticality>
 			<owner id="13" operation="make or buy item"/>
 		</operationplan>
 		<operationplan id="19" operation="make item">
@@ -239,21 +239,21 @@
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-12T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>13.9792</criticality>
 			<owner id="16" operation="make item"/>
 		</operationplan>
 		<operationplan id="4" operation="make item - step 1">
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-19T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>7</criticality>
 			<owner id="17" operation="make item"/>
 		</operationplan>
 		<operationplan id="6" operation="make item - step 1">
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-02-26T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>0.458333</criticality>
 			<owner id="18" operation="make item"/>
 		</operationplan>
 		<operationplan id="8" operation="make item - step 1">
@@ -268,21 +268,21 @@
 			<start>2009-02-12T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>13.9792</criticality>
 			<owner id="16" operation="make item"/>
 		</operationplan>
 		<operationplan id="5" operation="make item - step 2">
 			<start>2009-02-19T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>7</criticality>
 			<owner id="17" operation="make item"/>
 		</operationplan>
 		<operationplan id="7" operation="make item - step 2">
 			<start>2009-02-26T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
+			<criticality>0.458333</criticality>
 			<owner id="18" operation="make item"/>
 		</operationplan>
 		<operationplan id="9" operation="make item - step 2">

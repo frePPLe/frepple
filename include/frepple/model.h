@@ -2005,10 +2005,14 @@ class OperationPlan
       * assigned in the instantiate() function. The numbering starts with the
       * highest identifier read in from the input and is then incremented
       * for every operationplan that is registered.
+      *
+      * This method is declared as constant. But actually, it can still update
+      * the identifier field if it is wasn't set before.
       */
-    DECLARE_EXPORT unsigned long getIdentifier()
+    DECLARE_EXPORT unsigned long getIdentifier() const
     {
-      if (id==ULONG_MAX) assignIdentifier(); // Lazy generation
+      if (id==ULONG_MAX)
+        const_cast<OperationPlan*>(this)->assignIdentifier(); // Lazy generation
       return id;
     }
 
@@ -3095,8 +3099,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** This function matches producing and consuming operationplans
       * with each other, and updates the pegging iterator accordingly.
       */
-    virtual DECLARE_EXPORT void followPegging
-    (PeggingIterator&, FlowPlan*, short, double, double);
+    DECLARE_EXPORT void followPegging
+      (PeggingIterator&, FlowPlan*, double, short);
 
     /** Return the minimum interval between purchasing operations.<br>
       * This parameter doesn't control the timing of the first purchasing
@@ -5917,24 +5921,21 @@ class Problem::const_iterator
 
 /** Retrieve an iterator for the list. */
 inline Problem::const_iterator Problem::List::begin() const
-{return Problem::const_iterator(first);}
+{
+  return Problem::const_iterator(first);
+}
 
 
 /** Stop iterator. */
 inline Problem::const_iterator Problem::List::end() const
-{return Problem::const_iterator(static_cast<Problem*>(NULL));}
+{
+  return Problem::const_iterator(static_cast<Problem*>(NULL));
+}
 
 
-/** @brief This class allows upstream and downstream navigation through
-  * the plan.
+/** @brief This class finds all operationplans pegged to a certain demand.
   *
-  * Downstream navigation follows the material flow from raw materials
-  * towards the produced end item.<br>
-  * Upstream navigation traces back the material flow from the end item up to
-  * the consumed raw materials.<br>
   * The class is implemented as an STL-like iterator.
-  *
-  * @todo operationplans without flowplans are skipped by the iterator - not correct!
   */
 class PeggingIterator : public Object
 {
@@ -5943,128 +5944,77 @@ class PeggingIterator : public Object
     DECLARE_EXPORT PeggingIterator(const Demand*);
 
     /** Constructor. */
-    DECLARE_EXPORT PeggingIterator(const OperationPlan*, bool = true);
+    DECLARE_EXPORT PeggingIterator(const OperationPlan*, bool=true);
 
     /** Constructor. */
-    PeggingIterator(const FlowPlan* e, bool b = true)
-      : first(true), downstream(b), firstIteration(true)
+    DECLARE_EXPORT PeggingIterator(const FlowPlan*, bool=true);
+
+    /** Constructor. */
+    DECLARE_EXPORT PeggingIterator(const LoadPlan*, bool=true);
+
+    /** Return the operationplan. */
+    const OperationPlan* getOperationPlan() const
     {
-      if (!e) return;
-      if (downstream)
-        states.push(state(0,abs(e->getQuantity()),1.0,e,NULL,NULL));
-      else
-        states.push(state(0,abs(e->getQuantity()),1.0,NULL,e,NULL));
-      initType(metadata);
+      return states.back().opplan;
     }
 
-    /** Return the operationplan consuming the material. */
-    OperationPlan* getConsumingOperationplan() const
+    /** Return true if this is a downstream iterator. */
+    inline bool isDownstream() const
     {
-      const FlowPlan* x = states.top().cons_flowplan;
-      return x ? x->getOperationPlan() : NULL;
+      return downstream;
     }
 
-    /** Return the material buffer through which we are pegging. */
-    Buffer *getBuffer() const
+    /** Return the pegged quantity. */
+    double getQuantity() const
     {
-      const FlowPlan* x = states.top().prod_flowplan;
-      if (!x) x = states.top().cons_flowplan;
-      return x ? x->getFlow()->getBuffer() : NULL;
+      return states.back().quantity;
     }
 
-    /** Return the operationplan producing the material. */
-    OperationPlan* getProducingOperationplan() const
+    /** Returns the recursion depth of the iterator.*/
+    short getLevel() const
     {
-      const FlowPlan* x = states.top().prod_flowplan;
-      if (x) return x->getOperationPlan();
-      return const_cast<OperationPlan*>(states.top().opplan);
+      return states.back().level;
     }
 
-    /** Return the date when the material is consumed. */
-    Date getConsumingDate() const
-    {
-      const FlowPlan* x = states.top().cons_flowplan;
-      return x ? x->getDate() : Date::infinitePast;
-    }
-
-    /** Return the date when the material is produced. */
-    Date getProducingDate() const
-    {
-      const FlowPlan* x = states.top().prod_flowplan;
-      if (x) return x->getDate();
-      const OperationPlan* y = states.top().opplan;
-      return y ? y->getDates().getEnd() : Date::infinitePast;
-    }
-
-    /** Returns the recursion depth of the iterator.<br>
-      * The original flowplan is at level 0, and each level (either upstream
-      * or downstream) increments the value by 1.
-      */
-    short getLevel() const {return states.top().level;}
-
-    /** Returns the quantity of the demand that is linked to this pegging
-      * record.
-      */
-    double getQuantityDemand() const {return states.top().qty;}
-
-    /** Returns the quantity of the buffer flowplans that is linked to this
-      * pegging record.
-      */
-    double getQuantityBuffer() const
-    {
-      const state& t = states.top();
-      return t.prod_flowplan
-          ? t.factor * t.prod_flowplan->getOperationPlan()->getQuantity()
-          : 0;
-    }
-
-    /** Returns which portion of the current flowplan is fed/supplied by the
-      * original flowplan. */
-    double getFactor() const {return states.top().factor;}
-
-    /** Returns false if the flowplan remained unpegged, i.e. it wasn't
-      * -either completely or paritally- unconsumed at the next level.
-      */
-    bool getPegged() const {return states.top().pegged;}
-
-    /** Move the iterator foward to the next downstream flowplan. */
+    /** Move the iterator downstream. */
     DECLARE_EXPORT PeggingIterator& operator++();
+
+    /** Move the iterator upstream. */
+    DECLARE_EXPORT PeggingIterator& operator--();
 
     /** Move the iterator foward to the next downstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-increment
       * operator.
       */
     PeggingIterator operator++(int)
-    {PeggingIterator tmp = *this; ++*this; return tmp;}
-
-    /** Move the iterator foward to the next upstream flowplan. */
-    DECLARE_EXPORT PeggingIterator& operator--();
+    {
+      PeggingIterator tmp = *this;
+      ++*this;
+      return tmp;
+    }
 
     /** Move the iterator foward to the next upstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-decrement
       * operator.
       */
     PeggingIterator operator--(int)
-    {PeggingIterator tmp = *this; --*this; return tmp;}
-
-    /** Comparison operator. */
-    bool operator==(const PeggingIterator& x) const {return states == x.states;}
-
-    /** Inequality operator. */
-    bool operator!=(const PeggingIterator& x) const {return states != x.states;}
+    {
+      PeggingIterator tmp = *this;
+      --*this;
+      return tmp;
+    }
 
     /** Conversion operator to a boolean value.
       * The return value is true when the iterator still has next elements to
       * explore. Returns false when the iteration is finished.
       */
-    operator bool () const {return !states.empty();}
+    operator bool() const
+    {
+      return !states.empty();
+    }
 
-    /** Update the stack. */
-    DECLARE_EXPORT void updateStack(short, double, double, const FlowPlan*, const FlowPlan*, bool = true);
-    DECLARE_EXPORT void updateStack(short, double, double, const OperationPlan*, bool = true);
-
-    /** Returns true if this is a downstream iterator. */
-    bool isDownstream() {return downstream;}
+    /** Add an entry on the stack. */
+    DECLARE_EXPORT void updateStack(const OperationPlan*, double, short);
 
     /** Initialize the class. */
     static int initialize();
@@ -6073,96 +6023,48 @@ class PeggingIterator : public Object
     {
       throw LogicException("Pegging can't be read");
     }
+
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
     size_t getSize() const {return sizeof(PeggingIterator);}
 
   private:
-    /** This structure is used to keep track of the iterator states during the
-      * iteration. */
     struct state
     {
-      /** Stores the quantity of this flowplan that is involved. */
-      double qty;
-
-      /** Stores what portion of the flowplan is involved with the root flowplan
-        * where the recursion started.
-        */
-      double factor;
-
-      /** Keeps track of the number of levels we're removed from the root
-        * flowplan where the recursion started.
-        */
+      const OperationPlan* opplan;
+      double quantity;
       short level;
 
-      /** The current flowplan. */
-      const FlowPlan* cons_flowplan;
+      // Constructor
+      state(const OperationPlan* o, double q, short l)
+        : opplan(o), quantity(q), level(l) {};
 
-      /** The current flowplan. */
-      const FlowPlan* prod_flowplan;
-
-      /** Set to false when unpegged quantities are involved. */
-      bool pegged;
-
-      /** A pointer to an operationplan.
-        * Used only when no flowplan at all is found to represent the
-        * pegging. */
-      const OperationPlan* opplan;
-
-      /** Constructor. */
-      state(unsigned int l, double d, double f,
-          const FlowPlan* fc, const FlowPlan* fp,
-          const OperationPlan* op, bool p = true)
-        : qty(d), factor(f), level(l),
-          cons_flowplan(fc), prod_flowplan(fp), pegged(p),
-          opplan(op) {};
-
-      /** Inequality operator. */
-      bool operator != (const state& s) const
-      {
-        return cons_flowplan != s.cons_flowplan
-            || prod_flowplan != s.prod_flowplan
-            || level != s.level
-            || opplan != s.opplan;
-      }
-
-      /** Equality operator. */
-      bool operator == (const state& s) const
-      {
-        return cons_flowplan == s.cons_flowplan
-            && prod_flowplan == s.prod_flowplan
-            && level == s.level
-            && opplan == s.opplan;
-      }
+      // Copy constructor
+      state(const state& o)
+        : opplan(o.opplan), quantity(o.quantity), level(o.level) {};
     };
-
-    /** A type to hold the iterator state. */
-    typedef stack < state > statestack;
-
-    /** A stack is used to store the iterator state. */
-    statestack states;
+    typedef vector<state> statestack;
 
     /** Iterate over the pegging in Python. */
     DECLARE_EXPORT PyObject *iternext();
 
+    /** Access fields from Python. */
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
 
     /* Auxilary function to make recursive code possible. */
-    DECLARE_EXPORT void followPegging(const OperationPlan*, short, double, double);
+    DECLARE_EXPORT void followPegging(const OperationPlan*, double, short);
 
-    /** Convenience variable during stack updates.
-      * Depending on the value of this field, either the top element in the
-      * stack is updated or a new state is pushed on the stack.
-      */
-    bool first;
-
-    /** Downstream or upstream iterator. */
+    /** Follow the pegging upstream or downstream. */
     bool downstream;
 
-    /** A flag used by the Python iterators.
-      * @see iternext()
-      */
+    /** Store a list of all operations still to peg. */
+    statestack states;
+
+    /** Used by the Python iterator to mark the first call. */
     bool firstIteration;
+
+    /** Optimization to reuse elements on the stack. */
+    bool first;
 };
 
 

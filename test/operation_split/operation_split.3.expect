@@ -764,7 +764,7 @@
 			<start>2013-12-23T00:00:00</start>
 			<end>2013-12-26T00:00:00</end>
 			<quantity>15</quantity>
-			<criticality>5</criticality>
+			<criticality>0</criticality>
 			<owner id="31" operation="make item 1"/>
 		</operationplan>
 		<operationplan id="33" operation="make item 1 option B">
@@ -791,21 +791,21 @@
 			<start>2013-12-23T00:00:00</start>
 			<end>2013-12-26T00:00:00</end>
 			<quantity>30</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="35" operation="make item 2"/>
 		</operationplan>
 		<operationplan id="37" operation="make item 2 option B">
 			<start>2013-12-26T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>35</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="35" operation="make item 2"/>
 		</operationplan>
 		<operationplan id="38" operation="make item 2 option C">
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>35</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="35" operation="make item 2"/>
 		</operationplan>
 		<operationplan id="39" operation="make item 3">
@@ -842,84 +842,84 @@
 			<start>2014-06-22T00:00:00</start>
 			<end>2014-06-25T00:00:00</end>
 			<quantity>30</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="39" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="45" operation="make item 3 option A">
 			<start>2014-07-23T00:00:00</start>
 			<end>2014-07-26T00:00:00</end>
 			<quantity>30</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="40" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="46" operation="make item 3 option B">
 			<start>2014-06-25T00:00:00</start>
 			<end>2014-06-30T00:00:00</end>
 			<quantity>35</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="39" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="47" operation="make item 3 option B">
 			<start>2014-07-26T00:00:00</start>
 			<end>2014-07-31T00:00:00</end>
 			<quantity>35</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="40" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="48" operation="make item 3 option B">
 			<start>2014-08-26T00:00:00</start>
 			<end>2014-08-31T00:00:00</end>
 			<quantity>50</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="41" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="49" operation="make item 3 option B">
 			<start>2014-09-25T00:00:00</start>
 			<end>2014-09-30T00:00:00</end>
 			<quantity>25</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="42" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="50" operation="make item 3 option B">
 			<start>2014-10-26T00:00:00</start>
 			<end>2014-10-31T00:00:00</end>
 			<quantity>20</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="43" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="51" operation="make item 3 option C">
 			<start>2014-06-20T00:00:00</start>
 			<end>2014-06-30T00:00:00</end>
 			<quantity>35</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="39" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="52" operation="make item 3 option C">
 			<start>2014-07-21T00:00:00</start>
 			<end>2014-07-31T00:00:00</end>
 			<quantity>35</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="40" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="53" operation="make item 3 option C">
 			<start>2014-08-21T00:00:00</start>
 			<end>2014-08-31T00:00:00</end>
 			<quantity>50</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="41" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="54" operation="make item 3 option C">
 			<start>2014-09-20T00:00:00</start>
 			<end>2014-09-30T00:00:00</end>
 			<quantity>75</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="42" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="55" operation="make item 3 option C">
 			<start>2014-10-21T00:00:00</start>
 			<end>2014-10-31T00:00:00</end>
 			<quantity>80</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="43" operation="make item 3"/>
 		</operationplan>
 		<operationplan id="56" operation="make item 4">
@@ -932,21 +932,21 @@
 			<start>2013-12-23T00:00:00</start>
 			<end>2013-12-26T00:00:00</end>
 			<quantity>20</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="56" operation="make item 4"/>
 		</operationplan>
 		<operationplan id="58" operation="make item 4 option B">
 			<start>2013-12-26T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>40</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="56" operation="make item 4"/>
 		</operationplan>
 		<operationplan id="59" operation="make item 4 option C">
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>40</quantity>
-			<criticality>999</criticality>
+			<criticality>0</criticality>
 			<owner id="56" operation="make item 4"/>
 		</operationplan>
 	</operationplans>

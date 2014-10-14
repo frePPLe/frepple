@@ -2325,7 +2325,7 @@ class XMLOutput
             << "\"/>\n";
     }
 
-    /** Writes an element with a string and a long attribute.<br>
+    /** Writes an element with a string and an unsigned long attribute.<br>
       * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2"/\> */
     void writeElement(const Keyword& u, const Keyword& t1, unsigned long val1,
         const Keyword& t2, const string& val2)
@@ -2333,6 +2333,18 @@ class XMLOutput
       *m_fp << indentstring << u.stringStartElement()
           << t1.stringAttribute() << val1 << "\""
           << t2.stringAttribute() << XMLEscape(val2.c_str())
+          << "\"/>\n";
+    }
+
+    /** Writes an element with a short, an unsigned long and a double attribute.<br>
+      * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2" TAG_T3="val3"/\> */
+    void writeElement(const Keyword& u, const Keyword& t1, short val1,
+        const Keyword& t2, unsigned long val2, const Keyword& t3, double val3)
+    {
+      *m_fp << indentstring << u.stringStartElement()
+          << t1.stringAttribute() << val1 << "\""
+          << t2.stringAttribute() << val2 << "\""
+          << t3.stringAttribute() << val3
           << "\"/>\n";
     }
 

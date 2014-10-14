@@ -1144,34 +1144,46 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
 
 DECLARE_EXPORT double OperationPlan::getCriticality() const
 {
+  // Child operationplans have the same criticality as the parent
+  // TODO: Slack between routing sub operationplans isn't recognized. 
+  if (getOwner())
+    return getOwner()->getCriticality();
+
+  // Handle demand delivery operationplans
   if (getTopOwner()->getDemand())
   {
-    // Demand delivery operationplan
-    long early = getTopOwner()->getDemand()->getDue() - getDates().getEnd();
+
+    long early = getDemand()->getDue() - getDates().getEnd();
     return ((early<=0L) ? 0.0 : early) / 86400.0; // Convert to days
   }
 
   // Upstream operationplan
   TimePeriod minslack = 86313600L; // 999 days in seconds
-  vector<TimePeriod> slack(HasLevel::getNumberOfLevels() + 5);
+  vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
   for (PeggingIterator p(this); p; p++)
   {
-    Date d = p.getProducingDate();
-    if (!d) d = Plan::instance().getCurrent();
-    unsigned int lvl = -p.getLevel();
-    if (lvl >= slack.size())
-      slack.resize(lvl + 5);
-    slack[lvl] = p.getConsumingDate() - d;
-    if (slack[lvl] < 0L)
-      slack[lvl] = 0L;
-    OperationPlan* m = p.getConsumingOperationplan();
+    unsigned int lvl = p.getLevel();
+    if (lvl >= opplans.size())
+      opplans.resize(lvl + 5);
+    opplans[lvl] = p.getOperationPlan();
+    const OperationPlan* m = p.getOperationPlan();
     if (m && m->getTopOwner()->getDemand())
     {
       // Reached a demand. Get the total slack now.
       TimePeriod myslack = m->getTopOwner()->getDemand()->getDue() - m->getDates().getEnd();
       if (myslack < 0L) myslack = 0L;
-      for (int i=lvl; i>=0; i--)
-        myslack += slack[i];
+      for (unsigned int i=1; i<=lvl; i++)
+      {
+        if (opplans[i-1]->getOwner() == opplans[i] || opplans[i-1] == opplans[i]->getOwner())
+          // Times between parent and child opplans isn't slack
+          continue;
+        Date st = opplans[i-1]->getDates().getEnd();
+        if (!st) st = Plan::instance().getCurrent();
+        Date nd = opplans[i]->getDates().getStart();
+        if (!nd) nd = Plan::instance().getCurrent();
+        if (nd > st)
+          myslack += nd - st;
+      }
       if (myslack < minslack)
         minslack = myslack;
     }

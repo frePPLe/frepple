@@ -5933,8 +5933,13 @@ inline Problem::const_iterator Problem::List::end() const
 }
 
 
-/** @brief This class finds all operationplans pegged to a certain demand.
+/** @brief This class allows upstream and downstream navigation through
+  * the plan.
   *
+  * Downstream navigation follows the material flow from raw materials
+  * towards the produced end item.<br>
+  * Upstream navigation traces back the material flow from the end item up to
+  * the consumed raw materials.<br>
   * The class is implemented as an STL-like iterator.
   */
 class PeggingIterator : public Object
@@ -5982,7 +5987,7 @@ class PeggingIterator : public Object
     /** Move the iterator upstream. */
     DECLARE_EXPORT PeggingIterator& operator--();
 
-    /** Move the iterator foward to the next downstream flowplan.<br>
+    /** Move the iterator forward to the next downstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-increment
       * operator.
       */
@@ -5993,7 +5998,7 @@ class PeggingIterator : public Object
       return tmp;
     }
 
-    /** Move the iterator foward to the next upstream flowplan.<br>
+    /** Move the iterator forward to the next upstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-decrement
       * operator.
       */
@@ -6029,6 +6034,8 @@ class PeggingIterator : public Object
     size_t getSize() const {return sizeof(PeggingIterator);}
 
   private:
+    /** This structure is used to keep track of the iterator states during the
+      * iteration. */
     struct state
     {
       const OperationPlan* opplan;

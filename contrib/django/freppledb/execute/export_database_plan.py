@@ -55,7 +55,6 @@ def truncate(cursor):
   for group in tables:
     for sql in connections[database].ops.sql_flush(no_style(), group, []):
       cursor.execute(sql)
-      transaction.commit(using=database)
   print("Emptied plan tables in %.2f seconds" % (time() - starttime))
 
 
@@ -73,7 +72,6 @@ def exportProblems(cursor):
        round(i.weight, settings.DECIMAL_PLACES)
      ) for i in frepple.problems()]
     )
-  transaction.commit(using=database)
   cursor.execute("select count(*) from out_problem")
   print('Exported %d problems in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
@@ -95,9 +93,6 @@ def exportConstraints(cursor):
        ) for i in d.constraints]
       )
     cnt += 1
-    if cnt % 300 == 0:
-      transaction.commit(using=database)
-  transaction.commit(using=database)
   cursor.execute("select count(*) from out_constraint")
   print('Exported %d constraints in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
@@ -118,9 +113,6 @@ def exportOperationplans(cursor):
         j.owner and j.owner.id or None
        ) for j in i.operationplans ])
     cnt += 1
-    if cnt % 300 == 0:
-      transaction.commit(using=database)
-  transaction.commit(using=database)
   cursor.execute("select count(*) from out_operationplan")
   print('Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
@@ -141,9 +133,6 @@ def exportFlowplans(cursor):
        ) for j in i.flowplans]
       )
     cnt += 1
-    if cnt % 300 == 0:
-      transaction.commit(using=database)
-  transaction.commit(using=database)
   cursor.execute("select count(*) from out_flowplan")
   print('Exported %d flowplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
@@ -164,9 +153,6 @@ def exportLoadplans(cursor):
        ) for j in i.loadplans if j.quantity < 0]
       )
     cnt += 1
-    if cnt % 100 == 0:
-      transaction.commit(using=database)
-  transaction.commit(using=database)
   cursor.execute("select count(*) from out_loadplan")
   print('Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
@@ -206,31 +192,23 @@ def exportResourceplans(cursor):
 
   # Loop over all reporting buckets of all resources
   cnt = 0
-  try:
-    for i in frepple.resources():
-      cursor.executemany(
-        "insert into out_resourceplan \
-        (theresource,startdate,available,unavailable,setup,%s,free) \
-        values (%%s,%%s,%%s,%%s,%%s,%%s,%%s)" % connections[database].ops.quote_name('load'),
-        [(
-           i.name, str(j['start']),
-           round(j['available'], settings.DECIMAL_PLACES),
-           round(j['unavailable'], settings.DECIMAL_PLACES),
-           round(j['setup'], settings.DECIMAL_PLACES),
-           round(j['load'], settings.DECIMAL_PLACES),
-           round(j['free'], settings.DECIMAL_PLACES)
-         ) for j in i.plan(buckets)]
-        )
-      cnt += 1
-      if cnt % 100 == 0:
-        transaction.commit(using=database)
-  except Exception as e:
-    print(e)
-  finally:
-    transaction.commit(using=database)
+  for i in frepple.resources():
+    cursor.executemany(
+      "insert into out_resourceplan \
+      (theresource,startdate,available,unavailable,setup,%s,free) \
+      values (%%s,%%s,%%s,%%s,%%s,%%s,%%s)" % connections[database].ops.quote_name('load'),
+      [(
+         i.name, str(j['start']),
+         round(j['available'], settings.DECIMAL_PLACES),
+         round(j['unavailable'], settings.DECIMAL_PLACES),
+         round(j['setup'], settings.DECIMAL_PLACES),
+         round(j['load'], settings.DECIMAL_PLACES),
+         round(j['free'], settings.DECIMAL_PLACES)
+       ) for j in i.plan(buckets)]
+      )
+    cnt += 1
 
   # Finalize
-  transaction.commit(using=database)
   cursor.execute("select count(*) from out_resourceplan")
   print('Exported %d resourceplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
@@ -272,9 +250,6 @@ def exportDemand(cursor):
       values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [ j for j in deliveries(i) ] )
     cnt += 1
-    if cnt % 500 == 0:
-      transaction.commit(using=database)
-  transaction.commit(using=database)
   cursor.execute("select count(*) from out_demand")
   print('Exported %d demand plans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
@@ -292,22 +267,13 @@ def exportPegging(cursor):
     # Export pegging
     cursor.executemany(
       "insert into out_demandpegging \
-      (demand,depth,cons_operationplan,cons_date,prod_operationplan,prod_date, \
-       buffer,item,quantity_demand,quantity_buffer) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+      (demand,level,operationplan,quantity) values (%s,%s,%s,%s)",
       [(
-         n, str(j.level),
-         j.consuming and j.consuming.id or '0', str(j.consuming_date),
-         j.producing and j.producing.id or '0', str(j.producing_date),
-         j.buffer and j.buffer.name or '',
-         (j.buffer and j.buffer.item and j.buffer.item.name) or '',
-         round(j.quantity_demand, settings.DECIMAL_PLACES),
-         round(j.quantity_buffer, settings.DECIMAL_PLACES)
+         n, j.level, j.operationplan.id,
+         round(j.quantity, settings.DECIMAL_PLACES)
        ) for j in i.pegging]
       )
     cnt += 1
-    if cnt % 500 == 0:
-      transaction.commit(using=database)
-  transaction.commit(using=database)
   cursor.execute("select count(*) from out_demandpegging")
   print('Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime))
 
@@ -321,7 +287,6 @@ class DatabaseTask(Thread):
     super(DatabaseTask, self).__init__()
     self.functions = f
 
-  @transaction.commit_manually(using=database)
   def run(self):
     # Create a database connection
     cursor = connections[database].cursor()
@@ -334,17 +299,13 @@ class DatabaseTask(Thread):
 
     # Run the functions sequentially
     for f in self.functions:
-      try:
+      with transaction.atomic(using=database):
         f(cursor)
-      except Exception as e:
-        print(e)
 
     # Close the connection
     cursor.close()
-    transaction.commit(using=database)
 
 
-@transaction.commit_manually(using=database)
 def exportfrepple():
   '''
   This function exports the data from the frePPLe memory into the database.
@@ -364,27 +325,31 @@ def exportfrepple():
   elif settings.DATABASES[database]['ENGINE'] == 'oracle':
     cursor.execute("ALTER SESSION SET COMMIT_WRITE='BATCH,NOWAIT'")
 
-  # Erase previous output
-  truncate(cursor)
-
   if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
     # OPTION 1: Sequential export of each entity
     # For sqlite this is required since a writer blocks the database file.
     # For other databases the parallel export normally gives a better
     # performance, but you could still choose a sequential export.
-    exportProblems(cursor)
-    exportConstraints(cursor)
-    exportOperationplans(cursor)
-    exportFlowplans(cursor)
-    exportLoadplans(cursor)
-    exportResourceplans(cursor)
-    exportDemand(cursor)
-    exportPegging(cursor)
+    with transaction.atomic(using=database):
+      truncate(cursor)  # Erase previous output
+      exportProblems(cursor)
+      exportConstraints(cursor)
+      exportOperationplans(cursor)
+      exportFlowplans(cursor)
+      exportLoadplans(cursor)
+      exportResourceplans(cursor)
+      exportDemand(cursor)
+      exportPegging(cursor)
 
   else:
     # OPTION 2: Parallel export of entities in groups.
     # The groups are running in separate threads, and all functions in a group
     # are run in sequence.
+
+    # Erase previous output
+    with transaction.atomic(using=database):
+      truncate(cursor)
+
     tasks = (
       DatabaseTask(exportProblems, exportConstraints),
       DatabaseTask(exportOperationplans, exportFlowplans, exportLoadplans),
@@ -406,4 +371,3 @@ def exportfrepple():
 
   # Close the database connection
   cursor.close()
-  transaction.commit(using=database)

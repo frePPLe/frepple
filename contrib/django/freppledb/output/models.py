@@ -160,20 +160,14 @@ class Demand(models.Model):
 class DemandPegging(models.Model):
   # Database fields
   demand = models.CharField(_('demand'), max_length=settings.NAMESIZE, db_index=True)
-  depth = models.IntegerField(_('depth'))
-  cons_operationplan = models.IntegerField(_('consuming operationplan'), db_index=True, null=True)
-  cons_date = models.DateTimeField(_('consuming date'))
-  prod_operationplan = models.IntegerField(_('producing operationplan'), db_index=True, null=True)
-  prod_date = models.DateTimeField(_('producing date'))
-  buffer = models.CharField(_('buffer'), max_length=settings.NAMESIZE, db_index=True, null=True)
-  item = models.CharField(_('item'), max_length=settings.NAMESIZE, null=True)
-  quantity_demand = models.DecimalField(_('quantity demand'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
-  quantity_buffer = models.DecimalField(_('quantity buffer'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
+  level = models.IntegerField(_('level'))
+  operationplan = models.IntegerField(_('operationplan'), db_index=True)
+  quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
 
   def __unicode__(self):
     return self.demand \
-      + ' - ' + str(self.depth) + ' - ' + str(self.cons_operationplan or 'None') \
-      + ' - ' + self.buffer
+      + ' - ' + str(self.depth) + ' - ' + str(self.operationplan) \
+      + ' - ' + self.quantity
 
   class Meta:
     db_table = 'out_demandpegging'

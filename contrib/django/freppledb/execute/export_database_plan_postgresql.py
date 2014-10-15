@@ -219,7 +219,7 @@ def exportDemand(process):
 def exportPegging(process):
   print("Exporting pegging...")
   starttime = time()
-  process.stdin.write('COPY out_demandpegging (demand,depth,cons_operationplan,cons_date,prod_operationplan,prod_date, buffer,item,quantity_demand,quantity_buffer) FROM STDIN;\n')
+  process.stdin.write('COPY out_demandpegging (demand,level,operationplan,quantity) FROM STDIN;\n')
   for i in frepple.demands():
     # Find non-hidden demand owner
     n = i
@@ -228,15 +228,10 @@ def exportPegging(process):
     n = n and n.name or 'unspecified'
     # Export pegging
     for j in i.pegging:
-      process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+      process.stdin.write("%s\t%s\t%s\t%s\n" % (
         n.encode(encoding), str(j.level),
-        j.consuming and j.consuming.id or '0', str(j.consuming_date),
-        j.producing and j.producing.id or '0', str(j.producing_date),
-        j.buffer and j.buffer.name.encode(encoding) or '',
-        (j.buffer and j.buffer.item and j.buffer.item.name.encode(encoding)) or '',
-        round(j.quantity_demand, settings.DECIMAL_PLACES),
-        round(j.quantity_buffer, settings.DECIMAL_PLACES)
-       ))
+        j.consuming.id, round(j.quantity_demand, settings.DECIMAL_PLACES)
+        ))
   process.stdin.write('\\.\n')
   print('Exported pegging in %.2f seconds' % (time() - starttime))
 

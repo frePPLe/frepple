@@ -124,9 +124,11 @@ class exporter(object):
     ids = m.search(['|', ('active', '=', 1), ('active', '=', 0)], context=self.req.session.context)
     fields = ['factor', 'uom_type', 'category_id', 'name']
     self.uom = {}
+    self.uom_categories = {}
     for i in m.read(ids, fields, self.req.session.context):
       if i['uom_type'] == 'reference':
         f = 1.0
+        self.uom_categories[i['category_id'][0]] = i['id']
       elif i['uom_type'] == 'bigger':
         f = i['factor']
       else:
@@ -357,6 +359,7 @@ class exporter(object):
       fields = ['name', 'code', 'product_tmpl_id']
       data = [ i for i in m.read(ids, fields, self.req.session.context) ]
       for i in data:
+        tmpl = self.product_templates[i['product_tmpl_id'][0]]
         if i['code']:
           name = u'[%s] %s' % (i['code'], i['name'])
         else:
@@ -364,8 +367,8 @@ class exporter(object):
         self.product_product[i['id']] = {'name': name, 'template': i['product_tmpl_id'][0]}
         yield '<item name=%s price="%f" subcategory="%s,%s"/>\n' % (
           quoteattr(name),
-          (self.product_templates[i['product_tmpl_id'][0]]['list_price'] or 0) / self.convert_qty_uom(1.0, self.product_templates[i['product_tmpl_id'][0]]['uom_id'][0], i['id']),
-          self.product_templates[i['product_tmpl_id'][0]]['uom_id'][0], i['id']
+          (tmpl['list_price'] or 0) / self.convert_qty_uom(1.0, tmpl['uom_id'][0], i['id']),
+          self.uom_categories[self.uom[tmpl['uom_id'][0]]['category']], i['id']
           )
       yield '</items>\n'
 

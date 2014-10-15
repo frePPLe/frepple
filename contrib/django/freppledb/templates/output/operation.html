@@ -153,7 +153,28 @@ function drawGraphs(jsondata)
             .attr("x", x_width/2)
             .attr("y", top)
             .attr("height", y(0) - top)
-            .style("fill","#113C5E");
+            .style("fill","#113C5E")
+            .on("click", function(d) {
+                if (d3.event.defaultPrevented || d['total_start'] == 0) return;
+                d3.select("#tooltip").style('display', 'none');
+                contextMenu = $("#detail1context");
+                contextMenu.find('a').each( function() {
+                    $(this).attr(
+                      'href',
+                      $(this).attr('id')
+                        .replace(/{value}/g, d['operation'])
+                        .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
+                        .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
+                      );
+                  });
+                var coord = d3.mouse(document.body);
+                contextMenu.css({
+                  left: coord[0],
+                  top: coord[1],
+                  display: 'block'
+                  });
+                d3.event.stopPropagation();
+              });
         }
         if (d['total_start'] > d['locked_start'])
         {
@@ -163,7 +184,28 @@ function drawGraphs(jsondata)
             .attr("x", x_width/2)
             .attr("y", newtop)
             .attr("height", top - newtop)
-            .style("fill","#2B95EC");
+            .style("fill","#2B95EC")
+            .on("click", function(d) {
+                if (d3.event.defaultPrevented || d['total_start'] == 0) return;
+                d3.select("#tooltip").style('display', 'none');
+                contextMenu = $("#detail1context");
+                contextMenu.find('a').each( function() {
+                    $(this).attr(
+                      'href',
+                      $(this).attr('id')
+                        .replace(/{value}/g, d['operation'])
+                        .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
+                        .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
+                      );
+                  });
+                var coord = d3.mouse(document.body);
+                contextMenu.css({
+                  left: coord[0],
+                  top: coord[1],
+                  display: 'block'
+                  });
+                d3.event.stopPropagation();
+              });
         }
         top = y(0);
         if (d['locked_end'] > 0)
@@ -173,7 +215,28 @@ function drawGraphs(jsondata)
             .attr("width", x_width/2)
             .attr("y", top)
             .attr("height", y(0) - top)
-            .style("fill","#7B5E08");
+            .style("fill","#7B5E08")
+            .on("click", function(d) {
+                if (d3.event.defaultPrevented || d['total_end'] == 0) return;
+                d3.select("#tooltip").style('display', 'none');
+                contextMenu = $("#detail3context");
+                contextMenu.find('a').each( function() {
+                    $(this).attr(
+                      'href',
+                      $(this).attr('id')
+                        .replace(/{value}/g, d['operation'])
+                        .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
+                        .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
+                      );
+                  });
+                var coord = d3.mouse(document.body);
+                contextMenu.css({
+                  left: coord[0],
+                  top: coord[1],
+                  display: 'block'
+                  });
+                d3.event.stopPropagation();
+              });
         }
         if (d['total_end'] > d['locked_end'])
         {
@@ -182,7 +245,28 @@ function drawGraphs(jsondata)
             .attr("width", x_width/2)
             .attr("y", newtop)
             .attr("height", top - newtop)
-            .style("fill","#F6BD0F");
+            .style("fill","#F6BD0F")
+            .on("click", function(d) {
+                if (d3.event.defaultPrevented || d['total_end'] == 0) return;
+                d3.select("#tooltip").style('display', 'none');
+                contextMenu = $("#detail3context");
+                contextMenu.find('a').each( function() {
+                    $(this).attr(
+                      'href',
+                      $(this).attr('id')
+                        .replace(/{value}/g, d['operation'])
+                        .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
+                        .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
+                      );
+                  });
+                var coord = d3.mouse(document.body);
+                contextMenu.css({
+                  left: coord[0],
+                  top: coord[1],
+                  display: 'block'
+                  });
+                d3.event.stopPropagation();
+              });
         }
       });
 

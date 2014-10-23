@@ -325,7 +325,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // set to false we need to get a single replenishing operationplan.
           if (data->state->a_qty > ROUNDING_ERROR
               && data->state->a_qty < -theDelta - ROUNDING_ERROR
-              && data->getSolver()->getAllowSplits() && !data->safety_stock_planning
+              && ((data->getSolver()->getAllowSplits() && !data->safety_stock_planning)
+               || data->state->a_qty == b->getProducingOperation()->getSizeMaximum())
              )
             theDelta += data->state->a_qty;
           else

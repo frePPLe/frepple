@@ -230,7 +230,7 @@ def exportPegging(process):
     for j in i.pegging:
       process.stdin.write("%s\t%s\t%s\t%s\n" % (
         n.encode(encoding), str(j.level),
-        j.operationplan.id, round(j.quantity_demand, settings.DECIMAL_PLACES)
+        j.operationplan.id, round(j.quantity, settings.DECIMAL_PLACES)
         ))
   process.stdin.write('\\.\n')
   print('Exported pegging in %.2f seconds' % (time() - starttime))

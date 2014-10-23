@@ -28,6 +28,8 @@ import freppledb.input as input
 
 class execute_with_commands(TransactionTestCase):
 
+  fixtures = ["demo"]
+
   def setUp(self):
     # Make sure the test database is used
     if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
@@ -55,14 +57,15 @@ class execute_with_commands(TransactionTestCase):
 
     # Run frePPLe on the test database
     management.call_command('frepple_run', plantype=1, constraint=15)
-    self.assertEqual(output.models.Problem.objects.count(), 387)
-    self.assertEqual(output.models.FlowPlan.objects.count(), 1847)
-    self.assertEqual(output.models.LoadPlan.objects.count(), 199)
-    self.assertEqual(output.models.OperationPlan.objects.count(), 840)
+    self.assertEqual(output.models.Problem.objects.count(), 105)
+    self.assertEqual(output.models.FlowPlan.objects.count(), 755)
+    self.assertEqual(output.models.LoadPlan.objects.count(), 74)
+    self.assertEqual(output.models.OperationPlan.objects.count(), 393)
 
 
 class execute_multidb(TransactionTestCase):
   multi_db = True
+  fixtures = ['demo']
 
   def setUp(self):
     os.environ['FREPPLE_TEST'] = "YES"
@@ -140,7 +143,7 @@ class FixtureTest(TestCase):
 
   def test_fixture_small_demo(self):
     try:
-      full_path = os.path.join(self.fixture_dir, 'small_demo.json')
+      full_path = os.path.join(self.fixture_dir, 'demo.json')
       objects = serializers.deserialize("json", open(full_path, 'r'))
       for obj in objects:
         True

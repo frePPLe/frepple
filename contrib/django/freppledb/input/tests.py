@@ -25,61 +25,39 @@ from freppledb.input.models import Location
 
 class DataLoadTest(TestCase):
 
+  fixtures = ["demo"]
+
   def setUp(self):
     # Login
     if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
       settings.INSTALLED_APPS += ('django.contrib.sessions',)
     self.client.login(username='admin', password='admin')
 
-  def test_input_customer(self):
+  def test_demo_data(self):
     response = self.client.get('/data/input/customer/?format=json')
     self.assertContains(response, '"records":2,')
-
-  def test_input_flow(self):
     response = self.client.get('/data/input/flow/?format=json')
     self.assertContains(response, '"records":19,')
-
-  def test_input_buffer(self):
     response = self.client.get('/data/input/buffer/?format=json')
     self.assertContains(response, '"records":8,')
-
-  def test_input_calendar(self):
     response = self.client.get('/data/input/calendar/?format=json')
     self.assertContains(response, '"records":4,')
-
-  def test_input_calendarbucket(self):
     response = self.client.get('/data/input/calendarbucket/?format=json')
     self.assertContains(response, '"records":5,')
-
-  def test_input_demand(self):
     response = self.client.get('/data/input/demand/?format=json')
     self.assertContains(response, '"records":14,')
-
-  def test_input_item(self):
     response = self.client.get('/data/input/item/?format=json')
     self.assertContains(response, '"records":5,')
-
-  def test_input_load(self):
     response = self.client.get('/data/input/load/?format=json')
     self.assertContains(response, '"records":3,')
-
-  def test_input_location(self):
     response = self.client.get('/data/input/location/?format=json')
     self.assertContains(response, '"records":2,')
-
-  def test_input_operation(self):
     response = self.client.get('/data/input/operation/?format=json')
     self.assertContains(response, '"records":14,')
-
-  def test_input_operationplan(self):
     response = self.client.get('/data/input/operationplan/?format=json')
     self.assertContains(response, '"records":4,')
-
-  def test_input_resource(self):
     response = self.client.get('/data/input/resource/?format=json')
     self.assertContains(response, '"records":3,')
-
-  def test_input_suboperation(self):
     response = self.client.get('/data/input/suboperation/?format=json')
     self.assertContains(response, '"records":4,')
 

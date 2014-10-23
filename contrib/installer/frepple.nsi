@@ -514,11 +514,11 @@ Section -Post
   ; Create the database schema
   ${If} $DatabaseEngine != "sqlite3"
     DetailPrint "Creating database schema"
-    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" syncdb --noinput --no-initial-data'
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" syncdb --noinput'
     Pop $0
     ${If} $0 == "0"
       DetailPrint "Loading demo data"
-      nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" loaddata initial_data'
+      nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" loaddata demo'
       DetailPrint "Generating initial plan"
       nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" frepple_run'
     ${else}

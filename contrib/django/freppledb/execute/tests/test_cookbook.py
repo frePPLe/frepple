@@ -37,8 +37,6 @@ class cookbooktest(TransactionTestCase):
     if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
       settings.INSTALLED_APPS += ('django.contrib.sessions',)
     os.environ['FREPPLE_TEST'] = "YES"
-    # Remove the demo data
-    management.call_command('frepple_flush')
 
   def tearDown(self):
     del os.environ['FREPPLE_TEST']
@@ -60,7 +58,10 @@ class cookbooktest(TransactionTestCase):
     resultfilename = os.path.join(os.path.dirname(os.path.realpath(__file__)), resultfile)
     opplans = [
       "%s,%s,%s,%s" % (i.operation, i.startdate, i.enddate, round(i.quantity, 1))
-      for i in output.models.OperationPlan.objects.order_by('operation', 'startdate', 'quantity').only('operation', 'startdate', 'enddate', 'quantity')
+      for i in output.models.OperationPlan.objects \
+        .extra(select={'lower_operation':'lower(operation)'}) \
+        .order_by('lower_operation', 'startdate', 'quantity') \
+        .only('operation', 'startdate', 'enddate', 'quantity')
       ]
     row = 0
     with open(resultfilename, 'r') as f:

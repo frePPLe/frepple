@@ -194,7 +194,7 @@ class exporter(object):
         buckets.append( (strt, '<bucket start="%sT00:00:00" value="1" days="%s" priority="%%s" starttime="%s" endtime="%s"/>\n' % (
           strt.strftime("%Y-%m-%d"),
           2 ** ((int(i['dayofweek'])+1) % 7),  # In odoo, monday = 0. In frePPLe, sunday = 0.
-          'PT%dM' % (i['hour_from']*60), 'PT%dM' % (i['hour_to']*60)
+          'PT%dM' % round(i['hour_from']*60), 'PT%dM' % round(i['hour_to']*60)
           )))
       if len(buckets) > 0:
         # Sort by start date.

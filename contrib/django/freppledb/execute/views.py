@@ -312,7 +312,9 @@ def logfile(request):
       if f.tell() >= 50000:
         # Too big to display completely
         f.seek(-50000, os.SEEK_END)
-        logdata = force_unicode(_("Displaying only the last 50K from the log file")) + '...\n\n...' + force_unicode(f.read(50000))
+        d = f.read(50000)
+        d = d[d.index('\n'):] # Strip the first, incomplete line
+        logdata = force_unicode(_("Displaying only the last 50K from the log file")) + '...\n\n...' + force_unicode(d)
       else:
         # Displayed completely
         f.seek(0, os.SEEK_SET)

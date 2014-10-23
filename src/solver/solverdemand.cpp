@@ -228,10 +228,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       //    the minimum quantity.
       if (data->state->a_qty < ROUNDING_ERROR
           || data->state->a_qty + ROUNDING_ERROR < l->getMinShipment()
-          || (q_qty - data->state->a_qty < l->getMinShipment()
-              && q_qty - data->state->a_qty > ROUNDING_ERROR))
+          || (plan_qty - data->state->a_qty < l->getMinShipment()
+              && fabs(plan_qty - data->state->a_qty) > ROUNDING_ERROR))
       {
-        if (q_qty - data->state->a_qty < l->getMinShipment()
+        if (plan_qty - data->state->a_qty < l->getMinShipment()
             && data->state->a_qty + ROUNDING_ERROR >= l->getMinShipment()
             && data->state->a_qty > best_a_qty )
         {
@@ -249,8 +249,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
         // Set the ask date for the next pass through the loop
         if (next_date <= copy_plan_date
           || (!data->getSolver()->getAllowSplits() && data->state->a_qty > ROUNDING_ERROR)
-          || (data->state->a_qty > ROUNDING_ERROR && q_qty - data->state->a_qty < l->getMinShipment()
-              && q_qty - data->state->a_qty > ROUNDING_ERROR))
+          || (data->state->a_qty > ROUNDING_ERROR && plan_qty - data->state->a_qty < l->getMinShipment()
+              && plan_qty - data->state->a_qty > ROUNDING_ERROR))
         {
           // Oops, we didn't get a proper answer we can use for the next loop.
           // Print a warning and simply try one day later.

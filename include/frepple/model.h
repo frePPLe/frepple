@@ -1271,35 +1271,13 @@ class Operation : public HasName<Operation>,
     /** Returns a pointer to the operationplan being instantiated. */
     OperationPlan* getFirstOpPlan() const {return first_opplan;}
 
-    /** Returns the delay before this operation.    TODO CURRENTLY NOT USED!
-      * @see setPreTime
-      */
-    TimePeriod getPreTime() const {return pre_time;}
-
-    /** Updates the delay before this operation.<br>
-      * This delay is a soft constraint. This means that solvers should try to
-      * respect this waiting time but can choose to leave a shorter time delay
-      * if required.<br>
-      * @see setPostTime
-      */
-    void setPreTime(TimePeriod t)
-    {
-      if (t<TimePeriod(0L))
-        throw DataException("No negative pre-operation time allowed");
-      pre_time=t;
-      setChanged();
-    }
-
-    /** Returns the delay after this operation.
-      * @see setPostTime
-      */
+    /** Returns the delay after this operation. */
     TimePeriod getPostTime() const {return post_time;}
 
     /** Updates the delay after this operation.<br>
       * This delay is a soft constraint. This means that solvers should try to
       * respect this waiting time but can choose to leave a shorter time delay
       * if required.
-      * @see setPreTime
       */
     void setPostTime(TimePeriod t)
     {
@@ -1569,9 +1547,6 @@ class Operation : public HasName<Operation>,
 
     /** Represents the time between this operation and a next one. */
     TimePeriod post_time;
-
-    /** Represents the time between this operation and a previous one. */
-    TimePeriod pre_time;
 
     /** Represents the release fence of this operation, i.e. a period of time
       * (relative to the current date of the plan) in which normally no

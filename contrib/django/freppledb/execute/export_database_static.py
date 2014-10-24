@@ -178,12 +178,12 @@ class exportStaticModel(object):
     primary_keys = set([ i[0] for i in cursor.fetchall() ])
     cursor.executemany(
       '''insert into operation
-      (name,fence,pretime,posttime,sizeminimum,sizemultiple,sizemaximum,type,duration,
+      (name,fence,posttime,sizeminimum,sizemultiple,sizemaximum,type,duration,
        duration_per,location_id,cost,search,description,category,subcategory,source,lastmodified)
-      values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+      values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
       [
         (
-          i.name, i.fence, i.pretime, i.posttime, round(i.size_minimum, settings.DECIMAL_PLACES),
+          i.name, i.fence, i.posttime, round(i.size_minimum, settings.DECIMAL_PLACES),
           round(i.size_multiple, settings.DECIMAL_PLACES),
           i.size_maximum < 9999999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
           i.__class__.__name__[10:],
@@ -198,13 +198,13 @@ class exportStaticModel(object):
       ])
     cursor.executemany(
       '''update operation
-       set fence=%s, pretime=%s, posttime=%s, sizeminimum=%s, sizemultiple=%s,
+       set fence=%s, posttime=%s, sizeminimum=%s, sizemultiple=%s,
        sizemaximum=%s, type=%s, duration=%s, duration_per=%s, location_id=%s, cost=%s, search=%s,
        description=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s
        where name=%s''',
       [
         (
-          i.fence, i.pretime, i.posttime, round(i.size_minimum, settings.DECIMAL_PLACES),
+          i.fence, i.posttime, round(i.size_minimum, settings.DECIMAL_PLACES),
           round(i.size_multiple, settings.DECIMAL_PLACES),
           i.size_maximum < 9999999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
           i.__class__.__name__[10:],

@@ -204,7 +204,6 @@
       <xsd:group ref="common_fields" />
       <xsd:element name="owner" type="operation" />
       <xsd:element name="detectproblems" type="xsd:boolean" />
-      <xsd:element name="pretime" type="xsd:duration" />
       <xsd:element name="posttime" type="xsd:duration" />
       <xsd:element name="fence" type="xsd:duration" />
       <xsd:element name="size_minimum" type="positiveDouble" />
@@ -218,7 +217,6 @@
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
-    <xsd:attribute name="pretime" type="xsd:duration" />
     <xsd:attribute name="posttime" type="xsd:duration" />
     <xsd:attribute name="fence" type="xsd:duration" />
     <xsd:attribute name="size_minimum" type="positiveDouble" />

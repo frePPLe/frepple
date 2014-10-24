@@ -520,8 +520,6 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const Keyword& tag, mo
   Plannable::writeElement(o, tag);
   if (post_time)
     o->writeElement(Tags::tag_posttime, post_time);
-  if (pre_time)
-    o->writeElement(Tags::tag_pretime, pre_time);
   if (getCost() != 0.0)
     o->writeElement(Tags::tag_cost, getCost());
   if (fence)
@@ -588,8 +586,6 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, const Attribute& pAttr
     setSizeMultiple(pElement.getDouble());
   else if (pAttr.isA (Tags::tag_size_maximum))
     setSizeMaximum(pElement.getDouble());
-  else if (pAttr.isA (Tags::tag_pretime))
-    setPreTime(pElement.getTimeperiod());
   else if (pAttr.isA (Tags::tag_posttime))
     setPostTime(pElement.getTimeperiod());
   else if (pAttr.isA (Tags::tag_location))
@@ -1705,8 +1701,6 @@ DECLARE_EXPORT PyObject* Operation::getattro(const Attribute& attr)
     return PythonObject(getSizeMaximum());
   if (attr.isA(Tags::tag_cost))
     return PythonObject(getCost());
-  if (attr.isA(Tags::tag_pretime))
-    return PythonObject(getPreTime());
   if (attr.isA(Tags::tag_posttime))
     return PythonObject(getPostTime());
   if (attr.isA(Tags::tag_hidden))
@@ -1757,8 +1751,6 @@ DECLARE_EXPORT int Operation::setattro(const Attribute& attr, const PythonObject
     setSizeMaximum(field.getDouble());
   else if (attr.isA(Tags::tag_cost))
     setCost(field.getDouble());
-  else if (attr.isA(Tags::tag_pretime))
-    setPreTime(field.getTimeperiod());
   else if (attr.isA(Tags::tag_posttime))
     setPostTime(field.getTimeperiod());
   else if (attr.isA(Tags::tag_hidden))

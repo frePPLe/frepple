@@ -182,10 +182,6 @@ class Operation(AuditModel):
     _('release fence'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP")
     )
-  pretime = DurationField(
-    _('pre-op time'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
-    help_text=_("A delay time to be respected as a soft constraint before starting the operation")
-    )
   posttime = DurationField(
     _('post-op time'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     help_text=_("A delay time to be respected as a soft constraint after ending the operation")

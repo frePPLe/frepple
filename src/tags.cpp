@@ -126,7 +126,6 @@ DECLARE_EXPORT const Keyword Tags::tag_percent("percent");
 DECLARE_EXPORT const Keyword Tags::tag_plan("plan");
 DECLARE_EXPORT const Keyword Tags::tag_plantype("plantype");
 DECLARE_EXPORT const Keyword Tags::tag_posttime("posttime");
-DECLARE_EXPORT const Keyword Tags::tag_pretime("pretime");
 DECLARE_EXPORT const Keyword Tags::tag_price("price");
 DECLARE_EXPORT const Keyword Tags::tag_priority("priority");
 DECLARE_EXPORT const Keyword Tags::tag_problem("problem");

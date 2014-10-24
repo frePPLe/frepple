@@ -113,7 +113,7 @@ class Operation_admin(MultiDBModelAdmin):
   fieldsets = (
     (None, {'fields': ('name', 'type', 'location', 'description', ('category', 'subcategory'))}),
     (_('Planning parameters'), {
-      'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per', 'search'),
+      'fields': ('fence', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per', 'search'),
         'classes': ('collapse',)
        }),
     )

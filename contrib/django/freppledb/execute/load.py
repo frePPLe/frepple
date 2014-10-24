@@ -179,7 +179,7 @@ class loadData(object):
     starttime = time()
     self.cursor.execute('''
       SELECT
-        name, fence, pretime, posttime, sizeminimum, sizemultiple, sizemaximum,
+        name, fence, posttime, sizeminimum, sizemultiple, sizemaximum,
         type, duration, duration_per, location_id, cost, search, description,
         category, subcategory, source
       FROM operation %s
@@ -187,52 +187,50 @@ class loadData(object):
     for i in self.cursor.fetchall():
       cnt += 1
       try:
-        if not i[7] or i[7] == "fixed_time":
+        if not i[6] or i[6] == "fixed_time":
           x = frepple.operation_fixed_time(
-            name=i[0], description=i[13], category=i[14], subcategory=i[15], source=i[16]
+            name=i[0], description=i[12], category=i[13], subcategory=i[14], source=i[15]
             )
-          if i[8]:
-            x.duration = i[8]
-        elif i[7] == "time_per":
+          if i[7]:
+            x.duration = i[7]
+        elif i[6] == "time_per":
           x = frepple.operation_time_per(
-            name=i[0], description=i[13], category=i[14], subcategory=i[15], source=i[16]
+            name=i[0], description=i[12], category=i[13], subcategory=i[14], source=i[15]
             )
+          if i[7]:
+            x.duration = i[7]
           if i[8]:
-            x.duration = i[8]
-          if i[9]:
-            x.duration_per = i[9]
-        elif i[7] == "alternate":
+            x.duration_per = i[8]
+        elif i[6] == "alternate":
           x = frepple.operation_alternate(
-            name=i[0], description=i[13], category=i[14], subcategory=i[15], source=i[16]
+            name=i[0], description=i[12], category=i[13], subcategory=i[14], source=i[15]
             )
-        elif i[7] == "split":
+        elif i[6] == "split":
           x = frepple.operation_split(
-            name=i[0], description=i[13], category=i[14], subcategory=i[15], source=i[16]
+            name=i[0], description=i[12], category=i[13], subcategory=i[14], source=i[15]
             )
-        elif i[7] == "routing":
+        elif i[6] == "routing":
           x = frepple.operation_routing(
-            name=i[0], description=i[13], category=i[14], subcategory=i[15], source=i[16]
+            name=i[0], description=i[12], category=i[13], subcategory=i[14], source=i[15]
             )
         else:
-          raise ValueError("Operation type '%s' not recognized" % i[7])
+          raise ValueError("Operation type '%s' not recognized" % i[6])
         if i[1]:
           x.fence = i[1]
         if i[2]:
-          x.pretime = i[2]
+          x.posttime = i[2]
         if i[3]:
-          x.posttime = i[3]
+          x.size_minimum = i[3]
         if i[4]:
-          x.size_minimum = i[4]
+          x.size_multiple = i[4]
         if i[5]:
-          x.size_multiple = i[5]
-        if i[6]:
-          x.size_maximum = i[6]
+          x.size_maximum = i[5]
+        if i[9]:
+          x.location = frepple.location(name=i[9])
         if i[10]:
-          x.location = frepple.location(name=i[10])
+          x.cost = i[10]
         if i[11]:
-          x.cost = i[11]
-        if i[12]:
-          x.search = i[12]
+          x.search = i[11]
       except Exception as e:
         print("Error:", e)
     print('Loaded %d operations in %.2f seconds' % (cnt, time() - starttime))

@@ -661,7 +661,6 @@ class OperationList(GridReport):
     GridFieldDuration('duration', title=_('duration')),
     GridFieldDuration('duration_per', title=_('duration per unit')),
     GridFieldDuration('fence', title=_('release fence')),
-    GridFieldDuration('pretime', title=_('pre-op time')),
     GridFieldDuration('posttime', title=_('post-op time')),
     GridFieldNumber('sizeminimum', title=_('size minimum')),
     GridFieldNumber('sizemultiple', title=_('size multiple')),

@@ -57,7 +57,7 @@ class execute_with_commands(TransactionTestCase):
 
     # Run frePPLe on the test database
     management.call_command('frepple_run', plantype=1, constraint=15)
-    self.assertEqual(output.models.Problem.objects.count(), 105)
+    self.assertEqual(output.models.Problem.objects.count(), 112)
     self.assertEqual(output.models.FlowPlan.objects.count(), 755)
     self.assertEqual(output.models.LoadPlan.objects.count(), 74)
     self.assertEqual(output.models.OperationPlan.objects.count(), 393)

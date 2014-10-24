@@ -99,3 +99,8 @@ class cookbooktest(TransactionTestCase):
     self.loadExcel("http://frepple.com/wp-content/uploads/operation_type.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15)
     self.assertOperationplans("operation_type.expect")
+
+  def test_operation_posttime(self):
+    self.loadExcel("http://frepple.com/wp-content/uploads/operation_posttime.xlsx")
+    management.call_command('frepple_run', plantype=1, constraint=15)
+    self.assertOperationplans("operation_posttime.expect")

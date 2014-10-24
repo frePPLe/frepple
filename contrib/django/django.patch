@@ -194,10 +194,10 @@ index 5b0ad6c..62f0796 100644
                  pass # No management module - ignore this app
  
 diff --git django/db/models/fields/related.py django/db/models/fields/related.py
-index d50c72d..121aea9 100644
+index 1563d13..8f0e099 100644
 --- django/db/models/fields/related.py
 +++ django/db/models/fields/related.py
-@@ -1196,7 +1196,9 @@ class ForeignKey(ForeignObject):
+@@ -1198,7 +1198,9 @@ class ForeignKey(ForeignObject):
          if value is None:
              return
  
@@ -209,10 +209,10 @@ index d50c72d..121aea9 100644
                  **{self.rel.field_name: value}
               )
 diff --git django/db/models/sql/compiler.py django/db/models/sql/compiler.py
-index ca42280..dfbae0f 100644
+index ea7f9f4..9561301 100644
 --- django/db/models/sql/compiler.py
 +++ django/db/models/sql/compiler.py
-@@ -239,8 +239,11 @@ class SQLCompiler(object):
+@@ -243,8 +243,11 @@ class SQLCompiler(object):
  
          for (table, col), _ in self.query.related_select_cols:
              r = '%s.%s' % (qn(table), qn(col))
@@ -226,8 +226,8 @@ index ca42280..dfbae0f 100644
                  result.append('%s AS %s' % (r, c_alias))
                  aliases.add(c_alias)
                  col_aliases.add(c_alias)
-@@ -292,8 +295,11 @@ class SQLCompiler(object):
-                 result.append((alias, field.column))
+@@ -296,8 +299,11 @@ class SQLCompiler(object):
+                 result.append((alias, field))
                  aliases.add(alias)
                  continue
 -            if with_aliases and field.column in col_aliases:
@@ -285,7 +285,7 @@ index 6de15a2..1130feb 100644
              args = ['"%s"' % arg for arg in args]
          new_environ = os.environ.copy()
 diff --git django/utils/translation/trans_real.py django/utils/translation/trans_real.py
-index 195badf..6628118 100644
+index 789d59e..3914b1f 100644
 --- django/utils/translation/trans_real.py
 +++ django/utils/translation/trans_real.py
 @@ -142,7 +142,7 @@ def translation(language):

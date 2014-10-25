@@ -44,6 +44,8 @@ class DataLoadTest(TestCase):
 
 class ExcelTest(TransactionTestCase):
 
+  fixtures = ['demo']
+
   def setUp(self):
     # Login
     if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
@@ -78,6 +80,7 @@ class ExcelTest(TransactionTestCase):
     countBucket = common.models.Bucket.objects.count()
     countBucketDetail = common.models.BucketDetail.objects.count()
     countParameter = common.models.Parameter.objects.count()
+    self.assertTrue(countDemand > 0)
 
     # Export workbook
     response = self.client.post('/execute/launch/exportworkbook/', {

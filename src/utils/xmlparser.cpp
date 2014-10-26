@@ -60,7 +60,6 @@ DECLARE_EXPORT const XMLOutput::content_type XMLOutput::STANDARD = 1;
 DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLAN = 2;
 DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
 xercesc::XMLTranscoder* XMLInput::utf8_encoder = NULL;
-char XMLInput::encodingbuffer[16*1024+4];
 
 
 char* XMLInput::transcodeUTF8(const XMLCh* xercesChars)
@@ -68,7 +67,7 @@ char* XMLInput::transcodeUTF8(const XMLCh* xercesChars)
   XMLSize_t charsEaten;
   XMLSize_t charsReturned = utf8_encoder->transcodeTo(xercesChars,
     xercesc::XMLString::stringLen(xercesChars),
-    (XMLByte*) encodingbuffer, 16*1024, 
+    (XMLByte*) encodingbuffer, 4*1024,
     charsEaten, xercesc::XMLTranscoder::UnRep_RepChar );
   encodingbuffer[charsReturned] = 0;
   return encodingbuffer;
@@ -78,12 +77,12 @@ char* XMLInput::transcodeUTF8(const XMLCh* xercesChars)
 DECLARE_EXPORT XMLInput::XMLInput(unsigned short maxNestedElmnts)
   : parser(NULL), maxdepth(maxNestedElmnts), m_EStack(maxNestedElmnts+2),
     numElements(-1), ignore(0), objectEnded(false),
-    abortOnDataException(true), attributes(NULL) 
-{  
+    abortOnDataException(true), attributes(NULL, this)
+{
   if (!utf8_encoder)
   {
     xercesc::XMLTransService::Codes resCode;
-    utf8_encoder = xercesc::XMLPlatformUtils::fgTransService->makeNewTranscoderFor("UTF-8", resCode, 16*1024);
+    utf8_encoder = xercesc::XMLPlatformUtils::fgTransService->makeNewTranscoderFor("UTF-8", resCode, 4*1024);
     if (!XMLInput::utf8_encoder)
       logger << "Can't initialize UTF-8 transcoder: reason " << resCode << endl;
   }
@@ -146,7 +145,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
   pElement->second.reset();
 
   // Store a pointer to the attributes
-  attributes = &atts;
+  attributes.setAtts(&atts);
 
   switch (states.top())
   {
@@ -223,7 +222,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
   }  // End of switch statement
 
   // Outside of this handler, no attributes are available
-  attributes = NULL;
+  attributes.setAtts(NULL);
 }
 
 
@@ -500,7 +499,7 @@ DECLARE_EXPORT void XMLInput::reset()
   numElements = -1;
   ignore = 0;
   objectEnded = false;
-  attributes = NULL;
+  attributes.setAtts(NULL);
 }
 
 
@@ -693,7 +692,7 @@ DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& tag)
 
 DECLARE_EXPORT const XMLElement* XMLAttributeList::get(const Keyword& key) const
 {
-  char* s = XMLInput::transcodeUTF8(atts->getValue(key.getXMLCharacters()));
+  char* s = in->transcodeUTF8(atts->getValue(key.getXMLCharacters()));
   const_cast<XMLAttributeList*>(this)->result.setData(s ? s : "");
   return &result;
 }

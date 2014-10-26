@@ -3238,14 +3238,17 @@ class AttributeList
 };
 
 
+
 /** @brief This class represents a list of XML attributes. */
 class XMLAttributeList : public AttributeList
 {
   private:
-    const xercesc::Attributes* atts;
     XMLElement result;
+    XMLInput *in;
+    const xercesc::Attributes* atts;
   public:
-    XMLAttributeList(const xercesc::Attributes* a) : atts(a) {}
+    void setAtts(const xercesc::Attributes* c) {atts = c;}
+    XMLAttributeList(const xercesc::Attributes* a, XMLInput* i) : in(i), atts(a) {}
 
     DECLARE_EXPORT const XMLElement* get(const Keyword& key) const;
 };
@@ -4567,7 +4570,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     XMLAttributeList attributes;
 
     /** A buffer used for transcoding XML data. */
-    static char encodingbuffer[];
+    char encodingbuffer[4*1024];
 
     /** A Python callback function that is called once an object has been read
       * from the XML input. The return value is not used.
@@ -4741,11 +4744,8 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     /** Return the Python callback function. */
     PythonFunction getUserExit() const {return userexit;}
 
-    /** Transcode the Xerces XML characters to our UTF8 encoded buffer.
-      * This method uses a statically allocated buffer, and subsequent
-      * calls to this method will overwrite the previous results.
-      */
-    static char* transcodeUTF8(const XMLCh*);
+    /** Transcode the Xerces XML characters to our UTF8 encoded buffer. */
+    char* transcodeUTF8(const XMLCh*);
 
     /** Return the source field that will be populated on each object created
       * or updated from the XML data.

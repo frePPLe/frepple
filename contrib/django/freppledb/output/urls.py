@@ -47,6 +47,7 @@ urlpatterns = patterns(
   (r'^flowplan/$', freppledb.output.views.buffer.DetailReport.as_view()),
   (r'^problem/$', freppledb.output.views.problem.Report.as_view()),
   (r'^constraint/$', freppledb.output.views.constraint.BaseReport.as_view()),
+  (r'^constraintoperation/(.+)/$', freppledb.output.views.constraint.ReportByOperation.as_view()),
   (r'^constraintdemand/(.+)/$', freppledb.output.views.constraint.ReportByDemand.as_view()),
   (r'^constraintbuffer/(.+)/$', freppledb.output.views.constraint.ReportByBuffer.as_view()),
   (r'^constraintresource/(.+)/$', freppledb.output.views.constraint.ReportByResource.as_view()),

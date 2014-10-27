@@ -19,6 +19,7 @@ from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.util import unquote, quote
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
 from django.template import RequestContext, loader, TemplateDoesNotExist
@@ -221,6 +222,7 @@ def Comments(request, app, model, object_id):
   try:
     modeltype = ContentType.objects.using(request.database).get(app_label=app, model=model)
     modeltype._state.db = request.database
+    object_id = unquote(object_id)
     modelinstance = modeltype.get_object_for_this_type(pk=object_id)
     comments = Comment.objects.using(request.database) \
       .filter(content_type__pk=modeltype.id, object_pk=object_id) \
@@ -241,7 +243,7 @@ def Comments(request, app, model, object_id):
     return render_to_response('common/comments.html', {
       'title': capfirst(force_unicode(modelinstance._meta.verbose_name) + " " + object_id),
       'model': model,
-      'object_id': object_id,
+      'object_id': quote(object_id),
       'active_tab': 'comments',
       'comments': comments
       },

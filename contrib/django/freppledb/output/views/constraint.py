@@ -112,6 +112,18 @@ class ReportByBuffer(BaseReport):
       return Constraint.objects.all()
 
 
+class ReportByOperation(BaseReport):
+
+  template = 'output/constraint_operation.html'
+
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    if args and args[0]:
+      return Constraint.objects.all().filter(owner__exact=args[0], entity__exact='operation')
+    else:
+      return Constraint.objects.all()
+
+
 class ReportByResource(BaseReport):
 
   template = 'output/constraint_resource.html'

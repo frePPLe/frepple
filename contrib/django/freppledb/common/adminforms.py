@@ -166,7 +166,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       content_type__id__exact=ContentType.objects.get_for_model(model).id
     ).select_related().order_by('action_time')
     context = {
-      'title': capfirst(force_text(opts.verbose_name) + " " + object_id),
+      'title': capfirst(force_text(opts.verbose_name) + " " + unquote(object_id)),
       'action_list': action_list,
       'module_name': capfirst(force_text(opts.verbose_name_plural)),
       'object': obj,

@@ -18,6 +18,19 @@ function breadcrumbs_reflow()
 }
 
 
+// A function to escape all special characters in a name.
+// We escape all special characters in the EXACT same way as the django admin does.
+function admin_escape(n)
+{
+  return n.replace(/_/g,'_5F').replace(/&amp;/g,'_26').replace(/&lt;/g,'_3C')
+  .replace(/&gt;/g,'_3E').replace(/&#39;/g,"'").replace(/&quot;/g,'_22')
+  .replace(/:/g,'_3A').replace(/\//g,'_2F').replace(/#/g,'_23').replace(/\?/g,'_3F')
+  .replace(/;/g,'_3B').replace(/@/g,'_40').replace(/&/g,'_26').replace(/=/g,'_3D')
+  .replace(/\+/g,'_2B').replace(/\$/g,'_24').replace(/,/g,'_2C').replace(/"/g,'_22')
+  .replace(/</g,'_3C').replace(/>/g,'_3E').replace(/%/g,'_25').replace(/\\/g,'_5C');
+}
+
+
 //----------------------------------------------------------------------------
 // A class to handle changes to a grid.
 //----------------------------------------------------------------------------
@@ -800,7 +813,7 @@ $(function() {
     minLength: 2,
     select: function( event, ui ) {
       window.location.href = database + "/data/" + encodeURIComponent(ui.item.app)
-         + '/' + encodeURIComponent(ui.item.label) + "/" + encodeURIComponent(ui.item.value) + "/";
+         + '/' + encodeURIComponent(ui.item.label) + "/" + admin_escape(ui.item.value) + "/";
     }
   });
 
@@ -823,20 +836,18 @@ $(document).mousedown(function (event) {
     // Find the id of the menu to display
     contextMenu = $('#' + $(event.target).attr('role') + "context");
 
-    // Get the entity name. Unescape all escaped characters and urlencode the result.
+    // Get the entity name.
     if ($(event.target).hasClass('cross'))
     {
       var item = $(event.target).closest("tr.jqgrow")[0].id;
-      item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-        .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
+      item = admin_escape(item);
       var params = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[jQuery.jgrid.getCellIndex($(event.target).closest("td,th"))];
       params['value'] = item;
     }
     else
     {
       var item = $(event.target).parent().text();
-      item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-        .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
+      item = admin_escape(item);
       var params = {value: item};
     }
 

@@ -93,9 +93,8 @@ function clickedShaped(event)
     type = '#operation';
   var contextMenu = $(type + 'context');
 
-  // Find the id of the menu to display
-  name_escaped = encodeURIComponent(tgt.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-      .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
+  // Find the id of the menu to display.
+  name_escaped = admin_escape(tgt);
 
   // Build the URLs for the menu
   var params = {value: name_escaped};

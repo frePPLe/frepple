@@ -1,0 +1,34 @@
+{% extends "admin/base_site_grid.html" %}
+
+{% block contextmenus %}
+{% include "buffercontext.html" %}
+{% include "demandcontext.html" %}
+{% include "resourcecontext.html" %}
+{% include "operationcontext.html" %}
+{% endblock %}
+
+{% block before_table %}
+{% include "operationtabs.html" %}<div style="clear:both"></div>
+{{block.super}}
+{% endblock %}
+
+{% block extrahead %}{{block.super}}
+<script type="text/javascript">
+
+// TODO demand column needs separate formatter for demand and forecasts
+
+function probfmt(cellvalue, options, row)
+{
+  if (row['entity'] == 'material')
+    return cellvalue + "<span class='context fa fa-caret-right' role='buffer'></span>";
+  if (row['entity'] == 'capacity')
+    return cellvalue + "<span class='context fa fa-caret-right' role='resource'></span>";
+  if (row['entity'] == 'demand') // TODO distinguish between forecast and demand
+    return cellvalue + "<span class='context fa fa-caret-right' role='demand'></span>";
+  else
+    return cellvalue + "<span class='context fa fa-caret-right' role='operation'></span>";
+}
+
+</script>
+{% endblock %}
+

@@ -177,6 +177,17 @@ function drawGraphs(jsondata)
       .attr("d", line(data));
 
     {% if args.0 %}
+    // Display 0 line
+    if (min_y < 0 && max_y > 0)
+      svg.append("line")
+        .attr("x1", 0)
+        .attr("x2", width)
+        .attr("y1", y(0))
+        .attr("y2", y(0))
+        .attr("stroke-width", 1)
+        .attr("stroke", "black")
+        .attr("shape-rendering", "crispEdges");
+
     // Display axis for a single resource
     var xAxis = d3.svg.axis()
       .scale(x).ticks(10)

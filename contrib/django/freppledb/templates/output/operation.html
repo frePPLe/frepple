@@ -53,8 +53,12 @@ function drawGraphs(jsondata)
 
   // Define X-axis
   var domain_x = [];
+  var bucketnamelength = 0;
   for (var i in timebuckets)
+  {
     domain_x.push(timebuckets[i]['name']);
+    bucketnamelength = Math.max(timebuckets[i]['name'].length, bucketnamelength);
+  }
   var x = d3.scale.ordinal()
     .domain(domain_x)
     .rangeRoundBands([0, width], .1);
@@ -271,9 +275,14 @@ function drawGraphs(jsondata)
       });
 
     {% if args.0 %}
-    // Display axis for a single resource
+    // Display axis for a single operation
+    var nth = Math.ceil(timebuckets.length / width * bucketnamelength * 10);
+    var myticks = [];
+    for (var i in timebuckets)
+      if (i % nth == 0) myticks.push(timebuckets[i]['name']);
     var xAxis = d3.svg.axis()
-      .scale(x).ticks(10)
+      .scale(x)
+      .tickValues(myticks)
       .orient("bottom");
 
     var yAxis = d3.svg.axis()

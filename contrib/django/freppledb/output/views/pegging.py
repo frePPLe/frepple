@@ -202,7 +202,7 @@ class ReportByDemand(GridReport):
           'locked': rec[8],
           'id': rec[4]
           })
-      elif rec[9]:
+      elif rec[9] and not rec[9] in prevrec['resource']:
         # Extra resource loaded by the operationplan
         prevrec['resource'].append(rec[9])
     if prevrec:

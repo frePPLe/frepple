@@ -600,7 +600,7 @@ div.calendarbox
   stroke: rgb(0,0,0);
 }
 
-.axis path, .axis line {
+.axis path, .axis line, .miniaxis path {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;

@@ -1022,7 +1022,7 @@ var graph = {
     var svg = d3.select(el.get(0)).append("svg");
     svg.attr('height','15px');
     svg.attr('width', el.width());
-    var w = bucketwidth / 2;
+    var w = 50 + bucketwidth / 2;
     var wt = w;
     for (var i in timebuckets)
     {
@@ -1090,6 +1090,28 @@ var graph = {
       .style('left', (d3.event.pageX + 5) + "px")
       .style('top', (d3.event.pageY - 28) + "px");
     d3.event.stopPropagation();
+  },
+
+  miniAxis: function(s)
+  {
+    var sc = this.scale().range();
+    var dm = this.scale().domain();
+    // Draw the scale line
+    s.append("path")
+     .attr("class", "domain")
+     .attr("d", "M-10 0 H0 V" + (sc[0]-2) + " H-10");
+    // Draw the maximum value
+    s.append("text")
+     .attr("x", -2)
+     .attr("y", 13) // Depends on font size...
+     .attr("text-anchor", "end")
+     .text(Math.round(dm[1], 0));
+    // Draw the minimum value
+    s.append("text")
+    .attr("x", -2)
+    .attr("y", sc[0] - 5)
+    .attr("text-anchor", "end")
+    .text(Math.round(dm[0], 0));
   }
 };
 

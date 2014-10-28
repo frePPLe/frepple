@@ -1309,8 +1309,8 @@ var gantt = {
   reset: function()
   {
     var scale = $("#jqgh_grid_operationplans").width() / 10000;
-    var viewstart = new Date(horizonstart.getTime());
-    var viewend = new Date(horizonend.getTime());
+    viewstart = new Date(horizonstart.getTime());
+    viewend = new Date(horizonend.getTime());
     $('.transformer').each(function() {
       var layers = $(this).attr("title");
       $(this).attr("transform", "scale(" + scale + ",1) translate(0," + ((layers-1)*gantt.rowsize+3) + ")");

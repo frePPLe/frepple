@@ -297,13 +297,13 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    SolverMRP(const string& n) : Solver(n), constrts(15), allowSplits(true),
+    DECLARE_EXPORT SolverMRP(const string& n) : Solver(n), constrts(15), allowSplits(true),
       plantype(1), lazydelay(86400L), iteration_threshold(1),
       iteration_accuracy(0.01), autocommit(true), planSafetyStockFirst(false)
     { initType(metadata); }
 
     /** Destructor. */
-    virtual ~SolverMRP() {}
+    virtual DECLARE_EXPORT ~SolverMRP() {}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);

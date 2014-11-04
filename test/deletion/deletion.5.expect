@@ -157,12 +157,12 @@
 			<location name="Sublocation 1"/>
 		</resource>
 	</resources>
-			<loads>
-				<load>
-					<operation name="make item 1" xsi:type="operation_fixed_time"/>
+	<loads>
+		<load>
+			<operation name="make item 1" xsi:type="operation_fixed_time"/>
 			<resource name="assemble"/>
-				</load>
-			</loads>
+		</load>
+	</loads>
 	<flows>
 		<flow xsi:type="flow_start">
 			<operation name="delivery 1" xsi:type="operation_fixed_time"/>

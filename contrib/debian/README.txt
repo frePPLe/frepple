@@ -9,10 +9,17 @@ follows its packaging guidelines:
 
 Build instructions:
  - You need to install the packages "cdbs", "debhelper", "python-support", "pbuilder".
- - Initialize your build environment with the command:
-     sudo pbuilder create
- - Build the packages
+ - Build the packages:
      make contrib
+ - Verify the build dependencies of the package:
+     - Only for Ubuntu, to enable the universe packages
+	   Create a file ~/.pbuilderrc with the following line:
+         COMPONENTS="main restricted universe multiverse"
+     - Initialize your pbuild environment:
+         sudo pbuilder create --override-config
+	 - Rebuild the package in isolated pbuild environment:
+	     sudo pbuilder build *.dsc
+     - Regenerated packages will be stored in /var/cache/pbuilder/result/
 
 Additional handy commands:
  - Install a package

@@ -2,17 +2,17 @@ Source: frepple
 Section: science
 Priority: optional
 Maintainer: Johan De Taeye <jdetaeye@users.sourceforge.net>
-Build-Depends: debhelper (>= 7), cdbs (>= 0.4.90), autotools-dev, python-dev (<< 3), libxerces-c-dev, graphviz, libtool
+Build-Depends: debhelper (>= 7), cdbs (>= 0.4.90), autotools-dev, python-dev (<< 3), libxerces-c-dev, libtool
 Standards-Version: 3.8.4
 Homepage: http://frepple.com
-Vcs-Browser: https://github.com/jdetaeye/frePPLe/commits/
-Vcs-Git: git://github.com/jdetaeye/frePPLe.git
+Vcs-Browser: https://github.com/frePPLe/frePPLe/commits/
+Vcs-Git: git://github.com/frePPLe/frePPLe.git
 X-Python-Version: >= 2.7
 
 Package: frepple
 Architecture: any
 Depends: ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}, libxerces-c3.1, apache2, libapache2-mod-wsgi, python-openpyxl, python-cherrypy3
-Description: Free Production PLanning
+Description: open source Production PLanning
  FrePPLe is an open source production planning and scheduling application.
 
 Package: frepple-dev
@@ -20,7 +20,7 @@ Section: libdevel
 Architecture: any
 Depends: frepple (= ${binary:Version}), ${misc:Depends}
 Suggests: frepple-doc
-Description: Free Production PLanning - development headers 
+Description: open source Production PLanning - development headers
  These are the libraries and header files need for developing plug-ins and
  extensions of frePPLe - open source Production PLanning.
 
@@ -28,5 +28,5 @@ Package: frepple-doc
 Section: doc
 Depends: ${misc:Depends}
 Architecture: all
-Description: Free Production PLanning - documentation
+Description: open source Production PLanning - documentation
  Documentation for frePPLe - open source Production PLanning.

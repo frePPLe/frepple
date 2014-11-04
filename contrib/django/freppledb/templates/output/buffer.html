@@ -117,7 +117,7 @@ function drawGraphs(jsondata)
               $(this).attr(
                 'href',
                 $(this).attr('id')
-                  .replace(/{value}/g, d['buffer'])
+                  .replace(/{value}/g, admin_escape(d['buffer']))
                   .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
                   .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
                 );

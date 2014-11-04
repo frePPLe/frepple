@@ -3075,7 +3075,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * with each other, and updates the pegging iterator accordingly.
       */
     DECLARE_EXPORT void followPegging
-      (PeggingIterator&, FlowPlan*, double, short);
+      (PeggingIterator&, FlowPlan*, double, double, short);
 
     /** Return the minimum interval between purchasing operations.<br>
       * This parameter doesn't control the timing of the first purchasing
@@ -5994,7 +5994,7 @@ class PeggingIterator : public Object
     }
 
     /** Add an entry on the stack. */
-    DECLARE_EXPORT void updateStack(const OperationPlan*, double, short);
+    DECLARE_EXPORT void updateStack(const OperationPlan*, double, double, short);
 
     /** Initialize the class. */
     static int initialize();
@@ -6015,15 +6015,16 @@ class PeggingIterator : public Object
     {
       const OperationPlan* opplan;
       double quantity;
+      double offset;
       short level;
 
       // Constructor
-      state(const OperationPlan* o, double q, short l)
-        : opplan(o), quantity(q), level(l) {};
+      state(const OperationPlan* op, double q, double o, short l)
+        : opplan(op), quantity(q), offset(o), level(l) {};
 
       // Copy constructor
       state(const state& o)
-        : opplan(o.opplan), quantity(o.quantity), level(o.level) {};
+        : opplan(o.opplan), quantity(o.quantity), offset(o.offset), level(o.level) {};
     };
     typedef vector<state> statestack;
 
@@ -6034,7 +6035,7 @@ class PeggingIterator : public Object
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
 
     /* Auxilary function to make recursive code possible. */
-    DECLARE_EXPORT void followPegging(const OperationPlan*, double, short);
+    DECLARE_EXPORT void followPegging(const OperationPlan*, double, double, short);
 
     /** Follow the pegging upstream or downstream. */
     bool downstream;

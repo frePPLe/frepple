@@ -52,7 +52,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
       opplaniter != deli.end(); ++opplaniter)
   {
     OperationPlan *t = (*opplaniter)->getTopOwner();
-    updateStack(t, t->getQuantity(), 0);
+    updateStack(t, t->getQuantity(), 0.0, 0);
   }
 }
 
@@ -62,7 +62,12 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const OperationPlan* opplan, boo
 {
   if (!opplan) return;
   initType(metadata);
-  updateStack(opplan->getTopOwner(), opplan->getQuantity(), 0);
+  updateStack(
+    opplan->getTopOwner(),
+    opplan->getQuantity(),
+    0.0,
+    0
+    );
 }
 
 
@@ -71,7 +76,12 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const FlowPlan* fp, bool b)
 {
   if (!fp) return;
   initType(metadata);
-  updateStack(fp->getOperationPlan()->getTopOwner(), fp->getOperationPlan()->getQuantity(), 0);
+  updateStack(
+    fp->getOperationPlan()->getTopOwner(),
+    fp->getOperationPlan()->getQuantity(),
+    0.0,
+    0
+    );
 }
 
 
@@ -80,7 +90,12 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const LoadPlan* lp, bool b)
 {
   if (!lp) return;
   initType(metadata);
-  updateStack(lp->getOperationPlan()->getTopOwner(), lp->getOperationPlan()->getQuantity(), 0);
+  updateStack(
+    lp->getOperationPlan()->getTopOwner(),
+    lp->getOperationPlan()->getQuantity(),
+    0.0,
+    0
+    );
 }
 
 
@@ -97,7 +112,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 
   // Find other operationplans to add to the stack
   state t = states.back(); // Copy the top element
-  followPegging(t.opplan, t.quantity, t.level);
+  followPegging(t.opplan, t.quantity, t.offset, t.level);
 
   // Pop invalid top entry from the stack.
   // This will happen if we didn't find an operationplan to replace the
@@ -121,7 +136,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
 
   // Find other operationplans to add to the stack
   state t = states.back(); // Copy the top element
-  followPegging(t.opplan, t.quantity, t.level);
+  followPegging(t.opplan, t.quantity, t.offset, t.level);
 
   // Pop invalid top entry from the stack.
   // This will happen if we didn't find an operationplan to replace the
@@ -133,33 +148,37 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
 
 
 DECLARE_EXPORT void PeggingIterator::followPegging
-(const OperationPlan* op, double qty, short lvl)
+(const OperationPlan* op, double qty, double offset, short lvl)
 {
   // Zero quantity operationplans don't have further pegging
   if (!op->getQuantity()) return;
 
   // For each flowplan ask the buffer to find the pegged operationplans.
-  double factor = qty / op->getQuantity();
   if (downstream)
     for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans();
         i != op->endFlowPlans(); ++i)
     {
       if (i->getQuantity() > ROUNDING_ERROR) // Producing flowplan
-        i->getFlow()->getBuffer()->followPegging(*this, &*i, factor, lvl+1);
+        i->getFlow()->getBuffer()->followPegging(*this, &*i, qty, offset, lvl+1);
     }
   else
     for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans();
         i != op->endFlowPlans(); ++i)
     {
       if (i->getQuantity() < -ROUNDING_ERROR) // Consuming flowplan
-        i->getFlow()->getBuffer()->followPegging(*this, &*i, factor, lvl+1);
+        i->getFlow()->getBuffer()->followPegging(*this, &*i, qty, offset, lvl+1);
     }
 
   // Push child operationplans on the stack.
   // The pegged quantity is equal to the ratio of the quantities of the
   // parent and child operationplan.
   for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j)
-    updateStack(&*j, qty * j->getQuantity() / op->getQuantity(), lvl+1);
+    updateStack(
+      &*j,
+      qty * j->getQuantity() / op->getQuantity(),
+      offset * j->getQuantity() / op->getQuantity(),
+      lvl+1
+      );
 }
 
 
@@ -190,22 +209,10 @@ DECLARE_EXPORT PyObject* PeggingIterator::getattro(const Attribute& attr)
 
 
 DECLARE_EXPORT void PeggingIterator::updateStack
-(const OperationPlan* op, double qty, short lvl)
+(const OperationPlan* op, double qty, double o, short lvl)
 {
   // Avoid very small pegging quantities
   if (qty < ROUNDING_ERROR) return;
-
-  // Check if this operationplan already exists on the stack.
-  statestack::reverse_iterator i = states.rbegin();
-  if (first && i != states.rend())
-    ++i; // Avoid last element on the stack, since it is void
-  for(;i != states.rend(); ++i)
-    if (i->opplan == op)
-    {
-      // Update existing stack element and exit.
-      i->quantity += qty;
-      return;
-    }
 
   if (first)
   {
@@ -213,12 +220,13 @@ DECLARE_EXPORT void PeggingIterator::updateStack
     state& t = states.back();
     t.opplan = op;
     t.quantity = qty;
+    t.offset = o;
     t.level = lvl;
     first = false;
   }
   else
     // We need to create a new element on the stack
-    states.push_back( state(op, qty, lvl) );
+    states.push_back( state(op, qty, o, lvl) );
 }
 
 

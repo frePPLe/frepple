@@ -550,8 +550,10 @@ DECLARE_EXPORT Buffer::~Buffer()
 
 
 DECLARE_EXPORT void Buffer::followPegging
-(PeggingIterator& iter, FlowPlan* curflowplan, double factor, short lvl)
+(PeggingIterator& iter, FlowPlan* curflowplan, double qty, double offset, short lvl)
 {
+  if (!curflowplan->getOperationPlan()->getQuantity())
+    return;
   Buffer::flowplanlist::const_iterator f = getFlowPlans().begin(curflowplan);
 
   if (curflowplan->getQuantity() < -ROUNDING_ERROR && !iter.isDownstream())
@@ -559,8 +561,9 @@ DECLARE_EXPORT void Buffer::followPegging
     // CASE 1:
     // This is a flowplan consuming from a buffer. Navigating upstream means
     // finding the flowplans producing this consumed material.
-    double endQty = f->getCumulativeConsumed();
-    double startQty = endQty + f->getQuantity();
+    double scale = - curflowplan->getQuantity() / curflowplan->getOperationPlan()->getQuantity();
+    double startQty = f->getCumulativeConsumed() + f->getQuantity() + offset * scale;
+    double endQty = startQty + qty * scale;
     if (f->getCumulativeProduced() <= startQty + ROUNDING_ERROR)
     {
       // CASE 1A: Not produced enough yet: move forward
@@ -575,18 +578,25 @@ DECLARE_EXPORT void Buffer::followPegging
         if (f->getQuantity() > ROUNDING_ERROR)
         {
           double newqty = f->getQuantity();
+          double newoffset = 0.0;
           if (f->getCumulativeProduced()-f->getQuantity() < startQty)
-            newqty -= startQty - (f->getCumulativeProduced()-f->getQuantity());
+          {
+            newoffset = startQty - (f->getCumulativeProduced()-f->getQuantity());
+            newqty -= newoffset;
+          }
           if (f->getCumulativeProduced() > endQty)
             newqty -= f->getCumulativeProduced() - endQty;
           const OperationPlan *opplan = dynamic_cast<const FlowPlan*>(&(*f))->getOperationPlan();
           const OperationPlan *topopplan = opplan->getTopOwner();
+          if (topopplan->getOperation()->getType() == *OperationSplit::metadata)
+            topopplan = opplan;
           iter.updateStack(
             topopplan,
-            opplan->getQuantity() * factor * newqty / f->getQuantity(),
+            topopplan->getQuantity() * newqty / f->getQuantity(),
+            topopplan->getQuantity() * newoffset / f->getQuantity(),
             lvl
             );
-       }
+        }
         ++f;
       }
     }
@@ -602,15 +612,22 @@ DECLARE_EXPORT void Buffer::followPegging
         if (f->getQuantity() > ROUNDING_ERROR)
         {
           double newqty = f->getQuantity();
+          double newoffset = 0.0;
           if (f->getCumulativeProduced()-f->getQuantity() < startQty)
-            newqty -= startQty - (f->getCumulativeProduced()-f->getQuantity());
+          {
+            newoffset = startQty - (f->getCumulativeProduced()-f->getQuantity());
+            newqty -= newoffset;
+          }
           if (f->getCumulativeProduced() > endQty)
             newqty -= f->getCumulativeProduced() - endQty;
           const OperationPlan *opplan = dynamic_cast<const FlowPlan*>(&(*f))->getOperationPlan();
           const OperationPlan *topopplan = opplan->getTopOwner();
+          if (topopplan->getOperation()->getType() == *OperationSplit::metadata)
+            topopplan = opplan;
           iter.updateStack(
             topopplan,
-            opplan->getQuantity() * factor * newqty / f->getQuantity(),
+            topopplan->getQuantity() * newqty / f->getQuantity(),
+            topopplan->getQuantity() * newoffset / f->getQuantity(),
             lvl
             );
         }
@@ -625,8 +642,9 @@ DECLARE_EXPORT void Buffer::followPegging
     // CASE 2:
     // This is a flowplan producing in a buffer. Navigating downstream means
     // finding the flowplans consuming this produced material.
-    double endQty = f->getCumulativeProduced();
-    double startQty = endQty - f->getQuantity();
+    double scale = curflowplan->getQuantity() / curflowplan->getOperationPlan()->getQuantity();
+    double startQty = f->getCumulativeProduced() - f->getQuantity() + offset * scale;
+    double endQty = startQty + qty * scale;
     if (f->getCumulativeConsumed() <= startQty + ROUNDING_ERROR)
     {
       // CASE 2A: Not consumed enough yet: move forward
@@ -641,15 +659,22 @@ DECLARE_EXPORT void Buffer::followPegging
         if (f->getQuantity() < -ROUNDING_ERROR)
         {
           double newqty = - f->getQuantity();
+          double newoffset = 0.0;
           if (f->getCumulativeConsumed()+f->getQuantity() < startQty)
-            newqty -= startQty - (f->getCumulativeConsumed()+f->getQuantity());
+          {
+            newoffset = startQty - (f->getCumulativeConsumed()+f->getQuantity());
+            newqty -= newoffset;
+          }
           if (f->getCumulativeConsumed() > endQty)
             newqty -= f->getCumulativeConsumed() - endQty;
           const OperationPlan *opplan = dynamic_cast<const FlowPlan*>(&(*f))->getOperationPlan();
           const OperationPlan *topopplan = opplan->getTopOwner();
+          if (topopplan->getOperation()->getType() == *OperationSplit::metadata)
+            topopplan = opplan;
           iter.updateStack(
             topopplan,
-            - opplan->getQuantity() * factor * newqty / f->getQuantity(),
+            - topopplan->getQuantity() * newqty / f->getQuantity(),
+            - topopplan->getQuantity() * newoffset / f->getQuantity(),
             lvl
             );
         }
@@ -667,15 +692,19 @@ DECLARE_EXPORT void Buffer::followPegging
         if (f->getQuantity() < -ROUNDING_ERROR)
         {
           double newqty = - f->getQuantity();
+          double newoffset = 0.0;
           if (f->getCumulativeConsumed()+f->getQuantity() < startQty)
             newqty -= startQty - (f->getCumulativeConsumed()+f->getQuantity());
           if (f->getCumulativeConsumed() > endQty)
             newqty -= f->getCumulativeConsumed() - endQty;
           const OperationPlan *opplan = dynamic_cast<const FlowPlan*>(&(*f))->getOperationPlan();
           const OperationPlan *topopplan = opplan->getTopOwner();
+          if (topopplan->getOperation()->getType() == *OperationSplit::metadata)
+            topopplan = opplan;
           iter.updateStack(
             topopplan,
-            - opplan->getQuantity() * factor * newqty / f->getQuantity(),
+            - topopplan->getQuantity() * newqty / f->getQuantity(),
+            - topopplan->getQuantity() * newoffset / f->getQuantity(),
             lvl
             );
         }

@@ -62,12 +62,20 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const OperationPlan* opplan, boo
 {
   if (!opplan) return;
   initType(metadata);
-  updateStack(
-    opplan->getTopOwner(),
-    opplan->getQuantity(),
-    0.0,
-    0
-    );
+  if (opplan->getTopOwner()->getOperation()->getType() == *OperationSplit::metadata)
+    updateStack(
+      opplan,
+      opplan->getQuantity(),
+      0.0,
+      0
+      );
+  else
+    updateStack(
+      opplan->getTopOwner(),
+      opplan->getTopOwner()->getQuantity(),
+      0.0,
+      0
+      );
 }
 
 

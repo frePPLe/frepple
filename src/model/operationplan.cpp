@@ -1146,7 +1146,7 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
 {
   // Child operationplans have the same criticality as the parent
   // TODO: Slack between routing sub operationplans isn't recognized. 
-  if (getOwner())
+  if (getOwner() && getOwner()->getOperation()->getType() != *OperationSplit::metadata)
     return getOwner()->getCriticality();
 
   // Handle demand delivery operationplans

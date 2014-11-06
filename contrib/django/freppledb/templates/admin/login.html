@@ -4,6 +4,7 @@ This template overrides one of the standard admin ones.
 The changes are:
    - take care of url prefix
    - give the login button a jquery-ui look and feel
+   - check for old versions of Internet Explorer
 {% endcomment %}
 {% load i18n %}
 
@@ -22,7 +23,7 @@ $(function() {
   $("input:submit").button();
 });
 </script>
-<!--[if lte IE 8]>
+<!--[if lte IE 9]>
 <script type="text/javascript">
 $(function() {
   $('#login-form').hide();
@@ -72,8 +73,8 @@ $(function() {
   </div>
 </form>
 
-<!--[if lte IE 8]><br/><span style="font-weight: bold">FrePPLe does NOT support Internet Explorer 8!</span><br/><br/>
-Upgrade to Internet Explorer 9 or, even better, use a better browser: Chrome, Firefox, Safari or Opera.
+<!--[if lte IE 9]><br/><span style="font-weight: bold">FrePPLe does NOT support Internet Explorer <= 9!</span><br/><br/>
+Upgrade to Internet Explorer >= 10, or use a better browser: Chrome, Firefox, Safari or Opera.
 <![endif]-->
 
 <script type="text/javascript">

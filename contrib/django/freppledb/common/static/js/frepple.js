@@ -922,20 +922,42 @@ function sameOrigin(url) {
 function import_show(url)
 {
   $('#popup').html(
-    '<form id="uploadform" enctype="multipart/form-data" method="post" action="'
-    + (typeof(url) != 'undefined' ? url : '') + '">' +
-    '<input type="hidden" name="csrfmiddlewaretoken" value="' + getToken() + '"/>' +
+    '<form id="uploadform">' +
     gettext('Load an Excel file or a CSV-formatted text file.') + '<br/>' +
     gettext('The first row should contain the field names.') + '<br/><br/>' +
     '<input type="checkbox" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
-    gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/></form>'
+    gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/></form>' +
+    '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="display: none; width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'
     ).dialog({
       title: gettext("Import CSV or Excel file"),
-      autoOpen: true, resizable: false, width: 390, height: 'auto',
+      autoOpen: true, resizable: false, width: 450, height: 'auto',
       buttons: [
         {
           text: gettext("Import"),
-          click: function() { if ($("#csv_file").val() != "") $("#uploadform").submit(); }
+          click: function() {
+            if ($("#csv_file").val() == "") return;
+            $('#uploadResponse').css('display','block');
+            $.ajax({
+              type: 'post',
+              url: typeof(url) != 'undefined' ? url : '',
+              cache: false,
+              data: new FormData($("#uploadform")[0]),
+              success: function (data) {
+                var el = $('#uploadResponse');
+                el.val(data);
+                el.scrollTop(el[0].scrollHeight - el.height());
+              },
+              xhrFields: {
+                onprogress: function (e) {
+                  var el = $('#uploadResponse');
+                  el.val(e.currentTarget.response);
+                  el.scrollTop(el[0].scrollHeight - el.height());
+                }
+              },
+              processData: false,
+              contentType: false
+              });
+          }
         },
         {
           text: gettext("Cancel"),

@@ -104,6 +104,48 @@
       checkChildren("empty_" + models[m][child]);
   }
 
+  function importWorkbook()
+  {
+    // Nothing to import
+    if ($('#spreadsheet').val() == "")
+      return;
+
+    // Create dialog box
+    $('#uploadResponse').val("");
+    $("#uploadSpreadsheet").dialog({
+      title: gettext("Uploading spreadsheet"),
+      autoOpen: true,
+      resizable: false,
+      width: 600,
+      height: 'auto',
+      modal: true
+      });
+
+    // Upload the file
+    var data = new FormData();
+    data.append("spreadsheet", $('#spreadsheet').get(0).files[0]);
+    $.ajax({
+      type: 'post',
+      url: '{{request.prefix}}/execute/launch/importworkbook/',
+      cache: false,
+      data: data,
+      success: function (data) {
+        var el = $('#uploadResponse');
+        el.val(data);
+        el.scrollTop(el[0].scrollHeight - el.height());
+      },
+      xhrFields: {
+        onprogress: function (e) {
+          var el = $('#uploadResponse');
+          el.val(e.currentTarget.response);
+          el.scrollTop(el[0].scrollHeight - el.height());
+        }
+      },
+      processData: false,
+      contentType: false
+      });
+  }
+
   $(function() {
     // Buttons
     $("input:submit,#logfile").button();
@@ -237,11 +279,11 @@ and export results.<br/>
 
 <h3><a href="#importworkbook">{% trans "Import a spreadsheet" %}</a></h3>
 <div><table>
-<form method="post" enctype="multipart/form-data" action="{{request.prefix}}/execute/launch/importworkbook/">{% csrf_token %}<tr>
-<td style="vertical-align:top; padding: 15px"><input id="import" type="submit" value="{% trans "Import" %}" /></td>
+<tr>
+<td style="vertical-align:top; padding: 15px"><input id="import" type="submit" onclick="importWorkbook()" value="{% trans "Import" %}" /></td>
 <td>{% trans "Import input data from a spreadsheet.<br/>The spreadsheet must match the structure exported with the task above." %}<br/>
 {% trans "Data file" %}:<input type="file" id="spreadsheet" name="spreadsheet" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
-</td></tr></form>
+</td></tr>
 </table></div>
 
 {% if scenarios.count > 1 %}
@@ -375,4 +417,9 @@ Number of end items: <input id="create0" name="clusters" type="text" maxlength="
 {% endif %}
 
 </div>
+
+<div id="uploadSpreadsheet" style="display:none">
+<div style="margin: 5px 0">
+<textarea id="uploadResponse" rows="20" style="width:100%; background-color: inherit; border: none" readonly="readonly"></textarea>
+</div></div>
 {% endblock %}

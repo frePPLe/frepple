@@ -29,3 +29,12 @@ The module provides the following functionality:
 
 Full documentation on the installation, configuration and data mapping is available at:
   http://frepple.com/documentation/extension-modules/openerp-connector-module/
+
+The module does not support v8 yet.
+Here's the list of open migration tasks (the list is not necessarily complete...):
+  - use the stock.routes introduced by the new warehouse module
+  - mrp.bom is now split over the 2 tables mrp.bom and mrp.bom_lines.
+  - mrp.bom now refers to a product.template.
+  - v7 web controller allowed a streaming response, which is apparantly not possible
+    any longer with v8. As a result the connector will be slower and consume more
+    memory.

@@ -45,8 +45,8 @@ var upload = {
   {
     if ($('#undo').hasClass("ui-state-disabled")) return;
     $("#grid").trigger("reloadGrid");
-    $('#save').addClass("ui-state-disabled").removeClass("bold");
-    $('#undo').addClass("ui-state-disabled").removeClass("bold");
+    $('#save').addClass("ui-state-disabled").removeClass("bold red");
+    $('#undo').addClass("ui-state-disabled").removeClass("bold red");
     $('#filter').removeClass("ui-state-disabled");
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
@@ -55,8 +55,8 @@ var upload = {
   {
     $('#filter').addClass("ui-state-disabled");
     $.jgrid.hideModal("#searchmodfbox_grid");
-    $('#save').removeClass("ui-state-disabled").addClass("bold");
-    $('#undo').removeClass("ui-state-disabled").addClass("bold");
+    $('#save').removeClass("ui-state-disabled").addClass("bold red");
+    $('#undo').removeClass("ui-state-disabled").addClass("bold red");
     $(window).off('beforeunload', upload.warnUnsavedChanges);
     $(window).on('beforeunload', upload.warnUnsavedChanges);
   },

@@ -293,6 +293,11 @@ div.system-message p.system-message-title {
   vertical-align: middle;
 }
 
+.red {
+  color: red;
+}
+
+
 /* Style for the context menu. */
 div.ContextMenu {
   display: none;

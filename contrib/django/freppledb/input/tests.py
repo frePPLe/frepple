@@ -73,7 +73,9 @@ class DataLoadTest(TestCase):
       print('factory 4,', file=data)
       data.seek(0)
       response = self.client.post('/data/input/location/', {'csv_file': data})
-      self.assertRedirects(response, '/data/input/location/')
+      for rec in response.streaming_content:
+        rec
+      self.assertEqual(response.status_code, 200)
     finally:
       data.close()
     self.assertEqual(

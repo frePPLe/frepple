@@ -121,6 +121,9 @@ class ExcelTest(TransactionTestCase):
     # Import the same workbook again
     with open("workbook.xlsx", 'rb') as f:
       response = self.client.post('/execute/launch/importworkbook/', {'spreadsheet': f})
+      for rec in response.streaming_content:
+        rec
+      self.assertEqual(response.status_code, 200)
 
     # Verify the new content is identical
     self.assertEqual(input.models.Buffer.objects.count(), countBuffer)

@@ -51,7 +51,9 @@ class cookbooktest(TransactionTestCase):
     # Upload the excel data as a form
     self.client.login(username='admin', password='admin')
     response = self.client.post('/execute/launch/importworkbook/', {'spreadsheet': data})
-    self.assertRedirects(response, '/execute/')
+    for rec in response.streaming_content:
+      rec
+    self.assertEqual(response.status_code, 200)
     self.client.logout()
 
   def assertOperationplans(self, resultfile):

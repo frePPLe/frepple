@@ -37,9 +37,9 @@ from freppledb import VERSION
 class Command(BaseCommand):
 
   help = '''
-      This script is a simple, generic model generator.
-      This test script is meant more as a sample for your own tests on
-      evaluating performance, memory size, database size, ...
+      This command is a simple, generic model generator.
+      It is meant as a quick way to produce models for tests on performance,
+      memory size, database size...
 
       The auto-generated supply network looks schematically as follows:
         [ Operation -> buffer ] ...   [ -> Operation -> buffer ]  [ Delivery ]
@@ -53,6 +53,10 @@ class Command(BaseCommand):
       path parameter.
       In each cluster a single item is defined, and a parametrizable number of
       demands is placed on the cluster.
+
+      The script uses random numbers. These are reproducible (ie different runs
+      will produce the same random number sequence), but not portable (ie runs
+      on a different platform or version can give different results).
     '''
 
   option_list = BaseCommand.option_list + (

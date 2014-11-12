@@ -86,7 +86,7 @@ class Command(BaseCommand):
     else:
       end = '2016-1-1'
     if 'weekstart' in options:
-      weekstart = options['weekstart']
+      weekstart = int(options['weekstart'])
       if weekstart < 0 or weekstart > 6:
         raise CommandError("Invalid weekstart %s" % weekstart)
     else:

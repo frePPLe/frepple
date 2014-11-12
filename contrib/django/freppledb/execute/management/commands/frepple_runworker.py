@@ -152,7 +152,11 @@ class Command(BaseCommand):
           management.call_command('frepple_backup', database=database, task=task.id)
         # G
         elif task.name == 'generate buckets':
-          management.call_command('frepple_createbuckets', database=database, task=task.id)
+          args = {}
+          for i in task.arguments.split():
+            key, val = i.split('=')
+            args[key[2:]] = val
+          management.call_command('frepple_createbuckets', database=database, task=task.id, **args)
         # J
         elif task.name == 'Openbravo import' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
           args = {}

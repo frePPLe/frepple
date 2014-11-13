@@ -103,7 +103,7 @@ def createPlan(database=DEFAULT_DB_ALIAS):
     plantype=plantype, loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),
     lazydelay=int(Parameter.getValue('lazydelay', database, '86400')),
     allowsplits=(Parameter.getValue('allowsplits', database, 'true') == "true"),
-    plansafetystockfirst=False
+    plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false') == "false")
     #userexit_resource=debugResource,
     #userexit_demand=debugDemand
     )

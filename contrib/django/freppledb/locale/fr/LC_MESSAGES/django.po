@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010-2013 by Johan De Taeye, Guy Ollagnon, Gilles Manon
+# Copyright (C) 2010-2014 by Johan De Taeye, Guy Ollagnon, Gilles Manon
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -22,17 +22,16 @@ msgstr ""
 "Project-Id-Version: 2.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-08 08:49+0100\n"
-"PO-Revision-Date: 2014-10-26 11:58+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
+"PO-Revision-Date: 2014-11-11 17:45+0100\n"
+"Last-Translator: Guy Ollagnon <guy.ollagnon@demand2plan.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.6.10\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-SearchPath-0: \n"
 
 #: menu.py:22
 msgid "Input"
@@ -147,7 +146,7 @@ msgstr ""
 
 #: common/fields.py:68 common/fields.py:98
 msgid "Expected format \"DD HH:MM:SS\", \"HH:MM:SS\", \"MM:SS\" or \"SS\""
-msgstr ""
+msgstr "Format attendu \"DD HH:MM:SS\", \"HH:MM:SS\", \"MM:SS\" ou \"SS\""
 
 # Translation included with django
 #: common/menu.py:21 templates/admin/base.html:22
@@ -165,7 +164,7 @@ msgstr ""
 
 #: common/menu.py:26
 msgid "Guided tour"
-msgstr ""
+msgstr "Visite guidée"
 
 #: common/menu.py:27
 msgid "Documentation"
@@ -405,7 +404,7 @@ msgstr "et"
 #: common/report.py:967
 #, python-format
 msgid "Erasing data from %(model)s"
-msgstr ""
+msgstr "Effacement des données de %(model)s"
 
 #: common/report.py:986 common/report.py:1145
 msgid "Invalid upload request"
@@ -595,7 +594,7 @@ msgstr "Bienvenue"
 
 #: common/widget.py:24
 msgid "Some links to get started"
-msgstr ""
+msgstr "Quelques liens pour commencer"
 
 #: common/widget.py:28
 msgid ""
@@ -613,22 +612,36 @@ msgid ""
 "\"_blank\">Contact us</a></span></li>\n"
 "</ol>\n"
 msgstr ""
+"Bienvenue dans frePPLe, le leader mondial des outils de planification open "
+"source !<br/><br/>\n"
+"Pour commencer ?\n"
+"<ol><li>Commencer la <span class=\"underline\"><a href=\"javascript:void(0);"
+"\" onclick=\"tour.start('0,0,0'); return false;\">visite guidée</a></span></"
+"li>\n"
+"<li>Consulter la <span class=\"underline\"><a href=\"/static/doc/index.html"
+"\" target=\"_blank\">documentation</a></span></li>\n"
+"<li>Visiter et rejoigner la <span class=\"underline\"><a href=\"http://"
+"groups.google.com/group/frepple-users\" target=\"_blank\">communauté des "
+"utilisateurs</a></span></li>\n"
+"<li><span class=\"underline\"><a href=\"http://frepple.com/contact/\" target="
+"\"_blank\">Nous contacter</a></span></li>\n"
+"</ol>\n"
 
 #: common/widget.py:42
 msgid "News"
-msgstr ""
+msgstr "Nouvelles"
 
 #: common/widget.py:43
 msgid "Show the latest news items from the frePPLe website"
-msgstr ""
+msgstr "Voir les dernières nouvelles du site web frePPLe"
 
 #: common/widget.py:54
 msgid "My actions"
-msgstr ""
+msgstr "Mes actions"
 
 #: common/widget.py:55
 msgid "Display a list of the entities you recently changed"
-msgstr ""
+msgstr "Affiche la liste des objets que vous avez récemment changés"
 
 #: common/widget.py:85
 msgid "Unknown content"
@@ -728,7 +741,7 @@ msgstr "Fichier journal"
 
 #: execute/widget.py:29
 msgid "Generate a constrained plan"
-msgstr ""
+msgstr "Générer un plan contraint"
 
 #: execute/widget.py:42 templates/execute/execute.html:234
 msgid "Create a plan"
@@ -893,12 +906,12 @@ msgstr "prévisions de demande"
 #: forecast/models.py:238 forecast/views.py:94
 #: templates/forecast/forecast.html:150 templates/forecast/forecast.html:260
 msgid "total orders"
-msgstr "Commandes totales"
+msgstr "commandes totales"
 
 #: forecast/models.py:239 forecast/views.py:96
 #: templates/forecast/forecast.html:154
 msgid "orders adjustment"
-msgstr "Ajustement des commandes"
+msgstr "ajustement des commandes"
 
 #: forecast/models.py:240 forecast/views.py:95
 #: templates/forecast/forecast.html:152 templates/forecast/forecast.html:259
@@ -1137,7 +1150,7 @@ msgstr "alternatif"
 
 #: input/models.py:161
 msgid "split"
-msgstr ""
+msgstr "split"
 
 #: input/models.py:175 input/views.py:656
 msgid "release fence"
@@ -1450,7 +1463,7 @@ msgstr "règles de la matrice de setup"
 
 #: input/models.py:447
 msgid "Buckets"
-msgstr ""
+msgstr "Mailles temporelles"
 
 #: input/models.py:465 input/views.py:385
 msgid "maximum"
@@ -1671,7 +1684,7 @@ msgstr[1] "%(name)s - %(count)d matches"
 
 #: input/views.py:75
 msgid "Supply path"
-msgstr ""
+msgstr "Chemin d'approvisionnement"
 
 #: input/views.py:82 output/views/pegging.py:39
 msgid "depth"
@@ -1785,7 +1798,7 @@ msgstr "date de fin"
 #: output/widget.py:241 output/views/buffer.py:172
 #: output/views/operation.py:138 output/views/resource.py:189
 msgid "criticality"
-msgstr ""
+msgstr "criticalité"
 
 #: output/models.py:39 output/models.py:60 output/views/constraint.py:70
 #: output/views/problem.py:46
@@ -1853,7 +1866,7 @@ msgstr "date planifiée"
 
 #: output/models.py:156
 msgid "level"
-msgstr ""
+msgstr "niveau"
 
 #: output/models.py:168
 msgid "demand pegging"
@@ -1865,23 +1878,23 @@ msgstr "pegging des demandes"
 
 #: output/widget.py:35
 msgid "Late orders"
-msgstr ""
+msgstr "Commandes en retard"
 
 #: output/widget.py:36
 msgid "Shows orders that will be delivered after their due date"
-msgstr ""
+msgstr "Afficher les commandes qui sont délivrées après leur date d'échéance"
 
 #: output/widget.py:57
 msgid "delay"
-msgstr ""
+msgstr "délai"
 
 #: output/widget.py:72
 msgid "Short orders"
-msgstr ""
+msgstr "Commandes en rupture"
 
 #: output/widget.py:73
 msgid "Shows orders that are not planned completely"
-msgstr ""
+msgstr "Afficher les commandes qui ne sont pas planifiées complètement"
 
 #: output/widget.py:95 output/views/constraint.py:32
 msgid "short"
@@ -1889,89 +1902,90 @@ msgstr "rupture"
 
 #: output/widget.py:110
 msgid "Purchase queue"
-msgstr ""
+msgstr "Liste d'attente des achats"
 
 #: output/widget.py:111
 msgid "Display a list of new purchase orders"
-msgstr ""
+msgstr "Affiche la liste des nouveaux ordres d'achat"
 
 #: output/widget.py:148
 msgid "Shipping queue"
-msgstr ""
+msgstr "Liste d'attente d'expéditions"
 
 #: output/widget.py:149
 msgid "Display a list of customer orders and their shipping date"
-msgstr ""
+msgstr "Affiche la liste des commandes clients et leur date d'expédition"
 
 #: output/widget.py:171
 msgid "plan date"
-msgstr ""
+msgstr "date du plan"
 
 #: output/widget.py:186
 msgid "Resource queue"
-msgstr ""
+msgstr "Liste d'attente de la ressource"
 
 #: output/widget.py:187
 msgid "Display planned activities for the resources"
-msgstr ""
+msgstr "Affiche les activités planifiées pour les ressources"
 
 #: output/widget.py:224
 msgid "Purchase order analysis"
-msgstr ""
+msgstr "Analyse des ordres d'achat"
 
 #: output/widget.py:225
 msgid "Analyse the urgency of existing purchase orders"
-msgstr ""
+msgstr "Analyser l'urgence des ordres d'achat existants"
 
 #: output/widget.py:256
 msgid "Alerts"
-msgstr ""
+msgstr "Alertes"
 
 #: output/widget.py:257
 msgid "Overview of all alerts in the plan"
-msgstr ""
+msgstr "Vue globale de toutes les alertes du plan"
 
 #: output/widget.py:267
 msgid "count"
-msgstr ""
+msgstr "compter"
 
 #: output/widget.py:290
 msgid "Resource utilization"
-msgstr ""
+msgstr "Utilisation de la ressource "
 
 #: output/widget.py:291
 msgid "Shows the resources with the highest utilization"
-msgstr ""
+msgstr "Affiche les ressources avec la plus grande utilisation"
 
 #: output/widget.py:391
 msgid "Inventory by location"
-msgstr ""
+msgstr "Stock par emplacement"
 
 #: output/widget.py:392
 msgid "Display the locations with the highest inventory value"
-msgstr ""
+msgstr "Affiche les emplacements avec la plus grande valeur de stock"
 
 #: output/widget.py:480
 msgid "Inventory by item"
-msgstr ""
+msgstr "Stock par article"
 
 #: output/widget.py:481
 msgid "Display the items with the highest inventory value"
-msgstr ""
+msgstr "Affiche les articles avec la plus grande valeur de stock"
 
 #: output/widget.py:569
 msgid "Delivery performance"
-msgstr ""
+msgstr "Performance de livraison"
 
 #: output/widget.py:570
 msgid ""
 "Shows the percentage of demands that are planned to be shipped completely on "
 "time"
 msgstr ""
+"Affiche le pourcentage de la demande qui est planifié d'être expédié à temps"
 
 #: output/widget.py:609
 msgid "On time delivery"
-msgstr ""
+msgstr "Livraison à temps"
 
 #: output/views/buffer.py:27
 msgid "Inventory report"
@@ -2131,7 +2145,7 @@ msgstr "Rapport de pegging"
 
 #: output/views/pegging.py:222 output/views/pegging.py:303
 msgid "pegged quantity"
-msgstr ""
+msgstr "quantité résultat du pegging"
 
 #: output/views/pegging.py:224 output/views/pegging.py:305
 #: output/views/pegging.py:384
@@ -2206,6 +2220,8 @@ msgid ""
 "There's been an error. It's been reported to the site administrators via "
 "email and should be fixed shortly. Thanks for your patience."
 msgstr ""
+"Une erreur a eu lieu. Elle a été signalée aux administrateurs du site par "
+"email and devrait être corrigée sous peu. Merci de votre patience."
 
 #: templates/bucketcontext.html:3 templates/buckettabs.html:4
 #: templates/buffercontext.html:3 templates/buffertabs.html:4
@@ -2297,12 +2313,12 @@ msgstr ""
 
 #: templates/admin/base_site.html:30 templates/admin/index.html:6
 msgid "Cockpit"
-msgstr ""
+msgstr "Poste de pilotage"
 
 #: templates/admin/base_site_grid.html:14
 #: templates/admin/base_site_gridpivot.html:26
 msgid "Error: Missing time buckets or bucket dates"
-msgstr ""
+msgstr "Erreur : mailles temporelles ou dates manquantes"
 
 #: templates/admin/base_site_grid.html:51
 #: templates/admin/base_site_gridpivot.html:62
@@ -2313,44 +2329,44 @@ msgstr "Erreur récupérant les données du rapport"
 #: templates/admin/base_site_gridpivot.html:99
 #: templates/output/resourcegantt.html:96
 msgid "Filter data"
-msgstr ""
+msgstr "Filtrer les données"
 
 #: templates/admin/base_site_grid.html:84
 #: templates/admin/base_site_gridpivot.html:101
 msgid "Save changes"
-msgstr ""
+msgstr "Enregistrer les modifications"
 
 #: templates/admin/base_site_grid.html:85
 #: templates/admin/base_site_gridpivot.html:102
 msgid "Undo changes"
-msgstr ""
+msgstr "Annuler les modifications"
 
 #: templates/admin/base_site_grid.html:87
 msgid "Create new object"
-msgstr ""
+msgstr "Créer un nouvel objet"
 
 #: templates/admin/base_site_grid.html:88
 msgid "Copy selected objects"
-msgstr ""
+msgstr "Copier les objets sélectionnés"
 
 #: templates/admin/base_site_grid.html:89
 msgid "Delete selected objects"
-msgstr ""
+msgstr "Supprimer les objets sélectionnés"
 
 #: templates/admin/base_site_grid.html:90
 #: templates/admin/base_site_gridpivot.html:104
 #: templates/output/resourcegantt.html:97
 msgid "Configure time buckets"
-msgstr ""
+msgstr "Configure les périodes temporelles"
 
 #: templates/admin/base_site_grid.html:91
 msgid "Import CSV or Excel file"
-msgstr ""
+msgstr "Importer un fichier CSV ou Excel"
 
 #: templates/admin/base_site_grid.html:92
 #: templates/admin/base_site_gridpivot.html:105
 msgid "Export as CSV or Excel file"
-msgstr ""
+msgstr "Exporter comme fichier CSV ou Excel"
 
 #: templates/admin/base_site_grid.html:93
 #: templates/admin/base_site_gridpivot.html:106 templates/admin/index.html:5
@@ -2390,11 +2406,11 @@ msgstr "après la date actuelle"
 
 #: templates/admin/base_site_gridpivot.html:96
 msgid "Display table"
-msgstr ""
+msgstr "Afficher la table"
 
 #: templates/admin/base_site_gridpivot.html:97
 msgid "Display graph"
-msgstr ""
+msgstr "Afficher le graphique"
 
 # Translation included with django
 #: templates/admin/change_form.html:25 templates/admin/login.html:47
@@ -2467,7 +2483,7 @@ msgstr ""
 # Translation included with django
 #: templates/admin/object_history.html:18
 msgid "Action"
-msgstr "Action"
+msgstr ""
 
 # Translation included with django
 #: templates/admin/object_history.html:32
@@ -2499,25 +2515,27 @@ msgstr ""
 
 #: templates/admin/edit_inline/tabular.html:20
 msgid "Delete?"
-msgstr ""
+msgstr "Supprimer ?"
 
 #: templates/admin/edit_inline/tabular.html:25
 #, python-format
 msgid "More records exists. Only %(limit)s are shown."
 msgstr ""
+"D'autres enregistrements existent. Seuls les %(limit)s premiers sont "
+"affichés."
 
 #: templates/admin/edit_inline/tabular.html:35
 msgid "View on site"
-msgstr ""
+msgstr "Consulter sur le sit"
 
 #: templates/admin/edit_inline/tabular.html:89
 #, python-format
 msgid "Add another %(verbose_name)s"
-msgstr ""
+msgstr "Ajouter un autre %(verbose_name)s"
 
 #: templates/admin/edit_inline/tabular.html:90
 msgid "Remove"
-msgstr ""
+msgstr "Supprimer"
 
 #: templates/execute/execute.html:39
 msgid "Waiting"
@@ -2552,12 +2570,22 @@ msgid ""
 "<br/>\n"
 "<b>Plan type</b><br/>"
 msgstr ""
+"\n"
+"Chargement de frePPLe depuis la base de données et les données "
+"opérationnelles...<br/>\n"
+"et créer un plan dans frePPLe...<br/>\n"
+"et exporter les résultats.<br/>\n"
+"<br/>\n"
+"<b>Plan type</b><br/>"
 
 #: templates/execute/execute.html:246
 msgid ""
 "<span title=\"This plan respects the constraints enabled below.<br/>In case "
 "of shortages the demand is planned late or short.\">Constrained plan</span>"
 msgstr ""
+"<span title=\"Ce plan respecte les contraintes définies plus bas.<br/>En cas "
+"de rupture la demande est planifiée en retard ou manquante.\">Plan "
+"contraint</span>"
 
 #: templates/execute/execute.html:249
 msgid ""
@@ -2565,6 +2593,10 @@ msgid ""
 "prevent the demand from being planned in time.<br/>The demand is always met "
 "completely and on time.\">Unconstrained plan</span>"
 msgstr ""
+"<span title=\"Ce plan contient des problèmes de matières, de capacités, et "
+"d'opérations, qui empêchent la demande d'être planifiée à temps.<br/>La "
+"demande est toujours satisfaite entièrement et à temps.\">Plan non "
+"contraint</span>"
 
 #: templates/execute/execute.html:252
 msgid "Constraints"
@@ -2593,6 +2625,10 @@ msgid ""
 "web service, which is used for order quoting and interactive planning.\">Web "
 "service</b>"
 msgstr ""
+"<b title=\"Le moteur de planification est normalement arrêté après la "
+"génération du plan.<br/><br/>Avec cette option il est possible de conserver "
+"le plan en mémoire comme un service web, pour être utilisé pour qualifier "
+"une commandes et réaliser du planning interactif.\">Web service</b>"
 
 #: templates/execute/execute.html:260
 msgid "Keep active in memory"
@@ -2607,14 +2643,20 @@ msgid ""
 "exports the results to them.<br/>FrePPLe also saves a copy of the data in "
 "its own database for reporting.\">Live data sources</b>"
 msgstr ""
+"<b title=\"Une source de données interactive permet à votre plan frePPLe "
+"d'être 100%% synchronisé avec les données des systèmes externes.<br/><br/"
+">FrePPLe va charger les données avant de planifier.<br/>Et après la "
+"génération du plan frePPLe exportera directement les données.<br/>FrePPLe "
+"enregistre aussi une copie des informations dans sa base de données pour du "
+"reporting.\">Live data sources</b>"
 
 #: templates/execute/execute.html:267
 msgid "Read"
-msgstr ""
+msgstr "Lire"
 
 #: templates/execute/execute.html:268
 msgid "Write"
-msgstr ""
+msgstr "Enregistrer"
 
 #: templates/execute/execute.html:274
 msgid "View log file"
@@ -2706,7 +2748,7 @@ msgstr "Vider la base de données"
 
 #: templates/execute/execute.html:358
 msgid "Erase selected tables in the database."
-msgstr ""
+msgstr "Suppression des tables sélectionnées dans la base de données"
 
 #: templates/execute/execute.html:365
 msgid "Load a dataset"
@@ -2723,22 +2765,24 @@ msgstr "Ensembles de données disponibles:"
 #: templates/execute/execute.html:380
 #, python-format
 msgid "Import data from %(erp)s"
-msgstr ""
+msgstr "Import des données depuis %(erp)s"
 
 #: templates/execute/execute.html:384
 #, python-format
 msgid ""
 "Import data changes in the last %(delta)s days from the ERP into frePPLe."
 msgstr ""
+"Import des données modifiées au cours des %(delta)s derniers jours depuis "
+"l'ERP dans frePPLe."
 
 #: templates/execute/execute.html:387
 #, python-format
 msgid "Export data to %(erp)s"
-msgstr ""
+msgstr "Export des données vers %(erp)s"
 
 #: templates/execute/execute.html:391
 msgid "Export frePPLe plan to the ERP."
-msgstr ""
+msgstr "Export du plan frePPLe vers l'ERP."
 
 #: templates/execute/execute.html:395
 msgid "Generate buckets"
@@ -2872,7 +2916,7 @@ msgstr "Détail"
 
 #: templates/input/path.html:275
 msgid "Too many objects to display"
-msgstr ""
+msgstr "Trop d'objets sont à afficher"
 
 #: templates/output/buffer.html:16 templates/output/buffer.html.py:20
 #: templates/output/buffer.html:24 templates/output/operation.html:15
@@ -2888,11 +2932,11 @@ msgstr "approvisionnement"
 
 #: templates/output/operation.html:318
 msgid "new starts"
-msgstr ""
+msgstr "nouveau début"
 
 #: templates/output/operation.html:320
 msgid "new ends"
-msgstr ""
+msgstr "nouvelle fin"
 
 #: templates/output/pegging.html:95 templates/output/resourcegantt.html:91
 msgid "Zoom in"

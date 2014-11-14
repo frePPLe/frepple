@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013 by Johan De Taeye, Guy Ollagnon, Gilles Manon
+# Copyright (C) 2014 by Johan De Taeye, Guy Ollagnon, Gilles Manon
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -22,15 +22,15 @@ msgstr ""
 "Project-Id-Version: 2.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-08 08:49+0100\n"
-"PO-Revision-Date: 2014-10-26 11:49+0100\n"
-"Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
+"PO-Revision-Date: 2014-11-11 17:46+0100\n"
+"Last-Translator: Guy Ollagnon <guy.ollagnon@demand2plan.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.6.10\n"
 
 #: common/static/js/frepple.js:41
 msgid "There are unsaved changes on this page."
@@ -75,27 +75,27 @@ msgstr "Erreur en enregistrant la configuration du rapport"
 
 #: common/static/js/frepple.js:640 common/static/js/frepple.js.c:646
 msgid "Export format"
-msgstr ""
+msgstr "Format d'export"
 
 #: common/static/js/frepple.js:641 common/static/js/frepple.js.c:648
 msgid "Spreadsheet list"
-msgstr ""
+msgstr "Liste du tableur"
 
 #: common/static/js/frepple.js:642 common/static/js/frepple.js.c:650
 msgid "CSV list"
-msgstr ""
+msgstr "Liste CSV"
 
 #: common/static/js/frepple.js:647
 msgid "Spreadsheet table"
-msgstr ""
+msgstr "Table du tableur"
 
 #: common/static/js/frepple.js:649
 msgid "CSV table"
-msgstr ""
+msgstr "Table CSV"
 
 #: common/static/js/frepple.js:653
 msgid "Export CSV or Excel file"
-msgstr ""
+msgstr "Exporter un fichier CSV ou Excel"
 
 #: common/static/js/frepple.js:657
 msgid "Export"
@@ -137,15 +137,15 @@ msgstr "Filtré où"
 
 #: common/static/js/frepple.js:1006
 msgid "Add"
-msgstr ""
+msgstr "Ajouter"
 
 #: common/static/js/frepple.js:1067
 msgid "Reset"
-msgstr ""
+msgstr "Reset"
 
 #: common/static/js/frepple.js:1300
 msgid "Load an Excel file or a CSV-formatted text file."
-msgstr ""
+msgstr "Charger un fichier Excel ou un fichier texte format CSV"
 
 #: common/static/js/frepple.js:1301
 msgid "The first row should contain the field names."
@@ -161,7 +161,7 @@ msgstr "Fichier de données"
 
 #: common/static/js/frepple.js:1306
 msgid "Import CSV or Excel file"
-msgstr ""
+msgstr "Importer un fichier CSV ou Excel"
 
 #: common/static/js/frepple.js:1310
 msgid "Import"
@@ -169,7 +169,7 @@ msgstr "Importer"
 
 #: common/static/js/frepple.js:1785
 msgid "Guided tour"
-msgstr ""
+msgstr "Visite guidée"
 
 #: common/static/js/frepple.js:1809
 msgid "Previous"

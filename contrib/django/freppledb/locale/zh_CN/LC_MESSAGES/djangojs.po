@@ -19,15 +19,14 @@ msgstr ""
 "Project-Id-Version: 2.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-08 08:49+0100\n"
-"PO-Revision-Date: 2014-10-26 11:51+0100\n"
+"PO-Revision-Date: 2014-11-12 16:59+0800\n"
 "Last-Translator: Johan De Taeye <jdetaeye@frepple.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.7\n"
 
 #: common/static/js/frepple.js:41
 msgid "There are unsaved changes on this page."
@@ -72,27 +71,27 @@ msgstr "保存报表设置出错"
 
 #: common/static/js/frepple.js:640 common/static/js/frepple.js.c:646
 msgid "Export format"
-msgstr ""
+msgstr "导出格式"
 
 #: common/static/js/frepple.js:641 common/static/js/frepple.js.c:648
 msgid "Spreadsheet list"
-msgstr ""
+msgstr "电子表格列表"
 
 #: common/static/js/frepple.js:642 common/static/js/frepple.js.c:650
 msgid "CSV list"
-msgstr ""
+msgstr "CSV列表"
 
 #: common/static/js/frepple.js:647
 msgid "Spreadsheet table"
-msgstr ""
+msgstr "电子表格表"
 
 #: common/static/js/frepple.js:649
 msgid "CSV table"
-msgstr ""
+msgstr "CSV表"
 
 #: common/static/js/frepple.js:653
 msgid "Export CSV or Excel file"
-msgstr ""
+msgstr "导出CSV或Excel文件"
 
 #: common/static/js/frepple.js:657
 msgid "Export"
@@ -134,19 +133,19 @@ msgstr "过滤"
 
 #: common/static/js/frepple.js:1006
 msgid "Add"
-msgstr ""
+msgstr "新增"
 
 #: common/static/js/frepple.js:1067
 msgid "Reset"
-msgstr ""
+msgstr "重置"
 
 #: common/static/js/frepple.js:1300
 msgid "Load an Excel file or a CSV-formatted text file."
-msgstr ""
+msgstr "加载Excel文件或CSV格式文件"
 
 #: common/static/js/frepple.js:1301
 msgid "The first row should contain the field names."
-msgstr "第一行包含了字段名。"
+msgstr "第一行应该包含字段名。"
 
 #: common/static/js/frepple.js:1302
 msgid "First delete all existing records AND ALL RELATED TABLES"
@@ -158,7 +157,7 @@ msgstr "数据文件"
 
 #: common/static/js/frepple.js:1306
 msgid "Import CSV or Excel file"
-msgstr ""
+msgstr "导入CSV或Excel文件"
 
 #: common/static/js/frepple.js:1310
 msgid "Import"
@@ -166,7 +165,7 @@ msgstr "导入"
 
 #: common/static/js/frepple.js:1785
 msgid "Guided tour"
-msgstr ""
+msgstr "应用流程"
 
 #: common/static/js/frepple.js:1809
 msgid "Previous"

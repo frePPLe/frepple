@@ -22,7 +22,6 @@ It is recommended not to edit this file!
 Instead put all your settings in the file FREPPLE_CONFDIR/djangosettings.py.
 
 '''
-from __future__ import print_function
 import locale
 import os
 import sys
@@ -222,7 +221,7 @@ PORT = 8000
 
 # Override any of the above settings from a separate file
 if os.access(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py'), os.R_OK):
-  exec open(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py')) in globals()
+  exec(open(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py')).read(), globals())
   if DEBUG:
     # Add a dummy module to sys.modules to make the development server
     # autoreload when the configuration file changes.

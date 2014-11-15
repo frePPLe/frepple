@@ -245,12 +245,9 @@ INTERNAL_IPS = ( '127.0.0.1', )
 DEFAULT_CHARSET = 'utf-8'
 
 # Default characterset for writing and reading CSV files.
-# We are assuming here that the default encoding of clients is the same as the server.
-# If the server is on Linux and the clients are using Windows, this guess will not be good.
-# For Windows clients you should set this to the encoding that is better suited for Excel or
-# other office tools.
-#    Windows - western europe -> 'cp1252'
-CSV_CHARSET = locale.getdefaultlocale()[1]
+# FrePPLe versions < 3 used the default encoding of the server as default.
+# From version 3 onwards the default is UTF-8.
+CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 
 # A list of available user interface themes.
 # The current selection is nothing but the pack of standard themes of JQuery UI.

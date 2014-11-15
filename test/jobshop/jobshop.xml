@@ -450,8 +450,6 @@
 
 <!-- Solve and save the plan -->
 <?python
-from __future__ import print_function
-
 # The heuristic of the default solver is no match for this very complex
 # combinatorial problem.
 # We need to solve many times with different due dates and priorities to

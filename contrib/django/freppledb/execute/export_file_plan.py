@@ -24,7 +24,6 @@ interpreter from the frePPLe engine.
 The code iterates over all objects in the C++ core engine, and writes this
 information to a set of text files.
 '''
-from __future__ import print_function
 from time import time
 from datetime import datetime, timedelta
 import csv

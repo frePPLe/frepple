@@ -121,6 +121,8 @@ class Command(BaseCommand):
               kwargs[j[0][2:]] = j[1]
             else:
               kwargs[j[0][2:]] = True
+          if 'background' in kwargs:
+            background = True
           management.call_command('frepple_run', database=database, task=task.id, **kwargs)
         # B
         elif task.name == 'generate model':

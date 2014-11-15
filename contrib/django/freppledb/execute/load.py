@@ -24,7 +24,6 @@ interpreter from the frePPLe engine.
 It extracts the information fields from the database, and then uses the Python
 API of frePPLe to bring the data into the frePPLe C++ core engine.
 '''
-from __future__ import print_function
 from datetime import datetime
 import os
 from time import time

@@ -527,13 +527,9 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
       while (PyDict_Next(kwds, &pos, &key, &value))
       {
         PythonObject field(value);
-#if PY_MAJOR_VERSION >= 3
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         Attribute attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-#else
-        Attribute attr(PyString_AsString(key));
-#endif
         if (!attr.isA(Tags::tag_effective_end) && !attr.isA(Tags::tag_effective_start)
           && !attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_resource)
           && !attr.isA(Tags::tag_quantity) && !attr.isA(Tags::tag_type)
@@ -542,13 +538,8 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
           int result = l->setattro(attr, field);
           if (result && !PyErr_Occurred())
             PyErr_Format(PyExc_AttributeError,
-#if PY_MAJOR_VERSION >= 3
                 "attribute '%S' on '%s' can't be updated",
-                key, Py_TYPE(x)->tp_name);
-#else
-                "attribute '%s' on '%s' can't be updated",
-                PyString_AsString(key), Py_TYPE(l)->tp_name);
-#endif
+                key, Py_TYPE(l)->tp_name);
         }
       };
     }

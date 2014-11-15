@@ -29,10 +29,6 @@
 #define FREPPLE_CORE
 #include "frepple/utils.h"
 
-#if PY_MAJOR_VERSION >= 3
-extern PyTypeObject PyIOBase_Type;
-#endif
-
 namespace frepple
 {
 namespace utils
@@ -53,8 +49,6 @@ DECLARE_EXPORT void Object::beginElement(XMLInput& pIn, const Attribute& pAttr)
   PythonDictionary::read(pIn, pAttr, getDict());
 }
 
-
-#if PY_MAJOR_VERSION >= 3
 PyObject* PythonInterpreter::createModule()
 {
   static PyMethodDef freppleMethods[] = {
@@ -70,7 +64,6 @@ PyObject* PythonInterpreter::createModule()
   module = PyModule_Create(&frepplemodule);
   return module;
 }
-#endif
 
 
 DECLARE_EXPORT void PythonInterpreter::initialize()
@@ -78,10 +71,8 @@ DECLARE_EXPORT void PythonInterpreter::initialize()
   // Initialize the Python interpreter in case we are embedding it in frePPLe.
   if(!Py_IsInitialized())
   {
-#if PY_MAJOR_VERSION >= 3
     // This method needs to be called before the initialization
     PyImport_AppendInittab("frepple", &PythonInterpreter::createModule);
-#endif
     // The arg 0 indicates that the interpreter doesn't
     // implement its own signal handler
     Py_InitializeEx(0);
@@ -92,11 +83,6 @@ DECLARE_EXPORT void PythonInterpreter::initialize()
 
   // Capture global lock
   PyGILState_STATE state = PyGILState_Ensure();
-
-#if PY_MAJOR_VERSION < 3
-  // Create the frePPLe extension module
-  module = Py_InitModule3("frepple", NULL, "Access to the frePPLe library");
-#endif
 
   // Create the logging function.
   // In Python3 this also creates the frepple module, by calling the createModule callback.
@@ -227,11 +213,7 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
     throw RuntimeException("Error executing Python command");
   }
   Py_DECREF(v);
-#if PY_MAJOR_VERSION >= 3
   PyErr_Clear();
-#else
-  if (Py_FlushLine()) PyErr_Clear();   // TODO PYTHON3: verify this is ok to skip
-#endif
   // Release the global Python lock
   PyGILState_Release(state);
 }
@@ -239,24 +221,19 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
 
 DECLARE_EXPORT void PythonInterpreter::executeFile(string filename)
 {
-  // A file to be executed.
-  // We build an equivalent python command rather than using the
-  // PyRun_File function. On windows different versions of the
-  // VC compiler have a different structure for FILE, thus making it
-  // impossible to use a lib compiled in python version x when compiling
-  // under version y.  Quite ugly... :-( :-( :-(
+  // Replacing ' with \' to escape the quotes in the Python command
   for (string::size_type pos = filename.find_first_of("'", 0);
       pos < string::npos;
       pos = filename.find_first_of("'", pos))
   {
-    filename.replace(pos,1,"\\'",2); // Replacing ' with \'
+    filename.replace(pos,1,"\\'",2);
     pos+=2;
   }
-#if PY_MAJOR_VERSION >= 3
-  string cmd = "exec(compile(open(r'" + filename + "').read(), r'" + filename + "', 'exec'))";
-#else
-  string cmd = "execfile(r'" + filename + "')\n";
-#endif
+
+  // Execute the Python script
+  string cmd = "with open(r'" + filename
+    + "', 'rb') as f: exec(compile(f.read(), r'" + filename
+    + "', 'exec'), globals(), locals())";
   execute(cmd.c_str());
 }
 
@@ -391,7 +368,6 @@ const PyTypeObject PythonType::PyTypeObjectTemplate =
   0,  /* tp_alloc */
   0,  /* CAN BE UPDATED tp_new */
   0,  /* tp_free */
-#if PY_MAJOR_VERSION > 3
   0, /* tp_is_gc */
   0, /* tp_bases */
   0, /* tp_mro */
@@ -399,7 +375,6 @@ const PyTypeObject PythonType::PyTypeObjectTemplate =
   0, /* tp_subclasses */
   0, /* tp_weaklist */
   0, /* tp_del */
-#endif
   0  /* tp_version_tag */
 };
 
@@ -444,11 +419,7 @@ DECLARE_EXPORT Date PythonObject::getDate() const
         PyDateTime_GET_MONTH(obj),
         PyDateTime_GET_DAY(obj)
         );
-#if PY_MAJOR_VERSION >= 3
   else if (!PyUnicode_Check(obj))
-#else
-  else if (PyString_Check(obj))
-#endif
   {
     if (PyUnicode_Check(obj))
     {
@@ -456,11 +427,7 @@ DECLARE_EXPORT Date PythonObject::getDate() const
       const_cast<PyObject*&>(obj) =
         PyUnicode_AsEncodedString(obj, "UTF-8", "ignore");
     }
-#if PY_MAJOR_VERSION >= 3
     return Date(PyBytes_AsString(PyObject_Str(obj)));
-#else
-    return Date(PyString_AsString(PyObject_Str(obj)));
-#endif
   }
   else
     throw DataException(
@@ -643,13 +610,12 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
     // Write the output...
     if (filearg)
     {
-#if PY_MAJOR_VERSION >= 3
-      if (PyObject_IsInstance(filearg, (PyObject*)&PyIOBase_Type))
-#else
-      if (PyFile_Check(filearg))
-#endif
+      _Py_IDENTIFIER(write);
+      PyObject *writer = _PyObject_GetAttrId(filearg, &PyId_write);
+      if (writer)
       {
         // ... to a file
+        Py_DECREF(writer);
         return PyFile_WriteString(ch.str().c_str(), filearg) ?
             NULL : // Error writing to the file
             Py_BuildValue("");
@@ -871,30 +837,17 @@ extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *n
 {
   try
   {
-#if PY_MAJOR_VERSION >= 3
     if (!PyUnicode_Check(name))
-#else
-    if (!PyString_Check(name))
-#endif
     {
       PyErr_Format(PyExc_TypeError,
-#if PY_MAJOR_VERSION >= 3
           "attribute name must be string, not '%S'",
           Py_TYPE(name)->tp_name);
-#else
-          "attribute name must be string, not '%s'",
-          PyString_AsString(name));
-#endif
       return NULL;
     }
     PythonExtensionBase* cpp_self = static_cast<PythonExtensionBase*>(self);
-#if PY_MAJOR_VERSION >= 3
     PyObject* name_utf8 = PyUnicode_AsUTF8String(name);
     PyObject* result = cpp_self->getattro(Attribute(PyBytes_AsString(name_utf8)));
     Py_DECREF(name_utf8);
-#else
-    PyObject* result = cpp_self->getattro(Attribute(PyString_AsString(name)));
-#endif
     // Exit 1: Normal
     if (result) return result;
     // Exit 2: Exception occurred
@@ -929,33 +882,20 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
   try
   {
     // Pick up the field name
-#if PY_MAJOR_VERSION >= 3
     if (!PyUnicode_Check(name))
-#else
-    if (!PyString_Check(name))
-#endif
     {
       PyErr_Format(PyExc_TypeError,
-#if PY_MAJOR_VERSION >= 3
           "attribute name must be string, not '%S'",
           Py_TYPE(name)->tp_name);
-#else
-          "attribute name must be string, not '%s'",
-          PyString_AsString(name));
-#endif
       return -1;
     }
     PythonObject field(value);
 
     // Call the object to update the attribute
     PythonExtensionBase* cpp_self = static_cast<PythonExtensionBase*>(self);
-#if PY_MAJOR_VERSION >= 3
     PyObject* name_utf8 = PyUnicode_AsUTF8String(name);
     int result = cpp_self->setattro(Attribute(PyBytes_AsString(name_utf8)), field);
     Py_DECREF(name_utf8);
-#else
-    int result = cpp_self->setattro(Attribute(PyBytes_AsString(name)), field);
-#endif
     // Process 'OK' result
     if (!result) return 0;
 
@@ -974,13 +914,8 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
     // Process 'not OK' result - set python error string if it isn't set yet
     if (!PyErr_Occurred())
       PyErr_Format(PyExc_AttributeError,
-#if PY_MAJOR_VERSION >= 3
           "attribute '%S' on '%s' can't be updated",
           name, Py_TYPE(self)->tp_name);
-#else
-          "attribute '%s' on '%s' can't be updated",
-          PyString_AsString(name), Py_TYPE(self)->tp_name);
-#endif
     return -1;
   }
   catch (...)

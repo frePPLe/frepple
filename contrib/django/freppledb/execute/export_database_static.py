@@ -25,7 +25,6 @@ The code iterates over all objects in the C++ core engine, and creates
 database records with the information. The Django database wrappers are used
 to keep the code portable between different databases.
 '''
-from __future__ import print_function
 import datetime
 from time import time
 from threading import Thread

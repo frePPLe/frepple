@@ -141,13 +141,13 @@ class Command(BaseCommand):
         raise CommandError("Can't copy a schema on itself")
       if settings.DATABASES[source]['ENGINE'] != settings.DATABASES[destination]['ENGINE']:
         raise CommandError("Source and destination scenarios have a different engine")
-      if sourcescenario.status != u'In use':
+      if sourcescenario.status != 'In use':
         raise CommandError("Source scenario is not in use")
-      if destinationscenario.status != u'Free' and not force:
+      if destinationscenario.status != 'Free' and not force:
         raise CommandError("Destination scenario is not free")
 
       # Logging message - always logging in the default database
-      destinationscenario.status = u'Busy'
+      destinationscenario.status = 'Busy'
       destinationscenario.save()
 
       # Copying the data
@@ -240,8 +240,8 @@ class Command(BaseCommand):
         task.status = 'Failed'
         task.message = '%s' % e
         task.finished = datetime.now()
-      if destinationscenario and destinationscenario.status == u'Busy':
-        destinationscenario.status = u'Free'
+      if destinationscenario and destinationscenario.status == 'Busy':
+        destinationscenario.status = 'Free'
         destinationscenario.save()
       raise e
 

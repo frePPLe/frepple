@@ -24,7 +24,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.db.models.fields import CharField
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
-from django.utils.encoding import iri_to_uri, force_unicode
+from django.utils.encoding import iri_to_uri, force_text
 from django.utils.text import capfirst
 
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix
@@ -54,7 +54,7 @@ def search(request):
       if count > 0:
         result.append( {'value': None, 'label': (ungettext(
            '%(name)s - %(count)d match',
-           '%(name)s - %(count)d matches', count) % {'name': force_unicode(cls._meta.verbose_name), 'count': count}).capitalize()
+           '%(name)s - %(count)d matches', count) % {'name': force_text(cls._meta.verbose_name), 'count': count}).capitalize()
            })
         result.extend([ {
           'label': cls._meta.object_name.lower(),
@@ -65,7 +65,7 @@ def search(request):
   # Construct reply
   return HttpResponse(
      mimetype='application/json; charset=%s' % settings.DEFAULT_CHARSET,
-     content=json.dumps(result, encoding=settings.DEFAULT_CHARSET, ensure_ascii=False)
+     content=json.dumps(result).encode(settings.DEFAULT_CHARSET)
      )
 
 
@@ -119,8 +119,8 @@ class PathReport(GridReport):
   def extra_context(reportclass, request, *args, **kwargs):
     return {
       'title': capfirst(
-        force_unicode(reportclass.objecttype._meta.verbose_name) + " " + args[0] +
-        ": " + force_unicode(reportclass.downstream and _("Where Used") or _("Supply Path"))
+        force_text(reportclass.objecttype._meta.verbose_name) + " " + args[0] +
+        ": " + force_text(reportclass.downstream and _("Where Used") or _("Supply Path"))
         ),
       'downstream': reportclass.downstream,
       'active_tab': reportclass.downstream and 'whereused' or 'supplypath',
@@ -318,7 +318,7 @@ def location_calendar(request, location):
     url = request.META.get('HTTP_REFERER')
     messages.add_message(
       request, messages.ERROR,
-      force_unicode(_('No availability calendar found'))
+      force_text(_('No availability calendar found'))
       )
     return HttpResponseRedirect(url)
   except:

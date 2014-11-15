@@ -17,7 +17,7 @@
 
 import operator
 
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.contrib.auth.models import Permission
 from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
@@ -51,14 +51,14 @@ class MenuItem:
     self.window = window
     self.excludeFromBulkOperations = model in EXCLUDE_FROM_BULK_OPERATIONS
 
-  def __unicode__(self):
+  def __str__(self):
     return self.name
 
   def has_permission(self, user):
     if self.report:
       # The menu item is a report class
       for perm in self.report.permissions:
-        if not user.has_perm(u"%s.%s" % (self.report.getAppLabel(), perm[0])):
+        if not user.has_perm("%s.%s" % (self.report.getAppLabel(), perm[0])):
           return False
       return True
     elif self.model:
@@ -188,10 +188,10 @@ class Menu:
     for i in self._groups:
       items = []
       for j in i[3]:
-        items.append( (j.index, capfirst(force_unicode(j.label)), j) )
+        items.append( (j.index, capfirst(force_text(j.label)), j) )
       # Sort by 1) id and 2) label. Note that the order can be different for each language!
       items.sort(key=operator.itemgetter(0, 1))
-      m.append( ( force_unicode(i[1]), items ))
+      m.append( ( force_text(i[1]), items ))
 
     # Put the new result in the cache and return
     self._cached_menu[language] = m

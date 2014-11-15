@@ -20,7 +20,7 @@ from django.contrib.admin.models import LogEntry
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from freppledb.common.dashboard import Dashboard, Widget
 
@@ -87,9 +87,9 @@ class RecentActionsWidget(Widget):
       else:
         raise "Unexpected log entry type"
       if entry.content_type:
-        result.append('<span class="mini">%s</span><br/>' % capfirst(force_unicode(_(entry.content_type.name))) )
+        result.append('<span class="mini">%s</span><br/>' % capfirst(force_text(_(entry.content_type.name))) )
       else:
-        result.append('<span class="mini">%s</span><br/>' % force_unicode(_('Unknown content')))
-    return result and '\n'.join(result) or force_unicode(_('None available'))
+        result.append('<span class="mini">%s</span><br/>' % force_text(_('Unknown content')))
+    return result and '\n'.join(result) or force_text(_('None available'))
 
 Dashboard.register(RecentActionsWidget)

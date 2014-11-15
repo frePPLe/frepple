@@ -459,14 +459,14 @@ var grid = {
               // Open the window
               window.open(url,'_blank');
               $('#popup').dialog().dialog('close');
-    }
+            }
           },
-    {
+          {
             text: gettext("Cancel"),
             click: function() { $(this).dialog("close"); }
-    }
+          }
           ]
-  });
+        });
     $('#timebuckets').dialog().dialog('close');
     $.jgrid.hideModal("#searchmodfbox_grid");
   },
@@ -480,15 +480,15 @@ var grid = {
     $( "#horizonstart" ).datepicker({
         showOtherMonths: true, selectOtherMonths: true,
         changeMonth:true, changeYear:true, yearRange: "c-1:c+5", dateFormat: 'yy-mm-dd'
-    });
+      });
     $( "#horizonend" ).datepicker({
         showOtherMonths: true, selectOtherMonths: true,
         changeMonth:true, changeYear:true, yearRange: "c-1:c+5", dateFormat: 'yy-mm-dd'
-  });
+      });
     $('#timebuckets').dialog({
        autoOpen: true, resizable: false, width: 390,
        buttons: [
-  {
+         {
            text: gettext("OK"),
            click: function() {
             // Compare old and new parameters
@@ -519,13 +519,13 @@ var grid = {
                 });
             // Reload the report
             window.location.href = window.location.href;
-  }
-    }
+            }
+           }
          },
-    {
+         {
            text: gettext("Cancel"),
            click: function() { $(this).dialog("close"); }
-      }
+         }
          ]
       });
   },
@@ -533,110 +533,110 @@ var grid = {
   //Display dialog for copying or deleting records
   showDelete : function()
   {
-  if ($('#delete_selected').hasClass("ui-state-disabled")) return;
-  var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
-  if (sel.length == 1)
-  {
-    // Redirect to a page for deleting a single entity
-    location.href = location.pathname + encodeURI(sel[0]) + '/delete/';
-  }
-  else if (sel.length > 0)
-  {
-    $('#popup').html(
-      interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false)
-      ).dialog({
-        title: gettext("Delete data"),
-        autoOpen: true,
-        resizable: false,
-        width: 'auto',
-        height: 'auto',
-        buttons: [
-          {
-            text: gettext("Confirm"),
-            click: function() {
-              $.ajax({
-                url: location.pathname,
-                data: JSON.stringify([{'delete': sel}]),
-                type: "POST",
-                contentType: "application/json",
-                success: function () {
-                  $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
-                  $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
-                  $('.cbox').prop("checked", false);
-                  $('#cb_grid.cbox').prop("checked", false);
-                  $("#grid").trigger("reloadGrid");
-                  $('#popup').dialog('close');
-                  },
-                error: function (result, stat, errorThrown) {
-                  $('#popup').html(result.responseText)
-                    .dialog({
-                      title: gettext("Error deleting data"),
-                      autoOpen: true,
-                      resizable: true,
-                      width: 'auto',
-                      height: 'auto'
-                    });
-                  $('#timebuckets').dialog('close');
-                  $.jgrid.hideModal("#searchmodfbox_grid");
-                  }
-              });
-            }
-          },
-          {
-            text: gettext("Cancel"),
-            click: function() { $(this).dialog("close"); }
-          }
-          ]
-      });
-    $('#timebuckets').dialog().dialog('close');
-    $.jgrid.hideModal("#searchmodfbox_grid");
-  }
+    if ($('#delete_selected').hasClass("ui-state-disabled")) return;
+    var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
+    if (sel.length == 1)
+    {
+      // Redirect to a page for deleting a single entity
+      location.href = location.pathname + encodeURI(sel[0]) + '/delete/';
+    }
+    else if (sel.length > 0)
+    {
+     $('#popup').html(
+       interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false)
+       ).dialog({
+         title: gettext("Delete data"),
+         autoOpen: true,
+         resizable: false,
+         width: 'auto',
+         height: 'auto',
+         buttons: [
+           {
+             text: gettext("Confirm"),
+             click: function() {
+               $.ajax({
+                 url: location.pathname,
+                 data: JSON.stringify([{'delete': sel}]),
+                 type: "POST",
+                 contentType: "application/json",
+                 success: function () {
+                   $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
+                   $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
+                   $('.cbox').prop("checked", false);
+                   $('#cb_grid.cbox').prop("checked", false);
+                   $("#grid").trigger("reloadGrid");
+                   $('#popup').dialog('close');
+                   },
+                 error: function (result, stat, errorThrown) {
+                   $('#popup').html(result.responseText)
+                     .dialog({
+                       title: gettext("Error deleting data"),
+                       autoOpen: true,
+                       resizable: true,
+                       width: 'auto',
+                       height: 'auto'
+                     });
+                   $('#timebuckets').dialog('close');
+                   $.jgrid.hideModal("#searchmodfbox_grid");
+                   }
+               });
+             }
+           },
+           {
+             text: gettext("Cancel"),
+             click: function() { $(this).dialog("close"); }
+           }
+           ]
+       });
+     $('#timebuckets').dialog().dialog('close');
+     $.jgrid.hideModal("#searchmodfbox_grid");
+   }
   },
 
   showCopy: function()
   {
-  if ($('#copy_selected').hasClass("ui-state-disabled")) return;
-  var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
-  if (sel.length > 0)
-  {
-    $('#popup').html(
-      interpolate(gettext('You are about to duplicate %s objects'), [sel.length], false)
-      ).dialog({
-        title: gettext("Copy data"),
-        autoOpen: true,
-        resizable: false,
-        width: 'auto',
-        height: 'auto',
-        buttons: [
-          {
-            text: gettext("Confirm"),
-            click: function() {
-              $.ajax({
-                url: location.pathname,
-                data: JSON.stringify([{'copy': sel}]),
-                type: "POST",
-                contentType: "application/json",
-                success: function () {
-                  $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
-                  $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
-                  $('.cbox').prop("checked", false);
-                  $('#cb_grid.cbox').prop("checked", false);
-                  $("#grid").trigger("reloadGrid");
-                  $('#popup').dialog().dialog('close');
-                  },
-                error: function (result, stat, errorThrown) {
-                  $('#popup').html(result.responseText)
-                    .dialog({
-                      title: gettext("Error copying data"),
-                      autoOpen: true,
-                      resizable: true,
-                      width: 'auto',
-                      height: 'auto'
-                    });
-                  $('#timebuckets').dialog().dialog('close');
-                  $.jgrid.hideModal("#searchmodfbox_grid");
-                  }
-              });
+   if ($('#copy_selected').hasClass("ui-state-disabled")) return;
+   var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
+   if (sel.length > 0)
+   {
+     $('#popup').html(
+       interpolate(gettext('You are about to duplicate %s objects'), [sel.length], false)
+       ).dialog({
+         title: gettext("Copy data"),
+         autoOpen: true,
+         resizable: false,
+         width: 'auto',
+         height: 'auto',
+         buttons: [
+           {
+             text: gettext("Confirm"),
+             click: function() {
+               $.ajax({
+                 url: location.pathname,
+                 data: JSON.stringify([{'copy': sel}]),
+                 type: "POST",
+                 contentType: "application/json",
+                 success: function () {
+                   $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
+                   $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
+                   $('.cbox').prop("checked", false);
+                   $('#cb_grid.cbox').prop("checked", false);
+                   $("#grid").trigger("reloadGrid");
+                   $('#popup').dialog().dialog('close');
+                   },
+                 error: function (result, stat, errorThrown) {
+                   $('#popup').html(result.responseText)
+                     .dialog({
+                       title: gettext("Error copying data"),
+                       autoOpen: true,
+                       resizable: true,
+                       width: 'auto',
+                       height: 'auto'
+                     });
+                   $('#timebuckets').dialog().dialog('close');
+                   $.jgrid.hideModal("#searchmodfbox_grid");
+                   }
+               });
              }
            },
            {
@@ -964,7 +964,7 @@ function import_show(url)
           click: function() { $(this).dialog("close"); }
         }
         ]
-      });
+    });
   $('#timebuckets').dialog().dialog('close');
   $.jgrid.hideModal("#searchmodfbox_grid");
 }
@@ -1014,19 +1014,19 @@ function selectDatabase()
 //----------------------------------------------------------------------------
 
 $.fn.bindFirst = function(name, fn) {
-    // bind as you normally would
-    // don't want to miss out on any jQuery magic
-    this.on(name, fn);
+  // bind as you normally would
+  // don't want to miss out on any jQuery magic
+  this.on(name, fn);
 
-    // Thanks to a comment by @Martin, adding support for
-    // namespaced events too.
-    this.each(function() {
-        var handlers = $._data(this, 'events')[name.split('.')[0]];
-        // take out the handler we just inserted from the end
-        var handler = handlers.pop();
-        // move it at the beginning
-        handlers.splice(0, 0, handler);
-    });
+  // Thanks to a comment by @Martin, adding support for
+  // namespaced events too.
+  this.each(function() {
+    var handlers = $._data(this, 'events')[name.split('.')[0]];
+    // take out the handler we just inserted from the end
+    var handler = handlers.pop();
+    // move it at the beginning
+    handlers.splice(0, 0, handler);
+  });
 };
 
 

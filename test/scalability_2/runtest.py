@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2007 by Johan De Taeye, frePPLe bvba
 #
@@ -36,7 +36,6 @@
 # path parameter.
 # In each cluster a single item is defined, and a parametrizable number of
 # demands is placed on the cluster.
-from __future__ import print_function
 import os, os.path, sys, random
 
 

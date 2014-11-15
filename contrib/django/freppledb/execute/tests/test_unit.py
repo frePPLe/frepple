@@ -80,7 +80,7 @@ class execute_multidb(TransactionTestCase):
     # Find out which databases to use
     db1 = DEFAULT_DB_ALIAS
     db2 = None
-    for i in settings.DATABASES.keys():
+    for i in settings.DATABASES:
       if i != DEFAULT_DB_ALIAS:
         db2 = i
         break

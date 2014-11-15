@@ -11,14 +11,13 @@
   <current>2009-01-01T00:00:00</current>
 
 <?python
-from __future__ import print_function
-import sys, os
+import sys
+import os
 myvariable = 4
 print('1. defining my variable:', myvariable)
 ?>
 
 <?python
-from __future__ import print_function
 print('2. retrieving a variable:', myvariable)
 print('3. calling a function:', end="")
 result = my_function(myvariable)
@@ -79,7 +78,6 @@ frepple.saveXMLfile("output.1.xml")
 #
 # A simple user interface.
 #
-from __future__ import print_function
 def UI():
   import Tkinter
 
@@ -118,7 +116,6 @@ def UI():
 #
 # A simple web server.
 #
-from __future__ import print_function
 def webserver():
   import SimpleHTTPServer, SocketServer
   PORT = 8000
@@ -153,7 +150,6 @@ def webserver():
 #
 # An interactive debugging prompt.
 #
-from __future__ import print_function
 def debug():
   import code
   code.interact("Interactive debugging prompt (use CTRL-Z to exit)")
@@ -168,7 +164,6 @@ def debug():
 # The user interface, HTTP server and the debugger are now running
 # together in different threads.
 #
-from __future__ import print_function
 from threading import Thread
 class task(Thread):
   def __init__(self, f):

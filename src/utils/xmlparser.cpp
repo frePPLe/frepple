@@ -675,15 +675,25 @@ DECLARE_EXPORT void XMLOutput::writeElementWithHeader(const Keyword& tag, const 
 }
 
 
-DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& tag)
+DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& t)
 {
-  // There should not be any saved objects yet
-  if (numObjects > 0 || !parentObject || !currentObject)
-    throw LogicException("Writing invalid header to XML document");
-
   // Write the first line and the opening tag
   writeString(getHeaderStart());
-  BeginObject(tag, getHeaderAtts());
+  *m_fp << indentstring << t.stringStartElement() << " " << headerAtts << ">\n";
+  incIndent();
+
+  // Fake a dummy parent
+  numParents += 2;
+}
+
+
+DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& t, const Keyword& t1, const string& val1)
+{
+  // Write the first line and the opening tag
+  writeString(getHeaderStart());
+  *m_fp << indentstring << t.stringStartElement() << " " << headerAtts
+    << t1.stringAttribute() << val1 << "\">\n";
+  incIndent();
 
   // Fake a dummy parent
   numParents += 2;

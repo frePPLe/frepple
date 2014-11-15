@@ -22,7 +22,6 @@ PostgreSQL database.
 The code in this file is executed NOT by the Django web application, but by the
 embedded Python interpreter from the frePPLe engine.
 '''
-from __future__ import print_function
 from datetime import timedelta, datetime, date
 from time import time
 import os

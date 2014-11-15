@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+#!/usr/bin/python3
 #
 # Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba
 #
@@ -17,15 +16,19 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import sys, os, os.path
-sys.path.append(os.path.join(os.path.split(__file__)[0],'..','django'))
-import py2exe, django, freppledb
-from freppledb import VERSION
 from distutils.core import setup
+import django
+import os
+import os.path
+import py2exe
+import sys
+
+sys.path.append(os.path.join(os.path.split(__file__)[0],'..','django'))
+import freppledb
 
 # Add default command lines
 if len(sys.argv) == 1:
-    sys.argv.append("py2exe")
+  sys.argv.append("py2exe")
 
 # Figure out where the django and frepple directories are
 djangodirectory = django.__path__[0]
@@ -33,24 +36,20 @@ freppledirectory = freppledb.__path__[0]
 
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment
-            'django', 'email', 'cherrypy.wsgiserver', 'csv',
-            'htmlentitydefs', 'HTMLParser', 'markupbase',
+            'django', 'email', 'cherrypy.wsgiserver', 'sqlite3',
             # Added for PostgreSQL
-            'psycopg2', 'psycopg2.extensions',
+            'psycopg2',
             # Added to be able to connect to SQL Server
             'adodbapi',
-            # Required for the python initialization
-            'site',
             # Required for reading and writing spreadsheets
             'openpyxl',
             # Added to package a more complete python library with frePPLe
-            'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',
-            'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer',
+            'urllib', 'multiprocessing', 'asyncio',
             # Added for unicode and internationalization
             'encodings',
            ]
-includes = []
-excludes = ['pydoc', 'Tkinter', 'tcl', 'Tkconstants', 'freppledb', 'cx_Oracle', 'MySQLdb']
+includes = ['html.parser', 'csv', 'poplib', 'imaplib', 'telnetlib']
+excludes = ['django.utils.six.moves', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb']
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
            # Not using psycopg (using psycopg2 instead)
@@ -126,16 +125,14 @@ setup(
           "excludes": excludes,
           "includes": includes,
           "ignores": ignores,
-          # ignore this file that is useful only in archaic windows versions
-          "dll_excludes": ['w9xpopen.exe'],
           }},
     data_files = data_files,
     # Attributes
-    version = VERSION,
+    version = freppledb.VERSION,
     description = "frePPLe web application",
     name = "frePPLe",
-    author = "www.frepple.com",
-    url = "http://www.frepple.com",
+    author = "frepple.com",
+    url = "http://frepple.com",
     # Target to build a Windows service
     service = [{
        "modules":["freppleservice"],

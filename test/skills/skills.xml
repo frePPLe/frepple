@@ -98,8 +98,6 @@
   </demands>
 
 <?python
-from __future__ import print_function
-
 print("SAVING MODEL IN XML FORMAT")
 frepple.saveXMLfile("output.1.xml")
 	

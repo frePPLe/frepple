@@ -216,8 +216,6 @@
   </demands>
 
 <?python
-from __future__ import print_function
-
 allowed = [
   ['A1', 'B2', 'C1'],
   ['A1', 'B2', 'C2'],

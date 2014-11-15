@@ -7,4 +7,4 @@ SUBDIRS = buffer_batch cluster custom_fields scalability_1 scalability_2 scalabi
 EXTRA_DIST = runtest.py
 
 check:
-	`pwd`/runtest.py ${TESTARGS}
+	$(PYTHON) runtest.py ${TESTARGS}

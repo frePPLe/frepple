@@ -5,7 +5,6 @@
   </description>
   <current>2009-01-01T00:00:00</current>
 <?python
-from __future__ import print_function
 
 def printmodel():
   '''This function prints out information about the model to the output file'''

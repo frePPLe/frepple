@@ -479,7 +479,6 @@
   </demands>
 
 <?python
-from __future__ import print_function
 print("CREATING CONSTRAINED PLAN")
 sol = frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2, lazydelay=12*3600)
 sol.solve()

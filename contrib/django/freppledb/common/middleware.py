@@ -83,7 +83,7 @@ class DatabaseSelectionMiddleware(object):
     for i in Scenario.objects.all().only('name', 'status'):
       try:
         if settings.DATABASES[i.name]['regexp'].match(request.path) and i.name != DEFAULT_DB_ALIAS:
-          if i.status != u'In use':
+          if i.status != 'In use':
             raise Http404('Scenario not in use')
           request.prefix = '/%s' % i.name
           request.path_info = request.path_info[len(request.prefix):]

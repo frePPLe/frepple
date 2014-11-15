@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from __future__ import print_function
-
 from django.db import models, transaction, DEFAULT_DB_ALIAS
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -49,7 +47,7 @@ class Task(models.Model):
   message = models.TextField(_('message'), max_length=200, null=True, editable=False)
   user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
 
-  def __unicode__(self):
+  def __str__(self):
     return "%s - %s - %s" % (self.id, self.name, self.status)
 
   class Meta:
@@ -80,7 +78,7 @@ class Scenario(models.Model):
     )
   lastrefresh = models.DateTimeField(_('last refreshed'), null=True, editable=False)
 
-  def __unicode__(self):
+  def __str__(self):
     return self.name
 
   @staticmethod
@@ -97,9 +95,9 @@ class Scenario(models.Model):
       for db in dbs:
         if db not in scs:
           if db == DEFAULT_DB_ALIAS:
-            Scenario(name=db, status=u"In use", description='Production database').save()
+            Scenario(name=db, status="In use", description='Production database').save()
           else:
-            Scenario(name=db, status=u"Free").save()
+            Scenario(name=db, status="Free").save()
       transaction.commit()
     except Exception as e:
       logger.error("Error synchronizing the scenario table with the settings: %s" % e)
@@ -125,5 +123,5 @@ def sync_handler(sender, **kwargs):
   # A new user is created in the default database.
   # We create the same user in all scenarios that are in use. Otherwise the user can't create
   # comments or edit objects in these what-if scenarios.
-  for sc in Scenario.objects.all().filter(status=u'In use'):
+  for sc in Scenario.objects.all().filter(status='In use'):
     kwargs['instance'].save(using=sc.name)

@@ -80,7 +80,7 @@ class DurationFormField(fields.RegexField):
     if isinstance(value, numericTypes) or value is None:
       # Empty fields and numeric values pass directly
       return value
-    if value == u'':
+    if value == '':
       return None
 
     # Parse the input string to a decimal number, representing the number of seconds
@@ -121,9 +121,7 @@ class DurationField(models.DecimalField):
 # This code is very loosely inspired on the code found at:
 #    https://github.com/bradjasper/django-jsonfield
 
-class JSONField(models.TextField):
-
-  __metaclass__ = models.SubfieldBase
+class JSONField(models.TextField, metaclass=models.SubfieldBase):
 
   def __init__(self, *args, **kwargs):
     self.dump_kwargs = kwargs.pop('dump_kwargs', {

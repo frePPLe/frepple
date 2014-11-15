@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # Copyright (C) 2009-2013 by Johan De Taeye, frePPLe bvba
 #
@@ -58,7 +58,6 @@
 #    Visual Studio C++ compiler.
 #    Tests of type 1 are skipped in this case.
 #
-from __future__ import print_function
 import unittest, os, os.path, getopt, sys, glob
 from subprocess import Popen, STDOUT, PIPE
 
@@ -270,7 +269,7 @@ class freppleTest (unittest.TestCase):
 
     def runScript(self):
         '''Running a test script'''
-        self.runProcess('python %s' % os.path.join('.','runtest.py'))
+        self.runProcess('python3 %s' % os.path.join('.','runtest.py'))
 
     def runXML(self):
         '''Running the command line tool with an XML or Python file as argument.'''
@@ -306,8 +305,8 @@ def diff(f1, f2):
   The default one in the package isn't doing the job for us: we want to
   ignore differences in the file ending.
   '''
-  fp1 = open(f1, 'rt')
-  fp2 = open(f2, 'rt')
+  fp1 = open(f1, 'rt', encoding="utf-8")
+  fp2 = open(f2, 'rt', encoding="utf-8")
   while True:
     b1 = fp1.readline()
     b2 = fp2.readline()

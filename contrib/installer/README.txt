@@ -26,7 +26,7 @@ To create the installer, the following steps are required:
    Adjust the path appropriately, if required.
 
 6) Install the following Python extensions:
-      - py2exe
+      - py2exe (0.9.2 for Python 3, needs the patch from http://sourceforge.net/p/py2exe/svn/751/)
       - django (needs patching!)
       - cherrypy
       - psycopg2

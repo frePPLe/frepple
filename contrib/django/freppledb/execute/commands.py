@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import sys
 from datetime import datetime
@@ -63,13 +62,17 @@ def logProgress(val, database=DEFAULT_DB_ALIAS):
     transaction.leave_transaction_management(using=database)
 
 
-def logMessage(msg, database=DEFAULT_DB_ALIAS):
+def logMessage(msg, status=None, database=DEFAULT_DB_ALIAS):
   global task
   if task:
     transaction.enter_transaction_management(managed=False, using=database)
     transaction.managed(False, using=database)
     try:
       task.message = msg
+      if status:
+        if status == 'Done':
+          task.finished = datetime.now()
+        task.status = status
       task.save(using=database)
     finally:
       transaction.commit(using=database)

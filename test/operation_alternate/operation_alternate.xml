@@ -147,7 +147,6 @@
   -->
 
 <?python
-from __future__ import print_function
 print("CREATING CONSTRAINED PLAN")
 sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2)
 sol.solve()

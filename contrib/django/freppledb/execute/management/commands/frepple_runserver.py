@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from __future__ import print_function
 import socket
 import sys
 from threading import Thread
@@ -118,16 +117,15 @@ class Command(BaseCommand):
 class CheckUpdates(Thread):
   def run(self):
     try:
-      import urllib
-      import urllib2
+      import urllib.request, urllib.parse
       import re
       values = {
         'platform': sys.platform,
         'executable': sys.executable,
         'version': VERSION,
         }
-      request = urllib2.Request('http://www.frepple.com/usage.php?' + urllib.urlencode(values))
-      response = urllib2.urlopen(request).read()
+      request = urllib.request.Request('http://www.frepple.com/usage.php?' + urllib.parse.urlencode(values))
+      response = urllib.request.urlopen(request).read()
       match = re.search("<release>(.*)</release>", response)
       release = match.group(1)
       if release > VERSION:

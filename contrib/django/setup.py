@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+#!/usr/bin/python3
 #
 # Copyright (C) 2009-2013 by Johan De Taeye, frePPLe bvba
 #

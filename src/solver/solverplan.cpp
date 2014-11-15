@@ -222,11 +222,12 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   // This deletion is not multi-threaded... But on the other hand we need to
   // loop through the operations only once (rather than as many times as there
   // are clusters)
-  // A multi-threaded alternative would be to hash the operations here, and
-  // then delete in each thread.
-  if (getLogLevel()>0) logger << "Deleting previous plan" << endl;
-  for (Operation::iterator e=Operation::begin(); e!=Operation::end(); ++e)
-    e->deleteOperationPlans();
+  if (getErasePreviousFirst())
+  {
+    if (getLogLevel()>0) logger << "Deleting previous plan" << endl;
+    for (Operation::iterator e=Operation::begin(); e!=Operation::end(); ++e)
+      e->deleteOperationPlans();
+  }
 
   // Solve in parallel threads.
   // When not solving in silent and autocommit mode, we only use a single
@@ -421,8 +422,7 @@ DECLARE_EXPORT PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
     {
       // Incrementally plan a single demand
       sol->setAutocommit(false);
-      sol->commands.sol = sol;
-      static_cast<Demand*>(dem)->solve(*sol, &(sol->commands));
+      static_cast<Demand*>(dem)->solve(*sol, &(sol->getCommands()));
     }
   }
   catch(...)

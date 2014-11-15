@@ -17,7 +17,6 @@
   </items>
   
 <?python
-from __future__ import print_function
 from datetime import date
 it = frepple.item(name="test")
 it.new_boolean_field = True

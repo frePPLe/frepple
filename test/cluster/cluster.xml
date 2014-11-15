@@ -295,8 +295,6 @@
   </demands>
 
 <?python
-from __future__ import print_function
-
 #
 actual_to_expected = {}
 expected_to_actual = {}

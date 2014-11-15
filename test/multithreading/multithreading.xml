@@ -67,8 +67,6 @@
   </demands>
 
 <?python
-from __future__ import print_function
-
 # Skip this test by default!!!
 sys.exit(0)
 

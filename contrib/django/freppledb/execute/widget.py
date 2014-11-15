@@ -17,7 +17,7 @@
 
 from django.middleware.csrf import get_token
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from freppledb.common.dashboard import Dashboard, Widget
 
@@ -39,6 +39,6 @@ class ExecuteWidget(Widget):
       <input type="hidden" name="constraint" value="15"/>
       <input class="button" type="submit" value="%s"/>
       </form></div>
-      ''' % (_thread_locals.request.prefix, get_token(_thread_locals.request), force_unicode(_("Create a plan")))
+      ''' % (_thread_locals.request.prefix, get_token(_thread_locals.request), force_text(_("Create a plan")))
 
 Dashboard.register(ExecuteWidget)

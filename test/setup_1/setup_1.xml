@@ -228,7 +228,6 @@
   </demands>
 
 <?python
-from __future__ import print_function
 
 # Testing the Python API of the setup matrix
 print("")

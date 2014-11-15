@@ -32,7 +32,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_protect
 from django.http import Http404, HttpResponseRedirect, HttpResponseServerError, HttpResponse, StreamingHttpResponse
 from django.contrib import messages
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from freppledb.execute.models import Task, Scenario
 from freppledb.common.report import exportWorkbook, importWorkbook
@@ -129,7 +129,7 @@ def LaunchTask(request, action):
   except Exception as e:
     messages.add_message(
       request, messages.ERROR,
-      force_unicode(_('Failure launching action: %(msg)s') % {'msg': e})
+      force_text(_('Failure launching action: %(msg)s') % {'msg': e})
       )
     return HttpResponseRedirect('%s/execute/' % request.prefix)
 
@@ -161,12 +161,12 @@ def wrapTask(request, action):
     task = Task(name='generate plan', submitted=now, status='Waiting', user=request.user)
     task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype'))
     env = []
-    if request.POST.get('odoo_read', None) == u'1':
+    if request.POST.get('odoo_read', None) == '1':
       env.append("odoo_read")
       request.session['odoo_read'] = True
     else:
       request.session['odoo_read'] = False
-    if request.POST.get('odoo_write', None) == u'1':
+    if request.POST.get('odoo_write', None) == '1':
       env.append("odoo_write")
       request.session['odoo_write'] = True
     else:
@@ -205,7 +205,7 @@ def wrapTask(request, action):
         raise Exception('Missing execution privileges')
       source = request.POST.get('source', DEFAULT_DB_ALIAS)
       for sc in Scenario.objects.all():
-        if request.POST.get(sc.name, 'off') == 'on' and sc.status == u'Free':
+        if request.POST.get(sc.name, 'off') == 'on' and sc.status == 'Free':
           task = Task(name='copy scenario', submitted=now, status='Waiting', user=request.user, arguments="%s %s" % (source, sc.name))
           task.save()
     elif 'release' in request.POST:
@@ -213,8 +213,8 @@ def wrapTask(request, action):
       if not request.user.has_perm('execute.release_scenario'):
         raise Exception('Missing execution privileges')
       for sc in Scenario.objects.all():
-        if request.POST.get(sc.name, 'off') == u'on' and sc.status != u'Free':
-          sc.status = u'Free'
+        if request.POST.get(sc.name, 'off') == 'on' and sc.status != 'Free':
+          sc.status = 'Free'
           sc.lastrefresh = now
           sc.save()
           if request.database == sc.name:
@@ -348,8 +348,8 @@ def logfile(request):
         # Too big to display completely
         f.seek(-50000, os.SEEK_END)
         d = f.read(50000)
-        d = d[d.index('\n'):] # Strip the first, incomplete line
-        logdata = force_unicode(_("Displaying only the last 50K from the log file")) + '...\n\n...' + force_unicode(d)
+        d = d[d.index(b'\n'):] # Strip the first, incomplete line
+        logdata = force_text(_("Displaying only the last 50K from the log file")) + '...\n\n...' + force_text(d)
       else:
         # Displayed completely
         f.seek(0, os.SEEK_SET)

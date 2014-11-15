@@ -153,7 +153,6 @@
   </demands>
 
 <?python
-from __future__ import print_function
 print("CREATING CONSTRAINED PLAN - safety stock last")
 solver = frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2)
 solver.plansafetystockfirst = False

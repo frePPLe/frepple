@@ -64,7 +64,7 @@ class Dashboard:
           import_module('%s.widget' % app)
         except ImportError as e:
           # Silently ignore if it's the widget module which isn't found
-          if str(e) != 'No module named widget':
+          if str(e) not in ("No module named %s.widget" % app, "No module named '%s.widget'" % app):
             raise e
     return cls.__registry__
 
@@ -87,7 +87,7 @@ class Dashboard:
   def createWidgetPermissions(cls, app):
     # Registered all permissions defined by dashboard widgets
     content_type = None
-    for widget in cls.buildList().itervalues():
+    for widget in cls.buildList().values():
       if widget.__module__.startswith(app):
         # Loop over all permissions of the widget class
         for k in widget.permissions:
@@ -146,7 +146,7 @@ class Widget:
   @classmethod
   def has_permission(cls, user):
     for perm in cls.permissions:
-      if not user.has_perm(u"%s.%s" % (cls.getAppLabel(), perm[0])):
+      if not user.has_perm("%s.%s" % (cls.getAppLabel(), perm[0])):
         return False
     return True
 

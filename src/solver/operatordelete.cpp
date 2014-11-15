@@ -25,7 +25,7 @@ namespace frepple
 {
 
 
-const MetaClass* OperatorDelete::metadata;
+DECLARE_EXPORT const MetaClass* OperatorDelete::metadata;
 
 
 int OperatorDelete::initialize()
@@ -43,7 +43,7 @@ int OperatorDelete::initialize()
 }
 
 
-void OperatorDelete::solve(void *v)
+DECLARE_EXPORT void OperatorDelete::solve(void *v)
 {
    // Loop over all buffers Push to stack, in order of level TODO
 
@@ -57,7 +57,7 @@ void OperatorDelete::solve(void *v)
 }
 
 
-void OperatorDelete::solve(OperationPlan* o, void* v)
+DECLARE_EXPORT void OperatorDelete::solve(OperationPlan* o, void* v)
 {
   if (!o) return; // Null argument passed
 
@@ -80,7 +80,7 @@ void OperatorDelete::solve(OperationPlan* o, void* v)
 }
 
 
-void OperatorDelete::solve(const Resource* r, void* v)
+DECLARE_EXPORT void OperatorDelete::solve(const Resource* r, void* v)
 {
   if (getLogLevel()>0)
     logger << "Scanning " << r << " for excess" << endl;
@@ -104,7 +104,7 @@ void OperatorDelete::solve(const Resource* r, void* v)
 }
 
 
-void OperatorDelete::solve(const Demand* d, void* v)
+DECLARE_EXPORT void OperatorDelete::solve(const Demand* d, void* v)
 {
   if (getLogLevel()>1)
     logger << "Scanning " << d << " for excess" << endl;
@@ -203,7 +203,14 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       continue;
     }
     assert(fp);
-    ++fiter;  // Increment the iterator here, because it can get invalidated later on
+
+    // Increment the iterator here, because it can get invalidated later on
+    while (
+      fiter != fend
+      && fiter->getType() == 1
+      && static_cast<const FlowPlan*>(&*fiter)->getOperationPlan()->getTopOwner()==fp->getOperationPlan()->getTopOwner()
+      )
+        ++fiter;
     if (cur_excess >= fp->getQuantity() - ROUNDING_ERROR)
     {
       // The complete operationplan is excess.

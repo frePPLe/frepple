@@ -55,13 +55,16 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       logger << endl;
     }
 
-    // Unattach previous delivery operationplans.
-    // Locked operationplans will NOT be deleted, and a part of the demand can
-    // still remain planned.
-    const_cast<Demand*>(l)->deleteOperationPlans(false, data);
+    // Unattach previous delivery operationplans, if required.
+    if (data->getSolver()->getErasePreviousFirst())
+    {
+      // Locked operationplans will NOT be deleted, and a part of the demand can
+      // still remain planned.
+      const_cast<Demand*>(l)->deleteOperationPlans(false, data);
 
-    // Empty constraint list
-    const_cast<Demand*>(l)->getConstraints().clear();
+      // Empty constraint list
+      const_cast<Demand*>(l)->getConstraints().clear();
+    }
 
     // Track constraints or not
     data->logConstraints = (getPlanType() == 1);

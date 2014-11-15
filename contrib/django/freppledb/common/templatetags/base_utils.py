@@ -19,12 +19,13 @@ from decimal import Decimal
 import json
 
 from django.db import models
+from django.contrib.admin.util import unquote
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.template.loader import get_template
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
-from django.utils.encoding import iri_to_uri, force_unicode
+from django.utils.encoding import iri_to_uri, force_text
 from django.utils.html import escape
 
 from freppledb.execute.models import Scenario
@@ -84,7 +85,7 @@ class CrumbsNode(Node):
       # Don't handle the cockpit screen in the crumbs
       try:
         # Check if the same title is already in the crumbs.
-        title = unicode(title)
+        title = str(title)
         exists = False
         for i in cur:
           if i[0] == title:
@@ -103,7 +104,7 @@ class CrumbsNode(Node):
             '<span> &gt; <a href="%s%s%s">%s</a></span>' % (
               req.prefix, urlquote(req.path),
               req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
-              unicode(escape(title))
+              str(escape(title))
               ),
             req.path
             ))
@@ -218,17 +219,17 @@ class SelectDatabaseNode(Node):
       req = context['request']
     except:
       return ''  # No request found in the context
-    scenarios = Scenario.objects.filter(status=u'In use').values('name')
+    scenarios = Scenario.objects.filter(status='In use').values('name')
     if len(scenarios) <= 1:
       return ''
-    s = [u'<form>%s&nbsp;<select id="database" name="%s" onchange="selectDatabase()">' % (force_unicode(_("Model:")), req.database) ]
+    s = ['<form>%s&nbsp;<select id="database" name="%s" onchange="selectDatabase()">' % (force_text(_("Model:")), req.database) ]
     for i in scenarios:
       i = i['name']
       if i == req.database:
-        s.append(u'<option value="%s" selected="selected">%s</option>' % (i, i))
+        s.append('<option value="%s" selected="selected">%s</option>' % (i, i))
       else:
-        s.append(u'<option value="%s">%s</option>' % (i, i))
-    s.append(u'</select></form>')
+        s.append('<option value="%s">%s</option>' % (i, i))
+    s.append('</select></form>')
     return ''.join(s)
 
   def __repr__(self):
@@ -263,7 +264,7 @@ def duration(value):
   try:
     if value is None:
       return ''
-    value = Decimal(force_unicode(value))
+    value = Decimal(force_text(value))
     if value == 0:
       return '0 s'
     if value % 604800 == 0:
@@ -307,6 +308,11 @@ register.filter(object_name)
 def model_name(obj):
   return "%s.%s" % (obj._meta.app_label, obj._meta.model_name)
 register.filter(model_name)
+
+
+def admin_unquote(obj):
+  return unquote(obj)
+register.filter(admin_unquote)
 
 
 #

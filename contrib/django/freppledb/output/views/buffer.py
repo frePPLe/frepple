@@ -18,7 +18,7 @@
 from django.db import connections
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from freppledb.input.models import Buffer
 from freppledb.output.models import FlowPlan
@@ -51,8 +51,8 @@ class OverviewReport(GridPivot):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       return {
-        'title': capfirst(force_unicode(Buffer._meta.verbose_name) + " " + args[0]),
-        'post_title': ': ' + capfirst(force_unicode(_('plan'))),
+        'title': capfirst(force_text(Buffer._meta.verbose_name) + " " + args[0]),
+        'post_title': ': ' + capfirst(force_text(_('plan'))),
         }
     else:
       return {}

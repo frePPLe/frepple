@@ -85,7 +85,6 @@
 	</calendars>
 
 <?python
-from __future__ import print_function
 from datetime import datetime
 
 with open("output.1.xml","wt") as output:

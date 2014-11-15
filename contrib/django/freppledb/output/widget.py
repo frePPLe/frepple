@@ -15,12 +15,12 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from urllib import urlencode
+from urllib.parse import urlencode
 
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.text import capfirst
 from django.utils.http import urlquote
 
@@ -53,8 +53,8 @@ class LateOrdersWidget(Widget):
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_unicode(_("name"))), capfirst(force_unicode(_("due"))),
-        capfirst(force_unicode(_("planned date"))), capfirst(force_unicode(_("delay")))
+        capfirst(force_text(_("name"))), capfirst(force_text(_("due"))),
+        capfirst(force_text(_("planned date"))), capfirst(force_text(_("delay")))
         )
       ]
     for prob in Problem.objects.using(db).filter(name='late', entity='demand').order_by('startdate', '-weight')[:limit]:
@@ -92,7 +92,7 @@ class ShortOrdersWidget(Widget):
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_unicode(_("name"))), capfirst(force_unicode(_("due"))), capfirst(force_unicode(_("short")))
+        capfirst(force_text(_("name"))), capfirst(force_text(_("due"))), capfirst(force_text(_("short")))
         )
       ]
     for prob in Problem.objects.using(db).filter(name__gte='short', entity='demand').order_by('startdate')[:limit]:
@@ -128,9 +128,9 @@ class PurchaseQueueWidget(Widget):
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_unicode(_("operation"))), capfirst(force_unicode(_("startdate"))),
-        capfirst(force_unicode(_("enddate"))), capfirst(force_unicode(_("quantity"))),
-        capfirst(force_unicode(_("criticality")))
+        capfirst(force_text(_("operation"))), capfirst(force_text(_("startdate"))),
+        capfirst(force_text(_("enddate"))), capfirst(force_text(_("quantity"))),
+        capfirst(force_text(_("criticality")))
         )
       ]
     for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=False).order_by('startdate')[:limit]:
@@ -166,9 +166,9 @@ class ShippingQueueWidget(Widget):
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_unicode(_("demand"))), capfirst(force_unicode(_("customer"))),
-        capfirst(force_unicode(_("item"))), capfirst(force_unicode(_("quantity"))),
-        capfirst(force_unicode(_("plan date")))
+        capfirst(force_text(_("demand"))), capfirst(force_text(_("customer"))),
+        capfirst(force_text(_("item"))), capfirst(force_text(_("quantity"))),
+        capfirst(force_text(_("plan date")))
         )
       ]
     for dmdplan in Demand.objects.using(db).filter(planquantity__gt=0).order_by('plandate')[:limit]:
@@ -204,9 +204,9 @@ class ResourceQueueWidget(Widget):
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_unicode(_("resource"))), capfirst(force_unicode(_("operation"))),
-        capfirst(force_unicode(_("startdate"))), capfirst(force_unicode(_("enddate"))),
-        capfirst(force_unicode(_("quantity"))), capfirst(force_unicode(_("criticality")))
+        capfirst(force_text(_("resource"))), capfirst(force_text(_("operation"))),
+        capfirst(force_text(_("startdate"))), capfirst(force_text(_("enddate"))),
+        capfirst(force_text(_("quantity"))), capfirst(force_text(_("criticality")))
         )
       ]
     for ldplan in LoadPlan.objects.using(db).select_related().order_by('startdate')[:limit]:
@@ -237,8 +237,8 @@ class PurchaseAnalysisWidget(Widget):
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_unicode(_("operation"))), capfirst(force_unicode(_("end date"))),
-        capfirst(force_unicode(_("quantity"))), capfirst(force_unicode(_("criticality")))
+        capfirst(force_text(_("operation"))), capfirst(force_text(_("end date"))),
+        capfirst(force_text(_("quantity"))), capfirst(force_text(_("criticality")))
         )
       ]
     for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=True).order_by('criticality')[:limit]:
@@ -254,7 +254,7 @@ Dashboard.register(PurchaseAnalysisWidget)
 class AlertsWidget(Widget):
   name = "alerts"
   title = _("Alerts")
-  tooltip = _("Summary of all exceptions in the plan")
+  tooltip = _("Overview of all alerts in the plan")
   permissions = (("view_problem_report", "Can view problem report"),)
   async = True
   url = '/problem/'
@@ -264,8 +264,8 @@ class AlertsWidget(Widget):
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_unicode(_("resource"))), capfirst(force_unicode(_("count"))),
-        capfirst(force_unicode(_("weight")))
+        capfirst(force_text(_("resource"))), capfirst(force_text(_("count"))),
+        capfirst(force_text(_("weight")))
         )
       ]
     cursor = connections[request.database].cursor()
@@ -606,7 +606,7 @@ class DeliveryPerformanceWidget(Widget):
     val = cursor.fetchone()[0]
     result = [
       '<div style="text-align: center"><span id="otd"></span></div>',
-      '<span id="otd_label" style="display:none">%s</span>' % force_unicode(_("On time delivery")),
+      '<span id="otd_label" style="display:none">%s</span>' % force_text(_("On time delivery")),
       '<span id="otd_value" style="display:none">%s</span>' % val,
       '<span id="otd_green" style="display:none">%s</span>' % green,
       '<span id="otd_yellow" style="display:none">%s</span>' % yellow

@@ -57,6 +57,10 @@ class Command(BaseCommand):
       '--env', dest='env', type='string',
       help='A comma separated list of extra settings passed as environment variables to the engine'
       ),
+    make_option(
+      '--background', dest='background', action='store_true', default=False,
+      help='Run the planning engine in the background (default = False)'
+      ),
   )
   help = "Runs frePPLe to generate a plan"
 
@@ -118,6 +122,8 @@ class Command(BaseCommand):
             os.environ[j[0]] = j[1]
       else:
         task.arguments = "--constraint=%d --plantype=%d" % (constraint, plantype)
+      if options['background']:
+        task.arguments += " --background"
 
       # Log task
       task.save(using=database)
@@ -145,21 +151,32 @@ class Command(BaseCommand):
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
       if os.path.exists(os.path.join(settings.FREPPLE_HOME, 'python27.zip')):
         # For the py2exe executable
-        os.environ['PYTHONPATH'] = os.path.join(settings.FREPPLE_HOME, 'python27.zip') + os.pathsep + os.path.normpath(settings.FREPPLE_APP)
+        os.environ['PYTHONPATH'] = os.path.join(
+          settings.FREPPLE_HOME,
+          'python%d%d.zip' %(sys.version_info[0], sys.version_info[1])
+          ) + os.pathsep + os.path.normpath(settings.FREPPLE_APP)
       else:
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(settings.FREPPLE_APP)
 
-      # Execute in foreground
-      ret = subprocess.call(['frepple', cmd])
-      if ret != 0 and ret != 2:
-        # Return code 0 is a successful run
-        # Return code is 2 is a run cancelled by a user. That's shown in the status field.
-        raise Exception('Failed with exit code %d' % ret)
+      if options['background']:
+        # Execute as background process on Windows
+        if os.name == 'nt':
+          subprocess.Popen(['frepple', cmd], creationflags=0x08000000)
+        else:
+          # Execute as background process on Linux
+          subprocess.Popen(['frepple', cmd]).pid
+      else:
+        # Execute in foreground
+        ret = subprocess.call(['frepple', cmd])
+        if ret != 0 and ret != 2:
+          # Return code 0 is a successful run
+          # Return code is 2 is a run cancelled by a user. That's shown in the status field.
+          raise Exception('Failed with exit code %d' % ret)
 
-      # Task update
-      task.status = 'Done'
-      task.finished = datetime.now()
+        # Task update
+        task.status = 'Done'
+        task.finished = datetime.now()
 
     except Exception as e:
       if task:

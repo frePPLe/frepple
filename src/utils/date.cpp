@@ -47,14 +47,6 @@ DECLARE_EXPORT const TimePeriod TimePeriod::MAX(Date::infiniteFuture - Date::inf
 DECLARE_EXPORT const TimePeriod TimePeriod::MIN(Date::infinitePast - Date::infiniteFuture);
 
 
-DECLARE_EXPORT void Date::checkFinite(long long i)
-{
-  if (i > infiniteFuture.lval) lval = infiniteFuture.lval;
-  else if (i < infinitePast.lval) lval = infinitePast.lval;
-  else lval = static_cast<long>(i);
-}
-
-
 DECLARE_EXPORT void TimePeriod::toCharBuffer(char* t) const
 {
   if (!lval)

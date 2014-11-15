@@ -134,7 +134,6 @@
   </demands>
 
 <?python
-from __future__ import print_function
 from datetime import timedelta
 
 def showCriticality():

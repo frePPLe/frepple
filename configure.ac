@@ -23,7 +23,7 @@
 # Initialization
 #
 AC_PREREQ(2.60)
-AC_INIT([frepple], [2.2])
+AC_INIT([frepple], [3.0.beta])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([1.9 tar-ustar])
@@ -190,26 +190,21 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 
 #
 # Verify installation of PYTHON
-# Edit the minimum required version to 3.0 to switch to using Python 3.
 #
-AM_PATH_PYTHON([2.6], [],
+AM_PATH_PYTHON([3.4], [],
 [AC_MSG_ERROR([
-  This package requires Python 2.6 or higher.
-  Preferred versions are 2.6 and 2.7.
-  Support for Python 3.0 and higher is experimental.
+  This package requires Python 3.4 or higher.
 ])])
-LIBS="-L/usr/lib/python$PYTHON_VERSION/config $LIBS"
-CPPFLAGS="-I/usr/include/python$PYTHON_VERSION $CPPFLAGS"
-AC_CHECK_LIB(python$PYTHON_VERSION, PyModule_GetDict, [],
-[AC_MSG_ERROR([
-  Can't link with the Python library.
-  This package requires the Python development libraries.
-])])
+AC_PATH_TOOL(PYTHON_CONFIG, "python3-config", notavailable)
+if test x$PYTHON_CONFIG = xnotavailable
+then
+  AC_MSG_ERROR([This package requires the Python 3 development libraries.])
+fi
+LIBS="$($PYTHON_CONFIG --ldflags) $LIBS"
+CPPFLAGS="$($PYTHON_CONFIG --includes) $CPPFLAGS"
 AC_CHECK_HEADER([Python.h], [],
 [AC_MSG_ERROR([
-  This package requires Python.
-  Please install this package and its development libraries.
-  Check out http://www.python.org for more information.
+  This package requires Python 3 and its development libraries.
 ])])
 
 #

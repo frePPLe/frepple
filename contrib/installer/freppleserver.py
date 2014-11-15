@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from __future__ import print_function
 import argparse
 from datetime import datetime
 import os
@@ -239,7 +238,7 @@ def non_string_iterable(obj):
     except TypeError:
         return False
     else:
-        return not isinstance(obj, basestring)
+        return not isinstance(obj, str)
 
 
 if __name__=='__main__':

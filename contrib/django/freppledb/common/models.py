@@ -173,7 +173,7 @@ class Parameter(AuditModel):
   value = models.CharField(_('value'), max_length=settings.NAMESIZE, null=True, blank=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
 
-  def __unicode__(self):
+  def __str__(self):
     return self.name
 
   class Meta(AuditModel.Meta):
@@ -251,7 +251,7 @@ class Comment(models.Model):
       verbose_name = _('comment')
       verbose_name_plural = _('comments')
 
-  def __unicode__(self):
+  def __str__(self):
       return "%s: %s..." % (self.object_pk, self.comment[:50])
 
 
@@ -263,7 +263,7 @@ class Bucket(AuditModel):
   name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
 
-  def __unicode__(self):
+  def __str__(self):
     return str(self.name)
 
   class Meta:
@@ -280,8 +280,8 @@ class BucketDetail(AuditModel):
   startdate = models.DateTimeField(_('start date'))
   enddate = models.DateTimeField(_('end date'))
 
-  def __unicode__(self):
-    return u"%s %s" % (self.bucket.name or "", self.startdate)
+  def __str__(self):
+    return "%s %s" % (self.bucket.name or "", self.startdate)
 
   class Meta:
     verbose_name = _('bucket date')

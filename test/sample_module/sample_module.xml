@@ -131,8 +131,6 @@ frepple.loadmodule("mod_sample.so")
   </demands>
 
 <?python
-from __future__ import print_function
-
 # Create a plan
 frepple.solver_mrp(name="MRP", constraints=15, loglevel=0).solve()
 frepple.saveXMLfile("output.1.xml")

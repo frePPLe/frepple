@@ -32,7 +32,7 @@ class OperationPlan(models.Model):
   locked = models.BooleanField(_('locked'), default=True)
   owner = models.IntegerField(_('owner'), null=True, blank=True, db_index=True)
 
-  def __unicode__(self):
+  def __str__(self):
     return "Operationplan %s" % self.id
 
   class Meta:
@@ -51,7 +51,7 @@ class Problem(models.Model):
   enddate = models.DateTimeField(_('end date'), db_index=True)
   weight = models.DecimalField(_('weight'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
 
-  def __unicode__(self):
+  def __str__(self):
     return str(self.description)
 
   class Meta:
@@ -72,7 +72,7 @@ class Constraint(models.Model):
   enddate = models.DateTimeField(_('end date'), db_index=True)
   weight = models.DecimalField(_('weight'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
 
-  def __unicode__(self):
+  def __str__(self):
     return str(self.demand) + ' ' + str(self.description)
 
   class Meta:
@@ -108,7 +108,7 @@ class LoadPlan(models.Model):
   operationplan = models.ForeignKey(OperationPlan, verbose_name=_('operationplan'), db_index=True, related_name='loadplans')
   setup = models.CharField(_('setup'), max_length=settings.NAMESIZE, null=True)
 
-  def __unicode__(self):
+  def __str__(self):
       return self.theresource + ' ' + str(self.startdate) + ' ' + str(self.enddate)
 
   class Meta:
@@ -126,7 +126,7 @@ class FlowPlan(models.Model):
   flowdate = models.DateTimeField(_('date'), db_index=True)
   onhand = models.DecimalField(_('onhand'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
 
-  def __unicode__(self):
+  def __str__(self):
     return self.thebuffer.name + str(self.flowdate)
 
   class Meta:
@@ -147,7 +147,7 @@ class Demand(models.Model):
   plandate = models.DateTimeField(_('planned date'), null=True, db_index=True)
   operationplan = models.IntegerField(_('operationplan'), null=True, db_index=True)
 
-  def __unicode__(self):
+  def __str__(self):
     return self.demand.name
 
   class Meta:
@@ -164,7 +164,7 @@ class DemandPegging(models.Model):
   operationplan = models.IntegerField(_('operationplan'), db_index=True)
   quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
 
-  def __unicode__(self):
+  def __str__(self):
     return self.demand \
       + ' - ' + str(self.depth) + ' - ' + str(self.operationplan) \
       + ' - ' + self.quantity

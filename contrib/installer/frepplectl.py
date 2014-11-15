@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from __future__ import print_function
 import sys, os, os.path
 from stat import S_ISDIR, ST_MODE
 
@@ -41,26 +40,26 @@ if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3
     noDatabaseSchema = True
 elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] not in ['django.db.backends.postgresql_psycopg2', 'django.db.backends.mysql', 'django.db.backends.oracle']:
     print('Aborting: Unknown database engine %s' % settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'])
-    raw_input("Hit any key to continue...")
+    input("Hit any key to continue...")
     sys.exit(1)
 else:
-  # PostgreSQL, Oracle or MySQL database:
+  # PostgreSQL:
   # Try connecting and check for a table called 'parameter'.
   from django.db import connection
   try: cursor = connection.cursor()
   except Exception as e:
     print("Aborting: Can't connect to the database")
     print("   %s" % e)
-    raw_input("Hit any key to continue...")
+    input("Hit any key to continue...")
     sys.exit(1)
   try: cursor.execute("SELECT 1 FROM common_parameter")
   except: noDatabaseSchema = True
 
 if noDatabaseSchema and len(sys.argv)>1 and sys.argv[1]!='syncdb':
   print("\nDatabase schema has not been initialized yet.")
-  confirm = raw_input("Do you want to do that now? (yes/no): ")
+  confirm = input("Do you want to do that now? (yes/no): ")
   while confirm not in ('yes', 'no'):
-    confirm = raw_input('Please enter either "yes" or "no": ')
+    confirm = input('Please enter either "yes" or "no": ')
   if confirm == 'yes':
     # Create the database
     print("\nCreating database scheme")

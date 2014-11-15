@@ -16,7 +16,7 @@
 #
 
 from django.db import connections
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 
@@ -59,8 +59,8 @@ class OverviewReport(GridPivot):
     if args and args[0]:
       return {
         'units': reportclass.getUnits(request),
-        'title': capfirst(force_unicode(Resource._meta.verbose_name) + " " + args[0]),
-        'post_title': ': ' + capfirst(force_unicode(_('plan'))),
+        'title': capfirst(force_text(Resource._meta.verbose_name) + " " + args[0]),
+        'post_title': ': ' + capfirst(force_text(_('plan'))),
         }
     else:
       return {'units': reportclass.getUnits(request)}

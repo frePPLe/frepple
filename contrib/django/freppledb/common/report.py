@@ -925,9 +925,9 @@ class GridReport(View):
       '''
       # Check permissions
       if not reportclass.model:
-        yield force_unicode(_('Invalid upload request')) + '\n '
+        yield force_text(_('Invalid upload request')) + '\n '
       elif not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())):
-        yield force_unicode(_('Permission denied')) + '\n '
+        yield force_text(_('Permission denied')) + '\n '
       else:
 
         # Choose the right delimiter and language
@@ -953,10 +953,10 @@ class GridReport(View):
               yield returnvalue + '\n '
               errors = True
 
-        # Loop through the data records
-        has_pk_field = False
-        for row in EncodedCSVReader(request.FILES['csv_file'], delimiter=delimiter):
-          rownumber += 1
+          # Loop through the data records
+          has_pk_field = False
+          for row in EncodedCSVReader(request.FILES['csv_file'], delimiter=delimiter):
+            rownumber += 1
 
             ### Case 1: The first line is read as a header line
             if rownumber == 1:
@@ -977,14 +977,14 @@ class GridReport(View):
                     break
                 if not ok:
                   errors = True
-                  yield force_unicode(_('Incorrect field %(column)s') % {'column': col}) + '\n '
+                  yield force_text(_('Incorrect field %(column)s') % {'column': col}) + '\n '
                 if col == reportclass.model._meta.pk.name.lower() or \
                    col == reportclass.model._meta.pk.verbose_name.lower():
                   has_pk_field = True
               if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
                 # The primary key is not an auto-generated id and it is not mapped in the input...
                 errors = True
-                yield force_unicode(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name}) + '\n '
+                yield force_text(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name}) + '\n '
               # Abort when there are errors
               if errors:
                 break
@@ -1066,7 +1066,7 @@ class GridReport(View):
                 yield force_text(_("Exception during upload: %(message)s") % {'message': e}) + '\n '
 
         # Report all failed records
-        yield force_unicode(
+        yield force_text(
             _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
             ) + '\n '
 
@@ -1084,9 +1084,9 @@ class GridReport(View):
       '''
       # Check permissions
       if not reportclass.model:
-        yield force_unicode(_('Invalid upload request')) + '\n '
+        yield force_text(_('Invalid upload request')) + '\n '
       elif not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())):
-        yield force_unicode(_('Permission denied')) + '\n '
+        yield force_text(_('Permission denied')) + '\n '
       else:
         # Choose the right language
         if translation.get_language() != request.LANGUAGE_CODE:
@@ -1228,7 +1228,7 @@ class GridReport(View):
                 yield force_text(_("Exception during upload: %(message)s") % {'message': e}) + '\n '
 
       # Report all failed records
-      yield force_unicode(
+      yield force_text(
         _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
         ) + '\n '
 
@@ -1913,7 +1913,7 @@ def importWorkbook(request):
 
     # Process all rows in each worksheet
     for ws_name, model, contenttype_id, dependencies in models:
-      yield force_unicode(_("Processing data in worksheet: %s") % ws_name) + '\n'
+      yield force_text(_("Processing data in worksheet: %s") % ws_name) + '\n'
       ws = wb.get_sheet_by_name(name=ws_name)
       rownum = 0
       has_pk_field = False
@@ -2040,4 +2040,4 @@ def importWorkbook(request):
         _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') %
           {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors}
         ) + '\n'
-    yield force_unicode(_("Done")) + '\n'
+    yield force_text(_("Done")) + '\n'

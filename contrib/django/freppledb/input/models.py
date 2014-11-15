@@ -133,6 +133,22 @@ class Customer(AuditModel, HierarchyModel):
     ordering = ['name']
 
 
+class Supplier(AuditModel, HierarchyModel):
+  # Database fields
+  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
+  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
+  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
+
+  def __str__(self):
+    return self.name
+
+  class Meta(AuditModel.Meta):
+    db_table = 'supplier'
+    verbose_name = _('supplier')
+    verbose_name_plural = _('suppliers')
+    ordering = ['name']
+
+
 class Item(AuditModel, HierarchyModel):
   # Database fields
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)

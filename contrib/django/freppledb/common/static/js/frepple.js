@@ -197,6 +197,11 @@ jQuery.extend($.fn.fmatter, {
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='customer'></span>";
   },
+  supplier : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
+    return cellvalue + "<span class='context fa fa-caret-right' role='supplier'></span>";
+  },
   buffer : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
@@ -314,7 +319,10 @@ jQuery.extend($.fn.fmatter.forecast, {
     unformat : linkunformat
 });
 jQuery.extend($.fn.fmatter.customer, {
-    unformat : linkunformat
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.supplier, {
+  unformat : linkunformat
 });
 jQuery.extend($.fn.fmatter.operation, {
     unformat : linkunformat

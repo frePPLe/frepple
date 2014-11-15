@@ -503,6 +503,13 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     logger << "Customer     \t" << Customer::size() << "\t" << memsize << endl;
     total += memsize;
 
+    // Suppliers
+    memsize = 0;
+    for (Supplier::iterator c = Supplier::begin(); c != Supplier::end(); ++c)
+      memsize += c->getSize();
+    logger << "Supplier     \t" << Supplier::size() << "\t" << memsize << endl;
+    total += memsize;
+
     // Buffers
     memsize = 0;
     for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)

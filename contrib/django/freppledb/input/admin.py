@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow, Skill, ResourceSkill
-from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
+from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation, Supplier
 from freppledb.admin import data_site
 from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 
@@ -65,6 +65,14 @@ class Customer_admin(MultiDBModelAdmin):
   save_on_top = True
   exclude = ('source',)
 data_site.register(Customer, Customer_admin)
+
+
+class Supplier_admin(MultiDBModelAdmin):
+  model = Supplier
+  raw_id_fields = ('owner',)
+  save_on_top = True
+  exclude = ('source',)
+data_site.register(Supplier, Supplier_admin)
 
 
 class Item_admin(MultiDBModelAdmin):

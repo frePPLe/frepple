@@ -30,7 +30,7 @@ from django.utils.text import capfirst
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow, Skill
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
-from freppledb.input.models import ResourceSkill, searchmode
+from freppledb.input.models import ResourceSkill, Supplier, searchmode
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
@@ -438,6 +438,27 @@ class CustomerList(GridReport):
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='customer'),
+    GridFieldText('source', title=_('source')),
+    GridFieldLastModified('lastmodified'),
+    )
+
+
+class SupplierList(GridReport):
+  '''
+  A list report to show supplier.
+  '''
+  template = 'input/supplierlist.html'
+  title = _("Supplier List")
+  basequeryset = Supplier.objects.all()
+  model = Supplier
+  frozenColumns = 1
+
+  rows = (
+    GridFieldText('name', title=_('name'), key=True, formatter='supplier'),
+    GridFieldText('description', title=_('description')),
+    GridFieldText('category', title=_('category')),
+    GridFieldText('subcategory', title=_('subcategory')),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='supplier'),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )

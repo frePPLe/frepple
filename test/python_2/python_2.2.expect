@@ -9,6 +9,12 @@
 		<customer name="Customer">
 		</customer>
 	</customers>
+	<suppliers>
+		<supplier name="Supplier 1">
+		</supplier>
+		<supplier name="Supplier 2">
+		</supplier>
+	</suppliers>
 	<calendars>
 		<calendar name="Capacity">
 			<buckets>
@@ -104,12 +110,12 @@
 			<maximum_calendar name="Capacity"/>
 		</resource>
 	</resources>
-			<loads>
-				<load>
-					<operation name="make end item" xsi:type="operation_fixed_time"/>
+	<loads>
+		<load>
+			<operation name="make end item" xsi:type="operation_fixed_time"/>
 			<resource name="Resource"/>
-				</load>
-			</loads>
+		</load>
+	</loads>
 	<flows>
 		<flow xsi:type="flow_start">
 			<operation name="delivery end item" xsi:type="operation_fixed_time"/>

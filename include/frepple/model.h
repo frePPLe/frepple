@@ -1233,6 +1233,43 @@ class CustomerDefault : public Customer
 };
 
 
+/** @brief This abstracts class represents suppliers. */
+class Supplier : public HasHierarchy<Supplier>, public HasDescription
+{
+  public:
+    DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    size_t extrasize() const
+    {return getName().size() + HasDescription::extrasize();}
+
+    /** Constructor. */
+    explicit DECLARE_EXPORT Supplier(const string& n) : HasHierarchy<Supplier>(n) {}
+
+    /** Destructor. */
+    virtual DECLARE_EXPORT ~Supplier();
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
+    static int initialize();
+};
+
+
+/** @brief This class implements the abstract Supplier class. */
+class SupplierDefault : public Supplier
+{
+  public:
+    explicit SupplierDefault(const string& str) : Supplier(str) {initType(metadata);}
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
+    virtual size_t getSize() const
+    {return sizeof(SupplierDefault) + Supplier::extrasize();}
+    static int initialize();
+};
+
+
 /** @brief An operation represents an activity: these consume and produce material,
   * take time and also require capacity.
   *
@@ -6220,6 +6257,15 @@ class CustomerIterator
   public:
     CustomerIterator(Customer* b) : FreppleIterator<CustomerIterator,Customer::memberIterator,Customer>(b) {}
     CustomerIterator() {}
+};
+
+
+class SupplierIterator
+  : public FreppleIterator<SupplierIterator,Supplier::memberIterator,Supplier>
+{
+  public:
+    SupplierIterator(Supplier* b) : FreppleIterator<SupplierIterator,Supplier::memberIterator,Supplier>(b) {}
+    SupplierIterator() {}
 };
 
 

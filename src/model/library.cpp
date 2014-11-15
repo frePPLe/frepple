@@ -55,6 +55,11 @@ void LibraryModel::initialize()
   nok += CustomerDefault::initialize();
   nok += CustomerIterator::initialize();
 
+  // Initialize the supplier metadata.
+  nok += Supplier::initialize();
+  nok += SupplierDefault::initialize();
+  nok += SupplierIterator::initialize();
+
   // Initialize the calendar metadata.
   nok += Calendar::initialize();
   nok += CalendarDouble::initialize();
@@ -163,7 +168,10 @@ void LibraryModel::initialize()
     "Returns an iterator over the locations.");
   PythonInterpreter::registerGlobalMethod(
     "customers", CustomerIterator::create, METH_NOARGS,
-    "Returns an iterator over the customer.");
+    "Returns an iterator over the customers.");
+  PythonInterpreter::registerGlobalMethod(
+    "suppliers", SupplierIterator::create, METH_NOARGS,
+    "Returns an iterator over the suppliers.");
   PythonInterpreter::registerGlobalMethod(
     "items", ItemIterator::create, METH_NOARGS,
     "Returns an iterator over the items.");

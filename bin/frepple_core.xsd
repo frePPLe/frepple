@@ -192,6 +192,33 @@
     </xsd:choice>
   </xsd:complexType>
 
+  <!-- SUPPLIER -->
+  <xsd:complexType name="supplier">
+    <xsd:annotation>
+      <xsd:documentation>
+        A supplier sells material to your company.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:group ref="common_fields" />
+      <xsd:element name="owner" type="customer" minOccurs="0" />
+      <xsd:element name="members" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="supplier" type="supplier" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:choice>
+    <xsd:attributeGroup ref="common_attributes" />
+  </xsd:complexType>
+
+  <xsd:complexType name="supplierlist">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="supplier" type="supplier" />
+    </xsd:choice>
+  </xsd:complexType>
+
   <!-- OPERATION -->
   <xsd:complexType name="operation">
     <xsd:annotation>

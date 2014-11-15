@@ -135,6 +135,7 @@
     <ClCompile Include="..\..\src\model\setupmatrix.cpp" />
     <ClCompile Include="..\..\src\model\skill.cpp" />
     <ClCompile Include="..\..\src\model\solver.cpp" />
+    <ClCompile Include="..\..\src\model\supplier.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="utils.vcxproj">

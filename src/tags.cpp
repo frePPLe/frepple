@@ -162,6 +162,8 @@ DECLARE_EXPORT const Keyword Tags::tag_starttime("starttime");
 DECLARE_EXPORT const Keyword Tags::tag_steps("steps");
 DECLARE_EXPORT const Keyword Tags::tag_stringproperty("stringproperty");
 DECLARE_EXPORT const Keyword Tags::tag_subcategory("subcategory");
+DECLARE_EXPORT const Keyword Tags::tag_supplier("supplier");
+DECLARE_EXPORT const Keyword Tags::tag_suppliers("suppliers");
 DECLARE_EXPORT const Keyword Tags::tag_supply("supply");
 DECLARE_EXPORT const Keyword Tags::tag_tosetup("tosetup");
 // The next line requires the namespace "xsi" to be defined.

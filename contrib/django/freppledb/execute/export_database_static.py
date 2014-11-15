@@ -461,6 +461,40 @@ class exportStaticModel(object):
     print('Exported customers in %.2f seconds' % (time() - starttime))
 
 
+  def exportSuppliers(self, cursor):
+    print("Exporting suppliers...")
+    starttime = time()
+    cursor.execute("SELECT name FROM supplier")
+    primary_keys = set([ i[0] for i in cursor.fetchall() ])
+    cursor.executemany(
+      "insert into supplier \
+      (name,description,category,subcategory,source,lastmodified) \
+      values(%s,%s,%s,%s,%s,%s)",
+      [
+        (i.name, i.description, i.category, i.subcategory, i.source, self.timestamp)
+        for i in frepple.suppliers()
+        if i.name not in primary_keys and (not self.source or self.source == i.source)
+      ])
+    cursor.executemany(
+      "update supplier \
+       set description=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s \
+       where name=%s",
+      [
+        (i.description, i.category, i.subcategory, i.source, self.timestamp, i.name)
+        for i in frepple.suppliers()
+        if i.name in primary_keys and (not self.source or self.source == i.source)
+      ])
+    cursor.executemany(
+      "update supplier set owner_id=%s where name=%s",
+      [
+        (i.owner.name, i.name)
+        for i in frepple.suppliers()
+        if i.owner and (not self.source or self.source == i.source)
+      ])
+    transaction.commit(using=self.database)
+    print('Exported suppliers in %.2f seconds' % (time() - starttime))
+
+
   def exportDemands(self, cursor):
     print("Exporting demands...")
     starttime = time()
@@ -828,6 +862,7 @@ class exportStaticModel(object):
           self.exportResourceSkills(cursor)
           self.exportLoads(cursor)
           self.exportCustomers(cursor)
+          self.exportSuppliers(cursor)
           self.exportDemands(cursor)
         except:
           traceback.print_exc()
@@ -843,7 +878,7 @@ class exportStaticModel(object):
           self.exportItems(cursor)
           tasks = (
             DatabaseTask(self, self.exportCalendarBuckets, self.exportSubOperations, self.exportOperationPlans, self.exportParameters),
-            DatabaseTask(self, self.exportBuffers, self.exportFlows),
+            DatabaseTask(self, self.exportBuffers, self.exportFlows, exportSuppliers),
             DatabaseTask(self, self.exportSetupMatrices, self.exportSetupMatricesRules, self.exportResources, self.exportSkills, self.exportResourceSkills, self.exportLoads),
             DatabaseTask(self, self.exportCustomers, self.exportDemands),
             )

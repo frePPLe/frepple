@@ -172,6 +172,26 @@ class loadData(object):
     print('Loaded %d customers in %.2f seconds' % (cnt, time() - starttime))
 
 
+  def loadSuppliers(self):
+    print('Importing suppliers...')
+    cnt = 0
+    starttime = time()
+    self.cursor.execute('''
+      SELECT
+        name, description, owner_id, category, subcategory, source
+      FROM supplier %s
+      ''' % self.filter_where)
+    for i in self.cursor.fetchall():
+      cnt += 1
+      try:
+        x = frepple.supplier(name=i[0], description=i[1], category=i[3], subcategory=i[4], source=i[5])
+        if i[2]:
+          x.owner = frepple.supplier(name=i[2])
+      except Exception as e:
+        print("Error:", e)
+    print('Loaded %d suppliers in %.2f seconds' % (cnt, time() - starttime))
+
+
   def loadOperations(self):
     print('Importing operations...')
     cnt = 0
@@ -712,6 +732,7 @@ class loadData(object):
     self.loadCalendarBuckets()
     self.loadLocations()
     self.loadCustomers()
+    self.loadSuppliers()
     self.loadOperations()
     self.loadSuboperations()
     self.loadItems()

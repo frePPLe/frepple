@@ -30,6 +30,10 @@
       <duration>P1D</duration>
     </operation>
   </operations>
+  <suppliers>
+    <supplier name="Supplier 1"/>
+    <supplier name="Supplier 2"/>
+  </suppliers>
   <items>
     <item name="end item">
       <operation name="delivery end item" xsi:type="operation_fixed_time">

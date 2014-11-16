@@ -74,19 +74,6 @@ class CrumbsNode(Node):
       req.session['crumbs'] = {}
       cur = []
 
-    # Store the current and previous URLs in the session
-    try:
-      u = req.session['prev']
-    except:
-      u = req.session['prev'] = {}
-    if req.prefix in u:
-      if u[req.prefix][-1] != req.path:
-        while len(u[req.prefix]) > 1:
-          u[req.prefix].pop(0)
-        u[req.prefix].append( req.path )
-    else:
-      u[req.prefix] = [ req.path, ]
-
     # Compute the new crumb node
     count = 0
     try:
@@ -96,24 +83,29 @@ class CrumbsNode(Node):
     if title != lazy_site_administration:
       # Don't handle the cockpit screen in the crumbs
       try:
-        # Pop from the stack if the same title is already in the crumbs.
+        # Check if the same title is already in the crumbs.
         title = unicode(title)
         exists = False
-
         for i in cur:
           if i[0] == title:
+            # Current URL already exists in the list and we move it to the end
+            node = i
+            del cur[count]
+            cur.append( (node[0], node[1], req.path) )
             exists = True
+            break
           count += 1
 
-        # Add current URL to the stack
         if not exists:
+          # Add the current URL to the stack
           cur.append( (
             title,
             '<span> &gt; <a href="%s%s%s">%s</a></span>' % (
               req.prefix, urlquote(req.path),
               req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
               unicode(escape(title))
-              )
+              ),
+            req.path
             ))
           count += 1
 

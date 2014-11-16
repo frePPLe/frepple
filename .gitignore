@@ -66,6 +66,7 @@ build
 /test/*/output.*.xml
 
 # Eclipse
+.settings
 .cproject
 .project
 .pydevproject

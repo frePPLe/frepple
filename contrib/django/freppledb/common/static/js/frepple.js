@@ -1040,7 +1040,7 @@ var graph = {
   {
     var el = $("#grid_graph");
     el.html("");
-    var bucketwidth = el.width() / numbuckets;
+    var bucketwidth = (el.width() - 50) / numbuckets;
     var svg = d3.select(el.get(0)).append("svg");
     svg.attr('height','15px');
     svg.attr('width', el.width());
@@ -1075,8 +1075,6 @@ var graph = {
         .style("position", "absolute");
 
     // Update content and display
-    var xpos = d3.event.pageX + 5;
-    var ypos = d3.event.pageY - 28;
     tt.html('<div class="ui-tooltip-content">' + txt + '</div>')
       .style('display', 'block');
     graph.moveTooltip();

@@ -68,8 +68,8 @@ class DataLoadTest(TestCase):
       )
     try:
       data = tempfile.TemporaryFile(mode='w+b')
-      print('name, category', file=data)
-      print('factory 3, cat1', file=data)
+      print('name,category', file=data)
+      print('factory 3,cat1', file=data)
       print('factory 4,', file=data)
       data.seek(0)
       response = self.client.post('/data/input/location/', {'csv_file': data})

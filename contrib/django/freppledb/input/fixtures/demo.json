@@ -2,6 +2,7 @@
 {"pk": "currentdate", "model": "common.parameter", "fields": {"value": "2014-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS"}},
 {"pk": "loading_time_units", "model": "common.parameter", "fields": {"value": "days", "description": "Time units to be used for the resource report: hours, days, weeks"}},
 {"pk": "plan.loglevel", "model": "common.parameter", "fields": {"value": "0", "description": "Controls the verbosity of the planning log file. Accepted values are 0(silent - default), 1 and 2 (verbose)"}},
+{"pk": "plan.planSafetyStockFirst", "model": "common.parameter", "fields": {"value": "false", "description": "Controls whether safety stock is planned before or after the demand. Accepted values are false (default) and true"}},
 {"pk": "pack capacity factory 1", "model": "input.calendar", "fields": {}},
 {"pk": "pack capacity factory 2", "model": "input.calendar", "fields": {}},
 {"pk": "weave capacity factory 1", "model": "input.calendar", "fields": {}},

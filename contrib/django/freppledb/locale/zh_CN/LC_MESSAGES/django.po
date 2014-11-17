@@ -357,11 +357,11 @@ msgstr "结束日期"
 
 #: common/models.py:309
 msgid "bucket date"
-msgstr "日期"
+msgstr "具体日期"
 
 #: common/models.py:310
 msgid "bucket dates"
-msgstr "日期"
+msgstr "具体日期"
 
 #: common/report.py:449 common/report.py:816 common/report.py:818
 #: common/report.py:951 common/report.py:988 common/report.py:1147

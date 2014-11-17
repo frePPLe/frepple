@@ -407,7 +407,8 @@ class exporter(object):
     fields = ['location_id']
     mrp_routings = {}
     for i in m.read(ids, fields, self.req.session.context):
-      mrp_routings[i['id']] = i['location_id']
+      if i['location_id']:
+        mrp_routings[i['id']] = self.map_locations.get(i['location_id'][0], None)
 
     # Read all workcenters of all routings
     mrp_routing_workcenters = {}

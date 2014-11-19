@@ -231,7 +231,7 @@ class Command(BaseCommand):
         '<ob:Openbravo xmlns:ob="http://www.openbravo.com">'
         ]
       for i in cursor.fetchall():
-        body.append('<OrderLine id="%s"><description>Planned delivery date %s</description></OrderLine>' % i)
+        body.append('<OrderLine id="%s"><description>frePPLe planned delivery date: %s</description></OrderLine>' % i)
         count += 1
         if self.verbosity > 0 and count % 500 == 1:
           print('.', end="")
@@ -370,14 +370,14 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Exporting work orders...")
-      cursor.execute('''select demand.source, max(plandate)
-          from demand
-          left outer join out_demand
-            on demand.name = out_demand.demand
-          where demand.subcategory = 'openbravo'
-            and status = 'open'
-          group by source
-         ''')
+      cursor.execute('''
+        select operation.source, out_operationplan.quantity, startdate, enddate
+        from out_operationplan
+        inner join operation
+          on out_operationplan.operation = operation.name
+          and operation.type = 'routing'
+        where operation like 'Process%'
+        ''')
       count = 0
       body = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -388,16 +388,18 @@ class Command(BaseCommand):
         body.append('''<ManufacturingWorkRequirement>
            <organization id="%s" entity-name="Organization"/>
            <active>true</active>
-           <processPlan id="F8CC274694D84F85BCA743777390FD7E" entity-name="ManufacturingProcessPlan"/>
-           <quantity>666</quantity>
-           <startingDate>2014-01-29T00:00:00.0Z</startingDate>
-           <endingDate>2014-01-29T00:00:00.0Z</endingDate>
+           <processPlan id="%s" entity-name="ManufacturingProcessPlan"/>
+           <quantity>%s</quantity>
+           <startingDate>%s.0Z</startingDate>
+           <endingDate>%s.0Z</endingDate>
            <closed>false</closed>
            <insertProductsAndorPhases>true</insertProductsAndorPhases>
            <includePhasesWhenInserting>true</includePhasesWhenInserting>
-           <processed>true</processed>
+           <processed>false</processed>
            </ManufacturingWorkRequirement>
-           ''' % self.organization_id)
+           ''' % (self.organization_id, i[0], i[1],
+                  i[2].strftime("%Y-%m-%dT%H:%M:%S"), i[3].strftime("%Y-%m-%dT%H:%M:%S")
+                  ))
         count += 1
         if self.verbosity > 0 and count % 500 == 1:
           print('.', end="")

@@ -910,6 +910,7 @@ class exportStaticModel(object):
         cursor.execute("delete from setuprule where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from setupmatrix where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from customer where source = %s and lastmodified <> %s", (self.source, self.timestamp))
+        cursor.execute("delete from supplier where source = %s and lastmodified <> %s", (self.source, self.timestamp))
 
       # Analyze
       if settings.DATABASES[self.database]['ENGINE'] == 'django.db.backends.sqlite3':

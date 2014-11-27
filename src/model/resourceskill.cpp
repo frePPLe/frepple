@@ -83,7 +83,7 @@ DECLARE_EXPORT ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, DateRa
 }
 
 
-void ResourceSkill::writer(const MetaCategory* c, XMLOutput* o)
+void ResourceSkill::writer(const MetaCategory* c, Serializer* o)
 {
   bool first = true;
   for (Resource::iterator i = Resource::begin(); i != Resource::end(); ++i)
@@ -91,18 +91,18 @@ void ResourceSkill::writer(const MetaCategory* c, XMLOutput* o)
     {
       if (first)
       {
-        o->BeginObject(Tags::tag_resourceskills);
+        o->BeginList(Tags::tag_resourceskills);
         first = false;
       }
       // We use the FULL mode, to force the flows being written regardless
       // of the depth in the XML tree.
       o->writeElement(Tags::tag_resourceskill, &*j, FULL);
     }
-  if (!first) o->EndObject(Tags::tag_resourceskills);
+  if (!first) o->EndList(Tags::tag_resourceskills);
 }
 
 
-DECLARE_EXPORT void ResourceSkill::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void ResourceSkill::writeElement(Serializer* o, const Keyword& tag, mode m) const
 {
   // If the resourceskill has already been saved, no need to repeat it again
   // A 'reference' to a load is not useful to be saved.

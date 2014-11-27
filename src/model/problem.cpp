@@ -208,7 +208,7 @@ DECLARE_EXPORT void Plannable::computeProblems()
 }
 
 
-DECLARE_EXPORT void Plannable::writeElement (XMLOutput* o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Plannable::writeElement (Serializer* o, const Keyword& tag, mode m) const
 {
   // We don't bother about the mode, since this method is only called from
   // within the writeElement() method of other classes.
@@ -260,23 +260,23 @@ DECLARE_EXPORT void Problem::clearProblems(HasProblems& p, bool setchanged)
 }
 
 
-DECLARE_EXPORT void Problem::writer(const MetaCategory* c, XMLOutput* o)
+DECLARE_EXPORT void Problem::writer(const MetaCategory* c, Serializer* o)
 {
   const_iterator piter = begin();
   if (piter != end())
   {
-    o->BeginObject(*c->grouptag);
+    o->BeginList(*c->grouptag);
     for (; piter!=end(); ++piter)
       // Note: not the regular write, but a fast write to speed things up.
       // This is possible since problems aren't nested and are never
       // referenced.
       piter->writeElement(o, *c->typetag);
-    o->EndObject(*c->grouptag);
+    o->EndList(*c->grouptag);
   }
 }
 
 
-DECLARE_EXPORT void Problem::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Problem::writeElement(Serializer *o, const Keyword& tag, mode m) const
 {
   // We ignore the mode, and always write the complete model
   o->BeginObject(tag);

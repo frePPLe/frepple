@@ -212,6 +212,7 @@ namespace utils
 
 // Forward declarations
 class Object;
+class Serializer;
 class Keyword;
 class XMLInput;
 class AttributeList;
@@ -1099,7 +1100,7 @@ class MetaClass : public NonCopyable
 };
 
 
-class XMLOutput;
+class SerializerXML;
 
 /** @brief This class stores metadata on a data field of a class.
   *
@@ -1183,7 +1184,7 @@ class MetaCategory : public MetaClass
     typedef Object* (*readController)(const MetaClass*, const AttributeList&);
 
     /** Type definition for the write control function. */
-    typedef void (*writeController)(const MetaCategory*, XMLOutput *o);
+    typedef void (*writeController)(const MetaCategory*, Serializer *o);
 
     /** This template method is available as a object creation factory for
       * classes without key fields and which rely on a default constructor.
@@ -1233,7 +1234,7 @@ class MetaCategory : public MetaClass
       * through all registered categories (in the order of their registration)
       * and calls the persistance handler.
       */
-    static DECLARE_EXPORT void persist(XMLOutput *);
+    static DECLARE_EXPORT void persist(Serializer*);
 
     /** A control function for reading objects of a category.
       * The controller function manages the creation and destruction of
@@ -2036,43 +2037,11 @@ enum mode
 };
 
 
-/** @ brief This utility class escapes special characters from a string.
+/** @brief Abstract base class for writing serialized data to an output stream.
   *
-  *  The following characters are replaced:
-  *    - &: replaced with &amp;
-  *    - <: replaced with &lt;
-  *    - >: replaced with &gt;
-  *    - ": replaced with &quot;
-  *    - ': replaced with &apos;
-  *    - all other characters are left unchanged
-  * The reverse process of un-escaping the special character sequences is
-  * taken care of by the Xerces library.
-  *
-  * This class works fine with UTF-8 and single-byte encodings, but will
-  * NOT work with other multibyte encodings (such as UTF-116 or UTF-32).
-  * FrePPLe consistently uses UTF-8 in its internal representation.
+  * Subclasses implement writing different formats and stream types.
   */
-class XMLEscape
-{
-    friend DECLARE_EXPORT ostream& operator << (ostream&, const XMLEscape&);
-  private:
-    const char* data;
-  public:
-    XMLEscape(const char* p) {data = p;}
-    XMLEscape(const string& p) {data = p.c_str();}
-};
-
-
-/** Prints the escaped value of the string to the outputstream. */
-DECLARE_EXPORT ostream & operator << (ostream&, const XMLEscape&);
-
-
-/** @brief Base class for writing XML formatted data to an output stream.
-  *
-  * Subclasses implement writing to specific stream types, such as files
-  * and strings.
-  */
-class XMLOutput
+class Serializer
 {
   protected:
     /** Updating the output stream. */
@@ -2126,6 +2095,153 @@ class XMLOutput
       */
     void setContentType(content_type c) {content = c;}
 
+    /** Constructor with a given stream. */
+    Serializer(ostream& os) : numObjects(0),
+      numParents(0), currentObject(NULL), parentObject(NULL), content(STANDARD)
+    {m_fp = &os;}
+
+    /** Default constructor. */
+    Serializer() : numObjects(0), numParents(0),
+      currentObject(NULL), parentObject(NULL), content(STANDARD)
+    {m_fp = &logger;}
+
+    /** Force writing only references for nested objects. */
+    void setReferencesOnly(bool b) {numParents = b ? 2 : 0;}
+
+    /** Returns whether we write only references for nested objects or not. */
+    bool getReferencesOnly() const {return numParents>0;}
+
+    /** Start writing a new list. */
+    virtual void BeginList(const Keyword&) = 0;
+
+    /** Write the closing tag of a list. */
+    virtual void EndList(const Keyword& t) = 0;
+
+    /** Start writing a new object. */
+    virtual void BeginObject(const Keyword&) = 0;
+
+    /** Write the closing tag of this object. */
+    virtual void EndObject(const Keyword& t) = 0;
+
+    /** Start writing a new object. */
+    virtual void BeginObject(const Keyword&, const string&) = 0;
+    virtual void BeginObject(const Keyword&, const Keyword&, const int) = 0;
+    virtual void BeginObject(const Keyword&, const Keyword&, const string&) = 0;
+    virtual void BeginObject(const Keyword&,
+      const Keyword&, const string&, const Keyword&, const string&) = 0;
+    virtual void BeginObject(const Keyword&,
+      const Keyword&, const unsigned long&, const Keyword&, const string&) = 0;
+    virtual void BeginObject(const Keyword&, const Keyword&, const int&,
+      const Keyword&, const Date, const Keyword&, const Date) = 0;
+
+    /** Write the string to the output. No tags are added, so this method
+      * is used for passing text straight into the output file. */
+    virtual void writeString(const string& c) = 0;
+
+    /** Write an unsigned long value enclosed opening and closing tags.  */
+    virtual void writeElement(const Keyword& t, const long unsigned int val) = 0;
+
+    /** Write an integer value enclosed opening and closing tags. */
+    virtual void writeElement(const Keyword& t, const int val) = 0;
+
+    /** Write a double value enclosed opening and closing tags. */
+    virtual void writeElement(const Keyword& t, const double val) = 0;
+
+    /** Write a boolean value enclosed opening and closing tags. The boolean
+      * is written out as the string 'true' or 'false'.
+      */
+    virtual void writeElement(const Keyword& t, const bool val) = 0;
+
+    /** Write a string value enclosed opening and closing tags. Special
+      * characters are appropriately escaped. */
+    virtual void writeElement(const Keyword& t, const string& val) = 0;
+
+    /** Writes an element with a string attribute. */
+    virtual void writeElement(const Keyword& u, const Keyword& t, const string& val) = 0;
+
+    /** Writes an element with a long attribute. */
+    virtual void writeElement(const Keyword& u, const Keyword& t, const long val) = 0;
+
+    /** Writes an element with a date attribute. */
+    virtual void writeElement(const Keyword& u, const Keyword& t, const Date& val) = 0;
+
+    /** Writes an element with 2 string attributes. */
+    virtual void writeElement(const Keyword& u, const Keyword& t1, const string& val1,
+        const Keyword& t2, const string& val2) = 0;
+
+    /** Writes an element with a string and an unsigned long attribute. */
+    virtual void writeElement(const Keyword& u, const Keyword& t1, unsigned long val1,
+        const Keyword& t2, const string& val2) = 0;
+
+    /** Writes an element with a short, an unsigned long and a double attribute. */
+    virtual void writeElement(const Keyword& u, const Keyword& t1, short val1,
+        const Keyword& t2, unsigned long val2, const Keyword& t3, double val3) = 0;
+
+    /** Writes a C-type character string. */
+    virtual void writeElement(const Keyword& t, const char* val) = 0;
+
+    /** Writes an timeperiod element. /> */
+    virtual void writeElement(const Keyword& t, const TimePeriod d) = 0;
+
+    /** Writes an date element. */
+    virtual void writeElement(const Keyword& t, const Date d) = 0;
+
+    /** Writes an daterange element. */
+    virtual void writeElement(const Keyword& t, const DateRange& d) = 0;
+
+    /** This method writes a serializable object.<br>
+      * If an object is nested more than 2 levels deep only a reference
+      * to it is written, rather than the complete object.
+      * You should call this method for all objects in your xml document,
+      * except for the root object.
+      * @see writeElementWithHeader(const Keyword&, Object*)
+      */
+    DECLARE_EXPORT void writeElement(const Keyword&, const Object*, mode = DEFAULT);
+
+    /** @see writeElement(const Keyword&, const Object*, mode) */
+    void writeElement(const Keyword& t, const Object& o, mode m = DEFAULT)
+    {writeElement(t,&o,m);}
+
+    /** Returns a pointer to the object that is currently being saved. */
+    Object* getCurrentObject() const
+    {return const_cast<Object*>(currentObject);}
+
+    /** Returns a pointer to the parent of the object that is being saved. */
+    Object* getPreviousObject() const
+    {return const_cast<Object*>(parentObject);}
+
+    /** Returns the number of objects that have been serialized. */
+    unsigned long countObjects() const {return numObjects;}
+
+  protected:
+    /** Output stream. */
+    ostream* m_fp;
+
+    /** Keep track of the number of objects being stored. */
+    unsigned long numObjects;
+
+    /** Keep track of the number of objects currently in the save stack. */
+    unsigned int numParents;
+
+    /** This stores a pointer to the object that is currently being saved. */
+    const Object *currentObject;
+
+    /** This stores a pointer to the object that has previously been saved. */
+    const Object *parentObject;
+
+    /** Stores the type of data to be exported. */
+    content_type content;
+};
+
+
+/** @brief Base class for writing XML formatted data to an output stream.
+  *
+  * Subclasses implement writing to specific stream types, such as files
+  * and strings.
+  */
+class SerializerXML : public Serializer
+{
+  public:
     /** Updates the string that is printed as the first line of each XML
       * document.<br>
       * The default value is:
@@ -2148,24 +2264,35 @@ class XMLOutput
     string getHeaderAtts() const {return headerAtts;}
 
     /** Constructor with a given stream. */
-    XMLOutput(ostream& os) : m_nIndent(0), numObjects(0),
-      numParents(0), currentObject(NULL), parentObject(NULL), content(STANDARD),
+    SerializerXML(ostream& os) : Serializer(os), m_nIndent(0),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
-    {m_fp = &os; indentstring[0] = '\0';}
+    {
+      indentstring[0] = '\0';
+    }
 
     /** Default constructor. */
-    XMLOutput() : m_nIndent(0), numObjects(0), numParents(0),
-      currentObject(NULL), parentObject(NULL), content(STANDARD),
+    SerializerXML() : m_nIndent(0),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
-    {m_fp = &logger; indentstring[0] = '\0';}
+    {
+      indentstring[0] = '\0';
+    }
 
     /** Force writing only references for nested objects. */
     void setReferencesOnly(bool b) {numParents = b ? 2 : 0;}
 
     /** Returns whether we write only references for nested objects or not. */
     bool getReferencesOnly() const {return numParents>0;}
+
+    /** Start writing a new object. This method will open a new XML-tag.<br>
+      * Output: \<TAG\>
+      */
+    void BeginList(const Keyword& t)
+    {
+      *m_fp << indentstring << t.stringElement() << "\n";
+      incIndent();
+    }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG\>
@@ -2186,12 +2313,18 @@ class XMLOutput
     }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
-      * The user is responsible to assure string values are escaped correctly with the XMLEscape class.<br>
       * Output: \<TAG TAG1="val1"\>
-      * @see XMLEscape
       */
-    template <class T>
-    void BeginObject(const Keyword& t, const Keyword& attr1, const T& val1)
+    void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1)
+    {
+      *m_fp << indentstring << t.stringStartElement()
+          << attr1.stringAttribute();
+      escape(val1);
+      *m_fp << "\">\n";
+      incIndent();
+    }
+
+    void BeginObject(const Keyword& t, const Keyword& attr1, const int val1)
     {
       *m_fp << indentstring << t.stringStartElement()
           << attr1.stringAttribute() << val1 << "\">\n";
@@ -2199,29 +2332,34 @@ class XMLOutput
     }
 
     /** Start writing a new object. This method will open a new XML-tag.<br>
-      * The user is responsible to assure string values are escaped correctly with the XMLEscape class.<br>
       * Output: \<TAG TAG1="val1" TAG2="val2"\>
-      * @see XMLEscape
       */
-    template <class T, class U>
-    void BeginObject(const Keyword& t, const Keyword& attr1, const T& val1,
-      const Keyword& attr2, const U& val2)
+    void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
+      const Keyword& attr2, const string& val2)
     {
       *m_fp << indentstring << t.stringStartElement()
-          << attr1.stringAttribute() << val1 << "\""
-          << attr2.stringAttribute() << val2 << "\">\n";
+          << attr1.stringAttribute();
+      escape(val1);
+      *m_fp << "\"" << attr2.stringAttribute();
+      escape(val2);
+      *m_fp << "\">\n";
       incIndent();
     }
 
-    /** Start writing a new object. This method will open a new XML-tag.<br>
-      * The user is responsible to assure string values are escaped correctly with the XMLEscape class.<br>
-      * Output: \<TAG TAG1="val1" TAG2="val2" TAG3="val3"\>
-      * @see XMLEscape
-      */
-    template <class T, class U, class V>
-    void BeginObject(const Keyword& t, const Keyword& attr1, const T& val1,
-      const Keyword& attr2, const U& val2,
-      const Keyword& attr3, const V& val3)
+    void BeginObject(const Keyword& t, const Keyword& attr1, const unsigned long& val1,
+      const Keyword& attr2, const string& val2)
+    {
+      *m_fp << indentstring << t.stringStartElement()
+          << attr1.stringAttribute() << val1 << "\""
+          << attr2.stringAttribute();
+      escape(val2);
+      *m_fp << "\">\n";
+      incIndent();
+    }
+
+    void BeginObject(const Keyword& t, const Keyword& attr1, const int& val1,
+      const Keyword& attr2, const Date val2,
+      const Keyword& attr3, const Date val3)
     {
       *m_fp << indentstring << t.stringStartElement()
           << attr1.stringAttribute() << val1 << "\""
@@ -2235,6 +2373,16 @@ class XMLOutput
       * Output: \</TAG_T\>
       */
     void EndObject(const Keyword& t)
+    {
+      decIndent();
+      *m_fp << indentstring << t.stringEndElement();
+    }
+
+    /** Write the closing tag of this object and decrease the indentation
+      * level.<br>
+      * Output: \</TAG_T\>
+      */
+    void EndList(const Keyword& t)
     {
       decIndent();
       *m_fp << indentstring << t.stringEndElement();
@@ -2284,8 +2432,11 @@ class XMLOutput
     void writeElement(const Keyword& t, const string& val)
     {
       if (!val.empty())
-        *m_fp << indentstring << t.stringElement()
-            << XMLEscape(val) << t.stringEndElement();
+      {
+        *m_fp << indentstring << t.stringElement();
+        escape(val);
+        *m_fp << t.stringEndElement();
+      }
     }
 
     /** Writes an element with a string attribute.<br>
@@ -2295,9 +2446,11 @@ class XMLOutput
       if (val.empty())
         *m_fp << indentstring << u.stringStartElement() << "/>\n";
       else
-        *m_fp << indentstring << u.stringStartElement()
-            << t.stringAttribute() << XMLEscape(val)
-            << "\"/>\n";
+      {
+        *m_fp << indentstring << u.stringStartElement() << t.stringAttribute();
+        escape(val);
+        *m_fp << "\"/>\n";
+      }
     }
 
     /** Writes an element with a long attribute.<br>
@@ -2324,10 +2477,13 @@ class XMLOutput
       if(val1.empty())
         *m_fp << indentstring << u.stringStartElement() << "/>\n";
       else
-        *m_fp << indentstring << u.stringStartElement()
-            << t1.stringAttribute() << XMLEscape(val1.c_str()) << "\""
-            << t2.stringAttribute() << XMLEscape(val2.c_str())
-            << "\"/>\n";
+      {
+        *m_fp << indentstring << u.stringStartElement() << t1.stringAttribute();
+        escape(val1);
+        *m_fp << "\"" << t2.stringAttribute();
+        escape(val2);
+        *m_fp << "\"/>\n";
+      }
     }
 
     /** Writes an element with a string and an unsigned long attribute.<br>
@@ -2337,8 +2493,9 @@ class XMLOutput
     {
       *m_fp << indentstring << u.stringStartElement()
           << t1.stringAttribute() << val1 << "\""
-          << t2.stringAttribute() << XMLEscape(val2.c_str())
-          << "\"/>\n";
+          << t2.stringAttribute();
+      escape(val2);
+      *m_fp << "\"/>\n";
     }
 
     /** Writes an element with a short, an unsigned long and a double attribute.<br>
@@ -2357,9 +2514,10 @@ class XMLOutput
       * Output: \<TAG_T\>val\</TAG_T\> */
     void writeElement(const Keyword& t, const char* val)
     {
-      if (val)
-        *m_fp << indentstring << t.stringElement()
-            << XMLEscape(val) << t.stringEndElement();
+      if (!val) return;
+      *m_fp << indentstring << t.stringElement();
+      escape(val);
+      *m_fp << t.stringEndElement();
     }
 
     /** Writes an timeperiod element.<br>
@@ -2382,19 +2540,6 @@ class XMLOutput
     {
       *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
     }
-
-    /** This method writes a serializable object.<br>
-      * If an object is nested more than 2 levels deep only a reference
-      * to it is written, rather than the complete object.
-      * You should call this method for all objects in your xml document,
-      * except for the root object.
-      * @see writeElementWithHeader(const Keyword&, Object*)
-      */
-    DECLARE_EXPORT void writeElement(const Keyword&, const Object*, mode = DEFAULT);
-
-    /** @see writeElement(const Keyword&, const Object*, mode) */
-    void writeElement(const Keyword& t, const Object& o, mode m = DEFAULT)
-    {writeElement(t,&o,m);}
 
     /** This method writes a serializable object with a complete XML compliant
       * header.<br>
@@ -2432,8 +2577,23 @@ class XMLOutput
     const char* getIndent() {return indentstring;}
 
   private:
-    /** Output stream. */
-    ostream* m_fp;
+    /** Write the argument to the output stream, while escaping any
+      * special characters.
+      * The following characters are replaced:
+      *    - &: replaced with &amp;
+      *    - <: replaced with &lt;
+      *    - >: replaced with &gt;
+      *    - ": replaced with &quot;
+      *    - ': replaced with &apos;
+      *    - all other characters are left unchanged
+      * The reverse process of un-escaping the special character sequences is
+      * taken care of by the Xerces library.
+      *
+      * This method works fine with UTF-8 and single-byte encodings, but will
+      * NOT work with other multibyte encodings (such as UTF-116 or UTF-32).
+      * FrePPLe consistently uses UTF-8 in its internal representation.
+      */
+    DECLARE_EXPORT void escape(const string&);
 
     /** This variable keeps track of the indentation level.
       * @see incIndent, decIndent
@@ -2446,27 +2606,12 @@ class XMLOutput
       */
     char indentstring[41];
 
-    /** Keep track of the number of objects being stored. */
-    unsigned long numObjects;
-
-    /** Keep track of the number of objects currently in the save stack. */
-    unsigned int numParents;
-
-    /** This stores a pointer to the object that is currently being saved. */
-    const Object *currentObject;
-
-    /** This stores a pointer to the object that has previously been saved. */
-    const Object *parentObject;
-
     /** Increase the indentation level. The indentation level is between
       * 0 and 40. */
     DECLARE_EXPORT void incIndent();
 
     /** Decrease the indentation level. */
     DECLARE_EXPORT void decIndent();
-
-    /** Stores the type of data to be exported. */
-    content_type content;
 
     /** This string defines what will be printed at the start of each XML
       * document. The default value is:
@@ -2490,12 +2635,12 @@ class XMLOutput
   * required too.
   * @see XMLOutput
   */
-class XMLOutputFile : public XMLOutput
+class SerializerXMLFile : public SerializerXML
 {
   public:
     /** Constructor with a filename as argument. An exception will be
       * thrown if the output file can't be properly initialized. */
-    XMLOutputFile(const string& chFilename)
+    SerializerXMLFile(const string& chFilename)
     {
       of.open(chFilename.c_str(), ios::out);
       if(!of) throw RuntimeException("Could not open output file");
@@ -2503,7 +2648,7 @@ class XMLOutputFile : public XMLOutput
     }
 
     /** Destructor. */
-    ~XMLOutputFile() {of.close();}
+    ~SerializerXMLFile() {of.close();}
 
   private:
     ofstream of;
@@ -2518,14 +2663,14 @@ class XMLOutputFile : public XMLOutput
   * being saved in this way.
   * @see XMLOutput
   */
-class XMLOutputString : public XMLOutput
+class SerializerXMLString : public SerializerXML
 {
   public:
     /** Constructor with a starting string as argument. */
-    XMLOutputString(const string& str) : os(str) {setOutput(os);}
+    SerializerXMLString(const string& str) : os(str) {setOutput(os);}
 
     /** Default constructor. */
-    XMLOutputString() {setOutput(os);}
+    SerializerXMLString() {setOutput(os);}
 
     /** Return the output string. */
     const string getData() const {return os.str();}
@@ -3403,7 +3548,7 @@ class Object : public PythonExtensionBase
       * of such a class can be created but can't be persisted.
       * E.g. Command
       */
-    virtual void writeElement(XMLOutput *, const Keyword &, mode=DEFAULT) const
+    virtual void writeElement(Serializer *, const Keyword &, mode=DEFAULT) const
     {throw LogicException("Class can't be persisted");}
 
     /** Called while restoring the model from an XML-file.<br>
@@ -3544,7 +3689,7 @@ class PythonDictionary : public Object
     /** This static method is used to write a dictionary as XML.
       * It is normally called from the writeElement() method of an object.
       */
-    static DECLARE_EXPORT void write(XMLOutput*, PyObject* const*);
+    static DECLARE_EXPORT void write(Serializer*, PyObject* const*);
 
     void endElement(XMLInput&, const Attribute&, const DataElement&);
 
@@ -5029,13 +5174,13 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     }
 
     /** A handler that is used to persist the tree. */
-    static void writer(const MetaCategory* c, XMLOutput* o)
+    static void writer(const MetaCategory* c, Serializer* o)
     {
       if (empty()) return;
-      o->BeginObject(*(c->grouptag));
+      o->BeginList(*(c->grouptag));
       for (iterator i = begin(); i != end(); ++i)
         o->writeElement(*(c->typetag), *i);
-      o->EndObject(*(c->grouptag));
+      o->EndList(*(c->grouptag));
     }
 };
 
@@ -5079,7 +5224,7 @@ class HasDescription : public HasSource
     /** Sets the description field. */
     void setDescription(const string& f) {descr = f;}
 
-    void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput&, const Attribute&, const DataElement&);
 
   protected:
@@ -5225,7 +5370,7 @@ template <class T> class HasHierarchy : public HasName<T>
     unsigned short getHierarchyLevel() const;
 
     void beginElement(XMLInput&, const Attribute&);
-    void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput&, const Attribute&, const DataElement&);
 
   private:

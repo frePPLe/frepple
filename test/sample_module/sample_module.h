@@ -93,7 +93,7 @@ class OperationTransport : public OperationFixedTime
     void endElement(XMLInput&, const Attribute&, const DataElement&);
 
     /** Handler for writing out the objects in XML format. */
-    void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    void writeElement(SerializerXML*, const Keyword&, mode=DEFAULT) const;
 
     /** Handler for reading attributes from Python. */
     PyObject* getattro(const Attribute&);

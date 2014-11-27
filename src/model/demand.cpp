@@ -244,7 +244,7 @@ DECLARE_EXPORT double Demand::getPlannedQuantity() const
 }
 
 
-DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Demand::writeElement(Serializer *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -255,7 +255,7 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
 
   // Write the head
   if (m != NOHEAD && m != NOHEADTAIL)
-    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+    o->BeginObject(tag, Tags::tag_name, getName());
 
   // Write the fields
   HasDescription::writeElement(o, tag);
@@ -274,15 +274,15 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
     o->writeElement(Tags::tag_minshipment, getMinShipment());
 
   // Write extra plan information
-  if (o->getContentType() == XMLOutput::PLAN
-      || o->getContentType() == XMLOutput::PLANDETAIL)
+  if (o->getContentType() == Serializer::PLAN
+      || o->getContentType() == Serializer::PLANDETAIL)
   {
     if (!deli.empty())
     {
-      o->BeginObject(Tags::tag_operationplans);
+      o->BeginList(Tags::tag_operationplans);
       for (OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
         o->writeElement(Tags::tag_operationplan, *i, FULL);
-      o->EndObject(Tags::tag_operationplans);
+      o->EndList(Tags::tag_operationplans);
     }
     bool first = true;
     for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(this), true); j!=Problem::end(); ++j)
@@ -290,17 +290,17 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
       if (first)
       {
         first = false;
-        o->BeginObject(Tags::tag_problems);
+        o->BeginList(Tags::tag_problems);
       }
       o->writeElement(Tags::tag_problem, *j, FULL);
     }
-    if (!first) o->EndObject(Tags::tag_problems);
+    if (!first) o->EndList(Tags::tag_problems);
     if (!constraints.empty())
     {
-      o->BeginObject(Tags::tag_constraints);
+      o->BeginList(Tags::tag_constraints);
       for (Problem::const_iterator i = constraints.begin(); i != constraints.end(); ++i)
         o->writeElement(Tags::tag_problem, *i, FULL);
-      o->EndObject(Tags::tag_constraints);
+      o->EndList(Tags::tag_constraints);
     }
   }
 

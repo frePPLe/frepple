@@ -253,7 +253,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
 }
 
 
-DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void SolverMRP::writeElement(Serializer *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -265,7 +265,7 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
 
   // Write the complete object
   if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the fields
   if (constrts != 15) o->writeElement(Tags::tag_constraints, constrts);

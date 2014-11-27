@@ -186,7 +186,7 @@ DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(CalendarDouble* c)
 }
 
 
-DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Resource::writeElement(Serializer* o, const Keyword& tag, mode m) const
 {
   // Write a reference
   if (m == REFERENCE)
@@ -197,7 +197,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
 
   // Write the head
   if (m != NOHEAD && m != NOHEADTAIL)
-    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+    o->BeginObject(tag, Tags::tag_name, getName());
 
   // Write my fields
   HasDescription::writeElement(o, tag);
@@ -219,9 +219,9 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
 
   // Write extra plan information
   loadplanlist::const_iterator i = loadplans.begin();
-  if (o->getContentType() == XMLOutput::PLAN  && i!=loadplans.end())
+  if (o->getContentType() == Serializer::PLAN  && i!=loadplans.end())
   {
-    o->BeginObject(Tags::tag_loadplans);
+    o->BeginList(Tags::tag_loadplans);
     for (; i!=loadplans.end(); ++i)
       if (i->getType()==1)
       {
@@ -235,18 +235,18 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
         o->writeElement(Tags::tag_operationplan, &*(lp->getOperationPlan()), FULL);
         o->EndObject(Tags::tag_loadplan);
       }
-    o->EndObject(Tags::tag_loadplans);
+    o->EndList(Tags::tag_loadplans);
     bool first = true;
     for (Problem::const_iterator j = Problem::begin(const_cast<Resource*>(this), true); j!=Problem::end(); ++j)
     {
       if (first)
       {
         first = false;
-        o->BeginObject(Tags::tag_problems);
+        o->BeginList(Tags::tag_problems);
       }
       o->writeElement(Tags::tag_problem, *j, FULL);
     }
-    if (!first) o->EndObject(Tags::tag_problems);
+    if (!first) o->EndList(Tags::tag_problems);
   }
 
   // Write the tail
@@ -403,7 +403,7 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
 
 
 DECLARE_EXPORT void ResourceInfinite::writeElement
-(XMLOutput *o, const Keyword &tag, mode m) const
+(Serializer* o, const Keyword &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -415,7 +415,7 @@ DECLARE_EXPORT void ResourceInfinite::writeElement
 
   // Write the complete object
   if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the fields
   Resource::writeElement(o, tag, NOHEAD);
@@ -423,7 +423,7 @@ DECLARE_EXPORT void ResourceInfinite::writeElement
 
 
 DECLARE_EXPORT void ResourceBuckets::writeElement
-(XMLOutput *o, const Keyword &tag, mode m) const
+(Serializer *o, const Keyword &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -435,7 +435,7 @@ DECLARE_EXPORT void ResourceBuckets::writeElement
 
   // Write the complete object
   if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the fields
   Resource::writeElement(o, tag, NOHEAD);

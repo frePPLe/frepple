@@ -77,7 +77,7 @@ DECLARE_EXPORT void Plan::setCurrent (Date l)
 }
 
 
-DECLARE_EXPORT void Plan::writeElement (XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Plan::writeElement (Serializer* o, const Keyword& tag, mode m) const
 {
   // No references
   assert(m != REFERENCE);

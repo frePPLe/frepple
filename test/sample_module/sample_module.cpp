@@ -58,7 +58,7 @@ void OperationTransport::beginElement(XMLInput& pIn, const Attribute& pAttr)
 
 
 void OperationTransport::writeElement
-(XMLOutput *o, const Keyword& tag, mode m) const
+(Serializer *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)

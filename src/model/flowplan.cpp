@@ -124,7 +124,7 @@ DECLARE_EXPORT void FlowPlan::setFlow(const Flow* newfl)
 
 // Remember that this method only superficially looks like a normal
 // writeElement() method.
-DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void FlowPlan::writeElement(Serializer *o, const Keyword& tag, mode m) const
 {
   o->BeginObject(tag);
   o->writeElement(Tags::tag_date, getDate());
@@ -136,7 +136,7 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mod
     o->writeElement(Tags::tag_operationplan, &*getOperationPlan());
 
   // Write pegging info.
-  if (o->getContentType() == XMLOutput::PLANDETAIL)
+  if (o->getContentType() == Serializer::PLANDETAIL)
   {
     // Write the upstream pegging
     PeggingIterator k(this, false);

@@ -48,7 +48,7 @@ int Load::initialize()
 }
 
 
-void Load::writer(const MetaCategory* c, XMLOutput* o)
+void Load::writer(const MetaCategory* c, Serializer* o)
 {
   bool firstload = true;
   for (Operation::iterator i = Operation::begin(); i != Operation::end(); ++i)
@@ -56,14 +56,14 @@ void Load::writer(const MetaCategory* c, XMLOutput* o)
     {
       if (firstload)
       {
-        o->BeginObject(Tags::tag_loads);
+        o->BeginList(Tags::tag_loads);
         firstload = false;
       }
       // We use the FULL mode, to force the loads being written regardless
       // of the depth in the XML tree.
       o->writeElement(Tags::tag_load, &*j, FULL);
     }
-  if (!firstload) o->EndObject(Tags::tag_loads);
+  if (!firstload) o->EndList(Tags::tag_loads);
 }
 
 
@@ -249,7 +249,7 @@ DECLARE_EXPORT void Load::setSetup(const string n)
 }
 
 
-DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Load::writeElement(Serializer *o, const Keyword& tag, mode m) const
 {
   // If the load has already been saved, no need to repeat it again
   // A 'reference' to a load is not useful to be saved.

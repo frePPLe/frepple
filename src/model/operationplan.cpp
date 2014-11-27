@@ -803,19 +803,19 @@ DECLARE_EXPORT TimePeriod OperationPlan::getUnavailable() const
 }
 
 
-DECLARE_EXPORT void OperationPlan::writer(const MetaCategory* c, XMLOutput* o)
+DECLARE_EXPORT void OperationPlan::writer(const MetaCategory* c, Serializer* o)
 {
   if (!empty())
   {
-    o->BeginObject(*c->grouptag);
+    o->BeginList(*c->grouptag);
     for (iterator i=begin(); i!=end(); ++i)
       o->writeElement(*c->typetag, *i);
-    o->EndObject(*c->grouptag);
+    o->EndList(*c->grouptag);
   }
 }
 
 
-DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void OperationPlan::writeElement(Serializer* o, const Keyword& tag, mode m) const
 {
   // Don't export operationplans of hidden operations
   if (oper->getHidden()) return;
@@ -834,7 +834,7 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
   if (m != NOHEAD && m != NOHEADTAIL)
     o->BeginObject(
       tag, Tags::tag_id, const_cast<OperationPlan*>(this)->getIdentifier(),
-      Tags::tag_operation, XMLEscape(oper->getName())
+      Tags::tag_operation, oper->getName()
       );
 
   // The demand reference is only valid for delivery operationplans,
@@ -855,12 +855,12 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
   o->writeElement(Tags::tag_owner, owner);
 
   // Write out the flowplans and their pegging
-  if (o->getContentType() == XMLOutput::PLANDETAIL)
+  if (o->getContentType() == Serializer::PLANDETAIL)
   {
-    o->BeginObject(Tags::tag_flowplans);
+    o->BeginList(Tags::tag_flowplans);
     for (FlowPlanIterator qq = beginFlowPlans(); qq != endFlowPlans(); ++qq)
       qq->writeElement(o, Tags::tag_flowplan);
-    o->EndObject(Tags::tag_flowplans);
+    o->EndList(Tags::tag_flowplans);
   }
 
   // Write the custom fields

@@ -466,7 +466,7 @@ DECLARE_EXPORT PythonType* PythonExtensionBase::registerPythonType(int size, con
 }
 
 
-DECLARE_EXPORT void PythonDictionary::write(XMLOutput* o, PyObject* const* pydict)
+DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydict)
 {
   if (!*pydict) return; // No custom fields here
 
@@ -591,14 +591,14 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
 
     // Create the XML string.
     ostringstream ch;
-    XMLOutput x(ch);
+    SerializerXML x(ch);
     x.setReferencesOnly(true);
     if (!mode || mode[0] == 'S')
-      x.setContentType(XMLOutput::STANDARD);
+      x.setContentType(Serializer::STANDARD);
     else if (mode[0] == 'P')
-      x.setContentType(XMLOutput::PLAN);
+      x.setContentType(Serializer::PLAN);
     else if (mode[0] == 'D')
-      x.setContentType(XMLOutput::PLANDETAIL);
+      x.setContentType(Serializer::PLANDETAIL);
     else
       throw DataException("Invalid output mode");
 

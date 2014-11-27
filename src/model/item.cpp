@@ -62,7 +62,7 @@ DECLARE_EXPORT Item::~Item()
 }
 
 
-DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Item::writeElement(Serializer *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -73,7 +73,7 @@ DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const Keyword& tag, mode m)
 
   // Write the head
   if (m != NOHEAD && m != NOHEADTAIL)
-    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+    o->BeginObject(tag, Tags::tag_name, getName());
 
   // Write the fields
   HasDescription::writeElement(o, tag);

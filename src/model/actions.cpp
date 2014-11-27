@@ -135,15 +135,15 @@ PyObject* saveXMLfile(PyObject* self, PyObject* args)
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
-    XMLOutputFile o(filename);
+    SerializerXMLFile o(filename);
     if (content)
     {
       if (!strcmp(content,"STANDARD"))
-        o.setContentType(XMLOutput::STANDARD);
+        o.setContentType(Serializer::STANDARD);
       else if (!strcmp(content,"PLAN"))
-        o.setContentType(XMLOutput::PLAN);
+        o.setContentType(Serializer::PLAN);
       else if (!strcmp(content,"PLANDETAIL"))
-        o.setContentType(XMLOutput::PLANDETAIL);
+        o.setContentType(Serializer::PLANDETAIL);
       else
         throw DataException("Invalid content type '" + string(content) + "'");
     }

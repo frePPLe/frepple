@@ -129,7 +129,7 @@ void CalendarDouble::setValue(Date start, Date end, const double v)
 }
 
 
-void CalendarDouble::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+void CalendarDouble::writeElement(Serializer *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -140,7 +140,7 @@ void CalendarDouble::writeElement(XMLOutput *o, const Keyword& tag, mode m) cons
 
   // Write the head
   if (m != NOHEAD && m != NOHEADTAIL)
-    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+    o->BeginObject(tag, Tags::tag_name, getName());
 
   // Write the source field
   o->writeElement(Tags::tag_source, getSource());
@@ -149,12 +149,12 @@ void CalendarDouble::writeElement(XMLOutput *o, const Keyword& tag, mode m) cons
   if (getDefault()) o->writeElement(Tags::tag_default, getDefault());
 
   // Write all buckets
-  o->BeginObject (Tags::tag_buckets);
+  o->BeginList (Tags::tag_buckets);
   for (BucketIterator i = beginBuckets(); i != endBuckets(); ++i)
     // We use the FULL mode, to force the buckets being written regardless
     // of the depth in the XML tree.
     o->writeElement(Tags::tag_bucket, *i, FULL);
-  o->EndObject(Tags::tag_buckets);
+  o->EndList(Tags::tag_buckets);
 
   // Write the custom fields
   PythonDictionary::write(o, getDict());
@@ -391,7 +391,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(int ident) const
 }
 
 
-DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Calendar::writeElement(Serializer *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -403,18 +403,18 @@ DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const Keyword& tag, mod
 
   // Write the head
   if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write source field
   o->writeElement(Tags::tag_source, getSource());
 
   // Write all buckets
-  o->BeginObject (Tags::tag_buckets);
+  o->BeginList (Tags::tag_buckets);
   for (BucketIterator i = beginBuckets(); i != endBuckets(); ++i)
     // We use the FULL mode, to force the buckets being written regardless
     // of the depth in the XML tree.
     o->writeElement(Tags::tag_bucket, *i, FULL);
-  o->EndObject(Tags::tag_buckets);
+  o->EndList(Tags::tag_buckets);
 
   // Write the custom fields
   PythonDictionary::write(o, getDict());
@@ -496,7 +496,7 @@ DECLARE_EXPORT void Calendar::beginElement(XMLInput& pIn, const Attribute& pAttr
 }
 
 
-DECLARE_EXPORT void Calendar::Bucket::writeHeader(XMLOutput *o, const Keyword& tag) const
+DECLARE_EXPORT void Calendar::Bucket::writeHeader(Serializer *o, const Keyword& tag) const
 {
   // The header line has a variable number of attributes: start, end and/or name
   if (startdate != Date::infinitePast)
@@ -517,7 +517,7 @@ DECLARE_EXPORT void Calendar::Bucket::writeHeader(XMLOutput *o, const Keyword& t
 
 
 DECLARE_EXPORT void Calendar::Bucket::writeElement
-(XMLOutput *o, const Keyword& tag, mode m) const
+(Serializer *o, const Keyword& tag, mode m) const
 {
   assert(m == DEFAULT || m == FULL);
   writeHeader(o,tag);

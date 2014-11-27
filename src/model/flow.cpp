@@ -57,7 +57,7 @@ int Flow::initialize()
 }
 
 
-void Flow::writer(const MetaCategory* c, XMLOutput* o)
+void Flow::writer(const MetaCategory* c, Serializer* o)
 {
   bool firstflow = true;
   for (Operation::iterator i = Operation::begin(); i != Operation::end(); ++i)
@@ -65,14 +65,14 @@ void Flow::writer(const MetaCategory* c, XMLOutput* o)
     {
       if (firstflow)
       {
-        o->BeginObject(Tags::tag_flows);
+        o->BeginList(Tags::tag_flows);
         firstflow = false;
       }
       // We use the FULL mode, to force the flows being written regardless
       // of the depth in the XML tree.
       o->writeElement(Tags::tag_flow, &*j, FULL);
     }
-  if (!firstflow) o->EndObject(Tags::tag_flows);
+  if (!firstflow) o->EndList(Tags::tag_flows);
 }
 
 
@@ -239,7 +239,7 @@ DECLARE_EXPORT void Flow::setAlternate(const string& n)
 }
 
 
-DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Flow::writeElement (Serializer *o, const Keyword& tag, mode m) const
 {
   // If the flow has already been saved, no need to repeat it again
   // A 'reference' to a flow is not useful to be saved.
@@ -349,7 +349,7 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, con
 
 
 DECLARE_EXPORT void FlowEnd::writeElement
-(XMLOutput *o, const Keyword& tag, mode m) const
+(Serializer *o, const Keyword& tag, mode m) const
 {
   // If the flow has already been saved, no need to repeat it again
   // A 'reference' to a flow is not useful to be saved.

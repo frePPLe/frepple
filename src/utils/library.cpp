@@ -411,7 +411,7 @@ DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const hashtype h) const
 }
 
 
-DECLARE_EXPORT void MetaCategory::persist(XMLOutput *o)
+DECLARE_EXPORT void MetaCategory::persist(Serializer* o)
 {
   for (const MetaCategory *i = firstCategory; i; i = i->nextCategory)
     if (i->writeFunction) i->writeFunction(i, o);
@@ -540,7 +540,7 @@ Object* MetaCategory::ControllerDefault (const MetaClass* cat, const AttributeLi
 }
 
 
-void HasDescription::writeElement(XMLOutput *o, const Keyword &t, mode m) const
+void HasDescription::writeElement(Serializer* o, const Keyword &t, mode m) const
 {
   // Note that this function is never called on its own. It is always called
   // from the writeElement() method of a subclass.

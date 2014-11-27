@@ -80,7 +80,7 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
 
 
 template <class T> void HasHierarchy<T>::writeElement
-(XMLOutput* o, const Keyword &t, mode m) const
+(Serializer* o, const Keyword &t, mode m) const
 {
   /** Note that this function is never called on its own. It is always called
     * from the writeElement() method of a subclass. Therefore we don't need

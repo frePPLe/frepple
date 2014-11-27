@@ -85,7 +85,7 @@ DECLARE_EXPORT SetupMatrix::~SetupMatrix()
 }
 
 
-DECLARE_EXPORT void SetupMatrix::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void SetupMatrix::writeElement(Serializer *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -97,7 +97,7 @@ DECLARE_EXPORT void SetupMatrix::writeElement(XMLOutput *o, const Keyword& tag, 
 
   // Write the head
   if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write source field
   o->writeElement(Tags::tag_source, getSource());
@@ -106,12 +106,12 @@ DECLARE_EXPORT void SetupMatrix::writeElement(XMLOutput *o, const Keyword& tag, 
   PythonDictionary::write(o, getDict());
 
   // Write all rules
-  o->BeginObject (Tags::tag_rules);
+  o->BeginList (Tags::tag_rules);
   for (RuleIterator i = beginRules(); i != endRules(); ++i)
     // We use the FULL mode, to force the rules being written regardless
     // of the depth in the XML tree.
     o->writeElement(Tags::tag_rule, *i, FULL);
-  o->EndObject(Tags::tag_rules);
+  o->EndList(Tags::tag_rules);
 
   // Write the tail
   if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
@@ -298,7 +298,7 @@ DECLARE_EXPORT SetupMatrix::Rule::~Rule()
 
 
 DECLARE_EXPORT void SetupMatrix::Rule::writeElement
-(XMLOutput *o, const Keyword& tag, mode m) const
+(Serializer* o, const Keyword& tag, mode m) const
 {
   o->BeginObject(tag, Tags::tag_priority, priority);
   if (!from.empty()) o->writeElement(Tags::tag_fromsetup, from);

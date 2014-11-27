@@ -50,7 +50,7 @@ int LocationDefault::initialize()
 }
 
 
-DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Location::writeElement(Serializer* o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -61,7 +61,7 @@ DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const Keyword& tag, mod
 
   // Write the head
   if (m != NOHEAD && m != NOHEADTAIL)
-    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+    o->BeginObject(tag, Tags::tag_name, getName());
 
   // Write the fields
   HasDescription::writeElement(o, tag);

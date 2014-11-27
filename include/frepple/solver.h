@@ -309,7 +309,7 @@ class SolverMRP : public Solver
     /** Destructor. */
     virtual DECLARE_EXPORT ~SolverMRP() {}
 
-    DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);

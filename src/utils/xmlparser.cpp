@@ -56,9 +56,9 @@ namespace frepple
 namespace utils
 {
 
-DECLARE_EXPORT const XMLOutput::content_type XMLOutput::STANDARD = 1;
-DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLAN = 2;
-DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
+DECLARE_EXPORT const Serializer::content_type Serializer::STANDARD = 1;
+DECLARE_EXPORT const Serializer::content_type Serializer::PLAN = 2;
+DECLARE_EXPORT const Serializer::content_type Serializer::PLANDETAIL = 4;
 xercesc::XMLTranscoder* XMLInput::utf8_encoder = NULL;
 
 
@@ -583,25 +583,24 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
 }
 
 
-DECLARE_EXPORT ostream& operator << (ostream& os, const XMLEscape& x)
+DECLARE_EXPORT void SerializerXML::escape(const string& x)
 {
-  for (const char* p = x.data; *p; ++p)
+  for (const char* p = x.c_str(); *p; ++p)
   {
     switch (*p)
     {
-      case '&': os << "&amp;"; break;
-      case '<': os << "&lt;"; break;
-      case '>': os << "&gt;"; break;
-      case '"': os << "&quot;"; break;
-      case '\'': os << "&apos;"; break;
-      default: os << *p;
+      case '&': *m_fp << "&amp;"; break;
+      case '<': *m_fp << "&lt;"; break;
+      case '>': *m_fp << "&gt;"; break;
+      case '"': *m_fp << "&quot;"; break;
+      case '\'': *m_fp << "&apos;"; break;
+      default: *m_fp << *p;
     }
   }
-  return os;
 }
 
 
-DECLARE_EXPORT void XMLOutput::incIndent()
+DECLARE_EXPORT void SerializerXML::incIndent()
 {
   indentstring[m_nIndent++] = '\t';
   if (m_nIndent > 40) m_nIndent = 40;
@@ -609,14 +608,14 @@ DECLARE_EXPORT void XMLOutput::incIndent()
 }
 
 
-DECLARE_EXPORT void XMLOutput::decIndent()
+DECLARE_EXPORT void SerializerXML::decIndent()
 {
   if (--m_nIndent < 0) m_nIndent = 0;
   indentstring[m_nIndent] = '\0';
 }
 
 
-DECLARE_EXPORT void XMLOutput::writeElement
+DECLARE_EXPORT void Serializer::writeElement
 (const Keyword& tag, const Object* object, mode m)
 {
   // Avoid NULL pointers and skip hidden objects
@@ -645,7 +644,7 @@ DECLARE_EXPORT void XMLOutput::writeElement
 }
 
 
-DECLARE_EXPORT void XMLOutput::writeElementWithHeader(const Keyword& tag, const Object* object)
+DECLARE_EXPORT void SerializerXML::writeElementWithHeader(const Keyword& tag, const Object* object)
 {
   // Root object can't be null...
   if (!object)
@@ -675,7 +674,7 @@ DECLARE_EXPORT void XMLOutput::writeElementWithHeader(const Keyword& tag, const 
 }
 
 
-DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& t)
+DECLARE_EXPORT void SerializerXML::writeHeader(const Keyword& t)
 {
   // Write the first line and the opening tag
   writeString(getHeaderStart());
@@ -687,7 +686,7 @@ DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& t)
 }
 
 
-DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& t, const Keyword& t1, const string& val1)
+DECLARE_EXPORT void SerializerXML::writeHeader(const Keyword& t, const Keyword& t1, const string& val1)
 {
   // Write the first line and the opening tag
   writeString(getHeaderStart());
@@ -740,7 +739,7 @@ DECLARE_EXPORT Keyword::Keyword(const string& name) : strName(name)
   // Error condition: name is empty
   if (name.empty()) throw LogicException("Creating keyword without name");
 
-  // Create a number of variations of the tag name
+  // Create a number of variations of the tag name   TODO GET RID OF THESE XML SPECIFIC SHIT
   strStartElement = string("<") + name;
   strEndElement = string("</") + name + ">\n";
   strElement = string("<") + name + ">";

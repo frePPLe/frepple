@@ -40,7 +40,7 @@ int Solver::initialize()
 
 
 DECLARE_EXPORT void Solver::writeElement
-(XMLOutput *o, const Keyword &tag, mode m) const
+(Serializer* o, const Keyword &tag, mode m) const
 {
   // The subclass should have written its own header
   assert(m == NOHEAD || m == NOHEADTAIL);

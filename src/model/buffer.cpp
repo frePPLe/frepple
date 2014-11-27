@@ -200,7 +200,7 @@ DECLARE_EXPORT double Buffer::getOnHand(Date d1, Date d2, bool min) const
 }
 
 
-DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
+DECLARE_EXPORT void Buffer::writeElement(Serializer *o, const Keyword &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -211,7 +211,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
 
   // Write the complete object
   if (m != NOHEAD && m != NOHEADTAIL)
-    o->BeginObject(tag, Tags::tag_name, XMLEscape(getName()));
+    o->BeginObject(tag, Tags::tag_name, getName());
 
   // Write own fields
   HasDescription::writeElement(o, tag);
@@ -255,25 +255,25 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
 
   // Write extra plan information
   i = flowplans.begin();
-  if ((o->getContentType() == XMLOutput::PLAN
-      || o->getContentType() == XMLOutput::PLANDETAIL) && i!=flowplans.end())
+  if ((o->getContentType() == Serializer::PLAN
+      || o->getContentType() == Serializer::PLANDETAIL) && i!=flowplans.end())
   {
-    o->BeginObject(Tags::tag_flowplans);
+    o->BeginList(Tags::tag_flowplans);
     for (; i!=flowplans.end(); ++i)
       if (i->getType()==1)
         static_cast<const FlowPlan*>(&*i)->writeElement(o, Tags::tag_flowplan);
-    o->EndObject(Tags::tag_flowplans);
+    o->EndList(Tags::tag_flowplans);
     bool first = true;
     for (Problem::const_iterator j = Problem::begin(const_cast<Buffer*>(this), true); j!=Problem::end(); ++j)
     {
       if (first)
       {
         first = false;
-        o->BeginObject(Tags::tag_problems);
+        o->BeginList(Tags::tag_problems);
       }
       o->writeElement(Tags::tag_problem, *j, FULL);
     }
-    if (!first) o->EndObject(Tags::tag_problems);
+    if (!first) o->EndList(Tags::tag_problems);
   }
 
   // Ending tag
@@ -716,7 +716,7 @@ DECLARE_EXPORT void Buffer::followPegging
 
 
 DECLARE_EXPORT void BufferInfinite::writeElement
-(XMLOutput *o, const Keyword &tag, mode m) const
+(Serializer *o, const Keyword &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -728,7 +728,7 @@ DECLARE_EXPORT void BufferInfinite::writeElement
 
   // Write the complete object
   if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the fields and an ending tag
   Buffer::writeElement(o, tag, NOHEAD);
@@ -756,7 +756,7 @@ DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, const Attribute& pA
 }
 
 
-DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
+DECLARE_EXPORT void BufferProcure::writeElement(Serializer *o, const Keyword &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -768,7 +768,7 @@ DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const Keyword &tag
 
   // Write the complete object
   if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, XMLEscape(getName()), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the standard buffer fields
   Buffer::writeElement(o, tag, NOHEADTAIL);

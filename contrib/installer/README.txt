@@ -29,8 +29,6 @@ To create the installer, the following steps are required:
       - py2exe
       - django (needs patching!)
       - cherrypy
-      - cx_oracle
-      - MySQLdb
       - psycopg2
       - pywin32
    The installer uses py2exe to create a directory containing the Python

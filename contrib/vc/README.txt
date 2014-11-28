@@ -8,15 +8,9 @@ The frePPLe source distribution comes with Microsoft Visual C++ projects and
 workspaces to build the package. This document contains instructions on how to
 use these workspaces and some notes specific to the use of this compiler.
 
-Note:
-Using Visual Studio 2010 will NOT work: Python and its extension modules
-are all compiled with Visual C++ 2008, and the frePPle-Python requires you
-to use the same compiler and CRTs. Failure to use the same CRT causes trouble.
-
-Note:
-Only 32-bit builds are currently supported on Windows. FrePPLe compiles and 
-works fine in 64-bit environments, but there is no reason right now to 
-support both on Windows.
+Using more recent versions of Visual Studio will NOT work: Python and its
+extension modules are all compiled with Visual C++ 2008, and the frePPle
+needs to use the same compiler and C runtime libraries.
 
 
 PREREQUISITES

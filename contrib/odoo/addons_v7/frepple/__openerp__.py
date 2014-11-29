@@ -33,7 +33,8 @@ material and capacity planning decisions.
       'purchase',
       'sale',
       'resource',
-      'mrp'
+      'mrp',
+      'sales_order_date'
       ],
     'data': [
       'frepple_data.xml',

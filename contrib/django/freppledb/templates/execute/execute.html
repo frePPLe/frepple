@@ -25,6 +25,11 @@
   }
 
   function status (cellvalue, options, rowdata) {
+    if (rowdata.name == "generate plan"
+        && !('finished' in rowdata)
+        && cellvalue.charAt(cellvalue.length-1) == "%"
+        )
+      return cellvalue + "&nbsp;&nbsp;<button class='ui-button ui-widget ui-state-default ui-corner-all' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% trans 'Cancel' %}</button>";
     if (cellvalue == 'Failed')
       return "<span class='taskfailed'>{% trans 'Failed' %}</span>";
     else if (cellvalue == 'Waiting')

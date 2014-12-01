@@ -15,6 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import os
+import signal
 import os.path
 import sys
 from datetime import datetime
@@ -286,7 +288,28 @@ def CancelTask(request, taskid):
     raise Http404('Only ajax post requests allowed')
   try:
     task = Task.objects.all().using(request.database).get(pk=taskid)
-    if task.status != 'Waiting':
+    if task.name == 'generate plan' and task.status.endswith("%"):
+      if request.database == DEFAULT_DB_ALIAS:
+        fname = os.path.join(settings.FREPPLE_LOGDIR, 'frepple.log')
+      else:
+        fname = os.path.join(settings.FREPPLE_LOGDIR, 'frepple_%s.log' % request.database)
+      try:
+        # The second line in the log file has the id of the frePPLe process
+        with open(fname, 'rb') as f:
+          t = 0
+          for line in f:
+            if t >= 1:
+              t = line.split()
+              break
+            else:
+              t += 1
+          if t[0] == 'FrePPLe' and t[1] == 'with' and t[2] == 'processid':
+            # Kill the process with signal 9
+            os.kill(int(t[3]), 9)
+            task.message = 'Killed process'
+      except Exception as e:
+        return HttpResponseServerError('Error canceling task')
+    elif task.status != 'Waiting':
       raise Exception('Task is not in waiting status')
     task.status = 'Canceled'
     task.save(using=request.database)

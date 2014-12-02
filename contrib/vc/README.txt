@@ -32,7 +32,6 @@ A convenience build script is provided to compile frePPle.
      - VC: Installation directory of Visual Studio C++ 2008
      - PYTHON: Installation directory of the Python language
      - XERCES: Installation directory of the Xerces-C library
-     - GLPK:  *Optional.* Installation directory of the GNU Linear Programming Kit
 
 2. Execute the build.bat command
    The following options can be given on the command line:
@@ -50,13 +49,6 @@ The following describes the steps you need to build frePPLe.
 
 2. Double-click the solution file "contrib/vc/frepple.sln".
 
-4. The configuration 'release' builds the projects 'main' (console application)
-   'dll' (shared library), as well as the mail modules.
+3. Choose the "release" or "debug" configuration and build the solution.
 
-5. *Optionally* you may want to use the linear programming module.
-   If so, install "glpk" and configure its paths in VC++.
-
-6. When using the application, the path should be set such that
-   the module libraries are found in the path.
-   The easiest way is to have these files in the same directory as the
-   application.
+4. All relevant output binaries are placed in the "bin" folder.

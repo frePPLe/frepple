@@ -31,9 +31,3 @@ Public License can be found in `/usr/share/common-licenses/AGPL-3'.
 
 The Debian packaging is copyright 2012, jdetaeye <jdetaeye@users.sourceforge.net> and
 is licensed under the AGPL, see `/usr/share/common-licenses/AGPL-3'.
-
-# Note on the license: frePPle is released with the AGPL license.
-# The optional plugin module mod_lpsolver depends on the GLPK package which is
-# licensed under GPL. 
-# The source code of that module is included here, but it not compiled in
-# the binary packages.

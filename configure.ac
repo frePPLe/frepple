@@ -100,20 +100,6 @@ AS_HELP_STRING([--enable-profile],
 esac],[profile=false])
 AM_CONDITIONAL(PROFILE, test x$profile = xtrue)
 
-
-#
-# Define an extra configure argument to enable the lp solver
-#
-AC_ARG_ENABLE(lp_solver,
-AS_HELP_STRING([--enable-lp_solver],
-[Build the linear programming solver module (default: true if the GLPK package is installed)]),
-[case "${enableval}" in
-  yes) lp=true ;;
-  no)  lp=false ;;
-  *) AC_MSG_ERROR([bad value ${enableval} for --enable-lp_solver]) ;;
-esac], [AC_CHECK_PROG(lp, [glpsol], true, false)])
-AM_CONDITIONAL(LP, test x$lp = xtrue)
-
 #
 # Define a configure argument to enable/disable building of the documentation
 #
@@ -208,27 +194,6 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
   ])])
 
 #
-# Verify installation of GLPK (GNU linear programming kit)
-#
-if test x$lp = xtrue
-then
-AC_CHECK_LIB(glpk, glp_simplex,
-[ true ], # dummy action to avoid that glpk is added to the list list of required libraries
-[AC_MSG_ERROR([
-  Can't link with the glpk library.en
-  This package requires the GLPK linear programming solver.
-  Install its development library, or reconfigure with the option '--disable-lp_solver'
-])])
-AC_CHECK_HEADERS([glpk.h], [],
-[AC_CHECK_HEADERS([glpk/glpk.h], [],
-[AC_MSG_ERROR([
-  The glpk libray has been installed, but its header file could not be found
-  This package requires the GLPK linear programming solver.
-  Install its development library, or reconfigure with the option '--disable-lp_solver'
-])])])
-fi
-
-#
 # Verify installation of PYTHON
 # Edit the minimum required version to 3.0 to switch to using Python 3.
 #
@@ -314,9 +279,9 @@ AM_CONDITIONAL(CYGWIN, test x$host_os = xcygwin)
 AC_CONFIG_FILES([ Makefile bin/Makefile doc/Makefile ])
 AC_CONFIG_FILES([ include/Makefile include/frepple/Makefile ])
 AC_CONFIG_FILES([ src/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile ])
-AC_CONFIG_FILES([ modules/Makefile modules/lp_solver/Makefile ])
+AC_CONFIG_FILES([ modules/Makefile ])
 AC_CONFIG_FILES([ contrib/Makefile contrib/vc/Makefile contrib/django/Makefile contrib/installer/Makefile contrib/rpm/Makefile contrib/debian/Makefile contrib/odoo/Makefile ])
-AC_CONFIG_FILES([ test/Makefile test/buffer_batch/Makefile test/cluster/Makefile test/custom_fields/Makefile test/calendar/Makefile test/constraints_combined_1/Makefile test/constraints_combined_2/Makefile test/constraints_leadtime_1/Makefile test/constraints_leadtime_2/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/constraints_material_4/Makefile test/datetime/Makefile test/flow_alternate_1/Makefile test/flow_alternate_2/Makefile test/flow_fixed/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/jobshop/Makefile test/xml/Makefile test/xml_remote/Makefile  test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/constraints_resource_4/Makefile test/constraints_resource_5/Makefile test/constraints_resource_6/Makefile test/criticality/Makefile test/problems/Makefile test/deletion/Makefile test/demand_policy/Makefile test/operation_alternate/Makefile test/operation_available/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/operation_routing/Makefile test/operation_split/Makefile test/multithreading/Makefile test/name/Makefile test/python_1/Makefile test/python_2/Makefile test/python_3/Makefile test/sample_module/Makefile test/callback/Makefile test/pegging/Makefile test/safety_stock/Makefile test/buffer_procure_1/Makefile test/flow_effective/Makefile test/load_alternate/Makefile test/load_effective/Makefile test/setup_1/Makefile test/setup_2/Makefile test/setup_3/Makefile test/skills/Makefile test/wip/Makefile ])
+AC_CONFIG_FILES([ test/Makefile test/buffer_batch/Makefile test/cluster/Makefile test/custom_fields/Makefile test/calendar/Makefile test/constraints_combined_1/Makefile test/constraints_combined_2/Makefile test/constraints_leadtime_1/Makefile test/constraints_leadtime_2/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/constraints_material_4/Makefile test/datetime/Makefile test/flow_alternate_1/Makefile test/flow_alternate_2/Makefile test/flow_fixed/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/jobshop/Makefile test/xml/Makefile test/xml_remote/Makefile  test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/constraints_resource_4/Makefile test/constraints_resource_5/Makefile test/constraints_resource_6/Makefile test/criticality/Makefile test/problems/Makefile test/deletion/Makefile test/demand_policy/Makefile test/operation_alternate/Makefile test/operation_available/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/operation_routing/Makefile test/operation_split/Makefile test/multithreading/Makefile test/name/Makefile test/python_1/Makefile test/python_2/Makefile test/python_3/Makefile test/sample_module/Makefile test/callback/Makefile test/pegging/Makefile test/safety_stock/Makefile test/buffer_procure_1/Makefile test/flow_effective/Makefile test/load_alternate/Makefile test/load_effective/Makefile test/setup_1/Makefile test/setup_2/Makefile test/setup_3/Makefile test/skills/Makefile test/wip/Makefile ])
 
 # Generate all make files
 AC_OUTPUT

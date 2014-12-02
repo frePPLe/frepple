@@ -24,11 +24,9 @@
   If the contents of this file has validation errors, the execution is
   aborted.
   -->
-  <!--
-  <logfile>frepple.log</logfile>
-  -->
+<!--
 <?python
-## Linear Programming solver module
-#frepple.loadmodule("mod_lpsolver.so")
+# Python commands can go in here.
 ?>
+-->
 </plan>

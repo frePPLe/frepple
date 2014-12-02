@@ -2,4 +2,4 @@
 # Process this file with automake to produce Makefile.in
 #
 
-SUBDIRS = lp_solver
+# No modules are currently included in the Community Edition

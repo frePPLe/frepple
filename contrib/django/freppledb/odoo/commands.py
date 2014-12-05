@@ -70,6 +70,7 @@ def odoo_read(db=DEFAULT_DB_ALIAS):
     raise Exception("Odoo connector not configured correctly")
 
   # Connect to the odoo URL to GET data
+  f = None
   try:
     request = Request("%s/frepple/xml/?%s" % (odoo_url, urlencode({
       'database': odoo_db, 'language': odoo_language, 'company': odoo_company
@@ -82,7 +83,10 @@ def odoo_read(db=DEFAULT_DB_ALIAS):
     raise e
 
   # Download and parse XML data
-  frepple.readXMLdata(f.read(), False, False)
+  try:
+    frepple.readXMLdata(f.read(), False, False)
+  finally:
+    if f: f.close()
 
 
 def odoo_write(db=DEFAULT_DB_ALIAS):

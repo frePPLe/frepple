@@ -15,6 +15,6 @@ include /usr/share/cdbs/1/class/python-distutils.mk
 install/frepple::
 	# Install apache configuration
 	mkdir -p $(CURDIR)/debian/tmp/etc/apache2/sites-available
-	install -m 644 contrib/debian/httpd.conf $(CURDIR)/debian/tmp/etc/apache2/sites-available/frepple
+	install -m 644 contrib/debian/httpd.conf $(CURDIR)/debian/tmp/etc/apache2/sites-available/frepple.conf
 	# Rename script file
 	mv $(CURDIR)/debian/tmp/usr/bin/frepplectl.py $(CURDIR)/debian/tmp/usr/bin/frepplectl

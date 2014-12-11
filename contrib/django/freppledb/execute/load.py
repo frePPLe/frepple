@@ -61,8 +61,8 @@ class loadData(object):
       d = self.cursor.fetchone()
       frepple.settings.current = datetime.strptime(d[0], "%Y-%m-%d %H:%M:%S")
     except:
-      print('Invalid or missing currentdate parameter: using system clock instead')
-      frepple.settings.current = datetime.now()
+      frepple.settings.current = datetime.now().replace(microsecond=0)
+      print('Using system clock as current date: %s' % frepple.settings.current)
 
 
   def loadLocations(self):

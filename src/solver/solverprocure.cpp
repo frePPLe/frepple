@@ -64,17 +64,58 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   Date earliest_next;
   Date latest_next = Date::infiniteFuture;
   vector<OperationPlan*> procurements;
-  for (OperationPlan::iterator i(b->getOperation()); i!=OperationPlan::end(); ++i)
+  for (Buffer::flowplanlist::const_iterator c = b->getFlowPlans().begin();
+      c != b->getFlowPlans().end(); ++c)
   {
-    if (i->getLocked())
-      earliest_next = i->getDates().getEnd();
+    if (c->getQuantity() <= 0 || c->getType() != 1)
+      continue;
+    const OperationPlan *o = reinterpret_cast<const FlowPlan*>(&*c)->getOperationPlan();
+    if (o->getLocked())
+      earliest_next = o->getDates().getEnd();
     else
     {
-      procurements.push_back(&*i);
+      procurements.push_back(const_cast<OperationPlan*>(o));
       ++countProcurements;
     }
   }
   Date latestlocked = earliest_next;
+
+  // Collect operation parameters
+  // Normally these are collected from fields on the buffer. Only when a
+  // producing operation has been explicitly specified do we use those instead.
+  TimePeriod leadtime = b->getLeadtime();
+  TimePeriod fence = b->getFence();
+  double size_minimum = b->getSizeMinimum();
+  Operation *oper;
+  if (b->getProducingOperation())
+  {
+    oper = b->getProducingOperation();
+    if (oper->getType() == *OperationAlternate::metadata)
+    {
+      if (oper->getSubOperations().empty())
+        throw DataException("Missing procurement alternate suboperations");
+      // Take the first suboperation.
+      oper = *(oper->getSubOperations().begin());
+    }
+    if (oper->getType() == *OperationFixedTime::metadata)
+    {
+      // Inherit on operation from the buffer
+      if (b->getSizeMinimum() != 1.0 && oper->getSizeMinimum() == 1.0)
+        oper->setSizeMinimum(b->getSizeMinimum());
+      if (b->getSizeMaximum() && !oper->getSizeMaximum())
+        oper->setSizeMaximum(b->getSizeMaximum());
+      if (b->getSizeMultiple() && !oper->getSizeMultiple())
+        oper->setSizeMultiple(b->getSizeMultiple());
+      // Values to use in this solver method
+      fence = oper->getFence();
+      leadtime = static_cast<OperationFixedTime*>(oper)->getDuration();
+      size_minimum = oper->getSizeMinimum();
+    }
+    else
+      throw DataException("Producing operation of a procurement buffer must be of type fixed_time or alternate");
+  }
+  else
+    oper = b->getOperation();
 
   // Find constraints on earliest and latest date for the next procurement
   if (earliest_next && b->getMaximumInterval())
@@ -84,14 +125,14 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   if (data->constrainedPlanning)
   {
     if (data->getSolver()->isLeadtimeConstrained() && data->getSolver()->isFenceConstrained()
-        && earliest_next < Plan::instance().getCurrent() + b->getLeadtime() + b->getFence())
-      earliest_next = Plan::instance().getCurrent() + b->getLeadtime() + b->getFence();
+        && earliest_next < Plan::instance().getCurrent() + leadtime + fence)
+      earliest_next = Plan::instance().getCurrent() + leadtime + fence;
     else if (data->getSolver()->isLeadtimeConstrained()
-        && earliest_next < Plan::instance().getCurrent() + b->getLeadtime())
-      earliest_next = Plan::instance().getCurrent() + b->getLeadtime();
+        && earliest_next < Plan::instance().getCurrent() + leadtime)
+      earliest_next = Plan::instance().getCurrent() + leadtime;
     else if (data->getSolver()->isFenceConstrained()
-        && earliest_next < Plan::instance().getCurrent() + b->getFence())
-      earliest_next = Plan::instance().getCurrent() + b->getFence();
+        && earliest_next < Plan::instance().getCurrent() + fence)
+      earliest_next = Plan::instance().getCurrent() + fence;
   }
   if (latest_next < earliest_next) latest_next = earliest_next;
 
@@ -213,9 +254,9 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     {
       if (order_qty <= 0)
       {
-        if (latest_next == current_date && b->getSizeMinimum())
+        if (latest_next == current_date && size_minimum)
           // Forced to buy the minumum quantity
-          order_qty = b->getSizeMinimum();
+          order_qty = size_minimum;
         else
           break;
       }
@@ -225,7 +266,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       {
         // No existing procurement can be reused. Create a new one.
         CommandCreateOperationPlan *a =
-          new CommandCreateOperationPlan(b->getOperation(), order_qty,
+          new CommandCreateOperationPlan(oper, order_qty,
               Date::infinitePast, current_date, data->state->curDemand);
         a->getOperationPlan()->setMotive(data->state->motive);
         a->getOperationPlan()->insertInOperationplanList(); // TODO Not very nice: unregistered opplan in the list!
@@ -257,7 +298,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         break;  // Only 1 procurement allowed at this time...
       }
     }
-    while (order_qty > ROUNDING_ERROR && order_qty >= b->getSizeMinimum());
+    while (order_qty > ROUNDING_ERROR && order_qty >= size_minimum);
     if (b->getMaximumInterval())
     {
       current_inventory = produced - consumed;
@@ -311,13 +352,13 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       if (data->constrainedPlanning)
       {
         if (data->getSolver()->isFenceConstrained()
-            && data->state->q_date < Plan::instance().getCurrent() + b->getFence()
-            && data->state->a_date > Plan::instance().getCurrent() + b->getFence())
-          data->state->a_date = Plan::instance().getCurrent() + b->getFence();
+            && data->state->q_date < Plan::instance().getCurrent() + fence
+            && data->state->a_date > Plan::instance().getCurrent() + fence)
+          data->state->a_date = Plan::instance().getCurrent() + fence;
         if (data->getSolver()->isLeadtimeConstrained()
-            && data->state->q_date < Plan::instance().getCurrent() + b->getLeadtime()
-            && data->state->a_date > Plan::instance().getCurrent() + b->getLeadtime())
-          data->state->a_date = Plan::instance().getCurrent() + b->getLeadtime();   // TODO Doesn't consider calendar of the procurement operation...
+            && data->state->q_date < Plan::instance().getCurrent() + leadtime
+            && data->state->a_date > Plan::instance().getCurrent() + leadtime)
+          data->state->a_date = Plan::instance().getCurrent() + leadtime;   // TODO Doesn't consider calendar of the procurement operation...
         if (latestlocked
             && data->state->q_date < latestlocked
             && data->state->a_date > latestlocked)

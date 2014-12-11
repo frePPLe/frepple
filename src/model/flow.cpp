@@ -118,7 +118,8 @@ DECLARE_EXPORT void Flow::validate(Action action)
     case ADD_CHANGE:
       // ADD is handled in the code after the switch statement
       if (i == oper->getFlows().end()) break;
-      throw DataException("Can't update a flow");
+      throw DataException("Can't update a flow between '" +
+        oper->getName() + "' and '" + buf->getName() + "')");
     case REMOVE:
       // Delete the temporary flow object
       delete this;

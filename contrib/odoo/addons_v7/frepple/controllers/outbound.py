@@ -327,7 +327,8 @@ class exporter(object):
   def export_items(self):
     '''
     Send the list of products to frePPLe, based on the product.product model.
-    For purchased items we also create a procurement buffer in each warehouse.
+    For purchased items we also create a procurement buffer in each warehouse, and a procurement
+    operation for each of the suppliers.
 
     Mapping:
     [product.product.code] product.product.name -> item.name
@@ -337,18 +338,27 @@ class exporter(object):
     If product.product.product_tmpl_id.purchase_ok and product.product.product_tmpl_id.supply_method == 'buy':
     stock.warehouse.name -> buffer.location
     [product.product.code] product.product.name @ stock.warehouse.name -> buffer.name
-    product.product.product_tmpl_id.produce_delay -> buffer.leadtime
+
     'buffer_procure' -> buffer.type
     '''
     # Read the product templates
     self.product_product = {}
+    self.purchase_operations = set()
     self.procured_buffers = set()
     m = self.req.session.model('product.template')
-    fields = ['purchase_ok', 'procure_method', 'supply_method', 'produce_delay', 'list_price', 'uom_id']
+    fields = ['purchase_ok', 'procure_method', 'supply_method', 'produce_delay', 'list_price', 'seller_ids', 'uom_id']
     ids = m.search([], context=self.req.session.context)
     self.product_templates = {}
     for i in m.read(ids, fields, self.req.session.context):
       self.product_templates[i['id']] = i
+
+    # Read the supplierinfo
+    m = self.req.session.model('product.supplierinfo')
+    fields = ['delay', 'min_qty', 'product_uom', 'sequence', 'name']
+    ids = m.search([], context=self.req.session.context)
+    supplierinfo = {}
+    for i in m.read(ids, fields, self.req.session.context):
+      supplierinfo[i['id']] = i
 
     # Read the products
     m = self.req.session.model('product.product')
@@ -377,13 +387,57 @@ class exporter(object):
       for i in data:
         tmpl = self.product_templates[i['product_tmpl_id'][0]]
         if tmpl['purchase_ok'] and tmpl['supply_method'] == 'buy':
+          numsuppliers = len(tmpl['seller_ids'])
+          if numsuppliers == 0:
+            logger.warning("No suppliers defined for procured product '%s'" % self.product_product[i['id']]['name'])
           for j in self.warehouses:
             buf = u'%s @ %s' % (self.product_product[i['id']]['name'], j)
             self.procured_buffers.add(buf)
-            yield '<buffer name=%s leadtime="P%sD" xsi:type="buffer_procure"><item name=%s/><location name=%s/></buffer>\n' % (
-              quoteattr(buf), int(tmpl['produce_delay'] + self.po_lead),
-              quoteattr(self.product_product[i['id']]['name']), quoteattr(j)
-              )
+            if numsuppliers == 0:
+              # No suppliers found: use only the po_lead time
+              yield ('<buffer name=%s xsi:type="buffer_procure"><item name=%s/>'
+                '<location name=%s/><producing name=%s duration="P%sD" xsi:type="operation_fixed_time">'
+                '<location name=%s/></producing></buffer>\n') % (
+                quoteattr(buf), quoteattr(self.product_product[i['id']]['name']), quoteattr(j),
+                quoteattr("Purchase %s" % buf), int(self.po_lead), quoteattr(j)
+                )
+            elif numsuppliers == 1:
+              # A single supplier is found
+              supplier = supplierinfo[tmpl['seller_ids'][0]]
+              operation = "Purchase %s from %s" % (buf, supplier['name'][1])
+              self.purchase_operations.add(operation)
+              yield ('<buffer name=%s xsi:type="buffer_procure"><item name=%s/>'
+                 '<location name=%s/><producing name=%s duration="P%sD" '
+                 'size_minimum="%s" size_multiple="%s" xsi:type="operation_fixed_time">'
+                 '<flows><flow xsi:type="flow_end" quantity="1"><buffer name=%s/></flow></flows>'
+                 '<location name=%s/></producing></buffer>\n') % (
+                quoteattr(buf), quoteattr(self.product_product[i['id']]['name']), quoteattr(j),
+                quoteattr(operation), int(supplier['delay'] + self.po_lead),
+                supplier['min_qty'] and 1 / self.convert_qty_uom(supplier['min_qty'], supplier['product_uom'][0], i['id']) or 0,
+                1 / self.convert_qty_uom(1, supplier['product_uom'][0], i['id']),
+                quoteattr(buf), quoteattr(j)
+                )
+            else:
+              # Multiple suppliers
+              yield '<buffer name=%s xsi:type="buffer_procure"><item name=%s/><location name=%s/><producing name=%s xsi:type="operation_alternate"><alternates>\n' % (
+                quoteattr(buf), quoteattr(self.product_product[i['id']]['name']),
+                quoteattr(j), quoteattr("Alternate %s" % buf)
+                )
+              for k in tmpl['seller_ids']:
+                supplier = supplierinfo[k]
+                operation = "Purchase %s from %s" % (buf, supplier['name'][1])
+                self.purchase_operations.add(operation)
+                yield ('<alternate><operation name=%s duration="P%sD" size_minimum="%s" '
+                       'size_multiple="%s" xsi:type="operation_fixed_time">'
+                       '<flows><flow xsi:type="flow_end" quantity="1"><buffer name=%s></buffer></flow></flows>'
+                       '<location name=%s/></operation><priority>%s</priority></alternate>') % (
+                  quoteattr(operation),
+                  int(supplier['delay'] + self.po_lead),
+                  supplier['min_qty'] and 1 / self.convert_qty_uom(supplier['min_qty'], supplier['product_uom'][0], i['id']) or 0,
+                  1 / self.convert_qty_uom(1, supplier['product_uom'][0], i['id']),
+                  quoteattr(buf), quoteattr(j), supplier['sequence']
+                  )
+              yield '</alternates></producing></buffer>\n'
       yield '</buffers>\n'
 
 
@@ -624,7 +678,6 @@ class exporter(object):
 
     # Create purchasing operations
     dd = []
-    deliveries = set()
     yield '<!-- purchase operations -->\n'
     yield '<operations>\n'
     for i in po_line:
@@ -634,15 +687,15 @@ class exporter(object):
       j = po[i['order_id'][0]]
       location = j['location_id'] and self.map_locations.get(j['location_id'][0], None) or None
       if location and item and j['state'] == 'approved' and not j['shipped']:
-        operation = u'Purchase %s @ %s' % (item['name'], location)
+        operation = u'Purchase %s @ %s from %s' % (item['name'], location, j['partner_id'][1])
         buf = u'%s @ %s' % (item['name'], location)
         due = i['date_planned']
         qty = self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
-        if not buf in deliveries and not buf in self.procured_buffers:
+        if not operation in self.purchase_operations:
           yield '<operation name=%s><flows><flow xsi:type="flow_end" quantity="1"><buffer name=%s><item name=%s/><location name=%s/></buffer></flow></flows></operation>\n' % (
             quoteattr(operation), quoteattr(buf), quoteattr(item['name']), quoteattr(location)
             )
-          deliveries.update([buf])
+          self.purchase_operations.add(operation)
         dd.append( (quoteattr(operation), due, due, qty) )
     yield '</operations>\n'
 

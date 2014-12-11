@@ -260,8 +260,8 @@ and export results.<br/>
 <td style="padding: 0px 5px">{% trans "Read" %}</td>
 <td style="padding: 0px 5px">{% trans "Write" %}</td></tr>
 <tr><td style="padding-right: 10px">Odoo</td>
-<td style="text-align:center"><input type="checkbox" name="odoo_read" value="1"/></td>
-<td style="text-align:center"><input type="checkbox" name="odoo_write" value="1"/></td></tr>
+<td style="text-align:center"><input type="checkbox" name="odoo_read" {% if odoo_read %}checked {% endif %}value="1"/></td>
+<td style="text-align:center"><input type="checkbox" name="odoo_write" {% if odoo_write %}checked {% endif %}value="1"/></td></tr>
 </table>
 {% endif %}
 <a id="logfile" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a></td>

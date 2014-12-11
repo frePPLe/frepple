@@ -97,6 +97,7 @@ class TaskReport(GridReport):
     fixtures = sorted(fixtures)
 
     # Send to template
+    odoo = 'freppledb.odoo' in settings.INSTALLED_APPS
     return {'capacityconstrained': constraint & 4,
             'materialconstrained': constraint & 2,
             'leadtimeconstrained': constraint & 1,
@@ -104,7 +105,9 @@ class TaskReport(GridReport):
             'scenarios': Scenario.objects.all(),
             'fixtures': fixtures,
             'openbravo': 'freppledb.openbravo' in settings.INSTALLED_APPS,
-            'odoo': 'freppledb.odoo' in settings.INSTALLED_APPS,
+            'odoo': odoo,
+            'odoo_read': odoo and request.session.get('odoo_read', False),
+            'odoo_write': odoo and request.session.get('odoo_write', False)
             }
 
 
@@ -160,12 +163,18 @@ def wrapTask(request, action):
     env = []
     if request.POST.get('odoo_read', None) == u'1':
       env.append("odoo_read")
+      request.session['odoo_read'] = True
+    else:
+      request.session['odoo_read'] = False
     if request.POST.get('odoo_write', None) == u'1':
       env.append("odoo_write")
+      request.session['odoo_write'] = True
+    else:
+      request.session['odoo_write'] = False
     if env:
       task.arguments = "%s --env=%s" % (task.arguments, ','.join(env))
     task.save(using=request.database)
-    # Update the session object   TODO REPLACE WITH PREFERENCE INFO
+    # Update the session object
     request.session['plantype'] = request.POST.get('plantype')
     request.session['constraint'] = constraint
   # B

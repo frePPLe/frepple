@@ -210,10 +210,11 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     }
 
     // Now the normal reorder check
-    if (current_inventory >= b->getMinimumInventory()
+    if (current_inventory > b->getMinimumInventory() - ROUNDING_ERROR
         && current_date < latest_next)
     {
-      if (current_date == earliest_next) earliest_next = Date::infinitePast;
+      if (current_date == earliest_next)
+        earliest_next = Date::infinitePast;
       continue;
     }
 

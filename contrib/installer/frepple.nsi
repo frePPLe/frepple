@@ -209,7 +209,7 @@ Section "Application" SecAppl
   File "..\bin\frepple.exp"
 
   ; Copy modules
-  File "..\bin\mod_*.so"
+  File /nonfatal "..\bin\mod_*.so"
 
    ; Copy configuration files
   File "..\bin\*.xsd"

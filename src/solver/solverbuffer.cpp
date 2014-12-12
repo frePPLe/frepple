@@ -108,7 +108,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
         && prev
         && prev->getDate() >= theDate - b->getMinimumInterval())
       {
-       Buffer::flowplanlist::const_iterator prevbatchiter = b->getFlowPlans().end();
+        Operation *prevOper = NULL;
+        DateRange prevDates;
+        double prevQty = 0.0;
+        Buffer::flowplanlist::const_iterator prevbatchiter = b->getFlowPlans().end();
         for (Buffer::flowplanlist::const_iterator batchiter = prev;
           batchiter != b->getFlowPlans().end() && batchiter->getDate() >= theDate - b->getMinimumInterval();
           prevbatchiter = batchiter--)
@@ -130,6 +133,15 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           Operation* candidate_operation = batchcandidate->getOperationPlan()->getOperation();
           DateRange candidate_dates = batchcandidate->getOperationPlan()->getDates();
           double candidate_qty = batchcandidate->getOperationPlan()->getQuantity();
+
+          // Verify we haven't tried the same kind of candidate before
+          if (candidate_operation == prevOper
+            && candidate_dates == prevDates
+            && fabs(candidate_qty - prevQty) < ROUNDING_ERROR)
+              continue;
+          prevOper = candidate_operation;
+          prevDates = candidate_dates;
+          prevQty = candidate_qty;
 
           // Delete existing producer, and propagate the deletion upstream
           CommandManager::Bookmark* batchbookmark = data->setBookmark();
@@ -200,6 +212,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
         && cur != b->getFlowPlans().end()
         && cur->getDate() <= theDate + b->getMinimumInterval())
       {
+        Operation *prevOper = NULL;
+        DateRange prevDates;
+        double prevQty = 0.0;
         Buffer::flowplanlist::const_iterator prevbatchiter = b->getFlowPlans().end();
         for (Buffer::flowplanlist::const_iterator batchiter = cur;
           batchiter != b->getFlowPlans().end() && batchiter->getDate() <= theDate + b->getMinimumInterval();
@@ -221,6 +236,15 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           Operation* candidate_operation = batchcandidate->getOperationPlan()->getOperation();
           DateRange candidate_dates = batchcandidate->getOperationPlan()->getDates();
           double candidate_qty = batchcandidate->getOperationPlan()->getQuantity();
+
+          // Verify we haven't tried the same kind of candidate before
+          if (candidate_operation == prevOper
+            && prevDates == candidate_dates
+            && fabs(candidate_qty - prevQty) < ROUNDING_ERROR)
+              continue;
+          prevOper = candidate_operation;
+          prevDates = candidate_dates;
+          prevQty = candidate_qty;
 
           // Delete existing producer, and propagate the deletion upstream
           CommandManager::Bookmark* batchbookmark = data->setBookmark();

@@ -177,24 +177,30 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
       bufs[(buf->getLevel()>=0) ? buf->getLevel() : 0].push_back(&*buf);
   for (vector< list<Buffer*> >::iterator b_list = bufs.begin(); b_list != bufs.end(); ++b_list)
     for (list<Buffer*>::iterator b = b_list->begin(); b != b_list->end(); ++b)
-    {
-      state->curBuffer = NULL;
-      // A quantity of -1 is a flag for the buffer solver to solve safety stock.
-      state->q_qty = -1.0;
-      state->q_date = Date::infinitePast;
-      state->a_cost = 0.0;
-      state->a_penalty = 0.0;
-      planningDemand = NULL;
-      state->curDemand = NULL;
-      state->motive = *b;
-      state->curOwnerOpplan = NULL;
-      // Call the buffer solver
-      (*b)->solve(*solver, this);
-      // Check for excess
-      if ((*b)->getType() != *BufferProcure::metadata)
-        (*b)->solve(cleanup, this);
-      CommandManager::commit();
-    }
+      try
+      {
+        state->curBuffer = NULL;
+        // A quantity of -1 is a flag for the buffer solver to solve safety stock.
+        state->q_qty = -1.0;
+        state->q_date = Date::infinitePast;
+        state->a_cost = 0.0;
+        state->a_penalty = 0.0;
+        planningDemand = NULL;
+        state->curDemand = NULL;
+        state->motive = *b;
+        state->curOwnerOpplan = NULL;
+        // Call the buffer solver
+        iteration_count = 0;
+        (*b)->solve(*solver, this);
+        // Check for excess
+        if ((*b)->getType() != *BufferProcure::metadata)
+          (*b)->solve(cleanup, this);
+        CommandManager::commit();
+      }
+      catch(...)
+      {
+        CommandManager::rollback();
+      }
   if (getLogLevel()>0) logger << "Finished safety stock replenishment pass" << endl;
   safety_stock_planning = false;
 }

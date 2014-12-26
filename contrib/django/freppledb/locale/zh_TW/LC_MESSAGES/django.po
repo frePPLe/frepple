@@ -16,7 +16,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 2.2.beta\n"
+"Project-Id-Version: 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-08 08:49+0100\n"
 "PO-Revision-Date: 2014-10-26 11:52+0100\n"

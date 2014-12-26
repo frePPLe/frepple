@@ -194,7 +194,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       // "current end of the operationplan". We can try to resize the
       // operationplan to fit in this time period...
       if (HasOverload && !HasSetupOverload
-        && curdate < data->state->q_loadplan->getDate())
+        && curdate < data->state->q_loadplan->getDate()
+        && data->getSolver()->getAllowSplits())
       {
         Date currentEnd = data->state->q_operationplan->getDates().getEnd();
         data->state->q_operationplan->getOperation()->setOperationPlanParameters(

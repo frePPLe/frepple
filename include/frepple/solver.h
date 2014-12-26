@@ -300,9 +300,10 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    DECLARE_EXPORT SolverMRP(const string& n) : Solver(n), constrts(15), allowSplits(true),
-      plantype(1), lazydelay(86400L), iteration_threshold(1),
-      iteration_accuracy(0.01), autocommit(true), planSafetyStockFirst(false)
+    DECLARE_EXPORT SolverMRP(const string& n) : Solver(n), constrts(15),
+      allowSplits(true), plantype(1), lazydelay(86400L),
+      iteration_threshold(1), iteration_accuracy(0.01), iteration_max(0),
+      autocommit(true), planSafetyStockFirst(false)
     { initType(metadata); }
 
     /** Destructor. */
@@ -459,6 +460,21 @@ class SolverMRP : public Solver
       iteration_accuracy = d;
     }
 
+    /** Return the maximum number of asks allowed to plan a demand.
+      * If the can't plan a demand within this limit, we consider it
+      * unplannable.
+      */
+    unsigned long getIterationMax() const {return iteration_max;}
+
+    /** Update the maximum number of asks allowed to plan a demand.
+      * If the can't plan a demand within this limit, we consider it
+      * unplannable.
+      */
+    void setIterationMax(unsigned long d)
+    {
+      iteration_max = d;
+    }
+
     /** Return whether or not we automatically commit the changes after
       * planning a demand. */
     bool getAutocommit() const {return autocommit;}
@@ -555,6 +571,12 @@ class SolverMRP : public Solver
       * less than this percentage limit.
       */
     double iteration_accuracy;
+
+    /** Maximum number of asks allowed to plan a demand.
+      * If the can't plan a demand within this limit, we consider it
+      * unplannable.
+      */
+    unsigned long iteration_max;
 
     /** Enable or disable automatically committing the changes in the plan
       * after planning each demand.<br>
@@ -806,6 +828,9 @@ class SolverMRP : public Solver
 
         /** Internal flag that is set to true when solving for safety stock. */
         bool safety_stock_planning;
+
+        /** Count the number of asks. */
+        unsigned long iteration_count;
 
       public:
         /** Pointer to the current solver status. */

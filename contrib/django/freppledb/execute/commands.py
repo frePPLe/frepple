@@ -101,11 +101,14 @@ def createPlan(database=DEFAULT_DB_ALIAS):
   except:
     constraint = 15  # Default is with all constraints enabled
   solver = frepple.solver_mrp(
-    name="MRP", constraints=constraint,
-    plantype=plantype, loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),
+    name="MRP",
+    constraints=constraint,
+    plantype=plantype,
+    loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),
     lazydelay=int(Parameter.getValue('lazydelay', database, '86400')),
     allowsplits=(Parameter.getValue('allowsplits', database, 'true') == "true"),
-    plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false') == "false")
+    plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false') == "false"),
+    iterationmax=int(Parameter.getValue('plan.iterationmax', database, '0'))
     #userexit_resource=debugResource,
     #userexit_demand=debugDemand
     )

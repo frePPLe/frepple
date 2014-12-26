@@ -38,6 +38,15 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   if (userexit_buffer) userexit_buffer.call(b, PythonObject(data->constrainedPlanning));
 
+  // Verify the iteration limit isn't exceeded.
+  if (data->getSolver()->getIterationMax()
+    && ++data->iteration_count > data->getSolver()->getIterationMax())
+  {
+    ostringstream ch;
+    ch << "Maximum iteration count " << data->getSolver()->getIterationMax() << " exceeded";
+    throw RuntimeException(ch.str());
+  }
+
   // Safety stock planning is refactored to a separate method
   double requested_qty(data->state->q_qty);
   if (requested_qty == -1.0)
@@ -443,6 +452,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     // at all later dates!
     // Note that asking at the requested date doesn't keep the material on
     // stock to a minimum.
+    if (requested_qty - shortage < ROUNDING_ERROR)
+      data->rollback(topcommand);
     b->getProducingOperation()->solve(*this,v);
     // Evaluate the reply
     if (data->state->a_date < extraSupplyDate

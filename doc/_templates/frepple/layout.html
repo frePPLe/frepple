@@ -1,0 +1,47 @@
+{% extends "basic/layout.html" %}
+
+{%- block relbar1 %}<div id="banner">
+<div id="site-title" role="banner"><a href="http://frepple.com/" title="frePPLe" rel="home">
+<img src="{{ pathto('_static/frepple.svg', 1) }}" height="65" alt="frePPLe"><br/>
+<span>open source production planning</a>
+</div>
+<div style="position:relative; top:70px; float:right; font-weight:bold">Documentation v{{ release }}</div>
+
+</div>
+<div id="header-end"><hr/></div>    
+{% endblock %}
+
+{%- block content %}
+   <div class="document">
+
+   <!-- Sidebar with search field and table of contents -->
+    <div class="sphinxsidebar">
+    <form action="" method="get">
+    <input id="search" type="text" placeholder="Search" name="q" value="" />
+    <span id="search-progress" style="padding-left: 10px"></span>
+    </form>
+    {{ toc }}
+    </div>
+                 
+  {%- block document %}
+    <div class="documentwrapper">
+    
+    <!-- Breadcrumbs --> 
+    <ul class="breadcrumbs">
+    <li class="menu-item menu-item-type-post_type menu-item-object-page page_item"><a href="{{ pathto(master_doc) }}">Home</a></li>{% for doc in parents %} 
+    <li class="menu-item menu-item-type-post_type menu-item-object-page page_item">&nbsp;&raquo;&nbsp;<a href="{{ doc.link|e }}">{{ doc.title }}</a></li>{% endfor %}
+    {% if pagename != master_doc %}<li class="menu-item menu-item-type-post_type menu-item-object-page page_item">&nbsp;&raquo;&nbsp;{{ title }}</li>
+    {% endif %}</ul><br/>
+
+    <!-- Main content -->
+        <div class="bodywrapper">
+          <div class="body">
+            {% block body %} {% endblock %}
+          </div>
+      </div>
+  {%- endblock %}
+      <div class="clearer"></div>
+    </div>
+{%- endblock %}
+
+{%- block relbar2 %}{% endblock %}

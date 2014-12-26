@@ -158,15 +158,15 @@ IGNORE_PREFIX          =
 
 GENERATE_HTML          = YES
 
-HTML_OUTPUT            = output/api
+HTML_OUTPUT            = _build/api
 
 HTML_FILE_EXTENSION    = .html
 
-HTML_HEADER            = apiheader.html
+HTML_HEADER            =
 
-HTML_FOOTER            = apifooter.html
+HTML_FOOTER            =
 
-HTML_STYLESHEET        = apistyles.css
+HTML_STYLESHEET        =
 
 GENERATE_HTMLHELP      = NO
 
@@ -294,7 +294,7 @@ SKIP_FUNCTION_MACROS   = YES
 
 TAGFILES               =
 
-GENERATE_TAGFILE       = 
+GENERATE_TAGFILE       =
 
 ALLEXTERNALS           = NO
 
@@ -315,7 +315,7 @@ HAVE_DOT               = $(HAVE_DOT)
 CLASS_GRAPH            = YES
 
 # Collaboration graph gets too complex
-COLLABORATION_GRAPH    = NO 
+COLLABORATION_GRAPH    = NO
 
 TEMPLATE_RELATIONS     = NO
 

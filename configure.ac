@@ -115,10 +115,10 @@ AS_HELP_STRING([--enable-doc],
           AC_MSG_ERROR([Could not find doxygen, no documentation can be built])
           generatedoc=false
        fi
-       AC_CHECK_PROGS(WGET, wget, notavailable)
-       if test x$WGET = xnotavailable
+       AC_CHECK_PROGS(SPHINXBUILD, sphinx-build, notavailable)
+       if test x$SPHINXBUILD = xnotavailable
        then
-          AC_MSG_ERROR([Could not find wget, no documentation can be built])
+          AC_MSG_ERROR([Could not find sphinx-build, no documentation can be built])
           generatedoc=false
        fi
        ;;

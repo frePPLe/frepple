@@ -6,7 +6,7 @@
 DEB_PYTHON2_MODULE_PACKAGES=freppledb
 DEB_PYTHON_SETUP_CMD=contrib/django/setup.py
 DEB_BUILD_OPTIONS = nocheck parallel=2
-DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --disable-doc --disable-lp_solver PYFLAGS='--install-layout=deb'
+DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --enable-doc --disable-lp_solver PYFLAGS='--install-layout=deb'
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk

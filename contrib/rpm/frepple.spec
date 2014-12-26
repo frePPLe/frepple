@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2014 by Johan De Taeye, frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -29,7 +29,8 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
 # Note on dependencies: Django is also required, but we need a custom install.
 Requires: xerces-c, openssl, httpd, mod_wsgi, python, python-cherrypy
 Requires(pre): shadow-utils
-BuildRequires: python-devel, automake, autoconf, libtool, xerces-c-devel, openssl-devel, graphviz, doxygen
+BuildRequires: python-devel, automake, autoconf, libtool, xerces-c-devel
+BuildRequires: graphviz, doxygen, python-sphinx
 
 %description
 FrePPLe stands for "Free Production PLanning". It is an application for
@@ -70,7 +71,7 @@ usermod -a -G frepple apache
 %configure \
   --disable-static \
   --disable-dependency-tracking \
-  --disable-doc
+  --enable-doc
 # Remove rpath from libtool
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool

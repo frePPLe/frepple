@@ -1,0 +1,249 @@
+
+@import url("basic.css");
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: url(OpenSans-Light.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url(OpenSans-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url(OpenSans-Semibold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url(OpenSans-Bold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 300;
+  src: url(OpenSans-LightItalic.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: url(OpenSans-Italic.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 600;
+  src: url(OpenSans-SemiboldItalic.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 700;
+  src: url(OpenSans-BoldItalic.ttf) format('truetype');
+}
+
+body, tt {
+  font-family: 'Open Sans', sans-serif;
+}
+
+tt {
+  font-weight: normal;
+}
+
+a {
+  color: #d21900;
+  text-decoration: none;
+  outline: none;
+}
+
+.documentwrapper {
+  max-width: 750px;
+  float: left;
+}
+
+#banner, .document {
+  max-width: 995px;
+  margin: 0px auto;
+}
+
+#site-title {
+  font-size: small;
+  float: left;
+  padding: 5px 0px 10px 5px;
+}
+
+#primary-menu {
+  position: relative;
+  float: right;
+  margin: 0;
+  z-index: 9000;
+  background-repeat: repeat;
+}
+
+#primary-menu li {
+  list-style: none;
+  display: block;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  float: left;
+}
+
+#primary-menu li a {
+  padding: 14px 0 18px 0;
+  margin: 0 0 0 25px;
+  display: block;
+}
+
+#primary-menu li a, #primary-menu li a:visited, #site-title a, #site-title a:visited {
+  color: #333;
+  text-decoration: none;
+}
+
+.footer {
+  clear: both;
+}
+
+#header-end {
+  clear: both;
+  width: 100%;
+  color: #333;
+}
+
+div.sphinxsidebar {
+  float: left;
+  padding-right: 15px;
+  height: 100%;
+  margin: 0;
+  text-align: left;
+}
+
+
+div.sphinxsidebar ul {
+  padding-left: 1.5em;
+  margin-top: 7px;
+  padding: 0;
+  line-height: 130%;
+  list-style: none;
+}
+
+div.sphinxsidebar ul ul {
+  margin-left: 20px;
+  list-style: none;
+}
+
+div.sphinxsidebar ul ul ul {
+  margin-left: 20px;
+  list-style: none;
+}
+
+.document img {
+  //max-width: 100%;
+  padding: 5px;
+  margin: 5px;
+  border: 1px solid #86989B;
+}
+
+div.admonition, div.warning {
+  font-size: 0.9em;
+  margin: 1em 0 1em 0;
+  border: 1px solid #86989B;
+  background-color: #f7f7f7;
+  padding: 0;
+}
+
+div.admonition p, div.warning p {
+  margin: 0.5em 1em 0.5em 1em;
+  padding: 0;
+}
+
+div.admonition pre, div.warning pre {
+  margin: 0.4em 1em 0.4em 1em;
+}
+
+div.admonition p.admonition-title, div.warning p.admonition-title {
+  margin: 0;
+  padding: 0.1em 0 0.1em 0.5em;
+  color: white;
+  border-bottom: 1px solid #86989B;
+  font-weight: bold;
+  background-color: #AFC1C4;
+}
+
+div.warning  {
+  border: 1px solid #940000;
+}
+
+div.warning p.admonition-title
+{
+  background-color: #CF0000;
+  border-bottom-color: #940000;
+}
+
+div.admonition ul, div.admonition ol, div.warning ul, div.warning ol
+{
+  margin: 0.1em 0.5em 0.5em 3em;
+  padding: 0;
+}
+
+pre {
+  font-size: 0.95em;
+  letter-spacing: 0.015em;
+  line-height: 120%;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+}
+
+pre a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.breadcrumbs {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.breadcrumbs li {
+  color: #333;
+  font-size: small;
+  list-style: none;
+  display: block;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  float: left;
+}
+
+#search {
+  padding: 2px;
+  border: 1px solid #888;
+  border-radius: 7px;
+}
+
+div.sphinxsidebar .toctree-l1 {
+  font-weight: bold;
+  padding-top: 5px;
+}
+
+div.sphinxsidebar .toctree-l2, div.sphinxsidebar  .toctree-l3, div.sphinxsidebar  .toctree-l4 {
+  font-weight: normal;
+  padding-top: 5px;
+}

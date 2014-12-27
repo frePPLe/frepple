@@ -101,21 +101,18 @@ need the following steps to replace the first point in the section above.
 
    #. | autoconf, v2.59 or later
       | Gnu Autoconf produces shell scripts to automatically configure software
-      | source code packages. This makes the source code easier to port across
-      | platforms.
+        source code packages. This makes the source code easier to port across
+        platforms.
 
    #. | automake, v1.9.5 or later
       | Gnu Automake is a tool for automatically generating make-files.
 
    #. | libtool, v1.5 or later
       | Libtool hides the complexity of developing and using shared libraries
-      | for different platforms behind a consistent and portable interface.
+        for different platforms behind a consistent and portable interface.
 
-   #. | python-sphinx
+   #. | python-sphinx (optional)
       | A modern documentation generation tool.
-
-   #. | doxygen, any version should do
-      | Extracts documentation from the C++ source code.
 
 #. Pick up the latest code from the repository with the command:
    ::
@@ -148,7 +145,7 @@ The steps to work with such packages are standard:
 #. Install the dpkg-dev package and all prerequisite packages for frepple:
    ::
 
-     apt-get install dpkg-dev debhelper cdbs autotools-dev python-dev libxerces-c-dev graphviz libtool doxygen python-sphinx
+     apt-get install dpkg-dev debhelper cdbs autotools-dev python-dev libxerces-c-dev libtool python-sphinx
 
 #. Build the source directory.
 

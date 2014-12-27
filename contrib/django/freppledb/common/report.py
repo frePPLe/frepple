@@ -1288,7 +1288,10 @@ class GridReport(View):
         if r.field_name and i.startswith(r.field_name):
           operator = (i == r.field_name) and 'exact' or i[i.rfind('_') + 1:]
           try:
-            filters.append('{"field":"%s","op":"%s","data":"%s"},' % (r.field_name, reportclass._filter_map_django_jqgrid[operator], j.replace('"', '\\"')))
+            filters.append(
+              '{"field":"%s","op":"%s","data":"%s"},' % (
+              r.field_name, reportclass._filter_map_django_jqgrid[operator], unquote(j).replace('"', '\\"')
+              ))
             filtered = True
           except:
             pass  # Ignore invalid operators
@@ -1373,7 +1376,7 @@ class GridReport(View):
         for r in reportclass.rows:
           if r.name and i.startswith(r.field_name):
             try:
-              items = items.filter(**{i: j})
+              items = items.filter(**{i: unquote(j)})
             except:
               pass  # silently ignore invalid filters
     return items
@@ -1584,9 +1587,9 @@ class GridPivot(GridReport):
             ]
           fields.extend([ row['bucket'].encode(encoding, "ignore") ])
           fields.extend([
-             unicode(_localize(row[f[0]], decimal_separator)).encode(encoding, "ignore") if row[f[0]] is not None else ''
-             for f in reportclass.crosses
-             ])
+            unicode(_localize(row[f[0]], decimal_separator)).encode(encoding, "ignore") if row[f[0]] is not None else ''
+            for f in reportclass.crosses
+            ])
         else:
           fields = [
             unicode(getattr(row, f.name)).encode(encoding, "ignore") if getattr(row, f.name) is not None else ''
@@ -1945,9 +1948,9 @@ def importWorkbook(request):
                   model._meta.verbose_name, ': ', _('Incorrect field %(column)s') % {'column': value}
                   )) + '\n'
                 numerrors += 1
-              if value == model._meta.pk.name.lower() or \
-                 value == model._meta.pk.verbose_name.lower():
-                has_pk_field = True
+              if value == model._meta.pk.name.lower() \
+                or value == model._meta.pk.verbose_name.lower():
+                  has_pk_field = True
             if not has_pk_field and not isinstance(model._meta.pk, AutoField):
               # The primary key is not an auto-generated id and it is not mapped in the input...
               header_ok = False

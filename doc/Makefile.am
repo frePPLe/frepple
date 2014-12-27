@@ -6,15 +6,17 @@ man_MANS = frepple.1 frepplectl.1
 
 if DOC
 
-all-local: rebuildHTML
+all-local: sphinx
 
-rebuildHTML:
+sphinx:
 	-rm -rf _build _html
 	@SPHINXBUILD@ -a -E -b html -d _build/doctrees . _build/html
+
+doxygen:
 	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile
 
 clean-local:
-	-rm -rf _build *.pyc *.pyo
+	-rm -rf _build *.pyc *.pyo html
 
 install-data-local: rebuildHTML
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \

@@ -20,7 +20,7 @@ have a plan with rushed operations planned to follow each other quicker.
 Example
 *******
 
-:download:`Excel spreadsheet operation_posttime <operation_posttime.xlsx>`
+:download:`Excel spreadsheet operation-posttime <operation-posttime.xlsx>`
 
 In this example we model a two-step production process with a decoupling buffer
 between both steps. A post-operation delay of 3 days is specified for the first

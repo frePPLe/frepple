@@ -110,11 +110,6 @@ AS_HELP_STRING([--enable-doc],
   no)  generatedoc=false;;
   yes) generatedoc=true
        AC_CHECK_PROGS(DOXYGEN, doxygen, notavailable)
-       if test x$DOXYGEN = xnotavailable
-       then
-          AC_MSG_ERROR([Could not find doxygen, no documentation can be built])
-          generatedoc=false
-       fi
        AC_CHECK_PROGS(SPHINXBUILD, sphinx-build, notavailable)
        if test x$SPHINXBUILD = xnotavailable
        then

@@ -41,6 +41,6 @@ Different operation types are available:
 Example
 *******
 
-:download:`Excel spreadsheet operation_type <operation_type.xlsx>`
+:download:`Excel spreadsheet operation-type <operation-type.xlsx>`
 
 This example has a transport operation of type fixed_time and a production operation of type time_per.

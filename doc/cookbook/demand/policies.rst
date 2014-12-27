@@ -30,7 +30,7 @@ Two fields on the demand configure what deliveries are being accepted by the cus
 Example
 *******
 
-:download:`Excel spreadsheet demand_policies <demand_policies.xlsx>`
+:download:`Excel spreadsheet demand-policies <demand-policies.xlsx>`
 
 In this example we have 6 identical items, served from inventory and with a simple stock 
 replenishment operation. Each item has a single demand with a different delivery policy.

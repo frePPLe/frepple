@@ -20,7 +20,7 @@ FrePPLe orders the demands based on the following attributes:
 Example
 *******
 
-:download:`Excel spreadsheet demand_priorities <demand_priorities.xlsx>`
+:download:`Excel spreadsheet demand-priorities <demand-priorities.xlsx>`
 
 In this example we have a number of overdue orders that have to be manufactured on a bottleneck resource.
 The order of the shipping and production operations reflects the ranking criteria described above.

@@ -16,7 +16,7 @@ doxygen:
 	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile
 
 clean-local:
-	-rm -rf _build *.pyc *.pyo html
+	-rm -rf _build *.pyc *.pyo
 
 install-data-local: rebuildHTML
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \

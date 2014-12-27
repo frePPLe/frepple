@@ -1,5 +1,5 @@
 
-EXTRA_DIST = frepple.doxyfile frepple.1 frepplectl.1 conf.py index.rst license.rst faq.rst
+EXTRA_DIST = frepple.doxyfile frepple.1 frepplectl.1 frepple.py conf.py index.rst license.rst faq.rst
 EXTRA_DIST += _templates cookbook extension-modules installation-guide model-reference technical-guide user-guide
 
 man_MANS = frepple.1 frepplectl.1

@@ -143,7 +143,7 @@ astyle:
 #  * The  first 2 arguments need to be integers.
 #  * The third argument can be empty. Or it can be a string starting with a '.'/dot.
 old1 = 2
-old2 = 3
+old2 = 2
 old3 = .beta
 new1 = 2
 new2 = 2

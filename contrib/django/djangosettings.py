@@ -70,7 +70,7 @@ DATABASES = {
     'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
     'OPTIONS': {},  # Backend specific configuration parameters.
     'PORT': '',     # Set to empty string for default. Not used with sqlite3.
-    },
+    }
   }
 
 LANGUAGE_CODE = 'en'

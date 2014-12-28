@@ -9,7 +9,7 @@ if DOC
 all-local: sphinx
 
 sphinx:
-	-rm -rf _build _html
+	-rm -rf _build
 	@SPHINXBUILD@ -a -E -b html -d _build/doctrees . _build/html
 
 doxygen:
@@ -18,10 +18,11 @@ doxygen:
 clean-local:
 	-rm -rf _build *.pyc *.pyo
 
-install-data-local: rebuildHTML
+install-data-local:
+	cd _build; \
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \
-	cd _build && find html -type d -exec $(mkinstalldirs) "$(DESTDIR)$(docdir)/{}" \;; \
-	cd _build && for p in `find html -type f`; do \
+	find html -type d -exec $(mkinstalldirs) "$(DESTDIR)$(docdir)/{}" \;; \
+	for p in `find html -type f`; do \
 	  $(INSTALL_DATA) $$p "$(DESTDIR)$(docdir)/$$p"; \
 	done
 

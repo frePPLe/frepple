@@ -181,9 +181,12 @@ FunctionEnd
 Section -Start
   ; Create the python distribution and django server
   !system "${PYTHON} setup.py"
+  !cd "../.."
+
+  ; Build the documentation if it doesn't exist yet
+  !system "bash -c 'if (test ! -f doc/_build/html:index.html ); then cd doc && make; fi'"
 
   ; Create a distribution if none exists yet
-  !cd "../.."
   !system "bash -c 'if (test ! -f frepple-${PRODUCT_VERSION}.tar.gz ); then make dist; fi'"
 
   ; Expand the distribution
@@ -461,8 +464,8 @@ Section "Documentation" SecDoc
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\doc\_build\html\index.html"
-  File /r "doc"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\html\index.html"
+  File /r "..\doc\_build\html"   ; Pick up doc from build folder, not dist folder
 SectionEnd
 
 Section "Examples" SecEx

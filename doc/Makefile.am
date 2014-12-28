@@ -20,8 +20,8 @@ clean-local:
 
 install-data-local: rebuildHTML
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \
-	find _build/html -type d -exec $(mkinstalldirs) "$(DESTDIR)$(docdir)/{}" \;; \
-	for p in `find _build/html -type f`; do \
+	cd _build && find html -type d -exec $(mkinstalldirs) "$(DESTDIR)$(docdir)/{}" \;; \
+	cd _build && for p in `find html -type f`; do \
 	  $(INSTALL_DATA) $$p "$(DESTDIR)$(docdir)/$$p"; \
 	done
 

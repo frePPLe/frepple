@@ -151,5 +151,5 @@ rm -rf /var/log/frepple
 
 %files doc
 %defattr(-,root,root,-)
-%doc doc/output
+%doc doc/_build/html
 

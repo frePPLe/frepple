@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C++ Express 2010
+# Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utils", "utils.vcxproj", "{6F0FA2F1-4B47-46A3-9D41-85CFF808F5F4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "model", "model.vcxproj", "{D4D9FB66-1740-418C-9562-C80BB3616201}"
@@ -19,8 +19,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dll", "dll.vcxproj", "{3614
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main", "main.vcxproj", "{9E0E5751-80B4-47D1-8CB8-246C7A8FA23C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "module_lp_solver", "module_lp_solver.vcxproj", "{310824DC-B85D-4729-9F60-4C93237E5494}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,10 +46,6 @@ Global
 		{9E0E5751-80B4-47D1-8CB8-246C7A8FA23C}.Debug|Win32.Build.0 = Debug|Win32
 		{9E0E5751-80B4-47D1-8CB8-246C7A8FA23C}.Release|Win32.ActiveCfg = Release|Win32
 		{9E0E5751-80B4-47D1-8CB8-246C7A8FA23C}.Release|Win32.Build.0 = Release|Win32
-		{310824DC-B85D-4729-9F60-4C93237E5494}.Debug|Win32.ActiveCfg = Debug|Win32
-		{310824DC-B85D-4729-9F60-4C93237E5494}.Debug|Win32.Build.0 = Debug|Win32
-		{310824DC-B85D-4729-9F60-4C93237E5494}.Release|Win32.ActiveCfg = Release|Win32
-		{310824DC-B85D-4729-9F60-4C93237E5494}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

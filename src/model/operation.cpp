@@ -875,7 +875,9 @@ OperationTimePer::setOperationPlanParameters
           static_cast<double>(actual-duration) / duration_per :
           q;
       q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
-      wanted = duration + static_cast<long>(duration_per * q);
+      // The cast on the next line truncates the decimal part. We add half a
+      // second to get a rounded value.
+      wanted = duration + static_cast<long>(duration_per * q + 0.5);
       x = calculateOperationTime(e, wanted, false, &actual);
       if (!execute) return OperationPlanState(x, q);
       opplan->setStartAndEnd(x.getStart(),x.getEnd());

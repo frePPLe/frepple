@@ -6696,7 +6696,7 @@ DECLARE_EXPORT PyObject* savePlan(PyObject*, PyObject*);
 DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args);
 
 
-/** @brief This python function writes the complete model to an XML-file.
+/** @brief This python function writes the complete model to a XML-file.
   *
   * Both the static model (i.e. items, locations, buffers, resources,
   * calendars, etc...) and the dynamic data (i.e. the actual plan including

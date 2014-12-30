@@ -123,7 +123,7 @@ DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
 //
 
 
-PyObject* saveXMLfile(PyObject* self, PyObject* args)
+DECLARE_EXPORT PyObject* saveXMLfile(PyObject* self, PyObject* args)
 {
   // Pick up arguments
   char *filename;

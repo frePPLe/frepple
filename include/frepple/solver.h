@@ -304,7 +304,10 @@ class SolverMRP : public Solver
       allowSplits(true), plantype(1), lazydelay(86400L),
       iteration_threshold(1), iteration_accuracy(0.01), iteration_max(0),
       autocommit(true), planSafetyStockFirst(false), erasePreviousFirst(true)
-    { initType(metadata); }
+    {
+      initType(metadata);
+      commands.sol = this;
+    }
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~SolverMRP() {}

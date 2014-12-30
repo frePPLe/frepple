@@ -801,8 +801,10 @@ OperationTimePer::setOperationPlanParameters
         q = opplan->setQuantity(q, true, false, execute);
 
       // Updates the dates
+      // The cast on the next line truncates the decimal part. We add half a
+      // second to get a rounded value.
       TimePeriod wanted(
-        duration + static_cast<long>(duration_per * q)
+        duration + static_cast<long>(duration_per * q + 0.5)
       );
       if (preferEnd) x = calculateOperationTime(e, wanted, false, &actual);
       else x = calculateOperationTime(s, wanted, true, &actual);
@@ -816,8 +818,11 @@ OperationTimePer::setOperationPlanParameters
     // compute the start date
     // Case 4: No date was given at all. Respect the quantity and the
     // existing end date of the operationplan.
-    q = opplan->setQuantity(q,true,false,execute); // Round and size the quantity
-    TimePeriod wanted(duration + static_cast<long>(duration_per * q));
+    q = opplan->setQuantity(q,true,false,execute);
+    // Round and size the quantity
+    // The cast on the next line truncates the decimal part. We add half a
+    // second to get a rounded value.
+    TimePeriod wanted(duration + static_cast<long>(duration_per * q + 0.5));
     x = calculateOperationTime(e, wanted, false, &actual);
     if (actual == wanted)
     {
@@ -839,7 +844,9 @@ OperationTimePer::setOperationPlanParameters
           static_cast<double>(actual-duration) / duration_per :
           q;
       q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
-      wanted = duration + static_cast<long>(duration_per * q);
+      // The cast on the next line truncates the decimal part. We add half a
+      // second to get a rounded value.
+      wanted = duration + static_cast<long>(duration_per * q + 0.5);
       x = calculateOperationTime(e, wanted, false, &actual);
       if (!execute) return OperationPlanState(x, q);
       opplan->setStartAndEnd(x.getStart(),x.getEnd());
@@ -849,9 +856,12 @@ OperationTimePer::setOperationPlanParameters
   {
     // Case 3: Only a start date is specified. Respect the quantity and
     // compute the end date
-    q = opplan->setQuantity(q,true,false,execute); // Round and size the quantity
+    q = opplan->setQuantity(q,true,false,execute);
+    // Round and size the quantity
+    // The cast on the next line truncates the decimal part. We add half a
+    // second to get a rounded value.
     TimePeriod wanted(
-      duration + static_cast<long>(duration_per * q)
+      duration + static_cast<long>(duration_per * q + 0.5)
     );
     TimePeriod actual;
     x = calculateOperationTime(s, wanted, true, &actual);

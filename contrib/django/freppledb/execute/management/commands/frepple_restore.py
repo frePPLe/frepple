@@ -35,24 +35,11 @@ class Command(BaseCommand):
   This command creates a database dump of the frePPLe database.
 
   To use this command the following prerequisites need to be met:
-    * MySQL:
-        - mysqldump and mysql need to be in the path
     * PostgreSQL:
        - pg_dump and psql need to be in the path
        - The passwords need to be specified upfront in a file ~/.pgpass
     * SQLite:
        - none
-    * Oracle:
-       - impdp and expdp need to be in the path
-       - The DBA has to create a server side directory, pointing to the directory configured as
-         FREPPLE_LOGDIR. The oracle user will need to be granted rights to it:
-           CREATE OR REPLACE DIRECTORY frepple_logdir AS 'c:\\temp';
-           GRANT READ, WRITE ON DIRECTORY frepple_logdir TO usr1;
-       - If the schemas reside on different servers, the DB will need to
-         create a database link.
-         If the database are on the same server, you might still use the database
-         link to avoid create a temporary dump file.
-       - Can't run multiple copies in parallel!
   '''
   option_list = BaseCommand.option_list + (
     make_option(
@@ -121,51 +108,6 @@ class Command(BaseCommand):
       if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
         # SQLITE
         shutil.copy2(os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, args[0])), settings.DATABASES[database]['NAME'])
-      elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.mysql':
-        # MYSQL
-        cmd = [
-          'mysql',
-          '--password=%s' % settings.DATABASES[database]['PASSWORD'],
-          '--user=%s' % settings.DATABASES[database]['USER']
-          ]
-        if settings.DATABASES[database]['HOST']:
-          cmd.append("--host=%s " % settings.DATABASES[database]['HOST'])
-        if settings.DATABASES[database]['PORT']:
-          cmd.append("--port=%s " % settings.DATABASES[database]['PORT'])
-        cmd.append(settings.DATABASES[database]['NAME'])
-        cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, args[0])))
-        ret = subprocess.call(cmd, shell=True)  # Shell needs to be True in order to interpret the < character
-        if ret:
-          raise Exception("Run of mysql failed")
-      elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.oracle':
-        # ORACLE
-        if settings.DATABASES[database]['HOST'] and settings.DATABASES[database]['PORT']:
-          # The setting 'NAME' contains the SID name
-          dsn = "%s/%s@//%s:%s/%s" % (
-            settings.DATABASES[database]['USER'],
-            settings.DATABASES[database]['PASSWORD'],
-            settings.DATABASES[database]['HOST'],
-            settings.DATABASES[database]['PORT'],
-            settings.DATABASES[database]['NAME']
-            )
-        else:
-          # The setting 'NAME' contains the TNS name
-          dsn = "%s/%s@%s" % (
-            settings.DATABASES[database]['USER'],
-            settings.DATABASES[database]['PASSWORD'],
-            settings.DATABASES[database]['NAME']
-            )
-        cmd = [
-          "impdp",
-          dsn,
-          "table_exists_action=replace",
-          "nologfile=Y",
-          "directory=frepple_logdir",
-          "dumpfile=%s" % args[0]
-          ]
-        ret = subprocess.call(cmd)
-        if ret:
-          raise Exception("Run of impdp failed")
       elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
         # POSTGRESQL
         # Commenting the next line is a little more secure, but requires you to create a .pgpass file.

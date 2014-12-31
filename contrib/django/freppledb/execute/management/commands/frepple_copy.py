@@ -34,24 +34,11 @@ class Command(BaseCommand):
   The original data in the destination database are lost.
 
   To use this command the following prerequisites need to be met:
-    * MySQL:
-        - mysqldump and mysql need to be in the path
     * PostgreSQL:
        - pg_dump and psql need to be in the path
        - The passwords need to be specified upfront in a file ~/.pgpass
     * SQLite:
        - none
-    * Oracle:
-       - impdp and expdp need to be in the path
-       - The DBA has to create a server side directory, pointing to the directory configured as
-         FREPPLE_LOGDIR. The oracle user will need to be granted rights to it:
-           CREATE OR REPLACE DIRECTORY frepple_logdir AS 'c:\\temp';
-           GRANT READ, WRITE ON DIRECTORY frepple_logdir TO usr1;
-       - If the schemas reside on different servers, the DB will need to
-         create a database link.
-         If the database are on the same server, you might still use the database
-         link to avoid create a temporary dump file.
-       - Can't run multiple copies in parallel!
   '''
   option_list = BaseCommand.option_list + (
     make_option(
@@ -158,67 +145,20 @@ class Command(BaseCommand):
           settings.DATABASES[source]['USER'],
           settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',
           settings.DATABASES[source]['PORT'] and ("-p %s " % settings.DATABASES[source]['PORT']) or '',
-          test and settings.DATABASES[source]['TEST_NAME'] or settings.DATABASES[source]['NAME'],
+          test and settings.DATABASES[source]['TEST']['NAME'] or settings.DATABASES[source]['NAME'],
           settings.DATABASES[destination]['USER'],
           settings.DATABASES[destination]['HOST'] and ("-h %s " % settings.DATABASES[destination]['HOST']) or '',
           settings.DATABASES[destination]['PORT'] and ("-p %s " % settings.DATABASES[destination]['PORT']) or '',
-          test and settings.DATABASES[destination]['TEST_NAME'] or settings.DATABASES[destination]['NAME'],
+          test and settings.DATABASES[destination]['TEST']['NAME'] or settings.DATABASES[destination]['NAME'],
           ))
         if ret:
           raise Exception('Exit code of the database copy command is %d' % ret)
       elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.sqlite3':
         # A plain copy of the database file
         if test:
-          shutil.copy2(settings.DATABASES[source]['TEST_NAME'], settings.DATABASES[destination]['TEST_NAME'])
+          shutil.copy2(settings.DATABASES[source]['TEST']['NAME'], settings.DATABASES[destination]['TEST']['NAME'])
         else:
           shutil.copy2(settings.DATABASES[source]['NAME'], settings.DATABASES[destination]['NAME'])
-      elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.mysql':
-        ret = os.system("mysqldump %s --password=%s --user=%s %s%s--quick --compress --extended-insert --add-drop-table | mysql %s --password=%s --user=%s %s%s" % (
-          test and settings.DATABASES[source]['TEST_NAME'] or settings.DATABASES[source]['NAME'],
-          settings.DATABASES[source]['PASSWORD'],
-          settings.DATABASES[source]['USER'],
-          settings.DATABASES[source]['HOST'] and ("--host=%s " % settings.DATABASES[source]['HOST']) or '',
-          settings.DATABASES[source]['PORT'] and ("--port=%s " % settings.DATABASES[source]['PORT']) or '',
-          test and settings.DATABASES[destination]['TEST_NAME'] or settings.DATABASES[destination]['NAME'],
-          settings.DATABASES[destination]['PASSWORD'],
-          settings.DATABASES[destination]['USER'],
-          settings.DATABASES[destination]['HOST'] and ("--host=%s " % settings.DATABASES[destination]['HOST']) or '',
-          settings.DATABASES[destination]['PORT'] and ("--port=%s " % settings.DATABASES[destination]['PORT']) or '',
-          ))
-        if ret:
-          raise Exception('Exit code of the database copy command is %d' % ret)
-      elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.oracle':
-        try:
-          try:
-            os.unlink(os.path.join(settings.FREPPLE_LOGDIR, 'frepple.dmp'))
-          except:
-            pass
-          ret = os.system("expdp %s/%s@//%s:%s/%s schemas=%s directory=frepple_logdir nologfile=Y dumpfile=frepple.dmp" % (
-            test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
-            settings.DATABASES[source]['PASSWORD'],
-            settings.DATABASES[source]['HOST'] or 'localhost',
-            settings.DATABASES[source]['PORT'] or '1521',
-            test and settings.DATABASES[source]['TEST_NAME'] or settings.DATABASES[source]['NAME'],
-            test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
-            ))
-          if ret:
-            raise Exception('Exit code of the database export command is %d' % ret)
-          ret = os.system("impdp %s/%s@//%s:%s/%s remap_schema=%s:%s table_exists_action=replace directory=frepple_logdir nologfile=Y dumpfile=frepple.dmp" % (
-            test and settings.DATABASES[destination]['TEST_USER'] or settings.DATABASES[destination]['USER'],
-            settings.DATABASES[destination]['PASSWORD'],
-            settings.DATABASES[destination]['HOST'],
-            settings.DATABASES[destination]['PORT'],
-            test and settings.DATABASES[destination]['TEST_NAME'] or settings.DATABASES[destination]['NAME'],
-            test and settings.DATABASES[source]['TEST_USER'] or settings.DATABASES[source]['USER'],
-            test and settings.DATABASES[destination]['TEST_USER'] or settings.DATABASES[destination]['USER'],
-            ))
-          if ret:
-            raise Exception('Exit code of the database import command is %d' % ret)
-        finally:
-          try:
-            os.unlink(os.path.join(settings.FREPPLE_LOGDIR, 'frepple.dmp'))
-          except:
-            pass
       else:
         raise Exception('Copy command not supported for database engine %s' % settings.DATABASES[source]['ENGINE'])
 

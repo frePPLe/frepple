@@ -43,54 +43,50 @@ class Report(GridReport):
     # Execute the query
     cursor = connections[request.database].cursor()
     query = '''
-      select 101 as id, 'Problem count' as category, %s as name, count(*) as value
+      select 101 as id, 'Problem count' as category, name as name, count(*) as value
       from out_problem
       group by name
-      union
-      select 102, 'Problem weight', %s, round(sum(weight))
+      union all
+      select 102, 'Problem weight', name, round(sum(weight))
       from out_problem
       group by name
-      union
+      union all
       select 201, 'Demand', 'Requested', coalesce(round(sum(quantity)),0)
       from out_demand
-      union
+      union all
       select 202, 'Demand', 'Planned', coalesce(round(sum(planquantity)),0)
       from out_demand
-      union
+      union all
       select 203, 'Demand', 'Planned late', coalesce(round(sum(planquantity)),0)
       from out_demand
       where plandate > due and plandate is not null
-      union
+      union all
       select 204, 'Demand', 'Unplanned', coalesce(round(sum(quantity)),0)
       from out_demand
       where planquantity is null
-      union
+      union all
       select 205, 'Demand', 'Total lateness', coalesce(round(sum(planquantity * %s)),0)
       from out_demand
       where plandate > due and plandate is not null
-      union
+      union all
       select 301, 'Operation', 'Count', count(*)
       from out_operationplan
-      union
+      union all
       select 301, 'Operation', 'Quantity', coalesce(round(sum(quantity)),0)
       from out_operationplan
-      union
+      union all
       select 302, 'Resource', 'Usage', coalesce(round(sum(quantity * %s)),0)
       from out_loadplan
-      union
+      union all
       select 401, 'Material', 'Produced', coalesce(round(sum(quantity)),0)
       from out_flowplan
       where quantity>0
-      union
+      union all
       select 402, 'Material', 'Consumed', coalesce(round(sum(-quantity)),0)
       from out_flowplan
       where quantity<0
       order by 1
       ''' % (
-        # Oracle needs conversion from the field out_problem.name
-        # (in 'national character set') to the database 'character set'.
-        settings.DATABASES[request.database]['ENGINE'] == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
-        settings.DATABASES[request.database]['ENGINE'] == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
         sql_datediff('plandate', 'due'),
         sql_datediff('enddate', 'startdate')
       )

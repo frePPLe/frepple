@@ -38,11 +38,7 @@ if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3
   # Verify if the sqlite database file exists
   if not os.path.isfile(settings.DATABASES[DEFAULT_DB_ALIAS]['NAME']):
     noDatabaseSchema = True
-elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] not in ['django.db.backends.postgresql_psycopg2', 'django.db.backends.mysql', 'django.db.backends.oracle']:
-    print('Aborting: Unknown database engine %s' % settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'])
-    input("Hit any key to continue...")
-    sys.exit(1)
-else:
+elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
   # PostgreSQL:
   # Try connecting and check for a table called 'parameter'.
   from django.db import connection
@@ -54,6 +50,11 @@ else:
     sys.exit(1)
   try: cursor.execute("SELECT 1 FROM common_parameter")
   except: noDatabaseSchema = True
+else:
+  print('Aborting: Unknown database engine %s' % settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'])
+  input("Hit any key to continue...")
+  sys.exit(1)
+
 
 if noDatabaseSchema and len(sys.argv)>1 and sys.argv[1]!='syncdb':
   print("\nDatabase schema has not been initialized yet.")

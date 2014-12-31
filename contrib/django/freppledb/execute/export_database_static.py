@@ -836,8 +836,6 @@ class exportStaticModel(object):
         cursor.execute('PRAGMA temp_store = MEMORY;')
         cursor.execute('PRAGMA synchronous = OFF')
         cursor.execute('PRAGMA cache_size = 8000')
-      elif settings.DATABASES[self.database]['ENGINE'] == 'oracle':
-        cursor.execute("ALTER SESSION SET COMMIT_WRITE='BATCH,NOWAIT'")
 
       if settings.DATABASES[self.database]['ENGINE'] == 'django.db.backends.sqlite3':
         # OPTION 1: Sequential export of each entity
@@ -944,8 +942,6 @@ class DatabaseTask(Thread):
         cursor.execute('PRAGMA temp_store = MEMORY;')
         cursor.execute('PRAGMA synchronous = OFF')
         cursor.execute('PRAGMA cache_size = 8000')
-      elif settings.DATABASES[self.export.database]['ENGINE'] == 'django.db.backends.oracle':
-        cursor.execute("ALTER SESSION SET COMMIT_WRITE='BATCH,NOWAIT'")
 
       # Run the functions sequentially
       for f in self.functions:

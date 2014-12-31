@@ -240,14 +240,14 @@ MANAGERS = ADMINS
 for param in DATABASES.values():
   if param['ENGINE'] == 'django.db.backends.sqlite3':
     # Path to the sqlite3 test database file
-    param['TEST_NAME'] = os.path.join(FREPPLE_LOGDIR, 'test_%s.sqlite' % param['NAME'])
+    param['TEST'] = {'NAME': os.path.join(FREPPLE_LOGDIR, 'test_%s.sqlite' % param['NAME'])}
     # Path to sqlite3 database file
     param['NAME'] = os.path.join(FREPPLE_LOGDIR, '%s.sqlite' % param['NAME'])
     # Extra default settings for SQLITE
     if len(param['OPTIONS']) == 0:
       param['OPTIONS'] = {"timeout": 10, "check_same_thread": False}
   elif param['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-    param['TEST_NAME'] = 'test_%s' % param['NAME']
+    param['TEST'] = {'NAME': 'test_%s' % param['NAME']}
   else:
     print('Error: Unsupported database engine %s' % param['ENGINE'])
     sys.exit(1)

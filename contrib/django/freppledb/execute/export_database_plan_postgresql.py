@@ -248,7 +248,7 @@ def exportfrepple():
       settings.DATABASES[database]['USER'],
      settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
      settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
-     test and settings.DATABASES[database]['TEST_NAME'] or settings.DATABASES[database]['NAME'],
+     test and settings.DATABASES[database]['TEST']['NAME'] or settings.DATABASES[database]['NAME'],
    ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, universal_newlines=True)
   if process.returncode is None:
     # PSQL session is still running

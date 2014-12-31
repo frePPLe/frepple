@@ -141,13 +141,7 @@ if __name__ == "__main__":
 
   # Use the test database if we are running the test suite
   if 'FREPPLE_TEST' in os.environ:
-    settings.DATABASES[db]['NAME'] = settings.DATABASES[db]['TEST_NAME']
-    if 'TEST_CHARSET' in os.environ:
-      settings.DATABASES[db]['CHARSET'] = settings.DATABASES[db]['TEST_CHARSET']
-    if 'TEST_COLLATION' in os.environ:
-      settings.DATABASES[db]['COLLATION'] = settings.DATABASES[db]['TEST_COLLATION']
-    if 'TEST_USER' in os.environ:
-      settings.DATABASES[db]['USER'] = settings.DATABASES[db]['TEST_USER']
+    settings.DATABASES[db]['NAME'] = settings.DATABASES[db]['TEST']['NAME']
 
   printWelcome(database=db)
   logProgress(1, db)

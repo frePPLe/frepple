@@ -15,19 +15,19 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.test import TestCase
 from django.conf import settings
+from django.test import TestCase
+from django.test.utils import override_settings
 
 
+@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class OutputTest(TestCase):
 
   fixtures = ["demo"]
 
   def setUp(self):
     # Login
-    if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
-      settings.INSTALLED_APPS += ('django.contrib.sessions',)
-    self.client.login(username='admin', password='admin')
+    login = self.client.login(username='admin', password='admin')
 
   # Buffer
   def test_output_buffer(self):

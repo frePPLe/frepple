@@ -64,7 +64,7 @@ def search(request):
 
   # Construct reply
   return HttpResponse(
-     mimetype='application/json; charset=%s' % settings.DEFAULT_CHARSET,
+     content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET,
      content=json.dumps(result).encode(settings.DEFAULT_CHARSET)
      )
 

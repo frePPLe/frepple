@@ -5,10 +5,10 @@ It is built using the incredible Django web application framework.
 
 The basic steps to set up a development environment:
 
-- Install python 2.6 or 2.7(recommended).
-  Python 3 is planned for frePPLe v3.0.
+- Install python 3.4.
+  It is recommended to install the last patch release.
 
-- Install Django 1.6.8
+- Install Django 1.7.1
   Different versions of Django may or may not work with frePPLe...
   (The frePPLe user interface customizes some parts of the Django admin.
   The MultiDBModelAdmin class and the template overrides in the admin folder
@@ -22,11 +22,8 @@ The basic steps to set up a development environment:
 - Install and configure the PostgreSQL database.
   For a quick test run, you can also use the SQLite3 database bundled with Python.
 
-- If you're using a database different from sqlite, install the python database
-  access library for the database (see the django documentation for details).
-    - cx_oracle for Oracle
-    - psycopg2 for PostgreSQL
-    - MySQL-python for MySQL
+- If you're using a PostgreSQL database different from sqlite, you need to install
+  install the psycopg2 database access library.
 
 - Create a database schema for frePPle.
   For the Django tests, the user should have sufficient privileges to create a

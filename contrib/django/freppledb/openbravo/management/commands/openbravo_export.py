@@ -50,7 +50,7 @@ class Command(BaseCommand):
       ),
     )
 
-  requires_model_validation = False
+  requires_system_checks = False
 
   def handle(self, **options):
 

@@ -70,7 +70,7 @@ class Command(BaseCommand):
       default=False, help='Keep the worker alive after the queue is empty'
       ),
   )
-  requires_model_validation = False
+  requires_system_checks = False
 
   def get_version(self):
     return VERSION

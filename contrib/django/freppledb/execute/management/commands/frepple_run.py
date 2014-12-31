@@ -64,7 +64,7 @@ class Command(BaseCommand):
   )
   help = "Runs frePPLe to generate a plan"
 
-  requires_model_validation = False
+  requires_system_checks = False
 
   def handle(self, **options):
     # Pick up the options

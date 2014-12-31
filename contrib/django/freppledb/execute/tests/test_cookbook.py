@@ -21,16 +21,16 @@ from io import StringIO
 from django.conf import settings
 from django.core import management
 from django.test import TransactionTestCase
+from django.test.utils import override_settings
 
 import freppledb.output as output
 
 
+@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class cookbooktest(TransactionTestCase):
 
   def setUp(self):
     # Make sure the test database is used
-    if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
-      settings.INSTALLED_APPS += ('django.contrib.sessions',)
     os.environ['FREPPLE_TEST'] = "YES"
 
   def tearDown(self):

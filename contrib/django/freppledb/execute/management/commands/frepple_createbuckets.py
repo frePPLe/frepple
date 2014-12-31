@@ -62,7 +62,7 @@ class Command(BaseCommand):
       ),
   )
 
-  requires_model_validation = False
+  requires_system_checks = False
 
   def get_version(self):
     return VERSION
@@ -159,7 +159,7 @@ class Command(BaseCommand):
       prev_week = None
       while curdate < enddate:
         month = int(curdate.strftime("%m"))  # an integer in the range 1 - 12
-        quarter = (month - 1) / 3 + 1          # an integer in the range 1 - 4
+        quarter = (month - 1) // 3 + 1       # an integer in the range 1 - 4
         year = int(curdate.strftime("%Y"))
         dayofweek = int(curdate.strftime("%w"))  # day of the week, 0 = sunday, 1 = monday, ...
         year_start = datetime(year, 1, 1)
@@ -186,7 +186,7 @@ class Command(BaseCommand):
             bucket=q,
             name="%02d Q%s" % (year - 2000, quarter),
             startdate=date(year, quarter * 3 - 2, 1),
-            enddate=date(year + quarter / 4, quarter * 3 + 1 - 12 * (quarter / 4), 1)
+            enddate=date(year + quarter // 4, quarter * 3 + 1 - 12 * (quarter // 4), 1)
             ).save(using=database)
         if month != prev_month:
           prev_month = month
@@ -194,7 +194,7 @@ class Command(BaseCommand):
             bucket=m,
             name=curdate.strftime("%b %y"),
             startdate=date(year, month, 1),
-            enddate=date(year + month / 12, month + 1 - 12 * (month / 12), 1),
+            enddate=date(year + month // 12, month + 1 - 12 * (month // 12), 1),
             ).save(using=database)
         if week_start != prev_week:
           prev_week = week_start

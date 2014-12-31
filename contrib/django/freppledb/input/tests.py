@@ -18,18 +18,18 @@ import tempfile
 
 from django.conf import settings
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from freppledb.input.models import Location
 
 
+@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class DataLoadTest(TestCase):
 
   fixtures = ["demo"]
 
   def setUp(self):
     # Login
-    if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
-      settings.INSTALLED_APPS += ('django.contrib.sessions',)
     self.client.login(username='admin', password='admin')
 
   def test_demo_data(self):
@@ -67,9 +67,9 @@ class DataLoadTest(TestCase):
       )
     try:
       data = tempfile.TemporaryFile(mode='w+b')
-      print('name,category', file=data)
-      print('factory 3,cat1', file=data)
-      print('factory 4,', file=data)
+      data.write(b'name,category\n')
+      data.write(b'factory 3,cat1\n')
+      data.write(b'factory 4,\n')
       data.seek(0)
       response = self.client.post('/data/input/location/', {'csv_file': data})
       for rec in response.streaming_content:

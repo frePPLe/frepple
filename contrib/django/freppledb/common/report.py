@@ -499,7 +499,7 @@ class GridReport(View):
     output = BytesIO()
     wb.save(output)
     response = HttpResponse(
-      mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       content=output.getvalue()
       )
     response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % title
@@ -1753,7 +1753,7 @@ class GridPivot(GridReport):
     output = BytesIO()
     wb.save(output)
     response = HttpResponse(
-      mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       content=output.getvalue()
       )
     response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % reportclass.model._meta.model_name
@@ -1858,7 +1858,7 @@ def exportWorkbook(request):
   output = BytesIO()
   wb.save(output)
   response = HttpResponse(
-    mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     content=output.getvalue()
     )
   response['Content-Disposition'] = 'attachment; filename=frepple.xlsx'

@@ -17,23 +17,23 @@
 
 import os
 
-from django.core import management, serializers
-from django.test import TransactionTestCase, TestCase
 from django.conf import settings
+from django.core import management, serializers
 from django.db import DEFAULT_DB_ALIAS, transaction
+from django.test import TransactionTestCase, TestCase
+from django.test.utils import override_settings
 
 import freppledb.output as output
 import freppledb.input as input
 
 
+@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class execute_with_commands(TransactionTestCase):
 
   fixtures = ["demo"]
 
   def setUp(self):
     # Make sure the test database is used
-    if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
-      settings.INSTALLED_APPS += ('django.contrib.sessions',)
     os.environ['FREPPLE_TEST'] = "YES"
 
   def tearDown(self):
@@ -60,9 +60,9 @@ class execute_with_commands(TransactionTestCase):
     # across different version and platforms, we can only do a rough
     # check on the output.
     management.call_command('frepple_run', plantype=1, constraint=15)
-    self.assertTrue(output.models.Problem.objects.count() > 90)
+    self.assertTrue(output.models.Problem.objects.count() > 80)
     self.assertTrue(output.models.FlowPlan.objects.count() > 500)
-    self.assertTrue(output.models.LoadPlan.objects.count() > 50)
+    self.assertTrue(output.models.LoadPlan.objects.count() > 40)
     self.assertTrue(output.models.OperationPlan.objects.count(), 350)
 
 

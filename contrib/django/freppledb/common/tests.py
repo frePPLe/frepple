@@ -18,38 +18,37 @@
 import os
 import os.path
 
-from django.test import TestCase, TransactionTestCase
 from django.conf import settings
 from django.core import management
+from django.test import TestCase, TransactionTestCase
+from django.test.utils import override_settings
 
 import freppledb.input as input
 import freppledb.common as common
 
 
+@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class DataLoadTest(TestCase):
 
   def setUp(self):
     # Login
-    if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
-      settings.INSTALLED_APPS += ('django.contrib.sessions',)
     self.client.login(username='admin', password='admin')
 
   def test_common_parameter(self):
     response = self.client.get('/admin/common/parameter/?format=json')
     for i in response.streaming_content:
-      if '"records":16,' in i:
+      if b'"records":16,' in i:
         return
     self.fail("Didn't find expected number of parameters")
 
 
+@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class ExcelTest(TransactionTestCase):
 
   fixtures = ['demo']
 
   def setUp(self):
     # Login
-    if not 'django.contrib.sessions' in settings.INSTALLED_APPS:
-      settings.INSTALLED_APPS += ('django.contrib.sessions',)
     self.client.login(username='admin', password='admin')
 
   def tearDown(self):

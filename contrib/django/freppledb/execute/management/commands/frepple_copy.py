@@ -60,7 +60,7 @@ class Command(BaseCommand):
     )
   args = 'source_database destination_database'
 
-  requires_model_validation = False
+  requires_system_checks = False
 
   def get_version(self):
     return VERSION

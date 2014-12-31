@@ -15,11 +15,12 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from importlib import import_module
+
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseNotAllowed, HttpResponseForbidden, Http404
-from django.utils.importlib import import_module
 
 
 class Dashboard:

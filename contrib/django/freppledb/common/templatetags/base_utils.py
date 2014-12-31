@@ -19,7 +19,7 @@ from decimal import Decimal
 import json
 
 from django.db import models
-from django.contrib.admin.util import unquote
+from django.contrib.admin.utils import unquote
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.template.loader import get_template
 from django.conf import settings
@@ -32,8 +32,6 @@ from freppledb.execute.models import Scenario
 from freppledb import VERSION
 
 MAX_CRUMBS = 10
-
-lazy_site_administration = _('Site administration')
 
 register = Library()
 variable_title = Variable("title")
@@ -81,7 +79,7 @@ class CrumbsNode(Node):
       title = variable_title.resolve(context)
     except:
       title = req.get_full_path()
-    if title != lazy_site_administration:
+    if title != _('Site administration'):
       # Don't handle the cockpit screen in the crumbs
       try:
         # Check if the same title is already in the crumbs.

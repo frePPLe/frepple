@@ -19,10 +19,11 @@ r'''
 Django URL mapping file.
 '''
 
+from importlib import import_module
+
 from django.conf.urls import patterns, include
 from django.conf import settings
 from django.views.generic.base import RedirectView
-from django.utils.importlib import import_module
 
 import freppledb.admin
 

@@ -148,6 +148,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user 
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.SessionStorage'
 
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
 # Mail settings
 #DEFAULT_FROM_EMAIL #if not pass from_email to send_mail func.
 #EMAIL_HOST #required
@@ -221,7 +223,8 @@ PORT = 8000
 
 # Override any of the above settings from a separate file
 if os.access(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py'), os.R_OK):
-  exec(open(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py')).read(), globals())
+  with open(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py')) as mysettingfile:
+    exec(mysettingfile.read(), globals())
   if DEBUG:
     # Add a dummy module to sys.modules to make the development server
     # autoreload when the configuration file changes.

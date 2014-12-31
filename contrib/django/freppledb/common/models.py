@@ -18,7 +18,7 @@ from datetime import datetime
 import logging
 
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -134,13 +134,13 @@ class HierarchyModel(models.Model):
 
 
 class MultiDBManager(models.Manager):
-  def get_query_set(self):
+  def get_queryset(self):
     from freppledb.common.middleware import _thread_locals
     req = getattr(_thread_locals, 'request', None)
     if req:
-      return super(MultiDBManager, self).get_query_set().using(getattr(req, 'database', DEFAULT_DB_ALIAS))
+      return super(MultiDBManager, self).get_queryset().using(getattr(req, 'database', DEFAULT_DB_ALIAS))
     else:
-      return super(MultiDBManager, self).get_query_set().using(DEFAULT_DB_ALIAS)
+      return super(MultiDBManager, self).get_queryset().using(DEFAULT_DB_ALIAS)
 
 
 class AuditModel(models.Model):
@@ -240,7 +240,7 @@ class Comment(models.Model):
     related_name="content_type_set_for_%(class)s"
     )
   object_pk = models.TextField(_('object ID'))
-  content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_pk")
+  content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
   comment = models.TextField(_('comment'), max_length=settings.COMMENT_MAX_LENGTH)
   user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
   lastmodified = models.DateTimeField(_('last modified'), default=datetime.now(), editable=False)

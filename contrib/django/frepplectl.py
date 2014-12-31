@@ -18,13 +18,13 @@
 #
 
 r'''
-This command is the wrapper for all administratrive actions on frePPLe.
+This command is the wrapper for all administrative actions on frePPLe.
 '''
 
-import os, sys
+import os
+import sys
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
-    from django.core.management import execute_from_command_line
-    execute_from_command_line(sys.argv)
-
+  os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
+  from django.core.management import execute_from_command_line
+  execute_from_command_line(sys.argv)

@@ -40,21 +40,22 @@ import json
 from io import StringIO, BytesIO
 from openpyxl import load_workbook, Workbook
 
+from django.apps import apps
 from django.contrib.auth.models import Group
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.admin.util import unquote, quote
+from django.contrib.admin.utils import unquote, quote
 from django.contrib.auth import get_permission_codename
 from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
 from django.db.models.fields import Field, CharField, IntegerField, AutoField
 from django.db.models.fields.related import RelatedField
+from django.forms.models import modelform_factory
 from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
-from django.forms.models import modelform_factory
 from django.shortcuts import render
 from django.utils import translation, six
 from django.utils.decorators import method_decorator
@@ -68,7 +69,6 @@ from django.template.defaultfilters import title
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
-from django.db.models.loading import get_model
 
 
 from freppledb.common.models import User, Comment, Parameter, BucketDetail, Bucket, HierarchyModel
@@ -528,10 +528,10 @@ class GridReport(View):
       for f in reportclass.rows
       if f.title and not f.hidden
       ])
-    fields = [ 
-      i.field_name 
-      for i in reportclass.rows 
-      if i.field_name and not i.hidden 
+    fields = [
+      i.field_name
+      for i in reportclass.rows
+      if i.field_name and not i.hidden
       ]
 
     # Write a header row
@@ -1800,7 +1800,7 @@ def exportWorkbook(request):
     try:
       # Initialize
       (app_label, model_label) = entity_name.split('.')
-      model = get_model(app_label, model_label)
+      model = apps.get_model(app_label, model_label)
       # Verify access rights
       if not request.user.has_perm("%s.%s" % (app_label, get_permission_codename('change', model._meta))):
         continue

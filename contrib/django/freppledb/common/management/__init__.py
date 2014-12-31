@@ -19,8 +19,14 @@ from django.db.models import signals, get_models
 from django.db import DEFAULT_DB_ALIAS
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django import template
 
 from freppledb.common import models as common_models
+
+
+# Make our tags built-in, so we don't have to load them any more in our
+# templates with a 'load' tag.
+template.add_to_builtins('freppledb.common.templatetags.base_utils')
 
 
 def removeDefaultPermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kwargs):

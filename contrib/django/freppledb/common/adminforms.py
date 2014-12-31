@@ -20,7 +20,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import admin
 from django.contrib import messages
 from django.contrib.admin.models import LogEntry, CHANGE
-from django.contrib.admin.util import unquote, get_deleted_objects
+from django.contrib.admin.utils import unquote, get_deleted_objects
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction

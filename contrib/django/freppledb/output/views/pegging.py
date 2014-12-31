@@ -17,7 +17,7 @@
 
 from datetime import datetime, timedelta
 
-from django.contrib.admin.util import unquote
+from django.contrib.admin.utils import unquote
 from django.db import connections
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _

@@ -8,7 +8,7 @@ clean-local:
 	-rm -rf dist build *.pyc
 
 contrib:
-	"/c/Program Files/NSIS/makensis.exe" /DPYTHON='c:\develop\python27' frepple.nsi
+	"/c/Program Files/NSIS/makensis.exe" /DPYTHON='c:\develop\python34' frepple.nsi
 
 py2exe:
 	setup.py

@@ -15,9 +15,10 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from importlib import import_module
+
 from django.conf import settings
 from django.contrib import admin
-from django.utils.importlib import import_module
 
 # Create two admin sites where all our apps will register their models
 data_site = admin.sites.AdminSite(name='data')

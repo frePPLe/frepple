@@ -12,6 +12,10 @@ import frepple
 
 
 def printWelcome(prefix='frepple', database=DEFAULT_DB_ALIAS):
+  # Initialize django
+  import django
+  django.setup()
+
   # Send the output to a logfile
   if database == DEFAULT_DB_ALIAS:
     frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, '%s.log' % prefix)

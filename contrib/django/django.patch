@@ -1,20 +1,5 @@
-diff --git django/bin/__init__.py django/bin/__init__.py
-new file mode 100644
-index 0000000..675001b
---- /dev/null
-+++ django/bin/__init__.py
-@@ -0,0 +1 @@
-+# Extra file is required to keep py2exe happy
-\ No newline at end of file
-diff --git django/conf/project_template/__init__.py django/conf/project_template/__init__.py
-new file mode 100644
-index 0000000..05cb70d
---- /dev/null
-+++ django/conf/project_template/__init__.py
-@@ -0,0 +1 @@
-+# Extra file is required to keep py2exe happy
 diff --git django/contrib/admin/models.py django/contrib/admin/models.py
-index dc282b7..be38811 100644
+index 870c2b2..45cac6a 100644
 --- django/contrib/admin/models.py
 +++ django/contrib/admin/models.py
 @@ -71,11 +71,20 @@ class LogEntry(models.Model):
@@ -41,7 +26,7 @@ index dc282b7..be38811 100644
 +                    pass
          return None
 diff --git django/contrib/admin/widgets.py django/contrib/admin/widgets.py
-index 5773db6..236080e 100644
+index 6857579..ac7c362 100644
 --- django/contrib/admin/widgets.py
 +++ django/contrib/admin/widgets.py
 @@ -6,6 +6,7 @@ from __future__ import unicode_literals
@@ -60,7 +45,7 @@ index 5773db6..236080e 100644
  
  
  class FilteredSelectMultiple(forms.SelectMultiple):
-@@ -145,6 +147,10 @@ class ForeignKeyRawIdWidget(forms.TextInput):
+@@ -151,6 +153,10 @@ class ForeignKeyRawIdWidget(forms.TextInput):
          if attrs is None:
              attrs = {}
          extra = []
@@ -70,17 +55,19 @@ index 5773db6..236080e 100644
 +          prefix = '/%s' % self.db
          if rel_to in self.admin_site._registry:
              # The related object is registered with the same AdminSite
-             related_url = reverse('admin:%s_%s_changelist' %
-@@ -161,13 +167,15 @@ class ForeignKeyRawIdWidget(forms.TextInput):
-                 attrs['class'] = 'vForeignKeyRawIdAdminField' # The JavaScript code looks for this hook.
+             related_url = reverse(
+@@ -170,13 +176,15 @@ class ForeignKeyRawIdWidget(forms.TextInput):
+                 attrs['class'] = 'vForeignKeyRawIdAdminField'  # The JavaScript code looks for this hook.
              # TODO: "lookup_id_" is hard-coded here. This should instead use
              # the correct API to determine the ID dynamically.
--            extra.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> '
--                            % (related_url, url, name))
+-            extra.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> ' %
+-                (related_url, url, name))
+-            extra.append('<img src="%s" width="16" height="16" alt="%s" /></a>' %
+-                (static('admin/img/selector-search.gif'), _('Lookup')))
 +            extra.append('<a href="%s%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> '
 +                            % (prefix, related_url, url, name))
-             extra.append('<img src="%s" width="16" height="16" alt="%s" /></a>'
-                             % (static('admin/img/selector-search.gif'), _('Lookup')))
++            extra.append('<img src="%s" width="16" height="16" alt="%s" /></a>'
++                            % (static('admin/img/selector-search.gif'), _('Lookup')))
          output = [super(ForeignKeyRawIdWidget, self).render(name, value, attrs)] + extra
          if value:
 -            output.append(self.label_for_value(value))
@@ -91,27 +78,28 @@ index 5773db6..236080e 100644
  
      def base_url_parameters(self):
 diff --git django/core/management/__init__.py django/core/management/__init__.py
-index 5b0ad6c..62f0796 100644
+index f32c533..2e59446 100644
 --- django/core/management/__init__.py
 +++ django/core/management/__init__.py
-@@ -3,11 +3,14 @@ import os
- import sys
+@@ -3,6 +3,8 @@ from importlib import import_module
  from optparse import OptionParser, NO_DEFAULT
- import imp
+ import os
+ import sys
 +import warnings
 +from pkgutil import iter_modules
  
- from django.core.exceptions import ImproperlyConfigured
+ import django
+ from django.apps import apps
+@@ -11,27 +13,29 @@ from django.core.exceptions import ImproperlyConfigured
  from django.core.management.base import BaseCommand, CommandError, handle_default_options
  from django.core.management.color import color_style
- from django.utils.importlib import import_module
+ from django.utils import lru_cache
 +from django.utils._os import upath
  from django.utils import six
  
  # For backwards compatibility: get_version() used to be in this module.
-@@ -17,54 +20,18 @@ from django import get_version
- # doesn't have to reload every time it's called.
- _commands = None
+ from django import get_version
+ 
  
 -def find_commands(management_dir):
 +def find_commands(app_name):
@@ -124,80 +112,45 @@ index 5b0ad6c..62f0796 100644
 +    Raises ImportError if no commands are defined.
      """
 -    command_dir = os.path.join(management_dir, 'commands')
--    try:
+     try:
 -        return [f[:-3] for f in os.listdir(command_dir)
 -                if not f.startswith('_') and f.endswith('.py')]
 -    except OSError:
--        return []
--
--def find_management_module(app_name):
--    """
--    Determines the path to the management module for the given app_name,
--    without actually importing the application or the management module.
--
--    Raises ImportError if the management module cannot be found for any reason.
--    """
--    parts = app_name.split('.')
--    parts.append('management')
--    parts.reverse()
--    part = parts.pop()
--    path = None
--
--    # When using manage.py, the project module is added to the path,
--    # loaded, then removed from the path. This means that
--    # testproject.testapp.models can be loaded in future, even if
--    # testproject isn't in the path. When looking for the management
--    # module, we need look for the case where the project name is part
--    # of the app_name but the project directory itself isn't on the path.
--    try:
--        f, path, descr = imp.find_module(part, path)
--    except ImportError as e:
--        if os.path.basename(os.getcwd()) != part:
--            raise e
--    else:
--        if f:
--            f.close()
--
--    while parts:
--        part = parts.pop()
--        f, path, descr = imp.find_module(part, [path] if path else None)
--        if f:
--            f.close()
--    return path
-+    packages = {}
-+    mgmt_package = "%s.management.commands" % app_name
-+    # The next line imports the *package*, not all modules in the package
-+    __import__(mgmt_package)
-+    path = getattr(sys.modules[mgmt_package], '__path__', None)
-+    return [i[1] for i in iter_modules(path)]
++        packages = {}
++        mgmt_package = "%s.management.commands" % app_name
++        # The next line imports the *package*, not all modules in the package
++        __import__(mgmt_package)
++        path = getattr(sys.modules[mgmt_package], '__path__', None)
++        return [i[1] for i in iter_modules(path)]
++    except ImportError:
+         return []
  
+-
  def load_command_class(app_name, name):
      """
-@@ -99,7 +66,7 @@ def get_commands():
+     Given a command name and an application name, returns the Command
+@@ -65,14 +69,14 @@ def get_commands():
+     The dictionary is cached on the first call and reused on subsequent
+     calls.
      """
-     global _commands
-     if _commands is None:
--        _commands = dict([(name, 'django.core') for name in find_commands(__path__[0])])
-+        _commands = dict([(name, 'django.core') for name in find_commands('django.core')])
+-    commands = {name: 'django.core' for name in find_commands(__path__[0])}
++    commands = {name: 'django.core' for name in find_commands('django.core')}
  
-         # Find the installed apps
-         from django.conf import settings
-@@ -113,9 +80,8 @@ def get_commands():
-         # Find and load the management module for each installed app.
-         for app_name in apps:
-             try:
--                path = find_management_module(app_name)
-                 _commands.update(dict([(name, app_name)
--                                       for name in find_commands(path)]))
-+                                       for name in find_commands(app_name)]))
-             except ImportError:
-                 pass # No management module - ignore this app
+     if not settings.configured:
+         return commands
+ 
+     for app_config in reversed(list(apps.get_app_configs())):
+         path = os.path.join(app_config.path, 'management')
+-        commands.update({name: app_config.name for name in find_commands(path)})
++        commands.update({name: app_config.name for name in find_commands(app_config.name)})
+ 
+     return commands
  
 diff --git django/db/models/fields/related.py django/db/models/fields/related.py
-index 1563d13..8f0e099 100644
+index 344b238..52e883a 100644
 --- django/db/models/fields/related.py
 +++ django/db/models/fields/related.py
-@@ -1198,7 +1198,9 @@ class ForeignKey(ForeignObject):
+@@ -1696,7 +1696,9 @@ class ForeignKey(ForeignObject):
          if value is None:
              return
  
@@ -206,13 +159,13 @@ index 1563d13..8f0e099 100644
 +        if using is None:
 +            using = router.db_for_read(model_instance.__class__, instance=model_instance)
          qs = self.rel.to._default_manager.using(using).filter(
-                 **{self.rel.field_name: value}
-              )
+             **{self.rel.field_name: value}
+         )
 diff --git django/db/models/sql/compiler.py django/db/models/sql/compiler.py
-index ea7f9f4..9561301 100644
+index 90ac90f..25df08e 100644
 --- django/db/models/sql/compiler.py
 +++ django/db/models/sql/compiler.py
-@@ -243,8 +243,11 @@ class SQLCompiler(object):
+@@ -258,8 +258,11 @@ class SQLCompiler(object):
  
          for (table, col), _ in self.query.related_select_cols:
              r = '%s.%s' % (qn(table), qn(col))
@@ -226,11 +179,11 @@ index ea7f9f4..9561301 100644
                  result.append('%s AS %s' % (r, c_alias))
                  aliases.add(c_alias)
                  col_aliases.add(c_alias)
-@@ -296,8 +299,11 @@ class SQLCompiler(object):
+@@ -318,8 +321,11 @@ class SQLCompiler(object):
                  result.append((alias, field))
                  aliases.add(alias)
                  continue
--            if with_aliases and field.column in col_aliases:
+-            if with_aliases and column in col_aliases:
 -                c_alias = 'Col%d' % len(col_aliases)
 +            if with_aliases:
 +                if field.column in col_aliases:
@@ -238,13 +191,13 @@ index ea7f9f4..9561301 100644
 +                else:
 +                    c_alias = field.column
                  result.append('%s.%s AS %s' % (qn(alias),
-                     qn2(field.column), c_alias))
+                     qn2(column), c_alias))
                  col_aliases.add(c_alias)
 diff --git django/template/base.py django/template/base.py
-index 26f8111..506ae14 100644
+index 822e026..6e534b9 100644
 --- django/template/base.py
 +++ django/template/base.py
-@@ -1217,6 +1217,11 @@ class Library(object):
+@@ -1228,6 +1228,11 @@ class Library(object):
                      csrf_token = context.get('csrf_token', None)
                      if csrf_token is not None:
                          new_context['csrf_token'] = csrf_token
@@ -257,10 +210,10 @@ index 26f8111..506ae14 100644
  
              function_name = (name or
 diff --git django/utils/autoreload.py django/utils/autoreload.py
-index 6de15a2..1130feb 100644
+index cba555e..2a4c44a 100644
 --- django/utils/autoreload.py
 +++ django/utils/autoreload.py
-@@ -132,7 +132,22 @@ def reloader_thread():
+@@ -271,7 +271,22 @@ def reloader_thread():
  
  def restart_with_reloader():
      while True:
@@ -284,16 +237,3 @@ index 6de15a2..1130feb 100644
          if sys.platform == "win32":
              args = ['"%s"' % arg for arg in args]
          new_environ = os.environ.copy()
-diff --git django/utils/translation/trans_real.py django/utils/translation/trans_real.py
-index 789d59e..3914b1f 100644
---- django/utils/translation/trans_real.py
-+++ django/utils/translation/trans_real.py
-@@ -142,7 +142,7 @@ def translation(language):
-         # doesn't affect en-gb), even though they will both use the core "en"
-         # translation. So we have to subvert Python's internal gettext caching.
-         base_lang = lambda x: x.split('-', 1)[0]
--        if base_lang(lang) in [base_lang(trans) for trans in list(_translations)]:
-+        if res and base_lang(lang) in [base_lang(trans) for trans in list(_translations)]:
-             res._info = res._info.copy()
-             res._catalog = res._catalog.copy()
- 

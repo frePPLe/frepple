@@ -26,20 +26,20 @@ To create the installer, the following steps are required:
    Adjust the path appropriately, if required.
 
 6) Install the following Python extensions:
-      - py2exe (0.9.2 for Python 3, needs the patch from http://sourceforge.net/p/py2exe/svn/751/)
+      - py2exe, for Python 3, >= 0.9.2.2
       - django (needs patching!)
       - cherrypy
       - psycopg2
       - pywin32
    The installer uses py2exe to create a directory containing the Python
-   language (with its libaries and extensions) and the frePPLe web user
+   language (with its libraries and extensions) and the frePPLe web user
    interface.
    As the standalone web server we use WSGIServer that is provided by the
    CherryPy project. It is a bit more scalable and robust than the Django
    development server.
 
-7) Create sample sqlite database
-   The installer will pick up the sqlite database in the file bin\frepple.sqlite.
+7) Create sample SQLite database
+   The installer will pick up the SQLite database in the file bin\frepple.sqlite.
    You'll should make sure it is initialized correctly and contains the
    sample dataset.
 

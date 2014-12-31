@@ -18,11 +18,11 @@
 from optparse import make_option
 from datetime import datetime
 
+from django.apps import apps
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
-from django.conf import settings
-from django.db.models.loading import get_model
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
@@ -114,7 +114,7 @@ class Command(BaseCommand):
         for m in models:
           try:
             x = m.split('.', 1)
-            x = get_model(x[0], x[1])
+            x = apps.get_model(x[0], x[1])
             if x in EXCLUDE_FROM_BULK_OPERATIONS:
               continue
             x = x._meta.db_table

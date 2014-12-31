@@ -26,11 +26,5 @@ The common functionality handles:
   - generic report framework
   - database utility functions, mainly to handle SQL dates in a portable way
   - date and time bucket definition
-  - middelware allowing users to set their preferred language
+  - middleware allowing users to set their preferred language
 '''
-
-from django import template
-
-# Make our tags built-in, so we don't have to load them any more in our
-# templates with a 'load' tag.
-template.add_to_builtins('freppledb.common.templatetags.base_utils')

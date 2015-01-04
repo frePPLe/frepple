@@ -13,7 +13,13 @@ $.extend($.jgrid,{
 		recordtext: "Vizualizare {0} - {1} din {2}",
 		emptyrecords: "Nu există înregistrări de vizualizat",
 		loadtext: "Încărcare...",
-		pgtext : "Pagina {0} din {1}"
+		pgtext : "Pagina {0} din {1}",
+		pgfirst : "First Page",
+		pglast : "Last Page",
+		pgnext : "Next Page",
+		pgprev : "Previous Page",
+		pgrecs : "Records per Page",
+		showhide: "Toggle Expand Collapse Grid"
 	},
 	search : {
 		caption: "Caută...",
@@ -129,7 +135,8 @@ $.extend($.jgrid,{
 				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F, Y"
 			},
-			reformatAfterEdit : false
+			reformatAfterEdit : false,
+			userLocalTime : false
 		},
 		baseLinkUrl: '',
 		showAction: '',

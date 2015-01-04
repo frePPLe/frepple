@@ -13,7 +13,13 @@ $.extend($.jgrid,{
 		recordtext: "Mostrant {0} - {1} de {2}",
 	    emptyrecords: "Sense registres que mostrar",
 		loadtext: "Carregant...",
-		pgtext : "Pàgina {0} de {1}"
+		pgtext : "Pàgina {0} de {1}",
+		pgfirst : "First Page",
+		pglast : "Last Page",
+		pgnext : "Next Page",
+		pgprev : "Previous Page",
+		pgrecs : "Records per Page",
+		showhide: "Toggle Expand Collapse Grid"
 	},
 	search : {
 		caption: "Cerca...",
@@ -118,7 +124,8 @@ $.extend($.jgrid,{
 		        UniversalSortableDateTime: "Y-m-d H:i:sO",
 		        YearMonth: "F, Y"
 		    },
-		    reformatAfterEdit : false
+		    reformatAfterEdit : false,
+			userLocalTime : false
 		},
 		baseLinkUrl: '',
 		showAction: 'show',

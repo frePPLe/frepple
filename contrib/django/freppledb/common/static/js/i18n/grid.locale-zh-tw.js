@@ -14,7 +14,13 @@ $.extend($.jgrid,{
 		recordtext: "{0} - {1} 共 {2} 條",
 		emptyrecords: "沒有記錄",
 		loadtext: "載入中...",
-		pgtext : " {0} 共 {1} 頁"
+		pgtext : " {0} 共 {1} 頁",
+		pgfirst : "First Page",
+		pglast : "Last Page",
+		pgnext : "Next Page",
+		pgprev : "Previous Page",
+		pgrecs : "Records per Page",
+		showhide: "Toggle Expand Collapse Grid"
 	},
 	search : {
 		caption: "搜尋...",
@@ -119,7 +125,8 @@ $.extend($.jgrid,{
 				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F, Y"
 			},
-			reformatAfterEdit : false
+			reformatAfterEdit : false,
+			userLocalTime : false
 		},
 		baseLinkUrl: '',
 		showAction: '',

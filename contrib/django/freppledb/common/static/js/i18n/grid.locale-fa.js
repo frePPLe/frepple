@@ -11,7 +11,13 @@
             recordtext: "نمابش {0} - {1} از {2}",
             emptyrecords: "رکوردی یافت نشد",
             loadtext: "بارگزاري...",
-            pgtext: "صفحه {0} از {1}"
+            pgtext: "صفحه {0} از {1}",
+			pgfirst : "First Page",
+			pglast : "Last Page",
+			pgnext : "Next Page",
+			pgprev : "Previous Page",
+			pgrecs : "Records per Page",
+			showhide: "Toggle Expand Collapse Grid"
         },
         search: {
             caption: "جستجو...",
@@ -133,7 +139,8 @@
                     UniversalSortableDateTime: "Y-m-d H:i:sO",
                     YearMonth: "F, Y"
                 },
-                reformatAfterEdit: false
+                reformatAfterEdit: false,
+				userLocalTime : false
             },
             baseLinkUrl: "",
             showAction: "نمايش",

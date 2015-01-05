@@ -16,6 +16,7 @@
 		- 8: Procurement in fixed quantity
 		- 9: Procurement in fixed quantity with fixed interval
 		- 10: Constrained procurement test
+    - 11: Procurement with a supplier calendar
 	</description>
 	<current>2009-01-01T00:00:00</current>
 	<buffers>
@@ -126,6 +127,24 @@
 	    <size_minimum>1</size_minimum>
 	    <size_maximum>20</size_maximum>
 	  </buffer>
+	  <buffer name="buffer 11" xsi:type="buffer_procure">
+	    <description>11: Procurement with a supplier calendar</description>
+	    <item name="item 11" />
+      <location name="supplier">
+        <available name="holidays supplier">
+        <default>1</default>
+        <buckets>
+          <bucket start="2009-01-03T00:00:00" end="2009-01-05T00:00:00" value="0"/>
+          <bucket start="2009-01-10T00:00:00" end="2009-01-11T00:00:00" value="0"/>
+          <bucket start="2009-01-15T00:00:00" end="2009-01-17T00:00:00" value="0"/>
+          <bucket start="2009-07-01T00:00:00" end="2009-07-10T00:00:00" value="0"/>
+        </buckets>
+        </available>
+      </location>
+	    <onhand>0</onhand>
+	    <leadtime>P20D</leadtime>
+      <fence>P7D</fence>      
+	  </buffer>
 	</buffers>
 	<items>
 	  <item name="item 1">
@@ -223,6 +242,16 @@
       	<flows>
       	  <flow xsi:type="flow_end">
       	    <buffer name="buffer 10" />
+      	    <quantity>-1</quantity>
+      	  </flow>
+      	</flows>
+      </operation>
+	  </item>
+	  <item name="item 11">
+	    <operation name="delivery 11" xsi:type="operation_fixed_time">
+      	<flows>
+      	  <flow xsi:type="flow_end">
+      	    <buffer name="buffer 11" />
       	    <quantity>-1</quantity>
       	  </flow>
       	</flows>
@@ -1696,6 +1725,22 @@
 	    <quantity>70</quantity>
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 10" />
+	  </demand>	
+	  <!-- demand for item 11 -->
+	  <demand name="order 01 for item 11">
+	    <quantity>70</quantity>
+	    <due>2009-01-01T00:00:00</due>
+	    <item name="item 11" />
+	  </demand>
+	  <demand name="order 02 for item 11">
+	    <quantity>70</quantity>
+	    <due>2009-07-06T00:00:00</due>
+	    <item name="item 11" />
+	  </demand>	
+	  <demand name="order 03 for item 11">
+	    <quantity>70</quantity>
+	    <due>2009-07-12T00:00:00</due>
+	    <item name="item 11" />
 	  </demand>	
 	</demands>
 

@@ -124,15 +124,16 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     earliest_next += b->getMinimumInterval();
   if (data->constrainedPlanning)
   {
-    if (data->getSolver()->isLeadtimeConstrained() && data->getSolver()->isFenceConstrained()
-        && earliest_next < Plan::instance().getCurrent() + leadtime + fence)
-      earliest_next = Plan::instance().getCurrent() + leadtime + fence;
-    else if (data->getSolver()->isLeadtimeConstrained()
-        && earliest_next < Plan::instance().getCurrent() + leadtime)
-      earliest_next = Plan::instance().getCurrent() + leadtime;
-    else if (data->getSolver()->isFenceConstrained()
-        && earliest_next < Plan::instance().getCurrent() + fence)
-      earliest_next = Plan::instance().getCurrent() + fence;
+    // Calculation of earliest arrival considers the calendar of the operation
+    TimePeriod tp;
+    Date st = Plan::instance().getCurrent();
+    if (data->getSolver()->isLeadtimeConstrained())
+      tp = leadtime;
+    if (data->getSolver()->isFenceConstrained())
+      st += fence;
+    DateRange dr = oper->calculateOperationTime(st, tp, true);
+    if (earliest_next < dr.getEnd())
+      earliest_next = dr.getEnd();
   }
   if (latest_next < earliest_next) latest_next = earliest_next;
 

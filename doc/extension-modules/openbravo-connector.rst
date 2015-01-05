@@ -2,6 +2,10 @@
 Openbravo connector
 ===================
 
+.. raw:: html
+
+   <iframe width="640" height="360" src="http://www.youtube.com/embed/CBDaY4RUH58" frameborder="0" allowfullscreen=""></iframe>
+
 FrePPLe provides an integration with `Openbravo <http://www.openbravo.com>`_, a
 leading open source agile ERP system.
 

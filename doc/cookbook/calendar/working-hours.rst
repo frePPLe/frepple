@@ -19,7 +19,7 @@ an operation in location A that loads a resource in location B using another cal
 Example
 *******
 
-:download:`Excel spreadsheet calendar_working_hours <calendar_working_hours.xlsx>`
+:download:`Excel spreadsheet calendar-working-hours <calendar-working-hours.xlsx>`
 
 The attached example models a warehouse where the replenishment operations are running on weekdays (Monday through Friday) from 8am till 5pm with a lunch break of an hour. The warehouse is not working on Christmas, December 25th.
 

@@ -29,7 +29,7 @@ FrePPLe has 2 conceptually different resource types:
 Example
 *******
 
-:download:`Excel spreadsheet resource-type <resource_type.xlsx>`
+:download:`Excel spreadsheet resource-type <resource-type.xlsx>`
 
 In this example there are 3 resources. The first two use the continuous
 model and the third is a bucketized resource.

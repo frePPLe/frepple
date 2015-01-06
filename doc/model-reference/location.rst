@@ -19,6 +19,8 @@ name         non-empty string  | Name of the location.
 description  string            Free format description.
 category     string            Free format category.
 subcategory  string            Free format subcategory.
+available    calendar          Calendar defining the working hours for all operations,
+                               resources and buffers in the location.
 owner        location          | Locations are organized in a hierarchical tree.
                                | This field defines the parent location.
 members      list of location  | Locations are organized in a hierarchical tree.

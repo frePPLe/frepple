@@ -20,7 +20,7 @@ The above rules allow you to determine the value of a calendar at any moment in 
 Example
 *******
 
-:download:`Excel spreadsheet calendar_working_hours <calendar_working_hours.xlsx>`
+:download:`Excel spreadsheet calendar-working-hours <calendar-working-hours.xlsx>`
 
 The attached example models a warehouse where the replenishment operations are running on weekdays
 (Monday through Friday) from 8am till 5pm with a lunch break of an hour. The warehouse is not

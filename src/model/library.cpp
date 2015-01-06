@@ -80,6 +80,10 @@ void LibraryModel::initialize()
   nok += ItemDefault::initialize();
   nok += ItemIterator::initialize();
 
+  // Initialize the supplieritem metadata
+  nok += SupplierItem::initialize();
+  nok += SupplierItemIterator::initialize();
+
   // Initialize the buffer metadata.
   nok += Buffer::initialize();
   nok += BufferDefault::initialize();

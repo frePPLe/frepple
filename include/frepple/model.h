@@ -71,6 +71,8 @@ class Solvable;
 class PeggingIterator;
 class Skill;
 class ResourceSkill;
+class Supplier;
+class SupplierItem;
 
 
 /** @brief This class is used for initialization. */
@@ -1233,10 +1235,13 @@ class CustomerDefault : public Customer
 };
 
 
-/** @brief This abstracts class represents suppliers. */
+/** @brief This abstracts class represents a supplier. */
 class Supplier : public HasHierarchy<Supplier>, public HasDescription
 {
+  friend class SupplierItem;
   public:
+    typedef Association<Supplier,Item,SupplierItem>::ListA itemlist;
+
     DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
@@ -1251,9 +1256,16 @@ class Supplier : public HasHierarchy<Supplier>, public HasDescription
     /** Destructor. */
     virtual DECLARE_EXPORT ~Supplier();
 
+    /** Returns a constant reference to the list of items this supplier can deliver. */
+    const itemlist& getItems() const {return items;}
+
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
     static int initialize();
+
+private:
+    /** This is a list of items this supplier has. */
+    itemlist items;
 };
 
 
@@ -2884,7 +2896,10 @@ class OperationAlternate : public Operation
   */
 class Item : public HasHierarchy<Item>, public HasDescription
 {
+  friend class SupplierItem;
   public:
+    typedef Association<Supplier,Item,SupplierItem>::ListB supplierlist;
+
     /** Constructor. Don't use this directly! */
     explicit DECLARE_EXPORT Item(const string& str) :
       HasHierarchy<Item>(str), deliveryOperation(NULL), price(0.0) {}
@@ -2924,6 +2939,9 @@ class Item : public HasHierarchy<Item>, public HasDescription
       else throw DataException("Item price must be positive");
     }
 
+    /** Returns a constant reference to the list of items this supplier can deliver. */
+    const supplierlist& getSuppliers() const {return suppliers;}
+
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
@@ -2945,6 +2963,9 @@ class Item : public HasHierarchy<Item>, public HasDescription
 
     /** Selling price of the item. */
     double price;
+
+    /** This is a list of suppliers this item has. */
+    supplierlist suppliers;
 };
 
 
@@ -2962,6 +2983,115 @@ class ItemDefault : public Item
           + HasDescription::extrasize();
     }
     static int initialize();
+};
+
+
+/** @brief This class represents an item that can be purchased from a supplier. */
+class SupplierItem : public Object,
+  public Association<Supplier,Item,SupplierItem>::Node, public HasSource
+{
+  public:
+    /** Default constructor. */
+    explicit SupplierItem() {initType(metadata);}
+
+    /** Constructor. */
+    explicit DECLARE_EXPORT SupplierItem(Supplier*, Item*, int);
+
+    /** Constructor. */
+    explicit DECLARE_EXPORT SupplierItem(Supplier*, Item*, int, DateRange);
+
+    /** Initialize the class. */
+    static int initialize();
+    static void writer(const MetaCategory*, Serializer*);
+    virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    /** Returns the supplier. */
+    Supplier* getSupplier() const {return getPtrA();}
+
+    /** Returns the item. */
+    Item* getItem() const {return getPtrB();}
+
+    /** Updates the resource. This method can only be called on an instance. */
+    void setSupplier(Supplier* s) {if (s) setPtrA(s, s->getItems());}
+
+    /** Updates the item. This method can only be called on an instance. */
+    void setItem(Item* i) {if (i) setPtrB(i, i->getSuppliers());}
+
+    /** Sets the minimum size for procurements.<br>
+      * The default value is 1.0
+      */
+    void setSizeMinimum(double f)
+    {
+      if (f<0)
+        throw DataException("Supplieritem can't have a negative minimum size");
+      size_minimum = f;
+    }
+
+    /** Returns the minimum size for procurements. */
+    double getSizeMinimum() const {return size_minimum;}
+
+    /** Sets the multiple size for procurements. */
+    void setSizeMultiple(double f)
+    {
+      if (f<0)
+        throw DataException("Supplieritem can't have a negative multiple size");
+      size_multiple = f;
+    }
+
+    /** Returns the mutiple size for procurements. */
+    double getSizeMultiple() const {return size_multiple;}
+
+    /** Returns the cost of purchasing 1 unit of this item from this supplier.<br>
+      * The default value is 0.0.
+      */
+    double getCost() const {return cost;}
+
+    /** Update the cost of using 1 unit of this resource for 1 hour. */
+    void setCost(const double c)
+    {
+      if (c >= 0) cost = c;
+      else throw DataException("Supplieritem cost must be positive");
+    }
+
+    /** Return the purchasing leadtime. */
+    TimePeriod getLeadtime() const {return leadtime;}
+
+    /** Update the procurement leadtime. */
+    void setLeadtime(TimePeriod p)
+    {
+      if (p<0L)
+        throw DataException("Supplieritem can't have a negative lead time");
+      leadtime = p;
+    }
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
+    virtual size_t getSize() const {return sizeof(SupplierItem);}
+
+  private:
+    /** Factory method. */
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+
+    /** This method is called to check the validity of the object.<br>
+      * An exception is thrown if the supplieritem is invalid.
+      */
+    DECLARE_EXPORT void validate(Action action);
+
+    /** Procurement lead time. */
+    TimePeriod leadtime;
+
+    /** Minimum procurement quantity. */
+    double size_minimum;
+
+    /** Procurement multiple quantity. */
+    double size_multiple;
+
+    /** Procurement cost. */
+    double cost;
 };
 
 
@@ -4198,7 +4328,7 @@ class Resource : public HasHierarchy<Resource>,
       if (c >= 0) cost = c;
       else throw DataException("Resource cost must be positive");
     }
-
+    
     typedef Association<Operation,Resource,Load>::ListB loadlist;
     typedef Association<Resource,Skill,ResourceSkill>::ListA skilllist;
     typedef TimeLine<LoadPlan> loadplanlist;
@@ -6378,6 +6508,38 @@ class ResourceSkillIterator : public PythonExtension<ResourceSkillIterator>
     Resource::skilllist::const_iterator ir;
     Skill* skill;
     Skill::resourcelist::const_iterator is;
+    PyObject *iternext();
+};
+
+
+//
+// SUPPLIER ITEMS
+//
+
+class SupplierItemIterator : public PythonExtension<SupplierItemIterator>
+{
+  public:
+    static int initialize();
+
+    SupplierItemIterator(Supplier* r)
+      : sup(r), ir(r ? r->getItems().begin() : NULL), it(NULL), is(NULL)
+    {
+      if (!r)
+        throw LogicException("Creating supplieritem iterator for NULL supplier");
+    }
+
+    SupplierItemIterator(Item* s)
+      : sup(NULL), ir(NULL), it(s), is(s ? s->getSuppliers().begin() : NULL)
+    {
+      if (!s)
+        throw LogicException("Creating supplieritem iterator for NULL item");
+    }
+
+  private:
+    Supplier* sup;
+    Supplier::itemlist::const_iterator ir;
+    Item* it;
+    Item::supplierlist::const_iterator is;
     PyObject *iternext();
 };
 

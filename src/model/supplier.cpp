@@ -79,8 +79,19 @@ DECLARE_EXPORT void Supplier::writeElement(Serializer* o, const Keyword& tag, mo
 
 DECLARE_EXPORT void Supplier::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
-  PythonDictionary::read(pIn, pAttr, getDict());
-  HasHierarchy<Supplier>::beginElement(pIn, pAttr);
+  if (pAttr.isA(Tags::tag_supplieritem)
+      && pIn.getParentElement().first.isA(Tags::tag_supplieritems))
+  {
+    SupplierItem *s =
+      dynamic_cast<SupplierItem*>(MetaCategory::ControllerDefault(SupplierItem::metadata,pIn.getAttributes()));
+    if (s) s->setSupplier(this);
+    pIn.readto(s);
+  }
+  else
+  {
+    PythonDictionary::read(pIn, pAttr, getDict());
+    HasHierarchy<Supplier>::beginElement(pIn, pAttr);
+  }
 }
 
 
@@ -114,6 +125,8 @@ DECLARE_EXPORT PyObject* Supplier::getattro(const Attribute& attr)
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_members))
     return new SupplierIterator(this);
+  if (attr.isA(Tags::tag_supplieritems))
+    return new SupplierItemIterator(this);
   return NULL;
 }
 

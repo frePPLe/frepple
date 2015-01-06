@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Test model for suppliers</name>
+	<description>
+  In this test xxx.
+  </description>
+	<current>2015-01-01T00:00:00</current>
+	<suppliers>
+		<supplier name="Supplier A">
+		</supplier>
+		<supplier name="Supplier B">
+		</supplier>
+	</suppliers>
+	<operations>
+	</operations>
+	<items>
+		<item name="Component A">
+		</item>
+		<item name="Component B">
+			<price>1</price>
+		</item>
+	</items>
+</plan>

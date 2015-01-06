@@ -15,6 +15,7 @@ Start populating the entities at the top of the list and work your way down.
 |  :doc:`calendar`
 |    :doc:`Calendar bucket <calendar>` (references calendar)
 |    :doc:`location` (references calendar and itself)
+|    :doc:`supplier` (references calendar and itself)
 |      :doc:`resource` (references setup matrix, calendar, location and itself)
 |      :doc:`operation` (references location)
 |        :doc:`resource-skill` (references skill and resource)
@@ -22,6 +23,7 @@ Start populating the entities at the top of the list and work your way down.
 |        :doc:`Sub operation <operation>` (references operation)
 |        :doc:`operationplan` (references operation)
 |          :doc:`item` (references operation and itself)
+|            :doc:`supplier-item` (references supplier and item)
 |            :doc:`demand` (references item, customer, operation and itself)
 |            :doc:`buffer` (references item, operation, location, calendar and itself)
 |              :doc:`flow` (references buffer and operation)

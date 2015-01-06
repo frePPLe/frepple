@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for suppliers</name>
+  <description>
+  In this test xxx.
+  </description>
+  <current>2015-01-01T00:00:00</current>
+  <suppliers>
+    <supplier name="Supplier A">
+	    <supplieritems>
+	      <supplieritem><item name="Component A"/></supplieritem>
+	    </supplieritems>
+	  </supplier>
+  </suppliers>
+  <items>
+    <item name="Component B" price="1">
+	    <supplieritems>
+	      <supplieritem priority="1"><supplier name="Supplier B" /></supplieritem>
+	    </supplieritems>
+	  </item>    
+  </items>
+
+<?python
+print("SAVING MODEL IN XML FORMAT")
+frepple.saveXMLfile("output.1.xml")
+	
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(name="MRP", plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+
+print("TESTING PYTHON API")
+s = frepple.supplier(name="X")
+r = frepple.item(name='Y')
+frepple.supplieritem(supplier=s, item=r)
+with open("output.4.xml","wt") as output:
+  for i in frepple.suppliers():
+    print("Supplier", i.name, ":", file=output)
+    for j in i.supplieritems:
+      print("     ", j.item.name, file=output)
+  for i in frepple.items():
+    print("Item", i.name, ":", file=output)
+    for j in i.supplieritems:
+      print("     ", j.supplier.name, file=output)
+?>
+
+</plan>

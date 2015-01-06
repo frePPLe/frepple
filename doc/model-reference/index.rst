@@ -32,3 +32,5 @@ a high level overview of the model objects and their relationships.
    resource-skill
    setup-matrix
    skill
+   supplier
+   supplier-item

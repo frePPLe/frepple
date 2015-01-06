@@ -56,6 +56,7 @@
         <xsd:element name="operationplans" type="operationplanlist" />
         <xsd:element name="problems" type="problemlist" />
         <xsd:element name="resourceskills" type="resourceskilllist" />
+        <xsd:element name="supplieritems" type="supplieritemlist" />
       </xsd:choice>
       <xsd:attribute name="name" type="xsd:normalizedString" />
       <xsd:attribute name="source" type="xsd:normalizedString" />

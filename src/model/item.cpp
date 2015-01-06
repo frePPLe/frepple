@@ -93,6 +93,14 @@ DECLARE_EXPORT void Item::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
+  else if (pAttr.isA(Tags::tag_supplieritem)
+      && pIn.getParentElement().first.isA(Tags::tag_supplieritems))
+  {
+    SupplierItem *s =
+      dynamic_cast<SupplierItem*>(MetaCategory::ControllerDefault(SupplierItem::metadata,pIn.getAttributes()));
+    if (s) s->setItem(this);
+    pIn.readto(s);
+  }
   else
   {
     PythonDictionary::read(pIn, pAttr, getDict());
@@ -141,6 +149,8 @@ DECLARE_EXPORT PyObject* Item::getattro(const Attribute& attr)
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_members))
     return new ItemIterator(this);
+  if (attr.isA(Tags::tag_supplieritems))
+    return new SupplierItemIterator(this);
   return NULL;
 }
 

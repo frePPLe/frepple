@@ -201,7 +201,7 @@
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:group ref="common_fields" />
-      <xsd:element name="owner" type="customer" minOccurs="0" />
+      <xsd:element name="owner" type="supplier" minOccurs="0" />
       <xsd:element name="members" minOccurs="0">
         <xsd:complexType>
           <xsd:sequence minOccurs="0" maxOccurs="unbounded">
@@ -209,6 +209,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      <xsd:element name="supplieritems" type="supplieritemlist" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
   </xsd:complexType>
@@ -370,6 +371,7 @@
       </xsd:element>
       <xsd:element name="operation" type="operation" />
       <xsd:element name="price" type="positiveDouble" />
+      <xsd:element name="supplieritems" type="supplieritemlist" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="price" type="positiveDouble" />
@@ -379,6 +381,36 @@
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="item" type="item" />
     </xsd:sequence>
+  </xsd:complexType>
+
+  <!-- SUPPLIERITEM -->
+  <xsd:complexType name="supplieritem">
+    <xsd:annotation>
+      <xsd:documentation>
+        A supplieritem specifies an item than can be procured from a supplier.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="supplier" type="supplier" />
+      <xsd:element name="item" type="item" />
+      <xsd:element name="priority" type="xsd:integer" />
+      <xsd:element name="effective_start" type="xsd:dateTime" />
+      <xsd:element name="effective_end" type="xsd:dateTime" />
+      <xsd:element name="booleanproperty" type="booleanproperty" />
+      <xsd:element name="stringproperty" type="stringproperty" />
+      <xsd:element name="doubleproperty" type="doubleproperty" />
+      <xsd:element name="dateproperty" type="dateproperty" />
+    </xsd:choice>
+    <xsd:attribute name="priority" type="xsd:integer" />
+    <xsd:attribute name="effective_start" type="xsd:dateTime" />
+    <xsd:attribute name="effective_end" type="xsd:dateTime" />
+    <xsd:attribute name="action" type="action" />
+  </xsd:complexType>
+
+  <xsd:complexType name="supplieritemlist">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="supplieritem" type="supplieritem" />
+    </xsd:choice>
   </xsd:complexType>
 
   <!-- SETUP MATRIX -->

@@ -1,0 +1,12 @@
+Supplier Supplier A :
+      Component A
+Supplier Supplier B :
+      Component B
+Supplier X :
+      Y
+Item Component A :
+      Supplier A
+Item Component B :
+      Supplier B
+Item Y :
+      X

@@ -1034,6 +1034,10 @@ DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
     return PythonObject(getUnavailable());
   if (attr.isA(Tags::tag_criticality))
     return PythonObject(getCriticality());
+  if (attr.isA(Tags::tag_pegging_downstream))
+    return new PeggingIterator(this, true);
+  if (attr.isA(Tags::tag_pegging_upstream))
+    return new PeggingIterator(this, false);
   if (attr.isA(Tags::tag_consume_material))
     return PythonObject(getConsumeMaterial());
   if (attr.isA(Tags::tag_consume_capacity))

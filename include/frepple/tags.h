@@ -120,9 +120,9 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_operationplans;
     static DECLARE_EXPORT const Keyword tag_operations;
     static DECLARE_EXPORT const Keyword tag_owner;
-    static DECLARE_EXPORT const Keyword tag_parameter;
-    static DECLARE_EXPORT const Keyword tag_pegged;
     static DECLARE_EXPORT const Keyword tag_pegging;
+    static DECLARE_EXPORT const Keyword tag_pegging_upstream;
+    static DECLARE_EXPORT const Keyword tag_pegging_downstream;
     static DECLARE_EXPORT const Keyword tag_percent;
     static DECLARE_EXPORT const Keyword tag_plan;
     static DECLARE_EXPORT const Keyword tag_plantype;

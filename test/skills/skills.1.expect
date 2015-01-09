@@ -95,15 +95,15 @@
 		</resourceskill>
 		<resourceskill>
 			<resource name="Neil"/>
-				<skill name="Qualification A"/>
+			<skill name="Qualification A"/>
 		</resourceskill>
 		<resourceskill>
 			<resource name="Neil"/>
-				<skill name="Qualification B"/>
+			<skill name="Qualification B"/>
 		</resourceskill>
 		<resourceskill>
 			<resource name="Neil"/>
-				<skill name="Qualification C"/>
+			<skill name="Qualification C"/>
 		</resourceskill>
 		<resourceskill>
 			<resource name="Paul"/>

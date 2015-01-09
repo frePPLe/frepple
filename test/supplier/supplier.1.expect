@@ -20,4 +20,20 @@
 			<price>1</price>
 		</item>
 	</items>
+	<supplieritems>
+		<supplieritem>
+			<supplier name="Supplier A"/>
+			<item name="Component A"/>
+			<size_minimum>-6.27744e+066</size_minimum>
+			<size_multiple>-6.27744e+066</size_multiple>
+			<cost>-6.27744e+066</cost>
+		</supplieritem>
+		<supplieritem>
+			<supplier name="Supplier B"/>
+			<item name="Component B"/>
+			<size_minimum>-6.27744e+066</size_minimum>
+			<size_multiple>-6.27744e+066</size_multiple>
+			<cost>-6.27744e+066</cost>
+		</supplieritem>
+	</supplieritems>
 </plan>

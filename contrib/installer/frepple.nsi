@@ -208,8 +208,6 @@ Section "Application" SecAppl
   SetOutPath "$INSTDIR\bin"
   File "..\bin\frepple.exe"
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
-  File "..\bin\frepple.lib"
-  File "..\bin\frepple.exp"
 
   ; Copy modules
   File /nonfatal "..\bin\mod_*.so"

@@ -83,6 +83,14 @@ DECLARE_EXPORT ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, DateRa
 }
 
 
+DECLARE_EXPORT ResourceSkill::~ResourceSkill()
+{
+  // Delete the associated from the related objects
+  if (getResource()) getResource()->skills.erase(this);
+  if (getSkill()) getSkill()->resources.erase(this);
+}
+
+
 void ResourceSkill::writer(const MetaCategory* c, Serializer* o)
 {
   bool first = true;

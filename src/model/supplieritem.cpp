@@ -48,6 +48,17 @@ int SupplierItem::initialize()
 }
 
 
+DECLARE_EXPORT SupplierItem::~SupplierItem()
+{
+  // TODO Delete existing procurements?
+  //if (getSupplier() && getItem()) {}
+
+  // Delete the associated from the related objects
+  if (getSupplier()) getSupplier()->items.erase(this);
+  if (getItem()) getItem()->suppliers.erase(this);
+}
+
+
 DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u)
   : size_minimum(1.0), size_multiple(0.0), cost(0.0)
 {

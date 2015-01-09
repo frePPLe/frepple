@@ -2992,13 +2992,16 @@ class SupplierItem : public Object,
 {
   public:
     /** Default constructor. */
-    explicit SupplierItem() {initType(metadata);}
+    explicit SupplierItem() : size_minimum(1.0), size_multiple(0.0), cost(0.0) {initType(metadata);}
 
     /** Constructor. */
     explicit DECLARE_EXPORT SupplierItem(Supplier*, Item*, int);
 
     /** Constructor. */
     explicit DECLARE_EXPORT SupplierItem(Supplier*, Item*, int, DateRange);
+
+    /** Destructor. */
+    DECLARE_EXPORT ~SupplierItem();
 
     /** Initialize the class. */
     static int initialize();
@@ -4586,6 +4589,9 @@ class ResourceSkill : public Object,
 
     /** Constructor. */
     explicit DECLARE_EXPORT ResourceSkill(Skill*, Resource*, int, DateRange);
+
+    /** Destructor. */
+    DECLARE_EXPORT ~ResourceSkill();
 
     /** Initialize the class. */
     static int initialize();

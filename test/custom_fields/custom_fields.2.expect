@@ -13,14 +13,14 @@
 		<item name="test">
 			<source>ERP</source>
 			<booleanproperty name="new_boolean_field" value="1"/>
+			<doubleproperty name="new_double_field" value="12.3"/>
+			<stringproperty name="string_field" value="1"/>
+			<booleanproperty name="boolean_field" value="1"/>
+			<dateproperty name="new_date_field" value="2014-01-01T00:00:00"/>
 			<stringproperty name="new_string_field" value="zorro"/>
 			<dateproperty name="date_field" value="2014-01-01T01:01:01"/>
-			<stringproperty name="new_object_field" value="test"/>
-			<dateproperty name="new_date_field" value="2014-01-01T00:00:00"/>
-			<booleanproperty name="boolean_field" value="1"/>
-			<stringproperty name="string_field" value="1"/>
 			<doubleproperty name="double_field" value="1.0"/>
-			<doubleproperty name="new_double_field" value="12.3"/>
+			<stringproperty name="new_object_field" value="test"/>
 		</item>
 	</items>
 </plan>

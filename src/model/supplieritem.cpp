@@ -88,19 +88,19 @@ DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u, DateRange
 void SupplierItem::writer(const MetaCategory* c, Serializer* o)
 {
   bool first = true;
-  for (Resource::iterator i = Resource::begin(); i != Resource::end(); ++i)
-    for (Resource::skilllist::const_iterator j = i->getSkills().begin(); j != i->getSkills().end(); ++j)
+  for (Supplier::iterator i = Supplier::begin(); i != Supplier::end(); ++i)
+    for (Supplier::itemlist::const_iterator j = i->getItems().begin(); j != i->getItems().end(); ++j)
     {
       if (first)
       {
-        o->BeginList(Tags::tag_resourceskills);
+        o->BeginList(Tags::tag_supplieritems);
         first = false;
       }
-      // We use the FULL mode, to force the flows being written regardless
+      // We use the FULL mode, to force the supplieritems being written regardless
       // of the depth in the XML tree.
-      o->writeElement(Tags::tag_resourceskill, &*j, FULL);
+      o->writeElement(Tags::tag_supplieritem, &*j, FULL);
     }
-  if (!first) o->EndList(Tags::tag_resourceskills);
+  if (!first) o->EndList(Tags::tag_supplieritems);
 }
 
 

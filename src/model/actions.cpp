@@ -482,53 +482,64 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
 
     // Header for memory size
     logger << "Memory usage:" << endl;
-    logger << "Model        \tNumber\tMemory" << endl;
-    logger << "-----        \t------\t------" << endl;
+    logger << "Model             \tCount\tMemory" << endl;
+    logger << "-----             \t-----\t------" << endl;
 
     // Plan
     size_t total = Plan::instance().getSize();
-    logger << "Plan         \t1\t"<< Plan::instance().getSize() << endl;
+    logger << "Plan              \t1\t"<< Plan::instance().getSize() << endl;
 
     // Locations
     memsize = 0;
     for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
       memsize += l->getSize();
-    logger << "Location     \t" << Location::size() << "\t" << memsize << endl;
+    logger << "Location          \t" << Location::size() << "\t" << memsize << endl;
     total += memsize;
 
     // Customers
     memsize = 0;
     for (Customer::iterator c = Customer::begin(); c != Customer::end(); ++c)
       memsize += c->getSize();
-    logger << "Customer     \t" << Customer::size() << "\t" << memsize << endl;
+    logger << "Skill             \t" << Skill::size() << "\t" << memsize << endl;
+    logger << "Customer          \t" << Customer::size() << "\t" << memsize << endl;
     total += memsize;
 
-    // Suppliers
+    // Suppliers and supplier items
+    size_t countSupplierItems(0), memSupplierItems(0);
     memsize = 0;
     for (Supplier::iterator c = Supplier::begin(); c != Supplier::end(); ++c)
+    {
       memsize += c->getSize();
-    logger << "Supplier     \t" << Supplier::size() << "\t" << memsize << endl;
+      for (Supplier::itemlist::const_iterator rs = c->getItems().begin();
+          rs != c->getItems().end(); ++rs)
+      {
+        ++countSupplierItems;
+        memSupplierItems += rs->getSize();
+      }
+    }
+    logger << "Supplier          \t" << Supplier::size() << "\t" << memsize << endl;
+    logger << "Supplier items    \t" << countSupplierItems << "\t" << memSupplierItems << endl;
     total += memsize;
 
     // Buffers
     memsize = 0;
     for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
       memsize += b->getSize();
-    logger << "Buffer       \t" << Buffer::size() << "\t" << memsize << endl;
+    logger << "Buffer            \t" << Buffer::size() << "\t" << memsize << endl;
     total += memsize;
 
     // Setup matrices
     memsize = 0;
     for (SetupMatrix::iterator s = SetupMatrix::begin(); s != SetupMatrix::end(); ++s)
       memsize += s->getSize();
-    logger << "Setup matrix \t" << SetupMatrix::size() << "\t" << memsize << endl;
+    logger << "Setup matrix      \t" << SetupMatrix::size() << "\t" << memsize << endl;
     total += memsize;
 
     // Resources
     memsize = 0;
     for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
       memsize += r->getSize();
-    logger << "Resource     \t" << Resource::size() << "\t" << memsize << endl;
+    logger << "Resource          \t" << Resource::size() << "\t" << memsize << endl;
     total += memsize;
 
     // Skills and resourceskills
@@ -544,7 +555,7 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
         memResourceSkills += rs->getSize();
       }
     }
-    logger << "Skill     \t" << Skill::size() << "\t" << memsize << endl;
+    logger << "Skill             \t" << Skill::size() << "\t" << memsize << endl;
     logger << "ResourceSkill     \t" << countResourceSkills << "\t" << memResourceSkills << endl;
     total += memsize;
 
@@ -567,23 +578,23 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
         memLoads += ld->getSize();
       }
     }
-    logger << "Operation    \t" << Operation::size() << "\t" << memsize << endl;
-    logger << "Flow         \t" << countFlows << "\t" << memFlows  << endl;
-    logger << "Load         \t" << countLoads << "\t" << memLoads  << endl;
+    logger << "Operation         \t" << Operation::size() << "\t" << memsize << endl;
+    logger << "Flow              \t" << countFlows << "\t" << memFlows  << endl;
+    logger << "Load              \t" << countLoads << "\t" << memLoads  << endl;
     total += memsize + memFlows + memLoads;
 
     // Calendars (which includes the buckets)
     memsize = 0;
     for (Calendar::iterator cl = Calendar::begin(); cl != Calendar::end(); ++cl)
       memsize += cl->getSize();
-    logger << "Calendar     \t" << Calendar::size() << "\t" << memsize  << endl;
+    logger << "Calendar          \t" << Calendar::size() << "\t" << memsize  << endl;
     total += memsize;
 
     // Items
     memsize = 0;
     for (Item::iterator i = Item::begin(); i != Item::end(); ++i)
       memsize += i->getSize();
-    logger << "Item         \t" << Item::size() << "\t" << memsize  << endl;
+    logger << "Item              \t" << Item::size() << "\t" << memsize  << endl;
     total += memsize;
 
     // Demands
@@ -599,8 +610,8 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
         c_memsize += cstrnt->getSize();
       }
     }
-    logger << "Demand       \t" << Demand::size() << "\t" << memsize  << endl;
-    logger << "Constraints  \t" << c_count << "\t" << c_memsize  << endl;
+    logger << "Demand            \t" << Demand::size() << "\t" << memsize  << endl;
+    logger << "Constraints       \t" << c_count << "\t" << c_memsize  << endl;
     total += memsize + c_memsize;
 
     // Operationplans
@@ -615,17 +626,17 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
       countflowplans += j->sizeFlowPlans();
     }
     total += memsize;
-    logger << "OperationPlan\t" << count << "\t" << memsize << endl;
+    logger << "OperationPlan     \t" << count << "\t" << memsize << endl;
 
     // Flowplans
     memsize = countflowplans * sizeof(FlowPlan);
     total +=  memsize;
-    logger << "FlowPlan     \t" << countflowplans << "\t" << memsize << endl;
+    logger << "FlowPlan          \t" << countflowplans << "\t" << memsize << endl;
 
     // Loadplans
     memsize = countloadplans * sizeof(LoadPlan);
     total +=  memsize;
-    logger << "LoadPlan     \t" << countloadplans << "\t" << memsize << endl;
+    logger << "LoadPlan          \t" << countloadplans << "\t" << memsize << endl;
 
     // Problems
     memsize = count = 0;
@@ -635,10 +646,10 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
       memsize += pr->getSize();
     }
     total += memsize;
-    logger << "Problem      \t" << count << "\t" << memsize << endl;
+    logger << "Problem           \t" << count << "\t" << memsize << endl;
 
     // TOTAL
-    logger << "Total        \t\t" << total << endl << endl;
+    logger << "Total             \t\t" << total << endl << endl;
   }
   catch (...)
   {

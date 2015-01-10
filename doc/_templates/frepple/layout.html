@@ -16,8 +16,8 @@
 
    <!-- Sidebar with search field and table of contents -->
     <div class="sphinxsidebar">
-    <form action="" method="get">
-    <input id="search" type="text" placeholder="Search" name="q" value="" />
+    <form action="{{ pathto("search") }}" method="get" role="search">
+    <input id="search" type="search" placeholder="Search" name="q" value="" />
     <span id="search-progress" style="padding-left: 10px"></span>
     </form>
     {{ toc }}

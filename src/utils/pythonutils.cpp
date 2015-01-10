@@ -470,13 +470,20 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
 {
   if (!*pydict) return; // No custom fields here
 
-  // Iterate over all properties
+  // Create a sorted list of all keys
   PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* key_iterator = PyObject_CallMethod(*pydict, "keys", NULL); // new ref
+  PyObject* keylist = PySequence_Fast(key_iterator, ""); // new ref
+  PyList_Sort(keylist);
+
+  // Iterate over all keys
   PyObject *py_key, *py_value;
-  Py_ssize_t py_pos = 0;
-  while (PyDict_Next(*pydict, &py_pos, &py_key, &py_value))
+  Py_ssize_t len = PySequence_Size(keylist);
+  for (Py_ssize_t i = 0; i < len; i++)
   {
+    py_key = PySequence_Fast_GET_ITEM(keylist, i); // borrowed ref
     PythonObject key(py_key);
+    py_value = PyDict_GetItem(*pydict, py_key); // borrowed ref
     PythonObject value(py_value);
     if (PyBool_Check(py_value))
       o->writeElement(Tags::tag_booleanproperty,
@@ -499,6 +506,10 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
         Tags::tag_value, value.getString()
         );
   }
+
+  // Clean up
+  Py_DECREF(key_iterator);
+  Py_DECREF(keylist);
   PyGILState_Release(pythonstate);
 }
 

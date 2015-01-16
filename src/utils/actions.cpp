@@ -305,7 +305,7 @@ DECLARE_EXPORT void ThreadGroup::execute()
   for (; worker<numthreads; ++worker)
   {
     threads[worker] =  reinterpret_cast<HANDLE>(
-        _beginthreadex(0,  // Security atrtributes
+        _beginthreadex(0,  // Security attributes
             0,                 // Stack size
             &wrapper,          // Thread function
             this,              // Argument list
@@ -357,7 +357,7 @@ DECLARE_EXPORT void ThreadGroup::execute()
 
 DECLARE_EXPORT ThreadGroup::callableWithArgument ThreadGroup::selectNextCallable()
 {
-  ScopeMutexLock l(lock );
+  ScopeMutexLock l(lock);
   if (callables.empty())
   {
     // No more functions

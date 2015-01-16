@@ -2966,6 +2966,16 @@ class Environment
 
     /** Print all modules that have been loaded. */
     static DECLARE_EXPORT void printModules();
+
+    /** Sleep for a number of milliseconds. */
+    static void sleep(unsigned int m)
+    {
+#ifdef WIN32
+      Sleep(m); // milliseconds
+#else
+      usleep(m * 1000); // microseconds
+#endif
+    }
 };
 
 

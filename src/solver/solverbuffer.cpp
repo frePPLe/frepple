@@ -163,7 +163,11 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
             data->getSolver()->setLogLevel(0);
             data->state->curBuffer = const_cast<Buffer*>(b);
             data->state->q_qty = batchqty;
-            data->state->q_date = batchdate;
+            // We need to add the post-operation time, because the operation
+            // solver will subtract it again. For merging operationaplans we
+            // want to plan *exactly* at the date of the existing operationplan.
+            data->state->q_date =
+              batchdate + b->getProducingOperation()->getPostTime();
             data->state->curOwnerOpplan = NULL;
             b->getProducingOperation()->solve(*this, v);
           }

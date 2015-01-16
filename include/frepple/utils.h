@@ -2126,6 +2126,7 @@ class Serializer
     /** Start writing a new object. */
     virtual void BeginObject(const Keyword&, const string&) = 0;
     virtual void BeginObject(const Keyword&, const Keyword&, const int) = 0;
+    virtual void BeginObject(const Keyword&, const Keyword&, const Date) = 0;
     virtual void BeginObject(const Keyword&, const Keyword&, const string&) = 0;
     virtual void BeginObject(const Keyword&,
       const Keyword&, const string&, const Keyword&, const string&) = 0;
@@ -2324,6 +2325,19 @@ class SerializerXML : public Serializer
       incIndent();
     }
 
+    /** Start writing a new object. This method will open a new XML-tag.<br>
+      * Output: \<TAG TAG1="val1"\>
+      */
+    void BeginObject(const Keyword& t, const Keyword& attr1, const Date val1)
+    {
+      *m_fp << indentstring << t.stringStartElement()
+          << attr1.stringAttribute() << val1 << "\">\n";
+      incIndent();
+    }
+
+    /** Start writing a new object. This method will open a new XML-tag.<br>
+      * Output: \<TAG TAG1="val1"\>
+      */
     void BeginObject(const Keyword& t, const Keyword& attr1, const int val1)
     {
       *m_fp << indentstring << t.stringStartElement()

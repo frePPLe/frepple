@@ -347,7 +347,7 @@ DECLARE_EXPORT double TimePeriod::parse2double (const char* s)
 }
 
 
-DECLARE_EXPORT void Date::parse (const char* s, const string& fmt)
+DECLARE_EXPORT void Date::parse (const char* s, const char* fmt)
 {
   if (!s)
   {
@@ -356,7 +356,7 @@ DECLARE_EXPORT void Date::parse (const char* s, const string& fmt)
     return;
   }
   struct tm p;
-  strptime(s, fmt.c_str(), &p);
+  strptime(s, fmt, &p);
   // No clue whether daylight saving time is in effect...
   p.tm_isdst = -1;
   lval = mktime(&p);

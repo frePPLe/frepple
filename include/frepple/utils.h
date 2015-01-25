@@ -1637,9 +1637,12 @@ class Date
     /* Note: the automatic copy constructor works fine and is faster than
        writing our own. */
 
-    /** Constructor initialized with a string. The string needs to be in
-      * the format specified by the "format". */
-    Date(const char* s) {parse(s); checkFinite(lval);}
+    /** Constructor initialized with a string and an optional format string. */
+    Date(const char* s, const char* f = format.c_str())
+    {
+      parse(s, f);
+      checkFinite(lval);
+    }
 
     /** Constructor with year, month and day as arguments. Hours, minutes
       * and seconds can optionally be passed too.
@@ -1735,7 +1738,7 @@ class Date
     time_t getTicks() const {return lval;}
 
     /** Function that parses a string according to the format string. */
-    DECLARE_EXPORT void parse(const char*, const string& = format);
+    DECLARE_EXPORT void parse(const char*, const char* = format.c_str());
 
     /** Updates the default date format. */
     static void setFormat(const string& n) {format = n;}

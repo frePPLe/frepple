@@ -1,10 +1,9 @@
-{% load firstof from future %}<!DOCTYPE html>
+{% load i18n %}{% load firstof from future %}<!DOCTYPE html>
 <html lang="{{LANGUAGE_CODE|default:"en"}}">
-
-{% load i18n %}
 <head>
 <title>{% block title %}{% endblock %}</title>
 <meta http-equiv="Content-Type" content="text/html; charset={{request.charset}}" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="robots" content="NONE,NOARCHIVE" />
 {% block extrastyle %}{% endblock %}
 {% block extrahead %}{% endblock %}

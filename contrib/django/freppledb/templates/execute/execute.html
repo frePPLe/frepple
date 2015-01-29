@@ -338,9 +338,9 @@ and export results.<br/>
 <form method="post" action="{{request.prefix}}/execute/launch/frepple_flush/">{% csrf_token %}<tr>
 <td><input id="erase" type="submit" value="{% trans "Launch" %}"/></td>
 <td>{% trans "Erase selected tables in the database." %}<br/><br/>
-<input class="empty_all" type="checkbox" name="all" value="1" checked><br/>
+<input class="empty_all" type="checkbox" name="all" value="1"><br/>
 {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations %}
-<label for="empty_{{ item.1.model | model_name }}"><input class="empty_entity" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" checked id="empty_{{ item.1.model | model_name }}">{{ item.0 }}</label><br/>{% endif %}{% endfor %}{% endfor %}
+<label for="empty_{{ item.1.model | model_name }}"><input class="empty_entity" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if forloop.parentloop.counter == 1 %} checked{% endif %} id="empty_{{ item.1.model | model_name }}">{{ item.0 }}</label><br/>{% endif %}{% endfor %}{% endfor %}
 </td></tr></form>
 </table></div>
 

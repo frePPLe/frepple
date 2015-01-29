@@ -273,17 +273,53 @@ DECLARE_EXPORT void Demand::writeElement(Serializer *o, const Keyword& tag, mode
   if (getMinShipment() != 1.0)
     o->writeElement(Tags::tag_minshipment, getMinShipment());
 
-  // Write extra plan information
-  if (o->getContentType() == Serializer::PLAN
-      || o->getContentType() == Serializer::PLANDETAIL)
+  if (!deli.empty())
   {
-    if (!deli.empty())
+    if (o->getContentType() == Serializer::PLAN)
     {
+      // Write the delivery plan
       o->BeginList(Tags::tag_operationplans);
       for (OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
         o->writeElement(Tags::tag_operationplan, *i, FULL);
       o->EndList(Tags::tag_operationplans);
     }
+    else if (o->getContentType() == Serializer::PLANDETAIL)
+    {
+      // Write all pegged operationplans
+      o->BeginList(Tags::tag_operationplans);
+      for (PeggingIterator i(this); i; --i)
+      {
+        const OperationPlan* oplan = i.getOperationPlan();
+        o->BeginObject(
+          Tags::tag_operationplan, Tags::tag_id, oplan->getIdentifier(),
+          Tags::tag_operation, oplan->getOperation()->getName()
+          );
+        if (oplan->getDemand())
+          o->writeElement(Tags::tag_demand, oplan->getDemand());
+        o->writeElement(Tags::tag_start, oplan->getDates().getStart());
+        o->writeElement(Tags::tag_end, oplan->getDates().getEnd());
+        // The pegged quantity and level are the only extra field we export in addition
+        // to the standard export fields of an operationplan.
+        o->writeElement(Tags::tag_pegging, i.getQuantity());
+        o->writeElement(Tags::tag_level, i.getLevel());
+        o->writeElement(Tags::tag_quantity, oplan->getQuantity());
+        o->writeElement(Tags::tag_criticality, oplan->getCriticality());
+        if (oplan->getLocked()) o->writeElement (Tags::tag_locked, true);
+        if (!oplan->getConsumeMaterial()) o->writeElement(Tags::tag_consume_material, false);
+        if (!oplan->getProduceMaterial()) o->writeElement(Tags::tag_produce_material, false);
+        if (!oplan->getConsumeCapacity()) o->writeElement(Tags::tag_consume_capacity, false);
+        o->writeElement(Tags::tag_source, oplan->getSource());
+        o->writeElement(Tags::tag_owner, oplan->owner);
+        o->EndObject(Tags::tag_operationplan);
+      }
+      o->EndList(Tags::tag_operationplans);
+    }
+  }
+
+  // Write the problems and constraints
+  if (o->getContentType() == Serializer::PLAN
+      || o->getContentType() == Serializer::PLANDETAIL)
+  {
     bool first = true;
     for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(this), true); j!=Problem::end(); ++j)
     {

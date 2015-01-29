@@ -219,7 +219,7 @@ DECLARE_EXPORT void Resource::writeElement(Serializer* o, const Keyword& tag, mo
 
   // Write extra plan information
   loadplanlist::const_iterator i = loadplans.begin();
-  if (o->getContentType() == Serializer::PLAN  && i!=loadplans.end())
+  if ((o->getContentType() == Serializer::PLAN || o->getContentType() == Serializer::PLANDETAIL) && i!=loadplans.end())
   {
     o->BeginList(Tags::tag_loadplans);
     for (; i!=loadplans.end(); ++i)

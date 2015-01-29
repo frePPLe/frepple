@@ -1095,23 +1095,47 @@
 			<due>2009-06-19T00:00:00</due>
 			<operationplans>
 				<operationplan id="4022" operation="delivery 4">
+					<demand name="order 2 for item 4"/>
 					<start>2009-06-18T00:00:00</start>
 					<end>2009-06-19T00:00:00</end>
+					<pegging>100</pegging>
+					<level>0</level>
 					<quantity>100</quantity>
 					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-06-18T00:00:00</date>
-							<quantity>-200</quantity>
-							<onhand>6</onhand>
-							<minimum>6</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4021" quantity="3"/>
-							<pegging level="-2" operationplan="4001" quantity="6"/>
-							<pegging level="-1" operationplan="4023" quantity="97"/>
-							<pegging level="-2" operationplan="4001" quantity="194"/>
-						</flowplan>
-					</flowplans>
+				</operationplan>
+				<operationplan id="4021" operation="make 4">
+					<start>2009-01-15T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<pegging>3</pegging>
+					<level>1</level>
+					<quantity>98</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="4001" operation="supply 4">
+					<start>2009-01-15T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<pegging>6</pegging>
+					<level>2</level>
+					<quantity>1000</quantity>
+					<criticality>0</criticality>
+					<locked>true</locked>
+				</operationplan>
+				<operationplan id="4023" operation="make 4">
+					<start>2009-06-18T00:00:00</start>
+					<end>2009-06-18T00:00:00</end>
+					<pegging>97</pegging>
+					<level>1</level>
+					<quantity>100</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="4001" operation="supply 4">
+					<start>2009-01-15T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<pegging>194</pegging>
+					<level>2</level>
+					<quantity>1000</quantity>
+					<criticality>0</criticality>
+					<locked>true</locked>
 				</operationplan>
 			</operationplans>
 		</demand>
@@ -1120,55 +1144,75 @@
 			<item name="item 1"/>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
-				<operationplan id="4006" operation="delivery 1">
-					<start>2009-01-17T00:00:00</start>
-					<end>2009-01-18T00:00:00</end>
-					<quantity>45</quantity>
-					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-01-17T00:00:00</date>
-							<quantity>-90</quantity>
-							<onhand>4</onhand>
-							<minimum>4</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4007" quantity="45"/>
-							<pegging level="-2" operationplan="1002" quantity="90"/>
-						</flowplan>
-					</flowplans>
-				</operationplan>
-				<operationplan id="4004" operation="delivery 1">
-					<start>2009-01-10T00:00:00</start>
-					<end>2009-01-11T00:00:00</end>
-					<quantity>50</quantity>
-					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-01-10T00:00:00</date>
-							<quantity>-100</quantity>
-							<onhand>0</onhand>
-							<minimum>4</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4005" quantity="50"/>
-							<pegging level="-2" operationplan="1001" quantity="100"/>
-						</flowplan>
-					</flowplans>
-				</operationplan>
 				<operationplan id="4002" operation="delivery 1">
+					<demand name="order for item 1"/>
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
+					<pegging>5</pegging>
+					<level>0</level>
 					<quantity>5</quantity>
 					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-01-09T00:00:00</date>
-							<quantity>-10</quantity>
-							<onhand>0</onhand>
-							<minimum>4</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4003" quantity="10"/>
-						</flowplan>
-					</flowplans>
+				</operationplan>
+				<operationplan id="4003" operation="Inventory buffer 1">
+					<start>1971-01-01T00:00:00</start>
+					<end>1971-01-01T00:00:00</end>
+					<pegging>10</pegging>
+					<level>1</level>
+					<quantity>10</quantity>
+					<criticality>8</criticality>
+					<locked>true</locked>
+				</operationplan>
+				<operationplan id="4004" operation="delivery 1">
+					<demand name="order for item 1"/>
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-11T00:00:00</end>
+					<pegging>50</pegging>
+					<level>0</level>
+					<quantity>50</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="4005" operation="make 1">
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-10T00:00:00</end>
+					<pegging>50</pegging>
+					<level>1</level>
+					<quantity>50</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="1001" operation="supply 1">
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-10T00:00:00</end>
+					<pegging>100</pegging>
+					<level>2</level>
+					<quantity>100</quantity>
+					<criticality>0</criticality>
+					<locked>true</locked>
+				</operationplan>
+				<operationplan id="4006" operation="delivery 1">
+					<demand name="order for item 1"/>
+					<start>2009-01-17T00:00:00</start>
+					<end>2009-01-18T00:00:00</end>
+					<pegging>45</pegging>
+					<level>0</level>
+					<quantity>45</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="4007" operation="make 1">
+					<start>2009-01-17T00:00:00</start>
+					<end>2009-01-17T00:00:00</end>
+					<pegging>45</pegging>
+					<level>1</level>
+					<quantity>47</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="1002" operation="supply 1">
+					<start>2009-01-17T00:00:00</start>
+					<end>2009-01-17T00:00:00</end>
+					<pegging>90</pegging>
+					<level>2</level>
+					<quantity>200</quantity>
+					<criticality>0</criticality>
+					<locked>true</locked>
 				</operationplan>
 			</operationplans>
 			<problems>
@@ -1195,55 +1239,75 @@
 			<item name="item 2"/>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
-				<operationplan id="4012" operation="delivery 2">
-					<start>2009-01-17T00:00:00</start>
-					<end>2009-01-18T00:00:00</end>
-					<quantity>25</quantity>
-					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-01-17T00:00:00</date>
-							<quantity>-50</quantity>
-							<onhand>0</onhand>
-							<minimum>4</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4013" quantity="25"/>
-							<pegging level="-2" operationplan="2002" quantity="50"/>
-						</flowplan>
-					</flowplans>
-				</operationplan>
-				<operationplan id="4010" operation="delivery 2">
-					<start>2009-01-10T00:00:00</start>
-					<end>2009-01-11T00:00:00</end>
-					<quantity>50</quantity>
-					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-01-10T00:00:00</date>
-							<quantity>-100</quantity>
-							<onhand>0</onhand>
-							<minimum>4</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4011" quantity="50"/>
-							<pegging level="-2" operationplan="2001" quantity="100"/>
-						</flowplan>
-					</flowplans>
-				</operationplan>
 				<operationplan id="4008" operation="delivery 2">
+					<demand name="order for item 2"/>
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
+					<pegging>5</pegging>
+					<level>0</level>
 					<quantity>5</quantity>
 					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-01-09T00:00:00</date>
-							<quantity>-10</quantity>
-							<onhand>0</onhand>
-							<minimum>4</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4009" quantity="10"/>
-						</flowplan>
-					</flowplans>
+				</operationplan>
+				<operationplan id="4009" operation="Inventory buffer 2">
+					<start>1971-01-01T00:00:00</start>
+					<end>1971-01-01T00:00:00</end>
+					<pegging>10</pegging>
+					<level>1</level>
+					<quantity>10</quantity>
+					<criticality>8</criticality>
+					<locked>true</locked>
+				</operationplan>
+				<operationplan id="4010" operation="delivery 2">
+					<demand name="order for item 2"/>
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-11T00:00:00</end>
+					<pegging>50</pegging>
+					<level>0</level>
+					<quantity>50</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="4011" operation="make 2">
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-10T00:00:00</end>
+					<pegging>50</pegging>
+					<level>1</level>
+					<quantity>50</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="2001" operation="supply 2">
+					<start>2009-01-10T00:00:00</start>
+					<end>2009-01-10T00:00:00</end>
+					<pegging>100</pegging>
+					<level>2</level>
+					<quantity>100</quantity>
+					<criticality>0</criticality>
+					<locked>true</locked>
+				</operationplan>
+				<operationplan id="4012" operation="delivery 2">
+					<demand name="order for item 2"/>
+					<start>2009-01-17T00:00:00</start>
+					<end>2009-01-18T00:00:00</end>
+					<pegging>25</pegging>
+					<level>0</level>
+					<quantity>25</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="4013" operation="make 2">
+					<start>2009-01-17T00:00:00</start>
+					<end>2009-01-17T00:00:00</end>
+					<pegging>25</pegging>
+					<level>1</level>
+					<quantity>25</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="2002" operation="supply 2">
+					<start>2009-01-17T00:00:00</start>
+					<end>2009-01-17T00:00:00</end>
+					<pegging>50</pegging>
+					<level>2</level>
+					<quantity>50</quantity>
+					<criticality>0</criticality>
+					<locked>true</locked>
 				</operationplan>
 			</operationplans>
 			<problems>
@@ -1277,38 +1341,49 @@
 			<item name="item 3"/>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
-				<operationplan id="4016" operation="delivery 3">
-					<start>2009-01-15T00:00:00</start>
-					<end>2009-01-16T00:00:00</end>
-					<quantity>90</quantity>
-					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-01-15T00:00:00</date>
-							<quantity>-90</quantity>
-							<onhand>2</onhand>
-							<minimum>2</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4017" quantity="90"/>
-							<pegging level="-2" operationplan="3001" quantity="180"/>
-						</flowplan>
-					</flowplans>
-				</operationplan>
 				<operationplan id="4014" operation="delivery 3">
+					<demand name="order for item 3"/>
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
+					<pegging>10</pegging>
+					<level>0</level>
 					<quantity>10</quantity>
 					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-01-09T00:00:00</date>
-							<quantity>-10</quantity>
-							<onhand>0</onhand>
-							<minimum>4</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4015" quantity="10"/>
-						</flowplan>
-					</flowplans>
+				</operationplan>
+				<operationplan id="4015" operation="Inventory buffer 3">
+					<start>1971-01-01T00:00:00</start>
+					<end>1971-01-01T00:00:00</end>
+					<pegging>10</pegging>
+					<level>1</level>
+					<quantity>10</quantity>
+					<criticality>8</criticality>
+					<locked>true</locked>
+				</operationplan>
+				<operationplan id="4016" operation="delivery 3">
+					<demand name="order for item 3"/>
+					<start>2009-01-15T00:00:00</start>
+					<end>2009-01-16T00:00:00</end>
+					<pegging>90</pegging>
+					<level>0</level>
+					<quantity>90</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="4017" operation="make 3">
+					<start>2009-01-15T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<pegging>90</pegging>
+					<level>1</level>
+					<quantity>92</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="3001" operation="supply 3">
+					<start>2009-01-15T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<pegging>180</pegging>
+					<level>2</level>
+					<quantity>1000</quantity>
+					<criticality>0</criticality>
+					<locked>true</locked>
 				</operationplan>
 			</operationplans>
 			<problems>
@@ -1335,38 +1410,49 @@
 			<item name="item 4"/>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
-				<operationplan id="4020" operation="delivery 4">
-					<start>2009-01-15T00:00:00</start>
-					<end>2009-01-16T00:00:00</end>
-					<quantity>95</quantity>
-					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-01-15T00:00:00</date>
-							<quantity>-190</quantity>
-							<onhand>6</onhand>
-							<minimum>6</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4021" quantity="95"/>
-							<pegging level="-2" operationplan="4001" quantity="190"/>
-						</flowplan>
-					</flowplans>
-				</operationplan>
 				<operationplan id="4018" operation="delivery 4">
+					<demand name="order for item 4"/>
 					<start>2009-01-09T00:00:00</start>
 					<end>2009-01-10T00:00:00</end>
+					<pegging>5</pegging>
+					<level>0</level>
 					<quantity>5</quantity>
 					<criticality>0</criticality>
-					<flowplans>
-						<flowplan>
-							<date>2009-01-09T00:00:00</date>
-							<quantity>-10</quantity>
-							<onhand>0</onhand>
-							<minimum>4</minimum>
-							<maximum>0</maximum>
-							<pegging level="-1" operationplan="4019" quantity="10"/>
-						</flowplan>
-					</flowplans>
+				</operationplan>
+				<operationplan id="4019" operation="Inventory buffer 4">
+					<start>1971-01-01T00:00:00</start>
+					<end>1971-01-01T00:00:00</end>
+					<pegging>10</pegging>
+					<level>1</level>
+					<quantity>10</quantity>
+					<criticality>8</criticality>
+					<locked>true</locked>
+				</operationplan>
+				<operationplan id="4020" operation="delivery 4">
+					<demand name="order for item 4"/>
+					<start>2009-01-15T00:00:00</start>
+					<end>2009-01-16T00:00:00</end>
+					<pegging>95</pegging>
+					<level>0</level>
+					<quantity>95</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="4021" operation="make 4">
+					<start>2009-01-15T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<pegging>95</pegging>
+					<level>1</level>
+					<quantity>98</quantity>
+					<criticality>0</criticality>
+				</operationplan>
+				<operationplan id="4001" operation="supply 4">
+					<start>2009-01-15T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<pegging>190</pegging>
+					<level>2</level>
+					<quantity>1000</quantity>
+					<criticality>0</criticality>
+					<locked>true</locked>
 				</operationplan>
 			</operationplans>
 			<problems>

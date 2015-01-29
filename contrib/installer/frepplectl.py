@@ -27,6 +27,10 @@ os.environ.setdefault('FREPPLE_APP', os.path.join(os.path.split(sys.path[0])[0],
 # application directory into the path as well.
 sys.path += [ os.environ['FREPPLE_APP'] ]
 
+# Initialize django
+import django
+django.setup()
+
 # Import django
 from django.core.management import execute_from_command_line, call_command
 from django.conf import settings

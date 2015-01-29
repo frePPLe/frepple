@@ -146,6 +146,39 @@ index f32c533..2e59446 100644
  
      return commands
  
+diff --git django/db/migrations/loader.py django/db/migrations/loader.py
+index b700616..16ffbf2 100644
+--- django/db/migrations/loader.py
++++ django/db/migrations/loader.py
+@@ -2,6 +2,7 @@ from __future__ import unicode_literals
+ 
+ from importlib import import_module
+ import os
++import pkgutil
+ import sys
+ 
+ from django.apps import apps
+@@ -89,14 +90,12 @@ class MigrationLoader(object):
+                 if was_loaded:
+                     six.moves.reload_module(module)
+             self.migrated_apps.add(app_config.label)
+-            directory = os.path.dirname(module.__file__)
+-            # Scan for .py files
+-            migration_names = set()
+-            for name in os.listdir(directory):
+-                if name.endswith(".py"):
+-                    import_name = name.rsplit(".", 1)[0]
+-                    if import_name[0] not in "_.~":
+-                        migration_names.add(import_name)
++            # Scan for migrations
++            migration_names = set([
++              name
++              for _, name, is_pkg in pkgutil.iter_modules(module.__path__)
++              if not is_pkg
++              ])
+             # Load them
+             south_style_migrations = False
+             for migration_name in migration_names:
 diff --git django/db/models/fields/related.py django/db/models/fields/related.py
 index 344b238..52e883a 100644
 --- django/db/models/fields/related.py
@@ -237,3 +270,16 @@ index cba555e..2a4c44a 100644
          if sys.platform == "win32":
              args = ['"%s"' % arg for arg in args]
          new_environ = os.environ.copy()
+diff --git django/utils/translation/trans_real.py django/utils/translation/trans_real.py
+index cc1ffc2..9557052 100644
+--- django/utils/translation/trans_real.py
++++ django/utils/translation/trans_real.py
+@@ -169,7 +169,7 @@ def translation(language):
+         # doesn't affect en-gb), even though they will both use the core "en"
+         # translation. So we have to subvert Python's internal gettext caching.
+         base_lang = lambda x: x.split('-', 1)[0]
+-        if base_lang(lang) in [base_lang(trans) for trans in list(_translations)]:
++        if res and base_lang(lang) in [base_lang(trans) for trans in list(_translations)]:
+             res._info = res._info.copy()
+             res._catalog = res._catalog.copy()
+ 

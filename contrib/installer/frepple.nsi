@@ -26,7 +26,7 @@
 ; Make sure that this variable points to the windows version of Python, not
 ; the one that is part of cygwin.
 !ifndef PYTHON
-!define PYTHON "python.exe"
+!define PYTHON "python3.exe"
 !endif
 
 ; Main definitions

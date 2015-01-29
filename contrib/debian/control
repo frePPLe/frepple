@@ -7,8 +7,8 @@ Standards-Version: 3.8.4
 Homepage: http://frepple.com
 Vcs-Browser: https://github.com/frePPLe/frePPLe/commits/
 Vcs-Git: git://github.com/frePPLe/frePPLe.git
-X-Python-Version: >= 3.4
-X-Python3-Version: >= 3.4
+X-Python-Version: >= 3.2
+X-Python3-Version: >= 3.2
 
 Package: frepple
 Architecture: any

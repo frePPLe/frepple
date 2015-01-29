@@ -19,7 +19,7 @@ PREREQUISITES
 1. Install Visual Studio 2010 SP1 (aka vc10)
 2. Install xerces-c 3.1.1*
    Installing the 32-bit pre-compiled binaries for vc10 are easiest.
-3. Install Python 3.4.*
+3. Install Python 3.2 or higher
 
 
 BUILD INSTRUCTIONS FROM THE COMMAND LINE

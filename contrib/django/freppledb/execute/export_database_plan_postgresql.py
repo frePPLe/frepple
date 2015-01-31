@@ -23,9 +23,10 @@ The code in this file is executed NOT by the Django web application, but by the
 embedded Python interpreter from the frePPLe engine.
 '''
 from datetime import timedelta, datetime, date
-from time import time
 import os
 from subprocess import Popen, PIPE
+from time import time
+from threading import Thread
 
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.conf import settings
@@ -235,9 +236,88 @@ def exportPegging(process):
   print('Exported pegging in %.2f seconds' % (time() - starttime))
 
 
+class DatabasePipe(Thread):
+  '''
+  An auxiliary class that allows us to run a function with its own
+  PostgreSQL process pipe.
+  '''
+  def __init__(self, *f):
+    super(DatabasePipe, self).__init__()
+    self.functions = f
+
+  def run(self):
+    test = 'FREPPLE_TEST' in os.environ
+
+    # Start a PSQL process
+    # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
+    os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
+    process = Popen("psql -q -w -U%s %s%s%s" % (
+        settings.DATABASES[database]['USER'],
+       settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
+       settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
+       test and settings.DATABASES[database]['TEST_NAME'] or settings.DATABASES[database]['NAME'],
+     ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, universal_newlines=True)
+    if process.returncode is None:
+      # PSQL session is still running
+      process.stdin.write("SET statement_timeout = 0;\n")
+      process.stdin.write("SET client_encoding = 'UTF8';\n")
+
+    # Run the functions sequentially
+    try:
+      for f in self.functions:
+        f(process)
+    finally:
+      print(process.communicate()[1])
+      # Close the pipe and PSQL process
+      if process.returncode is None:
+        # PSQL session is still running.
+        process.stdin.write('\\q\n')
+      process.stdin.close()
+
+
 def exportfrepple():
   '''
   This function exports the data from the frePPLe memory into the database.
+  The export runs in parallel over 4 connections to PostgreSQL.
+  '''
+  # Truncate
+  task = DatabasePipe(truncate)
+  task.start()
+  task.join()
+
+  # Export process
+  tasks = (
+    DatabasePipe(exportResourceplans, exportDemand, exportProblems, exportConstraints),
+    DatabasePipe(exportOperationplans, exportFlowplans, exportLoadplans, exportPegging)
+    )
+  # Start all threads
+  for i in tasks:
+    i.start()
+  # Wait for all threads to finish
+  for i in tasks:
+    i.join()
+
+  # Report on the output
+  cursor = connections[database].cursor()
+  cursor.execute('''
+    select 'out_problem', count(*) from out_problem
+    union select 'out_constraint', count(*) from out_constraint
+    union select 'out_operationplan', count(*) from out_operationplan
+    union select 'out_flowplan', count(*) from out_flowplan
+    union select 'out_loadplan', count(*) from out_loadplan
+    union select 'out_resourceplan', count(*) from out_resourceplan
+    union select 'out_demandpegging', count(*) from out_demandpegging
+    union select 'out_demand', count(*) from out_demand
+    order by 1
+    ''')
+  for table, recs in cursor.fetchall():
+    print("Table %s: %d records" % (table, recs))
+
+
+def exportfrepple_sequential():
+  '''
+  This function exports the data from the frePPLe memory into the database.
+  The export runs sequentially over s single connection to PostgreSQL.
   '''
   test = 'FREPPLE_TEST' in os.environ
 

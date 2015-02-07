@@ -129,58 +129,18 @@ class PathReport(GridReport):
 
 
   @classmethod
+  def getRoot(request, entity):
+    raise Http404("invalid entity type")
+
+
+  @classmethod
   def query(reportclass, request, basequery):
     '''
     A function that recurses upstream or downstream in the supply chain.
     '''
-    from django.core.exceptions import ObjectDoesNotExist
     entity = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)[1]
     entity = entity[0]
-    if reportclass.objecttype == Buffer:
-      # Find the buffer
-      try:
-        buf = Buffer.objects.using(request.database).get(name=entity)
-        if reportclass.downstream:
-          root = [
-            (0, None, i.operation, 1, 0, None, 0, True)
-            for i in buf.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
-            ]
-        else:
-          if buf.producing:
-            root = [ (0, None, buf.producing, 1, 0, None, 0, False) ]
-          else:
-            root = []
-      except ObjectDoesNotExist:
-        raise Http404("buffer %s doesn't exist" % entity)
-    elif reportclass.objecttype == Item:
-      # Find the item
-      try:
-        it = Item.objects.using(request.database).get(name=entity)
-        if it.operation:
-          root = [ (0, None, it.operation, 1, 0, None, 0, False) ]
-        else:
-          root = [
-            (0, None, r.producing, 1, 0, None, 0, False)
-            for r in Buffer.objects.filter(item=entity).using(request.database)
-            if r.producing
-            ]
-      except ObjectDoesNotExist:
-        raise Http404("item %s doesn't exist" % entity)
-    elif reportclass.objecttype == Operation:
-      # Find the operation
-      try:
-        root = [ (0, None, Operation.objects.using(request.database).get(name=entity), 1, 0, None, 0, True) ]
-      except ObjectDoesNotExist:
-        raise Http404("operation %s doesn't exist" % entity)
-    elif reportclass.objecttype == Resource:
-      # Find the resource
-      try:
-        root = Resource.objects.using(request.database).get(name=entity)
-      except ObjectDoesNotExist:
-        raise Http404("resource %s doesn't exist" % entity)
-      root = [ (0, None, i.operation, 1, 0, None, 0, True) for i in root.loads.using(request.database).all() ]
-    else:
-      raise Http404("invalid entity type")
+    root = reportclass.getRoot(request, entity)
 
     # Recurse over all operations
     counter = 1
@@ -264,42 +224,117 @@ class PathReport(GridReport):
         }
 
 
+class UpstreamDemandPath(PathReport):
+  downstream = False
+  objecttype = Demand
+
+  @classmethod
+  def getRoot(reportclass, request, entity):
+    from django.core.exceptions import ObjectDoesNotExist
+    try:
+      dmd = Demand.objects.using(request.database).get(name=entity)
+      if dmd.operation:
+        return [ (0, None, dmd.operation, 1, 0, None, 0, False) ]
+      elif dmd.item.operation:
+        return [ (0, None, dmd.item.operation, 1, 0, None, 0, False) ]
+      else:
+        raise Http404("No supply path defined for demand %s" % entity)
+    except ObjectDoesNotExist:
+      raise Http404("demand %s doesn't exist" % entity)
+
+
 class UpstreamItemPath(PathReport):
   downstream = False
   objecttype = Item
+
+  @classmethod
+  def getRoot(reportclass, request, entity):
+    from django.core.exceptions import ObjectDoesNotExist
+    try:
+      it = Item.objects.using(request.database).get(name=entity)
+      if it.operation:
+        return [ (0, None, it.operation, 1, 0, None, 0, False) ]
+      else:
+        return [
+          (0, None, r.producing, 1, 0, None, 0, False)
+          for r in Buffer.objects.filter(item=entity).using(request.database)
+          if r.producing
+          ]
+    except ObjectDoesNotExist:
+      raise Http404("item %s doesn't exist" % entity)
 
 
 class UpstreamBufferPath(PathReport):
   downstream = False
   objecttype = Buffer
 
+  @classmethod
+  def getRoot(reportclass, request, entity):
+    from django.core.exceptions import ObjectDoesNotExist
+    try:
+      buf = Buffer.objects.using(request.database).get(name=entity)
+      if reportclass.downstream:
+        return [
+          (0, None, i.operation, 1, 0, None, 0, True)
+          for i in buf.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
+          ]
+      else:
+        if buf.producing:
+          return [ (0, None, buf.producing, 1, 0, None, 0, False) ]
+        else:
+          return []
+    except ObjectDoesNotExist:
+      raise Http404("buffer %s doesn't exist" % entity)
+
 
 class UpstreamResourcePath(PathReport):
   downstream = False
   objecttype = Resource
+
+  @classmethod
+  def getRoot(reportclass, request, entity):
+    from django.core.exceptions import ObjectDoesNotExist
+    try:
+      root = Resource.objects.using(request.database).get(name=entity)
+    except ObjectDoesNotExist:
+      raise Http404("resource %s doesn't exist" % entity)
+    return [ (0, None, i.operation, 1, 0, None, 0, True) for i in root.loads.using(request.database).all() ]
 
 
 class UpstreamOperationPath(PathReport):
   downstream = False
   objecttype = Operation
 
+  @classmethod
+  def getRoot(reportclass, request, entity):
+    from django.core.exceptions import ObjectDoesNotExist
+    try:
+      return [ (0, None, Operation.objects.using(request.database).get(name=entity), 1, 0, None, 0, True) ]
+    except ObjectDoesNotExist:
+      raise Http404("operation %s doesn't exist" % entity)
 
-class DownstreamItemPath(PathReport):
+
+class DownstreamItemPath(UpstreamItemPath):
   downstream = True
   objecttype = Item
 
 
-class DownstreamBufferPath(PathReport):
+class DownstreamDemandPath(UpstreamDemandPath):
+  downstream = True
+  objecttype = Demand
+
+
+class DownstreamBufferPath(UpstreamBufferPath):
   downstream = True
   objecttype = Buffer
 
 
-class DownstreamResourcePath(PathReport):
+class DownstreamResourcePath(UpstreamResourcePath):
   downstream = True
   objecttype = Resource
 
 
-class DownstreamOperationPath(PathReport):
+class DownstreamOperationPath(UpstreamOperationPath):
   downstream = True
   objecttype = Operation
 

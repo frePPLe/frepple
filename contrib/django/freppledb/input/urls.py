@@ -51,6 +51,7 @@ urlpatterns = patterns(
   (r'^supplypath/buffer/(.+)/$', freppledb.input.views.UpstreamBufferPath.as_view()),
   (r'^whereused/buffer/(.+)/$', freppledb.input.views.DownstreamBufferPath.as_view()),
   (r'^supplypath/resource/(.+)/$', freppledb.input.views.UpstreamResourcePath.as_view()),
+  (r'^supplypath/demand/(.+)/$', freppledb.input.views.UpstreamDemandPath.as_view()),
   (r'^whereused/resource/(.+)/$', freppledb.input.views.DownstreamResourcePath.as_view()),
   (r'^supplypath/operation/(.+)/$', freppledb.input.views.UpstreamOperationPath.as_view()),
   (r'^whereused/operation/(.+)/$', freppledb.input.views.DownstreamOperationPath.as_view()),

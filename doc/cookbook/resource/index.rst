@@ -8,3 +8,4 @@ Resources represent machines, personnel, or tools.
    :maxdepth: 1
 
    resource-type
+   resource-skills

@@ -73,7 +73,7 @@ $(window).bind('resize', function() {
 </script>
 {% endblock %}
 {% block content %}
-{% block before_table %}{% endblock %}<div id="toolicons">{% if reportclass.hasTimeBuckets and not args.0 %}<form style="display: inline"><span id="displaymode">
+{% block before_table %}{% endblock %}<div id="toolicons">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}<form style="display: inline"><span id="displaymode">
 <input type="radio" id="radio1" name="radio" value="grid" {% if mode == 'table' %}checked{% endif %}><label for="radio1"><span title="{% trans "Display table"|escape %}" class="fa fa-table fa-lg" style="color:#4c3000"></span></label>
 <input type="radio" id="radio2" name="radio" value="graph" {% if mode == 'graph' %}checked{% endif %}><label for="radio2"><span title="{% trans "Display graph"|escape %}" class="fa fa-image fa-lg" style="color:#4c3000"></span></label>
 </span></form>&nbsp;&nbsp;

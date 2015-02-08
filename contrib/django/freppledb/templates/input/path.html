@@ -145,7 +145,7 @@ function tick(e)
       {
         d.x += (width_level * (0.5 + maxlevel - d.level) - d.x) * k;
         if (d.type != 'buffer')
-           d.y += (1000 - d.y) * k / 3;
+           d.y += (1000 - d.y) * k / 10;
       }
     }
     if (d.parent >= 0 && d.suboperindex >= 0)

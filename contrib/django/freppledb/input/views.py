@@ -155,7 +155,7 @@ class PathReport(GridReport):
       # and use only the parent
       if pushsuper:
         hasParents = False
-        for x in curoperation.superoperations.using(request.database).order_by("-priority"):
+        for x in curoperation.superoperations.using(request.database).only('operation').order_by("-priority"):
           root.append( (level, parent, x.operation, curqty, issuboperation, parentoper, realdepth, False) )
           hasParents = True
         if hasParents:
@@ -174,21 +174,21 @@ class PathReport(GridReport):
       subcount = 0
       if reportclass.downstream:
         # Downstream recursion
-        for x in curoperation.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database):
-          curflows = x.thebuffer.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
+        for x in curoperation.flows.filter(quantity__gt=0).only('thebuffer').using(request.database):
+          curflows = x.thebuffer.flows.filter(quantity__lt=0).only('operation', 'quantity').using(request.database)
           for y in curflows:
             hasChildren = True
             root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper) )
-        for x in curoperation.suboperations.using(request.database).order_by("-priority"):
+        for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
           subcount += curoperation.type == "routing" and 1 or -1
           root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )
           hasChildren = True
       else:
         # Upstream recursion
         curprodflow = None
-        for x in curoperation.flows.filter(quantity__gt=0).select_related(depth=1).using(request.database):
+        for x in curoperation.flows.filter(quantity__gt=0).only('quantity').using(request.database):
           curprodflow = x
-        curflows = curoperation.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
+        curflows = curoperation.flows.filter(quantity__lt=0).only('thebuffer', 'quantity').using(request.database)
         for y in curflows:
           if y.thebuffer.producing:
             hasChildren = True
@@ -197,7 +197,7 @@ class PathReport(GridReport):
               curprodflow and (-curqty * y.quantity) / curprodflow.quantity or (-curqty * y.quantity),
               subcount, None, realdepth + 1, True
               ) )
-        for x in curoperation.suboperations.using(request.database).order_by("-priority"):
+        for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
           subcount += curoperation.type == "routing" and 1 or -1
           root.append( (level + 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )
           hasChildren = True
@@ -213,8 +213,8 @@ class PathReport(GridReport):
         'duration_per': curoperation.duration_per,
         'quantity': curqty,
         'suboperation': issuboperation,
-        'buffers': [ (x.thebuffer.name, float(x.quantity)) for x in curoperation.flows.using(request.database) ],
-        'resources': [ (x.resource.name, float(x.quantity)) for x in curoperation.loads.using(request.database) ],
+        'buffers': [ (x.thebuffer.name, float(x.quantity)) for x in curoperation.flows.only('thebuffer', 'quantity').using(request.database) ],
+        'resources': [ (x.resource.name, float(x.quantity)) for x in curoperation.loads.only('resource', 'quantity').using(request.database) ],
         'parentoper': parentoper and parentoper.name,
         'parent': parent,
         'leaf': hasChildren and 'false' or 'true',
@@ -276,7 +276,7 @@ class UpstreamBufferPath(PathReport):
       if reportclass.downstream:
         return [
           (0, None, i.operation, 1, 0, None, 0, True)
-          for i in buf.flows.filter(quantity__lt=0).select_related(depth=1).using(request.database)
+          for i in buf.flows.filter(quantity__lt=0).only('operation').using(request.database)
           ]
       else:
         if buf.producing:

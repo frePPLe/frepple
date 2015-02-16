@@ -55,7 +55,7 @@ from django.db.models.fields import Field, CharField, IntegerField, AutoField
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.http import Http404, HttpResponse, StreamingHttpResponse
-from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import HttpResponseForbidden, HttpResponseNotAllowed
 from django.shortcuts import render
 from django.utils import translation, six
 from django.utils.decorators import method_decorator

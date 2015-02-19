@@ -1148,7 +1148,7 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
   if (getTopOwner()->getDemand())
   {
 
-    long early = getDemand()->getDue() - getDates().getEnd();
+    long early = getTopOwner()->getDemand()->getDue() - getDates().getEnd();
     return ((early<=0L) ? 0.0 : early) / 86400.0; // Convert to days
   }
 

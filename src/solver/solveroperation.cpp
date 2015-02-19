@@ -1271,10 +1271,10 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
   // Make sure sub-operationplans know their owner & store the previous value
   OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;
 
-  // Find the flow into the requesting buffer for the quantity-per
   double top_flow_qty_per = 0.0;
   if (buf)
   {
+    // Find the flow into the requesting buffer for the quantity-per
     Flow* f = oper->findFlow(buf, data->state->q_date);
     if (f && f->getQuantity() > 0.0)
     {
@@ -1283,6 +1283,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
       top_flow_qty_per = f->getQuantity();
     }
   }
+  else
+    // We have a split operation as the delivery operation of a demand.
+    top_flow_qty_per = 1.0;
 
   // Compute the sum of all effective percentages.
   int sum_percent = 0;

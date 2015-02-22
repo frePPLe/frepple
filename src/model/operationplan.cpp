@@ -33,7 +33,7 @@ int OperationPlan::initialize()
 {
   // Initialize the metadata
   OperationPlan::metacategory = new MetaCategory("operationplan", "operationplans",
-      OperationPlan::createOperationPlan, OperationPlan::writer);
+      OperationPlan::createOperationPlan, OperationPlan::writer, OperationPlan::finder);
   OperationPlan::metadata = new MetaClass("operationplan", "operationplan");
 
   // Initialize the Python type
@@ -812,6 +812,13 @@ DECLARE_EXPORT void OperationPlan::writer(const MetaCategory* c, Serializer* o)
       o->writeElement(*c->typetag, *i);
     o->EndList(*c->grouptag);
   }
+}
+
+
+DECLARE_EXPORT Object* OperationPlan::finder(const string& key)
+{
+  unsigned long id = strtoul(key.c_str(), NULL, 0);
+  return OperationPlan::findId(id);
 }
 
 

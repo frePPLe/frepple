@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* ItemDefault::metadata;
 int Item::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("item", "items", reader, writer);
+  metadata = new MetaCategory("item", "items", reader, writer, finder);
 
   // Initialize the Python class
   return FreppleCategory<Item>::initialize();

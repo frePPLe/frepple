@@ -43,7 +43,7 @@ DECLARE_EXPORT const double Buffer::default_max = 1e37;
 int Buffer::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("buffer", "buffers", reader, writer);
+  metadata = new MetaCategory("buffer", "buffers", reader, writer, finder);
 
   // Initialize the Python class
   return FreppleCategory<Buffer>::initialize();

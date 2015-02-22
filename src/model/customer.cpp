@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* CustomerDefault::metadata;
 int Customer::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("customer", "customers", reader, writer);
+  metadata = new MetaCategory("customer", "customers", reader, writer, finder);
 
   // Initialize the Python class
   return FreppleCategory<Customer>::initialize();

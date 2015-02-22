@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* SkillDefault::metadata;
 int Skill::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("skill", "skills", reader, writer);
+  metadata = new MetaCategory("skill", "skills", reader, writer, finder);
 
   // Initialize the Python class
   return FreppleCategory<Skill>::initialize();

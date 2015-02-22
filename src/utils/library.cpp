@@ -336,7 +336,7 @@ DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b,
 
 
 DECLARE_EXPORT MetaCategory::MetaCategory (const string& a, const string& gr,
-    readController f, writeController w)
+    readController f, writeController w, findController s)
 {
   // Update registry
   if (!a.empty()) categoriesByTag[Keyword::hash(a)] = this;
@@ -345,6 +345,7 @@ DECLARE_EXPORT MetaCategory::MetaCategory (const string& a, const string& gr,
   // Update fields
   readFunction = f;
   writeFunction = w;
+  findFunction = s;
   type = a.empty() ? "unspecified" : a;
   typetag = &Keyword::find(type.c_str());
   group = gr.empty() ? "unspecified" : gr;

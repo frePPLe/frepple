@@ -34,7 +34,7 @@ DECLARE_EXPORT const MetaClass* ResourceBuckets::metadata;
 int Resource::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("resource", "resources", reader, writer);
+  metadata = new MetaCategory("resource", "resources", reader, writer, finder);
 
   // Initialize the Python class
   FreppleCategory<Resource>::getType().addMethod("plan", Resource::plan, METH_VARARGS,

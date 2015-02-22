@@ -39,7 +39,7 @@ DECLARE_EXPORT const Operation* OperationSetup::setupoperation;
 int Operation::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("operation", "operations", reader, writer);
+  metadata = new MetaCategory("operation", "operations", reader, writer, finder);
 
   // Initialize the Python class
   return FreppleCategory<Operation>::initialize();

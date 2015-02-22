@@ -1180,6 +1180,9 @@ class MetaCategory : public MetaClass
     /** A XML tag grouping objects of the category. */
     const Keyword* grouptag;
 
+    /** Type definition for the find control function. */
+    typedef Object* (*findController)(const string&);
+
     /** Type definition for the read control function. */
     typedef Object* (*readController)(const MetaClass*, const AttributeList&);
 
@@ -1196,7 +1199,7 @@ class MetaCategory : public MetaClass
 
     /** Constructor. */
     DECLARE_EXPORT MetaCategory (const string& t, const string& g,
-        readController = NULL, writeController = NULL);
+        readController = NULL, writeController = NULL, findController = NULL);
 
     /** Type definition for the map of all registered classes. */
     typedef map < hashtype, const MetaClass*, less<hashtype> > ClassMap;
@@ -1204,15 +1207,15 @@ class MetaCategory : public MetaClass
     /** Type definition for the map of all categories. */
     typedef map < hashtype, const MetaCategory*, less<hashtype> > CategoryMap;
 
-    /** Looks up a category name in the registry. If the catgory can't be
+    /** Looks up a category name in the registry. If the category can't be
       * located the return value is NULL. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByTag(const char*);
 
-    /** Looks up a category name in the registry. If the catgory can't be
+    /** Looks up a category name in the registry. If the category can't be
       * located the return value is NULL. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByTag(const hashtype);
 
-    /** Looks up a category name in the registry. If the catgory can't be
+    /** Looks up a category name in the registry. If the category can't be
       * located the return value is NULL. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const char*);
 
@@ -1229,6 +1232,12 @@ class MetaCategory : public MetaClass
       * If the catrgory can't be found the return value is NULL.
       */
     DECLARE_EXPORT const MetaClass* findClass(const hashtype) const;
+
+    /** Find an object given its primary key. */
+    Object* find(const string& key) const
+    {
+      return findFunction ? findFunction(key) : NULL;
+    }
 
     /** This method takes care of the persistence of all categories. It loops
       * through all registered categories (in the order of their registration)
@@ -1263,6 +1272,9 @@ class MetaCategory : public MetaClass
       * call write them one by one.
       */
     writeController writeFunction;
+
+    /** A control function to find an object given its primary key. */
+    findController findFunction;
 
     /** A map of all categories by their name. */
     static DECLARE_EXPORT CategoryMap categoriesByTag;
@@ -2204,18 +2216,27 @@ class Serializer
 
     /** @see writeElement(const Keyword&, const Object*, mode) */
     void writeElement(const Keyword& t, const Object& o, mode m = DEFAULT)
-    {writeElement(t,&o,m);}
+    {
+      writeElement(t, &o, m);
+    }
 
     /** Returns a pointer to the object that is currently being saved. */
     Object* getCurrentObject() const
-    {return const_cast<Object*>(currentObject);}
+    {
+      return const_cast<Object*>(currentObject);
+    }
 
     /** Returns a pointer to the parent of the object that is being saved. */
     Object* getPreviousObject() const
-    {return const_cast<Object*>(parentObject);}
+    {
+      return const_cast<Object*>(parentObject);
+    }
 
     /** Returns the number of objects that have been serialized. */
-    unsigned long countObjects() const {return numObjects;}
+    unsigned long countObjects() const
+    {
+      return numObjects;
+    }
 
   protected:
     /** Output stream. */
@@ -5208,6 +5229,14 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       for (iterator i = begin(); i != end(); ++i)
         o->writeElement(*(c->typetag), *i);
       o->EndList(*(c->grouptag));
+    }
+
+    /** Find an entity given its name. In case it can't be found, a NULL
+      * pointer is returned. */
+    static Object* finder(const string& k)
+    {
+      Tree::TreeNode *i = st.find(k);
+      return (i!=st.end() ? static_cast<Object*>(static_cast<T*>(i)) : NULL);
     }
 };
 

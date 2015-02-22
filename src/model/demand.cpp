@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* DemandDefault::metadata;
 int Demand::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("demand", "demands", reader, writer);
+  metadata = new MetaCategory("demand", "demands", reader, writer, finder);
 
   // Initialize the Python class
   return FreppleCategory<Demand>::initialize();

@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* SupplierDefault::metadata;
 int Supplier::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("supplier", "suppliers", reader, writer);
+  metadata = new MetaCategory("supplier", "suppliers", reader, writer, finder);
 
   // Initialize the Python class
   return FreppleCategory<Supplier>::initialize();

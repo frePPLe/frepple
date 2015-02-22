@@ -33,7 +33,7 @@ DECLARE_EXPORT const MetaCategory* SetupMatrix::Rule::metadata;
 int SetupMatrix::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("setupmatrix", "setupmatrices", reader, writer);
+  metadata = new MetaCategory("setupmatrix", "setupmatrices", reader, writer, finder);
 
   // Initialize the Python class
   FreppleCategory<SetupMatrix>::getType().addMethod("addRule",

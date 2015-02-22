@@ -34,7 +34,7 @@ DECLARE_EXPORT const MetaClass *CalendarDouble::BucketDouble::metadata;
 int Calendar::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("calendar", "calendars", reader, writer);
+  metadata = new MetaCategory("calendar", "calendars", reader, writer, finder);
 
   // Initialize the Python class
   FreppleCategory<Calendar>::getType().addMethod(

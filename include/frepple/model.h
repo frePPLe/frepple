@@ -2166,6 +2166,9 @@ class OperationPlan
     /** Handles the persistence of operationplan objects. */
     static DECLARE_EXPORT void writer(const MetaCategory*, Serializer*);
 
+    /** Lookup a operationplan given its primary key. */
+    static DECLARE_EXPORT Object* finder(const string&);
+
     /** Comparison of 2 OperationPlans.
       * To garantuee that the problems are sorted in a consistent and stable
       * way, the following sorting criteria are used (in order of priority):

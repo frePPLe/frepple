@@ -32,7 +32,7 @@ int ResourceSkill::initialize()
   // Initialize the metadata
   metadata = new MetaCategory("resourceskill", "resourceskills", MetaCategory::ControllerDefault, writer);
   const_cast<MetaCategory*>(metadata)->registerClass(
-    "resourceskill","resourceskill",true,Object::createDefault<ResourceSkill>
+    "resourceskill","resourceskill", true, Object::createDefault<ResourceSkill>
   );
 
   // Initialize the Python class

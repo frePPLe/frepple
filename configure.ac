@@ -191,9 +191,9 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #
 # Verify installation of PYTHON
 #
-AM_PATH_PYTHON([3.2], [],
+AM_PATH_PYTHON([3.3], [],
 [AC_MSG_ERROR([
-  This package requires Python 3.2 or higher.
+  This package requires Python 3.3 or higher.
 ])])
 AC_PATH_TOOL(PYTHON_CONFIG, "python3-config", notavailable)
 if test x$PYTHON_CONFIG = xnotavailable

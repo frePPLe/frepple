@@ -4885,12 +4885,6 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
     const Attribute& getParentElement() const
     {return m_EStack[numElements>0 ? numElements : 0].first;}
 
-    /** Returns a reference to the current element. */
-    /*
-    const datapair& getCurrentElement() const
-    {return m_EStack[numElements>-1 ? numElements+1 : 0];}
-    */
-
     /** This is the core parsing function, which triggers the XML parser to
       * start processing the input. It is normally called from the method
       * parse(Object*) once a proper stream has been created.
@@ -4960,6 +4954,7 @@ class XMLInputString : public XMLInput
         static_cast<const unsigned int>(data.size()),
         "memory data",
         false);
+      logger << "iiii" << data.c_str() << endl;
       XMLInput::parse(a,pRoot,v);
     }
 
@@ -4969,7 +4964,7 @@ class XMLInputString : public XMLInput
       * calling the command to correctly create and destroy the string being
       * used.
       */
-    const string& data;
+    const string data;
 };
 
 

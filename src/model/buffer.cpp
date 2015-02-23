@@ -281,10 +281,10 @@ DECLARE_EXPORT void Buffer::writeElement(Serializer *o, const Keyword &tag, mode
 }
 
 
-DECLARE_EXPORT void Buffer::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Buffer::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_flow)
-      && pIn.getParentElement().first.isA(Tags::tag_flows))
+      && pIn.getParentElement().isA(Tags::tag_flows))
   {
     Flow *f =
       dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn.getAttributes()));
@@ -310,7 +310,7 @@ DECLARE_EXPORT void Buffer::beginElement(XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Buffer::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_producing))
   {
@@ -735,7 +735,7 @@ DECLARE_EXPORT void BufferInfinite::writeElement
 }
 
 
-DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void BufferProcure::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_leadtime))
     setLeadtime(pElement.getTimeperiod());

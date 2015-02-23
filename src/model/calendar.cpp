@@ -68,7 +68,7 @@ int Calendar::Bucket::initialize()
 }
 
 
-void Calendar::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+void Calendar::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_source))
     setSource(pElement.getString());
@@ -164,7 +164,7 @@ void CalendarDouble::writeElement(Serializer *o, const Keyword& tag, mode m) con
 }
 
 
-void CalendarDouble::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+void CalendarDouble::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_default))
     pElement >> defaultValue;
@@ -485,10 +485,10 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const AttributeList& att
 }
 
 
-DECLARE_EXPORT void Calendar::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Calendar::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_bucket)
-      && pIn.getParentElement().first.isA(Tags::tag_buckets))
+      && pIn.getParentElement().isA(Tags::tag_buckets))
     // A new bucket
     pIn.readto(createBucket(pIn.getAttributes()));
   else
@@ -532,7 +532,7 @@ DECLARE_EXPORT void Calendar::Bucket::writeElement
 }
 
 
-DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Calendar::Bucket::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_priority))
     pElement >> priority;

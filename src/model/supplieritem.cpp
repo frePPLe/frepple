@@ -158,7 +158,7 @@ DECLARE_EXPORT void SupplierItem::writeElement(Serializer* o, const Keyword& tag
 }
 
 
-DECLARE_EXPORT void SupplierItem::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void SupplierItem::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_supplier))
     pIn.readto( Supplier::reader(Supplier::metadata, pIn.getAttributes()) );
@@ -169,7 +169,7 @@ DECLARE_EXPORT void SupplierItem::beginElement(XMLInput& pIn, const Attribute& p
 }
 
 
-DECLARE_EXPORT void SupplierItem::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void SupplierItem::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_supplier))
   {

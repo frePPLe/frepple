@@ -77,14 +77,14 @@ DECLARE_EXPORT void Customer::writeElement(Serializer* o, const Keyword& tag, mo
 }
 
 
-DECLARE_EXPORT void Customer::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Customer::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   PythonDictionary::read(pIn, pAttr, getDict());
   HasHierarchy<Customer>::beginElement(pIn, pAttr);
 }
 
 
-DECLARE_EXPORT void Customer::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Customer::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   HasDescription::endElement(pIn, pAttr, pElement);
   HasHierarchy<Customer>::endElement(pIn, pAttr, pElement);

@@ -294,7 +294,7 @@ DECLARE_EXPORT void SolverMRP::writeElement(Serializer *o, const Keyword& tag, m
 }
 
 
-DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void SolverMRP::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_constraints))
     setConstraints(pElement.getInt());

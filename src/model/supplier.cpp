@@ -77,10 +77,10 @@ DECLARE_EXPORT void Supplier::writeElement(Serializer* o, const Keyword& tag, mo
 }
 
 
-DECLARE_EXPORT void Supplier::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Supplier::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_supplieritem)
-      && pIn.getParentElement().first.isA(Tags::tag_supplieritems))
+      && pIn.getParentElement().isA(Tags::tag_supplieritems))
   {
     SupplierItem *s =
       dynamic_cast<SupplierItem*>(MetaCategory::ControllerDefault(SupplierItem::metadata,pIn.getAttributes()));
@@ -95,7 +95,7 @@ DECLARE_EXPORT void Supplier::beginElement(XMLInput& pIn, const Attribute& pAttr
 }
 
 
-DECLARE_EXPORT void Supplier::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Supplier::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   HasDescription::endElement(pIn, pAttr, pElement);
   HasHierarchy<Supplier>::endElement(pIn, pAttr, pElement);

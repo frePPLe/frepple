@@ -44,7 +44,7 @@ DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
 const MetaCategory* PythonDictionary::metadata = NULL;
 
 
-DECLARE_EXPORT void Object::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Object::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   PythonDictionary::read(pIn, pAttr, getDict());
 }
@@ -514,7 +514,7 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
 }
 
 
-void PythonDictionary::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_name))
     name = pElement.getString();
@@ -577,7 +577,7 @@ void PythonDictionary::endElement(XMLInput& pIn, const Attribute& pAttr, const D
 }
 
 
-DECLARE_EXPORT void PythonDictionary::read(XMLInput& pIn, const Attribute& pAttr, PyObject** pDict)
+DECLARE_EXPORT void PythonDictionary::read(DataInput& pIn, const Attribute& pAttr, PyObject** pDict)
 {
   if (pAttr.isA(Tags::tag_booleanproperty))
     pIn.readto(new PythonDictionary(pDict, 1));

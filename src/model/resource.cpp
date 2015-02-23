@@ -254,17 +254,17 @@ DECLARE_EXPORT void Resource::writeElement(Serializer* o, const Keyword& tag, mo
 }
 
 
-DECLARE_EXPORT void Resource::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Resource::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_load)
-      && pIn.getParentElement().first.isA(Tags::tag_loads))
+      && pIn.getParentElement().isA(Tags::tag_loads))
   {
     Load* l = new Load();
     l->setResource(this);
     pIn.readto(&*l);
   }
   else if (pAttr.isA(Tags::tag_resourceskill)
-      && pIn.getParentElement().first.isA(Tags::tag_resourceskills))
+      && pIn.getParentElement().isA(Tags::tag_resourceskills))
   {
     ResourceSkill *s =
       dynamic_cast<ResourceSkill*>(MetaCategory::ControllerDefault(ResourceSkill::metadata,pIn.getAttributes()));
@@ -280,7 +280,7 @@ DECLARE_EXPORT void Resource::beginElement(XMLInput& pIn, const Attribute& pAttr
   else if (pAttr.isA(Tags::tag_setupmatrix))
     pIn.readto( SetupMatrix::reader(SetupMatrix::metadata,pIn.getAttributes()) );
   if (pAttr.isA(Tags::tag_skill)
-      && pIn.getParentElement().first.isA(Tags::tag_skills))
+      && pIn.getParentElement().isA(Tags::tag_skills))
     pIn.readto( Skill::reader(Skill::metadata,pIn.getAttributes()) );
   else
   {
@@ -290,7 +290,7 @@ DECLARE_EXPORT void Resource::beginElement(XMLInput& pIn, const Attribute& pAttr
 }
 
 
-DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Resource::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   /* Note that while restoring the size, the parent's size is NOT
      automatically updated. The getDescription of the 'set_size' function may

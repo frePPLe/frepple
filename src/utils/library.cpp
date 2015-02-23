@@ -553,7 +553,7 @@ void HasDescription::writeElement(Serializer* o, const Keyword &t, mode m) const
 }
 
 
-void HasDescription::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+void HasDescription::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_category))
     setCategory(pElement.getString());

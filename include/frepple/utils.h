@@ -214,6 +214,7 @@ namespace utils
 class Object;
 class Serializer;
 class Keyword;
+class DataInput;
 class XMLInput;
 class AttributeList;
 
@@ -3604,13 +3605,13 @@ class Object : public PythonExtensionBase
       * for which the "this" element is immediate parent.<br>
       * It is called when the open element tag is encountered.
       */
-    virtual DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    virtual DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
 
     /** Called while restoring the model from an XML-file.<br>
       * This is called when the corresponding close element tag
       * is encountered, and the Data() member of pElement is valid.
       */
-    virtual void endElement(XMLInput&, const Attribute&, const DataElement&) = 0;
+    virtual void endElement(DataInput&, const Attribute&, const DataElement&) = 0;
 
     /** Mark the object as hidden or not. Hidden objects are not exported
       * and are used only as dummy constructs. */
@@ -3732,14 +3733,14 @@ class PythonDictionary : public Object
     /** This static method is used to read XML data into a dictionary.<br>
       * It is normally called from the beginElement() method of an object.
       */
-    static DECLARE_EXPORT void read(XMLInput&, const Attribute&, PyObject**);
+    static DECLARE_EXPORT void read(DataInput&, const Attribute&, PyObject**);
 
     /** This static method is used to write a dictionary as XML.
       * It is normally called from the writeElement() method of an object.
       */
     static DECLARE_EXPORT void write(Serializer*, PyObject* const*);
 
-    void endElement(XMLInput&, const Attribute&, const DataElement&);
+    void endElement(DataInput&, const Attribute&, const DataElement&);
 
     static const MetaCategory *metadata;
     const MetaClass& getType() const {return *metadata;}
@@ -4561,6 +4562,94 @@ class CommandManager
 // INPUT PROCESSING CLASSES
 //
 
+/** @brief An abstract class that is instantiated for data input streams
+  * in various formats.
+  */
+class DataInput
+{
+  public:
+    /** Return a pointer to an array of character pointer which point
+      * to the attributes.
+      */
+    virtual const AttributeList& getAttributes() const = 0;
+
+    /** Redirect event stream into a new Object.<br>
+      * It is also possible to pass a NULL pointer to the function. In
+      * that situation, we simple ignore the content of that element.<br>
+      */
+    virtual void readto(Object*) = 0;
+
+    /** Abort the data parsing. */
+    virtual void shutdown() = 0;
+
+    /** Ignore an element. */
+    virtual void IgnoreElement() = 0;
+
+    /** Returns true if the current object is finishing with the current
+      * tag. This method should only be used in the endElement() method. */
+    virtual bool isObjectEnd() = 0;
+
+    /** Invalidates the current object.<br>
+      * This method is useful when, for instance, the object being parsed
+      * is being deleted.
+      */
+    virtual void invalidateCurrentObject() = 0;
+
+    /** Return a pointer to the previous object being read in.<br>
+      * In a typical use the returned pointer will require a dynamic_cast
+      * to a subclass type.<br>
+      * The typical usage is as follows:
+      * <pre>
+      *   Operation *o = dynamic_cast<Operation*>(pIn.getPreviousObject());
+      *   if (o) doSomeThing(o);
+      *   else throw LogicException("Incorrect object type");
+      * </pre>
+      */
+    virtual Object* getPreviousObject() const = 0;
+
+    /** Clears the previously read object. */
+    virtual Object* getParentObject() const = 0;
+
+    /** Returns a reference to the parent element. */
+    virtual const Attribute& getParentElement() const = 0;
+
+    /** Return the source field that will be populated on each object created
+      * or updated from the XML data.
+      */
+    string getSource() const {return source;}
+
+    /** Update the source field that will be populated on each object created
+      * or updated from the XML data.
+      */
+    void setSource(string s) {source = s;}
+
+    /** Specify a Python callback function that is for every object read
+      * from the input stream.
+      */
+    void setUserExit(PyObject* p) {userexit = p;}
+
+    /** Return the Python callback function. */
+    const PythonFunction& getUserExit() const {return userexit;}
+
+    /** Updates the user definable pointer. This pointer is used to store
+      * status information between handler calls. */
+    virtual void setUserArea(void* ) = 0;   // TODO GET RID OF THIS
+
+    /** Returns the user definable pointer. */
+    virtual void* getUserArea() const = 0;  // TODO GET RID OF THIS
+
+  private:
+    /** A value to populate on the source field of all entities being created
+      * or updated from the input data.
+      */
+    string source;
+
+    /** A Python callback function that is called once an object has been read
+      * from the XML input. The return value is not used.
+      */
+    PythonFunction userexit;
+};
+
 
 /** @brief This class will read in an XML-file and call the appropriate
   * handler functions of the Object classes and objects.
@@ -4576,7 +4665,7 @@ class CommandManager
   * will create a significant overhead. The code would need to be enhanced
   * to maintain a pool of parsers and cache their grammars.
   */
-class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
+class XMLInput : public DataInput, public NonCopyable,  private xercesc::DefaultHandler
 {
   public:
     typedef pair<Attribute,XMLElement> datapair;
@@ -4674,21 +4763,11 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     /** A buffer used for transcoding XML data. */
     char encodingbuffer[4*1024];
 
-    /** A Python callback function that is called once an object has been read
-      * from the XML input. The return value is not used.
-      */
-    PythonFunction userexit;
-
     /** Handler called when a new element tag is encountered.
       * It pushes a new element on the stack and calls the current handler.
       */
     DECLARE_EXPORT void startElement (const XMLCh* const, const XMLCh* const,
         const XMLCh* const, const xercesc::Attributes&);
-
-    /** A value to populate on the source field of all entities being created
-      * or updated from the XML input data.
-      */
-    string source;
 
     /** Handler called when closing element tag is encountered.
       * If this is the closing tag for the current event handler, pop it
@@ -4803,12 +4882,14 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     }
 
     /** Returns a reference to the parent element. */
-    const datapair& getParentElement() const
-    {return m_EStack[numElements>0 ? numElements : 0];}
+    const Attribute& getParentElement() const
+    {return m_EStack[numElements>0 ? numElements : 0].first;}
 
     /** Returns a reference to the current element. */
+    /*
     const datapair& getCurrentElement() const
     {return m_EStack[numElements>-1 ? numElements+1 : 0];}
+    */
 
     /** This is the core parsing function, which triggers the XML parser to
       * start processing the input. It is normally called from the method
@@ -4838,26 +4919,8 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       */
     bool getAbortOnDataError() const {return abortOnDataException;}
 
-    /** Specify a Python callback function that is for every object read
-      * from the input stream.
-      */
-    void setUserExit(PyObject* p) {userexit = p;}
-
-    /** Return the Python callback function. */
-    PythonFunction getUserExit() const {return userexit;}
-
     /** Transcode the Xerces XML characters to our UTF8 encoded buffer. */
     char* transcodeUTF8(const XMLCh*);
-
-    /** Return the source field that will be populated on each object created
-      * or updated from the XML data.
-      */
-    string getSource() const {return source;}
-
-    /** Update the source field that will be populated on each object created
-      * or updated from the XML data.
-      */
-    void setSource(string s) {source = s;}
 
   protected:
     /** The real parsing job is delegated to subclasses.
@@ -4906,7 +4969,7 @@ class XMLInputString : public XMLInput
       * calling the command to correctly create and destroy the string being
       * used.
       */
-    const string data;
+    const string& data;
 };
 
 
@@ -5108,7 +5171,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       */
     static T* add(T* t, T* hint) {return static_cast<T*>(st.insert(t,hint));}
 
-    void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement) {};
+    void endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement) {};
 
     /** This method is available as a object creation factory for
       * classes that are using a string as a key identifier, in particular
@@ -5281,7 +5344,7 @@ class HasDescription : public HasSource
     void setDescription(const string& f) {descr = f;}
 
     void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    void endElement(XMLInput&, const Attribute&, const DataElement&);
+    void endElement(DataInput&, const Attribute&, const DataElement&);
 
   protected:
     /** Returns the memory size in bytes. */
@@ -5425,9 +5488,9 @@ template <class T> class HasHierarchy : public HasName<T>
       */
     unsigned short getHierarchyLevel() const;
 
-    void beginElement(XMLInput&, const Attribute&);
+    void beginElement(DataInput&, const Attribute&);
     void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    void endElement(XMLInput&, const Attribute&, const DataElement&);
+    void endElement(DataInput&, const Attribute&, const DataElement&);
 
   private:
     /** A pointer to the parent object. */

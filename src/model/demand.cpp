@@ -348,7 +348,7 @@ DECLARE_EXPORT void Demand::writeElement(Serializer *o, const Keyword& tag, mode
 }
 
 
-DECLARE_EXPORT void Demand::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Demand::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_item))
     pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
@@ -366,7 +366,7 @@ DECLARE_EXPORT void Demand::beginElement(XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Demand::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_quantity))
     setQuantity (pElement.getDouble());

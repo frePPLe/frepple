@@ -147,7 +147,7 @@ DECLARE_EXPORT void ResourceSkill::writeElement(Serializer* o, const Keyword& ta
 }
 
 
-DECLARE_EXPORT void ResourceSkill::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void ResourceSkill::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_resource))
     pIn.readto( Resource::reader(Resource::metadata,pIn.getAttributes()) );
@@ -158,7 +158,7 @@ DECLARE_EXPORT void ResourceSkill::beginElement(XMLInput& pIn, const Attribute& 
 }
 
 
-DECLARE_EXPORT void ResourceSkill::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void ResourceSkill::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_resource))
   {

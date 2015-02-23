@@ -77,10 +77,10 @@ DECLARE_EXPORT void Skill::writeElement(Serializer* o, const Keyword& tag, mode 
 }
 
 
-DECLARE_EXPORT void Skill::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Skill::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_resourceskill)
-      && pIn.getParentElement().first.isA(Tags::tag_resourceskills))
+      && pIn.getParentElement().isA(Tags::tag_resourceskills))
   {
     ResourceSkill *s =
       dynamic_cast<ResourceSkill*>(MetaCategory::ControllerDefault(ResourceSkill::metadata,pIn.getAttributes()));
@@ -92,7 +92,7 @@ DECLARE_EXPORT void Skill::beginElement(XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-DECLARE_EXPORT void Skill::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Skill::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_source))
     setSource(pElement.getString());

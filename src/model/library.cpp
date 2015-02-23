@@ -154,13 +154,13 @@ void LibraryModel::initialize()
     "Removes the plan data from memory, and optionally the static info too.");
   PythonInterpreter::registerGlobalMethod(
     "readXMLdata", readXMLdata, METH_VARARGS,
-    "Processes an XML string passed as argument.");
+    "Processes a XML string passed as argument.");
   PythonInterpreter::registerGlobalMethod(
     "readXMLfile", readXMLfile, METH_VARARGS,
-    "Read an XML-file.");
+    "Read an XML file.");
   PythonInterpreter::registerGlobalMethod(
     "saveXMLfile", saveXMLfile, METH_VARARGS,
-    "Save the model to an XML-file.");
+    "Save the model to a XML file.");
   PythonInterpreter::registerGlobalMethod(
     "saveplan", savePlan, METH_VARARGS,
     "Save the main plan information to a file.");

@@ -304,7 +304,7 @@ DECLARE_EXPORT void Load::writeElement(Serializer *o, const Keyword& tag, mode m
 }
 
 
-DECLARE_EXPORT void Load::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Load::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_resource))
     pIn.readto( Resource::reader(Resource::metadata,pIn.getAttributes()) );
@@ -317,7 +317,7 @@ DECLARE_EXPORT void Load::beginElement(XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Load::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_resource))
   {

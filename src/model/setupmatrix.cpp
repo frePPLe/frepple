@@ -118,10 +118,10 @@ DECLARE_EXPORT void SetupMatrix::writeElement(Serializer *o, const Keyword& tag,
 }
 
 
-DECLARE_EXPORT void SetupMatrix::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void SetupMatrix::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_rule)
-      && pIn.getParentElement().first.isA(Tags::tag_rules))
+      && pIn.getParentElement().isA(Tags::tag_rules))
     // A new rule
     pIn.readto(createRule(pIn.getAttributes()));
   else
@@ -191,7 +191,7 @@ DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::createRule(const AttributeList& a
 }
 
 
-DECLARE_EXPORT void SetupMatrix::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void SetupMatrix::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_source))
     setSource(pElement.getString());
@@ -309,7 +309,7 @@ DECLARE_EXPORT void SetupMatrix::Rule::writeElement
 }
 
 
-DECLARE_EXPORT void SetupMatrix::Rule::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void SetupMatrix::Rule::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_priority))
     setPriority(pElement.getInt());

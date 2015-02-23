@@ -283,7 +283,7 @@ DECLARE_EXPORT void Flow::writeElement (Serializer *o, const Keyword& tag, mode 
 }
 
 
-DECLARE_EXPORT void Flow::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Flow::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_buffer))
     pIn.readto( Buffer::reader(Buffer::metadata,pIn.getAttributes()) );
@@ -294,7 +294,7 @@ DECLARE_EXPORT void Flow::beginElement(XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Flow::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_buffer))
   {

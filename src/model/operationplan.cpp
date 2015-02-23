@@ -878,7 +878,7 @@ DECLARE_EXPORT void OperationPlan::writeElement(Serializer* o, const Keyword& ta
 }
 
 
-DECLARE_EXPORT void OperationPlan::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void OperationPlan::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_demand))
     pIn.readto( Demand::reader(Demand::metadata,pIn.getAttributes()) );
@@ -891,7 +891,7 @@ DECLARE_EXPORT void OperationPlan::beginElement(XMLInput& pIn, const Attribute& 
 }
 
 
-DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void OperationPlan::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   // Note that the fields have been ordered more or less in the order
   // of their expected frequency.

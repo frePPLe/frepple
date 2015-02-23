@@ -100,17 +100,17 @@ template <class T> void HasHierarchy<T>::writeElement
 
 
 template <class T> void HasHierarchy<T>::beginElement
-(XMLInput& pIn, const Attribute& pAttr)
+(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_owner) ||
-      (pIn.getParentElement().first.isA(Tags::tag_members)
+      (pIn.getParentElement().isA(Tags::tag_members)
           && pAttr.isA(T::metadata->typetag)))
     // Start reading a member of the parent
     pIn.readto( T::reader(T::metadata,pIn.getAttributes()) );
 }
 
 
-template <class T> void HasHierarchy<T>::endElement (XMLInput& pIn,
+template <class T> void HasHierarchy<T>::endElement(DataInput& pIn,
     const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_owner) && !pIn.isObjectEnd())
@@ -120,7 +120,7 @@ template <class T> void HasHierarchy<T>::endElement (XMLInput& pIn,
     if (o) setOwner(o);
   }
   else if (pAttr.isA(T::metadata->typetag)
-      && pIn.getParentElement().first.isA(Tags::tag_members)
+      && pIn.getParentElement().isA(Tags::tag_members)
       && pIn.isObjectEnd() )
   {
     // we just have ended a member element <MEMBERS><TAG>abc<TAG>...</MEMBERS>

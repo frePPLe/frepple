@@ -548,10 +548,10 @@ DECLARE_EXPORT void Operation::writeElement(Serializer* o, const Keyword& tag, m
 }
 
 
-DECLARE_EXPORT void Operation::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Operation::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_flow)
-      && pIn.getParentElement().first.isA(Tags::tag_flows))
+      && pIn.getParentElement().isA(Tags::tag_flows))
   {
     Flow *f =
       dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn.getAttributes()));
@@ -559,7 +559,7 @@ DECLARE_EXPORT void Operation::beginElement(XMLInput& pIn, const Attribute& pAtt
     pIn.readto(f);
   }
   else if (pAttr.isA (Tags::tag_load)
-      && pIn.getParentElement().first.isA(Tags::tag_loads))
+      && pIn.getParentElement().isA(Tags::tag_loads))
   {
     Load* l = new Load();
     l->setOperation(this);
@@ -574,7 +574,7 @@ DECLARE_EXPORT void Operation::beginElement(XMLInput& pIn, const Attribute& pAtt
 }
 
 
-DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Operation::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_fence))
     setFence(pElement.getTimeperiod());
@@ -742,7 +742,7 @@ DECLARE_EXPORT void OperationFixedTime::writeElement
 }
 
 
-DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void OperationFixedTime::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_duration))
     setDuration (pElement.getTimeperiod());
@@ -929,7 +929,7 @@ DECLARE_EXPORT void OperationTimePer::writeElement
 }
 
 
-DECLARE_EXPORT void OperationTimePer::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void OperationTimePer::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_duration))
     setDuration(pElement.getTimeperiod());
@@ -970,7 +970,7 @@ DECLARE_EXPORT void OperationRouting::writeElement
 }
 
 
-DECLARE_EXPORT void OperationRouting::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void OperationRouting::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
@@ -979,10 +979,10 @@ DECLARE_EXPORT void OperationRouting::beginElement(XMLInput& pIn, const Attribut
 }
 
 
-DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void OperationRouting::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_operation)
-      && pIn.getParentElement().first.isA(Tags::tag_steps))
+      && pIn.getParentElement().isA(Tags::tag_steps))
   {
     Operation *oper = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (oper) addStepBack (oper);
@@ -1220,7 +1220,7 @@ DECLARE_EXPORT void OperationAlternate::writeElement
 }
 
 
-DECLARE_EXPORT void OperationAlternate::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void OperationAlternate::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
@@ -1229,7 +1229,7 @@ DECLARE_EXPORT void OperationAlternate::beginElement(XMLInput& pIn, const Attrib
 }
 
 
-DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void OperationAlternate::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   // Saving some typing...
   typedef pair<Operation*,alternateProperty> tempData;
@@ -1256,7 +1256,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribu
   else if (pAttr.isA(Tags::tag_effective_end))
     tmp->second.second.setEnd(pElement.getDate());
   else if (pAttr.isA(Tags::tag_operation)
-      && pIn.getParentElement().first.isA(Tags::tag_alternate))
+      && pIn.getParentElement().isA(Tags::tag_alternate))
   {
     Operation * b = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (b) tmp->first = b;
@@ -1444,7 +1444,7 @@ DECLARE_EXPORT void OperationSplit::writeElement
 }
 
 
-DECLARE_EXPORT void OperationSplit::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void OperationSplit::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
@@ -1453,7 +1453,7 @@ DECLARE_EXPORT void OperationSplit::beginElement(XMLInput& pIn, const Attribute&
 }
 
 
-DECLARE_EXPORT void OperationSplit::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void OperationSplit::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   // Saving some typing...
   typedef pair<Operation*,alternateProperty> tempData;
@@ -1478,7 +1478,7 @@ DECLARE_EXPORT void OperationSplit::endElement (XMLInput& pIn, const Attribute& 
   else if (pAttr.isA(Tags::tag_effective_end))
     tmp->second.second.setEnd(pElement.getDate());
   else if (pAttr.isA(Tags::tag_operation)
-      && pIn.getParentElement().first.isA(Tags::tag_alternate))
+      && pIn.getParentElement().isA(Tags::tag_alternate))
   {
     Operation * b = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (b) tmp->first = b;

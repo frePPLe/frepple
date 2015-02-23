@@ -76,7 +76,7 @@ DECLARE_EXPORT void Location::writeElement(Serializer* o, const Keyword& tag, mo
 }
 
 
-DECLARE_EXPORT void Location::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Location::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_available) || pAttr.isA(Tags::tag_maximum))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
@@ -88,7 +88,7 @@ DECLARE_EXPORT void Location::beginElement(XMLInput& pIn, const Attribute& pAttr
 }
 
 
-DECLARE_EXPORT void Location::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Location::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_available))
   {

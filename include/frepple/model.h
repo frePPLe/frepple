@@ -292,7 +292,7 @@ class Calendar : public HasName<Calendar>, public HasSource
           * and "start" are read in. Other fields as also written out but these
           * are information-only fields.
           */
-        DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+        DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
 
         virtual const MetaClass& getType() const {return *metadata;}
         virtual size_t getSize() const {return sizeof(Bucket);}
@@ -409,8 +409,8 @@ class Calendar : public HasName<Calendar>, public HasSource
     BucketIterator endBuckets() const {return BucketIterator(NULL);}
 
     DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -495,7 +495,7 @@ class CalendarDouble : public Calendar
           o->EndObject(tag);
         }
 
-        void endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+        void endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
         {
           if (pAttr.isA(Tags::tag_value))
             pElement >> val;
@@ -546,7 +546,7 @@ class CalendarDouble : public Calendar
 
     static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 
-    void endElement(XMLInput&, const Attribute&, const DataElement&);
+    void endElement(DataInput&, const Attribute&, const DataElement&);
     void writeElement(Serializer*, const Keyword&, mode m=DEFAULT) const;
 
     /** Returns the value on the specified date. */
@@ -655,7 +655,7 @@ class Problem : public NonCopyable, public Object
     virtual double getWeight() const = 0;
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    void endElement(XMLInput&, const Attribute&, const DataElement&) {}
+    void endElement(DataInput&, const Attribute&, const DataElement&) {}
     static DECLARE_EXPORT void writer(const MetaCategory*, Serializer*);
 
     PyObject* getattro(const Attribute&);
@@ -860,7 +860,7 @@ class Solver : public HasName<Solver>
     virtual DECLARE_EXPORT ~Solver() {}
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -989,7 +989,7 @@ class Plannable : public HasProblems, public Solvable
     Plannable* getEntity() const {return const_cast<Plannable*>(this);}
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
 
   private:
     /** Stores whether this entity should be skip problem detection, or not. */
@@ -1163,8 +1163,8 @@ class Location : public HasHierarchy<Location>, public HasDescription
     void setAvailable(CalendarDouble* b) {available = b;}
 
     DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     size_t extrasize() const
@@ -1203,8 +1203,8 @@ class Customer : public HasHierarchy<Customer>, public HasDescription
 {
   public:
     DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     size_t extrasize() const
@@ -1243,8 +1243,8 @@ class Supplier : public HasHierarchy<Supplier>, public HasDescription
     typedef Association<Supplier,Item,SupplierItem>::ListA itemlist;
 
     DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     size_t extrasize() const
@@ -1527,9 +1527,9 @@ class Operation : public HasName<Operation>,
       OperationPlan*, OperationPlan*, bool=true
       );
 
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -2062,8 +2062,8 @@ class OperationPlan
     virtual DECLARE_EXPORT void setStart(Date);
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -2387,7 +2387,7 @@ class OperationFixedTime : public Operation
     }
 
     DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -2503,7 +2503,7 @@ class OperationTimePer : public Operation
     (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -2600,9 +2600,9 @@ class OperationRouting : public Operation
       OperationPlan*, OperationPlan*, bool = true
       );
 
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     static int initialize();
 
@@ -2733,9 +2733,9 @@ class OperationSplit : public Operation
       OperationPlan*, OperationPlan*, bool=true
       );
 
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
     DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual const Operationlist& getSubOperations() const {return alternates;}
@@ -2845,9 +2845,9 @@ class OperationAlternate : public Operation
       OperationPlan*, OperationPlan*, bool=true
       );
 
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
     DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
@@ -2946,8 +2946,8 @@ class Item : public HasHierarchy<Item>, public HasDescription
     const supplierlist& getSuppliers() const {return suppliers;}
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -3010,8 +3010,8 @@ class SupplierItem : public Object,
     static int initialize();
     static void writer(const MetaCategory*, Serializer*);
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
@@ -3184,9 +3184,9 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       else throw DataException("Buffer carrying_cost must be positive");
     }
 
-    DECLARE_EXPORT virtual void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT virtual void beginElement(DataInput&, const Attribute&);
     DECLARE_EXPORT virtual void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT virtual void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT virtual void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
@@ -3438,7 +3438,7 @@ class BufferProcure : public Buffer
 {
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
-    virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return *metadata;}
     virtual size_t getSize() const
@@ -3732,8 +3732,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual double getFlowplanQuantity(const FlowPlan*) const;
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     static int initialize();
     static void writer(const MetaCategory*, Serializer*);
 
@@ -4035,7 +4035,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
         DECLARE_EXPORT ~Rule();
 
         virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-        DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+        DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
         virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
         virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
         static int initialize();
@@ -4150,8 +4150,8 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
     DECLARE_EXPORT Rule* createRule(const AttributeList&);
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -4245,8 +4245,8 @@ class Skill : public HasName<Skill>, public HasSource
     static DECLARE_EXPORT PyObject* addPythonResource(PyObject*, PyObject*);
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -4359,8 +4359,8 @@ class Resource : public HasHierarchy<Resource>,
     {return loads.find(o,d);}
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
@@ -4600,8 +4600,8 @@ class ResourceSkill : public Object,
     static int initialize();
     static void writer(const MetaCategory*, Serializer*);
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
@@ -4741,8 +4741,8 @@ class Load
     virtual double getLoadplanQuantity(const LoadPlan*) const;
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -4871,8 +4871,8 @@ class Plan : public Plannable, public Object
       * dynamic plan information.
       */
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
@@ -5007,8 +5007,8 @@ class Demand
     DECLARE_EXPORT double getPlannedQuantity() const;
 
     virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    virtual DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    virtual DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT void beginElement(DataInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -6185,7 +6185,7 @@ class PeggingIterator : public Object
     /** Initialize the class. */
     static int initialize();
 
-    virtual void endElement(XMLInput& i, const Attribute& a, const DataElement& d)
+    virtual void endElement(DataInput& i, const Attribute& a, const DataElement& d)
     {
       throw LogicException("Pegging can't be read");
     }

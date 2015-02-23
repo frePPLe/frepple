@@ -89,12 +89,12 @@ DECLARE_EXPORT void Item::writeElement(Serializer *o, const Keyword& tag, mode m
 }
 
 
-DECLARE_EXPORT void Item::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Item::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_supplieritem)
-      && pIn.getParentElement().first.isA(Tags::tag_supplieritems))
+      && pIn.getParentElement().isA(Tags::tag_supplieritems))
   {
     SupplierItem *s =
       dynamic_cast<SupplierItem*>(MetaCategory::ControllerDefault(SupplierItem::metadata,pIn.getAttributes()));
@@ -109,7 +109,7 @@ DECLARE_EXPORT void Item::beginElement(XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-DECLARE_EXPORT void Item::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Item::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_operation))
   {

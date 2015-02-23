@@ -218,7 +218,7 @@ DECLARE_EXPORT void Plannable::writeElement (Serializer* o, const Keyword& tag, 
 }
 
 
-DECLARE_EXPORT void Plannable::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Plannable::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_detectproblems))
   {

@@ -99,7 +99,7 @@ DECLARE_EXPORT void Plan::writeElement (Serializer* o, const Keyword& tag, mode 
 }
 
 
-DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+DECLARE_EXPORT void Plan::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_current))
     setCurrent(pElement.getDate());
@@ -116,9 +116,9 @@ DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, const Attribute& pAttr, con
 }
 
 
-DECLARE_EXPORT void Plan::beginElement(XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Plan::beginElement(DataInput& pIn, const Attribute& pAttr)
 {
-  const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().first.getHash());
+  const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().getHash());
   if (cat)
   {
     if (cat->readFunction)

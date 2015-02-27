@@ -274,7 +274,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           data->state->q_operationplan->setEnd(curdate);
 
           // Verify the move is successfull
-          if (data->state->q_operationplan->getDates().getEnd() > curdate)
+          if (data->state->q_operationplan->getDates().getEnd() > curdate
+            || data->state->q_operationplan->getQuantity() == 0.0)
             // If there isn't available time in the location calendar, the move
             // can fail.
             data->state->a_qty = 0.0;

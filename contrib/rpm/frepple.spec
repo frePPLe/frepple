@@ -19,7 +19,7 @@
 
 Summary: Free Production PLanning
 Name: frepple
-Version: 2.2
+Version: 2.3
 Release: 1%{?dist}
 License: AGPLv3+
 Group: Applications/Productivity

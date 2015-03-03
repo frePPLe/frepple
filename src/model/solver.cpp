@@ -31,44 +31,22 @@ DECLARE_EXPORT const MetaCategory* Solver::metadata;
 int Solver::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("solver", "solvers", reader);
+  metadata = new MetaCategory("solver", "solvers", MetaCategory::ControllerDefault);
 
   // Initialize the Python class
-  FreppleCategory<Solver>::getType().addMethod("solve", solve, METH_NOARGS, "run the solver");
-  return FreppleCategory<Solver>::initialize();
-}
-
-
-DECLARE_EXPORT void Solver::writeElement
-(Serializer* o, const Keyword &tag, mode m) const
-{
-  // The subclass should have written its own header
-  assert(m == NOHEAD || m == NOHEADTAIL);
-
-  // Fields
-  if (loglevel) o->writeElement(Tags::tag_loglevel, loglevel);
-
-  // Write the tail
-  if (m != NOHEADTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void Solver::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_loglevel))
-  {
-    int i = pElement.getInt();
-    if (i<0 || i>USHRT_MAX)
-      throw DataException("Invalid log level" + pElement.getString());
-    setLogLevel(i);
-  }
+  PythonType& x = FreppleCategory<Flow>::getType();
+  x.setName("solver");
+  x.setDoc("frePPLe solver");
+  x.supportgetattro();
+  x.supportsetattro();
+  x.addMethod("solve", solve, METH_NOARGS, "run the solver");
+  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady();
 }
 
 
 DECLARE_EXPORT PyObject* Solver::getattro(const Attribute& attr)
 {
-  if (attr.isA(Tags::tag_name))
-    return PythonObject(getName());
   if (attr.isA(Tags::tag_loglevel))
     return PythonObject(getLogLevel());
   return NULL;
@@ -77,9 +55,7 @@ DECLARE_EXPORT PyObject* Solver::getattro(const Attribute& attr)
 
 DECLARE_EXPORT int Solver::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (attr.isA(Tags::tag_name))
-    setName(field.getString());
-  else if (attr.isA(Tags::tag_loglevel))
+  if (attr.isA(Tags::tag_loglevel))
     setLogLevel(field.getInt());
   else
     return -1;  // Error

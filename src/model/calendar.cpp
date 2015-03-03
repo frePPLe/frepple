@@ -525,7 +525,7 @@ DECLARE_EXPORT void Calendar::Bucket::writeElement
   if (days != 127) o->writeElement(Tags::tag_days, days);
   if (starttime)
     o->writeElement(Tags::tag_starttime, starttime);
-  if (endtime != TimePeriod(86400L))
+  if (endtime != Duration(86400L))
     o->writeElement(Tags::tag_endtime, endtime);
   PythonDictionary::write(o, getDict());
   o->EndObject(tag);
@@ -539,9 +539,9 @@ DECLARE_EXPORT void Calendar::Bucket::endElement(DataInput& pIn, const Attribute
   else if (pAttr.isA(Tags::tag_days))
     setDays(pElement.getInt());
   else if (pAttr.isA(Tags::tag_starttime))
-    setStartTime(pElement.getTimeperiod());
+    setStartTime(pElement.getDuration());
   else if (pAttr.isA(Tags::tag_endtime))
-    setEndTime(pElement.getTimeperiod());
+    setEndTime(pElement.getDuration());
 }
 
 
@@ -669,15 +669,15 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
   for (short i=0; i<offsetcounter; i+=2)
   {
     // Start and end date of this effective period
-    Date st = refDate + TimePeriod(offsets[i] - timeInWeek);
-    Date nd = refDate + TimePeriod(offsets[i+1] - timeInWeek);
+    Date st = refDate + Duration(offsets[i] - timeInWeek);
+    Date nd = refDate + Duration(offsets[i+1] - timeInWeek);
 
     // Move to next week if required
     bool canReturn = true;
     if (refDate >= nd)
     {
-      st += TimePeriod(86400L*7);
-      nd += TimePeriod(86400L*7);
+      st += Duration(86400L*7);
+      nd += Duration(86400L*7);
       canReturn = false;
     }
 
@@ -780,15 +780,15 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
   for (short i=offsetcounter-1; i>=0; i-=2)
   {
     // Start and end date of this effective period
-    Date st = refDate + TimePeriod(offsets[i] - timeInWeek);
-    Date nd = refDate + TimePeriod(offsets[i+1] - timeInWeek);
+    Date st = refDate + Duration(offsets[i] - timeInWeek);
+    Date nd = refDate + Duration(offsets[i+1] - timeInWeek);
 
     // Move to previous week if required
     bool canReturn = true;
     if (refDate <= st)
     {
-      st -= TimePeriod(86400L*7);
-      nd -= TimePeriod(86400L*7);
+      st -= Duration(86400L*7);
+      nd -= Duration(86400L*7);
       canReturn = false;
     }
 
@@ -1001,9 +1001,9 @@ DECLARE_EXPORT int Calendar::Bucket::setattro(const Attribute& attr, const Pytho
   else if (attr.isA(Tags::tag_days))
     setDays(field.getInt());
   else if (attr.isA(Tags::tag_starttime))
-    setStartTime(field.getTimeperiod());
+    setStartTime(field.getDuration());
   else if (attr.isA(Tags::tag_endtime))
-    setEndTime(field.getTimeperiod());
+    setEndTime(field.getDuration());
   else if (attr.isA(Tags::tag_value))
   {
     if (cal->getType() == *CalendarDouble::metadata)
@@ -1094,7 +1094,7 @@ PyObject* CalendarEventIterator::iternext()
 
 DECLARE_EXPORT void Calendar::Bucket::updateOffsets()
 {
-  if (days==127 && !starttime && endtime==TimePeriod(86400L))
+  if (days==127 && !starttime && endtime==Duration(86400L))
   {
     // Bucket is effective continuously. No need to update the structure.
     offsetcounter = 0;

@@ -50,11 +50,6 @@ def printModel(filename):
     print("Plan description:", frepple.settings.description, file=output)
     print("Plan current:", frepple.settings.current, file=output)
 
-    # Solvers
-    print("\nEchoing solvers:", file=output)
-    for b in frepple.solvers():
-      print("  Solver:", b.name, b.loglevel, getattr(b,'constraints',None), file=output)
-
     # Calendars
     print("\nEchoing calendars:", file=output)
     for b in frepple.calendars():
@@ -318,7 +313,7 @@ order3 = frepple.demand(name="order 3", item=item, quantity=10, priority=3, \
 
 ###
 print("\nCreating a solver and running it")
-frepple.solver_mrp(name="MRP", constraints=7, loglevel=0).solve()
+frepple.solver_mrp(constraints=7, loglevel=0).solve()
 
 ###
 print("\nEchoing the model to a file")

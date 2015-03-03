@@ -2,7 +2,7 @@
   <current>2009-01-01T00:00:00</current>
 <?python
 frepple.readXMLfile("input.xml",False)
-frepple.solver_mrp(name="MRP",constraints=15).solve()
+frepple.solver_mrp(constraints=15).solve()
 frepple.saveXMLfile("output.xml")
 #frepple.printsize()
 ?>

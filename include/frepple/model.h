@@ -142,10 +142,10 @@ class Calendar : public HasName<Calendar>, public HasSource
         short days;
 
         /** Starting time on the effective days. */
-        TimePeriod starttime;
+        Duration starttime;
 
         /** Ending time on the effective days. */
-        TimePeriod endtime;
+        Duration endtime;
 
         /** A pointer to the owning calendar. */
         Calendar *cal;
@@ -257,10 +257,10 @@ class Calendar : public HasName<Calendar>, public HasSource
         /** Return the time of the day when the entry becomes valid.<br>
           * The default value is 0 or midnight.
           */
-        TimePeriod getStartTime() const {return starttime;}
+        Duration getStartTime() const {return starttime;}
 
         /** Update the time of the day when the entry becomes valid. */
-        void setStartTime(TimePeriod t)
+        void setStartTime(Duration t)
         {
           if (t > 86399L || t < 0L)
             throw DataException("Calendar bucket start time must be between 0 and 86399 seconds");
@@ -271,10 +271,10 @@ class Calendar : public HasName<Calendar>, public HasSource
         /** Return the time of the day when the entry becomes invalid.<br>
           * The default value is 23h59m59s.
           */
-        TimePeriod getEndTime() const {return endtime;}
+        Duration getEndTime() const {return endtime;}
 
         /** Update the time of the day when the entry becomes invalid. */
-        void setEndTime(TimePeriod t)
+        void setEndTime(Duration t)
         {
           if (t > 86400L || t < 0L)
             throw DataException("Calendar bucket end time must be between 0 and 86400 seconds");
@@ -489,7 +489,7 @@ class CalendarDouble : public Calendar
           if (getDays() != 127) o->writeElement(Tags::tag_days, getDays());
           if (getStartTime())
             o->writeElement(Tags::tag_starttime, getStartTime());
-          if (getEndTime() != TimePeriod(86400L))
+          if (getEndTime() != Duration(86400L))
             o->writeElement(Tags::tag_endtime, getEndTime());
           PythonDictionary::write(o, getDict());
           o->EndObject(tag);
@@ -634,6 +634,12 @@ class Problem : public NonCopyable, public Object
 
     /** Returns the duration of this problem. */
     virtual const DateRange getDates() const = 0;
+
+    /** Get the start date of the problem. */
+    Date getStart() const { return getDates().getStart(); }
+
+    /** Get the start date of the problem. */
+    Date getEnd() const { return getDates().getEnd(); }
 
     /** Returns a text description of this problem. */
     virtual string getDescription() const = 0;
@@ -849,18 +855,15 @@ class Problem::List
   * representation. Different solvers can be easily be plugged in to work on
   * the same data.
   */
-class Solver : public HasName<Solver>
+class Solver : public Object
 {
   public:
     /** Constructor. */
-    explicit DECLARE_EXPORT Solver(const string& n) :
-      HasName<Solver>(n), loglevel(0) {}
+    explicit DECLARE_EXPORT Solver() : loglevel(0) {}
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Solver() {}
 
-    virtual DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    virtual DECLARE_EXPORT void endElement(DataInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -927,6 +930,9 @@ class Solver : public HasName<Solver>
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
+
+    /** Dummy method. */
+    virtual void endElement(DataInput&, const Attribute&, const DataElement&) {}
 
   private:
     /** Controls the amount of tracing and debugging messages. */
@@ -1321,16 +1327,16 @@ class Operation : public HasName<Operation>,
     OperationPlan* getFirstOpPlan() const {return first_opplan;}
 
     /** Returns the delay after this operation. */
-    TimePeriod getPostTime() const {return post_time;}
+    Duration getPostTime() const {return post_time;}
 
     /** Updates the delay after this operation.<br>
       * This delay is a soft constraint. This means that solvers should try to
       * respect this waiting time but can choose to leave a shorter time delay
       * if required.
       */
-    void setPostTime(TimePeriod t)
+    void setPostTime(Duration t)
     {
-      if (t<TimePeriod(0L))
+      if (t<Duration(0L))
         throw DataException("No negative post-operation time allowed");
       post_time=t;
       setChanged();
@@ -1378,8 +1384,8 @@ class Operation : public HasName<Operation>,
       *             amount of available time found.
       */
     DECLARE_EXPORT DateRange calculateOperationTime
-    (Date thedate, TimePeriod duration, bool forward,
-     TimePeriod* actualduration = NULL) const;
+    (Date thedate, Duration duration, bool forward,
+     Duration* actualduration = NULL) const;
 
     /** Calculates the effective, available time between two dates.
       *
@@ -1395,7 +1401,7 @@ class Operation : public HasName<Operation>,
       *             amount of available time found.
       */
     DECLARE_EXPORT DateRange calculateOperationTime
-    (Date start, Date end, TimePeriod* actualduration = NULL) const;
+    (Date start, Date end, Duration* actualduration = NULL) const;
 
     /** This method stores ALL logic the operation needs to compute the
       * correct relationship between the quantity, startdate and enddate
@@ -1562,10 +1568,10 @@ class Operation : public HasName<Operation>,
     {superoplist.remove(o); o->removeSubOperation(this);}
 
     /** Return the release fence of this operation. */
-    TimePeriod getFence() const {return fence;}
+    Duration getFence() const {return fence;}
 
     /** Update the release fence of this operation. */
-    void setFence(TimePeriod t) {if (fence!=t) setChanged(); fence=t;}
+    void setFence(Duration t) {if (fence!=t) setChanged(); fence=t;}
 
     virtual DECLARE_EXPORT void updateProblems();
 
@@ -1595,13 +1601,13 @@ class Operation : public HasName<Operation>,
     Location* loc;
 
     /** Represents the time between this operation and a next one. */
-    TimePeriod post_time;
+    Duration post_time;
 
     /** Represents the release fence of this operation, i.e. a period of time
       * (relative to the current date of the plan) in which normally no
       * operationplan is allowed to be created.
       */
-    TimePeriod fence;
+    Duration fence;
 
     /** Singly linked list of all flows of this operation. */
     flowlist flowdata;
@@ -1886,7 +1892,7 @@ class OperationPlan
     /** Calculate the unavailable time during the operationplan. The regular
       * duration is extended with this amount.
       */
-    DECLARE_EXPORT TimePeriod getUnavailable() const;
+    DECLARE_EXPORT Duration getUnavailable() const;
 
     /** Returns whether the operationplan is locked. A locked operationplan
       * is never changed.
@@ -2375,11 +2381,11 @@ class OperationFixedTime : public Operation
     explicit OperationFixedTime(const string& s) : Operation(s) {initType(metadata);}
 
     /** Returns the length of the operation. */
-    const TimePeriod getDuration() const {return duration;}
+    const Duration getDuration() const {return duration;}
 
     /** Updates the duration of the operation. Existing operation plans of this
       * operation are not automatically refreshed to reflect the change. */
-    void setDuration(TimePeriod t)
+    void setDuration(Duration t)
     {
       if (t<0L)
         throw DataException("FixedTime operation can't have a negative duration");
@@ -2420,7 +2426,7 @@ class OperationFixedTime : public Operation
 
   private:
     /** Stores the lengh of the Operation. */
-    TimePeriod duration;
+    Duration duration;
 };
 
 
@@ -2464,10 +2470,10 @@ class OperationTimePer : public Operation
     explicit OperationTimePer(const string& s) : Operation(s), duration_per(0.0) {initType(metadata);}
 
     /** Returns the constant part of the operation time. */
-    TimePeriod getDuration() const {return duration;}
+    Duration getDuration() const {return duration;}
 
     /** Sets the constant part of the operation time. */
-    void setDuration(TimePeriod t)
+    void setDuration(Duration t)
     {
       if(t<0L)
         throw DataException("TimePer operation can't have a negative duration");
@@ -2517,11 +2523,11 @@ class OperationTimePer : public Operation
 
   private:
     /** Constant part of the operation time. */
-    TimePeriod duration;
+    Duration duration;
 
     /** Variable part of the operation time.
-      * We store the value as a double value rather than a TimePeriod to
-      * be able to store fractional duration_per value. TimePeriod can only
+      * We store the value as a double value rather than a Duration to
+      * be able to store fractional duration_per value. Duration can only
       * represent seconds.
       */
     double duration_per;
@@ -3064,10 +3070,10 @@ class SupplierItem : public Object,
     }
 
     /** Return the purchasing leadtime. */
-    TimePeriod getLeadtime() const {return leadtime;}
+    Duration getLeadtime() const {return leadtime;}
 
     /** Update the procurement leadtime. */
-    void setLeadtime(TimePeriod p)
+    void setLeadtime(Duration p)
     {
       if (p<0L)
         throw DataException("Supplieritem can't have a negative lead time");
@@ -3088,7 +3094,7 @@ class SupplierItem : public Object,
     DECLARE_EXPORT void validate(Action action);
 
     /** Procurement lead time. */
-    TimePeriod leadtime;
+    Duration leadtime;
 
     /** Minimum procurement quantity. */
     double size_minimum;
@@ -3254,10 +3260,10 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * This parameter doesn't control the timing of the first purchasing
       * operation, but only to the subsequent ones.
       */
-    TimePeriod getMinimumInterval() const {return min_interval;}
+    Duration getMinimumInterval() const {return min_interval;}
 
     /** Update the minimum time between replenishments. */
-    void setMinimumInterval(TimePeriod p)
+    void setMinimumInterval(Duration p)
     {
       min_interval = p;
       // Minimum is increased over the maximum: auto-increase the maximum
@@ -3268,10 +3274,10 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Return the maximum time interval between sytem-generated replenishment
       * operations.
       */
-    TimePeriod getMaximumInterval() const {return max_interval;}
+    Duration getMaximumInterval() const {return max_interval;}
 
     /** Update the minimum time between replenishments. */
-    void setMaximumInterval(TimePeriod p)
+    void setMaximumInterval(Duration p)
     {
       max_interval = p;
       // Maximum is lowered below the minimum: auto-decrease the minimum
@@ -3335,10 +3341,10 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     CalendarDouble *max_cal;
 
     /** Minimum time interval between purchasing operations. */
-    TimePeriod min_interval;
+    Duration min_interval;
 
     /** Maximum time interval between purchasing operations. */
-    TimePeriod max_interval;
+    Duration max_interval;
 
     /** Carrying cost.<br>
       * The cost of carrying inventory in this buffer. The value is a
@@ -3454,10 +3460,10 @@ class BufferProcure : public Buffer
     static DECLARE_EXPORT const MetaClass* metadata;
 
     /** Return the purchasing leadtime. */
-    TimePeriod getLeadtime() const {return leadtime;}
+    Duration getLeadtime() const {return leadtime;}
 
     /** Update the procurement leadtime. */
-    void setLeadtime(TimePeriod p)
+    void setLeadtime(Duration p)
     {
       if (p<0L)
         throw DataException("Procurement buffer can't have a negative lead time");
@@ -3467,10 +3473,10 @@ class BufferProcure : public Buffer
     }
 
     /** Return the release time fence. */
-    TimePeriod getFence() const {return fence;}
+    Duration getFence() const {return fence;}
 
     /** Update the release time fence. */
-    void setFence(TimePeriod p)
+    void setFence(Duration p)
     {
       if (!getProducingOperation())
         getOperation()->setFence(p);
@@ -3586,13 +3592,13 @@ class BufferProcure : public Buffer
       * Within this leadtime fence no additional purchase orders can be generated.
       * TODO The lead time should be a property of the operation, not the buffer.
       */
-    TimePeriod leadtime;
+    Duration leadtime;
 
     /** Time window from the current date in which all procurements are expected
       * to be released.
       * TODO The fence should be a property of the operation, not the buffer.
       */
-    TimePeriod fence;
+    Duration fence;
 
     /** Minimum purchasing quantity.<br>
       * The default value is 0, meaning no minimum.
@@ -4071,10 +4077,10 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
         const string& getToSetup() const {return to;}
 
         /** Update the conversion duration. */
-        void setDuration(const TimePeriod p) {duration = p;}
+        void setDuration(const Duration p) {duration = p;}
 
         /** Return the conversion duration. */
-        TimePeriod getDuration() const {return duration;}
+        Duration getDuration() const {return duration;}
 
         /** Update the conversion cost. */
         void setCost(const double p) {cost = p;}
@@ -4090,7 +4096,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
         string to;
 
         /** Changeover time. */
-        TimePeriod duration;
+        Duration duration;
 
         /** Changeover cost. */
         double cost;
@@ -4400,11 +4406,11 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Returns the maximum inventory buildup allowed in case of capacity
       * shortages. */
-    TimePeriod getMaxEarly() const {return maxearly;}
+    Duration getMaxEarly() const {return maxearly;}
 
     /** Updates the maximum inventory buildup allowed in case of capacity
       * shortages. */
-    void setMaxEarly(TimePeriod c)
+    void setMaxEarly(Duration c)
     {
       if (c >= 0L) maxearly = c;
       else throw DataException("MaxEarly must be positive");
@@ -4452,7 +4458,7 @@ class Resource : public HasHierarchy<Resource>,
     bool hidden;
 
     /** Maximum inventory buildup allowed in case of capacity shortages. */
-    TimePeriod maxearly;
+    Duration maxearly;
 
     /** Reference to the setup matrix. */
     SetupMatrix *setupmatrix;
@@ -4905,7 +4911,7 @@ class Demand
     /** Constructor. */
     explicit DECLARE_EXPORT Demand(const string& str) :
       HasHierarchy<Demand>(str), it(NULL), oper(NULL), cust(NULL), qty(0.0),
-      prio(0), maxLateness(TimePeriod::MAX), minShipment(1), hidden(false) {}
+      prio(0), maxLateness(Duration::MAX), minShipment(1), hidden(false) {}
 
     /** Destructor.
       * Deleting the demand will also delete all delivery operation
@@ -5024,13 +5030,13 @@ class Demand
     /** Return the maximum delay allowed in satisfying this demand.<br>
       * The default value is infinite.
       */
-    TimePeriod getMaxLateness() const {return maxLateness;}
+    Duration getMaxLateness() const {return maxLateness;}
 
     /** Updates the maximum allowed lateness for this demand.<br>
       * The default value is infinite.<br>
       * The argument must be a positive time period.
       */
-    virtual void setMaxLateness(TimePeriod m)
+    virtual void setMaxLateness(Duration m)
     {
       if (m < 0L)
         throw DataException("The maximum demand lateness must be positive");
@@ -5088,9 +5094,9 @@ class Demand
     Date dueDate;
 
     /** Maximum lateness allowed when planning this demand.<br>
-      * The default value is TimePeriod::MAX.
+      * The default value is Duration::MAX.
       */
-    TimePeriod maxLateness;
+    Duration maxLateness;
 
     /** Minimum size for a delivery operation plan satisfying this demand. */
     double minShipment;
@@ -6432,12 +6438,6 @@ class ResourceIterator
   public:
     ResourceIterator(Resource* b) : FreppleIterator<ResourceIterator,Resource::memberIterator,Resource>(b) {}
     ResourceIterator() {}
-};
-
-
-class SolverIterator
-  : public FreppleIterator<SolverIterator,Solver::iterator,Solver>
-{
 };
 
 

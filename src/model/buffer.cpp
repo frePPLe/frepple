@@ -247,7 +247,7 @@ DECLARE_EXPORT void Buffer::writeElement(Serializer *o, const Keyword &tag, mode
     o->writeElement(Tags::tag_carrying_cost, getCarryingCost());
 
   // Write min and max interval
-  if (min_interval != TimePeriod(-1L)) o->writeElement(Tags::tag_mininterval, min_interval);
+  if (min_interval != Duration(-1L)) o->writeElement(Tags::tag_mininterval, min_interval);
   if (max_interval) o->writeElement(Tags::tag_maxinterval, max_interval);
 
   // Write the custom fields
@@ -367,9 +367,9 @@ DECLARE_EXPORT void Buffer::endElement(DataInput& pIn, const Attribute& pAttr, c
     }
   }
   else if (pAttr.isA(Tags::tag_mininterval))
-    setMinimumInterval(pElement.getTimeperiod());
+    setMinimumInterval(pElement.getDuration());
   else if (pAttr.isA(Tags::tag_maxinterval))
-    setMaximumInterval(pElement.getTimeperiod());
+    setMaximumInterval(pElement.getDuration());
   else if (pAttr.isA(Tags::tag_carrying_cost))
     setCarryingCost(pElement.getDouble());
   else
@@ -738,9 +738,9 @@ DECLARE_EXPORT void BufferInfinite::writeElement
 DECLARE_EXPORT void BufferProcure::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_leadtime))
-    setLeadtime(pElement.getTimeperiod());
+    setLeadtime(pElement.getDuration());
   else if (pAttr.isA(Tags::tag_fence))
-    setFence(pElement.getTimeperiod());
+    setFence(pElement.getDuration());
   else if (pAttr.isA(Tags::tag_size_maximum))
     setSizeMaximum(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_size_minimum))
@@ -936,9 +936,9 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
     setMinimumCalendar(y);
   }
   else if (attr.isA(Tags::tag_mininterval))
-    setMinimumInterval(field.getTimeperiod());
+    setMinimumInterval(field.getDuration());
   else if (attr.isA(Tags::tag_maxinterval))
-    setMaximumInterval(field.getTimeperiod());
+    setMaximumInterval(field.getDuration());
   else if (attr.isA(Tags::tag_carrying_cost))
     setCarryingCost(field.getDouble());
   else if (attr.isA(Tags::tag_producing))
@@ -984,7 +984,7 @@ DECLARE_EXPORT PyObject* BufferProcure::getattro(const Attribute& attr)
 DECLARE_EXPORT int BufferProcure::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_leadtime))
-    setLeadtime(field.getTimeperiod());
+    setLeadtime(field.getDuration());
   else if (attr.isA(Tags::tag_mininventory))
     setMinimumInventory(field.getDouble());
   else if (attr.isA(Tags::tag_maxinventory))
@@ -996,7 +996,7 @@ DECLARE_EXPORT int BufferProcure::setattro(const Attribute& attr, const PythonOb
   else if (attr.isA(Tags::tag_size_maximum))
     setSizeMaximum(field.getDouble());
   else if (attr.isA(Tags::tag_fence))
-    setFence(field.getTimeperiod());
+    setFence(field.getDuration());
   else if (attr.isA(Tags::tag_producing))
     return 0;
   else

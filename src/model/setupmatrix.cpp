@@ -318,7 +318,7 @@ DECLARE_EXPORT void SetupMatrix::Rule::endElement(DataInput& pIn, const Attribut
   else if (pAttr.isA(Tags::tag_tosetup))
     setToSetup(pElement.getString());
   else if (pAttr.isA(Tags::tag_duration))
-    setDuration(pElement.getTimeperiod());
+    setDuration(pElement.getDuration());
   else if (pAttr.isA(Tags::tag_cost))
     setCost(pElement.getDouble());
 }
@@ -351,7 +351,7 @@ DECLARE_EXPORT int SetupMatrix::Rule::setattro(const Attribute& attr, const Pyth
   else if (attr.isA(Tags::tag_tosetup))
     setToSetup(field.getString());
   else if (attr.isA(Tags::tag_duration))
-    setDuration(field.getTimeperiod());
+    setDuration(field.getDuration());
   else if (attr.isA(Tags::tag_cost))
     setCost(field.getDouble());
   else

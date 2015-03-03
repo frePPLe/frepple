@@ -32,14 +32,54 @@ int OperatorDelete::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass(
-    "solver", "solver_delete", Object::createString<OperatorDelete>
+    "solver", "solver_delete", Object::createDefault<OperatorDelete>
     );
 
   // Initialize the Python class
-  FreppleClass<OperatorDelete, Solver>::getType().addMethod(
-    "solve", solve, METH_VARARGS, "run the solver"
-    );
-  return FreppleClass<OperatorDelete, Solver>::initialize();
+  PythonType& x = FreppleClass<OperatorDelete, Solver>::getType();
+  x.setName("solver_delete");
+  x.setDoc("frePPLe solver_delete");
+  x.supportgetattro();
+  x.supportsetattro();
+  x.supportcreate(create);
+  x.addMethod("solve", solve, METH_NOARGS, "run the solver");
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady();
+}
+
+
+PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+{
+  try
+  {
+    // Create the solver
+    OperatorDelete *s = new OperatorDelete();
+
+    // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
+    PyObject *key, *value;
+    Py_ssize_t pos = 0;
+    while (PyDict_Next(kwds, &pos, &key, &value))
+    {
+      PythonObject field(value);
+      PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+      Attribute attr(PyBytes_AsString(key_utf8));
+      Py_DECREF(key_utf8);
+      int result = s->setattro(attr, field);
+      if (result && !PyErr_Occurred())
+        PyErr_Format(PyExc_AttributeError,
+            "attribute '%S' on '%s' can't be updated",
+            key, Py_TYPE(s)->tp_name);
+    };
+
+    // Return the object
+    //Py_INCREF(s);  // XXX TODO SHOULD the ref count be set to one? Or do we prevent the opbject from being garbage collected
+    return static_cast<PyObject*>(s);
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
 }
 
 

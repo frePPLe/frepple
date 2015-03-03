@@ -589,7 +589,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
           // If that's the case, we move it to start right at the end of the bucket.
           if (cur!=res->getLoadPlans().end() &&
             data->state->q_operationplan->getDates().getStart() > cur->getDate())
-              data->state->q_operationplan->setStart(cur->getDate() - TimePeriod(1L));
+              data->state->q_operationplan->setStart(cur->getDate() - Duration(1L));
         }
         else
         {
@@ -626,9 +626,9 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
           if (cur != res->getLoadPlans().end() && cur->getOnhand() > min_free_quantity)
           {
             // Find a suitable start date in this bucket
-            TimePeriod tmp;
+            Duration tmp;
             newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
-              bucketEnd, TimePeriod(1L), false, &tmp
+              bucketEnd, Duration(1L), false, &tmp
               );
             // Move to the start of the bucket
             while (cur!=res->getLoadPlans().end() && cur->getType() != 2) --cur;
@@ -688,9 +688,9 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
       else if (overloadQty > min_free_quantity)
       {
         // Find a suitable start date in this bucket
-        TimePeriod tmp;
+        Duration tmp;
         DateRange newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
-          prevStart, TimePeriod(1L), true, &tmp
+          prevStart, Duration(1L), true, &tmp
           );
         if (newStart.getStart() < cur->getDate())
         {

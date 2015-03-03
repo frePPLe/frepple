@@ -39,8 +39,8 @@ class OperatorDelete : public Solver
 {
   public:
 	/** Constructor. */
-    DECLARE_EXPORT OperatorDelete(const string& n, CommandManager* c = NULL) :
-        Solver(n), cmds(c) { initType(metadata); }
+    DECLARE_EXPORT OperatorDelete(CommandManager* c = NULL) : cmds(c)
+    { initType(metadata); }
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~OperatorDelete() {}
@@ -66,6 +66,7 @@ class OperatorDelete : public Solver
     DECLARE_EXPORT void solve(const Resource*, void* = NULL);
 
     static int initialize();
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const {return sizeof(OperatorDelete);}
@@ -300,10 +301,10 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    DECLARE_EXPORT SolverMRP(const string& n) : Solver(n), constrts(15),
-      allowSplits(true), plantype(1), lazydelay(86400L),
-      iteration_threshold(1), iteration_accuracy(0.01), iteration_max(0),
-      autocommit(true), planSafetyStockFirst(false), erasePreviousFirst(true)
+    DECLARE_EXPORT SolverMRP() : constrts(15), allowSplits(true), plantype(1),
+      lazydelay(86400L), iteration_threshold(1), iteration_accuracy(0.01),
+      iteration_max(0), autocommit(true), planSafetyStockFirst(false),
+      erasePreviousFirst(true)
     {
       initType(metadata);
       commands.sol = this;
@@ -312,12 +313,10 @@ class SolverMRP : public Solver
     /** Destructor. */
     virtual DECLARE_EXPORT ~SolverMRP() {}
 
-    DECLARE_EXPORT void writeElement(Serializer*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
-
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const {return sizeof(SolverMRP);}
@@ -421,11 +420,11 @@ class SolverMRP : public Solver
 
     /** Return the time increment between requests when the answered reply
       * date isn't usable. */
-    TimePeriod getLazyDelay() const {return lazydelay;}
+    Duration getLazyDelay() const {return lazydelay;}
 
     /** Update the time increment between requests when the answered reply
       * date isn't usable. */
-    void setLazyDelay(TimePeriod l)
+    void setLazyDelay(Duration l)
     {
       if (l <= 0L) throw DataException("Invalid lazy delay");
       lazydelay = l;
@@ -567,7 +566,7 @@ class SolverMRP : public Solver
       * request with a request date incremented by this value.<br>
       * The default value is 1 day.
       */
-    TimePeriod lazydelay;
+    Duration lazydelay;
 
     /** Threshold to stop iterating when the delta between iterations is
       * less than this absolute limit.
@@ -733,11 +732,7 @@ class SolverMRP : public Solver
           : sol(s), cluster(c), demands(d),
             constrainedPlanning(true), state(statestack),
             prevstate(statestack-1)
-        {
-          ostringstream n;
-          n << "delete operator for " << this;
-          operator_delete = new OperatorDelete(n.str(), this);
-        }
+        { operator_delete = new OperatorDelete(this); }
 
         /** Destructor. */
         virtual ~SolverMRPdata()

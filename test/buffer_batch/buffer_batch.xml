@@ -465,7 +465,7 @@ import datetime
 import random
 
 print("CREATING CONSTRAINED PLAN WITH LEAD TIME CONSTRAINTS")
-sol = frepple.solver_mrp(name="MRP", constraints=15, loglevel=2, lazydelay=3600)
+sol = frepple.solver_mrp(constraints=15, loglevel=2, lazydelay=3600)
 frepple.settings.current = datetime.date(2014,6,1)
 sol.solve()
 frepple.saveplan("output.1.xml")

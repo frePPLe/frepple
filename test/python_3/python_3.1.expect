@@ -3,9 +3,6 @@ Plan name: demo model
 Plan description: unicode А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь
 Plan current: 2009-01-01 00:00:00
 
-Echoing solvers:
-  Solver: MRP 0 7
-
 Echoing calendars:
   Calendar: Cal1 4.56
     Bucket: 1.0 2009-01-01 00:00:00 2009-03-01 00:00:00 -1

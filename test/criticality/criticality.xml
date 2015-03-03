@@ -146,7 +146,7 @@ out = open("output.1.xml", "wt", 1)
 try:
   print("CREATING JUST-IN-TIME PLAN", file=out)
   print("Every operationplan is critical", file=out)
-  solver = frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=0)
+  solver = frepple.solver_mrp(plantype=1, constraints=15, loglevel=0)
   solver.solve()
   showCriticality()
 

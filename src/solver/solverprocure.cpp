@@ -83,8 +83,8 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   // Collect operation parameters
   // Normally these are collected from fields on the buffer. Only when a
   // producing operation has been explicitly specified do we use those instead.
-  TimePeriod leadtime = b->getLeadtime();
-  TimePeriod fence = b->getFence();
+  Duration leadtime = b->getLeadtime();
+  Duration fence = b->getFence();
   double size_minimum = b->getSizeMinimum();
   Operation *oper;
   if (b->getProducingOperation())
@@ -125,7 +125,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   if (data->constrainedPlanning)
   {
     // Calculation of earliest arrival considers the calendar of the operation
-    TimePeriod tp;
+    Duration tp;
     Date st = Plan::instance().getCurrent();
     if (data->getSolver()->isLeadtimeConstrained())
       tp = leadtime;

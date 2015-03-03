@@ -64,7 +64,7 @@
   </problems>
 
 <?python
-frepple.solver_mrp(name="MRP", constraints=0, loglevel=0).solve()
+frepple.solver_mrp(constraints=0, loglevel=0).solve()
 frepple.saveplan("output.1.xml")
 frepple.saveXMLfile("output.2.xml")
 ?>

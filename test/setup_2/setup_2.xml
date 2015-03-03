@@ -337,7 +337,7 @@ def printStatus(d = None, mode = 1):
   print("")
 
 
-solver = frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2, userexit_demand=printStatus)
+solver = frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, userexit_demand=printStatus)
 
 print("CREATING CONSTRAINED PLAN")
 for d in frepple.demands():

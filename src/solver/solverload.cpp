@@ -77,7 +77,7 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
     // If it's an aggregate, push it's members on the stack
     if (res->isGroup())
     {
-      for (Resource::memberIterator x = res->beginMember(); x != Resource::end(); ++x)
+      for (Resource::memberIterator x = res->getMembers(); x != Resource::end(); ++x)
         res_stack.push(&*x);
       continue;
     }

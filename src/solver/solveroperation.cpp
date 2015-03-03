@@ -696,7 +696,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
 
   // Loop through the steps
   Date max_Date;
-  TimePeriod delay;
+  Duration delay;
   Date top_q_date(data->state->q_date);
   Date q_date;
   for (Operation::Operationlist::const_reverse_iterator

@@ -433,7 +433,6 @@ DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
       Location::clear();
       Customer::clear();
       Calendar::clear();
-      Solver::clear();
       Item::clear();
       // The setup operation is a static singleton and should always be around
       OperationSetup::setupoperation = Operation::add(new OperationSetup("setup operation"));

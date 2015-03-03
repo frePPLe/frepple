@@ -795,9 +795,9 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
 }
 
 
-DECLARE_EXPORT TimePeriod OperationPlan::getUnavailable() const
+DECLARE_EXPORT Duration OperationPlan::getUnavailable() const
 {
-  TimePeriod x;
+  Duration x;
   DateRange y = getOperation()->calculateOperationTime(dates.getStart(), dates.getEnd(), &x);
   return dates.getDuration() - x;
 }
@@ -1160,7 +1160,7 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
   }
 
   // Upstream operationplan
-  TimePeriod minslack = 86313600L; // 999 days in seconds
+  Duration minslack = 86313600L; // 999 days in seconds
   vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
   for (PeggingIterator p(this); p; p++)
   {
@@ -1172,7 +1172,7 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
     if (m && m->getTopOwner()->getDemand())
     {
       // Reached a demand. Get the total slack now.
-      TimePeriod myslack = m->getTopOwner()->getDemand()->getDue() - m->getDates().getEnd();
+      Duration myslack = m->getTopOwner()->getDemand()->getDue() - m->getDates().getEnd();
       if (myslack < 0L) myslack = 0L;
       for (unsigned int i=1; i<=lvl; i++)
       {

@@ -205,7 +205,7 @@ DECLARE_EXPORT void Resource::writeElement(Serializer* o, const Keyword& tag, mo
   if (getMaximum() != 1)
     o->writeElement(Tags::tag_maximum, getMaximum());
   o->writeElement(Tags::tag_maximum_calendar, size_max_cal);
-  if (getMaxEarly() != TimePeriod(defaultMaxEarly))
+  if (getMaxEarly() != Duration(defaultMaxEarly))
     o->writeElement(Tags::tag_maxearly, getMaxEarly());
   if (getCost() != 0.0) o->writeElement(Tags::tag_cost, getCost());
   o->writeElement(Tags::tag_location, loc);
@@ -312,7 +312,7 @@ DECLARE_EXPORT void Resource::endElement(DataInput& pIn, const Attribute& pAttr,
     }
   }
   else if (pAttr.isA (Tags::tag_maxearly))
-    setMaxEarly(pElement.getTimeperiod());
+    setMaxEarly(pElement.getDuration());
   else if (pAttr.isA (Tags::tag_cost))
     setCost(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_location))
@@ -538,7 +538,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
   else if (attr.isA(Tags::tag_cost))
     setCost(field.getDouble());
   else if (attr.isA(Tags::tag_maxearly))
-    setMaxEarly(field.getTimeperiod());
+    setMaxEarly(field.getDuration());
   else if (attr.isA(Tags::tag_setup))
     setSetup(field.getString());
   else if (attr.isA(Tags::tag_setupmatrix))

@@ -156,7 +156,7 @@
 <?python
 
 # Starting position...
-solver = frepple.solver_mrp(name="MRP", plantype=2)
+solver = frepple.solver_mrp(plantype=2)
 frepple.saveXMLfile("output.1.xml")
 solver.solve()
 frepple.saveplan("output.2.xml")

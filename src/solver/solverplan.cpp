@@ -55,14 +55,58 @@ void LibrarySolver::initialize()
 int SolverMRP::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaClass
-  ("solver","solver_mrp",Object::createString<SolverMRP>,true);
+  metadata = new MetaClass(
+    "solver", "solver_mrp", Object::createDefault<SolverMRP>, true
+    );
 
   // Initialize the Python class
-  FreppleClass<SolverMRP,Solver>::getType().addMethod("solve", solve, METH_VARARGS, "run the solver");
-  FreppleClass<SolverMRP,Solver>::getType().addMethod("commit", commit, METH_NOARGS, "commit the plan changes");
-  FreppleClass<SolverMRP,Solver>::getType().addMethod("rollback", rollback, METH_NOARGS, "rollback the plan changes");
-  return FreppleClass<SolverMRP,Solver>::initialize();
+  PythonType& x = FreppleClass<SolverMRP, Solver>::getType();
+  x.setName("solver_mrp");
+  x.setDoc("frePPLe solver_mrp");
+  x.supportgetattro();
+  x.supportsetattro();
+  x.supportcreate(create);
+  x.addMethod("solve", solve, METH_NOARGS, "run the solver");
+  x.addMethod("commit", commit, METH_NOARGS, "commit the plan changes");
+  x.addMethod("rollback", rollback, METH_NOARGS, "rollback the plan changes");
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady();
+}
+
+
+PyObject* SolverMRP::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+{
+  try
+  {
+    // Create the solver
+    SolverMRP *s = new SolverMRP();
+
+    // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
+    PyObject *key, *value;
+    Py_ssize_t pos = 0;
+    while (PyDict_Next(kwds, &pos, &key, &value))
+    {
+      PythonObject field(value);
+      PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+      Attribute attr(PyBytes_AsString(key_utf8));
+      Py_DECREF(key_utf8);
+      int result = s->setattro(attr, field);
+      if (result && !PyErr_Occurred())
+        PyErr_Format(PyExc_AttributeError,
+            "attribute '%S' on '%s' can't be updated",
+            key, Py_TYPE(s)->tp_name);
+    };
+
+    // Return the object. The reference count doesn't need to be increased
+    // as we do with other objects, because we want this object to be available
+    // for the garbage collector of Python.
+    return static_cast<PyObject*>(s);
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
 }
 
 
@@ -167,7 +211,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
 
 void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
 {
-  OperatorDelete cleanup("sweeper", this);
+  OperatorDelete cleanup(this);
   safety_stock_planning = true;
   if (getLogLevel()>0) logger << "Start safety stock replenishment pass   " << solver->getConstraints() << endl;
   vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
@@ -253,78 +297,6 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
 }
 
 
-DECLARE_EXPORT void SolverMRP::writeElement(Serializer *o, const Keyword& tag, mode m) const
-{
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-    return;
-  }
-
-  // Write the complete object
-  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-  // Write the fields
-  if (constrts != 15) o->writeElement(Tags::tag_constraints, constrts);
-  if (plantype != 1) o->writeElement(Tags::tag_plantype, plantype);
-
-  // Parameters
-  o->writeElement(tag_iterationthreshold, iteration_threshold);
-  o->writeElement(tag_iterationaccuracy, iteration_accuracy);
-  o->writeElement(tag_lazydelay, lazydelay);
-  o->writeElement(Tags::tag_autocommit, autocommit);
-
-  // User exit
-  if (userexit_flow)
-    o->writeElement(Tags::tag_userexit_flow, static_cast<string>(userexit_flow));
-  if (userexit_demand)
-    o->writeElement(Tags::tag_userexit_demand, static_cast<string>(userexit_demand));
-  if (userexit_buffer)
-    o->writeElement(Tags::tag_userexit_buffer, static_cast<string>(userexit_buffer));
-  if (userexit_resource)
-    o->writeElement(Tags::tag_userexit_resource, static_cast<string>(userexit_resource));
-  if (userexit_operation)
-    o->writeElement(Tags::tag_userexit_operation, static_cast<string>(userexit_operation));
-
-  // Write the parent class
-  Solver::writeElement(o, tag, NOHEAD);
-}
-
-
-DECLARE_EXPORT void SolverMRP::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_constraints))
-    setConstraints(pElement.getInt());
-  else if (pAttr.isA(Tags::tag_autocommit))
-    setAutocommit(pElement.getBool());
-  else if (pAttr.isA(Tags::tag_userexit_flow))
-    setUserExitFlow(pElement.getString());
-  else if (pAttr.isA(Tags::tag_userexit_demand))
-    setUserExitDemand(pElement.getString());
-  else if (pAttr.isA(Tags::tag_userexit_buffer))
-    setUserExitBuffer(pElement.getString());
-  else if (pAttr.isA(Tags::tag_userexit_resource))
-    setUserExitResource(pElement.getString());
-  else if (pAttr.isA(Tags::tag_userexit_operation))
-    setUserExitOperation(pElement.getString());
-  else if (pAttr.isA(Tags::tag_plantype))
-    setPlanType(pElement.getInt());
-  // Less common parameters
-  else if (pAttr.isA(tag_iterationthreshold))
-    setIterationThreshold(pElement.getDouble());
-  else if (pAttr.isA(tag_iterationaccuracy))
-    setIterationAccuracy(pElement.getDouble());
-  else if (pAttr.isA(tag_lazydelay))
-    setLazyDelay(pElement.getTimeperiod());
-  // Default parameters
-  else
-    Solver::endElement(pIn, pAttr, pElement);
-}
-
-
 DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_constraints))
@@ -383,7 +355,7 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
   else if (attr.isA(tag_iterationaccuracy))
     setIterationAccuracy(field.getDouble());
   else if (attr.isA(tag_lazydelay))
-    setLazyDelay(field.getTimeperiod());
+    setLazyDelay(field.getDuration());
   else if (attr.isA(tag_allowsplits))
     setAllowSplits(field.getBool());
   else if (attr.isA(tag_planSafetyStockFirst))

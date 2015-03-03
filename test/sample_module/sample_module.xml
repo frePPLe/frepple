@@ -132,7 +132,7 @@ frepple.loadmodule("mod_sample.so")
 
 <?python
 # Create a plan
-frepple.solver_mrp(name="MRP", constraints=15, loglevel=0).solve()
+frepple.solver_mrp(constraints=15, loglevel=0).solve()
 frepple.saveXMLfile("output.1.xml")
 
 # Testing Python binding

@@ -154,7 +154,7 @@
 
 <?python
 print("CREATING CONSTRAINED PLAN - safety stock last")
-solver = frepple.solver_mrp(name="MRP", plantype=1, constraints=15, loglevel=2)
+solver = frepple.solver_mrp(plantype=1, constraints=15, loglevel=2)
 solver.plansafetystockfirst = False
 solver.solve()
 frepple.saveplan("output.1.xml")

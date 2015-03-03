@@ -397,7 +397,7 @@ template <class type> class TimeLine
 
     /** Return the total production or consumption between an event. */
     double getFlow(
-      const Event* strt, TimePeriod prd, bool consumed
+      const Event* strt, Duration prd, bool consumed
       ) const
     {
       Date nd = strt->getDate() + prd;

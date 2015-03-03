@@ -258,7 +258,7 @@
 	</operationplans>
 
 <?python
-frepple.solver_mrp(name="MRP",constraints=15,loglevel=1).solve()
+frepple.solver_mrp(constraints=15,loglevel=1).solve()
 # Note that it is NOT common to save the complete plan with all pegging detail.
 # The output file gets very big and full of redundant data.
 # Pegging info is normally extracted for a small subset of data.

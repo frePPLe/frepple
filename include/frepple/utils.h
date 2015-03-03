@@ -1103,56 +1103,6 @@ class MetaClass : public NonCopyable
 
 class SerializerXML;
 
-/** @brief This class stores metadata on a data field of a class.
-  *
-  * A field
-  */
-//class MetaField : public NonCopyable
-//{
-//  private:
-//    Keyword& name;
-//
-//  public:
-//    typedef double (*getDouble)() const;
-//    typedef void (*setDouble)(double);
-//    typedef int (*getInt)() const;
-//    typedef void (*setInt)(int);
-//    typedef long (*getLong)() const;
-//    typedef void (*setLong)(long);
-//    typedef unsigned long (*getUnsignedLong)() const;
-//    typedef void (*setUnsignedLong)(unsigned long);
-//    typedef bool (*getBool)() const;
-//    typedef void (*setBool)(int);
-//    typedef bool (*getString)() const;
-//    typedef void (*setString)(string);
-//    typedef Date (*getDate)() const;
-//    typedef void (*setDate)(Date);
-//    typedef TimePeriod (*getTimePeriod)() const;
-//    typedef void (*setTimePeriod)(TimePeriod);
-//    /* Other types: list of things... */
-//
-//    /** Constructor. */
-//    MetaField(Keyword&, getDouble, setDouble);
-//    MetaField(Keyword&, getInt, setInt);
-//    MetaField(Keyword&, getBool, setBool);
-//    MetaField(Keyword&, getString, setString );
-//    template <class T> MetaField(Keyword&, T*(*getFunction)() const, void (*setFunction)(T*));
-//
-//    bool get(Object*);
-//    int get(Object*);
-//    double get(Object*);
-//    string get(Object*);
-//
-//    void set(Object*, bool);
-//    void set(Object*, int);
-//    void set(Object*, double);
-//    void set(Object*, string);
-//
-//    /* for class MetaClass: */
-//    void write(writer, object*);
-//    void read(reader, Object*);
-//};
-
 
 /** @brief A MetaCategory instance represents metadata for a category of
   * object.
@@ -1438,17 +1388,17 @@ inline ostream & operator << (ostream& os, const Timer& t)
   *
   * The duration can be both positive and negative.
   */
-class TimePeriod
+class Duration
 {
-    friend ostream& operator << (ostream &, const TimePeriod &);
+    friend ostream& operator << (ostream &, const Duration &);
   public:
-    /** Default constructor and constructor with timeperiod passed. */
-    TimePeriod(const long l = 0) : lval(l) {}
+    /** Default constructor and constructor with Duration passed. */
+    Duration(const long l = 0) : lval(l) {}
 
     /** Constructor from a character string.<br>
       * See the parse() method for details on the format of the argument.
       */
-    TimePeriod(const char* s) {parse(s);}
+    Duration(const char* s) {parse(s);}
 
     /** Comparison between periods of time. */
     bool operator < (const long& b) const {return lval < b;}
@@ -1463,33 +1413,33 @@ class TimePeriod
     bool operator >= (const long& b) const {return lval >= b;}
 
     /** Comparison between periods of time. */
-    bool operator < (const TimePeriod& b) const {return lval < b.lval;}
+    bool operator < (const Duration& b) const {return lval < b.lval;}
 
     /** Comparison between periods of time. */
-    bool operator > (const TimePeriod& b) const {return lval > b.lval;}
+    bool operator > (const Duration& b) const {return lval > b.lval;}
 
     /** Comparison between periods of time. */
-    bool operator <= (const TimePeriod& b) const {return lval <= b.lval;}
+    bool operator <= (const Duration& b) const {return lval <= b.lval;}
 
     /** Comparison between periods of time. */
-    bool operator >= (const TimePeriod& b) const {return lval >= b.lval;}
+    bool operator >= (const Duration& b) const {return lval >= b.lval;}
 
     /** Equality operator. */
-    bool operator == (const TimePeriod& b) const {return lval == b.lval;}
+    bool operator == (const Duration& b) const {return lval == b.lval;}
 
     /** Inequality operator. */
-    bool operator != (const TimePeriod& b) const {return lval != b.lval;}
+    bool operator != (const Duration& b) const {return lval != b.lval;}
 
-    /** Increase the timeperiod. */
-    void operator += (const TimePeriod& l) {lval += l.lval;}
+    /** Increase the Duration. */
+    void operator += (const Duration& l) {lval += l.lval;}
 
-    /** Decrease the timeperiod. */
-    void operator -= (const TimePeriod& l) {lval -= l.lval;}
+    /** Decrease the Duration. */
+    void operator -= (const Duration& l) {lval -= l.lval;}
 
     /** Returns true of the duration is equal to 0. */
     bool operator ! () const {return lval == 0L;}
 
-    /** This conversion operator creates a long value from a timeperiod. */
+    /** This conversion operator creates a long value from a Duration. */
     operator long() const {return lval;}
 
     /** Converts the date to a string, formatted according to ISO 8601. */
@@ -1504,7 +1454,7 @@ class TimePeriod
       * The string format is following the ISO 8601 specification for
       * durations: [-]P[nY][nM][nW][nD][T[nH][nM][nS]]<br>
       * Some examples to illustrate how the string is converted to a
-      * timeperiod, expressed in seconds:<br>
+      * Duration, expressed in seconds:<br>
       *    P1Y = 1 year = 365 days = 31536000 seconds
       *    P1M = 365/12 days = 2628000 seconds
       *    P1W = 1 week = 7 days = 604800 seconds
@@ -1532,18 +1482,18 @@ class TimePeriod
       */
     static DECLARE_EXPORT void double2CharBuffer(double, char*);
 
-    /** The maximum value for a timeperiod. */
-    DECLARE_EXPORT static const TimePeriod MAX;
+    /** The maximum value for a Duration. */
+    DECLARE_EXPORT static const Duration MAX;
 
-    /** The minimum value for a timeperiod. */
-    DECLARE_EXPORT static const TimePeriod MIN;
+    /** The minimum value for a Duration. */
+    DECLARE_EXPORT static const Duration MIN;
 
   private:
     /** The time is stored as a number of seconds. */
     long lval;
 
     /** This function fills a character buffer with a text representation of
-      * the TimePeriod.<br>
+      * the Duration.<br>
       * The character buffer passed MUST have room for at least 20 characters.
       * 20 characters is sufficient for even the most longest possible time
       * duration.<br>
@@ -1554,10 +1504,10 @@ class TimePeriod
 };
 
 
-/** Prints a Timeperiod to the outputstream.
-  * @see TimePeriod::string()
+/** Prints a Duration to the outputstream.
+  * @see Duration::string()
   */
-inline ostream & operator << (ostream & os, const TimePeriod & t)
+inline ostream & operator << (ostream & os, const Duration & t)
 {
   char str[20];
   t.toCharBuffer(str);
@@ -1686,15 +1636,15 @@ class Date
     void operator = (const Date& b) {lval = b.lval;}
 
     /** Adds some time to this date. */
-    void operator += (const TimePeriod& l)
+    void operator += (const Duration& l)
     {checkFinite(static_cast<long long>(l) + lval);}
 
     /** Subtracts some time to this date. */
-    void operator -= (const TimePeriod& l)
+    void operator -= (const Duration& l)
     {checkFinite(- static_cast<long long>(l) + lval);}
 
     /** Adding a time to a date returns a new date. */
-    Date operator + (const TimePeriod& l) const
+    Date operator + (const Duration& l) const
     {
       Date d;
       d.checkFinite(static_cast<long long>(l) + lval);
@@ -1702,7 +1652,7 @@ class Date
     }
 
     /** Subtracting a time from a date returns a new date. */
-    Date operator - (const TimePeriod& l) const
+    Date operator - (const Duration& l) const
     {
       Date d;
       d.checkFinite(- static_cast<long>(l) + lval);
@@ -1710,8 +1660,8 @@ class Date
     }
 
     /** Subtracting two date values returns the time difference in a
-      * TimePeriod object. */
-    TimePeriod operator - (const Date& l) const
+      * Duration object. */
+    Duration operator - (const Date& l) const
     {return static_cast<long>(lval - l.lval);}
 
     /** Check whether the date has been initialized. */
@@ -1901,7 +1851,7 @@ class DateRange
       * be greater than or equal to 0, since the end date is always later than
       * the start date.
       */
-    TimePeriod getDuration() const
+    Duration getDuration() const
     {
       return end - start;
     }
@@ -1926,14 +1876,14 @@ class DateRange
     }
 
     /** Move the daterange later in time. */
-    void operator += (const TimePeriod& l)
+    void operator += (const Duration& l)
     {
       start += l;
       end += l;
     }
 
     /** Move the daterange earlier in time. */
-    void operator -= (const TimePeriod& l)
+    void operator -= (const Duration& l)
     {
       start -= l;
       end -= l;
@@ -1958,7 +1908,7 @@ class DateRange
     }
 
     /** Returns the number of seconds the two dateranges overlap. */
-    TimePeriod overlap(const DateRange& dr) const
+    Duration overlap(const DateRange& dr) const
     {
       long x = (dr.end<end ? dr.end : end)
           - (dr.start>start ? dr.start : start);
@@ -2197,8 +2147,8 @@ class Serializer
     /** Writes a C-type character string. */
     virtual void writeElement(const Keyword& t, const char* val) = 0;
 
-    /** Writes an timeperiod element. /> */
-    virtual void writeElement(const Keyword& t, const TimePeriod d) = 0;
+    /** Writes an Duration element. /> */
+    virtual void writeElement(const Keyword& t, const Duration d) = 0;
 
     /** Writes an date element. */
     virtual void writeElement(const Keyword& t, const Date d) = 0;
@@ -2559,9 +2509,9 @@ class SerializerXML : public Serializer
       *m_fp << t.stringEndElement();
     }
 
-    /** Writes an timeperiod element.<br>
+    /** Writes an Duration element.<br>
       * Output: \<TAG_T\>d\</TAG_T\> /> */
-    void writeElement(const Keyword& t, const TimePeriod d)
+    void writeElement(const Keyword& t, const Duration d)
     {
       *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
     }
@@ -2810,7 +2760,7 @@ class DataElement
 
     void operator >> (long& val) const {val = getLong();}
 
-    void operator >> (TimePeriod& val) const {val = getTimeperiod();}
+    void operator >> (Duration& val) const {val = getDuration();}
 
     void operator >> (bool& v) const {v=getBool();}
 
@@ -2828,7 +2778,7 @@ class DataElement
     virtual unsigned long getUnsignedLong() const
     {throw LogicException("DataElement is an abstract class");}
 
-    virtual TimePeriod getTimeperiod() const
+    virtual Duration getDuration() const
     {throw LogicException("DataElement is an abstract class");}
 
     virtual int getInt() const
@@ -2890,7 +2840,7 @@ class XMLElement : public DataElement
 
     virtual unsigned long getUnsignedLong() const {return atol(getData());}
 
-    virtual TimePeriod getTimeperiod() const {return TimePeriod(getData());}
+    virtual Duration getDuration() const {return Duration(getData());}
 
     virtual int getInt() const {return atoi(getData());}
 
@@ -3185,16 +3135,16 @@ class PythonObject : public DataElement
     }
 
     /** Convert a Python number as a number of seconds into a frePPLe
-      * TimePeriod.<br>
-      * A TimePeriod is represented as a number of seconds in Python.
+      * Duration.<br>
+      * A Duration is represented as a number of seconds in Python.
       */
-    TimePeriod getTimeperiod() const
+    Duration getDuration() const
     {
       if (PyUnicode_Check(obj))
       {
         // Replace the unicode object with a string encoded in the correct locale
         PyObject * utf8_string = PyUnicode_AsUTF8String(obj);
-        TimePeriod t(PyBytes_AsString(utf8_string));
+        Duration t(PyBytes_AsString(utf8_string));
         Py_DECREF(utf8_string);
         return t;
       }
@@ -3260,11 +3210,11 @@ class PythonObject : public DataElement
       Py_INCREF(obj);
     }
 
-    /** Convert a frePPLe TimePeriod into a Python number representing
+    /** Convert a frePPLe Duration into a Python number representing
       * the number of seconds. */
-    inline PythonObject(const TimePeriod val)
+    inline PythonObject(const Duration val)
     {
-      // A TimePeriod is represented as a number of seconds in Python
+      // A Duration is represented as a number of seconds in Python
       obj = PyLong_FromLong(val);
     }
 
@@ -5455,7 +5405,7 @@ template <class T> class HasHierarchy : public HasName<T>
     ~HasHierarchy();
 
     /** Return a member iterator. */
-    memberIterator beginMember() const {return this;}
+    memberIterator getMembers() const {return this;}
 
     /** Returns true if this entity belongs to a higher hierarchical level.<br>
       * An entity can have only a single owner, and can't belong to multiple

@@ -190,7 +190,7 @@ DECLARE_EXPORT void SupplierItem::endElement(DataInput& pIn, const Attribute& pA
   else if (pAttr.isA(Tags::tag_size_multiple))
     setSizeMultiple(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_leadtime))
-    setLeadtime(pElement.getTimeperiod());
+    setLeadtime(pElement.getDuration());
   else if (pAttr.isA(Tags::tag_priority))
     setPriority(pElement.getInt());
   else if (pAttr.isA(Tags::tag_effective_end))
@@ -278,7 +278,7 @@ DECLARE_EXPORT int SupplierItem::setattro(const Attribute& attr, const PythonObj
   else if (attr.isA(Tags::tag_size_multiple))
     setSizeMultiple(field.getDouble());
   else if (attr.isA(Tags::tag_leadtime))
-    setLeadtime(field.getTimeperiod());
+    setLeadtime(field.getDuration());
   else if (attr.isA(Tags::tag_priority))
     setPriority(field.getInt());
   else if (attr.isA(Tags::tag_effective_end))

@@ -197,8 +197,8 @@ DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (double q, Date s, 
 
 
 DECLARE_EXPORT DateRange Operation::calculateOperationTime
-(Date thedate, TimePeriod duration, bool forward,
- TimePeriod *actualduration) const
+(Date thedate, Duration duration, bool forward,
+ Duration *actualduration) const
 {
   int calcount = 0;
   // Initial size of 10 should do for 99.99% of all cases
@@ -244,7 +244,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
     DateRange result;
     Date curdate = thedate;
     bool status = false;
-    TimePeriod curduration = duration;
+    Duration curduration = duration;
     while (true)
     {
       // Check whether all calendars are available
@@ -278,7 +278,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
         if (forward)
         {
           // Forward
-          TimePeriod delta = curdate - thedate;
+          Duration delta = curdate - thedate;
           if (delta >= curduration)
           {
             result.setEnd(thedate + curduration);
@@ -290,7 +290,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
         else
         {
           // Backward
-          TimePeriod delta = thedate - curdate;
+          Duration delta = thedate - curdate;
           if (delta >= curduration)
           {
             result.setStart(thedate - curduration);
@@ -305,7 +305,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
         // End of forward iteration
         if (available)
         {
-          TimePeriod delta = curdate - thedate;
+          Duration delta = curdate - thedate;
           if (delta >= curduration)
             result.setEnd(thedate + curduration);
           else if (actualduration)
@@ -320,7 +320,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
         // End of backward iteration
         if (available)
         {
-          TimePeriod delta = thedate - curdate;
+          Duration delta = thedate - curdate;
           if (delta >= curduration)
             result.setStart(thedate - curduration);
           else if (actualduration)
@@ -351,7 +351,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
 
 
 DECLARE_EXPORT DateRange Operation::calculateOperationTime
-(Date start, Date end, TimePeriod *actualduration) const
+(Date start, Date end, Duration *actualduration) const
 {
   // Switch start and end if required
   if (end < start)
@@ -577,7 +577,7 @@ DECLARE_EXPORT void Operation::beginElement(DataInput& pIn, const Attribute& pAt
 DECLARE_EXPORT void Operation::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_fence))
-    setFence(pElement.getTimeperiod());
+    setFence(pElement.getDuration());
   else if (pAttr.isA (Tags::tag_size_minimum))
     setSizeMinimum(pElement.getDouble());
   else if (pAttr.isA (Tags::tag_cost))
@@ -587,7 +587,7 @@ DECLARE_EXPORT void Operation::endElement(DataInput& pIn, const Attribute& pAttr
   else if (pAttr.isA (Tags::tag_size_maximum))
     setSizeMaximum(pElement.getDouble());
   else if (pAttr.isA (Tags::tag_posttime))
-    setPostTime(pElement.getTimeperiod());
+    setPostTime(pElement.getDuration());
   else if (pAttr.isA (Tags::tag_location))
   {
     Location *l = dynamic_cast<Location*>(pIn.getPreviousObject());
@@ -621,7 +621,7 @@ OperationFixedTime::setOperationPlanParameters
 
   // Set the start and end date.
   DateRange x;
-  TimePeriod actualduration;
+  Duration actualduration;
   if (e && s)
   {
     if (preferEnd) x = calculateOperationTime(e, duration, false, &actualduration);
@@ -745,7 +745,7 @@ DECLARE_EXPORT void OperationFixedTime::writeElement
 DECLARE_EXPORT void OperationFixedTime::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_duration))
-    setDuration (pElement.getTimeperiod());
+    setDuration (pElement.getDuration());
   else
     Operation::endElement (pIn, pAttr, pElement);
 }
@@ -767,7 +767,7 @@ OperationTimePer::setOperationPlanParameters
 
   // The logic depends on which dates are being passed along
   DateRange x;
-  TimePeriod actual;
+  Duration actual;
   if (s && e)
   {
     // Case 1: Both the start and end date are specified: Compute the quantity.
@@ -803,7 +803,7 @@ OperationTimePer::setOperationPlanParameters
       // Updates the dates
       // The cast on the next line truncates the decimal part. We add half a
       // second to get a rounded value.
-      TimePeriod wanted(
+      Duration wanted(
         duration + static_cast<long>(duration_per * q + 0.5)
       );
       if (preferEnd) x = calculateOperationTime(e, wanted, false, &actual);
@@ -822,7 +822,7 @@ OperationTimePer::setOperationPlanParameters
     // Round and size the quantity
     // The cast on the next line truncates the decimal part. We add half a
     // second to get a rounded value.
-    TimePeriod wanted(duration + static_cast<long>(duration_per * q + 0.5));
+    Duration wanted(duration + static_cast<long>(duration_per * q + 0.5));
     x = calculateOperationTime(e, wanted, false, &actual);
     if (actual == wanted)
     {
@@ -860,10 +860,10 @@ OperationTimePer::setOperationPlanParameters
     // Round and size the quantity
     // The cast on the next line truncates the decimal part. We add half a
     // second to get a rounded value.
-    TimePeriod wanted(
+    Duration wanted(
       duration + static_cast<long>(duration_per * q + 0.5)
     );
-    TimePeriod actual;
+    Duration actual;
     x = calculateOperationTime(s, wanted, true, &actual);
     if (actual == wanted)
     {
@@ -920,7 +920,7 @@ DECLARE_EXPORT void OperationTimePer::writeElement
   if (duration_per)
   {
     char t[65];
-    TimePeriod::double2CharBuffer(duration_per, t);
+    Duration::double2CharBuffer(duration_per, t);
     o->writeElement(Tags::tag_duration_per, t);
   }
 
@@ -932,9 +932,9 @@ DECLARE_EXPORT void OperationTimePer::writeElement
 DECLARE_EXPORT void OperationTimePer::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_duration))
-    setDuration(pElement.getTimeperiod());
+    setDuration(pElement.getDuration());
   else if (pAttr.isA(Tags::tag_duration_per))
-    setDurationPer( TimePeriod::parse2double(pElement.getString().c_str()) );
+    setDurationPer( Duration::parse2double(pElement.getString().c_str()) );
   else
     Operation::endElement (pIn, pAttr, pElement);
 }
@@ -1652,18 +1652,18 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
   }
   string lastsetup = lastld ? lastld->getSetup() : ldplan->getResource()->getSetup();
 
-  TimePeriod duration(0L);
+  Duration duration(0L);
   if (lastsetup != ldplan->getLoad()->getSetup())
   {
     // Calculate the setup time
     SetupMatrix::Rule *conversionrule = ldplan->getLoad()->getResource()->getSetupMatrix()
         ->calculateSetup(lastsetup, ldplan->getLoad()->getSetup());
-    duration = conversionrule ? conversionrule->getDuration() : TimePeriod(365L*86400L);
+    duration = conversionrule ? conversionrule->getDuration() : Duration(365L*86400L);
   }
 
   // Set the start and end date.
   DateRange x;
-  TimePeriod actualduration;
+  Duration actualduration;
   if (e && s)
   {
     if (preferEnd) x = calculateOperationTime(e, duration, false, &actualduration);
@@ -1754,7 +1754,7 @@ DECLARE_EXPORT int Operation::setattro(const Attribute& attr, const PythonObject
     setLocation(y);
   }
   else if (attr.isA(Tags::tag_fence))
-    setFence(field.getTimeperiod());
+    setFence(field.getDuration());
   else if (attr.isA(Tags::tag_size_minimum))
     setSizeMinimum(field.getDouble());
   else if (attr.isA(Tags::tag_size_multiple))
@@ -1764,7 +1764,7 @@ DECLARE_EXPORT int Operation::setattro(const Attribute& attr, const PythonObject
   else if (attr.isA(Tags::tag_cost))
     setCost(field.getDouble());
   else if (attr.isA(Tags::tag_posttime))
-    setPostTime(field.getTimeperiod());
+    setPostTime(field.getDuration());
   else if (attr.isA(Tags::tag_hidden))
     setHidden(field.getBool());
   else
@@ -1784,7 +1784,7 @@ DECLARE_EXPORT PyObject* OperationFixedTime::getattro(const Attribute& attr)
 DECLARE_EXPORT int OperationFixedTime::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_duration))
-    setDuration(field.getTimeperiod());
+    setDuration(field.getDuration());
   else
     return Operation::setattro(attr, field);
   return 0;
@@ -1804,7 +1804,7 @@ DECLARE_EXPORT PyObject* OperationTimePer::getattro(const Attribute& attr)
 DECLARE_EXPORT int OperationTimePer::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_duration))
-    setDuration(field.getTimeperiod());
+    setDuration(field.getDuration());
   else if (attr.isA(Tags::tag_duration_per))
     setDurationPer(field.getDouble());
   else

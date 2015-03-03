@@ -268,7 +268,7 @@ DECLARE_EXPORT void Demand::writeElement(Serializer *o, const Keyword& tag, mode
   o->writeElement(Tags::tag_item, it);
   o->writeElement(Tags::tag_due, dueDate);
   if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
-  if (getMaxLateness() != TimePeriod::MAX)
+  if (getMaxLateness() != Duration::MAX)
     o->writeElement(Tags::tag_maxlateness, getMaxLateness());
   if (getMinShipment() != 1.0)
     o->writeElement(Tags::tag_minshipment, getMinShipment());
@@ -393,7 +393,7 @@ DECLARE_EXPORT void Demand::endElement(DataInput& pIn, const Attribute& pAttr, c
     else throw LogicException("Incorrect object type during read operation");
   }
   else if (pAttr.isA (Tags::tag_maxlateness))
-    setMaxLateness(pElement.getTimeperiod());
+    setMaxLateness(pElement.getDuration());
   else if (pAttr.isA (Tags::tag_minshipment))
     setMinShipment(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_operationplan))
@@ -497,7 +497,7 @@ DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& f
   else if (attr.isA(Tags::tag_minshipment))
     setMinShipment(field.getDouble());
   else if (attr.isA(Tags::tag_maxlateness))
-    setMaxLateness(field.getTimeperiod());
+    setMaxLateness(field.getDuration());
   else if (attr.isA(Tags::tag_owner))
   {
     if (!field.check(Demand::metadata))

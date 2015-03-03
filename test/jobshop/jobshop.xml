@@ -460,7 +460,7 @@ from datetime import timedelta
 import random, math, os
 
 # Create a solver
-solver = frepple.solver_mrp(name="MRP", constraints=15, loglevel=0)
+solver = frepple.solver_mrp(constraints=15, loglevel=0)
 
 # Make the results reproducible
 if 'seed' in os.environ:

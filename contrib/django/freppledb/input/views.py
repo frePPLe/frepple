@@ -400,7 +400,7 @@ class SetupMatrixList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True),
+    GridFieldText('name', title=_('name'), key=True, formatter='setupmatrix'),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )

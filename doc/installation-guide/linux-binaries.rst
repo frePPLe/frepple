@@ -91,10 +91,13 @@ Here are the steps to get a fully working environment.
    ::
 
       wget https://www.djangoproject.com/download/1.6/tarball/
-      tar xvfz Django-1.6.tar.gz
-      cd Django-1.6
+      tar xvfz Django-1.7.tar.gz
+      cd Django-1.7
       patch -p0 < frepple_directory/contrib/django/django.patch
       python setup.py install
+
+   A version of frePPle requires a specific version of Django. FrePPLe 2.1 requires
+   Django 1.6.x. FrePPLe 2.2, 2.3 and 3.0 require django 1.7.x.
 
 #. **Install OpenPyXL**
 

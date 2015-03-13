@@ -38,7 +38,7 @@ are required:
    The recommended version is 9.3, 64-bit. Information on tuning the database
    configuration is easily found on Google.
 
-#. **Install Python 2.7**
+#. **Install Python 3.3 or higher**
 
    The download URL is http://www.python.org/download/releases/2.7/
    Use the 32-bit version, even on 64-bit platforms.
@@ -48,7 +48,7 @@ are required:
    The Python database driver for PostgreSQLcan be downloaded from
    http://stickpeople.com/projects/python/win-psycopg/
 
-   Pick the executable for Python 2.7. The executable built for PostgreSQL 9.2
+   Pick the executable that matches the Python version. The executable built for PostgreSQL 9.2
    also works with PostgreSQL 9.3.
 
 #. **Install PyWin32**
@@ -62,9 +62,12 @@ are required:
 
    Django is a high-level Python Web framework.
 
+   A version of frePPle requires a specific version of Django. FrePPLe 2.1 requires 
+   Django 1.6.x. FrePPLe 2.2, 2.3 and 3.0 require django 1.7.x.
+   
    You will need to:
 
-     #. Download django 1.6.x from https://www.djangoproject.com/download/
+     #. Download django 1.7.x from https://www.djangoproject.com/download/
 
      #. Apply the patch you find in contrib/django/django.patch
 

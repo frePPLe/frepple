@@ -48,9 +48,10 @@ FrePPLe uses a very standard build process, based on the automake suite.
      | Xerces is a validating XML parser provided by the Apache Foundation.
      | You need to install the libraries as well as the development libraries.
 
-   * | python v2.6 or v2.7
+   * | python 3.3 or higher
      | Python is a modern, easy to learn interpreted programming language.
      | You need to install the language as well as the development libraries.
+     | Note: FrePPLe versions < 3.0 required Python 2.7.
 
 #. Configure the build with the following command:
    ::

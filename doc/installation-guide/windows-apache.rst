@@ -90,7 +90,7 @@ are required:
 #. **Install cherrypy**:
 
    CherryPy is pythonic, object-oriented HTTP framework available from
-   http://download.cherrypy.org/cherrypy/3.2.2/
+   https://bitbucket.org/cherrypy/cherrypy/issue-attachment/1110/cherrypy/cherrypy/1322273715.09/1110/CherryPy-3.2.2.win32.exe
 
 #. **Install Apache web server**
 

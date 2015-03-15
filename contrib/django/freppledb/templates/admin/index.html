@@ -13,12 +13,12 @@
   }
   .portlet {
     margin: 0 1em 1em 0;
-    padding: 0.3em;
   }
   .portlet-header {
     padding: 0.2em 0.3em;
     margin-bottom: 0.5em;
     position: relative;
+    font-weight: normal;
   }
   .portlet-export {
     position: absolute;
@@ -45,7 +45,7 @@
     margin-top: -8px;
   }
   .portlet-content {
-    padding: 0.4em;
+    padding: 0 0.8em 0.8em 0.8em;
     overflow: hidden;
   }
   .portlet-placeholder {
@@ -88,7 +88,7 @@
     <span class='fa fa-arrow-down portlet-export'></span></a>{% endif %}
     <span class='fa fa-times portlet-close'></span>
     <span class='fa fa-question-circle portlet-help' title="{{widget.tooltip|escape}}"></span>
-    <span class='fa fa-minus portlet-toggle'></span>{% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title}}</a>{% else %}{{widget.title}}{% endif %}</div>
+    <span class='fa fa-minus portlet-toggle'></span>{% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}</a>{% else %}{{widget.title|upper}}{% endif %}</div>
     <div class="portlet-content">{% if widget.async %}<div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading"></div>{% else %}{{widget.render|safe}}{% endif %}</div>
   </div>
 {% endfor %}

@@ -32,7 +32,8 @@ $(function() {
     page: {{page}},
     hidegrid: false,
     scrollRows: true,
-    //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
+    altRows: true,
+    altclass:'oddRow',
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns
     autowidth: true,{% if filters %}

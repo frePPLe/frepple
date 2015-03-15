@@ -44,7 +44,8 @@ $(function() {
     sortorder: "asc",
     hidegrid: false,
     scrollRows: true,
-    //altRows: true,  // Different color for alternating rows. But doesn't look nice with a lot of themes.
+    {% if mode == "table" %}altRows: true,
+    altclass:'oddRow',{% endif %}
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     autowidth: true,
 	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},

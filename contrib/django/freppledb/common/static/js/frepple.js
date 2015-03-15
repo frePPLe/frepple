@@ -8,7 +8,7 @@ window.__admin_media_prefix__ = "/static/admin/";
 function breadcrumbs_reflow()
 {
   var crumbs = $("#breadcrumbs");
-  var height_one_line = Math.ceil($("#cockpitcrumb").height());
+  var height_one_line = Math.ceil($("#cockpitcrumb").height()) + 1;
   // Show all elements previously hidden
   crumbs.children("span:hidden").show();
   // Hide the first crumbs till it all fits on a single line.

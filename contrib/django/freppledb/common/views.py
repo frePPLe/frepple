@@ -16,8 +16,8 @@
 #
 
 from django.shortcuts import render_to_response
-from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.utils import unquote, quote
 from django.contrib.admin.views.decorators import staff_member_required
@@ -31,6 +31,8 @@ from django.contrib.auth.models import Group
 from django.utils import translation
 from django.conf import settings
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_variables
 
 from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
@@ -67,37 +69,72 @@ def handler500(request):
 
 class PreferencesForm(forms.Form):
   language = forms.ChoiceField(
-    label=_("language"),
+    label=_("Language"),
     initial="auto",
     choices=User.languageList,
     help_text=_("Language of the user interface"),
     )
   pagesize = forms.IntegerField(
-    label=_('page size'),
+    label=_('Page size'),
     required=False,
     initial=100,
     min_value=25,
-    help_text=_('Number of records to fetch in a single page from the server'),
+    help_text=_('Number of records to display in a single page'),
     )
   theme = forms.ChoiceField(
-    label=_('theme'),
+    label=_('Theme'),
     required=False,
     choices=settings.THEMES,
     help_text=_('Theme for the user interface'),
     )
+  cur_password = forms.CharField(
+    label = _("Change password"),
+    required=False,
+    help_text=_('Old password'),
+    widget = forms.PasswordInput()
+    )
+  new_password1 = forms.CharField(
+    label = "",
+    required=False,
+    help_text=_('New password'),
+    widget = forms.PasswordInput()
+    )
+  new_password2 = forms.CharField(
+    label = "",
+    required = False,
+    help_text = _('New password confirmation'),
+    widget = forms.PasswordInput()
+    )
+
+  def clean(self):
+    newdata = super(PreferencesForm, self).clean()
+    if newdata['cur_password']:
+      if not self.user.check_password(newdata['cur_password']):
+        raise forms.ValidationError(_("Your old password was entered incorrectly. Please enter it again."))
+      if newdata['new_password1'] != newdata['new_password2']:
+        raise forms.ValidationError("The two password fields didn't match.")
 
 
+@sensitive_variables('newdata')
 @login_required
 @csrf_protect
 def preferences(request):
   if request.method == 'POST':
     form = PreferencesForm(request.POST)
+    form.user = request.user
     if form.is_valid():
       try:
         newdata = form.cleaned_data
         request.user.language = newdata['language']
         request.user.theme = newdata['theme']
         request.user.pagesize = newdata['pagesize']
+        if newdata['cur_password']:
+          request.user.set_password(newdata["new_password1"])
+          # Updating the password logs out all other sessions for the user
+          # except the current one if
+          # django.contrib.auth.middleware.SessionAuthenticationMiddleware
+          # is enabled.
+          update_session_auth_hash(request, form.user)
         request.user.save()
         # Switch to the new theme and language immediately
         request.theme = newdata['theme']

@@ -18,8 +18,10 @@
 <!-- Header -->
 <div id="headerbar" >
 {% if user.is_authenticated and user.is_staff %}<div id="user-tools">
-<a href="/admin/logout/?next=/">{% trans 'Log out' %} <strong>{% firstof user.first_name user.username %}</strong></a>
-<br/><br/>{% selectDatabase %}</div>{% endif %}
+{% firstof user.first_name user.username %}&nbsp;&nbsp;
+<span onclick="window.location='/preferences/'" title="{% trans 'Log out' %}" class="fa fa-wrench fa-lg"></span>&nbsp;&nbsp;
+<span onclick="window.location='/admin/logout/?next=/'" title="{% trans 'Log out' %}" class="fa fa-sign-out fa-lg"></span>
+<br/><span style="display:block; padding-top:7px">{% selectDatabase %}</span></div>{% endif %}
 <div>{% block branding %}{% endblock %}{% block nav-global %}{% endblock %}</div>
 </div>
 <!-- END Header -->

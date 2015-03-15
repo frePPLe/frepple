@@ -119,14 +119,22 @@ div #tabs  {
 
 /* BREADCRUMBS */
 
-div.breadcrumbs, div.breadcrumbs a {
+div.breadcrumbs {
     padding: 2px 8px 3px 8px;
-    font-size: 11px;
-    color: #333333;
-    border-top: 1px solid white;
+    border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     text-align: left;
+    background: none;
 }
+
+div.breadcrumbs a {
+    padding: 2px 8px 3px 8px;
+    //border-bottom: 1px solid #ccc;
+    font-size: 11px;
+    color: #333333;
+    text-align: left;
+}
+
 
 /* PAGE STRUCTURE */
 
@@ -159,7 +167,7 @@ div.breadcrumbs, div.breadcrumbs a {
 
 #user-tools {
     float: right;
-    padding: 5px 5px;
+    padding-right: 5px;
     font-size: 11px;
     text-align: right;
 }
@@ -346,6 +354,21 @@ a.icon span.ui-icon {
 #grid_frozen tr td {
   white-space: nowrap;
   line-height: 16px;
+}
+
+.ui-row-ltr {
+  background-image: none;
+}
+
+.oddRow {
+  background-color: #EEEEEE;
+}
+
+.ui-jqgrid tr.ui-row-ltr td {
+    border-right-style: none;
+    border-left-style: none;
+    border-bottom-style: none;
+    border-top-style: none;
 }
 
 span.context {

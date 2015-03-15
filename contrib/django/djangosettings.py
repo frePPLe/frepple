@@ -255,13 +255,13 @@ CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 # Check out http://jqueryui.com/themeroller/ to roll your own theme.
 THEMES = [ (i,i) for i in (
   'black-tie', 'blitzer', 'cupertino', 'dark-hive', 'dot-luv', 'eggplant',
-  'excite-bike', 'flick', 'hot-sneaks', 'humanity', 'le-frog', 'mint-choc',
+  'excite-bike', 'flick', 'frepple', 'hot-sneaks', 'humanity', 'le-frog', 'mint-choc',
   'overcast', 'pepper-grinder', 'redmond', 'smoothness', 'south-street', 'start',
   'sunny', 'swanky-purse', 'trontastic', 'ui-darkness', 'ui-lightness', 'vader'
   )]
 
 # The default user interface theme
-DEFAULT_THEME = 'sunny'
+DEFAULT_THEME = 'frepple'
 
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100

@@ -82,22 +82,23 @@ Here are the steps to get a fully working environment.
    Since frePPle requires some patches to the standard Django package,
    you can’t install the binary package that comes with your Linux distribution.
    Instead, download the source from http://www.djangoproject.com and expand
-   it in a local folder. Next, dowload and apply `frePPLe's django patch`_
+   it in a local folder. Next, download and apply frePPLe's django patch
    and install the package.
 
-   .. _frePPLe's django patch: https://raw.github.com/jdetaeye/frePPLe/master/contrib/django/django.patch
+   A version of frePPle requires a specific version of Django. FrePPLe 2.2, 2.3 require
+   Django 1.6.x. FrePPLe 3.0 requires django 1.7.x.
+
+   The patch file is available at https://github.com/frePPLe/frePPLe/tree/3.0/contrib/django
+   - replace the version number to match the frePPLe release
 
    The shell commands for these steps are:
    ::
 
-      wget https://www.djangoproject.com/download/1.6/tarball/
+      wget https://www.djangoproject.com/download/1.7/tarball/
       tar xvfz Django-1.7.tar.gz
       cd Django-1.7
       patch -p0 < frepple_directory/contrib/django/django.patch
       python setup.py install
-
-   A version of frePPle requires a specific version of Django. FrePPLe 2.1 requires
-   Django 1.6.x. FrePPLe 2.2, 2.3 and 3.0 require django 1.7.x.
 
 #. **Install OpenPyXL**
 

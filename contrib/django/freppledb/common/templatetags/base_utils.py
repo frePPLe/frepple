@@ -54,6 +54,9 @@ class CrumbsNode(Node):
   crumbs tag is as follows:
   {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
   '''
+
+  separator = '&nbsp;&nbsp;<i class="fa fa-caret-right"></i>&nbsp;&nbsp;'
+
   def render(self, context):
     try:
       req = context['request']
@@ -99,8 +102,8 @@ class CrumbsNode(Node):
           # Add the current URL to the stack
           cur.append( (
             title,
-            '<span> &gt; <a href="%s%s%s">%s</a></span>' % (
-              req.prefix, urlquote(req.path),
+            '<span>%s<a href="%s%s%s">%s</a></span>' % (
+              self.separator, req.prefix, urlquote(req.path),
               req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
               str(escape(title))
               ),

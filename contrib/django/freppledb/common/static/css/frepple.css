@@ -360,15 +360,11 @@ a.icon span.ui-icon {
   background-image: none;
 }
 
-.oddRow {
-  background-color: #EEEEEE;
-}
-
 .ui-jqgrid tr.ui-row-ltr td {
-    border-right-style: none;
-    border-left-style: none;
-    border-bottom-style: none;
-    border-top-style: none;
+  border-right-style: none;
+  border-left-style: none;
+  border-bottom-style: none;
+  border-top-style: none;
 }
 
 span.context {

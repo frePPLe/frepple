@@ -1,0 +1,12 @@
+/*
+ * This file contains extra styles used in frePPLe, and which
+ * vary by theme.
+ */
+
+div.breadcrumbs .fa {
+  color: #838d11;
+}
+
+.oddRow {
+  background-color: #EEEEEE;
+}

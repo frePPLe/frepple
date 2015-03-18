@@ -124,6 +124,7 @@ class OverviewReport(GridPivot):
         and x.enddate > demand.due
         and demand.due >= '%s'
         and demand.due < '%s'
+        and demand.status = 'open'
         -- Grouping
         group by x.name, x.lft, x.rght, x.bucket, x.startdate, x.enddate
         ) y

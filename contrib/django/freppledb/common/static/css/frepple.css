@@ -285,7 +285,7 @@ div.system-message p.system-message-title {
 #toolicons {
   float: right;
   padding: 5px 5px 5px 5px;
-  clear: both;  TODO REQUIRED?
+  clear: both;
 }
 
 #toolicons span {
@@ -362,8 +362,8 @@ span.context {
 /* Style for main navigation menu */
 
 #headerbar div.menuBar {
-  padding-right: 10px; //
-  padding-left: 10px; //4px 2px 4px 2px;
+  padding-right: 10px;
+  padding-left: 10px;
   text-align: left;
   font-size: 1em;
   position: absolute; bottom: 0;
@@ -573,7 +573,7 @@ div.calendarbox
 .graphcell {
   margin-top: 2px;
   margin-bottom: 2px;
-  display: block;  // To avoid 4px margin at the bottom
+  display: block;  /* To avoid 4px margin at the bottom */
 }
 
 .graphheader  {
@@ -631,8 +631,11 @@ div.calendarbox
 
 @media print {
   .ui-tabs-nav, .ui-paging-info, #user-tools, div.menuBar, menuButton,
-  .breadcrumbs, div#gridpager, div.toolicons, #displaymode
-    { display: none !important; }
-  .ui-tabs .ui-tabs-hide
-    { display: block !important; }
+  .breadcrumbs, div#gridpager, div.toolicons, #displaymode,
+  .frozen-div, .frozen-bdiv, .cbox {
+    display: none !important;
+  }
+  .ui-tabs .ui-tabs-hide {
+    display: block !important;
+  }
 }

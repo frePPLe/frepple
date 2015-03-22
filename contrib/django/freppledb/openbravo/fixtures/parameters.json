@@ -2,5 +2,6 @@
 {"pk": "openbravo.user", "model": "common.parameter", "fields": {"value": "Openbravo", "description": "Openbravo connector: User for the connection"}},
 {"pk": "openbravo.password", "model": "common.parameter", "fields": {"value": "openbravo", "description": "Openbravo connector: Password for the connection"}},
 {"pk": "openbravo.host", "model": "common.parameter", "fields": {"value": "192.168.0.227", "description": "Openbravo connector: host of the REST web service"}},
-{"pk": "openbravo.organization", "model": "common.parameter", "fields": {"value": "F&B Espa\u00f1a - Regi\u00f3n Norte", "description": "Openbravo connector: organization used for uploading requisitions"}}
+{"pk": "openbravo.organization", "model": "common.parameter", "fields": {"value": "F&B Espa\u00f1a - Regi\u00f3n Norte", "description": "Openbravo connector: organization used for uploading requisitions"}},
+{"pk": "openbravo.pagesize", "model": "common.parameter", "fields": {"value": "1000", "description": "Openbravo connector: Number of records to pull with a single request to the web service"}}
 ]

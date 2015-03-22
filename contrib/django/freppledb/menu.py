@@ -31,7 +31,7 @@ menu.addGroup("input", label=_("Input"), index=100)
 menu.addGroup("reports", label=_("Reports"), index=200)
 menu.addGroup("admin", label=_("Admin"), index=300)
 menu.addGroup("user", label=_("User"), index=400)
-menu.addGroup("help", label="?", index=500)
+menu.addGroup("help", label=_("Help"), index=500)
 
 # Adding the menu modules of each installed application.
 # Note that the menus of the apps are processed in reverse order.

@@ -81,6 +81,7 @@ class Command(BaseCommand):
     self.openbravo_user = Parameter.getValue("openbravo.user", self.database)
     self.openbravo_password = Parameter.getValue("openbravo.password", self.database)
     self.openbravo_host = Parameter.getValue("openbravo.host", self.database)
+    self.openbravo_pagesize = int(Parameter.getValue("openbravo.pagesize", self.database, default='1000'))
     if not self.openbravo_user:
       raise CommandError("Missing or invalid parameter openbravo_user")
     if not self.openbravo_password:
@@ -203,32 +204,51 @@ class Command(BaseCommand):
       transaction.set_autocommit(ac, using=self.database)
 
 
-  def get_data(self, url):
-    # Send the request
-    webservice = http.client.HTTP(self.openbravo_host)
-    webservice.putrequest("GET", url)
-    webservice.putheader("Host", self.openbravo_host)
-    webservice.putheader("User-Agent", "frePPLe-Openbravo connector")
-    webservice.putheader("Content-type", "text/html; charset=\"UTF-8\"")
-    webservice.putheader("Content-length", "0")
-    webservice.putheader("Authorization", "Basic %s" % base64.encodestring('%s:%s' % (self.openbravo_user, self.openbravo_password)).replace('\n', ''))
-    webservice.endheaders()
-    webservice.send('')
+  def get_data(self, url, callback):
+    firstResult = 0
+    # Retrieve openbravo data page per page
+    while True:
+      # Send the request
+      if '?' in url:
+        url2 = "%s&firstResult=%d&maxResult=%d" % (url, firstResult, self.openbravo_pagesize)
+      else:
+        url2 = "%s?firstResult=%d&maxResult=%d" % (url, firstResult, self.openbravo_pagesize)
+      if self.verbosity > 1:
+        print('Request: ', url2)
+      webservice = http.client.HTTP(self.openbravo_host)
+      webservice.putrequest("GET", url2)
+      webservice.putheader("Host", self.openbravo_host)
+      webservice.putheader("User-Agent", "frePPLe-Openbravo connector")
+      webservice.putheader("Content-type", "text/html; charset=\"UTF-8\"")
+      webservice.putheader("Content-length", "0")
+      webservice.putheader("Authorization", "Basic %s" % base64.encodestring('%s:%s' % (self.openbravo_user, self.openbravo_password)).replace('\n', ''))
+      webservice.endheaders()
+      webservice.send('')
 
-    # Get the response
-    statuscode, statusmessage, header = webservice.getreply()
-    if statuscode != http.client.OK:
-      raise Exception(statusmessage)
-    if self.verbosity > 2:
-      res = webservice.getfile().read()
-      print('Request: ', url)
-      print('Response status: ', statuscode, statusmessage, header)
-      print('Response content: ', res)
-      conn = iter(iterparse(StringIO(res), events=('start', 'end')))
-    else:
-      conn = iter(iterparse(webservice.getfile(), events=('start', 'end')))
-    root = conn.next()[1]
-    return conn, root
+      # Get the response
+      statuscode, statusmessage, header = webservice.getreply()
+      if statuscode != httplib.OK:
+        raise Exception(statusmessage)
+      if self.verbosity == 1:
+        print('.', end="")
+        conn = iter(iterparse(webservice.getfile(), events=('start', 'end')))
+      elif self.verbosity > 2:
+        res = webservice.getfile().read()
+        print('Response status: ', statuscode, statusmessage, header)
+        print('Response content: ', res)
+        conn = iter(iterparse(StringIO(res), events=('start', 'end')))
+      else:
+        conn = iter(iterparse(webservice.getfile(), events=('start', 'end')))
+      root = conn.next()[1]
+      count = callback(conn, root)
+      if count < self.openbravo_pagesize:
+        # No more records to be expected
+        if self.verbosity == 1:
+          print('')
+        return firstResult + count
+      else:
+        # Prepare for the next loop
+        firstResult += self.openbravo_pagesize
 
 
   # Load a mapping of Openbravo organizations to their search key.
@@ -239,22 +259,26 @@ class Command(BaseCommand):
   # sales orders and purchase orders aren't mapped into frePPLe. This
   # can be used as a simple filter for some data.
   def import_organizations(self, cursor):
+
+    def parse(conn, root):
+      records = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'Organization':
+          continue
+        records += 1
+        searchkey = elem.find("searchKey").text
+        objectid = elem.get('id')
+        self.organizations[objectid] = searchkey
+        # Clean the XML hierarchy
+        root.clear()
+      return records
+
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:
         print("Importing organizations...")
-      conn, root = self.get_data("/openbravo/ws/dal/Organization?includeChildren=false")
-      count = 0
-      for event, elem in conn:
-        if event != 'end' or elem.tag != 'Organization':
-          continue
-        searchkey = elem.find("searchKey").text
-        objectid = elem.get('id')
-        self.organizations[objectid] = searchkey
-        count += 1
-        # Clean the XML hierarchy
-        root.clear()
+      count = self.get_data("/openbravo/ws/dal/Organization?includeChildren=false", parse)
       if self.verbosity > 0:
         print("Loaded %d organizations in %.2f seconds" % (count, time() - starttime))
     except Exception as e:
@@ -276,6 +300,32 @@ class Command(BaseCommand):
   #        - %id -> source
   #        - 'openbravo' -> subcategory
   def import_customers(self, cursor):
+
+    def parse(conn, root):
+      records = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'AFP_BPartner':  #JF Change
+          continue
+        records += 1
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
+        if not organization:
+          continue
+        searchkey = elem.find("searchKey").text
+        name = elem.find("name").text
+        unique_name = u'%s %s' % (searchkey, name)
+        objectid = elem.get('id')
+        description = elem.find("description").text
+        if description: description = description[0:settings.DESCRIPTIONSIZE]
+        self.customers[objectid] = unique_name
+        if unique_name in frepple_keys:
+          update.append( (description, objectid, unique_name) )
+        else:
+          insert.append( (description, unique_name, objectid) )
+        unused_keys.pop(unique_name, None)
+        # Clean the XML hierarchy
+        root.clear()
+      return records
+
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
@@ -296,33 +346,7 @@ class Command(BaseCommand):
       insert = []
       update = []
       query = urllib.quote("customer=true")
-      conn, root = self.get_data("/openbravo/ws/dal/BusinessPartner?where=%s&orderBy=name&includeChildren=false" % query)
-      count = 0
-      for event, elem in conn:
-        if event != 'end' or elem.tag != 'BusinessPartner':
-          continue
-        organization = self.organizations.get(elem.find("organization").get("id"), None)
-        if not organization:
-          continue
-        searchkey = elem.find("searchKey").text
-        name = elem.find("name").text
-        unique_name = u'%s %s' % (searchkey, name)
-        objectid = elem.get('id')
-        description = elem.find("description").text
-        self.customers[objectid] = unique_name
-        if unique_name in frepple_keys:
-          update.append( (description, objectid, unique_name) )
-        else:
-          insert.append( (description, unique_name, objectid) )
-        unused_keys.pop(unique_name, None)
-        # Clean the XML hierarchy
-        root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
-      if self.verbosity > 0:
-        print ('')
+      self.get_data("/openbravo/ws/dal/BusinessPartner?where=%s&orderBy=name&includeChildren=false" % query, parse)
 
       # Create records
       cursor.executemany(
@@ -379,6 +403,37 @@ class Command(BaseCommand):
   #        - %searchKey -> source
   #        - 'openbravo' -> subcategory
   def import_products(self, cursor):
+
+    def parse(conn, root):
+      records = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'Product':
+          continue
+        records += 1
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
+        if not organization:
+          continue
+        searchkey = elem.find("searchKey").text
+        name = elem.find("name").text
+        # A product name which consists of the searchkey and the name fields
+        # is the default.
+        # If you want a shorter item name, use the following lines instead:
+        # unique_name = searchkey
+        # description = name
+        unique_name = u'%s %s' % (searchkey, name)
+        description = elem.find("description").text
+        if description: description = description[0:settings.DESCRIPTIONSIZE]
+        objectid = elem.get('id')
+        self.items[objectid] = unique_name
+        unused_keys.pop(unique_name, None)
+        if unique_name in frepple_keys:
+          update.append( (description, objectid, unique_name) )
+        else:
+          insert.append( (unique_name, description, objectid) )
+        # Clean the XML hierarchy
+        root.clear()
+      return records
+
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
@@ -399,38 +454,7 @@ class Command(BaseCommand):
       insert = []
       update = []
       delete = []
-      conn, root = self.get_data("/openbravo/ws/dal/Product?orderBy=name&includeChildren=false")
-      count = 0
-      for event, elem in conn:
-        if event != 'end' or elem.tag != 'Product':
-          continue
-        organization = self.organizations.get(elem.find("organization").get("id"), None)
-        if not organization:
-          continue
-        searchkey = elem.find("searchKey").text
-        name = elem.find("name").text
-        # A product name which consists of the searchkey and the name fields
-        # is the default.
-        # If you want a shorter item name, use the following lines instead:
-        # unique_name = searchkey
-        # description = name
-        unique_name = u'%s %s' % (searchkey, name)
-        description = elem.find("description").text
-        objectid = elem.get('id')
-        self.items[objectid] = unique_name
-        unused_keys.pop(unique_name, None)
-        if unique_name in frepple_keys:
-          update.append( (description, objectid, unique_name) )
-        else:
-          insert.append( (unique_name, description, objectid) )
-        # Clean the XML hierarchy
-        root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
-      if self.verbosity > 0:
-        print ('')
+      self.get_data("/openbravo/ws/dal/Product?orderBy=name&includeChildren=false", parse)
 
       # Create new items
       cursor.executemany(
@@ -489,6 +513,53 @@ class Command(BaseCommand):
   #        - %searchKey -> category
   #        - 'openbravo' -> source
   def import_locations(self, cursor):
+
+    def parse1(conn, root):
+      records = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'Warehouse':
+          continue
+        records += 1
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
+        if not organization:
+          continue
+        searchkey = elem.find("searchKey").text
+        name = elem.find("name").text
+        # A product name which consists of the searchkey field is the default.
+        # If you want a longer more descriptive item name, use the following lines instead
+        # unique_name = u'%s %s' % (searchkey, name)
+        # description = elem.find("description").text[0:settings.DESCRIPTIONSIZE]
+        unique_name = searchkey
+        description = name
+        objectid = elem.get('id')
+        self.locations[objectid] = unique_name
+        locations.append( (description, objectid, unique_name) )
+        self.locations[objectid] = unique_name
+        unused_keys.pop(unique_name, None)
+        if organization in self.organization_location:
+          print (
+            "Warning: Organization '%s' is already associated with '%s'. Ignoring association with '%s'"
+            % (organization, self.organization_location[organization], unique_name)
+            )
+        else:
+          self.organization_location[organization] = unique_name
+
+        # Clean the XML hierarchy
+        root.clear()
+      return records
+
+    def parse2(conn, root):
+      records = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'Locator':
+          continue
+        records += 1
+        warehouse = elem.find("warehouse").get('id')
+        objectid = elem.get('id')
+        self.locators[objectid] = warehouse
+        root.clear()
+      return records
+
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
@@ -508,43 +579,7 @@ class Command(BaseCommand):
       # Get locations
       locations = []
       query = urllib.quote("active=true")
-      conn, root = self.get_data("/openbravo/ws/dal/Warehouse?where=%s&orderBy=name&includeChildren=false" % query)
-      count = 0
-      for event, elem in conn:
-        if event != 'end' or elem.tag != 'Warehouse':
-          continue
-        organization = self.organizations.get(elem.find("organization").get("id"), None)
-        if not organization:
-          continue
-        searchkey = elem.find("searchKey").text
-        name = elem.find("name").text
-        # A product name which consists of the searchkey field is the default.
-        # If you want a longer more descriptive item name, use the following lines instead
-        # unique_name = u'%s %s' % (searchkey, name)
-        # description = elem.find("description").text
-        unique_name = searchkey
-        description = name
-        objectid = elem.get('id')
-        self.locations[objectid] = unique_name
-        locations.append( (description, objectid, unique_name) )
-        self.locations[objectid] = unique_name
-        unused_keys.pop(unique_name, None)
-        if organization in self.organization_location:
-          print (
-            "Warning: Organization '%s' is already associated with '%s'. Ignoring association with '%s'"
-            % (organization, self.organization_location[organization], unique_name)
-            )
-        else:
-          self.organization_location[organization] = unique_name
-
-        # Clean the XML hierarchy
-        root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
-      if self.verbosity > 0:
-        print ('')
+      self.get_data("/openbravo/ws/dal/Warehouse?where=%s&orderBy=name&includeChildren=false" % query, parse1)
 
       # Remove deleted or inactive locations
       delete = [ (i,) for i, j in unused_keys.items() if j ]
@@ -582,14 +617,7 @@ class Command(BaseCommand):
         )
 
       # Get a mapping of all locators to their warehouse
-      conn, root = self.get_data("/openbravo/ws/dal/Locator")
-      for event, elem in conn:
-        if event != 'end' or elem.tag != 'Locator':
-          continue
-        warehouse = elem.find("warehouse").get('id')
-        objectid = elem.get('id')
-        self.locators[objectid] = warehouse
-        root.clear()
+      self.get_data("/openbravo/ws/dal/Locator", parse2)
 
       transaction.commit(using=self.database)
       if self.verbosity > 0:
@@ -631,27 +659,12 @@ class Command(BaseCommand):
   # We assume that a lineNo is unique within an order. However, this is not enforced by Openbravo!
   def import_salesorders(self, cursor):
 
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      deliveries = set()
-      if self.verbosity > 0:
-        print("Importing sales orders...")
-
-      # Get the list of known demands in frePPLe
-      cursor.execute("SELECT name FROM demand")
-      frepple_keys = set([ i[0] for i in cursor.fetchall() ])
-
-      # Get the list of sales order lines
-      insert = []
-      update = []
-      deliveries = set()
-      query = urllib.quote("(updated>'%s' or salesOrder.updated>'%s') and salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')" % (self.delta, self.delta))
-      conn, root = self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query)
-      count = 0
+    def parse(conn, root):
+      records = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'OrderLine':
           continue
+        records += 1
         organization = self.organizations.get(elem.find("organization").get("id"), None)
         product = self.items.get(elem.find("product").get('id'), None)
         warehouse = self.locations.get(elem.find("warehouse").get('id'), None)
@@ -665,9 +678,16 @@ class Command(BaseCommand):
         documentno = elem.find("salesOrder").get('identifier').split()[0]
         lineNo = elem.find("lineNo").text
         unique_name = "%s %s %s" % (organization, documentno, lineNo)
-        scheduledDeliveryDate = datetime.strptime(elem.find("scheduledDeliveryDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
-        orderedQuantity = float(elem.find("orderedQuantity").text)
-        deliveredQuantity = float(elem.find("deliveredQuantity").text)
+        tmp = elem.find("scheduledDeliveryDate").text
+        if tmp:
+          scheduledDeliveryDate = datetime.strptime(tmp, '%Y-%m-%dT%H:%M:%S.%fZ')
+        else:
+          root.clear()
+          continue
+        tmp = elem.find("orderedQuantity").text
+        orderedQuantity = tmp and float(tmp) or 0
+        tmp = elem.find("deliveredQuantity").text
+        deliveredQuantity = tmp and float(tmp) or 0
         closed = deliveredQuantity >= orderedQuantity   # TODO Not the right criterion
         operation = u'Ship %s @ %s' % (product, warehouse)
         deliveries.update([
@@ -688,12 +708,26 @@ class Command(BaseCommand):
           frepple_keys.add(unique_name)
         # Clean the XML hierarchy
         root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
+      return records
+
+    transaction.enter_transaction_management(using=self.database)
+    try:
+      starttime = time()
+      deliveries = set()
       if self.verbosity > 0:
-        print ('')
+        print("Importing sales orders...")
+
+      # Get the list of known demands in frePPLe
+      cursor.execute("SELECT name FROM demand")
+      frepple_keys = set([ i[0] for i in cursor.fetchall() ])
+
+      # Get the list of sales order lines
+      insert = []
+      update = []
+      deliveries = set()
+      query = urllib.quote("(updated>'%s' or salesOrder.updated>'%s') and salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')" % (self.delta, self.delta))      
+      query = urllib.quote("salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')")
+      self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query, parse)
 
       # Create or update delivery operations
       cursor.execute("SELECT name FROM operation where name like 'Ship %'")
@@ -776,6 +810,28 @@ class Command(BaseCommand):
   #     working.
   #
   def import_machines(self, cursor):
+
+    def parse(conn, root):
+      records = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'ManufacturingMachine':
+          continue
+        records += 1
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
+        if not organization:
+          continue
+        unique_name = elem.get('identifier')
+        objectid = elem.get('id')
+        if unique_name in frepple_keys:
+          update.append( (objectid, unique_name) )
+        else:
+          insert.append( (unique_name, objectid) )
+        unused_keys.discard(unique_name)
+        self.resources[objectid] = unique_name
+        # Clean the XML hierarchy
+        root.clear()
+      return records
+
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
@@ -790,30 +846,7 @@ class Command(BaseCommand):
       unused_keys = frepple_keys.copy()
       insert = []
       update = []
-      conn, root = self.get_data("/openbravo/ws/dal/ManufacturingMachine?orderBy=name&includeChildren=false")
-      count = 0
-      for event, elem in conn:
-        if event != 'end' or elem.tag != 'ManufacturingMachine':
-          continue
-        organization = self.organizations.get(elem.find("organization").get("id"), None)
-        if not organization:
-          continue
-        unique_name = elem.get('identifier')
-        objectid = elem.get('id')
-        if unique_name in frepple_keys:
-          update.append( (objectid, unique_name) )
-        else:
-          insert.append( (unique_name, objectid) )
-        unused_keys.discard(unique_name)
-        self.resources[objectid] = unique_name
-        # Clean the XML hierarchy
-        root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
-      if self.verbosity > 0:
-        print ('')
+      self.get_data("/openbravo/ws/dal/ManufacturingMachine?orderBy=name&includeChildren=false", parse)
 
       cursor.executemany(
         "insert into resource \
@@ -860,31 +893,13 @@ class Command(BaseCommand):
   #        - %qty -> onhand
   #        - 'openbravo' -> subcategory
   def import_onhand(self, cursor):
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing onhand...")
 
-      # Get the list of all current frepple records
-      cursor.execute("SELECT name, subcategory FROM buffer")
-      frepple_buffers = {}
-      for i in cursor.fetchall():
-        frepple_buffers[i[0]] = i[1]
-
-      # Reset stock levels in all openbravo buffers
-      cursor.execute("UPDATE buffer SET onhand=0, lastmodified='%s' WHERE subcategory='openbravo'" % self.date )
-
-      # Get all stock values. NO incremental load here!
-      insert = []
-      increment = []
-      update = []
-      query = urllib.quote("quantityOnHand>0")
-      conn, root = self.get_data("/openbravo/ws/dal/MaterialMgmtStorageDetail?where=%s" % query)
-      count = 0
+    def parse(conn, root):
+      records = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'MaterialMgmtStorageDetail':
           continue
+        records += 1
         organization = self.organizations.get(elem.find("organization").get("id"), None)
         if not organization:
           continue
@@ -911,12 +926,29 @@ class Command(BaseCommand):
           frepple_buffers[buffer_name] = 'openbravo'
         # Clean the XML hierarchy
         root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
+      return records
+
+    transaction.enter_transaction_management(using=self.database)
+    try:
+      starttime = time()
       if self.verbosity > 0:
-        print ('')
+        print("Importing onhand...")
+
+      # Get the list of all current frepple records
+      cursor.execute("SELECT name, subcategory FROM buffer")
+      frepple_buffers = {}
+      for i in cursor.fetchall():
+        frepple_buffers[i[0]] = i[1]
+
+      # Reset stock levels in all openbravo buffers
+      cursor.execute("UPDATE buffer SET onhand=0, lastmodified='%s' WHERE subcategory='openbravo'" % self.date )
+
+      # Get all stock values. NO incremental load here!
+      insert = []
+      increment = []
+      update = []
+      query = urllib.quote("quantityOnHand>0")
+      self.get_data("/openbravo/ws/dal/MaterialMgmtStorageDetail?where=%s" % query, parse)
 
       cursor.executemany(
         "insert into buffer \
@@ -977,28 +1009,14 @@ class Command(BaseCommand):
   #        - 1 -> quantity
   #        - 'end' -> type
   def import_approvedvendors(self, cursor):
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing approved vendors...")
-      cursor.execute("SELECT name, subcategory, source FROM operation where name like 'Purchase %'")
-      frepple_keys = {}
-      for i in cursor.fetchall():
-        if i[1] == 'openbravo':
-          frepple_keys[i[0]] = i[2]
-        else:
-          frepple_keys[i[0]] = None
-      unused_keys = frepple_keys.copy()
-      purchasing = []
-      warehouses = self.locations.values()
-      query = urllib.quote("product.purchase=true and currentVendor=true")
-      conn, root = self.get_data("/openbravo/ws/dal/ApprovedVendor?where=%s&orderBy=product&includeChildren=false" % query)
-      count = 0
-      prevproduct = None
+
+    def parse(conn, root):
+      global prevproduct
+      records = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'ApprovedVendor':
           continue
+        records += 1
         objectid = elem.get('id')
         product = self.items.get(elem.find('product').get('id'), None)
         if not product:
@@ -1022,12 +1040,27 @@ class Command(BaseCommand):
             ))
         # Clean the XML hierarchy
         root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
+      return records
+
+    transaction.enter_transaction_management(using=self.database)
+    global prevproduct
+    try:
+      starttime = time()
       if self.verbosity > 0:
-        print ('')
+        print("Importing approved vendors...")
+      cursor.execute("SELECT name, subcategory, source FROM operation where name like 'Purchase %'")
+      frepple_keys = {}
+      for i in cursor.fetchall():
+        if i[1] == 'openbravo':
+          frepple_keys[i[0]] = i[2]
+        else:
+          frepple_keys[i[0]] = None
+      unused_keys = frepple_keys.copy()
+      purchasing = []
+      warehouses = self.locations.values()
+      query = urllib.quote("product.purchase=true and currentVendor=true")
+      prevproduct = None
+      self.get_data("/openbravo/ws/dal/ApprovedVendor?where=%s&orderBy=product&includeChildren=false" % query, parse)
 
       # Remove deleted operations
       cursor.executemany(
@@ -1141,32 +1174,14 @@ class Command(BaseCommand):
   #        - %scheduledDeliveryDate -> enddate
   #        - 'openbravo' -> source
   def import_purchaseorders(self, cursor):
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing purchase orders...")
 
-      # Find all known operationplans in frePPLe
-      cursor.execute("SELECT source \
-         FROM operationplan \
-         where source is not null \
-           and operation_id like 'Purchase %'")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      cursor.execute("SELECT max(id) FROM operationplan")
-      idcounter = cursor.fetchone()[0] or 1
-
-      # Get the list of all open purchase orders
-      insert = []
-      update = []
-      delete = []
-      deliveries = set()
-      query = urllib.quote("updated>'%s' and salesOrder.salesTransaction=false and salesOrder.documentType.name<>'RTV Order'" % self.delta)
-      conn, root = self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query)
-      count = 0
+    def parse(conn, root):
+      global idcounter
+      records = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'OrderLine':
           continue
+        records += 1
         product = self.items.get(elem.find("product").get('id'), None)
         warehouse = self.locations.get(elem.find("warehouse").get('id'), None)
         organization = self.organizations.get(elem.find("organization").get("id"), None)
@@ -1203,12 +1218,31 @@ class Command(BaseCommand):
           frepple_keys.add(objectid)
         # Clean the XML hierarchy
         root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
+      return records
+
+    global idcounter
+    transaction.enter_transaction_management(using=self.database)
+    try:
+      starttime = time()
       if self.verbosity > 0:
-        print ('')
+        print("Importing purchase orders...")
+
+      # Find all known operationplans in frePPLe
+      cursor.execute("SELECT source \
+         FROM operationplan \
+         where source is not null \
+           and operation_id like 'Purchase %'")
+      frepple_keys = set([ i[0] for i in cursor.fetchall()])
+      cursor.execute("SELECT max(id) FROM operationplan")
+      idcounter = cursor.fetchone()[0] or 1
+
+      # Get the list of all open purchase orders
+      insert = []
+      update = []
+      delete = []
+      deliveries = set()
+      query = urllib.quote("updated>'%s' and salesOrder.salesTransaction=false and salesOrder.documentType.name<>'RTV Order'" % self.delta)
+      self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query, parse)
 
       # Create or update procurement operations
       cursor.execute("SELECT name FROM operation where name like 'Purchase %'")
@@ -1289,6 +1323,34 @@ class Command(BaseCommand):
   #        - %product -> item
   #        - 'openbravo' -> subcategory
   def import_workInProgress(self, cursor):
+
+    def parse(conn, root):
+      records = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'ManufacturingWorkRequirement':
+          continue
+        records += 1
+        objectid = elem.get('id')
+        quantity = float(elem.find("quantity").text)
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
+        location = self.organization_location.get(organization, None)
+        if not location:
+          continue
+        processPlan = frepple_operations.get( (elem.find("processPlan").get('id'), location), None)
+        if not processPlan:
+          continue
+        startingDate = datetime.strptime(elem.find("startingDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
+        endingDate = datetime.strptime(elem.find("endingDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
+        if objectid in frepple_keys:
+          update.append( (processPlan, quantity, startingDate, endingDate, objectid) )
+        else:
+          idcounter += 1
+          insert.append( (idcounter, processPlan, quantity, startingDate, endingDate, objectid) )
+        unused_keys.discard(objectid)
+        # Clean the XML hierarchy
+        root.clear()
+      return records
+
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
@@ -1316,36 +1378,7 @@ class Command(BaseCommand):
       insert = []
       update = []
       query = urllib.quote("closed=false")
-      conn, root = self.get_data("/openbravo/ws/dal/ManufacturingWorkRequirement?where=%s" % query)
-      count = 0
-      for event, elem in conn:
-        if event != 'end' or elem.tag != 'ManufacturingWorkRequirement':
-          continue
-        objectid = elem.get('id')
-        quantity = float(elem.find("quantity").text)
-        organization = self.organizations.get(elem.find("organization").get("id"), None)
-        location = self.organization_location.get(organization, None)
-        if not location:
-          continue
-        processPlan = frepple_operations.get( (elem.find("processPlan").get('id'), location), None)
-        if not processPlan:
-          continue
-        startingDate = datetime.strptime(elem.find("startingDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
-        endingDate = datetime.strptime(elem.find("endingDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
-        if objectid in frepple_keys:
-          update.append( (processPlan, quantity, startingDate, endingDate, objectid) )
-        else:
-          idcounter += 1
-          insert.append( (idcounter, processPlan, quantity, startingDate, endingDate, objectid) )
-        unused_keys.discard(objectid)
-        # Clean the XML hierarchy
-        root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
-      if self.verbosity > 0:
-        print ('')
+      self.get_data("/openbravo/ws/dal/ManufacturingWorkRequirement?where=%s" % query, parse)
 
       # Delete closed/canceled/deleted work requirements
       deleted = [ (i,) for i in unused_keys ]
@@ -1383,6 +1416,37 @@ class Command(BaseCommand):
   #   - extracting productBOM object for all Products with
   #
   def import_productbom(self, cursor):
+
+    def parse(conn, root):
+      records = 0
+      for event, elem in conn:
+        if event != 'end' or elem.tag != 'ProductBOM':
+          continue
+        records += 1
+        bomquantity = float(elem.find("bOMQuantity").text)
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
+        product = self.items.get(elem.find("product").get("id"), None)
+        bomproduct = self.items.get(elem.find("bOMProduct").get("id"), None)
+        if not product or not organization or not bomproduct or not product in frepple_buffers:
+          # Rejecting uninteresting records
+          root.clear()
+          continue
+        for name, loc in frepple_buffers[product]:
+          operation = "Product BOM %s @ %s" % (product, loc)
+          buf = "%s @ %s" % (bomproduct, loc)
+          operations.add( (operation, loc, name) )
+          if not buf in frepple_keys:
+            buffers.add( (buf, bomproduct, loc) )
+          flows[ (operation, name, 'end') ] = 1
+          t = (operation, buf, 'start')
+          if t in flows:
+            flows[t] -= bomquantity
+          else:
+            flows[t] = -bomquantity
+        # Clean the XML hierarchy
+        root.clear()
+      return records
+
     transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
@@ -1410,42 +1474,10 @@ class Command(BaseCommand):
 
       # Loop over all productboms
       query = urllib.quote("product.billOfMaterials=true")
-      conn, root = self.get_data("/openbravo/ws/dal/ProductBOM?where=%s&includeChildren=false" % query)
-      count = 0
       operations = set()
       buffers = set()
       flows = {}
-      for event, elem in conn:
-        if event != 'end' or elem.tag != 'ProductBOM':
-          continue
-        bomquantity = float(elem.find("bOMQuantity").text)
-        organization = self.organizations.get(elem.find("organization").get("id"), None)
-        product = self.items.get(elem.find("product").get("id"), None)
-        bomproduct = self.items.get(elem.find("bOMProduct").get("id"), None)
-        if not product or not organization or not bomproduct or not product in frepple_buffers:
-          # Rejecting uninteresting records
-          root.clear()
-          continue
-        for name, loc in frepple_buffers[product]:
-          operation = "Product BOM %s @ %s" % (product, loc)
-          buf = "%s @ %s" % (bomproduct, loc)
-          operations.add( (operation, loc, name) )
-          if not buf in frepple_keys:
-            buffers.add( (buf, bomproduct, loc) )
-          flows[ (operation, name, 'end') ] = 1
-          t = (operation, buf, 'start')
-          if t in flows:
-            flows[t] -= bomquantity
-          else:
-            flows[t] = -bomquantity
-        # Clean the XML hierarchy
-        root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
-      if self.verbosity > 0:
-        print ('')
+      self.get_data("/openbravo/ws/dal/ProductBOM?where=%s&includeChildren=false" % query, parse)
 
       # Execute now on the database
       cursor.executemany(
@@ -1499,54 +1531,22 @@ class Command(BaseCommand):
   #        - routings
   #
   def import_processplan(self, cursor):
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing processplans...")
 
-      # Reset the current operations
-      cursor.execute("DELETE FROM operationplan where operation_id like 'Processplan %'")  # TODO allow incremental load!
-      cursor.execute("DELETE FROM suboperation where operation_id like 'Processplan %'")
-      cursor.execute("DELETE FROM resourceload where operation_id like 'Processplan %'")
-      cursor.execute("DELETE FROM flow where operation_id like 'Processplan %'")
-      cursor.execute("UPDATE buffer SET producing_id=NULL where subcategory='openbravo' and producing_id like 'Processplan %'")
-      cursor.execute("DELETE FROM operation where name like 'Processplan %'")
-
-      # Pick up existing operations in frePPLe
-      cursor.execute("SELECT name FROM operation")
-      frepple_operations = set([i[0] for i in cursor.fetchall()])
-
-      # Get the list of all frePPLe buffers
-      cursor.execute("SELECT name, item_id, location_id FROM buffer")
-      frepple_buffers = {}
-      for i in cursor.fetchall():
-        if i[1] in frepple_buffers:
-          frepple_buffers[i[1]].append( (i[0], i[2]) )
-        else:
-          frepple_buffers[i[1]] = [ (i[0], i[2]) ]
-
-      # Get a dictionary with all process plans
-      processplans = {}
-      conn, root = self.get_data("/openbravo/ws/dal/ManufacturingProcessPlan?includeChildren=true")
+    def parse1(conn, root):
+      records = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'ManufacturingProcessPlan':
           continue
+        records += 1
         processplans[elem.get('id')] = elem
+      return records
 
-      # Loop over all produced products
-      query = urllib.quote("production=true and processPlan is not null")
-      conn, root = self.get_data("/openbravo/ws/dal/Product?where=%s&orderBy=name&includeChildren=false" % query)
-      count = 0
-      operations = []
-      suboperations = []
-      buffers_create = []
-      buffers_update = []
-      flows = {}
-      loads = []
+    def parse2(conn, root):
+      records = 0
       for event, elem in conn:
         if event != 'end' or elem.tag != 'Product':
           continue
+        records += 1
         product = self.items.get(elem.get('id'), None)
         if not product or not product in frepple_buffers:
           # TODO A produced item which appears in a BOM but has no sales orders, purchase orders or onhand will not show up.
@@ -1635,12 +1635,48 @@ class Command(BaseCommand):
                     loads.append( (step_name, machine, 1) )
         # Clean the XML hierarchy
         root.clear()
-        count -= 1
-        if self.verbosity > 0 and count < 0:
-          count = 500
-          print('.', end="")
+      return records
+
+    transaction.enter_transaction_management(using=self.database)
+    try:
+      starttime = time()
       if self.verbosity > 0:
-        print ('')
+        print("Importing processplans...")
+
+      # Reset the current operations
+      cursor.execute("DELETE FROM operationplan where operation_id like 'Processplan %'")  # TODO allow incremental load!
+      cursor.execute("DELETE FROM suboperation where operation_id like 'Processplan %'")
+      cursor.execute("DELETE FROM resourceload where operation_id like 'Processplan %'")
+      cursor.execute("DELETE FROM flow where operation_id like 'Processplan %'")
+      cursor.execute("UPDATE buffer SET producing_id=NULL where subcategory='openbravo' and producing_id like 'Processplan %'")
+      cursor.execute("DELETE FROM operation where name like 'Processplan %'")
+
+      # Pick up existing operations in frePPLe
+      cursor.execute("SELECT name FROM operation")
+      frepple_operations = set([i[0] for i in cursor.fetchall()])
+
+      # Get the list of all frePPLe buffers
+      cursor.execute("SELECT name, item_id, location_id FROM buffer")
+      frepple_buffers = {}
+      for i in cursor.fetchall():
+        if i[1] in frepple_buffers:
+          frepple_buffers[i[1]].append( (i[0], i[2]) )
+        else:
+          frepple_buffers[i[1]] = [ (i[0], i[2]) ]
+
+      # Get a dictionary with all process plans
+      processplans = {}
+      self.get_data("/openbravo/ws/dal/ManufacturingProcessPlan?includeChildren=true", parse1)
+
+      # Loop over all produced products
+      query = urllib.quote("production=true and processPlan is not null")
+      operations = []
+      suboperations = []
+      buffers_create = []
+      buffers_update = []
+      flows = {}
+      loads = []
+      self.get_data("/openbravo/ws/dal/Product?where=%s&orderBy=name&includeChildren=false" % query, parse2)
 
       # TODO use "decrease" and "rejected" fields on steps to compute the yield
       # TODO multiple processplans for the same item -> alternate operation

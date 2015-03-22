@@ -117,24 +117,44 @@ div #tabs  {
     font-size: 1em;
 }
 
+/* HEADER */
+
+#user-tools {
+  height: 40px;
+  line-height: 40px;
+  padding-right: 15px;
+  float: right;
+  font-size: 13px;
+  text-align: right;
+}
+
 /* BREADCRUMBS */
 
 div.breadcrumbs {
-    padding: 2px 8px 3px 8px;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    text-align: left;
-    background: none;
+  padding: 0px 15px 0px 15px;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+  font-size: 13px;
+  background: none;
+  height: 3em;
+  line-height: 3em;
 }
 
 div.breadcrumbs a {
-    padding: 2px 8px 3px 8px;
-    //border-bottom: 1px solid #ccc;
-    font-size: 11px;
-    color: #333333;
-    text-align: left;
+  color: #333333;
+  text-align: left;
 }
 
+div.selectdb {
+  padding: 0px 10px 0px 30px;
+  float: right;
+}
+
+div.selectdb select {
+  margin: 0px;
+  padding-right: 0px;
+}
 
 /* PAGE STRUCTURE */
 
@@ -161,19 +181,6 @@ div.breadcrumbs a {
 #footer {
     clear: both;
     padding: 10px;
-}
-
-/* HEADER */
-
-#user-tools {
-    float: right;
-    padding-right: 5px;
-    font-size: 11px;
-    text-align: right;
-}
-
-#user-tools a {
-    color: #333333;
 }
 
 /* TABLES */
@@ -381,8 +388,8 @@ span.context {
 /* Style for main navigation menu */
 
 #headerbar div.menuBar {
-  padding-right: 10px;
-  padding-left: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
   text-align: left;
   font-size: 1em;
   position: absolute; bottom: 0;

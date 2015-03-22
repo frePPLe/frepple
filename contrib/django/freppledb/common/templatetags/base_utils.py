@@ -55,7 +55,7 @@ class CrumbsNode(Node):
   {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
   '''
 
-  separator = '&nbsp;&nbsp;<i class="fa fa-caret-right"></i>&nbsp;&nbsp;'
+  separator = '&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-caret-right"></i>&nbsp;&nbsp;&nbsp;&nbsp;'
 
   def render(self, context):
     try:
@@ -223,14 +223,14 @@ class SelectDatabaseNode(Node):
     scenarios = Scenario.objects.filter(status='In use').values('name')
     if len(scenarios) <= 1:
       return ''
-    s = ['<form>%s&nbsp;<select id="database" name="%s" onchange="selectDatabase()">' % (force_text(_("Model:")), req.database) ]
+    s = ['<select id="database" name="%s" onchange="selectDatabase()">' % req.database ]
     for i in scenarios:
       i = i['name']
       if i == req.database:
         s.append('<option value="%s" selected="selected">%s</option>' % (i, i))
       else:
         s.append('<option value="%s">%s</option>' % (i, i))
-    s.append('</select></form>')
+    s.append('</select>')
     return ''.join(s)
 
   def __repr__(self):

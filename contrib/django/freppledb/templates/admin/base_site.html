@@ -25,5 +25,5 @@
   });
 </script>
 {% endblock %}
-{% block breadcrumbs %}<div class="breadcrumbs"><a id="cockpitcrumb" href="{{request.prefix}}/admin/">{% trans 'Cockpit' %}</a><span id="breadcrumbs">{% crumbs %}</span></div>{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><div class="selectdb">{% selectDatabase %}</div><a id="cockpitcrumb" href="{{request.prefix}}/admin/">{% trans 'Cockpit' %}</a><span id="breadcrumbs">{% crumbs %}</span></div>{% endblock %}
 {% block nav-global %}{% endblock %}

@@ -227,7 +227,7 @@ class Command(BaseCommand):
 
       # Get the response
       statuscode, statusmessage, header = webservice.getreply()
-      if statuscode != httplib.OK:
+      if statuscode != http.client.OK:
         raise Exception(statusmessage)
       if self.verbosity == 1:
         print('.', end="")

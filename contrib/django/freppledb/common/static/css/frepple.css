@@ -485,6 +485,10 @@ table thead th.sorted {
   padding: 0px 3px;
 }
 
+.editablepivotcol {
+  line-height: 20px;
+}
+
 .bold {
   font-weight: bold;
 }

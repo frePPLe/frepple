@@ -1408,7 +1408,7 @@ class GridPivot(GridReport):
     for i in cls.crosses:
       result.append(
         "{name:'%s',editable:%s}"
-        % (title('title' in i[1] and i[1]['title'] or ''), getattr(i[1], 'editable', False) and 'true' or 'false')
+        % (title('title' in i[1] and i[1]['title'] or ''), i[1].get('editable', False) and 'true' or 'false')
         )
     return ',\n'.join(result)
 

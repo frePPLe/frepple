@@ -1522,11 +1522,18 @@ class GridPivot(GridReport):
       r.append(', "%s":[' % i['bucket'])
       first2 = True
       for f in reportclass.crosses:
-        if first2:
-          r.append('%s' % i[f[0]])
-          first2 = False
+        if i[f[0]] == None:
+          if first2:
+            r.append('null')
+            first2 = False
+          else:
+            r.append(',null')
         else:
-          r.append(', %s' % i[f[0]])
+          if first2:
+            r.append('%s' % i[f[0]])
+            first2 = False
+          else:
+            r.append(',%s' % i[f[0]])
       r.append(']')
     r.append('}')
     r.append('\n]}\n')

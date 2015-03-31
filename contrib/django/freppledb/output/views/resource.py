@@ -45,8 +45,7 @@ class OverviewReport(GridPivot):
     )
   crosses = (
     ('available', {
-       'title': _('available'),
-       'editable': lambda req: req.user.has_perm('input.change_resource')
+       'title': _('available')
        }),
     ('unavailable', {'title': _('unavailable')}),
     ('setup', {'title': _('setup')}),

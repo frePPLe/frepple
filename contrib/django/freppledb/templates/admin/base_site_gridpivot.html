@@ -45,7 +45,7 @@ $(function() {
     hidegrid: false,
     scrollRows: true,
     {% if mode == "table" %}altRows: true,
-    altclass:'oddRow',{% endif %}
+    altclass:'altRow',{% endif %}
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     autowidth: true,
 	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},

@@ -732,9 +732,6 @@ var grid = {
 }
 
 
-
-
-
 //----------------------------------------------------------------------------
 // Code for customized autocomplete widget.
 // The customization creates unselectable categories and selectable list

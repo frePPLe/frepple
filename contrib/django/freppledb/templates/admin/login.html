@@ -19,11 +19,6 @@ The changes are:
   .login #container {
     border: none;
   }
-  img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto
-  }
 </style>
 {% endblock %}
 
@@ -43,6 +38,8 @@ $(function() {
 <![endif]-->
 
 {% endblock %}
+
+{% block branding %}<img style="display:block; margin-left:auto; margin-right:auto" src="{{STATIC_URL}}img/frepple_logo.svg" height="94" width="240" alt="frePPLe&nbsp;{% version %}">{% endblock %}
 
 {% block bodyclass %}login{% endblock %}
 

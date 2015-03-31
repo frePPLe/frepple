@@ -137,8 +137,7 @@ div.breadcrumbs {
   text-align: left;
   font-size: 13px;
   background: none;
-  height: 3em;
-  line-height: 3em;
+  line-height: 2em;
 }
 
 div.breadcrumbs a {
@@ -380,36 +379,8 @@ span.context {
   padding-left: 3px;
 }
 
-.ui-autocomplete-category {
-  font-weight:bold;
-  list-style-type: none;
-}
 
-/* Style for main navigation menu */
-
-#headerbar div.menuBar {
-  padding-right: 15px;
-  padding-left: 15px;
-  text-align: left;
-  font-size: 1em;
-  position: absolute; bottom: 0;
-  display: inline;
-}
-
-#headerbar div.menuBar a.menuButton {
-  background-color: transparent;
-  cursor: default;
-  left: 0px;
-  margin: 1px;
-  padding: 2px 10px 2px 10px;
-  position: relative;
-  text-decoration: none;
-  top: 0px;
-}
-
-#headerbar nav {
-  display: inline;
-}
+/* Styles for the navigation header. */
 
 #headerbar {
   position: relative;
@@ -418,48 +389,71 @@ span.context {
   padding: 10px 10px 3px 15px;
 }
 
-#headerbar div.menuBar div {
-  position: absolute;
-  visibility: hidden;
+nav {
+  display: inline;
   z-index: 10000;
+  font-size: 13px;
+  line-height: 40px;
+  height: 40px;
 }
 
-#headerbar div.menu {
-  left: 0px;
-  padding: 0px 1px 1px 0px;
-  position: absolute;
-  top: 0px;
-  visibility: hidden;
-  z-index: 10000;
+nav ul {
+  padding: 0 20px;
+  margin-bottom: 0px;
+  list-style: none;
+  position: relative;
+  display: inline-table;
 }
 
-#headerbar div.ui-menu a.menuItem {
-  cursor: default;
+nav ul li input {
+  margin-left: 20px;
+}
+
+nav ul ul {
+  display: none;
+}
+
+nav ul li:hover > ul {
   display: block;
-  padding: 3px 1em;
+}
+
+nav ul li {
+  float: left;
+}
+
+nav ul li a {
+  display: block;
+  padding: 0 20px 0 20px;
+  line-height: 40px;
+  font-size: 13px;
+  color: #333333;
   text-decoration: none;
-  color: black;
 }
 
-#headerbar div.ui-menu {
-  padding: 5px 10px 5px 10px;
+nav ul ul {
+  border-radius: 0px;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: 100%;
 }
 
-#headerbar div.ui-menu a.menuItem:hover, div.menu a.menuItemHighlight {
-  background-color: #417690;
-  text-decoration: none;
-  color: black;
+nav ul ul li {
+  float: none;
+  position: relative;
 }
 
-#headerbar div.ui-menu a.menuItem span.menuItemArrow {
-  margin-right: -.75em;
+nav ul ul li a {
+  padding: 0px 20px;
+  font-size: 13px;
+  line-height: 2em;
+  height: 2em;
 }
 
-#headerbar div.ui-menu div.menuItemSep {
-  border-top: 1px solid #909090;
-  border-bottom: 1px solid #f0f0f0;
-  margin: 4px 2px;
-  z-index: 10000;
+nav ul ul ul {
+  position: absolute;
+  left: 100%;
+  top:0;
 }
 
 table thead th {
@@ -514,12 +508,12 @@ div.calendarbox
   z-index: 10;
 }
 
-.ui-autocomplete-loading
+.uzi-autocomplete-loading
 {
   background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat;
 }
 
-.ui-autocomplete
+.uzi-autocomplete
 {
   max-height: 200px;
   overflow-y: auto;
@@ -527,6 +521,11 @@ div.calendarbox
   overflow-x: hidden;
   /* add padding to account for vertical scrollbar */
   padding-right: 20px;
+}
+
+.ui-autocomplete-categoryz {
+  font-weight:bold;
+  list-style-type: none;
 }
 
 .highutil
@@ -539,17 +538,57 @@ div.calendarbox
   float: right;
 }
 
-.ui-menu .ui-menu-item a
-{
-  font-weight: bold;
-}
-
 .graph
 {
   margin: auto;
   width: 100%;
   min-height: 48px;
   height: 100%;
+}
+
+/* DASHBOARD WIDGETS */
+
+.portlet {
+  margin: 0 1em 1em 0;
+}
+
+.portlet-header {
+  padding: 0.2em 0.3em;
+  margin-bottom: 0.5em;
+  position: relative;
+  font-weight: normal;
+}
+
+.portlet-export {
+  position: absolute;
+  top: 50%;
+  right: 32px;
+  margin-top: -8px;
+}
+
+.portlet-toggle {
+  position: absolute;
+  top: 50%;
+  right: 17px;
+  margin-top: -8px;
+}
+
+.portlet-close {
+  position: absolute;
+  top: 50%;
+  right: 2px;
+  margin-top: -8px;
+}
+
+.portlet-content {
+  padding: 0 0.8em 0.8em 0.8em;
+  overflow: hidden;
+}
+
+.portlet-placeholder {
+  border: 1px dotted black;
+  margin: 0 1em 1em 0;
+  height: 50px;
 }
 
 /* TASK EXECUTION SCREEN */

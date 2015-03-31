@@ -1,12 +1,26 @@
 /*
- * This file contains extra styles used in frePPLe, and which
- * vary by theme.
+ * This file contains extra frePPLe styles that vary by theme.
  */
 
 div.breadcrumbs .fa {
   color: #838d11;
 }
 
-.oddRow {
+.altRow {
   background-color: #EEEEEE;
+}
+
+nav ul ul {
+  list-style: none;
+  padding: 2px;
+  margin: 0;
+  outline: none;
+}
+
+nav ul li:hover a, nav ul ul, .ui-autocomplete {
+  background: #e5e5e5;   /* Suggestion: copy from the Jquery UI style ".ui-widget-header". */
+}
+
+nav ul ul li a:hover {
+  background: #dadada;  /* Suggestion: copy from the Jquery UI style ".ui-state-hover". */
 }

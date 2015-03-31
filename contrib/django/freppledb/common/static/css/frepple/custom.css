@@ -18,7 +18,7 @@ nav ul ul {
 }
 
 nav ul li:hover a, nav ul ul, .ui-autocomplete {
-  background: #e5e5e5;   /* Suggestion: copy from the Jquery UI style ".ui-widget-header". */
+  background: #ebebeb;   /* Suggestion: copy from the Jquery UI style ".ui-widget-header". */
 }
 
 nav ul ul li a:hover {

@@ -564,6 +564,7 @@ div.calendarbox
   top: 50%;
   right: 32px;
   margin-top: -8px;
+  color: #666;
 }
 
 .portlet-toggle {
@@ -571,6 +572,7 @@ div.calendarbox
   top: 50%;
   right: 17px;
   margin-top: -8px;
+  color: #666;
 }
 
 .portlet-close {
@@ -578,6 +580,7 @@ div.calendarbox
   top: 50%;
   right: 2px;
   margin-top: -8px;
+  color: #666;
 }
 
 .portlet-content {

@@ -2,14 +2,28 @@
  * This file contains extra frePPLe styles that vary by theme.
  */
 
-div.breadcrumbs .fa {
-  color: #838d11;
+body, input, textarea, select, .form-row p {
+  font-size: 13px;  /* Copy from Jquery UI style ".ui-widget" */
+  font-family: 'Open sans', Helvetica,Verdana,Arial,sans-serif; /* Copy from Jquery UI style ".ui-widget" */
 }
 
+/* Style for the separator between breadcrumbs. */
+div.breadcrumbs .fa {
+  color: #838d11;
+  font-size: 16px;
+}
+
+/* Style for edited cells in a table. */
+.ui-jqgrid tr.jqgrow td.dirty-cell, input.dirty-cell {
+  background: #838d11;
+}
+
+/* Background color to display alternate rows in a table. */
 .altRow {
   background-color: #EEEEEE;
 }
 
+/* Menu bar styles. */
 nav ul ul {
   list-style: none;
   padding: 2px;
@@ -18,9 +32,9 @@ nav ul ul {
 }
 
 nav ul li:hover a, nav ul ul, .ui-autocomplete {
-  background: #ebebeb;   /* Suggestion: copy from the Jquery UI style ".ui-widget-header". */
+  background: #ebebeb;   /* Copy from the Jquery UI style ".ui-widget-header". */
 }
 
 nav ul ul li a:hover {
-  background: #dadada;  /* Suggestion: copy from the Jquery UI style ".ui-state-hover". */
+  background: #dadada;  /* Copy from the Jquery UI style ".ui-state-hover". */
 }

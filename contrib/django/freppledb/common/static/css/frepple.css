@@ -4,20 +4,10 @@
 body {
   margin: 0;
   padding: 0;
-  font-size: 12px;
-  font-family: "Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
   color: #333;
   background: white;
 }
 
-p, ol, ul, dl {
-    margin: .2em 0 .8em 0;
-}
-
-p {
-    padding: 0;
-    line-height: 140%;
-}
 
 h1,h2,h3,h4,h5 {
     font-weight: bold;
@@ -99,9 +89,6 @@ input, textarea, select, .form-row p {
     margin: 2px 0;
     padding: 2px 3px;
     vertical-align: middle;
-    font-family: "Lucida Grande", Verdana, Arial, sans-serif;
-    font-weight: normal;
-    font-size: 11px;
 }
 
 textarea {
@@ -148,11 +135,13 @@ div.breadcrumbs a {
 div.selectdb {
   padding: 0px 10px 0px 30px;
   float: right;
+  line-height: 2em;
+  height: 2em;
 }
 
 div.selectdb select {
   margin: 0px;
-  padding-right: 0px;
+  padding: 0px 0px 0px 0px;
 }
 
 /* PAGE STRUCTURE */
@@ -180,14 +169,6 @@ div.selectdb select {
 #footer {
     clear: both;
     padding: 10px;
-}
-
-/* TABLES */
-
-td, th {
-    font-size: 12px;
-    line-height: 13px;
-    vertical-align: top;
 }
 
 /* MESSAGES & ERRORS */
@@ -317,7 +298,6 @@ div.ContextMenu {
   display: none;
   position: absolute;
   z-index: 100;
-  font-size: 80%;
 }
 
 div.ContextMenu ul {
@@ -354,12 +334,16 @@ a.icon span.ui-icon {
 
 #grid tr td {
   white-space: nowrap;
-  line-height: 16px;
+  line-height: 2em;
 }
 
 #grid_frozen tr td {
   white-space: nowrap;
-  line-height: 16px;
+  line-height: 2em;
+}
+
+.pivotgrid tr td {
+  line-height: 1.5em !important;
 }
 
 .ui-row-ltr {
@@ -375,7 +359,6 @@ a.icon span.ui-icon {
 
 span.context {
   display: inline-block;
-  vertical-align: bottom;
   padding-left: 3px;
 }
 
@@ -469,10 +452,6 @@ table thead th.sorted {
 
 #toolicons span.ui-button-text {
   padding: 0.2em;
-}
-
-.ui-jqgrid tr.jqgrow td.dirty-cell, input.dirty-cell {
-  font-weight: bold;
 }
 
 .smallpadding {
@@ -592,6 +571,10 @@ div.calendarbox
   border: 1px dotted black;
   margin: 0 1em 1em 0;
   height: 50px;
+}
+
+.portlet-content table {
+  line-height: 2em;
 }
 
 /* TASK EXECUTION SCREEN */

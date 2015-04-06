@@ -46,41 +46,30 @@ task = None
 
 def logProgress(val, database=DEFAULT_DB_ALIAS):
   global task
-  transaction.enter_transaction_management(using=database)
-  try:
-    if not task and 'FREPPLE_TASKID' in os.environ:
-      try:
-        task = Task.objects.all().using(database).get(pk=os.environ['FREPPLE_TASKID'])
-      except:
-        raise Exception("Task identifier not found")
-    if task:
-      if task.status == 'Canceling':
-        task.status = 'Cancelled'
-        task.save(using=database)
-        sys.exit(2)
-      else:
-        task.status = '%d%%' % val
-        task.save(using=database)
-  finally:
-    transaction.commit(using=database)
-    transaction.leave_transaction_management(using=database)
+  if not task and 'FREPPLE_TASKID' in os.environ:
+    try:
+      task = Task.objects.all().using(database).get(pk=os.environ['FREPPLE_TASKID'])
+    except:
+      raise Exception("Task identifier not found")
+  if task:
+    if task.status == 'Canceling':
+      task.status = 'Cancelled'
+      task.save(using=database)
+      sys.exit(2)
+    else:
+      task.status = '%d%%' % val
+      task.save(using=database)
 
 
 def logMessage(msg, status=None, database=DEFAULT_DB_ALIAS):
   global task
   if task:
-    transaction.enter_transaction_management(managed=False, using=database)
-    transaction.managed(False, using=database)
-    try:
-      task.message = msg
-      if status:
-        if status == 'Done':
-          task.finished = datetime.now()
-        task.status = status
-      task.save(using=database)
-    finally:
-      transaction.commit(using=database)
-      transaction.leave_transaction_management(using=database)
+    task.message = msg
+    if status:
+      if status == 'Done':
+        task.finished = datetime.now()
+      task.status = status
+    task.save(using=database)
 
 
 def createPlan(database=DEFAULT_DB_ALIAS):
@@ -108,7 +97,6 @@ def createPlan(database=DEFAULT_DB_ALIAS):
   except:
     constraint = 15  # Default is with all constraints enabled
   solver = frepple.solver_mrp(
-    name="MRP",
     constraints=constraint,
     plantype=plantype,
     loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),

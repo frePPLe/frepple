@@ -79,7 +79,6 @@ class Command(BaseCommand):
       user = None
 
     now = datetime.now()
-    transaction.enter_transaction_management(using=database)
     task = None
     try:
       # Initialize the task
@@ -96,7 +95,6 @@ class Command(BaseCommand):
         task = Task(name='restore database', submitted=now, started=now, status='0%', user=user)
       task.arguments = args and args[0] or None
       task.save(using=database)
-      transaction.commit(using=database)
 
       # Validate options
       if not args:
@@ -144,8 +142,3 @@ class Command(BaseCommand):
       # Commit it all, even in case of exceptions
       if task:
         task.save(using=database)
-      try:
-        transaction.commit(using=database)
-      except:
-        pass
-      transaction.leave_transaction_management(using=database)

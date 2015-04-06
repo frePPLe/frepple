@@ -1,11 +1,26 @@
+diff --git django/bin/__init__.py django/bin/__init__.py
+new file mode 100644
+index 0000000..675001b
+--- /dev/null
++++ django/bin/__init__.py
+@@ -0,0 +1 @@
++# Extra file is required to keep py2exe happy
+\ No newline at end of file
+diff --git django/conf/project_template/__init__.py django/conf/project_template/__init__.py
+new file mode 100644
+index 0000000..05cb70d
+--- /dev/null
++++ django/conf/project_template/__init__.py
+@@ -0,0 +1 @@
++# Extra file is required to keep py2exe happy
 diff --git django/contrib/admin/models.py django/contrib/admin/models.py
-index 870c2b2..45cac6a 100644
+index 636a99b..1be629b 100644
 --- django/contrib/admin/models.py
 +++ django/contrib/admin/models.py
-@@ -71,11 +71,20 @@ class LogEntry(models.Model):
+@@ -74,11 +74,20 @@ class LogEntry(models.Model):
+     def get_admin_url(self):
          """
          Returns the admin URL to edit the object represented by this log entry.
-         This is relative to the Django admin index page.
 +        FrePPLe change:
 +            This code assumes there is only a single admin, with name "admin".
 +            In frePPLe we have 2 admin sites: "data" and "admin".
@@ -26,7 +41,7 @@ index 870c2b2..45cac6a 100644
 +                    pass
          return None
 diff --git django/contrib/admin/widgets.py django/contrib/admin/widgets.py
-index 6857579..ac7c362 100644
+index 19b4187..3434ffb 100644
 --- django/contrib/admin/widgets.py
 +++ django/contrib/admin/widgets.py
 @@ -6,6 +6,7 @@ from __future__ import unicode_literals
@@ -36,16 +51,16 @@ index 6857579..ac7c362 100644
 +from django.db import DEFAULT_DB_ALIAS
  from django.contrib.admin.templatetags.admin_static import static
  from django.core.urlresolvers import reverse
- from django.forms.widgets import RadioFieldRenderer
-@@ -16,6 +17,7 @@ from django.utils.translation import ugettext as _
+ from django.db.models.deletion import CASCADE
+@@ -20,6 +21,7 @@ from django.utils.html import (
  from django.utils.safestring import mark_safe
- from django.utils.encoding import force_text
- from django.utils import six
+ from django.utils.text import Truncator
+ from django.utils.translation import ugettext as _
 +from django.utils.http import urlquote
  
  
  class FilteredSelectMultiple(forms.SelectMultiple):
-@@ -151,6 +153,10 @@ class ForeignKeyRawIdWidget(forms.TextInput):
+@@ -155,6 +157,10 @@ class ForeignKeyRawIdWidget(forms.TextInput):
          if attrs is None:
              attrs = {}
          extra = []
@@ -56,18 +71,14 @@ index 6857579..ac7c362 100644
          if rel_to in self.admin_site._registry:
              # The related object is registered with the same AdminSite
              related_url = reverse(
-@@ -170,13 +176,15 @@ class ForeignKeyRawIdWidget(forms.TextInput):
+@@ -174,11 +180,13 @@ class ForeignKeyRawIdWidget(forms.TextInput):
                  attrs['class'] = 'vForeignKeyRawIdAdminField'  # The JavaScript code looks for this hook.
              # TODO: "lookup_id_" is hard-coded here. This should instead use
              # the correct API to determine the ID dynamically.
--            extra.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> ' %
--                (related_url, url, name))
--            extra.append('<img src="%s" width="16" height="16" alt="%s" /></a>' %
--                (static('admin/img/selector-search.gif'), _('Lookup')))
-+            extra.append('<a href="%s%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> '
-+                            % (prefix, related_url, url, name))
-+            extra.append('<img src="%s" width="16" height="16" alt="%s" /></a>'
-+                            % (static('admin/img/selector-search.gif'), _('Lookup')))
+-            extra.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" title="%s"></a>' %
+-                (related_url, url, name, _('Lookup')))
++            extra.append('<a href="%s%s%s" class="related-lookup" id="lookup_id_%s" title="%s"></a>' %
++                (prefix, related_url, url, name, _('Lookup')))
          output = [super(ForeignKeyRawIdWidget, self).render(name, value, attrs)] + extra
          if value:
 -            output.append(self.label_for_value(value))
@@ -77,113 +88,11 @@ index 6857579..ac7c362 100644
          return mark_safe(''.join(output))
  
      def base_url_parameters(self):
-diff --git django/core/management/__init__.py django/core/management/__init__.py
-index f32c533..2e59446 100644
---- django/core/management/__init__.py
-+++ django/core/management/__init__.py
-@@ -3,6 +3,8 @@ from importlib import import_module
- from optparse import OptionParser, NO_DEFAULT
- import os
- import sys
-+import warnings
-+from pkgutil import iter_modules
- 
- import django
- from django.apps import apps
-@@ -11,27 +13,29 @@ from django.core.exceptions import ImproperlyConfigured
- from django.core.management.base import BaseCommand, CommandError, handle_default_options
- from django.core.management.color import color_style
- from django.utils import lru_cache
-+from django.utils._os import upath
- from django.utils import six
- 
- # For backwards compatibility: get_version() used to be in this module.
- from django import get_version
- 
- 
--def find_commands(management_dir):
-+def find_commands(app_name):
-     """
--    Given a path to a management directory, returns a list of all the command
--    names that are available.
-+    Given an application name, returns a list of all the commands found.
- 
--    Returns an empty list if no commands are defined.
-+    Raises ImportError if no commands are defined.
-     """
--    command_dir = os.path.join(management_dir, 'commands')
-     try:
--        return [f[:-3] for f in os.listdir(command_dir)
--                if not f.startswith('_') and f.endswith('.py')]
--    except OSError:
-+        packages = {}
-+        mgmt_package = "%s.management.commands" % app_name
-+        # The next line imports the *package*, not all modules in the package
-+        __import__(mgmt_package)
-+        path = getattr(sys.modules[mgmt_package], '__path__', None)
-+        return [i[1] for i in iter_modules(path)]
-+    except ImportError:
-         return []
- 
--
- def load_command_class(app_name, name):
-     """
-     Given a command name and an application name, returns the Command
-@@ -65,14 +69,14 @@ def get_commands():
-     The dictionary is cached on the first call and reused on subsequent
-     calls.
-     """
--    commands = {name: 'django.core' for name in find_commands(__path__[0])}
-+    commands = {name: 'django.core' for name in find_commands('django.core')}
- 
-     if not settings.configured:
-         return commands
- 
-     for app_config in reversed(list(apps.get_app_configs())):
-         path = os.path.join(app_config.path, 'management')
--        commands.update({name: app_config.name for name in find_commands(path)})
-+        commands.update({name: app_config.name for name in find_commands(app_config.name)})
- 
-     return commands
- 
-diff --git django/db/migrations/loader.py django/db/migrations/loader.py
-index b700616..16ffbf2 100644
---- django/db/migrations/loader.py
-+++ django/db/migrations/loader.py
-@@ -2,6 +2,7 @@ from __future__ import unicode_literals
- 
- from importlib import import_module
- import os
-+import pkgutil
- import sys
- 
- from django.apps import apps
-@@ -89,14 +90,12 @@ class MigrationLoader(object):
-                 if was_loaded:
-                     six.moves.reload_module(module)
-             self.migrated_apps.add(app_config.label)
--            directory = os.path.dirname(module.__file__)
--            # Scan for .py files
--            migration_names = set()
--            for name in os.listdir(directory):
--                if name.endswith(".py"):
--                    import_name = name.rsplit(".", 1)[0]
--                    if import_name[0] not in "_.~":
--                        migration_names.add(import_name)
-+            # Scan for migrations
-+            migration_names = set([
-+              name
-+              for _, name, is_pkg in pkgutil.iter_modules(module.__path__)
-+              if not is_pkg
-+              ])
-             # Load them
-             south_style_migrations = False
-             for migration_name in migration_names:
 diff --git django/db/models/fields/related.py django/db/models/fields/related.py
-index 344b238..52e883a 100644
+index a499fef..fa20245 100644
 --- django/db/models/fields/related.py
 +++ django/db/models/fields/related.py
-@@ -1696,7 +1696,9 @@ class ForeignKey(ForeignObject):
+@@ -1901,7 +1901,9 @@ class ForeignKey(ForeignObject):
          if value is None:
              return
  
@@ -194,43 +103,11 @@ index 344b238..52e883a 100644
          qs = self.rel.to._default_manager.using(using).filter(
              **{self.rel.field_name: value}
          )
-diff --git django/db/models/sql/compiler.py django/db/models/sql/compiler.py
-index 90ac90f..25df08e 100644
---- django/db/models/sql/compiler.py
-+++ django/db/models/sql/compiler.py
-@@ -258,8 +258,11 @@ class SQLCompiler(object):
- 
-         for (table, col), _ in self.query.related_select_cols:
-             r = '%s.%s' % (qn(table), qn(col))
--            if with_aliases and col in col_aliases:
--                c_alias = 'Col%d' % len(col_aliases)
-+            if with_aliases:
-+                if col in col_aliases:
-+                    c_alias = 'Col%d' % len(col_aliases)
-+                else:
-+                    c_alias = col
-                 result.append('%s AS %s' % (r, c_alias))
-                 aliases.add(c_alias)
-                 col_aliases.add(c_alias)
-@@ -318,8 +321,11 @@ class SQLCompiler(object):
-                 result.append((alias, field))
-                 aliases.add(alias)
-                 continue
--            if with_aliases and column in col_aliases:
--                c_alias = 'Col%d' % len(col_aliases)
-+            if with_aliases:
-+                if field.column in col_aliases:
-+                    c_alias = 'Col%d' % len(col_aliases)
-+                else:
-+                    c_alias = field.column
-                 result.append('%s.%s AS %s' % (qn(alias),
-                     qn2(column), c_alias))
-                 col_aliases.add(c_alias)
 diff --git django/template/base.py django/template/base.py
-index 822e026..6e534b9 100644
+index 1845621..1a435f6 100644
 --- django/template/base.py
 +++ django/template/base.py
-@@ -1228,6 +1228,11 @@ class Library(object):
+@@ -1289,6 +1289,11 @@ class Library(object):
                      csrf_token = context.get('csrf_token', None)
                      if csrf_token is not None:
                          new_context['csrf_token'] = csrf_token
@@ -239,14 +116,14 @@ index 822e026..6e534b9 100644
 +                    request = context.get('request', None)
 +                    if request is not None:
 +                        new_context['request'] = request
-                     return self.nodelist.render(new_context)
+                     return t.render(new_context)
  
              function_name = (name or
 diff --git django/utils/autoreload.py django/utils/autoreload.py
-index cba555e..2a4c44a 100644
+index 12f6ba2..4f765a2 100644
 --- django/utils/autoreload.py
 +++ django/utils/autoreload.py
-@@ -271,7 +271,22 @@ def reloader_thread():
+@@ -272,7 +272,22 @@ def reloader_thread():
  
  def restart_with_reloader():
      while True:
@@ -270,16 +147,3 @@ index cba555e..2a4c44a 100644
          if sys.platform == "win32":
              args = ['"%s"' % arg for arg in args]
          new_environ = os.environ.copy()
-diff --git django/utils/translation/trans_real.py django/utils/translation/trans_real.py
-index cc1ffc2..9557052 100644
---- django/utils/translation/trans_real.py
-+++ django/utils/translation/trans_real.py
-@@ -169,7 +169,7 @@ def translation(language):
-         # doesn't affect en-gb), even though they will both use the core "en"
-         # translation. So we have to subvert Python's internal gettext caching.
-         base_lang = lambda x: x.split('-', 1)[0]
--        if base_lang(lang) in [base_lang(trans) for trans in list(_translations)]:
-+        if res and base_lang(lang) in [base_lang(trans) for trans in list(_translations)]:
-             res._info = res._info.copy()
-             res._catalog = res._catalog.copy()
- 

@@ -97,8 +97,6 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     now = datetime.now()
-    ac = transaction.get_autocommit(using=self.database)
-    transaction.set_autocommit(False, using=self.database)
     task = None
     try:
       # Initialize the task
@@ -117,7 +115,6 @@ class Command(BaseCommand):
           user=user, arguments="--delta=%s" % self.delta
           )
       task.save(using=self.database)
-      transaction.commit(using=self.database)
 
       # Create a database connection to the frePPLe database
       cursor = connections[self.database].cursor()
@@ -146,38 +143,30 @@ class Command(BaseCommand):
       self.import_customers(cursor)
       task.status = '10%'
       task.save(using=self.database)
-      transaction.commit(using=self.database)
       self.import_products(cursor)
       task.status = '20%'
       task.save(using=self.database)
-      transaction.commit(using=self.database)
       self.import_locations(cursor)
       task.status = '30%'
       task.save(using=self.database)
-      transaction.commit(using=self.database)
       self.import_salesorders(cursor)
       task.status = '40%'
       task.save(using=self.database)
-      transaction.commit(using=self.database)
       self.import_machines(cursor)
       task.status = '50%'
       task.save(using=self.database)
-      transaction.commit(using=self.database)
       self.import_onhand(cursor)
       task.status = '60%'
       task.save(using=self.database)
-      transaction.commit(using=self.database)
       self.import_approvedvendors(cursor)
       task.status = '70%'
       task.save(using=self.database)
       self.import_purchaseorders(cursor)
       task.status = '80%'
       task.save(using=self.database)
-      transaction.commit(using=self.database)
       self.import_productbom(cursor)
       task.status = '90%'
       task.save(using=self.database)
-      self.import_processplan(cursor)
       task.status = '95%'
       task.save(using=self.database)
       self.import_workInProgress(cursor)
@@ -196,12 +185,6 @@ class Command(BaseCommand):
     finally:
       if task:
         task.save(using=self.database)
-      try:
-        transaction.commit(using=self.database)
-      except:
-        pass
-      settings.DEBUG = tmp_debug
-      transaction.set_autocommit(ac, using=self.database)
 
 
   def get_data(self, url, callback):
@@ -273,7 +256,6 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
     try:
       starttime = time()
       if self.verbosity > 0:
@@ -282,11 +264,7 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Loaded %d organizations in %.2f seconds" % (count, time() - starttime))
     except Exception as e:
-      transaction.rollback(using=self.database)
       raise CommandError("Error importing organizations: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
 
 
   # Importing customers
@@ -299,6 +277,7 @@ class Command(BaseCommand):
   #        - %description -> description
   #        - %id -> source
   #        - 'openbravo' -> subcategory
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_customers(self, cursor):
 
     def parse(conn, root):
@@ -326,71 +305,62 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing customers...")
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing customers...")
 
-      # Get existing records
-      cursor.execute("SELECT name, subcategory, source FROM customer")
-      frepple_keys = {}
-      for i in cursor.fetchall():
-        if i[1] == 'openbravo':
-          frepple_keys[i[0]] = i[2]
-        else:
-          frepple_keys[i[0]] = None
-      unused_keys = frepple_keys.copy()
+    # Get existing records
+    cursor.execute("SELECT name, subcategory, source FROM customer")
+    frepple_keys = {}
+    for i in cursor.fetchall():
+      if i[1] == 'openbravo':
+        frepple_keys[i[0]] = i[2]
+      else:
+        frepple_keys[i[0]] = None
+    unused_keys = frepple_keys.copy()
 
-      # Retrieve businesspartners
-      insert = []
-      update = []
-      query = urllib.quote("customer=true")
-      self.get_data("/openbravo/ws/dal/BusinessPartner?where=%s&orderBy=name&includeChildren=false" % query, parse)
+    # Retrieve businesspartners
+    insert = []
+    update = []
+    query = urllib.quote("customer=true")
+    self.get_data("/openbravo/ws/dal/BusinessPartner?where=%s&orderBy=name&includeChildren=false" % query, parse)
 
-      # Create records
-      cursor.executemany(
-        "insert into customer \
-          (description,name,source,subcategory,lastmodified) \
-          values (%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        insert
-        )
+    # Create records
+    cursor.executemany(
+      "insert into customer \
+        (description,name,source,subcategory,lastmodified) \
+        values (%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      insert
+      )
 
-      # Update records
-      cursor.executemany(
-        "update customer \
-          set description=%%s,source=%%s,subcategory='openbravo',lastmodified='%s' \
-          where name=%%s" % self.date,
-        update
-        )
+    # Update records
+    cursor.executemany(
+      "update customer \
+        set description=%%s,source=%%s,subcategory='openbravo',lastmodified='%s' \
+        where name=%%s" % self.date,
+      update
+      )
 
-      # Delete records
-      delete = [ (i,) for i, j in unused_keys.items() if j ]
-      cursor.executemany(
-        'update customer set owner_id=null where owner_id=%s',
-        delete
-        )
-      cursor.executemany(
-        'update demand set customer_id=null where customer_id=%s',
-        delete
-        )
-      cursor.executemany(
-        'delete from customer where name=%s',
-        delete
-        )
+    # Delete records
+    delete = [ (i,) for i, j in unused_keys.items() if j ]
+    cursor.executemany(
+      'update customer set owner_id=null where owner_id=%s',
+      delete
+      )
+    cursor.executemany(
+      'update demand set customer_id=null where customer_id=%s',
+      delete
+      )
+    cursor.executemany(
+      'delete from customer where name=%s',
+      delete
+      )
 
-      transaction.commit(using=self.database)
-      if self.verbosity > 0:
-        print("Inserted %d new customers" % len(insert))
-        print("Updated %d existing customers" % len(update))
-        print("Deleted %d customers" % len(delete))
-        print("Imported customers in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      raise CommandError("Error importing customers: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    if self.verbosity > 0:
+      print("Inserted %d new customers" % len(insert))
+      print("Updated %d existing customers" % len(update))
+      print("Deleted %d customers" % len(delete))
+      print("Imported customers in %.2f seconds" % (time() - starttime))
 
 
   # Importing products
@@ -402,6 +372,7 @@ class Command(BaseCommand):
   #        - %description -> description
   #        - %searchKey -> source
   #        - 'openbravo' -> subcategory
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_products(self, cursor):
 
     def parse(conn, root):
@@ -434,67 +405,58 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing products...")
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing products...")
 
-      # Get existing items
-      cursor.execute("SELECT name, subcategory, source FROM item")
-      frepple_keys = {}
-      for i in cursor.fetchall():
-        if i[1] == 'openbravo':
-          frepple_keys[i[0]] = i[2]
-        else:
-          frepple_keys[i[0]] = None
-      unused_keys = frepple_keys.copy()
+    # Get existing items
+    cursor.execute("SELECT name, subcategory, source FROM item")
+    frepple_keys = {}
+    for i in cursor.fetchall():
+      if i[1] == 'openbravo':
+        frepple_keys[i[0]] = i[2]
+      else:
+        frepple_keys[i[0]] = None
+    unused_keys = frepple_keys.copy()
 
-      # Get all items from Openbravo
-      insert = []
-      update = []
-      delete = []
-      self.get_data("/openbravo/ws/dal/Product?orderBy=name&includeChildren=false", parse)
+    # Get all items from Openbravo
+    insert = []
+    update = []
+    delete = []
+    self.get_data("/openbravo/ws/dal/Product?orderBy=name&includeChildren=false", parse)
 
-      # Create new items
-      cursor.executemany(
-        "insert into item \
-          (name,description,subcategory,source,lastmodified) \
-          values (%%s,%%s,'openbravo',%%s,'%s')" % self.date,
-        insert
-        )
+    # Create new items
+    cursor.executemany(
+      "insert into item \
+        (name,description,subcategory,source,lastmodified) \
+        values (%%s,%%s,'openbravo',%%s,'%s')" % self.date,
+      insert
+      )
 
-      # Update existing items
-      cursor.executemany(
-        "update item \
-          set description=%%s, subcategory='openbravo', source=%%s, lastmodified='%s' \
-          where name=%%s" % self.date,
-        update
-        )
+    # Update existing items
+    cursor.executemany(
+      "update item \
+        set description=%%s, subcategory='openbravo', source=%%s, lastmodified='%s' \
+        where name=%%s" % self.date,
+      update
+      )
 
-      # Delete inactive items
-      delete = [ (i,) for i, j in unused_keys.items() if j ]
-      cursor.executemany("delete from demand where item_id=%s", delete)
-      cursor.executemany(
-        "delete from flow \
-        where thebuffer_id in (select name from buffer where item_id=%s)",
-        delete
-        )
-      cursor.executemany("delete from buffer where item_id=%s", delete)
-      cursor.executemany("delete from item where name=%s", delete)
+    # Delete inactive items
+    delete = [ (i,) for i, j in unused_keys.items() if j ]
+    cursor.executemany("delete from demand where item_id=%s", delete)
+    cursor.executemany(
+      "delete from flow \
+      where thebuffer_id in (select name from buffer where item_id=%s)",
+      delete
+      )
+    cursor.executemany("delete from buffer where item_id=%s", delete)
+    cursor.executemany("delete from item where name=%s", delete)
 
-      transaction.commit(using=self.database)
-      if self.verbosity > 0:
-        print("Inserted %d new products" % len(insert))
-        print("Updated %d existing products" % len(update))
-        print("Deleted %d products" % len(delete))
-        print("Imported products in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      raise CommandError("Error importing products: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    if self.verbosity > 0:
+      print("Inserted %d new products" % len(insert))
+      print("Updated %d existing products" % len(update))
+      print("Deleted %d products" % len(delete))
+      print("Imported products in %.2f seconds" % (time() - starttime))
 
 
   # Importing locations
@@ -512,6 +474,7 @@ class Command(BaseCommand):
   #        - %searchKey %name -> name
   #        - %searchKey -> category
   #        - 'openbravo' -> source
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_locations(self, cursor):
 
     def parse1(conn, root):
@@ -560,76 +523,67 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing locations...")
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing locations...")
 
-      # Get existing locations
-      cursor.execute("SELECT name, subcategory, source FROM location")
-      frepple_keys = {}
-      for i in cursor.fetchall():
-        if i[1] == 'openbravo':
-          frepple_keys[i[0]] = i[2]
-        else:
-          frepple_keys[i[0]] = None
-      unused_keys = frepple_keys.copy()
+    # Get existing locations
+    cursor.execute("SELECT name, subcategory, source FROM location")
+    frepple_keys = {}
+    for i in cursor.fetchall():
+      if i[1] == 'openbravo':
+        frepple_keys[i[0]] = i[2]
+      else:
+        frepple_keys[i[0]] = None
+    unused_keys = frepple_keys.copy()
 
-      # Get locations
-      locations = []
-      query = urllib.quote("active=true")
-      self.get_data("/openbravo/ws/dal/Warehouse?where=%s&orderBy=name&includeChildren=false" % query, parse1)
+    # Get locations
+    locations = []
+    query = urllib.quote("active=true")
+    self.get_data("/openbravo/ws/dal/Warehouse?where=%s&orderBy=name&includeChildren=false" % query, parse1)
 
-      # Remove deleted or inactive locations
-      delete = [ (i,) for i, j in unused_keys.items() if j ]
-      cursor.executemany(
-        "update buffer \
-        set location_id=null \
-        where location_id=%s",
-        delete
-        )
-      cursor.executemany(
-        "update resource \
-        set location_id=null \
-        where location_id=%s",
-        delete
-        )
-      cursor.executemany(
-        "update location \
-        set owner_id=null \
-        where owner_id=%s",
-        delete
-        )
+    # Remove deleted or inactive locations
+    delete = [ (i,) for i, j in unused_keys.items() if j ]
+    cursor.executemany(
+      "update buffer \
+      set location_id=null \
+      where location_id=%s",
+      delete
+      )
+    cursor.executemany(
+      "update resource \
+      set location_id=null \
+      where location_id=%s",
+      delete
+      )
+    cursor.executemany(
+      "update location \
+      set owner_id=null \
+      where owner_id=%s",
+      delete
+      )
 
-      # Create or update locations
-      cursor.executemany(
-        "insert into location \
-          (description, source, subcategory, name, lastmodified) \
-          values (%%s,%%s,'openbravo',%%s,'%s')" % self.date,
-        [ i for i in locations if i[2] not in frepple_keys ]
-        )
-      cursor.executemany(
-        "update location \
-          set description=%%s, subcategory='openbravo', source=%%s, lastmodified='%s' \
-          where name=%%s" % self.date,
-        [ i for i in locations if i[2] not in frepple_keys ]
-        )
+    # Create or update locations
+    cursor.executemany(
+      "insert into location \
+        (description, source, subcategory, name, lastmodified) \
+        values (%%s,%%s,'openbravo',%%s,'%s')" % self.date,
+      [ i for i in locations if i[2] not in frepple_keys ]
+      )
+    cursor.executemany(
+      "update location \
+        set description=%%s, subcategory='openbravo', source=%%s, lastmodified='%s' \
+        where name=%%s" % self.date,
+      [ i for i in locations if i[2] not in frepple_keys ]
+      )
 
-      # Get a mapping of all locators to their warehouse
-      self.get_data("/openbravo/ws/dal/Locator", parse2)
+    # Get a mapping of all locators to their warehouse
+    self.get_data("/openbravo/ws/dal/Locator", parse2)
 
-      transaction.commit(using=self.database)
-      if self.verbosity > 0:
-        print("Processed %d locations" % len(locations))
-        print("Deleted %d locations" % len(delete))
-        print("Imported locations in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      raise CommandError("Error importing locations: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    if self.verbosity > 0:
+      print("Processed %d locations" % len(locations))
+      print("Deleted %d locations" % len(delete))
+      print("Imported locations in %.2f seconds" % (time() - starttime))
 
 
   # Importing sales orders
@@ -657,6 +611,7 @@ class Command(BaseCommand):
   #        - 'openbravo' -> source
   #        - 1 -> priority
   # We assume that a lineNo is unique within an order. However, this is not enforced by Openbravo!
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_salesorders(self, cursor):
 
     def parse(conn, root):
@@ -710,90 +665,82 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      deliveries = set()
-      if self.verbosity > 0:
-        print("Importing sales orders...")
+    starttime = time()
+    deliveries = set()
+    if self.verbosity > 0:
+      print("Importing sales orders...")
 
-      # Get the list of known demands in frePPLe
-      cursor.execute("SELECT name FROM demand")
-      frepple_keys = set([ i[0] for i in cursor.fetchall() ])
+    # Get the list of known demands in frePPLe
+    cursor.execute("SELECT name FROM demand")
+    frepple_keys = set([ i[0] for i in cursor.fetchall() ])
 
-      # Get the list of sales order lines
-      insert = []
-      update = []
-      deliveries = set()
-      query = urllib.quote("(updated>'%s' or salesOrder.updated>'%s') and salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')" % (self.delta, self.delta))      
-      query = urllib.quote("salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')")
-      self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query, parse)
+    # Get the list of sales order lines
+    insert = []
+    update = []
+    deliveries = set()
+    query = urllib.quote("(updated>'%s' or salesOrder.updated>'%s') and salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')" % (self.delta, self.delta))      
+    query = urllib.quote("salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')")
+    self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query, parse)
 
-      # Create or update delivery operations
-      cursor.execute("SELECT name FROM operation where name like 'Ship %'")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      cursor.executemany(
-        "insert into operation \
-          (name,location_id,subcategory,type,lastmodified) \
-          values (%%s,%%s,'openbravo','fixed_time','%s')" % self.date,
-        [ (i[2], i[1]) for i in deliveries if i[2] not in frepple_keys ])
-      cursor.executemany(
-        "update operation \
-          set location_id=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
-        [ (i[1], i[2]) for i in deliveries if i[2] in frepple_keys ])
+    # Create or update delivery operations
+    cursor.execute("SELECT name FROM operation where name like 'Ship %'")
+    frepple_keys = set([ i[0] for i in cursor.fetchall()])
+    cursor.executemany(
+      "insert into operation \
+        (name,location_id,subcategory,type,lastmodified) \
+        values (%%s,%%s,'openbravo','fixed_time','%s')" % self.date,
+      [ (i[2], i[1]) for i in deliveries if i[2] not in frepple_keys ])
+    cursor.executemany(
+      "update operation \
+        set location_id=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
+      [ (i[1], i[2]) for i in deliveries if i[2] in frepple_keys ])
 
-      # Create or update delivery buffers
-      cursor.execute("SELECT name FROM buffer")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      cursor.executemany(
-        "insert into buffer \
-          (name,item_id,location_id,subcategory,lastmodified) \
-          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        [ (i[3], i[0], i[1]) for i in deliveries if i[3] not in frepple_keys ])
-      cursor.executemany(
-        "update buffer \
-          set item_id=%%s, location_id=%%s, subcategory='openbravo', lastmodified='%s' where name=%%s" % self.date,
-        [ (i[0], i[1], i[3]) for i in deliveries if i[3] in frepple_keys ])
+    # Create or update delivery buffers
+    cursor.execute("SELECT name FROM buffer")
+    frepple_keys = set([ i[0] for i in cursor.fetchall()])
+    cursor.executemany(
+      "insert into buffer \
+        (name,item_id,location_id,subcategory,lastmodified) \
+        values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      [ (i[3], i[0], i[1]) for i in deliveries if i[3] not in frepple_keys ])
+    cursor.executemany(
+      "update buffer \
+        set item_id=%%s, location_id=%%s, subcategory='openbravo', lastmodified='%s' where name=%%s" % self.date,
+      [ (i[0], i[1], i[3]) for i in deliveries if i[3] in frepple_keys ])
 
-      # Create or update flow on delivery operation
-      cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
-      frepple_keys = set([ i for i in cursor.fetchall()])
-      cursor.executemany(
-        "insert into flow \
-          (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
-          values(%%s,%%s,-1,'start','openbravo','%s')" % self.date,
-        [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) not in frepple_keys ])
-      cursor.executemany(
-        "update flow \
-          set quantity=-1, type='start', source='openbravo', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
-        [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) in frepple_keys ])
+    # Create or update flow on delivery operation
+    cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
+    frepple_keys = set([ i for i in cursor.fetchall()])
+    cursor.executemany(
+      "insert into flow \
+        (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
+        values(%%s,%%s,-1,'start','openbravo','%s')" % self.date,
+      [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) not in frepple_keys ])
+    cursor.executemany(
+      "update flow \
+        set quantity=-1, type='start', source='openbravo', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
+      [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) in frepple_keys ])
 
-      # Create or update demands
-      cursor.executemany(
-        "insert into demand \
-          (source, quantity, item_id, status, subcategory, due, customer_id, operation_id, name, priority, lastmodified) \
-          values (%%s,%%s,%%s,%%s,'openbravo',%%s,%%s,%%s,%%s,0,'%s')" % self.date,
-        insert
-        )
-      cursor.executemany(
-        "update demand \
-          set source=%%s, quantity=%%s, item_id=%%s, status=%%s, subcategory='openbravo', \
-              due=%%s, customer_id=%%s, operation_id=%%s, lastmodified='%s' \
-          where name=%%s" % self.date,
-        update
-        )
+    # Create or update demands
+    cursor.executemany(
+      "insert into demand \
+        (source, quantity, item_id, status, subcategory, due, customer_id, operation_id, name, priority, lastmodified) \
+        values (%%s,%%s,%%s,%%s,'openbravo',%%s,%%s,%%s,%%s,0,'%s')" % self.date,
+      insert
+      )
+    cursor.executemany(
+      "update demand \
+        set source=%%s, quantity=%%s, item_id=%%s, status=%%s, subcategory='openbravo', \
+            due=%%s, customer_id=%%s, operation_id=%%s, lastmodified='%s' \
+        where name=%%s" % self.date,
+      update
+      )
 
-      if self.verbosity > 0:
-        print("Created or updated %d delivery operations" % len(deliveries))
-        print("Inserted %d new sales order lines" % len(insert))
-        print("Updated %d existing sales order lines" % len(update))
-        print("Imported sales orders in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      raise CommandError("Error importing sales orders: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    if self.verbosity > 0:
+      print("Created or updated %d delivery operations" % len(deliveries))
+      print("Inserted %d new sales order lines" % len(insert))
+      print("Updated %d existing sales order lines" % len(update))
+      print("Imported sales orders in %.2f seconds" % (time() - starttime))
 
 
   # Importing machines
@@ -809,6 +756,7 @@ class Command(BaseCommand):
   #     You should assign a location in frePPLe to assure that the user interface
   #     working.
   #
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_machines(self, cursor):
 
     def parse(conn, root):
@@ -832,51 +780,42 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing machines...")
-      cursor.execute("SELECT name, subcategory, source FROM resource")
-      frepple_keys = set()
-      for i in cursor.fetchall():
-        if i[1] == 'openbravo':
-          self.resources[i[2]] = i[0]
-        frepple_keys.add(i[0])
-      unused_keys = frepple_keys.copy()
-      insert = []
-      update = []
-      self.get_data("/openbravo/ws/dal/ManufacturingMachine?orderBy=name&includeChildren=false", parse)
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing machines...")
+    cursor.execute("SELECT name, subcategory, source FROM resource")
+    frepple_keys = set()
+    for i in cursor.fetchall():
+      if i[1] == 'openbravo':
+        self.resources[i[2]] = i[0]
+      frepple_keys.add(i[0])
+    unused_keys = frepple_keys.copy()
+    insert = []
+    update = []
+    self.get_data("/openbravo/ws/dal/ManufacturingMachine?orderBy=name&includeChildren=false", parse)
 
-      cursor.executemany(
-        "insert into resource \
-          (name,source,subcategory,lastmodified) \
-          values (%%s,%%s,'openbravo','%s')" % self.date,
-        insert
-        )
-      cursor.executemany(
-        "update resource \
-          set source=%%s,subcategory='openbravo',lastmodified='%s' \
-          where name=%%s" % self.date,
-        update
-        )
-      delete = [ (i,) for i in unused_keys ]
-      cursor.executemany('delete from resourceskill where resource_id=%s', delete)
-      cursor.executemany('delete from resourceload where resource_id=%s', delete)
-      cursor.executemany('update resource set owner_id where owner_id=%s', delete)
-      cursor.executemany('delete from resource where name=%s', delete)
-      transaction.commit(using=self.database)
-      if self.verbosity > 0:
-        print("Inserted %d new machines" % len(insert))
-        print("Updated %d existing machines" % len(update))
-        print("Deleted %d machines" % len(delete))
-        print("Imported machines in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      raise CommandError("Error importing machines: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    cursor.executemany(
+      "insert into resource \
+        (name,source,subcategory,lastmodified) \
+        values (%%s,%%s,'openbravo','%s')" % self.date,
+      insert
+      )
+    cursor.executemany(
+      "update resource \
+        set source=%%s,subcategory='openbravo',lastmodified='%s' \
+        where name=%%s" % self.date,
+      update
+      )
+    delete = [ (i,) for i in unused_keys ]
+    cursor.executemany('delete from resourceskill where resource_id=%s', delete)
+    cursor.executemany('delete from resourceload where resource_id=%s', delete)
+    cursor.executemany('update resource set owner_id where owner_id=%s', delete)
+    cursor.executemany('delete from resource where name=%s', delete)
+    if self.verbosity > 0:
+      print("Inserted %d new machines" % len(insert))
+      print("Updated %d existing machines" % len(update))
+      print("Deleted %d machines" % len(delete))
+      print("Imported machines in %.2f seconds" % (time() - starttime))
 
 
   # Importing onhand
@@ -892,6 +831,7 @@ class Command(BaseCommand):
   #        - %locator.warehouse -> location_id
   #        - %qty -> onhand
   #        - 'openbravo' -> subcategory
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_onhand(self, cursor):
 
     def parse(conn, root):
@@ -928,57 +868,48 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing onhand...")
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing onhand...")
 
-      # Get the list of all current frepple records
-      cursor.execute("SELECT name, subcategory FROM buffer")
-      frepple_buffers = {}
-      for i in cursor.fetchall():
-        frepple_buffers[i[0]] = i[1]
+    # Get the list of all current frepple records
+    cursor.execute("SELECT name, subcategory FROM buffer")
+    frepple_buffers = {}
+    for i in cursor.fetchall():
+      frepple_buffers[i[0]] = i[1]
 
-      # Reset stock levels in all openbravo buffers
-      cursor.execute("UPDATE buffer SET onhand=0, lastmodified='%s' WHERE subcategory='openbravo'" % self.date )
+    # Reset stock levels in all openbravo buffers
+    cursor.execute("UPDATE buffer SET onhand=0, lastmodified='%s' WHERE subcategory='openbravo'" % self.date )
 
-      # Get all stock values. NO incremental load here!
-      insert = []
-      increment = []
-      update = []
-      query = urllib.quote("quantityOnHand>0")
-      self.get_data("/openbravo/ws/dal/MaterialMgmtStorageDetail?where=%s" % query, parse)
+    # Get all stock values. NO incremental load here!
+    insert = []
+    increment = []
+    update = []
+    query = urllib.quote("quantityOnHand>0")
+    self.get_data("/openbravo/ws/dal/MaterialMgmtStorageDetail?where=%s" % query, parse)
 
-      cursor.executemany(
-        "insert into buffer \
-          (name,item_id,location_id,onhand,subcategory,lastmodified) \
-          values(%%s,%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        insert)
-      cursor.executemany(
-        "update buffer \
-          set onhand=%%s, subcategory='openbravo', lastmodified='%s' \
-          where name=%%s" % self.date,
-        update
-        )
-      cursor.executemany(
-        "update buffer \
-          set onhand=%s+onhand \
-          where name=%s",
-        increment
-        )
-      transaction.commit(using=self.database)
-      if self.verbosity > 0:
-        print("Inserted onhand for %d new buffers" % len(insert))
-        print("Updated onhand for %d existing buffers" % len(update))
-        print("Incremented onhand %d times for existing buffers" % len(increment))
-        print("Imported onhand in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      raise CommandError("Error importing onhand: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    cursor.executemany(
+      "insert into buffer \
+        (name,item_id,location_id,onhand,subcategory,lastmodified) \
+        values(%%s,%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      insert)
+    cursor.executemany(
+      "update buffer \
+        set onhand=%%s, subcategory='openbravo', lastmodified='%s' \
+        where name=%%s" % self.date,
+      update
+      )
+    cursor.executemany(
+      "update buffer \
+        set onhand=%s+onhand \
+        where name=%s",
+      increment
+      )
+    if self.verbosity > 0:
+      print("Inserted onhand for %d new buffers" % len(insert))
+      print("Updated onhand for %d existing buffers" % len(update))
+      print("Incremented onhand %d times for existing buffers" % len(increment))
+      print("Imported onhand in %.2f seconds" % (time() - starttime))
 
 
   # Load approved vendors
@@ -1008,6 +939,7 @@ class Command(BaseCommand):
   #        - %product ' @ ' %warehouse -> buffer
   #        - 1 -> quantity
   #        - 'end' -> type
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_approvedvendors(self, cursor):
 
     def parse(conn, root):
@@ -1042,109 +974,100 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
     global prevproduct
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing approved vendors...")
-      cursor.execute("SELECT name, subcategory, source FROM operation where name like 'Purchase %'")
-      frepple_keys = {}
-      for i in cursor.fetchall():
-        if i[1] == 'openbravo':
-          frepple_keys[i[0]] = i[2]
-        else:
-          frepple_keys[i[0]] = None
-      unused_keys = frepple_keys.copy()
-      purchasing = []
-      warehouses = self.locations.values()
-      query = urllib.quote("product.purchase=true and currentVendor=true")
-      prevproduct = None
-      self.get_data("/openbravo/ws/dal/ApprovedVendor?where=%s&orderBy=product&includeChildren=false" % query, parse)
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing approved vendors...")
+    cursor.execute("SELECT name, subcategory, source FROM operation where name like 'Purchase %'")
+    frepple_keys = {}
+    for i in cursor.fetchall():
+      if i[1] == 'openbravo':
+        frepple_keys[i[0]] = i[2]
+      else:
+        frepple_keys[i[0]] = None
+    unused_keys = frepple_keys.copy()
+    purchasing = []
+    warehouses = self.locations.values()
+    query = urllib.quote("product.purchase=true and currentVendor=true")
+    prevproduct = None
+    self.get_data("/openbravo/ws/dal/ApprovedVendor?where=%s&orderBy=product&includeChildren=false" % query, parse)
 
-      # Remove deleted operations
-      cursor.executemany(
-        "update buffer \
-        set producing_id=null \
-        where producing_id=%s",
-        [ (i,) for i, j in unused_keys.items() if j ]
-        )
-      cursor.executemany(
-        "delete from flow \
-        where operation_id=%s \
-        and not exists (select 1 from operationplan where operation_id=flow.operation_id)",
-        [ (i,) for i, j in unused_keys.items() if j ]
-        )
-      cursor.executemany(
-        "delete from operation \
-        where name=%s \
-        and not exists (select 1 from operationplan where operation_id=operation.name)",
-        [ (i,) for i, j in unused_keys.items() if j ]
-        )
+    # Remove deleted operations
+    cursor.executemany(
+      "update buffer \
+      set producing_id=null \
+      where producing_id=%s",
+      [ (i,) for i, j in unused_keys.items() if j ]
+      )
+    cursor.executemany(
+      "delete from flow \
+      where operation_id=%s \
+      and not exists (select 1 from operationplan where operation_id=flow.operation_id)",
+      [ (i,) for i, j in unused_keys.items() if j ]
+      )
+    cursor.executemany(
+      "delete from operation \
+      where name=%s \
+      and not exists (select 1 from operationplan where operation_id=operation.name)",
+      [ (i,) for i, j in unused_keys.items() if j ]
+      )
 
-      # Create or update purchasing operations
-      cursor.executemany(
-        "insert into operation \
-          (name,location_id,category,duration,sizeminimum,sizemultiple,subcategory,type,lastmodified,source) \
-          values (%%s,%%s,%%s,%%s,%%s,%%s,'openbravo','fixed_time','%s',%%s)" % self.date,
-        [
-          (i[0], i[3], i[4], i[5], i[6], i[7], i[8])
-          for i in purchasing
-          if i[0] not in frepple_keys
-        ])
-      cursor.executemany(
-        "update operation \
-          set source=%%s, location_id=%%s, category=%%s, duration=%%s, sizeminimum=%%s, \
-          sizemultiple=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
-        [
-          (i[8], i[3], i[4], i[5], i[6], i[7], i[0])
-          for i in purchasing
-          if i[0] in frepple_keys
-        ])
+    # Create or update purchasing operations
+    cursor.executemany(
+      "insert into operation \
+        (name,location_id,category,duration,sizeminimum,sizemultiple,subcategory,type,lastmodified,source) \
+        values (%%s,%%s,%%s,%%s,%%s,%%s,'openbravo','fixed_time','%s',%%s)" % self.date,
+      [
+        (i[0], i[3], i[4], i[5], i[6], i[7], i[8])
+        for i in purchasing
+        if i[0] not in frepple_keys
+      ])
+    cursor.executemany(
+      "update operation \
+        set source=%%s, location_id=%%s, category=%%s, duration=%%s, sizeminimum=%%s, \
+        sizemultiple=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
+      [
+        (i[8], i[3], i[4], i[5], i[6], i[7], i[0])
+        for i in purchasing
+        if i[0] in frepple_keys
+      ])
 
-      # Create or update buffers
-      cursor.execute("SELECT name FROM buffer")
-      frepple_keys = set([ i[0] for i in cursor.fetchall() ])
-      cursor.executemany(
-        "insert into buffer \
-          (producing_id,name,item_id,location_id,subcategory,lastmodified,source) \
-          values (%%s,%%s,%%s,%%s,'openbravo','%s',%%s)" % self.date,
-        [ (i[0], i[1], i[2], i[3], i[8]) for i in purchasing if i[1] not in frepple_keys ]
-        )
-      cursor.executemany(
-        "update buffer \
-          set producing_id=%%s, source=%%s, item_id=%%s, location_id=%%s, \
-          subcategory='openbravo', lastmodified='%s' \
-          where name=%%s" % self.date,
-        [ (i[0], i[8], i[2], i[3], i[1]) for i in purchasing if i[1] in frepple_keys ]
-        )
+    # Create or update buffers
+    cursor.execute("SELECT name FROM buffer")
+    frepple_keys = set([ i[0] for i in cursor.fetchall() ])
+    cursor.executemany(
+      "insert into buffer \
+        (producing_id,name,item_id,location_id,subcategory,lastmodified,source) \
+        values (%%s,%%s,%%s,%%s,'openbravo','%s',%%s)" % self.date,
+      [ (i[0], i[1], i[2], i[3], i[8]) for i in purchasing if i[1] not in frepple_keys ]
+      )
+    cursor.executemany(
+      "update buffer \
+        set producing_id=%%s, source=%%s, item_id=%%s, location_id=%%s, \
+        subcategory='openbravo', lastmodified='%s' \
+        where name=%%s" % self.date,
+      [ (i[0], i[8], i[2], i[3], i[1]) for i in purchasing if i[1] in frepple_keys ]
+      )
 
-      # Create or update flows
-      cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
-      frepple_keys = set([ i for i in cursor.fetchall() ])
-      cursor.executemany(
-        "insert into flow \
-          (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
-          values(%%s,%%s,1,'end','openbravo','%s')" % self.date,
-        [ (i[0], i[1]) for i in purchasing if (i[0], i[1]) not in frepple_keys ]
-        )
-      cursor.executemany(
-        "update flow \
-          set quantity=1, type='end', source='openbravo', lastmodified='%s' \
-          where operation_id=%%s and thebuffer_id=%%s" % self.date,
-        [ (i[0], i[1]) for i in purchasing if (i[0], i[1]) in frepple_keys ]
-        )
+    # Create or update flows
+    cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
+    frepple_keys = set([ i for i in cursor.fetchall() ])
+    cursor.executemany(
+      "insert into flow \
+        (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
+        values(%%s,%%s,1,'end','openbravo','%s')" % self.date,
+      [ (i[0], i[1]) for i in purchasing if (i[0], i[1]) not in frepple_keys ]
+      )
+    cursor.executemany(
+      "update flow \
+        set quantity=1, type='end', source='openbravo', lastmodified='%s' \
+        where operation_id=%%s and thebuffer_id=%%s" % self.date,
+      [ (i[0], i[1]) for i in purchasing if (i[0], i[1]) in frepple_keys ]
+      )
 
-      transaction.commit(using=self.database)
-      if self.verbosity > 0:
-        print("Processed %d approved vendors" % len(purchasing))
-        print("Imported approved vendors in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      raise CommandError("Error importing approved vendors: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    if self.verbosity > 0:
+      print("Processed %d approved vendors" % len(purchasing))
+      print("Imported approved vendors in %.2f seconds" % (time() - starttime))
 
 
   # Load open purchase orders
@@ -1173,6 +1096,7 @@ class Command(BaseCommand):
   #        - %creationDate -> startdate
   #        - %scheduledDeliveryDate -> enddate
   #        - 'openbravo' -> source
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_purchaseorders(self, cursor):
 
     def parse(conn, root):
@@ -1221,96 +1145,87 @@ class Command(BaseCommand):
       return records
 
     global idcounter
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing purchase orders...")
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing purchase orders...")
 
-      # Find all known operationplans in frePPLe
-      cursor.execute("SELECT source \
-         FROM operationplan \
-         where source is not null \
-           and operation_id like 'Purchase %'")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      cursor.execute("SELECT max(id) FROM operationplan")
-      idcounter = cursor.fetchone()[0] or 1
+    # Find all known operationplans in frePPLe
+    cursor.execute("SELECT source \
+       FROM operationplan \
+       where source is not null \
+         and operation_id like 'Purchase %'")
+    frepple_keys = set([ i[0] for i in cursor.fetchall()])
+    cursor.execute("SELECT max(id) FROM operationplan")
+    idcounter = cursor.fetchone()[0] or 1
 
-      # Get the list of all open purchase orders
-      insert = []
-      update = []
-      delete = []
-      deliveries = set()
-      query = urllib.quote("updated>'%s' and salesOrder.salesTransaction=false and salesOrder.documentType.name<>'RTV Order'" % self.delta)
-      self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query, parse)
+    # Get the list of all open purchase orders
+    insert = []
+    update = []
+    delete = []
+    deliveries = set()
+    query = urllib.quote("updated>'%s' and salesOrder.salesTransaction=false and salesOrder.documentType.name<>'RTV Order'" % self.delta)
+    self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query, parse)
 
-      # Create or update procurement operations
-      cursor.execute("SELECT name FROM operation where name like 'Purchase %'")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      cursor.executemany(
-        "insert into operation \
-          (name,location_id,subcategory,type,lastmodified) \
-          values (%%s,%%s,'openbravo','fixed_time','%s')" % self.date,
-        [ (i[2], i[1]) for i in deliveries if i[2] not in frepple_keys ])
-      cursor.executemany(
-        "update operation \
-          set location_id=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
-        [ (i[1], i[2]) for i in deliveries if i[2] in frepple_keys ])
+    # Create or update procurement operations
+    cursor.execute("SELECT name FROM operation where name like 'Purchase %'")
+    frepple_keys = set([ i[0] for i in cursor.fetchall()])
+    cursor.executemany(
+      "insert into operation \
+        (name,location_id,subcategory,type,lastmodified) \
+        values (%%s,%%s,'openbravo','fixed_time','%s')" % self.date,
+      [ (i[2], i[1]) for i in deliveries if i[2] not in frepple_keys ])
+    cursor.executemany(
+      "update operation \
+        set location_id=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
+      [ (i[1], i[2]) for i in deliveries if i[2] in frepple_keys ])
 
-      # Create or update purchasing buffers
-      cursor.execute("SELECT name FROM buffer")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      cursor.executemany(
-        "insert into buffer \
-          (name,item_id,location_id,subcategory,lastmodified) \
-          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        [ (i[3], i[0], i[1]) for i in deliveries if i[3] not in frepple_keys ])
-      cursor.executemany(
-        "update buffer \
-          set item_id=%%s, location_id=%%s, subcategory='openbravo', lastmodified='%s' where name=%%s" % self.date,
-        [ (i[0], i[1], i[3]) for i in deliveries if i[3] in frepple_keys ])
+    # Create or update purchasing buffers
+    cursor.execute("SELECT name FROM buffer")
+    frepple_keys = set([ i[0] for i in cursor.fetchall()])
+    cursor.executemany(
+      "insert into buffer \
+        (name,item_id,location_id,subcategory,lastmodified) \
+        values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      [ (i[3], i[0], i[1]) for i in deliveries if i[3] not in frepple_keys ])
+    cursor.executemany(
+      "update buffer \
+        set item_id=%%s, location_id=%%s, subcategory='openbravo', lastmodified='%s' where name=%%s" % self.date,
+      [ (i[0], i[1], i[3]) for i in deliveries if i[3] in frepple_keys ])
 
-      # Create or update flow on purchasing operation
-      cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
-      frepple_keys = set([ i for i in cursor.fetchall()])
-      cursor.executemany(
-        "insert into flow \
-          (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
-          values(%%s,%%s,1,'end','openbravo','%s')" % self.date,
-        [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) not in frepple_keys ])
-      cursor.executemany(
-        "update flow \
-          set quantity=1, type='end', source='openbravo', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
-        [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) in frepple_keys ])
+    # Create or update flow on purchasing operation
+    cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
+    frepple_keys = set([ i for i in cursor.fetchall()])
+    cursor.executemany(
+      "insert into flow \
+        (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
+        values(%%s,%%s,1,'end','openbravo','%s')" % self.date,
+      [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) not in frepple_keys ])
+    cursor.executemany(
+      "update flow \
+        set quantity=1, type='end', source='openbravo', lastmodified='%s' where operation_id=%%s and thebuffer_id=%%s" % self.date,
+      [ (i[2], i[3]) for i in deliveries if (i[2], i[3]) in frepple_keys ])
 
-      # Create purchasing operationplans
-      cursor.executemany(
-        "insert into operationplan \
-          (id,operation_id,quantity,startdate,enddate,locked,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,%%s,'1',%%s,'%s')" % self.date,
-        insert
-        )
-      cursor.executemany(
-        "update operationplan \
-          set operation_id=%%s, quantity=%%s, startdate=%%s, enddate=%%s, locked='1', lastmodified='%s' \
-          where source=%%s" % self.date,
-        update)
-      cursor.executemany(
-        "delete from operationplan where source=%s",
-        delete)
+    # Create purchasing operationplans
+    cursor.executemany(
+      "insert into operationplan \
+        (id,operation_id,quantity,startdate,enddate,locked,source,lastmodified) \
+        values(%%s,%%s,%%s,%%s,%%s,'1',%%s,'%s')" % self.date,
+      insert
+      )
+    cursor.executemany(
+      "update operationplan \
+        set operation_id=%%s, quantity=%%s, startdate=%%s, enddate=%%s, locked='1', lastmodified='%s' \
+        where source=%%s" % self.date,
+      update)
+    cursor.executemany(
+      "delete from operationplan where source=%s",
+      delete)
 
-      transaction.commit(using=self.database)
-      if self.verbosity > 0:
-        print("Inserted %d purchase order lines" % len(insert))
-        print("Updated %d purchase order lines" % len(update))
-        print("Deleted %d purchase order lines" % len(delete))
-        print("Imported purchase orders in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      raise CommandError("Error importing purchase orders: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    if self.verbosity > 0:
+      print("Inserted %d purchase order lines" % len(insert))
+      print("Updated %d purchase order lines" % len(update))
+      print("Deleted %d purchase order lines" % len(delete))
+      print("Imported purchase orders in %.2f seconds" % (time() - starttime))
 
 
   # Load work in progress operationplans
@@ -1322,6 +1237,7 @@ class Command(BaseCommand):
   #        - %warehouse -> location
   #        - %product -> item
   #        - 'openbravo' -> subcategory
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_workInProgress(self, cursor):
 
     def parse(conn, root):
@@ -1351,70 +1267,62 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing manufacturing work requirement ...")
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing manufacturing work requirement ...")
 
-      # Find all known operationplans in frePPLe
-      cursor.execute("SELECT source \
-         FROM operationplan \
-         where source is not null \
-           and operation_id like 'Processplan %'")
-      frepple_keys = set([ i[0] for i in cursor.fetchall()])
-      unused_keys = frepple_keys.copy()
-      cursor.execute("SELECT max(id) FROM operationplan")
-      idcounter = cursor.fetchone()[0] or 1
+    # Find all known operationplans in frePPLe
+    cursor.execute("SELECT source \
+       FROM operationplan \
+       where source is not null \
+         and operation_id like 'Processplan %'")
+    frepple_keys = set([ i[0] for i in cursor.fetchall()])
+    unused_keys = frepple_keys.copy()
+    cursor.execute("SELECT max(id) FROM operationplan")
+    idcounter = cursor.fetchone()[0] or 1
 
-      # Create index of all operations
-      cursor.execute("SELECT name, source, location_id \
-        FROM operation \
-        WHERE subcategory='openbravo' \
-          and source is not null")
-      frepple_operations = { (i[1], i[2]): i[0] for i in cursor.fetchall() }
+    # Create index of all operations
+    cursor.execute("SELECT name, source, location_id \
+      FROM operation \
+      WHERE subcategory='openbravo' \
+        and source is not null")
+    frepple_operations = { (i[1], i[2]): i[0] for i in cursor.fetchall() }
 
-      # Get the list of all open work requirements
-      insert = []
-      update = []
-      query = urllib.quote("closed=false")
-      self.get_data("/openbravo/ws/dal/ManufacturingWorkRequirement?where=%s" % query, parse)
+    # Get the list of all open work requirements
+    insert = []
+    update = []
+    query = urllib.quote("closed=false")
+    self.get_data("/openbravo/ws/dal/ManufacturingWorkRequirement?where=%s" % query, parse)
 
-      # Delete closed/canceled/deleted work requirements
-      deleted = [ (i,) for i in unused_keys ]
-      cursor.executemany("delete from operationplan where source=%s", deleted)
+    # Delete closed/canceled/deleted work requirements
+    deleted = [ (i,) for i in unused_keys ]
+    cursor.executemany("delete from operationplan where source=%s", deleted)
 
-      # Create or update operationplans
-      cursor.executemany(
-        "insert into operationplan \
-          (id,operation_id,quantity,startdate,enddate,locked,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,%%s,'1',%%s,'%s')" % self.date,
-        insert
-        )
-      cursor.executemany(
-        "update operationplan \
-          set operation_id=%%s, quantity=%%s, startdate=%%s, enddate=%%s, locked='1', lastmodified='%s' \
-          where source=%%s" % self.date,
-        update
-        )
+    # Create or update operationplans
+    cursor.executemany(
+      "insert into operationplan \
+        (id,operation_id,quantity,startdate,enddate,locked,source,lastmodified) \
+        values(%%s,%%s,%%s,%%s,%%s,'1',%%s,'%s')" % self.date,
+      insert
+      )
+    cursor.executemany(
+      "update operationplan \
+        set operation_id=%%s, quantity=%%s, startdate=%%s, enddate=%%s, locked='1', lastmodified='%s' \
+        where source=%%s" % self.date,
+      update
+      )
 
-      transaction.commit(using=self.database)
-      if self.verbosity > 0:
-        print("Inserted %d operationplans" % len(insert))
-        print("Updated %d operationplans" % len(update))
-        print("Deleted %d operationplans" % len(deleted))
-        print("Imported manufacturing work requirements in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      raise CommandError("Error importing manufacturing work requirements: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    if self.verbosity > 0:
+      print("Inserted %d operationplans" % len(insert))
+      print("Updated %d operationplans" % len(update))
+      print("Deleted %d operationplans" % len(deleted))
+      print("Imported manufacturing work requirements in %.2f seconds" % (time() - starttime))
 
 
   # Importing productboms
   #   - extracting productBOM object for all Products with
   #
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_productbom(self, cursor):
 
     def parse(conn, root):
@@ -1447,77 +1355,65 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing product boms...")
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing product boms...")
 
-      # Reset the current operations
-      cursor.execute("DELETE FROM operationplan where operation_id like 'Product BOM %'")  # TODO allow incremental load!
-      cursor.execute("DELETE FROM suboperation where operation_id like 'Product BOM %'")
-      cursor.execute("DELETE FROM resourceload where operation_id like 'Product BOM %'")
-      cursor.execute("DELETE FROM flow where operation_id like 'Product BOM %'")
-      cursor.execute("UPDATE buffer SET producing_id=NULL where subcategory='openbravo' and producing_id like 'Product BOM %'")
-      cursor.execute("DELETE FROM operation where name like 'Product BOM %'")
+    # Reset the current operations
+    cursor.execute("DELETE FROM operationplan where operation_id like 'Product BOM %'")  # TODO allow incremental load!
+    cursor.execute("DELETE FROM suboperation where operation_id like 'Product BOM %'")
+    cursor.execute("DELETE FROM resourceload where operation_id like 'Product BOM %'")
+    cursor.execute("DELETE FROM flow where operation_id like 'Product BOM %'")
+    cursor.execute("UPDATE buffer SET producing_id=NULL where subcategory='openbravo' and producing_id like 'Product BOM %'")
+    cursor.execute("DELETE FROM operation where name like 'Product BOM %'")
 
-      # Get the list of all frePPLe buffers
-      cursor.execute("SELECT name, item_id, location_id FROM buffer")
-      frepple_buffers = {}
-      frepple_keys = set()
-      for i in cursor.fetchall():
-        if i[1] in frepple_buffers:
-          frepple_buffers[i[1]].append( (i[0], i[2]) )
-        else:
-          frepple_buffers[i[1]] = [ (i[0], i[2]) ]
-        frepple_keys.add(i[0])
+    # Get the list of all frePPLe buffers
+    cursor.execute("SELECT name, item_id, location_id FROM buffer")
+    frepple_buffers = {}
+    frepple_keys = set()
+    for i in cursor.fetchall():
+      if i[1] in frepple_buffers:
+        frepple_buffers[i[1]].append( (i[0], i[2]) )
+      else:
+        frepple_buffers[i[1]] = [ (i[0], i[2]) ]
+      frepple_keys.add(i[0])
 
-      # Loop over all productboms
-      query = urllib.quote("product.billOfMaterials=true")
-      operations = set()
-      buffers = set()
-      flows = {}
-      self.get_data("/openbravo/ws/dal/ProductBOM?where=%s&includeChildren=false" % query, parse)
+    # Loop over all productboms
+    query = urllib.quote("product.billOfMaterials=true")
+    operations = set()
+    buffers = set()
+    flows = {}
+    self.get_data("/openbravo/ws/dal/ProductBOM?where=%s&includeChildren=false" % query, parse)
 
-      # Execute now on the database
-      cursor.executemany(
-        "insert into operation \
-          (name,location_id,subcategory,type,duration,lastmodified) \
-          values(%%s,%%s,'openbravo','fixed_time',0,'%s')" % self.date,
-        [ (i[0], i[1]) for i in operations ]
-        )
-      cursor.executemany(
-        "update buffer set producing_id=%%s, lastmodified='%s' where name=%%s" % self.date,
-        [ (i[0], i[2]) for i in operations ]
-        )
-      cursor.executemany(
-        "insert into buffer \
-          (name,item_id,location_id,subcategory,lastmodified) \
-          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        buffers
-        )
-      cursor.executemany(
-        "insert into flow \
-          (operation_id,thebuffer_id,type,quantity,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        [ (i[0], i[1], i[2], j) for i, j in flows.items() ]
-        )
+    # Execute now on the database
+    cursor.executemany(
+      "insert into operation \
+        (name,location_id,subcategory,type,duration,lastmodified) \
+        values(%%s,%%s,'openbravo','fixed_time',0,'%s')" % self.date,
+      [ (i[0], i[1]) for i in operations ]
+      )
+    cursor.executemany(
+      "update buffer set producing_id=%%s, lastmodified='%s' where name=%%s" % self.date,
+      [ (i[0], i[2]) for i in operations ]
+      )
+    cursor.executemany(
+      "insert into buffer \
+        (name,item_id,location_id,subcategory,lastmodified) \
+        values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      buffers
+      )
+    cursor.executemany(
+      "insert into flow \
+        (operation_id,thebuffer_id,type,quantity,source,lastmodified) \
+        values(%%s,%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      [ (i[0], i[1], i[2], j) for i, j in flows.items() ]
+      )
 
-      transaction.commit(using=self.database)
-      if self.verbosity > 0:
-        print("Inserted %d operations" % len(operations))
-        print("Created %d buffers" % len(buffers))
-        print("Inserted %d flows" % len(flows))
-        print("Imported product boms in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      import sys
-      import traceback
-      traceback.print_exc(file=sys.stdout)
-      raise CommandError("Error importing product boms: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    if self.verbosity > 0:
+      print("Inserted %d operations" % len(operations))
+      print("Created %d buffers" % len(buffers))
+      print("Inserted %d flows" % len(flows))
+      print("Imported product boms in %.2f seconds" % (time() - starttime))
 
 
   # Importing processplans
@@ -1530,6 +1426,7 @@ class Command(BaseCommand):
   #        - subproducts
   #        - routings
   #
+  @transaction.atomic(using=self.database, savepoint=False)
   def import_processplan(self, cursor):
 
     def parse1(conn, root):
@@ -1637,101 +1534,89 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    transaction.enter_transaction_management(using=self.database)
-    try:
-      starttime = time()
-      if self.verbosity > 0:
-        print("Importing processplans...")
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing processplans...")
 
-      # Reset the current operations
-      cursor.execute("DELETE FROM operationplan where operation_id like 'Processplan %'")  # TODO allow incremental load!
-      cursor.execute("DELETE FROM suboperation where operation_id like 'Processplan %'")
-      cursor.execute("DELETE FROM resourceload where operation_id like 'Processplan %'")
-      cursor.execute("DELETE FROM flow where operation_id like 'Processplan %'")
-      cursor.execute("UPDATE buffer SET producing_id=NULL where subcategory='openbravo' and producing_id like 'Processplan %'")
-      cursor.execute("DELETE FROM operation where name like 'Processplan %'")
+    # Reset the current operations
+    cursor.execute("DELETE FROM operationplan where operation_id like 'Processplan %'")  # TODO allow incremental load!
+    cursor.execute("DELETE FROM suboperation where operation_id like 'Processplan %'")
+    cursor.execute("DELETE FROM resourceload where operation_id like 'Processplan %'")
+    cursor.execute("DELETE FROM flow where operation_id like 'Processplan %'")
+    cursor.execute("UPDATE buffer SET producing_id=NULL where subcategory='openbravo' and producing_id like 'Processplan %'")
+    cursor.execute("DELETE FROM operation where name like 'Processplan %'")
 
-      # Pick up existing operations in frePPLe
-      cursor.execute("SELECT name FROM operation")
-      frepple_operations = set([i[0] for i in cursor.fetchall()])
+    # Pick up existing operations in frePPLe
+    cursor.execute("SELECT name FROM operation")
+    frepple_operations = set([i[0] for i in cursor.fetchall()])
 
-      # Get the list of all frePPLe buffers
-      cursor.execute("SELECT name, item_id, location_id FROM buffer")
-      frepple_buffers = {}
-      for i in cursor.fetchall():
-        if i[1] in frepple_buffers:
-          frepple_buffers[i[1]].append( (i[0], i[2]) )
-        else:
-          frepple_buffers[i[1]] = [ (i[0], i[2]) ]
+    # Get the list of all frePPLe buffers
+    cursor.execute("SELECT name, item_id, location_id FROM buffer")
+    frepple_buffers = {}
+    for i in cursor.fetchall():
+      if i[1] in frepple_buffers:
+        frepple_buffers[i[1]].append( (i[0], i[2]) )
+      else:
+        frepple_buffers[i[1]] = [ (i[0], i[2]) ]
 
-      # Get a dictionary with all process plans
-      processplans = {}
-      self.get_data("/openbravo/ws/dal/ManufacturingProcessPlan?includeChildren=true", parse1)
+    # Get a dictionary with all process plans
+    processplans = {}
+    self.get_data("/openbravo/ws/dal/ManufacturingProcessPlan?includeChildren=true", parse1)
 
-      # Loop over all produced products
-      query = urllib.quote("production=true and processPlan is not null")
-      operations = []
-      suboperations = []
-      buffers_create = []
-      buffers_update = []
-      flows = {}
-      loads = []
-      self.get_data("/openbravo/ws/dal/Product?where=%s&orderBy=name&includeChildren=false" % query, parse2)
+    # Loop over all produced products
+    query = urllib.quote("production=true and processPlan is not null")
+    operations = []
+    suboperations = []
+    buffers_create = []
+    buffers_update = []
+    flows = {}
+    loads = []
+    self.get_data("/openbravo/ws/dal/Product?where=%s&orderBy=name&includeChildren=false" % query, parse2)
 
-      # TODO use "decrease" and "rejected" fields on steps to compute the yield
-      # TODO multiple processplans for the same item -> alternate operation
+    # TODO use "decrease" and "rejected" fields on steps to compute the yield
+    # TODO multiple processplans for the same item -> alternate operation
 
-      # Execute now on the database
-      cursor.executemany(
-        "insert into operation \
-          (name,location_id,subcategory,type,duration,source,lastmodified) \
-          values(%%s,%%s,'openbravo',%%s,%%s,%%s,'%s')" % self.date,
-        operations
-        )
-      cursor.executemany(
-        "insert into suboperation \
-          (operation_id,suboperation_id,priority,source,lastmodified) \
-          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        suboperations
-        )
-      cursor.executemany(
-        "update buffer set producing_id=%%s, lastmodified='%s' where name=%%s" % self.date,
-        buffers_update
-        )
-      cursor.executemany(
-        "insert into buffer \
-          (name,item_id,location_id,subcategory,lastmodified) \
-          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        buffers_create
-        )
-      cursor.executemany(
-        "insert into flow \
-          (operation_id,thebuffer_id,type,quantity,source,lastmodified) \
-          values(%%s,%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        [ (i[0], i[1], i[2], j) for i, j in flows.items() ]
-        )
-      cursor.executemany(
-        "insert into resourceload \
-          (operation_id,resource_id,quantity,source,lastmodified) \
-          values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
-        loads
-        )
+    # Execute now on the database
+    cursor.executemany(
+      "insert into operation \
+        (name,location_id,subcategory,type,duration,source,lastmodified) \
+        values(%%s,%%s,'openbravo',%%s,%%s,%%s,'%s')" % self.date,
+      operations
+      )
+    cursor.executemany(
+      "insert into suboperation \
+        (operation_id,suboperation_id,priority,source,lastmodified) \
+        values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      suboperations
+      )
+    cursor.executemany(
+      "update buffer set producing_id=%%s, lastmodified='%s' where name=%%s" % self.date,
+      buffers_update
+      )
+    cursor.executemany(
+      "insert into buffer \
+        (name,item_id,location_id,subcategory,lastmodified) \
+        values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      buffers_create
+      )
+    cursor.executemany(
+      "insert into flow \
+        (operation_id,thebuffer_id,type,quantity,source,lastmodified) \
+        values(%%s,%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      [ (i[0], i[1], i[2], j) for i, j in flows.items() ]
+      )
+    cursor.executemany(
+      "insert into resourceload \
+        (operation_id,resource_id,quantity,source,lastmodified) \
+        values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      loads
+      )
 
-      transaction.commit(using=self.database)
-      if self.verbosity > 0:
-        print("Inserted %d operations" % len(operations))
-        print("Inserted %d suboperations" % len(suboperations))
-        print("Updated %d buffers" % len(buffers_update))
-        print("Created %d buffers" % len(buffers_create))
-        print("Inserted %d flows" % len(flows))
-        print("Inserted %d loads" % len(loads))
-        print("Imported processplans in %.2f seconds" % (time() - starttime))
-    except Exception as e:
-      transaction.rollback(using=self.database)
-      import sys
-      import traceback
-      traceback.print_exc(file=sys.stdout)
-      raise CommandError("Error importing processplans: %s" % e)
-    finally:
-      transaction.commit(using=self.database)
-      transaction.leave_transaction_management(using=self.database)
+    if self.verbosity > 0:
+      print("Inserted %d operations" % len(operations))
+      print("Inserted %d suboperations" % len(suboperations))
+      print("Updated %d buffers" % len(buffers_update))
+      print("Created %d buffers" % len(buffers_create))
+      print("Inserted %d flows" % len(flows))
+      print("Inserted %d loads" % len(loads))
+      print("Imported processplans in %.2f seconds" % (time() - starttime))

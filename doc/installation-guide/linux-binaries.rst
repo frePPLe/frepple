@@ -26,7 +26,7 @@ distributions:
    | A 64-bit binary package for Ubuntu 12 is provided in release 2.1.
    | From release 2.2 onwards we provide binaries for Ubuntu 14.
 
-Other Linux distributions aren’t really a problem, but you’ll need to build
+Other Linux distributions aren't really a problem, but you'll need to build
 the frePPLe package from the source .deb or .rpm files, as described on the
 next page. The build process is completely standardized.
 
@@ -50,11 +50,11 @@ Here are the steps to get a fully working environment.
    For optimal performance the default memory allocation parameters will need to
    be increased from their defaults. The appropriate settings depend on the model
    size, the number of concurrent users and the available memory on the server.
-   The most important parameter is “shared_buffers” (which normally requires
+   The most important parameter is 'shared_buffers' (which normally requires
    changing the Linux kernel parameter shmmax as well).
 
    For the user that will run the user interface application (normally
-   “www-data” on debian and “apache” on rhel) you need to create a file .pgpass
+   'www-data' on debian and 'apache' on rhel) you need to create a file .pgpass
    in their home directory. This allows them to connect without entering a password.
 
    See the Django documentation at http://docs.djangoproject.com/en/dev/ref/databases/
@@ -73,20 +73,20 @@ Here are the steps to get a fully working environment.
 
 #. **Install the Python database drivers**
 
-   You’ll need to install the python-psycopg2 package for PostgreSQL.
+   You'll need to install the python-psycopg2 package for PostgreSQL.
 
    This step can be skipped if you want to use SQLite as the database.
 
 #. **Install Django**
 
    Since frePPle requires some patches to the standard Django package,
-   you can’t install the binary package that comes with your Linux distribution.
+   you can't install the binary package that comes with your Linux distribution.
    Instead, download the source from http://www.djangoproject.com and expand
    it in a local folder. Next, download and apply frePPLe's django patch
    and install the package.
 
    A version of frePPle requires a specific version of Django. FrePPLe 2.2, 2.3 require
-   Django 1.6.x. FrePPLe 3.0 requires django 1.7.x.
+   Django 1.6.x. FrePPLe 3.0 requires django 1.8.x.
 
    The patch file is available at https://github.com/frePPLe/frePPLe/tree/3.0/contrib/django
    - replace the version number to match the frePPLe release
@@ -94,10 +94,10 @@ Here are the steps to get a fully working environment.
    The shell commands for these steps are:
    ::
 
-      wget https://www.djangoproject.com/download/1.7/tarball/
-      tar xvfz Django-1.7.tar.gz
-      cd Django-1.7
-      patch -p0 < frepple_directory/contrib/django/django.patch
+      wget https://www.djangoproject.com/download/1.8/tarball/
+      tar xvfz Django-1.8.tar.gz
+      cd Django-1.8
+      patch -p0 < django.patch
       python setup.py install
 
 #. **Install OpenPyXL**
@@ -108,7 +108,7 @@ Here are the steps to get a fully working environment.
 
      pip install openpyxl
 
-   Most linux distributions don’t install pip by default, so you’ll need to install
+   Most linux distributions don't install pip by default, so you'll need to install
    that first. See below for the commands for this on Ubuntu and RHEL.
 
 #. **Install the frepple binary package**
@@ -135,9 +135,9 @@ Here are the steps to get a fully working environment.
    now need to review and edit:
 
    #. | **/etc/frepple/djangosettings.py**
-      | Edit the “TIMEZONE” variable to your local setting.
-      | Edit the “DATABASES” with your database parameters.
-      | Change “SECRET_KEY” to some arbitrary value – important for security reasons.
+      | Edit the "TIMEZONE" variable to your local setting.
+      | Edit the "DATABASES" with your database parameters.
+      | Change "SECRET_KEY" to some arbitrary value - important for security reasons.
 
    #. | /etc/frepple/license.xml
       | No license file is required for the community edition.
@@ -148,7 +148,7 @@ Here are the steps to get a fully working environment.
       | Comment out the lines loading modules you are not using.
 
    #. | /etc/httpd/conf.d/z_frepple.conf
-      | For a standard deployment this file doesn’t need modification.
+      | For a standard deployment this file doesn't need modification.
       | It only needs review if you have specific requirements for the setup of
       | the Apache web server.
 
@@ -190,15 +190,15 @@ Here are the steps to get a fully working environment.
 
    Try the following as a mini-test of the installation:
 
-   #. Open the screen “input/demand” to see demand inputs.
+   #. Open the screen "input/demand" to see demand inputs.
 
-   #. Open the screen “admin/execute” and generate a plan.
+   #. Open the screen "admin/execute" and generate a plan.
 
-   #. Use the same “admin/execute” screen to copy the default data in a new scenario.
+   #. Use the same "admin/execute" screen to copy the default data in a new scenario.
 
-   #. Open the screen “output/resource report” to see the planned load on the resources.
+   #. Open the screen "output/resource report" to see the planned load on the resources.
 
-   If these steps all give the expected results, you’re up and running!
+   If these steps all give the expected results, you're up and running!
 
 .. tip::
    For security reasons it is recommended to change the password of the admin user.
@@ -317,9 +317,9 @@ inspiration for your own deployments.
   yum --nogpgcheck localinstall  *.rpm
 
   # Make PostgreSQL accessible for apache user
-  sudo sh –c ‘echo “localhost:5432:frepple:frepple:frepple” > ~apache/.pgpass’
-  sudo sh –c ‘echo “localhost:5432:scenario1:frepple:frepple” >> ~apache/.pgpass’
-  sudo sh –c ‘echo “localhost:5432:scenario2:frepple:frepple” >> ~apache/.pgpass’
-  sudo sh –c ‘echo “localhost:5432:scenario3:frepple:frepple” >> ~apache/.pgpass’
+  sudo sh -c 'echo "localhost:5432:frepple:frepple:frepple" > ~apache/.pgpass'
+  sudo sh -c 'echo "localhost:5432:scenario1:frepple:frepple" >> ~apache/.pgpass'
+  sudo sh -c 'echo "localhost:5432:scenario2:frepple:frepple" >> ~apache/.pgpass'
+  sudo sh -c 'echo "localhost:5432:scenario3:frepple:frepple" >> ~apache/.pgpass'
   sudo chown apache:apache ~apache/.pgpass
   sudo chmod 0600 ~apache/.pgpass

@@ -64,7 +64,7 @@ for counter in [500,1000,1500,2000]:
   print('</demands>\n' +
     '<?python\n' +
     'import frepple\n' +
-    'frepple.solver_mrp(name="MRP",constraints=0).solve()\n' +
+    'frepple.solver_mrp(constraints=0).solve()\n' +
     'frepple.saveXMLfile("output.xml")\n' +
     '?>\n' +
     '</plan>', file=out)

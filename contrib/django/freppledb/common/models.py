@@ -17,12 +17,13 @@
 from datetime import datetime
 import logging
 
-from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
 
 logger = logging.getLogger(__name__)
@@ -152,7 +153,7 @@ class AuditModel(models.Model):
   '''
   # Database fields
   source = models.CharField(_('source'), db_index=True, max_length=settings.CATEGORYSIZE, null=True, blank=True)
-  lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now)
+  lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=timezone.now)
 
   objects = MultiDBManager()  # The default manager.
 
@@ -243,7 +244,7 @@ class Comment(models.Model):
   content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
   comment = models.TextField(_('comment'), max_length=settings.COMMENT_MAX_LENGTH)
   user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
-  lastmodified = models.DateTimeField(_('last modified'), default=datetime.now(), editable=False)
+  lastmodified = models.DateTimeField(_('last modified'), default=timezone.now, editable=False)
 
   class Meta:
       db_table = "common_comment"

@@ -60,7 +60,7 @@ class OverviewReport(GridPivot):
   @staticmethod
   def query(request, basequery, sortsql='1 asc'):
     cursor = connections[request.database].cursor()
-    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)
+    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
 
     # Assure the item hierarchy is up to date
     Buffer.rebuildHierarchy(database=basequery.db)

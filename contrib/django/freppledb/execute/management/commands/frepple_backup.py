@@ -85,7 +85,6 @@ class Command(BaseCommand):
       user = None
 
     now = datetime.now()
-    transaction.enter_transaction_management(using=database)
     task = None
     try:
       # Initialize the task
@@ -105,7 +104,6 @@ class Command(BaseCommand):
       backupfile = now.strftime("database.%s.%%Y%%m%%d.%%H%%M%%S.dump" % database)
       task.message = 'Backup to file %s' % backupfile
       task.save(using=database)
-      transaction.commit(using=database)
 
       # Run the backup command
       if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
@@ -135,7 +133,6 @@ class Command(BaseCommand):
       # Task update
       task.status = '99%'
       task.save(using=database)
-      transaction.commit(using=database)
 
       # Delete backups older than a month
       pattern = re.compile("database.*.*.*.dump")
@@ -163,8 +160,3 @@ class Command(BaseCommand):
     finally:
       if task:
         task.save(using=database)
-      try:
-        transaction.commit(using=database)
-      except:
-        pass
-      transaction.leave_transaction_management(using=database)

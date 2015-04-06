@@ -208,7 +208,7 @@ class Menu:
           for k in j.report.permissions:
             if content_type is None:
               # Create a dummy contenttype in the app
-              content_type = ContentType.objects.get_or_create(name="reports", model="", app_label=app.split('.')[-1])[0]
+              content_type = ContentType.objects.get_or_create(model="reports", app_label=app.split('.')[-1])[0]
             # Create the permission object
             # TODO: cover the case where the permission refers to a permission of a model in the same app.
             # TODO: cover the case where app X wants to refer to a permission defined in app Y.

@@ -8,7 +8,7 @@ The basic steps to set up a development environment:
 - Install python 3.2 or higher.
   It is recommended to install the last release.
 
-- Install Django 1.7.4
+- Install Django 1.8.x
   Different versions of Django may or may not work with frePPLe...
   (The frePPLe user interface customizes some parts of the Django admin.
   The MultiDBModelAdmin class and the template overrides in the admin folder

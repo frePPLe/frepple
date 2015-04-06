@@ -58,15 +58,19 @@ class cookbooktest(TransactionTestCase):
         .only('operation', 'startdate', 'enddate', 'quantity')
       ]
     row = 0
+    maxrow = len(opplans)
     with open(os.path.join(*resultpath), 'r') as f:
       for line in f:
-        if opplans[row].strip() != line.strip():
+        if row >= maxrow or opplans[row].strip() != line.strip():
           print("Got:")
           for i in opplans:
             print("  ", i.strip())
-          self.fail("Difference in expected results on line %s" % (row + 1))
+          if row > len(opplans):
+            self.fail("Difference in expected results on line %s" % (row + 1))
+          else:
+            self.fail("Less output rows than expected")
         row += 1
-    if row != len(opplans):
+    if row != maxrow:
       self.fail("More output rows than expected")
 
   def test_calendar_working_hours(self):

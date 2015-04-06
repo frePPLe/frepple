@@ -42,12 +42,12 @@ from openpyxl import load_workbook, Workbook
 
 from django.apps import apps
 from django.contrib.auth.models import Group
+from django.contrib.auth import get_permission_codename
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.admin.utils import unquote, quote
-from django.contrib.auth import get_permission_codename
 from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
@@ -549,12 +549,12 @@ class GridReport(View):
       # Build the return value, encoding all output
       if hasattr(row, "__getitem__"):
         writer.writerow([
-          force_text(_localize(row[f], decimal_separator)).encode(encoding, "ignore") if row[f] is not None else ''
+          force_text(_localize(row[f], decimal_separator), encoding=encoding, errors='ignore') if row[f] is not None else ''
           for f in fields
           ])
       else:
         writer.writerow([
-          force_text(_localize(getattr(row, f), decimal_separator)).encode(encoding, "ignore") if getattr(row, f) is not None else ''
+          force_text(_localize(getattr(row, f), decimal_separator), encoding=encoding, errors='ignore') if getattr(row, f) is not None else ''
           for f in fields
           ])
       # Return string
@@ -756,29 +756,30 @@ class GridReport(View):
     # Check permissions
     if not reportclass.model or not reportclass.editable:
       return HttpResponseForbidden(_('Permission denied'))
-    if not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_change_permission())):
+    permname = get_permission_codename('change', reportclass.model._meta)
+    if not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, permname)):
       return HttpResponseForbidden(_('Permission denied'))
 
     # Loop over the data records
-    transaction.enter_transaction_management(using=request.database)
     resp = HttpResponse()
     ok = True
-    try:
+    with transaction.atomic(using=request.database, savepoint=False):
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
       for rec in json.JSONDecoder().decode(request.read().decode(request.encoding or settings.DEFAULT_CHARSET)):
         if 'delete' in rec:
           # Deleting records
           for key in rec['delete']:
             try:
-              obj = reportclass.model.objects.using(request.database).get(pk=key)
-              obj.delete()
-              LogEntry(
-                user_id=request.user.id,
-                content_type_id=content_type_id,
-                object_id=force_text(key),
-                object_repr=force_text(key)[:200],
-                action_flag=DELETION
-              ).save(using=request.database)
+              with transaction.atomic(using=request.database, savepoint=False):
+                obj = reportclass.model.objects.using(request.database).get(pk=key)
+                obj.delete()
+                LogEntry(
+                  user_id=request.user.id,
+                  content_type_id=content_type_id,
+                  object_id=force_text(key),
+                  object_repr=force_text(key)[:200],
+                  action_flag=DELETION
+                ).save(using=request.database)
             except reportclass.model.DoesNotExist:
               ok = False
               resp.write(escape(_("Can't find %s" % key)))
@@ -793,59 +794,58 @@ class GridReport(View):
           # Copying records
           for key in rec['copy']:
             try:
-              obj = reportclass.model.objects.using(request.database).get(pk=key)
-              if isinstance(reportclass.model._meta.pk, CharField):
-                # The primary key is a string
-                obj.pk = "Copy of %s" % key
-              elif isinstance(reportclass.model._meta.pk, AutoField):
-                # The primary key is an auto-generated number
-                obj.pk = None
-              else:
-                raise Exception(_("Can't copy %s") % reportclass.model._meta.app_label)
-              obj.save(using=request.database, force_insert=True)
-              LogEntry(
-                user_id=request.user.pk,
-                content_type_id=content_type_id,
-                object_id=obj.pk,
-                object_repr=force_text(obj),
-                action_flag=ADDITION,
-                change_message=_('Copied from %s.') % key
-              ).save(using=request.database)
-              transaction.commit(using=request.database)
+              with transaction.atomic(using=request.database, savepoint=False):
+                obj = reportclass.model.objects.using(request.database).get(pk=key)
+                if isinstance(reportclass.model._meta.pk, CharField):
+                  # The primary key is a string
+                  obj.pk = "Copy of %s" % key
+                elif isinstance(reportclass.model._meta.pk, AutoField):
+                  # The primary key is an auto-generated number
+                  obj.pk = None
+                else:
+                  raise Exception(_("Can't copy %s") % reportclass.model._meta.app_label)
+                obj.save(using=request.database, force_insert=True)
+                LogEntry(
+                  user_id=request.user.pk,
+                  content_type_id=content_type_id,
+                  object_id=obj.pk,
+                  object_repr=force_text(obj),
+                  action_flag=ADDITION,
+                  change_message=_('Copied from %s.') % key
+                ).save(using=request.database)
             except reportclass.model.DoesNotExist:
               ok = False
               resp.write(escape(_("Can't find %s" % key)))
               resp.write('<br/>')
-              transaction.rollback(using=request.database)
               pass
             except Exception as e:
               ok = False
               resp.write(escape(e))
               resp.write('<br/>')
-              transaction.rollback(using=request.database)
               pass
         else:
           # Editing records
           try:
-            obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
-            del rec['id']
-            UploadForm = modelform_factory(
-              reportclass.model,
-              fields=tuple(rec.keys()),
-              formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
-              )
-            form = UploadForm(rec, instance=obj)
-            if form.has_changed():
-              obj = form.save(commit=False)
-              obj.save(using=request.database)
-              LogEntry(
-                user_id=request.user.pk,
-                content_type_id=content_type_id,
-                object_id=obj.pk,
-                object_repr=force_text(obj),
-                action_flag=CHANGE,
-                change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-              ).save(using=request.database)
+            with transaction.atomic(using=request.database, savepoint=False):
+              obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
+              del rec['id']
+              UploadForm = modelform_factory(
+                reportclass.model,
+                fields=tuple(rec.keys()),
+                formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
+                )
+              form = UploadForm(rec, instance=obj)
+              if form.has_changed():
+                obj = form.save(commit=False)
+                obj.save(using=request.database)
+                LogEntry(
+                  user_id=request.user.pk,
+                  content_type_id=content_type_id,
+                  object_id=obj.pk,
+                  object_repr=force_text(obj),
+                  action_flag=CHANGE,
+                  change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                ).save(using=request.database)
           except reportclass.model.DoesNotExist:
             ok = False
             resp.write(escape(_("Can't find %s" % rec['id'])))
@@ -863,9 +863,6 @@ class GridReport(View):
             ok = False
             resp.write(escape(e))
             resp.write('<br/>')
-    finally:
-      transaction.commit(using=request.database)
-      transaction.leave_transaction_management(using=request.database)
     if ok:
       resp.write("OK")
     resp.status_code = ok and 200 or 500
@@ -874,11 +871,11 @@ class GridReport(View):
 
   @staticmethod
   def dependent_models(m, found):
-    ''' An auxilary method that constructs a set of all dependent models'''
-    for f in m._meta.get_all_related_objects_with_model():
-      if f[0].model != m and not f[0].model in found:
-        found.update([f[0].model])
-        GridReport.dependent_models(f[0].model, found)
+    ''' An auxilary method that constructs a set of all dependent models''' 
+    for f in m._meta.get_fields():
+      if f.is_relation and f.auto_created and f.related_model != m and not f.related_model in found:
+        found.update([f.related_model])
+        GridReport.dependent_models(f.related_model, found)
 
 
   @classmethod
@@ -889,7 +886,8 @@ class GridReport(View):
 
     # Check the delete permissions for all related objects
     for m in deps:
-      if not request.user.has_perm('%s.%s' % (m._meta.app_label, m._meta.get_delete_permission())):
+      permname = get_permission_codename('delete', m._meta)
+      if not request.user.has_perm('%s.%s' % (m._meta.app_label, permname)):
         return string_concat(m._meta.verbose_name, ':', _('Permission denied'))
 
     # Delete the data records
@@ -926,311 +924,316 @@ class GridReport(View):
       # Check permissions
       if not reportclass.model:
         yield force_text(_('Invalid upload request')) + '\n '
-      elif not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())):
+        return
+      permname = get_permission_codename('add', reportclass.model._meta)
+      if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, permname)):
         yield force_text(_('Permission denied')) + '\n '
-      else:
+        return
 
-        # Choose the right delimiter and language
-        delimiter = get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',' and ';' or ','
-        if translation.get_language() != request.LANGUAGE_CODE:
-          translation.activate(request.LANGUAGE_CODE)
+      # Choose the right delimiter and language
+      delimiter = get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',' and ';' or ','
+      if translation.get_language() != request.LANGUAGE_CODE:
+        translation.activate(request.LANGUAGE_CODE)
 
-        # Init
-        headers = []
-        rownumber = 0
-        changed = 0
-        added = 0
-        content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
+      # Init
+      headers = []
+      rownumber = 0
+      changed = 0
+      added = 0
+      content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
 
-        # Handle the complete upload as a single database transaction
-        with transaction.atomic(using=request.database):
+      # Handle the complete upload as a single database transaction
+      with transaction.atomic(using=request.database):
 
-          # Erase all records and related tables
-          errors = False
-          if 'erase' in request.POST:
-            returnvalue = reportclass.erase(request)
-            if returnvalue:
-              yield returnvalue + '\n '
-              errors = True
+        # Erase all records and related tables
+        errors = False
+        if 'erase' in request.POST:
+          returnvalue = reportclass.erase(request)
+          if returnvalue:
+            yield returnvalue + '\n '
+            errors = True
 
-          # Loop through the data records
-          has_pk_field = False
-          for row in EncodedCSVReader(request.FILES['csv_file'], delimiter=delimiter):
-            rownumber += 1
+        # Loop through the data records
+        has_pk_field = False
+        for row in EncodedCSVReader(request.FILES['csv_file'], delimiter=delimiter):
+          rownumber += 1
 
-            ### Case 1: The first line is read as a header line
-            if rownumber == 1:
+          ### Case 1: The first line is read as a header line
+          if rownumber == 1:
 
-              for col in row:
-                col = col.strip().strip('#').lower()
-                if col == "":
-                  headers.append(False)
-                  continue
-                ok = False
-                for i in reportclass.model._meta.fields:
-                  if col == i.name.lower() or col == i.verbose_name.lower():
-                    if i.editable is True:
-                      headers.append(i)
-                    else:
-                      headers.append(False)
-                    ok = True
-                    break
-                if not ok:
-                  errors = True
-                  yield force_text(_('Incorrect field %(column)s') % {'column': col}) + '\n '
-                if col == reportclass.model._meta.pk.name.lower() or \
-                   col == reportclass.model._meta.pk.verbose_name.lower():
-                  has_pk_field = True
-              if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
-                # The primary key is not an auto-generated id and it is not mapped in the input...
+            for col in row:
+              col = col.strip().strip('#').lower()
+              if col == "":
+                headers.append(False)
+                continue
+              ok = False
+              for i in reportclass.model._meta.fields:
+                if col == i.name.lower() or col == i.verbose_name.lower():
+                  if i.editable is True:
+                    headers.append(i)
+                  else:
+                    headers.append(False)
+                  ok = True
+                  break
+              if not ok:
                 errors = True
-                yield force_text(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name}) + '\n '
-              # Abort when there are errors
-              if errors:
-                break
+                yield force_text(_('Incorrect field %(column)s') % {'column': col}) + '\n '
+              if col == reportclass.model._meta.pk.name.lower() or \
+                 col == reportclass.model._meta.pk.verbose_name.lower():
+                has_pk_field = True
+            if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
+              # The primary key is not an auto-generated id and it is not mapped in the input...
+              errors = True
+              yield force_text(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name}) + '\n '
+            # Abort when there are errors
+            if errors:
+              break
 
-              # Create a form class that will be used to validate the data
-              UploadForm = modelform_factory(
-                reportclass.model,
-                fields=tuple([i.name for i in headers if isinstance(i, Field)]),
-                formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
-                )
+            # Create a form class that will be used to validate the data
+            UploadForm = modelform_factory(
+              reportclass.model,
+              fields=tuple([i.name for i in headers if isinstance(i, Field)]),
+              formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
+              )
 
-            ### Case 2: Skip empty rows and comments rows
-            elif len(row) == 0 or row[0].startswith('#'):
-              continue
+          ### Case 2: Skip empty rows and comments rows
+          elif len(row) == 0 or row[0].startswith('#'):
+            continue
 
-            ### Case 3: Process a data row
-            else:
-              try:
-                # Step 1: Build a dictionary with all data fields
-                d = {}
-                colnum = 0
-                for col in row:
-                  # More fields in data row than headers. Move on to the next row.
-                  if colnum >= len(headers):
-                    break
-                  if isinstance(headers[colnum], Field):
-                    d[headers[colnum].name] = col
-                  colnum += 1
+          ### Case 3: Process a data row
+          else:
+            try:
+              # Step 1: Build a dictionary with all data fields
+              d = {}
+              colnum = 0
+              for col in row:
+                # More fields in data row than headers. Move on to the next row.
+                if colnum >= len(headers):
+                  break
+                if isinstance(headers[colnum], Field):
+                  d[headers[colnum].name] = col
+                colnum += 1
 
-                # Step 2: Fill the form with data, either updating an existing
-                # instance or creating a new one.
-                if has_pk_field:
-                  # A primary key is part of the input fields
-                  try:
-                    # Try to find an existing record with the same primary key
-                    it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
-                    form = UploadForm(d, instance=it)
-                  except reportclass.model.DoesNotExist:
-                    form = UploadForm(d)
-                    it = None
-                else:
-                  # No primary key required for this model
+              # Step 2: Fill the form with data, either updating an existing
+              # instance or creating a new one.
+              if has_pk_field:
+                # A primary key is part of the input fields
+                try:
+                  # Try to find an existing record with the same primary key
+                  it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
+                  form = UploadForm(d, instance=it)
+                except reportclass.model.DoesNotExist:
                   form = UploadForm(d)
                   it = None
+              else:
+                # No primary key required for this model
+                form = UploadForm(d)
+                it = None
 
-                # Step 3: Validate the data and save to the database
-                if form.has_changed():
-                  try:
-                    with transaction.atomic(using=request.database):
-                      obj = form.save(commit=False)
-                      obj.save(using=request.database)
-                      LogEntry(
-                        user_id=request.user.pk,
-                        content_type_id=content_type_id,
-                        object_id=obj.pk,
-                        object_repr=force_text(obj),
-                        action_flag=it and CHANGE or ADDITION,
-                        change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                      ).save(using=request.database)
-                      if it:
-                        changed += 1
-                      else:
-                        added += 1
-                  except Exception as e:
-                    # Validation fails
-                    for error in form.non_field_errors():
+              # Step 3: Validate the data and save to the database
+              if form.has_changed():
+                try:
+                  with transaction.atomic(using=request.database):
+                    obj = form.save(commit=False)
+                    obj.save(using=request.database)
+                    LogEntry(
+                      user_id=request.user.pk,
+                      content_type_id=content_type_id,
+                      object_id=obj.pk,
+                      object_repr=force_text(obj),
+                      action_flag=it and CHANGE or ADDITION,
+                      change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                    ).save(using=request.database)
+                    if it:
+                      changed += 1
+                    else:
+                      added += 1
+                except Exception as e:
+                  # Validation fails
+                  for error in form.non_field_errors():
+                    yield force_text(
+                      _('Row %(rownum)s: %(message)s') % {
+                        'rownum': rownumber, 'message': error
+                      }) + '\n '
+                  for field in form:
+                    for error in field.errors:
                       yield force_text(
-                        _('Row %(rownum)s: %(message)s') % {
-                          'rownum': rownumber, 'message': error
+                        _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                          'rownum': rownumber, 'data': d[field.name],
+                          'field': field.name, 'message': error
                         }) + '\n '
-                    for field in form:
-                      for error in field.errors:
-                        yield force_text(
-                          _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
-                            'rownum': rownumber, 'data': d[field.name],
-                            'field': field.name, 'message': error
-                          }) + '\n '
-              except Exception as e:
-                yield force_text(_("Exception during upload: %(message)s") % {'message': e}) + '\n '
+            except Exception as e:
+              yield force_text(_("Exception during upload: %(message)s") % {'message': e}) + '\n '
 
-        # Report all failed records
-        yield force_text(
-            _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-            ) + '\n '
+      # Report all failed records
+      yield force_text(
+          _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+          ) + '\n '
 
 
   @classmethod
   def parseSpreadsheetUpload(reportclass, request):
-      '''
-      This method reads a spreadsheet file (in memory) and creates or updates
-      the database records.
-      The data must follow the following format:
-        - only the first tab in the spreadsheet is read
-        - the first row contains a header, listing all field names
-        - a first character # marks a comment line
-        - empty rows are skipped
-      '''
-      # Check permissions
-      if not reportclass.model:
-        yield force_text(_('Invalid upload request')) + '\n '
-      elif not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, reportclass.model._meta.get_add_permission())):
-        yield force_text(_('Permission denied')) + '\n '
-      else:
-        # Choose the right language
-        if translation.get_language() != request.LANGUAGE_CODE:
-          translation.activate(request.LANGUAGE_CODE)
+    '''
+    This method reads a spreadsheet file (in memory) and creates or updates
+    the database records.
+    The data must follow the following format:
+      - only the first tab in the spreadsheet is read
+      - the first row contains a header, listing all field names
+      - a first character # marks a comment line
+      - empty rows are skipped
+    '''
+    # Check permissions
+    if not reportclass.model:
+      yield force_text(_('Invalid upload request')) + '\n '
+      return      
+    permname = get_permission_codename('add', reportclass.model._meta)
+    if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, permname)):
+      yield force_text(_('Permission denied')) + '\n '
+      return
 
-        # Init
-        headers = []
-        rownumber = 0
-        changed = 0
-        added = 0
-        content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
+    # Choose the right language
+    if translation.get_language() != request.LANGUAGE_CODE:
+      translation.activate(request.LANGUAGE_CODE)
 
-        # Handle the complete upload as a single database transaction
-        with transaction.atomic(using=request.database):
+    # Init
+    headers = []
+    rownumber = 0
+    changed = 0
+    added = 0
+    content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
 
-          # Erase all records and related tables
-          errors = False
-          if 'erase' in request.POST:
-            returnvalue = reportclass.erase(request)
-            if returnvalue:
-              errors = True
-              yield returnvalue + '\n '
+    # Handle the complete upload as a single database transaction
+    with transaction.atomic(using=request.database):
 
-          # Loop through the data records
-          wb = load_workbook(filename=request.FILES['csv_file'], use_iterators=True, data_only=True)
-          ws = wb.worksheets[0]
-          has_pk_field = False
-          for row in ws.iter_rows():
-            rownumber += 1
+      # Erase all records and related tables
+      errors = False
+      if 'erase' in request.POST:
+        returnvalue = reportclass.erase(request)
+        if returnvalue:
+          errors = True
+          yield returnvalue + '\n '
 
-            ### Case 1: The first line is read as a header line
-            if rownumber == 1:
-              for col in row:
-                col = str(col.value).strip().strip('#').lower()
-                if col == "":
-                  headers.append(False)
-                  continue
-                ok = False
-                for i in reportclass.model._meta.fields:
-                  if col == i.name.lower() or col == i.verbose_name.lower():
-                    if i.editable is True:
-                      headers.append(i)
-                    else:
-                      headers.append(False)
-                    ok = True
-                    break
-                if not ok:
-                  errors = True
-                  yield force_text(_('Incorrect field %(column)s') % {'column': col}) + '\n '
-                if col == reportclass.model._meta.pk.name.lower() or \
-                   col == reportclass.model._meta.pk.verbose_name.lower():
-                  has_pk_field = True
-              if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
-                # The primary key is not an auto-generated id and it is not mapped in the input...
-                errors = True
-                yield force_text(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name}) + '\n '
-              # Abort when there are errors
-              if errors > 0:
-                break
+      # Loop through the data records
+      wb = load_workbook(filename=request.FILES['csv_file'], use_iterators=True, data_only=True)
+      ws = wb.worksheets[0]
+      has_pk_field = False
+      for row in ws.iter_rows():
+        rownumber += 1
 
-              # Create a form class that will be used to validate the data
-              UploadForm = modelform_factory(
-                reportclass.model,
-                fields=tuple([i.name for i in headers if isinstance(i, Field)]),
-                formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
-                )
-
-            ### Case 2: Skip empty rows and comments rows
-            elif len(row) == 0 or (isinstance(row[0].value, six.string_types) and row[0].value.startswith('#')):
+        ### Case 1: The first line is read as a header line
+        if rownumber == 1:
+          for col in row:
+            col = str(col.value).strip().strip('#').lower()
+            if col == "":
+              headers.append(False)
               continue
-
-            ### Case 3: Process a data row
-            else:
-              try:
-                # Step 1: Build a dictionary with all data fields
-                d = {}
-                colnum = 0
-                for col in row:
-                  # More fields in data row than headers. Move on to the next row.
-                  if colnum >= len(headers):
-                    break
-                  if isinstance(headers[colnum], Field):
-                    data = col.value
-                    if isinstance(headers[colnum], (IntegerField, AutoField)):
-                      if isinstance(data, numericTypes):
-                        data = int(data)
-                    d[headers[colnum].name] = data
-                  colnum += 1
-
-                # Step 2: Fill the form with data, either updating an existing
-                # instance or creating a new one.
-                if has_pk_field:
-                  # A primary key is part of the input fields
-                  try:
-                    # Try to find an existing record with the same primary key
-                    it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
-                    form = UploadForm(d, instance=it)
-                  except reportclass.model.DoesNotExist:
-                    form = UploadForm(d)
-                    it = None
+            ok = False
+            for i in reportclass.model._meta.fields:
+              if col == i.name.lower() or col == i.verbose_name.lower():
+                if i.editable is True:
+                  headers.append(i)
                 else:
-                  # No primary key required for this model
-                  form = UploadForm(d)
-                  it = None
+                  headers.append(False)
+                ok = True
+                break
+            if not ok:
+              errors = True
+              yield force_text(_('Incorrect field %(column)s') % {'column': col}) + '\n '
+            if col == reportclass.model._meta.pk.name.lower() or \
+               col == reportclass.model._meta.pk.verbose_name.lower():
+              has_pk_field = True
+          if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
+            # The primary key is not an auto-generated id and it is not mapped in the input...
+            errors = True
+            yield force_text(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name}) + '\n '
+          # Abort when there are errors
+          if errors > 0:
+            break
 
-                # Step 3: Validate the data and save to the database
-                if form.has_changed():
-                  try:
-                    with transaction.atomic(using=request.database):
-                      obj = form.save(commit=False)
-                      obj.save(using=request.database)
-                      LogEntry(
-                        user_id=request.user.pk,
-                        content_type_id=content_type_id,
-                        object_id=obj.pk,
-                        object_repr=force_text(obj),
-                        action_flag=it and CHANGE or ADDITION,
-                        change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                      ).save(using=request.database)
-                      if it:
-                        changed += 1
-                      else:
-                        added += 1
-                  except Exception as e:
-                    # Validation fails
-                    for error in form.non_field_errors():
-                      yield force_text(
-                        _('Row %(rownum)s: %(message)s') % {
-                          'rownum': rownumber, 'message': error
-                        }) + '\n '
-                    for field in form:
-                      for error in field.errors:
-                        yield force_text(
-                          _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
-                            'rownum': rownumber, 'data': d[field.name],
-                            'field': field.name, 'message': error
-                          }) + '\n '
+          # Create a form class that will be used to validate the data
+          UploadForm = modelform_factory(
+            reportclass.model,
+            fields=tuple([i.name for i in headers if isinstance(i, Field)]),
+            formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
+            )
+
+        ### Case 2: Skip empty rows and comments rows
+        elif len(row) == 0 or (isinstance(row[0].value, six.string_types) and row[0].value.startswith('#')):
+          continue
+
+        ### Case 3: Process a data row
+        else:
+          try:
+            # Step 1: Build a dictionary with all data fields
+            d = {}
+            colnum = 0
+            for col in row:
+              # More fields in data row than headers. Move on to the next row.
+              if colnum >= len(headers):
+                break
+              if isinstance(headers[colnum], Field):
+                data = col.value
+                if isinstance(headers[colnum], (IntegerField, AutoField)):
+                  if isinstance(data, numericTypes):
+                    data = int(data)
+                d[headers[colnum].name] = data
+              colnum += 1
+
+            # Step 2: Fill the form with data, either updating an existing
+            # instance or creating a new one.
+            if has_pk_field:
+              # A primary key is part of the input fields
+              try:
+                # Try to find an existing record with the same primary key
+                it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
+                form = UploadForm(d, instance=it)
+              except reportclass.model.DoesNotExist:
+                form = UploadForm(d)
+                it = None
+            else:
+              # No primary key required for this model
+              form = UploadForm(d)
+              it = None
+
+            # Step 3: Validate the data and save to the database
+            if form.has_changed():
+              try:
+                with transaction.atomic(using=request.database):
+                  obj = form.save(commit=False)
+                  obj.save(using=request.database)
+                  LogEntry(
+                    user_id=request.user.pk,
+                    content_type_id=content_type_id,
+                    object_id=obj.pk,
+                    object_repr=force_text(obj),
+                    action_flag=it and CHANGE or ADDITION,
+                    change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                  ).save(using=request.database)
+                  if it:
+                    changed += 1
+                  else:
+                    added += 1
               except Exception as e:
-                yield force_text(_("Exception during upload: %(message)s") % {'message': e}) + '\n '
+                # Validation fails
+                for error in form.non_field_errors():
+                  yield force_text(
+                    _('Row %(rownum)s: %(message)s') % {
+                      'rownum': rownumber, 'message': error
+                    }) + '\n '
+                for field in form:
+                  for error in field.errors:
+                    yield force_text(
+                      _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                        'rownum': rownumber, 'data': d[field.name],
+                        'field': field.name, 'message': error
+                      }) + '\n '
+          except Exception as e:
+            yield force_text(_("Exception during upload: %(message)s") % {'message': e}) + '\n '
 
-      # Report all failed records
-      yield force_text(
-        _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-        ) + '\n '
+    # Report all failed records
+    yield force_text(
+      _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+      ) + '\n '
 
 
   @classmethod
@@ -1588,24 +1591,24 @@ class GridPivot(GridReport):
         # Data for rows
         if hasattr(row, "__getitem__"):
           fields = [
-            force_text(row[f.name]).encode(encoding, "ignore") if row[f.name] is not None else ''
+            force_text(row[f.name], encoding=encoding, errors="ignore") if row[f.name] is not None else ''
             for f in reportclass.rows
             if f.name and not f.hidden
             ]
           fields.extend([ force_text(row['bucket'], encoding=encoding, errors='ignore') ])
           fields.extend([
-            force_text(_localize(row[f[0]], decimal_separator)).encode(encoding, "ignore") if row[f[0]] is not None else ''
+            force_text(_localize(row[f[0]], decimal_separator), encoding=encoding, errors='ignore') if row[f[0]] is not None else ''
             for f in reportclass.crosses
             ])
         else:
           fields = [
-            force_text(getattr(row, f.name)).encode(encoding, "ignore") if getattr(row, f.name) is not None else ''
+            force_text(getattr(row, f.name), encoding=encoding, errors='ignore') if getattr(row, f.name) is not None else ''
             for f in reportclass.rows
             if f.name and not f.hidden
             ]
           fields.extend([ force_text(getattr(row, 'bucket'), encoding=encoding, errors='ignore') ])
           fields.extend([
-            force_text(_localize(getattr(row, f[0]), decimal_separator)).encode(encoding, "ignore") if getattr(row, f[0]) is not None else ''
+            force_text(_localize(getattr(row, f[0]), decimal_separator), encoding=encoding, errors='ignore') if getattr(row, f[0]) is not None else ''
             for f in reportclass.crosses
             ])
         # Return string
@@ -1809,7 +1812,8 @@ def exportWorkbook(request):
       (app_label, model_label) = entity_name.split('.')
       model = apps.get_model(app_label, model_label)
       # Verify access rights
-      if not request.user.has_perm("%s.%s" % (app_label, get_permission_codename('change', model._meta))):
+      permname = get_permission_codename('change', model._meta)
+      if not request.user.has_perm("%s.%s" % (app_label, permname)):
         continue
       # Never export some special administrative models
       if model in EXCLUDE_FROM_BULK_OPERATIONS:

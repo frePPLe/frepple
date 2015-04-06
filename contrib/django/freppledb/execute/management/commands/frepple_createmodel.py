@@ -219,7 +219,6 @@ class Command(BaseCommand):
           resource_size, components, components_per, deliver_lt, procure_lt
         )
       task.save(using=database)
-      transaction.commit(using=database)
 
       # Pick up the startdate
       try:
@@ -480,74 +479,70 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
   # and cpu time.
   tmp_debug = settings.DEBUG
   settings.DEBUG = False
-
-  transaction.enter_transaction_management(using=database)
   try:
-
-    # Delete previous contents
-    connections[database].cursor().execute(
-      "delete from common_bucketdetail where bucket_id = 'telescope'"
-      )
-
-    # Create bucket
-    try:
-      b = Bucket.objects.using(database).get(name='telescope')
-    except Bucket.DoesNotExist:
-      b = Bucket(name='telescope', description='Time buckets with decreasing granularity')
-    b.save(using=database)
-
-    # Create bucket for all dates in the past
-    startdate = datetime.strptime(Parameter.objects.using(database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
-    curdate = startdate
-    BucketDetail(
-      bucket=b,
-      name='past',
-      startdate=datetime(2000, 1, 1),
-      enddate=curdate,
-      ).save(using=database)
-
-    # Create daily buckets
-    limit = curdate + timedelta(min_day_horizon)
-    while curdate < limit or curdate.strftime("%w") != '0':
+    with transaction.atomic(using=database, savepoint=False):
+      
+      # Delete previous contents
+      connections[database].cursor().execute(
+        "delete from common_bucketdetail where bucket_id = 'telescope'"
+        )
+  
+      # Create bucket
+      try:
+        b = Bucket.objects.using(database).get(name='telescope')
+      except Bucket.DoesNotExist:
+        b = Bucket(name='telescope', description='Time buckets with decreasing granularity')
+      b.save(using=database)
+  
+      # Create bucket for all dates in the past
+      startdate = datetime.strptime(Parameter.objects.using(database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
+      curdate = startdate
       BucketDetail(
         bucket=b,
-        name=str(curdate.date()),
-        startdate=curdate,
-        enddate=curdate + timedelta(1)
+        name='past',
+        startdate=datetime(2000, 1, 1),
+        enddate=curdate,
         ).save(using=database)
-      curdate = curdate + timedelta(1)
-
-    # Create weekly buckets
-    limit = startdate + timedelta(min_week_horizon)
-    stop = False
-    while not stop:
-      enddate = curdate + timedelta(7)
-      if curdate > limit and curdate.month != enddate.month:
-        stop = True
+  
+      # Create daily buckets
+      limit = curdate + timedelta(min_day_horizon)
+      while curdate < limit or curdate.strftime("%w") != '0':
+        BucketDetail(
+          bucket=b,
+          name=str(curdate.date()),
+          startdate=curdate,
+          enddate=curdate + timedelta(1)
+          ).save(using=database)
+        curdate = curdate + timedelta(1)
+  
+      # Create weekly buckets
+      limit = startdate + timedelta(min_week_horizon)
+      stop = False
+      while not stop:
+        enddate = curdate + timedelta(7)
+        if curdate > limit and curdate.month != enddate.month:
+          stop = True
+          enddate = datetime(enddate.year, enddate.month, 1)
+        BucketDetail(
+          bucket=b,
+          name=curdate.strftime("%y W%W"),
+          startdate=curdate,
+          enddate=enddate
+          ).save(using=database)
+        curdate = enddate
+  
+      # Create monthly buckets
+      limit = startdate + timedelta(min_month_horizon)
+      while curdate < limit:
+        enddate = curdate + timedelta(32)
         enddate = datetime(enddate.year, enddate.month, 1)
-      BucketDetail(
-        bucket=b,
-        name=curdate.strftime("%y W%W"),
-        startdate=curdate,
-        enddate=enddate
-        ).save(using=database)
-      curdate = enddate
+        BucketDetail(
+          bucket=b,
+          name=curdate.strftime("%b %y"),
+          startdate=curdate,
+          enddate=enddate
+          ).save(using=database)
+        curdate = enddate
 
-    # Create monthly buckets
-    limit = startdate + timedelta(min_month_horizon)
-    while curdate < limit:
-      enddate = curdate + timedelta(32)
-      enddate = datetime(enddate.year, enddate.month, 1)
-      BucketDetail(
-        bucket=b,
-        name=curdate.strftime("%b %y"),
-        startdate=curdate,
-        enddate=enddate
-        ).save(using=database)
-      curdate = enddate
-
-    transaction.commit(using=database)
   finally:
-    transaction.rollback(using=database)
     settings.DEBUG = tmp_debug
-    transaction.leave_transaction_management(using=database)

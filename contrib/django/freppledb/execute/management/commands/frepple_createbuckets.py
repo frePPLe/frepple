@@ -106,8 +106,6 @@ class Command(BaseCommand):
       user = None
 
     now = datetime.now()
-    ac = transaction.get_autocommit(using=database)
-    transaction.set_autocommit(False, using=database)
     task = None
     try:
       # Initialize the task
@@ -123,7 +121,6 @@ class Command(BaseCommand):
       else:
         task = Task(name='generate buckets', submitted=now, started=now, status='0%', user=user, arguments="--start=%s --end=%s --weekstart=%s" % (start, end, weekstart))
       task.save(using=database)
-      transaction.commit(using=database)
 
       # Validate the date arguments
       try:
@@ -132,87 +129,88 @@ class Command(BaseCommand):
       except Exception as e:
         raise CommandError("Date is not matching format YYYY-MM-DD")
 
-      # Delete previous contents
-      connections[database].cursor().execute(
-        "delete from common_bucketdetail where bucket_id in ('year', 'quarter','month','week','day')"
-        )
-      connections[database].cursor().execute(
-        "delete from common_bucket where name in ('year', 'quarter','month','week','day')"
-        )
-
-      # Create buckets
-      y = Bucket(name='year', description='Yearly time buckets')
-      q = Bucket(name='quarter', description='Quarterly time buckets')
-      m = Bucket(name='month', description='Monthly time buckets')
-      w = Bucket(name='week', description='Weeky time buckets')
-      d = Bucket(name='day', description='Daily time buckets')
-      y.save(using=database)
-      q.save(using=database)
-      m.save(using=database)
-      w.save(using=database)
-      d.save(using=database)
-
-      # Loop over all days in the chosen horizon
-      prev_year = None
-      prev_quarter = None
-      prev_month = None
-      prev_week = None
-      while curdate < enddate:
-        month = int(curdate.strftime("%m"))  # an integer in the range 1 - 12
-        quarter = (month - 1) // 3 + 1       # an integer in the range 1 - 4
-        year = int(curdate.strftime("%Y"))
-        dayofweek = int(curdate.strftime("%w"))  # day of the week, 0 = sunday, 1 = monday, ...
-        year_start = datetime(year, 1, 1)
-        year_end = datetime(year + 1, 1, 1)
-        week_start = curdate - timedelta((dayofweek + 6) % 7 + 1 - weekstart)
-        week_end = curdate - timedelta((dayofweek + 6) % 7 - 6 - weekstart)
-        if week_start < year_start:
-          week_start = year_start
-        if week_end > year_end:
-          week_end = year_end
+      with transaction.atomic(using=database, savepoint=False):
+        # Delete previous contents
+        connections[database].cursor().execute(
+          "delete from common_bucketdetail where bucket_id in ('year', 'quarter','month','week','day')"
+          )
+        connections[database].cursor().execute(
+          "delete from common_bucket where name in ('year', 'quarter','month','week','day')"
+          )
 
         # Create buckets
-        if year != prev_year:
-          prev_year = year
-          BucketDetail(
-            bucket=y,
-            name=str(year),
-            startdate=year_start,
-            enddate=year_end
-            ).save(using=database)
-        if quarter != prev_quarter:
-          prev_quarter = quarter
-          BucketDetail(
-            bucket=q,
-            name="%02d Q%s" % (year - 2000, quarter),
-            startdate=date(year, quarter * 3 - 2, 1),
-            enddate=date(year + quarter // 4, quarter * 3 + 1 - 12 * (quarter // 4), 1)
-            ).save(using=database)
-        if month != prev_month:
-          prev_month = month
-          BucketDetail(
-            bucket=m,
-            name=curdate.strftime("%b %y"),
-            startdate=date(year, month, 1),
-            enddate=date(year + month // 12, month + 1 - 12 * (month // 12), 1),
-            ).save(using=database)
-        if week_start != prev_week:
-          prev_week = week_start
-          BucketDetail(
-            bucket=w,
-            name=curdate.strftime("%y W%W"),
-            startdate=week_start,
-            enddate=week_end,
-            ).save(using=database)
-        BucketDetail(
-          bucket=d,
-          name=str(curdate.date()),
-          startdate=curdate,
-          enddate=curdate + timedelta(1),
-          ).save(using=database)
+        y = Bucket(name='year', description='Yearly time buckets')
+        q = Bucket(name='quarter', description='Quarterly time buckets')
+        m = Bucket(name='month', description='Monthly time buckets')
+        w = Bucket(name='week', description='Weeky time buckets')
+        d = Bucket(name='day', description='Daily time buckets')
+        y.save(using=database)
+        q.save(using=database)
+        m.save(using=database)
+        w.save(using=database)
+        d.save(using=database)
 
-        # Next date
-        curdate = curdate + timedelta(1)
+        # Loop over all days in the chosen horizon
+        prev_year = None
+        prev_quarter = None
+        prev_month = None
+        prev_week = None
+        while curdate < enddate:
+          month = int(curdate.strftime("%m"))  # an integer in the range 1 - 12
+          quarter = (month - 1) // 3 + 1       # an integer in the range 1 - 4
+          year = int(curdate.strftime("%Y"))
+          dayofweek = int(curdate.strftime("%w"))  # day of the week, 0 = sunday, 1 = monday, ...
+          year_start = datetime(year, 1, 1)
+          year_end = datetime(year + 1, 1, 1)
+          week_start = curdate - timedelta((dayofweek + 6) % 7 + 1 - weekstart)
+          week_end = curdate - timedelta((dayofweek + 6) % 7 - 6 - weekstart)
+          if week_start < year_start:
+            week_start = year_start
+          if week_end > year_end:
+            week_end = year_end
+
+          # Create buckets
+          if year != prev_year:
+            prev_year = year
+            BucketDetail(
+              bucket=y,
+              name=str(year),
+              startdate=year_start,
+              enddate=year_end
+              ).save(using=database)
+          if quarter != prev_quarter:
+            prev_quarter = quarter
+            BucketDetail(
+              bucket=q,
+              name="%02d Q%s" % (year - 2000, quarter),
+              startdate=date(year, quarter * 3 - 2, 1),
+              enddate=date(year + quarter // 4, quarter * 3 + 1 - 12 * (quarter // 4), 1)
+              ).save(using=database)
+          if month != prev_month:
+            prev_month = month
+            BucketDetail(
+              bucket=m,
+              name=curdate.strftime("%b %y"),
+              startdate=date(year, month, 1),
+              enddate=date(year + month // 12, month + 1 - 12 * (month // 12), 1),
+              ).save(using=database)
+          if week_start != prev_week:
+            prev_week = week_start
+            BucketDetail(
+              bucket=w,
+              name=curdate.strftime("%y W%W"),
+              startdate=week_start,
+              enddate=week_end,
+              ).save(using=database)
+          BucketDetail(
+            bucket=d,
+            name=str(curdate.date()),
+            startdate=curdate,
+            enddate=curdate + timedelta(1),
+            ).save(using=database)
+
+          # Next date
+          curdate = curdate + timedelta(1)
 
       # Log success
       task.status = 'Done'
@@ -228,9 +226,4 @@ class Command(BaseCommand):
     finally:
       if task:
         task.save(using=database)
-      try:
-        transaction.commit(using=database)
-      except:
-        pass
       settings.DEBUG = tmp_debug
-      transaction.set_autocommit(ac, using=database)

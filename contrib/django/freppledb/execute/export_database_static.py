@@ -49,6 +49,7 @@ class exportStaticModel(object):
     self.source = source
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportLocations(self, cursor):
     print("Exporting locations...")
     starttime = time()
@@ -85,10 +86,10 @@ class exportStaticModel(object):
         for i in frepple.locations()
         if i.owner and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported locations in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportCalendars(self, cursor):
     print("Exporting calendars...")
     starttime = time()
@@ -118,10 +119,10 @@ class exportStaticModel(object):
         for i in frepple.calendars()
         if i.name in primary_keys and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported calendars in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportCalendarBuckets(self, cursor):
     print("Exporting calendar buckets...")
     starttime = time()
@@ -166,10 +167,10 @@ class exportStaticModel(object):
         )
         for i in buckets()
       ])
-    transaction.commit(using=self.database)
     print('Exported calendar buckets in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportOperations(self, cursor):
     print("Exporting operations...")
     starttime = time()
@@ -216,10 +217,10 @@ class exportStaticModel(object):
         for i in frepple.operations()
         if i.name in primary_keys and not i.hidden and i.name != 'setup operation' and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported operations in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportSubOperations(self, cursor):
     print("Exporting suboperations...")
     starttime = time()
@@ -258,10 +259,10 @@ class exportStaticModel(object):
         for i in subops()
         if (i[0].name, i[1].name) in primary_keys and (not self.source or self.source == i[5])
       ])
-    transaction.commit(using=self.database)
     print('Exported suboperations in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportFlows(self, cursor):
     print("Exporting flows...")
     starttime = time()
@@ -302,10 +303,10 @@ class exportStaticModel(object):
         for i in flows()
         if (i.operation.name, i.buffer.name) in primary_keys and not i.hidden and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported flows in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportLoads(self, cursor):
     print("Exporting loads...")
     starttime = time()
@@ -347,10 +348,10 @@ class exportStaticModel(object):
         for i in loads()
         if (i.operation.name, i.resource.name) in primary_keys and not i.hidden and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported loads in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportBuffers(self, cursor):
     print("Exporting buffers...")
     starttime = time()
@@ -423,10 +424,10 @@ class exportStaticModel(object):
         for i in frepple.buffers()
         if i.owner and not i.hidden
       ])
-    transaction.commit(using=self.database)
     print('Exported buffers in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportCustomers(self, cursor):
     print("Exporting customers...")
     starttime = time()
@@ -457,10 +458,10 @@ class exportStaticModel(object):
         for i in frepple.customers()
         if i.owner and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported customers in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportSuppliers(self, cursor):
     print("Exporting suppliers...")
     starttime = time()
@@ -491,10 +492,10 @@ class exportStaticModel(object):
         for i in frepple.suppliers()
         if i.owner and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported suppliers in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportDemands(self, cursor):
     print("Exporting demands...")
     starttime = time()
@@ -539,10 +540,10 @@ class exportStaticModel(object):
         for i in frepple.demands()
         if i.owner and isinstance(i, frepple.demand_default) and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported demands in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportOperationPlans(self, cursor):
     '''
     Only locked operationplans are exported. That because we assume that
@@ -583,10 +584,10 @@ class exportStaticModel(object):
         for i in frepple.operationplans()
         if i.owner and not i.operation.hidden and i.locked and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported operationplans in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportResources(self, cursor):
     print("Exporting resources...")
     starttime = time()
@@ -634,10 +635,10 @@ class exportStaticModel(object):
         for i in frepple.resources()
         if i.owner and not i.hidden and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported resources in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportSkills(self, cursor):
     print("Exporting skills...")
     starttime = time()
@@ -657,10 +658,10 @@ class exportStaticModel(object):
         for i in frepple.skills()
         if i.name not in primary_keys and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported skills in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportResourceSkills(self, cursor):
     print("Exporting resource skills...")
     starttime = time()
@@ -688,10 +689,10 @@ class exportStaticModel(object):
         i for i in res_skills()
         if i not in primary_keys and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported resource skills in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportSetupMatrices(self, cursor):
     print("Exporting setup matrices...")
     starttime = time()
@@ -715,10 +716,10 @@ class exportStaticModel(object):
         for i in frepple.setupmatrices()
         if i.name in primary_keys and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported setupmatrices in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportSetupMatricesRules(self, cursor):
     print("Exporting setup matrix rules...")
     starttime = time()
@@ -755,10 +756,10 @@ class exportStaticModel(object):
         for i[1] in matrixrules()
         if (i[0].name, i[1].priority) in primary_keys and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported setup matrix rules in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportItems(self, cursor):
     print("Exporting items...")
     starttime = time()
@@ -797,10 +798,10 @@ class exportStaticModel(object):
         for i in frepple.items()
         if i.owner and (not self.source or self.source == i.source)
       ])
-    transaction.commit(using=self.database)
     print('Exported items in %.2f seconds' % (time() - starttime))
 
 
+  @transaction.atomic(using=self.database, savepoint=False)
   def exportParameters(self, cursor):
     if self.source:
       # Only complete export should save the current date
@@ -813,7 +814,6 @@ class exportStaticModel(object):
       "UPDATE common_parameter SET value=%s, lastmodified=%s WHERE name='currentdate'",
       (frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S"), self.timestamp)
       )
-    transaction.commit(using=self.database)
     print('Exported parameters in %.2f seconds' % (time() - starttime))
 
 
@@ -821,15 +821,15 @@ class exportStaticModel(object):
     '''
     This function exports the data from the frePPLe memory into the database.
     '''
-    transaction.set_autocommit(False, using=self.database)
-    try:
-      # Make sure the debug flag is not set!
-      # When it is set, the django database wrapper collects a list of all sql
-      # statements executed and their timings. This consumes plenty of memory
-      # and cpu time.
-      settings.DEBUG = False
-      self.timestamp = str(datetime.datetime.now())
+    # Make sure the debug flag is not set!
+    # When it is set, the django database wrapper collects a list of all sql
+    # statements executed and their timings. This consumes plenty of memory
+    # and cpu time.
+    tmp = settings.DEBUG
+    settings.DEBUG = False
+    self.timestamp = str(datetime.datetime.now())
 
+    try:
       # Create a database connection
       cursor = connections[self.database].cursor()
       if settings.DATABASES[self.database]['ENGINE'] == 'django.db.backends.sqlite3':
@@ -917,10 +917,10 @@ class exportStaticModel(object):
 
       # Close the database connection
       cursor.close()
-      transaction.commit(using=self.database)
+
     finally:
-      transaction.rollback(using=self.database)
-      transaction.set_autocommit(True, using=self.database)
+      # Restore the previous setting
+      settings.DEBUG = tmp
 
 
 class DatabaseTask(Thread):
@@ -934,25 +934,19 @@ class DatabaseTask(Thread):
     self.functions = f
 
   def run(self):
-    transaction.set_autocommit(False, using=self.export.database)
-    try:
-      # Create a database connection
-      cursor = connections[self.export.database].cursor()
-      if settings.DATABASES[self.export.database]['ENGINE'] == 'django.db.backends.sqlite3':
-        cursor.execute('PRAGMA temp_store = MEMORY;')
-        cursor.execute('PRAGMA synchronous = OFF')
-        cursor.execute('PRAGMA cache_size = 8000')
+    # Create a database connection
+    cursor = connections[self.export.database].cursor()
+    if settings.DATABASES[self.export.database]['ENGINE'] == 'django.db.backends.sqlite3':
+      cursor.execute('PRAGMA temp_store = MEMORY;')
+      cursor.execute('PRAGMA synchronous = OFF')
+      cursor.execute('PRAGMA cache_size = 8000')
 
-      # Run the functions sequentially
-      for f in self.functions:
-        try:
-          f(cursor)
-        except:
-          traceback.print_exc()
+    # Run the functions sequentially
+    for f in self.functions:
+      try:
+        f(cursor)
+      except:
+        traceback.print_exc()
 
-      # Close the connection
-      cursor.close()
-      transaction.commit(using=self.export.database)
-    finally:
-      transaction.rollback(using=self.export.database)
-      transaction.set_autocommit(True, using=self.export.database)
+    # Close the connection
+    cursor.close()

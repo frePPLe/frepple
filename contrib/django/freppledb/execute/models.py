@@ -83,27 +83,22 @@ class Scenario(models.Model):
 
   @staticmethod
   def syncWithSettings():
-    ac = transaction.get_autocommit()
-    transaction.set_autocommit(False)
     try:
       # Bring the scenario table in sync with settings.databases
-      dbs = [ i for i, j in settings.DATABASES.items() if j['NAME'] ]
-      for sc in Scenario.objects.all():
-        if sc.name not in dbs:
-          sc.delete()
-      scs = [sc.name for sc in Scenario.objects.all()]
-      for db in dbs:
-        if db not in scs:
-          if db == DEFAULT_DB_ALIAS:
-            Scenario(name=db, status="In use", description='Production database').save()
-          else:
-            Scenario(name=db, status="Free").save()
-      transaction.commit()
+      with transaction.atomic(savepoint=False):
+        dbs = [ i for i, j in settings.DATABASES.items() if j['NAME'] ]
+        for sc in Scenario.objects.all():
+          if sc.name not in dbs:
+            sc.delete()
+        scs = [sc.name for sc in Scenario.objects.all()]
+        for db in dbs:
+          if db not in scs:
+            if db == DEFAULT_DB_ALIAS:
+              Scenario(name=db, status="In use", description='Production database').save()
+            else:
+              Scenario(name=db, status="Free").save()
     except Exception as e:
       logger.error("Error synchronizing the scenario table with the settings: %s" % e)
-      transaction.rollback()
-    finally:
-      transaction.set_autocommit(ac)
 
   class Meta:
     db_table = "execute_scenario"

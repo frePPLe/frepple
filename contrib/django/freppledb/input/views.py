@@ -138,7 +138,7 @@ class PathReport(GridReport):
     '''
     A function that recurses upstream or downstream in the supply chain.
     '''
-    entity = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=True)[1]
+    entity = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)[1]
     entity = entity[0]
     root = reportclass.getRoot(request, entity)
 

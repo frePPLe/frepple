@@ -90,7 +90,7 @@ class importer(object):
         uom_id, item_id = elem.get('item').split(',')
         n = elem.get('operation')
         try:
-          if n.startswith('Purchase'):
+          if n.startswith('Purchase'):  # TODO missing fields warehouse and preferred routes (with implications)
             # Create purchase quotation
             x = proc_order.create({
               'name': n,
@@ -100,12 +100,12 @@ class importer(object):
               'company_id': company_id,
               'product_uom': int(uom_id),
               'location_id': int(elem.get('location')),
-              'procure_method': 'make_to_order',
+              #'procure_method': 'make_to_order', # this field is no longer there
               # : elem.get('criticality'),
               'origin': 'frePPLe'
               })
-            proc_order.action_confirm([x], context=self.req.session.context)
-            proc_order.action_po_assign([x], context=self.req.session.context)
+            # proc_order.action_confirm([x], context=self.req.session.context) # it is confirmed by default
+            # proc_order.action_po_assign([x], context=self.req.session.context) # TODO no idea of what this is yet, other than not available :)
             countproc += 1
           else:
             # Create manufacturing order

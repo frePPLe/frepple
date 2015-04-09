@@ -70,19 +70,19 @@ def odoo_read(db=DEFAULT_DB_ALIAS):
   # Connect to the odoo URL to GET data
   f = None
   try:
-    request = Request("%s/frepple/xml/?%s" % (odoo_url, urlencode({
+    request = Request("%sfrepple/xml/?%s" % (odoo_url, urlencode({
       'database': odoo_db, 'language': odoo_language, 'company': odoo_company
       })))
-    encoded = base64.encodestring('%s:%s' % (odoo_user, odoo_password)).replace('\n', '')
-    request.add_header("Authorization", "Basic %s" % encoded)
+    encoded = base64.encodestring(('%s:%s' % (odoo_user, odoo_password)).encode('utf-8'))[:-1]
+    request.add_header("Authorization", "Basic %s" % encoded.decode('ascii'))
     f = urlopen(request)
   except HTTPError as e:
-    print("Error connecting to odoo", e.read())
+    print("Error connecting to odoo", e)
     raise e
 
   # Download and parse XML data
   try:
-    frepple.readXMLdata(f.read(), False, False)
+    frepple.readXMLdata(f.read().decode('utf-8'), False, False)
   finally:
     if f: f.close()
 

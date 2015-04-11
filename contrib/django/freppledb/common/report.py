@@ -582,8 +582,15 @@ class GridReport(View):
         if reportclass.default_sort[1] == 'desc':
           asc = False
       else:
-        return query  # No sorting
-    return query.order_by(asc and sort or ('-%s' % sort))
+        # No sorting
+        return query
+    if sort and reportclass.model:
+      # Validate the field does exist.
+      for name in reportclass.model._meta.get_all_field_names():
+        if name == sort:
+          return query.order_by(asc and sort or ('-%s' % sort))
+    # Sorting by a non-existent field name: ignore the filter
+    return query
 
 
   @classmethod

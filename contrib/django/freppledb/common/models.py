@@ -277,7 +277,7 @@ class BucketDetail(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
   bucket = models.ForeignKey(Bucket, verbose_name=_('bucket'), db_index=True)
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE)
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE, db_index=True)
   startdate = models.DateTimeField(_('start date'))
   enddate = models.DateTimeField(_('end date'))
 

@@ -37,7 +37,7 @@ class DataLoadTest(TestCase):
   def test_common_parameter(self):
     response = self.client.get('/admin/common/parameter/?format=json')
     for i in response.streaming_content:
-      if '"records":16,' in i:
+      if '"records":17,' in i:
         return
     self.fail("Didn't find expected number of parameters")
 

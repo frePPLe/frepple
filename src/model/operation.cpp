@@ -2300,12 +2300,21 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
   (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const
 {
   assert(oplan);
-  // No impact on locked operationplans
-  if (oplan->getLocked()) return oplan->quantity;
 
   // Invalid operationplan: the quantity must be >= 0.
   if (f < 0)
     throw DataException("Operationplans can't have negative quantities");
+
+  // Locked operationplans don't respect sizing constraints
+  if (oplan->getLocked())
+  {
+    if (execute)
+    {
+      oplan->quantity = f;
+      if (upd) oplan->update();
+    }
+    return f;
+  }
 
   // Setting a quantity is only allowed on a top operationplan.
   // Two exceptions: on alternate and split operations the sizing on the

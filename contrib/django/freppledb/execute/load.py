@@ -655,8 +655,9 @@ class loadData(object):
       cnt += 1
       frepple.operationplan(
         operation=frepple.operation(name=i[0]),
-        id=i[1], quantity=i[2], start=i[3], end=i[4], source=i[6]
-        ).locked = i[5]
+        id=i[1], quantity=i[2], start=i[3], end=i[4],
+        locked=i[5], source=i[6]
+        ).quantity = i[2]
     self.cursor.execute('''
       SELECT
         operation_id, id, quantity, startdate, enddate, locked, owner_id, source
@@ -668,9 +669,10 @@ class loadData(object):
       cnt += 1
       frepple.operationplan(
         operation=frepple.operation(name=i[0]),
-        id=i[1], quantity=i[2], start=i[3], end=i[4],
-        owner=frepple.operationplan(id=i[6]), source=i[7]
-        ).locked = i[5]
+        id=i[1], start=i[3], end=i[4], quantity=i[2],
+        locked=i[5], source=i[7],
+        owner=frepple.operationplan(id=i[6])
+        ).quantity = i[2]
     print('Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime))
 
 

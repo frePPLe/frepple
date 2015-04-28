@@ -678,6 +678,9 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       // Check that the flowplans are on identical alternates and not of type fixed
       OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();
       OperationPlan::FlowPlanIterator fp2 = y->beginFlowPlans();
+      if (fp1 == o->endFlowPlans() || fp2 == o->endFlowPlans())
+        // Operationplan without flows are already deleted. Leave them alone.
+        return true;
       while (fp1 != o->endFlowPlans())
       {
         if (fp1->getBuffer() != fp2->getBuffer()
@@ -701,6 +704,9 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       // Check that the flowplans are on identical alternates
       OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();
       OperationPlan::FlowPlanIterator fp2 = x->beginFlowPlans();
+      if (fp1 == o->endFlowPlans() || fp2 == o->endFlowPlans())
+        // Operationplan without flows are already deleted. Leave them alone.
+        return true;
       while (fp1 != o->endFlowPlans())
       {
         if (fp1->getBuffer() != fp2->getBuffer())

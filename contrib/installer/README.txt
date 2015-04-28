@@ -2,12 +2,14 @@
 This is a script for creating a windows installer for frePPLe.
 To create the installer, the following steps are required:
 
-1) Install NSIS v2.41 or higher (Nullsoft Scriptable Install System)
+1) Install NSIS v3.0 or higher (Nullsoft Scriptable Install System)
    This is a free package to create installers.
    Further details on http://nsis.sourceforge.net/
 
-2) Install the AccessControl NSIS plugin.
-   See http://nsis.sourceforge.net/AccessControl_plug-in
+2) Activate the following plugins by copying them from the
+   <NSIS>\plugins\x86-ansi folder to <NSIS>\plugins\:
+     - AccessControl
+     - InstallOptions
 
 3) Install Cygwin environment and run "make dist"
    This is because the creation of the installer starts by making the same

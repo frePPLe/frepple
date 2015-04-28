@@ -19,15 +19,15 @@ compile the source code.
 
 You will also need to install:
 
-* **Visual Studio C++ 2008**.
+* **Visual Studio C++ 2010**.
 
   The express edition is sufficient.
 
-  Using more recent versions of Visual Studio will NOT work: Python 2.7 and
-  its extension modules are all compiled with Visual C++ 2008, and frePPle
+  Using more recent versions of Visual Studio will NOT work: Python3 and
+  its extension modules are all compiled with Visual C++ 2010, and frePPle
   needs to use the same compiler and C runtime libraries.
 
-* **Python 2.7**
+* **Python 3.2 or higher**
 
 * **Xerces-C 3.1**
 

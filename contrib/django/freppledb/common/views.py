@@ -304,7 +304,7 @@ class CommentList(GridReport):
     GridFieldInteger('id', title=_('identifier'), key=True),
     GridFieldLastModified('lastmodified'),
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center', width=80),
-    GridFieldText('content_type', title=_('type'), field_name='content_type__name', editable=False, align='center'),
+    GridFieldText('content_type', title=_('type'), field_name='content_type__model', editable=False, align='center'),
     GridFieldText('object_pk', title=_('object ID'), field_name='object_pk', editable=False, align='center', extra='formatter:objectfmt'),
     GridFieldText('comment', title=_('comment'), editable=False, align='center'),
     )

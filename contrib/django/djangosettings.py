@@ -276,6 +276,7 @@ DEFAULT_DASHBOARD = [
   ]},
   {'width':'25%', 'widgets':[
     ("recent_actions",{"limit":10}),
+    ("recent_comments",{"limit":10}),
     ("execute",{}),
     ("alerts",{}),
     ("late_orders",{"limit":20}),

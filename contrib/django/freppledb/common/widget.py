@@ -18,11 +18,14 @@
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.admin.models import LogEntry
 from django.db import DEFAULT_DB_ALIAS
+from django.utils import formats
+from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
 from freppledb.common.dashboard import Dashboard, Widget
+from freppledb.common.models import Comment
 
 
 class WelcomeWidget(Widget):
@@ -79,11 +82,11 @@ class RecentActionsWidget(Widget):
     result = []
     for entry in q:
       if entry.is_change():
-        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-pencil"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), entry.object_repr))
+        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-pencil"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), escape(entry.object_repr)))
       elif entry.is_addition():
-        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-plusthick"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), entry.object_repr))
+        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-plusthick"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), escape(entry.object_repr)))
       elif entry.is_deletion():
-        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-minusthick"></span>%s' % entry.object_repr)
+        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-minusthick"></span>%s' % escape(entry.object_repr))
       else:
         raise "Unexpected log entry type"
       if entry.content_type:
@@ -93,3 +96,32 @@ class RecentActionsWidget(Widget):
     return result and '\n'.join(result) or force_text(_('None available'))
 
 Dashboard.register(RecentActionsWidget)
+
+
+class RecentCommentsWidget(Widget):
+  name = "recent_comments"
+  title = _("Recent comments")
+  tooltip = _("Display a list of recent comments")
+  url = '/admin/common/comment/?sord=desc&sidx=lastmodified'
+  async = False
+  limit = 10
+
+  def render(self, request=None):
+    from freppledb.common.middleware import _thread_locals
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
+    cmts = Comment.objects.using(db).order_by('-lastmodified').select_related('content_type', 'user')[:self.limit]
+    result = []
+    for c in cmts:
+      result.append('<a href="%s%s">%s</a>&nbsp;<span class="mini">%s</span><div class="float_right mini">%s&nbsp;&nbsp;%s</div><br/>%s<br/>' % (
+        _thread_locals.request.prefix, c.get_admin_url(), escape(c.object_pk),
+        escape(capfirst(force_text(_(c.content_type.name))) if c.content_type else force_text(_('Unknown content'))),
+        escape(c.user.username),
+        formats.date_format(c.lastmodified, 'SHORT_DATETIME_FORMAT'),
+        escape(c.comment)
+        ))
+    return '\n'.join(result) if result else force_text(_('None available'))
+
+Dashboard.register(RecentCommentsWidget)

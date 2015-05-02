@@ -17,10 +17,12 @@
 from datetime import datetime
 import logging
 
+from django.conf import settings
+from django.contrib.admin.utils import quote
+from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.core.urlresolvers import NoReverseMatch, reverse
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -254,6 +256,22 @@ class Comment(models.Model):
 
   def __str__(self):
       return "%s: %s..." % (self.object_pk, self.comment[:50])
+
+  def get_admin_url(self):
+    """
+    Returns the admin URL to edit the object represented by this comment.
+    """
+    if self.content_type and self.object_pk:
+      url_name = 'data:%s_%s_change' % (self.content_type.app_label, self.content_type.model)
+      try:
+        return reverse(url_name, args=(quote(self.object_pk),))
+      except NoReverseMatch:
+        try:
+          url_name = 'admin:%s_%s_change' % (self.content_type.app_label, self.content_type.model)
+          return reverse(url_name, args=(quote(self.object_pk),))
+        except NoReverseMatch:
+          pass
+    return None
 
 
 class Bucket(AuditModel):

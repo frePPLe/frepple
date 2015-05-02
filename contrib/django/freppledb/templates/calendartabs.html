@@ -1,8 +1,8 @@
 {% load i18n %}
-<div class="ui-tabs" id="tabs">
-<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix" role="tablist">
-{% if perms.input.change_calendar %}<li class="ui-state-default ui-corner-top {% if not active_tab %}ui-tabs-active ui-state-active {% endif %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/calendar/{{object_id}}/">{% trans 'Edit' %}</a></li>{% endif %}
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'comments' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/comments/input/calendar/{{object_id}}/">{% trans 'Comments' %}</a></li>
-<li class="ui-state-default ui-corner-top {% ifequal active_tab 'history' %}ui-tabs-active ui-state-active {% endifequal %}" role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/calendar/{{object_id}}/history/">{% trans 'History' %}</a></li>
+<div class="frepple-tabs" id="tabs">
+<ul role="tablist">
+{% if perms.input.change_calendar %}<li{% if not active_tab %} class="frepple-tabs-active"{% endif %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/calendar/{{object_id}}/">{% trans 'Edit' %}</a></li>{% endif %}
+<li{% ifequal active_tab 'comments' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/comments/input/calendar/{{object_id}}/">{% trans 'Comments' %}</a></li>
+<li{% ifequal active_tab 'history' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/calendar/{{object_id}}/history/">{% trans 'History' %}</a></li>
 </ul>
 </div>

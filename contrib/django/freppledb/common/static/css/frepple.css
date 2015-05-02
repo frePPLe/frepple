@@ -122,7 +122,7 @@ div.breadcrumbs a {
 }
 
 div.selectdb {
-  padding: 0px 10px 0px 30px;
+  padding: 0px 0px 0px 30px;
   float: right;
   line-height: 2em;
   height: 2em;
@@ -366,7 +366,7 @@ span.context {
   position: relative;
   z-index: 3;
   overflow: visible;
-  padding: 10px 25px 5px 15px;
+  padding: 10px 15px 5px 15px;
 }
 
 nav {
@@ -434,6 +434,40 @@ nav ul ul ul {
   position: absolute;
   left: 100%;
   top:0;
+}
+
+/* Styles for the tabs. */
+.frepple-tabs {
+  padding: 0px 5px 0px 5px;
+  border-bottom: 1px solid #ccc;
+  font-size: 13px;
+}
+
+.frepple-tabs ul {
+  padding: 0;
+  list-style: none;
+  line-height: 2em;
+  height: 2em;
+  margin: 0 0 3px 0;
+}
+
+.frepple-tabs ul li {
+  float: left;
+  padding: 0 10px 0px 10px;
+}
+
+.frepple-tabs ul li a {
+  color: #333333;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.frepple-tabs ul li {
+  padding-top: 2px;
+}
+
+.frepple-tabs-active {
+  padding-top: 0 !important;
 }
 
 table thead th {

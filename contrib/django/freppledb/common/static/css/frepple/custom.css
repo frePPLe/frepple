@@ -38,3 +38,10 @@ nav ul li:hover a, nav ul ul, .ui-autocomplete {
 nav ul ul li a:hover {
   background: #dadada;  /* Copy from the Jquery UI style ".ui-state-hover". */
 }
+
+/* Style to mark the active tab. */
+.frepple-tabs-active {
+  font-weight: bold;
+  border-top: 2px solid #838d11;
+}
+

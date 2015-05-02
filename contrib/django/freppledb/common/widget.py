@@ -100,7 +100,7 @@ Dashboard.register(RecentActionsWidget)
 
 class RecentCommentsWidget(Widget):
   name = "recent_comments"
-  title = _("Recent comments")
+  title = _("comments")
   tooltip = _("Display a list of recent comments")
   url = '/admin/common/comment/?sord=desc&sidx=lastmodified'
   async = False

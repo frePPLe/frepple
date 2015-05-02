@@ -104,17 +104,6 @@ div #tabs  {
     font-size: 1em;
 }
 
-/* HEADER */
-
-#user-tools {
-  height: 40px;
-  line-height: 40px;
-  padding-right: 15px;
-  float: right;
-  font-size: 13px;
-  text-align: right;
-}
-
 /* BREADCRUMBS */
 
 div.breadcrumbs {
@@ -365,27 +354,35 @@ span.context {
 
 /* Styles for the navigation header. */
 
+#user-tools {
+  height: 40px;
+  line-height: 40px;
+  float: right;
+  font-size: 13px;
+  text-align: right;
+}
+
 #headerbar {
   position: relative;
   z-index: 3;
   overflow: visible;
-  padding: 10px 10px 3px 15px;
+  padding: 10px 25px 5px 15px;
 }
 
 nav {
   display: inline;
   z-index: 10000;
   font-size: 13px;
-  line-height: 40px;
-  height: 40px;
 }
 
 nav ul {
   padding: 0 20px;
-  margin-bottom: 0px;
+  margin: 0px;
   list-style: none;
   position: relative;
   display: inline-table;
+  line-height: 40px;
+  height: 40px;
 }
 
 nav ul li input {

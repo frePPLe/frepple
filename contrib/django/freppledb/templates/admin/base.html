@@ -21,7 +21,7 @@
 {% firstof user.first_name user.username %}&nbsp;&nbsp;
 <span onclick="window.location='/preferences/'" class="fa fa-wrench fa-lg"></span>&nbsp;&nbsp;
 <span onclick="window.location='/admin/logout/?next=/'" class="fa fa-sign-out fa-lg"></span></div>{% endif %}
-<div>{% block branding %}{% endblock %}{% block nav-global %}{% endblock %}</div>
+{% block branding %}{% endblock %}{% block nav-global %}{% endblock %}
 </div>
 <!-- END Header -->
 {% block breadcrumbs %}<div class="breadcrumbs"><a href="{{request.prefix}}/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{title}}{% endif %}</div>{% endblock %}

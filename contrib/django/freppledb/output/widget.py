@@ -19,10 +19,11 @@ from urllib.parse import urlencode
 
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.http import HttpResponse
-from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
-from django.utils.text import capfirst
+from django.utils.html import escape
 from django.utils.http import urlquote
+from django.utils.text import capfirst
+from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.dashboard import Dashboard, Widget
@@ -60,7 +61,7 @@ class LateOrdersWidget(Widget):
     alt = False
     for prob in Problem.objects.using(db).filter(name='late', entity='demand').order_by('startdate', '-weight')[:limit]:
       result.append('<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(prob.owner), prob.owner, prob.startdate.date(), prob.enddate.date(), int(prob.weight)
+        alt and ' class="altRow"' or '', request.prefix, urlquote(prob.owner), escape(prob.owner), prob.startdate.date(), prob.enddate.date(), int(prob.weight)
         ))
       alt = not alt
     result.append('</table>')
@@ -100,7 +101,7 @@ class ShortOrdersWidget(Widget):
     alt = False
     for prob in Problem.objects.using(db).filter(name__gte='short', entity='demand').order_by('startdate')[:limit]:
       result.append('<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(prob.owner), prob.owner, prob.startdate.date(), int(prob.weight)
+        alt and ' class="altRow"' or '', request.prefix, urlquote(prob.owner), escape(prob.owner), prob.startdate.date(), int(prob.weight)
         ))
       alt = not alt
     result.append('</table>')
@@ -140,7 +141,7 @@ class PurchaseQueueWidget(Widget):
     alt = False
     for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=False).order_by('startdate')[:limit]:
       result.append('<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', opplan.operation, opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
+        alt and ' class="altRow"' or '', escape(opplan.operation), opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
         ))
       alt = not alt
     result.append('</table>')
@@ -180,7 +181,7 @@ class ShippingQueueWidget(Widget):
     alt = False
     for dmdplan in Demand.objects.using(db).filter(planquantity__gt=0).order_by('plandate')[:limit]:
       result.append('<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td>%s</td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(dmdplan.demand), dmdplan.demand, dmdplan.customer, dmdplan.item, int(dmdplan.planquantity), dmdplan.plandate.date()
+        alt and ' class="altRow"' or '', request.prefix, urlquote(dmdplan.demand), escape(dmdplan.demand), escape(dmdplan.customer), escape(dmdplan.item), int(dmdplan.planquantity), dmdplan.plandate.date()
         ))
       alt = not alt
     result.append('</table>')
@@ -220,7 +221,7 @@ class ResourceQueueWidget(Widget):
     alt = False
     for ldplan in LoadPlan.objects.using(db).select_related().order_by('startdate')[:limit]:
       result.append('<tr%s><td class="underline"><a href="%s/loadplan/?theresource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(ldplan.theresource), ldplan.theresource, ldplan.operationplan.operation, ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity), int(ldplan.operationplan.criticality)
+        alt and ' class="altRow"' or '', request.prefix, urlquote(ldplan.theresource), escape(ldplan.theresource), escape(ldplan.operationplan.operation), ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity), int(ldplan.operationplan.criticality)
         ))
       alt = not alt
     result.append('</table>')
@@ -254,7 +255,7 @@ class PurchaseAnalysisWidget(Widget):
     alt = False
     for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=True).order_by('criticality')[:limit]:
       result.append('<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', opplan.operation, opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
+        alt and ' class="altRow"' or '', escape(opplan.operation), opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
         ))
       alt = not alt
     result.append('</table>')

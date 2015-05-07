@@ -22,8 +22,9 @@ from django.utils.encoding import force_text
 
 from freppledb.input.models import Buffer
 from freppledb.output.models import FlowPlan
-from freppledb.common.db import sql_max, sql_min, python_date
-from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
+from freppledb.common.db import sql_max, sql_min, python_date, string_agg
+from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber
+from freppledb.common.report import GridFieldDateTime, GridFieldBool, GridFieldInteger
 
 
 class OverviewReport(GridPivot):
@@ -162,9 +163,19 @@ class DetailReport(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
-      return FlowPlan.objects.filter(thebuffer__exact=args[0]).extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name"})
+      base = FlowPlan.objects.filter(thebuffer__exact=args[0])
     else:
-      return FlowPlan.objects.extra(select={'operation_in': "select name from operation where out_operationplan.operation = operation.name"})
+      base = FlowPlan.objects
+    return base.select_related() \
+      .extra(select={
+        'operation_in': "select name from operation where out_operationplan.operation = operation.name",
+        'demand': ("select %s(q || ' : ' || d, ', ') from ("
+                   "select round(sum(quantity)) as q, demand as d "
+                   "from out_demandpegging "
+                   "where out_demandpegging.operationplan = out_flowplan.operationplan_id "
+                   "group by demand order by 1 desc, 2) peg"
+                   % string_agg())
+        })
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -178,5 +189,7 @@ class DetailReport(GridReport):
     GridFieldNumber('onhand', title=_('onhand'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False),
     GridFieldBool('operationplan__locked', title=_('locked'), editable=False),
+    GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
+    GridFieldText('demand', title=_('demand quantity'), editable=False),
     GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
     )

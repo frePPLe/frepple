@@ -80,6 +80,8 @@ if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3
       return d.date()
     return datetime.strptime(d, '%Y-%m-%d %H:%M:%S').date()
 
+  def string_agg():
+    return 'group_concat'
 
 # Functions for POSTGRESQL
 elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
@@ -108,6 +110,9 @@ elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postg
 
   def python_date(d):
     return d.date()
+
+  def string_agg():
+    return 'string_agg'
 
 
 else:

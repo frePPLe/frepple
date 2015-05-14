@@ -27,13 +27,21 @@ id               unsigned long     | Unique identifier of the operationplan.
                                    | If left unspecified an identifier will be automatically
                                      generated.
                                    | This field is required when updating existing instances.
-start            dateTime          Start date.
-end              dateTime          End date.
+start            dateTime          | Start date.
+                                   | If left unspecified (or set to 1971-01-01), this field
+                                     will be computed based on the end date.
+end              dateTime          | End date.
+                                   | If left unspecified (or set to 1971-01-01), this field
+                                     will be computed based on the start date.
 demand           demand            | Points to the demand being satisfied with this
                                     operationplan.
                                    | This field is only non-null for the actual delivery
                                     operationplans.
-quantity         double            Quantity being planned.
+quantity         double            | Quantity being planned.
+                                   | For unlocked operationplans, this quantity will be rounded
+                                     to the respect the min, max and multiple constraints set
+                                     on the operation.
+                                   | Locked operationplans don't need to respect these limits.
 locked           boolean           A locked operation plan is not allowed to be changed by any
                                    solver algorithm.
 consume_material boolean           | Controls whether this operationplan should consume material

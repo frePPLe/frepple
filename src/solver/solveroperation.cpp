@@ -53,8 +53,8 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
       h!=opplan->endLoadPlans() && opplan->getDates()==orig; ++h)
     {
       if (h->getLoad()->getQuantity() == 0.0 || h->getQuantity() == 0.0)
-    	// Empty load or loadplan (eg when load is not effective)
-    	continue;
+        // Empty load or loadplan (eg when load is not effective)
+        continue;
       // Call the load solver - which will call the resource solver.
       data.state->q_operationplan = opplan;
       data.state->q_loadplan = &*h;
@@ -64,12 +64,17 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
       h->getLoad()->solve(*this,&data);
       if (opplan->getDates()!=orig)
       {
-    	if (data.state->a_qty==0)
-    	  // One of the resources is late. We want to prevent that other resources
-    	  // are trying to pull in the operationplan again. It can only be delayed
-    	  // from now on in this loop.
+        if (data.state->a_qty == 0)
+          // One of the resources is late. We want to prevent that other resources
+          // are trying to pull in the operationplan again. It can only be delayed
+          // from now on in this loop.
           data.state->forceLate = true;
-    	if (!first) recheck = true;
+        else if (first)
+          // First load is ok, but moved the operationplan.
+          // We can continue to check the second loadplan.
+          orig = opplan->getDates();
+        if (!first) 
+          recheck = true;
       }
       first = false;
     }
@@ -81,7 +86,7 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
   // No need to reloop if there is only a single load (= 2 loadplans)
   while (constrainedLoads>1 && opplan->getDates()!=orig
     && ((data.state->a_qty==0.0 && data.state->a_date > minimumEndDate)
-    	 || recheck));
+        || recheck));
   // TODO doesn't this loop increment a_penalty incorrectly???
 
   // Restore original flags
@@ -92,7 +97,7 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
   // This is required to make sure that the buffer inventory profile also
   // respects this answer.
   if (data.state->a_qty==0.0 && opplan->getQuantity() > 0.0)
-	opplan->setQuantity(0.0);
+    opplan->setQuantity(0.0);
 }
 
 

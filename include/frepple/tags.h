@@ -165,6 +165,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_stringproperty;
     static DECLARE_EXPORT const Keyword tag_subcategory;
     static DECLARE_EXPORT const Keyword tag_supply;
+    static DECLARE_EXPORT const Keyword tag_tool;
     static DECLARE_EXPORT const Keyword tag_tosetup;
     static DECLARE_EXPORT const Keyword tag_type;
     static DECLARE_EXPORT const Keyword tag_unavailable;

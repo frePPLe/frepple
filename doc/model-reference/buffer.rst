@@ -28,7 +28,9 @@ name             non-empty string  | Name of the buffer.
                                    | This is the key field and a required attribute.
 description      string            Free format description.
 category         string            Free format category.
-subcategory      string            Free format subcategory.
+subcategory      string            | Free format subcategory.
+                                   | If this field is set to 'tool', the field 'tool' will
+                                     automatically be set to true.
 owner            buffer            | Buffers can be organized in a hierarchical tree.
                                    | This field defines the parent buffer.
                                    | No specific planning behavior is currently linked to such
@@ -89,6 +91,10 @@ flowplans        list of flowplan  | This field is populated during an export wi
                                    | The field is export-only.
                                    | The description of the flowplan model is included in the
                                      section on operationplan.
+tool             boolean           | A flag to mark buffers that are actually representing a tool.
+                                   | Default is false.
+                                   | The impact on the planning results is visible in the 
+                                     pegging and criticality calculations.
 level            integer           | Indication of how upstream/downstream this entity is situated
                                      in the supply chain.
                                    | Lower numbers indicate the entity is close to the end item,

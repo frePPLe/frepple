@@ -574,6 +574,8 @@ class Flow(AuditModel):
   types = (
     ('start', _('Start')),
     ('end', _('End')),
+    ('fixed_start', _('Fixed start')),
+    ('fixed_end', _('Fixed end'))
   )
 
   # Database fields

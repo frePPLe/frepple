@@ -167,6 +167,7 @@ DECLARE_EXPORT const Keyword Tags::tag_suppliers("suppliers");
 DECLARE_EXPORT const Keyword Tags::tag_supplieritem("supplieritem");
 DECLARE_EXPORT const Keyword Tags::tag_supplieritems("supplieritems");
 DECLARE_EXPORT const Keyword Tags::tag_supply("supply");
+DECLARE_EXPORT const Keyword Tags::tag_tool("tool");
 DECLARE_EXPORT const Keyword Tags::tag_tosetup("tosetup");
 // The next line requires the namespace "xsi" to be defined.
 // It must refer to "http://www.w3.org/2001/XMLSchema-instance"

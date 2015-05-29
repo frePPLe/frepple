@@ -220,6 +220,7 @@ DECLARE_EXPORT void Buffer::writeElement(Serializer *o, const Keyword &tag, mode
   o->writeElement(Tags::tag_item, it);
   o->writeElement(Tags::tag_location, loc);
   Plannable::writeElement(o, tag);
+  if (tool) o->writeElement(Tags::tag_tool, tool);
 
   // Onhand: loop through the flowplans at the start of the horizon
   flowplanlist::const_iterator i = flowplans.begin();
@@ -372,6 +373,8 @@ DECLARE_EXPORT void Buffer::endElement(DataInput& pIn, const Attribute& pAttr, c
     setMaximumInterval(pElement.getDuration());
   else if (pAttr.isA(Tags::tag_carrying_cost))
     setCarryingCost(pElement.getDouble());
+  else if (pAttr.isA(Tags::tag_tool))
+    setTool(pElement.getBool());
   else
   {
     Plannable::endElement(pIn, pAttr, pElement);
@@ -552,10 +555,12 @@ DECLARE_EXPORT Buffer::~Buffer()
 DECLARE_EXPORT void Buffer::followPegging
 (PeggingIterator& iter, FlowPlan* curflowplan, double qty, double offset, short lvl)
 {
-  if (!curflowplan->getOperationPlan()->getQuantity())
+  if (!curflowplan->getOperationPlan()->getQuantity() || curflowplan->getBuffer()->getTool())
+    // Flowplans with quantity 0 have no pegging.
+    // Flowplans for buffers representing tools have no pegging either.
     return;
-  Buffer::flowplanlist::const_iterator f = getFlowPlans().begin(curflowplan);
 
+  Buffer::flowplanlist::const_iterator f = getFlowPlans().begin(curflowplan);
   if (curflowplan->getQuantity() < -ROUNDING_ERROR && !iter.isDownstream())
   {
     // CASE 1:
@@ -857,6 +862,8 @@ DECLARE_EXPORT PyObject* Buffer::getattro(const Attribute& attr)
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_flows))
     return new FlowIterator(this);
+  if (attr.isA(Tags::tag_tool))
+    return PythonObject(getTool());
   if (attr.isA(Tags::tag_level))
     return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))
@@ -941,6 +948,8 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
     setMaximumInterval(field.getDuration());
   else if (attr.isA(Tags::tag_carrying_cost))
     setCarryingCost(field.getDouble());
+  else if (attr.isA(Tags::tag_tool))
+    setTool(field.getBool());
   else if (attr.isA(Tags::tag_producing))
   {
     if (!field.check(Operation::metadata))

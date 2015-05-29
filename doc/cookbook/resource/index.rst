@@ -9,3 +9,4 @@ Resources represent machines, personnel, or tools.
 
    resource-type
    resource-skills
+   resource-tool

@@ -604,6 +604,7 @@
       <xsd:element name="detectproblems" type="xsd:boolean" />
       <xsd:element name="flows" type="flowlist" />
       <xsd:element name="flowplans" type="flowplanlist"/>
+      <xsd:element name="tool" type="xsd:boolean"/>
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="onhand" type="xsd:double" />
@@ -613,6 +614,7 @@
     <xsd:attribute name="mininterval" type="xsd:duration" />
     <xsd:attribute name="maxinterval" type="xsd:duration" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
+    <xsd:attribute name="tool" type="xsd:boolean" />
   </xsd:complexType>
 
   <xsd:complexType name="bufferlist">

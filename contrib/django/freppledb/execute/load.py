@@ -374,6 +374,8 @@ class loadData(object):
           )
       else:
         raise ValueError("Buffer type '%s' not recognized" % i[8])
+      if i[20] == 'tool':
+        b.tool = True
       if i[2]:
         b.location = frepple.location(name=i[2])
       if i[5]:

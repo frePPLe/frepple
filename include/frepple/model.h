@@ -3124,7 +3124,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     explicit DECLARE_EXPORT Buffer(const string& str) :
       HasHierarchy<Buffer>(str), hidden(false), producing_operation(NULL),
       loc(NULL), it(NULL), min_val(0), max_val(default_max), min_cal(NULL),
-      max_cal(NULL), min_interval(-1), carrying_cost(0.0) {}
+      max_cal(NULL), min_interval(-1), carrying_cost(0.0), tool(false) {}
 
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
@@ -3149,6 +3149,12 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Returns the minimum inventory level. */
     double getMinimum() const {return min_val;}
+
+    /** Return true if this buffer represents a tool. */
+    bool getTool() const {return tool;}
+
+    /** Marks the buffer a tool. */
+    void setTool(bool b) {tool = b;}
 
     /** Returns a pointer to a calendar for storing the minimum inventory
       * level. */
@@ -3351,8 +3357,10 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * percentage of the item sales price, per year and per unit.
       */
     double carrying_cost;
-};
 
+    /** A flag that marks whether this buffer represents a tool or not. */
+    bool tool;
+};
 
 
 /** @brief This class is the default implementation of the abstract Buffer class. */

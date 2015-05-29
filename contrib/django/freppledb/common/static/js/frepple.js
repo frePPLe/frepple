@@ -222,6 +222,19 @@ jQuery.extend($.fn.fmatter, {
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='demand'></span>";
   },
+  demanddetail : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
+    var result = '';
+    var dmds = cellvalue.split(", ");
+    for (var i in dmds)
+    {
+      var detail = dmds[i].split(" : ");
+      if (result != '') result += ', ';
+      result += detail[0] + " : <span>" + detail[1] + "<span class='context fa fa-caret-right' role='demand'></span></span>"
+    }
+    return result;
+  },
   operation : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;

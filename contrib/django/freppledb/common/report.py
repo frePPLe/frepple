@@ -576,9 +576,10 @@ class GridReport(View):
       sort = reportclass.rows[reportclass.default_sort[0]].name
       if reportclass.default_sort[1] == 'desc':
         asc = False
-    else:
+    if not sort:
       return query  # No sorting
-    return query.order_by(asc and sort or ('-%s' % sort))
+    else:
+      return query.order_by(asc and sort or ('-%s' % sort))
 
 
   @classmethod

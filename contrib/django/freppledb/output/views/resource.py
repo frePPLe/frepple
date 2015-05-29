@@ -200,7 +200,7 @@ class DetailReport(GridReport):
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
-    GridFieldText('demand', title=_('demand quantity'), editable=False),
+    GridFieldText('demand', title=_('demand quantity'), formatter='demanddetail', width=300, editable=False),
     GridFieldNumber('quantity', title=_('load quantity'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False),
     GridFieldBool('operationplan__locked', title=_('locked'), editable=False),

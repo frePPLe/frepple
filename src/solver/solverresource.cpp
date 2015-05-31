@@ -591,7 +591,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
             // If that's the case, we move it to start right at the end of the bucket.
             if (cur!=res->getLoadPlans().end() &&
               data->state->q_operationplan->getDates().getStart() > cur->getDate())
-                data->state->q_operationplan->setStart(cur->getDate() - TimePeriod(1L));
+                data->state->q_operationplan->setStart(cur->getDate() - Duration(1L));
           }
           else
           {

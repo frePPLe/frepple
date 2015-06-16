@@ -27,10 +27,10 @@
     <ClCompile Include="..\..\src\utils\name.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\utils\pythonutils.cpp">
+    <ClCompile Include="..\..\src\utils\xml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\utils\xml.cpp">
+    <ClCompile Include="..\..\src\utils\python.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

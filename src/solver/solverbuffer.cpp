@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -36,7 +36,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 {
   // Call the user exit
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
-  if (userexit_buffer) userexit_buffer.call(b, PythonObject(data->constrainedPlanning));
+  if (userexit_buffer) userexit_buffer.call(b, PythonData(data->constrainedPlanning));
 
   // Verify the iteration limit isn't exceeded.
   if (data->getSolver()->getIterationMax()
@@ -157,7 +157,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           data->operator_delete->solve(batchcandidate->getOperationPlan());
 
           // Create new producer
-          unsigned short loglevel = data->getSolver()->getLogLevel();
+          short loglevel = data->getSolver()->getLogLevel();
           try
           {
             data->getSolver()->setLogLevel(0);
@@ -264,7 +264,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           data->operator_delete->solve(batchcandidate->getOperationPlan());
 
           // Create new producer
-          unsigned short loglevel = data->getSolver()->getLogLevel();
+          short loglevel = data->getSolver()->getLogLevel();
           try
           {
             data->getSolver()->setLogLevel(0);
@@ -624,7 +624,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferInfinite* b, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Call the user exit
-  if (userexit_buffer) userexit_buffer.call(b, PythonObject(data->constrainedPlanning));
+  if (userexit_buffer) userexit_buffer.call(b, PythonData(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1)

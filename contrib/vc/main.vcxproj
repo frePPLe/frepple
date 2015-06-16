@@ -67,6 +67,8 @@
       <RuntimeTypeInfo>
       </RuntimeTypeInfo>
       <AdditionalIncludeDirectories>..\..\include</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -92,9 +94,11 @@
       </RuntimeTypeInfo>
       <AdditionalIncludeDirectories>..\..\include</AdditionalIncludeDirectories>
       <StringPooling>Yes</StringPooling>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>
       </AdditionalDependencies>
     </Link>

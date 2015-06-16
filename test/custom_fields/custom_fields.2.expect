@@ -10,7 +10,8 @@
 	<operations>
 	</operations>
 	<items>
-		<item name="test">
+		<item>
+			<name>test</name>
 			<source>ERP</source>
 			<booleanproperty name="boolean_field" value="1"/>
 			<dateproperty name="date_field" value="2014-01-01T01:01:01"/>

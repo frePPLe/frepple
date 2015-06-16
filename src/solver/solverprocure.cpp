@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -40,7 +40,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   // TODO Procurement solver doesn't consider working days of the supplier.
 
   // Call the user exit
-  if (userexit_buffer) userexit_buffer.call(b, PythonObject(data->constrainedPlanning));
+  if (userexit_buffer) userexit_buffer.call(b, PythonData(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -83,7 +83,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   // Collect operation parameters
   // Normally these are collected from fields on the buffer. Only when a
   // producing operation has been explicitly specified do we use those instead.
-  Duration leadtime = b->getLeadtime();
+  Duration leadtime = b->getLeadTime();
   Duration fence = b->getFence();
   double size_minimum = b->getSizeMinimum();
   Operation *oper;
@@ -127,7 +127,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     // Calculation of earliest arrival considers the calendar of the operation
     Duration tp;
     Date st = Plan::instance().getCurrent();
-    if (data->getSolver()->isLeadtimeConstrained())
+    if (data->getSolver()->isLeadTimeConstrained())
       tp = leadtime;
     if (data->getSolver()->isFenceConstrained())
       st += fence;
@@ -270,7 +270,6 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         CommandCreateOperationPlan *a =
           new CommandCreateOperationPlan(oper, order_qty,
               Date::infinitePast, current_date, data->state->curDemand);
-        a->getOperationPlan()->setMotive(data->state->motive);
         a->getOperationPlan()->insertInOperationplanList(); // TODO Not very nice: unregistered opplan in the list!
         produced += a->getOperationPlan()->getQuantity();
         order_qty -= a->getOperationPlan()->getQuantity();
@@ -323,7 +322,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   if (safetystock)
     data->state->a_qty = 1.0;
   else if (data->constrainedPlanning && (data->getSolver()->isFenceConstrained()
-      || data->getSolver()->isLeadtimeConstrained()
+      || data->getSolver()->isLeadTimeConstrained()
       || data->getSolver()->isMaterialConstrained()))
   {
     // Check if the inventory drops below zero somewhere
@@ -357,7 +356,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
             && data->state->q_date < Plan::instance().getCurrent() + fence
             && data->state->a_date > Plan::instance().getCurrent() + fence)
           data->state->a_date = Plan::instance().getCurrent() + fence;
-        if (data->getSolver()->isLeadtimeConstrained()
+        if (data->getSolver()->isLeadTimeConstrained()
             && data->state->q_date < Plan::instance().getCurrent() + leadtime
             && data->state->a_date > Plan::instance().getCurrent() + leadtime)
           data->state->a_date = Plan::instance().getCurrent() + leadtime;   // TODO Doesn't consider calendar of the procurement operation...

@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -101,7 +101,7 @@ DECLARE_EXPORT(void) FreppleReadXMLFile (const char* filename, bool validate, bo
     XMLInputFile(filename).parse(NULL, true);
   else
     // Read, execute and optionally validate a file
-    XMLInputFile(filename).parse(&Plan::instance(),validate);
+    XMLInputFile(filename).parse(&Plan::instance(), validate);
 }
 
 
@@ -115,7 +115,7 @@ DECLARE_EXPORT(void) FreppleReadPythonFile(const char* filename)
 
 DECLARE_EXPORT(void) FreppleSaveFile(const char* x)
 {
-  SerializerXMLFile o(x);
+  XMLSerializerFile o(x);
   o.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
 }
 

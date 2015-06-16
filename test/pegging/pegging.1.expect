@@ -585,23 +585,29 @@
 		</operation>
 	</operations>
 	<items>
-		<item name="item 1">
+		<item>
+			<name>item 1</name>
 			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
 		</item>
-		<item name="item 2">
+		<item>
+			<name>item 2</name>
 			<operation name="delivery 2" xsi:type="operation_fixed_time"/>
 		</item>
-		<item name="item 3">
+		<item>
+			<name>item 3</name>
 			<operation name="delivery 3" xsi:type="operation_fixed_time"/>
 		</item>
-		<item name="item 4">
+		<item>
+			<name>item 4</name>
 			<operation name="delivery 4" xsi:type="operation_fixed_time"/>
 		</item>
 	</items>
 	<buffers>
 		<buffer name="buffer 1">
 			<producing name="make 1" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+			<item>
+				<name>item 1</name>
+			</item>
 			<onhand>10</onhand>
 			<minimum_calendar name="min inv for buffer 1"/>
 			<flowplans>
@@ -682,7 +688,9 @@
 		</buffer>
 		<buffer name="buffer 2">
 			<producing name="make 2" xsi:type="operation_fixed_time"/>
-			<item name="item 2"/>
+			<item>
+				<name>item 2</name>
+			</item>
 			<onhand>10</onhand>
 			<minimum_calendar name="min inv for buffer 2"/>
 			<flowplans>
@@ -763,7 +771,9 @@
 		</buffer>
 		<buffer name="buffer 3">
 			<producing name="make 3" xsi:type="operation_fixed_time"/>
-			<item name="item 3"/>
+			<item>
+				<name>item 3</name>
+			</item>
 			<onhand>10</onhand>
 			<minimum_calendar name="min inv for buffer 3"/>
 			<flowplans>
@@ -824,7 +834,9 @@
 		</buffer>
 		<buffer name="buffer 4">
 			<producing name="make 4" xsi:type="operation_fixed_time"/>
-			<item name="item 4"/>
+			<item>
+				<name>item 4</name>
+			</item>
 			<onhand>10</onhand>
 			<minimum_calendar name="min inv for buffer 4"/>
 			<flowplans>
@@ -907,7 +919,9 @@
 			</problems>
 		</buffer>
 		<buffer name="constraint buffer 1">
-			<item name="item 1"/>
+			<item>
+				<name>item 1</name>
+			</item>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
@@ -961,7 +975,9 @@
 			</problems>
 		</buffer>
 		<buffer name="constraint buffer 2">
-			<item name="item 2"/>
+			<item>
+				<name>item 2</name>
+			</item>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
@@ -1006,7 +1022,9 @@
 			</flowplans>
 		</buffer>
 		<buffer name="constraint buffer 3">
-			<item name="item 3"/>
+			<item>
+				<name>item 3</name>
+			</item>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
@@ -1040,7 +1058,9 @@
 			</problems>
 		</buffer>
 		<buffer name="constraint buffer 4">
-			<item name="item 4"/>
+			<item>
+				<name>item 4</name>
+			</item>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
@@ -1091,7 +1111,9 @@
 	<demands>
 		<demand name="order 2 for item 4">
 			<quantity>100</quantity>
-			<item name="item 4"/>
+			<item>
+				<name>item 4</name>
+			</item>
 			<due>2009-06-19T00:00:00</due>
 			<operationplans>
 				<operationplan id="4022" operation="delivery 4">
@@ -1141,7 +1163,9 @@
 		</demand>
 		<demand name="order for item 1">
 			<quantity>100</quantity>
-			<item name="item 1"/>
+			<item>
+				<name>item 1</name>
+			</item>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
 				<operationplan id="4002" operation="delivery 1">
@@ -1236,7 +1260,9 @@
 		</demand>
 		<demand name="order for item 2">
 			<quantity>100</quantity>
-			<item name="item 2"/>
+			<item>
+				<name>item 2</name>
+			</item>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
 				<operationplan id="4008" operation="delivery 2">
@@ -1338,7 +1364,9 @@
 		</demand>
 		<demand name="order for item 3">
 			<quantity>100</quantity>
-			<item name="item 3"/>
+			<item>
+				<name>item 3</name>
+			</item>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
 				<operationplan id="4014" operation="delivery 3">
@@ -1407,7 +1435,9 @@
 		</demand>
 		<demand name="order for item 4">
 			<quantity>100</quantity>
-			<item name="item 4"/>
+			<item>
+				<name>item 4</name>
+			</item>
 			<due>2009-01-10T00:00:00</due>
 			<operationplans>
 				<operationplan id="4018" operation="delivery 4">

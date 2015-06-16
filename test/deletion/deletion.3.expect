@@ -30,9 +30,11 @@
 		</location>
 	</locations>
 	<customers>
-		<customer name="Customer 1">
+		<customer>
+			<name>Customer 1</name>
 		</customer>
-		<customer name="Customer 2">
+		<customer>
+			<name>Customer 2</name>
 		</customer>
 	</customers>
 	<calendars>
@@ -92,49 +94,70 @@
 		</operation>
 	</operations>
 	<items>
-		<item name="component A">
+		<item>
+			<name>component A</name>
 		</item>
-		<item name="component B">
+		<item>
+			<name>component B</name>
 		</item>
-		<item name="item 1">
+		<item>
+			<name>item 1</name>
 			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
 		</item>
 	</items>
 	<buffers>
 		<buffer name="buffer 1">
 			<producing name="make item 1" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+			<item>
+				<name>item 1</name>
+			</item>
 			<location name="Location 1"/>
 		</buffer>
 		<buffer name="buffer A">
 			<producing name="supply component A" xsi:type="operation_alternate"/>
-			<item name="component A"/>
+			<item>
+				<name>component A</name>
+			</item>
 			<location name="Location 1"/>
 		</buffer>
 		<buffer name="buffer B">
-			<item name="component B"/>
+			<item>
+				<name>component B</name>
+			</item>
 			<location name="Location 1"/>
 		</buffer>
 	</buffers>
 	<demands>
 		<demand name="order 1">
-			<customer name="Customer 1"/>
+			<customer>
+				<name>Customer 1</name>
+			</customer>
 			<quantity>1</quantity>
-			<item name="item 1"/>
+			<item>
+				<name>item 1</name>
+			</item>
 			<due>2009-03-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand name="order 2">
-			<customer name="Customer 1"/>
+			<customer>
+				<name>Customer 1</name>
+			</customer>
 			<quantity>1</quantity>
-			<item name="item 1"/>
+			<item>
+				<name>item 1</name>
+			</item>
 			<due>2009-02-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand name="order 3">
-			<customer name="Customer 2"/>
+			<customer>
+				<name>Customer 2</name>
+			</customer>
 			<quantity>1</quantity>
-			<item name="item 1"/>
+			<item>
+				<name>item 1</name>
+			</item>
 			<due>2009-04-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>

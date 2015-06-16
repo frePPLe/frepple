@@ -30,15 +30,15 @@
     <ClCompile Include="..\..\src\utils\pythonutils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\utils\xmlparser.cpp">
+    <ClCompile Include="..\..\src\utils\xml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\frepple\pythonutils.h">
+    <ClInclude Include="..\..\include\frepple\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\frepple\utils.h">
+    <ClInclude Include="..\..\include\frepple\xml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

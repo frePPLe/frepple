@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -28,6 +28,7 @@
 
 #define FREPPLE_CORE
 #include "frepple/utils.h"
+#include "frepple/xml.h"
 
 namespace frepple
 {
@@ -44,10 +45,77 @@ DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
 const MetaCategory* PythonDictionary::metadata = NULL;
 
 
-DECLARE_EXPORT void Object::beginElement(DataInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Object::writeElement(Serializer* o, const Keyword& tag, mode m) const
 {
-  PythonDictionary::read(pIn, pAttr, getDict());
+  // Don't serialize hidden objects
+  if (getHidden()) return;
+
+  const MetaClass& meta = getType();
+
+  // Write the head
+  if (m != NOHEAD && m != NOHEADTAIL)
+  {
+    if (meta.isDefault)
+      o->BeginObject(tag);
+    else
+      o->BeginObject(tag, Tags::tag_type, getType().type);
+  }
+
+  // Write the content
+  if (m == REFERENCE)
+  {
+    // Write references only
+    if (meta.category)
+      for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
+        if ((*i)->getCategory() & MetaFieldBase::MANDATORY)
+          (*i)->writeField(*o);
+    for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
+      if ((*i)->getCategory() & MetaFieldBase::MANDATORY)
+        (*i)->writeField(*o);
+  }
+  else if (m == DEFAULT)
+  {
+    // Writeonly the fields required to successfully save&restore the object
+    if (meta.category)
+      for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
+        if (!((*i)->getCategory() & MetaFieldBase::DETAIL))
+          (*i)->writeField(*o);
+    for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
+      if (!((*i)->getCategory() & MetaFieldBase::DETAIL))
+        (*i)->writeField(*o);
+    PythonDictionary::write(o, getDict());
+  }
+  else
+  {
+    // Write the full info on the object
+    if (meta.category)
+      for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
+        (*i)->writeField(*o);
+    for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
+      (*i)->writeField(*o);
+    PythonDictionary::write(o, getDict());
+  }
+
+  // Write the tail
+  if (m != NOHEADTAIL && m != NOTAIL)
+    o->EndObject(tag);
 }
+
+
+DECLARE_EXPORT size_t Object::getSize() const
+{
+  const MetaClass& meta = getType();
+  size_t tmp = meta.size;
+  if (meta.category)
+    for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
+      if (!((*i)->getCategory() & MetaFieldBase::COMPUTED))
+        tmp += (*i)->getSize(this);
+  for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
+    if (!((*i)->getCategory() & MetaFieldBase::COMPUTED))
+      tmp += (*i)->getSize(this);
+  return tmp;
+}
+
 
 PyObject* PythonInterpreter::createModule()
 {
@@ -120,8 +188,8 @@ DECLARE_EXPORT void PythonInterpreter::initialize()
   nok += PyModule_AddStringConstant(module, "version", PACKAGE_VERSION);
 
   // Create new python type for the dictionary wrapper
-  PythonDictionary::metadata = new MetaCategory("dictionary","");
-  PythonType& x = PythonExtension<PythonDictionary>::getType();
+  PythonDictionary::metadata = MetaCategory::registerCategory<PythonDictionary>("dictionary","");
+  PythonType& x = PythonExtension<PythonDictionary>::getPythonType();
   x.setName("dictionary");
   x.setDoc("frePPLe wrapper for a Python dictionary");
   x.typeReady();
@@ -379,8 +447,9 @@ const PyTypeObject PythonType::PyTypeObjectTemplate =
 };
 
 
-DECLARE_EXPORT PythonObject::PythonObject(const Date& d)
+DECLARE_EXPORT void PythonData::setDate(const Date d)
 {
+  if (obj) Py_DECREF(obj);
   PyDateTime_IMPORT;
   // The standard library function localtime() is not re-entrant: the same
   // static structure is used for all calls. In a multi-threaded environment
@@ -401,7 +470,7 @@ DECLARE_EXPORT PythonObject::PythonObject(const Date& d)
 }
 
 
-DECLARE_EXPORT Date PythonObject::getDate() const
+DECLARE_EXPORT Date PythonData::getDate() const
 {
   PyDateTime_IMPORT;
   if (PyDateTime_Check(obj))
@@ -436,9 +505,17 @@ DECLARE_EXPORT Date PythonObject::getDate() const
 }
 
 
-DECLARE_EXPORT PythonObject::PythonObject(Object* p)
+DECLARE_EXPORT PythonData::PythonData(Object* p)
 {
   obj = p ? static_cast<PyObject*>(p) : Py_None;
+  Py_INCREF(obj);
+}
+
+
+DECLARE_EXPORT void PythonData::setObject(Object* val)
+{
+  if (obj) Py_DECREF(obj);
+  obj = val ? static_cast<PyObject*>(val) : Py_None;
   Py_INCREF(obj);
 }
 
@@ -453,7 +530,7 @@ DECLARE_EXPORT PythonType::PythonType(size_t base_size, const type_info* tp)
 }
 
 
-DECLARE_EXPORT PythonType* PythonExtensionBase::registerPythonType(int size, const type_info *t)
+DECLARE_EXPORT PythonType* Object::registerPythonType(int size, const type_info *t)
 {
   // Scan the types already registered
   for (vector<PythonType*>::const_iterator i = table.begin(); i != table.end(); ++i)
@@ -482,9 +559,9 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
   for (Py_ssize_t i = 0; i < len; i++)
   {
     py_key = PySequence_Fast_GET_ITEM(keylist, i); // borrowed ref
-    PythonObject key(py_key);
+    PythonData key(py_key);
     py_value = PyDict_GetItem(*pydict, py_key); // borrowed ref
-    PythonObject value(py_value);
+    PythonData value(py_value);
     if (PyBool_Check(py_value))
       o->writeElement(Tags::tag_booleanproperty,
         Tags::tag_name, key.getString(),
@@ -513,9 +590,11 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
   PyGILState_Release(pythonstate);
 }
 
-
-void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+ 
+//XXX TODO change API:  void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataValue& pElement)
+void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataValue& pElement)
 {
+  /*
   if (pAttr.isA(Tags::tag_name))
     name = pElement.getString();
   else if (pAttr.isA(Tags::tag_value))
@@ -539,7 +618,7 @@ void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const 
   {
     // Adding the new key-value pair to the dictionary.
     PyGILState_STATE pythonstate = PyGILState_Ensure();
-    PythonObject key(name);
+    PythonData key(name);
     if (!*dict)
     {
       *dict = PyDict_New();
@@ -549,36 +628,38 @@ void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const 
     {
       case 1: // Boolean
         {
-        PythonObject val(value_bool);
+        PythonData val(value_bool);
         PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
         break;
         }
       case 2: // Date
         {
-        PythonObject val(value_date);
+        PythonData val(value_date);
         PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
         break;
         }
       case 3: // Double
         {
-        PythonObject val(value_double);
+        PythonData val(value_double);
         PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
         break;
         }
       default: // String
         {
-        PythonObject val(value_string);
+        PythonData val(value_string);
         PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
         }
     }
     PyGILState_Release(pythonstate);
     delete this;  // This was only a temporary object during the read!
   }
+  */
 }
 
 
 DECLARE_EXPORT void PythonDictionary::read(DataInput& pIn, const Attribute& pAttr, PyObject** pDict)
 {
+  /* XXX TODO
   if (pAttr.isA(Tags::tag_booleanproperty))
     pIn.readto(new PythonDictionary(pDict, 1));
   else if (pAttr.isA(Tags::tag_dateproperty))
@@ -587,6 +668,7 @@ DECLARE_EXPORT void PythonDictionary::read(DataInput& pIn, const Attribute& pAtt
     pIn.readto(new PythonDictionary(pDict, 3));
   else if (pAttr.isA(Tags::tag_stringproperty))
     pIn.readto(new PythonDictionary(pDict, 4));
+  */
 }
 
 
@@ -602,7 +684,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
 
     // Create the XML string.
     ostringstream ch;
-    SerializerXML x(ch);
+    XMLSerializer x(ch);
     x.setReferencesOnly(true);
     if (!mode || mode[0] == 'S')
       x.setContentType(Serializer::STANDARD);
@@ -637,7 +719,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
     }
     else
       // ... to a string
-      return PythonObject(ch.str());
+      return PythonData(ch.str());
   }
   catch(...)
   {
@@ -774,7 +856,7 @@ DECLARE_EXPORT PythonFunction::PythonFunction(PyObject* p)
     // It's not a callable object. Interprete it as a function name and
     // look it up.
     PyGILState_STATE pythonstate = PyGILState_Ensure();
-    string n = PythonObject(p).getString();
+    string n = PythonData(p).getString();
     p = PyRun_String(n.c_str(), Py_eval_input,
         PyEval_GetGlobals(), PyEval_GetLocals() );
     if (!p)
@@ -796,9 +878,9 @@ DECLARE_EXPORT PythonFunction::PythonFunction(PyObject* p)
 }
 
 
-DECLARE_EXPORT PythonObject PythonFunction::call() const
+DECLARE_EXPORT PythonData PythonFunction::call() const
 {
-  if (!func) return PythonObject();
+  if (!func) return PythonData();
   PyGILState_STATE pythonstate = PyGILState_Ensure();
   PyObject* result = PyEval_CallFunction(func, "()");
   if (!result)
@@ -808,13 +890,13 @@ DECLARE_EXPORT PythonObject PythonFunction::call() const
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
-  return PythonObject(result);
+  return PythonData(result);
 }
 
 
-DECLARE_EXPORT PythonObject PythonFunction::call(const PyObject* p) const
+DECLARE_EXPORT PythonData PythonFunction::call(const PyObject* p) const
 {
-  if (!func) return PythonObject();
+  if (!func) return PythonData();
   PyGILState_STATE pythonstate = PyGILState_Ensure();
   PyObject* result = PyEval_CallFunction(func, "(O)", p);
   if (!result)
@@ -824,13 +906,13 @@ DECLARE_EXPORT PythonObject PythonFunction::call(const PyObject* p) const
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
-  return PythonObject(result);
+  return PythonData(result);
 }
 
 
-DECLARE_EXPORT PythonObject PythonFunction::call(const PyObject* p, const PyObject* q) const
+DECLARE_EXPORT PythonData PythonFunction::call(const PyObject* p, const PyObject* q) const
 {
-  if (!func) return PythonObject();
+  if (!func) return PythonData();
   PyGILState_STATE pythonstate = PyGILState_Ensure();
   PyObject* result = PyEval_CallFunction(func, "(OO)", p, q);
   if (!result)
@@ -840,7 +922,7 @@ DECLARE_EXPORT PythonObject PythonFunction::call(const PyObject* p, const PyObje
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
-  return PythonObject(result);
+  return PythonData(result);
 }
 
 
@@ -855,14 +937,31 @@ extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *n
           Py_TYPE(name)->tp_name);
       return NULL;
     }
-    PythonExtensionBase* cpp_self = static_cast<PythonExtensionBase*>(self);
+
+    // Find the field
+    Object* cpp_self = static_cast<Object*>(self);
     PyObject* name_utf8 = PyUnicode_AsUTF8String(name);
-    PyObject* result = cpp_self->getattro(Attribute(PyBytes_AsString(name_utf8)));
+    char* fname = PyBytes_AsString(name_utf8);
+    const MetaFieldBase* fmeta = cpp_self->getType().findField(Keyword::hash(fname));
+    if (!fmeta && cpp_self->getType().category)
+      fmeta = cpp_self->getType().category->findField(Keyword::hash(fname));
     Py_DECREF(name_utf8);
-    // Exit 1: Normal
-    if (result) return result;
-    // Exit 2: Exception occurred
-    if (PyErr_Occurred()) return NULL;
+    PythonData result;
+    result.setNull();
+    if (fmeta)
+    {
+      // Retrieve the attribute
+      fmeta->getField(cpp_self, result);
+
+      // Exit 1: Normal
+      if (static_cast<PyObject*>(result))
+        return result;
+
+      // Exit 2: Exception occurred
+      if (PyErr_Occurred())
+        return NULL;
+    }
+
     // Exit 3: Look up in our custom dictionary
     if (cpp_self->dict)
     {
@@ -873,6 +972,7 @@ extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *n
         return item;
       }
     }
+
     // Exit 4: No error occurred but the attribute was not found.
     // Use the standard generic function to pick up  standard attributes
     // (such as __class__, __doc__, ...)
@@ -900,34 +1000,43 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
           Py_TYPE(name)->tp_name);
       return -1;
     }
-    PythonObject field(value);
+    PythonData field(value);
 
-    // Call the object to update the attribute
-    PythonExtensionBase* cpp_self = static_cast<PythonExtensionBase*>(self);
+    // Find the field
+    Object* cpp_self = static_cast<Object*>(self);
     PyObject* name_utf8 = PyUnicode_AsUTF8String(name);
-    int result = cpp_self->setattro(Attribute(PyBytes_AsString(name_utf8)), field);
+    char* fname = PyBytes_AsString(name_utf8);
+    const MetaFieldBase* fmeta = cpp_self->getType().findField(Keyword::hash(fname));
+    if (!fmeta && cpp_self->getType().category)
+      fmeta = cpp_self->getType().category->findField(Keyword::hash(fname));
     Py_DECREF(name_utf8);
-    // Process 'OK' result
-    if (!result) return 0;
-
-    // Add to our custom extension dictionary
-    if (value)
+    if (fmeta)
     {
-      if (!cpp_self->dict)
-      {
-        cpp_self->dict = PyDict_New();
-        Py_INCREF(cpp_self->dict);
-      }
-      result = PyDict_SetItem(cpp_self->dict, name, value);
-      if (!result) return 0;
+      // Update the attribute
+      fmeta->setField(cpp_self, field);
+      return 0;
     }
+    else
+    {
+      // Add to our custom extension dictionary
+      if (value)
+      {
+        if (!cpp_self->dict)
+        {
+          cpp_self->dict = PyDict_New();
+          Py_INCREF(cpp_self->dict);
+        }
+        if (!PyDict_SetItem(cpp_self->dict, name, value))
+          return 0;
+      }
 
-    // Process 'not OK' result - set python error string if it isn't set yet
-    if (!PyErr_Occurred())
-      PyErr_Format(PyExc_AttributeError,
-          "attribute '%S' on '%s' can't be updated",
-          name, Py_TYPE(self)->tp_name);
-    return -1;
+      // Process 'not OK' result - set python error string if it isn't set yet
+      if (!PyErr_Occurred())
+        PyErr_Format(PyExc_AttributeError,
+            "attribute '%S' on '%s' can't be updated",
+            name, Py_TYPE(self)->tp_name);
+      return -1;
+    }
   }
   catch (...)
   {
@@ -948,15 +1057,15 @@ extern "C" DECLARE_EXPORT PyObject* compare_handler(PyObject *self, PyObject *ot
       Py_INCREF(Py_NotImplemented);
       return Py_NotImplemented;
     }
-    int result = static_cast<PythonExtensionBase*>(self)->compare(other);
+    int result = static_cast<Object*>(self)->compare(other);
     switch(op)
     {
-      case Py_LT: return PythonObject(result > 0);
-      case Py_LE: return PythonObject(result >= 0);
-      case Py_EQ: return PythonObject(result == 0);
-      case Py_NE: return PythonObject(result != 0);
-      case Py_GT: return PythonObject(result < 0);
-      case Py_GE: return PythonObject(result <= 0);
+      case Py_LT: return PythonData(result > 0);
+      case Py_LE: return PythonData(result >= 0);
+      case Py_EQ: return PythonData(result == 0);
+      case Py_NE: return PythonData(result != 0);
+      case Py_GT: return PythonData(result < 0);
+      case Py_GE: return PythonData(result <= 0);
       default: throw LogicException("Unknown operator in comparison");
     }
   }
@@ -972,7 +1081,7 @@ extern "C" DECLARE_EXPORT PyObject* iternext_handler(PyObject *self)
 {
   try
   {
-    return static_cast<PythonExtensionBase*>(self)->iternext();
+    return static_cast<Object*>(self)->iternext();
   }
   catch (...)
   {
@@ -986,7 +1095,7 @@ extern "C" DECLARE_EXPORT PyObject* call_handler(PyObject* self, PyObject* args,
 {
   try
   {
-    return static_cast<PythonExtensionBase*>(self)->call(args, kwds);
+    return static_cast<Object*>(self)->call(args, kwds);
   }
   catch (...)
   {
@@ -1000,7 +1109,7 @@ extern "C" DECLARE_EXPORT PyObject* str_handler(PyObject* self)
 {
   try
   {
-    return static_cast<PythonExtensionBase*>(self)->str();
+    return static_cast<Object*>(self)->str();
   }
   catch (...)
   {

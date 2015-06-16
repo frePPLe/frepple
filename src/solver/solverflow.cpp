@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -81,7 +81,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
       // 4b) Call the Python user exit if there is one
       if (userexit_flow)
       {
-        PythonObject result = userexit_flow.call(data->state->q_flowplan, PythonObject(data->constrainedPlanning));
+        PythonData result = userexit_flow.call(data->state->q_flowplan, PythonData(data->constrainedPlanning));
         if (!result.getBool())
         {
           // Return value is false, alternate rejected

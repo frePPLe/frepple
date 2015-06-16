@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                                    *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -31,6 +31,7 @@
   * It provides a more detailed API to interface with frePPLe.
   */
 
+#pragma once
 #ifndef FREPPLE_INTERFACE_H
 #define FREPPLE_INTERFACE_H
 

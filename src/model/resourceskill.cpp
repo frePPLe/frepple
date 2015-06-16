@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -25,18 +25,20 @@ namespace frepple
 {
 
 DECLARE_EXPORT const MetaCategory* ResourceSkill::metadata;
+DECLARE_EXPORT const MetaClass* ResourceSkillDefault::metadata;
 
 
 int ResourceSkill::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("resourceskill", "resourceskills", MetaCategory::ControllerDefault, writer);
-  const_cast<MetaCategory*>(metadata)->registerClass(
-    "resourceskill","resourceskill", true, Object::createDefault<ResourceSkill>
-  );
+  metadata = MetaCategory::registerCategory<ResourceSkill>("resourceskill", "resourceskills", MetaCategory::ControllerDefault, writer);
+  registerFields<ResourceSkill>(const_cast<MetaCategory*>(metadata));
+  ResourceSkillDefault::metadata = MetaClass::registerClass<ResourceSkillDefault>(
+    "resourceskill", "resourceskill", Object::create<ResourceSkillDefault>, true
+    );
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<ResourceSkill>::getType();
+  PythonType& x = FreppleCategory<ResourceSkill>::getPythonType();
   x.setName("resourceskill");
   x.setDoc("frePPLe resourceskill");
   x.supportgetattro();
@@ -110,154 +112,6 @@ void ResourceSkill::writer(const MetaCategory* c, Serializer* o)
 }
 
 
-DECLARE_EXPORT void ResourceSkill::writeElement(Serializer* o, const Keyword& tag, mode m) const
-{
-  // If the resourceskill has already been saved, no need to repeat it again
-  // A 'reference' to a load is not useful to be saved.
-  if (m == REFERENCE) return;
-  assert(m != NOHEAD && m != NOHEADTAIL);
-
-  o->BeginObject(tag);
-
-  // If the resourceskill is defined inside of a resource tag, we don't need to save
-  // the resource. Otherwise we do save it...
-  if (!dynamic_cast<Resource*>(o->getPreviousObject()))
-    o->writeElement(Tags::tag_resource, getResource());
-
-  // If the resourceskill is defined inside of a skill tag, we don't need to save
-  // the skill. Otherwise we do save it...
-  if (!dynamic_cast<Skill*>(o->getPreviousObject()))
-    o->writeElement(Tags::tag_skill, getSkill());
-
-  // Write the priority and effective daterange
-  if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
-  if (getEffective().getStart() != Date::infinitePast)
-    o->writeElement(Tags::tag_effective_start, getEffective().getStart());
-  if (getEffective().getEnd() != Date::infiniteFuture)
-    o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
-
-  // Write source field
-  o->writeElement(Tags::tag_source, getSource());
-
-  // Write the custom fields
-  PythonDictionary::write(o, getDict());
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void ResourceSkill::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA (Tags::tag_resource))
-    pIn.readto( Resource::reader(Resource::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA (Tags::tag_skill))
-    pIn.readto( Skill::reader(Skill::metadata,pIn.getAttributes()) );
-  else
-    PythonDictionary::read(pIn, pAttr, getDict());
-}
-
-
-DECLARE_EXPORT void ResourceSkill::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA (Tags::tag_resource))
-  {
-    Resource *r = dynamic_cast<Resource*>(pIn.getPreviousObject());
-    if (r) setResource(r);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA (Tags::tag_skill))
-  {
-    Skill *s = dynamic_cast<Skill*>(pIn.getPreviousObject());
-    if (s) setSkill(s);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA(Tags::tag_priority))
-    setPriority(pElement.getInt());
-  else if (pAttr.isA(Tags::tag_effective_end))
-    setEffectiveEnd(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_effective_start))
-    setEffectiveStart(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_source))
-    setSource(pElement.getString());
-  else if (pAttr.isA(Tags::tag_action))
-  {
-    delete static_cast<Action*>(pIn.getUserArea());
-    pIn.setUserArea(
-      new Action(MetaClass::decodeAction(pElement.getString().c_str()))
-    );
-  }
-  else if (pIn.isObjectEnd())
-  {
-    // The resourceskill data is now all read in. See if it makes sense now...
-    Action a = pIn.getUserArea() ?
-        *static_cast<Action*>(pIn.getUserArea()) :
-        ADD_CHANGE;
-    delete static_cast<Action*>(pIn.getUserArea());
-    try { validate(a); }
-    catch (...)
-    {
-      delete this;
-      throw;
-    }
-  }
-}
-
-
-DECLARE_EXPORT PyObject* ResourceSkill::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_resource))
-    return PythonObject(getResource());
-  if (attr.isA(Tags::tag_skill))
-    return PythonObject(getSkill());
-  if (attr.isA(Tags::tag_priority))
-    return PythonObject(getPriority());
-  if (attr.isA(Tags::tag_effective_end))
-    return PythonObject(getEffective().getEnd());
-  if (attr.isA(Tags::tag_effective_start))
-    return PythonObject(getEffective().getStart());
-  if (attr.isA(Tags::tag_source))
-    return PythonObject(getSource());
-  return NULL;
-}
-
-
-DECLARE_EXPORT int ResourceSkill::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_resource))
-  {
-    if (!field.check(Resource::metadata))
-    {
-      PyErr_SetString(PythonDataException, "resourceskill resource must be of type resource");
-      return -1;
-    }
-    Resource* y = static_cast<Resource*>(static_cast<PyObject*>(field));
-    setResource(y);
-  }
-  else if (attr.isA(Tags::tag_skill))
-  {
-    if (!field.check(Skill::metadata))
-    {
-      PyErr_SetString(PythonDataException, "resourceskill skill must be of type skill");
-      return -1;
-    }
-    Skill* y = static_cast<Skill*>(static_cast<PyObject*>(field));
-    setSkill(y);
-  }
-  else if (attr.isA(Tags::tag_priority))
-    setPriority(field.getInt());
-  else if (attr.isA(Tags::tag_effective_end))
-    setEffectiveEnd(field.getDate());
-  else if (attr.isA(Tags::tag_effective_start))
-    setEffectiveStart(field.getDate());
-  else if (attr.isA(Tags::tag_source))
-    setSource(field.getString());
-  else
-    return -1;
-  return 0;
-}
-
-
 /** @todo this method implementation is not generic enough and not extendible by subclasses. */
 PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 {
@@ -275,20 +129,20 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args, PyObject* 
 
     // Pick up the priority
     PyObject* q1 = PyDict_GetItemString(kwds,"priority");
-    int q2 = q1 ? PythonObject(q1).getInt() : 1;
+    int q2 = q1 ? PythonData(q1).getInt() : 1;
 
     // Pick up the effective dates
     DateRange eff;
     PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
     if (eff_start)
     {
-      PythonObject d(eff_start);
+      PythonData d(eff_start);
       eff.setStart(d.getDate());
     }
     PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
     if (eff_end)
     {
-      PythonObject d(eff_end);
+      PythonData d(eff_end);
       eff.setEnd(d.getDate());
     }
 
@@ -306,7 +160,7 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args, PyObject* 
       Py_ssize_t pos = 0;
       while (PyDict_Next(kwds, &pos, &key, &value))
       {
-        PythonObject field(value);
+        PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         Attribute attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
@@ -315,8 +169,13 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args, PyObject* 
           && !attr.isA(Tags::tag_priority) && !attr.isA(Tags::tag_type)
           && !attr.isA(Tags::tag_action))
         {
-          int result = l->setattro(attr, field);
-          if (result && !PyErr_Occurred())
+          const MetaFieldBase* fmeta = l->getType().findField(attr.getHash());
+          if (!fmeta && l->getType().category)
+            fmeta = l->getType().category->findField(attr.getHash());
+          if (fmeta)
+            // Update the attribute
+            fmeta->setField(l, field);
+          else
             PyErr_Format(PyExc_AttributeError,
                 "attribute '%S' on '%s' can't be updated",
                 key, Py_TYPE(l)->tp_name);
@@ -395,7 +254,7 @@ DECLARE_EXPORT void ResourceSkill::validate(Action action)
 int ResourceSkillIterator::initialize()
 {
   // Initialize the type
-  PythonType& x = PythonExtension<ResourceSkillIterator>::getType();
+  PythonType& x = PythonExtension<ResourceSkillIterator>::getPythonType();
   x.setName("resourceSkillIterator");
   x.setDoc("frePPLe iterator for resource skills");
   x.supportiter();

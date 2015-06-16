@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -30,14 +30,17 @@ DECLARE_EXPORT const MetaClass* ResourceDefault::metadata;
 DECLARE_EXPORT const MetaClass* ResourceInfinite::metadata;
 DECLARE_EXPORT const MetaClass* ResourceBuckets::metadata;
 
+Duration Resource::defaultMaxEarly(100*86400L);
+
 
 int Resource::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("resource", "resources", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Resource>("resource", "resources", reader, writer, finder);
+  registerFields<Resource>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  FreppleCategory<Resource>::getType().addMethod("plan", Resource::plan, METH_VARARGS,
+  FreppleCategory<Resource>::getPythonType().addMethod("plan", Resource::plan, METH_VARARGS,
       "Return an iterator with tuples representing the resource plan in each time bucket");
   return FreppleCategory<Resource>::initialize();
 }
@@ -46,12 +49,12 @@ int Resource::initialize()
 int ResourceDefault::initialize()
 {
   // Initialize the metadata
-  ResourceDefault::metadata = new MetaClass(
-    "resource",
-    "resource_default",
-    Object::createString<ResourceDefault>,
-    true);
-
+  ResourceDefault::metadata = MetaClass::registerClass<ResourceDefault>(
+    "resource", "resource_default",
+    Object::create<ResourceDefault>,
+    true
+    );
+  
   // Initialize the Python class
   return FreppleClass<ResourceDefault,Resource>::initialize();
 }
@@ -60,10 +63,10 @@ int ResourceDefault::initialize()
 int ResourceInfinite::initialize()
 {
   // Initialize the metadata
-  ResourceInfinite::metadata = new MetaClass(
-    "resource",
-    "resource_infinite",
-    Object::createString<ResourceInfinite>);
+  ResourceInfinite::metadata = MetaClass::registerClass<ResourceInfinite>(
+    "resource", "resource_infinite",
+    Object::create<ResourceInfinite>
+    );
 
   // Initialize the Python class
   return FreppleClass<ResourceInfinite,Resource>::initialize();
@@ -73,10 +76,10 @@ int ResourceInfinite::initialize()
 int ResourceBuckets::initialize()
 {
   // Initialize the metadata
-  ResourceBuckets::metadata = new MetaClass(
+  ResourceBuckets::metadata = MetaClass::registerClass<ResourceBuckets>(
     "resource",
     "resource_buckets",
-    Object::createString<ResourceBuckets>);
+    Object::create<ResourceBuckets>);
 
   // Initialize the Python class
   return FreppleClass<ResourceBuckets,Resource>::initialize();
@@ -186,158 +189,6 @@ DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(CalendarDouble* c)
 }
 
 
-DECLARE_EXPORT void Resource::writeElement(Serializer* o, const Keyword& tag, mode m) const
-{
-  // Write a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement(tag, Tags::tag_name, getName());
-    return;
-  }
-
-  // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL)
-    o->BeginObject(tag, Tags::tag_name, getName());
-
-  // Write my fields
-  HasDescription::writeElement(o, tag);
-  HasHierarchy<Resource>::writeElement(o, tag);
-  if (getMaximum() != 1)
-    o->writeElement(Tags::tag_maximum, getMaximum());
-  o->writeElement(Tags::tag_maximum_calendar, size_max_cal);
-  if (getMaxEarly() != Duration(defaultMaxEarly))
-    o->writeElement(Tags::tag_maxearly, getMaxEarly());
-  if (getCost() != 0.0) o->writeElement(Tags::tag_cost, getCost());
-  o->writeElement(Tags::tag_location, loc);
-  if (!getSetup().empty()) o->writeElement(Tags::tag_setup, getSetup());
-  if (getSetupMatrix())
-    o->writeElement(Tags::tag_setupmatrix, getSetupMatrix());
-  Plannable::writeElement(o, tag);
-
-  // Write the custom fields
-  PythonDictionary::write(o, getDict());
-
-  // Write extra plan information
-  loadplanlist::const_iterator i = loadplans.begin();
-  if ((o->getContentType() == Serializer::PLAN || o->getContentType() == Serializer::PLANDETAIL) && i!=loadplans.end())
-  {
-    o->BeginList(Tags::tag_loadplans);
-    for (; i!=loadplans.end(); ++i)
-      if (i->getType()==1)
-      {
-        const LoadPlan *lp = static_cast<const LoadPlan*>(&*i);
-        o->BeginObject(Tags::tag_loadplan);
-        o->writeElement(Tags::tag_date, lp->getDate());
-        o->writeElement(Tags::tag_quantity, lp->getQuantity());
-        o->writeElement(Tags::tag_onhand, lp->getOnhand());
-        o->writeElement(Tags::tag_minimum, lp->getMin());
-        o->writeElement(Tags::tag_maximum, lp->getMax());
-        o->writeElement(Tags::tag_operationplan, &*(lp->getOperationPlan()), FULL);
-        o->EndObject(Tags::tag_loadplan);
-      }
-    o->EndList(Tags::tag_loadplans);
-    bool first = true;
-    for (Problem::const_iterator j = Problem::begin(const_cast<Resource*>(this), true); j!=Problem::end(); ++j)
-    {
-      if (first)
-      {
-        first = false;
-        o->BeginList(Tags::tag_problems);
-      }
-      o->writeElement(Tags::tag_problem, *j, FULL);
-    }
-    if (!first) o->EndList(Tags::tag_problems);
-  }
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void Resource::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA(Tags::tag_load)
-      && pIn.getParentElement().isA(Tags::tag_loads))
-  {
-    Load* l = new Load();
-    l->setResource(this);
-    pIn.readto(&*l);
-  }
-  else if (pAttr.isA(Tags::tag_resourceskill)
-      && pIn.getParentElement().isA(Tags::tag_resourceskills))
-  {
-    ResourceSkill *s =
-      dynamic_cast<ResourceSkill*>(MetaCategory::ControllerDefault(ResourceSkill::metadata,pIn.getAttributes()));
-    if (s) s->setResource(this);
-    pIn.readto(s);
-  }
-  else if (pAttr.isA(Tags::tag_maximum_calendar))
-    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA(Tags::tag_loadplans))
-    pIn.IgnoreElement();
-  else if (pAttr.isA(Tags::tag_location))
-    pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA(Tags::tag_setupmatrix))
-    pIn.readto( SetupMatrix::reader(SetupMatrix::metadata,pIn.getAttributes()) );
-  if (pAttr.isA(Tags::tag_skill)
-      && pIn.getParentElement().isA(Tags::tag_skills))
-    pIn.readto( Skill::reader(Skill::metadata,pIn.getAttributes()) );
-  else
-  {
-    PythonDictionary::read(pIn, pAttr, getDict());
-    HasHierarchy<Resource>::beginElement(pIn, pAttr);
-  }
-}
-
-
-DECLARE_EXPORT void Resource::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  /* Note that while restoring the size, the parent's size is NOT
-     automatically updated. The getDescription of the 'set_size' function may
-     suggest this would be the case... */
-  if (pAttr.isA (Tags::tag_maximum))
-    setMaximum(pElement.getDouble());
-  else if (pAttr.isA (Tags::tag_maximum_calendar))
-  {
-    CalendarDouble *c = dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
-    if (c)
-      setMaximumCalendar(c);
-    else
-    {
-      Calendar *c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
-      if (!c)
-        throw LogicException("Incorrect object type during read operation");
-      throw DataException("Calendar '" + c->getName() +
-          "' has invalid type for use as resource max calendar");
-    }
-  }
-  else if (pAttr.isA (Tags::tag_maxearly))
-    setMaxEarly(pElement.getDuration());
-  else if (pAttr.isA (Tags::tag_cost))
-    setCost(pElement.getDouble());
-  else if (pAttr.isA(Tags::tag_location))
-  {
-    Location * d = dynamic_cast<Location*>(pIn.getPreviousObject());
-    if (d) setLocation(d);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA (Tags::tag_setup))
-    setSetup(pElement.getString());
-  else if (pAttr.isA(Tags::tag_setupmatrix))
-  {
-    SetupMatrix * d = dynamic_cast<SetupMatrix*>(pIn.getPreviousObject());
-    if (d) setSetupMatrix(d);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else
-  {
-    Plannable::endElement(pIn, pAttr, pElement);
-    HasDescription::endElement(pIn, pAttr, pElement);
-    HasHierarchy<Resource>::endElement (pIn, pAttr, pElement);
-  }
-}
-
-
 DECLARE_EXPORT void Resource::deleteOperationPlans(bool deleteLocked)
 {
   // Delete the operationplans
@@ -402,161 +253,6 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
 }
 
 
-DECLARE_EXPORT void ResourceInfinite::writeElement
-(Serializer* o, const Keyword &tag, mode m) const
-{
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-    return;
-  }
-
-  // Write the complete object
-  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-  // Write the fields
-  Resource::writeElement(o, tag, NOHEAD);
-}
-
-
-DECLARE_EXPORT void ResourceBuckets::writeElement
-(Serializer *o, const Keyword &tag, mode m) const
-{
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-    return;
-  }
-
-  // Write the complete object
-  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-  // Write the fields
-  Resource::writeElement(o, tag, NOHEAD);
-}
-
-
-
-DECLARE_EXPORT PyObject* Resource::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_name))
-    return PythonObject(getName());
-  if (attr.isA(Tags::tag_description))
-    return PythonObject(getDescription());
-  if (attr.isA(Tags::tag_category))
-    return PythonObject(getCategory());
-  if (attr.isA(Tags::tag_subcategory))
-    return PythonObject(getSubCategory());
-  if (attr.isA(Tags::tag_source))
-    return PythonObject(getSource());
-  if (attr.isA(Tags::tag_owner))
-    return PythonObject(getOwner());
-  if (attr.isA(Tags::tag_location))
-    return PythonObject(getLocation());
-  if (attr.isA(Tags::tag_maximum))
-    return PythonObject(getMaximum());
-  if (attr.isA(Tags::tag_maximum_calendar))
-    return PythonObject(getMaximumCalendar());
-  if (attr.isA(Tags::tag_maxearly))
-    return PythonObject(getMaxEarly());
-  if (attr.isA(Tags::tag_cost))
-    return PythonObject(getCost());
-  if (attr.isA(Tags::tag_hidden))
-    return PythonObject(getHidden());
-  if (attr.isA(Tags::tag_loadplans))
-    return new LoadPlanIterator(this);
-  if (attr.isA(Tags::tag_loads))
-    return new LoadIterator(this);
-  if (attr.isA(Tags::tag_setup))
-    return PythonObject(getSetup());
-  if (attr.isA(Tags::tag_setupmatrix))
-    return PythonObject(getSetupMatrix());
-  if (attr.isA(Tags::tag_level))
-    return PythonObject(getLevel());
-  if (attr.isA(Tags::tag_cluster))
-    return PythonObject(getCluster());
-  if (attr.isA(Tags::tag_members))
-    return new ResourceIterator(this);
-  if (attr.isA(Tags::tag_resourceskills))
-    return new ResourceSkillIterator(this);
-  return NULL;
-}
-
-
-DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_name))
-    setName(field.getString());
-  else if (attr.isA(Tags::tag_description))
-    setDescription(field.getString());
-  else if (attr.isA(Tags::tag_category))
-    setCategory(field.getString());
-  else if (attr.isA(Tags::tag_subcategory))
-    setSubCategory(field.getString());
-  else if (attr.isA(Tags::tag_source))
-    setSource(field.getString());
-  else if (attr.isA(Tags::tag_owner))
-  {
-    if (!field.check(Resource::metadata))
-    {
-      PyErr_SetString(PythonDataException, "resource owner must be of type resource");
-      return -1;
-    }
-    Resource* y = static_cast<Resource*>(static_cast<PyObject*>(field));
-    setOwner(y);
-  }
-  else if (attr.isA(Tags::tag_location))
-  {
-    if (!field.check(Location::metadata))
-    {
-      PyErr_SetString(PythonDataException, "resource location must be of type location");
-      return -1;
-    }
-    Location* y = static_cast<Location*>(static_cast<PyObject*>(field));
-    setLocation(y);
-  }
-  else if (attr.isA(Tags::tag_maximum))
-    setMaximum(field.getDouble());
-  else if (attr.isA(Tags::tag_maximum_calendar))
-  {
-    if (!field.check(CalendarDouble::metadata))
-    {
-      PyErr_SetString(PythonDataException, "resource maximum_calendar must be of type calendar_double");
-      return -1;
-    }
-    CalendarDouble* y = static_cast<CalendarDouble*>(static_cast<PyObject*>(field));
-    setMaximumCalendar(y);
-  }
-  else if (attr.isA(Tags::tag_hidden))
-    setHidden(field.getBool());
-  else if (attr.isA(Tags::tag_cost))
-    setCost(field.getDouble());
-  else if (attr.isA(Tags::tag_maxearly))
-    setMaxEarly(field.getDuration());
-  else if (attr.isA(Tags::tag_setup))
-    setSetup(field.getString());
-  else if (attr.isA(Tags::tag_setupmatrix))
-  {
-    if (!field.check(SetupMatrix::metadata))
-    {
-      PyErr_SetString(PythonDataException, "resource setup_matrix must be of type setup_matrix");
-      return -1;
-    }
-    SetupMatrix* y = static_cast<SetupMatrix*>(static_cast<PyObject*>(field));
-    setSetupMatrix(y);
-  }
-  else
-    return -1;  // Error
-  return 0;  // OK
-}
-
-
 extern "C" PyObject* Resource::plan(PyObject *self, PyObject *args)
 {
   // Get the resource model
@@ -583,7 +279,7 @@ extern "C" PyObject* Resource::plan(PyObject *self, PyObject *args)
 int Resource::PlanIterator::initialize()
 {
   // Initialize the type
-  PythonType& x = PythonExtension<Resource::PlanIterator>::getType();
+  PythonType& x = PythonExtension<Resource::PlanIterator>::getPythonType();
   x.setName("resourceplanIterator");
   x.setDoc("frePPLe iterator for resourceplan");
   x.supportiter();
@@ -614,7 +310,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
     // Start date of the first bucket
     end_date = PyIter_Next(bucketiterator);
     if (!end_date) throw LogicException("Expecting at least two dates as argument");
-    cur_date = PythonObject(end_date).getDate();
+    cur_date = PythonData(end_date).getDate();
     prev_date = cur_date;
 
     // A flag to remember whether this resource has an unavailability calendar.
@@ -725,7 +421,7 @@ PyObject* Resource::PlanIterator::iternext()
       if (end_date)
         start_date = end_date;
       else
-        start_date = PythonObject(ldplaniter->getDate());
+        start_date = PythonData(ldplaniter->getDate());
       bucket_available = ldplaniter->getOnhand();
     }
     // Advance the loadplan iterator to the start of the next bucket
@@ -737,9 +433,9 @@ PyObject* Resource::PlanIterator::iternext()
       ++ldplaniter;
     }
     if (ldplaniter == res->getLoadPlans().end())
-      end_date = PythonObject(Date::infiniteFuture);
+      end_date = PythonData(Date::infiniteFuture);
     else
-      end_date = PythonObject(ldplaniter->getDate());
+      end_date = PythonData(ldplaniter->getDate());
   }
   else
   {
@@ -748,7 +444,7 @@ PyObject* Resource::PlanIterator::iternext()
     start_date = end_date;
     end_date = PyIter_Next(bucketiterator);
     if (!end_date) return NULL;
-    cur_date = PythonObject(end_date).getDate();
+    cur_date = PythonData(end_date).getDate();
 
     // Measure from beginning of the bucket till the first event in this bucket
     if (ldplaniter != res->getLoadPlans().end() && ldplaniter->getDate() < cur_date)

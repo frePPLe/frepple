@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -39,8 +39,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   try
   {
     // Call the user exit
-    if (userexit_demand) userexit_demand.call(l, PythonObject(data->constrainedPlanning));
-    unsigned int loglevel = data->getSolver()->getLogLevel();
+    if (userexit_demand) userexit_demand.call(l, PythonData(data->constrainedPlanning));
+    short loglevel = data->getSolver()->getLogLevel();
 
     // Note: This solver method does not push/pop states on the stack.
     // We continue to work on the top element of the stack.
@@ -131,7 +131,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       data->state->q_date = plan_date;
       data->planningDemand = const_cast<Demand*>(l);
       data->state->curDemand = const_cast<Demand*>(l);
-      data->state->motive = const_cast<Demand*>(l);
       data->state->curOwnerOpplan = NULL;
       deliveryoper->solve(*this,v);
       Date next_date = data->state->a_date;

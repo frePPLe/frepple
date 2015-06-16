@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -45,37 +45,28 @@ DECLARE_EXPORT const MetaClass* ProblemMaterialExcess::metadata,
 int Problem::initialize()
 {
   // Initialize the problem metadata.
-  Problem::metadata = new MetaCategory
-  ("problem", "problems", NULL, Problem::writer);
-  ProblemMaterialExcess::metadata = new MetaClass
-  ("problem","material excess");
-  ProblemMaterialShortage::metadata = new MetaClass
-  ("problem","material shortage");
-  ProblemExcess::metadata = new MetaClass
-  ("problem","excess");
-  ProblemShort::metadata = new MetaClass
-  ("problem","short");
-  ProblemEarly::metadata = new MetaClass
-  ("problem","early");
-  ProblemLate::metadata = new MetaClass
-  ("problem","late");
-  ProblemInvalidData::metadata = new MetaClass
-  ("problem","invalid data");
-  ProblemDemandNotPlanned::metadata = new MetaClass
-  ("problem","unplanned");
-  ProblemPrecedence::metadata = new MetaClass
-  ("problem","precedence");
-  ProblemBeforeFence::metadata = new MetaClass
-  ("problem","before fence");
-  ProblemBeforeCurrent::metadata = new MetaClass
-  ("problem","before current");
-  ProblemCapacityUnderload::metadata = new MetaClass
-  ("problem","underload");
-  ProblemCapacityOverload::metadata = new MetaClass
-  ("problem","overload");
+  metadata = MetaCategory::registerCategory<Problem>("problem", "problems", NULL, Problem::writer);
+  registerFields<Problem>(const_cast<MetaCategory*>(metadata));
 
+  // Register classes.
+  // We register them as default to avoid saving an xsi:type header. This
+  // has no further impact as there is no factory method.
+  ProblemMaterialExcess::metadata = MetaClass::registerClass<ProblemMaterialExcess>("problem", "material excess", true);
+  ProblemMaterialShortage::metadata = MetaClass::registerClass<ProblemMaterialShortage>("problem", "material shortage", true);
+  ProblemExcess::metadata = MetaClass::registerClass<ProblemExcess>("problem", "excess", true);
+  ProblemShort::metadata = MetaClass::registerClass<ProblemShort>("problem", "short", true);
+  ProblemEarly::metadata = MetaClass::registerClass<ProblemEarly>("problem", "early", true);
+  ProblemLate::metadata = MetaClass::registerClass<ProblemLate>("problem", "late", true);
+  ProblemInvalidData::metadata = MetaClass::registerClass<ProblemInvalidData>("problem", "invalid data", true);
+  ProblemDemandNotPlanned::metadata = MetaClass::registerClass<ProblemDemandNotPlanned>("problem", "unplanned", true);
+  ProblemPrecedence::metadata = MetaClass::registerClass<ProblemPrecedence>("problem", "precedence", true);
+  ProblemBeforeFence::metadata = MetaClass::registerClass<ProblemBeforeFence>("problem", "before fence", true);
+  ProblemBeforeCurrent::metadata = MetaClass::registerClass<ProblemBeforeCurrent>("problem", "before current", true);
+  ProblemCapacityUnderload::metadata = MetaClass::registerClass<ProblemCapacityUnderload>("problem", "underload", true);
+  ProblemCapacityOverload::metadata = MetaClass::registerClass<ProblemCapacityOverload>("problem", "overload", true);
+  
   // Initialize the Python type
-  PythonType& x = PythonExtension<Problem>::getType();
+  PythonType& x = PythonExtension<Problem>::getPythonType();
   x.setName("problem");
   x.setDoc("frePPLe problem");
   x.supportgetattro();
@@ -208,26 +199,6 @@ DECLARE_EXPORT void Plannable::computeProblems()
 }
 
 
-DECLARE_EXPORT void Plannable::writeElement (Serializer* o, const Keyword& tag, mode m) const
-{
-  // We don't bother about the mode, since this method is only called from
-  // within the writeElement() method of other classes.
-
-  // Problem detection flag only written if different from the default value
-  if (!getDetectProblems()) o->writeElement(Tags::tag_detectproblems, false);
-}
-
-
-DECLARE_EXPORT void Plannable::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA (Tags::tag_detectproblems))
-  {
-    bool b = pElement.getBool();
-    setDetectProblems(b);
-  }
-}
-
-
 DECLARE_EXPORT void Problem::clearProblems()
 {
   // Loop through all entities, and call clearProblems(i)
@@ -267,25 +238,9 @@ DECLARE_EXPORT void Problem::writer(const MetaCategory* c, Serializer* o)
   {
     o->BeginList(*c->grouptag);
     for (; piter!=end(); ++piter)
-      // Note: not the regular write, but a fast write to speed things up.
-      // This is possible since problems aren't nested and are never
-      // referenced.
-      piter->writeElement(o, *c->typetag);
+      o->writeElement(*(c->typetag), *piter);
     o->EndList(*c->grouptag);
   }
-}
-
-
-DECLARE_EXPORT void Problem::writeElement(Serializer *o, const Keyword& tag, mode m) const
-{
-  // We ignore the mode, and always write the complete model
-  o->BeginObject(tag);
-  o->writeElement(Tags::tag_name, getType().type);
-  o->writeElement(Tags::tag_description, getDescription());
-  o->writeElement(Tags::tag_start, getDates().getStart());
-  o->writeElement(Tags::tag_end, getDates().getEnd());
-  o->writeElement(Tags::tag_weight, getWeight());
-  o->EndObject(tag);
 }
 
 
@@ -523,26 +478,6 @@ DECLARE_EXPORT Problem::const_iterator Problem::begin(HasProblems* i, bool refre
 DECLARE_EXPORT const Problem::const_iterator Problem::end()
 {
   return const_iterator(static_cast<Problem*>(NULL));
-}
-
-
-PyObject* Problem::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_name))
-    return PythonObject(getType().type);
-  if (attr.isA(Tags::tag_description))
-    return PythonObject(getDescription());
-  if (attr.isA(Tags::tag_entity))
-    return PythonObject(getEntity());
-  if (attr.isA(Tags::tag_start))
-    return PythonObject(getDates().getStart());
-  if (attr.isA(Tags::tag_end))
-    return PythonObject(getDates().getEnd());
-  if (attr.isA(Tags::tag_weight))
-    return PythonObject(getWeight());
-  if (attr.isA(Tags::tag_owner))
-    return PythonObject(getOwner());
-  return NULL;
 }
 
 

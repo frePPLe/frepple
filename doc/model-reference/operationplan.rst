@@ -77,11 +77,6 @@ unavailable      duration          | Amount of time that the operationplan is in
                                      due to the unavailability (modelled through the
                                      availability calendar of the operation location).
                                    | This field is export-only.
-motive           demand, buffer    | Planning object that triggered the creation of this
-                 or resource         operationplan.
-                                   | This is an export-only field that is updated by the
-                                     solver. The information is normally not relevant for
-                                     end users.
 action           A/C/AC/R          | Type of action to be executed:
                                    | A: Add an new entity, and report an error if the entity
                                      already exists.

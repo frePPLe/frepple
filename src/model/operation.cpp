@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -33,13 +33,14 @@ DECLARE_EXPORT const MetaClass* OperationFixedTime::metadata,
                *OperationAlternate::metadata,
                *OperationSetup::metadata;
 DECLARE_EXPORT Operation::Operationlist Operation::nosubOperations;
-DECLARE_EXPORT const Operation* OperationSetup::setupoperation;
+DECLARE_EXPORT Operation* OperationSetup::setupoperation;
 
 
 int Operation::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("operation", "operations", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Operation>("operation", "operations", reader, writer, finder);
+  registerFields<Operation>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
   return FreppleCategory<Operation>::initialize();
@@ -49,8 +50,9 @@ int Operation::initialize()
 int OperationFixedTime::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaClass("operation", "operation_fixed_time",
-      Object::createString<OperationFixedTime>, true);
+  metadata = MetaClass::registerClass<OperationFixedTime>("operation", "operation_fixed_time",
+      Object::create<OperationFixedTime>, true);
+  registerFields<OperationFixedTime>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
   return FreppleClass<OperationFixedTime,Operation>::initialize();
@@ -60,8 +62,9 @@ int OperationFixedTime::initialize()
 int OperationTimePer::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaClass("operation", "operation_time_per",
-      Object::createString<OperationTimePer>);
+  metadata = MetaClass::registerClass<OperationTimePer>("operation", "operation_time_per",
+      Object::create<OperationTimePer>);
+  registerFields<OperationTimePer>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
   return FreppleClass<OperationTimePer,Operation>::initialize();
@@ -71,11 +74,12 @@ int OperationTimePer::initialize()
 int OperationSplit::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaClass("operation", "operation_split",
-      Object::createString<OperationSplit>);
+  metadata = MetaClass::registerClass<OperationSplit>("operation", "operation_split",
+      Object::create<OperationSplit>);
+  registerFields<OperationSplit>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  FreppleClass<OperationSplit,Operation>::getType().addMethod(
+  FreppleClass<OperationSplit,Operation>::getPythonType().addMethod(
     "addAlternate", OperationSplit::addAlternate,
     METH_VARARGS | METH_KEYWORDS, "add an alternate"
     );
@@ -86,11 +90,12 @@ int OperationSplit::initialize()
 int OperationAlternate::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaClass("operation", "operation_alternate",
-      Object::createString<OperationAlternate>);
+  metadata = MetaClass::registerClass<OperationAlternate>("operation", "operation_alternate",
+      Object::create<OperationAlternate>);
+  registerFields<OperationAlternate>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  FreppleClass<OperationAlternate,Operation>::getType().addMethod(
+  FreppleClass<OperationAlternate,Operation>::getPythonType().addMethod(
     "addAlternate", OperationAlternate::addAlternate,
     METH_VARARGS | METH_KEYWORDS, "add an alternate"
     );
@@ -101,11 +106,12 @@ int OperationAlternate::initialize()
 int OperationRouting::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaClass("operation", "operation_routing",
-      Object::createString<OperationRouting>);
+  metadata = MetaClass::registerClass<OperationRouting>("operation", "operation_routing",
+      Object::create<OperationRouting>);
+  registerFields<OperationRouting>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  FreppleClass<OperationRouting,Operation>::getType().addMethod("addStep", OperationRouting::addStep, METH_VARARGS , "add steps to the routing");
+  FreppleClass<OperationRouting,Operation>::getPythonType().addMethod("addStep", OperationRouting::addStep, METH_VARARGS , "add steps to the routing");
   return FreppleClass<OperationRouting,Operation>::initialize();
 }
 
@@ -114,14 +120,15 @@ int OperationSetup::initialize()
 {
   // Initialize the metadata.
   // There is NO factory method
-  metadata = new MetaClass("operation", "operation_setup");
+  metadata = MetaClass::registerClass<OperationSetup>("operation", "operation_setup");
 
   // Initialize the Python class
   int tmp = FreppleClass<OperationSetup,Operation>::initialize();
 
   // Create a generic setup operation.
   // This will be the only instance of this class.
-  setupoperation = add(new OperationSetup("setup operation"));
+  setupoperation = new OperationSetup();
+  setupoperation->setName("setup operation");
 
   return tmp;
 }
@@ -509,101 +516,7 @@ DECLARE_EXPORT void Operation::deleteOperationPlans(bool deleteLockedOpplans)
 }
 
 
-DECLARE_EXPORT void Operation::writeElement(Serializer* o, const Keyword& tag, mode m) const
-{
-  // Note that this class is abstract and never instantiated directly. There is
-  // therefore no reason to ever write a header.
-  assert(m == NOHEAD || m == NOHEADTAIL);
-
-  // Write the fields
-  HasDescription::writeElement(o, tag);
-  Plannable::writeElement(o, tag);
-  if (post_time)
-    o->writeElement(Tags::tag_posttime, post_time);
-  if (getCost() != 0.0)
-    o->writeElement(Tags::tag_cost, getCost());
-  if (fence)
-    o->writeElement(Tags::tag_fence, fence);
-  if (size_minimum != 1.0)
-    o->writeElement(Tags::tag_size_minimum, size_minimum);
-  if (size_multiple > 0.0)
-    o->writeElement(Tags::tag_size_multiple, size_multiple);
-  if (size_maximum < DBL_MAX)
-    o->writeElement(Tags::tag_size_maximum, size_maximum);
-  if (loc)
-    o->writeElement(Tags::tag_location, loc);
-
-  // Write the custom fields
-  PythonDictionary::write(o, getDict());
-
-  // Write extra plan information
-  if ((o->getContentType() == Serializer::PLAN
-      || o->getContentType() == Serializer::PLANDETAIL) && first_opplan)
-  {
-    o->BeginList(Tags::tag_operationplans);
-    for (OperationPlan::iterator i(this); i!=OperationPlan::end(); ++i)
-      o->writeElement(Tags::tag_operationplan, *i, FULL);
-    o->EndList(Tags::tag_operationplans);
-  }
-}
-
-
-DECLARE_EXPORT void Operation::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA(Tags::tag_flow)
-      && pIn.getParentElement().isA(Tags::tag_flows))
-  {
-    Flow *f =
-      dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn.getAttributes()));
-    if (f) f->setOperation(this);
-    pIn.readto(f);
-  }
-  else if (pAttr.isA (Tags::tag_load)
-      && pIn.getParentElement().isA(Tags::tag_loads))
-  {
-    Load* l = new Load();
-    l->setOperation(this);
-    pIn.readto(&*l);
-  }
-  else if (pAttr.isA (Tags::tag_operationplan))
-    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn.getAttributes()));
-  else if (pAttr.isA (Tags::tag_location))
-    pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
-  else
-    PythonDictionary::read(pIn, pAttr, getDict());
-}
-
-
-DECLARE_EXPORT void Operation::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA (Tags::tag_fence))
-    setFence(pElement.getDuration());
-  else if (pAttr.isA (Tags::tag_size_minimum))
-    setSizeMinimum(pElement.getDouble());
-  else if (pAttr.isA (Tags::tag_cost))
-    setCost(pElement.getDouble());
-  else if (pAttr.isA (Tags::tag_size_multiple))
-    setSizeMultiple(pElement.getDouble());
-  else if (pAttr.isA (Tags::tag_size_maximum))
-    setSizeMaximum(pElement.getDouble());
-  else if (pAttr.isA (Tags::tag_posttime))
-    setPostTime(pElement.getDuration());
-  else if (pAttr.isA (Tags::tag_location))
-  {
-    Location *l = dynamic_cast<Location*>(pIn.getPreviousObject());
-    if (l) setLocation(l);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else
-  {
-    Plannable::endElement(pIn, pAttr, pElement);
-    HasDescription::endElement(pIn, pAttr, pElement);
-  }
-}
-
-
-DECLARE_EXPORT OperationPlanState
-OperationFixedTime::setOperationPlanParameters
+DECLARE_EXPORT OperationPlanState OperationFixedTime::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Invalid call to the function, or locked operationplan.
@@ -721,39 +634,6 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
     }
   }
   return true;
-}
-
-
-DECLARE_EXPORT void OperationFixedTime::writeElement
-(Serializer* o, const Keyword& tag, mode m) const
-{
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-    return;
-  }
-
-  // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-  // Write the fields
-  Operation::writeElement(o, tag, NOHEAD);
-  if (duration) o->writeElement (Tags::tag_duration, duration);
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject (tag);
-}
-
-
-DECLARE_EXPORT void OperationFixedTime::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA (Tags::tag_duration))
-    setDuration (pElement.getDuration());
-  else
-    Operation::endElement (pIn, pAttr, pElement);
 }
 
 
@@ -902,99 +782,6 @@ OperationTimePer::setOperationPlanParameters
 
   // Return value
   return OperationPlanState(opplan);
-}
-
-
-DECLARE_EXPORT void OperationTimePer::writeElement
-(Serializer *o, const Keyword& tag, mode m) const
-{
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-    return;
-  }
-
-  // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-  // Write the fields
-  Operation::writeElement(o, tag, NOHEADTAIL);
-  o->writeElement(Tags::tag_duration, duration);
-  if (duration_per)
-  {
-    char t[65];
-    Duration::double2CharBuffer(duration_per, t);
-    o->writeElement(Tags::tag_duration_per, t);
-  }
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void OperationTimePer::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_duration))
-    setDuration(pElement.getDuration());
-  else if (pAttr.isA(Tags::tag_duration_per))
-    setDurationPer( Duration::parse2double(pElement.getString().c_str()) );
-  else
-    Operation::endElement (pIn, pAttr, pElement);
-}
-
-
-DECLARE_EXPORT void OperationRouting::writeElement
-(Serializer *o, const Keyword& tag, mode m) const
-{
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-    return;
-  }
-
-  // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-  // Write the fields
-  Operation::writeElement(o, tag, NOHEADTAIL);
-  if (steps.size())
-  {
-    o->BeginList(Tags::tag_steps);
-    for (Operationlist::const_iterator i = steps.begin(); i!=steps.end(); ++i)
-      o->writeElement(Tags::tag_operation, *i, REFERENCE);
-    o->EndList(Tags::tag_steps);
-  }
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void OperationRouting::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
-  else
-    Operation::beginElement(pIn, pAttr);
-}
-
-
-DECLARE_EXPORT void OperationRouting::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA (Tags::tag_operation)
-      && pIn.getParentElement().isA(Tags::tag_steps))
-  {
-    Operation *oper = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (oper) addStepBack (oper);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  Operation::endElement (pIn, pAttr, pElement);
 }
 
 
@@ -1183,98 +970,6 @@ DECLARE_EXPORT void OperationAlternate::setEffective(Operation* o, DateRange dr)
 }
 
 
-DECLARE_EXPORT void OperationAlternate::writeElement
-(Serializer *o, const Keyword& tag, mode m) const
-{
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-    return;
-  }
-
-  // Write the complete object
-  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-  // Write the standard fields
-  Operation::writeElement(o, tag, NOHEADTAIL);
-  if (search != PRIORITY)
-    o->writeElement(Tags::tag_search, search);
-
-  // Write the extra fields
-  o->BeginList(Tags::tag_alternates);
-  alternatePropertyList::const_iterator propIter = alternateProperties.begin();
-  for (Operationlist::const_iterator i = alternates.begin();
-      i != alternates.end(); ++i)
-  {
-    o->BeginObject(Tags::tag_alternate);
-    o->writeElement(Tags::tag_operation, *i, REFERENCE);
-    o->writeElement(Tags::tag_priority, propIter->first);
-    if (propIter->second.getStart() != Date::infinitePast)
-      o->writeElement(Tags::tag_effective_start, propIter->second.getStart());
-    if (propIter->second.getEnd() != Date::infiniteFuture)
-      o->writeElement(Tags::tag_effective_end, propIter->second.getEnd());
-    o->EndObject (Tags::tag_alternate);
-    ++propIter;
-  }
-  o->EndList(Tags::tag_alternates);
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void OperationAlternate::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA(Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
-  else
-    Operation::beginElement(pIn, pAttr);
-}
-
-
-DECLARE_EXPORT void OperationAlternate::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  // Saving some typing...
-  typedef pair<Operation*,alternateProperty> tempData;
-
-  // Create a temporary object
-  if (!pIn.getUserArea())
-    pIn.setUserArea(new tempData(static_cast<Operation*>(NULL),alternateProperty(1,DateRange())));
-  tempData* tmp = static_cast<tempData*>(pIn.getUserArea());
-
-  if (pAttr.isA(Tags::tag_alternate))
-  {
-    addAlternate(tmp->first, tmp->second.first, tmp->second.second);
-    // Reset the defaults
-    tmp->first = NULL;
-    tmp->second.first = 1;
-    tmp->second.second = DateRange();
-  }
-  else if (pAttr.isA(Tags::tag_priority))
-    tmp->second.first = pElement.getInt();
-  else if (pAttr.isA(Tags::tag_search))
-    setSearch(pElement.getString());
-  else if (pAttr.isA(Tags::tag_effective_start))
-    tmp->second.second.setStart(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_effective_end))
-    tmp->second.second.setEnd(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_operation)
-      && pIn.getParentElement().isA(Tags::tag_alternate))
-  {
-    Operation * b = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (b) tmp->first = b;
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  Operation::endElement (pIn, pAttr, pElement);
-
-  // Delete the temporary object
-  if (pIn.isObjectEnd()) delete static_cast<tempData*>(pIn.getUserArea());
-}
-
-
 DECLARE_EXPORT OperationPlanState
 OperationAlternate::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
@@ -1406,94 +1101,6 @@ DECLARE_EXPORT void OperationSplit::setEffective(Operation* o, DateRange dr)
   else
     throw DataException("Operation '" + o->getName() +
         "' isn't a suboperation of split operation '" + getName() + "'");
-}
-
-
-DECLARE_EXPORT void OperationSplit::writeElement
-(Serializer *o, const Keyword& tag, mode m) const
-{
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-    return;
-  }
-
-  // Write the complete object
-  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-  // Write the standard fields
-  Operation::writeElement(o, tag, NOHEADTAIL);
-
-  // Write the extra fields
-  o->BeginList(Tags::tag_alternates);
-  alternatePropertyList::const_iterator propIter = alternateProperties.begin();
-  for (Operationlist::const_iterator i = alternates.begin();
-      i != alternates.end(); ++i)
-  {
-    o->BeginObject(Tags::tag_alternate);
-    o->writeElement(Tags::tag_operation, *i, REFERENCE);
-    o->writeElement(Tags::tag_percent, propIter->first);
-    if (propIter->second.getStart() != Date::infinitePast)
-      o->writeElement(Tags::tag_effective_start, propIter->second.getStart());
-    if (propIter->second.getEnd() != Date::infiniteFuture)
-      o->writeElement(Tags::tag_effective_end, propIter->second.getEnd());
-    o->EndObject (Tags::tag_alternate);
-    ++propIter;
-  }
-  o->EndList(Tags::tag_alternates);
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void OperationSplit::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA(Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
-  else
-    Operation::beginElement(pIn, pAttr);
-}
-
-
-DECLARE_EXPORT void OperationSplit::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  // Saving some typing...
-  typedef pair<Operation*,alternateProperty> tempData;
-
-  // Create a temporary object
-  if (!pIn.getUserArea())
-    pIn.setUserArea(new tempData(static_cast<Operation*>(NULL),alternateProperty(1,DateRange())));
-  tempData* tmp = static_cast<tempData*>(pIn.getUserArea());
-
-  if (pAttr.isA(Tags::tag_alternate))
-  {
-    addAlternate(tmp->first, tmp->second.first, tmp->second.second);
-    // Reset the defaults
-    tmp->first = NULL;
-    tmp->second.first = 1;
-    tmp->second.second = DateRange();
-  }
-  else if (pAttr.isA(Tags::tag_percent))
-    tmp->second.first = pElement.getInt();
-  else if (pAttr.isA(Tags::tag_effective_start))
-    tmp->second.second.setStart(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_effective_end))
-    tmp->second.second.setEnd(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_operation)
-      && pIn.getParentElement().isA(Tags::tag_alternate))
-  {
-    Operation * b = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (b) tmp->first = b;
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  Operation::endElement (pIn, pAttr, pElement);
-
-  // Delete the temporary object
-  if (pIn.isObjectEnd()) delete static_cast<tempData*>(pIn.getUserArea());
 }
 
 
@@ -1695,150 +1302,6 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
 }
 
 
-DECLARE_EXPORT PyObject* Operation::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_name))
-    return PythonObject(getName());
-  if (attr.isA(Tags::tag_description))
-    return PythonObject(getDescription());
-  if (attr.isA(Tags::tag_category))
-    return PythonObject(getCategory());
-  if (attr.isA(Tags::tag_subcategory))
-    return PythonObject(getSubCategory());
-  if (attr.isA(Tags::tag_source))
-    return PythonObject(getSource());
-  if (attr.isA(Tags::tag_location))
-    return PythonObject(getLocation());
-  if (attr.isA(Tags::tag_fence))
-    return PythonObject(getFence());
-  if (attr.isA(Tags::tag_size_minimum))
-    return PythonObject(getSizeMinimum());
-  if (attr.isA(Tags::tag_size_multiple))
-    return PythonObject(getSizeMultiple());
-  if (attr.isA(Tags::tag_size_maximum))
-    return PythonObject(getSizeMaximum());
-  if (attr.isA(Tags::tag_cost))
-    return PythonObject(getCost());
-  if (attr.isA(Tags::tag_posttime))
-    return PythonObject(getPostTime());
-  if (attr.isA(Tags::tag_hidden))
-    return PythonObject(getHidden());
-  if (attr.isA(Tags::tag_loads))
-    return new LoadIterator(this);
-  if (attr.isA(Tags::tag_flows))
-    return new FlowIterator(this);
-  if (attr.isA(Tags::tag_operationplans))
-    return new OperationPlanIterator(this);
-  if (attr.isA(Tags::tag_level))
-    return PythonObject(getLevel());
-  if (attr.isA(Tags::tag_cluster))
-    return PythonObject(getCluster());
-  return NULL;
-}
-
-
-DECLARE_EXPORT int Operation::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_name))
-    setName(field.getString());
-  else if (attr.isA(Tags::tag_description))
-    setDescription(field.getString());
-  else if (attr.isA(Tags::tag_category))
-    setCategory(field.getString());
-  else if (attr.isA(Tags::tag_subcategory))
-    setSubCategory(field.getString());
-  else if (attr.isA(Tags::tag_source))
-    setSource(field.getString());
-  else if (attr.isA(Tags::tag_location))
-  {
-    if (!field.check(Location::metadata))
-    {
-      PyErr_SetString(PythonDataException, "buffer location must be of type location");
-      return -1;
-    }
-    Location* y = static_cast<Location*>(static_cast<PyObject*>(field));
-    setLocation(y);
-  }
-  else if (attr.isA(Tags::tag_fence))
-    setFence(field.getDuration());
-  else if (attr.isA(Tags::tag_size_minimum))
-    setSizeMinimum(field.getDouble());
-  else if (attr.isA(Tags::tag_size_multiple))
-    setSizeMultiple(field.getDouble());
-  else if (attr.isA(Tags::tag_size_maximum))
-    setSizeMaximum(field.getDouble());
-  else if (attr.isA(Tags::tag_cost))
-    setCost(field.getDouble());
-  else if (attr.isA(Tags::tag_posttime))
-    setPostTime(field.getDuration());
-  else if (attr.isA(Tags::tag_hidden))
-    setHidden(field.getBool());
-  else
-    return -1;  // Error
-  return 0;  // OK
-}
-
-
-DECLARE_EXPORT PyObject* OperationFixedTime::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_duration))
-    return PythonObject(getDuration());
-  return Operation::getattro(attr);
-}
-
-
-DECLARE_EXPORT int OperationFixedTime::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_duration))
-    setDuration(field.getDuration());
-  else
-    return Operation::setattro(attr, field);
-  return 0;
-}
-
-
-DECLARE_EXPORT PyObject* OperationTimePer::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_duration))
-    return PythonObject(getDuration());
-  if (attr.isA(Tags::tag_duration_per))
-    return PythonObject(getDurationPer());
-  return Operation::getattro(attr);
-}
-
-
-DECLARE_EXPORT int OperationTimePer::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_duration))
-    setDuration(field.getDuration());
-  else if (attr.isA(Tags::tag_duration_per))
-    setDurationPer(field.getDouble());
-  else
-    return Operation::setattro(attr, field);
-  return 0;
-}
-
-DECLARE_EXPORT PyObject* OperationSplit::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_alternates))
-  {
-    PyObject* result = PyTuple_New(getSubOperations().size());
-    alternatePropertyList::const_iterator j = alternateProperties.begin();
-    int count = 0;
-    for (Operation::Operationlist::const_iterator i = getSubOperations().begin();
-      i != getSubOperations().end(); i++, j++)
-      PyTuple_SetItem(result, count++, Py_BuildValue("(OiNN)",
-        static_cast<PyObject*>(*i),
-        j->first,
-        static_cast<PyObject*>(PythonObject(j->second.getStart())),
-        static_cast<PyObject*>(PythonObject(j->second.getEnd()))
-        ));
-    return result;
-  }
-  return Operation::getattro(attr);
-}
-
-
 DECLARE_EXPORT PyObject* OperationSplit::addAlternate(PyObject* self, PyObject* args, PyObject* kwdict)
 {
   try
@@ -1862,12 +1325,12 @@ DECLARE_EXPORT PyObject* OperationSplit::addAlternate(PyObject* self, PyObject* 
     DateRange eff;
     if (eff_start)
     {
-      PythonObject d(eff_start);
+      PythonData d(eff_start);
       eff.setStart(d.getDate());
     }
     if (eff_end)
     {
-      PythonObject d(eff_end);
+      PythonData d(eff_end);
       eff.setEnd(d.getDate());
     }
 
@@ -1880,43 +1343,6 @@ DECLARE_EXPORT PyObject* OperationSplit::addAlternate(PyObject* self, PyObject* 
     return NULL;
   }
   return Py_BuildValue("");
-}
-
-
-DECLARE_EXPORT PyObject* OperationAlternate::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_alternates))
-  {
-    PyObject* result = PyTuple_New(getSubOperations().size());
-    alternatePropertyList::const_iterator j = alternateProperties.begin();
-    int count = 0;
-    for (Operation::Operationlist::const_iterator i = getSubOperations().begin();
-      i != getSubOperations().end(); i++, j++)
-      PyTuple_SetItem(result, count++, Py_BuildValue("(OiNN)",
-        static_cast<PyObject*>(*i),
-        j->first,
-        static_cast<PyObject*>(PythonObject(j->second.getStart())),
-        static_cast<PyObject*>(PythonObject(j->second.getEnd()))
-        ));
-    return result;
-  }
-  if (attr.isA(Tags::tag_search))
-  {
-    ostringstream ch;
-    ch << getSearch();
-    return PythonObject(ch.str());
-  }
-  return Operation::getattro(attr);
-}
-
-
-DECLARE_EXPORT int OperationAlternate::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_search))
-    setSearch(field.getString());
-  else
-    return Operation::setattro(attr, field);
-  return 0;
 }
 
 
@@ -1943,12 +1369,12 @@ DECLARE_EXPORT PyObject* OperationAlternate::addAlternate(PyObject* self, PyObje
     DateRange eff;
     if (eff_start)
     {
-      PythonObject d(eff_start);
+      PythonData d(eff_start);
       eff.setStart(d.getDate());
     }
     if (eff_end)
     {
-      PythonObject d(eff_end);
+      PythonData d(eff_end);
       eff.setEnd(d.getDate());
     }
 
@@ -1961,20 +1387,6 @@ DECLARE_EXPORT PyObject* OperationAlternate::addAlternate(PyObject* self, PyObje
     return NULL;
   }
   return Py_BuildValue("");
-}
-
-
-DECLARE_EXPORT PyObject* OperationRouting::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_steps))
-  {
-    PyObject* result = PyTuple_New(getSubOperations().size());
-    int count = 0;
-    for (Operation::Operationlist::const_iterator i = getSubOperations().begin(); i != getSubOperations().end(); ++i)
-      PyTuple_SetItem(result, count++, PythonObject(*i));
-    return result;
-  }
-  return Operation::getattro(attr);
 }
 
 

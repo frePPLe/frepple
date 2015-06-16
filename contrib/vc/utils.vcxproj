@@ -66,6 +66,8 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <RuntimeTypeInfo>
       </RuntimeTypeInfo>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -91,15 +93,15 @@
       <RuntimeTypeInfo>
       </RuntimeTypeInfo>
       <StringPooling>Yes</StringPooling>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>
       </AdditionalDependencies>
     </Link>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
+    <ProjectReference />
     <Lib>
       <AdditionalDependencies>xerces-c_static_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
@@ -116,11 +118,11 @@
     <ClCompile Include="..\..\src\utils\library.cpp" />
     <ClCompile Include="..\..\src\utils\name.cpp" />
     <ClCompile Include="..\..\src\utils\pythonutils.cpp" />
-    <ClCompile Include="..\..\src\utils\xmlparser.cpp" />
+    <ClCompile Include="..\..\src\utils\xml.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\frepple\pythonutils.h" />
     <ClInclude Include="..\..\include\frepple\utils.h" />
+    <ClInclude Include="..\..\include\frepple\xml.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

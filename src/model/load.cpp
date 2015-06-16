@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -24,19 +24,20 @@ namespace frepple
 {
 
 DECLARE_EXPORT const MetaCategory* Load::metadata;
+DECLARE_EXPORT const MetaClass* LoadDefault::metadata;
 
 
 int Load::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory
-  ("load", "loads", MetaCategory::ControllerDefault, writer);
-  const_cast<MetaCategory*>(metadata)->registerClass(
-    "load","load",true,Object::createDefault<Load>
-  );
+  metadata = MetaCategory::registerCategory<Load>("load", "loads", MetaCategory::ControllerDefault, writer);
+  registerFields<Load>(const_cast<MetaCategory*>(metadata));
+  LoadDefault::metadata = MetaClass::registerClass<LoadDefault>(
+    "load", "load", Object::create<LoadDefault>, true
+    );
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<Load>::getType();
+  PythonType& x = FreppleCategory<Load>::getPythonType();
   x.setName("load");
   x.setDoc("frePPLe load");
   x.supportgetattro();
@@ -221,7 +222,7 @@ DECLARE_EXPORT void Load::setAlternate(Load *f)
 }
 
 
-DECLARE_EXPORT void Load::setAlternate(const string& n)
+DECLARE_EXPORT void Load::setAlternateName(string n)
 {
   if (!getOperation())
     throw LogicException("Can't set an alternate load before setting the operation");
@@ -231,7 +232,7 @@ DECLARE_EXPORT void Load::setAlternate(const string& n)
 }
 
 
-DECLARE_EXPORT void Load::setSetup(const string n)
+DECLARE_EXPORT void Load::setSetup(string n)
 {
   setup = n;
 
@@ -246,236 +247,6 @@ DECLARE_EXPORT void Load::setSetup(const string n)
           && i->getAlternate() != getAlternate())
         throw DataException("Only a single load of an operation can specify a setup");
   }
-}
-
-
-DECLARE_EXPORT void Load::writeElement(Serializer *o, const Keyword& tag, mode m) const
-{
-  // If the load has already been saved, no need to repeat it again
-  // A 'reference' to a load is not useful to be saved.
-  if (m == REFERENCE) return;
-  assert(m != NOHEAD && m != NOHEADTAIL);
-
-  o->BeginObject(tag);
-
-  // If the load is defined inside of an operation tag, we don't need to save
-  // the operation. Otherwise we do save it...
-  if (!dynamic_cast<Operation*>(o->getPreviousObject()))
-    o->writeElement(Tags::tag_operation, getOperation());
-
-  // If the load is defined inside of an resource tag, we don't need to save
-  // the resource. Otherwise we do save it...
-  if (!dynamic_cast<Resource*>(o->getPreviousObject()))
-    o->writeElement(Tags::tag_resource, getResource());
-
-  // Write the quantity, priority, name and alternate
-  if (qty != 1.0) o->writeElement(Tags::tag_quantity, qty);
-  if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
-  if (!getName().empty()) o->writeElement(Tags::tag_name, getName());
-  if (getAlternate())
-    o->writeElement(Tags::tag_alternate, getAlternate()->getName());
-  if (search != PRIORITY)
-  {
-    ostringstream ch;
-    ch << getSearch();
-    o->writeElement(Tags::tag_search, ch.str());
-  }
-
-  // Write the effective daterange
-  if (getEffective().getStart() != Date::infinitePast)
-    o->writeElement(Tags::tag_effective_start, getEffective().getStart());
-  if (getEffective().getEnd() != Date::infiniteFuture)
-    o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
-
-  // Write the required setup
-  if (!setup.empty()) o->writeElement(Tags::tag_setup, setup);
-
-  // Write the required skill
-  if (skill) o->writeElement(Tags::tag_skill, skill);
-
-  // Write source field
-  o->writeElement(Tags::tag_source, getSource());
-
-  // Write the custom fields
-  PythonDictionary::write(o, getDict());
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void Load::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA (Tags::tag_resource))
-    pIn.readto( Resource::reader(Resource::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA (Tags::tag_skill))
-    pIn.readto( Skill::reader(Skill::metadata,pIn.getAttributes()) );
-  else
-    PythonDictionary::read(pIn, pAttr, getDict());
-}
-
-
-DECLARE_EXPORT void Load::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA (Tags::tag_resource))
-  {
-    Resource *r = dynamic_cast<Resource*>(pIn.getPreviousObject());
-    if (r) setResource(r);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA (Tags::tag_operation))
-  {
-    Operation *o = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (o) setOperation(o);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA(Tags::tag_quantity))
-    setQuantity(pElement.getDouble());
-  else if (pAttr.isA(Tags::tag_priority))
-    setPriority(pElement.getInt());
-  else if (pAttr.isA(Tags::tag_name))
-    setName(pElement.getString());
-  else if (pAttr.isA(Tags::tag_alternate))
-    setAlternate(pElement.getString());
-  else if (pAttr.isA(Tags::tag_search))
-    setSearch(pElement.getString());
-  else if (pAttr.isA(Tags::tag_setup))
-    setSetup(pElement.getString());
-  else if (pAttr.isA(Tags::tag_action))
-  {
-    delete static_cast<Action*>(pIn.getUserArea());
-    pIn.setUserArea(
-      new Action(MetaClass::decodeAction(pElement.getString().c_str()))
-    );
-  }
-  else if (pAttr.isA(Tags::tag_effective_end))
-    setEffectiveEnd(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_effective_start))
-    setEffectiveStart(pElement.getDate());
-  else if (pAttr.isA (Tags::tag_skill))
-  {
-    Skill *s = dynamic_cast<Skill*>(pIn.getPreviousObject());
-    if (s) setSkill(s);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA(Tags::tag_source))
-    setSource(pElement.getString());
-  else if (pIn.isObjectEnd())
-  {
-    // The load data is now all read in. See if it makes sense now...
-    Action a = pIn.getUserArea() ?
-        *static_cast<Action*>(pIn.getUserArea()) :
-        ADD_CHANGE;
-    delete static_cast<Action*>(pIn.getUserArea());
-    try { validate(a); }
-    catch (...)
-    {
-      delete this;
-      throw;
-    }
-  }
-}
-
-
-DECLARE_EXPORT PyObject* Load::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_resource))
-    return PythonObject(getResource());
-  if (attr.isA(Tags::tag_operation))
-    return PythonObject(getOperation());
-  if (attr.isA(Tags::tag_quantity))
-    return PythonObject(getQuantity());
-  if (attr.isA(Tags::tag_priority))
-    return PythonObject(getPriority());
-  if (attr.isA(Tags::tag_effective_end))
-    return PythonObject(getEffective().getEnd());
-  if (attr.isA(Tags::tag_effective_start))
-    return PythonObject(getEffective().getStart());
-  if (attr.isA(Tags::tag_name))
-    return PythonObject(getName());
-  if (attr.isA(Tags::tag_hidden))
-    return PythonObject(getHidden());
-  if (attr.isA(Tags::tag_alternate))
-    return PythonObject(getAlternate());
-  if (attr.isA(Tags::tag_search))
-  {
-    ostringstream ch;
-    ch << getSearch();
-    return PythonObject(ch.str());
-  }
-  if (attr.isA(Tags::tag_setup))
-    return PythonObject(getSetup());
-  if (attr.isA(Tags::tag_skill))
-    return PythonObject(getSkill());
-  if (attr.isA(Tags::tag_source))
-    return PythonObject(getSource());
-  return NULL;
-}
-
-
-DECLARE_EXPORT int Load::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_resource))
-  {
-    if (!field.check(Resource::metadata))
-    {
-      PyErr_SetString(PythonDataException, "load resource must be of type resource");
-      return -1;
-    }
-    Resource* y = static_cast<Resource*>(static_cast<PyObject*>(field));
-    setResource(y);
-  }
-  else if (attr.isA(Tags::tag_operation))
-  {
-    if (!field.check(Operation::metadata))
-    {
-      PyErr_SetString(PythonDataException, "load operation must be of type operation");
-      return -1;
-    }
-    Operation* y = static_cast<Operation*>(static_cast<PyObject*>(field));
-    setOperation(y);
-  }
-  else if (attr.isA(Tags::tag_quantity))
-    setQuantity(field.getDouble());
-  else if (attr.isA(Tags::tag_priority))
-    setPriority(field.getInt());
-  else if (attr.isA(Tags::tag_effective_end))
-    setEffectiveEnd(field.getDate());
-  else if (attr.isA(Tags::tag_effective_start))
-    setEffectiveStart(field.getDate());
-  else if (attr.isA(Tags::tag_name))
-    setName(field.getString());
-  else if (attr.isA(Tags::tag_alternate))
-  {
-    if (!field.check(Load::metadata))
-      setAlternate(field.getString());
-    else
-    {
-      Load *y = static_cast<Load*>(static_cast<PyObject*>(field));
-      setAlternate(y);
-    }
-  }
-  else if (attr.isA(Tags::tag_search))
-    setSearch(field.getString());
-  else if (attr.isA(Tags::tag_setup))
-    setSetup(field.getString());
-  else if (attr.isA(Tags::tag_skill))
-  {
-    if (!field.check(Skill::metadata))
-    {
-      PyErr_SetString(PythonDataException, "load skill must be of type skill");
-      return -1;
-    }
-    Skill* y = static_cast<Skill*>(static_cast<PyObject*>(field));
-    setSkill(y);
-  }
-  else if (attr.isA(Tags::tag_source))
-    setSource(field.getString());
-  else
-    return -1;
-  return 0;
 }
 
 
@@ -495,25 +266,25 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 
     // Pick up the quantity
     PyObject* q1 = PyDict_GetItemString(kwds,"quantity");
-    double q2 = q1 ? PythonObject(q1).getDouble() : 1.0;
+    double q2 = q1 ? PythonData(q1).getDouble() : 1.0;
 
     // Pick up the effective dates
     DateRange eff;
     PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
     if (eff_start)
     {
-      PythonObject d(eff_start);
+      PythonData d(eff_start);
       eff.setStart(d.getDate());
     }
     PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
     if (eff_end)
     {
-      PythonObject d(eff_end);
+      PythonData d(eff_end);
       eff.setEnd(d.getDate());
     }
 
     // Create the load
-    Load *l = new Load(
+    Load *l = new LoadDefault(
       static_cast<Operation*>(oper),
       static_cast<Resource*>(res),
       q2, eff
@@ -526,7 +297,7 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
       Py_ssize_t pos = 0;
       while (PyDict_Next(kwds, &pos, &key, &value))
       {
-        PythonObject field(value);
+        PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         Attribute attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
@@ -535,8 +306,13 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
           && !attr.isA(Tags::tag_quantity) && !attr.isA(Tags::tag_type)
           && !attr.isA(Tags::tag_action))
         {
-          int result = l->setattro(attr, field);
-          if (result && !PyErr_Occurred())
+          const MetaFieldBase* fmeta = l->getType().findField(attr.getHash());
+          if (!fmeta && l->getType().category)
+            fmeta = l->getType().category->findField(attr.getHash());
+          if (fmeta)
+            // Update the attribute
+            fmeta->setField(l, field);
+          else
             PyErr_Format(PyExc_AttributeError,
                 "attribute '%S' on '%s' can't be updated",
                 key, Py_TYPE(l)->tp_name);
@@ -559,7 +335,7 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 int LoadIterator::initialize()
 {
   // Initialize the type
-  PythonType& x = PythonExtension<LoadIterator>::getType();
+  PythonType& x = PythonExtension<LoadIterator>::getPythonType();
   x.setName("loadIterator");
   x.setDoc("frePPLe iterator for loads");
   x.supportiter();

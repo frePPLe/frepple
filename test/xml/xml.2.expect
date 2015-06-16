@@ -4,101 +4,151 @@
 	<description>XML structure test model</description>
 	<current>2009-01-01T00:00:00</current>
 	<locations>
-		<location name="location 1">
+		<location>
+			<name>location 1</name>
 			<category>manufacturing</category>
 		</location>
 	</locations>
 	<calendars>
-		<calendar name="weeks">
+		<calendar>
+			<name>weeks</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 				</bucket>
 			</buckets>
 		</calendar>
 	</calendars>
 	<operations>
-		<operation name="operation 1" xsi:type="operation_routing">
+		<operation xsi:type="operation_routing">
+			<name>operation 1</name>
 			<size_multiple>3</size_multiple>
 			<steps>
-				<operation name="operation 1 step1" xsi:type="operation_fixed_time"/>
-				<operation name="operation 1 step2" xsi:type="operation_fixed_time"/>
+				<operation>
+					<name>operation 1 step1</name>
+				</operation>
+				<operation>
+					<name>operation 1 step2</name>
+				</operation>
 			</steps>
 		</operation>
-		<operation name="operation 1 step1" xsi:type="operation_fixed_time">
+		<operation>
+			<name>operation 1 step1</name>
 			<duration>P7D</duration>
 		</operation>
-		<operation name="operation 1 step2" xsi:type="operation_fixed_time">
+		<operation>
+			<name>operation 1 step2</name>
 			<duration>P7D</duration>
 		</operation>
 	</operations>
 	<items>
-		<item name="item 1">
+		<item>
+			<name>item 1</name>
 			<category>end item</category>
 			<description>А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь</description>
-			<operation name="operation 1" xsi:type="operation_routing"/>
+			<operation xsi:type="operation_routing">
+				<name>operation 1</name>
+			</operation>
 		</item>
 	</items>
 	<buffers>
-		<buffer name="STCK1">
-			<item name="item 1"/>
-			<location name="location 1"/>
+		<buffer>
+			<name>STCK1</name>
+			<item>
+				<name>item 1</name>
+			</item>
+			<location>
+				<name>location 1</name>
+			</location>
 			<onhand>100</onhand>
 		</buffer>
 	</buffers>
 	<demands>
-		<demand name=" แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่">
+		<demand>
+			<name> แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่</name>
 			<quantity>10</quantity>
-			<item name="item 1"/>
+			<item>
+				<name>item 1</name>
+			</item>
 			<due>2009-01-27T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 	</demands>
 	<resources>
-		<resource name="resource 1">
-			<maximum_calendar name="weeks"/>
+		<resource>
+			<name>resource 1</name>
+			<maximum_calendar>
+				<name>weeks</name>
+			</maximum_calendar>
 		</resource>
 	</resources>
 	<loads>
 		<load>
-			<operation name="operation 1 step1" xsi:type="operation_fixed_time"/>
-			<resource name="resource 1"/>
+			<operation>
+				<name>operation 1 step1</name>
+			</operation>
+			<resource>
+				<name>resource 1</name>
+			</resource>
 		</load>
 	</loads>
 	<flows>
-		<flow xsi:type="flow_start">
-			<operation name="operation 1 step1" xsi:type="operation_fixed_time"/>
-			<buffer name="STCK1"/>
+		<flow>
+			<operation>
+				<name>operation 1 step1</name>
+			</operation>
+			<buffer>
+				<name>STCK1</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
 	</flows>
 	<operationplans>
-		<operationplan id="2" operation="operation 1">
-			<demand name=" แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่"/>
+		<operationplan>
+			<id>2</id>
+			<operation xsi:type="operation_routing">
+				<name>operation 1</name>
+			</operation>
+			<demand>
+				<name> แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่</name>
+			</demand>
 			<start>2009-01-13T00:00:00</start>
 			<end>2009-01-27T00:00:00</end>
 			<quantity>12</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="3" operation="operation 1 step1">
+		<operationplan>
+			<id>3</id>
+			<operation>
+				<name>operation 1 step1</name>
+			</operation>
 			<start>2009-01-13T00:00:00</start>
 			<end>2009-01-20T00:00:00</end>
 			<quantity>12</quantity>
 			<criticality>0</criticality>
-			<owner id="2" operation="operation 1"/>
+			<owner>
+				<id>2</id>
+			</owner>
 		</operationplan>
-		<operationplan id="4" operation="operation 1 step2">
+		<operationplan>
+			<id>4</id>
+			<operation>
+				<name>operation 1 step2</name>
+			</operation>
 			<start>2009-01-20T00:00:00</start>
 			<end>2009-01-27T00:00:00</end>
 			<quantity>12</quantity>
 			<criticality>0</criticality>
-			<owner id="2" operation="operation 1"/>
+			<owner>
+				<id>2</id>
+			</owner>
 		</operationplan>
 	</operationplans>
 	<problems>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;STCK1&apos; has material excess of 100</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>2030-12-31T00:00:00</end>
 			<weight>100</weight>
 		</problem>

@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -34,8 +34,8 @@ namespace frepple
 
 DECLARE_EXPORT bool HasLevel::recomputeLevels = false;
 DECLARE_EXPORT bool HasLevel::computationBusy = false;
-DECLARE_EXPORT unsigned int HasLevel::numberOfClusters = 0;
-DECLARE_EXPORT unsigned short HasLevel::numberOfLevels = 0;
+DECLARE_EXPORT int HasLevel::numberOfClusters = 0;
+DECLARE_EXPORT short HasLevel::numberOfLevels = 0;
 
 
 DECLARE_EXPORT void HasLevel::computeLevels()

@@ -86,14 +86,15 @@ template <class type> class TimeLine
         inline double getCumulativeConsumed() const {return cum_prod - oh;}
 
         /** Return the date of the event. */
-        inline const Date& getDate() const {return dt;}
+        inline Date getDate() const {return dt;}
 
         /** Return a pointer to the owning timeline. */
         virtual TimeLine<type>* getTimeLine() const {return NULL;}
 
-        /** This functions returns the minimum boundary valid at the time of
+        /** These functions return the minimum boundary valid at the time of
           * this event. */
-        virtual double getMin(bool inclusive = true) const
+        double getMin() const {return getMin(true);}
+        virtual double getMin(bool inclusive) const
         {
           EventMinQuantity *m = this->getTimeLine()->lastMin;
           if (inclusive)
@@ -103,9 +104,10 @@ template <class type> class TimeLine
           return m ? m->newMin : 0.0;
         }
 
-        /** This functions returns the maximum boundary valid at the time of
+        /** This functions return the maximum boundary valid at the time of
           * this event. */
-        virtual double getMax(bool inclusive = true) const
+        double getMax() const {return getMax(true);}
+        virtual double getMax(bool inclusive) const
         {
           EventMaxQuantity *m = this->getTimeLine()->lastMax;
           if (inclusive)

@@ -51,67 +51,89 @@
 		</operation>
 	</operations>
 	<items>
-		<item name="component A">
+		<item>
+			<name>component A</name>
 		</item>
-		<item name="component B">
+		<item>
+			<name>component B</name>
 		</item>
-		<item name="component C">
+		<item>
+			<name>component C</name>
 		</item>
-		<item name="component D">
+		<item>
+			<name>component D</name>
 		</item>
-		<item name="component E">
+		<item>
+			<name>component E</name>
 		</item>
-		<item name="component F">
+		<item>
+			<name>component F</name>
 		</item>
-		<item name="component G">
+		<item>
+			<name>component G</name>
 		</item>
-		<item name="product">
+		<item>
+			<name>product</name>
 			<operation name="deliver product" xsi:type="operation_fixed_time"/>
 		</item>
 	</items>
 	<buffers>
 		<buffer name="component A" xsi:type="buffer_procure">
-			<item name="component A"/>
+			<item>
+				<name>component A</name>
+			</item>
 			<onhand>1</onhand>
 			<leadtime>P7D</leadtime>
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
 		<buffer name="component B" xsi:type="buffer_procure">
-			<item name="component B"/>
+			<item>
+				<name>component B</name>
+			</item>
 			<onhand>4</onhand>
 			<leadtime>P5D</leadtime>
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
 		<buffer name="component C" xsi:type="buffer_procure">
-			<item name="component C"/>
+			<item>
+				<name>component C</name>
+			</item>
 			<onhand>5</onhand>
 			<leadtime>P7D</leadtime>
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
 		<buffer name="component D" xsi:type="buffer_procure">
-			<item name="component D"/>
+			<item>
+				<name>component D</name>
+			</item>
 			<leadtime>P7D</leadtime>
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
 		<buffer name="component E" xsi:type="buffer_procure">
-			<item name="component E"/>
+			<item>
+				<name>component E</name>
+			</item>
 			<leadtime>P7D</leadtime>
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
 		<buffer name="component F" xsi:type="buffer_procure">
-			<item name="component F"/>
+			<item>
+				<name>component F</name>
+			</item>
 			<onhand>5</onhand>
 			<leadtime>P7D</leadtime>
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
 		<buffer name="component G" xsi:type="buffer_procure">
-			<item name="component G"/>
+			<item>
+				<name>component G</name>
+			</item>
 			<onhand>5</onhand>
 			<leadtime>P5D</leadtime>
 			<mininventory>20</mininventory>
@@ -119,13 +141,17 @@
 		</buffer>
 		<buffer name="product">
 			<producing name="assembly" xsi:type="operation_time_per"/>
-			<item name="product"/>
+			<item>
+				<name>product</name>
+			</item>
 		</buffer>
 	</buffers>
 	<demands>
 		<demand name="order 1">
 			<quantity>10</quantity>
-			<item name="product"/>
+			<item>
+				<name>product</name>
+			</item>
 			<due>2009-01-04T00:00:00</due>
 			<priority>11</priority>
 		</demand>

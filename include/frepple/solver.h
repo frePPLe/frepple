@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -18,6 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#pragma once
 #ifndef SOLVER_H
 #define SOLVER_H
 
@@ -40,7 +41,9 @@ class OperatorDelete : public Solver
   public:
 	/** Constructor. */
     DECLARE_EXPORT OperatorDelete(CommandManager* c = NULL) : cmds(c)
-    { initType(metadata); }
+    {
+      initType(metadata);
+    }
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~OperatorDelete() {}
@@ -313,8 +316,6 @@ class SolverMRP : public Solver
     /** Destructor. */
     virtual DECLARE_EXPORT ~SolverMRP() {}
 
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
     virtual const MetaClass& getType() const {return *metadata;}
@@ -355,32 +356,53 @@ class SolverMRP : public Solver
 
     /** Update the constraints to be considered by this solver. This field may
       * not be applicable for all solvers. */
-    void setConstraints(short i) {constrts = i;}
+    void setConstraints(short i)
+    {
+      constrts = i;
+    }
 
     /** Returns the constraints considered by the solve. */
-    short getConstraints() const {return constrts;}
+    short getConstraints() const
+    {
+      return constrts;
+    }
 
     /** Returns true if this solver respects the operation release fences.
       * The solver isn't allowed to create any operation plans within the
       * release fence.
       */
-    bool isFenceConstrained() const {return (constrts & FENCE)>0;}
+    bool isFenceConstrained() const
+    {
+      return (constrts & FENCE)>0;
+    }
 
     /** Returns true if the solver respects the current time of the plan.
       * The solver isn't allowed to create any operation plans in the past.
       */
-    bool isLeadtimeConstrained() const {return (constrts & LEADTIME)>0;}
+    bool isLeadTimeConstrained() const
+    {
+      return (constrts & LEADTIME)>0;
+    }
 
     /** Returns true if the solver respects the material procurement
       * constraints on procurement buffers.
       */
-    bool isMaterialConstrained() const {return (constrts & MATERIAL)>0;}
+    bool isMaterialConstrained() const
+    {
+      return (constrts & MATERIAL)>0;
+    }
 
     /** Returns true if the solver respects capacity constraints. */
-    bool isCapacityConstrained() const {return (constrts & CAPACITY)>0;}
+    bool isCapacityConstrained() const
+    {
+      return (constrts & CAPACITY)>0;
+    }
 
     /** Returns true if any constraint is relevant for the solver. */
-    bool isConstrained() const {return constrts>0;}
+    bool isConstrained() const
+    {
+      return constrts>0;
+    }
 
     /** Returns the plan type:
       *  - 1: Constrained plan.<br>
@@ -400,7 +422,10 @@ class SolverMRP : public Solver
       *       The demand is always fully met on time.
       * The default is 1.
       */
-    short getPlanType() const {return plantype;}
+    short getPlanType() const
+    {
+      return plantype;
+    }
 
     void setPlanType(short b)
     {
@@ -420,7 +445,10 @@ class SolverMRP : public Solver
 
     /** Return the time increment between requests when the answered reply
       * date isn't usable. */
-    Duration getLazyDelay() const {return lazydelay;}
+    Duration getLazyDelay() const
+    {
+      return lazydelay;
+    }
 
     /** Update the time increment between requests when the answered reply
       * date isn't usable. */
@@ -433,7 +461,10 @@ class SolverMRP : public Solver
     /** Get the threshold to stop iterating when the delta between iterations
       * is less than this absolute threshold.
       */
-    double getIterationThreshold() const {return iteration_threshold;}
+    double getIterationThreshold() const
+    {
+      return iteration_threshold;
+    }
 
     /** Set the threshold to stop iterating when the delta between iterations
       * is less than this absolute threshold.<br>
@@ -449,7 +480,10 @@ class SolverMRP : public Solver
     /** Get the threshold to stop iterating when the delta between iterations
       * is less than this percentage threshold.
       */
-    double getIterationAccuracy() const {return iteration_accuracy;}
+    double getIterationAccuracy() const
+    {
+      return iteration_accuracy;
+    }
 
     /** Set the threshold to stop iterating when the delta between iterations
       * is less than this percentage threshold.<br>
@@ -466,7 +500,10 @@ class SolverMRP : public Solver
       * If the can't plan a demand within this limit, we consider it
       * unplannable.
       */
-    unsigned long getIterationMax() const {return iteration_max;}
+    unsigned long getIterationMax() const
+    {
+      return iteration_max;
+    }
 
     /** Update the maximum number of asks allowed to plan a demand.
       * If the can't plan a demand within this limit, we consider it
@@ -479,56 +516,77 @@ class SolverMRP : public Solver
 
     /** Return whether or not we automatically commit the changes after
       * planning a demand. */
-    bool getAutocommit() const {return autocommit;}
+    bool getAutocommit() const
+    {
+      return autocommit;
+    }
 
     /** Update whether or not we automatically commit the changes after
       * planning a demand. */
-    void setAutocommit(const bool b) {autocommit = b;}
+    void setAutocommit(const bool b)
+    {
+      autocommit = b;
+    }
 
     /** Specify a Python function that is called before solving a flow. */
-    DECLARE_EXPORT void setUserExitFlow(const string& n) {userexit_flow = n;}
-
-    /** Specify a Python function that is called before solving a flow. */
-    DECLARE_EXPORT void setUserExitFlow(PyObject* p) {userexit_flow = p;}
+    DECLARE_EXPORT void setUserExitFlow(PythonFunction n)
+    {
+      userexit_flow = n;
+    }
 
     /** Return the Python function that is called before solving a flow. */
-    PythonFunction getUserExitFlow() const {return userexit_flow;}
+    PythonFunction getUserExitFlow() const
+    {
+      return userexit_flow;
+    }
 
     /** Specify a Python function that is called before solving a demand. */
-    DECLARE_EXPORT void setUserExitDemand(const string& n) {userexit_demand = n;}
-
-    /** Specify a Python function that is called before solving a demand. */
-    DECLARE_EXPORT void setUserExitDemand(PyObject* p) {userexit_demand = p;}
+    DECLARE_EXPORT void setUserExitDemand(PythonFunction n)
+    {
+      userexit_demand = n;
+    }
 
     /** Return the Python function that is called before solving a demand. */
-    PythonFunction getUserExitDemand() const {return userexit_demand;}
+    PythonFunction getUserExitDemand() const
+    {
+      return userexit_demand;
+    }
 
     /** Specify a Python function that is called before solving a buffer. */
-    DECLARE_EXPORT void setUserExitBuffer(const string& n) {userexit_buffer = n;}
-
-    /** Specify a Python function that is called before solving a buffer. */
-    DECLARE_EXPORT void setUserExitBuffer(PyObject* p) {userexit_buffer = p;}
+    DECLARE_EXPORT void setUserExitBuffer(PythonFunction n)
+    {
+      userexit_buffer = n;
+    }
 
     /** Return the Python function that is called before solving a buffer. */
-    PythonFunction getUserExitBuffer() const {return userexit_buffer;}
+    PythonFunction getUserExitBuffer() const
+    {
+      return userexit_buffer;
+    }
 
     /** Specify a Python function that is called before solving a resource. */
-    DECLARE_EXPORT void setUserExitResource(const string& n) {userexit_resource = n;}
-
-    /** Specify a Python function that is called before solving a resource. */
-    DECLARE_EXPORT void setUserExitResource(PyObject* p) {userexit_resource = p;}
+    DECLARE_EXPORT void setUserExitResource(PythonFunction n)
+    {
+      userexit_resource = n;
+    }
 
     /** Return the Python function that is called before solving a resource. */
-    PythonFunction getUserExitResource() const {return userexit_resource;}
+    PythonFunction getUserExitResource() const
+    {
+      return userexit_resource;
+    }
 
     /** Specify a Python function that is called before solving a operation. */
-    DECLARE_EXPORT void setUserExitOperation(const string& n) {userexit_operation = n;}
-
-    /** Specify a Python function that is called before solving a operation. */
-    DECLARE_EXPORT void setUserExitOperation(PyObject* p) {userexit_operation = p;}
+    DECLARE_EXPORT void setUserExitOperation(PythonFunction n)
+    {
+      userexit_operation = n;
+    }
 
     /** Return the Python function that is called before solving a operation. */
-    PythonFunction getUserExitOperation() const {return userexit_operation;}
+    PythonFunction getUserExitOperation() const
+    {
+      return userexit_operation;
+    }
 
     /** Python method for running the solver. */
     static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
@@ -539,21 +597,65 @@ class SolverMRP : public Solver
     /** Python method for undoing the plan changes. */
     static DECLARE_EXPORT PyObject* rollback(PyObject*, PyObject*);
 
-    bool getAllowSplits() const {return allowSplits;}
-    void setAllowSplits(bool b) {allowSplits = b;}
+    bool getAllowSplits() const
+    {
+      return allowSplits;
+    }
 
-    bool getPlanSafetyStockFirst() const {return planSafetyStockFirst;}
+    void setAllowSplits(bool b)
+    {
+      allowSplits = b;
+    }
 
-    void setPlanSafetyStockFirst(bool b) {planSafetyStockFirst = b;}
+    bool getPlanSafetyStockFirst() const
+    {
+      return planSafetyStockFirst;
+    }
 
-    bool getErasePreviousFirst() const {return erasePreviousFirst;}
+    void setPlanSafetyStockFirst(bool b)
+    {
+      planSafetyStockFirst = b;
+    }
 
-    void setErasePreviousFirst(bool b) {erasePreviousFirst= b;}
+    bool getErasePreviousFirst() const
+    {
+      return erasePreviousFirst;
+    }
+
+    void setErasePreviousFirst(bool b)
+    {
+      erasePreviousFirst= b;
+    }
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addShortField<Cls>(Tags::tag_constraints, &Cls::getConstraints, &Cls::setConstraints);
+      m->addBoolField<Cls>(Tags::tag_autocommit, &Cls::getAutocommit, &Cls::setAutocommit);
+      m->addShortField<Cls>(Tags::tag_plantype, &Cls::getPlanType, &Cls::setPlanType);
+      m->addDoubleField<Cls>(SolverMRP::tag_iterationthreshold, &Cls::getIterationThreshold, &Cls::setIterationThreshold);
+      m->addDoubleField<Cls>(SolverMRP::tag_iterationaccuracy, &Cls::getIterationAccuracy, &Cls::setIterationAccuracy);
+      m->addDurationField<Cls>(SolverMRP::tag_lazydelay, &Cls::getLazyDelay, &Cls::setLazyDelay);
+      m->addBoolField<Cls>(SolverMRP::tag_allowsplits, &Cls::getAllowSplits, &Cls::setAllowSplits);
+      m->addBoolField<Cls>(SolverMRP::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
+      m->addUnsignedLongField<Cls>(SolverMRP::tag_iterationmax, &Cls::getIterationMax, &Cls::setIterationMax);
+      m->addPythonFunctionField<Cls>(Tags::tag_userexit_flow, &Cls::getUserExitFlow, &Cls::setUserExitFlow);
+      m->addPythonFunctionField<Cls>(Tags::tag_userexit_demand, &Cls::getUserExitDemand, &Cls::setUserExitDemand);
+      m->addPythonFunctionField<Cls>(Tags::tag_userexit_buffer, &Cls::getUserExitBuffer, &Cls::setUserExitBuffer);
+      m->addPythonFunctionField<Cls>(Tags::tag_userexit_resource, &Cls::getUserExitResource, &Cls::setUserExitResource);
+      m->addPythonFunctionField<Cls>(Tags::tag_userexit_operation, &Cls::getUserExitOperation, &Cls::setUserExitOperation);
+    }
 
   private:
     typedef vector< deque<Demand*> > classified_demand;
     typedef classified_demand::iterator cluster_iterator;
     classified_demand demands_per_cluster;
+
+    static const Keyword tag_iterationthreshold;
+    static const Keyword tag_iterationaccuracy;
+    static const Keyword tag_lazydelay;
+    static const Keyword tag_allowsplits;
+    static const Keyword tag_planSafetyStockFirst;
+    static const Keyword tag_iterationmax;
 
     /** Type of plan to be created. */
     short plantype;
@@ -703,9 +805,6 @@ class SolverMRP : public Solver
         * inventory carrying costs, ...
         */
       double a_penalty;
-
-      /** Motive of the current solver. */
-      Plannable* motive;
     };
 
     /** @brief This class is a helper class of the SolverMRP class.
@@ -732,7 +831,9 @@ class SolverMRP : public Solver
           : sol(s), cluster(c), demands(d),
             constrainedPlanning(true), state(statestack),
             prevstate(statestack-1)
-        { operator_delete = new OperatorDelete(this); }
+        {
+          operator_delete = new OperatorDelete(this);
+        }
 
         /** Destructor. */
         virtual ~SolverMRPdata()
@@ -741,7 +842,10 @@ class SolverMRP : public Solver
         };
 
         /** Verbose mode is inherited from the solver. */
-        unsigned short getLogLevel() const {return sol ? sol->getLogLevel() : 0;}
+        unsigned short getLogLevel() const
+        {
+          return sol ? sol->getLogLevel() : 0;
+        }
 
         /** This function runs a single planning thread. Such a thread will loop
           * through the following steps:
@@ -860,7 +964,7 @@ class SolverMRP : public Solver
 
     /** Verifies whether this operationplan violates the leadtime
       * constraints. */
-    DECLARE_EXPORT bool checkOperationLeadtime(OperationPlan*, SolverMRPdata&, bool);
+    DECLARE_EXPORT bool checkOperationLeadTime(OperationPlan*, SolverMRPdata&, bool);
 
     /** Verifies whether this operationplan violates the capacity constraint.<br>
       * In case it does the operationplan is moved to an earlier or later

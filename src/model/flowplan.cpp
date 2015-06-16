@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -29,10 +29,11 @@ DECLARE_EXPORT const MetaCategory* FlowPlan::metadata;
 int FlowPlan::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("flowplan", "flowplans");
+  metadata = MetaCategory::registerCategory<FlowPlan>("flowplan", "flowplans");
+  // TODO XXX registerFields<FlowPlan>(const_cast<MetaCategory*>(metadata));   loadplan is not a subclass of Object. Why not?
 
   // Initialize the Python type
-  PythonType& x = FreppleCategory<FlowPlan>::getType();
+  PythonType& x = FreppleCategory<FlowPlan>::getPythonType();
   x.setName("flowplan");
   x.setDoc("frePPLe flowplan");
   x.supportgetattro();
@@ -122,71 +123,10 @@ DECLARE_EXPORT void FlowPlan::setFlow(const Flow* newfl)
 }
 
 
-// Remember that this method only superficially looks like a normal
-// writeElement() method.
-DECLARE_EXPORT void FlowPlan::writeElement(Serializer *o, const Keyword& tag, mode m) const
-{
-  o->BeginObject(tag);
-  o->writeElement(Tags::tag_date, getDate());
-  o->writeElement(Tags::tag_quantity, getQuantity());
-  o->writeElement(Tags::tag_onhand, getOnhand());
-  o->writeElement(Tags::tag_minimum, getMin());
-  o->writeElement(Tags::tag_maximum, getMax());
-  if (!dynamic_cast<OperationPlan*>(o->getCurrentObject()))
-    o->writeElement(Tags::tag_operationplan, &*getOperationPlan());
-
-  // Write pegging info.
-  if (o->getContentType() == Serializer::PLANDETAIL)
-  {
-    // Write the upstream pegging
-    PeggingIterator k(this, false);
-    if (k) --k;
-    for (; k; --k)
-      o->writeElement(Tags::tag_pegging,
-        Tags::tag_level, -k.getLevel(),
-        Tags::tag_operationplan, k.getOperationPlan()->getIdentifier(),
-        Tags::tag_quantity, k.getQuantity()
-        );
-
-    // Write the downstream pegging
-    PeggingIterator l(this, true);
-    if (l) ++l;
-    for (; l; ++l)
-      o->writeElement(Tags::tag_pegging,
-        Tags::tag_level, l.getLevel(),
-        Tags::tag_operationplan, l.getOperationPlan()->getIdentifier(),
-        Tags::tag_quantity, l.getQuantity()
-        );
-  }
-
-  o->EndObject(tag);
-}
-
-
-PyObject* FlowPlan::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_operationplan))
-    return PythonObject(getOperationPlan());
-  if (attr.isA(Tags::tag_quantity))
-    return PythonObject(getQuantity());
-  if (attr.isA(Tags::tag_flow))
-    return PythonObject(getFlow());
-  if (attr.isA(Tags::tag_date))
-    return PythonObject(getDate());
-  if (attr.isA(Tags::tag_onhand))
-    return PythonObject(getOnhand());
-  if (attr.isA(Tags::tag_buffer)) // Convenient shortcut
-    return PythonObject(getFlow()->getBuffer());
-  if (attr.isA(Tags::tag_operation)) // Convenient shortcut
-    return PythonObject(getFlow()->getOperation());
-  return NULL;
-}
-
-
 int FlowPlanIterator::initialize()
 {
   // Initialize the type
-  PythonType& x = PythonExtension<FlowPlanIterator>::getType();
+  PythonType& x = PythonExtension<FlowPlanIterator>::getPythonType();
   x.setName("flowplanIterator");
   x.setDoc("frePPLe iterator for flowplan");
   x.supportiter();

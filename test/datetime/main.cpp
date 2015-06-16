@@ -37,7 +37,7 @@ int main (int argc, char *argv[])
   // is in effect at that date.
   d3.parse("2009-06-01T00:00:00", "%Y-%m-%dT%H:%M:%S");
 
-  TimePeriod t1 = 10;
+  Duration t1 = 10;
 
   logger << "d1 \"2009-02-01T01:02:03\" => " << d1 << " " << d1.getSecondsDay()
      << " " << d1.getSecondsWeek() << " " << d1.getSecondsMonth()
@@ -50,7 +50,7 @@ int main (int argc, char *argv[])
      << " " << d3.getSecondsYear() << endl;
   logger << "t1: " << t1 << endl;
 
-  TimePeriod t2 = d1 - d2;
+  Duration t2 = d1 - d2;
   logger << "d1-d2: " << t2 << endl;
 
   t2 = d2 - d1;
@@ -59,7 +59,7 @@ int main (int argc, char *argv[])
   d1 -= t1;
   logger << "d1-t1: " << d1 << endl;
 
-  TimePeriod t3;
+  Duration t3;
   t3.parse("P1D");
   logger << "time \"P1D\" => " << t3 << "    "
       << static_cast<long>(t3) << endl;
@@ -71,7 +71,9 @@ int main (int argc, char *argv[])
     t3.parse("Pwrong");
   }
   catch (const DataException& e)
-  { logger << "Data exception caught: " << e.what() << endl; }
+  { 
+    logger << "Data exception caught: " << e.what() << endl; 
+  }
   logger << "time \"Pwrong\" => " << t3 << "    "
       << static_cast<long>(t3) << endl;
   t3.parse("PT79M");

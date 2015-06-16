@@ -6,28 +6,40 @@
   </description>
 	<current>2015-01-01T00:00:00</current>
 	<suppliers>
-		<supplier name="Supplier A">
+		<supplier>
+			<name>Supplier A</name>
 		</supplier>
-		<supplier name="Supplier B">
+		<supplier>
+			<name>Supplier B</name>
 		</supplier>
 	</suppliers>
 	<operations>
 	</operations>
 	<items>
-		<item name="Component A">
+		<item>
+			<name>Component A</name>
 		</item>
-		<item name="Component B">
+		<item>
+			<name>Component B</name>
 			<price>1</price>
 		</item>
 	</items>
 	<supplieritems>
 		<supplieritem>
-			<supplier name="Supplier A"/>
-			<item name="Component A"/>
+			<supplier>
+				<name>Supplier A</name>
+			</supplier>
+			<item>
+				<name>Component A</name>
+			</item>
 		</supplieritem>
 		<supplieritem>
-			<supplier name="Supplier B"/>
-			<item name="Component B"/>
+			<supplier>
+				<name>Supplier B</name>
+			</supplier>
+			<item>
+				<name>Component B</name>
+			</item>
 		</supplieritem>
 	</supplieritems>
 </plan>

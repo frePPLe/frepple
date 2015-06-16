@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -135,7 +135,7 @@ DECLARE_EXPORT PyObject* saveXMLfile(PyObject* self, PyObject* args)
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
-    SerializerXMLFile o(filename);
+    XMLSerializerFile o(filename);
     if (content)
     {
       if (!strcmp(content,"STANDARD"))
@@ -413,7 +413,7 @@ DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
 
   // Validate the argument
   bool deleteStaticModel = false;
-  if (obj) deleteStaticModel = PythonObject(obj).getBool();
+  if (obj) deleteStaticModel = PythonData(obj).getBool();
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
@@ -435,7 +435,8 @@ DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
       Calendar::clear();
       Item::clear();
       // The setup operation is a static singleton and should always be around
-      OperationSetup::setupoperation = Operation::add(new OperationSetup("setup operation"));
+      OperationSetup::setupoperation = new OperationSetup();
+      OperationSetup::setupoperation->setName("setup operation");
     }
     else
       // Delete the operationplans only
@@ -465,9 +466,9 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
   Py_BEGIN_ALLOW_THREADS
 
   // Execute and catch exceptions
-  size_t count, memsize;
   try
   {
+    size_t count, memsize;
 
     // Intro
     logger << endl << "Size information of frePPLe " << PACKAGE_VERSION
@@ -499,7 +500,6 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     memsize = 0;
     for (Customer::iterator c = Customer::begin(); c != Customer::end(); ++c)
       memsize += c->getSize();
-    logger << "Skill             \t" << Skill::size() << "\t" << memsize << endl;
     logger << "Customer          \t" << Customer::size() << "\t" << memsize << endl;
     total += memsize;
 
@@ -614,13 +614,13 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     total += memsize + c_memsize;
 
     // Operationplans
-    size_t countloadplans(0), countflowplans(0);
+    size_t countloadplans(0), countflowplans(0), memloadplans(0), memflowplans(0);
     memsize = count = 0;
     for (OperationPlan::iterator j = OperationPlan::begin();
         j!=OperationPlan::end(); ++j)
     {
       ++count;
-      memsize += sizeof(*j);
+      memsize += j->getSize();
       countloadplans += j->sizeLoadPlans();
       countflowplans += j->sizeFlowPlans();
     }

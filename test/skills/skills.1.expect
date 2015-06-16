@@ -7,7 +7,8 @@
   </description>
 	<current>2013-01-01T00:00:00</current>
 	<operations>
-		<operation name="1. delivery end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>1. delivery end item</name>
 		</operation>
 		<operation name="1. make end item" xsi:type="operation_time_per">
 			<duration>P0D</duration>
@@ -15,107 +16,186 @@
 		</operation>
 	</operations>
 	<items>
-		<item name="1. end item">
+		<item>
+			<name>1. end item</name>
 		</item>
 	</items>
 	<buffers>
-		<buffer name="1. end item">
-			<producing name="1. make end item" xsi:type="operation_time_per"/>
+		<buffer>
+			<name>1. end item</name>
+			<producing xsi:type="operation_time_per">
+				<name>1. make end item</name>
+			</producing>
 		</buffer>
 	</buffers>
 	<demands>
-		<demand name="1. order">
-			<operation name="1. delivery end item" xsi:type="operation_fixed_time"/>
+		<demand>
+			<name>1. order</name>
+			<operation>
+				<name>1. delivery end item</name>
+			</operation>
 			<quantity>20</quantity>
-			<item name="1. end item"/>
+			<item>
+				<name>1. end item</name>
+			</item>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="2. order">
-			<operation name="1. delivery end item" xsi:type="operation_fixed_time"/>
+		<demand>
+			<name>2. order</name>
+			<operation>
+				<name>1. delivery end item</name>
+			</operation>
 			<quantity>100</quantity>
-			<item name="1. end item"/>
+			<item>
+				<name>1. end item</name>
+			</item>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="3. order">
-			<operation name="1. delivery end item" xsi:type="operation_fixed_time"/>
+		<demand>
+			<name>3. order</name>
+			<operation>
+				<name>1. delivery end item</name>
+			</operation>
 			<quantity>40</quantity>
-			<item name="1. end item"/>
+			<item>
+				<name>1. end item</name>
+			</item>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 	</demands>
 	<skills>
-		<skill name="Qualification A">
+		<skill>
+			<name>Qualification A</name>
 		</skill>
-		<skill name="Qualification B">
+		<skill>
+			<name>Qualification B</name>
 		</skill>
-		<skill name="Qualification C">
+		<skill>
+			<name>Qualification C</name>
 		</skill>
 	</skills>
 	<resources>
-		<resource name="Bob">
-			<owner name="Operators"/>
+		<resource>
+			<name>Bob</name>
+			<owner>
+				<name>Operators</name>
+			</owner>
 			<cost>1</cost>
 		</resource>
-		<resource name="John">
-			<owner name="Operators"/>
+		<resource>
+			<name>John</name>
+			<owner>
+				<name>Operators</name>
+			</owner>
 			<cost>1</cost>
 		</resource>
-		<resource name="Neil">
-			<owner name="Operators"/>
+		<resource>
+			<name>Neil</name>
+			<owner>
+				<name>Operators</name>
+			</owner>
 			<cost>1</cost>
 		</resource>
-		<resource name="Operators">
+		<resource>
+			<name>Operators</name>
 			<members>
-				<resource name="Neil"/>
-				<resource name="Bob"/>
-				<resource name="John"/>
-				<resource name="Paul"/>
+				<resource>
+					<name>Neil</name>
+				</resource>
+				<resource>
+					<name>Bob</name>
+				</resource>
+				<resource>
+					<name>John</name>
+				</resource>
+				<resource>
+					<name>Paul</name>
+				</resource>
 			</members>
 		</resource>
-		<resource name="Paul">
-			<owner name="Operators"/>
+		<resource>
+			<name>Paul</name>
+			<owner>
+				<name>Operators</name>
+			</owner>
 			<cost>1</cost>
 		</resource>
 	</resources>
 	<resourceskills>
 		<resourceskill>
-			<resource name="Bob"/>
-			<skill name="Qualification B"/>
+			<resource>
+				<name>Bob</name>
+			</resource>
+			<skill>
+				<name>Qualification B</name>
+			</skill>
 		</resourceskill>
 		<resourceskill>
-			<resource name="Bob"/>
-			<skill name="Qualification C"/>
+			<resource>
+				<name>Bob</name>
+			</resource>
+			<skill>
+				<name>Qualification C</name>
+			</skill>
 		</resourceskill>
 		<resourceskill>
-			<resource name="John"/>
-			<skill name="Qualification C"/>
+			<resource>
+				<name>John</name>
+			</resource>
+			<skill>
+				<name>Qualification C</name>
+			</skill>
 		</resourceskill>
 		<resourceskill>
-			<resource name="Neil"/>
-			<skill name="Qualification A"/>
+			<resource>
+				<name>Neil</name>
+			</resource>
+			<skill>
+				<name>Qualification A</name>
+			</skill>
 		</resourceskill>
 		<resourceskill>
-			<resource name="Neil"/>
-			<skill name="Qualification B"/>
+			<resource>
+				<name>Neil</name>
+			</resource>
+			<skill>
+				<name>Qualification B</name>
+			</skill>
 		</resourceskill>
 		<resourceskill>
-			<resource name="Neil"/>
-			<skill name="Qualification C"/>
+			<resource>
+				<name>Neil</name>
+			</resource>
+			<skill>
+				<name>Qualification C</name>
+			</skill>
 		</resourceskill>
 		<resourceskill>
-			<resource name="Paul"/>
-			<skill name="Qualification A"/>
+			<resource>
+				<name>Paul</name>
+			</resource>
+			<skill>
+				<name>Qualification A</name>
+			</skill>
 		</resourceskill>
 		<resourceskill>
-			<resource name="Paul"/>
-			<skill name="Qualification B"/>
+			<resource>
+				<name>Paul</name>
+			</resource>
+			<skill>
+				<name>Qualification B</name>
+			</skill>
 		</resourceskill>
 		<resourceskill>
-			<resource name="Paul"/>
-			<skill name="Qualification C"/>
+			<resource>
+				<name>Paul</name>
+			</resource>
+			<skill>
+				<name>Qualification C</name>
+			</skill>
 		</resourceskill>
 	</resourceskills>
 	<loads>
@@ -127,14 +207,22 @@
 		</load>
 	</loads>
 	<flows>
-		<flow xsi:type="flow_start">
-			<operation name="1. delivery end item" xsi:type="operation_fixed_time"/>
-			<buffer name="1. end item"/>
+		<flow>
+			<operation>
+				<name>1. delivery end item</name>
+			</operation>
+			<buffer>
+				<name>1. end item</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="1. make end item" xsi:type="operation_time_per"/>
-			<buffer name="1. end item"/>
+			<operation xsi:type="operation_time_per">
+				<name>1. make end item</name>
+			</operation>
+			<buffer>
+				<name>1. end item</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 	</flows>

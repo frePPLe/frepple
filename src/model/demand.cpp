@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -32,7 +32,8 @@ DECLARE_EXPORT const MetaClass* DemandDefault::metadata;
 int Demand::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("demand", "demands", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Demand>("demand", "demands", reader, writer, finder);
+  registerFields<Demand>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
   return FreppleCategory<Demand>::initialize();
@@ -42,10 +43,10 @@ int Demand::initialize()
 int DemandDefault::initialize()
 {
   // Initialize the metadata
-  DemandDefault::metadata = new MetaClass(
+  DemandDefault::metadata = MetaClass::registerClass<DemandDefault>(
     "demand",
     "demand_default",
-    Object::createString<DemandDefault>, true);
+    Object::create<DemandDefault>, true);
 
   // Initialize the Python class
   return FreppleClass<DemandDefault,Demand>::initialize();
@@ -66,12 +67,6 @@ DECLARE_EXPORT void Demand::setQuantity(double f)
 
 DECLARE_EXPORT Demand::~Demand()
 {
-  // Reset the motive on all operationplans marked with this demand.
-  // This loop is linear with the model size. It doesn't scale well, but
-  // deleting a demand is not too common.
-  for (OperationPlan::iterator i; i != OperationPlan::end(); i++)
-    if (i->getMotive() == this) i->setMotive(NULL);
-
   // Remove the delivery operationplans
   deleteOperationPlans(true);
 }
@@ -244,292 +239,10 @@ DECLARE_EXPORT double Demand::getPlannedQuantity() const
 }
 
 
-DECLARE_EXPORT void Demand::writeElement(Serializer *o, const Keyword& tag, mode m) const
-{
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement(tag, Tags::tag_name, getName());
-    return;
-  }
-
-  // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL)
-    o->BeginObject(tag, Tags::tag_name, getName());
-
-  // Write the fields
-  HasDescription::writeElement(o, tag);
-  HasHierarchy<Demand>::writeElement(o, tag);
-  o->writeElement(Tags::tag_operation, oper);
-  o->writeElement(Tags::tag_customer, cust);
-  Plannable::writeElement(o, tag);
-
-  o->writeElement(Tags::tag_quantity, qty);
-  o->writeElement(Tags::tag_item, it);
-  o->writeElement(Tags::tag_due, dueDate);
-  if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
-  if (getMaxLateness() != Duration::MAX)
-    o->writeElement(Tags::tag_maxlateness, getMaxLateness());
-  if (getMinShipment() != 1.0)
-    o->writeElement(Tags::tag_minshipment, getMinShipment());
-
-  if (!deli.empty())
-  {
-    if (o->getContentType() == Serializer::PLAN)
-    {
-      // Write the delivery plan
-      o->BeginList(Tags::tag_operationplans);
-      for (OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
-        o->writeElement(Tags::tag_operationplan, *i, FULL);
-      o->EndList(Tags::tag_operationplans);
-    }
-    else if (o->getContentType() == Serializer::PLANDETAIL)
-    {
-      // Write all pegged operationplans
-      o->BeginList(Tags::tag_operationplans);
-      for (PeggingIterator i(this); i; --i)
-      {
-        const OperationPlan* oplan = i.getOperationPlan();
-        o->BeginObject(
-          Tags::tag_operationplan, Tags::tag_id, oplan->getIdentifier(),
-          Tags::tag_operation, oplan->getOperation()->getName()
-          );
-        if (oplan->getDemand())
-          o->writeElement(Tags::tag_demand, oplan->getDemand());
-        o->writeElement(Tags::tag_start, oplan->getDates().getStart());
-        o->writeElement(Tags::tag_end, oplan->getDates().getEnd());
-        // The pegged quantity and level are the only extra field we export in addition
-        // to the standard export fields of an operationplan.
-        o->writeElement(Tags::tag_pegging, i.getQuantity());
-        o->writeElement(Tags::tag_level, i.getLevel());
-        o->writeElement(Tags::tag_quantity, oplan->getQuantity());
-        o->writeElement(Tags::tag_criticality, oplan->getCriticality());
-        if (oplan->getLocked()) o->writeElement (Tags::tag_locked, true);
-        if (!oplan->getConsumeMaterial()) o->writeElement(Tags::tag_consume_material, false);
-        if (!oplan->getProduceMaterial()) o->writeElement(Tags::tag_produce_material, false);
-        if (!oplan->getConsumeCapacity()) o->writeElement(Tags::tag_consume_capacity, false);
-        o->writeElement(Tags::tag_source, oplan->getSource());
-        o->writeElement(Tags::tag_owner, oplan->owner);
-        o->EndObject(Tags::tag_operationplan);
-      }
-      o->EndList(Tags::tag_operationplans);
-    }
-  }
-
-  // Write the problems and constraints
-  if (o->getContentType() == Serializer::PLAN
-      || o->getContentType() == Serializer::PLANDETAIL)
-  {
-    bool first = true;
-    for (Problem::const_iterator j = Problem::begin(const_cast<Demand*>(this), true); j!=Problem::end(); ++j)
-    {
-      if (first)
-      {
-        first = false;
-        o->BeginList(Tags::tag_problems);
-      }
-      o->writeElement(Tags::tag_problem, *j, FULL);
-    }
-    if (!first) o->EndList(Tags::tag_problems);
-    if (!constraints.empty())
-    {
-      o->BeginList(Tags::tag_constraints);
-      for (Problem::const_iterator i = constraints.begin(); i != constraints.end(); ++i)
-        o->writeElement(Tags::tag_problem, *i, FULL);
-      o->EndList(Tags::tag_constraints);
-    }
-  }
-
-  // Write the custom fields
-  PythonDictionary::write(o, getDict());
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void Demand::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA (Tags::tag_item))
-    pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA (Tags::tag_customer))
-    pIn.readto( Customer::reader(Customer::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA(Tags::tag_operationplan))
-    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata,pIn.getAttributes()));
-  else
-  {
-    PythonDictionary::read(pIn, pAttr, getDict());
-    HasHierarchy<Demand>::beginElement(pIn, pAttr);
-  }
-}
-
-
-DECLARE_EXPORT void Demand::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA (Tags::tag_quantity))
-    setQuantity (pElement.getDouble());
-  else if (pAttr.isA (Tags::tag_priority))
-    setPriority (pElement.getInt());
-  else if (pAttr.isA (Tags::tag_due))
-    setDue(pElement.getDate());
-  else if (pAttr.isA (Tags::tag_operation))
-  {
-    Operation *o = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (o) setOperation(o);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA (Tags::tag_customer))
-  {
-    Customer *c = dynamic_cast<Customer*>(pIn.getPreviousObject());
-    if (c) setCustomer(c);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA (Tags::tag_item))
-  {
-    Item *i = dynamic_cast<Item*>(pIn.getPreviousObject());
-    if (i) setItem(i);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA (Tags::tag_maxlateness))
-    setMaxLateness(pElement.getDuration());
-  else if (pAttr.isA (Tags::tag_minshipment))
-    setMinShipment(pElement.getDouble());
-  else if (pAttr.isA(Tags::tag_operationplan))
-  {
-    OperationPlan* opplan
-      = dynamic_cast<OperationPlan*>(pIn.getPreviousObject());
-    if (opplan) addDelivery(opplan);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else
-  {
-    Plannable::endElement(pIn, pAttr, pElement);
-    HasDescription::endElement(pIn, pAttr, pElement);
-    HasHierarchy<Demand>::endElement (pIn, pAttr, pElement);
-  }
-}
-
-
-DECLARE_EXPORT PyObject* Demand::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_name))
-    return PythonObject(getName());
-  if (attr.isA(Tags::tag_quantity))
-    return PythonObject(getQuantity());
-  if (attr.isA(Tags::tag_due))
-    return PythonObject(getDue());
-  if (attr.isA(Tags::tag_priority))
-    return PythonObject(getPriority());
-  if (attr.isA(Tags::tag_owner))
-    return PythonObject(getOwner());
-  if (attr.isA(Tags::tag_item))
-    return PythonObject(getItem());
-  if (attr.isA(Tags::tag_customer))
-    return PythonObject(getCustomer());
-  if (attr.isA(Tags::tag_operation))
-    return PythonObject(getOperation());
-  if (attr.isA(Tags::tag_description))
-    return PythonObject(getDescription());
-  if (attr.isA(Tags::tag_category))
-    return PythonObject(getCategory());
-  if (attr.isA(Tags::tag_subcategory))
-    return PythonObject(getSubCategory());
-  if (attr.isA(Tags::tag_source))
-    return PythonObject(getSource());
-  if (attr.isA(Tags::tag_minshipment))
-    return PythonObject(getMinShipment());
-  if (attr.isA(Tags::tag_maxlateness))
-    return PythonObject(getMaxLateness());
-  if (attr.isA(Tags::tag_hidden))
-    return PythonObject(getHidden());
-  if (attr.isA(Tags::tag_operationplans))
-    return new DemandPlanIterator(this);
-  if (attr.isA(Tags::tag_pegging))
-    return new PeggingIterator(this);
-  if (attr.isA(Tags::tag_constraints))
-    return new ProblemIterator(*(constraints.begin()));
-  if (attr.isA(Tags::tag_members))
-    return new DemandIterator(this);
-  return NULL;
-}
-
-
-DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_name))
-    setName(field.getString());
-  else if (attr.isA(Tags::tag_priority))
-    setPriority(field.getInt());
-  else if (attr.isA(Tags::tag_quantity))
-    setQuantity(field.getDouble());
-  else if (attr.isA(Tags::tag_due))
-    setDue(field.getDate());
-  else if (attr.isA(Tags::tag_item))
-  {
-    if (!field.check(Item::metadata))
-    {
-      PyErr_SetString(PythonDataException, "demand item must be of type item");
-      return -1;
-    }
-    Item* y = static_cast<Item*>(static_cast<PyObject*>(field));
-    setItem(y);
-  }
-  else if (attr.isA(Tags::tag_customer))
-  {
-    if (!field.check(Customer::metadata))
-    {
-      PyErr_SetString(PythonDataException, "demand customer must be of type customer");
-      return -1;
-    }
-    Customer* y = static_cast<Customer*>(static_cast<PyObject*>(field));
-    setCustomer(y);
-  }
-  else if (attr.isA(Tags::tag_description))
-    setDescription(field.getString());
-  else if (attr.isA(Tags::tag_category))
-    setCategory(field.getString());
-  else if (attr.isA(Tags::tag_subcategory))
-    setSubCategory(field.getString());
-  else if (attr.isA(Tags::tag_source))
-    setSource(field.getString());
-  else if (attr.isA(Tags::tag_minshipment))
-    setMinShipment(field.getDouble());
-  else if (attr.isA(Tags::tag_maxlateness))
-    setMaxLateness(field.getDuration());
-  else if (attr.isA(Tags::tag_owner))
-  {
-    if (!field.check(Demand::metadata))
-    {
-      PyErr_SetString(PythonDataException, "demand owner must be of type demand");
-      return -1;
-    }
-    Demand* y = static_cast<Demand*>(static_cast<PyObject*>(field));
-    setOwner(y);
-  }
-  else if (attr.isA(Tags::tag_operation))
-  {
-    if (!field.check(Operation::metadata))
-    {
-      PyErr_SetString(PythonDataException, "demand operation must be of type operation");
-      return -1;
-    }
-    Operation* y = static_cast<Operation*>(static_cast<PyObject*>(field));
-    setOperation(y);
-  }
-  else if (attr.isA(Tags::tag_hidden))
-    setHidden(field.getBool());
-  else
-    return -1;  // Error
-  return 0;  // OK
-}
-
-
 int DemandPlanIterator::initialize()
 {
   // Initialize the type
-  PythonType& x = PythonExtension<DemandPlanIterator>::getType();
+  PythonType& x = PythonExtension<DemandPlanIterator>::getPythonType();
   x.setName("demandplanIterator");
   x.setDoc("frePPLe iterator for demand delivery operationplans");
   x.supportiter();

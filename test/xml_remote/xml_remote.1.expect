@@ -4,7 +4,8 @@
 	<operations>
 	</operations>
 	<items>
-		<item name="http://www.frepple.com/test/xml_remote.xml works!">
+		<item>
+			<name>http://www.frepple.com/test/xml_remote.xml works!</name>
 		</item>
 	</items>
 </plan>

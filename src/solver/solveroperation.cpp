@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -128,7 +128,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
   }
 
   // Check the leadtime constraints
-  if (data.constrainedPlanning && !checkOperationLeadtime(opplan,data,true))
+  if (data.constrainedPlanning && !checkOperationLeadTime(opplan,data,true))
     // This operationplan is a wreck. It is impossible to make it meet the
     // leadtime constraints
     return false;
@@ -367,11 +367,11 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
 }
 
 
-DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
+DECLARE_EXPORT bool SolverMRP::checkOperationLeadTime
 (OperationPlan* opplan, SolverMRP::SolverMRPdata& data, bool extra)
 {
   // No lead time constraints
-  if (!data.constrainedPlanning || (!isFenceConstrained() && !isLeadtimeConstrained()))
+  if (!data.constrainedPlanning || (!isFenceConstrained() && !isLeadTimeConstrained()))
     return true;
 
   // Compute offset from the current date: A fence problem uses the release
@@ -380,7 +380,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
   // most constraining date.
   Date threshold = Plan::instance().getCurrent();
   if (isFenceConstrained()
-    && !(isLeadtimeConstrained() && opplan->getOperation()->getFence()<0L))
+    && !(isLeadTimeConstrained() && opplan->getOperation()->getFence()<0L))
     threshold += opplan->getOperation()->getFence();
 
   // Check the setup operationplan
@@ -426,7 +426,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
   // available timeframe: used for e.g. time-per operations
   // Note that we allow the complete post-operation time to be eaten
   if (extra)
-    // Leadtime check during operation resolver
+    // Lead time check during operation resolver
     opplan->getOperation()->setOperationPlanParameters(
       opplan, opplan->getQuantity(),
       threshold,
@@ -434,7 +434,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
       false
     );
   else
-    // Leadtime check during capacity resolver
+    // Lead time check during capacity resolver
     opplan->getOperation()->setOperationPlanParameters(
       opplan, opplan->getQuantity(),
       threshold,
@@ -492,7 +492,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
   OperationPlan *z;
 
   // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper, PythonObject(data->constrainedPlanning));
+  if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
@@ -555,7 +555,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
         data->state->curOwnerOpplan
         );
     data->state->curDemand = NULL;
-    a->getOperationPlan()->setMotive(data->state->motive);
     z = a->getOperationPlan();
     data->add(a);
   }
@@ -611,7 +610,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper, PythonObject(data->constrainedPlanning));
+  if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -687,7 +686,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     data->state->q_date, data->state->curDemand, data->state->curOwnerOpplan, false
     );
   data->state->curDemand = NULL;
-  a->getOperationPlan()->setMotive(data->state->motive);
 
   // Quantity can be changed because of size constraints on the top operation
   a_qty = a->getOperationPlan()->getQuantity();
@@ -816,9 +814,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   Demand *d = data->state->curDemand;
 
   // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper, PythonObject(data->constrainedPlanning));
+  if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
-  unsigned int loglevel = data->getSolver()->getLogLevel();
+  short loglevel = data->getSolver()->getLogLevel();
   SearchMode search = oper->getSearch();
 
   // Message
@@ -965,7 +963,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
           oper, a_qty, Date::infinitePast, ask_date,
           d, prev_owner_opplan, false
           );
-      a->getOperationPlan()->setMotive(data->state->motive);
       if (!prev_owner_opplan) data->add(a);
 
       // Create a sub operationplan
@@ -1122,7 +1119,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
           oper, a_qty, Date::infinitePast, bestQDate,
           d, prev_owner_opplan, false
           );
-      a->getOperationPlan()->setMotive(data->state->motive);
       if (!prev_owner_opplan) data->add(a);
 
       // Recreate the ask
@@ -1199,7 +1195,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         oper, a_qty, Date::infinitePast, origQDate,
         d, prev_owner_opplan, false
         );
-    a->getOperationPlan()->setMotive(data->state->motive);
     if (!prev_owner_opplan) data->add(a);
 
     // Recreate the ask
@@ -1264,9 +1259,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
   Demand *dmd = data->state->curDemand;
 
   // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper, PythonObject(data->constrainedPlanning));
+  if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
-  unsigned int loglevel = data->getSolver()->getLogLevel();
+  short loglevel = data->getSolver()->getLogLevel();
 
   // Message
   if (loglevel>1)
@@ -1321,7 +1316,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
       oper, top_flow_qty_per ? origQqty / top_flow_qty_per : origQqty,
       Date::infinitePast, origQDate, dmd, prev_owner_opplan, false
       );
-    top_cmd->getOperationPlan()->setMotive(data->state->motive);
     if (!prev_owner_opplan) data->add(top_cmd);
 
     recheck = false;

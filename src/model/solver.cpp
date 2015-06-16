@@ -31,10 +31,11 @@ DECLARE_EXPORT const MetaCategory* Solver::metadata;
 int Solver::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory("solver", "solvers", MetaCategory::ControllerDefault);
+  metadata = MetaCategory::registerCategory<Solver>("solver", "solvers", MetaCategory::ControllerDefault);
+  registerFields<Solver>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<Flow>::getType();
+  PythonType& x = FreppleCategory<Solver>::getPythonType();
   x.setName("solver");
   x.setDoc("frePPLe solver");
   x.supportgetattro();
@@ -42,24 +43,6 @@ int Solver::initialize()
   x.addMethod("solve", solve, METH_NOARGS, "run the solver");
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
-}
-
-
-DECLARE_EXPORT PyObject* Solver::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_loglevel))
-    return PythonObject(getLogLevel());
-  return NULL;
-}
-
-
-DECLARE_EXPORT int Solver::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_loglevel))
-    setLogLevel(field.getInt());
-  else
-    return -1;  // Error
-  return 0;  // OK
 }
 
 

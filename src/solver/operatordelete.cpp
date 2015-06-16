@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -31,12 +31,12 @@ DECLARE_EXPORT const MetaClass* OperatorDelete::metadata;
 int OperatorDelete::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaClass(
-    "solver", "solver_delete", Object::createDefault<OperatorDelete>
+  metadata = MetaClass::registerClass<OperatorDelete>(
+    "solver", "solver_delete", Object::create<OperatorDelete>
     );
 
   // Initialize the Python class
-  PythonType& x = FreppleClass<OperatorDelete, Solver>::getType();
+  PythonType& x = FreppleClass<OperatorDelete, Solver>::getPythonType();
   x.setName("solver_delete");
   x.setDoc("frePPLe solver_delete");
   x.supportgetattro();
@@ -60,12 +60,17 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args, PyObject*
     Py_ssize_t pos = 0;
     while (PyDict_Next(kwds, &pos, &key, &value))
     {
-      PythonObject field(value);
+      PythonData field(value);
       PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
       Attribute attr(PyBytes_AsString(key_utf8));
       Py_DECREF(key_utf8);
-      int result = s->setattro(attr, field);
-      if (result && !PyErr_Occurred())
+      const MetaFieldBase* fmeta = OperatorDelete::metadata->findField(attr.getHash());
+      if (!fmeta)
+        fmeta = Solver::metadata->findField(attr.getHash());
+      if (fmeta)
+        // Update the attribute
+        fmeta->setField(s, field);
+      else
         PyErr_Format(PyExc_AttributeError,
             "attribute '%S' on '%s' can't be updated",
             key, Py_TYPE(s)->tp_name);

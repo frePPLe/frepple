@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright(C) 2007-2013 by Johan De Taeye, frePPLe bvba                  *
+ * Copyright(C) 2007-2015 by Johan De Taeye, frePPLe bvba                  *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -111,7 +111,6 @@ DECLARE_EXPORT const Keyword Tags::tag_minimum_calendar("minimum_calendar");
 DECLARE_EXPORT const Keyword Tags::tag_mininterval("mininterval");
 DECLARE_EXPORT const Keyword Tags::tag_mininventory("mininventory");
 DECLARE_EXPORT const Keyword Tags::tag_minshipment("minshipment");
-DECLARE_EXPORT const Keyword Tags::tag_motive("motive");
 DECLARE_EXPORT const Keyword Tags::tag_name("name");
 DECLARE_EXPORT const Keyword Tags::tag_onhand("onhand");
 DECLARE_EXPORT const Keyword Tags::tag_operation("operation");

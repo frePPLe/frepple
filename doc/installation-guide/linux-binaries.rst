@@ -14,17 +14,13 @@ Supported distributions
 Binary installation packages are available for the following Linux
 distributions:
 
-#. | **Fedora 16** and higher
+#. | **Fedora 20** and higher
    | FrePPLe is included in the official repositories.
 
    .. image:: _images/fedorainstall.png
 
-#. | **Red Hat Enterprise Linux 6**
-   | Starting from release 2.1 a 64-bit binary package can be downloaded.
-
 #. | **Ubuntu LTS**
-   | A 64-bit binary package for Ubuntu 12 is provided in release 2.1.
-   | From release 2.2 onwards we provide binaries for Ubuntu 14.
+   | A 64-bit binary package for Ubuntu 14 is available.
 
 Other Linux distributions aren't really a problem, but you'll need to build
 the frePPLe package from the source .deb or .rpm files, as described on the
@@ -47,11 +43,10 @@ Here are the steps to get a fully working environment.
    Install postgreSQL, create a new database and a new user. It is recommended
    to use the UTF-8 encoding for your database.
 
-   For optimal performance the default memory allocation parameters will need to
-   be increased from their defaults. The appropriate settings depend on the model
-   size, the number of concurrent users and the available memory on the server.
-   The most important parameter is 'shared_buffers' (which normally requires
-   changing the Linux kernel parameter shmmax as well).
+   The standard installation of PostgreSQL is not configured right for
+   intensive use. We highly recommend using the pgtune utility (or its online 
+   version at http://pgtune.leopard.in.ua/) to optimize the configuration for your
+   hardware.
 
    For the user that will run the user interface application (normally
    'www-data' on debian and 'apache' on rhel) you need to create a file .pgpass
@@ -67,7 +62,7 @@ Here are the steps to get a fully working environment.
    A database needs to be created for the default database, and one for each of
    the what-if scenarios you want to configure.
 
-   A single user can be used as the owner of these database.
+   A single user is normally used as the owner of these databases.
 
    This step can be skipped if you want to use SQLite as the database.
 

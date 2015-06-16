@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -33,19 +33,23 @@ DECLARE_EXPORT const MetaClass* FlowFixedEnd::metadata;
 int Flow::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaCategory
-  ("flow", "flows", MetaCategory::ControllerDefault, writer);
-  FlowStart::metadata = new MetaClass("flow", "flow_start",
-      Object::createDefault<FlowStart>, true);
-  FlowEnd::metadata = new MetaClass("flow", "flow_end",
-      Object::createDefault<FlowEnd>);
-  FlowFixedStart::metadata = new MetaClass("flow", "flow_fixed_start",
-      Object::createDefault<FlowFixedStart>);
-  FlowFixedEnd::metadata = new MetaClass("flow", "flow_fixed_end",
-      Object::createDefault<FlowFixedEnd>);
+  metadata = MetaCategory::registerCategory<Flow>("flow", "flows", MetaCategory::ControllerDefault, writer);
+  registerFields<Flow>(const_cast<MetaCategory*>(metadata));
+  FlowStart::metadata = MetaClass::registerClass<FlowStart>(
+    "flow", "flow_start", Object::create<FlowStart>, true
+    );
+  FlowEnd::metadata = MetaClass::registerClass<FlowEnd>(
+    "flow", "flow_end", Object::create<FlowEnd>
+    );
+  FlowFixedStart::metadata = MetaClass::registerClass<FlowFixedStart>(
+    "flow", "flow_fixed_start", Object::create<FlowFixedStart>
+    );
+  FlowFixedEnd::metadata = MetaClass::registerClass<FlowFixedEnd>(
+    "flow", "flow_fixed_end", Object::create<FlowFixedEnd>
+    );
 
   // Initialize the type
-  PythonType& x = FreppleCategory<Flow>::getType();
+  PythonType& x = FreppleCategory<Flow>::getPythonType();
   x.setName("flow");
   x.setDoc("frePPLe flow");
   x.supportgetattro();
@@ -229,255 +233,13 @@ DECLARE_EXPORT void Flow::setAlternate(Flow *f)
 }
 
 
-DECLARE_EXPORT void Flow::setAlternate(const string& n)
+DECLARE_EXPORT void Flow::setAlternate(string n)
 {
   if (!getOperation())
     throw LogicException("Can't set an alternate flow before setting the operation");
   Flow *x = getOperation()->flowdata.find(n);
   if (!x) throw DataException("Can't find flow with name '" + n + "'");
   setAlternate(x);
-}
-
-
-DECLARE_EXPORT void Flow::writeElement (Serializer *o, const Keyword& tag, mode m) const
-{
-  // If the flow has already been saved, no need to repeat it again
-  // A 'reference' to a flow is not useful to be saved.
-  if (m == REFERENCE) return;
-  assert(m != NOHEAD);
-
-  // Write the head
-  o->BeginObject(tag, Tags::tag_type, getType().type);
-
-  // If the flow is defined inside of an operation tag, we don't need to save
-  // the operation. Otherwise we do save it...
-  if (!dynamic_cast<Operation*>(o->getPreviousObject()))
-    o->writeElement(Tags::tag_operation, getOperation());
-
-  // If the flow is defined inside of an buffer tag, we don't need to save
-  // the buffer. Otherwise we do save it...
-  if (!dynamic_cast<Buffer*>(o->getPreviousObject()))
-    o->writeElement(Tags::tag_buffer, getBuffer());
-
-  // Write the quantity, priority, name and alternate
-  o->writeElement(Tags::tag_quantity, getQuantity());
-  if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
-  if (!getName().empty()) o->writeElement(Tags::tag_name, getName());
-  if (getAlternate())
-    o->writeElement(Tags::tag_alternate, getAlternate()->getName());
-
-  // Write the effective daterange
-  if (getEffective().getStart() != Date::infinitePast)
-    o->writeElement(Tags::tag_effective_start, getEffective().getStart());
-  if (getEffective().getEnd() != Date::infiniteFuture)
-    o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
-
-  // Write source field
-  o->writeElement(Tags::tag_source, getSource());
-
-  // Write the custom fields
-  PythonDictionary::write(o, getDict());
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void Flow::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA (Tags::tag_buffer))
-    pIn.readto( Buffer::reader(Buffer::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
-  else
-    PythonDictionary::read(pIn, pAttr, getDict());
-}
-
-
-DECLARE_EXPORT void Flow::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA (Tags::tag_buffer))
-  {
-    Buffer * b = dynamic_cast<Buffer*>(pIn.getPreviousObject());
-    if (b) setBuffer(b);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA (Tags::tag_operation))
-  {
-    Operation * o = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (o) setOperation(o);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA(Tags::tag_quantity))
-    setQuantity(pElement.getDouble());
-  else if (pAttr.isA(Tags::tag_priority))
-    setPriority(pElement.getInt());
-  else if (pAttr.isA(Tags::tag_name))
-    setName(pElement.getString());
-  else if (pAttr.isA(Tags::tag_alternate))
-    setAlternate(pElement.getString());
-  else if (pAttr.isA(Tags::tag_search))
-    setSearch(pElement.getString());
-  else if (pAttr.isA(Tags::tag_action))
-  {
-    delete static_cast<Action*>(pIn.getUserArea());
-    pIn.setUserArea(
-      new Action(MetaClass::decodeAction(pElement.getString().c_str()))
-    );
-  }
-  else if (pAttr.isA(Tags::tag_effective_end))
-    setEffectiveEnd(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_effective_start))
-    setEffectiveStart(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_source))
-    setSource(pElement.getString());
-  else if (pIn.isObjectEnd())
-  {
-    // The flow data are now all read in. See if it makes sense now...
-    Action a = pIn.getUserArea() ?
-        *static_cast<Action*>(pIn.getUserArea()) :
-        ADD_CHANGE;
-    delete static_cast<Action*>(pIn.getUserArea());
-    try { validate(a); }
-    catch (...)
-    {
-      delete this;
-      throw;
-    }
-  }
-}
-
-
-DECLARE_EXPORT void FlowEnd::writeElement
-(Serializer *o, const Keyword& tag, mode m) const
-{
-  // If the flow has already been saved, no need to repeat it again
-  // A 'reference' to a flow is not useful to be saved.
-  if (m == REFERENCE) return;
-  assert(m != NOHEAD);
-
-  // Write the head
-  o->BeginObject(tag, Tags::tag_type, getType().type);
-
-  // If the flow is defined inside of an operation tag, we don't need to save
-  // the operation. Otherwise we do save it...
-  if (!dynamic_cast<Operation*>(o->getPreviousObject()))
-    o->writeElement(Tags::tag_operation, getOperation());
-
-  // If the flow is defined inside of an buffer tag, we don't need to save
-  // the buffer. Otherwise we do save it...
-  if (!dynamic_cast<Buffer*>(o->getPreviousObject()))
-    o->writeElement(Tags::tag_buffer, getBuffer());
-
-  // Write the quantity, priority name and alternate
-  o->writeElement(Tags::tag_quantity, getQuantity());
-  if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
-  if (!getName().empty()) o->writeElement(Tags::tag_name, getName());
-  if (getAlternate())
-    o->writeElement(Tags::tag_alternate, getAlternate()->getName());
-
-  // Write the effective daterange
-  if (getEffective().getStart() != Date::infinitePast)
-    o->writeElement(Tags::tag_effective_start, getEffective().getStart());
-  if (getEffective().getEnd() != Date::infiniteFuture)
-    o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
-
-  // Write source field
-  o->writeElement(Tags::tag_source, getSource());
-
-  // Write the custom fields
-  PythonDictionary::write(o, getDict());
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT PyObject* Flow::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_buffer))
-    return PythonObject(getBuffer());
-  if (attr.isA(Tags::tag_operation))
-    return PythonObject(getOperation());
-  if (attr.isA(Tags::tag_quantity))
-    return PythonObject(getQuantity());
-  if (attr.isA(Tags::tag_priority))
-    return PythonObject(getPriority());
-  if (attr.isA(Tags::tag_type))
-	// Not very nice: all flow subclasses appear to Python as instance of a
-	// single Python class. We use this method to distinguish them.
-    return PythonObject(getType().type);
-  if (attr.isA(Tags::tag_effective_end))
-    return PythonObject(getEffective().getEnd());
-  if (attr.isA(Tags::tag_effective_start))
-    return PythonObject(getEffective().getStart());
-  if (attr.isA(Tags::tag_name))
-    return PythonObject(getName());
-  if (attr.isA(Tags::tag_hidden))
-    return PythonObject(getHidden());
-  if (attr.isA(Tags::tag_alternate))
-    return PythonObject(getAlternate());
-  if (attr.isA(Tags::tag_search))
-  {
-    ostringstream ch;
-    ch << getSearch();
-    return PythonObject(ch.str());
-  }
-  if (attr.isA(Tags::tag_source))
-    return PythonObject(getSource());
-  return NULL;
-}
-
-
-DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_buffer))
-  {
-    if (!field.check(Buffer::metadata))
-    {
-      PyErr_SetString(PythonDataException, "flow buffer must be of type buffer");
-      return -1;
-    }
-    Buffer* y = static_cast<Buffer*>(static_cast<PyObject*>(field));
-    setBuffer(y);
-  }
-  else if (attr.isA(Tags::tag_operation))
-  {
-    if (!field.check(Operation::metadata))
-    {
-      PyErr_SetString(PythonDataException, "flow operation must be of type operation");
-      return -1;
-    }
-    Operation* y = static_cast<Operation*>(static_cast<PyObject*>(field));
-    setOperation(y);
-  }
-  else if (attr.isA(Tags::tag_quantity))
-    setQuantity(field.getDouble());
-  else if (attr.isA(Tags::tag_priority))
-    setPriority(field.getInt());
-  else if (attr.isA(Tags::tag_effective_end))
-    setEffectiveEnd(field.getDate());
-  else if (attr.isA(Tags::tag_effective_start))
-    setEffectiveStart(field.getDate());
-  else if (attr.isA(Tags::tag_name))
-    setName(field.getString());
-  else if (attr.isA(Tags::tag_alternate))
-  {
-    if (!field.check(Flow::metadata))
-      setAlternate(field.getString());
-    else
-    {
-      Flow *y = static_cast<Flow*>(static_cast<PyObject*>(field));
-      setAlternate(y);
-    }
-  }
-  else if (attr.isA(Tags::tag_search))
-    setSearch(field.getString());
-  else if (attr.isA(Tags::tag_source))
-    setSource(field.getString());
-  else
-    return -1;
-  return 0;
 }
 
 
@@ -497,20 +259,20 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 
     // Pick up the quantity
     PyObject* q1 = PyDict_GetItemString(kwds,"quantity");
-    double q2 = q1 ? PythonObject(q1).getDouble() : 1.0;
+    double q2 = q1 ? PythonData(q1).getDouble() : 1.0;
 
     // Pick up the effectivity dates
     DateRange eff;
     PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
     if (eff_start)
     {
-      PythonObject d(eff_start);
+      PythonData d(eff_start);
       eff.setStart(d.getDate());
     }
     PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
     if (eff_end)
     {
-      PythonObject d(eff_end);
+      PythonData d(eff_end);
       eff.setEnd(d.getDate());
     }
 
@@ -519,7 +281,7 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     PyObject* t = PyDict_GetItemString(kwds,"type");
     if (t)
     {
-      PythonObject d(t);
+      PythonData d(t);
       if (d.getString() == "flow_end")
         l = new FlowEnd(
           static_cast<Operation*>(oper),
@@ -559,7 +321,7 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
       Py_ssize_t pos = 0;
       while (PyDict_Next(kwds, &pos, &key, &value))
       {
-        PythonObject field(value);
+        PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         Attribute attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
@@ -568,8 +330,13 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
           && !attr.isA(Tags::tag_quantity) && !attr.isA(Tags::tag_type)
           && !attr.isA(Tags::tag_action))
         {
-          int result = l->setattro(attr, field);
-          if (result && !PyErr_Occurred())
+          const MetaFieldBase* fmeta = l->getType().findField(attr.getHash());
+          if (!fmeta && l->getType().category)
+            fmeta = l->getType().category->findField(attr.getHash());
+          if (fmeta)
+            // Update the attribute
+            fmeta->setField(l, field);
+          else
             PyErr_Format(PyExc_AttributeError,
                 "attribute '%S' on '%s' can't be updated",
                 key, Py_TYPE(l)->tp_name);
@@ -592,7 +359,7 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 int FlowIterator::initialize()
 {
   // Initialize the type
-  PythonType& x = PythonExtension<FlowIterator>::getType();
+  PythonType& x = PythonExtension<FlowIterator>::getPythonType();
   x.setName("flowIterator");
   x.setDoc("frePPLe iterator for flows");
   x.supportiter();

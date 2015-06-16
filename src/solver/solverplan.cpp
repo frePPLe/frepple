@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -24,12 +24,12 @@ namespace frepple
 {
 
 DECLARE_EXPORT const MetaClass* SolverMRP::metadata;
-const Keyword tag_iterationthreshold("iterationthreshold");
-const Keyword tag_iterationaccuracy("iterationaccuracy");
-const Keyword tag_lazydelay("lazydelay");
-const Keyword tag_allowsplits("allowsplits");
-const Keyword tag_planSafetyStockFirst("plansafetystockfirst");
-const Keyword tag_iterationmax("iterationmax");
+const Keyword SolverMRP::tag_iterationthreshold("iterationthreshold");
+const Keyword SolverMRP::tag_iterationaccuracy("iterationaccuracy");
+const Keyword SolverMRP::tag_lazydelay("lazydelay");
+const Keyword SolverMRP::tag_allowsplits("allowsplits");
+const Keyword SolverMRP::tag_planSafetyStockFirst("plansafetystockfirst");
+const Keyword SolverMRP::tag_iterationmax("iterationmax");
 
 
 void LibrarySolver::initialize()
@@ -55,12 +55,13 @@ void LibrarySolver::initialize()
 int SolverMRP::initialize()
 {
   // Initialize the metadata
-  metadata = new MetaClass(
-    "solver", "solver_mrp", Object::createDefault<SolverMRP>, true
+  metadata = MetaClass::registerClass<SolverMRP>(
+    "solver", "solver_mrp", Object::create<SolverMRP>, true
     );
+  registerFields<SolverMRP>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleClass<SolverMRP, Solver>::getType();
+  PythonType& x = FreppleClass<SolverMRP, Solver>::getPythonType();
   x.setName("solver_mrp");
   x.setDoc("frePPLe solver_mrp");
   x.supportgetattro();
@@ -86,12 +87,17 @@ PyObject* SolverMRP::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds
     Py_ssize_t pos = 0;
     while (PyDict_Next(kwds, &pos, &key, &value))
     {
-      PythonObject field(value);
+      PythonData field(value);
       PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
       Attribute attr(PyBytes_AsString(key_utf8));
       Py_DECREF(key_utf8);
-      int result = s->setattro(attr, field);
-      if (result && !PyErr_Occurred())
+      const MetaFieldBase* fmeta = SolverMRP::metadata->findField(attr.getHash());
+      if (!fmeta)
+        fmeta = Solver::metadata->findField(attr.getHash());
+      if (fmeta)
+        // Update the attribute
+        fmeta->setField(s, field);
+      else
         PyErr_Format(PyExc_AttributeError,
             "attribute '%S' on '%s' can't be updated",
             key, Py_TYPE(s)->tp_name);
@@ -233,7 +239,6 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
         state->a_penalty = 0.0;
         planningDemand = NULL;
         state->curDemand = NULL;
-        state->motive = *b;
         state->curOwnerOpplan = NULL;
         // Call the buffer solver
         iteration_count = 0;
@@ -294,78 +299,6 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   // @todo Check the resource setups that were broken - needs to be removed
   for (Resource::iterator gres = Resource::begin(); gres != Resource::end(); ++gres)
     if (gres->getSetupMatrix()) gres->updateSetups();
-}
-
-
-DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_constraints))
-    return PythonObject(getConstraints());
-  if (attr.isA(Tags::tag_autocommit))
-    return PythonObject(getAutocommit());
-  if (attr.isA(Tags::tag_userexit_flow))
-    return getUserExitFlow();
-  if (attr.isA(Tags::tag_userexit_demand))
-    return getUserExitDemand();
-  if (attr.isA(Tags::tag_userexit_buffer))
-    return getUserExitBuffer();
-  if (attr.isA(Tags::tag_userexit_resource))
-    return getUserExitResource();
-  if (attr.isA(Tags::tag_userexit_operation))
-    return getUserExitOperation();
-  if (attr.isA(Tags::tag_plantype))
-    return PythonObject(getPlanType());
-  // Less common parameters
-  if (attr.isA(tag_iterationthreshold))
-    return PythonObject(getIterationThreshold());
-  if (attr.isA(tag_iterationaccuracy))
-    return PythonObject(getIterationAccuracy());
-  if (attr.isA(tag_lazydelay))
-    return PythonObject(getLazyDelay());
-  if (attr.isA(tag_planSafetyStockFirst))
-    return PythonObject(getPlanSafetyStockFirst());
-  if (attr.isA(tag_iterationmax))
-    return PythonObject(getIterationMax());
-  // Default parameters
-  return Solver::getattro(attr);
-}
-
-
-DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_constraints))
-    setConstraints(field.getInt());
-  else if (attr.isA(Tags::tag_autocommit))
-    setAutocommit(field.getBool());
-  else if (attr.isA(Tags::tag_userexit_flow))
-    setUserExitFlow(field);
-  else if (attr.isA(Tags::tag_userexit_demand))
-    setUserExitDemand(field);
-  else if (attr.isA(Tags::tag_userexit_buffer))
-    setUserExitBuffer(field);
-  else if (attr.isA(Tags::tag_userexit_resource))
-    setUserExitResource(field);
-  else if (attr.isA(Tags::tag_userexit_operation))
-    setUserExitOperation(field);
-  else if (attr.isA(Tags::tag_plantype))
-    setPlanType(field.getInt());
-  // Less common parameters
-  else if (attr.isA(tag_iterationthreshold))
-    setIterationThreshold(field.getDouble());
-  else if (attr.isA(tag_iterationaccuracy))
-    setIterationAccuracy(field.getDouble());
-  else if (attr.isA(tag_lazydelay))
-    setLazyDelay(field.getDuration());
-  else if (attr.isA(tag_allowsplits))
-    setAllowSplits(field.getBool());
-  else if (attr.isA(tag_planSafetyStockFirst))
-    setPlanSafetyStockFirst(field.getBool());
-  else if (attr.isA(tag_iterationmax))
-    setIterationMax(field.getUnsignedLong());
-  // Default parameters
-  else
-    return Solver::setattro(attr, field);
-  return 0;
 }
 
 

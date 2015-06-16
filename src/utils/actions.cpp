@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -428,7 +428,7 @@ DECLARE_EXPORT PyObject* loadModule
     PyObject *key, *value;
     Py_ssize_t pos = 0;
     while (PyDict_Next(kwds, &pos, &key, &value))
-      params[PythonObject(key).getString()] = PythonObject(value).getString();
+      params[PythonData(key).getString()] = PythonData(value).getString();
   }
 
   // Free Python interpreter for other threads.

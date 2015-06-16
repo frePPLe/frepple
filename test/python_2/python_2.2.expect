@@ -6,24 +6,29 @@
   </description>
 	<current>2009-01-01T00:00:00</current>
 	<customers>
-		<customer name="Customer">
+		<customer>
+			<name>Customer</name>
 		</customer>
 	</customers>
 	<suppliers>
-		<supplier name="Supplier 1">
+		<supplier>
+			<name>Supplier 1</name>
 		</supplier>
-		<supplier name="Supplier 2">
+		<supplier>
+			<name>Supplier 2</name>
 		</supplier>
 	</suppliers>
 	<calendars>
-		<calendar name="Capacity">
+		<calendar>
+			<name>Capacity</name>
 			<buckets>
 				<bucket id="1" start="2009-01-01T00:00:00">
 					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="Weeks">
+		<calendar>
+			<name>Weeks</name>
 			<buckets>
 				<bucket id="1" start="2009-01-01T00:00:00" end="2009-01-07T00:00:00">
 				</bucket>
@@ -57,17 +62,24 @@
 		</calendar>
 	</calendars>
 	<operations>
-		<operation name="delivery end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>delivery end item</name>
 			<duration>P1D</duration>
 		</operation>
-		<operation name="make end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make end item</name>
 			<duration>P1D</duration>
 		</operation>
 	</operations>
 	<items>
-		<item name="end item">
-			<owner name="product group"/>
-			<operation name="delivery end item" xsi:type="operation_fixed_time"/>
+		<item>
+			<name>end item</name>
+			<owner>
+				<name>product group</name>
+			</owner>
+			<operation>
+				<name>delivery end item</name>
+			</operation>
 		</item>
 		<item name="product group">
 			<members>
@@ -76,80 +88,131 @@
 		</item>
 	</items>
 	<buffers>
-		<buffer name="end item">
-			<producing name="make end item" xsi:type="operation_fixed_time"/>
-			<item name="end item"/>
+		<buffer>
+			<name>end item</name>
+			<producing>
+				<name>make end item</name>
+			</producing>
+			<item>
+				<name>end item</name>
+			</item>
 		</buffer>
 	</buffers>
 	<demands>
-		<demand name="order 1">
-			<customer name="Customer"/>
+		<demand>
+			<name>order 1</name>
+			<customer>
+				<name>Customer</name>
+			</customer>
 			<quantity>10</quantity>
-			<item name="end item"/>
+			<item>
+				<name>end item</name>
+			</item>
 			<due>2009-01-04T09:00:00</due>
 			<priority>1</priority>
 			<maxlateness>P0D</maxlateness>
 		</demand>
-		<demand name="order 2">
+		<demand>
+			<name>order 2</name>
 			<quantity>10</quantity>
-			<item name="end item"/>
+			<item>
+				<name>end item</name>
+			</item>
 			<due>2009-01-04T08:00:00</due>
 			<priority>2</priority>
 			<maxlateness>P0D</maxlateness>
 		</demand>
-		<demand name="order 3">
+		<demand>
+			<name>order 3</name>
 			<quantity>10</quantity>
-			<item name="end item"/>
+			<item>
+				<name>end item</name>
+			</item>
 			<due>2009-01-04T08:00:00</due>
 			<priority>3</priority>
 			<maxlateness>P0D</maxlateness>
 		</demand>
 	</demands>
 	<resources>
-		<resource name="Resource">
-			<maximum_calendar name="Capacity"/>
+		<resource>
+			<name>Resource</name>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
 		</resource>
 	</resources>
 	<loads>
 		<load>
-			<operation name="make end item" xsi:type="operation_fixed_time"/>
-			<resource name="Resource"/>
+			<operation>
+				<name>make end item</name>
+			</operation>
+			<resource>
+				<name>Resource</name>
+			</resource>
 		</load>
 	</loads>
 	<flows>
-		<flow xsi:type="flow_start">
-			<operation name="delivery end item" xsi:type="operation_fixed_time"/>
-			<buffer name="end item"/>
+		<flow>
+			<operation>
+				<name>delivery end item</name>
+			</operation>
+			<buffer>
+				<name>end item</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="make end item" xsi:type="operation_fixed_time"/>
-			<buffer name="end item"/>
+			<operation>
+				<name>make end item</name>
+			</operation>
+			<buffer>
+				<name>end item</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 	</flows>
 	<operationplans>
-		<operationplan id="2" operation="delivery end item">
-			<demand name="order 2"/>
+		<operationplan>
+			<id>2</id>
+			<operation>
+				<name>delivery end item</name>
+			</operation>
+			<demand>
+				<name>order 2</name>
+			</demand>
 			<start>2009-01-03T08:00:00</start>
 			<end>2009-01-04T08:00:00</end>
 			<quantity>10</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="3" operation="delivery end item">
-			<demand name="order 1"/>
+		<operationplan>
+			<id>3</id>
+			<operation>
+				<name>delivery end item</name>
+			</operation>
+			<demand>
+				<name>order 1</name>
+			</demand>
 			<start>2009-01-03T09:00:00</start>
 			<end>2009-01-04T09:00:00</end>
 			<quantity>10</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="4" operation="make end item">
+		<operationplan>
+			<id>4</id>
+			<operation>
+				<name>make end item</name>
+			</operation>
 			<start>2009-01-01T09:00:00</start>
 			<end>2009-01-02T09:00:00</end>
 			<quantity>10</quantity>
 			<criticality>0.958333</criticality>
 		</operationplan>
-		<operationplan id="5" operation="make end item">
+		<operationplan>
+			<id>5</id>
+			<operation>
+				<name>make end item</name>
+			</operation>
 			<start>2009-01-02T09:00:00</start>
 			<end>2009-01-03T09:00:00</end>
 			<quantity>10</quantity>

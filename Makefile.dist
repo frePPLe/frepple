@@ -120,7 +120,7 @@ stats:
 		`find . -name '*.nsi'` \
 		`find . -name '*.am'` \
 		`find . -name '*.ac'` \
-		`find modules -name '*.h'` | grep -v config.h | sort -n
+		`find modules -name '*.h'` | sort -n
 	wc -l `find . -name '*.py'` | sort -n
 	wc -l `find contrib -name '*.html'` \
 		contrib/django/freppledb/common/static/js/frepple.js \

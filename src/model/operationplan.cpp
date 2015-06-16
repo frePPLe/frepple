@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -32,12 +32,13 @@ DECLARE_EXPORT unsigned long OperationPlan::counterMin = 2;
 int OperationPlan::initialize()
 {
   // Initialize the metadata
-  OperationPlan::metacategory = new MetaCategory("operationplan", "operationplans",
+  OperationPlan::metacategory = MetaCategory::registerCategory<OperationPlan>("operationplan", "operationplans",
       OperationPlan::createOperationPlan, OperationPlan::writer, OperationPlan::finder);
-  OperationPlan::metadata = new MetaClass("operationplan", "operationplan");
+  registerFields<OperationPlan>(const_cast<MetaCategory*>(metacategory));
+  OperationPlan::metadata = MetaClass::registerClass<OperationPlan>("operationplan", "operationplan", true);
 
   // Initialize the Python type
-  PythonType& x = FreppleCategory<OperationPlan>::getType();
+  PythonType& x = FreppleCategory<OperationPlan>::getPythonType();
   x.setName("operationplan");
   x.setDoc("frePPLe operationplan");
   x.supportgetattro();
@@ -63,13 +64,13 @@ void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 
 
 DECLARE_EXPORT Object* OperationPlan::createOperationPlan
-(const MetaClass* cat, const AttributeList& in)
+(const MetaClass* cat, const DataValueDict& in)
 {
   // Pick up the action attribute
   Action action = MetaClass::decodeAction(in);
 
   // Decode the attributes
-  const DataElement* opnameElement = in.get(Tags::tag_operation);
+  const DataValue* opnameElement = in.get(Tags::tag_operation);
   if (!*opnameElement && action==ADD)
     // Operation name required
     throw DataException("Missing operation attribute");
@@ -77,7 +78,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
 
   // Decode the operationplan identifier
   unsigned long id = 0;
-  const DataElement* idfier = in.get(Tags::tag_id);
+  const DataValue* idfier = in.get(Tags::tag_id);
   if (*idfier) id = idfier->getUnsignedLong();
   if (!id && (action==CHANGE || action==REMOVE))
     // Identifier is required
@@ -630,7 +631,6 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src, bool init)
   lastsubopplan = NULL;
   nextsubopplan = NULL;
   prevsubopplan = NULL;
-  motive = NULL;
   initType(metadata);
 
   // Clone the suboperationplans
@@ -666,7 +666,6 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src,
   lastsubopplan = NULL;
   nextsubopplan = NULL;
   prevsubopplan = NULL;
-  motive = NULL;
   initType(metadata);
 
   // Set owner
@@ -822,118 +821,6 @@ DECLARE_EXPORT Object* OperationPlan::finder(const string& key)
 }
 
 
-DECLARE_EXPORT void OperationPlan::writeElement(Serializer* o, const Keyword& tag, mode m) const
-{
-  // Don't export operationplans of hidden operations
-  if (oper->getHidden()) return;
-
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement(
-      tag, Tags::tag_id, const_cast<OperationPlan*>(this)->getIdentifier(),
-      Tags::tag_operation, oper->getName()
-      );
-    return;
-  }
-
-  // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL)
-    o->BeginObject(
-      tag, Tags::tag_id, const_cast<OperationPlan*>(this)->getIdentifier(),
-      Tags::tag_operation, oper->getName()
-      );
-
-  // The demand reference is only valid for delivery operationplans,
-  // and it should only be written if this tag is not being written
-  // as part of a demand+delivery tag.
-  if (dmd && !dynamic_cast<Demand*>(o->getPreviousObject()))
-    o->writeElement(Tags::tag_demand, dmd);
-
-  o->writeElement(Tags::tag_start, dates.getStart());
-  o->writeElement(Tags::tag_end, dates.getEnd());
-  o->writeElement(Tags::tag_quantity, quantity);
-  o->writeElement(Tags::tag_criticality, getCriticality());
-  if (getLocked()) o->writeElement (Tags::tag_locked, true);
-  if (!getConsumeMaterial()) o->writeElement(Tags::tag_consume_material, false);
-  if (!getProduceMaterial()) o->writeElement(Tags::tag_produce_material, false);
-  if (!getConsumeCapacity()) o->writeElement(Tags::tag_consume_capacity, false);
-  o->writeElement(Tags::tag_source, getSource());
-  o->writeElement(Tags::tag_owner, owner);
-
-  // Write out the flowplans and their pegging
-  if (o->getContentType() == Serializer::PLANDETAIL)
-  {
-    o->BeginList(Tags::tag_flowplans);
-    for (FlowPlanIterator qq = beginFlowPlans(); qq != endFlowPlans(); ++qq)
-      qq->writeElement(o, Tags::tag_flowplan);
-    o->EndList(Tags::tag_flowplans);
-  }
-
-  // Write the custom fields
-  PythonDictionary::write(o, getDict());
-
-  // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void OperationPlan::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA (Tags::tag_demand))
-    pIn.readto( Demand::reader(Demand::metadata,pIn.getAttributes()) );
-  else if (pAttr.isA(Tags::tag_owner))
-    pIn.readto(createOperationPlan(metadata,pIn.getAttributes()));
-  else if (pAttr.isA(Tags::tag_flowplans))
-    pIn.IgnoreElement();
-  else
-    PythonDictionary::read(pIn, pAttr, getDict());
-}
-
-
-DECLARE_EXPORT void OperationPlan::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  // Note that the fields have been ordered more or less in the order
-  // of their expected frequency.
-  // Note that id and operation are handled already during the
-  // operationplan creation. They don't need to be handled here...
-  if (pAttr.isA(Tags::tag_quantity))
-    pElement >> quantity;
-  else if (pAttr.isA(Tags::tag_start))
-    dates.setStart(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_end))
-    dates.setEnd(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_owner) && !pIn.isObjectEnd())
-  {
-    OperationPlan* o = dynamic_cast<OperationPlan*>(pIn.getPreviousObject());
-    if (o) setOwner(o, false); // Extra argument is used to trigger validation of the new owner
-  }
-  else if (pIn.isObjectEnd())
-  {
-    // Initialize the operationplan
-    if (!activate())
-      // Initialization failed and the operationplan is deleted
-      pIn.invalidateCurrentObject();
-  }
-  else if (pAttr.isA (Tags::tag_demand))
-  {
-    Demand *d = dynamic_cast<Demand*>(pIn.getPreviousObject());
-    if (d) d->addDelivery(this);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA(Tags::tag_source))
-    setSource(pElement.getString());
-  else if (pAttr.isA(Tags::tag_locked))
-    setLocked(pElement.getBool());
-  else if (pAttr.isA(Tags::tag_consume_material))
-    setConsumeMaterial(pElement.getBool());
-  else if (pAttr.isA(Tags::tag_consume_capacity))
-    setConsumeCapacity(pElement.getBool());
-  else if (pAttr.isA(Tags::tag_produce_material))
-    setProduceMaterial(pElement.getBool());
-}
-
-
 DECLARE_EXPORT void OperationPlan::setLocked(bool b)
 {
   if (b)
@@ -969,7 +856,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
   try
   {
     // Find or create the C++ object
-    PythonAttributeList atts(kwds);
+    PythonDataValueDict atts(kwds);
     Object* x = createOperationPlan(OperationPlan::metadata,atts);
     Py_INCREF(x);
 
@@ -980,15 +867,20 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
       Py_ssize_t pos = 0;
       while (PyDict_Next(kwds, &pos, &key, &value))
       {
-        PythonObject field(value);
+        PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         Attribute attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
         if (!attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_id)
           && !attr.isA(Tags::tag_action) && !attr.isA(Tags::tag_type))
         {
-          int result = x->setattro(attr, field);
-          if (result && !PyErr_Occurred())
+          const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
+          if (!fmeta && x->getType().category)
+            fmeta = x->getType().category->findField(attr.getHash());
+          if (fmeta)
+            // Update the attribute
+            fmeta->setField(x, field);
+          else
             PyErr_Format(PyExc_AttributeError,
                 "attribute '%S' on '%s' can't be updated",
                 key, Py_TYPE(x)->tp_name);
@@ -1011,139 +903,6 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
 }
 
 
-DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_id))
-    return PythonObject(getIdentifier());
-  if (attr.isA(Tags::tag_operation))
-    return PythonObject(getOperation());
-  if (attr.isA(Tags::tag_flowplans))
-    return new frepple::FlowPlanIterator(this);
-  if (attr.isA(Tags::tag_loadplans))
-    return new frepple::LoadPlanIterator(this);
-  if (attr.isA(Tags::tag_quantity))
-    return PythonObject(getQuantity());
-  if (attr.isA(Tags::tag_start))
-    return PythonObject(getDates().getStart());
-  if (attr.isA(Tags::tag_end))
-    return PythonObject(getDates().getEnd());
-  if (attr.isA(Tags::tag_demand))
-    return PythonObject(getDemand());
-  if (attr.isA(Tags::tag_locked))
-    return PythonObject(getLocked());
-  if (attr.isA(Tags::tag_owner))
-    return PythonObject(getOwner());
-  if (attr.isA(Tags::tag_operationplans))
-    return new OperationPlanIterator(this);
-  if (attr.isA(Tags::tag_hidden))
-    return PythonObject(getHidden());
-  if (attr.isA(Tags::tag_unavailable))
-    return PythonObject(getUnavailable());
-  if (attr.isA(Tags::tag_criticality))
-    return PythonObject(getCriticality());
-  if (attr.isA(Tags::tag_pegging_downstream))
-    return new PeggingIterator(this, true);
-  if (attr.isA(Tags::tag_pegging_upstream))
-    return new PeggingIterator(this, false);
-  if (attr.isA(Tags::tag_consume_material))
-    return PythonObject(getConsumeMaterial());
-  if (attr.isA(Tags::tag_consume_capacity))
-    return PythonObject(getConsumeCapacity());
-  if (attr.isA(Tags::tag_produce_material))
-    return PythonObject(getProduceMaterial());
-  if (attr.isA(Tags::tag_source))
-    return PythonObject(getSource());
-  if (attr.isA(Tags::tag_motive))
-  {
-    // Null
-    if (!getMotive())
-    {
-      Py_INCREF(Py_None);
-      return Py_None;
-    }
-
-    // Demand
-    Demand* d = dynamic_cast<Demand*>(getMotive());
-    if (d) return PythonObject(d);
-
-    // Buffer
-    Buffer* b = dynamic_cast<Buffer*>(getMotive());
-    if (b) return PythonObject(b);
-
-    // Resource
-    Resource* r = dynamic_cast<Resource*>(getMotive());
-    if (r) return PythonObject(r);
-
-    // Unknown type
-    PyErr_SetString(PythonLogicException, "Unhandled motive type");
-    return NULL;
-  }
-  return NULL;
-}
-
-
-DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_quantity))
-    setQuantity(field.getDouble());
-  else if (attr.isA(Tags::tag_start))
-    setStart(field.getDate());
-  else if (attr.isA(Tags::tag_end))
-    setEnd(field.getDate());
-  else if (attr.isA(Tags::tag_locked))
-    setLocked(field.getBool());
-  else if (attr.isA(Tags::tag_demand))
-  {
-    if (!field.check(Demand::metadata))
-    {
-      PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
-      return -1;
-    }
-    Demand* y = static_cast<Demand*>(static_cast<PyObject*>(field));
-    setDemand(y);
-  }
-  else if (attr.isA(Tags::tag_owner))
-  {
-    if (!field.check(OperationPlan::metadata))
-    {
-      PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
-      return -1;
-    }
-    OperationPlan* y = static_cast<OperationPlan*>(static_cast<PyObject*>(field));
-    setOwner(y, false); // Extra argument is used to trigger validation of the new owner
-  }
-  else if (attr.isA(Tags::tag_motive))
-  {
-    Plannable* y;
-    if (static_cast<PyObject*>(field) == Py_None)
-      y = NULL;
-    if (field.check(Demand::metadata))
-      y = static_cast<Demand*>(static_cast<PyObject*>(field));
-    else if (field.check(Buffer::metadata))
-      y = static_cast<Buffer*>(static_cast<PyObject*>(field));
-    else if (field.check(Resource::metadata))
-      y = static_cast<Resource*>(static_cast<PyObject*>(field));
-    else
-    {
-      PyErr_SetString(PythonDataException, "operationplan motive must be of type demand, buffer or resource");
-      return -1;
-    }
-    setMotive(y);
-  }
-  else if (attr.isA(Tags::tag_consume_material))
-    setConsumeMaterial(field.getBool());
-  else if (attr.isA(Tags::tag_consume_capacity))
-    setConsumeCapacity(field.getBool());
-  else if (attr.isA(Tags::tag_produce_material))
-    setProduceMaterial(field.getBool());
-  else if (attr.isA(Tags::tag_source))
-    setSource(field.getString());
-  else
-    return -1;
-  return 0;
-}
-
-
 DECLARE_EXPORT double OperationPlan::getCriticality() const
 {
   // Child operationplans have the same criticality as the parent
@@ -1162,7 +921,7 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
   // Upstream operationplan
   Duration minslack = 86313600L; // 999 days in seconds
   vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
-  for (PeggingIterator p(this); p; p++)
+  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; p++)
   {
     unsigned int lvl = p.getLevel();
     if (lvl >= opplans.size())

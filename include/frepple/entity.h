@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -75,57 +75,6 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
     else
       // I am the first child of my parent
       fam->first_child = static_cast<T*>(this);
-  }
-}
-
-
-template <class T> void HasHierarchy<T>::writeElement
-(Serializer* o, const Keyword &t, mode m) const
-{
-  /** Note that this function is never called on its own. It is always called
-    * from the writeElement() method of a subclass. Therefore we don't need
-    * to worry about the refOnly or incHeader parameters.
-    */
-  assert(m == DEFAULT);
-  // Note that nothing is written when the owner is NULL
-  o->writeElement(Tags::tag_owner, parent);
-  if (first_child)
-  {
-    o->BeginObject (Tags::tag_members);
-    for (T *i = first_child; i; i=i->next_brother)
-      o->writeElement(*(T::metadata->typetag), i);
-    o->EndObject (Tags::tag_members);
-  }
-}
-
-
-template <class T> void HasHierarchy<T>::beginElement
-(DataInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA(Tags::tag_owner) ||
-      (pIn.getParentElement().isA(Tags::tag_members)
-          && pAttr.isA(T::metadata->typetag)))
-    // Start reading a member of the parent
-    pIn.readto( T::reader(T::metadata,pIn.getAttributes()) );
-}
-
-
-template <class T> void HasHierarchy<T>::endElement(DataInput& pIn,
-    const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_owner) && !pIn.isObjectEnd())
-  {
-    // we just ended an owner element: ...<OWNER>abc</OWNER>
-    T* o = dynamic_cast<T*>(pIn.getPreviousObject());
-    if (o) setOwner(o);
-  }
-  else if (pAttr.isA(T::metadata->typetag)
-      && pIn.getParentElement().isA(Tags::tag_members)
-      && pIn.isObjectEnd() )
-  {
-    // we just have ended a member element <MEMBERS><TAG>abc<TAG>...</MEMBERS>
-    T* o = dynamic_cast<T*>(pIn.getParentObject());
-    if (o) setOwner(o);
   }
 }
 

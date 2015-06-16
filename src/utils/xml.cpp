@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -20,6 +20,7 @@
 
 #define FREPPLE_CORE
 #include "frepple/utils.h"
+#include "frepple/xml.h"
 #include <sys/stat.h>
 
 /* Uncomment the next line to create a lot of debugging messages during
@@ -74,10 +75,9 @@ char* XMLInput::transcodeUTF8(const XMLCh* xercesChars)
 }
 
 
-DECLARE_EXPORT XMLInput::XMLInput(unsigned short maxNestedElmnts)
-  : parser(NULL), maxdepth(maxNestedElmnts), m_EStack(maxNestedElmnts+2),
-    numElements(-1), ignore(0), objectEnded(false),
-    abortOnDataException(true), attributes(NULL, this)
+DECLARE_EXPORT XMLInput::XMLInput() : parser(NULL), objects(maxobjects),
+  data(maxdata), objectindex(-1), dataindex(-1), numElements(-1),
+  reading(false), ignore(0), abortOnDataException(true)
 {
   if (!utf8_encoder)
   {
@@ -113,7 +113,8 @@ DECLARE_EXPORT void  XMLInput::processingInstruction
           xercesc::XMLString::release(&value);
           throw;
         }
-        else logger << "Continuing after data error: " << e.what() << endl;
+        else
+          logger << "Continuing after data error: " << e.what() << endl;
       }
     }
     xercesc::XMLString::release(&type);
@@ -132,97 +133,155 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
   const XMLCh* const n, const XMLCh* const qname,
   const xercesc::Attributes& atts)
 {
-  // Validate the state
-  assert(!states.empty());
-
-  // Check for excessive number of open objects
-  if (numElements >= maxdepth)
-    throw DataException("XML-document with elements nested excessively deep");
-
-  // Push the element on the stack
-  datapair *pElement = &m_EStack[numElements+1];
-  pElement->first.reset(n);
-  pElement->second.reset();
-
-  // Store a pointer to the attributes
-  attributes.setAtts(&atts);
-
-  switch (states.top())
+  // Currently ignoring all input?
+  if (ignore)
   {
-    case SHUTDOWN:
-      // STATE: Parser is shutting down, and we can ignore all input that
-      // is still coming
-      return;
+    if (data[dataindex].hash == Keyword::hash(n))
+    {
+      // Ignoring elements one level deeper
+      ++ignore;
+      if (ignore >= USHRT_MAX)
+        throw DataException("XML-document nested excessively deep");
+    }
+    return;
+  }
 
-    case IGNOREINPUT:
-      // STATE: Parser is ignoring a part of the input
-      if (pElement->first.getHash() == endingHashes.top())
-        // Increase the count of occurences before the ignore section ends
-        ++ignore;
-      ++numElements;
-      return;
+  // Use new data value
+  data[++dataindex].value.setString("");
+  reading = true;
 
-    case INIT:
-      // STATE: The only time the parser comes in this state is when we read
-      // opening tag of the ROOT tag.
 #ifdef PARSE_DEBUG
-      if (!m_EHStack.empty())
-        logger << "Initialize root tag for reading object "
-            << getCurrentObject() << " ("
-            << typeid(*getCurrentObject()).name() << ")" << endl;
-      else
-        logger << "Initialize root tag for reading object NULL" << endl;
-#endif
-      states.top() = READOBJECT;
-      endingHashes.push(pElement->first.getHash());
-      // Note that there is no break or return here. We also execute the
-      // statements of the following switch-case.
-
-    case READOBJECT:
-      // STATE: Parser is reading data elements of an object
-      // Debug
-#ifdef PARSE_DEBUG
-      logger << "   Start element " << pElement->first.getName()
-          << " - object " << getCurrentObject() << endl;
+  logger << "Start XML element #" << dataindex << " '" << transcodeUTF8(n)
+    << "' for object #" << objectindex << " "
+    << ((objectindex >= 0 && objects[objectindex].cls) ? objects[objectindex].cls->type : "none")
+    << endl;
 #endif
 
-      // Call the handler of the object
-      assert(!m_EHStack.empty());
-      try {getCurrentObject()->beginElement(*this, pElement->first);}
-      catch (const DataException& e)
+  if (objectindex < 0 ) return;
+
+  // Look up the field
+  data[dataindex].hash = Keyword::hash(n);
+  if (dataindex >= 1 && data[dataindex-1].field && data[dataindex-1].field->isGroup() && data[dataindex].hash == data[dataindex-1].field->getKeyword()->getHash())
+  {
+    // New element to create in the group
+    // Increment object index
+    if (++objectindex >= maxobjects)
+      // You're joking?
+      throw DataException("XML-document nested excessively deep");
+    // New object on the stack
+    objects[objectindex].object = NULL;
+    objects[objectindex].start = dataindex;
+    objects[objectindex].cls = data[dataindex-1].field->getClass();
+    objects[objectindex].hash = data[dataindex].hash;
+    reading = false;
+
+    if (!objects[objectindex].cls->category)
+    {
+      // Category metadata passed: replace it with the concrete type
+      // We start at the last attribute. Putting the type attribute at the end
+      // will thus give a (very small) performance improvement.
+      for (XMLSize_t i = atts.getLength(); i > 0; --i)
       {
-        if (abortOnDataException) throw;
-        else logger << "Continuing after data error: " << e.what() << endl;
-      }
-
-      // Now process all attributes. For attributes we only call the
-      // endElement() member and skip the beginElement() method.
-      numElements += 1;
-      if (states.top() != IGNOREINPUT)
-        for (XMLSize_t i=0, cnt=atts.getLength(); i<cnt; i++)
+        if (Keyword::hash(atts.getLocalName(i - 1)) == Tags::tag_type.getHash())
         {
-          char* val = transcodeUTF8(atts.getValue(i));
-          m_EStack[numElements+1].first.reset(atts.getLocalName(i));
-          m_EStack[numElements+1].second.setData(val);
-#ifdef PARSE_DEBUG
-          char* attname = xercesc::XMLString::transcode(atts.getQName(i));
-          logger << "   Processing attribute " << attname
-              << " - object " << getCurrentObject() << endl;
-          xercesc::XMLString::release(&attname);
-#endif
-          try {getCurrentObject()->endElement(*this, m_EStack[numElements+1].first, m_EStack[numElements+1].second);}
-          catch (const DataException& e)
-          {
-            if (abortOnDataException) throw;
-            else logger << "Continuing after data error: " << e.what() << endl;
-          }
-          // Stop processing attributes if we are now in the ignore mode
-          if (states.top() == IGNOREINPUT) break;
+          string tp = transcodeUTF8(atts.getValue(i - 1));
+          objects[objectindex].cls = static_cast<const MetaCategory&>(*objects[objectindex].cls).findClass(
+            Keyword::hash(tp)
+          );
+          if (!objects[objectindex].cls)
+            throw DataException("No type " + tp + " registered for category " + objects[objectindex].cls->type);
+          break;
         }
-  }  // End of switch statement
+      }
+      if (!objects[objectindex].cls->category)
+      {
+        // No type attribute was registered, and we use the default of the category
+        objects[objectindex].cls = static_cast<const MetaCategory&>(*objects[objectindex].cls).findClass(
+            Tags::tag_default.getHash()
+            );
+        if (!objects[objectindex].cls)
+          throw DataException("No default type registered for category " + objects[objectindex].cls->type);
+      }
+      --dataindex;
+    }
 
-  // Outside of this handler, no attributes are available
-  attributes.setAtts(NULL);
+    // Push all attributes on the data stack.
+    for (XMLSize_t i = 0, cnt = atts.getLength(); i < cnt; ++i)
+    {
+      // Look up the field
+      ++dataindex;
+      data[dataindex].hash = Keyword::hash(atts.getLocalName(i));
+      if (data[dataindex].hash == Tags::tag_type.getHash())
+      {
+        // Skip attribute called "type"
+        --dataindex;
+        continue;
+      }
+      data[dataindex].field = objects[objectindex].cls->findField(data[dataindex].hash);
+      if (!data[dataindex].field && objects[objectindex].cls->category)
+        data[dataindex].field = objects[objectindex].cls->category->findField(data[dataindex].hash);
+      if (!data[dataindex].field)
+        throw DataException("XML attribute not defined");
+
+      // Set the data value
+      data[dataindex].value.setString(transcodeUTF8(atts.getValue(i)));
+    }
+    return;
+  }
+
+  data[dataindex].field = objects[objectindex].cls->findField(data[dataindex].hash);
+  if (!data[dataindex].field && objects[objectindex].cls->category)
+    data[dataindex].field = objects[objectindex].cls->category->findField(data[dataindex].hash);
+
+  // Field not found
+  if (!data[dataindex].field && dataindex)
+  {
+    if (!dataindex && data[dataindex].hash == Tags::tag_plan.getHash())
+      // Special case: root element with name "plan"
+      ++objects[objectindex].start;
+    else
+    {
+      // Ignore this element
+      reading = false;
+      ++ignore;
+#ifdef PARSE_DEBUG
+      logger << "Ignoring XML element '" << transcodeUTF8(n) << "'" << endl;
+#endif
+    }
+  }
+
+  if (data[dataindex].field && data[dataindex].field->isPointer())
+  {
+    // Increment object index
+    if (++objectindex >= maxobjects)
+      // You're joking?
+      throw DataException("XML-document with elements nested excessively deep");
+
+    // New object on the stack
+    objects[objectindex].object = NULL;
+    objects[objectindex].cls = data[dataindex].field->getClass();
+    objects[objectindex].start = dataindex + 1;
+    objects[objectindex].hash = Keyword::hash(n);
+    reading = false;
+
+    // Push all attributes on the data stack.
+    for (XMLSize_t i = 0, cnt = atts.getLength(); i < cnt; ++i)
+    {
+      // Use new data value
+      ++dataindex;
+
+      // Look up the field
+      data[dataindex].hash = Keyword::hash(atts.getLocalName(i));
+      data[dataindex].field = objects[objectindex].cls->findField(data[dataindex].hash);
+      if (!data[dataindex].field && objects[objectindex].cls->category)
+        data[dataindex].field = objects[objectindex].cls->category->findField(data[dataindex].hash);
+      if (!data[dataindex].field)
+        throw DataException("XML attribute not defined");
+
+      // Set the data value
+      data[dataindex].value.setString(transcodeUTF8(atts.getValue(i)));
+    }
+  }
 }
 
 
@@ -230,108 +289,91 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
     const XMLCh* const s,
     const XMLCh* const qname)
 {
-  // Validate the state
-  assert(numElements >= 0);
-  assert(!states.empty());
-  assert(numElements < maxdepth);
-
-  // Remove an element from the stack
-  datapair *pElement = &(m_EStack[numElements--]);
-
-  switch (states.top())
+  // Currently ignoring all input?
+  hashtype h = Keyword::hash(s);
+  if (ignore)
   {
-    case INIT:
-      // This should never happen!
-      throw LogicException("Unreachable code reached");
-
-    case SHUTDOWN:
-      // STATE: Parser is shutting down, and we can ignore all input that is
-      // still coming
-      return;
-
-    case IGNOREINPUT:
-      // STATE: Parser is ignoring a part of the input
-#ifdef PARSE_DEBUG
-      logger << "   End element " << pElement->first.getName()
-          << " - IGNOREINPUT state" << endl;
-#endif
-      // Continue if we aren't dealing with the tag being ignored
-      if (pElement->first.getHash() != endingHashes.top()) return;
-      if (ignore == 0)
-      {
-        // Finished ignoring now
-        states.pop();
-        endingHashes.pop();
-#ifdef PARSE_DEBUG
-        logger << "Finish IGNOREINPUT state" << endl;
-#endif
-      }
-      else
-        --ignore;
-      break;
-
-    case READOBJECT:
-      // STATE: Parser is reading data elements of an object
-#ifdef PARSE_DEBUG
-      logger << "   End element " << pElement->first.getName()
-          << " - object " << getCurrentObject() << endl;
-#endif
-
-      // Check if we finished with the current handler
-      assert(!m_EHStack.empty());
-      if (pElement->first.getHash() == endingHashes.top())
-      {
-        // Call the ending handler of the Object, with a special
-        // flag to specify that this object is now ended
-        objectEnded = true;
-        try
-        {
-          getCurrentObject()->endElement(*this, pElement->first, pElement->second);
-          if (getUserExit()) getUserExit().call(getCurrentObject());
-        }
-        catch (const DataException& e)
-        {
-          if (abortOnDataException) throw;
-          else logger << "Continuing after data error: " << e.what() << endl;
-        }
-        objectEnded = false;
-#ifdef PARSE_DEBUG
-        logger << "Finish reading object " << getCurrentObject() << endl;
-#endif
-        // Pop from the handler object stack
-        prev = getCurrentObject();
-        m_EHStack.pop_back();
-        endingHashes.pop();
-
-        // Pop from the state stack
-        states.pop();
-        if (m_EHStack.empty())
-          shutdown();
-        else
-        {
-          // Call also the endElement function on the owning object
-          try {getCurrentObject()->endElement(*this, pElement->first, pElement->second);}
-          catch (const DataException& e)
-          {
-            if (abortOnDataException) throw;
-            else logger << "Continuing after data error: " << e.what() << endl;
-          }
-#ifdef PARSE_DEBUG
-          logger << "   End element " << pElement->first.getName()
-              << " - object " << getCurrentObject() << endl;
-#endif
-        }
-      }
-      else
-        // This tag is not the ending tag of an object
-        // Call the function of the Object
-        try {getCurrentObject()->endElement(*this, pElement->first, pElement->second);}
-        catch (const DataException& e)
-        {
-          if (abortOnDataException) throw;
-          else logger << "Continuing after data error: " << e.what() << endl;
-        }
+    if (data[dataindex].hash == h)
+    {
+      // Finishing ignored element level
+      --ignore;
+      if (!ignore)
+        --dataindex;
+    }
+    return;
   }
+
+#ifdef PARSE_DEBUG
+  logger << "End XML element #" << dataindex << " '" << transcodeUTF8(s)
+    << "' for object #" << objectindex << " " << ((objectindex >= 0 && objects[objectindex].cls) ? objects[objectindex].cls->type : "none") << endl;
+#endif
+
+  // Ignore content between tags
+  reading = false;
+
+  if (h != objects[objectindex].hash)
+    // Continue reading more fields until we'll have read the complete object
+    return;
+
+  try
+  {
+    XMLDataValueDict dict(data, objects[objectindex].start, dataindex);
+
+    // Push also the source field in the attributes.
+    // This is only required if 1) it's not in the dict yet, and 2) there
+    // is a value set at the interface level, 3) the class has a source field.
+    if (!getSource().empty())
+    {
+      const XMLData* s = dict.get(Tags::tag_source);
+      if (!s)
+      {
+        const MetaFieldBase* f = objects[objectindex].cls->findField(Tags::tag_source);
+        if (!f && objects[objectindex].cls->category)
+          f = objects[objectindex].cls->category->findField(Tags::tag_source);
+        if (f)
+        {
+          data[++dataindex].field = f;
+          data[dataindex].hash = Tags::tag_source.getHash();
+          data[dataindex].value.setString(getSource());
+          dict.enlarge();
+        }
+      }
+    }
+
+#ifdef PARSE_DEBUG
+    logger << "Creating object " << objects[objectindex].cls->type << endl;
+    dict.print();
+#endif
+
+    // Call the object factory for the category and pass all field values
+    // in a dictionary
+    if (objects[objectindex].cls->category)
+      objects[objectindex].object =
+        objects[objectindex].cls->category->readFunction(
+          objects[objectindex].cls,
+          dict
+          );
+    else
+      objects[objectindex].object =
+        static_cast<const MetaCategory*>(objects[objectindex].cls)->readFunction(
+          objects[objectindex].cls,
+          dict
+          );
+
+    if (objectindex && dataindex && data[dataindex-1].field)
+      // Update parent object
+      data[dataindex-1].value.setObject(objects[objectindex].object);
+    if (getUserExit())
+      getUserExit().call(objects[objectindex].object);
+  }
+  catch (const DataException& e)
+  {
+    if (abortOnDataException) throw;
+    else logger << "Continuing after data error: " << e.what() << endl;
+  }
+
+  // Update indexes for data and object
+  dataindex = objects[objectindex--].start - 1;
 }
 
 
@@ -343,12 +385,11 @@ DECLARE_EXPORT void XMLInput::characters(const XMLCh *const c, const unsigned in
 DECLARE_EXPORT void XMLInput::characters(const XMLCh *const c, const XMLSize_t n)
 #endif
 {
-  // No data capture during the ignore state
-  if (states.top()==IGNOREINPUT) return;
+  // Not in reading mode
+  if (!reading) return;
 
   // Process the data
-  char* name = transcodeUTF8(c);
-  m_EStack[numElements].second.addData(name, strlen(name));
+  data[dataindex].value.appendString(transcodeUTF8(c));
 }
 
 
@@ -356,7 +397,8 @@ DECLARE_EXPORT void XMLInput::warning(const xercesc::SAXParseException& e)
 {
   char* message = xercesc::XMLString::transcode(e.getMessage());
   logger << "Warning: " << message;
-  if (e.getLineNumber() > 0) logger << " at line: " << e.getLineNumber();
+  if (e.getLineNumber() > 0)
+    logger << " at line: " << e.getLineNumber();
   logger << endl;
   xercesc::XMLString::release(&message);
 }
@@ -367,7 +409,8 @@ DECLARE_EXPORT void XMLInput::fatalError(const xercesc::SAXParseException& e)
   char* message = xercesc::XMLString::transcode(e.getMessage());
   ostringstream ch;
   ch << message;
-  if (e.getLineNumber() > 0) ch << " at line " << e.getLineNumber();
+  if (e.getLineNumber() > 0)
+    ch << " at line " << e.getLineNumber();
   xercesc::XMLString::release(&message);
   throw DataException(ch.str());
 }
@@ -378,128 +421,21 @@ DECLARE_EXPORT void XMLInput::error(const xercesc::SAXParseException& e)
   char* message = xercesc::XMLString::transcode(e.getMessage());
   ostringstream ch;
   ch << message;
-  if (e.getLineNumber() > 0) ch << " at line " << e.getLineNumber();
+  if (e.getLineNumber() > 0)
+    ch << " at line " << e.getLineNumber();
   xercesc::XMLString::release(&message);
   throw DataException(ch.str());
 }
 
 
-DECLARE_EXPORT void XMLInput::readto(Object * pPI)
-{
-  // Keep track of the tag where this object will end
-  assert(numElements >= -1);
-  endingHashes.push(m_EStack[numElements+1].first.getHash());
-  if (pPI)
-  {
-    // Push a new object on the handler stack
-#ifdef PARSE_DEBUG
-    logger << "Start reading object " << pPI
-        << " (" << typeid(*pPI).name() << ")" << endl;
-#endif
-    prev = getCurrentObject();
-    m_EHStack.push_back(make_pair(pPI,static_cast<void*>(NULL)));
-    states.push(READOBJECT);
-
-    // Update the source field of the new object
-    if (!getSource().empty())
-    {
-      HasSource *x = dynamic_cast<HasSource*>(pPI);
-      if (x) x->setSource(getSource());
-    }
-  }
-  else
-  {
-    // Ignore the complete content of this element
-#ifdef PARSE_DEBUG
-    logger << "Start ignoring input" << endl;
-#endif
-    states.push(IGNOREINPUT);
-  }
-}
-
-
-void XMLInput::shutdown()
-{
-  // Already shutting down...
-  if (states.empty() || states.top() == SHUTDOWN) return;
-
-  // Message
-#ifdef PARSE_DEBUG
-  logger << "   Forcing a shutdown - SHUTDOWN state" << endl;
-#endif
-
-  // Change the state
-  states.push(SHUTDOWN);
-
-  // Done if we have no elements on the stack, i.e. a normal end.
-  if (numElements<0) return;
-
-  // Call the ending handling of all objects on the stack
-  // This allows them to finish off in a valid state, and delete any temporary
-  // objects they may have allocated.
-  objectEnded = true;
-  m_EStack[numElements].first.reset("Not a real tag");
-  m_EStack[numElements].second.reset();
-  while (!m_EHStack.empty())
-  {
-    try
-    {
-      getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);
-      if (getUserExit()) getUserExit().call(getCurrentObject());
-    }
-    catch (const DataException& e)
-    {
-      if (abortOnDataException) throw;
-      else logger << "Continuing after data error: " << e.what() << endl;
-    }
-    m_EHStack.pop_back();
-  }
-}
-
-
-DECLARE_EXPORT void XMLInput::reset()
+DECLARE_EXPORT XMLInput::~XMLInput()
 {
   // Delete the xerces parser object
   delete parser;
-  parser = NULL;
 
-  // Call the ending handling of all objects on the stack
-  // This allows them to finish off in a valid state, and delete any temporary
-  // objects they may have allocated.
-  if (!m_EHStack.empty())
-  {
-    // The next line is to avoid calling the endElement handler twice for the
-    // last object. E.g. endElement handler causes and exception, and as part
-    // of the exception handling we call the reset method.
-    if (objectEnded) m_EHStack.pop_back();
-    objectEnded = true;
-    m_EStack[++numElements].first.reset("Not a real tag");
-    m_EStack[++numElements].second.reset();
-    while (!m_EHStack.empty())
-    {
-      try
-      {
-        getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);
-        if (getUserExit()) getUserExit().call(getCurrentObject());
-      }
-      catch (const DataException& e)
-      {
-        if (abortOnDataException) throw;
-        else logger << "Continuing after data error: " << e.what() << endl;
-      }
-      m_EHStack.pop_back();
-    }
-  }
-
-  // Cleanup of stacks
-  while (!states.empty()) states.pop();
-  while (!endingHashes.empty()) endingHashes.pop();
-
-  // Set all variables back to their starting values
-  numElements = -1;
-  ignore = 0;
-  objectEnded = false;
-  attributes.setAtts(NULL);
+  if (objectindex > 0 || dataindex > 0)
+    logger << "WARNING: unfinished objects on XML stack "
+      << objectindex << "  " << dataindex << endl;
 }
 
 
@@ -520,8 +456,8 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
     parser->setFeature(xercesc::XMLUni::fgXercesDynamic, false);
     parser->setFeature(xercesc::XMLUni::fgXercesSchema, validate);
     parser->setFeature(xercesc::XMLUni::fgXercesSchemaFullChecking, false);
-    parser->setFeature(xercesc::XMLUni::fgXercesValidationErrorAsFatal,true);
-    parser->setFeature(xercesc::XMLUni::fgXercesIgnoreAnnotations,true);
+    parser->setFeature(xercesc::XMLUni::fgXercesValidationErrorAsFatal, true);
+    parser->setFeature(xercesc::XMLUni::fgXercesIgnoreAnnotations, true);
 
     if (validate)
     {
@@ -545,8 +481,11 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
       parser->setContentHandler(this);
 
       // Get the parser to read data into the object pRoot.
-      m_EHStack.push_back(make_pair(pRoot,static_cast<void*>(NULL)));
-      states.push(INIT);
+      objectindex = 0;
+      dataindex = -1;
+      objects[0].start = 0;
+      objects[0].object = pRoot;
+      objects[0].cls = &pRoot->getType();
     }
 
     // Set the error handler
@@ -555,35 +494,36 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
     // Parse the input
     parser->parse(in);
   }
-  // Note: the reset() method needs to be called in all circumstances. The
-  // reset method allows all objects to finish in a valid state and clean up
-  // any memory they may have allocated.
   catch (const xercesc::XMLException& toCatch)
   {
     char* message = xercesc::XMLString::transcode(toCatch.getMessage());
     string msg(message);
     xercesc::XMLString::release(&message);
-    reset();
+    delete parser;
+    parser = NULL;
     throw RuntimeException("Parsing error: " + msg);
   }
   catch (const exception& toCatch)
   {
-    reset();
+    delete parser;
+    parser = NULL;
     ostringstream msg;
     msg << "Error during XML parsing: " << toCatch.what();
     throw RuntimeException(msg.str());
   }
   catch (...)
   {
-    reset();
+    delete parser;
+    parser = NULL;
     throw RuntimeException(
       "Parsing error: Unexpected exception during XML parsing");
   }
-  reset();
+  delete parser;
+  parser = NULL;
 }
 
 
-DECLARE_EXPORT void SerializerXML::escape(const string& x)
+DECLARE_EXPORT void XMLSerializer::escape(const string& x)
 {
   for (const char* p = x.c_str(); *p; ++p)
   {
@@ -600,7 +540,7 @@ DECLARE_EXPORT void SerializerXML::escape(const string& x)
 }
 
 
-DECLARE_EXPORT void SerializerXML::incIndent()
+DECLARE_EXPORT void XMLSerializer::incIndent()
 {
   indentstring[m_nIndent++] = '\t';
   if (m_nIndent > 40) m_nIndent = 40;
@@ -608,7 +548,7 @@ DECLARE_EXPORT void SerializerXML::incIndent()
 }
 
 
-DECLARE_EXPORT void SerializerXML::decIndent()
+DECLARE_EXPORT void XMLSerializer::decIndent()
 {
   if (--m_nIndent < 0) m_nIndent = 0;
   indentstring[m_nIndent] = '\0';
@@ -644,7 +584,7 @@ DECLARE_EXPORT void Serializer::writeElement
 }
 
 
-DECLARE_EXPORT void SerializerXML::writeElementWithHeader(const Keyword& tag, const Object* object)
+DECLARE_EXPORT void XMLSerializer::writeElementWithHeader(const Keyword& tag, const Object* object)
 {
   // Root object can't be null...
   if (!object)
@@ -674,7 +614,7 @@ DECLARE_EXPORT void SerializerXML::writeElementWithHeader(const Keyword& tag, co
 }
 
 
-DECLARE_EXPORT void SerializerXML::writeHeader(const Keyword& t)
+DECLARE_EXPORT void XMLSerializer::writeHeader(const Keyword& t)
 {
   // Write the first line and the opening tag
   writeString(getHeaderStart());
@@ -686,7 +626,7 @@ DECLARE_EXPORT void SerializerXML::writeHeader(const Keyword& t)
 }
 
 
-DECLARE_EXPORT void SerializerXML::writeHeader(const Keyword& t, const Keyword& t1, const string& val1)
+DECLARE_EXPORT void XMLSerializer::writeHeader(const Keyword& t, const Keyword& t1, const string& val1)
 {
   // Write the first line and the opening tag
   writeString(getHeaderStart());
@@ -699,15 +639,33 @@ DECLARE_EXPORT void SerializerXML::writeHeader(const Keyword& t, const Keyword& 
 }
 
 
-DECLARE_EXPORT const XMLElement* XMLAttributeList::get(const Keyword& key) const
+DECLARE_EXPORT const XMLData* XMLDataValueDict::get(const Keyword& key) const
 {
-  char* s = in->transcodeUTF8(atts->getValue(key.getXMLCharacters()));
-  const_cast<XMLAttributeList*>(this)->result.setData(s ? s : "");
-  return &result;
+  for (int i = start; i <= end; ++i)
+    if (fields[i].hash == key.getHash())
+      return &fields[i].value;
+  return NULL;
 }
 
 
-DECLARE_EXPORT bool XMLElement::getBool() const
+void XMLDataValueDict::print()
+{
+  for (int i = start; i <= end; ++i)
+  {
+    if (fields[i].field)
+      logger << "   " << fields[i].field->getName().getName() << ": ";
+    else
+      logger << "   null: ";
+    Object *obj = static_cast<Object*>(fields[i].value.getObject());
+    if (obj)
+      logger << "pointer to " << obj->getType().type << endl;
+    else
+      logger << fields[i].value.getString() << endl;
+  }
+}
+
+
+DECLARE_EXPORT bool XMLData::getBool() const
 {
   switch (getData()[0])
   {

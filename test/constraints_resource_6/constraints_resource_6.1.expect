@@ -17,17 +17,24 @@
   </description>
 	<current>2014-01-01T00:00:00</current>
 	<locations>
-		<location name="3. factory">
+		<location>
+			<name>3. factory</name>
 			<source>The Matrix</source>
-			<available name="3. Working hours"/>
+			<available>
+				<name>3. Working hours</name>
+			</available>
 		</location>
-		<location name="4. factory">
+		<location>
+			<name>4. factory</name>
 			<source>The Matrix</source>
-			<available name="4. Working hours"/>
+			<available>
+				<name>4. Working hours</name>
+			</available>
 		</location>
 	</locations>
 	<calendars>
-		<calendar name="3. Working hours">
+		<calendar>
+			<name>3. Working hours</name>
 			<source>The Matrix</source>
 			<buckets>
 				<bucket id="1" start="2000-12-01T00:00:00" end="2020-06-30T00:00:00">
@@ -36,7 +43,8 @@
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="4. Working hours">
+		<calendar>
+			<name>4. Working hours</name>
 			<source>The Matrix</source>
 			<buckets>
 				<bucket id="3" start="2000-12-01T00:00:00" end="2020-06-30T00:00:00">
@@ -52,7 +60,8 @@
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="Capacity">
+		<calendar>
+			<name>Capacity</name>
 			<source>The Matrix</source>
 			<buckets>
 				<bucket id="1" start="2013-12-01T00:00:00" end="2014-06-30T00:00:00">
@@ -63,541 +72,809 @@
 		</calendar>
 	</calendars>
 	<operations>
-		<operation name="1. delivery end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>1. delivery end item</name>
 			<source>The Matrix</source>
 		</operation>
-		<operation name="1. make end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>1. make end item</name>
 			<source>The Matrix</source>
 			<size_multiple>1</size_multiple>
 			<duration>P7D</duration>
 		</operation>
-		<operation name="2. delivery end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>2. delivery end item</name>
 			<source>The Matrix</source>
 		</operation>
-		<operation name="2. make end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>2. make end item</name>
 			<source>The Matrix</source>
 			<size_multiple>1</size_multiple>
 			<duration>P7D</duration>
 		</operation>
-		<operation name="3. delivery end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>3. delivery end item</name>
 			<source>The Matrix</source>
-			<location name="3. factory"/>
+			<location>
+				<name>3. factory</name>
+			</location>
 		</operation>
-		<operation name="3. make end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>3. make end item</name>
 			<source>The Matrix</source>
 			<size_multiple>1</size_multiple>
-			<location name="3. factory"/>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<duration>P3D</duration>
 		</operation>
-		<operation name="4. delivery end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>4. delivery end item</name>
 			<source>The Matrix</source>
-			<location name="4. factory"/>
+			<location>
+				<name>4. factory</name>
+			</location>
 		</operation>
-		<operation name="4. make end item" xsi:type="operation_fixed_time">
+		<operation>
+			<name>4. make end item</name>
 			<source>The Matrix</source>
 			<size_multiple>1</size_multiple>
-			<location name="4. factory"/>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<duration>P3D</duration>
 		</operation>
 	</operations>
 	<items>
-		<item name="1. end item">
+		<item>
+			<name>1. end item</name>
 			<source>The Matrix</source>
-			<operation name="1. delivery end item" xsi:type="operation_fixed_time"/>
+			<operation>
+				<name>1. delivery end item</name>
+			</operation>
 		</item>
-		<item name="2. end item">
+		<item>
+			<name>2. end item</name>
 			<source>The Matrix</source>
-			<operation name="2. delivery end item" xsi:type="operation_fixed_time"/>
+			<operation>
+				<name>2. delivery end item</name>
+			</operation>
 		</item>
-		<item name="3. end item">
+		<item>
+			<name>3. end item</name>
 			<source>The Matrix</source>
-			<operation name="3. delivery end item" xsi:type="operation_fixed_time"/>
+			<operation>
+				<name>3. delivery end item</name>
+			</operation>
 		</item>
-		<item name="4. end item">
+		<item>
+			<name>4. end item</name>
 			<source>The Matrix</source>
-			<operation name="4. delivery end item" xsi:type="operation_fixed_time"/>
+			<operation>
+				<name>4. delivery end item</name>
+			</operation>
 		</item>
 	</items>
 	<buffers>
-		<buffer name="1. end item">
+		<buffer>
+			<name>1. end item</name>
 			<source>The Matrix</source>
-			<producing name="1. make end item" xsi:type="operation_fixed_time"/>
-			<item name="1. end item"/>
+			<producing>
+				<name>1. make end item</name>
+			</producing>
+			<item>
+				<name>1. end item</name>
+			</item>
 		</buffer>
-		<buffer name="2. end item">
+		<buffer>
+			<name>2. end item</name>
 			<source>The Matrix</source>
-			<producing name="2. make end item" xsi:type="operation_fixed_time"/>
-			<item name="2. end item"/>
+			<producing>
+				<name>2. make end item</name>
+			</producing>
+			<item>
+				<name>2. end item</name>
+			</item>
 		</buffer>
-		<buffer name="3. end item">
+		<buffer>
+			<name>3. end item</name>
 			<source>The Matrix</source>
-			<producing name="3. make end item" xsi:type="operation_fixed_time"/>
-			<item name="3. end item"/>
+			<producing>
+				<name>3. make end item</name>
+			</producing>
+			<item>
+				<name>3. end item</name>
+			</item>
 		</buffer>
-		<buffer name="4. end item">
+		<buffer>
+			<name>4. end item</name>
 			<source>The Matrix</source>
-			<producing name="4. make end item" xsi:type="operation_fixed_time"/>
-			<item name="4. end item"/>
+			<producing>
+				<name>4. make end item</name>
+			</producing>
+			<item>
+				<name>4. end item</name>
+			</item>
 		</buffer>
 	</buffers>
 	<demands>
-		<demand name="1. order">
+		<demand>
+			<name>1. order</name>
 			<source>The Matrix</source>
 			<quantity>120</quantity>
-			<item name="1. end item"/>
+			<item>
+				<name>1. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="2. order 01">
+		<demand>
+			<name>2. order 01</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 02">
+		<demand>
+			<name>2. order 02</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 03">
+		<demand>
+			<name>2. order 03</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 04">
+		<demand>
+			<name>2. order 04</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 05">
+		<demand>
+			<name>2. order 05</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 06">
+		<demand>
+			<name>2. order 06</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 07">
+		<demand>
+			<name>2. order 07</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 08">
+		<demand>
+			<name>2. order 08</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 09">
+		<demand>
+			<name>2. order 09</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 10">
+		<demand>
+			<name>2. order 10</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 11">
+		<demand>
+			<name>2. order 11</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 12">
+		<demand>
+			<name>2. order 12</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 13">
+		<demand>
+			<name>2. order 13</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 14">
+		<demand>
+			<name>2. order 14</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 15">
+		<demand>
+			<name>2. order 15</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 16">
+		<demand>
+			<name>2. order 16</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="2. order 17">
+		<demand>
+			<name>2. order 17</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="2. end item"/>
+			<item>
+				<name>2. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
-		<demand name="3. order 01">
+		<demand>
+			<name>3. order 01</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 02">
+		<demand>
+			<name>3. order 02</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 03">
+		<demand>
+			<name>3. order 03</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 04">
+		<demand>
+			<name>3. order 04</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 05">
+		<demand>
+			<name>3. order 05</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 06">
+		<demand>
+			<name>3. order 06</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 07">
+		<demand>
+			<name>3. order 07</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 08">
+		<demand>
+			<name>3. order 08</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 09">
+		<demand>
+			<name>3. order 09</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 10">
+		<demand>
+			<name>3. order 10</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 11">
+		<demand>
+			<name>3. order 11</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 12">
+		<demand>
+			<name>3. order 12</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 13">
+		<demand>
+			<name>3. order 13</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 14">
+		<demand>
+			<name>3. order 14</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 15">
+		<demand>
+			<name>3. order 15</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 16">
+		<demand>
+			<name>3. order 16</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="3. order 17">
+		<demand>
+			<name>3. order 17</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="3. end item"/>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
-		<demand name="4. order 01">
+		<demand>
+			<name>4. order 01</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 02">
+		<demand>
+			<name>4. order 02</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 03">
+		<demand>
+			<name>4. order 03</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 04">
+		<demand>
+			<name>4. order 04</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 05">
+		<demand>
+			<name>4. order 05</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 06">
+		<demand>
+			<name>4. order 06</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 07">
+		<demand>
+			<name>4. order 07</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 08">
+		<demand>
+			<name>4. order 08</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 09">
+		<demand>
+			<name>4. order 09</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 10">
+		<demand>
+			<name>4. order 10</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 11">
+		<demand>
+			<name>4. order 11</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 12">
+		<demand>
+			<name>4. order 12</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 13">
+		<demand>
+			<name>4. order 13</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 14">
+		<demand>
+			<name>4. order 14</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 15">
+		<demand>
+			<name>4. order 15</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 16">
+		<demand>
+			<name>4. order 16</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
-		<demand name="4. order 17">
+		<demand>
+			<name>4. order 17</name>
 			<source>The Matrix</source>
 			<quantity>7</quantity>
-			<item name="4. end item"/>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
 	</demands>
 	<resources>
-		<resource name="1. Resource" xsi:type="resource_buckets">
+		<resource xsi:type="resource_buckets">
+			<name>1. Resource</name>
 			<source>The Matrix</source>
-			<maximum_calendar name="Capacity"/>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
 			<maxearly>P28D</maxearly>
 		</resource>
-		<resource name="2. Resource" xsi:type="resource_buckets">
+		<resource xsi:type="resource_buckets">
+			<name>2. Resource</name>
 			<source>The Matrix</source>
-			<maximum_calendar name="Capacity"/>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
 			<maxearly>P28D</maxearly>
 		</resource>
-		<resource name="3. Resource" xsi:type="resource_buckets">
+		<resource xsi:type="resource_buckets">
+			<name>3. Resource</name>
 			<source>The Matrix</source>
-			<maximum_calendar name="Capacity"/>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
 			<maxearly>P28D</maxearly>
-			<location name="3. factory"/>
+			<location>
+				<name>3. factory</name>
+			</location>
 		</resource>
-		<resource name="4. Resource" xsi:type="resource_buckets">
+		<resource xsi:type="resource_buckets">
+			<name>4. Resource</name>
 			<source>The Matrix</source>
-			<maximum_calendar name="Capacity"/>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
 			<maxearly>P28D</maxearly>
-			<location name="4. factory"/>
+			<location>
+				<name>4. factory</name>
+			</location>
 		</resource>
 	</resources>
 	<loads>
 		<load>
-			<operation name="1. make end item" xsi:type="operation_fixed_time"/>
-			<resource name="1. Resource" xsi:type="resource_buckets"/>
+			<operation>
+				<name>1. make end item</name>
+			</operation>
+			<resource xsi:type="resource_buckets">
+				<name>1. Resource</name>
+			</resource>
 			<source>The Matrix</source>
 		</load>
 		<load>
-			<operation name="2. make end item" xsi:type="operation_fixed_time"/>
-			<resource name="2. Resource" xsi:type="resource_buckets"/>
+			<operation>
+				<name>2. make end item</name>
+			</operation>
+			<resource xsi:type="resource_buckets">
+				<name>2. Resource</name>
+			</resource>
 			<source>The Matrix</source>
 		</load>
 		<load>
-			<operation name="3. make end item" xsi:type="operation_fixed_time"/>
-			<resource name="3. Resource" xsi:type="resource_buckets"/>
+			<operation>
+				<name>3. make end item</name>
+			</operation>
+			<resource xsi:type="resource_buckets">
+				<name>3. Resource</name>
+			</resource>
 			<source>The Matrix</source>
 		</load>
 		<load>
-			<operation name="4. make end item" xsi:type="operation_fixed_time"/>
-			<resource name="4. Resource" xsi:type="resource_buckets"/>
+			<operation>
+				<name>4. make end item</name>
+			</operation>
+			<resource xsi:type="resource_buckets">
+				<name>4. Resource</name>
+			</resource>
 			<source>The Matrix</source>
 		</load>
 	</loads>
 	<flows>
-		<flow xsi:type="flow_start">
-			<operation name="1. delivery end item" xsi:type="operation_fixed_time"/>
-			<buffer name="1. end item"/>
+		<flow>
+			<operation>
+				<name>1. delivery end item</name>
+			</operation>
+			<buffer>
+				<name>1. end item</name>
+			</buffer>
 			<quantity>-1</quantity>
 			<source>The Matrix</source>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="1. make end item" xsi:type="operation_fixed_time"/>
-			<buffer name="1. end item"/>
+			<operation>
+				<name>1. make end item</name>
+			</operation>
+			<buffer>
+				<name>1. end item</name>
+			</buffer>
 			<quantity>1</quantity>
 			<source>The Matrix</source>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="2. delivery end item" xsi:type="operation_fixed_time"/>
-			<buffer name="2. end item"/>
+		<flow>
+			<operation>
+				<name>2. delivery end item</name>
+			</operation>
+			<buffer>
+				<name>2. end item</name>
+			</buffer>
 			<quantity>-1</quantity>
 			<source>The Matrix</source>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="2. make end item" xsi:type="operation_fixed_time"/>
-			<buffer name="2. end item"/>
+			<operation>
+				<name>2. make end item</name>
+			</operation>
+			<buffer>
+				<name>2. end item</name>
+			</buffer>
 			<quantity>1</quantity>
 			<source>The Matrix</source>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="3. delivery end item" xsi:type="operation_fixed_time"/>
-			<buffer name="3. end item"/>
+		<flow>
+			<operation>
+				<name>3. delivery end item</name>
+			</operation>
+			<buffer>
+				<name>3. end item</name>
+			</buffer>
 			<quantity>-1</quantity>
 			<source>The Matrix</source>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="3. make end item" xsi:type="operation_fixed_time"/>
-			<buffer name="3. end item"/>
+			<operation>
+				<name>3. make end item</name>
+			</operation>
+			<buffer>
+				<name>3. end item</name>
+			</buffer>
 			<quantity>1</quantity>
 			<source>The Matrix</source>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="4. delivery end item" xsi:type="operation_fixed_time"/>
-			<buffer name="4. end item"/>
+		<flow>
+			<operation>
+				<name>4. delivery end item</name>
+			</operation>
+			<buffer>
+				<name>4. end item</name>
+			</buffer>
 			<quantity>-1</quantity>
 			<source>The Matrix</source>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="4. make end item" xsi:type="operation_fixed_time"/>
-			<buffer name="4. end item"/>
+			<operation>
+				<name>4. make end item</name>
+			</operation>
+			<buffer>
+				<name>4. end item</name>
+			</buffer>
 			<quantity>1</quantity>
 			<source>The Matrix</source>
 		</flow>

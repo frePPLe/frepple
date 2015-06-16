@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -32,10 +32,11 @@ DECLARE_EXPORT const MetaCategory* Plan::metadata;
 int Plan::initialize()
 {
   // Initialize the plan metadata.
-  metadata = new MetaCategory("plan","");
+  metadata = MetaCategory::registerCategory<Plan>("plan","");
+  registerFields(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python type
-  PythonType& x = PythonExtension<Plan>::getType();
+  PythonType& x = PythonExtension<Plan>::getPythonType();
   x.setName("parameters");
   x.setDoc("frePPLe global settings");
   x.supportgetattro();
@@ -77,89 +78,33 @@ DECLARE_EXPORT void Plan::setCurrent (Date l)
 }
 
 
-DECLARE_EXPORT void Plan::writeElement (Serializer* o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Plan::writeElement(Serializer *o, const Keyword& tag, mode m) const
 {
-  // No references
-  assert(m != REFERENCE);
+  const MetaClass& meta = getType();
 
   // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL) o->BeginObject(tag);
+  if (m != NOHEAD && m != NOHEADTAIL)
+  {
+    if (meta.isDefault)
+      o->BeginObject(tag);
+    else
+      o->BeginObject(tag, Tags::tag_type, getType().type);
+  }
 
-  // Write all own fields
-  o->writeElement(Tags::tag_name, name);
-  o->writeElement(Tags::tag_description, descr);
-  o->writeElement(Tags::tag_current, cur_Date);
-  Plannable::writeElement(o, tag);
+  // Write my own fields
+  if (meta.category)
+    for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
+      (*i)->writeField(*o);
+  for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
+    (*i)->writeField(*o);
+  PythonDictionary::write(o, getDict());
 
-  // Persist all categories
+  // Write all categories
   MetaCategory::persist(o);
 
   // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL) o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void Plan::endElement(DataInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_current))
-    setCurrent(pElement.getDate());
-  else if (pAttr.isA(Tags::tag_source))
-    pIn.setSource(pElement.getString());
-  else if (pAttr.isA(Tags::tag_description))
-    pElement >> descr;
-  else if (pAttr.isA(Tags::tag_name))
-    pElement >> name;
-  else if (pAttr.isA(Tags::tag_logfile))
-    Environment::setLogFile(pElement.getString());
-  else
-    Plannable::endElement(pIn, pAttr, pElement);
-}
-
-
-DECLARE_EXPORT void Plan::beginElement(DataInput& pIn, const Attribute& pAttr)
-{
-  const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().getHash());
-  if (cat)
-  {
-    if (cat->readFunction)
-      // Hand over control to a registered read controller
-      pIn.readto(cat->readFunction(cat,pIn.getAttributes()));
-    else
-      // There is no controller available.
-      // This piece of code will be used to skip pieces of the XML file that
-      // frePPLe doesn't need to be understand.
-      pIn.IgnoreElement();
-  }
-}
-
-
-DECLARE_EXPORT PyObject* Plan::getattro(const Attribute& attr)
-{
-  if (attr.isA(Tags::tag_name))
-    return PythonObject(Plan::instance().getName());
-  if (attr.isA(Tags::tag_description))
-    return PythonObject(Plan::instance().getDescription());
-  if (attr.isA(Tags::tag_current))
-    return PythonObject(Plan::instance().getCurrent());
-  if (attr.isA(Tags::tag_logfile))
-    return PythonObject(Environment::getLogFile());
-  return NULL;
-}
-
-
-DECLARE_EXPORT int Plan::setattro(const Attribute& attr, const PythonObject& field)
-{
-  if (attr.isA(Tags::tag_name))
-    Plan::instance().setName(field.getString());
-  else if (attr.isA(Tags::tag_description))
-    Plan::instance().setDescription(field.getString());
-  else if (attr.isA(Tags::tag_current))
-    Plan::instance().setCurrent(field.getDate());
-  else if (attr.isA(Tags::tag_logfile))
-    Environment::setLogFile(field.getString());
-  else
-    return -1; // Error
-  return 0;  // OK
+  if (m != NOHEADTAIL && m != NOTAIL)
+    o->EndObject(tag);
 }
 
 }

@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2007-2013 by Johan De Taeye, frePPLe bvba                 *
+ * Copyright (C) 2007-2015 by Johan De Taeye, frePPLe bvba                 *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -31,7 +31,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Call the user exit
-  if (userexit_resource) userexit_resource.call(res, PythonObject(data->constrainedPlanning));
+  if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -91,9 +91,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       prevdate = data->state->q_operationplan->getDates().getEnd();
       noRestore = data->state->forceLate;
 
-      if (isLeadtimeConstrained() || isFenceConstrained())
+      if (isLeadTimeConstrained() || isFenceConstrained())
         // Note that the check function can update the answered date and quantity
-         if (data->constrainedPlanning && !checkOperationLeadtime(data->state->q_operationplan,*data,false))
+         if (data->constrainedPlanning && !checkOperationLeadTime(data->state->q_operationplan,*data,false))
          {
            // Operationplan violates the lead time and/or fence constraint
            noRestore = true;
@@ -279,11 +279,11 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
             // If there isn't available time in the location calendar, the move
             // can fail.
             data->state->a_qty = 0.0;
-          else if (data->constrainedPlanning && (isLeadtimeConstrained() || isFenceConstrained()))
+          else if (data->constrainedPlanning && (isLeadTimeConstrained() || isFenceConstrained()))
             // Check the leadtime constraints after the move
             // Note that the check function can update the answered date
             // and quantity
-            checkOperationLeadtime(data->state->q_operationplan,*data,false);
+            checkOperationLeadTime(data->state->q_operationplan,*data,false);
         }
         else
           // No earlier capacity found: get out of the loop
@@ -475,7 +475,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Call the user exit
-  if (userexit_resource) userexit_resource.call(res, PythonObject(data->constrainedPlanning));
+  if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
@@ -503,7 +503,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Call the user exit
-  if (userexit_resource) userexit_resource.call(res, PythonObject(data->constrainedPlanning));
+  if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
@@ -541,9 +541,9 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
       prevdate = data->state->q_operationplan->getDates().getEnd();
       noRestore = data->state->forceLate;
 
-      if (isLeadtimeConstrained() || isFenceConstrained())
+      if (isLeadTimeConstrained() || isFenceConstrained())
         // Note that the check function can update the answered date and quantity
-         if (data->constrainedPlanning && !checkOperationLeadtime(data->state->q_operationplan,*data,false))
+         if (data->constrainedPlanning && !checkOperationLeadTime(data->state->q_operationplan,*data,false))
          {
            // Operationplan violates the lead time and/or fence constraint
            noRestore = true;
@@ -655,11 +655,11 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
             // Not sure if there are cases where this will fail, but just
             // in case...
             data->state->a_qty = 0.0;
-          else if (data->constrainedPlanning && (isLeadtimeConstrained() || isFenceConstrained()))
+          else if (data->constrainedPlanning && (isLeadTimeConstrained() || isFenceConstrained()))
             // Check the leadtime constraints after the move
             // Note that the check function can update the answered date
             // and quantity
-            checkOperationLeadtime(data->state->q_operationplan,*data,false);
+            checkOperationLeadTime(data->state->q_operationplan,*data,false);
         }
         else
           // No earlier capacity found: get out of the loop

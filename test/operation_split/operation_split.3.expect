@@ -21,52 +21,68 @@
   </description>
 	<current>2014-01-01T00:00:00</current>
 	<operations>
-		<operation name="buy component 1 for option A" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 1 for option A</name>
 			<duration>P7D</duration>
 		</operation>
-		<operation name="buy component 1 for option B" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 1 for option B</name>
 			<duration>P2D</duration>
 		</operation>
-		<operation name="buy component 1 for option C" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 1 for option C</name>
 			<duration>P1D</duration>
 		</operation>
-		<operation name="buy component 2 for option A" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 2 for option A</name>
 			<duration>P7D</duration>
 		</operation>
-		<operation name="buy component 2 for option B" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 2 for option B</name>
 			<duration>P2D</duration>
 		</operation>
-		<operation name="buy component 2 for option C" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 2 for option C</name>
 			<duration>P1D</duration>
 		</operation>
-		<operation name="buy component 3 for option A" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 3 for option A</name>
 			<duration>P7D</duration>
 		</operation>
-		<operation name="buy component 3 for option B" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 3 for option B</name>
 			<duration>P2D</duration>
 		</operation>
-		<operation name="buy component 3 for option C" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 3 for option C</name>
 			<duration>P1D</duration>
 		</operation>
-		<operation name="buy component 4 for option A" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 4 for option A</name>
 			<duration>P7D</duration>
 		</operation>
-		<operation name="buy component 4 for option B" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 4 for option B</name>
 			<duration>P2D</duration>
 		</operation>
-		<operation name="buy component 4 for option C" xsi:type="operation_fixed_time">
+		<operation>
+			<name>buy component 4 for option C</name>
 			<duration>P1D</duration>
 		</operation>
-		<operation name="delivery 1" xsi:type="operation_fixed_time">
+		<operation>
+			<name>delivery 1</name>
 			<duration>P1D</duration>
 		</operation>
-		<operation name="delivery 2" xsi:type="operation_fixed_time">
+		<operation>
+			<name>delivery 2</name>
 			<duration>P1D</duration>
 		</operation>
-		<operation name="delivery 3" xsi:type="operation_fixed_time">
+		<operation>
+			<name>delivery 3</name>
 			<duration>P1D</duration>
 		</operation>
-		<operation name="delivery 4" xsi:type="operation_fixed_time">
+		<operation>
+			<name>delivery 4</name>
 			<duration>P1D</duration>
 		</operation>
 		<operation name="make item 1" xsi:type="operation_split">
@@ -85,15 +101,18 @@
 				</alternate>
 			</alternates>
 		</operation>
-		<operation name="make item 1 option A" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 1 option A</name>
 			<size_minimum>0</size_minimum>
 			<duration>P3D</duration>
 		</operation>
-		<operation name="make item 1 option B" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 1 option B</name>
 			<size_minimum>0</size_minimum>
 			<duration>P5D</duration>
 		</operation>
-		<operation name="make item 1 option C" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 1 option C</name>
 			<size_minimum>0</size_minimum>
 			<duration>P10D</duration>
 		</operation>
@@ -113,15 +132,18 @@
 				</alternate>
 			</alternates>
 		</operation>
-		<operation name="make item 2 option A" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 2 option A</name>
 			<size_minimum>0</size_minimum>
 			<duration>P3D</duration>
 		</operation>
-		<operation name="make item 2 option B" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 2 option B</name>
 			<size_minimum>0</size_minimum>
 			<duration>P5D</duration>
 		</operation>
-		<operation name="make item 2 option C" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 2 option C</name>
 			<size_minimum>0</size_minimum>
 			<duration>P10D</duration>
 		</operation>
@@ -166,15 +188,18 @@
 				</alternate>
 			</alternates>
 		</operation>
-		<operation name="make item 3 option A" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 3 option A</name>
 			<size_minimum>0</size_minimum>
 			<duration>P3D</duration>
 		</operation>
-		<operation name="make item 3 option B" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 3 option B</name>
 			<size_minimum>0</size_minimum>
 			<duration>P5D</duration>
 		</operation>
-		<operation name="make item 3 option C" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 3 option C</name>
 			<size_minimum>0</size_minimum>
 			<duration>P10D</duration>
 		</operation>
@@ -194,757 +219,1308 @@
 				</alternate>
 			</alternates>
 		</operation>
-		<operation name="make item 4 option A" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 4 option A</name>
 			<size_multiple>10</size_multiple>
 			<duration>P3D</duration>
 		</operation>
-		<operation name="make item 4 option B" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 4 option B</name>
 			<size_multiple>10</size_multiple>
 			<duration>P5D</duration>
 		</operation>
-		<operation name="make item 4 option C" xsi:type="operation_fixed_time">
+		<operation>
+			<name>make item 4 option C</name>
 			<size_multiple>10</size_multiple>
 			<duration>P10D</duration>
 		</operation>
 	</operations>
 	<items>
-		<item name="item 1">
-			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
+		<item>
+			<name>item 1</name>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 		</item>
-		<item name="item 2">
-			<operation name="delivery 2" xsi:type="operation_fixed_time"/>
+		<item>
+			<name>item 2</name>
+			<operation>
+				<name>delivery 2</name>
+			</operation>
 		</item>
-		<item name="item 3">
-			<operation name="delivery 3" xsi:type="operation_fixed_time"/>
+		<item>
+			<name>item 3</name>
+			<operation>
+				<name>delivery 3</name>
+			</operation>
 		</item>
-		<item name="item 4">
-			<operation name="delivery 4" xsi:type="operation_fixed_time"/>
+		<item>
+			<name>item 4</name>
+			<operation>
+				<name>delivery 4</name>
+			</operation>
 		</item>
 	</items>
 	<buffers>
-		<buffer name="component 1 for option A">
-			<producing name="buy component 1 for option A" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+		<buffer>
+			<name>component 1 for option A</name>
+			<producing>
+				<name>buy component 1 for option A</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
 		</buffer>
-		<buffer name="component 1 for option B">
-			<producing name="buy component 1 for option B" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+		<buffer>
+			<name>component 1 for option B</name>
+			<producing>
+				<name>buy component 1 for option B</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
 		</buffer>
-		<buffer name="component 1 for option C">
-			<producing name="buy component 1 for option C" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+		<buffer>
+			<name>component 1 for option C</name>
+			<producing>
+				<name>buy component 1 for option C</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
 		</buffer>
-		<buffer name="component 2 for option A">
-			<producing name="buy component 2 for option A" xsi:type="operation_fixed_time"/>
-			<item name="item 2"/>
+		<buffer>
+			<name>component 2 for option A</name>
+			<producing>
+				<name>buy component 2 for option A</name>
+			</producing>
+			<item>
+				<name>item 2</name>
+			</item>
 		</buffer>
-		<buffer name="component 2 for option B">
-			<producing name="buy component 2 for option B" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+		<buffer>
+			<name>component 2 for option B</name>
+			<producing>
+				<name>buy component 2 for option B</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
 		</buffer>
-		<buffer name="component 2 for option C">
-			<producing name="buy component 2 for option C" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+		<buffer>
+			<name>component 2 for option C</name>
+			<producing>
+				<name>buy component 2 for option C</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
 		</buffer>
-		<buffer name="component 3 for option A">
-			<producing name="buy component 3 for option A" xsi:type="operation_fixed_time"/>
-			<item name="item 3"/>
+		<buffer>
+			<name>component 3 for option A</name>
+			<producing>
+				<name>buy component 3 for option A</name>
+			</producing>
+			<item>
+				<name>item 3</name>
+			</item>
 		</buffer>
-		<buffer name="component 3 for option B">
-			<producing name="buy component 3 for option B" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+		<buffer>
+			<name>component 3 for option B</name>
+			<producing>
+				<name>buy component 3 for option B</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
 		</buffer>
-		<buffer name="component 3 for option C">
-			<producing name="buy component 3 for option C" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+		<buffer>
+			<name>component 3 for option C</name>
+			<producing>
+				<name>buy component 3 for option C</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
 		</buffer>
-		<buffer name="component 4 for option A">
-			<producing name="buy component 4 for option A" xsi:type="operation_fixed_time"/>
-			<item name="item 4"/>
+		<buffer>
+			<name>component 4 for option A</name>
+			<producing>
+				<name>buy component 4 for option A</name>
+			</producing>
+			<item>
+				<name>item 4</name>
+			</item>
 		</buffer>
-		<buffer name="component 4 for option B">
-			<producing name="buy component 4 for option B" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+		<buffer>
+			<name>component 4 for option B</name>
+			<producing>
+				<name>buy component 4 for option B</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
 		</buffer>
-		<buffer name="component 4 for option C">
-			<producing name="buy component 4 for option C" xsi:type="operation_fixed_time"/>
-			<item name="item 1"/>
+		<buffer>
+			<name>component 4 for option C</name>
+			<producing>
+				<name>buy component 4 for option C</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
 		</buffer>
-		<buffer name="item 1">
-			<producing name="make item 1" xsi:type="operation_split"/>
+		<buffer>
+			<name>item 1</name>
+			<producing xsi:type="operation_split">
+				<name>make item 1</name>
+			</producing>
 		</buffer>
-		<buffer name="item 2">
-			<producing name="make item 2" xsi:type="operation_split"/>
+		<buffer>
+			<name>item 2</name>
+			<producing xsi:type="operation_split">
+				<name>make item 2</name>
+			</producing>
 		</buffer>
-		<buffer name="item 3">
-			<producing name="make item 3" xsi:type="operation_split"/>
+		<buffer>
+			<name>item 3</name>
+			<producing xsi:type="operation_split">
+				<name>make item 3</name>
+			</producing>
 		</buffer>
-		<buffer name="item 4">
-			<producing name="make item 4" xsi:type="operation_split"/>
+		<buffer>
+			<name>item 4</name>
+			<producing xsi:type="operation_split">
+				<name>make item 4</name>
+			</producing>
 		</buffer>
 	</buffers>
 	<demands>
-		<demand name="order 1 for item 1">
+		<demand>
+			<name>order 1 for item 1</name>
 			<quantity>100</quantity>
-			<item name="item 1"/>
+			<item>
+				<name>item 1</name>
+			</item>
 			<due>2014-01-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 1 for item 2">
+		<demand>
+			<name>order 1 for item 2</name>
 			<quantity>200</quantity>
-			<item name="item 2"/>
+			<item>
+				<name>item 2</name>
+			</item>
 			<due>2014-01-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 1 for item 3">
+		<demand>
+			<name>order 1 for item 3</name>
 			<quantity>100</quantity>
-			<item name="item 3"/>
+			<item>
+				<name>item 3</name>
+			</item>
 			<due>2014-07-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 1 for item 4">
+		<demand>
+			<name>order 1 for item 4</name>
 			<quantity>200</quantity>
-			<item name="item 4"/>
+			<item>
+				<name>item 4</name>
+			</item>
 			<due>2014-01-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 2 for item 3">
+		<demand>
+			<name>order 2 for item 3</name>
 			<quantity>100</quantity>
-			<item name="item 3"/>
+			<item>
+				<name>item 3</name>
+			</item>
 			<due>2014-08-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 3 for item 3">
+		<demand>
+			<name>order 3 for item 3</name>
 			<quantity>100</quantity>
-			<item name="item 3"/>
+			<item>
+				<name>item 3</name>
+			</item>
 			<due>2014-09-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 4 for item 3">
+		<demand>
+			<name>order 4 for item 3</name>
 			<quantity>100</quantity>
-			<item name="item 3"/>
+			<item>
+				<name>item 3</name>
+			</item>
 			<due>2014-10-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 5 for item 3">
+		<demand>
+			<name>order 5 for item 3</name>
 			<quantity>100</quantity>
-			<item name="item 3"/>
+			<item>
+				<name>item 3</name>
+			</item>
 			<due>2014-11-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 	</demands>
 	<resources>
-		<resource name="Resource 1 A+B">
+		<resource>
+			<name>Resource 1 A+B</name>
 		</resource>
-		<resource name="Resource 1 C">
+		<resource>
+			<name>Resource 1 C</name>
 		</resource>
-		<resource name="Resource 2 A+B">
+		<resource>
+			<name>Resource 2 A+B</name>
 		</resource>
-		<resource name="Resource 2 C">
+		<resource>
+			<name>Resource 2 C</name>
 		</resource>
-		<resource name="Resource 3 A+B">
+		<resource>
+			<name>Resource 3 A+B</name>
 		</resource>
-		<resource name="Resource 3 C">
+		<resource>
+			<name>Resource 3 C</name>
 		</resource>
-		<resource name="Resource 4 A+B">
+		<resource>
+			<name>Resource 4 A+B</name>
 		</resource>
-		<resource name="Resource 4 C">
+		<resource>
+			<name>Resource 4 C</name>
 		</resource>
 	</resources>
 	<loads>
 		<load>
-			<operation name="make item 1 option A" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 1 A+B"/>
+			<operation>
+				<name>make item 1 option A</name>
+			</operation>
+			<resource>
+				<name>Resource 1 A+B</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 1 option B" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 1 A+B"/>
+			<operation>
+				<name>make item 1 option B</name>
+			</operation>
+			<resource>
+				<name>Resource 1 A+B</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 1 option C" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 1 C"/>
+			<operation>
+				<name>make item 1 option C</name>
+			</operation>
+			<resource>
+				<name>Resource 1 C</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 2 option A" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 2 A+B"/>
+			<operation>
+				<name>make item 2 option A</name>
+			</operation>
+			<resource>
+				<name>Resource 2 A+B</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 2 option B" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 2 A+B"/>
+			<operation>
+				<name>make item 2 option B</name>
+			</operation>
+			<resource>
+				<name>Resource 2 A+B</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 2 option C" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 2 C"/>
+			<operation>
+				<name>make item 2 option C</name>
+			</operation>
+			<resource>
+				<name>Resource 2 C</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 3 option A" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 3 A+B"/>
+			<operation>
+				<name>make item 3 option A</name>
+			</operation>
+			<resource>
+				<name>Resource 3 A+B</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 3 option B" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 3 A+B"/>
+			<operation>
+				<name>make item 3 option B</name>
+			</operation>
+			<resource>
+				<name>Resource 3 A+B</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 3 option C" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 3 C"/>
+			<operation>
+				<name>make item 3 option C</name>
+			</operation>
+			<resource>
+				<name>Resource 3 C</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 4 option A" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 4 A+B"/>
+			<operation>
+				<name>make item 4 option A</name>
+			</operation>
+			<resource>
+				<name>Resource 4 A+B</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 4 option B" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 4 A+B"/>
+			<operation>
+				<name>make item 4 option B</name>
+			</operation>
+			<resource>
+				<name>Resource 4 A+B</name>
+			</resource>
 		</load>
 		<load>
-			<operation name="make item 4 option C" xsi:type="operation_fixed_time"/>
-			<resource name="Resource 4 C"/>
+			<operation>
+				<name>make item 4 option C</name>
+			</operation>
+			<resource>
+				<name>Resource 4 C</name>
+			</resource>
 		</load>
 	</loads>
 	<flows>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 1 for option A" xsi:type="operation_fixed_time"/>
-			<buffer name="component 1 for option A"/>
+			<operation>
+				<name>buy component 1 for option A</name>
+			</operation>
+			<buffer>
+				<name>component 1 for option A</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 1 for option B" xsi:type="operation_fixed_time"/>
-			<buffer name="component 1 for option B"/>
+			<operation>
+				<name>buy component 1 for option B</name>
+			</operation>
+			<buffer>
+				<name>component 1 for option B</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 1 for option C" xsi:type="operation_fixed_time"/>
-			<buffer name="component 1 for option C"/>
+			<operation>
+				<name>buy component 1 for option C</name>
+			</operation>
+			<buffer>
+				<name>component 1 for option C</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 2 for option A" xsi:type="operation_fixed_time"/>
-			<buffer name="component 2 for option A"/>
+			<operation>
+				<name>buy component 2 for option A</name>
+			</operation>
+			<buffer>
+				<name>component 2 for option A</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 2 for option B" xsi:type="operation_fixed_time"/>
-			<buffer name="component 2 for option B"/>
+			<operation>
+				<name>buy component 2 for option B</name>
+			</operation>
+			<buffer>
+				<name>component 2 for option B</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 2 for option C" xsi:type="operation_fixed_time"/>
-			<buffer name="component 2 for option C"/>
+			<operation>
+				<name>buy component 2 for option C</name>
+			</operation>
+			<buffer>
+				<name>component 2 for option C</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 3 for option A" xsi:type="operation_fixed_time"/>
-			<buffer name="component 3 for option A"/>
+			<operation>
+				<name>buy component 3 for option A</name>
+			</operation>
+			<buffer>
+				<name>component 3 for option A</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 3 for option B" xsi:type="operation_fixed_time"/>
-			<buffer name="component 3 for option B"/>
+			<operation>
+				<name>buy component 3 for option B</name>
+			</operation>
+			<buffer>
+				<name>component 3 for option B</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 3 for option C" xsi:type="operation_fixed_time"/>
-			<buffer name="component 3 for option C"/>
+			<operation>
+				<name>buy component 3 for option C</name>
+			</operation>
+			<buffer>
+				<name>component 3 for option C</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 4 for option A" xsi:type="operation_fixed_time"/>
-			<buffer name="component 4 for option A"/>
+			<operation>
+				<name>buy component 4 for option A</name>
+			</operation>
+			<buffer>
+				<name>component 4 for option A</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 4 for option B" xsi:type="operation_fixed_time"/>
-			<buffer name="component 4 for option B"/>
+			<operation>
+				<name>buy component 4 for option B</name>
+			</operation>
+			<buffer>
+				<name>component 4 for option B</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="buy component 4 for option C" xsi:type="operation_fixed_time"/>
-			<buffer name="component 4 for option C"/>
+			<operation>
+				<name>buy component 4 for option C</name>
+			</operation>
+			<buffer>
+				<name>component 4 for option C</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
-			<buffer name="item 1"/>
+		<flow>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<buffer>
+				<name>item 1</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="delivery 2" xsi:type="operation_fixed_time"/>
-			<buffer name="item 2"/>
+		<flow>
+			<operation>
+				<name>delivery 2</name>
+			</operation>
+			<buffer>
+				<name>item 2</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="delivery 3" xsi:type="operation_fixed_time"/>
-			<buffer name="item 3"/>
+		<flow>
+			<operation>
+				<name>delivery 3</name>
+			</operation>
+			<buffer>
+				<name>item 3</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="delivery 4" xsi:type="operation_fixed_time"/>
-			<buffer name="item 4"/>
+		<flow>
+			<operation>
+				<name>delivery 4</name>
+			</operation>
+			<buffer>
+				<name>item 4</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="make item 1 option A" xsi:type="operation_fixed_time"/>
-			<buffer name="item 1"/>
+			<operation>
+				<name>make item 1 option A</name>
+			</operation>
+			<buffer>
+				<name>item 1</name>
+			</buffer>
 			<quantity>2</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 1 option A" xsi:type="operation_fixed_time"/>
-			<buffer name="component 1 for option A"/>
+		<flow>
+			<operation>
+				<name>make item 1 option A</name>
+			</operation>
+			<buffer>
+				<name>component 1 for option A</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="make item 1 option B" xsi:type="operation_fixed_time"/>
-			<buffer name="item 1"/>
+			<operation>
+				<name>make item 1 option B</name>
+			</operation>
+			<buffer>
+				<name>item 1</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 1 option B" xsi:type="operation_fixed_time"/>
-			<buffer name="component 1 for option B"/>
+		<flow>
+			<operation>
+				<name>make item 1 option B</name>
+			</operation>
+			<buffer>
+				<name>component 1 for option B</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="make item 1 option C" xsi:type="operation_fixed_time"/>
-			<buffer name="item 1"/>
+			<operation>
+				<name>make item 1 option C</name>
+			</operation>
+			<buffer>
+				<name>item 1</name>
+			</buffer>
 			<quantity>5</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 1 option C" xsi:type="operation_fixed_time"/>
-			<buffer name="component 1 for option C"/>
+		<flow>
+			<operation>
+				<name>make item 1 option C</name>
+			</operation>
+			<buffer>
+				<name>component 1 for option C</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="make item 2" xsi:type="operation_split"/>
-			<buffer name="item 2"/>
+			<operation xsi:type="operation_split">
+				<name>make item 2</name>
+			</operation>
+			<buffer>
+				<name>item 2</name>
+			</buffer>
 			<quantity>2</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 2 option A" xsi:type="operation_fixed_time"/>
-			<buffer name="component 2 for option A"/>
+		<flow>
+			<operation>
+				<name>make item 2 option A</name>
+			</operation>
+			<buffer>
+				<name>component 2 for option A</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 2 option B" xsi:type="operation_fixed_time"/>
-			<buffer name="component 2 for option B"/>
+		<flow>
+			<operation>
+				<name>make item 2 option B</name>
+			</operation>
+			<buffer>
+				<name>component 2 for option B</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 2 option C" xsi:type="operation_fixed_time"/>
-			<buffer name="component 2 for option C"/>
+		<flow>
+			<operation>
+				<name>make item 2 option C</name>
+			</operation>
+			<buffer>
+				<name>component 2 for option C</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="make item 3" xsi:type="operation_split"/>
-			<buffer name="item 3"/>
+			<operation xsi:type="operation_split">
+				<name>make item 3</name>
+			</operation>
+			<buffer>
+				<name>item 3</name>
+			</buffer>
 			<quantity>1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 3 option A" xsi:type="operation_fixed_time"/>
-			<buffer name="component 3 for option A"/>
+		<flow>
+			<operation>
+				<name>make item 3 option A</name>
+			</operation>
+			<buffer>
+				<name>component 3 for option A</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 3 option B" xsi:type="operation_fixed_time"/>
-			<buffer name="component 3 for option B"/>
+		<flow>
+			<operation>
+				<name>make item 3 option B</name>
+			</operation>
+			<buffer>
+				<name>component 3 for option B</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 3 option C" xsi:type="operation_fixed_time"/>
-			<buffer name="component 3 for option C"/>
+		<flow>
+			<operation>
+				<name>make item 3 option C</name>
+			</operation>
+			<buffer>
+				<name>component 3 for option C</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
 		<flow xsi:type="flow_end">
-			<operation name="make item 4" xsi:type="operation_split"/>
-			<buffer name="item 4"/>
+			<operation xsi:type="operation_split">
+				<name>make item 4</name>
+			</operation>
+			<buffer>
+				<name>item 4</name>
+			</buffer>
 			<quantity>2</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 4 option A" xsi:type="operation_fixed_time"/>
-			<buffer name="component 4 for option A"/>
+		<flow>
+			<operation>
+				<name>make item 4 option A</name>
+			</operation>
+			<buffer>
+				<name>component 4 for option A</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 4 option B" xsi:type="operation_fixed_time"/>
-			<buffer name="component 4 for option B"/>
+		<flow>
+			<operation>
+				<name>make item 4 option B</name>
+			</operation>
+			<buffer>
+				<name>component 4 for option B</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 4 option C" xsi:type="operation_fixed_time"/>
-			<buffer name="component 4 for option C"/>
+		<flow>
+			<operation>
+				<name>make item 4 option C</name>
+			</operation>
+			<buffer>
+				<name>component 4 for option C</name>
+			</buffer>
 			<quantity>-1</quantity>
 		</flow>
 	</flows>
 	<operationplans>
-		<operationplan id="2" operation="buy component 1 for option A">
+		<operationplan>
+			<id>2</id>
+			<operation>
+				<name>buy component 1 for option A</name>
+			</operation>
 			<start>2013-12-16T00:00:00</start>
 			<end>2013-12-23T00:00:00</end>
 			<quantity>15</quantity>
 			<criticality>5</criticality>
 		</operationplan>
-		<operationplan id="3" operation="buy component 1 for option B">
+		<operationplan>
+			<id>3</id>
+			<operation>
+				<name>buy component 1 for option B</name>
+			</operation>
 			<start>2013-12-24T00:00:00</start>
 			<end>2013-12-26T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="4" operation="buy component 1 for option C">
+		<operationplan>
+			<id>4</id>
+			<operation>
+				<name>buy component 1 for option C</name>
+			</operation>
 			<start>2013-12-20T00:00:00</start>
 			<end>2013-12-21T00:00:00</end>
 			<quantity>7</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="5" operation="buy component 2 for option A">
+		<operationplan>
+			<id>5</id>
+			<operation>
+				<name>buy component 2 for option A</name>
+			</operation>
 			<start>2013-12-16T00:00:00</start>
 			<end>2013-12-23T00:00:00</end>
 			<quantity>30</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="6" operation="buy component 2 for option B">
+		<operationplan>
+			<id>6</id>
+			<operation>
+				<name>buy component 2 for option B</name>
+			</operation>
 			<start>2013-12-24T00:00:00</start>
 			<end>2013-12-26T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="7" operation="buy component 2 for option C">
+		<operationplan>
+			<id>7</id>
+			<operation>
+				<name>buy component 2 for option C</name>
+			</operation>
 			<start>2013-12-20T00:00:00</start>
 			<end>2013-12-21T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="8" operation="buy component 3 for option A">
+		<operationplan>
+			<id>8</id>
+			<operation>
+				<name>buy component 3 for option A</name>
+			</operation>
 			<start>2014-06-15T00:00:00</start>
 			<end>2014-06-22T00:00:00</end>
 			<quantity>30</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="9" operation="buy component 3 for option A">
+		<operationplan>
+			<id>9</id>
+			<operation>
+				<name>buy component 3 for option A</name>
+			</operation>
 			<start>2014-07-16T00:00:00</start>
 			<end>2014-07-23T00:00:00</end>
 			<quantity>30</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="10" operation="buy component 3 for option B">
+		<operationplan>
+			<id>10</id>
+			<operation>
+				<name>buy component 3 for option B</name>
+			</operation>
 			<start>2014-06-23T00:00:00</start>
 			<end>2014-06-25T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="11" operation="buy component 3 for option B">
+		<operationplan>
+			<id>11</id>
+			<operation>
+				<name>buy component 3 for option B</name>
+			</operation>
 			<start>2014-07-24T00:00:00</start>
 			<end>2014-07-26T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="12" operation="buy component 3 for option B">
+		<operationplan>
+			<id>12</id>
+			<operation>
+				<name>buy component 3 for option B</name>
+			</operation>
 			<start>2014-08-24T00:00:00</start>
 			<end>2014-08-26T00:00:00</end>
 			<quantity>50</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="13" operation="buy component 3 for option B">
+		<operationplan>
+			<id>13</id>
+			<operation>
+				<name>buy component 3 for option B</name>
+			</operation>
 			<start>2014-09-23T00:00:00</start>
 			<end>2014-09-25T00:00:00</end>
 			<quantity>25</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="14" operation="buy component 3 for option B">
+		<operationplan>
+			<id>14</id>
+			<operation>
+				<name>buy component 3 for option B</name>
+			</operation>
 			<start>2014-10-24T00:00:00</start>
 			<end>2014-10-26T00:00:00</end>
 			<quantity>20</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="15" operation="buy component 3 for option C">
+		<operationplan>
+			<id>15</id>
+			<operation>
+				<name>buy component 3 for option C</name>
+			</operation>
 			<start>2014-06-19T00:00:00</start>
 			<end>2014-06-20T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="16" operation="buy component 3 for option C">
+		<operationplan>
+			<id>16</id>
+			<operation>
+				<name>buy component 3 for option C</name>
+			</operation>
 			<start>2014-07-20T00:00:00</start>
 			<end>2014-07-21T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="17" operation="buy component 3 for option C">
+		<operationplan>
+			<id>17</id>
+			<operation>
+				<name>buy component 3 for option C</name>
+			</operation>
 			<start>2014-08-20T00:00:00</start>
 			<end>2014-08-21T00:00:00</end>
 			<quantity>50</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="18" operation="buy component 3 for option C">
+		<operationplan>
+			<id>18</id>
+			<operation>
+				<name>buy component 3 for option C</name>
+			</operation>
 			<start>2014-09-19T00:00:00</start>
 			<end>2014-09-20T00:00:00</end>
 			<quantity>75</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="19" operation="buy component 3 for option C">
+		<operationplan>
+			<id>19</id>
+			<operation>
+				<name>buy component 3 for option C</name>
+			</operation>
 			<start>2014-10-20T00:00:00</start>
 			<end>2014-10-21T00:00:00</end>
 			<quantity>80</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="20" operation="buy component 4 for option A">
+		<operationplan>
+			<id>20</id>
+			<operation>
+				<name>buy component 4 for option A</name>
+			</operation>
 			<start>2013-12-16T00:00:00</start>
 			<end>2013-12-23T00:00:00</end>
 			<quantity>20</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="21" operation="buy component 4 for option B">
+		<operationplan>
+			<id>21</id>
+			<operation>
+				<name>buy component 4 for option B</name>
+			</operation>
 			<start>2013-12-24T00:00:00</start>
 			<end>2013-12-26T00:00:00</end>
 			<quantity>40</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="22" operation="buy component 4 for option C">
+		<operationplan>
+			<id>22</id>
+			<operation>
+				<name>buy component 4 for option C</name>
+			</operation>
 			<start>2013-12-20T00:00:00</start>
 			<end>2013-12-21T00:00:00</end>
 			<quantity>40</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="23" operation="delivery 1">
-			<demand name="order 1 for item 1"/>
+		<operationplan>
+			<id>23</id>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand>
+				<name>order 1 for item 1</name>
+			</demand>
 			<start>2013-12-31T00:00:00</start>
 			<end>2014-01-01T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="24" operation="delivery 2">
-			<demand name="order 1 for item 2"/>
+		<operationplan>
+			<id>24</id>
+			<operation>
+				<name>delivery 2</name>
+			</operation>
+			<demand>
+				<name>order 1 for item 2</name>
+			</demand>
 			<start>2013-12-31T00:00:00</start>
 			<end>2014-01-01T00:00:00</end>
 			<quantity>200</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="25" operation="delivery 3">
-			<demand name="order 1 for item 3"/>
+		<operationplan>
+			<id>25</id>
+			<operation>
+				<name>delivery 3</name>
+			</operation>
+			<demand>
+				<name>order 1 for item 3</name>
+			</demand>
 			<start>2014-06-30T00:00:00</start>
 			<end>2014-07-01T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="26" operation="delivery 3">
-			<demand name="order 2 for item 3"/>
+		<operationplan>
+			<id>26</id>
+			<operation>
+				<name>delivery 3</name>
+			</operation>
+			<demand>
+				<name>order 2 for item 3</name>
+			</demand>
 			<start>2014-07-31T00:00:00</start>
 			<end>2014-08-01T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="27" operation="delivery 3">
-			<demand name="order 3 for item 3"/>
+		<operationplan>
+			<id>27</id>
+			<operation>
+				<name>delivery 3</name>
+			</operation>
+			<demand>
+				<name>order 3 for item 3</name>
+			</demand>
 			<start>2014-08-31T00:00:00</start>
 			<end>2014-09-01T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="28" operation="delivery 3">
-			<demand name="order 4 for item 3"/>
+		<operationplan>
+			<id>28</id>
+			<operation>
+				<name>delivery 3</name>
+			</operation>
+			<demand>
+				<name>order 4 for item 3</name>
+			</demand>
 			<start>2014-09-30T00:00:00</start>
 			<end>2014-10-01T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="29" operation="delivery 3">
-			<demand name="order 5 for item 3"/>
+		<operationplan>
+			<id>29</id>
+			<operation>
+				<name>delivery 3</name>
+			</operation>
+			<demand>
+				<name>order 5 for item 3</name>
+			</demand>
 			<start>2014-10-31T00:00:00</start>
 			<end>2014-11-01T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="30" operation="delivery 4">
-			<demand name="order 1 for item 4"/>
+		<operationplan>
+			<id>30</id>
+			<operation>
+				<name>delivery 4</name>
+			</operation>
+			<demand>
+				<name>order 1 for item 4</name>
+			</demand>
 			<start>2013-12-31T00:00:00</start>
 			<end>2014-01-01T00:00:00</end>
 			<quantity>200</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="31" operation="make item 1">
+		<operationplan>
+			<id>31</id>
+			<operation xsi:type="operation_split">
+				<name>make item 1</name>
+			</operation>
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="32" operation="make item 1 option A">
+		<operationplan>
+			<id>32</id>
+			<operation>
+				<name>make item 1 option A</name>
+			</operation>
 			<start>2013-12-23T00:00:00</start>
 			<end>2013-12-26T00:00:00</end>
 			<quantity>15</quantity>
 			<criticality>5</criticality>
 			<owner id="31" operation="make item 1"/>
 		</operationplan>
-		<operationplan id="33" operation="make item 1 option B">
+		<operationplan>
+			<id>33</id>
+			<operation>
+				<name>make item 1 option B</name>
+			</operation>
 			<start>2013-12-26T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>0</criticality>
 			<owner id="31" operation="make item 1"/>
 		</operationplan>
-		<operationplan id="34" operation="make item 1 option C">
+		<operationplan>
+			<id>34</id>
+			<operation>
+				<name>make item 1 option C</name>
+			</operation>
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>7</quantity>
 			<criticality>0</criticality>
 			<owner id="31" operation="make item 1"/>
 		</operationplan>
-		<operationplan id="35" operation="make item 2">
+		<operationplan>
+			<id>35</id>
+			<operation xsi:type="operation_split">
+				<name>make item 2</name>
+			</operation>
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="36" operation="make item 2 option A">
+		<operationplan>
+			<id>36</id>
+			<operation>
+				<name>make item 2 option A</name>
+			</operation>
 			<start>2013-12-23T00:00:00</start>
 			<end>2013-12-26T00:00:00</end>
 			<quantity>30</quantity>
 			<criticality>999</criticality>
 			<owner id="35" operation="make item 2"/>
 		</operationplan>
-		<operationplan id="37" operation="make item 2 option B">
+		<operationplan>
+			<id>37</id>
+			<operation>
+				<name>make item 2 option B</name>
+			</operation>
 			<start>2013-12-26T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 			<owner id="35" operation="make item 2"/>
 		</operationplan>
-		<operationplan id="38" operation="make item 2 option C">
+		<operationplan>
+			<id>38</id>
+			<operation>
+				<name>make item 2 option C</name>
+			</operation>
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 			<owner id="35" operation="make item 2"/>
 		</operationplan>
-		<operationplan id="39" operation="make item 3">
+		<operationplan>
+			<id>39</id>
+			<operation xsi:type="operation_split">
+				<name>make item 3</name>
+			</operation>
 			<start>2014-06-20T00:00:00</start>
 			<end>2014-06-30T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="40" operation="make item 3">
+		<operationplan>
+			<id>40</id>
+			<operation xsi:type="operation_split">
+				<name>make item 3</name>
+			</operation>
 			<start>2014-07-21T00:00:00</start>
 			<end>2014-07-31T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="41" operation="make item 3">
+		<operationplan>
+			<id>41</id>
+			<operation xsi:type="operation_split">
+				<name>make item 3</name>
+			</operation>
 			<start>2014-08-21T00:00:00</start>
 			<end>2014-08-31T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="42" operation="make item 3">
+		<operationplan>
+			<id>42</id>
+			<operation xsi:type="operation_split">
+				<name>make item 3</name>
+			</operation>
 			<start>2014-09-20T00:00:00</start>
 			<end>2014-09-30T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="43" operation="make item 3">
+		<operationplan>
+			<id>43</id>
+			<operation xsi:type="operation_split">
+				<name>make item 3</name>
+			</operation>
 			<start>2014-10-21T00:00:00</start>
 			<end>2014-10-31T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="44" operation="make item 3 option A">
+		<operationplan>
+			<id>44</id>
+			<operation>
+				<name>make item 3 option A</name>
+			</operation>
 			<start>2014-06-22T00:00:00</start>
 			<end>2014-06-25T00:00:00</end>
 			<quantity>30</quantity>
 			<criticality>999</criticality>
 			<owner id="39" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="45" operation="make item 3 option A">
+		<operationplan>
+			<id>45</id>
+			<operation>
+				<name>make item 3 option A</name>
+			</operation>
 			<start>2014-07-23T00:00:00</start>
 			<end>2014-07-26T00:00:00</end>
 			<quantity>30</quantity>
 			<criticality>999</criticality>
 			<owner id="40" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="46" operation="make item 3 option B">
+		<operationplan>
+			<id>46</id>
+			<operation>
+				<name>make item 3 option B</name>
+			</operation>
 			<start>2014-06-25T00:00:00</start>
 			<end>2014-06-30T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 			<owner id="39" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="47" operation="make item 3 option B">
+		<operationplan>
+			<id>47</id>
+			<operation>
+				<name>make item 3 option B</name>
+			</operation>
 			<start>2014-07-26T00:00:00</start>
 			<end>2014-07-31T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 			<owner id="40" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="48" operation="make item 3 option B">
+		<operationplan>
+			<id>48</id>
+			<operation>
+				<name>make item 3 option B</name>
+			</operation>
 			<start>2014-08-26T00:00:00</start>
 			<end>2014-08-31T00:00:00</end>
 			<quantity>50</quantity>
 			<criticality>999</criticality>
 			<owner id="41" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="49" operation="make item 3 option B">
+		<operationplan>
+			<id>49</id>
+			<operation>
+				<name>make item 3 option B</name>
+			</operation>
 			<start>2014-09-25T00:00:00</start>
 			<end>2014-09-30T00:00:00</end>
 			<quantity>25</quantity>
 			<criticality>999</criticality>
 			<owner id="42" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="50" operation="make item 3 option B">
+		<operationplan>
+			<id>50</id>
+			<operation>
+				<name>make item 3 option B</name>
+			</operation>
 			<start>2014-10-26T00:00:00</start>
 			<end>2014-10-31T00:00:00</end>
 			<quantity>20</quantity>
 			<criticality>999</criticality>
 			<owner id="43" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="51" operation="make item 3 option C">
+		<operationplan>
+			<id>51</id>
+			<operation>
+				<name>make item 3 option C</name>
+			</operation>
 			<start>2014-06-20T00:00:00</start>
 			<end>2014-06-30T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 			<owner id="39" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="52" operation="make item 3 option C">
+		<operationplan>
+			<id>52</id>
+			<operation>
+				<name>make item 3 option C</name>
+			</operation>
 			<start>2014-07-21T00:00:00</start>
 			<end>2014-07-31T00:00:00</end>
 			<quantity>35</quantity>
 			<criticality>999</criticality>
 			<owner id="40" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="53" operation="make item 3 option C">
+		<operationplan>
+			<id>53</id>
+			<operation>
+				<name>make item 3 option C</name>
+			</operation>
 			<start>2014-08-21T00:00:00</start>
 			<end>2014-08-31T00:00:00</end>
 			<quantity>50</quantity>
 			<criticality>999</criticality>
 			<owner id="41" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="54" operation="make item 3 option C">
+		<operationplan>
+			<id>54</id>
+			<operation>
+				<name>make item 3 option C</name>
+			</operation>
 			<start>2014-09-20T00:00:00</start>
 			<end>2014-09-30T00:00:00</end>
 			<quantity>75</quantity>
 			<criticality>999</criticality>
 			<owner id="42" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="55" operation="make item 3 option C">
+		<operationplan>
+			<id>55</id>
+			<operation>
+				<name>make item 3 option C</name>
+			</operation>
 			<start>2014-10-21T00:00:00</start>
 			<end>2014-10-31T00:00:00</end>
 			<quantity>80</quantity>
 			<criticality>999</criticality>
 			<owner id="43" operation="make item 3"/>
 		</operationplan>
-		<operationplan id="56" operation="make item 4">
+		<operationplan>
+			<id>56</id>
+			<operation xsi:type="operation_split">
+				<name>make item 4</name>
+			</operation>
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>100</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="57" operation="make item 4 option A">
+		<operationplan>
+			<id>57</id>
+			<operation>
+				<name>make item 4 option A</name>
+			</operation>
 			<start>2013-12-23T00:00:00</start>
 			<end>2013-12-26T00:00:00</end>
 			<quantity>20</quantity>
 			<criticality>999</criticality>
 			<owner id="56" operation="make item 4"/>
 		</operationplan>
-		<operationplan id="58" operation="make item 4 option B">
+		<operationplan>
+			<id>58</id>
+			<operation>
+				<name>make item 4 option B</name>
+			</operation>
 			<start>2013-12-26T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>40</quantity>
 			<criticality>999</criticality>
 			<owner id="56" operation="make item 4"/>
 		</operationplan>
-		<operationplan id="59" operation="make item 4 option C">
+		<operationplan>
+			<id>59</id>
+			<operation>
+				<name>make item 4 option C</name>
+			</operation>
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>40</quantity>

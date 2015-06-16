@@ -175,17 +175,17 @@ AC_CHECK_LIB([xerces-c], [main], [],
   Check out http://xml.apache.org/xerces-c for more information.
 ])])
 
-AC_CHECKING([for xerces-c version >= 2.8 ])
+AC_CHECKING([for xerces-c version >= 3.0 ])
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([
   #include "xercesc/util/XercesVersion.hpp"
-  #if (XERCES_VERSION_MAJOR==2 && XERCES_VERSION_MINOR>=8) || XERCES_VERSION_MAJOR==3
+  #if XERCES_VERSION_MAJOR==3
     int main (void) {return 1;}
   #else
     force compile error;
   #endif
   ])], [],
   [AC_MSG_ERROR([
-  This package requires Xerces-C 2.8 or later. Your version is older...
+  This package requires Xerces-C 3.0 or later.
   ])])
 
 #

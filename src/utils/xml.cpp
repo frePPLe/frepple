@@ -377,13 +377,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
 }
 
 
-// Unfortunately the prototype for this handler function differs between
-// Xerces-c 2.x and 3.x
-#if XERCES_VERSION_MAJOR==2
-DECLARE_EXPORT void XMLInput::characters(const XMLCh *const c, const unsigned int n)
-#else
 DECLARE_EXPORT void XMLInput::characters(const XMLCh *const c, const XMLSize_t n)
-#endif
 {
   // Not in reading mode
   if (!reading) return;

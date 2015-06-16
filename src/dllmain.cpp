@@ -116,7 +116,7 @@ DECLARE_EXPORT(void) FreppleReadPythonFile(const char* filename)
 DECLARE_EXPORT(void) FreppleSaveFile(const char* x)
 {
   XMLSerializerFile o(x);
-  o.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
+  o.writeElementWithHeader(Tags::plan, &Plan::instance());
 }
 
 

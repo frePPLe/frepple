@@ -147,7 +147,7 @@ DECLARE_EXPORT PyObject* saveXMLfile(PyObject* self, PyObject* args)
       else
         throw DataException("Invalid content type '" + string(content) + "'");
     }
-    o.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
+    o.writeElementWithHeader(Tags::plan, &Plan::instance());
   }
   catch (...)
   {

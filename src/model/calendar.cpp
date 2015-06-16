@@ -347,11 +347,11 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(int ident) const
 DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const DataValueDict& atts)
 {
   // Pick up the start, end and name attributes
-  const DataValue* d = atts.get(Tags::tag_start);
+  const DataValue* d = atts.get(Tags::start);
   Date startdate = *d ? d->getDate() : Date::infinitePast;
-  d = atts.get(Tags::tag_end);
+  d = atts.get(Tags::end);
   Date enddate = *d ? d->getDate() : Date::infiniteFuture;
-  d = atts.get(Tags::tag_id);
+  d = atts.get(Tags::id);
   int id = *d ? d->getInt() : INT_MIN;
 
   // Check for existence of the bucket with the same identifier
@@ -411,16 +411,16 @@ DECLARE_EXPORT void Calendar::Bucket::writeHeader(Serializer *o, const Keyword& 
   if (startdate != Date::infinitePast)
   {
     if (enddate != Date::infiniteFuture)
-      o->BeginObject(tag, Tags::tag_id, id, Tags::tag_start, startdate, Tags::tag_end, enddate);
+      o->BeginObject(tag, Tags::id, id, Tags::start, startdate, Tags::end, enddate);
     else
-      o->BeginObject(tag, Tags::tag_id, id, Tags::tag_start, startdate);
+      o->BeginObject(tag, Tags::id, id, Tags::start, startdate);
   }
   else
   {
     if (enddate != Date::infiniteFuture)
-      o->BeginObject(tag, Tags::tag_id, id, Tags::tag_end, enddate);
+      o->BeginObject(tag, Tags::id, id, Tags::end, enddate);
     else
-      o->BeginObject(tag, Tags::tag_id, id);
+      o->BeginObject(tag, Tags::id, id);
   }
 }
 

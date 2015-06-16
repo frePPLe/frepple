@@ -90,7 +90,7 @@ DECLARE_EXPORT SetupMatrix::~SetupMatrix()
 DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::createRule(const DataValueDict& atts)
 {
   // Pick up the start, end and name attributes
-  int priority = atts.get(Tags::tag_priority)->getInt();
+  int priority = atts.get(Tags::priority)->getInt();
 
   // Check for existence of a rule with the same priority
   Rule* result = firstRule;

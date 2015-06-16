@@ -58,7 +58,7 @@ DECLARE_EXPORT void Object::writeElement(Serializer* o, const Keyword& tag, mode
     if (meta.isDefault)
       o->BeginObject(tag);
     else
-      o->BeginObject(tag, Tags::tag_type, getType().type);
+      o->BeginObject(tag, Tags::type, getType().type);
   }
 
   // Write the content
@@ -563,24 +563,24 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
     py_value = PyDict_GetItem(*pydict, py_key); // borrowed ref
     PythonData value(py_value);
     if (PyBool_Check(py_value))
-      o->writeElement(Tags::tag_booleanproperty,
-        Tags::tag_name, key.getString(),
-        Tags::tag_value, value.getBool() ? "1" : "0"
+      o->writeElement(Tags::booleanproperty,
+        Tags::name, key.getString(),
+        Tags::value, value.getBool() ? "1" : "0"
         );
     else if (PyFloat_Check(py_value))
-      o->writeElement(Tags::tag_doubleproperty,
-        Tags::tag_name, key.getString(),
-        Tags::tag_value, value.getString()
+      o->writeElement(Tags::doubleproperty,
+        Tags::name, key.getString(),
+        Tags::value, value.getString()
         );
     else if (PyDateTime_Check(py_value) || PyDate_Check(py_value))
-      o->writeElement(Tags::tag_dateproperty,
-        Tags::tag_name, key.getString(),
-        Tags::tag_value, string(value.getDate())
+      o->writeElement(Tags::dateproperty,
+        Tags::name, key.getString(),
+        Tags::value, string(value.getDate())
         );
     else
-      o->writeElement(Tags::tag_stringproperty,
-        Tags::tag_name, key.getString(),
-        Tags::tag_value, value.getString()
+      o->writeElement(Tags::stringproperty,
+        Tags::name, key.getString(),
+        Tags::value, value.getString()
         );
   }
 
@@ -595,9 +595,9 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
 void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataValue& pElement)
 {
   /*
-  if (pAttr.isA(Tags::tag_name))
+  if (pAttr.isA(Tags::name))
     name = pElement.getString();
-  else if (pAttr.isA(Tags::tag_value))
+  else if (pAttr.isA(Tags::value))
   {
     switch (type)
     {
@@ -660,13 +660,13 @@ void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const 
 DECLARE_EXPORT void PythonDictionary::read(DataInput& pIn, const Attribute& pAttr, PyObject** pDict)
 {
   /* XXX TODO
-  if (pAttr.isA(Tags::tag_booleanproperty))
+  if (pAttr.isA(Tags::booleanproperty))
     pIn.readto(new PythonDictionary(pDict, 1));
-  else if (pAttr.isA(Tags::tag_dateproperty))
+  else if (pAttr.isA(Tags::dateproperty))
     pIn.readto(new PythonDictionary(pDict, 2));
-  else if (pAttr.isA(Tags::tag_doubleproperty))
+  else if (pAttr.isA(Tags::doubleproperty))
     pIn.readto(new PythonDictionary(pDict, 3));
-  else if (pAttr.isA(Tags::tag_stringproperty))
+  else if (pAttr.isA(Tags::stringproperty))
     pIn.readto(new PythonDictionary(pDict, 4));
   */
 }

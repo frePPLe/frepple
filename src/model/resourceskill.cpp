@@ -101,14 +101,14 @@ void ResourceSkill::writer(const MetaCategory* c, Serializer* o)
     {
       if (first)
       {
-        o->BeginList(Tags::tag_resourceskills);
+        o->BeginList(Tags::resourceskills);
         first = false;
       }
       // We use the FULL mode, to force the resource skills being written regardless
       // of the depth in the XML tree.
-      o->writeElement(Tags::tag_resourceskill, &*j, FULL);
+      o->writeElement(Tags::resourceskill, &*j, FULL);
     }
-  if (!first) o->EndList(Tags::tag_resourceskills);
+  if (!first) o->EndList(Tags::resourceskills);
 }
 
 
@@ -164,10 +164,10 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args, PyObject* 
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         Attribute attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        if (!attr.isA(Tags::tag_effective_end) && !attr.isA(Tags::tag_effective_start)
-          && !attr.isA(Tags::tag_skill) && !attr.isA(Tags::tag_resource)
-          && !attr.isA(Tags::tag_priority) && !attr.isA(Tags::tag_type)
-          && !attr.isA(Tags::tag_action))
+        if (!attr.isA(Tags::effective_end) && !attr.isA(Tags::effective_start)
+          && !attr.isA(Tags::skill) && !attr.isA(Tags::resource)
+          && !attr.isA(Tags::priority) && !attr.isA(Tags::type)
+          && !attr.isA(Tags::action))
         {
           const MetaFieldBase* fmeta = l->getType().findField(attr.getHash());
           if (!fmeta && l->getType().category)

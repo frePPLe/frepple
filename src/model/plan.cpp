@@ -88,7 +88,7 @@ DECLARE_EXPORT void Plan::writeElement(Serializer *o, const Keyword& tag, mode m
     if (meta.isDefault)
       o->BeginObject(tag);
     else
-      o->BeginObject(tag, Tags::tag_type, getType().type);
+      o->BeginObject(tag, Tags::type, getType().type);
   }
 
   // Write my own fields

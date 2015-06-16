@@ -57,14 +57,14 @@ void Load::writer(const MetaCategory* c, Serializer* o)
     {
       if (firstload)
       {
-        o->BeginList(Tags::tag_loads);
+        o->BeginList(Tags::loads);
         firstload = false;
       }
       // We use the FULL mode, to force the loads being written regardless
       // of the depth in the XML tree.
-      o->writeElement(Tags::tag_load, &*j, FULL);
+      o->writeElement(Tags::load, &*j, FULL);
     }
-  if (!firstload) o->EndList(Tags::tag_loads);
+  if (!firstload) o->EndList(Tags::loads);
 }
 
 
@@ -301,10 +301,10 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         Attribute attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        if (!attr.isA(Tags::tag_effective_end) && !attr.isA(Tags::tag_effective_start)
-          && !attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_resource)
-          && !attr.isA(Tags::tag_quantity) && !attr.isA(Tags::tag_type)
-          && !attr.isA(Tags::tag_action))
+        if (!attr.isA(Tags::effective_end) && !attr.isA(Tags::effective_start)
+          && !attr.isA(Tags::operation) && !attr.isA(Tags::resource)
+          && !attr.isA(Tags::quantity) && !attr.isA(Tags::type)
+          && !attr.isA(Tags::action))
         {
           const MetaFieldBase* fmeta = l->getType().findField(attr.getHash());
           if (!fmeta && l->getType().category)

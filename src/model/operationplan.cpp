@@ -70,7 +70,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   Action action = MetaClass::decodeAction(in);
 
   // Decode the attributes
-  const DataValue* opnameElement = in.get(Tags::tag_operation);
+  const DataValue* opnameElement = in.get(Tags::operation);
   if (!*opnameElement && action==ADD)
     // Operation name required
     throw DataException("Missing operation attribute");
@@ -78,7 +78,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
 
   // Decode the operationplan identifier
   unsigned long id = 0;
-  const DataValue* idfier = in.get(Tags::tag_id);
+  const DataValue* idfier = in.get(Tags::id);
   if (*idfier) id = idfier->getUnsignedLong();
   if (!id && (action==CHANGE || action==REMOVE))
     // Identifier is required
@@ -871,8 +871,8 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         Attribute attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        if (!attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_id)
-          && !attr.isA(Tags::tag_action) && !attr.isA(Tags::tag_type))
+        if (!attr.isA(Tags::operation) && !attr.isA(Tags::id)
+          && !attr.isA(Tags::action) && !attr.isA(Tags::type))
         {
           const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
           if (!fmeta && x->getType().category)

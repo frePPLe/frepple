@@ -3595,7 +3595,7 @@ class Object : public PyObject
           PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
 		      Attribute attr(PyBytes_AsString(key_utf8));
           Py_DECREF(key_utf8);
-          if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type) && !attr.isA(Tags::tag_action))
+          if (!attr.isA(Tags::name) && !attr.isA(Tags::type) && !attr.isA(Tags::action))
           {
             const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
             if (!fmeta && x->getType().category)
@@ -5029,7 +5029,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       Action act = MetaClass::decodeAction(in);
 
       // Pick up the name attribute. An error is reported if it's missing.
-      const DataValue* nameElement = in.get(Tags::tag_name);
+      const DataValue* nameElement = in.get(Tags::name);
       if (!nameElement)
         throw DataException("Missing name field");
       string name = nameElement->getString();
@@ -5087,7 +5087,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       else
       {
         // Category metadata passed: we need to look up the type
-        const DataValue* type = in.get(Tags::tag_type);
+        const DataValue* type = in.get(Tags::type);
         j = static_cast<const MetaCategory&>(*cat).findClass(
             type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash
             );
@@ -5153,7 +5153,7 @@ class HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::tag_source, &Cls::getSource, &Cls::setSource);
+      m->addStringField<Cls>(Tags::source, &Cls::getSource, &Cls::setSource);
     }
 };
 
@@ -5185,9 +5185,9 @@ class HasDescription : public HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::tag_category, &Cls::getCategory, &Cls::setCategory);
-      m->addStringField<Cls>(Tags::tag_subcategory, &Cls::getSubCategory, &Cls::setSubCategory);
-      m->addStringField<Cls>(Tags::tag_description, &Cls::getDescription, &Cls::setDescription);
+      m->addStringField<Cls>(Tags::category, &Cls::getCategory, &Cls::setCategory);
+      m->addStringField<Cls>(Tags::subcategory, &Cls::getSubCategory, &Cls::setSubCategory);
+      m->addStringField<Cls>(Tags::description, &Cls::getDescription, &Cls::setDescription);
       HasSource::registerFields<Cls>(m);
     }
 
@@ -5336,9 +5336,9 @@ template <class T> class HasHierarchy : public HasName<T>
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::tag_name, &Cls::getName, NULL, MetaFieldBase::MANDATORY);
-      m->addPointerField<Cls, Cls>(Tags::tag_owner, &Cls::getOwner, &Cls::setOwner);
-      m->addIteratorField<Cls, typename Cls::memberIterator>(Tags::tag_members, *(Cls::metadata->typetag), &Cls::getMembers, MetaFieldBase::DETAIL);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MetaFieldBase::MANDATORY);
+      m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
+      m->addIteratorField<Cls, typename Cls::memberIterator>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, MetaFieldBase::DETAIL);
     }
 
   private:

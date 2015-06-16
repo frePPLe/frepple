@@ -492,7 +492,7 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const char *x)
 DECLARE_EXPORT Action MetaClass::decodeAction(const DataValueDict& atts)
 {
   // Decode the string and return the default in the absence of the attribute
-  const DataValue* c = atts.get(Tags::tag_action);
+  const DataValue* c = atts.get(Tags::action);
   return c ? decodeAction(c->getString().c_str()) : ADD_CHANGE;
 }
 
@@ -534,7 +534,7 @@ Object* MetaCategory::ControllerDefault (const MetaClass* cat, const DataValueDi
       else
       {
         // Category metadata passed: we need to look up the type
-        const DataValue* type = in.get(Tags::tag_type);
+        const DataValue* type = in.get(Tags::type);
         j = static_cast<const MetaCategory&>(*cat).findClass(*type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash);
         if (!j)
         {

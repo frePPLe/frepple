@@ -108,14 +108,14 @@ void SupplierItem::writer(const MetaCategory* c, Serializer* o)
     {
       if (first)
       {
-        o->BeginList(Tags::tag_supplieritems);
+        o->BeginList(Tags::supplieritems);
         first = false;
       }
       // We use the FULL mode, to force the supplieritems being written regardless
       // of the depth in the XML tree.
-      o->writeElement(Tags::tag_supplieritem, &*j, FULL);
+      o->writeElement(Tags::supplieritem, &*j, FULL);
     }
-  if (!first) o->EndList(Tags::tag_supplieritems);
+  if (!first) o->EndList(Tags::supplieritems);
 }
 
 
@@ -171,12 +171,12 @@ PyObject* SupplierItem::create(PyTypeObject* pytype, PyObject* args, PyObject* k
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         Attribute attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        if (!attr.isA(Tags::tag_effective_end) && !attr.isA(Tags::tag_effective_start)
-          && !attr.isA(Tags::tag_supplier) && !attr.isA(Tags::tag_item)
-          && !attr.isA(Tags::tag_priority) && !attr.isA(Tags::tag_type)
-          && !attr.isA(Tags::tag_action) && !attr.isA(Tags::tag_cost)
-          && !attr.isA(Tags::tag_size_minimum) && !attr.isA(Tags::tag_size_multiple)
-          && !attr.isA(Tags::tag_leadtime))
+        if (!attr.isA(Tags::effective_end) && !attr.isA(Tags::effective_start)
+          && !attr.isA(Tags::supplier) && !attr.isA(Tags::item)
+          && !attr.isA(Tags::priority) && !attr.isA(Tags::type)
+          && !attr.isA(Tags::action) && !attr.isA(Tags::cost)
+          && !attr.isA(Tags::size_minimum) && !attr.isA(Tags::size_multiple)
+          && !attr.isA(Tags::leadtime))
         {
           const MetaFieldBase* fmeta = l->getType().findField(attr.getHash());
           if (!fmeta && l->getType().category)

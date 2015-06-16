@@ -182,7 +182,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       // will thus give a (very small) performance improvement.
       for (XMLSize_t i = atts.getLength(); i > 0; --i)
       {
-        if (Keyword::hash(atts.getLocalName(i - 1)) == Tags::tag_type.getHash())
+        if (Keyword::hash(atts.getLocalName(i - 1)) == Tags::type.getHash())
         {
           string tp = transcodeUTF8(atts.getValue(i - 1));
           objects[objectindex].cls = static_cast<const MetaCategory&>(*objects[objectindex].cls).findClass(
@@ -197,7 +197,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       {
         // No type attribute was registered, and we use the default of the category
         objects[objectindex].cls = static_cast<const MetaCategory&>(*objects[objectindex].cls).findClass(
-            Tags::tag_default.getHash()
+            Tags::default.getHash()
             );
         if (!objects[objectindex].cls)
           throw DataException("No default type registered for category " + objects[objectindex].cls->type);
@@ -211,7 +211,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       // Look up the field
       ++dataindex;
       data[dataindex].hash = Keyword::hash(atts.getLocalName(i));
-      if (data[dataindex].hash == Tags::tag_type.getHash())
+      if (data[dataindex].hash == Tags::type.getHash())
       {
         // Skip attribute called "type"
         --dataindex;
@@ -236,7 +236,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
   // Field not found
   if (!data[dataindex].field && dataindex)
   {
-    if (!dataindex && data[dataindex].hash == Tags::tag_plan.getHash())
+    if (!dataindex && data[dataindex].hash == Tags::plan.getHash())
       // Special case: root element with name "plan"
       ++objects[objectindex].start;
     else
@@ -324,16 +324,16 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
     // is a value set at the interface level, 3) the class has a source field.
     if (!getSource().empty())
     {
-      const XMLData* s = dict.get(Tags::tag_source);
+      const XMLData* s = dict.get(Tags::source);
       if (!s)
       {
-        const MetaFieldBase* f = objects[objectindex].cls->findField(Tags::tag_source);
+        const MetaFieldBase* f = objects[objectindex].cls->findField(Tags::source);
         if (!f && objects[objectindex].cls->category)
-          f = objects[objectindex].cls->category->findField(Tags::tag_source);
+          f = objects[objectindex].cls->category->findField(Tags::source);
         if (f)
         {
           data[++dataindex].field = f;
-          data[dataindex].hash = Tags::tag_source.getHash();
+          data[dataindex].hash = Tags::source.getHash();
           data[dataindex].value.setString(getSource());
           dict.enlarge();
         }

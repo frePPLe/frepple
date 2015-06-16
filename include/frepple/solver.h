@@ -629,20 +629,20 @@ class SolverMRP : public Solver
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addShortField<Cls>(Tags::tag_constraints, &Cls::getConstraints, &Cls::setConstraints);
-      m->addBoolField<Cls>(Tags::tag_autocommit, &Cls::getAutocommit, &Cls::setAutocommit);
-      m->addShortField<Cls>(Tags::tag_plantype, &Cls::getPlanType, &Cls::setPlanType);
+      m->addShortField<Cls>(Tags::constraints, &Cls::getConstraints, &Cls::setConstraints);
+      m->addBoolField<Cls>(Tags::autocommit, &Cls::getAutocommit, &Cls::setAutocommit);
+      m->addShortField<Cls>(Tags::plantype, &Cls::getPlanType, &Cls::setPlanType);
       m->addDoubleField<Cls>(SolverMRP::tag_iterationthreshold, &Cls::getIterationThreshold, &Cls::setIterationThreshold);
       m->addDoubleField<Cls>(SolverMRP::tag_iterationaccuracy, &Cls::getIterationAccuracy, &Cls::setIterationAccuracy);
       m->addDurationField<Cls>(SolverMRP::tag_lazydelay, &Cls::getLazyDelay, &Cls::setLazyDelay);
       m->addBoolField<Cls>(SolverMRP::tag_allowsplits, &Cls::getAllowSplits, &Cls::setAllowSplits);
       m->addBoolField<Cls>(SolverMRP::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
       m->addUnsignedLongField<Cls>(SolverMRP::tag_iterationmax, &Cls::getIterationMax, &Cls::setIterationMax);
-      m->addPythonFunctionField<Cls>(Tags::tag_userexit_flow, &Cls::getUserExitFlow, &Cls::setUserExitFlow);
-      m->addPythonFunctionField<Cls>(Tags::tag_userexit_demand, &Cls::getUserExitDemand, &Cls::setUserExitDemand);
-      m->addPythonFunctionField<Cls>(Tags::tag_userexit_buffer, &Cls::getUserExitBuffer, &Cls::setUserExitBuffer);
-      m->addPythonFunctionField<Cls>(Tags::tag_userexit_resource, &Cls::getUserExitResource, &Cls::setUserExitResource);
-      m->addPythonFunctionField<Cls>(Tags::tag_userexit_operation, &Cls::getUserExitOperation, &Cls::setUserExitOperation);
+      m->addPythonFunctionField<Cls>(Tags::userexit_flow, &Cls::getUserExitFlow, &Cls::setUserExitFlow);
+      m->addPythonFunctionField<Cls>(Tags::userexit_demand, &Cls::getUserExitDemand, &Cls::setUserExitDemand);
+      m->addPythonFunctionField<Cls>(Tags::userexit_buffer, &Cls::getUserExitBuffer, &Cls::setUserExitBuffer);
+      m->addPythonFunctionField<Cls>(Tags::userexit_resource, &Cls::getUserExitResource, &Cls::setUserExitResource);
+      m->addPythonFunctionField<Cls>(Tags::userexit_operation, &Cls::getUserExitOperation, &Cls::setUserExitOperation);
     }
 
   private:

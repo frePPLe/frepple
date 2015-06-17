@@ -710,7 +710,7 @@ class Problem : public NonCopyable, public Object
       m->addDateField<Cls>(Tags::start, &Cls::getStart);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd);
       m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight);
-      m->addStringField<Cls>(Tags::entity, &Cls::getEntity);
+      m->addStringField<Cls>(Tags::entity, &Cls::getEntity, NULL, MetaFieldBase::DONT_SERIALIZE);
       // XXX TODO m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner);
     }
   protected:
@@ -782,7 +782,10 @@ class HasProblems
 
     /** Destructor. It needs to take care of making sure all problems objects
       * are being deleted as well. */
-    virtual ~HasProblems() {Problem::clearProblems(*this, false);}
+    virtual ~HasProblems()
+    {
+      Problem::clearProblems(*this, false);
+    }
 
     /** Returns the plannable entity relating to this problem container. */
     virtual Plannable* getEntity() const = 0;
@@ -877,62 +880,77 @@ class Solver : public Object
     static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
 
     virtual void solve(void* = NULL) = 0;
+
     virtual void solve(const Demand*,void* = NULL)
     {
       throw LogicException("Called undefined solve(Demand*) method");
     }
+
     virtual void solve(const Operation*,void* = NULL)
     {
       throw LogicException("Called undefined solve(Operation*) method");
     }
+
     virtual void solve(const OperationFixedTime* o, void* v = NULL)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
+
     virtual void solve(const OperationTimePer* o, void* v = NULL)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
+
     virtual void solve(const OperationRouting* o, void* v = NULL)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
+
     virtual void solve(const OperationAlternate* o, void* v = NULL)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
+
     virtual void solve(const OperationSplit* o, void* v = NULL)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
+
     virtual void solve(const Resource*,void* = NULL)
     {
       throw LogicException("Called undefined solve(Resource*) method");
     }
+
     virtual void solve(const ResourceInfinite* r, void* v = NULL)
     {
       solve(reinterpret_cast<const Resource*>(r),v);
     }
+
     virtual void solve(const ResourceBuckets* r, void* v = NULL)
     {
       solve(reinterpret_cast<const Resource*>(r),v);
     }
+
     virtual void solve(const Buffer*,void* = NULL)
     {
       throw LogicException("Called undefined solve(Buffer*) method");
     }
+
     virtual void solve(const BufferInfinite* b, void* v = NULL)
     {
       solve(reinterpret_cast<const Buffer*>(b),v);
     }
+
     virtual void solve(const BufferProcure* b, void* v = NULL)
     {
       solve(reinterpret_cast<const Buffer*>(b),v);
     }
+
     virtual void solve(const Load* b, void* v = NULL)
     {
       throw LogicException("Called undefined solve(Load*) method");
     }
+
     virtual void solve(const LoadDefault* b, void* v = NULL)
     {
       solve(reinterpret_cast<const Load*>(b),v);
@@ -941,18 +959,22 @@ class Solver : public Object
     {
       throw LogicException("Called undefined solve(Flow*) method");
     }
+
     virtual void solve(const FlowEnd* b, void* v = NULL)
     {
       solve(reinterpret_cast<const Flow*>(b),v);
     }
+
     virtual void solve(const FlowFixedStart* b, void* v = NULL)
     {
       solve(reinterpret_cast<const Flow*>(b),v);
     }
+
     virtual void solve(const FlowFixedEnd* b, void* v = NULL)
     {
       solve(reinterpret_cast<const Flow*>(b),v);
     }
+
     virtual void solve(const Solvable*,void* = NULL)
     {
       throw LogicException("Called undefined solve(Solvable*) method");
@@ -2804,7 +2826,7 @@ class OperationTimePer : public Operation
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addDurationField<Cls>(Tags::duration, &Cls::getDuration, &Cls::setDuration);
-      m->addDoubleField<Cls>(Tags::duration_per, &Cls::getDurationPer, &Cls::setDurationPer);  // TODO XXX use Duration::double2CharBuffer and Duration::parse2double to allow sub-second values
+      m->addDurationDoubleField<Cls>(Tags::duration_per, &Cls::getDurationPer, &Cls::setDurationPer);
     }
 
   private:

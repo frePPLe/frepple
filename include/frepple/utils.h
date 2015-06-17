@@ -2039,6 +2039,17 @@ class MetaClass : public NonCopyable
       fields.push_back( new MetaFieldDuration<Cls>(k, getfunc, setfunc, d, c) );
 		}
 
+    template <class Cls> inline void addDurationDoubleField(
+      const Keyword& k,
+      double (Cls::*getfunc)(void) const,
+      void (Cls::*setfunc)(double),
+      double d = 0L,
+      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      )
+		{
+      fields.push_back( new MetaFieldDurationDouble<Cls>(k, getfunc, setfunc, d, c) );
+		}
+
     /** Search a field. */
     DECLARE_EXPORT const MetaFieldBase* findField(const Keyword&) const;
 
@@ -6383,6 +6394,63 @@ template <class Cls> class MetaFieldDuration : public MetaFieldBase
 
     /** Default value. */
     Duration def;
+};
+
+
+template <class Cls> class MetaFieldDurationDouble : public MetaFieldBase
+{
+  public:
+    typedef void (Cls::*setFunction)(double);
+
+    typedef double (Cls::*getFunction)(void) const;
+
+    MetaFieldDurationDouble(const Keyword& n,
+        getFunction getfunc,
+        setFunction setfunc = NULL,
+        double d = 0,
+        FieldCategory c = BASE
+        ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
+    {
+      if (getfunc == NULL)
+        throw DataException("Getter function can't be NULL");
+    };
+
+    virtual void setField(Object* me, const DataValue& el) const
+    {
+      if (setf == NULL)
+      {
+        ostringstream o;
+        o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
+        throw DataException(o.str());
+      }
+      (static_cast<Cls*>(me)->*setf)(Duration::parse2double(el.getString().c_str()));
+    }
+
+    virtual void getField(Object* me, DataValue& el) const
+    {
+      el.setDouble((static_cast<Cls*>(me)->*getf)());
+    }
+
+    virtual void writeField(Serializer& output) const
+    {
+      double tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
+      if (tmp != def)
+      {
+        char t[65];
+        Duration::double2CharBuffer(tmp, t);
+        output.writeElement(getName(), t);
+      }
+    }
+
+  protected:
+    /** Get function. */
+    getFunction getf;
+
+    /** Set function. */
+    setFunction setf;
+
+    /** Default value. */
+    double def;
 };
 
 

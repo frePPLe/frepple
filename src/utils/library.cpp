@@ -535,10 +535,12 @@ Object* MetaCategory::ControllerDefault (const MetaClass* cat, const DataValueDi
       {
         // Category metadata passed: we need to look up the type
         const DataValue* type = in.get(Tags::type);
-        j = static_cast<const MetaCategory&>(*cat).findClass(*type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash);
+        j = static_cast<const MetaCategory&>(*cat).findClass(
+          type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash
+          );
         if (!j)
         {
-          string t(*type ? type->getString() : "default");
+          string t(type ? type->getString() : "default");
           throw LogicException("No type " + t + " registered for category " + cat->type);
         }
       }

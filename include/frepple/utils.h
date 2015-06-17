@@ -630,49 +630,94 @@ class Duration
     /** Constructor from a character string.<br>
       * See the parse() method for details on the format of the argument.
       */
-    Duration(const char* s) {parse(s);}
+    Duration(const char* s)
+    {
+      parse(s);
+    }
 
     /** Comparison between periods of time. */
-    bool operator < (const long& b) const {return lval < b;}
+    bool operator < (const long& b) const
+    {
+      return lval < b;
+    }
 
     /** Comparison between periods of time. */
-    bool operator > (const long& b) const {return lval > b;}
+    bool operator > (const long& b) const
+    {
+      return lval > b;
+    }
 
     /** Comparison between periods of time. */
-    bool operator <= (const long& b) const {return lval <= b;}
+    bool operator <= (const long& b) const
+    {
+      return lval <= b;
+    }
 
     /** Comparison between periods of time. */
-    bool operator >= (const long& b) const {return lval >= b;}
+    bool operator >= (const long& b) const
+    {
+      return lval >= b;
+    }
 
     /** Comparison between periods of time. */
-    bool operator < (const Duration& b) const {return lval < b.lval;}
+    bool operator < (const Duration& b) const
+    {
+      return lval < b.lval;
+    }
 
     /** Comparison between periods of time. */
-    bool operator > (const Duration& b) const {return lval > b.lval;}
+    bool operator > (const Duration& b) const
+    {
+      return lval > b.lval;
+    }
 
     /** Comparison between periods of time. */
-    bool operator <= (const Duration& b) const {return lval <= b.lval;}
+    bool operator <= (const Duration& b) const
+    {
+      return lval <= b.lval;
+    }
 
     /** Comparison between periods of time. */
-    bool operator >= (const Duration& b) const {return lval >= b.lval;}
+    bool operator >= (const Duration& b) const
+    {
+      return lval >= b.lval;
+    }
 
     /** Equality operator. */
-    bool operator == (const Duration& b) const {return lval == b.lval;}
+    bool operator == (const Duration& b) const
+    {
+      return lval == b.lval;
+    }
 
     /** Inequality operator. */
-    bool operator != (const Duration& b) const {return lval != b.lval;}
+    bool operator != (const Duration& b) const
+    {
+      return lval != b.lval;
+    }
 
     /** Increase the Duration. */
-    void operator += (const Duration& l) {lval += l.lval;}
+    void operator += (const Duration& l)
+    {
+      lval += l.lval;
+    }
 
     /** Decrease the Duration. */
-    void operator -= (const Duration& l) {lval -= l.lval;}
+    void operator -= (const Duration& l)
+    {
+      lval -= l.lval;
+    }
 
     /** Returns true of the duration is equal to 0. */
-    bool operator ! () const {return lval == 0L;}
+    bool operator ! () const
+    {
+      return lval == 0L;
+    }
 
     /** This conversion operator creates a long value from a Duration. */
-    operator long() const {return lval;}
+    operator long() const
+    {
+      return lval;
+    }
 
     /** Converts the date to a string, formatted according to ISO 8601. */
     operator string() const
@@ -1953,6 +1998,14 @@ class MetaClass : public NonCopyable
       fields.push_back( new MetaFieldList2<Cls,Ptr>(k1, k2, c) );
     }
 
+    template <class Cls, class Ptr> inline void addList3Field(
+      const Keyword& k1, const Keyword& k2,
+      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      )
+    {
+      fields.push_back( new MetaFieldList3<Cls,Ptr>(k1, k2, c) );
+    }
+
     template <class Cls> inline void addBoolField(
       const Keyword& k,
       bool (Cls::*getfunc)(void) const,
@@ -2775,7 +2828,7 @@ class DataValue
       throw LogicException("DataValue is an abstract class");
     }
 
-    virtual void* getObject() const
+    virtual Object* getObject() const
     {
       throw LogicException("DataValue is an abstract class");
     }
@@ -2909,7 +2962,7 @@ class XMLData : public DataValue
       */
     DECLARE_EXPORT bool getBool() const;
 
-    void* getObject() const
+    Object* getObject() const
     {
       return m_obj;
     }
@@ -3259,9 +3312,9 @@ class PythonData : public DataValue
       return result;
     }
 
-    void* getObject() const
+    Object* getObject() const
     {
-      return obj;
+      return reinterpret_cast<Object*>(obj);
     }
 
     /** Constructor from a pointer to an Object.<br>
@@ -3456,12 +3509,14 @@ class PythonFunction : public PythonData
   *    &lt;buffer name="a" onhand="10" category="A" /&gt;
   *  - Python:<br>
   *    buffer(name="a", onhand="10", category="A")
+  *
+  * TODO adding an abstract iterator or visitor to this class allows further abstraction and simplification
   */
 class DataValueDict
 {
   public:
+    /** Lookup function in the dictionary. */
     virtual const DataValue* get(const Keyword&) const = 0;
-    // @todo Iterator???
 
     /** Destructor. */
     virtual ~DataValueDict() {}
@@ -4158,8 +4213,10 @@ class Tree : public NonCopyable
     }
 
     /** Renames an existing node, and adjusts its position in the tree. */
-    void rename(TreeNode* obj, const string& newname, TreeNode* hint)
+    void rename(TreeNode* obj, const string& newname, TreeNode* hint = NULL)
     {
+      if (obj->nm == newname)
+        return;
       if (!obj->nm.empty())
       {
         bool found;
@@ -4957,12 +5014,18 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     /** Default constructor. */
     explicit HasName() {}
 
+    /** Rename the entity. */
+    void setName(string newname)
+    {
+      st.rename(this, newname);
+    }
+
     /** Rename the entity.
       * The second argument is a hint: when passing an entity with
       * a name close to the new one, the insertion will be sped up
       * considerably.
       */
-    void setName(const string& newname, TreeNode* hint = NULL)
+    void setName(const string& newname, TreeNode* hint)
     {
       st.rename(this, newname, hint);
     }
@@ -5232,7 +5295,8 @@ template <class T> class HasHierarchy : public HasName<T>
         memberIterator() : curmember(&*T::begin()), member_iter(false) {}
 
         /** Constructor. */
-        memberIterator(const typename HasName<T>::iterator& it) : curmember(&*it), member_iter(false) {}
+        memberIterator(const typename HasName<T>::iterator& it)
+          : curmember(&*it), member_iter(false) {}
 
         /** Copy constructor. */
         memberIterator(const memberIterator& it)
@@ -5242,10 +5306,16 @@ template <class T> class HasHierarchy : public HasName<T>
         }
 
         /** Return the content of the current node. */
-        T& operator*() const {return *static_cast<T*>(curmember);}
+        T& operator*() const
+        {
+          return *static_cast<T*>(curmember);
+        }
 
         /** Return the content of the current node. */
-        T* operator->() const {return static_cast<T*>(curmember);}
+        T* operator->() const
+        {
+          return static_cast<T*>(curmember);
+        }
 
         /** Pre-increment operator which moves the pointer to the next member. */
         memberIterator& operator++()
@@ -5270,7 +5340,9 @@ template <class T> class HasHierarchy : public HasName<T>
 
         /** Comparison operator. */
         bool operator==(const memberIterator& y) const
-        {return curmember == y.curmember;}
+        {
+          return curmember == y.curmember;
+        }
 
         /** Inequality operator. */
         bool operator!=(const memberIterator& y) const
@@ -5282,10 +5354,15 @@ template <class T> class HasHierarchy : public HasName<T>
 
         /** Inequality operator. */
         bool operator!=(const typename HasName<T>::iterator& y) const
-        {return curmember ? (curmember != &*y) : (y != T::end());}
+        {
+          return curmember ? (curmember != &*y) : (y != T::end());
+        }
 
         /** End iterator. */
-        static memberIterator end() {return NULL;}
+        static memberIterator end()
+        {
+          return NULL;
+        }
 
       private:
         /** Points to a member. */
@@ -5306,17 +5383,26 @@ template <class T> class HasHierarchy : public HasName<T>
     ~HasHierarchy();
 
     /** Return a member iterator. */
-    memberIterator getMembers() const {return this;}
+    memberIterator getMembers() const
+    {
+      return this;
+    }
 
     /** Returns true if this entity belongs to a higher hierarchical level.<br>
       * An entity can have only a single owner, and can't belong to multiple
       * hierarchies.
       */
-    bool hasOwner() const {return parent!=NULL;}
+    bool hasOwner() const
+    {
+      return parent!=NULL;
+    }
 
     /** Returns true if this entity has lower level entities belonging to
       * it. */
-    bool isGroup() const {return first_child!=NULL;}
+    bool isGroup() const
+    {
+      return first_child!=NULL;
+    }
 
     /** Changes the owner of the entity.<br>
       * The argument must be a valid pointer to an entity of the same type.<br>
@@ -5325,7 +5411,10 @@ template <class T> class HasHierarchy : public HasName<T>
     void setOwner(T* f);
 
     /** Returns the owning entity. */
-    T* getOwner() const {return parent;}
+    T* getOwner() const
+    {
+      return parent;
+    }
 
     /** Returns the level in the hierarchy.<br>
       * Level 0 means the entity doesn't have any parent.<br>
@@ -5336,7 +5425,7 @@ template <class T> class HasHierarchy : public HasName<T>
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MetaFieldBase::MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
       m->addIteratorField<Cls, typename Cls::memberIterator>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, MetaFieldBase::DETAIL);
     }
@@ -5409,14 +5498,33 @@ template <class A, class B, class C> class Association
             C* nodeptr;
           public:
             iterator(C* n) : nodeptr(n) {};
-            C& operator*() const {return *nodeptr;}
-            C* operator->() const {return nodeptr;}
+
+            C& operator*() const
+            {
+              return *nodeptr;
+            }
+
+            C* operator->() const
+            {
+              return nodeptr;
+            }
+
             bool operator==(const iterator& x) const
-            {return nodeptr == x.nodeptr;}
+            {
+              return nodeptr == x.nodeptr;
+            }
+
             bool operator!=(const iterator& x) const
-            {return nodeptr != x.nodeptr;}
+            {
+              return nodeptr != x.nodeptr;
+            }
+
             iterator& operator++()
-            {nodeptr = nodeptr->nextA; return *this;}
+            {
+              nodeptr = nodeptr->nextA;
+              return *this;
+            }
+
             iterator operator++(int i)
             {
               iterator j = *this;
@@ -5431,14 +5539,32 @@ template <class A, class B, class C> class Association
             C* nodeptr;
           public:
             const_iterator(C* n) : nodeptr(n) {};
-            const C& operator*() const {return *nodeptr;}
-            const C* operator->() const {return nodeptr;}
+
+            const C& operator*() const
+            {
+              return *nodeptr;
+            }
+
+            const C* operator->() const
+            {
+              return nodeptr;
+            }
+
             bool operator==(const const_iterator& x) const
-            {return nodeptr == x.nodeptr;}
+            {
+              return nodeptr == x.nodeptr;
+            }
+
             bool operator!=(const const_iterator& x) const
-            {return nodeptr != x.nodeptr;}
+            {
+              return nodeptr != x.nodeptr;
+            }
+
             const_iterator& operator++()
-            {nodeptr = nodeptr->nextA; return *this;}
+            {
+              nodeptr = nodeptr->nextA; return *this;
+            }
+
             const_iterator operator++(int i)
             {
               const_iterator j = *this;
@@ -5446,10 +5572,26 @@ template <class A, class B, class C> class Association
               return j;
             }
         };
-        iterator begin() {return iterator(this->first);}
-        const_iterator begin() const {return const_iterator(this->first);}
-        iterator end() {return iterator(NULL);}
-        const_iterator end() const {return const_iterator(NULL);}
+
+        iterator begin()
+        {
+          return iterator(this->first);
+        }
+
+        const_iterator begin() const
+        {
+          return const_iterator(this->first);
+        }
+
+        iterator end()
+        {
+          return iterator(NULL);
+        }
+
+        const_iterator end() const
+        {
+          return const_iterator(NULL);
+        }
 
         /** Destructor. */
         ~ListA()
@@ -5532,6 +5674,7 @@ template <class A, class B, class C> class Association
     {
       public:
         ListB() {};
+
         /** @brief An iterator over the associated objects. */
         class iterator
         {
@@ -5539,14 +5682,33 @@ template <class A, class B, class C> class Association
             C* nodeptr;
           public:
             iterator(C* n) : nodeptr(n) {};
-            C& operator*() const {return *nodeptr;}
-            C* operator->() const {return nodeptr;}
+
+            C& operator*() const
+            {
+              return *nodeptr;
+            }
+
+            C* operator->() const
+            {
+              return nodeptr;
+            }
+
             bool operator==(const iterator& x) const
-            {return nodeptr == x.nodeptr;}
+            {
+              return nodeptr == x.nodeptr;
+            }
+
             bool operator!=(const iterator& x) const
-            {return nodeptr != x.nodeptr;}
+            {
+              return nodeptr != x.nodeptr;
+            }
+
             iterator& operator++()
-            {nodeptr = nodeptr->nextB; return *this;}
+            {
+              nodeptr = nodeptr->nextB;
+              return *this;
+            }
+
             iterator operator++(int i)
             {
               iterator j = *this;
@@ -5554,6 +5716,7 @@ template <class A, class B, class C> class Association
               return j;
             }
         };
+
         /** @brief An iterator over the associated objects. */
         class const_iterator
         {
@@ -5587,10 +5750,26 @@ template <class A, class B, class C> class Association
             delete p;
           }
         }
-        iterator begin() {return iterator(this->first);}
-        const_iterator begin() const {return const_iterator(this->first);}
-        iterator end() {return iterator(NULL);}
-        const_iterator end() const {return const_iterator(NULL);}
+
+        iterator begin()
+        {
+          return iterator(this->first);
+        }
+
+        const_iterator begin() const
+        {
+          return const_iterator(this->first);
+        }
+
+        iterator end()
+        {
+          return iterator(NULL);
+        }
+
+        const_iterator end() const
+        {
+          return const_iterator(NULL);
+        }
 
         /** Remove an association. */
         void erase(const C* n)
@@ -6285,12 +6464,12 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
-      Object *obj = static_cast<Object*>(static_cast<PyObject*>(el.getObject()));
+      Ptr *obj = static_cast<Ptr*>(el.getObject());
       if (obj && (
         (obj->getType().category && Ptr::metadata && *(obj->getType().category) == *(Ptr::metadata))
         || obj->getType() == *(Ptr::metadata))
         )
-        (static_cast<Cls*>(me)->*setf)(static_cast<Ptr*>(obj));
+        (static_cast<Cls*>(me)->*setf)(obj);
       else
       {
         ostringstream o;
@@ -6495,6 +6674,47 @@ template <class Cls, class Ptr> class MetaFieldList2 : public MetaFieldBase
 };
 
 
+template <class Cls, class Ptr> class MetaFieldList3 : public MetaFieldBase
+{
+  public:
+    MetaFieldList3(const Keyword& g,
+        const Keyword& n,
+        FieldCategory c=BASE
+        ) : MetaFieldBase(g, c), singleKeyword(n)
+    {};
+
+    virtual void setField(Object* me, const DataValue& el) const {}
+
+    virtual void getField(Object* me, DataValue& el) const
+    {
+      throw LogicException("GetField not implemented for list3 fields");
+    }
+
+    virtual void writeField(Serializer& output) const
+    {
+      // XXX TODO writeField not implemented for list3 fields
+    }
+
+    virtual bool isGroup() const
+    {
+      return true;
+    }
+
+    virtual const MetaClass* getClass() const
+    {
+      return Ptr::metadata;
+    }
+
+    virtual const Keyword* getKeyword() const
+    {
+      return &singleKeyword;
+    }
+
+  protected:
+    const Keyword& singleKeyword;
+};
+
+
 //
 // LIBRARY INITIALISATION
 //
@@ -6528,18 +6748,26 @@ class FreppleIterator : public PythonExtension<ME>
     }
 
     FreppleIterator() : i(DATACLASS::begin())
-    {this->initType(PythonExtension<ME>::getPythonType().type_object());}
+    {
+      this->initType(PythonExtension<ME>::getPythonType().type_object());
+    }
 
     template <class OTHER> FreppleIterator(const OTHER *o) : i(o)
-    {this->initType(PythonExtension<ME>::getPythonType().type_object());}
+    {
+      this->initType(PythonExtension<ME>::getPythonType().type_object());
+    }
 
     template <class OTHER> FreppleIterator(const OTHER &o) : i(o)
-    {this->initType(PythonExtension<ME>::getPythonType().type_object());}
+    {
+      this->initType(PythonExtension<ME>::getPythonType().type_object());
+    }
 
     virtual ~FreppleIterator() {}
 
     static PyObject* create(PyObject* self, PyObject* args)
-    {return new ME();}
+    {
+      return new ME();
+    }
 
   private:
     ITERCLASS i;

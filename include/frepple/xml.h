@@ -87,6 +87,7 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
       hashtype hash;
       XMLData value;
     };
+
   private:
     /** A transcoder to encoding to UTF-8. */
     static xercesc::XMLTranscoder* utf8_encoder;
@@ -330,7 +331,7 @@ class XMLDataValueDict : public DataValueDict
       vector<XMLInput::fld>& f,
       int st,
       int nd
-      ) : fields(f), start(st), end(nd) {}
+      ) : fields(f), strt(st), nd(nd) {}
 
     /** Look up a certain keyword. */
     DECLARE_EXPORT const XMLData* get(const Keyword& key) const;
@@ -338,7 +339,7 @@ class XMLDataValueDict : public DataValueDict
     /** Enlarge the dictiorary. */
     void enlarge()
     {
-      ++end;
+      ++nd;
     }
 
     /** Auxilary debugging method. */
@@ -346,8 +347,8 @@ class XMLDataValueDict : public DataValueDict
 
   private:
     vector<XMLInput::fld>& fields;
-    int start;
-    int end;
+    int strt;
+    int nd;
 };
 
 

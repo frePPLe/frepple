@@ -248,28 +248,28 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
   try
   {
     // Pick up the operation
-    PyObject* oper = PyDict_GetItemString(kwds,"operation");
+    PyObject* oper = PyDict_GetItemString(kwds, "operation");
     if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
       throw DataException("flow operation must be of type operation");
 
-    // Pick up the resource
-    PyObject* buf = PyDict_GetItemString(kwds,"buffer");
+    // Pick up the buffer
+    PyObject* buf = PyDict_GetItemString(kwds, "buffer");
     if (!PyObject_TypeCheck(buf, Buffer::metadata->pythonClass))
       throw DataException("flow buffer must be of type buffer");
 
     // Pick up the quantity
-    PyObject* q1 = PyDict_GetItemString(kwds,"quantity");
+    PyObject* q1 = PyDict_GetItemString(kwds, "quantity");
     double q2 = q1 ? PythonData(q1).getDouble() : 1.0;
 
     // Pick up the effectivity dates
     DateRange eff;
-    PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
+    PyObject* eff_start = PyDict_GetItemString(kwds, "effective_start");
     if (eff_start)
     {
       PythonData d(eff_start);
       eff.setStart(d.getDate());
     }
-    PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
+    PyObject* eff_end = PyDict_GetItemString(kwds, "effective_end");
     if (eff_end)
     {
       PythonData d(eff_end);
@@ -278,7 +278,7 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 
     // Pick up the type and create the flow
     Flow *l;
-    PyObject* t = PyDict_GetItemString(kwds,"type");
+    PyObject* t = PyDict_GetItemString(kwds, "type");
     if (t)
     {
       PythonData d(t);
@@ -370,19 +370,34 @@ int FlowIterator::initialize()
 PyObject* FlowIterator::iternext()
 {
   PyObject* result;
-  if (buf)
+  switch (mode)
   {
-    // Iterate over flows on a buffer
-    if (ib == buf->getFlows().end()) return NULL;
-    result = const_cast<Flow*>(&*ib);
-    ++ib;
-  }
-  else
-  {
-    // Iterate over flows on an operation
-    if (io == oper->getFlows().end()) return NULL;
-    result = const_cast<Flow*>(&*io);
-    ++io;
+    case 1:
+      // Iterate over flows on a buffer
+      if (ib == buf->getFlows().end()) return NULL;
+      result = const_cast<Flow*>(&*ib);
+      ++ib;
+      break;
+    case 2:
+      // Iterate over flows on an operation
+      if (io == oper->getFlows().end()) return NULL;
+      result = const_cast<Flow*>(&*io);
+      ++io;
+      break;
+    case 3:
+      // Iterate over all flows
+      while (io == oper->getFlows().end())
+      {
+        if (++ioo == Operation::end())
+          return NULL;
+        oper = &*ioo;
+        io = Operation::flowlist::const_iterator(oper->getFlows().begin());
+      }
+      result = const_cast<Flow*>(&*io);
+      ++io;
+      break;
+    default:
+      throw LogicException("Unknown iterator mode");
   }
   Py_INCREF(result);
   return result;

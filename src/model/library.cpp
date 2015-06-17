@@ -167,7 +167,7 @@ void LibraryModel::initialize()
     "buffers", BufferIterator::create, METH_NOARGS,
     "Returns an iterator over the buffers.");
   PythonInterpreter::registerGlobalMethod(
-    "locations", LocationIterator::create, METH_NOARGS,
+    "locations", LocationIterator::create, METH_NOARGS,    // TODO Replace with a attribute?
     "Returns an iterator over the locations.");
   PythonInterpreter::registerGlobalMethod(
     "customers", CustomerIterator::create, METH_NOARGS,

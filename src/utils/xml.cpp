@@ -360,6 +360,17 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
           dict
           );
 
+    // Update all fields on the new object
+    if (objects[objectindex].object)
+    {
+      for (int idx = objects[objectindex].start; idx <= dataindex; ++idx)
+      {
+        if (data[idx].field && data[idx].hash != Tags::type.getHash()
+          && data[idx].hash != Tags::action.getHash())
+            data[idx].field->setField(objects[objectindex].object, data[idx].value);
+      }
+    }
+
     if (objectindex && dataindex && data[dataindex-1].field)
       // Update parent object
       data[dataindex-1].value.setObject(objects[objectindex].object);
@@ -379,11 +390,8 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
 
 DECLARE_EXPORT void XMLInput::characters(const XMLCh *const c, const XMLSize_t n)
 {
-  // Not in reading mode
-  if (!reading) return;
-
-  // Process the data
-  data[dataindex].value.appendString(transcodeUTF8(c));
+  if (reading)
+    data[dataindex].value.appendString(transcodeUTF8(c));
 }
 
 
@@ -569,7 +577,7 @@ DECLARE_EXPORT void Serializer::writeElement
   else
     // Choose wether to save a reference of the object.
     // The root object can't be saved as a reference.
-    object->writeElement(this, tag, numParents>2 ? REFERENCE : DEFAULT);
+    object->writeElement(this, tag, numParents>5 ? REFERENCE : DEFAULT);
 
   // Adjust current and parent object pointer
   --numParents;
@@ -635,7 +643,7 @@ DECLARE_EXPORT void XMLSerializer::writeHeader(const Keyword& t, const Keyword& 
 
 DECLARE_EXPORT const XMLData* XMLDataValueDict::get(const Keyword& key) const
 {
-  for (int i = start; i <= end; ++i)
+  for (int i = strt; i <= nd; ++i)
     if (fields[i].hash == key.getHash())
       return &fields[i].value;
   return NULL;
@@ -644,7 +652,7 @@ DECLARE_EXPORT const XMLData* XMLDataValueDict::get(const Keyword& key) const
 
 void XMLDataValueDict::print()
 {
-  for (int i = start; i <= end; ++i)
+  for (int i = strt; i <= nd; ++i)
   {
     if (fields[i].field)
       logger << "   " << fields[i].field->getName().getName() << ": ";

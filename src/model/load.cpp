@@ -346,19 +346,34 @@ int LoadIterator::initialize()
 PyObject* LoadIterator::iternext()
 {
   PyObject* result;
-  if (res)
+  switch (mode)
   {
-    // Iterate over loads on a resource
-    if (ir == res->getLoads().end()) return NULL;
-    result = const_cast<Load*>(&*ir);
-    ++ir;
-  }
-  else
-  {
-    // Iterate over loads on an operation
-    if (io == oper->getLoads().end()) return NULL;
-    result = const_cast<Load*>(&*io);
-    ++io;
+    case 1:
+      // Iterate over loads on a resource
+      if (ir == res->getLoads().end()) return NULL;
+      result = const_cast<Load*>(&*ir);
+      ++ir;
+      break;
+    case 2:
+      // Iterate over loads on an operation
+      if (io == oper->getLoads().end()) return NULL;
+      result = const_cast<Load*>(&*io);
+      ++io;
+      break;
+    case 3:
+      // Iterate over all loads
+      while (io == oper->getLoads().end())
+      {
+        if (++ioo == Operation::end())
+          return NULL;
+        oper = &*ioo;
+        io = Operation::loadlist::const_iterator(oper->getLoads().begin());
+      }
+      result = const_cast<Load*>(&*io);
+      ++io;
+      break;
+    default:
+      throw LogicException("Unknown iterator mode");
   }
   Py_INCREF(result);
   return result;

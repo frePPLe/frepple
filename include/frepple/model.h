@@ -40,6 +40,7 @@ namespace frepple
 {
 
 class Flow;
+class FlowIterator;
 class FlowEnd;
 class FlowFixedStart;
 class FlowFixedEnd;
@@ -66,6 +67,7 @@ class Plan;
 class Plannable;
 class Calendar;
 class Load;
+class LoadIterator;
 class LoadDefault;
 class Location;
 class Customer;
@@ -1745,7 +1747,7 @@ class Operation : public HasName<Operation>,
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MetaFieldBase::MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       HasDescription::registerFields<Cls>(m);
       Plannable::registerFields<Cls>(m);
       m->addDurationField<Cls>(Tags::posttime, &Cls::getPostTime, &Cls::setPostTime);
@@ -4941,7 +4943,7 @@ class Skill : public HasName<Skill>, public HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MetaFieldBase::MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       m->addListField<Cls, resourcelist>(Tags::resourceskills, Tags::resourceskill, &Cls::getResources, MetaFieldBase::DETAIL);
       HasSource::registerFields<Cls>(m);
     }
@@ -5578,6 +5580,13 @@ class Load
   }
   */
     }
+
+    typedef FlowIterator iterator;
+
+    static iterator begin();
+
+    static iterator end();
+
   private:
     /** This method is called to check the validity of the object.<br>
       * An exception is thrown if the load is invalid.
@@ -5740,8 +5749,8 @@ class Plan : public Plannable, public Object
       m->addList2Field<Plan, SetupMatrix>(Tags::setupmatrices, Tags::setupmatrix);
       m->addList2Field<Plan, Skill>(Tags::skills, Tags::skill);
       m->addList2Field<Plan, Resource>(Tags::resources, Tags::resource);
-      // XXX TODO m->addList2Field<Plan, Load>(Tags::loads, Tags::load);
-      // XXX TODO m->addList2Field<Plan, Flow>(Tags::flows, Tags::flow);
+      m->addList3Field<Plan, Load>(Tags::loads, Tags::load);
+      m->addList3Field<Plan, Flow>(Tags::flows, Tags::flow);
       m->addList2Field<Plan, OperationPlan>(Tags::operationplans, Tags::operationplan);
     }
 };
@@ -8153,30 +8162,54 @@ class DemandPlanIterator : public PythonExtension<DemandPlanIterator>
 //
 
 
-class LoadIterator : public PythonExtension<LoadIterator>
+class LoadIterator : public PythonExtension<LoadIterator>  // TODO optimize storage and overhead
 {
   public:
     static int initialize();
 
     LoadIterator(Resource* r)
-      : res(r), ir(r ? r->getLoads().begin() : NULL), oper(NULL), io(NULL)
+      : mode(1), res(r), ir(r ? r->getLoads().begin() : NULL),
+      oper(NULL), io(NULL), ioo(Operation::begin())
     {
       if (!r)
         throw LogicException("Creating loadplan iterator for NULL resource");
     }
 
     LoadIterator(Operation* o)
-      : res(NULL), ir(NULL), oper(o), io(o ? o->getLoads().begin() : NULL)
+      : mode(2), res(NULL), ir(NULL), oper(o),
+      io(o ? o->getLoads().begin() : NULL), ioo(Operation::begin())
     {
       if (!o)
         throw LogicException("Creating loadplan iterator for NULL operation");
     }
 
+    LoadIterator()
+      : mode(3), res(NULL), ir(NULL),
+      oper(!Operation::empty() ? &*Operation::begin() : NULL),
+      io(!Operation::empty() ? Operation::begin()->getLoads().begin() : NULL),
+      ioo(Operation::begin())
+    {
+      while (io == oper->getLoads().end())
+      {
+        if (++ioo == Operation::end())
+          return;
+        oper = &*ioo;
+        io = Operation::loadlist::const_iterator(oper->getLoads().begin());
+      }
+    }
+
   private:
+    /** Type of iteration:
+      *   1: loads of a resource
+      *   2: loads of an operation
+      *   3: all loads
+      */
+    unsigned short mode;
     Resource* res;
     Resource::loadlist::const_iterator ir;
     Operation* oper;
     Operation::loadlist::const_iterator io;
+    Operation::iterator ioo;
     PyObject *iternext();
 };
 
@@ -8186,30 +8219,54 @@ class LoadIterator : public PythonExtension<LoadIterator>
 //
 
 
-class FlowIterator : public PythonExtension<FlowIterator>
+class FlowIterator : public PythonExtension<FlowIterator>  // TODO optimize storage and overhead
 {
   public:
     static int initialize();
 
     FlowIterator(Buffer* b)
-      : buf(b), ib(b ? b->getFlows().begin() : NULL), oper(NULL), io(NULL)
+      : mode(1), buf(b), ib(b ? b->getFlows().begin() : NULL),
+      oper(NULL), io(NULL), ioo(Operation::begin())
     {
       if (!b)
         throw LogicException("Creating flowplan iterator for NULL buffer");
     }
 
     FlowIterator(Operation* o)
-      : buf(NULL), ib(NULL), oper(o), io(o ? o->getFlows().begin() : NULL)
+      : mode(2), buf(NULL), ib(NULL), oper(o),
+      io(o ? o->getFlows().begin() : NULL), ioo(Operation::begin())
     {
       if (!o)
         throw LogicException("Creating flowplan iterator for NULL operation");
     }
 
+    FlowIterator()
+      : mode(3), buf(NULL), ib(NULL),
+      oper(!Operation::empty() ? &*Operation::begin() : NULL),
+      io(!Operation::empty() ? Operation::begin()->getFlows().begin() : NULL),
+      ioo(Operation::begin())
+    {
+      while (io == oper->getFlows().end())
+      {
+        if (++ioo == Operation::end())
+          return;
+        oper = &*ioo;
+        io = Operation::flowlist::const_iterator(oper->getFlows().begin());
+      }
+    }
+
   private:
+    /** Type of iteration:
+      *   1: flows of a buffer
+      *   2: flows of an operation
+      *   3: all flows
+      */
+    unsigned short mode;
     Buffer* buf;
     Buffer::flowlist::const_iterator ib;
     Operation* oper;
     Operation::flowlist::const_iterator io;
+    Operation::iterator ioo;
     PyObject *iternext();
 };
 

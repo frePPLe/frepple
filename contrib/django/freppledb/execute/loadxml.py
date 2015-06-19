@@ -36,20 +36,14 @@ if 'FREPPLE_TEST' in os.environ:
   settings.DATABASES[db]['NAME'] = settings.DATABASES[db]['TEST']['NAME']
 
 # Welcome message
-if settings.DATABASES[db]['ENGINE'] == 'django.db.backends.sqlite3':
-  print("frePPLe on %s using sqlite3 database '%s'" % (
-    sys.platform,
-    'NAME' in settings.DATABASES[db] and settings.DATABASES[db]['NAME'] or ''
-    ))
-else:
-  print("frePPLe on %s using %s database '%s' as '%s' on '%s:%s'" % (
-    sys.platform,
-    'ENGINE' in settings.DATABASES[db] and settings.DATABASES[db]['ENGINE'] or '',
-    'NAME' in settings.DATABASES[db] and settings.DATABASES[db]['NAME'] or '',
-    'USER' in settings.DATABASES[db] and settings.DATABASES[db]['USER'] or '',
-    'HOST' in settings.DATABASES[db] and settings.DATABASES[db]['HOST'] or '',
-    'PORT' in settings.DATABASES[db] and settings.DATABASES[db]['PORT'] or ''
-    ))
+print("frePPLe on %s using %s database '%s' as '%s' on '%s:%s'" % (
+  sys.platform,
+  settings.DATABASES[db].get('ENGINE', ''),
+  settings.DATABASES[db].get('NAME', ''),
+  settings.DATABASES[db].get('USER', ''),
+  settings.DATABASES[db].get('HOST', ''),
+  settings.DATABASES[db].get('PORT', '')
+  ))
 
 print("\nStart exporting static model to the database at", datetime.now().strftime("%H:%M:%S"))
 from freppledb.execute.export_database_static import exportStaticModel

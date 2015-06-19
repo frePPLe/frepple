@@ -38,11 +38,7 @@ from django.db import DEFAULT_DB_ALIAS
 
 # Create the database if it doesn't exist yet
 noDatabaseSchema = False
-if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3':
-  # Verify if the sqlite database file exists
-  if not os.path.isfile(settings.DATABASES[DEFAULT_DB_ALIAS]['NAME']):
-    noDatabaseSchema = True
-elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
   # PostgreSQL:
   # Try connecting and check for a table called 'parameter'.
   from django.db import connection

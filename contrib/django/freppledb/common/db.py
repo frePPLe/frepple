@@ -48,43 +48,8 @@ from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
 
-# Functions for SQLITE
-if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3':
-
-  def sql_true():
-    return '1'
-
-  def sql_datediff(d1, d2):
-    return "((strftime('%%%%s',%s) - strftime('%%%%s',%s)) / 86400.0)" % (d1, d2)
-
-  def sql_overlap(s1, e1, s2, e2):
-    return "max(0,((" \
-      "min(strftime('%%%%s',%s),strftime('%%%%s',%s)) - " \
-      "max(strftime('%%%%s',%s),strftime('%%%%s',%s)) " \
-      ")) / 86400.0)" % (e1, e2, s1, s2)
-
-  def sql_overlap3(s1, e1, s2, e2, s3, e3):
-    return "max(0,((" \
-      "min(strftime('%%%%s',%s),strftime('%%%%s',%s),strftime('%%%%s',%s)) - " \
-      "max(strftime('%%%%s',%s),strftime('%%%%s',%s),strftime('%%%%s',%s)) " \
-      ")) / 86400.0)" % (e1, e2, e3, s1, s2, s3)
-
-  def sql_max(d1, d2):
-    return "max(%s,%s)" % (d1, d2)
-
-  def sql_min(d1, d2):
-    return "min(%s,%s)" % (d1, d2)
-
-  def python_date(d):
-    if isinstance(d, datetime):
-      return d.date()
-    return datetime.strptime(d, '%Y-%m-%d %H:%M:%S').date()
-
-  def string_agg():
-    return 'group_concat'
-
 # Functions for POSTGRESQL
-elif settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
 
   def sql_true():
     return 'true'

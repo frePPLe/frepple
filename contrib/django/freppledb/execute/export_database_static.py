@@ -832,16 +832,11 @@ class exportStaticModel(object):
     try:
       # Create a database connection
       cursor = connections[self.database].cursor()
-      if settings.DATABASES[self.database]['ENGINE'] == 'django.db.backends.sqlite3':
-        cursor.execute('PRAGMA temp_store = MEMORY;')
-        cursor.execute('PRAGMA synchronous = OFF')
-        cursor.execute('PRAGMA cache_size = 8000')
 
-      if settings.DATABASES[self.database]['ENGINE'] == 'django.db.backends.sqlite3':
+      if False:
         # OPTION 1: Sequential export of each entity
-        # For SQLite this is required since a writer blocks the database file.
-        # For other databases the parallel export normally gives a better
-        # performance, but you could still choose a sequential export.
+        # The parallel export normally gives a better performance, but
+        # you could still choose a sequential export.
         try:
           self.exportParameters(cursor)
           self.exportCalendars(cursor)
@@ -876,7 +871,7 @@ class exportStaticModel(object):
           self.exportItems(cursor)
           tasks = (
             DatabaseTask(self, self.exportCalendarBuckets, self.exportSubOperations, self.exportOperationPlans, self.exportParameters),
-            DatabaseTask(self, self.exportBuffers, self.exportFlows, exportSuppliers),
+            DatabaseTask(self, self.exportBuffers, self.exportFlows, self.exportSuppliers),
             DatabaseTask(self, self.exportSetupMatrices, self.exportSetupMatricesRules, self.exportResources, self.exportSkills, self.exportResourceSkills, self.exportLoads),
             DatabaseTask(self, self.exportCustomers, self.exportDemands),
             )
@@ -910,11 +905,6 @@ class exportStaticModel(object):
         cursor.execute("delete from customer where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from supplier where source = %s and lastmodified <> %s", (self.source, self.timestamp))
 
-      # Analyze
-      if settings.DATABASES[self.database]['ENGINE'] == 'django.db.backends.sqlite3':
-        print("Analyzing database tables...")
-        cursor.execute("analyze")
-
       # Close the database connection
       cursor.close()
 
@@ -936,10 +926,6 @@ class DatabaseTask(Thread):
   def run(self):
     # Create a database connection
     cursor = connections[self.export.database].cursor()
-    if settings.DATABASES[self.export.database]['ENGINE'] == 'django.db.backends.sqlite3':
-      cursor.execute('PRAGMA temp_store = MEMORY;')
-      cursor.execute('PRAGMA synchronous = OFF')
-      cursor.execute('PRAGMA cache_size = 8000')
 
     # Run the functions sequentially
     for f in self.functions:

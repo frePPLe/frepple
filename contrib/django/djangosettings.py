@@ -34,43 +34,47 @@ ADMINS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 
-# FrePPLe is tested with 'postgresql_psycopg2' and 'sqlite3' database engines.
+# FrePPLe only supports the 'postgresql_psycopg2' database.
 DATABASES = {
   'default': {
-    'ENGINE': 'django.db.backends.sqlite3',
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'frepple',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
-    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
+    'HOST': '',     # Set to empty string for localhost.
     'OPTIONS': {},  # Backend specific configuration parameters.
-    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
+    'PORT': '',     # Set to empty string for default.
+    'TEST_NAME': 'test_frepple'
     },
   'scenario1': {
-    'ENGINE': 'django.db.backends.sqlite3',
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'scenario1',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
-    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
+    'HOST': '',     # Set to empty string for localhost.
     'OPTIONS': {},  # Backend specific configuration parameters.
-    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
+    'PORT': '',     # Set to empty string for default.
+    'TEST_NAME': 'test_scenario1'    # Database for running the test suite
     },
   'scenario2': {
-    'ENGINE': 'django.db.backends.sqlite3',
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'scenario2',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
-    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
+    'HOST': '',     # Set to empty string for localhost.
     'OPTIONS': {},  # Backend specific configuration parameters.
-    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
+    'PORT': '',     # Set to empty string for default.
+    'TEST_NAME': 'test_scenario2'    # Database for running the test suite
     },
   'scenario3': {
-    'ENGINE': 'django.db.backends.sqlite3',
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'scenario3',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
-    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
+    'HOST': '',     # Set to empty string for localhost.
     'OPTIONS': {},  # Backend specific configuration parameters.
-    'PORT': '',     # Set to empty string for default. Not used with sqlite3.
+    'PORT': '',     # Set to empty string for default.
+    'TEST_NAME': 'test_scenario3'    # Database for running the test suite
     }
   }
 
@@ -102,6 +106,11 @@ ALLOWED_HOSTS = [ '*' ]
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
 TIME_ZONE = 'Europe/Brussels'
+
+# A boolean that specifies if datetimes will be timezone-aware by default or not. 
+# If this is set to True, we will use timezone-aware datetimes internally. 
+# Otherwise, we use naive datetimes in local time.
+USE_TZ = False     # TODO Test with this parameter set to True
 
 # Supported language codes, sorted by language code.
 # Language names and codes should match the ones in Django.

@@ -22,10 +22,9 @@ The basic steps to set up a development environment:
 - Install and configure the PostgreSQL database.
   For a quick test run, you can also use the SQLite3 database bundled with Python.
 
-- If you're using a PostgreSQL database different from sqlite, you need to install
-  install the psycopg2 database access library.
+- Install the psycopg2 package to access PostgreSQL databases from Python.
 
-- Create a database schema for frePPle.
+- Create a database for frePPle.
   For the Django tests, the user should have sufficient privileges to create a
   new database schema.
 

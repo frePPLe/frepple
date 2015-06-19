@@ -25,7 +25,7 @@ uninstall-local:
 clean-local:
 	-rm -rf `find . -name '*.pyc'`
 	-rm -rf `find . -name '*.pyo'`
-	-rm -rf build dist doc static *.sqlite *.log
+	-rm -rf build dist doc static *.log
 
 # Avoid packaging python bytecode files from the subdirectories
 dist-hook:

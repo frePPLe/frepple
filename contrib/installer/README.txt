@@ -40,12 +40,7 @@ To create the installer, the following steps are required:
    CherryPy project. It is a bit more scalable and robust than the Django
    development server.
 
-7) Create sample SQLite database
-   The installer will pick up the SQLite database in the file bin\frepple.sqlite.
-   You'll should make sure it is initialized correctly and contains the
-   sample dataset.
-
-8) Before building the installer script you'll need to update the frepple.nsi
+7) Before building the installer script you'll need to update the frepple.nsi
    script to point to the directory where the xerces-c dll is stored.
 
 CONSIDERING ALL THE ABOVE, BUILDING THE INSTALLER ISN'T FOR BEGINNERS.

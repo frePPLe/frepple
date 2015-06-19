@@ -39,12 +39,8 @@ class Command(BaseCommand):
   If you want to keep dumps for a longer period of time, you'll need to
   copy the dumps to a different location.
 
-  To use this command the following prerequisites need to be met:
-    * PostgreSQL:
-       - pg_dump and psql need to be in the path
-       - The passwords need to be specified upfront in a file ~/.pgpass
-    * SQLite:
-       - none
+  The pg_dump command needs to be in the path, otherwise this command
+  will fail.
   '''
   option_list = BaseCommand.option_list + (
     make_option(
@@ -106,29 +102,23 @@ class Command(BaseCommand):
       task.save(using=database)
 
       # Run the backup command
-      if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
-        # SQLITE
-        shutil.copy2(settings.DATABASES[database]['NAME'], os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, backupfile)))
-      elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-        # POSTGRESQL
-        # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
-        os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
-        args = [
-          "pg_dump",
-          "-b", "-w",
-          '--username=%s' % settings.DATABASES[database]['USER'],
-          '--file=%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, backupfile))
-          ]
-        if settings.DATABASES[database]['HOST']:
-          args.append("--host=%s" % settings.DATABASES[database]['HOST'])
-        if settings.DATABASES[database]['PORT']:
-          args.append("--port=%s " % settings.DATABASES[database]['PORT'])
-        args.append(settings.DATABASES[database]['NAME'])
-        ret = subprocess.call(args)
-        if ret:
-          raise Exception("Run of run pg_dump failed")
-      else:
-        raise Exception('Databasebackup command not supported for database engine %s' % settings.DATABASES[database]['ENGINE'])
+      # Commenting the next line is a little more secure, but requires you to 
+      # create a .pgpass file.
+      os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
+      args = [
+        "pg_dump",
+        "-b", "-w",
+        '--username=%s' % settings.DATABASES[database]['USER'],
+        '--file=%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, backupfile))
+        ]
+      if settings.DATABASES[database]['HOST']:
+        args.append("--host=%s" % settings.DATABASES[database]['HOST'])
+      if settings.DATABASES[database]['PORT']:
+        args.append("--port=%s " % settings.DATABASES[database]['PORT'])
+      args.append(settings.DATABASES[database]['NAME'])
+      ret = subprocess.call(args)
+      if ret:
+        raise Exception("Run of run pg_dump failed")
 
       # Task update
       task.status = '99%'

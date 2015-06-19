@@ -292,10 +292,6 @@ class DatabaseTask(Thread):
   def run(self):
     # Create a database connection
     cursor = connections[database].cursor()
-    if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
-      cursor.execute('PRAGMA temp_store = MEMORY;')
-      cursor.execute('PRAGMA synchronous = OFF')
-      cursor.execute('PRAGMA cache_size = 8000')
 
     # Run the functions sequentially
     for f in self.functions:
@@ -318,16 +314,11 @@ def exportfrepple():
 
   # Create a database connection
   cursor = connections[database].cursor()
-  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
-    cursor.execute('PRAGMA temp_store = MEMORY;')
-    cursor.execute('PRAGMA synchronous = OFF')
-    cursor.execute('PRAGMA cache_size = 8000')
 
-  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
+  if False:
     # OPTION 1: Sequential export of each entity
-    # For sqlite this is required since a writer blocks the database file.
-    # For other databases the parallel export normally gives a better
-    # performance, but you could still choose a sequential export.
+    # The parallel export normally gives a better performance, 
+    # but you could still choose a sequential export.
     with transaction.atomic(using=database):
       truncate(cursor)  # Erase previous output
       exportProblems(cursor)
@@ -361,11 +352,6 @@ def exportfrepple():
     # Wait for all threads to finish
     for i in tasks:
       i.join()
-
-  # Analyze
-  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
-    print("Analyzing database tables...")
-    cursor.execute("analyze")
 
   # Close the database connection
   cursor.close()

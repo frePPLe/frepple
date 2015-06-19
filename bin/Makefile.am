@@ -11,4 +11,4 @@ pkgsysconf_DATA = license.xml init.xml
 EXTRA_DIST = $(nobase_DATA) $(pkgsysconf_DATA)
 
 clean-local:
-	-rm -rf *.tds *.exe *.lib *.pdb *.dll *.pyd *.so *.so.* *.exp *.tds *.BAK *.ilk mod_*.xsd *.out output*.* frepple *.log *.sqlite
+	-rm -rf *.tds *.exe *.lib *.pdb *.dll *.pyd *.so *.so.* *.exp *.tds *.BAK *.ilk mod_*.xsd *.out output*.* frepple *.log

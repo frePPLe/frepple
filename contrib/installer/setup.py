@@ -54,7 +54,7 @@ ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
            # Not using psycopg (using psycopg2 instead)
            'psycopg',
-           # Not using pysqlite2 (using pysqlite3 instead)
+           # Not using pysqlite2
            'pysqlite2',
            # Not using mod_python
            'mod_python', 'mod_python.util',
@@ -118,7 +118,7 @@ setup(
           # optimize the bytecode
           "optimize": 2,
           # Next option is commented out: Gives a cleaner install, but doesn't work for sqlite
-          # bundle python modules in the zip file as well.
+          # bundle python modules in the zip file as well.  TODO test if it works for postgresql
           #"bundle_files": 2,
           # content of the packaged python
           "packages": packages,

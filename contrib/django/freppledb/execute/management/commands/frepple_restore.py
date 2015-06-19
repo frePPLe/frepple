@@ -23,7 +23,7 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS, transaction
+from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
@@ -34,12 +34,8 @@ class Command(BaseCommand):
   help = '''
   This command creates a database dump of the frePPLe database.
 
-  To use this command the following prerequisites need to be met:
-    * PostgreSQL:
-       - pg_dump and psql need to be in the path
-       - The passwords need to be specified upfront in a file ~/.pgpass
-    * SQLite:
-       - none
+  The psql command needs to be in the path, otherwise this command
+  will fail.
   '''
   option_list = BaseCommand.option_list + (
     make_option(
@@ -103,25 +99,18 @@ class Command(BaseCommand):
         raise CommandError("Dump file not found")
 
       # Run the restore command
-      if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
-        # SQLITE
-        shutil.copy2(os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, args[0])), settings.DATABASES[database]['NAME'])
-      elif settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-        # POSTGRESQL
-        # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
-        os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
-        cmd = [ "psql", '--username=%s' % settings.DATABASES[database]['USER'] ]
-        if settings.DATABASES[database]['HOST']:
-          cmd.append("--host=%s" % settings.DATABASES[database]['HOST'])
-        if settings.DATABASES[database]['PORT']:
-          cmd.append("--port=%s " % settings.DATABASES[database]['PORT'])
-        cmd.append(settings.DATABASES[database]['NAME'])
-        cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, args[0])))
-        ret = subprocess.call(cmd, shell=True)  # Shell needs to be True in order to interpret the < character
-        if ret:
-          raise Exception("Run of run psql failed")
-      else:
-        raise Exception('Database backup command not supported for engine %s' % settings.DATABASES[database]['ENGINE'])
+      # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
+      os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
+      cmd = [ "psql", '--username=%s' % settings.DATABASES[database]['USER'] ]
+      if settings.DATABASES[database]['HOST']:
+        cmd.append("--host=%s" % settings.DATABASES[database]['HOST'])
+      if settings.DATABASES[database]['PORT']:
+        cmd.append("--port=%s " % settings.DATABASES[database]['PORT'])
+      cmd.append(settings.DATABASES[database]['NAME'])
+      cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, args[0])))
+      ret = subprocess.call(cmd, shell=True)  # Shell needs to be True in order to interpret the < character
+      if ret:
+        raise Exception("Run of run psql failed")
 
       # Task update
       # We need to recreate a new task record, since the previous one is lost during the restoration.

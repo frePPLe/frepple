@@ -148,10 +148,6 @@ class Command(BaseCommand):
         for stmt in connections[database].ops.sql_flush(no_style(), tables, []):
           cursor.execute(stmt)
 
-      # SQLite specials
-      if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
-        cursor.execute('vacuum')   # Shrink the database file
-
       # Task update
       task.status = 'Done'
       task.finished = datetime.now()

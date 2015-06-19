@@ -36,17 +36,21 @@ the Apache web server with the mod_wsgi module.
 
 Here are the steps to get a fully working environment.
 
-#. **Install the database**
+#. **Install and tune the PostgreSQL database**
 
-   PostgreSQL is the preferred database for frePPLe.
+   Install postgreSQL 9.0 or higher, the world's most advanced open source database.
 
-   Install postgreSQL, create a new database and a new user. It is recommended
-   to use the UTF-8 encoding for your database.
+   FrePPLe assumes that the database uses UTF-8 encoding.
 
-   The standard installation of PostgreSQL is not configured right for
-   intensive use. We highly recommend using the pgtune utility (or its online 
-   version at http://pgtune.leopard.in.ua/) to optimize the configuration for your
-   hardware.
+   FrePPLe needs the following settings for its database connections. If these
+   values are configured as default for the database (in the file postgresql.conf)
+   or the database role (using the 'alter role' command), a small performance
+   optimization is achieved:
+   ::
+
+       client_encoding: 'UTF8',
+       default_transaction_isolation: 'read committed',
+       timezone: 'UTC' when USE_TZ is True, value of TIME_ZONE otherwise.
 
    For the user that will run the user interface application (normally
    'www-data' on debian and 'apache' on rhel) you need to create a file .pgpass
@@ -55,7 +59,12 @@ Here are the steps to get a fully working environment.
    See the Django documentation at http://docs.djangoproject.com/en/dev/ref/databases/
    for more details.
 
-   This step can be skipped if you want to use SQLite as the database.
+#. **Tune the database**
+
+   The default installation of PostgreSQL is not configured right for
+   intensive use. We highly recommend using the pgtune utility (or its online
+   version at http://pgtune.leopard.in.ua/) to optimize the configuration for your
+   hardware.
 
 #. **Create the database and database user**
 
@@ -64,13 +73,16 @@ Here are the steps to get a fully working environment.
 
    A single user is normally used as the owner of these databases.
 
-   This step can be skipped if you want to use SQLite as the database.
+   The typical SQL statements are shown below. Replace USR, PWD, DB with the suitable
+   values.
+   ::
+
+       create user USR with password 'PWD';
+       create database DB encoding 'utf-8' owner USR;
 
 #. **Install the Python database drivers**
 
    You'll need to install the python-psycopg2 package for PostgreSQL.
-
-   This step can be skipped if you want to use SQLite as the database.
 
 #. **Install Django**
 
@@ -243,9 +255,6 @@ inspiration for your own deployments.
   cd ~
   sudo dpkg -i frepple_*.deb
   sudo apt-get -f -y -q install
-
-  # Configure frepple
-  sudo sed -i "s/django.db.backends.sqlite3',$/django.db.backends.postgresql_psycopg2',/g" /etc/frepple/djangosettings.py
 
   # Configure apache web server
   sudo a2enmod expires

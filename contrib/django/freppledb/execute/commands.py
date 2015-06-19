@@ -23,22 +23,15 @@ def printWelcome(prefix='frepple', database=DEFAULT_DB_ALIAS):
     frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, '%s_%s.log' % (prefix, database))
 
   # Welcome message
-  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.sqlite3':
-    print("FrePPLe with processid %s on %s using sqlite3 database '%s'" % (
-      os.getpid(),
-      sys.platform,
-      settings.DATABASES[database].get('NAME', '')
-      ))
-  else:
-    print("FrePPLe with processid %s on %s using %s database '%s' as '%s' on '%s:%s'" % (
-      os.getpid(),
-      sys.platform,
-      settings.DATABASES[database].get('ENGINE', '').split('.')[-1],
-      settings.DATABASES[database].get('NAME', ''),
-      settings.DATABASES[database].get('USER', ''),
-      settings.DATABASES[database].get('HOST', ''),
-      settings.DATABASES[database].get('PORT', '')
-      ))
+  print("FrePPLe with processid %s on %s using %s database '%s' as '%s' on '%s:%s'" % (
+    os.getpid(),
+    sys.platform,
+    settings.DATABASES[database].get('ENGINE', '').split('.')[-1],
+    settings.DATABASES[database].get('NAME', ''),
+    settings.DATABASES[database].get('USER', ''),
+    settings.DATABASES[database].get('HOST', ''),
+    settings.DATABASES[database].get('PORT', '')
+    ))
 
 
 task = None

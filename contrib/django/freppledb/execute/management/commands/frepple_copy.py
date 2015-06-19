@@ -33,12 +33,8 @@ class Command(BaseCommand):
   This command copies the contents of a database into another.
   The original data in the destination database are lost.
 
-  To use this command the following prerequisites need to be met:
-    * PostgreSQL:
-       - pg_dump and psql need to be in the path
-       - The passwords need to be specified upfront in a file ~/.pgpass
-    * SQLite:
-       - none
+  The pg_dump and psql commands need to be in the path, otherwise
+  this command will fail.
   '''
   option_list = BaseCommand.option_list + (
     make_option(
@@ -138,29 +134,20 @@ class Command(BaseCommand):
       destinationscenario.save()
 
       # Copying the data
-      if settings.DATABASES[source]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-        # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
-        os.environ['PGPASSWORD'] = settings.DATABASES[source]['PASSWORD']
-        ret = os.system("pg_dump -c -U%s -Fp %s%s%s | psql -U%s %s%s%s" % (
-          settings.DATABASES[source]['USER'],
-          settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',
-          settings.DATABASES[source]['PORT'] and ("-p %s " % settings.DATABASES[source]['PORT']) or '',
-          test and settings.DATABASES[source]['TEST']['NAME'] or settings.DATABASES[source]['NAME'],
-          settings.DATABASES[destination]['USER'],
-          settings.DATABASES[destination]['HOST'] and ("-h %s " % settings.DATABASES[destination]['HOST']) or '',
-          settings.DATABASES[destination]['PORT'] and ("-p %s " % settings.DATABASES[destination]['PORT']) or '',
-          test and settings.DATABASES[destination]['TEST']['NAME'] or settings.DATABASES[destination]['NAME'],
-          ))
-        if ret:
-          raise Exception('Exit code of the database copy command is %d' % ret)
-      elif settings.DATABASES[source]['ENGINE'] == 'django.db.backends.sqlite3':
-        # A plain copy of the database file
-        if test:
-          shutil.copy2(settings.DATABASES[source]['TEST']['NAME'], settings.DATABASES[destination]['TEST']['NAME'])
-        else:
-          shutil.copy2(settings.DATABASES[source]['NAME'], settings.DATABASES[destination]['NAME'])
-      else:
-        raise Exception('Copy command not supported for database engine %s' % settings.DATABASES[source]['ENGINE'])
+      # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
+      os.environ['PGPASSWORD'] = settings.DATABASES[source]['PASSWORD']
+      ret = os.system("pg_dump -c -U%s -Fp %s%s%s | psql -U%s %s%s%s" % (
+        settings.DATABASES[source]['USER'],
+        settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',
+        settings.DATABASES[source]['PORT'] and ("-p %s " % settings.DATABASES[source]['PORT']) or '',
+        test and settings.DATABASES[source]['TEST']['NAME'] or settings.DATABASES[source]['NAME'],
+        settings.DATABASES[destination]['USER'],
+        settings.DATABASES[destination]['HOST'] and ("-h %s " % settings.DATABASES[destination]['HOST']) or '',
+        settings.DATABASES[destination]['PORT'] and ("-p %s " % settings.DATABASES[destination]['PORT']) or '',
+        test and settings.DATABASES[destination]['TEST']['NAME'] or settings.DATABASES[destination]['NAME'],
+        ))
+      if ret:
+        raise Exception('Exit code of the database copy command is %d' % ret)
 
       # Update the scenario table
       destinationscenario.status = 'In use'

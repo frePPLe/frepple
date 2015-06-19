@@ -300,18 +300,13 @@ if __name__=='__main__':
   else:
     msg.append(' http://%s:%s/' % (address, port))
   log(''.join(msg))
-  if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.sqlite3':
-    log("frePPLe using sqlite3 database '%s'" % (
-      settings.DATABASES[DEFAULT_DB_ALIAS].get('NAME','')
-      ))
-  else:
-    log("frePPLe using %s database '%s' as '%s' on '%s:%s'" % (
-      settings.DATABASES[DEFAULT_DB_ALIAS].get('ENGINE','sqlite3').split('.')[-1],
-      settings.DATABASES[DEFAULT_DB_ALIAS].get('NAME',''),
-      settings.DATABASES[DEFAULT_DB_ALIAS].get('USER',''),
-      settings.DATABASES[DEFAULT_DB_ALIAS].get('HOST',''),
-      settings.DATABASES[DEFAULT_DB_ALIAS].get('PORT','')
-      ))
+  log("frePPLe using %s database '%s' as '%s' on '%s:%s'" % (
+    settings.DATABASES[DEFAULT_DB_ALIAS].get('ENGINE', '').split('.')[-1],
+    settings.DATABASES[DEFAULT_DB_ALIAS].get('NAME', ''),
+    settings.DATABASES[DEFAULT_DB_ALIAS].get('USER', ''),
+    settings.DATABASES[DEFAULT_DB_ALIAS].get('HOST', ''),
+    settings.DATABASES[DEFAULT_DB_ALIAS].get('PORT', '')
+    ))
 
 
   # Start a separate thread that will check for updates.

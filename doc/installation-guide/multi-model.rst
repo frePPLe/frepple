@@ -41,7 +41,7 @@ The following steps are required to configure a multi-model setup.
 
      DATABASES = {
      'default': {
-       'ENGINE': 'django.db.backends.sqlite3',
+       'ENGINE': 'django.db.backends.postgresql_psycopg2',
        'NAME': 'frepple',
        'USER': '',
        'PASSWORD': '',
@@ -50,7 +50,7 @@ The following steps are required to configure a multi-model setup.
        'PORT': '',
        },
      'scenario1': {
-       'ENGINE': 'django.db.backends.sqlite3',
+       'ENGINE': 'django.db.backends.postgresql_psycopg2',
        'NAME': 'scenario1',
        'USER': '',
        'PASSWORD': '',
@@ -76,10 +76,10 @@ The following steps are required to configure a multi-model setup.
       Since the names will be used as a prefix in the URLs they should be short
       and can't contain any special characters.
 
-      Good examples: ‘scenario1′, ‘plant1′, …
+      Good examples: ‘scenario1′, ‘plant1′...
 
       Bad examples: ‘admin’, ‘buffer’, ‘scenario/1′, names with
-      non-ASCII characters, names with spaces…
+      non-ASCII characters, names with spaces...
 
     * For whatif scenario modelling the schemas all MUST use the same engine.
 

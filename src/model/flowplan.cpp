@@ -30,7 +30,7 @@ int FlowPlan::initialize()
 {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<FlowPlan>("flowplan", "flowplans");
-  // TODO XXX registerFields<FlowPlan>(const_cast<MetaCategory*>(metadata));   loadplan is not a subclass of Object. Why not?
+  registerFields<FlowPlan>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python type
   PythonType& x = FreppleCategory<FlowPlan>::getPythonType();
@@ -94,7 +94,7 @@ DECLARE_EXPORT void FlowPlan::update()
 }
 
 
-DECLARE_EXPORT void FlowPlan::setFlow(const Flow* newfl)
+DECLARE_EXPORT void FlowPlan::setFlow(Flow* newfl)
 {
   // No change
   if (newfl == fl) return;

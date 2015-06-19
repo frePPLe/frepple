@@ -31,7 +31,7 @@ int LoadPlan::initialize()
 {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<LoadPlan>("loadplan", "loadplans");
-  // TODO XXX registerFields<LoadPlan>(const_cast<MetaCategory*>(metadata));   loadplan is not a subclass of Object. Why not?
+  registerFields<LoadPlan>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python type
   PythonType& x = FreppleCategory<LoadPlan>::getPythonType();

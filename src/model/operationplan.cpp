@@ -728,7 +728,7 @@ DECLARE_EXPORT double OperationPlan::getPenalty() const
       i != endLoadPlans(); ++i)
     if (i->isStart() && !i->getLoad()->getSetup().empty() && i->getResource()->getSetupMatrix())
     {
-      SetupMatrix::Rule *rule = i->getResource()->getSetupMatrix()
+      SetupMatrixRule *rule = i->getResource()->getSetupMatrix()
           ->calculateSetup(i->getSetup(false), i->getSetup(true));
       if (rule) penalty += rule->getCost();
     }

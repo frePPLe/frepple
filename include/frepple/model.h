@@ -66,6 +66,7 @@ class BufferProcure;
 class Plan;
 class Plannable;
 class Calendar;
+class CalendarBucket;
 class Load;
 class LoadIterator;
 class LoadDefault;
@@ -88,6 +89,295 @@ class LibraryModel
 };
 
 
+/** @brief This class represents a time bucket as a part of a calendar.
+  *
+  * Manipulation of instances of this class need to be handled with the
+  * methods on the friend class Calendar.
+  * @see Calendar
+  */
+class CalendarBucket : public Object, public NonCopyable
+{
+    friend class Calendar;
+  private:
+    /** Unique identifier of the bucket within the calendar. */
+    int id;
+
+    /** Start date of the bucket. */
+    Date startdate;
+
+    /** End Date of the bucket. */
+    Date enddate;
+
+    /** A pointer to the next bucket. */
+    CalendarBucket* nextBucket;
+
+    /** A pointer to the previous bucket. */
+    CalendarBucket* prevBucket;
+
+    /** Priority of this bucket, compared to other buckets effective
+      * at a certain time.
+      */
+    int priority;
+
+    /** Weekdays on which the entry is effective.
+      * - Bit 0: Sunday
+      * - Bit 1: Monday
+      * - Bit 2: Tueday
+      * - Bit 3: Wednesday
+      * - Bit 4: Thursday
+      * - Bit 5: Friday
+      * - Bit 6: Saturday
+      */
+    short days;
+
+    /** Starting time on the effective days. */
+    Duration starttime;
+
+    /** Ending time on the effective days. */
+    Duration endtime;
+
+    /** A pointer to the owning calendar. */
+    Calendar *cal;
+
+    /** Value of this bucket.*/
+    double val;
+
+    /** An internally managed data structure to keep the offsets
+      * inside the week where the entry changes effectivity.
+      * TODO This type of data structure is not good when the DST changes during the week. Need to reimplement without this offset data structure!
+      */
+    long offsets[14];
+
+    /** An internal counter for the number of indices used in the
+      * offset array. */
+    short offsetcounter;
+
+    /** Updates the offsets data structure. */
+    DECLARE_EXPORT void updateOffsets();
+
+    /** Keep all calendar buckets sorted in ascending order of start date
+      * and use the priority as a tie breaker.
+      */
+    DECLARE_EXPORT void updateSort();
+
+  protected:
+    /** Constructor. */
+    DECLARE_EXPORT CalendarBucket(Calendar *, Date, Date, int ident=INT_MIN, int priority=0);
+
+    /** Auxilary function to write out the start of the XML. */
+    DECLARE_EXPORT void writeHeader(Serializer *, const Keyword&) const;
+
+  public:
+    /** Return the calendar to whom the bucket belongs. */
+    Calendar* getCalendar() const
+    {
+      return cal;
+    }
+
+    /** Get the identifier. */
+    int getId() const
+    {
+      return id;
+    }
+
+    /** Generate the identfier.<br>
+      * If a bucket with the given identifier already exists a unique
+      * number is generated instead. This is done by incrementing the
+      * value passed until it is unique.
+      */
+    DECLARE_EXPORT void setId(int ident=INT_MIN);
+
+    /** Returns the value of this bucket. */
+    double getValue() const
+    {
+      return val;
+    }
+
+    /** Updates the value of this bucket. */
+    void setValue(double v)
+    {
+      val = v;
+    }
+
+    /** Returns the end date of the bucket. */
+    Date getEnd() const
+    {
+      return enddate;
+    }
+
+    /** Updates the end date of the bucket. */
+    DECLARE_EXPORT void setEnd(const Date d);
+
+    /** Returns the start date of the bucket. */
+    Date getStart() const
+    {
+      return startdate;
+    }
+
+    /** Updates the start date of the bucket. */
+    DECLARE_EXPORT void setStart(const Date d);
+
+    /** Returns the priority of this bucket, compared to other buckets
+      * effective at a certain time.<br>
+      * Lower numbers indicate a higher priority level.<br>
+      * The default value is 0.
+      */
+    int getPriority() const
+    {
+      return priority;
+    }
+
+    /** Updates the priority of this bucket, compared to other buckets
+      * effective at a certain time.<br>
+      * Lower numbers indicate a higher priority level.<br>
+      * The default value is 0.
+      */
+    void setPriority(int f)
+    {
+      priority = f;
+      updateSort();
+    }
+
+    /** Get the days on which the entry is valid.<br>
+      * The value is a bit pattern with bit 0 representing sunday, bit 1
+      * monday, ... and bit 6 representing saturday.<br>
+      * The default value is 127.
+      */
+    short getDays() const
+    {
+      return days;
+    }
+
+    /** Update the days on which the entry is valid. */
+    void setDays(short p)
+    {
+      if (p<0 || p>127)
+        throw DataException("Calendar bucket days must be between 0 and 127");
+      days = p;
+      updateOffsets();
+    }
+
+    /** Return the time of the day when the entry becomes valid.<br>
+      * The default value is 0 or midnight.
+      */
+    Duration getStartTime() const
+    {
+      return starttime;
+    }
+
+    /** Update the time of the day when the entry becomes valid. */
+    void setStartTime(Duration t)
+    {
+      if (t > 86400L || t < 0L)
+        throw DataException("Calendar bucket start time must be between 0 and 86400 seconds");
+      starttime = t;
+      updateOffsets();
+    }
+
+    /** Return the time of the day when the entry becomes invalid.<br>
+      * The default value is 23h59m59s.
+      */
+    Duration getEndTime() const
+    {
+      return endtime;
+    }
+
+    /** Update the time of the day when the entry becomes invalid. */
+    void setEndTime(Duration t)
+    {
+      if (t > 86400L || t < 0L)
+        throw DataException("Calendar bucket end time must be between 0 and 86400 seconds");
+      endtime = t;
+      updateOffsets();
+    }
+
+    /** Convert the value of the bucket to a boolean value. */
+    virtual bool getBool() const
+    {
+      return val != 0;
+    }
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metacategory;
+    static DECLARE_EXPORT const MetaClass* metadata;
+    static int initialize();
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addIntField<Cls>(Tags::id, &Cls::getId, NULL, MetaFieldBase::MANDATORY);
+      m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart);
+      m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
+      m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
+      m->addShortField<Cls>(Tags::days, &Cls::getDays, &Cls::setDays, 127);
+      m->addDurationField<Cls>(Tags::starttime, &Cls::getStartTime, &Cls::setStartTime);
+      m->addDurationField<Cls>(Tags::endtime, &Cls::getEndTime, &Cls::setStartTime, 86400L);
+      m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar, NULL, MetaFieldBase::DONT_SERIALIZE);
+    }
+
+  public:
+    /** @brief An iterator class to go through all buckets of the calendar. */
+    class iterator
+    {
+      private:
+        CalendarBucket* curBucket;
+
+      public:
+        iterator(CalendarBucket* b = NULL) : curBucket(b) {}
+
+        bool operator != (const iterator &b) const
+        {
+          return b.curBucket != curBucket;
+        }
+
+        bool operator == (const iterator &b) const
+        {
+          return b.curBucket == curBucket;
+        }
+
+        iterator& operator++()
+        {
+          if (curBucket) curBucket = curBucket->nextBucket;
+          return *this;
+        }
+
+        iterator operator++(int)
+        {
+          iterator tmp = *this;
+          ++*this;
+          return tmp;
+        }
+
+        iterator& operator--()
+        {
+          if(curBucket) curBucket = curBucket->prevBucket;
+          return *this;
+        }
+
+        iterator operator--(int)
+        {
+          iterator tmp = *this;
+          --*this;
+          return tmp;
+        }
+
+        CalendarBucket* operator ->() const
+        {
+          return curBucket;
+        }
+
+        CalendarBucket& operator *() const
+        {
+          return *curBucket;
+        }
+
+        static iterator end()
+        {
+          return NULL;
+        }
+    };
+};
+
+
 /** @brief This is the class used to represent variables that are
   * varying over time.
   *
@@ -99,226 +389,51 @@ class LibraryModel
   */
 class Calendar : public HasName<Calendar>, public HasSource
 {
+  friend class CalendarBucket;
   public:
-    class BucketIterator; // Forward declaration
     class EventIterator; // Forward declaration
 
-    /** @brief This class represents a time bucket as a part of a calendar.
-      *
-      * Manipulation of instances of this class need to be handled with the
-      * methods on the friend class Calendar.
-      * @see Calendar
-      */
-    class Bucket : public Object, public NonCopyable
-    {
-        friend class Calendar;
-        friend class BucketIterator;
-        friend class EventIterator;
-      private:
-        /** Unique identifier of the bucket within the calendar. */
-        int id;
-
-        /** Start date of the bucket. */
-        Date startdate;
-
-        /** End Date of the bucket. */
-        Date enddate;
-
-        /** A pointer to the next bucket. */
-        Bucket* nextBucket;
-
-        /** A pointer to the previous bucket. */
-        Bucket* prevBucket;
-
-        /** Priority of this bucket, compared to other buckets effective
-          * at a certain time.
-          */
-        int priority;
-
-        /** Weekdays on which the entry is effective.
-          * - Bit 0: Sunday
-          * - Bit 1: Monday
-          * - Bit 2: Tueday
-          * - Bit 3: Wednesday
-          * - Bit 4: Thursday
-          * - Bit 5: Friday
-          * - Bit 6: Saturday
-          */
-        short days;
-
-        /** Starting time on the effective days. */
-        Duration starttime;
-
-        /** Ending time on the effective days. */
-        Duration endtime;
-
-        /** A pointer to the owning calendar. */
-        Calendar *cal;
-
-        /** An internally managed data structure to keep the offsets
-          * inside the week where the entry changes effectivity.
-          * TODO This type of data structure is not good when the DST changes during the week. Need to reimplement without this offset data structure!
-          */
-        long offsets[14];
-
-        /** An internal counter for the number of indices used in the
-          * offset array. */
-        short offsetcounter;
-
-        /** Updates the offsets data structure. */
-        DECLARE_EXPORT void updateOffsets();
-
-        /** Increments an iterator to the next change event.<br>
-          * A bucket will evaluate the current state of the iterator, and
-          * update it if a valid next event can be generated.
-          */
-        DECLARE_EXPORT void nextEvent(EventIterator*, Date) const;
-
-        /** Increments an iterator to the previous change event.<br>
-          * A bucket will evaluate the current state of the iterator, and
-          * update it if a valid previous event can be generated.
-          */
-        DECLARE_EXPORT void prevEvent(EventIterator*, Date) const;
-
-        /** Keep all calendar buckets sorted in ascending order of start date
-          * and use the priority as a tie breaker.
-          */
-        DECLARE_EXPORT void updateSort();
-
-      protected:
-        /** Constructor. */
-        Bucket(Calendar *c, Date start, Date end, int ident=INT_MIN, int priority=0) :
-          startdate(start), enddate(end), nextBucket(NULL),
-          prevBucket(NULL), priority(priority), days(127), starttime(0L),
-          endtime(86400L), cal(c)
-        {
-          setId(ident);
-          if (c->firstBucket) c->firstBucket->prevBucket = this;
-          nextBucket = c->firstBucket;
-          c->firstBucket = this;
-          updateOffsets();
-          updateSort();
-        }
-
-        /** Auxilary function to write out the start of the XML. */
-        DECLARE_EXPORT void writeHeader(Serializer *, const Keyword&) const;
-
-      public:
-        /** Return the calendar to whom the bucket belongs. */
-        Calendar* getCalendar() const {return cal;}
-
-        /** Get the identifier. */
-        int getId() const {return id;}
-
-        /** Generate the identfier.<br>
-          * If a bucket with the given identifier already exists a unique
-          * number is generated instead. This is done by incrementing the
-          * value passed until it is unique.
-          */
-        DECLARE_EXPORT void setId(int ident=INT_MIN);
-
-        /** Returns the end date of the bucket. */
-        Date getEnd() const {return enddate;}
-
-        /** Updates the end date of the bucket. */
-        DECLARE_EXPORT void setEnd(const Date d);
-
-        /** Returns the start date of the bucket. */
-        Date getStart() const {return startdate;}
-
-        /** Updates the start date of the bucket. */
-        DECLARE_EXPORT void setStart(const Date d);
-
-        /** Returns the priority of this bucket, compared to other buckets
-          * effective at a certain time.<br>
-          * Lower numbers indicate a higher priority level.<br>
-          * The default value is 0.
-          */
-        int getPriority() const {return priority;}
-
-        /** Updates the priority of this bucket, compared to other buckets
-          * effective at a certain time.<br>
-          * Lower numbers indicate a higher priority level.<br>
-          * The default value is 0.
-          */
-        void setPriority(int f) {priority = f; updateSort();}
-
-        /** Get the days on which the entry is valid.<br>
-          * The value is a bit pattern with bit 0 representing sunday, bit 1
-          * monday, ... and bit 6 representing saturday.<br>
-          * The default value is 127.
-          */
-        short getDays() const {return days;}
-
-        /** Update the days on which the entry is valid. */
-        void setDays(short p)
-        {
-          if (p<0 || p>127)
-            throw DataException("Calendar bucket days must be between 0 and 127");
-          days = p;
-          updateOffsets();
-        }
-
-        /** Return the time of the day when the entry becomes valid.<br>
-          * The default value is 0 or midnight.
-          */
-        Duration getStartTime() const {return starttime;}
-
-        /** Update the time of the day when the entry becomes valid. */
-        void setStartTime(Duration t)
-        {
-          if (t > 86400L || t < 0L)
-            throw DataException("Calendar bucket start time must be between 0 and 86400 seconds");
-          starttime = t;
-          updateOffsets();
-        }
-
-        /** Return the time of the day when the entry becomes invalid.<br>
-          * The default value is 23h59m59s.
-          */
-        Duration getEndTime() const {return endtime;}
-
-        /** Update the time of the day when the entry becomes invalid. */
-        void setEndTime(Duration t)
-        {
-          if (t > 86400L || t < 0L)
-            throw DataException("Calendar bucket end time must be between 0 and 86400 seconds");
-          endtime = t;
-          updateOffsets();
-        }
-
-        /** Convert the value of the bucket to a boolean value. */
-        virtual bool getBool() const {return true;}
-
-        virtual const MetaClass& getType() const {return *metadata;}
-        static DECLARE_EXPORT const MetaCategory* metadata;
-        static int initialize();
-
-        template<class Cls> static inline void registerFields(MetaClass* m)
-        {
-          m->addIntField<Cls>(Tags::id, &Cls::getId, NULL, MetaFieldBase::MANDATORY);
-          m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart);
-          m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
-          m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
-          m->addShortField<Cls>(Tags::days, &Cls::getDays, &Cls::setDays, 127);
-          m->addDurationField<Cls>(Tags::starttime, &Cls::getStartTime, &Cls::setStartTime);
-          m->addDurationField<Cls>(Tags::endtime, &Cls::getEndTime, &Cls::setStartTime, 86400L);
-          m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar, NULL, MetaFieldBase::DONT_SERIALIZE);
-        }
-    };
-
     /** Default constructor. */
-    explicit DECLARE_EXPORT Calendar() : firstBucket(NULL) {}
+    explicit DECLARE_EXPORT Calendar() : firstBucket(NULL), defaultValue(0.0) {}
 
     /** Destructor, which cleans up the buckets too and all references to the
       * calendar from the core model.
       */
     DECLARE_EXPORT ~Calendar();
 
+    /** Returns the value on the specified date. */
+    double getValue(const Date d) const
+    {
+      CalendarBucket* x = static_cast<CalendarBucket*>(findBucket(d));
+      return x ? x->getValue() : defaultValue;
+    }
+
+    /** Updates the value in a certain date range.<br>
+      * This will create a new bucket if required.
+      */
+    void setValue(Date start, Date end, const double v);
+
+    double getValue(CalendarBucket::iterator& i) const
+    {
+      return reinterpret_cast<CalendarBucket&>(*i).getValue();
+    }
+
+    /** Returns the default calendar value when no entry is matching. */
+    double getDefault() const
+    {
+      return defaultValue;
+    }
+
     /** Convert the value of the calendar to a boolean value. */
     virtual bool getBool() const
     {
-      return false;
+      return defaultValue != 0;
+    }
+
+    /** Update the default calendar value when no entry is matching. */
+    virtual void setDefault(double v)
+    {
+      defaultValue = v;
     }
 
     /** This is a factory method that creates a new bucket using the start
@@ -327,24 +442,24 @@ class Calendar : public HasName<Calendar>, public HasSource
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    DECLARE_EXPORT Bucket* createBucket(const DataValueDict&);
+    DECLARE_EXPORT CalendarBucket* createBucket(const DataValueDict&);
 
     /** Adds a new bucket to the list. */
-    DECLARE_EXPORT Bucket* addBucket(Date, Date, int = 1);
+    DECLARE_EXPORT CalendarBucket* addBucket(Date, Date, int = 1);
 
     /** Removes a bucket from the list. */
-    DECLARE_EXPORT void removeBucket(Bucket* bkt);
+    DECLARE_EXPORT void removeBucket(CalendarBucket* bkt);
 
     /** Returns the bucket where a certain date belongs to.
       * A NULL pointer is returned when no bucket is effective.
       */
-    DECLARE_EXPORT Bucket* findBucket(Date d, bool fwd = true) const;
+    DECLARE_EXPORT CalendarBucket* findBucket(Date d, bool fwd = true) const;
 
     /** Returns the bucket with a certain identifier.
       * A NULL pointer is returned in case no bucket can be found with the
       * given identifier.
       */
-    DECLARE_EXPORT Bucket* findBucket(int ident) const;
+    DECLARE_EXPORT CalendarBucket* findBucket(int ident) const;
 
     /** Find an existing bucket with a given identifier, or create a new one.
       * If no identifier is passed, we always create a new bucket and automatically
@@ -356,63 +471,80 @@ class Calendar : public HasName<Calendar>, public HasSource
       * value changes.*/
     class EventIterator
     {
-        friend class Calendar::Bucket;
+        friend class CalendarBucket;
       protected:
         const Calendar* theCalendar;
-        const Bucket* curBucket;
-        const Bucket* lastBucket;
+        const CalendarBucket* curBucket;
+        const CalendarBucket* lastBucket;
         Date curDate;
         int curPriority;
         int lastPriority;
       public:
-        const Date& getDate() const {return curDate;}
-        const Bucket* getBucket() const {return curBucket;}
-        const Calendar* getCalendar() const {return theCalendar;}
-        EventIterator(const Calendar* c = NULL, Date d = Date::infinitePast,
-            bool forward = true) : theCalendar(c), curDate(d)
+        const Date& getDate() const
         {
-          curBucket = lastBucket = c ? c->findBucket(d,forward) : NULL;
-          curPriority = lastPriority = curBucket ? curBucket->priority : INT_MAX;
-        };
+          return curDate;
+        }
+
+        const CalendarBucket* getBucket() const
+        {
+          return curBucket;
+        }
+
+        const Calendar* getCalendar() const
+        {
+          return theCalendar;
+        }
+
+        DECLARE_EXPORT EventIterator(const Calendar* c = NULL,
+          Date d = Date::infinitePast, bool forward = true);
+
         DECLARE_EXPORT EventIterator& operator++();
+
         DECLARE_EXPORT EventIterator& operator--();
+
         EventIterator operator++(int)
         {
-          EventIterator tmp = *this; ++*this; return tmp;
+          EventIterator tmp = *this;
+          ++*this;
+          return tmp;
         }
+
         EventIterator operator--(int)
         {
-          EventIterator tmp = *this; --*this; return tmp;
+          EventIterator tmp = *this;
+          --*this;
+          return tmp;
         }
-    };
 
-    /** @brief An iterator class to go through all buckets of the calendar. */
-    class BucketIterator
-    {
+        /** Return the current value of the iterator at this date. */
+        double getValue()
+        {
+          return curBucket ?
+              static_cast<const CalendarBucket*>(curBucket)->getValue() :
+              static_cast<const Calendar*>(theCalendar)->getDefault();
+        }
+
       private:
-        Bucket* curBucket;
-      public:
-        BucketIterator(Bucket* b = NULL) : curBucket(b) {}
-        bool operator != (const BucketIterator &b) const
-        {return b.curBucket != curBucket;}
-        bool operator == (const BucketIterator &b) const
-        {return b.curBucket == curBucket;}
-        BucketIterator& operator++()
-        {if (curBucket) curBucket = curBucket->nextBucket; return *this;}
-        BucketIterator operator++(int)
-        {BucketIterator tmp = *this; ++*this; return tmp;}
-        BucketIterator& operator--()
-        {if(curBucket) curBucket = curBucket->prevBucket; return *this;}
-        BucketIterator operator--(int)
-        {BucketIterator tmp = *this; --*this; return tmp;}
-        Bucket* operator ->() const {return curBucket;}
-        Bucket& operator *() const {return *curBucket;}
+        /** Increments an iterator to the next change event.<br>
+          * A bucket will evaluate the current state of the iterator, and
+          * update it if a valid next event can be generated.
+          */
+        DECLARE_EXPORT void nextEvent(const CalendarBucket*, Date);
 
-        static BucketIterator end() {return NULL;}
+        /** Increments an iterator to the previous change event.<br>
+          * A bucket will evaluate the current state of the iterator, and
+          * update it if a valid previous event can be generated.
+          */
+        DECLARE_EXPORT void prevEvent(const CalendarBucket*, Date);
     };
 
     /** Returns an iterator to go through the list of buckets. */
-    BucketIterator getBuckets() const {return BucketIterator(firstBucket);}
+    CalendarBucket::iterator getBuckets() const
+    {
+      return CalendarBucket::iterator(firstBucket);
+    }
+
+    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 
     static int initialize();
 
@@ -424,23 +556,25 @@ class Calendar : public HasName<Calendar>, public HasSource
     virtual size_t getSize() const  // XXX todo get rid of this?
     {
       size_t tmp = Object::getSize();
-      for (BucketIterator b = getBuckets(); b != BucketIterator::end(); ++b)
+      for (CalendarBucket::iterator b = getBuckets(); b != CalendarBucket::iterator::end(); ++b)
         tmp += b->getSize();
       return tmp;
     }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MetaFieldBase::MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       HasSource::registerFields<Cls>(m);
-      m->addIteratorField<Cls, BucketIterator>(Tags::buckets, Tags::bucket, &Cls::getBuckets);
+      m->addDoubleField<Cls>(Tags::default, &Cls::getDefault, &Cls::setDefault);
+      m->addIteratorField<Cls, CalendarBucket::iterator>(Tags::buckets, Tags::bucket, &Cls::getBuckets);
     }
+
   protected:
     /** Find the lowest priority of any bucket. */
     int lowestPriority() const
     {
       int min = 0;
-      for (BucketIterator i = getBuckets(); i != BucketIterator::end(); ++i)
+      for (CalendarBucket::iterator i = getBuckets(); i != CalendarBucket::iterator::end(); ++i)
         if (i->getPriority() < min) min = i->getPriority();
       return min;
     }
@@ -448,139 +582,33 @@ class Calendar : public HasName<Calendar>, public HasSource
   private:
     /** A pointer to the first bucket. The buckets are stored in a doubly
       * linked list. */
-    Bucket* firstBucket;
+    CalendarBucket* firstBucket;
+
+    /** Value used when no bucket is effective at all. */
+    double defaultValue;
 
     /** This is the factory method used to generate new buckets. Each subclass
       * should provide an override for this function. */
-    virtual Bucket* createNewBucket(Date start, Date end, int id=1, int priority=0)
+    virtual CalendarBucket* createNewBucket(Date start, Date end, int id=1, int priority=0)
     {
-      return new Bucket(this, start, end, id, priority);
+      return new CalendarBucket(this, start, end, id, priority);
     }
 };
 
 
 /** @brief A calendar storing double values in its buckets. */
-class CalendarDouble : public Calendar
+class CalendarDefault : public Calendar
 {
   public:
-    /** @brief A special type of calendar bucket, designed to hold a
-      * a value.
-      * @see Calendar::Bucket
-      */
-    class BucketDouble : public Calendar::Bucket
-    {
-        friend class CalendarDouble;
-      private:
-        /** This is the value stored in this bucket. */
-        double val;
-
-        /** Constructor. */
-        BucketDouble(CalendarDouble *c, Date start, Date end, int id=INT_MIN, int priority=0)
-          : Bucket(c, start, end, id, priority), val(0) {initType(metadata);}
-
-      public:
-        /** Returns the value of this bucket. */
-        double getValue() const
-        {
-          return val;
-        }
-
-        /** Convert the value of the bucket to a boolean value. */
-        bool getBool() const
-        {
-          return val != 0;
-        }
-
-        /** Updates the value of this bucket. */
-        void setValue(double v)
-        {
-          val = v;
-        }
-
-        static DECLARE_EXPORT const MetaClass* metadata;
-        virtual const MetaClass& getType() const {return *metadata;}
-        static int initialize();
-
-        template<class Cls> static inline void registerFields(MetaClass* m)
-        {
-          m->addDoubleField<Cls>(Tags::value, &Cls::getValue, &Cls::setValue);
-        }
-    };
-
-    /** @brief A special event iterator, providing also access to the
-      * current value. */
-    class EventIterator : public Calendar::EventIterator
-    {
-      public:
-        /** Constructor. */
-        EventIterator(const Calendar* c, Date d = Date::infinitePast,
-            bool f = true) : Calendar::EventIterator(c,d,f) {}
-
-        /** Return the current value of the iterator at this date. */
-        double getValue()
-        {
-          return curBucket ?
-              static_cast<const CalendarDouble::BucketDouble*>(curBucket)->getValue() :
-              static_cast<const CalendarDouble*>(theCalendar)->getDefault();
-        }
-    };
-
-  public:
     /** Default constructor. */
-    CalendarDouble()
+    explicit CalendarDefault()
     {
-      setDefault(0.0);
       initType(metadata);
     }
-
-    /** Destructor. */
-    DECLARE_EXPORT ~CalendarDouble();
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     static int initialize();
-
-    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
-
-    /** Returns the value on the specified date. */
-    double getValue(const Date d) const
-    {
-      BucketDouble* x = static_cast<BucketDouble*>(findBucket(d));
-      return x ? x->getValue() : defaultValue;
-    }
-
-    /** Updates the value in a certain date range.<br>
-      * This will create a new bucket if required.
-      */
-    void setValue(Date start, Date end, const double v);
-
-    double getValue(Calendar::BucketIterator& i) const
-    {
-      return reinterpret_cast<BucketDouble&>(*i).getValue();
-    }
-
-    /** Returns the default calendar value when no entry is matching. */
-    double getDefault() const {return defaultValue;}
-
-    /** Convert the value of the calendar to a boolean value. */
-    virtual bool getBool() const {return defaultValue != 0;}
-
-    /** Update the default calendar value when no entry is matching. */
-    virtual void setDefault(const double v) {defaultValue = v;}
-
-    template<class Cls> static inline void registerFields(MetaClass* m)
-    {
-      m->addDoubleField<Cls>(Tags::default, &Cls::getDefault, &Cls::setDefault);
-    }
-  private:
-    /** Factory method to add new buckets to the calendar.
-      * @see Calendar::addBucket()
-      */
-    Bucket* createNewBucket(Date start, Date end, int id, int priority=0)
-    {return new BucketDouble(this, start, end, id, priority);}
-
-    /** Value when no bucket is matching a certain date. */
-    double defaultValue;
 };
 
 
@@ -630,16 +658,25 @@ class Problem : public NonCopyable, public Object
     virtual DECLARE_EXPORT ~Problem() {}
 
     /** Return the category of the problem. */
-    string getName() const { return getType().type; }
+    string getName() const
+    {
+      return getType().type;
+    }
 
     /** Returns the duration of this problem. */
     virtual const DateRange getDates() const = 0;
 
     /** Get the start date of the problem. */
-    Date getStart() const { return getDates().getStart(); }
+    Date getStart() const
+    {
+      return getDates().getStart();
+    }
 
     /** Get the start date of the problem. */
-    Date getEnd() const { return getDates().getEnd(); }
+    Date getEnd() const
+    {
+      return getDates().getEnd();
+    }
 
     /** Returns a text description of this problem. */
     virtual string getDescription() const = 0;
@@ -813,7 +850,10 @@ class Problem::List
     List() : first(NULL) {};
 
     /** Destructor. */
-    ~List() {clear();}
+    ~List()
+    {
+      clear();
+    }
 
     /** Empty the list.<br>
       * If a problem is passed as argument, that problem and all problems
@@ -842,7 +882,10 @@ class Problem::List
     }
 
     /** Returns true if the list is empty. */
-    bool empty() const {return first == NULL;}
+    bool empty() const
+    {
+      return first == NULL;
+    }
 
     typedef Problem::const_iterator iterator;
 
@@ -1278,13 +1321,13 @@ class Location : public HasHierarchy<Location>, public HasDescription
       * The availability calendar models the working hours and holidays. It
       * applies to all operations, resources and buffers using this location.
       */
-    CalendarDouble *getAvailable() const
+    CalendarDefault *getAvailable() const
     {
       return available;
     }
 
     /** Updates the availability calendar of the location. */
-    void setAvailable(CalendarDouble* b)
+    void setAvailable(CalendarDefault* b)
     {
       available = b;
     }
@@ -1297,7 +1340,7 @@ class Location : public HasHierarchy<Location>, public HasDescription
     {
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
-      m->addPointerField<Cls, CalendarDouble>(Tags::available, &Cls::getAvailable, &Cls::setAvailable);
+      m->addPointerField<Cls, CalendarDefault>(Tags::available, &Cls::getAvailable, &Cls::setAvailable);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
     }
 
@@ -1305,7 +1348,7 @@ class Location : public HasHierarchy<Location>, public HasDescription
     /** The availability calendar models the working hours and holidays. It
       * applies to all operations, resources and buffers using this location.
       */
-    CalendarDouble* available;
+    CalendarDefault* available;
 };
 
 
@@ -1381,7 +1424,10 @@ class Supplier : public HasHierarchy<Supplier>, public HasDescription
     virtual DECLARE_EXPORT ~Supplier();
 
     /** Returns a constant reference to the list of items this supplier can deliver. */
-    const itemlist& getItems() const {return items;}
+    const itemlist& getItems() const
+    {
+      return items;
+    }
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
@@ -2014,10 +2060,16 @@ class OperationPlan
         }
 
         /** Comparison operator. */
-        bool operator==(const iterator& y) const {return opplan == y.opplan;}
+        bool operator==(const iterator& y) const
+        {
+          return opplan == y.opplan;
+        }
 
         /** Inequality operator. */
-        bool operator!=(const iterator& y) const {return opplan != y.opplan;}
+        bool operator!=(const iterator& y) const
+        {
+          return opplan != y.opplan;
+        }
 
       private:
         /** A pointer to current operationplan. */
@@ -2110,7 +2162,10 @@ class OperationPlan
     /** Returns a pointer to the demand for which this operationplan is a delivery.
       * If the operationplan isn't a delivery, this is a NULL pointer.
       */
-    Demand* getDemand() const {return dmd;}
+    Demand* getDemand() const
+    {
+      return dmd;
+    }
 
     /** Updates the demand to which this operationplan is a solution. */
     DECLARE_EXPORT void setDemand(Demand* l);
@@ -2188,7 +2243,10 @@ class OperationPlan
     }
 
     /** Returns a pointer to the operation being instantiated. */
-    Operation* getOperation() const {return oper;}
+    Operation* getOperation() const
+    {
+      return oper;
+    }
 
     /** Fixes the start and end date of an operationplan. Note that this
       * overrules the standard duration given on the operation, i.e. no logic
@@ -2300,7 +2358,10 @@ class OperationPlan
     }
 
     /** Return the identifier. This method can return the lazy identifier 1. */
-    unsigned long getRawIdentifier() const {return id;}
+    unsigned long getRawIdentifier() const
+    {
+      return id;
+    }
 
     /** Return the end date. */
     Date getEnd() const
@@ -2778,7 +2839,10 @@ class OperationTimePer : public Operation
     }
 
     /** Returns the constant part of the operation time. */
-    Duration getDuration() const {return duration;}
+    Duration getDuration() const
+    {
+      return duration;
+    }
 
     /** Sets the constant part of the operation time. */
     void setDuration(Duration t)
@@ -2789,7 +2853,10 @@ class OperationTimePer : public Operation
     }
 
     /** Returns the time per unit of the operation time. */
-    double getDurationPer() const {return duration_per;}
+    double getDurationPer() const
+    {
+      return duration_per;
+    }
 
     /** Sets the time per unit of the operation time. */
     void setDurationPer(double t)
@@ -3674,7 +3741,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Returns a pointer to a calendar for storing the minimum inventory
       * level. */
-    CalendarDouble* getMinimumCalendar() const
+    CalendarDefault* getMinimumCalendar() const
     {
       return min_cal;
     }
@@ -3687,7 +3754,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Returns a pointer to a calendar for storing the maximum inventory
       * level. */
-    CalendarDouble* getMaximumCalendar() const
+    CalendarDefault* getMaximumCalendar() const
     {
       return max_cal;
     }
@@ -3696,13 +3763,13 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     DECLARE_EXPORT void setMinimum(double);
 
     /** Updates the minimum inventory target for the buffer. */
-    DECLARE_EXPORT void setMinimumCalendar(CalendarDouble*);
+    DECLARE_EXPORT void setMinimumCalendar(CalendarDefault*);
 
     /** Updates the minimum inventory target for the buffer. */
     DECLARE_EXPORT void setMaximum(double);
 
     /** Updates the minimum inventory target for the buffer. */
-    DECLARE_EXPORT void setMaximumCalendar(CalendarDouble*);
+    DECLARE_EXPORT void setMaximumCalendar(CalendarDefault*);
 
     /** Return the carrying cost.<br>
       * The cost of carrying inventory in this buffer. The value is a
@@ -3852,9 +3919,9 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       Plannable::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnHand, &Cls::setOnHand);
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMinimum, &Cls::setMinimum);
-      m->addPointerField<Cls, CalendarDouble>(Tags::minimum_calendar, &Cls::getMinimumCalendar, &Cls::setMinimumCalendar);
+      m->addPointerField<Cls, CalendarDefault>(Tags::minimum_calendar, &Cls::getMinimumCalendar, &Cls::setMinimumCalendar);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMaximum, &Cls::setMaximum, default_max);
-      m->addPointerField<Cls, CalendarDouble>(Tags::maximum_calendar, &Cls::getMaximumCalendar, &Cls::setMaximumCalendar);
+      m->addPointerField<Cls, CalendarDefault>(Tags::maximum_calendar, &Cls::getMaximumCalendar, &Cls::setMaximumCalendar);
       m->addDoubleField<Cls>(Tags::carrying_cost, &Cls::getCarryingCost, &Cls::setCarryingCost);
       m->addDurationField<Cls>(Tags::mininterval, &Cls::getMinimumInterval, &Cls::setMinimumInterval, -1);
       m->addDurationField<Cls>(Tags::maxinterval, &Cls::getMaximumInterval, &Cls::setMaximumInterval);
@@ -3913,13 +3980,13 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * The default value is NULL, resulting in a constant minimum level
       * of 0.
       */
-    CalendarDouble *min_cal;
+    CalendarDefault *min_cal;
 
     /** Points to a calendar to store the maximum inventory level.<br>
       * The default value is NULL, resulting in a buffer without excess
       * inventory problems.
       */
-    CalendarDouble *max_cal;
+    CalendarDefault *max_cal;
 
     /** Minimum time interval between purchasing operations. */
     Duration min_interval;
@@ -4556,7 +4623,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public Object
     friend class OperationPlan::FlowPlanIterator;
   private:
     /** Points to the flow instantiated by this flowplan. */
-    const Flow *fl;
+    Flow *fl;
 
     /** Points to the operationplan owning this flowplan. */
     OperationPlan *oper;
@@ -4573,16 +4640,19 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public Object
     explicit DECLARE_EXPORT FlowPlan(OperationPlan*, const Flow*);
 
     /** Returns the flow of which this is an plan instance. */
-    const Flow* getFlow() const {return fl;}
+    Flow* getFlow() const
+    {
+      return fl;
+    }
 
     /** Returns the buffer, a convenient shortcut. */
-    const Buffer* getBuffer() const
+    Buffer* getBuffer() const
     {
       return fl->getBuffer();
     }
 
     /** Returns the operation, a convenient shortcut. */
-    const Operation* getOperation() const
+    Operation* getOperation() const
     {
       return fl->getOperation();
     }
@@ -4590,10 +4660,13 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public Object
     /** Update the flow of an already existing flowplan.<br>
       * The new flow must belong to the same operation.
       */
-    DECLARE_EXPORT void setFlow(const Flow*);
+    DECLARE_EXPORT void setFlow(Flow*);
 
     /** Returns the operationplan owning this flowplan. */
-    OperationPlan* getOperationPlan() const {return oper;}
+    OperationPlan* getOperationPlan() const
+    {
+      return oper;
+    }
 
     /** Destructor. */
     virtual ~FlowPlan()
@@ -4658,9 +4731,9 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public Object
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
-      m->addPointerField<Cls, const Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, MetaFieldBase::DETAIL);
-      m->addPointerField<Cls, const Buffer>(Tags::buffer, &Cls::getBuffer, NULL, MetaFieldBase::DONT_SERIALIZE);
-      m->addPointerField<Cls, const Operation>(Tags::operation, &Cls::getOperation, NULL, MetaFieldBase::DONT_SERIALIZE);
+      m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, MetaFieldBase::DETAIL);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, NULL, MetaFieldBase::DONT_SERIALIZE);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, NULL, MetaFieldBase::DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, NULL, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
       /*  TODO XXX write pegging?
   // Write pegging info.
@@ -4726,131 +4799,197 @@ inline Date FlowEnd::getFlowplanDate(const FlowPlan* fl) const
 }
 
 
+/** @brief An specific changeover rule in a setup matrix. */
+class SetupMatrixRule : public Object
+{
+    friend class SetupMatrix;
+  public:
+    /** Constructor. */
+    DECLARE_EXPORT SetupMatrixRule(SetupMatrix *s, int p = 0);
+
+    /** Destructor. */
+    DECLARE_EXPORT ~SetupMatrixRule();
+
+    static int initialize();
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
+
+    /** Update the priority.<br>
+      * The priority value is a key field. If multiple rules have the
+      * same priority a data exception is thrown.
+      */
+    DECLARE_EXPORT void setPriority(const int);
+
+    /** Return the matrix owning this rule. */
+    SetupMatrix* getSetupMatrix() const
+    {
+      return matrix;
+    }
+
+    /** Return the priority. */
+    int getPriority() const
+    {
+      return priority;
+    }
+
+    /** Update the from setup. */
+    void setFromSetup(string f)
+    {
+      from = f;
+    }
+
+    /** Return the from setup. */
+    string getFromSetup() const
+    {
+      return from;
+    }
+
+    /** Update the from setup. */
+    void setToSetup(string f)
+    {
+      to = f;
+    }
+
+    /** Return the from setup. */
+    string getToSetup() const
+    {
+      return to;
+    }
+
+    /** Update the conversion duration. */
+    void setDuration(Duration p)
+    {
+      duration = p;
+    }
+
+    /** Return the conversion duration. */
+    Duration getDuration() const
+    {
+      return duration;
+    }
+
+    /** Update the conversion cost. */
+    void setCost(double p)
+    {
+      cost = p;
+    }
+
+    /** Return the conversion cost. */
+    double getCost() const
+    {
+      return cost;
+    }
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addStringField<Cls>(Tags::fromsetup, &Cls::getFromSetup, &Cls::setFromSetup);
+      m->addStringField<Cls>(Tags::tosetup, &Cls::getToSetup, &Cls::setToSetup);
+      m->addDurationField<Cls>(Tags::duration, &Cls::getDuration, &Cls::setDuration);
+      m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
+      m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
+      m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, NULL, MetaFieldBase::DONT_SERIALIZE);
+    }
+  private:
+    /** Original setup. */
+    string from;
+
+    /** New setup. */
+    string to;
+
+    /** Changeover time. */
+    Duration duration;
+
+    /** Changeover cost. */
+    double cost;
+
+    /** Priority of the rule.<br>
+      * This field is the key field, i.e. within a setup matrix all rules
+      * need to have different priorities.
+      */
+    int priority;
+
+    /** Pointer to the owning matrix. */
+    SetupMatrix *matrix;
+
+    /** Pointer to the next rule in this matrix. */
+    SetupMatrixRule *nextRule;
+
+    /** Pointer to the previous rule in this matrix. */
+    SetupMatrixRule *prevRule;
+
+  public:
+    /** @brief An iterator class to go through all rules of a setup matrix. */
+    class iterator
+    {
+      private:
+        SetupMatrixRule* curRule;
+
+      public:
+        /** Constructor. */
+        iterator(SetupMatrixRule* c = NULL) : curRule(c) {}
+
+        bool operator != (const iterator &b) const
+        {
+          return b.curRule != curRule;
+        }
+
+        bool operator == (const iterator &b) const
+        {
+          return b.curRule == curRule;
+        }
+
+        iterator& operator++()
+        {
+          if (curRule) curRule = curRule->nextRule;
+          return *this;
+        }
+
+        iterator operator++(int)
+        {
+          iterator tmp = *this;
+          ++*this;
+          return tmp;
+        }
+
+        iterator& operator--()
+        {
+          if(curRule) curRule = curRule->prevRule;
+          return *this;
+        }
+
+        iterator operator--(int)
+        {
+          iterator tmp = *this;
+          --*this;
+          return tmp;
+        }
+
+        SetupMatrixRule* operator ->() const
+        {
+          return curRule;
+        }
+
+        SetupMatrixRule& operator *() const
+        {
+          return *curRule;
+        }
+    };
+};
+
+
 /** @brief This class is used to represent a matrix defining the changeover
   * times between setups.
   */
 class SetupMatrix : public HasName<SetupMatrix>, public HasSource
 {
+  friend class SetupMatrixRule;
   public:
     class RuleIterator; // Forward declaration
-    /** @brief An specific changeover rule in a setup matrix. */
-    class Rule : public Object
-    {
-        friend class RuleIterator;
-        friend class SetupMatrix;
-      public:
-        /** Constructor. */
-        DECLARE_EXPORT Rule(SetupMatrix *s, int p = 0);
-
-        /** Destructor. */
-        DECLARE_EXPORT ~Rule();
-
-        static int initialize();
-
-        virtual const MetaClass& getType() const {return *metadata;}
-        static DECLARE_EXPORT const MetaCategory* metadata;
-
-        /** Update the priority.<br>
-          * The priority value is a key field. If multiple rules have the
-          * same priority a data exception is thrown.
-          */
-        DECLARE_EXPORT void setPriority(const int);
-
-        /** Return the matrix owning this rule. */
-        SetupMatrix* getSetupMatrix() const {return matrix;}
-
-        /** Return the priority. */
-        int getPriority() const {return priority;}
-
-        /** Update the from setup. */
-        void setFromSetup(string f) {from = f;}
-
-        /** Return the from setup. */
-        string getFromSetup() const {return from;}
-
-        /** Update the from setup. */
-        void setToSetup(string f) {to = f;}
-
-        /** Return the from setup. */
-        string getToSetup() const {return to;}
-
-        /** Update the conversion duration. */
-        void setDuration(Duration p) {duration = p;}
-
-        /** Return the conversion duration. */
-        Duration getDuration() const {return duration;}
-
-        /** Update the conversion cost. */
-        void setCost(double p) {cost = p;}
-
-        /** Return the conversion cost. */
-        double getCost() const {return cost;}
-
-        template<class Cls> static inline void registerFields(MetaClass* m)
-        {
-          m->addStringField<Cls>(Tags::fromsetup, &Cls::getFromSetup, &Cls::setFromSetup);
-          m->addStringField<Cls>(Tags::tosetup, &Cls::getToSetup, &Cls::setToSetup);
-          m->addDurationField<Cls>(Tags::duration, &Cls::getDuration, &Cls::setDuration);
-          m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
-          m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
-          m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, NULL, MetaFieldBase::DONT_SERIALIZE);
-        }
-      private:
-        /** Original setup. */
-        string from;
-
-        /** New setup. */
-        string to;
-
-        /** Changeover time. */
-        Duration duration;
-
-        /** Changeover cost. */
-        double cost;
-
-        /** Priority of the rule.<br>
-          * This field is the key field, i.e. within a setup matrix all rules
-          * need to have different priorities.
-          */
-        int priority;
-
-        /** Pointer to the owning matrix. */
-        SetupMatrix *matrix;
-
-        /** Pointer to the next rule in this matrix. */
-        Rule *nextRule;
-
-        /** Pointer to the previous rule in this matrix. */
-        Rule *prevRule;
-    };
-
-    /** @brief An iterator class to go through all rules of a setup matrix. */
-    class RuleIterator
-    {
-      private:
-        Rule* curRule;
-      public:
-        /** Constructor. */
-        RuleIterator(Rule* c = NULL) : curRule(c) {}
-        bool operator != (const RuleIterator &b) const
-        {return b.curRule != curRule;}
-        bool operator == (const RuleIterator &b) const
-        {return b.curRule == curRule;}
-        RuleIterator& operator++()
-        {if (curRule) curRule = curRule->nextRule; return *this;}
-        RuleIterator operator++(int)
-        {RuleIterator tmp = *this; ++*this; return tmp;}
-        RuleIterator& operator--()
-        {if(curRule) curRule = curRule->prevRule; return *this;}
-        RuleIterator operator--(int)
-        {RuleIterator tmp = *this; --*this; return tmp;}
-        Rule* operator ->() const {return curRule;}
-        Rule& operator *() const {return *curRule;}
-    };
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MetaFieldBase::MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       HasSource::registerFields<Cls>(m);
       // TODO XXX m->addIteratorField<Cls>(Tags::rules, Tags::rule, &Cls::getRules);
 
@@ -4872,7 +5011,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    DECLARE_EXPORT Rule* createRule(const DataValueDict&);
+    DECLARE_EXPORT SetupMatrixRule* createRule(const DataValueDict&);
 
     static int initialize();
 
@@ -4882,16 +5021,22 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
     virtual size_t getSize() const
     {
       size_t tmp = Object::getSize();
-      for (RuleIterator j = beginRules(); j!= endRules(); ++j)
+      for (SetupMatrixRule::iterator j = beginRules(); j!= endRules(); ++j)
         tmp += j->getSize();
       return tmp;
     }
 
     /** Returns an iterator to go through the list of rules. */
-    RuleIterator beginRules() const {return RuleIterator(firstRule);}
+    SetupMatrixRule::iterator beginRules() const
+    {
+      return SetupMatrixRule::iterator(firstRule);
+    }
 
     /** Returns an iterator to go through the list of rules. */
-    RuleIterator endRules() const {return RuleIterator(NULL);}
+    SetupMatrixRule::iterator endRules() const
+    {
+      return SetupMatrixRule::iterator(NULL);
+    }
 
     /** Python interface to add a new rule. */
     static DECLARE_EXPORT PyObject* addPythonRule(PyObject*, PyObject*, PyObject*);
@@ -4913,11 +5058,11 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
       * If no matching rule is found, the changeover is not allowed: a NULL
       * pointer is returned.
       */
-    DECLARE_EXPORT Rule* calculateSetup(const string, const string) const;
+    DECLARE_EXPORT SetupMatrixRule* calculateSetup(const string, const string) const;
 
   private:
     /** Head of the list of rules. */
-    Rule *firstRule;
+    SetupMatrixRule *firstRule;
 };
 
 
@@ -4953,7 +5098,10 @@ class Skill : public HasName<Skill>, public HasSource
     typedef Association<Resource,Skill,ResourceSkill>::ListB resourcelist;
 
     /** Returns an reference to the list of resources having this skill. */
-    const resourcelist& getResources() const {return resources;}
+    const resourcelist& getResources() const
+    {
+      return resources;
+    }
 
     /** Python interface to add a new resource. */
     static DECLARE_EXPORT PyObject* addPythonResource(PyObject*, PyObject*);
@@ -5011,20 +5159,23 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Default constructor. */
     explicit DECLARE_EXPORT Resource() :
-      size_max_cal(NULL), size_max(0), loc(NULL), cost(0.0), hidden(false), maxearly(defaultMaxEarly),
-      setupmatrix(NULL) { setMaximum(1); };
+      size_max_cal(NULL), size_max(0), loc(NULL), cost(0.0), hidden(false),
+      maxearly(defaultMaxEarly), setupmatrix(NULL)
+    {
+      setMaximum(1);
+    }
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Resource();
 
     /** Updates the size of a resource, when it is time-dependent. */
-    virtual DECLARE_EXPORT void setMaximumCalendar(CalendarDouble*);
+    virtual DECLARE_EXPORT void setMaximumCalendar(CalendarDefault*);
 
     /** Updates the size of a resource. */
     DECLARE_EXPORT void setMaximum(double);
 
     /** Return a pointer to the maximum capacity profile. */
-    CalendarDouble* getMaximumCalendar() const
+    CalendarDefault* getMaximumCalendar() const
     {
       return size_max_cal;
     }
@@ -5194,7 +5345,7 @@ class Resource : public HasHierarchy<Resource>,
     }
   protected:
     /** This calendar is used to updates to the resource size. */
-    CalendarDouble* size_max_cal;
+    CalendarDefault* size_max_cal;
 
     /** Stores the collection of all loadplans of this resource. */
     loadplanlist loadplans;
@@ -5348,7 +5499,7 @@ class ResourceBuckets : public Resource
     virtual DECLARE_EXPORT void updateProblems();
 
     /** Updates the time buckets and the quantity per time bucket. */
-    virtual DECLARE_EXPORT void setMaximumCalendar(CalendarDouble*);
+    virtual DECLARE_EXPORT void setMaximumCalendar(CalendarDefault*);
 };
 
 
@@ -5358,7 +5509,10 @@ class ResourceSkill : public Object,
 {
   public:
     /** Default constructor. */
-    explicit ResourceSkill() {initType(metadata);}
+    explicit ResourceSkill()
+    {
+      initType(metadata);
+    }
 
     /** Constructor. */
     explicit DECLARE_EXPORT ResourceSkill(Skill*, Resource*, int);
@@ -5374,19 +5528,31 @@ class ResourceSkill : public Object,
     static void writer(const MetaCategory*, Serializer*);
 
     /** Returns the resource. */
-    Resource* getResource() const {return getPtrA();}
+    Resource* getResource() const
+    {
+      return getPtrA();
+    }
 
     /** Updates the resource. This method can only be called on an instance. */
-    void setResource(Resource* r) {if (r) setPtrA(r,r->getSkills());}
+    void setResource(Resource* r)
+    {
+      if (r) setPtrA(r,r->getSkills());
+    }
 
     /** Returns the skill. */
-    Skill* getSkill() const {return getPtrB();}
+    Skill* getSkill() const
+    {
+      return getPtrB();
+    }
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
 
     /** Updates the skill. This method can only be called on an instance. */
-    void setSkill(Skill* s) {if (s) setPtrB(s,s->getResources());}
+    void setSkill(Skill* s)
+    {
+      if (s) setPtrB(s,s->getResources());
+    }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -5476,22 +5642,37 @@ class Load
     DECLARE_EXPORT ~Load();
 
     /** Returns the operation consuming the resource capacity. */
-    Operation* getOperation() const {return getPtrA();}
+    Operation* getOperation() const
+    {
+      return getPtrA();
+    }
 
     /** Updates the operation being loaded. This method can only be called
       * once for a load. */
-    void setOperation(Operation* o) {if (o) setPtrA(o,o->getLoads());}
+    void setOperation(Operation* o)
+    {
+      if (o) setPtrA(o,o->getLoads());
+    }
 
     /** Returns the capacity resource being consumed. */
-    Resource* getResource() const {return getPtrB();}
+    Resource* getResource() const
+    {
+      return getPtrB();
+    }
 
     /** Updates the capacity being consumed. This method can only be called
       * once on a resource. */
-    void setResource(Resource* r) {if (r) setPtrB(r,r->getLoads());}
+    void setResource(Resource* r)
+    {
+      if (r) setPtrB(r,r->getLoads());
+    }
 
     /** Returns how much capacity is consumed during the duration of the
       * operationplan. */
-    double getQuantity() const {return qty;}
+    double getQuantity() const
+    {
+      return qty;
+    }
 
     /** Updates the quantity of the load.
       * @exception DataException When a negative number is passed.
@@ -5503,12 +5684,18 @@ class Load
     }
 
     /** Returns true if there are alternates for this load. */
-    bool hasAlternates() const {return hasAlts;}
+    bool hasAlternates() const
+    {
+      return hasAlts;
+    }
 
     /** Returns the load of which this one is an alternate.<br>
       * NULL is return where there is none.
       */
-    Load* getAlternate() const {return altLoad;}
+    Load* getAlternate() const
+    {
+      return altLoad;
+    }
 
     /** Define the load of which this one is an alternate. */
     DECLARE_EXPORT void setAlternate(Load *);
@@ -5516,7 +5703,10 @@ class Load
     /** Returns the load of which this one is an alternate.<br>
       * NULL is return where there is none.
       */
-    string getAlternateName() const {return altLoad ? altLoad->getName() : "";}
+    string getAlternateName() const
+    {
+      return altLoad ? altLoad->getName() : "";
+    }
 
     /** Define the load of which this one is an alternate. */
     DECLARE_EXPORT void setAlternateName(string n);
@@ -5525,13 +5715,22 @@ class Load
     DECLARE_EXPORT void setSetup(string);
 
     /** Return the required resource setup. */
-    string getSetup() const {return setup;}
+    string getSetup() const
+    {
+      return setup;
+    }
 
     /** Update the required skill. */
-    void setSkill(Skill* s) {skill = s;}
+    void setSkill(Skill* s)
+    {
+      skill = s;
+    }
 
     /** Return the required skill. */
-    Skill* getSkill() const {return skill;}
+    Skill* getSkill() const
+    {
+      return skill;
+    }
 
     /** This method holds the logic the compute the date of a loadplan. */
     virtual Date getLoadplanDate(const LoadPlan*) const;
@@ -5554,13 +5753,22 @@ class Load
 
     /** Default constructor. */
     Load() : qty(1.0), hasAlts(false), altLoad(NULL),
-      search(PRIORITY), skill(NULL) {initType(metadata);}
+      search(PRIORITY), skill(NULL)
+    {
+      initType(metadata);
+    }
 
     /** Return the search mode. */
-    SearchMode getSearch() const {return search;}
+    SearchMode getSearch() const
+    {
+      return search;
+    }
 
     /** Update the search mode. */
-    void setSearch(const string a) {search = decodeSearchMode(a);}
+    void setSearch(const string a)
+    {
+      search = decodeSearchMode(a);
+    }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -5694,7 +5902,10 @@ class Plan : public Plannable, public Object
       * The singleton object is created during the initialization of the
       * library.
       */
-    static Plan& instance() {return *thePlan;}
+    static Plan& instance()
+    {
+      return *thePlan;
+    }
 
     /** Destructor.
       * @warning In multi threaded applications, the destructor is never called
@@ -5705,13 +5916,22 @@ class Plan : public Plannable, public Object
     DECLARE_EXPORT ~Plan();
 
     /** Returns the plan name. */
-    string getName() const { return name; }
+    string getName() const
+    {
+      return name;
+    }
 
     /** Updates the plan name. */
-    void setName(string s) { name = s; }
+    void setName(string s)
+    {
+      name = s;
+    }
 
     /** Returns the current date of the plan. */
-    Date getCurrent() const { return cur_Date; }
+    Date getCurrent() const
+    {
+      return cur_Date;
+    }
 
     /** Updates the current date of the plan. This method can be relatively
       * heavy in a plan where operationplans already exist, since the
@@ -6159,7 +6379,18 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public Object
       * subresource of the resource specified on the load, and b) must also
       * have the skill specified on the resource.
       */
-    DECLARE_EXPORT void setResource(Resource*, bool = false);
+    void setResource(Resource* res)
+    {
+      setResource(res, false);
+    }
+
+    /** Update the resource.<br>
+      * The optional second argument specifies whether or not we need to verify
+      * if the assigned resource is valid. A valid resource must a) be a
+      * subresource of the resource specified on the load, and b) must also
+      * have the skill specified on the resource.
+      */
+    DECLARE_EXPORT void setResource(Resource*, bool);
 
     /** Return the resource. */
     Resource* getResource() const
@@ -6192,11 +6423,17 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public Object
       return &(res->loadplans);
     }
 
-    /** Returns the current setup of the resource.<br>
+    /** Returns the current setup of the resource. */
+    string getSetup() const
+    {
+      return getSetup(true);
+    }
+
+    /** Returns the current setup of the resource.<br>/
       * When the argument is true (= default) the current setup is returned.<br>
       * When the argument is false the setup just before the loadplan is returned.
       */
-    DECLARE_EXPORT string getSetup(bool = true) const;
+    DECLARE_EXPORT string getSetup(bool) const;
 
     /** Returns true when the loadplan is hidden.<br>
       * This is determined by looking at whether the load is hidden or not.
@@ -6234,6 +6471,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public Object
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, NULL, MetaFieldBase::DONT_SERIALIZE);
       m->addStringField<Cls>(Tags::setup, &Cls::getSetup, NULL, MetaFieldBase::DONT_SERIALIZE);
     }
+
   private:
     /** Private constructor. It is called from the public constructor.<br>
       * The public constructor constructs the starting loadplan, while this
@@ -6467,17 +6705,38 @@ class ProblemPrecedence : public Problem
             + "' starts before operation '"
             + o->nextsubopplan->getOperation()->getName() +"' ends";
     }
-    bool isFeasible() const {return false;}
+
+    bool isFeasible() const
+    {
+      return false;
+    }
+
     /** The weight of the problem is equal to the duration in days. */
     double getWeight() const
     {
       return static_cast<double>(getDates().getDuration()) / 86400;
     }
+
     explicit ProblemPrecedence(OperationPlan* o, bool add = true) : Problem(o)
-    {if (add) addProblem();}
-    ~ProblemPrecedence() {removeProblem();}
-    string getEntity() const {return "operation";}
-    Object* getOwner() const {return static_cast<OperationPlan*>(owner);}
+    {
+      if (add) addProblem();
+    }
+
+    ~ProblemPrecedence()
+    {
+      removeProblem();
+    }
+
+    string getEntity() const
+    {
+      return "operation";
+    }
+
+    Object* getOwner() const
+    {
+      return static_cast<OperationPlan*>(owner);
+    }
+
     const DateRange getDates() const
     {
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
@@ -6503,17 +6762,49 @@ class ProblemDemandNotPlanned : public Problem
 {
   public:
     string getDescription() const
-    {return string("Demand '") + getDemand()->getName() + "' is not planned";}
-    bool isFeasible() const {return false;}
-    double getWeight() const {return getDemand()->getQuantity();}
+    {
+      return string("Demand '") + getDemand()->getName() + "' is not planned";
+    }
+
+    bool isFeasible() const
+    {
+      return false;
+    }
+
+    double getWeight() const
+    {
+      return getDemand()->getQuantity();
+    }
+
     explicit ProblemDemandNotPlanned(Demand* d, bool add = true) : Problem(d)
-    {if (add) addProblem();}
-    ~ProblemDemandNotPlanned() {removeProblem();}
-    string getEntity() const {return "demand";}
+    {
+      if (add) addProblem();
+    }
+
+    ~ProblemDemandNotPlanned()
+    {
+      removeProblem();
+    }
+
+    string getEntity() const
+    {
+      return "demand";
+    }
+
     const DateRange getDates() const
-    {return DateRange(getDemand()->getDue(),getDemand()->getDue());}
-    Object* getOwner() const {return static_cast<Demand*>(owner);}
-    Demand* getDemand() const {return static_cast<Demand*>(owner);}
+    {
+      return DateRange(getDemand()->getDue(),getDemand()->getDue());
+    }
+
+    Object* getOwner() const
+    {
+      return static_cast<Demand*>(owner);
+    }
+
+    Demand* getDemand() const
+    {
+      return static_cast<Demand*>(owner);
+    }
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return *metadata;}
@@ -7297,16 +7588,28 @@ class CommandMoveOperationPlan : public Command
     }
 
     /** Set another start date for the operationplan. */
-    void setEnd(Date d) {if (opplan) opplan->setEnd(d);}
+    void setEnd(Date d)
+    {
+      if (opplan) opplan->setEnd(d);
+    }
 
     /** Set another quantity for the operationplan. */
-    void setQuantity(double q) {if (opplan) opplan->setQuantity(q);}
+    void setQuantity(double q)
+    {
+      if (opplan) opplan->setQuantity(q);
+    }
 
     /** Return the quantity of the original operationplan. */
-    double getQuantity() const {return originalqty; }
+    double getQuantity() const
+    {
+      return originalqty;
+    }
 
     /** Return the dates of the original operationplan. */
-    DateRange getDates() const {return originaldates;}
+    DateRange getDates() const
+    {
+      return originaldates;
+    }
 
   private:
     /** This is a pointer to the operationplan being moved. */
@@ -7916,7 +8219,7 @@ class SetupMatrixRuleIterator : public PythonExtension<SetupMatrixRuleIterator>
 
   private:
     SetupMatrix* matrix;
-    SetupMatrix::RuleIterator currule;
+    SetupMatrixRule::iterator currule;
     PyObject *iternext();
 };
 
@@ -8004,7 +8307,7 @@ class CalendarBucketIterator : public PythonExtension<CalendarBucketIterator>
 
   private:
     Calendar* cal;
-    Calendar::BucketIterator i;
+    CalendarBucket::iterator i;
     PyObject *iternext();
 };
 

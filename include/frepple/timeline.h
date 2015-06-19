@@ -71,29 +71,54 @@ template <class type> class TimeLine
         virtual ~Event() {};
 
         /** Return the even type. */
-        inline unsigned short getType() const {return tp;}
+        inline unsigned short getType() const
+        {
+          return tp;
+        }
 
         /** Return the quantity. */
-        inline double getQuantity() const {return qty;}
+        inline double getQuantity() const
+        {
+          return qty;
+        }
 
         /** Return the current onhand value. */
-        inline double getOnhand() const {return oh;}
+        inline double getOnhand() const
+        {
+          return oh;
+        }
 
         /** Return the total produced quantity till the current date. */
-        inline double getCumulativeProduced() const {return cum_prod;}
+        inline double getCumulativeProduced() const
+        {
+          return cum_prod;
+        }
 
         /** Return the total consumed quantity till the current date. */
-        inline double getCumulativeConsumed() const {return cum_prod - oh;}
+        inline double getCumulativeConsumed() const
+        {
+          return cum_prod - oh;
+        }
 
         /** Return the date of the event. */
-        inline Date getDate() const {return dt;}
+        inline Date getDate() const
+        {
+          return dt;
+        }
 
         /** Return a pointer to the owning timeline. */
-        virtual TimeLine<type>* getTimeLine() const {return NULL;}
+        virtual TimeLine<type>* getTimeLine() const
+        {
+          return NULL;
+        }
 
         /** These functions return the minimum boundary valid at the time of
           * this event. */
-        double getMin() const {return getMin(true);}
+        double getMin() const
+        {
+          return getMin(true);
+        }
+
         virtual double getMin(bool inclusive) const
         {
           EventMinQuantity *m = this->getTimeLine()->lastMin;
@@ -106,7 +131,11 @@ template <class type> class TimeLine
 
         /** This functions return the maximum boundary valid at the time of
           * this event. */
-        double getMax() const {return getMax(true);}
+        double getMax() const
+        {
+          return getMax(true);
+        }
+
         virtual double getMax(bool inclusive) const
         {
           EventMaxQuantity *m = this->getTimeLine()->lastMax;
@@ -151,11 +180,15 @@ template <class type> class TimeLine
         friend class TimeLine<type>;
       private:
         double new_oh;
+
       protected:
         EventSetOnhand *prevSet;
+
       public:
         EventSetOnhand(Date d, double q=0.0) : Event(2), new_oh(q), prevSet(NULL)
-        {this->dt = d;}
+        {
+          this->dt = d;
+        }
     };
 
     /** @brief A timeline event representing a change of the minimum target. */
@@ -166,18 +199,33 @@ template <class type> class TimeLine
       private:
         double newMin;
         TimeLine<type>* tmline;
+
       protected:
         EventMinQuantity *prevMin;
+
       public:
-        virtual TimeLine<type>* getTimeLine() const {return tmline;}
+        virtual TimeLine<type>* getTimeLine() const
+        {
+          return tmline;
+        }
+
         EventMinQuantity(Date d, TimeLine<type>* t, double f=0.0)
           : Event(3), newMin(f), tmline(t), prevMin(NULL)
-          {this->dt = d;}
-        void setMin(double f) {newMin = f;}
+        {
+          this->dt = d;
+        }
+
+        void setMin(double f)
+        {
+          newMin = f;
+        }
+
         virtual double getMin(bool inclusive = true) const
         {
-          if (inclusive) return newMin;
-          else return prevMin ? prevMin->newMin : 0.0;
+          if (inclusive)
+            return newMin;
+          else
+            return prevMin ? prevMin->newMin : 0.0;
         }
     };
 
@@ -186,17 +234,31 @@ template <class type> class TimeLine
     {
         friend class Event;
         friend class TimeLine<type>;
+
       private:
         double newMax;
         TimeLine<type>* tmline;
+
       protected:
         EventMaxQuantity *prevMax;
+
       public:
-        virtual TimeLine<type>* getTimeLine() const {return tmline;}
+        virtual TimeLine<type>* getTimeLine() const
+        {
+          return tmline;
+        }
+
         EventMaxQuantity(Date d, TimeLine<type>* t, double f=0.0)
           : Event(4), newMax(f), tmline(t), prevMax(NULL)
-          {this->dt = d;}
-        void setMax(double f) {newMax = f;}
+        {
+          this->dt = d;
+        }
+
+        void setMax(double f)
+        {
+          newMax = f;
+        }
+
         virtual double getMax(bool inclusive = true) const
         {
           if (inclusive) return newMax;
@@ -211,18 +273,56 @@ template <class type> class TimeLine
         const Event* cur;
       public:
         const_iterator() : cur(NULL) {}
+
         const_iterator(const Event* e) : cur(e) {};
+
         const_iterator(const iterator& c) : cur(c.cur) {}
-        const Event& operator*() const {return *cur;}
-        const Event* operator->() const {return cur;}
-        const_iterator& operator++() {if (cur) cur = cur->next; return *this;}
+
+        const Event& operator*() const
+        {
+          return *cur;
+        }
+
+        const Event* operator->() const
+        {
+          return cur;
+        }
+
+        const_iterator& operator++()
+        {
+          if (cur) cur = cur->next;
+          return *this;
+        }
+
         const_iterator operator++(int)
-        {const_iterator tmp = *this; ++*this; return tmp;}
-        const_iterator& operator--() {if (cur) cur = cur->prev; return *this;}
+        {
+          const_iterator tmp = *this;
+          ++*this;
+          return tmp;
+        }
+
+        const_iterator& operator--()
+        {
+          if (cur) cur = cur->prev;
+          return *this;
+        }
+
         const_iterator operator--(int)
-        {const_iterator tmp = *this; --*this; return tmp;}
-        bool operator==(const const_iterator& x) const {return cur == x.cur;}
-        bool operator!=(const const_iterator& x) const {return cur != x.cur;}
+        {
+          const_iterator tmp = *this;
+          --*this;
+          return tmp;
+        }
+
+        bool operator==(const const_iterator& x) const
+        {
+          return cur == x.cur;
+        }
+
+        bool operator!=(const const_iterator& x) const
+        {
+          return cur != x.cur;
+        }
     };
 
     /** @brief This is bi-directional iterator through the timeline. */
@@ -230,15 +330,54 @@ template <class type> class TimeLine
     {
       public:
         iterator() {}
+
         iterator(Event* e) : const_iterator(e) {};
-        Event& operator*() const {return *const_cast<Event*>(this->cur);}
-        Event* operator->() const {return const_cast<Event*>(this->cur);}
-        iterator& operator++() {if (this->cur) this->cur = this->cur->next; return *this;}
-        iterator operator++(int) {iterator tmp = *this; ++*this; return tmp;}
-        iterator& operator--() {if (this->cur) this->cur = this->cur->prev; return *this;}
-        iterator operator--(int) {iterator tmp = *this; --*this; return tmp;}
-        bool operator==(const iterator& x) const {return this->cur == x.cur;}
-        bool operator!=(const iterator& x) const {return this->cur != x.cur;}
+
+        Event& operator*() const
+        {
+          return *const_cast<Event*>(this->cur);
+        }
+
+        Event* operator->() const
+        {
+          return const_cast<Event*>(this->cur);
+        }
+
+        iterator& operator++()
+        {
+          if (this->cur) this->cur = this->cur->next;
+          return *this;
+        }
+
+        iterator operator++(int)
+        {
+          iterator tmp = *this;
+          ++*this;
+          return tmp;
+        }
+
+        iterator& operator--()
+        {
+          if (this->cur) this->cur = this->cur->prev;
+          return *this;
+        }
+
+        iterator operator--(int)
+        {
+          iterator tmp = *this;
+          --*this;
+          return tmp;
+        }
+
+        bool operator==(const iterator& x) const
+        {
+          return this->cur == x.cur;
+        }
+
+        bool operator!=(const iterator& x) const
+        {
+          return this->cur != x.cur;
+        }
     };
 
     TimeLine() : first(NULL), last(NULL), lastMax(NULL), lastMin(NULL), lastSet(NULL) {}
@@ -248,15 +387,52 @@ template <class type> class TimeLine
       for (Event* p=first; p; p=p->next) ++cnt;
       return cnt;
     }
-    iterator begin() {return iterator(first);}
-    iterator begin(Event* e) {return iterator(e);}
-    iterator rbegin() {return iterator(last);}
-    iterator end() {return iterator(NULL);}
-    const_iterator begin() const {return const_iterator(first);}
-    const_iterator begin(const Event* e) const {return const_iterator(e);}
-    const_iterator rbegin() const {return const_iterator(last);}
-    const_iterator end() const {return const_iterator(NULL);}
-    bool empty() const {return first==NULL;}
+
+    iterator begin()
+    {
+      return iterator(first);
+    }
+
+    iterator begin(Event* e)
+    {
+      return iterator(e);
+    }
+
+    iterator rbegin()
+    {
+      return iterator(last);
+    }
+
+    iterator end()
+    {
+      return iterator(NULL);
+    }
+
+    const_iterator begin() const
+    {
+      return const_iterator(first);
+    }
+
+    const_iterator begin(const Event* e) const
+    {
+      return const_iterator(e);
+    }
+
+    const_iterator rbegin() const
+    {
+      return const_iterator(last);
+    }
+
+    const_iterator end() const
+    {
+      return const_iterator(NULL);
+    }
+
+    bool empty() const
+    {
+      return first==NULL;
+    }
+
     void insert(Event*);
 
     /** Insert an onhandchange event in the timeline. */

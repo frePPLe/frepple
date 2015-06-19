@@ -248,7 +248,7 @@ DECLARE_EXPORT void Buffer::setMinimum(double m)
 }
 
 
-DECLARE_EXPORT void Buffer::setMinimumCalendar(CalendarDouble *cal)
+DECLARE_EXPORT void Buffer::setMinimumCalendar(CalendarDefault *cal)
 {
   // Resetting the same calendar
   if (min_cal == cal) return;
@@ -274,9 +274,9 @@ DECLARE_EXPORT void Buffer::setMinimumCalendar(CalendarDouble *cal)
 
   // Create timeline structures for every event. A new entry is created only
   // when the value changes.
-  min_cal = const_cast< CalendarDouble* >(cal);
+  min_cal = const_cast< CalendarDefault* >(cal);
   double curMin = 0.0;
-  for (CalendarDouble::EventIterator x(min_cal); x.getDate()<Date::infiniteFuture; ++x)
+  for (CalendarDefault::EventIterator x(min_cal); x.getDate()<Date::infiniteFuture; ++x)
     if (curMin != x.getValue())
     {
       curMin = x.getValue();
@@ -318,7 +318,7 @@ DECLARE_EXPORT void Buffer::setMaximum(double m)
 }
 
 
-DECLARE_EXPORT void Buffer::setMaximumCalendar(CalendarDouble *cal)
+DECLARE_EXPORT void Buffer::setMaximumCalendar(CalendarDefault *cal)
 {
   // Resetting the same calendar
   if (max_cal == cal) return;
@@ -344,9 +344,9 @@ DECLARE_EXPORT void Buffer::setMaximumCalendar(CalendarDouble *cal)
 
   // Create timeline structures for every bucket. A new entry is created only
   // when the value changes.
-  max_cal = const_cast<CalendarDouble*>(cal);
+  max_cal = const_cast<CalendarDefault*>(cal);
   double curMax = 0.0;
-  for (CalendarDouble::EventIterator x(max_cal); x.getDate()<Date::infiniteFuture; ++x)
+  for (CalendarDefault::EventIterator x(max_cal); x.getDate()<Date::infiniteFuture; ++x)
     if (curMax != x.getValue())
     {
       curMax = x.getValue();

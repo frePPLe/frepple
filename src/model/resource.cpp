@@ -120,7 +120,7 @@ DECLARE_EXPORT void Resource::setMaximum(double m)
 }
 
 
-DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDouble* c)
+DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDefault* c)
 {
   // Resetting the same calendar
   if (size_max_cal == c) return;
@@ -147,7 +147,7 @@ DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDouble* c)
   // Create timeline structures for every bucket.
   size_max_cal = c;
   double curMax = 0.0;
-  for (CalendarDouble::EventIterator x(size_max_cal); x.getDate()<Date::infiniteFuture; ++x)
+  for (CalendarDefault::EventIterator x(size_max_cal); x.getDate()<Date::infiniteFuture; ++x)
     if (curMax != x.getValue())
     {
       curMax = x.getValue();
@@ -158,7 +158,7 @@ DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDouble* c)
 }
 
 
-DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(CalendarDouble* c)
+DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(CalendarDefault* c)
 {
   // Resetting the same calendar
   if (size_max_cal == c) return;
@@ -178,7 +178,7 @@ DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(CalendarDouble* c)
   // Create timeline structures for every bucket.
   size_max_cal = c;
   double v = 0.0;
-  for (CalendarDouble::EventIterator x(size_max_cal); x.getDate()<Date::infiniteFuture; ++x)
+  for (CalendarDefault::EventIterator x(size_max_cal); x.getDate()<Date::infiniteFuture; ++x)
     if (v != x.getValue())
     {
       v = x.getValue();

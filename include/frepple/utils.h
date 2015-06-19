@@ -293,14 +293,20 @@ extern DECLARE_EXPORT ostream logger;
 struct indent
 {
   short level;
+
   indent(short l) : level(l) {}
-  indent operator() (short l) {return indent(l);}
+
+  indent operator() (short l)
+  {
+    return indent(l);
+  }
 };
 
 /** Print a number of spaces to the output stream. */
 inline ostream& operator <<(ostream &os, const indent& i)
 {
-  for (short c = i.level; c>0; --c) os << ' ';
+  for (short c = i.level; c>0; --c)
+    os << ' ';
   return os;
 }
 
@@ -563,7 +569,10 @@ class PythonInterpreter
     static DECLARE_EXPORT void registerGlobalObject(const char*, PyObject*, bool = true);
 
     /** Return a pointer to the main extension module. */
-    static PyObject* getModule() {return module;}
+    static PyObject* getModule()
+    {
+      return module;
+    }
 
     /** Create a new Python thread state.<br>
       * Each OS-level thread needs to initialize a Python thread state as well.
@@ -841,7 +850,10 @@ class Date
 
     /** A private constructor used to create the infinitePast and
       * infiniteFuture constants. */
-    Date(const char* s, bool dummy) {parse(s);}
+    Date(const char* s, bool dummy)
+    {
+      parse(s);
+    }
 
     /** A utility function that uses the C function localtime to compute the
       * details of the current time: day of the week, day of the month,
@@ -867,7 +879,10 @@ class Date
   public:
 
     /** Constructor initialized with a long value. */
-    Date(const time_t l) : lval(l) {checkFinite(lval);}
+    Date(const time_t l) : lval(l)
+    {
+      checkFinite(lval);
+    }
 
     /** Default constructor. */
     // This constructor can skip the check for finite dates, and
@@ -2059,7 +2074,10 @@ class MetaClass : public NonCopyable
     typedef vector<MetaFieldBase*> fieldlist;
 
     /** Return a reference to a list of fields. */
-    const fieldlist& getFields() const {return fields;}
+    const fieldlist& getFields() const
+    {
+      return fields;
+    }
 
   private:
     /** This constructor registers the metadata of a class. */
@@ -2444,7 +2462,10 @@ class Serializer
 {
   protected:
     /** Updating the output stream. */
-    void setOutput(ostream& o) {m_fp = &o;}
+    void setOutput(ostream& o)
+    {
+      m_fp = &o;
+    }
 
   public:
     /** This type is used to define different types of output.
@@ -2720,17 +2741,29 @@ class Attribute  // XXX TODO rename
 
     /** Returns true when this element is an instance of this tag. This method
       * doesn't involve a string comparison and is extremely efficient. */
-    bool isA(const Keyword& t) const {return t.getHash() == hash;}
+    bool isA(const Keyword& t) const
+    {
+      return t.getHash() == hash;
+    }
 
     /** Returns true when this element is an instance of this tag. This method
       * doesn't involve a string comparison and is extremely efficient. */
-    bool isA(const Keyword* t) const {return t->getHash() == hash;}
+    bool isA(const Keyword* t) const
+    {
+      return t->getHash() == hash;
+    }
 
     /** Comparison operator. */
-    bool operator < (const Attribute& o) const {return hash < o.hash;}
+    bool operator < (const Attribute& o) const
+    {
+      return hash < o.hash;
+    }
 
     /** String comparison. */
-    bool operator == (const string o) const {return o == ch;}
+    bool operator == (const string o) const
+    {
+      return o == ch;
+    }
 };
 
 
@@ -3477,7 +3510,10 @@ class PythonFunction : public PythonData
     }
 
     /** Destructor. */
-    ~PythonFunction() {if (func) {Py_DECREF(func);}}
+    ~PythonFunction()
+    {
+      if (func) {Py_DECREF(func);}
+    }
 
     /** Conversion operator to a Python pointer. */
     operator const PyObject*() const
@@ -5220,10 +5256,16 @@ class HasSource
     string source;
   public:
     /** Returns the source field. */
-    string getSource() const {return source;}
+    string getSource() const
+    {
+      return source;
+    }
 
     /** Sets the source field. */
-    void setSource(string c) {source = c;}
+    void setSource(string c)
+    {
+      source = c;
+    }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -5240,22 +5282,40 @@ class HasDescription : public HasSource
 {
   public:
     /** Returns the category. */
-    string getCategory() const {return cat;}
+    string getCategory() const
+    {
+      return cat;
+    }
 
     /** Returns the sub_category. */
-    string getSubCategory() const {return subcat;}
+    string getSubCategory() const
+    {
+      return subcat;
+    }
 
     /** Returns the getDescription. */
-    string getDescription() const {return descr;}
+    string getDescription() const
+    {
+      return descr;
+    }
 
     /** Sets the category field. */
-    void setCategory(const string f) {cat = f;}
+    void setCategory(const string f)
+    {
+      cat = f;
+    }
 
     /** Sets the sub_category field. */
-    void setSubCategory(const string f) {subcat = f;}
+    void setSubCategory(const string f)
+    {
+      subcat = f;
+    }
 
     /** Sets the description field. */
-    void setDescription(const string f) {descr = f;}
+    void setDescription(const string f)
+    {
+      descr = f;
+    }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -5357,11 +5417,15 @@ template <class T> class HasHierarchy : public HasName<T>
 
         /** Inequality operator. */
         bool operator!=(const memberIterator& y) const
-        {return curmember != y.curmember;}
+        {
+          return curmember != y.curmember;
+        }
 
         /** Comparison operator. */
         bool operator==(const typename HasName<T>::iterator& y) const
-        {return curmember ? (curmember == &*y) : (y == T::end());}
+        {
+          return curmember ? (curmember == &*y) : (y == T::end());
+        }
 
         /** Inequality operator. */
         bool operator!=(const typename HasName<T>::iterator& y) const
@@ -5491,9 +5555,14 @@ template <class A, class B, class C> class Association
         friend class Node;
       public:
         C* first;
+
       public:
         List() : first(NULL) {};
-        bool empty() const {return first==NULL;}
+
+        bool empty() const
+        {
+          return first==NULL;
+        }
     };
 
   public:
@@ -5502,11 +5571,13 @@ template <class A, class B, class C> class Association
     {
       public:
         ListA() {};
+
         /** @brief An iterator over the associated objects. */
         class iterator
         {
           protected:
             C* nodeptr;
+
           public:
             iterator(C* n) : nodeptr(n) {};
 
@@ -5735,14 +5806,33 @@ template <class A, class B, class C> class Association
             C* nodeptr;
           public:
             const_iterator(C* n) : nodeptr(n) {};
-            const C& operator*() const {return *nodeptr;}
-            const C* operator->() const {return nodeptr;}
+
+            const C& operator*() const
+            {
+              return *nodeptr;
+            }
+
+            const C* operator->() const
+            {
+              return nodeptr;
+            }
+
             bool operator==(const const_iterator& x) const
-            {return nodeptr == x.nodeptr;}
+            {
+              return nodeptr == x.nodeptr;
+            }
+
             bool operator!=(const const_iterator& x) const
-            {return nodeptr != x.nodeptr;}
+            {
+              return nodeptr != x.nodeptr;
+            }
+
             const_iterator& operator++()
-            {nodeptr = nodeptr->nextB; return *this;}
+            {
+              nodeptr = nodeptr->nextB;
+              return *this;
+            }
+
             const_iterator operator++(int i)
             {
               const_iterator j = *this;
@@ -5930,43 +6020,79 @@ template <class A, class B, class C> class Association
           setPtrB(b, bl);
         }
 
-        A* getPtrA() const {return ptrA;}
+        A* getPtrA() const
+        {
+          return ptrA;
+        }
 
-        B* getPtrB() const {return ptrB;}
+        B* getPtrB() const
+        {
+          return ptrB;
+        }
 
         /** Update the start date of the effectivity range. */
-        void setEffectiveStart(Date d) {effectivity.setStart(d);}
+        void setEffectiveStart(Date d)
+        {
+          effectivity.setStart(d);
+        }
 
         /** Update the end date of the effectivity range. */
-        void setEffectiveEnd(Date d) {effectivity.setEnd(d);}
+        void setEffectiveEnd(Date d)
+        {
+          effectivity.setEnd(d);
+        }
 
         /** Update the effectivity range. */
-        void setEffective(DateRange dr) {effectivity = dr;}
+        void setEffective(DateRange dr)
+        {
+          effectivity = dr;
+        }
 
         /** Get the start date of the effectivity range. */
-        Date getEffectiveStart() const { return effectivity.getStart(); }
+        Date getEffectiveStart() const
+        {
+          return effectivity.getStart();
+        }
 
         /** Get the end date of the effectivity range. */
-        Date getEffectiveEnd() const { return effectivity.getEnd(); }
+        Date getEffectiveEnd() const
+        {
+          return effectivity.getEnd();
+        }
 
         /** Return the effectivity daterange.<br>
           * The default covers the complete time horizon.
           */
-        DateRange getEffective() const {return effectivity;}
+        DateRange getEffective() const
+        {
+          return effectivity;
+        }
 
         /** Sets an optional name for the association.<br>
           * There is no garantuee of the uniqueness of this name.
           */
-        void setName(string x) {name = x;}
+        void setName(string x)
+        {
+          name = x;
+        }
 
         /** Return the optional name of the association. */
-        string getName() const {return name;}
+        string getName() const
+        {
+          return name;
+        }
 
         /** Update the priority. */
-        void setPriority(int i) {priority = i;}
+        void setPriority(int i)
+        {
+          priority = i;
+        }
 
         /** Return the priority. */
-        int getPriority() const {return priority;}
+        int getPriority() const
+        {
+          return priority;
+        }
     };
 };
 

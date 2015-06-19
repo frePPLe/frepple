@@ -60,8 +60,9 @@ void LibraryModel::initialize()
   nok += SupplierIterator::initialize();
 
   // Initialize the calendar metadata.
+  nok += CalendarBucket::initialize();
   nok += Calendar::initialize();
-  nok += CalendarDouble::initialize();
+  nok += CalendarDefault::initialize();
   nok += CalendarIterator::initialize();
 
   // Initialize the operation metadata.
@@ -97,6 +98,7 @@ void LibraryModel::initialize()
   nok += DemandPlanIterator::initialize();
 
   // Initialize the setupmatrix metadata.
+  nok += SetupMatrixRule::initialize();
   nok += SetupMatrix::initialize();
   nok += SetupMatrixDefault::initialize();
   nok += SetupMatrixIterator::initialize();

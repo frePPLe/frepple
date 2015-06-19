@@ -258,7 +258,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
       bool available = true;
       for (int c = 0; c < calcount && available; c++)
       {
-    	const Calendar::Bucket *tmp = cals[c]->getBucket();
+        const CalendarBucket *tmp = cals[c]->getBucket();
         if (tmp)
           available = tmp->getBool();
         else
@@ -1269,7 +1269,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
   if (lastsetup != ldplan->getLoad()->getSetup())
   {
     // Calculate the setup time
-    SetupMatrix::Rule *conversionrule = ldplan->getLoad()->getResource()->getSetupMatrix()
+    SetupMatrixRule *conversionrule = ldplan->getLoad()->getResource()->getSetupMatrix()
         ->calculateSetup(lastsetup, ldplan->getLoad()->getSetup());
     duration = conversionrule ? conversionrule->getDuration() : Duration(365L*86400L);
   }

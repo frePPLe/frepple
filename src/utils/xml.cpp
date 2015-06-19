@@ -221,7 +221,10 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       if (!data[dataindex].field && objects[objectindex].cls->category)
         data[dataindex].field = objects[objectindex].cls->category->findField(data[dataindex].hash);
       if (!data[dataindex].field)
-        throw DataException("XML attribute not defined");
+      {
+        string a = transcodeUTF8(atts.getLocalName(i));
+        throw DataException("Attribute '" + a + "' not defined");
+      }
 
       // Set the data value
       data[dataindex].value.setString(transcodeUTF8(atts.getValue(i)));
@@ -272,11 +275,20 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
 
       // Look up the field
       data[dataindex].hash = Keyword::hash(atts.getLocalName(i));
+      if (data[dataindex].hash == Tags::type.getHash())
+      {
+        // Skip attribute called "type"
+        --dataindex;
+        continue;
+      }
       data[dataindex].field = objects[objectindex].cls->findField(data[dataindex].hash);
       if (!data[dataindex].field && objects[objectindex].cls->category)
         data[dataindex].field = objects[objectindex].cls->category->findField(data[dataindex].hash);
       if (!data[dataindex].field)
-        throw DataException("XML attribute not defined");
+      {
+        string a = transcodeUTF8(atts.getLocalName(i));
+        throw DataException("Attribute '" + a + "' not defined");
+      }
 
       // Set the data value
       data[dataindex].value.setString(transcodeUTF8(atts.getValue(i)));

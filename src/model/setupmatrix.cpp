@@ -27,7 +27,7 @@ namespace frepple
 template<class SetupMatrix> DECLARE_EXPORT Tree utils::HasName<SetupMatrix>::st;
 DECLARE_EXPORT const MetaCategory* SetupMatrix::metadata;
 DECLARE_EXPORT const MetaClass* SetupMatrixDefault::metadata;
-DECLARE_EXPORT const MetaCategory* SetupMatrix::Rule::metadata;
+DECLARE_EXPORT const MetaCategory* SetupMatrixRule::metadata;
 
 
 int SetupMatrix::initialize()
@@ -40,19 +40,18 @@ int SetupMatrix::initialize()
   FreppleCategory<SetupMatrix>::getPythonType().addMethod("addRule",
     addPythonRule, METH_VARARGS | METH_KEYWORDS, "add a new setup rule");
   return FreppleCategory<SetupMatrix>::initialize()
-      + Rule::initialize()
       + SetupMatrixRuleIterator::initialize();
 }
 
 
-int SetupMatrix::Rule::initialize()
+int SetupMatrixRule::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<SetupMatrix::Rule>("setupmatrixrule", "setupmatrixrules");
-  registerFields<SetupMatrix::Rule>(const_cast<MetaCategory*>(metadata));
+  metadata = MetaCategory::registerCategory<SetupMatrixRule>("setupmatrixrule", "setupmatrixrules");
+  registerFields<SetupMatrixRule>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = PythonExtension<SetupMatrix::Rule>::getPythonType();
+  PythonType& x = PythonExtension<SetupMatrixRule>::getPythonType();
   x.setName("setupmatrixrule");
   x.setDoc("frePPLe setupmatrixrule");
   x.supportgetattro();
@@ -87,13 +86,13 @@ DECLARE_EXPORT SetupMatrix::~SetupMatrix()
 }
 
 
-DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::createRule(const DataValueDict& atts)
+DECLARE_EXPORT SetupMatrixRule* SetupMatrix::createRule(const DataValueDict& atts)
 {
   // Pick up the start, end and name attributes
   int priority = atts.get(Tags::priority)->getInt();
 
   // Check for existence of a rule with the same priority
-  Rule* result = firstRule;
+  SetupMatrixRule* result = firstRule;
   while (result && priority > result->priority)
     result = result->nextRule;
   if (result && result->priority != priority) result = NULL;
@@ -110,7 +109,7 @@ DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::createRule(const DataValueDict& a
           << " already exists in setup matrix '" << getName() << "'";
         throw DataException(o.str());
       }
-      result = new Rule(this, priority);
+      result = new SetupMatrixRule(this, priority);
       return result;
     case CHANGE:
       // Only changes are allowed
@@ -140,7 +139,7 @@ DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::createRule(const DataValueDict& a
     case ADD_CHANGE:
       if (!result)
         // Adding a new rule
-        result = new Rule(this, priority);
+        result = new SetupMatrixRule(this, priority);
       return result;
   }
 
@@ -170,7 +169,7 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
       return NULL;
 
     // Add the new rule
-    Rule * r = new Rule(matrix, prio);
+    SetupMatrixRule *r = new SetupMatrixRule(matrix, prio);
     if (pyfrom) r->setFromSetup(PythonData(pyfrom).getString());
     if (pyto) r->setToSetup(PythonData(pyfrom).getString());
     r->setDuration(duration);
@@ -185,14 +184,14 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
 }
 
 
-DECLARE_EXPORT SetupMatrix::Rule::Rule(SetupMatrix *s, int p)
+DECLARE_EXPORT SetupMatrixRule::SetupMatrixRule(SetupMatrix *s, int p)
   : cost(0), priority(p), matrix(s), nextRule(NULL), prevRule(NULL)
 {
   // Validate the arguments
   if (!matrix) throw DataException("Can't add a rule to NULL setup matrix");
 
   // Find the right place in the list
-  Rule *next = matrix->firstRule, *prev = NULL;
+  SetupMatrixRule *next = matrix->firstRule, *prev = NULL;
   while (next && p > next->priority)
   {
     prev = next;
@@ -215,7 +214,7 @@ DECLARE_EXPORT SetupMatrix::Rule::Rule(SetupMatrix *s, int p)
 }
 
 
-DECLARE_EXPORT SetupMatrix::Rule::~Rule()
+DECLARE_EXPORT SetupMatrixRule::~SetupMatrixRule()
 {
   // Maintain linked list
   if (nextRule) nextRule->prevRule = prevRule;
@@ -224,7 +223,7 @@ DECLARE_EXPORT SetupMatrix::Rule::~Rule()
 }
 
 
-DECLARE_EXPORT void SetupMatrix::Rule::setPriority(const int n)
+DECLARE_EXPORT void SetupMatrixRule::setPriority(const int n)
 {
   // Update the field
   priority = n;
@@ -232,8 +231,8 @@ DECLARE_EXPORT void SetupMatrix::Rule::setPriority(const int n)
   // Check ordering on the left
   while (prevRule && priority < prevRule->priority)
   {
-    Rule* next = nextRule;
-    Rule* prev = prevRule;
+    SetupMatrixRule* next = nextRule;
+    SetupMatrixRule* prev = prevRule;
     if (prev && prev->prevRule) prev->prevRule->nextRule = this;
     else matrix->firstRule = this;
     if (prev) prev->nextRule = nextRule;
@@ -247,8 +246,8 @@ DECLARE_EXPORT void SetupMatrix::Rule::setPriority(const int n)
   // Check ordering on the right
   while (nextRule && priority > nextRule->priority)
   {
-    Rule* next = nextRule;
-    Rule* prev = prevRule;
+    SetupMatrixRule* next = nextRule;
+    SetupMatrixRule* prev = prevRule;
     nextRule = next->nextRule;
     if (next && next->nextRule) next->nextRule->prevRule = this;
     if (prev) prev->nextRule = next;
@@ -289,14 +288,14 @@ PyObject* SetupMatrixRuleIterator::iternext()
 }
 
 
-DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::calculateSetup
+DECLARE_EXPORT SetupMatrixRule* SetupMatrix::calculateSetup
 (const string oldsetup, const string newsetup) const
 {
   // No need to look
   if (oldsetup == newsetup) return NULL;
 
   // Loop through all rules
-  for (Rule *curRule = firstRule; curRule; curRule = curRule->nextRule)
+  for (SetupMatrixRule *curRule = firstRule; curRule; curRule = curRule->nextRule)
   {
     // Need a match on the fromsetup
     if (!curRule->getFromSetup().empty()

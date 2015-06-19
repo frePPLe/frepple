@@ -200,7 +200,7 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
 
     /** Updates whether we ignore data exceptions or whether we abort the
       * processing of the XML data stream. */
-    void setAbortOnDataError(bool i) 
+    void setAbortOnDataError(bool i)
     {
       abortOnDataException = i;
     }
@@ -211,7 +211,7 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
       * still abort the parsing process.<br>
       * False indicates that the processing of the XML stream is aborted.
       */
-    bool getAbortOnDataError() const 
+    bool getAbortOnDataError() const
     {
       return abortOnDataException;
     }
@@ -287,13 +287,13 @@ class XMLInputFile : public XMLInput
     XMLInputFile() {};
 
     /** Update the name of the file to be processed. */
-    void setFileName(const string& s) 
+    void setFileName(const string& s)
     {
       filename = s;
     }
 
     /** Returns the name of the file or directory to process. */
-    string getFileName() 
+    string getFileName()
     {
       return filename;
     }
@@ -316,9 +316,9 @@ class XMLInputFile : public XMLInput
 };
 
 
-/** @brief This class represents a list of XML key+value pairs. 
+/** @brief This class represents a list of XML key+value pairs.
   *
-  * The method is a thin wrapper around one of the internal data 
+  * The method is a thin wrapper around one of the internal data
   * structures of the XMLInput class.
   */
 class XMLDataValueDict : public DataValueDict
@@ -365,21 +365,33 @@ class XMLSerializer : public Serializer
       * The default value is:
       *   <?xml version="1.0" encoding="UTF-8"?>
       */
-    void setHeaderStart(const string& s) {headerStart = s;}
+    void setHeaderStart(const string& s)
+    {
+      headerStart = s;
+    }
 
     /** Returns the string that is printed as the first line of each XML
       * document. */
-    string getHeaderStart() const {return headerStart;}
+    string getHeaderStart() const
+    {
+      return headerStart;
+    }
 
     /** Updates the attributes that are written for the root element of each
       * XML document.<br>
       * The default value is an empty string.
       */
-    void setHeaderAtts(const string& s) {headerAtts = s;}
+    void setHeaderAtts(const string& s)
+    {
+      headerAtts = s;
+    }
 
     /** Returns the attributes that are written for the root element of each
       * XML document. */
-    string getHeaderAtts() const {return headerAtts;}
+    string getHeaderAtts() const
+    {
+      return headerAtts;
+    }
 
     /** Constructor with a given stream. */
     XMLSerializer(ostream& os) : Serializer(os), m_nIndent(0),
@@ -689,17 +701,27 @@ class XMLSerializer : public Serializer
 
     /** Returns a pointer to the object that is currently being saved. */
     Object* getCurrentObject() const
-    {return const_cast<Object*>(currentObject);}
+    {
+      return const_cast<Object*>(currentObject);
+    }
 
     /** Returns a pointer to the parent of the object that is being saved. */
     Object* getPreviousObject() const
-    {return const_cast<Object*>(parentObject);}
+    {
+      return const_cast<Object*>(parentObject);
+    }
 
     /** Returns the number of objects that have been serialized. */
-    unsigned long countObjects() const {return numObjects;}
+    unsigned long countObjects() const
+    {
+      return numObjects;
+    }
 
     /** Get a string suitable for correctly indenting the output. */
-    const char* getIndent() {return indentstring;}
+    const char* getIndent()
+    {
+      return indentstring;
+    }
 
   private:
     /** Write the argument to the output stream, while escaping any

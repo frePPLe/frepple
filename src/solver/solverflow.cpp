@@ -57,7 +57,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
     // 3) Control the planning mode
     bool originalPlanningMode = data->constrainedPlanning;
     data->constrainedPlanning = true;
-    const Flow *firstAlternate = NULL;
+    Flow *firstAlternate = NULL;
     double firstQuantity = 0.0;
 
     // Remember the top constraint
@@ -68,7 +68,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
     Date min_next_date(Date::infiniteFuture);
     double ask_qty;
     FlowPlan *flplan = data->state->q_flowplan;
-    for (list<const Flow*>::const_iterator i = thealternates.begin();
+    for (list<const Flow*>::iterator i = thealternates.begin();
         i != thealternates.end();)
     {
       const Flow *curflow = *i;
@@ -76,7 +76,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
 
       // 4a) Switch to this flow
       if (data->state->q_flowplan->getFlow() != curflow)
-        data->state->q_flowplan->setFlow(curflow);
+        data->state->q_flowplan->setFlow(const_cast<Flow*>(curflow));
 
       // 4b) Call the Python user exit if there is one
       if (userexit_flow)
@@ -101,7 +101,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
       // Remember the first alternate
       if (!firstAlternate)
       {
-        firstAlternate = *i;
+        firstAlternate = const_cast<Flow*>(*i);
         firstQuantity = data->state->q_flowplan->getQuantity();
       }
 

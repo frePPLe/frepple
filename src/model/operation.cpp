@@ -39,7 +39,9 @@ DECLARE_EXPORT Operation* OperationSetup::setupoperation;
 int Operation::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Operation>("operation", "operations", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Operation>(
+    "operation", "operations", reader, writer, finder
+    );
   registerFields<Operation>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
@@ -50,8 +52,10 @@ int Operation::initialize()
 int OperationFixedTime::initialize()
 {
   // Initialize the metadata
-  metadata = MetaClass::registerClass<OperationFixedTime>("operation", "operation_fixed_time",
-      Object::create<OperationFixedTime>, true);
+  metadata = MetaClass::registerClass<OperationFixedTime>(
+    "operation", "operation_fixed_time",
+    Object::create<OperationFixedTime>, true
+    );
   registerFields<OperationFixedTime>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
@@ -62,8 +66,10 @@ int OperationFixedTime::initialize()
 int OperationTimePer::initialize()
 {
   // Initialize the metadata
-  metadata = MetaClass::registerClass<OperationTimePer>("operation", "operation_time_per",
-      Object::create<OperationTimePer>);
+  metadata = MetaClass::registerClass<OperationTimePer>(
+    "operation", "operation_time_per",
+    Object::create<OperationTimePer>
+    );
   registerFields<OperationTimePer>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
@@ -74,8 +80,10 @@ int OperationTimePer::initialize()
 int OperationSplit::initialize()
 {
   // Initialize the metadata
-  metadata = MetaClass::registerClass<OperationSplit>("operation", "operation_split",
-      Object::create<OperationSplit>);
+  metadata = MetaClass::registerClass<OperationSplit>(
+    "operation", "operation_split",
+    Object::create<OperationSplit>
+    );
   registerFields<OperationSplit>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
@@ -90,8 +98,10 @@ int OperationSplit::initialize()
 int OperationAlternate::initialize()
 {
   // Initialize the metadata
-  metadata = MetaClass::registerClass<OperationAlternate>("operation", "operation_alternate",
-      Object::create<OperationAlternate>);
+  metadata = MetaClass::registerClass<OperationAlternate>(
+    "operation", "operation_alternate",
+    Object::create<OperationAlternate>
+    );
   registerFields<OperationAlternate>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
@@ -106,8 +116,10 @@ int OperationAlternate::initialize()
 int OperationRouting::initialize()
 {
   // Initialize the metadata
-  metadata = MetaClass::registerClass<OperationRouting>("operation", "operation_routing",
-      Object::create<OperationRouting>);
+  metadata = MetaClass::registerClass<OperationRouting>(
+    "operation", "operation_routing",
+    Object::create<OperationRouting>
+    );
   registerFields<OperationRouting>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class

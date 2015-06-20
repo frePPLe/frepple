@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = sample_module.cpp sample_module.1.expect sample_module.2.expect sample_module.h sample_module.xml frepple.xsd sample_module.vcproj visual_studio_2008.sln
+EXTRA_DIST = sample_module.cpp sample_module.1.expect sample_module.2.expect sample_module.h sample_module.xml frepple.xsd sample_module.vcxproj sample_module.vcxproj.filters visual_studio_2010.sln
 
 CLEANFILES = output.* *.stackdump core *.gcda *.gcov *.gcno *.out
 
@@ -20,4 +20,4 @@ check-local:
 	-cp .libs/mod_sample.so ../../bin
 
 clean-local:
-	-rm -rf debug release *.vcproj.* *.opt *.ncb *.suo *.log *.sdf ipch
+	-rm -rf Debug Release *.user *.opt *.ncb *.suo *.log *.sdf ipch

@@ -79,6 +79,8 @@ class Skill;
 class ResourceSkill;
 class Supplier;
 class SupplierItem;
+class SetupMatrix;
+class SetupMatrixRule;
 
 
 /** @brief This class is used for initialization. */
@@ -565,7 +567,7 @@ class Calendar : public HasName<Calendar>, public HasSource
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       HasSource::registerFields<Cls>(m);
-      m->addDoubleField<Cls>(Tags::default, &Cls::getDefault, &Cls::setDefault);
+      m->addDoubleField<Cls>(Tags::deflt, &Cls::getDefault, &Cls::setDefault);
       m->addIteratorField<Cls, CalendarBucket::iterator>(Tags::buckets, Tags::bucket, &Cls::getBuckets);
     }
 

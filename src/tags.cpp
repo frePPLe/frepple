@@ -58,7 +58,7 @@ DECLARE_EXPORT const Keyword Tags::date("date");
 DECLARE_EXPORT const Keyword Tags::dateproperty("dateproperty");
 DECLARE_EXPORT const Keyword Tags::dates("dates");
 DECLARE_EXPORT const Keyword Tags::days("days");
-DECLARE_EXPORT const Keyword Tags::default("default");
+DECLARE_EXPORT const Keyword Tags::deflt("default");
 DECLARE_EXPORT const Keyword Tags::demand("demand");
 DECLARE_EXPORT const Keyword Tags::demands("demands");
 DECLARE_EXPORT const Keyword Tags::description("description");

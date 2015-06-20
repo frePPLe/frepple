@@ -59,7 +59,7 @@ class Tags
     static DECLARE_EXPORT const Keyword dateproperty;
     static DECLARE_EXPORT const Keyword dates;
     static DECLARE_EXPORT const Keyword days;
-    static DECLARE_EXPORT const Keyword default;
+    static DECLARE_EXPORT const Keyword deflt;
     static DECLARE_EXPORT const Keyword demand;
     static DECLARE_EXPORT const Keyword demands;
     static DECLARE_EXPORT const Keyword description;

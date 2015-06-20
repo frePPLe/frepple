@@ -48,17 +48,17 @@ void functionality_test()
   printlist("Start");
 
   // Inserting elements
-  Customer::add(new CustomerDefault("alfa"));
+  (new CustomerDefault())->setName("alfa");
   printlist("insert alfa");
-  Customer::add(new CustomerDefault("beta"));
+  (new CustomerDefault())->setName("beta");
   printlist("insert beta");
-  Customer::add(new CustomerDefault("alfa1"));
+  (new CustomerDefault())->setName("alfa1");
   printlist("insert alfa1");
-  Customer::add(new CustomerDefault("gamma"));
+  (new CustomerDefault())->setName("gamma");
   printlist("insert gamma");
-  Customer::add(new CustomerDefault("delta"));
+  (new CustomerDefault())->setName("delta");
   printlist("insert delta");
-  Customer::add(new CustomerDefault("omega"));
+  (new CustomerDefault())->setName("omega");
   printlist("insert omega");
 
   // Searching for some existing names
@@ -83,24 +83,25 @@ void functionality_test()
   printlist("erase hamburger");
 
   // Inserting a duplicate
-  Customer::add(new CustomerDefault("alfa2"));
+  (new CustomerDefault())->setName("alfa2");
   printlist("insert alfa2");
-  Customer::add(new CustomerDefault("alfa4"));
+  (new CustomerDefault())->setName("alfa4");
   printlist("insert alfa4");
-  Customer::add(new CustomerDefault("alfa x"));
+  (new CustomerDefault())->setName("alfa x");
   printlist("insert alfa x");
-  Customer::add(new CustomerDefault("alfa y"));
+  (new CustomerDefault())->setName("alfa y");
   printlist("insert alfa y");
-  Customer::add(new CustomerDefault("alfa z"));
+  (new CustomerDefault())->setName("alfa z");
   printlist("insert alfa z");
-  Customer::add(new CustomerDefault("delta"));
+  (new CustomerDefault())->setName("delta");
   printlist("insert delta");
-  Customer::add(new CustomerDefault("phi"));
+  (new CustomerDefault())->setName("phi");
   printlist("insert phi");
 
   // Inserting an already existing element
-  Customer * k = new CustomerDefault("alfa2");
-  logger << Customer::add(k)->getName() << endl;
+  Customer * k = new CustomerDefault();
+  k->setName("alfa2");
+  logger << k->getName() << endl;
   printlist("duplicate insert alfa2");
   delete k;
 
@@ -162,16 +163,20 @@ void scalability_test()
     Timer m;
 
     // Insert elements in the list
-    for (int i=0; i<scale; ++i) Customer::add(new CustomerDefault(names[i]));
+    for (int i=0; i<scale; ++i) 
+      (new CustomerDefault())->setName(names[i]);
 
     // Do a number of searches and deletes
-    for (int i=0; i<scale; ++i) Customer::find(names[i]);
+    for (int i=0; i<scale; ++i) 
+      Customer::find(names[i]);
 
     // Do a number of deletes
-    for (int i=0; i<scale; ++i) delete Customer::find(names[i]);
+    for (int i=0; i<scale; ++i) 
+      delete Customer::find(names[i]);
 
     // Clear the complete list
-    if (Customer::size()) throw domain_error("Tree elements not all deleted");
+    if (Customer::size()) 
+      throw domain_error("Tree elements not all deleted");
     Customer::clear();
 
     // Measure the time

@@ -197,7 +197,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       {
         // No type attribute was registered, and we use the default of the category
         objects[objectindex].cls = static_cast<const MetaCategory&>(*objects[objectindex].cls).findClass(
-            Tags::default.getHash()
+            Tags::deflt.getHash()
             );
         if (!objects[objectindex].cls)
           throw DataException("No default type registered for category " + objects[objectindex].cls->type);

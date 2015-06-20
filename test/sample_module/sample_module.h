@@ -61,15 +61,27 @@ MODULE_EXPORT const char* initialize(const Environment::ParameterList& z);
 class OperationTransport : public OperationFixedTime
 {
   private:
+    /** Buffer at the source location. */
     Buffer* fromBuf;
+
+    /** Buffer at the destination location. */
     Buffer* toBuf;
+
+    static const Keyword tag_frombuffer;
+    static const Keyword tag_tobuffer;
+
   public:
     /** Constructor. */
-    explicit OperationTransport(const string& s)
-      : OperationFixedTime(s), fromBuf(NULL), toBuf(NULL) {initType(metadata);}
+    explicit OperationTransport() : fromBuf(NULL), toBuf(NULL)
+    {
+      initType(metadata);
+    }
 
     /** Returns a pointer to the source buffer. */
-    Buffer* getFromBuffer() const {return fromBuf;}
+    Buffer* getFromBuffer() const
+    {
+      return fromBuf;
+    }
 
     /** Update the source buffer of the transport.<br>
       * If operationplans already exist for the operation the update will
@@ -78,28 +90,16 @@ class OperationTransport : public OperationFixedTime
     void setFromBuffer(Buffer *l);
 
     /** Returns a pointer to the destination buffer. */
-    Buffer* getToBuffer() const {return toBuf;}
+    Buffer* getToBuffer() const
+    {
+      return toBuf;
+    }
 
     /** Update the destination buffer of the transport.<br>
       * If operationplans already exist for the operation the update will
       * fail.
       */
     void setToBuffer(Buffer *l);
-
-    /** Start handler for processing SAX events during XML parsing. */
-    void beginElement(XMLInput&, const Attribute&);
-
-    /** End handler for processing SAX events during XML parsing. */
-    void endElement(XMLInput&, const Attribute&, const DataElement&);
-
-    /** Handler for writing out the objects in XML format. */
-    void writeElement(SerializerXML*, const Keyword&, mode=DEFAULT) const;
-
-    /** Handler for reading attributes from Python. */
-    PyObject* getattro(const Attribute&);
-
-    /** Handler for updating attributes from Python. */
-    int setattro(const Attribute&, const PythonObject&);
 
     /** Returns a reference to this class' metadata. */
     virtual const MetaClass& getType() const {return *metadata;}
@@ -109,6 +109,13 @@ class OperationTransport : public OperationFixedTime
 
     /** This callback will automatically be called when a buffer is deleted. */
     static bool callback(Buffer*, const Signal);
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      OperationFixedTime::registerFields<OperationTransport>(m);
+      m->addPointerField<Cls, Buffer>(tag_frombuffer, &Cls::getFromBuffer, &Cls::setFromBuffer);
+      m->addPointerField<Cls, Buffer>(tag_tobuffer, &Cls::getToBuffer, &Cls::setToBuffer);
+    }
 };
 
 } // End namespace

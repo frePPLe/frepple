@@ -157,9 +157,8 @@ using namespace std;
 #define ROUNDING_ERROR   0.000001
 
 /** Xerces-c XML libary header. */
-//#define XERCES_STATIC_LIBRARY
-//#include <xercesc/util/XercesDefs.hpp>
-typedef wchar_t				XMLCh;   // TODO XXX Can this be removed from the generic header?
+#define XERCES_STATIC_LIBRARY
+#include <xercesc/util/XercesDefs.hpp>
 
 /** @def DECLARE_EXPORT
   * Used to define which symbols to export from a Windows DLL.
@@ -210,12 +209,15 @@ template<class T> class MetaFieldDate;
 template<class T> class MetaFieldDouble;
 template<class T> class MetaFieldBool;
 template<class T> class MetaFieldDuration;
+template<class T> class MetaFieldDurationDouble;
 template<class T> class MetaFieldString;
 template<class T, class U> class MetaFieldPointer;
 template<class T> class MetaFieldUnsignedLong;
 template<class T> class MetaFieldPythonFunction;
 template<class T, class U> class MetaFieldIterator;
 template<class T, class U> class MetaFieldList;
+template<class T, class U> class MetaFieldList2;
+template<class T, class U> class MetaFieldList3;
 template<class T> class MetaFieldInt;
 template<class T> class MetaFieldShort;
 
@@ -2010,7 +2012,7 @@ class MetaClass : public NonCopyable
       MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
       )
     {
-      fields.push_back( new MetaFieldList2<Cls,Ptr>(k1, k2, c) );
+      fields.push_back( new MetaFieldList2<Cls, Ptr>(k1, k2, c) );
     }
 
     template <class Cls, class Ptr> inline void addList3Field(
@@ -2018,7 +2020,7 @@ class MetaClass : public NonCopyable
       MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
       )
     {
-      fields.push_back( new MetaFieldList3<Cls,Ptr>(k1, k2, c) );
+      fields.push_back( new MetaFieldList3<Cls, Ptr>(k1, k2, c) );
     }
 
     template <class Cls> inline void addBoolField(

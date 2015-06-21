@@ -87,10 +87,6 @@ int OperationSplit::initialize()
   registerFields<OperationSplit>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  FreppleClass<OperationSplit,Operation>::getPythonType().addMethod(
-    "addAlternate", OperationSplit::addAlternate,
-    METH_VARARGS | METH_KEYWORDS, "add an alternate"
-    );
   return FreppleClass<OperationSplit,Operation>::initialize();
 }
 
@@ -105,10 +101,6 @@ int OperationAlternate::initialize()
   registerFields<OperationAlternate>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  FreppleClass<OperationAlternate,Operation>::getPythonType().addMethod(
-    "addAlternate", OperationAlternate::addAlternate,
-    METH_VARARGS | METH_KEYWORDS, "add an alternate"
-    );
   return FreppleClass<OperationAlternate,Operation>::initialize();
 }
 
@@ -123,7 +115,6 @@ int OperationRouting::initialize()
   registerFields<OperationRouting>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  FreppleClass<OperationRouting,Operation>::getPythonType().addMethod("addStep", OperationRouting::addStep, METH_VARARGS , "add steps to the routing");
   return FreppleClass<OperationRouting,Operation>::initialize();
 }
 
@@ -181,7 +172,7 @@ DECLARE_EXPORT OperationRouting::~OperationRouting()
   // updating the list of super-operations at the same time as we move
   // through it.
   while (!getSubOperations().empty())
-    removeSubOperation(*getSubOperations().begin());
+    delete *getSubOperations().begin();
 }
 
 
@@ -191,7 +182,7 @@ DECLARE_EXPORT OperationSplit::~OperationSplit()
   // updating the list of super-operations at the same time as we move
   // through it.
   while (!getSubOperations().empty())
-    removeSubOperation(*getSubOperations().begin());
+    delete *getSubOperations().begin();
 }
 
 
@@ -201,7 +192,7 @@ DECLARE_EXPORT OperationAlternate::~OperationAlternate()
   // updating the list of super-operations at the same time as we move
   // through it.
   while (!getSubOperations().empty())
-    removeSubOperation(*getSubOperations().begin());
+    delete *getSubOperations().begin();
 }
 
 
@@ -877,8 +868,9 @@ DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
       for (Operation::Operationlist::const_reverse_iterator e =
           getSubOperations().rbegin(); e != getSubOperations().rend(); ++e)
       {
-        p = (*e)->createOperationPlan(o->getQuantity(), Date::infinitePast,
-            d, NULL, o, 0, true);
+        p = (*e)->getOperation()->createOperationPlan(
+          o->getQuantity(), Date::infinitePast, d, NULL, o, 0, true
+          );
         d = p->getDates().getStart();
       }
     }
@@ -891,8 +883,9 @@ DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
       for (Operation::Operationlist::const_iterator e =
           getSubOperations().begin(); e != getSubOperations().end(); ++e)
       {
-        p = (*e)->createOperationPlan(o->getQuantity(), d,
-            Date::infinitePast, NULL, o, 0, true);
+        p = (*e)->getOperation()->createOperationPlan(
+          o->getQuantity(), d, Date::infinitePast, NULL, o, 0, true
+          );
         d = p->getDates().getEnd();
       }
     }
@@ -908,77 +901,6 @@ DECLARE_EXPORT SearchMode decodeSearchMode(const string& c)
   if (c == "MINPENALTY") return MINPENALTY;
   if (c == "MINCOSTPENALTY") return MINCOSTPENALTY;
   throw DataException("Invalid search mode " + c);
-}
-
-DECLARE_EXPORT void OperationAlternate::addAlternate
-(Operation* o, int prio, DateRange eff)
-{
-  if (!o) return;
-  Operationlist::iterator altIter = alternates.begin();
-  alternatePropertyList::iterator propIter = alternateProperties.begin();
-  while (altIter!=alternates.end() && prio >= propIter->first)
-  {
-    ++propIter;
-    ++altIter;
-  }
-  alternateProperties.insert(propIter,alternateProperty(prio,eff));
-  alternates.insert(altIter,o);
-  o->addSuperOperation(this);
-}
-
-
-DECLARE_EXPORT const OperationAlternate::alternateProperty&
-OperationAlternate::getProperties(Operation* o) const
-{
-  if (!o)
-    throw LogicException("Null pointer passed when searching for a \
-        suboperation of alternate operation '" + getName() + "'");
-  Operationlist::const_iterator altIter = alternates.begin();
-  alternatePropertyList::const_iterator propIter = alternateProperties.begin();
-  while (altIter!=alternates.end() && *altIter != o)
-  {
-    ++propIter;
-    ++altIter;
-  }
-  if (*altIter == o) return *propIter;
-  throw DataException("Operation '" + o->getName() +
-      "' isn't a suboperation of alternate operation '" + getName() + "'");
-}
-
-
-DECLARE_EXPORT void OperationAlternate::setPriority(Operation* o, int f)
-{
-  if (!o) return;
-  Operationlist::const_iterator altIter = alternates.begin();
-  alternatePropertyList::iterator propIter = alternateProperties.begin();
-  while (altIter!=alternates.end() && *altIter != o)
-  {
-    ++propIter;
-    ++altIter;
-  }
-  if (*altIter == o)
-    propIter->first = f;
-  else
-    throw DataException("Operation '" + o->getName() +
-        "' isn't a suboperation of alternate operation '" + getName() + "'");
-}
-
-
-DECLARE_EXPORT void OperationAlternate::setEffective(Operation* o, DateRange dr)
-{
-  if (!o) return;
-  Operationlist::const_iterator altIter = alternates.begin();
-  alternatePropertyList::iterator propIter = alternateProperties.begin();
-  while (altIter!=alternates.end() && *altIter != o)
-  {
-    ++propIter;
-    ++altIter;
-  }
-  if (*altIter == o)
-    propIter->second = dr;
-  else
-    throw DataException("Operation '" + o->getName() +
-        "' isn't a suboperation of alternate operation '" + getName() + "'");
 }
 
 
@@ -1025,94 +947,17 @@ DECLARE_EXPORT bool OperationAlternate::extraInstantiate(OperationPlan* o)
     Operationlist::const_iterator altIter = getSubOperations().begin();
     for (; altIter != getSubOperations().end(); )
     {
-      const OperationAlternate::alternateProperty& props = getProperties(*altIter);
       // Filter out alternates that are not suitable
-      if (props.first != 0.0 && props.second.within(o->getDates().getEnd()))
+      if ((*altIter)->getPriority() != 0 && (*altIter)->getEffective().within(o->getDates().getEnd()))
         break;
     }
     if (altIter != getSubOperations().end())
       // Create an operationplan instance
-      (*altIter)->createOperationPlan(
+      (*altIter)->getOperation()->createOperationPlan(
         o->getQuantity(), o->getDates().getStart(),
         o->getDates().getEnd(), NULL, o, 0, true);
   }
   return true;
-}
-
-
-DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
-{
-  Operationlist::iterator altIter = alternates.begin();
-  alternatePropertyList::iterator propIter = alternateProperties.begin();
-  while (altIter!=alternates.end() && *altIter != o)
-  {
-    ++propIter;
-    ++altIter;
-  }
-  if (*altIter == o)
-  {
-    alternates.erase(altIter);
-    alternateProperties.erase(propIter);
-    o->superoplist.remove(this);
-    setChanged();
-  }
-  else
-    logger << "Warning: operation '" << *o
-        << "' isn't a suboperation of alternate operation '" << *this
-        << "'" << endl;
-}
-
-
-DECLARE_EXPORT void OperationSplit::addAlternate
-(Operation* o, int prio, DateRange eff)
-{
-  if (!o) return;
-  Operationlist::iterator altIter = alternates.begin();
-  alternatePropertyList::iterator propIter = alternateProperties.begin();
-  while (altIter!=alternates.end() && prio >= propIter->first)
-  {
-    ++propIter;
-    ++altIter;
-  }
-  alternateProperties.insert(propIter,alternateProperty(prio,eff));
-  alternates.insert(altIter,o);
-  o->addSuperOperation(this);
-}
-
-
-DECLARE_EXPORT void OperationSplit::setPercent(Operation* o, int f)
-{
-  if (!o) return;
-  Operationlist::const_iterator altIter = alternates.begin();
-  alternatePropertyList::iterator propIter = alternateProperties.begin();
-  while (altIter!=alternates.end() && *altIter != o)
-  {
-    ++propIter;
-    ++altIter;
-  }
-  if (*altIter == o)
-    propIter->first = f;
-  else
-    throw DataException("Operation '" + o->getName() +
-        "' isn't a suboperation of split operation '" + getName() + "'");
-}
-
-
-DECLARE_EXPORT void OperationSplit::setEffective(Operation* o, DateRange dr)
-{
-  if (!o) return;
-  Operationlist::const_iterator altIter = alternates.begin();
-  alternatePropertyList::iterator propIter = alternateProperties.begin();
-  while (altIter!=alternates.end() && *altIter != o)
-  {
-    ++propIter;
-    ++altIter;
-  }
-  if (*altIter == o)
-    propIter->second = dr;
-  else
-    throw DataException("Operation '" + o->getName() +
-        "' isn't a suboperation of split operation '" + getName() + "'");
 }
 
 
@@ -1149,13 +994,12 @@ DECLARE_EXPORT bool OperationSplit::extraInstantiate(OperationPlan* o)
   // Compute the sum of all effective percentages.
   int sum_percent = 0;
   Date enddate = o->getDates().getEnd();
-  OperationSplit::alternatePropertyList::const_iterator propIter = getProperties().begin();
   for (Operation::Operationlist::const_iterator altIter = getSubOperations().begin();
     altIter != getSubOperations().end();
-    ++altIter, ++propIter)
+    ++altIter)
   {
-    if (propIter->second.within(enddate))
-      sum_percent += propIter->first;
+    if ((*altIter)->getEffective().within(enddate))
+      sum_percent += (*altIter)->getPriority();
   }
   if (!sum_percent)
     // Oops, no effective suboperations found.
@@ -1163,56 +1007,32 @@ DECLARE_EXPORT bool OperationSplit::extraInstantiate(OperationPlan* o)
     return true;
 
   // Create all child operationplans
-  propIter = getProperties().begin();
   for (Operation::Operationlist::const_iterator altIter = getSubOperations().begin();
     altIter != getSubOperations().end();
-    ++altIter, ++propIter)
+    ++altIter)
   {
     // Verify effectivity date and percentage > 0
-    if (!propIter->first || !propIter->second.within(enddate))
+    if (!(*altIter)->getPriority() || !(*altIter)->getEffective().within(enddate))
       continue;
 
     // Find the first producing flow.
     // In case the split suboperation produces multiple materials this code
     // is not foolproof...
     const Flow* f = NULL;
-    for (Operation::flowlist::const_iterator fiter = (*altIter)->getFlows().begin();
-      fiter != (*altIter)->getFlows().end() && !f; ++fiter)
+    for (Operation::flowlist::const_iterator fiter = (*altIter)->getOperation()->getFlows().begin();
+      fiter != (*altIter)->getOperation()->getFlows().end() && !f; ++fiter)
     {
       if (fiter->getQuantity() > 0.0 && fiter->getEffective().within(enddate))
         f = &*fiter;
     }
 
     // Create an operationplan instance
-    (*altIter)->createOperationPlan(
-      o->getQuantity() * propIter->first / sum_percent / (f ? f->getQuantity() : 1.0),
+    (*altIter)->getOperation()->createOperationPlan(
+      o->getQuantity() * (*altIter)->getPriority() / sum_percent / (f ? f->getQuantity() : 1.0),
       o->getDates().getStart(), enddate, NULL, o, 0, true
       );
   }
   return true;
-}
-
-
-DECLARE_EXPORT void OperationSplit::removeSubOperation(Operation *o)
-{
-  Operationlist::iterator altIter = alternates.begin();
-  alternatePropertyList::iterator propIter = alternateProperties.begin();
-  while (altIter!=alternates.end() && *altIter != o)
-  {
-    ++propIter;
-    ++altIter;
-  }
-  if (*altIter == o)
-  {
-    alternates.erase(altIter);
-    alternateProperties.erase(propIter);
-    o->superoplist.remove(this);
-    setChanged();
-  }
-  else
-    logger << "Warning: operation '" << *o
-        << "' isn't a suboperation of split operation '" << *this
-        << "'" << endl;
 }
 
 
@@ -1314,122 +1134,6 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
 }
 
 
-DECLARE_EXPORT PyObject* OperationSplit::addAlternate(PyObject* self, PyObject* args, PyObject* kwdict)
-{
-  try
-  {
-    // Pick up the alternate operation
-    OperationSplit *altoper = static_cast<OperationSplit*>(self);
-    if (!altoper) throw LogicException("Can't add alternates to NULL split");
-
-    // Parse the arguments
-    PyObject *oper = NULL;
-    int percent = 0;
-    PyObject *eff_start = NULL;
-    PyObject *eff_end = NULL;
-    static const char *kwlist[] = {"operation", "percent", "effective_start", "effective_end", NULL};
-    if (!PyArg_ParseTupleAndKeywords(args, kwdict,
-        "O|iOO:addAlternate",
-        const_cast<char**>(kwlist), &oper, &percent, &eff_start, &eff_end))
-      return NULL;
-    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
-      throw DataException("alternate operation must be of type operation");
-    DateRange eff;
-    if (eff_start)
-    {
-      PythonData d(eff_start);
-      eff.setStart(d.getDate());
-    }
-    if (eff_end)
-    {
-      PythonData d(eff_end);
-      eff.setEnd(d.getDate());
-    }
-
-    // Add the alternate
-    altoper->addAlternate(static_cast<Operation*>(oper), percent, eff);
-  }
-  catch(...)
-  {
-    PythonType::evalException();
-    return NULL;
-  }
-  return Py_BuildValue("");
-}
-
-
-DECLARE_EXPORT PyObject* OperationAlternate::addAlternate(PyObject* self, PyObject* args, PyObject* kwdict)
-{
-  try
-  {
-    // Pick up the alternate operation
-    OperationAlternate *altoper = static_cast<OperationAlternate*>(self);
-    if (!altoper) throw LogicException("Can't add alternates to NULL alternate");
-
-    // Parse the arguments
-    PyObject *oper = NULL;
-    int prio = 1;
-    PyObject *eff_start = NULL;
-    PyObject *eff_end = NULL;
-    static const char *kwlist[] = {"operation", "priority", "effective_start", "effective_end", NULL};
-    if (!PyArg_ParseTupleAndKeywords(args, kwdict,
-        "O|iOO:addAlternate",
-        const_cast<char**>(kwlist), &oper, &prio, &eff_start, &eff_end))
-      return NULL;
-    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
-      throw DataException("alternate operation must be of type operation");
-    DateRange eff;
-    if (eff_start)
-    {
-      PythonData d(eff_start);
-      eff.setStart(d.getDate());
-    }
-    if (eff_end)
-    {
-      PythonData d(eff_end);
-      eff.setEnd(d.getDate());
-    }
-
-    // Add the alternate
-    altoper->addAlternate(static_cast<Operation*>(oper), prio, eff);
-  }
-  catch(...)
-  {
-    PythonType::evalException();
-    return NULL;
-  }
-  return Py_BuildValue("");
-}
-
-
-PyObject *OperationRouting::addStep(PyObject *self, PyObject *args)
-{
-  try
-  {
-    // Pick up the routing operation
-    OperationRouting *oper = static_cast<OperationRouting*>(self);
-    if (!oper) throw LogicException("Can't add steps to NULL routing");
-
-    // Parse the arguments
-    PyObject *steps[4];
-    for (unsigned int i=0; i<4; ++i) steps[i] = NULL;
-    if (PyArg_UnpackTuple(args, "addStep", 1, 4, &steps[0], &steps[1], &steps[2], &steps[3]))
-      for (unsigned int i=0; i<4 && steps[i]; ++i)
-      {
-        if (!PyObject_TypeCheck(steps[i], Operation::metadata->pythonClass))
-          throw DataException("routing steps must be of type operation");
-        oper->addStepBack(static_cast<Operation*>(steps[i]));
-      }
-  }
-  catch(...)
-  {
-    PythonType::evalException();
-    return NULL;
-  }
-  return Py_BuildValue("");
-}
-
-
 DECLARE_EXPORT void Operation::addSubOperationPlan(
   OperationPlan* parent, OperationPlan* child, bool fast
   )
@@ -1479,7 +1183,7 @@ DECLARE_EXPORT void OperationSplit::addSubOperationPlan(
     bool ok = false;
     const Operationlist& alts = parent->getOperation()->getSubOperations();
     for (Operationlist::const_iterator i = alts.begin(); i != alts.end(); i++)
-      if (*i == child->getOperation())
+      if ((*i)->getOperation() == child->getOperation())
       {
         ok = true;
         break;
@@ -1539,7 +1243,7 @@ DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(
     bool ok = false;
     const Operationlist& alts = parent->getOperation()->getSubOperations();
     for (Operationlist::const_iterator i = alts.begin(); i != alts.end(); i++)
-      if (*i == child->getOperation())
+      if ((*i)->getOperation() == child->getOperation())
       {
         ok = true;
         break;
@@ -1662,12 +1366,12 @@ DECLARE_EXPORT void OperationRouting::addSubOperationPlan
     bool ok = false;
     for (Operationlist::const_iterator i = steps.begin(); i != steps.end(); i++)
     {
-      if (*i == child->getOperation())
+      if ((*i)->getOperation() == child->getOperation())
       {
         ok = true;
         break;
       }
-      if (prevsub && *i == prevsub->getOperation())
+      if (prevsub && (*i)->getOperation() == prevsub->getOperation())
         prevsub = prevsub->nextsubopplan;
     }
     if (!ok)

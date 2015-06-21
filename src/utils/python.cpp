@@ -67,10 +67,10 @@ DECLARE_EXPORT void Object::writeElement(Serializer* o, const Keyword& tag, mode
     // Write references only
     if (meta.category)
       for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-        if ((*i)->getCategory() & MetaFieldBase::MANDATORY)
+        if ((*i)->getFlags() & MetaFieldBase::MANDATORY)
           (*i)->writeField(*o);
     for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      if ((*i)->getCategory() & MetaFieldBase::MANDATORY)
+      if ((*i)->getFlags() & MetaFieldBase::MANDATORY)
         (*i)->writeField(*o);
   }
   else if (m == DEFAULT)
@@ -78,10 +78,10 @@ DECLARE_EXPORT void Object::writeElement(Serializer* o, const Keyword& tag, mode
     // Writeonly the fields required to successfully save&restore the object
     if (meta.category)
       for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-        if (!((*i)->getCategory() & MetaFieldBase::DETAIL))
+        if (!((*i)->getFlags() & MetaFieldBase::DETAIL))
           (*i)->writeField(*o);
     for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      if (!((*i)->getCategory() & MetaFieldBase::DETAIL))
+      if (!((*i)->getFlags() & MetaFieldBase::DETAIL))
         (*i)->writeField(*o);
     PythonDictionary::write(o, getDict());
   }
@@ -108,10 +108,10 @@ DECLARE_EXPORT size_t Object::getSize() const
   size_t tmp = meta.size;
   if (meta.category)
     for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-      if (!((*i)->getCategory() & MetaFieldBase::COMPUTED))
+      if (!((*i)->getFlags() & MetaFieldBase::COMPUTED))
         tmp += (*i)->getSize(this);
   for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-    if (!((*i)->getCategory() & MetaFieldBase::COMPUTED))
+    if (!((*i)->getFlags() & MetaFieldBase::COMPUTED))
       tmp += (*i)->getSize(this);
   return tmp;
 }

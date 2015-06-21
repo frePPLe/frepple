@@ -73,7 +73,9 @@ void LibraryModel::initialize()
   nok += OperationTimePer::initialize();
   nok += OperationRouting::initialize();
   nok += OperationSetup::initialize();
+  nok += SubOperation::initialize();
   nok += OperationIterator::initialize();
+  nok += SubOperationIterator::initialize();
 
   // Initialize the item metadata.
   nok += Item::initialize();

@@ -546,6 +546,7 @@ Object* MetaCategory::ControllerDefault (const MetaClass* cat, const DataValueDi
       }
 
       // Call the factory method
+      assert(j->factoryMethod);
       Object* result = j->factoryMethod();
 
       // Run the callback methods

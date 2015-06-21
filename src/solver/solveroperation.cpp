@@ -73,7 +73,7 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
           // First load is ok, but moved the operationplan.
           // We can continue to check the second loadplan.
           orig = opplan->getDates();
-        if (!first) 
+        if (!first)
           recheck = true;
       }
       first = false;
@@ -645,7 +645,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
         e != oper->getSubOperations().end();
         ++e)
     {
-      f = (*e)->findFlow(data->state->curBuffer, data->state->q_date);
+      f = (*e)->getOperation()->findFlow(data->state->curBuffer, data->state->q_date);
       if (f)
       {
         // Flow on routing steps
@@ -712,7 +712,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     data->state->q_date = data->state->curOwnerOpplan->getDates().getStart();
     Buffer *tmpBuf = data->state->curBuffer;
     q_date = data->state->q_date;
-    (*e)->solve(*this,v);  // @todo if the step itself has child operations, the curOwnerOpplan field is changed here!!!
+    (*e)->getOperation()->solve(*this,v);  // @todo if the step itself has child operations, the curOwnerOpplan field is changed here!!!
     a_qty = data->state->a_qty;
     data->state->curBuffer = tmpBuf;
 
@@ -862,7 +862,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   bool effectiveOnly = true;
   Date a_date = Date::infiniteFuture;
   Date ask_date;
-  Operation *firstAlternate = NULL;
+  SubOperation *firstAlternate = NULL;
   double firstFlowPer;
   while (a_qty > 0)
   {
@@ -881,14 +881,10 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       CommandManager::Bookmark* topcommand = data->setBookmark();
       bool nextalternate = true;
 
-      // Operations with 0 priority are considered unavailable
-      const OperationAlternate::alternateProperty& props
-        = oper->getProperties(*altIter);
-
       // Filter out alternates that are not suitable
-      if (props.first == 0.0
-        || (effectiveOnly && !props.second.within(data->state->q_date))
-        || (!effectiveOnly && props.second.getEnd() > data->state->q_date)
+      if ((*altIter)->getPriority() == 0
+        || (effectiveOnly && !(*altIter)->getEffective().within(data->state->q_date))
+        || (!effectiveOnly && (*altIter)->getEnd() > data->state->q_date)
         )
       {
         ++altIter;
@@ -902,14 +898,14 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       }
 
       // Establish the ask date
-      ask_date = effectiveOnly ? origQDate : props.second.getEnd();
+      ask_date = effectiveOnly ? origQDate : (*altIter)->getEnd();
 
       // Find the flow into the requesting buffer. It may or may not exist, since
       // the flow could already exist on the top operationplan
       double sub_flow_qty_per = 0.0;
       if (buf)
       {
-        Flow* f = (*altIter)->findFlow(buf, ask_date);
+        Flow* f = (*altIter)->getOperation()->findFlow(buf, ask_date);
         if (f && f->getQuantity() > 0.0)
           sub_flow_qty_per = f->getQuantity();
         else if (!top_flow_exists)
@@ -984,12 +980,15 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         if (loglevel>1)
           logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
             << "' tries alternate '" << *altIter << "' " << endl;
-        (*altIter)->solve(*this,v);
+        (*altIter)->getOperation()->solve(*this,v);
       }
       else
       {
         data->getSolver()->setLogLevel(0);
-        try {(*altIter)->solve(*this,v);}
+        try
+        {
+          (*altIter)->getOperation()->solve(*this,v);
+        }
         catch (...)
         {
           data->getSolver()->setLogLevel(loglevel);
@@ -1082,7 +1081,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         {
           // Found a better alternate
           bestAlternateValue = val;
-          bestAlternateSelection = *altIter;
+          bestAlternateSelection = (*altIter)->getOperation();
           bestAlternateQuantity = data->state->a_qty;
           bestFlowPer = sub_flow_qty_per + top_flow_qty_per;
           bestQDate = ask_date;
@@ -1205,7 +1204,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
 
     // Create a sub operationplan and solve constraints
-    firstAlternate->solve(*this,v);
+    firstAlternate->getOperation()->solve(*this,v);
 
     // Expand flows of the top operationplan.
     data->state->q_qty = data->state->a_qty;
@@ -1289,13 +1288,12 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
 
   // Compute the sum of all effective percentages.
   int sum_percent = 0;
-  OperationSplit::alternatePropertyList::const_iterator propIter = oper->getProperties().begin();
-  for (Operation::Operationlist::const_iterator altIter = oper->getSubOperations().begin();
-    altIter != oper->getSubOperations().end();
-    ++altIter, ++propIter)
+  for (Operation::Operationlist::const_iterator iter = oper->getSubOperations().begin();
+    iter != oper->getSubOperations().end();
+    ++iter)
   {
-    if (propIter->second.within(data->state->q_date))
-      sum_percent += propIter->first;
+    if ((*iter)->getEffective().within(data->state->q_date))
+      sum_percent += (*iter)->getPriority();
   }
   if (!sum_percent)
     // Oops, no effective suboperations found.
@@ -1321,22 +1319,21 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
     recheck = false;
     int planned_percentages = 0;
     double planned_quantity = 0.0;
-    OperationSplit::alternatePropertyList::const_reverse_iterator propIter = oper->getProperties().rbegin();
-    for (Operation::Operationlist::const_reverse_iterator altIter = oper->getSubOperations().rbegin();
-      altIter != oper->getSubOperations().rend();
-      ++altIter, ++propIter)
+    for (Operation::Operationlist::const_reverse_iterator iter = oper->getSubOperations().rbegin();
+      iter != oper->getSubOperations().rend();
+      ++iter)
     {
       // Verify effectivity date and percentage > 0
-      if (!propIter->first || !propIter->second.within(origQDate))
+      if (!(*iter)->getPriority() || !(*iter)->getEffective().within(origQDate))
         continue;
 
       // Message
       if (loglevel>1)
         logger << indent(oper->getLevel()) << "   Split operation '" << oper->getName()
-          << "' asks alternate '" << *altIter << "' " << endl;
+          << "' asks alternate '" << (*iter)->getOperation() << "' " << endl;
 
       // Find the flow
-      Flow* f = (*altIter)->findFlow(buf, data->state->q_date);
+      Flow* f = (*iter)->getOperation()->findFlow(buf, data->state->q_date);
       double flow_qty_per = 0.0;
       if (f && f->getQuantity()>0.0)
       {
@@ -1354,7 +1351,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
 
       // Plan along this alternate
       double asked = (loop_qty - planned_quantity)
-        * propIter->first / (sum_percent - planned_percentages)
+        * (*iter)->getPriority() / (sum_percent - planned_percentages)
         / (flow_qty_per + top_flow_qty_per);
       if (asked > 0)
       {
@@ -1366,7 +1363,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
         data->state->curDemand = NULL;
         data->state->curOwnerOpplan = top_cmd->getOperationPlan();
         data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
-        (*altIter)->solve(*this,v);
+        (*iter)->getOperation()->solve(*this,v);
       }
 
       // Evaluate the reply
@@ -1398,7 +1395,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
       {
         // Successfully planned along this alternate.
         planned_quantity += data->state->a_qty * (flow_qty_per + top_flow_qty_per);
-        planned_percentages += propIter->first;
+        planned_percentages += (*iter)->getPriority();
       }
     }
   }

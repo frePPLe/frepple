@@ -95,7 +95,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       if (oper->getSubOperations().empty())
         throw DataException("Missing procurement alternate suboperations");
       // Take the first suboperation.
-      oper = *(oper->getSubOperations().begin());
+      oper = (*(oper->getSubOperations().begin()))->getOperation();
     }
     if (oper->getType() == *OperationFixedTime::metadata)
     {

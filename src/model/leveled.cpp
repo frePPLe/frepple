@@ -135,8 +135,8 @@ DECLARE_EXPORT void HasLevel::computeLevels()
               i != g->getSubOperations().rend() && search_level;
               ++i)
             for (Operation::flowlist::const_iterator
-                fl = (*i)->getFlows().begin();
-                fl != (*i)->getFlows().end() && search_level;
+                fl = (*i)->getOperation()->getFlows().begin();
+                fl != (*i)->getOperation()->getFlows().end() && search_level;
                 ++fl)
               if (fl->isProducer()) search_level = false;
         }
@@ -183,24 +183,24 @@ DECLARE_EXPORT void HasLevel::computeLevels()
             i != cur_oper->getSubOperations().rend();
             ++i)
         {
-          if ((*i)->lvl < cur_level)
+          if ((*i)->getOperation()->lvl < cur_level)
           {
             // Search level and cluster
-            stack.push(make_pair(*i,cur_level));
-            (*i)->lvl = cur_level;
-            (*i)->cluster = cur_cluster;
+            stack.push(make_pair((*i)->getOperation(),cur_level));
+            (*i)->getOperation()->lvl = cur_level;
+            (*i)->getOperation()->cluster = cur_cluster;
           }
-          else if (!(*i)->cluster)
+          else if (!(*i)->getOperation()->cluster)
           {
             // Search for clusters information only
-            stack.push(make_pair(*i,-1));
-            (*i)->cluster = cur_cluster;
+            stack.push(make_pair((*i)->getOperation(),-1));
+            (*i)->getOperation()->cluster = cur_cluster;
           }
           // else: no search required
         }
 
         // Push super operations on the stack
-        for (Operation::Operationlist::const_reverse_iterator
+        for (list<Operation*>::const_reverse_iterator
             j = cur_oper->getSuperOperations().rbegin();
             j != cur_oper->getSuperOperations().rend();
             ++j)

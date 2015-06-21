@@ -161,6 +161,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
 
   // Look up the field
   data[dataindex].hash = Keyword::hash(n);
+  data[dataindex].field = NULL;
   if (dataindex >= 1 && data[dataindex-1].field && data[dataindex-1].field->isGroup() && data[dataindex].hash == data[dataindex-1].field->getKeyword()->getHash())
   {
     // New element to create in the group
@@ -352,6 +353,49 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
       }
     }
 
+    // Check if we need to add a parent object to the dict
+    // XXX TODO Need to create the parent object already now. The key key fields should already be read, we assume.
+    /*
+    if (objects[objectindex].cls->parent)
+    {
+      for (MetaClass::fieldlist::const_iterator i = objects[objectindex].cls->getFields().begin();
+        i != objects[objectindex].cls->getFields().end(); ++i)
+        if ((*i)->getFlags() & MetaFieldBase::PARENT && objectindex >= 1)
+        {
+          const MetaClass& cl = objects[objectindex-1].object->getType();
+          if (*((*i)->getClass()) == cl
+            || (cl.category && *((*i)->getClass()) == *(cl.category)))
+          {
+            // Parent object matches expected type as parent field
+            data[++dataindex].field = *i;
+            data[dataindex].hash = (*i)->getHash();
+            data[dataindex].value.setObject(objects[objectindex-1].object);
+            dict.enlarge();
+            break;
+          }
+        }
+    }
+    if (objects[objectindex].cls->category && objects[objectindex].cls->category->parent)
+    {
+      for (MetaClass::fieldlist::const_iterator i = objects[objectindex].cls->category->getFields().begin();
+        i != objects[objectindex].cls->category->getFields().end(); ++i)
+        if ((*i)->getFlags() & MetaFieldBase::PARENT && objectindex >= 1)
+        {
+          const MetaClass& cl = objects[objectindex-1].object->getType();
+          if (*((*i)->getClass()) == cl
+            || (cl.category && *((*i)->getClass()) == *(cl.category)))
+          {
+            // Parent object matches expected type as parent field
+            data[++dataindex].field = *i;
+            data[dataindex].hash = (*i)->getHash();
+            data[dataindex].value.setObject(objects[objectindex-1].object);
+            dict.enlarge();
+            break;
+          }
+        }
+    }
+    */
+
 #ifdef PARSE_DEBUG
     logger << "Creating object " << objects[objectindex].cls->type << endl;
     dict.print();
@@ -360,17 +404,23 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
     // Call the object factory for the category and pass all field values
     // in a dictionary
     if (objects[objectindex].cls->category)
+    {
+      assert(objects[objectindex].cls->category->readFunction);
       objects[objectindex].object =
         objects[objectindex].cls->category->readFunction(
           objects[objectindex].cls,
           dict
           );
+    }
     else
+    {
+      assert(static_cast<const MetaCategory*>(objects[objectindex].cls)->readFunction);
       objects[objectindex].object =
         static_cast<const MetaCategory*>(objects[objectindex].cls)->readFunction(
           objects[objectindex].cls,
           dict
           );
+    }
 
     // Update all fields on the new object
     if (objects[objectindex].object)

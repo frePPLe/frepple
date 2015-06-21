@@ -60,6 +60,7 @@ class OperationTimePer;
 class OperationRouting;
 class OperationAlternate;
 class OperationSplit;
+class SubOperation;
 class Buffer;
 class BufferInfinite;
 class BufferProcure;
@@ -170,6 +171,17 @@ class CalendarBucket : public Object, public NonCopyable
     DECLARE_EXPORT void writeHeader(Serializer *, const Keyword&) const;
 
   public:
+    /** Default constructor. */
+    CalendarBucket() : id(INT_MIN), enddate(Date::infiniteFuture),
+      nextBucket(NULL), prevBucket(NULL), priority(priority), days(127),
+      starttime(0L), endtime(86400L), cal(NULL)
+    {}
+
+    /** Update the calendar owning the bucket.<br>
+      * TODO You cannot reassign a bucket once it's assigned to a calendar.
+      */
+    DECLARE_EXPORT void setCalendar(Calendar*);
+
     /** Return the calendar to whom the bucket belongs. */
     Calendar* getCalendar() const
     {
@@ -313,7 +325,8 @@ class CalendarBucket : public Object, public NonCopyable
       m->addShortField<Cls>(Tags::days, &Cls::getDays, &Cls::setDays, 127);
       m->addDurationField<Cls>(Tags::starttime, &Cls::getStartTime, &Cls::setStartTime);
       m->addDurationField<Cls>(Tags::endtime, &Cls::getEndTime, &Cls::setStartTime, 86400L);
-      m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar, NULL, MetaFieldBase::DONT_SERIALIZE);
+      m->addDoubleField<Cls>(Tags::value, &Cls::getValue, &Cls::setValue);
+      m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar, &Cls::setCalendar, MetaFieldBase::DONT_SERIALIZE + MetaFieldBase::PARENT);
     }
 
   public:
@@ -568,7 +581,7 @@ class Calendar : public HasName<Calendar>, public HasSource
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       HasSource::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::deflt, &Cls::getDefault, &Cls::setDefault);
-      m->addIteratorField<Cls, CalendarBucket::iterator>(Tags::buckets, Tags::bucket, &Cls::getBuckets);
+      m->addIterator2Field<Cls, CalendarBucket::iterator, CalendarBucket>(Tags::buckets, Tags::bucket, &Cls::getBuckets);
     }
 
   protected:
@@ -1464,6 +1477,100 @@ class SupplierDefault : public Supplier
 };
 
 
+/** @brief A suboperation is used in operation types which have child
+  * operations.
+  */
+class SubOperation : public Object
+{
+  private:
+    /** Pointer to the parent operation. */
+    Operation* owner;
+
+    /** Pointer to the child operation.
+      * Note that the same child operation can be used in multiple parents.
+      * The child operation is completely unaware of its parents.
+      */
+    Operation* oper;
+
+    /** Priority index. */
+    int prio;
+
+    /** Validity date range for the child operation. */
+    DateRange effective;
+
+  public:
+
+    /** Default constructor. */
+    explicit SubOperation() : owner(NULL), oper(NULL), prio(1)
+    {
+      initType(metadata);
+    }
+
+    /** Destructor. */
+    DECLARE_EXPORT ~SubOperation();
+
+    Operation* getOwner() const
+    {
+      return owner;
+    }
+
+    DECLARE_EXPORT void setOwner(Operation*);
+
+    Operation* getOperation() const
+    {
+      return oper;
+    }
+
+    DECLARE_EXPORT void setOperation(Operation*);
+
+    int getPriority() const
+    {
+      return prio;
+    }
+
+    DECLARE_EXPORT void setPriority(int);
+
+    DateRange getEffective() const
+    {
+      return effective;
+    }
+
+    Date getStart() const
+    {
+      return effective.getStart();
+    }
+
+    void setStart(Date d)
+    {
+      effective.setStart(d);
+    }
+
+    Date getEnd() const
+    {
+      return effective.getEnd();
+    }
+
+    void setEnd(Date d)
+    {
+      effective.setEnd(d);
+    }
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metacategory;
+    static DECLARE_EXPORT const MetaClass* metadata;
+    static int initialize();
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addPointerField<Cls, Operation>(Tags::owner, &Cls::getOwner, &Cls::setOwner, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MetaFieldBase::MANDATORY);
+      m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
+      m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart);
+      m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd);
+    }
+};
+
+
 /** @brief An operation represents an activity: these consume and produce material,
   * take time and also require capacity.
   *
@@ -1478,9 +1585,7 @@ class Operation : public HasName<Operation>,
     friend class Flow;
     friend class Load;
     friend class OperationPlan;
-    friend class OperationRouting;
-    friend class OperationAlternate;
-    friend class OperationSplit;
+    friend class SubOperation;
 
   protected:
     /** Extra logic called when instantiating an operationplan.<br>
@@ -1753,10 +1858,13 @@ class Operation : public HasName<Operation>,
       s.solve(this,v);
     }
 
-    typedef list<Operation*> Operationlist;
+    typedef list<SubOperation*> Operationlist;
 
-    /** Returns a reference to the list of sub operations of this operation. */
-    virtual const Operationlist& getSubOperations() const
+    /** Returns a reference to the list of sub operations of this operation.
+      * The list is always sorted with the operation with the lowest priority
+      * value at the start of the list.
+      */
+    virtual Operationlist& getSubOperations() const
     {
       return nosubOperations;
     }
@@ -1764,7 +1872,7 @@ class Operation : public HasName<Operation>,
     /** Returns a reference to the list of super-operations, i.e. operations
       * using the current Operation as a sub-Operation.
       */
-    const Operationlist& getSuperOperations() const
+    const list<Operation*>& getSuperOperations() const
     {
       return superoplist;
     }
@@ -1841,7 +1949,7 @@ class Operation : public HasName<Operation>,
 
   private:
     /** List of operations using this operation as a sub-operation */
-    Operationlist superoplist;
+    list<Operation*> superoplist;
 
     /** Empty list of operations.<br>
       * For operation types which have no suboperations this list is
@@ -2926,32 +3034,6 @@ class OperationRouting : public Operation
     /** Destructor. */
     DECLARE_EXPORT ~OperationRouting();
 
-    /** Adds a new steps to routing at the start of the routing. */
-    void addStepFront(Operation *o)
-    {
-      if (!o) throw DataException("Adding NULL operation to routing");
-      steps.push_front(o);
-      o->addSuperOperation(this);
-    }
-
-    /** Adds a new steps to routing at the end of the routing. */
-    void addStepBack(Operation *o)
-    {
-      if (!o) throw DataException("Adding NULL operation to routing");
-      steps.push_back(o);
-      o->addSuperOperation(this);
-    }
-
-    /** Add one or more steps to a routing. */
-    static DECLARE_EXPORT PyObject* addStep(PyObject*, PyObject*);
-
-    /** Remove a step from a routing. */
-    void removeSubOperation(Operation *o)
-    {
-      steps.remove(o);
-      o->superoplist.remove(this);
-    }
-
     /** A operation of this type enforces the following rules on its
       * operationplans:
       *  - If an end date is given, sequentially use this method on the
@@ -2994,9 +3076,9 @@ class OperationRouting : public Operation
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
     /** Return a list of all sub-operations. */
-    virtual const Operationlist& getSubOperations() const
+    virtual Operationlist& getSubOperations() const
     {
-      return steps;
+      return const_cast<Operationlist&>(steps);
     }
 
     virtual const MetaClass& getType() const {return *metadata;}
@@ -3009,25 +3091,15 @@ class OperationRouting : public Operation
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addListField<Cls, Operationlist>(Tags::steps, Tags::operation, &Cls::getSubOperations);
-
-      /* XXX TODO From endelement
-        if (pAttr.isA (Tags::operation)
-      && pIn.getParentElement().isA(Tags::steps))
-  {
-    Operation *oper = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (oper) addStepBack (oper);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-
-  */
+      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::steps, Tags::operation, &Cls::getSubOperations);
     }
+
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
     virtual DECLARE_EXPORT bool extraInstantiate(OperationPlan* o);
 
   private:
-    /** Stores a double linked list of all step operations. */
+    /** Stores a double linked list of all step suboperations. */
     Operationlist steps;
 };
 
@@ -3080,9 +3152,6 @@ DECLARE_EXPORT SearchMode decodeSearchMode(const string& c);
 class OperationSplit : public Operation
 {
   public:
-    typedef pair<int,DateRange> alternateProperty;
-    typedef list<alternateProperty> alternatePropertyList;
-
     /** Default constructor. */
     explicit OperationSplit()
     {
@@ -3091,32 +3160,6 @@ class OperationSplit : public Operation
 
     /** Destructor. */
     DECLARE_EXPORT ~OperationSplit();
-
-    /** Add a new alternate operation. */
-    DECLARE_EXPORT void addAlternate(
-      Operation*, int = 1, DateRange = DateRange()
-      );
-
-    /** Removes an alternate from the list. */
-    DECLARE_EXPORT void removeSubOperation(Operation *);
-
-    /** Returns the property list. */
-    DECLARE_EXPORT const alternatePropertyList& getProperties() const
-    {
-      return alternateProperties;
-    }
-
-    /** Updates the percentage of a certain suboperation.
-      * @exception DataException Generated when the argument operation is
-      *     not null and not a sub-operation of this alternate.
-      */
-    DECLARE_EXPORT void setPercent(Operation*, int);
-
-    /** Updates the effective daterange of a certain suboperation.
-      * @exception DataException Generated when the argument operation is
-      *     not null and not a sub-operation of this alternate.
-      */
-    DECLARE_EXPORT void setEffective(Operation*, DateRange);
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -3143,18 +3186,12 @@ class OperationSplit : public Operation
       s.solve(this,v);
     }
 
-    virtual const Operationlist& getSubOperations() const
+    virtual Operationlist& getSubOperations() const
     {
-      return alternates;
+      return const_cast<Operationlist&>(alternates);
     }
 
     static int initialize();
-
-    /** Add an alternate to the operation.<br>
-      * The keyword arguments are "operation", "percent", "effective_start"
-      * and "effective_end"
-      */
-    static DECLARE_EXPORT PyObject* addAlternate(PyObject*, PyObject*, PyObject*);
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -3162,60 +3199,20 @@ class OperationSplit : public Operation
     virtual size_t getSize() const
     {
       return Object::getSize()
-          + alternates.size() * (5*sizeof(Operation*)+sizeof(alternateProperty));
+          + alternates.size() * (5*sizeof(Operation*));
     }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-          /* TODO XXX From getattro
-
-          PyObject* result = PyTuple_New(getSubOperations().size());
-    alternatePropertyList::const_iterator j = alternateProperties.begin();
-    int count = 0;
-    for (Operation::Operationlist::const_iterator i = getSubOperations().begin();
-      i != getSubOperations().end(); i++, j++)
-      PyTuple_SetItem(result, count++, Py_BuildValue("(OiNN)",
-        static_cast<PyObject*>(*i),
-        j->first,
-        static_cast<PyObject*>(PythonData(j->second.getStart())),
-        static_cast<PyObject*>(PythonData(j->second.getEnd()))
-        ));
-    return result;
-    */
-      // TODO XXX m->addSearchField<Cls>(Tags::search, &Cls::getSearch, &Cls::setSearch);  // TODO enum field serialization
-      // TODO XXX m->addIteratorField<Cls, Operationlist>(Tags::alternates, Tags::alternate, &Cls::getSubOperations);
-            /*
-            alternatePropertyList::const_iterator propIter = alternateProperties.begin();
-        for (Operationlist::const_iterator i = alternates.begin();
-            i != alternates.end(); ++i)
-        {
-          o->BeginObject(Tags::alternate);
-          o->writeElement(Tags::operation, *i, REFERENCE);
-          o->writeElement(Tags::priority, propIter->first);
-          if (propIter->second.getStart() != Date::infinitePast)
-            o->writeElement(Tags::effective_start, propIter->second.getStart());
-          if (propIter->second.getEnd() != Date::infiniteFuture)
-            o->writeElement(Tags::effective_end, propIter->second.getEnd());
-          o->EndObject (Tags::alternate);
-          ++propIter;
-        }
-        */
+       m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::alternates, Tags::alternate, &Cls::getSubOperations);
     }
+
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
     virtual DECLARE_EXPORT bool extraInstantiate(OperationPlan* o);
 
   private:
-    /** List of the percentages of the different alternate operations. The list
-      * is maintained such that it is sorted in ascending order of priority. */
-    alternatePropertyList alternateProperties;
-
-    /** List of all alternate operations. The list is sorted with the operation
-      * with the highest percentage at the start of the list.<br>
-      * Note that the list of operations and the list of percentages go hand in
-      * hand: they have an equal number of elements and the order of the
-      * elements is matching in both lists.
-      */
+    /** List of all alternate operations. */
     Operationlist alternates;
 };
 
@@ -3226,8 +3223,6 @@ class OperationSplit : public Operation
 class OperationAlternate : public Operation
 {
   public:
-    typedef pair<int,DateRange> alternateProperty;
-
     /** Default constructor. */
     explicit DECLARE_EXPORT OperationAlternate() : search(PRIORITY)
     {
@@ -3236,36 +3231,6 @@ class OperationAlternate : public Operation
 
     /** Destructor. */
     DECLARE_EXPORT ~OperationAlternate();
-
-    /** Add a new alternate operation.<br>
-      * The lower the priority value, the more important this alternate
-      * operation is. */
-    DECLARE_EXPORT void addAlternate
-    (Operation*, int = 1, DateRange = DateRange());
-
-    /** Removes an alternate from the list. */
-    DECLARE_EXPORT void removeSubOperation(Operation *);
-
-    /** Returns the properties of a certain suboperation.
-      * @exception LogicException Generated when the argument operation is
-      *     null or when it is not a sub-operation of this alternate.
-      * TODO This method doesn't work correctly when the same operation is used
-      *      multiple times as alternate. Eg priorities between operations
-      *      changes over time.
-      */
-    DECLARE_EXPORT const alternateProperty& getProperties(Operation* o) const;
-
-    /** Updates the priority of a certain suboperation.
-      * @exception DataException Generated when the argument operation is
-      *     not null and not a sub-operation of this alternate.
-      */
-    DECLARE_EXPORT void setPriority(Operation*, int);
-
-    /** Updates the effective daterange of a certain suboperation.
-      * @exception DataException Generated when the argument operation is
-      *     not null and not a sub-operation of this alternate.
-      */
-    DECLARE_EXPORT void setEffective(Operation*, DateRange);
 
     /** Return the search mode. */
     SearchMode getSearch() const
@@ -3304,18 +3269,12 @@ class OperationAlternate : public Operation
       s.solve(this,v);
     }
 
-    virtual const Operationlist& getSubOperations() const
+    virtual Operationlist& getSubOperations() const
     {
-      return alternates;
+      return const_cast<Operationlist&>(alternates);
     }
 
     static int initialize();
-
-    /** Add an alternate to the operation.<br>
-      * The keyword arguments are "operation", "priority", "effective_start"
-      * and "effective_end"
-      */
-    static DECLARE_EXPORT PyObject* addAlternate(PyObject*, PyObject*, PyObject*);
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -3323,78 +3282,20 @@ class OperationAlternate : public Operation
     virtual size_t getSize() const
     {
       return Object::getSize()
-          + alternates.size() * (5*sizeof(Operation*)+sizeof(alternateProperty));
+          + alternates.size() * (5*sizeof(Operation*));
     }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       //m->addIntField<Cls>(Tags::search, &Cls::getSearch, &Cls::setSearch);  // TODO enum field serialization
-      // TODO XXX m->addIteratorField<Cls, Operationlist>(Tags::alternates, Tags::operation, &Cls::getSubOperations);
-            /*
-            from endeleent
-
-              if (!pIn.getUserArea())
-    pIn.setUserArea(new tempData(static_cast<Operation*>(NULL),alternateProperty(1,DateRange())));
-  tempData* tmp = static_cast<tempData*>(pIn.getUserArea());
-
-
-            from getattro
-              if (attr.isA(Tags::alternates))
-  {
-    PyObject* result = PyTuple_New(getSubOperations().size());
-    alternatePropertyList::const_iterator j = alternateProperties.begin();
-    int count = 0;
-    for (Operation::Operationlist::const_iterator i = getSubOperations().begin();
-      i != getSubOperations().end(); i++, j++)
-      PyTuple_SetItem(result, count++, Py_BuildValue("(OiNN)",
-        static_cast<PyObject*>(*i),
-        j->first,
-        static_cast<PyObject*>(PythonData(j->second.getStart())),
-        static_cast<PyObject*>(PythonData(j->second.getEnd()))
-        ));
-    return result;
-  }
-  if (attr.isA(Tags::search))
-  {
-    ostringstream ch;
-    ch << getSearch();
-    return PythonData(ch.str());
-  }
-
-   from write
-            alternatePropertyList::const_iterator propIter = alternateProperties.begin();
-        for (Operationlist::const_iterator i = alternates.begin();
-            i != alternates.end(); ++i)
-        {
-          o->BeginObject(Tags::alternate);
-          o->writeElement(Tags::operation, *i, REFERENCE);
-          o->writeElement(Tags::priority, propIter->first);
-          if (propIter->second.getStart() != Date::infinitePast)
-            o->writeElement(Tags::effective_start, propIter->second.getStart());
-          if (propIter->second.getEnd() != Date::infiniteFuture)
-            o->writeElement(Tags::effective_end, propIter->second.getEnd());
-          o->EndObject (Tags::alternate);
-          ++propIter;
-        }
-        */
+      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::alternates, Tags::operation, &Cls::getSubOperations);
     }
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
     virtual DECLARE_EXPORT bool extraInstantiate(OperationPlan* o);
 
   private:
-    typedef list<alternateProperty> alternatePropertyList;
-
-    /** List of the priorities of the different alternate operations. The list
-      * is maintained such that it is sorted in ascending order of priority. */
-    alternatePropertyList alternateProperties;
-
-    /** List of all alternate operations. The list is sorted with the operation
-      * with the highest priority at the start of the list.<br>
-      * Note that the list of operations and the list of priorities go hand in
-      * hand: they have an equal number of elements and the order of the
-      * elements is matching in both lists.
-      */
+    /** List of all alternate operations. */
     Operationlist alternates;
 
     /** Mode to select the preferred alternates. */
@@ -4470,8 +4371,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MetaFieldBase::MANDATORY);
-      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, &Cls::setBuffer, MetaFieldBase::MANDATORY);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, &Cls::setBuffer, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
@@ -4890,7 +4791,7 @@ class SetupMatrixRule : public Object
       m->addDurationField<Cls>(Tags::duration, &Cls::getDuration, &Cls::setDuration);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
-      m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, NULL, MetaFieldBase::DONT_SERIALIZE);
+      m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, NULL, MetaFieldBase::DONT_SERIALIZE + MetaFieldBase::PARENT);
     }
   private:
     /** Original setup. */
@@ -5558,8 +5459,8 @@ class ResourceSkill : public Object,
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MetaFieldBase::MANDATORY);
-      m->addPointerField<Cls, Skill>(Tags::skill, &Cls::getSkill, &Cls::setSkill, MetaFieldBase::MANDATORY);
+      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, Skill>(Tags::skill, &Cls::getSkill, &Cls::setSkill, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
@@ -5774,8 +5675,8 @@ class Load
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MetaFieldBase::MANDATORY);
-      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MetaFieldBase::MANDATORY);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity, 1.0);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
@@ -8184,6 +8085,23 @@ class OperationIterator
 };
 
 
+class SubOperationIterator : public PythonExtension<SubOperationIterator>
+{
+  public:
+    static int initialize();
+
+    SubOperationIterator(Operation* o) : oplist(o->getSubOperations())
+    {
+      iter = oplist.begin();
+    }
+
+  private:
+    const Operation::Operationlist& oplist;
+    Operation::Operationlist::const_iterator iter;
+    PyObject *iternext();
+};
+
+
 class CalendarIterator
   : public FreppleIterator<CalendarIterator,Calendar::iterator,Calendar>
 {
@@ -8200,11 +8118,6 @@ class SkillIterator
   : public FreppleIterator<SkillIterator,Skill::iterator,Skill>
 {
 };
-
-
-//
-// SETUP MATRIX RULES
-//
 
 
 class SetupMatrixRuleIterator : public PythonExtension<SetupMatrixRuleIterator>
@@ -8225,10 +8138,6 @@ class SetupMatrixRuleIterator : public PythonExtension<SetupMatrixRuleIterator>
     PyObject *iternext();
 };
 
-
-//
-// RESOURCE SKILLS
-//
 
 class ResourceSkillIterator : public PythonExtension<ResourceSkillIterator>
 {
@@ -8258,10 +8167,6 @@ class ResourceSkillIterator : public PythonExtension<ResourceSkillIterator>
 };
 
 
-//
-// SUPPLIER ITEMS
-//
-
 class SupplierItemIterator : public PythonExtension<SupplierItemIterator>
 {
   public:
@@ -8288,11 +8193,6 @@ class SupplierItemIterator : public PythonExtension<SupplierItemIterator>
     Item::supplierlist::const_iterator is;
     PyObject *iternext();
 };
-
-
-//
-// CALENDARS
-//
 
 
 class CalendarBucketIterator : public PythonExtension<CalendarBucketIterator>
@@ -8331,11 +8231,6 @@ class CalendarEventIterator
 };
 
 
-//
-// OPERATIONPLANS
-//
-
-
 class OperationPlanIterator
   : public FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>
 {
@@ -8353,11 +8248,6 @@ class OperationPlanIterator
       : FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(opplan)
     {}
 };
-
-
-//
-// FLOWPLANS
-//
 
 
 class FlowPlanIterator : public PythonExtension<FlowPlanIterator>
@@ -8409,11 +8299,6 @@ class FlowPlanIterator : public PythonExtension<FlowPlanIterator>
 };
 
 
-//
-// LOADPLANS
-//
-
-
 class LoadPlanIterator : public PythonExtension<LoadPlanIterator>
 {
   public:
@@ -8460,11 +8345,6 @@ class LoadPlanIterator : public PythonExtension<LoadPlanIterator>
 };
 
 
-//
-// DEMAND DELIVERY OPERATIONPLANS
-//
-
-
 class DemandPlanIterator : public PythonExtension<DemandPlanIterator>
 {
   public:
@@ -8482,11 +8362,6 @@ class DemandPlanIterator : public PythonExtension<DemandPlanIterator>
     Demand::OperationPlan_list::const_iterator i;
     PyObject *iternext();
 };
-
-
-//
-// LOADS
-//
 
 
 class LoadIterator : public PythonExtension<LoadIterator>  // TODO optimize storage and overhead
@@ -8539,11 +8414,6 @@ class LoadIterator : public PythonExtension<LoadIterator>  // TODO optimize stor
     Operation::iterator ioo;
     PyObject *iternext();
 };
-
-
-//
-// FLOW
-//
 
 
 class FlowIterator : public PythonExtension<FlowIterator>  // TODO optimize storage and overhead

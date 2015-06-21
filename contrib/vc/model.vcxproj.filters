@@ -107,5 +107,8 @@
     <ClCompile Include="..\..\src\model\supplieritem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\model\suboperation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

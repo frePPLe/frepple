@@ -61,9 +61,14 @@ int Calendar::initialize()
 int CalendarBucket::initialize()
 {
   // Initialize the metadata
-  metacategory = MetaCategory::registerCategory<CalendarBucket>("bucket", "buckets");
+  metacategory = MetaCategory::registerCategory<CalendarBucket>(
+    "bucket", "buckets", MetaCategory::ControllerDefault
+    );
   registerFields<CalendarBucket>(const_cast<MetaCategory*>(metacategory));
-  metadata = MetaClass::registerClass<CalendarBucket>("bucket", "bucket", true);
+  metadata = MetaClass::registerClass<CalendarBucket>(
+    "bucket", "bucket",
+    Object::create<CalendarBucket>, true
+    );
 
   // Initialize the Python class
   PythonType& x = FreppleCategory<CalendarBucket>::getPythonType();
@@ -73,6 +78,7 @@ int CalendarBucket::initialize()
   x.supportsetattro();
   x.supportstr();
   x.supportcompare();
+  // TODO x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
@@ -404,6 +410,21 @@ DECLARE_EXPORT void CalendarBucket::writeHeader(Serializer *o, const Keyword& ta
     else
       o->BeginObject(tag, Tags::id, id);
   }
+}
+
+
+DECLARE_EXPORT void CalendarBucket::setCalendar(Calendar* c)
+{
+  if (cal)
+    throw DataException("Can't reassign a calendar bucket to a new calendar");
+  cal = c;
+  if (cal->firstBucket)
+    cal->firstBucket->prevBucket = this;
+  else
+    nextBucket = cal->firstBucket;
+  cal->firstBucket = this;
+  updateOffsets();
+  updateSort();
 }
 
 

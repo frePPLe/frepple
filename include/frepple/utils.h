@@ -1670,11 +1670,12 @@ class MetaFieldBase
       PLAN = 4,
       DETAIL = 8,
       DONT_SERIALIZE = 16,
-      COMPUTED = 32
+      COMPUTED = 32,
+      PARENT = 64
     };
 
-    MetaFieldBase(const Keyword& k, FieldCategory c)
-      : name(k), category(c) {}
+    MetaFieldBase(const Keyword& k, unsigned int fl)
+      : name(k), flags(fl) {}
 
     const Keyword& getName() const
     {
@@ -1699,9 +1700,9 @@ class MetaFieldBase
       return 0;
     }
 
-    FieldCategory getCategory() const
+    unsigned int getFlags() const
     {
-      return category;
+      return flags;
     }
 
     hashtype getHash() const
@@ -1733,8 +1734,8 @@ class MetaFieldBase
     /** Field name. */
     const Keyword& name;
 
-    /** Category indicating the importance of this field. */
-    FieldCategory category;
+    /** A series of bit flags for specific behavior. */
+   unsigned int flags;
 };
 
 
@@ -1803,7 +1804,12 @@ class MetaClass : public NonCopyable
     PyTypeObject* pythonClass;
 
     /** A factory method for the registered class. */
-   creatorDefault factoryMethod;
+    creatorDefault factoryMethod;
+
+    /** A flag that tracks whether this object can inherit context from
+      * its parent during creation.
+      */
+    bool parent;
 
     /** A flag whether this is the default class in its category. */
     bool isDefault;
@@ -1912,14 +1918,14 @@ class MetaClass : public NonCopyable
 
     /** Default constructor. */
     MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")),
-      category(NULL), pythonClass(NULL), factoryMethod(NULL) {}
+      category(NULL), pythonClass(NULL), factoryMethod(NULL), parent(false) {}
 
     /** Register a field. */
     template <class Cls> inline void addStringField(
       const Keyword& k,
       string (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(string) = NULL,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
 		{
       fields.push_back( new MetaFieldString<Cls>(k, getfunc, setfunc, c) );  // TODO use a block allocator to keep all metadata compact
@@ -1930,7 +1936,7 @@ class MetaClass : public NonCopyable
       int (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(int) = NULL,
       int d = 0,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
 		{
       fields.push_back( new MetaFieldInt<Cls>(k, getfunc, setfunc, d, c) );
@@ -1941,7 +1947,7 @@ class MetaClass : public NonCopyable
       short (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(short) = NULL,
       int d = 0,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
 		{
       fields.push_back( new MetaFieldShort<Cls>(k, getfunc, setfunc, d, c) );
@@ -1952,7 +1958,7 @@ class MetaClass : public NonCopyable
       unsigned long (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(unsigned long) = NULL,
       unsigned long d = 0.0,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
 		{
       fields.push_back( new MetaFieldUnsignedLong<Cls>(k, getfunc, setfunc, d, c) );
@@ -1962,7 +1968,7 @@ class MetaClass : public NonCopyable
       const Keyword& k,
       PythonFunction (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(PythonFunction) = NULL,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::DONT_SERIALIZE
+      unsigned int c = MetaFieldBase::DONT_SERIALIZE
       )
 		{
       fields.push_back( new MetaFieldPythonFunction<Cls>(k, getfunc, setfunc, c) );
@@ -1973,7 +1979,7 @@ class MetaClass : public NonCopyable
       double (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(double) = NULL,
       double d = 0.0,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
 		{
       fields.push_back( new MetaFieldDouble<Cls>(k, getfunc, setfunc, d, c) );
@@ -1983,44 +1989,77 @@ class MetaClass : public NonCopyable
       const Keyword& k,
       Ptr* (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(Ptr*) = NULL,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
     {
       fields.push_back( new MetaFieldPointer<Cls, Ptr>(k, getfunc, setfunc, c) );
+      if (c & MetaFieldBase::PARENT)
+        parent = true;
     }
 
     template <class Cls, class Ptr> inline void addIteratorField(
       const Keyword& k1, const Keyword& k2,
       Ptr (Cls::*getfunc)(void) const,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
     {
       fields.push_back( new MetaFieldIterator<Cls, Ptr>(k1, k2, getfunc, c) );
+      if (c & MetaFieldBase::PARENT)
+        parent = true;
+    }
+
+    template <class Cls, class Iter, class Ptr> inline void addIterator2Field(
+      const Keyword& k1, const Keyword& k2,
+      Iter (Cls::*getfunc)(void) const,
+      unsigned int c = MetaFieldBase::BASE
+      )
+    {
+      fields.push_back( new MetaFieldIterator2<Cls, Iter, Ptr>(k1, k2, getfunc, c) );
+      if (c & MetaFieldBase::PARENT)
+        parent = true;
     }
 
     template <class Cls, class Ptr> inline void addListField(
       const Keyword& k1, const Keyword& k2,
       const Ptr& (Cls::*getfunc)(void) const,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
     {
       fields.push_back( new MetaFieldList<Cls, Ptr>(k1, k2, getfunc, c) );
+      if (c & MetaFieldBase::PARENT)
+        parent = true;
     }
 
     template <class Cls, class Ptr> inline void addList2Field(
       const Keyword& k1, const Keyword& k2,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
     {
       fields.push_back( new MetaFieldList2<Cls, Ptr>(k1, k2, c) );
+      if (c & MetaFieldBase::PARENT)
+        parent = true;
     }
 
     template <class Cls, class Ptr> inline void addList3Field(
       const Keyword& k1, const Keyword& k2,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      const Ptr& (Cls::*getfunc)(void) const = NULL,
+      unsigned int c = MetaFieldBase::BASE
       )
     {
-      fields.push_back( new MetaFieldList3<Cls, Ptr>(k1, k2, c) );
+      fields.push_back( new MetaFieldList3<Cls, Ptr>(k1, k2, getfunc, c) );
+      if (c & MetaFieldBase::PARENT)
+        parent = true;
+    }
+
+    template <class Cls, class Ptr, class Ptr2> inline void addList4Field(
+      const Keyword& k1, const Keyword& k2,
+      const Ptr& (Cls::*getfunc)(void) const = NULL,
+      unsigned int c = MetaFieldBase::BASE
+      )
+    {
+      fields.push_back( new MetaFieldList4<Cls, Ptr, Ptr2>(k1, k2, getfunc, c) );
+      if (c & MetaFieldBase::PARENT)
+        parent = true;
     }
 
     template <class Cls> inline void addBoolField(
@@ -2028,7 +2067,7 @@ class MetaClass : public NonCopyable
       bool (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(bool) = NULL,
       tribool d = BOOL_UNSET,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
 		{
       fields.push_back( new MetaFieldBool<Cls>(k, getfunc, setfunc, d, c) );
@@ -2039,7 +2078,7 @@ class MetaClass : public NonCopyable
       Date (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(Date) = NULL,
       Date d = Date::infinitePast,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
 		{
       fields.push_back( new MetaFieldDate<Cls>(k, getfunc, setfunc, d, c) );
@@ -2050,7 +2089,7 @@ class MetaClass : public NonCopyable
       Duration (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(Duration),
       Duration d = 0L,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
 		{
       fields.push_back( new MetaFieldDuration<Cls>(k, getfunc, setfunc, d, c) );
@@ -2061,7 +2100,7 @@ class MetaClass : public NonCopyable
       double (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(double),
       double d = 0L,
-      MetaFieldBase::FieldCategory c = MetaFieldBase::BASE
+      unsigned int c = MetaFieldBase::BASE
       )
 		{
       fields.push_back( new MetaFieldDurationDouble<Cls>(k, getfunc, setfunc, d, c) );
@@ -6117,7 +6156,7 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
     MetaFieldString(const Keyword& n,
         getFunction getfunc,
         setFunction setfunc = NULL,
-        FieldCategory c = BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc)
     {
       if (getfunc == NULL)
@@ -6170,7 +6209,7 @@ template <class Cls> class MetaFieldBool : public MetaFieldBase
         getFunction getfunc,
         setFunction setfunc = NULL,
         tribool d = BOOL_UNSET,
-        FieldCategory c = BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
       if (getfunc == NULL)
@@ -6223,7 +6262,7 @@ template <class Cls> class MetaFieldDouble : public MetaFieldBase
         getFunction getfunc,
         setFunction setfunc = NULL,
         double d = 0.0,
-        FieldCategory c = BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
       if (getfunc == NULL)
@@ -6276,7 +6315,7 @@ template <class Cls> class MetaFieldInt : public MetaFieldBase
         getFunction getfunc,
         setFunction setfunc = NULL,
         int d = 0,
-        FieldCategory c = BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
       if (getfunc == NULL)
@@ -6329,7 +6368,7 @@ template <class Cls> class MetaFieldShort : public MetaFieldBase
         getFunction getfunc,
         setFunction setfunc = NULL,
         short d = 0,
-        FieldCategory c = BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
       if (getfunc == NULL)
@@ -6382,7 +6421,7 @@ template <class Cls> class MetaFieldUnsignedLong : public MetaFieldBase
         getFunction getfunc,
         setFunction setfunc = NULL,
         unsigned long d = 0,
-        FieldCategory c = BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
       if (getfunc == NULL)
@@ -6434,7 +6473,7 @@ template <class Cls> class MetaFieldPythonFunction : public MetaFieldBase
     MetaFieldPythonFunction(const Keyword& n,
         getFunction getfunc,
         setFunction setfunc = NULL,
-        FieldCategory c = DONT_SERIALIZE
+        unsigned int c = DONT_SERIALIZE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc)
     {
       if (getfunc == NULL)
@@ -6483,7 +6522,7 @@ template <class Cls> class MetaFieldDuration : public MetaFieldBase
         getFunction getfunc,
         setFunction setfunc = NULL,
         Duration d = 0,
-        FieldCategory c = BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
       if (getfunc == NULL)
@@ -6536,7 +6575,7 @@ template <class Cls> class MetaFieldDurationDouble : public MetaFieldBase
         getFunction getfunc,
         setFunction setfunc = NULL,
         double d = 0,
-        FieldCategory c = BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
       if (getfunc == NULL)
@@ -6593,7 +6632,7 @@ template <class Cls> class MetaFieldDate : public MetaFieldBase
         getFunction getfunc,
         setFunction setfunc = NULL,
         Date d = Date::infinitePast,
-        FieldCategory c=BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
       if (getfunc == NULL)
@@ -6645,7 +6684,7 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
     MetaFieldPointer(const Keyword& n,
         getFunction getfunc,
         setFunction setfunc = NULL,
-        FieldCategory c=BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc)
     {
       if (getfunc == NULL)
@@ -6718,7 +6757,7 @@ template <class Cls, class Ptr> class MetaFieldIterator : public MetaFieldBase
     MetaFieldIterator(const Keyword& g,
         const Keyword& n,
         getFunction getfunc,
-        FieldCategory c=BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n)
     {
       if (getfunc == NULL)
@@ -6761,6 +6800,67 @@ template <class Cls, class Ptr> class MetaFieldIterator : public MetaFieldBase
 };
 
 
+template <class Cls, class Iter, class Ptr> class MetaFieldIterator2 : public MetaFieldBase
+{
+  public:
+    typedef Iter (Cls::*getFunction)(void) const;
+
+    MetaFieldIterator2(const Keyword& g,
+        const Keyword& n,
+        getFunction getfunc,
+        unsigned int c = BASE
+        ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n)
+    {
+      if (getfunc == NULL)
+        throw DataException("Getter function can't be NULL");
+    };
+
+    virtual void setField(Object* me, const DataValue& el) const {}
+
+    virtual void getField(Object* me, DataValue& el) const
+    {
+      throw LogicException("GetField not implemented for iterator fields");
+    }
+
+    virtual void writeField(Serializer& output) const
+    {
+      bool first = true;
+      for (Iter i = (static_cast<Cls*>(output.getCurrentObject())->*getf)(); i != Iter::end(); ++i)
+      {
+        if (first)
+        {
+          output.BeginList(getName());
+          first = false;
+        }
+		    output.writeElement(singleKeyword, *i);
+      }
+      if (!first)
+        output.EndList(getName());
+    }
+
+    virtual const Keyword* getKeyword() const
+    {
+      return &singleKeyword;
+    }
+
+    virtual bool isGroup() const
+    {
+      return true;
+    }
+
+    virtual const MetaClass* getClass() const
+    {
+      return Ptr::metadata;
+    }
+
+  protected:
+    /** Get function. */
+    getFunction getf;
+
+    const Keyword& singleKeyword;
+};
+
+
 template <class Cls, class Ptr> class MetaFieldList : public MetaFieldBase
 {
   public:
@@ -6769,7 +6869,7 @@ template <class Cls, class Ptr> class MetaFieldList : public MetaFieldBase
     MetaFieldList(const Keyword& g,
         const Keyword& n,
         getFunction getfunc,
-        FieldCategory c=BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n)
     {
       if (getfunc == NULL)
@@ -6823,7 +6923,7 @@ template <class Cls, class Ptr> class MetaFieldList2 : public MetaFieldBase
   public:
     MetaFieldList2(const Keyword& g,
         const Keyword& n,
-        FieldCategory c=BASE
+        unsigned int c = BASE
         ) : MetaFieldBase(g, c), singleKeyword(n)
     {};
 
@@ -6875,7 +6975,8 @@ template <class Cls, class Ptr> class MetaFieldList3 : public MetaFieldBase
   public:
     MetaFieldList3(const Keyword& g,
         const Keyword& n,
-        FieldCategory c=BASE
+        const Ptr& (Cls::*getfunc)(void) const,
+        unsigned int c = BASE
         ) : MetaFieldBase(g, c), singleKeyword(n)
     {};
 
@@ -6899,6 +7000,48 @@ template <class Cls, class Ptr> class MetaFieldList3 : public MetaFieldBase
     virtual const MetaClass* getClass() const
     {
       return Ptr::metadata;
+    }
+
+    virtual const Keyword* getKeyword() const
+    {
+      return &singleKeyword;
+    }
+
+  protected:
+    const Keyword& singleKeyword;
+};
+
+
+template <class Cls, class Ptr, class Ptr2> class MetaFieldList4 : public MetaFieldBase
+{
+  public:
+    MetaFieldList4(const Keyword& g,
+        const Keyword& n,
+        const Ptr& (Cls::*getfunc)(void) const,
+        unsigned int c = BASE
+        ) : MetaFieldBase(g, c), singleKeyword(n)
+    {};
+
+    virtual void setField(Object* me, const DataValue& el) const {}
+
+    virtual void getField(Object* me, DataValue& el) const
+    {
+      throw LogicException("GetField not implemented for list3 fields");
+    }
+
+    virtual void writeField(Serializer& output) const
+    {
+      // XXX TODO writeField not implemented for list3 fields
+    }
+
+    virtual bool isGroup() const
+    {
+      return true;
+    }
+
+    virtual const MetaClass* getClass() const
+    {
+      return Ptr2::metadata;
     }
 
     virtual const Keyword* getKeyword() const

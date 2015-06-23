@@ -215,7 +215,8 @@ template<class T, class U> class MetaFieldPointer;
 template<class T> class MetaFieldUnsignedLong;
 template<class T> class MetaFieldPythonFunction;
 template<class T, class U> class MetaFieldIterator;
-template<class T, class U> class MetaFieldList;
+template<class T, class U, class V> class MetaFieldIterator2;
+template<class T, class U, class V> class MetaFieldList;
 template<class T, class U> class MetaFieldList2;
 template<class T, class U> class MetaFieldList3;
 template<class T> class MetaFieldInt;
@@ -2019,13 +2020,13 @@ class MetaClass : public NonCopyable
         parent = true;
     }
 
-    template <class Cls, class Ptr> inline void addListField(
+    template <class Cls, class Ptr, class Ptr2> inline void addListField(
       const Keyword& k1, const Keyword& k2,
       const Ptr& (Cls::*getfunc)(void) const,
       unsigned int c = MetaFieldBase::BASE
       )
     {
-      fields.push_back( new MetaFieldList<Cls, Ptr>(k1, k2, getfunc, c) );
+      fields.push_back( new MetaFieldList<Cls, Ptr, Ptr2>(k1, k2, getfunc, c) );
       if (c & MetaFieldBase::PARENT)
         parent = true;
     }
@@ -3857,6 +3858,8 @@ class Object : public PyObject
       return &dict;
     }
 
+    static DECLARE_EXPORT const MetaCategory* metadata;
+
   protected:
     static vector<PythonType*> table;
 
@@ -5543,7 +5546,7 @@ template <class T> class HasHierarchy : public HasName<T>
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
-      m->addIteratorField<Cls, typename Cls::memberIterator>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, MetaFieldBase::DETAIL);
+      m->addIterator2Field<Cls, typename Cls::memberIterator, Cls>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, MetaFieldBase::DETAIL + MetaFieldBase::PARENT);
     }
 
   private:
@@ -6700,9 +6703,9 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
         throw DataException(o.str());
       }
       Ptr *obj = static_cast<Ptr*>(el.getObject());
-      if (obj && (
+      if (!obj || (obj && (
         (obj->getType().category && Ptr::metadata && *(obj->getType().category) == *(Ptr::metadata))
-        || obj->getType() == *(Ptr::metadata))
+        || obj->getType() == *(Ptr::metadata)))
         )
         (static_cast<Cls*>(me)->*setf)(obj);
       else
@@ -6861,7 +6864,7 @@ template <class Cls, class Iter, class Ptr> class MetaFieldIterator2 : public Me
 };
 
 
-template <class Cls, class Ptr> class MetaFieldList : public MetaFieldBase
+template <class Cls, class Ptr, class Ptr2> class MetaFieldList : public MetaFieldBase
 {
   public:
     typedef const Ptr& (Cls::*getFunction)(void) const;
@@ -6903,6 +6906,16 @@ template <class Cls, class Ptr> class MetaFieldList : public MetaFieldBase
     virtual bool isPointer() const
     {
       return true;
+    }
+
+    virtual bool isGroup() const
+    {
+      return true;
+    }
+
+    virtual const MetaClass* getClass() const
+    {
+      return Ptr2::metadata;
     }
 
     virtual const Keyword* getKeyword() const

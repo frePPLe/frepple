@@ -763,7 +763,7 @@ class Problem : public NonCopyable, public Object
       m->addDateField<Cls>(Tags::end, &Cls::getEnd);
       m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight);
       m->addStringField<Cls>(Tags::entity, &Cls::getEntity, NULL, MetaFieldBase::DONT_SERIALIZE);
-      // XXX TODO m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner);
+      m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner);
     }
   protected:
     /** Each Problem object references a HasProblem object as its owner. */
@@ -1452,7 +1452,7 @@ class Supplier : public HasHierarchy<Supplier>, public HasDescription
     {
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
-      m->addListField<Cls, typename Cls::itemlist>(Tags::supplieritems, Tags::supplieritem, &Cls::getItems, MetaFieldBase::DETAIL);
+      m->addListField<Cls, typename Cls::itemlist, SupplierItem>(Tags::supplieritems, Tags::supplieritem, &Cls::getItems, MetaFieldBase::DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
     }
 
@@ -1934,10 +1934,10 @@ class Operation : public HasName<Operation>,
       m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1);
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
       m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
-      m->addPointerField<Cls>(Tags::location, &Cls::getLocation, &Cls::setLocation);
+      m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
       // TODO XXX m->addIteratorField<Cls, >(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL);
-      m->addListField<Cls, loadlist>(Tags::loads, Tags::load, &Cls::getLoads, MetaFieldBase::DETAIL);
-      m->addListField<Cls, flowlist>(Tags::flows, Tags::flow, &Cls::getFlows, MetaFieldBase::DETAIL);
+      m->addListField<Cls, loadlist, Load>(Tags::loads, Tags::load, &Cls::getLoads, MetaFieldBase::DETAIL);
+      m->addListField<Cls, flowlist, Flow>(Tags::flows, Tags::flow, &Cls::getFlows, MetaFieldBase::DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
@@ -3381,7 +3381,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addDoubleField<Cls>(Tags::price, &Cls::getPrice, &Cls::setPrice, 0);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
-      m->addListField<Cls>(Tags::supplieritems, Tags::supplieritem, &Cls::getSuppliers, MetaFieldBase::DETAIL);
+      m->addListField<Cls, typename Cls::supplierlist, SupplierItem>(Tags::supplieritems, Tags::supplieritem, &Cls::getSuppliers, MetaFieldBase::DETAIL);
     }
 
   private:
@@ -3530,8 +3530,8 @@ class SupplierItem : public Object,
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Supplier>(Tags::supplier, &Cls::getSupplier, &Cls::setSupplier);
-      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem);
+      m->addPointerField<Cls, Supplier>(Tags::supplier, &Cls::getSupplier, &Cls::setSupplier, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
       m->addDurationField<Cls>(Tags::leadtime, &Cls::getLeadTime, &Cls::setLeadTime);
       m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1.0);
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
@@ -3828,8 +3828,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       m->addDoubleField<Cls>(Tags::carrying_cost, &Cls::getCarryingCost, &Cls::setCarryingCost);
       m->addDurationField<Cls>(Tags::mininterval, &Cls::getMinimumInterval, &Cls::setMinimumInterval, -1);
       m->addDurationField<Cls>(Tags::maxinterval, &Cls::getMaximumInterval, &Cls::setMaximumInterval);
-      // XXX TODO m->addListField<Cls, flowplanlist>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, MetaFieldBase::DETAIL);
-      m->addListField<Cls, flowlist>(Tags::flows, Tags::flow, &Cls::getFlows, MetaFieldBase::DETAIL);
+      // XXX TODO m->addListField<Cls, flowplanlist, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, MetaFieldBase::DETAIL);
+      m->addListField<Cls, flowlist, Flow>(Tags::flows, Tags::flow, &Cls::getFlows, MetaFieldBase::DETAIL);
       m->addBoolField<Cls>(Tags::tool, &Cls::getTool, &Cls::setTool, BOOL_FALSE);
       // XXX TODO m->addIteratorField<Cls, Problem::const_iterator>(Tags::problems, Tags::problem, &Cls::getProblems, MetaFieldBase::DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
@@ -5017,7 +5017,7 @@ class Skill : public HasName<Skill>, public HasSource
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
-      m->addListField<Cls, resourcelist>(Tags::resourceskills, Tags::resourceskill, &Cls::getResources, MetaFieldBase::DETAIL);
+      m->addListField<Cls, resourcelist, Resource>(Tags::resourceskills, Tags::resourceskill, &Cls::getResources, MetaFieldBase::DETAIL);
       HasSource::registerFields<Cls>(m);
     }
   private:
@@ -5232,15 +5232,15 @@ class Resource : public HasHierarchy<Resource>,
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMaximum, &Cls::setMaximum, 1);
-      m->addPointerField<Cls>(Tags::maximum_calendar, &Cls::getMaximumCalendar, &Cls::setMaximumCalendar); // XXX TODO test: resourcebucket has an override for this method. Test if it is called!!!
+      m->addPointerField<Cls, CalendarDefault>(Tags::maximum_calendar, &Cls::getMaximumCalendar, &Cls::setMaximumCalendar); // XXX TODO test: resourcebucket has an override for this method. Test if it is called!!!
       m->addDurationField<Cls>(Tags::maxearly, &Cls::getMaxEarly, &Cls::setMaxEarly, defaultMaxEarly);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
       m->addStringField<Cls>(Tags::setup, &Cls::getSetup, &Cls::setSetup);
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix);
       Plannable::registerFields<Cls>(m);
-      m->addListField<Cls, loadlist>(Tags::loads, Tags::load, &Cls::getLoads, MetaFieldBase::DETAIL);
-      m->addListField<Cls, skilllist>(Tags::skills, Tags::skill, &Cls::getSkills, MetaFieldBase::DETAIL);
+      m->addListField<Cls, loadlist, Load>(Tags::loads, Tags::load, &Cls::getLoads, MetaFieldBase::DETAIL);
+      m->addListField<Cls, skilllist, Skill>(Tags::skills, Tags::skill, &Cls::getSkills, MetaFieldBase::DETAIL);
       // TODO XXX m->addIteratorField<Cls, LoadPlanIterator>(Tags::loadplans, &Cls::getLoadPlans, DETAIL);  TODO SHOULD BE ONLY THE ONES OF TYPE 1
       // TODO XXX m->addIteratorField<Cls, ProblemIterator>(Tags::problems, &Cls::getProblems, DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
@@ -6139,7 +6139,7 @@ class Demand
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
       // xxx TODO m->addIteratorField<Cls>(Tags::operationplans, &Cls::getOperationplans, NULL, DETAIL);
       // xxx TODO m->addIteratorField<Cls>(Tags::problems, &Cls::getProblems, NULL, DETAIL);
-      m->addListField<Cls, Problem::List>(Tags::constraints, Tags::problem, &Cls::getConstraints, MetaFieldBase::DETAIL);
+      m->addListField<Cls, Problem::List, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraints, MetaFieldBase::DETAIL);
       /*   if (attr.isA(Tags::pegging))
     return new PeggingIterator(this);
 

@@ -152,12 +152,10 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
 
 #ifdef PARSE_DEBUG
   logger << "Start XML element #" << dataindex << " '" << transcodeUTF8(n)
-    << "' for object #" << objectindex << " "
+    << "' for object #" << objectindex << " ("
     << ((objectindex >= 0 && objects[objectindex].cls) ? objects[objectindex].cls->type : "none")
-    << endl;
+    << ")" << endl;
 #endif
-
-  if (objectindex < 0 ) return;
 
   // Look up the field
   data[dataindex].hash = Keyword::hash(n);
@@ -203,8 +201,9 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
         if (!objects[objectindex].cls)
           throw DataException("No default type registered for category " + objects[objectindex].cls->type);
       }
-      --dataindex;
     }
+    // Skip the opening tag of this object
+    --dataindex;
 
     // Push all attributes on the data stack.
     for (XMLSize_t i = 0, cnt = atts.getLength(); i < cnt; ++i)
@@ -233,16 +232,18 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
     return;
   }
 
+  // Look up the field
+  assert(objects[objectindex].cls);
   data[dataindex].field = objects[objectindex].cls->findField(data[dataindex].hash);
   if (!data[dataindex].field && objects[objectindex].cls->category)
     data[dataindex].field = objects[objectindex].cls->category->findField(data[dataindex].hash);
 
   // Field not found
-  if (!data[dataindex].field && dataindex)
+  if (!data[dataindex].field)
   {
     if (!dataindex && data[dataindex].hash == Tags::plan.getHash())
       // Special case: root element with name "plan"
-      ++objects[objectindex].start;
+      --dataindex;
     else
     {
       // Ignore this element
@@ -253,8 +254,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
 #endif
     }
   }
-
-  if (data[dataindex].field && data[dataindex].field->isPointer())
+  else if (data[dataindex].field->isPointer())
   {
     // Increment object index
     if (++objectindex >= maxobjects)
@@ -318,13 +318,15 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
 
 #ifdef PARSE_DEBUG
   logger << "End XML element #" << dataindex << " '" << transcodeUTF8(s)
-    << "' for object #" << objectindex << " " << ((objectindex >= 0 && objects[objectindex].cls) ? objects[objectindex].cls->type : "none") << endl;
+    << "' for object #" << objectindex << " ("
+    << ((objectindex >= 0 && objects[objectindex].cls) ? objects[objectindex].cls->type : "none")
+    << ")" << endl;
 #endif
 
   // Ignore content between tags
   reading = false;
 
-  if (h != objects[objectindex].hash)
+  if (h != objects[objectindex].hash || dataindex < 0)
     // Continue reading more fields until we'll have read the complete object
     return;
 
@@ -354,38 +356,90 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
     }
 
     // Check if we need to add a parent object to the dict
-    // XXX TODO Need to create the parent object already now. The key key fields should already be read, we assume.
-    /*
+    bool found_parent = false;
     if (objects[objectindex].cls->parent)
     {
+      assert(objects[objectindex-1].cls);
+      const MetaClass* cl = objects[objectindex-1].cls;
       for (MetaClass::fieldlist::const_iterator i = objects[objectindex].cls->getFields().begin();
         i != objects[objectindex].cls->getFields().end(); ++i)
         if ((*i)->getFlags() & MetaFieldBase::PARENT && objectindex >= 1)
         {
-          const MetaClass& cl = objects[objectindex-1].object->getType();
-          if (*((*i)->getClass()) == cl
-            || (cl.category && *((*i)->getClass()) == *(cl.category)))
+          if (*((*i)->getClass()) == *cl
+            || (cl->category && *((*i)->getClass()) == *(cl->category)))
           {
             // Parent object matches expected type as parent field
+            // First, create the parent object. It is normally created only
+            // AFTER all its fields are read in, and that's too late for us.
+            if (!objects[objectindex-1].object)
+            {
+              XMLDataValueDict dict_parent(data, objects[objectindex-1].start, dataindex-1);
+              if (objects[objectindex-1].cls->category)
+              {
+                assert(objects[objectindex-1].cls->category->readFunction);
+                objects[objectindex-1].object =
+                  objects[objectindex-1].cls->category->readFunction(
+                    objects[objectindex-1].cls,
+                    dict_parent
+                    );
+              }
+              else
+              {
+                assert(static_cast<const MetaCategory*>(objects[objectindex-1].cls)->readFunction);
+                objects[objectindex-1].object =
+                  static_cast<const MetaCategory*>(objects[objectindex-1].cls)->readFunction(
+                    objects[objectindex-1].cls,
+                    dict_parent
+                    );
+              }
+            }
+            // Add reference to parent to the current dict
             data[++dataindex].field = *i;
             data[dataindex].hash = (*i)->getHash();
             data[dataindex].value.setObject(objects[objectindex-1].object);
             dict.enlarge();
+            found_parent = true;
             break;
           }
         }
     }
-    if (objects[objectindex].cls->category && objects[objectindex].cls->category->parent)
+    if (!found_parent && objects[objectindex].cls->category && objects[objectindex].cls->category->parent)
     {
+      assert(objects[objectindex-1].cls);
+      const MetaClass* cl = objects[objectindex-1].cls;
       for (MetaClass::fieldlist::const_iterator i = objects[objectindex].cls->category->getFields().begin();
         i != objects[objectindex].cls->category->getFields().end(); ++i)
         if ((*i)->getFlags() & MetaFieldBase::PARENT && objectindex >= 1)
         {
-          const MetaClass& cl = objects[objectindex-1].object->getType();
-          if (*((*i)->getClass()) == cl
-            || (cl.category && *((*i)->getClass()) == *(cl.category)))
+          if (*((*i)->getClass()) == *cl
+            || (cl->category && *((*i)->getClass()) == *(cl->category)))
           {
             // Parent object matches expected type as parent field
+            // First, create the parent object. It is normally created only
+            // AFTER all its fields are read in, and that's too late for us.
+            if (!objects[objectindex-1].object)
+            {
+              XMLDataValueDict dict_parent(data, objects[objectindex-1].start, dataindex-1);
+              if (objects[objectindex-1].cls->category)
+              {
+                assert(objects[objectindex-1].cls->category->readFunction);
+                objects[objectindex-1].object =
+                  objects[objectindex-1].cls->category->readFunction(
+                    objects[objectindex-1].cls,
+                    dict_parent
+                    );
+              }
+              else
+              {
+                assert(static_cast<const MetaCategory*>(objects[objectindex-1].cls)->readFunction);
+                objects[objectindex-1].object =
+                  static_cast<const MetaCategory*>(objects[objectindex-1].cls)->readFunction(
+                    objects[objectindex-1].cls,
+                    dict_parent
+                    );
+              }
+            }
+            // Add reference to parent to the current dict
             data[++dataindex].field = *i;
             data[dataindex].hash = (*i)->getHash();
             data[dataindex].value.setObject(objects[objectindex-1].object);
@@ -394,7 +448,6 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
           }
         }
     }
-    */
 
 #ifdef PARSE_DEBUG
     logger << "Creating object " << objects[objectindex].cls->type << endl;
@@ -402,24 +455,30 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
 #endif
 
     // Call the object factory for the category and pass all field values
-    // in a dictionary
-    if (objects[objectindex].cls->category)
+    // in a dictionary.
+    // In some cases, the reading of the child fields already triggered the
+    // creation of the parent. In such cases we can skip the creation step
+    // here.
+    if (!objects[objectindex].object)
     {
-      assert(objects[objectindex].cls->category->readFunction);
-      objects[objectindex].object =
-        objects[objectindex].cls->category->readFunction(
-          objects[objectindex].cls,
-          dict
-          );
-    }
-    else
-    {
-      assert(static_cast<const MetaCategory*>(objects[objectindex].cls)->readFunction);
-      objects[objectindex].object =
-        static_cast<const MetaCategory*>(objects[objectindex].cls)->readFunction(
-          objects[objectindex].cls,
-          dict
-          );
+      if (objects[objectindex].cls->category)
+      {
+        assert(objects[objectindex].cls->category->readFunction);
+        objects[objectindex].object =
+          objects[objectindex].cls->category->readFunction(
+            objects[objectindex].cls,
+            dict
+            );
+      }
+      else
+      {
+        assert(static_cast<const MetaCategory*>(objects[objectindex].cls)->readFunction);
+        objects[objectindex].object =
+          static_cast<const MetaCategory*>(objects[objectindex].cls)->readFunction(
+            objects[objectindex].cls,
+            dict
+            );
+      }
     }
 
     // Update all fields on the new object
@@ -428,12 +487,12 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
       for (int idx = objects[objectindex].start; idx <= dataindex; ++idx)
       {
         if (data[idx].field && data[idx].hash != Tags::type.getHash()
-          && data[idx].hash != Tags::action.getHash())
+          && data[idx].hash != Tags::action.getHash() && !data[idx].field->isGroup())
             data[idx].field->setField(objects[objectindex].object, data[idx].value);
       }
     }
 
-    if (objectindex && dataindex && data[dataindex-1].field)
+    if (objectindex && dataindex && data[dataindex-1].field && data[dataindex-1].field->isPointer())
       // Update parent object
       data[dataindex-1].value.setObject(objects[objectindex].object);
     if (getUserExit())
@@ -446,13 +505,13 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
   }
 
   // Update indexes for data and object
-  dataindex = objects[objectindex--].start - 1;
+  dataindex = objects[objectindex--].start -1;
 }
 
 
 DECLARE_EXPORT void XMLInput::characters(const XMLCh *const c, const XMLSize_t n)
 {
-  if (reading)
+  if (reading && dataindex >= 0)
     data[dataindex].value.appendString(transcodeUTF8(c));
 }
 
@@ -536,8 +595,6 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
       xercesc::XMLString::release(&c);
     }
 
-    // If we are reading into a NULL object, there is no need to use a
-    // content handler or a handler stack.
     if (pRoot)
     {
       // Set the event handler. If we are reading into a NULL object, there is
@@ -550,6 +607,15 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
       objects[0].start = 0;
       objects[0].object = pRoot;
       objects[0].cls = &pRoot->getType();
+      objects[0].hash = pRoot->getType().typetag->getHash();
+    }
+    else
+    {
+      // Don't process any of the input data. We'll just let the parser
+      // check the validity of the XML document.
+      ignore = true;
+      objectindex = -1;
+      dataindex = 0;
     }
 
     // Set the error handler

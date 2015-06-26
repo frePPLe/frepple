@@ -219,6 +219,7 @@ template<class T, class U, class V> class MetaFieldIterator2;
 template<class T, class U, class V> class MetaFieldList;
 template<class T, class U> class MetaFieldList2;
 template<class T, class U> class MetaFieldList3;
+template<class T, class U, class V> class MetaFieldList4;
 template<class T> class MetaFieldInt;
 template<class T> class MetaFieldShort;
 

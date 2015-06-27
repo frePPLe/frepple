@@ -162,7 +162,7 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args, PyObject* 
       {
         PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-        Attribute attr(PyBytes_AsString(key_utf8));
+        DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
         if (!attr.isA(Tags::effective_end) && !attr.isA(Tags::effective_start)
           && !attr.isA(Tags::skill) && !attr.isA(Tags::resource)

@@ -43,7 +43,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::firstCategory = NULL;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByTag;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 
-DECLARE_EXPORT const MetaCategory* Object::metadata = NULL; // XXX TODO Only required to keep pointerfield to Object valid, used in problem.getOwner()
+DECLARE_EXPORT const MetaCategory* Object::metadata = NULL;
 
 // Repository of loaded modules
 DECLARE_EXPORT set<string> Environment::moduleRegistry;

@@ -592,9 +592,10 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
 
  
 //XXX TODO change API:  void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataValue& pElement)
+/*
 void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataValue& pElement)
 {
-  /*
+
   if (pAttr.isA(Tags::name))
     name = pElement.getString();
   else if (pAttr.isA(Tags::value))
@@ -653,11 +654,10 @@ void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const 
     PyGILState_Release(pythonstate);
     delete this;  // This was only a temporary object during the read!
   }
-  */
 }
+*/
 
-
-DECLARE_EXPORT void PythonDictionary::read(DataInput& pIn, const Attribute& pAttr, PyObject** pDict)
+DECLARE_EXPORT void PythonDictionary::read(DataInput& pIn, const DataKeyword& pAttr, PyObject** pDict)
 {
   /* XXX TODO
   if (pAttr.isA(Tags::booleanproperty))

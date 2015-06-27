@@ -30,6 +30,7 @@ namespace utils
 DECLARE_EXPORT const Keyword Tags::action("action");
 DECLARE_EXPORT const Keyword Tags::alternate("alternate");
 DECLARE_EXPORT const Keyword Tags::alternates("alternates");
+DECLARE_EXPORT const Keyword Tags::alternate_name("alternate_name");
 DECLARE_EXPORT const Keyword Tags::autocommit("autocommit");
 DECLARE_EXPORT const Keyword Tags::available("available");
 DECLARE_EXPORT const Keyword Tags::booleanproperty("booleanproperty");

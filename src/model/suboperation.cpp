@@ -82,7 +82,7 @@ DECLARE_EXPORT void SubOperation::setOwner(Operation* o)
   if (owner)
     owner->getSubOperations().remove(this);
 
-  // Update 
+  // Update
   owner = o;
 
   // Insert at new owner
@@ -138,8 +138,11 @@ DECLARE_EXPORT void SubOperation::setPriority(int pr)
 
 PyObject *SubOperationIterator::iternext()
 {
-  // TODO XXX missing implementation
-  return NULL;
+  if (iter == oplist.end())
+    return NULL;
+  PyObject* result = *(iter++);
+  Py_INCREF(result);
+  return result;
 }
 
 }

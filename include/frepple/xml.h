@@ -79,8 +79,6 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
     static const int maxdata = 200;
 
   public:
-    typedef pair<Attribute, XMLData> datapair;
-
     struct fld
     {
       const MetaFieldBase* field;
@@ -324,7 +322,7 @@ class XMLInputFile : public XMLInput
 class XMLDataValueDict : public DataValueDict
 {
   public:
-    typedef vector< pair<Attribute, XMLData> > dict;
+    typedef vector< pair<DataKeyword, XMLData> > dict;
 
     /** Constructor. */
     XMLDataValueDict(

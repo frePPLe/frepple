@@ -812,7 +812,7 @@ DECLARE_EXPORT bool XMLData::getBool() const
 }
 
 
-DECLARE_EXPORT const char* Attribute::getName() const
+DECLARE_EXPORT const char* DataKeyword::getName() const
 {
   if (ch) return ch;
   Keyword::tagtable::const_iterator i = Keyword::getTags().find(hash);

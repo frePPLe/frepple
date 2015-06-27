@@ -757,8 +757,8 @@ class Problem : public NonCopyable, public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MetaFieldBase::BASE); // XXX TODO | MetaFieldBase::COMPUTED);
-      m->addStringField<Cls>(Tags::description, &Cls::getDescription, NULL, MetaFieldBase::BASE); // XXX TODO | MetaFieldBase::COMPUTED);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MetaFieldBase::BASE + MetaFieldBase::COMPUTED);
+      m->addStringField<Cls>(Tags::description, &Cls::getDescription, NULL, MetaFieldBase::BASE + MetaFieldBase::COMPUTED);
       m->addDateField<Cls>(Tags::start, &Cls::getStart);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd);
       m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight);
@@ -1064,9 +1064,6 @@ class Solver : public Object
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
-
-    /** Dummy method. */
-    virtual void endElement(DataInput&, const Attribute&, const DataValue&) {}
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -4327,8 +4324,16 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     /** Define the flow of which this one is an alternate. */
     DECLARE_EXPORT void setAlternate(Flow *);
 
+    /** Returns the load of which this one is an alternate.<br>
+      * NULL is return where there is none.
+      */
+    string getAlternateName() const
+    {
+      return altFlow ? altFlow->getName() : "";
+    }
+
     /** Define the flow of which this one is an alternate. */
-    DECLARE_EXPORT void setAlternate(string n);
+    DECLARE_EXPORT void setAlternateName(string n);
 
     /** Return the search mode. */
     SearchMode getSearch() const
@@ -4377,7 +4382,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
       m->addPointerField<Cls, Flow>(Tags::alternate, &Cls::getAlternate, &Cls::setAlternate, MetaFieldBase::DONT_SERIALIZE);
-      //m->addStringField<Cls>(Tags::alternate, &Cls::getAlternateName, &Cls::setAlternateName);  // TODO xxx 2 methods with the same tag... not good
+      m->addStringField<Cls>(Tags::alternate_name, &Cls::getAlternateName, &Cls::setAlternateName);
       //m->addIntField<Cls>(Tags::search, &Cls::getSearch, &Cls::setSearch);  // TODO enum field serialization
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
@@ -4877,6 +4882,11 @@ class SetupMatrixRule : public Object
         {
           return *curRule;
         }
+
+        static iterator end()
+        {
+          return NULL;
+        }
     };
 };
 
@@ -4894,15 +4904,9 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       HasSource::registerFields<Cls>(m);
-      // TODO XXX m->addIteratorField<Cls>(Tags::rules, Tags::rule, &Cls::getRules);
-
-      /** from endeement: XXX TODO
-        if (pAttr.isA(Tags::rule)
-      && pIn.getParentElement().isA(Tags::rules))
-    // A new rule
-    pIn.readto(createRule(pIn.getAttributes()));
-    */
+      m->addIterator2Field<Cls, SetupMatrixRule::iterator, SetupMatrixRule>(Tags::rules, Tags::rule, &Cls::getRules);
     }
+
   public:
     /** Default constructor. */
     explicit DECLARE_EXPORT SetupMatrix() : firstRule(NULL) {}
@@ -4924,21 +4928,15 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
     virtual size_t getSize() const
     {
       size_t tmp = Object::getSize();
-      for (SetupMatrixRule::iterator j = beginRules(); j!= endRules(); ++j)
+      for (SetupMatrixRule::iterator j = getRules(); j != SetupMatrixRule::iterator::end(); ++j)
         tmp += j->getSize();
       return tmp;
     }
 
     /** Returns an iterator to go through the list of rules. */
-    SetupMatrixRule::iterator beginRules() const
+    SetupMatrixRule::iterator getRules() const
     {
       return SetupMatrixRule::iterator(firstRule);
-    }
-
-    /** Returns an iterator to go through the list of rules. */
-    SetupMatrixRule::iterator endRules() const
-    {
-      return SetupMatrixRule::iterator(NULL);
     }
 
     /** Python interface to add a new rule. */
@@ -5681,7 +5679,7 @@ class Load
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
       m->addPointerField<Cls, Load>(Tags::alternate, &Cls::getAlternate, &Cls::setAlternate, MetaFieldBase::DONT_SERIALIZE);
-      // XXX TODO m->addStringField<Cls>(Tags::alternate, &Cls::getAlternateName, &Cls::setAlternateName);   2 fields with same tag
+      m->addStringField<Cls>(Tags::alternate_name, &Cls::getAlternateName, &Cls::setAlternateName);
       // XXX TODO m->addIntField<Cls>(Tags::search, &Cls::getSearch, &Cls::setSearch);  // TODO enum field serialization
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
@@ -8129,7 +8127,7 @@ class SetupMatrixRuleIterator : public PythonExtension<SetupMatrixRuleIterator>
     {
       if (!c)
         throw LogicException("Creating rule iterator for NULL matrix");
-      currule = c->beginRules();
+      currule = c->getRules();
     }
 
   private:

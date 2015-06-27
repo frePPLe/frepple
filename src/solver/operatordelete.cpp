@@ -62,7 +62,7 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args, PyObject*
     {
       PythonData field(value);
       PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-      Attribute attr(PyBytes_AsString(key_utf8));
+      DataKeyword attr(PyBytes_AsString(key_utf8));
       Py_DECREF(key_utf8);
       const MetaFieldBase* fmeta = OperatorDelete::metadata->findField(attr.getHash());
       if (!fmeta)

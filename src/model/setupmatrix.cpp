@@ -281,7 +281,7 @@ int SetupMatrixRuleIterator::initialize()
 
 PyObject* SetupMatrixRuleIterator::iternext()
 {
-  if (currule == matrix->endRules()) return NULL;
+  if (currule == SetupMatrixRule::iterator::end()) return NULL;
   PyObject *result = &*(currule++);
   Py_INCREF(result);
   return result;

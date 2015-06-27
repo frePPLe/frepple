@@ -233,12 +233,13 @@ DECLARE_EXPORT void Flow::setAlternate(Flow *f)
 }
 
 
-DECLARE_EXPORT void Flow::setAlternate(string n)
+DECLARE_EXPORT void Flow::setAlternateName(string n)
 {
   if (!getOperation())
     throw LogicException("Can't set an alternate flow before setting the operation");
   Flow *x = getOperation()->flowdata.find(n);
-  if (!x) throw DataException("Can't find flow with name '" + n + "'");
+  if (!x)
+    throw DataException("Can't find flow with name '" + n + "'");
   setAlternate(x);
 }
 
@@ -323,7 +324,7 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
       {
         PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-        Attribute attr(PyBytes_AsString(key_utf8));
+        DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
         if (!attr.isA(Tags::effective_end) && !attr.isA(Tags::effective_start)
           && !attr.isA(Tags::operation) && !attr.isA(Tags::buffer)

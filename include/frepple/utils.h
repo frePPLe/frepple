@@ -1667,13 +1667,21 @@ class MetaFieldBase
   public:
     enum FieldCategory
     {
-      MANDATORY = 1,
-      BASE = 2,
-      PLAN = 4,
-      DETAIL = 8,
-      DONT_SERIALIZE = 16,
-      COMPUTED = 32,
-      PARENT = 64
+      MANDATORY = 1,         // Marks a key field of the object. This is
+                             // used when we need to serialize only a reference
+                             // to the object.
+      BASE = 2,              // The default value. The field will be serialized
+                             // and deserialized normally.
+      PLAN = 4,              // Marks fields containing planning output. It is
+                             // only serialized when we request such info. 
+      DETAIL = 8,            // Marks fields containing more detail than is
+                             // required to restore all state.
+      DONT_SERIALIZE = 16,   // These fields are not intended to be ever 
+                             // serialized.
+      COMPUTED = 32,         // A computed field doesn't consume any storage
+      PARENT = 64            // If set, the constructor of the child object 
+                             // will get a pointer to the parent as extra
+                             // argument.
     };
 
     MetaFieldBase(const Keyword& k, unsigned int fl)
@@ -2723,11 +2731,11 @@ class Serializer
 };
 
 
-/** @brief A class to model keyword instances.
+/** @brief A class to model a string to be interpreted as a keyword.
   *
   * The class uses hashes to do a fast comparison with the set of keywords.
   */
-class Attribute  // XXX TODO rename
+class DataKeyword
 {
   private:
     /** This string stores the hash value of the element. */
@@ -2741,17 +2749,17 @@ class Attribute  // XXX TODO rename
 
   public:
     /** Default constructor. */
-    explicit Attribute() : hash(0), ch(NULL) {}
+    explicit DataKeyword() : hash(0), ch(NULL) {}
 
     /** Constructor. */
-    explicit Attribute(const string& n)
+    explicit DataKeyword(const string& n)
       : hash(Keyword::hash(n)), ch(n.c_str()) {}
 
     /** Constructor. */
-    explicit Attribute(const char* c) : hash(Keyword::hash(c)), ch(c) {}
+    explicit DataKeyword(const char* c) : hash(Keyword::hash(c)), ch(c) {}
 
     /** Copy constructor. */
-    Attribute(const Attribute& o) : hash(o.hash), ch(o.ch) {}
+    DataKeyword(const DataKeyword& o) : hash(o.hash), ch(o.ch) {}
 
     /** Returns the hash value of this tag. */
     hashtype getHash() const
@@ -2797,7 +2805,7 @@ class Attribute  // XXX TODO rename
     }
 
     /** Comparison operator. */
-    bool operator < (const Attribute& o) const
+    bool operator < (const DataKeyword& o) const
     {
       return hash < o.hash;
     }
@@ -3707,17 +3715,16 @@ class Object : public PyObject
 
     /** This template function can generate a factory method for objects that
       * can be constructed with their default constructor.  */
-    template <class T>
-    static Object* create()
+    template <class T> static Object* create()
     {
       return new T();
     }
 
     /** Template function that generates a factory method callable
       * from Python. */
-    template<class T>
-    static PyObject* create
-    (PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+    template<class T> static PyObject* create(
+      PyTypeObject* pytype, PyObject* args, PyObject* kwds
+      )
     {
       try
       {
@@ -3738,7 +3745,7 @@ class Object : public PyObject
         {
           PythonData field(value);
           PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-		      Attribute attr(PyBytes_AsString(key_utf8));
+		      DataKeyword attr(PyBytes_AsString(key_utf8));
           Py_DECREF(key_utf8);
           if (!attr.isA(Tags::name) && !attr.isA(Tags::type) && !attr.isA(Tags::action))
           {
@@ -3802,7 +3809,7 @@ class Object : public PyObject
       * Subclasses are expected to implement an override if the type supports
       * gettattro.
       */
-    virtual PyObject* getattro(const Attribute& attr)
+    virtual PyObject* getattro(const DataKeyword& attr)
     {
       PyErr_SetString(PythonLogicException, "Missing method 'getattro'");
       return NULL;
@@ -3859,6 +3866,7 @@ class Object : public PyObject
       return &dict;
     }
 
+    // TODO Only required to keep pointerfield to Object valid, used in problem.getOwner()
     static DECLARE_EXPORT const MetaCategory* metadata;
 
   protected:
@@ -3959,14 +3967,12 @@ class PythonDictionary : public Object
     }
 
     /** This static method is used to read XML data into a dictionary. */
-    static DECLARE_EXPORT void read(DataInput&, const Attribute&, PyObject**);
+    static DECLARE_EXPORT void read(DataInput&, const DataKeyword&, PyObject**);
 
     /** This static method is used to write a dictionary as XML.
       * It is normally called from the writeElement() method of an object.
       */
     static DECLARE_EXPORT void write(Serializer*, PyObject* const*);
-
-    void endElement(DataInput&, const Attribute&, const DataValue&);
 
     static const MetaCategory *metadata;
     const MetaClass& getType() const {return *metadata;}
@@ -5158,8 +5164,6 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       Tree::TreeNode *i = st.findLowerBound(k, f);
       return (i!=st.end() ? static_cast<T*>(i) : NULL);
     }
-
-    void endElement(DataInput& pIn, const Attribute& pAttr, const DataValue& pElement) {};
 
     /** This method is available as a object creation factory for
       * classes that are using a string as a key identifier, in particular

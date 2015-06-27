@@ -31,6 +31,7 @@ class Tags
     static DECLARE_EXPORT const Keyword action;
     static DECLARE_EXPORT const Keyword alternate;
     static DECLARE_EXPORT const Keyword alternates;
+    static DECLARE_EXPORT const Keyword alternate_name;
     static DECLARE_EXPORT const Keyword autocommit;
     static DECLARE_EXPORT const Keyword available;
     static DECLARE_EXPORT const Keyword booleanproperty;

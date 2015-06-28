@@ -1952,6 +1952,17 @@ class MetaClass : public NonCopyable
       fields.push_back( new MetaFieldInt<Cls>(k, getfunc, setfunc, d, c) );
 		}
 
+    template <class Cls, class Enum> inline void addEnumField(
+      const Keyword& k,
+      Enum (Cls::*getfunc)(void) const,
+      void (Cls::*setfunc)(string),
+      Enum d,
+      unsigned int c = MetaFieldBase::BASE
+      )
+		{
+      fields.push_back( new MetaFieldEnum<Cls, Enum>(k, getfunc, setfunc, d, c) );
+		}
+
     template <class Cls> inline void addShortField(
       const Keyword& k,
       short (Cls::*getfunc)(void) const,
@@ -6362,6 +6373,59 @@ template <class Cls> class MetaFieldInt : public MetaFieldBase
 
     /** Defaut value. */
     int def;
+};
+
+
+template <class Cls, class Enum> class MetaFieldEnum : public MetaFieldBase
+{
+  public:
+    typedef void (Cls::*setFunction)(string);
+
+    typedef Enum (Cls::*getFunction)(void) const;
+
+    MetaFieldEnum(const Keyword& n,
+        getFunction getfunc,
+        setFunction setfunc,
+        Enum d,
+        unsigned int c = BASE
+        ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
+    {
+      if (getfunc == NULL)
+        throw DataException("Getter function can't be NULL");
+    };
+
+    virtual void setField(Object* me, const DataValue& el) const
+    {
+      if (setf == NULL)
+      {
+        ostringstream o;
+        o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
+        throw DataException(o.str());
+      }
+      (static_cast<Cls*>(me)->*setf)(el.getString());
+    }
+
+    virtual void getField(Object* me, DataValue& el) const
+    {
+      el.setInt((static_cast<Cls*>(me)->*getf)());
+    }
+
+    virtual void writeField(Serializer& output) const
+    {
+      Enum tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
+      if (tmp != def)
+        output.writeElement(getName(), tmp);
+    }
+
+  protected:
+    /** Get function. */
+    getFunction getf;
+
+    /** Set function. */
+    setFunction setf;
+
+    /** Defaut value. */
+    Enum def;
 };
 
 

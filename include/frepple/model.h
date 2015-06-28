@@ -568,14 +568,6 @@ class Calendar : public HasName<Calendar>, public HasSource
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
 
-    virtual size_t getSize() const  // XXX todo get rid of this?
-    {
-      size_t tmp = Object::getSize();
-      for (CalendarBucket::iterator b = getBuckets(); b != CalendarBucket::iterator::end(); ++b)
-        tmp += b->getSize();
-      return tmp;
-    }
-
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
@@ -3081,11 +3073,6 @@ class OperationRouting : public Operation
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
 
-    virtual size_t getSize() const
-    {
-      return Object::getSize() + steps.size() * 2 * sizeof(Operation*);
-    }
-
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::steps, Tags::operation, &Cls::getSubOperations);
@@ -3193,12 +3180,6 @@ class OperationSplit : public Operation
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
 
-    virtual size_t getSize() const
-    {
-      return Object::getSize()
-          + alternates.size() * (5*sizeof(Operation*));
-    }
-
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
        m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::alternates, Tags::alternate, &Cls::getSubOperations);
@@ -3276,15 +3257,9 @@ class OperationAlternate : public Operation
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
 
-    virtual size_t getSize() const
-    {
-      return Object::getSize()
-          + alternates.size() * (5*sizeof(Operation*));
-    }
-
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      //m->addIntField<Cls>(Tags::search, &Cls::getSearch, &Cls::setSearch);  // TODO enum field serialization
+      m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::alternates, Tags::operation, &Cls::getSubOperations);
     }
   protected:
@@ -4383,7 +4358,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
       m->addPointerField<Cls, Flow>(Tags::alternate, &Cls::getAlternate, &Cls::setAlternate, MetaFieldBase::DONT_SERIALIZE);
       m->addStringField<Cls>(Tags::alternate_name, &Cls::getAlternateName, &Cls::setAlternateName);
-      //m->addIntField<Cls>(Tags::search, &Cls::getSearch, &Cls::setSearch);  // TODO enum field serialization
+      m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
       HasSource::registerFields<Cls>(m);
@@ -4924,14 +4899,6 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
-
-    virtual size_t getSize() const
-    {
-      size_t tmp = Object::getSize();
-      for (SetupMatrixRule::iterator j = getRules(); j != SetupMatrixRule::iterator::end(); ++j)
-        tmp += j->getSize();
-      return tmp;
-    }
 
     /** Returns an iterator to go through the list of rules. */
     SetupMatrixRule::iterator getRules() const
@@ -5680,7 +5647,7 @@ class Load
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
       m->addPointerField<Cls, Load>(Tags::alternate, &Cls::getAlternate, &Cls::setAlternate, MetaFieldBase::DONT_SERIALIZE);
       m->addStringField<Cls>(Tags::alternate_name, &Cls::getAlternateName, &Cls::setAlternateName);
-      // XXX TODO m->addIntField<Cls>(Tags::search, &Cls::getSearch, &Cls::setSearch);  // TODO enum field serialization
+      m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
       m->addStringField<Cls>(Tags::setup, &Cls::getSetup, &Cls::setSetup);

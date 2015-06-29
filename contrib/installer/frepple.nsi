@@ -148,7 +148,6 @@ BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
-Var DatabaseEngine
 Var day
 Var month
 Var year
@@ -226,13 +225,6 @@ Section "Application" SecAppl
   SetOutPath "$INSTDIR\bin\custom"
   File "..\contrib\django\djangosettings.py"
 
-  ; Copy sqlite database if it is available.
-  ; This file shouldn't be put in the read-only "Program files" directory.
-  SetOutPath "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
-  File "..\contrib\django\frepple.sqlite"
-  AccessControl::GrantOnFile "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}" "(S-1-5-32-545)" "FullAccess"
-  AccessControl::GrantOnFile "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\frepple.sqlite" "(S-1-5-32-545)" "FullAccess"
-
   ; Create menu
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start frePPLe server.lnk" "$INSTDIR\bin\freppleserver.exe"
@@ -264,16 +256,6 @@ Section "Application" SecAppl
     Goto ok2
   MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid language selection $6!"
   ok2:
-  ReadINIStr $0 "$PLUGINSDIR\parameters.ini" "Field 9" "State"   # DB engine
-  StrCmp $0 "SQLite" 0 +3
-    StrCpy $0 "sqlite3"
-    Goto ok
-  StrCmp $0 "PostgreSQL 9" 0 +3
-    StrCpy $0 "postgresql_psycopg2"
-    Goto ok
-  MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid database type $0!"
-  ok:
-  strcpy $DatabaseEngine $0
   ReadINIStr $1 "$PLUGINSDIR\parameters.ini" "Field 10" "State"  # DB name
   ReadINIStr $2 "$PLUGINSDIR\parameters.ini" "Field 11" "State"  # DB user
   ReadINIStr $3 "$PLUGINSDIR\parameters.ini" "Field 12" "State"  # DB password
@@ -304,46 +286,19 @@ Section "Application" SecAppl
   FileWrite $R4 "# Make this unique, and don't share it with anybody.$\r$\n"
   FileWrite $R4 "SECRET_KEY = '%@mzit!i8b*$zc&6oev96=$year$month$day$hours$minutes$seconds'$\r$\n"
   FileWrite $R4 "$\r$\n"
-  FileWrite $R4 "# FrePPLe is tested with 'postgresql_psycopg2' and 'sqlite3' database engines.$\r$\n"
+  FileWrite $R4 "# FrePPLe only supports the 'postgresql_psycopg2' database.$\r$\n"
+  FileWrite $R4 "# Create additional entries in this dictionary to define scenario schemas.$\r$\n"
   FileWrite $R4 "DATABASES = {$\r$\n"
   FileWrite $R4 "  'default': {$\r$\n"
-  FileWrite $R4 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
+  FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql_psycopg2',$\r$\n"
   FileWrite $R4 "    'NAME': '$1',  # Database name $\r$\n"
-  FileWrite $R4 "    'USER': '$2',  # Not used with sqlite3.$\r$\n"
-  FileWrite $R4 "    'PASSWORD': '$3', # Not used with sqlite3.$\r$\n"
-  FileWrite $R4 "    'HOST': '$4',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
-  FileWrite $R4 "    'PORT': '$5',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
+  FileWrite $R4 "    'USER': '$2',  # Database user.$\r$\n"
+  FileWrite $R4 "    'PASSWORD': '$3', # Password of the database user.$\r$\n"
+  FileWrite $R4 "    'HOST': '$4',     # Set to empty string for localhost.$\r$\n"
+  FileWrite $R4 "    'PORT': '$5',     # Set to empty string for default port number.$\r$\n"
   FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
+  FileWrite $R4 "    'TEST_NAME': 'test_$1',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "    },$\r$\n"
-  StrCmp $0 "sqlite3" 0 NoScenarios
-    FileWrite $R4 "  'scenario1': {$\r$\n"
-    FileWrite $R4 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
-    FileWrite $R4 "    'NAME': 'scenario1',  # Database name $\r$\n"
-    FileWrite $R4 "    'USER': '',  # Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'PASSWORD': '', # Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'PORT': '',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
-    FileWrite $R4 "    },$\r$\n"
-    FileWrite $R4 "  'scenario2': {$\r$\n"
-    FileWrite $R4 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
-    FileWrite $R4 "    'NAME': 'scenario2',  # Database name $\r$\n"
-    FileWrite $R4 "    'USER': '',  # Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'PASSWORD': '', # Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'PORT': '',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
-    FileWrite $R4 "    },$\r$\n"
-    FileWrite $R4 "  'scenario3': {$\r$\n"
-    FileWrite $R4 "    'ENGINE': 'django.db.backends.$0',$\r$\n"
-    FileWrite $R4 "    'NAME': 'scenario3',  # Database name $\r$\n"
-    FileWrite $R4 "    'USER': '',  # Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'PASSWORD': '', # Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'PORT': '',     # Set to empty string for default port number. Not used with sqlite3.$\r$\n"
-    FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
-    FileWrite $R4 "    },$\r$\n"
-  NoScenarios:
   FileWrite $R4 "  }$\r$\n$\r$\n"
   FileWrite $R4 "FREPPLE_LOGDIR = r'$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
   FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
@@ -368,40 +323,34 @@ Function DatabaseOpen
 FunctionEnd
 
 
-Function DatabaseLeave
-  ReadINIStr $0 "$PLUGINSDIR\parameters.ini" "Settings" "State"
-  IntCmp $0 7 0 done
-    ; Disable user name, user password, host and port when the
-    ; SQLite database engine is selected.
-    ReadINIStr $1 "$PLUGINSDIR\parameters.ini" "Field 9" "State"
-    StrCpy $2 ""
-    StrCpy $3 1
-    StrCmp $1 "SQLite" 0 +3
-      StrCpy $2 "DISABLED"
-      StrCpy $3 0
-    WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 11" "Flags" "$2"
-    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 11" "HWND"
-    EnableWindow $4 $3
-    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 11" "HWND2"
-    EnableWindow $4 $3
-    WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 12" "Flags" "$2"
-    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 12" "HWND"
-    EnableWindow $4 $3
-    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 12" "HWND2"
-    EnableWindow $4 $3
-    WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 13" "Flags" "$2"
-    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 13" "HWND"
-    EnableWindow $4 $3
-    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 13" "HWND2"
-    EnableWindow $4 $3
-    WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 14" "Flags" "$2"
-    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 14" "HWND"
-    EnableWindow $4 $3
-    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 14" "HWND2"
-    EnableWindow $4 $3
+Function Databaseleave
+  ; Verify the connection to the database
+  ReadINIStr $2 "$PLUGINSDIR\parameters.ini" "Field 10" "State"  # DB name
+  ReadINIStr $3 "$PLUGINSDIR\parameters.ini" "Field 11" "State"  # DB user
+  ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 12" "State"  # DB password
+  ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 13" "State"  # DB host
+  ReadINIStr $6 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
+  ${if} $2 == ""
+  ${OrIf} $3 == ""
+  ${OrIf} $4 == ""
+    MessageBox MB_OK "Missing a mandatory field"
     ; Return to the page
     Abort
-  done:
+  ${endif}
+  ClearErrors
+  ExecWait 'set PGPASSWORD=$4&&psql -d $2 -U $3 -h $5 -p $6 -c "select version();"'
+  IfErrors 0 ok
+     StrCpy $1 'A test connection to the database failed...$\r$\n$\r$\n'
+     StrCpy $1 '$1Update the parameters or:$\r$\n'
+     StrCpy $1 '$1  1) Install PostgreSQL$\r$\n'
+     StrCpy $1 '$1  2) Configure it to accepts connections from these commands:$\r$\n'
+     StrCpy $1 '$1        set PGPASSWORD=$4$\r$\n'
+     StrCpy $1 '$1        psql -d $2 -U $3 -h $5 -p $6 -c "select version();"$\r$\n'
+     StrCpy $1 '$1  3) Assure psql is on the PATH environment variable'
+     MessageBox MB_OK $1       
+     ; Return to the page
+     Abort
+  ok:
 FunctionEnd
 
 
@@ -513,22 +462,20 @@ Section -Post
   !system "sh -c 'rm -rf frepple-${PRODUCT_VERSION}'"
 
   ; Create the database schema
-  ${If} $DatabaseEngine != "sqlite3"
-    DetailPrint "Creating database schema"
-    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" syncdb --noinput'
-    Pop $0
-    ${If} $0 == "0"
-      DetailPrint "Loading demo data"
-      nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" loaddata demo'
-      DetailPrint "Generating initial plan"
-      nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" frepple_run'
-    ${else}
-      DetailPrint "x $0 x"
-      DetailPrint "ERROR CREATING DATABASE SCHEMA!!!"
-      DetailPrint " "
-      DetailPrint "Review the file 'bin\\custom\\djangosettings.py' and run 'frepplectl syncdb'"
-      DetailPrint " "
-    ${EndIf}
+  DetailPrint "Creating database schema"
+  nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" syncdb --noinput'
+  Pop $0
+  ${If} $0 == "0"
+    DetailPrint "Loading demo data"
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" loaddata demo'
+    DetailPrint "Generating initial plan"
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" frepple_run'
+  ${else}
+    DetailPrint "x $0 x"
+    DetailPrint "ERROR CREATING DATABASE SCHEMA!!!"
+    DetailPrint " "
+    DetailPrint "Review the file 'bin\\custom\\djangosettings.py' and run 'frepplectl syncdb'"
+    DetailPrint " "
   ${EndIf}
 
   ; Create uninstaller

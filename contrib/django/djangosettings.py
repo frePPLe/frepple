@@ -35,6 +35,7 @@ ADMINS = (
 SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 
 # FrePPLe only supports the 'postgresql_psycopg2' database.
+# Create additional entries in this dictionary to define scenario schemas.
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -44,7 +45,7 @@ DATABASES = {
     'HOST': '',     # Set to empty string for localhost.
     'OPTIONS': {},  # Backend specific configuration parameters.
     'PORT': '',     # Set to empty string for default.
-    'TEST_NAME': 'test_frepple'
+    'TEST_NAME': 'test_frepple'  # Database name used when running the test suite.
     },
   'scenario1': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',

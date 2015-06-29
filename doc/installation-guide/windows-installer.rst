@@ -13,6 +13,32 @@ license agreement, the installer will guide you to select:
 
 The installer has been tested on Windows XP, Windows 7 and Windows 8.
 
+#. **A prerequisite is to have PostgreSQL installed.**
+
+   Install postgreSQL 9.0 or higher, the world's most advanced open source database.
+
+   FrePPLe assumes that the database uses UTF-8 encoding.
+
+   FrePPLe needs the following settings for its database connections. If these
+   values are configured as default for the database (in the file postgresql.conf)
+   or the database role (using the 'alter role' command), a small performance
+   optimization is achieved:
+   ::
+
+       client_encoding: 'UTF8',
+       default_transaction_isolation: 'read committed',
+       timezone: 'UTC' when USE_TZ is True, value of TIME_ZONE otherwise.
+
+   The default installation of PostgreSQL is not configured right for
+   intensive use. We highly recommend using the pgtune utility (or its online
+   version at http://pgtune.leopard.in.ua/) to optimize the configuration for your
+   hardware.
+
+#. **Create a PostgreSQL database and a database user**
+
+   After the installation of the database, create a user and a database for
+   frePPLe.
+
 #. Prior to the installation, it is recommended to **uninstall any previous
    version**.
 
@@ -65,19 +91,8 @@ The installer has been tested on Windows XP, Windows 7 and Windows 8.
 
    #. Database connection parameters
 
-      FrePPLe supports the PostgreSQL 9 and SQLite databases.
-
-      The SQLite database is included with frePPLe, allowing you to get
-      started very quickly: No additional installations are required.
-
-      The installer detects you have the PostgreSQL database installed. If it
-      is available you can fill in the parameters: the database name, the
-      database user and its password, and the host and port number.
-
-      The PostgreSQL database and the database user have to be created by the
-      database administrator. Make sure the database user has been created and
-      has been granted sufficient privileges to create tables and indexes.
-      The frePPLe database tables will be created further in the installation.
+      You will not be able to the next screen when a test connection to the
+      database fails.
 
    Your selections are saved in the file custom/djangosettings.py. The file can
    later be edited with a text editor.
@@ -87,7 +102,7 @@ The installer has been tested on Windows XP, Windows 7 and Windows 8.
 #. **Installation**
 
    During the actual installation you can see the list of installed files, and
-   monitor the creation of the database schema (when using PostgreSQL).
+   monitor the creation of the database schema.
 
    .. image:: _images/wininstall7.png
 

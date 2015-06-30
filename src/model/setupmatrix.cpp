@@ -233,14 +233,16 @@ DECLARE_EXPORT void SetupMatrixRule::setPriority(const int n)
   {
     SetupMatrixRule* next = nextRule;
     SetupMatrixRule* prev = prevRule;
-    if (prev && prev->prevRule) prev->prevRule->nextRule = this;
-    else matrix->firstRule = this;
-    if (prev) prev->nextRule = nextRule;
+    if (prev->prevRule)
+      prev->prevRule->nextRule = this;
+    else
+      matrix->firstRule = this;
+    prev->nextRule = nextRule;
     nextRule = prev;
-    prevRule = prev ? prev->prevRule : NULL;
-    if (next && next->nextRule) next->nextRule->prevRule = prev;
-    if (next) next->prevRule = prev;
-    if (prev) prev->prevRule = this;
+    prevRule = prev->prevRule;
+    if (next)
+      next->prevRule = prev;
+    prev->prevRule = this;
   }
 
   // Check ordering on the right
@@ -249,10 +251,14 @@ DECLARE_EXPORT void SetupMatrixRule::setPriority(const int n)
     SetupMatrixRule* next = nextRule;
     SetupMatrixRule* prev = prevRule;
     nextRule = next->nextRule;
-    if (next && next->nextRule) next->nextRule->prevRule = this;
-    if (prev) prev->nextRule = next;
-    if (next) next->nextRule = this;
-    if (next) next->prevRule = prev;
+    if (next->nextRule)
+      next->nextRule->prevRule = this;
+    if (prev)
+      prev->nextRule = next;
+    else
+      matrix->firstRule = next;
+    next->nextRule = this;
+    next->prevRule = prev;
     prevRule = next;
   }
 

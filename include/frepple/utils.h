@@ -6972,11 +6972,6 @@ template <class Cls, class Ptr, class Ptr2> class MetaFieldList : public MetaFie
         output.EndList(getName());
     }
 
-    virtual bool isPointer() const
-    {
-      return true;
-    }
-
     virtual bool isGroup() const
     {
       return true;

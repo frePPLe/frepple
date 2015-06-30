@@ -150,12 +150,12 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
   data[++dataindex].value.setString("");
   reading = true;
 
-#ifdef PARSE_DEBUG
+  #ifdef PARSE_DEBUG
   logger << "Start XML element #" << dataindex << " '" << transcodeUTF8(n)
     << "' for object #" << objectindex << " ("
     << ((objectindex >= 0 && objects[objectindex].cls) ? objects[objectindex].cls->type : "none")
     << ")" << endl;
-#endif
+  #endif
 
   // Look up the field
   data[dataindex].hash = Keyword::hash(n);
@@ -173,6 +173,12 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
     objects[objectindex].cls = data[dataindex-1].field->getClass();
     objects[objectindex].hash = data[dataindex].hash;
     reading = false;
+
+    // Debugging message
+    #ifdef PARSE_DEBUG
+    logger << "Starting object #" << objectindex << " ("
+      << objects[objectindex].cls->type << ")" << endl;
+    #endif
 
     if (!objects[objectindex].cls->category)
     {
@@ -249,9 +255,9 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       // Ignore this element
       reading = false;
       ++ignore;
-#ifdef PARSE_DEBUG
+      #ifdef PARSE_DEBUG
       logger << "Ignoring XML element '" << transcodeUTF8(n) << "'" << endl;
-#endif
+      #endif
     }
   }
   else if (data[dataindex].field->isPointer())
@@ -267,6 +273,41 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
     objects[objectindex].start = dataindex + 1;
     objects[objectindex].hash = Keyword::hash(n);
     reading = false;
+
+    // Debugging message
+    #ifdef PARSE_DEBUG
+    logger << "Starting object #" << objectindex << " ("
+      << objects[objectindex].cls->type << ")" << endl;
+    #endif
+
+    if (!objects[objectindex].cls->category)
+    {
+      // Category metadata passed: replace it with the concrete type
+      // We start at the last attribute. Putting the type attribute at the end
+      // will thus give a (very small) performance improvement.
+      for (XMLSize_t i = atts.getLength(); i > 0; --i)
+      {
+        if (Keyword::hash(atts.getLocalName(i - 1)) == Tags::type.getHash())
+        {
+          string tp = transcodeUTF8(atts.getValue(i - 1));
+          objects[objectindex].cls = static_cast<const MetaCategory&>(*objects[objectindex].cls).findClass(
+            Keyword::hash(tp)
+          );
+          if (!objects[objectindex].cls)
+            throw DataException("No type " + tp + " registered for category " + objects[objectindex].cls->type);
+          break;
+        }
+      }
+      if (!objects[objectindex].cls->category)
+      {
+        // No type attribute was registered, and we use the default of the category
+        objects[objectindex].cls = static_cast<const MetaCategory&>(*objects[objectindex].cls).findClass(
+            Tags::deflt.getHash()
+            );
+        if (!objects[objectindex].cls)
+          throw DataException("No default type registered for category " + objects[objectindex].cls->type);
+      }
+    }
 
     // Push all attributes on the data stack.
     for (XMLSize_t i = 0, cnt = atts.getLength(); i < cnt; ++i)
@@ -316,15 +357,26 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
     return;
   }
 
-#ifdef PARSE_DEBUG
+  #ifdef PARSE_DEBUG
   logger << "End XML element #" << dataindex << " '" << transcodeUTF8(s)
     << "' for object #" << objectindex << " ("
     << ((objectindex >= 0 && objects[objectindex].cls) ? objects[objectindex].cls->type : "none")
     << ")" << endl;
-#endif
+  #endif
 
   // Ignore content between tags
   reading = false;
+
+  if (objectindex == 0 && objects[objectindex].object && dataindex >= 0
+    && data[dataindex].field && !data[dataindex].field->isGroup())
+  {
+    // Immediately process updates to the root object
+    #ifdef PARSE_DEBUG
+    logger << "Updating field " << data[dataindex].field->getName().getName() << " on the root object" << endl;
+    #endif
+    data[dataindex].field->setField(objects[objectindex].object, data[dataindex].value);
+    --dataindex;
+  }
 
   if (h != objects[objectindex].hash || dataindex < 0)
     // Continue reading more fields until we'll have read the complete object
@@ -449,10 +501,14 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
         }
     }
 
-#ifdef PARSE_DEBUG
+    // Root object never gets created
+    if (!objectindex)
+      return;
+
+    #ifdef PARSE_DEBUG
     logger << "Creating object " << objects[objectindex].cls->type << endl;
     dict.print();
-#endif
+    #endif
 
     // Call the object factory for the category and pass all field values
     // in a dictionary.
@@ -492,9 +548,9 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
       }
     }
 
-    if (objectindex && dataindex && data[dataindex-1].field && data[dataindex-1].field->isPointer())
+    if (objectindex && dataindex && data[objects[objectindex].start-1].field && data[objects[objectindex].start-1].field->isPointer())
       // Update parent object
-      data[dataindex-1].value.setObject(objects[objectindex].object);
+      data[objects[objectindex].start-1].value.setObject(objects[objectindex].object);
     if (getUserExit())
       getUserExit().call(objects[objectindex].object);
   }
@@ -555,10 +611,6 @@ DECLARE_EXPORT XMLInput::~XMLInput()
 {
   // Delete the xerces parser object
   delete parser;
-
-  if (objectindex > 0 || dataindex > 0)
-    logger << "WARNING: unfinished objects on XML stack "
-      << objectindex << "  " << dataindex << endl;
 }
 
 
@@ -608,6 +660,11 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
       objects[0].object = pRoot;
       objects[0].cls = &pRoot->getType();
       objects[0].hash = pRoot->getType().typetag->getHash();
+
+      #ifdef PARSE_DEBUG
+      logger << "Starting root object #" << objectindex << " ("
+        << objects[objectindex].cls->type << ")" << endl;
+      #endif
     }
     else
     {
@@ -973,7 +1030,7 @@ DECLARE_EXPORT void XMLInputFile::parse(Object *pRoot, bool validate)
     // Data is a directory: loop through all *.xml files now. No recursion in
     // subdirectories is done.
     // The code is unfortunately different for Windows & Linux. Sigh...
-#ifdef _MSC_VER
+  #ifdef _MSC_VER
     string f = filename + "\\*.xml";
     WIN32_FIND_DATA dir_entry_p;
     HANDLE h = FindFirstFile(f.c_str(), &dir_entry_p);
@@ -986,7 +1043,7 @@ DECLARE_EXPORT void XMLInputFile::parse(Object *pRoot, bool validate)
     }
     while (FindNextFile(h, &dir_entry_p));
     FindClose(h);
-#elif HAVE_DIRENT_H
+  #elif HAVE_DIRENT_H
     struct dirent *dir_entry_p;
     DIR *dir_p = opendir(filename.c_str());
     while (NULL != (dir_entry_p = readdir(dir_p)))
@@ -999,9 +1056,9 @@ DECLARE_EXPORT void XMLInputFile::parse(Object *pRoot, bool validate)
       }
     }
     closedir(dir_p);
-#else
+  #else
     throw RuntimeException("Can't process a directory on your platform");
-#endif
+  #endif
   }
   else
   {

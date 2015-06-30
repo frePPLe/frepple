@@ -120,7 +120,8 @@
     </demand>
   </demands>
   <operationplans>
-    <operationplan id="2001" operation="supply 1">
+    <operationplan id="2001">
+      <operation name="supply 1"/>
       <start>2009-01-01T00:00:00</start>
       <end>2009-01-01T00:00:00</end>
       <quantity>25</quantity>
@@ -149,7 +150,8 @@
     </demand>
   </demands>
   <operationplans>
-    <operationplan id="2002" operation="supply 2">
+    <operationplan id="2002">
+      <operation name="supply 2"/>
       <start>2009-01-01T00:00:00</start>
       <end>2009-01-01T00:00:00</end>
       <quantity>25</quantity>
@@ -178,13 +180,15 @@
     </demand>
   </demands>
   <operationplans>
-    <operationplan id="2003" operation="supply 3">
+    <operationplan id="2003">
+      <operation name="supply 3"/>
       <start>2009-01-01T00:00:00</start>
       <end>2009-01-01T00:00:00</end>
       <quantity>25</quantity>
       <locked>true</locked>
     </operationplan>
-    <operationplan id="2004" operation="supply 3">
+    <operationplan id="2004">
+      <operation name="supply 3"/>
       <start>2009-01-20T00:00:00</start>
       <end>2009-01-20T00:00:00</end>
       <quantity>2</quantity>
@@ -213,13 +217,15 @@
     </demand>
   </demands>
   <operationplans>
-    <operationplan id="4001" operation="supply 4">
+    <operationplan id="4001">
+      <operation name="supply 4"/>
       <start>2009-01-01T00:00:00</start>
       <end>2009-01-01T00:00:00</end>
       <quantity>10</quantity>
       <locked>true</locked>
     </operationplan>
-    <operationplan id="4002" operation="supply 4">
+    <operationplan id="4002">
+      <operation name="supply 4"/>
       <start>2009-01-20T00:00:00</start>
       <end>2009-01-20T00:00:00</end>
       <quantity>10</quantity>

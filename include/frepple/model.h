@@ -324,7 +324,7 @@ class CalendarBucket : public Object, public NonCopyable
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
       m->addShortField<Cls>(Tags::days, &Cls::getDays, &Cls::setDays, 127);
       m->addDurationField<Cls>(Tags::starttime, &Cls::getStartTime, &Cls::setStartTime);
-      m->addDurationField<Cls>(Tags::endtime, &Cls::getEndTime, &Cls::setStartTime, 86400L);
+      m->addDurationField<Cls>(Tags::endtime, &Cls::getEndTime, &Cls::setEndTime, 86400L);
       m->addDoubleField<Cls>(Tags::value, &Cls::getValue, &Cls::setValue);
       m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar, &Cls::setCalendar, MetaFieldBase::DONT_SERIALIZE + MetaFieldBase::PARENT);
     }
@@ -1924,7 +1924,7 @@ class Operation : public HasName<Operation>,
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
       m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
-      // TODO XXX m->addIteratorField<Cls, >(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL);
+      // XXX TODO m->addIteratorField<Cls, >(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, MetaFieldBase::DETAIL);
       m->addListField<Cls, loadlist, Load>(Tags::loads, Tags::load, &Cls::getLoads, MetaFieldBase::DETAIL);
       m->addListField<Cls, flowlist, Flow>(Tags::flows, Tags::flow, &Cls::getFlows, MetaFieldBase::DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
@@ -2255,7 +2255,9 @@ class OperationPlan
     DECLARE_EXPORT double setQuantity(double f, bool roundDown,
       bool update = true, bool execute = true)
     {
-      return oper->setOperationPlanQuantity(this, f, roundDown, update, execute);
+      return oper ? 
+        oper->setOperationPlanQuantity(this, f, roundDown, update, execute) : 
+        f;
     }
 
     /** Returns a pointer to the demand for which this operationplan is a delivery.
@@ -2318,33 +2320,52 @@ class OperationPlan
     /** Locks/unlocks an operationplan. A locked operationplan is never
       * changed.
       */
-    virtual DECLARE_EXPORT void setLocked(bool b = true);
+    virtual DECLARE_EXPORT void setLocked(bool b);
 
     /** Update flag which allow/disallows material consumption. */
     void setConsumeMaterial(bool b)
     {
-      if (b) flags &= ~CONSUME_MATERIAL;
-      else flags |= CONSUME_MATERIAL;
+      if (b) 
+        flags &= ~CONSUME_MATERIAL;
+      else 
+        flags |= CONSUME_MATERIAL;
     }
 
     /** Update flag which allow/disallows material production. */
     void setProduceMaterial(bool b)
     {
-      if (b) flags &= ~PRODUCE_MATERIAL;
-      else flags |= PRODUCE_MATERIAL;
+      if (b) 
+        flags &= ~PRODUCE_MATERIAL;
+      else 
+        flags |= PRODUCE_MATERIAL;
     }
 
     /** Update flag which allow/disallows capacity consumption. */
     void setConsumeCapacity(bool b)
     {
-      if (b) flags &= ~CONSUME_CAPACITY;
-      else flags |= CONSUME_CAPACITY;
+      if (b) 
+        flags &= ~CONSUME_CAPACITY;
+      else 
+        flags |= CONSUME_CAPACITY;
     }
 
     /** Returns a pointer to the operation being instantiated. */
     Operation* getOperation() const
     {
       return oper;
+    }
+
+    /** Update the operation of an operationplan.<br>
+      * This method can only be called once for each operationplan.
+      */
+    void setOperation(Operation* o)
+    {
+      if (oper == o)
+        return;
+      if (oper)
+        throw DataException("Can't update operation of initialized operationplan");
+      oper = o;
+      activate();
     }
 
     /** Fixes the start and end date of an operationplan. Note that this
@@ -2456,6 +2477,12 @@ class OperationPlan
       return id;
     }
 
+    void setIdentifier(unsigned long i)
+    {
+      id = i;
+      assignIdentifier();
+    }
+
     /** Return the identifier. This method can return the lazy identifier 1. */
     unsigned long getRawIdentifier() const
     {
@@ -2545,6 +2572,9 @@ class OperationPlan
       */
     DECLARE_EXPORT void removeFromOperationplanList();
 
+    /** Maintain the operationplan list in sorted order. */
+    DECLARE_EXPORT void updateOperationplanList();
+
     /** Remove a sub-operation_plan from the list. */
     virtual DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan*);
 
@@ -2624,8 +2654,8 @@ class OperationPlan
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, NULL, 0, MetaFieldBase::MANDATORY);
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation);
+      m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MetaFieldBase::MANDATORY);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
       m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, &Cls::setDemand);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd);
@@ -2850,7 +2880,7 @@ class OperationFixedTime : public Operation
       * operation are not automatically refreshed to reflect the change. */
     void setDuration(Duration t)
     {
-      if (t<0L)
+      if (t < 0L)
         throw DataException("FixedTime operation can't have a negative duration");
       duration = t;
     }
@@ -3296,11 +3326,13 @@ class Item : public HasHierarchy<Item>, public HasDescription
     Operation* getOperation() const
     {
       // Current item has a non-empty deliveryOperation field
-      if (deliveryOperation) return deliveryOperation;
+      if (deliveryOperation) 
+        return deliveryOperation;
 
       // Look for a non-empty deliveryOperation field on owners
-      for (Item* i = getOwner(); i; i=i->getOwner())
-        if (i->deliveryOperation) return i->deliveryOperation;
+      for (Item* i = getOwner(); i; i = i->getOwner())
+        if (i->deliveryOperation) 
+          return i->deliveryOperation;
 
       // The field is not specified on the item or any of its parents.
       return NULL;

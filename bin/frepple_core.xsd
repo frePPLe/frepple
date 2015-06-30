@@ -912,6 +912,7 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="operation" type="operation" />
       <xsd:element name="demand" type="demand" />
       <xsd:element name="start" type="xsd:dateTime" />
       <xsd:element name="end" type="xsd:dateTime" />
@@ -929,7 +930,6 @@
       <xsd:element name="dateproperty" type="dateproperty" />
     </xsd:choice>
     <xsd:attribute name="id" type="xsd:unsignedLong" />
-    <xsd:attribute name="operation" type="non-empty-string" />
     <xsd:attribute name="start" type="xsd:dateTime" />
     <xsd:attribute name="end" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="positiveDouble" />

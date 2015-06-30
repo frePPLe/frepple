@@ -70,19 +70,19 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   Action action = MetaClass::decodeAction(in);
 
   // Decode the attributes
-  const DataValue* opnameElement = in.get(Tags::operation);
-  if (!*opnameElement && action==ADD)
+  const DataValue* operElement = in.get(Tags::operation);
+  if (!operElement && action==ADD)
     // Operation name required
-    throw DataException("Missing operation attribute");
-  string opname = *opnameElement ? opnameElement->getString() : "";
+    throw DataException("Missing operation field");
 
   // Decode the operationplan identifier
   unsigned long id = 0;
   const DataValue* idfier = in.get(Tags::id);
-  if (*idfier) id = idfier->getUnsignedLong();
+  if (idfier)
+    id = idfier->getUnsignedLong();
   if (!id && (action==CHANGE || action==REMOVE))
     // Identifier is required
-    throw DataException("Missing operationplan identifier");
+    throw DataException("Missing identifier field");
 
   // If an identifier is specified, we look up this operation plan
   OperationPlan* opplan = NULL;
@@ -95,14 +95,13 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
       throw DataException(ch.str());
     }
     opplan = OperationPlan::findId(id);
-    if (opplan && !opname.empty()
-        && opplan->getOperation()->getName()!=opname)
+    if (opplan && operElement
+      && opplan->getOperation() != operElement->getObject())
     {
       // Previous and current operations don't match.
       ostringstream ch;
       ch << "Operationplan identifier " << id
-          << " defined multiple times with different operations: '"
-          << opplan->getOperation() << "' & '" << opname << "'";
+          << " defined multiple times for different operations";
       throw DataException(ch.str());
     }
   }
@@ -140,9 +139,6 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
             << " already exists and can't be added again";
         throw DataException(ch.str());
       }
-      if (opname.empty())
-        throw DataException
-        ("Operation name missing for creating an operationplan");
       break;
     case CHANGE:
       if (!opplan)
@@ -159,21 +155,20 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   if (opplan) return opplan;
 
   // Create a new operation plan
-  Operation* oper = Operation::find(opname);
-  if (!oper)
-  {
+  if (!operElement->getObject())
     // Can't create operationplan because the operation doesn't exist
-    throw DataException("Operation '" + opname + "' doesn't exist");
-  }
+    throw DataException("Missing operation field");
   else
   {
     // Create an operationplan
+    Operation* oper = static_cast<Operation*>(operElement->getObject());
     opplan = oper->createOperationPlan(0.0,Date::infinitePast,Date::infinitePast,NULL,NULL,id,false);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
       delete opplan;
       throw DataException("Can't create operationplan");
     }
+    opplan->activate();
     return opplan;
   }
 }
@@ -231,12 +226,13 @@ DECLARE_EXPORT bool OperationPlan::assignIdentifier()
 DECLARE_EXPORT bool OperationPlan::activate()
 {
   // At least a valid operation pointer must exist
-  if (!oper) throw LogicException("Initializing an invalid operationplan");
+  if (!oper)
+    throw LogicException("Initializing an invalid operationplan");
 
   // Avoid negative quantities, and call operation specific activation code
   if (getQuantity() < 0.0 || !oper->extraInstantiate(this))
   {
-    delete this;
+    delete this;  // TODO Is this still safe & correct with new API?
     return false;
   }
 
@@ -245,7 +241,7 @@ DECLARE_EXPORT bool OperationPlan::activate()
     x->activate();
 
   // Mark as activated by assigning a unique identifier.
-  if (id && id!=ULONG_MAX)
+  if (id && id != ULONG_MAX)
   {
     // Validate the user provided id.
     if (!assignIdentifier())
@@ -302,8 +298,9 @@ DECLARE_EXPORT void OperationPlan::deactivate()
 DECLARE_EXPORT void OperationPlan::insertInOperationplanList()
 {
 
-  // Check if already linked
-  if (prev || oper->first_opplan == this) return;
+  // Check if already linked, or nothing to link
+  if (prev || !oper || oper->first_opplan == this)
+    return;
 
   if (!oper->first_opplan)
   {
@@ -363,6 +360,50 @@ DECLARE_EXPORT void OperationPlan::removeFromOperationplanList()
 }
 
 
+DECLARE_EXPORT void OperationPlan::updateOperationplanList()
+{
+  if (!oper) return;
+
+  // Check ordering on the left
+  while (prev && !(*prev < *this))
+  {
+    OperationPlan* n = next;
+    OperationPlan* p = prev;
+    if (p->prev)
+      p->prev->next = this;
+    else
+      oper->first_opplan = this;
+    p->next = n;
+    next = p;
+    prev = p->prev;
+    if (n)
+      n->prev = p;
+    else
+      oper->last_opplan = p;
+    p->prev = this;
+  }
+
+  // Check ordering on the right
+  while (next && !(*this < *next))
+  {
+    OperationPlan* n = next;
+    OperationPlan* p = prev;
+    next = n->next;
+    if (n->next)
+      n->next->prev = this;
+    else
+      oper->last_opplan = this;
+    if (p)
+      p->next = n;
+    else
+      oper->first_opplan = n;
+    n->next = this;
+    n->prev = p;
+    prev = n;
+  }
+}
+
+
 DECLARE_EXPORT void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
 {
   // Check
@@ -406,8 +447,9 @@ DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
 
 DECLARE_EXPORT void OperationPlan::createFlowLoads()
 {
-  // Has been initialized already, it seems
-  if (firstflowplan || firstloadplan) return;
+  // Initialized already, or nothing to initialize
+  if (firstflowplan || firstloadplan || !oper)
+    return;
 
   // Create setup suboperationplans and loadplans
   if (getConsumeCapacity() || !getLocked())
@@ -446,10 +488,12 @@ DECLARE_EXPORT void OperationPlan::deleteFlowLoads()
   firstloadplan = NULL;  // Important to do this before the delete!
 
   // Delete the flowplans
-  while (e != endFlowPlans()) delete &*(e++);
+  while (e != endFlowPlans())
+    delete &*(e++);
 
   // Delete the loadplans (including the setup suboperationplan)
-  while (f != endLoadPlans()) delete &*(f++);
+  while (f != endLoadPlans())
+    delete &*(f++);
 }
 
 
@@ -532,7 +576,8 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
     // Move all sub-operationplans in an orderly fashion
     for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
     {
-      if (i->getOperation() == OperationSetup::setupoperation) continue;
+      if (i->getOperation() == OperationSetup::setupoperation)
+        continue;
       if (i->getDates().getStart() < d)
       {
         i->setStart(d);
@@ -684,7 +729,7 @@ DECLARE_EXPORT void OperationPlan::update()
     // Set the start and end date of the parent.
     Date st = Date::infiniteFuture;
     Date nd = Date::infinitePast;
-    for (OperationPlan *f=firstsubopplan; f; f=f->nextsubopplan)
+    for (OperationPlan *f = firstsubopplan; f; f = f->nextsubopplan)
     {
       if (f->getOperation() == OperationSetup::setupoperation)
         continue;
@@ -700,8 +745,12 @@ DECLARE_EXPORT void OperationPlan::update()
   // Update the flow and loadplans
   resizeFlowLoadPlans();
 
+  // Keep the operationplan list sorted
+  updateOperationplanList();
+
   // Notify the owner operationplan
-  if (owner) owner->update();
+  if (owner)
+    owner->update();
 
   // Mark as changed
   setChanged();
@@ -836,10 +885,12 @@ DECLARE_EXPORT void OperationPlan::setLocked(bool b)
 DECLARE_EXPORT void OperationPlan::setDemand(Demand* l)
 {
   // No change
-  if (l==dmd) return;
+  if (l == dmd)
+    return;
 
   // Unregister from previous demand
-  if (dmd) dmd->removeDelivery(this);
+  if (dmd)
+    dmd->removeDelivery(this);
 
   // Register at the new demand and mark it changed
   dmd = l;
@@ -905,8 +956,12 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
 
 DECLARE_EXPORT double OperationPlan::getCriticality() const
 {
+  // Operationplan hasn't been set up yet
+  if (!oper)
+    return 86313600L; // 999 days in seconds;
+
   // Child operationplans have the same criticality as the parent
-  // TODO: Slack between routing sub operationplans isn't recognized. 
+  // TODO: Slack between routing sub operationplans isn't recognized.
   if (getOwner() && getOwner()->getOperation()->getType() != *OperationSplit::metadata)
     return getOwner()->getCriticality();
 

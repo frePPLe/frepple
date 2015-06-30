@@ -166,43 +166,50 @@
     </flow>
   </flows>
 	<operationplans>
-	  <operationplan id="1001" operation="supply item A">
+	  <operationplan id="1001">
+      <operation name="supply item A"/>
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
-	  <operationplan id="1002" operation="supply item B">
+	  <operationplan id="1002">
+      <operation name="supply item B"/>
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
-	  <operationplan id="1003" operation="supply item C">
+	  <operationplan id="1003">
+      <operation name="supply item C"/>
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
-	  <operationplan id="1004" operation="supply item D">
+	  <operationplan id="1004">
+      <operation name="supply item D"/>
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
-	  <operationplan id="1005" operation="supply item E">
+	  <operationplan id="1005">
+      <operation name="supply item E"/>
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
-    <operationplan id="1006" operation="supply item F">
+    <operationplan id="1006">
+      <operation name="supply item F"/>
       <start>2009-01-10T00:00:00</start>
       <end>2009-01-10T00:00:00</end>
       <quantity>10</quantity>
       <locked>true</locked>
     </operationplan>
-    <operationplan id="1007" operation="supply item G">
+    <operationplan id="1007">
+      <operation name="supply item G"/>
       <start>2009-01-10T00:00:00</start>
       <end>2009-01-10T00:00:00</end>
       <quantity>50</quantity>

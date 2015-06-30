@@ -357,25 +357,29 @@
 		</resource>
 	</resources>
 	<operationplans>
-		<operationplan id="1000" operation="Purchase box @ factory 1">
+		<operationplan id="1000">
+      <operation name="Purchase box @ factory 1"/>
 			<start>2009-01-02T00:00:00</start>
 			<end>2009-01-02T00:00:00</end>
 			<quantity>100</quantity>
 			<locked>true</locked>
 		</operationplan>
-		<operationplan id="1001" operation="Purchase box @ factory 2">
+		<operationplan id="1001">
+      <operation name="Purchase box @ factory 2"/>
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-09T00:00:00</end>
 			<quantity>100</quantity>
 			<locked>true</locked>
 		</operationplan>
-		<operationplan id="1002" operation="Purchase ink @ factory 1">
+		<operationplan id="1002">
+      <operation name="Purchase ink @ factory 1"/>
 			<start>2009-01-02T00:00:00</start>
 			<end>2009-01-02T00:00:00</end>
 			<quantity>100</quantity>
 			<locked>true</locked>
 		</operationplan>
-		<operationplan id="1003" operation="Purchase thread @ factory 1">
+		<operationplan id="1003">
+      <operation name="Purchase thread @ factory 1"/>
 			<start>2009-01-02T00:00:00</start>
 			<end>2009-01-02T00:00:00</end>
 			<quantity>100</quantity>

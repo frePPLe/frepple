@@ -1540,7 +1540,8 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
       }
 
   // Update the flow and loadplans, and mark for problem detection
-  if (upd) oplan->update();
+  if (upd)
+    oplan->update();
   return oplan->quantity;
 }
 

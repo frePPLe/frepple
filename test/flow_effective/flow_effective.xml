@@ -142,7 +142,8 @@
   </operations>
   <operationplans>
     <!-- This supply of component A is later than the effective end date. -->
-    <operationplan id="2001" operation="2. supply component A">
+    <operationplan id="2001">
+      <operation name="2. supply component A"/>
       <start>2009-02-12T00:00:00</start>
       <end>2009-02-12T00:00:00</end>
       <quantity>25</quantity>

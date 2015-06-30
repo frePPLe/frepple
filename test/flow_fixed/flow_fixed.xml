@@ -54,7 +54,8 @@
     </operation>
   </operations>   
   <operationplans>
-    <operationplan id="1000" operation="1. supply fixed item">
+    <operationplan id="1000">
+      <operation name="1. supply fixed item"/>
       <start>2013-03-01T00:00:00</start>
       <end>2013-03-01T00:00:00</end>
       <quantity>10</quantity>

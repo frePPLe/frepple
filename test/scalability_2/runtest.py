@@ -98,9 +98,9 @@ def create (cluster, demand, level):
         "</flow></flows></operation>") % (i, i, level+1), file=out)
   print("</operations>\n<operationplans>", file=out)
   for i in range(cluster):
-    print(("<operationplan id=\"%d\" operation=\"Supply C%d\" " +
+    print(("<operationplan id=\"%d\" " +
         "start=\"2007-05-01T00:00:00\" quantity=\"%d\" " +
-        "locked=\"true\" />") % (i+2, i, demand), file=out)
+        "locked=\"true\"><operation name=\"Supply C%d\"/></operationplan>") % (i+2, demand, i), file=out)
   print("</operationplans>", file=out)
 
   # Tail of the output file

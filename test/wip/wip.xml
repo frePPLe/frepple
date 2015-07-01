@@ -151,7 +151,8 @@
           <resource name="Res3" />
         </load>
       </loads>
-      <steps>
+      <suboperations>
+        <suboperation>
         <operation name="Oper3A" xsi:type="operation_fixed_time" duration="P1D">
           <flows>
             <flow xsi:type="flow_end">
@@ -169,6 +170,8 @@
             </load>
           </loads>
         </operation>
+        </suboperation>
+        <suboperation>
         <operation name="Oper3B" xsi:type="operation_fixed_time" duration="P1D">
           <flows>
             <flow xsi:type="flow_end">
@@ -186,6 +189,8 @@
             </load>
           </loads>
         </operation>
+        </suboperation>
+        <suboperation>
         <operation name="Oper3C" xsi:type="operation_fixed_time" duration="P1D">
           <flows>
             <flow xsi:type="flow_end">
@@ -203,7 +208,8 @@
             </load>
           </loads>
         </operation>
-      </steps>
+        </suboperation>
+      </suboperations>
     </operation>
     <operation name="Oper4" xsi:type="operation_alternate">
       <flows>
@@ -221,8 +227,8 @@
           <resource name="Res4" />
         </load>
       </loads>
-      <alternates>
-        <alternate>
+      <suboperations>
+        <suboperation>
           <operation name="Oper4A" xsi:type="operation_fixed_time" duration="P1D">
             <flows>
               <flow xsi:type="flow_end">
@@ -241,8 +247,8 @@
             </loads>
           </operation>
           <priority>1</priority>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="Oper4B" xsi:type="operation_fixed_time" duration="P1D">
             <flows>
               <flow xsi:type="flow_end">
@@ -261,8 +267,8 @@
             </loads>
           </operation>
           <priority>2</priority>
-        </alternate>
-      </alternates>
+        </suboperation>
+      </suboperations>
     </operation>
   </operations>
   <operationplans>

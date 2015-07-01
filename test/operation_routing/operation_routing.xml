@@ -44,7 +44,8 @@
             <quantity>-1</quantity>
           </flow>
         </flows>
-        <steps>
+        <suboperations>
+          <suboperation>
           <operation name="assemble product step A" xsi:type="operation_fixed_time" duration="P1D">
             <flows>
               <flow xsi:type="flow_start">
@@ -53,6 +54,8 @@
               </flow>
             </flows>
           </operation>
+          </suboperation>
+          <suboperation>
           <operation name="assemble product step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
             <flows>
               <flow xsi:type="flow_start">
@@ -65,6 +68,8 @@
               </flow>
             </flows>
           </operation>
+          </suboperation>
+          <suboperation>
           <operation name="assemble product step C" xsi:type="operation_fixed_time" duration="P1D">
             <flows>
               <flow xsi:type="flow_start">
@@ -73,7 +78,8 @@
               </flow>
             </flows>
           </operation>
-        </steps>
+          </suboperation>
+        </suboperations>
       </producing>
     </buffer>
   </buffers>

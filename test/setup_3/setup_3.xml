@@ -80,11 +80,11 @@
             <setup>red</setup>
           </load>
         </loads>
-        <steps>
+        <suboperations>
           <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
           <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
           <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </steps>
+        </suboperations>
       </producing>
       <item name="red product" />
       <flows>
@@ -118,11 +118,11 @@
             <setup>green</setup>
           </load>
         </loads>
-        <steps>
+        <suboperations>
           <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
           <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
           <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </steps>
+        </suboperations>
       </producing>
       <item name="green product" />
       <flows>
@@ -156,11 +156,17 @@
             <setup>white</setup>
           </load>
         </loads>
-        <steps>
+        <suboperations>
+          <suboperation>
           <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          </suboperation>
+          <suboperation>
           <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          </suboperation>
+          <suboperation>
           <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </steps>
+          </suboperation>
+        </suboperations>
       </producing>
       <item name="white product" />
       <flows>
@@ -194,11 +200,17 @@
             <setup>blue</setup>
           </load>
         </loads>
-        <steps>
+        <suboperations>
+          <suboperation>
           <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          </suboperation>
+          <suboperation>
           <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          </suboperation>
+          <suboperation>
           <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </steps>
+          </suboperation>
+        </suboperations>
       </producing>
       <item name="blue product" />
       <flows>
@@ -232,11 +244,17 @@
             <setup>black</setup>
           </load>
         </loads>
-        <steps>
+        <suboperations>
+          <suboperation>
           <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          </suboperation>
+          <suboperation>          
           <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          </suboperation>
+          <suboperation>
           <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </steps>
+          </suboperation>
+        </suboperations>
       </producing>
       <item name="black product" />
       <flows>
@@ -270,11 +288,17 @@
             <setup>yellow</setup>
           </load>
         </loads>
-        <steps>
+        <suboperations>
+          <suboperation>
           <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          </suboperation>
+          <suboperation>
           <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          </suboperation>
+          <suboperation>
           <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </steps>
+          </suboperation>
+        </suboperations>
       </producing>
       <item name="yellow product" />
       <flows>
@@ -305,11 +329,17 @@
             <alternate>paint</alternate>
           </load>
         </loads>
-        <steps>
+        <suboperations>
+          <suboperation>
           <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          </suboperation>
+          <suboperation>
           <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          </suboperation>
+          <suboperation>
           <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </steps>
+          </suboperation>
+        </suboperations>
       </producing>
       <item name="colorless product" />
       <flows>

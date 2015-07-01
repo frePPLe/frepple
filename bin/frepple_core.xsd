@@ -287,10 +287,10 @@
     <xsd:complexContent>
       <xsd:extension base="operation">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="steps">
+          <xsd:element name="suboperations">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="operation" type="operation" maxOccurs="unbounded" />
+                <xsd:element name="suboperation" type="suboperation" minOccurs="0" maxOccurs="unbounded" />
               </xsd:sequence>
             </xsd:complexType>
           </xsd:element>
@@ -304,19 +304,10 @@
       <xsd:extension base="operation">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
           <xsd:element name="search" type="search" />
-          <xsd:element name="alternates">
+          <xsd:element name="suboperations">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="alternate" minOccurs="0" maxOccurs="unbounded">
-                  <xsd:complexType>
-                    <xsd:sequence>
-                      <xsd:element name="operation" type="operation" />
-                      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
-                      <xsd:element name="effective_start" type="xsd:dateTime" minOccurs="0" />
-                      <xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
-                    </xsd:sequence>
-                  </xsd:complexType>
-                </xsd:element>
+                <xsd:element name="suboperation" type="suboperation" minOccurs="0" maxOccurs="unbounded" />
               </xsd:sequence>
             </xsd:complexType>
           </xsd:element>
@@ -330,25 +321,31 @@
     <xsd:complexContent>
       <xsd:extension base="operation">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="alternates">
+          <xsd:element name="suboperations">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="alternate" minOccurs="0" maxOccurs="unbounded">
-                  <xsd:complexType>
-                    <xsd:sequence>
-                      <xsd:element name="operation" type="operation" />
-                      <xsd:element name="percent" type="xsd:integer" minOccurs="0" />
-                      <xsd:element name="effective_start" type="xsd:dateTime" minOccurs="0" />
-                      <xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
-                    </xsd:sequence>
-                  </xsd:complexType>
-                </xsd:element>
+                <xsd:element name="suboperation" type="suboperation" minOccurs="0" maxOccurs="unbounded" />
               </xsd:sequence>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
       </xsd:extension>
     </xsd:complexContent>
+  </xsd:complexType>
+  
+  <xsd:complexType name="suboperation">
+    <xsd:annotation>
+      <xsd:documentation>
+        An operation nested inside another one. This is used for operations
+        of type routing, alternate and split.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="operation" type="operation" />
+      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
+      <xsd:element name="effective_start" type="xsd:dateTime" minOccurs="0" />
+      <xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
+    </xsd:sequence>
   </xsd:complexType>
 
   <!-- ITEM -->

@@ -27,7 +27,8 @@ namespace frepple
 template<class SetupMatrix> DECLARE_EXPORT Tree utils::HasName<SetupMatrix>::st;
 DECLARE_EXPORT const MetaCategory* SetupMatrix::metadata;
 DECLARE_EXPORT const MetaClass* SetupMatrixDefault::metadata;
-DECLARE_EXPORT const MetaCategory* SetupMatrixRule::metadata;
+DECLARE_EXPORT const MetaClass* SetupMatrixRule::metadata;
+DECLARE_EXPORT const MetaCategory* SetupMatrixRule::metacategory;
 
 
 int SetupMatrix::initialize()
@@ -47,8 +48,13 @@ int SetupMatrix::initialize()
 int SetupMatrixRule::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<SetupMatrixRule>("setupmatrixrule", "setupmatrixrules");
-  registerFields<SetupMatrixRule>(const_cast<MetaCategory*>(metadata));
+  metacategory = MetaCategory::registerCategory<SetupMatrixRule>(
+    "setupmatrixrule", "setupmatrixrules", MetaCategory::ControllerDefault
+    );
+  registerFields<SetupMatrixRule>(const_cast<MetaCategory*>(metacategory));
+  metadata = MetaClass::registerClass<SetupMatrixRule>(
+    "setupmatrixrule", "setupmatrixrule", Object::create<SetupMatrixRule>, true
+    );
 
   // Initialize the Python class
   PythonType& x = PythonExtension<SetupMatrixRule>::getPythonType();
@@ -56,7 +62,7 @@ int SetupMatrixRule::initialize()
   x.setDoc("frePPLe setupmatrixrule");
   x.supportgetattro();
   x.supportsetattro();
-  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
 

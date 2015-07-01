@@ -164,18 +164,22 @@ class CalendarBucket : public Object, public NonCopyable
     DECLARE_EXPORT void updateSort();
 
   protected:
-    /** Constructor. */
-    DECLARE_EXPORT CalendarBucket(Calendar *, Date, Date, int ident=INT_MIN, int priority=0);
-
     /** Auxilary function to write out the start of the XML. */
     DECLARE_EXPORT void writeHeader(Serializer *, const Keyword&) const;
 
   public:
     /** Default constructor. */
     CalendarBucket() : id(INT_MIN), enddate(Date::infiniteFuture),
-      nextBucket(NULL), prevBucket(NULL), priority(priority), days(127),
-      starttime(0L), endtime(86400L), cal(NULL)
-    {}
+      nextBucket(NULL), prevBucket(NULL), priority(0), days(127),
+      starttime(0L), endtime(86400L), cal(NULL), val(0.0), offsetcounter(0)
+    {
+      initType(metadata);
+    }
+
+    /** This is a factory method that creates a new bucket in a calendar.<br>
+      * It uses the calendar and id fields to identify existing buckets.
+      */
+    static DECLARE_EXPORT Object* createBucket(const MetaClass*, const DataValueDict&);
 
     /** Update the calendar owning the bucket.<br>
       * TODO You cannot reassign a bucket once it's assigned to a calendar.
@@ -318,7 +322,7 @@ class CalendarBucket : public Object, public NonCopyable
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addIntField<Cls>(Tags::id, &Cls::getId, NULL, MetaFieldBase::MANDATORY);
+      m->addIntField<Cls>(Tags::id, &Cls::getId, &Cls::setId, INT_MIN, MetaFieldBase::MANDATORY);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
@@ -451,17 +455,6 @@ class Calendar : public HasName<Calendar>, public HasSource
       defaultValue = v;
     }
 
-    /** This is a factory method that creates a new bucket using the start
-      * date as the key field. The fields are passed as an array of character
-      * pointers.<br>
-      * This method is intended to be used to create objects when reading
-      * XML input data.
-      */
-    DECLARE_EXPORT CalendarBucket* createBucket(const DataValueDict&);
-
-    /** Adds a new bucket to the list. */
-    DECLARE_EXPORT CalendarBucket* addBucket(Date, Date, int = 1);
-
     /** Removes a bucket from the list. */
     DECLARE_EXPORT void removeBucket(CalendarBucket* bkt);
 
@@ -593,13 +586,6 @@ class Calendar : public HasName<Calendar>, public HasSource
 
     /** Value used when no bucket is effective at all. */
     double defaultValue;
-
-    /** This is the factory method used to generate new buckets. Each subclass
-      * should provide an override for this function. */
-    virtual CalendarBucket* createNewBucket(Date start, Date end, int id=1, int priority=0)
-    {
-      return new CalendarBucket(this, start, end, id, priority);
-    }
 };
 
 
@@ -2215,10 +2201,7 @@ class OperationPlan
     }
 
     /** This is a factory method that creates an operationplan pointer based
-      * on the name and id, which are passed as an array of character pointers.
-      * This method is intended to be used to create objects when reading
-      * XML input data.
-      */
+      * on the operation and id. */
     static DECLARE_EXPORT Object* createOperationPlan(const MetaClass*, const DataValueDict&);
 
     /** Destructor. */
@@ -2255,8 +2238,8 @@ class OperationPlan
     DECLARE_EXPORT double setQuantity(double f, bool roundDown,
       bool update = true, bool execute = true)
     {
-      return oper ? 
-        oper->setOperationPlanQuantity(this, f, roundDown, update, execute) : 
+      return oper ?
+        oper->setOperationPlanQuantity(this, f, roundDown, update, execute) :
         f;
     }
 
@@ -2325,27 +2308,27 @@ class OperationPlan
     /** Update flag which allow/disallows material consumption. */
     void setConsumeMaterial(bool b)
     {
-      if (b) 
+      if (b)
         flags &= ~CONSUME_MATERIAL;
-      else 
+      else
         flags |= CONSUME_MATERIAL;
     }
 
     /** Update flag which allow/disallows material production. */
     void setProduceMaterial(bool b)
     {
-      if (b) 
+      if (b)
         flags &= ~PRODUCE_MATERIAL;
-      else 
+      else
         flags |= PRODUCE_MATERIAL;
     }
 
     /** Update flag which allow/disallows capacity consumption. */
     void setConsumeCapacity(bool b)
     {
-      if (b) 
+      if (b)
         flags &= ~CONSUME_CAPACITY;
-      else 
+      else
         flags |= CONSUME_CAPACITY;
     }
 
@@ -3105,7 +3088,7 @@ class OperationRouting : public Operation
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::steps, Tags::operation, &Cls::getSubOperations);
+      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations);
     }
 
   protected:
@@ -3212,7 +3195,7 @@ class OperationSplit : public Operation
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-       m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::alternates, Tags::alternate, &Cls::getSubOperations);
+       m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations);
     }
 
   protected:
@@ -3290,7 +3273,7 @@ class OperationAlternate : public Operation
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
-      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::alternates, Tags::operation, &Cls::getSubOperations);
+      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations);
     }
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
@@ -3326,12 +3309,12 @@ class Item : public HasHierarchy<Item>, public HasDescription
     Operation* getOperation() const
     {
       // Current item has a non-empty deliveryOperation field
-      if (deliveryOperation) 
+      if (deliveryOperation)
         return deliveryOperation;
 
       // Look for a non-empty deliveryOperation field on owners
       for (Item* i = getOwner(); i; i = i->getOwner())
-        if (i->deliveryOperation) 
+        if (i->deliveryOperation)
           return i->deliveryOperation;
 
       // The field is not specified on the item or any of its parents.
@@ -4440,9 +4423,6 @@ class FlowStart : public Flow
     /** Constructor. */
     explicit FlowStart(Operation* o, Buffer* b, double q) : Flow(o,b,q) {}
 
-    /** Constructor. */
-    explicit FlowStart(Operation* o, Buffer* b, double q, DateRange e) : Flow(o,b,q,e) {}
-
     /** This constructor is called from the plan begin_element function. */
     explicit FlowStart() {}
 
@@ -4461,9 +4441,6 @@ class FlowEnd : public Flow
   public:
     /** Constructor. */
     explicit FlowEnd(Operation* o, Buffer* b, double q) : Flow(o,b,q) {}
-
-    /** Constructor. */
-    explicit FlowEnd(Operation* o, Buffer* b, double q, DateRange e) : Flow(o,b,q,e) {}
 
     /** This constructor is called from the plan begin_element function. */
     explicit FlowEnd() {}
@@ -4487,9 +4464,6 @@ class FlowFixedEnd : public FlowEnd
     /** Constructor. */
     explicit FlowFixedEnd(Operation* o, Buffer* b, double q) : FlowEnd(o,b,q) {}
 
-    /** Constructor. */
-    explicit FlowFixedEnd(Operation* o, Buffer* b, double q, DateRange e) : FlowEnd(o,b,q,e) {}
-
     /** This constructor is called from the plan begin_element function. */
     explicit FlowFixedEnd() {}
 
@@ -4511,9 +4485,6 @@ class FlowFixedStart : public FlowStart
   public:
     /** Constructor. */
     explicit FlowFixedStart(Operation* o, Buffer* b, double q) : FlowStart(o,b,q) {}
-
-    /** Constructor. */
-    explicit FlowFixedStart(Operation* o, Buffer* b, double q, DateRange e) : FlowStart(o,b,q,e) {}
 
     /** This constructor is called from the plan begin_element function. */
     explicit FlowFixedStart() {}
@@ -4719,6 +4690,14 @@ class SetupMatrixRule : public Object
 {
     friend class SetupMatrix;
   public:
+
+    /** Default constructor. */
+    SetupMatrixRule::SetupMatrixRule()
+      : cost(0), priority(0), matrix(NULL), nextRule(NULL), prevRule(NULL)
+    {
+      initType(metadata);
+    }
+
     /** Constructor. */
     DECLARE_EXPORT SetupMatrixRule(SetupMatrix *s, int p = 0);
 
@@ -4728,7 +4707,8 @@ class SetupMatrixRule : public Object
     static int initialize();
 
     virtual const MetaClass& getType() const {return *metadata;}
-    static DECLARE_EXPORT const MetaCategory* metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
+    static DECLARE_EXPORT const MetaCategory* metacategory;
 
     /** Update the priority.<br>
       * The priority value is a key field. If multiple rules have the
@@ -4990,7 +4970,10 @@ class Skill : public HasName<Skill>, public HasSource
 
   public:
     /** Default constructor. */
-    explicit DECLARE_EXPORT Skill() {}
+    explicit DECLARE_EXPORT Skill()
+    {
+      initType(metadata);
+    }
 
     /** Destructor. */
     DECLARE_EXPORT ~Skill();
@@ -5014,7 +4997,7 @@ class Skill : public HasName<Skill>, public HasSource
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
-      m->addListField<Cls, resourcelist, Resource>(Tags::resourceskills, Tags::resourceskill, &Cls::getResources, MetaFieldBase::DETAIL);
+      m->addListField<Cls, resourcelist, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getResources, MetaFieldBase::DETAIL);
       HasSource::registerFields<Cls>(m);
     }
   private:
@@ -5237,7 +5220,7 @@ class Resource : public HasHierarchy<Resource>,
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix);
       Plannable::registerFields<Cls>(m);
       m->addListField<Cls, loadlist, Load>(Tags::loads, Tags::load, &Cls::getLoads, MetaFieldBase::DETAIL);
-      m->addListField<Cls, skilllist, Skill>(Tags::skills, Tags::skill, &Cls::getSkills, MetaFieldBase::DETAIL);
+      m->addListField<Cls, skilllist, ResourceSkill>(Tags::skills, Tags::skill, &Cls::getSkills, MetaFieldBase::DETAIL);
       // TODO XXX m->addIteratorField<Cls, LoadPlanIterator>(Tags::loadplans, &Cls::getLoadPlans, DETAIL);  TODO SHOULD BE ONLY THE ONES OF TYPE 1
       // TODO XXX m->addIteratorField<Cls, ProblemIterator>(Tags::problems, &Cls::getProblems, DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
@@ -5463,6 +5446,7 @@ class ResourceSkill : public Object,
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
       HasSource::registerFields<Cls>(m);
     }
+
   private:
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
@@ -5478,12 +5462,6 @@ class ResourceSkill : public Object,
 class ResourceSkillDefault : public ResourceSkill
 {
   public:
-    /** Constructor. */
-    explicit ResourceSkillDefault(Skill* s, Resource* r, int q) : ResourceSkill(s, r, q) {}
-
-    /** Constructor. */
-    explicit ResourceSkillDefault(Skill* s, Resource* r, int q, DateRange e) : ResourceSkill(s, r, q,e) {}
-
     /** This constructor is called from the plan begin_element function. */
     explicit ResourceSkillDefault() {}
 

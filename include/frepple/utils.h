@@ -3649,7 +3649,7 @@ class PythonDataValueDict : public DataValueDict
         const_cast<PythonDataValueDict*>(this)->result = PythonData();
         return &result;
       }
-      PyObject* val = PyDict_GetItemString(kwds,k.getName().c_str());
+      PyObject* val = PyDict_GetItemString(kwds, k.getName().c_str());
       const_cast<PythonDataValueDict*>(this)->result = PythonData(val);
       return &result;
     }

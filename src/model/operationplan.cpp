@@ -32,8 +32,8 @@ DECLARE_EXPORT unsigned long OperationPlan::counterMin = 2;
 int OperationPlan::initialize()
 {
   // Initialize the metadata
-  OperationPlan::metacategory = MetaCategory::registerCategory<OperationPlan>("operationplan", "operationplans",
-      OperationPlan::createOperationPlan, OperationPlan::writer, OperationPlan::finder);
+  metacategory = MetaCategory::registerCategory<OperationPlan>("operationplan", "operationplans",
+      createOperationPlan, OperationPlan::writer, OperationPlan::finder);
   registerFields<OperationPlan>(const_cast<MetaCategory*>(metacategory));
   OperationPlan::metadata = MetaClass::registerClass<OperationPlan>("operationplan", "operationplan", true);
 

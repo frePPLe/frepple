@@ -29,7 +29,6 @@ namespace utils
 
 DECLARE_EXPORT const Keyword Tags::action("action");
 DECLARE_EXPORT const Keyword Tags::alternate("alternate");
-DECLARE_EXPORT const Keyword Tags::alternates("alternates");
 DECLARE_EXPORT const Keyword Tags::alternate_name("alternate_name");
 DECLARE_EXPORT const Keyword Tags::autocommit("autocommit");
 DECLARE_EXPORT const Keyword Tags::available("available");
@@ -159,9 +158,10 @@ DECLARE_EXPORT const Keyword Tags::start("start");
 DECLARE_EXPORT const Keyword Tags::startorend("startorend");
 DECLARE_EXPORT const Keyword Tags::startdate("startdate");
 DECLARE_EXPORT const Keyword Tags::starttime("starttime");
-DECLARE_EXPORT const Keyword Tags::steps("steps");
 DECLARE_EXPORT const Keyword Tags::stringproperty("stringproperty");
 DECLARE_EXPORT const Keyword Tags::subcategory("subcategory");
+DECLARE_EXPORT const Keyword Tags::suboperation("suboperation");
+DECLARE_EXPORT const Keyword Tags::suboperations("suboperations");
 DECLARE_EXPORT const Keyword Tags::supplier("supplier");
 DECLARE_EXPORT const Keyword Tags::suppliers("suppliers");
 DECLARE_EXPORT const Keyword Tags::supplieritem("supplieritem");

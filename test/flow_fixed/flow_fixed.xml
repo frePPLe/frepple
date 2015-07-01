@@ -172,11 +172,17 @@
             <quantity>3</quantity>
           </flow>
         </flows>
-        <steps>
-          <operation name="3. make end item - step 1" xsi:type="operation_fixed_time" duration="P1D"/>
-          <operation name="3. make end item - step 2" xsi:type="operation_time_per" duration="P1D" duration_per="P1D"/>
-          <operation name="3. make end item - step 3" xsi:type="operation_fixed_time" duration="P1D"/>
-        </steps>
+        <suboperations>
+          <suboperation>
+            <operation name="3. make end item - step 1" xsi:type="operation_fixed_time" duration="P1D"/>
+          </suboperation>
+          <suboperation>
+            <operation name="3. make end item - step 2" xsi:type="operation_time_per" duration="P1D" duration_per="P1D"/>
+          </suboperation>
+          <suboperation>
+            <operation name="3. make end item - step 3" xsi:type="operation_fixed_time" duration="P1D"/>
+          </suboperation>
+        </suboperations>
       </producing>
     </buffer>
   </buffers>
@@ -228,7 +234,8 @@
             <quantity>1</quantity>
           </flow>
         </flows>
-        <steps>
+        <suboperations>
+          <suboperation>
           <operation name="4. make end item - step 1" xsi:type="operation_fixed_time" duration="P1D">
             <flows>
               <flow xsi:type="flow_fixed_end">
@@ -237,6 +244,8 @@
               </flow>
             </flows>
           </operation>
+          </suboperation>
+          <suboperation>
           <operation name="4. make end item - step 2" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
             <flows>
               <flow xsi:type="flow_fixed_end">
@@ -245,6 +254,8 @@
               </flow>
             </flows>
           </operation>
+          </suboperation>
+          <suboperation>
           <operation name="4. make end item - step 3" xsi:type="operation_fixed_time" duration="P1D">
             <flows>
               <flow xsi:type="flow_fixed_end">
@@ -253,7 +264,8 @@
               </flow>
             </flows>
           </operation>
-        </steps>
+          </suboperation>
+        </suboperations>
       </producing>
     </buffer>
   </buffers>

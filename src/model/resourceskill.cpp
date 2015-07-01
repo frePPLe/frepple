@@ -31,7 +31,9 @@ DECLARE_EXPORT const MetaClass* ResourceSkillDefault::metadata;
 int ResourceSkill::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<ResourceSkill>("resourceskill", "resourceskills", MetaCategory::ControllerDefault, writer);
+  metadata = MetaCategory::registerCategory<ResourceSkill>(
+    "resourceskill", "resourceskills", MetaCategory::ControllerDefault, writer
+    );
   registerFields<ResourceSkill>(const_cast<MetaCategory*>(metadata));
   ResourceSkillDefault::metadata = MetaClass::registerClass<ResourceSkillDefault>(
     "resourceskill", "resourceskill", Object::create<ResourceSkillDefault>, true
@@ -88,8 +90,10 @@ DECLARE_EXPORT ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, DateRa
 DECLARE_EXPORT ResourceSkill::~ResourceSkill()
 {
   // Delete the associated from the related objects
-  if (getResource()) getResource()->skills.erase(this);
-  if (getSkill()) getSkill()->resources.erase(this);
+  if (getResource())
+    getResource()->skills.erase(this);
+  if (getSkill())
+    getSkill()->resources.erase(this);
 }
 
 

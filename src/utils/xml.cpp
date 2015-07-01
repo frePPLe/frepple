@@ -201,11 +201,10 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       if (!objects[objectindex].cls->category)
       {
         // No type attribute was registered, and we use the default of the category
-        objects[objectindex].cls = static_cast<const MetaCategory&>(*objects[objectindex].cls).findClass(
-            Tags::deflt.getHash()
-            );
+        const MetaCategory& cat = static_cast<const MetaCategory&>(*objects[objectindex].cls);
+        objects[objectindex].cls = cat.findClass(Tags::deflt.getHash());
         if (!objects[objectindex].cls)
-          throw DataException("No default type registered for category " + objects[objectindex].cls->type);
+          throw DataException("No default type registered for category " + cat.type);
       }
     }
     // Skip the opening tag of this object
@@ -336,6 +335,8 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       data[dataindex].value.setString(transcodeUTF8(atts.getValue(i)));
     }
   }
+  else if (data[dataindex].field->isGroup())
+    reading = false;
 }
 
 
@@ -561,7 +562,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
   }
 
   // Update indexes for data and object
-  dataindex = objects[objectindex--].start -1;
+  dataindex = objects[objectindex--].start - 1;
 }
 
 

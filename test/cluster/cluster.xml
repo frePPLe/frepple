@@ -8,20 +8,20 @@
       <duration>PT10S</duration>
     </operation>
     <operation name="Make 1 : 1 : 1" xsi:type="operation_alternate">
-      <alternates>
-        <alternate>
+      <suboperations>
+        <suboperation>
           <operation name="Make 1a : 1 : 1" xsi:type="operation_fixed_time">
             <duration>PT10S</duration>
           </operation>
           <priority>1</priority>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="Make 1b : 1 : 1" xsi:type="operation_fixed_time">
             <duration>PT10S</duration>
           </operation>
           <priority>2</priority>
-        </alternate>
-      </alternates>
+        </suboperation>
+      </suboperations>
     </operation>
   </operations>
   <items>
@@ -47,16 +47,20 @@
     </item>
     <item name="item 5">
       <operation name="Delivery 5 : 0 : 2" xsi:type="operation_routing">
-        <steps>
-          <operation name="Delivery 5 step1 : 0 : 2"
-            xsi:type="operation_fixed_time">
-            <duration>PT10S</duration>
-          </operation>
-          <operation name="Delivery 5 step2 : 0 : 2"
-            xsi:type="operation_fixed_time">
-            <duration>PT10S</duration>
-          </operation>
-        </steps>
+        <suboperations>
+          <suboperation>
+            <operation name="Delivery 5 step1 : 0 : 2"
+              xsi:type="operation_fixed_time">
+              <duration>PT10S</duration>
+            </operation>
+          </suboperation>
+          <suboperation>
+            <operation name="Delivery 5 step2 : 0 : 2"
+              xsi:type="operation_fixed_time">
+              <duration>PT10S</duration>
+            </operation>
+          </suboperation>
+        </suboperations>
       </operation>
     </item>
     <item name="item 6">

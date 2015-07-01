@@ -16,7 +16,8 @@
         <operation name="operation 1" xsi:type="operation_routing">
           <!-- Level 3: operation -->
           <size_multiple>3</size_multiple>
-          <steps>
+          <suboperations>
+            <suboperation>
             <operation name="operation 1 step1"
               xsi:type="operation_fixed_time">
               <!-- Level 4: operation -->
@@ -54,7 +55,8 @@
               xsi:type="operation_fixed_time">
               <duration>P7D</duration>
             </operation>
-          </steps>
+            </suboperation>
+          </suboperations>
         </operation>
       </item>
     </demand>

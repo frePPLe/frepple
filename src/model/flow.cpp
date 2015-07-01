@@ -157,8 +157,10 @@ DECLARE_EXPORT Flow::~Flow()
   }
 
   // Delete the flow from the operation and the buffer
-  if (getOperation()) getOperation()->flowdata.erase(this);
-  if (getBuffer()) getBuffer()->flows.erase(this);
+  if (getOperation())
+    getOperation()->flowdata.erase(this);
+  if (getBuffer())
+    getBuffer()->flows.erase(this);
 
   // Clean up alternate flows
   if (hasAlts)
@@ -287,37 +289,38 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
         l = new FlowEnd(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
-          q2, eff
+          q2
         );
       else if (d.getString() == "flow_fixed_end")
         l = new FlowFixedEnd(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
-          q2, eff
+          q2
         );
       else if (d.getString() == "flow_fixed_start")
         l = new FlowFixedStart(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
-          q2, eff
+          q2
         );
       else
         l = new FlowStart(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
-          q2, eff
+          q2
         );
     }
     else
       l = new FlowStart(
         static_cast<Operation*>(oper),
         static_cast<Buffer*>(buf),
-        q2, eff
+        q2
       );
 
     // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
     if (l)
     {
+      l->setEffective(eff);
       PyObject *key, *value;
       Py_ssize_t pos = 0;
       while (PyDict_Next(kwds, &pos, &key, &value))

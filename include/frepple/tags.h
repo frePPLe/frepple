@@ -30,7 +30,6 @@ class Tags
   public:
     static DECLARE_EXPORT const Keyword action;
     static DECLARE_EXPORT const Keyword alternate;
-    static DECLARE_EXPORT const Keyword alternates;
     static DECLARE_EXPORT const Keyword alternate_name;
     static DECLARE_EXPORT const Keyword autocommit;
     static DECLARE_EXPORT const Keyword available;
@@ -162,9 +161,10 @@ class Tags
     static DECLARE_EXPORT const Keyword startorend;
     static DECLARE_EXPORT const Keyword startdate;
     static DECLARE_EXPORT const Keyword starttime;
-    static DECLARE_EXPORT const Keyword steps;
     static DECLARE_EXPORT const Keyword stringproperty;
     static DECLARE_EXPORT const Keyword subcategory;
+    static DECLARE_EXPORT const Keyword suboperation;
+    static DECLARE_EXPORT const Keyword suboperations;
     static DECLARE_EXPORT const Keyword supplier;
     static DECLARE_EXPORT const Keyword suppliers;
     static DECLARE_EXPORT const Keyword supplieritem;

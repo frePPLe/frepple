@@ -61,29 +61,35 @@
 	  <buffer name="buffer 5">
 	    <item name="item 5" />
 	    <producing name="make 5" xsi:type="operation_alternate">
-	      <alternates>
-	        <alternate>
+	      <suboperations>
+	        <suboperation>
 	          <operation name="make 5 from 5a" />
 	          <priority>1</priority>
-	        </alternate>
-	        <alternate>
+	        </suboperation>
+	        <suboperation>
 	          <operation name="make 5 from 5b" />
 	          <priority>2</priority>
-	        </alternate>
-	      </alternates>
+	        </suboperation>
+	      </suboperations>
 	    </producing>
 	  </buffer>
 	  <buffer name="buffer 6">
 	    <item name="item 6" />
 	    <producing name="make 6" xsi:type="operation_routing">
-	      <steps>
-	        <operation name="make 6 step 1" xsi:type="operation_fixed_time"
-	          duration="P1D" />
-	        <operation name="make 6 step 2" xsi:type="operation_fixed_time"
-	          duration="P1D" />
-	        <operation name="make 6 step 3" xsi:type="operation_fixed_time"
-	          duration="P1D" />
-	      </steps>
+	      <suboperations>
+          <suboperation>
+	          <operation name="make 6 step 1" xsi:type="operation_fixed_time"
+	            duration="P1D" />
+          </suboperation>
+          <suboperation>
+	          <operation name="make 6 step 2" xsi:type="operation_fixed_time"
+	            duration="P1D" />
+          </suboperation>
+          <suboperations>
+	          <operation name="make 6 step 3" xsi:type="operation_fixed_time"
+	            duration="P1D" />
+          </suboperations>
+	      </suboperations>
 	    </producing>
 	  </buffer>
 	  <buffer name="constraint buffer 1">

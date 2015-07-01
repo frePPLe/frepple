@@ -49,11 +49,14 @@
 	<operations>
     <operation name="make item 1 with routing A" xsi:type="operation_routing">
       <cost>13</cost>
-      <steps>
+      <suboperations>
+        <suboperation>
         <operation name="make item 1 with routing A step 1" xsi:type="operation_fixed_time">
           <cost>2</cost>
           <duration>P3D</duration>
         </operation>
+        </suboperation>
+        <suboperation>
         <operation name="make item 1 with routing A step 2" xsi:type="operation_time_per">
           <cost>2</cost>
           <loads>
@@ -64,7 +67,8 @@
           <duration>P5D</duration>
           <duration_per>P1D</duration_per>
         </operation>
-      </steps>
+        </suboperation>
+      </suboperations>
     </operation>
     <operation name="make item 1 with routing B" xsi:type="operation_time_per">
       <cost>11</cost>
@@ -132,7 +136,7 @@
 	    <item name="item 1" />
 	  </demand>
 	</demands>
-	
+
   <!--
     Case 2: minimum cost choice.
     TODO

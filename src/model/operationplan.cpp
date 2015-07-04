@@ -70,10 +70,13 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   Action action = MetaClass::decodeAction(in);
 
   // Decode the attributes
-  const DataValue* operElement = in.get(Tags::operation);
-  if (!operElement && action==ADD)
+  const DataValue* val = in.get(Tags::operation);
+  if (!val && action==ADD)
     // Operation name required
     throw DataException("Missing operation field");
+  Object *oper = val->getObject();
+  if (oper && oper->getType().category != Operation::metadata)
+    throw DataException("Operation field on operationplan must be of type operation");
 
   // Decode the operationplan identifier
   unsigned long id = 0;
@@ -95,8 +98,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
       throw DataException(ch.str());
     }
     opplan = OperationPlan::findId(id);
-    if (opplan && operElement
-      && opplan->getOperation() != operElement->getObject())
+    if (opplan && oper && opplan->getOperation() != static_cast<Operation*>(oper))
     {
       // Previous and current operations don't match.
       ostringstream ch;
@@ -155,14 +157,15 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   if (opplan) return opplan;
 
   // Create a new operation plan
-  if (!operElement->getObject())
+  if (!oper)
     // Can't create operationplan because the operation doesn't exist
     throw DataException("Missing operation field");
   else
   {
     // Create an operationplan
-    Operation* oper = static_cast<Operation*>(operElement->getObject());
-    opplan = oper->createOperationPlan(0.0,Date::infinitePast,Date::infinitePast,NULL,NULL,id,false);
+    opplan = static_cast<Operation*>(oper)->createOperationPlan(
+      0.0, Date::infinitePast, Date::infinitePast, NULL, NULL, id, false
+      );
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
       delete opplan;
@@ -908,7 +911,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
   {
     // Find or create the C++ object
     PythonDataValueDict atts(kwds);
-    Object* x = createOperationPlan(OperationPlan::metadata,atts);
+    Object* x = createOperationPlan(OperationPlan::metadata, atts);
     Py_INCREF(x);
 
     // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...

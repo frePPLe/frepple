@@ -52,7 +52,7 @@
         </flow>
       </flows>
     </operation>
-  </operations>   
+  </operations>
   <operationplans>
     <operationplan id="1000">
       <operation name="1. supply fixed item"/>
@@ -61,7 +61,7 @@
       <quantity>10</quantity>
       <locked>true</locked>
     </operationplan>
-  </operationplans> 
+  </operationplans>
   <items>
     <item name="1. end item">
       <operation name="1. deliver end item" xsi:type="operation_fixed_time" duration="P1D">
@@ -317,20 +317,20 @@
             <quantity>3</quantity>
           </flow>
         </flows>
-        <alternates>
-          <alternate>
+        <suboperations>
+          <suboperation>
             <operation name="5. make end item - alternate 1" xsi:type="operation_fixed_time" duration="P2D"/>
             <priority>1</priority>
-          </alternate>     
-          <alternate>
+          </suboperation>
+          <suboperation>
             <operation name="5. make end item - alternate 2" xsi:type="operation_fixed_time" duration="P2D"/>
             <priority>2</priority>
-          </alternate>     
-          <alternate>
+          </suboperation>
+          <suboperation>
             <operation name="5. make end item - alternate 3" xsi:type="operation_fixed_time" duration="P2D"/>
             <priority>3</priority>
-          </alternate>     
-        </alternates>          
+          </suboperation>
+        </suboperations>
       </producing>
     </buffer>
   </buffers>
@@ -382,8 +382,8 @@
             <quantity>1</quantity>
           </flow>
         </flows>
-        <alternates>
-          <alternate>
+        <suboperations>
+          <suboperation>
             <operation name="6. make end item - alternate 1" xsi:type="operation_fixed_time" duration="P2D">
               <flows>
                 <flow xsi:type="flow_fixed_end">
@@ -391,10 +391,10 @@
                   <quantity>1</quantity>
                 </flow>
               </flows>
-            </operation>            
+            </operation>
             <priority>1</priority>
-          </alternate>     
-          <alternate>
+          </suboperation>
+          <suboperation>
             <operation name="6. make end item - alternate 2" xsi:type="operation_fixed_time" duration="P2D">
               <flows>
                 <flow xsi:type="flow_fixed_end">
@@ -404,8 +404,8 @@
               </flows>
             </operation>
             <priority>2</priority>
-          </alternate>     
-          <alternate>
+          </suboperation>
+          <suboperation>
             <operation name="6. make end item - alternate 3" xsi:type="operation_fixed_time" duration="P2D">
               <flows>
                 <flow xsi:type="flow_fixed_end">
@@ -415,8 +415,8 @@
               </flows>
             </operation>
             <priority>3</priority>
-          </alternate>     
-        </alternates>          
+          </suboperation>
+        </suboperations>
       </producing>
     </buffer>
   </buffers>
@@ -453,7 +453,7 @@
       <item name="6. end item" />
     </demand>
   </demands>
-  
+
 <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()

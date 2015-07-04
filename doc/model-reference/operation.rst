@@ -184,33 +184,28 @@ search           string            Defines the order of preference among the alt
                                       | Select the alternate which gives the lowest sum of
                                         the cost and penalty.
                                       | The sum is computed for the complete upstream path.
-alternates       List of alternate List of alternate sub-operations, each with their priority.
+suboperations    List of           List of alternate sub-operations.
+                 suboperation
 ================ ================= ===========================================================
 
 
-+-----------------------------+----------------------------------------------------------+
-| Method                      | Description                                              |
-+=============================+==========================================================+
-| addAlternate(               | | Add a new alternate sub operation.                     |
-| operation=[operation],      | | The last three keyword arguments are optional.         |
-| priority=[number],          |                                                          |
-| effective_start=[date],     |                                                          |
-| effective_end=[date])       |                                                          |
-+-----------------------------+----------------------------------------------------------+
-
-
-Alternate fields:
+Suboperation fields:
 
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
 operation        operation         Sub-operation.
-priority         integer           | Priority of this alternate.
+owner            operation         Parent operation
+priority         integer           | For alternate operations: Priority of this alternate.
+                                   | For routing operations: Sequence number of the step.
+                                   | For split operations: Proportion of the demand planned
+                                     along this suboperation.
                                    | Lower numbers indicate higher priority.
                                    | When the priority is equal to 0, this alternate is
                                      considered unavailable and it can’t be used for planning.
-effective_start  dateTime          Earliest allowed start date for using this alternate.
-effective_end    dateTime          Latest allowed end date for using this alternate.
+                                   | Default value is 1.
+effective_start  dateTime          Earliest allowed start date for using this suboperation.
+effective_end    dateTime          Latest allowed end date for using this suboperation.
 ================ ================= ===========================================================
 
 Operation_split
@@ -234,29 +229,8 @@ the sub-operations.
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-alternates       List of alternate List of alternate sub-operations, each with their
-                                   percentage.
-================ ================= ===========================================================
-
-+-----------------------------+----------------------------------------------------------+
-| Method                      | Description                                              |
-+=============================+==========================================================+
-| addAlternate(               | | Add a new split sub operation.                         |
-| operation=[operation],      | | The last three keyword arguments are optional.         |
-| percent=[integer],          |                                                          |
-| effective_start=[date],     |                                                          |
-| effective_end=[date])       |                                                          |
-+-----------------------------+----------------------------------------------------------+
-
-Alternate fields:
-
-================ ================= ===========================================================
-Field            Type              Description
-================ ================= ===========================================================
-operation        operation         Sub-operation.
-percent          integer           Percent of the demand to be planned along this alternate.
-effective_start  dateTime          Earliest allowed start date for using this alternate.
-effective_end    dateTime          Latest allowed end date for using this alternate.
+suboperations    List of           | List of sub-operations to divide the plan across.
+                 suboperation      | See above for the definition of the suboperation.
 ================ ================= ===========================================================
 
 
@@ -268,15 +242,9 @@ Models a sequence a number of ‘step’ sub-operations, to be executed sequenti
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-steps            List of operation Lists all sub-operations in the order of execution.
+suboperations    List of           | List of sub-operations to execute in sequence.
+                 suboperation      | See above for the definition of the suboperation.
 ================ ================= ===========================================================
-
-+-----------------------------+----------------------------------------------------------+
-| Method                      | Description                                              |
-+=============================+==========================================================+
-| addStep([operation],...)    | Add a new step sub operation to the routing.             |
-|                             | Up to 4 operations can be passed as arguments.           |
-+-----------------------------+----------------------------------------------------------+
 
 **Example XML structures**
 
@@ -294,22 +262,28 @@ Adding or changing operations
           <duration_per>PT5M</duration_per>
         </operation>
         <operation name="make or buy item X" xsi:type="operation_alternate">
-          <alternates>
-            <alternate>
+          <suboperations>
+            <suboperation>
               <operation name="make item X" />
               <priority>1</priority>
-            </alternate>
-            <alternate>
+            </suboperation>
+            <suboperation>
               <operation name="buy item X from supplier" />
               <priority>2</priority>
-            </alternate>
-          </alternates>
+            </suboperation>
+          </suboperations>
         </operation>
         <operation name="make subassembly" xsi:type="operation_routing">
-          <steps>
-             <operation name="make subassembly step 1" duration="PT1H"/>
-             <operation name="make subassembly step 2" duration="PT5M"/>
-          </steps>
+          <suboperations>
+            <suboperation>
+              <operation name="make subassembly step 1" duration="PT1H"/>
+              <priority>1</priority>
+            </suboperation>
+            <suboperation>
+              <operation name="make subassembly step 2" duration="PT5M"/>
+              <priority>2</priority>
+            </suboperation>
+          </suboperations>
         </operation>
       </operations>
     </plan>
@@ -333,13 +307,20 @@ Adding or changing operations
     op1 = frepple.operation_fixed_time(name="buy item X from supplier", duration=24*3600)
     op2 = frepple.operation_time_per(name="make item X", duration=3600, duration_per=60*5)
     op3 = frepple.operation_alternate(name="make or buy item X")
-    op3.addAlternate(operation=op1, priority=1)
-    op3.addAlternate(operation=op2, priority=2, effective_end=datetime.datetime(2009,10,10))
+    frepple.suboperation(owner=op3, operation=op1, priority=1)
+    frepple.suboperation(owner=op3, operation=op2, priority=2, effective_end=datetime.datetime(2009,10,10))
     op4 = frepple.operation_routing(name="make subassembly")
-    op4.addStep(
-       frepple.operation_fixed_time(name="make subassembly step 1", duration=3600),
-       frepple.operation_fixed_time(name="make subassembly step 2", duration=300)
-       )
+    frepple.suboperation(
+      owner=op3,
+      operation=frepple.operation_fixed_time(name="make subassembly step 1", duration=3600),
+      priority=1
+      )
+    frepple.suboperation(
+      owner=op3,
+      operation=frepple.operation_fixed_time(name="make subassembly step 2", duration=300),
+      priority=2
+      )
+
 
 Deleting an operation
 

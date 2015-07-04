@@ -135,7 +135,8 @@ Adding an operationplan to represent a planned receipt of material
 
    <plan>
       <operationplans>
-        <operationplan operation="Purchase component A">
+        <operationplan>
+          <operation name="Purchase component A"/>
           <quantity>100</quantity>
           <start>2007-01-10T00:00:00</start>
           <locked>true</locked>
@@ -160,8 +161,12 @@ Adding an operationplan to represent a planned receipt of material
 ::
 
    op = frepple.operation(name="Purchase component A", action="C")
-   opplan = frepple.operationplan(operation=op,
-      quantity=100, start=datetime.datetime(2007,1,10), locked=True)
+   opplan = frepple.operationplan(
+     operation=op,
+     quantity=100,
+     start=datetime.datetime(2007,1,10),
+     locked=True
+     )
 
 Deleting an operationplan
 

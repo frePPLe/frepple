@@ -37,7 +37,7 @@ int SubOperation::initialize()
   metadata = MetaClass::registerClass<SupplierItem>(
     "suboperation", "suboperation", Object::create<SubOperation>, true
   );
-  registerFields<SubOperation>(const_cast<MetaClass*>(metadata));
+  registerFields<SubOperation>(const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python class
   PythonType& x = FreppleCategory<SubOperation>::getPythonType();
@@ -45,7 +45,7 @@ int SubOperation::initialize()
   x.setDoc("frePPLe suboperation");
   x.supportgetattro();
   x.supportsetattro();
-  // TODO x.supportcreate(create);
+  x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaClass*>(SubOperation::metadata)->pythonClass = x.type_object();
   return x.typeReady();
@@ -144,5 +144,62 @@ PyObject *SubOperationIterator::iternext()
   Py_INCREF(result);
   return result;
 }
+
+
+PyObject* SubOperation::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+{
+  try
+  {
+    // Pick up the operation
+    PyObject* oper = PyDict_GetItemString(kwds, "operation");
+    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
+      throw DataException("field 'operation' of suboperation must be of type operation");
+
+    // Pick up the buffer
+    PyObject* owner = PyDict_GetItemString(kwds, "owner");
+    if (!PyObject_TypeCheck(owner, Operation::metadata->pythonClass))
+      throw DataException("field 'operation' of suboperation must be of type operation");
+
+    // Pick up the type and create the flow
+    SubOperation *l = new SubOperation();
+    if (oper) l->setOperation(static_cast<Operation*>(oper));
+    if (owner) l->setOwner(static_cast<Operation*>(owner));
+
+    // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
+    if (l)
+    {
+      PyObject *key, *value;
+      Py_ssize_t pos = 0;
+      while (PyDict_Next(kwds, &pos, &key, &value))
+      {
+        PythonData field(value);
+        PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+        DataKeyword attr(PyBytes_AsString(key_utf8));
+        Py_DECREF(key_utf8);
+        if (!attr.isA(Tags::operation) && !attr.isA(Tags::owner))
+        {
+          const MetaFieldBase* fmeta = SubOperation::metacategory->findField(attr.getHash());
+          if (fmeta)
+            // Update the attribute
+            fmeta->setField(l, field);
+          else
+            PyErr_Format(PyExc_AttributeError,
+                "attribute '%S' on '%s' can't be updated",
+                key, Py_TYPE(l)->tp_name);
+        }
+      };
+    }
+
+    // Return the object
+    Py_INCREF(l);
+    return static_cast<PyObject*>(l);
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+}
+
 
 }

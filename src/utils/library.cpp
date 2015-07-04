@@ -501,7 +501,6 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const DataValueDict& atts)
 {
   // Decode the string and return the default in the absence of the attribute
   const DataValue* c = atts.get(Tags::action);
-  if (c) logger << " --->" << c->getString() << endl;
   return c ? decodeAction(c->getString().c_str()) : ADD_CHANGE;
 }
 

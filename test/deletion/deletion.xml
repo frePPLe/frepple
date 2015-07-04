@@ -48,18 +48,18 @@
       <item name="component A" />
       <location name="Location 1" />
       <producing name="supply component A" xsi:type="operation_alternate">
-        <alternates>
-          <alternate>
+        <suboperations>
+          <suboperation>
             <operation name="supply component A from supplier 1"
               duration="P1D" xsi:type="operation_fixed_time" />
             <priority>1</priority>
-          </alternate>
-          <alternate>
+          </suboperation>
+          <suboperation>
             <operation name="supply component A from supplier 2"
               duration="P2D" xsi:type="operation_fixed_time" />
             <priority>2</priority>
-          </alternate>
-        </alternates>
+          </suboperation>
+        </suboperations>
       </producing>
     </buffer>
     <buffer name="buffer B">

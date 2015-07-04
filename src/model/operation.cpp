@@ -59,7 +59,7 @@ int OperationFixedTime::initialize()
   registerFields<OperationFixedTime>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  return FreppleClass<OperationFixedTime,Operation>::initialize();
+  return FreppleClass<OperationFixedTime, Operation>::initialize();
 }
 
 
@@ -73,7 +73,7 @@ int OperationTimePer::initialize()
   registerFields<OperationTimePer>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  return FreppleClass<OperationTimePer,Operation>::initialize();
+  return FreppleClass<OperationTimePer, Operation>::initialize();
 }
 
 
@@ -87,7 +87,7 @@ int OperationSplit::initialize()
   registerFields<OperationSplit>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  return FreppleClass<OperationSplit,Operation>::initialize();
+  return FreppleClass<OperationSplit, Operation>::initialize();
 }
 
 
@@ -101,7 +101,7 @@ int OperationAlternate::initialize()
   registerFields<OperationAlternate>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  return FreppleClass<OperationAlternate,Operation>::initialize();
+  return FreppleClass<OperationAlternate, Operation>::initialize();
 }
 
 
@@ -495,15 +495,15 @@ DECLARE_EXPORT void Operation::initOperationPlan (OperationPlan* opplan,
     unsigned long i, bool makeflowsloads) const
 {
   opplan->oper = const_cast<Operation*>(this);
-  opplan->setDemand(l);
+  if (l) opplan->setDemand(l);
   opplan->id = i;
 
   // Setting the owner first. Note that the order is important here!
   // For alternates & routings the quantity needs to be set through the owner.
-  opplan->setOwner(ow);
+  if (ow) opplan->setOwner(ow);
 
   // Setting the dates and quantity
-  setOperationPlanParameters(opplan,q,s,e);
+  setOperationPlanParameters(opplan, q, s, e);
 
   // Create the loadplans and flowplans, if allowed
   if (makeflowsloads) opplan->createFlowLoads();

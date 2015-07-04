@@ -92,16 +92,19 @@ DECLARE_EXPORT SetupMatrix::~SetupMatrix()
 }
 
 
-DECLARE_EXPORT SetupMatrixRule* SetupMatrix::createRule(const DataValueDict& atts)
+/*
+DECLARE_EXPORT SetupMatrixRule* SetupMatrix::createRule(const DataValueDict& atts)  TODO Review for use as read controller for rules
 {
-  // Pick up the start, end and name attributes
-  int priority = atts.get(Tags::priority)->getInt();
+  // Pick up the priority attributes
+  const DataValue *val = atts.get(Tags::priority);
+  int priority = val ? val->getInt() : 0;
 
   // Check for existence of a rule with the same priority
   SetupMatrixRule* result = firstRule;
   while (result && priority > result->priority)
     result = result->nextRule;
-  if (result && result->priority != priority) result = NULL;
+  if (result && result->priority != priority)
+    result = NULL;
 
   // Pick up the action attribute and update the rule accordingly
   switch (MetaClass::decodeAction(atts))
@@ -152,7 +155,7 @@ DECLARE_EXPORT SetupMatrixRule* SetupMatrix::createRule(const DataValueDict& att
   // This part of the code isn't expected not be reached
   throw LogicException("Unreachable code reached");
 }
-
+*/
 
 DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* args, PyObject* kwdict)
 {
@@ -175,7 +178,9 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
       return NULL;
 
     // Add the new rule
-    SetupMatrixRule *r = new SetupMatrixRule(matrix, prio);
+    SetupMatrixRule *r = new SetupMatrixRule();
+    r->setPriority(prio);
+    r->setSetupMatrix(matrix);
     if (pyfrom) r->setFromSetup(PythonData(pyfrom).getString());
     if (pyto) r->setToSetup(PythonData(pyfrom).getString());
     r->setDuration(duration);
@@ -190,33 +195,38 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
 }
 
 
-DECLARE_EXPORT SetupMatrixRule::SetupMatrixRule(SetupMatrix *s, int p)
-  : cost(0), priority(p), matrix(s), nextRule(NULL), prevRule(NULL)
+DECLARE_EXPORT void SetupMatrixRule::setSetupMatrix(SetupMatrix *s)
 {
   // Validate the arguments
-  if (!matrix) throw DataException("Can't add a rule to NULL setup matrix");
+  if (matrix)
+    throw DataException("Can't reassign setup matrix matrix once assigned");
+  if (!s)
+    throw DataException("Can't update setup matrix to NULL");
+
+  // Assign the pointer
+  matrix = s;
 
   // Find the right place in the list
   SetupMatrixRule *next = matrix->firstRule, *prev = NULL;
-  while (next && p > next->priority)
+  while (next && priority > next->priority)
   {
     prev = next;
     next = next->nextRule;
   }
 
   // Duplicate priority
-  if (next && next->priority == p)
+  if (next && next->priority == priority)
     throw DataException("Multiple rules with identical priority in setup matrix");
 
   // Maintain linked list
   nextRule = next;
   prevRule = prev;
-  if (prev) prev->nextRule = this;
-  else matrix->firstRule = this;
-  if (next) next->prevRule = this;
-
-  // Initialize the Python type
-  initType(metadata);
+  if (prev)
+    prev->nextRule = this;
+  else
+    matrix->firstRule = this;
+  if (next)
+    next->prevRule = this;
 }
 
 
@@ -231,6 +241,27 @@ DECLARE_EXPORT SetupMatrixRule::~SetupMatrixRule()
 
 DECLARE_EXPORT void SetupMatrixRule::setPriority(const int n)
 {
+  if (n == priority)
+    return;
+  if (!matrix)
+  {
+    // As long as there is no matrix assigned, anything goes
+    priority = n;
+    return;
+  }
+
+  // Check for duplicate priorities, before making any changes
+  for (SetupMatrixRule *i = matrix->firstRule; i; i = i->nextRule)
+    if (i->priority == n)
+    {
+      ostringstream o;
+      o << "Rule with priority " << priority << " in setup matrix '"
+        << matrix->getName() << "' already exists";
+      throw DataException(o.str());
+    }
+    else if (i->priority > n)
+      break;
+
   // Update the field
   priority = n;
 
@@ -266,16 +297,6 @@ DECLARE_EXPORT void SetupMatrixRule::setPriority(const int n)
     next->nextRule = this;
     next->prevRule = prev;
     prevRule = next;
-  }
-
-  // Check for duplicate priorities
-  if ((prevRule && prevRule->priority == priority)
-      || (nextRule && nextRule->priority == priority))
-  {
-    ostringstream o;
-    o << "Duplicate priority " << priority << " in setup matrix '"
-      << matrix->getName() << "'";
-    throw DataException(o.str());
   }
 }
 

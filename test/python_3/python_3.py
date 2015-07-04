@@ -167,14 +167,28 @@ print("\nCreating operations")
 shipoper = frepple.operation_fixed_time(name="delivery end item", duration=86400)
 choice = frepple.operation_alternate(name="make or buy item")
 makeoper = frepple.operation_routing(name="make item")
-makeoper.addStep(frepple.operation_fixed_time(name="make item - step 1", duration=4*86400))
-makeoper.addStep(frepple.operation_fixed_time(name="make item - step 2", duration=3*86400))
+frepple.suboperation(
+  owner = makeoper,
+  operation = frepple.operation_fixed_time(name="make item - step 1", duration=4*86400)
+  )
+frepple.suboperation(
+  owner = makeoper,
+  operation = frepple.operation_fixed_time(name="make item - step 2", duration=3*86400)
+  )
 buyoper = frepple.operation_fixed_time(name="buy item", duration=86400)
-choice.addAlternate(operation=makeoper, priority=1)
-choice.addAlternate(operation=buyoper, priority=2)
+frepple.suboperation(
+  owner = choice,
+  operation = makeoper,
+  priority = 1
+  )
+frepple.suboperation(
+  owner = choice,
+  operation = buyoper,
+  priority = 2
+  )
 
 ###
-print("\nCreating calendars")
+#print("\nCreating calendars")
 c = frepple.calendar(name="Cal1", default=4.56)
 c.setValue(datetime.datetime(2009,1,1), datetime.datetime(2009,3,1), 1)
 c.setValue(datetime.datetime(2009,2,1), datetime.datetime(2009,5,1), 2)
@@ -192,7 +206,7 @@ for date, value in c.events():
 print("\nDeleting a calendar")
 frepple.calendar(name="Cal3", action="R")
 
-# Load some data - These things can't be done yet from Python
+# Load some XML data
 frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <resources>
@@ -231,7 +245,11 @@ frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
 
 ###
 print("\nCreating operationplans")
-opplan = frepple.operationplan(operation="make item", quantity=9, end=datetime.datetime(2011,1,1))
+opplan = frepple.operationplan(
+  operation = frepple.operation(name="make item"),
+  quantity = 9,
+  end = datetime.datetime(2011,1,1)
+  )
 opplan.locked = True
 
 ###

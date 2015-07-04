@@ -317,8 +317,8 @@ DECLARE_EXPORT Object* CalendarBucket::createBucket(
 {
   // Pick up the calendar and id fields
   const DataValue* cal_val = atts.get(Tags::calendar);
-  const DataValue* id_val = atts.get(Tags::id);
   Calendar *cal = cal_val ? static_cast<Calendar*>(cal_val->getObject()) : NULL;
+  const DataValue* id_val = atts.get(Tags::id);
   int id = id_val ? id_val->getInt() : INT_MIN;
 
   // Check for existence of a bucket with the same identifier

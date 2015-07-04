@@ -1473,6 +1473,9 @@ class SubOperation : public Object
     /** Validity date range for the child operation. */
     DateRange effective;
 
+    /** Python constructor. */
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+
   public:
 
     /** Default constructor. */
@@ -4698,8 +4701,8 @@ class SetupMatrixRule : public Object
       initType(metadata);
     }
 
-    /** Constructor. */
-    DECLARE_EXPORT SetupMatrixRule(SetupMatrix *s, int p = 0);
+    /** Update the matrix pointer. */
+    DECLARE_EXPORT void setSetupMatrix(SetupMatrix*);
 
     /** Destructor. */
     DECLARE_EXPORT ~SetupMatrixRule();
@@ -4783,7 +4786,7 @@ class SetupMatrixRule : public Object
       m->addDurationField<Cls>(Tags::duration, &Cls::getDuration, &Cls::setDuration);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
-      m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, NULL, MetaFieldBase::DONT_SERIALIZE + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix, MetaFieldBase::DONT_SERIALIZE + MetaFieldBase::PARENT);
     }
   private:
     /** Original setup. */
@@ -4900,12 +4903,6 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
 
     /** Destructor. */
     DECLARE_EXPORT ~SetupMatrix();
-
-    /** This is a factory method that creates a new rule<br>
-      * This method is intended to be used to create objects when reading
-      * XML input data.
-      */
-    DECLARE_EXPORT SetupMatrixRule* createRule(const DataValueDict&);
 
     static int initialize();
 
@@ -5849,7 +5846,6 @@ class Plan : public Plannable, public Object
 
     const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
-    DECLARE_EXPORT void writeElement(Serializer *, const Keyword &, mode=DEFAULT) const;
 
     static inline void registerFields(MetaClass* m)
     {

@@ -44,8 +44,8 @@
   </resources>
   <operations>
     <operation name="make item 1" xsi:type="operation_split">
-      <alternates>
-        <alternate>
+      <suboperations>
+        <suboperation>
           <operation name="make item 1 option A" xsi:type="operation_fixed_time">
             <loads>
               <load>
@@ -66,9 +66,9 @@
             <size_minimum>0</size_minimum>
             <duration>P3D</duration>
           </operation>
-          <percent>30</percent>
-        </alternate>
-        <alternate>
+          <priority>30</priority>
+        </suboperation>
+        <suboperation>
           <operation name="make item 1 option B" xsi:type="operation_fixed_time">
             <flows>
               <flow xsi:type="flow_end">
@@ -89,9 +89,9 @@
             <size_minimum>0</size_minimum>
             <duration>P5D</duration>
           </operation>
-          <percent>35</percent>
-        </alternate>
-        <alternate>
+          <priority>35</priority>
+        </suboperation>
+        <suboperation>
           <operation name="make item 1 option C" xsi:type="operation_fixed_time">
             <flows>
               <flow xsi:type="flow_end">
@@ -112,9 +112,9 @@
             <size_minimum>0</size_minimum>
             <duration>P10D</duration>
           </operation>
-          <percent>35</percent>
-        </alternate>
-      </alternates>
+          <priority>35</priority>
+        </suboperation>
+      </suboperations>
     </operation>
   </operations>
   <buffers>
@@ -196,8 +196,8 @@
           <quantity>2</quantity>
         </flow>
       </flows>
-      <alternates>
-        <alternate>
+      <suboperations>
+        <suboperation>
           <operation name="make item 2 option A" xsi:type="operation_fixed_time">
             <loads>
               <load>
@@ -214,9 +214,9 @@
             <size_minimum>0</size_minimum>
             <duration>P3D</duration>
           </operation>
-          <percent>30</percent>
-        </alternate>
-        <alternate>
+          <priority>30</priority>
+        </suboperation>
+        <suboperation>
           <operation name="make item 2 option B" xsi:type="operation_fixed_time">
             <flows>
               <flow xsi:type="flow_start">
@@ -233,9 +233,9 @@
             <size_minimum>0</size_minimum>
             <duration>P5D</duration>
           </operation>
-          <percent>35</percent>
-        </alternate>
-        <alternate>
+          <priority>35</priority>
+        </suboperation>
+        <suboperation>
           <operation name="make item 2 option C" xsi:type="operation_fixed_time">
             <flows>
               <flow xsi:type="flow_start">
@@ -252,9 +252,9 @@
             <size_minimum>0</size_minimum>
             <duration>P10D</duration>
           </operation>
-          <percent>35</percent>
-        </alternate>
-      </alternates>
+          <priority>35</priority>
+        </suboperation>
+      </suboperations>
     </operation>
   </operations>
   <buffers>
@@ -338,8 +338,8 @@
           <quantity>1</quantity>
         </flow>
       </flows>
-      <alternates>
-        <alternate>
+      <suboperations>
+        <suboperation>
           <operation name="make item 3 option A" xsi:type="operation_fixed_time">
             <loads>
               <load>
@@ -356,10 +356,10 @@
             <size_minimum>0</size_minimum>
             <duration>P3D</duration>
           </operation>
-          <percent>30</percent>
+          <priority>30</priority>
           <effective_end>2014-08-01T00:00:00</effective_end>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="make item 3 option B" xsi:type="operation_fixed_time">
             <flows>
               <flow xsi:type="flow_start">
@@ -376,10 +376,10 @@
             <size_minimum>0</size_minimum>
             <duration>P5D</duration>
           </operation>
-          <percent>35</percent>
+          <priority>35</priority>
           <effective_end>2014-09-01T00:00:00</effective_end>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="make item 3 option C" xsi:type="operation_fixed_time">
             <flows>
               <flow xsi:type="flow_start">
@@ -396,32 +396,32 @@
             <size_minimum>0</size_minimum>
             <duration>P10D</duration>
           </operation>
-          <percent>35</percent>
+          <priority>35</priority>
           <effective_end>2014-09-01T00:00:00</effective_end>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="make item 3 option B"/>
-          <percent>25</percent>
+          <priority>25</priority>
           <effective_start>2014-09-01T00:00:00</effective_start>
           <effective_end>2014-10-01T00:00:00</effective_end>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="make item 3 option C"/>
-          <percent>75</percent>
+          <priority>75</priority>
           <effective_start>2014-09-01T00:00:00</effective_start>
           <effective_end>2014-10-01T00:00:00</effective_end>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="make item 3 option B"/>
-          <percent>20</percent>
+          <priority>20</priority>
           <effective_start>2014-10-01T00:00:00</effective_start>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="make item 3 option C"/>
-          <percent>80</percent>
+          <priority>80</priority>
           <effective_start>2014-10-01T00:00:00</effective_start>
-        </alternate>
-      </alternates>
+        </suboperation>
+      </suboperations>
     </operation>
   </operations>
   <buffers>
@@ -536,8 +536,8 @@
           <quantity>2</quantity>
         </flow>
       </flows>
-      <alternates>
-        <alternate>
+      <suboperations>
+        <suboperation>
           <operation name="make item 4 option A" xsi:type="operation_fixed_time">
             <loads>
               <load>
@@ -555,9 +555,9 @@
             <size_multiple>10</size_multiple>
             <duration>P3D</duration>
           </operation>
-          <percent>30</percent>
-        </alternate>
-        <alternate>
+          <priority>30</priority>
+        </suboperation>
+        <suboperation>
           <operation name="make item 4 option B" xsi:type="operation_fixed_time">
             <flows>
               <flow xsi:type="flow_start">
@@ -575,9 +575,9 @@
             <size_multiple>10</size_multiple>
             <duration>P5D</duration>
           </operation>
-          <percent>35</percent>
-        </alternate>
-        <alternate>
+          <priority>35</priority>
+        </suboperation>
+        <suboperation>
           <operation name="make item 4 option C" xsi:type="operation_fixed_time">
             <flows>
               <flow xsi:type="flow_start">
@@ -595,9 +595,9 @@
             <size_multiple>10</size_multiple>
             <duration>P10D</duration>
           </operation>
-          <percent>35</percent>
-        </alternate>
-      </alternates>
+          <priority>35</priority>
+        </suboperation>
+      </suboperations>
     </operation>
   </operations>
   <buffers>

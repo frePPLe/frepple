@@ -1673,13 +1673,13 @@ class MetaFieldBase
       BASE = 2,              // The default value. The field will be serialized
                              // and deserialized normally.
       PLAN = 4,              // Marks fields containing planning output. It is
-                             // only serialized when we request such info. 
+                             // only serialized when we request such info.
       DETAIL = 8,            // Marks fields containing more detail than is
                              // required to restore all state.
-      DONT_SERIALIZE = 16,   // These fields are not intended to be ever 
+      DONT_SERIALIZE = 16,   // These fields are not intended to be ever
                              // serialized.
       COMPUTED = 32,         // A computed field doesn't consume any storage
-      PARENT = 64            // If set, the constructor of the child object 
+      PARENT = 64            // If set, the constructor of the child object
                              // will get a pointer to the parent as extra
                              // argument.
     };
@@ -3232,6 +3232,11 @@ class PythonData : public DataValue
       Py_INCREF(obj);
     }
 
+    /** Copy constructor.<br>
+      * The reference counter isn't increased.
+      */
+    PythonData(const PythonData& o) : obj(o) {}
+
     /** Constructor from an existing Python object. */
     PythonData(const PyObject* o)
       : obj(o ? const_cast<PyObject*>(o) : Py_None)
@@ -3418,10 +3423,10 @@ class PythonData : public DataValue
       return result;
     }
 
-    Object* getObject() const
-    {
-      return reinterpret_cast<Object*>(obj);
-    }
+    /** Return the frePPle Object referred to by the Python value.
+      * If it points to a non-frePPLe object, the return value is NULL.
+      */
+    DECLARE_EXPORT Object* getObject() const;
 
     /** Constructor from a pointer to an Object.<br>
       * The metadata of the Object instances allow us to create a Python
@@ -3651,7 +3656,7 @@ class PythonDataValueDict : public DataValueDict
       }
       PyObject* val = PyDict_GetItemString(kwds, k.getName().c_str());
       const_cast<PythonDataValueDict*>(this)->result = PythonData(val);
-      return &result;
+      return val ? &result : NULL;
     }
 };
 
@@ -3754,12 +3759,12 @@ class Object : public PyObject
         Py_ssize_t pos = 0;
         while (PyDict_Next(kwds, &pos, &key, &value))
         {
-          PythonData field(value);
           PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
 		      DataKeyword attr(PyBytes_AsString(key_utf8));
           Py_DECREF(key_utf8);
           if (!attr.isA(Tags::name) && !attr.isA(Tags::type) && !attr.isA(Tags::action))
           {
+            PythonData field(value);
             const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
             if (!fmeta && x->getType().category)
               fmeta = x->getType().category->findField(attr.getHash());
@@ -6773,7 +6778,7 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
       }
       Ptr *obj = static_cast<Ptr*>(el.getObject());
       if (!obj || (obj && (
-        (obj->getType().category && Ptr::metadata && *(obj->getType().category) == *(Ptr::metadata))
+        (obj->getType().category && *(obj->getType().category) == *(Ptr::metadata))
         || obj->getType() == *(Ptr::metadata)))
         )
         (static_cast<Cls*>(me)->*setf)(obj);

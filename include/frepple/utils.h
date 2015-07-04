@@ -211,6 +211,7 @@ template<class T> class MetaFieldBool;
 template<class T> class MetaFieldDuration;
 template<class T> class MetaFieldDurationDouble;
 template<class T> class MetaFieldString;
+template<class T, class u> class MetaFieldEnum;
 template<class T, class U> class MetaFieldPointer;
 template<class T> class MetaFieldUnsignedLong;
 template<class T> class MetaFieldPythonFunction;

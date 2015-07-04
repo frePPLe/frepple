@@ -4695,8 +4695,7 @@ class SetupMatrixRule : public Object
   public:
 
     /** Default constructor. */
-    SetupMatrixRule::SetupMatrixRule()
-      : cost(0), priority(0), matrix(NULL), nextRule(NULL), prevRule(NULL)
+    SetupMatrixRule() : cost(0), priority(0), matrix(NULL), nextRule(NULL), prevRule(NULL)
     {
       initType(metadata);
     }

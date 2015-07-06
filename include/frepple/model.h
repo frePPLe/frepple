@@ -1638,6 +1638,12 @@ class Operation : public HasName<Operation>,
         Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
         bool makeflowsloads=true) const;
 
+    /** Returns true for operation types that own suboperations. */
+    virtual bool hasSubOperations() const
+    {
+      return false;
+    }
+
     /** Calculates the daterange starting from (or ending at) a certain date
       * and using a certain amount of effective available time on the
       * operation.
@@ -3039,6 +3045,11 @@ class OperationRouting : public Operation
     /** Destructor. */
     DECLARE_EXPORT ~OperationRouting();
 
+    virtual bool hasSubOperations() const
+    {
+      return true;
+    }
+
     /** A operation of this type enforces the following rules on its
       * operationplans:
       *  - If an end date is given, sequentially use this method on the
@@ -3161,6 +3172,11 @@ class OperationSplit : public Operation
     /** Destructor. */
     DECLARE_EXPORT ~OperationSplit();
 
+    virtual bool hasSubOperations() const
+    {
+      return true;
+    }
+
     /** A operation of this type enforces the following rules on its
       * operationplans:
       *  - Very simple, accept any value. Ignore any lot size constraints
@@ -3225,6 +3241,11 @@ class OperationAlternate : public Operation
 
     /** Destructor. */
     DECLARE_EXPORT ~OperationAlternate();
+
+    virtual bool hasSubOperations() const
+    {
+      return true;
+    }
 
     /** Return the search mode. */
     SearchMode getSearch() const

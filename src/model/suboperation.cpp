@@ -74,7 +74,13 @@ DECLARE_EXPORT SubOperation::~SubOperation()
 
 DECLARE_EXPORT void SubOperation::setOwner(Operation* o)
 {
-  if (o == owner) return;
+  if (o == owner)
+    // No change
+    return;
+
+  if (o && !o->hasSubOperations())
+    // Some operation types don't have suboperations
+    throw DataException("Operation '" + o->getName() + "' can't have suboperations");
 
   // Remove from previous owner
   if (oper && owner)

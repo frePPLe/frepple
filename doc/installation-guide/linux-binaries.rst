@@ -166,7 +166,7 @@ Here are the steps to get a fully working environment.
 
    ::
 
-     frepplectl syncdb
+     frepplectl migrate
 
 #. **Optionally, load the demo dataset**
 
@@ -265,7 +265,7 @@ inspiration for your own deployments.
   sudo service apache2 restart
 
   # Create frepple database schema
-  frepplectl syncdb --noinput
+  frepplectl migrate --noinput
 
   # Make postgresql accessible for apache user without password
   sudo sh -c 'echo "localhost:5432:frepple:frepple:frepple" > ~www-data/.pgpass'

@@ -59,7 +59,7 @@ The connector provides the following functionality:
 
   ::
 
-     frepplectl syncdb
+     frepplectl migrate
 
 * | **Configure the following parameters**
   | In the frePPLe user interface, the menu item “admin/parameters” opens a

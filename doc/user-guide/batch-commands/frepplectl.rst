@@ -58,7 +58,13 @@ Commonly used subcommands are:
   | Run a development web server. Do not use for actual production.
 
 * | **syncdb**:
-  | Initializes an empty database with the frePPLe tables, indexes and sequences.
+  | Obsolete from v3.0 onwards. Please use the migrate command instead.
+
+* | **migrate**:
+  | Update the database structure with the latest definitions.
+  | This is used to generate the initial database schema.
+  | From version 3.0 onwards it is also used to upgrade an existing
+    frePPLe database from a previous release to the new release.
 
 * | **frepple_backup**:
   | Backs up the content of the database to a file.

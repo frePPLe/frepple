@@ -113,7 +113,7 @@ The connector has 2 components:
 
   ::
 
-      frepplectl syncdb
+      frepplectl migrate
 
 * **Configure the frePPLe parameters**:
 

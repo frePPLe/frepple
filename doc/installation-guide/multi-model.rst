@@ -101,7 +101,7 @@ The following steps are required to configure a multi-model setup.
 
   ::
 
-     frepplectl syncdb
+     frepplectl migrate
 
   To load the demo data in this database you run:
 

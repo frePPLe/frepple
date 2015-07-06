@@ -24,11 +24,14 @@ https://www.djangoproject.com for more information and an excellent tutorial.
 
 #. | **Define the database models**:
    | Edit the file models.py to describe the new database models you require.
-   | The database table and its indexes are created with:
+   | The database table and its indexes are created with the following two
+     commands. The first one generates an incremental database update script.
+     The second one executes the migration generated in the first step.
 
    ::
 
-      frepplectl syncdb
+      frepplectl makemigrations
+      frepplectl migrate
 
 #. | **Register the new models in the admin**:
    | You’ll need to edit the file admin.py.
@@ -66,12 +69,10 @@ https://www.djangoproject.com for more information and an excellent tutorial.
    | Note that this menu structure is not standard Django functionality,
      but specific to frePPLe.
 
-#. | **Add initial data**:
-   | In a subfolder called fixtures you can define initial data that is
-     loaded when you initialize your extension (ie when the command
-     “frepplectl syncdb” is run).
-   | Fixtures can also be loaded a) with the command “frepplectl
-     loaddata” or b) interactively in the execution screen.
+#. | **Add demo data**:
+   | In a subfolder called fixtures you can define demo datasets that can
+     be loaded with the command "frepplectl loaddata" or interactively
+     in the execution screen.
 
 #. | **Add custom commands**:
    | By creating files in the folder management/commands you can define extra

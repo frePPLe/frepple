@@ -25,7 +25,7 @@ import freppledb.common.fields
 
 
 def loadParameters(apps, schema_editor):
-  call_command('loaddata', "parameters.json", app_label="input")
+  call_command('loaddata', "parameters.json", app_label="input", verbosity=0)
 
 
 class Migration(migrations.Migration):

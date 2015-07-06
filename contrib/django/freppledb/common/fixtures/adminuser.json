@@ -1,3 +1,0 @@
-[
-{"pk": "2", "model": "common.user", "fields": {"username": "admin", "last_name": "system adminstrator account", "is_active": true, "is_superuser": true, "is_staff": true, "last_login": "2000-01-01 00:00:00", "groups": [], "user_permissions": [], "password": "sha1$a5978$f0fbb0b10f2c8d0ab78bd5ac7306a826dbec3b99", "email": "admin@your.company.com", "date_joined": "2000-01-01 00:00:00", "horizontype": true, "horizonlength": 6, "horizonunit": "month", "horizonbuckets": "week", "language": "auto"}}
-]

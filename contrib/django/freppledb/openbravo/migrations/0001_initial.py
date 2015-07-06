@@ -19,7 +19,7 @@ from django.core.management import call_command
 
 
 def loadParameters(apps, schema_editor):
-  call_command('loaddata', "parameters.json", app_label="openbravo")
+  call_command('loaddata', "parameters.json", app_label="openbravo", verbosity=0)
 
 
 class Migration(migrations.Migration):

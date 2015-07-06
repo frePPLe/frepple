@@ -14,13 +14,23 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from datetime import datetime
 
 from django.db import migrations
-from django.core.management import call_command
 
 
 def createAdminUser(apps, schema_editor):
-  call_command('loaddata', "adminuser.json", app_label="common")
+  from django.contrib.auth import get_user_model
+  User = get_user_model()
+  usr = User.objects.create_superuser('admin', 'your@company.com', 'admin')
+  usr.first_name = 'admin'
+  usr.last_name = 'admin'
+  usr.date_joined = datetime(2000, 1, 1)
+  usr.horizontype = True
+  usr.horizonlength = 6
+  usr.horizonunit = "month"
+  usr.language = "auto"
+  usr.save()
 
 
 class Migration(migrations.Migration):

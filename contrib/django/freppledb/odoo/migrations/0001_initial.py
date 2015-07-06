@@ -19,7 +19,7 @@ from django.db import migrations
 
 
 def loadParameters(apps, schema_editor):
-  call_command('loaddata', "parameters.json", app_label="odoo")
+  call_command('loaddata', "parameters.json", app_label="odoo", verbosity=0)
 
 
 class Migration(migrations.Migration):

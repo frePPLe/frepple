@@ -33,7 +33,7 @@ int Plan::initialize()
 {
   // Initialize the plan metadata.
   metadata = MetaCategory::registerCategory<Plan>("plan","");
-  registerFields(const_cast<MetaCategory*>(metadata));
+  registerFields<Plan>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python type
   PythonType& x = PythonExtension<Plan>::getPythonType();

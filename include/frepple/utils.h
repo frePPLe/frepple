@@ -213,7 +213,7 @@ template<class T> class MetaFieldUnsignedLong;
 template<class T> class MetaFieldPythonFunction;
 template<class T, class U> class MetaFieldIterator;
 template<class T, class U, class V> class MetaFieldIterator2;
-template<class T, class U, class V, class W> class MetaFieldIterator3;
+template<class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterator3;
 template<class T, class U, class V> class MetaFieldList;
 template<class T, class U> class MetaFieldList2;
 template<class T, class U> class MetaFieldList3;
@@ -4004,6 +4004,7 @@ class PythonIterator2 : public Object
       PyObject *result = iter.next();
       if (!result) return NULL;
       Py_INCREF(result);
+      Py_INCREF(result);
       return result;
     }
 };
@@ -4247,7 +4248,7 @@ class Tree : public NonCopyable
       * A node with color 'none' is a node that hasn't been inserted yet in
       * the tree.
       */
-    enum NodeColor {red, black, none};
+    enum NodeColor {red, black, none, head};
 
     /** @brief This class represents a node in the tree.
       *
@@ -4267,6 +4268,14 @@ class Tree : public NonCopyable
         string getName() const
         {
           return nm;
+        }
+
+        /** Return the color of this node: "red" or "black" for actual nodes,
+          * and "none" for the root node and nodes not yet inserted.
+          */
+        NodeColor getColor() const
+        {
+          return color;
         }
 
         /** Comparison operator. */
@@ -4345,8 +4354,7 @@ class Tree : public NonCopyable
     /** Default constructor. */
     Tree(bool b = false) : count(0), clearOnDestruct(b)
     {
-      // Color is used to distinguish header from root, in iterator.operator++
-      header.color = red;
+      header.color = head; // Mark as special head
       header.parent = NULL;
       header.left = &header;
       header.right = &header;
@@ -5099,6 +5107,16 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
           return static_cast<T*>(node);
         }
 
+        /** Return current value and advance the iterator. */
+        T* next()
+        {
+          if (node->getColor() == Tree::head)
+            return NULL;
+          T* tmp = static_cast<T*>(node);
+          node = node->increment();
+          return tmp;
+        }
+
         /** Pre-increment operator which moves the pointer to the next
           * element. */
         iterator& operator++()
@@ -5159,6 +5177,11 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     static iterator begin()
     {
       return st.begin();
+    }
+
+    static PyObject* createIterator(PyObject* self, PyObject* args)
+    {
+      return new PythonIterator2<iterator, T>(st.begin());
     }
 
     /** Returns false if no named entities have been defined yet. */
@@ -5535,6 +5558,19 @@ template <class T> class HasHierarchy : public HasName<T>
           return tmp;
         }
 
+        /** Return current member and advance the iterator. */
+        T* next()
+        {
+          if (!curmember)
+            return NULL;
+          T *tmp = static_cast<T*>(curmember);
+          if (member_iter)
+            curmember = curmember->next_brother;
+          else
+            curmember = static_cast<T*>(curmember->increment());
+          return tmp;
+        }
+
         /** Comparison operator. */
         bool operator==(const memberIterator& y) const
         {
@@ -5595,14 +5631,14 @@ template <class T> class HasHierarchy : public HasName<T>
       */
     bool hasOwner() const
     {
-      return parent!=NULL;
+      return parent ! =NULL;
     }
 
     /** Returns true if this entity has lower level entities belonging to
       * it. */
     bool isGroup() const
     {
-      return first_child!=NULL;
+      return first_child != NULL;
     }
 
     /** Changes the owner of the entity.<br>
@@ -5612,7 +5648,7 @@ template <class T> class HasHierarchy : public HasName<T>
     void setOwner(T* f);
 
     /** Returns the owning entity. */
-    T* getOwner() const
+    inline T* getOwner() const
     {
       return parent;
     }
@@ -5628,7 +5664,7 @@ template <class T> class HasHierarchy : public HasName<T>
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
-      m->addIterator2Field<Cls, typename Cls::memberIterator, Cls>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, MetaFieldBase::DETAIL + MetaFieldBase::PARENT);
+      m->addIterator3Field<Cls, typename Cls::memberIterator, Cls>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, MetaFieldBase::DETAIL + MetaFieldBase::PARENT);
     }
 
   private:

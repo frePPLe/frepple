@@ -1740,16 +1740,32 @@ class Operation : public HasName<Operation>,
       loc = l;
     }
 
-    /** Returns an reference to the list of flows. */
+    /** Returns an reference to the list of flows.
+      * TODO get rid of this method.
+      */
     const flowlist& getFlows() const
     {
       return flowdata;
     }
 
-    /** Returns an reference to the list of loads. */
+    /** Returns an reference to the list of flows. */
+    flowlist::const_iterator getFlowIterator() const
+    {
+      return flowdata.begin();
+    }
+
+    /** Returns an reference to the list of loads.
+      * TODO get rid of this method.
+      */
     const loadlist& getLoads() const
     {
       return loaddata;
+    }
+
+    /** Returns an reference to the list of loads. */
+    loadlist::const_iterator getLoadIterator() const
+    {
+      return loaddata.begin();
     }
 
     /** Return the flow that is associates a given buffer with this
@@ -1918,8 +1934,8 @@ class Operation : public HasName<Operation>,
       m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
       // XXX TODO m->addIteratorField<Cls, >(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, MetaFieldBase::DETAIL);
-      m->addListField<Cls, loadlist, Load>(Tags::loads, Tags::load, &Cls::getLoads, MetaFieldBase::DETAIL);
-      m->addListField<Cls, flowlist, Flow>(Tags::flows, Tags::flow, &Cls::getFlows, MetaFieldBase::DETAIL);
+      m->addIterator3Field<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, MetaFieldBase::DETAIL);
+      m->addIterator3Field<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, MetaFieldBase::DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
@@ -5760,140 +5776,6 @@ class LoadDefault : public Load
 };
 
 
-
-/** @brief This is the (logical) top class of the complete model.
-  *
-  * This is a singleton class: only a single instance can be created.
-  * The data model has other limitations that make it not obvious to support
-  * building multiple models/plans in memory of the same application: e.g.
-  * the operations, resources, problems, operationplans... etc are all
-  * implemented in static, global lists. An entity can't be simply linked with
-  * a particular plan if multiple ones would exist.
-  */
-class Plan : public Plannable, public Object
-{
-  private:
-    /** Current Date of this plan. */
-    Date cur_Date;
-
-    /** A name for this plan. */
-    string name;
-
-    /** A getDescription of this plan. */
-    string descr;
-
-    /** Pointer to the singleton plan object. */
-    static DECLARE_EXPORT Plan* thePlan;
-
-    /** The only constructor of this class is made private. An object of this
-      * class is created by the instance() member function.
-      */
-    Plan() : cur_Date(Date::now())
-    {
-      initType(metadata);
-    }
-
-  public:
-    /** Return a pointer to the singleton plan object.
-      * The singleton object is created during the initialization of the
-      * library.
-      */
-    static Plan& instance()
-    {
-      return *thePlan;
-    }
-
-    /** Destructor.
-      * @warning In multi threaded applications, the destructor is never called
-      * and the plan object leaks when we exit the application.
-      * In single-threaded applications this function is called properly, when
-      * the static plan variable is deleted.
-      */
-    DECLARE_EXPORT ~Plan();
-
-    /** Returns the plan name. */
-    string getName() const
-    {
-      return name;
-    }
-
-    /** Updates the plan name. */
-    void setName(string s)
-    {
-      name = s;
-    }
-
-    /** Returns the current date of the plan. */
-    Date getCurrent() const
-    {
-      return cur_Date;
-    }
-
-    /** Updates the current date of the plan. This method can be relatively
-      * heavy in a plan where operationplans already exist, since the
-      * detection for BeforeCurrent problems needs to be rerun.
-      */
-    DECLARE_EXPORT void setCurrent(Date);
-
-    /** Returns the description of the plan. */
-    string getDescription() const
-    {
-      return descr;
-    }
-
-    /** Updates the description of the plan. */
-    void setDescription(string str)
-    {
-      descr = str;
-    }
-
-    void setLogFile(string s)
-    {
-      Environment::setLogFile(s);
-    }
-
-    string getLogFile() const
-    {
-      return Environment::getLogFile();
-    }
-
-    /** Initialize the class. */
-    static int initialize();
-
-    virtual void updateProblems() {};
-
-    /** This method basically solves the whole planning problem. */
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
-
-    const MetaClass& getType() const {return *metadata;}
-    static DECLARE_EXPORT const MetaCategory* metadata;
-
-    static inline void registerFields(MetaClass* m)
-    {
-      m->addStringField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
-      m->addStringField<Plan>(Tags::description, &Plan::getDescription, &Plan::setDescription);
-      m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
-      m->addStringField<Plan>(Tags::logfile, &Plan::getLogFile, &Plan::setLogFile, MetaFieldBase::DONT_SERIALIZE);
-      Plannable::registerFields<Plan>(m);
-      m->addList2Field<Plan, Location>(Tags::locations, Tags::location);
-      m->addList2Field<Plan, Customer>(Tags::customers, Tags::customer);
-      m->addList2Field<Plan, Supplier>(Tags::suppliers, Tags::supplier);
-      m->addList2Field<Plan, Calendar>(Tags::calendars, Tags::calendar);
-      m->addList2Field<Plan, Operation>(Tags::operations, Tags::operation);
-      m->addList2Field<Plan, Item>(Tags::items, Tags::item);
-      m->addList2Field<Plan, Buffer>(Tags::buffers, Tags::buffer);
-      m->addList2Field<Plan, Demand>(Tags::demands, Tags::demand);
-      m->addList2Field<Plan, SetupMatrix>(Tags::setupmatrices, Tags::setupmatrix);
-      m->addList2Field<Plan, Skill>(Tags::skills, Tags::skill);
-      m->addList2Field<Plan, Resource>(Tags::resources, Tags::resource);
-      m->addList3Field<Plan, ResourceSkill>(Tags::resourceskills, Tags::resourceskill);
-      m->addList3Field<Plan, Load>(Tags::loads, Tags::load);
-      m->addList3Field<Plan, Flow>(Tags::flows, Tags::flow);
-      m->addList2Field<Plan, OperationPlan>(Tags::operationplans, Tags::operationplan);
-    }
-};
-
-
 /** @brief Represents the (independent) demand in the system. It can represent a
   * customer order or a forecast.
   *
@@ -6433,6 +6315,193 @@ inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
     return lp->isStart() ? getQuantity() : -getQuantity();
 }
 
+
+/** @brief This is the (logical) top class of the complete model.
+  *
+  * This is a singleton class: only a single instance can be created.
+  * The data model has other limitations that make it not obvious to support
+  * building multiple models/plans in memory of the same application: e.g.
+  * the operations, resources, problems, operationplans... etc are all
+  * implemented in static, global lists. An entity can't be simply linked with
+  * a particular plan if multiple ones would exist.
+  */
+class Plan : public Plannable, public Object
+{
+  private:
+    /** Current Date of this plan. */
+    Date cur_Date;
+
+    /** A name for this plan. */
+    string name;
+
+    /** A getDescription of this plan. */
+    string descr;
+
+    /** Pointer to the singleton plan object. */
+    static DECLARE_EXPORT Plan* thePlan;
+
+    /** The only constructor of this class is made private. An object of this
+      * class is created by the instance() member function.
+      */
+    Plan() : cur_Date(Date::now())
+    {
+      initType(metadata);
+    }
+
+  public:
+    /** Return a pointer to the singleton plan object.
+      * The singleton object is created during the initialization of the
+      * library.
+      */
+    static Plan& instance()
+    {
+      return *thePlan;
+    }
+
+    /** Destructor.
+      * @warning In multi threaded applications, the destructor is never called
+      * and the plan object leaks when we exit the application.
+      * In single-threaded applications this function is called properly, when
+      * the static plan variable is deleted.
+      */
+    DECLARE_EXPORT ~Plan();
+
+    /** Returns the plan name. */
+    string getName() const
+    {
+      return name;
+    }
+
+    /** Updates the plan name. */
+    void setName(string s)
+    {
+      name = s;
+    }
+
+    /** Returns the current date of the plan. */
+    Date getCurrent() const
+    {
+      return cur_Date;
+    }
+
+    /** Updates the current date of the plan. This method can be relatively
+      * heavy in a plan where operationplans already exist, since the
+      * detection for BeforeCurrent problems needs to be rerun.
+      */
+    DECLARE_EXPORT void setCurrent(Date);
+
+    /** Returns the description of the plan. */
+    string getDescription() const
+    {
+      return descr;
+    }
+
+    /** Updates the description of the plan. */
+    void setDescription(string str)
+    {
+      descr = str;
+    }
+
+    void setLogFile(string s)
+    {
+      Environment::setLogFile(s);
+    }
+
+    string getLogFile() const
+    {
+      return Environment::getLogFile();
+    }
+
+    /** Initialize the class. */
+    static int initialize();
+
+    virtual void updateProblems() {};
+
+    /** This method basically solves the whole planning problem. */
+    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+
+    Location::iterator getLocations() const
+    {
+      return Location::begin();
+    }
+
+    Customer::iterator getCustomers() const
+    {
+      return Customer::begin();
+    }
+
+    Supplier::iterator getSuppliers() const
+    {
+      return Supplier::begin();
+    }
+
+    Calendar::iterator getCalendars() const
+    {
+      return Calendar::begin();
+    }
+
+    Operation::iterator getOperations() const
+    {
+      return Operation::begin();
+    }
+
+    Item::iterator getItems() const
+    {
+      return Item::begin();
+    }
+
+    Buffer::iterator getBuffers() const
+    {
+      return Buffer::begin();
+    }
+
+    Demand::iterator getDemands() const
+    {
+      return Demand::begin();
+    }
+
+    SetupMatrix::iterator getSetupMatrices() const
+    {
+      return SetupMatrix::begin();
+    }
+
+    Skill::iterator getSkills() const
+    {
+      return Skill::begin();
+    }
+
+    Resource::iterator getResources() const
+    {
+      return Resource::begin();
+    }
+
+    const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
+
+    template<class Cls>static inline void registerFields(MetaClass* m)
+    {
+      m->addStringField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
+      m->addStringField<Plan>(Tags::description, &Plan::getDescription, &Plan::setDescription);
+      m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
+      m->addStringField<Plan>(Tags::logfile, &Plan::getLogFile, &Plan::setLogFile, MetaFieldBase::DONT_SERIALIZE);
+      Plannable::registerFields<Plan>(m);
+      m->addIterator3Field<Plan, Location::iterator, Location>(Tags::locations, Tags::location, &Plan::getLocations);
+      m->addIterator3Field<Plan, Customer::iterator, Customer>(Tags::customers, Tags::customer, &Plan::getCustomers);
+      m->addIterator3Field<Plan, Supplier::iterator, Supplier>(Tags::suppliers, Tags::supplier, &Plan::getSuppliers);
+      m->addIterator3Field<Plan, Calendar::iterator, Calendar>(Tags::calendars, Tags::calendar, &Plan::getCalendars);
+      m->addIterator3Field<Plan, Operation::iterator, Operation>(Tags::operations, Tags::operation, &Plan::getOperations);
+      m->addIterator3Field<Plan, Item::iterator, Item>(Tags::items, Tags::item, &Plan::getItems);
+      m->addIterator3Field<Plan, Buffer::iterator, Buffer>(Tags::buffers, Tags::buffer, &Plan::getBuffers);
+      m->addIterator3Field<Plan, Demand::iterator, Demand>(Tags::demands, Tags::demand, &Plan::getDemands);
+      m->addIterator3Field<Plan, SetupMatrix::iterator, SetupMatrix>(Tags::setupmatrices, Tags::setupmatrix, &Plan::getSetupMatrices);
+      m->addIterator3Field<Plan, Skill::iterator, Skill>(Tags::skills, Tags::skill, &Plan::getSkills);
+      m->addIterator3Field<Plan, Resource::iterator, Resource>(Tags::resources, Tags::resource, &Plan::getResources);
+      m->addList3Field<Plan, ResourceSkill>(Tags::resourceskills, Tags::resourceskill);
+      m->addList3Field<Plan, Load>(Tags::loads, Tags::load);
+      m->addList3Field<Plan, Flow>(Tags::flows, Tags::flow);
+      m->addList2Field<Plan, OperationPlan>(Tags::operationplans, Tags::operationplan);
+    }
+};
 
 
 /** @brief A problem of this class is created when an operationplan is being
@@ -8009,75 +8078,6 @@ class ProblemIterator
 };
 
 
-class BufferIterator
-  : public PythonIterator<BufferIterator,Buffer::memberIterator,Buffer>
-{
-  public:
-    BufferIterator(Buffer* b) : PythonIterator<BufferIterator,Buffer::memberIterator,Buffer>(b) {}
-    BufferIterator() {}
-};
-
-
-class LocationIterator
-  : public PythonIterator<LocationIterator,Location::memberIterator,Location>
-{
-  public:
-    LocationIterator(Location* b) : PythonIterator<LocationIterator,Location::memberIterator,Location>(b) {}
-    LocationIterator() {}
-};
-
-
-class CustomerIterator
-  : public PythonIterator<CustomerIterator,Customer::memberIterator,Customer>
-{
-  public:
-    CustomerIterator(Customer* b) : PythonIterator<CustomerIterator,Customer::memberIterator,Customer>(b) {}
-    CustomerIterator() {}
-};
-
-
-class SupplierIterator
-  : public PythonIterator<SupplierIterator,Supplier::memberIterator,Supplier>
-{
-  public:
-    SupplierIterator(Supplier* b) : PythonIterator<SupplierIterator,Supplier::memberIterator,Supplier>(b) {}
-    SupplierIterator() {}
-};
-
-
-class ItemIterator
-  : public PythonIterator<ItemIterator,Item::memberIterator,Item>
-{
-  public:
-    ItemIterator(Item* b) : PythonIterator<ItemIterator,Item::memberIterator,Item>(b) {}
-    ItemIterator() {}
-};
-
-
-class DemandIterator
-  : public PythonIterator<DemandIterator,Demand::memberIterator,Demand>
-{
-  public:
-    DemandIterator(Demand* b) : PythonIterator<DemandIterator,Demand::memberIterator,Demand>(b) {}
-    DemandIterator() {}
-};
-
-
-class ResourceIterator
-  : public PythonIterator<ResourceIterator,Resource::memberIterator,Resource>
-{
-  public:
-    ResourceIterator(Resource* b) : PythonIterator<ResourceIterator,Resource::memberIterator,Resource>(b) {}
-    ResourceIterator() {}
-};
-
-
-class OperationIterator
-  : public PythonIterator<OperationIterator,Operation::iterator,Operation>
-{
-};
-
-
 class SubOperationIterator : public PythonExtension<SubOperationIterator>
 {
   public:
@@ -8092,24 +8092,6 @@ class SubOperationIterator : public PythonExtension<SubOperationIterator>
     const Operation::Operationlist& oplist;
     Operation::Operationlist::const_iterator iter;
     PyObject *iternext();
-};
-
-
-class CalendarIterator
-  : public PythonIterator<CalendarIterator,Calendar::iterator,Calendar>
-{
-};
-
-
-class SetupMatrixIterator
-  : public PythonIterator<SetupMatrixIterator,SetupMatrix::iterator,SetupMatrix>
-{
-};
-
-
-class SkillIterator
-  : public PythonIterator<SkillIterator,Skill::iterator,Skill>
-{
 };
 
 

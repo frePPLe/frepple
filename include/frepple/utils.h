@@ -213,6 +213,7 @@ template<class T> class MetaFieldUnsignedLong;
 template<class T> class MetaFieldPythonFunction;
 template<class T, class U> class MetaFieldIterator;
 template<class T, class U, class V> class MetaFieldIterator2;
+template<class T, class U, class V, class W> class MetaFieldIterator3;
 template<class T, class U, class V> class MetaFieldList;
 template<class T, class U> class MetaFieldList2;
 template<class T, class U> class MetaFieldList3;
@@ -1513,7 +1514,7 @@ class PythonType : public NonCopyable
     DECLARE_EXPORT PythonType(size_t, const type_info*);
 
     /** Return a pointer to the actual Python PyTypeObject. */
-    PyTypeObject* type_object() const
+    inline PyTypeObject* type_object() const
     {
       return table;
     }
@@ -2016,6 +2017,18 @@ class MetaClass : public NonCopyable
       )
     {
       fields.push_back( new MetaFieldIterator2<Cls, Iter, Ptr>(k1, k2, getfunc, c) );
+      if (c & MetaFieldBase::PARENT)
+        parent = true;
+    }
+
+    template <class Cls, class Iter, class Ptr> inline void addIterator3Field(
+      const Keyword& k1, const Keyword& k2,
+      Iter (Cls::*getfunc)(void) const,
+      unsigned int c = MetaFieldBase::BASE
+      )
+    {
+      PythonIterator2<Iter, Ptr>::initialize();
+      fields.push_back( new MetaFieldIterator3<Cls, Iter, PythonIterator2<Iter, Ptr>, Ptr>(k1, k2, getfunc, c) );
       if (c & MetaFieldBase::PARENT)
         parent = true;
     }
@@ -3783,13 +3796,13 @@ class Object : public PyObject
     /** Initialize the object to a certain Python type. */
     inline void initType(const MetaClass *t)
     {
-      PyObject_INIT(this,t->pythonClass);
+      PyObject_INIT(this, t->pythonClass);
     }
 
     /** Initialize the object to a certain Python type. */
     inline void initType(PyTypeObject *t)
     {
-      PyObject_INIT(this,t);
+      PyObject_INIT(this, t);
     }
 
     /** Default getattro method. <br>
@@ -3875,6 +3888,8 @@ class Object : public PyObject
   * The structure of the C++ wrappers around the C Python API is heavily
   * inspired on the design of PyCXX.<br>
   * More information can be found on http://cxx.sourceforge.net
+  *
+  * TODO This class has become somewhat redundant, and we can do without.
   */
 template<class T>
 class PythonExtension: public Object, public NonCopyable
@@ -3915,6 +3930,81 @@ class PythonExtension: public Object, public NonCopyable
     static void deallocator(PyObject* o)
     {
       delete static_cast<T*>(o);
+    }
+};
+
+
+/** Wrapper class to expose frePPLe iterators to Python.
+  *
+  * The requirements for the argument classes are as follows:
+  *  - ITERCLASS must implement a method:
+  *         DATACLASS* next()
+  *    This returns the current value of the iterator, and then
+  *    advances it.
+  *  - If the iteration ends, the above method should return NULL.
+  *  - DATACLASS must be a subclass of Object, implementing the
+  *    type member to point to a MetaClass.
+  */
+template <class ITERCLASS, class DATACLASS>
+class PythonIterator2 : public Object
+{
+  public:
+    /** This method keeps the type information object for your extension. */
+    static PythonType& getPythonType()
+    {
+      static PythonType* cachedTypePtr = NULL;
+      if (cachedTypePtr) return *cachedTypePtr;
+
+      // Register a new type
+      cachedTypePtr = registerPythonType(
+        sizeof(PythonIterator2<ITERCLASS, class DATACLASS>),
+        &typeid(PythonIterator2<ITERCLASS, class DATACLASS>)
+        );
+
+      // Using our own memory deallocator
+      //xxxcachedTypePtr->supportdealloc( deallocator );
+
+      return *cachedTypePtr;
+    }
+
+    static int initialize()
+    {
+      // Initialize the type
+      PythonType& x = getPythonType();
+      x.setName(typeid(DATACLASS).name());
+      x.setDoc(typeid(DATACLASS).name());
+      //x.setName(DATACLASS::metadata->type + "Iterator");    XXX
+      //x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
+      x.supportiter();
+      return x.typeReady();
+      return 0;
+    }
+
+    /** Constructor from a pointer.
+      * The underlying iterator must have a matching constructor.
+      */
+    template <class OTHER> PythonIterator2(const OTHER *o) : iter(o)
+    {
+      this->initType(getPythonType().type_object());
+    }
+
+    /** Constructor from a reference.
+      * The underlying iterator must have a matching constructor.
+      */
+    template <class OTHER> PythonIterator2(const OTHER &o) : iter(o)
+    {
+      this->initType(getPythonType().type_object());
+    }
+
+  private:
+    ITERCLASS iter;
+
+    virtual PyObject* iternext()
+    {
+      PyObject *result = iter.next();
+      if (!result) return NULL;
+      Py_INCREF(result);
+      return result;
     }
 };
 
@@ -5606,6 +5696,7 @@ template <class A, class B, class C> class Association
     class ListA : public List
     {
       public:
+        /** Constructor. */
         ListA() {};
 
         /** @brief An iterator over the associated objects. */
@@ -5649,7 +5740,16 @@ template <class A, class B, class C> class Association
               nodeptr = nodeptr->nextA;
               return j;
             }
+
+            C* next()
+            {
+              C* tmp = nodeptr;
+              if (nodeptr)
+                nodeptr = nodeptr->nextA;
+              return tmp;
+            }
         };
+
         /** @brief An iterator over the associated objects. */
         class const_iterator
         {
@@ -5688,6 +5788,14 @@ template <class A, class B, class C> class Association
               const_iterator j = *this;
               nodeptr = nodeptr->nextA;
               return j;
+            }
+
+            C* next()
+            {
+              C* tmp = nodeptr;
+              if (nodeptr)
+                nodeptr = nodeptr->nextA;
+              return tmp;
             }
         };
 
@@ -5791,7 +5899,10 @@ template <class A, class B, class C> class Association
     class ListB : public List
     {
       public:
+        /** Constructor. */
         ListB() {};
+
+        // TODO Add a copy constructor as well?
 
         /** @brief An iterator over the associated objects. */
         class iterator
@@ -5830,8 +5941,16 @@ template <class A, class B, class C> class Association
             iterator operator++(int i)
             {
               iterator j = *this;
-              nodeptr = nodeptr->nextA;
+              nodeptr = nodeptr->nextB;
               return j;
+            }
+
+            C* next()
+            {
+              C* tmp = nodeptr;
+              if (nodeptr)
+                nodeptr = nodeptr->nextB;
+              return tmp;
             }
         };
 
@@ -5872,8 +5991,16 @@ template <class A, class B, class C> class Association
             const_iterator operator++(int i)
             {
               const_iterator j = *this;
-              nodeptr = nodeptr->nextA;
+              nodeptr = nodeptr->nextB;
               return j;
+            }
+
+            C* next()
+            {
+              C* tmp = nodeptr;
+              if (nodeptr)
+                nodeptr = nodeptr->nextB;
+              return tmp;
             }
         };
 
@@ -6840,6 +6967,15 @@ template <class Cls, class Ptr> class MetaFieldIterator : public MetaFieldBase
       return &singleKeyword;
     }
 
+    virtual bool isGroup() const
+    {
+      return true;
+    }
+
+    virtual const MetaClass* getClass() const
+    {
+      return Ptr::metadata;
+    }
   protected:
     /** Get function. */
     getFunction getf;
@@ -6899,6 +7035,69 @@ template <class Cls, class Iter, class Ptr> class MetaFieldIterator2 : public Me
     virtual const MetaClass* getClass() const
     {
       return Ptr::metadata;
+    }
+
+  protected:
+    /** Get function. */
+    getFunction getf;
+
+    const Keyword& singleKeyword;
+};
+
+
+template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterator3 : public MetaFieldBase
+{
+  public:
+    typedef Iter (Cls::*getFunction)(void) const;
+
+    MetaFieldIterator3(const Keyword& g,
+        const Keyword& n,
+        getFunction getfunc,
+        unsigned int c = BASE
+        ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n)
+    {
+      if (getfunc == NULL)
+        throw DataException("Getter function can't be NULL");
+    };
+
+    virtual void setField(Object* me, const DataValue& el) const {}
+
+    virtual void getField(Object* me, DataValue& el) const
+    {
+      PyIter *o = new PyIter((static_cast<Cls*>(me)->*getf)());
+      el.setObject(o);
+    }
+
+    virtual void writeField(Serializer& output) const
+    {
+      bool first = true;
+      Iter it = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
+      while (Ptr* ob = it.next())
+      {
+        if (first)
+        {
+          output.BeginList(getName());
+          first = false;
+        }
+		    output.writeElement(singleKeyword, ob);
+      }
+      if (!first)
+        output.EndList(getName());
+    }
+
+    virtual bool isGroup() const
+    {
+      return true;
+    }
+
+    virtual const MetaClass* getClass() const
+    {
+      return Ptr::metadata;
+    }
+
+    virtual const Keyword* getKeyword() const
+    {
+      return &singleKeyword;
     }
 
   protected:
@@ -7124,9 +7323,10 @@ class LibraryUtils
     static void initialize();
 };
 
+
 /** @brief A template class to expose iterators to Python. */
 template <class ME, class ITERCLASS, class DATACLASS>
-class FreppleIterator : public PythonExtension<ME>
+class PythonIterator : public PythonExtension<ME>
 {
   public:
     static int initialize()
@@ -7139,22 +7339,22 @@ class FreppleIterator : public PythonExtension<ME>
       return x.typeReady();
     }
 
-    FreppleIterator() : i(DATACLASS::begin())
+    PythonIterator() : i(DATACLASS::begin())
     {
       this->initType(PythonExtension<ME>::getPythonType().type_object());
     }
 
-    template <class OTHER> FreppleIterator(const OTHER *o) : i(o)
+    template <class OTHER> PythonIterator(const OTHER *o) : i(o)
     {
       this->initType(PythonExtension<ME>::getPythonType().type_object());
     }
 
-    template <class OTHER> FreppleIterator(const OTHER &o) : i(o)
+    template <class OTHER> PythonIterator(const OTHER &o) : i(o)
     {
       this->initType(PythonExtension<ME>::getPythonType().type_object());
     }
 
-    virtual ~FreppleIterator() {}
+    virtual ~PythonIterator() {}
 
     static PyObject* create(PyObject* self, PyObject* args)
     {

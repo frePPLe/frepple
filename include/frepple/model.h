@@ -40,7 +40,6 @@ namespace frepple
 {
 
 class Flow;
-class FlowIterator;
 class FlowEnd;
 class FlowFixedStart;
 class FlowFixedEnd;
@@ -69,7 +68,6 @@ class Plannable;
 class Calendar;
 class CalendarBucket;
 class Load;
-class LoadIterator;
 class LoadDefault;
 class Location;
 class Customer;
@@ -4376,7 +4374,6 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual double getFlowplanQuantity(const FlowPlan*) const;
 
     static int initialize();
-    static void writer(const MetaCategory*, Serializer*);
 
     string getTypeName() const
     {
@@ -4997,10 +4994,10 @@ class Skill : public HasName<Skill>, public HasSource
 
     typedef Association<Resource,Skill,ResourceSkill>::ListB resourcelist;
 
-    /** Returns an reference to the list of resources having this skill. */
-    const resourcelist& getResources() const
+    /** Returns an iterator over the list of resources having this skill. */
+    resourcelist::const_iterator getResources() const
     {
-      return resources;
+      return resources.begin();
     }
 
     /** Python interface to add a new resource. */
@@ -5014,7 +5011,7 @@ class Skill : public HasName<Skill>, public HasSource
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
-      m->addListField<Cls, resourcelist, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getResources, MetaFieldBase::DETAIL);
+      m->addIterator3Field<Cls, resourcelist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getResources, MetaFieldBase::DETAIL);
       HasSource::registerFields<Cls>(m);
     }
   private:
@@ -5121,16 +5118,25 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Returns a constant reference to the list of loads. It defines
       * which operations are using the resource.
+      * TODO Get rid of this
       */
     const loadlist& getLoads() const
     {
       return loads;
     }
 
-    /** Returns a constant reference to the list of skills. */
-    const skilllist& getSkills() const
+    /** Returns a constant reference to the list of loads. It defines
+      * which operations are using the resource.
+      */
+    loadlist::const_iterator getLoadIterator() const
     {
-      return skills;
+      return loads.begin();
+    }
+
+    /** Returns a constant reference to the list of skills. */
+    skilllist::const_iterator getSkills() const
+    {
+      return skills.begin();
     }
 
     /** Return the load that is associates a given operation with this
@@ -5236,8 +5242,8 @@ class Resource : public HasHierarchy<Resource>,
       m->addStringField<Cls>(Tags::setup, &Cls::getSetup, &Cls::setSetup);
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix);
       Plannable::registerFields<Cls>(m);
-      m->addListField<Cls, loadlist, Load>(Tags::loads, Tags::load, &Cls::getLoads, MetaFieldBase::DETAIL);
-      m->addListField<Cls, skilllist, ResourceSkill>(Tags::skills, Tags::skill, &Cls::getSkills, MetaFieldBase::DETAIL);
+      m->addIterator3Field<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, MetaFieldBase::DETAIL);
+      m->addIterator3Field<Cls, skilllist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getSkills, MetaFieldBase::DETAIL);
       // TODO XXX m->addIteratorField<Cls, LoadPlanIterator>(Tags::loadplans, &Cls::getLoadPlans, DETAIL);  TODO SHOULD BE ONLY THE ONES OF TYPE 1
       // TODO XXX m->addIteratorField<Cls, ProblemIterator>(Tags::problems, &Cls::getProblems, DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
@@ -5425,7 +5431,6 @@ class ResourceSkill : public Object,
 
     /** Initialize the class. */
     static int initialize();
-    static void writer(const MetaCategory*, Serializer*);
 
     /** Returns the resource. */
     Resource* getResource() const
@@ -5436,7 +5441,7 @@ class ResourceSkill : public Object,
     /** Updates the resource. This method can only be called on an instance. */
     void setResource(Resource* r)
     {
-      if (r) setPtrA(r,r->getSkills());
+      if (r) setPtrA(r, r->skills);
     }
 
     /** Returns the skill. */
@@ -5451,7 +5456,7 @@ class ResourceSkill : public Object,
     /** Updates the skill. This method can only be called on an instance. */
     void setSkill(Skill* s)
     {
-      if (s) setPtrB(s,s->getResources());
+      if (s) setPtrB(s, s->resources);
     }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
@@ -5634,7 +5639,6 @@ class Load
     virtual double getLoadplanQuantity(const LoadPlan*) const;
 
     static int initialize();
-    static void writer(const MetaCategory*, Serializer*);
 
     bool getHidden() const
     {
@@ -5705,12 +5709,6 @@ class Load
   }
   */
     }
-
-    typedef FlowIterator iterator;
-
-    static iterator begin();
-
-    static iterator end();
 
   private:
     /** This method is called to check the validity of the object.<br>
@@ -5790,7 +5788,10 @@ class Plan : public Plannable, public Object
     /** The only constructor of this class is made private. An object of this
       * class is created by the instance() member function.
       */
-    Plan() : cur_Date(Date::now()) {initType(metadata);}
+    Plan() : cur_Date(Date::now())
+    {
+      initType(metadata);
+    }
 
   public:
     /** Return a pointer to the singleton plan object.
@@ -5885,6 +5886,7 @@ class Plan : public Plannable, public Object
       m->addList2Field<Plan, SetupMatrix>(Tags::setupmatrices, Tags::setupmatrix);
       m->addList2Field<Plan, Skill>(Tags::skills, Tags::skill);
       m->addList2Field<Plan, Resource>(Tags::resources, Tags::resource);
+      m->addList3Field<Plan, ResourceSkill>(Tags::resourceskills, Tags::resourceskill);
       m->addList3Field<Plan, Load>(Tags::loads, Tags::load);
       m->addList3Field<Plan, Flow>(Tags::flows, Tags::flow);
       m->addList2Field<Plan, OperationPlan>(Tags::operationplans, Tags::operationplan);
@@ -7990,88 +7992,88 @@ inline int OperationPlan::sizeLoadPlans() const
 
 
 class ProblemIterator
-  : public FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>
+  : public PythonIterator<ProblemIterator,Problem::const_iterator,Problem>
 {
   public:
     /** Constructor starting the iteration from a certain problem. */
     ProblemIterator(Problem *x) :
-      FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>(x) {}
+      PythonIterator<ProblemIterator,Problem::const_iterator,Problem>(x) {}
 
     /** Constructor starting the iteration from a certain problem. */
     ProblemIterator(Problem &x) :
-      FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>(&x) {}
+      PythonIterator<ProblemIterator,Problem::const_iterator,Problem>(&x) {}
 
     /** Default constructor. */
     ProblemIterator() :
-      FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>() {}
+      PythonIterator<ProblemIterator,Problem::const_iterator,Problem>() {}
 };
 
 
 class BufferIterator
-  : public FreppleIterator<BufferIterator,Buffer::memberIterator,Buffer>
+  : public PythonIterator<BufferIterator,Buffer::memberIterator,Buffer>
 {
   public:
-    BufferIterator(Buffer* b) : FreppleIterator<BufferIterator,Buffer::memberIterator,Buffer>(b) {}
+    BufferIterator(Buffer* b) : PythonIterator<BufferIterator,Buffer::memberIterator,Buffer>(b) {}
     BufferIterator() {}
 };
 
 
 class LocationIterator
-  : public FreppleIterator<LocationIterator,Location::memberIterator,Location>
+  : public PythonIterator<LocationIterator,Location::memberIterator,Location>
 {
   public:
-    LocationIterator(Location* b) : FreppleIterator<LocationIterator,Location::memberIterator,Location>(b) {}
+    LocationIterator(Location* b) : PythonIterator<LocationIterator,Location::memberIterator,Location>(b) {}
     LocationIterator() {}
 };
 
 
 class CustomerIterator
-  : public FreppleIterator<CustomerIterator,Customer::memberIterator,Customer>
+  : public PythonIterator<CustomerIterator,Customer::memberIterator,Customer>
 {
   public:
-    CustomerIterator(Customer* b) : FreppleIterator<CustomerIterator,Customer::memberIterator,Customer>(b) {}
+    CustomerIterator(Customer* b) : PythonIterator<CustomerIterator,Customer::memberIterator,Customer>(b) {}
     CustomerIterator() {}
 };
 
 
 class SupplierIterator
-  : public FreppleIterator<SupplierIterator,Supplier::memberIterator,Supplier>
+  : public PythonIterator<SupplierIterator,Supplier::memberIterator,Supplier>
 {
   public:
-    SupplierIterator(Supplier* b) : FreppleIterator<SupplierIterator,Supplier::memberIterator,Supplier>(b) {}
+    SupplierIterator(Supplier* b) : PythonIterator<SupplierIterator,Supplier::memberIterator,Supplier>(b) {}
     SupplierIterator() {}
 };
 
 
 class ItemIterator
-  : public FreppleIterator<ItemIterator,Item::memberIterator,Item>
+  : public PythonIterator<ItemIterator,Item::memberIterator,Item>
 {
   public:
-    ItemIterator(Item* b) : FreppleIterator<ItemIterator,Item::memberIterator,Item>(b) {}
+    ItemIterator(Item* b) : PythonIterator<ItemIterator,Item::memberIterator,Item>(b) {}
     ItemIterator() {}
 };
 
 
 class DemandIterator
-  : public FreppleIterator<DemandIterator,Demand::memberIterator,Demand>
+  : public PythonIterator<DemandIterator,Demand::memberIterator,Demand>
 {
   public:
-    DemandIterator(Demand* b) : FreppleIterator<DemandIterator,Demand::memberIterator,Demand>(b) {}
+    DemandIterator(Demand* b) : PythonIterator<DemandIterator,Demand::memberIterator,Demand>(b) {}
     DemandIterator() {}
 };
 
 
 class ResourceIterator
-  : public FreppleIterator<ResourceIterator,Resource::memberIterator,Resource>
+  : public PythonIterator<ResourceIterator,Resource::memberIterator,Resource>
 {
   public:
-    ResourceIterator(Resource* b) : FreppleIterator<ResourceIterator,Resource::memberIterator,Resource>(b) {}
+    ResourceIterator(Resource* b) : PythonIterator<ResourceIterator,Resource::memberIterator,Resource>(b) {}
     ResourceIterator() {}
 };
 
 
 class OperationIterator
-  : public FreppleIterator<OperationIterator,Operation::iterator,Operation>
+  : public PythonIterator<OperationIterator,Operation::iterator,Operation>
 {
 };
 
@@ -8094,19 +8096,19 @@ class SubOperationIterator : public PythonExtension<SubOperationIterator>
 
 
 class CalendarIterator
-  : public FreppleIterator<CalendarIterator,Calendar::iterator,Calendar>
+  : public PythonIterator<CalendarIterator,Calendar::iterator,Calendar>
 {
 };
 
 
 class SetupMatrixIterator
-  : public FreppleIterator<SetupMatrixIterator,SetupMatrix::iterator,SetupMatrix>
+  : public PythonIterator<SetupMatrixIterator,SetupMatrix::iterator,SetupMatrix>
 {
 };
 
 
 class SkillIterator
-  : public FreppleIterator<SkillIterator,Skill::iterator,Skill>
+  : public PythonIterator<SkillIterator,Skill::iterator,Skill>
 {
 };
 
@@ -8126,34 +8128,6 @@ class SetupMatrixRuleIterator : public PythonExtension<SetupMatrixRuleIterator>
   private:
     SetupMatrix* matrix;
     SetupMatrixRule::iterator currule;
-    PyObject *iternext();
-};
-
-
-class ResourceSkillIterator : public PythonExtension<ResourceSkillIterator>
-{
-  public:
-    static int initialize();
-
-    ResourceSkillIterator(Resource* r)
-      : res(r), ir(r ? r->getSkills().begin() : NULL), skill(NULL), is(NULL)
-    {
-      if (!r)
-        throw LogicException("Creating resourceskill iterator for NULL resource");
-    }
-
-    ResourceSkillIterator(Skill* s)
-      : res(NULL), ir(NULL), skill(s), is(s ? s->getResources().begin() : NULL)
-    {
-      if (!s)
-        throw LogicException("Creating resourceskill iterator for NULL skill");
-    }
-
-  private:
-    Resource* res;
-    Resource::skilllist::const_iterator ir;
-    Skill* skill;
-    Skill::resourcelist::const_iterator is;
     PyObject *iternext();
 };
 
@@ -8223,7 +8197,7 @@ class CalendarEventIterator
 
 
 class OperationPlanIterator
-  : public FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>
+  : public PythonIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>
 {
   public:
     /** Constructor to iterate over all operationplans. */
@@ -8231,12 +8205,12 @@ class OperationPlanIterator
 
     /** Constructor to iterate over the operationplans of a single operation. */
     OperationPlanIterator(Operation* o)
-      : FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(o)
+      : PythonIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(o)
     {}
 
     /** Constructor to iterate over the suboperationplans of an operationplans. */
     OperationPlanIterator(OperationPlan* opplan)
-      : FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(opplan)
+      : PythonIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(opplan)
     {}
 };
 
@@ -8351,110 +8325,6 @@ class DemandPlanIterator : public PythonExtension<DemandPlanIterator>
   private:
     Demand* dem;
     Demand::OperationPlan_list::const_iterator i;
-    PyObject *iternext();
-};
-
-
-class LoadIterator : public PythonExtension<LoadIterator>  // TODO optimize storage and overhead
-{
-  public:
-    static int initialize();
-
-    LoadIterator(Resource* r)
-      : mode(1), res(r), ir(r ? r->getLoads().begin() : NULL),
-      oper(NULL), io(NULL), ioo(Operation::begin())
-    {
-      if (!r)
-        throw LogicException("Creating loadplan iterator for NULL resource");
-    }
-
-    LoadIterator(Operation* o)
-      : mode(2), res(NULL), ir(NULL), oper(o),
-      io(o ? o->getLoads().begin() : NULL), ioo(Operation::begin())
-    {
-      if (!o)
-        throw LogicException("Creating loadplan iterator for NULL operation");
-    }
-
-    LoadIterator()
-      : mode(3), res(NULL), ir(NULL),
-      oper(!Operation::empty() ? &*Operation::begin() : NULL),
-      io(!Operation::empty() ? Operation::begin()->getLoads().begin() : NULL),
-      ioo(Operation::begin())
-    {
-      while (io == oper->getLoads().end())
-      {
-        if (++ioo == Operation::end())
-          return;
-        oper = &*ioo;
-        io = Operation::loadlist::const_iterator(oper->getLoads().begin());
-      }
-    }
-
-  private:
-    /** Type of iteration:
-      *   1: loads of a resource
-      *   2: loads of an operation
-      *   3: all loads
-      */
-    unsigned short mode;
-    Resource* res;
-    Resource::loadlist::const_iterator ir;
-    Operation* oper;
-    Operation::loadlist::const_iterator io;
-    Operation::iterator ioo;
-    PyObject *iternext();
-};
-
-
-class FlowIterator : public PythonExtension<FlowIterator>  // TODO optimize storage and overhead
-{
-  public:
-    static int initialize();
-
-    FlowIterator(Buffer* b)
-      : mode(1), buf(b), ib(b ? b->getFlows().begin() : NULL),
-      oper(NULL), io(NULL), ioo(Operation::begin())
-    {
-      if (!b)
-        throw LogicException("Creating flowplan iterator for NULL buffer");
-    }
-
-    FlowIterator(Operation* o)
-      : mode(2), buf(NULL), ib(NULL), oper(o),
-      io(o ? o->getFlows().begin() : NULL), ioo(Operation::begin())
-    {
-      if (!o)
-        throw LogicException("Creating flowplan iterator for NULL operation");
-    }
-
-    FlowIterator()
-      : mode(3), buf(NULL), ib(NULL),
-      oper(!Operation::empty() ? &*Operation::begin() : NULL),
-      io(!Operation::empty() ? Operation::begin()->getFlows().begin() : NULL),
-      ioo(Operation::begin())
-    {
-      while (io == oper->getFlows().end())
-      {
-        if (++ioo == Operation::end())
-          return;
-        oper = &*ioo;
-        io = Operation::flowlist::const_iterator(oper->getFlows().begin());
-      }
-    }
-
-  private:
-    /** Type of iteration:
-      *   1: flows of a buffer
-      *   2: flows of an operation
-      *   3: all flows
-      */
-    unsigned short mode;
-    Buffer* buf;
-    Buffer::flowlist::const_iterator ib;
-    Operation* oper;
-    Operation::flowlist::const_iterator io;
-    Operation::iterator ioo;
     PyObject *iternext();
 };
 

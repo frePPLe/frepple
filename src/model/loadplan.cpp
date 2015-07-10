@@ -143,9 +143,13 @@ DECLARE_EXPORT void LoadPlan::setResource(Resource* newres, bool check)
     if (getLoad()->getSkill())
     {
       ok = false;
-      for(Resource::skilllist::const_iterator s = newres->getSkills().begin();
-        s != newres->getSkills().end() && !ok; s++)
-        if (s->getSkill() == getLoad()->getSkill()) ok = true;
+      Resource::skilllist::const_iterator s = newres->getSkills();
+      while(ResourceSkill *rs = s.next())
+        if (rs->getSkill() == getLoad()->getSkill())
+        {
+          ok = true;
+          break;
+        }
       if (!ok)
         throw DataException("Resource misses the skill specified on the load");
     }

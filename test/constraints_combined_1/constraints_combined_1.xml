@@ -87,16 +87,16 @@
 		</operation>
 		<operation name="Deliver product from factory 1 or 2" xsi:type="operation_alternate">
 			<size_multiple>1</size_multiple>
-			<alternates>
-				<alternate>
+			<suboperations>
+				<suboperation>
 					<operation name="Deliver product from factory 1 - 1 day" xsi:type="operation_fixed_time"/>
 					<priority>1</priority>
-				</alternate>
-				<alternate>
+				</suboperation>
+				<suboperation>
 					<operation name="Deliver product from factory 2 - 7 day" xsi:type="operation_fixed_time"/>
 					<priority>2</priority>
-				</alternate>
-			</alternates>
+				</suboperation>
+			</suboperations>
 		</operation>
 		<operation name="Deliver product from factory 2 - 1 day" xsi:type="operation_fixed_time">
 			<size_multiple>1</size_multiple>
@@ -110,16 +110,16 @@
 		</operation>
 		<operation name="Deliver product from factory 2 or 1" xsi:type="operation_alternate">
 			<size_multiple>1</size_multiple>
-			<alternates>
-				<alternate>
+			<suboperations>
+				<suboperation>
 					<operation name="Deliver product from factory 2 - 1 day" xsi:type="operation_fixed_time"/>
 					<priority>1</priority>
-				</alternate>
-				<alternate>
+				</suboperation>
+				<suboperation>
 					<operation name="Deliver product from factory 1 - 7 day" xsi:type="operation_fixed_time"/>
 					<priority>2</priority>
-				</alternate>
-			</alternates>
+				</suboperation>
+			</suboperations>
 		</operation>
 		<operation name="Make fabric @ factory 1" xsi:type="operation_time_per">
 			<size_multiple>1</size_multiple>

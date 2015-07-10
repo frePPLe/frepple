@@ -809,17 +809,29 @@ DECLARE_EXPORT int PythonType::typeReady()
 DECLARE_EXPORT void PythonType::evalException()
 {
   // Rethrowing the exception to catch its type better
-  try {throw;}
+  try {
+    throw;
+  }
   catch (const DataException& e)
-  {PyErr_SetString(PythonDataException, e.what());}
+  {
+    PyErr_SetString(PythonDataException, e.what());
+  }
   catch (const LogicException& e)
-  {PyErr_SetString(PythonLogicException, e.what());}
+  {
+    PyErr_SetString(PythonLogicException, e.what());
+  }
   catch (const RuntimeException& e)
-  {PyErr_SetString(PythonRuntimeException, e.what());}
+  {
+    PyErr_SetString(PythonRuntimeException, e.what());
+  }
   catch (const exception& e)
-  {PyErr_SetString(PyExc_Exception, e.what());}
+  {
+    PyErr_SetString(PyExc_Exception, e.what());
+  }
   catch (...)
-  {PyErr_SetString(PyExc_Exception, "Unidentified exception");}
+  {
+    PyErr_SetString(PyExc_Exception, "Unidentified exception");
+  }
 }
 
 

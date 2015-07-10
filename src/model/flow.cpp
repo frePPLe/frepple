@@ -34,7 +34,7 @@ int Flow::initialize()
 {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<Flow>(
-    "flow", "flows", MetaCategory::ControllerDefault, writer
+    "flow", "flows", MetaCategory::ControllerDefault
     );
   registerFields<Flow>(const_cast<MetaCategory*>(metadata));
   FlowStart::metadata = MetaClass::registerClass<FlowStart>(
@@ -60,25 +60,6 @@ int Flow::initialize()
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
-}
-
-
-void Flow::writer(const MetaCategory* c, Serializer* o)
-{
-  bool firstflow = true;
-  for (Operation::iterator i = Operation::begin(); i != Operation::end(); ++i)
-    for (Operation::flowlist::const_iterator j = i->getFlows().begin(); j != i->getFlows().end(); ++j)
-    {
-      if (firstflow)
-      {
-        o->BeginList(Tags::flows);
-        firstflow = false;
-      }
-      // We use the FULL mode, to force the flows being written regardless
-      // of the depth in the XML tree.
-      o->writeElement(Tags::flow, &*j, FULL);
-    }
-  if (!firstflow) o->EndList(Tags::flows);
 }
 
 
@@ -361,52 +342,5 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
   }
 }
 
-
-int FlowIterator::initialize()
-{
-  // Initialize the type
-  PythonType& x = PythonExtension<FlowIterator>::getPythonType();
-  x.setName("flowIterator");
-  x.setDoc("frePPLe iterator for flows");
-  x.supportiter();
-  return x.typeReady();
-}
-
-
-PyObject* FlowIterator::iternext()
-{
-  PyObject* result;
-  switch (mode)
-  {
-    case 1:
-      // Iterate over flows on a buffer
-      if (ib == buf->getFlows().end()) return NULL;
-      result = const_cast<Flow*>(&*ib);
-      ++ib;
-      break;
-    case 2:
-      // Iterate over flows on an operation
-      if (io == oper->getFlows().end()) return NULL;
-      result = const_cast<Flow*>(&*io);
-      ++io;
-      break;
-    case 3:
-      // Iterate over all flows
-      while (io == oper->getFlows().end())
-      {
-        if (++ioo == Operation::end())
-          return NULL;
-        oper = &*ioo;
-        io = Operation::flowlist::const_iterator(oper->getFlows().begin());
-      }
-      result = const_cast<Flow*>(&*io);
-      ++io;
-      break;
-    default:
-      throw LogicException("Unknown iterator mode");
-  }
-  Py_INCREF(result);
-  return result;
-}
 
 } // end namespace

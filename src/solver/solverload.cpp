@@ -86,12 +86,12 @@ DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo
     if (l->getSkill())
     {
       bool isqualified = false;
-      for (Resource::skilllist::const_iterator i = res->getSkills().begin();
-        i != res->getSkills().end() && !isqualified; ++i)
+      Resource::skilllist::const_iterator i = res->getSkills();
+      while (ResourceSkill *rs = i.next())
       {
-        if (i->getSkill() == l->getSkill()
-            && originalOpplan.start >= i->getEffective().getStart()
-            && originalOpplan.end <= i->getEffective().getEnd())
+        if (rs->getSkill() == l->getSkill()
+            && originalOpplan.start >= rs->getEffective().getStart()
+            && originalOpplan.end <= rs->getEffective().getEnd())
           isqualified = true;
       }
       // Next resource in the loop if not qualified

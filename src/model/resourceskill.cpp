@@ -32,7 +32,7 @@ int ResourceSkill::initialize()
 {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<ResourceSkill>(
-    "resourceskill", "resourceskills", MetaCategory::ControllerDefault, writer
+    "resourceskill", "resourceskills", MetaCategory::ControllerDefault
     );
   registerFields<ResourceSkill>(const_cast<MetaCategory*>(metadata));
   ResourceSkillDefault::metadata = MetaClass::registerClass<ResourceSkillDefault>(
@@ -94,25 +94,6 @@ DECLARE_EXPORT ResourceSkill::~ResourceSkill()
     getResource()->skills.erase(this);
   if (getSkill())
     getSkill()->resources.erase(this);
-}
-
-
-void ResourceSkill::writer(const MetaCategory* c, Serializer* o)
-{
-  bool first = true;
-  for (Resource::iterator i = Resource::begin(); i != Resource::end(); ++i)
-    for (Resource::skilllist::const_iterator j = i->getSkills().begin(); j != i->getSkills().end(); ++j)
-    {
-      if (first)
-      {
-        o->BeginList(Tags::resourceskills);
-        first = false;
-      }
-      // We use the FULL mode, to force the resource skills being written regardless
-      // of the depth in the XML tree.
-      o->writeElement(Tags::resourceskill, &*j, FULL);
-    }
-  if (!first) o->EndList(Tags::resourceskills);
 }
 
 
@@ -219,18 +200,19 @@ DECLARE_EXPORT void ResourceSkill::validate(Action action)
 
   // Check if a resourceskill with 1) identical resource, 2) identical skill and
   // 3) overlapping effectivity dates already exists
-  Skill::resourcelist::const_iterator i = skill->getResources().begin();
-  for (; i != skill->getResources().end(); ++i)
-    if (i->getResource() == res
-        && i->getEffective().overlap(getEffective())
-        && &*i != this)
+  Skill::resourcelist::const_iterator iter = skill->getResources();
+  ResourceSkill *resskill = NULL;
+  while (resskill = iter.next())
+    if (resskill->getResource() == res
+        && resskill->getEffective().overlap(getEffective())
+        && resskill != this)
       break;
 
   // Apply the appropriate action
   switch (action)
   {
     case ADD:
-      if (i != skill->getResources().end())
+      if (resskill)
       {
         throw DataException("Resourceskill of '" + res->getName() + "' and '"
             + skill->getName() + "' already exists");
@@ -240,51 +222,19 @@ DECLARE_EXPORT void ResourceSkill::validate(Action action)
       throw DataException("Can't update a resourceskill");
     case ADD_CHANGE:
       // ADD is handled in the code after the switch statement
-      if (i == skill->getResources().end()) break;
+      if (!resskill) break;
       throw DataException("Can't update a resourceskill");
     case REMOVE:
       // This resourceskill was only used temporarily during the reading process
       delete this;
-      if (i == skill->getResources().end())
+      if (!resskill)
         // Nothing to delete
         throw DataException("Can't remove nonexistent resourceskill of '"
             + res->getName() + "' and '" + skill->getName() + "'");
-      delete &*i;
+      delete resskill;
       return;
   }
 }
 
-
-int ResourceSkillIterator::initialize()
-{
-  // Initialize the type
-  PythonType& x = PythonExtension<ResourceSkillIterator>::getPythonType();
-  x.setName("resourceSkillIterator");
-  x.setDoc("frePPLe iterator for resource skills");
-  x.supportiter();
-  return x.typeReady();
-}
-
-
-PyObject* ResourceSkillIterator::iternext()
-{
-  PyObject* result;
-  if (res)
-  {
-    // Iterate over skills on a resource
-    if (ir == res->getSkills().end()) return NULL;
-    result = const_cast<ResourceSkill*>(&*ir);
-    ++ir;
-  }
-  else
-  {
-    // Iterate over resources having a skill
-    if (is == skill->getResources().end()) return NULL;
-    result = const_cast<ResourceSkill*>(&*is);
-    ++is;
-  }
-  Py_INCREF(result);
-  return result;
-}
 
 }

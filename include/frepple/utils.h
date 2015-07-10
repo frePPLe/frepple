@@ -199,6 +199,7 @@ class Keyword;
 class DataInput;
 class DataValue;
 class PythonFunction;
+template<class T, class U> class PythonIterator2;
 class DataValueDict;
 class MetaClass;
 template<class T> class MetaFieldDate;
@@ -3957,8 +3958,8 @@ class PythonIterator2 : public Object
 
       // Register a new type
       cachedTypePtr = registerPythonType(
-        sizeof(PythonIterator2<ITERCLASS, class DATACLASS>),
-        &typeid(PythonIterator2<ITERCLASS, class DATACLASS>)
+        sizeof(PythonIterator2<ITERCLASS, DATACLASS>),
+        &typeid(PythonIterator2<ITERCLASS, DATACLASS>)
         );
 
       // Using our own memory deallocator
@@ -4003,7 +4004,6 @@ class PythonIterator2 : public Object
     {
       PyObject *result = iter.next();
       if (!result) return NULL;
-      Py_INCREF(result);
       Py_INCREF(result);
       return result;
     }
@@ -5631,7 +5631,7 @@ template <class T> class HasHierarchy : public HasName<T>
       */
     bool hasOwner() const
     {
-      return parent ! =NULL;
+      return parent != NULL;
     }
 
     /** Returns true if this entity has lower level entities belonging to

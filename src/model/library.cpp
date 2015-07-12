@@ -120,7 +120,6 @@ void LibraryModel::initialize()
 
   // Initialize the operationplan metadata.
   nok += OperationPlan::initialize();
-  nok += OperationPlanIterator::initialize();
 
   // Initialize the problem metadata.
   nok += Problem::initialize();
@@ -178,10 +177,10 @@ void LibraryModel::initialize()
     "operations", Operation::createIterator, METH_NOARGS,
     "Returns an iterator over the operations.");
   PythonInterpreter::registerGlobalMethod(
-    "operationplans", OperationPlanIterator::create, METH_NOARGS,
+    "operationplans", PythonIterator2<OperationPlan::iterator, OperationPlan>::create, METH_NOARGS,
     "Returns an iterator over the operationplans.");
   PythonInterpreter::registerGlobalMethod(
-    "problems", Problem::createIterator, METH_NOARGS,
+    "problems", PythonIterator2<Problem::iterator, Problem>::create, METH_NOARGS,
     "Returns an iterator over the problems.");
   PythonInterpreter::registerGlobalMethod(
     "setupmatrices", SetupMatrix::createIterator, METH_NOARGS,

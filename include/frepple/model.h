@@ -740,8 +740,6 @@ class Problem : public NonCopyable, public Object
     /** Storing metadata on this class. */
     static DECLARE_EXPORT const MetaCategory* metadata;
 
-    inline static PyObject* createIterator(PyObject* self, PyObject* args);
-
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MetaFieldBase::BASE + MetaFieldBase::COMPUTED);
@@ -1759,6 +1757,8 @@ class Operation : public HasName<Operation>,
       return flowdata;
     }
 
+    // XXX OperationPlan::iterator getOperationPlans();
+
     /** Returns an reference to the list of flows. */
     flowlist::const_iterator getFlowIterator() const
     {
@@ -1944,7 +1944,7 @@ class Operation : public HasName<Operation>,
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
       m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
-      // XXX TODO m->addIteratorField<Cls, >(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, MetaFieldBase::DETAIL);
+      // XXX m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, MetaFieldBase::DETAIL);
       m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator);
       m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
@@ -2175,6 +2175,14 @@ class OperationPlan
             else
               opplan = NULL;
           }
+          return tmp;
+        }
+
+        /** Return current elemetn and advance the iterator. */
+        OperationPlan* next()
+        {
+          OperationPlan* tmp = opplan;
+          operator++();
           return tmp;
         }
 
@@ -6500,12 +6508,6 @@ inline Problem::iterator Problem::List::end() const
 }
 
 
-inline PyObject* Problem::createIterator(PyObject* self, PyObject* args)
-{
-  return new PythonIterator2<Problem::iterator, Problem>();
-}
-
-
 /** @brief This is the (logical) top class of the complete model.
   *
   * This is a singleton class: only a single instance can be created.
@@ -8112,25 +8114,6 @@ class CalendarEventIterator
     Calendar::EventIterator eventiter;
     bool forward;
     PyObject *iternext();
-};
-
-
-class OperationPlanIterator
-  : public PythonIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>
-{
-  public:
-    /** Constructor to iterate over all operationplans. */
-    OperationPlanIterator() {}
-
-    /** Constructor to iterate over the operationplans of a single operation. */
-    OperationPlanIterator(Operation* o)
-      : PythonIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(o)
-    {}
-
-    /** Constructor to iterate over the suboperationplans of an operationplans. */
-    OperationPlanIterator(OperationPlan* opplan)
-      : PythonIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(opplan)
-    {}
 };
 
 

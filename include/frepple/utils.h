@@ -3985,13 +3985,19 @@ class PythonIterator2 : public Object
       this->initType(getPythonType().type_object());
     }
 
+    static PyObject* create(PyObject* self, PyObject* args)
+    {
+      return new MYCLASS();
+    }
+
   private:
     ITERCLASS iter;
 
     virtual PyObject* iternext()
     {
       PyObject *result = iter.next();
-      if (!result) return NULL;
+      if (!result)
+        return NULL;
       Py_INCREF(result);
       return result;
     }

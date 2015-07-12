@@ -51,6 +51,8 @@
               </loads>
               <duration>P7D</duration>
             </operation>
+            </suboperation>
+            <suboperation>
             <operation name="operation 1 step2"
               xsi:type="operation_fixed_time">
               <duration>P7D</duration>

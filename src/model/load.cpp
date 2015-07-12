@@ -213,11 +213,31 @@ DECLARE_EXPORT void Load::setAlternateName(string n)
 }
 
 
+DECLARE_EXPORT void Load::setOperation(Operation* o)
+{
+  // Validate the input
+  if (!setup.empty() && o)
+  {
+    // Guarantuee that only a single load has a setup.
+    // Alternates of that load can have a setup as well.
+    for (Operation::loadlist::iterator i = o->loaddata.begin();
+        i != o->loaddata.end(); ++i)
+      if (&*i != this && !i->setup.empty()
+          && i->getAlternate() != this && getAlternate() != &*i
+          && i->getAlternate() != getAlternate())
+        throw DataException("Only a single load of an operation can specify a setup");
+  }
+
+  // Update the field
+  if (o)
+    setPtrA(o,o->getLoads());
+}
+
+
 DECLARE_EXPORT void Load::setSetup(string n)
 {
-  setup = n;
-
-  if (!setup.empty())
+  // Validate the input
+  if (!n.empty() && getOperation())
   {
     // Guarantuee that only a single load has a setup.
     // Alternates of that load can have a setup as well.
@@ -228,6 +248,9 @@ DECLARE_EXPORT void Load::setSetup(string n)
           && i->getAlternate() != getAlternate())
         throw DataException("Only a single load of an operation can specify a setup");
   }
+
+  // Update the field
+  setup = n;
 }
 
 

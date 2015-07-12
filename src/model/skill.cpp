@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* SkillDefault::metadata;
 int Skill::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Skill>("skill", "skills", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Skill>("skill", "skills", reader, finder);
   registerFields<Skill>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class

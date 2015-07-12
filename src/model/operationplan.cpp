@@ -32,8 +32,9 @@ DECLARE_EXPORT unsigned long OperationPlan::counterMin = 2;
 int OperationPlan::initialize()
 {
   // Initialize the metadata
-  metacategory = MetaCategory::registerCategory<OperationPlan>("operationplan", "operationplans",
-      createOperationPlan, OperationPlan::writer, OperationPlan::finder);
+  metacategory = MetaCategory::registerCategory<OperationPlan>(
+    "operationplan", "operationplans", createOperationPlan, OperationPlan::finder
+    );
   registerFields<OperationPlan>(const_cast<MetaCategory*>(metacategory));
   OperationPlan::metadata = MetaClass::registerClass<OperationPlan>("operationplan", "operationplan", true);
 
@@ -851,18 +852,6 @@ DECLARE_EXPORT Duration OperationPlan::getUnavailable() const
   Duration x;
   DateRange y = getOperation()->calculateOperationTime(dates.getStart(), dates.getEnd(), &x);
   return dates.getDuration() - x;
-}
-
-
-DECLARE_EXPORT void OperationPlan::writer(const MetaCategory* c, Serializer* o)
-{
-  if (!empty())
-  {
-    o->BeginList(*c->grouptag);
-    for (iterator i=begin(); i!=end(); ++i)
-      o->writeElement(*c->typetag, *i);
-    o->EndList(*c->grouptag);
-  }
 }
 
 

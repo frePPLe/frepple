@@ -52,17 +52,6 @@ int SubOperation::initialize()
 }
 
 
-int SubOperationIterator::initialize()
-{
-  // Initialize the type
-  PythonType& x = PythonExtension<SubOperationIterator>::getPythonType();
-  x.setName("suboperationIterator");
-  x.setDoc("frePPLe iterator for suboperations");
-  x.supportiter();
-  return x.typeReady();
-}
-
-
 DECLARE_EXPORT SubOperation::~SubOperation()
 {
   if (owner)
@@ -139,16 +128,6 @@ DECLARE_EXPORT void SubOperation::setPriority(int pr)
       ++iter;
     owner->getSubOperations().insert(iter, this);
   }
-}
-
-
-PyObject *SubOperationIterator::iternext()
-{
-  if (iter == oplist.end())
-    return NULL;
-  PyObject* result = *(iter++);
-  Py_INCREF(result);
-  return result;
 }
 
 

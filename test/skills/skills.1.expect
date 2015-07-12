@@ -6,15 +6,39 @@
   and organized in various levels of qualification.
   </description>
 	<current>2013-01-01T00:00:00</current>
-	<operations>
-		<operation>
-			<name>1. delivery end item</name>
-		</operation>
-		<operation xsi:type="operation_time_per">
-			<name>1. make end item</name>
-			<duration_per>PT1H6.600S</duration_per>
-		</operation>
-	</operations>
+	<resources>
+		<resource>
+			<name>Bob</name>
+			<owner>
+				<name>Operators</name>
+			</owner>
+			<cost>1</cost>
+		</resource>
+		<resource>
+			<name>John</name>
+			<owner>
+				<name>Operators</name>
+			</owner>
+			<cost>1</cost>
+		</resource>
+		<resource>
+			<name>Neil</name>
+			<owner>
+				<name>Operators</name>
+			</owner>
+			<cost>1</cost>
+		</resource>
+		<resource>
+			<name>Operators</name>
+		</resource>
+		<resource>
+			<name>Paul</name>
+			<owner>
+				<name>Operators</name>
+			</owner>
+			<cost>1</cost>
+		</resource>
+	</resources>
 	<items>
 		<item>
 			<name>1. end item</name>
@@ -28,6 +52,42 @@
 			</producing>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation>
+			<name>1. delivery end item</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>1. end item</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>1. make end item</name>
+			<loads>
+				<load>
+					<resource>
+						<name>Operators</name>
+					</resource>
+					<search>3</search>
+					<skill>
+						<name>Qualification B</name>
+					</skill>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>1. end item</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT1H6.600S</duration_per>
+		</operation>
+	</operations>
 	<demands>
 		<demand>
 			<name>1. order</name>
@@ -69,163 +129,65 @@
 	<skills>
 		<skill>
 			<name>Qualification A</name>
+			<resourceskills>
+				<resourceskill>
+					<resource>
+						<name>Neil</name>
+					</resource>
+				</resourceskill>
+				<resourceskill>
+					<resource>
+						<name>Paul</name>
+					</resource>
+				</resourceskill>
+			</resourceskills>
 		</skill>
 		<skill>
 			<name>Qualification B</name>
+			<resourceskills>
+				<resourceskill>
+					<resource>
+						<name>Neil</name>
+					</resource>
+				</resourceskill>
+				<resourceskill>
+					<resource>
+						<name>Bob</name>
+					</resource>
+				</resourceskill>
+				<resourceskill>
+					<resource>
+						<name>Paul</name>
+					</resource>
+				</resourceskill>
+			</resourceskills>
 		</skill>
 		<skill>
 			<name>Qualification C</name>
+			<resourceskills>
+				<resourceskill>
+					<resource>
+						<name>Neil</name>
+					</resource>
+				</resourceskill>
+				<resourceskill>
+					<resource>
+						<name>Bob</name>
+					</resource>
+				</resourceskill>
+				<resourceskill>
+					<resource>
+						<name>John</name>
+					</resource>
+				</resourceskill>
+				<resourceskill>
+					<resource>
+						<name>Paul</name>
+					</resource>
+				</resourceskill>
+			</resourceskills>
 		</skill>
 	</skills>
-	<resources>
-		<resource>
-			<name>Bob</name>
-			<owner>
-				<name>Operators</name>
-			</owner>
-			<cost>1</cost>
-		</resource>
-		<resource>
-			<name>John</name>
-			<owner>
-				<name>Operators</name>
-			</owner>
-			<cost>1</cost>
-		</resource>
-		<resource>
-			<name>Neil</name>
-			<owner>
-				<name>Operators</name>
-			</owner>
-			<cost>1</cost>
-		</resource>
-		<resource>
-			<name>Operators</name>
-			<members>
-				<resource>
-					<name>Neil</name>
-				</resource>
-				<resource>
-					<name>Bob</name>
-				</resource>
-				<resource>
-					<name>John</name>
-				</resource>
-				<resource>
-					<name>Paul</name>
-				</resource>
-			</members>
-		</resource>
-		<resource>
-			<name>Paul</name>
-			<owner>
-				<name>Operators</name>
-			</owner>
-			<cost>1</cost>
-		</resource>
-	</resources>
-	<resourceskills>
-		<resourceskill>
-			<resource>
-				<name>Bob</name>
-			</resource>
-			<skill>
-				<name>Qualification B</name>
-			</skill>
-		</resourceskill>
-		<resourceskill>
-			<resource>
-				<name>Bob</name>
-			</resource>
-			<skill>
-				<name>Qualification C</name>
-			</skill>
-		</resourceskill>
-		<resourceskill>
-			<resource>
-				<name>John</name>
-			</resource>
-			<skill>
-				<name>Qualification C</name>
-			</skill>
-		</resourceskill>
-		<resourceskill>
-			<resource>
-				<name>Neil</name>
-			</resource>
-			<skill>
-				<name>Qualification A</name>
-			</skill>
-		</resourceskill>
-		<resourceskill>
-			<resource>
-				<name>Neil</name>
-			</resource>
-			<skill>
-				<name>Qualification B</name>
-			</skill>
-		</resourceskill>
-		<resourceskill>
-			<resource>
-				<name>Neil</name>
-			</resource>
-			<skill>
-				<name>Qualification C</name>
-			</skill>
-		</resourceskill>
-		<resourceskill>
-			<resource>
-				<name>Paul</name>
-			</resource>
-			<skill>
-				<name>Qualification A</name>
-			</skill>
-		</resourceskill>
-		<resourceskill>
-			<resource>
-				<name>Paul</name>
-			</resource>
-			<skill>
-				<name>Qualification B</name>
-			</skill>
-		</resourceskill>
-		<resourceskill>
-			<resource>
-				<name>Paul</name>
-			</resource>
-			<skill>
-				<name>Qualification C</name>
-			</skill>
-		</resourceskill>
-	</resourceskills>
-	<loads>
-		<load>
-			<operation name="1. make end item" xsi:type="operation_time_per"/>
-			<resource name="Operators"/>
-			<search>MINCOSTPENALTY</search>
-			<skill name="Qualification B"/>
-		</load>
-	</loads>
-	<flows>
-		<flow>
-			<operation>
-				<name>1. delivery end item</name>
-			</operation>
-			<buffer>
-				<name>1. end item</name>
-			</buffer>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation xsi:type="operation_time_per">
-				<name>1. make end item</name>
-			</operation>
-			<buffer>
-				<name>1. end item</name>
-			</buffer>
-			<quantity>1</quantity>
-		</flow>
-	</flows>
 	<problems>
 		<problem>
 			<name>unplanned</name>

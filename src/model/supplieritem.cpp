@@ -32,7 +32,7 @@ int SupplierItem::initialize()
 {
   // Initialize the metadata
   metacategory = MetaCategory::registerCategory<SupplierItem>(
-	  "supplieritem", "supplieritems", MetaCategory::ControllerDefault, writer
+	  "supplieritem", "supplieritems", MetaCategory::ControllerDefault
 	  );
   metadata = MetaClass::registerClass<SupplierItem>(
     "supplieritem", "supplieritem", Object::create<SupplierItem>, true
@@ -97,25 +97,6 @@ DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u, DateRange
     resetReferenceCount();
     throw;
   }
-}
-
-
-void SupplierItem::writer(const MetaCategory* c, Serializer* o)
-{
-  bool first = true;
-  for (Supplier::iterator i = Supplier::begin(); i != Supplier::end(); ++i)
-    for (Supplier::itemlist::const_iterator j = i->getItems().begin(); j != i->getItems().end(); ++j)
-    {
-      if (first)
-      {
-        o->BeginList(Tags::supplieritems);
-        first = false;
-      }
-      // We use the FULL mode, to force the supplieritems being written regardless
-      // of the depth in the XML tree.
-      o->writeElement(Tags::supplieritem, &*j, FULL);
-    }
-  if (!first) o->EndList(Tags::supplieritems);
 }
 
 
@@ -257,39 +238,6 @@ DECLARE_EXPORT void SupplierItem::validate(Action action)
       delete &*i;
       return;
   }
-}
-
-
-int SupplierItemIterator::initialize()
-{
-  // Initialize the type
-  PythonType& x = PythonExtension<SupplierItemIterator>::getPythonType();
-  x.setName("supplierItemIterator");
-  x.setDoc("frePPLe iterator for supplier items");
-  x.supportiter();
-  return x.typeReady();
-}
-
-
-PyObject* SupplierItemIterator::iternext()
-{
-  PyObject* result;
-  if (sup)
-  {
-    // Iterate over items on a supplier
-    if (ir == sup->getItems().end()) return NULL;
-    result = const_cast<SupplierItem*>(&*ir);
-    ++ir;
-  }
-  else
-  {
-    // Iterate over resources having a skill
-    if (is == it->getSuppliers().end()) return NULL;
-    result = const_cast<SupplierItem*>(&*is);
-    ++is;
-  }
-  Py_INCREF(result);
-  return result;
 }
 
 }

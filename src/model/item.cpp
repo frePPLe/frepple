@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* ItemDefault::metadata;
 int Item::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Item>("item", "items", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Item>("item", "items", reader, finder);
   registerFields<Item>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class

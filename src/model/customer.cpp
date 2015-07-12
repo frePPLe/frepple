@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* CustomerDefault::metadata;
 int Customer::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Customer>("customer", "customers", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Customer>("customer", "customers", reader, finder);
   registerFields<Customer>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class

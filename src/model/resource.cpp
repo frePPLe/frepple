@@ -36,7 +36,7 @@ Duration Resource::defaultMaxEarly(100*86400L);
 int Resource::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Resource>("resource", "resources", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Resource>("resource", "resources", reader, finder);
   registerFields<Resource>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class

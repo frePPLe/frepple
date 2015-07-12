@@ -40,7 +40,7 @@ int Operation::initialize()
 {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<Operation>(
-    "operation", "operations", reader, writer, finder
+    "operation", "operations", reader, finder
     );
   registerFields<Operation>(const_cast<MetaCategory*>(metadata));
 

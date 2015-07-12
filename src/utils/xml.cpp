@@ -255,9 +255,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       // Ignore this element
       reading = false;
       ++ignore;
-      #ifdef PARSE_DEBUG
-      logger << "Ignoring XML element '" << ename_utf8 << "'" << endl;
-      #endif
+      logger << "Warning: Ignoring XML element '" << ename_utf8 << "'" << endl;
     }
   }
   else if (data[dataindex].field->isPointer())

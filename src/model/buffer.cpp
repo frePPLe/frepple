@@ -43,7 +43,7 @@ DECLARE_EXPORT const double Buffer::default_max = 1e37;
 int Buffer::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Buffer>("buffer", "buffers", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Buffer>("buffer", "buffers", reader, finder);
   registerFields<Buffer>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class

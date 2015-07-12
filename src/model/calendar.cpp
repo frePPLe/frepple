@@ -34,7 +34,7 @@ DECLARE_EXPORT const MetaClass* CalendarBucket::metadata;
 int Calendar::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Calendar>("calendar", "calendars", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Calendar>("calendar", "calendars", reader, finder);
   registerFields<Calendar>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
@@ -52,7 +52,6 @@ int Calendar::initialize()
     "return an event iterator"
     );
   int ok = FreppleCategory<Calendar>::initialize();
-  ok += CalendarBucketIterator::initialize();
   ok += CalendarEventIterator::initialize();
   return ok;
 }
@@ -788,26 +787,6 @@ DECLARE_EXPORT PyObject* Calendar::addPythonBucket(PyObject* self, PyObject* arg
     return NULL;
   }
   return Py_BuildValue("");
-}
-
-
-int CalendarBucketIterator::initialize()
-{
-  // Initialize the type
-  PythonType& x = PythonExtension<CalendarBucketIterator>::getPythonType();
-  x.setName("calendarBucketIterator");
-  x.setDoc("frePPLe iterator for calendar buckets");
-  x.supportiter();
-  return x.typeReady();
-}
-
-
-PyObject* CalendarBucketIterator::iternext()
-{
-  if (i == CalendarBucket::iterator::end()) return NULL;
-  PyObject *result = &*(i++);
-  Py_INCREF(result);
-  return result;
 }
 
 

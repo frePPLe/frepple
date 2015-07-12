@@ -45,7 +45,7 @@ DECLARE_EXPORT const MetaClass* ProblemMaterialExcess::metadata,
 int Problem::initialize()
 {
   // Initialize the problem metadata.
-  metadata = MetaCategory::registerCategory<Problem>("problem", "problems", NULL, Problem::writer);
+  metadata = MetaCategory::registerCategory<Problem>("problem", "problems");
   registerFields<Problem>(const_cast<MetaCategory*>(metadata));
 
   // Register classes.
@@ -228,19 +228,6 @@ DECLARE_EXPORT void Problem::clearProblems(HasProblems& p, bool setchanged)
 
   // Mark as changed
   if (setchanged) p.getEntity()->setChanged();
-}
-
-
-DECLARE_EXPORT void Problem::writer(const MetaCategory* c, Serializer* o)
-{
-  const_iterator piter = begin();
-  if (piter != end())
-  {
-    o->BeginList(*c->grouptag);
-    for (; piter!=end(); ++piter)
-      o->writeElement(*(c->typetag), *piter);
-    o->EndList(*c->grouptag);
-  }
 }
 
 
@@ -438,7 +425,7 @@ DECLARE_EXPORT HasProblems::EntityIterator HasProblems::endEntity()
 }
 
 
-DECLARE_EXPORT Problem::const_iterator& Problem::const_iterator::operator++()
+DECLARE_EXPORT Problem::iterator& Problem::iterator::operator++()
 {
   // Incrementing beyond the end
   if (!iter) return *this;
@@ -457,27 +444,26 @@ DECLARE_EXPORT Problem::const_iterator& Problem::const_iterator::operator++()
 }
 
 
-DECLARE_EXPORT Problem::const_iterator Problem::begin()
+DECLARE_EXPORT Problem::iterator Problem::begin()
 {
-  Plannable::computeProblems();
-  return const_iterator();
+  return iterator();
 }
 
 
-DECLARE_EXPORT Problem::const_iterator Problem::begin(HasProblems* i, bool refresh)
+DECLARE_EXPORT Problem::iterator Problem::begin(HasProblems* i, bool refresh)
 {
   // Null pointer passed, loop through the full list anyway
   if (!i) return begin();
 
   // Return an iterator for a single entity
   if (refresh) i->updateProblems();
-  return const_iterator(i);
+  return iterator(i);
 }
 
 
-DECLARE_EXPORT const Problem::const_iterator Problem::end()
+DECLARE_EXPORT const Problem::iterator Problem::end()
 {
-  return const_iterator(static_cast<Problem*>(NULL));
+  return iterator(static_cast<Problem*>(NULL));
 }
 
 

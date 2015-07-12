@@ -212,9 +212,7 @@ template<class T, class u> class MetaFieldEnum;
 template<class T, class U> class MetaFieldPointer;
 template<class T> class MetaFieldUnsignedLong;
 template<class T> class MetaFieldPythonFunction;
-template<class T, class U> class MetaFieldIterator;
-template<class T, class U, class V> class MetaFieldIterator2;
-template<class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterator3;
+template<class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterator;
 template<class T, class U, class V> class MetaFieldList;
 template<class T, class U> class MetaFieldList2;
 template<class T, class U> class MetaFieldList3;
@@ -1697,6 +1695,11 @@ class MetaFieldBase
       return flags;
     }
 
+    bool getFlag(unsigned int i) const
+    {
+      return (flags & i) != 0;
+    }
+
     hashtype getHash() const
     {
       return name.getHash();
@@ -1761,7 +1764,7 @@ class MetaCategory;
   *    void initialize()
   *    {
   *      ...
-  *      Y::metadata = MetaCategory::registerCategory<CLS>("Y","Ys", reader_method, writer_method);
+  *      Y::metadata = MetaCategory::registerCategory<CLS>("Y","Ys", reader_method);
   *      X::metadata = MetaClass::registerClass<CLS>("Y","X", factory_method);
   *      ...
   *    }
@@ -2000,36 +2003,14 @@ class MetaClass : public NonCopyable
         parent = true;
     }
 
-    template <class Cls, class Ptr> inline void addIteratorField(
-      const Keyword& k1, const Keyword& k2,
-      Ptr (Cls::*getfunc)(void) const,
-      unsigned int c = MetaFieldBase::BASE
-      )
-    {
-      fields.push_back( new MetaFieldIterator<Cls, Ptr>(k1, k2, getfunc, c) );
-      if (c & MetaFieldBase::PARENT)
-        parent = true;
-    }
-
-    template <class Cls, class Iter, class Ptr> inline void addIterator2Field(
-      const Keyword& k1, const Keyword& k2,
-      Iter (Cls::*getfunc)(void) const,
-      unsigned int c = MetaFieldBase::BASE
-      )
-    {
-      fields.push_back( new MetaFieldIterator2<Cls, Iter, Ptr>(k1, k2, getfunc, c) );
-      if (c & MetaFieldBase::PARENT)
-        parent = true;
-    }
-
-    template <class Cls, class Iter, class Ptr> inline void addIterator3Field(
+    template <class Cls, class Iter, class Ptr> inline void addIteratorField(
       const Keyword& k1, const Keyword& k2,
       Iter (Cls::*getfunc)(void) const,
       unsigned int c = MetaFieldBase::BASE
       )
     {
       PythonIterator2<Iter, Ptr>::initialize();
-      fields.push_back( new MetaFieldIterator3<Cls, Iter, PythonIterator2<Iter, Ptr>, Ptr>(k1, k2, getfunc, c) );
+      fields.push_back( new MetaFieldIterator<Cls, Iter, PythonIterator2<Iter, Ptr>, Ptr>(k1, k2, getfunc, c) );
       if (c & MetaFieldBase::PARENT)
         parent = true;
     }
@@ -2176,9 +2157,6 @@ class MetaClass : public NonCopyable
   * A category has the following specific pieces of data:
   *  - A reader function for creating objects.<br>
   *    The reader function creates objects for all classes registered with it.
-  *  - A writer function for persisting objects.<br>
-  *    The writer function will typically iterate over all objects of the
-  *    category and call the writeElement method on them.
   *  - A group tag used for the grouping objects of the category in the XML
   *    output stream.
   * @see MetaClass
@@ -2200,9 +2178,6 @@ class MetaCategory : public MetaClass
     /** Type definition for the read control function. */
     typedef Object* (*readController)(const MetaClass*, const DataValueDict&);
 
-    /** Type definition for the write control function. */
-    typedef void (*writeController)(const MetaCategory*, Serializer *o);
-
     /** This template method is available as a object creation factory for
       * classes without key fields and which rely on a default constructor.
       */
@@ -2214,11 +2189,10 @@ class MetaCategory : public MetaClass
     /** Template constructor. */
     template <class cls> static inline MetaCategory* registerCategory(
       const string& t, const string& g,
-      readController r = NULL, writeController w = NULL,
-      findController f = NULL
+      readController r = NULL, findController f = NULL
       )
     {
-      return new MetaCategory(t, g, sizeof(cls), r, w, f);
+      return new MetaCategory(t, g, sizeof(cls), r, f);
     }
 
     /** Type definition for the map of all registered classes. */
@@ -2274,7 +2248,7 @@ class MetaCategory : public MetaClass
   private:
     /** Private constructor, called by registerCategory. */
     DECLARE_EXPORT MetaCategory(const string&, const string&, size_t,
-        readController, writeController, findController);
+        readController, findController);
 
     /** A map of all classes registered for this category. */
     ClassMap classes;
@@ -2290,12 +2264,6 @@ class MetaCategory : public MetaClass
 
     /** A pointer to the next category in the singly linked list. */
     const MetaCategory* nextCategory;
-
-    /** A control function for writing the category.
-      * The controller function will loop over the objects in the category and
-      * call write them one by one.
-      */
-    writeController writeFunction;
 
     /** A control function to find an object given its primary key. */
     findController findFunction;
@@ -3721,6 +3689,17 @@ class Object : public PyObject
       return new T();
     }
 
+    /** Free the memory.<br>
+      * Our extensions don't use the usual Python heap allocator. They are
+      * created and initialized with the regular C++ new and delete. A special
+      * deallocator is called from Python to delete objects when their reference
+      * count reaches zero.
+      */
+    template <class T> static void deallocator(PyObject* o)
+    {
+      delete static_cast<T*>(o);
+    }
+
     /** Template function that generates a factory method callable
       * from Python. */
     template<class T> static PyObject* create(
@@ -3949,6 +3928,7 @@ class PythonExtension: public Object, public NonCopyable
 template <class ITERCLASS, class DATACLASS>
 class PythonIterator2 : public Object
 {
+  typedef PythonIterator2<ITERCLASS, DATACLASS> MYCLASS;
   public:
     /** This method keeps the type information object for your extension. */
     static PythonType& getPythonType()
@@ -3958,12 +3938,12 @@ class PythonIterator2 : public Object
 
       // Register a new type
       cachedTypePtr = registerPythonType(
-        sizeof(PythonIterator2<ITERCLASS, DATACLASS>),
-        &typeid(PythonIterator2<ITERCLASS, DATACLASS>)
+        sizeof(MYCLASS),
+        &typeid(MYCLASS)
         );
 
       // Using our own memory deallocator
-      //xxxcachedTypePtr->supportdealloc( deallocator );
+      cachedTypePtr->supportdealloc( deallocator<MYCLASS> );
 
       return *cachedTypePtr;
     }
@@ -3985,6 +3965,14 @@ class PythonIterator2 : public Object
       * The underlying iterator must have a matching constructor.
       */
     template <class OTHER> PythonIterator2(const OTHER *o) : iter(o)
+    {
+      this->initType(getPythonType().type_object());
+    }
+
+    /** Default constructor.
+      * The underlying iterator must have a matching constructor.
+      */
+    PythonIterator2()
     {
       this->initType(getPythonType().type_object());
     }
@@ -5378,16 +5366,6 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       return x;
     }
 
-    /** A handler that is used to persist the tree. */
-    static void writer(const MetaCategory* c, Serializer* o)
-    {
-      if (empty()) return;
-      o->BeginList(*(c->grouptag));
-      for (iterator i = begin(); i != end(); ++i)
-        o->writeElement(*(c->typetag), *i);
-      o->EndList(*(c->grouptag));
-    }
-
     /** Find an entity given its name. In case it can't be found, a NULL
       * pointer is returned. */
     static Object* finder(const string& k)
@@ -5664,7 +5642,7 @@ template <class T> class HasHierarchy : public HasName<T>
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
       m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
-      m->addIterator3Field<Cls, typename Cls::memberIterator, Cls>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, MetaFieldBase::DETAIL + MetaFieldBase::PARENT);
+      m->addIteratorField<Cls, typename Cls::memberIterator, Cls>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, MetaFieldBase::DETAIL + MetaFieldBase::PARENT);
     }
 
   private:
@@ -6097,7 +6075,7 @@ template <class A, class B, class C> class Association
         /** Search for the association effective at a certain date. */
         C* find(const A* b, Date d = Date::infinitePast) const
         {
-          for (C* p=this->first; p; p=p->nextB)
+          for (C* p = this->first; p; p = p->nextB)
             if (p->ptrA == b && p->effectivity.within(d)) return p;
           return NULL;
         }
@@ -6105,7 +6083,7 @@ template <class A, class B, class C> class Association
         /** Search for the association with a certain name. */
         C* find(const string& n) const
         {
-          for (C* p=this->first; p; p=p->nextB)
+          for (C* p = this->first; p; p = p->nextB)
             if (p->name == n) return p;
           return NULL;
         }
@@ -6339,6 +6317,8 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       output.writeElement(getName(), (static_cast<Cls*>(output.getCurrentObject())->*getf)());
     }
 
@@ -6392,6 +6372,8 @@ template <class Cls> class MetaFieldBool : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       bool tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (def == BOOL_UNSET || (def == BOOL_TRUE && !tmp) || (def == BOOL_FALSE && tmp))
         output.writeElement(getName(), tmp);
@@ -6445,6 +6427,8 @@ template <class Cls> class MetaFieldDouble : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       double tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -6498,6 +6482,8 @@ template <class Cls> class MetaFieldInt : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       int tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -6551,6 +6537,8 @@ template <class Cls, class Enum> class MetaFieldEnum : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       Enum tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -6604,6 +6592,8 @@ template <class Cls> class MetaFieldShort : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       int tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -6657,6 +6647,8 @@ template <class Cls> class MetaFieldUnsignedLong : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       unsigned long tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -6709,6 +6701,8 @@ template <class Cls> class MetaFieldPythonFunction : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       // XXX JDT int tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       //output.writeElement(getName(), tmp);
     }
@@ -6758,6 +6752,8 @@ template <class Cls> class MetaFieldDuration : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       Duration tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -6811,6 +6807,8 @@ template <class Cls> class MetaFieldDurationDouble : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       double tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
       {
@@ -6868,6 +6866,8 @@ template <class Cls> class MetaFieldDate : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       Date tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -6933,6 +6933,8 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       // Imagine object A refers to object B. Both objects have fields
       // referring the other. When serializing object A, we also serialize
       // object B but we skip saving the reference back to A.
@@ -6960,133 +6962,12 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
 };
 
 
-template <class Cls, class Ptr> class MetaFieldIterator : public MetaFieldBase
+template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterator : public MetaFieldBase
 {
   public:
-    typedef Ptr (Cls::*getFunction)(void) const;
+    typedef Iter (Cls::*getFunction)(void) const;
 
     MetaFieldIterator(const Keyword& g,
-        const Keyword& n,
-        getFunction getfunc,
-        unsigned int c = BASE
-        ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n)
-    {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
-    };
-
-    virtual void setField(Object* me, const DataValue& el) const {}
-
-    virtual void getField(Object* me, DataValue& el) const
-    {
-      throw LogicException("GetField not implemented for iterator fields");
-    }
-
-    virtual void writeField(Serializer& output) const
-    {
-      bool first = true;
-      for (Ptr i = (static_cast<Cls*>(output.getCurrentObject())->*getf)(); i != Ptr::end(); ++i)
-      {
-        if (first)
-        {
-          output.BeginList(getName());
-          first = false;
-        }
-		    output.writeElement(singleKeyword, *i);
-      }
-      if (!first)
-        output.EndList(getName());
-    }
-
-    virtual const Keyword* getKeyword() const
-    {
-      return &singleKeyword;
-    }
-
-    virtual bool isGroup() const
-    {
-      return true;
-    }
-
-    virtual const MetaClass* getClass() const
-    {
-      return Ptr::metadata;
-    }
-  protected:
-    /** Get function. */
-    getFunction getf;
-
-    const Keyword& singleKeyword;
-};
-
-
-template <class Cls, class Iter, class Ptr> class MetaFieldIterator2 : public MetaFieldBase
-{
-  public:
-    typedef Iter (Cls::*getFunction)(void) const;
-
-    MetaFieldIterator2(const Keyword& g,
-        const Keyword& n,
-        getFunction getfunc,
-        unsigned int c = BASE
-        ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n)
-    {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
-    };
-
-    virtual void setField(Object* me, const DataValue& el) const {}
-
-    virtual void getField(Object* me, DataValue& el) const
-    {
-      throw LogicException("GetField not implemented for iterator fields");
-    }
-
-    virtual void writeField(Serializer& output) const
-    {
-      bool first = true;
-      for (Iter i = (static_cast<Cls*>(output.getCurrentObject())->*getf)(); i != Iter::end(); ++i)
-      {
-        if (first)
-        {
-          output.BeginList(getName());
-          first = false;
-        }
-		    output.writeElement(singleKeyword, *i);
-      }
-      if (!first)
-        output.EndList(getName());
-    }
-
-    virtual const Keyword* getKeyword() const
-    {
-      return &singleKeyword;
-    }
-
-    virtual bool isGroup() const
-    {
-      return true;
-    }
-
-    virtual const MetaClass* getClass() const
-    {
-      return Ptr::metadata;
-    }
-
-  protected:
-    /** Get function. */
-    getFunction getf;
-
-    const Keyword& singleKeyword;
-};
-
-
-template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterator3 : public MetaFieldBase
-{
-  public:
-    typedef Iter (Cls::*getFunction)(void) const;
-
-    MetaFieldIterator3(const Keyword& g,
         const Keyword& n,
         getFunction getfunc,
         unsigned int c = BASE
@@ -7106,6 +6987,8 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       bool first = true;
       Iter it = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       while (Ptr* ob = it.next())
@@ -7168,6 +7051,8 @@ template <class Cls, class Ptr, class Ptr2> class MetaFieldList : public MetaFie
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       bool first = true;
       Ptr lst = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       for (typename Ptr::iterator i = lst.begin(); i != lst.end(); ++i)
@@ -7224,6 +7109,8 @@ template <class Cls, class Ptr> class MetaFieldList2 : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       bool first = true;
       for (typename Ptr::iterator i = Ptr::begin(); i != Ptr::end(); ++i)
       {
@@ -7277,6 +7164,8 @@ template <class Cls, class Ptr> class MetaFieldList3 : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       // XXX TODO writeField not implemented for list3 fields
     }
 
@@ -7319,6 +7208,8 @@ template <class Cls, class Ptr, class Ptr2> class MetaFieldList4 : public MetaFi
 
     virtual void writeField(Serializer& output) const
     {
+      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+        return;
       // XXX TODO writeField not implemented for list3 fields
     }
 

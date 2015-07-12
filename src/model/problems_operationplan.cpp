@@ -72,7 +72,7 @@ void OperationPlan::updateProblems()
   }
 
   // Loop through the existing problems
-  for (Problem::const_iterator j = Problem::begin(this, false);
+  for (Problem::iterator j = Problem::begin(this, false);
       j!=Problem::end();)
   {
     // Need to increment now and define a pointer to the problem, since the

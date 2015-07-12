@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* LocationDefault::metadata;
 int Location::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Location>("location", "locations", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Location>("location", "locations", reader, finder);
   registerFields<Location>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class

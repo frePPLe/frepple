@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* DemandDefault::metadata;
 int Demand::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Demand>("demand", "demands", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Demand>("demand", "demands", reader, finder);
   registerFields<Demand>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class

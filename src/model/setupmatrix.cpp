@@ -34,14 +34,13 @@ DECLARE_EXPORT const MetaCategory* SetupMatrixRule::metacategory;
 int SetupMatrix::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<SetupMatrix>("setupmatrix", "setupmatrices", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<SetupMatrix>("setupmatrix", "setupmatrices", reader, finder);
   registerFields<SetupMatrix>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
   FreppleCategory<SetupMatrix>::getPythonType().addMethod("addRule",
     addPythonRule, METH_VARARGS | METH_KEYWORDS, "add a new setup rule");
-  return FreppleCategory<SetupMatrix>::initialize()
-      + SetupMatrixRuleIterator::initialize();
+  return FreppleCategory<SetupMatrix>::initialize();
 }
 
 
@@ -298,26 +297,6 @@ DECLARE_EXPORT void SetupMatrixRule::setPriority(const int n)
     next->prevRule = prev;
     prevRule = next;
   }
-}
-
-
-int SetupMatrixRuleIterator::initialize()
-{
-  // Initialize the type
-  PythonType& x = PythonExtension<SetupMatrixRuleIterator>::getPythonType();
-  x.setName("setupmatrixRuleIterator");
-  x.setDoc("frePPLe iterator for setupmatrix rules");
-  x.supportiter();
-  return x.typeReady();
-}
-
-
-PyObject* SetupMatrixRuleIterator::iternext()
-{
-  if (currule == SetupMatrixRule::iterator::end()) return NULL;
-  PyObject *result = &*(currule++);
-  Py_INCREF(result);
-  return result;
 }
 
 

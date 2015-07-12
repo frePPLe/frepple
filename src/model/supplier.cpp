@@ -32,7 +32,7 @@ DECLARE_EXPORT const MetaClass* SupplierDefault::metadata;
 int Supplier::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Supplier>("supplier", "suppliers", reader, writer, finder);
+  metadata = MetaCategory::registerCategory<Supplier>("supplier", "suppliers", reader, finder);
   registerFields<Supplier>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class

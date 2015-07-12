@@ -90,8 +90,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     // Handle invalid or missing delivery operations
     {
     string problemtext = string("Demand '") + l->getName() + "' has no delivery operation";
-    Problem::const_iterator j = Problem::begin(const_cast<Demand*>(l), false);
-    while (j!=Problem::end())
+    Problem::iterator j = Problem::begin(const_cast<Demand*>(l), false);
+    while (j != Problem::end())
     {
       if (&(j->getType()) == ProblemInvalidData::metadata
           && j->getDescription() == problemtext)

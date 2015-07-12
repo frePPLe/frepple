@@ -70,7 +70,6 @@ void LibraryModel::initialize()
   nok += OperationRouting::initialize();
   nok += OperationSetup::initialize();
   nok += SubOperation::initialize();
-  nok += SubOperationIterator::initialize();
 
   // Initialize the item metadata.
   nok += Item::initialize();
@@ -78,7 +77,6 @@ void LibraryModel::initialize()
 
   // Initialize the supplieritem metadata
   nok += SupplierItem::initialize();
-  nok += SupplierItemIterator::initialize();
 
   // Initialize the buffer metadata.
   nok += Buffer::initialize();
@@ -126,7 +124,6 @@ void LibraryModel::initialize()
 
   // Initialize the problem metadata.
   nok += Problem::initialize();
-  nok += ProblemIterator::initialize();
 
   // Initialize the pegging metadata.
   nok += PeggingIterator::initialize();
@@ -184,7 +181,7 @@ void LibraryModel::initialize()
     "operationplans", OperationPlanIterator::create, METH_NOARGS,
     "Returns an iterator over the operationplans.");
   PythonInterpreter::registerGlobalMethod(
-    "problems", ProblemIterator::create, METH_NOARGS,
+    "problems", Problem::createIterator, METH_NOARGS,
     "Returns an iterator over the problems.");
   PythonInterpreter::registerGlobalMethod(
     "setupmatrices", SetupMatrix::createIterator, METH_NOARGS,

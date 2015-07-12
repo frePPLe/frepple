@@ -24,14 +24,14 @@
 		<operation xsi:type="operation_routing">
 			<name>operation 1</name>
 			<size_multiple>3</size_multiple>
-			<steps>
+			<suboperations>
 				<operation>
 					<name>operation 1 step1</name>
 				</operation>
 				<operation>
 					<name>operation 1 step2</name>
 				</operation>
-			</steps>
+			</suboperations>
 		</operation>
 		<operation>
 			<name>operation 1 step1</name>
@@ -45,7 +45,7 @@
 	<items>
 		<item>
 			<name>item 1</name>
-			<category>end item</category>
+			<category>item category</category>
 			<description>А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь</description>
 			<operation xsi:type="operation_routing">
 				<name>operation 1</name>

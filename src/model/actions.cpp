@@ -247,12 +247,12 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
     }
 
     // Write the problem summary.
-    for (Problem::const_iterator gprob = Problem::begin();
-        gprob != Problem::end(); ++gprob)
+    Problem::iterator gprob;
+    while (Problem *p = gprob.next())
     {
-      textoutput << "PROBLEM\t" << gprob->getType().type << '\t'
-          << gprob->getDescription() << '\t'
-          << gprob->getDates() << endl;
+      textoutput << "PROBLEM\t" << p->getType().type << '\t'
+          << p->getDescription() << '\t'
+          << p->getDates() << endl;
     }
 
     // Write the constraint summary
@@ -261,12 +261,13 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
     {
       if (!gdem->getHidden())
       {
-        for (Problem::const_iterator i = gdem->getConstraints().begin();
-            i != gdem->getConstraints().end();
-            ++i)
+        Problem::iterator i = gdem->getConstraints().begin();
+        while (Problem *prob = i.next())
+        {
           textoutput << "DEMAND CONSTRAINT\t" << (*gdem) << '\t'
-              << i->getDescription() << '\t'
-              << i->getDates() << '\t' << endl;
+              << prob->getDescription() << '\t'
+              << prob->getDates() << '\t' << endl;
+        }
       }
     }
 
@@ -602,8 +603,8 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     for (Demand::iterator dm = Demand::begin(); dm != Demand::end(); ++dm)
     {
       memsize += dm->getSize();
-      for (Problem::const_iterator cstrnt(dm->getConstraints().begin());
-        cstrnt != dm->getConstraints().end(); ++cstrnt)
+      Problem::iterator cstrnt_iter(dm->getConstraints().begin());
+      while (Problem *cstrnt = cstrnt_iter.next())
       {
         ++c_count;
         c_memsize += cstrnt->getSize();
@@ -639,7 +640,8 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
 
     // Problems
     memsize = count = 0;
-    for (Problem::const_iterator pr = Problem::begin(); pr!=Problem::end(); ++pr)
+    Problem::iterator piter;
+    while (Problem *pr = piter.next())
     {
       ++count;
       memsize += pr->getSize();

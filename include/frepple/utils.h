@@ -1824,6 +1824,13 @@ class MetaClass : public NonCopyable
       return new MetaClass(cat, cls, sizeof(T), def);
     }
 
+    /** This constructor registers the metadata of a class that is intended
+      * only for internal use. */
+    template <class T> static inline MetaClass* registerClass(const string& cls, creatorDefault f)
+    {
+      return new MetaClass(cls, sizeof(T), f);
+    }
+
     /** This constructor registers the metadata of a class, with a factory
       * method that uses the default constructor of the class. */
     template <class T> static inline MetaClass* registerClass(
@@ -2117,6 +2124,15 @@ class MetaClass : public NonCopyable
     }
 
   private:
+    /** This constructor registers the metadata of a class. */
+    MetaClass(const string& cls, size_t sz, creatorDefault f)
+      : type(cls), size(sz), category(NULL), pythonClass(NULL), factoryMethod(f),
+      parent(false), isDefault(false)
+    {
+      factoryMethod = f;
+      typetag = &Keyword::find(cls.c_str());
+    }
+
     /** This constructor registers the metadata of a class. */
     MetaClass(const string& cat, const string& cls, size_t sz, bool def = false)
       : size(sz), pythonClass(NULL), isDefault(def)

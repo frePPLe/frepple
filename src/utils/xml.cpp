@@ -247,7 +247,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
   // Field not found
   if (!data[dataindex].field)
   {
-    if (!dataindex && data[dataindex].hash == Tags::plan.getHash())
+    if (!dataindex && data[dataindex].hash == objects[0].hash)
       // Special case: root element with name "plan"
       --dataindex;
     else

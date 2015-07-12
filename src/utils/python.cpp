@@ -75,7 +75,7 @@ DECLARE_EXPORT void Object::writeElement(Serializer* o, const Keyword& tag, mode
   }
   else if (m == DEFAULT)
   {
-    // Writeonly the fields required to successfully save&restore the object
+    // Write only the fields required to successfully save&restore the object
     if (meta.category)
       for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
         if (!((*i)->getFlags() & MetaFieldBase::DETAIL))

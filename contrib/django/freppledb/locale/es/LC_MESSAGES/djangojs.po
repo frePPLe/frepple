@@ -1,0 +1,189 @@
+#
+# Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Chris Zajaczkowski <info@businesstec.net>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 2.1.beta\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-11-08 08:49+0100\n"
+"PO-Revision-Date: 2015-07-12 19:32-0600\n"
+"Last-Translator: Chris Zajaczkowski <info@businesstec.net>\n"
+"Language-Team: Spanish; Castilian <info@businesstec.net>\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: common/static/js/frepple.js:41
+msgid "There are unsaved changes on this page."
+msgstr "Hay cambios sin guardar en esta página."
+
+#: common/static/js/frepple.js:87
+msgid "Error saving data"
+msgstr "Error al guardar los datos"
+
+#: common/static/js/frepple.js:108
+msgid "Save or cancel your changes first"
+msgstr "En primer lugar, guardar o cancelar los cambios"
+
+#: common/static/js/frepple.js:115
+msgid "Save"
+msgstr "Guardar"
+
+#: common/static/js/frepple.js:122 common/static/js/frepple.js.c:510
+#: common/static/js/frepple.js:679 common/static/js/frepple.js.c:740
+#: common/static/js/frepple.js:800 common/static/js/frepple.js.c:857
+#: common/static/js/frepple.js:1093 common/static/js/frepple.js.c:1337
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: common/static/js/frepple.js:377
+msgid "Select"
+msgstr "Seleccionar"
+
+#: common/static/js/frepple.js:447 common/static/js/frepple.js.c:1013
+msgid "Customize"
+msgstr "Personalizar"
+
+#: common/static/js/frepple.js:453 common/static/js/frepple.js.c:706
+#: common/static/js/frepple.js:1020
+msgid "OK"
+msgstr "OK"
+
+#: common/static/js/frepple.js:596 common/static/js/frepple.js.c:980
+#: common/static/js/frepple.js:1081
+msgid "Error saving report settings"
+msgstr "Error al guardar la configuración del informe"
+
+#: common/static/js/frepple.js:640 common/static/js/frepple.js.c:646
+msgid "Export format"
+msgstr "Exportación de formato"
+
+#: common/static/js/frepple.js:641 common/static/js/frepple.js.c:648
+msgid "Spreadsheet list"
+msgstr "Lista de hoja de cálculo"
+
+#: common/static/js/frepple.js:642 common/static/js/frepple.js.c:650
+msgid "CSV list"
+msgstr "Lista de CSV"
+
+#: common/static/js/frepple.js:647
+msgid "Spreadsheet table"
+msgstr "Tabla Hoja"
+
+#: common/static/js/frepple.js:649
+msgid "CSV table"
+msgstr "Tabla CSV"
+
+#: common/static/js/frepple.js:653
+msgid "Export CSV or Excel file"
+msgstr "Exportar CSV o archivo de Excel"
+
+#: common/static/js/frepple.js:657
+msgid "Export"
+msgstr "Exportación"
+
+#: common/static/js/frepple.js:760
+#, c-format
+msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
+msgstr ""
+"Está a punto de eliminar objetos %s Y TODOS LOS REGISTROS RELACIONADOS."
+
+#: common/static/js/frepple.js:762
+msgid "Delete data"
+msgstr "Eliminar datos"
+
+#: common/static/js/frepple.js:769 common/static/js/frepple.js.c:826
+msgid "Confirm"
+msgstr "Confirmar"
+
+#: common/static/js/frepple.js:787
+msgid "Error deleting data"
+msgstr "Error al eliminar los datos"
+
+#: common/static/js/frepple.js:817
+#, c-format
+msgid "You are about to duplicate %s objects"
+msgstr "Está a punto de duplicar objetos %s"
+
+#: common/static/js/frepple.js:819
+msgid "Copy data"
+msgstr "Copiar datos"
+
+#: common/static/js/frepple.js:844
+msgid "Error copying data"
+msgstr "Error al copiar datos"
+
+#: common/static/js/frepple.js:881 common/static/js/frepple.js.c:885
+msgid "Filtered where"
+msgstr "Filtra donde"
+
+#: common/static/js/frepple.js:1006
+msgid "Add"
+msgstr "Agregar"
+
+#: common/static/js/frepple.js:1067
+msgid "Reset"
+msgstr "Reset"
+
+#: common/static/js/frepple.js:1300
+msgid "Load an Excel file or a CSV-formatted text file."
+msgstr "Carga de un archivo de Excel o un archivo de texto con formato CSV."
+
+#: common/static/js/frepple.js:1301
+msgid "The first row should contain the field names."
+msgstr "La primera fila debe contener los nombres de los campos."
+
+#: common/static/js/frepple.js:1302
+msgid "First delete all existing records AND ALL RELATED TABLES"
+msgstr ""
+"En primer lugar, elimine todos los registros existentes Y TODAS LAS TABLAS "
+"RELACIONADAS"
+
+#: common/static/js/frepple.js:1303
+msgid "Data file"
+msgstr "Archivo de Datos"
+
+#: common/static/js/frepple.js:1306
+msgid "Import CSV or Excel file"
+msgstr "Importar archivo CSV o Excel"
+
+#: common/static/js/frepple.js:1310
+msgid "Import"
+msgstr "Importar"
+
+#: common/static/js/frepple.js:1785
+msgid "Guided tour"
+msgstr "Demostración guiada"
+
+#: common/static/js/frepple.js:1809
+msgid "Previous"
+msgstr "Anterior"
+
+#: common/static/js/frepple.js:1814 common/static/js/frepple.js.c:1947
+msgid "Stop"
+msgstr "Detener"
+
+#: common/static/js/frepple.js:1814 common/static/js/frepple.js.c:1938
+msgid "Play"
+msgstr "Reproducir"
+
+#: common/static/js/frepple.js:1820
+msgid "Next"
+msgstr "Siguiente"

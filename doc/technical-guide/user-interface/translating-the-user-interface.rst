@@ -17,12 +17,15 @@ interface to your favourite language.
    ::
 
       LANGUAGES = (
-        ('nl', ugettext('Dutch')),
         ('en', ugettext('English')),
+        ('es', ugettext('Spanish')),
         ('fr', ugettext('French')),
         ('it', ugettext('Italian')),
+        ('ja', ugettext('Japanese')),
+        ('nl', ugettext('Dutch')),
+        ('zh-cn', ugettext('Simplified Chinese')),
         ('zh-tw', ugettext('Traditional Chinese')),
-        )
+      )
 
 #. Install an editor for gettext catalogs (.po files).
 

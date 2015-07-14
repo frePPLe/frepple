@@ -109,6 +109,7 @@ TIME_ZONE = 'Europe/Brussels'
 ugettext = lambda s: s
 LANGUAGES = (
   ('en', ugettext('English')),
+  ('es', ugettext('Spanish')),
   ('fr', ugettext('French')),
   ('it', ugettext('Italian')),
   ('ja', ugettext('Japanese')),

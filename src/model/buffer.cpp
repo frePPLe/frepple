@@ -144,7 +144,7 @@ DECLARE_EXPORT double Buffer::getOnHand() const
   for (flowplanlist::const_iterator i = flowplans.begin(); i!=flowplans.end(); ++i)
   {
     if(i->getDate()) return 0.0; // Inventory event is always at start of horizon
-    if(i->getType()!=1) continue;
+    if(i->getEventType() != 1) continue;
     const FlowPlan *fp = static_cast<const FlowPlan*>(&*i);
     if (fp->getFlow()->getOperation()->getName() == string(INVENTORY_OPERATION)
       && fabs(fp->getQuantity()) > ROUNDING_ERROR)
@@ -235,7 +235,7 @@ DECLARE_EXPORT void Buffer::setMinimum(double m)
 
   // Create or update a single timeline min event
   for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); oo++)
-    if (oo->getType() == 3)
+    if (oo->getEventType() == 3)
     {
       // Update existing event
       static_cast<flowplanlist::EventMinQuantity *>(&*oo)->setMin(min_val);
@@ -258,7 +258,7 @@ DECLARE_EXPORT void Buffer::setMinimumCalendar(CalendarDefault *cal)
 
   // Delete previous events.
   for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
-    if (oo->getType() == 3)
+    if (oo->getEventType() == 3)
     {
       flowplans.erase(&(*oo));
       delete &(*(oo++));
@@ -305,7 +305,7 @@ DECLARE_EXPORT void Buffer::setMaximum(double m)
 
   // Create or update a single timeline max event
   for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); oo++)
-    if (oo->getType() == 4)
+    if (oo->getEventType() == 4)
     {
       // Update existing event
       static_cast<flowplanlist::EventMaxQuantity *>(&*oo)->setMax(max_val);
@@ -328,7 +328,7 @@ DECLARE_EXPORT void Buffer::setMaximumCalendar(CalendarDefault *cal)
 
   // Delete previous events.
   for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
-    if (oo->getType() == 4)
+    if (oo->getEventType() == 4)
     {
       flowplans.erase(&(*oo));
       delete &(*(oo++));

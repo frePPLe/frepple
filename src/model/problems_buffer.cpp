@@ -46,9 +46,9 @@ DECLARE_EXPORT void Buffer::updateProblems()
       iter != flowplans.end(); )
   {
     // Process changes in the maximum or minimum targets
-    if (iter->getType() == 4)
+    if (iter->getEventType() == 4)
       curMax = iter->getMax();
-    else if (iter->getType() == 3)
+    else if (iter->getEventType() == 3)
       curMin = iter->getMin();
 
     // Only consider the last flowplan for a certain date

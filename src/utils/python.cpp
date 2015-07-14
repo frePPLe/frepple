@@ -698,11 +698,11 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
     XMLSerializer x(ch);
     x.setReferencesOnly(true);
     if (!mode || mode[0] == 'S')
-      x.setContentType(Serializer::STANDARD);
+      x.setContentType(MetaFieldBase::BASE);
     else if (mode[0] == 'P')
-      x.setContentType(Serializer::PLAN);
+      x.setContentType(MetaFieldBase::PLAN);
     else if (mode[0] == 'D')
-      x.setContentType(Serializer::PLANDETAIL);
+      x.setContentType(MetaFieldBase::DETAIL);
     else
       throw DataException("Invalid output mode");
 

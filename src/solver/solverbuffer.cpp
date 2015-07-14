@@ -83,7 +83,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       ; ++cur)
   {
-    if(&*cur && cur->getType() == 1)
+    if(&*cur && cur->getEventType() == 1)
     {
       const FlowPlan* fplan = static_cast<const FlowPlan*>(&*cur);
       if (!fplan->getOperationPlan()->getRawIdentifier()
@@ -128,7 +128,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // Check if it is an unlocked producing operationplan
           if (batchiter->getQuantity() <= 0) continue;
           const FlowPlan* batchcandidate = NULL;
-          if (batchiter->getType() == 1)
+          if (batchiter->getEventType() == 1)
             batchcandidate = static_cast<const FlowPlan*>(&*batchiter);
           if (!batchcandidate || batchcandidate->getOperationPlan()->getLocked())
             continue;
@@ -236,7 +236,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // Check if it is an unlocked producing operationplan
           if (batchiter->getQuantity() <= 0) continue;
           const FlowPlan* batchcandidate = NULL;
-          if (batchiter->getType() == 1)
+          if (batchiter->getEventType() == 1)
             batchcandidate = static_cast<const FlowPlan*>(&*batchiter);
           if (!batchcandidate || batchcandidate->getOperationPlan()->getLocked())
             continue;
@@ -408,7 +408,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     // If the flag getPlanSafetyStockFirst is set, then we need to replenish
     // up to the minimum quantity. If it is not set (which is the default) then
     // we only replenish up to 0.
-    if (cur->getType() == 3 && (getPlanSafetyStockFirst() || data->safety_stock_planning))
+    if (cur->getEventType() == 3 && (getPlanSafetyStockFirst() || data->safety_stock_planning))
       current_minimum = cur->getMin();
 
     // Update the pointer to the previous flowplan.
@@ -604,7 +604,7 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
     // Note that these limits can be updated only after the processing of the
     // date change in the statement above. Otherwise the code above would
     // already use the new value before the intended date.
-    if (cur->getType() == 3) current_minimum = cur->getMin();
+    if (cur->getEventType() == 3) current_minimum = cur->getMin();
 
     // Update the pointer to the previous flowplan.
     prev = &*cur;

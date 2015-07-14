@@ -39,14 +39,10 @@ def printWelcome(prefix='frepple', database=DEFAULT_DB_ALIAS):
     frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, '%s_%s.log' % (prefix, database))
 
   # Welcome message
-  print("FrePPLe with processid %s on %s using %s database '%s' as '%s' on '%s:%s'" % (
+  print("FrePPLe with processid %s on %s using database '%s'" % (
     os.getpid(),
     sys.platform,
-    settings.DATABASES[database].get('ENGINE', '').split('.')[-1],
-    settings.DATABASES[database].get('NAME', ''),
-    settings.DATABASES[database].get('USER', ''),
-    settings.DATABASES[database].get('HOST', ''),
-    settings.DATABASES[database].get('PORT', '')
+    settings.DATABASES[database].get('NAME', '')
     ))
 
 
@@ -122,11 +118,8 @@ def createPlan(database=DEFAULT_DB_ALIAS):
 
 
 def exportPlan(database=DEFAULT_DB_ALIAS):
-  if settings.DATABASES[database]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-    from freppledb.execute.export_database_plan_postgresql import exportfrepple as export_plan_to_database
-  else:
-    from freppledb.execute.export_database_plan import exportfrepple as export_plan_to_database
-  export_plan_to_database()
+  from freppledb.execute.export_database_plan_postgresql import exportfrepple
+  exportfrepple()
 
 
 if __name__ == "__main__":

@@ -57,9 +57,6 @@ namespace frepple
 namespace utils
 {
 
-DECLARE_EXPORT const Serializer::content_type Serializer::STANDARD = 1;
-DECLARE_EXPORT const Serializer::content_type Serializer::PLAN = 2;
-DECLARE_EXPORT const Serializer::content_type Serializer::PLANDETAIL = 4;
 xercesc::XMLTranscoder* XMLInput::utf8_encoder = NULL;
 
 

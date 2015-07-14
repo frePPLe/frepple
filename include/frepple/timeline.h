@@ -50,8 +50,10 @@ template <class type> class TimeLine
   public:
     class iterator;
     class const_iterator;
-    /** @brief Base class for nodes in the timeline. */
-    class Event : public NonCopyable
+    /** @brief Base class for nodes in the timeline.
+      * TODO all event types (except changeonhand) don't have a python type set
+      */
+    class Event : public NonCopyable, public Object
     {
         friend class TimeLine<type>;
         friend class const_iterator;
@@ -71,7 +73,7 @@ template <class type> class TimeLine
         virtual ~Event() {};
 
         /** Return the even type. */
-        inline unsigned short getType() const
+        inline unsigned short getEventType() const
         {
           return tp;
         }
@@ -290,7 +292,8 @@ template <class type> class TimeLine
 
         const_iterator& operator++()
         {
-          if (cur) cur = cur->next;
+          if (cur)
+            cur = cur->next;
           return *this;
         }
 
@@ -301,16 +304,29 @@ template <class type> class TimeLine
           return tmp;
         }
 
+        Event* next()
+        {
+          // Only use the change events
+          while (cur && cur->getEventType() != 1)
+            cur = cur->next;
+          Event* tmp = const_cast<Event*>(cur);
+          if (cur)
+            cur = cur->next;
+          return tmp;
+        }
+
         const_iterator& operator--()
         {
-          if (cur) cur = cur->prev;
+          if (cur)
+            cur = cur->prev;
           return *this;
         }
 
         const_iterator operator--(int)
         {
           const_iterator tmp = *this;
-          --*this;
+          if (cur)
+            cur = cur->prev;
           return tmp;
         }
 
@@ -546,7 +562,7 @@ template <class type> class TimeLine
       double cur_excess = 0.0;
       for (const_iterator cur(curevent); cur != end(); ++cur)
       {
-        if (consider_min_stock && cur->getType() == 3)
+        if (consider_min_stock && cur->getEventType() == 3)
           // New minimum value
           cur_min = cur->getMin();
         cur_excess = cur->getOnhand() - cur_min;
@@ -628,12 +644,14 @@ template <class type> void TimeLine<type>::insert (Event* e)
   if (qty > 0)
     for (; i!=end() && *e<*i; --i)
     {
-      if (i->getType()!=2) i->oh += qty;
+      if (i->getEventType() != 2)
+        i->oh += qty;
       i->cum_prod += qty;
     }
   else
     for (; i!=end() && *e<*i; --i)
-      if (i->getType()!=2) i->oh += qty;
+      if (i->getEventType() != 2)
+        i->oh += qty;
 
   // Insert
   if (i == end())
@@ -667,7 +685,7 @@ template <class type> void TimeLine<type>::insert (Event* e)
     else e->cum_prod = i->cum_prod;
   }
 
-  switch (e->getType())
+  switch (e->getEventType())
   {
     case 2:
       // Insert in the list of setOnhand
@@ -692,7 +710,7 @@ template <class type> void TimeLine<type>::insert (Event* e)
         iterator i = begin(m);
         m->oh = m->new_oh;
         ++i;
-        for (; i!=end() && i->getType()!=2; ++i)
+        for (; i!=end() && i->getEventType() != 2; ++i)
           m->oh += delta;
       }
       break;
@@ -753,7 +771,7 @@ template <class type> void TimeLine<type>::erase(Event* e)
     {
       if (update_oh)
       {
-        if (i->getType() == 2)
+        if (i->getEventType() == 2)
           update_oh = false;
         else
           i->oh -= qty;
@@ -762,7 +780,7 @@ template <class type> void TimeLine<type>::erase(Event* e)
     }
   }
   else
-    for (iterator i = begin(e); i!=end() && i->getType()!=2; ++i)
+    for (iterator i = begin(e); i!=end() && i->getEventType() != 2; ++i)
       i->oh -= qty;
 
   if (e->prev)
@@ -781,7 +799,7 @@ template <class type> void TimeLine<type>::erase(Event* e)
   e->prev = NULL;
   e->next = NULL;
 
-  switch (e->getType())
+  switch (e->getEventType())
   {
     case 2:
       // Remove from the list of setonhand
@@ -864,7 +882,7 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
     else
       last = e;
     if (first == e) first = theNext;
-    if (theNext->getType() == 2)
+    if (theNext->getEventType() == 2)
     {
       delta = -newqty;
       e->oh = theNext->oh;
@@ -896,7 +914,7 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
       first = e;
     if (last == e) last = thePrev;
     thePrev->cum_prod = e->cum_prod;
-    if (thePrev->getType() == 2)
+    if (thePrev->getEventType() == 2)
     {
       if (thePrevPrev)
         e->oh = thePrevPrev->oh + newqty;
@@ -906,13 +924,13 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
       if (delta)
       {
         // First time this happens
-        for (Event *f = thePrev->next; f && f->getType()!=2; f = f->next)
+        for (Event *f = thePrev->next; f && f->getEventType() != 2; f = f->next)
           f->oh -= oldqty;
         delta = 0.0;
       }
       else
         // Additional occurrences
-        for (Event *f = thePrev->next; f && f->getType()!=2; f = f->next)
+        for (Event *f = thePrev->next; f && f->getEventType() != 2; f = f->next)
           f->oh -= newqty;
     }
     else
@@ -934,7 +952,7 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
       {
         if (update_oh)
         {
-          if (i->getType()==2)
+          if (i->getEventType() == 2)
             update_oh = false;
           else
             i->oh -= delta;
@@ -943,7 +961,7 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
       }
     }
     else
-      for (iterator i=begin(e); i!=end() && i->getType()!=2; ++i)
+      for (iterator i = begin(e); i != end() && i->getEventType() != 2; ++i)
         i->oh -= delta;
   }
 
@@ -962,11 +980,12 @@ template <class type> bool TimeLine<type>::check() const
   for (const_iterator i = begin(); i!=end(); ++i)
   {
     // Problem 1: The onhands don't add up properly
-    if (i->getType() == 2)
+    if (i->getEventType() == 2)
       expectedOH = i->oh;
     else
       expectedOH += i->getQuantity();
-    if (i->getQuantity() > 0) expectedCumProd += i->getQuantity();
+    if (i->getQuantity() > 0)
+      expectedCumProd += i->getQuantity();
     if (fabs(expectedOH - i->oh) > ROUNDING_ERROR)
     {
       inspect("Error: timeline onhand value corrupted on "

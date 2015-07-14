@@ -832,8 +832,10 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
           && j->getOnhand() < prod_qty + current_maximum - ROUNDING_ERROR)
           || j->getOnhand() < prod_qty + current_minimum - ROUNDING_ERROR )
         return false;
-      if (j->getType() == 4 && !strict) current_maximum = j->getMax(false);
-      if (j->getType() == 3 && !strict) current_minimum = j->getMin(false);
+      if (j->getEventType() == 4 && !strict)
+        current_maximum = j->getMax(false);
+      if (j->getEventType() == 3 && !strict)
+        current_minimum = j->getMin(false);
       if (&*j == &*i) break;
     }
   }
@@ -998,5 +1000,30 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
   }
   return minslack / 86400.0; // Convert to days
 }
+
+
+PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args)
+{
+  // Check arguments
+  PyObject *pyoper = NULL;
+  int ok = PyArg_ParseTuple(args, "|O:operationplans", &pyoper);
+  if (!ok)
+    return NULL;
+
+  if (!pyoper)
+  {  // Iterate over all operationplans
+   logger << "oliebol" << endl;
+     return new PythonIterator2<OperationPlan::iterator, OperationPlan>();
+  }
+  // Iterate over the operationplans of a single operation
+  PythonData oper(pyoper);
+  if (!oper.check(Operation::metadata))
+  {
+    PyErr_SetString(PythonDataException, "optional argument must be of type operation");
+    return NULL;
+  }
+  return new PythonIterator2<OperationPlan::iterator, OperationPlan>(static_cast<Operation*>(pyoper));
+}
+
 
 } // end namespace

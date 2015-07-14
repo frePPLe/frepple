@@ -134,7 +134,7 @@ DECLARE_EXPORT void OperatorDelete::solve(const Resource* r, void* v)
   for (Resource::loadplanlist::const_iterator i = r->getLoadPlans().begin();
     i != r->getLoadPlans().end(); ++i)
   {
-    if (i->getType() == 1)
+    if (i->getEventType() == 1)
       // Add all buffers into which material is produced to the stack
       pushBuffers(static_cast<const LoadPlan*>(&*i)->getOperationPlan(), false);
   }
@@ -202,9 +202,15 @@ void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming)
 
     // Check if the buffer is already found on the stack
     bool found = false;
-    for (int j = buffersToScan.size()-1; j>=0 && !found; --j)
-      if (buffersToScan[j] == i->getBuffer())
+    for (vector<Buffer*>::const_reverse_iterator j = buffersToScan.rbegin();
+      j != buffersToScan.rend(); ++j)
+    {
+      if (*j == i->getBuffer())
+      {
         found = true;
+        break;
+      }
+    }
 
     // Add the buffer to the stack
     if (!found) buffersToScan.push_back(const_cast<Buffer*>(i->getBuffer()));
@@ -238,7 +244,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       continue;
     }
     FlowPlan* fp = NULL;
-    if (fiter->getType() == 1)
+    if (fiter->getEventType() == 1)
       fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter));
     double cur_excess = b->getFlowPlans().getExcess(&*fiter);
     if (!fp || fp->getOperationPlan()->getLocked() || cur_excess < ROUNDING_ERROR)
@@ -252,7 +258,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
     // Increment the iterator here, because it can get invalidated later on
     while (
       fiter != fend
-      && fiter->getType() == 1
+      && fiter->getEventType() == 1
       && static_cast<const FlowPlan*>(&*fiter)->getOperationPlan()->getTopOwner()==fp->getOperationPlan()->getTopOwner()
       )
         ++fiter;

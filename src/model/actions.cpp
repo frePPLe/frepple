@@ -138,12 +138,12 @@ DECLARE_EXPORT PyObject* saveXMLfile(PyObject* self, PyObject* args)
     XMLSerializerFile o(filename);
     if (content)
     {
-      if (!strcmp(content,"STANDARD"))
-        o.setContentType(Serializer::STANDARD);
-      else if (!strcmp(content,"PLAN"))
-        o.setContentType(Serializer::PLAN);
-      else if (!strcmp(content,"PLANDETAIL"))
-        o.setContentType(Serializer::PLANDETAIL);
+      if (!strcmp(content, "BASE"))
+        o.setContentType(MetaFieldBase::BASE);
+      else if (!strcmp(content, "PLAN"))
+        o.setContentType(MetaFieldBase::PLAN);
+      else if (!strcmp(content, "DETAIL"))
+        o.setContentType(MetaFieldBase::DETAIL);
       else
         throw DataException("Invalid content type '" + string(content) + "'");
     }
@@ -191,7 +191,7 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
             oo=gbuf->getFlowPlans().begin();
             oo!=gbuf->getFlowPlans().end();
             ++oo)
-          if (oo->getType() == 1 && oo->getQuantity() != 0.0)
+          if (oo->getEventType() == 1 && oo->getQuantity() != 0.0)
           {
             textoutput << "BUFFER\t" << *gbuf << '\t'
                 << oo->getDate() << '\t'
@@ -224,7 +224,7 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
             qq=gres->getLoadPlans().begin();
             qq!=gres->getLoadPlans().end();
             ++qq)
-          if (qq->getType() == 1 && qq->getQuantity() != 0.0)
+          if (qq->getEventType() == 1 && qq->getQuantity() != 0.0)
           {
             textoutput << "RESOURCE\t" << *gres << '\t'
                 << qq->getDate() << '\t'

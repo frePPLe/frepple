@@ -107,7 +107,7 @@ DECLARE_EXPORT void Resource::setMaximum(double m)
 
   // Create or update a single timeline max event
   for (loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); oo++)
-    if (oo->getType() == 4)
+    if (oo->getEventType() == 4)
     {
       // Update existing event
       static_cast<loadplanlist::EventMaxQuantity *>(&*oo)->setMax(size_max);
@@ -130,7 +130,7 @@ DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDefault* c)
 
   // Remove the current max events.
   for (loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); )
-    if (oo->getType() == 4)
+    if (oo->getEventType() == 4)
     {
       loadplans.erase(&(*oo));
       delete &(*(oo++));
@@ -168,7 +168,7 @@ DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(CalendarDefault* c)
 
   // Remove the current set-onhand events.
   for (loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); )
-    if (oo->getType() == 2)
+    if (oo->getEventType() == 2)
     {
       loadplans.erase(&(*oo));
       delete &(*(oo++));
@@ -302,7 +302,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
 
   if (bucketized)
   {
-    while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getType() != 2)
+    while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getEventType() != 2)
       ++ldplaniter;
   }
   else
@@ -326,7 +326,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
     // Advance loadplan iterator just beyond the starting date
     while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getDate() <= cur_date)
     {
-      unsigned short tp = ldplaniter->getType();
+      unsigned short tp = ldplaniter->getEventType();
       if (tp == 4)
         // New max size
         cur_size = ldplaniter->getMax();
@@ -426,9 +426,9 @@ PyObject* Resource::PlanIterator::iternext()
     }
     // Advance the loadplan iterator to the start of the next bucket
     ++ldplaniter;
-    while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getType() != 2)
+    while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getEventType() != 2)
     {
-      if (ldplaniter->getType() == 1)
+      if (ldplaniter->getEventType() == 1)
         bucket_load -= ldplaniter->getQuantity();
       ++ldplaniter;
     }
@@ -457,7 +457,7 @@ PyObject* Resource::PlanIterator::iternext()
       update(ldplaniter->getDate());
 
       // Process the event
-      unsigned short tp = ldplaniter->getType();
+      unsigned short tp = ldplaniter->getEventType();
       if (tp == 4)
         // New max size
         cur_size = ldplaniter->getMax();

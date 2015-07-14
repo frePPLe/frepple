@@ -46,9 +46,9 @@ DECLARE_EXPORT void Resource::updateProblems()
       iter != loadplans.end(); )
   {
     // Process changes in the maximum or minimum targets
-    if (iter->getType() == 4)
+    if (iter->getEventType() == 4)
       curMax = iter->getMax();
-    else if (iter->getType() == 3)
+    else if (iter->getEventType() == 3)
       curMin = iter->getMin();
 
     // Only consider the last loadplan for a certain date
@@ -137,7 +137,7 @@ DECLARE_EXPORT void ResourceBuckets::updateProblems()
   for (loadplanlist::const_iterator iter = loadplans.begin();
       iter != loadplans.end(); iter++)
   {
-    if (iter->getType() != 2)
+    if (iter->getEventType() != 2)
       load = iter->getOnhand();
     else
     {

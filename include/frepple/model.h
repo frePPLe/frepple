@@ -2718,6 +2718,9 @@ class OperationPlan
           return new PeggingIterator(this, false);
       */
     }
+
+    DECLARE_EXPORT static PyObject* createIterator(PyObject* self, PyObject* args);
+
   private:
     /** Private copy constructor.<br>
       * It is used in the public copy constructor to make a deep clone of suboperationplans.
@@ -4557,7 +4560,7 @@ class FlowFixedStart : public FlowStart
   * Flowplans are owned by operationplans, which manage a container to store
   * them.
   */
-class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public Object
+class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 {
     friend class OperationPlan::FlowPlanIterator;
   private:
@@ -5152,6 +5155,12 @@ class Resource : public HasHierarchy<Resource>,
     }
 
     /** Returns a reference to the list of loadplans. */
+    loadplanlist::const_iterator getLoadPlanIterator() const
+    {
+      return loadplans.begin();
+    }
+
+    /** Returns a reference to the list of loadplans. */
     loadplanlist& getLoadPlans()
     {
       return loadplans;
@@ -5285,7 +5294,7 @@ class Resource : public HasHierarchy<Resource>,
       Plannable::registerFields<Cls>(m);
       m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, MetaFieldBase::DETAIL);
       m->addIteratorField<Cls, skilllist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getSkills, MetaFieldBase::DETAIL);
-      // TODO XXX m->addIteratorField<Cls, LoadPlanIterator>(Tags::loadplans, &Cls::getLoadPlans, DETAIL);  TODO SHOULD BE ONLY THE ONES OF TYPE 1
+      m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlanIterator, MetaFieldBase::DETAIL);
       // TODO XXX m->addIteratorField<Cls, ProblemIterator>(Tags::problems, &Cls::getProblems, DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
@@ -6131,7 +6140,7 @@ class DemandDefault : public Demand
   * object is created. These are then inserted in the timeline structure
   * associated with a resource.
   */
-class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public Object
+class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 {
     friend class OperationPlan::LoadPlanIterator;
   public:

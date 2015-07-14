@@ -67,7 +67,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   for (Buffer::flowplanlist::const_iterator c = b->getFlowPlans().begin();
       c != b->getFlowPlans().end(); ++c)
   {
-    if (c->getQuantity() <= 0 || c->getType() != 1)
+    if (c->getQuantity() <= 0 || c->getEventType() != 1)
       continue;
     const OperationPlan *o = reinterpret_cast<const FlowPlan*>(&*c)->getOperationPlan();
     if (o->getLocked())
@@ -176,7 +176,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       current_date = cur->getDate();
       do
       {
-        if (cur->getType() != 1)
+        if (cur->getEventType() != 1)
         {
           cur++;
           continue;

@@ -113,11 +113,11 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       {
         // A change in the maximum capacity
         prevMax = curMax;
-        if (cur->getType() == 4)
+        if (cur->getEventType() == 4)
           curMax = cur->getMax(false);
 
         const LoadPlan* ldplan = NULL;
-        if (cur->getType() == 1)
+        if (cur->getEventType() == 1)
           ldplan = static_cast<const LoadPlan*>(&*cur);
         if (ldplan && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation
           && ldplan->getOperationPlan()->getDates().overlap(data->state->q_operationplan->getDates()) > 0L
@@ -156,12 +156,12 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         {
           // A change in the maximum capacity
           prevMax = curMax;
-          if (cur->getType() == 4)
+          if (cur->getEventType() == 4)
             curMax = cur->getMax(false);
 
           // Must be same setup
           const LoadPlan* ldplan = NULL;
-          if (cur->getType() == 1)
+          if (cur->getEventType() == 1)
             ldplan = static_cast<const LoadPlan*>(&*cur);
           if (ldplan
             && ldplan->getOperationPlan()->getDates().overlap(setupOpplan->getDates()) > 0L
@@ -241,11 +241,11 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         {
           // A change in the maximum capacity
           prevMax = curMax;
-          if (cur->getType() == 4) curMax = cur->getMax(false);
+          if (cur->getEventType() == 4) curMax = cur->getMax(false);
 
           // Ongoing setup
           const LoadPlan* ldplan = NULL;
-          if (cur->getType() == 1)
+          if (cur->getEventType() == 1)
             ldplan = static_cast<const LoadPlan*>(&*cur);
           if (ldplan
             && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation
@@ -330,7 +330,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       for (cur = res->getLoadPlans().begin(); cur!=res->getLoadPlans().begin(data->state->q_loadplan); ++cur)
       {
         const LoadPlan* ldplan = NULL;
-        if (cur->getType() == 1)
+        if (cur->getEventType() == 1)
           ldplan = static_cast<const LoadPlan*>(&*cur);
         if (ldplan && !ldplan->getOperationPlan()->getRawIdentifier()
           && ldplan->getOperationPlan()->getOperation()!=data->state->q_operationplan->getOperation() )
@@ -341,7 +341,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           !(HasOverload && newDate) && cur != res->getLoadPlans().end(); )
       {
         // New maximum
-        if (cur->getType() == 4)
+        if (cur->getEventType() == 4)
           curMax = cur->getMax();
 
         /* @todo is this required?
@@ -358,7 +358,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         }
         */
         const LoadPlan* ldplan = NULL;
-        if (cur->getType() == 1)
+        if (cur->getEventType() == 1)
           ldplan = static_cast<const LoadPlan*>(&*cur);
         if (ldplan && !ldplan->getOperationPlan()->getRawIdentifier()
           && ldplan->getOperationPlan()->getOperation()!=data->state->q_operationplan->getOperation())
@@ -553,7 +553,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
       // Check if this operation overloads the resource bucket
       overloadQty = 0.0;
       for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
-        cur!=res->getLoadPlans().end() && cur->getType()!=2;
+        cur != res->getLoadPlans().end() && cur->getEventType() != 2;
         ++cur)
         if (cur->getOnhand() < overloadQty)
           overloadQty = cur->getOnhand();
@@ -619,7 +619,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
         for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
           cur!=res->getLoadPlans().end() && cur->getDate() > currentOpplan.end - res->getMaxEarly();)
         {
-          if (cur->getType() != 2)
+          if (cur->getEventType() != 2)
           {
             --cur;
             continue;
@@ -634,7 +634,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
               bucketEnd, Duration(1L), false, &tmp
               );
             // Move to the start of the bucket
-            while (cur!=res->getLoadPlans().end() && cur->getType() != 2) --cur;
+            while (cur!=res->getLoadPlans().end() && cur->getEventType() != 2) --cur;
             // If the new start date is within this bucket we have found a
             // bucket with available capacity left
             if (cur==res->getLoadPlans().end() || cur->getDate() <= newStart.getStart())
@@ -685,7 +685,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
     for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
       cur!=res->getLoadPlans().end(); ++cur)
     {
-      if (cur->getType() != 2)
+      if (cur->getEventType() != 2)
         // Not a new bucket
         overloadQty = cur->getOnhand();
       else if (overloadQty > min_free_quantity)

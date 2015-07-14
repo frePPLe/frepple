@@ -2508,69 +2508,28 @@ class Serializer
     }
 
   public:
-    /** This type is used to define different types of output.
-      * @see STANDARD
-      * @see PLAN
-      * @see PLANDETAIL
-      */
-    typedef unsigned short content_type;
-
-    /** Constant used to mark standard export for the export.
-      * The standard export saves just enough information to persist the full
-      * state of the model as brief as possible.
-      * @see PLAN
-      * @see PLANDETAIL
-      */
-    static DECLARE_EXPORT const content_type STANDARD;
-
-    /** Constant to mark an export of the standard information plus the plan
-      * information. In this format, every entity is saved with the details
-      * on how it is used in the plan.<br>
-      * E.g. a resource will be saved with a reference to all its loadplans.
-      * E.g. an operation will be saved with all its operationplans.
-      * @see STANDARD
-      * @see PLANDETAIL
-      */
-    static DECLARE_EXPORT const content_type PLAN;
-
-    /** Constant to mark an export of the lowest level of plan information.
-      * In addition to the plan information pegging information is now saved.
-      * @see STANDARD
-      * @see PLAN
-      */
-    static DECLARE_EXPORT const content_type PLANDETAIL;
-
-    /** Returns which type of export is requested.
-      * Constants have been defined for each type.
-      * @see STANDARD
-      * @see PLAN
-      * @see PLANDETAIL
-      */
-    content_type getContentType() const
+    /** Returns which type of export is requested. */
+    MetaFieldBase::FieldCategory getContentType() const
     {
       return content;
     }
 
-    /** Specify the type of export.
-      * @see STANDARD
-      * @see PLAN
-      * @see PLANDETAIL
-      */
-    void setContentType(content_type c)
+    /** Specify the type of export. */
+    void setContentType(MetaFieldBase::FieldCategory c)
     {
       content = c;
     }
 
     /** Constructor with a given stream. */
     Serializer(ostream& os) : numObjects(0),
-      numParents(0), currentObject(NULL), parentObject(NULL), content(STANDARD)
+      numParents(0), currentObject(NULL), parentObject(NULL), content(MetaFieldBase::BASE)
     {
       m_fp = &os;
     }
 
     /** Default constructor. */
     Serializer() : numObjects(0), numParents(0),
-      currentObject(NULL), parentObject(NULL), content(STANDARD)
+      currentObject(NULL), parentObject(NULL), content(MetaFieldBase::BASE)
     {
       m_fp = &logger;
     }
@@ -2673,7 +2632,7 @@ class Serializer
       * except for the root object.
       * @see writeElementWithHeader(const Keyword&, Object*)
       */
-    DECLARE_EXPORT void writeElement(const Keyword&, const Object*, mode = DEFAULT);
+    DECLARE_EXPORT virtual void writeElement(const Keyword&, const Object*, mode = DEFAULT);
 
     /** @see writeElement(const Keyword&, const Object*, mode) */
     void writeElement(const Keyword& t, const Object& o, mode m = DEFAULT)
@@ -2685,6 +2644,13 @@ class Serializer
     Object* getCurrentObject() const
     {
       return const_cast<Object*>(currentObject);
+    }
+
+    Object* pushCurrentObject(Object *o)
+    {
+      Object *t = const_cast<Object*>(currentObject);
+      currentObject = o;
+      return t;
     }
 
     /** Returns a pointer to the parent of the object that is being saved. */
@@ -2716,7 +2682,7 @@ class Serializer
     const Object *parentObject;
 
     /** Stores the type of data to be exported. */
-    content_type content;
+    MetaFieldBase::FieldCategory content;
 };
 
 
@@ -7013,7 +6979,7 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
         return;
       bool first = true;
       Iter it = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
-      while (Ptr* ob = it.next())
+      while (Ptr* ob = static_cast<Ptr*>(it.next()))
       {
         if (first)
         {

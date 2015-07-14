@@ -131,6 +131,7 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_LANGUAGE "Italian"
 !insertmacro MUI_LANGUAGE "Japanese"
 !insertmacro MUI_LANGUAGE "SimpChinese"
+!insertmacro MUI_LANGUAGE "Spanish"
 !insertmacro MUI_LANGUAGE "TradChinese"
 
 ;Version Information
@@ -250,6 +251,9 @@ Section "Application" SecAppl
     Goto ok2
   StrCmp $6 "Simplified Chinese" 0 +3
     StrCpy $6 "zh_cn"
+    Goto ok2
+  StrCmp $6 "Spanish" 0 +3
+    StrCpy $6 "es"
     Goto ok2
   StrCmp $6 "Traditional Chinese" 0 +3
     StrCpy $6 "zh_tw"

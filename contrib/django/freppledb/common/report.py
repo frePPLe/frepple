@@ -1125,7 +1125,7 @@ class GridReport(View):
               continue
             ok = False
             for i in reportclass.model._meta.fields:
-              if col == i.name.lower() or col == i.verbose_name.lower():
+              if col.replace(' ', '') == i.name.lower() or col == i.verbose_name.lower():
                 if i.editable is True:
                   headers.append(i)
                 else:

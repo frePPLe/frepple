@@ -320,7 +320,7 @@ class CalendarBucket : public Object, public NonCopyable
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addIntField<Cls>(Tags::id, &Cls::getId, &Cls::setId, INT_MIN, MetaFieldBase::MANDATORY);
+      m->addIntField<Cls>(Tags::id, &Cls::getId, &Cls::setId, INT_MIN, MANDATORY);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
@@ -328,7 +328,7 @@ class CalendarBucket : public Object, public NonCopyable
       m->addDurationField<Cls>(Tags::starttime, &Cls::getStartTime, &Cls::setStartTime);
       m->addDurationField<Cls>(Tags::endtime, &Cls::getEndTime, &Cls::setEndTime, 86400L);
       m->addDoubleField<Cls>(Tags::value, &Cls::getValue, &Cls::setValue);
-      m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar, &Cls::setCalendar, MetaFieldBase::DONT_SERIALIZE + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar, &Cls::setCalendar, DONT_SERIALIZE + PARENT);
     }
 
   public:
@@ -570,10 +570,10 @@ class Calendar : public HasName<Calendar>, public HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
       HasSource::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::deflt, &Cls::getDefault, &Cls::setDefault);
-      m->addIteratorField<Cls, CalendarBucket::iterator, CalendarBucket>(Tags::buckets, Tags::bucket, &Cls::getBuckets);
+      m->addIteratorField<Cls, CalendarBucket::iterator, CalendarBucket>(Tags::buckets, Tags::bucket, &Cls::getBuckets, WRITE_FULL);
     }
 
   protected:
@@ -742,13 +742,13 @@ class Problem : public NonCopyable, public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MetaFieldBase::BASE + MetaFieldBase::COMPUTED);
-      m->addStringField<Cls>(Tags::description, &Cls::getDescription, NULL, MetaFieldBase::BASE + MetaFieldBase::COMPUTED);
-      m->addDateField<Cls>(Tags::start, &Cls::getStart);
-      m->addDateField<Cls>(Tags::end, &Cls::getEnd);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, BASE + COMPUTED);
+      m->addStringField<Cls>(Tags::description, &Cls::getDescription, NULL, BASE + COMPUTED);
+      m->addDateField<Cls>(Tags::start, &Cls::getStart, NULL, Date::infinitePast);
+      m->addDateField<Cls>(Tags::end, &Cls::getEnd, NULL, Date::infiniteFuture);
       m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight);
-      m->addStringField<Cls>(Tags::entity, &Cls::getEntity, NULL, MetaFieldBase::DONT_SERIALIZE);
-      m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner);
+      m->addStringField<Cls>(Tags::entity, &Cls::getEntity, NULL, DONT_SERIALIZE);
+      m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner, NULL, DONT_SERIALIZE);
     }
   protected:
     /** Each Problem object references a HasProblem object as its owner. */
@@ -1208,8 +1208,8 @@ class HasLevel
   protected:
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addShortField<Cls>(Tags::level, &Cls::getLevel, NULL, 0, MetaFieldBase::DONT_SERIALIZE);
-      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, MetaFieldBase::DONT_SERIALIZE);
+      m->addShortField<Cls>(Tags::level, &Cls::getLevel, NULL, 0, DONT_SERIALIZE);
+      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, DONT_SERIALIZE);
     }
 
     /** Default constructor. The initial level is -1 and basically indicates
@@ -1338,7 +1338,7 @@ class Location : public HasHierarchy<Location>, public HasDescription
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
       m->addPointerField<Cls, CalendarDefault>(Tags::available, &Cls::getAvailable, &Cls::setAvailable);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
     }
 
   private:
@@ -1386,7 +1386,7 @@ class Customer : public HasHierarchy<Customer>, public HasDescription
     {
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
     }
 };
 
@@ -1426,6 +1426,12 @@ class Supplier : public HasHierarchy<Supplier>, public HasDescription
       return items;
     }
 
+    /** Returns an iterator over the list of items this supplier can deliver. */
+    itemlist::const_iterator getItemIterator() const
+    {
+      return items.begin();
+    }
+
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
     static int initialize();
@@ -1434,8 +1440,8 @@ class Supplier : public HasHierarchy<Supplier>, public HasDescription
     {
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
-      m->addListField<Cls, typename Cls::itemlist, SupplierItem>(Tags::supplieritems, Tags::supplieritem, &Cls::getItems, MetaFieldBase::DETAIL);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
+      m->addIteratorField<Cls, itemlist::const_iterator, SupplierItem>(Tags::supplieritems, Tags::supplieritem, &Cls::getItemIterator, DETAIL);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
     }
 
   private:
@@ -1520,22 +1526,22 @@ class SubOperation : public Object
       return effective;
     }
 
-    Date getStart() const
+    Date getEffectiveStart() const
     {
       return effective.getStart();
     }
 
-    void setStart(Date d)
+    void setEffectiveStart(Date d)
     {
       effective.setStart(d);
     }
 
-    Date getEnd() const
+    Date getEffectiveEnd() const
     {
       return effective.getEnd();
     }
 
-    void setEnd(Date d)
+    void setEffectiveEnd(Date d)
     {
       effective.setEnd(d);
     }
@@ -1547,11 +1553,11 @@ class SubOperation : public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Operation>(Tags::owner, &Cls::getOwner, &Cls::setOwner, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MetaFieldBase::MANDATORY);
+      m->addPointerField<Cls, Operation>(Tags::owner, &Cls::getOwner, &Cls::setOwner, MANDATORY + PARENT);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MANDATORY);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
-      m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart);
-      m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd);
+      m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
+      m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd);
     }
 };
 
@@ -1934,7 +1940,7 @@ class Operation : public HasName<Operation>,
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
       HasDescription::registerFields<Cls>(m);
       Plannable::registerFields<Cls>(m);
       m->addDurationField<Cls>(Tags::posttime, &Cls::getPostTime, &Cls::setPostTime);
@@ -1944,10 +1950,10 @@ class Operation : public HasName<Operation>,
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
       m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
-      // XXX m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, MetaFieldBase::DETAIL);
-      m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator);
-      m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
+      // XXX m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL);
+      m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, WRITE_FULL);
+      m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, WRITE_FULL);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
 
@@ -2051,12 +2057,16 @@ class OperationPlan
 
   public:
     class FlowPlanIterator;
+    typedef TimeLine<FlowPlan> flowplanlist;
+    typedef TimeLine<LoadPlan> loadplanlist;
 
     /** Returns an iterator pointing to the first flowplan. */
-    FlowPlanIterator beginFlowPlans() const;
+    inline FlowPlanIterator beginFlowPlans() const;
+    inline flowplanlist::const_iterator getFlowPlans() const;
 
     /** Returns an iterator pointing beyond the last flowplan. */
-    FlowPlanIterator endFlowPlans() const;
+    inline FlowPlanIterator endFlowPlans() const;
+    inline loadplanlist::const_iterator getLoadPlans() const;
 
     /** Returns how many flowplans are created on an operationplan. */
     int sizeFlowPlans() const;
@@ -2676,11 +2686,11 @@ class OperationPlan
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MetaFieldBase::MANDATORY);
+      m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MANDATORY);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
       m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, &Cls::setDemand);
-      m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart);
-      m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd);
+      m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart, Date::infiniteFuture);
+      m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       // Default of -999 to enforce serializing the value if it is 0
       m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, NULL, -999);
@@ -2690,10 +2700,10 @@ class OperationPlan
       m->addBoolField<Cls>(Tags::consume_capacity, &Cls::getConsumeCapacity, &Cls::setConsumeCapacity, BOOL_TRUE);
       HasSource::registerFields<Cls>(m);
       m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
-      m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, NULL, 0L, MetaFieldBase::DONT_SERIALIZE);
-      // TODO XXX m->addIteratorField<Cls>(Tags::flowplans, Tags::flowplan, &Cls::beginFlowPlans, MetaFieldBase::DETAIL);
-      // TODO XXX m->addIteratorField<Cls>(Tags::loadplans, Tags::loadplan, &Cls::beginLoadPlans, MetaFieldBase::DETAIL);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
+      m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, NULL, 0L, DONT_SERIALIZE);
+      m->addIteratorField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DETAIL);
+      m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DETAIL);
       /* TODO XXX
       from endelement:
         else if (pAttr.isA(Tags::owner) && !pIn.isObjectEnd())
@@ -2710,8 +2720,6 @@ class OperationPlan
   }
 
       from getattr:
-        if (attr.isA(Tags::operationplans))
-          return new OperationPlanIterator(this);
         if (attr.isA(Tags::pegging_downstream))
           return new PeggingIterator(this, true);
         if (attr.isA(Tags::pegging_upstream))
@@ -3135,7 +3143,7 @@ class OperationRouting : public Operation
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations);
+      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations, WRITE_FULL);
     }
 
   protected:
@@ -3247,7 +3255,7 @@ class OperationSplit : public Operation
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-       m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations);
+       m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations, WRITE_FULL);
     }
 
   protected:
@@ -3330,7 +3338,7 @@ class OperationAlternate : public Operation
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
-      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations);
+      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations, WRITE_FULL);
     }
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
@@ -3410,6 +3418,12 @@ class Item : public HasHierarchy<Item>, public HasDescription
       return suppliers;
     }
 
+    /** Returns an iterator over the list of items this supplier can deliver. */
+    supplierlist::const_iterator getSupplierIterator() const
+    {
+      return suppliers.begin();
+    }
+
     static int initialize();
 
     /** Destructor. */
@@ -3424,8 +3438,8 @@ class Item : public HasHierarchy<Item>, public HasDescription
       HasDescription::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::price, &Cls::getPrice, &Cls::setPrice, 0);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
-      m->addListField<Cls, typename Cls::supplierlist, SupplierItem>(Tags::supplieritems, Tags::supplieritem, &Cls::getSuppliers);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
+      m->addIteratorField<Cls, supplierlist::const_iterator, SupplierItem>(Tags::supplieritems, Tags::supplieritem, &Cls::getSupplierIterator, WRITE_FULL);
     }
 
   private:
@@ -3574,8 +3588,8 @@ class SupplierItem : public Object,
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Supplier>(Tags::supplier, &Cls::getSupplier, &Cls::setSupplier, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
-      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, Supplier>(Tags::supplier, &Cls::getSupplier, &Cls::setSupplier, MANDATORY + PARENT);
+      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, MANDATORY + PARENT);
       m->addDurationField<Cls>(Tags::leadtime, &Cls::getLeadTime, &Cls::setLeadTime);
       m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1.0);
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
@@ -3780,6 +3794,11 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       return flowplans;
     }
 
+    flowplanlist::const_iterator getFlowPlanIterator() const
+    {
+      return flowplans.begin();
+    }
+
     /** Returns a reference to the list of all flow plans of this buffer. */
     flowplanlist& getFlowPlans()
     {
@@ -3872,11 +3891,11 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       m->addDoubleField<Cls>(Tags::carrying_cost, &Cls::getCarryingCost, &Cls::setCarryingCost);
       m->addDurationField<Cls>(Tags::mininterval, &Cls::getMinimumInterval, &Cls::setMinimumInterval, -1);
       m->addDurationField<Cls>(Tags::maxinterval, &Cls::getMaximumInterval, &Cls::setMaximumInterval);
-      // XXX TODO m->addListField<Cls, flowplanlist, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, MetaFieldBase::DETAIL);
-      m->addListField<Cls, flowlist, Flow>(Tags::flows, Tags::flow, &Cls::getFlows, MetaFieldBase::DETAIL);
+      m->addListField<Cls, flowlist, Flow>(Tags::flows, Tags::flow, &Cls::getFlows, DETAIL);
       m->addBoolField<Cls>(Tags::tool, &Cls::getTool, &Cls::setTool, BOOL_FALSE);
-      // XXX TODO m->addIteratorField<Cls, Problem::const_iterator>(Tags::problems, Tags::problem, &Cls::getProblems, MetaFieldBase::DETAIL);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
+      // XXX TODO m->addListField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlanIterator, DETAIL);
+      // XXX TODO m->addIteratorField<Cls, Problem::const_iterator>(Tags::problems, Tags::problem, &Cls::getProblems, DETAIL);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
 
@@ -4422,21 +4441,21 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
-      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, &Cls::setBuffer, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MANDATORY + PARENT);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, &Cls::setBuffer, MANDATORY + PARENT);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
-      m->addPointerField<Cls, Flow>(Tags::alternate, &Cls::getAlternate, &Cls::setAlternate, MetaFieldBase::DONT_SERIALIZE);
+      m->addPointerField<Cls, Flow>(Tags::alternate, &Cls::getAlternate, &Cls::setAlternate, DONT_SERIALIZE);
       m->addStringField<Cls>(Tags::alternate_name, &Cls::getAlternateName, &Cls::setAlternateName);
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
       HasSource::registerFields<Cls>(m);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
     	// Not very nice: all flow subclasses appear to Python as instance of a
 	    // single Python class. We use this method to distinguish them.
-      m->addStringField<Cls>(Tags::type, &Cls::getTypeName, NULL, MetaFieldBase::DONT_SERIALIZE);
+      m->addStringField<Cls>(Tags::type, &Cls::getTypeName, NULL, DONT_SERIALIZE);
     }
 
   protected:
@@ -4673,10 +4692,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
-      m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, MetaFieldBase::DETAIL);
-      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, NULL, MetaFieldBase::DONT_SERIALIZE);
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, NULL, MetaFieldBase::DONT_SERIALIZE);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, NULL, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
+      m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, DETAIL);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, NULL, DONT_SERIALIZE);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, NULL, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, NULL, BOOL_FALSE, DONT_SERIALIZE);
       /*  TODO XXX write pegging?
   // Write pegging info.
   if (o->getContentType() == Serializer::PLANDETAIL)
@@ -4838,7 +4857,7 @@ class SetupMatrixRule : public Object
       m->addDurationField<Cls>(Tags::duration, &Cls::getDuration, &Cls::setDuration);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
-      m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix, MetaFieldBase::DONT_SERIALIZE + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix, DONT_SERIALIZE + PARENT);
     }
   private:
     /** Original setup. */
@@ -4953,7 +4972,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
       HasSource::registerFields<Cls>(m);
       m->addIteratorField<Cls, SetupMatrixRule::iterator, SetupMatrixRule>(Tags::rules, Tags::rule, &Cls::getRules);
     }
@@ -5054,7 +5073,7 @@ class Skill : public HasName<Skill>, public HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
       m->addIteratorField<Cls, resourcelist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getResources);
       HasSource::registerFields<Cls>(m);
     }
@@ -5292,11 +5311,11 @@ class Resource : public HasHierarchy<Resource>,
       m->addStringField<Cls>(Tags::setup, &Cls::getSetup, &Cls::setSetup);
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix);
       Plannable::registerFields<Cls>(m);
-      m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, MetaFieldBase::DETAIL);
-      m->addIteratorField<Cls, skilllist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getSkills, MetaFieldBase::DETAIL);
-      m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlanIterator, MetaFieldBase::DETAIL);
+      m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, DETAIL);
+      m->addIteratorField<Cls, skilllist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getSkills, DETAIL);
+      m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlanIterator, DETAIL);
       // TODO XXX m->addIteratorField<Cls, ProblemIterator>(Tags::problems, &Cls::getProblems, DETAIL);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
   protected:
@@ -5511,8 +5530,8 @@ class ResourceSkill : public Object,
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
-      m->addPointerField<Cls, Skill>(Tags::skill, &Cls::getSkill, &Cls::setSkill, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MANDATORY + PARENT);
+      m->addPointerField<Cls, Skill>(Tags::skill, &Cls::getSkill, &Cls::setSkill, MANDATORY + PARENT);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
@@ -5718,12 +5737,12 @@ class Load
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
-      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MetaFieldBase::MANDATORY + MetaFieldBase::PARENT);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MANDATORY + PARENT);
+      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MANDATORY + PARENT);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity, 1.0);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
-      m->addPointerField<Cls, Load>(Tags::alternate, &Cls::getAlternate, &Cls::setAlternate, MetaFieldBase::DONT_SERIALIZE);
+      m->addPointerField<Cls, Load>(Tags::alternate, &Cls::getAlternate, &Cls::setAlternate, DONT_SERIALIZE);
       m->addStringField<Cls>(Tags::alternate_name, &Cls::getAlternateName, &Cls::setAlternateName);
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
@@ -5731,7 +5750,7 @@ class Load
       m->addStringField<Cls>(Tags::setup, &Cls::getSetup, &Cls::setSetup);
       m->addPointerField<Cls, Skill>(Tags::skill, &Cls::getSkill, &Cls::setSkill);
       HasSource::registerFields<Cls>(m);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       /* XXX TODO from endement
       else if (pAttr.isA(Tags::action))
   {
@@ -6042,10 +6061,10 @@ class Demand
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
       m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration::MAX);
       m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment, &Cls::setMinShipment, 1);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       // xxx TODO m->addIteratorField<Cls>(Tags::operationplans, &Cls::getOperationplans, NULL, DETAIL);
       // xxx TODO m->addIteratorField<Cls>(Tags::problems, &Cls::getProblems, NULL, DETAIL);
-      m->addListField<Cls, Problem::List, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraints, MetaFieldBase::DETAIL);
+      m->addListField<Cls, Problem::List, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraints, DETAIL);
       /*   if (attr.isA(Tags::pegging))
     return new PeggingIterator(this);
 
@@ -6272,13 +6291,13 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
-      m->addPointerField<Cls, Load>(Tags::load, &Cls::getLoad, &Cls::setLoad, MetaFieldBase::DETAIL);
-      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MetaFieldBase::DONT_SERIALIZE);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, NULL, BOOL_FALSE, MetaFieldBase::DONT_SERIALIZE);
-      m->addDateField<Cls>(Tags::startdate, &Cls::getStartDate, NULL, Date::infiniteFuture, MetaFieldBase::DONT_SERIALIZE);
-      m->addDateField<Cls>(Tags::enddate, &Cls::getEndDate, NULL, Date::infiniteFuture, MetaFieldBase::DONT_SERIALIZE);
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, NULL, MetaFieldBase::DONT_SERIALIZE);
-      m->addStringField<Cls>(Tags::setup, &Cls::getSetup, NULL, MetaFieldBase::DONT_SERIALIZE);
+      m->addPointerField<Cls, Load>(Tags::load, &Cls::getLoad, &Cls::setLoad, DETAIL);
+      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, NULL, BOOL_FALSE, DONT_SERIALIZE);
+      m->addDateField<Cls>(Tags::startdate, &Cls::getStartDate, NULL, Date::infiniteFuture, DONT_SERIALIZE);
+      m->addDateField<Cls>(Tags::enddate, &Cls::getEndDate, NULL, Date::infiniteFuture, DONT_SERIALIZE);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, NULL, DONT_SERIALIZE);
+      m->addStringField<Cls>(Tags::setup, &Cls::getSetup, NULL, DONT_SERIALIZE);
     }
 
   private:
@@ -6689,7 +6708,7 @@ class Plan : public Plannable, public Object
       m->addStringField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
       m->addStringField<Plan>(Tags::description, &Plan::getDescription, &Plan::setDescription);
       m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
-      m->addStringField<Plan>(Tags::logfile, &Plan::getLogFile, &Plan::setLogFile, MetaFieldBase::DONT_SERIALIZE);
+      m->addStringField<Plan>(Tags::logfile, &Plan::getLogFile, &Plan::setLogFile, DONT_SERIALIZE);
       Plannable::registerFields<Plan>(m);
       m->addIteratorField<Plan, Location::iterator, Location>(Tags::locations, Tags::location, &Plan::getLocations);
       m->addIteratorField<Plan, Customer::iterator, Customer>(Tags::customers, Tags::customer, &Plan::getCustomers);
@@ -8006,15 +8025,30 @@ class OperationPlan::FlowPlanIterator
     }
 };
 
+
 inline OperationPlan::FlowPlanIterator OperationPlan::beginFlowPlans() const
 {
   return OperationPlan::FlowPlanIterator(firstflowplan);
 }
 
+
 inline OperationPlan::FlowPlanIterator OperationPlan::endFlowPlans() const
 {
   return OperationPlan::FlowPlanIterator(NULL);
 }
+
+
+inline OperationPlan::flowplanlist::const_iterator OperationPlan::getFlowPlans() const
+{
+  return OperationPlan::flowplanlist::const_iterator(firstflowplan);
+}
+
+
+inline OperationPlan::loadplanlist::const_iterator OperationPlan::getLoadPlans() const
+{
+  return OperationPlan::loadplanlist::const_iterator(firstloadplan);
+}
+
 
 inline int OperationPlan::sizeFlowPlans() const
 {
@@ -8303,8 +8337,8 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args);
   * very same model.<br>
   * The function takes the following arguments:
   *   - Name of the output file
-  *   - Type of output desired: STANDARD, PLAN or PLANDETAIL.
-  *     The default value is STANDARD.
+  *   - Type of output desired: BASE, PLAN or DETAIL.
+  *     The default value is BASE.
   */
 DECLARE_EXPORT PyObject* saveXMLfile(PyObject*, PyObject*);
 

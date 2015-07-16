@@ -14,42 +14,6 @@
       used. The validity periods of the components can overlap.
   </description>
 	<current>2009-01-01T00:00:00</current>
-	<operations>
-		<operation name="Purchase component A" xsi:type="operation_fixed_time">
-			<size_minimum>0</size_minimum>
-			<duration>P7D</duration>
-		</operation>
-		<operation name="Purchase component B" xsi:type="operation_fixed_time">
-			<size_minimum>0</size_minimum>
-			<duration>P5D</duration>
-		</operation>
-		<operation name="Purchase component C" xsi:type="operation_fixed_time">
-			<size_minimum>0</size_minimum>
-			<duration>P7D</duration>
-		</operation>
-		<operation name="Purchase component D" xsi:type="operation_fixed_time">
-			<size_minimum>0</size_minimum>
-			<duration>P7D</duration>
-		</operation>
-		<operation name="Purchase component E" xsi:type="operation_fixed_time">
-			<size_minimum>0</size_minimum>
-			<duration>P7D</duration>
-		</operation>
-		<operation name="Purchase component F" xsi:type="operation_fixed_time">
-			<size_minimum>0</size_minimum>
-			<duration>P7D</duration>
-		</operation>
-		<operation name="Purchase component G" xsi:type="operation_fixed_time">
-			<size_minimum>0</size_minimum>
-			<duration>P5D</duration>
-		</operation>
-		<operation name="assembly" xsi:type="operation_time_per">
-			<duration>P1D</duration>
-			<duration_per>P1D</duration_per>
-		</operation>
-		<operation name="deliver product" xsi:type="operation_fixed_time">
-		</operation>
-	</operations>
 	<items>
 		<item>
 			<name>component A</name>
@@ -74,11 +38,14 @@
 		</item>
 		<item>
 			<name>product</name>
-			<operation name="deliver product" xsi:type="operation_fixed_time"/>
+			<operation>
+				<name>deliver product</name>
+			</operation>
 		</item>
 	</items>
 	<buffers>
-		<buffer name="component A" xsi:type="buffer_procure">
+		<buffer xsi:type="buffer_procure">
+			<name>component A</name>
 			<item>
 				<name>component A</name>
 			</item>
@@ -87,7 +54,8 @@
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer name="component B" xsi:type="buffer_procure">
+		<buffer xsi:type="buffer_procure">
+			<name>component B</name>
 			<item>
 				<name>component B</name>
 			</item>
@@ -96,7 +64,8 @@
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer name="component C" xsi:type="buffer_procure">
+		<buffer xsi:type="buffer_procure">
+			<name>component C</name>
 			<item>
 				<name>component C</name>
 			</item>
@@ -105,7 +74,8 @@
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer name="component D" xsi:type="buffer_procure">
+		<buffer xsi:type="buffer_procure">
+			<name>component D</name>
 			<item>
 				<name>component D</name>
 			</item>
@@ -113,7 +83,8 @@
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer name="component E" xsi:type="buffer_procure">
+		<buffer xsi:type="buffer_procure">
+			<name>component E</name>
 			<item>
 				<name>component E</name>
 			</item>
@@ -121,7 +92,8 @@
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer name="component F" xsi:type="buffer_procure">
+		<buffer xsi:type="buffer_procure">
+			<name>component F</name>
 			<item>
 				<name>component F</name>
 			</item>
@@ -130,7 +102,8 @@
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer name="component G" xsi:type="buffer_procure">
+		<buffer xsi:type="buffer_procure">
+			<name>component G</name>
 			<item>
 				<name>component G</name>
 			</item>
@@ -139,15 +112,185 @@
 			<mininventory>20</mininventory>
 			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer name="product">
-			<producing name="assembly" xsi:type="operation_time_per"/>
+		<buffer>
+			<name>product</name>
+			<producing xsi:type="operation_time_per">
+				<name>assembly</name>
+			</producing>
 			<item>
 				<name>product</name>
 			</item>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation>
+			<name>Purchase component A</name>
+			<size_minimum>0</size_minimum>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer xsi:type="buffer_procure">
+						<name>component A</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>Purchase component B</name>
+			<size_minimum>0</size_minimum>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer xsi:type="buffer_procure">
+						<name>component B</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>Purchase component C</name>
+			<size_minimum>0</size_minimum>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer xsi:type="buffer_procure">
+						<name>component C</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>Purchase component D</name>
+			<size_minimum>0</size_minimum>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer xsi:type="buffer_procure">
+						<name>component D</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>Purchase component E</name>
+			<size_minimum>0</size_minimum>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer xsi:type="buffer_procure">
+						<name>component E</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>Purchase component F</name>
+			<size_minimum>0</size_minimum>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer xsi:type="buffer_procure">
+						<name>component F</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>Purchase component G</name>
+			<size_minimum>0</size_minimum>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer xsi:type="buffer_procure">
+						<name>component G</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P5D</duration>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>assembly</name>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>product</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow>
+					<buffer xsi:type="buffer_procure">
+						<name>component A</name>
+					</buffer>
+					<quantity>-1</quantity>
+					<name>group1</name>
+				</flow>
+				<flow>
+					<buffer xsi:type="buffer_procure">
+						<name>component B</name>
+					</buffer>
+					<quantity>-2</quantity>
+					<priority>2</priority>
+				</flow>
+				<flow>
+					<buffer xsi:type="buffer_procure">
+						<name>component C</name>
+					</buffer>
+					<quantity>-1</quantity>
+					<name>group2</name>
+				</flow>
+				<flow>
+					<buffer xsi:type="buffer_procure">
+						<name>component D</name>
+					</buffer>
+					<quantity>-1</quantity>
+					<priority>2</priority>
+				</flow>
+				<flow>
+					<buffer xsi:type="buffer_procure">
+						<name>component E</name>
+					</buffer>
+					<quantity>-1</quantity>
+					<priority>3</priority>
+				</flow>
+				<flow>
+					<buffer xsi:type="buffer_procure">
+						<name>component F</name>
+					</buffer>
+					<quantity>-1</quantity>
+					<name>group3</name>
+				</flow>
+				<flow>
+					<buffer xsi:type="buffer_procure">
+						<name>component G</name>
+					</buffer>
+					<quantity>-1</quantity>
+					<priority>2</priority>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<duration_per>P1D</duration_per>
+		</operation>
+		<operation>
+			<name>deliver product</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>product</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
 	<demands>
-		<demand name="order 1">
+		<demand>
+			<name>order 1</name>
 			<quantity>10</quantity>
 			<item>
 				<name>product</name>
@@ -156,143 +299,82 @@
 			<priority>11</priority>
 		</demand>
 	</demands>
-	<flows>
-		<flow xsi:type="flow_end">
-			<operation name="Purchase component A" xsi:type="operation_fixed_time"/>
-			<buffer name="component A" xsi:type="buffer_procure"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="Purchase component B" xsi:type="operation_fixed_time"/>
-			<buffer name="component B" xsi:type="buffer_procure"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="Purchase component C" xsi:type="operation_fixed_time"/>
-			<buffer name="component C" xsi:type="buffer_procure"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="Purchase component D" xsi:type="operation_fixed_time"/>
-			<buffer name="component D" xsi:type="buffer_procure"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="Purchase component E" xsi:type="operation_fixed_time"/>
-			<buffer name="component E" xsi:type="buffer_procure"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="Purchase component F" xsi:type="operation_fixed_time"/>
-			<buffer name="component F" xsi:type="buffer_procure"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="Purchase component G" xsi:type="operation_fixed_time"/>
-			<buffer name="component G" xsi:type="buffer_procure"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="assembly" xsi:type="operation_time_per"/>
-			<buffer name="product"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="assembly" xsi:type="operation_time_per"/>
-			<buffer name="component A" xsi:type="buffer_procure"/>
-			<quantity>-1</quantity>
-			<name>group1</name>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="assembly" xsi:type="operation_time_per"/>
-			<buffer name="component B" xsi:type="buffer_procure"/>
-			<quantity>-2</quantity>
-			<priority>2</priority>
-			<alternate>group1</alternate>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="assembly" xsi:type="operation_time_per"/>
-			<buffer name="component C" xsi:type="buffer_procure"/>
-			<quantity>-1</quantity>
-			<name>group2</name>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="assembly" xsi:type="operation_time_per"/>
-			<buffer name="component D" xsi:type="buffer_procure"/>
-			<quantity>-1</quantity>
-			<priority>2</priority>
-			<alternate>group2</alternate>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="assembly" xsi:type="operation_time_per"/>
-			<buffer name="component E" xsi:type="buffer_procure"/>
-			<quantity>-1</quantity>
-			<priority>3</priority>
-			<alternate>group2</alternate>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="assembly" xsi:type="operation_time_per"/>
-			<buffer name="component F" xsi:type="buffer_procure"/>
-			<quantity>-1</quantity>
-			<name>group3</name>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="assembly" xsi:type="operation_time_per"/>
-			<buffer name="component G" xsi:type="buffer_procure"/>
-			<quantity>-1</quantity>
-			<priority>2</priority>
-			<alternate>group3</alternate>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="deliver product" xsi:type="operation_fixed_time"/>
-			<buffer name="product"/>
-			<quantity>-1</quantity>
-		</flow>
-	</flows>
 	<operationplans>
-		<operationplan id="2" operation="Purchase component A">
+		<operationplan>
+			<id>2</id>
+			<operation>
+				<name>Purchase component A</name>
+			</operation>
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>69</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="3" operation="Purchase component B">
+		<operationplan>
+			<id>3</id>
+			<operation>
+				<name>Purchase component B</name>
+			</operation>
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>66</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="4" operation="Purchase component C">
+		<operationplan>
+			<id>4</id>
+			<operation>
+				<name>Purchase component C</name>
+			</operation>
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>65</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="5" operation="Purchase component D">
+		<operationplan>
+			<id>5</id>
+			<operation>
+				<name>Purchase component D</name>
+			</operation>
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>70</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="6" operation="Purchase component E">
+		<operationplan>
+			<id>6</id>
+			<operation>
+				<name>Purchase component E</name>
+			</operation>
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>70</quantity>
 			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="7" operation="Purchase component F">
+		<operationplan>
+			<id>7</id>
+			<operation>
+				<name>Purchase component F</name>
+			</operation>
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>65</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="8" operation="Purchase component G">
+		<operationplan>
+			<id>8</id>
+			<operation>
+				<name>Purchase component G</name>
+			</operation>
 			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<quantity>65</quantity>
 			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="9" operation="assembly">
+		<operationplan>
+			<id>9</id>
+			<operation xsi:type="operation_time_per">
+				<name>assembly</name>
+			</operation>
 			<start>2008-12-24T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>1</quantity>
@@ -328,49 +410,42 @@
 		<problem>
 			<name>before current</name>
 			<description>Operation &apos;Purchase component A&apos; planned in the past</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<weight>69</weight>
 		</problem>
 		<problem>
 			<name>before current</name>
 			<description>Operation &apos;Purchase component B&apos; planned in the past</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<weight>66</weight>
 		</problem>
 		<problem>
 			<name>before current</name>
 			<description>Operation &apos;Purchase component C&apos; planned in the past</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<weight>65</weight>
 		</problem>
 		<problem>
 			<name>before current</name>
 			<description>Operation &apos;Purchase component D&apos; planned in the past</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<weight>70</weight>
 		</problem>
 		<problem>
 			<name>before current</name>
 			<description>Operation &apos;Purchase component E&apos; planned in the past</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<weight>70</weight>
 		</problem>
 		<problem>
 			<name>before current</name>
 			<description>Operation &apos;Purchase component F&apos; planned in the past</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<weight>65</weight>
 		</problem>
 		<problem>
 			<name>before current</name>
 			<description>Operation &apos;Purchase component G&apos; planned in the past</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>1971-01-01T00:00:00</end>
 			<weight>65</weight>
 		</problem>

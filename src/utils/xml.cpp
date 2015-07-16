@@ -159,7 +159,8 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
   // Look up the field
   data[dataindex].hash = Keyword::hash(ename_utf8);
   data[dataindex].field = NULL;
-  if (dataindex >= 1 && data[dataindex-1].field && data[dataindex-1].field->isGroup() && data[dataindex].hash == data[dataindex-1].field->getKeyword()->getHash())
+  if (dataindex >= 1 && data[dataindex-1].field && data[dataindex-1].field->isGroup()
+    && data[dataindex].hash == data[dataindex-1].field->getKeyword()->getHash())
   {
     // New element to create in the group
     // Increment object index
@@ -245,8 +246,17 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
   if (!data[dataindex].field)
   {
     if (!dataindex && data[dataindex].hash == objects[0].hash)
-      // Special case: root element with name "plan"
+    {
+      // Special case: root element
       --dataindex;
+      for (XMLSize_t i = 0, cnt = atts.getLength(); i < cnt; ++i)
+      {
+        string attr_name = transcodeUTF8(atts.getLocalName(i));
+        if (attr_name == "source")
+          // Special case: Source specified as attribute of the root element
+          setSource(transcodeUTF8(atts.getValue(i)));
+      }
+    }
     else
     {
       // Ignore this element
@@ -413,7 +423,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
       const MetaClass* cl = objects[objectindex-1].cls;
       for (MetaClass::fieldlist::const_iterator i = objects[objectindex].cls->getFields().begin();
         i != objects[objectindex].cls->getFields().end(); ++i)
-        if ((*i)->getFlags() & MetaFieldBase::PARENT && objectindex >= 1)
+        if ((*i)->getFlags() & PARENT && objectindex >= 1)
         {
           if (*((*i)->getClass()) == *cl
             || (cl->category && *((*i)->getClass()) == *(cl->category)))
@@ -459,7 +469,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
       const MetaClass* cl = objects[objectindex-1].cls;
       for (MetaClass::fieldlist::const_iterator i = objects[objectindex].cls->category->getFields().begin();
         i != objects[objectindex].cls->category->getFields().end(); ++i)
-        if ((*i)->getFlags() & MetaFieldBase::PARENT && objectindex >= 1)
+        if ((*i)->getFlags() & PARENT && objectindex >= 1)
         {
           if (*((*i)->getClass()) == *cl
             || (cl->category && *((*i)->getClass()) == *(cl->category)))
@@ -741,7 +751,7 @@ DECLARE_EXPORT void XMLSerializer::decIndent()
 
 
 DECLARE_EXPORT void Serializer::writeElement
-(const Keyword& tag, const Object* object, mode m)
+(const Keyword& tag, const Object* object, FieldCategory m)
 {
   // Avoid NULL pointers and skip hidden objects
   if (!object || object->getHidden()) return;
@@ -754,13 +764,15 @@ DECLARE_EXPORT void Serializer::writeElement
   ++numParents;
 
   // Call the write method on the object
-  if (m != DEFAULT)
+  if (m != BASE)
     // Mode is overwritten
     object->writeElement(this, tag, m);
   else
     // Choose wether to save a reference of the object.
     // The root object can't be saved as a reference.
-    object->writeElement(this, tag, numParents>5 ? REFERENCE : DEFAULT);
+    object->writeElement(
+      this, tag, numParents > 2 ? MANDATORY : BASE
+      );
 
   // Adjust current and parent object pointer
   --numParents;
@@ -791,7 +803,8 @@ DECLARE_EXPORT void XMLSerializer::writeElementWithHeader(const Keyword& tag, co
   ++numObjects;
   ++numParents;
   BeginObject(tag, getHeaderAtts());
-  object->writeElement(this, tag, NOHEAD);
+  skipHead();
+  object->writeElement(this, tag, BASE);
 
   // Adjust current and parent object pointer
   currentObject = NULL;

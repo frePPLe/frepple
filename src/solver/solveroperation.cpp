@@ -884,7 +884,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Filter out alternates that are not suitable
       if ((*altIter)->getPriority() == 0
         || (effectiveOnly && !(*altIter)->getEffective().within(data->state->q_date))
-        || (!effectiveOnly && (*altIter)->getEnd() > data->state->q_date)
+        || (!effectiveOnly && (*altIter)->getEffectiveEnd() > data->state->q_date)
         )
       {
         ++altIter;
@@ -898,7 +898,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       }
 
       // Establish the ask date
-      ask_date = effectiveOnly ? origQDate : (*altIter)->getEnd();
+      ask_date = effectiveOnly ? origQDate : (*altIter)->getEffectiveEnd();
 
       // Find the flow into the requesting buffer. It may or may not exist, since
       // the flow could already exist on the top operationplan

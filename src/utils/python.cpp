@@ -45,7 +45,9 @@ DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
 const MetaCategory* PythonDictionary::metadata = NULL;
 
 
-DECLARE_EXPORT void Object::writeElement(Serializer* o, const Keyword& tag, mode m) const
+DECLARE_EXPORT void Object::writeElement(
+  Serializer* o, const Keyword& tag, FieldCategory m
+  ) const
 {
   // Don't serialize hidden objects
   if (getHidden()) return;
@@ -53,7 +55,9 @@ DECLARE_EXPORT void Object::writeElement(Serializer* o, const Keyword& tag, mode
   const MetaClass& meta = getType();
 
   // Write the head
-  if (m != NOHEAD && m != NOHEADTAIL)
+  if (o->getSkipHead())
+    o->skipHead(false);
+  else
   {
     if (meta.isDefault)
       o->BeginObject(tag);
@@ -62,26 +66,26 @@ DECLARE_EXPORT void Object::writeElement(Serializer* o, const Keyword& tag, mode
   }
 
   // Write the content
-  if (m == REFERENCE)
+  if (m == MANDATORY)
   {
     // Write references only
     if (meta.category)
       for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-        if ((*i)->getFlags() & MetaFieldBase::MANDATORY)
+        if ((*i)->getFlag(MANDATORY))
           (*i)->writeField(*o);
     for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      if ((*i)->getFlags() & MetaFieldBase::MANDATORY)
+      if ((*i)->getFlag(MANDATORY))
         (*i)->writeField(*o);
   }
-  else if (m == DEFAULT)
+  else if (m == BASE)
   {
     // Write only the fields required to successfully save&restore the object
     if (meta.category)
       for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-        if (!((*i)->getFlags() & MetaFieldBase::DETAIL))
+        if (!(*i)->getFlag(DETAIL))
           (*i)->writeField(*o);
     for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      if (!((*i)->getFlags() & MetaFieldBase::DETAIL))
+      if (!(*i)->getFlag(DETAIL))
         (*i)->writeField(*o);
     PythonDictionary::write(o, getDict());
   }
@@ -97,7 +101,9 @@ DECLARE_EXPORT void Object::writeElement(Serializer* o, const Keyword& tag, mode
   }
 
   // Write the tail
-  if (m != NOHEADTAIL && m != NOTAIL)
+  if (o->getSkipTail())
+    o->skipTail(false);
+  else
     o->EndObject(tag);
 }
 
@@ -108,10 +114,10 @@ DECLARE_EXPORT size_t Object::getSize() const
   size_t tmp = meta.size;
   if (meta.category)
     for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-      if (!((*i)->getFlags() & MetaFieldBase::COMPUTED))
+      if (!((*i)->getFlags() & COMPUTED))
         tmp += (*i)->getSize(this);
   for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-    if (!((*i)->getFlags() & MetaFieldBase::COMPUTED))
+    if (!((*i)->getFlags() & COMPUTED))
       tmp += (*i)->getSize(this);
   return tmp;
 }
@@ -601,7 +607,7 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
   PyGILState_Release(pythonstate);
 }
 
- 
+
 //XXX TODO change API:  void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataValue& pElement)
 /*
 void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataValue& pElement)
@@ -698,11 +704,11 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
     XMLSerializer x(ch);
     x.setReferencesOnly(true);
     if (!mode || mode[0] == 'S')
-      x.setContentType(MetaFieldBase::BASE);
+      x.setContentType(BASE);
     else if (mode[0] == 'P')
-      x.setContentType(MetaFieldBase::PLAN);
+      x.setContentType(PLAN);
     else if (mode[0] == 'D')
-      x.setContentType(MetaFieldBase::DETAIL);
+      x.setContentType(DETAIL);
     else
       throw DataException("Invalid output mode");
 

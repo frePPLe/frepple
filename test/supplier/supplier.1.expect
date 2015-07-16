@@ -13,33 +13,29 @@
 			<name>Supplier B</name>
 		</supplier>
 	</suppliers>
-	<operations>
-	</operations>
 	<items>
 		<item>
 			<name>Component A</name>
+			<supplieritems>
+				<supplieritem>
+					<supplier>
+						<name>Supplier A</name>
+					</supplier>
+				</supplieritem>
+			</supplieritems>
 		</item>
 		<item>
 			<name>Component B</name>
 			<price>1</price>
+			<supplieritems>
+				<supplieritem>
+					<supplier>
+						<name>Supplier B</name>
+					</supplier>
+				</supplieritem>
+			</supplieritems>
 		</item>
 	</items>
-	<supplieritems>
-		<supplieritem>
-			<supplier>
-				<name>Supplier A</name>
-			</supplier>
-			<item>
-				<name>Component A</name>
-			</item>
-		</supplieritem>
-		<supplieritem>
-			<supplier>
-				<name>Supplier B</name>
-			</supplier>
-			<item>
-				<name>Component B</name>
-			</item>
-		</supplieritem>
-	</supplieritems>
+	<operations>
+	</operations>
 </plan>

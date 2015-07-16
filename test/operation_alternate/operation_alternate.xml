@@ -96,24 +96,24 @@
           <quantity>1</quantity>
         </flow>
       </flows>
-      <alternates>
-        <alternate>
+      <suboperations>
+        <suboperation>
           <operation name="make item 1 with routing A" />
           <priority>1</priority>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="make item 1 with routing B" />
           <priority>2</priority>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="buy from supplier C" />
           <priority>3</priority>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="buy from supplier D" />
           <priority>4</priority>
-        </alternate>
-      </alternates>
+        </suboperation>
+      </suboperations>
     </operation>
 	</operations>
 	<buffers>

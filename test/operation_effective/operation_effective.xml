@@ -80,8 +80,8 @@
   </buffers>
   <operations>
     <operation name="1. Source end item" xsi:type="operation_alternate">
-      <alternates>
-        <alternate>
+      <suboperations>
+        <suboperation>
           <operation name="1. sourcing from location A"
             xsi:type="operation_fixed_time" duration="P1D">
               <flows>
@@ -93,8 +93,8 @@
           </operation>
           <priority>1</priority>
           <effective_end>2009-02-01T00:00:00</effective_end>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="1. sourcing from location B"
             xsi:type="operation_fixed_time" duration="P2D">
               <flows>
@@ -106,8 +106,8 @@
           </operation>
           <priority>2</priority>
           <effective_start>2009-02-01T00:00:00</effective_start>
-        </alternate>
-      </alternates>
+        </suboperation>
+      </suboperations>
     </operation>
   </operations>
   <items>
@@ -201,8 +201,8 @@
   </buffers>
   <operations>
     <operation name="2. Source end item" xsi:type="operation_alternate">
-      <alternates>
-        <alternate>
+      <suboperations>
+        <suboperation>
           <operation name="2. sourcing from location A"
             xsi:type="operation_fixed_time" duration="P1D">
               <flows>
@@ -214,8 +214,8 @@
           </operation>
           <priority>1</priority>
           <effective_end>2009-02-01T00:00:00</effective_end>
-        </alternate>
-        <alternate>
+        </suboperation>
+        <suboperation>
           <operation name="2. sourcing from location B"
             xsi:type="operation_fixed_time" duration="P2D">
               <flows>
@@ -227,8 +227,8 @@
           </operation>
           <priority>2</priority>
           <effective_start>2009-02-01T00:00:00</effective_start>
-        </alternate>
-      </alternates>
+        </suboperation>
+      </suboperations>
     </operation>
   </operations>
   <items>

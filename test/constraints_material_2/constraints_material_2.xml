@@ -85,10 +85,10 @@
 	          <operation name="make 6 step 2" xsi:type="operation_fixed_time"
 	            duration="P1D" />
           </suboperation>
-          <suboperations>
+          <suboperation>
 	          <operation name="make 6 step 3" xsi:type="operation_fixed_time"
 	            duration="P1D" />
-          </suboperations>
+          </suboperation>
 	      </suboperations>
 	    </producing>
 	  </buffer>

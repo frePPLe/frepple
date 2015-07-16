@@ -199,7 +199,7 @@ class Keyword;
 class DataInput;
 class DataValue;
 class PythonFunction;
-template<class T, class U> class PythonIterator2;
+template<class T, class U> class PythonIterator;
 class DataValueDict;
 class MetaClass;
 template<class T> class MetaFieldDate;
@@ -1641,29 +1641,32 @@ class PythonType : public NonCopyable
 };
 
 
+enum FieldCategory
+{
+  MANDATORY = 1,         // Marks a key field of the object. This is
+                         // used when we need to serialize only a reference
+                         // to the object.
+  BASE = 2,              // The default value. The field will be serialized
+                         // and deserialized normally.
+  PLAN = 4,              // Marks fields containing planning output. It is
+                         // only serialized when we request such info.
+  DETAIL = 8,            // Marks fields containing more detail than is
+                         // required to restore all state.
+  DONT_SERIALIZE = 16,   // These fields are not intended to be ever
+                         // serialized.
+  COMPUTED = 32,         // A computed field doesn't consume any storage
+  PARENT = 64,           // If set, the constructor of the child object
+                         // will get a pointer to the parent as extra
+                         // argument.
+  WRITE_FULL = 128       // Write this field in full, even at deeper
+                         // indentation levels.
+};
+
+
 /** @brief This class stores metadata on a data field of a class. */
 class MetaFieldBase
 {
   public:
-    enum FieldCategory
-    {
-      MANDATORY = 1,         // Marks a key field of the object. This is
-                             // used when we need to serialize only a reference
-                             // to the object.
-      BASE = 2,              // The default value. The field will be serialized
-                             // and deserialized normally.
-      PLAN = 4,              // Marks fields containing planning output. It is
-                             // only serialized when we request such info.
-      DETAIL = 8,            // Marks fields containing more detail than is
-                             // required to restore all state.
-      DONT_SERIALIZE = 16,   // These fields are not intended to be ever
-                             // serialized.
-      COMPUTED = 32,         // A computed field doesn't consume any storage
-      PARENT = 64            // If set, the constructor of the child object
-                             // will get a pointer to the parent as extra
-                             // argument.
-    };
-
     MetaFieldBase(const Keyword& k, unsigned int fl)
       : name(k), flags(fl) {}
 
@@ -1927,7 +1930,7 @@ class MetaClass : public NonCopyable
       const Keyword& k,
       string (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(string) = NULL,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
 		{
       fields.push_back( new MetaFieldString<Cls>(k, getfunc, setfunc, c) );  // TODO use a block allocator to keep all metadata compact
@@ -1938,7 +1941,7 @@ class MetaClass : public NonCopyable
       int (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(int) = NULL,
       int d = 0,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
 		{
       fields.push_back( new MetaFieldInt<Cls>(k, getfunc, setfunc, d, c) );
@@ -1949,7 +1952,7 @@ class MetaClass : public NonCopyable
       Enum (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(string),
       Enum d,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
 		{
       fields.push_back( new MetaFieldEnum<Cls, Enum>(k, getfunc, setfunc, d, c) );
@@ -1960,7 +1963,7 @@ class MetaClass : public NonCopyable
       short (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(short) = NULL,
       int d = 0,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
 		{
       fields.push_back( new MetaFieldShort<Cls>(k, getfunc, setfunc, d, c) );
@@ -1971,7 +1974,7 @@ class MetaClass : public NonCopyable
       unsigned long (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(unsigned long) = NULL,
       unsigned long d = 0.0,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
 		{
       fields.push_back( new MetaFieldUnsignedLong<Cls>(k, getfunc, setfunc, d, c) );
@@ -1981,7 +1984,7 @@ class MetaClass : public NonCopyable
       const Keyword& k,
       PythonFunction (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(PythonFunction) = NULL,
-      unsigned int c = MetaFieldBase::DONT_SERIALIZE
+      unsigned int c = DONT_SERIALIZE
       )
 		{
       fields.push_back( new MetaFieldPythonFunction<Cls>(k, getfunc, setfunc, c) );
@@ -1992,7 +1995,7 @@ class MetaClass : public NonCopyable
       double (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(double) = NULL,
       double d = 0.0,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
 		{
       fields.push_back( new MetaFieldDouble<Cls>(k, getfunc, setfunc, d, c) );
@@ -2002,66 +2005,66 @@ class MetaClass : public NonCopyable
       const Keyword& k,
       Ptr* (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(Ptr*) = NULL,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
     {
       fields.push_back( new MetaFieldPointer<Cls, Ptr>(k, getfunc, setfunc, c) );
-      if (c & MetaFieldBase::PARENT)
+      if (c & PARENT)
         parent = true;
     }
 
     template <class Cls, class Iter, class Ptr> inline void addIteratorField(
       const Keyword& k1, const Keyword& k2,
       Iter (Cls::*getfunc)(void) const,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
     {
-      PythonIterator2<Iter, Ptr>::initialize();
-      fields.push_back( new MetaFieldIterator<Cls, Iter, PythonIterator2<Iter, Ptr>, Ptr>(k1, k2, getfunc, c) );
-      if (c & MetaFieldBase::PARENT)
+      PythonIterator<Iter, Ptr>::initialize();
+      fields.push_back( new MetaFieldIterator<Cls, Iter, PythonIterator<Iter, Ptr>, Ptr>(k1, k2, getfunc, c) );
+      if (c & PARENT)
         parent = true;
     }
 
     template <class Cls, class Ptr, class Ptr2> inline void addListField(
       const Keyword& k1, const Keyword& k2,
       const Ptr& (Cls::*getfunc)(void) const,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
     {
       fields.push_back( new MetaFieldList<Cls, Ptr, Ptr2>(k1, k2, getfunc, c) );
-      if (c & MetaFieldBase::PARENT)
+      if (c & PARENT)
         parent = true;
     }
 
     template <class Cls, class Ptr> inline void addList2Field(
       const Keyword& k1, const Keyword& k2,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
     {
       fields.push_back( new MetaFieldList2<Cls, Ptr>(k1, k2, c) );
-      if (c & MetaFieldBase::PARENT)
+      if (c & PARENT)
         parent = true;
     }
 
     template <class Cls, class Ptr> inline void addList3Field(
       const Keyword& k1, const Keyword& k2,
       const Ptr& (Cls::*getfunc)(void) const = NULL,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
     {
       fields.push_back( new MetaFieldList3<Cls, Ptr>(k1, k2, getfunc, c) );
-      if (c & MetaFieldBase::PARENT)
+      if (c & PARENT)
         parent = true;
     }
 
     template <class Cls, class Ptr, class Ptr2> inline void addList4Field(
       const Keyword& k1, const Keyword& k2,
       const Ptr& (Cls::*getfunc)(void) const = NULL,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
     {
       fields.push_back( new MetaFieldList4<Cls, Ptr, Ptr2>(k1, k2, getfunc, c) );
-      if (c & MetaFieldBase::PARENT)
+      if (c & PARENT)
         parent = true;
     }
 
@@ -2070,7 +2073,7 @@ class MetaClass : public NonCopyable
       bool (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(bool) = NULL,
       tribool d = BOOL_UNSET,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
 		{
       fields.push_back( new MetaFieldBool<Cls>(k, getfunc, setfunc, d, c) );
@@ -2081,7 +2084,7 @@ class MetaClass : public NonCopyable
       Date (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(Date) = NULL,
       Date d = Date::infinitePast,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
 		{
       fields.push_back( new MetaFieldDate<Cls>(k, getfunc, setfunc, d, c) );
@@ -2092,7 +2095,7 @@ class MetaClass : public NonCopyable
       Duration (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(Duration),
       Duration d = 0L,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
 		{
       fields.push_back( new MetaFieldDuration<Cls>(k, getfunc, setfunc, d, c) );
@@ -2103,7 +2106,7 @@ class MetaClass : public NonCopyable
       double (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(double),
       double d = 0L,
-      unsigned int c = MetaFieldBase::BASE
+      unsigned int c = BASE
       )
 		{
       fields.push_back( new MetaFieldDurationDouble<Cls>(k, getfunc, setfunc, d, c) );
@@ -2454,46 +2457,6 @@ inline ostream & operator << (ostream& os, const Timer& t)
 //
 
 
-/** This type is used to define different ways of persisting an object. */
-enum mode
-{
-  /** Write the full object or a reference. If the object is nested more
-    * than one level deep a reference is written, otherwise the complete
-    * object is written.<br>
-    * This mode is the one to be used when dumping all objects to be restored
-    * later. The other modes can dump too little or too much data.
-    * Eg: \<MODEL NAME="POL" TYPE="a"\>\<FIELD\>value\</FIELD\>\</MODEL\>
-    */
-  DEFAULT = 0,
-  /** Write only the key fields of the object.<br>
-    * Eg: \<MODEL NAME="POL" TYPE="a"/\>
-    */
-  REFERENCE = 1,
-  /** Write the full object, but without a header line. This method is
-    * typically used when a subclass calls the write method of its parent
-    * class.<br>
-    * Eg: \<FIELD\>value\</FIELD\>\</MODEL\>
-    */
-  NOHEAD = 2,
-  /** Write the full object, with all its fields and a header line.<br>
-    * Eg: \<MODEL NAME="POL" TYPE="a"\>\<FIELD\>value\</FIELD\>\</MODEL\>
-    */
-  FULL = 3,
-  /** Write the full object, but without a closing tag. This method is
-    * typically used when a subclass calls the write method of its parent
-    * class.<br>
-    * Eg: \<MODEL NAME="POL" TYPE="a"\>\<FIELD\>value\</FIELD\>
-    */
-  NOTAIL = 4,
-  /** Write the core fields, but without a starting and closing tag. This
-    * method is typically used when a subclass calls the write method of
-    * its parent class.<br>
-    * Eg: \<FIELD\>value\</FIELD\>
-    */
-  NOHEADTAIL = 5
-};
-
-
 /** @brief Abstract base class for writing serialized data to an output stream.
   *
   * Subclasses implement writing different formats and stream types.
@@ -2509,27 +2472,29 @@ class Serializer
 
   public:
     /** Returns which type of export is requested. */
-    MetaFieldBase::FieldCategory getContentType() const
+    FieldCategory getContentType() const
     {
       return content;
     }
 
     /** Specify the type of export. */
-    void setContentType(MetaFieldBase::FieldCategory c)
+    void setContentType(FieldCategory c)
     {
       content = c;
     }
 
     /** Constructor with a given stream. */
     Serializer(ostream& os) : numObjects(0),
-      numParents(0), currentObject(NULL), parentObject(NULL), content(MetaFieldBase::BASE)
+      numParents(0), currentObject(NULL), parentObject(NULL),
+      content(BASE), skipHeader(false), skipFooter(false)
     {
       m_fp = &os;
     }
 
     /** Default constructor. */
     Serializer() : numObjects(0), numParents(0),
-      currentObject(NULL), parentObject(NULL), content(MetaFieldBase::BASE)
+      currentObject(NULL), parentObject(NULL), content(BASE),
+      skipHeader(false), skipFooter(false)
     {
       m_fp = &logger;
     }
@@ -2632,10 +2597,10 @@ class Serializer
       * except for the root object.
       * @see writeElementWithHeader(const Keyword&, Object*)
       */
-    DECLARE_EXPORT virtual void writeElement(const Keyword&, const Object*, mode = DEFAULT);
+    DECLARE_EXPORT virtual void writeElement(const Keyword&, const Object*, FieldCategory = BASE);
 
     /** @see writeElement(const Keyword&, const Object*, mode) */
-    void writeElement(const Keyword& t, const Object& o, mode m = DEFAULT)
+    void writeElement(const Keyword& t, const Object& o, FieldCategory m = BASE)
     {
       writeElement(t, &o, m);
     }
@@ -2665,6 +2630,36 @@ class Serializer
       return numObjects;
     }
 
+    inline void skipHead(bool b = true)
+    {
+      skipHeader = b;
+    }
+
+    inline void skipTail(bool b = true)
+    {
+      skipFooter = b;
+    }
+
+    inline bool getSkipHead() const
+    {
+      return skipHeader;
+    }
+
+    inline bool getSkipTail() const
+    {
+      return skipFooter;
+    }
+
+    inline void incParents()
+    {
+      ++numParents;
+    }
+
+    inline void decParents()
+    {
+      --numParents;
+    }
+
   protected:
     /** Output stream. */
     ostream* m_fp;
@@ -2682,7 +2677,17 @@ class Serializer
     const Object *parentObject;
 
     /** Stores the type of data to be exported. */
-    MetaFieldBase::FieldCategory content;
+    FieldCategory content;
+
+    /** Flag allowing us to skip writing the head of the XML element.
+      * The flag is reset to 'true'.
+      */
+    bool skipHeader;
+
+    /** Flag allowing us to skip writing the tail of the XML element.
+      * The flag is reset to 'true'.
+      */
+    bool skipFooter;
 };
 
 
@@ -3634,15 +3639,10 @@ class Object : public PyObject
       if (dict) Py_DECREF(dict);
     }
 
-    /** Called while writing the model into an XML-file.
-      * The user class should write itself out, using the IOutStream
-      * members for its "simple" members and calling writeElement
-      * recursively for any contained objects.
-      * Not all classes are expected to implement this method. In instances
-      * of such a class can be created but can't be persisted.
-      * E.g. Command
-      */
-    virtual DECLARE_EXPORT void writeElement(Serializer *, const Keyword &, mode=DEFAULT) const;
+    /** Called while serializing the object. */
+    virtual DECLARE_EXPORT void writeElement(
+      Serializer*, const Keyword&, FieldCategory = BASE
+      ) const;
 
     /** Mark the object as hidden or not. Hidden objects are not exported
       * and are used only as dummy constructs. */
@@ -3908,9 +3908,9 @@ class PythonExtension: public Object, public NonCopyable
   *    type member to point to a MetaClass.
   */
 template <class ITERCLASS, class DATACLASS>
-class PythonIterator2 : public Object
+class PythonIterator : public Object
 {
-  typedef PythonIterator2<ITERCLASS, DATACLASS> MYCLASS;
+  typedef PythonIterator<ITERCLASS, DATACLASS> MYCLASS;
   public:
     /** This method keeps the type information object for your extension. */
     static PythonType& getPythonType()
@@ -3946,7 +3946,7 @@ class PythonIterator2 : public Object
     /** Constructor from a pointer.
       * The underlying iterator must have a matching constructor.
       */
-    template <class OTHER> PythonIterator2(const OTHER *o) : iter(o)
+    template <class OTHER> PythonIterator(const OTHER *o) : iter(o)
     {
       this->initType(getPythonType().type_object());
     }
@@ -3954,7 +3954,7 @@ class PythonIterator2 : public Object
     /** Default constructor.
       * The underlying iterator must have a matching constructor.
       */
-    PythonIterator2()
+    PythonIterator()
     {
       this->initType(getPythonType().type_object());
     }
@@ -3962,7 +3962,7 @@ class PythonIterator2 : public Object
     /** Constructor from a reference.
       * The underlying iterator must have a matching constructor.
       */
-    template <class OTHER> PythonIterator2(const OTHER &o) : iter(o)
+    template <class OTHER> PythonIterator(const OTHER &o) : iter(o)
     {
       this->initType(getPythonType().type_object());
     }
@@ -5157,7 +5157,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
 
     static PyObject* createIterator(PyObject* self, PyObject* args)
     {
-      return new PythonIterator2<iterator, T>(st.begin());
+      return new PythonIterator<iterator, T>(st.begin());
     }
 
     /** Returns false if no named entities have been defined yet. */
@@ -5628,9 +5628,9 @@ template <class T> class HasHierarchy : public HasName<T>
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MetaFieldBase::MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
       m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
-      m->addIteratorField<Cls, typename Cls::memberIterator, Cls>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, MetaFieldBase::DETAIL + MetaFieldBase::PARENT);
+      m->addIteratorField<Cls, typename Cls::memberIterator, Cls>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, DETAIL + PARENT);
     }
 
   private:
@@ -6305,7 +6305,7 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       output.writeElement(getName(), (static_cast<Cls*>(output.getCurrentObject())->*getf)());
     }
@@ -6360,7 +6360,7 @@ template <class Cls> class MetaFieldBool : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       bool tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (def == BOOL_UNSET || (def == BOOL_TRUE && !tmp) || (def == BOOL_FALSE && tmp))
@@ -6415,7 +6415,7 @@ template <class Cls> class MetaFieldDouble : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       double tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
@@ -6470,7 +6470,7 @@ template <class Cls> class MetaFieldInt : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       int tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
@@ -6525,7 +6525,7 @@ template <class Cls, class Enum> class MetaFieldEnum : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       Enum tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
@@ -6580,7 +6580,7 @@ template <class Cls> class MetaFieldShort : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       int tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
@@ -6635,7 +6635,7 @@ template <class Cls> class MetaFieldUnsignedLong : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       unsigned long tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
@@ -6689,7 +6689,7 @@ template <class Cls> class MetaFieldPythonFunction : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       // XXX JDT int tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       //output.writeElement(getName(), tmp);
@@ -6740,7 +6740,7 @@ template <class Cls> class MetaFieldDuration : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       Duration tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
@@ -6795,7 +6795,7 @@ template <class Cls> class MetaFieldDurationDouble : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       double tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
@@ -6854,7 +6854,7 @@ template <class Cls> class MetaFieldDate : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       Date tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
@@ -6921,7 +6921,7 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       // Imagine object A refers to object B. Both objects have fields
       // referring the other. When serializing object A, we also serialize
@@ -6975,8 +6975,10 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
+      if (getFlag(WRITE_FULL))
+        output.decParents();
       bool first = true;
       Iter it = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       while (Ptr* ob = static_cast<Ptr*>(it.next()))
@@ -6988,6 +6990,8 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
         }
 		    output.writeElement(singleKeyword, ob);
       }
+      if (getFlag(WRITE_FULL))
+        output.incParents();
       if (!first)
         output.EndList(getName());
     }
@@ -7039,7 +7043,7 @@ template <class Cls, class Ptr, class Ptr2> class MetaFieldList : public MetaFie
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       bool first = true;
       Ptr lst = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
@@ -7097,7 +7101,7 @@ template <class Cls, class Ptr> class MetaFieldList2 : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       bool first = true;
       for (typename Ptr::iterator i = Ptr::begin(); i != Ptr::end(); ++i)
@@ -7152,7 +7156,7 @@ template <class Cls, class Ptr> class MetaFieldList3 : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       // XXX TODO writeField not implemented for list3 fields
     }
@@ -7196,7 +7200,7 @@ template <class Cls, class Ptr, class Ptr2> class MetaFieldList4 : public MetaFi
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(MetaFieldBase::DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE))
         return;
       // XXX TODO writeField not implemented for list3 fields
     }
@@ -7236,57 +7240,6 @@ class LibraryUtils
 {
   public:
     static void initialize();
-};
-
-
-/** @brief A template class to expose iterators to Python. */
-template <class ME, class ITERCLASS, class DATACLASS>
-class PythonIterator : public PythonExtension<ME>
-{
-  public:
-    static int initialize()
-    {
-      // Initialize the type
-      PythonType& x = PythonExtension<ME>::getPythonType();
-      x.setName(DATACLASS::metadata->type + "Iterator");
-      x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
-      x.supportiter();
-      return x.typeReady();
-    }
-
-    PythonIterator() : i(DATACLASS::begin())
-    {
-      this->initType(PythonExtension<ME>::getPythonType().type_object());
-    }
-
-    template <class OTHER> PythonIterator(const OTHER *o) : i(o)
-    {
-      this->initType(PythonExtension<ME>::getPythonType().type_object());
-    }
-
-    template <class OTHER> PythonIterator(const OTHER &o) : i(o)
-    {
-      this->initType(PythonExtension<ME>::getPythonType().type_object());
-    }
-
-    virtual ~PythonIterator() {}
-
-    static PyObject* create(PyObject* self, PyObject* args)
-    {
-      return new ME();
-    }
-
-  private:
-    ITERCLASS i;
-
-    virtual PyObject* iternext()
-    {
-      if (i == DATACLASS::end()) return NULL;
-      PyObject* result = &*i;
-      ++i;
-      Py_INCREF(result);
-      return result;
-    }
 };
 
 

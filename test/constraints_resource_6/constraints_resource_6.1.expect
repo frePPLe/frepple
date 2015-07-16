@@ -37,9 +37,12 @@
 			<name>3. Working hours</name>
 			<source>The Matrix</source>
 			<buckets>
-				<bucket id="1" start="2000-12-01T00:00:00" end="2020-06-30T00:00:00">
-					<value>1</value>
+				<bucket>
+					<id>1</id>
+					<start>2000-12-01T00:00:00</start>
+					<end>2020-06-30T00:00:00</end>
 					<days>28</days>
+					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
@@ -47,15 +50,24 @@
 			<name>4. Working hours</name>
 			<source>The Matrix</source>
 			<buckets>
-				<bucket id="3" start="2000-12-01T00:00:00" end="2020-06-30T00:00:00">
+				<bucket>
+					<id>3</id>
+					<start>2000-12-01T00:00:00</start>
+					<end>2020-06-30T00:00:00</end>
 					<priority>2</priority>
-					<value>1</value>
 					<days>28</days>
+					<value>1</value>
 				</bucket>
-				<bucket id="1" start="2014-02-16T00:00:00" end="2014-02-22T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2014-02-16T00:00:00</start>
+					<end>2014-02-22T00:00:00</end>
 					<priority>1</priority>
 				</bucket>
-				<bucket id="2" start="2014-03-09T00:00:00" end="2014-03-15T00:00:00">
+				<bucket>
+					<id>2</id>
+					<start>2014-03-09T00:00:00</start>
+					<end>2014-03-15T00:00:00</end>
 					<priority>1</priority>
 				</bucket>
 			</buckets>
@@ -64,67 +76,56 @@
 			<name>Capacity</name>
 			<source>The Matrix</source>
 			<buckets>
-				<bucket id="1" start="2013-12-01T00:00:00" end="2014-06-30T00:00:00">
-					<value>20</value>
+				<bucket>
+					<id>1</id>
+					<start>2013-12-01T00:00:00</start>
+					<end>2014-06-30T00:00:00</end>
 					<days>62</days>
+					<value>20</value>
 				</bucket>
 			</buckets>
 		</calendar>
 	</calendars>
-	<operations>
-		<operation>
-			<name>1. delivery end item</name>
+	<resources>
+		<resource xsi:type="resource_buckets">
+			<name>1. Resource</name>
 			<source>The Matrix</source>
-		</operation>
-		<operation>
-			<name>1. make end item</name>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
+			<maxearly>P28D</maxearly>
+		</resource>
+		<resource xsi:type="resource_buckets">
+			<name>2. Resource</name>
 			<source>The Matrix</source>
-			<size_multiple>1</size_multiple>
-			<duration>P7D</duration>
-		</operation>
-		<operation>
-			<name>2. delivery end item</name>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
+			<maxearly>P28D</maxearly>
+		</resource>
+		<resource xsi:type="resource_buckets">
+			<name>3. Resource</name>
 			<source>The Matrix</source>
-		</operation>
-		<operation>
-			<name>2. make end item</name>
-			<source>The Matrix</source>
-			<size_multiple>1</size_multiple>
-			<duration>P7D</duration>
-		</operation>
-		<operation>
-			<name>3. delivery end item</name>
-			<source>The Matrix</source>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
+			<maxearly>P28D</maxearly>
 			<location>
 				<name>3. factory</name>
 			</location>
-		</operation>
-		<operation>
-			<name>3. make end item</name>
+		</resource>
+		<resource xsi:type="resource_buckets">
+			<name>4. Resource</name>
 			<source>The Matrix</source>
-			<size_multiple>1</size_multiple>
-			<location>
-				<name>3. factory</name>
-			</location>
-			<duration>P3D</duration>
-		</operation>
-		<operation>
-			<name>4. delivery end item</name>
-			<source>The Matrix</source>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
+			<maxearly>P28D</maxearly>
 			<location>
 				<name>4. factory</name>
 			</location>
-		</operation>
-		<operation>
-			<name>4. make end item</name>
-			<source>The Matrix</source>
-			<size_multiple>1</size_multiple>
-			<location>
-				<name>4. factory</name>
-			</location>
-			<duration>P3D</duration>
-		</operation>
-	</operations>
+		</resource>
+	</resources>
 	<items>
 		<item>
 			<name>1. end item</name>
@@ -197,6 +198,164 @@
 			</item>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation>
+			<name>1. delivery end item</name>
+			<source>The Matrix</source>
+			<flows>
+				<flow>
+					<buffer>
+						<name>1. end item</name>
+					</buffer>
+					<quantity>-1</quantity>
+					<source>The Matrix</source>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>1. make end item</name>
+			<source>The Matrix</source>
+			<size_multiple>1</size_multiple>
+			<loads>
+				<load>
+					<resource xsi:type="resource_buckets">
+						<name>1. Resource</name>
+					</resource>
+					<source>The Matrix</source>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>1. end item</name>
+					</buffer>
+					<quantity>1</quantity>
+					<source>The Matrix</source>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>2. delivery end item</name>
+			<source>The Matrix</source>
+			<flows>
+				<flow>
+					<buffer>
+						<name>2. end item</name>
+					</buffer>
+					<quantity>-1</quantity>
+					<source>The Matrix</source>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>2. make end item</name>
+			<source>The Matrix</source>
+			<size_multiple>1</size_multiple>
+			<loads>
+				<load>
+					<resource xsi:type="resource_buckets">
+						<name>2. Resource</name>
+					</resource>
+					<source>The Matrix</source>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>2. end item</name>
+					</buffer>
+					<quantity>1</quantity>
+					<source>The Matrix</source>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>3. delivery end item</name>
+			<source>The Matrix</source>
+			<location>
+				<name>3. factory</name>
+			</location>
+			<flows>
+				<flow>
+					<buffer>
+						<name>3. end item</name>
+					</buffer>
+					<quantity>-1</quantity>
+					<source>The Matrix</source>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>3. make end item</name>
+			<source>The Matrix</source>
+			<size_multiple>1</size_multiple>
+			<location>
+				<name>3. factory</name>
+			</location>
+			<loads>
+				<load>
+					<resource xsi:type="resource_buckets">
+						<name>3. Resource</name>
+					</resource>
+					<source>The Matrix</source>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>3. end item</name>
+					</buffer>
+					<quantity>1</quantity>
+					<source>The Matrix</source>
+				</flow>
+			</flows>
+			<duration>P3D</duration>
+		</operation>
+		<operation>
+			<name>4. delivery end item</name>
+			<source>The Matrix</source>
+			<location>
+				<name>4. factory</name>
+			</location>
+			<flows>
+				<flow>
+					<buffer>
+						<name>4. end item</name>
+					</buffer>
+					<quantity>-1</quantity>
+					<source>The Matrix</source>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>4. make end item</name>
+			<source>The Matrix</source>
+			<size_multiple>1</size_multiple>
+			<location>
+				<name>4. factory</name>
+			</location>
+			<loads>
+				<load>
+					<resource xsi:type="resource_buckets">
+						<name>4. Resource</name>
+					</resource>
+					<source>The Matrix</source>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>4. end item</name>
+					</buffer>
+					<quantity>1</quantity>
+					<source>The Matrix</source>
+				</flow>
+			</flows>
+			<duration>P3D</duration>
+		</operation>
+	</operations>
 	<demands>
 		<demand>
 			<name>1. order</name>
@@ -719,166 +878,6 @@
 			<priority>4</priority>
 		</demand>
 	</demands>
-	<resources>
-		<resource xsi:type="resource_buckets">
-			<name>1. Resource</name>
-			<source>The Matrix</source>
-			<maximum_calendar>
-				<name>Capacity</name>
-			</maximum_calendar>
-			<maxearly>P28D</maxearly>
-		</resource>
-		<resource xsi:type="resource_buckets">
-			<name>2. Resource</name>
-			<source>The Matrix</source>
-			<maximum_calendar>
-				<name>Capacity</name>
-			</maximum_calendar>
-			<maxearly>P28D</maxearly>
-		</resource>
-		<resource xsi:type="resource_buckets">
-			<name>3. Resource</name>
-			<source>The Matrix</source>
-			<maximum_calendar>
-				<name>Capacity</name>
-			</maximum_calendar>
-			<maxearly>P28D</maxearly>
-			<location>
-				<name>3. factory</name>
-			</location>
-		</resource>
-		<resource xsi:type="resource_buckets">
-			<name>4. Resource</name>
-			<source>The Matrix</source>
-			<maximum_calendar>
-				<name>Capacity</name>
-			</maximum_calendar>
-			<maxearly>P28D</maxearly>
-			<location>
-				<name>4. factory</name>
-			</location>
-		</resource>
-	</resources>
-	<loads>
-		<load>
-			<operation>
-				<name>1. make end item</name>
-			</operation>
-			<resource xsi:type="resource_buckets">
-				<name>1. Resource</name>
-			</resource>
-			<source>The Matrix</source>
-		</load>
-		<load>
-			<operation>
-				<name>2. make end item</name>
-			</operation>
-			<resource xsi:type="resource_buckets">
-				<name>2. Resource</name>
-			</resource>
-			<source>The Matrix</source>
-		</load>
-		<load>
-			<operation>
-				<name>3. make end item</name>
-			</operation>
-			<resource xsi:type="resource_buckets">
-				<name>3. Resource</name>
-			</resource>
-			<source>The Matrix</source>
-		</load>
-		<load>
-			<operation>
-				<name>4. make end item</name>
-			</operation>
-			<resource xsi:type="resource_buckets">
-				<name>4. Resource</name>
-			</resource>
-			<source>The Matrix</source>
-		</load>
-	</loads>
-	<flows>
-		<flow>
-			<operation>
-				<name>1. delivery end item</name>
-			</operation>
-			<buffer>
-				<name>1. end item</name>
-			</buffer>
-			<quantity>-1</quantity>
-			<source>The Matrix</source>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation>
-				<name>1. make end item</name>
-			</operation>
-			<buffer>
-				<name>1. end item</name>
-			</buffer>
-			<quantity>1</quantity>
-			<source>The Matrix</source>
-		</flow>
-		<flow>
-			<operation>
-				<name>2. delivery end item</name>
-			</operation>
-			<buffer>
-				<name>2. end item</name>
-			</buffer>
-			<quantity>-1</quantity>
-			<source>The Matrix</source>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation>
-				<name>2. make end item</name>
-			</operation>
-			<buffer>
-				<name>2. end item</name>
-			</buffer>
-			<quantity>1</quantity>
-			<source>The Matrix</source>
-		</flow>
-		<flow>
-			<operation>
-				<name>3. delivery end item</name>
-			</operation>
-			<buffer>
-				<name>3. end item</name>
-			</buffer>
-			<quantity>-1</quantity>
-			<source>The Matrix</source>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation>
-				<name>3. make end item</name>
-			</operation>
-			<buffer>
-				<name>3. end item</name>
-			</buffer>
-			<quantity>1</quantity>
-			<source>The Matrix</source>
-		</flow>
-		<flow>
-			<operation>
-				<name>4. delivery end item</name>
-			</operation>
-			<buffer>
-				<name>4. end item</name>
-			</buffer>
-			<quantity>-1</quantity>
-			<source>The Matrix</source>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation>
-				<name>4. make end item</name>
-			</operation>
-			<buffer>
-				<name>4. end item</name>
-			</buffer>
-			<quantity>1</quantity>
-			<source>The Matrix</source>
-		</flow>
-	</flows>
 	<problems>
 		<problem>
 			<name>unplanned</name>

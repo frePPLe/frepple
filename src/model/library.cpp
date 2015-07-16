@@ -180,7 +180,7 @@ void LibraryModel::initialize()
     "operationplans", OperationPlan::createIterator, METH_VARARGS,
     "Returns an iterator over the operationplans.");
   PythonInterpreter::registerGlobalMethod(
-    "problems", PythonIterator2<Problem::iterator, Problem>::create, METH_NOARGS,
+    "problems", PythonIterator<Problem::iterator, Problem>::create, METH_NOARGS,
     "Returns an iterator over the problems.");
   PythonInterpreter::registerGlobalMethod(
     "setupmatrices", SetupMatrix::createIterator, METH_NOARGS,

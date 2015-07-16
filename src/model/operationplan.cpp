@@ -1011,18 +1011,17 @@ PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args)
     return NULL;
 
   if (!pyoper)
-  {  // Iterate over all operationplans
-   logger << "oliebol" << endl;
-     return new PythonIterator2<OperationPlan::iterator, OperationPlan>();
-  }
-  // Iterate over the operationplans of a single operation
+    // First case: Iterate over all operationplans
+    return new PythonIterator<OperationPlan::iterator, OperationPlan>();
+
+  // Second case: Iterate over the operationplans of a single operation
   PythonData oper(pyoper);
   if (!oper.check(Operation::metadata))
   {
     PyErr_SetString(PythonDataException, "optional argument must be of type operation");
     return NULL;
   }
-  return new PythonIterator2<OperationPlan::iterator, OperationPlan>(static_cast<Operation*>(pyoper));
+  return new PythonIterator<OperationPlan::iterator, OperationPlan>(static_cast<Operation*>(pyoper));
 }
 
 

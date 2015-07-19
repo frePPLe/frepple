@@ -835,6 +835,15 @@ class HasProblems
       */
     virtual void updateProblems() = 0;
 
+    /** Return an iterator over the list of problems. */
+    DECLARE_EXPORT Problem::iterator getProblems() const;
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addBoolField<Cls>(Tags::detectproblems, &Cls::getDetectProblems, &Cls::setDetectProblems, BOOL_TRUE);
+      m->addIteratorField<Cls, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems, DETAIL);
+    }
+
   private:
     /** A pointer to the first problem of this object. Problems are maintained
       * in a single linked list. */
@@ -1135,7 +1144,7 @@ class Plannable : public HasProblems, public Solvable
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addBoolField<Cls>(Tags::detectproblems, &Cls::getDetectProblems, &Cls::setDetectProblems, BOOL_TRUE);
+      HasProblems::registerFields<Cls>(m);
     }
 
   private:
@@ -1762,8 +1771,6 @@ class Operation : public HasName<Operation>,
     {
       return flowdata;
     }
-
-    // XXX OperationPlan::iterator getOperationPlans();
 
     /** Returns an reference to the list of flows. */
     flowlist::const_iterator getFlowIterator() const
@@ -3894,7 +3901,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       m->addListField<Cls, flowlist, Flow>(Tags::flows, Tags::flow, &Cls::getFlows, DETAIL);
       m->addBoolField<Cls>(Tags::tool, &Cls::getTool, &Cls::setTool, BOOL_FALSE);
       // XXX TODO m->addListField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlanIterator, DETAIL);
-      // XXX TODO m->addIteratorField<Cls, Problem::const_iterator>(Tags::problems, Tags::problem, &Cls::getProblems, DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
@@ -5314,7 +5320,6 @@ class Resource : public HasHierarchy<Resource>,
       m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, DETAIL);
       m->addIteratorField<Cls, skilllist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getSkills, DETAIL);
       m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlanIterator, DETAIL);
-      // TODO XXX m->addIteratorField<Cls, ProblemIterator>(Tags::problems, &Cls::getProblems, DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
@@ -6063,7 +6068,6 @@ class Demand
       m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment, &Cls::setMinShipment, 1);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       // xxx TODO m->addIteratorField<Cls>(Tags::operationplans, &Cls::getOperationplans, NULL, DETAIL);
-      // xxx TODO m->addIteratorField<Cls>(Tags::problems, &Cls::getProblems, NULL, DETAIL);
       m->addListField<Cls, Problem::List, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraints, DETAIL);
       /*   if (attr.isA(Tags::pegging))
     return new PeggingIterator(this);

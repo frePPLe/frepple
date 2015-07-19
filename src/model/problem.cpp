@@ -64,7 +64,7 @@ int Problem::initialize()
   ProblemBeforeCurrent::metadata = MetaClass::registerClass<ProblemBeforeCurrent>("problem", "before current", true);
   ProblemCapacityUnderload::metadata = MetaClass::registerClass<ProblemCapacityUnderload>("problem", "underload", true);
   ProblemCapacityOverload::metadata = MetaClass::registerClass<ProblemCapacityOverload>("problem", "overload", true);
-  
+
   // Initialize the Python type
   PythonType& x = PythonExtension<Problem>::getPythonType();
   x.setName("problem");
@@ -231,6 +231,12 @@ DECLARE_EXPORT void Problem::clearProblems(HasProblems& p, bool setchanged)
 }
 
 
+DECLARE_EXPORT Problem::iterator HasProblems::getProblems() const
+{
+  return Problem::iterator(firstProblem);
+}
+
+
 DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator() : type(0)
 {
   // Buffer
@@ -312,13 +318,21 @@ DECLARE_EXPORT HasProblems::EntityIterator::~EntityIterator()
   switch (type)
   {
       // Buffer
-    case 0: delete bufIter; return;
+    case 0:
+      delete bufIter;
+      return;
       // Resource
-    case 1: delete resIter; return;
+    case 1:
+      delete resIter;
+      return;
       // Operation
-    case 2: delete operIter; return;
+    case 2:
+      delete operIter;
+      return;
       // Demand
-    case 3: delete demIter; return;
+    case 3:
+      delete demIter;
+      return;
   }
 }
 
@@ -329,10 +343,14 @@ DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator(const EntityIterator&
   this->~EntityIterator();
   // Populate new values
   type = o.type;
-  if (type==0) bufIter = new Buffer::iterator(*(o.bufIter));
-  else if (type==1) resIter = new Resource::iterator(*(o.resIter));
-  else if (type==2) operIter = new OperationPlan::iterator(*(o.operIter));
-  else if (type==3) demIter = new Demand::iterator(*(o.demIter));
+  if (type==0)
+    bufIter = new Buffer::iterator(*(o.bufIter));
+  else if (type==1)
+    resIter = new Resource::iterator(*(o.resIter));
+  else if (type==2)
+    operIter = new OperationPlan::iterator(*(o.operIter));
+  else if (type==3)
+    demIter = new Demand::iterator(*(o.demIter));
 }
 
 
@@ -345,10 +363,14 @@ HasProblems::EntityIterator::operator=(const EntityIterator& o)
   this->~EntityIterator();
   // Populate new values
   type = o.type;
-  if (type==0) bufIter = new Buffer::iterator(*(o.bufIter));
-  else if (type==1) resIter = new Resource::iterator(*(o.resIter));
-  else if (type==2) operIter = new OperationPlan::iterator(*(o.operIter));
-  else if (type==3) demIter = new Demand::iterator(*(o.demIter));
+  if (type==0)
+    bufIter = new Buffer::iterator(*(o.bufIter));
+  else if (type==1)
+    resIter = new Resource::iterator(*(o.resIter));
+  else if (type==2)
+    operIter = new OperationPlan::iterator(*(o.operIter));
+  else if (type==3)
+    demIter = new Demand::iterator(*(o.demIter));
   return *this;
 }
 
@@ -362,17 +384,22 @@ HasProblems::EntityIterator::operator != (const EntityIterator& t) const
   // Same iterator type, more granular comparison required
   switch (type)
   {
+    case 0:
       // Buffer
-    case 0: return *bufIter != *(t.bufIter);
+      return *bufIter != *(t.bufIter);
+    case 1:
       // Resource
-    case 1: return *resIter != *(t.resIter);
-      // Operationplan
-    case 2: return *operIter != *(t.operIter);
+      return *resIter != *(t.resIter);
+    case 2:
+      // Operation
+      return *operIter != *(t.operIter);
+    case 3:
       // Demand
-    case 3: return *demIter != *(t.demIter);
+      return *demIter != *(t.demIter);
+    default:
       // Always return true for higher type numbers. This should happen only
       // when comparing with the end of list element.
-    default: return false;
+      return false;
   }
 }
 
@@ -381,15 +408,20 @@ DECLARE_EXPORT HasProblems& HasProblems::EntityIterator::operator*() const
 {
   switch (type)
   {
+    case 0:
       // Buffer
-    case 0: return **bufIter;
+      return **bufIter;
+    case 1:
       // Resource
-    case 1: return **resIter;
+      return **resIter;
+    case 2:
       // Operation
-    case 2: return **operIter;
+      return **operIter;
+    case 3:
       // Demand
-    case 3: return **demIter;
-    default: throw LogicException("Unreachable code reached");
+      return **demIter;
+    default:
+      throw LogicException("Unknown problem entity found");
   }
 }
 
@@ -398,15 +430,20 @@ DECLARE_EXPORT HasProblems* HasProblems::EntityIterator::operator->() const
 {
   switch (type)
   {
+    case 0:
       // Buffer
-    case 0: return &**bufIter;
+      return &**bufIter;
+    case 1:
       // Resource
-    case 1: return &**resIter;
-      // Operationplan
-    case 2: return &**operIter;
+      return &**resIter;
+    case 2:
+      // Operation
+      return &**operIter;
+    case 3:
       // Demand
-    case 3: return &**demIter;
-    default: throw LogicException("Unreachable code reached");
+      return &**demIter;
+    default:
+      throw LogicException("Unknown problem entity found");
   }
 }
 
@@ -438,7 +475,8 @@ DECLARE_EXPORT Problem::iterator& Problem::iterator::operator++()
   while (!iter && !owner && eiter!=HasProblems::endEntity())
   {
     ++eiter;
-    if (eiter!=HasProblems::endEntity()) iter = eiter->firstProblem;
+    if (eiter!=HasProblems::endEntity())
+      iter = eiter->firstProblem;
   }
   return *this;
 }
@@ -456,7 +494,8 @@ DECLARE_EXPORT Problem::iterator Problem::begin(HasProblems* i, bool refresh)
   if (!i) return begin();
 
   // Return an iterator for a single entity
-  if (refresh) i->updateProblems();
+  if (refresh)
+    i->updateProblems();
   return iterator(i);
 }
 

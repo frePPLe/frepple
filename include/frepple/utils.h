@@ -1658,8 +1658,9 @@ enum FieldCategory
   PARENT = 64,           // If set, the constructor of the child object
                          // will get a pointer to the parent as extra
                          // argument.
-  WRITE_FULL = 128       // Write this field in full, even at deeper
+  WRITE_FULL = 128,      // Write this field in full, even at deeper
                          // indentation levels.
+  WRITE_HIDDEN = 256     // Force serializing of hidden objects
 };
 
 
@@ -2494,7 +2495,7 @@ class Serializer
     /** Default constructor. */
     Serializer() : numObjects(0), numParents(0),
       currentObject(NULL), parentObject(NULL), content(BASE),
-      skipHeader(false), skipFooter(false)
+      skipHeader(false), skipFooter(false), writeHidden(false)
     {
       m_fp = &logger;
     }
@@ -2509,6 +2510,16 @@ class Serializer
     bool getReferencesOnly() const
     {
       return numParents>0;
+    }
+
+    bool getWriteHidden() const
+    {
+      return writeHidden;
+    }
+
+    void setWriteHidden(bool b)
+    {
+      writeHidden = b;
     }
 
     /** Start writing a new list. */
@@ -2688,6 +2699,9 @@ class Serializer
       * The flag is reset to 'true'.
       */
     bool skipFooter;
+
+    /** Flag to mark whether hidden objects need to be written as well. */
+    bool writeHidden;
 };
 
 
@@ -5629,8 +5643,8 @@ template <class T> class HasHierarchy : public HasName<T>
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
-      m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
-      m->addIteratorField<Cls, typename Cls::memberIterator, Cls>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, DETAIL + PARENT);
+      m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner, BASE + PARENT);
+      m->addIteratorField<Cls, typename Cls::memberIterator, Cls>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, DETAIL);
     }
 
   private:
@@ -6979,6 +6993,8 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
         return;
       if (getFlag(WRITE_FULL))
         output.decParents();
+      if (getFlag(WRITE_HIDDEN))
+        output.setWriteHidden(true);
       bool first = true;
       Iter it = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       while (Ptr* ob = static_cast<Ptr*>(it.next()))
@@ -6990,6 +7006,8 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
         }
 		    output.writeElement(singleKeyword, ob);
       }
+      if (getFlag(WRITE_HIDDEN))
+        output.setWriteHidden(false);
       if (getFlag(WRITE_FULL))
         output.incParents();
       if (!first)

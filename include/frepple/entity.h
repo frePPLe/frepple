@@ -108,7 +108,7 @@ template <class T> HasHierarchy<T>::~HasHierarchy()
     }
   }
   else
-    // A parent exists and I have to remove my as a member
+    // A parent exists and I have to remove myself as a member
     setOwner(NULL);
 }
 

@@ -452,6 +452,17 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                     dict_parent
                     );
               }
+              // Set fields already available now on the parent object
+              for (int idx = objects[objectindex-1].start; idx < objects[objectindex].start; ++idx)
+              {
+                if (data[idx].field && data[idx].hash != Tags::type.getHash()
+                  && data[idx].hash != Tags::action.getHash() && !data[idx].field->isGroup())
+                {
+                    data[idx].field->setField(objects[objectindex-1].object, data[idx].value);
+                    data[idx].field = NULL; // Mark as already applied
+                }
+              }
+
             }
             // Add reference to parent to the current dict
             data[++dataindex].field = *i;
@@ -497,6 +508,16 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                     objects[objectindex-1].cls,
                     dict_parent
                     );
+              }
+              // Set fields already available now on the parent object
+              for (int idx = objects[objectindex-1].start; idx < objects[objectindex].start; ++idx)
+              {
+                if (data[idx].field && data[idx].hash != Tags::type.getHash()
+                  && data[idx].hash != Tags::action.getHash() && !data[idx].field->isGroup())
+                {
+                    data[idx].field->setField(objects[objectindex-1].object, data[idx].value);
+                    data[idx].field = NULL; // Mark as already applied
+                }
               }
             }
             // Add reference to parent to the current dict
@@ -754,7 +775,8 @@ DECLARE_EXPORT void Serializer::writeElement
 (const Keyword& tag, const Object* object, FieldCategory m)
 {
   // Avoid NULL pointers and skip hidden objects
-  if (!object || object->getHidden()) return;
+  if (!object || (object->getHidden() && !writeHidden))
+    return;
 
   // Adjust current and parent object pointer
   const Object *previousParent = parentObject;

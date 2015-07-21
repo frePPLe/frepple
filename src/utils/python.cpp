@@ -115,10 +115,10 @@ DECLARE_EXPORT size_t Object::getSize() const
   size_t tmp = meta.size;
   if (meta.category)
     for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-      if (!((*i)->getFlags() & COMPUTED))
+      if (!(*i)->getFlag(COMPUTED))
         tmp += (*i)->getSize(this);
   for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-    if (!((*i)->getFlags() & COMPUTED))
+    if (!(*i)->getFlag(COMPUTED))
       tmp += (*i)->getSize(this);
   return tmp;
 }

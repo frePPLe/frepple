@@ -3793,6 +3793,11 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       return flows;
     }
 
+    flowlist::const_iterator getFlowIterator() const
+    {
+      return flows.begin();
+    }
+
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
     /** Returns a reference to the list of all flow plans of this buffer. */
@@ -3898,9 +3903,9 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       m->addDoubleField<Cls>(Tags::carrying_cost, &Cls::getCarryingCost, &Cls::setCarryingCost);
       m->addDurationField<Cls>(Tags::mininterval, &Cls::getMinimumInterval, &Cls::setMinimumInterval, -1);
       m->addDurationField<Cls>(Tags::maxinterval, &Cls::getMaximumInterval, &Cls::setMaximumInterval);
-      m->addListField<Cls, flowlist, Flow>(Tags::flows, Tags::flow, &Cls::getFlows, DETAIL);
+      m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, DETAIL);
       m->addBoolField<Cls>(Tags::tool, &Cls::getTool, &Cls::setTool, BOOL_FALSE);
-      // XXX TODO m->addListField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlanIterator, DETAIL);
+      m->addIteratorField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlanIterator, DETAIL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
@@ -4602,6 +4607,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     static DECLARE_EXPORT const MetaCategory* metadata;
     static int initialize();
+    virtual const MetaClass& getType() const { return *metadata; }
 
     /** Constructor. */
     explicit DECLARE_EXPORT FlowPlan(OperationPlan*, const Flow*);
@@ -5988,6 +5994,8 @@ class Demand
       return constraints;
     }
 
+    Problem::List::iterator getConstraintIterator() const;
+
     /** Returns the total amount that has been planned. */
     DECLARE_EXPORT double getPlannedQuantity() const;
 
@@ -6068,7 +6076,7 @@ class Demand
       m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment, &Cls::setMinShipment, 1);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       // xxx TODO m->addIteratorField<Cls>(Tags::operationplans, &Cls::getOperationplans, NULL, DETAIL);
-      m->addListField<Cls, Problem::List, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraints, DETAIL);
+      m->addIteratorField<Cls, Problem::List::iterator, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraintIterator, DETAIL);
       /*   if (attr.isA(Tags::pegging))
     return new PeggingIterator(this);
 
@@ -6286,6 +6294,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 
     static int initialize();
     static DECLARE_EXPORT const MetaCategory* metadata;
+    virtual const MetaClass& getType() const { return *metadata; }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -6540,6 +6549,12 @@ inline Problem::iterator Problem::List::end() const
 }
 
 
+inline Problem::List::iterator Demand::getConstraintIterator() const
+{
+  return constraints.begin();
+}
+
+
 /** @brief This is the (logical) top class of the complete model.
   *
   * This is a singleton class: only a single instance can be created.
@@ -6729,7 +6744,7 @@ class Plan : public Plannable, public Object
       m->addList3Field<Plan, Load>(Tags::loads, Tags::load);
       m->addList3Field<Plan, Flow>(Tags::flows, Tags::flow);
       m->addList3Field<Plan, SupplierItem>(Tags::supplieritems, Tags::supplieritem);
-      m->addList2Field<Plan, OperationPlan>(Tags::operationplans, Tags::operationplan);
+      m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan);
       m->addIteratorField<Plan, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Plan::getProblems);
     }
 };

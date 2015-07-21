@@ -5,40 +5,611 @@
 	<calendars>
 		<calendar name="min inv for buffer 1">
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<priority>1</priority>
 					<value>4</value>
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="min inv for buffer 2">
+		<calendar>
+			<name>min inv for buffer 2</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<value>4</value>
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="min inv for buffer 3">
+		<calendar>
+			<name>min inv for buffer 3</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<value>4</value>
 				</bucket>
-				<bucket id="2" start="2009-01-12T00:00:00">
+				<bucket>
+					<id>2</id>
+					<start>2009-01-12T00:00:00</start>
 					<value>2</value>
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="min inv for buffer 4">
+		<calendar>
+			<name>min inv for buffer 4</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<value>4</value>
 				</bucket>
-				<bucket id="2" start="2009-01-12T00:00:00">
+				<bucket>
+					<id>2</id>
+					<start>2009-01-12T00:00:00</start>
 					<value>6</value>
 				</bucket>
 			</buckets>
 		</calendar>
 	</calendars>
+	<items>
+		<item>
+			<name>item 1</name>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+		</item>
+		<item>
+			<name>item 2</name>
+			<operation>
+				<name>delivery 2</name>
+			</operation>
+		</item>
+		<item>
+			<name>item 3</name>
+			<operation>
+				<name>delivery 3</name>
+			</operation>
+		</item>
+		<item>
+			<name>item 4</name>
+			<operation>
+				<name>delivery 4</name>
+			</operation>
+		</item>
+	</items>
+	<buffers>
+		<buffer>
+			<name>buffer 1</name>
+			<producing>
+				<name>make 1</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
+			<onhand>10</onhand>
+			<minimum_calendar>
+				<name>min inv for buffer 1</name>
+			</minimum_calendar>
+			<flowplans>
+				<flowplan>
+					<date>1971-01-01T00:00:00</date>
+					<quantity>10</quantity>
+					<onhand>10</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<pegging level="1" operationplan="4002" quantity="5"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-09T00:00:00</date>
+					<quantity>-10</quantity>
+					<onhand>0</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4002" operation="delivery 1"/>
+					<pegging level="-1" operationplan="4003" quantity="10"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-10T00:00:00</date>
+					<quantity>100</quantity>
+					<onhand>100</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4005" operation="make 1"/>
+					<pegging level="-1" operationplan="1001" quantity="100"/>
+					<pegging level="1" operationplan="4004" quantity="50"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-10T00:00:00</date>
+					<quantity>-100</quantity>
+					<onhand>0</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4004" operation="delivery 1"/>
+					<pegging level="-1" operationplan="4005" quantity="50"/>
+					<pegging level="-2" operationplan="1001" quantity="100"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-17T00:00:00</date>
+					<quantity>94</quantity>
+					<onhand>94</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4007" operation="make 1"/>
+					<pegging level="-1" operationplan="1002" quantity="94"/>
+					<pegging level="1" operationplan="4006" quantity="45"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-17T00:00:00</date>
+					<quantity>-90</quantity>
+					<onhand>4</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4006" operation="delivery 1"/>
+					<pegging level="-1" operationplan="4007" quantity="45"/>
+					<pegging level="-2" operationplan="1002" quantity="90"/>
+				</flowplan>
+			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 1&apos; has material excess of 10</description>
+					<start>1971-01-01T00:00:00</start>
+					<end>2009-01-09T00:00:00</end>
+					<weight>10</weight>
+				</problem>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;buffer 1&apos; has material shortage of 4</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2009-01-17T00:00:00</end>
+					<weight>4</weight>
+				</problem>
+			</problems>
+		</buffer>
+		<buffer>
+			<name>buffer 2</name>
+			<producing>
+				<name>make 2</name>
+			</producing>
+			<item>
+				<name>item 2</name>
+			</item>
+			<onhand>10</onhand>
+			<minimum_calendar>
+				<name>min inv for buffer 2</name>
+			</minimum_calendar>
+			<flowplans>
+				<flowplan>
+					<date>1971-01-01T00:00:00</date>
+					<quantity>10</quantity>
+					<onhand>10</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<pegging level="1" operationplan="4008" quantity="5"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-09T00:00:00</date>
+					<quantity>-10</quantity>
+					<onhand>0</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4008" operation="delivery 2"/>
+					<pegging level="-1" operationplan="4009" quantity="10"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-10T00:00:00</date>
+					<quantity>100</quantity>
+					<onhand>100</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4011" operation="make 2"/>
+					<pegging level="-1" operationplan="2001" quantity="100"/>
+					<pegging level="1" operationplan="4010" quantity="50"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-10T00:00:00</date>
+					<quantity>-100</quantity>
+					<onhand>0</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4010" operation="delivery 2"/>
+					<pegging level="-1" operationplan="4011" quantity="50"/>
+					<pegging level="-2" operationplan="2001" quantity="100"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-17T00:00:00</date>
+					<quantity>50</quantity>
+					<onhand>50</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4013" operation="make 2"/>
+					<pegging level="-1" operationplan="2002" quantity="50"/>
+					<pegging level="1" operationplan="4012" quantity="25"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-17T00:00:00</date>
+					<quantity>-50</quantity>
+					<onhand>0</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4012" operation="delivery 2"/>
+					<pegging level="-1" operationplan="4013" quantity="25"/>
+					<pegging level="-2" operationplan="2002" quantity="50"/>
+				</flowplan>
+			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 2&apos; has material excess of 10</description>
+					<start>1971-01-01T00:00:00</start>
+					<end>2009-01-09T00:00:00</end>
+					<weight>10</weight>
+				</problem>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;buffer 2&apos; has material shortage of 4</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>4</weight>
+				</problem>
+			</problems>
+		</buffer>
+		<buffer>
+			<name>buffer 3</name>
+			<producing>
+				<name>make 3</name>
+			</producing>
+			<item>
+				<name>item 3</name>
+			</item>
+			<onhand>10</onhand>
+			<minimum_calendar>
+				<name>min inv for buffer 3</name>
+			</minimum_calendar>
+			<flowplans>
+				<flowplan>
+					<date>1971-01-01T00:00:00</date>
+					<quantity>10</quantity>
+					<onhand>10</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<pegging level="1" operationplan="4014" quantity="10"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-09T00:00:00</date>
+					<quantity>-10</quantity>
+					<onhand>0</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4014" operation="delivery 3"/>
+					<pegging level="-1" operationplan="4015" quantity="10"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-15T00:00:00</date>
+					<quantity>92</quantity>
+					<onhand>92</onhand>
+					<minimum>2</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4017" operation="make 3"/>
+					<pegging level="-1" operationplan="3001" quantity="184"/>
+					<pegging level="1" operationplan="4016" quantity="90"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-15T00:00:00</date>
+					<quantity>-90</quantity>
+					<onhand>2</onhand>
+					<minimum>2</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4016" operation="delivery 3"/>
+					<pegging level="-1" operationplan="4017" quantity="90"/>
+					<pegging level="-2" operationplan="3001" quantity="180"/>
+				</flowplan>
+			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 3&apos; has material excess of 10</description>
+					<start>1971-01-01T00:00:00</start>
+					<end>2009-01-09T00:00:00</end>
+					<weight>10</weight>
+				</problem>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;buffer 3&apos; has material shortage of 4</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<weight>4</weight>
+				</problem>
+			</problems>
+		</buffer>
+		<buffer>
+			<name>buffer 4</name>
+			<producing>
+				<name>make 4</name>
+			</producing>
+			<item>
+				<name>item 4</name>
+			</item>
+			<onhand>10</onhand>
+			<minimum_calendar>
+				<name>min inv for buffer 4</name>
+			</minimum_calendar>
+			<flowplans>
+				<flowplan>
+					<date>1971-01-01T00:00:00</date>
+					<quantity>10</quantity>
+					<onhand>10</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<pegging level="1" operationplan="4018" quantity="5"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-09T00:00:00</date>
+					<quantity>-10</quantity>
+					<onhand>0</onhand>
+					<minimum>4</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4018" operation="delivery 4"/>
+					<pegging level="-1" operationplan="4019" quantity="10"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-15T00:00:00</date>
+					<quantity>196</quantity>
+					<onhand>196</onhand>
+					<minimum>6</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4021" operation="make 4"/>
+					<pegging level="-1" operationplan="4001" quantity="196"/>
+					<pegging level="1" operationplan="4022" quantity="3"/>
+					<pegging level="1" operationplan="4020" quantity="95"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-15T00:00:00</date>
+					<quantity>-190</quantity>
+					<onhand>6</onhand>
+					<minimum>6</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4020" operation="delivery 4"/>
+					<pegging level="-1" operationplan="4021" quantity="95"/>
+					<pegging level="-2" operationplan="4001" quantity="190"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-06-18T00:00:00</date>
+					<quantity>200</quantity>
+					<onhand>206</onhand>
+					<minimum>6</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4023" operation="make 4"/>
+					<pegging level="-1" operationplan="4001" quantity="200"/>
+					<pegging level="1" operationplan="4022" quantity="97"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-06-18T00:00:00</date>
+					<quantity>-200</quantity>
+					<onhand>6</onhand>
+					<minimum>6</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4022" operation="delivery 4"/>
+					<pegging level="-1" operationplan="4021" quantity="3"/>
+					<pegging level="-2" operationplan="4001" quantity="6"/>
+					<pegging level="-1" operationplan="4023" quantity="97"/>
+					<pegging level="-2" operationplan="4001" quantity="194"/>
+				</flowplan>
+			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;buffer 4&apos; has material excess of 10</description>
+					<start>1971-01-01T00:00:00</start>
+					<end>2009-01-09T00:00:00</end>
+					<weight>10</weight>
+				</problem>
+				<problem>
+					<name>material shortage</name>
+					<description>Buffer &apos;buffer 4&apos; has material shortage of 6</description>
+					<start>2009-01-09T00:00:00</start>
+					<end>2009-01-15T00:00:00</end>
+					<weight>6</weight>
+				</problem>
+			</problems>
+		</buffer>
+		<buffer>
+			<name>constraint buffer 1</name>
+			<item>
+				<name>item 1</name>
+			</item>
+			<flowplans>
+				<flowplan>
+					<date>2009-01-10T00:00:00</date>
+					<quantity>100</quantity>
+					<onhand>100</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="1001" operation="supply 1"/>
+					<pegging level="1" operationplan="4005" quantity="50"/>
+					<pegging level="2" operationplan="4004" quantity="50"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-10T00:00:00</date>
+					<quantity>-100</quantity>
+					<onhand>0</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4005" operation="make 1"/>
+					<pegging level="-1" operationplan="1001" quantity="100"/>
+					<pegging level="1" operationplan="4004" quantity="50"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-17T00:00:00</date>
+					<quantity>200</quantity>
+					<onhand>200</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="1002" operation="supply 1"/>
+					<pegging level="1" operationplan="4007" quantity="47"/>
+					<pegging level="2" operationplan="4006" quantity="45"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-17T00:00:00</date>
+					<quantity>-94</quantity>
+					<onhand>106</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4007" operation="make 1"/>
+					<pegging level="-1" operationplan="1002" quantity="94"/>
+					<pegging level="1" operationplan="4006" quantity="45"/>
+				</flowplan>
+			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;constraint buffer 1&apos; has material excess of 106</description>
+					<start>2009-01-17T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>106</weight>
+				</problem>
+			</problems>
+		</buffer>
+		<buffer>
+			<name>constraint buffer 2</name>
+			<item>
+				<name>item 2</name>
+			</item>
+			<flowplans>
+				<flowplan>
+					<date>2009-01-10T00:00:00</date>
+					<quantity>100</quantity>
+					<onhand>100</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="2001" operation="supply 2"/>
+					<pegging level="1" operationplan="4011" quantity="50"/>
+					<pegging level="2" operationplan="4010" quantity="50"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-10T00:00:00</date>
+					<quantity>-100</quantity>
+					<onhand>0</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4011" operation="make 2"/>
+					<pegging level="-1" operationplan="2001" quantity="100"/>
+					<pegging level="1" operationplan="4010" quantity="50"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-17T00:00:00</date>
+					<quantity>50</quantity>
+					<onhand>50</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="2002" operation="supply 2"/>
+					<pegging level="1" operationplan="4013" quantity="25"/>
+					<pegging level="2" operationplan="4012" quantity="25"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-17T00:00:00</date>
+					<quantity>-50</quantity>
+					<onhand>0</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4013" operation="make 2"/>
+					<pegging level="-1" operationplan="2002" quantity="50"/>
+					<pegging level="1" operationplan="4012" quantity="25"/>
+				</flowplan>
+			</flowplans>
+		</buffer>
+		<buffer>
+			<name>constraint buffer 3</name>
+			<item>
+				<name>item 3</name>
+			</item>
+			<flowplans>
+				<flowplan>
+					<date>2009-01-15T00:00:00</date>
+					<quantity>1000</quantity>
+					<onhand>1000</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="3001" operation="supply 3"/>
+					<pegging level="1" operationplan="4017" quantity="92"/>
+					<pegging level="2" operationplan="4016" quantity="90"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-15T00:00:00</date>
+					<quantity>-184</quantity>
+					<onhand>816</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4017" operation="make 3"/>
+					<pegging level="-1" operationplan="3001" quantity="184"/>
+					<pegging level="1" operationplan="4016" quantity="90"/>
+				</flowplan>
+			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;constraint buffer 3&apos; has material excess of 816</description>
+					<start>2009-01-15T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>816</weight>
+				</problem>
+			</problems>
+		</buffer>
+		<buffer>
+			<name>constraint buffer 4</name>
+			<item>
+				<name>item 4</name>
+			</item>
+			<flowplans>
+				<flowplan>
+					<date>2009-01-15T00:00:00</date>
+					<quantity>1000</quantity>
+					<onhand>1000</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4001" operation="supply 4"/>
+					<pegging level="1" operationplan="4023" quantity="100"/>
+					<pegging level="2" operationplan="4022" quantity="97"/>
+					<pegging level="1" operationplan="4021" quantity="98"/>
+					<pegging level="2" operationplan="4022" quantity="3"/>
+					<pegging level="2" operationplan="4020" quantity="95"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-01-15T00:00:00</date>
+					<quantity>-196</quantity>
+					<onhand>804</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4021" operation="make 4"/>
+					<pegging level="-1" operationplan="4001" quantity="196"/>
+					<pegging level="1" operationplan="4022" quantity="3"/>
+					<pegging level="1" operationplan="4020" quantity="95"/>
+				</flowplan>
+				<flowplan>
+					<date>2009-06-18T00:00:00</date>
+					<quantity>-200</quantity>
+					<onhand>604</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<operationplan id="4023" operation="make 4"/>
+					<pegging level="-1" operationplan="4001" quantity="200"/>
+					<pegging level="1" operationplan="4022" quantity="97"/>
+				</flowplan>
+			</flowplans>
+			<problems>
+				<problem>
+					<name>material excess</name>
+					<description>Buffer &apos;constraint buffer 4&apos; has material excess of 804</description>
+					<start>2009-01-15T00:00:00</start>
+					<end>2030-12-31T00:00:00</end>
+					<weight>804</weight>
+				</problem>
+			</problems>
+		</buffer>
+	</buffers>
 	<operations>
 		<operation name="delivery 1" xsi:type="operation_fixed_time">
 			<operationplans>
@@ -584,532 +1155,9 @@
 			</operationplans>
 		</operation>
 	</operations>
-	<items>
-		<item>
-			<name>item 1</name>
-			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
-		</item>
-		<item>
-			<name>item 2</name>
-			<operation name="delivery 2" xsi:type="operation_fixed_time"/>
-		</item>
-		<item>
-			<name>item 3</name>
-			<operation name="delivery 3" xsi:type="operation_fixed_time"/>
-		</item>
-		<item>
-			<name>item 4</name>
-			<operation name="delivery 4" xsi:type="operation_fixed_time"/>
-		</item>
-	</items>
-	<buffers>
-		<buffer name="buffer 1">
-			<producing name="make 1" xsi:type="operation_fixed_time"/>
-			<item>
-				<name>item 1</name>
-			</item>
-			<onhand>10</onhand>
-			<minimum_calendar name="min inv for buffer 1"/>
-			<flowplans>
-				<flowplan>
-					<date>1971-01-01T00:00:00</date>
-					<quantity>10</quantity>
-					<onhand>10</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<pegging level="1" operationplan="4002" quantity="5"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-09T00:00:00</date>
-					<quantity>-10</quantity>
-					<onhand>0</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4002" operation="delivery 1"/>
-					<pegging level="-1" operationplan="4003" quantity="10"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-10T00:00:00</date>
-					<quantity>100</quantity>
-					<onhand>100</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4005" operation="make 1"/>
-					<pegging level="-1" operationplan="1001" quantity="100"/>
-					<pegging level="1" operationplan="4004" quantity="50"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-10T00:00:00</date>
-					<quantity>-100</quantity>
-					<onhand>0</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4004" operation="delivery 1"/>
-					<pegging level="-1" operationplan="4005" quantity="50"/>
-					<pegging level="-2" operationplan="1001" quantity="100"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-17T00:00:00</date>
-					<quantity>94</quantity>
-					<onhand>94</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4007" operation="make 1"/>
-					<pegging level="-1" operationplan="1002" quantity="94"/>
-					<pegging level="1" operationplan="4006" quantity="45"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-17T00:00:00</date>
-					<quantity>-90</quantity>
-					<onhand>4</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4006" operation="delivery 1"/>
-					<pegging level="-1" operationplan="4007" quantity="45"/>
-					<pegging level="-2" operationplan="1002" quantity="90"/>
-				</flowplan>
-			</flowplans>
-			<problems>
-				<problem>
-					<name>material excess</name>
-					<description>Buffer &apos;buffer 1&apos; has material excess of 10</description>
-					<start>1971-01-01T00:00:00</start>
-					<end>2009-01-09T00:00:00</end>
-					<weight>10</weight>
-				</problem>
-				<problem>
-					<name>material shortage</name>
-					<description>Buffer &apos;buffer 1&apos; has material shortage of 4</description>
-					<start>2009-01-09T00:00:00</start>
-					<end>2009-01-17T00:00:00</end>
-					<weight>4</weight>
-				</problem>
-			</problems>
-		</buffer>
-		<buffer name="buffer 2">
-			<producing name="make 2" xsi:type="operation_fixed_time"/>
-			<item>
-				<name>item 2</name>
-			</item>
-			<onhand>10</onhand>
-			<minimum_calendar name="min inv for buffer 2"/>
-			<flowplans>
-				<flowplan>
-					<date>1971-01-01T00:00:00</date>
-					<quantity>10</quantity>
-					<onhand>10</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<pegging level="1" operationplan="4008" quantity="5"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-09T00:00:00</date>
-					<quantity>-10</quantity>
-					<onhand>0</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4008" operation="delivery 2"/>
-					<pegging level="-1" operationplan="4009" quantity="10"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-10T00:00:00</date>
-					<quantity>100</quantity>
-					<onhand>100</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4011" operation="make 2"/>
-					<pegging level="-1" operationplan="2001" quantity="100"/>
-					<pegging level="1" operationplan="4010" quantity="50"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-10T00:00:00</date>
-					<quantity>-100</quantity>
-					<onhand>0</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4010" operation="delivery 2"/>
-					<pegging level="-1" operationplan="4011" quantity="50"/>
-					<pegging level="-2" operationplan="2001" quantity="100"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-17T00:00:00</date>
-					<quantity>50</quantity>
-					<onhand>50</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4013" operation="make 2"/>
-					<pegging level="-1" operationplan="2002" quantity="50"/>
-					<pegging level="1" operationplan="4012" quantity="25"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-17T00:00:00</date>
-					<quantity>-50</quantity>
-					<onhand>0</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4012" operation="delivery 2"/>
-					<pegging level="-1" operationplan="4013" quantity="25"/>
-					<pegging level="-2" operationplan="2002" quantity="50"/>
-				</flowplan>
-			</flowplans>
-			<problems>
-				<problem>
-					<name>material excess</name>
-					<description>Buffer &apos;buffer 2&apos; has material excess of 10</description>
-					<start>1971-01-01T00:00:00</start>
-					<end>2009-01-09T00:00:00</end>
-					<weight>10</weight>
-				</problem>
-				<problem>
-					<name>material shortage</name>
-					<description>Buffer &apos;buffer 2&apos; has material shortage of 4</description>
-					<start>2009-01-09T00:00:00</start>
-					<end>2030-12-31T00:00:00</end>
-					<weight>4</weight>
-				</problem>
-			</problems>
-		</buffer>
-		<buffer name="buffer 3">
-			<producing name="make 3" xsi:type="operation_fixed_time"/>
-			<item>
-				<name>item 3</name>
-			</item>
-			<onhand>10</onhand>
-			<minimum_calendar name="min inv for buffer 3"/>
-			<flowplans>
-				<flowplan>
-					<date>1971-01-01T00:00:00</date>
-					<quantity>10</quantity>
-					<onhand>10</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<pegging level="1" operationplan="4014" quantity="10"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-09T00:00:00</date>
-					<quantity>-10</quantity>
-					<onhand>0</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4014" operation="delivery 3"/>
-					<pegging level="-1" operationplan="4015" quantity="10"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-15T00:00:00</date>
-					<quantity>92</quantity>
-					<onhand>92</onhand>
-					<minimum>2</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4017" operation="make 3"/>
-					<pegging level="-1" operationplan="3001" quantity="184"/>
-					<pegging level="1" operationplan="4016" quantity="90"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-15T00:00:00</date>
-					<quantity>-90</quantity>
-					<onhand>2</onhand>
-					<minimum>2</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4016" operation="delivery 3"/>
-					<pegging level="-1" operationplan="4017" quantity="90"/>
-					<pegging level="-2" operationplan="3001" quantity="180"/>
-				</flowplan>
-			</flowplans>
-			<problems>
-				<problem>
-					<name>material excess</name>
-					<description>Buffer &apos;buffer 3&apos; has material excess of 10</description>
-					<start>1971-01-01T00:00:00</start>
-					<end>2009-01-09T00:00:00</end>
-					<weight>10</weight>
-				</problem>
-				<problem>
-					<name>material shortage</name>
-					<description>Buffer &apos;buffer 3&apos; has material shortage of 4</description>
-					<start>2009-01-09T00:00:00</start>
-					<end>2009-01-15T00:00:00</end>
-					<weight>4</weight>
-				</problem>
-			</problems>
-		</buffer>
-		<buffer name="buffer 4">
-			<producing name="make 4" xsi:type="operation_fixed_time"/>
-			<item>
-				<name>item 4</name>
-			</item>
-			<onhand>10</onhand>
-			<minimum_calendar name="min inv for buffer 4"/>
-			<flowplans>
-				<flowplan>
-					<date>1971-01-01T00:00:00</date>
-					<quantity>10</quantity>
-					<onhand>10</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<pegging level="1" operationplan="4018" quantity="5"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-09T00:00:00</date>
-					<quantity>-10</quantity>
-					<onhand>0</onhand>
-					<minimum>4</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4018" operation="delivery 4"/>
-					<pegging level="-1" operationplan="4019" quantity="10"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-15T00:00:00</date>
-					<quantity>196</quantity>
-					<onhand>196</onhand>
-					<minimum>6</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4021" operation="make 4"/>
-					<pegging level="-1" operationplan="4001" quantity="196"/>
-					<pegging level="1" operationplan="4022" quantity="3"/>
-					<pegging level="1" operationplan="4020" quantity="95"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-15T00:00:00</date>
-					<quantity>-190</quantity>
-					<onhand>6</onhand>
-					<minimum>6</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4020" operation="delivery 4"/>
-					<pegging level="-1" operationplan="4021" quantity="95"/>
-					<pegging level="-2" operationplan="4001" quantity="190"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-06-18T00:00:00</date>
-					<quantity>200</quantity>
-					<onhand>206</onhand>
-					<minimum>6</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4023" operation="make 4"/>
-					<pegging level="-1" operationplan="4001" quantity="200"/>
-					<pegging level="1" operationplan="4022" quantity="97"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-06-18T00:00:00</date>
-					<quantity>-200</quantity>
-					<onhand>6</onhand>
-					<minimum>6</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4022" operation="delivery 4"/>
-					<pegging level="-1" operationplan="4021" quantity="3"/>
-					<pegging level="-2" operationplan="4001" quantity="6"/>
-					<pegging level="-1" operationplan="4023" quantity="97"/>
-					<pegging level="-2" operationplan="4001" quantity="194"/>
-				</flowplan>
-			</flowplans>
-			<problems>
-				<problem>
-					<name>material excess</name>
-					<description>Buffer &apos;buffer 4&apos; has material excess of 10</description>
-					<start>1971-01-01T00:00:00</start>
-					<end>2009-01-09T00:00:00</end>
-					<weight>10</weight>
-				</problem>
-				<problem>
-					<name>material shortage</name>
-					<description>Buffer &apos;buffer 4&apos; has material shortage of 6</description>
-					<start>2009-01-09T00:00:00</start>
-					<end>2009-01-15T00:00:00</end>
-					<weight>6</weight>
-				</problem>
-			</problems>
-		</buffer>
-		<buffer name="constraint buffer 1">
-			<item>
-				<name>item 1</name>
-			</item>
-			<flowplans>
-				<flowplan>
-					<date>2009-01-10T00:00:00</date>
-					<quantity>100</quantity>
-					<onhand>100</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="1001" operation="supply 1"/>
-					<pegging level="1" operationplan="4005" quantity="50"/>
-					<pegging level="2" operationplan="4004" quantity="50"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-10T00:00:00</date>
-					<quantity>-100</quantity>
-					<onhand>0</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4005" operation="make 1"/>
-					<pegging level="-1" operationplan="1001" quantity="100"/>
-					<pegging level="1" operationplan="4004" quantity="50"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-17T00:00:00</date>
-					<quantity>200</quantity>
-					<onhand>200</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="1002" operation="supply 1"/>
-					<pegging level="1" operationplan="4007" quantity="47"/>
-					<pegging level="2" operationplan="4006" quantity="45"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-17T00:00:00</date>
-					<quantity>-94</quantity>
-					<onhand>106</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4007" operation="make 1"/>
-					<pegging level="-1" operationplan="1002" quantity="94"/>
-					<pegging level="1" operationplan="4006" quantity="45"/>
-				</flowplan>
-			</flowplans>
-			<problems>
-				<problem>
-					<name>material excess</name>
-					<description>Buffer &apos;constraint buffer 1&apos; has material excess of 106</description>
-					<start>2009-01-17T00:00:00</start>
-					<end>2030-12-31T00:00:00</end>
-					<weight>106</weight>
-				</problem>
-			</problems>
-		</buffer>
-		<buffer name="constraint buffer 2">
-			<item>
-				<name>item 2</name>
-			</item>
-			<flowplans>
-				<flowplan>
-					<date>2009-01-10T00:00:00</date>
-					<quantity>100</quantity>
-					<onhand>100</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="2001" operation="supply 2"/>
-					<pegging level="1" operationplan="4011" quantity="50"/>
-					<pegging level="2" operationplan="4010" quantity="50"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-10T00:00:00</date>
-					<quantity>-100</quantity>
-					<onhand>0</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4011" operation="make 2"/>
-					<pegging level="-1" operationplan="2001" quantity="100"/>
-					<pegging level="1" operationplan="4010" quantity="50"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-17T00:00:00</date>
-					<quantity>50</quantity>
-					<onhand>50</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="2002" operation="supply 2"/>
-					<pegging level="1" operationplan="4013" quantity="25"/>
-					<pegging level="2" operationplan="4012" quantity="25"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-17T00:00:00</date>
-					<quantity>-50</quantity>
-					<onhand>0</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4013" operation="make 2"/>
-					<pegging level="-1" operationplan="2002" quantity="50"/>
-					<pegging level="1" operationplan="4012" quantity="25"/>
-				</flowplan>
-			</flowplans>
-		</buffer>
-		<buffer name="constraint buffer 3">
-			<item>
-				<name>item 3</name>
-			</item>
-			<flowplans>
-				<flowplan>
-					<date>2009-01-15T00:00:00</date>
-					<quantity>1000</quantity>
-					<onhand>1000</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="3001" operation="supply 3"/>
-					<pegging level="1" operationplan="4017" quantity="92"/>
-					<pegging level="2" operationplan="4016" quantity="90"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-15T00:00:00</date>
-					<quantity>-184</quantity>
-					<onhand>816</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4017" operation="make 3"/>
-					<pegging level="-1" operationplan="3001" quantity="184"/>
-					<pegging level="1" operationplan="4016" quantity="90"/>
-				</flowplan>
-			</flowplans>
-			<problems>
-				<problem>
-					<name>material excess</name>
-					<description>Buffer &apos;constraint buffer 3&apos; has material excess of 816</description>
-					<start>2009-01-15T00:00:00</start>
-					<end>2030-12-31T00:00:00</end>
-					<weight>816</weight>
-				</problem>
-			</problems>
-		</buffer>
-		<buffer name="constraint buffer 4">
-			<item>
-				<name>item 4</name>
-			</item>
-			<flowplans>
-				<flowplan>
-					<date>2009-01-15T00:00:00</date>
-					<quantity>1000</quantity>
-					<onhand>1000</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4001" operation="supply 4"/>
-					<pegging level="1" operationplan="4023" quantity="100"/>
-					<pegging level="2" operationplan="4022" quantity="97"/>
-					<pegging level="1" operationplan="4021" quantity="98"/>
-					<pegging level="2" operationplan="4022" quantity="3"/>
-					<pegging level="2" operationplan="4020" quantity="95"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-01-15T00:00:00</date>
-					<quantity>-196</quantity>
-					<onhand>804</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4021" operation="make 4"/>
-					<pegging level="-1" operationplan="4001" quantity="196"/>
-					<pegging level="1" operationplan="4022" quantity="3"/>
-					<pegging level="1" operationplan="4020" quantity="95"/>
-				</flowplan>
-				<flowplan>
-					<date>2009-06-18T00:00:00</date>
-					<quantity>-200</quantity>
-					<onhand>604</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<operationplan id="4023" operation="make 4"/>
-					<pegging level="-1" operationplan="4001" quantity="200"/>
-					<pegging level="1" operationplan="4022" quantity="97"/>
-				</flowplan>
-			</flowplans>
-			<problems>
-				<problem>
-					<name>material excess</name>
-					<description>Buffer &apos;constraint buffer 4&apos; has material excess of 804</description>
-					<start>2009-01-15T00:00:00</start>
-					<end>2030-12-31T00:00:00</end>
-					<weight>804</weight>
-				</problem>
-			</problems>
-		</buffer>
-	</buffers>
 	<demands>
-		<demand name="order 2 for item 4">
+		<demand>
+			<name>order 2 for item 4</name>
 			<quantity>100</quantity>
 			<item>
 				<name>item 4</name>
@@ -1161,7 +1209,8 @@
 				</operationplan>
 			</operationplans>
 		</demand>
-		<demand name="order for item 1">
+		<demand>
+			<name>order for item 1</name>
 			<quantity>100</quantity>
 			<item>
 				<name>item 1</name>
@@ -1258,7 +1307,8 @@
 				</problem>
 			</constraints>
 		</demand>
-		<demand name="order for item 2">
+		<demand>
+			<name>order for item 2</name>
 			<quantity>100</quantity>
 			<item>
 				<name>item 2</name>
@@ -1362,7 +1412,8 @@
 				</problem>
 			</constraints>
 		</demand>
-		<demand name="order for item 3">
+		<demand>
+			<name>order for item 3</name>
 			<quantity>100</quantity>
 			<item>
 				<name>item 3</name>
@@ -1433,7 +1484,8 @@
 				</problem>
 			</constraints>
 		</demand>
-		<demand name="order for item 4">
+		<demand>
+			<name>order for item 4</name>
 			<quantity>100</quantity>
 			<item>
 				<name>item 4</name>
@@ -1505,91 +1557,15 @@
 			</constraints>
 		</demand>
 	</demands>
-	<flows>
-		<flow xsi:type="flow_start">
-			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 1"/>
-			<quantity>-2</quantity>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="delivery 2" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 2"/>
-			<quantity>-2</quantity>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="delivery 3" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 3"/>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="delivery 4" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 4"/>
-			<quantity>-2</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="make 1" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 1"/>
-			<quantity>2</quantity>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make 1" xsi:type="operation_fixed_time"/>
-			<buffer name="constraint buffer 1"/>
-			<quantity>-2</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="make 2" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 2"/>
-			<quantity>2</quantity>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make 2" xsi:type="operation_fixed_time"/>
-			<buffer name="constraint buffer 2"/>
-			<quantity>-2</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="make 3" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 3"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make 3" xsi:type="operation_fixed_time"/>
-			<buffer name="constraint buffer 3"/>
-			<quantity>-2</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="make 4" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 4"/>
-			<quantity>2</quantity>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make 4" xsi:type="operation_fixed_time"/>
-			<buffer name="constraint buffer 4"/>
-			<quantity>-2</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="supply 1" xsi:type="operation_fixed_time"/>
-			<buffer name="constraint buffer 1"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="supply 2" xsi:type="operation_fixed_time"/>
-			<buffer name="constraint buffer 2"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="supply 3" xsi:type="operation_fixed_time"/>
-			<buffer name="constraint buffer 3"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="supply 4" xsi:type="operation_fixed_time"/>
-			<buffer name="constraint buffer 4"/>
-			<quantity>1</quantity>
-		</flow>
-	</flows>
 	<operationplans>
-		<operationplan id="4002" operation="delivery 1">
-			<demand name="order for item 1"/>
+		<operationplan>
+			<id>4002</id>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand>
+				<name>order for item 1</name>
+			</demand>
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>5</quantity>
@@ -1605,8 +1581,14 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4004" operation="delivery 1">
-			<demand name="order for item 1"/>
+		<operationplan>
+			<id>4003</id>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand>
+				<name>order for item 1</name>
+			</demand>
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-11T00:00:00</end>
 			<quantity>50</quantity>
@@ -1623,8 +1605,14 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4006" operation="delivery 1">
-			<demand name="order for item 1"/>
+		<operationplan>
+			<id>4004</id>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand>
+				<name>order for item 1</name>
+			</demand>
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-18T00:00:00</end>
 			<quantity>45</quantity>
@@ -1641,8 +1629,14 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4008" operation="delivery 2">
-			<demand name="order for item 2"/>
+		<operationplan>
+			<id>4005</id>
+			<operation>
+				<name>delivery 2</name>
+			</operation>
+			<demand>
+				<name>order for item 2</name>
+			</demand>
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>5</quantity>
@@ -1658,8 +1652,14 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4010" operation="delivery 2">
-			<demand name="order for item 2"/>
+		<operationplan>
+			<id>4006</id>
+			<operation>
+				<name>delivery 2</name>
+			</operation>
+			<demand>
+				<name>order for item 2</name>
+			</demand>
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-11T00:00:00</end>
 			<quantity>50</quantity>
@@ -1676,8 +1676,14 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4012" operation="delivery 2">
-			<demand name="order for item 2"/>
+		<operationplan>
+			<id>4007</id>
+			<operation>
+				<name>delivery 2</name>
+			</operation>
+			<demand>
+				<name>order for item 2</name>
+			</demand>
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-18T00:00:00</end>
 			<quantity>25</quantity>
@@ -1694,8 +1700,14 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4014" operation="delivery 3">
-			<demand name="order for item 3"/>
+		<operationplan>
+			<id>4008</id>
+			<operation>
+				<name>delivery 3</name>
+			</operation>
+			<demand>
+				<name>order for item 3</name>
+			</demand>
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>10</quantity>
@@ -1711,8 +1723,14 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4016" operation="delivery 3">
-			<demand name="order for item 3"/>
+		<operationplan>
+			<id>4009</id>
+			<operation>
+				<name>delivery 3</name>
+			</operation>
+			<demand>
+				<name>order for item 3</name>
+			</demand>
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-16T00:00:00</end>
 			<quantity>90</quantity>
@@ -1729,8 +1747,14 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4018" operation="delivery 4">
-			<demand name="order for item 4"/>
+		<operationplan>
+			<id>4010</id>
+			<operation>
+				<name>delivery 4</name>
+			</operation>
+			<demand>
+				<name>order for item 4</name>
+			</demand>
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>5</quantity>
@@ -1746,8 +1770,14 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4020" operation="delivery 4">
-			<demand name="order for item 4"/>
+		<operationplan>
+			<id>4011</id>
+			<operation>
+				<name>delivery 4</name>
+			</operation>
+			<demand>
+				<name>order for item 4</name>
+			</demand>
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-16T00:00:00</end>
 			<quantity>95</quantity>
@@ -1764,8 +1794,14 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4022" operation="delivery 4">
-			<demand name="order 2 for item 4"/>
+		<operationplan>
+			<id>4012</id>
+			<operation>
+				<name>delivery 4</name>
+			</operation>
+			<demand>
+				<name>order 2 for item 4</name>
+			</demand>
 			<start>2009-06-18T00:00:00</start>
 			<end>2009-06-19T00:00:00</end>
 			<quantity>100</quantity>
@@ -1784,7 +1820,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4005" operation="make 1">
+		<operationplan>
+			<id>4013</id>
+			<operation>
+				<name>make 1</name>
+			</operation>
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>50</quantity>
@@ -1810,7 +1850,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4007" operation="make 1">
+		<operationplan>
+			<id>4014</id>
+			<operation>
+				<name>make 1</name>
+			</operation>
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-17T00:00:00</end>
 			<quantity>47</quantity>
@@ -1836,7 +1880,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4011" operation="make 2">
+		<operationplan>
+			<id>4015</id>
+			<operation>
+				<name>make 2</name>
+			</operation>
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>50</quantity>
@@ -1862,7 +1910,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4013" operation="make 2">
+		<operationplan>
+			<id>4016</id>
+			<operation>
+				<name>make 2</name>
+			</operation>
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-17T00:00:00</end>
 			<quantity>25</quantity>
@@ -1888,7 +1940,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4017" operation="make 3">
+		<operationplan>
+			<id>4017</id>
+			<operation>
+				<name>make 3</name>
+			</operation>
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-15T00:00:00</end>
 			<quantity>92</quantity>
@@ -1914,7 +1970,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4021" operation="make 4">
+		<operationplan>
+			<id>4018</id>
+			<operation>
+				<name>make 4</name>
+			</operation>
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-15T00:00:00</end>
 			<quantity>98</quantity>
@@ -1942,7 +2002,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4023" operation="make 4">
+		<operationplan>
+			<id>4019</id>
+			<operation>
+				<name>make 4</name>
+			</operation>
 			<start>2009-06-18T00:00:00</start>
 			<end>2009-06-18T00:00:00</end>
 			<quantity>100</quantity>
@@ -1968,7 +2032,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="1001" operation="supply 1">
+		<operationplan>
+			<id>1001</id>
+			<operation>
+				<name>supply 1</name>
+			</operation>
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>100</quantity>
@@ -1986,7 +2054,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="1002" operation="supply 1">
+		<operationplan>
+			<id>1002</id>
+			<operation>
+				<name>supply 1</name>
+			</operation>
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-17T00:00:00</end>
 			<quantity>200</quantity>
@@ -2004,7 +2076,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="2001" operation="supply 2">
+		<operationplan>
+			<id>2001</id>
+			<operation>
+				<name>supply 2</name>
+			</operation>
 			<start>2009-01-10T00:00:00</start>
 			<end>2009-01-10T00:00:00</end>
 			<quantity>100</quantity>
@@ -2022,7 +2098,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="2002" operation="supply 2">
+		<operationplan>
+			<id>2002</id>
+			<operation>
+				<name>supply 2</name>
+			</operation>
 			<start>2009-01-17T00:00:00</start>
 			<end>2009-01-17T00:00:00</end>
 			<quantity>50</quantity>
@@ -2040,7 +2120,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="3001" operation="supply 3">
+		<operationplan>
+			<id>3001</id>
+			<operation>
+				<name>supply 3</name>
+			</operation>
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-15T00:00:00</end>
 			<quantity>1000</quantity>
@@ -2058,7 +2142,11 @@
 				</flowplan>
 			</flowplans>
 		</operationplan>
-		<operationplan id="4001" operation="supply 4">
+		<operationplan>
+			<id>4001</id>
+			<operation>
+				<name>supply 4</name>
+			</operation>
 			<start>2009-01-15T00:00:00</start>
 			<end>2009-01-15T00:00:00</end>
 			<quantity>1000</quantity>
@@ -2084,7 +2172,6 @@
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 1&apos; has material excess of 10</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>2009-01-09T00:00:00</end>
 			<weight>10</weight>
 		</problem>
@@ -2098,7 +2185,6 @@
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 2&apos; has material excess of 10</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>2009-01-09T00:00:00</end>
 			<weight>10</weight>
 		</problem>
@@ -2106,13 +2192,11 @@
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer 2&apos; has material shortage of 4</description>
 			<start>2009-01-09T00:00:00</start>
-			<end>2030-12-31T00:00:00</end>
 			<weight>4</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 3&apos; has material excess of 10</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>2009-01-09T00:00:00</end>
 			<weight>10</weight>
 		</problem>
@@ -2126,7 +2210,6 @@
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 4&apos; has material excess of 10</description>
-			<start>1971-01-01T00:00:00</start>
 			<end>2009-01-09T00:00:00</end>
 			<weight>10</weight>
 		</problem>
@@ -2141,21 +2224,18 @@
 			<name>material excess</name>
 			<description>Buffer &apos;constraint buffer 1&apos; has material excess of 106</description>
 			<start>2009-01-17T00:00:00</start>
-			<end>2030-12-31T00:00:00</end>
 			<weight>106</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;constraint buffer 3&apos; has material excess of 816</description>
 			<start>2009-01-15T00:00:00</start>
-			<end>2030-12-31T00:00:00</end>
 			<weight>816</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;constraint buffer 4&apos; has material excess of 804</description>
 			<start>2009-01-15T00:00:00</start>
-			<end>2030-12-31T00:00:00</end>
 			<weight>804</weight>
 		</problem>
 		<problem>

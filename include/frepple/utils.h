@@ -214,7 +214,6 @@ template<class T> class MetaFieldUnsignedLong;
 template<class T> class MetaFieldPythonFunction;
 template<class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterator;
 template<class T, class U, class V> class MetaFieldList;
-template<class T, class U> class MetaFieldList2;
 template<class T, class U> class MetaFieldList3;
 template<class T, class U, class V> class MetaFieldList4;
 template<class T> class MetaFieldInt;
@@ -1694,11 +1693,6 @@ class MetaFieldBase
       return 0;
     }
 
-    unsigned int getFlags() const
-    {
-      return flags;
-    }
-
     bool getFlag(unsigned int i) const
     {
       return (flags & i) != 0;
@@ -2016,7 +2010,7 @@ class MetaClass : public NonCopyable
 
     template <class Cls, class Iter, class Ptr> inline void addIteratorField(
       const Keyword& k1, const Keyword& k2,
-      Iter (Cls::*getfunc)(void) const,
+      Iter (Cls::*getfunc)(void) const = NULL,
       unsigned int c = BASE
       )
     {
@@ -2033,16 +2027,6 @@ class MetaClass : public NonCopyable
       )
     {
       fields.push_back( new MetaFieldList<Cls, Ptr, Ptr2>(k1, k2, getfunc, c) );
-      if (c & PARENT)
-        parent = true;
-    }
-
-    template <class Cls, class Ptr> inline void addList2Field(
-      const Keyword& k1, const Keyword& k2,
-      unsigned int c = BASE
-      )
-    {
-      fields.push_back( new MetaFieldList2<Cls, Ptr>(k1, k2, c) );
       if (c & PARENT)
         parent = true;
     }
@@ -3948,13 +3932,15 @@ class PythonIterator : public Object
     {
       // Initialize the type
       PythonType& x = getPythonType();
-      x.setName(typeid(DATACLASS).name());
-      x.setDoc(typeid(DATACLASS).name());
-      //x.setName(DATACLASS::metadata->type + "Iterator");    XXX
-      //x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
+      if (!DATACLASS::metadata)
+        throw LogicException(
+          "Iterator for " + string(typeid(DATACLASS).name()) +
+          " initialized before its data class"
+          );
+      x.setName(DATACLASS::metadata->type + "Iterator");
+      x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
       x.supportiter();
       return x.typeReady();
-      return 0;
     }
 
     /** Constructor from a pointer.
@@ -6971,25 +6957,23 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
 
     MetaFieldIterator(const Keyword& g,
         const Keyword& n,
-        getFunction getfunc,
+        getFunction getfunc = NULL,
         unsigned int c = BASE
-        ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n)
-    {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
-    };
+        ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
 
     virtual void setField(Object* me, const DataValue& el) const {}
 
     virtual void getField(Object* me, DataValue& el) const
     {
+      // This code is Python-specific. Only from Python can we call
+      // this method. Not generic, but good enough...
       PyIter *o = new PyIter((static_cast<Cls*>(me)->*getf)());
       el.setObject(o);
     }
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
+      if (getFlag(DONT_SERIALIZE) || !getf)
         return;
       if (getFlag(WRITE_FULL))
         output.decParents();
@@ -7097,60 +7081,6 @@ template <class Cls, class Ptr, class Ptr2> class MetaFieldList : public MetaFie
     /** Get function. */
     getFunction getf;
 
-    const Keyword& singleKeyword;
-};
-
-
-template <class Cls, class Ptr> class MetaFieldList2 : public MetaFieldBase
-{
-  public:
-    MetaFieldList2(const Keyword& g,
-        const Keyword& n,
-        unsigned int c = BASE
-        ) : MetaFieldBase(g, c), singleKeyword(n)
-    {};
-
-    virtual void setField(Object* me, const DataValue& el) const {}
-
-    virtual void getField(Object* me, DataValue& el) const
-    {
-      throw LogicException("GetField not implemented for list2 fields");
-    }
-
-    virtual void writeField(Serializer& output) const
-    {
-      if (getFlag(DONT_SERIALIZE))
-        return;
-      bool first = true;
-      for (typename Ptr::iterator i = Ptr::begin(); i != Ptr::end(); ++i)
-      {
-        if (first)
-        {
-          output.BeginList(getName());
-          first = false;
-        }
-        output.writeElement(singleKeyword, *i);
-      }
-      if (!first)
-        output.EndList(getName());
-    }
-
-    virtual bool isGroup() const
-    {
-      return true;
-    }
-
-    virtual const MetaClass* getClass() const
-    {
-      return Ptr::metadata;
-    }
-
-    virtual const Keyword* getKeyword() const
-    {
-      return &singleKeyword;
-    }
-
-  protected:
     const Keyword& singleKeyword;
 };
 

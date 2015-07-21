@@ -16,12 +16,12 @@
   <resources>
     <resource name="Operators"></resource>
     <resource name="Neil" cost="1">
-	  <owner name="Operators"/>
-	  <resourceskills>
-	    <resourceskill priority="1"><skill name="Qualification B" /></resourceskill>
-	    <resourceskill><skill name="Qualification C" /></resourceskill>
-	  </resourceskills>
-	</resource>
+	    <owner name="Operators"/>
+	    <resourceskills>
+	      <resourceskill priority="1"><skill name="Qualification B" /></resourceskill>
+	      <resourceskill><skill name="Qualification C" /></resourceskill>
+	    </resourceskills>
+	  </resource>
     <resource name="Bob" cost="1">
 	  <owner name="Operators"/>
 	  <resourceskills>

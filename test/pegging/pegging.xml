@@ -268,7 +268,7 @@ frepple.solver_mrp(constraints=15,loglevel=1).solve()
 # Note that it is NOT common to save the complete plan with all pegging detail.
 # The output file gets very big and full of redundant data.
 # Pegging info is normally extracted for a small subset of data.
-frepple.saveXMLfile("output.1.xml","PLANDETAIL")
+frepple.saveXMLfile("output.1.xml","DETAIL")
 ?>
 
 </plan>

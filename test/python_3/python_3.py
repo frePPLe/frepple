@@ -98,12 +98,9 @@ def printModel(filename):
         print("    Load:", l.resource.name, l.quantity, l.effective_start, l.effective_end, file=output)
       for l in b.flows:
         print("    Flow:", l.buffer.name, l.quantity, l.effective_start, l.effective_end, file=output)
-      if isinstance(b, frepple.operation_alternate):
-        for l in b.alternates:
-          print("    Alternate:", l[0].name, l[1], l[2], l[3], file=output)
-      if isinstance(b, frepple.operation_routing):
-        for l in b.steps:
-          print("    Step:", l.name, file=output)
+      if isinstance(b, (frepple.operation_alternate, frepple.operation_routing, frepple.operation_split)):
+        for l in b.suboperations:
+          print("    Suboperation:", l.operation.name, l.priority, l.effective_start, l.effective_end, file=output)
 
     # Demands
     print("\nEchoing demands:", file=output)

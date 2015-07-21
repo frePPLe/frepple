@@ -38,30 +38,29 @@ void LibraryModel::initialize()
   init = true;
 
   // Register new types in Python
+  // Ordering is important here!!! If a class contains a field of type
+  // iterator, then the class it iterators over must be defined before.
   int nok = 0;
-  nok += Plan::initialize();
-
-  // Initialize the solver metadata.
   nok += Solver::initialize();
-
-  // Initialize the location metadata.
+  nok += Problem::initialize();
   nok += Location::initialize();
   nok += LocationDefault::initialize();
-
-  // Initialize the customer metadata.
   nok += Customer::initialize();
   nok += CustomerDefault::initialize();
-
-  // Initialize the supplier metadata.
+  nok += SupplierItem::initialize();
   nok += Supplier::initialize();
   nok += SupplierDefault::initialize();
-
-  // Initialize the calendar metadata.
   nok += CalendarBucket::initialize();
   nok += Calendar::initialize();
   nok += CalendarDefault::initialize();
-
-  // Initialize the operation metadata.
+  nok += ResourceSkill::initialize();
+  nok += LoadPlan::initialize();
+  nok += FlowPlan::initialize();
+  nok += OperationPlan::initialize();
+  nok += Load::initialize();
+  nok += LoadPlanIterator::initialize();
+  nok += Flow::initialize();
+  nok += FlowPlanIterator::initialize();
   nok += Operation::initialize();
   nok += OperationAlternate::initialize();
   nok += OperationSplit::initialize();
@@ -70,65 +69,31 @@ void LibraryModel::initialize()
   nok += OperationRouting::initialize();
   nok += OperationSetup::initialize();
   nok += SubOperation::initialize();
-
-  // Initialize the item metadata.
   nok += Item::initialize();
   nok += ItemDefault::initialize();
-
-  // Initialize the supplieritem metadata
-  nok += SupplierItem::initialize();
-
-  // Initialize the buffer metadata.
   nok += Buffer::initialize();
   nok += BufferDefault::initialize();
   nok += BufferInfinite::initialize();
   nok += BufferProcure::initialize();
-
-  // Initialize the demand metadata.
   nok += Demand::initialize();
   nok += DemandDefault::initialize();
   nok += DemandPlanIterator::initialize();
-
-  // Initialize the setupmatrix metadata.
   nok += SetupMatrixRule::initialize();
   nok += SetupMatrix::initialize();
   nok += SetupMatrixDefault::initialize();
-
-  // Initialize the skill metadata
   nok += Skill::initialize();
   nok += SkillDefault::initialize();
-
-  // Initialize the resource metadata.
   nok += Resource::initialize();
   nok += ResourceDefault::initialize();
   nok += ResourceInfinite::initialize();
   nok += Resource::PlanIterator::initialize();
   nok += ResourceBuckets::initialize();
-
-  // Initialize the resourceskill metadata
-  nok += ResourceSkill::initialize();
-
-  // Initialize the load metadata.
-  nok += Load::initialize();
-  nok += LoadPlan::initialize();
-  nok += LoadPlanIterator::initialize();
-
-  // Initialize the flow metadata.
-  nok += Flow::initialize();
-  nok += FlowPlan::initialize();
-  nok += FlowPlanIterator::initialize();
-
-  // Initialize the operationplan metadata.
-  nok += OperationPlan::initialize();
-
-  // Initialize the problem metadata.
-  nok += Problem::initialize();
-
-  // Initialize the pegging metadata.
   nok += PeggingIterator::initialize();
+  nok += Plan::initialize();
 
   // Exit if errors were found
-  if (nok) throw RuntimeException("Error registering new Python types");
+  if (nok)
+    throw RuntimeException("Error registering new Python types");
 
   // Register new methods in Python
   PythonInterpreter::registerGlobalMethod(

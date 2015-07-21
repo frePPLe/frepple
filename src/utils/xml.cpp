@@ -423,8 +423,12 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
       const MetaClass* cl = objects[objectindex-1].cls;
       for (MetaClass::fieldlist::const_iterator i = objects[objectindex].cls->getFields().begin();
         i != objects[objectindex].cls->getFields().end(); ++i)
-        if ((*i)->getFlags() & PARENT && objectindex >= 1)
+        if ((*i)->getFlag(PARENT) && objectindex >= 1)
         {
+          const MetaFieldBase* fld = data[objects[objectindex].start-1].field;
+          if (fld && !fld->isGroup())
+            // Only under a group field can we inherit from a parent object
+            continue;
           if (*((*i)->getClass()) == *cl
             || (cl->category && *((*i)->getClass()) == *(cl->category)))
           {
@@ -480,8 +484,12 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
       const MetaClass* cl = objects[objectindex-1].cls;
       for (MetaClass::fieldlist::const_iterator i = objects[objectindex].cls->category->getFields().begin();
         i != objects[objectindex].cls->category->getFields().end(); ++i)
-        if ((*i)->getFlags() & PARENT && objectindex >= 1)
+        if ((*i)->getFlag(PARENT) && objectindex >= 1)
         {
+          const MetaFieldBase* fld = data[objects[objectindex].start-1].field;
+          if (fld && !fld->isGroup())
+            // Only under a group field can we inherit from a parent object
+            continue;
           if (*((*i)->getClass()) == *cl
             || (cl->category && *((*i)->getClass()) == *(cl->category)))
           {

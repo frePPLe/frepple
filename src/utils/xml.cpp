@@ -779,6 +779,20 @@ DECLARE_EXPORT void XMLSerializer::decIndent()
 }
 
 
+DECLARE_EXPORT void Serializer::setContentType(const string& c)
+{
+  if (c == "base")
+    setContentType(BASE);
+  else if (c == "plan")
+    setContentType(PLAN);
+  else if (c == "detail")
+    setContentType(DETAIL);
+  else
+    // Silently fallback to the default value
+    setContentType(BASE);
+}
+
+
 DECLARE_EXPORT void Serializer::writeElement
 (const Keyword& tag, const Object* object, FieldCategory m)
 {

@@ -215,7 +215,6 @@ template<class T> class MetaFieldPythonFunction;
 template<class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterator;
 template<class T, class U, class V> class MetaFieldList;
 template<class T, class U> class MetaFieldList3;
-template<class T, class U, class V> class MetaFieldList4;
 template<class T> class MetaFieldInt;
 template<class T> class MetaFieldShort;
 
@@ -2042,17 +2041,6 @@ class MetaClass : public NonCopyable
         parent = true;
     }
 
-    template <class Cls, class Ptr, class Ptr2> inline void addList4Field(
-      const Keyword& k1, const Keyword& k2,
-      const Ptr& (Cls::*getfunc)(void) const = NULL,
-      unsigned int c = BASE
-      )
-    {
-      fields.push_back( new MetaFieldList4<Cls, Ptr, Ptr2>(k1, k2, getfunc, c) );
-      if (c & PARENT)
-        parent = true;
-    }
-
     template <class Cls> inline void addBoolField(
       const Keyword& k,
       bool (Cls::*getfunc)(void) const,
@@ -2467,6 +2455,9 @@ class Serializer
     {
       content = c;
     }
+
+    /** Set the content type, by parsing its text description. */
+    DECLARE_EXPORT void setContentType(const string&);
 
     /** Constructor with a given stream. */
     Serializer(ostream& os) : numObjects(0),
@@ -6988,7 +6979,7 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
           output.BeginList(getName());
           first = false;
         }
-		    output.writeElement(singleKeyword, ob);
+        output.writeElement(singleKeyword, ob, output.getContentType());
       }
       if (getFlag(WRITE_HIDDEN))
         output.setWriteHidden(false);
@@ -7117,50 +7108,6 @@ template <class Cls, class Ptr> class MetaFieldList3 : public MetaFieldBase
     virtual const MetaClass* getClass() const
     {
       return Ptr::metadata;
-    }
-
-    virtual const Keyword* getKeyword() const
-    {
-      return &singleKeyword;
-    }
-
-  protected:
-    const Keyword& singleKeyword;
-};
-
-
-template <class Cls, class Ptr, class Ptr2> class MetaFieldList4 : public MetaFieldBase
-{
-  public:
-    MetaFieldList4(const Keyword& g,
-        const Keyword& n,
-        const Ptr& (Cls::*getfunc)(void) const,
-        unsigned int c = BASE
-        ) : MetaFieldBase(g, c), singleKeyword(n)
-    {};
-
-    virtual void setField(Object* me, const DataValue& el) const {}
-
-    virtual void getField(Object* me, DataValue& el) const
-    {
-      throw LogicException("GetField not implemented for list3 fields");
-    }
-
-    virtual void writeField(Serializer& output) const
-    {
-      if (getFlag(DONT_SERIALIZE))
-        return;
-      // XXX TODO writeField not implemented for list3 fields
-    }
-
-    virtual bool isGroup() const
-    {
-      return true;
-    }
-
-    virtual const MetaClass* getClass() const
-    {
-      return Ptr2::metadata;
     }
 
     virtual const Keyword* getKeyword() const

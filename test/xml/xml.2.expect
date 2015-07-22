@@ -20,28 +20,14 @@
 			</buckets>
 		</calendar>
 	</calendars>
-	<operations>
-		<operation xsi:type="operation_routing">
-			<name>operation 1</name>
-			<size_multiple>3</size_multiple>
-			<suboperations>
-				<operation>
-					<name>operation 1 step1</name>
-				</operation>
-				<operation>
-					<name>operation 1 step2</name>
-				</operation>
-			</suboperations>
-		</operation>
-		<operation>
-			<name>operation 1 step1</name>
-			<duration>P7D</duration>
-		</operation>
-		<operation>
-			<name>operation 1 step2</name>
-			<duration>P7D</duration>
-		</operation>
-	</operations>
+	<resources>
+		<resource>
+			<name>resource 1</name>
+			<maximum_calendar>
+				<name>weeks</name>
+			</maximum_calendar>
+		</resource>
+	</resources>
 	<items>
 		<item>
 			<name>item 1</name>
@@ -64,6 +50,47 @@
 			<onhand>100</onhand>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation xsi:type="operation_routing">
+			<name>operation 1</name>
+			<size_multiple>3</size_multiple>
+			<suboperations>
+				<suboperation>
+					<operation>
+						<name>operation 1 step1</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>operation 1 step2</name>
+					</operation>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation>
+			<name>operation 1 step1</name>
+			<loads>
+				<load>
+					<resource>
+						<name>resource 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<buffer>
+						<name>STCK1</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>operation 1 step2</name>
+			<duration>P7D</duration>
+		</operation>
+	</operations>
 	<demands>
 		<demand>
 			<name> แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่</name>
@@ -75,35 +102,6 @@
 			<priority>1</priority>
 		</demand>
 	</demands>
-	<resources>
-		<resource>
-			<name>resource 1</name>
-			<maximum_calendar>
-				<name>weeks</name>
-			</maximum_calendar>
-		</resource>
-	</resources>
-	<loads>
-		<load>
-			<operation>
-				<name>operation 1 step1</name>
-			</operation>
-			<resource>
-				<name>resource 1</name>
-			</resource>
-		</load>
-	</loads>
-	<flows>
-		<flow>
-			<operation>
-				<name>operation 1 step1</name>
-			</operation>
-			<buffer>
-				<name>STCK1</name>
-			</buffer>
-			<quantity>-1</quantity>
-		</flow>
-	</flows>
 	<operationplans>
 		<operationplan>
 			<id>2</id>
@@ -149,7 +147,6 @@
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;STCK1&apos; has material excess of 100</description>
-			<end>2030-12-31T00:00:00</end>
 			<weight>100</weight>
 		</problem>
 		<problem>

@@ -20,6 +20,8 @@ from django.db import migrations
 
 
 def createAdminUser(apps, schema_editor):
+  if not schema_editor.connection.alias == 'default':
+    return
   from django.contrib.auth import get_user_model
   User = get_user_model()
   usr = User.objects.create_superuser('admin', 'your@company.com', 'admin')

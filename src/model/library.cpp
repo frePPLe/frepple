@@ -61,6 +61,7 @@ void LibraryModel::initialize()
   nok += LoadPlanIterator::initialize();
   nok += Flow::initialize();
   nok += FlowPlanIterator::initialize();
+  nok += SubOperation::initialize();
   nok += Operation::initialize();
   nok += OperationAlternate::initialize();
   nok += OperationSplit::initialize();
@@ -68,7 +69,6 @@ void LibraryModel::initialize()
   nok += OperationTimePer::initialize();
   nok += OperationRouting::initialize();
   nok += OperationSetup::initialize();
-  nok += SubOperation::initialize();
   nok += Item::initialize();
   nok += ItemDefault::initialize();
   nok += Buffer::initialize();

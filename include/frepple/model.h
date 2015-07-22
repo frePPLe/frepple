@@ -742,11 +742,11 @@ class Problem : public NonCopyable, public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, BASE + COMPUTED);
-      m->addStringField<Cls>(Tags::description, &Cls::getDescription, NULL, BASE + COMPUTED);
-      m->addDateField<Cls>(Tags::start, &Cls::getStart, NULL, Date::infinitePast);
-      m->addDateField<Cls>(Tags::end, &Cls::getEnd, NULL, Date::infiniteFuture);
-      m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MANDATORY + COMPUTED);
+      m->addStringField<Cls>(Tags::description, &Cls::getDescription, NULL, MANDATORY + COMPUTED);
+      m->addDateField<Cls>(Tags::start, &Cls::getStart, NULL, Date::infinitePast, MANDATORY);
+      m->addDateField<Cls>(Tags::end, &Cls::getEnd, NULL, Date::infiniteFuture, MANDATORY);
+      m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight, NULL, 0.0, MANDATORY);
       m->addStringField<Cls>(Tags::entity, &Cls::getEntity, NULL, DONT_SERIALIZE);
       m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner, NULL, DONT_SERIALIZE);
     }
@@ -1500,6 +1500,8 @@ class SubOperation : public Object
 
   public:
 
+    typedef list<SubOperation*> suboperationlist;
+
     /** Default constructor. */
     explicit SubOperation() : owner(NULL), oper(NULL), prio(1)
     {
@@ -1552,7 +1554,7 @@ class SubOperation : public Object
 
     void setEffectiveEnd(Date d)
     {
-      effective.setEnd(d);
+      return effective.setEnd(d);
     }
 
     virtual const MetaClass& getType() const {return *metadata;}
@@ -1566,469 +1568,28 @@ class SubOperation : public Object
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MANDATORY);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
-      m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd);
+      m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
     }
-};
 
-
-/** @brief An operation represents an activity: these consume and produce material,
-  * take time and also require capacity.
-  *
-  * An operation consumes and produces material, modeled through flows.<br>
-  * An operation requires capacity, modeled through loads.
-  *
-  * This is an abstract base class for all different operation types.
-  */
-class Operation : public HasName<Operation>,
-  public HasLevel, public Plannable, public HasDescription
-{
-    friend class Flow;
-    friend class Load;
-    friend class OperationPlan;
-    friend class SubOperation;
-
-  protected:
-    /** Extra logic called when instantiating an operationplan.<br>
-      * When the function returns false the creation of the operationplan
-      * is denied and it is deleted.
-      */
-    virtual bool extraInstantiate(OperationPlan* o)
+    class iterator
     {
-      return true;
-    }
+      private:
+        suboperationlist::const_iterator cur;
+        suboperationlist::const_iterator nd;
+      public:
+        /** Constructor. */
+        iterator(suboperationlist& l) : cur(l.begin()), nd(l.end()) {}
 
-  public:
-    /** Default constructor. */
-    explicit DECLARE_EXPORT Operation() :
-      loc(NULL), size_minimum(1.0), size_multiple(0.0), size_maximum(DBL_MAX),
-      cost(0.0), hidden(false), first_opplan(NULL), last_opplan(NULL)
-      {}
-
-    /** Destructor. */
-    virtual DECLARE_EXPORT ~Operation();
-
-    /** Returns a pointer to the operationplan being instantiated. */
-    OperationPlan* getFirstOpPlan() const
-    {
-      return first_opplan;
-    }
-
-    /** Returns the delay after this operation. */
-    Duration getPostTime() const
-    {
-      return post_time;
-    }
-
-    /** Updates the delay after this operation.<br>
-      * This delay is a soft constraint. This means that solvers should try to
-      * respect this waiting time but can choose to leave a shorter time delay
-      * if required.
-      */
-    void setPostTime(Duration t)
-    {
-      if (t<Duration(0L))
-        throw DataException("No negative post-operation time allowed");
-      post_time=t;
-      setChanged();
-    }
-
-    /** Return the operation cost.<br>
-      * The cost of executing this operation, per unit of the
-      * operation_plan.<br>
-      * The default value is 0.0.
-      */
-    double getCost() const
-    {
-      return cost;
-    }
-
-    /** Update the operation cost.<br>
-      * The cost of executing this operation, per unit of the operation_plan.
-      */
-    void setCost(const double c)
-    {
-      if (c >= 0) cost = c;
-      else throw DataException("Operation cost must be positive");
-    }
-
-    typedef Association<Operation,Buffer,Flow>::ListA flowlist;
-    typedef Association<Operation,Resource,Load>::ListA loadlist;
-
-    /** This is the factory method which creates all operationplans of the
-      * operation. */
-    DECLARE_EXPORT OperationPlan* createOperationPlan(double, Date,
-        Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
-        bool makeflowsloads=true) const;
-
-    /** Returns true for operation types that own suboperations. */
-    virtual bool hasSubOperations() const
-    {
-      return false;
-    }
-
-    /** Calculates the daterange starting from (or ending at) a certain date
-      * and using a certain amount of effective available time on the
-      * operation.
-      *
-      * This calculation considers the availability calendars of:
-      * - the availability calendar of the operation's location
-      * - the availability calendar of all resources loaded by the operation @todo not implemented yet
-      * - the availability calendar of the locations of all resources loaded @todo not implemented yet
-      *   by the operation
-      *
-      * @param[in] thedate  The date from which to start searching.
-      * @param[in] duration The amount of available time we are looking for.
-      * @param[in] forward  The search direction
-      * @param[out] actualduration This variable is updated with the actual
-      *             amount of available time found.
-      */
-    DECLARE_EXPORT DateRange calculateOperationTime
-    (Date thedate, Duration duration, bool forward,
-     Duration* actualduration = NULL) const;
-
-    /** Calculates the effective, available time between two dates.
-      *
-      * This calculation considers the availability calendars of:
-      * - the availability calendar of the operation's location
-      * - the availability calendar of all resources loaded by the operation @todo not implemented yet
-      * - the availability calendar of the locations of all resources loaded @todo not implemented yet
-      *   by the operation
-      *
-      * @param[in] start  The date from which to start searching.
-      * @param[in] end    The date where to stop searching.
-      * @param[out] actualduration This variable is updated with the actual
-      *             amount of available time found.
-      */
-    DECLARE_EXPORT DateRange calculateOperationTime
-    (Date start, Date end, Duration* actualduration = NULL) const;
-
-    /** This method stores ALL logic the operation needs to compute the
-      * correct relationship between the quantity, startdate and enddate
-      * of an operationplan.
-      *
-      * The parameters "startdate", "enddate" and "quantity" can be
-      * conflicting if all are specified together.
-      * Typically, one would use one of the following combinations:
-      *  - specify quantity and start date, and let the operation compute the
-      *    end date.
-      *  - specify quantity and end date, and let the operation compute the
-      *    start date.
-      *  - specify both the start and end date, and let the operation compute
-      *    the quantity.
-      *  - specify quantity, start and end date. In this case, you need to
-      *    be aware that the operationplan that is created can be different
-      *    from the parameters you requested.
-      *
-      * The following priority rules apply upon conflicts.
-      *  - respecting the end date has the first priority.
-      *  - respecting the start date has second priority.
-      *  - respecting the quantity should be done if the specified dates can
-      *    be respected.
-      *  - if the quantity is being computed to meet the specified dates, the
-      *    quantity being passed as argument is to be treated as a maximum
-      *    limit. The created operationplan can have a smaller quantity, but
-      *    not bigger...
-      *  - at all times, we expect to have an operationplan that is respecting
-      *    the constraints set by the operation. If required, some of the
-      *    specified parameters may need to be violated. In case of such a
-      *    violation we expect the operationplan quantity to be 0.
-      *
-      * The pre- and post-operation times are NOT considered in this method.
-      * This method only enforces "hard" constraints. "Soft" constraints are
-      * considered as 'hints' by the solver.
-      *
-      * Subclasses need to override this method to implement the correct
-      * logic.
-      */
-    virtual OperationPlanState setOperationPlanParameters
-    (OperationPlan*, double, Date, Date, bool=true, bool=true) const = 0;
-
-    /** Updates the quantity of an operationplan.<br>
-      * This method considers the lot size constraints and also propagates
-      * the new quantity to child operationplans.
-      */
-    virtual DECLARE_EXPORT double setOperationPlanQuantity
-      (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const;
-
-    /** Returns the location of the operation, which is used to model the
-      * working hours and holidays. */
-    Location* getLocation() const
-    {
-      return loc;
-    }
-
-    /** Updates the location of the operation, which is used to model the
-      * working hours and holidays. */
-    void setLocation(Location* l)
-    {
-      loc = l;
-    }
-
-    /** Returns an reference to the list of flows.
-      * TODO get rid of this method.
-      */
-    const flowlist& getFlows() const
-    {
-      return flowdata;
-    }
-
-    /** Returns an reference to the list of flows. */
-    flowlist::const_iterator getFlowIterator() const
-    {
-      return flowdata.begin();
-    }
-
-    /** Returns an reference to the list of loads.
-      * TODO get rid of this method.
-      */
-    const loadlist& getLoads() const
-    {
-      return loaddata;
-    }
-
-    /** Returns an reference to the list of loads. */
-    loadlist::const_iterator getLoadIterator() const
-    {
-      return loaddata.begin();
-    }
-
-    /** Return the flow that is associates a given buffer with this
-      * operation. Returns NULL is no such flow exists. */
-    Flow* findFlow(const Buffer* b, Date d) const
-    {
-      return flowdata.find(b,d);
-    }
-
-    /** Return the load that is associates a given resource with this
-      * operation. Returns NULL is no such load exists. */
-    Load* findLoad(const Resource* r, Date d) const
-    {
-      return loaddata.find(r,d);
-    }
-
-    /** Deletes all operationplans of this operation. The boolean parameter
-      * controls whether we delete also locked operationplans or not.
-      */
-    DECLARE_EXPORT void deleteOperationPlans(bool deleteLockedOpplans = false);
-
-    /** Sets the minimum size of operationplans.<br>
-      * The default value is 1.0
-      */
-    void setSizeMinimum(double f)
-    {
-      if (f<0)
-        throw DataException("Operation can't have a negative minimum size");
-      size_minimum = f;
-      setChanged();
-    }
-
-    /** Returns the minimum size for operationplans. */
-    double getSizeMinimum() const
-    {
-      return size_minimum;
-    }
-
-    /** Sets the multiple size of operationplans. */
-    void setSizeMultiple(double f)
-    {
-      if (f<0)
-        throw DataException("Operation can't have a negative multiple size");
-      size_multiple = f;
-      setChanged();
-    }
-
-    /** Returns the mutiple size for operationplans. */
-    double getSizeMultiple() const
-    {
-      return size_multiple;
-    }
-
-    /** Sets the maximum size of operationplans. */
-    void setSizeMaximum(double f)
-    {
-      if (f < size_minimum)
-        throw DataException("Operation maximum size must be higher than the minimum size");
-      if (f <= 0)
-        throw DataException("Operation maximum size must be greater than 0");
-      size_maximum = f;
-      setChanged();
-    }
-
-    /** Returns the maximum size for operationplans. */
-    double getSizeMaximum() const
-    {
-      return size_maximum;
-    }
-
-    /** Add a new child operationplan.
-      * By default an operationplan can have only a single suboperation,
-      * representing a changeover.
-      * Operation subclasses can implement their own restrictions on the
-      * number and structure of the suboperationplans.
-      * @see OperationAlternate::addSubOperationPlan
-      * @see OperationRouting::addSubOperationPlan
-      * @see OperationSplit::addSubOperationPlan
-      */
-    virtual DECLARE_EXPORT void addSubOperationPlan(
-      OperationPlan*, OperationPlan*, bool=true
-      );
-
-    static int initialize();
-
-    virtual void solve(Solver &s, void* v = NULL) const
-    {
-      s.solve(this,v);
-    }
-
-    typedef list<SubOperation*> Operationlist;
-
-    /** Returns a reference to the list of sub operations of this operation.
-      * The list is always sorted with the operation with the lowest priority
-      * value at the start of the list.
-      */
-    virtual Operationlist& getSubOperations() const
-    {
-      return nosubOperations;
-    }
-
-    /** Returns a reference to the list of super-operations, i.e. operations
-      * using the current Operation as a sub-Operation.
-      */
-    const list<Operation*>& getSuperOperations() const
-    {
-      return superoplist;
-    }
-
-    /** Register a super-operation, i.e. an operation having this one as a
-      * sub-operation. */
-    void addSuperOperation(Operation * o)
-    {
-      superoplist.push_front(o);
-    }
-
-    /** Removes a sub-operation from the list. This method will need to be
-      * overridden by all operation types that acts as a super-operation. */
-    virtual void removeSubOperation(Operation *o) {}
-
-    /** Removes a super-operation from the list. */
-    void removeSuperOperation(Operation *o)
-    {
-      superoplist.remove(o);
-      o->removeSubOperation(this);
-    }
-
-    /** Return the release fence of this operation. */
-    Duration getFence() const
-    {
-      return fence;
-    }
-
-    /** Update the release fence of this operation. */
-    void setFence(Duration t)
-    {
-      if (fence!=t) setChanged();
-      fence=t;
-    }
-
-    virtual DECLARE_EXPORT void updateProblems();
-
-    void setHidden(bool b)
-    {
-      if (hidden!=b) setChanged();
-      hidden = b;
-    }
-
-    bool getHidden() const
-    {
-      return hidden;
-    }
-
-    static DECLARE_EXPORT const MetaCategory* metadata;
-
-    template<class Cls> static inline void registerFields(MetaClass* m)
-    {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
-      HasDescription::registerFields<Cls>(m);
-      Plannable::registerFields<Cls>(m);
-      m->addDurationField<Cls>(Tags::posttime, &Cls::getPostTime, &Cls::setPostTime);
-      m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
-      m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
-      m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1);
-      m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
-      m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
-      m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
-      // XXX m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL);
-      m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, WRITE_FULL);
-      m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, WRITE_FULL);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
-      HasLevel::registerFields<Cls>(m);
-    }
-
-  protected:
-    DECLARE_EXPORT void initOperationPlan(OperationPlan*, double,
-        const Date&, const Date&, Demand*, OperationPlan*, unsigned long,
-        bool = true) const;
-
-  private:
-    /** List of operations using this operation as a sub-operation */
-    list<Operation*> superoplist;
-
-    /** Empty list of operations.<br>
-      * For operation types which have no suboperations this list is
-      * used as the list of suboperations.
-      */
-    static DECLARE_EXPORT Operationlist nosubOperations;
-
-    /** Location of the operation.<br>
-      * The location is used to model the working hours and holidays.
-      */
-    Location* loc;
-
-    /** Represents the time between this operation and a next one. */
-    Duration post_time;
-
-    /** Represents the release fence of this operation, i.e. a period of time
-      * (relative to the current date of the plan) in which normally no
-      * operationplan is allowed to be created.
-      */
-    Duration fence;
-
-    /** Singly linked list of all flows of this operation. */
-    flowlist flowdata;
-
-    /** Singly linked list of all resources Loaded by this operation. */
-    loadlist loaddata;
-
-    /** Minimum size for operationplans.<br>
-      * The default value is 1.0
-      */
-    double size_minimum;
-
-    /** Multiple size for operationplans. */
-    double size_multiple;
-
-    /** Maximum size for operationplans. */
-    double size_maximum;
-
-    /** Cost of the operation.<br>
-      * The default value is 0.0.
-      */
-    double cost;
-
-    /** Does the operation require serialization or not. */
-    bool hidden;
-
-    /** A pointer to the first operationplan of this operation.<br>
-      * All operationplans of this operation are stored in a sorted
-      * doubly linked list.
-      */
-    OperationPlan* first_opplan;
-
-    /** A pointer to the last operationplan of this operation.<br>
-      * All operationplans of this operation are stored in a sorted
-      * doubly linked list.
-      */
-    OperationPlan* last_opplan;
+        /** Return current value and advance the iterator. */
+        SubOperation* next()
+        {
+          if (cur == nd)
+            return NULL;
+          SubOperation *tmp = *cur;
+          ++cur;
+          return tmp;
+        }
+    };
 };
 
 
@@ -2063,7 +1624,11 @@ class OperationPlan
     friend class ProblemPrecedence;
 
   public:
+    // Forward declarations
+    class iterator;
     class FlowPlanIterator;
+
+    // Type definitions
     typedef TimeLine<FlowPlan> flowplanlist;
     typedef TimeLine<LoadPlan> loadplanlist;
 
@@ -2104,160 +1669,7 @@ class OperationPlan
       */
     DECLARE_EXPORT double getCriticality() const;
 
-    /** @brief This class models an STL-like iterator that allows us to iterate over
-      * the operationplans in a simple and safe way.
-      *
-      * Objects of this class are created by the begin() and end() functions.
-      */
-    class iterator
-    {
-      public:
-        /** Constructor. The iterator will loop only over the operationplans
-          * of the operation passed. */
-        iterator(const Operation* x) : op(Operation::end()), mode(1)
-        {
-          opplan = x ? x->getFirstOpPlan() : NULL;
-        }
-
-        /** Constructor. The iterator will loop only over the suboperationplans
-          * of the operationplan passed. */
-        iterator(const OperationPlan* x) : op(Operation::end()), mode(2)
-        {
-          opplan = x ? x->firstsubopplan : NULL;
-        }
-
-        /** Constructor. The iterator will loop over all operationplans. */
-        iterator() : op(Operation::begin()), mode(3)
-        {
-          // The while loop is required since the first operation might not
-          // have any operationplans at all
-          while (op!=Operation::end() && !op->getFirstOpPlan()) ++op;
-          if (op!=Operation::end())
-            opplan = op->getFirstOpPlan();
-          else
-            opplan = NULL;
-        }
-
-        /** Copy constructor. */
-        iterator(const iterator& it) : opplan(it.opplan), op(it.op), mode(it.mode) {}
-
-        /** Return the content of the current node. */
-        OperationPlan& operator*() const
-        {
-          return *opplan;
-        }
-
-        /** Return the content of the current node. */
-        OperationPlan* operator->() const
-        {
-          return opplan;
-        }
-
-        /** Pre-increment operator which moves the pointer to the next
-          * element. */
-        iterator& operator++()
-        {
-          if (mode == 2)
-            opplan = opplan->nextsubopplan;
-          else
-            opplan = opplan->next;
-          // Move to a new operation
-          if (!opplan && mode == 3)
-          {
-            do ++op;
-            while (op!=Operation::end() && (!op->getFirstOpPlan()));
-            if (op!=Operation::end())
-              opplan = op->getFirstOpPlan();
-            else
-              opplan = NULL;
-          }
-          return *this;
-        }
-
-        /** Post-increment operator which moves the pointer to the next
-          * element. */
-        iterator operator++(int)
-        {
-          iterator tmp(*this);
-          if (mode == 2)
-            opplan = opplan->nextsubopplan;
-          else
-            opplan = opplan->next;
-          // Move to a new operation
-          if (!opplan && mode==3)
-          {
-            do ++op; while (op!=Operation::end() && !op->getFirstOpPlan());
-            if (op!=Operation::end())
-              opplan = op->getFirstOpPlan();
-            else
-              opplan = NULL;
-          }
-          return tmp;
-        }
-
-        /** Return current elemetn and advance the iterator. */
-        OperationPlan* next()
-        {
-          OperationPlan* tmp = opplan;
-          operator++();
-          return tmp;
-        }
-
-        /** Comparison operator. */
-        bool operator==(const iterator& y) const
-        {
-          return opplan == y.opplan;
-        }
-
-        /** Inequality operator. */
-        bool operator!=(const iterator& y) const
-        {
-          return opplan != y.opplan;
-        }
-
-      private:
-        /** A pointer to current operationplan. */
-        OperationPlan* opplan;
-
-        /** An iterator over the operations. */
-        Operation::iterator op;
-
-        /** Describes the type of iterator.<br>
-          * 1) iterate over operationplan instances of operation
-          * 2) iterate over suboperationplans of an operationplan
-          * 3) iterate over all operationplans
-          */
-        short mode;
-    };
-
     friend class iterator;
-
-    static iterator end()
-    {
-      return iterator(static_cast<Operation*>(NULL));
-    }
-
-    static iterator begin()
-    {
-      return iterator();
-    }
-
-    /** Returns true when not a single operationplan object exists. */
-    static bool empty()
-    {
-      return begin()==end();
-    }
-
-    /** Returns the number of operationplans in the system. This method
-      * is linear with the number of operationplans in the model, and should
-      * therefore be used only with care.
-      */
-    static unsigned long size()
-    {
-      unsigned long cnt = 0;
-      for (OperationPlan::iterator i = begin(); i != end(); ++i) ++cnt;
-      return cnt;
-    }
 
     /** This is a factory method that creates an operationplan pointer based
       * on the operation and id. */
@@ -2294,13 +1706,8 @@ class OperationPlan
       * This method can only be called on top operationplans. Sub operation
       * plans should pass on a call to the parent operationplan.
       */
-    DECLARE_EXPORT double setQuantity(double f, bool roundDown,
-      bool update = true, bool execute = true)
-    {
-      return oper ?
-        oper->setOperationPlanQuantity(this, f, roundDown, update, execute) :
-        f;
-    }
+    inline double setQuantity(double f, bool roundDown,
+      bool update = true, bool execute = true);
 
     /** Returns a pointer to the demand for which this operationplan is a delivery.
       * If the operationplan isn't a delivery, this is a NULL pointer.
@@ -2630,10 +2037,7 @@ class OperationPlan
       */
     DECLARE_EXPORT void deleteFlowLoads();
 
-    bool getHidden() const
-    {
-      return getOperation()->getHidden();
-    }
+    inline bool getHidden() const;
 
     /** Searches for an OperationPlan with a given identifier.<br>
       * Returns a NULL pointer if no such OperationPlan can be found.<br>
@@ -2650,10 +2054,7 @@ class OperationPlan
     virtual void updateProblems();
 
     /** Implement the pure virtual function from the HasProblem class. */
-    Plannable* getEntity() const
-    {
-      return oper;
-    }
+    inline Plannable* getEntity() const;
 
     /** Return the metadata. We return the metadata of the operation class,
       * not the one of the operationplan class!
@@ -2691,6 +2092,10 @@ class OperationPlan
       return getTopOwner()->getTotalFlowAux(b);
     }
 
+    static inline OperationPlan::iterator end();
+
+    static inline OperationPlan::iterator begin();
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MANDATORY);
@@ -2709,8 +2114,8 @@ class OperationPlan
       m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, NULL, 0L, DONT_SERIALIZE);
-      m->addIteratorField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DETAIL);
-      m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DETAIL);
+      m->addIteratorField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DONT_SERIALIZE);
+      m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DONT_SERIALIZE);
       /* TODO XXX
       from endelement:
         else if (pAttr.isA(Tags::owner) && !pIn.isObjectEnd())
@@ -2860,6 +2265,638 @@ class OperationPlan
     OperationPlan* prevsubopplan;
 };
 
+
+/** @brief An operation represents an activity: these consume and produce material,
+  * take time and also require capacity.
+  *
+  * An operation consumes and produces material, modeled through flows.<br>
+  * An operation requires capacity, modeled through loads.
+  *
+  * This is an abstract base class for all different operation types.
+  */
+class Operation : public HasName<Operation>,
+  public HasLevel, public Plannable, public HasDescription
+{
+    friend class Flow;
+    friend class Load;
+    friend class OperationPlan;
+    friend class SubOperation;
+
+  protected:
+    /** Extra logic called when instantiating an operationplan.<br>
+      * When the function returns false the creation of the operationplan
+      * is denied and it is deleted.
+      */
+    virtual bool extraInstantiate(OperationPlan* o)
+    {
+      return true;
+    }
+
+  public:
+    /** Default constructor. */
+    explicit DECLARE_EXPORT Operation() :
+      loc(NULL), size_minimum(1.0), size_multiple(0.0), size_maximum(DBL_MAX),
+      cost(0.0), hidden(false), first_opplan(NULL), last_opplan(NULL)
+      {}
+
+    /** Destructor. */
+    virtual DECLARE_EXPORT ~Operation();
+
+    /** Returns a pointer to the operationplan being instantiated. */
+    OperationPlan* getFirstOpPlan() const
+    {
+      return first_opplan;
+    }
+
+    /** Returns the delay after this operation. */
+    Duration getPostTime() const
+    {
+      return post_time;
+    }
+
+    /** Updates the delay after this operation.<br>
+      * This delay is a soft constraint. This means that solvers should try to
+      * respect this waiting time but can choose to leave a shorter time delay
+      * if required.
+      */
+    void setPostTime(Duration t)
+    {
+      if (t<Duration(0L))
+        throw DataException("No negative post-operation time allowed");
+      post_time=t;
+      setChanged();
+    }
+
+    /** Return the operation cost.<br>
+      * The cost of executing this operation, per unit of the
+      * operation_plan.<br>
+      * The default value is 0.0.
+      */
+    double getCost() const
+    {
+      return cost;
+    }
+
+    /** Update the operation cost.<br>
+      * The cost of executing this operation, per unit of the operation_plan.
+      */
+    void setCost(const double c)
+    {
+      if (c >= 0) cost = c;
+      else throw DataException("Operation cost must be positive");
+    }
+
+    typedef Association<Operation,Buffer,Flow>::ListA flowlist;
+    typedef Association<Operation,Resource,Load>::ListA loadlist;
+
+    /** This is the factory method which creates all operationplans of the
+      * operation. */
+    DECLARE_EXPORT OperationPlan* createOperationPlan(double, Date,
+        Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
+        bool makeflowsloads=true) const;
+
+    /** Returns true for operation types that own suboperations. */
+    virtual bool hasSubOperations() const
+    {
+      return false;
+    }
+
+    /** Calculates the daterange starting from (or ending at) a certain date
+      * and using a certain amount of effective available time on the
+      * operation.
+      *
+      * This calculation considers the availability calendars of:
+      * - the availability calendar of the operation's location
+      * - the availability calendar of all resources loaded by the operation @todo not implemented yet
+      * - the availability calendar of the locations of all resources loaded @todo not implemented yet
+      *   by the operation
+      *
+      * @param[in] thedate  The date from which to start searching.
+      * @param[in] duration The amount of available time we are looking for.
+      * @param[in] forward  The search direction
+      * @param[out] actualduration This variable is updated with the actual
+      *             amount of available time found.
+      */
+    DECLARE_EXPORT DateRange calculateOperationTime
+    (Date thedate, Duration duration, bool forward,
+     Duration* actualduration = NULL) const;
+
+    /** Calculates the effective, available time between two dates.
+      *
+      * This calculation considers the availability calendars of:
+      * - the availability calendar of the operation's location
+      * - the availability calendar of all resources loaded by the operation @todo not implemented yet
+      * - the availability calendar of the locations of all resources loaded @todo not implemented yet
+      *   by the operation
+      *
+      * @param[in] start  The date from which to start searching.
+      * @param[in] end    The date where to stop searching.
+      * @param[out] actualduration This variable is updated with the actual
+      *             amount of available time found.
+      */
+    DECLARE_EXPORT DateRange calculateOperationTime
+    (Date start, Date end, Duration* actualduration = NULL) const;
+
+    /** This method stores ALL logic the operation needs to compute the
+      * correct relationship between the quantity, startdate and enddate
+      * of an operationplan.
+      *
+      * The parameters "startdate", "enddate" and "quantity" can be
+      * conflicting if all are specified together.
+      * Typically, one would use one of the following combinations:
+      *  - specify quantity and start date, and let the operation compute the
+      *    end date.
+      *  - specify quantity and end date, and let the operation compute the
+      *    start date.
+      *  - specify both the start and end date, and let the operation compute
+      *    the quantity.
+      *  - specify quantity, start and end date. In this case, you need to
+      *    be aware that the operationplan that is created can be different
+      *    from the parameters you requested.
+      *
+      * The following priority rules apply upon conflicts.
+      *  - respecting the end date has the first priority.
+      *  - respecting the start date has second priority.
+      *  - respecting the quantity should be done if the specified dates can
+      *    be respected.
+      *  - if the quantity is being computed to meet the specified dates, the
+      *    quantity being passed as argument is to be treated as a maximum
+      *    limit. The created operationplan can have a smaller quantity, but
+      *    not bigger...
+      *  - at all times, we expect to have an operationplan that is respecting
+      *    the constraints set by the operation. If required, some of the
+      *    specified parameters may need to be violated. In case of such a
+      *    violation we expect the operationplan quantity to be 0.
+      *
+      * The pre- and post-operation times are NOT considered in this method.
+      * This method only enforces "hard" constraints. "Soft" constraints are
+      * considered as 'hints' by the solver.
+      *
+      * Subclasses need to override this method to implement the correct
+      * logic.
+      */
+    virtual OperationPlanState setOperationPlanParameters
+    (OperationPlan*, double, Date, Date, bool=true, bool=true) const = 0;
+
+    /** Updates the quantity of an operationplan.<br>
+      * This method considers the lot size constraints and also propagates
+      * the new quantity to child operationplans.
+      */
+    virtual DECLARE_EXPORT double setOperationPlanQuantity
+      (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const;
+
+    /** Returns the location of the operation, which is used to model the
+      * working hours and holidays. */
+    Location* getLocation() const
+    {
+      return loc;
+    }
+
+    /** Updates the location of the operation, which is used to model the
+      * working hours and holidays. */
+    void setLocation(Location* l)
+    {
+      loc = l;
+    }
+
+    /** Returns an reference to the list of flows.
+      * TODO get rid of this method.
+      */
+    const flowlist& getFlows() const
+    {
+      return flowdata;
+    }
+
+    /** Returns an reference to the list of flows. */
+    flowlist::const_iterator getFlowIterator() const
+    {
+      return flowdata.begin();
+    }
+
+    /** Returns an reference to the list of loads.
+      * TODO get rid of this method.
+      */
+    const loadlist& getLoads() const
+    {
+      return loaddata;
+    }
+
+    /** Returns an reference to the list of loads. */
+    loadlist::const_iterator getLoadIterator() const
+    {
+      return loaddata.begin();
+    }
+
+    DECLARE_EXPORT OperationPlan::iterator getOperationPlans() const;
+
+    /** Return the flow that is associates a given buffer with this
+      * operation. Returns NULL is no such flow exists. */
+    Flow* findFlow(const Buffer* b, Date d) const
+    {
+      return flowdata.find(b,d);
+    }
+
+    /** Return the load that is associates a given resource with this
+      * operation. Returns NULL is no such load exists. */
+    Load* findLoad(const Resource* r, Date d) const
+    {
+      return loaddata.find(r,d);
+    }
+
+    /** Deletes all operationplans of this operation. The boolean parameter
+      * controls whether we delete also locked operationplans or not.
+      */
+    DECLARE_EXPORT void deleteOperationPlans(bool deleteLockedOpplans = false);
+
+    /** Sets the minimum size of operationplans.<br>
+      * The default value is 1.0
+      */
+    void setSizeMinimum(double f)
+    {
+      if (f<0)
+        throw DataException("Operation can't have a negative minimum size");
+      size_minimum = f;
+      setChanged();
+    }
+
+    /** Returns the minimum size for operationplans. */
+    double getSizeMinimum() const
+    {
+      return size_minimum;
+    }
+
+    /** Sets the multiple size of operationplans. */
+    void setSizeMultiple(double f)
+    {
+      if (f<0)
+        throw DataException("Operation can't have a negative multiple size");
+      size_multiple = f;
+      setChanged();
+    }
+
+    /** Returns the mutiple size for operationplans. */
+    double getSizeMultiple() const
+    {
+      return size_multiple;
+    }
+
+    /** Sets the maximum size of operationplans. */
+    void setSizeMaximum(double f)
+    {
+      if (f < size_minimum)
+        throw DataException("Operation maximum size must be higher than the minimum size");
+      if (f <= 0)
+        throw DataException("Operation maximum size must be greater than 0");
+      size_maximum = f;
+      setChanged();
+    }
+
+    /** Returns the maximum size for operationplans. */
+    double getSizeMaximum() const
+    {
+      return size_maximum;
+    }
+
+    /** Add a new child operationplan.
+      * By default an operationplan can have only a single suboperation,
+      * representing a changeover.
+      * Operation subclasses can implement their own restrictions on the
+      * number and structure of the suboperationplans.
+      * @see OperationAlternate::addSubOperationPlan
+      * @see OperationRouting::addSubOperationPlan
+      * @see OperationSplit::addSubOperationPlan
+      */
+    virtual DECLARE_EXPORT void addSubOperationPlan(
+      OperationPlan*, OperationPlan*, bool=true
+      );
+
+    static int initialize();
+
+    virtual void solve(Solver &s, void* v = NULL) const
+    {
+      s.solve(this,v);
+    }
+
+    typedef list<SubOperation*> Operationlist;
+
+    /** Returns a reference to the list of sub operations of this operation.
+      * The list is always sorted with the operation with the lowest priority
+      * value at the start of the list.
+      */
+    virtual Operationlist& getSubOperations() const
+    {
+      return nosubOperations;
+    }
+
+    SubOperation::iterator getSubOperationIterator() const
+    {
+      return SubOperation::iterator(getSubOperations());
+    }
+
+    /** Returns a reference to the list of super-operations, i.e. operations
+      * using the current Operation as a sub-Operation.
+      */
+    const list<Operation*>& getSuperOperations() const
+    {
+      return superoplist;
+    }
+
+    /** Register a super-operation, i.e. an operation having this one as a
+      * sub-operation. */
+    void addSuperOperation(Operation * o)
+    {
+      superoplist.push_front(o);
+    }
+
+    /** Removes a sub-operation from the list. This method will need to be
+      * overridden by all operation types that acts as a super-operation. */
+    virtual void removeSubOperation(Operation *o) {}
+
+    /** Removes a super-operation from the list. */
+    void removeSuperOperation(Operation *o)
+    {
+      superoplist.remove(o);
+      o->removeSubOperation(this);
+    }
+
+    /** Return the release fence of this operation. */
+    Duration getFence() const
+    {
+      return fence;
+    }
+
+    /** Update the release fence of this operation. */
+    void setFence(Duration t)
+    {
+      if (fence!=t) setChanged();
+      fence=t;
+    }
+
+    virtual DECLARE_EXPORT void updateProblems();
+
+    void setHidden(bool b)
+    {
+      if (hidden!=b) setChanged();
+      hidden = b;
+    }
+
+    bool getHidden() const
+    {
+      return hidden;
+    }
+
+    static DECLARE_EXPORT const MetaCategory* metadata;
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
+      HasDescription::registerFields<Cls>(m);
+      Plannable::registerFields<Cls>(m);
+      m->addDurationField<Cls>(Tags::posttime, &Cls::getPostTime, &Cls::setPostTime);
+      m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
+      m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
+      m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1);
+      m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
+      m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
+      m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
+      m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL);
+      m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, WRITE_FULL);
+      m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, WRITE_FULL);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
+      HasLevel::registerFields<Cls>(m);
+    }
+
+  protected:
+    DECLARE_EXPORT void initOperationPlan(OperationPlan*, double,
+        const Date&, const Date&, Demand*, OperationPlan*, unsigned long,
+        bool = true) const;
+
+  private:
+    /** List of operations using this operation as a sub-operation */
+    list<Operation*> superoplist;
+
+    /** Empty list of operations.<br>
+      * For operation types which have no suboperations this list is
+      * used as the list of suboperations.
+      */
+    static DECLARE_EXPORT Operationlist nosubOperations;
+
+    /** Location of the operation.<br>
+      * The location is used to model the working hours and holidays.
+      */
+    Location* loc;
+
+    /** Represents the time between this operation and a next one. */
+    Duration post_time;
+
+    /** Represents the release fence of this operation, i.e. a period of time
+      * (relative to the current date of the plan) in which normally no
+      * operationplan is allowed to be created.
+      */
+    Duration fence;
+
+    /** Singly linked list of all flows of this operation. */
+    flowlist flowdata;
+
+    /** Singly linked list of all resources Loaded by this operation. */
+    loadlist loaddata;
+
+    /** Minimum size for operationplans.<br>
+      * The default value is 1.0
+      */
+    double size_minimum;
+
+    /** Multiple size for operationplans. */
+    double size_multiple;
+
+    /** Maximum size for operationplans. */
+    double size_maximum;
+
+    /** Cost of the operation.<br>
+      * The default value is 0.0.
+      */
+    double cost;
+
+    /** Does the operation require serialization or not. */
+    bool hidden;
+
+    /** A pointer to the first operationplan of this operation.<br>
+      * All operationplans of this operation are stored in a sorted
+      * doubly linked list.
+      */
+    OperationPlan* first_opplan;
+
+    /** A pointer to the last operationplan of this operation.<br>
+      * All operationplans of this operation are stored in a sorted
+      * doubly linked list.
+      */
+    OperationPlan* last_opplan;
+};
+
+
+inline double OperationPlan::setQuantity(double f, bool roundDown,
+  bool update, bool execute)
+{
+  return oper ?
+    oper->setOperationPlanQuantity(this, f, roundDown, update, execute) :
+    f;
+}
+
+
+Plannable* OperationPlan::getEntity() const
+{
+  return oper;
+}
+
+
+inline bool OperationPlan::getHidden() const
+{
+  return getOperation()->getHidden();
+}
+
+
+/** @brief A class to iterator over operationplans.
+  *
+  * Different modes are supported:
+  *   - iterate over all operationplans of a single operation.
+  *   - iterate over all sub-operationplans of a single operationplan.
+  *   - iterate over all operationplans.
+  */
+class OperationPlan::iterator
+{
+  public:
+    /** Constructor. The iterator will loop only over the operationplans
+      * of the operation passed. */
+    iterator(const Operation* x) : op(Operation::end()), mode(1)
+    {
+      opplan = x ? x->getFirstOpPlan() : NULL;
+    }
+
+    /** Constructor. The iterator will loop only over the suboperationplans
+      * of the operationplan passed. */
+    iterator(const OperationPlan* x) : op(Operation::end()), mode(2)
+    {
+      opplan = x ? x->firstsubopplan : NULL;
+    }
+
+    /** Constructor. The iterator will loop over all operationplans. */
+    iterator() : op(Operation::begin()), mode(3)
+    {
+      // The while loop is required since the first operation might not
+      // have any operationplans at all
+      while (op!=Operation::end() && !op->getFirstOpPlan()) ++op;
+      if (op!=Operation::end())
+        opplan = op->getFirstOpPlan();
+      else
+        opplan = NULL;
+    }
+
+    /** Copy constructor. */
+    iterator(const iterator& it) : opplan(it.opplan), op(it.op), mode(it.mode) {}
+
+    /** Return the content of the current node. */
+    OperationPlan& operator*() const
+    {
+      return *opplan;
+    }
+
+    /** Return the content of the current node. */
+    OperationPlan* operator->() const
+    {
+      return opplan;
+    }
+
+    /** Pre-increment operator which moves the pointer to the next
+      * element. */
+    iterator& operator++()
+    {
+      if (opplan)
+      {
+        if (mode == 2)
+          opplan = opplan->nextsubopplan;
+        else
+          opplan = opplan->next;
+      }
+      // Move to a new operation
+      if (!opplan && mode == 3)
+      {
+        do ++op;
+        while (op!=Operation::end() && (!op->getFirstOpPlan()));
+        if (op!=Operation::end())
+          opplan = op->getFirstOpPlan();
+        else
+          opplan = NULL;
+      }
+      return *this;
+    }
+
+    /** Post-increment operator which moves the pointer to the next
+      * element. */
+    iterator operator++(int)
+    {
+      iterator tmp(*this);
+      if (mode == 2)
+        opplan = opplan->nextsubopplan;
+      else
+        opplan = opplan->next;
+      // Move to a new operation
+      if (!opplan && mode==3)
+      {
+        do ++op; while (op!=Operation::end() && !op->getFirstOpPlan());
+        if (op!=Operation::end())
+          opplan = op->getFirstOpPlan();
+        else
+          opplan = NULL;
+      }
+      return tmp;
+    }
+
+    /** Return current elemetn and advance the iterator. */
+    OperationPlan* next()
+    {
+      OperationPlan* tmp = opplan;
+      operator++();
+      return tmp;
+    }
+
+    /** Comparison operator. */
+    bool operator==(const iterator& y) const
+    {
+      return opplan == y.opplan;
+    }
+
+    /** Inequality operator. */
+    bool operator!=(const iterator& y) const
+    {
+      return opplan != y.opplan;
+    }
+
+  private:
+    /** A pointer to current operationplan. */
+    OperationPlan* opplan;
+
+    /** An iterator over the operations. */
+    Operation::iterator op;
+
+    /** Describes the type of iterator.<br>
+      * 1) iterate over operationplan instances of operation
+      * 2) iterate over suboperationplans of an operationplan
+      * 3) iterate over all operationplans
+      */
+    short mode;
+};
+
+
+inline OperationPlan::iterator OperationPlan::end()
+{
+  return iterator(static_cast<Operation*>(NULL));
+}
+
+
+inline OperationPlan::iterator OperationPlan::begin()
+{
+  return iterator();
+}
 
 /** @brief A simple class to easily remember the date, quantity and owner of
   * an operationplan. */
@@ -3150,7 +3187,7 @@ class OperationRouting : public Operation
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations, WRITE_FULL);
+      m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, WRITE_FULL);
     }
 
   protected:
@@ -3262,7 +3299,7 @@ class OperationSplit : public Operation
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-       m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations, WRITE_FULL);
+      m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, WRITE_FULL);
     }
 
   protected:
@@ -3345,8 +3382,9 @@ class OperationAlternate : public Operation
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
-      m->addList4Field<Cls, Operationlist&, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperations, WRITE_FULL);
+      m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, WRITE_FULL);
     }
+
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
     virtual DECLARE_EXPORT bool extraInstantiate(OperationPlan* o);
@@ -4704,7 +4742,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
-      m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, DETAIL);
+      m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, DONT_SERIALIZE);
       m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, NULL, DONT_SERIALIZE);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, NULL, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, NULL, BOOL_FALSE, DONT_SERIALIZE);
@@ -6719,6 +6757,11 @@ class Plan : public Plannable, public Object
       return Problem::iterator();
     }
 
+    OperationPlan::iterator getOperationPlans() const
+    {
+      return OperationPlan::iterator();
+    }
+
     const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
 
@@ -6744,7 +6787,7 @@ class Plan : public Plannable, public Object
       m->addList3Field<Plan, Load>(Tags::loads, Tags::load);
       m->addList3Field<Plan, Flow>(Tags::flows, Tags::flow);
       m->addList3Field<Plan, SupplierItem>(Tags::supplieritems, Tags::supplieritem);
-      m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan);
+      m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Plan::getOperationPlans);
       m->addIteratorField<Plan, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Plan::getProblems);
     }
 };
@@ -7685,10 +7728,11 @@ class CommandDeleteOperationPlan : public Command
       opplan->insertInOperationplanList();
       if (opplan->getDemand())
         opplan->getDemand()->addDelivery(opplan);
-      for (OperationPlan::iterator x(opplan); x != OperationPlan::end(); x++)
+      OperationPlan::iterator x(opplan);
+      while (OperationPlan* i = x.next())
       {
-        x->createFlowLoads();
-        x->insertInOperationplanList();
+        i->createFlowLoads();
+        i->insertInOperationplanList();
       }
     }
 
@@ -7699,10 +7743,11 @@ class CommandDeleteOperationPlan : public Command
       opplan->removeFromOperationplanList();
       if (opplan->getDemand())
         opplan->getDemand()->removeDelivery(opplan);
-      for (OperationPlan::iterator x(opplan); x != OperationPlan::end(); x++)
+      OperationPlan::iterator x(opplan);
+      while (OperationPlan* i = x.next())
       {
-        x->deleteFlowLoads();
-        x->removeFromOperationplanList();
+        i->deleteFlowLoads();
+        i->removeFromOperationplanList();
       }
     }
 

@@ -196,6 +196,12 @@ DECLARE_EXPORT OperationAlternate::~OperationAlternate()
 }
 
 
+DECLARE_EXPORT OperationPlan::iterator Operation::getOperationPlans() const
+{
+  return OperationPlan::iterator(this);
+}
+
+
 DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (double q, Date s, Date e,
     Demand* l, OperationPlan* ow, unsigned long i,
     bool makeflowsloads) const

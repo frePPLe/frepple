@@ -22,7 +22,9 @@
 		<calendar>
 			<name>Capacity</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<value>1</value>
 				</bucket>
 			</buckets>
@@ -30,47 +32,87 @@
 		<calendar>
 			<name>Weeks</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00" end="2009-01-07T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-01-07T00:00:00</end>
 				</bucket>
-				<bucket id="2" start="2009-01-07T00:00:00" end="2009-01-14T00:00:00">
+				<bucket>
+					<id>2</id>
+					<start>2009-01-07T00:00:00</start>
+					<end>2009-01-14T00:00:00</end>
 				</bucket>
-				<bucket id="3" start="2009-01-14T00:00:00" end="2009-01-21T00:00:00">
+				<bucket>
+					<id>3</id>
+					<start>2009-01-14T00:00:00</start>
+					<end>2009-01-21T00:00:00</end>
 				</bucket>
-				<bucket id="4" start="2009-01-21T00:00:00" end="2009-01-28T00:00:00">
+				<bucket>
+					<id>4</id>
+					<start>2009-01-21T00:00:00</start>
+					<end>2009-01-28T00:00:00</end>
 				</bucket>
-				<bucket id="5" start="2009-01-28T00:00:00" end="2009-02-04T00:00:00">
+				<bucket>
+					<id>5</id>
+					<start>2009-01-28T00:00:00</start>
+					<end>2009-02-04T00:00:00</end>
 				</bucket>
-				<bucket id="6" start="2009-02-04T00:00:00" end="2009-02-11T00:00:00">
+				<bucket>
+					<id>6</id>
+					<start>2009-02-04T00:00:00</start>
+					<end>2009-02-11T00:00:00</end>
 				</bucket>
-				<bucket id="7" start="2009-02-11T00:00:00" end="2009-02-18T00:00:00">
+				<bucket>
+					<id>7</id>
+					<start>2009-02-11T00:00:00</start>
+					<end>2009-02-18T00:00:00</end>
 				</bucket>
-				<bucket id="8" start="2009-02-18T00:00:00" end="2009-02-25T00:00:00">
+				<bucket>
+					<id>8</id>
+					<start>2009-02-18T00:00:00</start>
+					<end>2009-02-25T00:00:00</end>
 				</bucket>
-				<bucket id="9" start="2009-02-25T00:00:00" end="2009-03-04T00:00:00">
+				<bucket>
+					<id>9</id>
+					<start>2009-02-25T00:00:00</start>
+					<end>2009-03-04T00:00:00</end>
 				</bucket>
-				<bucket id="10" start="2009-03-04T00:00:00" end="2009-03-11T00:00:00">
+				<bucket>
+					<id>10</id>
+					<start>2009-03-04T00:00:00</start>
+					<end>2009-03-11T00:00:00</end>
 				</bucket>
-				<bucket id="11" start="2009-03-11T00:00:00" end="2009-03-18T00:00:00">
+				<bucket>
+					<id>11</id>
+					<start>2009-03-11T00:00:00</start>
+					<end>2009-03-18T00:00:00</end>
 				</bucket>
-				<bucket id="12" start="2009-03-18T00:00:00" end="2009-03-25T00:00:00">
+				<bucket>
+					<id>12</id>
+					<start>2009-03-18T00:00:00</start>
+					<end>2009-03-25T00:00:00</end>
 				</bucket>
-				<bucket id="13" start="2009-03-25T00:00:00" end="2009-04-01T00:00:00">
+				<bucket>
+					<id>13</id>
+					<start>2009-03-25T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
 				</bucket>
-				<bucket id="14" start="2009-04-01T00:00:00" end="2009-04-07T00:00:00">
+				<bucket>
+					<id>14</id>
+					<start>2009-04-01T00:00:00</start>
+					<end>2009-04-07T00:00:00</end>
 				</bucket>
 			</buckets>
 		</calendar>
 	</calendars>
-	<operations>
-		<operation>
-			<name>delivery end item</name>
-			<duration>P1D</duration>
-		</operation>
-		<operation>
-			<name>make end item</name>
-			<duration>P1D</duration>
-		</operation>
-	</operations>
+	<resources>
+		<resource>
+			<name>Resource</name>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
+		</resource>
+	</resources>
 	<items>
 		<item>
 			<name>end item</name>
@@ -81,10 +123,8 @@
 				<name>delivery end item</name>
 			</operation>
 		</item>
-		<item name="product group">
-			<members>
-				<item name="end item"/>
-			</members>
+		<item>
+			<name>product group</name>
 		</item>
 	</items>
 	<buffers>
@@ -98,6 +138,39 @@
 			</item>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation>
+			<name>delivery end item</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>end item</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>make end item</name>
+			<loads>
+				<load>
+					<resource>
+						<name>Resource</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>end item</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+	</operations>
 	<demands>
 		<demand>
 			<name>order 1</name>
@@ -133,44 +206,6 @@
 			<maxlateness>P0D</maxlateness>
 		</demand>
 	</demands>
-	<resources>
-		<resource>
-			<name>Resource</name>
-			<maximum_calendar>
-				<name>Capacity</name>
-			</maximum_calendar>
-		</resource>
-	</resources>
-	<loads>
-		<load>
-			<operation>
-				<name>make end item</name>
-			</operation>
-			<resource>
-				<name>Resource</name>
-			</resource>
-		</load>
-	</loads>
-	<flows>
-		<flow>
-			<operation>
-				<name>delivery end item</name>
-			</operation>
-			<buffer>
-				<name>end item</name>
-			</buffer>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation>
-				<name>make end item</name>
-			</operation>
-			<buffer>
-				<name>end item</name>
-			</buffer>
-			<quantity>1</quantity>
-		</flow>
-	</flows>
 	<operationplans>
 		<operationplan>
 			<id>2</id>

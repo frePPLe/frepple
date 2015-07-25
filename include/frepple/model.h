@@ -573,7 +573,7 @@ class Calendar : public HasName<Calendar>, public HasSource
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
       HasSource::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::deflt, &Cls::getDefault, &Cls::setDefault);
-      m->addIteratorField<Cls, CalendarBucket::iterator, CalendarBucket>(Tags::buckets, Tags::bucket, &Cls::getBuckets, WRITE_FULL);
+      m->addIteratorField<Cls, CalendarBucket::iterator, CalendarBucket>(Tags::buckets, Tags::bucket, &Cls::getBuckets, BASE + WRITE_FULL);
     }
 
   protected:
@@ -1554,7 +1554,12 @@ class SubOperation : public Object
 
     void setEffectiveEnd(Date d)
     {
-      return effective.setEnd(d);
+      effective.setEnd(d);
+    }
+
+    void setEffective(DateRange d)
+    {
+      effective = d;
     }
 
     virtual const MetaClass& getType() const {return *metadata;}
@@ -2659,9 +2664,9 @@ class Operation : public HasName<Operation>,
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
       m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
-      m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL);
-      m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, WRITE_FULL);
-      m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, WRITE_FULL);
+      m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, PLAN + DETAIL);
+      m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, BASE + WRITE_FULL);
+      m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, BASE + WRITE_FULL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
@@ -3187,7 +3192,7 @@ class OperationRouting : public Operation
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, WRITE_FULL);
+      m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, BASE + WRITE_FULL);
     }
 
   protected:
@@ -3299,7 +3304,7 @@ class OperationSplit : public Operation
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, WRITE_FULL);
+      m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, BASE + WRITE_FULL);
     }
 
   protected:
@@ -3382,7 +3387,7 @@ class OperationAlternate : public Operation
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
-      m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, WRITE_FULL);
+      m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, BASE + WRITE_FULL);
     }
 
   protected:
@@ -3484,7 +3489,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addDoubleField<Cls>(Tags::price, &Cls::getPrice, &Cls::setPrice, 0);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
-      m->addIteratorField<Cls, supplierlist::const_iterator, SupplierItem>(Tags::supplieritems, Tags::supplieritem, &Cls::getSupplierIterator, WRITE_FULL);
+      m->addIteratorField<Cls, supplierlist::const_iterator, SupplierItem>(Tags::supplieritems, Tags::supplieritem, &Cls::getSupplierIterator, BASE + WRITE_FULL);
     }
 
   private:
@@ -3518,7 +3523,7 @@ class ItemDefault : public Item
 };
 
 
-/** @brief This class represents an item that can be purchased from a supplier. */  //TODO This class doesn't follow our 2 level category+class structure
+/** @brief This class represents an item that can be purchased from a supplier. */
 class SupplierItem : public Object,
   public Association<Supplier,Item,SupplierItem>::Node, public HasSource
 {
@@ -3668,6 +3673,36 @@ class SupplierItem : public Object,
 };
 
 
+/** @brief An internally generated operation that supplies procured material
+  * into a buffer.
+  */
+class OperationSupplierItem : public OperationFixedTime
+{
+  private:
+    SupplierItem* supitem;
+
+  public:
+    SupplierItem* getSupplierItem() const
+    {
+      return supitem;
+    }
+
+    explicit DECLARE_EXPORT OperationSupplierItem(SupplierItem*, Buffer*);
+
+    static int initialize();
+
+    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addPointerField<Cls, SupplierItem>(Tags::supplieritem, &Cls::getSupplierItem, NULL);
+    }
+};
+
+
 /** @brief A buffer represents a combination of a item and location.<br>
   * It is the entity for keeping modeling inventory.
   */
@@ -3683,14 +3718,31 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Default constructor. */
     explicit DECLARE_EXPORT Buffer() :
-      hidden(false), producing_operation(NULL), loc(NULL), it(NULL),
+      hidden(false), producing_operation(unitializedProducing), loc(NULL), it(NULL),
       min_val(0), max_val(default_max), min_cal(NULL), max_cal(NULL),
       min_interval(-1), carrying_cost(0.0), tool(false) {}
+
+    /** Builds a producing operation for a buffer.
+      * The logic used is based on the following:
+      *   - If specified explicitly, don't do anything.
+      *   - Add an operation for every supplier that can supply this item to
+      *     this location.
+      *     The new operation is called "Purchase X from Y", where X is the
+      *     buffer name and Y is the supplier.
+      *   - If multiple suppliers are found, an alternate operation is created
+      *     on top of them. The search is by priority.
+      *     TODO Make the creation of the superoperation flexible & configurable
+      *   - All new operations are marked as hidden.
+      *   - This method can be incrementally build up the producing operation.
+      */
+    DECLARE_EXPORT void buildProducingOperation();
 
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
     Operation* getProducingOperation() const
     {
+      if (producing_operation == unitializedProducing)
+        const_cast<Buffer*>(this)->buildProducingOperation();
       return producing_operation;
     }
 
@@ -3698,6 +3750,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * buffer. */
     void setProducingOperation(Operation* o)
     {
+      if (o && o->getHidden())
+        logger << "Warning: avoid setting the producing operation to a hidden operation" << endl;
       producing_operation = o;
       setChanged();
     }
@@ -3943,12 +3997,15 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       m->addDurationField<Cls>(Tags::maxinterval, &Cls::getMaximumInterval, &Cls::setMaximumInterval);
       m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, DETAIL);
       m->addBoolField<Cls>(Tags::tool, &Cls::getTool, &Cls::setTool, BOOL_FALSE);
-      m->addIteratorField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlanIterator, DETAIL);
+      m->addIteratorField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlanIterator, PLAN);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
 
-  private:
+  public:
+    /** A dummy producing operation to mark uninitialized ones. */
+    static DECLARE_EXPORT OperationFixedTime *unitializedProducing;
+
     /** A constant defining the default max inventory target.\\
       * Theoretically we should set this to DBL_MAX, but then the results
       * are not portable across platforms.
@@ -4047,6 +4104,7 @@ class BufferInfinite : public Buffer
     explicit BufferInfinite()
     {
       setDetectProblems(false);
+      setProducingOperation(NULL);
       initType(metadata);
     }
 
@@ -5161,7 +5219,9 @@ class Resource : public HasHierarchy<Resource>,
     friend class ResourceSkill;
 
   public:
+    // Forward declaration of inner classes
     class PlanIterator;
+    class OperationPlanIterator;
 
     /** The default time window before the ask date where we look for
       * available capacity. */
@@ -5234,6 +5294,8 @@ class Resource : public HasHierarchy<Resource>,
     {
       return loadplans;
     }
+
+    inline OperationPlanIterator getOperationPlans() const;
 
     /** Returns a constant reference to the list of loads. It defines
       * which operations are using the resource.
@@ -5364,6 +5426,7 @@ class Resource : public HasHierarchy<Resource>,
       m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, DETAIL);
       m->addIteratorField<Cls, skilllist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getSkills, DETAIL);
       m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlanIterator, DETAIL);
+      m->addIteratorField<Cls, OperationPlanIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, PLAN);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
@@ -6099,6 +6162,8 @@ class Demand
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
 
+    inline PeggingIterator getOperationplans() const;
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
@@ -6113,40 +6178,10 @@ class Demand
       m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration::MAX);
       m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment, &Cls::setMinShipment, 1);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
-      // xxx TODO m->addIteratorField<Cls>(Tags::operationplans, &Cls::getOperationplans, NULL, DETAIL);
+      m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::operationplans, Tags::operationplan, &Cls::getOperationplans, PLAN + WRITE_FULL);
       m->addIteratorField<Cls, Problem::List::iterator, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraintIterator, DETAIL);
-      /*   if (attr.isA(Tags::pegging))
-    return new PeggingIterator(this);
-
-      // Write all pegged operationplans xxx
-      o->BeginList(Tags::operationplans);
-      for (PeggingIterator i(this); i; --i)
-      {
-        const OperationPlan* oplan = i.getOperationPlan();
-        o->BeginObject(
-          Tags::operationplan, Tags::id, oplan->getIdentifier(),
-          Tags::operation, oplan->getOperation()->getName()
-          );
-        if (oplan->getDemand())
-          o->writeElement(Tags::demand, oplan->getDemand());
-        o->writeElement(Tags::start, oplan->getDates().getStart());
-        o->writeElement(Tags::end, oplan->getDates().getEnd());
-        // The pegged quantity and level are the only extra field we export in addition
-        // to the standard export fields of an operationplan.
-        o->writeElement(Tags::pegging, i.getQuantity());
-        o->writeElement(Tags::level, i.getLevel());
-        o->writeElement(Tags::quantity, oplan->getQuantity());
-        o->writeElement(Tags::criticality, oplan->getCriticality());
-        if (oplan->getLocked()) o->writeElement (Tags::locked, true);
-        if (!oplan->getConsumeMaterial()) o->writeElement(Tags::consume_material, false);
-        if (!oplan->getProduceMaterial()) o->writeElement(Tags::produce_material, false);
-        if (!oplan->getConsumeCapacity()) o->writeElement(Tags::consume_capacity, false);
-        o->writeElement(Tags::source, oplan->getSource());
-        o->writeElement(Tags::owner, oplan->owner);
-        o->EndObject(Tags::operationplan);
-      }
-      */
     }
+
   private:
     /** Requested item. */
     Item *it;
@@ -6342,7 +6377,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
-      m->addPointerField<Cls, Load>(Tags::load, &Cls::getLoad, &Cls::setLoad, DETAIL);
+      m->addPointerField<Cls, Load>(Tags::load, &Cls::getLoad, &Cls::setLoad, DONT_SERIALIZE);
       m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, NULL, BOOL_FALSE, DONT_SERIALIZE);
       m->addDateField<Cls>(Tags::startdate, &Cls::getStartDate, NULL, Date::infiniteFuture, DONT_SERIALIZE);
@@ -6414,6 +6449,32 @@ inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
   else
     // Continuous resource
     return lp->isStart() ? getQuantity() : -getQuantity();
+}
+
+
+class Resource::OperationPlanIterator
+{
+  private:
+    Resource::loadplanlist::const_iterator iter;
+
+  public:
+    /** Constructor. */
+    OperationPlanIterator(const Resource* r) : iter(r->getLoadPlanIterator()) {}
+
+    /** Return current value and advance the iterator. */
+    OperationPlan* next()
+    {
+      Resource::loadplanlist::Event* i = iter.next();
+      while (i && i->getEventType() == 1 && i->getQuantity() >= 0)
+        i = iter.next();
+      return i ? static_cast<LoadPlan*>(i)->getOperationPlan() : NULL;
+    }
+};
+
+
+inline Resource::OperationPlanIterator Resource::getOperationPlans() const
+{
+  return Resource::OperationPlanIterator(this);
 }
 
 
@@ -7895,7 +7956,7 @@ class PeggingIterator : public Object
 {
   public:
     /** Constructor. */
-    DECLARE_EXPORT PeggingIterator(Demand*);
+    DECLARE_EXPORT PeggingIterator(const Demand*);
 
     /** Constructor. */
     DECLARE_EXPORT PeggingIterator(OperationPlan*, bool=true);
@@ -7953,7 +8014,7 @@ class PeggingIterator : public Object
       */
     PeggingIterator operator--(int)
     {
-      PeggingIterator tmp = *this;
+      PeggingIterator tmp = *this;  // Very inefficient because of the vector copy
       --*this;
       return tmp;
     }
@@ -7967,6 +8028,8 @@ class PeggingIterator : public Object
       return !states.empty();
     }
 
+    DECLARE_EXPORT PeggingIterator* next();
+
     /** Add an entry on the stack. */
     DECLARE_EXPORT void updateStack(OperationPlan*, double, double, short);
 
@@ -7979,10 +8042,11 @@ class PeggingIterator : public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
-      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity);
-      m->addShortField<Cls>(Tags::level, &Cls::getLevel);
+      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, NULL, MANDATORY + WRITE_FULL);
+      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, NULL, MANDATORY);
+      m->addShortField<Cls>(Tags::level, &Cls::getLevel, NULL, MANDATORY);
     }
+
   private:
     /** This structure is used to keep track of the iterator states during the
       * iteration. */
@@ -8003,9 +8067,6 @@ class PeggingIterator : public Object
     };
     typedef vector<state> statestack;
 
-    /** Iterate over the pegging in Python. */
-    DECLARE_EXPORT PyObject *iternext();
-
     /* Auxilary function to make recursive code possible. */
     DECLARE_EXPORT void followPegging(const OperationPlan*, double, double, short);
 
@@ -8021,6 +8082,12 @@ class PeggingIterator : public Object
     /** Optimization to reuse elements on the stack. */
     bool first;
 };
+
+
+inline PeggingIterator Demand::getOperationplans() const
+{
+  return PeggingIterator(this);
+}
 
 
 /** @brief An iterator class to go through all flowplans of an operationplan.

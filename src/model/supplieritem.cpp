@@ -26,6 +26,7 @@ namespace frepple
 
 DECLARE_EXPORT const MetaCategory* SupplierItem::metacategory;
 DECLARE_EXPORT const MetaClass* SupplierItem::metadata;
+DECLARE_EXPORT const MetaClass* OperationSupplierItem::metadata;
 
 
 int SupplierItem::initialize()
@@ -238,6 +239,46 @@ DECLARE_EXPORT void SupplierItem::validate(Action action)
       delete &*i;
       return;
   }
+}
+
+
+int OperationSupplierItem::initialize()
+{
+  // Initialize the metadata
+  metadata = MetaClass::registerClass<OperationSupplierItem>(
+    "operation", "operation_supplieritem"
+    );
+  registerFields<OperationSupplierItem>(const_cast<MetaClass*>(metadata));
+
+  // Initialize the Python class
+  PythonType& x = FreppleCategory<FlowPlan>::getPythonType();
+  x.setName("operation_supplieritem");
+  x.setDoc("frePPLe operation_supplieritem");
+  x.supportgetattro();
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady();
+}
+
+
+DECLARE_EXPORT OperationSupplierItem::OperationSupplierItem(
+  SupplierItem* i, Buffer *b
+  ) : supitem(i)
+{
+  if (!i || !b)
+    throw LogicException(
+      "An OperationSupplierItem always needs to point to "
+      "a supplieritem and a buffer"
+      );
+  // We are NOT giving the operation a name in order to avoid it gets
+  // inserted into the operation tree.
+  setDuration(i->getLeadTime());
+  setSizeMultiple(i->getSizeMultiple());
+  setSizeMinimum(i->getSizeMinimum());
+  setLocation(b->getLocation());
+  setSource(i->getSource());
+  setHidden(true);
+  FlowEnd* fl = new FlowEnd(this, b, 1);
+  initType(metadata);
 }
 
 }

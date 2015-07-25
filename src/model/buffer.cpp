@@ -38,6 +38,7 @@ DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
                *BufferInfinite::metadata,
                *BufferProcure::metadata;
 DECLARE_EXPORT const double Buffer::default_max = 1e37;
+DECLARE_EXPORT OperationFixedTime *Buffer::unitializedProducing = NULL;
 
 
 int Buffer::initialize()
@@ -45,6 +46,8 @@ int Buffer::initialize()
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<Buffer>("buffer", "buffers", reader, finder);
   registerFields<Buffer>(const_cast<MetaCategory*>(metadata));
+
+  unitializedProducing = new OperationFixedTime();
 
   // Initialize the Python class
   return FreppleCategory<Buffer>::initialize();
@@ -140,7 +143,7 @@ DECLARE_EXPORT void Buffer::setOnHand(double f)
 
 
 DECLARE_EXPORT double Buffer::getOnHand() const
-{  
+{
   for (flowplanlist::const_iterator i = flowplans.begin(); i!=flowplans.end(); ++i)
   {
     if(i->getDate()) return 0.0; // Inventory event is always at start of horizon
@@ -578,6 +581,101 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
     o->setSource(getSource());
   }
   return oper;
+}
+
+
+DECLARE_EXPORT void Buffer::buildProducingOperation()
+{
+  if (producing_operation && producing_operation != unitializedProducing && !producing_operation->getHidden())
+    // Leave manually specified producing operations alone
+    return;
+
+  // Loop over all suppliers for this item + location combination
+  if (getItem())
+  {
+    Item::supplierlist::const_iterator supitem_iter = getItem()->getSupplierIterator();
+    while (SupplierItem *supitem = supitem_iter.next())
+    {
+      // Check if there is already a producing operation pointing to this combination
+      if (producing_operation)
+      {
+        if (producing_operation->getType() == *OperationSupplierItem::metadata)
+        {
+          OperationSupplierItem* o = static_cast<OperationSupplierItem*>(producing_operation);
+          if (o->getSupplierItem() == supitem)
+            // Already exists
+            continue;
+        }
+        else
+        {
+          SubOperation::iterator subiter(producing_operation->getSubOperations());
+          while (SubOperation *o = subiter.next())
+            if (o->getOperation()->getType() == *OperationSupplierItem::metadata)
+            {
+              OperationSupplierItem* o = static_cast<OperationSupplierItem*>(producing_operation);
+              if (o->getSupplierItem() == supitem)
+                // Already exists
+              continue;
+            }
+        }
+
+        // New operation needs to be created
+        OperationSupplierItem *oper = new OperationSupplierItem(supitem, this);
+        if (producing_operation)
+        {
+          // We're not the first
+          SubOperation* subop = new SubOperation();
+          subop->setOperation(oper);
+          subop->setPriority(supitem->getPriority());
+          subop->setEffective(supitem->getEffective());
+          if (producing_operation->getType() != *OperationAlternate::metadata)
+          {
+            // We are the second: create an alternate and add 2 suboperations
+            OperationAlternate *superop = new OperationAlternate();
+            superop->setHidden(true);
+            superop->setSearch("PRIORITY");
+            SubOperation* subop2 = new SubOperation();
+            subop2->setOperation(producing_operation);
+            // Note that priority and effectivity are at default values.
+            // If not, the alternate would already have been created.
+            subop2->setOwner(producing_operation);
+            producing_operation = superop;
+            subop->setOwner(producing_operation);
+          }
+          else
+            // We are third or later: just add a suboperation
+            subop->setOwner(producing_operation);
+        }
+        else
+        {
+          // We are the first: only create an operationsupplieritem instance
+          if (supitem->getEffective() == DateRange() && supitem->getPriority() == 1)
+          {
+            // Already create an alternate now
+            OperationAlternate *superop = new OperationAlternate();
+            producing_operation = superop;
+            superop->setHidden(true);
+            superop->setSearch("PRIORITY");
+            SubOperation* subop = new SubOperation();
+            subop->setOperation(oper);
+            subop->setPriority(supitem->getPriority());
+            subop->setEffective(supitem->getEffective());
+          }
+          else
+            // Use a single operation. If an alternate is required
+            // later on, we know it has the default priority and effectivity.
+            producing_operation = oper;
+        }
+      }
+    }
+  }
+
+  if (producing_operation == unitializedProducing)
+  {
+    // No producer could be generated. No replenishment will be possible.
+    logger << "Warning: can't replenish buffer " << this << endl;
+    producing_operation = NULL;
+  }
 }
 
 

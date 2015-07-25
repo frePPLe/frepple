@@ -902,10 +902,14 @@ DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
 
 DECLARE_EXPORT SearchMode decodeSearchMode(const string& c)
 {
-  if (c == "PRIORITY") return PRIORITY;
-  if (c == "MINCOST") return MINCOST;
-  if (c == "MINPENALTY") return MINPENALTY;
-  if (c == "MINCOSTPENALTY") return MINCOSTPENALTY;
+  if (c == "PRIORITY")
+    return PRIORITY;
+  if (c == "MINCOST")
+    return MINCOST;
+  if (c == "MINPENALTY")
+    return MINPENALTY;
+  if (c == "MINCOSTPENALTY")
+    return MINCOSTPENALTY;
   throw DataException("Invalid search mode " + c);
 }
 

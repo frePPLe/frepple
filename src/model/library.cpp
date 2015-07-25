@@ -75,6 +75,7 @@ void LibraryModel::initialize()
   nok += BufferDefault::initialize();
   nok += BufferInfinite::initialize();
   nok += BufferProcure::initialize();
+  nok += PeggingIterator::initialize();
   nok += Demand::initialize();
   nok += DemandDefault::initialize();
   nok += DemandPlanIterator::initialize();
@@ -88,7 +89,6 @@ void LibraryModel::initialize()
   nok += ResourceInfinite::initialize();
   nok += Resource::PlanIterator::initialize();
   nok += ResourceBuckets::initialize();
-  nok += PeggingIterator::initialize();
   nok += Plan::initialize();
 
   // Exit if errors were found

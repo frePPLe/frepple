@@ -6914,12 +6914,16 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
     {
       if (getFlag(DONT_SERIALIZE))
         return;
+      if (getFlag(WRITE_FULL))
+        output.decParents();
       // Imagine object A refers to object B. Both objects have fields
       // referring the other. When serializing object A, we also serialize
       // object B but we skip saving the reference back to A.
       Ptr* c = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (c && output.getPreviousObject() != c)
         output.writeElement(getName(), c);
+      if (getFlag(WRITE_FULL))
+        output.incParents();
     }
 
     virtual bool isPointer() const

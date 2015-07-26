@@ -1,0 +1,8 @@
+BUFFER	A @ warehouse	1971-01-01T00:00:00	100	100
+BUFFER	B @ warehouse	1971-01-01T00:00:00	100	100
+BUFFER	C @ warehouse	1971-01-01T00:00:00	100	100
+BUFFER	D @ warehouse	1971-01-01T00:00:00	100	100
+PROBLEM	material excess	Buffer 'A @ warehouse' has material excess of 100	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'B @ warehouse' has material excess of 100	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'C @ warehouse' has material excess of 100	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'D @ warehouse' has material excess of 100	1971-01-01T00:00:00 / 2030-12-31T00:00:00

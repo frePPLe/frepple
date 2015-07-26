@@ -68,6 +68,7 @@ void LibraryModel::initialize()
   nok += OperationFixedTime::initialize();
   nok += OperationTimePer::initialize();
   nok += OperationRouting::initialize();
+  nok += OperationSupplierItem::initialize();
   nok += OperationSetup::initialize();
   nok += Item::initialize();
   nok += ItemDefault::initialize();

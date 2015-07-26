@@ -434,16 +434,28 @@ DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
       Location::clear();
       Customer::clear();
       Calendar::clear();
+      Supplier::clear();
       Item::clear();
       // The setup operation is a static singleton and should always be around
       OperationSetup::setupoperation = new OperationSetup();
       OperationSetup::setupoperation->setName("setup operation");
     }
     else
+    {
       // Delete the operationplans only
+      // part 1: opplans of registered operations
       for (Operation::iterator gop = Operation::begin();
           gop != Operation::end(); ++gop)
         gop->deleteOperationPlans();
+      // part 2: opplans of hidden purchasing operations
+      for (Supplier::iterator sup = Supplier::begin();
+        sup != Supplier::end(); ++sup)
+      {
+        Supplier::itemlist::const_iterator supitemiter = sup->getItemIterator();
+        while (SupplierItem* supitem = supitemiter.next())
+          supitem->deleteOperationPlans();
+      }
+    }
   }
   catch (...)
   {

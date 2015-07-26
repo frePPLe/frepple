@@ -69,7 +69,7 @@ DECLARE_EXPORT void Object::writeElement(
   // Write the content
   if (m == MANDATORY)
   {
-    // Mode MANDATORY: write MANDATORY fields
+    // Write references only
     if (meta.category)
       for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
         if ((*i)->getFlag(MANDATORY))
@@ -80,38 +80,24 @@ DECLARE_EXPORT void Object::writeElement(
   }
   else if (m == BASE)
   {
-    // Mode BASE: write MANDATORY + BASE fields
+    // Write only the fields required to successfully save&restore the object
     if (meta.category)
       for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-        if ((*i)->getFlag(MANDATORY + BASE))
+        if (!(*i)->getFlag(DETAIL))
           (*i)->writeField(*o);
     for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      if ((*i)->getFlag(MANDATORY + BASE))
-        (*i)->writeField(*o);
-    PythonDictionary::write(o, getDict());
-  }
-  else if (m == PLAN)
-  {
-    // Mode PLAN: write MANDATORY + BASE + PLAN fields
-    if (meta.category)
-      for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-        if ((*i)->getFlag(MANDATORY + BASE + PLAN))
-          (*i)->writeField(*o);
-    for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      if ((*i)->getFlag(MANDATORY + BASE + PLAN))
+      if (!(*i)->getFlag(DETAIL))
         (*i)->writeField(*o);
     PythonDictionary::write(o, getDict());
   }
   else
   {
-    // Mode DETAIL: write MANDATORY + BASE + DETAIL fields
+    // Write the full info on the object
     if (meta.category)
       for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-        if ((*i)->getFlag(MANDATORY + BASE + DETAIL))
-          (*i)->writeField(*o);
-    for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      if ((*i)->getFlag(MANDATORY + BASE + DETAIL))
         (*i)->writeField(*o);
+    for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
+      (*i)->writeField(*o);
     PythonDictionary::write(o, getDict());
   }
 

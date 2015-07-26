@@ -55,17 +55,20 @@ int SupplierItem::initialize()
 
 DECLARE_EXPORT SupplierItem::~SupplierItem()
 {
-  // TODO Delete existing procurements?
-  //if (getSupplier() && getItem()) {}
+  // Delete the association from the related objects
+  if (getSupplier())
+    getSupplier()->items.erase(this);
+  if (getItem())
+    getItem()->suppliers.erase(this);
 
-  // Delete the associated from the related objects
-  if (getSupplier()) getSupplier()->items.erase(this);
-  if (getItem()) getItem()->suppliers.erase(this);
+  // Delete all owned purchase operations
+  while (firstOperation)
+    delete firstOperation;
 }
 
 
 DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u)
-  : size_minimum(1.0), size_multiple(0.0), cost(0.0)
+  : size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
 {
   setSupplier(s);
   setItem(r);
@@ -83,7 +86,7 @@ DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u)
 
 
 DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u, DateRange e)
-  : size_minimum(1.0), size_multiple(0.0), cost(0.0)
+  : size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
 {
   setSupplier(s);
   setItem(r);
@@ -188,7 +191,7 @@ PyObject* SupplierItem::create(PyTypeObject* pytype, PyObject* args, PyObject* k
 
 DECLARE_EXPORT void SupplierItem::validate(Action action)
 {
-  // Catch null supplier and item pointers 
+  // Catch null supplier and item pointers
   Supplier *sup = getSupplier();
   Item *it = getItem();
   if (!sup || !it)
@@ -212,7 +215,7 @@ DECLARE_EXPORT void SupplierItem::validate(Action action)
         && i->getEffective().overlap(getEffective())
         && &*i != this)
       break;
-  
+
   // Apply the appropriate action
   switch (action)
   {
@@ -239,6 +242,14 @@ DECLARE_EXPORT void SupplierItem::validate(Action action)
       delete &*i;
       return;
   }
+}
+
+
+DECLARE_EXPORT void SupplierItem::deleteOperationPlans(bool b)
+{
+  logger << "delete for " << getSupplier() << "  " << getName()<< endl;
+  for (OperationSupplierItem* i = firstOperation; i; i = i->nextOperation)
+    i->deleteOperationPlans(b);
 }
 
 
@@ -276,9 +287,57 @@ DECLARE_EXPORT OperationSupplierItem::OperationSupplierItem(
   setSizeMinimum(i->getSizeMinimum());
   setLocation(b->getLocation());
   setSource(i->getSource());
+  setCost(i->getCost());
   setHidden(true);
   FlowEnd* fl = new FlowEnd(this, b, 1);
   initType(metadata);
+
+  // Insert in the list of supplieritem operations.
+  // We keep the list sorted by the name of the buffers.
+  if (!i->firstOperation || b->getName() < i->firstOperation->getName())
+  {
+    // New head of the list
+    nextOperation = i->firstOperation;
+    i->firstOperation = this;
+  }
+  else
+  {
+    // Insert in the middle or at the tail
+    OperationSupplierItem* o = i->firstOperation;
+    while (o->nextOperation)
+    {
+      // There should always be a single flow on these operations.
+      // We take it for granted and don't verify it.
+      if (b->getName() < o->nextOperation->getFlows().begin()->getBuffer()->getName())
+        break;
+      o = o->nextOperation;
+    }
+    nextOperation = o->nextOperation;
+    o->nextOperation = this;
+  }
 }
+
+
+OperationSupplierItem::~OperationSupplierItem()
+{
+  // Remove from the list of operations of this supplier item
+  if (supitem->firstOperation == this)
+  {
+    // We were at the head
+    supitem->firstOperation = nextOperation;
+  }
+  else
+  {
+    // We were in the middle
+    OperationSupplierItem* i = supitem->firstOperation;
+    while (i->nextOperation != this && i->nextOperation)
+      i = i->nextOperation;
+    if (!i)
+      throw LogicException("SupplierItem operation list corrupted");
+    else
+      i->nextOperation = nextOperation;
+  }
+}
+
 
 }

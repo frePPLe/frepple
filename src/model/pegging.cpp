@@ -44,7 +44,7 @@ int PeggingIterator::initialize()
 }
 
 
-DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
+DECLARE_EXPORT PeggingIterator::PeggingIterator(Demand* d)
   : downstream(false), firstIteration(true), first(false)
 {
   initType(metadata);
@@ -112,7 +112,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 {
   // Validate
   if (states.empty())
-    return *this;
+    throw LogicException("Incrementing the iterator beyond it's end");
   if (downstream)
     throw LogicException("Decrementing a downstream iterator");
 
@@ -136,7 +136,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
 {
   // Validate
   if (states.empty())
-    return *this;
+    throw LogicException("Incrementing the iterator beyond it's end");
   if (!downstream)
     throw LogicException("Incrementing an upstream iterator");
 
@@ -191,7 +191,7 @@ DECLARE_EXPORT void PeggingIterator::followPegging
 }
 
 
-DECLARE_EXPORT PeggingIterator* PeggingIterator::next()
+DECLARE_EXPORT PyObject* PeggingIterator::iternext()
 {
   if (firstIteration)
     firstIteration = false;
@@ -199,10 +199,9 @@ DECLARE_EXPORT PeggingIterator* PeggingIterator::next()
     operator++();
   else
     operator--();
-  if (!operator bool())
-    return NULL;
-  else
-    return this;
+  if (!operator bool()) return NULL;
+  Py_INCREF(this);
+  return static_cast<PyObject*>(this);
 }
 
 

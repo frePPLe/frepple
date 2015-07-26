@@ -586,14 +586,17 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
 
 DECLARE_EXPORT void Buffer::buildProducingOperation()
 {
-  if (producing_operation && producing_operation != unitializedProducing && !producing_operation->getHidden())
+  if (producing_operation
+    && producing_operation != unitializedProducing
+    && !producing_operation->getHidden())
     // Leave manually specified producing operations alone
     return;
 
   // Loop over all suppliers for this item + location combination
-  if (getItem())
+  Item* item = getItem();
+  while (item)
   {
-    Item::supplierlist::const_iterator supitem_iter = getItem()->getSupplierIterator();
+    Item::supplierlist::const_iterator supitem_iter = item->getSupplierIterator();
     while (SupplierItem *supitem = supitem_iter.next())
     {
       // Check if there is already a producing operation pointing to this combination
@@ -612,8 +615,8 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           while (SubOperation *o = subiter.next())
             if (o->getOperation()->getType() == *OperationSupplierItem::metadata)
             {
-              OperationSupplierItem* o = static_cast<OperationSupplierItem*>(producing_operation);
-              if (o->getSupplierItem() == supitem)
+              OperationSupplierItem* s = static_cast<OperationSupplierItem*>(o->getOperation());
+              if (s->getSupplierItem() == supitem)
                 // Already exists
               continue;
             }
@@ -638,7 +641,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
             subop2->setOperation(producing_operation);
             // Note that priority and effectivity are at default values.
             // If not, the alternate would already have been created.
-            subop2->setOwner(producing_operation);
+            subop2->setOwner(superop);
             producing_operation = superop;
             subop->setOwner(producing_operation);
           }
@@ -668,6 +671,8 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
         }
       }
     }
+    // While-loop to add suppliers defined at parent items
+    item = item->getOwner();
   }
 
   if (producing_operation == unitializedProducing)

@@ -1,12 +1,21 @@
-Supplier Supplier A :
+Supplier Supplier of component A :
       Component A
-Supplier Supplier B :
+Supplier Supplier of component B :
       Component B
+Supplier Supplier of component C :
+      Component C
+Supplier Supplier of components A and B :
+      Component group A and B
 Supplier X :
       Y
 Item Component A :
-      Supplier A
+      Supplier of component A
 Item Component B :
-      Supplier B
+      Supplier of component B
+Item Component C :
+      Supplier of component C
+Item Component D :
+Item Component group A and B :
+      Supplier of components A and B
 Item Y :
       X

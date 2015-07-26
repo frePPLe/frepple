@@ -390,6 +390,10 @@
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="supplier" type="supplier" />
       <xsd:element name="item" type="item" />
+      <xsd:element name="leadtime" type="xsd:duration" />
+      <xsd:element name="size_multiple" type="positiveDouble" />
+      <xsd:element name="size_minimum" type="positiveDouble" />
+      <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="priority" type="xsd:integer" />
       <xsd:element name="effective_start" type="xsd:dateTime" />
       <xsd:element name="effective_end" type="xsd:dateTime" />
@@ -398,6 +402,10 @@
       <xsd:element name="doubleproperty" type="doubleproperty" />
       <xsd:element name="dateproperty" type="dateproperty" />
     </xsd:choice>
+    <xsd:attribute name="leadtime" type="xsd:duration" />
+    <xsd:attribute name="size_multiple" type="positiveDouble" />
+    <xsd:attribute name="size_minimum" type="positiveDouble" />
+    <xsd:attribute name="cost" type="positiveDouble" />
     <xsd:attribute name="priority" type="xsd:integer" />
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
     <xsd:attribute name="effective_end" type="xsd:dateTime" />

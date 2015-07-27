@@ -28,7 +28,7 @@ from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_text
 from django.utils.html import escape
 
-from freppledb.execute.models import Scenario
+from freppledb.execute.models import Scenario, User
 from freppledb import VERSION
 
 MAX_CRUMBS = 10
@@ -255,6 +255,15 @@ def version():
   return VERSION
 
 version.is_safe = True
+
+
+#
+# A tag to mark whether the password of a user is correct.
+#
+
+@register.assignment_tag
+def checkPassword(usr, pwd):
+  return User.objects.get(username=usr).check_password(pwd)
 
 
 #

@@ -95,6 +95,10 @@ document.getElementById('id_username').focus()
 </script>
 
 </div>
+{% checkPassword "admin" "admin" as recommend_reset %}{% if recommend_reset %}
+<div id='tourtooltip' class='tourtooltip ui-dialog ui-widget ui-widget-content ui-corner-all ui-front' style='position: relative; top: 20px; font-weight: normal'>
+{% blocktrans %}The user "admin" has password "admin".<br/>
+We suggest changing this password.{% endblocktrans %}</div>{% endif %}
 {% endblock %}
 
 

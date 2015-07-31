@@ -137,6 +137,26 @@ int OperationSetup::initialize()
 }
 
 
+DECLARE_EXPORT void Operation::removeSuperOperation(Operation *o)
+{
+  if (!o) return;
+  superoplist.remove(o);
+  Operationlist::iterator i = o->getSubOperations().begin();
+  while (i != o->getSubOperations().end())
+  {
+    if ((*i)->getOperation() == this)
+    {
+      SubOperation *tmp = *i;
+      // note: erase also advances the iterator
+      i = o->getSubOperations().erase(i);
+      delete tmp;
+    }
+    else
+      ++i;
+  }
+}
+
+
 DECLARE_EXPORT Operation::~Operation()
 {
   // Delete all existing operationplans (even locked ones)

@@ -196,9 +196,9 @@ DECLARE_EXPORT PyObject* PeggingIterator::iternext()
   if (firstIteration)
     firstIteration = false;
   else if (downstream)
-    operator++();
+    ++*this;
   else
-    operator--();
+    --*this;
   if (!operator bool()) return NULL;
   Py_INCREF(this);
   return static_cast<PyObject*>(this);

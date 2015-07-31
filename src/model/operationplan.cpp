@@ -970,7 +970,7 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
   // Upstream operationplan
   Duration minslack = 86313600L; // 999 days in seconds
   vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
-  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; p++)
+  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p)
   {
     unsigned int lvl = p.getLevel();
     if (lvl >= opplans.size())
@@ -1024,5 +1024,16 @@ PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args)
   return new PythonIterator<OperationPlan::iterator, OperationPlan>(static_cast<Operation*>(pyoper));
 }
 
+
+DECLARE_EXPORT PeggingIterator OperationPlan::getPeggingDownstream() const
+{
+  return PeggingIterator(this, true);
+}
+
+
+DECLARE_EXPORT PeggingIterator OperationPlan::getPeggingUpstream() const
+{
+  return PeggingIterator(this, false);
+}
 
 } // end namespace

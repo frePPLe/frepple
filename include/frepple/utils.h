@@ -1523,14 +1523,14 @@ class PythonType : public NonCopyable
     DECLARE_EXPORT void addMethod(const char*, PyCFunctionWithKeywords, int, const char*);
 
     /** Updates tp_name. */
-    void setName (const string n)
+    void setName (const string& n)
     {
       string *name = new string("frepple." + n);
       table->tp_name = const_cast<char*>(name->c_str());
     }
 
     /** Updates tp_doc. */
-    void setDoc (const string n)
+    void setDoc (const string& n)
     {
       string *doc = new string(n);
       table->tp_doc = const_cast<char*>(doc->c_str());
@@ -1923,7 +1923,7 @@ class MetaClass : public NonCopyable
     template <class Cls> inline void addStringField(
       const Keyword& k,
       string (Cls::*getfunc)(void) const,
-      void (Cls::*setfunc)(string) = NULL,
+      void (Cls::*setfunc)(const string&) = NULL,
       unsigned int c = BASE
       )
 		{
@@ -2853,7 +2853,7 @@ class DataValue
       throw LogicException("DataValue is an abstract class");
     }
 
-    virtual string getString() const
+    virtual const string& getString() const
     {
       throw LogicException("DataValue is an abstract class");
     }
@@ -2880,7 +2880,7 @@ class DataValue
 
     virtual void setDate(const Date) = 0;
 
-    virtual void setString(const string) = 0;
+    virtual void setString(const string&) = 0;
 
     virtual void setBool(const bool) = 0;
 
@@ -2981,7 +2981,7 @@ class XMLData : public DataValue
 
     /** Returns the string value of the XML data. The xerces library takes care
       * of appropriately unescaping special character sequences. */
-    virtual string getString() const
+    virtual const string& getString() const
     {
       return m_strData;
     }
@@ -3032,7 +3032,7 @@ class XMLData : public DataValue
       throw LogicException("Not implemented on XMLData");
     }
 
-    virtual void setString(const string v)
+    virtual void setString(const string& v)
     {
       m_strData = v;
       m_obj = NULL;
@@ -3144,10 +3144,8 @@ class Environment
   * code that provided us the PyObject pointer should have incremented the
   * reference count already.
   *
-  * @todo object creator should be common with the XML reader, which uses
-  * the registered factory method.
-  * Also supports add/add_change/remove.
-  * Tricky: flow/load which use an additional validate() method
+  * TODO: the getString member uses a static string value. This makes this
+  * class nonreentrant, ie it is not possible to use multiple values simultaneously.
   */
 class PythonData : public DataValue
 {
@@ -3225,17 +3223,17 @@ class PythonData : public DataValue
     }
 
     /** Convert a Python string into a C++ string. */
-    inline string getString() const
+    inline const string& getString() const
     {
+      static string result;
       if (obj == Py_None)
-        return string();
+        result = "";
       else if (PyUnicode_Check(obj))
       {
         // It's a Python unicode string
         PyObject* x = PyUnicode_AsEncodedString(obj, "UTF-8", "ignore");
-        string result = PyBytes_AS_STRING(x);
+        result = PyBytes_AS_STRING(x);
         Py_DECREF(x);
-        return result;
       }
       else
       {
@@ -3243,11 +3241,11 @@ class PythonData : public DataValue
         // Call the repr() function on the object, and encode the result in UTF-8.
         PyObject* x1 = PyObject_Str(obj);
         PyObject* x2 = PyUnicode_AsEncodedString(x1, "UTF-8", "ignore");
-        string result = PyBytes_AS_STRING(x2);
+        result = PyBytes_AS_STRING(x2);
         Py_DECREF(x1);
         Py_DECREF(x2);
-        return result;
       }
+      return result;
     }
 
     /** Extract an unsigned long from the Python object. */
@@ -3451,7 +3449,7 @@ class PythonData : public DataValue
 
     virtual DECLARE_EXPORT void setDate(const Date);
 
-    virtual void setString(const string val)
+    virtual void setString(const string& val)
     {
       if (obj) Py_DECREF(obj);
       if (val.empty())
@@ -5180,7 +5178,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     explicit HasName() {}
 
     /** Rename the entity. */
-    void setName(string newname)
+    void setName(const string& newname)
     {
       st.rename(this, newname);
     }
@@ -5368,7 +5366,7 @@ class HasSource
     }
 
     /** Sets the source field. */
-    void setSource(string c)
+    DECLARE_EXPORT void setSource(const string& c)
     {
       source = c;
     }
@@ -5394,31 +5392,31 @@ class HasDescription : public HasSource
     }
 
     /** Returns the sub_category. */
-    string getSubCategory() const
+    DECLARE_EXPORT string getSubCategory() const
     {
       return subcat;
     }
 
     /** Returns the getDescription. */
-    string getDescription() const
+    DECLARE_EXPORT string getDescription() const
     {
       return descr;
     }
 
     /** Sets the category field. */
-    void setCategory(const string f)
+    DECLARE_EXPORT void setCategory(const string& f)
     {
       cat = f;
     }
 
     /** Sets the sub_category field. */
-    void setSubCategory(const string f)
+    DECLARE_EXPORT void setSubCategory(const string& f)
     {
       subcat = f;
     }
 
     /** Sets the description field. */
-    void setDescription(const string f)
+    void setDescription(const string& f)
     {
       descr = f;
     }
@@ -5580,6 +5578,16 @@ template <class T> class HasHierarchy : public HasName<T>
     memberIterator getMembers() const
     {
       return this;
+    }
+
+    /** Return true if an object is part of the children of a second object. */
+    bool isMemberOf(T* p) const
+    {
+      for (const HasHierarchy* tmp = this; tmp; tmp = tmp->getOwner())
+        if (tmp == p)
+          // Yes, we find the argument in the parent hierarchy
+          return true;
+      return false;
     }
 
     /** Returns true if this entity belongs to a higher hierarchical level.<br>
@@ -6227,7 +6235,7 @@ template <class A, class B, class C> class Association
         /** Sets an optional name for the association.<br>
           * There is no garantuee of the uniqueness of this name.
           */
-        void setName(string x)
+        void setName(const string& x)
         {
           name = x;
         }
@@ -6264,7 +6272,7 @@ template <class A, class B, class C> class Association
 template <class Cls> class MetaFieldString : public MetaFieldBase
 {
   public:
-    typedef void (Cls::*setFunction)(string);
+    typedef void (Cls::*setFunction)(const string&);
 
     typedef string (Cls::*getFunction)(void) const;
 
@@ -6978,7 +6986,7 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
       Iter it = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       while (Ptr* ob = static_cast<Ptr*>(it.next()))
       {
-        if (first)
+        if (first && (getFlag(WRITE_HIDDEN) || !ob->getHidden()))
         {
           output.BeginList(getName());
           first = false;

@@ -390,6 +390,7 @@
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="supplier" type="supplier" />
       <xsd:element name="item" type="item" />
+      <xsd:element name="location" type="location" />
       <xsd:element name="leadtime" type="xsd:duration" />
       <xsd:element name="size_multiple" type="positiveDouble" />
       <xsd:element name="size_minimum" type="positiveDouble" />

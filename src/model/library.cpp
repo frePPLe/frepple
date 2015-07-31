@@ -79,7 +79,6 @@ void LibraryModel::initialize()
   nok += PeggingIterator::initialize();
   nok += Demand::initialize();
   nok += DemandDefault::initialize();
-  nok += DemandPlanIterator::initialize();
   nok += SetupMatrixRule::initialize();
   nok += SetupMatrix::initialize();
   nok += SetupMatrixDefault::initialize();

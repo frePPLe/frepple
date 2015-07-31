@@ -239,23 +239,9 @@ DECLARE_EXPORT double Demand::getPlannedQuantity() const
 }
 
 
-int DemandPlanIterator::initialize()
+DECLARE_EXPORT PeggingIterator Demand::getPegging() const
 {
-  // Initialize the type
-  PythonType& x = PythonExtension<DemandPlanIterator>::getPythonType();
-  x.setName("demandplanIterator");
-  x.setDoc("frePPLe iterator for demand delivery operationplans");
-  x.supportiter();
-  return x.typeReady();
-}
-
-
-PyObject* DemandPlanIterator::iternext()
-{
-  if (i == dem->getDelivery().end()) return NULL;
-  PyObject* result = const_cast<OperationPlan*>(&**(i++));
-  Py_INCREF(result);
-  return result;
+  return PeggingIterator(this);
 }
 
 } // end namespace

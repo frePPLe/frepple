@@ -247,7 +247,6 @@ DECLARE_EXPORT void SupplierItem::validate(Action action)
 
 DECLARE_EXPORT void SupplierItem::deleteOperationPlans(bool b)
 {
-  logger << "delete for " << getSupplier() << "  " << getName()<< endl;
   for (OperationSupplierItem* i = firstOperation; i; i = i->nextOperation)
     i->deleteOperationPlans(b);
 }
@@ -275,13 +274,14 @@ DECLARE_EXPORT OperationSupplierItem::OperationSupplierItem(
   SupplierItem* i, Buffer *b
   ) : supitem(i)
 {
-  if (!i || !b)
+  if (!i || !b || !i->getSupplier())
     throw LogicException(
       "An OperationSupplierItem always needs to point to "
       "a supplieritem and a buffer"
       );
-  // We are NOT giving the operation a name in order to avoid it gets
-  // inserted into the operation tree.
+  stringstream o;
+  o << "Purchase '" << b->getName() << "' from '" << i->getSupplier()->getName() << "' (*)";
+  setName(o.str());
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());
   setSizeMinimum(i->getSizeMinimum());

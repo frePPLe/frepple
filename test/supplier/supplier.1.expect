@@ -23,6 +23,9 @@
 	<items>
 		<item>
 			<name>Component A</name>
+			<operation>
+				<name>Delivery A</name>
+			</operation>
 			<supplieritems>
 				<supplieritem>
 					<supplier>
@@ -36,6 +39,9 @@
 		<item>
 			<name>Component B</name>
 			<price>1</price>
+			<operation>
+				<name>Delivery B</name>
+			</operation>
 			<supplieritems>
 				<supplieritem>
 					<supplier>
@@ -48,6 +54,9 @@
 		<item>
 			<name>Component C</name>
 			<price>1</price>
+			<operation>
+				<name>Delivery C</name>
+			</operation>
 			<supplieritems>
 				<supplieritem>
 					<supplier>
@@ -62,6 +71,9 @@
 		<item>
 			<name>Component D</name>
 			<price>1</price>
+			<operation>
+				<name>Delivery D</name>
+			</operation>
 		</item>
 		<item>
 			<name>Component group A and B</name>
@@ -82,53 +94,225 @@
 			<item>
 				<name>Component A</name>
 			</item>
-			<onhand>100</onhand>
+			<onhand>10</onhand>
 		</buffer>
 		<buffer>
 			<name>B @ warehouse</name>
 			<item>
 				<name>Component B</name>
 			</item>
-			<onhand>100</onhand>
+			<onhand>10</onhand>
 		</buffer>
 		<buffer>
 			<name>C @ warehouse</name>
 			<item>
 				<name>Component C</name>
 			</item>
-			<onhand>100</onhand>
+			<onhand>10</onhand>
 		</buffer>
 		<buffer>
 			<name>D @ warehouse</name>
 			<item>
 				<name>Component D</name>
 			</item>
-			<onhand>100</onhand>
+			<onhand>10</onhand>
 		</buffer>
 	</buffers>
 	<operations>
+		<operation>
+			<name>Delivery A</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>A @ warehouse</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>Delivery B</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>B @ warehouse</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>Delivery C</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>C @ warehouse</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>Delivery D</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>D @ warehouse</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
 	</operations>
-	<operationplans>
-	</operationplans>
+	<demands>
+		<demand>
+			<name>order 1 for item A</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component A</name>
+			</item>
+			<due>2015-01-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 1 for item B</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component B</name>
+			</item>
+			<due>2015-01-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 1 for item C</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component C</name>
+			</item>
+			<due>2015-01-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 1 for item D</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component D</name>
+			</item>
+			<due>2015-01-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 2 for item A</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component A</name>
+			</item>
+			<due>2015-02-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 2 for item B</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component B</name>
+			</item>
+			<due>2015-02-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 2 for item C</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component C</name>
+			</item>
+			<due>2015-02-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 2 for item D</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component D</name>
+			</item>
+			<due>2015-02-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+	</demands>
 	<problems>
 		<problem>
 			<name>material excess</name>
-			<description>Buffer &apos;A @ warehouse&apos; has material excess of 100</description>
-			<weight>100</weight>
+			<description>Buffer &apos;A @ warehouse&apos; has material excess of 10</description>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
-			<description>Buffer &apos;B @ warehouse&apos; has material excess of 100</description>
-			<weight>100</weight>
+			<description>Buffer &apos;B @ warehouse&apos; has material excess of 10</description>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
-			<description>Buffer &apos;C @ warehouse&apos; has material excess of 100</description>
-			<weight>100</weight>
+			<description>Buffer &apos;C @ warehouse&apos; has material excess of 10</description>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
-			<description>Buffer &apos;D @ warehouse&apos; has material excess of 100</description>
+			<description>Buffer &apos;D @ warehouse&apos; has material excess of 10</description>
+			<weight>10</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 1 for item A&apos; is not planned</description>
+			<start>2015-01-01T00:00:00</start>
+			<end>2015-01-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 1 for item B&apos; is not planned</description>
+			<start>2015-01-01T00:00:00</start>
+			<end>2015-01-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 1 for item C&apos; is not planned</description>
+			<start>2015-01-01T00:00:00</start>
+			<end>2015-01-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 1 for item D&apos; is not planned</description>
+			<start>2015-01-01T00:00:00</start>
+			<end>2015-01-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 2 for item A&apos; is not planned</description>
+			<start>2015-02-01T00:00:00</start>
+			<end>2015-02-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 2 for item B&apos; is not planned</description>
+			<start>2015-02-01T00:00:00</start>
+			<end>2015-02-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 2 for item C&apos; is not planned</description>
+			<start>2015-02-01T00:00:00</start>
+			<end>2015-02-01T00:00:00</end>
+			<weight>100</weight>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 2 for item D&apos; is not planned</description>
+			<start>2015-02-01T00:00:00</start>
+			<end>2015-02-01T00:00:00</end>
 			<weight>100</weight>
 		</problem>
 	</problems>

@@ -61,13 +61,97 @@
   </items>
 
   <buffers>
-    <buffer name="A @ warehouse" onhand="100"><item name="Component A"/></buffer>
-    <buffer name="B @ warehouse" onhand="100"><item name="Component B"/></buffer>
-    <buffer name="C @ warehouse" onhand="100"><item name="Component C"/></buffer>
-    <buffer name="D @ warehouse" onhand="100"><item name="Component D"/></buffer>
+    <buffer name="A @ warehouse" onhand="10"><item name="Component A"/></buffer>
+    <buffer name="B @ warehouse" onhand="10"><item name="Component B"/></buffer>
+    <buffer name="C @ warehouse" onhand="10"><item name="Component C"/></buffer>
+    <buffer name="D @ warehouse" onhand="10"><item name="Component D"/></buffer>
   </buffers>
 
   <demands>
+    <demand name="order 1 for item A">
+      <quantity>100</quantity>
+      <due>2015-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component A">
+        <operation name="Delivery A">
+          <flows>
+            <flow>
+              <buffer name="A @ warehouse"/>
+              <quantity> -1</quantity>
+            </flow>
+          </flows>
+        </operation>
+      </item>      
+    </demand>
+    <demand name="order 2 for item A">
+      <quantity>100</quantity>
+      <due>2015-02-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component A" />
+    </demand>
+    <demand name="order 1 for item B">
+      <quantity>100</quantity>
+      <due>2015-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component B">
+        <operation name="Delivery B">
+          <flows>
+            <flow>
+              <buffer name="B @ warehouse"/>
+              <quantity> -1</quantity>
+            </flow>
+          </flows>
+        </operation>
+      </item>
+    </demand>
+    <demand name="order 2 for item B">
+      <quantity>100</quantity>
+      <due>2015-02-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component B" />
+    </demand>
+    <demand name="order 1 for item C">
+      <quantity>100</quantity>
+      <due>2015-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component C">
+        <operation name="Delivery C">
+          <flows>
+            <flow>
+              <buffer name="C @ warehouse"/>
+              <quantity> -1</quantity>
+            </flow>
+          </flows>
+        </operation>
+      </item>
+    </demand>
+    <demand name="order 2 for item C">
+      <quantity>100</quantity>
+      <due>2015-02-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component C" />
+    </demand>
+    <demand name="order 1 for item D">
+      <quantity>100</quantity>
+      <due>2015-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component D">
+        <operation name="Delivery D">
+          <flows>
+            <flow>
+              <buffer name="D @ warehouse"/>
+              <quantity> -1</quantity>
+            </flow>
+          </flows>
+        </operation>
+      </item>    
+    </demand>
+    <demand name="order 2 for item D">
+      <quantity>100</quantity>
+      <due>2015-02-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component D" />
+    </demand>
   </demands>
 
 <?python

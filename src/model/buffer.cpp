@@ -592,15 +592,28 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
     // Leave manually specified producing operations alone
     return;
 
-  // Loop over all suppliers for this item + location combination
+  // Loop over this item and all its parent items
   Item* item = getItem();
   while (item)
   {
+    // Loop over all suppliers of this item+location combination
     Item::supplierlist::const_iterator supitem_iter = item->getSupplierIterator();
     while (SupplierItem *supitem = supitem_iter.next())
     {
-      // Check if there is already a producing operation pointing to this combination
-      if (producing_operation)
+      // Verify whether the supplieritem is applicable to the buffer location
+      // We need to reject the following 2 mismatches:
+      //   - buffer location is not null, and is not a member of the
+      //     supplieritem location
+      //   - buffer location is null, and the supplieritem location isn't
+      if (supitem->getLocation())
+      {
+        if ((getLocation() && !getLocation()->isMemberOf(supitem->getLocation()))
+          || !getLocation())
+          continue;
+      }
+
+      // Check if there is already a producing operation referencing this supplieritem
+      if (producing_operation && producing_operation != unitializedProducing)
       {
         if (producing_operation->getType() == *OperationSupplierItem::metadata)
         {
@@ -618,57 +631,64 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
               OperationSupplierItem* s = static_cast<OperationSupplierItem*>(o->getOperation());
               if (s->getSupplierItem() == supitem)
                 // Already exists
-              continue;
+                continue;
             }
         }
+      }
 
-        // New operation needs to be created
-        OperationSupplierItem *oper = new OperationSupplierItem(supitem, this);
-        if (producing_operation)
+      // New operation needs to be created
+      OperationSupplierItem *oper = new OperationSupplierItem(supitem, this);
+      if (producing_operation && producing_operation != unitializedProducing)
+      {
+        // We're not the first
+        SubOperation* subop = new SubOperation();
+        subop->setOperation(oper);
+        subop->setPriority(supitem->getPriority());
+        subop->setEffective(supitem->getEffective());
+        if (producing_operation->getType() != *OperationAlternate::metadata)
         {
-          // We're not the first
+          // We are the second: create an alternate and add 2 suboperations
+          OperationAlternate *superop = new OperationAlternate();
+          stringstream o;
+          o << "Replenish '" << getName() << "' (*)";
+          superop->setName(o.str());
+          superop->setHidden(true);
+          superop->setSearch("PRIORITY");
+          SubOperation* subop2 = new SubOperation();
+          subop2->setOperation(producing_operation);
+          // Note that priority and effectivity are at default values.
+          // If not, the alternate would already have been created.
+          subop2->setOwner(superop);
+          producing_operation = superop;
+          subop->setOwner(producing_operation);
+        }
+        else
+          // We are third or later: just add a suboperation
+          subop->setOwner(producing_operation);
+      }
+      else
+      {
+        // We are the first: only create an operationsupplieritem instance
+        if (supitem->getEffective() == DateRange() && supitem->getPriority() == 1)
+        {
+          // Already create an alternate now
+          OperationAlternate *superop = new OperationAlternate();
+          producing_operation = superop;
+          stringstream o;
+          o << "Replenish '" << getName() << "' (*)";
+          superop->setName(o.str());
+          superop->setHidden(true);
+          superop->setSearch("PRIORITY");
           SubOperation* subop = new SubOperation();
           subop->setOperation(oper);
           subop->setPriority(supitem->getPriority());
           subop->setEffective(supitem->getEffective());
-          if (producing_operation->getType() != *OperationAlternate::metadata)
-          {
-            // We are the second: create an alternate and add 2 suboperations
-            OperationAlternate *superop = new OperationAlternate();
-            superop->setHidden(true);
-            superop->setSearch("PRIORITY");
-            SubOperation* subop2 = new SubOperation();
-            subop2->setOperation(producing_operation);
-            // Note that priority and effectivity are at default values.
-            // If not, the alternate would already have been created.
-            subop2->setOwner(superop);
-            producing_operation = superop;
-            subop->setOwner(producing_operation);
-          }
-          else
-            // We are third or later: just add a suboperation
-            subop->setOwner(producing_operation);
+          subop->setOwner(superop);
         }
         else
-        {
-          // We are the first: only create an operationsupplieritem instance
-          if (supitem->getEffective() == DateRange() && supitem->getPriority() == 1)
-          {
-            // Already create an alternate now
-            OperationAlternate *superop = new OperationAlternate();
-            producing_operation = superop;
-            superop->setHidden(true);
-            superop->setSearch("PRIORITY");
-            SubOperation* subop = new SubOperation();
-            subop->setOperation(oper);
-            subop->setPriority(supitem->getPriority());
-            subop->setEffective(supitem->getEffective());
-          }
-          else
-            // Use a single operation. If an alternate is required
-            // later on, we know it has the default priority and effectivity.
-            producing_operation = oper;
-        }
+          // Use a single operation. If an alternate is required
+          // later on, we know it has the default priority and effectivity.
+          producing_operation = oper;
       }
     }
     // While-loop to add suppliers defined at parent items
@@ -678,7 +698,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
   if (producing_operation == unitializedProducing)
   {
     // No producer could be generated. No replenishment will be possible.
-    logger << "Warning: can't replenish buffer " << this << endl;
+    logger << "Warning: Can't replenish buffer '" << this << "'" << endl;
     producing_operation = NULL;
   }
 }

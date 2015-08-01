@@ -68,39 +68,23 @@ DECLARE_EXPORT SupplierItem::~SupplierItem()
 
 
 DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u)
-  : size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
+  : loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
 {
   setSupplier(s);
   setItem(r);
   setPriority(u);
   initType(metadata);
-  try { validate(ADD); }
-  catch (...)
-  {
-    if (getSupplier()) getSupplier()->items.erase(this);
-    if (getItem()) getItem()->suppliers.erase(this);
-    resetReferenceCount();
-    throw;
-  }
 }
 
 
 DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u, DateRange e)
-  : size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
+  : loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
 {
   setSupplier(s);
   setItem(r);
   setPriority(u);
   setEffective(e);
   initType(metadata);
-  try { validate(ADD); }
-  catch (...)
-  {
-    if (getSupplier()) getSupplier()->items.erase(this);
-    if (getItem()) getItem()->suppliers.erase(this);
-    resetReferenceCount();
-    throw;
-  }
 }
 
 
@@ -194,9 +178,10 @@ DECLARE_EXPORT void SupplierItem::validate(Action action)
   // Catch null supplier and item pointers
   Supplier *sup = getSupplier();
   Item *it = getItem();
+  Location *loc = getLocation();
   if (!sup || !it)
   {
-    // Invalid load model
+    // Invalid supplieritem model
     if (!sup && !it)
       throw DataException("Missing supplier and item on a supplieritem");
     else if (!sup)
@@ -207,12 +192,13 @@ DECLARE_EXPORT void SupplierItem::validate(Action action)
           + sup->getName() + "'");
   }
 
-  // Check if a supplieritem with 1) identical supplier, 2) identical item and
-  // 3) overlapping effectivity dates already exists
+  // Check if a supplieritem with 1) identical supplier, 2) identical item
+  // 3) identical location, and 4) overlapping effectivity dates already exists
   Supplier::itemlist::const_iterator i = sup->getItems().begin();
   for (; i != sup->getItems().end(); ++i)
     if (i->getItem() == it
         && i->getEffective().overlap(getEffective())
+        && i->getLocation() == loc
         && &*i != this)
       break;
 

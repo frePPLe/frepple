@@ -314,6 +314,48 @@ class loadData(object):
     print('Loaded %d items in %.2f seconds' % (cnt, time() - starttime))
 
 
+  def loadSupplierItems(self):
+    print('Importing supplier items...')
+    cnt = 0
+    starttime = time()
+    self.cursor.execute('''
+      SELECT
+        supplier_id, item_id, location_id, sizeminimum, sizemultiple,
+        cost, priority, effective_start, effective_end, source
+      FROM supplieritem %s
+      ORDER BY supplier_id, item_id, priority desc, location_id
+      ''' % self.filter_where)
+    cursuppliername = None
+    curitemname = None
+    for i in self.cursor.fetchall():
+      cnt += 1
+      try:
+        if i[0] != cursuppliername:
+          cursuppliername = i[0]
+          cursupplier = frepple.supplier(name=cursuppliername)
+        if i[1] != curitemname:
+          curitemname = i[1]
+          curitem = frepple.item(name=curitemname)
+        cursupplieritem = frepple.supplieritem(supplier=cursupplier, item=curitem, source=i[9])
+        if i[2]:
+          cursupplieritem.location = frepple.location(name=i[2])
+        if i[3]:
+          cursupplieritem.size_minimum = i[3]
+        if i[4]:
+          cursupplieritem.size_multiple = i[4]
+        if i[5]:
+          cursupplieritem.cost = i[5]
+        if i[6]:
+          cursupplieritem.priority = i[6]
+        if i[7]:
+          cursupplieritem.effective_start = i[7]
+        if i[8]:
+          cursupplieritem.effective_end = i[8]
+      except Exception as e:
+        print("Error:", e)
+    print('Loaded %d supplier items in %.2f seconds' % (cnt, time() - starttime))
+
+
   def loadBuffers(self):
     print('Importing buffers...')
     cnt = 0
@@ -725,6 +767,7 @@ class loadData(object):
     self.loadOperations()
     self.loadSuboperations()
     self.loadItems()
+    self.loadSupplierItems()
     self.loadBuffers()
     self.loadSetupMatrices()
     self.loadResources()

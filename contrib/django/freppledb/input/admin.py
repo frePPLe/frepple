@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow, Skill, ResourceSkill
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation, Supplier
+from freppledb.input.models import SupplierItem
 from freppledb.admin import data_site
 from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 
@@ -67,6 +68,14 @@ class Customer_admin(MultiDBModelAdmin):
 data_site.register(Customer, Customer_admin)
 
 
+class SupplierItem_inline(MultiDBTabularInline):
+  model = SupplierItem
+  fk_name = 'item'
+  raw_id_fields = ('supplier','location')
+  extra = 0
+  exclude = ('source',)
+
+
 class Supplier_admin(MultiDBModelAdmin):
   model = Supplier
   raw_id_fields = ('owner',)
@@ -79,8 +88,17 @@ class Item_admin(MultiDBModelAdmin):
   model = Item
   save_on_top = True
   raw_id_fields = ('operation', 'owner',)
+  inlines = [ SupplierItem_inline, ]
   exclude = ('source',)
 data_site.register(Item, Item_admin)
+
+
+class SupplierItem_admin(MultiDBModelAdmin):
+  model = SupplierItem
+  save_on_top = True
+  raw_id_fields = ('supplier', 'location')
+  exclude = ('source',)
+data_site.register(SupplierItem, SupplierItem_admin)
 
 
 class SubOperation_inline(MultiDBTabularInline):
@@ -222,7 +240,6 @@ class Load_admin(MultiDBModelAdmin):
        }),
     )
 data_site.register(Load, Load_admin)
-
 
 
 class OperationPlan_admin(MultiDBModelAdmin):

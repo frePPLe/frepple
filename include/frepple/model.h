@@ -1477,7 +1477,7 @@ class SupplierDefault : public Supplier
 /** @brief A suboperation is used in operation types which have child
   * operations.
   */
-class SubOperation : public Object
+class SubOperation : public Object, public HasSource
 {
   private:
     /** Pointer to the parent operation. */
@@ -1574,6 +1574,7 @@ class SubOperation : public Object
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
+      HasSource::registerFields<Cls>(m);
     }
 
     class iterator

@@ -30,7 +30,7 @@ from django.utils.text import capfirst
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow, Skill
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
-from freppledb.input.models import ResourceSkill, Supplier, searchmode
+from freppledb.input.models import ResourceSkill, Supplier, SupplierItem, searchmode
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
@@ -494,6 +494,33 @@ class SupplierList(GridReport):
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='supplier'),
+    GridFieldText('source', title=_('source')),
+    GridFieldLastModified('lastmodified'),
+    )
+
+
+class SupplierItemList(GridReport):
+  '''
+  A list report to show supplieritems.
+  '''
+  template = 'input/supplieritemlist.html'
+  title = _("SupplierItem List")
+  basequeryset = SupplierItem.objects.all()
+  model = SupplierItem
+  frozenColumns = 1
+
+  rows = (
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='supplieritem'),
+    GridFieldText('supplier', title=_('supplier'), formatter='supplier'),
+    GridFieldText('item', title=_('item'), formatter='item'),
+    GridFieldText('location', title=_('location'), formatter='location'),
+    GridFieldDuration('leadtime', title=_('lead time')),
+    GridFieldNumber('sizeminimum', title=_('size minimum')),
+    GridFieldNumber('sizemultiple', title=_('size multiple')),
+    GridFieldCurrency('cost', title=_('cost')),
+    GridFieldNumber('priority', title=_('priority')),
+    GridFieldDateTime('effective_start', title=_('effective start')),
+    GridFieldDateTime('effective_end', title=_('effective end')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )

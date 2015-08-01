@@ -83,10 +83,10 @@ DECLARE_EXPORT void Object::writeElement(
     // Write only the fields required to successfully save&restore the object
     if (meta.category)
       for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-        if (!(*i)->getFlag(DETAIL))
+        if (!(*i)->getFlag(DETAIL) && !(*i)->getFlag(PLAN))
           (*i)->writeField(*o);
     for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      if (!(*i)->getFlag(DETAIL))
+      if (!(*i)->getFlag(DETAIL) && !(*i)->getFlag(PLAN))
         (*i)->writeField(*o);
     PythonDictionary::write(o, getDict());
   }

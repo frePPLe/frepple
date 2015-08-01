@@ -549,5 +549,33 @@ class Migration(migrations.Migration):
             name='flow',
             unique_together=set([('operation', 'thebuffer')]),
         ),
+        migrations.CreateModel(
+            name='SupplierItem',
+            fields=[
+                ('source', models.CharField(verbose_name='source', null=True, max_length=20, blank=True, db_index=True)),
+                ('lastmodified', models.DateTimeField(verbose_name='last modified', editable=False, default=django.utils.timezone.now, db_index=True)),
+                ('id', models.AutoField(verbose_name='identifier', serialize=False, primary_key=True)),
+                ('leadtime', freppledb.common.fields.DurationField(verbose_name='leadtime', help_text='Purchasing lead time', decimal_places=4, max_digits=15, blank=True, null=True)),
+                ('sizeminimum', models.DecimalField(verbose_name='size minimum', help_text='A minimum purchasing quantity', decimal_places=4, max_digits=15, blank=True, null=True, default='1.0')),
+                ('sizemultiple', models.DecimalField(verbose_name='size multiple', help_text='A multiple purchasing quantity', decimal_places=4, max_digits=15, blank=True, null=True)),
+                ('cost', models.DecimalField(verbose_name='cost', help_text='Purchasing cost per unit', decimal_places=4, max_digits=15, blank=True, null=True)),
+                ('priority', models.IntegerField(verbose_name='priority', help_text='Priority of this flow in a group of alternates', default=1, null=True, blank=True)),
+                ('effective_start', models.DateTimeField(verbose_name='effective start', help_text='Validity start date', null=True, blank=True)),
+                ('effective_end', models.DateTimeField(verbose_name='effective end', help_text='Validity end date', null=True, blank=True)),
+                ('item', models.ForeignKey(verbose_name='item', related_name='items', to='input.Item')),
+                ('location', models.ForeignKey(verbose_name='location', related_name='supplieritems', to='input.Location', blank=True, null=True)),
+                ('supplier', models.ForeignKey(verbose_name='supplier', related_name='suppliers', to='input.Supplier')),
+            ],
+            options={
+                'verbose_name': 'supplieritem',
+                'db_table': 'supplieritem',
+                'abstract': False,
+                'verbose_name_plural': 'supplieritems',
+            },
+        ),
+        migrations.AlterUniqueTogether(
+            name='supplieritem',
+            unique_together=set([('supplier', 'item', 'location')]),
+        ),
         migrations.RunPython(loadParameters),
     ]

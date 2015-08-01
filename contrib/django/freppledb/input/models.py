@@ -133,22 +133,6 @@ class Customer(AuditModel, HierarchyModel):
     ordering = ['name']
 
 
-class Supplier(AuditModel, HierarchyModel):
-  # Database fields
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-
-  def __str__(self):
-    return self.name
-
-  class Meta(AuditModel.Meta):
-    db_table = 'supplier'
-    verbose_name = _('supplier')
-    verbose_name_plural = _('suppliers')
-    ordering = ['name']
-
-
 class Item(AuditModel, HierarchyModel):
   # Database fields
   description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
@@ -172,6 +156,85 @@ class Item(AuditModel, HierarchyModel):
     verbose_name = _('item')
     verbose_name_plural = _('items')
     ordering = ['name']
+
+
+class Supplier(AuditModel, HierarchyModel):
+  # Database fields
+  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
+  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
+  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
+
+  def __str__(self):
+    return self.name
+
+  class Meta(AuditModel.Meta):
+    db_table = 'supplier'
+    verbose_name = _('supplier')
+    verbose_name_plural = _('suppliers')
+    ordering = ['name']
+
+
+class SupplierItem(AuditModel):
+
+  # Database fields
+  id = models.AutoField(_('identifier'), primary_key=True)
+  supplier = models.ForeignKey(
+    Supplier, verbose_name=_('supplier'),
+    db_index=True, related_name='suppliers'
+    )
+  item = models.ForeignKey(
+    Item, verbose_name=_('item'),
+    db_index=True, related_name='items'
+    )
+  location = models.ForeignKey(
+    Location, verbose_name=_('location'), null=True, blank=True,
+    db_index=True, related_name='supplieritems'
+    )
+  leadtime = DurationField(
+    _('lead time'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Purchasing lead time')
+    )
+  sizeminimum = models.DecimalField(
+    _('size minimum'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    null=True, blank=True, default='1.0',
+    help_text=_("A minimum purchasing quantity")
+    )
+  sizemultiple = models.DecimalField(
+    _('size multiple'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("A multiple purchasing quantity")
+    )
+  cost = models.DecimalField(
+    _('cost'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("Purchasing cost per unit")
+    )
+  priority = models.IntegerField(
+    _('priority'), default=1, null=True, blank=True,
+    help_text=_('Priority of this flow in a group of alternates')
+    )
+  effective_start = models.DateTimeField(
+    _('effective start'), null=True, blank=True,
+    help_text=_('Validity start date')
+    )
+  effective_end = models.DateTimeField(
+    _('effective end'), null=True, blank=True,
+    help_text=_('Validity end date')
+    )
+
+  def __str__(self):
+    return '%s - %s - %s' % (
+      self.supplier.name if self.supplier else 'No supplier',
+      self.item.name if self.item else 'No item',
+      self.location.name if self.location else 'Any location'
+      )
+
+  class Meta(AuditModel.Meta):
+    db_table = 'supplieritem'
+    unique_together = (('supplier', 'item', 'location'),)  # TODO also include effectivity in this
+    verbose_name = _('supplieritem')
+    verbose_name_plural = _('supplieritems')
 
 
 class Operation(AuditModel):

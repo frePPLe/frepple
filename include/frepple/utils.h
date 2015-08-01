@@ -6976,6 +6976,25 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
 
     virtual void writeField(Serializer& output) const
     {
+      switch (output.getContentType())
+      {
+        case MANDATORY:
+          if (!getFlag(MANDATORY))
+            return;
+          break;
+        case BASE:
+          if (getFlag(DETAIL) || getFlag(PLAN))
+            return;
+          break;
+        case DETAIL:
+          if (!getFlag(DETAIL))
+            return;
+          break;
+        case PLAN:
+          if (!getFlag(PLAN))
+            return;
+          break;
+      }
       if (getFlag(DONT_SERIALIZE) || !getf)
         return;
       if (getFlag(WRITE_FULL))

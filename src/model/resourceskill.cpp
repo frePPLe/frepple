@@ -104,11 +104,15 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args, PyObject* 
   {
     // Pick up the skill
     PyObject* skill = PyDict_GetItemString(kwds,"skill");
+    if (!skill)
+      throw DataException("Missing skill on ResourceSkill");
     if (!PyObject_TypeCheck(skill, Skill::metadata->pythonClass))
       throw DataException("resourceskill skill must be of type skill");
 
     // Pick up the resource
     PyObject* res = PyDict_GetItemString(kwds,"resource");
+    if (!skill)
+      throw DataException("Missing resource on ResourceSkill");
     if (!PyObject_TypeCheck(res, Resource::metadata->pythonClass))
       throw DataException("resourceskill resource must be of type resource");
 

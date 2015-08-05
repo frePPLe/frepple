@@ -60,6 +60,13 @@ DECLARE_EXPORT Item::~Item()
   // Remove references from the demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
     if (l->getItem() == this) l->setItem(NULL);
+
+  // Remove all item distributions referencing this item
+  while (firstItemDistribution)
+    delete firstItemDistribution;
+
+  // The ItemSupplier objects are automatically deleted by the
+  // destructor of the Association list class.
 }
 
 

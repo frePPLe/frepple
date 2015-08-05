@@ -10,23 +10,26 @@
   </description>
 	<current>2009-01-01T00:00:00</current>
 	<locations>
-		<location name="All places">
-			<members>
-				<location name="Location 1"/>
-			</members>
+		<location>
+			<name>All places</name>
 		</location>
-		<location name="Location 1">
-			<owner name="All places"/>
-			<members>
-				<location name="Sublocation 1"/>
-				<location name="Sublocation 2"/>
-			</members>
+		<location>
+			<name>Location 1</name>
+			<owner>
+				<name>All places</name>
+			</owner>
 		</location>
-		<location name="Sublocation 1">
-			<owner name="Location 1"/>
+		<location>
+			<name>Sublocation 1</name>
+			<owner>
+				<name>Location 1</name>
+			</owner>
 		</location>
-		<location name="Sublocation 2">
-			<owner name="Location 1"/>
+		<location>
+			<name>Sublocation 2</name>
+			<owner>
+				<name>Location 1</name>
+			</owner>
 		</location>
 	</locations>
 	<customers>
@@ -38,61 +41,83 @@
 		</customer>
 	</customers>
 	<calendars>
-		<calendar name="assembly capacity">
+		<calendar>
+			<name>assembly capacity</name>
 			<default>1</default>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<value>2</value>
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="months">
+		<calendar>
+			<name>months</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00" end="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-01-01T00:00:00</end>
 				</bucket>
-				<bucket id="2" start="2009-02-01T00:00:00" end="2009-02-01T00:00:00">
+				<bucket>
+					<id>2</id>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-02-01T00:00:00</end>
 				</bucket>
-				<bucket id="3" start="2009-03-01T00:00:00" end="2009-03-01T00:00:00">
+				<bucket>
+					<id>3</id>
+					<start>2009-03-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
 				</bucket>
-				<bucket id="4" start="2009-04-01T00:00:00" end="2009-04-01T00:00:00">
+				<bucket>
+					<id>4</id>
+					<start>2009-04-01T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
 				</bucket>
-				<bucket id="5" start="2009-05-01T00:00:00" end="2009-05-01T00:00:00">
+				<bucket>
+					<id>5</id>
+					<start>2009-05-01T00:00:00</start>
+					<end>2009-05-01T00:00:00</end>
 				</bucket>
-				<bucket id="6" start="2009-06-01T00:00:00" end="2009-06-01T00:00:00">
+				<bucket>
+					<id>6</id>
+					<start>2009-06-01T00:00:00</start>
+					<end>2009-06-01T00:00:00</end>
 				</bucket>
-				<bucket id="7" start="2009-07-01T00:00:00" end="2009-07-01T00:00:00">
+				<bucket>
+					<id>7</id>
+					<start>2009-07-01T00:00:00</start>
+					<end>2009-07-01T00:00:00</end>
 				</bucket>
-				<bucket id="8" start="2009-08-01T00:00:00" end="2009-08-01T00:00:00">
+				<bucket>
+					<id>8</id>
+					<start>2009-08-01T00:00:00</start>
+					<end>2009-08-01T00:00:00</end>
 				</bucket>
 			</buckets>
 		</calendar>
 	</calendars>
-	<operations>
-		<operation name="delivery 1" xsi:type="operation_fixed_time">
-			<duration>P1D</duration>
-		</operation>
-		<operation name="make item 1" xsi:type="operation_fixed_time">
-			<duration>P1D</duration>
-		</operation>
-		<operation name="supply component A" xsi:type="operation_alternate">
-			<alternates>
-				<alternate>
-					<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time"/>
-					<priority>1</priority>
-				</alternate>
-				<alternate>
-					<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time"/>
-					<priority>2</priority>
-				</alternate>
-			</alternates>
-		</operation>
-		<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time">
-			<duration>P1D</duration>
-		</operation>
-		<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time">
-			<duration>P2D</duration>
-		</operation>
-	</operations>
+	<resources>
+		<resource>
+			<name>assemble</name>
+			<maximum_calendar>
+				<name>assembly capacity</name>
+			</maximum_calendar>
+			<location>
+				<name>Location 1</name>
+			</location>
+			<setupmatrix>
+				<name>assembly setup</name>
+			</setupmatrix>
+		</resource>
+		<resource>
+			<name>transport</name>
+			<location>
+				<name>Sublocation 1</name>
+			</location>
+		</resource>
+	</resources>
 	<items>
 		<item>
 			<name>component A</name>
@@ -102,33 +127,134 @@
 		</item>
 		<item>
 			<name>item 1</name>
-			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 		</item>
 	</items>
 	<buffers>
-		<buffer name="buffer 1">
-			<producing name="make item 1" xsi:type="operation_fixed_time"/>
+		<buffer>
+			<name>buffer 1</name>
+			<producing>
+				<name>make item 1</name>
+			</producing>
 			<item>
 				<name>item 1</name>
 			</item>
-			<location name="Location 1"/>
+			<location>
+				<name>Location 1</name>
+			</location>
 		</buffer>
-		<buffer name="buffer A">
-			<producing name="supply component A" xsi:type="operation_alternate"/>
+		<buffer>
+			<name>buffer A</name>
+			<producing xsi:type="operation_alternate">
+				<name>supply component A</name>
+			</producing>
 			<item>
 				<name>component A</name>
 			</item>
-			<location name="Location 1"/>
+			<location>
+				<name>Location 1</name>
+			</location>
 		</buffer>
-		<buffer name="buffer B">
+		<buffer>
+			<name>buffer B</name>
 			<item>
 				<name>component B</name>
 			</item>
-			<location name="Location 1"/>
+			<location>
+				<name>Location 1</name>
+			</location>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation>
+			<name>delivery 1</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>buffer 1</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>make item 1</name>
+			<loads>
+				<load>
+					<resource>
+						<name>assemble</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>buffer 1</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow>
+					<buffer>
+						<name>buffer A</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+				<flow>
+					<buffer>
+						<name>buffer B</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation xsi:type="operation_alternate">
+			<name>supply component A</name>
+			<suboperations>
+				<suboperation>
+					<operation>
+						<name>supply component A from supplier 1</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>supply component A from supplier 2</name>
+					</operation>
+					<priority>2</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation>
+			<name>supply component A from supplier 1</name>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>buffer A</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>supply component A from supplier 2</name>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>buffer A</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P2D</duration>
+		</operation>
+	</operations>
 	<demands>
-		<demand name="order 1">
+		<demand>
+			<name>order 1</name>
 			<customer>
 				<name>Customer 1</name>
 			</customer>
@@ -139,7 +265,8 @@
 			<due>2009-03-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 2">
+		<demand>
+			<name>order 2</name>
 			<customer>
 				<name>Customer 1</name>
 			</customer>
@@ -150,7 +277,8 @@
 			<due>2009-02-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 3">
+		<demand>
+			<name>order 3</name>
 			<customer>
 				<name>Customer 2</name>
 			</customer>
@@ -163,71 +291,26 @@
 		</demand>
 	</demands>
 	<setupmatrices>
-		<setupmatrix name="assembly setup" xsi:type="setupmatrix_default">
+		<setupmatrix>
+			<name>assembly setup</name>
 			<rules>
-				<rule priority="1">
+				<rule>
 					<fromsetup>product family 1</fromsetup>
 					<tosetup>product family 2</tosetup>
 					<duration>P10D</duration>
 					<cost>10</cost>
+					<priority>1</priority>
 				</rule>
-				<rule priority="2">
+				<rule>
 					<fromsetup>product family 2</fromsetup>
 					<tosetup>product family 1</tosetup>
 					<duration>P10D</duration>
 					<cost>10</cost>
+					<priority>2</priority>
 				</rule>
 			</rules>
 		</setupmatrix>
 	</setupmatrices>
-	<resources>
-		<resource name="assemble">
-			<maximum_calendar name="assembly capacity"/>
-			<location name="Location 1"/>
-			<setupmatrix name="assembly setup" xsi:type="setupmatrix_default"/>
-		</resource>
-		<resource name="transport">
-			<location name="Sublocation 1"/>
-		</resource>
-	</resources>
-	<loads>
-		<load>
-			<operation name="make item 1" xsi:type="operation_fixed_time"/>
-			<resource name="assemble"/>
-		</load>
-	</loads>
-	<flows>
-		<flow xsi:type="flow_start">
-			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 1"/>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="make item 1" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 1"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 1" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer A"/>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_start">
-			<operation name="make item 1" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer B"/>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer A"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer A"/>
-			<quantity>1</quantity>
-		</flow>
-	</flows>
 	<problems>
 		<problem>
 			<name>unplanned</name>

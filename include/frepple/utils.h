@@ -3143,14 +3143,14 @@ class Environment
   * When constructing a PythonData from an existing Python object, the
   * code that provided us the PyObject pointer should have incremented the
   * reference count already.
-  *
-  * TODO: the getString member uses a static string value. This makes this
-  * class nonreentrant, ie it is not possible to use multiple values simultaneously.
   */
 class PythonData : public DataValue
 {
   private:
     PyObject* obj;
+
+    // Used by the getString method to store a string value
+    string result;
 
   public:
     /** Default constructor. The default value is equal to Py_None. */
@@ -3225,14 +3225,13 @@ class PythonData : public DataValue
     /** Convert a Python string into a C++ string. */
     inline const string& getString() const
     {
-      static string result;
       if (obj == Py_None)
-        result = "";
+        const_cast<PythonData*>(this)->result = "";
       else if (PyUnicode_Check(obj))
       {
         // It's a Python unicode string
         PyObject* x = PyUnicode_AsEncodedString(obj, "UTF-8", "ignore");
-        result = PyBytes_AS_STRING(x);
+        const_cast<PythonData*>(this)->result = PyBytes_AS_STRING(x);
         Py_DECREF(x);
       }
       else
@@ -3241,7 +3240,7 @@ class PythonData : public DataValue
         // Call the repr() function on the object, and encode the result in UTF-8.
         PyObject* x1 = PyObject_Str(obj);
         PyObject* x2 = PyUnicode_AsEncodedString(x1, "UTF-8", "ignore");
-        result = PyBytes_AS_STRING(x2);
+        const_cast<PythonData*>(this)->result = PyBytes_AS_STRING(x2);
         Py_DECREF(x1);
         Py_DECREF(x2);
       }
@@ -3582,8 +3581,10 @@ class PythonDataValueDict : public DataValueDict
         return &result;
       }
       PyObject* val = PyDict_GetItemString(kwds, k.getName().c_str());
+      if (!val)
+        return NULL;
       const_cast<PythonDataValueDict*>(this)->result = PythonData(val);
-      return val ? &result : NULL;
+      return &result;
     }
 };
 

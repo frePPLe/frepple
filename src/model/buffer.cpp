@@ -638,6 +638,8 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
 
       // New operation needs to be created
       OperationItemSupplier *oper = new OperationItemSupplier(supitem, this);
+
+      // Merge the new operation in an alternate operation if required
       if (producing_operation && producing_operation != unitializedProducing)
       {
         // We're not the first
@@ -690,7 +692,133 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           // later on, we know it has the default priority and effectivity.
           producing_operation = oper;
       }
-    }
+    } // End loop over itemsuppliers
+
+    // Loop over all item distributions to replenish this item+location combination
+    Item::distributionIterator itemdist_iter = item->getDistributionIterator();
+    while (ItemDistribution *itemdist = itemdist_iter.next())
+    {
+      // Verify whether the ItemDistribution is applicable to the buffer location
+      // We need to reject the following 2 mismatches:
+      //   - buffer location is not null, and is not a member of the
+      //     ItemDistribution destination location
+      //   - buffer location is null, and the ItemDistribution destination location isn't
+      if (itemdist->getDestination())
+      {
+        if ((getLocation() && !getLocation()->isMemberOf(itemdist->getDestination()))
+          || !getLocation())
+          continue;
+      }
+
+      // Check if there is already a producing operation referencing this ItemDistribution
+      if (producing_operation && producing_operation != unitializedProducing)
+      {
+        if (producing_operation->getType() == *OperationItemDistribution::metadata)
+        {
+          OperationItemDistribution* o = static_cast<OperationItemDistribution*>(producing_operation);
+          if (o->getItemDistribution() == itemdist)
+            // Already exists
+            continue;
+        }
+        else
+        {
+          SubOperation::iterator subiter(producing_operation->getSubOperations());
+          while (SubOperation *o = subiter.next())
+            if (o->getOperation()->getType() == *OperationItemDistribution::metadata)
+            {
+              OperationItemDistribution* s = static_cast<OperationItemDistribution*>(o->getOperation());
+              if (s->getItemDistribution() == itemdist)
+                // Already exists
+                continue;
+            }
+        }
+      }
+
+      // New operation needs to be created for each allowed source location
+      for (Location::iterator loc = Location::begin(); loc != Location::end(); ++loc)
+      {
+        // Skip unqualified locations
+        if (itemdist->getOrigin() && !loc->isMemberOf(itemdist->getOrigin()))
+          continue; 
+      
+        // Find or create the source buffer
+        Buffer* originbuf = NULL;
+        for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
+          if (buf->getLocation() == &*loc && buf->getItem() == item)
+          {
+            originbuf = &*buf;
+            break;
+          }
+        if (!originbuf)
+        {
+          originbuf = new BufferDefault();
+          originbuf->setItem(item);
+          originbuf->setLocation(&*loc);
+          stringstream o;
+          o << item->getName() << " @ " << loc->getName();
+          originbuf->setName(o.str());
+        }
+
+        // Create new operation
+        OperationItemDistribution *oper = new OperationItemDistribution(itemdist, originbuf, this);
+
+        // Merge the new operation in an alternate operation if required
+        if (producing_operation && producing_operation != unitializedProducing)
+        {
+          // We're not the first
+          SubOperation* subop = new SubOperation();
+          subop->setOperation(oper);
+          subop->setPriority(itemdist->getPriority());
+          subop->setEffective(itemdist->getEffective());
+          if (producing_operation->getType() != *OperationAlternate::metadata)
+          {
+            // We are the second: create an alternate and add 2 suboperations
+            OperationAlternate *superop = new OperationAlternate();
+            stringstream o;
+            o << "Replenish '" << getName() << "' (*)";
+            superop->setName(o.str());
+            superop->setHidden(true);
+            superop->setSearch("PRIORITY");
+            SubOperation* subop2 = new SubOperation();
+            subop2->setOperation(producing_operation);
+            // Note that priority and effectivity are at default values.
+            // If not, the alternate would already have been created.
+            subop2->setOwner(superop);
+            producing_operation = superop;
+            subop->setOwner(producing_operation);
+          }
+          else
+            // We are third or later: just add a suboperation
+            subop->setOwner(producing_operation);
+        }
+        else
+        {
+          // We are the first: only create an operationItemSupplier instance
+          if (itemdist->getEffective() == DateRange() && itemdist->getPriority() == 1)
+          {
+            // Already create an alternate now
+            OperationAlternate *superop = new OperationAlternate();
+            producing_operation = superop;
+            stringstream o;
+            o << "Replenish '" << getName() << "' (*)";
+            superop->setName(o.str());
+            superop->setHidden(true);
+            superop->setSearch("PRIORITY");
+            SubOperation* subop = new SubOperation();
+            subop->setOperation(oper);
+            subop->setPriority(itemdist->getPriority());
+            subop->setEffective(itemdist->getEffective());
+            subop->setOwner(superop);
+          }
+          else
+            // Use a single operation. If an alternate is required
+            // later on, we know it has the default priority and effectivity.
+            producing_operation = oper;
+        }
+      } // End loop over origin locations
+
+    } // End loop over itemdistributions
+
     // While-loop to add suppliers defined at parent items
     item = item->getOwner();
   }
@@ -698,6 +826,8 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
   if (producing_operation == unitializedProducing)
   {
     // No producer could be generated. No replenishment will be possible.
+    new ProblemInvalidData(this, "no replenishment defined", "buffer",
+      Date::infinitePast, Date::infiniteFuture, 1);
     logger << "Warning: Can't replenish buffer '" << this << "'" << endl;
     producing_operation = NULL;
   }

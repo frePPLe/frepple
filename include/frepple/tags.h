@@ -63,6 +63,7 @@ class Tags
     static DECLARE_EXPORT const Keyword demand;
     static DECLARE_EXPORT const Keyword demands;
     static DECLARE_EXPORT const Keyword description;
+    static DECLARE_EXPORT const Keyword destination;
     static DECLARE_EXPORT const Keyword detectproblems;
     static DECLARE_EXPORT const Keyword discrete;
     static DECLARE_EXPORT const Keyword doubleproperty;
@@ -88,6 +89,8 @@ class Tags
     static DECLARE_EXPORT const Keyword hidden;
     static DECLARE_EXPORT const Keyword id;
     static DECLARE_EXPORT const Keyword item;
+    static DECLARE_EXPORT const Keyword itemdistribution;
+    static DECLARE_EXPORT const Keyword itemdistributions;
     static DECLARE_EXPORT const Keyword items;
     static DECLARE_EXPORT const Keyword itemsupplier;
     static DECLARE_EXPORT const Keyword itemsuppliers;
@@ -121,6 +124,7 @@ class Tags
     static DECLARE_EXPORT const Keyword operationplan;
     static DECLARE_EXPORT const Keyword operationplans;
     static DECLARE_EXPORT const Keyword operations;
+    static DECLARE_EXPORT const Keyword origin;
     static DECLARE_EXPORT const Keyword owner;
     static DECLARE_EXPORT const Keyword pegging;
     static DECLARE_EXPORT const Keyword pegging_upstream;

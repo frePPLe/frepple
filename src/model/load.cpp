@@ -260,11 +260,15 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
   {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds,"operation");
+    if (!oper)
+      throw DataException("missing operation on Load");
     if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
       throw DataException("load operation must be of type operation");
 
     // Pick up the resource
     PyObject* res = PyDict_GetItemString(kwds,"resource");
+    if (!res)
+      throw DataException("missing resource on Load");
     if (!PyObject_TypeCheck(res, Resource::metadata->pythonClass))
       throw DataException("load resource must be of type resource");
 

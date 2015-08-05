@@ -67,6 +67,27 @@ DECLARE_EXPORT Location::~Location()
   for (Operation::iterator oper = Operation::begin();
       oper != Operation::end(); ++oper)
     if (oper->getLocation() == this) oper->setLocation(NULL);
+
+  // Remove all item suppliers referencing this location
+  for (Supplier::iterator sup = Supplier::begin();
+    sup != Supplier::end(); ++sup)
+  {
+    for (Supplier::itemlist::const_iterator it = sup->getItems().begin();
+      it != sup->getItems().end(); )
+    {
+      if (it->getLocation() == this)
+      {
+        const ItemSupplier *itemsup = &*it;
+        ++it;   // Advance iterator before the delete
+        delete itemsup;
+      }
+      else
+        ++it;
+    }
+  }
+
+  // The ItemDistribution objects are automatically deleted by the
+  // destructor of the Association list class.
 }
 
 } // end namespace

@@ -40,6 +40,8 @@ urlpatterns = patterns(
   (r'^data/input/setupmatrix/$', freppledb.input.views.SetupMatrixList.as_view()),
   (r'^data/input/suboperation/$', freppledb.input.views.SubOperationList.as_view()),
   (r'^data/input/operationplan/$', freppledb.input.views.OperationPlanList.as_view()),
+  (r'^data/input/purchaseorder/$', freppledb.input.views.PurchaseOrderList.as_view()),
+  (r'^data/input/distributionorder/$', freppledb.input.views.DistributionOrderList.as_view()),
   (r'^data/input/skill/$', freppledb.input.views.SkillList.as_view()),
   (r'^data/input/resourceskill/$', freppledb.input.views.ResourceSkillList.as_view()),
   (r'^data/input/supplier/$', freppledb.input.views.SupplierList.as_view()),

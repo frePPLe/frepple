@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for suppliers</name>
+  <description>
+  This test model demonstrates the distribution network modeling features.
+  </description>
+  <current>2015-01-01T00:00:00</current>
+  <locations>
+    <location name="Region 1"/>
+    <location name="Region 2"/>
+    <location name="Central WH"/>
+    <location name="Regional DC 1"/>
+    <location name="Local DC 1a">
+      <owner name="Region 1"/>
+    </location>
+    <location name="Local DC 1b">
+      <owner name="Region 1"/>
+    </location>
+    <location name="Regional DC 2"/>
+    <location name="Local DC 2a">
+      <owner name="Region 2"/>
+    </location>
+    <location name="Local DC 2b">
+      <owner name="Region 2"/>
+    </location>
+  </locations>
+  <suppliers>
+    <supplier name="Supplier 1"/>
+    <supplier name="Supplier 2"/>
+    <supplier name="Supplier 3"/>
+  </suppliers>
+  <items>
+    <!-- DEFAULT NETWORK FOR ALL PRODUCTS -->
+    <item name="All products" price="1">
+	    <itemsuppliers>
+	      <itemsupplier>
+          <supplier name="Supplier 1" />
+          <leadtime>P7D</leadtime>
+          <location name="Central WH"/>
+          <priority>1</priority>
+        </itemsupplier>
+        <itemsupplier>
+          <supplier name="Supplier 1" />
+          <leadtime>P14D</leadtime>
+          <location name="Regional DC 2"/>
+          <priority>2</priority>
+        </itemsupplier>
+	    </itemsuppliers>
+	    <itemdistributions>
+        <itemdistribution>
+          <origin name="Central WH" />
+          <leadtime>P10D</leadtime>
+          <destination name="Regional DC 1"/>
+          <priority>1</priority>
+        </itemdistribution>
+        <itemdistribution>
+          <origin name="Central WH" />
+          <leadtime>P12D</leadtime>
+          <destination name="Regional DC 2"/>
+          <priority>1</priority>
+        </itemdistribution>
+        <itemdistribution>
+          <origin name="Regional DC 1" />
+          <destination name="Region 1"/>
+          <leadtime>P3D</leadtime>
+          <priority>1</priority>
+        </itemdistribution>
+        <itemdistribution>
+          <origin name="Regional DC 2" />
+          <destination name="Region 2"/>
+          <leadtime>P3D</leadtime>
+          <priority>1</priority>
+        </itemdistribution>
+      </itemdistributions>
+    </item>
+    <!-- ITEM USING DEFAULT DISTRIBUTION AND PURCHASING -->
+    <item name="product A">
+      <owner name="All products"/>
+      <price>2</price>
+    </item>
+  </items>
+
+  <buffers>
+    <buffer name="product A @ Central WH" onhand="10"><item name="product A"/><location name="Central WH"/></buffer>
+  </buffers>
+
+  <demands>
+    <demand name="order 1 for product A">
+      <quantity>100</quantity>
+      <due>2015-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="product A">
+        <operation name="Delivery A">
+          <flows>
+            <flow>
+              <buffer name="product A @ Local DC 1a">
+                <item name="product A"/>
+                <location name="Local DC 1a"/>
+              </buffer>
+              <quantity> -1</quantity>
+            </flow>
+          </flows>
+        </operation>
+      </item>
+    </demand>
+    <demand name="order 2 for product A">
+      <quantity>100</quantity>
+      <due>2015-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="product A">
+        <operation name="Delivery A">
+          <flows>
+            <flow>
+              <buffer name="product A @ Local DC 1b">
+                <item name="product A"/>
+                <location name="Local DC 1b"/>
+              </buffer>
+              <quantity> -1</quantity>
+            </flow>
+          </flows>
+        </operation>
+      </item>
+    </demand>
+    <demand name="order 3 for product A">
+      <quantity>100</quantity>
+      <due>2015-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="product A">
+        <operation name="Delivery A">
+          <flows>
+            <flow>
+              <buffer name="product A @ Local DC 2a">
+                <item name="product A"/>
+                <location name="Local DC 2a"/>
+              </buffer>
+              <quantity> -1</quantity>
+            </flow>
+          </flows>
+        </operation>
+      </item>
+    </demand>
+    <demand name="order 4 for product A">
+      <quantity>100</quantity>
+      <due>2015-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="product A">
+        <operation name="Delivery A">
+          <flows>
+            <flow>
+              <buffer name="product A @ Local DC 2b">
+                <item name="product A"/>
+                <location name="Local DC 2b"/>
+              </buffer>
+              <quantity> -1</quantity>
+            </flow>
+          </flows>
+        </operation>
+      </item>
+    </demand>
+  </demands>
+
+<?python
+print("SAVING MODEL IN XML FORMAT")
+frepple.saveXMLfile("output.1.xml")
+
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+
+print("TESTING PYTHON API")
+s = frepple.location(name='X')
+d = frepple.location(name='Z')
+r = frepple.item(name='Y')
+frepple.itemdistribution(origin=s, destination=d, item=r)
+with open("output.4.xml","wt") as output:
+  for i in frepple.items():
+    print("Item ", i.name, ":", file=output)
+    for j in i.itemdistributions:
+      print(
+        "     ", j.origin.name if j.origin else "",
+        j.destination.name if j.destination else "",
+        j.leadtime, j.priority,
+        file=output
+        )
+
+print("ERASE PLAN DATA")
+frepple.erase(False)
+
+print("ERASE ALL DATA")
+frepple.erase(True)
+?>
+
+</plan>

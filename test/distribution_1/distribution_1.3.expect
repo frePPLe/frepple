@@ -1,0 +1,146 @@
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	100	100
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	100	200
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	100	300
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	100	400
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	100	500
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	100	600
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	100	700
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	100	800
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	-100	700
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	-100	600
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	-100	500
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	-100	400
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	-100	300
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	-100	200
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	-100	100
+BUFFER	All products @ Central WH	2014-12-19T00:00:00	-100	0
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	100	100
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	100	200
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	100	300
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	100	400
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	100	500
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	100	600
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	100	700
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	100	800
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	-100	700
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	-100	600
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	-100	500
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	-100	400
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	-100	300
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	-100	200
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	-100	100
+BUFFER	All products @ Regional DC 1	2014-12-29T00:00:00	-100	0
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	100	100
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	100	200
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	100	300
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	100	400
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	100	500
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	100	600
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	100	700
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	100	800
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	-100	700
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	-100	600
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	-100	500
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	-100	400
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	-100	300
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	-100	200
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	-100	100
+BUFFER	All products @ Regional DC 2	2014-12-29T00:00:00	-100	0
+BUFFER	product A @ Central WH	1971-01-01T00:00:00	10	10
+BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	100	100
+BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	100	200
+BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	100	300
+BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	100	400
+BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	-100	300
+BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	-100	200
+BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	-100	100
+BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	-100	0
+BUFFER	product A @ Local DC 1b	2015-01-01T00:00:00	100	100
+BUFFER	product A @ Local DC 1b	2015-01-01T00:00:00	100	200
+BUFFER	product A @ Local DC 1b	2015-01-01T00:00:00	100	300
+BUFFER	product A @ Local DC 1b	2015-01-01T00:00:00	100	400
+BUFFER	product A @ Local DC 1b	2015-01-01T00:00:00	-100	300
+BUFFER	product A @ Local DC 1b	2015-01-01T00:00:00	-100	200
+BUFFER	product A @ Local DC 1b	2015-01-01T00:00:00	-100	100
+BUFFER	product A @ Local DC 1b	2015-01-01T00:00:00	-100	0
+BUFFER	product A @ Local DC 2a	2015-01-01T00:00:00	100	100
+BUFFER	product A @ Local DC 2a	2015-01-01T00:00:00	100	200
+BUFFER	product A @ Local DC 2a	2015-01-01T00:00:00	100	300
+BUFFER	product A @ Local DC 2a	2015-01-01T00:00:00	100	400
+BUFFER	product A @ Local DC 2a	2015-01-01T00:00:00	-100	300
+BUFFER	product A @ Local DC 2a	2015-01-01T00:00:00	-100	200
+BUFFER	product A @ Local DC 2a	2015-01-01T00:00:00	-100	100
+BUFFER	product A @ Local DC 2a	2015-01-01T00:00:00	-100	0
+BUFFER	product A @ Local DC 2b	2015-01-01T00:00:00	100	100
+BUFFER	product A @ Local DC 2b	2015-01-01T00:00:00	100	200
+BUFFER	product A @ Local DC 2b	2015-01-01T00:00:00	100	300
+BUFFER	product A @ Local DC 2b	2015-01-01T00:00:00	100	400
+BUFFER	product A @ Local DC 2b	2015-01-01T00:00:00	-100	300
+BUFFER	product A @ Local DC 2b	2015-01-01T00:00:00	-100	200
+BUFFER	product A @ Local DC 2b	2015-01-01T00:00:00	-100	100
+BUFFER	product A @ Local DC 2b	2015-01-01T00:00:00	-100	0
+DEMAND	order 1 for product A	2015-01-01T00:00:00	100
+DEMAND	order 2 for product A	2015-01-01T00:00:00	100
+DEMAND	order 3 for product A	2015-01-01T00:00:00	100
+DEMAND	order 4 for product A	2015-01-01T00:00:00	100
+OPERATION	Delivery A	2015-01-01T00:00:00	2015-01-01T00:00:00	100
+OPERATION	Delivery A	2015-01-01T00:00:00	2015-01-01T00:00:00	100
+OPERATION	Delivery A	2015-01-01T00:00:00	2015-01-01T00:00:00	100
+OPERATION	Delivery A	2015-01-01T00:00:00	2015-01-01T00:00:00	100
+OPERATION	Purchase 'All products @ Central WH' from 'Supplier 1' (*)	2014-12-12T00:00:00	2014-12-19T00:00:00	100
+OPERATION	Purchase 'All products @ Central WH' from 'Supplier 1' (*)	2014-12-12T00:00:00	2014-12-19T00:00:00	100
+OPERATION	Purchase 'All products @ Central WH' from 'Supplier 1' (*)	2014-12-12T00:00:00	2014-12-19T00:00:00	100
+OPERATION	Purchase 'All products @ Central WH' from 'Supplier 1' (*)	2014-12-12T00:00:00	2014-12-19T00:00:00	100
+OPERATION	Purchase 'All products @ Central WH' from 'Supplier 1' (*)	2014-12-12T00:00:00	2014-12-19T00:00:00	100
+OPERATION	Purchase 'All products @ Central WH' from 'Supplier 1' (*)	2014-12-12T00:00:00	2014-12-19T00:00:00	100
+OPERATION	Purchase 'All products @ Central WH' from 'Supplier 1' (*)	2014-12-12T00:00:00	2014-12-19T00:00:00	100
+OPERATION	Purchase 'All products @ Central WH' from 'Supplier 1' (*)	2014-12-12T00:00:00	2014-12-19T00:00:00	100
+OPERATION	Purchase 'All products @ Regional DC 2' from 'Supplier 1' (*)	2014-12-15T00:00:00	2014-12-29T00:00:00	100
+OPERATION	Purchase 'All products @ Regional DC 2' from 'Supplier 1' (*)	2014-12-15T00:00:00	2014-12-29T00:00:00	100
+OPERATION	Purchase 'All products @ Regional DC 2' from 'Supplier 1' (*)	2014-12-15T00:00:00	2014-12-29T00:00:00	100
+OPERATION	Purchase 'All products @ Regional DC 2' from 'Supplier 1' (*)	2014-12-15T00:00:00	2014-12-29T00:00:00	100
+OPERATION	Purchase 'All products @ Regional DC 2' from 'Supplier 1' (*)	2014-12-15T00:00:00	2014-12-29T00:00:00	100
+OPERATION	Purchase 'All products @ Regional DC 2' from 'Supplier 1' (*)	2014-12-15T00:00:00	2014-12-29T00:00:00	100
+OPERATION	Purchase 'All products @ Regional DC 2' from 'Supplier 1' (*)	2014-12-15T00:00:00	2014-12-29T00:00:00	100
+OPERATION	Purchase 'All products @ Regional DC 2' from 'Supplier 1' (*)	2014-12-15T00:00:00	2014-12-29T00:00:00	100
+PROBLEM	material excess	Buffer 'product A @ Central WH' has material excess of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Central WH' (*)' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Central WH' (*)' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Central WH' (*)' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Central WH' (*)' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Central WH' (*)' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Central WH' (*)' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Central WH' (*)' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Central WH' (*)' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 1' (*)' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 1' (*)' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 1' (*)' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 1' (*)' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 1' (*)' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 1' (*)' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 1' (*)' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 1' (*)' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 2' (*)' planned in the past	2014-12-15T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 2' (*)' planned in the past	2014-12-15T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 2' (*)' planned in the past	2014-12-15T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 2' (*)' planned in the past	2014-12-15T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 2' (*)' planned in the past	2014-12-15T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 2' (*)' planned in the past	2014-12-15T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 2' (*)' planned in the past	2014-12-15T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'All products @ Regional DC 2' (*)' planned in the past	2014-12-15T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 1a' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 1a' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 1a' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 1a' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 1b' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 1b' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 1b' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 1b' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 2a' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 2a' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 2a' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 2a' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 2b' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 2b' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 2b' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish 'product A @ Local DC 2b' (*)' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00

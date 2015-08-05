@@ -235,11 +235,15 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
   {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds, "operation");
+    if (!oper)
+      throw DataException("missing operation on Flow");
     if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
       throw DataException("flow operation must be of type operation");
 
     // Pick up the buffer
     PyObject* buf = PyDict_GetItemString(kwds, "buffer");
+    if (!buf)
+      throw DataException("missing buffer on Flow");
     if (!PyObject_TypeCheck(buf, Buffer::metadata->pythonClass))
       throw DataException("flow buffer must be of type buffer");
 

@@ -22,6 +22,8 @@ a high level overview of the model objects and their relationships.
    demand
    flow
    item
+   item-supplier
+   item-distribution
    load
    location
    operation
@@ -33,4 +35,3 @@ a high level overview of the model objects and their relationships.
    setup-matrix
    skill
    supplier
-   supplier-item

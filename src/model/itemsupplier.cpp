@@ -67,6 +67,13 @@ DECLARE_EXPORT ItemSupplier::~ItemSupplier()
 }
 
 
+DECLARE_EXPORT ItemSupplier::ItemSupplier() : loc(NULL),
+  size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
+{
+  initType(metadata);
+}
+
+
 DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u)
   : loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
 {
@@ -88,18 +95,21 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange
 }
 
 
-/** @todo this method implementation is not generic enough and not extendible by subclasses. */
 PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 {
   try
   {
     // Pick up the supplier
     PyObject* sup = PyDict_GetItemString(kwds,"supplier");
+    if (!sup)
+      throw DataException("missing supplier on ItemSupplier");
     if (!PyObject_TypeCheck(sup, Supplier::metadata->pythonClass))
       throw DataException("ItemSupplier supplier must be of type supplier");
 
     // Pick up the item
     PyObject* it = PyDict_GetItemString(kwds,"item");
+    if (!it)
+      throw DataException("missing item on ItemSupplier");
     if (!PyObject_TypeCheck(it, Item::metadata->pythonClass))
       throw DataException("ItemSupplier item must be of type item");
 
@@ -142,10 +152,7 @@ PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args, PyObject* k
         Py_DECREF(key_utf8);
         if (!attr.isA(Tags::effective_end) && !attr.isA(Tags::effective_start)
           && !attr.isA(Tags::supplier) && !attr.isA(Tags::item)
-          && !attr.isA(Tags::priority) && !attr.isA(Tags::type)
-          && !attr.isA(Tags::action) && !attr.isA(Tags::cost)
-          && !attr.isA(Tags::size_minimum) && !attr.isA(Tags::size_multiple)
-          && !attr.isA(Tags::leadtime))
+          && !attr.isA(Tags::type) && !attr.isA(Tags::action))
         {
           const MetaFieldBase* fmeta = l->getType().findField(attr.getHash());
           if (!fmeta && l->getType().category)
@@ -183,12 +190,12 @@ DECLARE_EXPORT void ItemSupplier::validate(Action action)
   {
     // Invalid ItemSupplier model
     if (!sup && !it)
-      throw DataException("Missing supplier and item on a ItemSupplier");
+      throw DataException("Missing supplier and item on a itemsupplier");
     else if (!sup)
-      throw DataException("Missing supplier on a ItemSupplier on item '"
+      throw DataException("Missing supplier on a itemsupplier on item '"
           + it->getName() + "'");
     else if (!it)
-      throw DataException("Missing item on a ItemSupplier on supplier '"
+      throw DataException("Missing item on a itemsupplier on supplier '"
           + sup->getName() + "'");
   }
 
@@ -213,17 +220,17 @@ DECLARE_EXPORT void ItemSupplier::validate(Action action)
       }
       break;
     case CHANGE:
-      throw DataException("Can't update a ItemSupplier");
+      throw DataException("Can't update a itemsupplier");
     case ADD_CHANGE:
       // ADD is handled in the code after the switch statement
       if (i == sup->getItems().end()) break;
-      throw DataException("Can't update a ItemSupplier");
+      throw DataException("Can't update a itemsupplier");
     case REMOVE:
       // This ItemSupplier was only used temporarily during the reading process
       delete this;
       if (i == sup->getItems().end())
         // Nothing to delete
-        throw DataException("Can't remove nonexistent ItemSupplier of '"
+        throw DataException("Can't remove nonexistent itemsupplier of '"
             + sup->getName() + "' and '" + it->getName() + "'");
       delete &*i;
       return;
@@ -242,14 +249,14 @@ int OperationItemSupplier::initialize()
 {
   // Initialize the metadata
   metadata = MetaClass::registerClass<OperationItemSupplier>(
-    "operation", "operation_ItemSupplier"
+    "operation", "operation_itemsupplier"
     );
   registerFields<OperationItemSupplier>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<FlowPlan>::getPythonType();
-  x.setName("operation_ItemSupplier");
-  x.setDoc("frePPLe operation_ItemSupplier");
+  PythonType& x = FreppleCategory<OperationItemSupplier>::getPythonType();
+  x.setName("operation_itemsupplier");
+  x.setDoc("frePPLe operation_itemsupplier");
   x.supportgetattro();
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
@@ -263,7 +270,7 @@ DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
   if (!i || !b || !i->getSupplier())
     throw LogicException(
       "An OperationItemSupplier always needs to point to "
-      "a ItemSupplier and a buffer"
+      "a itemsupplier and a buffer"
       );
   stringstream o;
   o << "Purchase '" << b->getName() << "' from '" << i->getSupplier()->getName() << "' (*)";
@@ -279,8 +286,8 @@ DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
   initType(metadata);
 
   // Insert in the list of ItemSupplier operations.
-  // We keep the list sorted by the name of the buffers.
-  if (!i->firstOperation || b->getName() < i->firstOperation->getName())
+  // We keep the list sorted by the operation name.
+  if (!i->firstOperation || getName() < i->firstOperation->getName())
   {
     // New head of the list
     nextOperation = i->firstOperation;
@@ -292,9 +299,7 @@ DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
     OperationItemSupplier* o = i->firstOperation;
     while (o->nextOperation)
     {
-      // There should always be a single flow on these operations.
-      // We take it for granted and don't verify it.
-      if (b->getName() < o->nextOperation->getFlows().begin()->getBuffer()->getName())
+      if (b->getName() < o->nextOperation->getName())
         break;
       o = o->nextOperation;
     }

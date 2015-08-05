@@ -369,6 +369,7 @@
       <xsd:element name="operation" type="operation" />
       <xsd:element name="price" type="positiveDouble" />
       <xsd:element name="itemsuppliers" type="itemsupplierlist" />
+      <xsd:element name="itemdistributions" type="itemdistributionlist" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="price" type="positiveDouble" />
@@ -380,7 +381,7 @@
     </xsd:sequence>
   </xsd:complexType>
 
-  <!-- ITEMSUPPLIER -->
+  <!-- ITEM SUPPLIER -->
   <xsd:complexType name="itemsupplier">
     <xsd:annotation>
       <xsd:documentation>
@@ -416,6 +417,46 @@
   <xsd:complexType name="itemsupplierlist">
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="itemsupplier" type="itemsupplier" />
+    </xsd:choice>
+  </xsd:complexType>
+
+  <!-- ITEM DISTRIBUTION -->
+  <xsd:complexType name="itemdistribution">
+    <xsd:annotation>
+      <xsd:documentation>
+        A itemsupplier specifies an item than can be shipped from an origin
+        location to a destination location.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="item" type="item" />
+      <xsd:element name="origin" type="location" />
+      <xsd:element name="destination" type="location" />
+      <xsd:element name="leadtime" type="xsd:duration" />
+      <xsd:element name="size_multiple" type="positiveDouble" />
+      <xsd:element name="size_minimum" type="positiveDouble" />
+      <xsd:element name="cost" type="positiveDouble" />
+      <xsd:element name="priority" type="xsd:integer" />
+      <xsd:element name="effective_start" type="xsd:dateTime" />
+      <xsd:element name="effective_end" type="xsd:dateTime" />
+      <xsd:element name="booleanproperty" type="booleanproperty" />
+      <xsd:element name="stringproperty" type="stringproperty" />
+      <xsd:element name="doubleproperty" type="doubleproperty" />
+      <xsd:element name="dateproperty" type="dateproperty" />
+    </xsd:choice>
+    <xsd:attribute name="leadtime" type="xsd:duration" />
+    <xsd:attribute name="size_multiple" type="positiveDouble" />
+    <xsd:attribute name="size_minimum" type="positiveDouble" />
+    <xsd:attribute name="cost" type="positiveDouble" />
+    <xsd:attribute name="priority" type="xsd:integer" />
+    <xsd:attribute name="effective_start" type="xsd:dateTime" />
+    <xsd:attribute name="effective_end" type="xsd:dateTime" />
+    <xsd:attribute name="action" type="action" />
+  </xsd:complexType>
+
+  <xsd:complexType name="itemdistributionlist">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="itemdistribution" type="itemdistribution" />
     </xsd:choice>
   </xsd:complexType>
 

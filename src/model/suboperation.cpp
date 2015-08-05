@@ -137,15 +137,19 @@ PyObject* SubOperation::create(PyTypeObject* pytype, PyObject* args, PyObject* k
   {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds, "operation");
+    if (!oper)
+      throw DataException("Missing operation on SubOperation");
     if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
       throw DataException("field 'operation' of suboperation must be of type operation");
 
-    // Pick up the buffer
+    // Pick up the owner
     PyObject* owner = PyDict_GetItemString(kwds, "owner");
+    if (!owner)
+      throw DataException("Missing owner on SubOperation");
     if (!PyObject_TypeCheck(owner, Operation::metadata->pythonClass))
       throw DataException("field 'operation' of suboperation must be of type operation");
 
-    // Pick up the type and create the flow
+    // Pick up the type and create the suboperation
     SubOperation *l = new SubOperation();
     if (oper) l->setOperation(static_cast<Operation*>(oper));
     if (owner) l->setOwner(static_cast<Operation*>(owner));
@@ -161,7 +165,8 @@ PyObject* SubOperation::create(PyTypeObject* pytype, PyObject* args, PyObject* k
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        if (!attr.isA(Tags::operation) && !attr.isA(Tags::owner))
+        if (!attr.isA(Tags::operation) && !attr.isA(Tags::owner)
+           && !attr.isA(Tags::type) && !attr.isA(Tags::action))
         {
           const MetaFieldBase* fmeta = SubOperation::metacategory->findField(attr.getHash());
           if (fmeta)

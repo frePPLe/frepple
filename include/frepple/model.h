@@ -52,6 +52,8 @@ class Problem;
 class Demand;
 class OperationPlan;
 class Item;
+class ItemSupplier;
+class ItemDistribution;
 class Operation;
 class OperationPlanState;
 class OperationFixedTime;
@@ -60,6 +62,7 @@ class OperationRouting;
 class OperationAlternate;
 class OperationSplit;
 class OperationItemSupplier;
+class OperationItemDistribution;
 class SubOperation;
 class Buffer;
 class BufferInfinite;
@@ -78,7 +81,6 @@ class PeggingIterator;
 class Skill;
 class ResourceSkill;
 class Supplier;
-class ItemSupplier;
 class SetupMatrix;
 class SetupMatrixRule;
 
@@ -969,6 +971,16 @@ class Solver : public Object
       solve(reinterpret_cast<const Operation*>(o),v);
     }
 
+    virtual void solve(const OperationItemSupplier* o, void* v = NULL)
+    {
+      solve(reinterpret_cast<const Operation*>(o),v);
+    }
+
+    virtual void solve(const OperationItemDistribution* o, void* v = NULL)
+    {
+      solve(reinterpret_cast<const Operation*>(o),v);
+    }
+
     virtual void solve(const Resource*,void* = NULL)
     {
       throw LogicException("Called undefined solve(Resource*) method");
@@ -1314,7 +1326,11 @@ class HasLevel
   */
 class Location : public HasHierarchy<Location>, public HasDescription
 {
+  friend class ItemDistribution;
   public:
+    typedef Association<Location,Location,ItemDistribution>::ListA distributionoriginlist;
+    typedef Association<Location,Location,ItemDistribution>::ListB distributiondestinationlist;
+
     /** Default constructor. */
     explicit DECLARE_EXPORT Location() : available(NULL)
     {
@@ -1339,6 +1355,34 @@ class Location : public HasHierarchy<Location>, public HasDescription
       available = b;
     }
 
+    /** Returns a constant reference to the item distributions pointing to
+      * this location as origin. */
+    const distributionoriginlist& getDistributionOrigins() const
+    {
+      return origins;
+    }
+
+    /** Returns an iterator over the list of item distributions pointing to
+      * this location as origin. */
+    distributionoriginlist::const_iterator getDistributionOriginIterator() const
+    {
+      return origins.begin();
+    }
+
+    /** Returns a constant reference to the item distributions pointing to
+      * this location as origin. */
+    const distributiondestinationlist& getDistributionDestinations() const
+    {
+      return destinations;
+    }
+
+    /** Returns an iterator over the list of item distributions pointing to
+      * this location as origin. */
+    distributiondestinationlist::const_iterator getDistributionDestinationIterator() const
+    {
+      return destinations.begin();
+    }
+
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
     static int initialize();
@@ -1356,6 +1400,16 @@ class Location : public HasHierarchy<Location>, public HasDescription
       * applies to all operations, resources and buffers using this location.
       */
     CalendarDefault* available;
+
+    /** This is a list of item distributions pointing to this location as
+      * origin.
+      */
+    distributionoriginlist origins;
+
+    /** This is a list of item distributions pointing to this location as
+      * destination.
+      */
+    distributiondestinationlist destinations;
 };
 
 
@@ -3401,6 +3455,172 @@ class OperationAlternate : public Operation
 };
 
 
+/** @brief This class holds the definition of distribution replenishments. */
+class ItemDistribution : public Object,
+  public Association<Location,Location,ItemDistribution>::Node, public HasSource
+{
+  friend class OperationItemDistribution;
+  friend class Item;
+  public:
+    /** Factory method. */
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+
+    /** This method is called to check the validity of the object.<br>
+      * An exception is thrown if the ItemSupplier is invalid.
+      */
+    DECLARE_EXPORT void validate(Action action);
+
+    /** Constructor. */
+    explicit DECLARE_EXPORT ItemDistribution();
+
+    /** Destructor. */
+    virtual DECLARE_EXPORT ~ItemDistribution();
+
+    /** Remove all shipping operationplans. */
+    DECLARE_EXPORT void deleteOperationPlans(bool deleteLockedOpplans = false);
+
+    static int initialize();
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
+    static DECLARE_EXPORT const MetaCategory* metacategory;
+
+    /** Returns the item. */
+    Item* getItem() const
+    {
+      return it;
+    }
+
+    /** Update the item. */
+    DECLARE_EXPORT void setItem(Item*);
+
+    /** Returns the origin location. */
+    Location* getOrigin() const
+    {
+      return getPtrA();
+    }
+
+    /** Returns the destination location. */
+    Location* getDestination() const
+    {
+      return getPtrB();
+    }
+
+    /** Updates the origin Location. This method can only be called once on each instance. */
+    void setOrigin(Location* s)
+    {
+      if (s) setPtrA(s, s->getDistributionOrigins());
+    }
+
+    /** Updates the destination location. This method can only be called once on each instance. */
+    void setDestination(Location* i)
+    {
+      if (i) setPtrB(i, i->getDistributionDestinations());
+    }
+
+    /** Return the purchasing leadtime. */
+    Duration getLeadTime() const
+    {
+      return leadtime;
+    }
+
+    /** Update the shipping lead time.<br>
+      * Note that any already existing purchase operations and their
+      * operationplans are NOT updated.
+      */
+    void setLeadTime(Duration p)
+    {
+      if (p<0L)
+        throw DataException("ItemDistribution can't have a negative lead time");
+      leadtime = p;
+    }
+
+    /** Sets the minimum size for shipments.<br>
+      * The default value is 1.0
+      */
+    void setSizeMinimum(double f)
+    {
+      if (f<0)
+        throw DataException("ItemDistribution can't have a negative minimum size");
+      size_minimum = f;
+    }
+
+    /** Returns the minimum size for shipments. */
+    double getSizeMinimum() const
+    {
+      return size_minimum;
+    }
+
+    /** Sets the multiple size for shipments. */
+    void setSizeMultiple(double f)
+    {
+      if (f<0)
+        throw DataException("ItemDistribution can't have a negative multiple size");
+      size_multiple = f;
+    }
+
+    /** Returns the mutiple size for shipments. */
+    double getSizeMultiple() const
+    {
+      return size_multiple;
+    }
+
+    /** Returns the cost of shipping 1 unit of this item.<br>
+      * The default value is 0.0.
+      */
+    double getCost() const
+    {
+      return cost;
+    }
+
+    /** Update the cost of shipping 1 unit. */
+    void setCost(const double c)
+    {
+      if (c >= 0)
+        cost = c;
+      else
+        throw DataException("ItemDistribution cost must be positive");
+    }
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, MANDATORY + PARENT);
+      m->addPointerField<Cls, Location>(Tags::origin, &Cls::getOrigin, &Cls::setOrigin);
+      m->addPointerField<Cls, Location>(Tags::destination, &Cls::getDestination, &Cls::setDestination, BASE + PARENT);
+      m->addDurationField<Cls>(Tags::leadtime, &Cls::getLeadTime, &Cls::setLeadTime);
+      m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1.0);
+      m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
+      m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
+      m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
+      m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
+      m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
+      HasSource::registerFields<Cls>(m);
+    }
+
+  private:
+    /** Item being distributed. */
+    Item* it;
+
+    /** Shipping lead time. */
+    Duration leadtime;
+
+    /** Minimum procurement quantity. */
+    double size_minimum;
+
+    /** Procurement multiple quantity. */
+    double size_multiple;
+
+    /** Procurement cost. */
+    double cost;
+
+    /** Pointer to the head of the auto-generated shipping operation list.*/
+    OperationItemDistribution* firstOperation;
+
+    /** Pointer to the next ItemDistribution for the same item. */
+    ItemDistribution* next;
+};
+
+
 /** @brief An item defines the products being planned, sold, stored and/or
   * manufactured. Buffers and demands have a reference an item.
   *
@@ -3409,11 +3629,13 @@ class OperationAlternate : public Operation
 class Item : public HasHierarchy<Item>, public HasDescription
 {
   friend class ItemSupplier;
+  friend class ItemDistribution;
   public:
     typedef Association<Supplier,Item,ItemSupplier>::ListB supplierlist;
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Item() : deliveryOperation(NULL), price(0.0) {}
+    explicit DECLARE_EXPORT Item()
+      : deliveryOperation(NULL), price(0.0), firstItemDistribution(NULL) {}
 
     /** Returns the delivery operation.<br>
       * This field is inherited from a parent item, if it hasn't been
@@ -3472,6 +3694,34 @@ class Item : public HasHierarchy<Item>, public HasDescription
       return suppliers.begin();
     }
 
+    /** Nested class to iterate of ItemDistribution objects of this item. */
+    class distributionIterator
+    {
+      private:
+        ItemDistribution* cur;
+
+      public:
+        /** Constructor. */
+        distributionIterator(const Item *c) 
+        {
+          cur = c ? c->firstItemDistribution : NULL;
+        }
+
+        /** Return current value and advance the iterator. */
+        ItemDistribution* next()
+        {
+          ItemDistribution* tmp = cur;
+          if (cur)
+            cur = cur->next;
+          return tmp;
+        }
+    };
+
+    distributionIterator getDistributionIterator() const
+    {
+      return this;
+    }
+
     static int initialize();
 
     /** Destructor. */
@@ -3488,6 +3738,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier, &Cls::getSupplierIterator, BASE + WRITE_FULL);
+      m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_FULL);      
     }
 
   private:
@@ -3501,6 +3752,9 @@ class Item : public HasHierarchy<Item>, public HasDescription
 
     /** This is a list of suppliers this item has. */
     supplierlist suppliers;
+
+    /** Maintain a list of ItemDistributions. */
+    ItemDistribution *firstItemDistribution;
 };
 
 
@@ -3528,11 +3782,7 @@ class ItemSupplier : public Object,
   friend class OperationItemSupplier;
   public:
     /** Default constructor. */
-    explicit ItemSupplier() : loc(NULL), size_minimum(1.0), size_multiple(0.0),
-      cost(0.0), firstOperation(NULL)
-    {
-      initType(metadata);
-    }
+    explicit DECLARE_EXPORT ItemSupplier();
 
     /** Constructor. */
     explicit DECLARE_EXPORT ItemSupplier(Supplier*, Item*, int);
@@ -3633,13 +3883,13 @@ class ItemSupplier : public Object,
       loc = l;
     }
 
-    /** Return the purchasing leadtime. */
+    /** Return the purchasing lead time. */
     Duration getLeadTime() const
     {
       return leadtime;
     }
 
-    /** Update the procurement leadtime.<br>
+    /** Update the procurement lead time.<br>
       * Note that any already existing purchase operations and their
       * operationplans are NOT updated.
       */
@@ -3701,6 +3951,45 @@ class ItemSupplier : public Object,
 };
 
 
+/** @brief An internally generated operation that ships material from an
+  * origin location to a destinationLocation.
+  */
+class OperationItemDistribution : public OperationFixedTime
+{
+  friend class ItemDistribution;
+  private:
+    /** Pointer to the ItemDistribution that 'owns' this operation. */
+    ItemDistribution* itemdist;
+
+    /** Pointer to the next operation of the supplier item. */
+    OperationItemDistribution* nextOperation;
+
+  public:
+    ItemDistribution* getItemDistribution() const
+    {
+      return itemdist;
+    }
+
+    /** Constructor. */
+    explicit DECLARE_EXPORT OperationItemDistribution(ItemDistribution*, Buffer*, Buffer*);
+
+    /** Destructor. */
+    virtual DECLARE_EXPORT ~OperationItemDistribution();
+
+    static int initialize();
+
+    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addPointerField<Cls, ItemDistribution>(Tags::itemdistribution, &Cls::getItemDistribution, NULL);
+    }
+};
+
+
 /** @brief An internally generated operation that supplies procured material
   * into a buffer.
   */
@@ -3708,10 +3997,10 @@ class OperationItemSupplier : public OperationFixedTime
 {
   friend class ItemSupplier;
   private:
-    /** Pointer to the supplier item that 'owns' this operation. */
+    /** Pointer to the ItemSupplier that 'owns' this operation. */
     ItemSupplier* supitem;
 
-    /** Pointer to the next operation of the supplier item. */
+    /** Pointer to the next operation of the ItemSupplier. */
     OperationItemSupplier* nextOperation;
 
   public:
@@ -5119,7 +5408,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
       HasSource::registerFields<Cls>(m);
-      m->addIteratorField<Cls, SetupMatrixRule::iterator, SetupMatrixRule>(Tags::rules, Tags::rule, &Cls::getRules);
+      m->addIteratorField<Cls, SetupMatrixRule::iterator, SetupMatrixRule>(Tags::rules, Tags::rule, &Cls::getRules, BASE + WRITE_FULL);
     }
 
   public:
@@ -6885,6 +7174,7 @@ class Plan : public Plannable, public Object
       m->addList3Field<Plan, Load>(Tags::loads, Tags::load);
       m->addList3Field<Plan, Flow>(Tags::flows, Tags::flow);
       m->addList3Field<Plan, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier);
+      m->addList3Field<Plan, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Plan::getOperationPlans);
       m->addIteratorField<Plan, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Plan::getProblems);
     }

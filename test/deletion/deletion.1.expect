@@ -12,25 +12,12 @@
 	<locations>
 		<location>
 			<name>All places</name>
-			<members>
-				<location>
-					<name>Location 1</name>
-				</location>
-			</members>
 		</location>
 		<location>
 			<name>Location 1</name>
 			<owner>
 				<name>All places</name>
 			</owner>
-			<members>
-				<location>
-					<name>Sublocation 1</name>
-				</location>
-				<location>
-					<name>Sublocation 2</name>
-				</location>
-			</members>
 		</location>
 		<location>
 			<name>Sublocation 1</name>
@@ -56,6 +43,7 @@
 	<calendars>
 		<calendar>
 			<name>assembly capacity</name>
+			<default>1</default>
 			<buckets>
 				<bucket>
 					<id>1</id>
@@ -63,7 +51,6 @@
 					<value>2</value>
 				</bucket>
 			</buckets>
-			<default>1</default>
 		</calendar>
 		<calendar>
 			<name>months</name>
@@ -111,36 +98,26 @@
 			</buckets>
 		</calendar>
 	</calendars>
-	<operations>
-		<operation>
-			<name>delivery 1</name>
-			<duration>P1D</duration>
-		</operation>
-		<operation>
-			<name>make item 1</name>
-			<duration>P1D</duration>
-		</operation>
-		<operation name="supply component A" xsi:type="operation_alternate">
-			<alternates>
-				<alternate>
-					<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time"/>
-					<priority>1</priority>
-				</alternate>
-				<alternate>
-					<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time"/>
-					<priority>2</priority>
-				</alternate>
-			</alternates>
-		</operation>
-		<operation>
-			<name>supply component A from supplier 1</name>
-			<duration>P1D</duration>
-		</operation>
-		<operation>
-			<name>supply component A from supplier 2</name>
-			<duration>P2D</duration>
-		</operation>
-	</operations>
+	<resources>
+		<resource>
+			<name>assemble</name>
+			<maximum_calendar>
+				<name>assembly capacity</name>
+			</maximum_calendar>
+			<location>
+				<name>Location 1</name>
+			</location>
+			<setupmatrix>
+				<name>assembly setup</name>
+			</setupmatrix>
+		</resource>
+		<resource>
+			<name>transport</name>
+			<location>
+				<name>Sublocation 1</name>
+			</location>
+		</resource>
+	</resources>
 	<items>
 		<item>
 			<name>component A</name>
@@ -190,6 +167,91 @@
 			</location>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation>
+			<name>delivery 1</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>buffer 1</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>make item 1</name>
+			<loads>
+				<load>
+					<resource>
+						<name>assemble</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>buffer 1</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow>
+					<buffer>
+						<name>buffer A</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+				<flow>
+					<buffer>
+						<name>buffer B</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation xsi:type="operation_alternate">
+			<name>supply component A</name>
+			<suboperations>
+				<suboperation>
+					<operation>
+						<name>supply component A from supplier 1</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>supply component A from supplier 2</name>
+					</operation>
+					<priority>2</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation>
+			<name>supply component A from supplier 1</name>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>buffer A</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>supply component A from supplier 2</name>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>buffer A</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P2D</duration>
+		</operation>
+	</operations>
 	<demands>
 		<demand>
 			<name>order 1</name>
@@ -229,109 +291,26 @@
 		</demand>
 	</demands>
 	<setupmatrices>
-		<setupmatrix name="assembly setup" xsi:type="setupmatrix_default">
+		<setupmatrix>
+			<name>assembly setup</name>
 			<rules>
-				<rule priority="1">
+				<rule>
 					<fromsetup>product family 1</fromsetup>
 					<tosetup>product family 2</tosetup>
 					<duration>P10D</duration>
 					<cost>10</cost>
+					<priority>1</priority>
 				</rule>
-				<rule priority="2">
+				<rule>
 					<fromsetup>product family 2</fromsetup>
 					<tosetup>product family 1</tosetup>
 					<duration>P10D</duration>
 					<cost>10</cost>
+					<priority>2</priority>
 				</rule>
 			</rules>
 		</setupmatrix>
 	</setupmatrices>
-	<resources>
-		<resource>
-			<name>assemble</name>
-			<maximum_calendar>
-				<name>assembly capacity</name>
-			</maximum_calendar>
-			<location>
-				<name>Location 1</name>
-			</location>
-			<setupmatrix>
-				<name>assembly setup</name>
-			</setupmatrix>
-		</resource>
-		<resource>
-			<name>transport</name>
-			<location>
-				<name>Sublocation 1</name>
-			</location>
-		</resource>
-	</resources>
-	<loads>
-		<load>
-			<operation>
-				<name>make item 1</name>
-			</operation>
-			<resource>
-				<name>assemble</name>
-			</resource>
-		</load>
-	</loads>
-	<flows>
-		<flow>
-			<operation>
-				<name>delivery 1</name>
-			</operation>
-			<buffer>
-				<name>buffer 1</name>
-			</buffer>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation>
-				<name>make item 1</name>
-			</operation>
-			<buffer>
-				<name>buffer 1</name>
-			</buffer>
-			<quantity>1</quantity>
-		</flow>
-		<flow>
-			<operation>
-				<name>make item 1</name>
-			</operation>
-			<buffer>
-				<name>buffer A</name>
-			</buffer>
-			<quantity>-1</quantity>
-		</flow>
-		<flow>
-			<operation>
-				<name>make item 1</name>
-			</operation>
-			<buffer>
-				<name>buffer B</name>
-			</buffer>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation>
-				<name>supply component A from supplier 1</name>
-			</operation>
-			<buffer>
-				<name>buffer A</name>
-			</buffer>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation>
-				<name>supply component A from supplier 2</name>
-			</operation>
-			<buffer>
-				<name>buffer A</name>
-			</buffer>
-			<quantity>1</quantity>
-		</flow>
-	</flows>
 	<problems>
 		<problem>
 			<name>unplanned</name>

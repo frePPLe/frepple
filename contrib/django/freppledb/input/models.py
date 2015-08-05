@@ -763,10 +763,25 @@ class Load(AuditModel):
 
 
 class OperationPlan(AuditModel):
+  # Possible status
+  orderstatus = (
+    ('confirmed', _('confirmed')),
+    ('approved', _('approved')),
+    ('proposed', _('proposed')),
+  )
+
   # Database fields
   id = models.IntegerField(
     _('identifier'), primary_key=True,
     help_text=_('Unique identifier of an operationplan')
+    )
+  status = models.CharField(
+    _('status'), null=True, blank=True, max_length=20, choices=orderstatus,
+    help_text=_('Status of the order')
+    )
+  reference = models.CharField(
+    _('reference'), max_length=settings.NAMESIZE, null=True, blank=True,
+    help_text=_('External reference of this order')
     )
   operation = models.ForeignKey(
     Operation, verbose_name=_('operation'),
@@ -776,11 +791,11 @@ class OperationPlan(AuditModel):
     _('quantity'), max_digits=settings.MAX_DIGITS,
     decimal_places=settings.DECIMAL_PLACES, default='1.00'
     )
-  startdate = models.DateTimeField(_('start date'), help_text=_('start date'))
-  enddate = models.DateTimeField(_('end date'), help_text=_('end date'))
-  locked = models.BooleanField(
-    _('locked'), default=True,
-    help_text=_('Prevent or allow changes')
+  startdate = models.DateTimeField(_('start date'), help_text=_('start date'), null=True, blank=True)
+  enddate = models.DateTimeField(_('end date'), help_text=_('end date'), null=True, blank=True)
+  criticality = models.DecimalField(
+    _('criticality'), max_digits=settings.MAX_DIGITS,
+    decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
     )
   owner = models.ForeignKey(
     'self', verbose_name=_('owner'), null=True, blank=True,
@@ -794,6 +809,114 @@ class OperationPlan(AuditModel):
     db_table = 'operationplan'
     verbose_name = _('operationplan')
     verbose_name_plural = _('operationplans')
+    ordering = ['id']
+
+
+class DistributionOrder(AuditModel):
+  # Possible status
+  orderstatus = (
+    ('confirmed', _('confirmed')),
+    ('approved', _('approved')),
+    ('proposed', _('proposed')),
+  )
+
+  # Database fields
+  id = models.IntegerField(
+    _('identifier'), primary_key=True,
+    help_text=_('Unique identifier')
+    )
+  reference = models.CharField(
+    _('reference'), max_length=settings.NAMESIZE, null=True, blank=True,
+    help_text=_('External reference of this order')
+    )
+  status = models.CharField(
+    _('status'), null=True, blank=True, max_length=20, choices=orderstatus,
+    help_text=_('Status of the order')
+    )
+  item = models.ForeignKey(
+    Item, verbose_name=_('item'),
+    db_index=True
+    )
+  origin = models.ForeignKey(
+    Location, verbose_name=_('origin'), null=True, blank=True,
+    related_name='origins', db_index=True
+    )
+  destination = models.ForeignKey(
+    Location, verbose_name=_('destination'),
+    related_name='destinations', db_index=True
+    )
+  quantity = models.DecimalField(
+    _('quantity'), max_digits=settings.MAX_DIGITS,
+    decimal_places=settings.DECIMAL_PLACES, default='1.00'
+    )
+  startdate = models.DateTimeField(_('start date'), help_text=_('start date'), null=True, blank=True)
+  enddate = models.DateTimeField(_('end date'), help_text=_('end date'), null=True, blank=True)
+  criticality = models.DecimalField(
+    _('criticality'), max_digits=settings.MAX_DIGITS,
+    decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    )
+
+  def __str__(self):
+    return str(self.id)
+
+  class Meta(AuditModel.Meta):
+    db_table = 'distribution_order'
+    verbose_name = _('distribution order')
+    verbose_name_plural = _('distribution orders')
+    ordering = ['id']
+
+
+class PurchaseOrder(AuditModel):
+  # Possible status
+  orderstatus = (
+    ('confirmed', _('confirmed')),
+    ('proposed', _('proposed')),
+    ('approved', _('approved')),
+  )
+
+  # Database fields
+  id = models.IntegerField(
+    _('identifier'), primary_key=True,
+    help_text=_('Unique identifier')
+    )
+  reference = models.CharField(
+    _('reference'), max_length=settings.NAMESIZE, null=True, blank=True,
+    help_text=_('External reference of this order')
+    )
+  status = models.CharField(
+    _('status'), null=True, blank=True, max_length=20, choices=orderstatus,
+    help_text=_('Status of the order')
+    )
+  item = models.ForeignKey(
+    Item, verbose_name=_('item'),
+    db_index=True
+    )
+  supplier = models.ForeignKey(
+    Supplier, verbose_name=_('supplier'),
+    db_index=True
+    )
+  location = models.ForeignKey(
+    Location, verbose_name=_('location'),
+    db_index=True
+    )
+  quantity = models.DecimalField(
+    _('quantity'), max_digits=settings.MAX_DIGITS,
+    decimal_places=settings.DECIMAL_PLACES, default='1.00'
+    )
+  startdate = models.DateTimeField(_('start date'), help_text=_('start date'), null=True, blank=True)
+  enddate = models.DateTimeField(_('end date'), help_text=_('end date'), null=True, blank=True)
+  criticality = models.DecimalField(
+    _('criticality'), max_digits=settings.MAX_DIGITS,
+    decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    )
+
+  def __str__(self):
+    return str(self.id)
+
+  class Meta(AuditModel.Meta):
+    db_table = 'purchase_order'
+    verbose_name = _('purchase order')
+    verbose_name_plural = _('purchase orders')
     ordering = ['id']
 
 

@@ -110,5 +110,8 @@
     <ClCompile Include="..\..\src\model\itemsupplier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\model\itemdistribution.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

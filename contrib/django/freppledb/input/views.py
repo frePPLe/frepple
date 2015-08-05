@@ -31,6 +31,7 @@ from freppledb.input.models import Resource, Operation, Location, SetupMatrix
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow, Skill
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.input.models import ResourceSkill, Supplier, ItemSupplier, searchmode
+from freppledb.input.models import DistributionOrder, PurchaseOrder
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
@@ -795,6 +796,57 @@ class OperationPlanList(GridReport):
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldBool('locked', title=_('locked')),
     GridFieldInteger('owner', title=_('owner'), extra="formatoptions:{defaultValue:''}"),
+    GridFieldText('source', title=_('source')),
+    GridFieldLastModified('lastmodified'),
+    )
+
+
+class DistributionOrderList(GridReport):
+  '''
+  A list report to show distribution orders.
+  '''
+  template = 'input/distributionorderlist.html'
+  title = _("Distribution order List")
+  basequeryset = DistributionOrder.objects.all()
+  model = DistributionOrder
+  frozenColumns = 1
+
+  rows = (
+    GridFieldInteger('id', title=_('identifier'), key=True),
+    GridFieldText('reference', title=_('reference')),
+    GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
+    GridFieldText('origin', title=_('origin'), field_name='origin__name', formatter='location'),
+    GridFieldText('destination', title=_('destination'), field_name='origin__name', formatter='location'),
+    GridFieldDateTime('startdate', title=_('start date')),
+    GridFieldDateTime('enddate', title=_('end date')),
+    GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldNumber('criticality', title=_('criticality')),
+    GridFieldText('source', title=_('source')),
+    GridFieldLastModified('lastmodified'),
+    )
+
+
+class PurchaseOrderList(GridReport):
+  '''
+  A list report to show purchase orders.
+  '''
+  template = 'input/purchaseorderlist.html'
+  title = _("Purchase order List")
+  basequeryset = PurchaseOrder.objects.all()
+  model = PurchaseOrder
+  frozenColumns = 1
+
+  rows = (
+    GridFieldInteger('id', title=_('identifier'), key=True),
+    GridFieldText('reference', title=_('reference')),
+    GridFieldChoice('status', title=_('status'), choices=PurchaseOrder.orderstatus),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
+    GridFieldText('supplier', title=_('supplier'), field_name='supplier__name', formatter='supplier'),
+    GridFieldDateTime('startdate', title=_('start date')),
+    GridFieldDateTime('enddate', title=_('end date')),
+    GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldNumber('criticality', title=_('criticality')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
